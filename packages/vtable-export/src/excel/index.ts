@@ -4,9 +4,10 @@ import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
 import { isArray } from '@visactor/vutils';
-import type { ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
+import type { CellRange, ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
 import { getHierarchyOffset } from '../util/indent';
 import { isPromise } from '../util/promise';
+import { handlePaginationExport } from '../util/pagination';
 
 export type CellInfo = {
   cellType: string;
@@ -27,6 +28,7 @@ export type SkipImageExportCellType =
 
 export type ExportVTableToExcelOptions = {
   ignoreIcon?: boolean;
+  exportAllData?: boolean;
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
   formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
   excelJSWorksheetCallback?: (worksheet: ExcelJS.Worksheet) => void;
@@ -48,14 +50,15 @@ export async function exportVTableToExcel(
 ) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('sheet1');
-  worksheet.properties.defaultRowHeight = 40;
-
-  const columns = [];
+  const exportAllData = !!options?.exportAllData;
+  const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);
   const minRow = 0;
-  const maxRow = tableInstance.rowCount - 1;
+  const maxRow = handleRowCount();
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
-  const mergeCells = [];
+  worksheet.properties.defaultRowHeight = 40;
+  const columns: { width: number }[] = [];
+  const mergeCells: CellRange[] = [];
   const mergeCellSet = new Set();
 
   const SLICE_SIZE = 100;
@@ -153,6 +156,8 @@ export async function exportVTableToExcel(
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
+  // 恢复透视表的pagination配置
+  reset();
   return buffer;
 }
 
@@ -167,7 +172,7 @@ async function addCell(
   const { layoutMap } = tableInstance.internalProps;
   const cellType = tableInstance.getCellType(col, row);
   const rawRecord = tableInstance.getCellRawRecord(col, row);
-  let cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
+  let cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false);
   if (isPromise(cellValue)) {
     cellValue = await cellValue;
   }

@@ -1,5 +1,6 @@
 import type * as VTable from '@visactor/vtable';
 import type { CellInfo } from '../excel';
+import { handlePaginationExport } from '../util/pagination';
 
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 type CellRange = VTable.TYPES.CellRange;
@@ -10,11 +11,14 @@ const separator = ',';
 export type ExportVTableToCsvOptions = {
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
   escape?: boolean;
+  exportAllData?: boolean;
 };
 
 export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
+  const exportAllData = !!option?.exportAllData;
+  const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);
   const minRow = 0;
-  const maxRow = tableInstance.rowCount - 1;
+  const maxRow = handleRowCount();
   const minCol = 0;
   const maxCol = tableInstance.colCount - 1;
 
@@ -36,6 +40,8 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
     }
     copyValue += newLine;
   }
+  // 恢复透视表的pagination配置
+  reset();
   return copyValue;
 }
 
@@ -46,7 +52,7 @@ function getCopyCellValue(
   option?: ExportVTableToCsvOptions
 ): string | Promise<string> | void {
   const rawRecord = tableInstance.getCellRawRecord(col, row);
-  const cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row);
+  const cellValue = (rawRecord && rawRecord.vtableMergeName) ?? tableInstance.getCellValue(col, row, false);
 
   if (option?.formatExportOutput) {
     const cellType = tableInstance.getCellType(col, row);

@@ -3,6 +3,7 @@ import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
 //备用 插件配置项 目前感觉都走默认逻辑就行
 export type IExcelEditCellKeyboardPluginOptions = {
+  id?: string;
   // 是否响应删除
   // enableDeleteKey?: boolean;
 };
@@ -14,6 +15,7 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   table: VTable.ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
   constructor(pluginOptions?: IExcelEditCellKeyboardPluginOptions) {
+    this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
 
     this.bindEvent();
