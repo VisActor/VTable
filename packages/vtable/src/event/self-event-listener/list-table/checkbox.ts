@@ -263,15 +263,25 @@ function updateChildrenCheckboxState(
     }
     return 0;
   });
+
+  // 元素的子元素数组
+  const childrenOfKey = (key: string) => {
+    // 提取当前元素前缀
+    const prefix = key;
+
+    // 查找所有同层级的元素
+    return (keys as string[]).filter(item => item.startsWith(prefix + ',') && item !== key);
+  };
+
   const stateArr = keys.map(key => checkedState.get(key));
 
   stateArr.forEach((state, i) => {
     const index = keys[i] as string;
     const value = state;
+    const shouldSelectChildren = childrenOfKey(key).length !== 0 && childrenOfKey(key).includes(index);
 
     if (start) {
-      const indexData = index.split(',');
-      if (indexData.length === currentIndexLength) {
+      if (!shouldSelectChildren) {
         start = false;
       } else {
         value[field] = parentState;
