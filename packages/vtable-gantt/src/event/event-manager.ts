@@ -116,11 +116,11 @@ function bindTableGroupListener(event: EventManager) {
     });
     if (downBarNode) {
       // 获取任务记录
-      const { taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
-        downBarNode.task_index,
-        downBarNode.sub_task_index
-      );
-
+      // const { taskRecord } = scene._gantt.getTaskInfoByTaskListIndex(
+      //   downBarNode.task_index,
+      //   downBarNode.sub_task_index
+      // );
+      const taskRecord = downBarNode.record;
       // 检查是否是project类型
       const isProjectTask = taskRecord?.type === TaskType.PROJECT;
       if (!isProjectTask) {
@@ -244,7 +244,8 @@ function bindTableGroupListener(event: EventManager) {
           scene._gantt.stateManager.hoverTaskBar.target = taskBarTarget as any as GanttTaskBarNode;
           const taskIndex = taskBarTarget.task_index;
           const sub_task_index = taskBarTarget.sub_task_index;
-          const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
+          const record = taskBarTarget.record;
+          // const record = scene._gantt.getRecordByIndex(taskIndex, sub_task_index);
           if (record.type !== TaskType.PROJECT) {
             stateManager.showTaskBarHover();
           }

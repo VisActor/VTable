@@ -94,6 +94,7 @@ export interface GanttConstructorOptions {
     /** 任务条样式 */
     barStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
     milestoneStyle?: IMilestoneStyle;
+    projectStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
     /** 任务条是否可调整大小 */

@@ -133,6 +133,7 @@ export class Gantt extends EventTarget {
     grid: IGrid;
     taskBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     taskBarMilestoneStyle: IMilestoneStyle;
+    projectBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
     taskBarMilestoneHypotenuse: number;
     taskBarHoverStyle: ITaskBarHoverStyle;
@@ -759,12 +760,31 @@ export class Gantt extends EventTarget {
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
-  getRecordByIndex(taskShowIndex: number, sub_task_index?: number) {
-    if (isValid(sub_task_index)) {
-      //如果有sub_task_index 表示是sub_task等模式
-      return this.records[taskShowIndex]?.children?.[sub_task_index];
-    }
+  /**
+   *
+   * @param taskShowIndex 任务显示的index，从0开始
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
+   * @returns 具体的task record数据
+   */
+  getRecordByIndex(taskShowIndex: number, sub_task_index?: number | number[]) {
     if (this.taskListTableInstance) {
+      if (isValid(sub_task_index)) {
+        const new_sub_task_index = Array.isArray(sub_task_index) ? [...sub_task_index] : sub_task_index;
+        const record = this.taskListTableInstance.getRecordByCell(
+          0,
+          taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
+        );
+        if (Array.isArray(new_sub_task_index)) {
+          let currentRecord = record;
+          while (new_sub_task_index.length > 0) {
+            const index = new_sub_task_index.shift();
+            currentRecord = currentRecord?.children?.[index];
+          }
+          return currentRecord;
+        }
+        return record?.children?.[new_sub_task_index];
+      }
       return this.taskListTableInstance.getRecordByCell(
         0,
         taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
@@ -805,12 +825,14 @@ export class Gantt extends EventTarget {
   }
   /**
    * 获取指定index处任务数据的具体信息
-   * @param index
+   * @param taskShowIndex 任务显示的index，从0开始
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
    * @returns 当前任务信息
    */
   getTaskInfoByTaskListIndex(
     taskShowIndex: number,
-    sub_task_index?: number
+    sub_task_index?: number | number[]
   ): {
     taskRecord: any;
     /** 废弃，请直接使用startDate和endDate来计算 */
@@ -1272,7 +1294,7 @@ export class Gantt extends EventTarget {
     return parseDateFormat(date);
   }
 
-  getTaskBarStyle(task_index: number, sub_task_index?: number) {
+  getTaskBarStyle(task_index: number, sub_task_index?: number | number[]) {
     if (typeof this.parsedOptions.taskBarStyle === 'function') {
       const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
 

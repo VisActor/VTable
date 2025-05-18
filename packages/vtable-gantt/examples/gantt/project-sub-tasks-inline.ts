@@ -74,86 +74,85 @@ export function createTable() {
           id: '2-1',
           title: 'Planning',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+
           progress: 100,
           priority: 'P1',
-          type: 'project'
-          // children: [
-          //   {
-          //     id: '2-1-1',
-          //     title: 'Resource Allocation',
-          //     developer: 'liufangfang.jane@bytedance.com',
-          //     start: '2024-07-24',
-          //     end: '2024-08-04',
-          //     progress: 31,
-          //     priority: 'P0'
-          //   },
-          //   {
-          //     id: '2-1-2',
-          //     title: 'Timeline Preparation',
-          //     developer: 'liufangfang.jane@bytedance.com',
-          //     start: '2024-07-06',
-          //     end: '2024-07-08',
-          //     progress: 60,
-          //     priority: 'P0'
-          //   },
-          //   {
-          //     id: '2-1-3',
-          //     title: 'Budget Estimation',
-          //     developer: 'liufangfang.jane@bytedance.com',
-          //     start: '2024-07-09',
-          //     end: '2024-07-11',
-          //     progress: 100,
-          //     priority: 'P1'
-          //   }
-          // ]
+          type: 'project',
+          children: [
+            {
+              id: '2-1-1',
+              title: 'Resource Allocation',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-24',
+              end: '2024-07-24',
+              progress: 31,
+              priority: 'P0'
+            },
+            {
+              id: '2-1-2',
+              title: 'Timeline Preparation',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-26',
+              end: '2024-07-28',
+              progress: 60,
+              priority: 'P0'
+            },
+            {
+              id: '2-1-3',
+              title: 'Budget Estimation',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-29',
+              end: '2024-07-29',
+              progress: 100,
+              priority: 'P1'
+            }
+          ]
         },
         {
           id: '2-2',
           title: 'Execution',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
-          end: '2024-08-04',
+          start: '2024-07-14',
+          end: '2024-07-14',
           progress: 31,
           priority: 'P0',
-          type: 'project'
-          // children: [
-          //   {
-          //     id: '2-2-1',
-          //     title: 'Team Coordination',
-          //     developer: 'liufangfang.jane@bytedance.com',
-          //     start: '2024-07-24',
-          //     end: '2024-08-04',
-          //     progress: 31,
-          //     priority: 'P0'
-          //   },
-          //   {
-          //     id: '2-2-2',
-          //     title: 'Progress Tracking',
-          //     developer: 'liufangfang.jane@bytedance.com',
-          //     start: '2024-07-06',
-          //     end: '2024-07-08',
-          //     progress: 60,
-          //     priority: 'P0'
-          //   },
-          //   {
-          //     id: '2-2-3',
-          //     title: 'Issue Resolution',
-          //     developer: 'liufangfang.jane@bytedance.com',
-          //     start: '2024-07-09',
-          //     end: '2024-07-11',
-          //     progress: 100,
-          //     priority: 'P1'
-          //   }
-          // ]
+          // type: 'project',
+          children: [
+            {
+              id: '2-2-1',
+              title: 'Team Coordination',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-24',
+              end: '2024-08-04',
+              progress: 31,
+              priority: 'P0'
+            },
+            {
+              id: '2-2-2',
+              title: 'Progress Tracking',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-06',
+              end: '2024-07-08',
+              progress: 60,
+              priority: 'P0'
+            },
+            {
+              id: '2-2-3',
+              title: 'Issue Resolution',
+              developer: 'liufangfang.jane@bytedance.com',
+              start: '2024-07-09',
+              end: '2024-07-11',
+              progress: 100,
+              priority: 'P1'
+            }
+          ]
         },
         {
           id: '2-3',
           title: 'Monitoring',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
+          start: '2024-07-26',
+          end: '2024-07-26',
           progress: 60,
           priority: 'P0'
         },
@@ -161,8 +160,8 @@ export function createTable() {
           id: '2-4',
           title: 'Closing',
           developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
+          start: '2024-08-02',
+          end: '2024-08-02',
           progress: 100,
           priority: 'P1'
           // children: [
@@ -277,7 +276,7 @@ export function createTable() {
       }
     },
     tasksShowMode: TasksShowMode.Project_Sub_Tasks_Inline,
-    projectSubTasksExpandable: true,
+    projectSubTasksExpandable: false,
     frame: {
       outerFrameStyle: {
         borderLineWidth: 2,
