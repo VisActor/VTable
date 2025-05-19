@@ -252,7 +252,7 @@ export class TaskBar {
       cornerRadius: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
         : taskBarStyle.cornerRadius,
-      clip: !isMilestone
+      clip: true
     });
     barGroup.name = 'task-bar-group';
     barGroupBox.appendChild(barGroup);
