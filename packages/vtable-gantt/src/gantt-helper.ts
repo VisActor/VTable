@@ -55,6 +55,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
     return [
       {
         date: createDateAtMidnight().toLocaleDateString(),
+        content: '',
         scrollToMarkLine: true,
         position: 'left',
         style: {
@@ -211,6 +212,21 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.barStyle && typeof options?.taskBar?.barStyle === 'function'
       ? options.taskBar.barStyle
       : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle);
+
+  const defaultMilestoneStyle = {
+    borderColor: 'red',
+    borderLineWidth: 1,
+    fillColor: 'green',
+    cornerRadius: 0,
+    width: 15,
+    labelText: '${title}',
+    labelTextStyle: {
+      fontSize: 16,
+      color: 'red',
+      fontFamily: 'Arial',
+      padding: 4
+    }
+  };
   gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
     typeof gantt.parsedOptions.taskBarStyle === 'function'
       ? {}
@@ -221,8 +237,10 @@ export function initOptions(gantt: Gantt) {
           fillColor: gantt.parsedOptions.taskBarStyle.barColor,
           cornerRadius: 0
         },
+    defaultMilestoneStyle,
     options?.taskBar?.milestoneStyle
   );
+
   gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
 
   gantt.parsedOptions.dateFormat = options?.dateFormat;
