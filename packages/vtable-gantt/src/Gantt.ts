@@ -1295,9 +1295,14 @@ export class Gantt extends EventTarget {
   }
 
   getTaskBarStyle(task_index: number, sub_task_index?: number | number[]) {
-    if (typeof this.parsedOptions.taskBarStyle === 'function') {
-      const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
-
+    const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
+    let style;
+    if (taskRecord.type === TaskType.PROJECT) {
+      style = this.parsedOptions.projectBarStyle;
+    } else {
+      style = this.parsedOptions.taskBarStyle;
+    }
+    if (typeof style === 'function') {
       const args = {
         index: task_index,
         startDate,
@@ -1305,9 +1310,9 @@ export class Gantt extends EventTarget {
         taskRecord,
         ganttInstance: this
       };
-      return this.parsedOptions.taskBarStyle(args);
+      return style(args);
     }
-    return this.parsedOptions.taskBarStyle;
+    return style;
   }
 
   /**

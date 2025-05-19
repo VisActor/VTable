@@ -212,7 +212,12 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.barStyle && typeof options?.taskBar?.barStyle === 'function'
       ? options.taskBar.barStyle
       : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle);
-
+  gantt.parsedOptions.projectBarStyle =
+    options?.taskBar?.projectStyle && typeof options?.taskBar?.projectStyle === 'function'
+      ? options.taskBar.projectStyle
+      : options?.taskBar?.projectStyle
+      ? Object.assign({}, defaultTaskBarStyle, options?.taskBar?.projectStyle)
+      : gantt.parsedOptions.taskBarStyle;
   const defaultMilestoneStyle = {
     borderColor: 'red',
     borderLineWidth: 1,

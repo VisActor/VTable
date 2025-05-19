@@ -333,6 +333,17 @@ export function createTable() {
         borderWidth: 1,
         /** 边框颜色 */
         borderColor: 'black'
+      },
+      projectStyle: {
+        barColor: 'pink',
+        /** 已完成部分任务条的颜色 */
+        completedBarColor: 'green',
+        /** 任务条的圆角 */
+        cornerRadius: 1,
+        /** 任务条的边框 */
+        borderWidth: 2,
+        /** 边框颜色 */
+        borderColor: 'yellow'
       }
     },
     timelineHeader: {
