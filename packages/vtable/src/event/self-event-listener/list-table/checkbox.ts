@@ -66,9 +66,8 @@ export function bindGroupCheckboxTreeChange(table: ListTableAPI) {
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
 
-    const isCheckboxAndTree =
-      table.internalProps.columns.some(column => column.tree && (column as any).enableTreeCheckbox) &&
-      field !== '_vtable_rowSeries_number';
+    const isCheckboxAndTree = table.internalProps.columns.some(column => column.tree);
+    table.internalProps.enableCheckboxCascade && field !== '_vtable_rowSeries_number';
 
     if (!isCheckboxAndTree) {
       return;
@@ -200,12 +199,16 @@ function updateParentCheckboxState(
   });
   const stateArr = keys.map(key => checkedState.get(key));
 
+  // currentIndex的子元素
+  const childOfCurrentIndex = (keys as string[]).filter(item => item.startsWith(key + ',') && item !== key);
+
   stateArr.forEach((state, i) => {
     const index = keys[i] as string;
     const value = state;
+    const isChildOfCurrentIndex = childOfCurrentIndex.includes(index);
+
     if (start) {
-      const indexData = index.split(',');
-      if (indexData.length === currentIndexLength) {
+      if (!isChildOfCurrentIndex) {
         start = false;
       } else {
         result.push(value[fieldName]);

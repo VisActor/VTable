@@ -139,7 +139,8 @@ export interface IRowSeriesNumber {
   /** 是否禁止列宽调整 */
   disableColumnResize?: boolean;
 
-  /** 是否开启树形结构复选框 */
+  /** @deprecated 请使用全局 enableCheckboxCascade配置
+   * 是否开启树形结构复选框 */
   enableTreeCheckbox?: boolean;
   customLayout?: ICustomLayout;
   headerCustomLayout?: ICustomLayout;

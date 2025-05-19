@@ -132,6 +132,8 @@ export interface IBaseTableProtected {
   keyboardOptions?: TableKeyboardOptions;
   eventOptions?: TableEventOptions;
   rowSeriesNumber?: IRowSeriesNumber;
+  /** 启动复选框级联 */
+  enableCheckboxCascade?: boolean;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
 
@@ -537,6 +539,8 @@ export interface BaseTableConstructorOptions {
   beforeRender?: (stage: any) => void;
   afterRender?: (stage: any) => void;
   rowSeriesNumber?: IRowSeriesNumber;
+  /** 启用复选框级联 */
+  enableCheckboxCascade?: boolean;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
