@@ -263,15 +263,19 @@ function updateChildrenCheckboxState(
     }
     return 0;
   });
+
+  // 当前元素的子元素数组
+  const childrenOfKey = (keys as string[]).filter(item => item.startsWith(key + ',') && item !== key);
+
   const stateArr = keys.map(key => checkedState.get(key));
 
   stateArr.forEach((state, i) => {
     const index = keys[i] as string;
     const value = state;
+    const shouldSelectChildren = childrenOfKey.length !== 0 && childrenOfKey.includes(index);
 
     if (start) {
-      const indexData = index.split(',');
-      if (indexData.length === currentIndexLength) {
+      if (!shouldSelectChildren) {
         start = false;
       } else {
         value[field] = parentState;
