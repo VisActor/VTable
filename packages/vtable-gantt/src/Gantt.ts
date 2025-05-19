@@ -67,7 +67,7 @@ import { isValid } from '@visactor/vutils';
 import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
-import { toBoxArray } from './gantt-helper';
+import { toBoxArray } from '@visactor/vtable';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');

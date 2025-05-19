@@ -1130,24 +1130,3 @@ export function judgeIfHasMarkLine(data: { startDate: Date; endDate: Date }, mar
     return marklineTime >= beginTime && marklineTime <= endTime;
   });
 }
-
-export const style = {
-  toBoxArray
-};
-
-export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
-  if (!Array.isArray(obj)) {
-    return [obj /*top*/, obj /*right*/, obj /*bottom*/, obj /*left*/];
-  }
-  if (obj.length === 3) {
-    return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[1] /*left*/];
-  }
-  if (obj.length === 2) {
-    return [obj[0] /*top*/, obj[1] /*right*/, obj[0] /*bottom*/, obj[1] /*left*/];
-  }
-  if (obj.length === 1) {
-    return [obj[0] /*top*/, obj[0] /*right*/, obj[0] /*bottom*/, obj[0] /*left*/];
-  }
-  // return obj as [T, T, T, T];//原先这种返回方式，会造成修改引用问题
-  return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[3] /*left*/];
-}

@@ -1,6 +1,6 @@
 import { createRect } from '@visactor/vtable/es/vrender';
 import type { IRect, IGroupGraphicAttribute, IRectGraphicAttribute } from '@visactor/vtable/es/vrender';
-import { toBoxArray } from '../gantt-helper';
+import { toBoxArray } from '@visactor/vtable';
 
 import type { Scenegraph } from './scenegraph';
 
