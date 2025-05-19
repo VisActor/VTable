@@ -213,7 +213,6 @@ export function initOptions(gantt: Gantt) {
     fillColor: 'green',
     cornerRadius: 0,
     width: 15,
-    labelText: '${title}',
     labelTextStyle: {
       fontSize: 16,
       color: 'red',
