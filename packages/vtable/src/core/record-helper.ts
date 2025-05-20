@@ -263,7 +263,7 @@ export function listTableChangeCellValues(
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
-    return;
+    return changedCellResults;
   }
 
   for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
