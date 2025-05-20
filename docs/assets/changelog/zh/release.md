@@ -2,7 +2,6 @@
 
 2025-05-13
 
-
 **🆕 新增功能**
 
 - **@visactor/vtable**: 在主题中添加 frozenColumnLine visible 配置 [#3828](https://github.com/VisActor/VTable/issues/3828)
@@ -12,18 +11,15 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: 当没有配置rowTree时，tree 模式下报错 [#3830](https://github.com/VisActor/VTable/issues/3830)
+- **@visactor/vtable**: 当没有配置 rowTree 时，tree 模式下报错 [#3830](https://github.com/VisActor/VTable/issues/3830)
 - **@visactor/vtable**: 修复当点击功能按钮点击时意外激活编辑状态 [#3831](https://github.com/VisActor/VTable/issues/3831)
-- **@visactor/vtable**: 修复当点击 resize图标后再点击 linkPonitNode 时，触发任务条调整宽度问题 [#3829](https://github.com/VisActor/VTable/issues/3829)
-
-
+- **@visactor/vtable**: 修复当点击 resize 图标后再点击 linkPonitNode 时，触发任务条调整宽度问题 [#3829](https://github.com/VisActor/VTable/issues/3829)
 
 [更多详情请查看 v1.18.3](https://github.com/VisActor/VTable/releases/tag/v1.18.3)
 
 # v1.18.2
 
 2025-04-30
-
 
 **🐛 功能修复**
 
@@ -40,32 +36,30 @@
 - **@visactor/vtable**: 插件更新机制 [#3788](https://github.com/VisActor/VTable/issues/3788)
 - **@visactor/vtable**: 添加转换表格插件
 
-
 [更多详情请查看 v1.18.2](https://github.com/VisActor/VTable/releases/tag/v1.18.2)
-
 
 # v1.18.1
 
 2025-04-21
 
-
 **🐛 功能修复**
 
 - **@visactor/vtable**: 修复当拖拽滚动条时，控制台报错问题 #3770 [#3766](https://github.com/VisActor/VTable/issues/3770)
 
+# v1.18.0
 
-# v1.18.0 
-  v1.17.7 版本相同内容
+v1.17.7 版本相同内容
 
 2025-04-17
 
 **💥 Breaking change**
 
 - **@visactor/vtable**: 修复 switch 默认方向问题 [#3667](https://github.com/VisActor/VTable/issues/3667)
-- **@visactor/vtable-editors**: 修改了input编辑器中的默认样式
+- **@visactor/vtable-editors**: 修改了 input 编辑器中的默认样式
 
 **🆕 新增功能**
-- **@visactor/vtable-plugins**: 新增 行列新增 行列序号 excel键盘对齐等插件
+
+- **@visactor/vtable-plugins**: 新增 行列新增 行列序号 excel 键盘对齐等插件
 - **@visactor/vtable**: 新增 onBeforeCacheChartImage 事件
 - **@visactor/vtable**: 支持 customConfig disableBuildInChartActive 配置
 - **@visactor/vtable**: 在 theme.selectionStyle 中新增 dynamicUpdateSelectionSize 配置
@@ -77,19 +71,16 @@
 - **@visactor/vtable**: 修复图片闪烁问题 [#3588](https://github.com/VisActor/VTable/issues/3588)
 - **@visactor/vtable**: 修复 text-stick 中行/列更新问题 [#3744](https://github.com/VisActor/VTable/issues/3744)
 
-
-
 [更多详情请查看 v1.17.7](https://github.com/VisActor/VTable/releases/tag/v1.17.7)
 
 # v1.17.6
 
 2025-04-10
 
-
 **🆕 新增功能**
 
-- **@visactor/vtable**: ListTable的changeCellValue方法新增tiggerEvent参数
-- **@visactor/vtable**: ListTable表头支持层级结构
+- **@visactor/vtable**: ListTable 的 changeCellValue 方法新增 tiggerEvent 参数
+- **@visactor/vtable**: ListTable 表头支持层级结构
 
 **🐛 功能修复**
 
@@ -97,18 +88,15 @@
 - **@visactor/vtable**: 修复边框设置数组时底部线条位置渲染错误 [#3684](https://github.com/VisActor/VTable/issues/3684)
 - **@visactor/vtable**: 修复移动端触摸事件调整列宽问题 [#3693](https://github.com/VisActor/VTable/issues/3693)
 - **@visactor/vtable**: 修复设置冻结时禁用拖拽选择不生效问题 [#3702](https://github.com/VisActor/VTable/issues/3702)
-- **@visactor/vtable**: 修复react-custom-layout组件中flex布局更新问题 [#3696](https://github.com/VisActor/VTable/issues/3696)
-- **@visactor/vtable**: 修复updateTaskRecord接口问题 [#3639](https://github.com/VisActor/VTable/issues/3639)
-- **@visactor/vtable**: 修复重复调用computeColsWidth自适应模式结果错误问题
-
-
+- **@visactor/vtable**: 修复 react-custom-layout 组件中 flex 布局更新问题 [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: 修复 updateTaskRecord 接口问题 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复重复调用 computeColsWidth 自适应模式结果错误问题
 
 [更多详情请查看 v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
 
 # v1.17.5
 
 2025-04-02
-
 
 **🆕 新增功能**
 
@@ -127,8 +115,6 @@
 **🔨 功能重构**
 
 - **@visactor/vtable**: 重构填充句柄功能 [#3582](https://github.com/VisActor/VTable/issues/3582)
-
-
 
 [更多详情请查看 v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
 

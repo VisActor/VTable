@@ -44,6 +44,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   private _headerCellIds: number[][];
   private _columns: ColumnData[];
   private _columnsIncludeHided: ColumnData[];
+  private _columnMaxDepth: number = 0;
   rowSeriesNumberColumn: SeriesNumberColumnData[];
   leftRowSeriesNumberColumn: SeriesNumberColumnData[];
   rightRowSeriesNumberColumn: SeriesNumberColumnData[];
@@ -79,6 +80,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._columns = [];
     this._columnsIncludeHided = [];
     this._headerCellIds = [];
+    this._columnMaxDepth = this._calculateMaxDepth(columns);
     this.hierarchyIndent = hierarchyIndent ?? 20;
     this.hierarchyTextStartAlignment = table.options.hierarchyTextStartAlignment;
     this.columnHierarchyType = table.options.headerHierarchyType;
@@ -855,6 +857,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return undefined;
   }
   getCellId(col: number, row: number): LayoutObjectId {
+    // for (let row = 0; row < this._headerCellIds.length; row++) {
+    //   for (let col = 0; col < this._headerCellIds[row].length; col++) {
+    //     console.log(`${row}, ${col}: ${this._headerCellIds[row][col]}`);
+    //   }
+    // }
     if (this.transpose) {
       if (col >= this.headerLevelCount + this.leftRowSeriesNumberColumnCount) {
         return this._columns[row]?.id;
@@ -978,11 +985,26 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     const skipRowCount = this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount;
     return skipRowCount + index;
   }
+
+  private _calculateMaxDepth(columns: ColumnsDefine, currentDepth: number = 0): number {
+    let maxDepth = currentDepth;
+    columns.forEach(col => {
+      if (col.columns && col.columns.length > 0) {
+        const childDepth = this._calculateMaxDepth(col.columns, currentDepth + 1);
+        if (childDepth > maxDepth) {
+          maxDepth = childDepth;
+        }
+      }
+    });
+    return maxDepth;
+  }
+
   private _addHeaders(
     row: number,
     column: ColumnsDefine,
     roots: number[],
-    hideColumnsSubHeader?: boolean
+    hideColumnsSubHeader?: boolean,
+    lastLevelSpan?: number
   ): HeaderData[] {
     const results: HeaderData[] = [];
     const rowCells = this._newRow(row, hideColumnsSubHeader); // !hideColumnsSubHeader ? this._headerCellIds[row] || this._newRow(row) : [];
@@ -992,65 +1014,92 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       const cell: HeaderData = {
         id,
         title: hd.title ?? (hd as any).caption,
-        // captionIcon,
         headerIcon: hd.headerIcon,
         field: (hd as ColumnDefine).field,
-        // fieldFormat: (hd as ColumnDefine).fieldFormat,
         style: hd.headerStyle,
         headerType: hd.headerType ?? 'text',
         dropDownMenu: hd.dropDownMenu,
         define: hd,
-        // 展开/折叠状态
         hierarchyState: (hd as HeaderData).hierarchyState,
         columnWidthComputeMode: hd.columnWidthComputeMode
-        // iconPositionList:[]
       };
 
       results[id] = cell;
-      for (let r = row - 1; r >= 0; r--) {
-        this._headerCellIds[r] && (this._headerCellIds[r][col] = roots[r]);
+      //处理levelSpan 跨行处理
+      let maxRow = row;
+      if (hd.levelSpan) {
+        maxRow = Math.min(row + hd.levelSpan - 1, this._columnMaxDepth - 1);
       }
+      // 填充当前列的 id 到所有跨行中
+      for (let r = row; r <= maxRow; r++) {
+        if (!this._headerCellIds[r]) {
+          this._headerCellIds[r] = [];
+        }
+        if (this._headerCellIds[r][col] === undefined) {
+          this._headerCellIds[r][col] = id;
+        }
+      }
+      // 如果有父节点，并且当前列的值没有被设置，则填充父节点的 id
+      // 如果上一层遍历设置了levelSpan,则填充maxRow-levelSpan的id
+      if (lastLevelSpan) {
+        for (let r = maxRow - 1; r >= 0; r--) {
+          if (
+            this._headerCellIds[r] &&
+            this._headerCellIds[r][col] === undefined &&
+            roots[maxRow - lastLevelSpan] !== undefined
+          ) {
+            this._headerCellIds[r][col] = roots[maxRow - lastLevelSpan];
+          }
+        }
+      } else {
+        for (let r = maxRow - 1; r >= 0; r--) {
+          if (this._headerCellIds[r] && this._headerCellIds[r][col] === undefined && roots[r] !== undefined) {
+            this._headerCellIds[r][col] = roots[r];
+          }
+        }
+      }
+
       if (!hideColumnsSubHeader) {
         rowCells[col] = id;
       } else if (this._headerCellIds[row - 1]) {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
+
       // 当前节点是展开状态才需要添加子节点
       const expand = !(hd as HeaderData).hierarchyState || (hd as HeaderData).hierarchyState === HierarchyState.expand;
       if (!!hd.columns && !!expand) {
         const isAllHided = hd.columns.every((c: any) => c.hide);
         !isAllHided &&
           this._addHeaders(
-            row + 1,
+            maxRow + 1,
             hd.columns,
             [...roots, id],
-            hd.hideColumnsSubHeader || hideColumnsSubHeader
+            hd.hideColumnsSubHeader || hideColumnsSubHeader,
+            hd.levelSpan
           ).forEach(c => results.push(c));
       } else {
         const colDef = {
-          id: this.seqId++,
+          id: id,
           field: hd.field,
-          // fieldKey: colDef.fieldKey,
           fieldFormat: hd.fieldFormat,
           width: hd.width,
           minWidth: hd.minWidth,
           maxWidth: hd.maxWidth,
           icon: hd.icon,
           cellType: hd.cellType ?? (hd as any).columnType ?? 'text',
-          chartModule: 'chartModule' in hd ? hd.chartModule : null, // todo: 放到对应的column对象中
-          chartSpec: 'chartSpec' in hd ? hd.chartSpec : null, // todo: 放到对应的column对象中
-          sparklineSpec: 'sparklineSpec' in hd ? hd.sparklineSpec : DefaultSparklineSpec, // todo: 放到对应的column对象中
+          chartModule: 'chartModule' in hd ? hd.chartModule : null,
+          chartSpec: 'chartSpec' in hd ? hd.chartSpec : null,
+          sparklineSpec: 'sparklineSpec' in hd ? hd.sparklineSpec : DefaultSparklineSpec,
           style: hd.style,
           define: hd,
           columnWidthComputeMode: hd.columnWidthComputeMode,
           disableColumnResize: hd?.disableColumnResize,
-          aggregation: hd.aggregation, //getAggregationForColumn(hd, col, this._table),
+          aggregation: hd.aggregation,
           isChildNode: row >= 1
         };
         this._columnsIncludeHided.push(colDef);
         if (hd.hide !== true) {
           this._columns.push(colDef);
-
           for (let r = row + 1; r < this._headerCellIds.length; r++) {
             this._headerCellIds[r][col] = id;
           }

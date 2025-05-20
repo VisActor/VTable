@@ -111,6 +111,7 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
         }
         cellRange.end.row = r;
       }
+
       // return cellRange;
     }
   }
@@ -122,7 +123,6 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
   if (layout.rowHierarchyType !== 'tree') {
     return;
   }
-
   const cellRecord = layout._table.getCellRawRecord(col, row);
   if (layout._table.internalProps.rowSeriesNumber?.enableTreeCheckbox) {
     if (cellRecord?.vtableMerge && col >= layout.leftRowSeriesNumberColumnCount) {
@@ -141,6 +141,7 @@ function getTreeTitleMerge(col: number, row: number, cellRange: CellRange, layou
 
 export function getCellRangeTranspose(col: number, row: number, layout: SimpleHeaderLayoutMap): CellRange {
   const result: CellRange = { start: { col, row }, end: { col, row } };
+
   // hover相关的单元格位置是-1,-1，getCellRange计算有误，先进行判断
   if (layout.headerLevelCount + layout.leftRowSeriesNumberColumnCount <= col || (col === -1 && row === -1)) {
     //如果是body部分 设置了需要合并单元格 这里判断左右是否内容相同 相同的话 将cellRange范围扩大
