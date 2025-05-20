@@ -209,6 +209,7 @@ const option = {
       fillColor: value => (value.record.progress >= 100 ? '#597ef7' : '#d6e4ff'),
       borderColor: '#597ef7',
       borderLineWidth: 0,
+      labelText: '{title}',
       labelTextStyle: {
         fontSize: 16,
         color: 'rgb(1, 43, 75)'
