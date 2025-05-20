@@ -204,6 +204,10 @@ export interface TableEvents {
    * 缓存图表事件
    */
   BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image';
+  /**
+   * 粘贴数据事件
+   */
+  PASTED_DATA: 'pasted_data';
 }
 /**
  * Table event types
@@ -281,5 +285,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   EMPTY_TIP_DBLCLICK: 'empty_tip_dblclick',
 
   BUTTON_CLICK: 'button_click',
-  BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image'
+  BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image',
+  PASTED_DATA: 'pasted_data'
 } as TableEvents;

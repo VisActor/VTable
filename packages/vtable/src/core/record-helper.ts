@@ -120,7 +120,8 @@ export function listTableChangeCellValues(
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable
-) {
+): boolean[][] {
+  const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
   let pasteRowEnd = startRow;
   // const rowCount = values.length;
@@ -154,6 +155,7 @@ export function listTableChangeCellValues(
     if (startRow + i > table.rowCount - 1) {
       break;
     }
+    changedCellResults[i] = [];
     pasteRowEnd = startRow + i;
     const rowValues = values[i];
     let thisRowPasteColEnd = startCol;
@@ -184,6 +186,7 @@ export function listTableChangeCellValues(
       }
       // if ((workOnEditableCell && table.isHasEditorDefine(startCol + j, startRow + i)) || workOnEditableCell === false) {
       if (isCanChange) {
+        changedCellResults[i][j] = true;
         const value = rowValues[j];
         const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
         const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);
@@ -206,6 +209,8 @@ export function listTableChangeCellValues(
             changedValue
           });
         }
+      } else {
+        changedCellResults[i][j] = false;
       }
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
@@ -303,6 +308,7 @@ export function listTableChangeCellValues(
   }
 
   table.scenegraph.updateNextFrame();
+  return changedCellResults;
 }
 
 type CellUpdateType = 'normal' | 'sort' | 'group';
