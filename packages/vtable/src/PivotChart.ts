@@ -74,6 +74,7 @@ import {
 } from './scenegraph/group-creater/cell-type';
 import { hasLinearAxis } from './layout/chart-helper/get-axis-config';
 import { cacheStageCanvas, clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import { EditManager } from './edit/edit-manager';
 
 registerAxis();
 registerEmptyTip();
@@ -255,6 +256,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     );
 
     this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
+
+    if (Env.mode !== 'node') {
+      this.editorManager = new EditManager(this);
+    }
+
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
