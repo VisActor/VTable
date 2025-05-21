@@ -51,6 +51,7 @@
 | 鼠标进入表格区域         | MOUSEENTER_TABLE            | 鼠标进入表格区域触发该事件                                                |
 | 鼠标离开表格区域         | MOUSELEAVE_TABLE            | 鼠标离开表格区域触发该事件                                                |
 | 鼠标按下                 | MOUSEDOWN_TABLE             | 鼠标在表格区域按下触发该事件                                              |
+| 粘贴事件的数据                 | PASTED_DATA                 | 粘贴数据事件                                                              |
 
 ## 事件监听方式
 

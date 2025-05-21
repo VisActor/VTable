@@ -262,6 +262,12 @@ export interface TableEventHandlersEventArgumentMap {
     event: Event;
   };
   before_cache_chart_image: { chartInstance: any };
+  pasted_data: {
+    col: number;
+    row: number;
+    pasteData: (string | number)[][];
+    changedCellResults: boolean[][];
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -358,4 +364,5 @@ export interface TableEventHandlersReturnMap {
 
   button_click: void;
   before_cache_chart_image: void;
+  pasted_data: void;
 }

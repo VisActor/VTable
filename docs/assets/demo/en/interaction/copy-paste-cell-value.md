@@ -11,9 +11,13 @@ option: ListTable#keyboardOptions.pasteValueToCell
 
 Use shortcut keys to copy the contents of the selected cell and paste the contents of the clipboard into the cell.
 
-Of course, in addition to the arrow keys, there are other shortcut keys, please refer to [Tutorial](../../guide/interaction/keyboard).
+Please configure the following two configuration items to be true!
+- keyboardOptions.pasteValueToCell
+- keyboardOptions.copySelected
 
 Note: VTable has been verified internally, and only editable cells are allowed to be pasted. Therefore, in the business scenario where pasting is required, please ensure that an editor is configured. The editor supports configuring empty strings (that is, non-existent editors).
+
+Other shortcut keys refer to [Tutorial](../../guide/shortcut).
 
 ## Key Configurations
 
