@@ -11,6 +11,10 @@ export const menus = [
     name: 'gantt-milestone'
   },
   {
+    path: "gantt",
+    name: 'gantt-borderLineWidth-array-config '
+  },
+  {
     path: 'gantt',
     name: 'gantt-hour'
   },
