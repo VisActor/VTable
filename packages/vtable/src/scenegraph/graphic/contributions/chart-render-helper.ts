@@ -74,11 +74,18 @@ export function renderChart(chart: Chart) {
   );
 
   const chartStage = chartInstance.getStage();
-  const matrix = chart.globalTransMatrix.clone();
-  const stageMatrix = chart.stage.window.getViewBoxTransform();
-  matrix.multiply(stageMatrix.a, stageMatrix.b, stageMatrix.c, stageMatrix.d, stageMatrix.e, stageMatrix.f);
+  const matrix = chart.globalTransMatrix;
+  const stageMatrix = chart.stage.window.getViewBoxTransform().clone();
+  stageMatrix.multiply(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
   chartStage.window.setViewBoxTransform &&
-    chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
+    chartStage.window.setViewBoxTransform(
+      stageMatrix.a,
+      stageMatrix.b,
+      stageMatrix.c,
+      stageMatrix.d,
+      stageMatrix.e,
+      stageMatrix.f
+    );
   // to be fixed: update state everytimes render, need be fix by vchart
   //  测试的没发现问题  这里应该能去掉吧 留着每次都要调用一次
   // const table = (chart.getRootNode() as any).table as BaseTableAPI;
