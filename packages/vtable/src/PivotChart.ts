@@ -267,6 +267,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
     this.internalProps.layoutMap = new PivotHeaderLayoutMap(this, this.dataset, columnDimensionTree, rowDimensionTree);
 
+    if (Env.mode !== 'node') {
+      this.editorManager = new EditManager(this);
+    }
+
     this.refreshHeader();
     this.internalProps.useOneRowHeightFillAll = false;
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
