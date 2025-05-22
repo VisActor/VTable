@@ -20,6 +20,7 @@ import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import { dealWithIcon, dealWithIconLayout } from '../../utils/text-icon-layout';
 import { CheckboxContent } from '../../component/checkbox-content';
 import { CUSTOM_CONTAINER_NAME } from '../../component/custom';
+import type { ListTable } from '../../..';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -324,6 +325,15 @@ function createCheckbox(
   } else if (typeof value === 'boolean') {
     isChecked = value;
     text = '';
+  }
+  // 处理 rowSeriesNumbe 在record设置checkbox是否勾选与是否禁用的场景
+  if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+    const checkboxSeriesNumberStyle = (table as ListTable).getFieldData('_vtable_rowSeries_number', col, row);
+    if (checkboxSeriesNumberStyle) {
+      isChecked = checkboxSeriesNumberStyle.checked;
+      isDisabled = checkboxSeriesNumberStyle.disable;
+      text = checkboxSeriesNumberStyle.text ?? '';
+    }
   }
   isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, isChecked);
   const hierarchyOffset = getHierarchyOffset(col, row, table);
