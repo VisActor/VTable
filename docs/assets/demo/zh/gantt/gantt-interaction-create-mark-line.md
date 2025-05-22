@@ -290,6 +290,19 @@ const option = {
         lineWidth: 1,
         lineColor: 'red'
       }
+    },
+    {
+      date: '2024-10-08 8:00:00',
+      content: 'mrkLine(date)',
+      position: 'date',
+      contentStyle: {
+        color: '#fff'
+        // fontSize: 40
+      },
+      style: {
+        lineWidth: 1,
+        lineColor: 'blue'
+      }
     }
   ],
   scrollStyle: {
