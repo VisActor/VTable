@@ -327,11 +327,12 @@ export class SumAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        if (record.isAggregator) {
-          this.records.push(...record.records);
-        } else {
-          this.records.push(record);
-        }
+        // if (record.isAggregator) {
+        //   this.records.push(...record.records);
+        // } else {
+        //   this.records.push(record);
+        // }
+        this.records.push(record);
       }
       if (record.isAggregator) {
         const value = record.value();
