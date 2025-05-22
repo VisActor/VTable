@@ -2307,7 +2307,7 @@ export class Dataset {
                             typeof indicator !== 'string' && indicator.indicatorKey === indicatorKeyToProcess
                         ) as IIndicator
                       )?.format,
-                    needSplitPositiveAndNegativeForSum: this.needSplitPositiveAndNegative
+                    needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
                   });
                 }
               }
@@ -2363,7 +2363,7 @@ export class Dataset {
                         typeof indicator !== 'string' && indicator.indicatorKey === indicatorKeyToProcess
                     ) as IIndicator
                   )?.format,
-                needSplitPositiveAndNegativeForSum: this.needSplitPositiveAndNegative
+                needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
               });
             }
           }
@@ -2466,7 +2466,7 @@ export class Dataset {
                               typeof indicator !== 'string' && indicator.indicatorKey === indicatorKeyToProcess
                           ) as IIndicator
                         )?.format,
-                      needSplitPositiveAndNegativeForSum: this.needSplitPositiveAndNegative
+                      needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
                     });
                   }
                 }
@@ -2523,7 +2523,7 @@ export class Dataset {
                           typeof indicator !== 'string' && indicator.indicatorKey === indicatorKeyToProcess
                       ) as IIndicator
                     )?.format,
-                  needSplitPositiveAndNegativeForSum: this.needSplitPositiveAndNegative
+                  needSplitPositiveAndNegative: this.needSplitPositiveAndNegative
                 });
               }
             }
