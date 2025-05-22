@@ -170,7 +170,8 @@ export class TaskBar {
         const isExpanded = record.hierarchyState === 'expand';
         // For project type records, we want to show all children in one line when collapsed
         if (record.type === TaskType.PROJECT && record.children?.length > 0 && !isExpanded) {
-          const sub_task_indexs: number[] = [];
+          const recordIndex = this._scene._gantt.getRecordIndexByTaskShowIndex(i);
+          const sub_task_indexs: number[] = Array.isArray(recordIndex) ? [...recordIndex] : [recordIndex];
 
           const callInitBar = (record: any, sub_task_indexs: number[]) => {
             if (record.children?.length > 0) {
@@ -230,7 +231,7 @@ export class TaskBar {
 
     const taskBarStyle = this._scene._gantt.getTaskBarStyle(index, childIndex);
     const taskbarHeight = taskBarStyle.width;
-    const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
+    // const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
     // const subTaskShowRowCount =
     //   this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate

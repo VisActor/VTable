@@ -64,7 +64,7 @@ export function createTable() {
       id: '2',
       title: 'Project Management',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
+      start: '2024-07-08',
       end: '2024-07-08',
       progress: 60,
       priority: 'P0',
@@ -367,7 +367,7 @@ export function createTable() {
         // }
       ]
     },
-    minDate: '2024-07-07',
+    minDate: '2024-07-05',
     maxDate: '2024-10-15',
     markLine: [
       {

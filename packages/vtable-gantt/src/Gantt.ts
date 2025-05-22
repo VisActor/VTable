@@ -770,12 +770,17 @@ export class Gantt extends EventTarget {
   getRecordByIndex(taskShowIndex: number, sub_task_index?: number | number[]) {
     if (this.taskListTableInstance) {
       if (isValid(sub_task_index)) {
-        const new_sub_task_index = Array.isArray(sub_task_index) ? [...sub_task_index] : sub_task_index;
         const record = this.taskListTableInstance.getRecordByCell(
           0,
           taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
         );
-        if (Array.isArray(new_sub_task_index)) {
+
+        if (Array.isArray(sub_task_index)) {
+          const recordIndex = this.getRecordIndexByTaskShowIndex(taskShowIndex);
+          const parentIndexLength = Array.isArray(recordIndex) ? recordIndex.length : 1;
+          const new_sub_task_index = [...sub_task_index];
+          //从new_sub_task_index中删除前面parentIndexLength的元素
+          new_sub_task_index.splice(0, parentIndexLength);
           let currentRecord = record;
           while (new_sub_task_index.length > 0) {
             const index = new_sub_task_index.shift();
@@ -783,7 +788,7 @@ export class Gantt extends EventTarget {
           }
           return currentRecord;
         }
-        return record?.children?.[new_sub_task_index];
+        return record?.children?.[sub_task_index];
       }
       return this.taskListTableInstance.getRecordByCell(
         0,
@@ -901,9 +906,10 @@ export class Gantt extends EventTarget {
    * 更新任务的开始日期
    * @param startDate 新的开始日期
    * @param index 对应的一定是左侧表格body的index
-   * @param sub_task_index 子任务的index 只有当TasksShowMode时dsunb_task_* 的时候才会传入
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
    */
-  _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number) {
+  _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
@@ -918,6 +924,9 @@ export class Gantt extends EventTarget {
       if (Array.isArray(indexs)) {
         this.stateManager.updateProjectTaskTimes(indexs);
       }
+    } else if (Array.isArray(sub_task_index)) {
+      // 递归更新父级project任务的时间范围
+      this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
@@ -936,6 +945,9 @@ export class Gantt extends EventTarget {
       if (Array.isArray(indexs)) {
         this.stateManager.updateProjectTaskTimes(indexs);
       }
+    } else if (Array.isArray(sub_task_index)) {
+      // 递归更新父级project任务的时间范围
+      this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
@@ -956,6 +968,9 @@ export class Gantt extends EventTarget {
       if (Array.isArray(indexs)) {
         this.stateManager.updateProjectTaskTimes(indexs);
       }
+    } else if (Array.isArray(sub_task_index)) {
+      // 递归更新父级project任务的时间范围
+      this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 

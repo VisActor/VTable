@@ -1223,8 +1223,8 @@ export function initProjectTaskTimes(gantt: Gantt) {
       let earliestStart: Date | null = null;
       let latestEnd: Date | null = null;
 
-      // 如果有子任务，递归处理
-      if (record.children && record.children.length > 0) {
+      // 如果有子任务，递归处理  收起其子子孙孙的最小开始日期和最大结束日期 （前提是record.type === TaskType.PROJECT）如果是遇到！TaskType.PROJECT节点则按其自身的时间范围计算 进入else
+      if (record.children && record.children.length > 0 && record.type === TaskType.PROJECT) {
         // 递归处理子任务，并获取子任务的时间范围
         const [childrenEarliestStart, childrenLatestEnd] = processTasksRecursively(record.children, index, records);
 
@@ -1281,7 +1281,4 @@ export function initProjectTaskTimes(gantt: Gantt) {
 
   // 从顶层记录开始处理
   processTasksRecursively(gantt.records);
-
-  // 更新UI
-  gantt.scenegraph?.refreshAll();
 }

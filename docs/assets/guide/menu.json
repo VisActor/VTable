@@ -213,6 +213,27 @@
           }
         },
         {
+          "path": "gantt_dependency_links",
+          "title": {
+            "zh": "依赖关系",
+            "en": "Dependency Links"
+          }
+        },
+        {
+          "path": "gantt_scales",
+          "title": {
+            "zh": "日期轴（时间粒度）",
+            "en": "Gantt Scales"
+          }
+        },
+        {
+          "path": "gantt_markline",
+          "title": {
+            "zh": "标记线",
+            "en": "Gantt Markline"
+          }
+        },
+        {
           "path": "gantt_customLayout",
           "title": {
             "zh": "自定义渲染",
@@ -227,10 +248,17 @@
           }
         },
         {
-          "path": "gantt_dependency_links",
+          "path": "gantt_date",
           "title": {
-            "zh": "依赖关系",
-            "en": "Dependency Links"
+            "zh": "甘特图日期相关",
+            "en": "Gantt Date"
+          }
+        },
+        {
+          "path": "gantt_export",
+          "title": {
+            "zh": "甘特图导出",
+            "en": "Gantt Export"
           }
         }
       ]
