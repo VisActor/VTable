@@ -62,8 +62,6 @@ export interface IBasicColumnBodyDefine {
   width?: number | string;
   minWidth?: number | string;
   maxWidth?: number | string;
-  //表头跨行合并，默认为1
-  levelSpan?: number;
   //是否展示为树形结构
   tree?: boolean;
   icon?:
