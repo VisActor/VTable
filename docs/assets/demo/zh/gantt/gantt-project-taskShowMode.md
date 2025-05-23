@@ -1,24 +1,16 @@
 ---
 category: examples
 group: gantt
-title: 甘特图任务显示模式
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-taskShowMode.gif
+title: 甘特图项目任务显示模式
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-taskShowMode.gif
 link: gantt/subtask_layout
 option: Gantt#tasksShowMode
 ---
 
 # 甘特图任务显示模式
 
-在 Gantt 中，任务条布局模式决定了任务条的显示效果。Gantt 提供了以下几种任务条布局模式：
+在上面的示例中，主要展示了`Gantt#tasksShowMode`各个模式的展示效果。不过`Project_Sub_Tasks_Inline`模式有些特殊，单独拿出来展示一下。因为该模式需要配合将数据项的`type`设置为`project`，才能生效。
 
-- `Tasks_Separate`: 每一个任务节点用单独一行来展示，父任务占用一行，子任务分别占用一行。这是默认的显示效果
-- `Sub_Tasks_Separate`: 省去父任务节点不展示，且所有子任务的节点分别用一行展示。
-- `Sub_Tasks_Inline`: 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。
-- `Sub_Tasks_Arrange`: 省去父任务节点不展示，且所有子任务会维持 records 中的数据顺序布局，并保证节点不重叠展示。
-- `Sub_Tasks_Compact`: 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示。
-- `Project_Sub_Tasks_Inline`: 针对设置了`type`为`project`的任务，会按照`Sub_Tasks_Inline`的模式来展示（非展开情况下）。其他type不是`project`的任务仍然则按照`Tasks_Separate`的模式来展示。（不限制子任务的层级。）
-
-以上配置通过 `Gantt#tasksShowMode` 配置项来设置。
 ## 关键配置
 
 - `Gantt`
@@ -33,35 +25,34 @@ const records = [
   {
     id: 0,
     name: 'Planning',
-    start: '2024-11-15',
-    end: '2024-11-21',
+    type: 'project',
     children: [
       {
         id: 1,
-        name: 'Michael Smith',
+        name: 'Michael Smith 1',
         start: '2024-11-15',
-        end: '2024-11-17',
+        end: '2024-11-15',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       },
       {
         id: 2,
-        name: 'Emily',
+        name: 'Emily 2',
         start: '2024-11-17',
         end: '2024-11-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 3,
-        name: 'Rramily',
+        name: 'Rramily 3',
         start: '2024-11-19',
         end: '2024-11-20',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 4,
-        name: 'Lichael Join',
-        start: '2024-11-18',
-        end: '2024-11-19',
+        name: 'Lichael Join 4',
+        start: '2024-11-21',
+        end: '2024-11-21',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       }
     ]
@@ -69,12 +60,11 @@ const records = [
   {
     id: 300,
     name: 'Research',
-    start: '2024-11-18',
-    end: '2024-11-21',
+     type: 'project',
     children: [
       {
         id: 5,
-        name: 'Ryan',
+        name: 'Ryan 5',
         start: '2024-11-18',
         end: '2024-11-21',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
@@ -83,19 +73,18 @@ const records = [
   },
   {
     name: 'Goal Setting',
-    start: '2024-11-18',
-    end: '2024-11-21',
+    type: 'project',
     children: [
       {
         id: 6,
-        name: 'Daniel Davis',
+        name: 'Daniel Davis 6',
         start: '2024-11-21',
         end: '2024-11-22',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
       },
       {
         id: 7,
-        name: 'Lauren',
+        name: 'Lauren 7',
         start: '2024-11-18',
         end: '2024-11-19',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
@@ -105,40 +94,39 @@ const records = [
 
   {
     name: 'Strategy',
-    start: '2024-11-20',
-    end: '2024-11-25',
+    type: 'project',
     children: [
       {
         id: 8,
-        name: 'Tacarah Siller',
+        name: 'Tacarah Siller 8',
         start: '2024-11-20',
         end: '2024-11-21',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 9,
-        name: 'Camentew Olision',
+        name: 'Camentew Olision 9',
         start: '2024-11-25',
         end: '2024-11-26',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       },
       {
         id: 10,
-        name: 'Sarah Miller',
+        name: 'Sarah Miller 10',
         start: '2024-11-17',
         end: '2024-11-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 11,
-        name: 'Matthew Wilson',
+        name: 'Matthew Wilson 11',
         start: '2024-11-22',
         end: '2024-11-25',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       },
       {
         id: 12,
-        name: 'Grarah Poliller',
+        name: 'Grarah Poliller 12',
         start: '2024-11-23',
         end: '2024-11-24',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
@@ -147,12 +135,11 @@ const records = [
   },
   {
     name: 'Execution',
-    start: '2024-11-22',
-    end: '2024-11-25',
+    type: 'project',
     children: [
       {
         id: 13,
-        name: 'Ashley Taylor',
+        name: 'Ashley Taylor 13',
         start: '2024-11-22',
         end: '2024-11-25',
 
@@ -160,14 +147,14 @@ const records = [
       },
       {
         id: 14,
-        name: 'Megan',
+        name: 'Megan 14',
         start: '2024-11-27',
         end: '2024-11-30',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
       },
       {
         id: 15,
-        name: 'David',
+        name: 'David 15',
         start: '2024-12-10',
         end: '2024-12-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
@@ -176,19 +163,18 @@ const records = [
   },
   {
     name: 'Monitoring',
-    start: '2024-12-02',
-    end: '2024-12-25',
+    type: 'project',
     children: [
       {
         id: 16,
-        name: 'Hannah',
+        name: 'Hannah 16',
         start: '2024-11-20',
         end: '2024-11-30',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 17,
-        name: 'Andrew',
+        name: 'Andrew 17',
         start: '2024-12-02',
         end: '2024-12-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
@@ -197,12 +183,11 @@ const records = [
   },
   {
     name: 'Reporting',
-    start: '2024-12-22',
-    end: '2024-12-28',
+   type: 'project',
     children: [
       {
         id: 18,
-        name: 'Joshua Anderson',
+        name: 'Joshua Anderson 18',
         start: '2024-12-22',
         end: '2024-12-28',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
@@ -211,19 +196,18 @@ const records = [
   },
   {
     name: 'Process review',
-    start: '2024-11-25',
-    end: '2024-11-30',
+   type: 'project',
     children: [
       {
         id: 19,
-        name: 'Christopher Moore',
+        name: 'Christopher Moore 19',
         start: '2024-11-25',
         end: '2024-11-30',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
       },
       {
         id: 20,
-        name: 'Emma',
+        name: 'Emma 20',
         start: '2024-12-01',
         end: '2024-12-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
@@ -255,7 +239,7 @@ const option = {
     }
   },
   groupBy: true,
-  tasksShowMode: VTableGantt.TYPES.TasksShowMode.Sub_Tasks_Arrange,
+  tasksShowMode: VTableGantt.TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
   frame: {
     outerFrameStyle: {
       borderLineWidth: 1,
@@ -361,6 +345,7 @@ const option = {
   },
   minDate: '2024-11-14',
   maxDate: '2024-12-31',
+
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
     visible: 'none',
@@ -372,32 +357,4 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
-const container = document.getElementById(CONTAINER_ID).parentElement;
-const wrapper = document.createElement('div');
-wrapper.style.height = '25px';
-wrapper.style.width = '280px';
-wrapper.style.position = 'absolute';
-wrapper.style.top = '0px';
-wrapper.style.left = '0px';
-wrapper.style.zIndex = '1000';
-wrapper.style.backgroundColor = 'white';
-container.appendChild(wrapper);
-// 创建一个select模式选择列表
-const modeSelect = document.createElement('select');
-modeSelect.innerHTML = `
-<option value="tasks_separate">Tasks_Separate</option>
-<option value="sub_tasks_separate">Sub_Tasks_Separate</option>
-<option value="sub_tasks_inline">Sub_Tasks_Inline</option>
-<option value="sub_tasks_arrange" selected>Sub_Tasks_Arrange</option>
-<option value="sub_tasks_compact">Sub_Tasks_Compact</option>
-`;
-modeSelect.style.marginLeft = '5px';
-modeSelect.style.height = '20px';
-wrapper.appendChild(document.createTextNode('任务条布局模式: '));
-wrapper.appendChild(modeSelect);
-
-modeSelect.addEventListener('change', (e) => {
-  const mode = e.target.value;
-  ganttInstance.updateTasksShowMode(mode);
-});
 ```

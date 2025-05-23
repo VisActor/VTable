@@ -97,33 +97,38 @@ export class DependencyLink {
       } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
     } else if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
       // For Project_Sub_Tasks_Inline, we need to check if the parent records are projects and their expansion state
-      const fromRecord = this._scene._gantt.getRecordByIndex(linkedFromTaskRecord.index[0]);
-      const toRecord = this._scene._gantt.getRecordByIndex(linkedToTaskRecord.index[0]);
-
+      const fromParentRecordShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(
+        linkedFromTaskRecord.index.slice(0, -1)
+      );
+      const toParentRecordShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(
+        linkedToTaskRecord.index.slice(0, -1)
+      );
+      const fromParentRecord = this._scene._gantt.getRecordByIndex(fromParentRecordShowIndex);
+      const toParentRecord = this._scene._gantt.getRecordByIndex(toParentRecordShowIndex);
       // Handle "from" record
       if (
-        fromRecord.type === TaskType.PROJECT &&
-        fromRecord.hierarchyState !== 'expand' &&
+        fromParentRecord.type === TaskType.PROJECT &&
+        fromParentRecord.hierarchyState !== 'expand' &&
         this._scene._gantt.parsedOptions.projectSubTasksExpandable !== false
       ) {
         // Task is part of a collapsed project - it appears inline with project
-        linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+        linkedFromTaskShowIndex = fromParentRecordShowIndex;
       } else {
         // Normal task display
-        linkedFromTaskShowIndex = linkedFromTaskRecord.index[0];
+        linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
       }
 
       // Handle "to" record
       if (
-        toRecord.type === TaskType.PROJECT &&
-        toRecord.hierarchyState !== 'expand' &&
+        toParentRecord.type === TaskType.PROJECT &&
+        toParentRecord.hierarchyState !== 'expand' &&
         this._scene._gantt.parsedOptions.projectSubTasksExpandable !== false
       ) {
         // Task is part of a collapsed project - it appears inline with project
-        linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+        linkedToTaskShowIndex = toParentRecordShowIndex;
       } else {
         // Normal task display
-        linkedToTaskShowIndex = linkedToTaskRecord.index[0];
+        linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
       }
 
       // Get task info
@@ -131,12 +136,12 @@ export class DependencyLink {
         startDate: linkedToTaskStartDate,
         endDate: linkedToTaskEndDate,
         taskDays: linkedToTaskTaskDays
-      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskRecord.index[0], linkedToTaskRecord.index[1]));
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex, linkedToTaskRecord.index));
       ({
         startDate: linkedFromTaskStartDate,
         endDate: linkedFromTaskEndDate,
         taskDays: linkedFromTaskTaskDays
-      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex, linkedFromTaskRecord.index));
     } else if (
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||

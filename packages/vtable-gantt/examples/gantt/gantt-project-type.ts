@@ -228,7 +228,7 @@ export function createTable() {
       }
     },
     groupBy: true,
-    //tasksShowMode: TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
+    tasksShowMode: TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
     frame: {
       outerFrameStyle: {
         borderLineWidth: 1,

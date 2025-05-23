@@ -378,6 +378,44 @@ export class Scenegraph {
 
         const taskbarHeight = taskBarStyle.width;
         diffY = target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        const fromParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index.slice(0, -1));
+        const toParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index.slice(0, -1));
+        const fromParentRecord = gantt.getRecordByIndex(fromParentRecordShowIndex);
+        const toParentRecord = gantt.getRecordByIndex(toParentRecordShowIndex);
+        if (
+          fromParentRecord.type === TaskType.PROJECT &&
+          fromParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedFromTaskShowIndex = fromParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+        }
+        if (
+          toParentRecord.type === TaskType.PROJECT &&
+          toParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedToTaskShowIndex = toParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+        }
+
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex, linkedToTaskRecord.index));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex, linkedFromTaskRecord.index));
       } else if (
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
@@ -513,6 +551,44 @@ export class Scenegraph {
         const taskbarHeight = taskBarStyle.width;
         diffY =
           target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        const fromParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index.slice(0, -1));
+        const toParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index.slice(0, -1));
+        const fromParentRecord = gantt.getRecordByIndex(fromParentRecordShowIndex);
+        const toParentRecord = gantt.getRecordByIndex(toParentRecordShowIndex);
+        if (
+          fromParentRecord.type === TaskType.PROJECT &&
+          fromParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedFromTaskShowIndex = fromParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+        }
+        if (
+          toParentRecord.type === TaskType.PROJECT &&
+          toParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedToTaskShowIndex = toParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+        }
+
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex, linkedToTaskRecord.index));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex, linkedFromTaskRecord.index));
       } else if (
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||

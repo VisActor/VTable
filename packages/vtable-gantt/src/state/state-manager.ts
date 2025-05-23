@@ -1170,7 +1170,10 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
   if (dx) {
     target.setAttribute('x', Math.max(0, target.attribute.x + dx));
   }
-  if (state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate) {
+  if (
+    state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate &&
+    state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Project_Sub_Tasks_Inline
+  ) {
     if (dy) {
       target.setAttribute('y', target.attribute.y + dy);
     }
