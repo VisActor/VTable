@@ -223,6 +223,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     this.internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
+    this.internalProps._widthResizedColMap.clear();
     this.options.columns = columns;
     this.internalProps.headerHelper.setTableColumnsEditor();
     this._hasAutoImageColumn = undefined;
