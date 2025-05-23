@@ -80,6 +80,73 @@ export default {
       visible: 'always'
     }
   },
+  taskBar: {
+    startDateField: 'start',
+    endDateField: 'end',
+    progressField: 'progress',
+    labelText: '{title} {progress}%',
+    barStyle: {
+      barColor: '#5389FF',
+      completedBarColor: '#E0EAFE',
+      width: 20,
+      cornerRadius: 8,
+      borderColor: '#5286FA',
+      borderWidth: 1
+    },
+    milestoneStyle: {
+      borderColor: '#A1C1FF',
+      borderLineWidth: 1,
+      fillColor: '#5389FF',
+      width: 15,
+      cornerRadius: 0
+    },
+    labelTextStyle: {
+      fontFamily: 'Arial',
+      fontSize: 14,
+      color: '#000',
+      textAlign: 'left'
+    }
+  },
+  // 时间轴表头样式
+  timelineHeader: {
+    backgroundColor: '#5389FF',
+    colWidth: 60,
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    }
+  },
+  // 行号列样式
+  rowSeriesNumber: {
+    title: '行号',
+    dragOrder: true,
+    headerStyle: {
+      bgColor: '#5389FF',
+      borderColor: '#A1C1FF',
+      color: '#FFF'
+    },
+    style: {
+      bgColor: '#F4F8FF',
+      color: '#000',
+      fontSize: 14
+    }
+  },
+  // 网格线样式
+  grid: {
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    backgroundColor: '#FFF'
+  },
   // menuStyle: {
   //   color: '#000',
   //   highlightColor: '#2E68CF',
