@@ -259,10 +259,7 @@ function toCanvas(stage: IStage, fullImage: boolean = true, viewBox?: IAABBBound
   if ((stage as any).releaseStatus === 'released') {
     return null;
   }
-  const matrix = stage.window.getViewBoxTransform();
   const window = renderToNewWindow(stage, fullImage, viewBox);
-  window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, 0, 0);
-  (stage as any).renderTo(window);
   const c = window.getNativeHandler();
   if (c.nativeCanvas) {
     return c.nativeCanvas;
@@ -301,6 +298,7 @@ function renderToNewWindow(stage: IStage, fullImage: boolean = true, viewBox?: I
     });
   }
 
+  window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, 0, 0);
   (stage as any).renderTo(window);
   return window;
 }
