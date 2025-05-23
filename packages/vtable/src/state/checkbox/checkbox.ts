@@ -307,7 +307,9 @@ export function setCellCheckboxStateByAttribute(
   table: BaseTableAPI
 ) {
   const cellGroup = table.scenegraph.getCell(col, row);
-  const checkbox = cellGroup?.getChildByName('checkbox') as any;
+  const checkbox =
+    (cellGroup?.getChildByName('checkbox') as any) ||
+    (cellGroup?.getChildByName('checkbox-content')?._checkboxGroup?.getChildByName('checkbox') as any);
   if (checkbox) {
     if (checked === 'indeterminate') {
       (checkbox as CheckBox).setAttribute('indeterminate', true);
