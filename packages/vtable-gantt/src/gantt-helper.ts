@@ -1238,7 +1238,7 @@ export function initProjectTaskTimes(gantt: Gantt) {
             // 获取日期格式
             const dateFormat =
               gantt.parsedOptions.dateFormat ??
-              gantt.parseTimeFormat(record[startDateField] || record.children[0][startDateField]);
+              gantt.parseTimeFormat(record[startDateField] || record.children[0][startDateField] || '');
 
             // 格式化日期
             const formatDateValue = (date: Date) => {

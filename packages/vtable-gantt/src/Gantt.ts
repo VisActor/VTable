@@ -219,6 +219,8 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
+    // 初始化项目任务时间
+    initProjectTaskTimes(this);
     this.data = new DataSource(this);
     this._generateTimeLineDateMap();
 
@@ -240,12 +242,10 @@ export class Gantt extends EventTarget {
     this._syncPropsFromTable();
 
     createSplitLineAndResizeLine(this);
+
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
-
-    // 初始化项目任务时间
-    initProjectTaskTimes(this);
 
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();

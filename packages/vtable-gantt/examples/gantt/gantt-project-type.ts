@@ -16,16 +16,62 @@ export function createTable() {
     {
       id: 0,
       name: 'Planning',
-      start: '2024-11-15',
-      end: '2024-11-21',
       type: 'project',
       children: [
         {
           id: 1,
           name: 'Michael Smith',
-          start: '2024-11-15',
-          end: '2024-11-17',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+          type: 'project',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg',
+          children: [
+            {
+              name: 'Execution',
+              type: 'project',
+              children: [
+                {
+                  id: 13,
+                  name: 'Ashley Taylor',
+                  start: '2024-11-22',
+                  end: '2024-11-25',
+
+                  avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+                },
+                {
+                  id: 14,
+                  name: 'Megan',
+                  start: '2024-11-27',
+                  end: '2024-11-30',
+                  avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+                },
+                {
+                  id: 15,
+                  name: 'David',
+                  start: '2024-12-10',
+                  end: '2024-12-18',
+                  avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+                }
+              ]
+            },
+            {
+              name: 'Monitoring',
+              children: [
+                {
+                  id: 16,
+                  name: 'Hannah',
+                  start: '2024-11-20',
+                  end: '2024-11-30',
+                  avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+                },
+                {
+                  id: 17,
+                  name: 'Andrew',
+                  start: '2024-12-02',
+                  end: '2024-12-18',
+                  avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+                }
+              ]
+            }
+          ]
         },
         {
           id: 2,
@@ -125,52 +171,7 @@ export function createTable() {
         }
       ]
     },
-    {
-      name: 'Execution',
-      children: [
-        {
-          id: 13,
-          name: 'Ashley Taylor',
-          start: '2024-11-22',
-          end: '2024-11-25',
 
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
-        },
-        {
-          id: 14,
-          name: 'Megan',
-          start: '2024-11-27',
-          end: '2024-11-30',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
-        },
-        {
-          id: 15,
-          name: 'David',
-          start: '2024-12-10',
-          end: '2024-12-18',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
-        }
-      ]
-    },
-    {
-      name: 'Monitoring',
-      children: [
-        {
-          id: 16,
-          name: 'Hannah',
-          start: '2024-11-20',
-          end: '2024-11-30',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
-        },
-        {
-          id: 17,
-          name: 'Andrew',
-          start: '2024-12-02',
-          end: '2024-12-18',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
-        }
-      ]
-    },
     {
       title: 'Reporting',
       children: [
@@ -227,7 +228,7 @@ export function createTable() {
       }
     },
     groupBy: true,
-    tasksShowMode: TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
+    //tasksShowMode: TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
     frame: {
       outerFrameStyle: {
         borderLineWidth: 1,
