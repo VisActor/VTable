@@ -1032,7 +1032,10 @@ export class Gantt extends EventTarget {
     this.parsedOptions.pixelRatio = pixelRatio;
     this.scenegraph.setPixelRatio(pixelRatio);
   }
-
+  updateTasksShowMode(tasksShowMode: TasksShowMode) {
+    this.options.tasksShowMode = tasksShowMode;
+    this.updateOption(this.options);
+  }
   _resize() {
     this._updateSize();
     this.taskListTableInstance?.setCanvasSize(
