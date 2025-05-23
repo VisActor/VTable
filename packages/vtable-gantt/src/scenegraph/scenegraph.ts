@@ -16,7 +16,7 @@ import { ToolTip } from './tooltip';
 import { DependencyLink, updateLinkLinePoints } from './dependency-link';
 import { DragOrderLine } from './drag-order-line';
 import type { GanttTaskBarNode } from './gantt-node';
-import { TasksShowMode } from '../ts-types';
+import { TasksShowMode, TaskType } from '../ts-types';
 container.load(graphicContribution);
 export class Scenegraph {
   dateStepWidth: number;
@@ -378,6 +378,44 @@ export class Scenegraph {
 
         const taskbarHeight = taskBarStyle.width;
         diffY = target.attribute.y + taskbarHeight / 2 - (linkedToTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        const fromParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index.slice(0, -1));
+        const toParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index.slice(0, -1));
+        const fromParentRecord = gantt.getRecordByIndex(fromParentRecordShowIndex);
+        const toParentRecord = gantt.getRecordByIndex(toParentRecordShowIndex);
+        if (
+          fromParentRecord.type === TaskType.PROJECT &&
+          fromParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedFromTaskShowIndex = fromParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+        }
+        if (
+          toParentRecord.type === TaskType.PROJECT &&
+          toParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedToTaskShowIndex = toParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+        }
+
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex, linkedToTaskRecord.index));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex, linkedFromTaskRecord.index));
       } else if (
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
@@ -450,14 +488,14 @@ export class Scenegraph {
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
         linkedFromTaskTaskDays,
-        linkedFromTaskRecord.record.type === 'milestone',
+        linkedFromTaskRecord.record.type === TaskType.MILESTONE,
         null,
         0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
         linkedToTaskTaskDays,
-        linkedToTaskRecord.record.type === 'milestone',
+        linkedToTaskRecord.record.type === TaskType.MILESTONE,
         target,
         diffY ?? 0,
         this._gantt
@@ -513,6 +551,44 @@ export class Scenegraph {
         const taskbarHeight = taskBarStyle.width;
         diffY =
           target.attribute.y + taskbarHeight / 2 - (linkedFromTaskShowIndex + 0.5) * gantt.parsedOptions.rowHeight;
+      } else if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        const fromParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index.slice(0, -1));
+        const toParentRecordShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index.slice(0, -1));
+        const fromParentRecord = gantt.getRecordByIndex(fromParentRecordShowIndex);
+        const toParentRecord = gantt.getRecordByIndex(toParentRecordShowIndex);
+        if (
+          fromParentRecord.type === TaskType.PROJECT &&
+          fromParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedFromTaskShowIndex = fromParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedFromTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+        }
+        if (
+          toParentRecord.type === TaskType.PROJECT &&
+          toParentRecord.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false
+        ) {
+          // Task is part of a collapsed project - it appears inline with project
+          linkedToTaskShowIndex = toParentRecordShowIndex;
+        } else {
+          // Normal task display
+          linkedToTaskShowIndex = gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+        }
+
+        ({
+          startDate: linkedToTaskStartDate,
+          endDate: linkedToTaskEndDate,
+          taskDays: linkedToTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex, linkedToTaskRecord.index));
+        ({
+          startDate: linkedFromTaskStartDate,
+          endDate: linkedFromTaskEndDate,
+          taskDays: linkedFromTaskTaskDays
+        } = gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex, linkedFromTaskRecord.index));
       } else if (
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
@@ -585,14 +661,14 @@ export class Scenegraph {
         linkedFromTaskEndDate,
         linkedFromTaskShowIndex,
         linkedFromTaskTaskDays,
-        linkedFromTaskRecord.record.type === 'milestone',
+        linkedFromTaskRecord.record.type === TaskType.MILESTONE,
         target,
         diffY ?? 0,
         linkedToTaskStartDate,
         linkedToTaskEndDate,
         linkedToTaskShowIndex,
         linkedToTaskTaskDays,
-        linkedToTaskRecord.record.type === 'milestone',
+        linkedToTaskRecord.record.type === TaskType.MILESTONE,
         null,
         0,
         this._gantt

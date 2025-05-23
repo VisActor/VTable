@@ -7,6 +7,8 @@ import { isValid } from '@visactor/vutils';
 import { textMeasure } from '@visactor/vtable';
 
 export class GanttTaskBarNode extends Group {
+  milestoneTextLabel?: IText;
+  milestoneTextContainer?: Group;
   clipGroupBox: Group;
   barRect?: IRect;
   progressRect?: IRect;

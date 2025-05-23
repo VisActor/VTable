@@ -80,6 +80,7 @@ git checkout -b docs/add-funnel-demo
   - Common `type` include docs (documentation, log changes), feat (new features), fix (bug fixes), refactor (code refactoring), etc. Please choose according to the actual situation.
   - Please write the description in English with short and accurate descriptions.
   - Before committing, we will perform commit lint checks. For details, see [inspection rules](https://github.com/VisActor/VTable/blob/develop/common/autoinstallers/lint/commitlint.config.js).
+  - After committing, please run the `rush change-all` command to generate changelog (this will be displayed on the official website's release log, but note that the same feature's different commits only need to run once! After running the command, a json file will be generated in the common/changes directory).
 
 ### Step5: Merge and Modify
 
@@ -206,10 +207,27 @@ $ rush update
 $ cd packages/vtable
 # execute in file path: ./packages/vtable
 $ rushx demo
+# build all packages
+$ rush build
+# build vtable package . execute in file path: ./packages/vtable
+$ rushx build
 # start site development server, execute in file path: ./
 $ rush docs
 # after execut git commit, please run the following command to update the change log. Please execute in file path: ./
 $ rush change-all
+```
+
+Other commands that may be used:
+
+```
+# run unit test. execute in file path: ./packages/vtable
+$ rushx test
+# run all tests. execute in file path: ./
+$ rush test
+# compile a package. execute in file path: ./packages/vtable
+$ rushx compile
+# when the node_modules is polluted, please manually delete the common/temp file folder, and then run the command to clear the cache, then execute rush update. execute in file path: ./
+$ rush purge
 ```
 
 3.  Submit all code and create a Pull Request on Github, inviting others to review it.

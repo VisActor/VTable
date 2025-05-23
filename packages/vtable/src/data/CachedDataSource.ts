@@ -310,8 +310,9 @@ export class CachedDataSource extends DataSource {
     if (isNumber(recordIndex)) {
       this.dataSourceObj.records.splice(recordIndex, 0, ...recordArr);
     } else {
-      const index = recordIndex.pop();
-      const parentRecord = this.getOriginalRecord(recordIndex);
+      const recordIndex_copy = [...recordIndex];
+      const index = recordIndex_copy.pop();
+      const parentRecord = this.getOriginalRecord(recordIndex_copy);
       if (parentRecord.children) {
         parentRecord.children.splice(index, 0, ...recordArr);
       } else {
@@ -338,8 +339,9 @@ export class CachedDataSource extends DataSource {
       if (isNumber(recordIndex)) {
         this.dataSourceObj.records.splice(recordIndex, 1);
       } else {
-        const index = recordIndex.pop();
-        const parentRecord = this.getOriginalRecord(recordIndex);
+        const recordIndex_copy = [...recordIndex];
+        const index = recordIndex_copy.pop();
+        const parentRecord = this.getOriginalRecord(recordIndex_copy);
         // delete parentRecord.children[index];
         parentRecord.children.splice(index, 1);
       }
@@ -363,8 +365,9 @@ export class CachedDataSource extends DataSource {
       if (isNumber(recordIndex)) {
         this.dataSourceObj.records.splice(recordIndex, 1, record);
       } else {
-        const index = recordIndex.pop();
-        const parentRecord = this.getOriginalRecord(recordIndex);
+        const recordIndex_copy = [...recordIndex];
+        const index = recordIndex_copy.pop();
+        const parentRecord = this.getOriginalRecord(recordIndex_copy);
         parentRecord.children.splice(index, 1, record);
       }
     }

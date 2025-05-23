@@ -18,10 +18,28 @@ export function createTable() {
     },
     {
       id: 2,
-      title: 'Scope',
+      title: 'Project Started',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-07-05',
-      progress: 60,
+      progress: 100,
+      priority: 'P0',
+      type: 'milestone'
+    },
+    {
+      id: 3,
+      title: 'Design Complete',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-08',
+      progress: 100,
+      priority: 'P1',
+      type: 'milestone'
+    },
+    {
+      id: 4,
+      title: 'Phase 1 Complete',
+      developer: 'liufangfang.jane@bytedance.com',
+      start: '2024-07-15',
+      progress: 100,
       priority: 'P0',
       type: 'milestone'
     },
@@ -348,7 +366,12 @@ export function createTable() {
         borderLineWidth: 1,
         fillColor: 'green',
         cornerRadius: 0,
-        width: 15
+        width: 15,
+        labelText: '${title}',
+        labelTextStyle: {
+          fontFamily: 'Arial',
+          padding: 8
+        }
       },
       selectedBarStyle: {
         shadowBlur: 5, //阴影宽度

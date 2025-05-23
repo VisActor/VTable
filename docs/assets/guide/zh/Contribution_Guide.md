@@ -82,6 +82,7 @@ git checkout -b docs/add-funnel-demo
   - 其中常用 `type`包括 docs（文档、日志修改）、feat（新功能）、fix（问题修复）、refactor（代码重构）等，请根据实际情况选择。
   - 请用简短精确的英文描述编写 description
   - 提交 commit 之前，我们会进行 commit lint 检查，具体可以查看[检查规则](https://github.com/VisActor/VTable/blob/develop/common/autoinstallers/lint/commitlint.config.js)
+  - 提交 commit 之后，请运行`rush change-all`命令，生成changelog（后续会展示到官网的发布日志中，但注意同一个功能的不同commit，只需要运行一次即可！运行命令后会在common/changes目录下生成json文件）。
 
 ### Step5：合并修改
 
@@ -216,10 +217,25 @@ $ rush update
 $ cd packages/vtable
 # 注释：启动开发测试页面。 execute in file path: ./packages/vtable
 $ rushx demo
+# 注释： 构建某个包。 execute in file path: ./packages/vtable
+$ rushx build
+# 注释： 构建所有包。 execute in file path: ./
+$ rush build
 # 注释：在外层目录启动官网页面。 start site development server, execute in file path: ./
 $ rush docs
 # 注释：提交代码后生成changelog。 after execut git commit, please run the following command to update the change log. Please execute in file path: ./
 $ rush change-all
+```
+其他可能用到的命令：
+```
+# 注释： 运行单元测试。 execute in file path: ./packages/vtable
+$ rushx test
+# 注释： 运行所有测试。 execute in file path: ./
+$ rush test
+# 注释： 编译某个包。 execute in file path: ./packages/vtable
+$ rushx compile
+# 注释：当安装的node_modules 被污染时，请先手动删除common/temp文件夹，然后运行命令清除缓存，再执行rush update。 execute in file path: ./
+$ rush purge
 ```
 
 3.  提交所有代码，并在 Github 创建 Pull Request，邀请其他人进行 review

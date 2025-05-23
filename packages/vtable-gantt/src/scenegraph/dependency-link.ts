@@ -7,7 +7,7 @@ import { isValid } from '@visactor/vutils';
 import { clearRecordLinkInfos, findRecordByTaskKey, getSubTaskRowIndexByRecordDate, getTextPos } from '../gantt-helper';
 import type { GanttTaskBarNode } from './gantt-node';
 import type { ITaskLink } from '../ts-types';
-import { DependencyType, TasksShowMode } from '../ts-types';
+import { DependencyType, TasksShowMode, TaskType } from '../ts-types';
 import type { Gantt } from '../Gantt';
 
 export class DependencyLink {
@@ -48,7 +48,7 @@ export class DependencyLink {
     });
     this.group.appendChild(this.linkLinesContainer);
     if (this._scene._gantt.records?.length) {
-      for (let i = 0; i < this._scene._gantt.parsedOptions.dependencyLinks?.length ?? 0; i++) {
+      for (let i = 0; i < this._scene._gantt.parsedOptions.dependencyLinks.length; i++) {
         this.initLinkLine(i);
       }
     }
@@ -95,6 +95,53 @@ export class DependencyLink {
         endDate: linkedFromTaskEndDate,
         taskDays: linkedFromTaskTaskDays
       } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskRecord.index[0], linkedFromTaskRecord.index[1]));
+    } else if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+      // For Project_Sub_Tasks_Inline, we need to check if the parent records are projects and their expansion state
+      const fromParentRecordShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(
+        linkedFromTaskRecord.index.slice(0, -1)
+      );
+      const toParentRecordShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(
+        linkedToTaskRecord.index.slice(0, -1)
+      );
+      const fromParentRecord = this._scene._gantt.getRecordByIndex(fromParentRecordShowIndex);
+      const toParentRecord = this._scene._gantt.getRecordByIndex(toParentRecordShowIndex);
+      // Handle "from" record
+      if (
+        fromParentRecord.type === TaskType.PROJECT &&
+        fromParentRecord.hierarchyState !== 'expand' &&
+        this._scene._gantt.parsedOptions.projectSubTasksExpandable !== false
+      ) {
+        // Task is part of a collapsed project - it appears inline with project
+        linkedFromTaskShowIndex = fromParentRecordShowIndex;
+      } else {
+        // Normal task display
+        linkedFromTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedFromTaskRecord.index);
+      }
+
+      // Handle "to" record
+      if (
+        toParentRecord.type === TaskType.PROJECT &&
+        toParentRecord.hierarchyState !== 'expand' &&
+        this._scene._gantt.parsedOptions.projectSubTasksExpandable !== false
+      ) {
+        // Task is part of a collapsed project - it appears inline with project
+        linkedToTaskShowIndex = toParentRecordShowIndex;
+      } else {
+        // Normal task display
+        linkedToTaskShowIndex = this._scene._gantt.getTaskShowIndexByRecordIndex(linkedToTaskRecord.index);
+      }
+
+      // Get task info
+      ({
+        startDate: linkedToTaskStartDate,
+        endDate: linkedToTaskEndDate,
+        taskDays: linkedToTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedToTaskShowIndex, linkedToTaskRecord.index));
+      ({
+        startDate: linkedFromTaskStartDate,
+        endDate: linkedFromTaskEndDate,
+        taskDays: linkedFromTaskTaskDays
+      } = this._scene._gantt.getTaskInfoByTaskListIndex(linkedFromTaskShowIndex, linkedFromTaskRecord.index));
     } else if (
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
       this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
@@ -154,12 +201,12 @@ export class DependencyLink {
       linkedFromTaskEndDate,
       linkedFromTaskShowIndex,
       linkedFromTaskTaskDays,
-      linkedFromTaskRecord.record.type === 'milestone',
+      linkedFromTaskRecord.record.type === TaskType.MILESTONE,
       linkedToTaskStartDate,
       linkedToTaskEndDate,
       linkedToTaskShowIndex,
       linkedToTaskTaskDays,
-      linkedToTaskRecord.record.type === 'milestone',
+      linkedToTaskRecord.record.type === TaskType.MILESTONE,
       this._scene._gantt
     );
 

@@ -1,13 +1,8 @@
 import type { Gantt } from '../Gantt';
-import {
-  createDateAtLastHour,
-  createDateAtLastMinute,
-  createDateAtMidnight,
-  getEndDateByTimeUnit,
-  getStartDateByTimeUnit
-} from '../tools/util';
-import { TasksShowMode } from '../ts-types';
+import { createDateAtMidnight, getEndDateByTimeUnit, getStartDateByTimeUnit } from '../tools/util';
+import { TasksShowMode, TaskType } from '../ts-types/gantt-engine';
 import { isValid } from '@visactor/vutils';
+
 export class DataSource {
   records: any[];
   _gantt: Gantt;
@@ -116,6 +111,38 @@ export class DataSource {
           createDateAtMidnight(b[this._gantt.parsedOptions.startDateField]).getTime()
         );
       });
+    } else if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+      // For Project_Sub_Tasks_Inline mode, we handle reordering based on whether tasks are projects
+      if (
+        isValid(source_sub_task_index) &&
+        isValid(target_sub_task_index) &&
+        isValid(source_index) &&
+        isValid(target_index)
+      ) {
+        // Check if source and target are projects
+        const sourceIsProject = this.records[source_index].type === TaskType.PROJECT;
+        const targetIsProject = this.records[target_index].type === TaskType.PROJECT;
+
+        // Moving subtask from a project to another project or normal task
+        const sub_task_record = this.records[source_index].children[source_sub_task_index];
+        this.records[source_index].children.splice(source_sub_task_index, 1);
+
+        if (!this.records[target_index].children) {
+          this.records[target_index].children = [];
+        }
+
+        this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);
+
+        // If target is a project, sort children by date
+        if (targetIsProject) {
+          this.records[target_index]?.children?.sort((a: any, b: any) => {
+            return (
+              createDateAtMidnight(a[this._gantt.parsedOptions.startDateField]).getTime() -
+              createDateAtMidnight(b[this._gantt.parsedOptions.startDateField]).getTime()
+            );
+          });
+        }
+      }
     } else {
       if (
         isValid(source_sub_task_index) &&
