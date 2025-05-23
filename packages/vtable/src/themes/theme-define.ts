@@ -825,6 +825,26 @@ export class TableTheme implements ITableThemeDefine {
     return this._internalIconsStyle;
   }
 
+  get grid(): RequiredTableThemeDefine['grid'] {
+    const { obj, superTheme } = this.internalTheme;
+    return ingoreNoneValueMerge({}, superTheme.grid, obj.grid);
+  }
+
+  get rowSeriesNumber(): RequiredTableThemeDefine['rowSeriesNumber'] {
+    const {obj,superTheme} = this.internalTheme;
+    return ingoreNoneValueMerge({},superTheme.rowSeriesNumber,obj.rowSeriesNumber)
+  }
+
+  get taskBar(): RequiredTableThemeDefine['taskBar'] {
+    const {obj,superTheme} = this.internalTheme;
+    return ingoreNoneValueMerge({},superTheme.taskBar,obj.taskBar)
+  }
+
+  get timelineHeader(): RequiredTableThemeDefine['timelineHeader'] {
+    const {obj,superTheme} = this.internalTheme;
+    return ingoreNoneValueMerge({},superTheme.timelineHeader,obj.timelineHeader)
+  }
+
   hasProperty(names: string[]): boolean {
     const { obj, superTheme } = this.internalTheme;
     return hasThemeProperty(obj, names) || hasThemeProperty(superTheme, names);
