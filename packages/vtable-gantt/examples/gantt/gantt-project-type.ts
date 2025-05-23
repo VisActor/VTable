@@ -1,8 +1,8 @@
 import type { ColumnsDefine } from '@visactor/vtable';
 import { register } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import type { GanttConstructorOptions, TYPES } from '../../src/index';
-import { Gantt } from '../../src/index';
+import type { GanttConstructorOptions } from '../../src/index';
+import { Gantt, VTable, TYPES } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
 import { scale } from '@visactor/vutils';
 import { DependencyType } from '../../src/ts-types';
@@ -14,300 +14,237 @@ register.editor('date-input', date_input_editor);
 export function createTable() {
   const records = [
     {
-      id: '1',
-      title: 'Software Development',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
-      end: '2024-08-14',
-      progress: 31,
-      priority: 'P0',
-      type: 'project', // 任务为项目类型，
-      children: [
-        {
-          id: '1-1',
-          title: 'Scope Definition',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
-          end: '2024-08-04',
-          progress: 60,
-          priority: 'P0'
-        },
-        {
-          id: '1-2',
-          title: 'Requirements Analysis',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024/07/24',
-          end: '2024/08/04',
-          progress: 100,
-          priority: 'P1'
-        },
-        {
-          id: '1-3',
-          title: 'Design Phase',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
-          end: '2024-08-04',
-          progress: 90,
-          priority: 'P0'
-        },
-        {
-          id: '1-4',
-          title: 'Implementation',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
-          end: '2024-08-04',
-          progress: 31,
-          priority: 'P0'
-        },
-        {
-          id: '1-5',
-          title: 'Testing',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024.07.06',
-          end: '2024.07.08',
-          progress: 60,
-          priority: 'P0'
-        }
-      ]
-    },
-    {
-      id: '2',
-      title: 'Project Management',
-      developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-06',
-      end: '2024-07-08',
-      progress: 60,
-      priority: 'P0',
+      id: 0,
+      name: 'Planning',
+      start: '2024-11-15',
+      end: '2024-11-21',
       type: 'project',
       children: [
         {
-          id: '2-1',
-          title: 'Planning',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
-          progress: 100,
-          priority: 'P1',
-          type: 'project',
-          children: [
-            {
-              id: '2-1-1',
-              title: 'Resource Allocation',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-24',
-              end: '2024-08-04',
-              progress: 31,
-              priority: 'P0'
-            },
-            {
-              id: '2-1-2',
-              title: 'Timeline Preparation',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-06',
-              end: '2024-07-08',
-              progress: 60,
-              priority: 'P0'
-            },
-            {
-              id: '2-1-3',
-              title: 'Budget Estimation',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-09',
-              end: '2024-07-11',
-              progress: 100,
-              priority: 'P1'
-            }
-          ]
+          id: 1,
+          name: 'Michael Smith',
+          start: '2024-11-15',
+          end: '2024-11-17',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
         },
         {
-          id: '2-2',
-          title: 'Execution',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-24',
-          end: '2024-08-04',
-          progress: 31,
-          priority: 'P0',
-          type: 'project',
-          children: [
-            {
-              id: '2-2-1',
-              title: 'Team Coordination',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-24',
-              end: '2024-08-04',
-              progress: 31,
-              priority: 'P0'
-            },
-            {
-              id: '2-2-2',
-              title: 'Progress Tracking',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-06',
-              end: '2024-07-08',
-              progress: 60,
-              priority: 'P0'
-            },
-            {
-              id: '2-2-3',
-              title: 'Issue Resolution',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-09',
-              end: '2024-07-11',
-              progress: 100,
-              priority: 'P1'
-            }
-          ]
+          id: 2,
+          name: 'Emily',
+          start: '2024-11-17',
+          end: '2024-11-18',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
         },
         {
-          id: '2-3',
-          title: 'Monitoring',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-06',
-          end: '2024-07-08',
-          progress: 60,
-          priority: 'P0'
+          id: 3,
+          name: 'Rramily',
+          start: '2024-11-19',
+          end: '2024-11-20',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
         },
         {
-          id: '2-4',
-          title: 'Closing',
-          developer: 'liufangfang.jane@bytedance.com',
-          start: '2024-07-09',
-          end: '2024-07-11',
-          progress: 100,
-          priority: 'P1',
-          children: [
-            {
-              id: '2-4-1',
-              title: 'Final Review',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-24',
-              end: '2024-08-04',
-              progress: 31,
-              priority: 'P0'
-            },
-            {
-              id: '2-4-2',
-              title: 'Documentation',
-              developer: 'liufangfang.jane@bytedance.com',
-              start: '2024-07-06',
-              end: '2024-07-08',
-              progress: 60,
-              priority: 'P0'
-            }
-          ]
+          id: 4,
+          name: 'Lichael Join',
+          start: '2024-11-18',
+          end: '2024-11-19',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        }
+      ]
+    },
+    {
+      id: 300,
+      name: 'Research',
+      type: 'project',
+      children: [
+        {
+          id: 5,
+          name: 'Ryan',
+          start: '2024-11-18',
+          end: '2024-11-21',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+        }
+      ]
+    },
+    {
+      name: 'Goal Setting',
+      type: 'project',
+      children: [
+        {
+          id: 6,
+          name: 'Daniel Davis',
+          start: '2024-11-21',
+          end: '2024-11-22',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+        },
+        {
+          id: 7,
+          name: 'Lauren',
+          start: '2024-11-18',
+          end: '2024-11-19',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+        }
+      ]
+    },
+
+    {
+      name: 'Strategy',
+      children: [
+        {
+          id: 8,
+          name: 'Tacarah Siller',
+          start: '2024-11-20',
+          end: '2024-11-21',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        },
+        {
+          id: 9,
+          name: 'Camentew Olision',
+          start: '2024-11-25',
+          end: '2024-11-26',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        },
+        {
+          id: 10,
+          name: 'Sarah Miller',
+          start: '2024-11-17',
+          end: '2024-11-18',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        },
+        {
+          id: 11,
+          name: 'Matthew Wilson',
+          start: '2024-11-22',
+          end: '2024-11-25',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        },
+        {
+          id: 12,
+          name: 'Grarah Poliller',
+          start: '2024-11-23',
+          end: '2024-11-24',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        }
+      ]
+    },
+    {
+      name: 'Execution',
+      children: [
+        {
+          id: 13,
+          name: 'Ashley Taylor',
+          start: '2024-11-22',
+          end: '2024-11-25',
+
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+        },
+        {
+          id: 14,
+          name: 'Megan',
+          start: '2024-11-27',
+          end: '2024-11-30',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+        },
+        {
+          id: 15,
+          name: 'David',
+          start: '2024-12-10',
+          end: '2024-12-18',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+        }
+      ]
+    },
+    {
+      name: 'Monitoring',
+      children: [
+        {
+          id: 16,
+          name: 'Hannah',
+          start: '2024-11-20',
+          end: '2024-11-30',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        },
+        {
+          id: 17,
+          name: 'Andrew',
+          start: '2024-12-02',
+          end: '2024-12-18',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        }
+      ]
+    },
+    {
+      title: 'Reporting',
+      children: [
+        {
+          id: 18,
+          name: 'Joshua Anderson',
+          start: '2024-12-22',
+          end: '2024-12-28',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+        }
+      ]
+    },
+    {
+      name: 'Process review',
+      children: [
+        {
+          id: 19,
+          name: 'Christopher Moore',
+          start: '2024-11-25',
+          end: '2024-11-30',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+        },
+        {
+          id: 20,
+          name: 'Emma',
+          start: '2024-12-01',
+          end: '2024-12-18',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
         }
       ]
     }
   ];
 
-  const columns: ColumnsDefine = [
-    // {
-    //   field: 'id',
-    //   title: 'ID',
-    //   width: 80,
-    //   sort: true
-    // },
+  const columns = [
     {
-      field: 'title',
-      title: 'title',
-      width: 200,
-      tree: true,
-      sort: true
-    },
-    {
-      field: 'start',
-      title: 'start',
+      field: 'name',
+      title: 'PROCESS',
       width: 150,
-      sort: true
-    },
-    {
-      field: 'end',
-      title: 'end',
-      width: 150,
-      sort: true
-    },
-    {
-      field: 'priority',
-      title: 'priority',
-      width: 100,
-      sort: true
-    },
-
-    {
-      field: 'progress',
-      title: 'progress',
-      width: 200,
-      sort: true
+      tree: true
     }
   ];
-  const option: GanttConstructorOptions = {
+  const option = {
     records,
-    dependency: {
-      linkDeletable: true,
-      links: [
-        {
-          type: DependencyType.FinishToStart,
-          linkedFromTaskKey: 1,
-          linkedToTaskKey: 2
-        },
-        {
-          type: DependencyType.StartToFinish,
-          linkedFromTaskKey: 2,
-          linkedToTaskKey: 3
-        },
-        {
-          type: DependencyType.StartToStart,
-          linkedFromTaskKey: 3,
-          linkedToTaskKey: 4
-        },
-        {
-          type: DependencyType.FinishToFinish,
-          linkedFromTaskKey: 4,
-          linkedToTaskKey: 5
-        }
-      ],
-      // linkLineSelectable: false,
-      linkSelectedLineStyle: {
-        shadowBlur: 5, //阴影宽度
-        shadowColor: 'red',
-        lineColor: 'red',
-        lineWidth: 1
-      },
-      linkCreatable: true
-    },
     taskListTable: {
-      headerEditor: 'input',
       columns: columns,
-      tableWidth: 400,
-      minTableWidth: 100,
-      maxTableWidth: 600,
-      hierarchyExpandLevel: 5,
-      menu: {
-        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      theme: {
+        bodyStyle: {
+          bgColor: 'white',
+          color: 'rgb(115 115 115)'
+        },
+        headerStyle: {
+          color: 'white'
+        }
       }
     },
-
+    groupBy: true,
+    tasksShowMode: TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
     frame: {
       outerFrameStyle: {
-        borderLineWidth: 2,
-        borderColor: 'red',
+        borderLineWidth: 1,
+        borderColor: '#e1e4e8',
         cornerRadius: 8
       },
-      verticalSplitLineHighlight: {
-        lineColor: 'green',
-        lineWidth: 3
-      }
+      verticalSplitLineMoveable: false
     },
     grid: {
-      backgroundColor: 'gray',
+      horizontalLine: {
+        lineWidth: 1,
+        lineColor: '#e1e4e8'
+      },
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
       }
-      // horizontalLine: {
-      //   lineWidth: 1,
-      //   lineColor: '#e1e4e8'
-      // }
     },
     headerRowHeight: 60,
     rowHeight: 40,
@@ -315,111 +252,53 @@ export function createTable() {
       startDateField: 'start',
       endDateField: 'end',
       progressField: 'progress',
-      labelText: '{title} {progress}%',
+      labelText: '{name}',
       labelTextStyle: {
         fontFamily: 'Arial',
-        fontSize: 16,
-        textAlign: 'left'
+        fontSize: 14,
+        textAlign: 'center',
+        color: 'white'
       },
       barStyle: {
-        width: 20,
+        width: 22,
         /** 任务条的颜色 */
-        barColor: '#ee8800',
+        barColor: 'rgb(68 99 244)',
         /** 已完成部分任务条的颜色 */
         completedBarColor: '#91e8e0',
         /** 任务条的圆角 */
-        cornerRadius: 8,
-        /** 任务条的边框 */
-        borderWidth: 1,
-        /** 边框颜色 */
-        borderColor: 'black'
-      },
-      projectStyle: {
-        barColor: 'pink',
-        /** 已完成部分任务条的颜色 */
-        completedBarColor: 'green',
-        /** 任务条的圆角 */
-        cornerRadius: 1,
-        /** 任务条的边框 */
-        borderWidth: 2,
-        /** 边框颜色 */
-        borderColor: 'yellow'
+        cornerRadius: 15,
+        borderColor: 'black',
+        borderLineWidth: 1
       }
     },
+
     timelineHeader: {
       verticalLine: {
         lineColor: '#e1e4e8',
         lineWidth: 1
       },
+      horizontalLine: {
+        lineColor: '#e1e4e8',
+        lineWidth: 1
+      },
+      backgroundColor: '#63a8ff',
       scales: [
-        {
-          unit: 'week',
-          step: 1,
-          startOfWeek: 'sunday',
-          format(date: TYPES.DateFormatArgumentType) {
-            return `Week ${date.dateIndex}`;
-          },
-          style: {
-            fontSize: 20,
-            fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
-          }
-        },
         {
           unit: 'day',
           step: 1,
-          format(date: TYPES.DateFormatArgumentType) {
+          format(date) {
             return date.dateIndex.toString();
           },
           style: {
             fontSize: 20,
             fontWeight: 'bold',
-            color: 'red',
-            backgroundColor: '#EEF1F5'
+            color: 'white'
           }
         }
-        // {
-        //   unit: 'quarter',
-        //   step: 1,
-        //   format(date: TYPES.DateFormatArgumentType) {
-        //     return '第' + date.index + '季度';
-        //   }
-        // }
       ]
     },
-    minDate: '2024-07-07',
-    maxDate: '2024-10-15',
-    markLine: [
-      {
-        date: '2024-07-17',
-        style: {
-          lineWidth: 1,
-          lineColor: 'blue',
-          lineDash: [8, 4]
-        }
-      },
-      {
-        date: '2024-08-17',
-        style: {
-          lineWidth: 2,
-          lineColor: 'red',
-          lineDash: [8, 4]
-        }
-      }
-    ],
-    rowSeriesNumber: {
-      title: '行号',
-      dragOrder: true,
-      headerStyle: {
-        bgColor: '#EEF1F5',
-
-        borderColor: '#e1e4e8'
-      },
-      style: {
-        borderColor: '#e1e4e8'
-      }
-    },
+    minDate: '2024-11-14',
+    maxDate: '2024-12-31',
     scrollStyle: {
       scrollRailColor: 'RGBA(246,246,246,0.5)',
       visible: 'none',

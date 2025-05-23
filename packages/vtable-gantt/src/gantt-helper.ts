@@ -1091,7 +1091,7 @@ export function updateOptionsWhenRecordChanged(gantt: Gantt) {
       );
     }
   }
-  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links ?? [];
 }
 
 export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
