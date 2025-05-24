@@ -1,11 +1,7 @@
 <template>
-  <vue-list-table
-    :options="tableOptions"
-    :records="records"
-    :keep-column-width-change="keepColumnWidthChange"
-    @on-dropdown-menu-click="handleDropdownMenuClick"
-    @on-mouse-enter-cell="handleMouseEnterCell"
-  >
+  <vue-list-table :options="tableOptions" :records="records" :keep-column-width-change="keepColumnWidthChange"
+    @on-dropdown-menu-click="handleDropdownMenuClick" @on-mouse-enter-cell="handleMouseEnterCell"
+    @on-selected-clear="handleSelectedClear">
     <ListColumn key="0" field="0" title="名字" max-width="300" :drag-header="true" />
     <ListColumn key="1" field="1" title="年龄" max-width="300" :drag-header="true" />
     <ListColumn key="2" field="2" title="性别" max-width="300" :drag-header="true" />
@@ -80,5 +76,9 @@ const handleDropdownMenuClick = args => {
 // 定义 handleMouseEnterCell 方法
 const handleMouseEnterCell = args => {
   console.log('mouse enter cell', args);
+};
+// 定义 handleSelectedClear 方法
+const handleSelectedClear = args => {
+  alert('selected clear');
 };
 </script>
