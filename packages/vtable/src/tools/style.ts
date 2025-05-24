@@ -3,7 +3,7 @@ import type { ScrollStyle } from '../ts-types';
 
 export function getHorizontalScrollBarSize(scrollStyle?: ScrollStyle): number {
   if (
-    scrollStyle?.hoverOn ||
+    (scrollStyle.visible !== 'always' && scrollStyle?.hoverOn) ||
     (scrollStyle?.horizontalVisible && scrollStyle?.horizontalVisible === 'none') ||
     (!scrollStyle?.horizontalVisible && scrollStyle?.visible === 'none')
   ) {
@@ -14,7 +14,7 @@ export function getHorizontalScrollBarSize(scrollStyle?: ScrollStyle): number {
 
 export function getVerticalScrollBarSize(scrollStyle?: ScrollStyle): number {
   if (
-    scrollStyle?.hoverOn ||
+    (scrollStyle.visible !== 'always' && scrollStyle?.hoverOn) ||
     (scrollStyle?.verticalVisible && scrollStyle?.verticalVisible === 'none') ||
     (!scrollStyle?.verticalVisible && scrollStyle?.visible === 'none')
   ) {
