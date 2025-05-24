@@ -796,6 +796,13 @@
           }
         },
         {
+          "path": "paste-add-row",
+          "title": {
+            "zh": "粘贴新增行插件",
+            "en": "paste add row plugin"
+          }
+        },
+        {
           "path": "table-carousel-animation",
           "title": {
             "zh": "表格轮播动画",
@@ -810,11 +817,11 @@
           }
         },
         {
-            "path": "gantt-export-image",
-            "title":{
-                "zh": "全量导出甘特图",
-                "en": "gantt export image"
-            }
+          "path": "gantt-export-image",
+          "title": {
+            "zh": "全量导出甘特图",
+            "en": "gantt export image"
+          }
         }
       ]
     },
