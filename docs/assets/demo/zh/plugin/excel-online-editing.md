@@ -13,6 +13,7 @@ option: plugins
 
 在本示例中我们组合运用了以下插件：
 - `AddRowColumnPlugin`：添加行和列；
+- `PasteAddRowPlugin`：粘贴时行数不足时添加新行；
 - `ColumnSeriesPlugin`：列系列插件；
 - `RowSeriesPlugin`：行系列插件；
 - `HighlightHeaderWhenSelectCellPlugin`：高亮选中单元格；
@@ -80,6 +81,7 @@ VTable.register.editor('input', input_editor);
     rowHighlight: true
   });
   const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
+  const pasteAddRowPlugin = new VTablePlugins.PasteAddRowPlugin();
   const option = {
     // 二维数组的数据 和excel的行列一致
     records: [
@@ -110,9 +112,11 @@ VTable.register.editor('input', input_editor);
     frozenColCount: 1,
     defaultRowHeight: 30,
     keyboardOptions: {
-      moveFocusCellOnEnter: true
+      moveFocusCellOnEnter: true,
+      copySelected: true,
+      pasteValueToCell: true
     },
-    plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
+    plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin, pasteAddRowPlugin]
   };
   const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;
