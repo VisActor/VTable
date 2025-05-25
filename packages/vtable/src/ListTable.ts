@@ -1557,4 +1557,61 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.editorManager.release();
     super.release();
   }
+
+  /**
+   * 批量展开或收起所有树形节点，支持递归和懒加载
+   * @param expand 是否全部展开，true为展开，false为收起
+   * @returns
+   *
+   * 用法示例：
+   *   // 全部展开
+   *   await tableInstance.toggleHierarchyAllState(true);
+   *   // 全部收起
+   *   await tableInstance.toggleHierarchyAllState(false);
+   */
+  async toggleHierarchyAllState(expand: boolean = true) {
+
+    const treeCols: number[] = [];
+    for (let col = 0; col < this.colCount; col++) {
+      const define = this.getBodyColumnDefine(col, this.columnHeaderLevelCount) as ColumnDefine;
+      if (define && define.tree) treeCols.push(col);
+    }
+    // 递归展开/收起所有节点
+    const processRow = async (col: number, row: number) => {
+      const state = this.getHierarchyState(col, row);
+      if (expand && state !== HierarchyState.expand) {
+        this.toggleHierarchyState(col, row);
+        // 懒加载场景：需要等待子节点加载
+        const record = this.getCellOriginRecord(col, row);
+        if (record && record.children === true) {
+          // 等待外部事件（如TREE_HIERARCHY_STATE_CHANGE）插入children
+          await new Promise(resolve => setTimeout(resolve, 2100));
+        }
+      } else if (!expand && state === HierarchyState.expand) {
+        this.toggleHierarchyState(col, row);
+      }
+      // 递归处理子节点
+      const record = this.getCellOriginRecord(col, row);
+      if (Array.isArray(record?.children) && record.children.length > 0) {
+        for (let i = 0; i < record.children.length; i++) {
+          // 计算子节点的row
+          const childIndex = this.getRecordIndexByCell(col, row);
+          let childRow = this.getTableIndexByRecordIndex(Array.isArray(childIndex) ? [...childIndex, i] : [childIndex, i]);
+          if (childRow !== undefined && childRow >= 0) {
+            await processRow(col, childRow);
+          }
+        }
+      }
+    };
+    // 遍历所有根节点
+    for (let col of treeCols) {
+      for (let row = this.columnHeaderLevelCount; row < this.rowCount; row++) {
+        // 只处理有children的节点
+        const record = this.getCellOriginRecord(col, row);
+        if (record && (Array.isArray(record.children) || record.children === true)) {
+          await processRow(col, row);
+        }
+      }
+    }
+  }
 }

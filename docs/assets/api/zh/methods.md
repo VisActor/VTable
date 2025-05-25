@@ -689,6 +689,19 @@ enum HierarchyState {
 }
 ```
 
+## toggleHierarchyAllState(Function)
+
+展开或收起所有树形节点
+
+```
+  /**
+   * 展开或收起所有树形节点
+   * @param expand 是否全部展开，true为展开，false为收起
+   * @returns
+   */
+   async toggleHierarchyAllState(expand: boolean = true)
+```
+
 ## getLayoutRowTree(Function)
 
 **PivotTable 专有**

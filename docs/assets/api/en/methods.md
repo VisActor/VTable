@@ -731,6 +731,19 @@ Get the tree-shaped expanded or collapsed status of a certain cell
 
 ```
 
+## toggleHierarchyAllState(Function)
+
+Expand or collapse all tree nodes
+
+```
+  /**
+   * Expand or collapse all tree nodes
+   * @param expand whether it is fully expanded, true is expanded and false is folded
+   * @returns
+   */
+   async toggleHierarchyAllState(expand: boolean = true)
+```
+
 /\*\*
 
 - Get the collapsed and expanded status of hierarchical nodes
