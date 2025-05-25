@@ -641,7 +641,16 @@ export function bindContainerDomListener(eventManager: EventManager) {
       return;
     }
     const target = e.target as HTMLElement;
-
+    if (stateManager.interactionState === 'grabing') {
+      // stateManager.interactionState = 'default';
+      stateManager.updateInteractionState(InteractionState.default);
+      // eventManager._resizing = false;
+      if (stateManager.isResizeCol()) {
+        endResizeCol(table);
+      } else if (stateManager.isResizeRow()) {
+        endResizeRow(table);
+      }
+    }
     if (target !== table.canvas) {
       globalPointerupOutsideCallback(e);
     }
