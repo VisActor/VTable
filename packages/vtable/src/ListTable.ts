@@ -99,7 +99,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
   declare options: ListTableConstructorOptions;
   showHeader = true;
   listTreeStickCellPlugin?: ListTreeStickCellPlugin;
-  containerFit: boolean = false;
 
   // eslint-disable-next-line default-param-last
   constructor(options: ListTableConstructorOptions);
