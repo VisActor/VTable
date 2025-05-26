@@ -360,7 +360,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
               rowValues.push(cell);
             });
           });
-          (table as ListTableAPI).changeCellValues(col, row, values);
+          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
         }
       }
     }
@@ -448,7 +456,16 @@ export function bindContainerDomListener(eventManager: EventManager) {
             maxRow - row + 1,
             maxCol - col + 1
           );
-          (table as ListTableAPI).changeCellValues(col, row, values, true);
+
+          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
         } else {
           navigator.clipboard.read().then(clipboardItems => {
             for (const item of clipboardItems) {
@@ -490,7 +507,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
     pasteValuesRowCount = values.length ?? 0;
     values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
-    (table as ListTableAPI).changeCellValues(col, row, values, true);
+    const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+    if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+      table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+        col,
+        row,
+        pasteData: values,
+        changedCellResults
+      });
+    }
   }
   function pasteTextToTable(item: ClipboardItem) {
     // 如果只有 'text/plain'
@@ -532,7 +557,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
           maxRow - row + 1,
           maxCol - col + 1
         );
-        (table as ListTableAPI).changeCellValues(col, row, values, true);
+        const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+        if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+          table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+            col,
+            row,
+            pasteData: values,
+            changedCellResults
+          });
+        }
       });
     });
   }

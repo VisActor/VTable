@@ -35,6 +35,204 @@
         "zh": "5.如何贡献代码",
         "en": "5-How to Contribute Code"
       }
+    },
+    {
+      "path": "source-code-details",
+      "title": {
+        "zh": "源码详解",
+        "en": "Source Code Details"
+      },
+      "children": [
+        {
+          "path": "0-VTable-Engineering",
+          "title": {
+            "zh": "0. VTable 工程化",
+            "en": "0. VTable Engineering"
+          }
+        },
+        {
+          "path": "1.1-Basic-Concepts-of-Vtable",
+          "title": {
+            "zh": "1.1 Vtable 的基本概念",
+            "en": "1.1 Basic Concepts of Vtable"
+          }
+        },
+        {
+          "path": "1.2-Basic-Architecture-and-Source-Code-Structure-of-VTable",
+          "title": {
+            "zh": "1.2 VTable 的基本架构和源码结构",
+            "en": "1.2 Basic Architecture and Source Code Structure of VTable"
+          }
+        },
+        {
+          "path": "1.3-VTable-Lifecycle",
+          "title": {
+            "zh": "1.3 VTable 生命周期",
+            "en": "1.3 VTable Lifecycle"
+          }
+        },
+        {
+          "path": "2.1-Scenegraph-Concept-Interpretation",
+          "title": {
+            "zh": "2.1 场景树（Scenegraph）概念解读",
+            "en": "2.1 Scenegraph Concept Interpretation"
+          }
+        },
+        {
+          "path": "2.2-VTable-Elements-and-the-Expression-Relationship-with-the-Scene-Tree",
+          "title": {
+            "zh": "2.2 VTable元素与场景树的表达关系",
+            "en": "2.2 VTable Elements and the Expression Relationship with the Scene Tree"
+          }
+        },
+        {
+          "path": "2.3-VTable-Scene-Tree-Rendering",
+          "title": {
+            "zh": "2.3 VTable 场景树渲染",
+            "en": "2.3 VTable Scene Tree Rendering"
+          }
+        },
+        {
+          "path": "2.4-Rendering-Process-of-Different-Primitive-Types",
+          "title": {
+            "zh": "2.4 不同图元类型渲染流程",
+            "en": "2.4 Rendering Process of Different Primitive Types"
+          }
+        },
+        {
+          "path": "2.5-Scene-Tree-Update",
+          "title": {
+            "zh": "2.5 场景树更新",
+            "en": "2.5 Scene Tree Update"
+          }
+        },
+        {
+          "path": "2.6-Progressive-Loading-of-Scene-Tree",
+          "title": {
+            "zh": "2.6 场景树渐进加载",
+            "en": "2.6 Progressive Loading of Scene Tree"
+          }
+        },
+        {
+          "path": "3.1-Basic-Table-Header-Structure",
+          "title": {
+            "zh": "3.1 基本表格表头结构",
+            "en": "3.1 Basic Table Header Structure"
+          }
+        },
+        {
+          "path": "3.2-Pivot-Table-Header-Structure",
+          "title": {
+            "zh": "3.2 透视表表头结构",
+            "en": "3.2 Pivot Table Header Structure"
+          }
+        },
+        {
+          "path": "3.3-Row-Height-Column-Width-Calculation",
+          "title": {
+            "zh": "3.3 行高、列宽计算",
+            "en": "3.3 Row Height, Column Width Calculation"
+          }
+        },
+        {
+          "path": "4.1-VTable-Event-Design",
+          "title": {
+            "zh": "4.1 VTable 事件设计",
+            "en": "4.1 VTable Event Design"
+          }
+        },
+        {
+          "path": "4.2-Event-Listening",
+          "title": {
+            "zh": "4.2 事件监听",
+            "en": "4.2 Event Listening"
+          }
+        },
+        {
+          "path": "4.3-Built-in-Event-Definition-and-Implementation",
+          "title": {
+            "zh": "4.3 内置事件定义及实现",
+            "en": "4.3 Built-in Event Definition and Implementation"
+          }
+        },
+        {
+          "path": "4.4-VTable-State-Management-Types",
+          "title": {
+            "zh": "4.4 VTable 状态管理类型",
+            "en": "4.4 VTable State Management Types"
+          }
+        },
+        {
+          "path": "4.5-Event-to-State-Update-Process",
+          "title": {
+            "zh": "4.5 事件到状态的更新流程",
+            "en": "4.5 Event to State Update Process"
+          }
+        },
+        {
+          "path": "6.1-ListTable-Concept-and-Capability-Definition",
+          "title": {
+            "zh": "6.1 ListTable 概念和能力定义",
+            "en": "6.1 ListTable Concept and Capability Definition"
+          }
+        },
+        {
+          "path": "6.2-Basic-Table-Data-Processing",
+          "title": {
+            "zh": "6.2 基本表格数据处理",
+            "en": "6.2 Basic Table Data Processing"
+          }
+        },
+        {
+          "path": "6.3-ListTable-Code-Structure-and-Detail-Analysis",
+          "title": {
+            "zh": "6.3 ListTable 代码结构和细节分析",
+            "en": "6.3 ListTable Code Structure and Detail Analysis"
+          }
+        },
+        {
+          "path": "7.1-PivotTable-Concepts-and-Capability-Definition",
+          "title": {
+            "zh": "7.1 PivotTable 概念和能力定义",
+            "en": "7.1 PivotTable Concepts and Capability Definition"
+          }
+        },
+        {
+          "path": "7.2-Pivot-Table-and-Pivot-Chart-Data-Module",
+          "title": {
+            "zh": "7.2 透视表及透视图数据模块",
+            "en": "7.2 Pivot Table and Pivot Chart Data Module"
+          }
+        },
+        {
+          "path": "7.3-PivotTable-Code-Structure-and-Detail-Analysis",
+          "title": {
+            "zh": "7.3 PivotTable 代码结构和细节分析",
+            "en": "7.3 PivotTable Code Structure and Detail Analysis"
+          }
+        },
+        {
+          "path": "11-Data-Editing",
+          "title": {
+            "zh": "11. 数据编辑",
+            "en": "11. Data Editing"
+          }
+        },
+        {
+          "path": "React-VTable-Source-Code-Analysis-Document",
+          "title": {
+            "zh": "React-VTable 源码解析文档",
+            "en": "React-VTable Source Code Analysis Document"
+          }
+        },
+        {
+          "path": "Detailed-Explanation-of-VTable-Perspective-Combination-Chart",
+          "title": {
+            "zh": "VTable 透视组合图详解",
+            "en": "Detailed Explanation of VTable Perspective Combination Chart"
+          }
+        }
+      ]
     }
   ]
 }

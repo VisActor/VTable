@@ -9,7 +9,7 @@ option: ListTable#keyboardOptions.selectAllOnCtrlA
 
 # use keyboard to move select cell
 
-This example has shortcut key capabilities. Use the arrow keys to switch selected cells and press enter to enter editing. Of course, in addition to the direction keys, there are other shortcut keys, please refer to [Tutorial](../../guide/interaction/keyboard)
+This example has shortcut key capabilities. Use the arrow keys to switch selected cells and press enter to enter editing. Of course, in addition to the direction keys, there are other shortcut keys, please refer to [Tutorial](../../guide/shortcut)
 
 ## Key Configurations
 

@@ -219,12 +219,6 @@ export function initOptions(gantt: Gantt) {
       ? Object.assign({}, defaultTaskBarStyle, options?.taskBar?.projectStyle)
       : gantt.parsedOptions.taskBarStyle;
   const defaultMilestoneStyle = {
-    borderColor: 'red',
-    borderLineWidth: 1,
-    fillColor: 'green',
-    cornerRadius: 0,
-    width: 15,
-    labelText: '${title}',
     labelTextStyle: {
       fontSize: 16,
       color: 'red',

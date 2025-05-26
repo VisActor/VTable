@@ -163,11 +163,18 @@ $ rush change-all
 
 # 📖 Documents
 
-安装并且更新依赖后，可以执行 docs 命令，开启 VTable 的本地文档预览
+After installation & clone & update, run docs to preview VTable documents locally.
 
 ```bash
 # start vtable document server. execute in file path: ./
+$ rush update
+$ rush build
 $ rush docs
+```
+# 如果有依赖问题
+```bash
+$ rush purge
+$ rush update
 ```
 
 # 🔗 相关链接

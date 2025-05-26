@@ -65,6 +65,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
         name: 'list-tree-20000'
       },
       {
@@ -806,6 +810,10 @@ export const menus = [
       {
         path: 'theme',
         name: 'custom-list'
+      },
+      {
+        path: 'theme',
+        name: 'scrollbar-always-visible-space-correction'
       }
     ]
   },

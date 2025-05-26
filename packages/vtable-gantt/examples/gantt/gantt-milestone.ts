@@ -367,7 +367,7 @@ export function createTable() {
         fillColor: 'green',
         cornerRadius: 0,
         width: 15,
-        labelText: '${title}',
+        labelText: '{title}',
         labelTextStyle: {
           fontFamily: 'Arial',
           padding: 8

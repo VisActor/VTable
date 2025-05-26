@@ -30,12 +30,12 @@ export class TaskBar {
     if (!text) {
       return '';
     }
-    const fieldPattern = /\${([^}]+)}/g;
+    const fieldPattern = /{([^}]+)}/g;
     const matches = text.match(fieldPattern);
 
     if (matches) {
       matches.forEach(match => {
-        const fieldName = match.substring(2, match.length - 1);
+        const fieldName = match.substring(1, match.length - 1);
         const fieldValue = record[fieldName];
         if (fieldValue !== undefined) {
           text = text.replace(match, String(fieldValue));
@@ -290,7 +290,7 @@ export class TaskBar {
       cornerRadius: isMilestone
         ? this._scene._gantt.parsedOptions.taskBarMilestoneStyle.cornerRadius
         : taskBarStyle.cornerRadius,
-      clip: !isMilestone
+      clip: true
     });
     barGroup.name = 'task-bar-group';
     barGroupBox.appendChild(barGroup);
