@@ -114,7 +114,8 @@
     "d3-hexbin": "^0.2.2",
     "d3-hierarchy": "^3.1.1",
     "@resvg/resvg-js": "^2.5.0",
-    "pikaday": "1.8.2"
+    "pikaday": "1.8.2",
+    "@babel/plugin-transform-react-jsx": "7"
   },
   "unpkg": "latest",
   "unpkgFiles": [
