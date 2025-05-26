@@ -1,66 +1,58 @@
 ---
 category: examples
 group: gantt
-title: Gantt Chart Sub-task Layout Mode
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-taskShowMode.gif
+title: 甘特图项目任务显示模式
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-show-mode.gif
 link: gantt/gantt_task_show_mode
 option: Gantt#tasksShowMode
 ---
 
-# Gantt Chart Sub-task Layout Mode
+# 甘特图任务显示模式
 
-In Gantt, the task bar layout mode determines the display effect of the task bars. Gantt provides the following several task bar layout modes:
+在上面的示例中，主要展示了`Gantt#tasksShowMode`各个模式的展示效果。不过`Project_Sub_Tasks_Inline`模式有些特殊，单独拿出来展示一下。因为该模式需要配合将数据项的`type`设置为`project`，才能生效。
 
-- `Tasks_Separate`: Each task node is displayed in a separate row, with the parent task occupying one row and the subtasks occupying one row respectively. This is the default display effect.
-- `Sub_Tasks_Separate`: The parent task node is omitted and not displayed, and all subtask nodes are displayed in separate rows.
-- `Sub_Tasks_Inline`: The parent task node is omitted and not displayed, and all subtask nodes are placed in the same row.
-- `Sub_Tasks_Arrange`: The parent task node is omitted and not displayed, and all subtasks will maintain the data sequence in the records for layout, ensuring that the nodes do not overlap.
-- `Sub_Tasks_Compact`: The parent task node is omitted and not displayed, and all subtasks will be laid out according to the date order attribute, ensuring a compact display without node overlap.
-
-This configuration is set through the `Gantt#tasksShowMode` configuration item.
-## Key Configuration
+## 关键配置
 
 - `Gantt`
 - `Gantt#tasksShowMode`
 
-## Code Demo
+## 代码演示
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';
 let ganttInstance;
-const records =  [
+const records = [
   {
     id: 0,
     name: 'Planning',
-    start: '2024-11-15',
-    end: '2024-11-21',
+    type: 'project',
     children: [
       {
         id: 1,
-        name: 'Michael Smith',
+        name: 'Michael Smith 1',
         start: '2024-11-15',
-        end: '2024-11-17',
+        end: '2024-11-15',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       },
       {
         id: 2,
-        name: 'Emily',
+        name: 'Emily 2',
         start: '2024-11-17',
         end: '2024-11-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 3,
-        name: 'Rramily',
+        name: 'Rramily 3',
         start: '2024-11-19',
         end: '2024-11-20',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 4,
-        name: 'Lichael Join',
-        start: '2024-11-18',
-        end: '2024-11-19',
+        name: 'Lichael Join 4',
+        start: '2024-11-21',
+        end: '2024-11-21',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       }
     ]
@@ -68,12 +60,11 @@ const records =  [
   {
     id: 300,
     name: 'Research',
-    start: '2024-11-18',
-    end: '2024-11-21',
+     type: 'project',
     children: [
       {
         id: 5,
-        name: 'Ryan',
+        name: 'Ryan 5',
         start: '2024-11-18',
         end: '2024-11-21',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
@@ -82,19 +73,18 @@ const records =  [
   },
   {
     name: 'Goal Setting',
-    start: '2024-11-18',
-    end: '2024-11-21',
+    type: 'project',
     children: [
       {
         id: 6,
-        name: 'Daniel Davis',
+        name: 'Daniel Davis 6',
         start: '2024-11-21',
         end: '2024-11-22',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
       },
       {
         id: 7,
-        name: 'Lauren',
+        name: 'Lauren 7',
         start: '2024-11-18',
         end: '2024-11-19',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
@@ -104,40 +94,39 @@ const records =  [
 
   {
     name: 'Strategy',
-    start: '2024-11-20',
-    end: '2024-11-25',
+    type: 'project',
     children: [
       {
         id: 8,
-        name: 'Tacarah Siller',
+        name: 'Tacarah Siller 8',
         start: '2024-11-20',
         end: '2024-11-21',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 9,
-        name: 'Camentew Olision',
+        name: 'Camentew Olision 9',
         start: '2024-11-25',
         end: '2024-11-26',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       },
       {
         id: 10,
-        name: 'Sarah Miller',
+        name: 'Sarah Miller 10',
         start: '2024-11-17',
         end: '2024-11-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 11,
-        name: 'Matthew Wilson',
+        name: 'Matthew Wilson 11',
         start: '2024-11-22',
         end: '2024-11-25',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
       },
       {
         id: 12,
-        name: 'Grarah Poliller',
+        name: 'Grarah Poliller 12',
         start: '2024-11-23',
         end: '2024-11-24',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
@@ -146,12 +135,11 @@ const records =  [
   },
   {
     name: 'Execution',
-    start: '2024-11-22',
-    end: '2024-11-25',
+    type: 'project',
     children: [
       {
         id: 13,
-        name: 'Ashley Taylor',
+        name: 'Ashley Taylor 13',
         start: '2024-11-22',
         end: '2024-11-25',
 
@@ -159,14 +147,14 @@ const records =  [
       },
       {
         id: 14,
-        name: 'Megan',
+        name: 'Megan 14',
         start: '2024-11-27',
         end: '2024-11-30',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
       },
       {
         id: 15,
-        name: 'David',
+        name: 'David 15',
         start: '2024-12-10',
         end: '2024-12-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
@@ -175,19 +163,18 @@ const records =  [
   },
   {
     name: 'Monitoring',
-    start: '2024-12-02',
-    end: '2024-12-25',
+    type: 'project',
     children: [
       {
         id: 16,
-        name: 'Hannah',
+        name: 'Hannah 16',
         start: '2024-11-20',
         end: '2024-11-30',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
       },
       {
         id: 17,
-        name: 'Andrew',
+        name: 'Andrew 17',
         start: '2024-12-02',
         end: '2024-12-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
@@ -196,12 +183,11 @@ const records =  [
   },
   {
     name: 'Reporting',
-    start: '2024-12-22',
-    end: '2024-12-28',
+   type: 'project',
     children: [
       {
         id: 18,
-        name: 'Joshua Anderson',
+        name: 'Joshua Anderson 18',
         start: '2024-12-22',
         end: '2024-12-28',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
@@ -210,19 +196,18 @@ const records =  [
   },
   {
     name: 'Process review',
-    start: '2024-11-25',
-    end: '2024-11-30',
+   type: 'project',
     children: [
       {
         id: 19,
-        name: 'Christopher Moore',
+        name: 'Christopher Moore 19',
         start: '2024-11-25',
         end: '2024-11-30',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
       },
       {
         id: 20,
-        name: 'Emma',
+        name: 'Emma 20',
         start: '2024-12-01',
         end: '2024-12-18',
         avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
@@ -254,7 +239,7 @@ const option = {
     }
   },
   groupBy: true,
-  tasksShowMode: VTableGantt.TYPES.TasksShowMode.Sub_Tasks_Arrange,
+  tasksShowMode: VTableGantt.TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
   frame: {
     outerFrameStyle: {
       borderLineWidth: 1,
@@ -360,6 +345,7 @@ const option = {
   },
   minDate: '2024-11-14',
   maxDate: '2024-12-31',
+
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
     visible: 'none',
@@ -371,32 +357,4 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
-const container = document.getElementById(CONTAINER_ID).parentElement;
-const wrapper = document.createElement('div');
-wrapper.style.height = '25px';
-wrapper.style.width = '330px';
-wrapper.style.position = 'absolute';
-wrapper.style.top = '0px';
-wrapper.style.left = '0px';
-wrapper.style.zIndex = '1000';
-wrapper.style.backgroundColor = 'white';
-container.appendChild(wrapper);
-// create a select mode selection list
-const modeSelect = document.createElement('select');
-modeSelect.innerHTML = `
-<option value="tasks_separate">Tasks_Separate</option>
-<option value="sub_tasks_separate">Sub_Tasks_Separate</option>
-<option value="sub_tasks_inline">Sub_Tasks_Inline</option>
-<option value="sub_tasks_arrange" selected>Sub_Tasks_Arrange</option>
-<option value="sub_tasks_compact">Sub_Tasks_Compact</option>
-`;
-modeSelect.style.marginLeft = '5px';
-modeSelect.style.height = '20px';
-wrapper.appendChild(document.createTextNode('Task bar layout mode: '));
-wrapper.appendChild(modeSelect);
-
-modeSelect.addEventListener('change', (e) => {
-  const mode = e.target.value;
-  ganttInstance.updateTasksShowMode(mode);
-});
 ```

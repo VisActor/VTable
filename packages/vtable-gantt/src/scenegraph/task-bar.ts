@@ -17,7 +17,7 @@ import {
   getTextPos
 } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
-import { TasksShowMode } from '../ts-types';
+import { TasksShowMode, TaskType } from '../ts-types';
 
 const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.org/2000/svg">
   <line x1="30" y1="10" x2="30" y2="190" stroke="black" stroke-width="4"/>
@@ -165,6 +165,39 @@ export class TaskBar {
           }
         }
         continue;
+      } else if (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        const record = this._scene._gantt.getRecordByIndex(i);
+        const isExpanded = record.hierarchyState === 'expand';
+        // For project type records, we want to show all children in one line when collapsed
+        if (record.type === TaskType.PROJECT && record.children?.length > 0 && !isExpanded) {
+          const recordIndex = this._scene._gantt.getRecordIndexByTaskShowIndex(i);
+          const sub_task_indexs: number[] = Array.isArray(recordIndex) ? [...recordIndex] : [recordIndex];
+
+          const callInitBar = (record: any, sub_task_indexs: number[]) => {
+            if (record.children?.length > 0) {
+              for (let j = 0; j < record.children?.length; j++) {
+                const child_record = record.children[j];
+                if (child_record.type !== TaskType.PROJECT) {
+                  const barGroup = this.initBar(i, [...sub_task_indexs, j], record.children.length);
+                  if (barGroup) {
+                    this.barContainer.appendChild(barGroup);
+                  }
+                } else {
+                  //如果是project类型的子任务，需要递归调用 只将类型不是project的子任务添加到barContainer中
+                  callInitBar(child_record, [...sub_task_indexs, j]);
+                }
+              }
+            }
+          };
+          callInitBar(record, sub_task_indexs);
+        } else {
+          // For non-project tasks, use the default Tasks_Separate mode
+          const barGroup = this.initBar(i);
+          if (barGroup) {
+            this.barContainer.appendChild(barGroup);
+          }
+        }
+        continue;
       } else {
         const barGroup = this.initBar(i);
         if (barGroup) {
@@ -173,14 +206,19 @@ export class TaskBar {
       }
     }
   }
-  // childIndex 只有当TasksShowMode时dsunb_task_* 的时候才会传入
-  initBar(index: number, childIndex?: number, childrenLength?: number) {
+
+  /**
+   * @param index 任务显示的index，从0开始
+   * @param childIndex 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
+   */
+  initBar(index: number, childIndex?: number | number[], childrenLength?: number) {
     const taskBarCustomLayout = this._scene._gantt.parsedOptions.taskBarCustomLayout;
     const { startDate, endDate, taskDays, progress, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
       index,
       childIndex
     );
-    const isMilestone = taskRecord.type === 'milestone';
+    const isMilestone = taskRecord.type === TaskType.MILESTONE;
     if (
       (isMilestone && !startDate) ||
       (!isMilestone && (taskDays <= 0 || !startDate || !endDate || startDate.getTime() > endDate.getTime()))
@@ -193,16 +231,16 @@ export class TaskBar {
 
     const taskBarStyle = this._scene._gantt.getTaskBarStyle(index, childIndex);
     const taskbarHeight = taskBarStyle.width;
-    const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
+    // const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
-    const subTaskShowRowCount =
-      this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
-        ? childrenLength || 1
-        : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
-        ? computeRowsCountByRecordDate(this._scene._gantt, this._scene._gantt.records[index])
-        : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-        ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
-        : 1;
+    // const subTaskShowRowCount =
+    //   this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+    //     ? childrenLength || 1
+    //     : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange
+    //     ? computeRowsCountByRecordDate(this._scene._gantt, this._scene._gantt.records[index])
+    //     : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+    //     ? computeRowsCountByRecordDateForCompact(this._scene._gantt, this._scene._gantt.records[index])
+    //     : 1;
     const oneTaskHeigth = this._scene._gantt.parsedOptions.rowHeight; // this._scene._gantt.getRowHeightByIndex(index) / subTaskShowRowCount;
     const milestoneTaskBarHeight = this._scene._gantt.parsedOptions.taskBarMilestoneStyle.width;
     const x =
@@ -212,7 +250,7 @@ export class TaskBar {
     const y =
       this._scene._gantt.getRowsHeightByIndex(0, index - 1) +
       (this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
-        ? (childIndex ?? 0) * oneTaskHeigth
+        ? ((childIndex as number) ?? 0) * oneTaskHeigth
         : this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
           this._scene._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
         ? taskRecord.vtable_gantt_showIndex * oneTaskHeigth
@@ -303,7 +341,7 @@ export class TaskBar {
       rect.name = 'task-bar-rect';
       barGroup.appendChild(rect);
       barGroupBox.barRect = rect;
-      if (taskRecord.type !== 'milestone') {
+      if (taskRecord.type !== TaskType.MILESTONE) {
         // 创建已完成部分任务条rect
         const progress_rect = createRect({
           x: 0,
@@ -320,7 +358,7 @@ export class TaskBar {
     }
 
     rootContainer && barGroup.appendChild(rootContainer);
-    if (renderDefaultText && taskRecord.type !== 'milestone') {
+    if (renderDefaultText && taskRecord.type !== TaskType.MILESTONE) {
       const { textAlign, textBaseline, fontSize, fontFamily, textOverflow, color, padding } =
         this._scene._gantt.parsedOptions.taskBarLabelStyle;
       const position = getTextPos(toBoxArray(padding), textAlign, textBaseline, taskBarSize, taskbarHeight);
@@ -505,7 +543,7 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
     const taskBarStyle = this._scene._gantt.getTaskBarStyle(target.task_index, target.sub_task_index);
-    if (taskRecord.type === 'milestone') {
+    if (taskRecord.type === TaskType.MILESTONE) {
       this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
     } else {
       const cornerRadius =
@@ -517,7 +555,7 @@ export class TaskBar {
 
     let leftResizable = true;
     let rightResizable = true;
-    if (taskRecord.type === 'milestone') {
+    if (taskRecord.type === TaskType.MILESTONE) {
       leftResizable = false;
       rightResizable = false;
     } else if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
@@ -616,7 +654,7 @@ export class TaskBar {
     selectedBorder.appendChild(selectRectBorder);
 
     if (showLinkPoint) {
-      const isMilestone = record.type === 'milestone';
+      const isMilestone = record.type === TaskType.MILESTONE;
       const linePointPadding = isMilestone ? 15 : 10;
       const linkPointContainer = new Group({
         x: -linePointPadding,

@@ -1,13 +1,13 @@
 ---
 category: examples
 group: gantt
-title: 甘特图子任务布局模式
+title: 甘特图任务显示模式
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-taskShowMode.gif
-link: gantt/subtask_layout
+link: gantt/gantt_task_show_mode
 option: Gantt#tasksShowMode
 ---
 
-# 甘特图子任务布局模式
+# 甘特图任务显示模式
 
 在 Gantt 中，任务条布局模式决定了任务条的显示效果。Gantt 提供了以下几种任务条布局模式：
 
@@ -16,6 +16,7 @@ option: Gantt#tasksShowMode
 - `Sub_Tasks_Inline`: 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。
 - `Sub_Tasks_Arrange`: 省去父任务节点不展示，且所有子任务会维持 records 中的数据顺序布局，并保证节点不重叠展示。
 - `Sub_Tasks_Compact`: 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示。
+- `Project_Sub_Tasks_Inline`: 针对设置了`type`为`project`的任务，会按照`Sub_Tasks_Inline`的模式来展示（非展开情况下）。其他type不是`project`的任务仍然则按照`Tasks_Separate`的模式来展示。（不限制子任务的层级。）
 
 以上配置通过 `Gantt#tasksShowMode` 配置项来设置。
 ## 关键配置
