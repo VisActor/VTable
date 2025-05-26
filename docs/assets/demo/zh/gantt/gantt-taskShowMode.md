@@ -17,6 +17,7 @@ option: Gantt#tasksShowMode
 - `Sub_Tasks_Arrange`: 省去父任务节点不展示，且所有子任务会维持 records 中的数据顺序布局，并保证节点不重叠展示。
 - `Sub_Tasks_Compact`: 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示。
 
+以上配置通过 `Gantt#tasksShowMode` 配置项来设置。
 ## 关键配置
 
 - `Gantt`
@@ -67,6 +68,8 @@ const records = [
   {
     id: 300,
     name: 'Research',
+    start: '2024-11-18',
+    end: '2024-11-21',
     children: [
       {
         id: 5,
@@ -79,6 +82,8 @@ const records = [
   },
   {
     name: 'Goal Setting',
+    start: '2024-11-18',
+    end: '2024-11-21',
     children: [
       {
         id: 6,
@@ -99,6 +104,8 @@ const records = [
 
   {
     name: 'Strategy',
+    start: '2024-11-20',
+    end: '2024-11-25',
     children: [
       {
         id: 8,
@@ -139,6 +146,8 @@ const records = [
   },
   {
     name: 'Execution',
+    start: '2024-11-22',
+    end: '2024-11-25',
     children: [
       {
         id: 13,
@@ -166,6 +175,8 @@ const records = [
   },
   {
     name: 'Monitoring',
+    start: '2024-12-02',
+    end: '2024-12-25',
     children: [
       {
         id: 16,
@@ -184,7 +195,9 @@ const records = [
     ]
   },
   {
-    title: 'Reporting',
+    name: 'Reporting',
+    start: '2024-12-22',
+    end: '2024-12-28',
     children: [
       {
         id: 18,
@@ -197,6 +210,8 @@ const records = [
   },
   {
     name: 'Process review',
+    start: '2024-11-25',
+    end: '2024-11-30',
     children: [
       {
         id: 19,
@@ -355,4 +370,33 @@ const option = {
 };
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
+
+const container = document.getElementById(CONTAINER_ID).parentElement;
+const wrapper = document.createElement('div');
+wrapper.style.height = '25px';
+wrapper.style.width = '280px';
+wrapper.style.position = 'absolute';
+wrapper.style.top = '0px';
+wrapper.style.left = '0px';
+wrapper.style.zIndex = '1000';
+wrapper.style.backgroundColor = 'white';
+container.appendChild(wrapper);
+// 创建一个select模式选择列表
+const modeSelect = document.createElement('select');
+modeSelect.innerHTML = `
+<option value="tasks_separate">Tasks_Separate</option>
+<option value="sub_tasks_separate">Sub_Tasks_Separate</option>
+<option value="sub_tasks_inline">Sub_Tasks_Inline</option>
+<option value="sub_tasks_arrange" selected>Sub_Tasks_Arrange</option>
+<option value="sub_tasks_compact">Sub_Tasks_Compact</option>
+`;
+modeSelect.style.marginLeft = '5px';
+modeSelect.style.height = '20px';
+wrapper.appendChild(document.createTextNode('任务条布局模式: '));
+wrapper.appendChild(modeSelect);
+
+modeSelect.addEventListener('change', (e) => {
+  const mode = e.target.value;
+  ganttInstance.updateTasksShowMode(mode);
+});
 ```
