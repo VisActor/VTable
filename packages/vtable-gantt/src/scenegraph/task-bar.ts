@@ -26,6 +26,83 @@ const TASKBAR_HOVER_ICON = `<svg width="100" height="200" xmlns="http://www.w3.o
 export const TASKBAR_HOVER_ICON_WIDTH = 10;
 
 export class TaskBar {
+  formatMilestoneText(text: string, record: any): string {
+    if (!text) {
+      return '';
+    }
+    const fieldPattern = /{([^}]+)}/g;
+    const matches = text.match(fieldPattern);
+
+    if (matches) {
+      matches.forEach(match => {
+        const fieldName = match.substring(1, match.length - 1);
+        const fieldValue = record[fieldName];
+        if (fieldValue !== undefined) {
+          text = text.replace(match, String(fieldValue));
+        }
+      });
+    }
+    return text;
+  }
+
+  calculateMilestoneTextPosition(
+    position: string,
+    milestoneWidth: number,
+    padding: number | number[] = 4
+  ): {
+    textX: number;
+    textY: number;
+    textAlignValue: CanvasTextAlign;
+    textBaselineValue: CanvasTextBaseline;
+  } {
+    const paddingVal = typeof padding === 'number' ? padding : 4;
+    let textX = 0;
+    let textY = 0;
+    let textAlignValue: CanvasTextAlign = 'left';
+    let textBaselineValue: CanvasTextBaseline = 'middle';
+
+    // 将文本位置改为以中心点为基准
+    const center = milestoneWidth / 2;
+
+    switch (position) {
+      case 'left':
+        textX = -paddingVal;
+        textY = center;
+        textAlignValue = 'end';
+        textBaselineValue = 'middle';
+        break;
+      case 'right':
+        textX = milestoneWidth + paddingVal;
+        textY = center;
+        textAlignValue = 'start';
+        textBaselineValue = 'middle';
+        break;
+      case 'top':
+        textX = center;
+        textY = -paddingVal;
+        textAlignValue = 'center';
+        textBaselineValue = 'bottom';
+        break;
+      case 'bottom':
+        textX = center;
+        textY = milestoneWidth + paddingVal;
+        textAlignValue = 'center';
+        textBaselineValue = 'top';
+        break;
+      default:
+        textX = milestoneWidth + paddingVal;
+        textY = center;
+        textAlignValue = 'start';
+        textBaselineValue = 'middle';
+    }
+
+    return {
+      textX,
+      textY,
+      textAlignValue,
+      textBaselineValue
+    };
+  }
   group: Group;
   barContainer: Group;
   hoverBarGroup: Group;
@@ -282,6 +359,46 @@ export class TaskBar {
       barGroupBox.labelStyle = this._scene._gantt.parsedOptions.taskBarLabelStyle;
 
       barGroupBox.updateTextPosition();
+    }
+    if (
+      renderDefaultText &&
+      taskRecord.type === 'milestone' &&
+      this._scene._gantt.parsedOptions.taskBarMilestoneStyle.labelText
+    ) {
+      const milestoneStyle = this._scene._gantt.parsedOptions.taskBarMilestoneStyle;
+      const textStyle = milestoneStyle.labelTextStyle || {};
+      const pos = this.calculateMilestoneTextPosition(
+        milestoneStyle.textOrient || 'right',
+        milestoneStyle.width,
+        textStyle.padding ?? 4
+      );
+
+      const textContainer = new Group({
+        x,
+        y,
+        width: milestoneStyle.width,
+        height: milestoneStyle.width,
+        angle: 0,
+        pickable: false
+      });
+
+      const milestoneLabel = createText({
+        x: pos.textX,
+        y: pos.textY,
+        fontSize: textStyle.fontSize || 16,
+        fontFamily: textStyle.fontFamily || 'Arial',
+        fill: textStyle.color || '#ff0000',
+        textBaseline: textStyle.textBaseline || pos.textBaselineValue,
+        textAlign: textStyle.textAlign || pos.textAlignValue,
+        text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
+        pickable: false
+      });
+
+      textContainer.appendChild(milestoneLabel);
+      this.barContainer.appendChild(textContainer);
+
+      barGroupBox.milestoneTextLabel = milestoneLabel;
+      barGroupBox.milestoneTextContainer = textContainer;
     }
     return barGroupBox;
   }
