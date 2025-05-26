@@ -142,7 +142,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
-            field: '_vtable_rowSeries_number', //rowSeriesNumber.field,
+            field: rowSeriesNumber.field,
             icon: rowSeriesNumber.icon,
             headerIcon: rowSeriesNumber.headerIcon,
             isChildNode: false

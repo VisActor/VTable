@@ -1,12 +1,13 @@
 import type { IThemeSpec } from '@src/vrender';
 import { Group } from '../../graphic/group';
-import type {
-  CellInfo,
-  CellRange,
-  CheckboxColumnDefine,
-  CheckboxStyleOption,
-  ColumnIconOption,
-  SparklineSpec
+import {
+  InternalIconName,
+  type CellInfo,
+  type CellRange,
+  type CheckboxColumnDefine,
+  type CheckboxStyleOption,
+  type ColumnIconOption,
+  type SparklineSpec
 } from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
@@ -20,6 +21,7 @@ import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
 import { dealWithIcon, dealWithIconLayout } from '../../utils/text-icon-layout';
 import { CheckboxContent } from '../../component/checkbox-content';
 import { CUSTOM_CONTAINER_NAME } from '../../component/custom';
+import type { ListTable } from '../../..';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -164,7 +166,12 @@ export function createCheckboxCellGroup(
     isCheckboxTree
   );
 
-  if (cellContentLeftIcons.length !== 0 || cellContentRightIcons.length !== 0) {
+  // 目前只支持展示折叠或者展开icons
+  if (
+    cellContentLeftIcons.length === 1 &&
+    (cellContentLeftIcons[0].name === InternalIconName.expandIconName ||
+      cellContentLeftIcons[0].name === InternalIconName.collapseIconName)
+  ) {
     const checkContent = new CheckboxContent({
       x: 0,
       y: 0,
@@ -324,6 +331,15 @@ function createCheckbox(
   } else if (typeof value === 'boolean') {
     isChecked = value;
     text = '';
+  }
+  // 处理 rowSeriesNumbe 在record设置checkbox是否勾选与是否禁用的场景
+  if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+    const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
+    if (checkboxSeriesNumberStyle) {
+      isChecked = checkboxSeriesNumberStyle.checked;
+      isDisabled = checkboxSeriesNumberStyle.disable;
+      text = checkboxSeriesNumberStyle.text ?? '';
+    }
   }
   isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, isChecked);
   const hierarchyOffset = getHierarchyOffset(col, row, table);

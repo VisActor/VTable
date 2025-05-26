@@ -17,6 +17,8 @@ Basic table tree display, turn on the tree mode of a certain column, if the chil
 - children: true Set to enable tree display on a certain row of data and lazily load child node data
 - setRecordChildren(children: any[], col: number, row: number) Call this method after lazily loading child node data in a row of data and return it to the table component
 - TREE_HIERARCHY_STATE_CHANGE tree display state change events
+- cellType: 'checkbox' Turns on the checkbox. Use it with tree:true to display the checkbox in a tree format.
+- enableCheckboxCascade: true It is used globally to turn on the checkbox cascade. It must be used with cellType: 'checkbox' and tree:true to synchronize the parent and child element selections.
 
 ## Code Demo
 
@@ -184,6 +186,9 @@ const option = {
   columns: [
     {
       field: 'category',
+      // Supports checkbox tree display.
+      // To synchronize parent and child element checkboxes, be sure to configure enableCheckboxCascade: true in the option global configuration.
+      // cellType: 'checkbox',
       tree: true,
       title: 'category',
       width: 'auto',
@@ -203,6 +208,7 @@ const option = {
       sort: true
     }
   ],
+  // enableCheckboxCascade:true,
   showPin: true, //显示VTable内置冻结列图标
   widthMode: 'standard',
   allowFrozenColCount: 2,
