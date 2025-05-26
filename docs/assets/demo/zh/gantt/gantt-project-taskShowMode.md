@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图项目任务显示模式
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-taskShowMode.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-show-mode.gif
 link: gantt/gantt_task_show_mode
 option: Gantt#tasksShowMode
 ---

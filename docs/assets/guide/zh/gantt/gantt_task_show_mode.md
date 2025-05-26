@@ -7,7 +7,7 @@
 - `Sub_Tasks_Inline`: 省去父任务节点不展示，并把所有子任务的节点都放到同一行来展示。（仅支持一层子任务的展示。）
 - `Sub_Tasks_Arrange`: 省去父任务节点不展示，且所有子任务会维持 records 中的数据顺序布局，并保证节点不重叠展示。（仅支持一层子任务的展示。）
 - `Sub_Tasks_Compact`: 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示。（仅支持一层子任务的展示。）
-- `Project_Sub_Tasks_Inline`: 针对设置了`type`为`project`的任务，会按照`Sub_Tasks_Inline`的模式来展示。其他任务则按照`Tasks_Separate`的模式来展示。（不限制子任务的层级。）
+- `Project_Sub_Tasks_Inline`: 针对设置了`type`为`project`的任务，会按照`Sub_Tasks_Inline`的模式来展示（非展开情况下）。其他type不是`project`的任务仍然则按照`Tasks_Separate`的模式来展示。（不限制子任务的层级。）
 
 
 # 配置方式
