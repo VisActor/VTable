@@ -758,19 +758,17 @@
           }
         },
         {
+          "path": "copy-paste-cell-value",
+          "title": {
+            "zh": "复制粘贴",
+            "en": "copy paste cell value"
+          }
+        },
+        {
           "path": "context-menu",
           "title": {
             "zh": "右键菜单(复制/粘贴/删除)",
             "en": "Right click menu(copy/paste/delete)"
-          },
-          "meta": {
-            "title": "Right click menu",
-            "keywords": "",
-            "category": "demo",
-            "group": "Interaction",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -820,13 +818,6 @@
           "title": {
             "zh": "方向键切换选中单元格",
             "en": "arrowkeys move select"
-          }
-        },
-        {
-          "path": "copy-paste-cell-value",
-          "title": {
-            "zh": "复制粘贴",
-            "en": "copy paste cell value"
           }
         },
         {
