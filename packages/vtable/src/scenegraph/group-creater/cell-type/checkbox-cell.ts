@@ -1,6 +1,13 @@
 import type { IThemeSpec } from '@src/vrender';
 import { Group } from '../../graphic/group';
-import type { CellInfo, CellRange, CheckboxColumnDefine, CheckboxStyleOption, SparklineSpec } from '../../../ts-types';
+import type {
+  CellInfo,
+  CellRange,
+  CheckboxColumnDefine,
+  CheckboxStyleOption,
+  ColumnIconOption,
+  SparklineSpec
+} from '../../../ts-types';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isObject } from '@visactor/vutils';
 import type { CheckboxAttributes } from '@src/vrender';
@@ -10,7 +17,9 @@ import { getOrApply } from '../../../tools/helper';
 import type { CheckboxStyle } from '../../../body-helper/style/CheckboxStyle';
 import { getProp } from '../../utils/get-prop';
 import { getCellBorderStrokeWidth } from '../../utils/cell-border-stroke-width';
-import { dealWithIconLayout } from '../../utils/text-icon-layout';
+import { dealWithIcon, dealWithIconLayout } from '../../utils/text-icon-layout';
+import { CheckboxContent } from '../../component/checkbox-content';
+import { CUSTOM_CONTAINER_NAME } from '../../component/custom';
 
 export function createCheckboxCellGroup(
   cellGroup: Group | null,
@@ -30,7 +39,8 @@ export function createCheckboxCellGroup(
   cellTheme: IThemeSpec,
   define: CheckboxColumnDefine,
   range: CellRange | undefined,
-  isAsync: boolean
+  isAsync: boolean,
+  isCheckboxTree: boolean
 ) {
   // cell
   if (!cellGroup) {
@@ -97,17 +107,25 @@ export function createCheckboxCellGroup(
   let iconWidth = 0;
   let cellLeftIconWidth = 0;
   let cellRightIconWidth = 0;
+  let cellabsoluteRightIconWidth = 0;
+  let cellContentLeftIcons: ColumnIconOption[] = [];
+  let cellContentRightIcons: ColumnIconOption[] = [];
   if (Array.isArray(icons) && icons.length !== 0) {
-    const { leftIconWidth, rightIconWidth, absoluteLeftIconWidth, absoluteRightIconWidth } = dealWithIconLayout(
-      icons,
-      cellGroup,
-      range,
-      table
-    );
+    const {
+      leftIconWidth,
+      rightIconWidth,
+      contentLeftIcons,
+      contentRightIcons,
+      absoluteLeftIconWidth,
+      absoluteRightIconWidth
+    } = dealWithIconLayout(icons, cellGroup, range, table);
 
     iconWidth = leftIconWidth + rightIconWidth;
     cellLeftIconWidth = leftIconWidth;
     cellRightIconWidth = rightIconWidth;
+    cellContentLeftIcons = contentLeftIcons;
+    cellContentRightIcons = contentRightIcons;
+    cellabsoluteRightIconWidth = absoluteRightIconWidth;
 
     // 更新各个部分横向位置
     cellGroup.forEachChildren((child: any) => {
@@ -142,13 +160,108 @@ export function createCheckboxCellGroup(
     padding,
     cellTheme,
     define,
-    table
+    table,
+    isCheckboxTree
   );
-  if (checkboxComponent) {
-    cellGroup.appendChild(checkboxComponent);
-  }
 
-  checkboxComponent.render();
+  if (cellContentLeftIcons.length !== 0 || cellContentRightIcons.length !== 0) {
+    const checkContent = new CheckboxContent({
+      x: 0,
+      y: 0,
+      fill: false,
+      stroke: false,
+      pickable: false
+    });
+    checkContent.name = 'checkbox-content';
+
+    checkContent.setCheckboxContentOption({
+      autoWidth: false,
+      autoHeight: false,
+      cellWidth: width - (padding[1] + padding[3]),
+      cellHeight: height - padding[0] - padding[2],
+      align: textAlign,
+      baseline: textBaseline
+    });
+
+    const dealWithIconComputeVar = {
+      addedHierarchyOffset: 0
+    }; //为了只增加一次indent的缩进值，如果有两个icon都dealWithIcon的话
+
+    cellContentLeftIcons.forEach(icon => {
+      const iconMark = dealWithIcon(
+        icon,
+        undefined,
+        cellGroup.col,
+        cellGroup.row,
+        range,
+        table,
+        dealWithIconComputeVar
+      );
+      iconMark.role = 'icon-content-left';
+      iconMark.name = icon.name;
+      checkContent.addLeftOccupyingIcon(iconMark);
+    });
+
+    if (checkboxComponent) {
+      checkContent.addCheckbox(checkboxComponent);
+    }
+    cellGroup.appendChild(checkContent);
+    checkContent.layout();
+
+    const contentWidth = checkContent.AABBBounds.width();
+    const contentHeight = checkContent.AABBBounds.height();
+
+    // 内容添加后单元格的宽高
+    const Awidth = false
+      ? cellLeftIconWidth + contentWidth + cellRightIconWidth // + padding[1] + padding[3]
+      : width - (padding[1] + padding[3]);
+    const Aheight = height - (padding[0] + padding[2]);
+
+    // 更新各个部分横向位置
+    cellGroup.forEachChildren((child: any) => {
+      if (child.role === 'icon-left') {
+        child.setAttribute('x', child.attribute.x + padding[3]);
+      } else if (child.role === 'icon-right') {
+        child.setAttribute('x', child.attribute.x + Awidth - cellRightIconWidth + padding[3]);
+      } else if (child.role === 'icon-absolute-right') {
+        child.setAttribute('x', child.attribute.x + Awidth - cellabsoluteRightIconWidth + padding[3] + padding[1]);
+      } else if (child.name === 'content' || child.name === 'checkbox-content') {
+        if (textAlign === 'center' && child.type !== 'richtext') {
+          child.setAttribute(
+            'x',
+            padding[3] + cellLeftIconWidth + (Awidth - cellLeftIconWidth - cellRightIconWidth) / 2
+          );
+        } else if (textAlign === 'right' && child.type !== 'richtext') {
+          child.setAttribute('x', padding[3] + Awidth - cellRightIconWidth);
+        } else {
+          child.setAttribute('x', padding[3] + cellLeftIconWidth);
+        }
+      }
+    });
+
+    // 更新各个部分纵向位置
+    cellGroup.forEachChildren((child: any) => {
+      if (child.name === CUSTOM_CONTAINER_NAME) {
+        return;
+      }
+      if (textBaseline === 'middle') {
+        // child.setAttribute('y', padding[0] + (Aheight - child.AABBBounds.height()) / 2);
+        if (child?._checkboxGroup as Group) {
+          child._leftGroup.setAttribute('y', padding[0] + (Aheight - child._checkboxGroup.AABBBounds.height()) / 2);
+        }
+      } else if (textBaseline === 'bottom') {
+        child.setAttribute('y', padding[0] + Aheight - child.AABBBounds.height());
+      } else {
+        child.setAttribute('y', padding[0]);
+      }
+    });
+  } else {
+    if (checkboxComponent) {
+      cellGroup.appendChild(checkboxComponent);
+    }
+
+    checkboxComponent.render();
+  }
 
   width -= padding[1] + padding[3] + iconWidth;
   height -= padding[0] + padding[2];
@@ -183,7 +296,8 @@ function createCheckbox(
   padding: number[],
   cellTheme: IThemeSpec,
   define: CheckboxColumnDefine,
-  table: BaseTableAPI
+  table: BaseTableAPI,
+  isCheckboxTree: boolean
 ) {
   const style = table._getCellStyle(col, row) as CheckboxStyle;
   const size = getProp('size', style, col, row, table);
@@ -255,7 +369,7 @@ function createCheckbox(
     // widthLimit: autoColWidth ? -1 : colWidth - (padding[1] + padding[3]),
     heightLimit: autoRowHeight ? -1 : cellHeight - Math.floor(padding[0] + padding[2]),
     pickable: false,
-    dx: hierarchyOffset,
+    dx: isCheckboxTree ? 0 : hierarchyOffset,
     whiteSpace: text.length === 1 && !autoWrapText ? 'no-wrap' : 'normal'
   };
   const testAttribute = cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute;
@@ -271,6 +385,7 @@ function createCheckbox(
       width: size,
       height: size
     },
+    dx: isCheckboxTree ? hierarchyOffset : 0,
     spaceBetweenTextAndIcon,
     disabled: isDisabled ?? globalDisable ?? false
   };
