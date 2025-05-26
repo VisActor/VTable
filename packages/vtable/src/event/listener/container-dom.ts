@@ -651,14 +651,17 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
     table.eventManager.inertiaScroll.endInertia();
+   
+    // 如果是grabing状态 但不是resize或move的状态 则结束grabing状态
     stateManager.updateInteractionState(InteractionState.default);
+
     if (stateManager.interactionState === 'grabing' && stateManager.isResizeCol()) {
       endResizeCol(table);
     } else if (stateManager.interactionState === 'grabing' && stateManager.isResizeRow()) {
       endResizeRow(table);
     } else if (stateManager.isMoveCol()) {
       const endMoveColSuccess = table.stateManager.endMoveCol();
-      fireMoveColEventListeners(table, endMoveColSuccess, e);
+      fireMoveColEventListeners(table, endMoveColSuccess, e); 
     } else if (table.editorManager.editingEditor) {
       if (!table.getElement().contains(target)) {
         // 如果点击到表格外部的dom
