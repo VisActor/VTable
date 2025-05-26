@@ -641,6 +641,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       return;
     }
     const target = e.target as HTMLElement;
+    
     if (target !== table.canvas) {
       globalPointerupOutsideCallback(e);
     }
@@ -650,7 +651,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     table.eventManager.isDown = false;
     table.eventManager.isDraging = false;
     table.eventManager.inertiaScroll.endInertia();
-    
     if (stateManager.interactionState === 'grabing' && stateManager.isResizeCol()) {
       endResizeCol(table);
     } else if (stateManager.interactionState === 'grabing' && stateManager.isResizeRow()) {
@@ -673,7 +673,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
     stateManager.updateInteractionState(InteractionState.default);
-    
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
