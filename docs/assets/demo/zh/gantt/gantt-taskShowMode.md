@@ -3,7 +3,7 @@ category: examples
 group: gantt
 title: 甘特图任务显示模式
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-taskShowMode.gif
-link: gantt/subtask_layout
+link: gantt/gantt_task_show_mode
 option: Gantt#tasksShowMode
 ---
 

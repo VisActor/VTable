@@ -1,22 +1,22 @@
 ---
 category: examples
 group: gantt
-title: 甘特图项目任务显示模式
+title: Gantt Project Task Show Mode
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-taskShowMode.gif
 link: gantt/gantt_task_show_mode
 option: Gantt#tasksShowMode
 ---
 
-# 甘特图任务显示模式
+# Gantt Project Task Show Mode
 
-在上面的示例中，主要展示了`Gantt#tasksShowMode`各个模式的展示效果。不过`Project_Sub_Tasks_Inline`模式有些特殊，单独拿出来展示一下。因为该模式需要配合将数据项的`type`设置为`project`，才能生效。
+In the above example, the main purpose is to show the effect of the `Gantt#tasksShowMode` option. However, the `Project_Sub_Tasks_Inline` mode is special, so it is displayed separately. This mode requires setting the `type` of the data item to `project` to take effect.
 
-## 关键配置
+## Key Configuration
 
 - `Gantt`
 - `Gantt#tasksShowMode`
 
-## 代码演示
+## Code Demo
 
 ```javascript livedemo template=vtable
 // import * as VTableGantt from '@visactor/vtable-gantt';

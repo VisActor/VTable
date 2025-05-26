@@ -9,7 +9,7 @@ option: Gantt#taskBar
 
 # Basic Usage of Gantt Chart
 
-This example demonstrates the basic usage of the Gantt chart.
+This example demonstrates the basic usage of the Gantt chart. The task types include the default `Task` type, the `Milestone` type, and the `Project` type. The `Project` type is used to represent projects and can contain multiple sub-tasks. For details, see [Gantt Project Task Display Mode](./gantt_project_taskShowMode).
 
 ## Key Configuration
 
