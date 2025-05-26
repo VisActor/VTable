@@ -2,14 +2,31 @@
 
 ## 功能介绍
 
-PasteAddRowPlugin 是为了扩展当在表格中进行粘贴时，当要粘贴插入的数据大于剩余行数，则新增行而写的插件。
+PasteAddRowColumnPlugin 是为了扩展当在表格中进行粘贴时，当要粘贴插入的数据大于剩余行数和列数时，则新增行和列而写的插件。
 
-该插件监听了`vTable`实例的`COPY_DATA`事件!
+该插件监听了`vTable`实例的`PASTED_DATA`事件!
+
+## 插件配置
+
+添加行和列的插件的配置选项：
+
+```ts
+export interface AddRowColumnOptions {
+  /**
+   * 添加列的回调函数
+   */
+  addColumnCallback?: (col: number, vTable: VTable.ListTable) => void;
+  /**
+   * 添加行的回调函数
+   */
+  addRowCallback?: (row: number, vTable: VTable.ListTable) => void;
+}
+```
 
 ## 插件示例
 初始化插件对象，添加到vTable配置的plugins中。
 ```
-const pasteAddRowPlugin = new PasteAddRowPlugin();
+const pasteAddRowColumnPlugin = new PasteAddRowColumnPlugin();
 const option = {
   records,
   columns,
@@ -18,7 +35,7 @@ const option = {
     copySelected: true,
     pasteValueToCell: true
   },
-  plugins: [pasteAddRowPlugin]
+  plugins: [pasteAddRowColumnPlugin]
 };
 ```
 为了能保证插件能正常工作，需要在vTable初始化时配置`keyboardOptions`，并设置`copySelected`和`pasteValueToCell`为`true`。
@@ -39,7 +56,7 @@ const generatePersons = count => {
     city: 'beijing',
   }));
 };
-  const pasteAddRowPlugin = new VTablePlugins.PasteAddRowPlugin();
+  const pasteAddRowColumnPlugin = new VTablePlugins.PasteAddRowColumnPlugin();
   const option = {
     records: generatePersons(20),
     rowSeriesNumber: {},
@@ -84,7 +101,7 @@ const generatePersons = count => {
     copySelected: true,
     pasteValueToCell: true
   },
-  plugins: [pasteAddRowPlugin]
+  plugins: [pasteAddRowColumnPlugin]
   };
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;

@@ -13,7 +13,7 @@ option: plugins
 
 在本示例中我们组合运用了以下插件：
 - `AddRowColumnPlugin`：添加行和列；
-- `PasteAddRowPlugin`：粘贴时行数不足时添加新行；
+- `PasteAddRowColumnPlugin`：粘贴时行或列数不足时添加新行或新列；
 - `ColumnSeriesPlugin`：列系列插件；
 - `RowSeriesPlugin`：行系列插件；
 - `HighlightHeaderWhenSelectCellPlugin`：高亮选中单元格；
@@ -81,7 +81,20 @@ VTable.register.editor('input', input_editor);
     rowHighlight: true
   });
   const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
-  const pasteAddRowPlugin = new VTablePlugins.PasteAddRowPlugin();
+  const pasteAddRowPlugin = new VTablePlugins.PasteAddRowPlugin({
+    addColumnCallback: col => {
+      // 新增列时，重置列数
+      columnSeries.resetColumnCount(columnSeries.pluginOptions.columnCount + 1);
+      // 将table实例中的数据源records每一个数组中新增一个空字符串，对应新增的列
+      const newRecords = tableInstance.records.map(record => {
+        if (Array.isArray(record)) {
+          record.splice(col - 1, 0, '');
+        }
+        return record;
+      });
+      tableInstance.setRecords(newRecords);
+    }
+  });
   const option = {
     // 二维数组的数据 和excel的行列一致
     records: [

@@ -2,14 +2,32 @@
 
 ## Introduction
 
-PasteAddRowPlugin is a plugin written to extend the function of adding new rows when the data to be pasted is greater than the number of remaining rows in a table.
+PasteAddRowColumnPlugin is a plugin written to extend the function of adding rows and columns when the data to be pasted is greater than the number of remaining rows and columns in a table.
 
-This plugin listens to the `COPY_DATA` event of the `vTable` instance!
+This plugin listens to the `PASTED_dATA` event of the `vTable` instance!
+
+## Plugin Configuration
+
+Configuration options for the row and column addition plugin:
+
+```ts
+export interface AddRowColumnOptions {
+  /**
+   * Callback function for adding a column
+   */
+  addColumnCallback?: (col: number, vTable: VTable.ListTable) => void;
+  /**
+   * Callback function for adding a row
+   */
+  addRowCallback?: (row: number, vTable: VTable.ListTable) => void;
+}
+```
+
 
 ## Plugin Example
 Initialize the plugin object and add it to the plugins of the vTable configuration.
 ```
-const pasteAddRowPlugin = new PasteAddRowPlugin();
+const pasteAddRowColumnPlugin = new PasteAddRowColumnPlugin();
 const option = {
   records,
   columns,
@@ -18,7 +36,7 @@ const option = {
     copySelected: true,
     pasteValueToCell: true
   },
-  plugins: [pasteAddRowPlugin]
+  plugins: [pasteAddRowColumnPlugin]
 };
 ```
 In order to ensure that the plugin works properly, you need to configure `keyboardOptions` when vTable is initialized, and set `copySelected` and `pasteValueToCell` to `true`.
@@ -39,7 +57,7 @@ const generatePersons = count => {
     city: 'Chigago',
   }));
 };
-  const pasteAddRowPlugin = new VTablePlugins.PasteAddRowPlugin();
+  const pasteAddRowColumnPlugin = new VTablePlugins.PasteAddRowColumnPlugin();
   const option = {
     records: generatePersons(20),
     rowSeriesNumber: {},
@@ -84,7 +102,7 @@ const generatePersons = count => {
     copySelected: true,
     pasteValueToCell: true
   },
-  plugins: [pasteAddRowPlugin]
+  plugins: [pasteAddRowColumnPlugin]
   };
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
   window.tableInstance = tableInstance;

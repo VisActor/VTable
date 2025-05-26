@@ -13,6 +13,7 @@ Based on VTable's plugin mechanism, this example implements Excel-like online ed
 
 In this example, we use the following plugins in combination:
 - `AddRowColumnPlugin`: Add rows and columns
+- `PastedAddRowColumnPlugin`: Add new rows or columns when there are not enough rows or columns when pasting
 - `ColumnSeriesPlugin`: Column series plugin
 - `RowSeriesPlugin`: Row series plugin
 - `HighlightHeaderWhenSelectCellPlugin`: Highlight selected cells

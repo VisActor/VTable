@@ -32,8 +32,8 @@ export const menus = [
     name: 'add-row-column'
   },
   {
-    path: 'paste-add-row',
-    name: 'paste-add-row'
+    path: 'paste-add-row-column',
+    name: 'paste-add-row-column'
   },
   {
     path: 'column-series',
