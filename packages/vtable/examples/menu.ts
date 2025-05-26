@@ -810,10 +810,6 @@ export const menus = [
       {
         path: 'theme',
         name: 'custom-list'
-      },
-      {
-        path: 'theme',
-        name: 'scrollbar-always-visible-space-correction'
       }
     ]
   },
