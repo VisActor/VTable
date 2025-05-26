@@ -641,7 +641,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       return;
     }
     const target = e.target as HTMLElement;
-    
+
     if (target !== table.canvas) {
       globalPointerupOutsideCallback(e);
     }
