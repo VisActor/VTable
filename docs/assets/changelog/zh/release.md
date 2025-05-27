@@ -1,3 +1,24 @@
+# v1.18.4
+
+2025-05-27
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
+- **@visactor/vtable**: add date position to markline
+- **@visactor/vtable**: add milestone text
+- **@visactor/vtable-gantt**: support record type 'project'
+- **@visactor/vtable-gantt**:  add tasksShowMode 'Project_Sub_Tasks_Inline'
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix bug of chart matrix when has scale
+
+
+
+[更多详情请查看 v1.18.4](https://github.com/VisActor/VTable/releases/tag/v1.18.4)
+
 # v1.18.3
 
 2025-05-13
