@@ -80,8 +80,8 @@ VTable甘特图中的任务对象可以包含多种属性，以下是完整的�
 | 属性名 | 类型 | 描述 | 配置属性名 |
 |-------|------|------| --------- |
 | **startDate** | Date \| string | 任务计划开始的日期，可以是日期对象或日期字符串 | taskBar.startDateField |
-| **endDate** | Date \| string | 任务计划完成的日期，可以是日期对象或日期字符串（与startDate二选一） | taskBar.endDateField |
-| **text** | string | 任务的名称或描述文本，用于显示在任务条上 | 无需 |
+| **endDate** | Date \| string | 任务计划完成的日期，可以是日期对象或日期字符串 | taskBar.endDateField |
+| **任务名[any field name]** | string | 任务的名称或描述文本，用于显示在任务条上 | 无需 |
 
 
 ### 可选属性
@@ -90,9 +90,9 @@ VTable甘特图中的任务对象可以包含多种属性，以下是完整的�
 
 | 属性名 | 类型 | 描述 | 配置属性名 |
 |-------|------|------| --------- |
-| **id** | string \| number | 任务的唯一标识，如果未设置则自动生成 | taskKeyField |
+| **任务标识[any field name]** | string \| number | 任务的唯一标识, 依赖关联线需要有相关key的配置| taskKeyField |
 | **type** | string | 任务类型，可以是`task`（默认）、`project`或`milestone` | 固定值 |
-| **progress** | number | 任务完成的百分比，取值范围0-1（例如0.5表示50%） | taskBar.progressField |
+| **progress** | number | 任务完成的百分比，0-100 | taskBar.progressField |
 | **children** | Array | 子任务的数组，用于构建任务层次结构 | 固定值 |
 | **hierarchyState** | string | 树结构的展开状态，可以是`expand`或`collapse` | 固定值 |
 
@@ -148,9 +148,7 @@ VTable-Gantt甘特图支持树形结构的任务数据，以表示任务之间�
 
 ### 父子任务关系
 
-在VTable-Gantt甘特图中，可以通过两种方式建立父子任务关系：
-
-1. **使用children属性**（推荐）：
+在VTable-Gantt甘特图中，可以通过`children`属性建立父子任务关系：
 
 ```javascript
 const data = [
@@ -185,7 +183,7 @@ const data = [
 ];
 ```
 
-在`Project_Sub_Tasks_Inline`模式下，可以通过`projectSubTasksExpandable`配置控制项目任务的展开/折叠行为：
+在`Project_Sub_Tasks_Inline`模式下，可以通过`projectSubTasksExpandable`配置控制项目任务是否可以有展开/折叠的行为：
 
 ```javascript
 const ganttOptions = {
@@ -197,104 +195,3 @@ const ganttOptions = {
 当`projectSubTasksExpandable`设置为`true`时（默认值），项目任务可以展开/折叠。当折叠时，子任务将在项目任务行内显示；当展开时，子任务将按照常规树形结构显示。
 
 当`projectSubTasksExpandable`设置为`false`时，项目任务将没有展开收起图标，子任务在项目任务整行内显示。
-
-## 任务显示模式
-
-VTable甘特图提供了多种任务显示模式，可以通过`tasksShowMode`配置项设置。每种模式对任务的展示方式有不同的处理逻辑。
-
-### Tasks_Separate模式
-
-这是默认的显示模式，每个任务节点（包括父任务和子任务）都使用单独的一行来展示。
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Tasks_Separate"
-};
-```
-
-这种模式下：
-- 父任务占用一行
-- 每个子任务分别占用一行
-- 适合需要清晰展示每个任务的层次结构的场景
-
-### Sub_Tasks_Inline模式
-
-这种模式省去父任务节点不展示，并把所有子任务都放在同一行来展示。
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Inline"
-};
-```
-
-这种模式下：
-- 父任务节点不单独显示
-- 所有子任务显示在同一行上
-- 适合需要紧凑展示相关任务的场景
-
-### Sub_Tasks_Separate模式
-
-这种模式省去父任务节点不展示，且所有子任务分别用一行展示。
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Separate"
-};
-```
-
-这种模式下：
-- 父任务节点不显示
-- 每个子任务分别占用一行
-- 适合只关注具体执行任务而非分组的场景
-
-### Sub_Tasks_Arrange模式
-
-这种模式省去父任务节点不展示，且所有子任务会维持records中的数据顺序布局，并保证节点不重叠展示。
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Arrange"
-};
-```
-
-这种模式下：
-- 父任务节点不显示
-- 子任务按照数据中的顺序排列
-- 自动调整布局避免任务条重叠
-- 适合需要保持原始数据顺序的场景
-
-### Sub_Tasks_Compact模式
-
-这种模式省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示。
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Compact"
-};
-```
-
-这种模式下：
-- 父任务节点不显示
-- 子任务按照开始日期排序
-- 自动调整布局实现最紧凑的展示
-- 适合需要最大化利用空间的场景
-
-### Project_Sub_Tasks_Inline模式
-
-这种模式专门处理项目类型的任务，将项目类型节点的所有子任务都放到主任务的同一行来展示，而其他类型的任务则保持默认的Tasks_Separate模式显示效果。
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Project_Sub_Tasks_Inline",
-  projectSubTasksExpandable: true  // 控制项目子任务是否可以展开/折叠
-};
-```
-
-这种模式下：
-- 仅项目类型的任务特殊处理，其他任务正常显示
-- 当项目任务折叠时，子任务会内联显示在项目任务行上
-- 当项目任务展开时，子任务按照常规树形结构显示
-- 通过`projectSubTasksExpandable`配置控制是否支持展开/折叠功能
-- 适合需要区别对待项目任务和普通任务的场景
-
-这种显示模式的实现主要在`scenegraph/task-bar.ts`文件的`initBars`方法中，针对`Project_Sub_Tasks_Inline`模式有特殊处理逻辑，检查记录的`hierarchyState`状态和类型来决定如何显示子任务。

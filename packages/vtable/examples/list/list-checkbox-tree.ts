@@ -148,7 +148,7 @@ export function createTable() {
         field: '类别',
         tree: true,
         cellType: 'checkbox',
-        enableTreeCheckbox: true,
+        // headerType: 'checkbox',
         title: '类别',
         width: 'auto',
         sort: true
@@ -185,7 +185,8 @@ export function createTable() {
     defaultRowHeight: 32,
     select: {
       disableDragSelect: true
-    }
+    },
+    enableCheckboxCascade: true
   };
 
   const instance = new ListTable(option);
