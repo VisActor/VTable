@@ -33,6 +33,13 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./es/index.js"
+    },
+    "./es/*": {
+      "types": [
+        "./es/*.d.ts",
+        "./es/*/index.d.ts"
+      ],
+      "import": "./es/*.js"
     }
   },
   "scripts": {
