@@ -5,15 +5,15 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
-- **@visactor/vtable**: add date position to markline
-- **@visactor/vtable**: add milestone text
-- **@visactor/vtable-gantt**: support record type 'project'
-- **@visactor/vtable-gantt**:  add tasksShowMode 'Project_Sub_Tasks_Inline'
+- **@visactor/vtable**: 新增事件 pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
+- **@visactor/vtable-gantt**: 给markline添加 date position 定位类型 
+- **@visactor/vtable-gantt**: 里程碑 milestone 支持配置文本text
+- **@visactor/vtable-gantt**: 任务信息可配置type = 'project'表示项目类型
+- **@visactor/vtable-gantt**: 新增任务条展示模式 tasksShowMode 'Project_Sub_Tasks_Inline'
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix bug of chart matrix when has scale
+- **@visactor/vtable**: 修复当有scale时，图表矩阵报错问题 [#3910](https://github.com/VisActor/VTable/issues/3910)
 
 
 

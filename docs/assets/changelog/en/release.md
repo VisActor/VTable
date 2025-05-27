@@ -6,8 +6,8 @@
 **🆕 New feature**
 
 - **@visactor/vtable**: add pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
-- **@visactor/vtable**: add date position to markline
-- **@visactor/vtable**: add milestone text
+- **@visactor/vtable-gantt**: add date position to markline
+- **@visactor/vtable-gantt**: add milestone text
 - **@visactor/vtable-gantt**: support record type 'project'
 - **@visactor/vtable-gantt**:  add tasksShowMode 'Project_Sub_Tasks_Inline'
 
