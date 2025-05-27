@@ -328,7 +328,7 @@ export interface IMarkLine {
 export type ITableColumnsDefine = ColumnsDefine;
 export type IFrameStyle = {
   borderColor?: string;
-  borderLineWidth?: number;
+  borderLineWidth?: number | number[];
   borderLineDash?: number[];
   cornerRadius?: number;
 };
