@@ -123,10 +123,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
         (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
-        (table as ListTableAPI).editorManager.completeEdit();
+        (table as ListTableAPI).editorManager?.completeEdit();
         table.getElement().focus();
         if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-          (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+          (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
         }
       }
     } else if (e.key === 'Escape') {
@@ -137,7 +137,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
         handleKeydownListener(e);
-        (table as ListTableAPI).editorManager.completeEdit();
+        (table as ListTableAPI).editorManager?.completeEdit();
         table.getElement().focus();
 
         if (table.options.keyboardOptions?.moveFocusCellOnEnter === true) {
@@ -173,7 +173,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         const endRow = table.stateManager.select.ranges[0].end.row;
         if (startCol === endCol && startRow === endRow) {
           if ((table as ListTableAPI).getEditor(startCol, startRow)) {
-            (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
+            (table as ListTableAPI).editorManager?.startEditCell(startCol, startRow);
           }
         }
       }
@@ -205,10 +205,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
           table.selectCell(targetCol, targetRow);
           if ((table as ListTableAPI).editorManager?.editingEditor) {
-            (table as ListTableAPI).editorManager.completeEdit();
+            (table as ListTableAPI).editorManager?.completeEdit();
             table.getElement().focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-              (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+              (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
             }
           }
         }
@@ -221,8 +221,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       ) {
         const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
         if (e.key.match(allowedKeys)) {
-          table.editorManager.beginTriggerEditCellMode = 'keydown';
-          table.editorManager.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+          table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
+          table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
         }
       }
     }
@@ -360,7 +360,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
               rowValues.push(cell);
             });
           });
-          (table as ListTableAPI).changeCellValues(col, row, values);
+          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
         }
       }
     }
@@ -448,7 +456,16 @@ export function bindContainerDomListener(eventManager: EventManager) {
             maxRow - row + 1,
             maxCol - col + 1
           );
-          (table as ListTableAPI).changeCellValues(col, row, values, true);
+
+          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
         } else {
           navigator.clipboard.read().then(clipboardItems => {
             for (const item of clipboardItems) {
@@ -490,7 +507,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
     pasteValuesRowCount = values.length ?? 0;
     values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
-    (table as ListTableAPI).changeCellValues(col, row, values, true);
+    const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+    if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+      table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+        col,
+        row,
+        pasteData: values,
+        changedCellResults
+      });
+    }
   }
   function pasteTextToTable(item: ClipboardItem) {
     // 如果只有 'text/plain'
@@ -532,7 +557,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
           maxRow - row + 1,
           maxCol - col + 1
         );
-        (table as ListTableAPI).changeCellValues(col, row, values, true);
+        const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+        if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+          table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+            col,
+            row,
+            pasteData: values,
+            changedCellResults
+          });
+        }
       });
     });
   }
@@ -658,7 +691,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     } else if (stateManager.isMoveCol()) {
       const endMoveColSuccess = table.stateManager.endMoveCol();
       fireMoveColEventListeners(table, endMoveColSuccess, e);
-    } else if (table.editorManager.editingEditor) {
+    } else if (table.editorManager?.editingEditor) {
       if (!table.getElement().contains(target)) {
         // 如果点击到表格外部的dom
         const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
