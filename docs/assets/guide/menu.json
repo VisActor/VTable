@@ -185,6 +185,55 @@
           }
         },
         {
+          "path": "gantt_tasks",
+          "title": {
+            "zh": "任务类型",
+            "en": "Task Type"
+          }
+        },
+        {
+          "path": "gantt_task_show_mode",
+          "title": {
+            "zh": "任务显示模式",
+            "en": "Task Show Mode"
+          }
+        },
+        {
+          "path": "gantt_style",
+          "title": {
+            "zh": "甘特图样式",
+            "en": "Gantt Style"
+          }
+        },
+        {
+          "path": "gantt_grid",
+          "title": {
+            "zh": "甘特图网格线",
+            "en": "Gantt Grid"
+          }
+        },
+        {
+          "path": "gantt_dependency_links",
+          "title": {
+            "zh": "依赖关系",
+            "en": "Dependency Links"
+          }
+        },
+        {
+          "path": "gantt_scales",
+          "title": {
+            "zh": "日期轴（时间粒度）",
+            "en": "Gantt Scales"
+          }
+        },
+        {
+          "path": "gantt_markline",
+          "title": {
+            "zh": "标记线",
+            "en": "Gantt Markline"
+          }
+        },
+        {
           "path": "gantt_customLayout",
           "title": {
             "zh": "自定义渲染",
@@ -199,10 +248,17 @@
           }
         },
         {
-          "path": "subtask_layout",
+          "path": "gantt_date",
           "title": {
-            "zh": "子任务布局",
-            "en": "Subtask Layout"
+            "zh": "甘特图日期相关",
+            "en": "Gantt Date"
+          }
+        },
+        {
+          "path": "gantt_export",
+          "title": {
+            "zh": "甘特图导出",
+            "en": "Gantt Export"
           }
         }
       ]
