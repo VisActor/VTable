@@ -64,7 +64,8 @@ export function registerForVrender() {
   registerFlexLayoutPlugin();
 }
 
-export type { Direction, Timeline } from '@visactor/vrender-core';
+export type { Direction } from '@visactor/vrender-core';
+export type { State } from '@visactor/vrender-components';
 // export { GroupFadeIn } from '@visactor/vrender-core';
 // export { GroupFadeOut } from '@visactor/vrender-core';
 
