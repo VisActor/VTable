@@ -1,5 +1,5 @@
 import { isArray, isNumber } from '@visactor/vutils';
-import type { BaseTableAPI, ListTableProtected } from '../../../ts-types/base-table';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { setCellCheckboxStateByAttribute } from '../../../state/checkbox/checkbox';
 import type { ListTableAPI } from '../../../ts-types';
 import { HierarchyState } from '../../../ts-types';
@@ -9,7 +9,10 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
 
-    if (field !== '_vtable_rowSeries_number' || table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true) {
+    if (
+      !table.internalProps.layoutMap.isSeriesNumber(col, row) ||
+      table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true
+    ) {
       return;
     }
 
@@ -30,7 +33,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
         // 1.1 group title check
         // 1.1.1 check all children
         if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-          updateChildrenCheckboxState(true, titleIndex, table, field);
+          updateChildrenCheckboxState(true, titleIndex, table, field as string);
         } else {
           setAllChildrenCheckboxState(true, titleShowIndex, titleIndex, indexedData, table, col);
         }
@@ -40,7 +43,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
         // 1.2 group title uncheck
         // 1.2.1 uncheck all children
         if (getHierarchyState(table, col, row) === HierarchyState.collapse) {
-          updateChildrenCheckboxState(false, titleIndex, table, field);
+          updateChildrenCheckboxState(false, titleIndex, table, field as string);
         } else {
           setAllChildrenCheckboxState(false, titleShowIndex, titleIndex, indexedData, table, col);
         }
@@ -66,9 +69,8 @@ export function bindGroupCheckboxTreeChange(table: ListTableAPI) {
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
 
-    const isCheckboxAndTree =
-      table.internalProps.columns.some(column => column.tree && (column as any).enableTreeCheckbox) &&
-      field !== '_vtable_rowSeries_number';
+    const isCheckboxAndTree = table.internalProps.columns.some(column => column.tree);
+    table.internalProps.enableCheckboxCascade && field !== '_vtable_rowSeries_number';
 
     if (!isCheckboxAndTree) {
       return;
@@ -200,12 +202,16 @@ function updateParentCheckboxState(
   });
   const stateArr = keys.map(key => checkedState.get(key));
 
+  // currentIndex的子元素
+  const childOfCurrentIndex = (keys as string[]).filter(item => item.startsWith(key + ',') && item !== key);
+
   stateArr.forEach((state, i) => {
     const index = keys[i] as string;
     const value = state;
+    const isChildOfCurrentIndex = childOfCurrentIndex.includes(index);
+
     if (start) {
-      const indexData = index.split(',');
-      if (indexData.length === currentIndexLength) {
+      if (!isChildOfCurrentIndex) {
         start = false;
       } else {
         result.push(value[fieldName]);
