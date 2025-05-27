@@ -144,9 +144,6 @@ export const TABLE_EVENTS = {
   onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
   onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
   onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END,
-
-  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE, //will remove this typo in upcoming release
-
   onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
   onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK,
