@@ -1,3 +1,25 @@
+# v1.18.3
+
+2025-05-13
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add frozenColumnLine visible on theme [#3828](https://github.com/VisActor/VTable/issues/3828)
+- **@visactor/vtable**: add touch event for gantt chart [#3864](https://github.com/VisActor/VTable/issues/3864)
+- **@visactor/vtable**: add support for text not to be hidden [#3802](https://github.com/VisActor/VTable/issues/3802)
+- **@visactor/vtable**: add exportAllData to export table plugin [#3726](https://github.com/VisActor/VTable/issues/3726)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when no rowTree treeMode occor error [#3830](https://github.com/VisActor/VTable/issues/3830)
+- **@visactor/vtable**: unintended edit state activation on functional button clicks
+- **@visactor/vtable**: resolve taskBar width problem when click linkPonitNode [#3829](https://github.com/VisActor/VTable/issues/3829)
+
+
+
+[more detail about v1.18.3](https://github.com/VisActor/VTable/releases/tag/v1.18.3)
+
 # v1.18.2
 
 2025-04-30

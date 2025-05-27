@@ -274,6 +274,13 @@
           }
         },
         {
+          "path": "gantt-milestone",
+          "title": {
+            "zh": "甘特图里程碑",
+            "en": "Gantt Milestone"
+          }
+        },
+        {
           "path": "gantt-dependency-link-line",
           "title": {
             "zh": "甘特图依赖线（关联线）",
@@ -318,8 +325,15 @@
         {
           "path": "gantt-taskShowMode",
           "title": {
-            "zh": "甘特图子任务布局模式",
-            "en": "Gantt Subtask Show Mode"
+            "zh": "甘特图任务显示模式",
+            "en": "Gantt Task Show Mode"
+          }
+        },
+        {
+          "path": "gantt-project-taskShowMode",
+          "title": {
+            "zh": "甘特图项目任务显示模式",
+            "en": "Gantt Project Task Show Mode"
           }
         },
         {
@@ -751,19 +765,17 @@
           }
         },
         {
+          "path": "copy-paste-cell-value",
+          "title": {
+            "zh": "复制粘贴",
+            "en": "copy paste cell value"
+          }
+        },
+        {
           "path": "context-menu",
           "title": {
             "zh": "右键菜单(复制/粘贴/删除)",
             "en": "Right click menu(copy/paste/delete)"
-          },
-          "meta": {
-            "title": "Right click menu",
-            "keywords": "",
-            "category": "demo",
-            "group": "Interaction",
-            "cover": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.png",
-            "link": "",
-            "option": ""
           }
         },
         {
@@ -813,13 +825,6 @@
           "title": {
             "zh": "方向键切换选中单元格",
             "en": "arrowkeys move select"
-          }
-        },
-        {
-          "path": "copy-paste-cell-value",
-          "title": {
-            "zh": "复制粘贴",
-            "en": "copy paste cell value"
           }
         },
         {

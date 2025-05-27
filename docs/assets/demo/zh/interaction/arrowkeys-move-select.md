@@ -9,7 +9,7 @@ option: ListTable#keyboardOptions.selectAllOnCtrlA
 
 # 方向键切换选中单元格
 
-该示例快捷键能力，选中单元格通过方向键切换选中，按 enter 进入编辑。当然，除了方向键还有其他快捷键可以参考[教程](../../guide/interaction/keyboard)
+该示例快捷键能力，选中单元格通过方向键切换选中，按 enter 进入编辑。当然，除了方向键还有其他快捷键可以参考[教程](../../guide/shortcut)
 
 ## 关键配置
 

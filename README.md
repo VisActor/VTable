@@ -168,7 +168,14 @@ After installation & clone & update, run docs to preview VTable documents locall
 
 ```bash
 # start vtable document server. execute in file path: ./
+$ rush update
+$ rush build
 $ rush docs
+```
+# If you meet dependency problems
+```bash
+$ rush purge
+$ rush update
 ```
 
 ## 🔗 Related Links

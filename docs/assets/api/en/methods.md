@@ -259,6 +259,18 @@ Get the selected cell information, and the returned result is a two-dimensional 
 
 Clear the selection of all cells.
 
+## getBodyColumnDefine(Function)
+
+Get the original table column definition through the index.
+
+```
+  /**
+   * Get the original table column definition through the index
+   */
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
+
+```
+
 ## getCopyValue(Function)
 
 Get the contents of the selected area as the copy content. The return value is a string, with cells separated by `\t` and rows separated by `\n`.
