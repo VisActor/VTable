@@ -174,7 +174,7 @@ export class EventManager {
     // group title checkbox change
     bindGroupTitleCheckboxChange(this.table);
     // checkbox and titlr change
-    bindGroupCheckboxTreeChange(this.table);
+    bindGroupCheckboxTreeChange(this.table as ListTable);
     // header checkbox change
     bindHeaderCheckboxChange(this.table);
 
