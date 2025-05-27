@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 13 May 2025 11:26:12 GMT and should not be manually modified.
+This log was last generated on Tue, 27 May 2025 09:16:00 GMT and should not be manually modified.
+
+## 1.18.4
+Tue, 27 May 2025 09:16:00 GMT
+
+### Updates
+
+- feat: add pasted_data event #3908
+
+
+- feat: add date position to markline
+
+
+- feat: add milestone text
+
+
+- fix: fix bug of chart matrix when has scale
+
+
 
 ## 1.18.3
 Tue, 13 May 2025 11:26:12 GMT

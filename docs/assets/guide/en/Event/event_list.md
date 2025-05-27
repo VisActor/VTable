@@ -49,6 +49,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | The mouse enters the table area            | MOUSEENTER_TABLE                                    | This event is triggered when the mouse enters the table area                                                           |
 | The mouse leaves the table area            | MOUSELEAVE_TABLE                                    | This event is triggered when the mouse leaves the table area                                                           |
 | Mouse down                                 | MOUSEDOWN_TABLE                                     | This event is triggered when the mouse is pressed in the table area                                                    |
+| Paste data                                 | PASTED_DATA                                         | Paste data event                                                                                                      |
 
 ## Event monitoring method
 
