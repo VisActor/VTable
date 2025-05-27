@@ -65,9 +65,10 @@ export function registerForVrender() {
 }
 
 export type { Direction, Timeline } from '@visactor/vrender-core';
-export { GroupFadeIn } from '@visactor/vrender-core';
-export { GroupFadeOut } from '@visactor/vrender-core';
+// export { GroupFadeIn } from '@visactor/vrender-core';
+// export { GroupFadeOut } from '@visactor/vrender-core';
 
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
 export * from '@visactor/vrender-components';
+export * from '@visactor/vrender-animate';
