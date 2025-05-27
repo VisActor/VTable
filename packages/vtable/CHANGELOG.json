@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.4",
+      "tag": "@visactor/vtable_v1.18.4",
+      "date": "Tue, 27 May 2025 09:16:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add pasted_data event #3908\n\n"
+          },
+          {
+            "comment": "feat: add date position to markline\n\n"
+          },
+          {
+            "comment": "feat: add milestone text\n\n"
+          },
+          {
+            "comment": "fix: fix bug of chart matrix when has scale\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.3",
       "tag": "@visactor/vtable_v1.18.3",
       "date": "Tue, 13 May 2025 11:26:12 GMT",
