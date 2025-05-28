@@ -619,6 +619,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
         this.setCanvasSize(canvasWidth, canvasHeight);
       }, 0);
+    } else if (!isValid(this.canvasWidth) && !isValid(this.canvasHeight)) {
+      // containerFit: false 且没指定 canvasWidth/Height，canvas 尺寸用内容区
+      setTimeout(() => {
+        const canvasWidth = this.getAllColsWidth();
+        const canvasHeight = this.getAllRowsHeight();
+        this.setCanvasSize(canvasWidth, canvasHeight);
+      }, 0);
     } else if (this.canvasWidth !== undefined && this.canvasHeight !== undefined) {
       // 确保固定尺寸在非auto和非containerFit模式下也能生效
       setTimeout(() => {
