@@ -1,5 +1,3 @@
-// vtable-gantt/src/themes/DEFAULT.ts
-// 仅迁移甘特相关主题字段
 const DEFAULT = {
   name: 'DEFAULT',
   rowSeriesNumber: {

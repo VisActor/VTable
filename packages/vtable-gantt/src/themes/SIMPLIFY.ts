@@ -1,7 +1,3 @@
-/*
- * 甘特图 SIMPLIFY 主题，仿照 vtable 的 SIMPLIFY 主题结构
- */
-
 const SIMPLIFY = {
   name: 'SIMPLIFY',
   underlayBackgroundColor: '#FFF',

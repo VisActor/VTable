@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { extend, getIgnoreCase } from './tools/helper';
 import { TableTheme } from './themes/theme-define';
 import ganttSimplifyTheme from './themes/SIMPLIFY';

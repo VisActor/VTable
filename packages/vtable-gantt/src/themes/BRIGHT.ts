@@ -1,6 +1,3 @@
-// vtable-gantt/src/themes/BRIGHT.ts
-// 迁移自 vtable，专用于甘特图主题体系
-
 const BRIGHT = {
   name: 'BRIGHT',
   rowSeriesNumber: {

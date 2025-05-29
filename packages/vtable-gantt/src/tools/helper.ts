@@ -1,6 +1,3 @@
-// d:/HTML/ByteDance1/VTable/packages/vtable-gantt/src/tools/helper.ts
-
-// 简单实现与 vtable 一致的 extend 和 getIgnoreCase
 export function extend(target: any, ...sources: any[]): any {
   for (const source of sources) {
     if (source) {

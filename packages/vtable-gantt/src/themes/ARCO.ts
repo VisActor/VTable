@@ -1,5 +1,3 @@
-// vtable-gantt/src/themes/ARCO.ts
-// 仅迁移甘特相关主题字段
 const ARCO = {
   name: 'ARCO',
   rowSeriesNumber: {

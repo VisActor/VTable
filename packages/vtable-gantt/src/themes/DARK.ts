@@ -1,5 +1,3 @@
-// vtable-gantt/src/themes/DARK.ts
-// 仅迁移甘特相关主题字段
 const DARK = {
   name: 'DARK',
   rowSeriesNumber: {

@@ -1,4 +1,3 @@
-// vtable-gantt/src/themes/theme-define.ts
 // 主题 TableTheme 实现，兼容 vtable 主题合并机制
 import { ingoreNoneValueMerge } from '../tools/helper';
 
@@ -38,7 +37,6 @@ export class TableTheme {
     const { obj, superTheme } = this.internalTheme;
     return ingoreNoneValueMerge({}, superTheme.timelineHeader, obj.timelineHeader);
   }
-  // ...可继续扩展其他 getter
 }
 
 export default TableTheme;
