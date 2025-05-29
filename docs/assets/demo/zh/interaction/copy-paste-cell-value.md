@@ -11,9 +11,13 @@ option: ListTable#keyboardOptions.pasteValueToCell
 
 使用快捷键复制选中单元格内容，粘贴剪切板中内容到单元格。
 
-当然，除了方向键还有其他快捷键可以参考[教程](../../guide/interaction/keyboard)。
+请配置如下两项配置项为true！
+- keyboardOptions.pasteValueToCell
+- keyboardOptions.copySelected
 
 注意：VTable 内部进行了校验，只有可编辑的单元格才允许进行粘贴，所以需要粘贴的业务场景请确保配置了 editor，editor 支持配置空字符串（即不存在的编辑器）。
+
+其他快捷键参考[教程](../../guide/shortcut)。
 
 ## 关键配置
 

@@ -73,6 +73,13 @@ export interface EventsProps {
 
   onScrollVerticalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_vertical_end']>;
   onScrollHorizontalEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['scroll_horizontal_end']>;
+
+  onChangCellValue?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_cell_value']>;
+  onEmptyTipClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_click']>;
+  onEmptyTipDblClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_dblclick']>;
+  onButtonClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['button_click']>;
+  onBeforeCacheChartImage?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['before_cache_chart_image']>;
+  onPastedData?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['pasted_data']>;
 }
 
 export const TABLE_EVENTS = {
@@ -137,8 +144,13 @@ export const TABLE_EVENTS = {
   onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
   onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
   onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END,
-
-  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE //will remove this typo in upcoming release
+  onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
+  onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
+  onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK,
+  onButtonClick: EVENT_TYPE.BUTTON_CLICK,
+  onBeforeCacheChartImage: EVENT_TYPE.BEFORE_CACHE_CHART_IMAGE,
+  onPastedData: EVENT_TYPE.PASTED_DATA,
+  onSelectedClear: EVENT_TYPE.SELECTED_CLEAR
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

@@ -9,7 +9,7 @@ option: Gantt#taskBar
 
 # 甘特图基本用法
 
-该示例展示了甘特图的基本用法。
+该示例展示了甘特图的基本用法。该示例的任务类型包括默认的`Task`类型，以及`Milestone`类型。另外一种任务类型`Project`，用于表示项目，可以包含多个子任务。具体效果可参考[甘特图项目任务显示模式](./gantt-project-taskShowMode)。
 
 ## 关键配置
 
