@@ -17,6 +17,8 @@ option: ListTable-columns-text#tree
 - children: true 在某一行数据上设置开启树形展示 并懒加载子节点数据
 - setRecordChildren(children: any[], col: number, row: number) 在某一行数据懒加载子节点数据后调用此方法回传到表格组件中
 - TREE_HIERARCHY_STATE_CHANGE 树形展示状态改变事件
+- cellType: 'checkbox' 开启复选框，与 tree:true 配合使用可进行复选框树形展示
+- enableCheckboxCascade: true 在全局使用，用于开启复选框级联，必须与 cellType: 'checkbox'和 tree:true 配合使用，可实现父子元素勾选同步
 
 ## 代码演示
 
@@ -184,6 +186,9 @@ const option = {
   columns: [
     {
       field: '类别',
+      // 支持checkbox复选框树形展示。
+      // 欲使父子级元素勾选同步时务必在option全局配置 enableCheckboxCascade: true。
+      // cellType: 'checkbox',
       tree: true,
       title: '类别',
       width: 'auto',
@@ -203,6 +208,7 @@ const option = {
       sort: true
     }
   ],
+  // enableCheckboxCascade:true,
   showPin: true, //显示VTable内置冻结列图标
   widthMode: 'standard',
   allowFrozenColCount: 2,
