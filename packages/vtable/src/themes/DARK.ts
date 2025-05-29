@@ -135,5 +135,5 @@ export default {
     expand_color_opacity: '0.75',
     dragReorder_color: '#FFF',
     dragReorder_color_opacity: '0.75'
-  },
+  }
 } as ITableThemeDefine;

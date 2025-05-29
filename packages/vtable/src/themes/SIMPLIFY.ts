@@ -75,5 +75,5 @@ export default {
     color: '#000',
     fontSize: 12,
     fontFamily: 'Arial,sans-serif'
-  },
+  }
 } as ITableThemeDefine;
