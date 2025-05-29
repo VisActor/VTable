@@ -231,7 +231,7 @@ export function createTable() {
   ];
   const option: GanttConstructorOptions = {
     records: [],
-    theme: VTable.themes.SIMPLIFY,
+    theme: VTableGantt.themes.SIMPLIFY,
     taskListTable: {
       columns: columns,
       tableWidth: 400,

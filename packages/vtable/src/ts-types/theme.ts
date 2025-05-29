@@ -209,14 +209,6 @@ export interface ITableThemeDefine {
     dragReorder_color_opacity?: string;
     dragReorder_size?: number;
   };
-
-  grid?: {};
-
-  rowSeriesNumber?: {}
-
-  timelineHeader? :{}
-
-  taskBar? :{}
 }
 
 export type RequiredTableThemeDefine = Required<ITableThemeDefine>;
