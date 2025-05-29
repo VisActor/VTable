@@ -8,7 +8,7 @@ This plugin will take effect when the Gantt chart is being `constructor`
 
 When you need to export an image, you can execute`exportGanttPlugin.exportToImage` to do so.
 
-However, since the principle of my implementation is to create a container large enough to hold the entire gantt component, and then put our gantt component in it and export it using the toDataURL, there will be a size limit, which may lead to export failure
+However, since the current implementation principle is to create a container large enough to hold the entire gantt component, and then put our gantt component in it and export it using the toDataURL, there will be a size limit, which may lead to export failure
 
 ## Plugin Configuration
 
