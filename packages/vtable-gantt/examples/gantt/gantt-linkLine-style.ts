@@ -1,9 +1,7 @@
-import type { ColumnsDefine } from '@visactor/vtable';
-import type { GanttConstructorOptions, TYPES } from '../../src/index';
+import type { GanttConstructorOptions } from '../../src/index';
 import * as VTableGantt from '../../src/index';
 import { Gantt } from '../../src/index';
 import { bindDebugTool } from '../../../vtable/src/scenegraph/debug-tool';
-import { debug } from 'console';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
