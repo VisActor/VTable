@@ -155,10 +155,10 @@ export class TimelineHeader {
             y: height / 2 - size / 2,
             width: size,
             height: size,
-            visiable: true
+            visible: true
           });
           marklineCreateGroup.name = 'markline-hover-group';
-          marklineCreateGroup.data = timelineDates[j];
+          (marklineCreateGroup as any).data = timelineDates[j];
           const marklineCreateInnerGroup = new Group({
             x: 0,
             y: 0,

@@ -279,7 +279,7 @@ export class TaskBar {
     //如果TaskShowMode是tasks_separate模式 这里的task_index其实是table中的bodyIndex；如果TaskShowMode是sub_tasks_***模式 task_index也是对应父节点任务条在table中的bodyIndex（但不会渲染父节点，只是渲染子节点）
     barGroupBox.task_index = index;
     //如果TaskShowMode是tasks_separate模式，不会赋值sub_task_index；如果TaskShowMode是sub_tasks_***模式 这里的sub_task_index是父节点下子元素的index
-    barGroupBox.sub_task_index = childIndex;
+    barGroupBox.sub_task_index = childIndex as number;
     barGroupBox.record = taskRecord;
 
     const barGroup = new Group({
@@ -389,7 +389,7 @@ export class TaskBar {
         }
         // dx: 12 + 4,
         // dy: this._scene._gantt.barLabelStyle.fontSize / 2
-      });
+      } as any);
 
       barGroup.appendChild(label);
       barGroupBox.textLabel = label;
@@ -426,7 +426,7 @@ export class TaskBar {
         fontSize: textStyle.fontSize || 16,
         fontFamily: textStyle.fontFamily || 'Arial',
         fill: textStyle.color || '#ff0000',
-        textBaseline: textStyle.textBaseline || pos.textBaselineValue,
+        textBaseline: (textStyle.textBaseline || pos.textBaselineValue) as any,
         textAlign: textStyle.textAlign || pos.textAlignValue,
         text: this.formatMilestoneText(milestoneStyle.labelText, taskRecord),
         pickable: false
@@ -530,8 +530,8 @@ export class TaskBar {
 
   showHoverBar(x: number, y: number, width: number, height: number, target?: Group) {
     const { startDate, endDate, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
-      target.task_index,
-      target.sub_task_index
+      (target as any).task_index,
+      (target as any).sub_task_index
     );
     if (target && target.name === 'task-bar') {
       // this.hoverBarGroup.releatedTaskBar = target;
@@ -542,7 +542,7 @@ export class TaskBar {
     this.hoverBarGroup.setAttribute('width', width);
     this.hoverBarGroup.setAttribute('height', height);
     this.hoverBarGroup.setAttribute('visibleAll', true);
-    const taskBarStyle = this._scene._gantt.getTaskBarStyle(target.task_index, target.sub_task_index);
+    const taskBarStyle = this._scene._gantt.getTaskBarStyle((target as any).task_index, (target as any).sub_task_index);
     if (taskRecord.type === TaskType.MILESTONE) {
       this.hoverBarGroup.setAttribute('cornerRadius', target.attribute.cornerRadius);
     } else {
@@ -560,7 +560,7 @@ export class TaskBar {
       rightResizable = false;
     } else if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
       const arg = {
-        index: target.task_index,
+        index: (target as any).task_index,
         startDate,
         endDate,
         taskRecord,
@@ -627,7 +627,7 @@ export class TaskBar {
       zIndex: 10000
       // angle: attachedToTaskBarNode.attribute.angle,
       // anchor: attachedToTaskBarNode.attribute.anchor
-    });
+    } as any);
     selectedBorder.name = 'task-bar-select-border';
     this.barContainer.appendChild(selectedBorder);
     this.selectedBorders.push(selectedBorder);

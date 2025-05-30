@@ -4,7 +4,7 @@ import type { IPosition } from './common';
 
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
   args: TableEventHandlersEventArgumentMap[TYPE]
-) => TableEventHandlersReturnMap[TYPE]; //AnyFunction;
+) => TYPE extends keyof TableEventHandlersReturnMap ? TableEventHandlersReturnMap[TYPE] : any;
 export type EventListenerId = number;
 
 export interface TableEventHandlersEventArgumentMap {

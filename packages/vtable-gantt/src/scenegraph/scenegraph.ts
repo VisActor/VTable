@@ -9,7 +9,7 @@ import { TimelineHeader } from './timeline-header';
 import { TaskBar } from './task-bar';
 import { MarkLine } from './mark-line';
 import { FrameBorder } from './frame-border';
-import { findRecordByTaskKey, getTaskIndexByY, getTaskIndexsByTaskY } from '../gantt-helper';
+import { findRecordByTaskKey, getTaskIndexsByTaskY } from '../gantt-helper';
 import graphicContribution from './graphic';
 import { TaskCreationButton } from './task-creation-button';
 import { ToolTip } from './tooltip';

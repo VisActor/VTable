@@ -587,6 +587,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return (record.children?.length || 1) * this.parsedOptions.rowHeight;
         }
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
@@ -596,6 +597,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDateForCompact(this, record) * this.parsedOptions.rowHeight;
         }
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
@@ -605,6 +607,7 @@ export class Gantt extends EventTarget {
         if (record) {
           return computeRowsCountByRecordDate(this, record) * this.parsedOptions.rowHeight;
         }
+        return undefined;
       };
       listTable_options.defaultRowHeight = 'auto';
     } else {
@@ -1340,6 +1343,6 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    return formatDate(date, format);
+    return formatDate(date as Date, format);
   }
 }

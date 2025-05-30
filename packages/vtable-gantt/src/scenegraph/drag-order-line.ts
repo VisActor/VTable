@@ -31,12 +31,12 @@ export class DragOrderLine {
       // 创建拖拽位置高亮线条
       const lineObj = createLine({
         pickable: false,
-        stroke: style.lineColor,
+        stroke: style.lineColor as string,
         lineWidth: style.lineWidth,
         // lineDash: style.lineDash,
         points: []
       });
-      this.dragLine = lineObj;
+      this.dragLine = lineObj as any;
       this.dragLineContainer.appendChild(lineObj);
     }
   }

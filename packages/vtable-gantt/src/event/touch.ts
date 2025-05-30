@@ -62,7 +62,7 @@ export function bindTouchListener(eventManager: EventManager) {
       const deltaY =
         -eventManager.touchMovePoints[eventManager.touchMovePoints.length - 1].y +
         eventManager.touchMovePoints[eventManager.touchMovePoints.length - 2].y;
-      handleWhell(e, stateManager, gantt);
+      handleWhell(e as any, stateManager, gantt);
 
       if (
         e.cancelable &&
@@ -107,7 +107,7 @@ export function bindTouchListener(eventManager: EventManager) {
         //开始惯性滚动
         eventManager.inertiaScroll.startInertia(vX, vY, 0.95);
         gantt.eventManager.inertiaScroll.setScrollHandle((dx: number, dy: number) => {
-          handleWhell({ deltaX: -dx, deltaY: -dy }, gantt.stateManager, gantt);
+          handleWhell({ deltaX: -dx, deltaY: -dy } as any, gantt.stateManager, gantt);
         });
       }
     }

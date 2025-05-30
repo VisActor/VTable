@@ -19,7 +19,7 @@ export class ToolTip {
         background: '#14161c',
         cornerRadius: 4
       }
-    });
+    } as any);
     scene.ganttGroup.addChild(this.group);
   }
   show(graphic: IGraphic<Partial<IRectGraphicAttribute>>) {
@@ -51,7 +51,7 @@ export class ToolTip {
       },
       x,
       y
-    });
+    } as any);
   }
 
   hide() {

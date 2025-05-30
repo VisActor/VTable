@@ -1,15 +1,26 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
-  "include": ["src"],
-  "compilerOptions": {    
-    "types": ["jest", "offscreencanvas", "node"],
-    "lib": ["DOM", "ESNext"],
+  "include": [
+    "src"
+  ],
+  "compilerOptions": {
+    "types": [
+      "jest",
+      "offscreencanvas",
+      "node"
+    ],
+    "lib": [
+      "DOM",
+      "ESNext"
+    ],
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./es",
     "composite": true,
     "plugins": [
-      { "transform": "typescript-transform-paths" },
+      {
+        "transform": "typescript-transform-paths"
+      },
       {
         "transform": "typescript-transform-paths",
         "afterDeclarations": true
@@ -17,8 +28,21 @@
     ],
     "strict": false,
     "paths": {
-      "@src/*": ["./src/*"],
-      "@vutils-extension": ["./src/vutil-extension-temp"]
+      "@src/vrender": [
+        "../vtable/src/vrender"
+      ],
+      "@src/ts-types": [
+        "../vtable/src/ts-types"
+      ],
+      "@vutils-extension": [
+        "./src/vutil-extension-temp"
+      ],
+      "@visactor/vtable": [
+        "../vtable/src"
+      ],
+      "@visactor/vtable/es/vrender": [
+        "../vtable/src/vrender"
+      ]
     }
   },
   "references": [

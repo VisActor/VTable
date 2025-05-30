@@ -164,7 +164,7 @@ export class StateManager {
       targetStartX: null,
       creating: false,
       secondTaskBarNode: null
-    };
+    } as any;
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
     this.updateHorizontalScrollBar = this.updateHorizontalScrollBar.bind(this);
@@ -455,11 +455,11 @@ export class StateManager {
             let insertAfterNode = target;
             while (
               (insertAfterNode as Group).nextSibling &&
-              (insertAfterNode as Group).nextSibling.attribute.y === (target as Group).attribute.y &&
-              (insertAfterNode as Group).nextSibling.record[this._gantt.parsedOptions.startDateField] <=
+              ((insertAfterNode as Group).nextSibling as any).attribute.y === (target as Group).attribute.y &&
+              ((insertAfterNode as Group).nextSibling as any).record[this._gantt.parsedOptions.startDateField] <=
                 target.record[this._gantt.parsedOptions.startDateField]
             ) {
-              insertAfterNode = (insertAfterNode as Group).nextSibling;
+              insertAfterNode = (insertAfterNode as Group).nextSibling as any;
             }
             if (insertAfterNode !== target) {
               (insertAfterNode as Group).parent.insertAfter(target, insertAfterNode);
@@ -468,11 +468,11 @@ export class StateManager {
             let insertBeforeNode = target;
             while (
               (insertBeforeNode as Group).previousSibling &&
-              (insertBeforeNode as Group).previousSibling.attribute.y === (target as Group).attribute.y &&
-              (insertBeforeNode as Group).previousSibling.record[this._gantt.parsedOptions.startDateField] >=
+              ((insertBeforeNode as Group).previousSibling as any).attribute.y === (target as Group).attribute.y &&
+              ((insertBeforeNode as Group).previousSibling as any).record[this._gantt.parsedOptions.startDateField] >=
                 target.record[this._gantt.parsedOptions.startDateField]
             ) {
-              insertBeforeNode = (insertBeforeNode as Group).previousSibling;
+              insertBeforeNode = (insertBeforeNode as Group).previousSibling as any;
             }
             if (insertBeforeNode !== target) {
               (insertBeforeNode as Group).parent.insertBefore(target, insertBeforeNode);
@@ -979,7 +979,7 @@ export class StateManager {
   }
   highlightLinkPointNode(linkPointGroup: Group) {
     if (linkPointGroup?.children.length > 0) {
-      const circle = linkPointGroup.children[0];
+      const circle = linkPointGroup.children[0] as any;
       circle.setAttribute('fill', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.fillColor);
       circle.setAttribute('stroke', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.strokeColor);
       circle.setAttribute('radius', this._gantt.parsedOptions.dependencyLinkLineCreatingPointStyle.radius);
@@ -989,7 +989,7 @@ export class StateManager {
   }
   unhighlightLinkPointNode(linkPointGroup: Group) {
     if (linkPointGroup?.children.length > 0) {
-      const circle = linkPointGroup.children[0];
+      const circle = linkPointGroup.children[0] as any;
       circle.setAttribute('fill', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.fillColor);
       circle.setAttribute('stroke', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.strokeColor);
       circle.setAttribute('radius', this._gantt.parsedOptions.dependencyLinkLineCreatePointStyle.radius);
@@ -1143,7 +1143,7 @@ function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number
     if (customLayoutObj) {
       const rootContainer = customLayoutObj.rootContainer;
       rootContainer.name = 'task-bar-custom-render';
-      const barGroup = taskBarGroup.children.find((node: any) => node.name === 'task-bar-group');
+      const barGroup = taskBarGroup.children.find((node: any) => node.name === 'task-bar-group') as Group;
       if (barGroup) {
         const oldCustomIndex = barGroup.children.findIndex((node: any) => {
           return node.name === 'task-bar-custom-render';
