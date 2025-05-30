@@ -179,6 +179,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
   _autoFillHeight: boolean;
+  _containerFit: boolean;
   _widthAdaptiveMode: WidthAdaptiveModeDef;
   _heightAdaptiveMode: HeightAdaptiveModeDef;
   customRender?: ICustomRender;
@@ -276,6 +277,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode = 'standard',
       autoFillWidth = false,
       autoFillHeight = false,
+      containerFit = false,
       widthAdaptiveMode = 'only-body',
       heightAdaptiveMode = 'only-body',
       keyboardOptions,
@@ -319,6 +321,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._heightAdaptiveMode = heightAdaptiveMode;
     this._autoFillWidth = autoFillWidth;
     this._autoFillHeight = autoFillHeight;
+    this._containerFit = containerFit;
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -553,51 +556,100 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   _adjustCanvasSizeByOption() {
     // 等宽高都进行了内部计算，判断如果配置了内容自动撑开表格，需要在这里赋值canvasWidth 和 canvasHeight
-    if (this.options.canvasHeight === 'auto' || this.options.canvasWidth === 'auto') {
+    if (this.options.canvasHeight === 'auto' || this.options.canvasWidth === 'auto' || this.containerFit) {
       setTimeout(() => {
         let canvasWidth;
         let canvasHeight;
-        if (this.options.canvasHeight === 'auto') {
-          let borderWidth = 0;
-          if (this.theme.frameStyle?.innerBorder) {
-            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-            borderWidth += shadowWidths[1] ?? 0;
-          } else if (this.theme.frameStyle) {
-            const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
-            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-            borderWidth +=
-              (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0) + ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+
+        if (this.containerFit) {
+          // containerFit 模式：强制适配容器尺寸
+          const container = this.getContainer();
+
+          if (container) {
+            const computedStyle = window.getComputedStyle(container);
+            const paddingLeft = parseInt(computedStyle.paddingLeft, 10) || 0;
+            const paddingRight = parseInt(computedStyle.paddingRight, 10) || 0;
+            const paddingTop = parseInt(computedStyle.paddingTop, 10) || 0;
+            const paddingBottom = parseInt(computedStyle.paddingBottom, 10) || 0;
+
+            canvasWidth = container.offsetWidth - paddingLeft - paddingRight;
+            canvasHeight = container.offsetHeight - paddingTop - paddingBottom;
           }
-          canvasHeight =
-            Math.min(
-              this.options.maxCanvasHeight ? this.options.maxCanvasHeight - borderWidth : 20000,
-              this.getAllRowsHeight()
-            ) + borderWidth;
         } else {
-          canvasHeight = this.canvasHeight;
-        }
-        if (this.options.canvasWidth === 'auto') {
-          let borderWidth = 0;
-          if (this.theme.frameStyle?.innerBorder) {
-            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-            borderWidth += shadowWidths[2] ?? 0;
-          } else if (this.theme.frameStyle) {
-            const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
-            const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-            borderWidth +=
-              (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0) + ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+          // 原有的 auto 模式逻辑
+          if (this.options.canvasHeight === 'auto') {
+            let borderWidth = 0;
+            if (this.theme.frameStyle?.innerBorder) {
+              const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+              borderWidth += shadowWidths[1] ?? 0;
+            } else if (this.theme.frameStyle) {
+              const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
+              const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+              borderWidth +=
+                (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0) + ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+            }
+            canvasHeight =
+              Math.min(
+                this.options.maxCanvasHeight ? this.options.maxCanvasHeight - borderWidth : 20000,
+                this.getAllRowsHeight()
+              ) + borderWidth;
+          } else {
+            canvasHeight = this.canvasHeight;
           }
-          canvasWidth =
-            Math.min(
-              this.options.maxCanvasWidth ? this.options.maxCanvasWidth - borderWidth : 20000,
-              this.getAllColsWidth()
-            ) + borderWidth;
-        } else {
-          canvasWidth = this.canvasWidth;
+          if (this.options.canvasWidth === 'auto') {
+            let borderWidth = 0;
+            if (this.theme.frameStyle?.innerBorder) {
+              const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+              borderWidth += shadowWidths[2] ?? 0;
+            } else if (this.theme.frameStyle) {
+              const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
+              const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
+              borderWidth +=
+                (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0) + ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+            }
+            canvasWidth =
+              Math.min(
+                this.options.maxCanvasWidth ? this.options.maxCanvasWidth - borderWidth : 20000,
+                this.getAllColsWidth()
+              ) + borderWidth;
+          } else {
+            canvasWidth = this.canvasWidth;
+          }
         }
 
         this.setCanvasSize(canvasWidth, canvasHeight);
       }, 0);
+    } else if (!isValid(this.canvasWidth) && !isValid(this.canvasHeight)) {
+      // containerFit: false 且没指定 canvasWidth/Height，canvas 尺寸用内容区
+      setTimeout(() => {
+        const canvasWidth = this.getAllColsWidth();
+        const canvasHeight = this.getAllRowsHeight();
+        this.setCanvasSize(canvasWidth, canvasHeight);
+      }, 0);
+    } else if (this.canvasWidth !== undefined && this.canvasHeight !== undefined) {
+      // 确保固定尺寸在非auto和非containerFit模式下也能生效
+      setTimeout(() => {
+        this.setCanvasSize(this.canvasWidth, this.canvasHeight);
+      }, 0);
+    }
+  }
+
+  // 强制触发containerFit调整的方法
+  _forceContainerFitAdjustment() {
+    if (this.containerFit) {
+      const container = this.getContainer();
+      if (container) {
+        const computedStyle = window.getComputedStyle(container);
+        const paddingLeft = parseInt(computedStyle.paddingLeft, 10) || 0;
+        const paddingRight = parseInt(computedStyle.paddingRight, 10) || 0;
+        const paddingTop = parseInt(computedStyle.paddingTop, 10) || 0;
+        const paddingBottom = parseInt(computedStyle.paddingBottom, 10) || 0;
+
+        const canvasWidth = container.offsetWidth - paddingLeft - paddingRight;
+        const canvasHeight = container.offsetHeight - paddingTop - paddingBottom;
+
+        this.setCanvasSize(canvasWidth, canvasHeight);
+      }
     }
   }
   /** 节流绘制 */
@@ -626,6 +678,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.canvasHeight = canvasHeight;
     this.options.canvasHeight = canvasHeight;
     this.options.canvasWidth = canvasWidth;
+    this.canvasSizeSeted = true; // 标记画布尺寸已设置
     this.resize();
   }
   resize() {
@@ -959,6 +1012,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   set autoFillHeight(autoFillHeight: boolean) {
     if (autoFillHeight !== this._autoFillHeight) {
       this._autoFillHeight = autoFillHeight;
+    }
+  }
+  get containerFit(): boolean {
+    return this._containerFit;
+  }
+  set containerFit(containerFit: boolean) {
+    if (containerFit !== this._containerFit) {
+      this._containerFit = containerFit;
     }
   }
   get widthAdaptiveMode(): WidthAdaptiveModeDef {
@@ -2421,7 +2482,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       canvasHeight,
       overscrollBehavior,
       limitMinWidth,
-      limitMinHeight
+      limitMinHeight,
+      containerFit
     } = options;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
@@ -2451,6 +2513,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._heightAdaptiveMode = heightAdaptiveMode ?? 'only-body';
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
+    this.containerFit = containerFit ?? false;
+
     this.customRender = customRender;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
@@ -2615,6 +2679,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       options.customCellStyleArrangement ?? []
     );
     this._adjustCanvasSizeByOption();
+    // 强制触发containerFit调整
+    this._forceContainerFitAdjustment();
   }
   /**
    * 重新创建场景树并重新渲染

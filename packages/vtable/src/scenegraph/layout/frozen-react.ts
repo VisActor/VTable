@@ -77,18 +77,28 @@ export function updateReactContainer(table: BaseTableAPI) {
     return;
   }
   const allColsWidth = table.getAllColsWidth();
-  const tableNoFrameWidth = Math.min(allColsWidth, table.tableNoFrameWidth);
+  // containerFit 模式：强制使用容器尺寸，不受内容尺寸限制
+  const tableNoFrameWidth = table.containerFit
+    ? table.tableNoFrameWidth
+    : Math.min(allColsWidth, table.tableNoFrameWidth);
   const frozenColsWidth = table.getFrozenColsWidth();
   const rightFrozenColsWidth = table.getRightFrozenColsWidth();
   const totalFrozenColsWidth = frozenColsWidth + rightFrozenColsWidth;
-  const bodyWidth = Math.min(allColsWidth - totalFrozenColsWidth, tableNoFrameWidth - totalFrozenColsWidth);
+  const bodyWidth = table.containerFit
+    ? tableNoFrameWidth - totalFrozenColsWidth
+    : Math.min(allColsWidth - totalFrozenColsWidth, tableNoFrameWidth - totalFrozenColsWidth);
 
   const allRowsHeight = table.getAllRowsHeight();
-  const tableNoFrameHeight = Math.min(allRowsHeight, table.tableNoFrameHeight);
+  // containerFit 模式：强制使用容器尺寸，不受内容尺寸限制
+  const tableNoFrameHeight = table.containerFit
+    ? table.tableNoFrameHeight
+    : Math.min(allRowsHeight, table.tableNoFrameHeight);
   const frozenRowsHeight = table.getFrozenRowsHeight();
   const bottomFrozenRowsHeight = table.getBottomFrozenRowsHeight();
   const totalFrozenRowsHeight = frozenRowsHeight + bottomFrozenRowsHeight;
-  const bodyHeight = Math.min(allRowsHeight - totalFrozenRowsHeight, tableNoFrameHeight - totalFrozenRowsHeight);
+  const bodyHeight = table.containerFit
+    ? tableNoFrameHeight - totalFrozenRowsHeight
+    : Math.min(allRowsHeight - totalFrozenRowsHeight, tableNoFrameHeight - totalFrozenRowsHeight);
 
   if (table.frozenColCount > 0) {
     headerDomContainer.style.left = `${table.tableX + frozenColsWidth}px`;

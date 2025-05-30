@@ -129,6 +129,7 @@ export class Scenegraph {
   frozenColCount: number; // 冻结列数
   frozenRowCount: number; // 冻结行数
   clear: boolean;
+  containerFit: boolean; // 是否表格外框始终撑满容器，内容区宽高不拉伸，剩余空白/超出滚动
 
   mergeMap: MergeMap;
   _dealAutoFillHeightOriginRowsHeight: number; // hack 缓存一个值 用于处理autoFillHeight的逻辑判断 在某些情况下是需要更新此值的 如增删数据 但目前没有做这个
@@ -138,6 +139,7 @@ export class Scenegraph {
     this.table = table;
     this.hasFrozen = false;
     this.clear = true;
+    this.containerFit = table.containerFit;
     this.mergeMap = new Map();
 
     setPoptipTheme(this.table.theme.textPopTipStyle);
@@ -1047,52 +1049,62 @@ export class Scenegraph {
   }
 
   updateTableSize() {
-    this.tableGroup.setAttributes({
-      x: this.table.tableX,
-      y: this.table.tableY,
-      width: Math.min(
-        this.table.tableNoFrameWidth,
-        Math.max(
-          this.colHeaderGroup.attribute.width,
-          this.bodyGroup.attribute.width,
-          this.bottomFrozenGroup.attribute.width,
-          0
-        ) +
+    // containerFit 模式：表格外框始终撑满容器，内容区宽高不拉伸
+    if (this.table.containerFit) {
+      this.tableGroup.setAttributes({
+        x: this.table.tableX,
+        y: this.table.tableY,
+        width: this.table.tableNoFrameWidth,
+        height: this.table.tableNoFrameHeight
+      } as any);
+    } else {
+      this.tableGroup.setAttributes({
+        x: this.table.tableX,
+        y: this.table.tableY,
+        width: Math.min(
+          this.table.tableNoFrameWidth,
           Math.max(
-            this.cornerHeaderGroup.attribute.width,
-            this.rowHeaderGroup.attribute.width,
-            this.leftBottomCornerGroup.attribute.width,
+            this.colHeaderGroup.attribute.width,
+            this.bodyGroup.attribute.width,
+            this.bottomFrozenGroup.attribute.width,
             0
           ) +
+            Math.max(
+              this.cornerHeaderGroup.attribute.width,
+              this.rowHeaderGroup.attribute.width,
+              this.leftBottomCornerGroup.attribute.width,
+              0
+            ) +
+            Math.max(
+              this.rightTopCornerGroup.attribute.width,
+              this.rightFrozenGroup.attribute.width,
+              this.rightBottomCornerGroup.attribute.width,
+              0
+            )
+        ),
+        height: Math.min(
+          this.table.tableNoFrameHeight,
           Math.max(
-            this.rightTopCornerGroup.attribute.width,
-            this.rightFrozenGroup.attribute.width,
-            this.rightBottomCornerGroup.attribute.width,
-            0
-          )
-      ),
-      height: Math.min(
-        this.table.tableNoFrameHeight,
-        Math.max(
-          this.colHeaderGroup.attribute.height,
-          this.cornerHeaderGroup.attribute.height,
-          this.rightTopCornerGroup.attribute.height,
-          0
-        ) +
-          Math.max(
-            this.rowHeaderGroup.attribute.height,
-            this.bodyGroup.attribute.height,
-            this.rightFrozenGroup.attribute.height,
+            this.colHeaderGroup.attribute.height,
+            this.cornerHeaderGroup.attribute.height,
+            this.rightTopCornerGroup.attribute.height,
             0
           ) +
-          Math.max(
-            this.leftBottomCornerGroup.attribute.height,
-            this.bottomFrozenGroup.attribute.height,
-            this.rightBottomCornerGroup.attribute.height,
-            0
-          )
-      )
-    } as any);
+            Math.max(
+              this.rowHeaderGroup.attribute.height,
+              this.bodyGroup.attribute.height,
+              this.rightFrozenGroup.attribute.height,
+              0
+            ) +
+            Math.max(
+              this.leftBottomCornerGroup.attribute.height,
+              this.bottomFrozenGroup.attribute.height,
+              this.rightBottomCornerGroup.attribute.height,
+              0
+            )
+        )
+      } as any);
+    }
 
     if (this.tableGroup.border) {
       const rectAttributes = this.tableGroup.border?.attribute;
@@ -1458,6 +1470,9 @@ export class Scenegraph {
    */
   dealWidthMode() {
     const table = this.table;
+    if (table.containerFit) {
+      return;
+    }
     if (table.widthMode === 'adaptive') {
       table._clearColRangeWidthsMap();
       const canvasWidth = table.tableNoFrameWidth;
@@ -1537,6 +1552,12 @@ export class Scenegraph {
    */
   dealHeightMode() {
     const table = this.table;
+
+    // 处理containerFit
+    if (table.containerFit) {
+      return;
+    }
+
     // 处理adaptive高度
     if (table.heightMode === 'adaptive') {
       table._clearRowRangeHeightsMap();
