@@ -48,7 +48,6 @@ export function get(): { [key: string]: TableTheme } {
 }
 
 export default {
-  SIMPLIFY,
   theme,
   of,
   get
