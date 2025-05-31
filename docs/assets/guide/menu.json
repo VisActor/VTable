@@ -852,6 +852,13 @@
           }
         },
         {
+          "path": "paste-add-row",
+          "title": {
+            "zh": "粘贴新增行插件",
+            "en": "paste add row plugin"
+          }
+        },
+        {
           "path": "table-carousel-animation",
           "title": {
             "zh": "表格轮播动画",
