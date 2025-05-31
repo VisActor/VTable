@@ -34,7 +34,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.19.1"
+    "@visactor/vutils": "~0.19.1",
+    "exceljs": "4.4.0"
   },
   "peerDependencies": {
     "@visactor/vtable": "workspace:*"

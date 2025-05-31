@@ -10,7 +10,7 @@
 
 ## 插件配置
 
-当你调用`exportGanttPlugin.exportToImage`是，里面还需要接受以下参数来更改导出图片的参数
+当你调用`exportGanttPlugin.exportToImage`时，里面还需要接受以下参数来更改导出图片的参数
 
 ```
 fileName: '甘特图导出测试',
