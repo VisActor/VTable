@@ -572,8 +572,13 @@ export class MenuElement {
     const rootElement = this._rootElement;
     // const element = table.getElement();
     const element = table.internalProps.menu.parentElement ?? table.getElement();
-    const { width: containerWidth, left: containerLeft, top: containerTop } = element.getBoundingClientRect();
-    const { x: rootLeft, y: rootTop, width: rootWidth } = rootElement.getBoundingClientRect();
+    const {
+      width: containerWidth,
+      height: containerHeight,
+      left: containerLeft,
+      top: containerTop
+    } = element.getBoundingClientRect();
+    const { x: rootLeft, y: rootTop, width: rootWidth, height: rootHeight } = rootElement.getBoundingClientRect();
 
     if (secondElement) {
       // if (secondElement.parentElement !== rootElement) {
@@ -589,12 +594,20 @@ export class MenuElement {
       secondElement.style.maxWidth = `${maxWidth}px`;
       //计算弹出框的宽度
       const secondElementWidth = secondElement.clientWidth;
-      // const secondElementHeight = secondElement.clientHeight;
+      const secondElementHeight = secondElement.clientHeight;
 
       const secondElementTop = y - 4 - containerTop;
       const secondElementLeft = x - containerLeft;
 
-      secondElement.style.top = `${secondElementTop}px`;
+      let topStyle = secondElementTop;
+      // 判断如果超出下范围则靠上边显示
+      if (topStyle + secondElementHeight > containerHeight) {
+        const secondElementItem = secondElement.firstElementChild;
+        topStyle = topStyle - secondElementHeight + secondElementItem.clientHeight + 4;
+      }
+
+      secondElement.style.top = `${topStyle}px`;
+
       let leftStyle = secondElementLeft;
 
       // 判断如果超出右范围则靠左边显示
