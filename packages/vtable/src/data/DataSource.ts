@@ -1209,6 +1209,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this._sourceLength = this._source?.length || 0;
     this.sortedIndexMap.clear();
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    if (this.rowHierarchyType === 'tree') {
+      this.initTreeHierarchyState();
+    }
     if (!this.userPagination) {
       this.pagination.perPageCount = this._sourceLength;
       this.pagination.totalCount = this._sourceLength;
