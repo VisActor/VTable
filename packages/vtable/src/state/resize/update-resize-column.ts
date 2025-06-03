@@ -42,7 +42,10 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
     afterSize = state.table.internalProps.limitMinWidth;
     detaX = afterSize - state.table.getColWidth(state.columnResize.col);
   }
-  if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
+  if (
+    (state.table.widthMode === 'adaptive' || state.table.containerFit?.width) &&
+    state.columnResize.col < state.table.colCount - 1
+  ) {
     const rightColWidthCache = state.table.getColWidth(state.columnResize.col + 1);
     const rightColMinWidth = state.table.getMinColWidth(state.columnResize.col + 1);
     const rightColMaxWidth = state.table.getMaxColWidth(state.columnResize.col + 1);
@@ -121,12 +124,12 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
 }
 
 function updateResizeColForColumn(detaX: number, state: StateManager) {
-  if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
-    // in adaptive mode, the right column width can not be negative
-    // const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
-    // if (rightColWidth - detaX < 0) {
-    //   detaX = rightColWidth;
-    // }
+  if (
+    (state.table.widthMode === 'adaptive' || state.table.containerFit?.width) &&
+    state.columnResize.col < state.table.colCount - 1
+  ) {
+    // in adaptive or containerFit mode, the right column width can not be negative
+    // 在adaptive或containerFit模式下，通过调整相邻列宽度保持总宽度不变
     state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
     state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
 
