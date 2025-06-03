@@ -871,6 +871,13 @@
             "zh": "全量导出甘特图",
             "en": "gantt export image"
           }
+        },
+        {
+          "path": "execl-import",
+          "title": {
+            "zh": "execl导入",
+            "en": "execl import"
+          }
         }
       ]
     },

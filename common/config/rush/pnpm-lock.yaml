@@ -793,6 +793,7 @@ importers:
       axios: ^1.4.0
       chai: 4.3.4
       eslint: ~8.18.0
+      exceljs: 4.4.0
       form-data: ~4.0.0
       inversify: 6.0.1
       jest: ^26.0.0
@@ -820,6 +821,7 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vutils': 0.19.4
+      exceljs: 4.4.0
     devDependencies:
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2_@babel+core@7.20.12
@@ -4357,7 +4359,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.25.9_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6_tp2wsfwniubhwwtz2rzahg2hve
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true
