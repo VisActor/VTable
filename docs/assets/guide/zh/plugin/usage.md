@@ -52,6 +52,7 @@ const option: VTable.ListTableConstructorOptions = {
 | `ExcelEditCellKeyboardPlugin` | Excel编辑单元格键盘插件 | `ListTable`,`PivotTable` |
 | `TableCarouselAnimationPlugin` | 表格轮播动画插件 | `ListTable`,`PivotTable` |
 | `RotateTablePlugin` | 表格旋转插件 | `ListTable`,`PivotTable` |
+| `ExcelImportPlugin` | 导入execl到表格中 | `ListTable` |
 
 <br>
 
