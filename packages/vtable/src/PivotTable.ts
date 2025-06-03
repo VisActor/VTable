@@ -1971,14 +1971,19 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     // const cell_value = this.getCellValue(col, row);
     const startRange = this.getCellRange(startCol, startRow);
     const range = this.getCellRange(pasteColEnd, pasteRowEnd);
-    // for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
-    //   for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
-    //     this.scenegraph.updateCellContent(sCol, sRow);
-    //   }
-    // }
-    for (let sCol = 0; sCol < this.colCount; sCol++) {
-      for (let sRow = 0; sRow < this.rowCount; sRow++) {
+    for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
+      for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
         this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    // 更新所有的统计单元格
+    if(this.options.dataConfig.updateAggregationOnEditCell){
+      for (let col = 0; col < this.colCount; col++) {
+        for (let row = 0; row < this.rowCount; row++) {
+          if (this.internalProps.layoutMap.isAggregation(col, row)) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
       }
     }
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {

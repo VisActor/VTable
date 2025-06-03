@@ -39,6 +39,8 @@ export abstract class Aggregator implements IAggregator {
   key: string;
   field?: string | string[];
   formatFun?: any;
+  changedValue?: any;
+  children?: Aggregator[] = [];
   _formatedValue?: any;
 
   constructor(config: { key: string; field: string | string[]; formatFun?: any; isRecord?: boolean }) {
@@ -67,6 +69,8 @@ export abstract class Aggregator implements IAggregator {
   }
   reset() {
     this.records = [];
+    this.changedValue = undefined;
+    this.children = [];
     this.clearCacheValue();
   }
 }
@@ -159,7 +163,7 @@ export class NoneAggregator extends Aggregator {
     }
   }
   value() {
-    return this.fieldValue;
+    return this.changedValue ?? this.fieldValue;
   }
   reset() {
     this.records = [];
@@ -327,14 +331,14 @@ export class SumAggregator extends Aggregator {
   push(record: any): void {
     if (record) {
       if (this.isRecord && this.records) {
-        // if (record.isAggregator) {
-        //   this.records.push(...record.records);
-        // } else {
-        //   this.records.push(record);
-        // }
-        this.records.push(record);
+        if (record.isAggregator) {
+          this.records.push(...record.records);
+        } else {
+          this.records.push(record);
+        }
       }
       if (record.isAggregator) {
+        this.children.push(record);
         const value = record.value();
         this.sum += value ?? 0;
         if (this.needSplitPositiveAndNegativeForSum) {
@@ -364,6 +368,7 @@ export class SumAggregator extends Aggregator {
         this.records = this.records.filter(item => item !== record);
       }
       if (record.isAggregator) {
+        this.children = this.children.filter(item => item !== record);
         const value = record.value();
         this.sum -= value ?? 0;
         if (this.needSplitPositiveAndNegativeForSum) {
@@ -399,7 +404,9 @@ export class SumAggregator extends Aggregator {
       }
       if (oldRecord.isAggregator) {
         const oldValue = oldRecord.value();
+        this.children = this.children.filter(item => item !== oldRecord);
         const newValue = newRecord.value();
+        this.children.push(newRecord);
         this.sum += newValue - oldValue;
         if (this.needSplitPositiveAndNegativeForSum) {
           if (oldValue > 0) {
@@ -434,7 +441,7 @@ export class SumAggregator extends Aggregator {
     }
   }
   value() {
-    return this.records?.length >= 1 ? this.sum : undefined;
+    return this.changedValue || (this.records?.length >= 1 ? this.sum : undefined);
   }
   positiveValue() {
     return this.positiveSum;
@@ -450,7 +457,23 @@ export class SumAggregator extends Aggregator {
   recalculate() {
     this.sum = 0;
     this._formatedValue = undefined;
-    if (this.records) {
+    if(this.children){
+      for (let i = 0; i < this.children.length; i++) {
+        const child = this.children[i];
+        if (child.isAggregator) {
+          const value = child.value();
+          this.sum += value ?? 0;
+          if (this.needSplitPositiveAndNegativeForSum) {
+            if (value > 0) {
+              this.positiveSum += value;
+            } else if (value < 0) {
+              this.nagetiveSum += value;
+            }
+          }
+        }
+      }
+    }
+    else if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator) {
