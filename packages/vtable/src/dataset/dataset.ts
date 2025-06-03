@@ -2132,7 +2132,7 @@ export class Dataset {
     
 
     //重新计算总计
-    if(typeof this.dataConfig.updateAggregationOnEditCell != 'undefined' && this.dataConfig.updateAggregationOnEditCell){
+    if(this.dataConfig?.updateAggregationOnEditCell ?? false){
       const cellAggregator = this.tree[flatRowKey]?.[flatColKey]?.[indicatorIndex];
       if(cellAggregator){
         cellAggregator.changedValue = newValue;

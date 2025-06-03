@@ -1977,7 +1977,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
     // 更新所有的统计单元格
-    if(typeof this.options.dataConfig.updateAggregationOnEditCell != 'undefined' && this.options.dataConfig.updateAggregationOnEditCell){
+    if(this.options.dataConfig?.updateAggregationOnEditCell ?? false){
       for (let col = 0; col < this.colCount; col++) {
         for (let row = 0; row < this.rowCount; row++) {
           if (this.internalProps.layoutMap.isAggregation(col, row)) {
