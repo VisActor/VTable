@@ -42,3 +42,4 @@ export {
   VTable,
   plugins
 };
+export * as themes from './themes';
