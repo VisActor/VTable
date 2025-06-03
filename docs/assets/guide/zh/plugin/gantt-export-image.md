@@ -8,6 +8,8 @@
 
 当需要导出图片的时候，你可以去执行`exportGanttPlugin.exportToImage`来导出图片
 
+但是由于目前的实现原理是建立一个足够容下整个gantt组件的容器，然后把这个我们的gantt组件放进去然后使用toDataURL进行导出，所以这个会有大小限制导致导出失败的情况
+
 ## 插件配置
 
 当你调用`exportGanttPlugin.exportToImage`是，里面还需要接受以下参数来更改导出图片的参数
