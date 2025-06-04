@@ -121,7 +121,7 @@ export interface IRowSeriesNumber {
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
   title?: string;
-  // field?: FieldDef;
+  field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -139,7 +139,8 @@ export interface IRowSeriesNumber {
   /** 是否禁止列宽调整 */
   disableColumnResize?: boolean;
 
-  /** 是否开启树形结构复选框 */
+  /** @deprecated 请使用全局 enableCheckboxCascade配置
+   * 是否开启树形结构复选框 */
   enableTreeCheckbox?: boolean;
   customLayout?: ICustomLayout;
   headerCustomLayout?: ICustomLayout;
@@ -317,7 +318,12 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
    */
-  changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell?: boolean) => void;
+  changeCellValues: (
+    col: number,
+    row: number,
+    values: (string | number)[][],
+    workOnEditableCell?: boolean
+  ) => boolean[][];
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

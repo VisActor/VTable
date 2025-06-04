@@ -257,6 +257,18 @@ setRecords(records: Array<any>)
 
 清除所有单元格的选中状态。
 
+## getBodyColumnDefine(Function)
+
+通过索引获取表列配置
+
+```
+  /**
+   * 通过索引获取表列配置
+   */
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
+
+```
+
 ## getCopyValue(Function)
 
 获取选中区域的内容 作为复制内容。返回值是个字符串，以`\t`分割单元格，以`\n`分割行。
