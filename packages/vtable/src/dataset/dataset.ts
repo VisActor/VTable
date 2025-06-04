@@ -2147,16 +2147,16 @@ export class Dataset {
         });
         newCellAggregator.changedValue = newValue;
 
-        if (this.tree[flatRowKey]?.[flatColKey]) {
-          this.tree[flatRowKey][flatColKey][indicatorIndex] = newCellAggregator;
-        } else if (this.tree[flatRowKey]) {
-          this.tree[flatRowKey][flatColKey] = [];
-          this.tree[flatRowKey][flatColKey][indicatorIndex] = newCellAggregator;
-        } else {
-          this.tree[flatRowKey] = {};
-          this.tree[flatRowKey][flatColKey] = [];
-          this.tree[flatRowKey][flatColKey][indicatorIndex] = newCellAggregator;
-        }
+        // if (this.tree[flatRowKey]?.[flatColKey]) {
+        //   this.tree[flatRowKey][flatColKey][indicatorIndex] = newCellAggregator;
+        // } else if (this.tree[flatRowKey]) {
+        //   this.tree[flatRowKey][flatColKey] = [];
+        //   this.tree[flatRowKey][flatColKey][indicatorIndex] = newCellAggregator;
+        // } else {
+        //   this.tree[flatRowKey] = {};
+        //   this.tree[flatRowKey][flatColKey] = [];
+        //   this.tree[flatRowKey][flatColKey][indicatorIndex] = newCellAggregator;
+        // }
         //在有新的单元格的情况下 更新相应的小计总计聚合器的children
         this.recalculateTotals(rowKey, colKey, indicator, newCellAggregator);
       }
