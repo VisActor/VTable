@@ -2,84 +2,6 @@ import type { ListTable } from '../../ListTable';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { IndicatorData } from '../../ts-types/list-table/layout-map/api';
 import type { StateManager } from '../state';
-import type { BaseTableAPI } from '../../ts-types/base-table';
-
-/**
- * 根据VTable的列宽模式分类判断列是否可以在containerFit模式下调整
- * @param col 列索引
- * @param table 表格实例
- * @returns 是否可调整
- */
-function isColumnResizableInContainerFit(col: number, table: BaseTableAPI): boolean {
-  const widthMode = table.widthMode;
-  const colWidthDefined = table.getColWidthDefined(col);
-
-  switch (widthMode) {
-    case 'standard':
-      // 标准模式下，只有明确设置为'auto'的列才被认为是可调整的
-      // 数字类型的width表示用户希望固定宽度
-      return colWidthDefined === 'auto';
-
-    case 'adaptive':
-      // 自适应模式下，所有列都参与容器宽度分配，因此都可调整
-      return true;
-
-    case 'autoWidth':
-      // 自动宽度模式下，所有列都会根据内容自动计算，因此都可调整
-      return true;
-
-    default:
-      // 默认情况下不允许调整
-      return false;
-  }
-}
-
-/**
- * 寻找可以补偿宽度变化的列 优先级：右侧相邻列 → 左侧相邻列 → 其他列
- * @param excludeCol 排除的列
- * @param detaX 需要补偿的宽度
- * @param state 状态管理器
- * @returns 是否找到并成功调整
- */
-function findCompensationColumn(excludeCol: number, detaX: number, state: StateManager): boolean {
-  const table = state.table;
-
-  const searchOrder = [];
-
-  // 右侧相邻列
-  if (excludeCol + 1 < table.colCount) {
-    searchOrder.push(excludeCol + 1);
-  }
-
-  // 左侧相邻列
-  if (excludeCol - 1 >= 0) {
-    searchOrder.push(excludeCol - 1);
-  }
-
-  // 其他可调整的列
-  for (let col = 0; col < table.colCount; col++) {
-    if (col !== excludeCol && !searchOrder.includes(col)) {
-      searchOrder.push(col);
-    }
-  }
-
-  for (const col of searchOrder) {
-    if (isColumnResizableInContainerFit(col, table)) {
-      const currentWidth = table.getColWidth(col);
-      const newWidth = currentWidth - detaX;
-      const minWidth = table.getMinColWidth(col);
-      const maxWidth = table.getMaxColWidth(col);
-
-      if (newWidth >= minWidth && newWidth <= maxWidth && newWidth >= table.internalProps.limitMinWidth) {
-        table.scenegraph.updateColWidth(col, -detaX);
-        table.internalProps._widthResizedColMap.add(col);
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
 
 // columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
 export function updateResizeColumn(xInTable: number, yInTable: number, state: StateManager) {
@@ -89,13 +11,6 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
   if (Math.abs(detaX) < 1) {
     return;
-  }
-
-  // 在containerFit模式下，检查当前列是否允许调整
-  if (state.table.containerFit?.width) {
-    if (!isColumnResizableInContainerFit(state.columnResize.col, state.table)) {
-      return;
-    }
   }
 
   // 检查minWidth/maxWidth
@@ -127,10 +42,7 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
     afterSize = state.table.internalProps.limitMinWidth;
     detaX = afterSize - state.table.getColWidth(state.columnResize.col);
   }
-  if (
-    (state.table.widthMode === 'adaptive' || state.table.containerFit?.width) &&
-    state.columnResize.col < state.table.colCount - 1
-  ) {
+  if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
     const rightColWidthCache = state.table.getColWidth(state.columnResize.col + 1);
     const rightColMinWidth = state.table.getMinColWidth(state.columnResize.col + 1);
     const rightColMaxWidth = state.table.getMaxColWidth(state.columnResize.col + 1);
@@ -209,55 +121,18 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
 }
 
 function updateResizeColForColumn(detaX: number, state: StateManager) {
-  if (state.table.widthMode === 'adaptive') {
-    // adaptive模式：保持原有逻辑，强制调整相邻列
-    if (state.columnResize.col < state.table.colCount - 1) {
-      state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-      state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
+  if (state.table.widthMode === 'adaptive' && state.columnResize.col < state.table.colCount - 1) {
+    // in adaptive mode, the right column width can not be negative
+    // const rightColWidth = state.table.getColWidth(state.columnResize.col + 1);
+    // if (rightColWidth - detaX < 0) {
+    //   detaX = rightColWidth;
+    // }
+    state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
+    state.table.scenegraph.updateColWidth(state.columnResize.col + 1, -detaX);
 
-      state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
-      state.table.internalProps._widthResizedColMap.add(state.columnResize.col + 1);
-    } else {
-      state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-      state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
-    }
-  } else if (state.table.containerFit?.width && state.columnResize.col < state.table.colCount - 1) {
-    // containerFit模式：智能调整逻辑
-    const rightCol = state.columnResize.col + 1;
-
-    if (isColumnResizableInContainerFit(rightCol, state.table)) {
-      // 右侧相邻列可调整，检查调整后是否在合理范围内
-      const rightColCurrentWidth = state.table.getColWidth(rightCol);
-      const rightColNewWidth = rightColCurrentWidth - detaX;
-      const rightColMinWidth = state.table.getMinColWidth(rightCol);
-
-      if (rightColNewWidth >= rightColMinWidth && rightColNewWidth >= state.table.internalProps.limitMinWidth) {
-        // 直接调整相邻列
-        state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-        state.table.scenegraph.updateColWidth(rightCol, -detaX);
-
-        state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
-        state.table.internalProps._widthResizedColMap.add(rightCol);
-      } else {
-        // 右侧列调整超出限制，寻找其他可调整的列
-        const found = findCompensationColumn(state.columnResize.col, detaX, state);
-        if (found) {
-          state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-          state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
-        }
-        // 如果找不到可调整的列，则不执行调整
-      }
-    } else {
-      // 右侧相邻列不可调整，寻找其他可调整的列
-      const found = findCompensationColumn(state.columnResize.col, detaX, state);
-      if (found) {
-        state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
-        state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
-      }
-      // 如果找不到可调整的列，则不执行调整
-    }
+    state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
+    state.table.internalProps._widthResizedColMap.add(state.columnResize.col + 1);
   } else {
-    // 普通模式：直接调整当前列，不需要保持总宽度不变
     state.table.scenegraph.updateColWidth(state.columnResize.col, detaX);
     state.table.internalProps._widthResizedColMap.add(state.columnResize.col);
   }
