@@ -345,7 +345,7 @@ export class Scenegraph {
       y: this.table.tableY,
       width: 0,
       height: 0
-    });
+    } as any);
 
     if ((this.tableGroup as any).border) {
       (this.tableGroup.parent as Group).removeChild((this.tableGroup as any).border);
@@ -1036,7 +1036,9 @@ export class Scenegraph {
       this.table.widthMode === 'adaptive' ||
       this.table.heightMode === 'adaptive' ||
       this.table.autoFillWidth ||
-      this.table.autoFillHeight
+      this.table.autoFillHeight ||
+      this.table.containerFit?.width ||
+      this.table.containerFit?.height
     ) {
       this.updateChartSizeForResizeColWidth(-1);
     }
@@ -1047,51 +1049,72 @@ export class Scenegraph {
   }
 
   updateTableSize() {
+    // 计算内容的实际尺寸
+    const contentWidth =
+      Math.max(
+        this.colHeaderGroup.attribute.width,
+        this.bodyGroup.attribute.width,
+        this.bottomFrozenGroup.attribute.width,
+        0
+      ) +
+      Math.max(
+        this.cornerHeaderGroup.attribute.width,
+        this.rowHeaderGroup.attribute.width,
+        this.leftBottomCornerGroup.attribute.width,
+        0
+      ) +
+      Math.max(
+        this.rightTopCornerGroup.attribute.width,
+        this.rightFrozenGroup.attribute.width,
+        this.rightBottomCornerGroup.attribute.width,
+        0
+      );
+
+    const contentHeight =
+      Math.max(
+        this.colHeaderGroup.attribute.height,
+        this.cornerHeaderGroup.attribute.height,
+        this.rightTopCornerGroup.attribute.height,
+        0
+      ) +
+      Math.max(
+        this.rowHeaderGroup.attribute.height,
+        this.bodyGroup.attribute.height,
+        this.rightFrozenGroup.attribute.height,
+        0
+      ) +
+      Math.max(
+        this.leftBottomCornerGroup.attribute.height,
+        this.bottomFrozenGroup.attribute.height,
+        this.rightBottomCornerGroup.attribute.height,
+        0
+      );
+
+    // 处理containerFit模式
+    let tableWidth = contentWidth;
+    let tableHeight = contentHeight;
+
+    if (this.table.containerFit?.width) {
+      // containerFit.width: 表格宽度等于容器宽度
+      tableWidth = this.table.tableNoFrameWidth;
+    } else {
+      // 普通模式：表格宽度不超过容器宽度
+      tableWidth = Math.min(this.table.tableNoFrameWidth, contentWidth);
+    }
+
+    if (this.table.containerFit?.height) {
+      // containerFit.height: 表格高度等于容器高度
+      tableHeight = this.table.tableNoFrameHeight;
+    } else {
+      // 普通模式：表格高度不超过容器高度
+      tableHeight = Math.min(this.table.tableNoFrameHeight, contentHeight);
+    }
+
     this.tableGroup.setAttributes({
       x: this.table.tableX,
       y: this.table.tableY,
-      width: Math.min(
-        this.table.tableNoFrameWidth,
-        Math.max(
-          this.colHeaderGroup.attribute.width,
-          this.bodyGroup.attribute.width,
-          this.bottomFrozenGroup.attribute.width,
-          0
-        ) +
-          Math.max(
-            this.cornerHeaderGroup.attribute.width,
-            this.rowHeaderGroup.attribute.width,
-            this.leftBottomCornerGroup.attribute.width,
-            0
-          ) +
-          Math.max(
-            this.rightTopCornerGroup.attribute.width,
-            this.rightFrozenGroup.attribute.width,
-            this.rightBottomCornerGroup.attribute.width,
-            0
-          )
-      ),
-      height: Math.min(
-        this.table.tableNoFrameHeight,
-        Math.max(
-          this.colHeaderGroup.attribute.height,
-          this.cornerHeaderGroup.attribute.height,
-          this.rightTopCornerGroup.attribute.height,
-          0
-        ) +
-          Math.max(
-            this.rowHeaderGroup.attribute.height,
-            this.bodyGroup.attribute.height,
-            this.rightFrozenGroup.attribute.height,
-            0
-          ) +
-          Math.max(
-            this.leftBottomCornerGroup.attribute.height,
-            this.bottomFrozenGroup.attribute.height,
-            this.rightBottomCornerGroup.attribute.height,
-            0
-          )
-      )
+      width: tableWidth,
+      height: tableHeight
     } as any);
 
     if (this.tableGroup.border) {
