@@ -189,7 +189,8 @@ function App() {
   for (let i = 0; i < 20; i++) {
     records.push({
       id: i,
-      name: generateRandomString(8)
+      name: generateRandomString(8),
+      content: '哈哈哈哈哈哈哈哈'
     });
   }
 
@@ -215,7 +216,7 @@ function App() {
         {/* <HeaderCustomLayoutComponent role={'header-custom-layout'} /> */}
         <CommentComponent role={'custom-layout'} />
       </ListColumn>
-      <ListColumn field={'name'} title={'name'} width={200} />
+      <ListColumn field={'content'} title={'content'} width={200} />
       <ListColumn field={'name'} title={'name'} width={200} />
       <ListColumn field={'name'} title={'name'} width={200} />
       <ListColumn field={'name'} title={'name'} width={200} />

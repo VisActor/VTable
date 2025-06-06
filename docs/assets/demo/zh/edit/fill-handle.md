@@ -157,3 +157,15 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     }
   });
 ```
+
+## 仿 wps 填充柄
+
+实现了仿 wps 的填充柄功能，主要支持
+
+- 单个单元格数字递增/递减
+- 两个单元格数字等差递增/递减
+- 纯文本单元格内容复制填充
+- 文本数字混合，最后一位数字递增/递减
+- 两个以上单元格按照单个单元格间隔填充（选中 3 个单元格往下拖，则第 4 个单元格依据第 1 个内容填充，第 5 个依据第 2 个...）
+
+请查看[demo](https://github.com/VisActor/VTable/tree/develop/packages/react-vtable/demo/src/list-table/list-fill-handle.tsx)
