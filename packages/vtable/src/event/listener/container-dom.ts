@@ -4,12 +4,13 @@ import type { ListTableConstructorOptions, MousePointerMultiCellEvent } from '..
 import { InteractionState, type KeydownEvent, type ListTableAPI } from '../../ts-types';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 import { handleWhell } from '../scroll';
-import { browser } from '../../tools/helper';
+import { browser, getPromiseValue } from '../../tools/helper';
 import type { EventManager } from '../event';
 import { getPixelRatio } from '../../tools/pixel-ratio';
 import { endResizeCol, endResizeRow } from './table-group';
 import { isCellDisableSelect } from '../../state/select/is-cell-select-highlight';
 import { fireMoveColEventListeners } from '../helper';
+import { vglobal } from '@src/vrender';
 export function bindContainerDomListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -28,6 +29,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   // 监听键盘事件
   handler.on(table.getElement(), 'keydown', (e: KeyboardEvent) => {
+    // 键盘按下事件 内部逻辑处理前
+    const beforeKeydownEvent: KeydownEvent = {
+      keyCode: e.keyCode ?? e.which,
+      code: e.code,
+      event: e
+    };
+    table.fireListeners(TABLE_EVENT_TYPE.BEFORE_KEYDOWN, beforeKeydownEvent);
+    // 键盘按下事件 内部逻辑处理
     if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
       if (table.keyboardOptions?.selectAllOnCtrlA) {
         // 处理全选
@@ -114,10 +123,10 @@ export function bindContainerDomListener(eventManager: EventManager) {
         (table as ListTableAPI).editorManager?.editingEditor
       ) {
         // 开启了方向键切换编辑单元格  并且当前已经在编辑状态下 切换到下一个需先退出再进入下个单元格的编辑
-        (table as ListTableAPI).editorManager.completeEdit();
+        (table as ListTableAPI).editorManager?.completeEdit();
         table.getElement().focus();
         if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-          (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+          (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
         }
       }
     } else if (e.key === 'Escape') {
@@ -128,7 +137,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         // 如果是结束当前编辑，且有主动监听keydown事件，则先触发keydown事件，之后再结束编辑
         handleKeydownListener(e);
-        (table as ListTableAPI).editorManager.completeEdit();
+        (table as ListTableAPI).editorManager?.completeEdit();
         table.getElement().focus();
 
         if (table.options.keyboardOptions?.moveFocusCellOnEnter === true) {
@@ -164,7 +173,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         const endRow = table.stateManager.select.ranges[0].end.row;
         if (startCol === endCol && startRow === endRow) {
           if ((table as ListTableAPI).getEditor(startCol, startRow)) {
-            (table as ListTableAPI).editorManager.startEditCell(startCol, startRow);
+            (table as ListTableAPI).editorManager?.startEditCell(startCol, startRow);
           }
         }
       }
@@ -196,15 +205,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
           }
           table.selectCell(targetCol, targetRow);
           if ((table as ListTableAPI).editorManager?.editingEditor) {
-            (table as ListTableAPI).editorManager.completeEdit();
+            (table as ListTableAPI).editorManager?.completeEdit();
             table.getElement().focus();
             if ((table as ListTableAPI).getEditor(targetCol, targetRow)) {
-              (table as ListTableAPI).editorManager.startEditCell(targetCol, targetRow);
+              (table as ListTableAPI).editorManager?.startEditCell(targetCol, targetRow);
             }
           }
         }
       }
-    } else if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
+    } else if (!(e.ctrlKey || e.metaKey)) {
       const editCellTrigger = (table.options as ListTableConstructorOptions).editCellTrigger;
       if (
         (editCellTrigger === 'keydown' || (Array.isArray(editCellTrigger) && editCellTrigger.includes('keydown'))) &&
@@ -212,7 +221,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       ) {
         const allowedKeys = /^[a-zA-Z0-9+\-*\/%=.,\s]$/; // 允许的键值正则表达式
         if (e.key.match(allowedKeys)) {
-          table.editorManager.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
+          table.editorManager && (table.editorManager.beginTriggerEditCellMode = 'keydown');
+          table.editorManager?.startEditCell(stateManager.select.cellPos.col, stateManager.select.cellPos.row, '');
         }
       }
     }
@@ -350,7 +360,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
               rowValues.push(cell);
             });
           });
-          (table as ListTableAPI).changeCellValues(col, row, values);
+          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
         }
       }
     }
@@ -438,7 +456,16 @@ export function bindContainerDomListener(eventManager: EventManager) {
             maxRow - row + 1,
             maxCol - col + 1
           );
-          (table as ListTableAPI).changeCellValues(col, row, values, true);
+
+          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
         } else {
           navigator.clipboard.read().then(clipboardItems => {
             for (const item of clipboardItems) {
@@ -480,7 +507,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
     pasteValuesRowCount = values.length ?? 0;
     values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
-    (table as ListTableAPI).changeCellValues(col, row, values, true);
+    const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+    if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+      table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+        col,
+        row,
+        pasteData: values,
+        changedCellResults
+      });
+    }
   }
   function pasteTextToTable(item: ClipboardItem) {
     // 如果只有 'text/plain'
@@ -522,7 +557,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
           maxRow - row + 1,
           maxCol - col + 1
         );
-        (table as ListTableAPI).changeCellValues(col, row, values, true);
+        const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+        if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+          table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+            col,
+            row,
+            pasteData: values,
+            changedCellResults
+          });
+        }
       });
     });
   }
@@ -554,16 +597,37 @@ export function bindContainerDomListener(eventManager: EventManager) {
   }
   // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   const globalPointerdownCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     // console.log('body pointerdown');
     table.eventManager.LastBodyPointerXY = { x: e.x, y: e.y };
     table.eventManager.isDown = true;
+
+    const target = e.target as HTMLElement;
+    if (!table.getElement().contains(target) && !table.internalProps.menuHandler.containElement(target)) {
+      // 如果点击到表格外部的dom
+      const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
+      getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
+        if (isCompleteEdit === false) {
+          // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+          return;
+        }
+        //点击到表格外部不需要取消选中状态
+        if (table.options.select?.outsideClickDeselect) {
+          const isHasSelected = !!stateManager.select.ranges?.length;
+          eventManager.dealTableSelect();
+          stateManager.endSelectCells(true, isHasSelected);
+        }
+      });
+    }
   };
   eventManager.globalEventListeners.push({
     name: 'pointerdown',
-    env: 'body',
+    env: 'vglobal',
     callback: globalPointerdownCallback
   });
-  document.body.addEventListener('pointerdown', globalPointerdownCallback);
+  vglobal.addEventListener('pointerdown', globalPointerdownCallback);
 
   const globalPointerupOutsideCallback = (e: MouseEvent) => {
     // console.log('pointerupoutside');
@@ -606,10 +670,15 @@ export function bindContainerDomListener(eventManager: EventManager) {
   };
 
   const globalPointerupCallback = (e: MouseEvent) => {
+    if (table.isReleased) {
+      return;
+    }
     const target = e.target as HTMLElement;
+
     if (target !== table.canvas) {
       globalPointerupOutsideCallback(e);
     }
+
     table.eventManager.LastBodyPointerXY = null;
     // console.log('body pointerup', table.eventManager.isDown, table.eventManager.isDraging);
     table.eventManager.isDown = false;
@@ -622,14 +691,28 @@ export function bindContainerDomListener(eventManager: EventManager) {
     } else if (stateManager.isMoveCol()) {
       const endMoveColSuccess = table.stateManager.endMoveCol();
       fireMoveColEventListeners(table, endMoveColSuccess, e);
+    } else if (table.editorManager?.editingEditor) {
+      if (!table.getElement().contains(target)) {
+        // 如果点击到表格外部的dom
+        const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e);
+        getPromiseValue<boolean>(isCompleteEdit, (isCompleteEdit: boolean) => {
+          if (isCompleteEdit === false) {
+            // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+            return;
+          }
+          stateManager.updateInteractionState(InteractionState.default);
+          eventManager.dealTableHover();
+        });
+      }
     }
+    stateManager.updateInteractionState(InteractionState.default);
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',
-    env: 'document',
+    env: 'vglobal',
     callback: globalPointerupCallback
   });
-  document.addEventListener('pointerup', globalPointerupCallback);
+  vglobal.addEventListener('pointerup', globalPointerupCallback);
 
   const globalPointermoveCallback = (e: MouseEvent) => {
     if (table.eventManager.isDown && table.eventManager.LastBodyPointerXY) {
@@ -646,7 +729,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     //   eventManager.touchSetTimeout = undefined;
     // }
     // const eventArgsSet = getCellEventArgsSet(e);
-    const { x, y } = table._getMouseAbstractPoint(e, false);
+    const { x, y } = table._getMouseAbstractPoint(e);
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
@@ -785,7 +868,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           table.stateManager.updateInteractionState(InteractionState.grabing);
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
-          if (isValid(targetCol) && isValid(targetRow)) {
+          if (!table.options.select?.disableDragSelect && isValid(targetCol) && isValid(targetRow)) {
             table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, false);
           }
         });
@@ -798,8 +881,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
   };
   eventManager.globalEventListeners.push({
     name: 'pointermove',
-    env: 'body',
+    env: 'vglobal',
     callback: globalPointermoveCallback
   });
-  document.body.addEventListener('pointermove', globalPointermoveCallback);
+  vglobal.addEventListener('pointermove', globalPointermoveCallback);
 }

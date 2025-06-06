@@ -27,7 +27,7 @@ import type {
   SeriesNumberColumnData
 } from './list-table/layout-map/api';
 export type { HeaderData } from './list-table/layout-map/api';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import type { ICustomRender } from './customElement';
 import type { LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';
@@ -104,6 +104,7 @@ import type { EmptyTip } from '../components/empty-tip/empty-tip';
 import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
+import type { IVTablePlugin } from '../plugins/interface';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -131,6 +132,8 @@ export interface IBaseTableProtected {
   keyboardOptions?: TableKeyboardOptions;
   eventOptions?: TableEventOptions;
   rowSeriesNumber?: IRowSeriesNumber;
+  /** 启动复选框级联 */
+  enableCheckboxCascade?: boolean;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
 
@@ -389,6 +392,13 @@ export interface BaseTableConstructorOptions {
      * 'body': 不选择表头，点击行表头则选择该行所有 body 单元格，点击列表头则选择该列所有 body 单元格。
      */
     headerSelectMode?: 'inline' | 'cell' | 'body';
+    /** 点击表头corner单元格效果
+     * 'inline': 点击corner选择列表头则整列选中；
+     * 'cell': 仅仅选择当前点击的corner表头单元格；
+     * 'body': 点击corner列表头则选择该列所有 body 单元格；
+     * 'all': 点击corner选择整个图表。
+     */
+    cornerHeaderSelectMode?: 'inline' | 'cell' | 'body' | 'all';
     /** 不响应鼠标select交互 */
     disableSelect?: boolean | ((col: number, row: number, table: BaseTableAPI) => boolean);
     /** 单独设置表头不响应鼠标select交互 */
@@ -529,6 +539,8 @@ export interface BaseTableConstructorOptions {
   beforeRender?: (stage: any) => void;
   afterRender?: (stage: any) => void;
   rowSeriesNumber?: IRowSeriesNumber;
+  /** 启用复选框级联 */
+  enableCheckboxCascade?: boolean;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
@@ -562,6 +574,9 @@ export interface BaseTableConstructorOptions {
 
     // 开启透视结构缓存
     enablePivotPathCache?: boolean;
+
+    // 是否禁用内置图表激活
+    disableBuildInChartActive?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -594,6 +609,8 @@ export interface BaseTableConstructorOptions {
     /** 拖拽移动位置结束时进行验证 */
     validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
   };
+  /** 插件配置 */
+  plugins?: IVTablePlugin[];
 }
 export interface BaseTableAPI {
   id: string;
@@ -681,7 +698,7 @@ export interface BaseTableAPI {
   // rowHeightsMap: NumberMap<number>;
   rowHeightsMap: NumberRangeMap;
   colWidthsMap: NumberMap<string | number>;
-
+  hasListeners: (type: string) => boolean;
   on: <TYPE extends keyof TableEventHandlersEventArgumentMap>(
     type: TYPE,
     listener: TableEventListener<TYPE> //(event: TableEventHandlersEventArgumentMap[TYPE]) => TableEventHandlersReturnMap[TYPE]
@@ -714,14 +731,11 @@ export interface BaseTableAPI {
   canvasSizeSeted?: boolean;
 
   pixelRatio: number;
-
+  rotateDegree?: number;
   /** 获取表格绘制的范围 不包括frame的宽度 */
   getDrawRange: () => Rect;
   /** 将鼠标坐标值 转换成表格坐标系中的坐标位置 */
-  _getMouseAbstractPoint: (
-    evt: TouchEvent | MouseEvent | undefined,
-    isAddScroll?: boolean
-  ) => { x: number; y: number; inTable: boolean };
+  _getMouseAbstractPoint: (evt: TouchEvent | MouseEvent | undefined) => { x: number; y: number; inTable: boolean };
   getElement: () => HTMLElement;
   getContainer: () => HTMLElement;
 
@@ -765,6 +779,7 @@ export interface BaseTableAPI {
   // focusCell(col: number, row: number): void;
   getCellOverflowText: (col: number, row: number) => string | null;
   getColsWidth: (startCol: number, endCol: number) => number;
+  getColsWidths: () => number[];
   getRowsHeight: (startRow: number, endRow: number) => number;
 
   release: () => void;

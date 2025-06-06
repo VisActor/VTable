@@ -2,7 +2,7 @@ import type { ColumnsDefine, TYPES, ListTableConstructorOptions } from '@visacto
 import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
-
+import type { IGanttPlugin } from '../plugins/interface';
 export interface ITimelineDateInfo {
   days: number;
   endDate: Date;
@@ -94,6 +94,7 @@ export interface GanttConstructorOptions {
     /** 任务条样式 */
     barStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
     milestoneStyle?: IMilestoneStyle;
+    projectStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
     /** 自定义布局渲染 */
     customLayout?: ITaskBarCustomLayout;
     /** 任务条是否可调整大小 */
@@ -214,9 +215,17 @@ export interface GanttConstructorOptions {
   groupBy?: true | string | string[];
   /** 展示嵌套结构数据时的模式，默认为full。*/
   tasksShowMode?: TasksShowMode;
+  /**
+   * 当使用Project_Sub_Tasks_Inline模式时，控制是否启用项目子任务的展开/收起功能
+   * 默认值为true
+   * 当设置为true（默认值）时，项目节点可以展开/收起其子任务
+   * 当设置为false时，项目节点将始终以内联方式显示其子任务，没有展开/收起功能
+   */
+  projectSubTasksExpandable?: boolean;
   eventOptions?: IEventOptions;
   keyboardOptions?: IKeyboardOptions;
   markLineCreateOptions?: IMarkLineCreateOptions;
+  plugins?: IGanttPlugin[];
 }
 /**
  * IBarLabelText
@@ -237,12 +246,16 @@ export interface ITaskBarLabelTextStyle {
   fontFamily?: string;
   fontSize?: number;
   color?: string;
+  /** 当文字显示在任务条外侧时的颜色，默认为黑色 */
+  outsideColor?: string;
   textAlign?: 'center' | 'end' | 'left' | 'right' | 'start'; // 设置单元格内文字的水平对齐方式
   textOverflow?: string;
   textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // 设置单元格内文字的垂直对齐方式
   padding?: number | number[];
-  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
-  // orient?: 'left', 'top', 'right', 'bottom';
+  /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
+  orient?: 'left' | 'top' | 'right' | 'bottom';
+  /** 只有当文本在 taskbar 中容纳不下时，会根据该方位将文本显示在任务条旁边。当配置 orient 时，该配置无效 */
+  orientHandleWithOverflow?: 'left' | 'top' | 'right' | 'bottom';
 }
 export interface ITaskBarStyle {
   /** 任务条的颜色 */
@@ -272,14 +285,14 @@ export interface IMilestoneStyle {
   cornerRadius?: number;
   /** 里程碑默认是个正方形，这个width配置正方形的边长 */
   width?: number;
-  //  /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
-  //  labelText?: ITaskBarLabelText;
-  //  /** 里程碑文字样式 */
-  //  labelTextStyle?: ITaskBarLabelTextStyle;
+  /** 里程碑展示文字。可以配置固定文本 或者 字符串模版`${fieldName}` */
+  labelText?: ITaskBarLabelText;
+  /** 里程碑文字样式 */
+  labelTextStyle?: ITaskBarLabelTextStyle;
   // /** 里程碑图标 */
   // icon?: string;
-  // /** 相对于任务条文字方位位置，可选值：'left', 'top', 'right', 'bottom'，分别代表左、上、右、下四个方向 */
-  // textorient?: 'left', 'top', 'right', 'bottom';
+  /** 文字相对于里程碑的位置 */
+  textOrient?: 'left' | 'top' | 'right' | 'bottom';
 }
 export type ILineStyle = {
   lineColor?: string;
@@ -294,7 +307,7 @@ export type IPointStyle = {
 };
 export interface IMarkLine {
   date: string;
-  content: string;
+  content?: string;
   contentStyle?: {
     color?: string;
     fontSize?: number;
@@ -305,7 +318,7 @@ export interface IMarkLine {
   };
   style?: ILineStyle;
   /** 标记线显示在日期列下的位置 默认为'left' */
-  position?: 'left' | 'right' | 'middle';
+  position?: 'left' | 'right' | 'middle' | 'date';
   /** 自动将日期范围内 包括改标记线 */
   scrollToMarkLine?: boolean;
 }
@@ -437,7 +450,17 @@ export enum TasksShowMode {
   /** 省去父任务节点不展示，且所有子任务会维持records中的数据顺序布局，并保证节点不重叠展示 */
   Sub_Tasks_Arrange = 'sub_tasks_arrange',
   /** 省去父任务节点不展示，且所有子任务会按照日期早晚的属性来布局，并保证节点不重叠的紧凑型展示 */
-  Sub_Tasks_Compact = 'sub_tasks_compact'
+  Sub_Tasks_Compact = 'sub_tasks_compact',
+  /** 数据标记为project的节点，会把所有子任务的节点都放到和主任务的同一行来展示。其他节点则保持默认的显示效果即Tasks_Separate */
+  Project_Sub_Tasks_Inline = 'project_sub_tasks_inline'
+}
+/**
+ * 任务类型枚举，用于区分不同类型的任务
+ */
+export enum TaskType {
+  TASK = 'task', // record没有指明type的 会默认使用TASK
+  PROJECT = 'project',
+  MILESTONE = 'milestone'
 }
 export type ITaskBarSelectedStyle = {
   shadowBlur?: number; //阴影宽度

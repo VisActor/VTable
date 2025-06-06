@@ -86,6 +86,8 @@ export interface EventsProps {
   onEmptyTipClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_click']>;
   onEmptyTipDblClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['empty_tip_dblclick']>;
   onButtonClick?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['button_click']>;
+  onBeforeCacheChartImage?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['before_cache_chart_image']>;
+  onPastedData?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['pasted_data']>;
 }
 
 export const TABLE_EVENTS = {
@@ -160,7 +162,9 @@ export const TABLE_EVENTS = {
   onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
   onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK,
-  onButtonClick: EVENT_TYPE.BUTTON_CLICK
+  onButtonClick: EVENT_TYPE.BUTTON_CLICK,
+  onBeforeCacheChartImage: EVENT_TYPE.BEFORE_CACHE_CHART_IMAGE,
+  onPastedData: EVENT_TYPE.PASTED_DATA
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

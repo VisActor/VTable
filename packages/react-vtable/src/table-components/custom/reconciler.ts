@@ -1,6 +1,6 @@
 import { application, REACT_TO_CANOPUS_EVENTS, Tag } from '@visactor/vtable/es/vrender';
-import type { Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
-import { isFunction, merge } from '@visactor/vutils';
+import type { FlexLayoutPlugin, Graphic, IGraphic, IGraphicCreator } from '@visactor/vtable/es/vrender';
+import { isFunction, isNumber, merge } from '@visactor/vutils';
 import React from 'react';
 import ReactReconciler from 'react-reconciler';
 import { DefaultEventPriority } from 'react-reconciler/constants.js';
@@ -175,10 +175,24 @@ function updateGraphicProps(graphic: IGraphic, newProps: any, oldProps: any) {
       );
     }
   }
-  // update all attribute
   const attribute = newProps.attribute ?? merge({}, newProps);
+
+  // update all attribute
   graphic.initAttributes(attribute);
   if (graphic.type === 'image') {
     graphic.loadImage(attribute.image);
+  }
+
+  if (
+    attribute.display === 'flex' &&
+    attribute.width === undefined &&
+    attribute.height === undefined &&
+    isNumber(oldProps.attribute.width) &&
+    isNumber(oldProps.attribute.height)
+  ) {
+    const plugin = graphic.stage.pluginService.findPluginsByName('FlexLayoutPlugin')[0] as FlexLayoutPlugin;
+    if (plugin) {
+      plugin.tryLayoutChildren(graphic);
+    }
   }
 }

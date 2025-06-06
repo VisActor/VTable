@@ -1,3 +1,4 @@
+import { vglobal } from '@src/vrender';
 import type { FederatedPointerEvent } from '@src/vrender';
 import { handleWhell, isHorizontalScrollable, isVerticalScrollable } from '../scroll';
 import type { EventManager } from '../event';
@@ -7,6 +8,19 @@ export function bindTouchListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
   const scenegraph = table.scenegraph;
+  if ((vglobal as any).envContribution.supportsTouchEvents === false) {
+    return;
+  }
+  // 阻止右键事件
+  vglobal.addEventListener(
+    'contextmenu',
+    e => {
+      e.stopPropagation();
+      e.preventDefault();
+    },
+    // 捕获阶段就阻止
+    { capture: true }
+  );
 
   // deal width touch scrolling in mobile devices
   eventManager.touchMovePoints = [];
@@ -15,21 +29,22 @@ export function bindTouchListener(eventManager: EventManager) {
       return;
     }
     eventManager.isTouchdown = true;
+    const touchEvent = e.nativeEvent as TouchEvent;
     eventManager.touchMovePoints.push({
-      x: e.page.x,
-      y: e.page.y,
+      x: table.rotateDegree ? (touchEvent.changedTouches?.[0] as any)?._canvasX ?? e.canvas?.x : e.page.x,
+      y: table.rotateDegree ? (touchEvent.changedTouches?.[0] as any)?._canvasY ?? e.canvas?.y : e.page.y,
       timestamp: Date.now()
     });
   });
 
   const globalTouchMoveCallback = (e: TouchEvent) => {
-    if (eventManager.touchMove) {
+    if (eventManager.isLongTouch) {
       e.preventDefault();
     }
     if (!eventManager.isTouchdown || !isTouchEvent(e)) {
       return;
     }
-    console.log('downIcon', eventManager.downIcon);
+    eventManager.isTouchMove = true;
     if ((eventManager.downIcon?.attribute as any)?.funcType === IconFuncTypeEnum.dragReorder) {
       // console.log()
       e.preventDefault();
@@ -39,8 +54,8 @@ export function bindTouchListener(eventManager: EventManager) {
         eventManager.touchMovePoints.shift();
       }
       eventManager.touchMovePoints.push({
-        x: e.changedTouches[0].pageX,
-        y: e.changedTouches[0].pageY,
+        x: table.rotateDegree ? (e.changedTouches[0] as any)._canvasX : e.changedTouches[0].pageX,
+        y: table.rotateDegree ? (e.changedTouches[0] as any)._canvasY : e.changedTouches[0].pageY,
         timestamp: Date.now()
       });
       if (eventManager._enableTableScroll) {
@@ -63,16 +78,16 @@ export function bindTouchListener(eventManager: EventManager) {
       }
     }
   };
-  window.addEventListener('touchmove', globalTouchMoveCallback, { passive: false });
+  vglobal.addEventListener('touchmove', globalTouchMoveCallback, { passive: false });
   eventManager.globalEventListeners.push({
     name: 'touchmove',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchMoveCallback
   });
 
   const globalTouchEndCallback = (e: TouchEvent) => {
     eventManager.touchEnd = true;
-    eventManager.touchMove = false;
+    eventManager.isLongTouch = false;
     if (!eventManager.isTouchdown || !isTouchEvent(e)) {
       return;
     }
@@ -85,8 +100,8 @@ export function bindTouchListener(eventManager: EventManager) {
           eventManager.touchMovePoints.shift();
         }
         eventManager.touchMovePoints.push({
-          x: e.changedTouches[0].pageX,
-          y: e.changedTouches[0].pageY,
+          x: table.rotateDegree ? (e.changedTouches[0] as any)._canvasX : e.changedTouches[0].pageX,
+          y: table.rotateDegree ? (e.changedTouches[0] as any)._canvasY : e.changedTouches[0].pageY,
           timestamp: Date.now()
         });
         // compute inertia parameter
@@ -105,28 +120,33 @@ export function bindTouchListener(eventManager: EventManager) {
       }
     }
     eventManager.isTouchdown = false;
+    eventManager.isTouchMove = false;
+    eventManager.isDraging = false;
     eventManager.touchMovePoints = [];
   };
-  window.addEventListener('touchend', globalTouchEndCallback);
+  vglobal.addEventListener('touchend', globalTouchEndCallback);
   eventManager.globalEventListeners.push({
     name: 'touchend',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchEndCallback
   });
 
   const globalTouchCancelCallback = (e: TouchEvent) => {
     eventManager.touchEnd = true;
-    eventManager.touchMove = false;
+    eventManager.isLongTouch = false;
+
     if (!eventManager.isTouchdown) {
       return;
     }
     eventManager.isTouchdown = false;
+    eventManager.isTouchMove = false;
     eventManager.touchMovePoints = [];
+    eventManager.isDraging = false;
   };
-  window.addEventListener('touchcancel', globalTouchCancelCallback);
+  vglobal.addEventListener('touchcancel', globalTouchCancelCallback);
   eventManager.globalEventListeners.push({
     name: 'touchcancel',
-    env: 'window',
+    env: 'vglobal',
     callback: globalTouchCancelCallback
   });
 }

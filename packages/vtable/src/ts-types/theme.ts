@@ -130,6 +130,8 @@ export interface ITableThemeDefine {
       width: number; //阴影整体宽度
       startColor: string; //开始颜色
       endColor: string; //结束颜色
+      /**滚动条是否可见  'always' | 'scrolling' | 'none' | 'focus',常驻|滚动时|不显示|聚焦在画布上时 。默认'scrolling'*/
+      visible?: 'always' | 'scrolling';
     };
     /** TODO  暂未生效 */
     border?: {
@@ -154,6 +156,7 @@ export interface ITableThemeDefine {
     inlineRowBgColor?: string; //交互所在整行的背景颜色
     inlineColumnBgColor?: string; //交互所在整列的背景颜色
     selectionFillMode?: 'overlay' | 'replace'; //选择框填充模式，overlay表示选择框背景色覆盖在表格上（需要配饰透明度），replace表示背景色替换原有单元格的背景色
+    dynamicUpdateSelectionSize?: boolean; // 选择框大小随滚动动态变化，用于冻结并且背景透明的场景，默认false，开启后性能会有一定影响
   };
 
   // style for axis

@@ -1,10 +1,19 @@
-import type { CellAddress, CellRange, CellLocation, FieldDef, CellAddressWithBound } from './table-engine';
+import type {
+  CellAddress,
+  CellRange,
+  CellLocation,
+  FieldDef,
+  CellAddressWithBound,
+  ListTableConstructorOptions,
+  PivotTableConstructorOptions
+} from './table-engine';
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
+import type { BaseTableConstructorOptions } from './base-table';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -74,6 +83,7 @@ export interface TableEventHandlersEventArgumentMap {
   mousedown_cell: MousePointerCellEvent;
   mouseup_cell: MousePointerCellEvent;
   contextmenu_cell: MousePointerMultiCellEvent;
+  before_keydown: KeydownEvent;
   keydown: KeydownEvent;
   scroll: {
     event: WheelEvent;
@@ -203,6 +213,7 @@ export interface TableEventHandlersEventArgumentMap {
     dimensionInfo?: IDimensionInfo[];
     /**整条数据-原始数据 */
     originData?: any;
+    cellLocation?: CellLocation;
   };
   vchart_event_type: {
     eventName: string;
@@ -225,6 +236,8 @@ export interface TableEventHandlersEventArgumentMap {
   checkbox_state_change: MousePointerCellEvent & { checked: boolean };
   radio_state_change: MousePointerCellEvent & { radioIndexInCell: number | undefined };
   switch_state_change: MousePointerCellEvent & { checked: boolean };
+  before_init: { options: BaseTableConstructorOptions; container: HTMLElement | null };
+  before_set_size: { width: number; height: number };
   after_render: null;
   initialized: null;
 
@@ -247,6 +260,13 @@ export interface TableEventHandlersEventArgumentMap {
     col: number;
     row: number;
     event: Event;
+  };
+  before_cache_chart_image: { chartInstance: any };
+  pasted_data: {
+    col: number;
+    row: number;
+    pasteData: (string | number)[][];
+    changedCellResults: boolean[][];
   };
 }
 export interface DrillMenuEventInfo {
@@ -275,6 +295,7 @@ export interface TableEventHandlersReturnMap {
   mousedown_cell: boolean;
   mouseup_cell: void;
   contextmenu_cell: void;
+  before_keydown: void;
   keydown: void;
   scroll: void;
   can_scroll: void | boolean;
@@ -324,6 +345,8 @@ export interface TableEventHandlersReturnMap {
   checkbox_state_change: void;
   radio_state_change: void;
   switch_state_change: void;
+  before_init: void;
+  before_set_size: void;
   after_render: void;
   initialized: void;
 
@@ -340,4 +363,6 @@ export interface TableEventHandlersReturnMap {
   empty_tip_dblclick: void;
 
   button_click: void;
+  before_cache_chart_image: void;
+  pasted_data: void;
 }

@@ -12,7 +12,7 @@ link: plugin/header-highlight
 
 ## 关键配置
 
-- `HeaderHighlightPlugin` 高亮表头插件
+- `HighlightHeaderWhenSelectCellPlugin` 高亮表头插件
   - `columnHighlight` 是否高亮列头
   - `rowHighlight` 是否高亮行头
   - `colHighlightBGColor` 列头高亮背景色
@@ -90,14 +90,13 @@ const columns = [
     width: 100
   }
 ];
-
+const highlightPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin();
 const option = {
   records,
   columns,
-  rowSeriesNumber: {}
+  rowSeriesNumber: {},
+  plugins: [highlightPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
-
-const highlightPlugin = new VTablePlugins.HeaderHighlightPlugin(tableInstance, {});
 ```

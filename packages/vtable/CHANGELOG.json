@@ -2,6 +2,227 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.4",
+      "tag": "@visactor/vtable_v1.18.4",
+      "date": "Tue, 27 May 2025 09:16:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add pasted_data event #3908\n\n"
+          },
+          {
+            "comment": "feat: add date position to markline\n\n"
+          },
+          {
+            "comment": "feat: add milestone text\n\n"
+          },
+          {
+            "comment": "fix: fix bug of chart matrix when has scale\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.18.3",
+      "tag": "@visactor/vtable_v1.18.3",
+      "date": "Tue, 13 May 2025 11:26:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add frozenColumnLine visible on theme #3828\n\n"
+          },
+          {
+            "comment": "fix: when no rowTree treeMode occor error #3830\n\n"
+          },
+          {
+            "comment": "feat: add touch event for gantt chart #3864\n\n"
+          },
+          {
+            "comment": "feat: add support for text not to be hidden #3802"
+          },
+          {
+            "comment": "fix: unintended edit state activation on functional button clicks\n\n"
+          },
+          {
+            "comment": "feat: add exportAllData to export table plugin #3726\n\n"
+          },
+          {
+            "comment": "fix: resolve taskBar width problem when click linkPonitNode #3829\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.18.2",
+      "tag": "@visactor/vtable_v1.18.2",
+      "date": "Wed, 30 Apr 2025 09:48:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: change event listener with vglobal #3734\n\n"
+          },
+          {
+            "comment": "fix: when records is blank updateColumns api occor error #3766\n\n"
+          },
+          {
+            "comment": "fix: updateOption with dataSource object occor error #3768\n\n"
+          },
+          {
+            "comment": "refactor: plugins update progress #3788\n\n"
+          },
+          {
+            "comment": "fix: when hide pivot header find headerPath error #3791\n\n"
+          },
+          {
+            "comment": "fix: supplement adaptive widthAdaptiveMode logic #3796\n\n"
+          },
+          {
+            "comment": "fix: transform rotate api\n\n"
+          },
+          {
+            "comment": "fix: after rotate resize column interaction error\n\n"
+          },
+          {
+            "comment": "fix: skip serial number calculation for aggregation rows when groupBy is enabled\n\n"
+          },
+          {
+            "comment": "fix: hide rowSeriesNumber and checkbox in aggregation #2173\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.18.1",
+      "tag": "@visactor/vtable_v1.18.1",
+      "date": "Mon, 21 Apr 2025 09:53:06 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix scroll console error #3770"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.18.0",
+      "tag": "@visactor/vtable_v1.18.0",
+      "date": "Thu, 17 Apr 2025 07:40:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "chore: release 1.18.0"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.17.7",
+      "tag": "@visactor/vtable_v1.17.7",
+      "date": "Thu, 17 Apr 2025 06:30:44 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add onBeforeCacheChartImage event\n\n"
+          },
+          {
+            "comment": "feat: support customConfig disableBuildInChartActive\n\n"
+          },
+          {
+            "comment": "fix: fix table size in getCellsRect() #3681"
+          },
+          {
+            "comment": "fix: correct column index calculation when rowSeriesNumber is configured\n\n"
+          },
+          {
+            "comment": "fix: fix image flash problem #3588"
+          },
+          {
+            "comment": "feat: add dynamicUpdateSelectionSize config in theme.selectionStyle"
+          },
+          {
+            "comment": "fix: fix row/column update problem in text-stick #3744"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "fix: fix switch default direction #3667"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.17.6",
+      "tag": "@visactor/vtable_v1.17.6",
+      "date": "Thu, 10 Apr 2025 09:18:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when move tree node position code occor error #3645 #3706\n\n"
+          },
+          {
+            "comment": "fix: frame border set array render bottom line position error #3684\n\n"
+          },
+          {
+            "comment": "fix: mobile touch event resize column width #3693\n\n"
+          },
+          {
+            "comment": "fix: when set frozen disableDragSelect not work #3702\n\n"
+          },
+          {
+            "comment": "feat: listTable added tiggerEvent parameter to changeCellValue\n\n"
+          },
+          {
+            "comment": "feat: list table header support hierarchy \n\n"
+          },
+          {
+            "comment": "fix: fix flex layout update in react-custom-layout component #3696"
+          },
+          {
+            "comment": "fix: updateTaskRecord api #3639\n\n"
+          },
+          {
+            "comment": "fix: repeat call computeColsWidth adaptive mode result error\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.17.5",
+      "tag": "@visactor/vtable_v1.17.5",
+      "date": "Wed, 02 Apr 2025 09:56:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: fillHandle function #3582\n\n"
+          },
+          {
+            "comment": "feat: cell support marked function #3583\n\n"
+          },
+          {
+            "comment": "fix: gantt scale set quarter parser problem #3612\n\n"
+          },
+          {
+            "comment": "fix: gantt overscrollBehavior none work #3638\n\n"
+          },
+          {
+            "comment": "fix: gantt chart updateRecords error when table is tree mode #3639\n\n"
+          },
+          {
+            "comment": "fix: rowHeight error when set adaptive heightMode #3640\n\n"
+          },
+          {
+            "comment": "feat: refactor pivotTable corner with no columns or rows case #3653\n\n"
+          },
+          {
+            "comment": "fix: when set renderChartAsync setRecords api render error #3661\n\n"
+          },
+          {
+            "comment": "fix: fix merge cell checkbox state update #3668"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.17.4",
       "tag": "@visactor/vtable_v1.17.4",
       "date": "Mon, 31 Mar 2025 12:27:48 GMT",

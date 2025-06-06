@@ -12,7 +12,7 @@ Highlight the header when selecting the cell.
 
 ## Key Configurations
 
-- `HeaderHighlightPlugin` highlight plugin
+- `HighlightHeaderWhenSelectCellPlugin` highlight plugin
   - `columnHighlight` whether highlight the column
   - `rowHighlight` whether highlight the row
   - `colHighlightBGColor` the background color of the column highlight
@@ -90,14 +90,15 @@ const columns = [
     width: 100
   }
 ];
-
+const highlightPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin();
 const option = {
   records,
   columns,
-  rowSeriesNumber: {}
+  rowSeriesNumber: {},
+  plugins: [highlightPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 
-const highlightPlugin = new VTablePlugins.HeaderHighlightPlugin(tableInstance, {});
+
 ```

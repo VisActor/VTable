@@ -76,6 +76,7 @@ import { updateReactContainer } from './layout/frozen-react';
 
 import * as registerIcons from '../icons';
 import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
+import type { CheckboxContent } from './component/checkbox-content';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -803,6 +804,28 @@ export class Scenegraph {
                 (node as CheckBox).setAttribute('checked', checked);
               }
             }
+            // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+            if (node.name === 'checkbox-content') {
+              if (checked === 'indeterminate') {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  true
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  undefined
+                );
+              } else {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  undefined
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  checked
+                );
+              }
+            }
           });
       });
     } else {
@@ -816,6 +839,28 @@ export class Scenegraph {
             } else {
               (node as CheckBox).setAttribute('indeterminate', undefined);
               (node as CheckBox).setAttribute('checked', checked);
+            }
+          }
+          // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+          if (node.name === 'checkbox-content') {
+            if (checked === 'indeterminate') {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                true
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                undefined
+              );
+            } else {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                undefined
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                checked
+              );
             }
           }
         });
@@ -838,6 +883,28 @@ export class Scenegraph {
                 (node as CheckBox).setAttribute('checked', checked);
               }
             }
+            // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+            if (node.name === 'checkbox-content') {
+              if (checked === 'indeterminate') {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  true
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  undefined
+                );
+              } else {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  undefined
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  checked
+                );
+              }
+            }
           });
       });
     } else {
@@ -851,6 +918,28 @@ export class Scenegraph {
             } else {
               (node as CheckBox).setAttribute('indeterminate', undefined);
               (node as CheckBox).setAttribute('checked', checked);
+            }
+          }
+          // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+          if (node.name === 'checkbox-content') {
+            if (checked === 'indeterminate') {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                true
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                undefined
+              );
+            } else {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                undefined
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                checked
+              );
             }
           }
         });
@@ -1233,8 +1322,10 @@ export class Scenegraph {
    */
   setBodyAndRowHeaderY(y: number) {
     // correct y, avoid scroll out of range
-    const firstBodyCell = this.bodyGroup.firstChild?.firstChild as Group;
-    const lastBodyCell = this.bodyGroup.firstChild?.lastChild as Group;
+    const firstBodyCell =
+      (this.bodyGroup.firstChild?.firstChild as Group) ?? (this.rowHeaderGroup.firstChild?.firstChild as Group);
+    const lastBodyCell =
+      (this.bodyGroup.firstChild?.lastChild as Group) ?? (this.rowHeaderGroup.firstChild?.lastChild as Group);
     if (
       y === 0 &&
       firstBodyCell &&
@@ -1371,17 +1462,22 @@ export class Scenegraph {
       table._clearColRangeWidthsMap();
       const canvasWidth = table.tableNoFrameWidth;
       let actualHeaderWidth = 0;
-      for (let col = 0; col < table.colCount; col++) {
-        if (
-          col < table.rowHeaderLevelCount ||
-          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
-        ) {
-          const colWidth = table.getColWidth(col);
-          actualHeaderWidth += colWidth;
+      let startCol = 0;
+      let endCol = table.colCount;
+      if (table.widthAdaptiveMode === 'only-body') {
+        for (let col = 0; col < table.colCount; col++) {
+          if (
+            col < table.rowHeaderLevelCount ||
+            (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+          ) {
+            const colWidth = table.getColWidth(col);
+            actualHeaderWidth += colWidth;
+          }
         }
+        startCol = table.rowHeaderLevelCount;
+        endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
       }
-      const startCol = table.rowHeaderLevelCount;
-      const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
     } else if (table.autoFillWidth) {
       table._clearColRangeWidthsMap();

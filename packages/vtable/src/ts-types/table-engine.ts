@@ -33,7 +33,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
 import type { ColorPropertyDefine, StylePropertyFunctionArg } from './style-define';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 
 export interface CellAddress {
   col: number;
@@ -121,7 +121,7 @@ export interface IRowSeriesNumber {
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
   title?: string;
-  // field?: FieldDef;
+  field?: FieldDef;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -139,7 +139,8 @@ export interface IRowSeriesNumber {
   /** 是否禁止列宽调整 */
   disableColumnResize?: boolean;
 
-  /** 是否开启树形结构复选框 */
+  /** @deprecated 请使用全局 enableCheckboxCascade配置
+   * 是否开启树形结构复选框 */
   enableTreeCheckbox?: boolean;
   customLayout?: ICustomLayout;
   headerCustomLayout?: ICustomLayout;
@@ -239,6 +240,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   hierarchyExpandLevel?: number;
   /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
   hierarchyTextStartAlignment?: boolean;
+  /** 表头树形展示模式(设置成 'grid-tree' 则支持展开和折叠) */
+  headerHierarchyType?: 'grid-tree';
+  /** 表头默认展开层级(headerHierarchyType 为 'grid-tree' 时有效) */
+  headerExpandLevel?: number;
   /** 分页配置 */
   pagination?: IPagination;
 
@@ -276,7 +281,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
         col: number;
         field: string;
       }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
-
+  /** 数据为空时显示聚合结果 */
+  showAggregationWhenEmpty?: boolean;
   enableTreeNodeMerge?: boolean;
   groupBy?: GroupByOption;
   groupTitleCustomLayout?: ICustomLayout;
@@ -312,7 +318,12 @@ export interface ListTableAPI extends BaseTableAPI {
    * @param values 多个单元格的数据数组
    * @param workOnEditableCell 是否仅更改可编辑单元格
    */
-  changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell?: boolean) => void;
+  changeCellValues: (
+    col: number,
+    row: number,
+    values: (string | number)[][],
+    workOnEditableCell?: boolean
+  ) => boolean[][];
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

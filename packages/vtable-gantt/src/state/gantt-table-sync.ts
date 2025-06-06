@@ -1,6 +1,7 @@
 import type { Gantt } from '../Gantt';
 import { updateSplitLineAndResizeLine } from '../gantt-helper';
 import { TasksShowMode } from '../ts-types';
+import { TaskType } from '../ts-types';
 
 export function syncScrollStateToTable(gantt: Gantt) {
   const { scroll } = gantt.stateManager;
@@ -14,15 +15,19 @@ export function syncScrollStateFromTable(gantt: Gantt) {
       if (args.scrollDirection === 'vertical') {
         const { scroll } = gantt.taskListTableInstance.stateManager;
         const { verticalBarPos } = scroll;
-        gantt.stateManager.setScrollTop(verticalBarPos, false);
+        if (gantt.stateManager.scroll.verticalBarPos !== verticalBarPos) {
+          gantt.stateManager.setScrollTop(verticalBarPos, false);
+        }
       }
     });
   }
 }
 export function syncEditCellFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('change_cell_value', (args: any) => {
-    const { col, row, rawValue, changedValue } = args;
-    gantt._refreshTaskBar(row - gantt.taskListTableInstance.columnHeaderLevelCount);
+    const { col, row } = args;
+    if (!gantt.taskListTableInstance.isHeader(col, row)) {
+      gantt._refreshTaskBar(row - gantt.taskListTableInstance.columnHeaderLevelCount);
+    }
     // const record = gantt.getRecordByIndex(row - gantt.taskListTableInstance.columnHeaderLevelCount);
     // debugger;
   });
@@ -30,8 +35,27 @@ export function syncEditCellFromTable(gantt: Gantt) {
 
 export function syncTreeChangeFromTable(gantt: Gantt) {
   gantt.taskListTableInstance?.on('tree_hierarchy_state_change', (args: any) => {
+    // Get the changed record and its hierarchy state from the event args
+    const { row, hierarchyState } = args;
+
+    if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+      // For Project_Sub_Tasks_Inline mode, we need to ensure the record's hierarchy state is updated
+      // before refreshing the task bars
+      const recordIndex = row - gantt.taskListTableInstance.columnHeaderLevelCount;
+      const record = gantt.getRecordByIndex(recordIndex);
+
+      if (record && record.type === TaskType.PROJECT && record.children?.length > 0) {
+        // Update the record's hierarchyState explicitly to ensure it's synchronized
+        // console.log(
+        //   `Updating hierarchyState for record at index ${recordIndex} from ${record.hierarchyState} to ${hierarchyState}`
+        // );
+        record.hierarchyState = hierarchyState;
+      }
+    }
+
     gantt._syncPropsFromTable();
     gantt.scenegraph.refreshTaskBarsAndGrid();
+
     if (
       gantt.taskListTableInstance.checkHasColumnAutoWidth() &&
       (gantt.options.taskListTable?.tableWidth === 'auto' || gantt.taskTableWidth === -1)
@@ -39,6 +63,7 @@ export function syncTreeChangeFromTable(gantt: Gantt) {
       // 和监听resize_column事件处理逻辑一致
       _syncTableSize(gantt);
     }
+
     const left = gantt.stateManager.scroll.horizontalBarPos;
     const top = gantt.stateManager.scroll.verticalBarPos;
     gantt.scenegraph.setX(-left);
@@ -59,7 +84,8 @@ export function syncDragOrderFromTable(gantt: Gantt) {
     if (
       gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
       gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
-      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+      gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline
     ) {
       gantt.scenegraph.refreshTaskBarsAndGrid();
     } else {

@@ -92,8 +92,32 @@ export function createCell(
   //   );
   // }
 
-  // customMerge&customLayout cell as text cell
-  if (type === 'text' || type === 'link' || customResult) {
+  // 支持cellType: 'checkbox'与tree: true同时配置
+  if (type === 'checkbox' && define.tree) {
+    const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
+    cellGroup = createCheckboxCellGroup(
+      null,
+      columnGroup,
+      0,
+      y,
+      col,
+      row,
+      colWidth,
+      cellWidth,
+      cellHeight,
+      padding,
+      textAlign,
+      textBaseline,
+      mayHaveIcon,
+      table,
+      cellTheme,
+      define as CheckboxColumnDefine,
+      range,
+      isAsync,
+      true
+    );
+  } else if (type === 'text' || type === 'link' || customResult) {
+    // customMerge&customLayout cell as text cell
     if (type === 'link') {
       //如果是超链接 颜色按照linkColor绘制 TODO：放到方法_getCellStyle中
       // const columnDefine = table.getHeaderDefine(col, row);
@@ -349,27 +373,56 @@ export function createCell(
       isAsync
     );
   } else if (type === 'checkbox') {
-    const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
-    cellGroup = createCheckboxCellGroup(
-      null,
-      columnGroup,
-      0,
-      y,
-      col,
-      row,
-      colWidth,
-      cellWidth,
-      cellHeight,
-      padding,
-      textAlign,
-      textBaseline,
-      mayHaveIcon,
-      table,
-      cellTheme,
-      define as CheckboxColumnDefine,
-      range,
-      isAsync
-    );
+    const isAggregation =
+      'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
+    if (isAggregation && isSeriesNumber) {
+      const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
+      cellGroup = createTextCellGroup(
+        table,
+        value,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        false,
+        undefined,
+        true,
+        cellTheme,
+        range,
+        isAsync
+      );
+    } else {
+      const createCheckboxCellGroup = Factory.getFunction('createCheckboxCellGroup') as CreateCheckboxCellGroup;
+      cellGroup = createCheckboxCellGroup(
+        null,
+        columnGroup,
+        0,
+        y,
+        col,
+        row,
+        colWidth,
+        cellWidth,
+        cellHeight,
+        padding,
+        textAlign,
+        textBaseline,
+        mayHaveIcon,
+        table,
+        cellTheme,
+        define as CheckboxColumnDefine,
+        range,
+        isAsync,
+        false
+      );
+    }
   } else if (type === 'radio') {
     const createRadioCellGroup = Factory.getFunction('createRadioCellGroup') as CreateRadioCellGroup;
     cellGroup = createRadioCellGroup(

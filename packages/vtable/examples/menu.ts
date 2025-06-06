@@ -65,6 +65,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
         name: 'list-tree-20000'
       },
       {
@@ -109,7 +113,16 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-contextMenu-disabledMenu'
+      },
+
+      {
+        path: 'list',
         name: 'list-rowSeriesNumber'
+      },
+      {
+        path: 'list',
+        name: 'list-rowSeriesNumber-cornerHeaderSelectMode'
       },
       {
         path: 'list',
@@ -216,6 +229,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'pivot-grid-tree-totals'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-grid-tree-select-cornerHeaderSelectMode'
       },
       {
         path: 'pivot',

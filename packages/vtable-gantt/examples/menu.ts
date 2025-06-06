@@ -40,6 +40,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-default-minDate-maxDate'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-createButton'
   },
   {
@@ -138,6 +142,14 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-createMarkLine'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-project-type'
+  },
+  {
+    path: 'gantt',
+    name: 'project-sub-tasks-inline'
   }
   //   ]
   // }

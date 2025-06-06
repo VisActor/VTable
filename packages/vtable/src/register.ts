@@ -1,6 +1,6 @@
-import { icons as iconPlugins } from './plugins/icons';
-import { themes as themePlugins } from './plugins/themes';
-import { chartTypes as chartTypePlugins } from './plugins/chartModules';
+import { icons as iconPlugins } from './icons';
+import { themes as themePlugins } from './themes/themes';
+import { chartTypes as chartTypePlugins } from './chartModule';
 import type { ColumnIconOption, ITableThemeDefine } from './ts-types';
 import type { IEditor } from '@visactor/vtable-editors';
 import { editors } from './edit/editors';

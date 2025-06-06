@@ -1,7 +1,7 @@
 import { clone, cloneDeep, isValid, max } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
-import { InteractionState, GANTT_EVENT_TYPE, DependencyType, TasksShowMode } from '../ts-types';
+import { InteractionState, GANTT_EVENT_TYPE, DependencyType, TasksShowMode, TaskType } from '../ts-types';
 import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
@@ -364,7 +364,8 @@ export class StateManager {
         this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
       const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
       const testDateX =
-        this.moveTaskBar.target.attribute.x + (target.record.type === 'milestone' ? milestoneTaskbarHeight / 2 : 0);
+        this.moveTaskBar.target.attribute.x +
+        (target.record.type === TaskType.MILESTONE ? milestoneTaskbarHeight / 2 : 0);
       const startDateColIndex = getDateIndexByX(
         testDateX - this._gantt.stateManager.scroll.horizontalBarPos,
         this._gantt
@@ -443,7 +444,7 @@ export class StateManager {
           // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
         } else {
           let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
-          if (target.record.type === 'milestone') {
+          if (target.record.type === TaskType.MILESTONE) {
             const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
             newX -= milestoneTaskbarHeight / 2;
           }
@@ -485,6 +486,7 @@ export class StateManager {
     if (this.selectedTaskBar.target !== target) {
       target.setAttribute('zIndex', 0);
     }
+    target.updateTextPosition();
     this.moveTaskBar.target = null;
     this.moveTaskBar.deltaX = 0;
     this.moveTaskBar.deltaY = 0;
@@ -534,7 +536,11 @@ export class StateManager {
         );
         gantt.scrollLeft = gantt.parsedOptions.timelineColWidth - 1;
         gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
-        target.setAttribute('x', gantt.scrollLeft);
+        if (target.record?.type === 'milestone') {
+          moveTaskBar(target, gantt.scrollLeft - target.attribute.x, 0, this);
+        } else {
+          target.setAttribute('x', gantt.scrollLeft);
+        }
       } else {
         this.moveTaskBar.moveTaskBarXSpeed = -gantt.parsedOptions.timelineColWidth / 100;
 
@@ -580,7 +586,12 @@ export class StateManager {
         );
         gantt.scrollLeft += 1;
         gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
-        target.setAttribute('x', gantt.scrollLeft + gantt.tableNoFrameWidth - target.attribute.width);
+        if (target.record?.type === 'milestone') {
+          const newX = gantt.scrollLeft + gantt.tableNoFrameWidth - target.attribute.width;
+          moveTaskBar(target, newX - target.attribute.x, 0, this);
+        } else {
+          target.setAttribute('x', gantt.scrollLeft + gantt.tableNoFrameWidth - target.attribute.width);
+        }
       } else {
         // 处理向右拖拽任务条时，整体向右滚动
         this.moveTaskBar.moveTaskBarXSpeed = gantt.parsedOptions.timelineColWidth / 100;
@@ -604,8 +615,6 @@ export class StateManager {
     }
 
     gantt.scenegraph.updateNextFrame();
-
-    //
   }
   //#region 调整拖拽任务条的大小
   startResizeTaskBar(target: Group, x: number, y: number, startOffsetY: number, onIconName: string) {
@@ -704,6 +713,7 @@ export class StateManager {
         reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
         taskBarGroup.setAttribute('zIndex', 0);
       }
+      taskBarGroup.updateTextPosition();
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
 
@@ -743,7 +753,6 @@ export class StateManager {
     );
 
     this._gantt.scenegraph.updateNextFrame();
-    //
   }
   //#endregion
   //#region 生成关联线的交互处理
@@ -751,6 +760,7 @@ export class StateManager {
     // if (target.name === 'task-bar-hover-shadow') {
     // target = target.parent.parent;
     // }
+    this.resizeTaskBar.resizing = false; // 关联线创建时，任务条resizing状态重置
     this.creatingDenpendencyLink.creating = true;
     this.creatingDenpendencyLink.startClickedPoint = target;
     this.creatingDenpendencyLink.startX = x;
@@ -1003,6 +1013,107 @@ export class StateManager {
     this._gantt.stateManager.marklineIcon.target = null;
     this._gantt.scenegraph.updateNextFrame();
   }
+
+  /**
+   * 更新项目任务的时间范围
+   * 当子任务移动或调整大小时，需要更新父项目任务的时间范围
+   * @param taskPath 任务路径
+   */
+  updateProjectTaskTimes(taskPath: number[]) {
+    if (!taskPath || taskPath.length === 0 || !this._gantt || !this._gantt.records) {
+      return;
+    }
+
+    const startDateField = this._gantt.parsedOptions.startDateField;
+    const endDateField = this._gantt.parsedOptions.endDateField;
+
+    // 从最底层的子任务开始，向上更新所有父任务
+    // 先复制一份路径数组，避免修改原数组
+    const pathCopy = [...taskPath];
+
+    // 逐步向上处理每个父节点
+    while (pathCopy.length > 0) {
+      // 获取当前层级的父节点路径
+      const parentPath = [...pathCopy];
+      // 移除最后一个索引，得到父节点路径
+      const childIndex = parentPath.pop();
+
+      // 使用父节点路径获取父任务记录
+      let parentRecord = this._gantt.records;
+      const currentPath = [];
+      for (const index of parentPath) {
+        currentPath.push(index);
+        if (!parentRecord[index] || !parentRecord[index].children) {
+          console.warn('Invalid parent path:', currentPath);
+          return; // 路径无效，直接返回
+        }
+        parentRecord = parentRecord[index].children;
+      }
+
+      // 如果parentPath为空，表示已经到了顶层
+      const parent = parentPath.length === 0 ? this._gantt.records[childIndex] : parentRecord[childIndex];
+
+      // 只处理project类型的父任务
+      if (parent && parent.type === TaskType.PROJECT && parent.children && parent.children.length > 0) {
+        let earliestStart: Date | null = null;
+        let latestEnd: Date | null = null;
+
+        // 遍历所有子任务，找出最早的开始时间和最晚的结束时间
+        for (const child of parent.children) {
+          if (child[startDateField] && child[endDateField]) {
+            const childStartDate = new Date(child[startDateField]);
+            const childEndDate = new Date(child[endDateField]);
+
+            if (!earliestStart || childStartDate < earliestStart) {
+              earliestStart = childStartDate;
+            }
+
+            if (!latestEnd || childEndDate > latestEnd) {
+              latestEnd = childEndDate;
+            }
+          }
+        }
+
+        // 只有当有有效的时间范围时才更新父任务
+        if (earliestStart && latestEnd) {
+          // 获取当前父任务的时间范围
+          const currentStartDate = parent[startDateField] ? new Date(parent[startDateField]) : null;
+          const currentEndDate = parent[endDateField] ? new Date(parent[endDateField]) : null;
+
+          // 检查是否需要更新（避免不必要的更新）
+          const needUpdate =
+            !currentStartDate ||
+            !currentEndDate ||
+            earliestStart.getTime() !== currentStartDate.getTime() ||
+            latestEnd.getTime() !== currentEndDate.getTime();
+
+          if (needUpdate) {
+            // 获取日期格式
+            const dateFormat =
+              this._gantt.parsedOptions.dateFormat ??
+              this._gantt.parseTimeFormat(parent[startDateField] || parent.children[0][startDateField]);
+
+            // 格式化日期
+            const formatDateValue = (date: Date) => {
+              return this._gantt.formatDate
+                ? this._gantt.formatDate(date, dateFormat)
+                : date.toISOString().split('T')[0];
+            };
+
+            // 更新父任务的时间范围
+            parent[startDateField] = formatDateValue(earliestStart);
+            parent[endDateField] = formatDateValue(latestEnd);
+          }
+        }
+      }
+
+      // 继续向上遍历父节点
+      pathCopy.pop();
+    }
+
+    // 更新UI
+    this._gantt.scenegraph?.refreshAll();
+  }
 }
 
 function reCreateCustomNode(gantt: Gantt, taskBarGroup: Group, taskIndex: number, sub_task_index?: number) {
@@ -1052,12 +1163,17 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
   const taskIndex = target.task_index;
   const sub_task_index = target.sub_task_index;
   const record = target.record;
-  const isMilestone = record.type === 'milestone';
+  const isMilestone = record.type === TaskType.MILESTONE;
+  const oldX = target.attribute.x;
+  const oldY = target.attribute.y;
 
   if (dx) {
     target.setAttribute('x', Math.max(0, target.attribute.x + dx));
   }
-  if (state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate) {
+  if (
+    state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Tasks_Separate &&
+    state._gantt.parsedOptions.tasksShowMode !== TasksShowMode.Project_Sub_Tasks_Inline
+  ) {
     if (dy) {
       target.setAttribute('y', target.attribute.y + dy);
     }
@@ -1069,7 +1185,19 @@ function moveTaskBar(target: GanttTaskBarNode, dx: number, dy: number, state: St
       target.attribute.x + target.attribute.width / 2,
       target.attribute.y + target.attribute.height / 2
     ]);
+
+    if (target.milestoneTextContainer) {
+      const deltaX = target.attribute.x - oldX;
+      const deltaY = target.attribute.y - oldY;
+
+      const currentX = target.milestoneTextContainer.attribute.x;
+      const currentY = target.milestoneTextContainer.attribute.y;
+      target.milestoneTextContainer.setAttribute('x', currentX + deltaX);
+      target.milestoneTextContainer.setAttribute('y', currentY + deltaY);
+    }
   }
+
+  target.updateTextPosition();
 
   state._gantt.scenegraph.refreshRecordLinkNodes(taskIndex, sub_task_index, target, dy);
 }
@@ -1085,7 +1213,7 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
   const sub_task_index = target.sub_task_index;
   const record = target.record;
   const progress = record[progressField];
-  const isMilestone = record.type === 'milestone';
+  const isMilestone = record.type === TaskType.MILESTONE;
   target.setAttribute('zIndex', 10000);
   if (dx) {
     target.setAttribute('x', target.attribute.x + dx);
@@ -1110,6 +1238,9 @@ function resizeTaskBar(target: GanttTaskBarNode, dx: number, newWidth: number, s
     textLabel.setAttribute('maxLineWidth', newWidth - TASKBAR_HOVER_ICON_WIDTH * 2);
     textLabel.setAttribute('x', position.x);
   }
+
+  target.updateTextPosition();
+
   state.showTaskBarHover();
 
   reCreateCustomNode(state._gantt, target, taskIndex, sub_task_index);

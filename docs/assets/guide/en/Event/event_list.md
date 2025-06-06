@@ -33,7 +33,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | After sort                                 | AFTER_SORT                                          | Execute after sorting event                                                                                            |
 | Click Fixed Column                         | FREEZE_CLICK                                        | Click Fixed Column Icon Event                                                                                          |
 | Scroll                                     | SCROLL                                              | Scroll Table Events                                                                                                    |
-| Click the drop-down icon                   | DROPDOWNMENU_CLICK                                  | Click the drop-down menu icon event                                                                                    |
+| Click the drop-down icon                   | DROPDOWN_MENU_CLICK                                  | Click the drop-down menu icon event                                                                                    |
 | Click on the drop-down menu                | MENU_CLICK                                          | Click on the drop-down menu Events                                                                                     |
 | Mouse over miniature                       | MOUSEOVER_CHART_SYMBOL                              | Mouse over miniature mark events                                                                                       |
 | Drag and drop box to select mouse release  | DRAG_SELECT_END                                     | Drag and drop box to select cell mouse release event                                                                   |
@@ -49,6 +49,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | The mouse enters the table area            | MOUSEENTER_TABLE                                    | This event is triggered when the mouse enters the table area                                                           |
 | The mouse leaves the table area            | MOUSELEAVE_TABLE                                    | This event is triggered when the mouse leaves the table area                                                           |
 | Mouse down                                 | MOUSEDOWN_TABLE                                     | This event is triggered when the mouse is pressed in the table area                                                    |
+| Paste data                                 | PASTED_DATA                                         | Paste data event                                                                                                      |
 
 ## Event monitoring method
 

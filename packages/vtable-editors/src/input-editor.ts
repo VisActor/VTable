@@ -29,6 +29,19 @@ export class InputEditor implements IEditor {
     input.style.width = '100%';
     input.style.boxSizing = 'border-box';
     input.style.backgroundColor = '#FFFFFF';
+    input.style.borderRadius = '0px';
+    input.style.border = '2px solid #d9d9d9';
+    // #region 为了保证input在focus时，没有圆角
+    input.addEventListener('focus', () => {
+      input.style.borderColor = '#4A90E2';
+      input.style.outline = 'none';
+    });
+
+    input.addEventListener('blur', () => {
+      input.style.borderColor = '#d9d9d9';
+      // input.style.boxShadow = 'none';
+    });
+    // #endregion
     this.element = input;
     this.container.appendChild(input);
 
@@ -72,10 +85,17 @@ export class InputEditor implements IEditor {
   }
 
   adjustPosition(rect: RectProps) {
-    this.element.style.top = rect.top + 'px';
-    this.element.style.left = rect.left + 'px';
-    this.element.style.width = rect.width + 'px';
-    this.element.style.height = rect.height + 'px';
+    //使border均分input位置rect的上下左右
+    const borderWidth = 2;
+    const top = rect.top - borderWidth / 2;
+    const left = rect.left - borderWidth / 2;
+    const width = rect.width + borderWidth;
+    const height = rect.height + borderWidth;
+
+    this.element.style.top = top + 'px';
+    this.element.style.left = left + 'px';
+    this.element.style.width = width + 'px';
+    this.element.style.height = height + 'px';
   }
 
   endEditing() {

@@ -12,13 +12,12 @@ link: animation/carousel_animation
 
 ## 关键配置
 
-- `CarouselAnimationPlugin` 轮播动画插件
+- `TableCarouselAnimationPlugin` 轮播动画插件
   - `rowCount` 一次动画滚动的行数
   - `colCount` 一次动画滚动的列数
   - `animationDuration` 一次滚动动画的时间
   - `animationDelay` 动画间隔时间
   - `animationEasing` 动画缓动函数
-  - `replaceScrollAction` 是否替换滚动行为，如果为 true ，每次滚动操作会移动对于的行数/列数
 
 ## 代码演示
 
@@ -31,6 +30,10 @@ let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
   .then(res => res.json())
   .then(data => {
+
+    const animationPlugin = new VTablePlugins.TableCarouselAnimationPlugin( {
+      rowCount: 2,
+    });
     const columns = [
       {
         field: 'Category',
@@ -92,16 +95,12 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     const option = {
       records: data.slice(0, 20),
       columns,
-      widthMode: 'standard'
+      widthMode: 'standard',
+      plugins: [animationPlugin]
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;
 
-    const ca = new VTablePlugins.CarouselAnimationPlugin(tableInstance, {
-      rowCount: 2,
-      replaceScrollAction: true
-    });
-
-    ca.play();
+    
   });
 ```

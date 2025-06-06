@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix node-canvas range in PivotChart #3997",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

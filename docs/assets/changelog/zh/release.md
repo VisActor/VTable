@@ -1,3 +1,158 @@
+# v1.18.4
+
+2025-05-27
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增事件 pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
+- **@visactor/vtable-gantt**: 给markline添加 date position 定位类型 
+- **@visactor/vtable-gantt**: 里程碑 milestone 支持配置文本text
+- **@visactor/vtable-gantt**: 任务信息可配置type = 'project'表示项目类型
+- **@visactor/vtable-gantt**: 新增任务条展示模式 tasksShowMode 'Project_Sub_Tasks_Inline'
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当有scale时，图表矩阵报错问题 [#3910](https://github.com/VisActor/VTable/issues/3910)
+
+
+
+[更多详情请查看 v1.18.4](https://github.com/VisActor/VTable/releases/tag/v1.18.4)
+
+# v1.18.3
+
+2025-05-13
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 在主题中添加 frozenColumnLine visible 配置 [#3828](https://github.com/VisActor/VTable/issues/3828)
+- **@visactor/vtable**: 为甘特图添加 touch 事件 [#3864](https://github.com/VisActor/VTable/issues/3864)
+- **@visactor/vtable-gantt**: 任务条支持文本不隐藏自适应显示到任务条外部 [#3802](https://github.com/VisActor/VTable/issues/3802)
+- **@visactor/vtable**: 为导出插件添加 exportAllData 配置 [#3726](https://github.com/VisActor/VTable/issues/3726)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 当没有配置rowTree时，tree 模式下报错 [#3830](https://github.com/VisActor/VTable/issues/3830)
+- **@visactor/vtable**: 修复当点击功能按钮点击时意外激活编辑状态 [#3831](https://github.com/VisActor/VTable/issues/3831)
+- **@visactor/vtable**: 修复当点击 resize图标后再点击 linkPonitNode 时，触发任务条调整宽度问题 [#3829](https://github.com/VisActor/VTable/issues/3829)
+
+
+
+[更多详情请查看 v1.18.3](https://github.com/VisActor/VTable/releases/tag/v1.18.3)
+
+# v1.18.2
+
+2025-04-30
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 当 records 为空时，updateColumns 接口报错 [#3766](https://github.com/VisActor/VTable/issues/3766)
+- **@visactor/vtable**: 使用 dataSource 对象做数据源，调用 updateOption 接口报错 [#3768](https://github.com/VisActor/VTable/issues/3768)
+- **@visactor/vtable**: 隐藏透视表表头时，查找 headerPath 错误 [#3791](https://github.com/VisActor/VTable/issues/3791)
+- **@visactor/vtable**: 补充自适应 widthAdaptiveMode 逻辑 [#3796](https://github.com/VisActor/VTable/issues/3796)
+- **@visactor/vtable**: 启用 groupBy 时，跳过聚合行的序号计算
+- **@visactor/vtable**: 在聚合中隐藏 rowSeriesNumber 和复选框 [#2173](https://github.com/VisActor/VTable/issues/2173)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 使用 vglobal 更改事件监听器 [#3734](https://github.com/VisActor/VTable/issues/3734)
+- **@visactor/vtable**: 插件更新机制 [#3788](https://github.com/VisActor/VTable/issues/3788)
+- **@visactor/vtable**: 添加转换表格插件
+
+
+[更多详情请查看 v1.18.2](https://github.com/VisActor/VTable/releases/tag/v1.18.2)
+
+
+# v1.18.1
+
+2025-04-21
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当拖拽滚动条时，控制台报错问题 #3770 [#3766](https://github.com/VisActor/VTable/issues/3770)
+
+
+# v1.18.0 
+  v1.17.7 版本相同内容
+
+2025-04-17
+
+**💥 Breaking change**
+
+- **@visactor/vtable**: 修复 switch 默认方向问题 [#3667](https://github.com/VisActor/VTable/issues/3667)
+- **@visactor/vtable-editors**: 修改了input编辑器中的默认样式
+
+**🆕 新增功能**
+- **@visactor/vtable-plugins**: 新增 行列新增 行列序号 excel键盘对齐等插件
+- **@visactor/vtable**: 新增 onBeforeCacheChartImage 事件
+- **@visactor/vtable**: 支持 customConfig disableBuildInChartActive 配置
+- **@visactor/vtable**: 在 theme.selectionStyle 中新增 dynamicUpdateSelectionSize 配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 getCellsRect() 中表格大小问题 [#3681](https://github.com/VisActor/VTable/issues/3681)
+- **@visactor/vtable**: 修复配置 rowSeriesNumber 时列索引计算错误问题
+- **@visactor/vtable**: 修复图片闪烁问题 [#3588](https://github.com/VisActor/VTable/issues/3588)
+- **@visactor/vtable**: 修复 text-stick 中行/列更新问题 [#3744](https://github.com/VisActor/VTable/issues/3744)
+
+
+
+[更多详情请查看 v1.17.7](https://github.com/VisActor/VTable/releases/tag/v1.17.7)
+
+# v1.17.6
+
+2025-04-10
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: ListTable的changeCellValue方法新增tiggerEvent参数
+- **@visactor/vtable**: ListTable表头支持层级结构
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复移动树节点位置时代码报错问题 [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
+- **@visactor/vtable**: 修复边框设置数组时底部线条位置渲染错误 [#3684](https://github.com/VisActor/VTable/issues/3684)
+- **@visactor/vtable**: 修复移动端触摸事件调整列宽问题 [#3693](https://github.com/VisActor/VTable/issues/3693)
+- **@visactor/vtable**: 修复设置冻结时禁用拖拽选择不生效问题 [#3702](https://github.com/VisActor/VTable/issues/3702)
+- **@visactor/vtable**: 修复react-custom-layout组件中flex布局更新问题 [#3696](https://github.com/VisActor/VTable/issues/3696)
+- **@visactor/vtable**: 修复updateTaskRecord接口问题 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复重复调用computeColsWidth自适应模式结果错误问题
+
+
+
+[更多详情请查看 v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
+
+# v1.17.5
+
+2025-04-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 单元格支持标记功能 [#3583](https://github.com/VisActor/VTable/issues/3583)
+- **@visactor/vtable**: 重构透视表在无列或无行情况下的角落处理 [#3653](https://github.com/VisActor/VTable/issues/3653)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复甘特图刻度设置季度解析问题 [#3612](https://github.com/VisActor/VTable/issues/3612)
+- **@visactor/vtable**: 修复甘特图 overscrollBehavior 无效问题 [#3638](https://github.com/VisActor/VTable/issues/3638)
+- **@visactor/vtable**: 修复树形模式下甘特图 updateRecords 错误 [#3639](https://github.com/VisActor/VTable/issues/3639)
+- **@visactor/vtable**: 修复设置自适应高度模式时行高错误 [#3640](https://github.com/VisActor/VTable/issues/3640)
+- **@visactor/vtable**: 修复设置异步渲染图表时 setRecords API 渲染错误 [#3661](https://github.com/VisActor/VTable/issues/3661)
+- **@visactor/vtable**: 修复合并单元格复选框状态更新问题 [#3668](https://github.com/VisActor/VTable/issues/3668)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 重构填充句柄功能 [#3582](https://github.com/VisActor/VTable/issues/3582)
+
+
+
+[更多详情请查看 v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
+
 # v1.17.4
 
 2025-03-31

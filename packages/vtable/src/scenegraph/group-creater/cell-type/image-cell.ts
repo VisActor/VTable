@@ -170,7 +170,9 @@ export function createImageCellGroup(
       image.resources.has(image.attribute.image) &&
       image.resources.get(image.attribute.image).state === 'success'
     ) {
+      image.setAttribute('opacity', 0); // hack for image update
       setTimeout(() => {
+        image.setAttribute('opacity', 1); // hack for image update; 如果图片资源存在，会先安照单元格大小渲染一次，再异步调整大小，这样可能出现图片闪烁的问题，这里使用opacity来规避
         updateAutoSizingAndKeepAspectRatio(
           imageAutoSizing,
           keepAspectRatio,
@@ -181,6 +183,7 @@ export function createImageCellGroup(
           cellGroup,
           table
         );
+        table.scenegraph.updateNextFrame();
       }, 0);
     } else {
       image.successCallback = () => {

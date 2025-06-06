@@ -1,6 +1,184 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 31 Mar 2025 12:27:48 GMT and should not be manually modified.
+This log was last generated on Tue, 27 May 2025 09:16:00 GMT and should not be manually modified.
+
+## 1.18.4
+Tue, 27 May 2025 09:16:00 GMT
+
+### Updates
+
+- feat: add pasted_data event #3908
+
+
+- feat: add date position to markline
+
+
+- feat: add milestone text
+
+
+- fix: fix bug of chart matrix when has scale
+
+
+
+## 1.18.3
+Tue, 13 May 2025 11:26:12 GMT
+
+### Updates
+
+- feat: add frozenColumnLine visible on theme #3828
+
+
+- fix: when no rowTree treeMode occor error #3830
+
+
+- feat: add touch event for gantt chart #3864
+
+
+- feat: add support for text not to be hidden #3802
+- fix: unintended edit state activation on functional button clicks
+
+
+- feat: add exportAllData to export table plugin #3726
+
+
+- fix: resolve taskBar width problem when click linkPonitNode #3829
+
+
+
+## 1.18.2
+Wed, 30 Apr 2025 09:48:20 GMT
+
+### Updates
+
+- refactor: change event listener with vglobal #3734
+
+
+- fix: when records is blank updateColumns api occor error #3766
+
+
+- fix: updateOption with dataSource object occor error #3768
+
+
+- refactor: plugins update progress #3788
+
+
+- fix: when hide pivot header find headerPath error #3791
+
+
+- fix: supplement adaptive widthAdaptiveMode logic #3796
+
+
+- fix: transform rotate api
+
+
+- fix: after rotate resize column interaction error
+
+
+- fix: skip serial number calculation for aggregation rows when groupBy is enabled
+
+
+- fix: hide rowSeriesNumber and checkbox in aggregation #2173
+
+
+
+## 1.18.1
+Mon, 21 Apr 2025 09:53:06 GMT
+
+### Updates
+
+- fix: fix scroll console error #3770
+
+## 1.18.0
+Thu, 17 Apr 2025 07:40:27 GMT
+
+### Updates
+
+- chore: release 1.18.0
+
+## 1.17.7
+Thu, 17 Apr 2025 06:30:44 GMT
+
+### Minor changes
+
+- fix: fix switch default direction #3667
+
+### Updates
+
+- feat: add onBeforeCacheChartImage event
+
+
+- feat: support customConfig disableBuildInChartActive
+
+
+- fix: fix table size in getCellsRect() #3681
+- fix: correct column index calculation when rowSeriesNumber is configured
+
+
+- fix: fix image flash problem #3588
+- feat: add dynamicUpdateSelectionSize config in theme.selectionStyle
+- fix: fix row/column update problem in text-stick #3744
+
+## 1.17.6
+Thu, 10 Apr 2025 09:18:51 GMT
+
+### Updates
+
+- fix: when move tree node position code occor error #3645 #3706
+
+
+- fix: frame border set array render bottom line position error #3684
+
+
+- fix: mobile touch event resize column width #3693
+
+
+- fix: when set frozen disableDragSelect not work #3702
+
+
+- feat: listTable added tiggerEvent parameter to changeCellValue
+
+
+- feat: list table header support hierarchy 
+
+
+- fix: fix flex layout update in react-custom-layout component #3696
+- fix: updateTaskRecord api #3639
+
+
+- fix: repeat call computeColsWidth adaptive mode result error
+
+
+
+## 1.17.5
+Wed, 02 Apr 2025 09:56:31 GMT
+
+### Updates
+
+- refactor: fillHandle function #3582
+
+
+- feat: cell support marked function #3583
+
+
+- fix: gantt scale set quarter parser problem #3612
+
+
+- fix: gantt overscrollBehavior none work #3638
+
+
+- fix: gantt chart updateRecords error when table is tree mode #3639
+
+
+- fix: rowHeight error when set adaptive heightMode #3640
+
+
+- feat: refactor pivotTable corner with no columns or rows case #3653
+
+
+- fix: when set renderChartAsync setRecords api render error #3661
+
+
+- fix: fix merge cell checkbox state update #3668
 
 ## 1.17.4
 Mon, 31 Mar 2025 12:27:48 GMT

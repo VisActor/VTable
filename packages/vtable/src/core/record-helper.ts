@@ -14,12 +14,14 @@ import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
  * @param row
  * @param value 更改后的值
  * @param workOnEditableCell 限制只能更改配置了编辑器的单元格值。快捷键paste这里配置的true，限制只能修改可编辑单元格值
+ * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
  */
 export function listTableChangeCellValue(
   col: number,
   row: number,
   value: string | number | null,
   workOnEditableCell: boolean,
+  triggerEvent: boolean,
   table: ListTable
 ) {
   if ((workOnEditableCell && table.isHasEditorDefine(col, row)) || workOnEditableCell === false) {
@@ -91,7 +93,7 @@ export function listTableChangeCellValue(
       table.scenegraph.updateRowHeight(row, newHeight - oldHeight);
     }
     const changedValue = table.getCellOriginValue(col, row);
-    if (oldValue !== changedValue) {
+    if (oldValue !== changedValue && triggerEvent) {
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
         col,
         row,
@@ -109,14 +111,17 @@ export function listTableChangeCellValue(
  * @param row 粘贴数据的起始行号
  * @param values 多个单元格的数据数组
  * @param workOnEditableCell 是否仅更改可编辑单元格
+ * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
  */
 export function listTableChangeCellValues(
   startCol: number,
   startRow: number,
   values: (string | number)[][],
   workOnEditableCell: boolean,
+  triggerEvent: boolean,
   table: ListTable
-) {
+): boolean[][] {
+  const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
   let pasteRowEnd = startRow;
   // const rowCount = values.length;
@@ -150,6 +155,7 @@ export function listTableChangeCellValues(
     if (startRow + i > table.rowCount - 1) {
       break;
     }
+    changedCellResults[i] = [];
     pasteRowEnd = startRow + i;
     const rowValues = values[i];
     let thisRowPasteColEnd = startCol;
@@ -180,6 +186,7 @@ export function listTableChangeCellValues(
       }
       // if ((workOnEditableCell && table.isHasEditorDefine(startCol + j, startRow + i)) || workOnEditableCell === false) {
       if (isCanChange) {
+        changedCellResults[i][j] = true;
         const value = rowValues[j];
         const recordIndex = table.getRecordShowIndexByCell(startCol + j, startRow + i);
         const { field } = table.internalProps.layoutMap.getBody(startCol + j, startRow + i);
@@ -193,7 +200,7 @@ export function listTableChangeCellValues(
           table.dataSource.changeFieldValue(value, recordIndex, field, startCol + j, startRow + i, table);
         }
         const changedValue = table.getCellOriginValue(startCol + j, startRow + i);
-        if (oldValue !== changedValue) {
+        if (oldValue !== changedValue && triggerEvent) {
           table.fireListeners(TABLE_EVENT_TYPE.CHANGE_CELL_VALUE, {
             col: startCol + j,
             row: startRow + i,
@@ -202,6 +209,8 @@ export function listTableChangeCellValues(
             changedValue
           });
         }
+      } else {
+        changedCellResults[i][j] = false;
       }
     }
     pasteColEnd = Math.max(pasteColEnd, thisRowPasteColEnd);
@@ -254,7 +263,7 @@ export function listTableChangeCellValues(
     // 更新整个场景树
     table.scenegraph.clearCells();
     table.scenegraph.createSceneGraph();
-    return;
+    return changedCellResults;
   }
 
   for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
@@ -299,6 +308,7 @@ export function listTableChangeCellValues(
   }
 
   table.scenegraph.updateNextFrame();
+  return changedCellResults;
 }
 
 type CellUpdateType = 'normal' | 'sort' | 'group';

@@ -442,7 +442,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             style: seriesNumber.style,
             format: seriesNumber.format,
             field: (seriesNumber as any).field,
-            icon: seriesNumber.icon
+            icon: seriesNumber.icon,
+            headerIcon: seriesNumber.headerIcon,
+            isChildNode: false
           };
         });
       } else {
@@ -459,6 +461,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             format: rowSeriesNumber.format,
             field: '', // rowSeriesNumber.field,
             icon: rowSeriesNumber.icon,
+            headerIcon: rowSeriesNumber.headerIcon,
             isChildNode: false
           }
         ];
@@ -798,6 +801,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.rowHierarchyType === 'grid-tree'
         ? this._getRowHeaderTreeExpandedMaxLevelCount() || this.rowHeaderLevelCount
         : this.rowHeaderLevelCount;
+    if (colLevelCount === 0 || rowLevelCount === 0) {
+      return results;
+    }
     if (this.cornerSetting.titleOnDimension === 'all') {
       if (this.indicatorsAsCol) {
         if (colDimensionKeys) {
@@ -1581,7 +1587,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         !this.dataset.customColTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
         // && !this.dataset.customRowTree?.length
       ) {
-        if (this.cornerSetting.titleOnDimension === 'row' && this.cornerSetting.forceShowHeader) {
+        if (
+          (this.cornerSetting.titleOnDimension === 'row' || this.cornerSetting.titleOnDimension === 'all') &&
+          this.cornerSetting.forceShowHeader
+        ) {
           count = 1;
         } else if (
           !this._table.isPivotChart() &&
@@ -1630,10 +1639,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.rowHierarchyType === 'tree') {
         const extensionRowCount = this.extensionRows?.length ?? 0;
         if (this.rowHeaderTitle) {
-          this.rowHeaderLevelCount = 2 + extensionRowCount;
+          this.rowHeaderLevelCount = 1 + (this.rowDimensionTree.totalLevel ? 1 : 0) + extensionRowCount;
           return;
         }
-        this.rowHeaderLevelCount = 1 + extensionRowCount;
+        this.rowHeaderLevelCount = (this.rowDimensionTree.totalLevel ? 1 : 0) + extensionRowCount;
         return;
       }
       const rowLevelCount = this._getRowHeaderTreeExpandedMaxLevelCount();
@@ -1658,7 +1667,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         // && !this.dataset.customColTree
         !this.dataset.customRowTree?.length //根据情况来加的判断条件  之前是只兼容没有设置两个自定义树的情况  现在对有自定义树的情况也处理出现角头
       ) {
-        if (this.cornerSetting.titleOnDimension === 'column' && this.cornerSetting.forceShowHeader) {
+        if (
+          (this.cornerSetting.titleOnDimension === 'column' || this.cornerSetting.titleOnDimension === 'all') &&
+          this.cornerSetting.forceShowHeader
+        ) {
           count = 1;
         } else if (
           !this._table.isPivotChart() &&
@@ -1714,17 +1726,20 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._rowHeaderLevelCount = count;
   }
   get colCount(): number {
-    return (
-      (this._getColumnHeaderTreeExpandedMaxLevelCount() > 0 ||
+    let bodyColCount;
+    if (
+      this._getColumnHeaderTreeExpandedMaxLevelCount() > 0 ||
       this._table.isPivotChart() ||
       (this.dataset.records as Array<any>)?.length > 0 ||
       (this.dataset.records && !Array.isArray(this.dataset.records))
-        ? this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size
-        : 0) +
-      this.rowHeaderLevelCount +
-      this.rightHeaderColCount +
-      this.leftRowSeriesNumberColumnCount
-    ); // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
+    ) {
+      bodyColCount =
+        (this._columnHeaderCellIds[0]?.length ?? this.columnDimensionTree.tree.size) ||
+        (this._indicators?.length > 0 ? 1 : 0);
+    } else {
+      bodyColCount = 0;
+    }
+    return bodyColCount + this.rowHeaderLevelCount + this.rightHeaderColCount + this.leftRowSeriesNumberColumnCount; // 小心rightFrozenColCount和colCount的循环引用 造成调用栈溢出
   }
   get rowCount(): number {
     return (
@@ -1740,7 +1755,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.columnHeaderLevelCount +
       this.bottomHeaderRowCount // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
     );
-    // return (this._rowHeaderCellIds?.length ?? 0) + this.columnHeaderLevelCount + this.bottomFrozenRowCount;
   }
   get bodyRowSpanCount() {
     return this.rowDimensionTree.tree.size;
@@ -2198,7 +2212,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         const row_pathIds = this._rowHeaderCellFullPathIds[recordRow]; //获取当前行的cellId 但这个cellId不是各级维度都有的  下面逻辑就是找全路径然后再去各个树找path的过程
         let findTree = this.rowDimensionTree; //第一棵寻找的树是第一列的维度树 主树
         let level = 0; //level和col对应，代表一层层树找的过程
-        while (findTree) {
+        while (findTree && row_pathIds) {
           const pathIds: (number | string)[] = []; // pathIds记录寻找当前树需要匹配的cellId
           let cellId: LayoutObjectId = row_pathIds[level]; //row_pathIds中每个值对应了pathIds的一个节点cellId
           pathIds.push(cellId);
@@ -2925,8 +2939,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   } {
     // 判断从source地址是否可以移动到target地址
     if (
-      (this._table.options.dragOrder?.validateDragOrderOnEnd(source, target) ||
-        !this._table.options.dragOrder?.validateDragOrderOnEnd) &&
+      (!this._table.options.dragOrder?.validateDragOrderOnEnd ||
+        this._table.options.dragOrder?.validateDragOrderOnEnd(source, target)) &&
       this.canMoveHeaderPosition(source, target) &&
       !this.isCellRangeEqual(source.col, source.row, target.col, target.row)
     ) {
@@ -3187,10 +3201,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       needLowestLevel_colPaths = true;
       needLowestLevel_rowPaths = true;
     }
-    if (colHeaderPaths.length >= this.columnHeaderLevelCount) {
+    if (colHeaderPaths.length >= this._getColumnHeaderTreeExpandedMaxLevelCount()) {
       needLowestLevel_colPaths = true;
     }
-    if (rowHeaderPaths.length >= this.rowHeaderLevelCount) {
+    if (rowHeaderPaths.length >= this._getRowHeaderTreeExpandedMaxLevelCount()) {
       needLowestLevel_rowPaths = true;
     }
     let col;

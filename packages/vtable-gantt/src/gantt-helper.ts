@@ -6,7 +6,8 @@ import {
   type IPosition,
   type IScrollStyle,
   type ITimelineDateInfo,
-  type ITimelineScale
+  type ITimelineScale,
+  TaskType
 } from './ts-types';
 import {
   createDateAtLastHour,
@@ -54,6 +55,7 @@ export function generateMarkLine(markLine?: boolean | IMarkLine | IMarkLine[]): 
     return [
       {
         date: createDateAtMidnight().toLocaleDateString(),
+        content: '',
         scrollToMarkLine: true,
         position: 'left',
         style: {
@@ -125,6 +127,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
+  gantt.parsedOptions.projectSubTasksExpandable = options?.projectSubTasksExpandable ?? true;
   // gantt.parsedOptions.minDate = options?.minDate
   //   ? gantt.parsedOptions.timeScaleIncludeHour
   //     ? createDateAtMidnight(options.minDate)
@@ -139,9 +142,13 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.minDate = options?.minDate
     ? getStartDateByTimeUnit(new Date(options.minDate), minTimeUnit, startOfWeek)
     : undefined;
-  gantt.parsedOptions.maxDate = options?.maxDate
-    ? getEndDateByTimeUnit(gantt.parsedOptions.minDate, new Date(options.maxDate), minTimeUnit, step)
-    : undefined;
+
+  // processRecords函数中，重新计算了是否缺失minDate，maxDate 的情况
+  gantt.parsedOptions.maxDate =
+    options?.maxDate && gantt.parsedOptions?.minDate
+      ? getEndDateByTimeUnit(gantt.parsedOptions?.minDate, new Date(options.maxDate), minTimeUnit, step)
+      : undefined;
+
   gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.overscrollBehavior = options?.overscrollBehavior ?? 'auto';
@@ -165,7 +172,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.timelineHeaderBackgroundColor = options?.timelineHeader?.backgroundColor;
   gantt.parsedOptions.timeLineHeaderRowHeights = [];
   gantt.parsedOptions.timelineHeaderStyles = [];
-  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length; i++) {
     const style = gantt.parsedOptions.sortedTimelineScales[i].style;
     gantt.parsedOptions.timelineHeaderStyles.push(
       Object.assign(
@@ -205,6 +212,20 @@ export function initOptions(gantt: Gantt) {
     options?.taskBar?.barStyle && typeof options?.taskBar?.barStyle === 'function'
       ? options.taskBar.barStyle
       : Object.assign({}, defaultTaskBarStyle, options?.taskBar?.barStyle);
+  gantt.parsedOptions.projectBarStyle =
+    options?.taskBar?.projectStyle && typeof options?.taskBar?.projectStyle === 'function'
+      ? options.taskBar.projectStyle
+      : options?.taskBar?.projectStyle
+      ? Object.assign({}, defaultTaskBarStyle, options?.taskBar?.projectStyle)
+      : gantt.parsedOptions.taskBarStyle;
+  const defaultMilestoneStyle = {
+    labelTextStyle: {
+      fontSize: 16,
+      color: 'red',
+      fontFamily: 'Arial',
+      padding: 4
+    }
+  };
   gantt.parsedOptions.taskBarMilestoneStyle = Object.assign(
     typeof gantt.parsedOptions.taskBarStyle === 'function'
       ? {}
@@ -215,8 +236,10 @@ export function initOptions(gantt: Gantt) {
           fillColor: gantt.parsedOptions.taskBarStyle.barColor,
           cornerRadius: 0
         },
+    defaultMilestoneStyle,
     options?.taskBar?.milestoneStyle
   );
+
   gantt.parsedOptions.taskBarMilestoneHypotenuse = gantt.parsedOptions.taskBarMilestoneStyle.width * Math.sqrt(2);
 
   gantt.parsedOptions.dateFormat = options?.dateFormat;
@@ -257,10 +280,13 @@ export function initOptions(gantt: Gantt) {
     fontFamily: options?.taskBar?.labelTextStyle?.fontFamily ?? 'Arial',
     fontSize: options?.taskBar?.labelTextStyle?.fontSize ?? 20,
     color: options?.taskBar?.labelTextStyle?.color ?? '#F01',
+    outsideColor: options?.taskBar?.labelTextStyle?.outsideColor ?? '#333333',
     textAlign: options?.taskBar?.labelTextStyle?.textAlign ?? 'left',
     textBaseline: options?.taskBar?.labelTextStyle?.textBaseline ?? 'middle',
     padding: options?.taskBar?.labelTextStyle?.padding ?? [0, 0, 0, 10],
-    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow
+    textOverflow: options?.taskBar?.labelTextStyle?.textOverflow,
+    orient: options?.taskBar?.labelTextStyle?.orient,
+    orientHandleWithOverflow: options?.taskBar?.labelTextStyle?.orientHandleWithOverflow
   };
   gantt.parsedOptions.taskBarCustomLayout = options?.taskBar?.customLayout;
   gantt.parsedOptions.taskBarCreatable =
@@ -384,7 +410,7 @@ export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
   gantt.parsedOptions.timeLineHeaderRowHeights = [];
   gantt.parsedOptions.timelineHeaderStyles = [];
-  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length ?? 0; i++) {
+  for (let i = 0; i < gantt.parsedOptions.sortedTimelineScales.length; i++) {
     const style = gantt.parsedOptions.sortedTimelineScales[i].style;
     gantt.parsedOptions.timelineHeaderStyles.push(
       Object.assign(
@@ -715,8 +741,8 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
       const highlightLine = document.createElement('div');
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
-      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
-      highlightLine.style.width = (gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth) / 2}px`;
+      highlightLine.style.width = gantt.parsedOptions.verticalSplitLineHighlight.lineWidth + 'px';
       highlightLine.style.height = '100%';
       highlightLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLineHighlight.lineColor;
       highlightLine.style.zIndex = '100';
@@ -778,8 +804,8 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
       const highlightLine = gantt.verticalSplitResizeLine.childNodes[1] as HTMLDivElement;
       highlightLine.style.position = 'absolute';
       highlightLine.style.top = '0px';
-      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) / 2}px`;
-      highlightLine.style.width = (gantt.parsedOptions.verticalSplitLineHighlight.lineWidth ?? 2) + 'px';
+      highlightLine.style.left = `${(14 - gantt.parsedOptions.verticalSplitLineHighlight.lineWidth) / 2}px`;
+      highlightLine.style.width = gantt.parsedOptions.verticalSplitLineHighlight.lineWidth + 'px';
       highlightLine.style.height = '100%';
       highlightLine.style.backgroundColor = gantt.parsedOptions.verticalSplitLineHighlight.lineColor;
       highlightLine.style.zIndex = '100';
@@ -866,6 +892,17 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
         gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate
       ) {
         sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+      } else if (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline) {
+        // For Project_Sub_Tasks_Inline, we need to check if the current record is a project
+        const record = gantt.getRecordByIndex(task_index);
+        if (record && record.type === TaskType.PROJECT && record.children?.length > 0) {
+          // Check if the project is collapsed
+          const isExpanded = record.hierarchyState === 'expand';
+          if (!isExpanded && gantt.parsedOptions.projectSubTasksExpandable !== false) {
+            // If collapsed and expandable is enabled, subtasks appear inline
+            sub_task_index = Math.floor((y - beforeRowsHeight) / gantt.parsedOptions.rowHeight);
+          }
+        }
       }
     }
   } else {
@@ -1048,7 +1085,7 @@ export function updateOptionsWhenRecordChanged(gantt: Gantt) {
       );
     }
   }
-  gantt.parsedOptions.dependencyLinks = options.dependency?.links;
+  gantt.parsedOptions.dependencyLinks = options.dependency?.links ?? [];
 }
 
 export function updateOptionsWhenDateRangeChanged(gantt: Gantt) {
@@ -1091,7 +1128,11 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
         ((gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact ||
           gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) &&
           taskRecord.vtable_gantt_showIndex === taskIndex.sub_task_index) ||
-        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline
+        gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+        (gantt.parsedOptions.tasksShowMode === TasksShowMode.Project_Sub_Tasks_Inline &&
+          recordParent.type === TaskType.PROJECT &&
+          recordParent.hierarchyState !== 'expand' &&
+          gantt.parsedOptions.projectSubTasksExpandable !== false)
       ) {
         if (dateRange.startDate.getTime() >= startDate.getTime() && dateRange.endDate.getTime() <= endDate.getTime()) {
           return { startDate, endDate, taskDays, progress, taskRecord };
@@ -1125,4 +1166,113 @@ export function judgeIfHasMarkLine(data: { startDate: Date; endDate: Date }, mar
     const marklineTime = new Date(item.date).getTime();
     return marklineTime >= beginTime && marklineTime <= endTime;
   });
+}
+
+/**
+ * 检查任务是否有子任务
+ * @param gantt 甘特图实例
+ * @param taskIndex 任务索引
+ * @param subTaskIndex 子任务索引（可选）
+ * @returns 是否有子任务
+ */
+export function checkHasChildTasks(gantt: Gantt, taskIndex: number, subTaskIndex?: number): boolean {
+  const taskRecord = gantt.getRecordByIndex(taskIndex, subTaskIndex);
+  return !!(taskRecord?.children && taskRecord.children.length > 0);
+}
+
+/**
+ * 初始化项目类型任务的时间范围
+ * 根据子任务的时间范围计算父项目任务的时间范围
+ * @param gantt 甘特图实例
+ */
+export function initProjectTaskTimes(gantt: Gantt) {
+  if (!gantt.records || gantt.records.length === 0) {
+    return;
+  }
+
+  const startDateField = gantt.parsedOptions.startDateField;
+  const endDateField = gantt.parsedOptions.endDateField;
+
+  /**
+   * 递归处理任务及其子任务
+   * @param records 当前层级的任务记录数组
+   * @param parentIndex 父任务在其所属数组中的索引（为顶层任务时可能是undefined）
+   * @param parentArray 父任务所属的数组（为顶层任务时可能是undefined）
+   * @returns 返回该层级任务记录的时间范围 [earliestStart, latestEnd]
+   */
+  const processTasksRecursively = (
+    records: any[],
+    parentIndex?: number,
+    parentArray?: any[]
+  ): [Date | null, Date | null] => {
+    let earliestStartAll: Date | null = null;
+    let latestEndAll: Date | null = null;
+
+    // 处理当前层级的每个记录
+    records.forEach((record, index) => {
+      if (!record) {
+        return;
+      }
+
+      let earliestStart: Date | null = null;
+      let latestEnd: Date | null = null;
+
+      // 如果有子任务，递归处理  收起其子子孙孙的最小开始日期和最大结束日期 （前提是record.type === TaskType.PROJECT）如果是遇到！TaskType.PROJECT节点则按其自身的时间范围计算 进入else
+      if (record.children && record.children.length > 0 && record.type === TaskType.PROJECT) {
+        // 递归处理子任务，并获取子任务的时间范围
+        const [childrenEarliestStart, childrenLatestEnd] = processTasksRecursively(record.children, index, records);
+
+        // 更新当前记录的时间范围
+        if (childrenEarliestStart && childrenLatestEnd) {
+          earliestStart = childrenEarliestStart;
+          latestEnd = childrenLatestEnd;
+
+          // 如果是project类型，更新记录的时间字段
+          if (record.type === TaskType.PROJECT) {
+            // 获取日期格式
+            const dateFormat =
+              gantt.parsedOptions.dateFormat ??
+              gantt.parseTimeFormat(record[startDateField] || record.children[0][startDateField] || '');
+
+            // 格式化日期
+            const formatDateValue = (date: Date) => {
+              return gantt.formatDate ? gantt.formatDate(date, dateFormat) : date.toISOString().split('T')[0];
+            };
+
+            // 创建更新记录对象
+            const updatedRecord = { ...record };
+            updatedRecord[startDateField] = formatDateValue(earliestStart);
+            updatedRecord[endDateField] = formatDateValue(latestEnd);
+
+            // 更新记录到原数组（直接修改引用）
+            records[index] = updatedRecord;
+          }
+        }
+      } else {
+        // 没有子任务的记录，直接取其自身的时间
+        if (record[startDateField] && record[endDateField]) {
+          earliestStart = new Date(record[startDateField]);
+          latestEnd = new Date(record[endDateField]);
+        }
+      }
+
+      // 更新当前层级的整体最早/最晚时间
+      if (earliestStart) {
+        if (!earliestStartAll || earliestStart < earliestStartAll) {
+          earliestStartAll = earliestStart;
+        }
+      }
+
+      if (latestEnd) {
+        if (!latestEndAll || latestEnd > latestEndAll) {
+          latestEndAll = latestEnd;
+        }
+      }
+    });
+
+    return [earliestStartAll, latestEndAll];
+  };
+
+  // 从顶层记录开始处理
+  processTasksRecursively(gantt.records);
 }

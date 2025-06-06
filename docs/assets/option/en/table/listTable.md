@@ -93,6 +93,13 @@ When displayed as a tree structure, the number of levels is expanded by default.
 
 Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
 
+## headerHierarchyType('grid-tree')
+
+Defines the hierarchy display mode for headers. When set to 'grid-tree', it enables tree-style expand/collapse functionality in the header structure.
+
+## headerExpandLevel(number)
+
+Sets the initial expansion level of headers. Defaults to 1.
 
 ## aggregation(Aggregation|CustomAggregation|Array|Function)
 
@@ -125,6 +132,10 @@ type CustomAggregation = {
   formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
 };
 ```
+
+## showAggregationWhenEmpty(boolean)
+
+Display aggregation result when data is empty.
 
 ## groupBy(string|string[])
 

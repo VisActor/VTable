@@ -104,7 +104,8 @@ export default {
     shadow: {
       width: 3,
       startColor: 'rgba(225, 228, 232, 0.6)',
-      endColor: 'rgba(225, 228, 232, 0.6)'
+      endColor: 'rgba(225, 228, 232, 0.6)',
+      visible: 'always'
     }
   },
   // menuStyle: {

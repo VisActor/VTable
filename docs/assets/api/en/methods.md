@@ -259,6 +259,18 @@ Get the selected cell information, and the returned result is a two-dimensional 
 
 Clear the selection of all cells.
 
+## getBodyColumnDefine(Function)
+
+Get the original table column definition through the index.
+
+```
+  /**
+   * Get the original table column definition through the index
+   */
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber;
+
+```
+
 ## getCopyValue(Function)
 
 Get the contents of the selected area as the copy content. The return value is a string, with cells separated by `\t` and rows separated by `\n`.
@@ -1060,7 +1072,7 @@ Change the value of a cell:
 ```
 
 /\*_ Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly _/
-changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false, triggerEvent = true) => void;
 
 ```
 
@@ -1077,7 +1089,7 @@ Change the value of cells in batches:
 - @param row The starting row number of pasted data
 - @param values Data array of multiple cells
   \*/
-  changeCellValues(startCol: number, startRow: number, values: string[][])
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
 
 ```
 
@@ -1411,6 +1423,16 @@ get all columns width
 ```
 
 getAllColsWidth: () => number;
+
+```
+
+## getAllColsWidths(Function)
+
+get all columns width list
+
+```
+
+getAllColsWidth: () => number[];
 
 ```
 

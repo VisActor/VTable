@@ -194,6 +194,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
           width,
           height,
           cornerRadius,
+          true,
           new Array(4).fill(0).map((_, i) => (x1: number, y1: number, x2: number, y2: number) => {
             renderStrokeWithCornerRadius(
               i,
@@ -226,8 +227,8 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
           stroke,
           strokeArrayWidth || lineWidth,
           strokeArrayColor || strokeColor,
-          Math.ceil(width + deltaWidth),
-          Math.ceil(height + deltaHeight)
+          rect.name !== 'table-border-rect' ? Math.ceil(width + deltaWidth) : width + deltaWidth,
+          rect.name !== 'table-border-rect' ? Math.ceil(height + deltaHeight) : height + deltaHeight
         );
       }
     }

@@ -11,7 +11,7 @@ option: ListTable-columns-text#dropDownMenu
 # 下拉菜单
 
 在该示例中，在 columns 第一列中配置了 dropDownMenu, 当 hover 到表头单元格时会显示下拉菜单以进行进一步操作。
-同时通过监听`click_cell`事件，鼠标点击第一列中订单 icon 时，调用接口 showDropDownMenu 来显示下拉菜单。如需根据点击下拉菜单的项目来继续操作，可以监听事件 dropdownmenu_click。
+同时通过监听`click_cell`事件，鼠标点击第一列中订单 icon 时，调用接口 showDropDownMenu 来显示下拉菜单。如需根据点击下拉菜单的项目来继续操作，可以监听事件 dropdown_menu_click。
 
 ## 关键配置
 

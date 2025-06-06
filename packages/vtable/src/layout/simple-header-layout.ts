@@ -2,15 +2,15 @@
 import { isValid, merge } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
 import { DefaultSparklineSpec } from '../tools/global';
-import type {
-  CellAddress,
-  CellRange,
-  CellLocation,
-  IListTableCellHeaderPaths,
-  LayoutObjectId,
-  AggregationType,
-  Aggregation,
-  IRowSeriesNumber
+import {
+  type CellAddress,
+  type CellRange,
+  type CellLocation,
+  type IListTableCellHeaderPaths,
+  type LayoutObjectId,
+  type Aggregation,
+  type IRowSeriesNumber,
+  HierarchyState
 } from '../ts-types';
 import type { ChartColumnDefine, ColumnsDefine } from '../ts-types/list-table/define';
 import type {
@@ -66,6 +66,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   _hasAggregationOnBottomCount: number = 0;
   /**层级维度结构显示形式 */
   rowHierarchyType?: 'grid' | 'tree';
+  /** 列表头树形展示模式 */
+  columnHierarchyType?: 'grid-tree';
+  /** 列表头默认展开层级 */
+  columnExpandLevel?: number;
   // 缓存行号列号对应的cellRange 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
   _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
   constructor(table: ListTable, columns: ColumnsDefine, showHeader: boolean, hierarchyIndent: number) {
@@ -77,7 +81,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     this._headerCellIds = [];
     this.hierarchyIndent = hierarchyIndent ?? 20;
     this.hierarchyTextStartAlignment = table.options.hierarchyTextStartAlignment;
-    this.columnTree = new DimensionTree(columns as any, { seqId: 0 }, null); //seqId这里没有利用上 所有顺便传了0
+    this.columnHierarchyType = table.options.headerHierarchyType;
+    this.columnExpandLevel = table.options.headerExpandLevel ?? 1;
+    this.columnTree = new DimensionTree(
+      columns as any,
+      { seqId: 0 },
+      this.columnHierarchyType ?? null,
+      this.columnHierarchyType === 'grid-tree' ? this.columnExpandLevel : undefined
+    ); //seqId这里没有利用上 所有顺便传了0
     this._headerObjectsIncludeHided = this._addHeaders(0, columns, []);
     // this._headerObjectMapIncludeHided = this._headerObjectsIncludeHided.reduce((o, e) => {
     //   o[e.id as number] = e;
@@ -131,7 +142,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,
-            field: '_vtable_rowSeries_number', //rowSeriesNumber.field,
+            field: rowSeriesNumber.field ?? '_vtable_rowSeries_number',
             icon: rowSeriesNumber.icon,
             headerIcon: rowSeriesNumber.headerIcon,
             isChildNode: false
@@ -989,6 +1000,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         headerType: hd.headerType ?? 'text',
         dropDownMenu: hd.dropDownMenu,
         define: hd,
+        // 展开/折叠状态
+        hierarchyState: (hd as HeaderData).hierarchyState,
         columnWidthComputeMode: hd.columnWidthComputeMode
         // iconPositionList:[]
       };
@@ -1002,7 +1015,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       } else if (this._headerCellIds[row - 1]) {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
-      if (hd.columns) {
+      // 当前节点是展开状态才需要添加子节点
+      const expand = !(hd as HeaderData).hierarchyState || (hd as HeaderData).hierarchyState === HierarchyState.expand;
+      if (!!hd.columns && !!expand) {
         const isAllHided = hd.columns.every((c: any) => c.hide);
         !isAllHided &&
           this._addHeaders(
@@ -1188,8 +1203,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   } {
     // 判断从source地址是否可以移动到target地址
     if (
-      (this._table.options.dragOrder?.validateDragOrderOnEnd(source, target) ||
-        !this._table.options.dragOrder?.validateDragOrderOnEnd) &&
+      (!this._table.options.dragOrder?.validateDragOrderOnEnd ||
+        this._table.options.dragOrder?.validateDragOrderOnEnd(source, target)) &&
       this.canMoveHeaderPosition(source, target)
     ) {
       let sourceCellRange = this.getCellRange(source.col, source.row);
@@ -1447,7 +1462,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     let col;
     const result = this.columnObjects?.find((columnData: ColumnData, index) => {
       if (columnData.define?.key === key) {
-        col = index;
+        col = index + this.leftRowSeriesNumberColumnCount;
         return true;
       }
       return false;

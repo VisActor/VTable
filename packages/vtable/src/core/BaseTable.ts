@@ -62,7 +62,7 @@ import { EventHandler } from '../event/EventHandler';
 import { EventTarget } from '../event/EventTarget';
 import { NumberMap } from '../tools/NumberMap';
 import { Rect } from '../tools/Rect';
-import type { TableTheme } from '../themes/theme';
+import type { TableTheme } from '../themes/theme-define';
 import { throttle2 } from '../tools/util';
 import themes from '../themes';
 import { Env } from '../tools/env';
@@ -96,7 +96,6 @@ import type {
   SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';
 import type { TooltipOptions } from '../ts-types/tooltip';
-import { IconCache } from '../plugins/icons';
 import {
   _applyColWidthLimits,
   _getScrollableVisibleRect,
@@ -158,6 +157,8 @@ import type { CustomCellStylePlugin, ICustomCellStylePlugin } from '../plugins/c
 import { isCellDisableSelect } from '../state/select/is-cell-select-highlight';
 import { getCustomMergeCellFunc } from './utils/get-custom-merge-cell-func';
 import { vglobal } from '@src/vrender';
+import { PluginManager } from '../plugins/plugin-manager';
+import type { IVTablePlugin } from '../plugins/interface';
 
 const { toBoxArray } = utilStyle;
 const { isTouchEvent } = event;
@@ -233,12 +234,29 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   reactCustomLayout?: ReactCustomLayout;
   _hasAutoImageColumn?: boolean;
 
+  pluginManager: PluginManager;
+  rotateDegree?: number;
   constructor(container: HTMLElement, options: BaseTableConstructorOptions = {}) {
     super();
+
+    if (Env.mode === 'node') {
+      options = container as BaseTableConstructorOptions;
+      container = null;
+    } else if (!(container instanceof HTMLElement)) {
+      options = container as BaseTableConstructorOptions;
+      if ((container as BaseTableConstructorOptions).container) {
+        container = (container as BaseTableConstructorOptions).container;
+      } else {
+        container = null;
+      }
+    }
     if (!container && options.mode !== 'node' && !options.canvas) {
       throw new Error("vtable's container is undefined");
     }
 
+    this.pluginManager = new PluginManager(this, options);
+    this.fireListeners(TABLE_EVENT_TYPE.BEFORE_INIT, { options, container });
+    container = options.container && options.container instanceof HTMLElement ? options.container : container;
     // for image anonymous
     if (options.customConfig?.imageAnonymous === false) {
       vglobal.isImageAnonymous = false;
@@ -263,6 +281,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
+      enableCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -375,6 +394,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -1167,6 +1187,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
       }
     }
+
+    this._clearColRangeWidthsMap();
+    this._clearRowRangeHeightsMap();
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
@@ -1645,6 +1668,21 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**
+   * 获取所有表列的宽度的数组
+   * @returns {number[]} 宽度列表
+   */
+  getColsWidths(): number[] {
+    const maxCount = this.colCount;
+    const widths: number[] = [];
+
+    for (let col = 0; col < maxCount; col++) {
+      widths.push(this.getColWidth(col));
+    }
+
+    return widths;
+  }
+
+  /**
    * 根据列号 获取列宽最大值
    * @param  {number} col column index
    * @return {number} column max width
@@ -1866,6 +1904,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let absoluteLeft = this.getColsWidth(0, startCol - 1) || 0; // startCol为0时，absoluteLeft计算为Nan
     let width = this.getColsWidth(startCol, endCol);
     const scrollLeft = this.scrollLeft;
+
+    const tableWidth = Math.min(this.tableNoFrameWidth, this.getAllColsWidth());
+    const tableHeight = Math.min(this.tableNoFrameHeight, this.getAllRowsHeight());
     if (this.isLeftFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
       width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
       // width =
@@ -1875,10 +1916,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (this.isLeftFrozenColumn(startCol) && !this.isLeftFrozenColumn(endCol)) {
       width = Math.max(width - scrollLeft, this.getColsWidth(startCol, this.frozenColCount - 1));
     } else if (!this.isRightFrozenColumn(startCol) && this.isRightFrozenColumn(endCol)) {
-      absoluteLeft = Math.min(absoluteLeft - scrollLeft, this.tableNoFrameWidth - this.getRightFrozenColsWidth());
-      width = this.tableNoFrameWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
+      absoluteLeft = Math.min(absoluteLeft - scrollLeft, tableWidth - this.getRightFrozenColsWidth());
+      width = tableWidth - (this.getColsWidth(startCol + 1, this.colCount - 1) ?? 0) - absoluteLeft;
     } else if (this.isRightFrozenColumn(startCol)) {
-      absoluteLeft = this.tableNoFrameWidth - (this.getColsWidth(startCol, this.colCount - 1) ?? 0);
+      absoluteLeft = tableWidth - (this.getColsWidth(startCol, this.colCount - 1) ?? 0);
     } else {
       // 范围全部在整体一块区域 如都在右侧冻结区域 都可以走这块逻辑
       // do nothing
@@ -1896,10 +1937,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else if (this.isTopFrozenRow(startRow) && !this.isTopFrozenRow(endRow)) {
       height = Math.max(height - scrollTop, this.getRowsHeight(startRow, this.frozenRowCount - 1));
     } else if (!this.isBottomFrozenRow(startRow) && this.isBottomFrozenRow(endRow)) {
-      absoluteTop = Math.min(absoluteTop - scrollTop, this.tableNoFrameHeight - this.getBottomFrozenRowsHeight());
-      height = this.tableNoFrameHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
+      absoluteTop = Math.min(absoluteTop - scrollTop, tableHeight - this.getBottomFrozenRowsHeight());
+      height = tableHeight - (this.getRowsHeight(startRow + 1, this.rowCount - 1) ?? 0) - absoluteTop;
     } else if (this.isBottomFrozenRow(startRow)) {
-      absoluteTop = this.tableNoFrameHeight - (this.getRowsHeight(startRow, this.rowCount - 1) ?? 0);
+      absoluteTop = tableHeight - (this.getRowsHeight(startRow, this.rowCount - 1) ?? 0);
     } else {
       // 范围全部在整体一块区域 如都在右侧冻结区域 都可以走这块逻辑
       // do nothing
@@ -2286,7 +2327,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     internalProps.tooltipHandler?.release?.();
     internalProps.menuHandler?.release?.();
-    IconCache.clearAll();
 
     super.release?.();
     internalProps.handler?.release?.();
@@ -2320,6 +2360,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
+    this.pluginManager.release();
     clearChartRenderQueue();
   }
 
@@ -2335,6 +2376,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) {
+    this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
     this._hasAutoImageColumn = undefined;
     const {
@@ -2350,6 +2392,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
+      enableCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -2431,6 +2474,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -2651,10 +2695,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /** @private  将鼠标坐标值 转换成表格坐标系中的坐标位置
    * isAddScroll默认为true 返回的xy 加上了scrollX和scrollY。如滚动后通过该方法计算出的坐标值是未滚动时的坐标
    */
-  _getMouseAbstractPoint(
-    evt: TouchEvent | MouseEvent | undefined,
-    isAddScroll = true
-  ): { x: number; y: number; inTable: boolean } {
+  _getMouseAbstractPoint(evt: TouchEvent | MouseEvent | undefined): { x: number; y: number; inTable: boolean } {
     const table = this;
     let e: MouseEvent | Touch;
     if (!evt) {
@@ -2677,22 +2718,32 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
 
     const currentWidth = rect.width;
-    const originWidth = this.canvas.offsetWidth || currentWidth;
+    // 考虑旋转情况下宽高值和rect的宽高是相反的
+    const originWidth = (this.rotateDegree === 90 ? this.canvas.offsetHeight : this.canvas.offsetWidth) || currentWidth;
     const widthRatio = currentWidth / originWidth;
 
     const currentHeight = rect.height;
-    const originHeight = this.canvas.offsetHeight || currentHeight;
+    // 考虑旋转情况下宽高值和rect的宽高是相反的
+    const originHeight =
+      (this.rotateDegree === 90 ? this.canvas.offsetWidth : this.canvas.offsetHeight) || currentHeight;
     const heightRatio = currentHeight / originHeight;
-
-    const x =
-      (clientX - rect.left) / widthRatio + (isAddScroll ? table.scrollLeft : 0) - (this.options.viewBox?.x1 ?? 0);
-    const y =
-      (clientY - rect.top) / heightRatio + (isAddScroll ? table.scrollTop : 0) - (this.options.viewBox?.y1 ?? 0);
+    //接下来和rotateTablePlugin插件逻辑有点耦合了 需要借助旋转插件的矩阵来计算相对于表格的坐标
+    const rotateTablePlugin = this.pluginManager.getPluginByName('Rotate Table');
+    if (rotateTablePlugin && this.rotateDegree === 90) {
+      const x = clientX / widthRatio - (this.options.viewBox?.x1 ?? 0);
+      const y = clientY / heightRatio - (this.options.viewBox?.y1 ?? 0);
+      const point = { x, y, inTable };
+      const matrix = (rotateTablePlugin as any).matrix;
+      matrix.transformPoint(point, point);
+      return point;
+    }
+    const x = (clientX - rect.left) / widthRatio - (this.options.viewBox?.x1 ?? 0);
+    const y = (clientY - rect.top) / heightRatio - (this.options.viewBox?.y1 ?? 0);
     const point = { x, y, inTable };
-
     if (this.internalProps.modifiedViewBoxTransform && this.scenegraph.stage.window.getViewBoxTransform()) {
       const transform = this.scenegraph.stage.window.getViewBoxTransform();
       transform.transformPoint(point, point);
+      return point;
     }
     return point;
   }
@@ -4209,8 +4260,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.render();
     const stage = this.scenegraph.stage;
     if (stage) {
-      const contentWidth = this.tableX + this.getAllColsWidth();
-      const contentHeight = this.tableY + this.getAllRowsHeight();
+      let contentWidth = this.tableX + this.getAllColsWidth();
+      let contentHeight = this.tableY + this.getAllRowsHeight();
+      if (this.internalProps.legends) {
+        this.internalProps.legends.forEach(legend => {
+          if (legend.orient === 'right') {
+            contentWidth = Math.max(contentWidth, legend.legendComponent.globalAABBBounds.x2);
+          } else if (legend.orient === 'bottom') {
+            contentHeight = Math.max(contentHeight, legend.legendComponent.globalAABBBounds.y2);
+          }
+        });
+      }
+      if (this.internalProps.title) {
+        if (this.internalProps.title._titleOption.orient === 'right') {
+          contentWidth = Math.max(contentWidth, this.internalProps.title.getComponentGraphic().globalAABBBounds.x2);
+        } else if (this.internalProps.title._titleOption.orient === 'bottom') {
+          contentHeight = Math.max(contentHeight, this.internalProps.title.getComponentGraphic().globalAABBBounds.y2);
+        }
+      }
       if (contentWidth >= this.canvasWidth && contentHeight >= this.canvasHeight) {
         stage.render();
         const buffer = stage.window.getImageBuffer(type);

@@ -164,11 +164,18 @@ $ rush change-all
 
 # 📖 ドキュメント
 
-インストールとクローンと更新が完了したら、docsを実行してVTableのドキュメントをローカルでプレビューします。
+インストール、クローン、更新が完了したら、`docs` を実行してVTableのドキュメントをローカルでプレビューできます。
 
 ```bash
-# vtableドキュメントサーバーを開始。ファイルパスで実行: ./
+# vtableのドキュメントサーバーを起動します。実行パス: ./
+$ rush update
+$ rush build
 $ rush docs
+```
+# If you meet dependency problems
+```bash
+$ rush purge
+$ rush update
 ```
 
 # 🔗 関連リンク

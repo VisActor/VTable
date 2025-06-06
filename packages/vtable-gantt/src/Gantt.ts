@@ -29,7 +29,7 @@ import type {
   IKeyboardOptions,
   IMarkLineCreateOptions
 } from './ts-types';
-import { TasksShowMode } from './ts-types';
+import { TasksShowMode, TaskType } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -45,6 +45,7 @@ import {
   getHorizontalScrollBarSize,
   getVerticalScrollBarSize,
   initOptions,
+  initProjectTaskTimes,
   updateOptionsWhenDateRangeChanged,
   updateOptionsWhenMarkLineChanged,
   updateOptionsWhenRecordChanged,
@@ -65,6 +66,7 @@ import {
 import { DataSource } from './data/DataSource';
 import { isValid } from '@visactor/vutils';
 import type { GanttTaskBarNode } from './scenegraph/gantt-node';
+import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -112,6 +114,8 @@ export class Gantt extends EventTarget {
   headerHeight: number;
   gridHeight: number;
 
+  pluginManager: PluginManager;
+
   parsedOptions: {
     timeLineHeaderRowHeights: number[];
     rowHeight: number;
@@ -129,6 +133,7 @@ export class Gantt extends EventTarget {
     grid: IGrid;
     taskBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     taskBarMilestoneStyle: IMilestoneStyle;
+    projectBarStyle: ITaskBarStyle | ((interactionArgs: TaskBarInteractionArgumentType) => ITaskBarStyle);
     /** 里程碑是旋转后的矩形，所以需要计算里程碑的对角线长度 */
     taskBarMilestoneHypotenuse: number;
     taskBarHoverStyle: ITaskBarHoverStyle;
@@ -155,6 +160,7 @@ export class Gantt extends EventTarget {
     outerFrameStyle: IFrameStyle;
     pixelRatio: number;
     tasksShowMode: TasksShowMode;
+    projectSubTasksExpandable: boolean;
 
     startDateField: string;
     endDateField: string;
@@ -213,6 +219,8 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
+    // 初始化项目任务时间
+    initProjectTaskTimes(this);
     this.data = new DataSource(this);
     this._generateTimeLineDateMap();
 
@@ -234,12 +242,14 @@ export class Gantt extends EventTarget {
     this._syncPropsFromTable();
 
     createSplitLineAndResizeLine(this);
+
     this.scenegraph = new Scenegraph(this);
     this.stateManager = new StateManager(this);
     this.eventManager = new EventManager(this);
 
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
+    this.pluginManager = new PluginManager(this, options);
   }
 
   renderTaskBarsTable() {
@@ -384,6 +394,8 @@ export class Gantt extends EventTarget {
             }
           }
         }
+        // For Project_Sub_Tasks_Inline mode, we keep tree functionality
+        // This is because we want to maintain the expand/collapse functionality for project tasks
       }
       if (
         key === 'hierarchyExpandLevel' &&
@@ -394,6 +406,7 @@ export class Gantt extends EventTarget {
       ) {
         delete listTable_options[key];
       }
+      // For Project_Sub_Tasks_Inline mode, we keep hierarchyExpandLevel
     }
 
     // lineWidthArr[1] = 0;
@@ -747,12 +760,36 @@ export class Gantt extends EventTarget {
   getTaskShowIndexByRecordIndex(index: number | number[]) {
     return this.taskListTableInstance.getBodyRowIndexByRecordIndex(index);
   }
-  getRecordByIndex(taskShowIndex: number, sub_task_index?: number) {
-    if (isValid(sub_task_index)) {
-      //如果有sub_task_index 表示是sub_task等模式
-      return this.records[taskShowIndex]?.children?.[sub_task_index];
-    }
+  /**
+   *
+   * @param taskShowIndex 任务显示的index，从0开始
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
+   * @returns 具体的task record数据
+   */
+  getRecordByIndex(taskShowIndex: number, sub_task_index?: number | number[]) {
     if (this.taskListTableInstance) {
+      if (isValid(sub_task_index)) {
+        const record = this.taskListTableInstance.getRecordByCell(
+          0,
+          taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
+        );
+
+        if (Array.isArray(sub_task_index)) {
+          const recordIndex = this.getRecordIndexByTaskShowIndex(taskShowIndex);
+          const parentIndexLength = Array.isArray(recordIndex) ? recordIndex.length : 1;
+          const new_sub_task_index = [...sub_task_index];
+          //从new_sub_task_index中删除前面parentIndexLength的元素
+          new_sub_task_index.splice(0, parentIndexLength);
+          let currentRecord = record;
+          while (new_sub_task_index.length > 0) {
+            const index = new_sub_task_index.shift();
+            currentRecord = currentRecord?.children?.[index];
+          }
+          return currentRecord;
+        }
+        return record?.children?.[sub_task_index];
+      }
       return this.taskListTableInstance.getRecordByCell(
         0,
         taskShowIndex + this.taskListTableInstance.columnHeaderLevelCount
@@ -761,7 +798,7 @@ export class Gantt extends EventTarget {
     return this.records[taskShowIndex];
   }
 
-  _refreshTaskBar(taskShowIndex: number, sub_task_index: number) {
+  _refreshTaskBar(taskShowIndex: number, sub_task_index?: number) {
     // this.taskListTableInstance.updateRecords([record], [index]);
     this.scenegraph.taskBar.updateTaskBarNode(taskShowIndex, sub_task_index);
     this.scenegraph.refreshRecordLinkNodes(
@@ -782,23 +819,25 @@ export class Gantt extends EventTarget {
     //     index + this.taskListTableInstance.columnHeaderLevelCount
     //   );
     // }
-    if (this.taskListTableInstance.rowHierarchyType === 'tree' && typeof index === 'number') {
-      //如果是树形结构 需要获取数据源对应的索引
-      index = this.taskListTableInstance.getRecordIndexByCell(
-        0,
-        index + this.taskListTableInstance.columnHeaderLevelCount
-      );
-    }
+    // if (this.taskListTableInstance.rowHierarchyType === 'tree' && typeof index === 'number') {
+    //   //如果是树形结构 需要获取数据源对应的索引
+    //   index = this.taskListTableInstance.getRecordIndexByCell(
+    //     0,
+    //     index + this.taskListTableInstance.columnHeaderLevelCount
+    //   );
+    // }
     this.taskListTableInstance.updateRecords([record], [index]);
   }
   /**
    * 获取指定index处任务数据的具体信息
-   * @param index
+   * @param taskShowIndex 任务显示的index，从0开始
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
    * @returns 当前任务信息
    */
   getTaskInfoByTaskListIndex(
     taskShowIndex: number,
-    sub_task_index?: number
+    sub_task_index?: number | number[]
   ): {
     taskRecord: any;
     /** 废弃，请直接使用startDate和endDate来计算 */
@@ -867,9 +906,10 @@ export class Gantt extends EventTarget {
    * 更新任务的开始日期
    * @param startDate 新的开始日期
    * @param index 对应的一定是左侧表格body的index
-   * @param sub_task_index 子任务的index 只有当TasksShowMode时dsunb_task_* 的时候才会传入
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   * 如果模式Project_Sub_Tasks_Inline时，传入的sub_task_index是一个数组，数组的第一个元素是父任务的index，第二个元素是子任务的index,依次类推算是各层子任务的path。
    */
-  _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number) {
+  _updateStartDateToTaskRecord(startDate: Date, index: number, sub_task_index?: number | number[]) {
     const taskRecord = this.getRecordByIndex(index, sub_task_index);
     const startDateField = this.parsedOptions.startDateField;
     const dateFormat = this.parsedOptions.dateFormat ?? parseDateFormat(taskRecord[startDateField]);
@@ -880,6 +920,13 @@ export class Gantt extends EventTarget {
       //子任务不是独占左侧表格一行的情况
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       this._updateRecordToListTable(taskRecord, indexs);
+      // 递归更新父级project任务的时间范围
+      if (Array.isArray(indexs)) {
+        this.stateManager.updateProjectTaskTimes(indexs);
+      }
+    } else if (Array.isArray(sub_task_index)) {
+      // 递归更新父级project任务的时间范围
+      this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
@@ -894,6 +941,13 @@ export class Gantt extends EventTarget {
       //子任务不是独占左侧表格一行的情况
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       this._updateRecordToListTable(taskRecord, indexs);
+      // 递归更新父级project任务的时间范围
+      if (Array.isArray(indexs)) {
+        this.stateManager.updateProjectTaskTimes(indexs);
+      }
+    } else if (Array.isArray(sub_task_index)) {
+      // 递归更新父级project任务的时间范围
+      this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
@@ -910,6 +964,13 @@ export class Gantt extends EventTarget {
       const indexs = this.getRecordIndexByTaskShowIndex(index);
       //子任务不是独占左侧表格一行的情况
       this._updateRecordToListTable(taskRecord, indexs);
+      // 递归更新父级project任务的时间范围
+      if (Array.isArray(indexs)) {
+        this.stateManager.updateProjectTaskTimes(indexs);
+      }
+    } else if (Array.isArray(sub_task_index)) {
+      // 递归更新父级project任务的时间范围
+      this.stateManager.updateProjectTaskTimes(sub_task_index);
     }
   }
 
@@ -929,7 +990,10 @@ export class Gantt extends EventTarget {
     this.data.adjustOrder(source_index, source_sub_task_index, target_index, target_sub_task_index);
   }
   // 定义多个函数签名
-  /** 更新数据信息 */
+  /** 更新数据信息
+   * 如果TasksShowModes是 tasks_separate 模式 则需要传入task_index即可
+   * 如果TasksShowModes是 sub_tasks_*** 模式 则需要传入task_index和sub_task_index
+   */
   updateTaskRecord(record: any, task_index: number | number[]): void;
   updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
   updateTaskRecord(record: any, task_index: number | number[], sub_task_index?: number) {
@@ -942,13 +1006,21 @@ export class Gantt extends EventTarget {
     if (Array.isArray(task_index)) {
       const index = (task_index as number[])[0];
       const sub_index = (task_index as number[])[1];
-      this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      // this._updateRecordToListTable(record, isValid(sub_index) ? [index, sub_index] : index);
+      this._updateRecordToListTable(record, task_index);
       this._refreshTaskBar(index, sub_index);
       return;
     }
-    const index = task_index as number;
-    this._updateRecordToListTable(record, index);
-    this._refreshTaskBar(index, undefined);
+    let recordIndexs: number | number[] = task_index;
+    if (this.taskListTableInstance.rowHierarchyType === 'tree') {
+      //如果是树形结构 需要获取数据源对应的索引
+      recordIndexs = this.taskListTableInstance.getRecordIndexByCell(
+        0,
+        task_index + this.taskListTableInstance.columnHeaderLevelCount
+      );
+    }
+    this._updateRecordToListTable(record, recordIndexs);
+    this._refreshTaskBar(task_index, undefined);
   }
 
   /**
@@ -960,7 +1032,10 @@ export class Gantt extends EventTarget {
     this.parsedOptions.pixelRatio = pixelRatio;
     this.scenegraph.setPixelRatio(pixelRatio);
   }
-
+  updateTasksShowMode(tasksShowMode: TasksShowMode) {
+    this.options.tasksShowMode = tasksShowMode;
+    this.updateOption(this.options);
+  }
   _resize() {
     this._updateSize();
     this.taskListTableInstance?.setCanvasSize(
@@ -995,6 +1070,7 @@ export class Gantt extends EventTarget {
       this.horizontalSplitLine && parentElement.removeChild(this.horizontalSplitLine);
     }
     this.scenegraph = null;
+    this.pluginManager.release();
   }
 
   updateOption(options: GanttConstructorOptions) {
@@ -1236,10 +1312,15 @@ export class Gantt extends EventTarget {
     return parseDateFormat(date);
   }
 
-  getTaskBarStyle(task_index: number, sub_task_index?: number) {
-    if (typeof this.parsedOptions.taskBarStyle === 'function') {
-      const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
-
+  getTaskBarStyle(task_index: number, sub_task_index?: number | number[]) {
+    const { startDate, endDate, taskRecord } = this.getTaskInfoByTaskListIndex(task_index, sub_task_index);
+    let style;
+    if (taskRecord.type === TaskType.PROJECT) {
+      style = this.parsedOptions.projectBarStyle;
+    } else {
+      style = this.parsedOptions.taskBarStyle;
+    }
+    if (typeof style === 'function') {
       const args = {
         index: task_index,
         startDate,
@@ -1247,8 +1328,18 @@ export class Gantt extends EventTarget {
         taskRecord,
         ganttInstance: this
       };
-      return this.parsedOptions.taskBarStyle(args);
+      return style(args);
     }
-    return this.parsedOptions.taskBarStyle;
+    return style;
+  }
+
+  /**
+   * 格式化日期
+   * @param date 日期对象或字符串
+   * @param format 格式字符串
+   * @returns 格式化后的日期字符串
+   */
+  formatDate(date: Date | string, format: string) {
+    return formatDate(date, format);
   }
 }

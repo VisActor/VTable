@@ -86,7 +86,14 @@ function getHierarchyExpandLevel(table: ListTableAPI) {
 
 export function _setDataSource(table: BaseTableAPI, dataSource: DataSource): void {
   _dealWithUpdateDataSource(table, () => {
-    table.internalProps.dataSource && table.internalProps.dataSource.release?.();
+    if (table.internalProps.dataSource) {
+      table.internalProps.releaseList.forEach(releaseObj => {
+        if (releaseObj instanceof DataSource) {
+          releaseObj.release();
+          table.internalProps.releaseList.splice(table.internalProps.releaseList.indexOf(releaseObj), 1);
+        }
+      });
+    }
     if (dataSource) {
       if (dataSource instanceof DataSource) {
         table.internalProps.dataSource = dataSource;
@@ -368,25 +375,43 @@ export function getCellCornerRadius(col: number, row: number, table: BaseTableAP
   const tableCornerRadius = table.theme.frameStyle.cornerRadius;
   if (table.theme.cellInnerBorder) {
     if (Array.isArray(tableCornerRadius)) {
+      const radius = [0, 0, 0, 0];
       if (col === 0 && row === 0) {
-        return [tableCornerRadius[0], 0, 0, 0];
-      } else if (col === table.colCount - 1 && row === 0) {
-        return [0, tableCornerRadius[1], 0, 0];
-      } else if (col === 0 && row === table.rowCount - 1) {
-        return [0, 0, 0, tableCornerRadius[3]];
-      } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
-        return [0, 0, tableCornerRadius[2], 0];
+        // return [tableCornerRadius[0], 0, 0, 0];
+        radius[0] = tableCornerRadius[0];
       }
+      if (col === table.colCount - 1 && row === 0) {
+        // return [0, tableCornerRadius[1], 0, 0];
+        radius[1] = tableCornerRadius[1];
+      }
+      if (col === 0 && row === table.rowCount - 1) {
+        // return [0, 0, 0, tableCornerRadius[3]];
+        radius[3] = tableCornerRadius[3];
+      }
+      if (col === table.colCount - 1 && row === table.rowCount - 1) {
+        // return [0, 0, tableCornerRadius[2], 0];
+        radius[2] = tableCornerRadius[2];
+      }
+      return radius;
     } else if (tableCornerRadius) {
+      const radius = [0, 0, 0, 0];
       if (col === 0 && row === 0) {
-        return [tableCornerRadius, 0, 0, 0];
-      } else if (col === table.colCount - 1 && row === 0) {
-        return [0, tableCornerRadius, 0, 0];
-      } else if (col === 0 && row === table.rowCount - 1) {
-        return [0, 0, 0, tableCornerRadius];
-      } else if (col === table.colCount - 1 && row === table.rowCount - 1) {
-        return [0, 0, tableCornerRadius, 0];
+        // return [tableCornerRadius, 0, 0, 0];
+        radius[0] = tableCornerRadius;
       }
+      if (col === table.colCount - 1 && row === 0) {
+        // return [0, tableCornerRadius, 0, 0];
+        radius[1] = tableCornerRadius;
+      }
+      if (col === 0 && row === table.rowCount - 1) {
+        // return [0, 0, 0, tableCornerRadius];
+        radius[3] = tableCornerRadius;
+      }
+      if (col === table.colCount - 1 && row === table.rowCount - 1) {
+        // return [0, 0, tableCornerRadius, 0];
+        radius[2] = tableCornerRadius;
+      }
+      return radius;
     }
   }
   return 0;

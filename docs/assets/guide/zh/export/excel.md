@@ -48,6 +48,10 @@ const { downloadCsv, exportVTableToCsv } = VTable.export;
 
 默认情况下，单元格中有图标时，图标和文字会统一当做图片被导出；如果不需要导出图标，可以设置`ignoreIcon`为 true，只输出文字
 
+### exportAllData
+
+默认情况下，只导出表格中当前页的数据；如果有设置分页时，想导出所有数据，而不是当前页，可以设置`exportAllData`为 true
+
 ### formatExportOutput
 
 默认情况下，表格导出时，会将导出单元格的内文字或图片输出到 Excel 中，如果需要自定义导出内容，可以设置`formatExportOutput`为一个函数，函数的参数为单元格信息，函数的返回值为导出字符串，如果返回`undefined`，则按照默认导出逻辑处理
@@ -136,4 +140,13 @@ const excelOption = {
   }
 };
 await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+```
+
+### requestIdleCallback
+
+`@visactor/vtable-export`使用`exceljs`库作为导出 Excel 文件的工具，如果需要解决导出对页面性能影响，可以设置`requestIdleCallback`的启用参数`optimization`
+
+```js
+const excelOption = {};
+await downloadExcel(await exportVTableToExcel(tableInstance, excelOption， true));
 ```

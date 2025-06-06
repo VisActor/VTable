@@ -30,6 +30,7 @@ const TITLE_CLASSNAME = `${CLASSNAME}__title`;
 const ARROW_CLASSNAME = `${CLASSNAME}__arrow`;
 const NOEVENT_CLASSNAME = `${CLASSNAME}__no-event`;
 const ITEMTEXT_CLASSNAME = `${CLASSNAME}__item-text`;
+const ITEM_DISABLED_CLASSNAME = `${CLASSNAME}__item-disabled`;
 
 function createMenuDomElement(): HTMLElement {
   const rootElement = createElement('div', [CLASSNAME, HIDDEN_CLASSNAME]);
@@ -118,6 +119,11 @@ export class MenuElement {
     this._rootElement?.addEventListener('touchend', e => {
       e.stopPropagation();
       e.preventDefault();
+
+      // disabled菜单项，禁用菜单点击
+      if ((e.target as HTMLElement).classList.contains(ITEM_DISABLED_CLASSNAME)) {
+        return;
+      }
       if (this._rootElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
       }
@@ -155,6 +161,11 @@ export class MenuElement {
     this._rootElement?.addEventListener('click', e => {
       e.stopPropagation();
       e.preventDefault();
+
+      // disabled菜单项，禁用菜单点击
+      if ((e.target as HTMLElement).classList.contains(ITEM_DISABLED_CLASSNAME)) {
+        return;
+      }
       if (this._rootElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
       }
@@ -283,6 +294,11 @@ export class MenuElement {
     this._secondElement?.addEventListener('click', e => {
       e.stopPropagation();
       e.preventDefault();
+
+      // disabled菜单项，禁用菜单点击
+      if ((e.target as HTMLElement).classList.contains(ITEM_DISABLED_CLASSNAME)) {
+        return;
+      }
       if (this._secondElement.classList.contains(HIDDEN_CLASSNAME)) {
         return;
       }
@@ -556,8 +572,13 @@ export class MenuElement {
     const rootElement = this._rootElement;
     // const element = table.getElement();
     const element = table.internalProps.menu.parentElement ?? table.getElement();
-    const { width: containerWidth, left: containerLeft, top: containerTop } = element.getBoundingClientRect();
-    const { x: rootLeft, y: rootTop, width: rootWidth } = rootElement.getBoundingClientRect();
+    const {
+      width: containerWidth,
+      height: containerHeight,
+      left: containerLeft,
+      top: containerTop
+    } = element.getBoundingClientRect();
+    const { x: rootLeft, y: rootTop, width: rootWidth, height: rootHeight } = rootElement.getBoundingClientRect();
 
     if (secondElement) {
       // if (secondElement.parentElement !== rootElement) {
@@ -573,12 +594,20 @@ export class MenuElement {
       secondElement.style.maxWidth = `${maxWidth}px`;
       //计算弹出框的宽度
       const secondElementWidth = secondElement.clientWidth;
-      // const secondElementHeight = secondElement.clientHeight;
+      const secondElementHeight = secondElement.clientHeight;
 
       const secondElementTop = y - 4 - containerTop;
       const secondElementLeft = x - containerLeft;
 
-      secondElement.style.top = `${secondElementTop}px`;
+      let topStyle = secondElementTop;
+      // 判断如果超出下范围则靠上边显示
+      if (topStyle + secondElementHeight > containerHeight) {
+        const secondElementItem = secondElement.firstElementChild;
+        topStyle = topStyle - secondElementHeight + secondElementItem.clientHeight + 4;
+      }
+
+      secondElement.style.top = `${topStyle}px`;
+
       let leftStyle = secondElementLeft;
 
       // 判断如果超出右范围则靠左边显示
@@ -608,7 +637,7 @@ export class MenuElement {
         y: secondTop,
         width: secondWidth,
         height: secondHeight
-      } = rootElement.getBoundingClientRect();
+      } = secondElement.getBoundingClientRect();
       if (
         x > secondLeft - 5 &&
         x < secondLeft + secondWidth + 5 &&
@@ -627,6 +656,11 @@ function createItem(info: MenuListItem, isHighlight: boolean): HTMLDivElement {
     ITEM_CLASSNAME,
     isHighlight ? SELECT_CLASSNAME : NORAML_CLASSNAME
   ]) as HTMLDivElement;
+
+  // 添加disabled样式
+  if (typeof info === 'object' && info.disabled) {
+    itemContainer.classList.add(ITEM_DISABLED_CLASSNAME);
+  }
 
   if (typeof info === 'string') {
     const item = createElement('span', [CONTENT_CLASSNAME, NOEVENT_CLASSNAME, ITEMTEXT_CLASSNAME]);
