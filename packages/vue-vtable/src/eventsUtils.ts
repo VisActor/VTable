@@ -144,13 +144,13 @@ export const TABLE_EVENTS = {
   onDblclickFillHandle: EVENT_TYPE.DBLCLICK_FILL_HANDLE,
   onScrollVerticalEnd: EVENT_TYPE.SCROLL_VERTICAL_END,
   onScrollHorizontalEnd: EVENT_TYPE.SCROLL_HORIZONTAL_END,
-
   onChangCellValue: EVENT_TYPE.CHANGE_CELL_VALUE,
   onEmptyTipClick: EVENT_TYPE.EMPTY_TIP_CLICK,
   onEmptyTipDblClick: EVENT_TYPE.EMPTY_TIP_DBLCLICK,
   onButtonClick: EVENT_TYPE.BUTTON_CLICK,
   onBeforeCacheChartImage: EVENT_TYPE.BEFORE_CACHE_CHART_IMAGE,
-  onPastedData: EVENT_TYPE.PASTED_DATA
+  onPastedData: EVENT_TYPE.PASTED_DATA,
+  onSelectedClear: EVENT_TYPE.SELECTED_CLEAR
 };
 
 export const TABLE_EVENTS_KEYS = Object.keys(TABLE_EVENTS);

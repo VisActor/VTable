@@ -80,8 +80,8 @@ VTable Gantt chart tasks can include various properties, here is the complete li
 | Property Name | Type | Description | Configuration Property Name |
 |-------|------|------| --------- |
 | **startDate** | Date \| string | The planned start date of the task, can be a date object or date string | taskBar.startDateField |
-| **endDate** | Date \| string | The planned completion date of the task, can be a date object or date string (choose one of startDate and endDate) | taskBar.endDateField |
-| **text** | string | The name or description text of the task, used to display on the task bar | No need to configure |
+| **endDate** | Date \| string | The planned completion date of the task, can be a date object or date string | taskBar.endDateField |
+| **task title[any field name]** | string | The name or description text of the task, used to display on the task bar | No need to configure |
 
 
 ### Optional Properties
@@ -90,9 +90,9 @@ These properties are used to extend the functionality and visual representation 
 
 | Property Name | Type | Description | Configuration Property Name |
 |-------|------|------| --------- |
-| **id** | string \| number | 任务的唯一标识，如果未设置则自动生成 | taskKeyField |
-| **type** | string | 任务类型，可以是`task`（默认）、`project`或`milestone` | 固定值 |
-| **progress** | number | The percentage of task completion, range 0-1 (e.g., 0.5 represents 50%) | taskBar.progressField |
+| **task id[any field name]** | string \| number | task id, depends on the configuration of the link line | taskKeyField |
+| **type** | string | task type, can be `task` (default), `project` or `milestone` |  |
+| **progress** | number | The percentage of task completion, range 0-100 | taskBar.progressField |
 | **children** | Array | The array of sub-tasks, used to build the task hierarchy | Fixed value |
 | **hierarchyState** | string | The expansion state of the tree structure, can be `expand` or `collapse` | Fixed value |
 
@@ -148,7 +148,7 @@ VTable-Gantt Gantt chart supports task data with tree structure, representing th
 
 ### Parent-Child Task Relationship
 
-In the VTable-Gantt Gantt chart, the parent-child task relationship can be established in two ways:
+In the VTable-Gantt Gantt chart, the parent-child task relationship can be established in this ways:
 
 1. **Using the children property** (recommended):
 
@@ -198,101 +198,4 @@ When `projectSubTasksExpandable` is set to `true` (default value), project tasks
 
   When `projectSubTasksExpandable` is set to `false`, project tasks will not have an expand/collapse icon, and sub-tasks will be displayed within the project task row.
 
-## Task Display Mode
 
-VTable Gantt chart provides multiple task display modes, which can be set through the `tasksShowMode` configuration item. Each mode has different processing logic for task display.
-
-### Tasks_Separate mode
-
-This is the default display mode, where each task node (including parent and sub-tasks) is displayed on a separate line.
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Tasks_Separate"
-};
-```
-
-In this mode:
-- The parent task occupies one line
-- Each sub-task occupies one line
-- Suitable for scenarios where it is necessary to clearly show the hierarchical structure of each task
-
-### Sub_Tasks_Inline模式
-
-This mode does not display the parent task node and displays all sub-tasks on the same line.
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Inline"
-};
-```
-
-In this mode:
-- The parent task node is not displayed separately
-- All sub-tasks are displayed on the same line
-- Suitable for scenarios where it is necessary to display related tasks compactly
-
-### Sub_Tasks_Separate模式
-
-This mode does not display the parent task node and displays all sub-tasks on separate lines.
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Separate"
-};
-```
-
-In this mode:
-- The parent task node is not displayed
-- Each sub-task occupies one line
-- Suitable for scenarios where only specific tasks are focused on rather than grouped
-
-### Sub_Tasks_Arrange模式
-
-This mode does not display the parent task node and displays all sub-tasks in the order of the data in `records`, ensuring that the nodes are not overlapped.
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Arrange"
-};
-```
-
-In this mode:
-- The parent task node is not displayed
-- The sub-tasks are arranged in the order of the data in `records`, ensuring that the nodes are not overlapped
-- Suitable for scenarios where it is necessary to maintain the original data order
-
-### Sub_Tasks_Compact模式
-
-This mode does not display the parent task node and displays all sub-tasks in a compact manner, arranged by the start date, ensuring that the nodes are not overlapped.
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Sub_Tasks_Compact"
-};
-```
-
-In this mode:
-- The parent task node is not displayed
-- The sub-tasks are arranged by the start date, ensuring that the nodes are displayed in a compact manner without overlapping
-- Suitable for scenarios where it is necessary to maximize the use of space
-
-### Project_Sub_Tasks_Inline模式
-
-This mode specifically handles project type tasks, displaying all sub-tasks of the project type node on the same line as the main task, while other types of tasks remain in the default Tasks_Separate mode.
-
-```javascript
-const ganttOptions = {
-  tasksShowMode: "Project_Sub_Tasks_Inline",
-  projectSubTasksExpandable: true  // 控制项目子任务是否可以展开/折叠
-};
-```
-
-In this mode:
-- Only project type tasks are specially processed, and other tasks are displayed normally
-- When the project task is folded, the sub-tasks are displayed inline on the project task row
-- When the project task is expanded, the sub-tasks are displayed in a regular tree structure
-- Controlled by the `projectSubTasksExpandable` configuration to support expand/collapse functionality
-- Suitable for scenarios where it is necessary to treat project tasks differently from normal tasks
-
-This display mode is mainly implemented in the `initBars` method of the `scenegraph/task-bar.ts` file, with special processing logic for the `Project_Sub_Tasks_Inline` mode, checking the `hierarchyState` status and type of the record to determine how to display the sub-tasks.

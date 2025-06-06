@@ -635,6 +635,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       }
     }
     setTimeout(() => {
+      eventManager.isDown = false;
       eventManager.isTouchdown = false;
       eventManager.isTouchMove = false;
       eventManager.isDraging = false;
