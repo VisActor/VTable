@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VTable-Sheet Filter Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 100%;
+      height: 600px;
+    }
+    
+    .header {
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      color: #333;
+    }
+    
+    .description {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    
+    .filter-controls {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    
+    .filter-group {
+      margin-bottom: 10px;
+    }
+    
+    .filter-group label {
+      display: inline-block;
+      width: 100px;
+      font-weight: bold;
+    }
+    
+    .filter-group select,
+    .filter-group input {
+      margin-right: 10px;
+      padding: 4px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    
+    button {
+      padding: 6px 12px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    
+    button:hover {
+      background-color: #3367d6;
+    }
+    
+    button.reset {
+      background-color: #f44336;
+    }
+    
+    button.reset:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>VTable-Sheet 过滤功能演示</h1>
+    <div class="description">
+      该示例演示了VTable-Sheet的数据过滤功能。
+    </div>
+  </div>
+  
+  <div class="filter-controls">
+    <h3>过滤控制：</h3>
+    
+    <div class="filter-group">
+      <label for="filter-column">列：</label>
+      <select id="filter-column">
+        <option value="col0">产品</option>
+        <option value="col1">价格</option>
+        <option value="col2">库存</option>
+        <option value="col3">销量</option>
+        <option value="col4">评分</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="filter-type">过滤类型：</label>
+      <select id="filter-type">
+        <option value="valueList">值列表过滤</option>
+        <option value="condition">条件过滤</option>
+      </select>
+    </div>
+    
+    <!-- 值列表过滤控制 -->
+    <div id="value-list-controls" class="filter-group">
+      <label for="filter-values">值列表：</label>
+      <select id="filter-values" multiple style="width: 200px; height: 100px;">
+        <!-- 动态填充 -->
+      </select>
+      <label>
+        <input type="checkbox" id="exclude-values">
+        排除选中的值
+      </label>
+    </div>
+    
+    <!-- 条件过滤控制 -->
+    <div id="condition-controls" class="filter-group" style="display: none;">
+      <label for="filter-operator">条件：</label>
+      <select id="filter-operator">
+        <option value="equals">等于</option>
+        <option value="notEquals">不等于</option>
+        <option value="greaterThan">大于</option>
+        <option value="greaterThanOrEqual">大于等于</option>
+        <option value="lessThan">小于</option>
+        <option value="lessThanOrEqual">小于等于</option>
+        <option value="contains">包含</option>
+        <option value="notContains">不包含</option>
+        <option value="startsWith">开始于</option>
+        <option value="endsWith">结束于</option>
+        <option value="between">介于</option>
+      </select>
+      <input type="text" id="filter-value" placeholder="输入值">
+      <input type="text" id="filter-value2" placeholder="结束值" style="display: none;">
+    </div>
+    
+    <div class="filter-actions">
+      <button id="apply-filter">应用过滤</button>
+      <button id="reset-filter" class="reset">重置过滤器</button>
+    </div>
+  </div>
+  
+  <div id="filter-sheet-container" class="container"></div>
+  
+  <script src="../dist/vtable-sheet.js"></script>
+  <script>
+    // 创建示例数据
+    const productData = [
+      ['产品', '价格', '库存', '销量', '评分'],
+      ['笔记本电脑', 5999, 120, 78, 4.5],
+      ['智能手机', 3999, 200, 156, 4.2],
+      ['平板电脑', 2599, 150, 92, 4.0],
+      ['耳机', 899, 300, 210, 4.7],
+      ['鼠标', 129, 500, 310, 4.3],
+      ['键盘', 239, 400, 180, 4.4],
+      ['显示器', 1299, 100, 60, 4.6],
+      ['摄像头', 399, 200, 85, 3.9],
+      ['音箱', 599, 150, 75, 4.1],
+      ['移动硬盘', 499, 250, 120, 4.2],
+      ['充电器', 99, 600, 350, 4.0],
+      ['手表', 1999, 80, 45, 4.8],
+      ['路由器', 349, 180, 95, 4.3],
+      ['打印机', 799, 70, 30, 4.0],
+      ['投影仪', 3499, 40, 15, 4.5]
+    ];
+    
+    // 初始化VTableSheet
+    const sheet = new VTableSheet.VTableSheet({
+      container: 'filter-sheet-container',
+      showToolbar: true,
+      showFormulaBar: true,
+      showSheetTab: true,
+      sheets: [
+        {
+          title: "产品数据",
+          key: "products",
+          data: productData
+        }
+      ]
+    });
+    
+    // 过滤功能控制
+    window.addEventListener('load', () => {
+      const filterManager = sheet.getFilterManager();
+      
+      // 选择元素
+      const columnSelect = document.getElementById('filter-column');
+      const filterTypeSelect = document.getElementById('filter-type');
+      const valueListControls = document.getElementById('value-list-controls');
+      const conditionControls = document.getElementById('condition-controls');
+      const valuesSelect = document.getElementById('filter-values');
+      const excludeCheckbox = document.getElementById('exclude-values');
+      const operatorSelect = document.getElementById('filter-operator');
+      const valueInput = document.getElementById('filter-value');
+      const value2Input = document.getElementById('filter-value2');
+      const applyButton = document.getElementById('apply-filter');
+      const resetButton = document.getElementById('reset-filter');
+      
+      // 切换过滤类型显示
+      filterTypeSelect.addEventListener('change', () => {
+        const isValueList = filterTypeSelect.value === 'valueList';
+        valueListControls.style.display = isValueList ? 'block' : 'none';
+        conditionControls.style.display = isValueList ? 'none' : 'block';
+      });
+      
+      // 切换between操作符时显示/隐藏第二个值输入框
+      operatorSelect.addEventListener('change', () => {
+        value2Input.style.display = operatorSelect.value === 'between' ? 'inline-block' : 'none';
+      });
+      
+      // 更新值列表
+      const updateValuesList = () => {
+        // 清空现有选项
+        valuesSelect.innerHTML = '';
+        
+        // 获取选中的列
+        const columnIndex = parseInt(columnSelect.value.replace('col', ''), 10);
+        
+        // 获取该列的所有唯一值
+        const uniqueValues = new Set();
+        const activeSheet = sheet.getActiveSheet();
+        
+        if (activeSheet) {
+          const data = activeSheet.getData();
+          for (let i = 1; i < data.length; i++) { // 跳过表头
+            if (data[i][columnIndex] !== undefined && data[i][columnIndex] !== null) {
+              uniqueValues.add(data[i][columnIndex]);
+            }
+          }
+        }
+        
+        // 添加选项
+        Array.from(uniqueValues).sort().forEach(value => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          valuesSelect.appendChild(option);
+        });
+      };
+      
+      // 列选择变化时更新值列表
+      columnSelect.addEventListener('change', updateValuesList);
+      
+      // 应用过滤
+      applyButton.addEventListener('click', () => {
+        const columnKey = columnSelect.value;
+        const filterType = filterTypeSelect.value;
+        
+        if (filterType === 'valueList') {
+          // 值列表过滤
+          const selectedValues = Array.from(valuesSelect.selectedOptions).map(option => option.value);
+          
+          if (selectedValues.length === 0) {
+            alert('请至少选择一个值');
+            return;
+          }
+          
+          // 将字符串数字转换为数字
+          const parsedValues = selectedValues.map(value => {
+            return /^-?\d+(\.\d+)?$/.test(value) ? parseFloat(value) : value;
+          });
+          
+          filterManager.setFilter(columnKey, {
+            type: VTableSheet.FilterType.VALUE_LIST,
+            values: parsedValues,
+            exclude: excludeCheckbox.checked
+          });
+        } else {
+          // 条件过滤
+          const operator = operatorSelect.value;
+          let value = valueInput.value;
+          let value2 = value2Input.value;
+          
+          if (!value) {
+            alert('请输入过滤值');
+            return;
+          }
+          
+          if (operator === 'between' && !value2) {
+            alert('请输入结束值');
+            return;
+          }
+          
+          // 将字符串数字转换为数字
+          if (/^-?\d+(\.\d+)?$/.test(value)) {
+            value = parseFloat(value);
+          }
+          
+          if (value2 && /^-?\d+(\.\d+)?$/.test(value2)) {
+            value2 = parseFloat(value2);
+          }
+          
+          filterManager.setFilter(columnKey, {
+            type: VTableSheet.FilterType.CONDITION,
+            operator: operator,
+            value: value,
+            value2: value2
+          });
+        }
+      });
+      
+      // 重置过滤器
+      resetButton.addEventListener('click', () => {
+        filterManager.resetFilters();
+      });
+      
+      // 初始加载值列表
+      setTimeout(updateValuesList, 1000);
+    });
+  </script>
+</body>
+</html> 

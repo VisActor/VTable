@@ -1,0 +1,117 @@
+{
+  "name": "@visactor/vtable-sheet",
+  "version": "1.0.0",
+  "description": "Lightweight editable spreadsheet component based on VTable",
+  "keywords": [
+    "vtable-sheet",
+    "grid",
+    "table",
+    "spreadsheet",
+    "sheet",
+    "excel",
+    "visualization",
+    "VTable",
+    "VisActor",
+    "canvas",
+    "datagrid",
+    "datatable",
+    "editor"
+  ],
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
+  "sideEffects": true,
+  "main": "cjs/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "files": [
+    "cjs",
+    "es",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "import": "./es/index.js"
+    }
+  },
+  "scripts": {
+    "demo": "vite serve examples",
+    "compile": "tsc --noEmit",
+    "eslint": "eslint --debug --fix src/",
+    "build": "bundle --clean",
+    "dev": "bundle --clean -f es -w",
+    "start": "vite ./vite",
+    "test": "jest --silent",
+    "test-cov": "jest --coverage",
+    "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
+    "build:es": "bundle --clean -f es --ignorePostTasks"
+  },
+  "dependencies": {
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vutils": "~0.19.1",
+    "@visactor/vscale": "~0.18.1",
+    "@visactor/vdataset": "~0.18.1",
+    "cssfontparser": "^1.2.1"
+  },
+  "devDependencies": {
+    "luxon": "*",
+    "@internal/bundler": "workspace:*",
+    "@internal/eslint-config": "workspace:*",
+    "@internal/ts-config": "workspace:*",
+    "@rushstack/eslint-patch": "~1.1.4",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "3.1.0",
+    "eslint": "~8.18.0",
+    "vite": "3.2.6",
+    "typescript": "4.9.5",
+    "@babel/core": "7.20.12",
+    "@babel/preset-env": "7.20.2",
+    "@types/chai": "4.2.22",
+    "@types/jest": "^26.0.0",
+    "@types/mocha": "9.0.0",
+    "@types/node": "*",
+    "@types/offscreencanvas": "2019.6.4",
+    "chai": "4.3.4",
+    "jest": "^26.0.0",
+    "jest-electron": "^0.1.12",
+    "jest-transform-stub": "^2.0.0",
+    "magic-string": "^0.25.7",
+    "mocha": "9.1.3",
+    "postcss": "8.4.21",
+    "rimraf": "3.0.2",
+    "sass": "1.43.5",
+    "ts-jest": "^26.0.0",
+    "ts-loader": "9.2.6",
+    "ts-node": "10.9.0",
+    "tslib": "2.3.1",
+    "ttypescript": "1.5.13",
+    "typescript-transform-paths": "3.3.1",
+    "json-formatter-js": "^2.3.4",
+    "inversify": "6.0.1",
+    "vite-plugin-markdown": "^2.1.0",
+    "markdown-it": "^13.0.0",
+    "node-fetch": "2.6.7",
+    "form-data": "~4.0.0",
+    "axios": "^1.4.0"
+  },
+  "unpkg": "latest",
+  "unpkgFiles": [
+    "dist/vtable-sheet.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://visactor.io/vtable",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VTable.git",
+    "directory": "packages/vtable-sheet"
+  }
+}
