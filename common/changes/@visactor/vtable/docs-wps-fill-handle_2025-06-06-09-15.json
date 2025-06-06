@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "docs: 增加全逻辑填充柄demo（同wps功能一致）\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "santcool@126.com"
+}
