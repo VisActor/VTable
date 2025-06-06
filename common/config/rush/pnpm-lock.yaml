@@ -186,6 +186,7 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/chai': 4.2.22
       '@types/jest': ^26.0.0
+      '@types/lodash': 4.14.182
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
@@ -198,6 +199,7 @@ importers:
       '@visactor/vutils': ~0.19.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
+      big.js: 6.2.2
       chai: 4.3.4
       eslint: ~8.18.0
       form-data: ~4.0.0
@@ -206,6 +208,7 @@ importers:
       jest-electron: ^0.1.12
       jest-transform-stub: ^2.0.0
       json-formatter-js: ^2.3.4
+      lodash: 4.17.21
       magic-string: ^0.25.7
       markdown-it: ^13.0.0
       mocha: 9.1.3
@@ -241,6 +244,7 @@ importers:
       '@rushstack/eslint-patch': 1.1.4
       '@types/chai': 4.2.22
       '@types/jest': 26.0.24
+      '@types/lodash': 4.14.182
       '@types/mocha': 9.0.0
       '@types/node': 22.13.9
       '@types/offscreencanvas': 2019.6.4
@@ -251,6 +255,7 @@ importers:
       '@visactor/vchart': 1.13.3-alpha.2
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.8.2
+      big.js: 6.2.2
       chai: 4.3.4
       eslint: 8.18.0
       form-data: 4.0.2
@@ -259,6 +264,7 @@ importers:
       jest-electron: 0.1.12_jest@26.6.3
       jest-transform-stub: 2.0.0
       json-formatter-js: 2.5.23
+      lodash: 4.17.21
       magic-string: 0.25.9
       markdown-it: 13.0.2
       mocha: 9.1.3
@@ -2772,7 +2778,7 @@ packages:
       jest-resolve: 26.6.2
       jest-resolve-dependencies: 26.6.3
       jest-runner: 26.6.3_ts-node@10.9.0
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
       jest-snapshot: 26.6.2
       jest-util: 26.6.2
       jest-validate: 26.6.2
@@ -2933,7 +2939,7 @@ packages:
       graceful-fs: 4.2.11
       jest-haste-map: 26.6.2
       jest-runner: 26.6.3_ts-node@10.9.0
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -5239,6 +5245,10 @@ packages:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
     engines: {node: '>=0.6'}
     dev: false
+
+  /big.js/6.2.2:
+    resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
+    dev: true
 
   /binary-extensions/1.13.1:
     resolution: {integrity: sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==}
@@ -9587,7 +9597,7 @@ packages:
       jest-leak-detector: 26.6.2
       jest-message-util: 26.6.2
       jest-resolve: 26.6.2
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
       jest-util: 26.6.2
       jest-worker: 26.6.2
       source-map-support: 0.5.21
@@ -9628,42 +9638,6 @@ packages:
       slash: 2.0.0
       strip-bom: 3.0.0
       yargs: 13.3.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /jest-runtime/26.6.3:
-    resolution: {integrity: sha512-lrzyR3N8sacTAMeonbqpnSka1dHNux2uk0qqDXVkMv2c/A3wYnvQ4EXuI013Y6+gSKSCxdaczvf4HF0mVXHRdw==}
-    engines: {node: '>= 10.14.2'}
-    hasBin: true
-    dependencies:
-      '@jest/console': 26.6.2
-      '@jest/environment': 26.6.2
-      '@jest/fake-timers': 26.6.2
-      '@jest/globals': 26.6.2
-      '@jest/source-map': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/transform': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/yargs': 15.0.19
-      chalk: 4.1.2
-      cjs-module-lexer: 0.6.0
-      collect-v8-coverage: 1.0.2
-      exit: 0.1.2
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-config: 26.6.3_ts-node@10.9.0
-      jest-haste-map: 26.6.2
-      jest-message-util: 26.6.2
-      jest-mock: 26.6.2
-      jest-regex-util: 26.0.0
-      jest-resolve: 26.6.2
-      jest-snapshot: 26.6.2
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      slash: 3.0.0
-      strip-bom: 4.0.0
-      yargs: 15.4.1
     transitivePeerDependencies:
       - supports-color
     dev: true

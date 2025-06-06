@@ -22,7 +22,7 @@ import customLayoutDom from './component/custom-layout-dom';
 import customLayoutDomSite from './component/custom-layout-dom-site';
 import customLayoutDomSite1 from './component/custom-layout-dom-site-1';
 import customLayoutPivot from './component/custom-layout-pivot';
-
+import fillHandle from './list-table/list-fill-handle';
 // export default listTable;
 // export default listEditor;
 // export default listOptionRecord;
@@ -45,5 +45,5 @@ import customLayoutPivot from './component/custom-layout-pivot';
 // export default customLayout;
 // export default customLayoutDom;
 // export default customLayoutDomSite;
-export default customLayoutDomSite1;
+export default fillHandle;
 // export default customLayoutPivot;

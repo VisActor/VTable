@@ -99,6 +99,9 @@
     "axios": "^1.4.0",
     "@types/react-is": "^17.0.3",
     "@arco-design/web-react": "2.60.2",
-    "@types/react-reconciler": "0.28.8"
+    "@types/react-reconciler": "0.28.8",
+    "@types/lodash": "4.14.182",
+    "lodash": "4.17.21",
+    "big.js": "6.2.2"
   }
 }
