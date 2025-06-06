@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { TABLE_EVENT_TYPE } from '../../src';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 const generatePersons = count => {
@@ -71,7 +72,7 @@ export function createTable() {
       width: 150
     }
   ];
-  const option = {
+  const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
@@ -81,7 +82,12 @@ export function createTable() {
     pagination: {
       perPageCount: 10,
       currentPage: 0
-    }
+    },
+    keyboardOptions: {
+      copySelected: true,
+      pasteValueToCell: true
+    },
+    editor: ''
     // bottomFrozenRowCount: 1
     // autoWrapText: true,
     // heightMode: 'autoHeight',
@@ -99,4 +105,7 @@ export function createTable() {
   //   );
   //   return false; //return false代表不执行内部排序逻辑
   // });
+  tableInstance.on(TABLE_EVENT_TYPE.PASTED_DATA, args => {
+    console.log('pasted_data', args);
+  });
 }
