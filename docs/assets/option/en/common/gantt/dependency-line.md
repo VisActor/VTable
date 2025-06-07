@@ -29,10 +29,14 @@ ITaskLink is defined as:
 
 ```
 export type ITaskLink = {
-/** Dependency type */
-type: DependencyType;
-linkedFromTaskKey?: string | number;
-linkedToTaskKey?: string | number;
+  /** Type */
+  type: DependencyType;
+  /** Start task ID. Array for better tree search */
+  linkedFromTaskKey?: string | number | (string | number)[];
+  /** End task ID. Array for better tree search */
+  linkedToTaskKey?: string | number | (string | number)[];
+  /** Line style */
+  linkLineStyle?: ILineStyle;
 };
 ```
 
