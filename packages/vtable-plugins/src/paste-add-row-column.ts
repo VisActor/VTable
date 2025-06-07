@@ -24,29 +24,6 @@ export class PasteAddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     }
   }
 
-  /**
-   * @param needed 需要增加的列或行数量
-   * @param currentCount 当前行、列的总数量
-   * @param addFunction 添加行或列回调
-   * @param updateValue 更新数据
-   * @returns
-   */
-  private handleDimensionExpansion(
-    needed: number,
-    currentCount: number,
-    addFunction: () => void,
-    updateValue: () => void
-  ) {
-    if (needed > 0) {
-      Array.from({ length: needed }).forEach(() => {
-        addFunction();
-      });
-      updateValue();
-      return true;
-    }
-    return false;
-  }
-
   handlePaste() {
     const { pasteData, row, col } = this.pastedData;
     const rowCount = this.table.rowCount;
