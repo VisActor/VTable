@@ -852,10 +852,10 @@
           }
         },
         {
-          "path": "paste-add-row",
+          "path": "paste-add-row-column",
           "title": {
-            "zh": "粘贴新增行插件",
-            "en": "paste add row plugin"
+            "zh": "粘贴新增行和列插件",
+            "en": "paste add row and column plugin"
           }
         },
         {
