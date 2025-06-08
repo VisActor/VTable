@@ -51,7 +51,7 @@ import type { BaseTableAPI } from './ts-types/base-table';
 export { getDataCellPath } from './tools/get-data-path';
 export * from './render/jsx';
 export { getTargetCell } from './event/util';
-
+export { toBoxArray } from './tools/helper';
 export { Icon } from './scenegraph/graphic/icon';
 
 // export * as VRender from './vrender';
