@@ -852,6 +852,13 @@
           }
         },
         {
+          "path": "paste-add-row-column",
+          "title": {
+            "zh": "粘贴新增行和列插件",
+            "en": "paste add row and column plugin"
+          }
+        },
+        {
           "path": "table-carousel-animation",
           "title": {
             "zh": "表格轮播动画",
