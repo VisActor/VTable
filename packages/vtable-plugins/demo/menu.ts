@@ -1,3 +1,5 @@
+import path from "path";
+
 export const menus = [
   {
     path: 'carousel-animation',
@@ -6,6 +8,10 @@ export const menus = [
   {
     path: 'gantt-export-image',
     name: 'gantt-export-image'
+  },
+  {
+    path: 'execl-import',
+    name: 'execl-import',
   },
   {
     path: 'header-highlight',
