@@ -1,11 +1,15 @@
 import type { ListTable } from '@visactor/vtable';
 import type { SheetDefine, VTableSheetOptions, CellValueChangedEvent } from '../ts-types';
-import { FormulaManager } from '../data/FormulaManager';
-import { FilterManager } from '../data/FilterManager';
-import SheetManager from '../data/SheetManager';
+import { FormulaManager } from '../managers/FormulaManager';
+import { FilterManager } from '../managers/FilterManager';
+import SheetManager from '../managers/SheetManager';
 import { Sheet } from '../core/Sheet';
 import '../styles/index.css';
-
+import * as VTable_editors from '@visactor/vtable-editors';
+import * as VTable from '@visactor/vtable';
+import { getTablePlugins } from '../core/table-plugins';
+const input_editor = new VTable_editors.InputEditor();
+VTable.register.editor('input', input_editor);
 /**
  * VTableSheet组件 - 多sheet表格组件
  */
@@ -556,14 +560,18 @@ export default class VTableSheet {
       container: this.contentElement,
       width: contentWidth,
       height: contentHeight,
-      data: sheetDefine.data,
+      records: sheetDefine.data,
+      columns: sheetDefine.columns,
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
       frozenRowCount: this.options.frozenRowCount,
       frozenColCount: this.options.frozenColCount,
       sheetKey: sheetDefine.key,
       sheetTitle: sheetDefine.title,
-      parent: this
+      parent: this,
+      plugins: getTablePlugins(),
+      editor: 'input',
+      editCellTrigger: ['api', 'keydown', 'doubleclick']
     } as any); // 使用as any暂时解决类型不匹配问题
 
     // 注册事件

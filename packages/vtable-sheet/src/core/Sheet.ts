@@ -10,6 +10,8 @@ import type {
 } from '../ts-types';
 import type { EventEmitter } from '@visactor/vutils';
 import type { VTableSheet } from '../components/VTableSheet';
+import { getTablePlugins } from './table-plugins';
+import { editor } from '@visactor/vtable/es/register';
 
 /**
  * Sheet构造函数扩展选项
@@ -68,7 +70,7 @@ export class Sheet implements SheetAPI {
   /**
    * 事件总线
    */
-  private eventBus: EventEmitter;
+  // private eventBus: EventEmitter;
 
   /**
    * Creates a new Sheet instance
@@ -119,10 +121,10 @@ export class Sheet implements SheetAPI {
   private _initializeTable(): void {
     // 这里应该是实际的表格初始化逻辑
     const tableOptions = this._generateTableOptions();
-    this.tableInstance = new ListTable(this.element, tableOptions);
+    this.tableInstance = new ListTable(tableOptions);
 
-    // 获取事件总线 - 这里假设eventBus是存在的，如果不存在需要创建一个
-    this.eventBus = (this.tableInstance as any).eventBus;
+    // // 获取事件总线 - 这里假设eventBus是存在的，如果不存在需要创建一个
+    // this.eventBus = (this.tableInstance as any).eventBus;
   }
 
   /**
@@ -132,6 +134,7 @@ export class Sheet implements SheetAPI {
     // 转换为ListTable的选项
     return {
       ...this.options
+
       // 其他特定配置
     };
   }
@@ -143,23 +146,23 @@ export class Sheet implements SheetAPI {
     // 设置事件监听器
   }
 
-  /**
-   * 触发事件
-   */
-  protected fire(eventName: string, eventData: any): void {
-    if (this.eventBus) {
-      this.eventBus.emit(eventName, eventData);
-    }
-  }
+  // /**
+  //  * 触发事件
+  //  */
+  // protected fire(eventName: string, eventData: any): void {
+  //   if (this.eventBus) {
+  //     this.eventBus.emit(eventName, eventData);
+  //   }
+  // }
 
-  /**
-   * 监听事件
-   */
-  on(eventName: string, handler: (...args: any[]) => void): void {
-    if (this.eventBus) {
-      this.eventBus.on(eventName, handler);
-    }
-  }
+  // /**
+  //  * 监听事件
+  //  */
+  // on(eventName: string, handler: (...args: any[]) => void): void {
+  //   if (this.eventBus) {
+  //     this.eventBus.on(eventName, handler);
+  //   }
+  // }
 
   /**
    * Updates the size of the sheet

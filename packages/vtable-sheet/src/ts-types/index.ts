@@ -221,7 +221,7 @@ export interface SheetDefine {
   /** 行数 */
   rowCount?: number;
   /** 表头定义 */
-  headers?: HeaderDefine[]; //可以没有
+  columns?: HeaderDefine[]; //可以没有
   /** 数据 */
   data: (string | number | boolean | null)[][] | Record<string, any>[];
   /** 是否是当前活动sheet */

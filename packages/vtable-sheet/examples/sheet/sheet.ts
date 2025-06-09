@@ -15,33 +15,31 @@ export function createTable() {
       {
         key: 'sheet1',
         title: 'sheet1',
-        columnCount: [
+        columns: [
           {
-            key: 'name',
+            field: 'name',
             title: '名称',
             width: 100
           }
         ],
-        records: [
-          {
-            name: '张三'
-          }
+        data: [
+          [1, 2, 3],
+          ['放到', '个', '哦']
         ]
       },
       {
         key: 'sheet2',
         title: 'sheet2',
-        columnCount: [
+        columns: [
           {
             key: 'name',
             title: '名称',
             width: 100
           }
         ],
-        records: [
-          {
-            name: '张三'
-          }
+        data: [
+          [3, 4, 6],
+          ['s', 'd', 'f']
         ]
       }
     ],
