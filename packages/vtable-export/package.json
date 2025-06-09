@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-export",
-  "version": "1.18.4",
+  "version": "1.18.5",
   "description": "The export util of VTable",
   "author": {
     "name": "VisActor",

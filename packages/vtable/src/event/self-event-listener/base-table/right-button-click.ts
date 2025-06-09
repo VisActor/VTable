@@ -10,7 +10,16 @@ export function rightButtonClickEvent(table: BaseTableAPI) {
     if (ranges.length > 0) {
       for (let i = 0; i < ranges.length; i++) {
         const range = ranges[i];
-        if (col >= range.start.col && col <= range.end.col && row >= range.start.row && row <= range.end.row) {
+        const startCol = range.start.col;
+        const endCol = range.end.col;
+        const startRow = range.start.row;
+        const endRow = range.end.row;
+        if (
+          (col >= startCol && col <= endCol && row >= startRow && row <= endRow) || // 左上向右下选择
+          (col >= endCol && col <= startCol && row >= endRow && row <= startRow) || // 右下向左上选择
+          (col >= startCol && col <= endCol && row >= endRow && row <= startRow) || // 左下向右上选择
+          (col >= endCol && col <= startCol && row >= startRow && row <= endRow) // 右上向左下选择
+        ) {
           cellInRange = true;
           break;
         }
