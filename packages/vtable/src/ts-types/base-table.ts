@@ -577,6 +577,9 @@ export interface BaseTableConstructorOptions {
 
     // 是否禁用内置图表激活
     disableBuildInChartActive?: boolean;
+
+    // 多行合并行号自动计算时单行最小行高，用在大量行合并的情况下，行高自动计算过小导致无法显示完整内容
+    minSingleRowHeight?: number;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
