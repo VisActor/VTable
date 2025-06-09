@@ -226,11 +226,14 @@ export class TaskBar {
       return null;
     }
     const { unit, step } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
-    const taskBarSize =
+    let taskBarSize =
       computeCountToTimeScale(endDate, startDate, unit, step, 1) * this._scene._gantt.parsedOptions.timelineColWidth;
 
     const taskBarStyle = this._scene._gantt.getTaskBarStyle(index, childIndex);
     const taskbarHeight = taskBarStyle.width;
+    if (isValid(taskBarStyle.minSize)) {
+      taskBarSize = Math.max(taskBarSize, taskBarStyle.minSize);
+    }
     // const minDate = createDateAtMidnight(this._scene._gantt.parsedOptions.minDate);
 
     // const subTaskShowRowCount =

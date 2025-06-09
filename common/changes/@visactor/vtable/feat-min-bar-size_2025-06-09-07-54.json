@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add task-bar minSize config #4016",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
