@@ -213,9 +213,9 @@ export class DependencyLink {
     const lineStyle = this._scene._gantt.parsedOptions.dependencyLinkLineStyle;
     const lineObj = createLine({
       pickable: true,
-      stroke: lineStyle.lineColor,
-      lineWidth: lineStyle.lineWidth,
-      lineDash: lineStyle.lineDash,
+      stroke: link.linkLineStyle?.lineColor ?? lineStyle.lineColor,
+      lineWidth: link.linkLineStyle?.lineWidth ?? lineStyle.lineWidth,
+      lineDash: link.linkLineStyle?.lineDash ?? lineStyle.lineDash,
       points: linePoints,
       pickStrokeBuffer: 3,
       vtable_link: link
@@ -224,7 +224,7 @@ export class DependencyLink {
     (link as any).vtable_gantt_linkLineNode = lineObj;
 
     const arrow = new Polygon({
-      fill: lineStyle.lineColor,
+      fill: link.linkLineStyle?.lineColor ?? lineStyle.lineColor,
       points: arrowPoints
     });
     this.linkLinesContainer.appendChild(arrow);

@@ -1,4 +1,3 @@
-
 ## Task Dependency Relationships
 
 VTable Gantt supports task dependency relationships, which can be displayed as lines connecting tasks.
@@ -33,7 +32,7 @@ const ganttOptions = {
 };
 ```
 
-The values of `linkedFromTaskKey` and `linkedToTaskKey` need to correspond to the unique identifier field in the task data. The default unique identifier field name is `id`, which can be modified using the `taskKeyField` configuration option.
+The values of `linkedFromTaskKey` and `linkedToTaskKey` need to correspond to the unique identifier field in the task data. The default unique identifier field name is `id`, which can be modified using the `taskKeyField` configuration option. Each dependency relationship can have its own style set through the `linkLineStyle` property, such as line color, width, etc., which helps better distinguish between different types of dependency relationships.
 
 ### Create Dependencies
 
@@ -78,6 +77,7 @@ Configure the shortcut key `keyboardOptions.deleteLinkOnDel` or `keyboardOptions
 ### Dependency Style Configuration
 
 Style configuration entry:
+
 ```
 {
   /** Basic dependency line style */
@@ -134,6 +134,31 @@ const ganttOptions = {
   }
 };
 ```
+
+In addition to setting unified dependency line styles, you can also configure styles for each dependency line individually. In the links array, each link object can set the style of that dependency line through the `linkLineStyle` property. The interface type of `linkLineStyle` is also `ILineStyle`.
+
+```javascript
+const dependencyLinks = [
+  {
+    type: DependencyType.FinishToStart,
+    linkedFromTaskKey: 1,
+    linkedToTaskKey: 2,
+    // style
+    linkLineStyle: {
+      lineColor: 'skyblue',
+      lineWidth: 2,
+      lineDash: [4, 2]
+    }
+  }
+];
+
+const ganttOptions = {
+  dependency: {
+    links: dependencyLinks
+  }
+};
+```
+
 ### Notes
 
 If the Gantt chart is tree-structured, when the start or end of the dependency line is a collapsed subtask, the dependency line will be automatically hidden.

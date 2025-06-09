@@ -68,6 +68,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-linkLine-style'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-customLayout'
   },
   {
