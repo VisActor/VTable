@@ -5,7 +5,7 @@
 
 **🆕 New feature**
 
-- **@visactor/vtable**: add vue-table export type /es/*.d.ts
+- **@visactor/vtable-vue**: add vue-table export type /es/*.d.ts
 
 **🐛 Bug fix**
 
