@@ -321,67 +321,128 @@ export function setCellCheckboxStateByAttribute(
   }
 }
 
-export function changeCheckboxOrder(sourceIndex: number, targetIndex: number, state: StateManager) {
-  const { checkedState, table } = state;
-  let source;
-  let target;
-  if (table.internalProps.transpose) {
-    sourceIndex = table.getRecordShowIndexByCell(sourceIndex, 0);
-    targetIndex = table.getRecordShowIndexByCell(targetIndex, 0);
+export function changeCheckboxOrder(
+  sourceRecordPath: number | number[],
+  targetRecordPath: number | number[],
+  state: StateManager
+) {
+  const { checkedState } = state;
+
+  // 处理组级别移动（单个数字或数组的第一个元素）
+  if (
+    (!isArray(sourceRecordPath) && !isArray(targetRecordPath)) ||
+    (isArray(sourceRecordPath) &&
+      isArray(targetRecordPath) &&
+      sourceRecordPath.length === 1 &&
+      targetRecordPath.length === 1)
+  ) {
+    const sourceIndex = isArray(sourceRecordPath) ? sourceRecordPath[0] : sourceRecordPath;
+    const targetIndex = isArray(targetRecordPath) ? targetRecordPath[0] : targetRecordPath;
+
+    const allKeys = Array.from(checkedState.keys());
+
+    // 将键转换为字符串进行比较
+    const sourcePrefix = String(sourceIndex);
+    const sourceKeys = allKeys.filter(key => String(key).startsWith(sourcePrefix));
+
+    const sourceValues = sourceKeys.map(key => ({
+      key,
+      value: checkedState.get(key)
+    }));
+
+    if (sourceIndex > targetIndex) {
+      for (let i = sourceIndex - 1; i >= targetIndex; i--) {
+        const keysToMove = allKeys.filter(key => String(key).startsWith(String(i)));
+
+        keysToMove.forEach(oldKey => {
+          const oldKeyStr = String(oldKey);
+          const newKey = oldKeyStr.replace(new RegExp(`^${i}([,]|$)`), `${i + 1}$1`);
+          const value = checkedState.get(oldKey);
+          checkedState.set(newKey, value);
+        });
+      }
+    } else if (sourceIndex < targetIndex) {
+      for (let i = sourceIndex + 1; i <= targetIndex; i++) {
+        const keysToMove = allKeys.filter(key => String(key).startsWith(String(i)));
+        keysToMove.forEach(oldKey => {
+          const oldKeyStr = String(oldKey);
+          const newKey = oldKeyStr.replace(new RegExp(`^${i}([,]|$)`), `${i - 1}$1`);
+          const value = checkedState.get(oldKey);
+          checkedState.set(newKey, value);
+        });
+      }
+    }
+
+    sourceValues.forEach(({ key, value }) => {
+      const keyStr = String(key);
+      const newKey = keyStr.replace(new RegExp(`^${sourceIndex}([,]|$)`), `${targetIndex}$1`);
+      checkedState.set(newKey, value);
+    });
+
+    // 处理同一层级内的移动
+  } else if (
+    isArray(sourceRecordPath) &&
+    isArray(targetRecordPath) &&
+    sourceRecordPath.length === targetRecordPath.length &&
+    sourceRecordPath.slice(0, -1).join(',') === targetRecordPath.slice(0, -1).join(',')
+  ) {
+    const parentPath = sourceRecordPath.slice(0, -1).join(',');
+    const sourceItemIndex = sourceRecordPath[sourceRecordPath.length - 1];
+    const targetItemIndex = targetRecordPath[targetRecordPath.length - 1];
+
+    const allKeys = Array.from(checkedState.keys());
+
+    // 将键转换为字符串进行比较
+    const sourcePrefix = parentPath ? `${parentPath},${sourceItemIndex}` : `${sourceItemIndex}`;
+    const sourceKeys = allKeys.filter(key => String(key).startsWith(sourcePrefix));
+
+    const sourceValues = sourceKeys.map(key => ({
+      key,
+      value: checkedState.get(key)
+    }));
+
+    if (sourceItemIndex > targetItemIndex) {
+      for (let i = sourceItemIndex - 1; i >= targetItemIndex; i--) {
+        const currentPrefix = parentPath ? `${parentPath},${i}` : `${i}`;
+        const keysToMove = allKeys.filter(key => String(key).startsWith(currentPrefix));
+
+        keysToMove.forEach(oldKey => {
+          const oldKeyStr = String(oldKey);
+          const newKey = parentPath
+            ? oldKeyStr.replace(new RegExp(`^${parentPath},${i}([,]|$)`), `${parentPath},${i + 1}$1`)
+            : oldKeyStr.replace(new RegExp(`^${i}([,]|$)`), `${i + 1}$1`);
+          const value = checkedState.get(oldKey);
+          checkedState.set(newKey, value);
+        });
+      }
+    } else if (sourceItemIndex < targetItemIndex) {
+      for (let i = sourceItemIndex + 1; i <= targetItemIndex; i++) {
+        const currentPrefix = parentPath ? `${parentPath},${i}` : `${i}`;
+        const keysToMove = allKeys.filter(key => String(key).startsWith(currentPrefix));
+
+        keysToMove.forEach(oldKey => {
+          const newKey = parentPath
+            ? String(oldKey).replace(new RegExp(`^${parentPath},${i}([,]|$)`), `${parentPath},${i - 1}$1`)
+            : String(oldKey).replace(new RegExp(`^${i}([,]|$)`), `${i - 1}$1`);
+          const value = checkedState.get(oldKey);
+          checkedState.set(newKey, value);
+        });
+      }
+    }
+
+    sourceValues.forEach(({ key, value }) => {
+      const newKey = parentPath
+        ? String(key).replace(
+            new RegExp(`^${parentPath},${sourceItemIndex}([,]|$)`),
+            `${parentPath},${targetItemIndex}$1`
+          )
+        : String(key).replace(new RegExp(`^${sourceItemIndex}([,]|$)`), `${targetItemIndex}$1`);
+      checkedState.set(newKey, value);
+    });
   } else {
-    // sourceIndex = table.getRecordShowIndexByCell(0, sourceIndex);
-    // targetIndex = table.getRecordShowIndexByCell(0, targetIndex);
-
-    source = table.isPivotTable() ? undefined : (table as any).getRecordIndexByCell(0, sourceIndex);
-    target = table.isPivotTable() ? undefined : (table as any).getRecordIndexByCell(0, targetIndex);
-  }
-
-  if (isNumber(source) && isNumber(target)) {
-    sourceIndex = source;
-    targetIndex = target;
-    if (sourceIndex > targetIndex) {
-      const sourceRecord = checkedState.get(sourceIndex.toString());
-      for (let i = sourceIndex; i > targetIndex; i--) {
-        // checkedState[i] = checkedState[i - 1];
-        checkedState.set(i.toString(), checkedState.get((i - 1).toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(targetIndex.toString(), sourceRecord);
-    } else if (sourceIndex < targetIndex) {
-      const sourceRecord = checkedState.get(sourceIndex.toString());
-      for (let i = sourceIndex; i < targetIndex; i++) {
-        // checkedState[i] = checkedState[i + 1];
-        checkedState.set(i.toString(), checkedState.get((i + 1).toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(targetIndex.toString(), sourceRecord);
-    }
-  } else if (isArray(source) && isArray(target)) {
-    sourceIndex = source[source.length - 1];
-    targetIndex = target[target.length - 1];
-    if (sourceIndex > targetIndex) {
-      const sourceRecord = checkedState.get(source.toString());
-      for (let i = sourceIndex; i > targetIndex; i--) {
-        const now = [...source];
-        now[now.length - 1] = i;
-        const last = [...source];
-        last[last.length - 1] = i - 1;
-        checkedState.set(now.toString(), checkedState.get(last.toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(target.toString(), sourceRecord);
-    } else if (sourceIndex < targetIndex) {
-      const sourceRecord = checkedState.get(source.toString());
-      for (let i = sourceIndex; i < targetIndex; i++) {
-        const now = [...source];
-        now[now.length - 1] = i;
-        const next = [...source];
-        next[next.length - 1] = i + 1;
-        checkedState.set(now.toString(), checkedState.get(next.toString()));
-      }
-      // checkedState[targetIndex] = sourceRecord;
-      checkedState.set(target.toString(), sourceRecord);
-    }
+    // 不同层级的移动暂不支持
+    console.warn('不支持跨层级的移动');
+    return;
   }
 }
 
