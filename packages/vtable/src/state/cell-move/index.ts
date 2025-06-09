@@ -211,8 +211,15 @@ export function endMoveCol(state: StateManager): boolean {
           state.columnMove.rowSource
         )
       ) {
+        const sourceRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.sourceIndex);
+        const targetRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.targetIndex);
+
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
-        state.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
+
+        // 对于checkbox，使用真实完整的路径
+        state.changeCheckboxOrder(sourceRecordPath, targetRecordPath);
+
+        state.changeRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
       }
       // clear columns width and rows height cache
       if (moveContext.moveType === 'column') {
