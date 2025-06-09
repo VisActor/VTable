@@ -138,6 +138,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-header-levelSpan'
+      },
+      {
+        path: 'list',
         name: 'list-merge-cell-function'
       },
       {
