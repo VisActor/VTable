@@ -1,3 +1,24 @@
+# v1.18.5
+
+2025-06-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add vue-table export type /es/*.d.ts
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix node-canvas range in PivotChart [#3997](https://github.com/VisActor/VTable/issues/3997)
+- **@visactor/vtable**: when pointer up set isDown false
+- **@visactor/vtable**: fix drag select not stop problem [#3895](https://github.com/VisActor/VTable/issues/3895)
+- **@visactor/vtable**: fix scrollbar not show when set visible 'focus' [#3914](https://github.com/VisActor/VTable/issues/3914)
+- **@visactor/vtable**: contextmenu submenu show postion should adjust by bottom [#3867](https://github.com/VisActor/VTable/issues/3867)
+- **@visactor/vtable**: filter data occor error with sort state and groupby [#3961](https://github.com/VisActor/VTable/issues/3961) 
+
+
+[more detail about v1.18.5](https://github.com/VisActor/VTable/releases/tag/v1.18.5)
+
 # v1.18.4
 
 2025-05-27
