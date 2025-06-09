@@ -1,6 +1,19 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 27 May 2025 09:16:00 GMT and should not be manually modified.
+This log was last generated on Fri, 06 Jun 2025 09:57:33 GMT and should not be manually modified.
+
+## 1.18.5
+Fri, 06 Jun 2025 09:57:33 GMT
+
+### Updates
+
+- feat: add vue-table export type /es/*.d.ts
+
+
+- fix: fix node-canvas range in PivotChart #3997
+- fix: when pointer up set isDown false
+
+
 
 ## 1.18.4
 Tue, 27 May 2025 09:16:00 GMT
