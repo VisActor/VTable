@@ -1,6 +1,7 @@
 import type { ListTable } from '@visactor/vtable';
 import type { SheetDefine, VTableSheetOptions, CellValueChangedEvent } from '../ts-types';
-import { FormulaManager } from '../managers/FormulaManager';
+import type { FormulaManager } from '../managers/FormulaManager';
+import { EnhancedFormulaManager } from '../managers/EnhancedFormulaManager';
 import { FilterManager } from '../managers/FilterManager';
 import SheetManager from '../managers/SheetManager';
 import { Sheet } from '../core/Sheet';
@@ -21,7 +22,7 @@ export default class VTableSheet {
   /** sheet管理器 */
   private sheetManager: SheetManager;
   /** 公式管理器 */
-  private formulaManager: FormulaManager;
+  private formulaManager: FormulaManager | EnhancedFormulaManager;
   /** 过滤管理器 */
   private filterManager: FilterManager;
   /** 当前活动sheet实例 */
@@ -47,7 +48,7 @@ export default class VTableSheet {
 
     // 创建管理器
     this.sheetManager = new SheetManager();
-    this.formulaManager = new FormulaManager(this);
+    this.formulaManager = new EnhancedFormulaManager(this);
     this.filterManager = new FilterManager(this);
 
     // 初始化UI
@@ -578,7 +579,25 @@ export default class VTableSheet {
     // sheet.on('cell-selected', this.handleCellSelected.bind(this));
     // sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
 
+    // 同步工作表数据到 HyperFormula
+    this.syncSheetToFormula(sheet, sheetDefine);
+
     return sheet;
+  }
+
+  /**
+   * 同步工作表数据到 HyperFormula
+   */
+  private syncSheetToFormula(sheet: Sheet, sheetDefine: SheetDefine): void {
+    if (this.formulaManager instanceof EnhancedFormulaManager) {
+      const engine = this.formulaManager.getEngine();
+
+      // 确保工作表存在
+      if (!engine.getSheetNames().includes(sheetDefine.key)) {
+        const data = Array.isArray(sheetDefine.data) ? (sheetDefine.data as any[][]) : [];
+        engine.addSheet(sheetDefine.key, data);
+      }
+    }
   }
 
   /**
@@ -673,36 +692,64 @@ export default class VTableSheet {
     if (event.key === 'Enter') {
       // 获取当前选中的单元格
       const selection = this.activeSheet.getSelection();
+
       if (!selection) {
-        return;
+        // 使用默认位置 C3 (row: 2, col: 2)
+        const defaultSelection = { startRow: 2, startCol: 2, endRow: 2, endCol: 2 };
+        this.activeSheet.setSelection(defaultSelection);
+        const newSelection = this.activeSheet.getSelection();
+        if (!newSelection) {
+          return;
+        }
       }
 
       const value = input.value;
+
+      // 重新获取 selection（可能在上面被修改了）
+      const finalSelection = this.activeSheet.getSelection();
+      if (!finalSelection) {
+        return;
+      }
 
       // 检查是否是公式
       if (value.startsWith('=')) {
         const formula = value.substring(1);
 
-        // 注册公式
-        this.formulaManager.registerFormula(
-          {
-            sheet: this.activeSheet.getKey(),
-            row: selection.startRow,
-            col: selection.startCol
-          },
-          formula
-        );
+        try {
+          // 注册公式
+          this.formulaManager.registerFormula(
+            {
+              sheet: this.activeSheet.getKey(),
+              row: finalSelection.startRow,
+              col: finalSelection.startCol
+            },
+            formula
+          );
 
-        // 计算公式值
-        const result = this.formulaManager.evaluateFormula(formula, {
-          sheet: this.activeSheet.getKey()
-        });
+          // 计算公式值
+          const result = this.formulaManager.evaluateFormula(formula, {
+            sheet: this.activeSheet.getKey()
+          });
 
-        // 设置单元格值
-        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result);
+          // 设置单元格值
+          this.activeSheet.setCellValue(finalSelection.startRow, finalSelection.startCol, result);
+
+          // 直接更新 VTable 表格实例
+          if ((this.activeSheet as any).tableInstance) {
+            const table = (this.activeSheet as any).tableInstance;
+            // 更新数据源
+            table.changeCellValue(finalSelection.startCol, finalSelection.startRow, result);
+
+            // 强制刷新界面
+            table.scenegraph.updateNextFrame();
+          }
+        } catch (error) {
+          console.error('公式处理错误:', error);
+          this.activeSheet.setCellValue(finalSelection.startRow, finalSelection.startCol, '#ERROR!');
+        }
       } else {
         // 普通值，直接设置
-        this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
+        this.activeSheet.setCellValue(finalSelection.startRow, finalSelection.startCol, value);
       }
 
       // 阻止默认行为
@@ -727,7 +774,7 @@ export default class VTableSheet {
   /**
    * 获取公式管理器
    */
-  getFormulaManager(): FormulaManager {
+  getFormulaManager(): FormulaManager | EnhancedFormulaManager {
     return this.formulaManager;
   }
 
