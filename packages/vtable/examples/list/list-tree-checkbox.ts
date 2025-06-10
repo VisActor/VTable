@@ -122,6 +122,7 @@ export function createTable() {
 
   const data = [
     {
+      // _vtable_rowSeries_number:{text: 'checked', checked: true,  disable: true },
       类别: '办公用品',
       销售额: '129.696',
       数量: '2',

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vue-vtable",
-  "version": "1.18.3",
+  "version": "1.18.5",
   "description": "The vue version of VTable",
   "keywords": [
     "vue",
@@ -33,6 +33,13 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./es/index.js"
+    },
+    "./es/*": {
+      "types": [
+        "./es/*.d.ts",
+        "./es/*/index.d.ts"
+      ],
+      "import": "./es/*.js"
     }
   },
   "scripts": {

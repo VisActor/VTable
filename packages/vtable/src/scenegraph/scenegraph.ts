@@ -76,6 +76,7 @@ import { updateReactContainer } from './layout/frozen-react';
 
 import * as registerIcons from '../icons';
 import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
+import type { CheckboxContent } from './component/checkbox-content';
 // import { contextModule } from './context/module';
 
 registerForVrender();
@@ -803,6 +804,28 @@ export class Scenegraph {
                 (node as CheckBox).setAttribute('checked', checked);
               }
             }
+            // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+            if (node.name === 'checkbox-content') {
+              if (checked === 'indeterminate') {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  true
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  undefined
+                );
+              } else {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  undefined
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  checked
+                );
+              }
+            }
           });
       });
     } else {
@@ -816,6 +839,28 @@ export class Scenegraph {
             } else {
               (node as CheckBox).setAttribute('indeterminate', undefined);
               (node as CheckBox).setAttribute('checked', checked);
+            }
+          }
+          // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+          if (node.name === 'checkbox-content') {
+            if (checked === 'indeterminate') {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                true
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                undefined
+              );
+            } else {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                undefined
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                checked
+              );
             }
           }
         });
@@ -838,6 +883,28 @@ export class Scenegraph {
                 (node as CheckBox).setAttribute('checked', checked);
               }
             }
+            // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+            if (node.name === 'checkbox-content') {
+              if (checked === 'indeterminate') {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  true
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  undefined
+                );
+              } else {
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'indeterminate',
+                  undefined
+                );
+                ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                  'checked',
+                  checked
+                );
+              }
+            }
           });
       });
     } else {
@@ -851,6 +918,28 @@ export class Scenegraph {
             } else {
               (node as CheckBox).setAttribute('indeterminate', undefined);
               (node as CheckBox).setAttribute('checked', checked);
+            }
+          }
+          // 适配cellType: 'checkbox'与tree: true，并且开启enableTreeCheckbox: true的情况
+          if (node.name === 'checkbox-content') {
+            if (checked === 'indeterminate') {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                true
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                undefined
+              );
+            } else {
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'indeterminate',
+                undefined
+              );
+              ((node as CheckboxContent)._checkboxGroup.getChildByName('checkbox') as CheckBox).setAttribute(
+                'checked',
+                checked
+              );
             }
           }
         });

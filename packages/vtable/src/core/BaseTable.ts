@@ -281,6 +281,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
+      enableCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -393,6 +394,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -2390,6 +2392,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       keyboardOptions,
       eventOptions,
       rowSeriesNumber,
+      enableCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -2471,6 +2474,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -4256,8 +4260,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.render();
     const stage = this.scenegraph.stage;
     if (stage) {
-      const contentWidth = this.tableX + this.getAllColsWidth();
-      const contentHeight = this.tableY + this.getAllRowsHeight();
+      let contentWidth = this.tableX + this.getAllColsWidth();
+      let contentHeight = this.tableY + this.getAllRowsHeight();
+      if (this.internalProps.legends) {
+        this.internalProps.legends.forEach(legend => {
+          if (legend.orient === 'right') {
+            contentWidth = Math.max(contentWidth, legend.legendComponent.globalAABBBounds.x2);
+          } else if (legend.orient === 'bottom') {
+            contentHeight = Math.max(contentHeight, legend.legendComponent.globalAABBBounds.y2);
+          }
+        });
+      }
+      if (this.internalProps.title) {
+        if (this.internalProps.title._titleOption.orient === 'right') {
+          contentWidth = Math.max(contentWidth, this.internalProps.title.getComponentGraphic().globalAABBBounds.x2);
+        } else if (this.internalProps.title._titleOption.orient === 'bottom') {
+          contentHeight = Math.max(contentHeight, this.internalProps.title.getComponentGraphic().globalAABBBounds.y2);
+        }
+      }
       if (contentWidth >= this.canvasWidth && contentHeight >= this.canvasHeight) {
         stage.render();
         const buffer = stage.window.getImageBuffer(type);

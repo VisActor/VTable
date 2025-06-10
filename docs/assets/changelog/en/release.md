@@ -1,3 +1,45 @@
+# v1.18.5
+
+2025-06-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-vue**: add vue-table export type /es/*.d.ts
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix node-canvas range in PivotChart [#3997](https://github.com/VisActor/VTable/issues/3997)
+- **@visactor/vtable**: when pointer up set isDown false
+- **@visactor/vtable**: fix drag select not stop problem [#3895](https://github.com/VisActor/VTable/issues/3895)
+- **@visactor/vtable**: fix scrollbar not show when set visible 'focus' [#3914](https://github.com/VisActor/VTable/issues/3914)
+- **@visactor/vtable**: contextmenu submenu show postion should adjust by bottom [#3867](https://github.com/VisActor/VTable/issues/3867)
+- **@visactor/vtable**: filter data occor error with sort state and groupby [#3961](https://github.com/VisActor/VTable/issues/3961) 
+
+
+[more detail about v1.18.5](https://github.com/VisActor/VTable/releases/tag/v1.18.5)
+
+# v1.18.4
+
+2025-05-27
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
+- **@visactor/vtable-gantt**: add date position to markline
+- **@visactor/vtable-gantt**: add milestone text
+- **@visactor/vtable-gantt**: support record type 'project'
+- **@visactor/vtable-gantt**:  add tasksShowMode 'Project_Sub_Tasks_Inline'
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix bug of chart matrix when has scale
+
+
+
+[more detail about v1.18.4](https://github.com/VisActor/VTable/releases/tag/v1.18.4)
+
 # v1.18.3
 
 2025-05-13
