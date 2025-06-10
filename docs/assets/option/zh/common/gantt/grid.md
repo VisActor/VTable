@@ -56,9 +56,14 @@ ${prefix} horizontalBackgroundColor(string)
 
 非必填
 
-${prefix} verticalBackgroundColor(string)
+${prefix} verticalBackgroundColor(string|Function)
 
 需要纵向按日期列设置不同背景色
+
+```
+ /** 需要按日期列设置不同背景色 */
+  verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  ```
 
 非必填
 

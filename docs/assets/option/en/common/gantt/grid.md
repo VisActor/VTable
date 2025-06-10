@@ -54,9 +54,16 @@ Requires setting different background colors horizontally by data rows.
 
 Optional
 
-${prefix} verticalBackgroundColor(string)
+${prefix} verticalBackgroundColor(string|Function)
 
 Requires setting different background colors vertically by date columns.
+
+```
+ /**
+  * need to set different background colors vertically by date columns
+  */
+  verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  ```
 
 Optional
 

@@ -278,7 +278,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   _canResizeColumn(col: number, row: number): boolean {
     const ifCan = super._canResizeColumn(col, row);
     if (ifCan) {
-      const isSeriesNumber = this.internalProps.layoutMap.isSeriesNumber(col, row);
+      const isSeriesNumber = this.internalProps.layoutMap.isRowSeriesNumber(col, row);
       if (isSeriesNumber && this.internalProps.rowSeriesNumber.disableColumnResize === true) {
         return false;
       } else if (!this.internalProps.layoutMap.indicatorsAsCol) {
@@ -723,12 +723,12 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         return customMergeText;
       }
     }
-    if (this.internalProps.layoutMap.isSeriesNumber(col, row)) {
+    if (this.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
       if (this.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
         const { title } = this.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }
-      const { format } = this.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      const { format } = this.internalProps.layoutMap.getRowSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount + 1;
     } else if (this.internalProps.layoutMap.isHeader(col, row)) {
       const { title, fieldFormat } = this.internalProps.layoutMap.getHeader(col, row) as HeaderData;

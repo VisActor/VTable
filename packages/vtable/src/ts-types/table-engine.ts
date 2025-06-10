@@ -84,7 +84,7 @@ export type CellSubLocation =
   | 'leftBottomCorner'
   | 'rightBottomCorner'
   | 'rowSeriesNumber'
-  | 'colSeriesNumber';
+  | 'columnSeriesNumber';
 
 export interface SelectAllOnCtrlAOption {
   disableHeaderSelect?: boolean;
@@ -146,16 +146,17 @@ export interface IRowSeriesNumber {
   headerCustomLayout?: ICustomLayout;
 }
 
-export interface ColumnSeriesNumber {
-  enable: boolean;
-  align?: 'top' | 'bottom';
-  span?: number | 'dependOnNear';
-  title?: string;
-  field?: FieldDef;
+export interface IColumnSeriesNumber {
+  // enable: boolean;
+  // align?: 'top' | 'bottom';
+  // span?: number | 'dependOnNear';
+  // title?: string;
+  // field?: FieldDef;
+  height?: number | 'auto';
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
+  // headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   icon?:
     | string
     | ColumnIconOption
@@ -163,10 +164,10 @@ export interface ColumnSeriesNumber {
     | ((args: CellInfo) => undefined | string | ColumnIconOption | (string | ColumnIconOption)[]);
   /** 选中整行或者全选时 是否包括序号部分 */
   selectRangeInclude?: boolean;
-  /** 是否可拖拽顺序 */
-  dragOrder?: boolean;
-  /** 是否显示调换顺序的图标 */
-  showDragOrderIcon?: boolean;
+  // /** 是否可拖拽顺序 */
+  // dragOrder?: boolean;
+  // /** 是否显示调换顺序的图标 */
+  // showDragOrderIcon?: boolean;
 }
 export interface DataSourceAPI {
   clearCurrentIndexedData: () => void;

@@ -127,7 +127,7 @@ export function createComplexColumn(
     if (
       !table.isPivotTable() &&
       (cellLocation === 'columnHeader' || cellLocation === 'cornerHeader') &&
-      row >= table.columnHeaderLevelCount
+      row >= table.columnHeaderLevelCount + table.internalProps.layoutMap.columnSeriesNumberColumnCount
     ) {
       cellLocation = 'body';
     }
@@ -143,7 +143,7 @@ export function createComplexColumn(
     }
     const isAggregation =
       'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
-    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isRowSeriesNumber(col, row);
 
     let mayHaveIcon =
       cellLocation !== 'body'

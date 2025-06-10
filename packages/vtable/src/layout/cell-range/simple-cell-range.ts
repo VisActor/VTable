@@ -16,14 +16,14 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
     cellRange = getCellRangeTranspose(col, row, layout);
   } else {
     // hover相关的单元格位置是-1,-1，getCellRange计算有误，先进行判断
-    if (layout.headerLevelCount <= row) {
+    if (row >= layout.headerLevelCount + layout.columnSeriesNumberColumnCount) {
       //如果是body部分 设置了需要合并单元格 这里判断上下是否内容相同 相同的话 将cellRange范围扩大
       if (
-        layout.headerLevelCount <= row &&
+        row >= layout.headerLevelCount + layout.columnSeriesNumberColumnCount &&
         (layout.columnObjects[col - layout.leftRowSeriesNumberColumnCount]?.define as TextColumnDefine)?.mergeCell
       ) {
         const value = layout._table.getCellValue(col, row);
-        for (let r = row - 1; r >= layout.headerLevelCount; r--) {
+        for (let r = row - 1; r >= layout.headerLevelCount + layout.columnSeriesNumberColumnCount; r--) {
           const last_Value = layout._table.getCellValue(col, r);
           if (typeof layout.columnObjects[col - layout.leftRowSeriesNumberColumnCount].define.mergeCell === 'boolean') {
             if (value !== last_Value) {
@@ -105,7 +105,7 @@ export function getCellRange(col: number, row: number, layout: SimpleHeaderLayou
         }
         cellRange.start.row = r;
       }
-      for (let r = row + 1; r < layout.headerLevelCount; r++) {
+      for (let r = row + 1; r < layout.headerLevelCount + layout.columnSeriesNumberColumnCount; r++) {
         if (id !== layout.getCellId(col, r)) {
           break;
         }

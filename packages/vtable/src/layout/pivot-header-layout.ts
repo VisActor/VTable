@@ -1841,7 +1841,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
   getCellId(col: number, row: number): LayoutObjectId {
     if (row >= 0 && col >= 0) {
-      if (this.isSeriesNumber(col, row)) {
+      if (this.isRowSeriesNumber(col, row)) {
         return '';
       } else if (this.isCornerHeader(col, row)) {
         return this._cornerHeaderCellIds[row]?.[col - this.leftRowSeriesNumberColumnCount];
@@ -1922,8 +1922,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (cache) {
       return cache;
     }
-    if (this.isSeriesNumber(_col, _row)) {
-      const body = this.getSeriesNumberBody(_col, _row);
+    if (this.isRowSeriesNumber(_col, _row)) {
+      const body = this.getRowSeriesNumberBody(_col, _row);
       this.setBodyWidthCache(_col, _row, body);
       return body;
     }
@@ -4026,7 +4026,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  isSeriesNumber(col: number, row: number): boolean {
+  isRowSeriesNumber(col: number, row: number): boolean {
     if (isValid(col) && isValid(row)) {
       if (
         this.leftRowSeriesNumberColumnCount > 0 &&
@@ -4070,7 +4070,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return undefined;
   }
-  getSeriesNumberBody(col: number, row: number) {
+  getRowSeriesNumberBody(col: number, row: number) {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row >= this.headerLevelCount) {
         return this.leftRowSeriesNumberColumn[col];
@@ -4259,7 +4259,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
   }
   getBodyWidthCache(col: number, row: number) {
-    if (!this._useGetBodyCache || this.isHeader(col, row) || this.isSeriesNumber(col, row)) {
+    if (!this._useGetBodyCache || this.isHeader(col, row) || this.isRowSeriesNumber(col, row)) {
       return undefined;
     }
     if (this.indicatorsAsCol && this._getBodyCache.has(col)) {
@@ -4270,7 +4270,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return undefined;
   }
   setBodyWidthCache(col: number, row: number, cache: IndicatorData | SeriesNumberColumnData) {
-    if (!this._useGetBodyCache || this.isHeader(col, row) || this.isSeriesNumber(col, row)) {
+    if (!this._useGetBodyCache || this.isHeader(col, row) || this.isRowSeriesNumber(col, row)) {
       return;
     }
     if (this.indicatorsAsCol) {
@@ -4284,7 +4284,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (
       this._useHeaderPathCache &&
       !this.isHeader(col, row) &&
-      !this.isSeriesNumber(col, row) &&
+      !this.isRowSeriesNumber(col, row) &&
       this._colHeaderPathCache.has(col)
     ) {
       return this._colHeaderPathCache.get(col);
@@ -4293,7 +4293,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   setColHeaderPathCache(col: number, row: number, cache: ITreeLayoutHeadNode[]) {
-    if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isSeriesNumber(col, row)) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isRowSeriesNumber(col, row)) {
       this._colHeaderPathCache.set(col, cache);
     }
   }
@@ -4302,7 +4302,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (
       this._useHeaderPathCache &&
       !this.isHeader(col, row) &&
-      !this.isSeriesNumber(col, row) &&
+      !this.isRowSeriesNumber(col, row) &&
       this._rowHeaderPathCache.has(row)
     ) {
       return this._rowHeaderPathCache.get(row);
@@ -4311,7 +4311,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   setRowHeaderPathCache(col: number, row: number, cache: ITreeLayoutHeadNode[]) {
-    if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isSeriesNumber(col, row)) {
+    if (this._useHeaderPathCache && !this.isHeader(col, row) && !this.isRowSeriesNumber(col, row)) {
       this._rowHeaderPathCache.set(row, cache);
     }
   }

@@ -43,7 +43,7 @@ import type {
   CellAddressWithBound,
   ColorPropertyDefine,
   ColumnIconOption,
-  ColumnSeriesNumber,
+  IColumnSeriesNumber,
   IRowSeriesNumber,
   ColumnStyleOption,
   MappingRule,
@@ -282,7 +282,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       eventOptions,
       rowSeriesNumber,
       enableCheckboxCascade,
-      // columnSeriesNumber,
+      columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       rowResizeMode = 'none',
@@ -395,7 +395,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
     internalProps.enableCheckboxCascade = enableCheckboxCascade;
-    // internalProps.columnSeriesNumber = columnSeriesNumber;
+    internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
     internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
@@ -1416,15 +1416,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this.internalProps._heightResizedRowMap.size === 0
     ) {
       // part in header
-      for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
+      for (
+        let i = startRow;
+        i <
+        Math.min(endRow + 1, this.columnHeaderLevelCount + this.internalProps.layoutMap.columnSeriesNumberColumnCount);
+        i++
+      ) {
         h += this.getRowHeight(i);
       }
       // part in body
-      if (endRow >= this.columnHeaderLevelCount) {
+      if (endRow >= this.columnHeaderLevelCount + this.internalProps.layoutMap.columnSeriesNumberColumnCount) {
         h +=
           this.defaultRowHeight *
           (Math.min(endRow, this.rowCount - this.bottomFrozenRowCount - 1) -
-            Math.max(this.columnHeaderLevelCount, startRow) +
+            Math.max(
+              this.columnHeaderLevelCount + this.internalProps.layoutMap.columnSeriesNumberColumnCount,
+              startRow
+            ) +
             1);
       }
       // part in bottom frozen
@@ -2393,7 +2401,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       eventOptions,
       rowSeriesNumber,
       enableCheckboxCascade,
-      // columnSeriesNumber,
+      columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
       rowResizeMode = 'none',
@@ -2475,7 +2483,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
     internalProps.enableCheckboxCascade = enableCheckboxCascade;
-    // internalProps.columnSeriesNumber = columnSeriesNumber;
+    internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
     internalProps.rowResizeMode = resize?.rowResizeMode ?? rowResizeMode;
@@ -3046,7 +3054,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber {
+  getBodyColumnDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | IColumnSeriesNumber {
     // TODO: 暂时修复透视表报错
     const body = this.internalProps.layoutMap.getBody(col, row);
     return body?.define;
@@ -3060,7 +3068,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   getCellType(col: number, row: number): ColumnTypeOption {
     let cellType;
     if (this.isSeriesNumberInHeader(col, row)) {
-      return (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberHeader(col, row).cellType;
+      return (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getRowSeriesNumberHeader(col, row).cellType;
     } else if (this.isHeader(col, row)) {
       cellType = (this.internalProps.layoutMap.getHeader(col, row) as HeaderData).headerType;
     } else {
@@ -3083,7 +3091,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} row row index.
    * @return {ColumnDefine} The column define object.
    */
-  getHeaderDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber {
+  getHeaderDefine(col: number, row: number): ColumnDefine | IRowSeriesNumber | IColumnSeriesNumber {
     const hd = this.internalProps.layoutMap.getHeader(col, row);
     return hd?.define;
   }
@@ -3109,7 +3117,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param  {number} col The column index.
    * @return {*} The array of header define object.
    */
-  getHeadersDefine(col: number, row: number): (ColumnDefine | IRowSeriesNumber | ColumnSeriesNumber)[] {
+  getHeadersDefine(col: number, row: number): (ColumnDefine | IRowSeriesNumber | IColumnSeriesNumber)[] {
     const headers = [];
     while (true) {
       const header = this.getHeaderDefine(col, row) as ColumnDefine;
@@ -3582,10 +3590,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let icons;
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
-    } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
+    } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumber(col, row)) {
       if (!(this.options as ListTableConstructorOptions).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
-        const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
-          ?.dragOrder;
+        const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getRowSeriesNumberBody(col, row)
+          ?.define?.dragOrder;
         if (dragOrder) {
           icons = this.internalProps.rowSeriesNumberHelper.getIcons(col, row);
         }
@@ -4371,7 +4379,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.customCellStylePlugin?.arrangeCustomCellStyle(cellPos, customStyleId, forceFastUpdate);
   }
   isSeriesNumber(col: number, row: number): boolean {
-    return this.internalProps.layoutMap.isSeriesNumber(col, row);
+    return this.internalProps.layoutMap.isRowSeriesNumber(col, row);
   }
   isHasSeriesNumber(): boolean {
     return this.internalProps.layoutMap?.leftRowSeriesNumberColumnCount > 0;

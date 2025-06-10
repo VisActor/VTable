@@ -10,7 +10,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
     const { col, row, checked, field } = args;
 
     if (
-      !table.internalProps.layoutMap.isSeriesNumber(col, row) ||
+      !table.internalProps.layoutMap.isRowSeriesNumber(col, row) ||
       table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true
     ) {
       return;

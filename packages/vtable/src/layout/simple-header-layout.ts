@@ -10,6 +10,7 @@ import {
   type LayoutObjectId,
   type Aggregation,
   type IRowSeriesNumber,
+  type IColumnSeriesNumber,
   HierarchyState
 } from '../ts-types';
 import type { ChartColumnDefine, ColumnsDefine } from '../ts-types/list-table/define';
@@ -45,10 +46,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   private _columns: ColumnData[];
   private _columnsIncludeHided: ColumnData[];
   rowSeriesNumberColumn: SeriesNumberColumnData[];
+  columnSeriesNumberColumn: SeriesNumberColumnData;
   leftRowSeriesNumberColumn: SeriesNumberColumnData[];
   rightRowSeriesNumberColumn: SeriesNumberColumnData[];
   leftRowSeriesNumberColumnCount: number = 0;
   rightRowSeriesNumberColumnCount: number = 0;
+  columnSeriesNumberColumnCount: number = 0;
   /** 后期加的 对应pivot-header-layout 中的columnDimensionTree 为了排序后获取到排序后的columns */
   columnTree: DimensionTree;
   readonly bodyRowSpanCount: number = 1;
@@ -111,6 +114,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     //   return o;
     // }, {} as { [key in string]: HeaderData });
     this.handleRowSeriesNumber(table.internalProps.rowSeriesNumber);
+    this.handleColumnSeriesNumber(table.internalProps.columnSeriesNumber);
   }
   handleRowSeriesNumber(rowSeriesNumber: IRowSeriesNumber) {
     if (rowSeriesNumber) {
@@ -165,6 +169,19 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       this.rightRowSeriesNumberColumnCount = this.rightRowSeriesNumberColumn.length;
     }
   }
+  handleColumnSeriesNumber(columnSeriesNumber: IColumnSeriesNumber) {
+    if (columnSeriesNumber) {
+      this.columnSeriesNumberColumnCount = 1;
+      this.columnSeriesNumberColumn = {
+        id: this.seqId++,
+        // title: columnSeriesNumber.title,
+        style: columnSeriesNumber.style,
+        define: merge({ field: '_vtable_columnSeries_number' }, columnSeriesNumber),
+        cellType: columnSeriesNumber.cellType ?? 'text',
+        headerType: columnSeriesNumber.cellType === 'checkbox' ? 'checkbox' : 'text'
+      };
+    }
+  }
   // get columnWidths(): ColumnData[] {
   //   return this._columns;
   // }
@@ -184,7 +201,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return false;
-      } else if (row < this.headerLevelCount) {
+      } else if (row < this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return true;
       }
     }
@@ -195,7 +212,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     ) {
       if (this.transpose) {
         return false;
-      } else if (row < this.headerLevelCount) {
+      } else if (row < this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return true;
       }
     }
@@ -206,7 +223,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       if (this.transpose) {
         return true;
       }
-      if (row >= this.headerLevelCount) {
+      if (row >= this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return true;
       }
     }
@@ -214,13 +231,13 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       if (this.transpose) {
         return true;
       }
-      if (row >= this.headerLevelCount) {
+      if (row >= this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return true;
       }
     }
     return false;
   }
-  isSeriesNumber(col: number, row: number): boolean {
+  isRowSeriesNumber(col: number, row: number): boolean {
     if (isValid(col) && isValid(row)) {
       if (
         this.leftRowSeriesNumberColumnCount > 0 &&
@@ -240,12 +257,23 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  getSeriesNumberHeader(col: number, row: number) {
+  isColumnSeriesNumber(col: number, row: number): boolean {
+    if (
+      this.columnSeriesNumberColumnCount > 0 &&
+      col >= this.leftRowSeriesNumberColumnCount &&
+      row >= 0 &&
+      row < this.columnSeriesNumberColumnCount
+    ) {
+      return true;
+    }
+    return false;
+  }
+  getRowSeriesNumberHeader(col: number, row: number) {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return undefined;
       }
-      if (row < this.headerLevelCount) {
+      if (row < this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return Object.assign({}, this.leftRowSeriesNumberColumn[col], {
           style: Object.assign(
             {},
@@ -260,23 +288,23 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (
       this.rightRowSeriesNumberColumnCount > 0 &&
       col >= this.colCount - this.rightRowSeriesNumberColumnCount &&
-      row < this.headerLevelCount
+      row < this.headerLevelCount + this.columnSeriesNumberColumnCount
     ) {
       if (this.transpose) {
         return undefined;
       }
-      if (row < this.headerLevelCount) {
+      if (row < this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
       }
     }
     return undefined;
   }
-  getSeriesNumberBody(col: number, row: number) {
+  getRowSeriesNumberBody(col: number, row: number) {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (this.transpose) {
         return this.leftRowSeriesNumberColumn[col];
       }
-      if (row >= this.headerLevelCount) {
+      if (row >= this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return this.leftRowSeriesNumberColumn[col];
       }
     }
@@ -284,9 +312,20 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       if (this.transpose) {
         return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
       }
-      if (row >= this.headerLevelCount) {
+      if (row >= this.headerLevelCount + this.columnSeriesNumberColumnCount) {
         return this.rightRowSeriesNumberColumn[col - (this.colCount - this.rightRowSeriesNumberColumnCount)];
       }
+    }
+    return undefined;
+  }
+  getColumnSeriesNumber(col: number, row: number) {
+    if (
+      this.columnSeriesNumberColumnCount > 0 &&
+      row >= 0 &&
+      row < this.columnSeriesNumberColumnCount &&
+      col >= this.leftRowSeriesNumberColumnCount
+    ) {
+      return this.columnSeriesNumberColumn;
     }
     return undefined;
   }
@@ -298,7 +337,12 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     ) {
       return true;
     }
-    if (!this.transpose && row >= 0 && row < this.headerLevelCount) {
+    if (
+      !this.transpose &&
+      ((row >= this.columnSeriesNumberColumnCount &&
+        row < this.headerLevelCount + this.columnSeriesNumberColumnCount) ||
+        (row >= 0 && row < this.columnSeriesNumberColumnCount && col >= 0 && col < this.leftRowSeriesNumberColumnCount))
+    ) {
       return true;
     }
     return false;
@@ -511,7 +555,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     if (
       !this.transpose &&
       row >= 0 &&
-      row <= this.headerLevelCount - 1 &&
+      row < this.headerLevelCount + this.columnSeriesNumberColumnCount &&
       col >= this.leftRowSeriesNumberColumnCount &&
       col < this.colCount - this.rightRowSeriesNumberColumnCount
     ) {
@@ -752,7 +796,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   }
   get rowCount(): number {
     //转置表格 行数是由表头定义的field决定的；如果是标准表格，这个值么有地方用到，而且是由数据量决定的，在listTable中有定义这个值
-    return this.transpose ? this._columns.length : this.headerLevelCount + this.recordsCount;
+    return this.transpose
+      ? this._columns.length + this.columnSeriesNumberColumnCount
+      : this.headerLevelCount + this.recordsCount + this.columnSeriesNumberColumnCount;
   }
   /** 不包括冻结的行 */
   get bodyRowCount(): number {
@@ -859,33 +905,39 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       if (col >= this.headerLevelCount + this.leftRowSeriesNumberColumnCount) {
         return this._columns[row]?.id;
       }
-      if (this.isSeriesNumber(col, row)) {
-        return row + '_series_number';
+      if (this.isRowSeriesNumber(col, row)) {
+        return row + '_row_series_number';
+      }
+      if (this.isColumnSeriesNumber(col, row)) {
+        return col + '_column_series_number';
       }
       //in header
-      return this._headerCellIds[col - this.leftRowSeriesNumberColumnCount]?.[row];
+      return this._headerCellIds[col - this.leftRowSeriesNumberColumnCount]?.[row - this.columnSeriesNumberColumnCount];
     }
-    if (this.isSeriesNumber(col, row)) {
+    if (this.isRowSeriesNumber(col, row)) {
       return this.rowSeriesNumberColumn[col].id;
     }
-    if (this.headerLevelCount <= row) {
+    if (this.isColumnSeriesNumber(col, row)) {
+      return col + '_column_series_number';
+    }
+    if (row >= this.headerLevelCount + this.columnSeriesNumberColumnCount) {
       return this._columns[col - this.leftRowSeriesNumberColumnCount]?.id;
     }
     //in header
-    return this._headerCellIds[row]?.[col - this.leftRowSeriesNumberColumnCount];
+    return this._headerCellIds[row - this.columnSeriesNumberColumnCount]?.[col - this.leftRowSeriesNumberColumnCount];
   }
   getHeader(col: number, row: number): HeaderData | SeriesNumberColumnData {
     if (this.isSeriesNumberInHeader(col, row)) {
-      return this.getSeriesNumberHeader(col, row);
+      return this.getRowSeriesNumberHeader(col, row);
     }
     const id = this.getCellId(col, row);
     return this._headerObjectMap[id as number]!;
   }
   getHeaderField(col: number, row: number) {
     if (this.isSeriesNumberInHeader(col, row)) {
-      return this.getSeriesNumberHeader(col, row)?.field;
+      return this.getRowSeriesNumberHeader(col, row)?.field;
     } else if (this.isSeriesNumberInBody(col, row)) {
-      return this.getSeriesNumberBody(col, row)?.field;
+      return this.getRowSeriesNumberBody(col, row)?.field;
     }
     const id = this.getCellId(col, row);
     return (
@@ -916,8 +968,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return hd && this.getHeaderCellAdressById(hd.id as number);
   }
   getBody(col: number, _row: number): ColumnData | SeriesNumberColumnData {
-    if (this.isSeriesNumber(col, _row)) {
-      return this.getSeriesNumberBody(col, _row);
+    if (this.isRowSeriesNumber(col, _row)) {
+      return this.getRowSeriesNumberBody(col, _row);
     }
     return this.transpose ? this._columns[_row] : this._columns[col - this.leftRowSeriesNumberColumnCount];
   }
@@ -961,7 +1013,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     );
   }
   getRecordShowIndexByCell(col: number, row: number): number {
-    const skipRowCount = this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount;
+    const skipRowCount =
+      (this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount) +
+      this.columnSeriesNumberColumnCount;
     if (this.transpose) {
       if (col < skipRowCount) {
         return -1;
@@ -975,7 +1029,9 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return row - skipRowCount;
   }
   getRecordStartRowByRecordIndex(index: number): number {
-    const skipRowCount = this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount;
+    const skipRowCount =
+      (this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount) +
+      this.columnSeriesNumberColumnCount;
     return skipRowCount + index;
   }
   private _addHeaders(
@@ -1087,7 +1143,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return newRow;
   }
   getCellHeaderPaths(col: number, row: number): IListTableCellHeaderPaths {
-    if (this.isSeriesNumber(col, row)) {
+    if (this.isRowSeriesNumber(col, row)) {
       return undefined;
     }
     let colPath: IListTableCellHeaderPaths['colHeaderPaths'] = [];

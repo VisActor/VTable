@@ -333,7 +333,7 @@ function createCheckbox(
     text = '';
   }
   // 处理 rowSeriesNumbe 在record设置checkbox是否勾选与是否禁用的场景
-  if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+  if (table.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
     const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
     if (checkboxSeriesNumberStyle) {
       isChecked = checkboxSeriesNumberStyle.checked;

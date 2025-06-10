@@ -129,7 +129,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(100);
+  const records = generatePersons(10);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'sex',
@@ -197,7 +197,25 @@ export function createTable() {
     keyboardOptions: {
       copySelected: true
     },
-    theme: { headerStyle: { bgColor: 'yellow' } },
+    theme: {
+      headerStyle: {
+        bgColor: 'yellow',
+        frameStyle: {
+          borderLineWidth: 2,
+          borderColor: 'blue'
+        }
+      },
+      bodyStyle: {
+        frameStyle: {
+          borderLineWidth: 2,
+          borderColor: 'green'
+        }
+      },
+      frameStyle: {
+        borderLineWidth: 2,
+        borderColor: 'yellow'
+      }
+    },
 
     // sortState: {
     //   field: 'email1',
@@ -213,6 +231,13 @@ export function createTable() {
         return true;
       },
       dragHeaderMode: 'all'
+    },
+    columnSeriesNumber: {
+      height: 100,
+      headerStyle: {
+        color: 'black',
+        bgColor: 'pink'
+      }
     },
     rowSeriesNumber: {
       title: '',
@@ -276,8 +301,8 @@ export function createTable() {
           renderDefault: true
         };
       }
-    },
-    bottomFrozenRowCount: 3
+    }
+    // bottomFrozenRowCount: 3
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('change_header_position', args => {

@@ -86,7 +86,6 @@ export function createGroupForFirstScreen(
     x: table.getFrozenColsWidth(),
     y: table.getFrozenRowsHeight()
   });
-
   // create cornerHeaderGroup
   createColGroup(
     cornerHeaderGroup,

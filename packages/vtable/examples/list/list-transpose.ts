@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(1000);
+  const records = generatePersons(10);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -72,6 +72,7 @@ export function createTable() {
     transpose: true,
     dragHeaderMode: 'all',
     limitMinWidth: 20,
+    rowSeriesNumber: {},
     theme: VTable.themes.DEFAULT.extends({
       frameStyle: { borderLineWidth: 10 },
       scrollStyle: {

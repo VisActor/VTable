@@ -34,7 +34,7 @@ import * as editors from './edit/editors';
 import { EditManager } from './edit/edit-manager';
 import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
-import { defaultOrderFn } from './tools/util';
+import { defaultOrderFn, generateColumnNumber } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
@@ -309,9 +309,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     const table = this;
-    if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+    if (table.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
       if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
-        const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        const { title } = table.internalProps.layoutMap.getRowSeriesNumberHeader(col, row);
         return title;
       }
       let value;
@@ -326,10 +326,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
         // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
         // value = indexs[indexs.length - 1] + 1;
       } else {
-        value = row - this.columnHeaderLevelCount + 1;
+        value = row - this.columnHeaderLevelCount - this.internalProps.layoutMap.columnSeriesNumberColumnCount + 1;
       }
-      const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      const { format } = table.internalProps.layoutMap.getRowSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this, value) : value;
+    } else if (table.internalProps.layoutMap.isColumnSeriesNumber(col, row)) {
+      const { format } = table.internalProps.layoutMap.getColumnSeriesNumber(col, row);
+      return typeof format === 'function'
+        ? format(col, row, this)
+        : generateColumnNumber(col - this.leftRowSeriesNumberCount);
     } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
       return typeof title === 'function' ? title() : title;
@@ -351,12 +356,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return null;
     }
     const table = this;
-    if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+    if (table.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
       if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
-        const { title } = table.internalProps.layoutMap.getSeriesNumberHeader(col, row);
+        const { title } = table.internalProps.layoutMap.getRowSeriesNumberHeader(col, row);
         return title;
       }
-      const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
+      const { format } = table.internalProps.layoutMap.getRowSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this) : row - this.columnHeaderLevelCount;
     } else if (table.internalProps.layoutMap.isHeader(col, row)) {
       const { title } = table.internalProps.layoutMap.getHeader(col, row);
@@ -469,7 +474,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (!this.transpose) {
         // 列上是否配置了禁止拖拽列宽的配置项disableColumnResize
         const cellDefine = this.internalProps.layoutMap.getBody(col, this.columnHeaderLevelCount);
-        const isSeriesNumber = this.internalProps.layoutMap.isSeriesNumber(col, row);
+        const isSeriesNumber = this.internalProps.layoutMap.isRowSeriesNumber(col, row);
         if ((cellDefine as ColumnData)?.disableColumnResize) {
           return false;
         } else if (isSeriesNumber && this.internalProps.rowSeriesNumber.disableColumnResize === true) {
@@ -634,6 +639,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.options.frozenColCount ?? 0
       );
       this.internalProps.frozenRowCount = this.options.frozenRowCount ?? 0;
+
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
         table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
       }
@@ -642,10 +648,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     } else {
       table.colCount = layoutMap.colCount ?? 0;
-      table.rowCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
+      table.rowCount = layoutMap.rowCount ?? 0;
       // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
-      table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
+      table.frozenRowCount = Math.max(
+        layoutMap.headerLevelCount + this.internalProps.layoutMap.columnSeriesNumberColumnCount,
+        this.options.frozenRowCount ?? 0
+      );
 
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
         table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;

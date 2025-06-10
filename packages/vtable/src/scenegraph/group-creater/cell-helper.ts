@@ -375,7 +375,7 @@ export function createCell(
   } else if (type === 'checkbox') {
     const isAggregation =
       'isAggregation' in table.internalProps.layoutMap && table.internalProps.layoutMap.isAggregation(col, row);
-    const isSeriesNumber = table.internalProps.layoutMap.isSeriesNumber(col, row);
+    const isSeriesNumber = table.internalProps.layoutMap.isRowSeriesNumber(col, row);
     if (isAggregation && isSeriesNumber) {
       const createTextCellGroup = Factory.getFunction('createTextCellGroup') as CreateTextCellGroup;
       cellGroup = createTextCellGroup(
