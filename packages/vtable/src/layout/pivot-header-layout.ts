@@ -166,6 +166,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   leftRowSeriesNumberColumnCount: number = 0;
   rightRowSeriesNumberColumn: SeriesNumberColumnData[];
   rightRowSeriesNumberColumnCount: number = 0;
+  columnSeriesNumberColumnCount: number = 0;
   //#endregion
 
   _useGetBodyCache: boolean = false;

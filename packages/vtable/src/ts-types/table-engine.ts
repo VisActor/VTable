@@ -150,7 +150,7 @@ export interface IColumnSeriesNumber {
   // enable: boolean;
   // align?: 'top' | 'bottom';
   // span?: number | 'dependOnNear';
-  // title?: string;
+  title?: string;
   // field?: FieldDef;
   height?: number | 'auto';
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
