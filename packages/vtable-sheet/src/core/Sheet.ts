@@ -9,7 +9,7 @@ import type {
   SheetDefine
 } from '../ts-types';
 import type { EventEmitter } from '@visactor/vutils';
-import type { VTableSheet } from '../components/VTableSheet';
+import type VTableSheet from '../components/VTableSheet';
 import { getTablePlugins } from './table-plugins';
 import { editor } from '@visactor/vtable/es/register';
 
@@ -123,6 +123,9 @@ export class Sheet implements SheetAPI {
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
 
+    // 设置事件监听器
+    this._setupEventListeners();
+
     // // 获取事件总线 - 这里假设eventBus是存在的，如果不存在需要创建一个
     // this.eventBus = (this.tableInstance as any).eventBus;
   }
@@ -143,7 +146,27 @@ export class Sheet implements SheetAPI {
    * Sets up event listeners
    */
   private _setupEventListeners(): void {
-    // 设置事件监听器
+    // 监听单元格值变化事件
+    if (this.tableInstance) {
+      // 监听选中状态变化
+      this.tableInstance.on('selected_cell', (event: any) => {
+        if (event.ranges && event.ranges.length > 0) {
+          // 使用第一个选中范围作为当前选中状态
+          const range = event.ranges[0];
+          this.selection = {
+            startRow: range.start.row,
+            startCol: range.start.col,
+            endRow: range.end.row,
+            endCol: range.end.col
+          };
+        }
+      });
+
+      // 监听选中清除事件
+      this.tableInstance.on('selected_clear', () => {
+        this.selection = null;
+      });
+    }
   }
 
   // /**
@@ -268,7 +291,8 @@ export class Sheet implements SheetAPI {
         cellAddress: this.addressFromCoord(row, col)
       };
 
-      this.fire('cellValueChanged', event);
+      // TODO: 实现事件触发机制
+      // this.fire('cellValueChanged', event);
     }
   }
 

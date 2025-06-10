@@ -56,7 +56,8 @@
     "@visactor/vutils": "~0.19.1",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
-    "cssfontparser": "^1.2.1"
+    "cssfontparser": "^1.2.1",
+    "hyperformula": "~3.0.0"
   },
   "devDependencies": {
     "luxon": "*",
