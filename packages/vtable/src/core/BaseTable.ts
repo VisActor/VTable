@@ -1363,7 +1363,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         : this.defaultHeaderRowHeight;
     }
     if (row < this.internalProps.layoutMap.columnSeriesNumberColumnCount) {
-      return this.internalProps.columnSeriesNumber.height ?? this.defaultHeaderRowHeight;
+      return (
+        this.internalProps.columnSeriesNumber.height ??
+        (Array.isArray(this.defaultHeaderRowHeight)
+          ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
+          : this.defaultHeaderRowHeight)
+      );
     }
     if (this.isBottomFrozenRow(row)) {
       //底部冻结行默认取用了表头的行高  但针对非表头数据冻结的情况这里可能不妥
