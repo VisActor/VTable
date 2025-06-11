@@ -60,7 +60,9 @@ export function createGroupForFirstScreen(
     computeRowsHeight(
       table,
       0,
-      table.options.canvasHeight === 'auto' ? table.rowCount - 1 : distRowForCompute ?? distRow
+      table.options.canvasHeight === 'auto' || table.options.customConfig?.forceComputeAllRowHeight
+        ? table.rowCount - 1
+        : distRowForCompute ?? distRow
     ); //如果配置了 canvasHeight为 'auto'， 则一次性将所有行高都计算出来才能满足后续赋值表格高度的使用
   }
 

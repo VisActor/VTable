@@ -577,6 +577,8 @@ export interface BaseTableConstructorOptions {
 
     // 是否禁用内置图表激活
     disableBuildInChartActive?: boolean;
+    /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
+    forceComputeAllRowHeight?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
