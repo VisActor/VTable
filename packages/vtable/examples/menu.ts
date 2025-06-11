@@ -115,7 +115,10 @@ export const menus = [
         path: 'list',
         name: 'list-contextMenu-disabledMenu'
       },
-
+      {
+        path: 'list',
+        name: 'list-columnSeriesNumber'
+      },
       {
         path: 'list',
         name: 'list-rowSeriesNumber'

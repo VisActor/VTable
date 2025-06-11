@@ -30,7 +30,7 @@ export function startMoveCol(
     cellLocation === 'columnHeader'
       ? state.columnMove.x
       : cellLocation === 'rowHeader' ||
-        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(col, row)
       ? state.columnMove.y
       : 0;
 
@@ -108,7 +108,7 @@ export function updateMoveCol(
       }
     } else if (
       cellLocation === 'rowHeader' ||
-      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(col, row)
     ) {
       backY = state.columnMove.y;
       if (state.table.isFrozenRow(row)) {
@@ -206,7 +206,7 @@ export function endMoveCol(state: StateManager): boolean {
       }
       if (
         !(state.table as ListTable).transpose &&
-        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
+        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(
           state.columnMove.colSource,
           state.columnMove.rowSource
         )
@@ -224,7 +224,10 @@ export function endMoveCol(state: StateManager): boolean {
       // clear cell style cache
       state.table.clearCellStyleCache();
       if (
-        state.table.internalProps.layoutMap.isSeriesNumberInBody(state.columnMove.colSource, state.columnMove.rowSource)
+        state.table.internalProps.layoutMap.isRowSeriesNumberInBody(
+          state.columnMove.colSource,
+          state.columnMove.rowSource
+        )
       ) {
         // 如果是拖拽序号换位置 考虑到非拖拽单元格合并而是其他地方有合并被拆开或者独立单元格拖拽后变为合并的情况  这里直接刷新这个场景树的节点 才能覆盖所有情况
         state.table.scenegraph.updateHeaderPosition(

@@ -1353,10 +1353,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   getDefaultRowHeight(row: number) {
-    if (this.isColumnHeader(0, row) || this.isCornerHeader(0, row) || this.isSeriesNumberInHeader(0, row)) {
+    if (
+      this.isColumnHeader(0, row) ||
+      this.isCornerHeader(0, row) ||
+      (row >= this.internalProps.layoutMap.columnSeriesNumberColumnCount && this.isSeriesNumberInHeader(0, row))
+    ) {
       return Array.isArray(this.defaultHeaderRowHeight)
         ? this.defaultHeaderRowHeight[row] ?? this.internalProps.defaultRowHeight
         : this.defaultHeaderRowHeight;
+    }
+    if (row < this.internalProps.layoutMap.columnSeriesNumberColumnCount) {
+      return this.internalProps.columnSeriesNumber.height ?? this.defaultHeaderRowHeight;
     }
     if (this.isBottomFrozenRow(row)) {
       //底部冻结行默认取用了表头的行高  但针对非表头数据冻结的情况这里可能不妥
@@ -3312,14 +3319,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   isSeriesNumberInBody(col: number, row: number): boolean {
     return (
       this.internalProps.layoutMap &&
-      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(col, row)
     );
   }
   /** 判断单元格是否属于序号表头部分 */
   isSeriesNumberInHeader(col: number, row: number): boolean {
     return (
       this.internalProps.layoutMap &&
-      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)
+      (this.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInHeader(col, row)
     );
   }
   /** 判断单元格是否属于表头部分 */

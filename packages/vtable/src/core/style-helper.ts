@@ -182,9 +182,12 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
   //如果是主体部分，获取相应的style
   if (rawRecord?.vtableMerge) {
     cacheKey = 'merge-title';
-  } else if (table.isSeriesNumberInBody(col, row)) {
+  } else if (table.internalProps.layoutMap.isRowSeriesNumberInBody(col, row)) {
     // 如果是行序号
-    cacheKey = `${col}-series-` + cellType;
+    cacheKey = `${col}-row-series-` + cellType;
+  } else if (table.internalProps.layoutMap.isColumnSeriesNumber(col, row)) {
+    // 如果是列序号
+    cacheKey = `${row}-column-series-` + cellType;
   } else if (
     (table.isListTable() && !(table as any).transpose) ||
     (table.isPivotTable() && (table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol)

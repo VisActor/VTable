@@ -207,7 +207,7 @@ export function updateSelectPosition(
             skipBodyMerge: true
           });
         }
-      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInHeader(col, row)) {
+      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInHeader(col, row)) {
         // 选中表头行号单元格
         extendSelectRange = false;
 
@@ -261,7 +261,7 @@ export function updateSelectPosition(
         //     skipBodyMerge: true
         //   });
         // }
-      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(col, row)) {
         // 选中内容行号单元格
         extendSelectRange = false;
         if (state.select.headerSelectMode === 'body') {
@@ -277,6 +277,25 @@ export function updateSelectPosition(
           state.select.ranges.push({
             start: { col, row },
             end: { col: table.colCount - 1, row: row },
+            skipBodyMerge: true
+          });
+        }
+      } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isColumnSeriesNumber(col, row)) {
+        // 选中列号单元格
+        extendSelectRange = false;
+        if (state.select.headerSelectMode === 'body') {
+          state.select.ranges.push({
+            start: {
+              col,
+              row: table.columnHeaderLevelCount
+            },
+            end: { col: col, row: table.rowCount - 1 },
+            skipBodyMerge: true
+          });
+        } else {
+          state.select.ranges.push({
+            start: { col, row },
+            end: { col: col, row: table.rowCount - 1 },
             skipBodyMerge: true
           });
         }
@@ -370,7 +389,7 @@ export function updateSelectPosition(
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (currentRange) {
       if (
-        (table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
+        (table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(
           currentRange.start.col,
           currentRange.start.row
         )
@@ -462,7 +481,7 @@ export function updateSelectPosition(
             } else if (table.isColumnHeader(col, row)) {
               currentRange.start.row = table.columnHeaderLevelCount;
               currentRange.end.row = table.rowCount - 1;
-            } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)) {
+            } else if ((table.internalProps.layoutMap as SimpleHeaderLayoutMap).isRowSeriesNumberInBody(col, row)) {
               currentRange.start.col = table.leftRowSeriesNumberCount;
               currentRange.end.col = table.colCount - 1;
             } else if (table.isCornerHeader(col, row)) {

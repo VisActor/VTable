@@ -724,7 +724,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
     }
     if (this.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
-      if (this.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+      if (this.internalProps.layoutMap.isRowSeriesNumberInHeader(col, row)) {
         const { title } = this.internalProps.layoutMap.getSeriesNumberHeader(col, row);
         return title;
       }

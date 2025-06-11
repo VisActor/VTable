@@ -310,7 +310,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const table = this;
     if (table.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
-      if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+      if (table.internalProps.layoutMap.isRowSeriesNumberInHeader(col, row)) {
         const { title } = table.internalProps.layoutMap.getRowSeriesNumberHeader(col, row);
         return title;
       }
@@ -357,7 +357,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const table = this;
     if (table.internalProps.layoutMap.isRowSeriesNumber(col, row)) {
-      if (table.internalProps.layoutMap.isSeriesNumberInHeader(col, row)) {
+      if (table.internalProps.layoutMap.isRowSeriesNumberInHeader(col, row)) {
         const { title } = table.internalProps.layoutMap.getRowSeriesNumberHeader(col, row);
         return title;
       }
@@ -681,10 +681,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (table.internalProps.layoutMap.isHeader(col, row)) {
       return null;
     }
-    const index = table.getRecordShowIndexByCell(
-      table.transpose ? col - table.internalProps.layoutMap.leftRowSeriesNumberColumnCount : col,
-      row
-    );
+    const index = table.getRecordShowIndexByCell(col, row);
     return table.internalProps.dataSource.getField(index, field, col, row, this);
   }
   /**

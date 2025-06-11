@@ -1384,8 +1384,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.isRightFrozenColumn(col) ||
       this.isBottomFrozenRow(row) ||
       this.isFrozenRow(row) ||
-      this.isSeriesNumberInBody(col, row) ||
-      this.isSeriesNumberInHeader(col, row)
+      this.isRowSeriesNumberInBody(col, row) ||
+      this.isRowSeriesNumberInHeader(col, row)
     );
   }
   /**
@@ -1875,7 +1875,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   //   return 0;
   // }
   getHeader(col: number, row: number): HeaderData | SeriesNumberColumnData {
-    if (this.isSeriesNumberInHeader(col, row)) {
+    if (this.isRowSeriesNumberInHeader(col, row)) {
       return this.getSeriesNumberHeader(col, row);
     }
     const id = this.getCellId(col, row);
@@ -2072,7 +2072,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       for (let r = row + 1; r < (this.rowCount ?? 0); r++) {
         if (
           id !== this.getCellId(col, r) ||
-          (this.isSeriesNumberInHeader(col, row) && r >= this.columnHeaderLevelCount)
+          (this.isRowSeriesNumberInHeader(col, row) && r >= this.columnHeaderLevelCount)
           // ||
           // (col >= 1 && this.getCellId(col - 1, row) !== this.getCellId(col - 1, r))
         ) {
@@ -2854,7 +2854,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @returns boolean 是否可以移动
    */
   canMoveHeaderPosition(source: CellAddress, target: CellAddress): boolean {
-    if (this.isSeriesNumberInHeader(target.col, target.row) || this.isSeriesNumberInHeader(source.col, source.row)) {
+    if (
+      this.isRowSeriesNumberInHeader(target.col, target.row) ||
+      this.isRowSeriesNumberInHeader(source.col, source.row)
+    ) {
       return false;
     }
     if (this.isCornerHeader(target.col, target.row)) {
@@ -2863,7 +2866,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (source.col < 0 || source.row < 0 || target.col < 0 || target.row < 0) {
       return false;
     }
-    if (this.isSeriesNumberInBody(target.col, target.row) && this.isSeriesNumberInBody(source.col, source.row)) {
+    if (this.isRowSeriesNumberInBody(target.col, target.row) && this.isRowSeriesNumberInBody(source.col, source.row)) {
       // 如果是子节点之间相互换位置  则匹配表头最后一级
       // if (
       //   this.getColumnDefine(source.col + this.leftRowSeriesNumberColumnCount, source.row).isChildNode &&
@@ -3997,7 +4000,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.generateCellIdsConsiderHideHeader();
     this.setPagination(this.pagination);
   }
-  isSeriesNumberInHeader(col: number, row: number): boolean {
+  isRowSeriesNumberInHeader(col: number, row: number): boolean {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && row >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row < this.headerLevelCount) {
         return true;
@@ -4014,7 +4017,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     return false;
   }
-  isSeriesNumberInBody(col: number, row: number): boolean {
+  isRowSeriesNumberInBody(col: number, row: number): boolean {
     if (this.leftRowSeriesNumberColumnCount > 0 && col >= 0 && col < this.leftRowSeriesNumberColumnCount) {
       if (row >= this.headerLevelCount) {
         return true;
@@ -4044,6 +4047,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       ) {
         return true;
       }
+    }
+    return false;
+  }
+  isColumnSeriesNumber(col: number, row: number): boolean {
+    if (this.columnSeriesNumberColumnCount > 0 && row >= 0 && row < this.columnSeriesNumberColumnCount) {
+      return true;
     }
     return false;
   }

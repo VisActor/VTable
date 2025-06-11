@@ -129,7 +129,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(100);
+  const records = generatePersons(10);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'sex',
@@ -197,7 +197,31 @@ export function createTable() {
     keyboardOptions: {
       copySelected: true
     },
-    theme: { headerStyle: { bgColor: 'yellow' } },
+    theme: {
+      headerStyle: {
+        bgColor: 'yellow',
+        frameStyle: {
+          borderLineWidth: 2,
+          borderColor: 'blue'
+        }
+      },
+      cornerHeaderStyle: {
+        frameStyle: {
+          borderLineWidth: 2,
+          borderColor: 'purple'
+        }
+      },
+      bodyStyle: {
+        frameStyle: {
+          borderLineWidth: 2,
+          borderColor: 'green'
+        }
+      },
+      frameStyle: {
+        borderLineWidth: 2,
+        borderColor: 'yellow'
+      }
+    },
 
     // sortState: {
     //   field: 'email1',
@@ -208,14 +232,22 @@ export function createTable() {
     //   currentPage: 1
     // },
     dragOrder: {
-      validateDragOrderOnEnd(source, target) {
-        console.log(source, target);
-        return true;
-      },
+      // validateDragOrderOnEnd(source, target) {
+      //   console.log(source, target);
+      //   return true;
+      // },
       dragHeaderMode: 'all'
     },
+    // transpose: true,
+    columnSeriesNumber: {
+      height: 30,
+      style: {
+        color: 'black',
+        bgColor: 'gray'
+      }
+    },
     rowSeriesNumber: {
-      title: '',
+      title: 'fffff',
       // field: 'sex',
       dragOrder: true,
       headerIcon: 'book',
@@ -227,57 +259,57 @@ export function createTable() {
       },
       style: {
         color: 'red'
-      },
-      customLayout: (args: any) => {
-        const { table, row, col, rect } = args;
-        const record = table.getRecordByCell(col, row);
-        const { height, width } = rect ?? table.getCellRect(col, row);
-        const container = new VTable.CustomLayout.Group({
-          height,
-          width,
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const bloggerName = new VTable.CustomLayout.Text({
-          text: 'ttttttt ffff',
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'black',
-          marginLeft: 10
-        });
-        container.add(bloggerName);
-        return {
-          rootContainer: container,
-          renderDefault: true
-        };
-      },
-      headerCustomLayout: (args: any) => {
-        const { table, row, col, rect } = args;
-        const record = table.getRecordByCell(col, row);
-        const { height, width } = rect ?? table.getCellRect(col, row);
-        const container = new VTable.CustomLayout.Group({
-          height,
-          width,
-          display: 'flex',
-          flexDirection: 'row',
-          flexWrap: 'nowrap'
-        });
-        const bloggerName = new VTable.CustomLayout.Text({
-          text: 'ttttttt ffff',
-          fontSize: 13,
-          fontFamily: 'sans-serif',
-          fill: 'black',
-          marginLeft: 10
-        });
-        container.add(bloggerName);
-        return {
-          rootContainer: container,
-          renderDefault: true
-        };
       }
-    },
-    bottomFrozenRowCount: 3
+      // customLayout: (args: any) => {
+      //   const { table, row, col, rect } = args;
+      //   const record = table.getRecordByCell(col, row);
+      //   const { height, width } = rect ?? table.getCellRect(col, row);
+      //   const container = new VTable.CustomLayout.Group({
+      //     height,
+      //     width,
+      //     display: 'flex',
+      //     flexDirection: 'row',
+      //     flexWrap: 'nowrap'
+      //   });
+      //   const bloggerName = new VTable.CustomLayout.Text({
+      //     text: 'ttttttt ffff',
+      //     fontSize: 13,
+      //     fontFamily: 'sans-serif',
+      //     fill: 'black',
+      //     marginLeft: 10
+      //   });
+      //   container.add(bloggerName);
+      //   return {
+      //     rootContainer: container,
+      //     renderDefault: true
+      //   };
+      // },
+      // headerCustomLayout: (args: any) => {
+      //   const { table, row, col, rect } = args;
+      //   const record = table.getRecordByCell(col, row);
+      //   const { height, width } = rect ?? table.getCellRect(col, row);
+      //   const container = new VTable.CustomLayout.Group({
+      //     height,
+      //     width,
+      //     display: 'flex',
+      //     flexDirection: 'row',
+      //     flexWrap: 'nowrap'
+      //   });
+      //   const bloggerName = new VTable.CustomLayout.Text({
+      //     text: 'ttttttt ffff',
+      //     fontSize: 13,
+      //     fontFamily: 'sans-serif',
+      //     fill: 'black',
+      //     marginLeft: 10
+      //   });
+      //   container.add(bloggerName);
+      //   return {
+      //     rootContainer: container,
+      //     renderDefault: true
+      //   };
+      // }
+    }
+    // bottomFrozenRowCount: 3
   };
   const tableInstance = new VTable.ListTable(option);
   tableInstance.on('change_header_position', args => {
