@@ -1649,6 +1649,44 @@ The pixelRatio can be obtained directly from the instance's pixelRatio property.
 /\*_ Set the canvas pixel ratio _/
 setPixelRatio: (pixelRatio: number) => void;
 
+````
+
+## expandAllTreeNode(Function)
+
+Expand all tree nodes (including headers and data rows).
+
+**ListTable Proprietary**
+
+```ts
+  /**
+   * Expand all tree nodes (including headers and data rows).
+   */
+  expandAllTreeNode(): void
+````
+
+Usage:
+
+```ts
+// Expand all nodes
+tableInstance.expandAllTreeNode();
 ```
 
+## collapseAllTreeNode(Function)
+
+Collapse all tree nodes (including headers and data rows).
+
+**ListTable Proprietary**
+
+```ts
+  /**
+   * Collapse all tree nodes (including headers and data rows).
+   */
+  collapseAllTreeNode(): void
+```
+
+Usage:
+
+```ts
+// Collapse all nodes
+tableInstance.collapseAllTreeNode();
 ```

@@ -1557,4 +1557,80 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.editorManager.release();
     super.release();
   }
+
+  /**
+   * 展开所有树形节点
+   */
+  expandAllTreeNode(): void {
+    let stateChanged = false;
+
+    // 展开所有表头节点
+    const headerObjects = this.internalProps.layoutMap.headerObjects;
+    for (const header of headerObjects) {
+      const headerDefine = header.define as any;
+      if (headerDefine.columns && headerDefine.columns.length > 0) {
+        if (headerDefine.hierarchyState !== HierarchyState.expand) {
+          headerDefine.hierarchyState = HierarchyState.expand;
+          stateChanged = true;
+        }
+      }
+    }
+
+    // 展开所有数据行节点
+    if (this.dataSource && typeof (this.dataSource as any).expandAllNodes === 'function') {
+      (this.dataSource as any).expandAllNodes();
+      stateChanged = true;
+    }
+
+    // 刷新视图
+    if (stateChanged) {
+      this.updateColumns(this.internalProps.columns); // 应用表头变化并重新评估列
+      this.refreshRowColCount(); // 更新行列计数基于数据源变化
+      this.scenegraph.renderSceneGraph(); // 全部重绘
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1, // 表示非特定单元格操作
+        row: -1,
+        hierarchyState: HierarchyState.expand
+      });
+    }
+  }
+
+  /**
+   * 折叠所有树形节点
+   */
+  collapseAllTreeNode(): void {
+    let stateChanged = false;
+
+    // 折叠所有表头节点
+    const headerObjects = this.internalProps.layoutMap.headerObjects;
+    for (const header of headerObjects) {
+      const headerDefine = header.define as any;
+      if (headerDefine.columns && headerDefine.columns.length > 0) {
+        if (headerDefine.hierarchyState !== HierarchyState.collapse) {
+          headerDefine.hierarchyState = HierarchyState.collapse;
+          stateChanged = true;
+        }
+      }
+    }
+
+    // 折叠所有数据行节点
+    if (this.dataSource && typeof (this.dataSource as any).collapseAllNodes === 'function') {
+      (this.dataSource as any).collapseAllNodes();
+      stateChanged = true;
+    }
+
+    // 刷新视图
+    if (stateChanged) {
+      this.updateColumns(this.internalProps.columns);
+      this.refreshRowColCount();
+      this.scenegraph.renderSceneGraph();
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse
+      });
+    }
+  }
 }
