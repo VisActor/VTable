@@ -234,11 +234,17 @@ export function createTable() {
         borderColor: 'red',
         shadowBlur: 0
       },
+      selectionStyle: {
+        selectionFillMode: 'replace'
+      },
       bodyStyle: {
         select: {
           cellBgColor: 'red',
           inlineRowBgColor: 'pink',
-          inlineColumnBgColor: 'purple'
+          inlineColumnBgColor: 'purple',
+          cellTextColor: 'white',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
         }
       }
     },

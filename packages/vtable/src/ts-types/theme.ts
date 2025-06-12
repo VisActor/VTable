@@ -25,6 +25,9 @@ export type InteractionStyle = {
   // inlineColBorderColor?: ColorsPropertyDefine,//交互所在整列的边框颜色
   inlineColumnBgColor?: ColorPropertyDefine; //交互所在整列的背景颜色
   // headerHighlightBorderColor?:ColorPropertyDefine,//表头底部高亮线
+  cellTextColor?: ColorPropertyDefine; //交互所在单元格的文本颜色
+  inlineRowTextColor?: ColorPropertyDefine; //交互所在整行的文本颜色
+  inlineColumnTextColor?: ColorPropertyDefine; //交互所在整列的文本颜色
 };
 export type FrameStyle = {
   borderColor?: ColorsDef;
@@ -86,6 +89,14 @@ export type TooltipStyle = {
   /**气泡框位置，可选 top left right bottom */
   // placement?: Placement;
 };
+
+export type BodyThemeStyle = ThemeStyle & {
+  select?: {
+    cellTextColor?: ColorPropertyDefine; //交互所在单元格的文本颜色
+    inlineRowTextColor?: ColorPropertyDefine; //交互所在整行的文本颜色
+    inlineColumnTextColor?: ColorPropertyDefine; //交互所在整列的文本颜色
+  };
+};
 export interface ITableThemeDefine {
   /** 表格绘制范围外的canvas上填充的颜色 */
   underlayBackgroundColor?: string;
@@ -99,7 +110,7 @@ export interface ITableThemeDefine {
   bottomFrozenStyle?: ThemeStyle; // 下部冻结单元格样式
   headerStyle?: ThemeStyle;
   rowHeaderStyle?: ThemeStyle;
-  bodyStyle?: ThemeStyle;
+  bodyStyle?: BodyThemeStyle;
   groupTitleStyle?: ThemeStyle;
   frameStyle?: TableFrameStyle;
   //列调整宽度的直线

@@ -47,6 +47,7 @@ import {
   DEFAULTFONTSIZE
 } from '../tools/global';
 import { defalutPoptipStyle, getAxisStyle } from './component';
+import type { BodyThemeStyle } from '../ts-types/theme';
 //private symbol
 // const _ = getSymbol();
 
@@ -927,6 +928,15 @@ export class TableTheme implements ITableThemeDefine {
               return style.select?.cellBgColor ?? that.selectionStyle.cellBgColor ?? undefined;
             }
             return undefined;
+          },
+          get cellTextColor(): ColorPropertyDefine | undefined {
+            return (style as BodyThemeStyle).select?.cellTextColor ?? undefined;
+          },
+          get inlineRowTextColor(): ColorPropertyDefine | undefined {
+            return (style as BodyThemeStyle).select?.inlineRowTextColor ?? undefined;
+          },
+          get inlineColumnTextColor(): ColorPropertyDefine | undefined {
+            return (style as BodyThemeStyle).select?.inlineColumnTextColor ?? undefined;
           }
         };
         // }
