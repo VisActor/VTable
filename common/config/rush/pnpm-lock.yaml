@@ -297,10 +297,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 2.0.0-alpha.1
       '@visactor/vdataset': ~0.18.1
-      '@visactor/vrender-animate': 1.0.0-alpha.18
-      '@visactor/vrender-components': 1.0.0-alpha.18
-      '@visactor/vrender-core': 1.0.0-alpha.18
-      '@visactor/vrender-kits': 1.0.0-alpha.18
+      '@visactor/vrender-animate': 1.0.3
+      '@visactor/vrender-components': 1.0.3
+      '@visactor/vrender-core': 1.0.3
+      '@visactor/vrender-kits': 1.0.3
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.19.1
@@ -345,10 +345,10 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.18.18
-      '@visactor/vrender-animate': 1.0.0-alpha.18
-      '@visactor/vrender-components': 1.0.0-alpha.18
-      '@visactor/vrender-core': 1.0.0-alpha.18
-      '@visactor/vrender-kits': 1.0.0-alpha.18
+      '@visactor/vrender-animate': 1.0.3
+      '@visactor/vrender-components': 1.0.3
+      '@visactor/vrender-core': 1.0.3
+      '@visactor/vrender-kits': 1.0.3
       '@visactor/vscale': 0.18.18
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.19.6
@@ -4176,11 +4176,11 @@ packages:
       '@visactor/vrender-core': 1.0.0-alpha.17
       '@visactor/vutils': 1.0.4
 
-  /@visactor/vrender-animate/1.0.0-alpha.18:
-    resolution: {integrity: sha512-9kTtvp1ef+1t+AtUiza6A7qBQP7SmvOu3/ILGrqs/HGdZVj1XGjbYvD/X/zwKJ3LEb7gGV5fa8x95e4czTvRSA==}
+  /@visactor/vrender-animate/1.0.3:
+    resolution: {integrity: sha512-F6E4ngeFfP//MRd2P8uitDsO9q669bFiNnIbbS06+vjca893kfg2S4HHd6X0DaS9Efz66FINNxqUoDXRzl1gYA==}
     dependencies:
-      '@visactor/vrender-core': 1.0.0-alpha.18
-      '@visactor/vutils': 1.0.4
+      '@visactor/vrender-core': 1.0.3
+      '@visactor/vutils': 1.0.6
     dev: false
 
   /@visactor/vrender-components/1.0.0-alpha.17:
@@ -4192,14 +4192,14 @@ packages:
       '@visactor/vscale': 1.0.4
       '@visactor/vutils': 1.0.4
 
-  /@visactor/vrender-components/1.0.0-alpha.18:
-    resolution: {integrity: sha512-7Euq+ZfswL74n2pgkaqZSsPxoSa5SPIGyXatN1eUrdzM2Z0kX6U0RcJg01fctvRs4op6WhcecRLqGvnHcBeb9Q==}
+  /@visactor/vrender-components/1.0.3:
+    resolution: {integrity: sha512-reQgGRW5/LMm2ArM1m8hM1jg+eDOU5dS/bg/uT3rqayl2ylfa/WHJwemileL6rQKLM+uFyH50RpGXVDV8PQv8w==}
     dependencies:
-      '@visactor/vrender-animate': 1.0.0-alpha.18
-      '@visactor/vrender-core': 1.0.0-alpha.18
-      '@visactor/vrender-kits': 1.0.0-alpha.18
-      '@visactor/vscale': 1.0.4
-      '@visactor/vutils': 1.0.4
+      '@visactor/vrender-animate': 1.0.3
+      '@visactor/vrender-core': 1.0.3
+      '@visactor/vrender-kits': 1.0.3
+      '@visactor/vscale': 1.0.6
+      '@visactor/vutils': 1.0.6
     dev: false
 
   /@visactor/vrender-core/1.0.0-alpha.17:
@@ -4208,10 +4208,10 @@ packages:
       '@visactor/vutils': 1.0.4
       color-convert: 2.0.1
 
-  /@visactor/vrender-core/1.0.0-alpha.18:
-    resolution: {integrity: sha512-0ihtNvCyNkOsWPFgRqowHzq0IcQgS2Wl/nPpKbVtxWKveenwlhA+ZKoQvam6VJyBY7jeNe1pROy0mJMDyVAJQw==}
+  /@visactor/vrender-core/1.0.3:
+    resolution: {integrity: sha512-g+aPhX7WK/4FrDiAAX8hZRfoHtG2JmB2/73AaU8SMuWMYBFMPwTSBXQD5oI4vqeZ3/4p0yoSjXXaAL6t0d5ZTw==}
     dependencies:
-      '@visactor/vutils': 1.0.4
+      '@visactor/vutils': 1.0.6
       color-convert: 2.0.1
     dev: false
 
@@ -4225,12 +4225,12 @@ packages:
       lottie-web: 5.13.0
       roughjs: 4.5.2
 
-  /@visactor/vrender-kits/1.0.0-alpha.18:
-    resolution: {integrity: sha512-Tvolkq+4G8qiPFZo0Aj8M//Yr6jR2h8FNkFEyWM9gbQbEiTkjpmHAJOYnoSsaPtPrcMSlG4EhJSFDk6ymANHVg==}
+  /@visactor/vrender-kits/1.0.3:
+    resolution: {integrity: sha512-RKO6zsYMU8ZhFgNa97lmwJEsm34MgV9CZLmDmMZ1Af9FkhwDYYaoMvZLHP47mjgQMGm4dnGUBfhPaZEqk31Dvw==}
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.0.0-alpha.18
-      '@visactor/vutils': 1.0.4
+      '@visactor/vrender-core': 1.0.3
+      '@visactor/vutils': 1.0.6
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
       roughjs: 4.5.2
