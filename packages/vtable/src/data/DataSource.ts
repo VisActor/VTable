@@ -1639,7 +1639,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.hasHierarchyStateExpand = true;
       this.clearSortedIndexMap();
       this.restoreTreeHierarchyState();
-      this.updatePagerData();
+
+      if (this.lastSortStates && this.lastSortStates.length > 0) {
+        this.sort(this.lastSortStates); // sort 方法内部会调用 updatePagerData
+      } else {
+        this.updatePagerData();
+      }
     } else {
       console.warn('DataSource._source is not an array, cannot expand all nodes.');
     }
@@ -1653,7 +1658,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       // hasHierarchyStateExpand 将由 restoreTreeHierarchyState 正确更新
       this.clearSortedIndexMap();
       this.restoreTreeHierarchyState();
-      this.updatePagerData();
+
+      if (this.lastSortStates && this.lastSortStates.length > 0) {
+        this.sort(this.lastSortStates); // sort 方法内部会调用 updatePagerData
+      } else {
+        this.updatePagerData();
+      }
     } else {
       console.warn('DataSource._source is not an array, cannot collapse all nodes.');
     }

@@ -175,10 +175,10 @@ export function createTable() {
     hierarchyIndent: 20,
     hierarchyExpandLevel: 2,
 
-    // sortState: {
-    //   field: '销售额',
-    //   order: 'desc'
-    // },
+    sortState: {
+      field: '销售额',
+      order: 'desc'
+    },
     theme: VTable.themes.BRIGHT,
     defaultRowHeight: 32,
     select: {
