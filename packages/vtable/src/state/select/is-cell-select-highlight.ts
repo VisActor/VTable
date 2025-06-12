@@ -56,6 +56,31 @@ export function getCellSelectColor(cellGroup: Group, table: BaseTableAPI): strin
   const fillColor = getProp(colorKey, selectStyle, cellGroup.col, cellGroup.row, table);
   return fillColor;
 }
+/**
+ * 获取选中单元格的文本颜色
+ */
+export function getSelectedCellTextColor(cellGroup: Group, table: BaseTableAPI): string | undefined {
+  const styleKey = getCellTypeSelectionStyleKey(table.stateManager, cellGroup.col, cellGroup.row);
+  if (!styleKey) {
+    return undefined;
+  }
+  let selectStyle;
+  const layout = table.internalProps.layoutMap;
+  const col = cellGroup.col;
+  const row = cellGroup.row;
+  if (
+    !layout.isCornerHeader(col, row) &&
+    !layout.isColumnHeader(col, row) &&
+    !layout.isRowHeader(col, row) &&
+    !layout.isBottomFrozenRow(col, row) &&
+    !layout.isRightFrozenColumn(col, row) &&
+    !table.isHeader(col, row)
+  ) {
+    selectStyle = table.theme.bodyStyle?.select;
+  }
+  const textColor = getProp(styleKey, selectStyle, col, row, table);
+  return textColor;
+}
 
 // 选中多列
 function isSelectMultipleRange(range: CellRange) {
@@ -164,6 +189,30 @@ export function isCellSelected(state: StateManager, col: number, row: number, ce
     }
   }
   return selectMode;
+}
+/**
+ * 获取不同类型单元格的选择样式键名
+ * 复用了isCellSelected的逻辑，根据单元格位置返回对应的样式属性名：
+ * - 当前选中单元格：'cellTextColor'
+ * - 同行单元格：'inlineRowTextColor'
+ * - 同列单元格：'inlineColumnTextColor'
+ */
+export function getCellTypeSelectionStyleKey(
+  state: StateManager,
+  col: number,
+  row: number
+): 'cellTextColor' | 'inlineRowTextColor' | 'inlineColumnTextColor' | undefined {
+  const selectMode = isCellSelected(state, col, row, null);
+  switch (selectMode) {
+    case 'cellBgColor':
+      return 'cellTextColor';
+    case 'inlineRowBgColor':
+      return 'inlineRowTextColor';
+    case 'inlineColumnBgColor':
+      return 'inlineColumnTextColor';
+    default:
+      return undefined;
+  }
 }
 /**
  * 判断单元格是否禁用选择。先判断高优配置select.disableSelect。
