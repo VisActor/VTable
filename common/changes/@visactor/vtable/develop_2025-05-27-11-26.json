@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "chore: update vrender 1.0.0\n\n",
+      "type": "minor",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
