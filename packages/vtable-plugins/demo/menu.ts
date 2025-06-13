@@ -1,19 +1,23 @@
 export const menus = [
+  // {
+  //   path: 'carousel-animation',
+  //   name: '(deprecated)carousel-animation'
+  // },
+  // {
+  //   path: 'gantt-export-image',
+  //   name: 'gantt-export-image'
+  // },
+  // {
+  //   path: 'header-highlight',
+  //   name: '(deprecated)header-highlight'
+  // },
+  // {
+  //   path: 'invert-highlight',
+  //   name: '(deprecated)invert-highlight'
+  // },
   {
-    path: 'carousel-animation',
-    name: '(deprecated)carousel-animation'
-  },
-  {
-    path: 'gantt-export-image',
-    name: 'gantt-export-image'
-  },
-  {
-    path: 'header-highlight',
-    name: '(deprecated)header-highlight'
-  },
-  {
-    path: 'invert-highlight',
-    name: '(deprecated)invert-highlight'
+    path: 'wps-fill-handle',
+    name: 'wps-fill-handle'
   },
   {
     path: 'focus-highlight',
