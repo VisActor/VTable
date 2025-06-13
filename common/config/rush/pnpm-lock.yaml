@@ -778,6 +778,7 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/chai': 4.2.22
       '@types/jest': ^26.0.0
+      '@types/lodash': 4.14.182
       '@types/mocha': 9.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
@@ -791,6 +792,7 @@ importers:
       '@visactor/vutils': ~0.19.1
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
+      big.js: 6.2.2
       chai: 4.3.4
       eslint: ~8.18.0
       form-data: ~4.0.0
@@ -799,6 +801,7 @@ importers:
       jest-electron: ^0.1.12
       jest-transform-stub: ^2.0.0
       json-formatter-js: ^2.3.4
+      lodash: 4.17.21
       magic-string: ^0.25.7
       markdown-it: ^13.0.0
       mocha: 9.1.3
@@ -820,6 +823,8 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vutils': 0.19.4
+      big.js: 6.2.2
+      lodash: 4.17.21
     devDependencies:
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2_@babel+core@7.20.12
@@ -829,6 +834,7 @@ importers:
       '@rushstack/eslint-patch': 1.1.4
       '@types/chai': 4.2.22
       '@types/jest': 26.0.24
+      '@types/lodash': 4.14.182
       '@types/mocha': 9.0.0
       '@types/node': 22.13.9
       '@types/offscreencanvas': 2019.6.4
@@ -4357,7 +4363,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.25.9_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6_tp2wsfwniubhwwtz2rzahg2hve
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -5254,6 +5260,9 @@ packages:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
     engines: {node: '>=0.6'}
     dev: false
+
+  /big.js/6.2.2:
+    resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
 
   /binary-extensions/1.13.1:
     resolution: {integrity: sha512-Un7MIEDdUC5gNpcGDV97op1Ywk748MpHcFTHoYs6qnj1Z3j7I53VG3nwZhKzoBZmbdRNnb6WRdFlwl7tSDuZGw==}
