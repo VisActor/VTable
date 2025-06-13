@@ -179,6 +179,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   _heightMode: HeightModeDef;
   _autoFillWidth: boolean;
   _autoFillHeight: boolean;
+  _containerFit: { width: boolean; height: boolean };
   _widthAdaptiveMode: WidthAdaptiveModeDef;
   _heightAdaptiveMode: HeightAdaptiveModeDef;
   customRender?: ICustomRender;
@@ -276,6 +277,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode = 'standard',
       autoFillWidth = false,
       autoFillHeight = false,
+      containerFit = { width: false, height: false },
       widthAdaptiveMode = 'only-body',
       heightAdaptiveMode = 'only-body',
       keyboardOptions,
@@ -319,6 +321,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._heightAdaptiveMode = heightAdaptiveMode;
     this._autoFillWidth = autoFillWidth;
     this._autoFillHeight = autoFillHeight;
+    // 处理containerFit配置
+    if (containerFit !== undefined) {
+      if (typeof containerFit === 'boolean') {
+        this._containerFit = { width: containerFit, height: containerFit };
+      } else if (containerFit && typeof containerFit === 'object') {
+        this._containerFit = {
+          width: containerFit.width ?? true,
+          height: containerFit.height ?? true
+        };
+      } else {
+        this._containerFit = { width: false, height: false };
+      }
+    }
     this.customRender = customRender;
     this.padding = { top: 0, right: 0, left: 0, bottom: 0 };
     if (padding) {
@@ -2412,6 +2427,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightMode,
       autoFillWidth,
       autoFillHeight,
+      containerFit,
       widthAdaptiveMode,
       heightAdaptiveMode,
       customRender,
@@ -2451,6 +2467,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._heightAdaptiveMode = heightAdaptiveMode ?? 'only-body';
     this.autoFillWidth = autoFillWidth ?? false;
     this.autoFillHeight = autoFillHeight ?? false;
+    // 处理containerFit配置
+    if (containerFit !== undefined) {
+      if (typeof containerFit === 'boolean') {
+        this._containerFit = { width: containerFit, height: containerFit };
+      } else if (containerFit && typeof containerFit === 'object') {
+        this._containerFit = {
+          width: containerFit.width ?? true,
+          height: containerFit.height ?? true
+        };
+      } else {
+        this._containerFit = { width: false, height: false };
+      }
+    }
     this.customRender = customRender;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
@@ -4514,5 +4543,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   checkHasColumnAutoWidth(): boolean {
     return checkHasColumnAutoWidth(this);
+  }
+  get containerFit(): { width: boolean; height: boolean } {
+    return this._containerFit;
+  }
+  set containerFit(containerFit: boolean | { width?: boolean; height?: boolean }) {
+    if (typeof containerFit === 'boolean') {
+      this._containerFit = { width: containerFit, height: containerFit };
+    } else if (containerFit && typeof containerFit === 'object') {
+      this._containerFit = {
+        width: containerFit.width ?? true,
+        height: containerFit.height ?? true
+      };
+    } else {
+      this._containerFit = { width: false, height: false };
+    }
   }
 }
