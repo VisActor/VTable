@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: group release so gif can stop animation #4029\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
