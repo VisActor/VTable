@@ -318,7 +318,7 @@ export class Gantt extends EventTarget {
           ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0
           : left;
       this.tableY = top;
-      this.tableNoFrameWidth = Math.min(width - left - right - this.tableX, this.getAllDateColsWidth());
+      this.tableNoFrameWidth = Math.min(width - right - this.tableX, this.getAllDateColsWidth());
 
       this.tableNoFrameHeight = height - top - bottom;
     }
@@ -330,7 +330,7 @@ export class Gantt extends EventTarget {
     if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
       // 归一化边框宽度
       const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
-      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + left + right;
+      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right;
       if (this.options?.taskListTable?.maxTableWidth) {
         this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
       }
