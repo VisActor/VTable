@@ -252,6 +252,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-moveRow'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-rowSeriesNumber'
       },
       {

@@ -205,14 +205,22 @@ export function endMoveCol(state: StateManager): boolean {
         }
       }
       if (
-        !(state.table as ListTable).transpose &&
+        state.table.isListTable() &&
         (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
           state.columnMove.colSource,
           state.columnMove.rowSource
         )
       ) {
-        const sourceRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.sourceIndex);
-        const targetRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.targetIndex);
+        let sourceRecordPath;
+        let targetRecordPath;
+
+        if (!(state.table as ListTable).transpose) {
+          sourceRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.sourceIndex);
+          targetRecordPath = (state.table as ListTable).getRecordIndexByCell(0, moveContext.targetIndex);
+        } else {
+          sourceRecordPath = (state.table as ListTable).getRecordIndexByCell(moveContext.sourceIndex, 0);
+          targetRecordPath = (state.table as ListTable).getRecordIndexByCell(moveContext.targetIndex, 0);
+        }
 
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
 
