@@ -241,6 +241,33 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.renderAsync();
     this.eventManager.updateEventBinder();
   }
+
+  /**
+   * 作为 `updateColumns` 的轻量级替代方案，用于仅需重新创建场景图而无需重新定义列的场景，
+   * 例如展开/折叠树形节点。此方法避免了 `updateColumns` 中开销较大的 `cloneDeepSpec` 深拷贝操作。
+   *
+   * 注意：此方法与 `updateColumns` 共享部分逻辑。如果将来修改了 `updateColumns`，
+   * 请务必检查此方法，以确保逻辑一致性，防止出现“逻辑漂移”。
+   */
+  private _recreateSceneForStateChange(): void {
+    this.scenegraph.clearCells();
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
+
+    this._hasAutoImageColumn = undefined;
+    this.refreshHeader();
+    if (this.records && checkHasAggregationOnColumnDefine(this.internalProps.columns)) {
+      this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
+    }
+    this.internalProps.useOneRowHeightFillAll = false;
+
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
+    this.renderAsync();
+    this.eventManager.updateEventBinder();
+  }
   /**
    * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param column
@@ -1584,14 +1611,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     // 刷新视图
     if (stateChanged) {
-      this.updateColumns(this.internalProps.columns); // 应用表头变化并重新评估列
-      this.refreshRowColCount(); // 更新行列计数基于数据源变化
-      this.scenegraph.renderSceneGraph(); // 全部重绘
+      // 使用轻量级的更新管道，而非重量级的 `updateColumns`。
+      // 这个新方法会处理表头刷新、场景创建和渲染。
+      this._recreateSceneForStateChange();
 
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: -1, // 表示非特定单元格操作
         row: -1,
-        hierarchyState: HierarchyState.expand
+        hierarchyState: HierarchyState.expand,
+        originData: { children: this.records }
       });
     }
   }
@@ -1622,14 +1650,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     // 刷新视图
     if (stateChanged) {
-      this.updateColumns(this.internalProps.columns);
-      this.refreshRowColCount();
-      this.scenegraph.renderSceneGraph();
+      // 使用轻量级的更新管道，而非重量级的 `updateColumns`。
+      // 这个新方法会处理表头刷新、场景创建和渲染。
+      this._recreateSceneForStateChange();
 
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: -1,
         row: -1,
-        hierarchyState: HierarchyState.collapse
+        hierarchyState: HierarchyState.collapse,
+        originData: { children: this.records }
       });
     }
   }
