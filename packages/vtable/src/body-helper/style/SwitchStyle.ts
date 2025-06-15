@@ -1,5 +1,5 @@
 import type { IStyleOption, SwitchStyleOption } from '../../ts-types';
-import { Style } from '../style';
+import { Style } from './Style';
 import type { SwitchStyle as SwitchStyleThemeOption } from '../../ts-types/column/style';
 
 let defaultStyle: SwitchStyle;
