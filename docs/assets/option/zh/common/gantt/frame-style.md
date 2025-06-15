@@ -4,7 +4,7 @@ IFrameStyle的定义为：
 ```
 export type IFrameStyle = {
   borderColor?: string;
-  borderLineWidth?: number;
+  borderLineWidth?: number | number[];
   borderLineDash?: number[];
   cornerRadius?: number;
 };
