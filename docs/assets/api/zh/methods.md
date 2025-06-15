@@ -1462,3 +1462,43 @@ setLoadingHierarchyState: (col: number, row: number) => void;
   /** 设置画布的像素比 */
   setPixelRatio: (pixelRatio: number) => void;
 ```
+
+## expandAllTreeNode(Function)
+
+展开所有树形节点（包括表头和数据行）。
+
+**ListTable 专有**
+
+```ts
+  /**
+   * 展开所有树形节点（包括表头和数据行）。
+   */
+  expandAllTreeNode(): void
+```
+
+使用：
+
+```ts
+// 展开所有节点
+tableInstance.expandAllTreeNode();
+```
+
+## collapseAllTreeNode(Function)
+
+折叠所有树形节点（包括表头和数据行）。
+
+**ListTable 专有**
+
+```ts
+  /**
+   * 折叠所有树形节点（包括表头和数据行）。
+   */
+  collapseAllTreeNode(): void
+```
+
+使用：
+
+```ts
+// 折叠所有节点
+tableInstance.collapseAllTreeNode();
+```
