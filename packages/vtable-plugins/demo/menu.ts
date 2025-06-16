@@ -16,6 +16,10 @@ export const menus = [
     name: '(deprecated)invert-highlight'
   },
   {
+    path: 'wps-fill-handle',
+    name: 'wps-fill-handle'
+  },
+  {
     path: 'focus-highlight',
     name: 'focus-highlight'
   },
