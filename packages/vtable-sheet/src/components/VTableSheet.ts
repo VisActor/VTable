@@ -575,8 +575,8 @@ export default class VTableSheet {
     } as any); // 使用as any暂时解决类型不匹配问题
 
     // 注册事件
-    sheet.on('cell-selected', this.handleCellSelected.bind(this));
-    sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
+    // sheet.on('cell-selected', this.handleCellSelected.bind(this));
+    // sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
 
     return sheet;
   }
