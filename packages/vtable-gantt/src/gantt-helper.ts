@@ -912,7 +912,7 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
 }
 
 export function computeRowsCountByRecordDateForCompact(gantt: Gantt, record: any) {
-  if (!record.children || record.children.length === 1) {
+  if (!record.children || record.children.length <= 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
     } else {
@@ -962,7 +962,7 @@ function isOverlapping(startDate: Date, endDate: Date, rowTasks: any[], gantt: G
   });
 }
 export function computeRowsCountByRecordDate(gantt: Gantt, record: any) {
-  if (!record.children || record.children.length === 1) {
+  if (!record.children || record.children.length <= 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
     } else {
