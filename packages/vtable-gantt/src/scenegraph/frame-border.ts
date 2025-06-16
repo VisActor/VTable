@@ -33,7 +33,13 @@ export class FrameBorder {
 
     // 归一化 borderLineWidth 并设置 strokeArrayWidth
     const lineWidths = toBoxArray(borderLineWidth ?? 0);
-    const strokeArrayWidth = [lineWidths[0], lineWidths[1], lineWidths[2], 0]; // 左边线宽为0
+    // 根据是否有任务列表决定是否显示左边框
+    const strokeArrayWidth = [
+      lineWidths[0], 
+      lineWidths[1], 
+      lineWidths[2], 
+      this._scene._gantt.taskListTableInstance ? 0 : lineWidths[3] // 有任务列表时左边为0，无任务列表时使用配置值
+    ];
 
     rectAttributes.stroke = true;
     rectAttributes.fill = false;
@@ -44,12 +50,18 @@ export class FrameBorder {
     rectAttributes.lineCap = 'butt';
 
     // 计算 IRect 的位置和尺寸
-    rectAttributes.x = 0; // x 偏移
+    const hasTaskList = !!this._scene._gantt.taskListTableInstance;
+    const maxLineWidth = Math.max(...strokeArrayWidth);
+    
+    // 根据是否有任务列表调整位置，有任务列表时向左偏移以隐藏左边框
+    rectAttributes.x = hasTaskList ? -maxLineWidth / 2 : strokeArrayWidth[3] / 2;
     rectAttributes.y = strokeArrayWidth[0] / 2; // y 偏移顶部线宽一半
 
     const verticalSplitLineWidth = this._scene._gantt.parsedOptions.verticalSplitLine?.lineWidth ?? 0;
-    rectAttributes.width = group.attribute.width + lineWidths[1] / 2 + verticalSplitLineWidth;
-    rectAttributes.height = group.attribute.height + lineWidths[0] / 2 + lineWidths[2] / 2;
+    rectAttributes.width = group.attribute.width + 
+                           (hasTaskList ? maxLineWidth : strokeArrayWidth[3] / 2 + strokeArrayWidth[1] / 2) + 
+                           (hasTaskList ? verticalSplitLineWidth : 0);
+    rectAttributes.height = group.attribute.height + strokeArrayWidth[0] / 2 + strokeArrayWidth[2] / 2;
 
     // 设置圆角属性
     if (cornerRadius) {
@@ -93,16 +105,27 @@ export class FrameBorder {
     // 获取最新配置并计算尺寸
     const { borderLineWidth } = this._scene._gantt.parsedOptions.outerFrameStyle;
     const lineWidths = toBoxArray(borderLineWidth ?? 0);
-    const strokeArrayWidth = [lineWidths[0], lineWidths[1], lineWidths[2], 0];
+    const strokeArrayWidth = [
+      lineWidths[0], 
+      lineWidths[1], 
+      lineWidths[2], 
+      this._scene._gantt.taskListTableInstance ? 0 : lineWidths[3] // 有任务列表时左边为0，无任务列表时使用配置值
+    ];
     const verticalSplitLineWidth = this._scene._gantt.parsedOptions.verticalSplitLine?.lineWidth ?? 0;
 
     // 更新边框矩形属性 (线宽, 位置, 尺寸)
+    const hasTaskList = !!this._scene._gantt.taskListTableInstance;
+    const maxLineWidth = Math.max(...strokeArrayWidth);
+    
     this.border?.setAttributes({
-      lineWidth: Math.max(...strokeArrayWidth),
-      x: 0,
+      lineWidth: maxLineWidth,
+      // 根据是否有任务列表调整位置
+      x: hasTaskList ? -maxLineWidth / 2 : strokeArrayWidth[3] / 2,
       y: strokeArrayWidth[0] / 2,
-      width: this._scene.ganttGroup.attribute.width + lineWidths[1] / 2 + verticalSplitLineWidth,
-      height: this._scene.ganttGroup.attribute.height + lineWidths[0] / 2 + lineWidths[2] / 2
+      width: this._scene.ganttGroup.attribute.width + 
+             (hasTaskList ? maxLineWidth : strokeArrayWidth[3] / 2 + strokeArrayWidth[1] / 2) + 
+             (hasTaskList ? verticalSplitLineWidth : 0),
+      height: this._scene.ganttGroup.attribute.height + strokeArrayWidth[0] / 2 + strokeArrayWidth[2] / 2
     });
     // 更新 strokeArrayWidth 属性
     (this.border as any).strokeArrayWidth = strokeArrayWidth;
