@@ -26,7 +26,6 @@ export interface AddRowColumnOptions {
 ## 插件示例
 
 初始化插件对象，添加到 vTable 配置的 plugins 中。
-
 ```
 const pasteAddRowColumnPlugin = new PasteAddRowColumnPlugin();
 const option = {
@@ -96,3 +95,4 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
 ```
+

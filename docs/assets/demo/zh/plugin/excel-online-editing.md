@@ -42,25 +42,6 @@ const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
 
 // 注册插件
-const addRowColumn = new VTablePlugins.AddRowColumnPlugin({
-  addColumnCallback: col => {
-    // 新增列时，重置列数
-    columnSeries.resetColumnCount(columnSeries.pluginOptions.columnCount + 1);
-    // 将table实例中的数据源records每一个数组中新增一个空字符串，对应新增的列
-    const newRecords = tableInstance.records.map(record => {
-      if (Array.isArray(record)) {
-        record.splice(col - 1, 0, '');
-      }
-      return record;
-    });
-    tableInstance.setRecords(newRecords);
-  },
-  addRowCallback: row => {
-    // 新增行时，填充空行数据
-    tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
-  }
-});
-
 const columnSeries = new VTablePlugins.ColumnSeriesPlugin({
   columnCount: 26,
   autoExtendColumnTriggerKeys: ['ArrowRight', 'Tab']
@@ -129,6 +110,7 @@ const option = {
     copySelected: true,
     pasteValueToCell: true
   },
+
   plugins: [
     addRowColumn,
     columnSeries,
@@ -141,3 +123,4 @@ const option = {
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
 ```
+

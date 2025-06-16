@@ -1,4 +1,4 @@
-# Paste Add Row Plugin
+# Paste Add Row Plugin 
 
 ## Introduction
 
@@ -24,7 +24,6 @@ export interface AddRowColumnOptions {
 ```
 
 ## Plugin Example
-
 Initialize the plugin object and add it to the plugins of the vTable configuration.
 
 ```
@@ -40,7 +39,6 @@ const option = {
   plugins: [pasteAddRowColumnPlugin]
 };
 ```
-
 In order to ensure that the plugin works properly, you need to configure `keyboardOptions` when vTable is initialized, and set `copySelected` and `pasteValueToCell` to `true`.
 
 ```javascript livedemo template=vtable
@@ -92,6 +90,7 @@ const option = {
     pasteValueToCell: true
   },
   plugins: [pasteAddRowColumnPlugin]
+
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
