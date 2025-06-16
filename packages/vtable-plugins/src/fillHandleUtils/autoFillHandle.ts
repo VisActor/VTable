@@ -3,7 +3,9 @@
  */
 // @ts-ignore no need check
 import Big from 'big.js';
-import { isEqual, isNumber, isFinite, isObject } from 'lodash';
+import isEqual from 'lodash/isEqual';
+import isNumber from 'lodash/isNumber';
+import isObject from 'lodash/isObject';
 import type { RowObject, RowData } from './translateRowObj';
 import { translateRowArrayToObj, translateRowObjToArray } from './translateRowObj';
 import type * as VTable from '@visactor/vtable';
@@ -199,10 +201,9 @@ export const generateAutoFillData = (
         pos.col = isVertical ? startRange.startCol : startRange.startCol + direction * i;
         sample = samples[Math.abs(sampLength - i) % sampLength];
       }
-      console.log('pos,sample', pos, sample);
       if (pos.row >= 0 && pos.col >= 0 && positionInEdges(pos)) {
         let tempRes;
-        if (isNumber(sample.full) && sampLength === 2) {
+        if (isNumber(sample.full) || (Number(sample.full) === Number(sample.number) && sampLength === 2)) {
           const deltaLength = sampLength + Math.floor((i - 1) / sampLength) * sampLength;
           tempRes = add(sample?.number || 0, direction > 0 ? (step || 1) * deltaLength : -(step || 1) * deltaLength);
         } else {
