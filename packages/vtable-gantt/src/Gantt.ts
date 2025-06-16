@@ -330,7 +330,7 @@ export class Gantt extends EventTarget {
     if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
       // 归一化边框宽度
       const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
-      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right;
+      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right; 
       if (this.options?.taskListTable?.maxTableWidth) {
         this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
       }
