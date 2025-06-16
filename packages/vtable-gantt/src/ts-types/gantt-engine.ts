@@ -273,6 +273,9 @@ export interface ITaskBarStyle {
   borderLineWidth?: number;
   /** 边框颜色 */
   borderColor?: string;
+
+  /** 任务条的最小尺寸 */
+  minSize?: number;
 }
 export interface IMilestoneStyle {
   /** 里程碑边框颜色 */
