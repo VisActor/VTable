@@ -1,3 +1,24 @@
+# v1.18.5
+
+2025-06-09
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-vue**: 添加vue-table导出类型 /es/*.d.ts
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复PivotChart中node-canvas范围问题 [#3997](https://github.com/VisActor/VTable/issues/3997)
+- **@visactor/vtable**: 指针抬起时设置isDown为false
+- **@visactor/vtable**: 修复拖动选择不停止的问题 [#3895](https://github.com/VisActor/VTable/issues/3895)
+- **@visactor/vtable**: 修复当设置visible为'focus'时滚动条不显示的问题 [#3914](https://github.com/VisActor/VTable/issues/3914)
+- **@visactor/vtable**: 右键菜单子菜单显示位置应根据底部调整 [#3867](https://github.com/VisActor/VTable/issues/3867)
+- **@visactor/vtable**: 修复在排序状态和分组情况下过滤数据发生错误的问题 [#3961](https://github.com/VisActor/VTable/issues/3961) 
+
+
+[更多详情请查看 v1.18.5](https://github.com/VisActor/VTable/releases/tag/v1.18.5)
+
 # v1.18.4
 
 2025-05-27
@@ -873,12 +894,12 @@
 - **@visactor/vtable**: 当前编辑不存在时，无法触发新编辑单元格 [#2469](https://github.com/VisActor/VTable/issues/2469)
 - **@visactor/vtable**: 无记录时编辑单元格值出错 [#2474](https://github.com/VisActor/VTable/issues/2474)
 - **@visactor/vtable**: 在选项上设置聚合功能不起作用 [#2459](https://github.com/VisActor/VTable/issues/2459)
-- **@visactor/vtable**: 修复在“底部-右”边框模式下单元格边框裁剪问题 [#2442](https://github.com/VisActor/VTable/issues/2442)
+- **@visactor/vtable**: 修复在"底部-右"边框模式下单元格边框裁剪问题 [#2442](https://github.com/VisActor/VTable/issues/2442)
 - **@visactor/vtable**: 在 initChildrenNodeHierarchy() 中添加 children === true hierarchyState
 - **@visactor/vtable**: 修复自定义组件冻结更新问题 [#2432](https://github.com/VisActor/VTable/issues/2432)
 - **@visactor/vtable**: 调整大小时触发 click_cell 事件
 - **@visactor/vtable**: 修复 resetFrozen() 中 proxy.colStart 更新问题 [#2464](https://github.com/VisActor/VTable/issues/2464)
-- **@visactor/vtable**: 在特殊字符集中添加“——” [#2470](https://github.com/VisActor/VTable/issues/2470)
+- **@visactor/vtable**: 在特殊字符集中添加"——" [#2470](https://github.com/VisActor/VTable/issues/2470)
 
 **🔨 功能重构**
 
