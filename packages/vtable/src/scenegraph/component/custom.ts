@@ -1,4 +1,4 @@
-import type { Cursor, ITimeline, Timeline } from '@src/vrender';
+import type { Cursor, ITimeline } from '@src/vrender';
 import {
   createArc,
   createCircle,
