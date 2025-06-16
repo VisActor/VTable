@@ -289,4 +289,10 @@ const table = new VTable.ListTable({
 
 一般需要通过指定容器宽高进而给定表格整体的宽高。如果不指定宽高，想让 VTable 根据内容自动撑开容器的话，可以设置 canvasWidth 为'auto', canvasHeight 为'auto'。 同时配合 maxCanvasWidth 与 maxCanvasHeight 来限制最大宽高。
 
+## 双击自动列宽怎么取消
+
+默认情况下，双击两列之间的间隔线会将间隔线左侧的列宽调整适应内容。如果不想双击自动列宽，可以在配置项中设置`
+ListTable.resize.disableDblclickAutoResizeColWidth`为 true.
+
+
 至此，我们已经介绍了 VTable 中的表格行高列宽计算功能，包括行高、列宽配置，以及表格宽度模式。通过掌握这些功能，您可以更便捷地 VTable 中进行数据展示与分析，现各种实际需求。
