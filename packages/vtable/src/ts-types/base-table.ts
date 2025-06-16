@@ -455,6 +455,11 @@ export interface BaseTableConstructorOptions {
   autoFillWidth?: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+  /** 内容自适应模式，确保表格大小始终等于容器大小，保持原有的列宽/行高不变。默认false */
+  containerFit?: {
+    width?: boolean; // 是否自适应宽度，默认true
+    height?: boolean; // 是否自适应高度，默认true
+  };
 
   /** adaptive 模式下宽度的适应策略 **/
   widthAdaptiveMode?: WidthAdaptiveModeDef;
@@ -689,6 +694,8 @@ export interface BaseTableAPI {
   autoFillWidth: boolean;
   /** 当行高度不能占满容器时，是否需要自动拉高来填充容器的高度。默认false */
   autoFillHeight?: boolean;
+  /** 内容自适应模式，确保表格大小始终等于容器大小，保持原有的列宽/行高不变。默认false */
+  containerFit?: { width: boolean; height: boolean };
 
   /** adaptive 模式下宽度的适应策略 **/
   widthAdaptiveMode: WidthAdaptiveModeDef;
