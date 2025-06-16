@@ -24,7 +24,8 @@ export interface AddRowColumnOptions {
 ```
 
 ## 插件示例
-初始化插件对象，添加到vTable配置的plugins中。
+
+初始化插件对象，添加到 vTable 配置的 plugins 中。
 ```
 const pasteAddRowColumnPlugin = new PasteAddRowColumnPlugin();
 const option = {
@@ -38,7 +39,8 @@ const option = {
   plugins: [pasteAddRowColumnPlugin]
 };
 ```
-为了能保证插件能正常工作，需要在vTable初始化时配置`keyboardOptions`，并设置`copySelected`和`pasteValueToCell`为`true`。
+
+为了能保证插件能正常工作，需要在 vTable 初始化时配置`keyboardOptions`，并设置`copySelected`和`pasteValueToCell`为`true`。
 
 ```javascript livedemo template=vtable
 const input_editor = new VTable_editors.InputEditor();
@@ -53,37 +55,24 @@ const generatePersons = count => {
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
     work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
-    city: 'beijing',
+    city: 'beijing'
   }));
 };
-  const pasteAddRowColumnPlugin = new VTablePlugins.PasteAddRowColumnPlugin();
-  const option = {
-    records: generatePersons(20),
-    rowSeriesNumber: {},
-    columns:[
+const pasteAddRowColumnPlugin = new VTablePlugins.PasteAddRowColumnPlugin();
+const option = {
+  records: generatePersons(20),
+  rowSeriesNumber: {},
+  columns: [
     {
       field: 'email1',
       title: 'email',
-      width: 200,
-      sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
-      }
+      width: 200
     },
-
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
-        },
-
+    {
+      field: 'name',
+      title: 'First Name',
+      width: 200
+    },
     {
       field: 'date1',
       title: 'birthday',
@@ -96,13 +85,14 @@ const generatePersons = count => {
     }
   ],
   editor: 'input-editor',
-  editCellTrigger: 'doubleclick',// 编辑单元格触发方式
+  editCellTrigger: 'doubleclick', // 编辑单元格触发方式
   keyboardOptions: {
     copySelected: true,
     pasteValueToCell: true
   },
   plugins: [pasteAddRowColumnPlugin]
-  };
-  const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-  window.tableInstance = tableInstance;
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window.tableInstance = tableInstance;
 ```
+

@@ -41,7 +41,7 @@ export class PasteAddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
         if (this.pluginOptions?.addRowCallback) {
           this.pluginOptions.addRowCallback(rowCount + i, this.table);
         } else {
-          this.table.addRecord({});
+          this.table.addRecord([]);
         }
       }
     }
