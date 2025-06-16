@@ -378,6 +378,7 @@ export class Gantt extends EventTarget {
         listTable_options[key] = this.options[key];
       }
     }
+    listTable_options.defaultRowHeight = this.options.rowHeight;
     for (const key in this.options.taskListTable) {
       listTable_options[key] = this.options.taskListTable[key];
       if (key === 'columns') {
@@ -589,6 +590,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
@@ -598,6 +600,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
@@ -607,6 +610,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else {
       listTable_options.defaultRowHeight = this.options.rowHeight ?? 40;
     }

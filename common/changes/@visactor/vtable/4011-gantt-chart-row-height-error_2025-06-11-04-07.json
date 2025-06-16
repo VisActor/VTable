@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: some taskShowMode should compute all row height on vtable #4011\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
