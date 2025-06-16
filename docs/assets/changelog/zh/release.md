@@ -1,3 +1,29 @@
+# v1.19.0
+
+2025-06-16
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: add task-bar minSize config [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable-gantt**: support different dependency link line has differrent style [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable**: add containerFit config to support table size
+- **@visactor/vtable**: add wps fill-handle plugin
+- **@visactor/vtable**: add clearColWidthCache for updateColumns api
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: some taskShowMode should compute all row height on vtable [#4011](https://github.com/VisActor/VTable/issues/4011)
+- **@visactor/vtable**: group release so gif can stop animation [#4029](https://github.com/VisActor/VTable/issues/4029)
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: update vrender 1.0.0
+
+
+
+[更多详情请查看 v1.19.0](https://github.com/VisActor/VTable/releases/tag/v1.19.0)
+
 # v1.18.5
 
 2025-06-09
