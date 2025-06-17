@@ -1430,6 +1430,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       !isDefaultRowHeightIsAuto &&
       this.internalProps._heightResizedRowMap.size === 0
     ) {
+      /** 底部冻结开始行 */
+      const bottomFrozenStartRow = this.rowCount - this.bottomFrozenRowCount;
       // part in header
       for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
         h += this.getRowHeight(i);
@@ -1438,14 +1440,30 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (endRow >= this.columnHeaderLevelCount) {
         h +=
           this.defaultRowHeight *
-          (Math.min(endRow, this.rowCount - this.bottomFrozenRowCount - 1) -
-            Math.max(this.columnHeaderLevelCount, startRow) +
-            1);
+          (Math.min(endRow, bottomFrozenStartRow - 1) - Math.max(this.columnHeaderLevelCount, startRow) + 1);
       }
+      /** 当前底部冻结的行高 */
+      let currentBottomFrozenRowsHeight = 0;
       // part in bottom frozen
       // last axis row height is default header row height in pivot chart
-      for (let i = this.rowCount - this.bottomFrozenRowCount; i < endRow + 1; i++) {
-        h += this.getRowHeight(i);
+      for (let i = bottomFrozenStartRow; i < endRow + 1; i++) {
+        currentBottomFrozenRowsHeight += this.getRowHeight(i);
+      }
+      h += currentBottomFrozenRowsHeight;
+      if (
+        !!this.containerFit?.height &&
+        this.bottomFrozenRowCount > 0 &&
+        h < this.tableNoFrameHeight &&
+        endRow >= bottomFrozenStartRow
+      ) {
+        // 配置了冻结行固定在底部+存在冻结行+当前总行高小于表格高度+传入的结尾行在底部冻结行以上
+        const tableHeight = this.tableNoFrameHeight;
+        if (endRow === this.rowCount - 1) {
+          // 当前行是最后一行
+          h = tableHeight;
+        } else {
+          h = tableHeight - this.getBottomFrozenRowsHeight() + currentBottomFrozenRowsHeight;
+        }
       }
     } else {
       if (this.options.customConfig?._disableColumnAndRowSizeRound) {
@@ -2715,7 +2733,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
     // const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
     const width = Math.min(this.tableNoFrameWidth, this.getAllColsWidth());
-    const height = Math.min(this.tableNoFrameHeight, this.getAllRowsHeight());
+    const height = this.containerFit?.height
+      ? this.tableNoFrameHeight
+      : Math.min(this.tableNoFrameHeight, this.getAllRowsHeight());
     // Math.max(lineWidths[3] ?? 0, shadowWidths[3] ?? 0),
     // Math.max(lineWidths[1] ?? 0, shadowWidths[1] ?? 0),
     return new Rect(this.tableX, this.tableY, width, height);
