@@ -5,20 +5,20 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-gantt**: add task-bar minSize config [#4016](https://github.com/VisActor/VTable/issues/4016)
-- **@visactor/vtable-gantt**: support different dependency link line has differrent style [#4016](https://github.com/VisActor/VTable/issues/4016)
-- **@visactor/vtable**: add containerFit config to support table size
-- **@visactor/vtable**: add wps fill-handle plugin
-- **@visactor/vtable**: add clearColWidthCache for updateColumns api
+- **@visactor/vtable-gantt**: 添加任务条最小尺寸配置 [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable-gantt**: 支持不同依赖关系连接线具有不同样式 [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable**: 添加 containerFit 配置以支持表格尺寸适配
+- **@visactor/vtable**: 添加 仿WPS 填充柄功能插件
+- **@visactor/vtable**: 为 updateColumns API 添加 clearColWidthCache 配置项，用于清除列宽缓存
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: some taskShowMode should compute all row height on vtable [#4011](https://github.com/VisActor/VTable/issues/4011)
-- **@visactor/vtable**: group release so gif can stop animation [#4029](https://github.com/VisActor/VTable/issues/4029)
+- **@visactor/vtable**: 某些 taskShowMode 应该计算 vtable 上的所有行高 [#4011](https://github.com/VisActor/VTable/issues/4011)
+- **@visactor/vtable**: gif 停止动画时释放资源 [#4029](https://github.com/VisActor/VTable/issues/4029)
 
 **🔧 项目配置**
 
-- **@visactor/vtable**: update vrender 1.0.0
+- **@visactor/vtable**: 更新至 vrender 1.0.0
 
 
 
