@@ -42,6 +42,23 @@ adaptive 模式下高度的适应策略，默认为 'only-body'。
 - 'only-body'：只计算 body 单元格内容。
 - 'normal'：正常计算，即计算表头和 body 单元格内容。
 
+#${prefix} containerFit(Object)
+
+配置表格框架适应容器尺寸，同时保持内容大小不变。
+
+```javascript
+containerFit: {
+  width: true,   // boolean
+  height: true   // boolean
+}
+```
+
+- `width`: 是否让表格框架宽度适应容器宽度
+- `height`: 是否让表格框架高度适应容器高度
+
+与自适应模式（`widthMode: 'adaptive'` 或 `heightMode: 'adaptive'`）拉伸内容以填充容器不同，`containerFit` 保持原始内容尺寸，并适当填充剩余空间。
+
+
 #${prefix} autoWrapText(boolean) = false
 
 是否自动换行
@@ -672,18 +689,3 @@ animationAppear?: boolean | {
 validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
 ```
 
-#${prefix} containerFit(Object)
-
-配置表格框架适应容器尺寸，同时保持内容大小不变。
-
-```javascript
-containerFit: {
-  width: true,   // boolean
-  height: true   // boolean
-}
-```
-
-- `width`: 是否让表格框架宽度适应容器宽度
-- `height`: 是否让表格框架高度适应容器高度
-
-与自适应模式（`widthMode: 'adaptive'` 或 `heightMode: 'adaptive'`）拉伸内容以填充容器不同，`containerFit` 保持原始内容尺寸，并适当填充剩余空间。
