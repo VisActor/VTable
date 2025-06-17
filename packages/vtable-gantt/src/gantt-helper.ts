@@ -713,7 +713,7 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
     gantt.verticalSplitResizeLine.style.left =
-      (gantt.taskTableWidth ? gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2 : 0) +
+      (gantt.taskTableWidth != -1 ? gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2 : 0) +
       'px';
     gantt.verticalSplitResizeLine.style.width = '14px'; // 注意下面的14 和7 的地方 都是因为这里的宽度是 14
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
@@ -776,7 +776,7 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
   if (gantt.verticalSplitResizeLine) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
-    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth
+    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth != -1
       ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
       : '0px';
     gantt.verticalSplitResizeLine.style.width = '14px';
