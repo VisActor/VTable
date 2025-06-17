@@ -51,15 +51,14 @@ export class FrameBorder {
 
     // 计算 IRect 的位置和尺寸
     const hasTaskList = !!this._scene._gantt.taskListTableInstance;
-    const maxLineWidth = Math.max(...strokeArrayWidth);
     
     // 根据是否有任务列表调整位置，有任务列表时向左偏移以隐藏左边框
-    rectAttributes.x = hasTaskList ? -maxLineWidth / 2 : strokeArrayWidth[3] / 2;
-    rectAttributes.y = strokeArrayWidth[0] / 2; // y 偏移顶部线宽一半
+    rectAttributes.x = hasTaskList ? 0 : strokeArrayWidth[3] / 2;
+    rectAttributes.y = strokeArrayWidth[0] / 2; 
 
     const verticalSplitLineWidth = this._scene._gantt.parsedOptions.verticalSplitLine?.lineWidth ?? 0;
     rectAttributes.width = group.attribute.width + 
-                           (hasTaskList ? maxLineWidth : strokeArrayWidth[3] / 2 + strokeArrayWidth[1] / 2) + 
+                           (hasTaskList ? 0 : strokeArrayWidth[3] / 2 + strokeArrayWidth[1] / 2) + 
                            (hasTaskList ? verticalSplitLineWidth : 0);
     rectAttributes.height = group.attribute.height + strokeArrayWidth[0] / 2 + strokeArrayWidth[2] / 2;
 
@@ -115,15 +114,13 @@ export class FrameBorder {
 
     // 更新边框矩形属性 (线宽, 位置, 尺寸)
     const hasTaskList = !!this._scene._gantt.taskListTableInstance;
-    const maxLineWidth = Math.max(...strokeArrayWidth);
     
     this.border?.setAttributes({
-      lineWidth: maxLineWidth,
       // 根据是否有任务列表调整位置
-      x: hasTaskList ? -maxLineWidth / 2 : strokeArrayWidth[3] / 2,
+      x: hasTaskList ? 0 : strokeArrayWidth[3] / 2,
       y: strokeArrayWidth[0] / 2,
       width: this._scene.ganttGroup.attribute.width + 
-             (hasTaskList ? maxLineWidth : strokeArrayWidth[3] / 2 + strokeArrayWidth[1] / 2) + 
+             (hasTaskList ? 0 : strokeArrayWidth[3] / 2 + strokeArrayWidth[1] / 2) + 
              (hasTaskList ? verticalSplitLineWidth : 0),
       height: this._scene.ganttGroup.attribute.height + strokeArrayWidth[0] / 2 + strokeArrayWidth[2] / 2
     });
