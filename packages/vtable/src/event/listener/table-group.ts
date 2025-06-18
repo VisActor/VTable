@@ -23,6 +23,7 @@ import { getCellMergeInfo } from '../../scenegraph/utils/get-cell-merge';
 import type { CheckBox, CheckboxAttributes, Radio } from '@src/vrender';
 import { handleWhell } from '../scroll';
 import { fireMoveColEventListeners } from '../helper';
+import { clearPageSelection } from '../../tools/env';
 export function bindTableGroupListener(eventManager: EventManager) {
   const table = eventManager.table;
   const stateManager = table.stateManager;
@@ -395,7 +396,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         event: e.nativeEvent
       });
     }
-    table.internalProps.focusControl.focus();
+    clearPageSelection();
     // table.eventManager.isPointerDownOnTable = true;
     // setTimeout(() => {
     //   table.eventManager.isPointerDownOnTable = false;
