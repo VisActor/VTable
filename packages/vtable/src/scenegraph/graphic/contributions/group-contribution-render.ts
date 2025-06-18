@@ -1084,7 +1084,13 @@ function getCellSizeForDraw(group: any, width: number, height: number, bottomRig
     }
     if (!bottomRight) {
       // 边框剪切方向是左上
-      if (col === table.colCount - 1 || (col === table.frozenColCount - 1 && table.scrollLeft)) {
+      if (
+        col === table.colCount - 1 ||
+        (col === table.frozenColCount - 1 && table.scrollLeft) ||
+        (!!table.containerFit?.width &&
+          !!table.rightFrozenColCount &&
+          col === table.colCount - table.rightFrozenColCount - 1)
+      ) {
         width -= 1;
       }
       if (
