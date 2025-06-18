@@ -395,6 +395,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         event: e.nativeEvent
       });
     }
+    table.internalProps.focusControl.focus();
     // table.eventManager.isPointerDownOnTable = true;
     // setTimeout(() => {
     //   table.eventManager.isPointerDownOnTable = false;
