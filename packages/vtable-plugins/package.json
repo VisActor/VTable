@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.19.0",
+  "version": "1.19.1-alpha.1",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -42,9 +42,9 @@
     "@visactor/vtable": "workspace:*"
   },
   "devDependencies": {
-    "@visactor/vtable": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vtable-gantt": "workspace:*",
+    "@visactor/vtable": "workspace:1.19.1-alpha.1",
+    "@visactor/vtable-editors": "workspace:1.19.1-alpha.1",
+    "@visactor/vtable-gantt": "workspace:1.19.1-alpha.1",
     "@visactor/vchart": "2.0.0-alpha.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
