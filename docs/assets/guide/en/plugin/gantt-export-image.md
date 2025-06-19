@@ -36,7 +36,7 @@ const option = {
 ```
 
 ```javascript livedemo template=vtable
-//  使用时需要引入插件包@visactor/vtable-plugins
+//  The plugin package needs to be introduced when in use@visactor/vtable-plugins
 //  import * as VTablePlugins from '@visactor/vtable-plugins';
 const EXPORT_PANEL_ID = 'gantt-export-panel';
 const exportGanttPlugin = new VTablePlugins.ExportGanttPlugin();
