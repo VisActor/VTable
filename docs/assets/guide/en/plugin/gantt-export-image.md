@@ -293,34 +293,29 @@ const option = {
 
 const container = document.getElementById(CONTAINER_ID);
 
-// 创建一个包装容器
 const wrapper = document.createElement('div');
 wrapper.style.height = '100%';
 wrapper.style.width = '100%';
 wrapper.style.position = 'relative';
 container.appendChild(wrapper);
 
-// 创建导出面板，放入包装容器
 const exportPanel = document.createElement('div');
 exportPanel.id = EXPORT_PANEL_ID;
 exportPanel.style.cssText = 'padding: 2px; background-color: #f6f6f6; margin-bottom: 2px; position: absolute; z-index: 1; border: 1px solid black; opacity: 0.5;';
 wrapper.appendChild(exportPanel);
 
-// 创建甘特图容器，放入包装容器
 const ganttContainer = document.createElement('div');
 ganttContainer.style.height = '100%';
 ganttContainer.style.width = '100%';
 ganttContainer.style.position = 'relative'; 
 wrapper.appendChild(ganttContainer);
 
-// 文件格式选择
 const formatSelect = document.createElement('select');
 formatSelect.innerHTML = `
 <option value="png">PNG</option>
 `;
 formatSelect.style.marginRight = '5px';
 
-// 缩放比例选择
 const scaleSelect = document.createElement('select');
 scaleSelect.innerHTML = `
 <option value="1">1x</option>
@@ -329,18 +324,15 @@ scaleSelect.innerHTML = `
 `;
 scaleSelect.style.marginRight = '5px';
 
-// 背景色选择
 const bgColorInput = document.createElement('input');
 bgColorInput.type = 'color';
 bgColorInput.value = '#ffffff';
 bgColorInput.style.marginRight = '5px';
 
-// 导出按钮
 const exportButton = document.createElement('button');
 exportButton.textContent = '导出甘特图';
 exportButton.style.marginLeft = '5px';
 
-// 获取 Base64 按钮
 const getBase64Button = document.createElement('button');
 getBase64Button.textContent = '获取 Base64';
 getBase64Button.style.marginLeft = '5px';
@@ -359,14 +351,12 @@ base64Result.style.overflow = 'hidden';
 base64Result.style.textOverflow = 'ellipsis';
 base64Result.style.whiteSpace = 'nowrap';
 
-// 说明文本
 const infoText = document.createElement('div');
 infoText.innerHTML = '导出功能会直接捕获完整的甘特图和任务列表，即使部分内容在滚动区域外。';
 infoText.style.marginTop = '10px';
 infoText.style.fontSize = '12px';
 infoText.style.color = '#666';
 
-// 添加控件到面板
 exportPanel.appendChild(document.createTextNode('格式: '));
 exportPanel.appendChild(formatSelect);
 exportPanel.appendChild(document.createTextNode('缩放: '));
@@ -378,10 +368,8 @@ exportPanel.appendChild(getBase64Button);
 exportPanel.appendChild(infoText);
 exportPanel.appendChild(base64Result);
 
-// 创建甘特图实例
 const gantt = new VTableGantt.Gantt(ganttContainer, option);
 
-// 绑定导出事件
 exportButton.onclick = async () => {
   try {
     exportButton.disabled = true;
@@ -416,23 +404,20 @@ getBase64Button.onclick = async () => {
     getBase64Button.textContent = '获取中...';
     base64Result.style.display = 'none';
 
-    // 使用相同的导出逻辑，但设置download为false
     const base64Data = await exportGanttPlugin.exportToImage({
       type: 'png',
       scale: Number(scaleSelect.value),
       backgroundColor: bgColorInput.value,
       quality: 1,
-      download: false // 不触发下载
+      download: false 
     });
 
-    // 显示结果
     if (base64Data) {
       const displayText = base64Data.substring(0, 64) + '...';
       base64Result.textContent = displayText;
       base64Result.style.display = 'block';
-      base64Result.title = base64Data; // 鼠标悬停可以看到完整数据
+      base64Result.title = base64Data;
       
-      // 尝试复制到剪贴板
       try {
         await navigator.clipboard.writeText(base64Data);
         getBase64Button.textContent = '已复制到剪贴板';
@@ -441,7 +426,6 @@ getBase64Button.onclick = async () => {
         console.warn('无法复制到剪贴板:', clipboardError);
       }
       
-      // 添加点击事件以查看完整数据
       base64Result.style.cursor = 'pointer';
     } else {
       base64Result.textContent = '获取Base64数据失败';
@@ -449,7 +433,6 @@ getBase64Button.onclick = async () => {
       getBase64Button.textContent = '获取失败';
     }
     
-    // 恢复按钮状态
     setTimeout(() => {
       getBase64Button.disabled = false;
       if (getBase64Button.textContent === '获取中...' || getBase64Button.textContent === '获取失败' || getBase64Button.textContent === '已复制到剪贴板') {
