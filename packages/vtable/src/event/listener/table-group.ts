@@ -840,8 +840,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       const isHasSelected = !!stateManager.select.ranges?.length;
+      if (table.options.customConfig?.cancelSelectCellHook) {
+        if (table.options.customConfig?.cancelSelectCellHook(e)) {
+          eventManager.dealTableSelect();
+        }
+      }
       // 点击空白区域取消选中
-      if (table.options.select?.blankAreaClickDeselect ?? true) {
+      else if (table.options.select?.blankAreaClickDeselect ?? true) {
         eventManager.dealTableSelect();
       }
       stateManager.endSelectCells(true, isHasSelected);

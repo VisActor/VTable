@@ -1,5 +1,5 @@
 import type { EasingType, IRect } from '@src/vrender';
-import { DefaultTimeline, DefaultTicker, Animate, ACustomAnimate, createRect, Generator } from '@src/vrender';
+import { DefaultTimeline, DefaultTicker, ACustomAnimate, createRect, Generator, Animate } from '@src/vrender';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isBoolean, isNumber } from '@visactor/vutils';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
@@ -30,7 +30,7 @@ export class TableAnimationManager {
     this.table = table;
     this.timeline = new DefaultTimeline();
     // this.ticker = new DefaultTicker([this.timeline]);
-    this.ticker = new DefaultTicker();
+    this.ticker = new DefaultTicker(this.table.scenegraph.stage);
     this.ticker.addTimeline(this.timeline);
     const TICKER_FPS = 60;
     this.ticker.setFPS(TICKER_FPS);

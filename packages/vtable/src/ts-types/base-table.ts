@@ -105,6 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -584,6 +585,9 @@ export interface BaseTableConstructorOptions {
     disableBuildInChartActive?: boolean;
     /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
     forceComputeAllRowHeight?: boolean;
+
+    /** 是否取消当前单元格选中状态的判断钩子，用在table-group文件的pointertap事件中，当点击空白区域时，取消选中状态 */
+    cancelSelectCellHook?: (e: FederatedPointerEvent) => boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
