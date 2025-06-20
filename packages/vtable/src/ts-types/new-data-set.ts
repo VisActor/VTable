@@ -236,6 +236,8 @@ export interface IPivotTableDataConfig {
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
   calculatedFieldRules?: CalculateddFieldRules;
+  /** 编辑单元格时是否更新聚合值, 默认为false */
+  updateAggregationOnEditCell?: boolean;
 }
 
 /**
