@@ -1523,6 +1523,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
             tableSize: 'tableNoFrameHeight',
             getSize: 'getRowHeight'
           };
+    const tableSize = this[keyMap.tableSize];
+    if (totalSize >= tableSize) {
+      // 总尺寸已经大于表格尺寸，直接返回
+      return totalSize;
+    }
     /** 目标冻结开始位置 */
     const frozenStart = this[keyMap.totalCount] - this[keyMap.frozenCount];
     if (!isFinite(this[keyMap.totalCount]) || this[keyMap.frozenCount] <= 0 || frozenStart < 0) {
@@ -1534,7 +1539,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // 传入范围不包含 body 和冻结区的交叉区域 或 当前未开启 containerFit，无需处理
       return totalSize;
     }
-    const tableSize = this[keyMap.tableSize];
+
     const first = 0;
     const last = this[keyMap.totalCount] - 1;
     let size = tableSize;
