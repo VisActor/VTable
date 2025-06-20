@@ -17,7 +17,9 @@ import {
 } from '@src/vrender';
 import { isString } from '@visactor/vutils';
 import { textMeasure } from '../../utils/text-measure';
-
+import { getSelectedCellTextColor } from '../../../state/select/is-cell-select-highlight';
+import type { BaseTableAPI } from '../../../ts-types/base-table';
+import type { Group } from '../group';
 @injectable()
 export class SuffixTextBeforeRenderContribution implements ITextRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
@@ -174,6 +176,44 @@ export class SuffixTextBeforeRenderContribution implements ITextRenderContributi
       context.moveTo(x + offsetX, dy, z);
       context.lineTo(x + offsetX + w, dy, z);
       context.stroke();
+    }
+  }
+}
+
+/**
+ * 在绘制文本前，修改选区单元格的文本颜色
+ */
+@injectable()
+export class SelectedCellTextColorBeforeRenderContribution implements ITextRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
+  useStyle: boolean = true;
+  order: number = 0;
+  drawShape(text: IText) {
+    const group = text.parent;
+    const table = (group.stage as any).table as BaseTableAPI;
+    if (table && table.theme.selectionStyle?.selectionFillMode === 'replace') {
+      const textColor = getSelectedCellTextColor(group as Group, table);
+      if (textColor) {
+        (group.attribute as any)._vtableSelectedTextOldColor = text.attribute.fill;
+        text.attribute.fill = textColor;
+      }
+    }
+  }
+}
+
+/**
+ * 在绘制文本后，清除旧文本颜色记录
+ */
+@injectable()
+export class SelectedCellTextColorAfterRenderContribution implements ITextRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle: boolean = true;
+  order: number = 0;
+  drawShape(text: IText) {
+    const group = text.parent;
+    if (group && (group.attribute as any)._vtableSelectedTextOldColor) {
+      text.attribute.fill = (group.attribute as any)._vtableSelectedTextOldColor;
+      (group.attribute as any)._vtableSelectedTextOldColor = undefined;
     }
   }
 }

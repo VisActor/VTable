@@ -34,7 +34,11 @@ import {
   // ClipBodyGroupAfterRenderContribution
 } from './group-contribution-render';
 import { VTableDrawItemInterceptorContribution } from './draw-interceptor';
-import { SuffixTextBeforeRenderContribution } from './text-contribution-render';
+import {
+  SuffixTextBeforeRenderContribution,
+  SelectedCellTextColorBeforeRenderContribution,
+  SelectedCellTextColorAfterRenderContribution
+} from './text-contribution-render';
 import { VChartPicker } from './vchart-graphic-picker';
 // import { VChartPickServiceInterceptorContribution } from './picker-interceptor';
 
@@ -107,4 +111,9 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // text 渲染器注入contributions
   bind(SuffixTextBeforeRenderContribution).toSelf().inSingletonScope();
   bind(TextRenderContribution).toService(SuffixTextBeforeRenderContribution);
+
+  bind(SelectedCellTextColorBeforeRenderContribution).toSelf().inSingletonScope();
+  bind(TextRenderContribution).toService(SelectedCellTextColorBeforeRenderContribution);
+  bind(SelectedCellTextColorAfterRenderContribution).toSelf().inSingletonScope();
+  bind(TextRenderContribution).toService(SelectedCellTextColorAfterRenderContribution);
 });
