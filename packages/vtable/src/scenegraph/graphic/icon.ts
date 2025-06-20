@@ -3,6 +3,7 @@ import { Image, ResourceLoader, Text } from '@src/vrender';
 import type { IIconBase } from '../../ts-types';
 import type { ParsedFrame } from 'gifuct-js';
 import { decompressFrames, parseGIF } from 'gifuct-js';
+import * as icons from '../../icons';
 
 export interface IIconGraphicAttribute extends IImageGraphicAttribute {
   backgroundWidth?: number;
@@ -197,6 +198,15 @@ export class Icon extends Image {
     super.setAttributes(params, forceUpdateTag, context);
     if ((params as any).gif) {
       this.loadGif();
+    }
+  }
+
+  failCallback() {
+    const registeredIcons = icons.get();
+    const { svg, src } = (registeredIcons.damage_pic as any) || {};
+    const image = svg || src;
+    if (image) {
+      super.image = image;
     }
   }
 }
