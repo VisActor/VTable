@@ -1206,6 +1206,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._clearColRangeWidthsMap();
     this._clearRowRangeHeightsMap();
   }
+  setTableX(x: number) {
+    this.tableX = x;
+    this.scenegraph.tableGroup.setAttributes({ x });
+  }
+  setTableY(y: number) {
+    this.tableY = y;
+    this.scenegraph.tableGroup.setAttributes({ y });
+  }
 
   updateViewBox(newViewBox: IBoundsLike) {
     const oldWidth = (this.options?.viewBox?.x2 ?? 0) - (this.options?.viewBox?.x1 ?? 0);
@@ -2996,6 +3004,22 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.setScrollTop(scrollTop);
     this.setScrollLeft(scrollLeft);
   }
+  selectRow(rowIndex: number) {
+    this.selectCells([
+      {
+        start: { col: 0, row: rowIndex },
+        end: { col: this.colCount - 1, row: rowIndex }
+      }
+    ]);
+  }
+  selectCol(colIndex: number) {
+    this.selectCells([
+      {
+        start: { col: colIndex, row: 0 },
+        end: { col: colIndex, row: this.rowCount - 1 }
+      }
+    ]);
+  }
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
   abstract isPivotChart(): boolean;
@@ -4651,5 +4675,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       this._containerFit = { width: false, height: false };
     }
+  }
+  set customConfig(customConfig: any) {
+    this.options.customConfig = customConfig;
   }
 }
