@@ -84,3 +84,37 @@ function defaultMode(): EnvMode {
   }
   return mode;
 }
+/**
+ * 清空页面上的所有文本选择，使用多种兼容性方法
+ */
+export function clearPageSelection(): void {
+  try {
+    const selection = window.getSelection();
+    if (selection) {
+      // 方法1: removeAllRanges() - 标准方法，最广泛支持
+      if (typeof selection.removeAllRanges === 'function') {
+        selection.removeAllRanges();
+        console.log('使用 removeAllRanges() 清空selection');
+        return;
+      }
+
+      // 方法2: empty() - IE 和一些旧浏览器
+      if (typeof (selection as any).empty === 'function') {
+        (selection as any).empty();
+        console.log('使用 empty() 清空selection');
+        return;
+      }
+
+      // 方法3: collapse() - 备用方法
+      if (typeof selection.collapse === 'function') {
+        selection.collapse(document.body, 0);
+        console.log('使用 collapse() 清空selection');
+        return;
+      }
+
+      console.warn('无法清空selection：不支持的浏览器');
+    }
+  } catch (error) {
+    console.warn('清空selection时出错:', error);
+  }
+}

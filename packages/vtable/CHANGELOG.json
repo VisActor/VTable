@@ -2,6 +2,56 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.0",
+      "tag": "@visactor/vtable_v1.19.0",
+      "date": "Mon, 16 Jun 2025 12:04:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: some taskShowMode should compute all row height on vtable #4011\n\n"
+          },
+          {
+            "comment": "fix: group release so gif can stop animation #4029\n\n"
+          },
+          {
+            "comment": "Merge branch develop into docs/wps-fill-handle\n"
+          },
+          {
+            "comment": "feat: add task-bar minSize config #4016"
+          },
+          {
+            "comment": "docs: 增加wps填充柄插件\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "chore: update vrender 1.0.0\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.18.5",
+      "tag": "@visactor/vtable_v1.18.5",
+      "date": "Fri, 06 Jun 2025 09:57:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add vue-table export type /es/*.d.ts\n\n"
+          },
+          {
+            "comment": "fix: fix node-canvas range in PivotChart #3997"
+          },
+          {
+            "comment": "fix: when pointer up set isDown false\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.4",
       "tag": "@visactor/vtable_v1.18.4",
       "date": "Tue, 27 May 2025 09:16:00 GMT",

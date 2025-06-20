@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: when pointer up set isDown false\n\n",
+      "comment": "feat: add containerFit #3337\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

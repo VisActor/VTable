@@ -288,4 +288,8 @@ If width is declared in columns, we will traverse the maximum number value of th
 
 Typically, you need to specify the container's width and height to determine the overall width and height of the table. If you don't specify the width and height, and you want VTable to automatically expand the container based on the content, you can set canvasWidth to 'auto' and canvasHeight to 'auto'. At the same time, use maxCanvasWidth and maxCanvasHeight to limit the maximum width and height.
 
+## How to cancel double-click automatic column width
+
+By default, double-clicking the interval line between two columns will adjust the column width on the left of the interval line to adapt to the content. If you don't want to double-click to automatically adjust the column width, you can set `ListTable.resize.disableDblclickAutoResizeColWidth` to true in the configuration.
+
 So far, we have introduced the table row height and column width calculation function in VTable, including row height, column width configuration, and table width mode. By mastering these functions, you can display and analyze data in VTable more conveniently to meet various practical needs.
