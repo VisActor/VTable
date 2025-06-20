@@ -2432,7 +2432,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = [];
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
+
     if (this.rowHierarchyType === 'tree') {
+      // 确保extensionRows的维度键也被包含在fullRowDimensionKeys中
+      if (this.extensionRows?.length > 0) {
+        this.extensionRows.forEach(extensionRow => {
+          const extensionRowDimensionKeys =
+            extensionRow.rows?.map(row => (typeof row === 'string' ? row : row.dimensionKey)) || [];
+          this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(extensionRowDimensionKeys);
+        });
+      }
+
       this._addHeadersForTreeMode(
         this._rowHeaderCellFullPathIds_FULL,
         0,
