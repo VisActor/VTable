@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.1",
+      "tag": "@visactor/vtable_v1.19.1",
+      "date": "Fri, 20 Jun 2025 12:11:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add containerFit #3337\n\n"
+          },
+          {
+            "comment": "chore: update vrender 1.0.4 fix animation bug\n\n"
+          },
+          {
+            "comment": "fix: copy not work when after copy tooltip text #3968\n\n"
+          },
+          {
+            "comment": "fix: fix the issue where the icon configuration is not effective when cellType is progressBar #4047\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.0",
       "tag": "@visactor/vtable_v1.19.0",
       "date": "Mon, 16 Jun 2025 12:04:55 GMT",
