@@ -1269,7 +1269,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       // use default column width if no width in colWidthsMap
       const adjustW = this.getColWidth(endCol);
       // }
-      const addWidth = cachedLowerColWidth + adjustW;
+      let addWidth = cachedLowerColWidth + adjustW;
+      if (this.rightFrozenColCount > 0 && endCol === this.colCount - this.rightFrozenColCount) {
+        // 当结束列大于右侧冻结起始列，说明带差值的列已经计入了缓存，不用计算，此处只需计算传入列正好在右侧起始冻结列的情况
+        addWidth = this._getRangeSizeForContainerFit(startCol, endCol, addWidth, 'col');
+      }
       // 合法地址存入缓存
       if (startCol >= 0 && endCol >= 0 && !Number.isNaN(addWidth)) {
         this._colRangeWidthsMap.set(`$${startCol}$${endCol}`, Math.round(addWidth));
@@ -1281,6 +1285,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     for (let col = startCol; col <= endCol; col++) {
       w += this.getColWidth(col);
     }
+    w = this._getRangeSizeForContainerFit(startCol, endCol, w, 'col');
 
     // this.colWidthsMap.each(startCol, endCol, (width, col) => {
     //   // adaptive模式下，不受max min配置影响，直接使用width
@@ -1430,6 +1435,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       !isDefaultRowHeightIsAuto &&
       this.internalProps._heightResizedRowMap.size === 0
     ) {
+      /** 底部冻结开始行 */
+      const bottomFrozenStartRow = this.rowCount - this.bottomFrozenRowCount;
       // part in header
       for (let i = startRow; i < Math.min(endRow + 1, this.columnHeaderLevelCount); i++) {
         h += this.getRowHeight(i);
@@ -1438,15 +1445,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       if (endRow >= this.columnHeaderLevelCount) {
         h +=
           this.defaultRowHeight *
-          (Math.min(endRow, this.rowCount - this.bottomFrozenRowCount - 1) -
-            Math.max(this.columnHeaderLevelCount, startRow) +
-            1);
+          (Math.min(endRow, bottomFrozenStartRow - 1) - Math.max(this.columnHeaderLevelCount, startRow) + 1);
       }
+      /** 当前底部冻结的行高 */
+      let currentBottomFrozenRowsHeight = 0;
       // part in bottom frozen
       // last axis row height is default header row height in pivot chart
-      for (let i = this.rowCount - this.bottomFrozenRowCount; i < endRow + 1; i++) {
-        h += this.getRowHeight(i);
+      for (let i = bottomFrozenStartRow; i < endRow + 1; i++) {
+        currentBottomFrozenRowsHeight += this.getRowHeight(i);
       }
+      h = this._getRangeSizeForContainerFit(startRow, endRow, h + currentBottomFrozenRowsHeight, 'row');
     } else {
       if (this.options.customConfig?._disableColumnAndRowSizeRound) {
         // for (let i = startRow; i <= endRow; i++) {
@@ -1476,6 +1484,87 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //   return h;
     // }
     return Math.round(h);
+  }
+  /**
+   * @description: 获取 containerFit 模式下的指定范围的总列宽/行高
+   * @param {number} start
+   * @param {number} end
+   * @param {number} totalSize 总列宽/行高
+   * @return {*}
+   */
+  _getRangeSizeForContainerFit(start: number, end: number, totalSize: number, type: 'col' | 'row' = 'col') {
+    if (!isFinite(start) || !isFinite(end)) {
+      return totalSize;
+    }
+    const keyMap: {
+      /** 目标范围总数量 */
+      totalCount: 'colCount' | 'rowCount';
+      /** 冻结数量 */
+      frozenCount: 'rightFrozenColCount' | 'bottomFrozenRowCount';
+      /** 自适应类型 */
+      fitType: 'width' | 'height';
+      /** 表格尺寸 */
+      tableSize: 'tableNoFrameWidth' | 'tableNoFrameHeight';
+      /** 获取单个行/列尺寸的方法 */
+      getSize: 'getColWidth' | 'getRowHeight';
+    } =
+      type === 'col'
+        ? {
+            totalCount: 'colCount',
+            frozenCount: 'rightFrozenColCount',
+            fitType: 'width',
+            tableSize: 'tableNoFrameWidth',
+            getSize: 'getColWidth'
+          }
+        : {
+            totalCount: 'rowCount',
+            frozenCount: 'bottomFrozenRowCount',
+            fitType: 'height',
+            tableSize: 'tableNoFrameHeight',
+            getSize: 'getRowHeight'
+          };
+    const tableSize = this[keyMap.tableSize];
+    if (totalSize >= tableSize) {
+      // 总尺寸已经大于表格尺寸，直接返回
+      return totalSize;
+    }
+    /** 目标冻结开始位置 */
+    const frozenStart = this[keyMap.totalCount] - this[keyMap.frozenCount];
+    if (!isFinite(this[keyMap.totalCount]) || this[keyMap.frozenCount] <= 0 || frozenStart < 0) {
+      // 无效冻结区域跳过
+      return totalSize;
+    }
+    const noIntersecting = start > frozenStart || end < frozenStart || start === end;
+    if (noIntersecting || !this.containerFit?.[keyMap.fitType]) {
+      // 传入范围不包含 body 和冻结区的交叉区域 或 当前未开启 containerFit，无需处理
+      return totalSize;
+    }
+
+    const first = 0;
+    const last = this[keyMap.totalCount] - 1;
+    let size = tableSize;
+    // 使用表格尺寸减去边缘尺寸
+    if (start > first) {
+      // 减去传入开始位置以前的尺寸
+      for (let i = 0; i < start; i++) {
+        size -= this[keyMap.getSize](i);
+        if (size <= 0) {
+          // 已超出表格尺寸，返回原始尺寸
+          return totalSize;
+        }
+      }
+    }
+    if (end !== last) {
+      // 减去传入结束位置之后的尺寸
+      for (let i = end + 1; i <= last; i++) {
+        size -= this[keyMap.getSize](i);
+        if (size <= 0) {
+          // 已超出表格尺寸，返回原始尺寸
+          return totalSize;
+        }
+      }
+    }
+    return size;
   }
   /**
    * 根据列号获取列宽定义
@@ -2714,8 +2803,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     //考虑表格整体边框的问题
     // const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
     // const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
-    const width = Math.min(this.tableNoFrameWidth, this.getAllColsWidth());
-    const height = Math.min(this.tableNoFrameHeight, this.getAllRowsHeight());
+    const width = this.containerFit?.width
+      ? this.tableNoFrameWidth
+      : Math.min(this.tableNoFrameWidth, this.getAllColsWidth());
+    const height = this.containerFit?.height
+      ? this.tableNoFrameHeight
+      : Math.min(this.tableNoFrameHeight, this.getAllRowsHeight());
     // Math.max(lineWidths[3] ?? 0, shadowWidths[3] ?? 0),
     // Math.max(lineWidths[1] ?? 0, shadowWidths[1] ?? 0),
     return new Rect(this.tableX, this.tableY, width, height);
