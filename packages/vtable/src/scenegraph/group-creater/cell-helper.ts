@@ -665,7 +665,7 @@ export function updateCell(
       }
       if ((table.options as ListTableConstructorOptions).groupTitleFieldFormat) {
         value = (table.options as ListTableConstructorOptions).groupTitleFieldFormat(rawRecord, col, row, table);
-      } else if (vtableMergeName) {
+      } else if (vtableMergeName !== undefined) {
         value = vtableMergeName;
       }
     }
@@ -788,8 +788,8 @@ export function updateCell(
     isVtableMerge || isCustomMerge
       ? 'text'
       : table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-      : table.getBodyColumnType(col, row) ?? 'text';
+        ? ((table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
+        : (table.getBodyColumnType(col, row) ?? 'text');
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
@@ -1192,8 +1192,8 @@ export function resizeCellGroup(
       });
       child.skipMergeUpdate = false;
     } else {
-      child.skipMergeUpdate = true;
       child._dx = child.attribute.dx ?? 0;
+      child.skipMergeUpdate = true;
       child.setAttributes({
         dx: (child.attribute.dx ?? 0) + dx
       });

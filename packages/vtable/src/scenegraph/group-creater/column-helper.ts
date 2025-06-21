@@ -190,7 +190,7 @@ export function createComplexColumn(
         }
         if ((table.options as ListTableConstructorOptions).groupTitleFieldFormat) {
           value = (table.options as ListTableConstructorOptions).groupTitleFieldFormat(rawRecord, col, row, table);
-        } else if (vtableMergeName) {
+        } else if (vtableMergeName !== undefined) {
           value = vtableMergeName;
         }
       }
@@ -199,9 +199,9 @@ export function createComplexColumn(
     const type =
       isVtableMerge || isCustomMerge
         ? 'text'
-        : (table.isHeader(col, row)
-            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-            : table.getBodyColumnType(col, row)) ?? 'text';
+        : ((table.isHeader(col, row)
+            ? ((table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
+            : table.getBodyColumnType(col, row)) ?? 'text');
 
     // deal with promise data
     if (isPromise(value)) {
