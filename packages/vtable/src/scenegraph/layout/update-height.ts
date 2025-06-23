@@ -221,8 +221,11 @@ export function updateCellHeight(
           const customContainer =
             (mergedCell.getChildByName(CUSTOM_CONTAINER_NAME) as Group) ||
             (mergedCell.getChildByName(CUSTOM_MERGE_CONTAINER_NAME) as Group);
-          customContainer.removeAllChild();
-          mergedCell.removeChild(customContainer);
+          if (customContainer) {
+            // 判空
+            customContainer.removeAllChild();
+            mergedCell.removeChild(customContainer);
+          }
           getCustomCellMergeCustom(col, mergeRow, mergedCell, scene.table);
         }
       } else {
