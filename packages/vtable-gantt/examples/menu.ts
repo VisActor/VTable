@@ -11,7 +11,7 @@ export const menus = [
     name: 'gantt-milestone'
   },
   {
-    path: "gantt",
+    path: 'gantt',
     name: 'gantt-borderLineWidth-array-config'
   },
   {
@@ -69,6 +69,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-style'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-linkLine-style'
   },
   {
     path: 'gantt',

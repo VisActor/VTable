@@ -228,7 +228,7 @@ export class Gantt extends EventTarget {
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     // this.element.style.top = '0px';
-    this.element.style.left = this.taskTableWidth != -1 ? `${this.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
 
     this.canvas = document.createElement('canvas');
     this.element.appendChild(this.canvas);
@@ -330,18 +330,15 @@ export class Gantt extends EventTarget {
     if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
       // 归一化边框宽度
       const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
-      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right; 
+      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right;
       if (this.options?.taskListTable?.maxTableWidth) {
         this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
       }
       if (this.options?.taskListTable?.minTableWidth) {
         this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
       }
-      this.element.style.left = this.taskTableWidth != -1 ? `${this.taskTableWidth}px` : '0px';
-      taskListTableInstance.setCanvasSize(
-        this.taskTableWidth,
-        this.tableNoFrameHeight + top + bottom
-      );
+      this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
+      taskListTableInstance.setCanvasSize(this.taskTableWidth, this.tableNoFrameHeight + top + bottom);
       this._updateSize();
     }
 
@@ -380,6 +377,7 @@ export class Gantt extends EventTarget {
         (listTable_options as any)[key] = (this.options as any)[key];
       }
     }
+    listTable_options.defaultRowHeight = this.options.rowHeight;
     if (this.options.taskListTable) {
       for (const key in this.options.taskListTable) {
         (listTable_options as any)[key] = (this.options.taskListTable as any)[key];
@@ -454,12 +452,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            top,
-            0,
-            bottom,
-            left
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         });
         extendThemeOption.scrollStyle = Object.assign(
           {},
@@ -504,7 +497,7 @@ export class Gantt extends EventTarget {
           }
         );
         listTable_options.theme.cellInnerBorder = false;
-         const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
+        const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
         listTable_options.theme.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
           cornerRadius: [
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
@@ -512,12 +505,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            top,
-            0,
-            bottom,
-            left
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         });
         listTable_options.theme.scrollStyle = Object.assign(
           {},
@@ -566,12 +554,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            top,
-            0,
-            bottom,
-            left
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         }),
         columnResize: Object.assign(
           {
@@ -596,6 +579,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
@@ -605,6 +589,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
@@ -614,6 +599,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else {
       listTable_options.defaultRowHeight = this.options.rowHeight ?? 40;
     }
@@ -1047,7 +1033,9 @@ export class Gantt extends EventTarget {
     this._updateSize();
     this.taskListTableInstance?.setCanvasSize(
       this.taskTableWidth,
-      this.tableNoFrameHeight + toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[0] + toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[2]
+      this.tableNoFrameHeight +
+        toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[0] +
+        toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[2]
     );
     this._syncPropsFromTable();
     this.scenegraph.resize();
@@ -1102,7 +1090,7 @@ export class Gantt extends EventTarget {
     }
     this._syncPropsFromTable();
     this.scenegraph.updateStageBackground();
-    this.element.style.left = this.taskTableWidth != -1 ? `${this.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
 
     updateSplitLineAndResizeLine(this);
     this.scenegraph.updateSceneGraph();

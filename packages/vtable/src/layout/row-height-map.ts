@@ -150,17 +150,37 @@ export class NumberRangeMap {
 
   getCumulativeSum(position: number) {
     let sum = 0;
+    /** 当前底部冻结的行高 */
+    let currentBottomFrozenRowsHeight = 0;
+    /** 底部冻结行是否没有缓存 */
+    let isBottomFrozenRowNoCache = false;
+    /** 底部冻结开始行 */
+    const bottomFrozenStartRow =
+      this.table.rowCount > 0 && this.table.bottomFrozenRowCount > 0
+        ? this.table.rowCount - this.table.bottomFrozenRowCount
+        : -1;
     for (let i = position; i >= 0; i--) {
       if (this.cumulativeSum.has(i)) {
         sum += this.cumulativeSum.get(i);
         break;
       } else {
         sum += this.data.get(i) ?? this.table.getRowHeight(i);
+        if (i >= bottomFrozenStartRow && bottomFrozenStartRow !== -1) {
+          currentBottomFrozenRowsHeight = sum;
+          isBottomFrozenRowNoCache = i === bottomFrozenStartRow;
+        }
       }
       // if (i === position && this.cumulativeSum.has(i + 1)) {
       //   sum += this.cumulativeSum.get(i + 1) - (this.data.get(i + 1) ?? this.table.getRowHeight(i + 1));
       //   break;
       // }
+    }
+    if (isBottomFrozenRowNoCache && !!this.table.containerFit?.height && !!this.table.bottomFrozenRowCount) {
+      // 当底部冻结行没有进入缓存且配置了底部冻结行显示在最底部时，此时分情况判断
+      const tableHeight = this.table.tableNoFrameHeight || 0;
+      if (sum < tableHeight) {
+        sum = tableHeight - this.table.getBottomFrozenRowsHeight() + currentBottomFrozenRowsHeight;
+      }
     }
     this.cumulativeSum.set(position, sum);
     return sum;

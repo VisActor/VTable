@@ -22,14 +22,14 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
       state.updateInteractionState(InteractionState.scrolling);
     }
   }
-
+  const autoHide = state.table.options.theme?.scrollStyle?.visible === 'scrolling';
   if (optimizedDeltaX) {
     state.setScrollLeft(state.scroll.horizontalBarPos + optimizedDeltaX, event);
-    state.showHorizontalScrollBar(true);
+    state.showHorizontalScrollBar(autoHide);
   }
   if (optimizedDeltaY) {
     state.setScrollTop(state.scroll.verticalBarPos + optimizedDeltaY, event);
-    state.showVerticalScrollBar(true);
+    state.showVerticalScrollBar(autoHide);
   }
   isWheelEvent && state.resetInteractionState(state.interactionStateBeforeScroll);
   if (

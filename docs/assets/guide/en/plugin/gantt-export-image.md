@@ -8,6 +8,8 @@ This plugin will take effect when the Gantt chart is being `constructor`
 
 When you need to export an image, you can execute`exportGanttPlugin.exportToImage` to do so.
 
+However, since the current implementation principle is to create a container large enough to hold the entire gantt component, and then put our gantt component in it and export it using the toDataURL, there will be a size limit, which may lead to export failure
+
 ## Plugin Configuration
 
 When you call`exportGanttPlugin.exportToImage`,it also needs to accept the following parameters to change the export image settings
@@ -196,10 +198,15 @@ const option = {
     },
     barStyle: {
       width: 20,
+      /** 任务条的颜色 */
       barColor: '#ee8800',
+      /** 已完成部分任务条的颜色 */
       completedBarColor: '#91e8e0',
+      /** 任务条的圆角 */
       cornerRadius: 8,
+      /** 任务条的边框 */
       borderLineWidth: 1,
+      /** 边框颜色 */
       borderColor: 'black'
     }
   },
@@ -286,34 +293,29 @@ const option = {
 
 const container = document.getElementById(CONTAINER_ID);
 
-// Create a packaging container
 const wrapper = document.createElement('div');
 wrapper.style.height = '100%';
 wrapper.style.width = '100%';
 wrapper.style.position = 'relative';
 container.appendChild(wrapper);
 
-// Create the export panel and put it into the packaging container
 const exportPanel = document.createElement('div');
 exportPanel.id = EXPORT_PANEL_ID;
 exportPanel.style.cssText = 'padding: 2px; background-color: #f6f6f6; margin-bottom: 2px; position: absolute; z-index: 1; border: 1px solid black; opacity: 0.5;';
 wrapper.appendChild(exportPanel);
 
-// Create a Gantt chart container and place it in the packaging container
 const ganttContainer = document.createElement('div');
-ganttContainer.style.height = '100%'; 
+ganttContainer.style.height = '100%';
 ganttContainer.style.width = '100%';
 ganttContainer.style.position = 'relative'; 
 wrapper.appendChild(ganttContainer);
 
-// File format selection
 const formatSelect = document.createElement('select');
 formatSelect.innerHTML = `
 <option value="png">PNG</option>
 `;
 formatSelect.style.marginRight = '5px';
 
-// Zoom ratio selection
 const scaleSelect = document.createElement('select');
 scaleSelect.innerHTML = `
 <option value="1">1x</option>
@@ -322,16 +324,32 @@ scaleSelect.innerHTML = `
 `;
 scaleSelect.style.marginRight = '5px';
 
-// Background color selection
 const bgColorInput = document.createElement('input');
 bgColorInput.type = 'color';
 bgColorInput.value = '#ffffff';
 bgColorInput.style.marginRight = '5px';
 
-// Export button
 const exportButton = document.createElement('button');
 exportButton.textContent = '导出甘特图';
 exportButton.style.marginLeft = '5px';
+
+const getBase64Button = document.createElement('button');
+getBase64Button.textContent = '获取 Base64';
+getBase64Button.style.marginLeft = '5px';
+getBase64Button.style.backgroundColor = '#e8f4ff';
+
+const base64Result = document.createElement('div');
+base64Result.style.marginTop = '10px';
+base64Result.style.fontSize = '12px';
+base64Result.style.color = '#666';
+base64Result.style.display = 'none';
+base64Result.style.padding = '5px';
+base64Result.style.backgroundColor = '#f8f8f8';
+base64Result.style.borderRadius = '3px';
+base64Result.style.maxWidth = '100%';
+base64Result.style.overflow = 'hidden';
+base64Result.style.textOverflow = 'ellipsis';
+base64Result.style.whiteSpace = 'nowrap';
 
 const infoText = document.createElement('div');
 infoText.innerHTML = '导出功能会直接捕获完整的甘特图和任务列表，即使部分内容在滚动区域外。';
@@ -339,7 +357,6 @@ infoText.style.marginTop = '10px';
 infoText.style.fontSize = '12px';
 infoText.style.color = '#666';
 
-// 添加控件到面板
 exportPanel.appendChild(document.createTextNode('格式: '));
 exportPanel.appendChild(formatSelect);
 exportPanel.appendChild(document.createTextNode('缩放: '));
@@ -347,11 +364,12 @@ exportPanel.appendChild(scaleSelect);
 exportPanel.appendChild(document.createTextNode('背景色: '));
 exportPanel.appendChild(bgColorInput);
 exportPanel.appendChild(exportButton);
+exportPanel.appendChild(getBase64Button);
 exportPanel.appendChild(infoText);
+exportPanel.appendChild(base64Result);
 
 const gantt = new VTableGantt.Gantt(ganttContainer, option);
 
-// Bind the export event
 exportButton.onclick = async () => {
   try {
     exportButton.disabled = true;
@@ -375,6 +393,61 @@ exportButton.onclick = async () => {
     setTimeout(() => {
         exportButton.disabled = false;
         exportButton.textContent = '导出甘特图';
+    }, 2000);
+  }
+};
+
+
+getBase64Button.onclick = async () => {
+  try {
+    getBase64Button.disabled = true;
+    getBase64Button.textContent = '获取中...';
+    base64Result.style.display = 'none';
+
+    const base64Data = await exportGanttPlugin.exportToImage({
+      type: 'png',
+      scale: Number(scaleSelect.value),
+      backgroundColor: bgColorInput.value,
+      quality: 1,
+      download: false 
+    });
+
+    if (base64Data) {
+      const displayText = base64Data.substring(0, 64) + '...';
+      base64Result.textContent = displayText;
+      base64Result.style.display = 'block';
+      base64Result.title = base64Data;
+      
+      try {
+        await navigator.clipboard.writeText(base64Data);
+        getBase64Button.textContent = '已复制到剪贴板';
+      } catch (clipboardError) {
+        getBase64Button.textContent = '获取成功';
+        console.warn('无法复制到剪贴板:', clipboardError);
+      }
+      
+      base64Result.style.cursor = 'pointer';
+    } else {
+      base64Result.textContent = '获取Base64数据失败';
+      base64Result.style.display = 'block';
+      getBase64Button.textContent = '获取失败';
+    }
+    
+    setTimeout(() => {
+      getBase64Button.disabled = false;
+      if (getBase64Button.textContent === '获取中...' || getBase64Button.textContent === '获取失败' || getBase64Button.textContent === '已复制到剪贴板') {
+        getBase64Button.textContent = '获取 Base64';
+      }
+    }, 3000);
+  } catch (error) {
+    console.error('获取Base64失败:', error);
+    base64Result.textContent = `获取失败: ${error instanceof Error ? error.message : '未知错误'}`;
+    base64Result.style.display = 'block';
+    getBase64Button.textContent = '获取失败';
+    
+    setTimeout(() => {
+      getBase64Button.disabled = false;
+      getBase64Button.textContent = '获取 Base64';
     }, 2000);
   }
 };

@@ -1,3 +1,72 @@
+# v1.19.1
+
+2025-06-20
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: fix when use containerFit scroll and bottom border error [#3337](https://github.com/VisActor/VTable/issues/3337)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: copy not work when after copy tooltip text [#3968](https://github.com/VisActor/VTable/issues/3968)
+- **@visactor/vtable**: fix the issue where the icon configuration is not effective when cellType is progressBar [#4047](https://github.com/VisActor/VTable/issues/4047)
+
+**🔧 Configuration releated**
+
+- **@visactor/vtable**: update vrender 1.0.5 fix animation bug
+
+
+
+[more detail about v1.19.1](https://github.com/VisActor/VTable/releases/tag/v1.19.1)
+
+# v1.19.0
+
+2025-06-16
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-gantt**: add task-bar minSize config [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable-gantt**: support different dependency link line has differrent style [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable**: add containerFit config to support table size
+- **@visactor/vtable**: add wps fill-handle plugin
+- **@visactor/vtable**: add clearColWidthCache for updateColumns api
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: some taskShowMode should compute all row height on vtable [#4011](https://github.com/VisActor/VTable/issues/4011)
+- **@visactor/vtable**: group release so gif can stop animation [#4029](https://github.com/VisActor/VTable/issues/4029)
+
+**🔧 Configuration releated**
+
+- **@visactor/vtable**: update vrender 1.0.0
+
+
+
+[more detail about v1.19.0](https://github.com/VisActor/VTable/releases/tag/v1.19.0)
+
+# v1.18.5
+
+2025-06-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-vue**: add vue-table export type /es/*.d.ts
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix node-canvas range in PivotChart [#3997](https://github.com/VisActor/VTable/issues/3997)
+- **@visactor/vtable**: when pointer up set isDown false
+- **@visactor/vtable**: fix drag select not stop problem [#3895](https://github.com/VisActor/VTable/issues/3895)
+- **@visactor/vtable**: fix scrollbar not show when set visible 'focus' [#3914](https://github.com/VisActor/VTable/issues/3914)
+- **@visactor/vtable**: contextmenu submenu show postion should adjust by bottom [#3867](https://github.com/VisActor/VTable/issues/3867)
+- **@visactor/vtable**: filter data occor error with sort state and groupby [#3961](https://github.com/VisActor/VTable/issues/3961) 
+
+
+[more detail about v1.18.5](https://github.com/VisActor/VTable/releases/tag/v1.18.5)
+
 # v1.18.4
 
 2025-05-27
