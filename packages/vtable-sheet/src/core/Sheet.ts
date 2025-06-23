@@ -159,12 +159,17 @@ export class Sheet implements SheetAPI {
             endRow: range.end.row,
             endCol: range.end.col
           };
+
+          // 通知父组件更新公式栏
+          this.parent.handleCellSelected(this.selection);
         }
       });
 
       // 监听选中清除事件
       this.tableInstance.on('selected_clear', () => {
         this.selection = null;
+        // 通知父组件清除公式栏
+        this.parent.handleCellSelected(null);
       });
     }
   }

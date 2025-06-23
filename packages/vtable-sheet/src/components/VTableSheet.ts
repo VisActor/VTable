@@ -1,9 +1,8 @@
-import type { ListTable } from '@visactor/vtable';
-import type { SheetDefine, VTableSheetOptions, CellValueChangedEvent } from '../ts-types';
+import type { VTableSheetOptions, SheetDefine, CellValueChangedEvent, CellRange } from '../ts-types';
+import SheetManager from '../managers/SheetManager';
 import type { FormulaManager } from '../managers/FormulaManager';
 import { EnhancedFormulaManager } from '../managers/EnhancedFormulaManager';
 import { FilterManager } from '../managers/FilterManager';
-import SheetManager from '../managers/SheetManager';
 import { Sheet } from '../core/Sheet';
 import '../styles/index.css';
 import * as VTable_editors from '@visactor/vtable-editors';
@@ -37,6 +36,9 @@ export default class VTableSheet {
   private contentElement: HTMLElement;
   private toolbarElement: HTMLElement | null = null;
   private footerElement: HTMLElement | null = null;
+
+  /** 公式栏编辑前的原始值 */
+  private originalFormulaValue: string = '';
 
   /**
    * 构造函数
@@ -192,8 +194,15 @@ export default class VTableSheet {
    */
   private activateFormulaBar(): void {
     const formulaBar = this.formulaBarElement;
+    const formulaInput = formulaBar?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+
     if (formulaBar) {
       formulaBar.classList.add('active');
+    }
+
+    // 保存原始值用于取消编辑
+    if (formulaInput) {
+      this.originalFormulaValue = formulaInput.value;
     }
   }
 
@@ -212,8 +221,48 @@ export default class VTableSheet {
    */
   private cancelFormulaEdit(): void {
     const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-    if (formulaInput) {
-      this.updateFormulaBar(); // 重置为原始值
+    if (formulaInput && this.activeSheet) {
+      // 恢复原始值
+      formulaInput.value = this.originalFormulaValue;
+
+      // 获取当前选中的单元格
+      const selection = this.activeSheet.getSelection();
+      if (selection) {
+        // 恢复单元格的原始值
+        const originalValue = this.originalFormulaValue.startsWith('=')
+          ? this.originalFormulaValue
+          : this.originalFormulaValue;
+
+        // 如果原始值是公式，需要计算其结果显示在表格中
+        if (originalValue.startsWith('=')) {
+          const formula = originalValue.substring(1);
+          try {
+            const result = this.formulaManager.evaluateFormula(formula, {
+              sheet: this.activeSheet.getKey()
+            });
+            this.activeSheet.setCellValue(selection.startRow, selection.startCol, result);
+
+            // 更新VTable显示
+            if ((this.activeSheet as any).tableInstance) {
+              const table = (this.activeSheet as any).tableInstance;
+              table.changeCellValue(selection.startCol, selection.startRow, result);
+              table.scenegraph.updateNextFrame();
+            }
+          } catch (error) {
+            console.error('恢复公式值时出错:', error);
+          }
+        } else {
+          // 普通值直接恢复
+          this.activeSheet.setCellValue(selection.startRow, selection.startCol, originalValue);
+
+          // 更新VTable显示
+          if ((this.activeSheet as any).tableInstance) {
+            const table = (this.activeSheet as any).tableInstance;
+            table.changeCellValue(selection.startCol, selection.startRow, originalValue);
+            table.scenegraph.updateNextFrame();
+          }
+        }
+      }
     }
   }
 
@@ -630,7 +679,7 @@ export default class VTableSheet {
   /**
    * 处理单元格选中事件
    */
-  private handleCellSelected(event: any): void {
+  handleCellSelected(selection: CellRange | null): void {
     // 更新公式栏
     this.updateFormulaBar();
   }
@@ -645,6 +694,16 @@ export default class VTableSheet {
 
     const selection = this.activeSheet.getSelection();
     if (!selection) {
+      // 如果没有选中，清空公式栏
+      const cellAddressBox = this.formulaBarElement.querySelector('.vtable-sheet-cell-address');
+      if (cellAddressBox) {
+        cellAddressBox.textContent = '';
+      }
+
+      const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+      if (formulaInput) {
+        formulaInput.value = '';
+      }
       return;
     }
 
@@ -676,7 +735,66 @@ export default class VTableSheet {
    * 处理公式输入
    */
   private handleFormulaInput(event: Event): void {
-    // 公式输入处理
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    // 获取当前选中的单元格
+    const selection = this.activeSheet?.getSelection();
+    if (!selection || !this.activeSheet) {
+      return;
+    }
+
+    // 添加视觉反馈 - 检测是否为公式
+    if (value.startsWith('=')) {
+      input.setAttribute('data-is-formula', 'true');
+    } else {
+      input.removeAttribute('data-is-formula');
+    }
+
+    // 实时同步公式输入框的内容到选中的单元格
+    // 对于公式，显示原始公式文本而不是计算结果（这样用户可以看到正在输入的公式）
+    // 对于普通值，直接显示并设置值
+
+    if (value.startsWith('=')) {
+      // 如果是公式，在表格中显示公式文本（让用户知道这是公式）
+      // 但不立即计算，只在Enter时计算最终结果
+      this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
+
+      // 在表格中显示公式文本（带等号）
+      if ((this.activeSheet as any).tableInstance) {
+        const table = (this.activeSheet as any).tableInstance;
+        // 使用节流来减少更新频率
+        this.throttledUpdateCell(table, selection.startCol, selection.startRow, value);
+      }
+    } else {
+      // 普通值，实时更新
+      this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
+
+      if ((this.activeSheet as any).tableInstance) {
+        const table = (this.activeSheet as any).tableInstance;
+        this.throttledUpdateCell(table, selection.startCol, selection.startRow, value);
+      }
+    }
+  }
+
+  /** 节流更新计时器 */
+  private updateCellTimer: NodeJS.Timeout | null = null;
+
+  /**
+   * 节流更新单元格显示
+   */
+  private throttledUpdateCell(table: any, col: number, row: number, value: any): void {
+    // 清除之前的计时器
+    if (this.updateCellTimer) {
+      clearTimeout(this.updateCellTimer);
+    }
+
+    // 设置新的计时器，延迟更新以减少频繁刷新
+    this.updateCellTimer = setTimeout(() => {
+      table.changeCellValue(col, row, value);
+      table.scenegraph.updateNextFrame();
+      this.updateCellTimer = null;
+    }, 100); // 100ms 延迟
   }
 
   /**
@@ -750,10 +868,25 @@ export default class VTableSheet {
       } else {
         // 普通值，直接设置
         this.activeSheet.setCellValue(finalSelection.startRow, finalSelection.startCol, value);
+
+        // 更新VTable显示
+        if ((this.activeSheet as any).tableInstance) {
+          const table = (this.activeSheet as any).tableInstance;
+          table.changeCellValue(finalSelection.startCol, finalSelection.startRow, value);
+          table.scenegraph.updateNextFrame();
+        }
       }
 
       // 阻止默认行为
       event.preventDefault();
+
+      // 移除焦点，结束编辑状态
+      input.blur();
+    } else if (event.key === 'Escape') {
+      // Escape键取消编辑，恢复原值
+      this.cancelFormulaEdit();
+      event.preventDefault();
+      input.blur();
     }
   }
 
@@ -844,6 +977,12 @@ export default class VTableSheet {
    * 销毁实例
    */
   destroy(): void {
+    // 清理计时器
+    if (this.updateCellTimer) {
+      clearTimeout(this.updateCellTimer);
+      this.updateCellTimer = null;
+    }
+
     // 移除事件监听
     window.removeEventListener('resize', this.handleResize.bind(this));
 

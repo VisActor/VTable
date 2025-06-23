@@ -9,6 +9,13 @@
   position: relative;
   z-index: 10;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+/* 公式栏激活状态 */
+.vtable-sheet-formula-bar.active {
+  border-bottom: 2px solid #1a73e8;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* 单元格地址显示 */
@@ -22,6 +29,8 @@
   height: 100%;
   border-right: 1px solid #e0e0e0;
   font-size: 13px;
+  background-color: #f8f9fa;
+  font-weight: 600;
 }
 
 /* fx图标 */
@@ -36,6 +45,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.vtable-sheet-formula-icon:hover {
+  background-color: #f1f3f4;
+  color: #1a73e8;
 }
 
 /* 公式输入框 */
@@ -49,10 +66,18 @@
   height: 100%;
   color: #333;
   background-color: transparent;
+  transition: all 0.2s ease;
 }
 
 .vtable-sheet-formula-input:focus {
   outline: none;
+  background-color: #fff;
+}
+
+/* 公式输入框中的公式高亮 */
+.vtable-sheet-formula-input[data-is-formula="true"] {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  color: #1a73e8;
 }
 
 /* 公式操作按钮容器 */
@@ -62,6 +87,13 @@
   height: 100%;
   padding: 0 4px;
   border-left: 1px solid #e0e0e0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* 公式栏激活时显示操作按钮 */
+.vtable-sheet-formula-bar.active .vtable-sheet-formula-actions {
+  opacity: 1;
 }
 
 /* 公式操作按钮 */
@@ -85,13 +117,13 @@
 /* 取消按钮 */
 .vtable-sheet-formula-cancel:hover {
   color: #d93025;
-  background-color: #f8f8f8;
+  background-color: #fce8e6;
 }
 
 /* 确认按钮 */
 .vtable-sheet-formula-confirm:hover {
   color: #1e8e3e;
-  background-color: #f8f8f8;
+  background-color: #e6f4ea;
 }
 
 /* 其他按钮样式 - 当有更多功能时使用 */
@@ -118,4 +150,4 @@
 .vtable-sheet-toolbar,
 .vtable-sheet-toolbar-group {
   display: none;
-} 
+}
