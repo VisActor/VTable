@@ -8,6 +8,10 @@ export const menus = [
     name: 'gantt-export-image'
   },
   {
+    path: 'excel-import',
+    name: 'excel-import',
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
