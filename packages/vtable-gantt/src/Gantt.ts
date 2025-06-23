@@ -228,7 +228,7 @@ export class Gantt extends EventTarget {
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     // this.element.style.top = '0px';
-    this.element.style.left = this.taskTableWidth != -1 ? `${this.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
 
     this.canvas = document.createElement('canvas');
     this.element.appendChild(this.canvas);
@@ -337,7 +337,7 @@ export class Gantt extends EventTarget {
       if (this.options?.taskListTable?.minTableWidth) {
         this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
       }
-      this.element.style.left = this.taskTableWidth != -1 ? `${this.taskTableWidth}px` : '0px';
+      this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
       taskListTableInstance.setCanvasSize(
         this.taskTableWidth,
         this.tableNoFrameHeight + top + bottom
@@ -1105,7 +1105,7 @@ export class Gantt extends EventTarget {
     }
     this._syncPropsFromTable();
     this.scenegraph.updateStageBackground();
-    this.element.style.left = this.taskTableWidth != -1 ? `${this.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
 
     updateSplitLineAndResizeLine(this);
     this.scenegraph.updateSceneGraph();

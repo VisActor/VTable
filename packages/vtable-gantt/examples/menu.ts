@@ -8,10 +8,14 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-try'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-milestone'
   },
   {
-    path: "gantt",
+    path: 'gantt',
     name: 'gantt-borderLineWidth-array-config'
   },
   {
