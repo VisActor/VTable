@@ -42,6 +42,7 @@ export interface IGrid {
 }
 //#region gantt
 export interface GanttConstructorOptions {
+  theme?: any;
   /**
    * 数据集合
    */

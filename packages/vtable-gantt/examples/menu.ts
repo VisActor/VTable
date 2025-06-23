@@ -12,6 +12,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-theme-adaptation'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-hour'
   },
   {

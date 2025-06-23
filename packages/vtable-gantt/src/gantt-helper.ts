@@ -120,6 +120,22 @@ export { isNode };
 
 export function initOptions(gantt: Gantt) {
   const options = gantt.options;
+  
+  const theme = options.theme;
+  if (theme) {
+    const themeTimelineHeader = theme.timelineHeader || {};
+    options.timelineHeader = Object.assign({}, themeTimelineHeader, options.timelineHeader);
+
+    const themeTaskBar = theme.taskBar || {};
+    options.taskBar = Object.assign({}, themeTaskBar, options.taskBar);
+
+    const themeGridStyle = theme.grid || {};
+    options.grid = Object.assign({}, themeGridStyle, options.grid);
+
+    const themeRowSeriesNumber = theme.rowSeriesNumber || {};
+    options.rowSeriesNumber = Object.assign({},themeRowSeriesNumber,options.rowSeriesNumber);
+  }
+
   gantt.parsedOptions.tasksShowMode = options?.tasksShowMode ?? TasksShowMode.Tasks_Separate;
   gantt.parsedOptions.pixelRatio = options?.pixelRatio ?? 1;
   gantt.parsedOptions.rowHeight = options?.rowHeight ?? 40;
