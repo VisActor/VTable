@@ -12,6 +12,9 @@ export type ThemeStyle = ITextStyleOption & {
     inlineRowBgColor?: ColorPropertyDefine; //交互所在整行的背景颜色
     inlineColumnBgColor?: ColorPropertyDefine; //交互所在整列的背景颜色
     cellBgColor?: ColorPropertyDefine; //交互所在单元格的背景颜色
+    cellTextColor?: ColorPropertyDefine; //交互所在单元格的文本颜色
+    inlineRowTextColor?: ColorPropertyDefine; //交互所在整行的文本颜色
+    inlineColumnTextColor?: ColorPropertyDefine; //交互所在整列的文本颜色
   };
   frameStyle?: FrameStyle;
 };

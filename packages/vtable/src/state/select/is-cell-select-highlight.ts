@@ -68,14 +68,22 @@ export function getSelectedCellTextColor(cellGroup: Group, table: BaseTableAPI):
   const layout = table.internalProps.layoutMap;
   const col = cellGroup.col;
   const row = cellGroup.row;
-  if (
-    !layout.isCornerHeader(col, row) &&
-    !layout.isColumnHeader(col, row) &&
-    !layout.isRowHeader(col, row) &&
-    !layout.isBottomFrozenRow(col, row) &&
-    !layout.isRightFrozenColumn(col, row) &&
-    !table.isHeader(col, row)
-  ) {
+
+  if (layout.isCornerHeader(cellGroup.col, cellGroup.row)) {
+    selectStyle = table.theme.cornerHeaderStyle?.select || table.theme.headerStyle?.select;
+  } else if (layout.isColumnHeader(cellGroup.col, cellGroup.row)) {
+    selectStyle = table.theme.headerStyle?.select;
+  } else if (layout.isRowHeader(cellGroup.col, cellGroup.row)) {
+    selectStyle = table.theme.rowHeaderStyle?.select;
+  } else if (layout.isBottomFrozenRow(cellGroup.col, cellGroup.row)) {
+    selectStyle =
+      table.theme.bottomFrozenStyle?.select ||
+      (table.isListTable() ? table.theme.bodyStyle?.select : table.theme.headerStyle?.select);
+  } else if (layout.isRightFrozenColumn(cellGroup.col, cellGroup.row)) {
+    selectStyle =
+      table.theme.rightFrozenStyle?.select ||
+      (table.isListTable() ? table.theme.bodyStyle?.select : table.theme.rowHeaderStyle?.select);
+  } else if (!table.isHeader(cellGroup.col, cellGroup.row)) {
     selectStyle = table.theme.bodyStyle?.select;
   }
   const textColor = getProp(styleKey, selectStyle, col, row, table);

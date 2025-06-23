@@ -930,13 +930,13 @@ export class TableTheme implements ITableThemeDefine {
             return undefined;
           },
           get cellTextColor(): ColorPropertyDefine | undefined {
-            return (style as BodyThemeStyle).select?.cellTextColor ?? undefined;
+            return style.select?.cellTextColor ?? undefined;
           },
           get inlineRowTextColor(): ColorPropertyDefine | undefined {
-            return (style as BodyThemeStyle).select?.inlineRowTextColor ?? undefined;
+            return style.select?.inlineRowTextColor ?? undefined;
           },
           get inlineColumnTextColor(): ColorPropertyDefine | undefined {
-            return (style as BodyThemeStyle).select?.inlineColumnTextColor ?? undefined;
+            return style.select?.inlineColumnTextColor ?? undefined;
           }
         };
         // }
