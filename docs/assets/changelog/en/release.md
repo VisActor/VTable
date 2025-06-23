@@ -14,7 +14,7 @@
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender 1.0.4 fix animation bug
+- **@visactor/vtable**: update vrender 1.0.5 fix animation bug
 
 
 

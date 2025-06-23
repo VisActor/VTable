@@ -5,16 +5,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: fix when use containerFit scroll and bottom border error [#3337](https://github.com/VisActor/VTable/issues/3337)
+- **@visactor/vtable**: 修复使用 containerFit 滚动时底部边框错误问题 [#3337](https://github.com/VisActor/VTable/issues/3337)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: copy not work when after copy tooltip text [#3968](https://github.com/VisActor/VTable/issues/3968)
-- **@visactor/vtable**: fix the issue where the icon configuration is not effective when cellType is progressBar [#4047](https://github.com/VisActor/VTable/issues/4047)
+- **@visactor/vtable**: 修复复制 tooltip 文本后无法复制的问题 [#3968](https://github.com/VisActor/VTable/issues/3968)
+- **@visactor/vtable**: 修复当 cellType 为 progressBar 时图标配置不生效的问题 [#4047](https://github.com/VisActor/VTable/issues/4047)
 
 **🔧 项目配置**
 
-- **@visactor/vtable**: update vrender 1.0.4 fix animation bug
+- **@visactor/vtable**: 更新 vrender 1.0.5 修复动画 bug
 
 
 
