@@ -8,10 +8,6 @@ export const menus = [
   },
   {
     path: 'gantt',
-    name: 'gantt-try'
-  },
-  {
-    path: 'gantt',
     name: 'gantt-milestone'
   },
   {
