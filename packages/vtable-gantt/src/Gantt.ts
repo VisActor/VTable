@@ -1050,7 +1050,9 @@ export class Gantt extends EventTarget {
     this._updateSize();
     this.taskListTableInstance?.setCanvasSize(
       this.taskTableWidth,
-      this.tableNoFrameHeight + toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[0] + toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[2]
+      this.tableNoFrameHeight +
+        toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[0] +
+        toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[2]
     );
     this._syncPropsFromTable();
     this.scenegraph.resize();

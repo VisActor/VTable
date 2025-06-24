@@ -70,10 +70,10 @@ export class FrameBorder {
         ? cornerRadius
         : [cornerRadius, cornerRadius, cornerRadius, cornerRadius];
       if (this._scene._gantt.taskListTableInstance) {
-        rectAttributes.cornerRadius = [0, radius[1] ?? 0, radius[2] ?? 0, 0]; // 有任务列表时只设右上右下
+        rectAttributes.cornerRadius = [0, radius[1] ?? 0, radius[2] ?? 0, 0];
         groupAttributes.cornerRadius = [0, radius[1] ?? 0, radius[2] ?? 0, 0];
       } else {
-        rectAttributes.cornerRadius = radius as [number, number, number, number]; // 无任务列表时设全部
+        rectAttributes.cornerRadius = radius as [number, number, number, number];
         groupAttributes.cornerRadius = radius as [number, number, number, number];
       }
     }
