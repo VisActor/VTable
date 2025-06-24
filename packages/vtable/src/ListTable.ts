@@ -231,7 +231,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this._hasAutoImageColumn = undefined;
     this.refreshHeader();
     this.dataSource.updateColumns?.(this.internalProps.columns);
-    if (this.records && checkHasAggregationOnColumnDefine(columns)) {
+    if (this.records && (!!this.options.aggregation || checkHasAggregationOnColumnDefine(columns))) {
       this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
     }
     this.internalProps.useOneRowHeightFillAll = false;
