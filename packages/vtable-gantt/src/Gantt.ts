@@ -330,7 +330,7 @@ export class Gantt extends EventTarget {
     if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
       // 归一化边框宽度
       const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
-      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right; 
+      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right;
       if (this.options?.taskListTable?.maxTableWidth) {
         this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
       }
@@ -338,10 +338,7 @@ export class Gantt extends EventTarget {
         this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
       }
       this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
-      taskListTableInstance.setCanvasSize(
-        this.taskTableWidth,
-        this.tableNoFrameHeight + top + bottom
-      );
+      taskListTableInstance.setCanvasSize(this.taskTableWidth, this.tableNoFrameHeight + top + bottom);
       this._updateSize();
     }
 
@@ -380,6 +377,7 @@ export class Gantt extends EventTarget {
         (listTable_options as any)[key] = (this.options as any)[key];
       }
     }
+    listTable_options.defaultRowHeight = this.options.rowHeight;
     if (this.options.taskListTable) {
       for (const key in this.options.taskListTable) {
         (listTable_options as any)[key] = (this.options.taskListTable as any)[key];
@@ -454,12 +452,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            top,
-            0,
-            bottom,
-            left
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         });
         extendThemeOption.scrollStyle = Object.assign(
           {},
@@ -504,7 +497,7 @@ export class Gantt extends EventTarget {
           }
         );
         listTable_options.theme.cellInnerBorder = false;
-         const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
+        const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
         listTable_options.theme.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
           cornerRadius: [
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
@@ -512,12 +505,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            top,
-            0,
-            bottom,
-            left
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         });
         listTable_options.theme.scrollStyle = Object.assign(
           {},
@@ -566,12 +554,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            top,
-            0,
-            bottom,
-            left
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         }),
         columnResize: Object.assign(
           {
