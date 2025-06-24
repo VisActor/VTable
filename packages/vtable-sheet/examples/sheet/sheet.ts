@@ -10,7 +10,7 @@ const input_editor = new InputEditor({});
 register.editor('input', input_editor);
 register.editor('date-input', date_input_editor);
 export function createTable() {
-  const ganttInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
+  const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
     sheets: [
       {
         key: 'sheet1',
@@ -46,7 +46,7 @@ export function createTable() {
     // showSheetTab: true,
     activeSheetKey: 'sheet1'
   });
-  window.ganttInstance = ganttInstance;
+  window.sheetInstance = sheetInstance;
 
   // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']

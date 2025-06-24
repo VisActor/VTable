@@ -7,19 +7,24 @@
   align-items: center;
   background-color: #f8f8f8;
   position: relative;
-  box-shadow: 0 -1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
   z-index: 10;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* Sheet标签容器 */
 .vtable-sheet-tabs-container {
   display: flex;
   flex: 1;
+  flex-wrap: nowrap;
+  /* 超出容器宽度时显示横向滚动条 */
   overflow-x: auto;
-  overflow-y: hidden;
+  height: 100%;
   position: relative;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  /* 隐藏滚动条样式（可选，如需自定义滚动条可保留原生或用伪元素美化） */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 /* 隐藏滚动条但保留功能 */
@@ -29,22 +34,17 @@
 
 /* 单个sheet标签 */
 .vtable-sheet-tab {
-  padding: 0 15px;
-  margin: 0;
+  width: auto;
+  /* 禁止标签压缩，保持内容撑开的宽度 */
+  flex-shrink: 0;
+  padding: 0 12px;
+  line-height: 32px;
+  text-align: center;
   cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 160px;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  transition: all 0.2s;
-  font-size: 13px;
-  color: #666;
-  height: 100%;
-  background-color: #f2f2f2;
   border-right: 1px solid #e0e0e0;
+  white-space: nowrap;
+  color: #333;
+  transition: background 0.1s;
   user-select: none;
 }
 
@@ -131,12 +131,12 @@
 
 .vtable-sheet-fade-left {
   left: 0;
-  background: linear-gradient(to right, rgba(248,248,248,1), rgba(248,248,248,0));
+  background: linear-gradient(to right, rgba(248, 248, 248, 1), rgba(248, 248, 248, 0));
 }
 
 .vtable-sheet-fade-right {
   right: 0;
-  background: linear-gradient(to left, rgba(248,248,248,1), rgba(248,248,248,0));
+  background: linear-gradient(to left, rgba(248, 248, 248, 1), rgba(248, 248, 248, 0));
 }
 
 /* Sheet菜单按钮 */
@@ -182,4 +182,4 @@
 .vtable-sheet-footer-right {
   display: flex;
   align-items: center;
-} 
+}

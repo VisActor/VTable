@@ -101,7 +101,7 @@ export class Sheet implements SheetAPI {
    */
   private _createRootElement(): HTMLElement {
     const element = document.createElement('div');
-    element.setAttribute('tabindex', '0');
+    element.setAttribute('sheet-key', `${this.sheetKey}`);
     element.classList.add('vtable-sheet');
     element.style.outline = 'none';
     element.style.position = 'relative';
@@ -133,7 +133,8 @@ export class Sheet implements SheetAPI {
   private _generateTableOptions(): any {
     // 转换为ListTable的选项
     return {
-      ...this.options
+      ...this.options,
+      container: this.element
 
       // 其他特定配置
     };
