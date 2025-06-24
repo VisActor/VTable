@@ -85,6 +85,7 @@ export class RecordAggregator extends Aggregator {
         this.records.push(record);
       }
     }
+
     if (record.isAggregator && this.children) {
       this.children.push(record);
     }
@@ -95,7 +96,9 @@ export class RecordAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
+
       if (record.isAggregator && this.children) {
+
         this.children = this.children.filter(item => item !== record);
       }
     }
@@ -111,6 +114,7 @@ export class RecordAggregator extends Aggregator {
           return item;
         });
       }
+
       if (oldRecord.isAggregator && newRecord.isAggregator && this.children) {
         this.children = this.children.map(item => {
           if (item === oldRecord) {
@@ -159,6 +163,7 @@ export class NoneAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
+
       if (record.isAggregator && this.children) {
         this.children = this.children.filter(item => item !== record);
       }
@@ -225,6 +230,7 @@ export class CustomAggregator extends Aggregator {
           this.records.push(record);
         }
       }
+
       if (record.isAggregator && this.children) {
         this.children.push(record);
       }

@@ -2132,6 +2132,7 @@ export class Dataset {
       cellAggregator.records[0][this.indicatorKeys[indicatorIndex]] = newValue;
     }
     //重新计算总计
+
     if(this.dataConfig?.updateAggregationOnEditCell ?? false){
       if(cellAggregator){
         cellAggregator.changedValue = newValue;
