@@ -42,6 +42,22 @@ When calculating the content width, the limited area participates in the calcula
 - 'only-body': Only the body cell content is calculated.
 - 'normal': Normal calculation, that is, calculating the header and body cell contents.
 
+#${prefix} containerFit(Object)
+
+Configuration for adapting the table frame to the container dimensions while preserving content size.
+
+```javascript
+containerFit: {
+  width: true,   // boolean
+  height: true   // boolean
+}
+```
+
+- `width`: Whether to adapt the table frame width to the container width
+- `height`: Whether to adapt the table frame height to the container height
+
+Unlike adaptive mode (`widthMode: 'adaptive'` or `heightMode: 'adaptive'`) which stretches content to fill the container, `containerFit` maintains the original content dimensions and fills remaining space appropriately.
+
 #${prefix} autoWrapText(boolean) = false
 
 Whether to automatically wrap text
@@ -505,14 +521,12 @@ Custom cell style assignment
   - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
 - customStyleId: Custom style id, the same as the id defined when registering the custom style
 
-
 #${prefix} rowSeriesNumber(IRowSeriesNumber)
 
 set row serial number.
 {{ use: row-series-number(
     prefix = '###',
 ) }}
-
 
 #${prefix} editor (string|Object|Function)
 
@@ -677,3 +691,4 @@ Validate when the drag to move position ends.
 ```
 validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
 ```
+

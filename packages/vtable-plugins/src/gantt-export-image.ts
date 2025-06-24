@@ -7,6 +7,7 @@ export interface ExportOptions {
     quality?: number;
     backgroundColor?: string;
     scale?: number;
+    download?: boolean;
 }
 
 
@@ -27,8 +28,7 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
              return;
         }
         this._gantt = ganttInstance;
-    }
-
+    }    
     /**
      * 执行甘特图导出操作
      * @async
@@ -48,7 +48,8 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
             type = 'png',
             quality = 1,
             backgroundColor = '#ffffff',
-            scale = window.devicePixelRatio || 1
+            scale = window.devicePixelRatio || 1,
+            download = true // 默认执行下载
         } = options;
 
         try {
@@ -97,11 +98,10 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
                          sourceWidth, clonedGantt.canvas.height,
                          (clonedGantt.taskListTableInstance.getAllColsWidth() + 1.5) * scale, 0,
                          (clonedGantt.getAllDateColsWidth() - 1.5) * scale,
-                         totalHeight
-                     );
+                         totalHeight                     );
                 }
 
-                return this.finalizeExport(exportCanvas, fileName, type, quality);
+                return this.finalizeExport(exportCanvas, fileName, type, quality, download);
             } finally {
                 tempContainer.remove();
                  // 确保克隆的甘特图实例被释放
@@ -111,6 +111,21 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
             console.error('[Gantt Export Plugin] Export failed:', error);
             throw new Error(`甘特图导出失败: ${error instanceof Error ? error.message : '未知错误'}`);
         }
+    }
+
+    /**
+     * 获取甘特图的 Base64 图片数据，不触发下载
+     * @async
+     * @param {Omit<ExportOptions, 'download'>} [options={}] 导出配置选项（不包含 download 参数）
+     * @returns {Promise<string | undefined>} 返回 Base64 格式的图片数据，或在未初始化时返回 undefined
+     * @throws {Error} 导出过程中发生错误时抛出异常
+     */
+    public async exportToBase64(options: Omit<ExportOptions, 'download'> = {}): Promise<string | undefined> {
+        // 调用 exportToImage 方法，但设置 download 为 false
+        return this.exportToImage({
+            ...options,
+            download: false
+        });
     }
 
     private createFullSizeContainer(scale: number) {
@@ -145,6 +160,7 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
                 minTableWidth: undefined as unknown as number,
                 maxTableWidth: undefined as unknown as number,
             },
+            plugins: [] 
         });
 
         clonedGantt.setPixelRatio(scale);
@@ -160,16 +176,19 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
         clonedGantt.scenegraph.stage.render();
 
         return { tempContainer, clonedGantt };
-    }
-
-    private finalizeExport(canvas: HTMLCanvasElement, fileName: string, type: string, quality: number): string {
+    }    private finalizeExport(canvas: HTMLCanvasElement, fileName: string, type: string, quality: number, download: boolean = true): string {
         const base64 = canvas.toDataURL(`image/${type}`, quality);
-        const link = document.createElement('a');
-        link.download = `${fileName}.${type}`;
-        link.href = base64;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        
+        // 如果需要下载，则创建下载链接
+        if (download) {
+            const link = document.createElement('a');
+            link.download = `${fileName}.${type}`;
+            link.href = base64;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
         return base64;
     }
     

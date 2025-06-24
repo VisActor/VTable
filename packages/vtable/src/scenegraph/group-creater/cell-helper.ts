@@ -328,7 +328,7 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
-      false,
+      mayHaveIcon,
       customElementsGroup,
       renderDefault,
       cellTheme,
@@ -971,6 +971,7 @@ function updateCellContent(
     // update cell
     oldCellGroup.parent.insertAfter(newCellGroup, oldCellGroup);
     oldCellGroup.parent.removeChild(oldCellGroup);
+    oldCellGroup.release(true);
 
     // update cache
     if (table.scenegraph?.proxy.cellCache.get(col)) {

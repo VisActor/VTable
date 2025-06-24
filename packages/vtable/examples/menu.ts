@@ -93,6 +93,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-cellType-progressBar'
+      },
+      {
+        path: 'list',
         name: 'list-updateOption'
       },
       {
