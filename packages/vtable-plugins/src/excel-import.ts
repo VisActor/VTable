@@ -446,7 +446,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
             title,
             columns: subColumns,
             hideColumnsSubHeader: false
-          } as any);
+          });
         }
       } else {
         columns.push({
@@ -454,7 +454,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
           title,
           cellType: 'text' as const,
           headerType: 'text' as const
-        } as any);
+        });
       }
       i += span;
     }
@@ -595,15 +595,12 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
       };
     } else if (Array.isArray(jsonData) && jsonData.length > 0) {
       const firstRecord = jsonData[0] as Record<string, unknown>;
-      const columns: VTable.ColumnsDefine = Object.keys(firstRecord).map(
-        key =>
-          ({
-            field: key,
-            title: key,
-            cellType: 'text' as const,
-            headerType: 'text' as const
-          } as any)
-      );
+      const columns: VTable.ColumnsDefine = Object.keys(firstRecord).map(key => ({
+        field: key,
+        title: key,
+        cellType: 'text' as const,
+        headerType: 'text' as const
+      }));
 
       const records: Record<string, unknown>[] = [];
       await this._processBatchRecords(
