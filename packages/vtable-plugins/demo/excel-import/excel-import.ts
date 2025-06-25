@@ -11,8 +11,8 @@ export function createTable() {
   const excelImportPlugin = new ExcelImportPlugin({
     exportData: true,
     supportedTypes: ['csv', 'json', 'xlsx', 'html'],
-    autoTable: false,
-    autoColumns: true // 自动生成列
+    autoTable: true,
+    autoColumns: true
   });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
