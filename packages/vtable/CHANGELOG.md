@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 06 Jun 2025 09:57:33 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Jun 2025 07:19:56 GMT and should not be manually modified.
+
+## 1.18.6
+Wed, 25 Jun 2025 07:19:56 GMT
+
+### Updates
+
+- feat: update vrender into 0.22.14
 
 ## 1.18.5
 Fri, 06 Jun 2025 09:57:33 GMT

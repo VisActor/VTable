@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.6",
+      "tag": "@visactor/vtable_v1.18.6",
+      "date": "Wed, 25 Jun 2025 07:19:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: update vrender into 0.22.14"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.5",
       "tag": "@visactor/vtable_v1.18.5",
       "date": "Fri, 06 Jun 2025 09:57:33 GMT",
