@@ -9,7 +9,7 @@ export const menus = [
   },
   {
     path: 'excel-import',
-    name: 'excel-import',
+    name: 'excel-import'
   },
   {
     path: 'header-highlight',
