@@ -1001,7 +1001,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     lastLevelSpan?: number
   ): HeaderData[] {
     const results: HeaderData[] = [];
-    const rowCells = this._newRow(row, hideColumnsSubHeader); // !hideColumnsSubHeader ? this._headerCellIds[row] || this._newRow(row) : [];
+    const rowCells = this._newRow(row);
     column.forEach((hd: ColumnDefine) => {
       const col = this._columns.length;
       const id = this.seqId++;
@@ -1059,7 +1059,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
 
       if (!hideColumnsSubHeader) {
         rowCells[col] = id;
-      } else if (this._headerCellIds[row - 1]) {
+      } else if (this._headerCellIds[row - 1] && this._headerCellIds[row - 1][col] !== undefined) {
         rowCells[col] = this._headerCellIds[row - 1][col];
       }
 
@@ -1109,7 +1109,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return results;
   }
 
-  private _newRow(row: number, hideColumnsSubHeader = false): number[] {
+  private _newRow(row: number): number[] {
     //如果当前行已经有数组对象 将上一行的id内容补全到当前行上
     if (this._headerCellIds[row]) {
       const prev = this._headerCellIds[row - 1];
@@ -1120,11 +1120,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
       return this._headerCellIds[row];
     }
-    // 隐藏子标题的情况 吐出一个新的数组
-    if (hideColumnsSubHeader) {
-      return [];
-    }
-    // 其他情况 不隐藏子标题 同步上一行的id
+
     const newRow: number[] = (this._headerCellIds[row] = []);
     if (!this._columns.length) {
       return newRow;
