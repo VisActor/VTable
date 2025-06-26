@@ -61,7 +61,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * Tabulator风格的导入方法
    * @param type 导入类型: "file" | "csv" | "json" | "html"
    * @param source 数据源: 文件选择器 | 字符串数据
    * @param options 导入选项
