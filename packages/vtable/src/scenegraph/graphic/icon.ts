@@ -201,7 +201,7 @@ export class Icon extends Image {
     }
   }
 
-  failCallback() {
+  failCallback = () => {
     const registeredIcons = icons.get();
     const { svg, src } = (registeredIcons.damage_pic as any) || {};
     const image = svg || src;

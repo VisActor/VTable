@@ -85,7 +85,8 @@ export class RecordAggregator extends Aggregator {
         this.records.push(record);
       }
     }
-    if(record.isAggregator && this.children){
+
+    if (record.isAggregator && this.children) {
       this.children.push(record);
     }
     this.clearCacheValue();
@@ -95,7 +96,9 @@ export class RecordAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if(record.isAggregator && this.children){
+
+      if (record.isAggregator && this.children) {
+
         this.children = this.children.filter(item => item !== record);
       }
     }
@@ -111,7 +114,8 @@ export class RecordAggregator extends Aggregator {
           return item;
         });
       }
-      if(oldRecord.isAggregator && newRecord.isAggregator && this.children){
+
+      if (oldRecord.isAggregator && newRecord.isAggregator && this.children) {
         this.children = this.children.map(item => {
           if (item === oldRecord) {
             return newRecord;
@@ -159,8 +163,9 @@ export class NoneAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if(record.isAggregator && this.children){
-        this.children = this.children.filter(item => item!== record);
+
+      if (record.isAggregator && this.children) {
+        this.children = this.children.filter(item => item !== record);
       }
       if (this.field && this.records.length) {
         this.fieldValue = this.records[this.records.length - 1][this.field];
@@ -178,7 +183,7 @@ export class NoneAggregator extends Aggregator {
           return item;
         });
       }
-      if(oldRecord.isAggregator && newRecord.isAggregator && this.children){
+      if (oldRecord.isAggregator && newRecord.isAggregator && this.children) {
         this.children = this.children.map(item => {
           if (item === oldRecord) {
             return newRecord;
@@ -225,7 +230,8 @@ export class CustomAggregator extends Aggregator {
           this.records.push(record);
         }
       }
-      if(record.isAggregator && this.children){
+
+      if (record.isAggregator && this.children) {
         this.children.push(record);
       }
       if (this.field) {
@@ -244,7 +250,7 @@ export class CustomAggregator extends Aggregator {
           return item;
         });
       }
-      if(oldRecord.isAggregator && newRecord.isAggregator && this.children){
+      if (oldRecord.isAggregator && newRecord.isAggregator && this.children) {
         this.children = this.children.map(item => {
           if (item === oldRecord) {
             return newRecord;
@@ -263,7 +269,7 @@ export class CustomAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if(record.isAggregator && this.children){
+      if (record.isAggregator && this.children) {
         this.children = this.children.filter(item => item !== record);
       }
       if (this.field && this.records.length) {
@@ -321,7 +327,7 @@ export class RecalculateAggregator extends Aggregator {
         this.records.push(record);
       }
     }
-    if(this.children && record.isAggregator){
+    if (this.children && record.isAggregator) {
       this.children.push(record);
     }
     this.clearCacheValue();
@@ -331,8 +337,8 @@ export class RecalculateAggregator extends Aggregator {
       if (this.isRecord && this.records) {
         this.records = this.records.filter(item => item !== record);
       }
-      if(record.isAggregator && this.children){
-        this.children = this.children.filter(item => item!== record);
+      if (record.isAggregator && this.children) {
+        this.children = this.children.filter(item => item !== record);
       }
     }
     this.clearCacheValue();
@@ -347,7 +353,7 @@ export class RecalculateAggregator extends Aggregator {
           return item;
         });
       }
-      if(oldRecord.isAggregator && newRecord.isAggregator && this.children){
+      if (oldRecord.isAggregator && newRecord.isAggregator && this.children) {
         this.children = this.children.map(item => {
           if (item === oldRecord) {
             return newRecord;
@@ -521,7 +527,7 @@ export class SumAggregator extends Aggregator {
   recalculate() {
     this.sum = 0;
     this._formatedValue = undefined;
-    if(this.children && this.children.length > 0){
+    if (this.children && this.children.length > 0) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator) {
@@ -536,8 +542,7 @@ export class SumAggregator extends Aggregator {
           }
         }
       }
-    }
-    else if (this.records) {
+    } else if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator) {
@@ -580,7 +585,7 @@ export class CountAggregator extends Aggregator {
         }
       }
       if (record.isAggregator) {
-        if(this.children){
+        if (this.children) {
           this.children.push(record);
         }
         this.count += record.value();
@@ -596,8 +601,8 @@ export class CountAggregator extends Aggregator {
         this.records = this.records.filter(item => item !== record);
       }
       if (record.isAggregator) {
-        if(this.children){
-          this.children = this.children.filter(item => item!== record);
+        if (this.children) {
+          this.children = this.children.filter(item => item !== record);
         }
         this.count -= record.value();
       } else {
@@ -621,7 +626,7 @@ export class CountAggregator extends Aggregator {
       } else {
         //this.count++;
       }
-      if(oldRecord.isAggregator && newRecord.isAggregator && this.children){
+      if (oldRecord.isAggregator && newRecord.isAggregator && this.children) {
         this.children = this.children.map(item => {
           if (item === oldRecord) {
             return newRecord;
@@ -643,17 +648,17 @@ export class CountAggregator extends Aggregator {
   recalculate() {
     this.count = 0;
     this._formatedValue = undefined;
-    if(this.children && this.children.length > 0){
+    if (this.children && this.children.length > 0) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator) {
           const value = child.value();
-          this.count += value?? 0;
+          this.count += value ?? 0;
         } else {
-          this.count++;}
+          this.count++;
+        }
       }
-    }
-    else if (this.records) {
+    } else if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator) {
@@ -680,7 +685,7 @@ export class AvgAggregator extends Aggregator {
         }
       }
       if (record.isAggregator && record.type === AggregationType.AVG) {
-        if(this.children){
+        if (this.children) {
           this.children.push(record);
         }
         this.sum += record.sum;
@@ -698,8 +703,8 @@ export class AvgAggregator extends Aggregator {
         this.records = this.records.filter(item => item !== record);
       }
       if (record.isAggregator && record.type === AggregationType.AVG) {
-        if(this.children){
-          this.children = this.children.filter(item => item!== record);
+        if (this.children) {
+          this.children = this.children.filter(item => item !== record);
         }
         this.sum -= record.sum;
         this.count -= record.count;
@@ -721,7 +726,7 @@ export class AvgAggregator extends Aggregator {
         });
       }
       if (oldRecord.isAggregator && oldRecord.type === AggregationType.AVG) {
-        if(this.children && newRecord.isAggregator){
+        if (this.children && newRecord.isAggregator) {
           this.children = this.children.map(item => {
             if (item === oldRecord) {
               return newRecord;
@@ -752,16 +757,17 @@ export class AvgAggregator extends Aggregator {
     this.sum = 0;
     this.count = 0;
     this._formatedValue = undefined;
-    if(this.children && this.children.length > 0){
+    if (this.children && this.children.length > 0) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator && child.type === AggregationType.AVG) {
-          this.sum += (child as AvgAggregator).sum;
+          this.sum += child.changedValue
+            ? child.changedValue * (child as AvgAggregator).count
+            : (child as AvgAggregator).sum;
           this.count += (child as AvgAggregator).count;
         }
       }
-    }
-    else if (this.records) {
+    } else if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator && record.type === AggregationType.AVG) {
@@ -789,7 +795,7 @@ export class MaxAggregator extends Aggregator {
         }
       }
       if (record.isAggregator) {
-        if(this.children){
+        if (this.children) {
           this.children.push(record);
         }
         this.max = record.max > this.max ? record.max : this.max;
@@ -809,8 +815,8 @@ export class MaxAggregator extends Aggregator {
         this.records = this.records.filter(item => item !== record);
       }
       if (record.isAggregator) {
-        if(this.children){
-          this.children = this.children.filter(item => item!== record);
+        if (this.children) {
+          this.children = this.children.filter(item => item !== record);
         }
       }
       this.recalculate();
@@ -827,7 +833,7 @@ export class MaxAggregator extends Aggregator {
         });
       }
       if (oldRecord.isAggregator && newRecord.isAggregator) {
-        if(this.children){
+        if (this.children) {
           this.children = this.children.map(item => {
             if (item === oldRecord) {
               return newRecord;
@@ -851,15 +857,18 @@ export class MaxAggregator extends Aggregator {
   recalculate() {
     this.max = Number.MIN_SAFE_INTEGER;
     this._formatedValue = undefined;
-    if(this.children && this.children.length > 0){
+    if (this.children && this.children.length > 0) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator) {
-          this.max = (child as MaxAggregator).max > this.max? (child as MaxAggregator).max : this.max;
+          if (child.changedValue) {
+            this.max = child.changedValue > this.max ? child.changedValue : this.max;
+          } else {
+            this.max = (child as MaxAggregator).max > this.max ? (child as MaxAggregator).max : this.max;
+          }
         }
       }
-    }
-    else if (this.records) {
+    } else if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator) {
@@ -889,7 +898,7 @@ export class MinAggregator extends Aggregator {
         }
       }
       if (record.isAggregator) {
-        if(this.children){
+        if (this.children) {
           this.children.push(record);
         }
         this.min = record.min < this.min ? record.min : this.min;
@@ -909,8 +918,8 @@ export class MinAggregator extends Aggregator {
         this.records = this.records.filter(item => item !== record);
       }
       if (record.isAggregator) {
-        if(this.children){
-          this.children = this.children.filter(item => item!== record);
+        if (this.children) {
+          this.children = this.children.filter(item => item !== record);
         }
       }
       this.recalculate();
@@ -927,7 +936,7 @@ export class MinAggregator extends Aggregator {
         });
       }
       if (oldRecord.isAggregator && newRecord.isAggregator) {
-        if(this.children){
+        if (this.children) {
           this.children = this.children.map(item => {
             if (item === oldRecord) {
               return newRecord;
@@ -951,15 +960,18 @@ export class MinAggregator extends Aggregator {
   recalculate() {
     this.min = Number.MAX_SAFE_INTEGER;
     this._formatedValue = undefined;
-    if(this.children && this.children.length > 0){
+    if (this.children && this.children.length > 0) {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator) {
-          this.min = (child as MinAggregator).min < this.min? (child as MinAggregator).min : this.min;
+          if (child.changedValue) {
+            this.min = child.changedValue < this.min ? child.changedValue : this.min;
+          } else {
+            this.min = (child as MinAggregator).min < this.min ? (child as MinAggregator).min : this.min;
+          }
         }
       }
-    }
-    else if (this.records) {
+    } else if (this.records) {
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (record.isAggregator) {
