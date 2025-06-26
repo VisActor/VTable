@@ -273,6 +273,9 @@ export interface ITaskBarStyle {
   borderLineWidth?: number;
   /** 边框颜色 */
   borderColor?: string;
+
+  /** 任务条的最小尺寸 */
+  minSize?: number;
 }
 export interface IMilestoneStyle {
   /** 里程碑边框颜色 */
@@ -427,6 +430,8 @@ export type ITaskLink = {
   linkedFromTaskKey?: string | number | (string | number)[];
   /** 依赖的终止目标任务唯一标识。如果是tree树形结构的数据 设置数组的话 查找性能会更高 */
   linkedToTaskKey?: string | number | (string | number)[];
+  /** 依赖线的样式 */
+  linkLineStyle?: ILineStyle;
 };
 
 export type ITaskLinkSelectedStyle = ILineStyle & {

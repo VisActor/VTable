@@ -1,4 +1,4 @@
-import path from "path";
+import path from 'path';
 
 export const menus = [
   {
@@ -11,7 +11,7 @@ export const menus = [
   },
   {
     path: 'execl-import',
-    name: 'execl-import',
+    name: 'execl-import'
   },
   {
     path: 'header-highlight',
@@ -20,6 +20,10 @@ export const menus = [
   {
     path: 'invert-highlight',
     name: '(deprecated)invert-highlight'
+  },
+  {
+    path: 'wps-fill-handle',
+    name: 'wps-fill-handle'
   },
   {
     path: 'focus-highlight',

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.18.4",
+  "version": "1.19.1",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -35,7 +35,9 @@
   },
   "dependencies": {
     "@visactor/vutils": "~0.19.1",
-    "exceljs": "4.4.0"
+    "exceljs": "4.4.0",
+    "lodash": "4.17.21",
+    "big.js": "6.2.2"
   },
   "peerDependencies": {
     "@visactor/vtable": "workspace:*"
@@ -44,7 +46,7 @@
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",
-    "@visactor/vchart": "1.13.3-alpha.2",
+    "@visactor/vchart": "2.0.0-alpha.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
@@ -87,6 +89,7 @@
     "form-data": "~4.0.0",
     "axios": "^1.4.0",
     "@types/react-is": "^17.0.3",
-    "rollup-plugin-node-resolve": "5.2.0"
+    "rollup-plugin-node-resolve": "5.2.0",
+    "@types/lodash": "4.14.182"
   }
 }

@@ -1,5 +1,6 @@
 <template>
-  <div ref="vTableContainer" :style="{ width: containerWidth, height: containerHeight }" style="position: relative" />
+  <div ref="vTableContainer"
+:style="{ width: containerWidth, height: containerHeight }" style="position: relative" />
 </template>
 
 <script setup lang="ts">

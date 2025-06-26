@@ -1,14 +1,14 @@
 <template>
   <BaseTable
+    ref="baseTableRef"
     type="pivot"
     :options="computedOptions"
     :records="records"
     :width="width"
     :height="height"
-    ref="baseTableRef"
     v-bind="$attrs"
   />
-  <slot/>
+  <slot />
 </template>
 
 <script setup lang="ts">

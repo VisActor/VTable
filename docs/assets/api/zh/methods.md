@@ -51,14 +51,20 @@ tableInstance.theme = newTheme;
   /**
    * 更新表格的columns字段配置信息
    * @param columns
+   * @param options 配置项(可选)
+   * @param options.clearColWidthCache 是否清除调整列宽缓存，默认为 false。当设置为 true 时
+   * ，将清除手动调整过宽度的列的宽度缓存，重新分配所有列的宽度
+   *
    */
-  updateColumns(columns: ColumnsDefine) => void
+  updateColumns(columns: ColumnsDefine, options?: { clearColWidthCache?: boolean }) => void
 ```
 
 使用：
 
 ```
 tableInstance.updateColumns(newColumns)
+
+tableInstance.updateColumns(newColumns, { clearColWidthCache: true })
 ```
 
 对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
@@ -1273,12 +1279,12 @@ getAllRowsHeight: () => number;
 getAllColsWidth: () => number;
 ```
 
-## getAllColsWidths(Function)
+## getColsWidths(Function)
 
 获取表格所有列的宽度列表
 
 ```
-getAllColsWidth: () => number[];
+getColsWidths: () => number[];
 ```
 
 ## setSortedIndexMap(Function)

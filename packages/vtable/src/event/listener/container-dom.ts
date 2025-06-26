@@ -705,6 +705,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
         });
       }
     }
+    stateManager.updateInteractionState(InteractionState.default);
   };
   eventManager.globalEventListeners.push({
     name: 'pointerup',

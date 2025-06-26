@@ -1,14 +1,13 @@
 <template>
   <BaseTable
+    ref="baseTableRef"
     type="list"
     :options="computedOptions"
     :records="records"
     :width="width"
     :height="height"
-    ref="baseTableRef"
     v-bind="$attrs"
-  >
-  </BaseTable>
+  />
   <slot />
 </template>
 
@@ -16,7 +15,6 @@
 import { ref, computed, defineProps, useSlots, defineExpose } from 'vue';
 import { flattenVNodes, extractListSlotOptions, mergeSlotOptions } from '../utils';
 import BaseTable from './base-table.vue';
-
 
 // 定义属性接口
 interface Props {
@@ -42,6 +40,6 @@ const computedOptions = computed(() => {
 
 // 暴露实例
 defineExpose({
-  vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null),
+  vTableInstance: computed(() => baseTableRef.value?.vTableInstance || null)
 });
 </script>

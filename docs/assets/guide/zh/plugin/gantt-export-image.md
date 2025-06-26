@@ -22,6 +22,7 @@ scale: Number(scaleSelect.value),
 backgroundColor: bgColorInput.value,
 // 导出的图片的质量
 quality: 1
+download: false // 是否下载图片
 ```
 
 ## 插件示例
@@ -341,6 +342,25 @@ const exportButton = document.createElement('button');
 exportButton.textContent = '导出甘特图';
 exportButton.style.marginLeft = '5px';
 
+// 获取 Base64 按钮
+const getBase64Button = document.createElement('button');
+getBase64Button.textContent = '获取 Base64';
+getBase64Button.style.marginLeft = '5px';
+getBase64Button.style.backgroundColor = '#e8f4ff';
+
+const base64Result = document.createElement('div');
+base64Result.style.marginTop = '10px';
+base64Result.style.fontSize = '12px';
+base64Result.style.color = '#666';
+base64Result.style.display = 'none';
+base64Result.style.padding = '5px';
+base64Result.style.backgroundColor = '#f8f8f8';
+base64Result.style.borderRadius = '3px';
+base64Result.style.maxWidth = '100%';
+base64Result.style.overflow = 'hidden';
+base64Result.style.textOverflow = 'ellipsis';
+base64Result.style.whiteSpace = 'nowrap';
+
 // 说明文本
 const infoText = document.createElement('div');
 infoText.innerHTML = '导出功能会直接捕获完整的甘特图和任务列表，即使部分内容在滚动区域外。';
@@ -356,7 +376,9 @@ exportPanel.appendChild(scaleSelect);
 exportPanel.appendChild(document.createTextNode('背景色: '));
 exportPanel.appendChild(bgColorInput);
 exportPanel.appendChild(exportButton);
+exportPanel.appendChild(getBase64Button);
 exportPanel.appendChild(infoText);
+exportPanel.appendChild(base64Result);
 
 // 创建甘特图实例
 const gantt = new VTableGantt.Gantt(ganttContainer, option);
@@ -385,6 +407,66 @@ exportButton.onclick = async () => {
     setTimeout(() => {
         exportButton.disabled = false;
         exportButton.textContent = '导出甘特图';
+    }, 2000);
+  }
+};
+
+
+getBase64Button.onclick = async () => {
+  try {
+    getBase64Button.disabled = true;
+    getBase64Button.textContent = '获取中...';
+    base64Result.style.display = 'none';
+
+    // 使用相同的导出逻辑，但设置download为false
+    const base64Data = await exportGanttPlugin.exportToImage({
+      type: 'png',
+      scale: Number(scaleSelect.value),
+      backgroundColor: bgColorInput.value,
+      quality: 1,
+      download: false // 不触发下载
+    });
+
+    // 显示结果
+    if (base64Data) {
+      const displayText = base64Data.substring(0, 64) + '...';
+      base64Result.textContent = displayText;
+      base64Result.style.display = 'block';
+      base64Result.title = base64Data; // 鼠标悬停可以看到完整数据
+      
+      // 尝试复制到剪贴板
+      try {
+        await navigator.clipboard.writeText(base64Data);
+        getBase64Button.textContent = '已复制到剪贴板';
+      } catch (clipboardError) {
+        getBase64Button.textContent = '获取成功';
+        console.warn('无法复制到剪贴板:', clipboardError);
+      }
+      
+      // 添加点击事件以查看完整数据
+      base64Result.style.cursor = 'pointer';
+    } else {
+      base64Result.textContent = '获取Base64数据失败';
+      base64Result.style.display = 'block';
+      getBase64Button.textContent = '获取失败';
+    }
+    
+    // 恢复按钮状态
+    setTimeout(() => {
+      getBase64Button.disabled = false;
+      if (getBase64Button.textContent === '获取中...' || getBase64Button.textContent === '获取失败' || getBase64Button.textContent === '已复制到剪贴板') {
+        getBase64Button.textContent = '获取 Base64';
+      }
+    }, 3000);
+  } catch (error) {
+    console.error('获取Base64失败:', error);
+    base64Result.textContent = `获取失败: ${error instanceof Error ? error.message : '未知错误'}`;
+    base64Result.style.display = 'block';
+    getBase64Button.textContent = '获取失败';
+    
+    setTimeout(() => {
+      getBase64Button.disabled = false;
+      getBase64Button.textContent = '获取 Base64';
     }, 2000);
   }
 };

@@ -16,5 +16,7 @@ export interface ITaskBarStyle {
   borderLineWidth?: number;
   /** 边框颜色 */
   borderColor?: string;
+  /** 任务条最小尺寸，当任务条计算宽度过小时，可以保证任务条可以正常展示 */
+  minSize?: number;
 }
 ```

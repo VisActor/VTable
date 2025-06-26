@@ -30,7 +30,7 @@ export class TableAnimationManager {
     this.table = table;
     this.timeline = new DefaultTimeline();
     // this.ticker = new DefaultTicker([this.timeline]);
-    this.ticker = new DefaultTicker();
+    this.ticker = new DefaultTicker(this.table.scenegraph.stage);
     this.ticker.addTimeline(this.timeline);
     const TICKER_FPS = 60;
     this.ticker.setFPS(TICKER_FPS);
