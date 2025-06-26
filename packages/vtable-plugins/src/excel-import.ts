@@ -12,7 +12,6 @@ export interface ExcelImportOptions {
   id?: string;
   headerRowCount?: number; // 指定头的层数，不指定会使用detectHeaderRowCount来自动判断，但是只有excel才有
   exportData?: boolean; // 是否导出JavaScript对象字面量格式文件
-  supportedTypes?: string[]; // 支持的文件类型
   autoTable?: boolean; // 是否自动替换表格数据
   autoColumns?: boolean; // 是否自动生成列配置
   delimiter?: string; // CSV分隔符，默认逗号
@@ -30,7 +29,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   private _tableInstance: ListTable | null = null;
   constructor(options?: ExcelImportOptions) {
     this.options = {
-      supportedTypes: ['csv', 'json', 'xlsx', 'xls', 'html'],
       autoTable: true,
       autoColumns: true,
       delimiter: ',',
@@ -64,14 +62,14 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
 
   /**
    * Tabulator风格的导入方法
-   * @param type 导入类型: "file" | "csv" | "json" | "xlsx" | "html"
-   * @param source 数据源: 文件选择器 | 字符串数据 | 对象数据
+   * @param type 导入类型: "file" | "csv" | "json" | "html"
+   * @param source 数据源: 文件选择器 | 字符串数据
    * @param options 导入选项
    * @returns Promise<ImportResult>
    */
   async import(
-    type: 'file' | 'csv' | 'json' | 'xlsx' | 'html',
-    source?: string | object | HTMLInputElement,
+    type: 'file' | 'csv' | 'json' | 'html',
+    source?: string | object,
     options?: Partial<ExcelImportOptions>
   ): Promise<ImportResult> {
     const mergedOptions = { ...this.options, ...options };
@@ -80,9 +78,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
       return this._importFromFileDialog(mergedOptions);
     }
     if (typeof source === 'string') {
-      if (type === 'xlsx') {
-        throw new Error('Excel文件不能从字符串导入，请使用文件上传');
-      }
       return this._importFromString(type as 'csv' | 'json' | 'html', source, mergedOptions);
     }
     if (Array.isArray(source) || typeof source === 'object') {
@@ -106,7 +101,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
 
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = this._buildAcceptString();
       input.style.display = 'none';
       document.body.appendChild(input);
 
@@ -213,20 +207,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     return result;
-  }
-
-  private _buildAcceptString(): string {
-    const typeMap: Record<string, string> = {
-      csv: '.csv',
-      json: '.json',
-      xlsx: '.xlsx',
-      xls: '.xls',
-      html: '.html,.htm'
-    };
-
-    return (
-      this.options.supportedTypes?.map(type => typeMap[type] || type).join(',') || '.csv,.json,.xlsx,.xls,.html,.htm'
-    );
   }
   /**
    * 根据文件类型解析文件

@@ -19,7 +19,6 @@ ExcelImportOptions {
   id?: string;
   headerRowCount?: number;
   exportData?: boolean;
-  supportedTypes?: string[];
   autoTable?: boolean;
   autoColumns?: boolean;
   delimiter?: string;
@@ -34,8 +33,8 @@ This is the import method called by our plugin
 
 ```
   async import(
-    type: 'file' | 'csv' | 'json' | 'xlsx' | 'html',
-    source?: string | object | HTMLInputElement,
+    type: 'file' | 'csv' | 'json' | 'html',
+    source?: string | object
     options?: Partial<ExcelImportOptions>
   ): Promise<ImportResult>
 ```
@@ -544,10 +543,7 @@ function createTable() {
     }
   ];
   const excelImportPlugin = new VTablePlugins.ExcelImportPlugin({
-    exportData: true,
-    supportedTypes: ['csv', 'json', 'xlsx', 'html'],
-    autoTable: true,
-    autoColumns: true
+    exportData: true
   });
   const option = {
     container: document.getElementById(CONTAINER_ID),
@@ -577,6 +573,7 @@ function addImportButton(importPlugin, tableInstance) {
 
   panelContainer.style.position = 'absolute';
   panelContainer.style.top = '10px';
+  panelContainer.style.opacity = '0.9';
   panelContainer.style.right = '10px';
   panelContainer.style.zIndex = '1000';
   buttonContainer.style.display = 'flex';

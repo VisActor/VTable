@@ -19,7 +19,6 @@ ExcelImportOptions {
   id?: string;
   headerRowCount?: number; // 指定头的层数，不指定会使用detectHeaderRowCount来自动判断，但是只有excel才有
   exportData?: boolean; // 是否导出JavaScript对象字面量格式文件，默认是false
-  supportedTypes?: string[]; // 支持的文件类型，默认是['csv', 'json', 'xlsx', 'xls', 'html']
   autoTable?: boolean; // 是否自动替换表格数据 默认是true
   autoColumns?: boolean; // 是否自动生成列配置 默认是true
   delimiter?: string; // CSV分隔符，默认逗号 
@@ -34,8 +33,8 @@ ExcelImportOptions {
 
 ```
   async import(
-    type: 'file' | 'csv' | 'json' | 'xlsx' | 'html',
-    source?: string | object | HTMLInputElement,
+    type: 'file' | 'csv' | 'json' | 'html',
+    source?: string | object
     options?: Partial<ExcelImportOptions>
   ): Promise<ImportResult>
 ```
@@ -544,10 +543,7 @@ function createTable() {
     }
   ];
   const excelImportPlugin = new VTablePlugins.ExcelImportPlugin({
-    exportData: true,
-    supportedTypes: ['csv', 'json', 'xlsx', 'html'],
-    autoTable: true,
-    autoColumns: true
+    exportData: true
   });
   const option = {
     container: document.getElementById(CONTAINER_ID),
@@ -577,6 +573,7 @@ function addImportButton(importPlugin, tableInstance) {
 
   panelContainer.style.position = 'absolute';
   panelContainer.style.top = '10px';
+  panelContainer.style.opacity = '0.9';
   panelContainer.style.right = '10px';
   panelContainer.style.zIndex = '1000';
   buttonContainer.style.display = 'flex';
