@@ -19,12 +19,17 @@ const generatePersons = count => {
       '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
   }));
 };
+const t0 = Date.now();
 const tableSeriesNumberPlugin = new TableSeriesNumber({
-  rowCount: 1000,
-  colCount: 1000,
+  rowCount: 10000,
+  colCount: 100,
   rowHeight: 30,
-  colWidth: 30
+  colWidth: 30,
+  syncRowHeightFromTable: true,
+  syncColWidthFromTable: true
 });
+const t1 = Date.now();
+console.log('tableSeriesNumberPlugin init time', t1 - t0);
 export function createTable() {
   // const input_editor = new VTable_editors.InputEditor();
   // VTable.register.editor('input-editor', input_editor);
@@ -43,10 +48,12 @@ export function createTable() {
       title: 'email',
       width: 200,
       sort: true,
-      style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
+      style() {
+        return {
+          underline: true,
+          underlineDash: [2, 0],
+          underlineOffset: 3
+        };
       }
     },
     {
@@ -118,10 +125,18 @@ export function createTable() {
   ];
   window.createTableInstance = function () {
     // window.tableInstance?.release();
-    const records = generatePersons(4000);
+    const records = generatePersons(10000);
     const option: VTable.ListTableConstructorOptions = {
+      defaultHeaderRowHeight: 60,
+      heightMode: 'autoHeight',
       records,
       columns,
+      frozenColCount: 1,
+      // frozenRowCount: 2,
+      maintainedDataCount: 60,
+      select: {
+        makeSelectCellVisible: false
+      },
       // rowSeriesNumber: {}
       // select: {
       //   outsideClickDeselect: true,

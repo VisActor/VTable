@@ -208,6 +208,14 @@ export interface TableEvents {
    * 粘贴数据事件
    */
   PASTED_DATA: 'pasted_data';
+  /**
+   * 批量计算或者更新rowHeight和colWidth前触发事件
+   */
+  BEFORE_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH: 'before_batch_update_row_height_col_width';
+  /**
+   * 批量计算或者更新rowHeight和colWidth后触发事件
+   */
+  AFTER_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH: 'after_batch_update_row_height_col_width';
 }
 /**
  * Table event types
@@ -286,5 +294,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   BUTTON_CLICK: 'button_click',
   BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image',
-  PASTED_DATA: 'pasted_data'
+  PASTED_DATA: 'pasted_data',
+  BEFORE_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH: 'before_batch_update_row_height_col_width',
+  AFTER_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH: 'after_batch_update_row_height_col_width'
 } as TableEvents;

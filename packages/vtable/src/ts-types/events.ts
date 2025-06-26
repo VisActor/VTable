@@ -268,6 +268,18 @@ export interface TableEventHandlersEventArgumentMap {
     pasteData: (string | number)[][];
     changedCellResults: boolean[][];
   };
+  before_batch_update_row_height_col_width: {
+    currentRow: number;
+    currentCol: number;
+    totalRow: number;
+    totalCol: number;
+  };
+  after_batch_update_row_height_col_width: {
+    currentRow: number;
+    currentCol: number;
+    totalRow: number;
+    totalCol: number;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -365,4 +377,6 @@ export interface TableEventHandlersReturnMap {
   button_click: void;
   before_cache_chart_image: void;
   pasted_data: void;
+  before_batch_update_row_height_col_width: void;
+  after_batch_update_row_height_col_width: void;
 }
