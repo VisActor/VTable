@@ -1279,12 +1279,12 @@ getAllRowsHeight: () => number;
 getAllColsWidth: () => number;
 ```
 
-## getAllColsWidths(Function)
+## getColsWidths(Function)
 
 获取表格所有列的宽度列表
 
 ```
-getAllColsWidth: () => number[];
+getColsWidths: () => number[];
 ```
 
 ## setSortedIndexMap(Function)
