@@ -98,7 +98,6 @@ export class RecordAggregator extends Aggregator {
       }
 
       if (record.isAggregator && this.children) {
-
         this.children = this.children.filter(item => item !== record);
       }
     }
@@ -761,9 +760,8 @@ export class AvgAggregator extends Aggregator {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator && child.type === AggregationType.AVG) {
-          this.sum += child.changedValue
-            ? child.changedValue * (child as AvgAggregator).count
-            : (child as AvgAggregator).sum;
+          const childValue = child.value();
+          this.sum += childValue * (child as AvgAggregator).count;
           this.count += (child as AvgAggregator).count;
         }
       }
@@ -861,11 +859,8 @@ export class MaxAggregator extends Aggregator {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator) {
-          if (child.changedValue) {
-            this.max = child.changedValue > this.max ? child.changedValue : this.max;
-          } else {
-            this.max = (child as MaxAggregator).max > this.max ? (child as MaxAggregator).max : this.max;
-          }
+          const childValue = child.value();
+          this.max = Math.max(this.max, childValue);
         }
       }
     } else if (this.records) {
@@ -964,11 +959,8 @@ export class MinAggregator extends Aggregator {
       for (let i = 0; i < this.children.length; i++) {
         const child = this.children[i];
         if (child.isAggregator) {
-          if (child.changedValue) {
-            this.min = child.changedValue < this.min ? child.changedValue : this.min;
-          } else {
-            this.min = (child as MinAggregator).min < this.min ? (child as MinAggregator).min : this.min;
-          }
+          const childValue = child.value();
+          this.min = Math.min(this.min, childValue);
         }
       }
     } else if (this.records) {
