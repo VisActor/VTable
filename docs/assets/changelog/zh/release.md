@@ -1,3 +1,25 @@
+# v1.19.1
+
+2025-06-20
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 修复使用 containerFit 滚动时底部边框错误问题 [#3337](https://github.com/VisActor/VTable/issues/3337)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复复制 tooltip 文本后无法复制的问题 [#3968](https://github.com/VisActor/VTable/issues/3968)
+- **@visactor/vtable**: 修复当 cellType 为 progressBar 时图标配置不生效的问题 [#4047](https://github.com/VisActor/VTable/issues/4047)
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: 更新 vrender 1.0.5 修复动画 bug
+
+
+
+[更多详情请查看 v1.19.1](https://github.com/VisActor/VTable/releases/tag/v1.19.1)
+
 # v1.19.0
 
 2025-06-16

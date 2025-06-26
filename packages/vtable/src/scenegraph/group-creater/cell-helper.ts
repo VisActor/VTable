@@ -328,7 +328,7 @@ export function createCell(
       padding,
       textAlign,
       textBaseline,
-      false,
+      mayHaveIcon,
       customElementsGroup,
       renderDefault,
       cellTheme,
