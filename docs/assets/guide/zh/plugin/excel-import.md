@@ -8,7 +8,7 @@
 
 当需要使用这个插件的时候，请调用`ExcelImportPlugin`中的`import`接口来实现文件导入
 
-但是由于目前实现无法处理csv、json、html多层表头的导入，只有excel才支持多层表头的导入
+目前这个插件不支持透视表的导入
 
 ## 插件配置
 
@@ -30,10 +30,31 @@ ExcelImportOptions {
 }
 ```
 
+这是我们这个插件调用的导入方法
+
+```
+  async import(
+    type: 'file' | 'csv' | 'json' | 'xlsx' | 'html',
+    source?: string | object | HTMLInputElement,
+    options?: Partial<ExcelImportOptions>
+  ): Promise<ImportResult>
+```
+
+因为我们调用的`import`方法最多接受三个参数，也就是说当我们`import`导入文件的时候，需要定义`delimiter`的时候，我们就需要传入第二个参数来当`source`，然后再传入我们的`option`，在这个`option`去定义我们的`delimiter`，当然我们也可以在一开始`ExcelImportPlugin`初始化的时候传入我们需要的`delimiter`
+
+```
+      await importPlugin.import('file', undefined, {
+        delimiter: ','
+      });
+```
+
 ## 插件示例
 
 初始化插件对象并且添加到配置中plugins中
 ```
+  const excelImportPlugin = new ExcelImportPlugin({
+    exportData: true
+  });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
@@ -71,11 +92,22 @@ function createTable() {
 }
 
 function addImportButton(importPlugin, tableInstance) {
+  const panelContainer = document.createElement('div');
   const buttonContainer = document.createElement('div');
-  buttonContainer.style.position = 'absolute';
-  buttonContainer.style.top = '10px';
-  buttonContainer.style.right = '10px';
-  buttonContainer.style.zIndex = '1000';
+  const textareaContainer = document.createElement('div');
+  textareaContainer.style.marginTop = '8px';
+  const dataTextArea = document.createElement('textarea');
+  dataTextArea.rows = 5;
+  dataTextArea.cols = 50;
+  dataTextArea.placeholder = '在此粘贴JSON或CSV数据(格式需正确)';
+  dataTextArea.style.width = '100%';
+  dataTextArea.style.boxSizing = 'border-box';
+  dataTextArea.style.padding = '8px';
+
+  panelContainer.style.position = 'absolute';
+  panelContainer.style.top = '10px';
+  panelContainer.style.right = '10px';
+  panelContainer.style.zIndex = '1000';
   buttonContainer.style.display = 'flex';
   buttonContainer.style.gap = '8px';
   buttonContainer.style.flexWrap = 'wrap';
@@ -96,12 +128,36 @@ function addImportButton(importPlugin, tableInstance) {
   const jsonButton = document.createElement('button');
   jsonButton.textContent = '导入JSON数据';
   jsonButton.addEventListener('click', async () => {
-    const jsonData = [
-      { name: '张三', age: 25, department: '技术部', salary: 8000 },
-      { name: '李四', age: 30, department: '销售部', salary: 6000 },
-      { name: '王五', age: 28, department: '市场部', salary: 7000 },
-      { name: '赵六', age: 32, department: '人事部', salary: 6500 }
-    ];
+    let jsonData;
+    if (dataTextArea.value.trim()) {
+      try {
+        jsonData = JSON.parse(dataTextArea.value.trim());
+      } catch (error) {
+        console.error('JSON格式错误');
+        return;
+      }
+    } else {
+      jsonData = [
+        {
+          "col0": "赵六",
+          "col1": "32",
+          "col2": "市场部",
+          "col3": "7000"
+        },
+        {
+          "col0": "钱七",
+          "col1": "26",
+          "col2": "技术部",
+          "col3": "8500"
+        },
+        {
+          "col0": "孙八",
+          "col1": "29",
+          "col2": "人事部",
+          "col3": "6500"
+        }
+      ];
+    }
     try {
       const result = await importPlugin.import('json', jsonData);
       console.log('JSON导入成功:', result);
@@ -114,10 +170,12 @@ function addImportButton(importPlugin, tableInstance) {
   const delimiterButton = document.createElement('button');
   delimiterButton.textContent = '分号分隔CSV';
   delimiterButton.addEventListener('click', async () => {
-    const csvData = `姓名;年龄;部门;工资
+    const csvData =
+      dataTextArea.value.trim() ||
+      `姓名;年龄;部门;工资
 张三;25;技术部;8000
 李四;30;销售部;6000
-王五;28;市场部;7000`;
+王五;28;技术部;9000`;
     try {
       const result = await importPlugin.import('csv', csvData, {
         delimiter: ';'
@@ -129,13 +187,16 @@ function addImportButton(importPlugin, tableInstance) {
     }
   });
 
+  panelContainer.appendChild(buttonContainer);
   buttonContainer.appendChild(importButton);
   buttonContainer.appendChild(jsonButton);
   buttonContainer.appendChild(delimiterButton);
+  textareaContainer.appendChild(dataTextArea);
+  panelContainer.appendChild(textareaContainer);
   
   const tableContainer = document.getElementById(CONTAINER_ID);
   if (tableContainer) {
-    tableContainer.appendChild(buttonContainer);
+    tableContainer.appendChild(panelContainer);
   }
 }
 

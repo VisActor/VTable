@@ -186,31 +186,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 从input元素导入
-   */
-  private async _importFromInput(input: HTMLInputElement, options: ExcelImportOptions): Promise<ImportResult> {
-    if (!input.files || input.files.length === 0) {
-      throw new Error('未选择文件');
-    }
-
-    const file = input.files[0];
-    const result = await this._parseFile(file, options);
-
-    // 自动更新表格
-    if (options.autoTable && this._tableInstance) {
-      if (options.autoColumns) {
-        this._tableInstance.updateOption({
-          columns: result.columns,
-          plugins: [this]
-        });
-      }
-      this._tableInstance.setRecords(result.records);
-    }
-
-    return result;
-  }
-
-  /**
    * 从数据对象导入
    */
   private async _importFromData(

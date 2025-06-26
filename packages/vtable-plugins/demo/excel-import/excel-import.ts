@@ -3,16 +3,48 @@ import { ExcelImportPlugin } from '../../src/excel-import';
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  const records = [];
+  const records = [
+    {
+      col0: '张三',
+      col1: '25',
+      col2: '技术部',
+      col3: '8000'
+    },
+    {
+      col0: '李四',
+      col1: '30',
+      col2: '销售部',
+      col3: '6000'
+    }
+  ];
   const columns: VTable.ColumnsDefine = [
-    { field: 'col0', title: '示例列1', width: 200 },
-    { field: 'col1', title: '示例列2', width: 200 }
+    {
+      field: 'col0',
+      title: '姓名',
+      cellType: 'text',
+      headerType: 'text'
+    },
+    {
+      field: 'col1',
+      title: '年龄',
+      cellType: 'text',
+      headerType: 'text'
+    },
+    {
+      field: 'col2',
+      title: '部门',
+      cellType: 'text',
+      headerType: 'text'
+    },
+    {
+      field: 'col3',
+      title: '工资',
+      cellType: 'text',
+      headerType: 'text'
+    }
   ];
   const excelImportPlugin = new ExcelImportPlugin({
-    exportData: true,
-    supportedTypes: ['csv', 'json', 'xlsx', 'html'],
-    autoTable: true,
-    autoColumns: true
+    exportData: true
   });
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
@@ -28,11 +60,22 @@ export function createTable() {
 }
 
 function addImportButton(importPlugin: ExcelImportPlugin) {
+  const panelContainer = document.createElement('div');
   const buttonContainer = document.createElement('div');
-  buttonContainer.style.position = 'absolute';
-  buttonContainer.style.top = '10px';
-  buttonContainer.style.right = '10px';
-  buttonContainer.style.zIndex = '1000';
+  const textareaContainer = document.createElement('div');
+  textareaContainer.style.marginTop = '8px';
+  const dataTextArea = document.createElement('textarea');
+  dataTextArea.rows = 5;
+  dataTextArea.cols = 50;
+  dataTextArea.placeholder = '在此粘贴JSON或CSV数据(格式需正确)';
+  dataTextArea.style.width = '100%';
+  dataTextArea.style.boxSizing = 'border-box';
+  dataTextArea.style.padding = '8px';
+
+  panelContainer.style.position = 'absolute';
+  panelContainer.style.top = '10px';
+  panelContainer.style.right = '10px';
+  panelContainer.style.zIndex = '1000';
   buttonContainer.style.display = 'flex';
   buttonContainer.style.gap = '8px';
   buttonContainer.style.flexWrap = 'wrap';
@@ -53,11 +96,36 @@ function addImportButton(importPlugin: ExcelImportPlugin) {
   const jsonButton = document.createElement('button');
   jsonButton.textContent = '导入JSON';
   jsonButton.addEventListener('click', async () => {
-    const jsonData = [
-      { name: '赵六', age: 32, department: '市场部', salary: 7000 },
-      { name: '钱七', age: 26, department: '技术部', salary: 8500 },
-      { name: '孙八', age: 29, department: '人事部', salary: 6500 }
-    ];
+    let jsonData: string | object;
+    if (dataTextArea.value.trim()) {
+      try {
+        jsonData = JSON.parse(dataTextArea.value.trim());
+      } catch (error) {
+        console.error('JSON格式错误');
+        return;
+      }
+    } else {
+      jsonData = [
+        {
+          "col0": "赵六",
+          "col1": "32",
+          "col2": "市场部",
+          "col3": "7000"
+        },
+        {
+          "col0": "钱七",
+          "col1": "26",
+          "col2": "技术部",
+          "col3": "8500"
+        },
+        {
+          "col0": "孙八",
+          "col1": "29",
+          "col2": "人事部",
+          "col3": "6500"
+        }
+      ];
+    }
     try {
       await importPlugin.import('json', jsonData);
     } catch (error) {
@@ -70,7 +138,9 @@ function addImportButton(importPlugin: ExcelImportPlugin) {
   delimiterButton.textContent = '分号分隔CSV';
 
   delimiterButton.addEventListener('click', async () => {
-    const csvData = `姓名;年龄;部门;工资
+    const csvData =
+      dataTextArea.value.trim() ||
+      `姓名;年龄;部门;工资
 张三;25;技术部;8000
 李四;30;销售部;6000
 王五;28;技术部;9000`;
@@ -83,12 +153,15 @@ function addImportButton(importPlugin: ExcelImportPlugin) {
       alert('自定义分隔符导入失败: ' + (error as Error).message);
     }
   });
+  panelContainer.appendChild(buttonContainer);
   buttonContainer.appendChild(importButton);
   buttonContainer.appendChild(jsonButton);
   buttonContainer.appendChild(delimiterButton);
+  textareaContainer.appendChild(dataTextArea);
+  panelContainer.appendChild(textareaContainer);
   const tableContainer = document.getElementById(CONTAINER_ID);
   if (tableContainer && tableContainer.parentElement) {
-    tableContainer.appendChild(buttonContainer);
+    tableContainer.appendChild(panelContainer);
   }
 }
 
