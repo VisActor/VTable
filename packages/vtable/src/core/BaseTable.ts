@@ -186,6 +186,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   canvasWidth?: number;
   canvasHeight?: number;
+  translateX?: number;
+  translateY?: number;
 
   _vDataSet?: DataSet;
   scenegraph: Scenegraph;
@@ -308,6 +310,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
+      translateX,
+      translateY,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight,
@@ -354,6 +358,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
+    this.translateX = translateX ?? 0;
+    this.translateY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
 
@@ -641,6 +647,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.canvasHeight = canvasHeight;
     this.options.canvasHeight = canvasHeight;
     this.options.canvasWidth = canvasWidth;
+    this.resize();
+  }
+  setTranslate(translateX: number, translateY: number) {
+    this.translateX = translateX;
+    this.translateY = translateY;
+    this.options.translateX = translateX;
+    this.options.translateY = translateY;
     this.resize();
   }
   resize() {
@@ -1093,8 +1106,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
-    this.tableX = 0;
-    this.tableY = 0;
+    this.tableX = this.translateX;
+    this.tableY = this.translateY;
 
     if (this.options.canvas && this.options.viewBox) {
       widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
@@ -1189,30 +1202,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
       if (this.theme.frameStyle?.innerBorder) {
-        this.tableX = 0;
-        this.tableY = 0;
-        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0);
-        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0);
+        this.tableX += this.translateX;
+        this.tableY += this.translateY;
+        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.translateX;
+        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.translateY;
       } else {
-        this.tableX = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-        this.tableY = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+        this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
+        this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
         this.tableNoFrameWidth =
-          width - ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) - ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+          width -
+          ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) -
+          ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0)) -
+          this.translateX;
         this.tableNoFrameHeight =
-          height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+          height -
+          ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) -
+          ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0)) -
+          this.translateY;
       }
     }
 
     this._clearColRangeWidthsMap();
     this._clearRowRangeHeightsMap();
-  }
-  setTableX(x: number) {
-    this.tableX = x;
-    this.scenegraph.tableGroup.setAttributes({ x });
-  }
-  setTableY(y: number) {
-    this.tableY = y;
-    this.scenegraph.tableGroup.setAttributes({ y });
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
@@ -2532,6 +2543,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       renderChartAsyncBatchCount,
       canvasWidth,
       canvasHeight,
+      translateX = 0,
+      translateY = 0,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight
@@ -2578,6 +2591,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     this.customRender = customRender;
+    this.translateX = translateX ?? 0;
+    this.translateY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
     // 更新protectedSpace
@@ -3004,21 +3019,39 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.setScrollTop(scrollTop);
     this.setScrollLeft(scrollLeft);
   }
-  selectRow(rowIndex: number) {
-    this.selectCells([
-      {
+  selectRow(rowIndex: number, isCtrl?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    if (isCtrl) {
+      currentSelectRanges.push({
         start: { col: 0, row: rowIndex },
         end: { col: this.colCount - 1, row: rowIndex }
-      }
-    ]);
+      });
+      this.selectCells(currentSelectRanges);
+    } else {
+      this.selectCells([
+        {
+          start: { col: 0, row: rowIndex },
+          end: { col: this.colCount - 1, row: rowIndex }
+        }
+      ]);
+    }
   }
-  selectCol(colIndex: number) {
-    this.selectCells([
-      {
+  selectCol(colIndex: number, isCtrl?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    if (isCtrl) {
+      currentSelectRanges.push({
         start: { col: colIndex, row: 0 },
         end: { col: colIndex, row: this.rowCount - 1 }
-      }
-    ]);
+      });
+      this.selectCells(currentSelectRanges);
+    } else {
+      this.selectCells([
+        {
+          start: { col: colIndex, row: 0 },
+          end: { col: colIndex, row: this.rowCount - 1 }
+        }
+      ]);
+    }
   }
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;

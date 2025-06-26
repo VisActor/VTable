@@ -517,6 +517,10 @@ export interface BaseTableConstructorOptions {
   canvasHeight?: number | 'auto';
   maxCanvasWidth?: number;
   maxCanvasHeight?: number;
+  /** 表格的x偏移量, 内部适配的表格边框或者title等组件的占位不算在内 */
+  translateX?: number;
+  /** 表格的y偏移量, 内部适配的表格边框或者title等组件的占位不算在内 */
+  translateY?: number;
 
   // #endregion
   /**
