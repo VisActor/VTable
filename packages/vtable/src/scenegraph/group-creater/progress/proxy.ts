@@ -16,12 +16,17 @@ import { updateAutoColumn } from './update-position/update-auto-column';
 import { getDefaultHeight, getDefaultWidth } from './default-width-height';
 import { handleTextStick } from '../../stick-text';
 import type { ColumnInfo, RowInfo } from '../../../ts-types';
+import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
 
 export class SceneProxy {
   table: BaseTableAPI;
   isRelease: boolean = false;
   mode: 'column' | 'row' | 'pivot' = 'column';
   isProgressing: boolean;
+  isBatchUpdateRowHeightColWidth: boolean = false;
+  triggerAfterBatchUpdateRowHeightColWidthTimer: any = null;
+  // 批量更新状态管理
+  hasBatchUpdateStarted: boolean = false;
 
   rowLimit = 200;
   currentRow = 0; // 目前渐进生成的row number
@@ -252,14 +257,24 @@ export class SceneProxy {
       return;
     }
     this.isProgressing = true;
+
+    // 开始批量更新，触发BEFORE事件（只在第一次触发）
+    if (!this.hasBatchUpdateStarted) {
+      this.hasBatchUpdateStarted = true;
+      this.table.fireListeners(TABLE_EVENT_TYPE.BEFORE_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, {
+        currentRow: this.currentRow,
+        currentCol: this.currentCol,
+        totalRow: this.table.rowCount,
+        totalCol: this.table.colCount
+      });
+    }
+
     return new Promise<void>((resolve, reject) => {
       setTimeout(async () => {
         this.isProgressing = false;
         if (this.isRelease) {
           return;
         }
-        // console.log('progress col', this.colUpdatePos, this.colEnd, this.currentCol, this.totalCol);
-        // console.log('progress row', this.rowUpdatePos, this.rowEnd, this.currentRow, this.totalRow);
         // console.log('before: createRow', table.scenegraph.bodyGroup.lastChild.attribute);
         // if (this.isSkipProgress) {
         //   await this.progress();
@@ -284,6 +299,29 @@ export class SceneProxy {
         }
         handleTextStick(this.table);
         this.table.scenegraph.updateNextFrame();
+
+        // 批量更新结束，节流触发AFTER事件
+        // this.isBatchUpdateRowHeightColWidth = true;
+
+        // // 清除之前的定时器
+        // if (this.triggerAfterBatchUpdateRowHeightColWidthTimer) {
+        //   clearTimeout(this.triggerAfterBatchUpdateRowHeightColWidthTimer);
+        // }
+
+        // // 设置节流定时器，确保AFTER事件在批量更新真正结束后触发
+        // this.triggerAfterBatchUpdateRowHeightColWidthTimer = setTimeout(() => {
+        //   this.isBatchUpdateRowHeightColWidth = false;
+        //   this.hasBatchUpdateStarted = false; // 重置状态，为下次批量更新做准备
+        //   this.triggerAfterBatchUpdateRowHeightColWidthTimer = null;
+
+        this.table.fireListeners(TABLE_EVENT_TYPE.AFTER_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, {
+          currentRow: this.currentRow,
+          currentCol: this.currentCol,
+          totalRow: this.table.rowCount,
+          totalCol: this.table.colCount
+        });
+        // }, 0);
+
         resolve();
       }, 16);
     });
@@ -849,6 +887,47 @@ export class SceneProxy {
       this.deltaX = distColXOffset - currentColXOffset;
     }
   }
+
+  // /**
+  //  * 批量更新事件触发方法
+  //  * @param isBefore 是否是开始批量更新
+  //  */
+  // triggerBatchUpdateRowHeightColWidth(isBefore = false) {
+  //   if (isBefore) {
+  //     // 开始批量更新，触发BEFORE事件（只在第一次触发时）
+  //     if (!this.hasBatchUpdateStarted) {
+  //       this.hasBatchUpdateStarted = true;
+  //       this.table.fireListeners(TABLE_EVENT_TYPE.BEFORE_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, {
+  //         currentRow: this.currentRow,
+  //         currentCol: this.currentCol,
+  //         totalRow: this.table.rowCount,
+  //         totalCol: this.table.colCount
+  //       });
+  //     }
+  //   } else {
+  //     // 结束批量更新，节流触发AFTER事件
+  //     this.isBatchUpdateRowHeightColWidth = true;
+
+  //     // 清除之前的定时器
+  //     if (this.triggerAfterBatchUpdateRowHeightColWidthTimer) {
+  //       clearTimeout(this.triggerAfterBatchUpdateRowHeightColWidthTimer);
+  //     }
+
+  //     // 设置节流定时器，确保AFTER事件在批量更新真正结束后触发
+  //     this.triggerAfterBatchUpdateRowHeightColWidthTimer = setTimeout(() => {
+  //       this.isBatchUpdateRowHeightColWidth = false;
+  //       this.hasBatchUpdateStarted = false; // 重置状态，为下次批量更新做准备
+  //       this.triggerAfterBatchUpdateRowHeightColWidthTimer = null;
+
+  //       this.table.fireListeners(TABLE_EVENT_TYPE.AFTER_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, {
+  //         currentRow: this.currentRow,
+  //         currentCol: this.currentCol,
+  //         totalRow: this.table.rowCount,
+  //         totalCol: this.table.colCount
+  //       });
+  //     }, 200);
+  //   }
+  // }
 
   release() {
     this.isRelease = true;
