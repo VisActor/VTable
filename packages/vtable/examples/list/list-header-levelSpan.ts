@@ -97,6 +97,7 @@ export function createTable() {
           // title: 'field1',
           caption: 'field1',
           // width: 'auto',
+          // hideColumnsSubHeader: true,
           columns: [
             {
               field: 'field11',
@@ -232,6 +233,7 @@ export function createTable() {
   //     headerStyle: {
   //       textAlign: 'center'
   //     },
+  //     hideColumnsSubHeader: true,
   //     columns: [
   //       {
   //         field: 'name1',

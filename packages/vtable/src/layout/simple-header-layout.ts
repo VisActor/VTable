@@ -1001,7 +1001,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     lastLevelSpan?: number
   ): HeaderData[] {
     const results: HeaderData[] = [];
-    const rowCells = this._newRow(row);
+    const rowCells = this._newRow(row, hideColumnsSubHeader); // !hideColumnsSubHeader ? this._headerCellIds[row] || this._newRow(row) : [];
     column.forEach((hd: ColumnDefine) => {
       const col = this._columns.length;
       const id = this.seqId++;
@@ -1021,20 +1021,19 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         columnWidthComputeMode: hd.columnWidthComputeMode
         // iconPositionList:[]
       };
-
       results[id] = cell;
       //处理levelSpan 跨行处理
       let maxRow = row;
       if (hd.levelSpan) {
         maxRow = Math.min(row + hd.levelSpan - 1, this._columnMaxDepth - 1);
-      }
-      // 填充当前列的 id 到所有跨行中
-      for (let r = row; r <= maxRow; r++) {
-        if (!this._headerCellIds[r]) {
-          this._headerCellIds[r] = [];
-        }
-        if (this._headerCellIds[r][col] === undefined) {
-          this._headerCellIds[r][col] = id;
+        // 填充当前列的 id 到所有跨行中
+        for (let r = row; r <= maxRow; r++) {
+          if (!this._headerCellIds[r]) {
+            this._headerCellIds[r] = [];
+          }
+          if (this._headerCellIds[r][col] === undefined) {
+            this._headerCellIds[r][col] = id;
+          }
         }
       }
       // 如果有父节点，并且当前列的值没有被设置，则填充父节点的 id
@@ -1109,7 +1108,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     return results;
   }
 
-  private _newRow(row: number): number[] {
+  private _newRow(row: number, hideColumnsSubHeader = false): number[] {
     //如果当前行已经有数组对象 将上一行的id内容补全到当前行上
     if (this._headerCellIds[row]) {
       const prev = this._headerCellIds[row - 1];
@@ -1120,7 +1119,11 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       }
       return this._headerCellIds[row];
     }
-
+    // 隐藏子标题的情况 吐出一个新的数组
+    if (hideColumnsSubHeader) {
+      return [];
+    }
+    // 其他情况 不隐藏子标题 同步上一行的id
     const newRow: number[] = (this._headerCellIds[row] = []);
     if (!this._columns.length) {
       return newRow;
