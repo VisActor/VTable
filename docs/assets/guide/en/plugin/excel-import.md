@@ -1,68 +1,148 @@
-# Excel import plugin
+# Data Import Plugin
 
-## Feature Introduction
+## Function Introduction
 
-The `ExcelImportPlugin` is a plugin developed to enable VTable to support the import of Excel files, and it also supports the import of CSV, JSON, XLSX, and HTML files.
+ExcelImportPlugin is an import plugin designed to provide users with an efficient solution for importing multiple formats of external data files. This plugin supports data import in Excel, CSV, JSON and HTML formats.
 
-This plugin takes effect at the beginning of `VTable.TABLE EVENT TYPE.INITIALIZED`
+### Supported data formats
+- Excel File
+- CSV File (Supporting Custom Delimiters)
+- JSON Object
+- HTML Data
 
-When it is necessary to use this plugin, please call the `import` interface in `ExcelImportPlugin` to achieve file import
+### Service restrictions
+The current version does not support the import function of PivotTable data.
 
-Currently, this plugin does not support the import of pivot tables.
+## Plugin configuration
 
-## Plugin Configuration
-
-When calling the constructor `ExcelImportPlugin`, the configured `ExcelImportOptions` need to be passed in.
+### ExcelImportOptions
+The plugin constructor accepts a configuration object, which must implement the `ExcelImportOptions` interface. The following is a complete description of the configuration parameters:
 
 ```
-ExcelImportOptions {
-  id?: string;
-  headerRowCount?: number;
-  exportData?: boolean;
-  autoTable?: boolean;
-  autoColumns?: boolean;
-  delimiter?: string;
-  encoding?: string;
-  batchSize?: number;
-  enableBatchProcessing?: boolean;
-  asyncDelay?: number;
+interface ExcelImportOptions {
+  id?: string;                        // The unique identifier of the plugin instance, which by default will use excel-import-plugin-${Date.now()};
+  headerRowCount?: number;             // The number of header rows in an Excel file is only valid for Excel format. If not specified, it will be automatically detected.
+  exportData?: boolean;                // Whether to export as JavaScript object format. The default is false.
+  autoTable?: boolean;                 // Whether to automatically replace the table data. The default setting is true.
+  autoColumns?: boolean;               // Whether to automatically generate column configuration, default is true
+  delimiter?: string;                  // CSV file delimiter, default is the English comma
+  batchSize?: number;                  // Batch processing data row count, default value is 1000
+  enableBatchProcessing?: boolean;     // Whether to enable batch processing mode. The default is true.
+  asyncDelay?: number;                 // Asynchronous processing delay time (in milliseconds), default value is 5
 }
 ```
 
-This is the import method called by our plugin
+| name of parameter | type | default | explain |
+|---------|------|--------|------|
+| `id` | string | excel-import-plugin-${Date.now()} | Plugin instance identifier, used to distinguish multiple plugin instances|
+| `headerRowCount` | number | - | Specify the number of header rows in the Excel file. This setting is only applicable to Excel files. |
+| `exportData` | boolean | false | Control whether to export the data in JavaScript object format |
+| `autoTable` | boolean | true | Control whether to automatically replace the existing data in the table |
+| `autoColumns` | boolean | true | Control whether columns are automatically configured based on the imported data |
+| `delimiter` | string | ',' | The field delimiter of a CSV file|
+| `batchSize` | number | 1000 | The number of data rows processed in each batch under batch processing mode |
+| `enableBatchProcessing` | boolean | true | Should the batch processing mode be enabled to optimize memory usage? |
+| `asyncDelay` | number | 5 | Delay time (in milliseconds) during the asynchronous processing process |
+
+### import function
+
+The core method of the plugin is responsible for performing the data import operation.
+
+```ts
+async import(
+  type: 'file' | 'csv' | 'json' | 'html',
+  source?: string | object,
+  options?: Partial<ExcelImportOptions>
+): Promise<ImportResult>
+```
+
+**type（necessary）**
+- type：`'file' | 'csv' | 'json' | 'html'`
+- explain：Specify the type of imported data
+  - `'file'`：Import files through the file selector
+  - `'csv'`：Import string data in CSV format
+  - `'json'`：Import data objects in JSON format
+  - `'html'`：Import data in HTML table format
+
+**source（optional）**
+- type：`string | object`
+- explain：Data source content
+  - When `type` is set to `'file'`, this parameter is invalid.
+  - When `type` is either `'csv'`, `'html'`, or `'json'`, a string or object in the corresponding format should be passed in.
+
+**options（optional）**
+- type：`Partial<ExcelImportOptions>`
+- explain：The runtime configuration parameters will temporarily override the configuration set during the plugin initialization.
+
+## operating guide
+
+### Plugin initialization
+
+First, a plugin instance needs to be created and added to the plugin configuration of the VTable:
+
+```ts
+//初始化插件
+const excelImportPlugin = new ExcelImportPlugin({
+  exportData: true
+});
+const option: VTable.ListTableConstructorOptions = {
+  container: document.getElementById(CONTAINER_ID),
+  records,
+  columns,
+  theme: VTable.themes.DEFAULT,
+  select: { disableSelect: false },
+  plugins: [excelImportPlugin]
+};
+```
+
+### Usage example
+
+#### File import
+
+Import local files through the file selector:
+
+```ts
+await excelImportPlugin.import('file');
+
+await excelImportPlugin.import('file', undefined, {
+  exportData: true,
+  delimiter: ';' 
+});
+```
+
+#### CSV data import
+
+Import string data in CSV format:
+
+```ts
+const csvData1 = `姓名,年龄,部门
+张三,25,技术部
+李四,30,销售部
+王五,28,市场部`;
+
+await excelImportPlugin.import('csv', csvData1);
+
+const csvData2 = `姓名;年龄;部门
+张三;25;技术部
+李四;30;销售部`;
+
+await excelImportPlugin.import('csv', csvData2, {
+  delimiter: ';'
+});
 
 ```
-  async import(
-    type: 'file' | 'csv' | 'json' | 'html',
-    source?: string | object
-    options?: Partial<ExcelImportOptions>
-  ): Promise<ImportResult>
+
+#### Disable automatic table updates
+
+Only obtain data without automatically updating the table:
+
+```javascript
+const result = await excelImportPlugin.import('json', jsonData, {
+  autoTable: false,
+});
 ```
 
-Because the `import` method we call can accept at most three parameters, that is to say, when we `import` a file and need to define the `delimiter`, we need to pass the second parameter as the `source`, and then pass our `option`, where we define the `delimiter` in this `option`. Of course, we can also pass the `delimiter` we need when initializing the `ExcelImportPlugin` at the very beginning.
-
-```
-      await importPlugin.import('file', undefined, {
-        delimiter: ','
-      });
-```
-
-## Plugin example
-
-Initialize the plugin object and add it to the "plugins" section of the configuration.
-```
-  const excelImportPlugin = new ExcelImportPlugin({
-    exportData: true
-  });
-  const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(CONTAINER_ID),
-    records,
-    columns,
-    theme: VTable.themes.DEFAULT,
-    select: { disableSelect: false },
-    plugins: [excelImportPlugin]
-  };
-```
+## 演示代码
 
 ```javascript livedemo template=vtable
 function createTable() {
@@ -670,7 +750,6 @@ function addImportButton(importPlugin, tableInstance) {
 
 createTable();
 ```
-
 # This document was contributed by:
 
 [Abstract chips](https://github.com/Violet2314)

@@ -15,7 +15,6 @@ export interface ExcelImportOptions {
   autoTable?: boolean; // 是否自动替换表格数据
   autoColumns?: boolean; // 是否自动生成列配置
   delimiter?: string; // CSV分隔符，默认逗号
-  encoding?: string; // 文件编码，默认UTF-8
   batchSize?: number; // 批处理大小，默认1000行
   enableBatchProcessing?: boolean; // 是否启用分批处理，默认true
   asyncDelay?: number; // 异步处理延迟时间(ms)，默认5ms
@@ -32,7 +31,6 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
       autoTable: true,
       autoColumns: true,
       delimiter: ',',
-      encoding: 'utf-8',
       exportData: false,
       batchSize: 1000,
       enableBatchProcessing: true,
