@@ -2239,6 +2239,71 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   setLoadingHierarchyState(col: number, row: number) {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
+
+  expandAllForRowTree() {
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForRowTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        originData: this.internalProps.layoutMap.rowDimensionTree.tree
+      });
+    }
+  }
+
+  collapseAllForRowTree() {
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForRowTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        originData: this.internalProps.layoutMap.rowDimensionTree.tree
+      });
+    }
+  }
+
+  expandAllForColumnTree() {
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      console.log('%c[API] expandAllForColumnTree called.', 'color: green; font-weight: bold;');
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForColumnTree();
+      this.renderWithRecreateCells();
+      const eventPayload = {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        originData: this.internalProps.layoutMap.columnDimensionTree.tree
+      };
+      console.log('[API] Firing TREE_HIERARCHY_STATE_CHANGE with payload:', eventPayload);
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, eventPayload);
+      console.log('%c[API] expandAllForColumnTree finished.', 'color: green; font-weight: bold;');
+    }
+  }
+
+  collapseAllForColumnTree() {
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      console.log('%c[API] collapseAllForColumnTree called.', 'color: green; font-weight: bold;');
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForColumnTree();
+      this.renderWithRecreateCells();
+      const eventPayload = {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        originData: this.internalProps.layoutMap.columnDimensionTree.tree
+      };
+      console.log('[API] Firing TREE_HIERARCHY_STATE_CHANGE with payload:', eventPayload);
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, eventPayload);
+      console.log('%c[API] collapseAllForColumnTree finished.', 'color: green; font-weight: bold;');
+    }
+  }
+
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
     this.editorManager.release();

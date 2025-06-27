@@ -26,7 +26,7 @@ interface ITreeLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
   // // title: string;
-  // indicatorKey?: string;
+  // // indicatorKey?: string;
   value: string;
   children: ITreeLayoutHeadNode[] | undefined;
   columns?: any; //兼容ListTable情况 simple-header-layout中增加了columnTree
@@ -382,6 +382,66 @@ export class DimensionTree {
     const children = cloneDeep(this.tree.children);
     clearNode(children);
     return children;
+  }
+
+  /**
+   * 就地更新所有节点的状态并重新计算布局相关元数据（size, startIndex, level）。
+   * 该方法专门为“全部展开/折叠”功能设计，以避免调用reset方法带来的初始化开销。
+   * @param state 要强制设置的目标状态 (expand | collapse)
+   */
+  updateAllNodesState(state: HierarchyState): void {
+    this.totalLevel = 0;
+    this.expandedMaxLevel = 0;
+    // 第一步：计算各节点的hierarchyState和size
+    this._updateNodeStateAndCalcLayout(this.tree, state, -1);
+
+    // 第二步：使用setTreeNode重新计算所有节点的startIndex和startInTotal
+    // 确保索引计算与单个节点展开/折叠时的逻辑保持一致
+    this.setTreeNode(this.tree, 0, this.tree);
+  }
+
+  /**
+   * 递归辅助函数，用于遍历树、更新节点状态并计算布局。
+   * @param node 当前节点
+   * @param hierarchyState 当前节点的状态
+   * @param level 当前节点的层级
+   * @returns 返回当前节点及其可见子孙节点的总大小
+   */
+  private _updateNodeStateAndCalcLayout(node: ITreeLayoutHeadNode, hierarchyState: HierarchyState, level: number) {
+    console.log(`%c[data] Processing node: ${node.value} at level ${level}`, 'color: green;');
+    node.level = level;
+    this.totalLevel = Math.max(this.totalLevel, level + 1);
+
+    // 1. Set node's state. If it has children, apply the target state, otherwise it's a leaf.
+    if (node.children && node.children.length > 0) {
+      node.hierarchyState = hierarchyState;
+    } else {
+      node.hierarchyState = HierarchyState.none;
+    }
+    console.log(`%c[data]  - Set hierarchyState to: ${node.hierarchyState}`, 'color: green;');
+
+    // 2. If the node is expanded, update expandedMaxLevel and process its children.
+    if (node.hierarchyState === HierarchyState.expand) {
+      this.expandedMaxLevel = Math.max(this.expandedMaxLevel, level + 1);
+
+      let childrenSize = 0;
+
+      if (node.children && node.children.length > 0) {
+        node.children.forEach(child => {
+          // 递归处理子节点
+          this._updateNodeStateAndCalcLayout(child, hierarchyState, level + 1);
+
+          // 累加子节点大小
+          childrenSize += child.size;
+        });
+      }
+
+      // Parent's size is the sum of its children's sizes PLUS 1 for itself
+      node.size = childrenSize === 0 ? 1 : childrenSize + 1;
+    } else {
+      // 3. If the node is collapsed or a leaf, its size is always 1.
+      node.size = 1;
+    }
   }
 }
 

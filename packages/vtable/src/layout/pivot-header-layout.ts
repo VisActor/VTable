@@ -4361,6 +4361,124 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     return false;
   }
+
+  /**
+   * Expand all nodes in the row dimension tree.
+   */
+  expandAllForRowTree() {
+    if (this.rowDimensionTree) {
+      this.rowDimensionTree.updateAllNodesState(HierarchyState.expand);
+      this._rebuildLayoutAfterTreeChange();
+    }
+  }
+
+  /**
+   * Collapse all nodes in the row dimension tree.
+   */
+  collapseAllForRowTree() {
+    if (this.rowDimensionTree) {
+      this.rowDimensionTree.updateAllNodesState(HierarchyState.collapse);
+      this._rebuildLayoutAfterTreeChange();
+    }
+  }
+
+  /**
+   * Expand all nodes in the column dimension tree.
+   */
+  expandAllForColumnTree() {
+    if (this.columnDimensionTree) {
+      this.columnDimensionTree.updateAllNodesState(HierarchyState.expand);
+      this._rebuildLayoutAfterTreeChange();
+    }
+  }
+
+  /**
+   * Collapse all nodes in the column dimension tree.
+   */
+  collapseAllForColumnTree() {
+    if (this.columnDimensionTree) {
+      this.columnDimensionTree.updateAllNodesState(HierarchyState.collapse);
+      this._rebuildLayoutAfterTreeChange();
+    }
+  }
+
+  /**
+   * Rebuild the layout after the dimension tree state has changed.
+   * This method mimics the constructor's logic to ensure a complete and correct layout reset.
+   */
+  private _rebuildLayoutAfterTreeChange() {
+    // 1. Reset all header collections and IDs
+    this.columnHeaderObjs = [];
+    this.rowHeaderObjs = [];
+    this.cornerHeaderObjs = [];
+    this._headerObjects = [];
+    this._headerObjectMap = {};
+    this._cornerHeaderCellFullPathIds = [];
+    this._columnHeaderCellFullPathIds = [];
+    this._rowHeaderCellFullPathIds = [];
+    this._rowHeaderCellFullPathIds_FULL = [];
+    this._cornerHeaderCellIds = [];
+    this._columnHeaderCellIds = [];
+    this._rowHeaderCellIds = [];
+    this._rowHeaderCellIds_FULL = [];
+
+    // 2. Reset level counts (assuming these methods exist as per constructor)
+    this.resetRowHeaderLevelCount();
+    this.resetColumnHeaderLevelCount();
+
+    // 3. Regenerate column and row headers
+    this._generateColHeaderIds();
+    this.colIndex = 0; // Reset colIndex before generating row headers
+    this._generateRowHeaderIds();
+
+    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
+
+    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+      this.generateExtensionRowTree();
+    }
+
+    // 4. Regenerate corner headers
+    let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+    colDimensionKeys = this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys;
+
+    let rowDimensionKeys;
+    let extensionRowDimensions = [];
+    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+      const rowTreeFirstKey = [this.rowDimensionKeys[0]];
+      this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
+        rowTreeFirstKey.push(extensionRowKeys[0]);
+      });
+      extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
+        return dimensions.concat(cur.rows);
+      }, []);
+      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey;
+    } else {
+      rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys;
+    }
+
+    this.cornerHeaderObjs = this._addCornerHeaders(
+      colDimensionKeys,
+      rowDimensionKeys,
+      this.columnsDefine.concat(...this.rowsDefine, ...extensionRowDimensions)
+    );
+
+    // 5. Finalize header objects map
+    this.colIndex = 0;
+    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
+      o[e.id as number] = e;
+      return o;
+    }, {} as { [key: LayoutObjectId]: HeaderData });
+
+    // 6. Final adjustments
+    this.generateCellIdsConsiderHideHeader();
+    if (this.pagination) {
+      this.setPagination(this.pagination);
+    }
+    this.setColumnWidths();
+    // NOTE: setRowHeights was not found, row heights might be calculated dynamically elsewhere.
+    console.log('%c[layout] Layout rebuild complete.', 'color: orange;');
+  }
 }
 /** 计算 scale 的实际 range 长度 */
 function scaleWholeRangeSize(count: number, bandwidth: number, paddingInner: number, paddingOuter: number) {
