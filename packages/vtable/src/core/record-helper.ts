@@ -180,7 +180,7 @@ export function listTableChangeCellValues(
             isCanChange =
               maybePromiseOrValue === true ||
               maybePromiseOrValue === 'validate-exit' ||
-              maybePromiseOrValue === 'invalidate-exit';
+              maybePromiseOrValue === 'validate-not-exit';
           }
         }
       }
