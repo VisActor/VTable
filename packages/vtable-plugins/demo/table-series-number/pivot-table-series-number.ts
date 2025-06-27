@@ -37,6 +37,8 @@ export function createTable() {
       editCellTrigger: ['api', 'keydown', 'doubleclick'],
       indicatorTitle: '指标名称',
       indicatorsAsCol: false,
+      autoWrapText: true,
+      heightMode: 'autoHeight',
       dataConfig: {
         totals: {
           row: {
