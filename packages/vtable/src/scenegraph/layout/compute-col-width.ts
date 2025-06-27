@@ -758,16 +758,25 @@ export function getAdaptiveWidth(
   const adaptiveColumns: number[] = [];
   const sparklineColumns = [];
   let totalSparklineAbleWidth = 0;
+  const maxWidthColumnMap = new Map<number, number>();
+  const minWidthColumnMap = new Map<number, number>();
   for (let col = startCol; col < endColPlus1; col++) {
     const width = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
     const maxWidth = table.getMaxColWidth(col);
     const minWidth = table.getMinColWidth(col);
-    if (width !== maxWidth && width !== minWidth) {
-      actualWidth += width;
-      adaptiveColumns.push(col);
-    } else {
-      // fixed width, do not adaptive
-      totalDrawWidth -= width;
+    // if (width !== maxWidth && width !== minWidth) {
+    //   actualWidth += width;
+    //   adaptiveColumns.push(col);
+    // } else {
+    //   // fixed width, do not adaptive
+    //   totalDrawWidth -= width;
+    // }
+    actualWidth += width;
+    adaptiveColumns.push(col);
+    if (maxWidth === width) {
+      maxWidthColumnMap.set(col, width);
+    } else if (minWidth === width) {
+      minWidthColumnMap.set(col, width);
     }
 
     if (table.options.customConfig?.shrinkSparklineFirst) {
@@ -775,6 +784,28 @@ export function getAdaptiveWidth(
       if (bodyCellType === 'sparkline') {
         sparklineColumns.push({ col, width });
         totalSparklineAbleWidth += width - table.defaultColWidth;
+      }
+    }
+  }
+
+  if (actualWidth > totalDrawWidth) {
+    // all columns need shrink, except minWidthColumnMap
+    for (const [col, width] of minWidthColumnMap) {
+      totalDrawWidth -= width;
+      actualWidth -= width;
+      const index = adaptiveColumns.indexOf(col);
+      if (index !== -1) {
+        adaptiveColumns.splice(index, 1);
+      }
+    }
+  } else if (actualWidth < totalDrawWidth) {
+    // all columns need expand, except maxWidthColumnMap
+    for (const [col, width] of maxWidthColumnMap) {
+      totalDrawWidth -= width;
+      actualWidth -= width;
+      const index = adaptiveColumns.indexOf(col);
+      if (index !== -1) {
+        adaptiveColumns.splice(index, 1);
       }
     }
   }
