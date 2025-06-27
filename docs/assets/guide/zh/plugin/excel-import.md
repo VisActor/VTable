@@ -39,12 +39,34 @@ ExcelImportOptions {
   ): Promise<ImportResult>
 ```
 
-因为我们调用的`import`方法最多接受三个参数，也就是说当我们`import`导入文件的时候，需要定义`delimiter`的时候，我们就需要传入第二个参数来当`source`，然后再传入我们的`option`，在这个`option`去定义我们的`delimiter`，当然我们也可以在一开始`ExcelImportPlugin`初始化的时候传入我们需要的`delimiter`
+如果我们希望导入文件我们就使用填`type`为`file`，如果是`csv`，`json`，`html`，就填对应的`type`，并且填`source`
+```
+await excelImportPlugin.import('file');
+
+await excelImportPlugin.import('json', jsonData);
+
+await excelImportPlugin.import('csv', csvData);
+```
+
+如果我们希望在`import`导入的时候使用和我们创建`ExcelImportPlugin`初始化定义的时候不同的`option`来`import`，那么我们就需要传入`option`这个参数
+
+如果`type`是`csv`，`json`，`html`，我们就直接填第三个参数就可以了，但是如果是`file`的话，因为我们本来是用不到第二个参数`source`的，所以我们就需要使用`undefined`来占位，然后再传入我们的`option`
 
 ```
-      await importPlugin.import('file', undefined, {
-        delimiter: ','
-      });
+  //初始化ExcelImportPlugin
+  const excelImportPlugin = new ExcelImportPlugin({
+    exportData: true
+  });
+
+  //type为非file的时候
+  const result = await importPlugin.import('csv', csvData, {
+    delimiter: ';'
+  });
+
+  //type为file的时候，如果我希望我的这个improt处理csv文件的时候是根据分号来分割的，我们就需要传入一个ExcelImportOptions作为第三个参数，所以我们就用undefined作为source参数
+  await excelImportPlugin.import('file', undefined, {
+    delimiter: ';'
+  });
 ```
 
 ## 插件示例
