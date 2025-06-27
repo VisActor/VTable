@@ -412,7 +412,7 @@ export class DimensionTree {
     node.level = level;
     this.totalLevel = Math.max(this.totalLevel, level + 1);
 
-    // 1. Set node's state. If it has children, apply the target state, otherwise it's a leaf.
+    // Set node's state. If it has children, apply the target state, otherwise it's a leaf.
     if (node.children && node.children.length > 0) {
       node.hierarchyState = hierarchyState;
     } else {
@@ -420,7 +420,23 @@ export class DimensionTree {
     }
     console.log(`%c[data]  - Set hierarchyState to: ${node.hierarchyState}`, 'color: green;');
 
-    // 2. If the node is expanded, update expandedMaxLevel and process its children.
+    if (hierarchyState === HierarchyState.collapse && node.children && node.children.length > 0) {
+      node.hierarchyState = HierarchyState.collapse;
+      node.size = 1;
+
+      if (level === -1) {
+        this.expandedMaxLevel = 1;
+      }
+
+      if (node.children && node.children.length > 0) {
+        node.children.forEach(child => {
+          this._updateNodeStateAndCalcLayout(child, HierarchyState.collapse, level + 1);
+        });
+      }
+
+      return;
+    }
+
     if (node.hierarchyState === HierarchyState.expand) {
       this.expandedMaxLevel = Math.max(this.expandedMaxLevel, level + 1);
 
