@@ -21,6 +21,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   lastCurrentRow: number = 0;
   lastCurrentCol: number = 0;
   startRowIndex: number = 0;
+  scrollTimer: any;
   constructor(pluginOptions: TableSeriesNumberOptions) {
     this.pluginOptions = pluginOptions;
     this.seriesNumberComponent = new VRenderTableSeriesNumber({
@@ -87,6 +88,18 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   }
   listenTableEvents() {
     this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => {
+      //节流处理，避免滚动时频繁触发 10ms一次
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+        this.scrollTimer = null;
+      }
+      this.scrollTimer = setTimeout(() => {
+        console.log('syncScrollToComponent');
+        this.scrollTimer = null;
+        this.syncScrollToComponent();
+      }, 5);
+    });
+    this.table.on(VTable.TABLE_EVENT_TYPE.AFTER_SORT, () => {
       this.syncScrollToComponent();
     });
     // this.table.on(VTable.TABLE_EVENT_TYPE.CLICK_CELL, e => {
@@ -183,10 +196,10 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   }
 
   syncRowHeightToComponent() {
-    const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
-    const adjustStartRowIndex = rowStart;
-    const adjustEndRowIndex = rowEnd;
     // console.log('syncRowHeightToComponent adjust', adjustStartRowIndex, adjustEndRowIndex);
+    const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
+    const adjustStartRowIndex = Math.max(rowStart - 2, this.table.frozenRowCount);
+    const adjustEndRowIndex = Math.min(rowEnd + 2, this.table.rowCount - 1);
     // 调用行序号重建接口
     this.seriesNumberComponent.recreateCellsToRowSeriesNumberGroup(adjustStartRowIndex, adjustEndRowIndex);
     // 更新冻结行序号单元格的y和height
@@ -195,6 +208,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       const cell_attrs = cellGroup.getAttributes();
       this.seriesNumberComponent.setRowSeriesNumberCellAttributes(i, { y: cell_attrs.y, height: cell_attrs.height });
     }
+
     // 更新行序号单元格的y和height
     for (let i = adjustStartRowIndex; i <= adjustEndRowIndex; i++) {
       const cellGroup = this.table.scenegraph.getCell(0, i);
