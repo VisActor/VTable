@@ -171,6 +171,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-tree-checkbox'
+      },
+      {
+        path: 'list',
+        name: 'list-autoFillWidth'
       }
     ]
   },

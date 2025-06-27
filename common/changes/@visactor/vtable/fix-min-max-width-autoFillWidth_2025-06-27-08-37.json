@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix minWidth & maxWidth in autoFillWidth status #4100",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
