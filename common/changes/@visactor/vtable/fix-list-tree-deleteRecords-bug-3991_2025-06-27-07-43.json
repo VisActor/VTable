@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: list-tree delete root level error when using deleteRecords\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "longzhu.xlj@raycloud.com"
+}

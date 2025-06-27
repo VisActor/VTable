@@ -243,12 +243,16 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   }
   initTreeHierarchyState() {
     // if (this.hierarchyExpandLevel) {
+    this._sourceLength = this._source?.length || 0;
     this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
     // if (this.hierarchyExpandLevel > 1) {
     let nodeLength = this._sourceLength;
     for (let i = 0; i < nodeLength; i++) {
       const indexKey = this.currentIndexedData[i];
       const nodeData = this.getOriginalRecord(indexKey);
+      if (!nodeData) {
+        continue;
+      }
       const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
       if (children?.length > 0) {
         if (this.hierarchyExpandLevel > 1) {
@@ -1509,11 +1513,13 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           targetI = (<number[]>targetIndexs).splice(targetIndexs.length - 1, 1)[0];
           if (sourceIndexs.length >= 1) {
             const parent = this.getOriginalRecord(sourceIndexs);
-            const sourceIds = parent.filteredChildren
-              ? parent.filteredChildren.splice(sourceI, 1)
-              : parent.children.splice(sourceI, 1);
-            sourceIds.unshift(targetI, 0);
-            Array.prototype.splice.apply(parent.filteredChildren ?? parent.children, sourceIds);
+            if (parent) {
+              const sourceIds = parent.filteredChildren
+                ? parent.filteredChildren.splice(sourceI, 1)
+                : parent.children.splice(sourceI, 1);
+              sourceIds.unshift(targetI, 0);
+              Array.prototype.splice.apply(parent.filteredChildren ?? parent.children, sourceIds);
+            }
           } else {
             const sourceIds = this.records.splice(sourceI, 1);
             // 将records插入到目标地址targetIndex处
@@ -1549,6 +1555,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < this._sourceLength; i++) {
         //expandLevel为有效值即需要按tree分析展示数据
         const nodeData = this.getOriginalRecord(i);
+        if (!nodeData) {
+          continue;
+        }
         const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
         children && !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
       }
@@ -1558,6 +1567,9 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       for (let i = 0; i < nodeLength; i++) {
         const indexKey = this.currentIndexedData[i];
         const nodeData = this.getOriginalRecord(indexKey);
+        if (!nodeData) {
+          continue;
+        }
         const children = (nodeData as any).filteredChildren ?? (nodeData as any).children;
         if (children?.length > 0 && nodeData.hierarchyState === HierarchyState.expand) {
           this.hasHierarchyStateExpand = true;
