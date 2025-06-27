@@ -113,14 +113,14 @@ export function listTableChangeCellValue(
  * @param workOnEditableCell 是否仅更改可编辑单元格
  * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
  */
-export function listTableChangeCellValues(
+export async function listTableChangeCellValues(
   startCol: number,
   startRow: number,
   values: (string | number)[][],
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable
-): boolean[][] {
+): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
   let pasteRowEnd = startRow;
@@ -174,8 +174,9 @@ export function listTableChangeCellValues(
           const value = rowValues[j];
           const maybePromiseOrValue = editor?.validateValue?.(value, oldValue) ?? true;
           if (isPromise(maybePromiseOrValue)) {
-            //TODO 处理promise的情况
-            isCanChange = true;
+            const validateResult = await maybePromiseOrValue;
+            isCanChange =
+              validateResult === true || validateResult === 'validate-exit' || validateResult === 'validate-not-exit';
           } else {
             isCanChange =
               maybePromiseOrValue === true ||
