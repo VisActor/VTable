@@ -129,6 +129,7 @@ export function createTable() {
     const option: VTable.ListTableConstructorOptions = {
       defaultHeaderRowHeight: 60,
       heightMode: 'autoHeight',
+      autoWrapText: true,
       records,
       columns,
       frozenColCount: 1,
