@@ -3,8 +3,14 @@ import { encodeCellAddress } from '../util/encode';
 import type { CellType, IVTable } from '../util/type';
 import { getCellAlignment, getCellBorder, getCellFill, getCellFont } from './style';
 import { updateCell, renderChart, graphicUtil } from '@visactor/vtable';
-import { isArray } from '@visactor/vutils';
-import type { CellRange, ColumnDefine, IRowSeriesNumber } from '@visactor/vtable/es/ts-types';
+import { isArray, isFunction } from '@visactor/vutils';
+import type {
+  BaseTableAPI,
+  CellRange,
+  ColumnDefine,
+  IRowSeriesNumber,
+  LinkColumnDefine
+} from '@visactor/vtable/es/ts-types';
 import { getHierarchyOffset } from '../util/indent';
 import { isPromise } from '../util/promise';
 import { handlePaginationExport } from '../util/pagination';
@@ -258,7 +264,37 @@ async function addCell(
     }
   } else if (cellType === 'text' || cellType === 'link') {
     cell = worksheet.getCell(encodeCellAddress(col, row));
-    cell.value = getCellValue(cellValue, cellType);
+    let linkUrl: string;
+    if (cellType === 'link') {
+      const templateLink = (define as LinkColumnDefine).templateLink;
+      if (templateLink) {
+        // 如果有模板链接，使用模板
+        const rowData = tableInstance.getCellOriginRecord(col, row);
+        if (rowData && rowData.vtableMerge) {
+          // group title
+          // return;
+        } else {
+          const cellOriginValue = tableInstance.getCellOriginValue(col, row);
+          const data = Object.assign(
+            {
+              __value: cellValue,
+              __dataValue: cellOriginValue
+            },
+            rowData
+          );
+          if (isFunction(templateLink)) {
+            linkUrl = templateLink(data, col, row, tableInstance as BaseTableAPI);
+          } else {
+            const re = /\{\s*(\S+?)\s*\}/g;
+            linkUrl = templateLink.replace(re, (matchs: string, key: string) => {
+              matchs;
+              return (data as any)[key];
+            });
+          }
+        }
+      }
+    }
+    cell.value = getCellValue(cellValue, cellType, linkUrl);
     cell.font = getCellFont(cellStyle, cellType);
     cell.fill = getCellFill(cellStyle);
     cell.border = getCellBorder(cellStyle);
@@ -294,11 +330,11 @@ async function addCell(
   return cell;
 }
 
-function getCellValue(cellValue: string, cellType: CellType) {
+function getCellValue(cellValue: string, cellType: CellType, linkUrl?: string) {
   if (cellType === 'link') {
     return {
       text: cellValue,
-      hyperlink: cellValue,
+      hyperlink: linkUrl || cellValue,
       tooltip: cellValue
     };
   }
