@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix templateLink in export excel #4106",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -1430,13 +1430,13 @@ getAllColsWidth: () => number;
 
 ```
 
-## getAllColsWidths(Function)
+## getColsWidths(Function)
 
 get all columns width list
 
 ```
 
-getAllColsWidth: () => number[];
+getColsWidths: () => number[];
 
 ```
 
