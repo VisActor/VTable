@@ -1,6 +1,51 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 06 Jun 2025 09:57:33 GMT and should not be manually modified.
+This log was last generated on Fri, 20 Jun 2025 12:11:39 GMT and should not be manually modified.
+
+## 1.19.1
+Fri, 20 Jun 2025 12:11:39 GMT
+
+### Updates
+
+- feat: add containerFit #3337
+
+
+- chore: update vrender 1.0.4 fix animation bug
+
+
+- fix: copy not work when after copy tooltip text #3968
+
+
+- fix: fix the issue where the icon configuration is not effective when cellType is progressBar #4047
+
+
+
+## 1.19.0
+Mon, 16 Jun 2025 12:04:55 GMT
+
+### Minor changes
+
+- chore: update vrender 1.0.0
+
+
+
+### Updates
+
+- fix: some taskShowMode should compute all row height on vtable #4011
+
+
+- fix: group release so gif can stop animation #4029
+
+
+- Merge branch develop into docs/wps-fill-handle
+
+- feat: add task-bar minSize config #4016
+- docs: 增加wps填充柄插件
+
+
+- docs: update changlog of rush
+
+
 
 ## 1.18.5
 Fri, 06 Jun 2025 09:57:33 GMT

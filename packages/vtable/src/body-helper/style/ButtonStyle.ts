@@ -1,5 +1,5 @@
 import type { IStyleOption, ButtonStyleOption } from '../../ts-types';
-import { Style } from '../style';
+import { Style } from './Style';
 import type { ButtonStyle as ButtonStyleThemeOption } from '../../ts-types/column/style';
 
 let defaultStyle: ButtonStyle;
