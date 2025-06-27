@@ -89,6 +89,13 @@ export function createTable() {
         field: 'link',
         width: 300,
         cellType: 'link'
+      },
+      {
+        title: 'Link',
+        field: 'name',
+        width: 80,
+        cellType: 'link',
+        templateLink: 'https://www.baidu.com/s?wd={name}'
       }
     ],
     showFrozenIcon: true, //显示VTable内置冻结列图标
