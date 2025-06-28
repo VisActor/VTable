@@ -102,13 +102,15 @@ export function createTable() {
             {
               field: 'field11',
               caption: 'field11',
+              description: 'field11',
               // title: 'field11',
               width: '150',
               columns: [
                 {
                   field: 'math',
                   title: 'math',
-                  width: '150'
+                  width: '150',
+                  description: 'math'
                 }
               ]
             },
