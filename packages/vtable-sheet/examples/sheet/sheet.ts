@@ -1,8 +1,5 @@
-import type { ColumnsDefine } from '@visactor/vtable';
-import { register, themes } from '@visactor/vtable';
+import { register } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import type { GanttConstructorOptions, TYPES } from '@visactor/vtable-gantt';
-import { Gantt } from '@visactor/vtable-gantt';
 import { VTableSheet } from '../../src/index';
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
