@@ -1,7 +1,16 @@
 import type { ColumnDefine, ListTableConstructorOptions } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import type { CellCoord, CellRange, CellValueChangedEvent, FormulaOptions, SelectionMode, SheetAPI } from '../ts-types';
-import { isValid, type EventEmitter } from '@visactor/vutils';
+import type {
+  CellCoord,
+  CellRange,
+  CellValueChangedEvent,
+  SelectionMode,
+  SheetAPI,
+  SheetConstructorOptions,
+  SheetDefine
+} from '../ts-types';
+import type { EventEmitter } from '@visactor/vutils';
+import type { VTableSheet } from '../components/vtable-sheet';
 import { getTablePlugins } from './table-plugins';
 import { editor } from '@visactor/vtable/es/register';
 /**
