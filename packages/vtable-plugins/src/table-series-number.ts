@@ -200,6 +200,10 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
     const adjustStartRowIndex = Math.max(rowStart - 2, this.table.frozenRowCount);
     const adjustEndRowIndex = Math.min(rowEnd + 2, this.table.rowCount - 1);
+    //判断seriesNumberComponent的冻结行数是否变化
+    if (this.table.frozenRowCount !== this.seriesNumberComponent.getAttributes.frozenRowCount) {
+      this.seriesNumberComponent.setAttributes({ frozenRowCount: this.table.frozenRowCount });
+    }
     // 调用行序号重建接口
     this.seriesNumberComponent.recreateCellsToRowSeriesNumberGroup(adjustStartRowIndex, adjustEndRowIndex);
     // 更新冻结行序号单元格的y和height
@@ -222,12 +226,16 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     const adjustEndColIndex = colEnd;
     //  console.log('syncColWidthToComponent adjust', adjustStartColIndex, adjustEndColIndex);
 
+    //判断seriesNumberComponent的冻结列数是否变化
+    if (this.table.frozenColCount !== this.seriesNumberComponent.getAttributes.frozenColCount) {
+      this.seriesNumberComponent.setAttributes({ frozenColCount: this.table.frozenColCount });
+    }
     // 调用列序号重建接口
     this.seriesNumberComponent.recreateCellsToColSeriesNumberGroup(adjustStartColIndex, adjustEndColIndex);
     //更新冻结列序号单元格的x和width
     for (let i = 0; i < this.table.frozenColCount; i++) {
-      const cellGroup = this.table.scenegraph.getCell(i, 0);
-      const cell_attrs = cellGroup.getAttributes();
+      const colGroup = this.table.scenegraph.getColGroup(i);
+      const cell_attrs = colGroup.getAttributes();
       this.seriesNumberComponent.setColSeriesNumberCellAttributes(i, { x: cell_attrs.x, width: cell_attrs.width });
     }
     // 更新列序号单元格的x和width
