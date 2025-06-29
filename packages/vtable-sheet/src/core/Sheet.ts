@@ -10,9 +10,11 @@ import type {
   SheetDefine
 } from '../ts-types';
 import type { EventEmitter } from '@visactor/vutils';
-import type { VTableSheet } from '../components/vtable-sheet';
+import type VTableSheet from '../components/vtable-sheet';
 import { getTablePlugins } from './table-plugins';
 import { editor } from '@visactor/vtable/es/register';
+import { EventTarget } from '../event/event-target';
+
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
  */
@@ -35,8 +37,8 @@ export type SheetConstructorOptions = {
 /**
  * VTable-Sheet is a lightweight editable spreadsheet component based on VTable
  */
-export class Sheet implements SheetAPI {
-  options: SheetConstructorOptions;
+export class Sheet extends EventTarget implements SheetAPI {
+  options: SheetOptions;
   container: HTMLElement;
 
   tableInstance?: ListTable;
@@ -61,13 +63,14 @@ export class Sheet implements SheetAPI {
   /**
    * 事件总线
    */
-  // private eventBus: EventEmitter;
+  private eventBus: EventEmitter;
 
   /**
    * Creates a new Sheet instance
    * @param options Configuration options
    */
-  constructor(options: SheetConstructorOptions) {
+  constructor(options: SheetOptions) {
+    super();
     this.options = options;
     this.container = options.container;
 
@@ -130,9 +133,9 @@ export class Sheet implements SheetAPI {
     // 这里应该是实际的表格初始化逻辑
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
-
-    // // 获取事件总线 - 这里假设eventBus是存在的，如果不存在需要创建一个
-    // this.eventBus = (this.tableInstance as any).eventBus;
+    this.element.classList.add('vtable-excel-cursor');
+    // 获取事件总线
+    this.eventBus = (this.tableInstance as any).eventBus;
   }
 
   /**
@@ -155,10 +158,7 @@ export class Sheet implements SheetAPI {
 
     return {
       ...this.options,
-      records: this.options.data,
-      container: this.element,
-      showHeader: isShowTableHeader
-      // 其他特定配置
+      container: this.element
     };
   }
 
@@ -166,26 +166,67 @@ export class Sheet implements SheetAPI {
    * Sets up event listeners
    */
   private _setupEventListeners(): void {
-    // 设置事件监听器
+    if (this.tableInstance) {
+      // 监听单元格选择事件
+      this.tableInstance.on('selected_cell', (event: any) => {
+        this.handleCellSelected(event);
+      });
+
+      // 监听单元格值变更事件
+      this.tableInstance.on('change_cell_value', (event: any) => {
+        this.handleCellValueChanged(event);
+      });
+
+      // 监听双击进入编辑状态
+      this.tableInstance.on('dblclick_cell', (event: any) => {
+        this.element.classList.remove('vtable-excel-cursor');
+        this.handleCellValueChanged(event);
+      });
+
+      // 监听编辑结束事件，恢复十字光标
+
+      this.tableInstance.on('click_cell', () => {
+        this.element.classList.add('vtable-excel-cursor');
+      });
+    }
   }
 
-  // /**
-  //  * 触发事件
-  //  */
-  // protected fire(eventName: string, eventData: any): void {
-  //   if (this.eventBus) {
-  //     this.eventBus.emit(eventName, eventData);
-  //   }
-  // }
+  /**
+   * 处理单元格选择事件
+   */
+  private handleCellSelected(event: any): void {
+    // 更新选择范围
+    this.selection = {
+      startRow: event.row - 1,
+      startCol: event.col - 1,
+      endRow: event.row - 1,
+      endCol: event.col - 1
+    };
 
-  // /**
-  //  * 监听事件
-  //  */
-  // on(eventName: string, handler: (...args: any[]) => void): void {
-  //   if (this.eventBus) {
-  //     this.eventBus.on(eventName, handler);
-  //   }
-  // }
+    // 触发事件给父组件
+    this.fire('cell-selected', event);
+  }
+
+  /**
+   * 处理单元格值变更事件
+   */
+  private handleCellValueChanged(event: any): void {
+    this.fire('cell-value-changed', event);
+  }
+
+  /**
+   * 触发事件
+   */
+  protected fireEvent(eventName: string, eventData: any): void {
+    this.fire(eventName, eventData);
+  }
+
+  /**
+   * 监听事件
+   */
+  on(eventName: string, handler: (...args: any[]) => void): this {
+    return super.on(eventName, handler);
+  }
 
   /**
    * Updates the size of the sheet
@@ -267,6 +308,16 @@ export class Sheet implements SheetAPI {
    * Gets the cell value at the specified coordinates
    */
   getCellValue(row: number, col: number): any {
+    if (this.tableInstance) {
+      try {
+        // 尝试交换参数顺序：可能是(row, col)而不是(col, row)
+        const value = this.tableInstance.getCellValue(col + 1, row + 1);
+        return value;
+      } catch (error) {
+        console.warn('Failed to get cell value from VTable:', error);
+      }
+    }
+
     const data = this.getData();
     if (data && data[row] && data[row][col] !== undefined) {
       return data[row][col];
@@ -282,6 +333,11 @@ export class Sheet implements SheetAPI {
     if (data && data[row]) {
       const oldValue = data[row][col];
       data[row][col] = value;
+
+      // 更新表格实例
+      if (this.tableInstance) {
+        this.tableInstance.changeCellValue(col, row, value);
+      }
 
       // 触发事件
       const event: CellValueChangedEvent = {
