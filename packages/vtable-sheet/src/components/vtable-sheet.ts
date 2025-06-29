@@ -231,21 +231,24 @@ export default class VTableSheet {
 
       // 应用与按Enter键相同的逻辑
       if (value.startsWith('=')) {
-        const formula = value.substring(1);
-        this.formulaManager.registerFormula(
+        // 设置公式单元格
+        this.formulaManager.setCellContent(
           {
             sheet: this.activeSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
           },
-          formula
+          value
         );
 
-        const result = this.formulaManager.evaluateFormula(formula, {
-          sheet: this.activeSheet.getKey()
+        // 获取计算结果
+        const result = this.formulaManager.getCellValue({
+          sheet: this.activeSheet.getKey(),
+          row: selection.startRow,
+          col: selection.startCol
         });
 
-        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result);
+        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
       } else {
         this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
       }
@@ -575,8 +578,11 @@ export default class VTableSheet {
     } as any); // 使用as any暂时解决类型不匹配问题
 
     // 注册事件
-    // sheet.on('cell-selected', this.handleCellSelected.bind(this));
-    // sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
+    sheet.on('cell-selected', this.handleCellSelected.bind(this));
+    sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
+
+    // 在公式管理器中添加这个sheet
+    this.formulaManager.addSheet(sheetDefine.key, sheetDefine.data as any[][]);
 
     return sheet;
   }
@@ -639,14 +645,14 @@ export default class VTableSheet {
     const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
     if (formulaInput) {
       const cellValue = this.activeSheet.getCellValue(selection.startRow, selection.startCol);
-      const formula = this.formulaManager.getFormula({
+      const formula = this.formulaManager.getCellFormula({
         sheet: this.activeSheet.getKey(),
         row: selection.startRow,
         col: selection.startCol
       });
 
       if (formula) {
-        formulaInput.value = '=' + formula.formula;
+        formulaInput.value = '=' + formula;
       } else {
         formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
       }
@@ -657,7 +663,45 @@ export default class VTableSheet {
    * 处理公式输入
    */
   private handleFormulaInput(event: Event): void {
-    // 公式输入处理
+    if (!this.activeSheet) {
+      return;
+    }
+
+    const input = event.target as HTMLInputElement;
+    const selection = this.activeSheet.getSelection();
+    if (!selection) {
+      return;
+    }
+
+    // 如果是公式，直接显示输入的内容
+    // 如果不是公式，直接显示值
+    const value = input.value;
+
+    // 实时更新表格内容
+    if (value.startsWith('=')) {
+      // 设置公式单元格
+      this.formulaManager.setCellContent(
+        {
+          sheet: this.activeSheet.getKey(),
+          row: selection.startRow,
+          col: selection.startCol
+        },
+        value
+      );
+
+      // 获取计算结果
+      const result = this.formulaManager.getCellValue({
+        sheet: this.activeSheet.getKey(),
+        row: selection.startRow,
+        col: selection.startCol
+      });
+
+      // 更新表格显示
+      this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
+    } else {
+      // 普通值直接更新
+      this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
+    }
   }
 
   /**
@@ -681,25 +725,25 @@ export default class VTableSheet {
 
       // 检查是否是公式
       if (value.startsWith('=')) {
-        const formula = value.substring(1);
-
-        // 注册公式
-        this.formulaManager.registerFormula(
+        // 设置公式单元格
+        this.formulaManager.setCellContent(
           {
             sheet: this.activeSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
           },
-          formula
+          value
         );
 
-        // 计算公式值
-        const result = this.formulaManager.evaluateFormula(formula, {
-          sheet: this.activeSheet.getKey()
+        // 获取计算结果
+        const result = this.formulaManager.getCellValue({
+          sheet: this.activeSheet.getKey(),
+          row: selection.startRow,
+          col: selection.startCol
         });
 
         // 设置单元格值
-        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result);
+        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
       } else {
         // 普通值，直接设置
         this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
@@ -716,12 +760,19 @@ export default class VTableSheet {
   private handleCellValueChanged(event: CellValueChangedEvent): void {
     // 更新依赖的公式
     if (this.activeSheet) {
-      this.formulaManager.updateDependencies({
+      const dependents = this.formulaManager.getCellDependents({
         sheet: this.activeSheet.getKey(),
         row: event.row,
         col: event.col
       });
+
+      // 重新计算依赖该单元格的所有公式
+      dependents.forEach(dependent => {
+        const result = this.formulaManager.getCellValue(dependent);
+        this.activeSheet!.setCellValue(dependent.row, dependent.col, result.value);
+      });
     }
+    this.updateFormulaBar();
   }
 
   /**
