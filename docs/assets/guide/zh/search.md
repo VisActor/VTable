@@ -57,7 +57,7 @@ search.clear();
 | highlightCellStyle | ICellStyle | 全部搜索结果的高亮样式 |
 | focuseHighlightCellStyle | ICellStyle | 当前目标搜索结果的高亮样式 |
 | queryMethod | (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean | 搜索匹配方法，默认使用`includes`方法 |
-| callback | boolean | 搜索完成后的回调 |
+| callback | (queryResult: QueryResult, table: IVTable) => void | 搜索完成后的回调 |
 
 注意
 
