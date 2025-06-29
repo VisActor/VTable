@@ -9,7 +9,7 @@ import type {
   SheetDefine
 } from '../ts-types';
 import type { EventEmitter } from '@visactor/vutils';
-import type { VTableSheet } from '../components/VTableSheet';
+import type { VTableSheet } from '../components/vtable-sheet';
 import { getTablePlugins } from './table-plugins';
 import { editor } from '@visactor/vtable/es/register';
 

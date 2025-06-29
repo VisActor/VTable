@@ -1,8 +1,8 @@
 import type { ListTable } from '@visactor/vtable';
 import type { SheetDefine, VTableSheetOptions, CellValueChangedEvent } from '../ts-types';
-import { FormulaManager } from '../managers/FormulaManager';
-import { FilterManager } from '../managers/FilterManager';
-import SheetManager from '../managers/SheetManager';
+import { FormulaManager } from '../managers/formula-manager';
+import { FilterManager } from '../managers/filter-manager';
+import SheetManager from '../managers/sheet-manager';
 import { Sheet } from '../core/Sheet';
 import '../styles/index.css';
 import * as VTable_editors from '@visactor/vtable-editors';

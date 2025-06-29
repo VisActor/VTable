@@ -1,7 +1,7 @@
-import VTableSheet from './components/VTableSheet';
-import SheetManager from './managers/SheetManager';
-import { FormulaManager } from './managers/FormulaManager';
-import { FilterManager } from './managers/FilterManager';
+import VTableSheet from './components/vtable-sheet';
+import SheetManager from './managers/sheet-manager';
+import { FormulaManager } from './managers/formula-manager';
+import { FilterManager } from './managers/filter-manager';
 import * as tools from './tools';
 import type { SheetDefine, VTableSheetOptions } from './ts-types';
 

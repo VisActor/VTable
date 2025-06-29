@@ -1,12 +1,21 @@
 import type {
   ColumnDefine,
-  ColumnsDefine,
   ListTableAPI,
   ListTableConstructorOptions,
   CellAddress,
-  HeaderData,
   HeaderDefine
 } from '@visactor/vtable';
+
+export interface FormulaCell {
+  sheet: string;
+  row: number;
+  col: number;
+}
+
+export interface FormulaResult {
+  value: any;
+  error?: any;
+}
 
 /**
  * Cell data type enum
