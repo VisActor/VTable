@@ -1,5 +1,6 @@
 import * as VTable from '../../src';
-import type { IEditor, RectProps, Placement, EditContext } from '@visactor/vtable-editors';
+import type { IEditor, RectProps, EditContext } from '@visactor/vtable-editors';
+import { ValidateEnum } from '@visactor/vtable-editors';
 import { DateInputEditor, InputEditor, ListEditor } from '@visactor/vtable-editors';
 import * as luxon from 'luxon';
 import * as Pikaday from 'pikaday';
@@ -89,6 +90,20 @@ class DateEditor implements IEditor {
       return true;
     }
     return false;
+  }
+  validateValue(newValue?: any, oldValue?: any): ValidateEnum | Promise<boolean | ValidateEnum> {
+    if (newValue === oldValue) {
+      return ValidateEnum.validateExit;
+    }
+    return new Promise(resolve => {
+      setTimeout(() => {
+        if (typeof newValue === 'string' && /([0-9]{4})年([0-9]{2})月([0-9]{2})日/.test(newValue)) {
+          return resolve(ValidateEnum.validateExit);
+        }
+        console.log('校验未通过');
+        resolve(ValidateEnum.invalidateNotExit);
+      }, 500);
+    });
   }
 }
 const custom_date_editor = new DateEditor({});
@@ -262,8 +277,8 @@ export function createTable() {
     },
     {
       field: 'employedSince',
-      title: 'employedSince',
-      width: 120,
+      title: 'employedSince (自定义编辑)',
+      width: 130,
       editor: 'custom-date'
     },
     {

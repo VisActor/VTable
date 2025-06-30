@@ -323,7 +323,7 @@ export interface ListTableAPI extends BaseTableAPI {
     row: number,
     values: (string | number)[][],
     workOnEditableCell?: boolean
-  ) => boolean[][];
+  ) => Promise<boolean[][]>;
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

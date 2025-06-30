@@ -1394,7 +1394,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param workOnEditableCell 是否仅更改可编辑单元格
    * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(
+  async changeCellValues(
     startCol: number,
     startRow: number,
     values: (string | number)[][],

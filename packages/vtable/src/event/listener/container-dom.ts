@@ -319,7 +319,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       }
     }
   });
-  handler.on(table.getElement(), 'paste', (e: any) => {
+  handler.on(table.getElement(), 'paste', async (e: any) => {
     if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         return;
@@ -360,7 +360,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
               rowValues.push(cell);
             });
           });
-          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values);
+          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values);
           if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
             table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
               col,
@@ -421,7 +421,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     let pasteValuesRowCount = 0;
     let values: (string | number)[][] = [];
     item.getType('text/html').then((blob: any) => {
-      blob.text().then((pastedData: any) => {
+      blob.text().then(async (pastedData: any) => {
         // 解析html数据
         if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
           // const matches = pastedData.matchAll(regex);
@@ -457,7 +457,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
             maxCol - col + 1
           );
 
-          const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
           if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
             table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
               col,
@@ -481,7 +481,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
   }
 
-  function _pasteValue(pastedData: string) {
+  async function _pasteValue(pastedData: string) {
     const ranges = table.stateManager.select.ranges;
     const selectRangeLength = ranges.length;
     const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
@@ -507,7 +507,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
     pasteValuesRowCount = values.length ?? 0;
     values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
-    const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+    const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
     if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
       table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
         col,
@@ -529,7 +529,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     let pasteValuesRowCount = 0;
     // const values: (string | number)[][] = [];
     item.getType('text/plain').then((blob: any) => {
-      blob.text().then((pastedData: any) => {
+      blob.text().then(async (pastedData: any) => {
         const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
         let values: (string | number)[][] = [];
         if (rows.length > 1 && rows[rows.length - 1] === '') {
@@ -557,7 +557,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
           maxRow - row + 1,
           maxCol - col + 1
         );
-        const changedCellResults = (table as ListTableAPI).changeCellValues(col, row, values, true);
+        const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
         if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
           table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
             col,
