@@ -771,6 +771,7 @@ function bindContainerDomListener(eventManager: EventManager) {
         gantt.eventManager.poniterState = 'draging';
       }
     }
+
     if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
@@ -779,7 +780,9 @@ function bindContainerDomListener(eventManager: EventManager) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealResizeTableWidth(e);
+          console.log('resize table width');
         } else if (stateManager.isMoveingTaskBar()) {
+          console.log('move task bar');
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarMove(e);
@@ -787,6 +790,7 @@ function bindContainerDomListener(eventManager: EventManager) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarResize(e);
+          console.log('resize task bar');
         } else if (stateManager.isCreatingDependencyLine()) {
           // stateManager.hideDependencyLinkSelectedLine();
           stateManager.dealCreateDependencyLine(e);

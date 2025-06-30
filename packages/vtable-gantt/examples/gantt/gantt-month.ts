@@ -955,28 +955,28 @@ export function createTable() {
   // ]
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   window.ganttInstance = ganttInstance;
-  ganttInstance.on('scroll', e => {
-    console.log('scroll', e);
-  });
-  ganttInstance.on('change_date_range', e => {
-    console.log('change_date_range', e);
-  });
-  ganttInstance.on('mouseenter_task_bar', e => {
-    console.log('mouseenter_taskbar', e);
-  });
-  ganttInstance.on('mouseleave_task_bar', e => {
-    console.log('mouseleave_taskbar', e);
-  });
-  ganttInstance.on('click_task_bar', e => {
-    console.log('click_task_bar', e);
-  });
-  ganttInstance.taskListTableInstance?.on('scroll', e => {
-    console.log('listTable scroll', e);
-  });
-  ganttInstance.taskListTableInstance?.on('change_header_position_start', e => {
-    console.log('change_header_position_start ', e);
-  });
-  ganttInstance.taskListTableInstance?.on('changing_header_position', e => {
-    console.log('changing_header_position ', e);
-  });
+  // ganttInstance.on('scroll', e => {
+  //   console.log('scroll', e);
+  // });
+  // ganttInstance.on('change_date_range', e => {
+  //   console.log('change_date_range', e);
+  // });
+  // ganttInstance.on('mouseenter_task_bar', e => {
+  //   console.log('mouseenter_taskbar', e);
+  // });
+  // ganttInstance.on('mouseleave_task_bar', e => {
+  //   console.log('mouseleave_taskbar', e);
+  // });
+  // ganttInstance.on('click_task_bar', e => {
+  //   console.log('click_task_bar', e);
+  // });
+  // ganttInstance.taskListTableInstance?.on('scroll', e => {
+  //   console.log('listTable scroll', e);
+  // });
+  // ganttInstance.taskListTableInstance?.on('change_header_position_start', e => {
+  //   console.log('change_header_position_start ', e);
+  // });
+  // ganttInstance.taskListTableInstance?.on('changing_header_position', e => {
+  //   console.log('changing_header_position ', e);
+  // });
 }
