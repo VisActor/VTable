@@ -2409,6 +2409,187 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   }
 
   /**
+   * 统一的行布局重建方法。
+   * 在行维度树的节点状态全部发生改变后，调用此方法来完整地重新计算和生成布局。
+   */
+  private _rebuildRowLayout() {
+    // 1. 基于节点最新的状态，重置并重新计算整个维度树的布局信息
+    this.rowDimensionTree.reset(this.rowDimensionTree.tree.children);
+
+    // 2. 重置行头相关的计数和缓存
+    this.resetRowHeaderLevelCount();
+    this._rowHeaderCellFullPathIds_FULL = [];
+    this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+    this.fullRowDimensionKeys = [...this.rowDimensionKeys];
+
+    // 3. 根据模式重新生成行头单元格ID
+    if (this.rowHierarchyType === 'tree') {
+      this._addHeadersForTreeMode(
+        this._rowHeaderCellFullPathIds_FULL,
+        0,
+        this.rowDimensionTree.tree.children,
+        [],
+        this.rowDimensionTree.totalLevel,
+        true,
+        this.rowsDefine,
+        this.rowHeaderObjs
+      );
+    } else if (this.rowHierarchyType === 'grid-tree') {
+      this._addHeadersForGridTreeMode(
+        this._rowHeaderCellFullPathIds_FULL,
+        0,
+        this.rowDimensionTree.tree.children,
+        [],
+        this.rowDimensionTree.totalLevel,
+        this._getRowHeaderTreeExpandedMaxLevelCount(),
+        true,
+        this.rowsDefine,
+        this.rowHeaderObjs,
+        true
+      );
+      // 重新生成角头
+      this.cornerHeaderObjs = this._addCornerHeaders(
+        this.colDimensionKeys,
+        this.rowDimensionKeys,
+        this.columnsDefine.concat(...this.rowsDefine)
+      );
+    }
+
+    // 4. 处理行标题
+    if (this.rowHeaderTitle) {
+      const id = ++this.sharedVar.seqId;
+      const firstColIds = Array(this.rowCount - this.columnHeaderLevelCount).fill(id);
+      this._rowHeaderCellFullPathIds_FULL.unshift(firstColIds);
+      const cell: HeaderData = {
+        id,
+        title:
+          typeof this.rowHeaderTitle.title === 'string'
+            ? this.rowHeaderTitle.title
+            : (this.rowsDefine.reduce((title: string, value) => {
+                if (typeof value === 'string') {
+                  return title;
+                }
+                return title + (title ? `/${value.title}` : `${value.title}`);
+              }, '') as string),
+        field: undefined,
+        headerType: this.rowHeaderTitle?.headerType ?? 'text',
+        style: this.rowHeaderTitle?.headerStyle,
+        define: {
+          field: '',
+          headerType: 'text',
+          cellType: 'text',
+          disableHeaderHover: !!this.rowHeaderTitle?.disableHeaderHover,
+          disableHeaderSelect: !!this.rowHeaderTitle?.disableHeaderSelect
+        }
+      };
+      this.rowHeaderObjs.push(cell);
+      this._headerObjects[id] = cell;
+    }
+
+    // 5. 转置并完成后续处理
+    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
+    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
+      this.generateExtensionRowTree();
+    }
+
+    // 6. 重置所有对象映射和缓存
+    this.colIndex = 0;
+    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
+      o[e.id as number] = e;
+      return o;
+    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._CellHeaderPathMap = new Map();
+    this._largeCellRangeCache.length = 0;
+
+    // 7. 应用隐藏和分页逻辑，并设置列宽
+    this.generateCellIdsConsiderHideHeader();
+    this.setPagination(this.pagination);
+    if (this.rowHierarchyType === 'grid-tree') {
+      this.setColumnWidths();
+    }
+  }
+
+  /**
+   * 统一的列布局重建方法。
+   * 在列维度树的节点状态全部发生改变后，调用此方法来完整地重新计算和生成布局。
+   */
+  private _rebuildColumnLayout() {
+    // 1. 基于节点最新的状态，重置并重新计算整个维度树的布局信息
+    this.columnDimensionTree.reset(this.columnDimensionTree.tree.children);
+
+    // 2. 重置列头相关的计数和缓存
+    this.resetColumnHeaderLevelCount();
+    this._columnHeaderCellFullPathIds = []; // 使用源文件中的变量名
+    this.colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
+
+    // 3. 根据模式重新生成列头单元格ID
+    if (this.columnHierarchyType === 'grid-tree') {
+      this._addHeadersForGridTreeMode(
+        this._columnHeaderCellFullPathIds,
+        0,
+        this.columnDimensionTree.tree.children,
+        [],
+        this.columnDimensionTree.totalLevel,
+        this._getColumnHeaderTreeExpandedMaxLevelCount(),
+        true,
+        this.columnsDefine,
+        this.columnHeaderObjs,
+        false
+      );
+      // 重新生成角头
+      this.cornerHeaderObjs = this._addCornerHeaders(
+        this.colDimensionKeys,
+        this.rowDimensionKeys,
+        this.columnsDefine.concat(...this.rowsDefine)
+      );
+    }
+
+    // 4. 处理列标题
+    if (this.columnHeaderTitle) {
+      const id = ++this.sharedVar.seqId;
+      const firstRowIds = Array(this.colCount - this.rowHeaderLevelCount - this.rightFrozenColCount).fill(id);
+      this._columnHeaderCellFullPathIds.unshift(firstRowIds);
+      const cell: HeaderData = {
+        id,
+        title:
+          typeof this.columnHeaderTitle.title === 'string'
+            ? this.columnHeaderTitle.title
+            : (this.columnsDefine.reduce((title: string, value) => {
+                if (typeof value === 'string') {
+                  return title;
+                }
+                return title + (title ? `/${value.title}` : `${value.title}`);
+              }, '') as string),
+        field: undefined,
+        headerType: this.columnHeaderTitle?.headerType ?? 'text',
+        style: this.columnHeaderTitle?.headerStyle,
+        define: <any>{
+          id,
+          disableHeaderHover: !!this.columnHeaderTitle?.disableHeaderHover,
+          disableHeaderSelect: !!this.columnHeaderTitle?.disableHeaderSelect
+        }
+      };
+      this.columnHeaderObjs.push(cell);
+      this._headerObjects[id] = cell;
+    }
+
+    // 5. 重置所有对象映射和缓存
+    this.colIndex = 0;
+    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
+      o[e.id as number] = e;
+      return o;
+    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._CellHeaderPathMap = new Map();
+    this._largeCellRangeCache.length = 0;
+
+    // 6. 应用隐藏和分页逻辑，并设置列宽
+    this.generateCellIdsConsiderHideHeader();
+    if (this.columnHierarchyType === 'grid-tree') {
+      this.setColumnWidths();
+    }
+  }
+
+  /**
    * 点击某个单元格的展开折叠按钮 改变该节点的状态 维度树重置
    * @param col
    * @param row
@@ -4365,119 +4546,32 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   /**
    * Expand all nodes in the row dimension tree.
    */
-  expandAllForRowTree() {
+  expandAllForRowDimensionTree() {
     if (this.rowDimensionTree) {
-      this.rowDimensionTree.updateAllNodesState(HierarchyState.expand);
-      this._rebuildLayoutAfterTreeChange();
+      this.rowDimensionTree.setAllNodesState(HierarchyState.expand);
+      this._rebuildRowLayout(); // 后续可以优化
     }
   }
 
-  /**
-   * Collapse all nodes in the row dimension tree.
-   */
-  collapseAllForRowTree() {
+  collapseAllForRowDimensionTree() {
     if (this.rowDimensionTree) {
-      this.rowDimensionTree.updateAllNodesState(HierarchyState.collapse);
-      this._rebuildLayoutAfterTreeChange();
+      this.rowDimensionTree.setAllNodesState(HierarchyState.collapse);
+      this._rebuildRowLayout(); // 后续可以优化
     }
   }
 
-  /**
-   * Expand all nodes in the column dimension tree.
-   */
-  expandAllForColumnTree() {
+  expandAllForColumnDimensionTree() {
     if (this.columnDimensionTree) {
-      this.columnDimensionTree.updateAllNodesState(HierarchyState.expand);
-      this._rebuildLayoutAfterTreeChange();
+      this.columnDimensionTree.setAllNodesState(HierarchyState.expand);
+      this._rebuildColumnLayout(); // 后续可以优化
     }
   }
 
-  /**
-   * Collapse all nodes in the column dimension tree.
-   */
-  collapseAllForColumnTree() {
+  collapseAllForColumnDimensionTree() {
     if (this.columnDimensionTree) {
-      this.columnDimensionTree.updateAllNodesState(HierarchyState.collapse);
-      this._rebuildLayoutAfterTreeChange();
+      this.columnDimensionTree.setAllNodesState(HierarchyState.collapse);
+      this._rebuildColumnLayout(); // 后续可以优化
     }
-  }
-
-  /**
-   * Rebuild the layout after the dimension tree state has changed.
-   * This method mimics the constructor's logic to ensure a complete and correct layout reset.
-   */
-  private _rebuildLayoutAfterTreeChange() {
-    // 1. Reset all header collections and IDs
-    this.columnHeaderObjs = [];
-    this.rowHeaderObjs = [];
-    this.cornerHeaderObjs = [];
-    this._headerObjects = [];
-    this._headerObjectMap = {};
-    this._cornerHeaderCellFullPathIds = [];
-    this._columnHeaderCellFullPathIds = [];
-    this._rowHeaderCellFullPathIds = [];
-    this._rowHeaderCellFullPathIds_FULL = [];
-    this._cornerHeaderCellIds = [];
-    this._columnHeaderCellIds = [];
-    this._rowHeaderCellIds = [];
-    this._rowHeaderCellIds_FULL = [];
-
-    // 2. Reset level counts (assuming these methods exist as per constructor)
-    this.resetRowHeaderLevelCount();
-    this.resetColumnHeaderLevelCount();
-
-    // 3. Regenerate column and row headers
-    this._generateColHeaderIds();
-    this.colIndex = 0; // Reset colIndex before generating row headers
-    this._generateRowHeaderIds();
-
-    this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
-
-    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
-      this.generateExtensionRowTree();
-    }
-
-    // 4. Regenerate corner headers
-    let colDimensionKeys = this.columnDimensionTree.dimensionKeysIncludeVirtual.valueArr();
-    colDimensionKeys = this.columnHeaderTitle ? [''].concat(colDimensionKeys) : colDimensionKeys;
-
-    let rowDimensionKeys;
-    let extensionRowDimensions = [];
-    if (this.rowHierarchyType === 'tree' && this.extensionRows?.length >= 1) {
-      const rowTreeFirstKey = [this.rowDimensionKeys[0]];
-      this._extensionRowDimensionKeys.forEach(extensionRowKeys => {
-        rowTreeFirstKey.push(extensionRowKeys[0]);
-      });
-      extensionRowDimensions = this.extensionRows.reduce((dimensions, cur) => {
-        return dimensions.concat(cur.rows);
-      }, []);
-      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowTreeFirstKey as any) : rowTreeFirstKey;
-    } else {
-      rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
-      rowDimensionKeys = this.rowHeaderTitle ? [''].concat(rowDimensionKeys) : rowDimensionKeys;
-    }
-
-    this.cornerHeaderObjs = this._addCornerHeaders(
-      colDimensionKeys,
-      rowDimensionKeys,
-      this.columnsDefine.concat(...this.rowsDefine, ...extensionRowDimensions)
-    );
-
-    // 5. Finalize header objects map
-    this.colIndex = 0;
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
-
-    // 6. Final adjustments
-    this.generateCellIdsConsiderHideHeader();
-    if (this.pagination) {
-      this.setPagination(this.pagination);
-    }
-    this.setColumnWidths();
-    // NOTE: setRowHeights was not found, row heights might be calculated dynamically elsewhere.
-    console.log('%c[layout] Layout rebuild complete.', 'color: orange;');
   }
 }
 /** 计算 scale 的实际 range 长度 */

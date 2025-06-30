@@ -2240,10 +2240,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
 
+  /**
+   * 展开行表头树的所有节点
+   */
   expandAllForRowTree() {
     if (this.internalProps.layoutMap.rowDimensionTree) {
       this.internalProps.layoutMap.clearHeaderPathCache();
-      this.internalProps.layoutMap.expandAllForRowTree();
+      this.internalProps.layoutMap.expandAllForRowDimensionTree();
       this.renderWithRecreateCells();
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: -1,
@@ -2254,10 +2257,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
   }
 
+  /**
+   * 折叠行表头树的所有节点
+   */
   collapseAllForRowTree() {
     if (this.internalProps.layoutMap.rowDimensionTree) {
       this.internalProps.layoutMap.clearHeaderPathCache();
-      this.internalProps.layoutMap.collapseAllForRowTree();
+      this.internalProps.layoutMap.collapseAllForRowDimensionTree();
       this.renderWithRecreateCells();
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: -1,
@@ -2268,11 +2274,13 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
   }
 
+  /**
+   * 展开列表头树的所有节点
+   */
   expandAllForColumnTree() {
     if (this.internalProps.layoutMap.columnDimensionTree) {
-      console.log('%c[API] expandAllForColumnTree called.', 'color: green; font-weight: bold;');
       this.internalProps.layoutMap.clearHeaderPathCache();
-      this.internalProps.layoutMap.expandAllForColumnTree();
+      this.internalProps.layoutMap.expandAllForColumnDimensionTree();
       this.renderWithRecreateCells();
       const eventPayload = {
         col: -1,
@@ -2280,17 +2288,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         hierarchyState: HierarchyState.expand,
         originData: this.internalProps.layoutMap.columnDimensionTree.tree
       };
-      console.log('[API] Firing TREE_HIERARCHY_STATE_CHANGE with payload:', eventPayload);
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, eventPayload);
-      console.log('%c[API] expandAllForColumnTree finished.', 'color: green; font-weight: bold;');
     }
   }
 
+  /**
+   * 折叠列表头树的所有节点
+   */
   collapseAllForColumnTree() {
     if (this.internalProps.layoutMap.columnDimensionTree) {
-      console.log('%c[API] collapseAllForColumnTree called.', 'color: green; font-weight: bold;');
       this.internalProps.layoutMap.clearHeaderPathCache();
-      this.internalProps.layoutMap.collapseAllForColumnTree();
+      this.internalProps.layoutMap.collapseAllForColumnDimensionTree();
       this.renderWithRecreateCells();
       const eventPayload = {
         col: -1,
@@ -2298,9 +2306,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         hierarchyState: HierarchyState.collapse,
         originData: this.internalProps.layoutMap.columnDimensionTree.tree
       };
-      console.log('[API] Firing TREE_HIERARCHY_STATE_CHANGE with payload:', eventPayload);
       this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, eventPayload);
-      console.log('%c[API] collapseAllForColumnTree finished.', 'color: green; font-weight: bold;');
     }
   }
 
