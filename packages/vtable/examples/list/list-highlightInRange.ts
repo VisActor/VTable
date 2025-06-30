@@ -234,11 +234,64 @@ export function createTable() {
         borderColor: 'red',
         shadowBlur: 0
       },
+      selectionStyle: {
+        selectionFillMode: 'replace'
+      },
+      cornerHeaderStyle: {
+        select: {
+          cellBgColor: 'red',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
+          // cellTextColor: 'white'
+        }
+      },
+      rowHeaderStyle: {
+        select: {
+          // cellBgColor: 'red'
+          inlineRowBgColor: 'red',
+          inlineColumnBgColor: 'red',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
+          // cellTextColor: 'white'
+        }
+      },
+      bottomFrozenStyle: {
+        select: {
+          // cellBgColor: 'red',
+          inlineRowBgColor: 'red',
+          inlineColumnBgColor: 'red',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
+          // cellTextColor: 'white'
+        }
+      },
+      rightFrozenStyle: {
+        select: {
+          // cellBgColor: 'red'
+          inlineRowBgColor: 'red',
+          inlineColumnBgColor: 'red',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
+          // cellTextColor: 'white'
+        }
+      },
+      headerStyle: {
+        select: {
+          inlineRowBgColor: 'red',
+          inlineColumnBgColor: 'red',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
+        }
+      },
+
       bodyStyle: {
         select: {
           cellBgColor: 'red',
           inlineRowBgColor: 'pink',
-          inlineColumnBgColor: 'purple'
+          inlineColumnBgColor: 'purple',
+          cellTextColor: 'white',
+          inlineRowTextColor: 'white',
+          inlineColumnTextColor: 'white'
         }
       }
     },
