@@ -25,6 +25,10 @@ export const menus = [
       {
         path: 'debug',
         name: 'scroll'
+      },
+      {
+        path: 'debug',
+        name: 'list'
       }
     ]
   },
@@ -65,7 +69,15 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-expandAndCollapseAll'
+      },
+      {
+        path: 'list',
         name: 'list-checkbox-tree'
+      },
+      {
+        path: 'list',
+        name: 'list-checkbox-tree-moveRow'
       },
       {
         path: 'list',

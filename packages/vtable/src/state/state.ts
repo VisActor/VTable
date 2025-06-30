@@ -1769,10 +1769,13 @@ export class StateManager {
     return syncRadioState(col, row, field, radioType, indexInCell, isChecked, this);
   }
 
-  changeCheckboxAndRadioOrder(sourceIndex: number, targetIndex: number) {
+  changeCheckboxOrder(sourceRecordPath: number | number[], targetRecordPath: number | number[]) {
     if (this.checkedState.size) {
-      changeCheckboxOrder(sourceIndex, targetIndex, this);
+      changeCheckboxOrder(sourceRecordPath, targetRecordPath, this);
     }
+  }
+
+  changeRadioOrder(sourceIndex: number, targetIndex: number) {
     if (this.radioState.length) {
       changeRadioOrder(sourceIndex, targetIndex, this);
     }
