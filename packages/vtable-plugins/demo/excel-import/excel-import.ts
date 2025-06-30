@@ -4,7 +4,7 @@ const CONTAINER_ID = 'vTable';
 
 export function createTable() {
   const records = [
-        {
+    {
       col0: 1,
       col1: '《后端架构与开发》-Springboot和Springcloud框架的演进介绍',
       col2: '上海班（大三、大二选听）',

@@ -1,68 +1,149 @@
-# excel导入插件
+# 数据导入插件
 
 ## 功能介绍
 
-`ExcelImportPlugin`是为了让VTable支持导入excel文件而开发的插件，并且同时还支持csv、json、 xlsx、 html的导入
+ExcelImportPlugin是一个导入插件，旨在为用户提供多格式外部数据文件的高效导入解决方案。该插件支持 Excel、CSV、JSON 和 HTML 格式的数据导入
 
-该插件会在`VTable.TABLE_EVENT_TYPE.INITIALIZED`的开始生效
+### 支持的数据格式
+- Excel 文件
+- CSV 文件（支持自定义分隔符）
+- JSON 数据对象
+- HTML 表格数据
 
-当需要使用这个插件的时候，请调用`ExcelImportPlugin`中的`import`接口来实现文件导入
-
-目前这个插件不支持透视表的导入
+### 使用限制
+当前版本不支持透视表（PivotTable）数据的导入功能。
 
 ## 插件配置
 
-当调用构造`ExcelImportPlugin`时，需要传入配置的`ExcelImportOptions`
+### ExcelImportOptions
+
+插件构造函数接受一个配置对象，该对象需要实现 `ExcelImportOptions` 接口。以下为完整的配置参数说明：
 
 ```
-ExcelImportOptions {
-  id?: string;
-  headerRowCount?: number; // 指定头的层数，不指定会使用detectHeaderRowCount来自动判断，但是只有excel才有
-  exportData?: boolean; // 是否导出JavaScript对象字面量格式文件，默认是false
-  autoTable?: boolean; // 是否自动替换表格数据 默认是true
-  autoColumns?: boolean; // 是否自动生成列配置 默认是true
-  delimiter?: string; // CSV分隔符，默认逗号 
-  encoding?: string; // 文件编码，默认UTF-8
-  batchSize?: number; // 批处理大小，默认1000行
-  enableBatchProcessing?: boolean; // 是否启用分批处理，默认true
-  asyncDelay?: number; // 异步处理延迟时间(ms)，默认5ms
+interface ExcelImportOptions {
+  id?: string;                        // 插件实例的唯一标识符，默认会使用excel-import-plugin-${Date.now()};
+  headerRowCount?: number;             // Excel 文件表头行数，仅对 Excel 格式有效，未指定时将自动检测
+  exportData?: boolean;                // 是否导出为 JavaScript 对象格式，默认为 false
+  autoTable?: boolean;                 // 是否自动替换表格数据，默认为 true
+  autoColumns?: boolean;               // 是否自动生成列配置，默认为 true
+  delimiter?: string;                  // CSV 文件分隔符，默认为英文逗号
+  batchSize?: number;                  // 批处理数据行数，默认为 1000
+  enableBatchProcessing?: boolean;     // 是否启用批处理模式，默认为 true
+  asyncDelay?: number;                 // 异步处理延迟时间（毫秒），默认为 5
 }
 ```
 
-这是我们这个插件调用的导入方法
+| 参数名称 | 类型 | 默认值 | 说明 |
+|---------|------|--------|------|
+| `id` | string | excel-import-plugin-${Date.now()} | 插件实例标识符，用于区分多个插件实例 |
+| `headerRowCount` | number | - | 指定 Excel 文件的表头行数，仅对 Excel 文件有效 |
+| `exportData` | boolean | false | 控制是否将数据导出为 JavaScript 对象格式 |
+| `autoTable` | boolean | true | 控制是否自动替换表格中的现有数据 |
+| `autoColumns` | boolean | true | 控制是否根据导入数据自动生成列配置 |
+| `delimiter` | string | ',' | CSV 文件的字段分隔符 |
+| `batchSize` | number | 1000 | 批处理模式下每批处理的数据行数 |
+| `enableBatchProcessing` | boolean | true | 是否启用批处理模式以优化内存使用 |
+| `asyncDelay` | number | 5 | 异步处理过程中的延迟时间（毫秒） |
+
+### import 方法
+
+插件的核心方法，负责执行数据导入操作。
+
+```ts
+async import(
+  type: 'file' | 'csv' | 'json' | 'html',
+  source?: string | object,
+  options?: Partial<ExcelImportOptions>
+): Promise<ImportResult>
+```
+
+**type（必需）**
+- 类型：`'file' | 'csv' | 'json' | 'html'`
+- 说明：指定导入数据的类型
+  - `'file'`：通过文件选择器导入文件
+  - `'csv'`：导入 CSV 格式的字符串数据
+  - `'json'`：导入 JSON 格式的数据对象
+  - `'html'`：导入 HTML 表格格式的数据
+
+**source（可选）**
+- 类型：`string | object`
+- 说明：数据源内容
+  - 当 `type` 为 `'file'` 时，此参数无效
+  - 当 `type` 为 `'csv'` 或 `'html'` 或者 `'json'`时，应传入对应格式的字符串或者对象
+
+**options（可选）**
+- 类型：`Partial<ExcelImportOptions>`
+- 说明：运行时配置参数，会临时覆盖插件初始化时的配置
+
+## 使用指南
+
+### 插件初始化
+
+首先需要创建插件实例并将其添加到 VTable 的插件配置中：
+
+```ts
+//初始化插件
+const excelImportPlugin = new ExcelImportPlugin({
+  exportData: true
+});
+const option: VTable.ListTableConstructorOptions = {
+  container: document.getElementById(CONTAINER_ID),
+  records,
+  columns,
+  theme: VTable.themes.DEFAULT,
+  select: { disableSelect: false },
+  plugins: [excelImportPlugin]
+};
+```
+
+### 用法示例
+
+#### 文件导入
+
+通过文件选择器导入本地文件：
+
+```ts
+await excelImportPlugin.import('file');
+
+await excelImportPlugin.import('file', undefined, {
+  exportData: true,
+  delimiter: ';' 
+});
+```
+
+#### CSV 数据导入
+
+导入 CSV 格式的字符串数据：
+
+```ts
+const csvData1 = `姓名,年龄,部门
+张三,25,技术部
+李四,30,销售部
+王五,28,市场部`;
+
+await excelImportPlugin.import('csv', csvData1);
+
+const csvData2 = `姓名;年龄;部门
+张三;25;技术部
+李四;30;销售部`;
+
+await excelImportPlugin.import('csv', csvData2, {
+  delimiter: ';'
+});
 
 ```
-  async import(
-    type: 'file' | 'csv' | 'json' | 'html',
-    source?: string | object
-    options?: Partial<ExcelImportOptions>
-  ): Promise<ImportResult>
+
+#### 禁用自动表格更新
+
+仅获取数据而不自动更新表格：
+
+```javascript
+const result = await excelImportPlugin.import('json', jsonData, {
+  autoTable: false,
+});
 ```
 
-因为我们调用的`import`方法最多接受三个参数，也就是说当我们`import`导入文件的时候，需要定义`delimiter`的时候，我们就需要传入第二个参数来当`source`，然后再传入我们的`option`，在这个`option`去定义我们的`delimiter`，当然我们也可以在一开始`ExcelImportPlugin`初始化的时候传入我们需要的`delimiter`
-
-```
-      await importPlugin.import('file', undefined, {
-        delimiter: ','
-      });
-```
-
-## 插件示例
-
-初始化插件对象并且添加到配置中plugins中
-```
-  const excelImportPlugin = new ExcelImportPlugin({
-    exportData: true
-  });
-  const option: VTable.ListTableConstructorOptions = {
-    container: document.getElementById(CONTAINER_ID),
-    records,
-    columns,
-    theme: VTable.themes.DEFAULT,
-    select: { disableSelect: false },
-    plugins: [excelImportPlugin]
-  };
-```
+## 演示代码
 
 ```javascript livedemo template=vtable
 function createTable() {
