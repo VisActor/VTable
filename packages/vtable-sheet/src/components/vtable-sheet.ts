@@ -671,11 +671,8 @@ export default class VTableSheet {
       return;
     }
 
-    // 如果是公式，直接显示输入的内容
-    // 如果不是公式，直接显示值
     const value = input.value;
 
-    // 实时更新表格内容
     if (value.startsWith('=')) {
       // 设置公式单元格
       this.formulaManager.setCellContent(
@@ -694,11 +691,11 @@ export default class VTableSheet {
         col: selection.startCol
       });
 
-      // 更新表格显示
-      this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
+      // 使用 VTable API 更新表格显示
+      this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, result.value);
     } else {
-      // 普通值直接更新
-      this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
+      // 普通值，使用 VTable API 直接更新
+      this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
     }
   }
 
@@ -769,8 +766,13 @@ export default class VTableSheet {
         const result = this.formulaManager.getCellValue(dependent);
         this.activeSheet!.setCellValue(dependent.row, dependent.col, result.value);
       });
+
+      // 如果当前编辑的单元格就是选中的单元格，更新 fx 输入框
+      const selection = this.activeSheet.getSelection();
+      if (selection && selection.startRow === event.row && selection.startCol === event.col) {
+        this.updateFormulaBar();
+      }
     }
-    this.updateFormulaBar();
   }
 
   /**

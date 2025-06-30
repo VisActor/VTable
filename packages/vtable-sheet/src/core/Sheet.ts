@@ -211,7 +211,12 @@ export class Sheet extends EventTarget implements SheetAPI {
    * 处理单元格值变更事件
    */
   private handleCellValueChanged(event: any): void {
-    this.fire('cell-value-changed', event);
+    this.fire('cell-value-changed', {
+      row: event.row - 1,
+      col: event.col - 1,
+      oldValue: event.rawValue,
+      newValue: event.changedValue
+    });
   }
 
   /**
