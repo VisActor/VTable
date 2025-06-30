@@ -4337,28 +4337,28 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row 行索引
    * @returns 是否为聚合值单元格
    */
-  isAggregation(col: number, row: number): boolean {
+  isPivotAggregation(col: number, row: number): boolean {
     if (this.isHeader(col, row)) {
       return false; // 表头单元格不是聚合值单元格
     }
 
     // 获取单元格的路径信息
     const cellHeaderPaths = this.getCellHeaderPaths(col, row);
-    
+
     // 检查行和列路径中是否有小计或总计角色
-    
+
     for (const path of cellHeaderPaths.colHeaderPaths) {
       if (path.role === 'sub-total' || path.role === 'grand-total') {
         return true;
       }
     }
-    
+
     for (const path of cellHeaderPaths.rowHeaderPaths) {
       if (path.role === 'sub-total' || path.role === 'grand-total') {
         return true;
       }
     }
-    
+
     return false;
   }
 }
