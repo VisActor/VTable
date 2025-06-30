@@ -1508,3 +1508,83 @@ tableInstance.expandAllTreeNode();
 // 折叠所有节点
 tableInstance.collapseAllTreeNode();
 ```
+
+## expandAllForRowTree(Function)
+
+展开所有行表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 展开行表头树的所有节点。
+   */
+  expandAllForRowTree(): void
+```
+
+使用：
+
+```ts
+// 展开行表头树的所有节点
+tableInstance.expandAllForRowTree();
+```
+
+## collapseAllForRowTree(Function)
+
+折叠所有行表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 折叠行表头树的所有节点
+   */
+  collapseAllForRowTree(): void
+```
+
+使用：
+
+```ts
+// 折叠行表头树的所有节点
+tableInstance.collapseAllForRowTree();
+```
+
+## expandAllForColumnTree(Function)
+
+展开所有列表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 展开列表头树的所有节点
+   */
+  expandAllForColumnTree(): void
+```
+
+使用：
+
+```ts
+// 展开列表头树的所有节点
+tableInstance.expandAllForColumnTree();
+```
+
+## collapseAllForColumnTree(Function)
+
+折叠所有行表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 折叠列表头树的所有节点
+   */
+  collapseAllForColumnTree(): void
+```
+
+使用：
+
+```ts
+// 折叠列表头树的所有节点
+tableInstance.collapseAllForColumnTree();
+```
