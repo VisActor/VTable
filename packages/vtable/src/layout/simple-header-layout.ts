@@ -1022,7 +1022,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         // iconPositionList:[]
       };
       results[id] = cell;
-      //处理levelSpan 跨行处理
+      // 处理levelSpan 跨行处理
       let maxRow = row;
       if (hd.levelSpan) {
         maxRow = Math.min(row + hd.levelSpan - 1, this._columnMaxDepth - 1);
@@ -1076,7 +1076,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           ).forEach(c => results.push(c));
       } else {
         const colDef = {
-          id: id,
+          id: this.seqId++,
           field: hd.field,
           // fieldKey: colDef.fieldKey,
           fieldFormat: hd.fieldFormat,
