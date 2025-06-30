@@ -247,6 +247,9 @@ Configure the display title of this column header
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
+${prefix} levelSpan(number)
+Optional. The number of row levels the header cell spans. Defaults to 1. If the levels do not reach the maximum, the last level cells will merge all remaining levels.
+
 ${prefix} columns (Array)
 Configure arrays with upper columns, nesting structures to describe column grouping relationships.
 
