@@ -656,6 +656,10 @@ export const menus = [
       },
       {
         path: 'pivot-analysis',
+        name: 'pivot-analysis-updateTotalData'
+      },
+      {
+        path: 'pivot-analysis',
         name: 'pivot-analysis-aggregationRules'
       },
       {
