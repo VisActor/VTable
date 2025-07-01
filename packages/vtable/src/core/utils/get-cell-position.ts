@@ -68,7 +68,7 @@ export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnIn
     for (let col = startCol; col >= 0; col--) {
       const width = _this.getColWidth(col);
       const left = right - width;
-      if (Math.round(left) <= Math.round(absoluteX) && Math.round(absoluteX) < Math.round(right)) {
+      if (Math.round(left) <= absoluteX && absoluteX < Math.round(right)) {
         return {
           left,
           col,
@@ -86,7 +86,7 @@ export function getTargetColAt(absoluteX: number, _this: BaseTableAPI): ColumnIn
     for (let col = startCol; col < colCount; col++) {
       const width = _this.getColWidth(col);
       const right = left + width;
-      if (Math.round(left) <= Math.round(absoluteX) && Math.round(absoluteX) < Math.round(right)) {
+      if (Math.round(left) <= absoluteX && absoluteX < Math.round(right)) {
         return {
           left,
           col,

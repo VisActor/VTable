@@ -1,9 +1,11 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import * as VTable_editors from '@visactor/vtable-editors';
-
+import { InputEditor } from '@visactor/vtable-editors';
 import { TableSeriesNumber } from '../../src';
 const CONTAINER_ID = 'vTable';
+const input_editor = new InputEditor({});
+VTable.register.editor('input', input_editor);
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
     id: i + 1,
@@ -21,7 +23,7 @@ const generatePersons = count => {
 };
 const t0 = Date.now();
 const tableSeriesNumberPlugin = new TableSeriesNumber({
-  rowCount: 10000,
+  rowCount: 1000,
   colCount: 100,
   rowHeight: 30,
   colWidth: 30,
@@ -39,6 +41,11 @@ export function createTable() {
       title: 'ID',
       width: 'auto',
       minWidth: 50,
+      style: {
+        textBaseline: 'bottom',
+        textAlign: 'center',
+        padding: [2, 10]
+      },
       sort: true
       // headerEditor: 'input-editor',
       // editor: 'input-editor'
@@ -125,7 +132,7 @@ export function createTable() {
   ];
   window.createTableInstance = function () {
     // window.tableInstance?.release();
-    const records = generatePersons(10000);
+    const records = generatePersons(100);
     const option: VTable.ListTableConstructorOptions = {
       defaultHeaderRowHeight: 60,
       heightMode: 'autoHeight',
@@ -155,6 +162,7 @@ export function createTable() {
       //   x2: 1700,
       //   y2: 600
       // },
+      editor: 'input',
       plugins: [tableSeriesNumberPlugin]
     };
     const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)!, option);
