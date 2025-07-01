@@ -20,6 +20,17 @@
   position: relative;
 }
 
+.vtable-excel-cursor {
+  cursor: cell;
+}
+
+.vtable-excel-cursor canvas,
+.vtable-excel-cursor * {
+  cursor: cell !important;
+}
+
+
+
 /* VTable 容器 */
 .vtable-sheet-table {
   flex: 1;
