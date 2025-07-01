@@ -67,6 +67,11 @@ export interface IDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+    /**
+   * 是否在编辑单元格后更新总计小计
+   * @default false
+   */
+  updateAggregationOnEditCell?: boolean;
 }
 ```
 

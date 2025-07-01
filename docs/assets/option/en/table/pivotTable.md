@@ -67,6 +67,11 @@ export interface IDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+  /**
+   * Whether to update total and subtotal after editing.
+   * @default false
+   */
+  updateAggregationOnEditCell?: boolean;
 }
 ```
 
