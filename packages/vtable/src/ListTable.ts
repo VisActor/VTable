@@ -1629,18 +1629,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     let stateChanged = false;
 
-    // 折叠所有表头节点
-    const headerObjects = this.internalProps.layoutMap.headerObjects;
-    for (const header of headerObjects) {
-      const headerDefine = header.define as any;
-      if (headerDefine.columns && headerDefine.columns.length > 0) {
-        if (headerDefine.hierarchyState !== HierarchyState.collapse) {
-          headerDefine.hierarchyState = HierarchyState.collapse;
-          stateChanged = true;
-        }
-      }
-    }
-
     // 折叠所有数据行节点
     if (this.dataSource && typeof (this.dataSource as any).collapseAllNodes === 'function') {
       (this.dataSource as any).collapseAllNodes();
