@@ -1,3 +1,30 @@
+# v1.19.2
+
+2025-07-01
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: ListTable support levelSpan for header
+- **@visactor/vtable-plugins**: add import excel file plugin
+- **@visactor/vtable-gantt**: gantt chart's frame border support set array
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix templateLink in export excel [#4106](https://github.com/VisActor/VTable/issues/4106)
+- **@visactor/vtable**: list-tree delete root level error when using deleteRecords
+- **@visactor/vtable**: fix minWidth & maxWidth in autoFillWidth status [#4100](https://github.com/VisActor/VTable/issues/4100)
+- **@visactor/vtable**: when updateColumns occor error with aggregation
+- **@visactor/vtable**: when edit pivot indicator value the total value should update synchronously
+- **@visactor/vtable**: merge render error when has custom aggregation
+- **@visactor/vtable**: list tree delete records bug [#3991](https://github.com/VisActor/VTable/issues/3991)
+- **@visactor/vtable**: group by boolean cannot render false [#4059](https://github.com/VisActor/VTable/issues/4059)
+
+
+
+[更多详情请查看 v1.19.2](https://github.com/VisActor/VTable/releases/tag/v1.19.2)
+
 # v1.19.1
 
 2025-06-20
