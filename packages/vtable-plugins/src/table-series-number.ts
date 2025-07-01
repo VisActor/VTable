@@ -1,6 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vrender-components';
 import type { ILayer } from '@visactor/vrender-core';
+import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
 
 export interface TableSeriesNumberOptions {
   rowCount: number;
@@ -13,7 +14,7 @@ export interface TableSeriesNumberOptions {
 export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   id = `table-series-number`;
   name = 'Table Series Number';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
+  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.BEFORE_INIT];
   pluginOptions: TableSeriesNumberOptions;
   table: VTable.ListTable;
   seriesNumberComponent: VRenderTableSeriesNumber;
@@ -36,7 +37,26 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     // const eventArgs = args[0];
     const runTime = args[1];
-    if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
+    if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
+      const eventArgs = args[0];
+      const table: BaseTableAPI = args[2];
+      this.table = table as ListTable;
+      const options: ListTableConstructorOptions = eventArgs.options;
+      const records = options.records ?? [];
+      //用空数据将records填充到pluginOptions.rowCount
+      for (let i = records.length; i < this.pluginOptions.rowCount; i++) {
+        records.push({});
+      }
+      options.records = records;
+
+      for (let i = options.columns.length; i < this.pluginOptions.colCount - options.columns.length; i++) {
+        const columnFields = {
+          field: `col_${i}`,
+          title: ``
+        };
+        options.columns.push(columnFields);
+      }
+    } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
       console.log('TableSeriesNumber initialized');
       this.table = args[2];
       this.table.customConfig = {
