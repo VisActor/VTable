@@ -435,9 +435,6 @@ export function bindTableGroupListener(eventManager: EventManager) {
     env: 'document',
     callback: globalPointerdownCallback
   });
-  // 整体全局监听事件
-  vglobal.addEventListener('pointerup', globalPointerupCallback);
-  vglobal.addEventListener('pointerdown', globalPointerdownCallback);
   table.scenegraph.tableGroup.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE)) {
       table.fireListeners(TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, {
