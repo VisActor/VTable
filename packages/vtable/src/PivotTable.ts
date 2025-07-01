@@ -2244,6 +2244,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 展开行表头树的所有节点
    */
   expandAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
     if (this.internalProps.layoutMap.rowDimensionTree) {
       this.internalProps.layoutMap.clearHeaderPathCache();
       this.internalProps.layoutMap.expandAllForRowDimensionTree();
@@ -2252,7 +2256,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         col: -1,
         row: -1,
         hierarchyState: HierarchyState.expand,
-        originData: this.internalProps.layoutMap.rowDimensionTree.tree
+        changeAll: true
       });
     }
   }
@@ -2261,6 +2265,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 折叠行表头树的所有节点
    */
   collapseAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
     if (this.internalProps.layoutMap.rowDimensionTree) {
       this.internalProps.layoutMap.clearHeaderPathCache();
       this.internalProps.layoutMap.collapseAllForRowDimensionTree();
@@ -2269,7 +2277,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         col: -1,
         row: -1,
         hierarchyState: HierarchyState.collapse,
-        originData: this.internalProps.layoutMap.rowDimensionTree.tree
+        changeAll: true
       });
     }
   }
@@ -2278,17 +2286,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 展开列表头树的所有节点
    */
   expandAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
     if (this.internalProps.layoutMap.columnDimensionTree) {
       this.internalProps.layoutMap.clearHeaderPathCache();
       this.internalProps.layoutMap.expandAllForColumnDimensionTree();
       this.renderWithRecreateCells();
-      const eventPayload = {
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: -1,
         row: -1,
         hierarchyState: HierarchyState.expand,
-        originData: this.internalProps.layoutMap.columnDimensionTree.tree
-      };
-      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, eventPayload);
+        changeAll: true
+      });
     }
   }
 
@@ -2296,17 +2307,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
    * 折叠列表头树的所有节点
    */
   collapseAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
     if (this.internalProps.layoutMap.columnDimensionTree) {
       this.internalProps.layoutMap.clearHeaderPathCache();
       this.internalProps.layoutMap.collapseAllForColumnDimensionTree();
       this.renderWithRecreateCells();
-      const eventPayload = {
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: -1,
         row: -1,
         hierarchyState: HierarchyState.collapse,
-        originData: this.internalProps.layoutMap.columnDimensionTree.tree
-      };
-      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, eventPayload);
+        changeAll: true
+      });
     }
   }
 

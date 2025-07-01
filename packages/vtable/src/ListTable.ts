@@ -1592,19 +1592,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 展开所有树形节点
    */
   expandAllTreeNode(): void {
-    let stateChanged = false;
-
-    // 展开所有表头节点
-    const headerObjects = this.internalProps.layoutMap.headerObjects;
-    for (const header of headerObjects) {
-      const headerDefine = header.define as any;
-      if (headerDefine.columns && headerDefine.columns.length > 0) {
-        if (headerDefine.hierarchyState !== HierarchyState.expand) {
-          headerDefine.hierarchyState = HierarchyState.expand;
-          stateChanged = true;
-        }
-      }
+    if (!this._hasHierarchyTreeHeader()) {
+      return;
     }
+
+    let stateChanged = false;
 
     // 展开所有数据行节点
     if (this.dataSource && typeof (this.dataSource as any).expandAllNodes === 'function') {
@@ -1631,6 +1623,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 折叠所有树形节点
    */
   collapseAllTreeNode(): void {
+    if (!this._hasHierarchyTreeHeader()) {
+      return;
+    }
+
     let stateChanged = false;
 
     // 折叠所有表头节点
