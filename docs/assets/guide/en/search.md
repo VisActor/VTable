@@ -57,7 +57,7 @@ Initial configuration
 | highlightCellStyle | ICellStyle | Highlight style for all search results |
 | focuseHighlightCellStyle | ICellStyle | The highlight style of the current target search result |
 | queryMethod | (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean | Search matching method, the `includes` method is used by default |
-| callback | boolean | callback after the search is completed |
+| callback | (queryResult: QueryResult, table: IVTable) => void | callback after the search is completed |
 
 Notice
 

@@ -797,6 +797,7 @@ importers:
       big.js: 6.2.2
       chai: 4.3.4
       eslint: ~8.18.0
+      exceljs: 4.4.0
       form-data: ~4.0.0
       inversify: 6.0.1
       jest: ^26.0.0
@@ -826,6 +827,7 @@ importers:
     dependencies:
       '@visactor/vutils': 0.19.7
       big.js: 6.2.2
+      exceljs: 4.4.0
       lodash: 4.17.21
     devDependencies:
       '@babel/core': 7.20.12
@@ -5255,6 +5257,7 @@ packages:
 
   /bindings/1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
+    requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
     optional: true
@@ -7529,6 +7532,7 @@ packages:
 
   /file-uri-to-path/1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
+    requiresBuild: true
     optional: true
 
   /fill-range/4.0.0:
@@ -10777,6 +10781,7 @@ packages:
 
   /nan/2.22.2:
     resolution: {integrity: sha512-DANghxFkS1plDdRsX0X9pm0Z6SJNN6gBdtXfanwoZ8hooC5gosGFSBGRYHUVPz1asKA/kMRqDRdHrluZ61SpBQ==}
+    requiresBuild: true
     optional: true
 
   /nanoid/3.1.25:
