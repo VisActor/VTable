@@ -1,6 +1,6 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
-import { RichText } from '@src/vrender';
+import { RichText, vglobal } from '@src/vrender';
 import type { ColumnDefine, ListTableConstructorOptions, MousePointerCellEvent } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
@@ -675,6 +675,8 @@ export class EventManager {
         document.body.removeEventListener(item.name, item.callback);
       } else if (item.env === 'window') {
         window.removeEventListener(item.name, item.callback);
+      } else if (item.env === 'vglobal') {
+        vglobal.removeEventListener(item.name, item.callback);
       }
     });
     this.globalEventListeners = [];
