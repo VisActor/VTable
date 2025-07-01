@@ -23,6 +23,8 @@ option: PivotTable#dataConfig.updateAggregationOnEditCell
 ## 代码演示
 
 ```javascript livedemo template=vtable
+const input_editor = new VTable_editors.InputEditor();
+VTable.register.editor('input', input_editor);
 const sumNumberFormat = VTable.DataStatistics.numberFormat({
   prefix: '$'
 });
