@@ -37,6 +37,9 @@ export default class VTableSheet {
   private toolbarElement: HTMLElement | null = null;
   private footerElement: HTMLElement | null = null;
 
+  /** 防止递归调用的标志 */
+  private isUpdatingFromFormula = false;
+
   /**
    * 构造函数
    * @param options 配置选项
@@ -230,25 +233,31 @@ export default class VTableSheet {
       const value = formulaInput.value;
 
       // 应用与按Enter键相同的逻辑
-      if (value.startsWith('=')) {
-        // 设置公式单元格
-        this.formulaManager.setCellContent(
-          {
+      if (value.startsWith('=') && value.length > 1) {
+        try {
+          // 设置公式单元格
+          this.formulaManager.setCellContent(
+            {
+              sheet: this.activeSheet.getKey(),
+              row: selection.startRow,
+              col: selection.startCol
+            },
+            value
+          );
+
+          // 获取计算结果
+          const result = this.formulaManager.getCellValue({
             sheet: this.activeSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
-          },
-          value
-        );
+          });
 
-        // 获取计算结果
-        const result = this.formulaManager.getCellValue({
-          sheet: this.activeSheet.getKey(),
-          row: selection.startRow,
-          col: selection.startCol
-        });
-
-        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
+          this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
+        } catch (error) {
+          console.warn('Formula confirmation error:', error);
+          // 显示错误状态
+          this.activeSheet.setCellValue(selection.startRow, selection.startCol, '#ERROR!');
+        }
       } else {
         this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
       }
@@ -650,7 +659,25 @@ export default class VTableSheet {
       });
 
       if (formula) {
-        formulaInput.value = '=' + formula;
+        // 检查公式是否已经包含等于号，避免重复添加
+        const displayFormula = formula.startsWith('=') ? formula : '=' + formula;
+        formulaInput.value = displayFormula;
+
+        // 如果选中的单元格包含公式，确保单元格显示计算结果而非公式文本
+        try {
+          const result = this.formulaManager.getCellValue({
+            sheet: this.activeSheet.getKey(),
+            row: selection.startRow,
+            col: selection.startCol
+          });
+          // 设置标志防止递归调用
+          this.isUpdatingFromFormula = true;
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, result.value);
+          this.isUpdatingFromFormula = false;
+        } catch (error) {
+          this.isUpdatingFromFormula = false;
+          console.warn('Error updating cell with formula result:', error);
+        }
       } else {
         formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
       }
@@ -673,30 +700,16 @@ export default class VTableSheet {
 
     const value = input.value;
 
+    // 输入公式时，单元格显示公式本身，不计算结果
+    this.isUpdatingFromFormula = true;
     if (value.startsWith('=')) {
-      // 设置公式单元格
-      this.formulaManager.setCellContent(
-        {
-          sheet: this.activeSheet.getKey(),
-          row: selection.startRow,
-          col: selection.startCol
-        },
-        value
-      );
-
-      // 获取计算结果
-      const result = this.formulaManager.getCellValue({
-        sheet: this.activeSheet.getKey(),
-        row: selection.startRow,
-        col: selection.startCol
-      });
-
-      // 使用 VTable API 更新表格显示
-      this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, result.value);
+      // 直接显示公式文本，不进行计算
+      this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
     } else {
-      // 普通值，使用 VTable API 直接更新
+      // 普通值，正常同步显示
       this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
     }
+    this.isUpdatingFromFormula = false;
   }
 
   /**
@@ -719,33 +732,55 @@ export default class VTableSheet {
       const value = input.value;
 
       // 检查是否是公式
-      if (value.startsWith('=')) {
-        // 设置公式单元格
-        this.formulaManager.setCellContent(
-          {
+      if (value.startsWith('=') && value.length > 1) {
+        try {
+          // 设置公式单元格
+          this.formulaManager.setCellContent(
+            {
+              sheet: this.activeSheet.getKey(),
+              row: selection.startRow,
+              col: selection.startCol
+            },
+            value
+          );
+
+          // 获取计算结果
+          const result = this.formulaManager.getCellValue({
             sheet: this.activeSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
-          },
-          value
-        );
+          });
 
-        // 获取计算结果
-        const result = this.formulaManager.getCellValue({
-          sheet: this.activeSheet.getKey(),
-          row: selection.startRow,
-          col: selection.startCol
-        });
+          // 设置单元格值
+          this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
 
-        // 设置单元格值
-        this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
+          // 同时更新表格显示
+          this.isUpdatingFromFormula = true;
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, result.value);
+          this.isUpdatingFromFormula = false;
+        } catch (error) {
+          this.isUpdatingFromFormula = false;
+          console.warn('Formula evaluation error:', error);
+          // 显示错误状态
+          this.activeSheet.setCellValue(selection.startRow, selection.startCol, '#ERROR!');
+          this.isUpdatingFromFormula = true;
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, '#ERROR!');
+          this.isUpdatingFromFormula = false;
+        }
       } else {
         // 普通值，直接设置
         this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
+        this.isUpdatingFromFormula = true;
+        this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
+        this.isUpdatingFromFormula = false;
       }
+
+      // 让输入框失焦，回到表格
+      input.blur();
 
       // 阻止默认行为
       event.preventDefault();
+      event.stopPropagation();
     }
   }
 
@@ -753,25 +788,74 @@ export default class VTableSheet {
    * 处理单元格值变更事件
    */
   private handleCellValueChanged(event: CellValueChangedEvent): void {
-    // 更新依赖的公式
-    if (this.activeSheet) {
-      const dependents = this.formulaManager.getCellDependents({
-        sheet: this.activeSheet.getKey(),
-        row: event.row,
-        col: event.col
-      });
+    if (!this.activeSheet || this.isUpdatingFromFormula) {
+      return;
+    }
 
-      // 重新计算依赖该单元格的所有公式
-      dependents.forEach(dependent => {
-        const result = this.formulaManager.getCellValue(dependent);
-        this.activeSheet!.setCellValue(dependent.row, dependent.col, result.value);
-      });
+    // 检查新输入的值是否为公式
+    const newValue = event.newValue;
+    if (typeof newValue === 'string' && newValue.startsWith('=') && newValue.length > 1) {
+      try {
+        // 设置公式单元格
+        this.formulaManager.setCellContent(
+          {
+            sheet: this.activeSheet.getKey(),
+            row: event.row,
+            col: event.col
+          },
+          newValue
+        );
 
-      // 如果当前编辑的单元格就是选中的单元格，更新 fx 输入框
-      const selection = this.activeSheet.getSelection();
-      if (selection && selection.startRow === event.row && selection.startCol === event.col) {
-        this.updateFormulaBar();
+        // 获取计算结果
+        const result = this.formulaManager.getCellValue({
+          sheet: this.activeSheet.getKey(),
+          row: event.row,
+          col: event.col
+        });
+
+        // 更新单元格显示为计算结果
+        this.isUpdatingFromFormula = true;
+        this.activeSheet.tableInstance?.changeCellValue(event.col + 1, event.row + 1, result.value);
+        this.isUpdatingFromFormula = false;
+      } catch (error) {
+        this.isUpdatingFromFormula = false;
+        console.warn('Formula processing error:', error);
+        // 显示错误状态
+        this.isUpdatingFromFormula = true;
+        this.activeSheet.tableInstance?.changeCellValue(event.col + 1, event.row + 1, '#ERROR!');
+        this.isUpdatingFromFormula = false;
       }
+    } else {
+      // 非公式值，同步到HyperFormula
+      this.formulaManager.setCellContent(
+        {
+          sheet: this.activeSheet.getKey(),
+          row: event.row,
+          col: event.col
+        },
+        newValue
+      );
+    }
+
+    // 更新依赖的公式
+    const dependents = this.formulaManager.getCellDependents({
+      sheet: this.activeSheet.getKey(),
+      row: event.row,
+      col: event.col
+    });
+
+    // 重新计算依赖该单元格的所有公式
+    dependents.forEach(dependent => {
+      const result = this.formulaManager.getCellValue(dependent);
+      this.isUpdatingFromFormula = true;
+      this.activeSheet!.setCellValue(dependent.row, dependent.col, result.value);
+      this.isUpdatingFromFormula = false;
+    });
+
+    // 如果当前编辑的单元格就是选中的单元格，更新 fx 输入框
+    const selection = this.activeSheet.getSelection();
+    if (selection && selection.startRow === event.row && selection.startCol === event.col) {
+      this.updateFormulaBar();
     }
   }
 
