@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.19.1",
+  "version": "1.19.2",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -36,7 +36,8 @@
   "dependencies": {
     "@visactor/vutils": "~0.19.1",
     "lodash": "4.17.21",
-    "big.js": "6.2.2"
+    "big.js": "6.2.2",
+    "exceljs": "4.4.0"
   },
   "peerDependencies": {
     "@visactor/vtable": "workspace:*"
