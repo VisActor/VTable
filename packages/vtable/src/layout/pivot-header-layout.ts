@@ -4543,9 +4543,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return false;
   }
 
-  /**
-   * Expand all nodes in the row dimension tree.
-   */
   expandAllForRowDimensionTree() {
     if (this.rowDimensionTree) {
       this.rowDimensionTree.setAllNodesState(HierarchyState.expand);
