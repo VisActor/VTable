@@ -2,7 +2,7 @@
 category: examples
 group: data-analysis
 title: Pivot Analysis Update Subtotal Total Using Editor
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-total.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-updateTotalData.gif
 link: data_analysis/pivot_table_dataAnalysis
 option: PivotTable#dataConfig.updateAggregationOnEditCell
 ---

@@ -272,6 +272,11 @@ export interface CalculateddFieldRule {
   calculateFun?: (dependFieldsValue: any) => any;
 }
 ```
+### updateAggregationOnEditCell (boolean)
+
+是否在修改单元格后更新小计和总计。默认值为false.
+
+具体情况请参考[demo](../demo/data-analysis/pivot-analysis-updateTotalData)
 
 ## columnTree(Array)
 
