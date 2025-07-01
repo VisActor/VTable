@@ -5,21 +5,21 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: ListTable support levelSpan for header
-- **@visactor/vtable-plugins**: add import excel file plugin
-- **@visactor/vtable-gantt**: gantt chart's frame border support set array
+- **@visactor/vtable**: 列表表格支持表头层级跨度
+- **@visactor/vtable-plugins**: 添加导入Excel文件插件
+- **@visactor/vtable-gantt**: 甘特图外边框支持数组配置
 
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix templateLink in export excel [#4106](https://github.com/VisActor/VTable/issues/4106)
-- **@visactor/vtable**: list-tree delete root level error when using deleteRecords
-- **@visactor/vtable**: fix minWidth & maxWidth in autoFillWidth status [#4100](https://github.com/VisActor/VTable/issues/4100)
-- **@visactor/vtable**: when updateColumns occor error with aggregation
-- **@visactor/vtable**: when edit pivot indicator value the total value should update synchronously
-- **@visactor/vtable**: merge render error when has custom aggregation
-- **@visactor/vtable**: list tree delete records bug [#3991](https://github.com/VisActor/VTable/issues/3991)
-- **@visactor/vtable**: group by boolean cannot render false [#4059](https://github.com/VisActor/VTable/issues/4059)
+- **@visactor/vtable**: 修复导出Excel时templateLink问题 [#4106](https://github.com/VisActor/VTable/issues/4106)
+- **@visactor/vtable**: 修复使用deleteRecords删除列表树根级别时的错误
+- **@visactor/vtable**: 修复自动填充宽度状态下的minWidth和maxWidth问题 [#4100](https://github.com/VisActor/VTable/issues/4100)
+- **@visactor/vtable**: 修复带聚合时updateColumns发生错误
+- **@visactor/vtable**: 编辑透视表指标值时总计值应同步更新
+- **@visactor/vtable**: 修复自定义聚合时的合并渲染错误
+- **@visactor/vtable**: 修复列表树删除数据时的bug [#3991](https://github.com/VisActor/VTable/issues/3991)
+- **@visactor/vtable**: 修复安装boolean类型的某个字段分组时无法渲染false值的问题 [#4059](https://github.com/VisActor/VTable/issues/4059)
 
 
 
