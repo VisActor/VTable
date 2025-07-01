@@ -4337,7 +4337,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
    * @param row 行索引
    * @returns 是否为聚合值单元格
    */
-  isPivotAggregation(col: number, row: number): boolean {
+  isAggregation(col: number, row: number): boolean {
     if (this.isHeader(col, row)) {
       return false; // 表头单元格不是聚合值单元格
     }

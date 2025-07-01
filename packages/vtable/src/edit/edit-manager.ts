@@ -96,9 +96,16 @@ export class EditManager {
       //     return;
       //   }
       // }
+      //ListTable聚合值不可以修改，PivotTable聚合值在updateAggregationOnEditCell false可以修改，true不可以修改
       if ((this.table.internalProps.layoutMap as SimpleHeaderLayoutMap)?.isAggregation?.(col, row)) {
-        console.warn("VTable Warn: this is aggregation value, can't be edited");
-        return;
+        const isPivotTable = this.table.isPivotTable?.();
+        const updateAggregationOnEditCell = isPivotTable
+          ? (this.table as any).internalProps?.dataConfig?.updateAggregationOnEditCell
+          : false;
+        if (!isPivotTable || (isPivotTable && updateAggregationOnEditCell)) {
+          console.warn("VTable Warn: this is aggregation value, can't be edited");
+          return;
+        }
       }
 
       // group title cell do not allow edit

@@ -1862,7 +1862,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
         for (let col = 0; col < this.colCount; col++) {
           for (let row = 0; row < this.rowCount; row++) {
-            if (this.internalProps.layoutMap.isPivotAggregation(col, row)) {
+            if (this.internalProps.layoutMap.isAggregation(col, row)) {
               this.scenegraph.updateCellContent(col, row);
             }
           }
@@ -1990,7 +1990,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
       for (let col = 0; col < this.colCount; col++) {
         for (let row = 0; row < this.rowCount; row++) {
-          if (this.internalProps.layoutMap.isPivotAggregation(col, row)) {
+          if (this.internalProps.layoutMap.isAggregation(col, row)) {
             this.scenegraph.updateCellContent(col, row);
           }
         }
