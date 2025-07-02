@@ -586,7 +586,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
         return 'null';
       }
       if (typeof value === 'string') {
-        return `'${value.replace(/'/g, "\\'")}'`;
+        return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
       }
       if (typeof value === 'number' || typeof value === 'boolean') {
         return String(value);
