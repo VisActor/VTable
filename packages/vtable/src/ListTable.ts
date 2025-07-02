@@ -239,6 +239,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.bodyBottomStyleCache = new Map();
+    this._updateSize();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
@@ -1123,6 +1124,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
     this.scenegraph.createSceneGraph();
+    this.resize();
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
@@ -1273,11 +1275,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
+
+    this._updateSize();
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
-      this._updateSize();
+      //   this._updateSize();
       this.internalProps.title.resize();
-      this.scenegraph.resize();
+      //   this.scenegraph.resize();
     }
+    this.scenegraph.resize();
+
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip?.resetVisible();

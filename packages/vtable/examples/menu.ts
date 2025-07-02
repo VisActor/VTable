@@ -830,6 +830,10 @@ export const menus = [
       {
         path: 'theme',
         name: 'custom-list'
+      },
+      {
+        path: 'theme',
+        name: 'scroll-style'
       }
     ]
   },
