@@ -639,6 +639,11 @@ export class StateManager {
       row = this.table.rowCount - 1;
     }
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
+    this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
+      ranges: this.select.ranges,
+      col: col,
+      row: row
+    });
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {

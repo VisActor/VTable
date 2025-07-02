@@ -130,27 +130,30 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       //todo 对应更新seriesNumberComponent的选中状态
       // console.log('drag_select_end', e);
     });
-    this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CELL, e => {
+    this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, e => {
       //todo 对应更新seriesNumberComponent的选中状态
       // console.log('select_cell', e);
       this.seriesNumberComponent.removeAllSelectedIndexs();
       const selectRange = this.table.stateManager.select.ranges;
+
       const rowSelectedIndexs = [];
       const colSelectedIndexs = [];
       for (const range of selectRange) {
         const { row: rowStart, col: colStart } = range.start;
         const { row: rowEnd, col: colEnd } = range.end;
-        rowSelectedIndexs.push({ startIndex: rowStart, endIndex: rowEnd });
-        colSelectedIndexs.push({ startIndex: colStart, endIndex: colEnd });
+        rowSelectedIndexs.push({ startIndex: Math.min(rowStart, rowEnd), endIndex: Math.max(rowStart, rowEnd) });
+        colSelectedIndexs.push({ startIndex: Math.min(colStart, colEnd), endIndex: Math.max(colStart, colEnd) });
       }
       this.seriesNumberComponent.addRowSelectedRanges(rowSelectedIndexs);
       this.seriesNumberComponent.addColSelectedRanges(colSelectedIndexs);
 
       this.seriesNumberComponent.renderSelectedIndexsState();
     });
-    this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CLEAR, e => {
-      //todo 对应更新seriesNumberComponent的选中状态
-      // console.log('selected_clear', e);
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END, e => {
+      this.seriesNumberComponent.setAttribute('hover', true);
+    });
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, e => {
+      this.seriesNumberComponent.setAttribute('hover', true);
     });
     // this.table.on(VTable.TABLE_EVENT_TYPE.BEFORE_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, e => {
     //   console.log(
@@ -192,7 +195,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       this.table.scenegraph.renderSceneGraph();
     });
     this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClick, e => {
-      const { seriesNumberCell, event } = e.detail;
+      const { seriesNumberCell, event, isDragSelect } = e.detail;
       const isCtrl = event.nativeEvent.ctrlKey || event.nativeEvent.metaKey;
       // console.log(SeriesNumberEvent.seriesNumberCellClick, event, seriesNumberCell);
       const isRow = seriesNumberCell.name.includes('row');
@@ -201,6 +204,8 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
         this.table.selectRow(rowIndex, isCtrl);
       } else {
         const colIndex = seriesNumberCell.id;
+        console.log('seriesNumberCellClick', colIndex, isCtrl);
+
         this.table.selectCol(colIndex, isCtrl);
       }
     });
@@ -209,6 +214,21 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
       const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
       this.table.setTranslate(rowSeriesNumberColWidth, colSeriesNumberRowHeight);
+    });
+    this.seriesNumberComponent.on(SeriesNumberEvent.resizeColWidthStart, e => {
+      this.seriesNumberComponent.setAttribute('hover', false);
+      console.log('resizeColWidthStart', e);
+      const { colIndex, event } = e.detail;
+      this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
+      this.table.stateManager.startResizeCol(colIndex, event.viewport.x, event.viewport.y);
+    });
+
+    this.seriesNumberComponent.on(SeriesNumberEvent.resizeRowHeightStart, e => {
+      this.seriesNumberComponent.setAttribute('hover', false);
+      console.log('resizeRowHeightStart', e);
+      const { rowIndex, event } = e.detail;
+      this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
+      this.table.stateManager.startResizeRow(rowIndex, event.viewport.x, event.viewport.y);
     });
   }
   release() {

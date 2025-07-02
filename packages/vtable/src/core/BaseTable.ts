@@ -2888,10 +2888,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   selectCells(cellRanges: CellRange[]) {
     const { scrollLeft, scrollTop } = this;
     cellRanges.forEach((cellRange: CellRange, index: number) => {
-      if (cellRange.start.col === cellRange.end.col && cellRange.start.row === cellRange.end.row) {
+      const startRow = cellRange.start.row;
+      const startCol = cellRange.start.col;
+      const endRow = cellRange.end.row;
+      const endCol = cellRange.end.col;
+      if (startCol === endCol && startRow === endRow) {
         this.stateManager.updateSelectPos(
-          cellRange.start.col,
-          cellRange.start.row,
+          startCol,
+          startRow,
           false,
           index >= 1,
           false,
@@ -2900,8 +2904,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
       } else {
         this.stateManager.updateSelectPos(
-          cellRange.start.col,
-          cellRange.start.row,
+          startCol,
+          startRow,
           false,
           index >= 1,
           false,
@@ -2910,8 +2914,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
         this.stateManager.updateInteractionState(InteractionState.grabing);
         this.stateManager.updateSelectPos(
-          cellRange.end.col,
-          cellRange.end.row,
+          endCol,
+          endRow,
           false,
           index >= 1,
           false,
@@ -2919,7 +2923,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           true
         );
       }
-      this.stateManager.endSelectCells(false, false);
+      // this.stateManager.endSelectCells(false, false);
       this.stateManager.updateInteractionState(InteractionState.default);
     });
     // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
@@ -2943,13 +2947,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       ]);
     }
   }
-  selectCol(colIndex: number, isCtrl?: boolean) {
+  selectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     if (isCtrl) {
       currentSelectRanges.push({
         start: { col: colIndex, row: 0 },
         end: { col: colIndex, row: this.rowCount - 1 }
       });
+      this.selectCells(currentSelectRanges);
+    } else if (isShift) {
+      const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+      if (lastSelectRange) {
+        lastSelectRange.end.col = colIndex;
+      }
       this.selectCells(currentSelectRanges);
     } else {
       this.selectCells([
