@@ -26,7 +26,7 @@ interface ITreeLayoutBaseHeadNode {
   id: number;
   // dimensionKey: string;
   // // title: string;
-  // indicatorKey?: string;
+  // // indicatorKey?: string;
   value: string;
   children: ITreeLayoutHeadNode[] | undefined;
   columns?: any; //兼容ListTable情况 simple-header-layout中增加了columnTree
@@ -382,6 +382,32 @@ export class DimensionTree {
     const children = cloneDeep(this.tree.children);
     clearNode(children);
     return children;
+  }
+
+  /**
+   * 仅更新树中所有节点的 hierarchyState，不执行任何布局计算。
+   */
+  setAllNodesState(state: HierarchyState) {
+    this._updateNodeHierarchyState(this.tree, state);
+  }
+
+  /**
+   * 递归辅助函数，仅用于遍历树并更新所有节点的 hierarchyState
+   */
+  private _updateNodeHierarchyState(node: ITreeLayoutHeadNode, hierarchyState: HierarchyState) {
+    // 如果节点有子节点，且子节点为非指标节点，则设置其状态；否则，状态为 none
+    if (node.children && node.children.length > 0 && node.children[0].dimensionKey) {
+      // 不对根节点进行处理
+      if (node.level !== -1) {
+        node.hierarchyState = hierarchyState;
+      }
+
+      node.children.forEach(child => {
+        this._updateNodeHierarchyState(child, hierarchyState);
+      });
+    } else {
+      node.hierarchyState = HierarchyState.none;
+    }
   }
 }
 

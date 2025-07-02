@@ -209,6 +209,7 @@ export interface TableEventHandlersEventArgumentMap {
   tree_hierarchy_state_change: {
     col: number;
     row: number;
+    changeAll?: boolean;
     hierarchyState: HierarchyState;
     dimensionInfo?: IDimensionInfo[];
     /**整条数据-原始数据 */
