@@ -719,6 +719,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const lastX = table.eventManager.LastBodyPointerXY?.x ?? e.x;
       const lastY = table.eventManager.LastBodyPointerXY?.y ?? e.y;
       if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
+        console.log('globalPointermoveCallback isDraging =true');
         table.eventManager.isDraging = true;
       }
     }

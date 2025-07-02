@@ -173,6 +173,11 @@ export interface TableEventHandlersEventArgumentMap {
   mouseover_chart_symbol: MousePointerSparklineEvent;
 
   drag_select_end: MousePointerMultiCellEvent;
+  selected_changed: {
+    col: number;
+    row: number;
+    ranges: CellRange[];
+  };
   copy_data: { cellRange: CellRange[]; copyData: string };
   drillmenu_click: DrillMenuEventInfo;
 
@@ -328,6 +333,7 @@ export interface TableEventHandlersReturnMap {
 
   mouseover_chart_symbol: void;
   drag_select_end: void;
+  selected_changed: void;
   copy_data: void;
   drillmenu_click: void;
 
