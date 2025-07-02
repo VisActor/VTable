@@ -576,7 +576,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   // 注意和pointertap事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    console.log('tableGroup', 'pointerup');
+    // console.log('tableGroup', 'pointerup');
     if (e.button !== 0) {
       // 只处理左键
       return;

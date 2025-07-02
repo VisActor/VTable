@@ -1449,9 +1449,7 @@ export class Scenegraph {
     this.updateBorderSizeAndPosition();
 
     // 更新滚动条状态
-    if (this.isPivot) {
-      this.component.updateScrollBar();
-    }
+    this.component.updateScrollBar();
 
     // 处理单元格内容需要textStick的情况  入股这里不处理 只依赖异步proxy progress中处理 会有闪烁问题
 
@@ -1472,10 +1470,6 @@ export class Scenegraph {
 
     if (this.table.options.animationAppear) {
       dealWithAnimationAppear(this.table);
-    }
-
-    if (this.table.isListTable()) {
-      this.table._updateSize();
     }
 
     this.updateNextFrame();

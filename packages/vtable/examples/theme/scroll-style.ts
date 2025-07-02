@@ -145,8 +145,8 @@ export function createTable() {
       // frameStyle: undefined,
       scrollStyle: {
         width: 16,
-        visible: 'focus',
-        hoverOn: true,
+        visible: 'always',
+        hoverOn: false,
         barToSide: true,
         scrollSliderCornerRadius: 0,
         scrollRailColor: 'RGBA(216,216,216,.5)',

@@ -531,10 +531,6 @@ export class TableComponent {
       });
       (this.columnResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getColWidth(col))}px`);
     }
-
-    if (this.table.isListTable()) {
-      this.table._updateSize();
-    }
   }
 
   /**
@@ -619,10 +615,6 @@ export class TableComponent {
         x
       });
       (this.rowResizeLabel.lastChild as Text).setAttribute('text', `${Math.floor(this.table.getRowHeight(row))}px`);
-    }
-
-    if (this.table.isListTable()) {
-      this.table._updateSize();
     }
   }
 

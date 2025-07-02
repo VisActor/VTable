@@ -1187,7 +1187,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let vScrollBarWidth = 0;
     let hScrollBarWidth = 0;
 
-    if (['focus'].includes(scrollStyle.visible)) {
+    if (scrollStyle.visible === 'focus') {
       vScrollBarWidth = style.getVerticalScrollBarSize(scrollStyle);
       hScrollBarWidth = style.getHorizontalScrollBarSize(scrollStyle);
     } else {
@@ -1222,15 +1222,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this._clearColRangeWidthsMap();
     this._clearRowRangeHeightsMap();
-
-    // pivot-table或focus排除
-    if (this.isListTable() && this.scenegraph && !['focus'].includes(scrollStyle.visible)) {
-      this.scenegraph.resize();
-    }
   }
 
   shouldVScrollBarWidthShow(scrollStyle: ScrollStyle): boolean {
-    if (scrollStyle.hoverOn || ['none'].includes(scrollStyle.visible)) {
+    if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
       return false;
     }
     // 这个visible在focus或者动态的情况下可能不准确
@@ -1245,7 +1240,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   shouldHScrollBarWidthShow(scrollStyle: ScrollStyle): boolean {
-    if (scrollStyle.hoverOn || ['none'].includes(scrollStyle.visible)) {
+    if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
       return false;
     }
     // 这个visible在focus或者动态的情况下可能不准确
@@ -2710,7 +2705,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.updateComponent();
     this.stateManager.updateOptionSetState();
 
-    this._updateSize();
+    this.resize();
     // this.stateManager = new StateManager(this);
     // this.eventManager = new EventManager(this);
     this.eventManager.updateEventBinder();
