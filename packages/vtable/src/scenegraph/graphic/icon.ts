@@ -208,7 +208,7 @@ export class Icon extends Image {
     if (image) {
       super.image = image;
     }
-  }
+  };
 }
 
 export class TextIcon extends Text {
