@@ -213,7 +213,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * Sets the define of the column.
    */
-  updateColumns(columns: ColumnsDefine) {
+  updateColumns(columns: ColumnsDefine, options?: { clearColWidthCache?: boolean }) {
     this.scenegraph.clearCells(); //将该代码提前 逻辑中有设置this.clear=true。refreshHeader逻辑中有判断clear这个值的地方
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns, ['children']);
@@ -223,12 +223,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     this.internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
+    if (options?.clearColWidthCache) {
+      this.internalProps._widthResizedColMap.clear();
+    }
     this.options.columns = columns;
     this.internalProps.headerHelper.setTableColumnsEditor();
     this._hasAutoImageColumn = undefined;
     this.refreshHeader();
     this.dataSource.updateColumns?.(this.internalProps.columns);
-    if (this.records && checkHasAggregationOnColumnDefine(columns)) {
+    if (this.records && checkHasAggregationOnColumnDefine(this.internalProps.columns)) {
       this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
     }
     this.internalProps.useOneRowHeightFillAll = false;

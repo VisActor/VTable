@@ -1082,20 +1082,34 @@ function getCellSizeForDraw(group: any, width: number, height: number, bottomRig
       col = mergeInfo.end.col;
       row = mergeInfo.end.row;
     }
-
-    if (col === table.colCount - 1 && !bottomRight) {
-      width -= 1;
-    } else if (col === table.frozenColCount - 1 && table.scrollLeft && !bottomRight) {
-      width -= 1;
-    } else if (col === 0 && bottomRight) {
-      width -= 1;
-    }
-    if (row === table.rowCount - 1 && !bottomRight) {
-      height -= 1;
-    } else if (row === table.frozenRowCount - 1 && table.scrollTop && !bottomRight) {
-      height -= 1;
-    } else if (row === 0 && bottomRight) {
-      height -= 1;
+    if (!bottomRight) {
+      // 边框剪切方向是左上
+      if (
+        col === table.colCount - 1 ||
+        (col === table.frozenColCount - 1 && table.scrollLeft) ||
+        (!!table.containerFit?.width &&
+          !!table.rightFrozenColCount &&
+          col === table.colCount - table.rightFrozenColCount - 1)
+      ) {
+        width -= 1;
+      }
+      if (
+        row === table.rowCount - 1 ||
+        (row === table.frozenRowCount - 1 && table.scrollTop) ||
+        (!!table.containerFit?.height &&
+          !!table.bottomFrozenRowCount &&
+          row === table.rowCount - table.bottomFrozenRowCount - 1)
+      ) {
+        height -= 1;
+      }
+    } else {
+      // 边框剪切方向是右下
+      if (col === 0) {
+        width -= 1;
+      }
+      if (row === 0) {
+        height -= 1;
+      }
     }
   } else if (group.role === 'corner-frozen') {
     if (table.scrollLeft && !bottomRight) {

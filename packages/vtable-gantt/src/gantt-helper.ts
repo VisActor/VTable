@@ -713,8 +713,9 @@ export function createSplitLineAndResizeLine(gantt: Gantt) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
     gantt.verticalSplitResizeLine.style.left =
-      (gantt.taskTableWidth ? gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2 : 0) +
-      'px';
+      (gantt.taskTableWidth !== -1
+        ? gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2
+        : 0) + 'px';
     gantt.verticalSplitResizeLine.style.width = '14px'; // 注意下面的14 和7 的地方 都是因为这里的宽度是 14
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
@@ -776,9 +777,10 @@ export function updateSplitLineAndResizeLine(gantt: Gantt) {
   if (gantt.verticalSplitResizeLine) {
     gantt.verticalSplitResizeLine.style.position = 'absolute';
     gantt.verticalSplitResizeLine.style.top = gantt.tableY + 'px';
-    gantt.verticalSplitResizeLine.style.left = gantt.taskTableWidth
-      ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
-      : '0px';
+    gantt.verticalSplitResizeLine.style.left =
+      gantt.taskTableWidth !== -1
+        ? `${gantt.taskTableWidth - 7 + gantt.parsedOptions.verticalSplitLine.lineWidth / 2}px`
+        : '0px';
     gantt.verticalSplitResizeLine.style.width = '14px';
     gantt.verticalSplitResizeLine.style.height = gantt.drawHeight + 'px'; //'100%';
     gantt.verticalSplitResizeLine.style.backgroundColor = 'rgba(0,0,0,0)';
@@ -912,7 +914,7 @@ export function getTaskIndexsByTaskY(y: number, gantt: Gantt) {
 }
 
 export function computeRowsCountByRecordDateForCompact(gantt: Gantt, record: any) {
-  if (!record.children || record.children.length === 1) {
+  if (!record.children || record.children.length <= 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
     } else {
@@ -962,7 +964,7 @@ function isOverlapping(startDate: Date, endDate: Date, rowTasks: any[], gantt: G
   });
 }
 export function computeRowsCountByRecordDate(gantt: Gantt, record: any) {
-  if (!record.children || record.children.length === 1) {
+  if (!record.children || record.children.length <= 1) {
     if (record.children?.length === 1) {
       record.children[0].vtable_gantt_showIndex = 0;
     } else {

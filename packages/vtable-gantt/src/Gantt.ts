@@ -68,6 +68,7 @@ import { isValid } from '@visactor/vutils';
 import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
+import { toBoxArray } from '@visactor/vtable';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
@@ -227,7 +228,7 @@ export class Gantt extends EventTarget {
     this.timeLineHeaderLevel = this.parsedOptions.sortedTimelineScales.length;
     this.element = createRootElement({ top: 0, right: 0, left: 0, bottom: 0 }, 'vtable-gantt');
     // this.element.style.top = '0px';
-    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
 
     this.canvas = document.createElement('canvas');
     this.element.appendChild(this.canvas);
@@ -311,15 +312,15 @@ export class Gantt extends EventTarget {
     this.tableNoFrameHeight = Math.floor(heightP);
     if (this.parsedOptions.outerFrameStyle) {
       //考虑表格整体边框的问题
-      const lineWidth = this.parsedOptions.outerFrameStyle?.borderLineWidth; // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
+      const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0); // toBoxArray(this.parsedOptions.frameStyle?.borderLineWidth ?? [null]);
       this.tableX =
         this.taskTableColumns.length >= 1 || this.options?.rowSeriesNumber
           ? this.parsedOptions.verticalSplitLine.lineWidth ?? 0
-          : lineWidth;
-      this.tableY = lineWidth;
-      this.tableNoFrameWidth = Math.min(width - lineWidth - this.tableX, this.getAllDateColsWidth());
+          : left;
+      this.tableY = top;
+      this.tableNoFrameWidth = Math.min(width - right - this.tableX, this.getAllDateColsWidth());
 
-      this.tableNoFrameHeight = height - lineWidth * 2;
+      this.tableNoFrameHeight = height - top - bottom;
     }
   }
   _updateListTableSize(taskListTableInstance: ListTable) {
@@ -327,19 +328,17 @@ export class Gantt extends EventTarget {
       return;
     }
     if (this.options?.taskListTable?.tableWidth === 'auto' || this.taskTableWidth === -1) {
-      this.taskTableWidth =
-        taskListTableInstance.getAllColsWidth() + this.parsedOptions.outerFrameStyle.borderLineWidth;
+      // 归一化边框宽度
+      const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
+      this.taskTableWidth = taskListTableInstance.getAllColsWidth() + right;
       if (this.options?.taskListTable?.maxTableWidth) {
         this.taskTableWidth = Math.min(this.options?.taskListTable?.maxTableWidth, this.taskTableWidth);
       }
       if (this.options?.taskListTable?.minTableWidth) {
         this.taskTableWidth = Math.max(this.options?.taskListTable?.minTableWidth, this.taskTableWidth);
       }
-      this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
-      taskListTableInstance.setCanvasSize(
-        this.taskTableWidth,
-        this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
-      );
+      this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
+      taskListTableInstance.setCanvasSize(this.taskTableWidth, this.tableNoFrameHeight + top + bottom);
       this._updateSize();
     }
 
@@ -373,38 +372,41 @@ export class Gantt extends EventTarget {
       'pixelRatio',
       'eventOptions'
     ];
-    for (const key in this.options) {
-      if (needPutInListTableKeys.indexOf(key) >= 0) {
-        listTable_options[key] = this.options[key];
+    for (const key of needPutInListTableKeys) {
+      if (key in this.options) {
+        (listTable_options as any)[key] = (this.options as any)[key];
       }
     }
-    for (const key in this.options.taskListTable) {
-      listTable_options[key] = this.options.taskListTable[key];
-      if (key === 'columns') {
-        listTable_options[key][listTable_options[key].length - 1].disableColumnResize = true;
-        if (
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
-        ) {
-          for (let i = 0; i < listTable_options.columns.length; i++) {
-            if (listTable_options.columns[i].tree) {
-              listTable_options.columns[i].tree = false;
+    listTable_options.defaultRowHeight = this.options.rowHeight;
+    if (this.options.taskListTable) {
+      for (const key in this.options.taskListTable) {
+        (listTable_options as any)[key] = (this.options.taskListTable as any)[key];
+        if (key === 'columns') {
+          (listTable_options as any)[key][(listTable_options as any)[key].length - 1].disableColumnResize = true;
+          if (
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact
+          ) {
+            for (let i = 0; i < (listTable_options as any).columns.length; i++) {
+              if ((listTable_options as any).columns[i].tree) {
+                (listTable_options as any).columns[i].tree = false;
+              }
             }
           }
         }
         // For Project_Sub_Tasks_Inline mode, we keep tree functionality
         // This is because we want to maintain the expand/collapse functionality for project tasks
-      }
-      if (
-        key === 'hierarchyExpandLevel' &&
-        (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
-          this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact)
-      ) {
-        delete listTable_options[key];
+        if (
+          key === 'hierarchyExpandLevel' &&
+          (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline ||
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Separate ||
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange ||
+            this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact)
+        ) {
+          delete listTable_options[key];
+        }
       }
       // For Project_Sub_Tasks_Inline mode, we keep hierarchyExpandLevel
     }
@@ -441,6 +443,7 @@ export class Gantt extends EventTarget {
           };
         }
         extendThemeOption.cellInnerBorder = false;
+        const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
         extendThemeOption.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
           shadowBlur: 0,
           cornerRadius: [
@@ -449,12 +452,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-            0,
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         });
         extendThemeOption.scrollStyle = Object.assign(
           {},
@@ -499,6 +497,7 @@ export class Gantt extends EventTarget {
           }
         );
         listTable_options.theme.cellInnerBorder = false;
+        const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
         listTable_options.theme.frameStyle = Object.assign({}, this.parsedOptions.outerFrameStyle, {
           cornerRadius: [
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0,
@@ -506,12 +505,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-            0,
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         });
         listTable_options.theme.scrollStyle = Object.assign(
           {},
@@ -533,6 +527,7 @@ export class Gantt extends EventTarget {
         }
       }
     } else {
+      const [top, right, bottom, left] = toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0);
       listTable_options.theme = {
         scrollStyle: Object.assign({}, this.options.taskListTable?.theme?.scrollStyle, this.parsedOptions.scrollStyle, {
           verticalVisible: 'none'
@@ -559,12 +554,7 @@ export class Gantt extends EventTarget {
             0,
             this.parsedOptions.outerFrameStyle?.cornerRadius ?? 0
           ],
-          borderLineWidth: [
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-            0,
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0,
-            this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0
-          ]
+          borderLineWidth: [top, 0, bottom, left]
         }),
         columnResize: Object.assign(
           {
@@ -589,6 +579,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Compact) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
@@ -598,6 +589,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else if (this.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Arrange) {
       listTable_options.customComputeRowHeight = (args: { row: number; table: ListTable }) => {
         const { row, table } = args;
@@ -607,6 +599,7 @@ export class Gantt extends EventTarget {
         }
       };
       listTable_options.defaultRowHeight = 'auto';
+      listTable_options.customConfig = { forceComputeAllRowHeight: true };
     } else {
       listTable_options.defaultRowHeight = this.options.rowHeight ?? 40;
     }
@@ -1040,7 +1033,9 @@ export class Gantt extends EventTarget {
     this._updateSize();
     this.taskListTableInstance?.setCanvasSize(
       this.taskTableWidth,
-      this.tableNoFrameHeight + this.parsedOptions.outerFrameStyle.borderLineWidth * 2
+      this.tableNoFrameHeight +
+        toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[0] +
+        toBoxArray(this.parsedOptions.outerFrameStyle?.borderLineWidth ?? 0)[2]
     );
     this._syncPropsFromTable();
     this.scenegraph.resize();
@@ -1095,7 +1090,7 @@ export class Gantt extends EventTarget {
     }
     this._syncPropsFromTable();
     this.scenegraph.updateStageBackground();
-    this.element.style.left = this.taskTableWidth ? `${this.taskTableWidth}px` : '0px';
+    this.element.style.left = this.taskTableWidth !== -1 ? `${this.taskTableWidth}px` : '0px';
 
     updateSplitLineAndResizeLine(this);
     this.scenegraph.updateSceneGraph();

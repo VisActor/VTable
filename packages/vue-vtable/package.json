@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vue-vtable",
-  "version": "1.18.4",
+  "version": "1.19.2",
   "description": "The vue version of VTable",
   "keywords": [
     "vue",
@@ -62,7 +62,7 @@
   "devDependencies": {
     "@arco-design/web-vue": "^2.11.0",
     "cross-env": "^7.0.3",
-    "@visactor/vchart": "1.13.3-alpha.2",
+    "@visactor/vchart": "2.0.0-alpha.1",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
