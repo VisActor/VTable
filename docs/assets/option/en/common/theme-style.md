@@ -42,6 +42,24 @@ The highlight color of the entire column when selected
 prefix = ${prefix}
 ) }}
 
+##${prefix} cellTextColor(ColorPropertyDefine)
+Text color of the selection box when selected (effective in replace mode)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineRowTextColor(ColorPropertyDefine)
+Text color of the entire row when selected (effective in replace mode)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineColumnTextColor(ColorPropertyDefine)
+Text color of the entire column when selected (effective in replace mode)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
 #${prefix} frameStyle(FrameStyle)
 
 Outer border style of the current section, such as the overall outer border of the body or the overall outer border of the header

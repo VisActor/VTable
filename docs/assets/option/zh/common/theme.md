@@ -206,8 +206,20 @@ body 单元格的样式配置
   prefix = ${prefix}
   ) }}
 
-##${prefix} inlineColumnBgColor(ColorPropertyDefine)
-选中时整列高亮颜色
+##${prefix} cellTextColor(ColorPropertyDefine)
+选中时选择框文本颜色(replace 模式下生效)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineRowTextColor(ColorPropertyDefine)
+选中时整行文本颜色(replace 模式下生效)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineColumnTextColor(ColorPropertyDefine)
+选中时整列文本颜色(replace 模式下生效)
 {{ use: common-color(
   prefix = ${prefix}
   ) }}

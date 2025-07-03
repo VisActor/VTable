@@ -42,6 +42,24 @@ hover 单元格时的效果
   prefix = ${prefix}
   ) }}
 
+##${prefix} cellTextColor(ColorPropertyDefine)
+选中时选择框文本颜色(replace 模式下生效)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineRowTextColor(ColorPropertyDefine)
+选中时整行文本颜色(replace 模式下生效)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
+##${prefix} inlineColumnTextColor(ColorPropertyDefine)
+选中时整列文本颜色(replace 模式下生效)
+{{ use: common-color(
+  prefix = ${prefix}
+  ) }}
+
 #${prefix} frameStyle(FrameStyle)
 
 当前部分的外边框样式，如 body 整体外边框，或者表头整体外边框
