@@ -544,22 +544,22 @@ function addImportButton(importPlugin: ExcelImportPlugin) {
     } else {
       jsonData = [
         {
-          "col0": "赵六",
-          "col1": "32",
-          "col2": "市场部",
-          "col3": "7000"
+          col0: '赵六',
+          col1: '32',
+          col2: '市场部',
+          col3: '7000'
         },
         {
-          "col0": "钱七",
-          "col1": "26",
-          "col2": "技术部",
-          "col3": "8500"
+          col0: '钱七',
+          col1: '26',
+          col2: '技术部',
+          col3: '8500'
         },
         {
-          "col0": "孙八",
-          "col1": "29",
-          "col2": "人事部",
-          "col3": "6500"
+          col0: '孙八',
+          col1: '29',
+          col2: '人事部',
+          col3: '6500'
         }
       ];
     }

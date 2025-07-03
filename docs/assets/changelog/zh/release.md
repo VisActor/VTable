@@ -1,3 +1,30 @@
+# v1.19.2
+
+2025-07-01
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 列表表格支持表头层级跨度
+- **@visactor/vtable-plugins**: 添加导入Excel文件插件
+- **@visactor/vtable-gantt**: 甘特图外边框支持数组配置
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复导出Excel时templateLink问题 [#4106](https://github.com/VisActor/VTable/issues/4106)
+- **@visactor/vtable**: 修复使用deleteRecords删除列表树根级别时的错误
+- **@visactor/vtable**: 修复自动填充宽度状态下的minWidth和maxWidth问题 [#4100](https://github.com/VisActor/VTable/issues/4100)
+- **@visactor/vtable**: 修复带聚合时updateColumns发生错误
+- **@visactor/vtable**: 编辑透视表指标值时总计值应同步更新
+- **@visactor/vtable**: 修复自定义聚合时的合并渲染错误
+- **@visactor/vtable**: 修复列表树删除数据时的bug [#3991](https://github.com/VisActor/VTable/issues/3991)
+- **@visactor/vtable**: 修复安装boolean类型的某个字段分组时无法渲染false值的问题 [#4059](https://github.com/VisActor/VTable/issues/4059)
+
+
+
+[更多详情请查看 v1.19.2](https://github.com/VisActor/VTable/releases/tag/v1.19.2)
+
 # v1.19.1
 
 2025-06-20
