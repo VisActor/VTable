@@ -2,7 +2,7 @@
 category: examples
 group: Basic Features
 title: 基本表格表头分组与折叠
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-header-group.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-header-hierarchy-tree.gif
 link: table-type/list-table
 option: ListTable-columns-text#columns
 ---

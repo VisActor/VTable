@@ -1,3 +1,52 @@
+# v1.19.2
+
+2025-07-01
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: ListTable support levelSpan for header
+- **@visactor/vtable-plugins**: add import excel file plugin
+- **@visactor/vtable-gantt**: gantt chart's frame border support set array
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix templateLink in export excel [#4106](https://github.com/VisActor/VTable/issues/4106)
+- **@visactor/vtable**: list-tree delete root level error when using deleteRecords
+- **@visactor/vtable**: fix minWidth & maxWidth in autoFillWidth status [#4100](https://github.com/VisActor/VTable/issues/4100)
+- **@visactor/vtable**: when updateColumns occor error with aggregation
+- **@visactor/vtable**: when edit pivot indicator value the total value should update synchronously
+- **@visactor/vtable**: merge render error when has custom aggregation
+- **@visactor/vtable**: list tree delete records bug [#3991](https://github.com/VisActor/VTable/issues/3991)
+- **@visactor/vtable**: group by boolean cannot render false [#4059](https://github.com/VisActor/VTable/issues/4059)
+
+
+
+[more detail about v1.19.2](https://github.com/VisActor/VTable/releases/tag/v1.19.2)
+
+# v1.19.1
+
+2025-06-20
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: fix when use containerFit scroll and bottom border error [#3337](https://github.com/VisActor/VTable/issues/3337)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: copy not work when after copy tooltip text [#3968](https://github.com/VisActor/VTable/issues/3968)
+- **@visactor/vtable**: fix the issue where the icon configuration is not effective when cellType is progressBar [#4047](https://github.com/VisActor/VTable/issues/4047)
+
+**🔧 Configuration releated**
+
+- **@visactor/vtable**: update vrender 1.0.5 fix animation bug
+
+
+
+[more detail about v1.19.1](https://github.com/VisActor/VTable/releases/tag/v1.19.1)
+
 # v1.19.0
 
 2025-06-16

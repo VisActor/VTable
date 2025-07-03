@@ -1,6 +1,38 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 16 Jun 2025 12:04:55 GMT and should not be manually modified.
+This log was last generated on Tue, 01 Jul 2025 10:26:51 GMT and should not be manually modified.
+
+## 1.19.2
+Tue, 01 Jul 2025 10:26:51 GMT
+
+### Updates
+
+- fix: fix templateLink in export excel #4106
+- fix: list-tree delete root level error when using deleteRecords
+
+
+- fix: fix minWidth & maxWidth in autoFillWidth status #4100
+- fix: when updateColumns occor error with aggregation
+
+
+
+## 1.19.1
+Fri, 20 Jun 2025 12:11:39 GMT
+
+### Updates
+
+- feat: add containerFit #3337
+
+
+- chore: update vrender 1.0.4 fix animation bug
+
+
+- fix: copy not work when after copy tooltip text #3968
+
+
+- fix: fix the issue where the icon configuration is not effective when cellType is progressBar #4047
+
+
 
 ## 1.19.0
 Mon, 16 Jun 2025 12:04:55 GMT

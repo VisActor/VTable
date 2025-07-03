@@ -2432,7 +2432,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.rowDimensionKeys = this.rowDimensionTree.dimensionKeysIncludeVirtual.valueArr();
     this.fullRowDimensionKeys = [];
     this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(this.rowDimensionKeys);
+
     if (this.rowHierarchyType === 'tree') {
+      // 确保extensionRows的维度键也被包含在fullRowDimensionKeys中
+      if (this.extensionRows?.length > 0) {
+        this.extensionRows.forEach(extensionRow => {
+          const extensionRowDimensionKeys =
+            extensionRow.rows?.map(row => (typeof row === 'string' ? row : row.dimensionKey)) || [];
+          this.fullRowDimensionKeys = this.fullRowDimensionKeys.concat(extensionRowDimensionKeys);
+        });
+      }
+
       this._addHeadersForTreeMode(
         this._rowHeaderCellFullPathIds_FULL,
         0,
@@ -4319,6 +4329,37 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   clearHeaderPathCache() {
     this._colHeaderPathCache.clear();
     this._rowHeaderPathCache.clear();
+  }
+
+  /**
+   * 判断单元格是否为聚合值单元格（小计或总计）
+   * @param col 列索引
+   * @param row 行索引
+   * @returns 是否为聚合值单元格
+   */
+  isAggregation(col: number, row: number): boolean {
+    if (this.isHeader(col, row)) {
+      return false; // 表头单元格不是聚合值单元格
+    }
+
+    // 获取单元格的路径信息
+    const cellHeaderPaths = this.getCellHeaderPaths(col, row);
+
+    // 检查行和列路径中是否有小计或总计角色
+
+    for (const path of cellHeaderPaths.colHeaderPaths) {
+      if (path.role === 'sub-total' || path.role === 'grand-total') {
+        return true;
+      }
+    }
+
+    for (const path of cellHeaderPaths.rowHeaderPaths) {
+      if (path.role === 'sub-total' || path.role === 'grand-total') {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 /** 计算 scale 的实际 range 长度 */

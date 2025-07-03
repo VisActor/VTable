@@ -1858,6 +1858,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.scenegraph.updateCellContent(sCol, sRow);
         }
       }
+      // 更新所有的统计单元格
+      if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
+        for (let col = 0; col < this.colCount; col++) {
+          for (let row = 0; row < this.rowCount; row++) {
+            if (this.internalProps.layoutMap.isAggregation(col, row)) {
+              this.scenegraph.updateCellContent(col, row);
+            }
+          }
+        }
+      }
       if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
         if (this.internalProps._widthResizedColMap.size === 0) {
           //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -1974,6 +1984,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
       for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
         this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    // 更新所有的统计单元格
+    if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
+      for (let col = 0; col < this.colCount; col++) {
+        for (let row = 0; row < this.rowCount; row++) {
+          if (this.internalProps.layoutMap.isAggregation(col, row)) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
       }
     }
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {

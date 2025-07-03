@@ -798,6 +798,7 @@ export interface BaseTableAPI {
   getColsWidth: (startCol: number, endCol: number) => number;
   getColsWidths: () => number[];
   getRowsHeight: (startRow: number, endRow: number) => number;
+  _getRangeSizeForContainerFit: (start: number, end: number, totalSize: number, type: 'col' | 'row') => number;
 
   release: () => void;
   addReleaseObj: (releaseObj: { release: () => void }) => void;
