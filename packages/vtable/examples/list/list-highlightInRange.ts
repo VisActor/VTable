@@ -235,60 +235,24 @@ export function createTable() {
         shadowBlur: 0
       },
       selectionStyle: {
-        selectionFillMode: 'replace'
-      },
-      cornerHeaderStyle: {
-        select: {
-          cellBgColor: 'red',
-          inlineRowTextColor: 'white',
-          inlineColumnTextColor: 'white'
-          // cellTextColor: 'white'
-        }
-      },
-      rowHeaderStyle: {
-        select: {
-          // cellBgColor: 'red'
-          inlineRowBgColor: 'red',
-          inlineColumnBgColor: 'red',
-          inlineRowTextColor: 'white',
-          inlineColumnTextColor: 'white'
-          // cellTextColor: 'white'
-        }
-      },
-      bottomFrozenStyle: {
-        select: {
-          // cellBgColor: 'red',
-          inlineRowBgColor: 'red',
-          inlineColumnBgColor: 'red',
-          inlineRowTextColor: 'white',
-          inlineColumnTextColor: 'white'
-          // cellTextColor: 'white'
-        }
-      },
-      rightFrozenStyle: {
-        select: {
-          // cellBgColor: 'red'
-          inlineRowBgColor: 'red',
-          inlineColumnBgColor: 'red',
-          inlineRowTextColor: 'white',
-          inlineColumnTextColor: 'white'
-          // cellTextColor: 'white'
-        }
+        selectionFillMode: 'replace',
+        cellBgColor: 'gray',
+        inlineRowBgColor: 'gray',
+        inlineColumnBgColor: 'gray',
+        inlineColumnTextColor: 'white',
+        cellTextColor: 'white',
+        inlineRowTextColor: 'white'
       },
       headerStyle: {
         select: {
-          inlineRowBgColor: 'red',
-          inlineColumnBgColor: 'red',
-          inlineRowTextColor: 'white',
-          inlineColumnTextColor: 'white'
+          inlineRowTextColor: 'lightblue',
+          inlineColumnTextColor: 'lightblue',
+          cellTextColor: 'lightblue'
         }
       },
 
       bodyStyle: {
         select: {
-          cellBgColor: 'red',
-          inlineRowBgColor: 'pink',
-          inlineColumnBgColor: 'purple',
           cellTextColor: 'white',
           inlineRowTextColor: 'white',
           inlineColumnTextColor: 'white'

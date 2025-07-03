@@ -113,7 +113,7 @@ export interface ITableThemeDefine {
   bottomFrozenStyle?: ThemeStyle; // 下部冻结单元格样式
   headerStyle?: ThemeStyle;
   rowHeaderStyle?: ThemeStyle;
-  bodyStyle?: BodyThemeStyle;
+  bodyStyle?: ThemeStyle;
   groupTitleStyle?: ThemeStyle;
   frameStyle?: TableFrameStyle;
   //列调整宽度的直线
@@ -167,6 +167,9 @@ export interface ITableThemeDefine {
     cellBorderColor?: string; //边框颜色
     cellBorderLineWidth?: number; //边框线宽度
     cellBgColor?: string; //选择框背景颜色
+    cellTextColor?: string; //选择框文本颜色
+    inlineRowTextColor?: string; //交互所在整行的文本颜色
+    inlineColumnTextColor?: string; //交互所在整列的文本颜色
     inlineRowBgColor?: string; //交互所在整行的背景颜色
     inlineColumnBgColor?: string; //交互所在整列的背景颜色
     selectionFillMode?: 'overlay' | 'replace'; //选择框填充模式，overlay表示选择框背景色覆盖在表格上（需要配饰透明度），replace表示背景色替换原有单元格的背景色

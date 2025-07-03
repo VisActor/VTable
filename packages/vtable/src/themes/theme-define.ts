@@ -728,6 +728,15 @@ export class TableTheme implements ITableThemeDefine {
         },
         get dynamicUpdateSelectionSize(): boolean {
           return selectionStyle?.dynamicUpdateSelectionSize ?? false;
+        },
+        get cellTextColor(): string | undefined {
+          return selectionStyle?.cellTextColor;
+        },
+        get inlineRowTextColor(): string | undefined {
+          return selectionStyle?.inlineRowTextColor;
+        },
+        get inlineColumnTextColor(): string | undefined {
+          return selectionStyle?.inlineColumnTextColor;
         }
       };
     }
@@ -930,13 +939,22 @@ export class TableTheme implements ITableThemeDefine {
             return undefined;
           },
           get cellTextColor(): ColorPropertyDefine | undefined {
-            return style.select?.cellTextColor ?? undefined;
+            if (that.selectionStyle.selectionFillMode === 'replace') {
+              return style.select?.cellTextColor ?? that.selectionStyle.cellTextColor ?? undefined;
+            }
+            return undefined;
           },
           get inlineRowTextColor(): ColorPropertyDefine | undefined {
-            return style.select?.inlineRowTextColor ?? undefined;
+            if (that.selectionStyle.selectionFillMode === 'replace') {
+              return style.select?.inlineRowTextColor ?? that.selectionStyle.inlineRowTextColor ?? undefined;
+            }
+            return undefined;
           },
           get inlineColumnTextColor(): ColorPropertyDefine | undefined {
-            return style.select?.inlineColumnTextColor ?? undefined;
+            if (that.selectionStyle.selectionFillMode === 'replace') {
+              return style.select?.inlineColumnTextColor ?? that.selectionStyle.inlineColumnTextColor ?? undefined;
+            }
+            return undefined;
           }
         };
         // }
