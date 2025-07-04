@@ -998,7 +998,7 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
    * @param workOnEditableCell 是否仅更改可编辑单元格
    * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => Promise<boolean[][]>;
 ```
 
 ## getEditor(Function)
