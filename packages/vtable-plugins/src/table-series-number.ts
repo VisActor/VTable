@@ -197,17 +197,31 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClick, e => {
       const { seriesNumberCell, event, isDragSelect } = e.detail;
       const isCtrl = event.nativeEvent.ctrlKey || event.nativeEvent.metaKey;
+      const isShift = event.nativeEvent.shiftKey;
       // console.log(SeriesNumberEvent.seriesNumberCellClick, event, seriesNumberCell);
       const isRow = seriesNumberCell.name.includes('row');
       if (isRow) {
+        this.table.stateManager.setSelectInline('row');
         const rowIndex = seriesNumberCell.id;
-        this.table.selectRow(rowIndex, isCtrl);
-      } else {
-        const colIndex = seriesNumberCell.id;
-        console.log('seriesNumberCellClick', colIndex, isCtrl);
 
-        this.table.selectCol(colIndex, isCtrl);
+        if (isDragSelect) {
+          this.table.dragSelectRow(rowIndex, isCtrl);
+        } else {
+          this.table.startDragSelectRow(rowIndex, isCtrl, isShift);
+        }
+      } else {
+        this.table.stateManager.setSelectInline('col');
+        const colIndex = seriesNumberCell.id;
+        if (isDragSelect) {
+          this.table.dragSelectCol(colIndex, isCtrl);
+        } else {
+          this.table.startDragSelectCol(colIndex, isCtrl, isShift);
+        }
       }
+    });
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClickUp, e => {
+      this.table.stateManager.setSelectInline(false);
+      this.table.endDragSelect();
     });
     this.seriesNumberComponent.on(SeriesNumberEvent.rowSeriesNumberWidthChange, e => {
       // console.log(SeriesNumberEvent.rowSeriesNumberWidthChange, e);

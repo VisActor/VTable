@@ -3016,7 +3016,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           true
         );
       }
-      // this.stateManager.endSelectCells(false, false);
+      this.stateManager.endSelectCells(false, false);
       this.stateManager.updateInteractionState(InteractionState.default);
     });
     // 选择后 会自动滚动到所选区域最后一行一列的位置 这里再设置回滚动前位置
@@ -3063,6 +3063,96 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       ]);
     }
   }
+  startDragSelectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
+    const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
+    const startCol = isShift && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
+    const startRow = 0;
+    const endCol = colIndex;
+    const endRow = this.rowCount - 1;
+    this.stateManager.updateSelectPos(
+      startCol,
+      startRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+    this.stateManager.updateInteractionState(InteractionState.grabing);
+    this.stateManager.updateSelectPos(
+      endCol,
+      endRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+  dragSelectCol(colIndex: number, isCtrl?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+    if (lastSelectRange) {
+      lastSelectRange.end.col = colIndex;
+    }
+    this.stateManager.updateSelectPos(
+      colIndex,
+      this.rowCount - 1,
+      false,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+  endDragSelect() {
+    this.stateManager.updateInteractionState(InteractionState.default);
+    this.stateManager.endSelectCells(false, false);
+  }
+
+  startDragSelectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
+    const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
+    const startCol = 0;
+    const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
+    const endCol = this.colCount - 1;
+    const endRow = rowIndex;
+    this.stateManager.updateSelectPos(
+      startCol,
+      startRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+    this.stateManager.updateInteractionState(InteractionState.grabing);
+    this.stateManager.updateSelectPos(
+      endCol,
+      endRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+  dragSelectRow(rowIndex: number, isCtrl?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+    if (lastSelectRange) {
+      lastSelectRange.end.row = rowIndex;
+    }
+    this.stateManager.updateSelectPos(
+      this.colCount - 1,
+      rowIndex,
+      false,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
   abstract isPivotChart(): boolean;
