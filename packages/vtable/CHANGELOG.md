@@ -1,6 +1,20 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 20 Jun 2025 12:11:39 GMT and should not be manually modified.
+This log was last generated on Tue, 01 Jul 2025 10:26:51 GMT and should not be manually modified.
+
+## 1.19.2
+Tue, 01 Jul 2025 10:26:51 GMT
+
+### Updates
+
+- fix: fix templateLink in export excel #4106
+- fix: list-tree delete root level error when using deleteRecords
+
+
+- fix: fix minWidth & maxWidth in autoFillWidth status #4100
+- fix: when updateColumns occor error with aggregation
+
+
 
 ## 1.19.1
 Fri, 20 Jun 2025 12:11:39 GMT

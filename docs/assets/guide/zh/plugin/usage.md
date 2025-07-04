@@ -60,3 +60,4 @@ const option: VTable.ListTableConstructorOptions = {
 | 插件名称 | 插件描述 | 适用对象 |
 | --- | --- | --- |
 | `ExportGanttPlugin` | 实现全量导出甘特图,可以自适应甘特图的大小 | `Gantt` |
+| `ExcelImportPlugin` | 导入execl，csv，json，html到表格中 | `ListTable` |

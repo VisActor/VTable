@@ -486,20 +486,21 @@ export function createTable() {
 
   // 背景色选择
   const bgColorInput = document.createElement('input');
-  bgColorInput.type = 'color';  bgColorInput.value = '#ffffff';
+  bgColorInput.type = 'color';
+  bgColorInput.value = '#ffffff';
   bgColorInput.style.marginRight = '5px';
 
   // 导出按钮
   const exportButton = document.createElement('button');
   exportButton.textContent = '导出甘特图';
   exportButton.style.marginLeft = '5px';
-  
+
   // 获取 Base64 按钮
   const getBase64Button = document.createElement('button');
   getBase64Button.textContent = '获取 Base64';
   getBase64Button.style.marginLeft = '5px';
   getBase64Button.style.backgroundColor = '#e8f4ff';
-  
+
   const base64Result = document.createElement('div');
   base64Result.style.marginTop = '10px';
   base64Result.style.fontSize = '12px';
@@ -563,7 +564,7 @@ export function createTable() {
       }, 2000);
     }
   };
-  
+
   // 绑定获取Base64事件
   getBase64Button.onclick = async () => {
     try {
@@ -588,7 +589,7 @@ export function createTable() {
         base64Result.textContent = displayText;
         base64Result.style.display = 'block';
         base64Result.title = base64Data; // 鼠标悬停可以看到完整数据
-        
+
         // 尝试复制到剪贴板
         try {
           await navigator.clipboard.writeText(base64Data);
@@ -597,7 +598,7 @@ export function createTable() {
           getBase64Button.textContent = '获取成功';
           console.warn('无法复制到剪贴板:', clipboardError);
         }
-        
+
         // 添加点击事件以查看完整数据
         base64Result.style.cursor = 'pointer';
       } else {
@@ -605,11 +606,15 @@ export function createTable() {
         base64Result.style.display = 'block';
         getBase64Button.textContent = '获取失败';
       }
-      
+
       // 恢复按钮状态
       setTimeout(() => {
         getBase64Button.disabled = false;
-        if (getBase64Button.textContent === '获取中...' || getBase64Button.textContent === '获取失败' || getBase64Button.textContent === '已复制到剪贴板') {
+        if (
+          getBase64Button.textContent === '获取中...' ||
+          getBase64Button.textContent === '获取失败' ||
+          getBase64Button.textContent === '已复制到剪贴板'
+        ) {
           getBase64Button.textContent = '获取 Base64';
         }
       }, 3000);
@@ -618,7 +623,7 @@ export function createTable() {
       base64Result.textContent = `获取失败: ${error instanceof Error ? error.message : '未知错误'}`;
       base64Result.style.display = 'block';
       getBase64Button.textContent = '获取失败';
-      
+
       setTimeout(() => {
         getBase64Button.disabled = false;
         getBase64Button.textContent = '获取 Base64';
