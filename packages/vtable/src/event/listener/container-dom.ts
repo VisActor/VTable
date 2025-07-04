@@ -719,6 +719,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
       const lastX = table.eventManager.LastBodyPointerXY?.x ?? e.x;
       const lastY = table.eventManager.LastBodyPointerXY?.y ?? e.y;
       if (Math.abs(lastX - e.x) > 1 || Math.abs(lastY - e.y) > 1) {
+        console.log('globalPointermoveCallback isDraging =true');
         table.eventManager.isDraging = true;
       }
     }
@@ -869,7 +870,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
           if (!table.options.select?.disableDragSelect && isValid(targetCol) && isValid(targetRow)) {
-            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, false);
+            table.stateManager.updateSelectPos(
+              table.stateManager.select.selectInline === 'row' ? table.colCount - 1 : targetCol.col,
+              table.stateManager.select.selectInline === 'col' ? table.rowCount - 1 : targetRow.row,
+              false,
+              false,
+              false,
+              false
+            );
           }
         });
       } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {

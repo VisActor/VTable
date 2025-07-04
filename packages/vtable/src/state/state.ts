@@ -75,6 +75,7 @@ export class StateManager {
   interactionStateBeforeScroll?: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
+    selectInline?: 'col' | 'row' | false; //是否必须整行或者整列选中
     ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
     cellPos: CellPosition;
@@ -639,6 +640,11 @@ export class StateManager {
       row = this.table.rowCount - 1;
     }
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
+    this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
+      ranges: this.select.ranges,
+      col: col,
+      row: row
+    });
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -1547,7 +1553,9 @@ export class StateManager {
       event
     });
   }
-
+  setSelectInline(selectInline: 'col' | 'row' | false) {
+    this.select.selectInline = selectInline;
+  }
   updateSortState(sortState: SortState[]) {
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 

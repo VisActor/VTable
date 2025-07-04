@@ -272,8 +272,8 @@ export class EventManager {
       }
 
       this.table.stateManager.updateSelectPos(
-        eventArgs.col,
-        eventArgs.row,
+        this.table.stateManager.select.selectInline === 'row' ? this.table.colCount - 1 : eventArgs.col,
+        this.table.stateManager.select.selectInline === 'col' ? this.table.rowCount - 1 : eventArgs.row,
         eventArgs.event.shiftKey,
         eventArgs.event.ctrlKey || eventArgs.event.metaKey,
         false,
