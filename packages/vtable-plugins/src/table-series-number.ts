@@ -155,34 +155,6 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, e => {
       this.seriesNumberComponent.setAttribute('hover', true);
     });
-    // this.table.on(VTable.TABLE_EVENT_TYPE.BEFORE_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, e => {
-    //   console.log(
-    //     'before_batch currentRow',
-    //     this.table.scenegraph.proxy.currentRow,
-    //     'rowEnd',
-    //     this.table.scenegraph.proxy.rowEnd,
-    //     'rowUpdatePos',
-    //     this.table.scenegraph.proxy.rowUpdatePos,
-    //     'totalRow',
-    //     this.table.scenegraph.proxy.totalRow
-    //   );
-    //   this.startRowIndex = Math.min(this.table.scenegraph.proxy.currentRow, this.table.scenegraph.proxy.rowUpdatePos);
-    // });
-    // this.table.on(VTable.TABLE_EVENT_TYPE.AFTER_BATCH_UPDATE_ROW_HEIGHT_COL_WIDTH, e => {
-    //   console.log(
-    //     'after_batch currentRow',
-    //     this.table.scenegraph.proxy.currentRow,
-    //     'rowEnd',
-    //     this.table.scenegraph.proxy.rowEnd,
-    //     'rowUpdatePos',
-    //     this.table.scenegraph.proxy.rowUpdatePos,
-    //     'totalRow',
-    //     this.table.scenegraph.proxy.totalRow
-    //   );
-    //   this.syncRowHeightToComponent(this.startRowIndex, e.currentRow);
-    //   this.table.render();
-    //   // this.syncColWidthToComponent(e.currentRow, e.currentCol);
-    // });
   }
 
   listenComponentEvents() {
