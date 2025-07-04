@@ -15,11 +15,11 @@ export interface AddRowColumnOptions {
   /**
    * 添加列的回调函数
    */
-  addColumnCallback?: (col: number) => void;
+  addColumnCallback?: (col: number, table: VTable.ListTable) => void;
   /**
    * 添加行的回调函数
    */
-  addRowCallback?: (row: number) => void;
+  addRowCallback?: (row: number, table: VTable.ListTable) => void;
 }
 /**
  * 添加行和列的插件
@@ -230,7 +230,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       const col = this.hoverCell.col;
       const addColIndex = isLeft ? col : col + 1;
       if (this.pluginOptions.addColumnCallback) {
-        this.pluginOptions.addColumnCallback(addColIndex);
+        this.pluginOptions.addColumnCallback(addColIndex, this.table);
       } else {
         columns.splice(addColIndex, 0, {
           field: ``,
@@ -402,7 +402,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       const row = this.hoverCell.row;
       const addRowIndex = isTop ? row : row + 1;
       if (this.pluginOptions.addRowCallback) {
-        this.pluginOptions.addRowCallback(addRowIndex);
+        this.pluginOptions.addRowCallback(addRowIndex, this.table as VTable.ListTable);
       } else {
         const recordIndex = this.table.getRecordIndexByCell(0, addRowIndex);
         this.table.addRecord({}, recordIndex);
