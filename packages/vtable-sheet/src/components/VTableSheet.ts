@@ -331,11 +331,15 @@ export default class VTableSheet {
     menuButton.className = 'vtable-sheet-menu-button';
     menuButton.innerHTML = menuIcon;
     menuButton.title = '工作表选项';
-    menuButton.addEventListener('click', e => this.showSheetMenu(e));
+    menuButton.addEventListener('click', e => this.toggleSheetMenu(e));
     navButtons.appendChild(menuButton);
 
-    sheetTab.appendChild(navButtons);
+    // 创建菜单容器
+    const menuContainer = document.createElement('ul');
+    menuContainer.className = 'vtable-sheet-menu-list';
+    sheetTab.appendChild(menuContainer);
 
+    sheetTab.appendChild(navButtons);
     // 初始化渐变效果
     setTimeout(() => {
       this.updateFadeEffects(tabsContainer, fadeLeft, fadeRight);
@@ -347,9 +351,10 @@ export default class VTableSheet {
   /**
    * 显示工作表菜单
    */
-  private showSheetMenu(event: MouseEvent): void {
-    // 在这里添加菜单逻辑
-    console.log('Show sheet menu', event);
+
+  private toggleSheetMenu(event: MouseEvent): void {
+    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
+    menuContainer.classList.toggle('active');
   }
 
   /**
@@ -438,6 +443,31 @@ export default class VTableSheet {
       const activeTab = tabsContainer.querySelector('.vtable-sheet-tab.active');
       if (activeTab) {
         this.scrollTabIntoView(activeTab as HTMLElement, tabsContainer);
+      }
+    }, 100);
+  }
+  /**
+   * 更新sheet列表
+   */
+  private updateSheetMenu(): void {
+    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
+    menuContainer.innerHTML = '';
+    const sheets = this.sheetManager.getAllSheets();
+    sheets.forEach(sheet => {
+      const li = document.createElement('li');
+      li.className = 'vtable-sheet-menu-item';
+      li.textContent = sheet.title;
+      if (sheet.key === this.activeSheet?.getKey()) {
+        li.classList.add('active');
+      }
+      li.addEventListener('click', () => this.activateSheet(sheet.key));
+      menuContainer.appendChild(li as any);
+    });
+    // 确保激活的标签可见
+    setTimeout(() => {
+      const activeItem = menuContainer.querySelector('.vtable-sheet-menu-item.active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }, 100);
   }
@@ -544,6 +574,7 @@ export default class VTableSheet {
 
     // 更新UI
     this.updateSheetTabs();
+    this.updateSheetMenu();
     this.updateFormulaBar();
   }
 
@@ -577,7 +608,6 @@ export default class VTableSheet {
     // 注册事件
     // sheet.on('cell-selected', this.handleCellSelected.bind(this));
     // sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
-
     return sheet;
   }
 

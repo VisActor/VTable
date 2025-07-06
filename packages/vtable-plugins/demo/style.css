@@ -27,7 +27,7 @@ body p {
 }
 
 .container .sidebar {
-  width: 100px;
+  width: 300px;
   /* height: 100%; */
   /* border-right: 1px solid rgba(0, 0, 0, 0.06); */
 }
@@ -74,6 +74,7 @@ body p {
   /* margin: 0 1em; */
   /* height: 100%; */
   min-width: 500px;
+  width: 500px;
 }
 
 #header {

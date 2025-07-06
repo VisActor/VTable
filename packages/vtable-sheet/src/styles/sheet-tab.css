@@ -10,7 +10,44 @@
   box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
   z-index: 10;
   width: 100%;
-  overflow: hidden;
+}
+/* sheet列表样式 */
+.vtable-sheet-menu-list {
+  position: absolute;
+  right: 0;
+  top: -175px;
+  width: 140px;
+  height: 174px;
+  background-color: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  box-sizing: content-box;
+  border-radius: 4px;
+  display: none;
+  margin: 0;
+  padding: 0 2px;
+  box-sizing: border-box;
+  list-style: none;
+  overflow-y: auto;
+}
+.vtable-sheet-menu-list.active {
+  display: block;
+}
+/* sheet列表项样式 */
+.vtable-sheet-menu-item {
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  height: 32px;
+  line-height: 32px;
+  margin-top: 2px;
+  background-color: #f8f8f840;
+}
+
+.vtable-sheet-menu-item:hover {
+  background-color: #e0e0e0;
+}
+.vtable-sheet-menu-item.active {
+  color: #1a73e8;
 }
 
 /* Sheet标签容器 */
