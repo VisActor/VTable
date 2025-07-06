@@ -11,15 +11,17 @@ export type TableSeriesNumberOptions = {
   colWidth: number;
   // syncRowHeightFromTable?: boolean;
   // syncColWidthFromTable?: boolean;
-} & Pick<
-  TableSeriesNumberAttributes,
-  | 'rowSeriesNumberGenerate'
-  | 'colSeriesNumberGenerate'
-  | 'rowSeriesNumberCellStyle'
-  | 'colSeriesNumberCellStyle'
-  | 'cornerCellStyle'
-  | 'colSeriesNumberHeight'
-  | 'rowSeriesNumberWidth'
+} & Partial<
+  Pick<
+    TableSeriesNumberAttributes,
+    | 'rowSeriesNumberGenerate'
+    | 'colSeriesNumberGenerate'
+    | 'rowSeriesNumberCellStyle'
+    | 'colSeriesNumberCellStyle'
+    | 'cornerCellStyle'
+    | 'colSeriesNumberHeight'
+    | 'rowSeriesNumberWidth'
+  >
 >;
 export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   id = `table-series-number`;
@@ -58,8 +60,11 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
         records.push({});
       }
       options.records = records;
-
-      for (let i = options.columns.length; i < this.pluginOptions.colCount - options.columns.length; i++) {
+      if (!options.columns) {
+        options.columns = [];
+      }
+      const columnCount = options.columns.length;
+      for (let i = options.columns.length; i < this.pluginOptions.colCount - columnCount; i++) {
         const columnFields = {
           field: `col_${i}`,
           title: ``
