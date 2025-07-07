@@ -69,6 +69,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-expandAndCollapseAll'
+      },
+      {
+        path: 'list',
         name: 'list-checkbox-tree'
       },
       {
