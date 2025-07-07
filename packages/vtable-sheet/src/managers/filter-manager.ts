@@ -1,6 +1,6 @@
 import type { ColumnFilter, Filter, IFilterManager } from '../ts-types';
 import { FilterOperator, FilterType } from '../ts-types';
-import type { VTableSheet } from '../components/VTableSheet';
+import type { VTableSheet } from '../components/vtable-sheet';
 
 /**
  * 过滤管理器 - 管理数据过滤
