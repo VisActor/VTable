@@ -172,7 +172,8 @@ export function listTableChangeCellValues(
           const editor = table.getEditor(startCol + j, startRow + i);
           const oldValue = oldValues[i][j];
           const value = rowValues[j];
-          const maybePromiseOrValue = editor?.validateValue?.(value, oldValue) ?? true;
+          const maybePromiseOrValue =
+            editor?.validateValue?.(value, oldValue, { col: startCol + j, row: startRow + i }, table) ?? true;
           if (isPromise(maybePromiseOrValue)) {
             //TODO 处理promise的情况
             isCanChange = true;
