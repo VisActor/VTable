@@ -7,8 +7,6 @@ import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, plugi
 export type TableSeriesNumberOptions = {
   rowCount: number;
   colCount: number;
-  rowHeight: number;
-  colWidth: number;
   // syncRowHeightFromTable?: boolean;
   // syncColWidthFromTable?: boolean;
 } & Partial<
@@ -40,8 +38,13 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     this.seriesNumberComponent = new VRenderTableSeriesNumber({
       rowCount: pluginOptions.rowCount,
       colCount: pluginOptions.colCount,
-      rowHeight: pluginOptions.rowHeight,
-      colWidth: pluginOptions.colWidth
+      rowSeriesNumberWidth: pluginOptions.rowSeriesNumberWidth,
+      colSeriesNumberHeight: pluginOptions.colSeriesNumberHeight,
+      rowSeriesNumberGenerate: pluginOptions.rowSeriesNumberGenerate,
+      colSeriesNumberGenerate: pluginOptions.colSeriesNumberGenerate,
+      rowSeriesNumberCellStyle: pluginOptions.rowSeriesNumberCellStyle,
+      colSeriesNumberCellStyle: pluginOptions.colSeriesNumberCellStyle,
+      cornerCellStyle: pluginOptions.cornerCellStyle
     });
     this.listenComponentEvents();
   }
