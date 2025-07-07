@@ -146,6 +146,9 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       }
       this.seriesNumberComponent.addRowSelectedRanges(rowSelectedIndexs);
       this.seriesNumberComponent.addColSelectedRanges(colSelectedIndexs);
+      if (this.table.stateManager.select.isSelectAll) {
+        this.seriesNumberComponent.addCornderSelected();
+      }
 
       this.seriesNumberComponent.renderSelectedIndexsState();
     });
@@ -172,6 +175,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       const isShift = event.nativeEvent.shiftKey;
       // console.log(SeriesNumberEvent.seriesNumberCellClick, event, seriesNumberCell);
       const isRow = seriesNumberCell.name.includes('row');
+      const isCol = seriesNumberCell.name.includes('col');
       if (isRow) {
         this.table.stateManager.setSelectInline('row');
         const rowIndex = seriesNumberCell.id;
@@ -181,7 +185,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
         } else {
           this.table.startDragSelectRow(rowIndex, isCtrl, isShift);
         }
-      } else {
+      } else if (isCol) {
         this.table.stateManager.setSelectInline('col');
         const colIndex = seriesNumberCell.id;
         if (isDragSelect) {
@@ -189,6 +193,8 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
         } else {
           this.table.startDragSelectCol(colIndex, isCtrl, isShift);
         }
+      } else {
+        this.table.eventManager.deelTableSelectAll();
       }
     });
     this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClickUp, e => {

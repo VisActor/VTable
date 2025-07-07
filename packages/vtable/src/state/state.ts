@@ -75,6 +75,7 @@ export class StateManager {
   interactionStateBeforeScroll?: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
+    isSelectAll?: boolean;
     selectInline?: 'col' | 'row' | false; //是否必须整行或者整列选中
     ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
