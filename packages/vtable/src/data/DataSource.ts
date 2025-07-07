@@ -1612,6 +1612,62 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     return childTotalLength;
   }
+
+  private _setNodeStateRecursive(node: any, targetState: HierarchyState): void {
+    if (!node) {
+      return;
+    }
+    const children = (node as any).filteredChildren ?? (node as any).children;
+    // 仅为具有子节点（即可以展开/折叠）的节点设置状态
+    if (children && (Array.isArray(children) ? children.length > 0 : children === true)) {
+      (node as any).hierarchyState = targetState;
+    }
+
+    // 如果子节点作为数组存在，则递归应用于子节点
+    if (children && Array.isArray(children)) {
+      for (const child of children) {
+        this._setNodeStateRecursive(child, targetState);
+      }
+    }
+  }
+
+  expandAllNodes(): void {
+    if (Array.isArray(this._source)) {
+      for (const rootNode of this._source) {
+        this._setNodeStateRecursive(rootNode, HierarchyState.expand);
+      }
+      this.hasHierarchyStateExpand = true;
+      this.clearSortedIndexMap();
+      this.restoreTreeHierarchyState();
+
+      if (this.lastSortStates && this.lastSortStates.length > 0) {
+        this.sort(this.lastSortStates); // sort 方法内部会调用 updatePagerData
+      } else {
+        this.updatePagerData();
+      }
+    } else {
+      console.warn('DataSource._source is not an array, cannot expand all nodes.');
+    }
+  }
+
+  collapseAllNodes(): void {
+    if (Array.isArray(this._source)) {
+      for (const rootNode of this._source) {
+        this._setNodeStateRecursive(rootNode, HierarchyState.collapse);
+      }
+      // hasHierarchyStateExpand 将由 restoreTreeHierarchyState 正确更新
+      this.clearSortedIndexMap();
+      this.restoreTreeHierarchyState();
+
+      if (this.lastSortStates && this.lastSortStates.length > 0) {
+        this.sort(this.lastSortStates); // sort 方法内部会调用 updatePagerData
+      } else {
+        this.updatePagerData();
+      }
+    } else {
+      console.warn('DataSource._source is not an array, cannot collapse all nodes.');
+    }
+  }
 }
 
 /**
