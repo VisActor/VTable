@@ -26,9 +26,7 @@ const tableSeriesNumberPlugin = new TableSeriesNumber({
   rowCount: 1000,
   colCount: 100,
   rowHeight: 30,
-  colWidth: 30,
-  syncRowHeightFromTable: true,
-  syncColWidthFromTable: true
+  colWidth: 30
 });
 const t1 = Date.now();
 console.log('tableSeriesNumberPlugin init time', t1 - t0);

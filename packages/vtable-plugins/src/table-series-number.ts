@@ -1,16 +1,28 @@
 import * as VTable from '@visactor/vtable';
+import type { TableSeriesNumberAttributes } from '@visactor/vrender-components';
 import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vrender-components';
 import type { ILayer } from '@visactor/vrender-core';
 import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
 
-export interface TableSeriesNumberOptions {
+export type TableSeriesNumberOptions = {
   rowCount: number;
   colCount: number;
   rowHeight: number;
   colWidth: number;
-  syncRowHeightFromTable?: boolean;
-  syncColWidthFromTable?: boolean;
-}
+  // syncRowHeightFromTable?: boolean;
+  // syncColWidthFromTable?: boolean;
+} & Partial<
+  Pick<
+    TableSeriesNumberAttributes,
+    | 'rowSeriesNumberGenerate'
+    | 'colSeriesNumberGenerate'
+    | 'rowSeriesNumberCellStyle'
+    | 'colSeriesNumberCellStyle'
+    | 'cornerCellStyle'
+    | 'colSeriesNumberHeight'
+    | 'rowSeriesNumberWidth'
+  >
+>;
 export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   id = `table-series-number`;
   name = 'Table Series Number';
@@ -48,8 +60,11 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
         records.push({});
       }
       options.records = records;
-
-      for (let i = options.columns.length; i < this.pluginOptions.colCount - options.columns.length; i++) {
+      if (!options.columns) {
+        options.columns = [];
+      }
+      const columnCount = options.columns.length;
+      for (let i = options.columns.length; i < this.pluginOptions.colCount - columnCount; i++) {
         const columnFields = {
           field: `col_${i}`,
           title: ``
@@ -96,12 +111,12 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       const t1 = performance.now();
       console.log('append component', t1 - t0);
 
-      if (this.pluginOptions.syncRowHeightFromTable) {
-        this.syncRowHeightToComponent();
-      }
-      if (this.pluginOptions.syncColWidthFromTable) {
-        this.syncColWidthToComponent();
-      }
+      // if (this.pluginOptions.syncRowHeightFromTable) {
+      this.syncRowHeightToComponent();
+      // }
+      // if (this.pluginOptions.syncColWidthFromTable) {
+      this.syncColWidthToComponent();
+      // }
 
       this.listenTableEvents();
     }
