@@ -201,6 +201,10 @@ export interface SelectAllOnCtrlAOption {
 ##${prefix} preventDefaultContextMenu(boolean) = true
 阻止鼠标右键的默认行为
 
+##${prefix} contextmenuReturnAllSelectedCells(boolean) = true
+
+右键菜单事件回传给用户参数中是否组织所有选中cells信息，默认true。如果不需要最好主动设置为false。
+
 #${prefix} excelOptions(Object)
 
 对齐 excel 高级能力

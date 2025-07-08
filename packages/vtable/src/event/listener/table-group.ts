@@ -722,13 +722,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
           target: eventArgsSet?.eventArgs?.target,
           mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
         };
-        if (cellInRanges(table.stateManager.select.ranges, col, row)) {
-          // 用户右键点击已经选中的区域
-          // const { start, end } = eventManager.selection.range;
-          cellsEvent.cells = table.getSelectedCellInfos();
-        } else {
-          // 用户右键点击新单元格
-          cellsEvent.cells = [[cellInfo]];
+        if (table.options.eventOptions?.contextmenuReturnAllSelectedCells ?? true) {
+          if (cellInRanges(table.stateManager.select.ranges, col, row)) {
+            // 用户右键点击已经选中的区域
+            // const { start, end } = eventManager.selection.range;
+            cellsEvent.cells = table.getSelectedCellInfos();
+          } else {
+            // 用户右键点击新单元格
+            cellsEvent.cells = [[cellInfo]];
+          }
         }
 
         table.fireListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, cellsEvent);
