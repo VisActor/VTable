@@ -114,6 +114,8 @@ export interface TableKeyboardOptions {
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
   preventDefaultContextMenu?: boolean;
+  /** contextmenu事件回传给用户参数中是否组织所有选中cells信息，默认true */
+  contextmenuReturnAllSelectedCells?: boolean;
 }
 
 export interface IRowSeriesNumber {
