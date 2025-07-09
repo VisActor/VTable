@@ -615,50 +615,13 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
           cellsEvent.cells = table.getSelectedCellInfos();
           table.fireListeners(TABLE_EVENT_TYPE.DRAG_SELECT_END, cellsEvent);
-        } else {
-          // 从pointertap中挪过来的这段逻辑
-          const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
-          if (
-            !eventManager.isTouchMove &&
-            e.button === 0 &&
-            eventArgsSet.eventArgs &&
-            (table as any).hasListeners(TABLE_EVENT_TYPE.CLICK_CELL)
-          ) {
-            const { col, row } = eventArgsSet.eventArgs;
-            const cellInfo = table.getCellInfo(col, row);
-            let icon;
-            let position;
-            if (eventArgsSet.eventArgs?.target) {
-              const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-              if (iconInfo) {
-                icon = iconInfo.icon;
-                position = iconInfo.position;
-              }
-            }
-            const cellsEvent: MousePointerMultiCellEvent = {
-              ...cellInfo,
-              event: e.nativeEvent,
-              federatedEvent: e,
-              cells: [],
-              targetIcon: icon
-                ? {
-                    name: icon.name,
-                    position: position,
-                    funcType: (icon as any).attribute.funcType
-                  }
-                : undefined,
-              target: eventArgsSet?.eventArgs?.target,
-              mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
-            };
-
-            table.fireListeners(TABLE_EVENT_TYPE.CLICK_CELL, cellsEvent);
-          }
         }
       }
     } else if (stateManager.interactionState === InteractionState.scrolling) {
       stateManager.updateInteractionState(InteractionState.default);
       // scroll end
-    } else {
+    }
+    if (!table.eventManager.isDraging) {
       // 从pointertap中挪过来的这段逻辑
       const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
       if (
