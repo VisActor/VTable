@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: click to edit cell not work with groupBy #4172\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
