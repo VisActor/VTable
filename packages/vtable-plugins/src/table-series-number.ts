@@ -24,7 +24,12 @@ export type TableSeriesNumberOptions = {
 export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   id = `table-series-number`;
   name = 'Table Series Number';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.BEFORE_INIT];
+  runTime = [
+    VTable.TABLE_EVENT_TYPE.INITIALIZED,
+    VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
+    VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
+    VTable.TABLE_EVENT_TYPE.UPDATED
+  ];
   pluginOptions: TableSeriesNumberOptions;
   table: VTable.ListTable;
   seriesNumberComponent: VRenderTableSeriesNumber;
@@ -52,15 +57,19 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     // const eventArgs = args[0];
     const runTime = args[1];
-    if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
+    if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT || runTime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
       const eventArgs = args[0];
       const table: BaseTableAPI = args[2];
       this.table = table as ListTable;
       const options: ListTableConstructorOptions = eventArgs.options;
       const records = options.records ?? [];
-      //用空数据将records填充到pluginOptions.rowCount
-      for (let i = records.length; i < this.pluginOptions.rowCount; i++) {
-        records.push({});
+      // //用空数据将records填充到pluginOptions.rowCount
+      // for (let i = records.length; i < this.pluginOptions.rowCount; i++) {
+      //   records.push({});
+      // }
+      // 直接设置数组长度，不填充任何内容
+      if (records.length < this.pluginOptions.rowCount) {
+        records.length = this.pluginOptions.rowCount;
       }
       options.records = records;
       if (!options.columns) {
@@ -69,12 +78,15 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       const columnCount = options.columns.length;
       for (let i = options.columns.length; i < this.pluginOptions.colCount - columnCount; i++) {
         const columnFields = {
-          field: `col_${i}`,
+          field: i,
           title: ``
         };
         options.columns.push(columnFields);
       }
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
+      // if (options.columns.length < this.pluginOptions.colCount) {
+      //   options.columns.length = this.pluginOptions.colCount;
+      // }
+    } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED || runTime === VTable.TABLE_EVENT_TYPE.UPDATED) {
       console.log('TableSeriesNumber initialized');
       this.table = args[2];
       this.table.customConfig = {

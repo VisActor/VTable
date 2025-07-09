@@ -221,9 +221,9 @@ export interface SheetDefine {
   /** 行数 */
   rowCount?: number;
   /** 表头定义 */
-  columns?: HeaderDefine[]; //可以没有
+  columns?: Omit<ColumnDefine, 'field'>[]; //可以没有
   /** 数据 */
-  data: (string | number | boolean | null)[][] | Record<string, any>[];
+  data?: (string | number | boolean | null)[][] | Record<string, any>[];
   /** 是否是当前活动sheet */
   active?: boolean;
   /** 单元格样式 */

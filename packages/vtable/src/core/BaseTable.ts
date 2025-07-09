@@ -2499,6 +2499,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) {
+    this.fireListeners(TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, { options, container: this.container });
     this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
     this._hasAutoImageColumn = undefined;
@@ -3023,13 +3024,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.setScrollTop(scrollTop);
     this.setScrollLeft(scrollLeft);
   }
-  selectRow(rowIndex: number, isCtrl?: boolean) {
+  selectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     if (isCtrl) {
       currentSelectRanges.push({
         start: { col: 0, row: rowIndex },
         end: { col: this.colCount - 1, row: rowIndex }
       });
+      this.selectCells(currentSelectRanges);
+    } else if (isShift) {
+      const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+      if (lastSelectRange) {
+        lastSelectRange.end.row = rowIndex;
+      }
       this.selectCells(currentSelectRanges);
     } else {
       this.selectCells([
@@ -3063,6 +3070,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       ]);
     }
   }
+  /**
+   * 开始拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整列
+   * @param colIndex 列索引
+   * @param isCtrl 是否按住 ctrl 键
+   * @param isShift 是否按住 shift 键
+   */
   startDragSelectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = isShift && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
@@ -3089,6 +3102,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       true
     );
   }
+  /**
+   * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
+   * @param colIndex 列索引
+   * @param isCtrl 是否按住 ctrl 键
+   */
   dragSelectCol(colIndex: number, isCtrl?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
@@ -3105,11 +3123,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       true
     );
   }
+  /**
+   * 结束拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来结束拖拽选择整列或者整行
+   */
   endDragSelect() {
     this.stateManager.updateInteractionState(InteractionState.default);
     this.stateManager.endSelectCells(false, false);
   }
 
+  /**
+   * 开始拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整行
+   * @param rowIndex 行索引
+   * @param isCtrl 是否按住 ctrl 键
+   * @param isShift 是否按住 shift 键
+   */
   startDragSelectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = 0;
@@ -3136,6 +3163,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       true
     );
   }
+  /**
+   * 拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整行
+   * @param rowIndex 行索引
+   * @param isCtrl 是否按住 ctrl 键
+   */
   dragSelectRow(rowIndex: number, isCtrl?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];

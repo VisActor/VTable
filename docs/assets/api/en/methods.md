@@ -248,6 +248,14 @@ Select one or more cell ranges
   selectCells(cellRanges: CellRange[]): void
 ```
 
+## selectRow(Function)
+
+Select a row
+
+## selectCol(Function)
+
+Select a column
+
 ## getSelectedCellInfos(Function)
 
 Get the selected cell information, and the returned result is a two-dimensional array. The first-level array item represents a row, and each item of the second-level array represents a cell information of the row.

@@ -640,12 +640,19 @@ export class StateManager {
     if (row > this.table.rowCount - 1) {
       row = this.table.rowCount - 1;
     }
+    const oldCellPosCol = this.select.cellPos.col;
+    const oldCellPosRow = this.select.cellPos.row;
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
-    this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
-      ranges: this.select.ranges,
-      col: col,
-      row: row
-    });
+    if (
+      this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED) &&
+      (oldCellPosCol !== col || oldCellPosRow !== row)
+    ) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
+        ranges: this.select.ranges,
+        col: col,
+        row: row
+      });
+    }
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {

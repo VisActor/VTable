@@ -167,12 +167,16 @@ export interface TableEvents {
   //#region lifecircle
   /** 表格实例初始化前触发 */
   BEFORE_INIT: 'before_init';
+  /** 更新表格选项前触发 */
+  BEFORE_UPDATE_OPTION: 'before_update_option';
   /** 设置表格大小前触发 */
   BEFORE_SET_SIZE: 'before_set_size';
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
   /** 表格实例初始化完成 */
   INITIALIZED: 'initialized';
+  /** 表格更新完成 */
+  UPDATED: 'updated';
   //#endregion
 
   /** 编辑单元格 */
@@ -279,8 +283,10 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   SWITCH_STATE_CHANGE: 'switch_state_change',
   BEFORE_SET_SIZE: 'before_set_size',
   BEFORE_INIT: 'before_init',
+  BEFORE_UPDATE_OPTION: 'before_update_option',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
+  UPDATED: 'updated',
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',

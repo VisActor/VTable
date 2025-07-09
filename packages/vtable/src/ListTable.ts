@@ -562,6 +562,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.pluginManager.updatePlugins(options.plugins);
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });

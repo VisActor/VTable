@@ -19,7 +19,10 @@ module.exports = {
       '@visactor/vtable': path.resolve(__dirname, '../../vtable/src/index.ts'),
       '@visactor/vtable-plugins': path.resolve(__dirname, '../../vtable-plugins/src/index.ts'),
       '@src': path.resolve(__dirname, '../../vtable/src/'),
-      '@vutils-extension': path.resolve(__dirname, '../../vtable/src/vutil-extension-temp')
+      '@vutils-extension': path.resolve(__dirname, '../../vtable/src/vutil-extension-temp'),
+      '@visactor/vrender-components': '/Users/bytedance/VisActor/VRender/packages/vrender-components/src/index.ts',
+      '@visactor/vrender-core': '/Users/bytedance/VisActor/VRender/packages/vrender-core/src/index.ts',
+      '@visactor/vrender-kits': '/Users/bytedance/VisActor/VRender/packages/vrender-kits/src/index.ts'
     }
   },
   plugins: [

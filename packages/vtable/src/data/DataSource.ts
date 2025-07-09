@@ -1124,9 +1124,39 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     // Perform sorting on each state
     sortedIndexArray.sort((indexA, indexB) => {
+      // 获取两个索引对应的记录
+      const recordA = this.getOriginalRecord(indexA);
+      const recordB = this.getOriginalRecord(indexB);
+
+      // 检查记录是否为空（null、undefined 或空对象）
+      const isEmptyA =
+        recordA === null || recordA === undefined || (typeof recordA === 'object' && Object.keys(recordA).length === 0);
+      const isEmptyB =
+        recordB === null || recordB === undefined || (typeof recordB === 'object' && Object.keys(recordB).length === 0);
+
       return states.reduce((result: number, state: SortState) => {
         if (result !== 0) {
           return result;
+        }
+
+        // 如果有排序状态（非normal状态），则空数据排在后面
+        if (state.order === 'asc' || state.order === 'desc') {
+          // 如果一个是空记录而另一个不是，则空记录排在后面
+          if (isEmptyA && !isEmptyB) {
+            return 1; // A是空的，B不是，A排后面
+          }
+          if (!isEmptyA && isEmptyB) {
+            return -1; // A不是空的，B是，B排后面
+          }
+          // 如果两者都是空记录，保持原有顺序
+          if (isEmptyA && isEmptyB) {
+            return indexA - indexB; // 保持原有顺序
+          }
+        } else {
+          // normal状态，保持原始顺序
+          if (isEmptyA || isEmptyB) {
+            return indexA - indexB;
+          }
         }
 
         const orderFn =

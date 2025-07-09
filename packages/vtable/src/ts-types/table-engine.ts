@@ -215,10 +215,6 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    */
   records?: any[];
   /**
-   * 指定行数
-   */
-  recordCount?: number;
-  /**
    * 传入用户实例化的数据对象
    */
   dataSource?: CachedDataSource | DataSource;

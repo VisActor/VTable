@@ -248,6 +248,16 @@ setRecords(records: Array<any>)
 其中：
 {{ use: CellRange() }}
 
+## selectRow(Function)
+
+选中整行
+
+## selectCol(Function)
+
+选中整列
+
+
+
 ## getSelectedCellInfos(Function)
 
 获取已选中的单元格信息，返回结果是二维数组，第一层数组项代表一行，第二层数组每一项即代表该行的一个单元格信息。
@@ -1467,4 +1477,12 @@ setLoadingHierarchyState: (col: number, row: number) => void;
 ```
   /** 设置画布的像素比 */
   setPixelRatio: (pixelRatio: number) => void;
+```
+## setTranslate(Function)
+
+设置表格的偏移量
+
+```
+  /** 设置表格的偏移量 */
+  setTranslate: (x: number, y: number) => void;
 ```
