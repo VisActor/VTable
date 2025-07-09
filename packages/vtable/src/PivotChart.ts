@@ -60,7 +60,8 @@ import {
   registerLegend,
   registerMenu,
   registerTitle,
-  registerTooltip
+  registerTooltip,
+  registerAnimation
 } from './components';
 import {
   registerChartCell,
@@ -81,7 +82,7 @@ registerLegend();
 registerMenu();
 registerTitle();
 registerTooltip();
-
+registerAnimation();
 registerChartCell();
 registerCheckboxCell();
 registerImageCell();

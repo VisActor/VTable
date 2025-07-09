@@ -5,7 +5,8 @@ import {
   registerLegend,
   registerMenu,
   registerTitle,
-  registerTooltip
+  registerTooltip,
+  registerAnimation
 } from './components';
 import { registerCustomCellStylePlugin } from './plugins/custom-cell-style';
 import { registerListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
@@ -30,7 +31,7 @@ registerTitle();
 registerTooltip();
 registerListTreeStickCellPlugin();
 registerCustomCellStylePlugin();
-
+registerAnimation();
 registerChartCell();
 registerCheckboxCell();
 registerImageCell();
