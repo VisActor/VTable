@@ -25,6 +25,7 @@ registerTooltip();
 * registerMenu: menu component
 * registerTitle: title component
 * registerTooltip: tooltip component
+* registerAnimation: animation component
 
 ### Cell type
 
