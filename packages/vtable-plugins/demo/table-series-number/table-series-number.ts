@@ -130,7 +130,7 @@ export function createTable() {
   ];
   window.createTableInstance = function () {
     // window.tableInstance?.release();
-    const records = generatePersons(100);
+    const records = generatePersons(3);
     const option: VTable.ListTableConstructorOptions = {
       defaultHeaderRowHeight: 60,
       heightMode: 'autoHeight',
@@ -167,6 +167,12 @@ export function createTable() {
     window.tableInstance = tableInstance;
     tableInstance.on('click_cell', e => {
       console.log('click_cell');
+    });
+    tableInstance.on('selected_changed', e => {
+      console.log('selected_changed');
+    });
+    tableInstance.on('selected_cell', e => {
+      console.log('selected_cell');
     });
   };
   /** @ts-ignore */
