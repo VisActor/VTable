@@ -33,6 +33,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
 
     const animationPlugin = new VTablePlugins.TableCarouselAnimationPlugin( {
       rowCount: 2,
+      autoPlay: true,
+      autoPlayDelay: 1000
     });
     const columns = [
       {

@@ -114,6 +114,8 @@ export interface TableKeyboardOptions {
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
   preventDefaultContextMenu?: boolean;
+  /** contextmenu事件回传给用户参数中是否组织所有选中cells信息，默认true */
+  contextmenuReturnAllSelectedCells?: boolean;
 }
 
 export interface IRowSeriesNumber {
@@ -323,7 +325,7 @@ export interface ListTableAPI extends BaseTableAPI {
     row: number,
     values: (string | number)[][],
     workOnEditableCell?: boolean
-  ) => boolean[][];
+  ) => Promise<boolean[][]> | boolean[][];
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

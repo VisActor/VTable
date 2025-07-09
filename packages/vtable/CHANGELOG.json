@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.3",
+      "tag": "@visactor/vtable_v1.19.3",
+      "date": "Wed, 09 Jul 2025 09:24:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add contextmenuReturnAllSelectedCells api #4064\n\n"
+          },
+          {
+            "comment": "fix: click to edit cell not work with groupBy #4172\n\n"
+          },
+          {
+            "comment": "fix: 修复自定义编辑器复制粘贴时无法触发异步校验的问题\n\n"
+          },
+          {
+            "comment": "fix: handle frozen column calculation when container is invisible\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.2",
       "tag": "@visactor/vtable_v1.19.2",
       "date": "Tue, 01 Jul 2025 10:26:51 GMT",

@@ -25,6 +25,7 @@ registerTooltip();
 * registerMenu: 菜单组件
 * registerTitle: 标题组件
 * registerTooltip: tooltip组件
+* registerAnimation: 动画组件
 
 ### 单元格类型
 
