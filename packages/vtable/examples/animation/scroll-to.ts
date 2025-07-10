@@ -99,7 +99,9 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
-
+  setTimeout(() => {
+    tableInstance.scrollToCell({ col: 4, row: 5 }, { duration: 500, easing: 'quadIn' });
+  }, 1000);
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
   });

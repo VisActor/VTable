@@ -1136,7 +1136,12 @@ export function _getTaskInfoByXYForCreateSchedule(eventX: number, eventY: number
           recordParent.hierarchyState !== 'expand' &&
           gantt.parsedOptions.projectSubTasksExpandable !== false)
       ) {
-        if (dateRange.startDate.getTime() >= startDate.getTime() && dateRange.endDate.getTime() <= endDate.getTime()) {
+        if (
+          startDate &&
+          endDate &&
+          dateRange.startDate.getTime() >= startDate.getTime() &&
+          dateRange.endDate.getTime() <= endDate.getTime()
+        ) {
           return { startDate, endDate, taskDays, progress, taskRecord };
         }
       }

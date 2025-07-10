@@ -2242,6 +2242,91 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   setLoadingHierarchyState(col: number, row: number) {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
+
+  /**
+   * 展开行表头树的所有节点
+   */
+  expandAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForRowDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 折叠行表头树的所有节点
+   */
+  collapseAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForRowDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 展开列表头树的所有节点
+   */
+  expandAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForColumnDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 折叠列表头树的所有节点
+   */
+  collapseAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForColumnDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        changeAll: true
+      });
+    }
+  }
+
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
     this.editorManager.release();

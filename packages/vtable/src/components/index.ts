@@ -7,6 +7,7 @@ import { createLegend } from './legend/create-legend';
 import { MenuHandler } from './menu/dom/MenuHandler';
 import { Title } from './title/title';
 import { TooltipHandler } from './tooltip/TooltipHandler';
+import { registerCustomAnimate, registerAnimate } from '@src/vrender';
 
 export const registerAxis = () => {
   Factory.registerComponent('axis', CartesianAxis);
@@ -33,4 +34,9 @@ export const registerTitle = () => {
 
 export const registerTooltip = () => {
   Factory.registerComponent('tooltipHandler', TooltipHandler);
+};
+
+export const registerAnimation = () => {
+  registerCustomAnimate();
+  registerAnimate();
 };
