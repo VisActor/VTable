@@ -60,7 +60,8 @@ import {
   registerLegend,
   registerMenu,
   registerTitle,
-  registerTooltip
+  registerTooltip,
+  registerAnimation
 } from './components';
 import {
   registerChartCell,
@@ -81,7 +82,7 @@ registerLegend();
 registerMenu();
 registerTitle();
 registerTooltip();
-
+registerAnimation();
 registerChartCell();
 registerCheckboxCell();
 registerImageCell();
@@ -509,6 +510,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });

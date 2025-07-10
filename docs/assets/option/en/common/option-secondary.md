@@ -202,6 +202,10 @@ Issue settings related to event triggering, specific configuration items:
 ##${prefix} preventDefaultContextMenu(boolean) = true
 prevent the default behavior of the right mouse button
 
+##${prefix} contextmenuReturnAllSelectedCells(boolean) = true
+
+Whether to return all selected cells information to the user in the contextmenu event parameter. Default is true. If you do not need it, it is best to set it to false.
+
 #${prefix} excelOptions(Object)
 
 Align excel advanced capabilities

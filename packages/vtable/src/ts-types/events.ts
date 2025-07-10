@@ -173,6 +173,11 @@ export interface TableEventHandlersEventArgumentMap {
   mouseover_chart_symbol: MousePointerSparklineEvent;
 
   drag_select_end: MousePointerMultiCellEvent;
+  selected_changed: {
+    col: number;
+    row: number;
+    ranges: CellRange[];
+  };
   copy_data: { cellRange: CellRange[]; copyData: string };
   drillmenu_click: DrillMenuEventInfo;
 
@@ -209,6 +214,7 @@ export interface TableEventHandlersEventArgumentMap {
   tree_hierarchy_state_change: {
     col: number;
     row: number;
+    changeAll?: boolean;
     hierarchyState: HierarchyState;
     dimensionInfo?: IDimensionInfo[];
     /**整条数据-原始数据 */
@@ -237,9 +243,11 @@ export interface TableEventHandlersEventArgumentMap {
   radio_state_change: MousePointerCellEvent & { radioIndexInCell: number | undefined };
   switch_state_change: MousePointerCellEvent & { checked: boolean };
   before_init: { options: BaseTableConstructorOptions; container: HTMLElement | null };
+  before_update_option: { options: BaseTableConstructorOptions; container: HTMLElement | null };
   before_set_size: { width: number; height: number };
   after_render: null;
   initialized: null;
+  updated: null;
 
   change_cell_value: {
     col: number;
@@ -316,6 +324,7 @@ export interface TableEventHandlersReturnMap {
 
   mouseover_chart_symbol: void;
   drag_select_end: void;
+  selected_changed: void;
   copy_data: void;
   drillmenu_click: void;
 
@@ -346,9 +355,11 @@ export interface TableEventHandlersReturnMap {
   radio_state_change: void;
   switch_state_change: void;
   before_init: void;
+  before_update_option: void;
   before_set_size: void;
   after_render: void;
   initialized: void;
+  updated: void;
 
   change_cell_value: void;
   mousedown_fill_handle: void;

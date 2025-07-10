@@ -17,8 +17,8 @@ export function createTable() {
         title: 'sheet1',
         columns: [
           {
-            field: 'name',
             title: '名称',
+            sort: true,
             width: 100
           }
         ],
@@ -41,6 +41,19 @@ export function createTable() {
           [3, 4, 6],
           ['s', 'd', 'f']
         ]
+      },
+      {
+        key: 'sheet3',
+        title: 'sheet3',
+
+        data: [
+          [3, 4, 6],
+          ['s', 'd', 'f']
+        ]
+      },
+      {
+        key: 'sheet4',
+        title: 'sheet4'
       }
     ],
     // showSheetTab: true,

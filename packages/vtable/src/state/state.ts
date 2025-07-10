@@ -75,6 +75,8 @@ export class StateManager {
   interactionStateBeforeScroll?: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
+    isSelectAll?: boolean;
+    selectInline?: 'col' | 'row' | false; //是否必须整行或者整列选中
     ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
     cellPos: CellPosition;
@@ -199,6 +201,7 @@ export class StateManager {
   };
   _clearVerticalScrollBar: any;
   _clearHorizontalScrollBar: any;
+  _frozenObserver?: ResizeObserver;
 
   fastScrolling: boolean = false;
 
@@ -638,7 +641,19 @@ export class StateManager {
     if (row > this.table.rowCount - 1) {
       row = this.table.rowCount - 1;
     }
+    const oldCellPosCol = this.select.cellPos.col;
+    const oldCellPosRow = this.select.cellPos.row;
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
+    if (
+      this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED) &&
+      (oldCellPosCol !== col || oldCellPosRow !== row)
+    ) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
+        ranges: this.select.ranges,
+        col: col,
+        row: row
+      });
+    }
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -910,12 +925,42 @@ export class StateManager {
       : 0;
 
     if (originalFrozenColCount) {
-      if (originalFrozenColCount > this.table.colCount) {
-        originalFrozenColCount = this.table.colCount;
+      // 确保冻结列数不超过实际列数
+      originalFrozenColCount = Math.min(originalFrozenColCount, this.table.colCount);
+      const container = this.table.getContainer();
+      if (container && container.clientWidth === 0) {
+        if (this._frozenObserver) {
+          return;
+        }
+
+        // 使用 ResizeObserver 监听容器尺寸变化
+        this._frozenObserver = new ResizeObserver(entries => {
+          for (const entry of entries) {
+            // 检查容器宽度是否变为可见
+            if (entry.contentRect.width > 0) {
+              // container变为可见，重新计算冻结列
+              this.clearFrozenObserver();
+
+              this.table.resize();
+
+              setTimeout(() => {
+                this.checkFrozen();
+              }, 0);
+              return;
+            }
+          }
+        });
+
+        // 监听当前容器
+        this._frozenObserver.observe(container);
+        return;
       }
 
+      // 检查冻结列宽度是否超过限制
+      const frozenWidth = this.table.getColsWidth(0, originalFrozenColCount - 1);
       const maxFrozenWidth = this.table._getMaxFrozenWidth();
-      if (this.table.getColsWidth(0, originalFrozenColCount - 1) > maxFrozenWidth) {
+
+      if (frozenWidth > maxFrozenWidth) {
         if (this.table.internalProps.unfreezeAllOnExceedsMaxWidth) {
           this.table._setFrozenColCount(0);
           this.setFrozenCol(-1);
@@ -928,8 +973,19 @@ export class StateManager {
         this.table._setFrozenColCount(originalFrozenColCount);
         this.setFrozenCol(originalFrozenColCount);
       }
+    } else {
+      this.clearFrozenObserver();
     }
   }
+
+  clearFrozenObserver() {
+    // 清理观察器
+    if (this._frozenObserver) {
+      this._frozenObserver.disconnect();
+      this._frozenObserver = null;
+    }
+  }
+
   setFrozenCol(col: number) {
     if (col !== this.frozen.col) {
       // const oldFrozenCol = this.frozen.col;
@@ -1547,7 +1603,9 @@ export class StateManager {
       event
     });
   }
-
+  setSelectInline(selectInline: 'col' | 'row' | false) {
+    this.select.selectInline = selectInline;
+  }
   updateSortState(sortState: SortState[]) {
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 

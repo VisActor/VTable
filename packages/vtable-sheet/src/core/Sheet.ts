@@ -95,7 +95,25 @@ export class Sheet implements SheetAPI {
     // 设置事件监听
     this._setupEventListeners();
   }
+  // 实现ListTableAPI所需的属性
 
+  get rowCount(): number {
+    const data = this.getData();
+    return data ? data.length : 0;
+  }
+
+  get colCount(): number {
+    const data = this.getData();
+    return data && data.length > 0 ? data[0].length : 0;
+  }
+
+  get records(): any {
+    return this.getData();
+  }
+
+  get columns(): any {
+    return this.options.columns || [];
+  }
   /**
    * Creates the root element for the sheet
    */
@@ -131,11 +149,19 @@ export class Sheet implements SheetAPI {
    * Generates VTable options from Sheet options
    */
   private _generateTableOptions(): any {
+    let isShowTableHeader = true;
     // 转换为ListTable的选项
+    if (!this.options.columns) {
+      isShowTableHeader = false;
+    } else {
+      for (let i = 0; i < this.options.columns.length; i++) {
+        this.options.columns[i].field = i;
+      }
+    }
     return {
       ...this.options,
-      container: this.element
-
+      container: this.element,
+      showHeader: isShowTableHeader
       // 其他特定配置
     };
   }
@@ -226,7 +252,7 @@ export class Sheet implements SheetAPI {
    */
   getData(): any[][] {
     // 从表格实例获取数据
-    return this.options.data || [];
+    return this.options.records || [];
   }
 
   /**
@@ -383,17 +409,32 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Undo the last operation
+   * 将第一行设置为表头
    */
-  undo(): void {
-    // 撤销操作实现
-  }
-
-  /**
-   * Redo the last undone operation
-   */
-  redo(): void {
-    // 重做操作实现
+  setFirstRowAsHeader(): void {
+    const data = this.getData();
+    if (data && data.length > 0) {
+      if (!this.options.columns) {
+        this.options.columns = [];
+      }
+      for (let i = 0; i < data[0].length; i++) {
+        if (!this.options.columns[i]) {
+          this.options.columns[i] = {
+            field: i,
+            title: data[0][i]
+          };
+        } else {
+          this.options.columns[i].title = data[0][i];
+          this.options.columns[i].field = i;
+        }
+      }
+    }
+    data.shift();
+    this.tableInstance.updateOption({
+      ...this.options,
+      columns: this.options.columns,
+      showHeader: true
+    });
   }
 
   /**
@@ -414,25 +455,5 @@ export class Sheet implements SheetAPI {
 
     // 清除引用
     this.tableInstance = undefined;
-  }
-
-  // 实现ListTableAPI所需的属性
-
-  get rowCount(): number {
-    const data = this.getData();
-    return data ? data.length : 0;
-  }
-
-  get colCount(): number {
-    const data = this.getData();
-    return data && data.length > 0 ? data[0].length : 0;
-  }
-
-  get records(): any {
-    return this.getData();
-  }
-
-  get columns(): any {
-    return this.options.columns || [];
   }
 }
