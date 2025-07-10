@@ -297,10 +297,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 2.0.0-alpha.1
       '@visactor/vdataset': ~0.18.1
-      '@visactor/vrender-animate': 1.0.5
-      '@visactor/vrender-components': 1.0.5
-      '@visactor/vrender-core': 1.0.5
-      '@visactor/vrender-kits': 1.0.5
+      '@visactor/vrender-animate': 1.0.8-alpha.2
+      '@visactor/vrender-components': 1.0.8-alpha.2
+      '@visactor/vrender-core': 1.0.8-alpha.2
+      '@visactor/vrender-kits': 1.0.8-alpha.2
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.19.1
@@ -345,10 +345,10 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.18.18
-      '@visactor/vrender-animate': 1.0.5
-      '@visactor/vrender-components': 1.0.5
-      '@visactor/vrender-core': 1.0.5
-      '@visactor/vrender-kits': 1.0.5
+      '@visactor/vrender-animate': 1.0.8-alpha.2
+      '@visactor/vrender-components': 1.0.8-alpha.2
+      '@visactor/vrender-core': 1.0.8-alpha.2
+      '@visactor/vrender-kits': 1.0.8-alpha.2
       '@visactor/vscale': 0.18.18
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.19.7
@@ -1033,7 +1033,7 @@ importers:
       '@visactor/vtable': link:../vtable
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vtable-plugins': link:../vtable-plugins
-      '@visactor/vutils': 0.19.5
+      '@visactor/vutils': 0.19.7
       cssfontparser: 1.2.1
     devDependencies:
       '@babel/core': 7.20.12
@@ -1045,21 +1045,21 @@ importers:
       '@types/chai': 4.2.22
       '@types/jest': 26.0.24
       '@types/mocha': 9.0.0
-      '@types/node': 22.13.9
+      '@types/node': 24.0.4
       '@types/offscreencanvas': 2019.6.4
-      '@types/react': 18.3.18
-      '@types/react-dom': 18.3.5_@types+react@18.3.18
+      '@types/react': 18.3.23
+      '@types/react-dom': 18.3.7_@types+react@18.3.23
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
-      axios: 1.8.2
+      axios: 1.10.0
       chai: 4.3.4
       eslint: 8.18.0
-      form-data: 4.0.2
+      form-data: 4.0.3
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
       jest-transform-stub: 2.0.0
       json-formatter-js: 2.5.23
-      luxon: 3.5.0
+      luxon: 3.6.1
       magic-string: 0.25.9
       markdown-it: 13.0.2
       mocha: 9.1.3
@@ -1071,12 +1071,12 @@ importers:
       sass: 1.43.5
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
       ts-loader: 9.2.6_typescript@4.9.5
-      ts-node: 10.9.0_uq7lvm7thgjxm43kb2nifjwava
+      ts-node: 10.9.0_vtufjj2l7bw7teyr4botkn4jrm
       tslib: 2.3.1
       ttypescript: 1.5.13_fxi2xlggroal5l3a4znftvxz2m
       typescript: 4.9.5
       typescript-transform-paths: 3.3.1_typescript@4.9.5
-      vite: 3.2.6_tp2wsfwniubhwwtz2rzahg2hve
+      vite: 3.2.6_ozooono6bjz33btoyejpocgcz4
       vite-plugin-markdown: 2.2.0_vite@3.2.6
 
   ../../packages/vue-vtable:
@@ -2884,7 +2884,7 @@ packages:
       jest-resolve: 26.6.2
       jest-resolve-dependencies: 26.6.3
       jest-runner: 26.6.3_ts-node@10.9.0
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
       jest-snapshot: 26.6.2
       jest-util: 26.6.2
       jest-validate: 26.6.2
@@ -3045,7 +3045,7 @@ packages:
       graceful-fs: 4.2.11
       jest-haste-map: 26.6.2
       jest-runner: 26.6.3_ts-node@10.9.0
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -4287,10 +4287,10 @@ packages:
       '@visactor/vrender-core': 1.0.0-alpha.17
       '@visactor/vutils': 1.0.4
 
-  /@visactor/vrender-animate/1.0.5:
-    resolution: {integrity: sha512-EVK4eTeiZg+WqfDe+QDnQlRLYD9C3viN1FZ+SzCRB5oYs8+su9zezRC/xV/kvnx5kCBPlfwnJEI70bIsXuRMtw==}
+  /@visactor/vrender-animate/1.0.8-alpha.2:
+    resolution: {integrity: sha512-J7Ga5tnFSt93+E/fn6XOIUUNpuYKitJruYB187JDDlJ4eN/5mwJHf0BUXzm8CNMhjDBh6pscSzFmmysGHcDWPA==}
     dependencies:
-      '@visactor/vrender-core': 1.0.5
+      '@visactor/vrender-core': 1.0.8-alpha.2
       '@visactor/vutils': 1.0.6
     dev: false
 
@@ -4303,12 +4303,12 @@ packages:
       '@visactor/vscale': 1.0.4
       '@visactor/vutils': 1.0.4
 
-  /@visactor/vrender-components/1.0.5:
-    resolution: {integrity: sha512-A0WQZZlD9DHLgKnJ/mVJEx5xomIWQEjkVFngrR7tZ0lCQ2Utqk4Mqny9Ad5xZ4lxf8521aseNk1N3R+OUhj8wQ==}
+  /@visactor/vrender-components/1.0.8-alpha.2:
+    resolution: {integrity: sha512-ivgRRDaxQrcV9u57SewDpt9Yi9qndwz81WHLb3V8d8tuH/xtntFe73345zLVlZyhiD6L7sRE7pJqCD+Kogqmzw==}
     dependencies:
-      '@visactor/vrender-animate': 1.0.5
-      '@visactor/vrender-core': 1.0.5
-      '@visactor/vrender-kits': 1.0.5
+      '@visactor/vrender-animate': 1.0.8-alpha.2
+      '@visactor/vrender-core': 1.0.8-alpha.2
+      '@visactor/vrender-kits': 1.0.8-alpha.2
       '@visactor/vscale': 1.0.6
       '@visactor/vutils': 1.0.6
     dev: false
@@ -4319,8 +4319,8 @@ packages:
       '@visactor/vutils': 1.0.4
       color-convert: 2.0.1
 
-  /@visactor/vrender-core/1.0.5:
-    resolution: {integrity: sha512-8vKzA+WkON6ndjlCAX4CQX/jB2JGUehT/jWXrDFUPZ1QrJ/X3Rd99ADsL1UbMCcxPDJFsp7m4gQg3uNeza2mKA==}
+  /@visactor/vrender-core/1.0.8-alpha.2:
+    resolution: {integrity: sha512-5jiN2/7Vv6ecc5bgpb2Am7ZWE1TUUmsQBXemwQBGR5It4T/gN4eDHt36cecYxc21fVNPdp87cbVM07fVK7aFrA==}
     dependencies:
       '@visactor/vutils': 1.0.6
       color-convert: 2.0.1
@@ -4336,11 +4336,11 @@ packages:
       lottie-web: 5.13.0
       roughjs: 4.5.2
 
-  /@visactor/vrender-kits/1.0.5:
-    resolution: {integrity: sha512-mTsEnYRgIgsJ/KFul6lhRjwpEPVjrVpefr0kUC/qIzvKp8I+ay18HZdCKcWsmQavouYfUnIoODiez3bZhuNp6A==}
+  /@visactor/vrender-kits/1.0.8-alpha.2:
+    resolution: {integrity: sha512-ay1mQGnZYClLDc9SLQ7yHhWkBk+bzr5wyVD5/+G6dKDiOx0xi3u/kcAVj184Lc+80ZnlrBzeY1dkwnGO1z+7GQ==}
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.0.5
+      '@visactor/vrender-core': 1.0.8-alpha.2
       '@visactor/vutils': 1.0.6
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
@@ -9692,7 +9692,7 @@ packages:
       jest-leak-detector: 26.6.2
       jest-message-util: 26.6.2
       jest-resolve: 26.6.2
-      jest-runtime: 26.6.3
+      jest-runtime: 26.6.3_ts-node@10.9.0
       jest-util: 26.6.2
       jest-worker: 26.6.2
       source-map-support: 0.5.21
@@ -9733,42 +9733,6 @@ packages:
       slash: 2.0.0
       strip-bom: 3.0.0
       yargs: 13.3.2
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /jest-runtime/26.6.3:
-    resolution: {integrity: sha512-lrzyR3N8sacTAMeonbqpnSka1dHNux2uk0qqDXVkMv2c/A3wYnvQ4EXuI013Y6+gSKSCxdaczvf4HF0mVXHRdw==}
-    engines: {node: '>= 10.14.2'}
-    hasBin: true
-    dependencies:
-      '@jest/console': 26.6.2
-      '@jest/environment': 26.6.2
-      '@jest/fake-timers': 26.6.2
-      '@jest/globals': 26.6.2
-      '@jest/source-map': 26.6.2
-      '@jest/test-result': 26.6.2
-      '@jest/transform': 26.6.2
-      '@jest/types': 26.6.2
-      '@types/yargs': 15.0.19
-      chalk: 4.1.2
-      cjs-module-lexer: 0.6.0
-      collect-v8-coverage: 1.0.2
-      exit: 0.1.2
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-config: 26.6.3_ts-node@10.9.0
-      jest-haste-map: 26.6.2
-      jest-message-util: 26.6.2
-      jest-mock: 26.6.2
-      jest-regex-util: 26.0.0
-      jest-resolve: 26.6.2
-      jest-snapshot: 26.6.2
-      jest-util: 26.6.2
-      jest-validate: 26.6.2
-      slash: 3.0.0
-      strip-bom: 4.0.0
-      yargs: 15.4.1
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -13901,7 +13865,7 @@ packages:
       mkdirp: 1.0.4
       semver: 7.3.4
       typescript: 4.9.5
-      yargs-parser: 20.2.4
+      yargs-parser: 20.2.9
     dev: true
 
   /ts-loader/9.2.6_typescript@4.9.5:
@@ -15056,6 +15020,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  /yargs-parser/20.2.9:
+    resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
+    engines: {node: '>=10'}
+    dev: true
+
   /yargs-parser/21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
@@ -15119,7 +15088,7 @@ packages:
       require-directory: 2.1.1
       string-width: 4.2.3
       y18n: 5.0.8
-      yargs-parser: 20.2.4
+      yargs-parser: 20.2.9
     dev: true
 
   /yargs/17.7.2:

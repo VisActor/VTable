@@ -878,6 +878,13 @@
             "zh": "excel导入",
             "en": "excel Import"
           }
+        },
+        {
+          "path": "table-series-number",
+          "title": {
+            "zh": "表格专用序号插件",
+            "en": "table series number plugin"
+          }
         }
       ]
     },

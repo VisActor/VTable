@@ -52,6 +52,14 @@ export const menus = [
     name: 'rotate-table'
   },
   {
+    path: 'table-series-number',
+    name: 'table-series-number'
+  },
+  {
+    path: 'table-series-number',
+    name: 'pivot-table-series-number'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {
