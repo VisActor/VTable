@@ -1,13 +1,5 @@
-import type {
-  ColumnDefine,
-  ColumnsDefine,
-  ListTableAPI,
-  ListTableConstructorOptions,
-  CellAddress,
-  HeaderData,
-  HeaderDefine
-} from '@visactor/vtable';
-
+import type { ColumnDefine, ColumnsDefine, ListTableConstructorOptions } from '@visactor/vtable';
+import type { ListTableAPI, CellAddress, HeaderData, HeaderDefine } from '@visactor/vtable/es/ts-types';
 /**
  * Cell data type enum
  */
@@ -74,64 +66,9 @@ export interface FormulaOptions {
 }
 
 /**
- * Sheet constructor options
- */
-export interface SheetConstructorOptions extends ListTableConstructorOptions {
-  /**
-   * Grid data in 2D array format
-   */
-  data?: any[][];
-
-  /**
-   * Default row height in pixels
-   */
-  defaultRowHeight?: number;
-
-  /**
-   * Default column width in pixels
-   */
-  defaultColWidth?: number;
-
-  /**
-   * Whether to show row headers (1, 2, 3, ...)
-   */
-  showRowHeader?: boolean;
-
-  /**
-   * Whether to show column headers (A, B, C, ...)
-   */
-  showColHeader?: boolean;
-
-  /**
-   * Whether cells are editable
-   */
-  editable?: boolean;
-
-  /**
-   * The theme to use
-   */
-  theme?: 'light' | 'dark' | string;
-
-  /**
-   * Formula calculation options
-   */
-  formula?: FormulaOptions;
-
-  /**
-   * Cell selection mode
-   */
-  selectionMode?: SelectionMode;
-
-  /**
-   * Custom column definitions
-   */
-  columns?: ColumnDefine[];
-}
-
-/**
  * Sheet API interface
  */
-export interface SheetAPI extends ListTableAPI {
+export interface SheetAPI {
   /**
    * Get cell value at specified coordinates
    */
@@ -206,6 +143,7 @@ export interface SheetAPI extends ListTableAPI {
    * Redo the last undone operation
    */
   redo: () => void;
+  getData: () => any[][];
 }
 
 /**
@@ -213,15 +151,15 @@ export interface SheetAPI extends ListTableAPI {
  */
 export interface SheetDefine {
   /** 标题 */
-  title: string;
+  sheetTitle: string;
   /** 唯一标识 */
-  key: string;
+  sheetKey: string;
   /** 列数 */
   columnCount?: number;
   /** 行数 */
   rowCount?: number;
-  /** 表头定义 */
-  columns?: Omit<ColumnDefine, 'field'>[]; //可以没有
+  /** 表头定义 可以没有*/
+  columns?: Omit<ColumnDefine, 'field'>[];
   /** 数据 */
   data?: (string | number | boolean | null)[][] | Record<string, any>[];
   /** 是否是当前活动sheet */
@@ -232,6 +170,12 @@ export interface SheetDefine {
   rowStyles?: Record<string, any>;
   /** 列样式 */
   columnStyles?: Record<string, any>;
+  /** 冻结行数 */
+  frozenRowCount?: number;
+  /** 冻结列数 */
+  frozenColCount?: number;
+  /** 是否显示表头 */
+  showHeader?: boolean;
 }
 
 /**
@@ -256,10 +200,6 @@ export interface VTableSheetOptions {
   defaultRowHeight?: number;
   /** 默认列宽 */
   defaultColWidth?: number;
-  /** 冻结行数 */
-  frozenRowCount?: number;
-  /** 冻结列数 */
-  frozenColCount?: number;
 }
 
 /**
@@ -397,19 +337,4 @@ export interface ISheetManager {
   getSheet: (sheetKey: string) => SheetDefine | null;
   /** 获取sheet数量 */
   getSheetCount: () => number;
-}
-
-/**
- * 数据导出格式
- */
-export interface SheetExportData {
-  sheets: {
-    title: string;
-    key: string;
-    data: any[][];
-    formulas?: Record<string, string>;
-    filters?: ColumnFilter[];
-    cellStyles?: Record<string, any>;
-  }[];
-  activeSheetKey: string;
 }

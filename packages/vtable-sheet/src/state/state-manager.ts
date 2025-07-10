@@ -46,37 +46,37 @@ export class StateManager {
     }
   }
 
-  /**
-   * Undoes the last action
-   */
-  undo(): void {
-    if (this.undoStack.length === 0) {
-      return;
-    }
+  // /**
+  //  * Undoes the last action
+  //  */
+  // undo(): void {
+  //   if (this.undoStack.length === 0) {
+  //     return;
+  //   }
 
-    const action = this.undoStack.pop()!;
-    action.undo();
-    this.redoStack.push(action);
+  //   const action = this.undoStack.pop()!;
+  //   action.undo();
+  //   this.redoStack.push(action);
 
-    // Fire undo event
-    this.sheet.fire('undo', action.type);
-  }
+  //   // Fire undo event
+  //   this.sheet.fire('undo', action.type);
+  // }
 
-  /**
-   * Redoes the last undone action
-   */
-  redo(): void {
-    if (this.redoStack.length === 0) {
-      return;
-    }
+  // /**
+  //  * Redoes the last undone action
+  //  */
+  // redo(): void {
+  //   if (this.redoStack.length === 0) {
+  //     return;
+  //   }
 
-    const action = this.redoStack.pop()!;
-    action.redo();
-    this.undoStack.push(action);
+  //   const action = this.redoStack.pop()!;
+  //   action.redo();
+  //   this.undoStack.push(action);
 
-    // Fire redo event
-    this.sheet.fire('redo', action.type);
-  }
+  //   // Fire redo event
+  //   this.sheet.fire('redo', action.type);
+  // }
 
   /**
    * Gets the current cell selection
@@ -93,11 +93,11 @@ export class StateManager {
     const oldSelection = this.currentSelection;
     this.currentSelection = range;
 
-    // Fire selection change event
-    this.sheet.fire('selectionChanged', {
-      oldSelection,
-      newSelection: range
-    });
+    // // Fire selection change event
+    // this.sheet.fire('selectionChanged', {
+    //   oldSelection,
+    //   newSelection: range
+    // });
   }
 
   /**
@@ -127,8 +127,8 @@ export class StateManager {
     this.isEditing = true;
     this.editingCell = { row, col };
 
-    // Fire edit start event
-    this.sheet.fire('editStart', { row, col });
+    // // Fire edit start event
+    // this.sheet.fire('editStart', { row, col });
   }
 
   /**
@@ -144,8 +144,8 @@ export class StateManager {
     this.isEditing = false;
     this.editingCell = null;
 
-    // Fire edit stop event
-    this.sheet.fire('editStop', { row, col, cancel });
+    // // Fire edit stop event
+    // this.sheet.fire('editStop', { row, col, cancel });
   }
 
   /**
