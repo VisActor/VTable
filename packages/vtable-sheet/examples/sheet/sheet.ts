@@ -11,10 +11,18 @@ register.editor('input', input_editor);
 register.editor('date-input', date_input_editor);
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
+    width: 1528,
+    height: 883,
+    showFormulaBar: true,
+    showSheetTab: true,
+    defaultRowHeight: 25,
+    defaultColWidth: 100,
+    frozenRowCount: 0,
+    frozenColCount: 0,
     sheets: [
       {
-        key: 'sheet1',
-        title: 'sheet1',
+        sheetKey: 'sheet1',
+        sheetTitle: 'sheet1',
         columns: [
           {
             title: '名称',
@@ -25,11 +33,12 @@ export function createTable() {
         data: [
           [1, 2, 3],
           ['放到', '个', '哦']
-        ]
+        ],
+        active: false
       },
       {
-        key: 'sheet2',
-        title: 'sheet2',
+        sheetKey: 'sheet2',
+        sheetTitle: 'sheet2',
         columns: [
           {
             key: 'name',
@@ -40,24 +49,66 @@ export function createTable() {
         data: [
           [3, 4, 6],
           ['s', 'd', 'f']
-        ]
+        ],
+        active: false
       },
       {
-        key: 'sheet3',
-        title: 'sheet3',
-
+        sheetKey: 'sheet3',
+        sheetTitle: 'sheet3',
         data: [
-          [3, 4, 6],
-          ['s', 'd', 'f']
+          ['s', 'd', 'f'],
+          null,
+          {
+            '0': 't',
+            '1': 'y',
+            '2': 'u'
+          },
+          null,
+          null,
+          null,
+          null,
+          {
+            '1': '3'
+          }
+        ],
+        active: false,
+        columns: [
+          {
+            title: 3
+          },
+          {
+            title: 4
+          },
+          {
+            title: 6
+          }
         ]
       },
       {
-        key: 'sheet4',
-        title: 'sheet4'
+        sheetKey: 'sheet4',
+        sheetTitle: 'sheet4',
+        active: true,
+        showHeader: false,
+        data: [
+          {
+            '0': 'r',
+            '1': 't',
+            '2': 'y'
+          },
+          {
+            '0': 'y',
+            '1': 'u',
+            '2': 'i'
+          },
+          {
+            '0': 'j',
+            '1': 'k',
+            '2': 'h'
+          }
+        ],
+        columns: []
       }
-    ],
-    // showSheetTab: true,
-    activeSheetKey: 'sheet1'
+    ]
   });
   window.sheetInstance = sheetInstance;
 
