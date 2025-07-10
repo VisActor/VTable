@@ -1,18 +1,18 @@
-import type { Sheet } from '../core/Sheet';
-import type { CellCoord, CellRange } from '../ts-types';
+import type { CellCoord } from '../ts-types';
+import type VTableSheet from '../components/VTableSheet';
 
 /**
  * Manages events and event handlers for the Sheet component
  */
 export class EventManager {
-  private sheet: Sheet;
+  private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
 
   /**
    * Creates a new EventManager instance
    * @param sheet The Sheet instance
    */
-  constructor(sheet: Sheet) {
+  constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.setupEventListeners();
   }
@@ -22,7 +22,7 @@ export class EventManager {
    */
   private setupEventListeners(): void {
     // Get the sheet element
-    const element = this.sheet.getElement();
+    const element = this.sheet.getContainer();
 
     // Set up mouse events
     this.addEvent(element, 'mousedown', this.handleMouseDown.bind(this));
@@ -179,7 +179,7 @@ export class EventManager {
    */
   private handleWindowResize(event: UIEvent): void {
     // Update sheet size on window resize
-    this.sheet._updateSize();
+    this.sheet.resize();
   }
 
   /**
@@ -201,7 +201,7 @@ export class EventManager {
    * Releases all event handlers
    */
   release(): void {
-    const element = this.sheet.getElement();
+    const element = this.sheet.getContainer();
 
     // Remove all event listeners
     for (const [key, handler] of this.boundHandlers.entries()) {
