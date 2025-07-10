@@ -5,17 +5,17 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add eventOptions contextmenuReturnAllSelectedCells [#4064](https://github.com/VisActor/VTable/issues/4064)
--  **@visactor/vtable**: add batch expand or collapse all tree nodes
+- **@visactor/vtable**: 添加 eventOptions.contextmenuReturnAllSelectedCells [#4064](https://github.com/VisActor/VTable/issues/4064)
+-  **@visactor/vtable**: 添加批量展开或折叠所有树节点
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: click to edit cell not work with groupBy [#4172](https://github.com/VisActor/VTable/issues/4172)
-- **@visactor/vtable**: fix validateCellVaule when paste cell [#4174](https://github.com/VisActor/VTable/issues/4174) [#1797](https://github.com/VisActor/VTable/issues/1797)
-- **@visactor/vtable**: handle frozen column calculation when container is invisible
--  **@visactor/vtable**: fix: paste validateValue missing position table params [#4164](https://github.com/VisActor/VTable/issues/4164)
--  **@visactor/vtable**: fix animation register progress
--  **@visactor/vtable**: fix: fix after resize container then frozen column invisible [#3836](https://github.com/VisActor/VTable/issues/3836)
+- **@visactor/vtable**: 修复在使用groupBy时单击触发编辑单元格无效的问题 [#4172](https://github.com/VisActor/VTable/issues/4172)
+- **@visactor/vtable**: 修复粘贴单元格时的validateCellVaule问题 [#4174](https://github.com/VisActor/VTable/issues/4174) [#1797](https://github.com/VisActor/VTable/issues/1797)
+- **@visactor/vtable**: 修复容器resize后冻结列样式不可见问题
+-  **@visactor/vtable**: 修复粘贴validateValue缺少position表参数 [#4164](https://github.com/VisActor/VTable/issues/4164)
+-  **@visactor/vtable**: 修复动画注册进度问题
+-  **@visactor/vtable**: 修复：修复调整容器大小后冻结列不可见的问题 [#3836](https://github.com/VisActor/VTable/issues/3836)
 
 
 
