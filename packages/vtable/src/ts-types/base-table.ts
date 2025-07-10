@@ -1091,3 +1091,22 @@ export interface PivotChartProtected extends IBaseTableProtected {
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
 }
+export interface MasterDetailTableProtected extends IBaseTableProtected {
+  /** 表格数据 */
+  records: any[] | null;
+  dataConfig?: IListTableDataConfig;
+  columns: ColumnsDefine;
+  layoutMap: SimpleHeaderLayoutMap;
+  columnWidthConfig?: {
+    key: string;
+    width: number;
+  }[];
+
+  // 主从表格特有属性
+  /** 展开的行索引集合 */
+  expandedRowsSet: Set<number>;
+  /** 详情行高度 */
+  detailRowHeight: number;
+  /** 详情渲染函数 */
+  detailRenderer?: (record: any, rowIndex: number) => string | HTMLElement;
+}

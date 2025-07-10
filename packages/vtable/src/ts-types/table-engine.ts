@@ -292,6 +292,101 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   columnWidthConfig?: { key: string; width: number }[];
 }
 
+export interface MasterDetailTableConstructorOptions extends BaseTableConstructorOptions {
+  /**
+   * 数据集合
+   */
+  records?: any[];
+  /**
+   * 传入用户实例化的数据对象
+   */
+  dataSource?: CachedDataSource | DataSource;
+  /**
+   * 是否显示表头
+   */
+  showHeader?: boolean;
+  /**
+   * Simple header property
+   */
+  columns?: ColumnsDefine;
+  /**
+   *@deprecated 已废弃 请使用columns
+   */
+  header?: ColumnsDefine;
+
+  transpose?: boolean; //是否转置
+  /**
+   * 展示为tree的列 层级缩进值
+   */
+  hierarchyIndent?: number;
+  /** 展开层数 默认为1只显示根节点*/
+  hierarchyExpandLevel?: number;
+  /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
+  hierarchyTextStartAlignment?: boolean;
+  /** 表头树形展示模式(设置成 'grid-tree' 则支持展开和折叠) */
+  headerHierarchyType?: 'grid-tree';
+  /** 表头默认展开层级(headerHierarchyType 为 'grid-tree' 时有效) */
+  headerExpandLevel?: number;
+  /** 分页配置 */
+  pagination?: IPagination;
+
+  /**
+   * 排序状态
+   */
+  sortState?: SortState | SortState[];
+  multipleSort?: boolean;
+
+  /** 全局设置表头编辑器 */
+  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 全局设置编辑器 */
+  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+  /** 编辑触发时机 双击事件  单击事件 api手动开启编辑 或者 鼠标按下新值即可开启编辑。默认为双击'doubleclick' */
+  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown';
+
+  /**
+   * 拖拽头部移动位置
+   */
+  dragOrder?: {
+    /** 控制拖拽表头移动位置顺序开关 */
+    dragHeaderMode?: 'all' | 'none' | 'column' | 'row';
+    /** 拖拽移动位置 针对冻结部分的规则
+     * "disabled"（禁止调整冻结列位置）：不允许其他列的表头移入冻结列，也不允许冻结列移出，冻结列保持不变。
+     * "adjustFrozenCount"（根据交互结果调整冻结数量）：允许其他列的表头移入冻结列，及冻结列移出，并根据拖拽的动作调整冻结列的数量。当其他列的表头被拖拽进入冻结列位置时，冻结列数量增加；当其他列的表头被拖拽移出冻结列位置时，冻结列数量减少。
+     * "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
+     */
+    frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+  };
+
+  /** 主从表格特有配置 */
+  /** 详情行的默认高度 */
+  detailRowHeight?: number;
+  /** 初始展开的行索引数组 */
+  expandedRows?: number[];
+  /** 详情内容渲染器 */
+  detailRenderer?: (record: any, rowIndex: number) => string | HTMLElement;
+  /** 展开/收起回调函数 */
+  onExpandToggle?: (rowIndex: number, expanded: boolean) => void;
+
+  // 其他配置项与 ListTable 保持一致
+  aggregation?:
+    | Aggregation
+    | CustomAggregation
+    | (Aggregation | CustomAggregation)[]
+    | ((args: {
+        col: number;
+        field: string;
+      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+  /** 数据为空时显示聚合结果 */
+  showAggregationWhenEmpty?: boolean;
+  enableTreeNodeMerge?: boolean;
+  groupBy?: GroupByOption;
+  groupTitleCustomLayout?: ICustomLayout;
+  groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  enableTreeStickCell?: boolean;
+
+  columnWidthConfig?: { key: string; width: number }[];
+}
+
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
 
 export type GroupConfig = {
@@ -356,6 +451,73 @@ export interface ListTableAPI extends BaseTableAPI {
 
   _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
   _hasHierarchyTreeHeader: () => boolean;
+}
+export interface MasterDetailTableAPI extends BaseTableAPI {
+  transpose: boolean;
+  options: MasterDetailTableConstructorOptions;
+  editorManager: EditManager;
+  sortState: SortState[] | SortState | null;
+  internalProps: any; // MasterDetailTableProtected 类型引用会在后续完善
+  isMasterDetailTable: () => true;
+  isListTable: () => false;
+  isPivotTable: () => false;
+
+  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
+  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell?: boolean) => void;
+  /**
+   * 批量更新多个单元格的数据
+   * @param col 粘贴数据的起始列号
+   * @param row 粘贴数据的起始行号
+   * @param values 多个单元格的数据数组
+   * @param workOnEditableCell 是否仅更改可编辑单元格
+   */
+  changeCellValues: (
+    col: number,
+    row: number,
+    values: (string | number)[][],
+    workOnEditableCell?: boolean
+  ) => boolean[][];
+  getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
+
+  /** 获取单元格配置的编辑器 */
+  getEditor: (col: number, row: number) => IEditor;
+  /**
+   * 开启单元格编辑
+   * @param col
+   * @param row
+   * @param value 如果想要改变显示到编辑框中的值 可以value来设置改变
+   * @returns
+   */
+  startEditCell: (col?: number, row?: number, value?: string | number) => void;
+  /** 结束编辑 */
+  completeEditCell: () => void;
+
+  addRecord: (record: any, recordIndex?: number) => void;
+  addRecords: (records: any[], recordIndex?: number) => void;
+  deleteRecords: (recordIndexs: number[]) => void;
+  updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
+  updateFilterRules: (filterRules: FilterRules) => void;
+
+  /**
+   * 根据数据的索引获取应该显示在body的第几行  参数和返回值的索引均从0开始
+   * @param  {number} index The record index.
+   */
+  getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
+
+  _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
+  _hasHierarchyTreeHeader: () => boolean;
+
+  // 主从表格特有方法（暂时保留接口，后续实现展开/收起时使用）
+  /** 展开指定行的详情 */
+  expandRow?: (rowIndex: number) => void;
+  /** 收起指定行的详情 */
+  collapseRow?: (rowIndex: number) => void;
+  /** 切换行的展开状态 */
+  toggleRowExpand?: (rowIndex: number) => void;
+  /** 检查行是否已展开 */
+  isRowExpanded?: (rowIndex: number) => boolean;
+  /** 获取所有展开的行 */
+  getExpandedRows?: () => number[];
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**
