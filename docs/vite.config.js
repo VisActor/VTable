@@ -31,7 +31,6 @@ export default {
       '@visactor/openinula-vtable': path.resolve('../packages/openinula-vtable/src/index.ts'),
       '@vutils-extension': path.resolve(__dirname, '../packages/vtable/src/vutil-extension-temp'),
       '@src': path.resolve(__dirname, '../packages/vtable/src/'),
-
       'vue': 'vue/dist/vue.esm-bundler.js' 
 
       // react: 'openinula', // 新增
