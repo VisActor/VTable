@@ -56,18 +56,18 @@ export default class SheetManager implements ISheetManager {
    */
   addSheet(sheet: SheetDefine): void {
     // 检查key是否已存在
-    if (this._sheets.has(sheet.key)) {
-      throw new Error(`Sheet with key '${sheet.key}' already exists`);
+    if (this._sheets.has(sheet.sheetKey)) {
+      throw new Error(`Sheet with key '${sheet.sheetKey}' already exists`);
     }
 
     // 如果这是第一个sheet，将其设为活动sheet
     if (this._sheets.size === 0) {
       sheet.active = true;
-      this._activeSheetKey = sheet.key;
+      this._activeSheetKey = sheet.sheetKey;
     }
 
     // 添加sheet
-    this._sheets.set(sheet.key, sheet);
+    this._sheets.set(sheet.sheetKey, sheet);
   }
 
   /**
@@ -93,7 +93,7 @@ export default class SheetManager implements ISheetManager {
 
       // 如果有其他sheet，将其设为活动sheet
       if (nextSheet) {
-        this._activeSheetKey = nextSheet.key;
+        this._activeSheetKey = nextSheet.sheetKey;
         nextSheet.active = true;
       } else {
         this._activeSheetKey = '';
@@ -115,7 +115,7 @@ export default class SheetManager implements ISheetManager {
 
     // 更新标题
     const sheet = this._sheets.get(sheetKey)!;
-    sheet.title = newTitle;
+    sheet.sheetTitle = newTitle;
   }
 
   /**

@@ -425,16 +425,16 @@ export default class VTableSheet {
     sheets.forEach(sheet => {
       const tab = document.createElement('div');
       tab.className = 'vtable-sheet-tab';
-      tab.dataset.key = sheet.key;
-      tab.textContent = sheet.title;
-      tab.title = sheet.title;
+      tab.dataset.key = sheet.sheetKey;
+      tab.textContent = sheet.sheetTitle;
+      tab.title = sheet.sheetTitle;
 
       // 高亮当前活动sheet
-      if (sheet.key === activeSheet.key) {
+      if (sheet.sheetKey === activeSheet.sheetKey) {
         tab.classList.add('active');
       }
 
-      tab.addEventListener('click', () => this.activateSheet(sheet.key));
+      tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
       tabsContainer.appendChild(tab);
     });
 
@@ -502,9 +502,9 @@ export default class VTableSheet {
       let activeSheetKey = '';
       const activeSheet = this.options.sheets.find(sheet => sheet.active);
       if (activeSheet) {
-        activeSheetKey = activeSheet.key;
+        activeSheetKey = activeSheet.sheetKey;
       } else {
-        activeSheetKey = this.options.sheets[0].key;
+        activeSheetKey = this.options.sheets[0].sheetKey;
       }
 
       // 激活sheet
@@ -588,17 +588,12 @@ export default class VTableSheet {
 
     // 创建sheet实例
     const sheet = new Sheet({
+      ...sheetDefine,
       container: this.contentElement,
       width: contentWidth,
       height: contentHeight,
-      records: sheetDefine.data,
-      columns: sheetDefine.columns,
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
-      frozenRowCount: this.options.frozenRowCount,
-      frozenColCount: this.options.frozenColCount,
-      sheetKey: sheetDefine.key,
-      sheetTitle: sheetDefine.title,
       parent: this,
       plugins: getTablePlugins(),
       editor: 'input',
@@ -625,8 +620,8 @@ export default class VTableSheet {
 
     // 创建新sheet配置
     const newSheet: SheetDefine = {
-      key,
-      title,
+      sheetKey: key,
+      sheetTitle: title,
       columnCount: 20,
       rowCount: 100,
       data: Array(100)
@@ -793,13 +788,37 @@ export default class VTableSheet {
     const sheets: SheetDefine[] = [];
 
     this.sheetManager.getAllSheets().forEach(sheetDefine => {
-      const instance = this.sheetInstances.get(sheetDefine.key);
+      const instance = this.sheetInstances.get(sheetDefine.sheetKey);
       if (instance) {
         const data = instance.getData();
+        //column中去除field字段
+        const columns = instance.getColumns().map(column => {
+          const { field, ...rest } = column;
+          return rest;
+        });
+        // 找到最后一个有title的列的索引
+        const lastTitleIndex = columns.reduce((lastIndex, column, index) => (column.title ? index : lastIndex), -1);
+
+        // 从最后一个有title的列之后删除所有列
+        if (lastTitleIndex === -1) {
+          columns.length = 0; // 清空数组
+        } else {
+          columns.splice(lastTitleIndex + 1);
+        }
+        // 找到最后一个有非空值的行
+        const lastDataIndex = data.reduce((lastIndex, rowData, index) => (rowData ? index : lastIndex), -1);
+        // 保留到最后一个有值的行，删除之后的空行
+        if (lastDataIndex === -1) {
+          data.length = 0; // 清空数组
+        } else {
+          data.splice(lastDataIndex + 1);
+        }
         sheets.push({
           ...sheetDefine,
           data,
-          active: sheetDefine.key === this.sheetManager.getActiveSheet().key
+          columns,
+          showHeader: instance.tableInstance.options.showHeader,
+          active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey
         });
       } else {
         sheets.push(sheetDefine);
@@ -842,5 +861,16 @@ export default class VTableSheet {
     if (this.rootElement && this.rootElement.parentNode) {
       this.rootElement.parentNode.removeChild(this.rootElement);
     }
+  }
+  exportData(sheetKey: string): any[][] {
+    const sheet = this.sheetInstances.get(sheetKey);
+    if (!sheet) {
+      return [];
+    }
+    return sheet.getData();
+  }
+  exportAllData(): any[][] {
+    const sheets = Array.from(this.sheetInstances.values());
+    return sheets.map(sheet => sheet.getData());
   }
 }

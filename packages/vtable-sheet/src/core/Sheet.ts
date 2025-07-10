@@ -1,61 +1,43 @@
+import type { ColumnDefine, ListTableConstructorOptions } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import type {
-  CellCoord,
-  CellRange,
-  CellValueChangedEvent,
-  SelectionMode,
-  SheetAPI,
-  SheetConstructorOptions,
-  SheetDefine
-} from '../ts-types';
-import type { EventEmitter } from '@visactor/vutils';
-import type { VTableSheet } from '../components/VTableSheet';
+import type { CellCoord, CellRange, CellValueChangedEvent, FormulaOptions, SelectionMode, SheetAPI } from '../ts-types';
+import { isValid, type EventEmitter } from '@visactor/vutils';
 import { getTablePlugins } from './table-plugins';
 import { editor } from '@visactor/vtable/es/register';
-
 /**
- * Sheet构造函数扩展选项
+ * Sheet constructor options. 内部类型Sheet的构造函数参数类型
  */
-export interface SheetOptions extends SheetConstructorOptions {
+export type SheetConstructorOptions = {
+  /**
+   * Grid data in 2D array format
+   */
+  data?: any[][];
+  /**
+   * Formula calculation options
+   */
+  formula?: FormulaOptions;
   /** Sheet Key */
   sheetKey: string;
   /** Sheet 标题 */
   sheetTitle: string;
-  /** 父组件 */
-  parent: VTableSheet;
-}
+  // ...其他属性
+} & Omit<ListTableConstructorOptions, 'records'>; // 排除有冲突的属性
 
 /**
  * VTable-Sheet is a lightweight editable spreadsheet component based on VTable
  */
 export class Sheet implements SheetAPI {
-  options: SheetOptions;
+  options: SheetConstructorOptions;
   container: HTMLElement;
 
   tableInstance?: ListTable;
 
   element: HTMLElement;
 
-  parsedOptions: {
-    defaultRowHeight: number;
-    defaultColWidth: number;
-    showRowHeader: boolean;
-    showColHeader: boolean;
-    editable: boolean;
-    theme: string;
-    selectionMode: SelectionMode;
-    pixelRatio: number;
-  } = {} as any;
-
   /**
    * 选择范围
    */
   private selection: CellRange | null = null;
-
-  /**
-   * 父组件
-   */
-  private parent: VTableSheet;
 
   /**
    * Sheet Key
@@ -76,12 +58,11 @@ export class Sheet implements SheetAPI {
    * Creates a new Sheet instance
    * @param options Configuration options
    */
-  constructor(options: SheetOptions) {
+  constructor(options: SheetConstructorOptions) {
     this.options = options;
     this.container = options.container;
 
     // 初始化基本属性
-    this.parent = options.parent;
     this.sheetKey = options.sheetKey;
     this.sheetTitle = options.sheetTitle;
 
@@ -148,18 +129,24 @@ export class Sheet implements SheetAPI {
   /**
    * Generates VTable options from Sheet options
    */
-  private _generateTableOptions(): any {
-    let isShowTableHeader = true;
+  private _generateTableOptions(): ListTableConstructorOptions {
+    let isShowTableHeader = this.options.showHeader;
     // 转换为ListTable的选项
     if (!this.options.columns) {
-      isShowTableHeader = false;
+      isShowTableHeader = isValid(isShowTableHeader) ? isShowTableHeader : false;
+      this.options.columns = [];
     } else {
       for (let i = 0; i < this.options.columns.length; i++) {
         this.options.columns[i].field = i;
       }
     }
+    if (!this.options.data) {
+      this.options.data = [];
+    }
+
     return {
       ...this.options,
+      records: this.options.data,
       container: this.element,
       showHeader: isShowTableHeader
       // 其他特定配置
@@ -246,13 +233,15 @@ export class Sheet implements SheetAPI {
   setTitle(title: string): void {
     this.sheetTitle = title;
   }
-
+  getColumns(): ColumnDefine[] {
+    return this.options.columns || [];
+  }
   /**
    * 获取表格数据
    */
   getData(): any[][] {
     // 从表格实例获取数据
-    return this.options.records || [];
+    return this.options.data || [];
   }
 
   /**
@@ -265,7 +254,6 @@ export class Sheet implements SheetAPI {
       // TODO: 更新表格数据
     }
   }
-
   /**
    * Gets the cell value at the specified coordinates
    */
@@ -295,7 +283,7 @@ export class Sheet implements SheetAPI {
         cellAddress: this.addressFromCoord(row, col)
       };
 
-      this.fire('cellValueChanged', event);
+      // this.fire('cellValueChanged', event);
     }
   }
 
@@ -414,9 +402,6 @@ export class Sheet implements SheetAPI {
   setFirstRowAsHeader(): void {
     const data = this.getData();
     if (data && data.length > 0) {
-      if (!this.options.columns) {
-        this.options.columns = [];
-      }
       for (let i = 0; i < data[0].length; i++) {
         if (!this.options.columns[i]) {
           this.options.columns[i] = {
@@ -433,7 +418,8 @@ export class Sheet implements SheetAPI {
     this.tableInstance.updateOption({
       ...this.options,
       columns: this.options.columns,
-      showHeader: true
+      showHeader: true,
+      records: data
     });
   }
 
@@ -455,5 +441,12 @@ export class Sheet implements SheetAPI {
 
     // 清除引用
     this.tableInstance = undefined;
+  }
+  undo(): void {
+    // 撤销实现
+  }
+
+  redo(): void {
+    // 重做实现
   }
 }
