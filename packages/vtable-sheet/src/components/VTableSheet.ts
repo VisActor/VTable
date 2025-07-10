@@ -61,6 +61,8 @@ export default class VTableSheet {
 
     // 绑定事件
     this.bindEvents();
+
+    this.resize();
   }
 
   /**
@@ -68,14 +70,10 @@ export default class VTableSheet {
    */
   private mergeDefaultOptions(options: VTableSheetOptions): VTableSheetOptions {
     return {
-      width: this.container.clientWidth,
-      height: this.container.clientHeight,
       showFormulaBar: true,
       showSheetTab: true,
       defaultRowHeight: 25,
       defaultColWidth: 100,
-      frozenRowCount: 0,
-      frozenColCount: 0,
       ...options
     };
   }
@@ -875,11 +873,8 @@ export default class VTableSheet {
     const containerWidth = this.container.clientWidth;
     const containerHeight = this.container.clientHeight;
     // 设置根元素尺寸
-    this.rootElement.style.width = `${containerWidth}px`;
-    this.rootElement.style.height = `${containerHeight}px`;
-    // 更新选项中的尺寸
-    this.options.width = containerWidth;
-    this.options.height = containerHeight;
+    this.rootElement.style.width = `${this.options.width || containerWidth}px`;
+    this.rootElement.style.height = `${this.options.height || containerHeight}px`;
   }
 
   /**
