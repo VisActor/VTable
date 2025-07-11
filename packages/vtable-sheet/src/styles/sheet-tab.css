@@ -16,19 +16,31 @@
   position: absolute;
   right: 0;
   top: -175px;
-  width: 140px;
   height: 174px;
+  min-width: 140px;
   background-color: #f8f8f8;
   border: 1px solid #e0e0e0;
   box-sizing: content-box;
   border-radius: 4px;
   display: none;
   margin: 0;
-  padding: 0 2px;
+  padding: 0 2px 0 2px;
   box-sizing: border-box;
   list-style: none;
   overflow-y: auto;
 }
+.vtable-sheet-menu-list::-webkit-scrollbar {
+  width: 4px;
+  margin: 0;
+}
+.vtable-sheet-menu-list::-webkit-scrollbar-thumb {
+  background-color: #e0e0e0;
+  border-radius: 3px;
+}
+.vtable-sheet-menu-list::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
 .vtable-sheet-menu-list.active {
   display: block;
 }
@@ -39,8 +51,13 @@
   border-radius: 4px;
   height: 32px;
   line-height: 32px;
-  margin-top: 2px;
+  margin: 2px 0;
+  padding: 0 8px;
   background-color: #f8f8f840;
+  max-width: 150px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
 }
 
 .vtable-sheet-menu-item:hover {
@@ -92,7 +109,6 @@
 .vtable-sheet-tab.active {
   color: #1a73e8;
   background-color: #fff;
-  font-weight: bold;
   height: calc(100% + 1px);
   margin-top: -1px;
   border-top: 2px solid #1a73e8;
