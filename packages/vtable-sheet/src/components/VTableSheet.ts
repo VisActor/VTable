@@ -8,6 +8,7 @@ import '../styles/index.css';
 import * as VTable_editors from '@visactor/vtable-editors';
 import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
+import { EventManager } from '../event/event-manager';
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
 /**
@@ -24,6 +25,8 @@ export default class VTableSheet {
   private formulaManager: FormulaManager;
   /** 过滤管理器 */
   private filterManager: FilterManager;
+  /** 事件管理器 */
+  private eventManager: EventManager;
   /** 当前活动sheet实例 */
   private activeSheet: Sheet | null = null;
   /** 所有sheet实例 */
@@ -49,7 +52,7 @@ export default class VTableSheet {
     this.sheetManager = new SheetManager();
     this.formulaManager = new FormulaManager(this);
     this.filterManager = new FilterManager(this);
-
+    this.eventManager = new EventManager(this);
     // 初始化UI
     this.initUI();
 
@@ -58,6 +61,8 @@ export default class VTableSheet {
 
     // 绑定事件
     this.bindEvents();
+
+    this.resize();
   }
 
   /**
@@ -65,14 +70,10 @@ export default class VTableSheet {
    */
   private mergeDefaultOptions(options: VTableSheetOptions): VTableSheetOptions {
     return {
-      width: this.container.clientWidth,
-      height: this.container.clientHeight,
       showFormulaBar: true,
       showSheetTab: true,
       defaultRowHeight: 25,
       defaultColWidth: 100,
-      frozenRowCount: 0,
-      frozenColCount: 0,
       ...options
     };
   }
@@ -331,11 +332,15 @@ export default class VTableSheet {
     menuButton.className = 'vtable-sheet-menu-button';
     menuButton.innerHTML = menuIcon;
     menuButton.title = '工作表选项';
-    menuButton.addEventListener('click', e => this.showSheetMenu(e));
+    menuButton.addEventListener('click', e => this.toggleSheetMenu(e));
     navButtons.appendChild(menuButton);
 
-    sheetTab.appendChild(navButtons);
+    // 创建菜单容器
+    const menuContainer = document.createElement('ul');
+    menuContainer.className = 'vtable-sheet-menu-list';
+    sheetTab.appendChild(menuContainer);
 
+    sheetTab.appendChild(navButtons);
     // 初始化渐变效果
     setTimeout(() => {
       this.updateFadeEffects(tabsContainer, fadeLeft, fadeRight);
@@ -347,9 +352,10 @@ export default class VTableSheet {
   /**
    * 显示工作表菜单
    */
-  private showSheetMenu(event: MouseEvent): void {
-    // 在这里添加菜单逻辑
-    console.log('Show sheet menu', event);
+
+  private toggleSheetMenu(event: MouseEvent): void {
+    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
+    menuContainer.classList.toggle('active');
   }
 
   /**
@@ -441,6 +447,31 @@ export default class VTableSheet {
       }
     }, 100);
   }
+  /**
+   * 更新sheet列表
+   */
+  private updateSheetMenu(): void {
+    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
+    menuContainer.innerHTML = '';
+    const sheets = this.sheetManager.getAllSheets();
+    sheets.forEach(sheet => {
+      const li = document.createElement('li');
+      li.className = 'vtable-sheet-menu-item';
+      li.textContent = sheet.sheetTitle;
+      if (sheet.sheetKey === this.activeSheet?.getKey()) {
+        li.classList.add('active');
+      }
+      li.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
+      menuContainer.appendChild(li as any);
+    });
+    // 确保激活的标签可见
+    setTimeout(() => {
+      const activeItem = menuContainer.querySelector('.vtable-sheet-menu-item.active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
 
   /**
    * 滚动以确保标签可见
@@ -490,26 +521,7 @@ export default class VTableSheet {
    */
   private bindEvents(): void {
     // 监听窗口大小变化
-    window.addEventListener('resize', this.handleResize.bind(this));
-  }
-
-  /**
-   * 处理窗口大小变化
-   */
-  private handleResize(): void {
-    // 更新容器大小
-    if (this.options.width === undefined || this.options.height === undefined) {
-      const width = this.container.clientWidth;
-      const height = this.container.clientHeight;
-
-      this.rootElement.style.width = `${width}px`;
-      this.rootElement.style.height = `${height}px`;
-
-      // 如果有活动的sheet，调整其大小
-      if (this.activeSheet) {
-        this.activeSheet.resize();
-      }
-    }
+    // window.addEventListener('resize', this.handleResize.bind(this));
   }
 
   /**
@@ -544,6 +556,7 @@ export default class VTableSheet {
 
     // 更新UI
     this.updateSheetTabs();
+    this.updateSheetMenu();
     this.updateFormulaBar();
   }
 
@@ -575,7 +588,6 @@ export default class VTableSheet {
     // 注册事件
     // sheet.on('cell-selected', this.handleCellSelected.bind(this));
     // sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
-
     return sheet;
   }
 
@@ -819,9 +831,8 @@ export default class VTableSheet {
    * 销毁实例
    */
   destroy(): void {
-    // 移除事件监听
-    window.removeEventListener('resize', this.handleResize.bind(this));
-
+    // 释放事件管理器
+    this.eventManager.release();
     // 销毁所有sheet实例
     this.sheetInstances.forEach(instance => {
       instance.release();
@@ -842,5 +853,119 @@ export default class VTableSheet {
   exportAllData(): any[][] {
     const sheets = Array.from(this.sheetInstances.values());
     return sheets.map(sheet => sheet.getData());
+  }
+
+  /**
+   * resize
+   */
+  resize(): void {
+    this.updateRootSize();
+    this.updateContentSize();
+    this.updateActiveSheetSize();
+    this.updateUILayout();
+  }
+
+  /**
+   * 更新根元素尺寸
+   */
+  private updateRootSize(): void {
+    // 获取容器尺寸
+    const containerWidth = this.container.clientWidth;
+    const containerHeight = this.container.clientHeight;
+    // 设置根元素尺寸
+    this.rootElement.style.width = `${this.options.width || containerWidth}px`;
+    this.rootElement.style.height = `${this.options.height || containerHeight}px`;
+  }
+
+  /**
+   * 更新内容区域尺寸
+   */
+  private updateContentSize(): void {
+    // 计算可用内容区域尺寸
+    const rootRect = this.rootElement.getBoundingClientRect();
+    const contentWidth = rootRect.width;
+    let contentHeight = rootRect.height;
+    // 减去公式栏高度
+    if (this.formulaBarElement && this.options.showFormulaBar) {
+      const formulaBarRect = this.formulaBarElement.getBoundingClientRect();
+      contentHeight -= formulaBarRect.height;
+    }
+    // 减去sheet标签栏高度
+    if (this.sheetTabElement && this.options.showSheetTab) {
+      const sheetTabRect = this.sheetTabElement.getBoundingClientRect();
+      contentHeight -= sheetTabRect.height;
+    }
+    // 更新内容区域尺寸
+    this.contentElement.style.width = `${contentWidth}px`;
+    this.contentElement.style.height = `${contentHeight}px`;
+  }
+
+  /**
+   * 更新活动 sheet 尺寸
+   */
+  private updateActiveSheetSize(): void {
+    if (this.activeSheet) {
+      this.activeSheet.resize();
+    }
+  }
+
+  /**
+   * 更新 UI 组件布局
+   */
+  private updateUILayout(): void {
+    // 更新公式栏布局
+    this.updateFormulaBarLayout();
+    // 更新 sheet 标签栏布局
+    this.updateSheetTabLayout();
+  }
+
+  /**
+   * 更新公式栏布局
+   */
+  private updateFormulaBarLayout(): void {
+    if (!this.formulaBarElement) {
+      return;
+    }
+    // 确保公式栏宽度与根元素一致
+    this.formulaBarElement.style.width = '100%';
+    // 更新公式输入框宽度
+    const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    if (formulaInput) {
+      // 计算可用宽度（减去地址框、fx图标、按钮等）
+      const addressBox = this.formulaBarElement.querySelector('.vtable-sheet-cell-address');
+      const formulaIcon = this.formulaBarElement.querySelector('.vtable-sheet-formula-icon');
+      const actions = this.formulaBarElement.querySelector('.vtable-sheet-formula-actions');
+
+      const addressWidth = addressBox?.getBoundingClientRect().width || 0;
+      const iconWidth = formulaIcon?.getBoundingClientRect().width || 0;
+      const actionsWidth = actions?.getBoundingClientRect().width || 0;
+      const padding = 20;
+
+      const availableWidth = this.rootElement.clientWidth - addressWidth - iconWidth - actionsWidth - padding;
+      formulaInput.style.width = `${Math.max(availableWidth, 100)}px`;
+    }
+  }
+
+  /**
+   * 更新 sheet 标签栏布局
+   */
+  private updateSheetTabLayout(): void {
+    if (!this.sheetTabElement) {
+      return;
+    }
+    // 确保标签栏宽度与根元素一致
+    this.sheetTabElement.style.width = '100%';
+    // 更新标签容器宽度
+    const tabsContainer = this.sheetTabElement.querySelector('.vtable-sheet-tabs-container');
+    if (tabsContainer) {
+      // 计算可用宽度（减去导航按钮等）
+      const navButtons = this.sheetTabElement.querySelector('.vtable-sheet-nav-buttons');
+      const addButton = this.sheetTabElement.querySelector('.vtable-sheet-add-button');
+      const navWidth = navButtons?.getBoundingClientRect().width || 0;
+      const addButtonWidth = addButton?.getBoundingClientRect().width || 0;
+      const padding = 20; // 预留边距
+      const availableWidth = this.rootElement.clientWidth - navWidth - addButtonWidth - padding;
+      (tabsContainer as HTMLElement).style.width = `${Math.max(availableWidth, 200)}px`;
+    }
   }
 }
