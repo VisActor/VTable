@@ -67,5 +67,9 @@ export const menus = [
         name: 'pivot-plugin'
       }
     ]
+  },
+  {
+    path: 'context-menu',
+    name: 'context-menu'
   }
 ];

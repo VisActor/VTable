@@ -276,6 +276,11 @@ export interface TableEventHandlersEventArgumentMap {
     pasteData: (string | number)[][];
     changedCellResults: boolean[][];
   };
+  plugin_event: {
+    event: any;
+    plugin: any;
+    pluginEventInfo: any;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -376,4 +381,5 @@ export interface TableEventHandlersReturnMap {
   button_click: void;
   before_cache_chart_image: void;
   pasted_data: void;
+  plugin_event: void;
 }

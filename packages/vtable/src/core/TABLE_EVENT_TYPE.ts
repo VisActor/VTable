@@ -216,6 +216,7 @@ export interface TableEvents {
    * 粘贴数据事件
    */
   PASTED_DATA: 'pasted_data';
+  PLUGIN_EVENT: 'plugin_event';
 }
 /**
  * Table event types
@@ -297,5 +298,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   BUTTON_CLICK: 'button_click',
   BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image',
-  PASTED_DATA: 'pasted_data'
+  PASTED_DATA: 'pasted_data',
+  PLUGIN_EVENT: 'plugin_event'
 } as TableEvents;
