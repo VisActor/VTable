@@ -152,14 +152,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     this.table.on(VTable.TABLE_EVENT_TYPE.AFTER_SORT, () => {
       this.syncScrollToComponent();
     });
-    // this.table.on(VTable.TABLE_EVENT_TYPE.CLICK_CELL, e => {
-    //   //todo 对应更新seriesNumberComponent的选中状态
-    //   console.log('click_cell', e);
-    // });
-    this.table.on(VTable.TABLE_EVENT_TYPE.DRAG_SELECT_END, e => {
-      //todo 对应更新seriesNumberComponent的选中状态
-      // console.log('drag_select_end', e);
-    });
+
     this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, e => {
       //todo 对应更新seriesNumberComponent的选中状态
       // console.log('select_cell', e);
@@ -191,6 +184,42 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   }
 
   listenComponentEvents() {
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellRightClick, e => {
+      console.log(SeriesNumberEvent.seriesNumberCellRightClick, e);
+      const { seriesNumberCell, event, isDragSelect } = e.detail;
+      const isRow = seriesNumberCell.name.includes('row');
+      const isCol = seriesNumberCell.name.includes('col');
+      if (isRow) {
+        const rowIndex = seriesNumberCell.id;
+        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+          plugin: this,
+          event: event,
+          pluginEventInfo: {
+            eventType: 'rightclick',
+            rowIndex: rowIndex
+          }
+        });
+      } else if (isCol) {
+        const colIndex = seriesNumberCell.id;
+        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+          plugin: this,
+          event: event,
+          pluginEventInfo: {
+            eventType: 'rightclick',
+            colIndex: colIndex
+          }
+        });
+      } else {
+        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+          plugin: this,
+          event: event,
+          pluginEventInfo: {
+            eventType: 'rightclick',
+            isCorner: true
+          }
+        });
+      }
+    });
     this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellHover, e => {
       // console.log(SeriesNumberEvent.seriesNumberCellHover, e);
       this.table.scenegraph.renderSceneGraph();
