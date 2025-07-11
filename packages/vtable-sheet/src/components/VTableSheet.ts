@@ -296,9 +296,6 @@ export default class VTableSheet {
     fadeRight.className = 'vtable-sheet-fade-right';
     sheetTab.appendChild(fadeRight);
 
-    // 更新sheet切换标签
-    this.updateSheetTabs(tabsContainer);
-
     // 添加新增sheet按钮
     const addButton = document.createElement('button');
     addButton.className = 'vtable-sheet-add-button';
@@ -397,7 +394,26 @@ export default class VTableSheet {
       });
     }
   }
-
+  /**
+   * 激活sheet标签并滚动到可见区域
+   */
+  private activeSheetTab(): void {
+    const tabs = this.sheetTabElement?.querySelectorAll('.vtable-sheet-tab') as NodeListOf<HTMLElement>;
+    let activeTab: HTMLElement | null = null;
+    tabs.forEach(tab => {
+      tab.classList.remove('active');
+      if (tab.dataset.key === this.activeSheet?.getKey()) {
+        tab.classList.add('active');
+        activeTab = tab;
+      }
+    });
+    // 确保激活的标签可见
+    setTimeout(() => {
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
   /**
    * 更新sheet切换标签
    */
@@ -407,46 +423,26 @@ export default class VTableSheet {
     if (!tabsContainer) {
       return;
     }
-
     // 清除现有标签
     const tabs = tabsContainer.querySelectorAll('.vtable-sheet-tab');
     tabs.forEach(tab => {
       tab.remove();
     });
-
     // 添加sheet标签
     const sheets = this.sheetManager.getAllSheets();
-    const activeSheet = this.sheetManager.getActiveSheet();
-
-    // 如果没有活动sheet，提前返回
-    if (!activeSheet) {
-      return;
-    }
-
     sheets.forEach(sheet => {
       const tab = document.createElement('div');
       tab.className = 'vtable-sheet-tab';
       tab.dataset.key = sheet.sheetKey;
       tab.textContent = sheet.sheetTitle;
       tab.title = sheet.sheetTitle;
-
-      // 高亮当前活动sheet
-      if (sheet.sheetKey === activeSheet.sheetKey) {
-        tab.classList.add('active');
-      }
-
       tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
       tabsContainer.appendChild(tab);
     });
-
-    // 确保激活的标签可见
-    setTimeout(() => {
-      const activeTab = tabsContainer.querySelector('.vtable-sheet-tab.active');
-      if (activeTab) {
-        this.scrollTabIntoView(activeTab as HTMLElement, tabsContainer);
-      }
-    }, 100);
+    // 激活sheet标签并滚动到可见区域
+    this.activeSheetTab();
   }
+
   /**
    * 更新sheet列表
    */
@@ -457,16 +453,35 @@ export default class VTableSheet {
     sheets.forEach(sheet => {
       const li = document.createElement('li');
       li.className = 'vtable-sheet-menu-item';
+      li.dataset.key = sheet.sheetKey;
       li.textContent = sheet.sheetTitle;
-      if (sheet.sheetKey === this.activeSheet?.getKey()) {
-        li.classList.add('active');
-      }
       li.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
       menuContainer.appendChild(li as any);
     });
+    this.activeSheetMenuItem();
     // 确保激活的标签可见
     setTimeout(() => {
       const activeItem = menuContainer.querySelector('.vtable-sheet-menu-item.active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
+
+  /**
+   * 激活sheet菜单项并滚动到可见区域
+   */
+  private activeSheetMenuItem(): void {
+    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-menu-item') as NodeListOf<HTMLElement>;
+    let activeItem: HTMLElement | null = null;
+    menuItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.key === this.activeSheet?.getKey()) {
+        item.classList.add('active');
+        activeItem = item;
+      }
+    });
+    setTimeout(() => {
       if (activeItem) {
         activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -542,21 +557,24 @@ export default class VTableSheet {
       instance.getElement().style.display = 'none';
     });
 
-    // 如果已经存在实例，则显示
+    // 如果已经存在实例，则显示并激活对应tab和menu
     if (this.sheetInstances.has(sheetKey)) {
       const instance = this.sheetInstances.get(sheetKey)!;
       instance.getElement().style.display = 'block';
       this.activeSheet = instance;
+      // sheet标签和菜单项激活样式
+      this.activeSheetTab();
+      this.activeSheetMenuItem();
     } else {
       // 创建新的sheet实例
       const instance = this.createSheetInstance(sheetDefine);
       this.sheetInstances.set(sheetKey, instance);
       this.activeSheet = instance;
+      // 刷新sheet标签和菜单
+      this.updateSheetTabs();
+      this.updateSheetMenu();
     }
 
-    // 更新UI
-    this.updateSheetTabs();
-    this.updateSheetMenu();
     this.updateFormulaBar();
   }
 
