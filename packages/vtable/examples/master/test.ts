@@ -44,6 +44,118 @@ export function createTable() {
       position: 'Financial Analyst',
       salary: 72000,
       status: 'Active'
+    },
+    {
+      id: 5,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 6,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 7,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 8,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 9,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 10,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 11,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 12,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 13,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 14,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 15,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 16,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 17,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 18,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
     }
   ];
 
@@ -86,9 +198,6 @@ export function createTable() {
   const option: VTable.MasterDetailTableConstructorOptions = {
     columns,
     records,
-
-    // 主从表格特有配置
-    expandedRows: [0], // 默认展开第1行
     detailRowHeight: 100, // 子表区域高度
 
     // 基础表格配置

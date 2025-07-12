@@ -1109,4 +1109,6 @@ export interface MasterDetailTableProtected extends IBaseTableProtected {
   detailRowHeight: number;
   /** 详情渲染函数 */
   detailRenderer?: (record: any, rowIndex: number) => string | HTMLElement;
+  /** 每个展开行的自定义高度映射 */
+  expandedRowHeights: Map<number, number>;
 }
