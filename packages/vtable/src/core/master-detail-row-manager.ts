@@ -40,14 +40,32 @@ export class MasterDetailRowManager {
     
     // 使用 scenegraph.updateRow 插入新的空白行
     const addCells = [{ col: 0, row: insertRowIndex }];
+    console.log(addCells)
     this.table.scenegraph.updateRow([], addCells, []);
     
     // 获取插入后的当前行高度，计算需要的高度变化量
     const currentHeight = this.table.getRowHeight(insertRowIndex);
+    console.log(currentHeight)
     const deltaHeight = height - currentHeight;
     
     // 使用 update-height.ts 中的 updateRowHeight 函数来更新行高度
     updateRowHeight(this.table.scenegraph, insertRowIndex, deltaHeight);
+        // 1. 将 Set 转换为数组，以便使用数组方法
+    const oldValues = this.table.scenegraph.table.internalProps._heightResizedRowMap;
+    const newSet = new Set<number>(); // 创建一个新的 Set 来存放修改后的值
+
+    oldValues.forEach(value => {
+        if (value >= insertRowIndex) { // 根据你修正后的逻辑
+            newSet.add(value + 1);
+        } else {
+            newSet.add(value);
+        }
+    });
+
+    newSet.add(insertRowIndex); // 添加新插入的行索引
+
+    this.table.scenegraph.table.internalProps._heightResizedRowMap = newSet;
+    console.log(this.table.scenegraph.table.internalProps._heightResizedRowMap)
     
     // 触发展开事件 - 使用现有的事件类型
     this.table.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -69,18 +87,24 @@ export class MasterDetailRowManager {
 
     // 先计算要删除的行索引（必须在删除 expandedRowsSet 记录之前）
     const removeRowIndex = this.getInsertRowIndex(recordIndex);
-    
-    // 获取详情行的原始高度
-    const detailHeight = this.getDetailRowHeight(recordIndex);
-    const deltaHeight = -detailHeight; // 负值，因为是删除
-    
+    console.log(removeRowIndex)
     // 标记为已收起
     this.table.internalProps.expandedRowsSet.delete(recordIndex);
     
     // 使用 update-height.ts 中的 updateRowHeight 函数来更新整体高度
     // 传入负的高度变化量来减少表格高度
-    updateRowHeight(this.table.scenegraph, removeRowIndex, deltaHeight);
+    this.table.scenegraph.table.internalProps._heightResizedRowMap.delete(removeRowIndex);
+    // 1. 将 Set 转换为数组，以便使用数组方法
+    const valuesAsArray = Array.from(this.table.scenegraph.table.internalProps._heightResizedRowMap);
 
+    // 2. 链式调用 filter 和 map 来处理数据
+    const newValues = valuesAsArray
+      .filter(value => value !== removeRowIndex)
+      .map(value => (value > removeRowIndex ? value - 1 : value));
+
+    // 3. 用处理好的新数组来创建一个全新的 Set，并替换掉旧的
+    this.table.scenegraph.table.internalProps._heightResizedRowMap = new Set(newValues);
+    console.log(this.table.scenegraph.table.internalProps._heightResizedRowMap)
     // 更新行数 - 删除空白行
     this.table.internalProps.rowCount--;
     
