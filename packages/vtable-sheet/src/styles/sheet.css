@@ -76,6 +76,23 @@
   opacity: 1;
 }
 
+.vtable-sheet-snackbar-message {
+  position: fixed;
+  left: 50%;
+  bottom: 60px;
+  transform: translateX(-50%);
+  background: rgba(60, 60, 60, 0.95);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 15px;
+  z-index: 9999;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
 /* 选择区域高亮 */
 .vtable-sheet-selection-highlight {
   position: absolute;
@@ -124,4 +141,4 @@
 /* 隐藏底部功能区 */
 .vtable-sheet-footer {
   display: none;
-} 
+}

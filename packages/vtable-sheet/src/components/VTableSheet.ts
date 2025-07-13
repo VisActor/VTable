@@ -478,8 +478,7 @@ export default class VTableSheet {
       }
       const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
       if (isExist) {
-        //TODO toast
-        alert('工作表名称已存在');
+        this.showSnackbar('工作表名称已存在，请重新输入');
         targetTab.innerHTML = sheet.sheetTitle;
       } else {
         this.sheetManager.renameSheet(sheetKey, newTitle);
@@ -500,6 +499,24 @@ export default class VTableSheet {
 
     targetTab.addEventListener('blur', onBlur);
     targetTab.addEventListener('keydown', onKeyDown);
+  }
+  /**
+   * 显示Snackbar
+   */
+  private showSnackbar(message: string): void {
+    const snackbar = document.createElement('div');
+    snackbar.className = 'vtable-sheet-snackbar-message';
+    snackbar.textContent = message;
+    document.body.appendChild(snackbar);
+    setTimeout(() => {
+      snackbar.style.opacity = '1';
+    }, 10);
+    setTimeout(() => {
+      snackbar.style.opacity = '0';
+      setTimeout(() => {
+        snackbar.remove();
+      }, 300);
+    }, 1300);
   }
 
   /**
