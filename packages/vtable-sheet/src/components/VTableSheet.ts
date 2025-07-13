@@ -482,7 +482,8 @@ export default class VTableSheet {
         targetTab.innerHTML = sheet.sheetTitle;
       } else {
         this.sheetManager.renameSheet(sheetKey, newTitle);
-        targetTab.innerHTML = newTitle;
+        this.updateSheetTabs();
+        this.updateSheetMenu();
       }
     };
 
