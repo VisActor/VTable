@@ -37,26 +37,7 @@ export class MasterDetailLayoutMap extends SimpleHeaderLayoutMap implements Layo
     return baseRowCount + extraRows;
   }
 
-  /**
-   * 重写 getRecordShowIndexByCell 来处理展开行的影响
-   */
-  getRecordShowIndexByCell(col: number, row: number): number {
-    const skipRowCount = this.hasAggregationOnTopCount ? this.headerLevelCount + 1 : this.headerLevelCount;
-    
-    if (this.transpose) {
-      if (col < skipRowCount) {
-        return -1;
-      }
-      return col - skipRowCount;
-    }
 
-    if (row < skipRowCount) {
-      return -1;
-    }
-
-    // 使用行管理器来获取记录索引
-    return this._masterDetailTable.getRecordIndexByRow(row);
-  }
 
   /**
    * 根据记录索引获取表格中的行号

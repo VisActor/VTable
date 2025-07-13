@@ -25,22 +25,7 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
     scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
   }
 
-  for (let col = 0; col < scene.table.colCount; col++) {
-    const cell = scene.getCell(col, row);
-    if (cell.role === 'empty') {
-      continue;
-    }
-    const mergeInfo = getCellMergeInfo(scene.table, col, row);
-    if (mergeInfo && mergeInfo.start.col !== col) {
-      continue;
-    }
-    const height = cell.attribute.height;
-    // cell.setAttribute('height', height);
-    // (cell.firstChild as Rect).setAttribute('height', cell.attribute.height);
-    updateCellHeightForRow(scene, cell, col, row, height + detaY, detaY, scene.table.isHeader(col, row));
 
-    scene.updateCellContentWhileResize(col, row);
-  }
 
   let rowStart = 0;
   let rowEnd = 0;

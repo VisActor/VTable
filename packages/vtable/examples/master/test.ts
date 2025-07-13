@@ -46,14 +46,6 @@ export function createTable() {
       status: 'Active'
     },
     {
-      id: 55,
-      name: 'Bob Wilson',
-      department: 'Finance',
-      position: 'Financial Analyst',
-      salary: 72000,
-      status: 'Active'
-    },
-    {
       id: 6,
       name: 'Bob Wilson',
       department: 'Finance',
@@ -151,6 +143,14 @@ export function createTable() {
     },
     {
       id: 18,
+      name: 'Bob Wilson',
+      department: 'Finance',
+      position: 'Financial Analyst',
+      salary: 72000,
+      status: 'Active'
+    },
+    {
+      id: 19,
       name: 'Bob Wilson',
       department: 'Finance',
       position: 'Financial Analyst',

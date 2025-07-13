@@ -199,13 +199,6 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       return null;
     }
     
-    // 检查是否是展开后插入的空白行
-    const layoutMap = this.internalProps.layoutMap as MasterDetailLayoutMap;
-    if (layoutMap.isDetailRow(row)) {
-      // 这是展开后插入的空白行，返回空内容
-      return '';
-    }
-    
     if (!skipCustomMerge) {
       const customMergeText = this.getCustomMergeValue(col, row);
       if (customMergeText) {
@@ -737,14 +730,14 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       return HierarchyState.none;
     }
 
-    // 获取数据行索引
-    const dataRowIndex = this.getRecordShowIndexByCell(col, row);
-    if (dataRowIndex < 0) {
+    // 获取正确的记录索引
+    const recordIndex = this.rowManager.getRecordIndexByRow(row);
+    if (recordIndex < 0) {
       return HierarchyState.none;
     }
 
     // 检查是否已展开
-    if (this.internalProps.expandedRowsSet.has(dataRowIndex)) {
+    if (this.internalProps.expandedRowsSet.has(recordIndex)) {
       return HierarchyState.expand;
     }
     return HierarchyState.collapse;
@@ -855,7 +848,11 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
    * @param rowIndex
    */
   toggleRowExpand?(rowIndex: number): void {
-    this.rowManager.toggleRecord(rowIndex);
+    if (this.internalProps.expandedRowsSet.has(rowIndex)) {
+      this.collapseRow(rowIndex);
+    } else {
+      this.expandRow(rowIndex);
+    }
   }
 
   /**
@@ -864,6 +861,12 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
    */
   collapseRow?(recordIndex: number): void {
     this.rowManager.collapseRecord(recordIndex);
+    // 更新图标状态
+    const tableRowIndex = recordIndex + 1;
+    if (tableRowIndex >= 0) {
+      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
+      this.scenegraph.updateNextFrame();
+    }
   }
 
   /**
@@ -873,42 +876,13 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
    */
   expandRow?(recordIndex: number, height?: number): void {
     this.rowManager.expandRecord(recordIndex, height);
-  }
-
-  /**
-   * 重写 getRowHeight 方法，为展开的详情行提供自定义高度
-   */
-  getRowHeight(row: number): number {
-    // 检查是否是展开后插入的详情行
-    if (this.rowManager.isDetailRow(row)) {
-      // 这是展开后插入的详情行，从 rowHeightsMap 获取高度
-      const customHeight = this.rowHeightsMap.get(row);
-      if (customHeight !== undefined) {
-        return customHeight;
-      }
-      // 如果没有设置自定义高度，使用默认详情行高度
-      return this.internalProps.detailRowHeight || 100;
+    // 更新图标状态
+    // console.log(recordIndex)
+    const tableRowIndex = recordIndex + 1;
+    // console.log(tableRowIndex)
+    if (tableRowIndex >= 0) {
+      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
+      this.scenegraph.updateNextFrame();
     }
-    
-    // 对于普通行，调用父类方法
-    return super.getRowHeight(row);
-  }
-
-  /**
-   * 检查指定行是否是详情行
-   * @param row 行索引
-   * @returns 是否是详情行
-   */
-  isDetailRow(row: number): boolean {
-    return this.rowManager.isDetailRow(row);
-  }
-
-  /**
-   * 根据行索引获取对应的记录索引（仅对数据行有效）
-   * @param row 行索引
-   * @returns 记录索引，如果是详情行则返回 -1
-   */
-  getRecordIndexByRow(row: number): number {
-    return this.rowManager.getRecordIndexByRow(row);
   }
 }
