@@ -91,8 +91,8 @@
   width: auto;
   /* 禁止标签压缩，保持内容撑开的宽度 */
   flex-shrink: 0;
-  padding: 0 12px;
-  line-height: 32px;
+  padding: 4px 12px;
+  line-height: 24px;
   text-align: center;
   cursor: pointer;
   border-right: 1px solid #e0e0e0;
@@ -109,10 +109,25 @@
 .vtable-sheet-tab.active {
   color: #1a73e8;
   background-color: #fff;
-  height: calc(100% + 1px);
   margin-top: -1px;
   border-top: 2px solid #1a73e8;
   z-index: 2;
+}
+/* 编辑状态样式 */
+.vtable-sheet-tab[contenteditable='true'] {
+  outline: inherit !important; /* 移除聚焦时的轮廓线 */
+  border-right: 1px solid #e0e0e0;
+  cursor: text;
+  color: #333;
+}
+/* 自定义 contenteditable 元素的选区样式 */
+.vtable-sheet-tab[contenteditable='true']::selection {
+  background-color: #2563eb33; /* 浅蓝色半透明背景（示例） */
+}
+
+/* 兼容 Firefox */
+.vtable-sheet-tab[contenteditable='true']::-moz-selection {
+  background-color: #2563eb33;
 }
 
 /* 添加sheet按钮 */

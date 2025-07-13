@@ -437,10 +437,69 @@ export default class VTableSheet {
       tab.textContent = sheet.sheetTitle;
       tab.title = sheet.sheetTitle;
       tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
+      tab.addEventListener('dblclick', () => this.renameSheet(sheet.sheetKey));
       tabsContainer.appendChild(tab);
     });
     // 激活sheet标签并滚动到可见区域
     this.activeSheetTab();
+  }
+  private renameSheet(sheetKey: string): void {
+    const tabsContainer: HTMLElement = this.sheetTabElement?.querySelector(
+      '.vtable-sheet-tabs-container'
+    ) as HTMLElement;
+    const targetTab = tabsContainer.querySelector(`.vtable-sheet-tab[data-key="${sheetKey}"]`) as HTMLElement;
+    if (!targetTab) {
+      return;
+    }
+    const sheet = this.sheetManager.getSheet(sheetKey);
+    if (!sheet) {
+      return;
+    }
+    // 将原文本节点设为可编辑
+    targetTab.setAttribute('contenteditable', 'true');
+    targetTab.setAttribute('spellcheck', 'false');
+    targetTab.classList.add('editing'); // 添加编辑状态样式
+    // 选中所有文本
+    const range = document.createRange();
+    range.selectNodeContents(targetTab);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    const finishInput = (commit: boolean) => {
+      targetTab.removeEventListener('blur', onBlur);
+      targetTab.removeEventListener('keydown', onKeyDown);
+      const newTitle = targetTab.textContent?.trim();
+      targetTab.classList.remove('editing');
+      targetTab.setAttribute('contenteditable', 'false');
+      if (!commit || !newTitle || newTitle === sheet.sheetTitle) {
+        targetTab.innerHTML = sheet.sheetTitle;
+        return;
+      }
+      const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
+      if (isExist) {
+        //TODO toast
+        alert('工作表名称已存在');
+        targetTab.innerHTML = sheet.sheetTitle;
+      } else {
+        this.sheetManager.renameSheet(sheetKey, newTitle);
+        targetTab.innerHTML = newTitle;
+      }
+    };
+
+    const onBlur = () => finishInput(true);
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        finishInput(true);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        finishInput(false);
+      }
+    };
+
+    targetTab.addEventListener('blur', onBlur);
+    targetTab.addEventListener('keydown', onKeyDown);
   }
 
   /**
@@ -615,8 +674,19 @@ export default class VTableSheet {
   private addNewSheet(): void {
     // 生成新sheet的key和title
     const sheetCount = this.sheetManager.getSheetCount();
-    const key = `sheet${sheetCount + 1}`;
-    const title = `Sheet ${sheetCount + 1}`;
+    const baseKey = `sheet${sheetCount + 1}`;
+    const baseTitle = `Sheet ${sheetCount + 1}`;
+    let key = baseKey;
+    let title = baseTitle;
+    let index = sheetCount + 1;
+    // 检查key和title是否被占用，递增直到唯一
+    const existingKeys = new Set(this.sheetManager.getAllSheets().map(s => s.sheetKey));
+    const existingTitles = new Set(this.sheetManager.getAllSheets().map(s => s.sheetTitle));
+    while (existingKeys.has(key) || existingTitles.has(title)) {
+      index += 1;
+      key = `sheet${index}`;
+      title = `Sheet ${index}`;
+    }
 
     // 创建新sheet配置
     const newSheet: SheetDefine = {
