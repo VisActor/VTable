@@ -447,20 +447,18 @@ export default class VTableSheet {
     tab.textContent = sheet.sheetTitle;
     tab.title = sheet.sheetTitle;
     tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
-    tab.addEventListener('dblclick', () => this.renameSheet(sheet.sheetKey));
+    tab.addEventListener('dblclick', () => this.handleSheetTabDblClick(sheet.sheetKey, sheet.sheetTitle));
     return tab;
   }
-
   /**
-   * 重命名sheet
+   * 处理sheet标签双击事件
+   * 双击sheet标签后，将标签设为可编辑状态。输入完成后进行重命名。
+   * @param sheetKey 工作表key
+   * @param originalTitle 原始名称
    */
-  private renameSheet(sheetKey: string): void {
+  private handleSheetTabDblClick(sheetKey: string, originalTitle: string): void {
     const targetTab = this.getSheetTabElement(sheetKey);
     if (!targetTab) {
-      return;
-    }
-    const sheet = this.sheetManager.getSheet(sheetKey);
-    if (!sheet) {
       return;
     }
     // 将原文本节点设为可编辑
@@ -473,41 +471,54 @@ export default class VTableSheet {
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-    // 输入完成
-    const finishInput = (commit: boolean) => {
-      targetTab.removeEventListener('blur', onBlur);
-      targetTab.removeEventListener('keydown', onKeyDown);
-      const newTitle = targetTab.textContent?.trim();
-      targetTab.classList.remove('editing');
-      targetTab.setAttribute('contenteditable', 'false');
-      if (!commit || !newTitle || newTitle === sheet.sheetTitle) {
-        targetTab.innerHTML = sheet.sheetTitle;
-        return;
-      }
-      const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
-      if (isExist) {
-        showSnackbar('工作表名称已存在，请重新输入', 1300);
-        targetTab.innerHTML = sheet.sheetTitle;
-      } else {
-        this.sheetManager.renameSheet(sheetKey, newTitle);
-        this.updateSheetTabs();
-        this.updateSheetMenu();
-      }
-    };
 
-    const onBlur = () => finishInput(true);
+    const onBlur = () => {
+      finishInput(true);
+    };
     const onKeyDown = (e: KeyboardEvent) => {
+      e.stopPropagation();
       if (e.key === 'Enter') {
         e.preventDefault();
         finishInput(true);
       } else if (e.key === 'Escape') {
-        e.preventDefault();
         finishInput(false);
       }
     };
-
+    const finishInput = (commit: boolean) => {
+      targetTab.removeEventListener('blur', onBlur);
+      targetTab.removeEventListener('keydown', onKeyDown);
+      targetTab.classList.remove('editing');
+      targetTab.setAttribute('contenteditable', 'false');
+      const newTitle = targetTab.textContent?.trim();
+      if (!commit || !newTitle || newTitle === originalTitle || !this.renameSheet(sheetKey, newTitle)) {
+        targetTab.textContent = originalTitle;
+        return;
+      }
+    };
     targetTab.addEventListener('blur', onBlur);
     targetTab.addEventListener('keydown', onKeyDown);
+  }
+
+  /**
+   * 重命名sheet
+   * @param sheetKey 工作表key
+   * @param newTitle 新名称
+   * @returns 是否成功
+   */
+  private renameSheet(sheetKey: string, newTitle: string): boolean {
+    const sheet = this.sheetManager.getSheet(sheetKey);
+    if (!sheet) {
+      return false;
+    }
+    const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
+    if (isExist) {
+      showSnackbar('工作表名称已存在，请重新输入', 1300);
+      return false;
+    }
+    this.sheetManager.renameSheet(sheetKey, newTitle);
+    this.updateSheetTabs();
+    this.updateSheetMenu();
+    return true;
   }
 
   /**
