@@ -78,19 +78,22 @@
 
 .vtable-sheet-snackbar-message {
   position: fixed;
+  bottom: 20px;
   left: 50%;
-  bottom: 60px;
   transform: translateX(-50%);
-  background: rgba(60, 60, 60, 0.95);
-  color: #fff;
-  padding: 10px 24px;
-  border-radius: 6px;
-  font-size: 15px;
-  z-index: 9999;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  pointer-events: none;
+  padding: 12px 24px;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.vtable-sheet-snackbar-message.show {
+  opacity: 1;
 }
 
 /* 选择区域高亮 */

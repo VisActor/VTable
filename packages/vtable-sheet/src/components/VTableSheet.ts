@@ -9,6 +9,7 @@ import * as VTable_editors from '@visactor/vtable-editors';
 import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
+import { showSnackbar } from '../tools/ui/snackbar';
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
 /**
@@ -430,24 +431,31 @@ export default class VTableSheet {
     });
     // 添加sheet标签
     const sheets = this.sheetManager.getAllSheets();
-    sheets.forEach(sheet => {
-      const tab = document.createElement('div');
-      tab.className = 'vtable-sheet-tab';
-      tab.dataset.key = sheet.sheetKey;
-      tab.textContent = sheet.sheetTitle;
-      tab.title = sheet.sheetTitle;
-      tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
-      tab.addEventListener('dblclick', () => this.renameSheet(sheet.sheetKey));
-      tabsContainer.appendChild(tab);
+    sheets.forEach((sheet, index) => {
+      tabsContainer.appendChild(this.createSheetTabItem(sheet, index));
     });
     // 激活sheet标签并滚动到可见区域
     this.activeSheetTab();
   }
+  /**
+   * 创建tab栏标签项
+   */
+  private createSheetTabItem(sheet: SheetDefine, index: number): HTMLElement {
+    const tab = document.createElement('div');
+    tab.className = 'vtable-sheet-tab';
+    tab.dataset.key = sheet.sheetKey;
+    tab.textContent = sheet.sheetTitle;
+    tab.title = sheet.sheetTitle;
+    tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
+    tab.addEventListener('dblclick', () => this.renameSheet(sheet.sheetKey));
+    return tab;
+  }
+
+  /**
+   * 重命名sheet
+   */
   private renameSheet(sheetKey: string): void {
-    const tabsContainer: HTMLElement = this.sheetTabElement?.querySelector(
-      '.vtable-sheet-tabs-container'
-    ) as HTMLElement;
-    const targetTab = tabsContainer.querySelector(`.vtable-sheet-tab[data-key="${sheetKey}"]`) as HTMLElement;
+    const targetTab = this.getSheetTabElement(sheetKey);
     if (!targetTab) {
       return;
     }
@@ -465,7 +473,7 @@ export default class VTableSheet {
     const selection = window.getSelection();
     selection.removeAllRanges();
     selection.addRange(range);
-
+    // 输入完成
     const finishInput = (commit: boolean) => {
       targetTab.removeEventListener('blur', onBlur);
       targetTab.removeEventListener('keydown', onKeyDown);
@@ -478,7 +486,7 @@ export default class VTableSheet {
       }
       const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
       if (isExist) {
-        this.showSnackbar('工作表名称已存在，请重新输入');
+        showSnackbar('工作表名称已存在，请重新输入', 1300);
         targetTab.innerHTML = sheet.sheetTitle;
       } else {
         this.sheetManager.renameSheet(sheetKey, newTitle);
@@ -501,23 +509,13 @@ export default class VTableSheet {
     targetTab.addEventListener('blur', onBlur);
     targetTab.addEventListener('keydown', onKeyDown);
   }
+
   /**
-   * 显示Snackbar
+   * 获取指定sheetKey的标签元素
    */
-  private showSnackbar(message: string): void {
-    const snackbar = document.createElement('div');
-    snackbar.className = 'vtable-sheet-snackbar-message';
-    snackbar.textContent = message;
-    document.body.appendChild(snackbar);
-    setTimeout(() => {
-      snackbar.style.opacity = '1';
-    }, 10);
-    setTimeout(() => {
-      snackbar.style.opacity = '0';
-      setTimeout(() => {
-        snackbar.remove();
-      }, 300);
-    }, 1300);
+  private getSheetTabElement(sheetKey: string): HTMLElement | null {
+    const tabsContainer = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container') as HTMLElement;
+    return tabsContainer?.querySelector(`.vtable-sheet-tab[data-key="${sheetKey}"]`) as HTMLElement;
   }
 
   /**
