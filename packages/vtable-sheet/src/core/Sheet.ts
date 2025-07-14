@@ -143,12 +143,17 @@ export class Sheet implements SheetAPI {
     if (!this.options.data) {
       this.options.data = [];
     }
-
+    const keyboardOptions = {
+      ...this.options.keyboardOptions,
+      copySelected: true,
+      pasteValueToCell: true
+    };
     return {
       ...this.options,
       records: this.options.data,
       container: this.element,
-      showHeader: isShowTableHeader
+      showHeader: isShowTableHeader,
+      keyboardOptions
       // 其他特定配置
     };
   }

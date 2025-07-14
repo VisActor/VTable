@@ -1,4 +1,5 @@
 import type { ListTable } from '@visactor/vtable';
+import { vglobal } from '@visactor/vtable/es/vrender';
 import {
   MENU_CONTAINER_CLASS,
   MENU_ITEM_CLASS,
@@ -44,8 +45,6 @@ export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => 
 interface MenuContext {
   rowIndex?: number;
   colIndex?: number;
-  cellType?: string;
-  cellValue?: any;
 }
 
 /**
@@ -85,8 +84,8 @@ export class MenuManager {
 
     // 添加全局点击事件，用于关闭菜单
     setTimeout(() => {
-      document.addEventListener('click', this.handleDocumentClick);
-      document.addEventListener('contextmenu', this.handleDocumentClick);
+      vglobal.addEventListener('click', this.handleDocumentClick);
+      vglobal.addEventListener('contextmenu', this.handleDocumentClick);
     }, 0);
   }
 
@@ -384,7 +383,7 @@ export class MenuManager {
     }
 
     // 移除全局事件监听
-    document.removeEventListener('click', this.handleDocumentClick);
-    document.removeEventListener('contextmenu', this.handleDocumentClick);
+    vglobal.removeEventListener('click', this.handleDocumentClick);
+    vglobal.removeEventListener('contextmenu', this.handleDocumentClick);
   }
 }

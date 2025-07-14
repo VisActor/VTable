@@ -67,7 +67,7 @@ export function createTableInstance() {
 
   // 创建右键菜单插件
   const contextMenuPlugin = new ContextMenuPlugin({
-    headerNumberColumnMenuItems: [
+    columnSeriesNumberMenuItems: [
       { text: '向左插入', menuKey: 'insert_left', iconName: 'insert' },
       { text: '向右插入', menuKey: 'insert_right', iconName: 'insert' },
       { text: '列宽设为', menuKey: 'set_width', iconName: 'merge' },
@@ -78,73 +78,79 @@ export function createTableInstance() {
       { text: '排序', menuKey: 'sort', iconName: 'sort' },
       { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
       { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
-    ],
+    ]
 
-    bodyCellMenuItems: [
-      { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
-      { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
-      { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' },
-      '---',
-      {
-        text: '插入',
-        menuKey: 'insert',
-        iconName: 'insert',
-        children: [
-          {
-            type: 'input',
-            label: '向上插入行数：',
-            menuKey: 'insert_row_above',
-            defaultValue: 1
-          },
-          {
-            type: 'input',
-            label: '向下插入行数：',
-            menuKey: 'insert_row_below',
-            defaultValue: 1
-          },
-          '---',
-          {
-            type: 'input',
-            label: '向左插入列数：',
-            menuKey: 'insert_column_left',
-            defaultValue: 1
-          },
-          {
-            type: 'input',
-            label: '向右插入列数：',
-            menuKey: 'insert_column_right',
-            defaultValue: 1
-          }
-        ]
-      },
-      {
-        text: '删除',
-        menuKey: 'delete',
-        iconName: 'delete',
-        children: [
-          { text: '删除行', menuKey: 'delete_row' },
-          { text: '删除列', menuKey: 'delete_column' }
-        ]
-      },
-      {
-        text: '冻结',
-        menuKey: 'freeze',
-        iconName: 'freeze',
-        children: [
-          { text: '冻结到本行', menuKey: 'freeze_to_this_row' },
-          { text: '冻结到本列', menuKey: 'freeze_to_this_column' },
-          { text: '冻结到本行本列', menuKey: 'freeze_to_this_row_and_column' },
-          { text: '取消冻结', menuKey: 'unfreeze' }
-        ]
-      },
-      '---',
-      { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
-      { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
-    ],
+    // bodyCellMenuItems: [
+    //   { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
+    //   { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
+    //   { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' },
+    //   { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
+    //   { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
+    //   { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' },
+    //   { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
+    //   { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
+    //   { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' },
+    //   '---',
+    //   {
+    //     text: '插入',
+    //     menuKey: 'insert',
+    //     iconName: 'insert',
+    //     children: [
+    //       {
+    //         type: 'input',
+    //         label: '向上插入行数：',
+    //         menuKey: 'insert_row_above',
+    //         defaultValue: 1
+    //       },
+    //       {
+    //         type: 'input',
+    //         label: '向下插入行数：',
+    //         menuKey: 'insert_row_below',
+    //         defaultValue: 1
+    //       },
+    //       '---',
+    //       {
+    //         type: 'input',
+    //         label: '向左插入列数：',
+    //         menuKey: 'insert_column_left',
+    //         defaultValue: 1
+    //       },
+    //       {
+    //         type: 'input',
+    //         label: '向右插入列数：',
+    //         menuKey: 'insert_column_right',
+    //         defaultValue: 1
+    //       }
+    //     ]
+    //   },
+    //   {
+    //     text: '删除',
+    //     menuKey: 'delete',
+    //     iconName: 'delete',
+    //     children: [
+    //       { text: '删除行', menuKey: 'delete_row' },
+    //       { text: '删除列', menuKey: 'delete_column' }
+    //     ]
+    //   },
+    //   {
+    //     text: '冻结',
+    //     menuKey: 'freeze',
+    //     iconName: 'freeze',
+    //     children: [
+    //       { text: '冻结到本行', menuKey: 'freeze_to_this_row' },
+    //       { text: '冻结到本列', menuKey: 'freeze_to_this_column' },
+    //       { text: '冻结到本行本列', menuKey: 'freeze_to_this_row_and_column' },
+    //       { text: '取消冻结', menuKey: 'unfreeze' }
+    //     ]
+    //   },
+    //   '---',
+    //   { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
+    //   { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
+    // ],
 
-    menuClickCallback: (args, table) => {
-      console.log('菜单点击事件:', args);
-    }
+    // menuClickCallback: (args, table) => {
+    //   console.log('菜单点击事件:', args);
+    // }
   });
   const tableSeriesNumberPlugin = new TableSeriesNumber({
     rowCount: 1000,
@@ -165,6 +171,11 @@ export function createTableInstance() {
     showHeader: true,
     select: {
       makeSelectCellVisible: false
+    },
+    editor: '',
+    keyboardOptions: {
+      copySelected: true,
+      pasteValueToCell: true
     },
     plugins: [contextMenuPlugin, tableSeriesNumberPlugin]
   };
