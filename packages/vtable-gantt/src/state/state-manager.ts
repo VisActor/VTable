@@ -854,29 +854,6 @@ export class StateManager {
       this._gantt.scenegraph.updateNextFrame();
     }
   }
-  dealTaskBarResize1(e: FederatedPointerEvent) {
-    const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
-    const x2 = e.x;
-    const dx = x2 - x1;
-    // debugger;
-    const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
-
-    // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
-
-    let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
-    const taskBarSize = Math.max(1, taskBarGroup.attribute.width + diffWidth);
-    diffWidth = taskBarSize - taskBarGroup.attribute.width;
-
-    resizeTaskBar(
-      taskBarGroup,
-      this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0,
-
-      taskBarSize,
-      this
-    );
-
-    this._gantt.scenegraph.updateNextFrame();
-  }
   dealTaskBarResize(e: FederatedPointerEvent) {
     const gantt = this._gantt;
     const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x;
