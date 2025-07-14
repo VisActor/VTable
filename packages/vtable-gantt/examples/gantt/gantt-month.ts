@@ -10,9 +10,9 @@ export function createTable() {
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
       start: '2024-07-30',
-      end: '2024-08-14',
       progress: 31,
-      priority: 'P0'
+      priority: 'P0',
+      type: 'milestone'
     },
     {
       id: 2,
@@ -852,6 +852,7 @@ export function createTable() {
         fontSize: 16,
         textAlign: 'left'
       },
+      moveToExtendDateRange: false,
       barStyle: {
         width: 20,
         /** 任务条的颜色 */
@@ -888,7 +889,7 @@ export function createTable() {
         },
         {
           unit: 'day',
-          step: 2
+          step: 1
         }
         // {
         //   unit: 'quarter',
@@ -958,9 +959,9 @@ export function createTable() {
   // ganttInstance.on('scroll', e => {
   //   console.log('scroll', e);
   // });
-  // ganttInstance.on('change_date_range', e => {
-  //   console.log('change_date_range', e);
-  // });
+  ganttInstance.on('change_date_range', e => {
+    console.log('change_date_range', e);
+  });
   // ganttInstance.on('mouseenter_task_bar', e => {
   //   console.log('mouseenter_taskbar', e);
   // });
