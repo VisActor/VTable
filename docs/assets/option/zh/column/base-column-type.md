@@ -248,6 +248,9 @@ ${prefix} headerEditor (string|Object|Function)
 headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
 ```
 
+${prefix} levelSpan(number)
+非必填，该表头单元格跨行层级，默认为 1。如果层级未到最大层数，最末级剩下多大就合并多大层数的单元格。
+
 ${prefix} columns (Array)
 同上层的列配置数组，嵌套结构来描述列分组关系。
 

@@ -65,6 +65,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-expandAndCollapseAll'
+      },
+      {
+        path: 'list',
         name: 'list-checkbox-tree'
       },
       {
@@ -142,6 +146,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-header-levelSpan'
+      },
+      {
+        path: 'list',
         name: 'list-merge-cell-function'
       },
       {
@@ -171,6 +179,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-tree-checkbox'
+      },
+      {
+        path: 'list',
+        name: 'list-autoFillWidth'
       }
     ]
   },
@@ -559,6 +571,10 @@ export const menus = [
       },
       {
         path: 'pivot',
+        name: 'pivot-extension-row3'
+      },
+      {
+        path: 'pivot',
         name: 'pivot-extension-bp'
       },
       {
@@ -645,6 +661,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-updateSortRule'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-updateTotalData'
       },
       {
         path: 'pivot-analysis',

@@ -1,3 +1,54 @@
+# v1.19.3
+
+2025-07-09
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add eventOptions contextmenuReturnAllSelectedCells [#4064](https://github.com/VisActor/VTable/issues/4064)
+-  **@visactor/vtable**: add batch expand or collapse all tree nodes
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: click to edit cell not work with groupBy [#4172](https://github.com/VisActor/VTable/issues/4172)
+- **@visactor/vtable**: fix validateCellVaule when paste cell [#4174](https://github.com/VisActor/VTable/issues/4174) [#1797](https://github.com/VisActor/VTable/issues/1797)
+- **@visactor/vtable**: handle frozen column calculation when container is invisible
+-  **@visactor/vtable**: fix: paste validateValue missing position table params [#4164](https://github.com/VisActor/VTable/issues/4164)
+-  **@visactor/vtable**: fix animation register progress
+-  **@visactor/vtable**: fix: fix after resize container then frozen column invisible [#3836](https://github.com/VisActor/VTable/issues/3836)
+
+
+
+
+[more detail about v1.19.3](https://github.com/VisActor/VTable/releases/tag/v1.19.3)
+
+# v1.19.2
+
+2025-07-01
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: ListTable support levelSpan for header
+- **@visactor/vtable-plugins**: add import excel file plugin
+- **@visactor/vtable-gantt**: gantt chart's frame border support set array
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix templateLink in export excel [#4106](https://github.com/VisActor/VTable/issues/4106)
+- **@visactor/vtable**: list-tree delete root level error when using deleteRecords
+- **@visactor/vtable**: fix minWidth & maxWidth in autoFillWidth status [#4100](https://github.com/VisActor/VTable/issues/4100)
+- **@visactor/vtable**: when updateColumns occor error with aggregation
+- **@visactor/vtable**: when edit pivot indicator value the total value should update synchronously
+- **@visactor/vtable**: merge render error when has custom aggregation
+- **@visactor/vtable**: list tree delete records bug [#3991](https://github.com/VisActor/VTable/issues/3991)
+- **@visactor/vtable**: group by boolean cannot render false [#4059](https://github.com/VisActor/VTable/issues/4059)
+
+
+
+[more detail about v1.19.2](https://github.com/VisActor/VTable/releases/tag/v1.19.2)
+
 # v1.19.1
 
 2025-06-20

@@ -231,7 +231,34 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this._hasAutoImageColumn = undefined;
     this.refreshHeader();
     this.dataSource.updateColumns?.(this.internalProps.columns);
-    if (this.records && checkHasAggregationOnColumnDefine(columns)) {
+    if (this.records && checkHasAggregationOnColumnDefine(this.internalProps.columns)) {
+      this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
+    }
+    this.internalProps.useOneRowHeightFillAll = false;
+
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
+    this.renderAsync();
+    this.eventManager.updateEventBinder();
+  }
+
+  /**
+   * 作为 `updateColumns` 的轻量级替代方案，用于仅需重新创建场景图而无需重新定义列的场景，
+   * 例如展开/折叠树形节点。此方法避免了 `updateColumns` 中开销较大的 `cloneDeepSpec` 深拷贝操作。
+   *
+   * 注意：此方法与 `updateColumns` 共享部分逻辑。如果将来修改了 `updateColumns`，
+   * 请务必检查此方法，以确保逻辑一致性，防止出现“逻辑漂移”。
+   */
+  private _recreateSceneForStateChange(): void {
+    this.scenegraph.clearCells();
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
+
+    this._hasAutoImageColumn = undefined;
+    this.refreshHeader();
+    if (this.records && checkHasAggregationOnColumnDefine(this.internalProps.columns)) {
       this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
     }
     this.internalProps.useOneRowHeightFillAll = false;
@@ -1559,5 +1586,67 @@ export class ListTable extends BaseTable implements ListTableAPI {
   release() {
     this.editorManager.release();
     super.release();
+  }
+
+  /**
+   * 展开所有树形节点
+   */
+  expandAllTreeNode(): void {
+    if (!this._hasHierarchyTreeHeader()) {
+      return;
+    }
+
+    let stateChanged = false;
+
+    // 展开所有数据行节点
+    if (this.dataSource && typeof (this.dataSource as any).expandAllNodes === 'function') {
+      (this.dataSource as any).expandAllNodes();
+      stateChanged = true;
+    }
+
+    // 刷新视图
+    if (stateChanged) {
+      // 使用轻量级的更新管道，而非重量级的 `updateColumns`。
+      // 这个新方法会处理表头刷新、场景创建和渲染。
+      this._recreateSceneForStateChange();
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1, // 表示非特定单元格操作
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        originData: { children: this.records }
+      });
+    }
+  }
+
+  /**
+   * 折叠所有树形节点
+   */
+  collapseAllTreeNode(): void {
+    if (!this._hasHierarchyTreeHeader()) {
+      return;
+    }
+
+    let stateChanged = false;
+
+    // 折叠所有数据行节点
+    if (this.dataSource && typeof (this.dataSource as any).collapseAllNodes === 'function') {
+      (this.dataSource as any).collapseAllNodes();
+      stateChanged = true;
+    }
+
+    // 刷新视图
+    if (stateChanged) {
+      // 使用轻量级的更新管道，而非重量级的 `updateColumns`。
+      // 这个新方法会处理表头刷新、场景创建和渲染。
+      this._recreateSceneForStateChange();
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        originData: { children: this.records }
+      });
+    }
   }
 }
