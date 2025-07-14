@@ -1,5 +1,3 @@
-import type { ListTable } from '@visactor/vtable';
-import type { SheetDefine, VTableSheetOptions, CellValueChangedEvent } from '../ts-types';
 import { FormulaManager } from '../managers/formula-manager';
 import { FilterManager } from '../managers/filter-manager';
 import SheetManager from '../managers/sheet-manager';
@@ -8,16 +6,16 @@ import '../styles/index.css';
 import * as VTable_editors from '@visactor/vtable-editors';
 import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
+import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent } from '../ts-types';
+
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
-/**
- * VTableSheet组件 - 多sheet表格组件
- */
+
 export default class VTableSheet {
   /** DOM容器 */
   private container: HTMLElement;
   /** 配置选项 */
-  private options: VTableSheetOptions;
+  private options: IVTableSheetOptions;
   /** sheet管理器 */
   private sheetManager: SheetManager;
   /** 公式管理器 */
@@ -34,8 +32,6 @@ export default class VTableSheet {
   private formulaBarElement: HTMLElement | null = null;
   private sheetTabElement: HTMLElement | null = null;
   private contentElement: HTMLElement;
-  private toolbarElement: HTMLElement | null = null;
-  private footerElement: HTMLElement | null = null;
 
   /** 防止递归调用的标志 */
   private isUpdatingFromFormula = false;
@@ -44,7 +40,7 @@ export default class VTableSheet {
    * 构造函数
    * @param options 配置选项
    */
-  constructor(container: HTMLElement, options: VTableSheetOptions) {
+  constructor(container: HTMLElement, options: IVTableSheetOptions) {
     this.container = container;
     this.options = this.mergeDefaultOptions(options);
 
@@ -66,32 +62,16 @@ export default class VTableSheet {
   /**
    * 合并默认配置
    */
-  private mergeDefaultOptions(options: VTableSheetOptions): VTableSheetOptions {
+  private mergeDefaultOptions(options: IVTableSheetOptions): IVTableSheetOptions {
     return {
+      ...options,
       width: this.container.clientWidth,
       height: this.container.clientHeight,
       showFormulaBar: true,
       showSheetTab: true,
       defaultRowHeight: 25,
-      defaultColWidth: 100,
-      frozenRowCount: 0,
-      frozenColCount: 0,
-      ...options
+      defaultColWidth: 100
     };
-  }
-
-  /**
-   * 获取DOM容器
-   */
-  private resolveContainer(container: HTMLElement | string): HTMLElement {
-    if (typeof container === 'string') {
-      const el = document.getElementById(container);
-      if (!el) {
-        throw new Error(`Container with id '${container}' not found`);
-      }
-      return el;
-    }
-    return container;
   }
 
   /**
@@ -366,6 +346,9 @@ export default class VTableSheet {
 
   /**
    * 更新渐变效果
+   * @param tabsContainer 标签容器
+   * @param fadeLeft 左侧渐变效果
+   * @param fadeRight 右侧渐变效果
    */
   private updateFadeEffects(tabsContainer: HTMLElement, fadeLeft: HTMLElement, fadeRight: HTMLElement): void {
     // 显示/隐藏左侧渐变
@@ -386,6 +369,8 @@ export default class VTableSheet {
 
   /**
    * 滚动sheet标签
+   * @param direction 滚动方向
+   * @param tabsContainer 标签容器
    */
   private scrollSheetTabs(direction: 'left' | 'right', tabsContainer: HTMLElement): void {
     const scrollAmount = 200; // 每次滚动的像素数
@@ -406,6 +391,7 @@ export default class VTableSheet {
 
   /**
    * 更新sheet切换标签
+   * @param tabsContainer 标签容器
    */
   private updateSheetTabs(
     tabsContainer: HTMLElement = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container')
@@ -456,6 +442,8 @@ export default class VTableSheet {
 
   /**
    * 滚动以确保标签可见
+   * @param tab 标签
+   * @param container 容器
    */
   private scrollTabIntoView(tab: HTMLElement, container: HTMLElement): void {
     const tabRect = tab.getBoundingClientRect();
@@ -476,13 +464,13 @@ export default class VTableSheet {
   private initSheets(): void {
     if (this.options.sheets && this.options.sheets.length > 0) {
       // 添加所有sheet
-      this.options.sheets.forEach(sheetDefine => {
+      this.options.sheets.forEach((sheetDefine: ISheetDefine) => {
         this.sheetManager.addSheet(sheetDefine);
       });
 
       // 找到active的sheet
       let activeSheetKey = '';
-      const activeSheet = this.options.sheets.find(sheet => sheet.active);
+      const activeSheet = this.options.sheets.find((sheet: ISheetDefine) => sheet.active);
       if (activeSheet) {
         activeSheetKey = activeSheet.sheetKey;
       } else {
@@ -526,6 +514,7 @@ export default class VTableSheet {
 
   /**
    * 激活指定sheet
+   * @param sheetKey sheet的key
    */
   private activateSheet(sheetKey: string): void {
     // 设置活动sheet
@@ -561,8 +550,9 @@ export default class VTableSheet {
 
   /**
    * 创建sheet实例
+   * @param sheetDefine sheet的定义
    */
-  private createSheetInstance(sheetDefine: SheetDefine): Sheet {
+  private createSheetInstance(sheetDefine: ISheetDefine): Sheet {
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
     const contentHeight = this.contentElement.clientHeight;
@@ -589,7 +579,7 @@ export default class VTableSheet {
     sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
 
     // 在公式管理器中添加这个sheet
-    this.formulaManager.addSheet(sheetDefine.key, sheetDefine.data as any[][]);
+    this.formulaManager.addSheet(sheetDefine.sheetKey, sheetDefine.data as any[][]);
 
     return sheet;
   }
@@ -604,7 +594,7 @@ export default class VTableSheet {
     const title = `Sheet ${sheetCount + 1}`;
 
     // 创建新sheet配置
-    const newSheet: SheetDefine = {
+    const newSheet: ISheetDefine = {
       sheetKey: key,
       sheetTitle: title,
       columnCount: 20,
@@ -624,7 +614,7 @@ export default class VTableSheet {
   /**
    * 处理单元格选中事件
    */
-  private handleCellSelected(event: any): void {
+  private handleCellSelected(): void {
     // 更新公式栏
     this.updateFormulaBar();
   }
@@ -686,6 +676,7 @@ export default class VTableSheet {
 
   /**
    * 处理公式输入
+   * @param event 事件
    */
   private handleFormulaInput(event: Event): void {
     if (!this.activeSheet) {
@@ -714,6 +705,7 @@ export default class VTableSheet {
 
   /**
    * 处理公式输入框键盘事件
+   * @param event 事件
    */
   private handleFormulaKeydown(event: KeyboardEvent): void {
     if (!this.activeSheet) {
@@ -786,6 +778,7 @@ export default class VTableSheet {
 
   /**
    * 处理单元格值变更事件
+   * @param event 事件
    */
   private handleCellValueChanged(event: CellValueChangedEvent): void {
     if (!this.activeSheet || this.isUpdatingFromFormula) {
@@ -890,9 +883,9 @@ export default class VTableSheet {
   /**
    * 保存所有数据为配置
    */
-  saveToConfig(): VTableSheetOptions {
+  saveToConfig(): IVTableSheetOptions {
     // 收集所有sheet的数据
-    const sheets: SheetDefine[] = [];
+    const sheets: ISheetDefine[] = [];
 
     this.sheetManager.getAllSheets().forEach(sheetDefine => {
       const instance = this.sheetInstances.get(sheetDefine.sheetKey);
@@ -969,6 +962,12 @@ export default class VTableSheet {
       this.rootElement.parentNode.removeChild(this.rootElement);
     }
   }
+
+  /**
+   * 导出指定sheet的数据
+   * @param sheetKey sheet的key
+   * @returns 数据
+   */
   exportData(sheetKey: string): any[][] {
     const sheet = this.sheetInstances.get(sheetKey);
     if (!sheet) {
@@ -976,6 +975,11 @@ export default class VTableSheet {
     }
     return sheet.getData();
   }
+
+  /**
+   * 导出所有sheet的数据
+   * @returns 数据
+   */
   exportAllData(): any[][] {
     const sheets = Array.from(this.sheetInstances.values());
     return sheets.map(sheet => sheet.getData());

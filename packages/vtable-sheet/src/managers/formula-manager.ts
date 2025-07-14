@@ -1,7 +1,7 @@
 import type { SimpleCellAddress } from 'hyperformula';
 import { HyperFormula, CellError } from 'hyperformula';
 import type VTableSheet from '../components/vtable-sheet';
-import type { FormulaCell, FormulaResult } from '../ts-types';
+import type { FormulaCell, FormulaResult } from '../ts-types/formula';
 
 /**
  * 标准HyperFormula配置
@@ -24,19 +24,22 @@ const DEFAULT_HYPERFORMULA_CONFIG = {
   timeFormats: ['hh:mm', 'hh:mm:ss.s']
 };
 
-/**
- * 增强的公式管理器 - 使用HyperFormula实现Excel兼容的公式计算
- */
 export class FormulaManager {
-  private vtableSheet: VTableSheet;
+  /** Sheet实例 */
+  private sheet: VTableSheet;
+  /** HyperFormula实例 */
   private hyperFormula: HyperFormula;
+  /** 工作表映射 */
   private sheetMapping: Map<string, number> = new Map();
+  /** 反向工作表映射 */
   private reverseSheetMapping: Map<number, string> = new Map();
+  /** 是否已初始化 */
   private isInitialized = false;
+  /** 下一个工作表ID */
   private nextSheetId = 0;
 
-  constructor(vtableSheet: VTableSheet) {
-    this.vtableSheet = vtableSheet;
+  constructor(sheet: VTableSheet) {
+    this.sheet = sheet;
     this.initializeHyperFormula();
   }
 
@@ -55,6 +58,9 @@ export class FormulaManager {
 
   /**
    * 添加新工作表 - 正确的多表格支持
+   * @param sheetKey 工作表键
+   * @param data 工作表数据
+   * @returns 工作表ID
    */
   addSheet(sheetKey: string, data?: any[][]): number {
     this.ensureInitialized();
@@ -96,6 +102,8 @@ export class FormulaManager {
 
   /**
    * 标准化工作表数据
+   * @param data 工作表数据
+   * @returns 标准化后的工作表数据
    */
   private normalizeSheetData(data?: any[][]): any[][] {
     if (!data || data.length === 0) {
@@ -115,6 +123,7 @@ export class FormulaManager {
 
   /**
    * 移除工作表
+   * @param sheetKey 工作表键
    */
   removeSheet(sheetKey: string): void {
     const sheetId = this.sheetMapping.get(sheetKey);
@@ -139,6 +148,8 @@ export class FormulaManager {
 
   /**
    * 重命名工作表
+   * @param oldKey 旧工作表键
+   * @param newKey 新工作表键
    */
   renameSheet(oldKey: string, newKey: string): void {
     const sheetId = this.sheetMapping.get(oldKey);
@@ -162,6 +173,8 @@ export class FormulaManager {
 
   /**
    * 获取工作表ID
+   * @param sheetKey 工作表键
+   * @returns 工作表ID
    */
   private getSheetId(sheetKey: string): number {
     const sheetId = this.sheetMapping.get(sheetKey);
@@ -174,6 +187,8 @@ export class FormulaManager {
 
   /**
    * 设置单元格内容
+   * @param cell 单元格
+   * @param value 值
    */
   setCellContent(cell: FormulaCell, value: any): void {
     this.ensureInitialized();
@@ -195,6 +210,8 @@ export class FormulaManager {
 
   /**
    * 获取单元格值
+   * @param cell 单元格
+   * @returns 单元格值
    */
   getCellValue(cell: FormulaCell): FormulaResult {
     this.ensureInitialized();
@@ -224,6 +241,8 @@ export class FormulaManager {
 
   /**
    * 获取单元格公式
+   * @param cell 单元格
+   * @returns 单元格公式
    */
   getCellFormula(cell: FormulaCell): string | undefined {
     this.ensureInitialized();
@@ -245,6 +264,8 @@ export class FormulaManager {
 
   /**
    * 检查是否为公式单元格
+   * @param cell 单元格
+   * @returns 是否为公式单元格
    */
   isCellFormula(cell: FormulaCell): boolean {
     this.ensureInitialized();
@@ -266,6 +287,8 @@ export class FormulaManager {
 
   /**
    * 获取依赖此单元格的所有单元格
+   * @param cell 单元格
+   * @returns 依赖此单元格的所有单元格
    */
   getCellDependents(cell: FormulaCell): FormulaCell[] {
     this.ensureInitialized();
@@ -295,6 +318,8 @@ export class FormulaManager {
 
   /**
    * 获取此单元格依赖的所有单元格
+   * @param cell 单元格
+   * @returns 此单元格依赖的所有单元格
    */
   getCellPrecedents(cell: FormulaCell): FormulaCell[] {
     this.ensureInitialized();
@@ -324,6 +349,7 @@ export class FormulaManager {
 
   /**
    * 批量更新单元格
+   * @param changes 更新内容
    */
   batchUpdate(changes: Array<{ cell: FormulaCell; value: any }>): void {
     this.ensureInitialized();
@@ -348,6 +374,9 @@ export class FormulaManager {
 
   /**
    * 添加行
+   * @param sheetKey 工作表键
+   * @param rowIndex 行索引
+   * @param numberOfRows 添加的行数
    */
   addRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
     this.ensureInitialized();
@@ -363,6 +392,9 @@ export class FormulaManager {
 
   /**
    * 删除行
+   * @param sheetKey 工作表键
+   * @param rowIndex 行索引
+   * @param numberOfRows 删除的行数
    */
   removeRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
     this.ensureInitialized();
@@ -378,6 +410,9 @@ export class FormulaManager {
 
   /**
    * 添加列
+   * @param sheetKey 工作表键
+   * @param columnIndex 列索引
+   * @param numberOfColumns 添加的列数
    */
   addColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
@@ -393,6 +428,9 @@ export class FormulaManager {
 
   /**
    * 删除列
+   * @param sheetKey 工作表键
+   * @param columnIndex 列索引
+   * @param numberOfColumns 删除的列数
    */
   removeColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
@@ -408,6 +446,8 @@ export class FormulaManager {
 
   /**
    * 获取工作表序列化数据
+   * @param sheetKey 工作表键
+   * @returns 工作表序列化数据
    */
   getSheetSerialized(sheetKey: string): any[][] {
     this.ensureInitialized();
@@ -423,6 +463,8 @@ export class FormulaManager {
 
   /**
    * 设置工作表内容
+   * @param sheetKey 工作表键
+   * @param data 工作表数据
    */
   setSheetContent(sheetKey: string, data: any[][]): void {
     this.ensureInitialized();
@@ -439,6 +481,7 @@ export class FormulaManager {
 
   /**
    * 检查循环引用
+   * @returns 是否存在循环引用
    */
   hasCircularReference(): boolean {
     try {
@@ -452,6 +495,7 @@ export class FormulaManager {
 
   /**
    * 获取可用函数列表 - 静态列表
+   * @returns 可用函数列表
    */
   getAvailableFunctions(): string[] {
     // 返回常用的Excel函数列表
@@ -504,6 +548,8 @@ export class FormulaManager {
 
   /**
    * 验证公式语法
+   * @param formula 公式
+   * @returns 验证结果
    */
   validateFormula(formula: string): { isValid: boolean; error?: string } {
     try {
@@ -520,6 +566,8 @@ export class FormulaManager {
 
   /**
    * 计算单个公式而不影响工作表
+   * @param formula 公式
+   * @returns 计算结果
    */
   calculateFormula(formula: string): { value: any; error?: string } {
     try {
@@ -538,6 +586,7 @@ export class FormulaManager {
 
   /**
    * 暂停自动计算
+   * @returns 是否成功
    */
   suspendEvaluation(): void {
     try {
@@ -641,6 +690,11 @@ export class FormulaManager {
 
   /**
    * 复制/移动单元格范围 - 简化版本
+   * @param sourceSheet 源工作表
+   * @param sourceRange 源范围
+   * @param targetSheet 目标工作表
+   * @param targetRow 目标行
+   * @param targetCol 目标列
    */
   copyRange(
     sourceSheet: string,

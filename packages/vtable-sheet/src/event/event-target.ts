@@ -4,17 +4,15 @@ interface EventRecord {
   [key: string]: EventHandler[];
 }
 
-/**
- * Basic event target implementation for handling event subscriptions
- */
 export class EventTarget {
+  /** 事件记录 */
   private events: EventRecord = {};
 
   /**
-   * Adds an event listener for the specified event type
-   * @param type Event type
-   * @param handler Event handler function
-   * @returns this, for chaining
+   * 添加事件监听器
+   * @param type 事件类型
+   * @param handler 事件处理函数
+   * @returns 返回this，用于链式调用
    */
   on(type: string, handler: EventHandler): this {
     if (!this.events[type]) {
@@ -26,10 +24,10 @@ export class EventTarget {
   }
 
   /**
-   * Removes an event listener for the specified event type
-   * @param type Event type
-   * @param handler Event handler function to remove
-   * @returns this, for chaining
+   * 移除事件监听器
+   * @param type 事件类型
+   * @param handler 事件处理函数
+   * @returns 返回this，用于链式调用
    */
   off(type: string, handler?: EventHandler): this {
     if (!this.events[type]) {
@@ -37,10 +35,10 @@ export class EventTarget {
     }
 
     if (!handler) {
-      // Remove all handlers for this event type
+      // 移除所有事件处理函数
       delete this.events[type];
     } else {
-      // Remove specific handler
+      // 移除特定事件处理函数
       const idx = this.events[type].indexOf(handler);
       if (idx >= 0) {
         this.events[type].splice(idx, 1);
@@ -55,17 +53,17 @@ export class EventTarget {
   }
 
   /**
-   * Fires an event of the specified type
-   * @param type Event type
-   * @param args Arguments to pass to the event handlers
-   * @returns this, for chaining
+   * 触发事件
+   * @param type 事件类型
+   * @param args 传递给事件处理函数的参数
+   * @returns 返回this，用于链式调用
    */
   fire(type: string, ...args: any[]): this {
     if (!this.events[type]) {
       return this;
     }
 
-    // Create a copy of the handlers array to prevent issues if handlers are added/removed during execution
+    // 创建一个处理函数的副本，以防止在执行期间添加/移除处理函数时出现问题
     const handlers = [...this.events[type]];
 
     for (const handler of handlers) {
@@ -80,10 +78,10 @@ export class EventTarget {
   }
 
   /**
-   * Adds a one-time event listener that is automatically removed after it's called
-   * @param type Event type
-   * @param handler Event handler function
-   * @returns this, for chaining
+   * 添加一次性事件监听器，在调用后自动移除
+   * @param type 事件类型
+   * @param handler 事件处理函数
+   * @returns 返回this，用于链式调用
    */
   once(type: string, handler: EventHandler): this {
     const onceHandler = (...args: any[]) => {
@@ -95,8 +93,8 @@ export class EventTarget {
   }
 
   /**
-   * Removes all event listeners
-   * @returns this, for chaining
+   * 移除所有事件监听器
+   * @returns 返回this，用于链式调用
    */
   removeAllListeners(): this {
     this.events = {};
@@ -104,17 +102,17 @@ export class EventTarget {
   }
 
   /**
-   * Gets all registered event types
-   * @returns Array of event types
+   * 获取所有注册的事件类型
+   * @returns 事件类型数组
    */
   eventNames(): string[] {
     return Object.keys(this.events);
   }
 
   /**
-   * Gets the number of listeners for a specific event type
-   * @param type Event type
-   * @returns Number of listeners
+   * 获取特定事件类型的监听器数量
+   * @param type 事件类型
+   * @returns 监听器数量
    */
   listenerCount(type: string): number {
     return this.events[type]?.length || 0;
