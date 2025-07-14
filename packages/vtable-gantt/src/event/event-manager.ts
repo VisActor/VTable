@@ -780,9 +780,7 @@ function bindContainerDomListener(eventManager: EventManager) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealResizeTableWidth(e);
-          console.log('resize table width');
         } else if (stateManager.isMoveingTaskBar()) {
-          console.log('move task bar');
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarMove(e);
@@ -790,7 +788,6 @@ function bindContainerDomListener(eventManager: EventManager) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarResize(e);
-          console.log('resize task bar');
         } else if (stateManager.isCreatingDependencyLine()) {
           // stateManager.hideDependencyLinkSelectedLine();
           stateManager.dealCreateDependencyLine(e);
