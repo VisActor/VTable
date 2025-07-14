@@ -39,12 +39,14 @@ export class MenuHandler {
   /**
    * 处理复制操作
    */
-  handleCopy(table: VTable.ListTable): void {
+  handleCopy(table: VTable.ListTable, resetCut: boolean = true): void {
     console.log('执行复制操作');
     try {
-      // 记录剪切状态为false
-      this.isCut = false;
-      this.cutCellRange = null;
+      if (resetCut) {
+        // 重置
+        this.isCut = false;
+        this.cutCellRange = null;
+      }
 
       // 直接调用表格内部的复制处理逻辑
       if (table.eventManager) {
@@ -71,13 +73,12 @@ export class MenuHandler {
    */
   handleCut(table: VTable.ListTable): void {
     console.log('执行剪切操作');
-    // 先执行复制
-    this.handleCopy(table);
-
     // 记录下是剪切操作，等粘贴的时候清空选中区域的内容
     this.isCut = true;
     this.cutOperationTime = Date.now();
     this.cutCellRange = table.getSelectedCellInfos();
+    // 先执行复制
+    this.handleCopy(table, false);
 
     // 设置自动超时，防止剪切状态无限期保持
     if (this.clipboardCheckTimer) {
