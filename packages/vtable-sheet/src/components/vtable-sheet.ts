@@ -10,6 +10,7 @@ import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
+import { checkTabTitle } from '../tools';
 
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
@@ -504,7 +505,7 @@ export default class VTableSheet {
       targetTab.classList.remove('editing');
       targetTab.setAttribute('contenteditable', 'false');
       const newTitle = targetTab.textContent?.trim();
-      if (!commit || !newTitle || newTitle === originalTitle || !this.renameSheet(sheetKey, newTitle)) {
+      if (!commit || newTitle === originalTitle || !this.renameSheet(sheetKey, newTitle)) {
         targetTab.textContent = originalTitle;
         return;
       }
@@ -522,6 +523,11 @@ export default class VTableSheet {
   private renameSheet(sheetKey: string, newTitle: string): boolean {
     const sheet = this.sheetManager.getSheet(sheetKey);
     if (!sheet) {
+      return false;
+    }
+    const error = checkTabTitle(newTitle);
+    if (error) {
+      showSnackbar(error, 1300);
       return false;
     }
     const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
