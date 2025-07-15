@@ -184,4 +184,43 @@ export default class SheetManager implements ISheetManager {
   offActiveSheetChange(callback: (sheet: ISheetDefine) => void): void {
     // TODO: Implement event handling
   }
+
+  /**
+   * 移动sheet的位置
+   * @param sourceKey 源sheet的key
+   * @param targetKey 目标sheet的key
+   */
+  reorderSheet(sourceKey: string, targetKey: string, position: 'left' | 'right'): void {
+    if (sourceKey === targetKey) {
+      console.warn('Source and target sheet keys cannot be the same');
+      return;
+    }
+    if (!this._sheets.has(sourceKey)) {
+      throw new Error(`Source sheet '${sourceKey}' does not exist`);
+    }
+    if (!this._sheets.has(targetKey)) {
+      throw new Error(`Target sheet '${targetKey}' does not exist`);
+    }
+    // 计算索引
+    const sheetsArray = Array.from(this._sheets.entries());
+    const sourceIndex = sheetsArray.findIndex(([key]) => key === sourceKey);
+    const targetIndex = sheetsArray.findIndex(([key]) => key === targetKey);
+    if (sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex) {
+      return;
+    }
+    // 计算插入位置
+    let insertIndex = position === 'left' ? targetIndex : targetIndex + 1;
+    // 调整索引
+    if (sourceIndex < insertIndex) {
+      insertIndex--;
+    }
+    // 重排序
+    const [movedSheet] = sheetsArray.splice(sourceIndex, 1);
+    sheetsArray.splice(insertIndex, 0, movedSheet);
+    // 清空并重新添加
+    this._sheets.clear();
+    sheetsArray.forEach(([key, sheet]) => {
+      this._sheets.set(key, sheet);
+    });
+  }
 }

@@ -8,8 +8,8 @@ register.editor('input', input_editor);
 register.editor('date-input', date_input_editor);
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
-    width: 1528,
-    height: 883,
+    // width: 1528,
+    // height: 883,
     showFormulaBar: true,
     showSheetTab: true,
     defaultRowHeight: 25,

@@ -8,8 +8,8 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import { resizeSheetUI } from '../core/resize-helper';
 import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent } from '../ts-types';
+import SheetTabDragManager from '../managers/tab-drag-manager';
 
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
@@ -41,6 +41,9 @@ export default class VTableSheet {
   /** 防止递归调用的标志 */
   private isUpdatingFromFormula = false;
 
+  // 新增：拖拽管理器实例
+  private dragManager: SheetTabDragManager;
+
   /**
    * 构造函数
    * @param options 配置选项
@@ -54,6 +57,7 @@ export default class VTableSheet {
     this.formulaManager = new FormulaManager(this);
     this.filterManager = new FilterManager(this);
     this.eventManager = new EventManager(this);
+    this.dragManager = new SheetTabDragManager(this);
     // 初始化UI
     this.initUI();
 
@@ -287,6 +291,12 @@ export default class VTableSheet {
     tabsContainer.addEventListener('scroll', () => this.updateFadeEffects(tabsContainer, fadeLeft, fadeRight));
     sheetTab.appendChild(tabsContainer);
 
+    // 创建插入指示器
+    const insertIndicator = document.createElement('div');
+    insertIndicator.className = 'vtable-sheet-insert-indicator';
+    insertIndicator.style.display = 'none';
+    tabsContainer.appendChild(insertIndicator);
+
     // 创建右侧渐变效果
     const fadeRight = document.createElement('div');
     fadeRight.className = 'vtable-sheet-fade-right';
@@ -419,7 +429,7 @@ export default class VTableSheet {
    * 更新sheet切换标签
    * @param tabsContainer 标签容器
    */
-  private updateSheetTabs(
+  updateSheetTabs(
     tabsContainer: HTMLElement = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container')
   ): void {
     if (!tabsContainer) {
@@ -441,7 +451,7 @@ export default class VTableSheet {
   /**
    * 创建tab栏标签项
    */
-  private createSheetTabItem(sheet: SheetDefine, index: number): HTMLElement {
+  private createSheetTabItem(sheet: ISheetDefine, index: number): HTMLElement {
     const tab = document.createElement('div');
     tab.className = 'vtable-sheet-tab';
     tab.dataset.key = sheet.sheetKey;
@@ -449,6 +459,9 @@ export default class VTableSheet {
     tab.title = sheet.sheetTitle;
     tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
     tab.addEventListener('dblclick', () => this.handleSheetTabDblClick(sheet.sheetKey, sheet.sheetTitle));
+    // 拖拽事件
+    tab.addEventListener('mousedown', e => this.dragManager.handleTabMouseDown(e, sheet.sheetKey));
+
     return tab;
   }
   /**
@@ -533,7 +546,7 @@ export default class VTableSheet {
   /**
    * 更新sheet列表
    */
-  private updateSheetMenu(): void {
+  updateSheetMenu(): void {
     const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
     menuContainer.innerHTML = '';
     const sheets = this.sheetManager.getAllSheets();
