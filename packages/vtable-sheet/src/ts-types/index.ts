@@ -20,7 +20,7 @@ export interface ISheetDefine {
   /** 表头定义 */
   columns?: Omit<ColumnDefine, 'field'>[];
   /** 数据 */
-  data?: CellValue[][] | Record<string, any>[];
+  data?: (CellValue[] | null)[];
   /** 是否是当前活动sheet */
   active?: boolean;
   /** 单元格样式 */

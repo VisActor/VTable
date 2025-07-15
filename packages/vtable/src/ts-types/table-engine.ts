@@ -216,6 +216,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 数据集合
    */
   records?: any[];
+  addRecordRule?: 'Array' | 'Object';
   /**
    * 传入用户实例化的数据对象
    */

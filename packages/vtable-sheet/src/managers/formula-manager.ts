@@ -96,7 +96,8 @@ export class FormulaManager {
       return sheetId;
     } catch (error) {
       console.error(`Failed to add sheet ${sheetKey}:`, error);
-      throw new Error(`Failed to add sheet: ${sheetKey}`);
+      // throw new Error(`Failed to add sheet: ${sheetKey}`);
+      return;
     }
   }
 

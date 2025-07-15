@@ -151,6 +151,7 @@ export interface ISortedMapItem {
 }
 
 export class DataSource extends EventTarget implements DataSourceAPI {
+  addRecordRule: 'Array' | 'Object' = 'Object';
   dataConfig: IListTableDataConfig;
   dataSourceObj: DataSourceParam | DataSource;
   private _get: (index: number | number[]) => any;
@@ -214,6 +215,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     hierarchyExpandLevel?: number
   ) {
     super();
+    this.addRecordRule = dataConfig?.addRecordRule || 'Object';
     this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
@@ -789,7 +791,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           if (record) {
             record[field] = formatValue;
           } else {
-            this.records[dataIndex as number] = {};
+            this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
             this.records[dataIndex as number][field] = formatValue;
           }
         }

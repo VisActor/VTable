@@ -1,6 +1,6 @@
 import type { ColumnDefine, ListTableConstructorOptions } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import type { EventEmitter } from '@visactor/vutils';
+import { isValid, type EventEmitter } from '@visactor/vutils';
 import { EventTarget } from '../event/event-target';
 import type {
   ISheetOptions,
@@ -147,7 +147,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
     let isShowTableHeader = this.options.showHeader;
     // 转换为ListTable的选项
     if (!this.options.columns) {
-      isShowTableHeader = isShowTableHeader !== undefined ? isShowTableHeader : false;
+      isShowTableHeader = isValid(isShowTableHeader) ? isShowTableHeader : false;
       this.options.columns = [];
     } else {
       for (let i = 0; i < this.options.columns.length; i++) {
@@ -160,7 +160,10 @@ export class Sheet extends EventTarget implements ISheetAPI {
 
     return {
       ...this.options,
-      container: this.element
+      records: this.options.data,
+      container: this.element,
+      showHeader: isShowTableHeader,
+      addRecordRule: 'Array'
     };
   }
 
