@@ -1,13 +1,15 @@
-import type { Sheet } from '../core/Sheet';
 import type { CellCoord } from '../ts-types';
+import type VTableSheet from '../components/vtable-sheet';
 
 export class EventManager {
-  /** Sheet实例 */
-  private sheet: Sheet;
-  /** 绑定的事件处理函数 */
+  private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
 
-  constructor(sheet: Sheet) {
+  /**
+   * Creates a new EventManager instance
+   * @param sheet The Sheet instance
+   */
+  constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.setupEventListeners();
   }
@@ -17,7 +19,7 @@ export class EventManager {
    */
   private setupEventListeners(): void {
     // 获取Sheet元素
-    const element = this.sheet.getElement();
+    const element = this.sheet.getContainer();
 
     // 设置鼠标事件
     this.addEvent(element, 'mousedown', this.handleMouseDown.bind(this));
@@ -196,7 +198,7 @@ export class EventManager {
    * 释放所有事件处理函数
    */
   release(): void {
-    const element = this.sheet.getElement();
+    const element = this.sheet.getContainer();
 
     // 移除所有事件监听器
     for (const [key, handler] of this.boundHandlers.entries()) {
