@@ -1,34 +1,30 @@
 import type { Sheet } from '../core/Sheet';
-import { dataToRecords, recordsToData } from '../sheet-helper';
+import { dataToRecords } from '../sheet-helper';
 
-/**
- * Manages data for the Sheet component
- */
 export class DataManager {
+  /** Sheet实例 */
   private sheet: Sheet;
+  /** 数据 */
   private data: any[][] = [];
+  /** 列定义 */
   private columns: any[] = [];
 
-  /**
-   * Creates a new DataManager instance
-   * @param sheet The Sheet instance
-   */
   constructor(sheet: Sheet) {
     this.sheet = sheet;
     this.initializeData();
   }
 
   /**
-   * Initializes data from the sheet options
+   * 初始化数据
    */
   private initializeData(): void {
     const options = this.sheet.options;
 
-    // Initialize data from options or create empty data
+    // 从选项中初始化数据或创建空数据
     if (options.data && Array.isArray(options.data)) {
       this.data = options.data;
     } else {
-      // Create a default empty grid
+      // 创建一个默认的空网格
       const rows = 100;
       const cols = 26;
       this.data = Array(rows)
@@ -36,11 +32,11 @@ export class DataManager {
         .map(() => Array(cols).fill(''));
     }
 
-    // Initialize columns
+    // 初始化列
     if (options.columns && Array.isArray(options.columns)) {
       this.columns = options.columns;
     } else {
-      // Create default columns
+      // 创建默认列
       this.columns = Array(this.getColCount())
         .fill(0)
         .map((_, index) => ({
@@ -51,23 +47,23 @@ export class DataManager {
   }
 
   /**
-   * Gets the number of rows
+   * 获取行数
    */
   getRowCount(): number {
     return this.data.length;
   }
 
   /**
-   * Gets the number of columns
+   * 获取列数
    */
   getColCount(): number {
     return this.data.length > 0 ? this.data[0].length : 0;
   }
 
   /**
-   * Gets the value at the specified cell coordinates
-   * @param row Row index
-   * @param col Column index
+   * 获取指定单元格的值
+   * @param row 行索引
+   * @param col 列索引
    */
   getCellValue(row: number, col: number): any {
     if (row < 0 || row >= this.getRowCount() || col < 0 || col >= this.getColCount()) {
@@ -78,10 +74,10 @@ export class DataManager {
   }
 
   /**
-   * Sets the value at the specified cell coordinates
-   * @param row Row index
-   * @param col Column index
-   * @param value Value to set
+   * 设置指定单元格的值
+   * @param row 行索引
+   * @param col 列索引
+   * @param value 要设置的值
    */
   setCellValue(row: number, col: number, value: any): void {
     if (row < 0 || row >= this.getRowCount() || col < 0 || col >= this.getColCount()) {
@@ -92,46 +88,46 @@ export class DataManager {
   }
 
   /**
-   * Gets the data as a 2D array
+   * 获取数据
    */
   getData(): any[][] {
     return this.data;
   }
 
   /**
-   * Sets the data as a 2D array
-   * @param data Data to set
+   * 设置数据
+   * @param data 要设置的数据
    */
   setData(data: any[][]): void {
     this.data = data;
   }
 
   /**
-   * Gets the data as VTable records
+   * 获取数据
    */
   getRecords(): any[] {
     return dataToRecords(this.data);
   }
 
   /**
-   * Gets the columns definition
+   * 获取列定义
    */
   getColumns(): any[] {
     return this.columns;
   }
 
   /**
-   * Sets the columns definition
-   * @param columns Columns to set
+   * 设置列定义
+   * @param columns 要设置的列定义
    */
   setColumns(columns: any[]): void {
     this.columns = columns;
   }
 
   /**
-   * Inserts a row at the specified index
-   * @param index Row index
-   * @param data Row data
+   * 插入行
+   * @param index 行索引
+   * @param data 行数据
    */
   insertRow(index: number, data?: any[]): void {
     if (index < 0 || index > this.getRowCount()) {
@@ -143,8 +139,8 @@ export class DataManager {
   }
 
   /**
-   * Deletes a row at the specified index
-   * @param index Row index
+   * 删除行
+   * @param index 行索引
    */
   deleteRow(index: number): void {
     if (index < 0 || index >= this.getRowCount()) {
@@ -155,9 +151,9 @@ export class DataManager {
   }
 
   /**
-   * Inserts a column at the specified index
-   * @param index Column index
-   * @param data Column data
+   * 插入列
+   * @param index 列索引
+   * @param data 列数据
    */
   insertColumn(index: number, data?: any[]): void {
     if (index < 0 || index > this.getColCount()) {
@@ -166,18 +162,18 @@ export class DataManager {
 
     const colData = data || Array(this.getRowCount()).fill('');
 
-    // Insert the column data into each row
+    // 插入列数据到每一行
     for (let i = 0; i < this.getRowCount(); i++) {
       this.data[i].splice(index, 0, colData[i] || '');
     }
 
-    // Update columns definition
+    // 更新列定义
     this.columns.splice(index, 0, {
       field: index.toString(),
       title: String.fromCharCode(65 + index)
     });
 
-    // Update field names for columns after the inserted column
+    // 更新插入列后的列字段名
     for (let i = index + 1; i < this.columns.length; i++) {
       this.columns[i].field = i.toString();
       this.columns[i].title = String.fromCharCode(65 + i);
@@ -185,23 +181,23 @@ export class DataManager {
   }
 
   /**
-   * Deletes a column at the specified index
-   * @param index Column index
+   * 删除列
+   * @param index 列索引
    */
   deleteColumn(index: number): void {
     if (index < 0 || index >= this.getColCount()) {
       return;
     }
 
-    // Remove the column from each row
+    // 从每一行中删除列
     for (let i = 0; i < this.getRowCount(); i++) {
       this.data[i].splice(index, 1);
     }
 
-    // Update columns definition
+    // 更新列定义
     this.columns.splice(index, 1);
 
-    // Update field names for columns after the deleted column
+    // 更新删除列后的列字段名
     for (let i = index; i < this.columns.length; i++) {
       this.columns[i].field = i.toString();
       this.columns[i].title = String.fromCharCode(65 + i);
@@ -209,15 +205,15 @@ export class DataManager {
   }
 
   /**
-   * Imports data from a CSV string
-   * @param csv CSV string
+   * 从CSV导入数据
+   * @param csv CSV字符串
    */
   importFromCSV(csv: string): void {
     if (!csv) {
       return;
     }
 
-    // Basic CSV parsing
+    // 基本CSV解析
     const rows = csv.split('\n');
     const newData: any[][] = [];
 
@@ -230,7 +226,7 @@ export class DataManager {
   }
 
   /**
-   * Exports data to a CSV string
+   * 导出数据到CSV字符串
    */
   exportToCSV(): string {
     const rows: string[] = [];

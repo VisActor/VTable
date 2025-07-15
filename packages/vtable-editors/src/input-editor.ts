@@ -11,6 +11,9 @@ export class InputEditor implements IEditor {
   container: HTMLElement;
   successCallback?: () => void;
   element?: HTMLInputElement;
+  table?: any;
+  col?: number;
+  row?: number;
 
   constructor(editorConfig?: InputEditorConfig) {
     this.editorConfig = editorConfig;
@@ -57,6 +60,15 @@ export class InputEditor implements IEditor {
     input.addEventListener('wheel', e => {
       e.preventDefault();
     });
+
+    // Add input event listener for real-time sync
+    input.addEventListener('input', e => {
+      const target = e.target as HTMLInputElement;
+      if (this.container && this.table) {
+        const value = target.value;
+        this.table.changeCellValue(this.col, this.row, value);
+      }
+    });
   }
 
   setValue(value: string) {
@@ -67,9 +79,12 @@ export class InputEditor implements IEditor {
     return this.element.value;
   }
 
-  onStart({ value, referencePosition, container, endEdit }: EditContext<string>) {
+  onStart({ value, referencePosition, container, endEdit, table, col, row }: EditContext<string>) {
     this.container = container;
     this.successCallback = endEdit;
+    this.table = table;
+    this.col = col;
+    this.row = row;
     if (!this.element) {
       this.createElement();
 

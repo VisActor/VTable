@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: sync formula when user select\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "ucccth@gmail.com"
+}
