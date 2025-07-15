@@ -1,9 +1,6 @@
 import type { CellCoord } from '../ts-types';
-import type VTableSheet from '../components/VTableSheet';
+import type VTableSheet from '../components/vtable-sheet';
 
-/**
- * Manages events and event handlers for the Sheet component
- */
 export class EventManager {
   private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
@@ -18,40 +15,40 @@ export class EventManager {
   }
 
   /**
-   * Sets up event listeners for the sheet element
+   * 设置事件监听
    */
   private setupEventListeners(): void {
-    // Get the sheet element
+    // 获取Sheet元素
     const element = this.sheet.getContainer();
 
-    // Set up mouse events
+    // 设置鼠标事件
     this.addEvent(element, 'mousedown', this.handleMouseDown.bind(this));
     this.addEvent(element, 'mousemove', this.handleMouseMove.bind(this));
     this.addEvent(element, 'mouseup', this.handleMouseUp.bind(this));
     this.addEvent(element, 'dblclick', this.handleDoubleClick.bind(this));
 
-    // Set up keyboard events
+    // 设置键盘事件
     this.addEvent(element, 'keydown', this.handleKeyDown.bind(this));
     this.addEvent(element, 'keyup', this.handleKeyUp.bind(this));
 
-    // Set up clipboard events
+    // 设置剪贴板事件
     this.addEvent(element, 'copy', this.handleCopy.bind(this));
     this.addEvent(element, 'paste', this.handlePaste.bind(this));
     this.addEvent(element, 'cut', this.handleCut.bind(this));
 
-    // Set up focus events
+    // 设置焦点事件
     this.addEvent(element, 'focus', this.handleFocus.bind(this));
     this.addEvent(element, 'blur', this.handleBlur.bind(this));
 
-    // Window resize event
+    // 窗口大小变化事件
     this.addEvent(window, 'resize', this.handleWindowResize.bind(this));
   }
 
   /**
-   * Adds an event listener and stores the bound handler for later removal
-   * @param target Event target
-   * @param eventType Event type
-   * @param handler Event handler
+   * 添加事件监听
+   * @param target 事件目标
+   * @param eventType 事件类型
+   * @param handler 事件处理函数
    */
   private addEvent(target: EventTarget, eventType: string, handler: EventListener): void {
     target.addEventListener(eventType, handler);
@@ -59,138 +56,138 @@ export class EventManager {
   }
 
   /**
-   * Handles mouse down events
-   * @param event Mouse event
+   * 处理鼠标按下事件
+   * @param event 鼠标事件
    */
   private handleMouseDown(event: MouseEvent): void {
-    // TODO: Implement cell selection logic
-    // 1. Get the cell coordinates from the mouse position
-    // 2. Start cell selection
-    // 3. Update UI to show selection
+    // TODO: 实现单元格选择逻辑
+    // 1. 从鼠标位置获取单元格坐标
+    // 2. 开始单元格选择
+    // 3. 更新UI以显示选择
   }
 
   /**
-   * Handles mouse move events
-   * @param event Mouse event
+   * 处理鼠标移动事件
+   * @param event 鼠标事件
    */
   private handleMouseMove(event: MouseEvent): void {
-    // TODO: Implement cell selection dragging
-    // 1. If selection is active, extend selection to current cell
-    // 2. Update UI to show selection
+    // TODO: 实现单元格选择拖拽
+    // 1. 如果选择是活动的，则扩展选择到当前单元格
+    // 2. 更新UI以显示选择
   }
 
   /**
-   * Handles mouse up events
-   * @param event Mouse event
+   * 处理鼠标抬起事件
+   * @param event 鼠标事件
    */
   private handleMouseUp(event: MouseEvent): void {
-    // TODO: Implement end of cell selection
-    // 1. Finalize the selection
-    // 2. Update UI
-    // 3. Trigger selection change event
+    // TODO: 实现单元格选择结束
+    // 1. 最终确定选择
+    // 2. 更新UI
+    // 3. 触发选择变化事件
   }
 
   /**
-   * Handles double click events
-   * @param event Mouse event
+   * 处理双击事件
+   * @param event 鼠标事件
    */
   private handleDoubleClick(event: MouseEvent): void {
-    // TODO: Start cell editing
-    // 1. Get cell coordinates
-    // 2. Switch cell to edit mode
+    // TODO: 开始单元格编辑
+    // 1. 获取单元格坐标
+    // 2. 切换单元格到编辑模式
   }
 
   /**
-   * Handles key down events
-   * @param event Keyboard event
+   * 处理键盘按下事件
+   * @param event 键盘事件
    */
   private handleKeyDown(event: KeyboardEvent): void {
-    // TODO: Handle keyboard navigation and commands
-    // Examples:
-    // - Arrow keys: Move selection
-    // - Enter: Start editing or move down
-    // - Tab: Move right
-    // - Shift+Tab: Move left
-    // - Ctrl/Cmd+C: Copy
-    // - Ctrl/Cmd+V: Paste
-    // - Ctrl/Cmd+Z: Undo
-    // - Ctrl/Cmd+Y: Redo
+    // TODO: 处理键盘导航和命令
+    // 示例:
+    // - 箭头键: 移动选择
+    // - Enter: 开始编辑或移动到下一行
+    // - Tab: 移动到右侧
+    // - Shift+Tab: 移动到左侧
+    // - Ctrl/Cmd+C: 复制
+    // - Ctrl/Cmd+V: 粘贴
+    // - Ctrl/Cmd+Z: 撤销
+    // - Ctrl/Cmd+Y: 重做
   }
 
   /**
-   * Handles key up events
-   * @param event Keyboard event
+   * 处理键盘抬起事件
+   * @param event 键盘事件
    */
   private handleKeyUp(event: KeyboardEvent): void {
-    // Handle any key up specific logic
+    // TODO: 处理键盘抬起事件
   }
 
   /**
-   * Handles copy events
-   * @param event Clipboard event
+   * 处理复制事件
+   * @param event 剪贴板事件
    */
   private handleCopy(event: ClipboardEvent): void {
-    // TODO: Copy selected cells to clipboard
-    // 1. Get selected range
-    // 2. Format data for clipboard
-    // 3. Set clipboard data
+    // TODO: 复制选中的单元格到剪贴板
+    // 1. 获取选中的范围
+    // 2. 格式化数据到剪贴板
+    // 3. 设置剪贴板数据
   }
 
   /**
-   * Handles paste events
-   * @param event Clipboard event
+   * 处理粘贴事件
+   * @param event 剪贴板事件
    */
   private handlePaste(event: ClipboardEvent): void {
-    // TODO: Paste clipboard data to selected cells
-    // 1. Get clipboard data
-    // 2. Parse data
-    // 3. Apply to selected range
+    // TODO: 粘贴剪贴板数据到选中的单元格
+    // 1. 获取剪贴板数据
+    // 2. 解析数据
+    // 3. 应用到选中的范围
   }
 
   /**
-   * Handles cut events
-   * @param event Clipboard event
+   * 处理剪切事件
+   * @param event 剪贴板事件
    */
   private handleCut(event: ClipboardEvent): void {
-    // TODO: Cut selected cells to clipboard
-    // 1. Copy selected cells to clipboard
-    // 2. Clear selected cells
+    // TODO: 剪切选中的单元格到剪贴板
+    // 1. 复制选中的单元格到剪贴板
+    // 2. 清除选中的单元格
   }
 
   /**
-   * Handles focus events
-   * @param event Focus event
+   * 处理焦点事件
+   * @param event 焦点事件
    */
   private handleFocus(event: FocusEvent): void {
-    // Handle focus-related logic
+    // TODO: 处理焦点相关逻辑
   }
 
   /**
-   * Handles blur events
-   * @param event Focus event
+   * 处理失去焦点事件
+   * @param event 焦点事件
    */
   private handleBlur(event: FocusEvent): void {
-    // Handle blur-related logic
+    // TODO: 处理失去焦点相关逻辑
   }
 
   /**
-   * Handles window resize events
-   * @param event Resize event
+   * 处理窗口大小变化事件
+   * @param event 大小变化事件
    */
   private handleWindowResize(event: UIEvent): void {
-    // Update sheet size on window resize
+    // 更新Sheet大小
     this.sheet.resize();
   }
 
   /**
-   * Converts mouse coordinates to cell coordinates
-   * @param x Mouse X coordinate
-   * @param y Mouse Y coordinate
-   * @returns Cell coordinates
+   * 将鼠标坐标转换为单元格坐标
+   * @param x 鼠标X坐标
+   * @param y 鼠标Y坐标
+   * @returns 单元格坐标
    */
   private getCellFromMouseCoords(x: number, y: number): CellCoord {
-    // TODO: Implement conversion of mouse coordinates to cell coordinates
-    // This is a placeholder implementation
+    // TODO: 实现鼠标坐标转换为单元格坐标
+    // 这是一个占位符实现
     return {
       row: 0,
       col: 0
@@ -198,12 +195,12 @@ export class EventManager {
   }
 
   /**
-   * Releases all event handlers
+   * 释放所有事件处理函数
    */
   release(): void {
     const element = this.sheet.getContainer();
 
-    // Remove all event listeners
+    // 移除所有事件监听器
     for (const [key, handler] of this.boundHandlers.entries()) {
       const eventType = key.split('-')[0];
 
@@ -214,7 +211,7 @@ export class EventManager {
       }
     }
 
-    // Clear the map
+    // 清空事件处理函数映射
     this.boundHandlers.clear();
   }
 }

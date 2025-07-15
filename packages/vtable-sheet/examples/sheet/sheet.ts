@@ -1,8 +1,5 @@
-import type { ColumnsDefine } from '@visactor/vtable';
-import { register, themes } from '@visactor/vtable';
+import { register } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import type { GanttConstructorOptions, TYPES } from '@visactor/vtable-gantt';
-import { Gantt } from '@visactor/vtable-gantt';
 import { VTableSheet } from '../../src/index';
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
@@ -17,8 +14,6 @@ export function createTable() {
     showSheetTab: true,
     defaultRowHeight: 25,
     defaultColWidth: 100,
-    frozenRowCount: 0,
-    frozenColCount: 0,
     sheets: [
       {
         sheetKey: 'sheet1',
@@ -55,32 +50,17 @@ export function createTable() {
       {
         sheetKey: 'sheet3',
         sheetTitle: 'sheet3',
-        data: [
-          ['s', 'd', 'f'],
-          null,
-          {
-            '0': 't',
-            '1': 'y',
-            '2': 'u'
-          },
-          null,
-          null,
-          null,
-          null,
-          {
-            '1': '3'
-          }
-        ],
+        data: [['s', 'd', 'f'], null, ['t', 'y', 'u'], null, null, null, null, ['3']],
         active: false,
         columns: [
           {
-            title: 3
+            title: '3'
           },
           {
-            title: 4
+            title: '4'
           },
           {
-            title: 6
+            title: '6'
           }
         ]
       },
@@ -90,21 +70,9 @@ export function createTable() {
         active: true,
         showHeader: false,
         data: [
-          {
-            '0': 'r',
-            '1': 't',
-            '2': 'y'
-          },
-          {
-            '0': 'y',
-            '1': 'u',
-            '2': 'i'
-          },
-          {
-            '0': 'j',
-            '1': 'k',
-            '2': 'h'
-          }
+          ['r', 't', 'y'],
+          ['y', 'u', 'i'],
+          ['j', 'k', 'h']
         ],
         columns: []
       }

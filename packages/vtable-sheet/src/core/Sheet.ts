@@ -1,64 +1,52 @@
 import type { ColumnDefine, ListTableConstructorOptions } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
-import type { CellCoord, CellRange, CellValueChangedEvent, FormulaOptions, SelectionMode, SheetAPI } from '../ts-types';
 import { isValid, type EventEmitter } from '@visactor/vutils';
-import { getTablePlugins } from './table-plugins';
-import { editor } from '@visactor/vtable/es/register';
+import { EventTarget } from '../event/event-target';
+import type {
+  ISheetOptions,
+  ISheetAPI,
+  CellCoord,
+  CellRange,
+  CellValue,
+  CellValueChangedEvent,
+  IFormulaManagerOptions
+} from '../ts-types';
+
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
  */
 export type SheetConstructorOptions = {
-  /**
-   * Grid data in 2D array format
-   */
+  /** 表格数据 */
   data?: any[][];
-  /**
-   * Formula calculation options
-   */
-  formula?: FormulaOptions;
-  /** Sheet Key */
+  /** 公式计算选项 */
+  formula?: IFormulaManagerOptions;
+  /** Sheet 唯一标识 */
   sheetKey: string;
   /** Sheet 标题 */
   sheetTitle: string;
-  // ...其他属性
-} & Omit<ListTableConstructorOptions, 'records'>; // 排除有冲突的属性
+} & Omit<ListTableConstructorOptions, 'records'>;
 
-/**
- * VTable-Sheet is a lightweight editable spreadsheet component based on VTable
- */
-export class Sheet implements SheetAPI {
-  options: SheetConstructorOptions;
+export class Sheet extends EventTarget implements ISheetAPI {
+  /** 选项 */
+  options: ISheetOptions;
+  /** 容器 */
   container: HTMLElement;
-
+  /** 表格实例 */
   tableInstance?: ListTable;
-
+  /** 元素 */
   element: HTMLElement;
-
-  /**
-   * 选择范围
-   */
+  /** 选择范围 */
   private selection: CellRange | null = null;
-
-  /**
-   * Sheet Key
-   */
+  /** Sheet 唯一标识 */
   private sheetKey: string;
-
-  /**
-   * Sheet 标题
-   */
+  /** Sheet 标题 */
   private sheetTitle: string;
 
-  /**
-   * 事件总线
-   */
-  // private eventBus: EventEmitter;
+  /** 事件总线 */
+  private eventBus: EventEmitter;
 
-  /**
-   * Creates a new Sheet instance
-   * @param options Configuration options
-   */
-  constructor(options: SheetConstructorOptions) {
+  constructor(options: ISheetOptions) {
+    super();
     this.options = options;
     this.container = options.container;
 
@@ -76,27 +64,53 @@ export class Sheet implements SheetAPI {
     // 设置事件监听
     this._setupEventListeners();
   }
-  // 实现ListTableAPI所需的属性
 
+  /**
+   * 获取行数
+   */
   get rowCount(): number {
     const data = this.getData();
     return data ? data.length : 0;
   }
 
+  /**
+   * 获取列数
+   */
   get colCount(): number {
     const data = this.getData();
     return data && data.length > 0 ? data[0].length : 0;
   }
 
+  /**
+   * 获取行数
+   */
+  getRowCount(): number {
+    return this.rowCount;
+  }
+
+  /**
+   * 获取列数
+   */
+  getColumnCount(): number {
+    return this.colCount;
+  }
+
+  /**
+   * 获取表格数据
+   */
   get records(): any {
     return this.getData();
   }
 
+  /**
+   * 获取列定义
+   */
   get columns(): any {
     return this.options.columns || [];
   }
+
   /**
-   * Creates the root element for the sheet
+   * 创建根元素
    */
   private _createRootElement(): HTMLElement {
     const element = document.createElement('div');
@@ -115,19 +129,19 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Initializes the table instance
+   * 初始化表格实例
    */
   private _initializeTable(): void {
     // 这里应该是实际的表格初始化逻辑
     const tableOptions = this._generateTableOptions();
     this.tableInstance = new ListTable(tableOptions);
-
-    // // 获取事件总线 - 这里假设eventBus是存在的，如果不存在需要创建一个
-    // this.eventBus = (this.tableInstance as any).eventBus;
+    this.element.classList.add('vtable-excel-cursor');
+    // 获取事件总线
+    this.eventBus = (this.tableInstance as any).eventBus;
   }
 
   /**
-   * Generates VTable options from Sheet options
+   * 生成VTable选项
    */
   private _generateTableOptions(): ListTableConstructorOptions {
     let isShowTableHeader = this.options.showHeader;
@@ -148,38 +162,90 @@ export class Sheet implements SheetAPI {
       ...this.options,
       records: this.options.data,
       container: this.element,
-      showHeader: isShowTableHeader
-      // 其他特定配置
+      showHeader: isShowTableHeader,
+      addRecordRule: 'Array'
     };
   }
 
   /**
-   * Sets up event listeners
+   * 设置事件监听
    */
   private _setupEventListeners(): void {
-    // 设置事件监听器
+    if (this.tableInstance) {
+      // 监听单元格选择事件
+      this.tableInstance.on('selected_cell', (event: any) => {
+        this.handleCellSelected(event);
+      });
+
+      // 监听单元格值变更事件
+      this.tableInstance.on('change_cell_value', (event: any) => {
+        this.handleCellValueChanged(event);
+      });
+
+      // 监听双击进入编辑状态
+      this.tableInstance.on('dblclick_cell', (event: any) => {
+        this.element.classList.remove('vtable-excel-cursor');
+        this.handleCellValueChanged(event);
+      });
+
+      // 监听编辑结束事件，恢复十字光标
+
+      this.tableInstance.on('click_cell', () => {
+        this.element.classList.add('vtable-excel-cursor');
+      });
+    }
   }
 
-  // /**
-  //  * 触发事件
-  //  */
-  // protected fire(eventName: string, eventData: any): void {
-  //   if (this.eventBus) {
-  //     this.eventBus.emit(eventName, eventData);
-  //   }
-  // }
+  /**
+   * 处理单元格选择事件
+   * @param event 选择事件
+   */
+  private handleCellSelected(event: any): void {
+    // 更新选择范围
+    this.selection = {
+      startRow: event.row - 1,
+      startCol: event.col - 1,
+      endRow: event.row - 1,
+      endCol: event.col - 1
+    };
 
-  // /**
-  //  * 监听事件
-  //  */
-  // on(eventName: string, handler: (...args: any[]) => void): void {
-  //   if (this.eventBus) {
-  //     this.eventBus.on(eventName, handler);
-  //   }
-  // }
+    // 触发事件给父组件
+    this.fire('cell-selected', event);
+  }
 
   /**
-   * Updates the size of the sheet
+   * 处理单元格值变更事件
+   * @param event 值变更事件
+   */
+  private handleCellValueChanged(event: any): void {
+    this.fire('cell-value-changed', {
+      row: event.row - 1,
+      col: event.col - 1,
+      oldValue: event.rawValue,
+      newValue: event.changedValue
+    });
+  }
+
+  /**
+   * 触发事件
+   * @param eventName 事件名称
+   * @param eventData 事件数据
+   */
+  protected fireEvent(eventName: string, eventData: any): void {
+    this.fire(eventName, eventData);
+  }
+
+  /**
+   * 监听事件
+   * @param eventName 事件名称
+   * @param handler 事件处理函数
+   */
+  on(eventName: string, handler: (...args: any[]) => void): this {
+    return super.on(eventName, handler);
+  }
+
+  /**
+   * 更新Sheet大小
    */
   resize(): void {
     if (!this.element) {
@@ -200,14 +266,14 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Gets the HTML element containing the sheet
+   * 获取Sheet元素
    */
   getElement(): HTMLElement {
     return this.element;
   }
 
   /**
-   * Gets the container element
+   * 获取Sheet容器
    */
   getContainer(): HTMLElement {
     return this.container;
@@ -233,9 +299,14 @@ export class Sheet implements SheetAPI {
   setTitle(title: string): void {
     this.sheetTitle = title;
   }
+
+  /**
+   * 获取列定义
+   */
   getColumns(): ColumnDefine[] {
     return this.options.columns || [];
   }
+
   /**
    * 获取表格数据
    */
@@ -246,6 +317,7 @@ export class Sheet implements SheetAPI {
 
   /**
    * 设置表格数据
+   * @param data 表格数据
    */
   setData(data: any[][]): void {
     this.options.data = data;
@@ -255,9 +327,21 @@ export class Sheet implements SheetAPI {
     }
   }
   /**
-   * Gets the cell value at the specified coordinates
+   * 获取指定坐标的单元格值
+   * @param row 行索引
+   * @param col 列索引
    */
   getCellValue(row: number, col: number): any {
+    if (this.tableInstance) {
+      try {
+        // 尝试交换参数顺序：可能是(row, col)而不是(col, row)
+        const value = this.tableInstance.getCellValue(col + 1, row + 1);
+        return value;
+      } catch (error) {
+        console.warn('Failed to get cell value from VTable:', error);
+      }
+    }
+
     const data = this.getData();
     if (data && data[row] && data[row][col] !== undefined) {
       return data[row][col];
@@ -266,7 +350,10 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Sets the cell value at the specified coordinates
+   * 设置指定坐标的单元格值
+   * @param row 行索引
+   * @param col 列索引
+   * @param value 新值
    */
   setCellValue(row: number, col: number, value: any): void {
     const data = this.getData();
@@ -274,13 +361,17 @@ export class Sheet implements SheetAPI {
       const oldValue = data[row][col];
       data[row][col] = value;
 
+      // 更新表格实例
+      if (this.tableInstance) {
+        this.tableInstance.changeCellValue(col, row, value);
+      }
+
       // 触发事件
       const event: CellValueChangedEvent = {
         row,
         col,
         oldValue,
-        newValue: value,
-        cellAddress: this.addressFromCoord(row, col)
+        newValue: value
       };
 
       // this.fire('cellValueChanged', event);
@@ -288,23 +379,37 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Gets cell information by A1 address notation
+   * 根据A1地址获取单元格信息
+   * @param address A1地址
    */
-  getCellByAddress(address: string): { row: number; col: number; value: any } {
+  getCellByAddress(address: string): { coord: CellCoord; value: CellValue } {
     const coord = this.coordFromAddress(address);
     return {
-      row: coord.row,
-      col: coord.col,
+      coord,
       value: this.getCellValue(coord.row, coord.col)
     };
   }
 
   /**
-   * Converts row/col coordinates to A1 notation
+   * 将行/列坐标转换为A1格式
+   * @param coord 坐标
    */
-  addressFromCoord(row: number, col: number): string {
+  addressFromCoord(coord: CellCoord): string;
+  addressFromCoord(row: number, col: number): string;
+  addressFromCoord(coordOrRow: CellCoord | number, col?: number): string {
+    let row: number;
+    let colNum: number;
+
+    if (typeof coordOrRow === 'object') {
+      row = coordOrRow.row;
+      colNum = coordOrRow.col;
+    } else {
+      row = coordOrRow;
+      colNum = col!;
+    }
+
     let colStr = '';
-    let tempCol = col + 1;
+    let tempCol = colNum + 1;
 
     do {
       tempCol -= 1;
@@ -316,7 +421,8 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Converts A1 notation to row/col coordinates
+   * 将A1格式转换为行/列坐标
+   * @param address A1地址
    */
   coordFromAddress(address: string): CellCoord {
     const match = address.match(/^([A-Z]+)([0-9]+)$/);
@@ -339,14 +445,15 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Gets the current selection
+   * 获取当前选择
    */
   getSelection(): CellRange | null {
     return this.selection;
   }
 
   /**
-   * Sets the current selection
+   * 设置当前选择
+   * @param range 选择范围
    */
   setSelection(range: CellRange): void {
     this.selection = range;
@@ -354,45 +461,52 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Inserts a row at the specified index
+   * 插入行
+   * @param index 行索引
+   * @param data 数据
    */
   insertRow(index: number, data?: any[]): void {
-    // 插入行实现
+    // TODO: 插入行实现
   }
 
   /**
-   * Inserts a column at the specified index
+   * 插入列
+   * @param index 列索引
+   * @param data 数据
    */
   insertColumn(index: number, data?: any[]): void {
-    // 插入列实现
+    // TODO: 插入列实现
   }
 
   /**
-   * Deletes a row at the specified index
+   * 删除行
+   * @param index 行索引
    */
   deleteRow(index: number): void {
-    // 删除行实现
+    // TODO: 删除行实现
   }
 
   /**
-   * Deletes a column at the specified index
+   * 删除列
+   * @param index 列索引
    */
   deleteColumn(index: number): void {
-    // 删除列实现
+    // TODO: 删除列实现
   }
 
   /**
-   * Imports data from CSV
+   * 从CSV导入数据
+   * @param csv CSV数据
    */
   importFromCSV(csv: string): void {
-    // CSV导入实现
+    // TODO: CSV导入实现
   }
 
   /**
-   * Exports data to CSV
+   * 导出数据到CSV
    */
   exportToCSV(): string {
-    // CSV导出实现
+    // TODO: CSV导出实现
     return '';
   }
 
@@ -424,7 +538,7 @@ export class Sheet implements SheetAPI {
   }
 
   /**
-   * Releases resources
+   * 释放资源
    */
   release(): void {
     // 清理事件监听器
@@ -442,11 +556,103 @@ export class Sheet implements SheetAPI {
     // 清除引用
     this.tableInstance = undefined;
   }
+
+  /**
+   * 撤销
+   */
   undo(): void {
-    // 撤销实现
+    // TODO: 撤销实现
   }
 
+  /**
+   * 重做
+   */
   redo(): void {
-    // 重做实现
+    // TODO: 重做实现
+  }
+
+  /**
+   * 清除数据
+   */
+  clearData(): void {
+    this.setData([]);
+  }
+
+  /**
+   * 获取可见行范围
+   * @returns 可见行范围
+   */
+  getVisibleRowRange(): { start: number; end: number } {
+    // TODO: 实现可见行范围获取
+    return { start: 0, end: this.getRowCount() };
+  }
+
+  /**
+   * 获取可见列范围
+   * @returns 可见列范围
+   */
+  getVisibleColumnRange(): { start: number; end: number } {
+    // TODO: 实现可见列范围获取
+    return { start: 0, end: this.getColumnCount() };
+  }
+
+  /**
+   * 滚动到指定单元格
+   * @param coord 坐标
+   */
+  scrollToCell(coord: CellCoord): void {
+    // TODO: 实现滚动到单元格功能
+    console.log('Scroll to cell:', coord);
+  }
+
+  /**
+   * 获取单元格DOM元素
+   * @param coord 坐标
+   * @returns 单元格DOM元素
+   */
+  getCellElement(coord: CellCoord): HTMLElement | null {
+    // TODO: 实现获取单元格DOM元素
+    return null;
+  }
+
+  /**
+   * 获取行高
+   * @param row 行索引
+   * @returns 行高
+   */
+  getRowHeight(row: number): number {
+    // TODO: 实现获取行高
+    const defaultHeight = this.options.defaultRowHeight;
+    return typeof defaultHeight === 'number' ? defaultHeight : 25;
+  }
+
+  /**
+   * 设置行高
+   * @param row 行索引
+   * @param height 行高
+   */
+  setRowHeight(row: number, height: number): void {
+    // TODO: 实现设置行高
+    console.log('Set row height:', row, height);
+  }
+
+  /**
+   * 获取列宽
+   * @param col 列索引
+   * @returns 列宽
+   */
+  getColumnWidth(col: number): number {
+    // TODO: 实现获取列宽
+    return this.options.defaultColWidth || 100;
+  }
+
+  /**
+   * 设置列宽
+   * @param col 列索引
+   * @param width 列宽
+   */
+  setColumnWidth(col: number, width: number): void {
+    // TODO: 实现设置列宽
+    console.log('Set column width:', col, width);
   }
 }
