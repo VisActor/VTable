@@ -458,7 +458,7 @@ export default class VTableSheet {
    * @param originalTitle 原始名称
    */
   private handleSheetTabDblClick(sheetKey: string, originalTitle: string): void {
-    const targetTab = this.getSheetTabElement(sheetKey);
+    const targetTab = this.getSheetTabElementByKey(sheetKey);
     if (!targetTab) {
       return;
     }
@@ -525,7 +525,7 @@ export default class VTableSheet {
   /**
    * 获取指定sheetKey的标签元素
    */
-  private getSheetTabElement(sheetKey: string): HTMLElement | null {
+  private getSheetTabElementByKey(sheetKey: string): HTMLElement | null {
     const tabsContainer = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container') as HTMLElement;
     return tabsContainer?.querySelector(`.vtable-sheet-tab[data-key="${sheetKey}"]`) as HTMLElement;
   }
@@ -1147,6 +1147,10 @@ export default class VTableSheet {
    * resize
    */
   resize(): void {
-    resizeSheetUI(this);
+    const containerWidth = this.getContainer().clientWidth;
+    const containerHeight = this.getContainer().clientHeight;
+    this.rootElement.style.width = `${this.getOptions().width || containerWidth}px`;
+    this.rootElement.style.height = `${this.getOptions().height || containerHeight}px`;
+    this.getActiveSheet()?.resize();
   }
 }
