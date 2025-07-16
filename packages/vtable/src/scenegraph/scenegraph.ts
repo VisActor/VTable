@@ -1841,7 +1841,7 @@ export class Scenegraph {
     }
   }
 
-  updateContainerSync(needUpdateCellY: boolean) {
+  updateContainerSync(needUpdateCellY: boolean = false) {
     if (!this._needUpdateContainer) {
       return;
     }
