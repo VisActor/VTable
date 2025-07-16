@@ -44,6 +44,12 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   /** 行管理器，负责正确的展开/收起行操作 */
   private rowManager: MasterDetailRowManager;
 
+  /** 子表实例映射 */
+  private subTableInstances: Map<number, MasterDetailTable> = new Map();
+
+  /** 存储每行展开前的原始高度 */
+  private originalRowHeights: Map<number, number> = new Map();
+
   // eslint-disable-next-line default-param-last
   constructor(options: MasterDetailTableConstructorOptions);
   constructor(container: HTMLElement, options: MasterDetailTableConstructorOptions);
@@ -856,10 +862,42 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
+   * 展开行 - 在指定数据行后插入一个详情行
+   * @param recordIndex 数据记录索引
+   * @param height 详情行高度（可选，默认使用 detailRowHeight）
+   */
+  expandRow?(recordIndex: number, height?: number): void {
+    // 在展开之前，先记录原始行高度
+    const tableRowIndex = recordIndex + 1;
+    if (tableRowIndex >= 0) {
+      const originalHeight = this.getRowHeight(tableRowIndex);
+      this.originalRowHeights.set(recordIndex, originalHeight);
+    }
+
+    this.rowManager.expandRecord(recordIndex, height);
+    // 更新图标状态
+    // console.log(recordIndex)
+    // console.log(tableRowIndex)
+    if (tableRowIndex >= 0) {
+      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
+      this.scenegraph.updateNextFrame();
+    }
+
+    // 渲染子表
+    this.renderSubTable(recordIndex);
+  }
+
+  /**
    * 收起行 - 移除指定数据行后的详情行
    * @param recordIndex 数据记录索引
    */
   collapseRow?(recordIndex: number): void {
+    // 先移除子表
+    this.removeSubTable(recordIndex);
+    
+    // 清理原始高度记录
+    this.originalRowHeights.delete(recordIndex);
+    
     this.rowManager.collapseRecord(recordIndex);
     // 更新图标状态
     const tableRowIndex = recordIndex + 1;
@@ -870,19 +908,162 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
-   * 展开行 - 在指定数据行后插入一个详情行
+   * 渲染子表（基于test.ts的逻辑）
    * @param recordIndex 数据记录索引
-   * @param height 详情行高度（可选，默认使用 detailRowHeight）
    */
-  expandRow?(recordIndex: number, height?: number): void {
-    this.rowManager.expandRecord(recordIndex, height);
-    // 更新图标状态
-    // console.log(recordIndex)
-    const tableRowIndex = recordIndex + 1;
-    // console.log(tableRowIndex)
-    if (tableRowIndex >= 0) {
-      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
-      this.scenegraph.updateNextFrame();
+  private renderSubTable(recordIndex: number): void {
+    // 动态计算子表的viewBox区域
+    const childViewBox = this.calculateSubTableViewBox(recordIndex);
+    if (!childViewBox) {
+      return; // 如果无法计算viewBox，则不渲染子表
+    }
+
+    // 创建子表选项（完全基于test.ts的配置）
+    const subTableOption = {
+      viewBox: childViewBox,
+      canvas: this.canvas,
+      records: this.records, // 使用父表的records
+      columns: this.options.columns, // 使用父表的columns
+      widthMode: 'standard' as const,
+      disableInteraction: false
+    };
+
+    // 创建子表实例
+    const subTable = new MasterDetailTable(this.container, subTableOption);
+    this.subTableInstances.set(recordIndex, subTable);
+
+    // 关键：每次父表重绘后，手动让子表重绘，保证子表内容在上层
+    const afterRenderHandler = () => {
+      if (this.subTableInstances.has(recordIndex)) {
+        subTable.render();
+      }
+    };
+    
+    this.on('after_render', afterRenderHandler);
+    
+    // 存储处理器引用以便清理
+    (subTable as any).__afterRenderHandler = afterRenderHandler;
+
+    // 设置滚动事件隔离
+    this.setupScrollEventIsolation(recordIndex, subTable, childViewBox);
+
+    // 初始渲染
+    subTable.render();
+  }
+
+  /**
+   * 计算子表的viewBox区域
+   * @param recordIndex 数据记录索引
+   * @returns viewBox区域或null
+   */
+  private calculateSubTableViewBox(recordIndex: number): { x1: number; y1: number; x2: number; y2: number } | null {
+    // 获取展开行的详情行索引（数据行的下一行）
+    const detailRowIndex = recordIndex + 1;
+    
+    // 获取详情行的位置和大小
+    const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
+    if (!detailRowRect) {
+      return null;
+    }
+
+    // 获取原始行高度
+    const originalHeight = this.originalRowHeights.get(recordIndex) || 0;
+    
+    // 获取表格的完整宽度范围 - 从第一列到最后一列
+    const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
+    const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: detailRowIndex });
+    
+    if (!firstColRect || !lastColRect) {
+      return null;
+    }
+    
+    // 计算子表的viewBox，留出一些边距
+    const margin = 10; // 边距
+    const viewBox = {
+      x1: firstColRect.left + margin,
+      y1: detailRowRect.top + originalHeight + margin, // 从原始高度之后开始
+      x2: lastColRect.right - margin, // 使用最后一列的右边界
+      y2: detailRowRect.bottom - margin
+    };
+
+    // 确保viewBox有效
+    if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
+      return null;
+    }
+
+    return viewBox;
+  }
+
+  /**
+   * 设置滚动事件隔离（基于test.ts的逻辑）
+   * @param recordIndex 数据记录索引
+   * @param subTable 子表实例
+   * @param childViewBox 子表显示区域
+   */
+  private setupScrollEventIsolation(
+    recordIndex: number,
+    subTable: MasterDetailTable,
+    childViewBox: { x1: number; y1: number; x2: number; y2: number }
+  ): void {
+    // 检测鼠标是否在子表区域内
+    const isMouseInChildTableArea = (event: MouseEvent) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      
+      // 检查是否在子表的viewBox区域内
+      const isInArea = x >= childViewBox.x1 && x <= childViewBox.x2 && y >= childViewBox.y1 && y <= childViewBox.y2;
+      return isInArea;
+    };
+
+    // 父表滚动控制函数
+    const handleParentScroll = (parentArgs: { event?: MouseEvent }) => {
+      // 检查鼠标是否在子表区域内
+      if (parentArgs.event && isMouseInChildTableArea(parentArgs.event)) {
+        // console.log('鼠标在子表区域内，阻止父表滚动');
+        return false; // 阻止父表滚动
+      }
+      return true; // 允许父表滚动
+    };
+    
+    // 监听父表滚动事件
+    this.on('can_scroll', handleParentScroll);
+    
+    // 监听子表滚动事件
+    subTable.on('scroll', (args: unknown) => {
+      // console.log('子表滚动事件:', args);
+    });
+
+    // 存储处理器引用以便清理
+    (subTable as any).__scrollHandler = handleParentScroll;
+  }
+
+  /**
+   * 移除子表
+   * @param recordIndex 数据记录索引
+   */
+  private removeSubTable(recordIndex: number): void {
+    const subTable = this.subTableInstances.get(recordIndex);
+    if (subTable) {
+      // 移除after_render监听器
+      const afterRenderHandler = (subTable as any).__afterRenderHandler;
+      if (afterRenderHandler) {
+        this.off('after_render', afterRenderHandler);
+      }
+
+      // 移除滚动事件监听器
+      const scrollHandler = (subTable as any).__scrollHandler;
+      if (scrollHandler) {
+        this.off('can_scroll', scrollHandler);
+      }
+
+      // 销毁子表实例
+      if (typeof subTable.release === 'function') {
+        subTable.release();
+      }
+
+      // 清理映射
+      this.subTableInstances.delete(recordIndex);
     }
   }
 }

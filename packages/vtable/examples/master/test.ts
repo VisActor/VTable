@@ -193,22 +193,17 @@ export function createTable() {
       width: 100
     }
   ];
-
   // 配置选项
   const option: VTable.MasterDetailTableConstructorOptions = {
     columns,
     records,
     detailRowHeight: 100, // 子表区域高度
-
     // 基础表格配置
     widthMode: 'standard' as const
   };
 
-  // 创建 MasterDetailTable 实例
+  // 创建 MasterDetailTable 实例（父表）
   const tableInstance = new VTable.MasterDetailTable(document.getElementById(CONTAINER_ID) as HTMLElement, option);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).tableInstance = tableInstance;
-
-  return tableInstance;
 }
 
