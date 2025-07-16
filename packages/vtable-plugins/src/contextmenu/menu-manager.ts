@@ -51,9 +51,10 @@ export class MenuManager {
   private clickCallback: MenuClickCallback | null = null;
   private table: ListTable | null = null;
   private context: MenuContext = {};
-  private hideTimeout: number | null = null;
-  private submenuShowDelay = 300;
-  private submenuHideDelay = 800;
+  private hideTimeout: any = null;
+  private showTimeout: any = null;
+  private submenuShowDelay = 100;
+  private submenuHideDelay = 500;
 
   /**
    * 显示菜单
@@ -217,6 +218,7 @@ export class MenuManager {
 
           // 鼠标悬停事件
           menuItemElement.addEventListener('mouseenter', () => {
+            console.log('mouseenter', menuItem.text);
             // 添加悬停样式
             applyStyles(menuItemElement, MENU_STYLES.menuItemHover);
 
@@ -225,6 +227,10 @@ export class MenuManager {
               clearTimeout(this.hideTimeout);
               this.hideTimeout = null;
             }
+            if (this.showTimeout !== null) {
+              clearTimeout(this.showTimeout);
+              this.showTimeout = null;
+            }
 
             // 如果有子菜单，显示子菜单
             if (menuItem.children && menuItem.children.length > 0) {
@@ -232,7 +238,7 @@ export class MenuManager {
               this.closeAllSubmenus();
 
               // 显示当前子菜单
-              setTimeout(() => {
+              this.showTimeout = setTimeout(() => {
                 if (document.body.contains(menuItemElement)) {
                   this.showSubmenu(menuItem.children, menuItemElement, menuItem);
                 }
@@ -245,6 +251,7 @@ export class MenuManager {
 
           // 鼠标离开事件
           menuItemElement.addEventListener('mouseleave', () => {
+            console.log('mouseleave', menuItem.text);
             // 移除悬停样式，使用与添加时相同的方式
             // 通过设置空对象来重置之前应用的menuItemHover样式的属性
             Object.keys(MENU_STYLES.menuItemHover).forEach(key => {
@@ -253,7 +260,7 @@ export class MenuManager {
 
             // 如果有子菜单，设置延迟关闭
             if (menuItem.children && menuItem.children.length > 0) {
-              this.hideTimeout = window.setTimeout(() => {
+              this.hideTimeout = setTimeout(() => {
                 this.closeAllSubmenus();
               }, this.submenuHideDelay);
             }
@@ -309,7 +316,7 @@ export class MenuManager {
 
     // 添加鼠标离开事件，设置延迟关闭
     submenu.addEventListener('mouseleave', () => {
-      this.hideTimeout = window.setTimeout(() => {
+      this.hideTimeout = setTimeout(() => {
         this.closeAllSubmenus();
       }, this.submenuHideDelay);
     });

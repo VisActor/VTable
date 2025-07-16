@@ -12,29 +12,10 @@ export class MenuHandler {
   private lastClipboardContent: string = ''; // 最后一次复制/剪切的内容
 
   constructor() {
-    // 监听全局复制事件，用于重置剪切状态
-    document.addEventListener('copy', this.handleGlobalCopy);
-    document.addEventListener('cut', this.handleGlobalCut);
+    // // 监听全局复制事件，用于重置剪切状态
+    // document.addEventListener('copy', this.handleGlobalCopy);
+    // document.addEventListener('cut', this.handleGlobalCut);
   }
-
-  // 全局复制事件处理器
-  private handleGlobalCopy = () => {
-    // 如果不是来自我们的剪切操作的复制，则取消剪切状态
-    if (this.isCut && Date.now() - this.cutOperationTime > 500) {
-      console.log('检测到外部复制操作，重置剪切状态');
-      this.isCut = false;
-      this.cutCellRange = null;
-    }
-  };
-
-  // 全局剪切事件处理器
-  private handleGlobalCut = () => {
-    // 如果不是来自我们的剪切操作，则重置剪切状态
-    if (Date.now() - this.cutOperationTime > 500) {
-      this.isCut = false;
-      this.cutCellRange = null;
-    }
-  };
 
   /**
    * 处理复制操作
@@ -361,10 +342,37 @@ export class MenuHandler {
   handleMergeCells(table: VTable.ListTable): void {
     console.log('合并单元格');
     // 获取当前选中区域
-    const selection = (table as any).getSelection?.();
-    if (selection && typeof (table as any).mergeCells === 'function') {
-      const { startRow, endRow, startColumn, endColumn } = selection;
-      (table as any).mergeCells(startRow, startColumn, endRow, endColumn);
+    if ((table.stateManager.select.ranges?.length ?? 0) === 1 && typeof (table as any).mergeCells === 'function') {
+      const { row: startRow, col: startCol } = table.stateManager.select.ranges[0].start;
+      const { row: endRow, col: endCol } = table.stateManager.select.ranges[0].end;
+      if (startCol === endCol && startRow === endRow) {
+        return;
+      }
+      table.mergeCells(
+        Math.min(startCol, endCol),
+        Math.min(startRow, endRow),
+        Math.max(startCol, endCol),
+        Math.max(startRow, endRow)
+      );
+    }
+  }
+  /**
+   * 处理取消合并单元格
+   */
+  handleUnmergeCells(table: VTable.ListTable): void {
+    console.log('取消合并单元格');
+    if ((table.stateManager.select.ranges?.length ?? 0) === 1 && typeof (table as any).unmergeCells === 'function') {
+      const { row: startRow, col: startCol } = table.stateManager.select.ranges[0].start;
+      const { row: endRow, col: endCol } = table.stateManager.select.ranges[0].end;
+      if (startCol === endCol && startRow === endRow) {
+        return;
+      }
+      table.unmergeCells(
+        Math.min(startCol, endCol),
+        Math.min(startRow, endRow),
+        Math.max(startCol, endCol),
+        Math.max(startRow, endRow)
+      );
     }
   }
 
@@ -427,9 +435,9 @@ export class MenuHandler {
    * 释放资源
    */
   release(): void {
-    // 移除全局事件监听
-    document.removeEventListener('copy', this.handleGlobalCopy);
-    document.removeEventListener('cut', this.handleGlobalCut);
+    // // 移除全局事件监听
+    // document.removeEventListener('copy', this.handleGlobalCopy);
+    // document.removeEventListener('cut', this.handleGlobalCut);
 
     // 清除定时器
     if (this.clipboardCheckTimer) {

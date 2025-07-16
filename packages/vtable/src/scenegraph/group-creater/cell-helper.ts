@@ -710,7 +710,11 @@ export function updateCell(
 
       y: table.scenegraph.getCellGroupY(row)
     } as any);
-
+    // 重置合并单元格信息
+    oldCellGroup.mergeStartCol = undefined;
+    oldCellGroup.mergeStartRow = undefined;
+    oldCellGroup.mergeEndCol = undefined;
+    oldCellGroup.mergeEndRow = undefined;
     oldCellGroup.forEachChildren((child: IGraphic) => {
       child.setAttributes({
         dx: 0,
@@ -788,8 +792,8 @@ export function updateCell(
     isVtableMerge || isCustomMerge
       ? 'text'
       : table.isHeader(col, row)
-        ? ((table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
-        : (table.getBodyColumnType(col, row) ?? 'text');
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+      : table.getBodyColumnType(col, row) ?? 'text';
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

@@ -155,9 +155,12 @@ export function createIcon(iconName: string): HTMLElement {
     case 'sort':
       iconElement.innerHTML = '🔃';
       break;
-    case 'merge':
-      iconElement.innerHTML = '🔗';
-      break;
+    // case 'merge':
+    //   iconElement.innerHTML = ;
+    //   break;
+    // case 'unmerge':
+    //   iconElement.innerHTML = ;
+    //   break;
     case 'protect':
       iconElement.innerHTML = '🔒';
       break;

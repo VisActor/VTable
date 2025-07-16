@@ -120,8 +120,9 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
         { text: '隐藏列', menuKey: 'hide_column', iconName: 'hide' },
         '---',
         { text: '排序', menuKey: 'sort', iconName: 'sort' },
-        { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
-        { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
+        { text: '合并单元格', menuKey: 'merge_cells' }, //鼠标右键所在单元格如果未被合并，则显示合并单元格
+        { text: '取消合并单元格', menuKey: 'unmerge_cells' } //鼠标右键所在单元格如果被合并了，则显示取消合并单元格
+        // { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
       ];
     }
 
@@ -184,8 +185,9 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
           ]
         },
         '---',
-        { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
-        { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
+        { text: '合并单元格', menuKey: 'merge_cells' }, //鼠标右键所在单元格如果未被合并，则显示合并单元格
+        { text: '取消合并单元格', menuKey: 'unmerge_cells' } //鼠标右键所在单元格如果被合并了，则显示取消合并单元格
+        // { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
       ];
     }
   }
@@ -231,6 +233,15 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
       }
 
       if (menuItems.length > 0) {
+        // 如果鼠标右键所在单元格未被合并，则显示合并单元格
+        const cellRange = table.getCellRange(col, row);
+        if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+          // 如果鼠标右键所在单元格被合并了，则显示取消合并单元格。将合并单元格item从menuItems中删除
+          menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'merge_cells');
+        } else {
+          // 如果鼠标右键所在单元格未被合并，则显示合并单元格。将取消合并单元格item从menuItems中删除
+          menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'unmerge_cells');
+        }
         // 显示右键菜单
         this.showContextMenu(menuItems, mouseX, mouseY, col, row, cellType, value);
       }
@@ -350,6 +361,9 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
         break;
       case 'merge_cells':
         this.menuHandler.handleMergeCells(table);
+        break;
+      case 'unmerge_cells':
+        this.menuHandler.handleUnmergeCells(table);
         break;
       case 'set_protection':
         this.menuHandler.handleSetProtection(table);
