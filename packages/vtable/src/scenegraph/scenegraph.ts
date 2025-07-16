@@ -762,7 +762,7 @@ export class Scenegraph {
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
-      this.updateContainer(true);
+      this.updateContainer({ async: true });
     }
   }
 
@@ -1826,18 +1826,18 @@ export class Scenegraph {
     }
   }
   updateContainer(
-    updateConfig: { async: boolean; needUpdateCellY: boolean } = { async: false, needUpdateCellY: false }
+    updateConfig: { async?: boolean; needUpdateCellY?: boolean } = { async: false, needUpdateCellY: false }
   ) {
     if (updateConfig.async) {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerSync(updateConfig.needUpdateCellY);
+          this.updateContainerSync(updateConfig.needUpdateCellY ?? false);
         }, 0);
       }
     } else {
       this._needUpdateContainer = true;
-      this.updateContainerSync(updateConfig.needUpdateCellY);
+      this.updateContainerSync(updateConfig.needUpdateCellY ?? false);
     }
   }
 
