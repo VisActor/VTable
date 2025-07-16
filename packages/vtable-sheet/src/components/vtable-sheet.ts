@@ -7,8 +7,10 @@ import * as VTable_editors from '@visactor/vtable-editors';
 import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
-import { resizeSheetUI } from '../core/resize-helper';
+import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent } from '../ts-types';
+import SheetTabDragManager from '../managers/tab-drag-manager';
+import { checkTabTitle } from '../tools';
 
 const input_editor = new VTable_editors.InputEditor();
 VTable.register.editor('input', input_editor);
@@ -40,6 +42,9 @@ export default class VTableSheet {
   /** 防止递归调用的标志 */
   private isUpdatingFromFormula = false;
 
+  // 新增：拖拽管理器实例
+  private dragManager: SheetTabDragManager;
+
   /**
    * 构造函数
    * @param options 配置选项
@@ -53,6 +58,7 @@ export default class VTableSheet {
     this.formulaManager = new FormulaManager(this);
     this.filterManager = new FilterManager(this);
     this.eventManager = new EventManager(this);
+    this.dragManager = new SheetTabDragManager(this);
     // 初始化UI
     this.initUI();
 
@@ -286,13 +292,16 @@ export default class VTableSheet {
     tabsContainer.addEventListener('scroll', () => this.updateFadeEffects(tabsContainer, fadeLeft, fadeRight));
     sheetTab.appendChild(tabsContainer);
 
+    // 创建插入指示器
+    const insertIndicator = document.createElement('div');
+    insertIndicator.className = 'vtable-sheet-insert-indicator';
+    insertIndicator.style.display = 'none';
+    tabsContainer.appendChild(insertIndicator);
+
     // 创建右侧渐变效果
     const fadeRight = document.createElement('div');
     fadeRight.className = 'vtable-sheet-fade-right';
     sheetTab.appendChild(fadeRight);
-
-    // 更新sheet切换标签
-    this.updateSheetTabs(tabsContainer);
 
     // 添加新增sheet按钮
     const addButton = document.createElement('button');
@@ -397,77 +406,188 @@ export default class VTableSheet {
       });
     }
   }
-
+  /**
+   * 激活sheet标签并滚动到可见区域
+   */
+  private activeSheetTab(): void {
+    const tabs = this.sheetTabElement?.querySelectorAll('.vtable-sheet-tab') as NodeListOf<HTMLElement>;
+    let activeTab: HTMLElement | null = null;
+    tabs.forEach(tab => {
+      tab.classList.remove('active');
+      if (tab.dataset.key === this.activeSheet?.getKey()) {
+        tab.classList.add('active');
+        activeTab = tab;
+      }
+    });
+    // 确保激活的标签可见
+    setTimeout(() => {
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
   /**
    * 更新sheet切换标签
    * @param tabsContainer 标签容器
    */
-  private updateSheetTabs(
+  updateSheetTabs(
     tabsContainer: HTMLElement = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container')
   ): void {
     if (!tabsContainer) {
       return;
     }
-
     // 清除现有标签
     const tabs = tabsContainer.querySelectorAll('.vtable-sheet-tab');
     tabs.forEach(tab => {
       tab.remove();
     });
-
     // 添加sheet标签
     const sheets = this.sheetManager.getAllSheets();
-    const activeSheet = this.sheetManager.getActiveSheet();
+    sheets.forEach((sheet, index) => {
+      tabsContainer.appendChild(this.createSheetTabItem(sheet, index));
+    });
+    // 激活sheet标签并滚动到可见区域
+    this.activeSheetTab();
+  }
+  /**
+   * 创建tab栏标签项
+   */
+  private createSheetTabItem(sheet: ISheetDefine, index: number): HTMLElement {
+    const tab = document.createElement('div');
+    tab.className = 'vtable-sheet-tab';
+    tab.dataset.key = sheet.sheetKey;
+    tab.textContent = sheet.sheetTitle;
+    tab.title = sheet.sheetTitle;
+    tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
+    tab.addEventListener('dblclick', () => this.handleSheetTabDblClick(sheet.sheetKey, sheet.sheetTitle));
+    // 拖拽事件
+    tab.addEventListener('mousedown', e => this.dragManager.handleTabMouseDown(e, sheet.sheetKey));
 
-    // 如果没有活动sheet，提前返回
-    if (!activeSheet) {
+    return tab;
+  }
+  /**
+   * 处理sheet标签双击事件
+   * 双击sheet标签后，将标签设为可编辑状态。输入完成后进行重命名。
+   * @param sheetKey 工作表key
+   * @param originalTitle 原始名称
+   */
+  private handleSheetTabDblClick(sheetKey: string, originalTitle: string): void {
+    const targetTab = this.getSheetTabElementByKey(sheetKey);
+    if (!targetTab) {
       return;
     }
+    // 将原文本节点设为可编辑
+    targetTab.setAttribute('contenteditable', 'true');
+    targetTab.setAttribute('spellcheck', 'false');
+    targetTab.classList.add('editing'); // 添加编辑状态样式
+    // 选中所有文本
+    const range = document.createRange();
+    range.selectNodeContents(targetTab);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
 
-    sheets.forEach(sheet => {
-      const tab = document.createElement('div');
-      tab.className = 'vtable-sheet-tab';
-      tab.dataset.key = sheet.sheetKey;
-      tab.textContent = sheet.sheetTitle;
-      tab.title = sheet.sheetTitle;
-
-      // 高亮当前活动sheet
-      if (sheet.sheetKey === activeSheet.sheetKey) {
-        tab.classList.add('active');
+    const onBlur = () => {
+      finishInput(true);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      e.stopPropagation();
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        finishInput(true);
+      } else if (e.key === 'Escape') {
+        finishInput(false);
       }
-
-      tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
-      tabsContainer.appendChild(tab);
-    });
-
-    // 确保激活的标签可见
-    setTimeout(() => {
-      const activeTab = tabsContainer.querySelector('.vtable-sheet-tab.active');
-      if (activeTab) {
-        this.scrollTabIntoView(activeTab as HTMLElement, tabsContainer);
+    };
+    const finishInput = (commit: boolean) => {
+      targetTab.removeEventListener('blur', onBlur);
+      targetTab.removeEventListener('keydown', onKeyDown);
+      targetTab.classList.remove('editing');
+      targetTab.setAttribute('contenteditable', 'false');
+      const newTitle = targetTab.textContent?.trim();
+      if (!commit || newTitle === originalTitle || !this.renameSheet(sheetKey, newTitle)) {
+        targetTab.textContent = originalTitle;
+        return;
       }
-    }, 100);
+    };
+    targetTab.addEventListener('blur', onBlur);
+    targetTab.addEventListener('keydown', onKeyDown);
   }
+
+  /**
+   * 重命名sheet
+   * @param sheetKey 工作表key
+   * @param newTitle 新名称
+   * @returns 是否成功
+   */
+  private renameSheet(sheetKey: string, newTitle: string): boolean {
+    const sheet = this.sheetManager.getSheet(sheetKey);
+    if (!sheet) {
+      return false;
+    }
+    const error = checkTabTitle(newTitle);
+    if (error) {
+      showSnackbar(error, 1300);
+      return false;
+    }
+    const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
+    if (isExist) {
+      showSnackbar('工作表名称已存在，请重新输入', 1300);
+      return false;
+    }
+    this.sheetManager.renameSheet(sheetKey, newTitle);
+    this.updateSheetTabs();
+    this.updateSheetMenu();
+    return true;
+  }
+
+  /**
+   * 获取指定sheetKey的标签元素
+   */
+  private getSheetTabElementByKey(sheetKey: string): HTMLElement | null {
+    const tabsContainer = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container') as HTMLElement;
+    return tabsContainer?.querySelector(`.vtable-sheet-tab[data-key="${sheetKey}"]`) as HTMLElement;
+  }
+
   /**
    * 更新sheet列表
    */
-  private updateSheetMenu(): void {
+  updateSheetMenu(): void {
     const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
     menuContainer.innerHTML = '';
     const sheets = this.sheetManager.getAllSheets();
     sheets.forEach(sheet => {
       const li = document.createElement('li');
       li.className = 'vtable-sheet-menu-item';
+      li.dataset.key = sheet.sheetKey;
       li.textContent = sheet.sheetTitle;
-      if (sheet.sheetKey === this.activeSheet?.getKey()) {
-        li.classList.add('active');
-      }
       li.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
       menuContainer.appendChild(li as any);
     });
+    this.activeSheetMenuItem();
     // 确保激活的标签可见
     setTimeout(() => {
       const activeItem = menuContainer.querySelector('.vtable-sheet-menu-item.active');
+      if (activeItem) {
+        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 100);
+  }
+
+  /**
+   * 激活sheet菜单项并滚动到可见区域
+   */
+  private activeSheetMenuItem(): void {
+    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-menu-item') as NodeListOf<HTMLElement>;
+    let activeItem: HTMLElement | null = null;
+    menuItems.forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.key === this.activeSheet?.getKey()) {
+        item.classList.add('active');
+        activeItem = item;
+      }
+    });
+    setTimeout(() => {
       if (activeItem) {
         activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -546,21 +666,24 @@ export default class VTableSheet {
       instance.getElement().style.display = 'none';
     });
 
-    // 如果已经存在实例，则显示
+    // 如果已经存在实例，则显示并激活对应tab和menu
     if (this.sheetInstances.has(sheetKey)) {
       const instance = this.sheetInstances.get(sheetKey)!;
       instance.getElement().style.display = 'block';
       this.activeSheet = instance;
+      // sheet标签和菜单项激活样式
+      this.activeSheetTab();
+      this.activeSheetMenuItem();
     } else {
       // 创建新的sheet实例
       const instance = this.createSheetInstance(sheetDefine);
       this.sheetInstances.set(sheetKey, instance);
       this.activeSheet = instance;
+      // 刷新sheet标签和菜单
+      this.updateSheetTabs();
+      this.updateSheetMenu();
     }
 
-    // 更新UI
-    this.updateSheetTabs();
-    this.updateSheetMenu();
     this.updateFormulaBar();
   }
 
@@ -606,8 +729,19 @@ export default class VTableSheet {
   private addNewSheet(): void {
     // 生成新sheet的key和title
     const sheetCount = this.sheetManager.getSheetCount();
-    const key = `sheet${sheetCount + 1}`;
-    const title = `Sheet ${sheetCount + 1}`;
+    const baseKey = `sheet${sheetCount + 1}`;
+    const baseTitle = `Sheet ${sheetCount + 1}`;
+    let key = baseKey;
+    let title = baseTitle;
+    let index = sheetCount + 1;
+    // 检查key和title是否被占用，递增直到唯一
+    const existingKeys = new Set(this.sheetManager.getAllSheets().map(s => s.sheetKey));
+    const existingTitles = new Set(this.sheetManager.getAllSheets().map(s => s.sheetTitle));
+    while (existingKeys.has(key) || existingTitles.has(title)) {
+      index += 1;
+      key = `sheet${index}`;
+      title = `Sheet ${index}`;
+    }
 
     // 创建新sheet配置
     const newSheet: ISheetDefine = {
@@ -1032,6 +1166,10 @@ export default class VTableSheet {
    * resize
    */
   resize(): void {
-    resizeSheetUI(this);
+    const containerWidth = this.getContainer().clientWidth;
+    const containerHeight = this.getContainer().clientHeight;
+    this.rootElement.style.width = `${this.getOptions().width || containerWidth}px`;
+    this.rootElement.style.height = `${this.getOptions().height || containerHeight}px`;
+    this.getActiveSheet()?.resize();
   }
 }

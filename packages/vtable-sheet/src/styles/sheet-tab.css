@@ -74,8 +74,8 @@
   flex-wrap: nowrap;
   /* 超出容器宽度时显示横向滚动条 */
   overflow-x: auto;
+  overflow-y: visible; /* 允许Y方向溢出，确保三角标志显示 */
   height: 100%;
-  position: relative;
   /* 隐藏滚动条样式（可选，如需自定义滚动条可保留原生或用伪元素美化） */
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -91,10 +91,10 @@
   width: auto;
   /* 禁止标签压缩，保持内容撑开的宽度 */
   flex-shrink: 0;
-  padding: 0 12px;
-  line-height: 32px;
+  padding: 4px 12px;
+  line-height: 24px;
   text-align: center;
-  cursor: pointer;
+  cursor: grab;
   border-right: 1px solid #e0e0e0;
   white-space: nowrap;
   color: #333;
@@ -109,10 +109,68 @@
 .vtable-sheet-tab.active {
   color: #1a73e8;
   background-color: #fff;
-  height: calc(100% + 1px);
-  margin-top: -1px;
   border-top: 2px solid #1a73e8;
   z-index: 2;
+}
+/* 编辑状态样式 */
+.vtable-sheet-tab[contenteditable='true'] {
+  outline: inherit !important; /* 移除聚焦时的轮廓线 */
+  border-right: 1px solid #e0e0e0;
+  cursor: text;
+  color: #333;
+}
+.vtable-sheet-tab[contenteditable='true']::selection {
+  background-color: #2563eb33; /* 浅蓝色半透明背景（示例） */
+}
+
+/* 兼容 Firefox */
+.vtable-sheet-tab[contenteditable='true']::-moz-selection {
+  background-color: #2563eb33;
+}
+
+/* 拖拽中的tab样式 */
+.vtable-sheet-tab.dragging {
+  opacity: 0.7;
+  transform: scale(1.02);
+  background-color: #f0f5ff;
+  cursor: grabbing !important;
+  z-index: 100;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 拖拽预览样式 */
+.vtable-sheet-drag-preview {
+  position: fixed;
+  z-index: 10000;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #1890ff;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 20px;
+  color: #333;
+  user-select: none;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 插入位置指示器 */
+.vtable-sheet-insert-indicator {
+  position: absolute;
+  top: -4px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid black;
+  z-index: inherit;
 }
 
 /* 添加sheet按钮 */
