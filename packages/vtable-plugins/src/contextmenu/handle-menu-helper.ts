@@ -158,7 +158,7 @@ export class MenuHandler {
       for (let i = 0; i < selectCells.length; i++) {
         for (let j = 0; j < selectCells[i].length; j++) {
           if (selectCells[i][j]) {
-            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');
+            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, undefined);
           }
         }
       }
@@ -233,9 +233,11 @@ export class MenuHandler {
     }
 
     console.log('插入行（向上）', { rowIndex, count });
-    if (typeof (table as any).insertRows === 'function') {
+    if (typeof (table as any).addRecord === 'function') {
       // 使用表格API插入行
-      (table as any).insertRows(rowIndex, count);
+      for (let i = 0; i < count; i++) {
+        table.addRecord([], rowIndex - 1);
+      }
     }
   }
 
@@ -246,11 +248,12 @@ export class MenuHandler {
     if (rowIndex === undefined) {
       return;
     }
-
     console.log('插入行（向下）', { rowIndex, count });
-    if (typeof (table as any).insertRows === 'function') {
+    if (typeof (table as any).addRecord === 'function') {
       // 使用表格API插入行
-      (table as any).insertRows(rowIndex + 1, count);
+      for (let i = 0; i < count; i++) {
+        table.addRecord([], rowIndex + i);
+      }
     }
   }
 
@@ -261,11 +264,12 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-
     console.log('插入列（向左）', { colIndex, count });
-    if (typeof (table as any).insertColumns === 'function') {
+    if (typeof (table as any).addColumn === 'function') {
       // 使用表格API插入列
-      (table as any).insertColumns(colIndex, count);
+      for (let i = 0; i < count; i++) {
+        table.addColumn({ field: colIndex }, colIndex, true);
+      }
     }
   }
 
@@ -276,11 +280,11 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-
     console.log('插入列（向右）', { colIndex, count });
-    if (typeof (table as any).insertColumns === 'function') {
-      // 使用表格API插入列
-      (table as any).insertColumns(colIndex + 1, count);
+    if (typeof (table as any).addColumn === 'function') {
+      for (let i = 0; i < count; i++) {
+        table.addColumn({ field: colIndex + 1 }, colIndex + 1, true);
+      }
     }
   }
 
@@ -291,11 +295,11 @@ export class MenuHandler {
     if (rowIndex === undefined) {
       return;
     }
-
     console.log('删除行', { rowIndex });
-    if (typeof (table as any).deleteRows === 'function') {
+    if (typeof (table as any).deleteRecords === 'function') {
+      const recordIndex = table.getRecordIndexByCell(0, rowIndex);
       // 使用表格API删除行
-      (table as any).deleteRows(rowIndex, 1);
+      (table as any).deleteRecords([recordIndex]);
     }
   }
 
@@ -306,11 +310,10 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-
     console.log('删除列', { colIndex });
-    if (typeof (table as any).deleteColumns === 'function') {
+    if (typeof (table as any).deleteColumn === 'function') {
       // 使用表格API删除列
-      (table as any).deleteColumns(colIndex, 1);
+      (table as any).deleteColumn(colIndex);
     }
   }
 
@@ -382,11 +385,8 @@ export class MenuHandler {
     }
 
     console.log('冻结到本行', { rowIndex });
-    if (typeof (table as any).updateOption === 'function') {
-      (table as any).updateOption({
-        frozenRowCount: rowIndex + 1
-      });
-    }
+
+    table.frozenRowCount = rowIndex + 1;
   }
 
   /**
@@ -398,11 +398,7 @@ export class MenuHandler {
     }
 
     console.log('冻结到本列', { colIndex });
-    if (typeof (table as any).updateOption === 'function') {
-      (table as any).updateOption({
-        frozenColCount: colIndex + 1
-      });
-    }
+    table.frozenColCount = colIndex + 1;
   }
 
   /**
@@ -414,12 +410,8 @@ export class MenuHandler {
     }
 
     console.log('冻结到本行本列', { rowIndex, colIndex });
-    if (typeof (table as any).updateOption === 'function') {
-      (table as any).updateOption({
-        frozenRowCount: rowIndex + 1,
-        frozenColCount: colIndex + 1
-      });
-    }
+    table.frozenRowCount = rowIndex + 1;
+    table.frozenColCount = colIndex + 1;
   }
 
   /**
@@ -427,12 +419,8 @@ export class MenuHandler {
    */
   handleUnfreeze(table: VTable.ListTable): void {
     console.log('取消冻结');
-    if (typeof (table as any).updateOption === 'function') {
-      (table as any).updateOption({
-        frozenRowCount: 0,
-        frozenColCount: 0
-      });
-    }
+    table.frozenRowCount = 0;
+    table.frozenColCount = 0;
   }
 
   /**

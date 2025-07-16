@@ -48,7 +48,7 @@ import {
   updateChartState
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
-import { updateContainerChildrenX } from './utils/update-container';
+import { updateContainerChildrenX, updateContainerChildrenY } from './utils/update-container';
 import type { CheckBox } from '@src/vrender';
 import { loadPoptip, setPoptipTheme } from '@src/vrender';
 import textMeasureModule from './utils/text-measure';
@@ -1769,26 +1769,87 @@ export class Scenegraph {
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
   }
 
-  updateContainer(async: boolean = false) {
-    if (async) {
+  updateContainerAttrHeightAndY() {
+    for (let i = 0; i < this.cornerHeaderGroup.children.length; i++) {
+      updateContainerChildrenY(this.cornerHeaderGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.colHeaderGroup.children.length; i++) {
+      updateContainerChildrenY(this.colHeaderGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.rightTopCornerGroup.children.length; i++) {
+      updateContainerChildrenY(this.rightTopCornerGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.rowHeaderGroup.children.length; i++) {
+      this.rowHeaderGroup.children[i].firstChild &&
+        updateContainerChildrenY(
+          this.rowHeaderGroup.children[i] as Group,
+          (this.rowHeaderGroup.children[i].firstChild as Group).row > 0
+            ? this.table.getRowsHeight(
+                this.table.frozenRowCount ?? 0,
+                (this.rowHeaderGroup.children[i].firstChild as Group).row - 1
+              )
+            : 0
+        );
+    }
+    for (let i = 0; i < this.bodyGroup.children.length; i++) {
+      this.bodyGroup.children[i].firstChild &&
+        updateContainerChildrenY(
+          this.bodyGroup.children[i] as Group,
+          (this.bodyGroup.children[i].firstChild as Group).row > 0
+            ? this.table.getRowsHeight(
+                this.table.frozenRowCount ?? 0,
+                (this.bodyGroup.children[i].firstChild as Group).row - 1
+              )
+            : 0
+        );
+    }
+    for (let i = 0; i < this.rightFrozenGroup.children.length; i++) {
+      this.rightFrozenGroup.children[i].firstChild &&
+        updateContainerChildrenY(
+          this.rightFrozenGroup.children[i] as Group,
+          (this.rightFrozenGroup.children[i].firstChild as Group).row > 0
+            ? this.table.getRowsHeight(
+                this.table.frozenRowCount ?? 0,
+                (this.rightFrozenGroup.children[i].firstChild as Group).row - 1
+              )
+            : 0
+        );
+    }
+    for (let i = 0; i < this.leftBottomCornerGroup.children.length; i++) {
+      updateContainerChildrenY(this.leftBottomCornerGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.bottomFrozenGroup.children.length; i++) {
+      updateContainerChildrenY(this.bottomFrozenGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.rightBottomCornerGroup.children.length; i++) {
+      updateContainerChildrenY(this.rightBottomCornerGroup.children[i] as Group, 0);
+    }
+  }
+  updateContainer(
+    updateConfig: { async: boolean; needUpdateCellY: boolean } = { async: false, needUpdateCellY: false }
+  ) {
+    if (updateConfig.async) {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerSync();
+          this.updateContainerSync(updateConfig.needUpdateCellY);
         }, 0);
       }
     } else {
       this._needUpdateContainer = true;
-      this.updateContainerSync();
+      this.updateContainerSync(updateConfig.needUpdateCellY);
     }
   }
 
-  updateContainerSync() {
+  updateContainerSync(needUpdateCellY: boolean) {
     if (!this._needUpdateContainer) {
       return;
     }
     this._needUpdateContainer = false;
     this.updateContainerAttrWidthAndX();
+    if (needUpdateCellY) {
+      this.updateContainerAttrHeightAndY();
+    }
     this.updateTableSize();
     this.component.updateScrollBar();
 

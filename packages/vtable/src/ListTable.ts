@@ -275,9 +275,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param column
    */
-  addColumn(column: ColumnDefine) {
+  addColumn(column: ColumnDefine, colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
-    columns.push(column);
+    if (colIndex === undefined) {
+      columns.push(column);
+    } else {
+      columns.splice(colIndex, 0, column);
+    }
+    //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
+    if (isMaintainArrayData) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (Array.isArray(record)) {
+          record.splice(colIndex, 0, undefined);
+        }
+      }
+    }
+    this.updateColumns(columns);
+  }
+  deleteColumn(colIndex: number) {
+    const columns = this.options.columns;
+    columns.splice(colIndex, 1);
     this.updateColumns(columns);
   }
   get columns(): ColumnsDefine {

@@ -167,6 +167,18 @@ export function createIcon(iconName: string): HTMLElement {
     case 'freeze':
       iconElement.innerHTML = '❄️';
       break;
+    case 'up-arrow':
+      iconElement.innerHTML = '🔼';
+      break;
+    case 'down-arrow':
+      iconElement.innerHTML = '🔽';
+      break;
+    case 'left-arrow':
+      iconElement.innerHTML = '◀️';
+      break;
+    case 'right-arrow':
+      iconElement.innerHTML = '▶️';
+      break;
     default:
       iconElement.innerHTML = '•';
   }
@@ -181,12 +193,20 @@ export function createIcon(iconName: string): HTMLElement {
 export function createNumberInputItem(
   label: string,
   defaultValue: number = 1,
+  iconName: string,
   callback: (value: number) => void
 ): HTMLElement {
   // 创建容器
   const container = createElement('div');
   applyStyles(container, MENU_STYLES.inputContainer);
 
+  // 创建左侧图标容器
+
+  // 添加图标
+  if (iconName) {
+    const icon = createIcon(iconName);
+    container.appendChild(icon);
+  }
   // 创建标签
   const labelElement = createElement('label');
   labelElement.textContent = label;
@@ -200,27 +220,9 @@ export function createNumberInputItem(
   input.value = defaultValue.toString();
   applyStyles(input, MENU_STYLES.inputField);
   container.appendChild(input);
-
-  // 创建按钮容器
-  const buttonContainer = createElement('div');
-  applyStyles(buttonContainer, MENU_STYLES.buttonContainer);
-
-  // 创建确认按钮
-  const button = createElement('button');
-  button.textContent = '确定';
-  applyStyles(button, MENU_STYLES.button);
-  button.onclick = () => {
-    const value = parseInt(input.value, 10);
-    if (!isNaN(value) && value > 0) {
-      callback(value);
-    }
-  };
-  buttonContainer.appendChild(button);
-
   // 创建包装容器
   const wrapper = createElement('div');
   wrapper.appendChild(container);
-  wrapper.appendChild(buttonContainer);
 
   return wrapper;
 }

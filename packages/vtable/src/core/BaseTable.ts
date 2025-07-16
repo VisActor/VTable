@@ -782,6 +782,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   set frozenRowCount(frozenRowCount: number) {
     this.internalProps.frozenRowCount = frozenRowCount;
+    this.options.frozenRowCount = frozenRowCount;
     this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
   }
 

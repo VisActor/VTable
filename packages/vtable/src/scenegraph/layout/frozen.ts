@@ -533,7 +533,7 @@ export function resetRowFrozen(scene: Scenegraph) {
   scene.bodyGroup.setAttribute('y', scene.colHeaderGroup.attribute.height);
   scene.rowHeaderGroup.setAttribute('y', scene.cornerHeaderGroup.attribute.height);
   // scene.updateContainerAttrWidthAndX();
-  scene.updateContainer();
+  scene.updateContainer({ needUpdateCellY: true });
   scene.updateBorderSizeAndPosition();
 
   scene.hasFrozen = true;

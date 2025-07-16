@@ -59,16 +59,16 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
           iconName: 'insert',
           children: [
             {
-              type: 'input',
-              label: '向上插入行数：',
+              text: '向上插入行数：',
               menuKey: 'insert_row_above',
-              defaultValue: 1
+              iconName: 'up-arrow',
+              inputDefaultValue: 1
             },
             {
-              type: 'input',
-              label: '向下插入行数：',
+              text: '向下插入行数：',
               menuKey: 'insert_row_below',
-              defaultValue: 1
+              iconName: 'down-arrow',
+              inputDefaultValue: 1
             }
           ]
         },
@@ -104,16 +104,16 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
           iconName: 'insert',
           children: [
             {
-              type: 'input',
-              label: '向左插入列数：',
+              text: '向左插入列数：',
               menuKey: 'insert_column_left',
-              defaultValue: 1
+              iconName: 'left-arrow',
+              inputDefaultValue: 1
             },
             {
-              type: 'input',
-              label: '向右插入列数：',
+              text: '向右插入列数：',
               menuKey: 'insert_column_right',
-              defaultValue: 1
+              iconName: 'right-arrow',
+              inputDefaultValue: 1
             }
           ]
         },
@@ -138,28 +138,28 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
           iconName: 'insert',
           children: [
             {
-              type: 'input',
-              label: '向上插入行数：',
+              text: '向上插入行数：',
               menuKey: 'insert_row_above',
-              defaultValue: 1
+              iconName: 'up-arrow',
+              inputDefaultValue: 1
             },
             {
-              type: 'input',
-              label: '向下插入行数：',
+              text: '向下插入行数：',
               menuKey: 'insert_row_below',
-              defaultValue: 1
+              iconName: 'down-arrow',
+              inputDefaultValue: 1
             },
             {
-              type: 'input',
-              label: '向左插入列数：',
+              text: '向左插入列数：',
               menuKey: 'insert_column_left',
-              defaultValue: 1
+              iconName: 'left-arrow',
+              inputDefaultValue: 1
             },
             {
-              type: 'input',
-              label: '向右插入列数：',
+              text: '向右插入列数：',
               menuKey: 'insert_column_right',
-              defaultValue: 1
+              iconName: 'right-arrow',
+              inputDefaultValue: 1
             }
           ]
         },

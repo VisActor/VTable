@@ -28,17 +28,12 @@ export interface MenuItem {
   disabled?: boolean;
   shortcut?: string;
   iconName?: string;
-  children?: (MenuItem | MenuItemInput | string)[];
+  iconPlaceholder?: boolean; //如果没有iconName时 是否显示占位图标位置 让他与其他有图标的item对齐
+  inputDefaultValue?: number;
+  children?: (MenuItem | string)[];
 }
 
-export interface MenuItemInput {
-  type: 'input';
-  label: string;
-  menuKey: string;
-  defaultValue?: number;
-}
-
-export type MenuItemOrSeparator = MenuItem | MenuItemInput | string;
+export type MenuItemOrSeparator = MenuItem | string;
 
 export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => void;
 
@@ -99,25 +94,30 @@ export class MenuManager {
   /**
    * 创建菜单项
    */
-  private createMenuItems(items: MenuItemOrSeparator[], container: HTMLElement): void {
+  private createMenuItems(items: MenuItemOrSeparator[], container: HTMLElement, parentItem?: MenuItem): void {
     items.forEach(item => {
       if (typeof item === 'string' && item === '---') {
         // 创建分隔线
         const separator = createElement('div', MENU_ITEM_SEPARATOR_CLASS);
         applyStyles(separator, MENU_STYLES.menuItemSeparator);
         container.appendChild(separator);
-      } else if (typeof item === 'object' && 'type' in item && item.type === 'input') {
-        // 创建输入框菜单项
-        const inputItem = item as MenuItemInput;
-        const wrapper = createNumberInputItem(inputItem.label, inputItem.defaultValue || 1, (value: number) => {
-          this.handleMenuItemClick({
-            menuKey: inputItem.menuKey,
-            menuText: inputItem.label,
-            inputValue: value,
-            ...this.context
-          });
-        });
-        container.appendChild(wrapper);
+        // } else if (typeof item === 'object' && 'type' in item && item.type === 'input') {
+        //   // 创建输入框菜单项
+        //   const inputItem = item as MenuItemInput;
+        //   const wrapper = createNumberInputItem(
+        //     inputItem.label,
+        //     inputItem.defaultValue || 1,
+        //     inputItem.iconName,
+        //     (value: number) => {
+        //       this.handleMenuItemClick({
+        //         menuKey: inputItem.menuKey,
+        //         menuText: inputItem.label,
+        //         inputValue: value,
+        //         ...this.context
+        //       });
+        //     }
+        //   );
+        //   container.appendChild(wrapper);
       } else if (typeof item === 'object') {
         // 创建普通菜单项
         const menuItem = item as MenuItem;
@@ -133,7 +133,7 @@ export class MenuManager {
         if (menuItem.iconName) {
           const icon = createIcon(menuItem.iconName);
           leftContainer.appendChild(icon);
-        } else {
+        } else if (menuItem.iconPlaceholder) {
           // 占位图标，保持对齐
           const placeholder = createElement('span');
           applyStyles(placeholder, MENU_STYLES.menuItemIcon);
@@ -145,6 +145,26 @@ export class MenuManager {
         text.textContent = menuItem.text;
         applyStyles(text, MENU_STYLES.menuItemText);
         leftContainer.appendChild(text);
+        if (item.inputDefaultValue) {
+          // 创建输入框
+          const input = createElement('input') as HTMLInputElement;
+          input.type = 'number';
+          input.min = '1';
+          input.value = item.inputDefaultValue.toString();
+          applyStyles(input, MENU_STYLES.inputField);
+          leftContainer.appendChild(input);
+          //监听enter 回车确认
+          input.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+              this.handleMenuItemClick({
+                menuKey: menuItem.menuKey,
+                menuText: menuItem.text,
+                inputValue: parseInt(input.value, 10),
+                ...this.context
+              });
+            }
+          });
+        }
 
         menuItemElement.appendChild(leftContainer);
 
@@ -182,7 +202,11 @@ export class MenuManager {
         if (!menuItem.disabled) {
           // 点击事件
           if (!menuItem.children || menuItem.children.length === 0) {
-            menuItemElement.addEventListener('click', () => {
+            menuItemElement.addEventListener('click', (e: MouseEvent) => {
+              //判断如果点击到input 则不触发点击事件
+              if (e.target instanceof HTMLInputElement) {
+                return;
+              }
               this.handleMenuItemClick({
                 menuKey: menuItem.menuKey,
                 menuText: menuItem.text,
@@ -210,10 +234,10 @@ export class MenuManager {
               // 显示当前子菜单
               setTimeout(() => {
                 if (document.body.contains(menuItemElement)) {
-                  this.showSubmenu(menuItem.children!, menuItemElement);
+                  this.showSubmenu(menuItem.children, menuItemElement, menuItem);
                 }
               }, this.submenuShowDelay);
-            } else {
+            } else if (!parentItem) {
               // 没有子菜单，关闭所有子菜单
               this.closeAllSubmenus();
             }
@@ -221,10 +245,11 @@ export class MenuManager {
 
           // 鼠标离开事件
           menuItemElement.addEventListener('mouseleave', () => {
-            // 移除悬停样式
-            const computedStyle = window.getComputedStyle(menuItemElement);
-            const originalBackgroundColor = computedStyle.backgroundColor;
-            menuItemElement.style.backgroundColor = originalBackgroundColor;
+            // 移除悬停样式，使用与添加时相同的方式
+            // 通过设置空对象来重置之前应用的menuItemHover样式的属性
+            Object.keys(MENU_STYLES.menuItemHover).forEach(key => {
+              (menuItemElement.style as any)[key] = '';
+            });
 
             // 如果有子菜单，设置延迟关闭
             if (menuItem.children && menuItem.children.length > 0) {
@@ -243,7 +268,7 @@ export class MenuManager {
   /**
    * 显示子菜单
    */
-  private showSubmenu(items: (MenuItem | MenuItemInput | string)[], parentElement: HTMLElement): void {
+  private showSubmenu(items: MenuItemOrSeparator[], parentElement: HTMLElement, parentItem?: MenuItem): void {
     const parentRect = parentElement.getBoundingClientRect();
 
     // 创建子菜单容器
@@ -251,7 +276,7 @@ export class MenuManager {
     applyStyles(submenu, MENU_STYLES.submenuContainer);
 
     // 创建子菜单项
-    this.createMenuItems(items, submenu);
+    this.createMenuItems(items, submenu, parentItem);
 
     // 添加到文档
     document.body.appendChild(submenu);

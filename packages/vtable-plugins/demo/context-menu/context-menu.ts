@@ -68,8 +68,8 @@ export function createTableInstance() {
   // 创建右键菜单插件
   const contextMenuPlugin = new ContextMenuPlugin({
     columnSeriesNumberMenuItems: [
-      { text: '向左插入', menuKey: 'insert_left', iconName: 'insert' },
-      { text: '向右插入', menuKey: 'insert_right', iconName: 'insert' },
+      { text: '向左插入', menuKey: 'insert_column_left', iconName: 'insert' },
+      { text: '向右插入', menuKey: 'insert_column_right', iconName: 'insert' },
       { text: '列宽设为', menuKey: 'set_width', iconName: 'merge' },
       { text: '列宽自适应', menuKey: 'fit_width', iconName: 'merge' },
       { text: '删除列', menuKey: 'delete_column', iconName: 'delete' },
@@ -79,7 +79,6 @@ export function createTableInstance() {
       { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
       { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
     ]
-
     // bodyCellMenuItems: [
     //   { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
     //   { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
@@ -147,7 +146,6 @@ export function createTableInstance() {
     //   { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
     //   { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
     // ],
-
     // menuClickCallback: (args, table) => {
     //   console.log('菜单点击事件:', args);
     // }
@@ -160,6 +158,7 @@ export function createTableInstance() {
   });
   // 创建表格配置
   const option: VTable.ListTableConstructorOptions = {
+    frozenRowCount: 2,
     container: document.getElementById(CONTAINER_ID)!,
     columns,
     records,
