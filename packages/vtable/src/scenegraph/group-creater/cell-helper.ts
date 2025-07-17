@@ -721,8 +721,11 @@ export function updateCell(
     // update text
     const textMark = oldCellGroup.getChildByName('text');
     if (forceFastUpdate && textMark) {
+      const textAlign = cellTheme.text.textAlign;
+      const hierarchyOffset = getHierarchyOffset(col, row, table);
       const attribute = {
-        textBaseline: 'top'
+        textBaseline: 'top',
+        dx: textAlign === 'left' ? hierarchyOffset : 0
       };
       textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
     } else if (textMark) {
@@ -788,8 +791,8 @@ export function updateCell(
     isVtableMerge || isCustomMerge
       ? 'text'
       : table.isHeader(col, row)
-        ? ((table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
-        : (table.getBodyColumnType(col, row) ?? 'text');
+      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+      : table.getBodyColumnType(col, row) ?? 'text';
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;
