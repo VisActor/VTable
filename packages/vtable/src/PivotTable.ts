@@ -501,6 +501,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     // this.render();
     return new Promise(resolve => {
       setTimeout(resolve, 0);

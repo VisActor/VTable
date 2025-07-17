@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VTable-Sheet Formula Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 100%;
+      height: 600px;
+    }
+    
+    .header {
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      color: #333;
+    }
+    
+    .description {
+      color: #666;
+      margin-bottom: 20px;
+    }
+    
+    .formula-examples {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    
+    .formula-examples h3 {
+      margin-top: 0;
+    }
+    
+    .formula-examples code {
+      background-color: #e0e0e0;
+      padding: 2px 4px;
+      border-radius: 2px;
+      font-family: monospace;
+    }
+    
+    .formula-examples ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>VTable-Sheet 公式功能演示</h1>
+    <div class="description">
+      该示例演示了VTable-Sheet的公式计算功能。
+    </div>
+  </div>
+  
+  <div class="formula-examples">
+    <h3>可用公式示例：</h3>
+    <ul>
+      <li><code>=SUM(A1:B5)</code> - 计算A1到B5单元格的总和</li>
+      <li><code>=AVERAGE(C1:C10)</code> - 计算C1到C10单元格的平均值</li>
+      <li><code>=MAX(D1:E5)</code> - 获取D1到E5单元格的最大值</li>
+      <li><code>=MIN(A1:A10)</code> - 获取A1到A10单元格的最小值</li>
+      <li><code>=COUNT(A1:D10)</code> - 计算A1到D10单元格的非空值数量</li>
+      <li><code>=IF(A1>100, "高", "低")</code> - 如果A1大于100，显示"高"，否则显示"低"</li>
+    </ul>
+    <p>输入方式：点击单元格，在公式栏中输入公式（以=开头），然后按Enter键确认</p>
+  </div>
+  
+  <div id="formula-sheet-container" class="container"></div>
+  
+  <script src="../dist/vtable-sheet.js"></script>
+  <script>
+    // 创建示例数据
+    const salesData = [
+      ['产品', '一月', '二月', '三月', '四月', '五月', '六月', '总计', '平均值'],
+      ['产品A', 1200, 1500, 900, 1800, 1350, 1650, '', ''],
+      ['产品B', 950, 1100, 1300, 800, 1200, 1400, '', ''],
+      ['产品C', 400, 600, 350, 500, 450, 550, '', ''],
+      ['产品D', 2500, 2200, 2400, 2300, 2600, 2700, '', ''],
+      ['总计', '', '', '', '', '', '', '', ''],
+      ['平均值', '', '', '', '', '', '', '', '']
+    ];
+    
+    // 初始化VTableSheet
+    const sheet = new VTableSheet.VTableSheet({
+      container: 'formula-sheet-container',
+      showToolbar: true,
+      showFormulaBar: true,
+      showSheetTab: true,
+      sheets: [
+        {
+          title: "销售数据",
+          key: "sales",
+          data: salesData
+        }
+      ]
+    });
+    
+    // 添加公式
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const formulaManager = sheet.getFormulaManager();
+        
+        // 添加行总计公式
+        for (let row = 1; row <= 4; row++) {
+          formulaManager.registerFormula({
+            sheet: 'sales',
+            row: row,
+            col: 7
+          }, `SUM(B${row+1}:G${row+1})`);
+        }
+        
+        // 添加行平均值公式
+        for (let row = 1; row <= 4; row++) {
+          formulaManager.registerFormula({
+            sheet: 'sales',
+            row: row,
+            col: 8
+          }, `AVERAGE(B${row+1}:G${row+1})`);
+        }
+        
+        // 添加列总计公式
+        for (let col = 1; col <= 6; col++) {
+          formulaManager.registerFormula({
+            sheet: 'sales',
+            row: 5,
+            col: col
+          }, `SUM(${String.fromCharCode(65 + col)}2:${String.fromCharCode(65 + col)}5)`);
+        }
+        
+        // 添加列平均值公式
+        for (let col = 1; col <= 6; col++) {
+          formulaManager.registerFormula({
+            sheet: 'sales',
+            row: 6,
+            col: col
+          }, `AVERAGE(${String.fromCharCode(65 + col)}2:${String.fromCharCode(65 + col)}5)`);
+        }
+        
+        // 添加总计的总计
+        formulaManager.registerFormula({
+          sheet: 'sales',
+          row: 5,
+          col: 7
+        }, 'SUM(B6:G6)');
+        
+        // 添加总计的平均值
+        formulaManager.registerFormula({
+          sheet: 'sales',
+          row: 5,
+          col: 8
+        }, 'AVERAGE(B6:G6)');
+        
+        // 添加平均值的总计
+        formulaManager.registerFormula({
+          sheet: 'sales',
+          row: 6,
+          col: 7
+        }, 'SUM(B7:G7)');
+        
+        // 添加平均值的平均值
+        formulaManager.registerFormula({
+          sheet: 'sales',
+          row: 6,
+          col: 8
+        }, 'AVERAGE(B7:G7)');
+      }, 1000);
+    });
+  </script>
+</body>
+</html> 

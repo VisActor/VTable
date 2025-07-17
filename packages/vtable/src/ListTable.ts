@@ -113,7 +113,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     internalProps.multipleSort = !!options.multipleSort;
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = options.groupBy
+      ? getGroupByDataConfig(options.groupBy, options.addRecordRule)
+      : { addRecordRule: options.addRecordRule }; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
@@ -518,7 +520,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     // internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = options.groupBy
+      ? getGroupByDataConfig(options.groupBy, options.addRecordRule)
+      : { addRecordRule: options.addRecordRule }; //cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
@@ -589,6 +593,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.pluginManager.updatePlugins(options.plugins);
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
