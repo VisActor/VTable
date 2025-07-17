@@ -181,10 +181,13 @@ export class FilterToolbar {
 
     const field = this.table.internalProps.layoutMap.getHeaderField(col, row) as string;
     this.updateSelectedField(field);
-    if (this.activeTab === 'byValue') {
-      this.valueFilter.show();
+
+    // 根据当前筛选配置自动选择正确的筛选标签页
+    const currentFilter = this.filterStateManager.getState().filters.get(field);
+    if (currentFilter && currentFilter.type === 'byCondition') {
+      this.onTabSwitch('byCondition');
     } else {
-      this.conditionFilter.show();
+      this.onTabSwitch('byValue');
     }
   }
 
