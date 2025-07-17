@@ -296,7 +296,7 @@ export function createTable() {
     frame: {
       verticalSplitLineMoveable: true,
       outerFrameStyle: {
-        borderLineWidth: [2,10,10,2],
+        borderLineWidth: [2, 10, 10, 2],
         borderColor: 'red',
         cornerRadius: 0
       },

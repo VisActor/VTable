@@ -1,13 +1,13 @@
 import {
   Aggregator,
-  RecordAggregator, 
-  NoneAggregator, 
-  CustomAggregator, 
-  RecalculateAggregator, 
-  SumAggregator, 
-  CountAggregator, 
-  AvgAggregator, 
-  MaxAggregator, 
+  RecordAggregator,
+  NoneAggregator,
+  CustomAggregator,
+  RecalculateAggregator,
+  SumAggregator,
+  CountAggregator,
+  AvgAggregator,
+  MaxAggregator,
   MinAggregator
 } from '../../src/ts-types/dataset/aggregation';
 import { AggregationType } from '../../src/ts-types/new-data-set';
@@ -88,7 +88,7 @@ function createAggregatorInstances() {
         isRecord: true,
         calculateFun: (aggregatorValues: any[], records: any[], field: string) => {
           return records.reduce((sum: number, record: any) => {
-            return sum + (record.price * record.quantity);
+            return sum + record.price * record.quantity;
           }, 0);
         },
         dependAggregators: [],
@@ -101,7 +101,7 @@ function createAggregatorInstances() {
         isRecord: true,
         calculateFun: (aggregatorValues: any[], records: any[], field: string) => {
           return records.reduce((sum: number, record: any) => {
-            return sum + (record.price * record.quantity);
+            return sum + record.price * record.quantity;
           }, 0);
         },
         dependAggregators: [],
@@ -114,7 +114,7 @@ function createAggregatorInstances() {
         isRecord: true,
         calculateFun: (aggregatorValues: any[], records: any[], field: string) => {
           return records.reduce((sum: number, record: any) => {
-            return sum + (record.price * record.quantity);
+            return sum + record.price * record.quantity;
           }, 0);
         },
         dependAggregators: [],
@@ -127,7 +127,7 @@ function createAggregatorInstances() {
         isRecord: true,
         calculateFun: (aggregatorValues: any[], records: any[], field: string) => {
           return records.reduce((sum: number, record: any) => {
-            return sum + (record.price * record.quantity);
+            return sum + record.price * record.quantity;
           }, 0);
         },
         dependAggregators: [],
@@ -202,7 +202,7 @@ describe('Aggregation Tests', () => {
       // 测试 push 函数
       main.push(child1);
       main.push(child2);
-      
+
       // 根据聚合器类型调整期望值
       if (aggregatorName === 'NoneAggregator') {
         // NoneAggregator 只保留最新的一个聚合器
@@ -215,7 +215,7 @@ describe('Aggregation Tests', () => {
       const originalValue = main.value();
       main.changedValue = 999;
       expect(main.value()).toBe(999);
-      
+
       // 重置 changedValue
       main.changedValue = undefined;
       expect(main.value()).toBe(originalValue);

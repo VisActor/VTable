@@ -26,7 +26,9 @@ export class FrameBorder {
   createFrameBorder() {
     const group = this._scene.ganttGroup;
     const frameStyle = this._scene._gantt.parsedOptions.outerFrameStyle;
-    if (!frameStyle) return;
+    if (!frameStyle) {
+      return;
+    }
     const { cornerRadius, borderColor, borderLineWidth, borderLineDash } = frameStyle;
     const groupAttributes: IGroupGraphicAttribute = {};
     const rectAttributes: IRectGraphicAttribute = { pickable: false };
