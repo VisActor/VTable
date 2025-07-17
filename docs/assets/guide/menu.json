@@ -878,6 +878,13 @@
             "zh": "全量导出甘特图",
             "en": "gantt export image"
           }
+        },
+        {
+          "path": "excel-import",
+          "title": {
+            "zh": "excel导入",
+            "en": "excel Import"
+          }
         }
       ]
     },

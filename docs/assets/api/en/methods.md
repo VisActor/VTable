@@ -51,14 +51,18 @@ Update the configuration information of the columns field of the table, and it w
   /**
    * Update the columns field configuration information of the table
    * @param columns
+   * @param options configuration options (optional)
+   * @param options.clearColWidthCache Clear manually adjusted column width cache (default: false)
    */
-  updateColumns(columns: ColumnsDefine) => void
+  updateColumns(columns: ColumnsDefine, options?: { clearColWidthCache?: boolean }) => void
 ```
 
 use:
 
 ```
-tableInstance. updateColumns(newColumns)
+tableInstance.updateColumns(newColumns)
+
+tableInstance.updateColumns(newColumns, { clearColWidthCache: true })
 ```
 
 Corresponding attribute update interface（https://visactor.io/vtable/guide/basic_function/update_option ）:
@@ -1426,13 +1430,13 @@ getAllColsWidth: () => number;
 
 ```
 
-## getAllColsWidths(Function)
+## getColsWidths(Function)
 
 get all columns width list
 
 ```
 
-getAllColsWidth: () => number[];
+getColsWidths: () => number[];
 
 ```
 
@@ -1649,6 +1653,44 @@ The pixelRatio can be obtained directly from the instance's pixelRatio property.
 /\*_ Set the canvas pixel ratio _/
 setPixelRatio: (pixelRatio: number) => void;
 
+````
+
+## expandAllTreeNode(Function)
+
+Expand all tree nodes (including headers and data rows).
+
+**ListTable Proprietary**
+
+```ts
+  /**
+   * Expand all tree nodes (including headers and data rows).
+   */
+  expandAllTreeNode(): void
+````
+
+Usage:
+
+```ts
+// Expand all nodes
+tableInstance.expandAllTreeNode();
 ```
 
+## collapseAllTreeNode(Function)
+
+Collapse all tree nodes (including headers and data rows).
+
+**ListTable Proprietary**
+
+```ts
+  /**
+   * Collapse all tree nodes (including headers and data rows).
+   */
+  collapseAllTreeNode(): void
+```
+
+Usage:
+
+```ts
+// Collapse all nodes
+tableInstance.collapseAllTreeNode();
 ```

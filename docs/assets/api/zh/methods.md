@@ -51,14 +51,20 @@ tableInstance.theme = newTheme;
   /**
    * 更新表格的columns字段配置信息
    * @param columns
+   * @param options 配置项(可选)
+   * @param options.clearColWidthCache 是否清除调整列宽缓存，默认为 false。当设置为 true 时
+   * ，将清除手动调整过宽度的列的宽度缓存，重新分配所有列的宽度
+   *
    */
-  updateColumns(columns: ColumnsDefine) => void
+  updateColumns(columns: ColumnsDefine, options?: { clearColWidthCache?: boolean }) => void
 ```
 
 使用：
 
 ```
 tableInstance.updateColumns(newColumns)
+
+tableInstance.updateColumns(newColumns, { clearColWidthCache: true })
 ```
 
 对应属性更新接口（可参考教程：https://visactor.io/vtable/guide/basic_function/update_option ）:
@@ -992,7 +998,7 @@ use case: 对于透视图的场景上，点击图例项后 更新过滤规则 �
    * @param workOnEditableCell 是否仅更改可编辑单元格
    * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => void;
+  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false, triggerEvent=true) => Promise<boolean[][]>;
 ```
 
 ## getEditor(Function)
@@ -1273,12 +1279,12 @@ getAllRowsHeight: () => number;
 getAllColsWidth: () => number;
 ```
 
-## getAllColsWidths(Function)
+## getColsWidths(Function)
 
 获取表格所有列的宽度列表
 
 ```
-getAllColsWidth: () => number[];
+getColsWidths: () => number[];
 ```
 
 ## setSortedIndexMap(Function)
@@ -1461,4 +1467,124 @@ setLoadingHierarchyState: (col: number, row: number) => void;
 ```
   /** 设置画布的像素比 */
   setPixelRatio: (pixelRatio: number) => void;
+```
+
+## expandAllTreeNode(Function)
+
+展开所有树形节点（包括表头和数据行）。
+
+**ListTable 专有**
+
+```ts
+  /**
+   * 展开所有树形节点（包括表头和数据行）。
+   */
+  expandAllTreeNode(): void
+```
+
+使用：
+
+```ts
+// 展开所有节点
+tableInstance.expandAllTreeNode();
+```
+
+## collapseAllTreeNode(Function)
+
+折叠所有树形节点（包括表头和数据行）。
+
+**ListTable 专有**
+
+```ts
+  /**
+   * 折叠所有树形节点（包括表头和数据行）。
+   */
+  collapseAllTreeNode(): void
+```
+
+使用：
+
+```ts
+// 折叠所有节点
+tableInstance.collapseAllTreeNode();
+```
+
+## expandAllForRowTree(Function)
+
+展开所有行表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 展开行表头树的所有节点。
+   */
+  expandAllForRowTree(): void
+```
+
+使用：
+
+```ts
+// 展开行表头树的所有节点
+tableInstance.expandAllForRowTree();
+```
+
+## collapseAllForRowTree(Function)
+
+折叠所有行表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 折叠行表头树的所有节点
+   */
+  collapseAllForRowTree(): void
+```
+
+使用：
+
+```ts
+// 折叠行表头树的所有节点
+tableInstance.collapseAllForRowTree();
+```
+
+## expandAllForColumnTree(Function)
+
+展开所有列表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 展开列表头树的所有节点
+   */
+  expandAllForColumnTree(): void
+```
+
+使用：
+
+```ts
+// 展开列表头树的所有节点
+tableInstance.expandAllForColumnTree();
+```
+
+## collapseAllForColumnTree(Function)
+
+折叠所有行表头树的节点。
+
+**PivotTable 专有**
+
+```ts
+  /**
+   * 折叠列表头树的所有节点
+   */
+  collapseAllForColumnTree(): void
+```
+
+使用：
+
+```ts
+// 折叠列表头树的所有节点
+tableInstance.collapseAllForColumnTree();
 ```

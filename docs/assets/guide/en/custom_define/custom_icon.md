@@ -198,6 +198,8 @@ The effect after replacement is as follows: https://visactor.io/vtable/demo/cust
 
 In the same way, we can replace other functional icons. Several icons related to internal functions are built into VTable, such as sorting, fixed columns, drop-down menu icons, Expand folding icons, etc.
 
+The built-in icon file address: https://github.com/VisActor/VTable/blob/39eaa851d6a5415b9c7bba746d23ca173ccf675f/packages/vtable/src/icons.ts.
+
 The list of resettable internal icons is as follows:
 
 | Functions                      | Configure funcType                        | Configure name   | Icon description                                                    |

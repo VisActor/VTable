@@ -2109,6 +2109,12 @@ export class Dataset {
     } else {
       flatColKey = colKey.join(this.stringJoinChar);
     }
+    //在newValue能转为数字的情况下 转为数字
+    if (typeof newValue === 'string') {
+      if (!isNaN(parseFloat(newValue))) {
+        newValue = parseFloat(newValue);
+      }
+    }
 
     if (this.changedTree[flatRowKey]?.[flatColKey]) {
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
@@ -2120,9 +2126,253 @@ export class Dataset {
       this.changedTree[flatRowKey][flatColKey] = [];
       this.changedTree[flatRowKey][flatColKey][indicatorIndex] = newValue;
     }
+
     const cellAggregator = this.tree[flatRowKey]?.[flatColKey]?.[indicatorIndex];
     if (cellAggregator?.records.length === 1) {
       cellAggregator.records[0][this.indicatorKeys[indicatorIndex]] = newValue;
+    }
+    //重新计算总计
+
+    if (this.dataConfig?.updateAggregationOnEditCell ?? false) {
+      if (cellAggregator) {
+        cellAggregator.changedValue = newValue;
+        this.recalculateTotals(rowKey, colKey, indicator);
+      } else {
+        //空白单元格更新的情况，为单元格重新创建Aggregator
+        const newCellAggregator = new SumAggregator({
+          key: indicator,
+          field: indicator,
+          isRecord: true
+        });
+        newCellAggregator.changedValue = newValue;
+        //在有新的单元格的情况下 更新相应的小计总计聚合器的children
+        this.recalculateTotals(rowKey, colKey, indicator, newCellAggregator);
+      }
+    }
+  }
+
+  /**
+   * 重新计算受单元格值变化影响的小计和总计
+   * @param rowKey 行键（可以是字符串数组或字符串）
+   * @param colKey 列键（可以是字符串数组或字符串）
+   * @param indicator 指标字段
+   * @param newCellAggregator 新的单元格聚合器（可选）
+   */
+  recalculateTotals(
+    rowKey: string[] | string = [],
+    colKey: string[] | string = [],
+    indicator: string,
+    newCellAggregator?: IAggregator
+  ) {
+    //#region 前置条件检查
+    // 如果没有配置总计，或者树为空，或者没有启用任何行/列的小计或总计，则直接返回
+    if (
+      !this.totals ||
+      Object.keys(this.tree).length === 0 ||
+      (!(
+        this.totals.row?.showGrandTotals ||
+        (this.totals.row?.subTotalsDimensions &&
+          this.totals.row.subTotalsDimensions.length > 0 &&
+          this.totals.row.showSubTotals !== false)
+      ) &&
+        !(
+          this.totals.column?.showGrandTotals ||
+          (this.totals.column?.subTotalsDimensions &&
+            this.totals.column.subTotalsDimensions.length > 0 &&
+            this.totals.column.showSubTotals !== false)
+        ))
+    ) {
+      return;
+    }
+    //#endregion
+
+    //#region 参数处理与初始化
+    // 将输入参数转换为字符串格式，用于在树中查找
+    const flatRowKey = Array.isArray(rowKey) ? rowKey.join(this.stringJoinChar) : rowKey;
+    const flatColKey = Array.isArray(colKey) ? colKey.join(this.stringJoinChar) : colKey;
+    const indicatorIndex = this.indicatorKeysIncludeCalculatedFieldDependIndicatorKeys.indexOf(indicator);
+
+    // 找出受影响的小计和总计
+    const aggregatorsToReset: Set<Aggregator> = new Set(); // 存储所有需要重置的聚合器
+    const subTotalAggregators: Set<Aggregator> = new Set(); // 用于标记哪些聚合器是小计
+    const rowKeyParts = flatRowKey.split(this.stringJoinChar); // 拆分行键以便构建小计键
+    const colKeyParts = flatColKey.split(this.stringJoinChar); // 拆分列键以便构建小计键
+    //#endregion
+
+    //#region 辅助函数定义
+    /**
+     * 添加受影响的聚合器到重置集合
+     * @param agg 聚合器
+     * @param rowKey 行键
+     * @param colKey 列键
+     */
+    const addAggregatorToResetSet = (agg: Aggregator | undefined, rowKey: string, colKey: string) => {
+      // 确保不添加原始修改的单元格（即我们正在更改的那个单元格）
+      if (agg && !(rowKey === flatRowKey && colKey === flatColKey)) {
+        // 添加到需要重置的聚合器集合
+        aggregatorsToReset.add(agg);
+
+        // 如果聚合器是当前行或当前列的小计，标记它
+        if (rowKey === flatRowKey || colKey === flatColKey) {
+          subTotalAggregators.add(agg);
+        }
+      }
+    };
+    //#endregion
+
+    //#region 处理行维度的小计和总计
+    // 1. 找出受影响的行小计
+    if (this.totals?.row?.subTotalsDimensions && this.totals.row.showSubTotals !== false) {
+      for (let i = 0; i < this.totals.row.subTotalsDimensions.length; i++) {
+        const dimension = this.totals.row.subTotalsDimensions[i];
+        const dimensionIndex = this.rows.indexOf(dimension);
+
+        if (dimensionIndex >= 0 && dimensionIndex < rowKeyParts.length) {
+          // 构建行小计的键（截取到当前维度）
+          const rowSubTotalKeyParts = rowKeyParts.slice(0, dimensionIndex + 1);
+          if (this.rowHierarchyType !== 'tree') {
+            rowSubTotalKeyParts.push(this.rowSubTotalLabel); // 添加小计标识
+          }
+          const flatRowSubTotalKey = rowSubTotalKeyParts.join(this.stringJoinChar);
+
+          // 添加行小计与当前列的交叉点
+          if (this.tree[flatRowSubTotalKey]?.[flatColKey]?.[indicatorIndex]) {
+            addAggregatorToResetSet(
+              this.tree[flatRowSubTotalKey][flatColKey][indicatorIndex],
+              flatRowSubTotalKey,
+              flatColKey
+            );
+          }
+
+          // 添加行小计与列小计的交叉点
+          if (this.totals?.column?.subTotalsDimensions && this.totals.column.showSubTotals !== false) {
+            for (let j = 0; j < this.totals.column.subTotalsDimensions.length; j++) {
+              const colDimension = this.totals.column.subTotalsDimensions[j];
+              const colDimensionIndex = this.columns.indexOf(colDimension);
+
+              if (colDimensionIndex >= 0 && colDimensionIndex < colKeyParts.length) {
+                const colSubTotalKeyParts = colKeyParts.slice(0, colDimensionIndex + 1);
+                colSubTotalKeyParts.push(this.colSubTotalLabel);
+                const flatColSubTotalKey = colSubTotalKeyParts.join(this.stringJoinChar);
+
+                if (this.tree[flatRowSubTotalKey]?.[flatColSubTotalKey]?.[indicatorIndex]) {
+                  addAggregatorToResetSet(
+                    this.tree[flatRowSubTotalKey][flatColSubTotalKey][indicatorIndex],
+                    flatRowSubTotalKey,
+                    flatColSubTotalKey
+                  );
+                }
+              }
+            }
+          }
+
+          // 添加行小计与列总计的交叉点
+          if (this.totals?.column?.showGrandTotals) {
+            if (this.tree[flatRowSubTotalKey]?.[this.colGrandTotalLabel]?.[indicatorIndex]) {
+              addAggregatorToResetSet(
+                this.tree[flatRowSubTotalKey][this.colGrandTotalLabel][indicatorIndex],
+                flatRowSubTotalKey,
+                this.colGrandTotalLabel
+              );
+            }
+          }
+        }
+      }
+    }
+
+    // 处理行总计
+    if (this.totals?.row?.showGrandTotals) {
+      // 添加行总计与当前列的交叉点
+      if (this.tree[this.rowGrandTotalLabel]?.[flatColKey]?.[indicatorIndex]) {
+        addAggregatorToResetSet(
+          this.tree[this.rowGrandTotalLabel][flatColKey][indicatorIndex],
+          this.rowGrandTotalLabel,
+          flatColKey
+        );
+
+        // 添加行总计与列小计的交叉点
+        if (this.totals?.column?.subTotalsDimensions && this.totals.column.showSubTotals !== false) {
+          for (let j = 0; j < this.totals.column.subTotalsDimensions.length; j++) {
+            const colDimension = this.totals.column.subTotalsDimensions[j];
+            const colDimensionIndex = this.columns.indexOf(colDimension);
+
+            if (colDimensionIndex >= 0 && colDimensionIndex < colKeyParts.length) {
+              const colSubTotalKeyParts = colKeyParts.slice(0, colDimensionIndex + 1);
+              colSubTotalKeyParts.push(this.colSubTotalLabel);
+              const flatColSubTotalKey = colSubTotalKeyParts.join(this.stringJoinChar);
+
+              if (this.tree[this.rowGrandTotalLabel]?.[flatColSubTotalKey]?.[indicatorIndex]) {
+                addAggregatorToResetSet(
+                  this.tree[this.rowGrandTotalLabel][flatColSubTotalKey][indicatorIndex],
+                  this.rowGrandTotalLabel,
+                  flatColSubTotalKey
+                );
+              }
+            }
+          }
+        }
+
+        // 添加行总计与列总计的交叉点（表格右下角的总计单元格）
+        if (this.totals?.column?.showGrandTotals) {
+          if (this.tree[this.rowGrandTotalLabel]?.[this.colGrandTotalLabel]?.[indicatorIndex]) {
+            addAggregatorToResetSet(
+              this.tree[this.rowGrandTotalLabel][this.colGrandTotalLabel][indicatorIndex],
+              this.rowGrandTotalLabel,
+              this.colGrandTotalLabel
+            );
+          }
+        }
+      }
+      //#endregion
+
+      //#region 处理列维度的小计和总计
+      // 2. 找出受影响的列小计
+      if (this.totals?.column?.subTotalsDimensions && this.totals.column.showSubTotals !== false) {
+        for (let j = 0; j < this.totals.column.subTotalsDimensions.length; j++) {
+          const colDimension = this.totals.column.subTotalsDimensions[j];
+          const colDimensionIndex = this.columns.indexOf(colDimension);
+
+          if (colDimensionIndex >= 0 && colDimensionIndex < colKeyParts.length) {
+            // 构建列小计的键
+            const colSubTotalKeyParts = colKeyParts.slice(0, colDimensionIndex + 1);
+            colSubTotalKeyParts.push(this.colSubTotalLabel);
+            const flatColSubTotalKey = colSubTotalKeyParts.join(this.stringJoinChar);
+
+            // 添加当前行与列小计的交叉点
+            if (this.tree[flatRowKey]?.[flatColSubTotalKey]?.[indicatorIndex]) {
+              addAggregatorToResetSet(
+                this.tree[flatRowKey][flatColSubTotalKey][indicatorIndex],
+                flatRowKey,
+                flatColSubTotalKey
+              );
+            }
+          }
+        }
+      }
+
+      // 处理列总计
+      if (this.totals?.column?.showGrandTotals) {
+        // 添加当前行与列总计的交叉点
+        if (this.tree[flatRowKey]?.[this.colGrandTotalLabel]?.[indicatorIndex]) {
+          addAggregatorToResetSet(
+            this.tree[flatRowKey][this.colGrandTotalLabel][indicatorIndex],
+            flatRowKey,
+            this.colGrandTotalLabel
+          );
+        }
+      }
+      //#endregion
+
+      //#region 重新计算受影响的聚合器
+      // 重置并重新计算受影响的聚合器
+      aggregatorsToReset.forEach(agg => {
+        // 只对行小计和列小计添加新的aggregator（直接相关的小计）
+        if (newCellAggregator && subTotalAggregators.has(agg)) {
+          agg.push(newCellAggregator); // 将新的单元格聚合器添加到小计聚合器中
+        }
+        agg.recalculate(); // 重新计算聚合值
+      });
+      //#endregion
     }
   }
 

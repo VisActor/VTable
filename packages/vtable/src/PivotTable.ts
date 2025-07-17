@@ -1858,6 +1858,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.scenegraph.updateCellContent(sCol, sRow);
         }
       }
+      // 更新所有的统计单元格
+      if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
+        for (let col = 0; col < this.colCount; col++) {
+          for (let row = 0; row < this.rowCount; row++) {
+            if (this.internalProps.layoutMap.isAggregation(col, row)) {
+              this.scenegraph.updateCellContent(col, row);
+            }
+          }
+        }
+      }
       if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
         if (this.internalProps._widthResizedColMap.size === 0) {
           //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -1974,6 +1984,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
       for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
         this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    // 更新所有的统计单元格
+    if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
+      for (let col = 0; col < this.colCount; col++) {
+        for (let row = 0; row < this.rowCount; row++) {
+          if (this.internalProps.layoutMap.isAggregation(col, row)) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
       }
     }
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
@@ -2219,6 +2239,91 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   setLoadingHierarchyState(col: number, row: number) {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
+
+  /**
+   * 展开行表头树的所有节点
+   */
+  expandAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForRowDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 折叠行表头树的所有节点
+   */
+  collapseAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForRowDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 展开列表头树的所有节点
+   */
+  expandAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForColumnDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 折叠列表头树的所有节点
+   */
+  collapseAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForColumnDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        changeAll: true
+      });
+    }
+  }
+
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
     this.editorManager.release();

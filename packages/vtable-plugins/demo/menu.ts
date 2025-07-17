@@ -8,12 +8,20 @@ export const menus = [
     name: 'gantt-export-image'
   },
   {
+    path: 'excel-import',
+    name: 'excel-import'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
   {
     path: 'invert-highlight',
     name: '(deprecated)invert-highlight'
+  },
+  {
+    path: 'wps-fill-handle',
+    name: 'wps-fill-handle'
   },
   {
     path: 'focus-highlight',

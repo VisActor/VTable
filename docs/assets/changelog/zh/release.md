@@ -1,3 +1,102 @@
+# v1.19.3
+
+2025-07-09
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 eventOptions.contextmenuReturnAllSelectedCells [#4064](https://github.com/VisActor/VTable/issues/4064)
+-  **@visactor/vtable**: 添加批量展开或折叠所有树节点
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复在使用groupBy时单击触发编辑单元格无效的问题 [#4172](https://github.com/VisActor/VTable/issues/4172)
+- **@visactor/vtable**: 修复粘贴单元格时的validateCellVaule问题 [#4174](https://github.com/VisActor/VTable/issues/4174) [#1797](https://github.com/VisActor/VTable/issues/1797)
+- **@visactor/vtable**: 修复容器resize后冻结列样式不可见问题
+-  **@visactor/vtable**: 修复粘贴validateValue缺少position表参数 [#4164](https://github.com/VisActor/VTable/issues/4164)
+-  **@visactor/vtable**: 修复动画注册进度问题
+-  **@visactor/vtable**: 修复：修复调整容器大小后冻结列不可见的问题 [#3836](https://github.com/VisActor/VTable/issues/3836)
+
+
+
+
+[更多详情请查看 v1.19.3](https://github.com/VisActor/VTable/releases/tag/v1.19.3)
+
+# v1.19.2
+
+2025-07-01
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 列表表格支持表头层级跨度
+- **@visactor/vtable-plugins**: 添加导入Excel文件插件
+- **@visactor/vtable-gantt**: 甘特图外边框支持数组配置
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复导出Excel时templateLink问题 [#4106](https://github.com/VisActor/VTable/issues/4106)
+- **@visactor/vtable**: 修复使用deleteRecords删除列表树根级别时的错误
+- **@visactor/vtable**: 修复自动填充宽度状态下的minWidth和maxWidth问题 [#4100](https://github.com/VisActor/VTable/issues/4100)
+- **@visactor/vtable**: 修复带聚合时updateColumns发生错误
+- **@visactor/vtable**: 编辑透视表指标值时总计值应同步更新
+- **@visactor/vtable**: 修复自定义聚合时的合并渲染错误
+- **@visactor/vtable**: 修复列表树删除数据时的bug [#3991](https://github.com/VisActor/VTable/issues/3991)
+- **@visactor/vtable**: 修复安装boolean类型的某个字段分组时无法渲染false值的问题 [#4059](https://github.com/VisActor/VTable/issues/4059)
+
+
+
+[更多详情请查看 v1.19.2](https://github.com/VisActor/VTable/releases/tag/v1.19.2)
+
+# v1.19.1
+
+2025-06-20
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 修复使用 containerFit 滚动时底部边框错误问题 [#3337](https://github.com/VisActor/VTable/issues/3337)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复复制 tooltip 文本后无法复制的问题 [#3968](https://github.com/VisActor/VTable/issues/3968)
+- **@visactor/vtable**: 修复当 cellType 为 progressBar 时图标配置不生效的问题 [#4047](https://github.com/VisActor/VTable/issues/4047)
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: 更新 vrender 1.0.5 修复动画 bug
+
+
+
+[更多详情请查看 v1.19.1](https://github.com/VisActor/VTable/releases/tag/v1.19.1)
+
+# v1.19.0
+
+2025-06-16
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 添加任务条最小尺寸配置 [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable-gantt**: 支持不同依赖关系连接线具有不同样式 [#4016](https://github.com/VisActor/VTable/issues/4016)
+- **@visactor/vtable**: 添加 containerFit 配置以支持表格尺寸适配
+- **@visactor/vtable**: 添加 仿WPS 填充柄功能插件
+- **@visactor/vtable**: 为 updateColumns API 添加 clearColWidthCache 配置项，用于清除列宽缓存
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 某些 taskShowMode 应该计算 vtable 上的所有行高 [#4011](https://github.com/VisActor/VTable/issues/4011)
+- **@visactor/vtable**: gif 停止动画时释放资源 [#4029](https://github.com/VisActor/VTable/issues/4029)
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: 更新至 vrender 1.0.0
+
+
+
+[更多详情请查看 v1.19.0](https://github.com/VisActor/VTable/releases/tag/v1.19.0)
+
 # v1.18.5
 
 2025-06-09

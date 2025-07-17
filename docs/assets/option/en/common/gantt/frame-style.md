@@ -4,7 +4,7 @@ The definition of IFrameStyle is:
 ```
 export type IFrameStyle = {
   borderColor?: string;
-  borderLineWidth?: number;
+  borderLineWidth?: number | number[];
   borderLineDash?: number[];
   cornerRadius?: number;
 };

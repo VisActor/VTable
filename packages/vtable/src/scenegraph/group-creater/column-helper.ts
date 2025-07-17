@@ -190,7 +190,7 @@ export function createComplexColumn(
         }
         if ((table.options as ListTableConstructorOptions).groupTitleFieldFormat) {
           value = (table.options as ListTableConstructorOptions).groupTitleFieldFormat(rawRecord, col, row, table);
-        } else if (vtableMergeName) {
+        } else if (vtableMergeName !== undefined) {
           value = vtableMergeName;
         }
       }

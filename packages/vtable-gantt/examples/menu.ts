@@ -12,6 +12,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-borderLineWidth-array-config'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-hour'
   },
   {
@@ -65,6 +69,10 @@ export const menus = [
   {
     path: 'gantt',
     name: 'gantt-style'
+  },
+  {
+    path: 'gantt',
+    name: 'gantt-linkLine-style'
   },
   {
     path: 'gantt',

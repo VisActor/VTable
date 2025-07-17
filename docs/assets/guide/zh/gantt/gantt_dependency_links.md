@@ -1,7 +1,6 @@
-
 ## 任务依赖关系
 
-VTable甘特图支持任务之间的依赖关系，可以通过连线展示任务之间的前后关系。
+VTable 甘特图支持任务之间的依赖关系，可以通过连线展示任务之间的前后关系。
 
 ### 依赖类型
 
@@ -33,13 +32,13 @@ const ganttOptions = {
 };
 ```
 
-其中`linkedFromTaskKey` 和 `linkedToTaskKey` 的值需要对应任务数据中的唯一标识字段，唯一标识的字段名默认为`id`，如果需要修改可以通过`taskKeyField`配置项来修改。
+其中`linkedFromTaskKey` 和 `linkedToTaskKey` 的值需要对应任务数据中的唯一标识字段，唯一标识的字段名默认为`id`，如果需要修改可以通过`taskKeyField`配置项来修改。每个依赖关系可以通过`linkLineStyle`属性为这条依赖线单独设置样式，比如线条颜色、宽度等，这样可以更好地区分不同类型的依赖关系。
 
 ### 创建依赖
 
-可以通过API或者交互添加依赖关系：
+可以通过 API 或者交互添加依赖关系：
 
-1. **API方式**：
+1. **API 方式**：
 
 ```javascript
 // 添加依赖
@@ -78,6 +77,7 @@ gantt.deleteLink({
 ### 依赖样式配置
 
 样式配置入口：
+
 ```
 {
   /** 依赖线基本样式 */
@@ -134,8 +134,33 @@ const ganttOptions = {
   }
 };
 ```
+
+除了统一设置依赖线样式外，您还可以为每条依赖线单独配置样式。在 links 数组中，每个 link 对象都可以通过 `linkLineStyle` 属性来设置该条依赖线的样式。`linkLineStyle` 的接口类型同为 `ILineStyle`。
+
+```javascript
+const dependencyLinks = [
+  {
+    type: DependencyType.FinishToStart,
+    linkedFromTaskKey: 1,
+    linkedToTaskKey: 2,
+    // 这条依赖线的样式
+    linkLineStyle: {
+      lineColor: 'skyblue',
+      lineWidth: 2,
+      lineDash: [4, 2]
+    }
+  }
+];
+
+const ganttOptions = {
+  dependency: {
+    links: dependencyLinks
+  }
+};
+```
+
 ### 注意事项
 
 如果是树形结构的甘特图，当依赖线的起点或者终点是被折叠起来的子任务时，依赖线会自动隐藏。
 
-不同任务显示模式下，依懒关联线可能有异常，发现可以提issue或者排查我们的代码逻辑提pr给我们！
+不同任务显示模式下，依懒关联线可能有异常，发现可以提 issue 或者排查我们的代码逻辑提 pr 给我们！
