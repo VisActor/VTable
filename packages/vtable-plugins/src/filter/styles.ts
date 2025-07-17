@@ -125,7 +125,32 @@ export const filterStyles = {
     backgroundColor: isPrimary ? '#007bff' : 'white',
     color: isPrimary ? 'white' : '#333',
     borderColor: isPrimary ? '#007bff' : '#ccc'
-  })
+  }),
+
+  // === 条件筛选相关样式 ===
+
+  // 条件筛选容器
+  conditionContainer: {
+    marginBottom: '15px',
+    padding: '10px'
+  },
+
+  // 表单标签样式
+  formLabel: {
+    display: 'block',
+    marginBottom: '8px',
+    fontWeight: 'bold'
+  },
+
+  // 操作符选择框样式
+  operatorSelect: {
+    width: '100%',
+    padding: '8px',
+    marginBottom: '15px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    boxSizing: 'border-box'
+  }
 };
 
 /**

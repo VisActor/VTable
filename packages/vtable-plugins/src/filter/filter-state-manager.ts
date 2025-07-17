@@ -67,7 +67,7 @@ export class FilterStateManager {
         newFilter.clear();
         break;
       case FilterActionType.APPLY_FILTERS:
-        newFilter.set(payload.id, { ...newFilter.get(payload.id), enable: true });
+        newFilter.set(payload.id, { ...newFilter.get(payload.id), ...payload, enable: true });
         break;
     }
 
