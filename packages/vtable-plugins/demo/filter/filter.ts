@@ -2,92 +2,140 @@ import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { FilterPlugin } from '../../src/filter';
 const CONTAINER_ID = 'vTable';
-const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
-    id: i + 1,
-    email: `${i + 1}@xxx.com`,
-    name: `小明${i + 1}`,
-    lastName: '王',
-    date1: `2022年9月${i + 1}日`,
-    tel: '000-0000-0000',
-    sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
-    city: 'beijing',
-    image:
-      '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
-  }));
+
+/**
+ * 生成展示筛选功能的演示数据
+ * 包含各种类型的数据：文本、数值、日期、布尔值、颜色等
+ */
+const generateDemoData = (count: number) => {
+  const colors = ['#f5a623', '#7ed321', '#bd10e0', '#4a90e2', '#50e3c2', '#ff5a5f', '#000000'];
+  const departments = ['研发部', '市场部', '销售部', '人事部', '财务部', '设计部', '客服部', '运营部'];
+
+  return Array.from(new Array(count)).map((_, i) => {
+    const salary = Math.floor(5000 + Math.random() * 15000);
+    const sales = Math.floor(10000 + Math.random() * 90000);
+    const isSelected = i % 3 === 0;
+    const option = i === 1;
+
+    return {
+      id: i + 1,
+      name: `员工${i + 1}`,
+      gender: i % 2 === 0 ? '男' : '女',
+      salary,
+      sales,
+      isFullTime: i % 5 !== 0,
+      department: departments[i % departments.length],
+      favoriteColor: colors[i % colors.length],
+      status: i % 3 === 0 ? '在职' : i % 3 === 1 ? '请假' : '离职',
+      isSelected,
+      option,
+      avatar:
+        '<svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" fill="#' +
+        colors[i % colors.length].substring(1) +
+        '" stroke="#333" stroke-width="1"/></svg>'
+    };
+  });
 };
 
 export function createTable() {
-  const records = generatePersons(20);
+  const records = generateDemoData(50);
   const columns: VTable.ColumnsDefine = [
     {
-      field: 'image',
-      title: '行号',
-      width: 80,
+      field: 'id',
+      title: 'ID',
+      width: 60,
+      sort: true
+    },
+    {
+      field: 'name',
+      title: '姓名',
+      width: 120,
+      sort: true
+    },
+    {
+      field: 'gender',
+      title: '性别',
+      width: 100
+    },
+    {
+      field: 'avatar',
+      title: '头像',
+      width: 100,
       cellType: 'image',
       keepAspectRatio: true
     },
     {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
+      field: 'salary',
+      title: '薪资',
+      width: 120,
+      sort: true,
+      format: value => `￥${value.toLocaleString()}`
     },
     {
-      field: 'email',
-      title: 'email',
-      width: 200,
+      field: 'sales',
+      title: '销售额',
+      width: 150,
       sort: true,
+      format: value => `￥${value.toLocaleString()}`
+    },
+    {
+      field: 'department',
+      title: '部门',
+      width: 100
+    },
+    {
+      field: 'favoriteColor',
+      title: '喜好',
+      width: 120,
+      format: value => value,
       style: {
-        underline: true,
-        underlineDash: [2, 0],
-        underlineOffset: 3
+        bgColor: (args: any) => args.value
       }
     },
     {
-      title: 'full name',
-      columns: [
-        {
-          field: 'name',
-          title: 'First Name',
-          width: 200
-        },
-        {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
+      field: 'status',
+      title: '状态',
+      width: 120,
+      style: {
+        textAlign: 'center',
+        color: (args: any) => {
+          const { value } = args;
+          if (value === '在职') {
+            return '#7ed321';
+          }
+          if (value === '请假') {
+            return '#f5a623';
+          }
+          return '#ff5a5f'; // 离职
         }
-      ]
+      }
     },
     {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
+      field: 'isSelected',
+      title: '选择',
+      width: 100,
+      cellType: 'checkbox'
     },
     {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+      field: 'option',
+      title: '选项',
+      width: 100,
+      cellType: 'radio'
     }
   ];
-  // const rowFilter = new FilterPlugin({
-  //   filterField: ['sex', 'id', 'name']
-  // });
 
   const filterPlugin = new FilterPlugin({});
-  window.filterPlugin = filterPlugin;
+  (window as any).filterPlugin = filterPlugin;
 
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
     records,
     columns,
-    padding: 30,
+    padding: 10,
     plugins: [filterPlugin]
   };
   const tableInstance = new VTable.ListTable(option);
-  window.tableInstance = tableInstance;
+  (window as any).tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']

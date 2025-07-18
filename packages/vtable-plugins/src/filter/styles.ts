@@ -150,6 +150,17 @@ export const filterStyles = {
     border: '1px solid #ccc',
     borderRadius: '4px',
     boxSizing: 'border-box'
+  },
+
+  rangeInputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
+
+  addLabel: {
+    display: 'none',
+    padding: '0 5px'
   }
 };
 

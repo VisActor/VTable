@@ -44,19 +44,39 @@ export interface ValueFilterOptionDom {
   countSpan: HTMLSpanElement;
 }
 
-export interface ColumnDefinition {
-  field: string;
-  title: string;
-  dataType: 'string' | 'number' | 'boolean' | 'date';
-}
-
 export type FilterOperator =
+  // 通用
   | 'equals'
   | 'notEquals'
-  | 'contains'
-  | 'startsWith'
-  | 'endsWith'
+  // 数值
   | 'greaterThan'
   | 'lessThan'
   | 'greaterThanOrEqual'
-  | 'lessThanOrEqual';
+  | 'lessThanOrEqual'
+  | 'between'
+  | 'notBetween'
+  // 文本
+  | 'contains'
+  | 'notContains'
+  | 'startsWith'
+  | 'notStartsWith'
+  | 'endsWith'
+  | 'notEndsWith'
+  // 复选框 | 单选框
+  | 'isChecked'
+  | 'isUnchecked';
+
+export interface OperatorOption {
+  value: FilterOperator;
+  label: string;
+  category: FilterOperatorCategory;
+}
+
+export enum FilterOperatorCategory {
+  ALL = 'all',
+  TEXT = 'text',
+  NUMBER = 'number',
+  COLOR = 'color',
+  CHECKBOX = 'checkbox',
+  RADIO = 'radio'
+}
