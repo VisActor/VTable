@@ -2,6 +2,7 @@ import type * as VTable from '@visactor/vtable';
 import type { FilterState, FilterAction } from './types';
 import { FilterActionType } from './types';
 import type { FilterEngine } from './filter-engine';
+import type { FilterPlugin } from '../filter';
 
 /**
  * 筛选状态管理器，用于管理筛选状态
@@ -76,6 +77,43 @@ export class FilterStateManager {
 
   private applyFilters() {
     this.engine.applyFilter(this.state, this.table);
+    this.updateFilterIcons();
+  }
+
+  /**
+   * 根据筛选状态更新列头图标
+   * 当列应用了筛选条件时，将图标切换为filteringIcon
+   */
+  private updateFilterIcons() {
+    // 获取表格列定义
+    const columns = (this.table as VTable.ListTable).columns;
+    if (!columns) {
+      return;
+    }
+
+    const plugin = this.table.pluginManager.getPluginByName('Filter') as FilterPlugin;
+    if (!plugin || !plugin.pluginOptions) {
+      return;
+    }
+
+    const filterIcon = plugin.pluginOptions.filterIcon;
+    const filteringIcon = plugin.pluginOptions.filteringIcon;
+
+    // 遍历所有列，更新图标
+    columns.forEach((col: VTable.ColumnDefine) => {
+      const field = col.field as string;
+      const filterConfig = this.state.filters.get(field);
+
+      // 如果该列有激活的筛选，则使用filteringIcon
+      if (filterConfig && filterConfig.enable) {
+        col.headerIcon = filteringIcon;
+      } else {
+        col.headerIcon = filterIcon;
+      }
+    });
+
+    // 更新表格列定义
+    (this.table as VTable.ListTable).updateColumns(columns);
   }
 
   private shouldApplyFilter(action: FilterAction) {

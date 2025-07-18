@@ -3,6 +3,7 @@ import type * as VTable from '@visactor/vtable';
 export interface FilterOptions {
   id?: string;
   filterIcon?: VTable.TYPES.ColumnIconOption;
+  filteringIcon?: VTable.TYPES.ColumnIconOption;
 }
 
 export interface FilterState {
