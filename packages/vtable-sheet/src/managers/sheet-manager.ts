@@ -57,12 +57,6 @@ export default class SheetManager implements ISheetManager {
       throw new Error(`Sheet with key '${sheet.sheetKey}' already exists`);
     }
 
-    // 如果这是第一个sheet，将其设为活动sheet
-    if (this._sheets.size === 0) {
-      sheet.active = true;
-      this._activeSheetKey = sheet.sheetKey;
-    }
-
     // 添加sheet
     this._sheets.set(sheet.sheetKey, sheet);
   }
