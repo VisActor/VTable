@@ -55,6 +55,8 @@ export function updateCol(
   // reset attribute y and col number in CellGroup
   // const newTotalHeight = resetColNumberAndY(scene);
   resetColNumberAndX(scene);
+  //下面合并单元格情况有重复调用updateCell问题，需要优化。用这个变量记录已经处理过的合并单元格位置，避免重复处理。
+  const batchMergePos = new Set<string>();
   // add cells
   updateCols.forEach(col => {
     for (let row = 0; row < table.rowCount; row++) {
@@ -63,7 +65,11 @@ export function updateCol(
       if (mergeInfo) {
         for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
           for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
-            updateCell(col, row, scene.table, false);
+            const key = `${col}-${row}`;
+            if (!batchMergePos.has(key)) {
+              updateCell(col, row, scene.table, false);
+              batchMergePos.add(key);
+            }
           }
         }
       } else {

@@ -86,7 +86,8 @@ export function updateRow(
     const pos = _getUpdateRowIndex(beforeRow, afterRow, scene);
     rowUpdatePos = isValid(rowUpdatePos) ? (isValid(pos) ? Math.min(rowUpdatePos, pos) : rowUpdatePos) : pos;
   }
-
+  //下面合并单元格情况有重复调用updateCell问题，需要优化。用这个变量记录已经处理过的合并单元格位置，避免重复处理。
+  const batchMergePos = new Set<string>();
   for (let col = 0; col < table.colCount; col++) {
     // add cells
     updateRows.forEach(row => {
@@ -96,7 +97,11 @@ export function updateRow(
         if (mergeInfo) {
           for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
             for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-              updateCell(col, row, scene.table, false);
+              const key = `${col}-${row}`;
+              if (!batchMergePos.has(key)) {
+                updateCell(col, row, scene.table, false);
+                batchMergePos.add(key);
+              }
             }
           }
         } else {
@@ -115,7 +120,11 @@ export function updateRow(
         if (mergeInfo) {
           for (let col = mergeInfo.start.col; col <= mergeInfo.end.col; col++) {
             for (let row = mergeInfo.start.row; row <= mergeInfo.end.row; row++) {
-              updateCell(col, row, scene.table, false);
+              const key = `${col}-${row}`;
+              if (!batchMergePos.has(key)) {
+                updateCell(col, row, scene.table, false);
+                batchMergePos.add(key);
+              }
             }
           }
         } else {
