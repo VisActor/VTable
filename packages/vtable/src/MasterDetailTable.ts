@@ -50,6 +50,9 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   /** 存储每行展开前的原始高度 */
   private originalRowHeights: Map<number, number> = new Map();
 
+  /** 存储子表的初始ViewBox位置（用于translate计算） */
+  private subTableInitialViewBox: Map<number, { x1: number; y1: number; x2: number; y2: number }> = new Map();
+
   // eslint-disable-next-line default-param-last
   constructor(options: MasterDetailTableConstructorOptions);
   constructor(container: HTMLElement, options: MasterDetailTableConstructorOptions);
@@ -60,6 +63,31 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     super(container as HTMLElement, options);
     options = this.options;
     const internalProps = this.internalProps;
+    
+    // 只在构造时加一次空白行
+    if (
+      options.records &&
+      Array.isArray(options.records) &&
+      options.columns &&
+      Array.isArray(options.columns) &&
+      options.columns.length > 0 &&
+      typeof options.columns[0] === 'object'
+    ) {
+      // 检查最后一行是否已经是空白行，避免重复添加
+      const last = options.records[options.records.length - 1];
+      let isBlank = false;
+      if (last) {
+        isBlank = options.columns.every(
+          col => typeof col === 'object' && 'field' in col && last[col.field] === ''
+        );
+      }
+      if (!isBlank) {
+        options.records = [
+          ...options.records,
+          MasterDetailTable._generateBlankRow(options.columns as any[])
+        ];
+      }
+    }
     
     internalProps.frozenColDragHeaderMode = options.dragOrder?.frozenColDragHeaderMode;
     //分页配置
@@ -84,11 +112,6 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
 
     // 主从表格特有的初始化
     this.internalProps.expandedRowsSet = new Set(options.expandedRows || []);
-    this.internalProps.detailRowHeight = options.detailRowHeight || 100;
-    this.internalProps.detailRenderer = options.detailRenderer;
-    // 存储每个展开行的自定义高度
-    this.internalProps.expandedRowHeights = new Map<number, number>();
-    
     // 初始化行管理器
     this.rowManager = new MasterDetailRowManager(this);
 
@@ -128,6 +151,11 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
     }, 0);
 
+    // 构造完成后，将最后一行高度设为0（如果有行）
+    if (this.rowCount > 0) {
+      this.setRowHeight(this.rowCount - 1, 0);
+    }
+
     // 监听图标点击事件，处理展开收起操作
     this.on(TABLE_EVENT_TYPE.ICON_CLICK, iconInfo => {
       const { col, row, funcType } = iconInfo;
@@ -138,6 +166,27 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
         }
       }
     });
+
+    // 监听滚动事件，更新子表位置
+    this.on(TABLE_EVENT_TYPE.SCROLL, (scrollInfo: any) => {
+      // 计算滚动偏移量
+      const deltaX = scrollInfo.scrollLeft || 0;
+      const deltaY = scrollInfo.scrollTop || 0;
+      
+      // 更新所有子表位置
+      this.updateAllSubTablePositions(-deltaX, -deltaY);
+    });
+  }
+
+  // 新增：生成空白行的静态方法
+  private static _generateBlankRow(columns: any[] = []): Record<string, unknown> {
+    const blank: Record<string, unknown> = {};
+    columns.forEach(col => {
+      if (col && typeof col === 'object' && 'field' in col) {
+        blank[col.field] = '';
+      }
+    });
+    return blank;
   }
 
   isMasterDetailTable(): true {
@@ -885,6 +934,9 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
 
     // 渲染子表
     this.renderSubTable(recordIndex);
+    
+    // 重新计算所有子表位置（因为展开操作会影响其他子表的相对位置）
+    this.recalculateAllSubTablePositions();
   }
 
   /**
@@ -905,6 +957,9 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
       this.scenegraph.updateNextFrame();
     }
+    
+    // 重新计算所有子表位置（因为收起操作会影响其他子表的相对位置）
+    this.recalculateAllSubTablePositions();
   }
 
   /**
@@ -918,6 +973,14 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       return; // 如果无法计算viewBox，则不渲染子表
     }
 
+    // 保存初始ViewBox位置
+    this.subTableInitialViewBox.set(recordIndex, {
+      x1: childViewBox.x1,
+      y1: childViewBox.y1,
+      x2: childViewBox.x2,
+      y2: childViewBox.y2
+    });
+
     // 创建子表选项（完全基于test.ts的配置）
     const subTableOption = {
       viewBox: childViewBox,
@@ -925,7 +988,7 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       records: this.records, // 使用父表的records
       columns: this.options.columns, // 使用父表的columns
       widthMode: 'standard' as const,
-      disableInteraction: false
+      //disableInteraction: false
     };
 
     // 创建子表实例
@@ -1011,8 +1074,15 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
       
-      // 检查是否在子表的viewBox区域内
-      const isInArea = x >= childViewBox.x1 && x <= childViewBox.x2 && y >= childViewBox.y1 && y <= childViewBox.y2;
+      // 获取子表的当前 ViewBox 位置（实时更新）
+      const currentViewBox = subTable.options.viewBox;
+      if (!currentViewBox) {
+        return false;
+      }
+      
+      // 检查是否在子表的当前viewBox区域内
+      const isInArea =
+        x >= currentViewBox.x1 && x <= currentViewBox.x2 && y >= currentViewBox.y1 && y <= currentViewBox.y2;
       return isInArea;
     };
 
@@ -1064,6 +1134,125 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
 
       // 清理映射
       this.subTableInstances.delete(recordIndex);
+      this.subTableInitialViewBox.delete(recordIndex);
     }
+  }
+
+  /**
+   * 为子表添加setTranslate方法，用于改变ViewBox坐标
+   * @param deltaX X轴位移量
+   * @param deltaY Y轴位移量
+   */
+  setTranslate(deltaX: number, deltaY: number): void {
+    if (this.options.viewBox) {
+      // 计算新的ViewBox位置
+      const currentViewBox = this.options.viewBox;
+      const newViewBox = {
+        x1: currentViewBox.x1 + deltaX,
+        y1: currentViewBox.y1 + deltaY,
+        x2: currentViewBox.x2 + deltaX,
+        y2: currentViewBox.y2 + deltaY
+      };
+      
+      // 更新ViewBox配置
+      this.options.viewBox = newViewBox;
+      
+      // 通知VRender Stage更新ViewBox
+      if (this.scenegraph?.stage) {
+        (this.scenegraph.stage as any).setViewBox(newViewBox, false);
+      }
+      
+      // 重新渲染子表
+      this.render();
+    }
+  }
+
+  /**
+   * 更新子表位置（translate方法）
+   * @param recordIndex 数据记录索引
+   * @param deltaX X轴位移量
+   * @param deltaY Y轴位移量
+   */
+  private updateSubTablePosition(recordIndex: number, deltaX: number, deltaY: number): void {
+    const subTable = this.subTableInstances.get(recordIndex);
+    if (!subTable) {
+      return;
+    }
+
+    // 获取初始ViewBox位置
+    const initialViewBox = this.subTableInitialViewBox.get(recordIndex);
+    if (!initialViewBox) {
+      return;
+    }
+
+    // 计算新的ViewBox位置
+    const newViewBox = {
+      x1: initialViewBox.x1 + deltaX,
+      y1: initialViewBox.y1 + deltaY,
+      x2: initialViewBox.x2 + deltaX,
+      y2: initialViewBox.y2 + deltaY
+    };
+
+    // 更新子表的ViewBox
+    subTable.options.viewBox = newViewBox;
+    
+    // 通知VRender Stage更新ViewBox
+    if (subTable.scenegraph?.stage) {
+      (subTable.scenegraph.stage as any).setViewBox(newViewBox, false);
+    }
+
+    // 重新渲染子表
+    subTable.render();
+  }
+
+  /**
+   * 更新所有子表位置
+   * @param deltaX X轴位移量
+   * @param deltaY Y轴位移量
+   */
+  private updateAllSubTablePositions(deltaX: number, deltaY: number): void {
+    this.subTableInstances.forEach((subTable, recordIndex) => {
+      this.updateSubTablePosition(recordIndex, deltaX, deltaY);
+    });
+  }
+
+  /**
+   * 在表格状态变化时更新子表位置
+   * 可以在外部调用这个方法来手动更新子表位置
+   * @param deltaX X轴位移量
+   * @param deltaY Y轴位移量
+   */
+  updateSubTableTranslation(deltaX: number = 0, deltaY: number = 0): void {
+    this.updateAllSubTablePositions(deltaX, deltaY);
+  }
+
+  /**
+   * 重新计算所有子表位置（用于展开收起后重新定位）
+   */
+  private recalculateAllSubTablePositions(): void {
+    this.subTableInstances.forEach((subTable, recordIndex) => {
+      // 重新计算子表的ViewBox区域
+      const newViewBox = this.calculateSubTableViewBox(recordIndex);
+      if (newViewBox) {
+        // 更新初始ViewBox位置
+        this.subTableInitialViewBox.set(recordIndex, {
+          x1: newViewBox.x1,
+          y1: newViewBox.y1,
+          x2: newViewBox.x2,
+          y2: newViewBox.y2
+        });
+        
+        // 更新子表的ViewBox
+        subTable.options.viewBox = newViewBox;
+        
+        // 通知VRender Stage更新ViewBox
+        if (subTable.scenegraph?.stage) {
+          (subTable.scenegraph.stage as any).setViewBox(newViewBox, false);
+        }
+        
+        // 重新渲染子表
+        subTable.render();
+      }
+    });
   }
 }

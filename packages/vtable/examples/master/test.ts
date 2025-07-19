@@ -197,9 +197,6 @@ export function createTable() {
   const option: VTable.MasterDetailTableConstructorOptions = {
     columns,
     records,
-    detailRowHeight: 100, // 子表区域高度
-    // 基础表格配置
-    widthMode: 'standard' as const
   };
 
   // 创建 MasterDetailTable 实例（父表）

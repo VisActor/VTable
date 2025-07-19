@@ -1,7 +1,7 @@
 import type { MasterDetailTable } from '../MasterDetailTable';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 import { HierarchyState } from '../ts-types';
-import { updateRowHeight } from '../scenegraph/layout/update-height';
+import { updateRowHeightForExpand } from '../scenegraph/layout/update-height';
 
 /**
  * MasterDetailTable 的行操作工具类
@@ -37,9 +37,9 @@ export class MasterDetailRowManager {
     const currentHeight = this.table.getRowHeight(insertRowIndex);
     const deltaHeight = height - currentHeight;
     // 使用 update-height.ts 中的 updateRowHeight 函数来更新行高度
-    updateRowHeight(this.table.scenegraph, insertRowIndex, deltaHeight);
+    updateRowHeightForExpand(this.table.scenegraph, insertRowIndex, deltaHeight);
 
-    this.table.scenegraph.table.internalProps._heightResizedRowMap.add(insertRowIndex); // 添加新插入的行索引
+    // this.table.scenegraph.table.internalProps._heightResizedRowMap.add(insertRowIndex); // 添加新插入的行索引
 
     // 关键！更新容器高度，这会触发 updateTableSize() 和 updateScrollBar()
     this.table.scenegraph.updateContainerHeight(insertRowIndex, deltaHeight);
@@ -76,7 +76,7 @@ export class MasterDetailRowManager {
     
     // 使用 update-height.ts 中的 updateRowHeight 函数来更新整体高度
     // 传入负的高度变化量来减少表格高度
-    updateRowHeight(this.table.scenegraph, removeRowIndex, -260);
+    updateRowHeightForExpand(this.table.scenegraph, removeRowIndex, -260);
     this.table.scenegraph.table.internalProps._heightResizedRowMap.delete(removeRowIndex);
     
     // 关键！更新容器高度，这会触发 updateTableSize() 和 updateScrollBar()

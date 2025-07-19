@@ -129,7 +129,7 @@ import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get
 import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
 import type { SimpleHeaderLayoutMap } from '../layout';
-import { RowSeriesNumberHelper } from './row-series-number-helper';
+
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
@@ -463,7 +463,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
-    internalProps.rowSeriesNumberHelper = new RowSeriesNumberHelper(this);
 
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.enableLineBreak = options.enableLineBreak;
