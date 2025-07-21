@@ -59,6 +59,26 @@ export interface FieldAssessor {
   set: FieldSetter;
 }
 
+/** 子表配置接口 */
+export interface DetailGridOptions {
+  /** 子表类型 */
+  type: 'ListTable' | 'MasterDetailTable' | 'PivotTable';
+  
+  /** 子表列定义 */
+  columnDefs: ColumnsDefine;
+  
+  /** 子表样式配置 */
+  style?: {
+    /** 边距 */
+    margin?: number;
+    /** 高度 */
+    height?: number;
+  };
+  
+  /** 子表其他配置项 */
+  [key: string]: any;
+}
+
 export type FieldDef = string | number | string[];
 export type FieldKeyDef = string | number;
 export type FieldFormat = FieldGetter | FieldAssessor;
@@ -366,6 +386,11 @@ export interface MasterDetailTableConstructorOptions extends BaseTableConstructo
   detailRenderer?: (record: any, rowIndex: number) => string | HTMLElement;
   /** 展开/收起回调函数 */
   onExpandToggle?: (rowIndex: number, expanded: boolean) => void;
+
+  /** 子表配置选项 */
+  detailGridOptions?: DetailGridOptions;
+  /** 根据数据动态获取子表配置的函数 */
+  getDetailGridOptions?: (params: { data: any; rowIndex: number }) => DetailGridOptions;
 
   // 其他配置项与 ListTable 保持一致
   aggregation?:

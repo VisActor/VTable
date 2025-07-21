@@ -28,14 +28,16 @@ export class MasterDetailRowManager {
 
     // 计算插入位置：记录行的下一行
     const insertRowIndex = recordIndex + 1;
-    // 获取详情行高度
-    detailHeight = 300;
-    const height = detailHeight ?? this.getDetailRowHeight(recordIndex);
     
+    // 获取详情行高度 - 优先使用传入的高度，否则使用默认配置
+    const targetTotalHeight = detailHeight || this.getDetailRowHeight(recordIndex);
     
-    // 获取插入后的当前行高度，计算需要的高度变化量
-    const currentHeight = this.table.getRowHeight(insertRowIndex);
-    const deltaHeight = height - currentHeight;
+    // 获取原始行高度
+    const originalHeight = this.table.getRowHeight(insertRowIndex);
+    
+    // 计算实际需要增加的高度：目标总高度 - 原始高度
+    const deltaHeight = targetTotalHeight - originalHeight;
+    console.log(deltaHeight)
     // 使用 update-height.ts 中的 updateRowHeight 函数来更新行高度
     updateRowHeightForExpand(this.table.scenegraph, insertRowIndex, deltaHeight);
 
@@ -50,13 +52,6 @@ export class MasterDetailRowManager {
       row: insertRowIndex,
       hierarchyState: HierarchyState.expand
     });
-
-    // console.log(this.table.tableNoFrameHeight);
-    console.log(this.table.canvasHeight)
-    console.log(this.table.getAllRowsHeight())
-    console.log(this.table.scenegraph.height)
-    // console.log(this.table.scenegraph.proxy.rowStart)
-    // console.log(this.table.scenegraph.proxy.rowEnd)
   }
 
   /**
@@ -74,13 +69,22 @@ export class MasterDetailRowManager {
     // 标记为已收起
     this.table.internalProps.expandedRowsSet.delete(recordIndex);
     
+    // 获取当前详情行的高度
+    const currentHeight = this.table.getRowHeight(removeRowIndex);
+    
+    // 获取原始高度（从 MasterDetailTable 的公共方法获取）
+    const originalHeight = this.table.getOriginalRowHeight(recordIndex);
+    
+    // 计算需要减少的高度：当前高度 - 原始高度
+    const deltaHeight = currentHeight - originalHeight;
+    console.log(originalHeight)
     // 使用 update-height.ts 中的 updateRowHeight 函数来更新整体高度
-    // 传入负的高度变化量来减少表格高度
-    updateRowHeightForExpand(this.table.scenegraph, removeRowIndex, -260);
-    this.table.scenegraph.table.internalProps._heightResizedRowMap.delete(removeRowIndex);
+    // 传入负的高度变化量来减少表格高度，恢复到原始高度
+    updateRowHeightForExpand(this.table.scenegraph, removeRowIndex, -deltaHeight);
+    this.table.internalProps._heightResizedRowMap.delete(removeRowIndex);
     
     // 关键！更新容器高度，这会触发 updateTableSize() 和 updateScrollBar()
-    this.table.scenegraph.updateContainerHeight(removeRowIndex, -260);
+    this.table.scenegraph.updateContainerHeight(removeRowIndex, -deltaHeight);
     
     // 触发收起事件 - 使用现有的事件类型
     this.table.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -100,10 +104,9 @@ export class MasterDetailRowManager {
     if (isExpanded) {
       this.collapseRecord(recordIndex);
       return false;
-    } else {
-      this.expandRecord(recordIndex, detailHeight);
-      return true;
     }
+    this.expandRecord(recordIndex, detailHeight);
+    return true;
   }
 
   /**
@@ -115,7 +118,7 @@ export class MasterDetailRowManager {
     // 优先使用 API 配置的高度函数
     if (this.table.options.detailRowHeight) {
       if (typeof this.table.options.detailRowHeight === 'function') {
-        return (this.table.options.detailRowHeight as any)(recordIndex);
+        return (this.table.options.detailRowHeight as (index: number) => number)(recordIndex);
       }
       return this.table.options.detailRowHeight as number;
     }
@@ -123,7 +126,6 @@ export class MasterDetailRowManager {
     // 默认高度
     return 200;
   }
-
 
   /**
    * 根据行索引获取对应的记录索引（仅对数据行有效）

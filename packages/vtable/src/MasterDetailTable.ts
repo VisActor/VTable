@@ -115,6 +115,11 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     // 初始化行管理器
     this.rowManager = new MasterDetailRowManager(this);
 
+    // 为了保证文本对齐，默认启用hierarchyTextStartAlignment
+    if (options.hierarchyTextStartAlignment === undefined) {
+      options.hierarchyTextStartAlignment = true;
+    }
+
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
       this.editorManager = new EditManager(this);
@@ -396,6 +401,68 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     return undefined;
   }
 
+  /**
+   * 获取层级节点收起展开的状态
+   * @param col
+   * @param row
+   * @returns
+   */
+  getHierarchyState(col: number, row: number): HierarchyState {
+    if (this.isHeader(col, row)) {
+      return (this._getHeaderLayoutMap(col, row) as any)?.hierarchyState;
+    }
+    
+    // 检查是否是树形列
+    const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
+    if (!define?.tree) {
+      return HierarchyState.none;
+    }
+    
+    // 获取记录数据
+    const record = this.getCellRawRecord(col, row);
+    if (!record) {
+      return HierarchyState.none;
+    }
+    
+    // 获取记录索引
+    const recordIndex = this.getRecordShowIndexByCell(col, row);
+    if (recordIndex < 0) {
+      return HierarchyState.none;
+    }
+    
+    // 检查是否有children数据
+    const hasChildren = record.children && Array.isArray(record.children) && record.children.length > 0;
+    
+    if (hasChildren) {
+      // 有children数据，根据expandedRowsSet状态显示展开/收起图标
+      return this.internalProps.expandedRowsSet.has(recordIndex) ? HierarchyState.expand : HierarchyState.collapse;
+    }
+    
+    // 没有children数据，返回none（不显示图标，但通过hierarchyTextStartAlignment保持对齐）
+    return HierarchyState.none;
+  }
+
+  /**
+   * 根据记录数据获取详情配置
+   * @param record 记录数据
+   * @param rowIndex 行索引
+   * @returns 详情配置或null
+   */
+  private getDetailConfigForRecord(record: any, rowIndex: number): any | null {
+    // 1. 优先使用 getDetailGridOptions 函数
+    if (this.options.getDetailGridOptions) {
+      return this.options.getDetailGridOptions({ data: record, rowIndex });
+    }
+    
+    // 2. 使用默认的 detailGridOptions
+    if (this.options.detailGridOptions) {
+      return this.options.detailGridOptions;
+    }
+    
+    // 3. 没有配置则返回 null
+    return null;
+  }
+
   /** @private */
   refreshHeader(): void {
     const table = this;
@@ -415,6 +482,14 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       this.setMinMaxLimitWidth(true);
     }
     this.refreshRowColCount();
+
+    // 添加adaptive模式支持：在头部刷新后，重新计算列宽
+    // 无论是adaptive还是autoFillWidth模式，都需要重新计算，具体逻辑在compute-col-width.ts中处理
+    if (this.widthMode === 'adaptive' || this.autoFillWidth) {
+      setTimeout(() => {
+        this.handleAdaptiveMode();
+      }, 0);
+    }
   }
 
   refreshRowColCount(): void {
@@ -443,6 +518,14 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
     }
     this.stateManager.setFrozenCol(this.internalProps.frozenColCount);
+
+    // 添加adaptive模式支持：在行列数更新后，重新计算列宽
+    if (this.widthMode === 'adaptive' || this.autoFillWidth) {
+      // 延迟执行列宽计算，确保布局已完成
+      setTimeout(() => {
+        this.handleAdaptiveMode();
+      }, 0);
+    }
   }
 
   /**
@@ -697,6 +780,13 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     this.refreshRowColCount();
     this.scenegraph.createSceneGraph();
     this.internalProps.emptyTip?.resetVisible();
+
+    // 添加adaptive模式支持
+    if (this.widthMode === 'adaptive' || this.autoFillWidth) {
+      setTimeout(() => {
+        this.handleAdaptiveMode();
+      }, 0);
+    }
   }
 
   addRecords(records: Record<string, unknown>[], recordIndex?: number | number[]) {
@@ -708,6 +798,13 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     this.refreshRowColCount();
     this.scenegraph.createSceneGraph();
     this.internalProps.emptyTip?.resetVisible();
+
+    // 添加adaptive模式支持
+    if (this.widthMode === 'adaptive' || this.autoFillWidth) {
+      setTimeout(() => {
+        this.handleAdaptiveMode();
+      }, 0);
+    }
   }
 
   deleteRecords(recordIndexs: number[] | number[][]) {
@@ -724,6 +821,13 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     this.refreshRowColCount();
     this.scenegraph.createSceneGraph();
     this.internalProps.emptyTip?.resetVisible();
+
+    // 添加adaptive模式支持
+    if (this.widthMode === 'adaptive' || this.autoFillWidth) {
+      setTimeout(() => {
+        this.handleAdaptiveMode();
+      }, 0);
+    }
   }
 
   updateRecords(records: Record<string, unknown>[], recordIndexs: (number | number[])[]) {
@@ -731,12 +835,20 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       return;
     }
     records.forEach((record, i) => {
-      const index = typeof recordIndexs[i] === 'number' ? recordIndexs[i] as number : (recordIndexs[i] as number[])[0];
+      const index =
+        typeof recordIndexs[i] === 'number' ? (recordIndexs[i] as number) : (recordIndexs[i] as number[])[0];
       if (index >= 0 && index < this.internalProps.records.length) {
         this.internalProps.records[index] = { ...this.internalProps.records[index], ...record };
       }
     });
     this.scenegraph.createSceneGraph();
+
+    // 添加adaptive模式支持
+    if (this.widthMode === 'adaptive' || this.autoFillWidth) {
+      setTimeout(() => {
+        this.handleAdaptiveMode();
+      }, 0);
+    }
   }
 
   getBodyRowIndexByRecordIndex(index: number | number[]): number {
@@ -771,33 +883,27 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     super.release();
   }
 
-  // ==================== 抽象方法实现 ====================
-  
   /**
-   * 获取层级节点收起展开的状态
-   * @param col
-   * @param row
-   * @returns
+   * 处理自适应宽度模式
+   * 仿照ListTable的逻辑：
+   * - widthMode: 'adaptive' 强制启用自适应，无条件重新分配列宽
+   * - autoFillWidth: true 智能模式，只有当总宽度小于容器宽度时才启用自适应
    */
-  getHierarchyState(col: number, row: number): HierarchyState | null {
-    // 检查是否为第一列（展开按钮列）
-    if (col !== 0 || this.isHeader(col, row)) {
-      return HierarchyState.none;
+  private handleAdaptiveMode(): void {
+    if (this.scenegraph) {
+      // 重新计算列宽 - 这会触发compute-col-width.ts中的逻辑
+      // 在那里会根据widthMode和autoFillWidth的不同进行不同的处理
+      this.scenegraph.recalculateColWidths();
+      
+      // 如果有图表需要更新，也进行更新
+      if (this.scenegraph.updateChartSizeForResizeColWidth) {
+        this.scenegraph.updateChartSizeForResizeColWidth(-1);
+      }
     }
-
-    // 获取正确的记录索引
-    const recordIndex = this.rowManager.getRecordIndexByRow(row);
-    if (recordIndex < 0) {
-      return HierarchyState.none;
-    }
-
-    // 检查是否已展开
-    if (this.internalProps.expandedRowsSet.has(recordIndex)) {
-      return HierarchyState.expand;
-    }
-    return HierarchyState.collapse;
   }
 
+  // ==================== 抽象方法实现 ====================
+  
   /**
    * 表头切换层级状态
    * @param col
@@ -889,6 +995,15 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
+   * 获取记录的原始行高度
+   * @param recordIndex 记录索引
+   * @returns 原始行高度
+   */
+  getOriginalRowHeight(recordIndex: number): number {
+    return this.originalRowHeights.get(recordIndex) || 0;
+  }
+
+  /**
    * 判断行是否展开
    * @param rowIndex
    * @returns
@@ -923,6 +1038,13 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       this.originalRowHeights.set(recordIndex, originalHeight);
     }
 
+    // 如果没有传递height，从动态配置中获取
+    if (!height) {
+      const record = this.getRecordByRowIndex(recordIndex);
+      const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
+      height = detailConfig?.style?.height || 200; // 默认200
+    }
+
     this.rowManager.expandRecord(recordIndex, height);
     // 更新图标状态
     // console.log(recordIndex)
@@ -946,11 +1068,10 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   collapseRow?(recordIndex: number): void {
     // 先移除子表
     this.removeSubTable(recordIndex);
-    
+
+    this.rowManager.collapseRecord(recordIndex);
     // 清理原始高度记录
     this.originalRowHeights.delete(recordIndex);
-    
-    this.rowManager.collapseRecord(recordIndex);
     // 更新图标状态
     const tableRowIndex = recordIndex + 1;
     if (tableRowIndex >= 0) {
@@ -963,12 +1084,25 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
-   * 渲染子表（基于test.ts的逻辑）
+   * 渲染子表（支持动态配置）
    * @param recordIndex 数据记录索引
    */
   private renderSubTable(recordIndex: number): void {
+    // 获取记录数据
+    const record = this.getRecordByRowIndex(recordIndex);
+    if (!record || !record.children) {
+      return;
+    }
+
+    // 获取子表配置
+    const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
+    if (!detailConfig) {
+      console.warn('No detail config found for record at index:', recordIndex);
+      return;
+    }
+
     // 动态计算子表的viewBox区域
-    const childViewBox = this.calculateSubTableViewBox(recordIndex);
+    const childViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
     if (!childViewBox) {
       return; // 如果无法计算viewBox，则不渲染子表
     }
@@ -981,18 +1115,24 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       y2: childViewBox.y2
     });
 
-    // 创建子表选项（完全基于test.ts的配置）
-    const subTableOption = {
+    // 准备子表数据
+    const childrenData = Array.isArray(record.children) ? record.children : [];
+
+    // 创建子表配置
+    const subTableOptions = {
       viewBox: childViewBox,
       canvas: this.canvas,
-      records: this.records, // 使用父表的records
-      columns: this.options.columns, // 使用父表的columns
-      widthMode: 'standard' as const,
-      //disableInteraction: false
+      records: childrenData, // 使用记录的children数据
+      columns: detailConfig.columnDefs, // 使用配置的列定义
+      widthMode: 'adaptive' as const, // 使用自适应模式，列宽自动平分占满整个子表宽度
+      showHeader: true,
+      // 继承一些父表的配置
+      theme: this.options.theme,
+      ...detailConfig // 应用其他详情配置
     };
 
-    // 创建子表实例
-    const subTable = new MasterDetailTable(this.container, subTableOption);
+    // 目前只支持MasterDetailTable类型，未来可以扩展其他类型
+    const subTable = new MasterDetailTable(this.container, subTableOptions);
     this.subTableInstances.set(recordIndex, subTable);
 
     // 关键：每次父表重绘后，手动让子表重绘，保证子表内容在上层
@@ -1005,21 +1145,61 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     this.on('after_render', afterRenderHandler);
     
     // 存储处理器引用以便清理
-    (subTable as any).__afterRenderHandler = afterRenderHandler;
+    (subTable as MasterDetailTable & { __afterRenderHandler?: () => void }).__afterRenderHandler = afterRenderHandler;
 
     // 设置滚动事件隔离
     this.setupScrollEventIsolation(recordIndex, subTable, childViewBox);
 
     // 初始渲染
     subTable.render();
+    
+    // 延迟设置第一个数据单元格为选中状态
+    setTimeout(() => {
+      this.selectSubTableFirstCell(subTable);
+    }, 200);
+  }
+
+  /**
+   * 设置子表第一个数据单元格为选中状态
+   * @param subTable 子表实例
+   */
+  private selectSubTableFirstCell(subTable: MasterDetailTable): void {
+    // 如果子表没有数据，直接返回
+    if (!subTable.records || subTable.records.length === 0) {
+      return;
+    }
+
+    // 计算第一个数据单元格的位置
+    // 行：跳过表头行，选择第一个数据行
+    const firstDataRow = subTable.columnHeaderLevelCount; // 表头行数
+    // 列：选择第一个数据列（通常是第0列）
+    const firstDataCol = 0;
+
+    // 使用VTable的selectCell方法直接设置选中状态
+    if (firstDataRow < subTable.rowCount && firstDataCol < subTable.colCount) {
+      subTable.selectCell(firstDataCol, firstDataRow);
+    }
+  }
+
+  /**
+   * 获取指定行索引的记录数据
+   * @param rowIndex 行索引
+   * @returns 记录数据
+   */
+  private getRecordByRowIndex(rowIndex: number): Record<string, unknown> {
+    return this.records[rowIndex];
   }
 
   /**
    * 计算子表的viewBox区域
    * @param recordIndex 数据记录索引
+   * @param detailConfig 详情配置
    * @returns viewBox区域或null
    */
-  private calculateSubTableViewBox(recordIndex: number): { x1: number; y1: number; x2: number; y2: number } | null {
+  private calculateSubTableViewBox(
+    recordIndex: number,
+    detailConfig?: Record<string, unknown>
+  ): { x1: number; y1: number; x2: number; y2: number } | null {
     // 获取展开行的详情行索引（数据行的下一行）
     const detailRowIndex = recordIndex + 1;
     
@@ -1040,13 +1220,16 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       return null;
     }
     
-    // 计算子表的viewBox，留出一些边距
-    const margin = 10; // 边距
+    // 从配置中获取边距和高度，提供默认值
+    const margin = detailConfig?.style?.margin || 10;
+    const configHeight = detailConfig?.style?.height || 300;
+    
+    // 计算子表的viewBox
     const viewBox = {
       x1: firstColRect.left + margin,
       y1: detailRowRect.top + originalHeight + margin, // 从原始高度之后开始
       x2: lastColRect.right - margin, // 使用最后一列的右边界
-      y2: detailRowRect.bottom - margin
+      y2: detailRowRect.top - margin + configHeight // 使用配置的高度
     };
 
     // 确保viewBox有效
@@ -1105,7 +1288,9 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     });
 
     // 存储处理器引用以便清理
-    (subTable as any).__scrollHandler = handleParentScroll;
+    (subTable as MasterDetailTable & { 
+      __scrollHandler?: (args: { event?: MouseEvent }) => boolean 
+    }).__scrollHandler = handleParentScroll;
   }
 
   /**
@@ -1116,13 +1301,21 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     const subTable = this.subTableInstances.get(recordIndex);
     if (subTable) {
       // 移除after_render监听器
-      const afterRenderHandler = (subTable as any).__afterRenderHandler;
+      const afterRenderHandler = (
+        subTable as MasterDetailTable & {
+          __afterRenderHandler?: () => void;
+        }
+      ).__afterRenderHandler;
       if (afterRenderHandler) {
         this.off('after_render', afterRenderHandler);
       }
 
       // 移除滚动事件监听器
-      const scrollHandler = (subTable as any).__scrollHandler;
+      const scrollHandler = (
+        subTable as MasterDetailTable & {
+          __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
+        }
+      ).__scrollHandler;
       if (scrollHandler) {
         this.off('can_scroll', scrollHandler);
       }
@@ -1159,7 +1352,11 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       
       // 通知VRender Stage更新ViewBox
       if (this.scenegraph?.stage) {
-        (this.scenegraph.stage as any).setViewBox(newViewBox, false);
+        (
+          this.scenegraph.stage as {
+            setViewBox: (viewBox: { x1: number; y1: number; x2: number; y2: number }, flag: boolean) => void;
+          }
+        ).setViewBox(newViewBox, false);
       }
       
       // 重新渲染子表
@@ -1198,7 +1395,11 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     
     // 通知VRender Stage更新ViewBox
     if (subTable.scenegraph?.stage) {
-      (subTable.scenegraph.stage as any).setViewBox(newViewBox, false);
+      (
+        subTable.scenegraph.stage as {
+          setViewBox: (viewBox: { x1: number; y1: number; x2: number; y2: number }, flag: boolean) => void;
+        }
+      ).setViewBox(newViewBox, false);
     }
 
     // 重新渲染子表
@@ -1231,8 +1432,12 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
    */
   private recalculateAllSubTablePositions(): void {
     this.subTableInstances.forEach((subTable, recordIndex) => {
+      // 获取记录数据和配置
+      const record = this.getRecordByRowIndex(recordIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
+      
       // 重新计算子表的ViewBox区域
-      const newViewBox = this.calculateSubTableViewBox(recordIndex);
+      const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
       if (newViewBox) {
         // 更新初始ViewBox位置
         this.subTableInitialViewBox.set(recordIndex, {
@@ -1247,7 +1452,11 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
         
         // 通知VRender Stage更新ViewBox
         if (subTable.scenegraph?.stage) {
-          (subTable.scenegraph.stage as any).setViewBox(newViewBox, false);
+          (
+            subTable.scenegraph.stage as {
+              setViewBox: (viewBox: { x1: number; y1: number; x2: number; y2: number }, flag: boolean) => void;
+            }
+          ).setViewBox(newViewBox, false);
         }
         
         // 重新渲染子表
