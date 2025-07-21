@@ -149,7 +149,9 @@ export class StateManager {
     colSource: number;
     colTarget: number;
     rowSource: number;
+    rowSourceSize: number;
     rowTarget: number;
+    rowTargetSize: number;
     x: number;
     y: number;
     moving: boolean;
