@@ -284,6 +284,8 @@ export class StateManager {
       colTarget: -1,
       rowSource: -1,
       rowTarget: -1,
+      rowSourceSize: 0,
+      rowTargetSize: 0,
       x: 0,
       y: 0,
       moving: false
