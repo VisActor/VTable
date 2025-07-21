@@ -812,7 +812,7 @@ export default class VTableSheet {
           });
           // 设置标志防止递归调用
           this.isUpdatingFromFormula = true;
-          this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, result.value);
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, result.value);
           this.isUpdatingFromFormula = false;
         } catch (error) {
           this.isUpdatingFromFormula = false;
@@ -845,10 +845,10 @@ export default class VTableSheet {
     this.isUpdatingFromFormula = true;
     if (value.startsWith('=')) {
       // 直接显示公式文本，不进行计算
-      this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
+      this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
     } else {
       // 普通值，正常同步显示
-      this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
+      this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
     }
     this.isUpdatingFromFormula = false;
   }
@@ -898,7 +898,8 @@ export default class VTableSheet {
 
           // 同时更新表格显示
           this.isUpdatingFromFormula = true;
-          this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, result.value);
+
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, result.value);
           this.isUpdatingFromFormula = false;
         } catch (error) {
           this.isUpdatingFromFormula = false;
@@ -906,14 +907,14 @@ export default class VTableSheet {
           // 显示错误状态
           this.activeSheet.setCellValue(selection.startRow, selection.startCol, '#ERROR!');
           this.isUpdatingFromFormula = true;
-          this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, '#ERROR!');
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, '#ERROR!');
           this.isUpdatingFromFormula = false;
         }
       } else {
         // 普通值，直接设置
         this.activeSheet.setCellValue(selection.startRow, selection.startCol, value);
         this.isUpdatingFromFormula = true;
-        this.activeSheet.tableInstance?.changeCellValue(selection.startCol + 1, selection.startRow + 1, value);
+        this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
         this.isUpdatingFromFormula = false;
       }
 
@@ -939,7 +940,7 @@ export default class VTableSheet {
     const newValue = event.newValue;
     if (typeof newValue === 'string' && newValue.startsWith('=') && newValue.length > 1) {
       try {
-        // 设置公式单元格
+        // 首先设置公式内容
         this.formulaManager.setCellContent(
           {
             sheet: this.activeSheet.getKey(),
@@ -948,24 +949,21 @@ export default class VTableSheet {
           },
           newValue
         );
-
-        // 获取计算结果
         const result = this.formulaManager.getCellValue({
           sheet: this.activeSheet.getKey(),
           row: event.row,
           col: event.col
         });
-
         // 更新单元格显示为计算结果
         this.isUpdatingFromFormula = true;
-        this.activeSheet.tableInstance?.changeCellValue(event.col + 1, event.row + 1, result.value);
+        this.activeSheet.tableInstance?.changeCellValue(event.col, event.row, result.value);
         this.isUpdatingFromFormula = false;
       } catch (error) {
         this.isUpdatingFromFormula = false;
         console.warn('Formula processing error:', error);
         // 显示错误状态
         this.isUpdatingFromFormula = true;
-        this.activeSheet.tableInstance?.changeCellValue(event.col + 1, event.row + 1, '#ERROR!');
+        this.activeSheet.tableInstance?.changeCellValue(event.col, event.row, '#ERROR!');
         this.isUpdatingFromFormula = false;
       }
     } else {
