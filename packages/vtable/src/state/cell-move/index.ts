@@ -23,7 +23,7 @@ export function startMoveCol(
   state.columnMove.moving = true;
   state.columnMove.colSource = col;
   state.columnMove.rowSource = row;
-  if ((state.table as ListTable).isListTable) {
+  if ((state.table as ListTable).isListTable()) {
     const nodeIndex = (state.table as ListTable).getRecordIndexByCell(col, row);
     const nodeData = (state.table as ListTable).getRecordByCell(col, row);
     const hierarchyState = (state.table as ListTable).getRecordHierarchyState(col, row);
@@ -91,7 +91,7 @@ export function updateMoveCol(
     state.columnMove.y = y - state.table.tableY;
     state.columnMove.colTarget = targetCell.col;
     state.columnMove.rowTarget = targetCell.row;
-    if ((state.table as ListTable).isListTable) {
+    if ((state.table as ListTable).isListTable()) {
       const nodeIndex = (state.table as ListTable).getRecordIndexByCell(targetCell.col, targetCell.row);
       const nodeData = (state.table as ListTable).getRecordByCell(targetCell.col, targetCell.row);
       const hierarchyState = (state.table as ListTable).getRecordHierarchyState(targetCell.col, targetCell.row);
