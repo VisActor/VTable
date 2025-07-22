@@ -1,4 +1,5 @@
 import * as columnStyleContents from '../body-helper/style';
+import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
 import {
@@ -23,6 +24,7 @@ import {
   type CellStyle,
   type MenuInstanceType,
   type DropDownMenuOptions,
+  type FieldFormat,
   type FieldData,
   type MaybePromiseOrUndefined,
   type MousePointerCellEvent,
@@ -39,13 +41,16 @@ import {
 import type {
   AnyFunction,
   CellAddressWithBound,
+  ColorPropertyDefine,
   ColumnIconOption,
   ColumnSeriesNumber,
   IRowSeriesNumber,
   ColumnStyleOption,
+  MappingRule,
   TableEventOptions,
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
+  ListTableAPI,
   ColumnInfo,
   RowInfo,
   ListTableConstructorOptions
@@ -66,16 +71,27 @@ import { StateManager } from '../state/state';
 import { EventManager } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
+import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { ITooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IBoundsLike } from '@visactor/vutils';
-import { AABBBounds, isNumber, isBoolean, type ITextSize, isValid, cloneDeep } from '@visactor/vutils';
+import {
+  AABBBounds,
+  isNumber,
+  isBoolean,
+  isFunction,
+  type ITextSize,
+  isValid,
+  merge,
+  cloneDeep
+} from '@visactor/vutils';
 import { measureTextBounds, textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
   ColumnData,
   ColumnDefine,
   ColumnsDefine,
+  ImageColumnDefine,
   IndicatorData,
   SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';
@@ -113,7 +129,7 @@ import { isLeftOrRightAxis, isTopOrBottomAxis } from '../layout/chart-helper/get
 import { NumberRangeMap } from '../layout/row-height-map';
 import { ListTable } from '../ListTable';
 import type { SimpleHeaderLayoutMap } from '../layout';
-
+import { RowSeriesNumberHelper } from './row-series-number-helper';
 import { hideCellSelectBorder, restoreCellSelectBorder } from '../scenegraph/select/update-select-border';
 import type { ITextGraphicAttribute } from '@src/vrender';
 import { ReactCustomLayout } from '../components/react/react-custom-layout';
@@ -447,6 +463,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     // internalProps.theme.isPivot = this.isPivotTable();
     internalProps.bodyHelper = new BodyHelper(this);
     internalProps.headerHelper = new HeaderHelper(this);
+    internalProps.rowSeriesNumberHelper = new RowSeriesNumberHelper(this);
 
     internalProps.autoWrapText = options.autoWrapText;
     internalProps.enableLineBreak = options.enableLineBreak;
