@@ -95,7 +95,6 @@ import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
-import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear, ITableAnimationOption } from './animation/appear';
@@ -178,7 +177,6 @@ export interface IBaseTableProtected {
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
-  rowSeriesNumberHelper: RowSeriesNumberHelper;
 
   cellTextOverflows: { [at: string]: string };
   // headerDescriptions: { [at: string]: string };
@@ -1093,7 +1091,7 @@ export interface PivotChartProtected extends IBaseTableProtected {
 }
 export interface MasterDetailTableProtected extends IBaseTableProtected {
   /** 表格数据 */
-  records: any[] | null;
+  records: unknown[] | null;
   dataConfig?: IListTableDataConfig;
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
@@ -1101,8 +1099,5 @@ export interface MasterDetailTableProtected extends IBaseTableProtected {
     key: string;
     width: number;
   }[];
-
-  // 主从表格特有属性
-  /** 展开的行索引集合 */
   expandedRowsSet: Set<number>;
 }

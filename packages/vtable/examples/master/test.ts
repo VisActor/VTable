@@ -185,8 +185,6 @@ export function createTable() {
 
   // 创建 MasterDetailTable 实例（父表）
   const tableInstance = new VTable.MasterDetailTable(document.getElementById(CONTAINER_ID) as HTMLElement, option);
-  
   // 将表格实例挂载到 window 对象上，方便调试
   (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
 }
-

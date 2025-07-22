@@ -1,5 +1,4 @@
 import * as columnStyleContents from '../body-helper/style';
-import * as headerStyleContents from '../header-helper/style';
 import { importStyle } from './style';
 import * as style from '../tools/style';
 import {
@@ -24,7 +23,6 @@ import {
   type CellStyle,
   type MenuInstanceType,
   type DropDownMenuOptions,
-  type FieldFormat,
   type FieldData,
   type MaybePromiseOrUndefined,
   type MousePointerCellEvent,
@@ -41,16 +39,13 @@ import {
 import type {
   AnyFunction,
   CellAddressWithBound,
-  ColorPropertyDefine,
   ColumnIconOption,
   ColumnSeriesNumber,
   IRowSeriesNumber,
   ColumnStyleOption,
-  MappingRule,
   TableEventOptions,
   WidthAdaptiveModeDef,
   HeightAdaptiveModeDef,
-  ListTableAPI,
   ColumnInfo,
   RowInfo,
   ListTableConstructorOptions
@@ -71,27 +66,16 @@ import { StateManager } from '../state/state';
 import { EventManager } from '../event/event';
 import { BodyHelper } from '../body-helper/body-helper';
 import { HeaderHelper } from '../header-helper/header-helper';
-import type { PivotHeaderLayoutMap } from '../layout/pivot-header-layout';
 import type { ITooltipHandler } from '../components/tooltip/TooltipHandler';
 import type { CachedDataSource, DataSource } from '../data';
 import type { IBoundsLike } from '@visactor/vutils';
-import {
-  AABBBounds,
-  isNumber,
-  isBoolean,
-  isFunction,
-  type ITextSize,
-  isValid,
-  merge,
-  cloneDeep
-} from '@visactor/vutils';
+import { AABBBounds, isNumber, isBoolean, type ITextSize, isValid, cloneDeep } from '@visactor/vutils';
 import { measureTextBounds, textMeasure } from '../scenegraph/utils/text-measure';
 import { getProp } from '../scenegraph/utils/get-prop';
 import type {
   ColumnData,
   ColumnDefine,
   ColumnsDefine,
-  ImageColumnDefine,
   IndicatorData,
   SeriesNumberColumnData
 } from '../ts-types/list-table/layout-map/api';

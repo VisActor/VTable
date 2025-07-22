@@ -6,17 +6,14 @@ import { SimpleHeaderLayoutMap } from './simple-header-layout';
 
 /**
  * MasterDetailTable 专用的 LayoutMap 实现
- * 继承自 SimpleHeaderLayoutMap 并适配 MasterDetailTable
  */
 export class MasterDetailLayoutMap extends SimpleHeaderLayoutMap implements LayoutMapAPI {
   private _masterDetailTable: MasterDetailTable;
 
   constructor(table: MasterDetailTable, columns: ColumnsDefine, showHeader: boolean, hierarchyIndent: number) {
-    // 将 MasterDetailTable 强制转换为 ListTable 类型传递给父类
-    // 这是安全的，因为 MasterDetailTable 实现了 ListTable 的所有必要接口
+    // 这里我直接修改了SimpleHeaderLayoutMap中接受table的参数类型，增加了MasterDetailTable,
+    // 因为这个MasterDetailTable和ListTable实现的接口类似，所以应该没问题
     super(table, columns, showHeader, hierarchyIndent);
-    
     this._masterDetailTable = table;
   }
-
 }
