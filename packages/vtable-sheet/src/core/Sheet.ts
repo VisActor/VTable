@@ -45,6 +45,8 @@ export class Sheet extends EventTarget implements ISheetAPI {
   /** 事件总线 */
   private eventBus: EventEmitter;
 
+  private parent: any;
+
   constructor(options: ISheetOptions) {
     super();
     this.options = options;
@@ -53,6 +55,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
     // 初始化基本属性
     this.sheetKey = options.sheetKey;
     this.sheetTitle = options.sheetTitle;
+    this.parent = options.parent;
 
     // 创建表格元素
     this.element = this._createRootElement();
@@ -176,14 +179,28 @@ export class Sheet extends EventTarget implements ISheetAPI {
         this.handleCellSelected(event);
       });
 
-      // 监听单元格值变更事件
-      this.tableInstance.on('change_cell_value', (event: any) => {
-        this.handleCellValueChanged(event);
-      });
-
       // 监听双击进入编辑状态
       this.tableInstance.on('dblclick_cell', (event: any) => {
         this.element.classList.remove('vtable-excel-cursor');
+
+        // 获取公式
+        const formula = this.parent.formulaManager.getCellFormula({
+          sheet: this.getKey(),
+          row: event.row,
+          col: event.col
+        });
+
+        if (formula) {
+          // 进入编辑状态
+          this.tableInstance.startEditCell(event.col, event.row, formula);
+        } else {
+          // 不是公式单元格，直接进入编辑状态
+          this.tableInstance.startEditCell(event.col, event.row);
+        }
+      });
+
+      // 监听单元格值变更事件
+      this.tableInstance.on('change_cell_value', (event: any) => {
         this.handleCellValueChanged(event);
       });
 

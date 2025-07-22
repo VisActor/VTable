@@ -8,7 +8,7 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent } from '../ts-types';
+import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent, FormulaCell } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
 
@@ -41,6 +41,8 @@ export default class VTableSheet {
 
   /** 防止递归调用的标志 */
   private isUpdatingFromFormula = false;
+
+  private isEnterKeyPressed = false;
 
   // 新增：拖拽管理器实例
   private dragManager: SheetTabDragManager;
@@ -150,8 +152,51 @@ export default class VTableSheet {
     formulaInput.placeholder = '输入公式...';
     formulaInput.addEventListener('input', e => this.handleFormulaInput(e));
     formulaInput.addEventListener('keydown', e => this.handleFormulaKeydown(e));
-    formulaInput.addEventListener('focus', () => this.activateFormulaBar());
-    formulaInput.addEventListener('blur', () => this.deactivateFormulaBar());
+    formulaInput.addEventListener('focus', () => {
+      this.activateFormulaBar();
+      // 当获得焦点时，显示公式而不是计算值
+      if (this.activeSheet) {
+        const selection = this.activeSheet.getSelection();
+        if (selection) {
+          const formula = this.formulaManager.getCellFormula({
+            sheet: this.activeSheet.getKey(),
+            row: selection.startRow,
+            col: selection.startCol
+          });
+          if (formula) {
+            // 在单元格中显示公式
+            this.isUpdatingFromFormula = true;
+            this.activeSheet.tableInstance?.changeCellValue(
+              selection.startCol,
+              selection.startRow,
+              formula.startsWith('=') ? formula : `=${formula}`
+            );
+            this.isUpdatingFromFormula = false;
+          }
+        }
+      }
+    });
+    formulaInput.addEventListener('blur', () => {
+      this.deactivateFormulaBar();
+      // 当失去焦点时，如果没有确认修改，恢复显示计算值
+      if (this.activeSheet) {
+        const selection = this.activeSheet.getSelection();
+        if (selection) {
+          const result = this.formulaManager.getCellValue({
+            sheet: this.activeSheet.getKey(),
+            row: selection.startRow,
+            col: selection.startCol
+          });
+          this.isUpdatingFromFormula = true;
+          this.activeSheet.tableInstance?.changeCellValue(
+            selection.startCol,
+            selection.startRow,
+            result.error ? '#ERROR!' : result.value
+          );
+          this.isUpdatingFromFormula = false;
+        }
+      }
+    });
     formulaBar.appendChild(formulaInput);
 
     // 创建操作按钮容器
@@ -710,8 +755,8 @@ export default class VTableSheet {
       select: {
         makeSelectCellVisible: false
       },
-      editCellTrigger: ['api', 'keydown', 'doubleclick']
-    } as any); // 使用as any暂时解决类型不匹配问题
+      editCellTrigger: ['api', 'keydown']
+    } as any);
 
     // 注册事件
     sheet.on('cell-selected', this.handleCellSelected.bind(this));
@@ -791,6 +836,13 @@ export default class VTableSheet {
     // 更新公式输入框
     const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
     if (formulaInput) {
+      // 如果是刚按下回车键，直接清空公式栏并返回
+      if (this.isEnterKeyPressed) {
+        formulaInput.value = '';
+        this.isEnterKeyPressed = false;
+        return;
+      }
+
       const cellValue = this.activeSheet.getCellValue(selection.startRow, selection.startCol);
       const formula = this.formulaManager.getCellFormula({
         sheet: this.activeSheet.getKey(),
@@ -799,18 +851,15 @@ export default class VTableSheet {
       });
 
       if (formula) {
-        // 检查公式是否已经包含等于号，避免重复添加
         const displayFormula = formula.startsWith('=') ? formula : '=' + formula;
         formulaInput.value = displayFormula;
 
-        // 如果选中的单元格包含公式，确保单元格显示计算结果而非公式文本
         try {
           const result = this.formulaManager.getCellValue({
             sheet: this.activeSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
           });
-          // 设置标志防止递归调用
           this.isUpdatingFromFormula = true;
           this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, result.value);
           this.isUpdatingFromFormula = false;
@@ -865,7 +914,6 @@ export default class VTableSheet {
     const input = event.target as HTMLInputElement;
 
     if (event.key === 'Enter') {
-      // 获取当前选中的单元格
       const selection = this.activeSheet.getSelection();
       if (!selection) {
         return;
@@ -873,10 +921,9 @@ export default class VTableSheet {
 
       const value = input.value;
 
-      // 检查是否是公式
       if (value.startsWith('=') && value.length > 1) {
         try {
-          // 设置公式单元格
+          // 设置公式内容
           this.formulaManager.setCellContent(
             {
               sheet: this.activeSheet.getKey(),
@@ -886,21 +933,30 @@ export default class VTableSheet {
             value
           );
 
-          // 获取计算结果
+          // 保持显示公式
+          this.isUpdatingFromFormula = true;
+          this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
+          this.isUpdatingFromFormula = false;
+
+          // 清空公式栏
+          input.value = '';
+
+          // 让输入框失焦
+          input.blur();
+
+          // 重要：在移动到下一行之前，先重置当前单元格的显示状态为计算结果
           const result = this.formulaManager.getCellValue({
             sheet: this.activeSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
           });
 
-          // 设置单元格值
-          this.activeSheet.setCellValue(selection.startRow, selection.startCol, result.value);
-
-          // 同时更新表格显示
           this.isUpdatingFromFormula = true;
-
           this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, result.value);
           this.isUpdatingFromFormula = false;
+
+          // 移动选择到下一行
+          this.activeSheet.tableInstance?.selectCell(selection.startCol, selection.startRow + 1);
         } catch (error) {
           this.isUpdatingFromFormula = false;
           console.warn('Formula evaluation error:', error);
@@ -918,8 +974,14 @@ export default class VTableSheet {
         this.isUpdatingFromFormula = false;
       }
 
+      // 设置标志
+      this.isEnterKeyPressed = true;
+
       // 让输入框失焦，回到表格
       input.blur();
+
+      // 移动选择到下一行
+      this.activeSheet.tableInstance?.selectCell(selection.startCol, selection.startRow + 1);
 
       // 阻止默认行为
       event.preventDefault();
@@ -954,9 +1016,14 @@ export default class VTableSheet {
           row: event.row,
           col: event.col
         });
-        // 更新单元格显示为计算结果
+
+        // 检查当前单元格是否正在编辑（是否在公式栏中编辑）
+        const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+        const isEditing = document.activeElement === formulaInput;
+
+        // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
         this.isUpdatingFromFormula = true;
-        this.activeSheet.tableInstance?.changeCellValue(event.col, event.row, result.value);
+        this.activeSheet.tableInstance?.changeCellValue(event.col, event.row, isEditing ? newValue : result.value);
         this.isUpdatingFromFormula = false;
       } catch (error) {
         this.isUpdatingFromFormula = false;
