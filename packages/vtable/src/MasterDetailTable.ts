@@ -119,7 +119,7 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
       }
     }
 
-    //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
+    // 异步触发初始化事件，确保实例完全初始化
     setTimeout(() => {
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
     }, 0);
@@ -478,7 +478,7 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
 
     // 添加adaptive模式支持：在行列数更新后，重新计算列宽
     if (this.widthMode === 'adaptive' || this.autoFillWidth) {
-      // 延迟执行列宽计算，确保布局已完成
+      // 延迟计算列宽，等待布局完成
       setTimeout(() => {
         this.handleAdaptiveMode();
       }, 0);
@@ -699,8 +699,7 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
    * @param recalculateColWidths 是否重新计算列宽
    */
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true): void {
-    // 基本实现，主从表格暂时不支持层级状态切换
-    // TODO: 后续实现层级状态切换功能
+    // 主从表格暂不支持层级状态切换
   }
 
   /**
@@ -967,20 +966,18 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     const subTableOptions = {
       viewBox: childViewBox,
       canvas: this.canvas,
-      records: childrenData, // 使用记录的children数据
-      columns: detailConfig?.columnDefs || [], // 使用配置的列定义
-      widthMode: 'adaptive' as const, // 使用自适应模式，列宽自动平分占满整个子表宽度
+      records: childrenData,
+      columns: detailConfig?.columnDefs || [],
+      widthMode: 'adaptive' as const,
       showHeader: true,
       // 继承一些父表的配置
       theme: this.options.theme,
-      ...(detailConfig || {}) // 应用其他详情配置
+      ...(detailConfig || {})
     };
-
-    // 目前只支持MasterDetailTable类型，未来可以扩展其他类型
     const subTable = new MasterDetailTable(this.container, subTableOptions);
     this.subTableInstances.set(recordIndex, subTable);
 
-    // 关键：每次父表重绘后，手动让子表重绘，保证子表内容在上层
+    // 确保子表内容在父表重绘后保持在上层
     const afterRenderHandler = () => {
       if (this.subTableInstances.has(recordIndex)) {
         subTable.render();
@@ -1078,7 +1075,7 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
-   * 设置滚动事件隔离（基于test.ts的逻辑）
+   * 设置滚动事件隔离
    * @param recordIndex 数据记录索引
    * @param subTable 子表实例
    * @param childViewBox 子表显示区域
@@ -1250,8 +1247,7 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
-   * 在表格状态变化时更新子表位置
-   * 可以在外部调用这个方法来手动更新子表位置
+   * 更新子表位置
    * @param deltaX X轴位移量
    * @param deltaY Y轴位移量
    */
