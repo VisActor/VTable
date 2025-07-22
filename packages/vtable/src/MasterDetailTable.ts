@@ -1004,6 +1004,42 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
   }
 
   /**
+   * 重写 getRowsHeight 方法，用于选中渲染时使用原始高度
+   * 确保选中高亮只覆盖原始 cell 内容，而不是展开后的高度
+   */
+  getRowsHeight(startRow: number, endRow: number): number {
+    if (startRow > endRow || this.rowCount === 0) {
+      return 0;
+    }
+    startRow = Math.max(startRow, 0);
+    endRow = Math.min(endRow, (this.rowCount ?? Infinity) - 1);
+
+    let h = 0;
+    
+    // 遍历指定行范围，使用原始高度计算总高度
+    for (let row = startRow; row <= endRow; row++) {
+      // 检查这一行是否是展开的详情行
+      const recordIndex = row - 1; // 详情行索引 = 记录索引 + 1，所以记录索引 = 行索引 - 1
+      
+      if (recordIndex >= 0 && this.internalProps.expandedRowsSet.has(recordIndex) && row === recordIndex + 1) {
+        // 这是一个展开的详情行，使用原始高度
+        const originalHeight = this.originalRowHeights.get(recordIndex);
+        if (originalHeight !== undefined) {
+          h += originalHeight;
+        } else {
+          // 如果没有记录原始高度，回退到默认计算
+          h += super.getRowHeight(row);
+        }
+      } else {
+        // 普通行，使用正常的行高计算
+        h += this.getRowHeight(row);
+      }
+    }
+    
+    return Math.round(h);
+  }
+
+  /**
    * 判断行是否展开
    * @param rowIndex
    * @returns
