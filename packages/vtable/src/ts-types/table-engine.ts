@@ -193,6 +193,8 @@ export interface DataSourceAPI {
   clearSortedMap: () => void;
   updatePagination: (pagination: IPagination) => void;
   getIndexKey: (index: number) => number | number[];
+  /** 数据是否为树形结构 且可以展开收起 */
+  hierarchyExpandLevel: number;
 
   getGroupLength?: () => number;
 }
@@ -253,6 +255,10 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   hierarchyExpandLevel?: number;
   /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
   hierarchyTextStartAlignment?: boolean;
+  /** 表头树形展示模式(设置成 'grid-tree' 则支持展开和折叠) */
+  headerHierarchyType?: 'grid-tree';
+  /** 表头默认展开层级(headerHierarchyType 为 'grid-tree' 时有效) */
+  headerExpandLevel?: number;
   /** 分页配置 */
   pagination?: IPagination;
 
