@@ -24,14 +24,23 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
     this.pluginOptions.filterIcon = pluginOptions.filterIcon ?? {
-      name: 'filter',
+      name: 'filter-icon',
       type: 'svg',
       width: 20,
       height: 20,
       marginRight: 6,
       positionType: VTable.TYPES.IconPosition.right,
       // interactive: true,
-      svg: '<svg t="1707378931406" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1587" width="200" height="200"><path d="M741.248 79.68l-234.112 350.08v551.488l55.296 24.704v-555.776l249.152-372.544c8.064-32.96-10.496-59.712-41.152-59.712h-709.248c-30.464 0-49.28 26.752-41.344 59.712l265.728 372.544v432.256l55.36 24.704v-478.592l-248.896-348.864h649.216z m-68.032 339.648c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-14.016-27.264-30.848z m0 185.216c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.256-27.264-14.016-27.264-30.848z m0 185.28c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-13.952-27.264-30.848z" p-id="1588"></path></svg>'
+      svg: '<svg t="1752821809070" class="icon" viewBox="0 0 1664 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12092" width="200" height="200"><path d="M89.6 179.2A89.6 89.6 0 0 1 89.6 0h1408a89.6 89.6 0 0 1 0 179.2H89.6z m256 384a89.6 89.6 0 0 1 0-179.2h896a89.6 89.6 0 0 1 0 179.2h-896z m256 384a89.6 89.6 0 0 1 0-179.2h384a89.6 89.6 0 0 1 0 179.2h-384z" fill="#333333" p-id="12093"></path></svg>'
+    };
+    this.pluginOptions.filteringIcon = pluginOptions.filteringIcon ?? {
+      name: 'filtering-icon',
+      type: 'svg',
+      width: 20,
+      height: 20,
+      marginRight: 6,
+      positionType: VTable.TYPES.IconPosition.right,
+      svg: '<svg t="1752821771292" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11926" width="200" height="200"><path d="M971.614323 53.05548L655.77935 412.054233C635.196622 435.434613 623.906096 465.509377 623.906096 496.583302v495.384307c0 28.975686-35.570152 43.063864-55.353551 21.781723l-159.865852-171.256294c-5.495389-5.895053-8.59279-13.688514-8.592789-21.781722V496.583302c0-31.073925-11.290526-61.148688-31.873254-84.429153L52.385677 53.05548C34.200936 32.472751 48.888611 0 76.365554 0h871.268892c27.476943 0 42.164618 32.472751 23.979877 53.05548z" p-id="11927"></path></svg>'
     };
   }
 
@@ -48,7 +57,10 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
 
       this.filterToolbar.render(document.body);
       this.addFilterIcon();
-    } else if (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter') {
+    } else if (
+      (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
+      eventArgs.name === 'filtering-icon'
+    ) {
       const col = eventArgs.col;
       const row = eventArgs.row;
       if (this.filterToolbar.isVisible) {

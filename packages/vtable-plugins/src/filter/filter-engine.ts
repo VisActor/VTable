@@ -68,12 +68,34 @@ export class FilterEngine {
           return this.compareValues(value, condition) >= 0;
         case 'lessThanOrEqual':
           return this.compareValues(value, condition) <= 0;
+        case 'between':
+          // 范围条件需要是数组形式 [min, max]
+          if (Array.isArray(condition) && condition.length === 2) {
+            return this.compareValues(value, condition[0]) >= 0 && this.compareValues(value, condition[1]) <= 0;
+          }
+          return true;
+        case 'notBetween':
+          // 范围条件需要是数组形式 [min, max]
+          if (Array.isArray(condition) && condition.length === 2) {
+            return this.compareValues(value, condition[0]) < 0 || this.compareValues(value, condition[1]) > 0;
+          }
+          return true;
         case 'contains':
           return String(value).toLowerCase().includes(String(condition).toLowerCase());
+        case 'notContains':
+          return !String(value).toLowerCase().includes(String(condition).toLowerCase());
         case 'startsWith':
           return String(value).toLowerCase().startsWith(String(condition).toLowerCase());
+        case 'notStartsWith':
+          return !String(value).toLowerCase().startsWith(String(condition).toLowerCase());
         case 'endsWith':
           return String(value).toLowerCase().endsWith(String(condition).toLowerCase());
+        case 'notEndsWith':
+          return !String(value).toLowerCase().endsWith(String(condition).toLowerCase());
+        case 'isChecked':
+          return Boolean(value) === true;
+        case 'isUnchecked':
+          return Boolean(value) === false;
         default:
           return true;
       }
@@ -85,24 +107,14 @@ export class FilterEngine {
    * 返回: -1 (value < condition), 0 (value === condition), 1 (value > condition)
    */
   private compareValues(value: any, condition: any): number {
-    // 处理日期比较
-    if (value instanceof Date && condition instanceof Date) {
-      const valueTime = value.getTime();
-      const conditionTime = condition.getTime();
-      return valueTime === conditionTime ? 0 : valueTime > conditionTime ? 1 : -1;
-    }
-
-    // 处理数字比较
     if (typeof value === 'number' && typeof condition === 'number') {
       return value === condition ? 0 : value > condition ? 1 : -1;
     }
 
-    // 处理布尔值比较
     if (typeof value === 'boolean' && typeof condition === 'boolean') {
       return value === condition ? 0 : -1;
     }
 
-    // 处理字符串比较 (不区分大小写)
     const valueStr = String(value).toLowerCase();
     const conditionStr = String(condition).toLowerCase();
     return valueStr === conditionStr ? 0 : valueStr > conditionStr ? 1 : -1;
