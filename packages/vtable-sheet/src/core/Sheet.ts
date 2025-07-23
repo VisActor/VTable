@@ -45,6 +45,8 @@ export class Sheet extends EventTarget implements ISheetAPI {
   /** 事件总线 */
   private eventBus: EventEmitter;
 
+  private parent: any;
+
   constructor(options: ISheetOptions) {
     super();
     this.options = options;
@@ -53,6 +55,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
     // 初始化基本属性
     this.sheetKey = options.sheetKey;
     this.sheetTitle = options.sheetTitle;
+    this.parent = options.parent;
 
     // 创建表格元素
     this.element = this._createRootElement();
@@ -162,8 +165,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
       ...this.options,
       records: this.options.data,
       container: this.element,
-      showHeader: isShowTableHeader,
-      addRecordRule: 'Array'
+      showHeader: isShowTableHeader
     };
   }
 
@@ -177,19 +179,32 @@ export class Sheet extends EventTarget implements ISheetAPI {
         this.handleCellSelected(event);
       });
 
+      // 监听双击进入编辑状态
+      this.tableInstance.on('dblclick_cell', (event: any) => {
+        this.element.classList.remove('vtable-excel-cursor');
+
+        // 获取公式
+        const formula = this.parent.formulaManager.getCellFormula({
+          sheet: this.getKey(),
+          row: event.row,
+          col: event.col
+        });
+
+        if (formula) {
+          // 进入编辑状态
+          this.tableInstance.startEditCell(event.col, event.row, formula);
+        } else {
+          // 不是公式单元格，直接进入编辑状态
+          this.tableInstance.startEditCell(event.col, event.row);
+        }
+      });
+
       // 监听单元格值变更事件
       this.tableInstance.on('change_cell_value', (event: any) => {
         this.handleCellValueChanged(event);
       });
 
-      // 监听双击进入编辑状态
-      this.tableInstance.on('dblclick_cell', (event: any) => {
-        this.element.classList.remove('vtable-excel-cursor');
-        this.handleCellValueChanged(event);
-      });
-
       // 监听编辑结束事件，恢复十字光标
-
       this.tableInstance.on('click_cell', () => {
         this.element.classList.add('vtable-excel-cursor');
       });
@@ -203,10 +218,10 @@ export class Sheet extends EventTarget implements ISheetAPI {
   private handleCellSelected(event: any): void {
     // 更新选择范围
     this.selection = {
-      startRow: event.row - 1,
-      startCol: event.col - 1,
-      endRow: event.row - 1,
-      endCol: event.col - 1
+      startRow: event.row,
+      startCol: event.col,
+      endRow: event.row,
+      endCol: event.col
     };
 
     // 触发事件给父组件
@@ -219,8 +234,8 @@ export class Sheet extends EventTarget implements ISheetAPI {
    */
   private handleCellValueChanged(event: any): void {
     this.fire('cell-value-changed', {
-      row: event.row - 1,
-      col: event.col - 1,
+      row: event.row,
+      col: event.col,
       oldValue: event.rawValue,
       newValue: event.changedValue
     });
@@ -334,8 +349,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
   getCellValue(row: number, col: number): any {
     if (this.tableInstance) {
       try {
-        // 尝试交换参数顺序：可能是(row, col)而不是(col, row)
-        const value = this.tableInstance.getCellValue(col + 1, row + 1);
+        const value = this.tableInstance.getCellValue(col, row);
         return value;
       } catch (error) {
         console.warn('Failed to get cell value from VTable:', error);
@@ -374,7 +388,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
         newValue: value
       };
 
-      // this.fire('cellValueChanged', event);
+      this.fire('cellValueChanged', event);
     }
   }
 

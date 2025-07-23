@@ -73,19 +73,24 @@ export class FormulaManager {
     try {
       let sheetId: number;
 
+      // 创建第一个sheet
       if (this.sheetMapping.size === 0) {
-        // 第一个sheet - 使用buildFromArray重建
-        const initialData = this.normalizeSheetData(data);
-        this.hyperFormula = HyperFormula.buildFromArray(initialData, DEFAULT_HYPERFORMULA_CONFIG);
+        this.hyperFormula = HyperFormula.buildFromArray([['']], DEFAULT_HYPERFORMULA_CONFIG);
         sheetId = 0;
       } else {
         // 后续sheet - 使用addSheet API
         const sheetName = this.hyperFormula.addSheet(sheetKey);
         sheetId = this.hyperFormula.getSheetId(sheetName);
+      }
 
-        // 如果有数据，设置内容
-        if (data && data.length > 0) {
-          (this.hyperFormula as any).setSheetContent(sheetId, this.normalizeSheetData(data));
+      // 如果有有效数据，设置内容
+      if (Array.isArray(data) && data.length > 0) {
+        const hasHeader = this.getHasHeader(sheetKey);
+        const normalizedData = hasHeader
+          ? [Array(data[0].length).fill('')].concat(this.normalizeSheetData(data))
+          : this.normalizeSheetData(data);
+        if (normalizedData.length > 0) {
+          this.hyperFormula.setSheetContent(sheetId, normalizedData);
         }
       }
 
@@ -96,8 +101,7 @@ export class FormulaManager {
       return sheetId;
     } catch (error) {
       console.error(`Failed to add sheet ${sheetKey}:`, error);
-      // throw new Error(`Failed to add sheet: ${sheetKey}`);
-      return;
+      throw new Error(`Failed to add sheet: ${sheetKey}`);
     }
   }
 
@@ -106,20 +110,43 @@ export class FormulaManager {
    * @param data 工作表数据
    * @returns 标准化后的工作表数据
    */
-  private normalizeSheetData(data?: any[][]): any[][] {
-    if (!data || data.length === 0) {
-      return [[]];
-    }
-
-    // 确保所有行都有相同的列数
-    const maxCols = Math.max(...data.map(row => row.length));
-    return data.map(row => {
-      const normalizedRow = [...row];
-      while (normalizedRow.length < maxCols) {
-        normalizedRow.push('');
+  private normalizeSheetData(data: any[][]): any[][] {
+    try {
+      if (!Array.isArray(data) || data.length === 0) {
+        return [['']];
       }
-      return normalizedRow;
-    });
+
+      // 确保所有行都是数组，并转换数据类型
+      const validData = data.filter(row => Array.isArray(row));
+      if (validData.length === 0) {
+        return [['']];
+      }
+
+      // 确保所有行都有相同的列数，并正确处理数据类型
+      const maxCols = Math.max(...validData.map(row => row.length));
+      return validData.map(row => {
+        const normalizedRow = Array.isArray(row)
+          ? row.map(cell => {
+              if (typeof cell === 'string') {
+                if (cell.startsWith('=')) {
+                  return cell; // 保持公式不变
+                }
+                const num = Number(cell);
+                return !isNaN(num) ? num : cell;
+              }
+              return cell ?? '';
+            })
+          : [''];
+
+        while (normalizedRow.length < maxCols) {
+          normalizedRow.push('');
+        }
+        return normalizedRow;
+      });
+    } catch (error) {
+      console.error('Failed to normalize sheet data:', error);
+      return [['']];
+    }
   }
 
   /**
@@ -187,6 +214,17 @@ export class FormulaManager {
   }
 
   /**
+   * 获取是否有表头
+   * @param sheetKey 工作表键
+   * @returns 是否有表头
+   */
+  private getHasHeader(sheetKey: string): boolean {
+    const sheetDefine = this.sheet.getSheetManager().getSheet(sheetKey);
+
+    return sheetDefine?.showHeader ?? sheetDefine?.columns?.length > 0 ?? false;
+  }
+
+  /**
    * 设置单元格内容
    * @param cell 单元格
    * @param value 值
@@ -196,6 +234,7 @@ export class FormulaManager {
 
     try {
       const sheetId = this.getSheetId(cell.sheet);
+
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
@@ -219,6 +258,7 @@ export class FormulaManager {
 
     try {
       const sheetId = this.getSheetId(cell.sheet);
+
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
@@ -226,7 +266,6 @@ export class FormulaManager {
       };
 
       const value = this.hyperFormula.getCellValue(address);
-
       return {
         value,
         error: value instanceof CellError ? value : undefined
@@ -250,6 +289,7 @@ export class FormulaManager {
 
     try {
       const sheetId = this.getSheetId(cell.sheet);
+
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
