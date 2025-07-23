@@ -95,6 +95,7 @@ import type { ITitle } from './component/title';
 import type { DiscreteTableLegend } from '../components/legend/discrete-legend/discrete-legend';
 import type { ContinueTableLegend } from '../components/legend/continue-legend/continue-legend';
 import type { NumberRangeMap } from '../layout/row-height-map';
+import type { RowSeriesNumberHelper } from '../core/row-series-number-helper';
 import type { ReactCustomLayout } from '../components/react/react-custom-layout';
 import type { ISortedMapItem } from '../data/DataSource';
 import type { IAnimationAppear, ITableAnimationOption } from './animation/appear';
@@ -177,6 +178,7 @@ export interface IBaseTableProtected {
 
   bodyHelper: BodyHelper;
   headerHelper: HeaderHelper;
+  rowSeriesNumberHelper: RowSeriesNumberHelper;
 
   cellTextOverflows: { [at: string]: string };
   // headerDescriptions: { [at: string]: string };
