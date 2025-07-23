@@ -44,6 +44,9 @@ export function updateHoverPosition(state: StateManager, col: number, row: numbe
     return;
   }
 
+  // activateChart逻辑需要用到这个hover的位置，所以需要先更新
+  cellPos.col = col;
+  cellPos.row = row;
   if (!state.table.options.customConfig?.disableBuildInChartActive) {
     // 将hover单元格的图表实例激活 并将上一个失去焦点
     scenegraph.deactivateChart(prevHoverCellCol, prevHoverCellRow);
@@ -126,8 +129,8 @@ export function updateHoverPosition(state: StateManager, col: number, row: numbe
     scenegraph.showHoverIcon(col, row);
   }
 
-  cellPos.col = col;
-  cellPos.row = row;
+  // cellPos.col = col;
+  // cellPos.row = row;
   if (updateScenegraph) {
     state.table.scenegraph.updateNextFrame();
   }
