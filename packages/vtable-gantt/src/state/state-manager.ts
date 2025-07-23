@@ -74,6 +74,8 @@ export class StateManager {
     target: GanttTaskBarNode;
     resizing: boolean;
     onIconName: string;
+    resizeTaskBarXSpeed: number;
+    resizeTaskBarXInertia: Inertia;
   };
   selectedTaskBar: {
     target: GanttTaskBarNode;
@@ -147,7 +149,9 @@ export class StateManager {
       startY: null,
       target: null,
       resizing: false,
-      onIconName: ''
+      onIconName: '',
+      resizeTaskBarXSpeed: 0, // 新增
+      resizeTaskBarXInertia: new Inertia() // 新增
     };
     this.resizeTableWidth = {
       lastX: null,
@@ -351,6 +355,9 @@ export class StateManager {
     const deltaX = this.moveTaskBar.deltaX;
     const deltaY = this.moveTaskBar.deltaY;
     const target = this.moveTaskBar.target;
+
+    // 添加拖拽方向检测
+    const dragDirection = this.moveTaskBar.deltaX > 0 ? 'right' : 'left';
     if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
       const taskIndex = target.task_index;
       const sub_task_index = target.sub_task_index;
@@ -363,30 +370,82 @@ export class StateManager {
         this.moveTaskBar.targetStartY +
         this._gantt.parsedOptions.rowHeight * Math.round(deltaY / this._gantt.parsedOptions.rowHeight);
       const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+
       const testDateX =
         this.moveTaskBar.target.attribute.x +
         (target.record.type === TaskType.MILESTONE ? milestoneTaskbarHeight / 2 : 0);
-      const startDateColIndex = getDateIndexByX(
-        testDateX - this._gantt.stateManager.scroll.horizontalBarPos,
+
+      // taskBar所在索引
+      let taskBarColIndex = getDateIndexByX(
+        (dragDirection === 'left' ? this.moveTaskBar.target.attribute.x : target.attribute.x + target.attribute.width) -
+          this._gantt.stateManager.scroll.horizontalBarPos,
         this._gantt
       );
-      const timelineStartDate =
-        this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[startDateColIndex];
-      if (!timelineStartDate) {
+
+      // let startDateColIndex = getDateIndexByX(
+      //   testDateX - this._gantt.stateManager.scroll.horizontalBarPos,
+      //   this._gantt
+      // ); // 原始计算逻辑向右不变
+      const scrollLeftColIndex = getDateIndexByX(0, this._gantt); // 滚动条所在index
+      const scrollRightColIndex = getDateIndexByX(this._gantt.tableNoFrameWidth, this._gantt);
+
+      if (this._gantt.parsedOptions.moveTaskBarToExtendDateRange) {
+        if (dragDirection === 'left') {
+          if (taskBarColIndex <= scrollLeftColIndex) {
+            taskBarColIndex = Math.max(taskBarColIndex + 1, scrollLeftColIndex + 1);
+          } else {
+            if (taskBarColIndex >= scrollRightColIndex) {
+              taskBarColIndex = Math.min(taskBarColIndex - 1, scrollRightColIndex - 1);
+            }
+          }
+        }
+      } else {
+        const maxColIndex = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates.length - 1;
+        const minColIndex = 1;
+
+        if (dragDirection === 'left') {
+          if (taskBarColIndex <= scrollLeftColIndex && taskBarColIndex > minColIndex) {
+            taskBarColIndex = Math.max(taskBarColIndex + 1, scrollLeftColIndex + 1);
+          }
+
+          if (taskBarColIndex < minColIndex) {
+            taskBarColIndex = minColIndex - 1;
+          }
+        } else {
+          if (taskBarColIndex >= scrollRightColIndex && taskBarColIndex < maxColIndex) {
+            taskBarColIndex = Math.min(taskBarColIndex - 1, scrollRightColIndex - 1);
+          }
+
+          if (taskBarColIndex > maxColIndex) {
+            taskBarColIndex = maxColIndex;
+          }
+        }
+      }
+
+      const timelineDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[taskBarColIndex];
+      if (!timelineDate) {
         return;
       }
-      const newStartDate = timelineStartDate.startDate;
-      // const endDateColIndex = getDateIndexByX(
-      //   this.moveTaskBar.target.attribute.x +
-      //     this.moveTaskBar.target.attribute.width -
-      //     this._gantt.stateManager.scroll.horizontalBarPos,
-      //   this._gantt
-      // );
-      // const timelineEndDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[endDateColIndex];
-      const newEndDate = new Date(
+      let newStartDate = timelineDate.startDate;
+      let newEndDate = new Date(
         newStartDate.getTime() +
           (createDateAtMidnight(oldEndDate).getTime() - createDateAtMidnight(oldStartDate).getTime())
       );
+
+      if (dragDirection === 'left') {
+        newStartDate = timelineDate.startDate;
+        newEndDate = new Date(
+          newStartDate.getTime() +
+            (createDateAtMidnight(oldEndDate).getTime() - createDateAtMidnight(oldStartDate).getTime())
+        );
+      } else {
+        newEndDate = timelineDate.endDate;
+        newStartDate = new Date(
+          newEndDate.getTime() -
+            (createDateAtMidnight(oldEndDate).getTime() - createDateAtMidnight(oldStartDate).getTime())
+        );
+      }
+
       // 判断横向拖动 更新数据的date
       let dateChanged: 'left' | 'right';
       if (createDateAtMidnight(oldStartDate).getTime() !== newStartDate.getTime()) {
@@ -443,13 +502,30 @@ export class StateManager {
           }
           // target = this._gantt.scenegraph.taskBar.getTaskBarNodeByIndex(indexs.task_index, indexs.sub_task_index);
         } else {
-          let newX = startDateColIndex >= 1 ? this._gantt.getDateColsWidth(0, startDateColIndex - 1) : 0;
-          if (target.record.type === TaskType.MILESTONE) {
-            const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
-            newX -= milestoneTaskbarHeight / 2;
-          }
-          moveTaskBar(target, newX - (target as Group).attribute.x, targetEndY - (target as Group).attribute.y, this);
+          if (dragDirection === 'left') {
+            let newX = taskBarColIndex >= 1 ? this._gantt.getDateColsWidth(0, taskBarColIndex - 1) : 0;
+            if (target.record.type === TaskType.MILESTONE) {
+              const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+              newX -= milestoneTaskbarHeight / 2;
+            }
 
+            moveTaskBar(target, newX - (target as Group).attribute.x, targetEndY - (target as Group).attribute.y, this);
+          } else if (dragDirection === 'right') {
+            // 计算新的起始位置
+            let newX = this._gantt.getDateColsWidth(0, taskBarColIndex);
+            if (target.record.type === TaskType.MILESTONE) {
+              const milestoneTaskbarHeight = this._gantt.parsedOptions.taskBarMilestoneStyle.width;
+              newX -= milestoneTaskbarHeight / 2;
+            }
+
+            // 使用 moveTaskBar 移动到新位置
+            moveTaskBar(
+              target,
+              newX - (target as Group).attribute.x - target.attribute.width,
+              targetEndY - (target as Group).attribute.y,
+              this
+            );
+          }
           // 为了确保拖拽后 保持startDate日期晚的显示在上层不被盖住 这里需要重新排序一下
           if (dateChanged === 'right') {
             let insertAfterNode = target;
@@ -616,6 +692,7 @@ export class StateManager {
 
     gantt.scenegraph.updateNextFrame();
   }
+
   //#region 调整拖拽任务条的大小
   startResizeTaskBar(target: Group, x: number, y: number, startOffsetY: number, onIconName: string) {
     // if (target.name === 'task-bar-hover-shadow') {
@@ -640,13 +717,55 @@ export class StateManager {
       // let diff_days =
       //   Math.round(deltaX / this._gantt.parsedOptions.timelineColWidth) * this._gantt.getMinScaleUnitToDays();
 
-      const colIndex = getDateIndexByX(
+      // taskBar所在的索引
+      let colIndex = getDateIndexByX(
         (direction === 'left'
           ? this.resizeTaskBar.target.attribute.x
           : this.resizeTaskBar.target.attribute.x + this.resizeTaskBar.target.attribute.width) -
           this._gantt.stateManager.scroll.horizontalBarPos,
         this._gantt
       );
+
+      // 获取左边缘的列索引
+      const scrollLeftColIndex = getDateIndexByX(0, this._gantt);
+      // 获取右边缘的列索引
+      const rightEdgeX = this._gantt.tableNoFrameWidth; // 表格可视区域的右边缘X坐标
+      const scrollRightColIndex = getDateIndexByX(rightEdgeX, this._gantt);
+
+      if (this._gantt.parsedOptions.moveTaskBarToExtendDateRange) {
+        // 需要扩展日期范围时
+        if (direction === 'left') {
+          if (colIndex <= scrollLeftColIndex) {
+            colIndex = Math.max(colIndex + 1, scrollLeftColIndex + 1);
+          }
+        } else {
+          if (colIndex >= scrollRightColIndex) {
+            colIndex = Math.min(colIndex - 1, scrollRightColIndex - 1);
+          }
+        }
+      } else {
+        const maxColIndex = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates.length - 1;
+        const minColIndex = 1;
+        if (direction === 'left') {
+          if (colIndex <= scrollLeftColIndex && colIndex > minColIndex) {
+            colIndex = Math.max(colIndex + 1, scrollLeftColIndex + 1);
+          }
+
+          if (colIndex < minColIndex) {
+            // console.log('左边缘');
+            colIndex = minColIndex - 1;
+          }
+        } else {
+          if (colIndex >= scrollRightColIndex && colIndex < maxColIndex) {
+            colIndex = Math.min(colIndex - 1, scrollRightColIndex - 1);
+          }
+
+          if (colIndex > scrollRightColIndex) {
+            colIndex = maxColIndex;
+          }
+        }
+      }
+
       const timelineDate = this._gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[colIndex];
       if (!timelineDate) {
         return;
@@ -713,9 +832,13 @@ export class StateManager {
         reCreateCustomNode(this._gantt, taskBarGroup, taskIndex, sub_task_index);
         taskBarGroup.setAttribute('zIndex', 0);
       }
+      if (this.resizeTaskBar.resizeTaskBarXInertia.isInertiaScrolling()) {
+        this.resizeTaskBar.resizeTaskBarXInertia.endInertia();
+      }
       taskBarGroup.updateTextPosition();
       this.resizeTaskBar.resizing = false;
       this.resizeTaskBar.target = null;
+      this.resizeTaskBar.resizeTaskBarXSpeed = 0;
 
       if (dateChanged && this._gantt.hasListeners(GANTT_EVENT_TYPE.CHANGE_DATE_RANGE)) {
         const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
@@ -732,27 +855,142 @@ export class StateManager {
     }
   }
   dealTaskBarResize(e: FederatedPointerEvent) {
-    const x1 = this._gantt.eventManager.lastDragPointerXYOnWindow.x;
+    const gantt = this._gantt;
+    const x1 = gantt.eventManager.lastDragPointerXYOnWindow.x;
     const x2 = e.x;
     const dx = x2 - x1;
-    // debugger;
-    const taskBarGroup = this._gantt.stateManager.resizeTaskBar.target;
+    const taskBarGroup = this.resizeTaskBar.target;
 
-    // const taskIndex = getTaskIndexByY(this.resizeTaskBar.startOffsetY, this._gantt);
-
-    let diffWidth = this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -dx : dx;
+    let diffWidth = this.resizeTaskBar.onIconName === 'left' ? -dx : dx;
     const taskBarSize = Math.max(1, taskBarGroup.attribute.width + diffWidth);
     diffWidth = taskBarSize - taskBarGroup.attribute.width;
 
-    resizeTaskBar(
-      taskBarGroup,
-      this._gantt.stateManager.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0,
+    resizeTaskBar(taskBarGroup, this.resizeTaskBar.onIconName === 'left' ? -diffWidth : 0, taskBarSize, this);
 
-      taskBarSize,
-      this
-    );
+    // 添加边缘滚动逻辑
+    const isLeftResize = this.resizeTaskBar.onIconName === 'left';
+    const isRightResize = this.resizeTaskBar.onIconName === 'right';
 
-    this._gantt.scenegraph.updateNextFrame();
+    // 左边缘滚动检测（左侧调整大小时）
+    if (isLeftResize && taskBarGroup.attribute.x <= gantt.stateManager.scrollLeft && dx < 0) {
+      if (gantt.parsedOptions.moveTaskBarToExtendDateRange && gantt.stateManager.scrollLeft === 0) {
+        this.resizeTaskBar.resizeTaskBarXInertia?.endInertia();
+        // 扩展滚动区域
+        const timeDiff =
+          gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[1].startDate.getTime() -
+          gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[0].startDate.getTime();
+        const { unit: minTimeUnit, startOfWeek } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+        gantt.parsedOptions.minDate = getStartDateByTimeUnit(
+          new Date(
+            gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates[0].startDate.getTime() - timeDiff / 2
+          ),
+          minTimeUnit,
+          startOfWeek
+        );
+        gantt.parsedOptions._minDateTime = gantt.parsedOptions.minDate?.getTime();
+        gantt._generateTimeLineDateMap();
+        gantt._updateSize();
+        gantt.scenegraph.refreshAll();
+        // 重新获取任务条节点
+        const oldTarget = this.resizeTaskBar.target;
+        const oldWidth = oldTarget.attribute.width;
+        const oldX = oldTarget.attribute.x;
+        this.resizeTaskBar.target = gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
+          taskBarGroup.task_index,
+          taskBarGroup.sub_task_index
+        );
+        gantt.scrollLeft = gantt.parsedOptions.timelineColWidth - 1;
+        gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
+        // 根据调整方向来处理位置
+        if (this.resizeTaskBar.onIconName === 'left') {
+          // 左侧调整：保持右边界位置不变，调整左边界
+          const rightEdge = oldX + oldWidth;
+          const newX = Math.max(gantt.scrollLeft, rightEdge - oldWidth);
+          this.resizeTaskBar.target.setAttribute('x', newX);
+          this.resizeTaskBar.target.setAttribute('width', oldWidth);
+        } else {
+          // 右侧调整：保持左边界位置，调整宽度
+          this.resizeTaskBar.target.setAttribute('x', Math.max(gantt.scrollLeft, oldX));
+          this.resizeTaskBar.target.setAttribute('width', oldWidth);
+        }
+      } else {
+        this.resizeTaskBar.resizeTaskBarXSpeed = -gantt.parsedOptions.timelineColWidth / 100;
+        this.resizeTaskBar.resizeTaskBarXInertia.startInertia(this.resizeTaskBar.resizeTaskBarXSpeed, 0, 1);
+        this.resizeTaskBar.resizeTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
+          const currentTarget = this.resizeTaskBar.target;
+          if (isLeftResize) {
+            // 左侧调整时，需要同时移动位置和调整宽度
+            const newX = Math.max(0, currentTarget.attribute.x + dx);
+            const widthChange = currentTarget.attribute.x - newX;
+            resizeTaskBar(currentTarget, dx, currentTarget.attribute.width + widthChange, this);
+          }
+          gantt.stateManager.setScrollLeft(Math.max(0, currentTarget.attribute.x));
+          if (gantt.stateManager.scrollLeft === 0) {
+            this.resizeTaskBar.resizeTaskBarXInertia.endInertia();
+          }
+        });
+      }
+    }
+    // 右边缘滚动检测（右侧调整大小时）
+    else if (
+      isRightResize &&
+      taskBarGroup.attribute.x + taskBarGroup.attribute.width >=
+        gantt.stateManager.scrollLeft + gantt.tableNoFrameWidth &&
+      dx > 0
+    ) {
+      if (
+        gantt.parsedOptions.moveTaskBarToExtendDateRange &&
+        gantt.stateManager.scrollLeft + gantt.tableNoFrameWidth === gantt.getAllDateColsWidth()
+      ) {
+        this.resizeTaskBar.resizeTaskBarXInertia?.endInertia();
+        // 扩展滚动区域
+        const timelineDates = gantt.parsedOptions.reverseSortedTimelineScales[0].timelineDates;
+        const timeDiff = timelineDates[1].startDate.getTime() - timelineDates[0].startDate.getTime();
+        const { unit: minTimeUnit, startOfWeek, step } = gantt.parsedOptions.reverseSortedTimelineScales[0];
+        gantt.parsedOptions.maxDate = getEndDateByTimeUnit(
+          gantt.parsedOptions.minDate,
+          new Date(timelineDates[timelineDates.length - 1].endDate.getTime() + timeDiff / 2),
+          minTimeUnit,
+          step
+        );
+        gantt.parsedOptions._maxDateTime = gantt.parsedOptions.maxDate?.getTime();
+        gantt._generateTimeLineDateMap();
+        gantt._updateSize();
+        gantt.scenegraph.refreshAll();
+
+        // 重新获取任务条节点
+        this.resizeTaskBar.target = gantt.scenegraph.taskBar.getTaskBarNodeByIndex(
+          taskBarGroup.task_index,
+          taskBarGroup.sub_task_index
+        );
+        gantt.scrollLeft += 1;
+        gantt.eventManager.lastDragPointerXYOnWindow.x = e.x;
+      } else {
+        this.resizeTaskBar.resizeTaskBarXSpeed = gantt.parsedOptions.timelineColWidth / 100;
+        this.resizeTaskBar.resizeTaskBarXInertia.startInertia(this.resizeTaskBar.resizeTaskBarXSpeed, 0, 1);
+        this.resizeTaskBar.resizeTaskBarXInertia.setScrollHandle((dx: number, dy: number) => {
+          const currentTarget = this.resizeTaskBar.target;
+          if (isRightResize) {
+            // 右侧调整时，只需要调整宽度
+            resizeTaskBar(currentTarget, 0, currentTarget.attribute.width + dx, this);
+          }
+          gantt.stateManager.setScrollLeft(
+            currentTarget.attribute.x + currentTarget.attribute.width - gantt.tableNoFrameWidth
+          );
+          if (gantt.stateManager.scrollLeft === gantt.getAllDateColsWidth() - gantt.tableNoFrameWidth) {
+            this.resizeTaskBar.resizeTaskBarXInertia.endInertia();
+          }
+        });
+      }
+    }
+    // 停止惯性滚动
+    else if (this.resizeTaskBar.resizeTaskBarXInertia.isInertiaScrolling()) {
+      this.resizeTaskBar.resizeTaskBarXInertia.endInertia();
+    } else {
+      this.resizeTaskBar.resizeTaskBarXSpeed = 0;
+    }
+
+    gantt.scenegraph.updateNextFrame();
   }
   //#endregion
   //#region 生成关联线的交互处理
