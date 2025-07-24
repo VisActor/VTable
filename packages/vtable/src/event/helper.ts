@@ -12,19 +12,27 @@ export function fireMoveColEventListeners(table: BaseTableAPI, endMoveColSuccess
   ) {
     // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
+      const { colSource, rowSource, colTarget, rowTarget } = table.stateManager.columnMove;
+      const rowSourceSize = table.stateManager.columnMove.rowSourceSize ?? 0;
+      const rowTargetSize = table.stateManager.columnMove.rowTargetSize ?? 0;
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
-        target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
+        target: { col: colTarget, row: rowTarget + rowTargetSize - rowSourceSize },
         source: {
-          col: table.stateManager.columnMove.colSource,
-          row: table.stateManager.columnMove.rowSource
+          col: colSource,
+          row: rowSource
         },
         event: e
       });
     }
   } else if (!endMoveColSuccess) {
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL)) {
+      const rowSourceSize = table.stateManager.columnMove.rowSourceSize ?? 0;
+      const rowTargetSize = table.stateManager.columnMove.rowTargetSize ?? 0;
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, {
-        target: { col: table.stateManager.columnMove.colTarget, row: table.stateManager.columnMove.rowTarget },
+        target: {
+          col: table.stateManager.columnMove.colTarget,
+          row: table.stateManager.columnMove.rowTarget + rowTargetSize - rowSourceSize
+        },
         source: {
           col: table.stateManager.columnMove.colSource,
           row: table.stateManager.columnMove.rowSource

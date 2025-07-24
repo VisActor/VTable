@@ -721,8 +721,11 @@ export function updateCell(
     // update text
     const textMark = oldCellGroup.getChildByName('text');
     if (forceFastUpdate && textMark) {
+      const textAlign = cellTheme.text.textAlign;
+      const hierarchyOffset = getHierarchyOffset(col, row, table);
       const attribute = {
-        textBaseline: 'top'
+        textBaseline: 'top',
+        dx: textAlign === 'left' ? hierarchyOffset : 0
       };
       textMark.setAttributes(cellTheme.text ? (Object.assign({}, cellTheme.text, attribute) as any) : attribute);
     } else if (textMark) {
