@@ -40,7 +40,7 @@ export function updateCustomSelectBorder(
     const cornerEndCol = Math.min(endCol, table.frozenColCount - 1);
     const cornerEndRow = Math.min(endRow, table.frozenRowCount - 1);
     const strokeArray = [true, !needColumnHeader, !needRowHeader, true];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       startCol,
       startRow,
@@ -56,7 +56,7 @@ export function updateCustomSelectBorder(
     const cornerStartCol = Math.max(startCol, table.colCount - table.rightFrozenColCount);
     const cornerEndRow = Math.min(endRow, table.frozenRowCount - 1);
     const strokeArray = [true, true, !needRightRowHeader, !needColumnHeader];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       cornerStartCol,
       startRow,
@@ -73,7 +73,7 @@ export function updateCustomSelectBorder(
     const cornerEndCol = Math.min(endCol, table.frozenColCount - 1);
     const cornerStartRow = Math.max(startRow, table.rowCount - table.bottomFrozenRowCount);
     const strokeArray = [!needRowHeader, !needBottomColumnHeader, true, true];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       startCol,
       cornerStartRow,
@@ -89,7 +89,7 @@ export function updateCustomSelectBorder(
     const cornerStartCol = Math.max(startCol, table.colCount - table.rightFrozenColCount);
     const cornerStartRow = Math.max(startRow, table.rowCount - table.bottomFrozenRowCount);
     const strokeArray = [!needRightRowHeader, true, true, !needBottomColumnHeader];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       cornerStartCol,
       cornerStartRow,
@@ -106,7 +106,7 @@ export function updateCustomSelectBorder(
     const columnHeaderEndCol = Math.min(endCol, table.colCount - table.rightFrozenColCount - 1);
     const columnHeaderEndRow = Math.min(endRow, table.frozenRowCount - 1);
     const strokeArray = [true, !needRightTopCornerHeader, !needBody, !needCornerHeader];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       columnHeaderStartCol,
       startRow,
@@ -123,7 +123,7 @@ export function updateCustomSelectBorder(
     const columnHeaderEndCol = Math.min(endCol, table.colCount - table.rightFrozenColCount - 1);
     const columnHeaderStartRow = Math.max(startRow, table.rowCount - table.bottomFrozenRowCount);
     const strokeArray = [!needBody, !needRightBottomCornerHeader, true, !needLeftBottomCornerHeader];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       columnHeaderStartCol,
       columnHeaderStartRow,
@@ -140,7 +140,7 @@ export function updateCustomSelectBorder(
     const columnHeaderEndRow = Math.min(endRow, table.rowCount - table.bottomFrozenRowCount - 1);
     const columnHeaderEndCol = Math.min(endCol, table.frozenColCount - 1);
     const strokeArray = [!needCornerHeader, !needBody, !needLeftBottomCornerHeader, true];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       startCol,
       columnHeaderStartRow,
@@ -148,7 +148,8 @@ export function updateCustomSelectBorder(
       columnHeaderEndRow,
       'rowHeader',
       `${startCol}${startRow}${endCol}${endRow}`,
-      strokeArray
+      strokeArray,
+      style
     );
   }
   if (needRightRowHeader) {
@@ -156,7 +157,7 @@ export function updateCustomSelectBorder(
     const columnHeaderEndRow = Math.min(endRow, table.rowCount - table.bottomFrozenRowCount - 1);
     const columnHeaderStartCol = Math.max(startCol, table.colCount - table.rightFrozenColCount);
     const strokeArray = [!needRightTopCornerHeader, true, !needRightBottomCornerHeader, !needBody];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       columnHeaderStartCol,
       columnHeaderStartRow,
@@ -174,7 +175,7 @@ export function updateCustomSelectBorder(
     const columnHeaderEndCol = Math.min(endCol, table.colCount - table.rightFrozenColCount - 1);
     const columnHeaderEndRow = Math.min(endRow, table.rowCount - table.bottomFrozenRowCount - 1);
     const strokeArray = [!needColumnHeader, !needRightRowHeader, !needBottomColumnHeader, !needRowHeader];
-    createCellSelectBorder(
+    createCustomCellSelectBorder(
       scene,
       columnHeaderStartCol,
       columnHeaderStartRow,
@@ -188,7 +189,7 @@ export function updateCustomSelectBorder(
   }
 }
 
-function createCellSelectBorder(
+function createCustomCellSelectBorder(
   scene: Scenegraph,
   start_Col: number,
   start_Row: number,
