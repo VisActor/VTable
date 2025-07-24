@@ -12,7 +12,8 @@ import type {
   MenuListItem,
   PivotTableAPI,
   SortOrder,
-  SortState
+  SortState,
+  CustomSelectionStyle
 } from '../ts-types';
 import { HighlightScope, InteractionState, SortType } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -53,13 +54,6 @@ import { traverseObject } from '../tools/util';
 import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
 import { expendCellRange } from '../tools/merge-range';
-
-export type CustomSelectionStyle = {
-  cellBorderColor?: string; //边框颜色
-  cellBorderLineWidth?: number; //边框线宽度
-  cellBorderLineDash?: number[]; //边框线虚线
-  cellBgColor?: string; //选择框背景颜色
-};
 
 export class StateManager {
   table: BaseTableAPI;

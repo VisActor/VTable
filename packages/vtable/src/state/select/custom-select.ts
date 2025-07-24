@@ -1,5 +1,5 @@
-import type { CustomSelectionStyle, StateManager } from '../state';
-import type { CellRange } from '../../ts-types';
+import type { StateManager } from '../state';
+import type { CustomSelectionStyle, CellRange } from '../../ts-types';
 import type { IRect, IRectGraphicAttribute } from '@src/vrender';
 import { createRect } from '@src/vrender';
 import { updateAllSelectComponent } from '../../scenegraph/select/update-select-border';
