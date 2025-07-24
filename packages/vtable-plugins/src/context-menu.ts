@@ -51,29 +51,23 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
     if (!this.pluginOptions.columnSeriesNumberMenuItems) {
       this.pluginOptions.columnSeriesNumberMenuItems = [
         { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
+        { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
         { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' },
         '---',
+
         {
-          text: '插入',
-          menuKey: 'insert',
-          iconName: 'insert',
-          children: [
-            {
-              text: '向上插入行数：',
-              menuKey: 'insert_row_above',
-              iconName: 'up-arrow',
-              inputDefaultValue: 1
-            },
-            {
-              text: '向下插入行数：',
-              menuKey: 'insert_row_below',
-              iconName: 'down-arrow',
-              inputDefaultValue: 1
-            }
-          ]
+          text: '向左插入列数：',
+          menuKey: 'insert_column_left',
+          iconName: 'left-arrow',
+          inputDefaultValue: 1
         },
-        '---',
-        { text: '排序', menuKey: 'sort', iconName: 'sort' }
+        {
+          text: '向右插入列数：',
+          menuKey: 'insert_column_right',
+          iconName: 'right-arrow',
+          inputDefaultValue: 1
+        },
+        { text: '删除列', menuKey: 'delete_column' }
       ];
     }
 
@@ -81,7 +75,22 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
     if (!this.pluginOptions.rowSeriesNumberMenuItems) {
       this.pluginOptions.rowSeriesNumberMenuItems = [
         { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
-        { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' }
+        { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
+        { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' },
+        '---',
+        {
+          text: '向上插入行数：',
+          menuKey: 'insert_row_above',
+          iconName: 'up-arrow',
+          inputDefaultValue: 1
+        },
+        {
+          text: '向下插入行数：',
+          menuKey: 'insert_row_below',
+          iconName: 'down-arrow',
+          inputDefaultValue: 1
+        },
+        { text: '删除行', menuKey: 'delete_row' }
       ];
     }
 
@@ -89,6 +98,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
     if (!this.pluginOptions.cornerSeriesNumberMenuItems) {
       this.pluginOptions.cornerSeriesNumberMenuItems = [
         { text: '复制', menuKey: 'copy', iconName: 'copy', shortcut: 'Ctrl+C' },
+        { text: '剪切', menuKey: 'cut', iconName: 'cut', shortcut: 'Ctrl+X' },
         { text: '粘贴', menuKey: 'paste', iconName: 'paste', shortcut: 'Ctrl+V' }
       ];
     }

@@ -193,7 +193,6 @@ export class MenuHandler {
     const setRanges = [];
     for (let i = 0; i < selectRanges.length; i++) {
       const range = selectRanges[i];
-
       setRanges.push({
         range,
         style: {
@@ -278,10 +277,28 @@ export class MenuHandler {
     }
     console.log('删除行', { rowIndex });
     if (typeof (table as any).deleteRecords === 'function') {
-      const recordIndex = table.getRecordIndexByCell(0, rowIndex);
-      // 使用表格API删除行
-      (table as any).deleteRecords([recordIndex]);
+      const selectRanges = table.stateManager.select.ranges;
+      //处理selectRanges中的每个选择区域，记录到deleteRowIndexs数组中，保证没给row值记录一次，且按倒序排序
+      const deleteRowIndexs: number[] = [];
+      for (let i = 0; i < selectRanges.length; i++) {
+        const range = selectRanges[i];
+        for (let j = range.start.row; j <= range.end.row; j++) {
+          if (!deleteRowIndexs.includes(j)) {
+            deleteRowIndexs.push(j);
+          }
+        }
+      }
+      deleteRowIndexs.sort((a, b) => b - a);
+      for (let i = 0; i < deleteRowIndexs.length; i++) {
+        const recordIndex = table.getRecordIndexByCell(0, deleteRowIndexs[i]);
+        // 使用表格API删除行
+        (table as any).deleteRecords([recordIndex]);
+      }
     }
+
+    // const recordIndex = table.getRecordIndexByCell(0, rowIndex);
+    // // 使用表格API删除行
+    // (table as any).deleteRecords([recordIndex]);
   }
 
   /**
@@ -293,8 +310,21 @@ export class MenuHandler {
     }
     console.log('删除列', { colIndex });
     if (typeof (table as any).deleteColumn === 'function') {
-      // 使用表格API删除列
-      (table as any).deleteColumn(colIndex);
+      const selectRanges = table.stateManager.select.ranges;
+      //处理selectRanges中的每个选择区域，记录到deleteColIndexs数组中，保证没给col值记录一次，且按倒序排序
+      const deleteColIndexs: number[] = [];
+      for (let i = 0; i < selectRanges.length; i++) {
+        const range = selectRanges[i];
+        for (let j = range.start.col; j <= range.end.col; j++) {
+          if (!deleteColIndexs.includes(j)) {
+            deleteColIndexs.push(j);
+          }
+        }
+      }
+      deleteColIndexs.sort((a, b) => b - a);
+      for (let i = 0; i < deleteColIndexs.length; i++) {
+        (table as any).deleteColumn(deleteColIndexs[i]);
+      }
     }
   }
 
