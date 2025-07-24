@@ -12,9 +12,10 @@ import {
   createNumberInputItem,
   MENU_ITEM_DISABLED_CLASS
 } from './styles';
+import type { MenuClickCallback } from '../context-menu';
 
 export interface MenuClickEventArgs {
-  menuKey: string;
+  menuKey: MenuKey;
   menuText: string;
   rowIndex?: number;
   colIndex?: number;
@@ -22,9 +23,32 @@ export interface MenuClickEventArgs {
   inputValue?: number | string;
 }
 
+/**menuKey的枚举类型 */
+export enum MenuKey {
+  /** 空白无意义的key，用于占位 */
+  EMPTY = 'empty',
+  COPY = 'copy',
+  CUT = 'cut',
+  PASTE = 'paste',
+  INSERT_COLUMN_LEFT = 'insert_column_left',
+  INSERT_COLUMN_RIGHT = 'insert_column_right',
+  INSERT_ROW_ABOVE = 'insert_row_above',
+  INSERT_ROW_BELOW = 'insert_row_below',
+  DELETE_ROW = 'delete_row',
+  DELETE_COLUMN = 'delete_column',
+  FREEZE_TO_THIS_ROW = 'freeze_to_this_row',
+  FREEZE_TO_THIS_COLUMN = 'freeze_to_this_column',
+  FREEZE_TO_THIS_ROW_AND_COLUMN = 'freeze_to_this_row_and_column',
+  UNFREEZE = 'unfreeze',
+  MERGE_CELLS = 'merge_cells',
+  UNMERGE_CELLS = 'unmerge_cells',
+  HIDE_COLUMN = 'hide_column',
+  SORT = 'sort'
+}
+
 export interface MenuItem {
   text: string;
-  menuKey: string;
+  menuKey: MenuKey;
   disabled?: boolean;
   shortcut?: string;
   iconName?: string;
@@ -34,8 +58,6 @@ export interface MenuItem {
 }
 
 export type MenuItemOrSeparator = MenuItem | string;
-
-export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => void;
 
 interface MenuContext {
   rowIndex?: number;
@@ -48,7 +70,7 @@ interface MenuContext {
 export class MenuManager {
   private menuContainer: HTMLElement | null = null;
   private activeSubmenus: HTMLElement[] = [];
-  private clickCallback: MenuClickCallback | null = null;
+  private clickCallback: Function | null = null;
   private table: ListTable | null = null;
   private context: MenuContext = {};
   private hideTimeout: any = null;
@@ -88,7 +110,7 @@ export class MenuManager {
   /**
    * 设置菜单点击回调
    */
-  setClickCallback(callback: MenuClickCallback): void {
+  setClickCallback(callback: Function): void {
     this.clickCallback = callback;
   }
 
@@ -365,7 +387,6 @@ export class MenuManager {
   private handleMenuItemClick(args: MenuClickEventArgs): void {
     // 关闭菜单
     this.destroy();
-
     // 调用回调
     if (this.clickCallback && this.table) {
       this.clickCallback(args, this.table);

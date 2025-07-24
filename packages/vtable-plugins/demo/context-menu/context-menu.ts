@@ -1,6 +1,8 @@
 import * as VTable from '@visactor/vtable';
 import { ContextMenuPlugin } from '../../src/context-menu';
 import { TableSeriesNumber } from '../../src/table-series-number';
+import type { MenuClickEventArgs } from '../../src/contextmenu/menu-manager';
+import { MenuKey } from '../../src/contextmenu/menu-manager';
 
 const CONTAINER_ID = 'vTable';
 
@@ -146,9 +148,11 @@ export function createTableInstance() {
     //   { text: '合并单元格', menuKey: 'merge_cells', iconName: 'merge' },
     //   { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
     // ],
-    // menuClickCallback: (args, table) => {
-    //   console.log('菜单点击事件:', args);
-    // }
+    menuClickCallback: {
+      [MenuKey.COPY]: (args: MenuClickEventArgs, table: VTable.ListTable) => {
+        console.log('复制', args, table);
+      }
+    }
   });
   const tableSeriesNumberPlugin = new TableSeriesNumber({
     rowCount: 1000,
@@ -172,6 +176,7 @@ export function createTableInstance() {
       makeSelectCellVisible: false
     },
     editor: '',
+    headerEditor: '',
     keyboardOptions: {
       copySelected: true,
       pasteValueToCell: true

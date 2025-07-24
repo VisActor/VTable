@@ -204,11 +204,6 @@ function createCellSelectBorder(
   const endCol = Math.max(start_Col, end_Col);
   const endRow = Math.max(start_Row, end_Row);
   const firstCellBound = scene.highPerformanceGetCell(startCol, startRow).globalAABBBounds;
-  const lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
-  const theme = scene.table.theme;
-  // 框选外边框
-  const bodyClickBorderColor = theme.selectionStyle?.cellBorderColor;
-  const bodyClickLineWidth = theme.selectionStyle?.cellBorderLineWidth;
   const rect = createRect({
     pickable: false,
     fill: style.cellBgColor ?? false,
