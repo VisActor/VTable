@@ -771,7 +771,6 @@ function bindContainerDomListener(eventManager: EventManager) {
         gantt.eventManager.poniterState = 'draging';
       }
     }
-
     if (stateManager.interactionState === InteractionState.grabing && gantt.eventManager.poniterState === 'draging') {
       const lastX = gantt.eventManager.lastDragPointerXYOnWindow?.x ?? e.x;
       const lastY = gantt.eventManager.lastDragPointerXYOnWindow?.y ?? e.y;
