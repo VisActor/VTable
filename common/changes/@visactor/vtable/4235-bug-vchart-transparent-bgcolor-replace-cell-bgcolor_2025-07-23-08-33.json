@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: vchart trasnparent bgColor replace cell hover color #4245\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
