@@ -170,7 +170,7 @@ export class Chart extends Rect {
         },
         afterClearScreen(drawParams: any) {
           const { context, layer, viewBox } = drawParams;
-          if (layer.main) {
+          if (layer.main && drawParams.clear) {
             context.beginPath();
             context.fillStyle = hoverColor;
             context.rect(viewBox.x1, viewBox.y1, viewBox.x2 - viewBox.x1, viewBox.y2 - viewBox.y1);
