@@ -37,6 +37,7 @@ import { bindDropdownMenuClickEvent } from './self-event-listener/base-table/dro
 import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
 import { rightButtonClickEvent } from './self-event-listener/base-table/right-button-click';
 import { browser } from '../tools/helper';
+import { setActiveCellRangeState as showCopyCellBorder } from '../tools/style';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -806,6 +807,10 @@ export class EventManager {
           copyData: data
         });
       }
+      if (table.keyboardOptions?.showCopyCellBorder) {
+        showCopyCellBorder(table);
+        table.clearSelected();
+      }
     }
   }
   async handlePaste(e: any) {
@@ -861,6 +866,9 @@ export class EventManager {
           }
         }
       }
+    }
+    if (table.keyboardOptions?.showCopyCellBorder) {
+      showCopyCellBorder(table);
     }
   }
 

@@ -39,8 +39,8 @@ export class MenuHandler {
         });
 
         table.eventManager.handleCopy(fakeEvent);
-        this.setActiveCellRangeState(table);
-        table.clearSelected();
+        // this.setActiveCellRangeState(table);
+        // table.clearSelected();
         // 保存复制的内容，用于后续检测剪贴板是否被更改
         this.saveClipboardContent();
       }
@@ -108,10 +108,10 @@ export class MenuHandler {
   private executePaste(table: VTable.ListTable, shouldClearSelectedArea: boolean): void {
     if (typeof (table.eventManager as any).handlePaste === 'function') {
       (table.eventManager as any).handlePaste(new MouseEvent('paste'));
-      this.setActiveCellRangeState(table);
+      // this.setActiveCellRangeState(table);
       // 如果是剪切模式且需要清空选中区域
       if (this.isCut && shouldClearSelectedArea && this.cutCellRange) {
-        this.clearSelectedArea(table);
+        this.clearCutArea(table);
       }
 
       // 执行完粘贴操作后，重置剪切状态
@@ -129,7 +129,7 @@ export class MenuHandler {
   }
 
   // 清空选中区域的内容
-  private clearSelectedArea(table: VTable.ListTable): void {
+  private clearCutArea(table: VTable.ListTable): void {
     try {
       const selectCells = this.cutCellRange;
       if (!selectCells || selectCells.length === 0) {
@@ -187,23 +187,7 @@ export class MenuHandler {
       return false;
     }
   }
-  // 设置复制区域的状态 类似excel的虚线框
-  private setActiveCellRangeState(table: VTable.ListTable) {
-    const selectRanges = table.stateManager.select.ranges;
-    const setRanges = [];
-    for (let i = 0; i < selectRanges.length; i++) {
-      const range = selectRanges[i];
-      setRanges.push({
-        range,
-        style: {
-          cellBorderColor: 'blue',
-          cellBorderLineWidth: 2,
-          cellBorderLineDash: [5, 5]
-        }
-      });
-    }
-    table.stateManager.setCustomSelectRanges(setRanges);
-  }
+
   /**
    * 处理向上插入行
    */

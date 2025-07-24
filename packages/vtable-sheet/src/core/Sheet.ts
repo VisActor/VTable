@@ -146,7 +146,8 @@ export class Sheet implements SheetAPI {
     const keyboardOptions = {
       ...this.options.keyboardOptions,
       copySelected: true,
-      pasteValueToCell: true
+      pasteValueToCell: true,
+      showCopyCellBorder: true
     };
     return {
       ...this.options,
