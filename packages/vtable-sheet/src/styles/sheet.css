@@ -20,6 +20,17 @@
   position: relative;
 }
 
+.vtable-excel-cursor {
+  cursor: cell;
+}
+
+.vtable-excel-cursor canvas,
+.vtable-excel-cursor * {
+  cursor: cell !important;
+}
+
+
+
 /* VTable 容器 */
 .vtable-sheet-table {
   flex: 1;
@@ -76,6 +87,26 @@
   opacity: 1;
 }
 
+.vtable-sheet-snackbar-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.vtable-sheet-snackbar-message.show {
+  opacity: 1;
+}
+
 /* 选择区域高亮 */
 .vtable-sheet-selection-highlight {
   position: absolute;
@@ -124,4 +155,4 @@
 /* 隐藏底部功能区 */
 .vtable-sheet-footer {
   display: none;
-} 
+}

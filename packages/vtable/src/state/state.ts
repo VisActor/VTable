@@ -145,7 +145,9 @@ export class StateManager {
     colSource: number;
     colTarget: number;
     rowSource: number;
+    rowSourceSize: number;
     rowTarget: number;
+    rowTargetSize: number;
     x: number;
     y: number;
     moving: boolean;
@@ -278,6 +280,8 @@ export class StateManager {
       colTarget: -1,
       rowSource: -1,
       rowTarget: -1,
+      rowSourceSize: 0,
+      rowTargetSize: 0,
       x: 0,
       y: 0,
       moving: false
@@ -362,6 +366,8 @@ export class StateManager {
       colTarget: -1,
       rowSource: -1,
       rowTarget: -1,
+      rowSourceSize: 0,
+      rowTargetSize: 0,
       x: 0,
       y: 0,
       moving: false

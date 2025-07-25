@@ -12,6 +12,10 @@ export const menus = [
     name: 'excel-import'
   },
   {
+    path: 'filter',
+    name: 'filter'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
@@ -38,6 +42,10 @@ export const menus = [
   {
     path: 'add-row-column',
     name: 'add-row-column'
+  },
+  {
+    path: 'paste-add-row-column',
+    name: 'paste-add-row-column'
   },
   {
     path: 'column-series',

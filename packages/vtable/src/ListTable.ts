@@ -114,7 +114,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     internalProps.multipleSort = !!options.multipleSort;
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = options.groupBy
+      ? getGroupByDataConfig(options.groupBy, options.addRecordRule)
+      : { addRecordRule: options.addRecordRule }; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
@@ -537,7 +539,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     // internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = options.groupBy
+      ? getGroupByDataConfig(options.groupBy, options.addRecordRule)
+      : { addRecordRule: options.addRecordRule }; //cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
@@ -917,6 +921,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const index = this.getRecordShowIndexByCell(col, row);
     return this.dataSource.getHierarchyState(index);
+  }
+  /**
+   * 获取单元格所在数据源的层级节点收起展开的状态
+   * @param col
+   * @param row
+   * @returns
+   */
+  getRecordHierarchyState(col: number, row: number) {
+    let recordIndex;
+    if (this.transpose) {
+      this.getRecordShowIndexByCell(col, 0);
+    } else {
+      recordIndex = this.getRecordShowIndexByCell(0, row);
+    }
+    return this.dataSource.getHierarchyState(recordIndex);
   }
   /**
    * 表头切换层级状态

@@ -17,7 +17,7 @@ import type {
 import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
-import { getValueByPath, isAllDigits } from '../tools/util';
+import { computeChildrenNodeLength, getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
 import { arrayEqual, cloneDeep, isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
@@ -151,6 +151,7 @@ export interface ISortedMapItem {
 }
 
 export class DataSource extends EventTarget implements DataSourceAPI {
+  addRecordRule: 'Array' | 'Object' = 'Object';
   dataConfig: IListTableDataConfig;
   dataSourceObj: DataSourceParam | DataSource;
   private _get: (index: number | number[]) => any;
@@ -214,6 +215,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     hierarchyExpandLevel?: number
   ) {
     super();
+    this.addRecordRule = dataConfig?.addRecordRule || 'Object';
     this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
@@ -622,40 +624,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.pushChildrenNode(indexed, HierarchyState.expand, data);
       this.hasHierarchyStateExpand = true;
     } else if (state === HierarchyState.expand) {
-      // 记录状态变化影响的子节点行数
-      let childrenLength = 0;
-      /**
-       * 当某个节点由展开变为折叠，需要计算出影响的节点数量 使用childrenLength来标记。同样需递归
-       * @param indexKey
-       * @param hierarchyState
-       * @param nodeData
-       * @returns
-       */
-      const computeChildrenNodeLength = (
-        indexKey: number | number[],
-        hierarchyState: HierarchyState,
-        nodeData: any
-      ) => {
-        if (!hierarchyState || hierarchyState === HierarchyState.collapse || hierarchyState === HierarchyState.none) {
-          return;
-        }
-        const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
-        if (children) {
-          for (let i = 0; i < children.length; i++) {
-            childrenLength += 1;
-            const childIndex = Array.isArray(indexKey) ? indexKey.concat([i]) : [indexKey, i];
-
-            computeChildrenNodeLength(
-              childIndex,
-              // this.treeDataHierarchyState.get(childIndex.join(',')),
-              children[i].hierarchyState,
-              children[i]
-            );
-          }
-        }
-      };
-      computeChildrenNodeLength(indexed, state, data);
-
+      const childrenLength = computeChildrenNodeLength(indexed, state, data);
       this.currentIndexedData.splice(this.currentIndexedData.indexOf(indexed) + 1, childrenLength);
       // this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.collapse);
       data.hierarchyState = HierarchyState.collapse;
@@ -789,7 +758,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           if (record) {
             record[field] = formatValue;
           } else {
-            this.records[dataIndex as number] = {};
+            this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
             this.records[dataIndex as number][field] = formatValue;
           }
         }

@@ -2,7 +2,7 @@ import type { Sheet } from '../core/Sheet';
 import type { CellRange } from '../ts-types';
 
 /**
- * Action type for the undo/redo stack
+ * 动作类型关于撤销/重做
  */
 interface Action {
   type: string;
@@ -10,84 +10,81 @@ interface Action {
   redo: () => void;
 }
 
-/**
- * Manages state and undo/redo history for the Sheet component
- */
 export class StateManager {
+  /** Sheet实例 */
   private sheet: Sheet;
+  /** 撤销栈 */
   private undoStack: Action[] = [];
+  /** 重做栈 */
   private redoStack: Action[] = [];
+  /** 最大撤销栈大小 */
   private maxUndoStackSize = 100;
+  /** 当前选择 */
   private currentSelection: CellRange | null = null;
+  /** 是否正在编辑 */
   private isEditing = false;
+  /** 正在编辑的单元格 */
   private editingCell: { row: number; col: number } | null = null;
 
-  /**
-   * Creates a new StateManager instance
-   * @param sheet The Sheet instance
-   */
   constructor(sheet: Sheet) {
     this.sheet = sheet;
   }
 
   /**
-   * Pushes a new action to the undo stack
-   * @param action Action to push
+   * 将新动作推入撤销栈
+   * @param action 要推入的动作
    */
   pushAction(action: Action): void {
     this.undoStack.push(action);
 
-    // Clear redo stack when a new action is performed
+    // 清空重做栈
     this.redoStack = [];
 
-    // Limit undo stack size
+    // 限制撤销栈大小
     if (this.undoStack.length > this.maxUndoStackSize) {
       this.undoStack.shift();
     }
   }
 
-  // /**
-  //  * Undoes the last action
-  //  */
-  // undo(): void {
-  //   if (this.undoStack.length === 0) {
-  //     return;
-  //   }
-
-  //   const action = this.undoStack.pop()!;
-  //   action.undo();
-  //   this.redoStack.push(action);
-
-  //   // Fire undo event
-  //   this.sheet.fire('undo', action.type);
-  // }
-
-  // /**
-  //  * Redoes the last undone action
-  //  */
-  // redo(): void {
-  //   if (this.redoStack.length === 0) {
-  //     return;
-  //   }
-
-  //   const action = this.redoStack.pop()!;
-  //   action.redo();
-  //   this.undoStack.push(action);
-
-  //   // Fire redo event
-  //   this.sheet.fire('redo', action.type);
-  // }
+  /**
+   * 撤销最后一个动作
+   */
+  undo(): void {
+    //   if (this.undoStack.length === 0) {
+    //     return;
+    //   }
+    //   const action = this.undoStack.pop()!;
+    //   action.undo();
+    //   this.redoStack.push(action);
+    //   // Fire undo event
+    //   this.sheet.fire('undo', action.type);
+    // }
+    // /**
+    //  * Redoes the last undone action
+    //  */
+    // redo(): void {
+    //   if (this.redoStack.length === 0) {
+    //     return;
+    //   }
+    //   const action = this.redoStack.pop()!;
+    //   action.redo();
+    //   this.undoStack.push(action);
+    //   // Fire redo event
+    //   this.sheet.fire('redo', action.type);
+    // }
+  }
 
   /**
-   * Gets the current cell selection
+   * 获取当前选择
+   * @returns 当前选择
    */
   getSelection(): CellRange | null {
     return this.currentSelection;
   }
 
   /**
-   * Sets the current cell selection
-   * @param range Selection range
+   * 设置当前选择
+   * @param range 选择范围
    */
   setSelection(range: CellRange): void {
     const oldSelection = this.currentSelection;
@@ -101,23 +98,25 @@ export class StateManager {
   }
 
   /**
-   * Checks if a cell is currently being edited
+   * 检查是否正在编辑单元格
+   * @returns 是否正在编辑单元格
    */
   isEditingCell(): boolean {
     return this.isEditing;
   }
 
   /**
-   * Gets the cell currently being edited
+   * 获取正在编辑的单元格
+   * @returns 正在编辑的单元格
    */
   getEditingCell(): { row: number; col: number } | null {
     return this.editingCell;
   }
 
   /**
-   * Starts editing a cell
-   * @param row Row index
-   * @param col Column index
+   * 开始编辑单元格
+   * @param row 行索引
+   * @param col 列索引
    */
   startEditing(row: number, col: number): void {
     if (this.isEditing) {
@@ -132,8 +131,8 @@ export class StateManager {
   }
 
   /**
-   * Stops editing the current cell
-   * @param cancel Whether to cancel editing (discard changes)
+   * 停止编辑当前单元格
+   * @param cancel 是否取消编辑（丢弃更改）
    */
   stopEditing(cancel = false): void {
     if (!this.isEditing || !this.editingCell) {
@@ -149,11 +148,11 @@ export class StateManager {
   }
 
   /**
-   * Creates a cell value change action
-   * @param row Row index
-   * @param col Column index
-   * @param oldValue Old cell value
-   * @param newValue New cell value
+   * 创建单元格值更改动作
+   * @param row 行索引
+   * @param col 列索引
+   * @param oldValue 旧单元格值
+   * @param newValue 新单元格值
    */
   createCellValueChangeAction(row: number, col: number, oldValue: any, newValue: any): Action {
     return {
@@ -168,9 +167,9 @@ export class StateManager {
   }
 
   /**
-   * Creates a row insert action
-   * @param index Row index
-   * @param data Row data
+   * 创建行插入动作
+   * @param index 行索引
+   * @param data 行数据
    */
   createInsertRowAction(index: number, data: any[]): Action {
     return {
@@ -185,9 +184,9 @@ export class StateManager {
   }
 
   /**
-   * Creates a column insert action
-   * @param index Column index
-   * @param data Column data
+   * 创建列插入动作
+   * @param index 列索引
+   * @param data 列数据
    */
   createInsertColumnAction(index: number, data: any[]): Action {
     return {
@@ -202,9 +201,9 @@ export class StateManager {
   }
 
   /**
-   * Creates a row delete action
-   * @param index Row index
-   * @param data Row data (for restoration)
+   * 创建行删除动作
+   * @param index 行索引
+   * @param data 行数据（用于恢复）
    */
   createDeleteRowAction(index: number, data: any[]): Action {
     return {
@@ -219,9 +218,9 @@ export class StateManager {
   }
 
   /**
-   * Creates a column delete action
-   * @param index Column index
-   * @param data Column data (for restoration)
+   * 创建列删除动作
+   * @param index 列索引
+   * @param data 列数据（用于恢复）
    */
   createDeleteColumnAction(index: number, data: any[]): Action {
     return {

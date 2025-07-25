@@ -10,7 +10,61 @@
   box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.05);
   z-index: 10;
   width: 100%;
-  overflow: hidden;
+}
+/* sheet列表样式 */
+.vtable-sheet-menu-list {
+  position: absolute;
+  right: 0;
+  top: -175px;
+  height: 174px;
+  min-width: 140px;
+  background-color: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  box-sizing: content-box;
+  border-radius: 4px;
+  display: none;
+  margin: 0;
+  padding: 0 2px 0 2px;
+  box-sizing: border-box;
+  list-style: none;
+  overflow-y: auto;
+}
+.vtable-sheet-menu-list::-webkit-scrollbar {
+  width: 4px;
+  margin: 0;
+}
+.vtable-sheet-menu-list::-webkit-scrollbar-thumb {
+  background-color: #e0e0e0;
+  border-radius: 3px;
+}
+.vtable-sheet-menu-list::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.vtable-sheet-menu-list.active {
+  display: block;
+}
+/* sheet列表项样式 */
+.vtable-sheet-menu-item {
+  cursor: pointer;
+  text-align: center;
+  border-radius: 4px;
+  height: 32px;
+  line-height: 32px;
+  margin: 2px 0;
+  padding: 0 8px;
+  background-color: #f8f8f840;
+  max-width: 150px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.vtable-sheet-menu-item:hover {
+  background-color: #e0e0e0;
+}
+.vtable-sheet-menu-item.active {
+  color: #1a73e8;
 }
 
 /* Sheet标签容器 */
@@ -20,8 +74,8 @@
   flex-wrap: nowrap;
   /* 超出容器宽度时显示横向滚动条 */
   overflow-x: auto;
+  overflow-y: visible; /* 允许Y方向溢出，确保三角标志显示 */
   height: 100%;
-  position: relative;
   /* 隐藏滚动条样式（可选，如需自定义滚动条可保留原生或用伪元素美化） */
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -37,10 +91,10 @@
   width: auto;
   /* 禁止标签压缩，保持内容撑开的宽度 */
   flex-shrink: 0;
-  padding: 0 12px;
-  line-height: 32px;
+  padding: 4px 12px;
+  line-height: 24px;
   text-align: center;
-  cursor: pointer;
+  cursor: grab;
   border-right: 1px solid #e0e0e0;
   white-space: nowrap;
   color: #333;
@@ -55,11 +109,68 @@
 .vtable-sheet-tab.active {
   color: #1a73e8;
   background-color: #fff;
-  font-weight: bold;
-  height: calc(100% + 1px);
-  margin-top: -1px;
   border-top: 2px solid #1a73e8;
   z-index: 2;
+}
+/* 编辑状态样式 */
+.vtable-sheet-tab[contenteditable='true'] {
+  outline: inherit !important; /* 移除聚焦时的轮廓线 */
+  border-right: 1px solid #e0e0e0;
+  cursor: text;
+  color: #333;
+}
+.vtable-sheet-tab[contenteditable='true']::selection {
+  background-color: #2563eb33; /* 浅蓝色半透明背景（示例） */
+}
+
+/* 兼容 Firefox */
+.vtable-sheet-tab[contenteditable='true']::-moz-selection {
+  background-color: #2563eb33;
+}
+
+/* 拖拽中的tab样式 */
+.vtable-sheet-tab.dragging {
+  opacity: 0.7;
+  transform: scale(1.02);
+  background-color: #f0f5ff;
+  cursor: grabbing !important;
+  z-index: 100;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 拖拽预览样式 */
+.vtable-sheet-drag-preview {
+  position: fixed;
+  z-index: 10000;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #1890ff;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  opacity: 0.9;
+  pointer-events: none;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 20px;
+  color: #333;
+  user-select: none;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 插入位置指示器 */
+.vtable-sheet-insert-indicator {
+  position: absolute;
+  top: -4px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid black;
+  z-index: inherit;
 }
 
 /* 添加sheet按钮 */
