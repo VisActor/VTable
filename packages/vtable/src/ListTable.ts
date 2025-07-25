@@ -904,6 +904,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     return this.dataSource.getHierarchyState(index);
   }
   /**
+   * 获取单元格所在数据源的层级节点收起展开的状态
+   * @param col
+   * @param row
+   * @returns
+   */
+  getRecordHierarchyState(col: number, row: number) {
+    let recordIndex;
+    if (this.transpose) {
+      this.getRecordShowIndexByCell(col, 0);
+    } else {
+      recordIndex = this.getRecordShowIndexByCell(0, row);
+    }
+    return this.dataSource.getHierarchyState(recordIndex);
+  }
+  /**
    * 表头切换层级状态
    * @param col
    * @param row

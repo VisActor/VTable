@@ -297,10 +297,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 2.0.0-alpha.1
       '@visactor/vdataset': ~0.18.1
-      '@visactor/vrender-animate': 1.0.8-alpha.2
-      '@visactor/vrender-components': 1.0.8-alpha.2
-      '@visactor/vrender-core': 1.0.8-alpha.2
-      '@visactor/vrender-kits': 1.0.8-alpha.2
+      '@visactor/vrender-animate': 1.0.8
+      '@visactor/vrender-components': 1.0.8
+      '@visactor/vrender-core': 1.0.8
+      '@visactor/vrender-kits': 1.0.8
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.19.1
@@ -345,10 +345,10 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.18.18
-      '@visactor/vrender-animate': 1.0.8-alpha.2
-      '@visactor/vrender-components': 1.0.8-alpha.2
-      '@visactor/vrender-core': 1.0.8-alpha.2
-      '@visactor/vrender-kits': 1.0.8-alpha.2
+      '@visactor/vrender-animate': 1.0.8
+      '@visactor/vrender-components': 1.0.8
+      '@visactor/vrender-core': 1.0.8
+      '@visactor/vrender-kits': 1.0.8
       '@visactor/vscale': 0.18.18
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.19.7
@@ -4305,10 +4305,10 @@ packages:
       '@visactor/vrender-core': 1.0.0-alpha.17
       '@visactor/vutils': 1.0.4
 
-  /@visactor/vrender-animate/1.0.8-alpha.2:
-    resolution: {integrity: sha512-J7Ga5tnFSt93+E/fn6XOIUUNpuYKitJruYB187JDDlJ4eN/5mwJHf0BUXzm8CNMhjDBh6pscSzFmmysGHcDWPA==}
+  /@visactor/vrender-animate/1.0.8:
+    resolution: {integrity: sha512-JWxK+bcD2Pyd0rvFVyV13UicwrViz7OiQmzqVbGPcRmMS3rEktFhq5gK9Cggr4cTeTCDnlGTljLuXVPikR9mRQ==}
     dependencies:
-      '@visactor/vrender-core': 1.0.8-alpha.2
+      '@visactor/vrender-core': 1.0.8
       '@visactor/vutils': 1.0.6
     dev: false
 
@@ -4321,12 +4321,12 @@ packages:
       '@visactor/vscale': 1.0.4
       '@visactor/vutils': 1.0.4
 
-  /@visactor/vrender-components/1.0.8-alpha.2:
-    resolution: {integrity: sha512-ivgRRDaxQrcV9u57SewDpt9Yi9qndwz81WHLb3V8d8tuH/xtntFe73345zLVlZyhiD6L7sRE7pJqCD+Kogqmzw==}
+  /@visactor/vrender-components/1.0.8:
+    resolution: {integrity: sha512-QxzOIbvn5+sZi+I6EFCwGzxAEtSVFhFhKp+xcXpOomQ5q8+3JKCIGMuxEsqB6uDR5SV4oWNxzsoxAFRuhJxZ2g==}
     dependencies:
-      '@visactor/vrender-animate': 1.0.8-alpha.2
-      '@visactor/vrender-core': 1.0.8-alpha.2
-      '@visactor/vrender-kits': 1.0.8-alpha.2
+      '@visactor/vrender-animate': 1.0.8
+      '@visactor/vrender-core': 1.0.8
+      '@visactor/vrender-kits': 1.0.8
       '@visactor/vscale': 1.0.6
       '@visactor/vutils': 1.0.6
     dev: false
@@ -4337,8 +4337,8 @@ packages:
       '@visactor/vutils': 1.0.4
       color-convert: 2.0.1
 
-  /@visactor/vrender-core/1.0.8-alpha.2:
-    resolution: {integrity: sha512-5jiN2/7Vv6ecc5bgpb2Am7ZWE1TUUmsQBXemwQBGR5It4T/gN4eDHt36cecYxc21fVNPdp87cbVM07fVK7aFrA==}
+  /@visactor/vrender-core/1.0.8:
+    resolution: {integrity: sha512-KTlh3Q2sNNlhBfsw6ABunH1ifSmMow6mdk85Qu00ISW+YC+BXFUNExL05/mJMsNqPoFund2uCDDgXJ82o9GsoQ==}
     dependencies:
       '@visactor/vutils': 1.0.6
       color-convert: 2.0.1
@@ -4354,11 +4354,11 @@ packages:
       lottie-web: 5.13.0
       roughjs: 4.5.2
 
-  /@visactor/vrender-kits/1.0.8-alpha.2:
-    resolution: {integrity: sha512-ay1mQGnZYClLDc9SLQ7yHhWkBk+bzr5wyVD5/+G6dKDiOx0xi3u/kcAVj184Lc+80ZnlrBzeY1dkwnGO1z+7GQ==}
+  /@visactor/vrender-kits/1.0.8:
+    resolution: {integrity: sha512-eUGp6b/aRssWcUV6RRWOJnG/QXNPmW45YLmXCHFWyJnVDS+8aL4H1KwyGVqTl6GJF9Lf6124sx+CJdqZN4jwkw==}
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.0.8-alpha.2
+      '@visactor/vrender-core': 1.0.8
       '@visactor/vutils': 1.0.6
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
@@ -4449,7 +4449,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.27.1_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6_xaveilwbgjznmfwb7uxjndmvve
+      vite: 3.2.6
     transitivePeerDependencies:
       - supports-color
     dev: true

@@ -817,6 +817,7 @@ export interface BaseTableAPI {
     makeSelectCellVisible?: boolean,
     skipBodyMerge?: boolean
   ) => void;
+  clearSelected: () => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;

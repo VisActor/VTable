@@ -153,7 +153,7 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
 
     const clonedGantt = new VTableGantt.Gantt(clonedContainer, {
       ...this._gantt.options,
-      records: JSON.parse(JSON.stringify(this._gantt.records)),
+      records: this._gantt.records,
       taskListTable: {
         ...this._gantt.options.taskListTable,
         tableWidth: undefined as unknown as number,
