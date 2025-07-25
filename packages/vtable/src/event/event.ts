@@ -33,7 +33,7 @@ import {
 } from './self-event-listener/list-table/checkbox';
 import { bindButtonClickEvent } from './component/button';
 import { bindIconClickEvent } from './self-event-listener/base-table/icon';
-import { bindDropdownMenuClickEvent } from './self-event-listener/base-table/dropdown-menu';
+import { bindDropdownMenuEvent } from './self-event-listener/base-table/dropdown-menu';
 import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
 import { rightButtonClickEvent } from './self-event-listener/base-table/right-button-click';
 
@@ -141,7 +141,7 @@ export class EventManager {
     bindIconClickEvent(this.table);
 
     // 下拉菜单内容点击
-    bindDropdownMenuClickEvent(this.table);
+    bindDropdownMenuEvent(this.table);
 
     // 处理textStick
     // if (checkHaveTextStick(this.table)) {
