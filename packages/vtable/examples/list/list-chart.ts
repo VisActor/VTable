@@ -25,6 +25,7 @@ export function createTable() {
       chartSpec(args) {
         if (args.row % 3 == 2)
           return {
+            background: 'rgba(0,0,0,0)',
             type: 'area',
             data: {
               id: 'data'
@@ -100,6 +101,7 @@ export function createTable() {
           };
         else if (args.row % 3 == 1)
           return {
+            background: 'rgba(0,0,0,0)',
             type: 'common',
             series: [
               {
@@ -181,6 +183,7 @@ export function createTable() {
       cellType: 'chart',
       chartModule: 'vchart',
       chartSpec: {
+        background: 'red',
         type: 'common',
         series: [
           {
