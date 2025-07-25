@@ -5,7 +5,7 @@ title: Basic table grouping checkbox
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group-checkbox.gif
 order: 1-2
 link: table_type/List_table/group_list
-option: ListTable#groupBy
+option: ListTable#groupConfig
 ---
 
 # Basic table grouping checkbox
@@ -14,7 +14,7 @@ Basic table grouping checkbox. If enabled, checkbox will be displayed in the lef
 
 ## Key configuration
 
-- enableTreeCheckbox: enable group title checkbox function
+- enableCheckboxCascade: enable group checkbox cascade
 
 ## Code demonstration
 
@@ -86,14 +86,17 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       records: data.slice(0, 100),
       columns,
       widthMode: 'standard',
-      groupBy: ['Category', 'Sub-Category', 'Region'],
+      groupConfig: {
+        groupBy: ['Category', 'Sub-Category', 'Region'],
+      },
+      enableCheckboxCascade: true,
       rowSeriesNumber: {
         width: 50,
         format: () => {
           return '';
         },
         cellType: 'checkbox',
-        enableTreeCheckbox: true
+        headerType: 'checkbox'
       }
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);

@@ -20,14 +20,18 @@ In the option of ListTable, configure the `groupBy` field, the value is the grou
 ```
 {
   // ...
-  groupBy: 'key',
+  groupConfig: {
+    groupBy: 'key',
+  }
 }
 ```
 或
 ```
 {
   // ...
-  groupBy: ['key1', 'key2'],
+  groupConfig: {
+    groupBy: ['key1', 'key2'],
+  }
 }
 ```
 ## Example
@@ -86,7 +90,9 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group'
+  groupConfig: {
+    groupBy: 'group'
+  }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
@@ -99,9 +105,11 @@ In the option, you can configure the `groupTitleFieldFormat` property to customi
 ```ts
 const option: VTable.ListTableConstructorOptions = {
   // ...
-  groupBy: 'group',
-  groupTitleFieldFormat: (record, col, row, table) => {
-    return record.vtableMergeName + '(' + record.children.length + ')';
+  groupConfig: {
+    groupBy: 'group',
+    titleFieldFormat: (record, col, row, table) => {
+      return record.vtableMergeName + '(' + record.children.length + ')';
+    }
   }
 };
 ```
@@ -150,9 +158,11 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group',
-  groupTitleFieldFormat: (record, col, row, table) => {
-    return record.vtableMergeName + '(' + record.children.length + ')';
+  groupConfig: {
+    groupBy: 'group',
+    titleFieldFormat: (record, col, row, table) => {
+      return record.vtableMergeName + '(' + record.children.length + ')';
+    }
   }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
@@ -166,7 +176,9 @@ In the theme, you can configure the groupTitleStyle property to specify the disp
 ```ts
 const option: VTable.ListTableConstructorOptions = {
   // ...
-  groupBy: ['Category', 'Sub-Category'],
+  groupConfig: {
+    groupBy: ['Category', 'Sub-Category'],
+  },
   theme: VTable.themes.DEFAULT.extends({
     groupTitleStyle: {
       fontWeight: 'bold',
@@ -193,8 +205,10 @@ In option, you can configure the `enableTreeStickCell` property to enable the gr
 ```ts
 const option: VTable.ListTableConstructorOptions = {
   // ...
-  groupBy: ['Category', 'Sub-Category'],
-  enableTreeStickCell: true
+  groupConfig: {
+    groupBy: ['Category', 'Sub-Category'],
+    enableTreeStickCell: true
+  }
 };
 ```
 
@@ -262,8 +276,9 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group',
-  groupTitleCustomLayout: args => {
+  groupConfig: {
+    groupBy: 'group',
+    titleCustomLayout: args => {
     const { table, row, col, rect } = args;
     const record = table.getCellOriginRecord(col, row);
     const { height, width } = rect ?? table.getCellRect(col, row);
@@ -364,6 +379,7 @@ const option = {
       rootContainer: container,
       renderDefault: false
     };
+    }
   }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
@@ -372,8 +388,7 @@ window['tableInstance'] = tableInstance;
 
 ## Group checkbox
 
-In `rowSeriesNumber`, you can configure `enableTreeCheckbox` to enable the group checkbox.
-If enabled, checkbox will be displayed in the left of group title, and it will be synced with the children checkbox.
+In `rowSeriesNumber`, you can configure `cellType: 'checkbox'` to display checkboxes in the group.
 
 ```javascript livedemo template=vtable
 // only use for website
@@ -435,17 +450,21 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group',
-
+  groupConfig: {
+    groupBy: 'group',
+  },
   rowSeriesNumber: {
     width: 50,
     format: () => {
       return '';
     },
     cellType: 'checkbox',
-    enableTreeCheckbox: true
   }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```
+
+If you want to display the checkbox in the group title, you can configure the `groupConfig.titleCheckbox` property to enable or disable the group title checkbox function. The default is false.
+
+If you don't want to associate the selected status of parent and child nodes, you can configure the `enableCheckboxCascade` property to enable or disable the group checkbox cascade function. The same applies to the checkbox configured in the column.

@@ -138,4 +138,26 @@ getCellCheckboxState(col: number, row: number): boolean
 setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate')
 ```
 
+## 树形结构中checkbox的配置
+
+在树形结构中，可以在利用`rowSeriesNumber`中配置`cellType: 'checkbox'`属性，用于在树形结构中显示复选框。开启后，树形结构中会出现复选框，会和子元素的选中状态同步。
+
+同时我们还支持在配置tree为true的columnDefine中配置`cellType: 'checkbox'`属性，用于在树形结构中显示复选框。开启后，树形结构中会出现复选框，会和子元素的选中状态同步。
+
+```
+columns: [{
+  tree: true,
+  cellType: 'checkbox'
+}]
+```
+
+or
+
+```
+rowSeriesNumber: {
+  cellType: 'checkbox'
+}
+```
+如果不想关联父子节点的选中状态，可以配置`enableCheckboxCascade`属性为false，用于开启或者关闭分组复选框级联功能。
+
 通过以上介绍，您已学会了如何在 VTable 表格中使用 checkbox 复选框类型进行数据展示，希望对您有所帮助。
