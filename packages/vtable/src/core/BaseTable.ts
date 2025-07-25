@@ -409,7 +409,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.enableCheckboxCascade = enableCheckboxCascade;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -2592,7 +2592,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.enableCheckboxCascade = enableCheckboxCascade;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
