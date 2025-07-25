@@ -137,6 +137,10 @@ type CustomAggregation = {
 
 Display aggregation result when data is empty.
 
+## enableCheckboxCascade(boolean)
+
+Enable group checkbox cascade function. The default is true.
+
 
 ## groupConfig(GroupConfig)
 

@@ -134,6 +134,11 @@ type CustomAggregation = {
 
 数据为空时是否仍显示聚合结果。
 
+## enableCheckboxCascade(boolean)
+
+开启分组复选框级联功能。默认是true。
+
+
 ## groupConfig(GroupConfig)
 
 分组配置。
