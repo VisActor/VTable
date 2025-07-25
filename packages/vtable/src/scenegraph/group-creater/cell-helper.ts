@@ -710,7 +710,11 @@ export function updateCell(
 
       y: table.scenegraph.getCellGroupY(row)
     } as any);
-
+    // 重置合并单元格信息
+    oldCellGroup.mergeStartCol = undefined;
+    oldCellGroup.mergeStartRow = undefined;
+    oldCellGroup.mergeEndCol = undefined;
+    oldCellGroup.mergeEndRow = undefined;
     oldCellGroup.forEachChildren((child: IGraphic) => {
       child.setAttributes({
         dx: 0,

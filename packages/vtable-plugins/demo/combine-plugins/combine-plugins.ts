@@ -1,6 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import {
+  TableSeriesNumber,
   AddRowColumnPlugin,
   ColumnSeriesPlugin,
   ExcelEditCellKeyboardPlugin,
@@ -14,6 +15,12 @@ const input_editor = new InputEditor({});
 VTable.register.editor('input', input_editor);
 
 export function createTable() {
+  const tableSeriesNumberPlugin = new TableSeriesNumber({
+    rowCount: 1000,
+    colCount: 100,
+    rowHeight: 30,
+    colWidth: 50
+  });
   const addRowColumn = new AddRowColumnPlugin({
     addColumnCallback: col => {
       columnSeries.resetColumnCount(columnSeries.pluginOptions.columnCount + 1);
@@ -82,7 +89,14 @@ export function createTable() {
       moveFocusCellOnEnter: true
       // editCellOnEnter: false
     },
-    plugins: [addRowColumn, columnSeries, rowSeries, highlightPlugin, excelEditCellKeyboardPlugin]
+    plugins: [
+      tableSeriesNumberPlugin,
+      addRowColumn,
+      columnSeries,
+      rowSeries,
+      highlightPlugin,
+      excelEditCellKeyboardPlugin
+    ]
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;

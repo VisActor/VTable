@@ -244,7 +244,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
       }
     }
-    table.scenegraph.updateContainer(true);
+    table.scenegraph.updateContainer({ async: true });
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
 
