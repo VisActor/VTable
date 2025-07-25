@@ -25,7 +25,7 @@ import type { CreateProgressBarCell } from './cell-type/progress-bar-cell';
 import type { CreateSparkLineCellGroup } from './cell-type/spark-line-cell';
 import type { CreateTextCellGroup } from './cell-type/text-cell';
 import type { CreateVideoCellGroup } from './cell-type/video-cell';
-import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { getOrApply, isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
@@ -648,9 +648,9 @@ export function updateCell(
     isVtableMerge = vtableMerge;
     if (vtableMerge) {
       mayHaveIcon = true;
-      if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+      if ((table.internalProps as ListTableProtected).groupTitleCustomLayout) {
         customResult = dealWithCustom(
-          (table.options as ListTableConstructorOptions).groupTitleCustomLayout,
+          (table.internalProps as ListTableProtected).groupTitleCustomLayout,
           undefined,
           range.start.col,
           range.start.row,
@@ -663,8 +663,8 @@ export function updateCell(
           table
         );
       }
-      if ((table.options as ListTableConstructorOptions).groupTitleFieldFormat) {
-        value = (table.options as ListTableConstructorOptions).groupTitleFieldFormat(rawRecord, col, row, table);
+      if ((table.internalProps as ListTableProtected).groupTitleFieldFormat) {
+        value = (table.internalProps as ListTableProtected).groupTitleFieldFormat(rawRecord, col, row, table);
       } else if (vtableMergeName !== undefined) {
         value = vtableMergeName;
       }

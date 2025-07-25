@@ -90,7 +90,12 @@ export function createTable() {
         records: data.slice(0, 50),
         columns,
         widthMode: 'standard',
-        groupBy: ['Category', 'Sub-Category'],
+
+        groupConfig: {
+          groupBy: ['Category', 'Sub-Category'],
+          // titleCheckbox: true
+          enableTreeStickCell: true
+        },
         groupTitleFieldFormat: (record, col, row, table) => {
           return record.vtableMergeName + '(' + record.children.length + ')';
         },
@@ -100,7 +105,7 @@ export function createTable() {
         theme: VTable.themes.DEFAULT.extends({
           groupTitleStyle: {
             fontWeight: 'bold',
-            // bgColor: '#3370ff'
+            color: 'orange',
             bgColor: args => {
               const { col, row, table } = args;
               const index = table.getGroupTitleLevel(col, row);
@@ -335,10 +340,12 @@ export function createTable() {
         // },
         // frozenColCount: 1
         enableTreeStickCell: true,
+        enableCheckboxCascade: false,
         rowSeriesNumber: {
           dragOrder: true,
           title: '序号',
           width: 'auto',
+          cellType: 'checkbox',
           headerStyle: {
             color: 'black',
             bgColor: 'pink'

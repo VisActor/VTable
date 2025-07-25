@@ -3,7 +3,7 @@ import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
 import { HierarchyState } from '../../ts-types';
-import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 
 export function getHierarchyOffset(col: number, row: number, table: BaseTableAPI): number {
   // 处理树形展开
@@ -29,7 +29,7 @@ export function getHierarchyOffset(col: number, row: number, table: BaseTableAPI
     // 基本表格表身body单元格 如果是树形展开 需要考虑缩进值
     // const cellHierarchyState = table.getHierarchyState(col, row);
     if (
-      (table.options as ListTableConstructorOptions).groupBy ||
+      (table.internalProps as ListTableProtected).groupBy ||
       (table.getBodyColumnDefine(col, row) as ColumnDefine)?.tree
     ) {
       const indexArr = table.dataSource.getIndexKey(table.getRecordShowIndexByCell(col, row));

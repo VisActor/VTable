@@ -137,21 +137,58 @@ type CustomAggregation = {
 
 Display aggregation result when data is empty.
 
-## groupBy(string|string[])
+## enableCheckboxCascade(boolean)
 
-Enable the group display function to display the hierarchical structure of the group fields in the data. The value is the group field name, which can be configured as one field or an array of multiple fields.
+Enable group checkbox cascade function. The default is true.
 
-## enableTreeStickCell(boolean) = false
 
-Enable the group title sticking function.
+## groupConfig(GroupConfig)
 
-## groupTitleFieldFormat(Function)
+Group configuration.  
 
-Customize the group title.
+```
+type GroupConfig = {
+  /** Enable group display function, used to display the hierarchical structure of grouped fields in data. The value is the name of the grouped field, which can be configured with one field or an array of multiple fields. */
+  groupBy: GroupByOption;
+  /** Enable group title stick function. */
+  enableTreeStickCell: boolean;
+  /** Enable group title checkbox function. This configuration corresponds to the configuration of cellType: 'checkbox' in rowSeriesNumber. If you want to display the checkbox in the group name, you need to enable this configuration. The default is false */
+  titleCheckbox: boolean;
+  /** Custom group title. */
+  titleFieldFormat: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  /** Custom group title layout. */
+  titleCustomLayout: ICustomLayout;
+};
 
-## groupTitleCustomLayout(CustomLayout)
+export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
 
-Customize the group title layout.
+export type GroupConfig = {
+  key: string;
+  sort?: SortOrder;
+};
+type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
+
+```
+
+### groupBy
+
+Enable group display function, used to display the hierarchical structure of grouped fields in data. The value is the name of the grouped field, which can be configured with one field or an array of multiple fields.
+
+### enableTreeStickCell
+
+Enable group title stick function.
+
+### titleCheckbox
+
+Enable group title checkbox function. This configuration corresponds to the configuration of cellType: 'checkbox' in rowSeriesNumber. If you want to display the checkbox in the group name, you need to enable this configuration. The default is false
+
+### titleFieldFormat
+
+Custom group title.
+
+### titleCustomLayout
+
+Group title custom layout rendering.
 
 ## customComputeRowHeight(Function)
 

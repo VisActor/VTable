@@ -17,14 +17,18 @@ ListTable的option中，配置`groupBy`字段，值为分组字段名称，可�
 ```
 {
   // ...
-  groupBy: 'key',
+  groupConfig: {
+    groupBy: 'key',
+  }
 }
 ```
 或
 ```
 {
   // ...
-  groupBy: ['key1', 'key2'],
+  groupConfig: {
+    groupBy: ['key1', 'key2'],
+  }
 }
 ```
 
@@ -90,7 +94,9 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group'
+  groupConfig: {
+    groupBy: 'group'
+  }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
@@ -103,9 +109,11 @@ window['tableInstance'] = tableInstance;
 ```ts
 const option: VTable.ListTableConstructorOptions = {
   // ...
-  groupBy: 'group',
-  groupTitleFieldFormat: (record, col, row, table) => {
-    return record.vtableMergeName + '(' + record.children.length + ')';
+  groupConfig: {
+    groupBy: 'group',
+    titleFieldFormat: (record, col, row, table) => {
+      return record.vtableMergeName + '(' + record.children.length + ')';
+    }
   }
 };
 ```
@@ -154,9 +162,11 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group',
-  groupTitleFieldFormat: (record, col, row, table) => {
-    return record.vtableMergeName + '(' + record.children.length + ')';
+  groupConfig: {
+    groupBy: 'group',
+    titleFieldFormat: (record, col, row, table) => {
+      return record.vtableMergeName + '(' + record.children.length + ')';
+    }
   }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
@@ -170,7 +180,9 @@ window['tableInstance'] = tableInstance;
 ```ts
 const option: VTable.ListTableConstructorOptions = {
   // ...
-  groupBy: ['Category', 'Sub-Category'],
+  groupConfig: {
+    groupBy: ['Category', 'Sub-Category'],
+  },
   theme: VTable.themes.DEFAULT.extends({
     groupTitleStyle: {
       fontWeight: 'bold',
@@ -197,8 +209,10 @@ const option: VTable.ListTableConstructorOptions = {
 ```ts
 const option: VTable.ListTableConstructorOptions = {
   // ...
-  groupBy: ['Category', 'Sub-Category'],
-  enableTreeStickCell: true
+  groupConfig: {
+    groupBy: ['Category', 'Sub-Category'],
+    enableTreeStickCell: true
+  }
 };
 ```
 
@@ -266,8 +280,9 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group',
-  groupTitleCustomLayout: args => {
+  groupConfig: {
+    groupBy: 'group',
+    titleCustomLayout: args => {
     const { table, row, col, rect } = args;
     const record = table.getCellOriginRecord(col, row);
     const { height, width } = rect ?? table.getCellRect(col, row);
@@ -369,6 +384,7 @@ const option = {
       renderDefault: false
     };
   }
+  }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
@@ -376,7 +392,7 @@ window['tableInstance'] = tableInstance;
 
 ## 分组复选框
 
-可以在`rowSeriesNumber`中配置`enableTreeCheckbox`属性，用于开启分组复选框。开启后，分组标题的左侧会出现复选框，会和子元素的选中状态同步。
+可以在`rowSeriesNumber`中配置`cellType: 'checkbox'`属性，用于在分组情况下显示复选框。开启后，分组标题的左侧会出现复选框，会和子元素的选中状态同步。
 
 ```javascript livedemo template=vtable
 // only use for website
@@ -438,17 +454,21 @@ const option = {
   records,
   columns,
   widthMode: 'standard',
-  groupBy: 'group',
-
+  groupConfig: {
+    groupBy: 'group',
+  },
   rowSeriesNumber: {
     width: 50,
     format: () => {
       return '';
     },
     cellType: 'checkbox',
-    enableTreeCheckbox: true
   }
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
 ```
+如果想在分组标题也显示checkbox，可以配置`groupConfig.titleCheckbox`属性，用于开启或者关闭分组标题的checkbox功能。默认是false。
+
+如不想关联父子节点的选中状态，可以配置`enableCheckboxCascade`属性，用于开启或者关闭分组复选框级联功能。同样适用于column中配置的checkbox的情况。
+

@@ -3,7 +3,7 @@ import type { ProgressBarStyle } from '../../body-helper/style/ProgressBarStyle'
 import type { ICartesianAxis } from '../../components/axis/axis';
 import { Factory } from '../../core/factory';
 import { getStyleTheme } from '../../core/tableHelper';
-import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import type { IProgressbarColumnBodyDefine } from '../../ts-types/list-table/define/progressbar-define';
 import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
@@ -394,8 +394,8 @@ function updateCellWidth(
         const cellType = scene.table.getCellLocation(col, row);
         const { vtableMerge } = scene.table.getCellRawRecord(col, row) || {};
 
-        if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
-          customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
+        if (vtableMerge && (scene.table.internalProps as ListTableProtected).groupTitleCustomLayout) {
+          customLayout = (scene.table.internalProps as ListTableProtected).groupTitleCustomLayout;
         } else if (cellType !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
           customRender = (define as ColumnDefine)?.headerCustomRender;

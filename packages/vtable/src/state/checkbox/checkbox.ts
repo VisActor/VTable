@@ -48,9 +48,11 @@ function setSingleCheckedState(
 
 export function setHeaderCheckedState(field: string | number, checked: boolean | 'indeterminate', state: StateManager) {
   state.headerCheckedState[field] = checked;
-  state.checkedState?.forEach(recordCheckState => {
-    recordCheckState[field] = checked;
-  });
+  if (state.table.internalProps.enableCheckboxCascade) {
+    state.checkedState?.forEach(recordCheckState => {
+      recordCheckState[field] = checked;
+    });
+  }
 }
 
 //#region CheckedState 状态维护
@@ -91,7 +93,7 @@ export function syncCheckedState(
     }
     if (state.checkedState.get(dataIndex)) {
       state.checkedState.get(dataIndex)[field] = checked;
-    } else if (dataIndex.includes(',')) {
+    } else if (state.table.internalProps.enableCheckboxCascade && dataIndex.includes(',')) {
       // child record, sync parent record state
       const parentDataIndex = dataIndex.split(',').slice(0, -1).join(','); // get latest parent data index
       if (state.checkedState.has(parentDataIndex) && state.checkedState.get(parentDataIndex)[field] === true) {
@@ -191,7 +193,7 @@ export function updateHeaderCheckedState(
       : state.table.getCustomMerge(col, tableIndex);
 
     const data = state.table.dataSource?.get(index as number);
-    if (mergeCell || (!state.table.internalProps.rowSeriesNumber?.enableTreeCheckbox && data?.vtableMerge)) {
+    if (mergeCell || (!state.table.internalProps.enableCheckboxCascade && data?.vtableMerge)) {
       // 不参与check状态的计算
       return;
     }

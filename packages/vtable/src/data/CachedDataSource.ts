@@ -10,7 +10,7 @@ import {
   type MaybePromise,
   type MaybePromiseOrUndefined
 } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource, getValue, getValueFromDeepArray, sortRecordIndexs } from './DataSource';
@@ -417,7 +417,7 @@ export class CachedDataSource extends DataSource {
 
   cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
     const originRecord = this.getOriginalRecord(dataIndex);
-    if ((table.options as ListTableConstructorOptions).groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       dataIndex = this.getOriginRecordIndexForGroup(dataIndex);
     }
     if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {
