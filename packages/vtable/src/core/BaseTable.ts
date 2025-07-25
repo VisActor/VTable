@@ -112,7 +112,7 @@ import type {
   BaseTableAPI,
   BaseTableConstructorOptions,
   IBaseTableProtected,
-  PivotTableProtected
+  ListTableProtected
 } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
@@ -313,6 +313,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       limitMinHeight,
       clearDOM = true
     } = options;
+
+    const { groupConfig, groupBy, groupTitleFieldFormat, groupTitleCustomLayout, enableTreeStickCell } =
+      options as ListTableConstructorOptions;
     this.container = container;
     this.options = options;
     this._widthMode = widthMode;
@@ -418,6 +421,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
+
+    (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
+    (internalProps as ListTableProtected).titleCheckbox = groupConfig?.titleCheckbox;
+    (internalProps as ListTableProtected).groupTitleFieldFormat =
+      groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
+    (internalProps as ListTableProtected).groupTitleCustomLayout =
+      groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
+    (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
+
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -2528,6 +2540,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       limitMinWidth,
       limitMinHeight
     } = options;
+    const { groupConfig, groupBy, groupTitleFieldFormat, groupTitleCustomLayout, enableTreeStickCell } =
+      options as ListTableConstructorOptions;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
     }
@@ -2602,6 +2616,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
+
+    (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
+    (internalProps as ListTableProtected).titleCheckbox = groupConfig?.titleCheckbox;
+    (internalProps as ListTableProtected).groupTitleFieldFormat =
+      groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
+    (internalProps as ListTableProtected).groupTitleCustomLayout =
+      groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
+    (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
+
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -3705,7 +3728,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
     } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
-      if (!(this.options as ListTableConstructorOptions).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
+      if (!(this.internalProps as ListTableProtected).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
         const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
           ?.dragOrder;
         if (dragOrder) {

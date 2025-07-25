@@ -11,7 +11,7 @@ import { checkCellInSelect } from '../state/common/check-in-select';
 import { bindMediaClick } from './media-click';
 import { bindDrillEvent, checkHaveDrill, drillClick } from './drill';
 import { bindSparklineHoverEvent } from './sparkline-event';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import { checkHaveTextStick, handleTextStick } from '../scenegraph/stick-text';
 import { bindGesture, bindTableGroupListener } from './listener/table-group';
 import { bindScrollBarListener } from './listener/scroll-bar';
@@ -475,7 +475,7 @@ export class EventManager {
     // return false;
     const { eventArgs } = eventArgsSet;
 
-    if ((this.table.options as ListTableConstructorOptions).enableTreeStickCell && !eventArgs) {
+    if ((this.table.internalProps as ListTableProtected).enableTreeStickCell && !eventArgs) {
       return false;
     }
     // if (eventArgs) { // 如果是鼠标处理表格外部如最后一列的后面 也期望可以拖拽列宽

@@ -12,7 +12,7 @@ import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_CONTAINER_NAME, dealWithCustom } fr
 import { updateImageCellContentWhileResize } from '../group-creater/cell-type/image-cell';
 import { getStyleTheme } from '../../core/tableHelper';
 import { isMergeCellGroup } from '../utils/is-merge-cell-group';
-import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { resizeCellGroup, getCustomCellMergeCustom } from '../group-creater/cell-helper';
 import type { IGraphic } from '@src/vrender';
 import { getCellMergeRange } from '../../tools/merge-range';
@@ -231,8 +231,8 @@ export function updateCellHeight(
         const cellLocation = scene.table.getCellLocation(col, row);
         const { vtableMerge } = scene.table.getCellRawRecord(col, row) || {};
 
-        if (vtableMerge && (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
-          customLayout = (scene.table.options as ListTableConstructorOptions).groupTitleCustomLayout;
+        if (vtableMerge && (scene.table.internalProps as ListTableProtected).groupTitleCustomLayout) {
+          customLayout = (scene.table.internalProps as ListTableProtected).groupTitleCustomLayout;
         } else if (cellLocation !== 'body') {
           const define = scene.table.getHeaderDefine(col, row);
           customRender = (define as ColumnDefine)?.headerCustomRender;
