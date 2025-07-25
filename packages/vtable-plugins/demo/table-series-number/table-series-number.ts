@@ -132,6 +132,7 @@ export function createTable() {
     // window.tableInstance?.release();
     const records = generatePersons(3);
     const option: VTable.ListTableConstructorOptions = {
+      dragHeaderMode: 'all',
       defaultHeaderRowHeight: 60,
       heightMode: 'autoHeight',
       autoWrapText: true,

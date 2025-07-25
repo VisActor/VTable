@@ -28,7 +28,7 @@ export interface AddRowColumnOptions {
  * 当鼠标离开table的cell时，会隐藏添加行和列的dot和加号
  */
 export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
-  id = `add-row-column-${Date.now()}`;
+  id = `add-row-column`;
   name = 'Add Row Column';
   runTime = [
     VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL,

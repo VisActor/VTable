@@ -751,6 +751,7 @@ export default class VTableSheet {
       defaultColWidth: this.options.defaultColWidth,
       parent: this,
       plugins: getTablePlugins(),
+      headerEditor: 'input',
       editor: 'input',
       select: {
         makeSelectCellVisible: false

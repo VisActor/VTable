@@ -104,6 +104,8 @@ export interface TableKeyboardOptions {
   selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 被复制单元格是否显示虚线框，默认：false */
+  showCopyCellBorder?: boolean;
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
   /** 方向键是否可以更改选中单元格位置，默认：true */

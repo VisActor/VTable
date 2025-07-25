@@ -19,6 +19,7 @@ export function getTablePlugins() {
     colHighlight: true,
     rowHighlight: true
   });
+  const contextMenuPlugin = new VTablePlugins.ContextMenuPlugin({});
   const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
-  return [addRowColumn, highlightPlugin, excelEditCellKeyboardPlugin, tableSeriesNumberPlugin];
+  return [addRowColumn, highlightPlugin, excelEditCellKeyboardPlugin, tableSeriesNumberPlugin, contextMenuPlugin];
 }

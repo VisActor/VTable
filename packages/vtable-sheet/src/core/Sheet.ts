@@ -160,12 +160,19 @@ export class Sheet extends EventTarget implements ISheetAPI {
     if (!this.options.data) {
       this.options.data = [];
     }
-
+    const keyboardOptions = {
+      ...this.options.keyboardOptions,
+      copySelected: true,
+      pasteValueToCell: true,
+      showCopyCellBorder: true
+    };
     return {
       ...this.options,
       records: this.options.data,
       container: this.element,
-      showHeader: isShowTableHeader
+      showHeader: isShowTableHeader,
+      keyboardOptions
+      // 其他特定配置
     };
   }
 

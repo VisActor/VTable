@@ -15,4 +15,5 @@ export * from './paste-add-row-column';
 export * from './wps-fill-handle';
 export * from './excel-import';
 export * from './table-series-number';
+export * from './context-menu';
 export * from './filter';

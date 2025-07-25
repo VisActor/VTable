@@ -703,6 +703,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * Set the number of frozen columns.
+   * 设置冻结列数 会自动刷新渲染节点
    */
   set frozenColCount(frozenColCount: number) {
     // 此情况将frozenColCount设为0（显示效果一致）
@@ -779,9 +780,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * Set the number of frozen rows.
+   * 设置冻结行数 会自动刷新渲染节点
    */
   set frozenRowCount(frozenRowCount: number) {
     this.internalProps.frozenRowCount = frozenRowCount;
+    this.options.frozenRowCount = frozenRowCount;
     this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
   }
 

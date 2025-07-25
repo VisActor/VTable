@@ -56,6 +56,7 @@ import {
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import { getCustomMergeCellFunc } from './core/utils/get-custom-merge-cell-func';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -277,9 +278,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param column
    */
-  addColumn(column: ColumnDefine) {
+  addColumn(column: ColumnDefine, colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
-    columns.push(column);
+    if (colIndex === undefined) {
+      columns.push(column);
+    } else {
+      columns.splice(colIndex, 0, column);
+    }
+    //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
+    if (isMaintainArrayData) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (Array.isArray(record)) {
+          record.splice(colIndex, 0, undefined);
+        }
+      }
+    }
+    this.updateColumns(columns);
+  }
+  deleteColumn(colIndex: number) {
+    const columns = this.options.columns;
+    columns.splice(colIndex, 1);
     this.updateColumns(columns);
   }
   get columns(): ColumnsDefine {
@@ -1670,5 +1689,65 @@ export class ListTable extends BaseTable implements ListTableAPI {
         originData: { children: this.records }
       });
     }
+  }
+  /** 合并单元格 对外接口 。会自动刷新渲染节点
+   * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
+   */
+  mergeCells(startCol: number, startRow: number, endCol: number, endRow: number) {
+    // 先检查一遍这个区域是否有合并情况 有的话 不能再次合并
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        const cellRange = this.getCellRange(i, j);
+        if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+          return;
+        }
+      }
+    }
+    if (!this.options.customMergeCell) {
+      this.options.customMergeCell = [];
+    } else if (typeof this.options.customMergeCell === 'function') {
+      this.options.customMergeCell = [];
+    }
+    this.options.customMergeCell.push({
+      text: this.getCellValue(startCol, startRow),
+      range: {
+        start: {
+          col: startCol,
+          row: startRow
+        },
+        end: {
+          col: endCol,
+          row: endRow
+        }
+      }
+    });
+    this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        this.scenegraph.updateCellContent(i, j);
+      }
+    }
+    this.scenegraph.updateNextFrame();
+  }
+  /** 取消合并单元格 对外接口 。会自动刷新渲染节点
+   * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
+   */
+  unmergeCells(startCol: number, startRow: number, endCol: number, endRow: number) {
+    if (!this.options.customMergeCell) {
+      this.options.customMergeCell = [];
+    } else if (typeof this.options.customMergeCell === 'function') {
+      this.options.customMergeCell = [];
+    }
+    this.options.customMergeCell = this.options.customMergeCell.filter(item => {
+      const { start, end } = item.range;
+      return !(start.col === startCol && start.row === startRow && end.col === endCol && end.row === endRow);
+    });
+    this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        this.scenegraph.updateCellContent(i, j);
+      }
+    }
+    this.scenegraph.updateNextFrame();
   }
 }
