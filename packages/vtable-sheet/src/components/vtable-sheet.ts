@@ -764,7 +764,12 @@ export default class VTableSheet {
     sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
 
     // 在公式管理器中添加这个sheet
-    this.formulaManager.addSheet(sheetDefine.sheetKey, sheetDefine.data as any[][]);
+    try {
+      this.formulaManager.addSheet(sheetDefine.sheetKey, sheetDefine.data as any[][]);
+    } catch (error) {
+      console.warn(`Sheet ${sheetDefine.sheetKey} may already exist in formula manager:`, error);
+      // 如果添加失败（可能已存在），继续执行
+    }
 
     return sheet;
   }

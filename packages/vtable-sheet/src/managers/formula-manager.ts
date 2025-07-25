@@ -77,10 +77,35 @@ export class FormulaManager {
       if (this.sheetMapping.size === 0) {
         this.hyperFormula = HyperFormula.buildFromArray([['']], DEFAULT_HYPERFORMULA_CONFIG);
         sheetId = 0;
+
+        // 获取 HyperFormula 自动创建的 sheet 名称并重命名为我们需要的名称
+        const defaultSheetName = this.hyperFormula.getSheetName(0);
+        if (defaultSheetName !== sheetKey) {
+          try {
+            // 重命名默认 sheet 为我们需要的名称
+            (this.hyperFormula as any).renameSheet(0, sheetKey);
+          } catch (e) {
+            console.warn(`Could not rename default sheet from ${defaultSheetName} to ${sheetKey}:`, e);
+          }
+        }
       } else {
-        // 后续sheet - 使用addSheet API
-        const sheetName = this.hyperFormula.addSheet(sheetKey);
-        sheetId = this.hyperFormula.getSheetId(sheetName);
+        // 后续sheet - 先检查这个名称是否已经存在于 HyperFormula 中
+        try {
+          // 尝试获取已存在的 sheet ID
+          const existingSheetId = this.hyperFormula.getSheetId(sheetKey);
+          if (existingSheetId !== undefined) {
+            // 如果 HyperFormula 中已经有这个名称的 sheet，直接使用它
+            sheetId = existingSheetId;
+          } else {
+            // 否则创建新的 sheet
+            const sheetName = this.hyperFormula.addSheet(sheetKey);
+            sheetId = this.hyperFormula.getSheetId(sheetName);
+          }
+        } catch (error) {
+          // 如果获取 sheet ID 失败，说明不存在，创建新的
+          const sheetName = this.hyperFormula.addSheet(sheetKey);
+          sheetId = this.hyperFormula.getSheetId(sheetName);
+        }
       }
 
       // 如果有有效数据，设置内容
