@@ -168,7 +168,7 @@ export class Chart extends Rect {
           stage.needRender = false;
           chartStage.resumeRender();
         },
-        afterClearScreen(drawParams: any) {
+        afterClearRect(drawParams: any) {
           const { context, layer, viewBox } = drawParams;
           if (layer.main && drawParams.clear) {
             context.beginPath();
