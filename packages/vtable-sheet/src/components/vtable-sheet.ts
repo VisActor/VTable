@@ -11,10 +11,12 @@ import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine, CellValue, CellValueChangedEvent, FormulaCell } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
+import { FormulaAutocomplete } from './formula-autocomplete';
+import { formulaEditor } from './formula-editor';
 
-const input_editor = new VTable_editors.InputEditor();
-VTable.register.editor('input', input_editor);
-
+// const input_editor = new VTable_editors.InputEditor();
+// VTable.register.editor('input', input_editor);
+VTable.register.editor('formula', formulaEditor);
 export default class VTableSheet {
   /** DOM容器 */
   private container: HTMLElement;
@@ -32,6 +34,8 @@ export default class VTableSheet {
   private activeSheet: Sheet | null = null;
   /** 所有sheet实例 */
   private sheetInstances: Map<string, Sheet> = new Map();
+  /** 公式自动补全 */
+  private formulaAutocomplete: FormulaAutocomplete | null = null;
 
   /** UI组件 */
   private rootElement: HTMLElement;
@@ -87,6 +91,21 @@ export default class VTableSheet {
   }
 
   /**
+   * 初始化公式自动补全
+   */
+  private initFormulaAutocomplete(): void {
+    if (!this.formulaBarElement) {
+      return;
+    }
+
+    const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    if (formulaInput) {
+      this.formulaAutocomplete = new FormulaAutocomplete(this.rootElement, this);
+      this.formulaAutocomplete.attachTo(formulaInput);
+    }
+  }
+
+  /**
    * 初始化UI
    */
   private initUI(): void {
@@ -101,6 +120,8 @@ export default class VTableSheet {
     if (this.options.showFormulaBar) {
       this.formulaBarElement = this.createFormulaBar();
       this.rootElement.appendChild(this.formulaBarElement);
+
+      this.initFormulaAutocomplete();
     }
 
     // 创建内容区域
@@ -737,6 +758,7 @@ export default class VTableSheet {
    * @param sheetDefine sheet的定义
    */
   private createSheetInstance(sheetDefine: ISheetDefine): Sheet {
+    formulaEditor.setSheet(this);
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
     const contentHeight = this.contentElement.clientHeight;
@@ -751,8 +773,8 @@ export default class VTableSheet {
       defaultColWidth: this.options.defaultColWidth,
       parent: this,
       plugins: getTablePlugins(),
-      headerEditor: 'input',
-      editor: 'input',
+      headerEditor: 'formula',
+      editor: 'formula',
       select: {
         makeSelectCellVisible: false
       },
@@ -1208,6 +1230,10 @@ export default class VTableSheet {
     // 清空容器
     if (this.rootElement && this.rootElement.parentNode) {
       this.rootElement.parentNode.removeChild(this.rootElement);
+    }
+
+    if (this.formulaAutocomplete) {
+      this.formulaAutocomplete.destroy();
     }
   }
 
