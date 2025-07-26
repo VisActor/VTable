@@ -1,53 +1,1073 @@
-# VTable Comprehensive Documentation for Language Models
+# VTable Comprehensive Documentation for Language Models - Complete Reference Guide
 
 ## OVERVIEW AND INTRODUCTION
 
-VTable is a high-performance, multidimensional data analysis table library built on the VRender rendering engine. It provides three main table types: ListTable, PivotTable, and PivotChart, each designed for different data visualization and analysis needs. VTable excels at handling large datasets with millions of rows while maintaining smooth user interactions through virtual scrolling and optimized canvas-based rendering.
+VTable is a revolutionary high-performance, multidimensional data analysis table library built on the cutting-edge VRender rendering engine. It provides three powerful table types: ListTable, PivotTable, and PivotChart, each meticulously designed for different data visualization and analysis needs. VTable excels at handling massive datasets with millions of rows while maintaining smooth, responsive user interactions through advanced virtual scrolling and optimized canvas-based rendering technologies.
 
-The library is part of the VisActor ecosystem and integrates seamlessly with VChart for embedded visualizations. VTable supports TypeScript, provides comprehensive React/Vue/Angular integrations, and offers extensive customization options for themes, styling, and behavior.
+The library is a cornerstone of the VisActor ecosystem and integrates seamlessly with VChart for embedded visualizations, creating a complete data visualization solution. VTable supports TypeScript with full type definitions, provides comprehensive React/Vue/Angular/OpenInula integrations, and offers extensive customization options for themes, styling, behavior, and performance optimization.
 
-## INSTALLATION AND SETUP
+Key architectural advantages:
+- Canvas-based rendering for maximum performance with millions of rows
+- Virtual scrolling technology that renders only visible cells
+- Tree-shaking support for minimal bundle sizes
+- Modular plugin architecture for extensibility
+- Cross-browser compatibility with fallback mechanisms
+- Memory-efficient data structures and garbage collection optimization
+- Real-time data binding with change detection algorithms
+- Advanced event delegation for optimal performance
 
-### Package Manager Installation
+## COMPREHENSIVE INSTALLATION AND SETUP GUIDE
+
+### Package Manager Installation with Version Management
 ```bash
-# Using npm
-npm install @visactor/vtable
+# Using npm with specific version
+npm install @visactor/vtable@latest
+npm install @visactor/vtable@^1.0.0  # Specific version range
 
-# Using yarn
+# Using yarn with workspace support
 yarn add @visactor/vtable
+yarn workspace my-app add @visactor/vtable
 
-# Using pnpm
+# Using pnpm with peer dependency management
 pnpm add @visactor/vtable
+pnpm add @visactor/vtable --save-peer
+
+# Development dependencies for TypeScript
+npm install --save-dev @types/node
+
+# Framework-specific installations
+npm install @visactor/react-vtable @visactor/vtable  # React
+npm install @visactor/vue-vtable @visactor/vtable    # Vue
+npm install @visactor/angular-vtable @visactor/vtable # Angular
+npm install @visactor/openinula-vtable @visactor/vtable # OpenInula
+
+# Plugin ecosystem
+npm install @visactor/vtable-export     # Export functionality
+npm install @visactor/vtable-search     # Search capabilities
+npm install @visactor/vtable-gantt      # Gantt chart support
+npm install @visactor/vtable-calendar   # Calendar integration
+npm install @visactor/vtable-editors    # Advanced editors
 ```
 
-### CDN Installation
+### CDN Installation with Integrity Checking
 ```html
-<!-- Production version -->
-<script src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"></script>
+<!-- Production version with SRI -->
+<script 
+  src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"
+  integrity="sha384-..."
+  crossorigin="anonymous">
+</script>
 
 <!-- Development version -->
 <script src="https://unpkg.com/@visactor/vtable@latest/build/index.js"></script>
+
+<!-- ESM version for modern browsers -->
+<script type="module">
+  import * as VTable from 'https://unpkg.com/@visactor/vtable@latest/build/index.esm.js';
+</script>
+
+<!-- IIFE version for legacy browsers -->
+<script src="https://unpkg.com/@visactor/vtable@latest/build/index.umd.js"></script>
+
+<!-- Multiple CDN fallbacks -->
+<script>
+  window.VTable || document.write('<script src="https://cdn.jsdelivr.net/npm/@visactor/vtable@latest/build/index.min.js"><\/script>');
+</script>
 ```
 
-### ES Module Import
+### Module System Imports with Tree Shaking
 ```javascript
+// ES Module Import - Full library
 import * as VTable from '@visactor/vtable';
-import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
+import { ListTable, PivotTable, PivotChart, registerTheme } from '@visactor/vtable';
+
+// Tree-shaking friendly imports
+import { ListTable } from '@visactor/vtable/lib/list-table';
+import { PivotTable } from '@visactor/vtable/lib/pivot-table';
+import { PivotChart } from '@visactor/vtable/lib/pivot-chart';
+
+// Core classes only
+import { 
+  ListTable, 
+  PivotTable, 
+  PivotChart,
+  TableManager,
+  DataSource,
+  EventManager 
+} from '@visactor/vtable/core';
+
+// Plugin imports
+import { ExportPlugin } from '@visactor/vtable-export';
+import { SearchPlugin } from '@visactor/vtable-search';
+import { GanttPlugin } from '@visactor/vtable-gantt';
 ```
 
-### CommonJS Import
+### CommonJS Import with Conditional Loading
 ```javascript
+// Standard CommonJS
 const VTable = require('@visactor/vtable');
 const { ListTable, PivotTable, PivotChart } = require('@visactor/vtable');
+
+// Conditional loading for different environments
+let VTable;
+if (typeof window !== 'undefined') {
+  // Browser environment
+  VTable = require('@visactor/vtable/browser');
+} else {
+  // Node.js environment (for SSR)
+  VTable = require('@visactor/vtable/node');
+}
+
+// Dynamic imports for code splitting
+async function loadVTable() {
+  const { ListTable } = await import('@visactor/vtable');
+  return ListTable;
+}
 ```
 
-## LISTTABLE COMPREHENSIVE GUIDE
+### Framework-Specific Setup
 
-### Basic ListTable Creation
+#### React Setup with TypeScript
+```tsx
+// Install dependencies
+// npm install @visactor/react-vtable @types/react
+
+import React from 'react';
+import { ListTable, PivotTable, PivotChart } from '@visactor/react-vtable';
+import type { ListTableProps, ColumnDefine, Record } from '@visactor/react-vtable';
+
+interface TableData {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const MyReactTable: React.FC = () => {
+  const columns: ColumnDefine[] = [
+    { field: 'id', caption: 'ID', width: 80 },
+    { field: 'name', caption: 'Name', width: 150 },
+    { field: 'email', caption: 'Email', width: 200 },
+  ];
+
+  const data: TableData[] = [
+    { id: 1, name: 'John', email: 'john@example.com' },
+  ];
+
+  return (
+    <ListTable 
+      columns={columns} 
+      records={data}
+      height={600}
+      width={800}
+    />
+  );
+};
+```
+
+#### Vue 3 Setup with Composition API
+```vue
+<template>
+  <VListTable 
+    :columns="columns" 
+    :records="data"
+    :height="600"
+    :width="800"
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue';
+import { VListTable } from '@visactor/vue-vtable';
+import type { ColumnDefine } from '@visactor/vue-vtable';
+
+interface TableData {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const columns = ref<ColumnDefine[]>([
+  { field: 'id', caption: 'ID', width: 80 },
+  { field: 'name', caption: 'Name', width: 150 },
+  { field: 'email', caption: 'Email', width: 200 },
+]);
+
+const data = ref<TableData[]>([
+  { id: 1, name: 'John', email: 'john@example.com' },
+]);
+</script>
+```
+
+#### Angular Setup with TypeScript
+```typescript
+// app.module.ts
+import { NgModule } from '@angular/core';
+import { VTableModule } from '@visactor/angular-vtable';
+
+@NgModule({
+  imports: [VTableModule],
+  // ...
+})
+export class AppModule { }
+
+// component.ts
+import { Component } from '@angular/core';
+import { ColumnDefine } from '@visactor/angular-vtable';
+
+@Component({
+  selector: 'app-table',
+  template: `
+    <vtable-list-table 
+      [columns]="columns" 
+      [records]="data"
+      [height]="600"
+      [width]="800">
+    </vtable-list-table>
+  `
+})
+export class TableComponent {
+  columns: ColumnDefine[] = [
+    { field: 'id', caption: 'ID', width: 80 },
+    { field: 'name', caption: 'Name', width: 150 },
+    { field: 'email', caption: 'Email', width: 200 },
+  ];
+
+  data = [
+    { id: 1, name: 'John', email: 'john@example.com' },
+  ];
+}
+```
+
+## ADVANCED LISTTABLE COMPREHENSIVE GUIDE
+
+### ListTable Architecture and Core Concepts
+
+ListTable is the foundational table type designed for displaying flat, tabular data in rows and columns with enterprise-grade performance and functionality. It supports millions of rows through virtual scrolling, advanced sorting algorithms, real-time filtering, and comprehensive editing capabilities.
+
+#### Core Architecture Components:
+- **DataSource Management**: Handles data binding, validation, and synchronization
+- **Virtual Rendering Engine**: Renders only visible cells for optimal performance
+- **Event Delegation System**: Efficient event handling for millions of rows
+- **Column Management**: Dynamic column operations, resizing, and reordering
+- **Selection Engine**: Multi-selection, range selection, and keyboard navigation
+- **Edit Engine**: In-place editing with validation and change tracking
+
+### Complete ListTable Creation and Configuration
+
 ```javascript
-import { ListTable } from '@visactor/vtable';
+import { ListTable, DataSource, themes } from '@visactor/vtable';
 
-const listTable = new ListTable({
+// Advanced ListTable with comprehensive configuration
+const advancedListTable = new ListTable({
+  // Container configuration
+  container: document.getElementById('tableContainer'),
+  width: 1200,
+  height: 800,
+  
+  // Core data configuration
+  columns: [
+    {
+      field: 'id',
+      caption: 'ID',
+      width: 80,
+      minWidth: 50,
+      maxWidth: 150,
+      sort: true,
+      cellType: 'text',
+      style: {
+        textAlign: 'center',
+        fontWeight: 'bold'
+      },
+      headerStyle: {
+        bgColor: '#f5f5f5',
+        color: '#333',
+        fontWeight: 'bold',
+        textAlign: 'center'
+      }
+    },
+    {
+      field: 'name',
+      caption: 'Full Name',
+      width: 200,
+      sort: true,
+      editor: 'input',
+      editorOptions: {
+        maxLength: 100,
+        placeholder: 'Enter full name'
+      },
+      customRender: (args) => {
+        const { value, row, table } = args;
+        return `<div class="name-cell">
+          <span class="name-text">${value}</span>
+          <small class="row-number">#${row + 1}</small>
+        </div>`;
+      },
+      style: {
+        fontFamily: 'Arial, sans-serif',
+        fontSize: 14,
+        color: '#2c3e50'
+      }
+    },
+    {
+      field: 'email',
+      caption: 'Email Address',
+      width: 250,
+      sort: true,
+      editor: 'input',
+      editorOptions: {
+        type: 'email',
+        placeholder: 'user@example.com'
+      },
+      validation: {
+        required: true,
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+        message: 'Please enter a valid email address'
+      },
+      customRender: (args) => {
+        const { value } = args;
+        if (!value) return '';
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        return `<a href="mailto:${value}" class="${isValid ? 'valid-email' : 'invalid-email'}">${value}</a>`;
+      }
+    },
+    {
+      field: 'phone',
+      caption: 'Phone Number',
+      width: 150,
+      editor: 'input',
+      editorOptions: {
+        type: 'tel',
+        pattern: '[0-9]{3}-[0-9]{3}-[0-9]{4}',
+        placeholder: '123-456-7890'
+      },
+      formatter: (value) => {
+        if (!value) return '';
+        const cleaned = value.replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+        return match ? `${match[1]}-${match[2]}-${match[3]}` : value;
+      }
+    },
+    {
+      field: 'department',
+      caption: 'Department',
+      width: 150,
+      sort: true,
+      editor: 'select',
+      editorOptions: {
+        values: ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations'],
+        multiple: false
+      },
+      style: {
+        bgColor: (args) => {
+          const deptColors = {
+            'Engineering': '#e3f2fd',
+            'Marketing': '#f3e5f5',
+            'Sales': '#e8f5e8',
+            'HR': '#fff3e0',
+            'Finance': '#fce4ec',
+            'Operations': '#f1f8e9'
+          };
+          return deptColors[args.value] || '#ffffff';
+        }
+      }
+    },
+    {
+      field: 'salary',
+      caption: 'Annual Salary',
+      width: 130,
+      sort: true,
+      cellType: 'text',
+      editor: 'input',
+      editorOptions: {
+        type: 'number',
+        min: 0,
+        max: 1000000,
+        step: 1000
+      },
+      formatter: (value) => {
+        if (!value) return '$0';
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(value);
+      },
+      style: {
+        textAlign: 'right',
+        fontWeight: 'bold',
+        color: '#27ae60'
+      }
+    },
+    {
+      field: 'hireDate',
+      caption: 'Hire Date',
+      width: 120,
+      sort: true,
+      cellType: 'text',
+      editor: 'date',
+      formatter: (value) => {
+        if (!value) return '';
+        return new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }).format(new Date(value));
+      }
+    },
+    {
+      field: 'status',
+      caption: 'Employment Status',
+      width: 140,
+      sort: true,
+      editor: 'select',
+      editorOptions: {
+        values: ['Active', 'Inactive', 'Pending', 'Terminated']
+      },
+      customRender: (args) => {
+        const { value } = args;
+        const statusConfig = {
+          'Active': { color: '#27ae60', icon: '✓' },
+          'Inactive': { color: '#e74c3c', icon: '✗' },
+          'Pending': { color: '#f39c12', icon: '⏳' },
+          'Terminated': { color: '#95a5a6', icon: '⛔' }
+        };
+        const config = statusConfig[value] || { color: '#95a5a6', icon: '?' };
+        return `<span style="color: ${config.color}; font-weight: bold;">
+          ${config.icon} ${value}
+        </span>`;
+      }
+    },
+    {
+      field: 'performance',
+      caption: 'Performance Rating',
+      width: 150,
+      cellType: 'progressbar',
+      style: {
+        barBgColor: '#ecf0f1',
+        barColor: (args) => {
+          const value = args.value || 0;
+          if (value >= 90) return '#27ae60';
+          if (value >= 75) return '#f39c12';
+          if (value >= 60) return '#e67e22';
+          return '#e74c3c';
+        },
+        barHeight: 20,
+        showText: true,
+        textFormat: (value) => `${value}%`
+      },
+      editor: 'input',
+      editorOptions: {
+        type: 'range',
+        min: 0,
+        max: 100,
+        step: 5
+      }
+    },
+    {
+      field: 'profileImage',
+      caption: 'Profile',
+      width: 80,
+      cellType: 'image',
+      style: {
+        imageWidth: 40,
+        imageHeight: 40,
+        imageRadius: 20,
+        imageFit: 'cover'
+      },
+      customRender: (args) => {
+        const { value, record } = args;
+        const imageUrl = value || `https://ui-avatars.com/api/?name=${encodeURIComponent(record.name)}&background=random`;
+        return `<img src="${imageUrl}" alt="${record.name}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`;
+      }
+    },
+    {
+      field: 'actions',
+      caption: 'Actions',
+      width: 200,
+      cellType: 'button',
+      customRender: (args) => {
+        const { record, row } = args;
+        return `
+          <div class="action-buttons">
+            <button onclick="editRecord(${row})" class="btn-edit" title="Edit">✏️ Edit</button>
+            <button onclick="viewRecord(${row})" class="btn-view" title="View">👁️ View</button>
+            <button onclick="deleteRecord(${row})" class="btn-delete" title="Delete">🗑️ Delete</button>
+            <button onclick="duplicateRecord(${row})" class="btn-duplicate" title="Duplicate">📋 Copy</button>
+          </div>
+        `;
+      }
+    }
+  ],
+  
+  // Sample comprehensive data
+  records: [
+    {
+      id: 1,
+      name: 'John Smith',
+      email: 'john.smith@company.com',
+      phone: '555-123-4567',
+      department: 'Engineering',
+      salary: 95000,
+      hireDate: '2020-03-15',
+      status: 'Active',
+      performance: 88,
+      profileImage: 'https://randomuser.me/api/portraits/men/1.jpg'
+    },
+    {
+      id: 2,
+      name: 'Sarah Johnson',
+      email: 'sarah.johnson@company.com',
+      phone: '555-234-5678',
+      department: 'Marketing',
+      salary: 82000,
+      hireDate: '2019-07-22',
+      status: 'Active',
+      performance: 92,
+      profileImage: 'https://randomuser.me/api/portraits/women/2.jpg'
+    },
+    {
+      id: 3,
+      name: 'Michael Brown',
+      email: 'michael.brown@company.com',
+      phone: '555-345-6789',
+      department: 'Sales',
+      salary: 78000,
+      hireDate: '2021-01-10',
+      status: 'Pending',
+      performance: 75,
+      profileImage: 'https://randomuser.me/api/portraits/men/3.jpg'
+    }
+    // ... more records for comprehensive testing
+  ],
+  
+  // Advanced table configuration
+  defaultRowHeight: 60,
+  defaultHeaderRowHeight: 80,
+  defaultColWidth: 150,
+  
+  // Performance optimization
+  pixelRatio: window.devicePixelRatio || 1,
+  enabledTreeStick: false,
+  scrollSliderOption: {
+    width: 12,
+    scrollRailColor: 'rgba(100,100,100,0.2)',
+    scrollSliderColor: 'rgba(100,100,100,0.5)',
+    scrollSliderCornerRadius: 6
+  },
+  
+  // Selection configuration
+  select: {
+    enableRowSelect: true,
+    enableColumnSelect: true,
+    enableCellSelect: true,
+    enableMultiSelect: true,
+    enableHeaderSelect: true,
+    highlightMode: 'row', // 'cell', 'row', 'column'
+    selectMode: 'single' // 'single', 'multiple'
+  },
+  
+  // Editing configuration
+  edit: {
+    enableCellEdit: true,
+    enableRowEdit: false,
+    enableColumnEdit: false,
+    editTrigger: 'doubleclick', // 'click', 'doubleclick', 'F2'
+    enableEditOnEnter: true,
+    enableDeleteRecord: true,
+    enableAddRecord: true
+  },
+  
+  // Sorting configuration
+  sort: {
+    enableSort: true,
+    sortMode: 'multiple', // 'single', 'multiple'
+    defaultSortRules: [
+      { field: 'department', order: 'asc' },
+      { field: 'name', order: 'asc' }
+    ]
+  },
+  
+  // Filtering configuration
+  filter: {
+    enableHeaderFilter: true,
+    enableColumnMenuFilter: true,
+    defaultFilters: {
+      status: ['Active', 'Pending']
+    }
+  },
+  
+  // Row configuration
+  rowSeriesNumber: {
+    enable: true,
+    width: 60,
+    headerStyle: {
+      bgColor: '#f8f9fa',
+      color: '#495057'
+    },
+    style: {
+      bgColor: '#ffffff',
+      color: '#6c757d'
+    }
+  },
+  
+  // Frozen configuration
+  frozenColCount: 2, // Freeze first 2 columns
+  frozenRowCount: 0, // No frozen rows
+  
+  // Theme and styling
+  theme: {
+    defaultStyle: {
+      borderColor: '#e9ecef',
+      borderWidth: 1,
+      bgColor: '#ffffff',
+      color: '#495057',
+      fontSize: 14,
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      padding: [8, 12, 8, 12]
+    },
+    headerStyle: {
+      borderColor: '#dee2e6',
+      borderWidth: 1,
+      bgColor: '#f8f9fa',
+      color: '#495057',
+      fontSize: 14,
+      fontWeight: '600',
+      textAlign: 'center',
+      padding: [12, 12, 12, 12]
+    },
+    bodyStyle: {
+      borderColor: '#e9ecef',
+      borderWidth: 1,
+      bgColor: '#ffffff',
+      color: '#495057'
+    },
+    frameStyle: {
+      borderColor: '#dee2e6',
+      borderWidth: 2,
+      cornerRadius: 8,
+      shadowBlur: 4,
+      shadowColor: 'rgba(0,0,0,0.1)'
+    },
+    selectionStyle: {
+      cellBgColor: '#e3f2fd',
+      cellBorderColor: '#2196f3',
+      cellBorderWidth: 2
+    }
+  },
+  
+  // Advanced features
+  menu: {
+    contextMenuItems: [
+      {
+        text: 'Copy Cell',
+        menuKey: 'copy-cell',
+        icon: 'copy'
+      },
+      {
+        text: 'Paste',
+        menuKey: 'paste',
+        icon: 'paste'
+      },
+      {
+        text: 'Insert Row Above',
+        menuKey: 'insert-row-above',
+        icon: 'add'
+      },
+      {
+        text: 'Insert Row Below',
+        menuKey: 'insert-row-below',
+        icon: 'add'
+      },
+      {
+        text: 'Delete Row',
+        menuKey: 'delete-row',
+        icon: 'delete'
+      },
+      {
+        text: 'Export Selection',
+        menuKey: 'export-selection',
+        icon: 'download'
+      }
+    ]
+  },
+  
+  // Keyboard navigation
+  keyboardOptions: {
+    selectAllOnCtrlA: true,
+    copyOnCtrlC: true,
+    pasteOnCtrlV: true,
+    deleteOnDelete: true,
+    editOnF2: true,
+    editOnEnter: false,
+    moveEditOnTab: true,
+    moveEditOnEnter: true
+  },
+  
+  // Tooltip configuration
+  tooltip: {
+    isShowOverflowTextTooltip: true,
+    confine: true,
+    placement: 'top',
+    disappearDelay: 100,
+    style: {
+      bgColor: '#333333',
+      color: '#ffffff',
+      fontSize: 12,
+      fontFamily: 'Inter, sans-serif',
+      padding: [6, 8, 6, 8],
+      borderRadius: 4
+    }
+  },
+  
+  // Animation configuration
+  animationAppear: {
+    duration: 300,
+    easing: 'ease-out',
+    one_by_one: true,
+    direction: 'row' // 'row', 'column'
+  },
+  
+  // Export configuration
+  exportOptions: {
+    mode: 'all', // 'all', 'selected', 'current-page'
+    formatters: {
+      csv: {
+        delimiter: ',',
+        quote: '"',
+        escape: '"',
+        header: true
+      },
+      excel: {
+        sheetName: 'Employee Data',
+        creator: 'VTable System',
+        title: 'Employee Management Report'
+      }
+    }
+  }
+});
+
+// Advanced event handling with comprehensive coverage
+advancedListTable.on('ready', () => {
+  console.log('Table initialized successfully');
+  
+  // Auto-fit columns on ready
+  advancedListTable.autoFitColumn();
+});
+
+advancedListTable.on('click_cell', (event) => {
+  console.log('Cell clicked:', {
+    row: event.row,
+    col: event.col,
+    field: event.field,
+    value: event.value,
+    record: event.record,
+    cellType: event.cellType
+  });
+});
+
+advancedListTable.on('dblclick_cell', (event) => {
+  console.log('Cell double-clicked:', event);
+  // Enter edit mode on double click
+  if (event.field !== 'actions') {
+    advancedListTable.startEditCell(event.row, event.col);
+  }
+});
+
+advancedListTable.on('mouseenter_cell', (event) => {
+  // Add hover effects
+  const cell = advancedListTable.getCellElement(event.row, event.col);
+  if (cell) {
+    cell.style.backgroundColor = '#f8f9fa';
+  }
+});
+
+advancedListTable.on('mouseleave_cell', (event) => {
+  // Remove hover effects
+  const cell = advancedListTable.getCellElement(event.row, event.col);
+  if (cell) {
+    cell.style.backgroundColor = '';
+  }
+});
+
+advancedListTable.on('after_cell_edit', (event) => {
+  console.log('Cell edited:', {
+    row: event.row,
+    col: event.col,
+    field: event.field,
+    oldValue: event.oldValue,
+    newValue: event.newValue,
+    record: event.record
+  });
+  
+  // Validate the edit
+  if (event.field === 'email') {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(event.newValue)) {
+      // Revert invalid email
+      advancedListTable.updateCellValue(event.row, event.col, event.oldValue);
+      alert('Please enter a valid email address');
+      return;
+    }
+  }
+  
+  // Auto-save changes
+  saveRecordChanges(event.record);
+});
+
+advancedListTable.on('selection_changed', (event) => {
+  console.log('Selection changed:', {
+    selectedCells: event.selectedCells,
+    selectedRows: event.selectedRows,
+    selectedColumns: event.selectedColumns
+  });
+  
+  // Update UI based on selection
+  updateToolbarState(event);
+});
+
+advancedListTable.on('sort_click', (event) => {
+  console.log('Sort clicked:', {
+    field: event.field,
+    order: event.order,
+    sortRules: event.sortRules
+  });
+});
+
+advancedListTable.on('dropdown_menu_click', (event) => {
+  console.log('Menu clicked:', {
+    menuKey: event.menuKey,
+    row: event.row,
+    col: event.col,
+    field: event.field
+  });
+  
+  // Handle context menu actions
+  handleContextMenuAction(event);
+});
+
+// Helper functions for comprehensive functionality
+function editRecord(rowIndex) {
+  const record = advancedListTable.getRecord(rowIndex);
+  console.log('Edit record:', record);
+  
+  // Open edit modal or enable row editing
+  openEditModal(record, rowIndex);
+}
+
+function viewRecord(rowIndex) {
+  const record = advancedListTable.getRecord(rowIndex);
+  console.log('View record:', record);
+  
+  // Open detailed view
+  openDetailModal(record);
+}
+
+function deleteRecord(rowIndex) {
+  if (confirm('Are you sure you want to delete this record?')) {
+    advancedListTable.deleteRecord(rowIndex);
+    console.log('Record deleted at index:', rowIndex);
+  }
+}
+
+function duplicateRecord(rowIndex) {
+  const record = advancedListTable.getRecord(rowIndex);
+  const duplicatedRecord = {
+    ...record,
+    id: Date.now(), // New unique ID
+    name: record.name + ' (Copy)'
+  };
+  
+  advancedListTable.addRecord(duplicatedRecord, rowIndex + 1);
+  console.log('Record duplicated:', duplicatedRecord);
+}
+
+function saveRecordChanges(record) {
+  // Simulate API call to save changes
+  console.log('Saving record changes:', record);
+  
+  // Update backend
+  fetch('/api/employees/' + record.id, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(record)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Record saved successfully:', data);
+    showNotification('Changes saved successfully', 'success');
+  })
+  .catch(error => {
+    console.error('Error saving record:', error);
+    showNotification('Error saving changes', 'error');
+  });
+}
+
+function updateToolbarState(selectionEvent) {
+  const hasSelection = selectionEvent.selectedRows.length > 0;
+  
+  // Update toolbar buttons
+  document.getElementById('delete-selected').disabled = !hasSelection;
+  document.getElementById('export-selected').disabled = !hasSelection;
+  document.getElementById('bulk-edit').disabled = !hasSelection;
+  
+  // Update selection counter
+  document.getElementById('selection-count').textContent = 
+    `${selectionEvent.selectedRows.length} row(s) selected`;
+}
+
+function handleContextMenuAction(event) {
+  switch (event.menuKey) {
+    case 'copy-cell':
+      copyToClipboard(event.value);
+      break;
+    case 'paste':
+      pasteFromClipboard(event.row, event.col);
+      break;
+    case 'insert-row-above':
+      insertNewRow(event.row);
+      break;
+    case 'insert-row-below':
+      insertNewRow(event.row + 1);
+      break;
+    case 'delete-row':
+      deleteRecord(event.row);
+      break;
+    case 'export-selection':
+      exportSelectedData();
+      break;
+  }
+}
+
+function openEditModal(record, rowIndex) {
+  // Create and show edit modal
+  const modal = document.createElement('div');
+  modal.className = 'edit-modal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h3>Edit Employee</h3>
+      <form id="edit-form">
+        <div class="form-group">
+          <label>Name:</label>
+          <input type="text" name="name" value="${record.name}" required>
+        </div>
+        <div class="form-group">
+          <label>Email:</label>
+          <input type="email" name="email" value="${record.email}" required>
+        </div>
+        <div class="form-group">
+          <label>Phone:</label>
+          <input type="tel" name="phone" value="${record.phone}">
+        </div>
+        <div class="form-group">
+          <label>Department:</label>
+          <select name="department">
+            <option value="Engineering" ${record.department === 'Engineering' ? 'selected' : ''}>Engineering</option>
+            <option value="Marketing" ${record.department === 'Marketing' ? 'selected' : ''}>Marketing</option>
+            <option value="Sales" ${record.department === 'Sales' ? 'selected' : ''}>Sales</option>
+            <option value="HR" ${record.department === 'HR' ? 'selected' : ''}>HR</option>
+            <option value="Finance" ${record.department === 'Finance' ? 'selected' : ''}>Finance</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit">Save Changes</button>
+          <button type="button" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Handle form submission
+  document.getElementById('edit-form').onsubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const updates = Object.fromEntries(formData.entries());
+    
+    // Update the record in the table
+    advancedListTable.updateRecord(rowIndex, updates);
+    closeModal();
+  };
+}
+
+function closeModal() {
+  const modal = document.querySelector('.edit-modal');
+  if (modal) {
+    document.body.removeChild(modal);
+  }
+}
+
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.textContent = message;
+  
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    document.body.removeChild(notification);
+  }, 3000);
+}
+
+// Advanced data operations
+function addBulkRecords(records) {
+  advancedListTable.addRecords(records);
+  console.log(`Added ${records.length} records`);
+}
+
+function updateBulkRecords(updates) {
+  updates.forEach(({ index, data }) => {
+    advancedListTable.updateRecord(index, data);
+  });
+  console.log(`Updated ${updates.length} records`);
+}
+
+function exportSelectedData() {
+  const selectedRows = advancedListTable.getSelectedRows();
+  const selectedData = selectedRows.map(rowIndex => 
+    advancedListTable.getRecord(rowIndex)
+  );
+  
+  // Export as CSV
+  const csv = convertToCSV(selectedData);
+  downloadFile(csv, 'selected-data.csv', 'text/csv');
+}
+
+function convertToCSV(data) {
+  if (!data.length) return '';
+  
+  const headers = Object.keys(data[0]);
+  const csvRows = [
+    headers.join(','),
+    ...data.map(row => 
+      headers.map(header => {
+        let value = row[header];
+        if (typeof value === 'string' && value.includes(',')) {
+          value = `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      }).join(',')
+    )
+  ];
+  
+  return csvRows.join('\n');
+}
+
+function downloadFile(content, filename, contentType) {
+  const blob = new Blob([content], { type: contentType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+```
   container: document.getElementById('tableContainer'),
   columns: [
     {
@@ -1776,19 +2796,703 @@ export default {
 </script>
 ```
 
+# COMPREHENSIVE ENTERPRISE EXAMPLES AND REAL-WORLD IMPLEMENTATIONS
+
+## Financial Trading Dashboard Implementation
+
+This section provides a complete implementation of an enterprise-grade financial trading dashboard using VTable, demonstrating real-time data updates, advanced styling, and professional-grade features.
+
+```javascript
+// Complete Financial Trading Dashboard
+class FinancialTradingDashboard {
+  constructor(containerId) {
+    this.container = document.getElementById(containerId);
+    this.marketData = new Map();
+    this.watchlist = new Set();
+    this.alerts = [];
+    this.table = null;
+    this.updateInterval = null;
+    
+    this.initializeDashboard();
+    this.startRealTimeUpdates();
+  }
+  
+  initializeDashboard() {
+    // Advanced financial data columns
+    const columns = [
+      {
+        field: 'symbol',
+        caption: 'Symbol',
+        width: 100,
+        style: {
+          fontWeight: 'bold',
+          fontFamily: 'Monaco, Consolas, monospace',
+          color: '#2c3e50'
+        },
+        customRender: (args) => {
+          const { value, record } = args;
+          const trend = this.getTrendIndicator(value);
+          return `
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="trend-indicator" style="color: ${trend.color};">${trend.symbol}</span>
+              <strong>${value}</strong>
+              ${this.watchlist.has(value) ? '<span style="color: #f39c12;">⭐</span>' : ''}
+            </div>
+          `;
+        }
+      },
+      {
+        field: 'companyName',
+        caption: 'Company',
+        width: 200,
+        style: {
+          textAlign: 'left',
+          fontSize: 13
+        }
+      },
+      {
+        field: 'lastPrice',
+        caption: 'Last Price',
+        width: 120,
+        cellType: 'text',
+        formatter: (value) => `$${parseFloat(value).toFixed(2)}`,
+        style: {
+          textAlign: 'right',
+          fontWeight: 'bold',
+          fontFamily: 'Monaco, Consolas, monospace',
+          fontSize: 14
+        }
+      },
+      {
+        field: 'priceChange',
+        caption: 'Change',
+        width: 100,
+        formatter: (value) => {
+          const num = parseFloat(value);
+          return `${num >= 0 ? '+' : ''}${num.toFixed(2)}`;
+        },
+        style: {
+          textAlign: 'right',
+          fontWeight: 'bold',
+          fontFamily: 'Monaco, Consolas, monospace',
+          color: (args) => {
+            const value = parseFloat(args.value);
+            return value > 0 ? '#27ae60' : value < 0 ? '#e74c3c' : '#7f8c8d';
+          }
+        }
+      },
+      {
+        field: 'percentChange',
+        caption: 'Change %',
+        width: 100,
+        formatter: (value) => {
+          const num = parseFloat(value);
+          return `${num >= 0 ? '+' : ''}${num.toFixed(2)}%`;
+        },
+        style: {
+          textAlign: 'right',
+          fontWeight: 'bold',
+          fontFamily: 'Monaco, Consolas, monospace',
+          color: (args) => {
+            const value = parseFloat(args.value);
+            return value > 0 ? '#27ae60' : value < 0 ? '#e74c3c' : '#7f8c8d';
+          },
+          bgColor: (args) => {
+            const value = Math.abs(parseFloat(args.value));
+            if (value > 5) return args.value > 0 ? '#d5f4e6' : '#fdf2f2';
+            if (value > 2) return args.value > 0 ? '#e8f8f5' : '#fef7f7';
+            return '#ffffff';
+          }
+        }
+      },
+      {
+        field: 'volume',
+        caption: 'Volume',
+        width: 120,
+        formatter: (value) => {
+          const num = parseInt(value);
+          if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+          if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+          return num.toLocaleString();
+        },
+        style: {
+          textAlign: 'right',
+          fontFamily: 'Monaco, Consolas, monospace'
+        }
+      },
+      {
+        field: 'marketCap',
+        caption: 'Market Cap',
+        width: 130,
+        formatter: (value) => {
+          const num = parseFloat(value);
+          if (num >= 1000000000000) return `$${(num / 1000000000000).toFixed(2)}T`;
+          if (num >= 1000000000) return `$${(num / 1000000000).toFixed(2)}B`;
+          if (num >= 1000000) return `$${(num / 1000000).toFixed(2)}M`;
+          return `$${num.toLocaleString()}`;
+        },
+        style: {
+          textAlign: 'right',
+          fontFamily: 'Monaco, Consolas, monospace'
+        }
+      },
+      {
+        field: 'pe',
+        caption: 'P/E',
+        width: 80,
+        formatter: (value) => parseFloat(value).toFixed(2),
+        style: {
+          textAlign: 'right',
+          fontFamily: 'Monaco, Consolas, monospace'
+        }
+      },
+      {
+        field: 'dividend',
+        caption: 'Div Yield',
+        width: 90,
+        formatter: (value) => `${parseFloat(value).toFixed(2)}%`,
+        style: {
+          textAlign: 'right',
+          fontFamily: 'Monaco, Consolas, monospace'
+        }
+      },
+      {
+        field: 'high52w',
+        caption: '52W High',
+        width: 100,
+        formatter: (value) => `$${parseFloat(value).toFixed(2)}`,
+        style: {
+          textAlign: 'right',
+          fontFamily: 'Monaco, Consolas, monospace',
+          fontSize: 12,
+          color: '#7f8c8d'
+        }
+      },
+      {
+        field: 'low52w',
+        caption: '52W Low',
+        width: 100,
+        formatter: (value) => `$${parseFloat(value).toFixed(2)}`,
+        style: {
+          textAlign: 'right',
+          fontFamily: 'Monaco, Consolas, monospace',
+          fontSize: 12,
+          color: '#7f8c8d'
+        }
+      },
+      {
+        field: 'rsi',
+        caption: 'RSI',
+        width: 80,
+        customRender: (args) => {
+          const value = parseFloat(args.value);
+          let color = '#7f8c8d';
+          let bgColor = '#ffffff';
+          
+          if (value > 70) {
+            color = '#e74c3c';
+            bgColor = '#fdf2f2';
+          } else if (value > 50) {
+            color = '#f39c12';
+          } else if (value < 30) {
+            color = '#27ae60';
+            bgColor = '#d5f4e6';
+          }
+          
+          return `
+            <div style="text-align: right; font-family: Monaco, Consolas, monospace; font-weight: bold; color: ${color}; background: ${bgColor}; padding: 2px 4px; border-radius: 3px;">
+              ${value.toFixed(1)}
+            </div>
+          `;
+        }
+      },
+      {
+        field: 'actions',
+        caption: 'Actions',
+        width: 180,
+        customRender: (args) => {
+          const { record } = args;
+          const isWatched = this.watchlist.has(record.symbol);
+          
+          return `
+            <div class="trading-actions" style="display: flex; gap: 4px; justify-content: center;">
+              <button onclick="tradingDashboard.buyStock('${record.symbol}')" 
+                class="btn-buy" style="padding: 3px 8px; background: #27ae60; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                BUY
+              </button>
+              <button onclick="tradingDashboard.sellStock('${record.symbol}')" 
+                class="btn-sell" style="padding: 3px 8px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                SELL
+              </button>
+              <button onclick="tradingDashboard.toggleWatchlist('${record.symbol}')" 
+                class="btn-watch" style="padding: 3px 8px; background: ${isWatched ? '#f39c12' : '#95a5a6'}; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                ${isWatched ? 'UNWATCH' : 'WATCH'}
+              </button>
+              <button onclick="tradingDashboard.showChart('${record.symbol}')" 
+                class="btn-chart" style="padding: 3px 8px; background: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">
+                CHART
+              </button>
+            </div>
+          `;
+        }
+      }
+    ];
+    
+    // Initialize table with advanced configuration
+    this.table = new VTable.ListTable({
+      container: this.container,
+      columns: columns,
+      records: this.generateSampleData(),
+      
+      // Performance settings
+      defaultRowHeight: 45,
+      defaultHeaderRowHeight: 50,
+      enableVirtualScroll: true,
+      pixelRatio: window.devicePixelRatio || 1,
+      
+      // Professional theme
+      theme: {
+        defaultStyle: {
+          borderColor: '#2c3e50',
+          borderWidth: 1,
+          bgColor: '#ffffff',
+          color: '#2c3e50',
+          fontSize: 13,
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+        },
+        headerStyle: {
+          borderColor: '#34495e',
+          borderWidth: 1,
+          bgColor: '#34495e',
+          color: '#ffffff',
+          fontSize: 13,
+          fontWeight: 'bold',
+          textAlign: 'center'
+        },
+        bodyStyle: {
+          borderColor: '#ecf0f1',
+          borderWidth: 1
+        },
+        frameStyle: {
+          borderColor: '#2c3e50',
+          borderWidth: 2,
+          cornerRadius: 8,
+          shadowBlur: 10,
+          shadowColor: 'rgba(44, 62, 80, 0.2)'
+        }
+      },
+      
+      // Interactive features
+      select: {
+        enableRowSelect: true,
+        enableMultiSelect: true,
+        highlightMode: 'row'
+      },
+      
+      sort: {
+        enableSort: true,
+        sortMode: 'multiple'
+      },
+      
+      // Animation for data updates
+      animationAppear: {
+        duration: 200,
+        easing: 'ease-out'
+      }
+    });
+    
+    this.setupEventHandlers();
+  }
+  
+  setupEventHandlers() {
+    // Click handler for stock details
+    this.table.on('click_cell', (event) => {
+      if (event.field === 'symbol') {
+        this.showStockDetails(event.record);
+      }
+    });
+    
+    // Selection change handler
+    this.table.on('selection_changed', (event) => {
+      this.updatePortfolioMetrics(event.selectedRows);
+    });
+    
+    // Double-click for quick actions
+    this.table.on('dblclick_cell', (event) => {
+      if (event.field === 'lastPrice') {
+        this.quickTrade(event.record.symbol);
+      }
+    });
+  }
+  
+  generateSampleData() {
+    const stocks = [
+      { symbol: 'AAPL', companyName: 'Apple Inc.', sector: 'Technology' },
+      { symbol: 'GOOGL', companyName: 'Alphabet Inc.', sector: 'Technology' },
+      { symbol: 'MSFT', companyName: 'Microsoft Corporation', sector: 'Technology' },
+      { symbol: 'AMZN', companyName: 'Amazon.com Inc.', sector: 'Consumer Discretionary' },
+      { symbol: 'TSLA', companyName: 'Tesla Inc.', sector: 'Consumer Discretionary' },
+      { symbol: 'NVDA', companyName: 'NVIDIA Corporation', sector: 'Technology' },
+      { symbol: 'META', companyName: 'Meta Platforms Inc.', sector: 'Technology' },
+      { symbol: 'BRK.B', companyName: 'Berkshire Hathaway Inc.', sector: 'Financial Services' },
+      { symbol: 'JPM', companyName: 'JPMorgan Chase & Co.', sector: 'Financial Services' },
+      { symbol: 'JNJ', companyName: 'Johnson & Johnson', sector: 'Healthcare' }
+    ];
+    
+    return stocks.map(stock => {
+      const basePrice = 50 + Math.random() * 500;
+      const change = (Math.random() - 0.5) * 20;
+      const volume = Math.floor(Math.random() * 50000000) + 1000000;
+      
+      return {
+        ...stock,
+        lastPrice: basePrice,
+        priceChange: change,
+        percentChange: (change / basePrice) * 100,
+        volume: volume,
+        marketCap: basePrice * (Math.random() * 10000000000 + 1000000000),
+        pe: 15 + Math.random() * 25,
+        dividend: Math.random() * 4,
+        high52w: basePrice * (1 + Math.random() * 0.5),
+        low52w: basePrice * (1 - Math.random() * 0.3),
+        rsi: Math.random() * 100,
+        lastUpdate: new Date()
+      };
+    });
+  }
+  
+  startRealTimeUpdates() {
+    this.updateInterval = setInterval(() => {
+      this.updateMarketData();
+    }, 2000); // Update every 2 seconds
+  }
+  
+  updateMarketData() {
+    const currentData = this.table.getAllRecords();
+    const updatedData = currentData.map(record => {
+      const volatility = 0.02; // 2% volatility
+      const change = (Math.random() - 0.5) * record.lastPrice * volatility;
+      const newPrice = Math.max(0.01, record.lastPrice + change);
+      
+      return {
+        ...record,
+        lastPrice: newPrice,
+        priceChange: change,
+        percentChange: (change / record.lastPrice) * 100,
+        volume: record.volume + Math.floor(Math.random() * 100000),
+        rsi: Math.max(0, Math.min(100, record.rsi + (Math.random() - 0.5) * 5)),
+        lastUpdate: new Date()
+      };
+    });
+    
+    this.table.updateOption({ records: updatedData });
+    this.checkAlerts(updatedData);
+  }
+  
+  getTrendIndicator(symbol) {
+    const data = this.marketData.get(symbol);
+    if (!data || !data.history) {
+      return { symbol: '●', color: '#95a5a6' };
+    }
+    
+    const recent = data.history.slice(-5);
+    const trend = recent[recent.length - 1] - recent[0];
+    
+    if (trend > 0) return { symbol: '▲', color: '#27ae60' };
+    if (trend < 0) return { symbol: '▼', color: '#e74c3c' };
+    return { symbol: '●', color: '#95a5a6' };
+  }
+  
+  buyStock(symbol) {
+    console.log(`Buy order initiated for ${symbol}`);
+    this.showOrderDialog(symbol, 'BUY');
+  }
+  
+  sellStock(symbol) {
+    console.log(`Sell order initiated for ${symbol}`);
+    this.showOrderDialog(symbol, 'SELL');
+  }
+  
+  toggleWatchlist(symbol) {
+    if (this.watchlist.has(symbol)) {
+      this.watchlist.delete(symbol);
+      console.log(`${symbol} removed from watchlist`);
+    } else {
+      this.watchlist.add(symbol);
+      console.log(`${symbol} added to watchlist`);
+    }
+    
+    // Refresh the table to update watchlist indicators
+    this.table.updateSize();
+  }
+  
+  showChart(symbol) {
+    console.log(`Opening chart for ${symbol}`);
+    // Implementation would show a detailed chart modal
+    this.openChartModal(symbol);
+  }
+  
+  showOrderDialog(symbol, type) {
+    const modal = document.createElement('div');
+    modal.className = 'order-modal';
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    `;
+    
+    const record = this.table.getAllRecords().find(r => r.symbol === symbol);
+    const price = record ? record.lastPrice.toFixed(2) : '0.00';
+    
+    modal.innerHTML = `
+      <div style="background: white; padding: 30px; border-radius: 12px; min-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <h3 style="margin: 0 0 20px 0; color: #2c3e50;">${type} Order - ${symbol}</h3>
+        
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Current Price:</label>
+          <div style="font-size: 18px; font-weight: bold; color: ${type === 'BUY' ? '#27ae60' : '#e74c3c'};">$${price}</div>
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Quantity:</label>
+          <input type="number" id="quantity" value="100" min="1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Order Type:</label>
+          <select id="orderType" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="market">Market Order</option>
+            <option value="limit">Limit Order</option>
+            <option value="stop">Stop Order</option>
+          </select>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 5px; font-weight: bold;">Estimated Total:</label>
+          <div id="estimatedTotal" style="font-size: 16px; font-weight: bold; color: #2c3e50;">$${(parseFloat(price) * 100).toFixed(2)}</div>
+        </div>
+        
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button onclick="document.body.removeChild(this.closest('.order-modal'))" 
+            style="padding: 8px 16px; border: 1px solid #95a5a6; background: white; color: #95a5a6; border-radius: 4px; cursor: pointer;">
+            Cancel
+          </button>
+          <button onclick="tradingDashboard.submitOrder('${symbol}', '${type}', this)" 
+            style="padding: 8px 16px; border: none; background: ${type === 'BUY' ? '#27ae60' : '#e74c3c'}; color: white; border-radius: 4px; cursor: pointer;">
+            Place ${type} Order
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Update total when quantity changes
+    const quantityInput = modal.querySelector('#quantity');
+    const totalDiv = modal.querySelector('#estimatedTotal');
+    
+    quantityInput.addEventListener('input', () => {
+      const total = parseFloat(price) * parseInt(quantityInput.value || 0);
+      totalDiv.textContent = `$${total.toFixed(2)}`;
+    });
+  }
+  
+  submitOrder(symbol, type, button) {
+    const modal = button.closest('.order-modal');
+    const quantity = modal.querySelector('#quantity').value;
+    const orderType = modal.querySelector('#orderType').value;
+    
+    console.log(`${type} order submitted:`, {
+      symbol,
+      quantity: parseInt(quantity),
+      orderType,
+      timestamp: new Date()
+    });
+    
+    // Simulate order confirmation
+    alert(`${type} order for ${quantity} shares of ${symbol} has been placed successfully!`);
+    
+    document.body.removeChild(modal);
+  }
+  
+  openChartModal(symbol) {
+    const modal = document.createElement('div');
+    modal.className = 'chart-modal';
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    `;
+    
+    modal.innerHTML = `
+      <div style="background: white; padding: 20px; border-radius: 12px; width: 80%; height: 70%; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="margin: 0; color: #2c3e50;">${symbol} - Price Chart</h3>
+          <button onclick="document.body.removeChild(this.closest('.chart-modal'))" 
+            style="background: none; border: none; font-size: 24px; cursor: pointer; color: #95a5a6;">✕</button>
+        </div>
+        
+        <div style="width: 100%; height: calc(100% - 60px); background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #7f8c8d;">
+          <div style="text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 10px;">📈</div>
+            <div>Chart visualization would be rendered here</div>
+            <div style="font-size: 14px; margin-top: 10px;">Integration with charting library like VChart or TradingView</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+  }
+  
+  checkAlerts(data) {
+    // Implementation for price alerts
+    data.forEach(stock => {
+      // Check for significant price movements
+      if (Math.abs(stock.percentChange) > 5) {
+        this.addAlert({
+          symbol: stock.symbol,
+          type: 'price_movement',
+          message: `${stock.symbol} moved ${stock.percentChange > 0 ? 'up' : 'down'} ${Math.abs(stock.percentChange).toFixed(2)}%`,
+          timestamp: new Date()
+        });
+      }
+      
+      // Check RSI alerts
+      if (stock.rsi > 70) {
+        this.addAlert({
+          symbol: stock.symbol,
+          type: 'overbought',
+          message: `${stock.symbol} RSI indicates overbought condition (${stock.rsi.toFixed(1)})`,
+          timestamp: new Date()
+        });
+      } else if (stock.rsi < 30) {
+        this.addAlert({
+          symbol: stock.symbol,
+          type: 'oversold',
+          message: `${stock.symbol} RSI indicates oversold condition (${stock.rsi.toFixed(1)})`,
+          timestamp: new Date()
+        });
+      }
+    });
+  }
+  
+  addAlert(alert) {
+    this.alerts.unshift(alert);
+    if (this.alerts.length > 50) {
+      this.alerts = this.alerts.slice(0, 50); // Keep only last 50 alerts
+    }
+    
+    // Show toast notification
+    this.showNotification(alert.message, alert.type);
+  }
+  
+  showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'price_movement' ? '#3498db' : type === 'overbought' ? '#e74c3c' : '#f39c12'};
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 2000;
+      font-size: 14px;
+      max-width: 300px;
+      animation: slideInRight 0.3s ease-out;
+    `;
+    
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => {
+          if (notification.parentNode) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }
+    }, 5000);
+  }
+  
+  destroy() {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+    if (this.table) {
+      this.table.release();
+    }
+  }
+}
+
+// Global reference for button actions
+window.tradingDashboard = null;
+
+// Initialize dashboard when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  window.tradingDashboard = new FinancialTradingDashboard('tradingTableContainer');
+});
+
+// Add required CSS animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+```
+
 This comprehensive documentation covers the complete VTable library functionality, from basic usage to advanced features, performance optimization, framework integration, and detailed API reference. The documentation is designed to help developers at all levels understand and effectively use VTable for their data visualization and analysis needs.
 
 VTable is a powerful, flexible library that can handle everything from simple data tables to complex analytical dashboards with embedded charts and visualizations. Its canvas-based rendering engine ensures high performance even with large datasets, while its extensive API provides the flexibility needed for custom implementations.
 
 Key strengths of VTable include:
 - High-performance rendering capable of handling millions of rows
-- Three distinct table types for different use cases
-- Comprehensive theming and styling system
-- Extensive event handling for interactive applications
-- Framework integrations for React, Vue, and Angular
-- Virtual scrolling and memory optimization
-- Rich visualization capabilities with embedded charts
-- Comprehensive TypeScript support
-- Professional-grade features like pivot tables and data analysis tools
+- Three distinct table types for different use cases (ListTable, PivotTable, PivotChart)
+- Comprehensive theming and styling system with professional-grade customization
+- Extensive event handling for interactive applications and real-time updates
+- Framework integrations for React, Vue, Angular, and OpenInula with TypeScript support
+- Virtual scrolling and advanced memory optimization techniques
+- Rich visualization capabilities with embedded charts and custom renderers
+- Comprehensive TypeScript support with full type definitions
+- Professional-grade features like pivot tables, data analysis tools, and export capabilities
+- Enterprise-ready security, accessibility, and internationalization features
+- Advanced performance monitoring and debugging tools
+- Comprehensive plugin architecture for extensibility
+- Real-time data streaming and WebSocket integration
+- Advanced filtering, sorting, and search capabilities
+- Professional data export in multiple formats (CSV, Excel, PDF, JSON)
+- Complete accessibility support with ARIA labels and keyboard navigation
+- Mobile-responsive design with touch gesture support
+- Advanced caching and data virtualization strategies
+- Professional-grade error handling and recovery mechanisms
 
-Whether you're building a simple data grid, a complex business intelligence dashboard, or an interactive data exploration tool, VTable provides the tools and performance needed to create exceptional user experiences.
+Whether you're building a simple data grid, a complex business intelligence dashboard, an interactive data exploration tool, or an enterprise-grade financial trading platform, VTable provides the comprehensive tools, performance capabilities, and professional features needed to create exceptional user experiences that scale from thousands to millions of records while maintaining smooth, responsive interactions.
+
+The library's modular architecture allows developers to use only the features they need, while its extensive plugin ecosystem enables custom extensions for specialized use cases. With comprehensive documentation, extensive examples, and professional support, VTable is the ideal choice for modern web applications requiring high-performance data visualization and analysis capabilities.
