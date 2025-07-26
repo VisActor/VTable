@@ -1,0 +1,1794 @@
+# VTable Comprehensive Documentation for Language Models
+
+## OVERVIEW AND INTRODUCTION
+
+VTable is a high-performance, multidimensional data analysis table library built on the VRender rendering engine. It provides three main table types: ListTable, PivotTable, and PivotChart, each designed for different data visualization and analysis needs. VTable excels at handling large datasets with millions of rows while maintaining smooth user interactions through virtual scrolling and optimized canvas-based rendering.
+
+The library is part of the VisActor ecosystem and integrates seamlessly with VChart for embedded visualizations. VTable supports TypeScript, provides comprehensive React/Vue/Angular integrations, and offers extensive customization options for themes, styling, and behavior.
+
+## INSTALLATION AND SETUP
+
+### Package Manager Installation
+```bash
+# Using npm
+npm install @visactor/vtable
+
+# Using yarn
+yarn add @visactor/vtable
+
+# Using pnpm
+pnpm add @visactor/vtable
+```
+
+### CDN Installation
+```html
+<!-- Production version -->
+<script src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"></script>
+
+<!-- Development version -->
+<script src="https://unpkg.com/@visactor/vtable@latest/build/index.js"></script>
+```
+
+### ES Module Import
+```javascript
+import * as VTable from '@visactor/vtable';
+import { ListTable, PivotTable, PivotChart } from '@visactor/vtable';
+```
+
+### CommonJS Import
+```javascript
+const VTable = require('@visactor/vtable');
+const { ListTable, PivotTable, PivotChart } = require('@visactor/vtable');
+```
+
+## LISTTABLE COMPREHENSIVE GUIDE
+
+### Basic ListTable Creation
+```javascript
+import { ListTable } from '@visactor/vtable';
+
+const listTable = new ListTable({
+  container: document.getElementById('tableContainer'),
+  columns: [
+    {
+      field: 'id',
+      caption: 'ID',
+      width: 80,
+      style: {
+        textAlign: 'center',
+        fontWeight: 'bold'
+      }
+    },
+    {
+      field: 'name',
+      caption: 'Employee Name',
+      width: 200,
+      sort: true,
+      style: {
+        textAlign: 'left',
+        fontWeight: 'normal'
+      }
+    },
+    {
+      field: 'department',
+      caption: 'Department',
+      width: 150,
+      sort: true
+    },
+    {
+      field: 'salary',
+      caption: 'Annual Salary',
+      width: 120,
+      style: {
+        textAlign: 'right',
+        fontFamily: 'monospace'
+      },
+      format: (value) => '$' + Number(value).toLocaleString()
+    },
+    {
+      field: 'startDate',
+      caption: 'Start Date',
+      width: 120,
+      format: (value) => new Date(value).toLocaleDateString()
+    }
+  ],
+  records: [
+    {
+      id: 1,
+      name: 'John Doe',
+      department: 'Engineering',
+      salary: 85000,
+      startDate: '2020-01-15'
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      department: 'Marketing',
+      salary: 75000,
+      startDate: '2019-03-20'
+    }
+  ],
+  autoFillWidth: true,
+  autoFillHeight: true
+});
+```
+
+### ListTable Column Types and Configurations
+
+#### Text Columns
+```javascript
+{
+  field: 'description',
+  caption: 'Description',
+  width: 300,
+  cellType: 'text',
+  style: {
+    textAlign: 'left',
+    fontFamily: 'Arial, sans-serif',
+    fontSize: 14,
+    color: '#333333',
+    textOverflow: 'ellipsis'
+  },
+  format: (value, col, row, table) => {
+    return value ? value.toString().toUpperCase() : '';
+  }
+}
+```
+
+#### Link Columns
+```javascript
+{
+  field: 'website',
+  caption: 'Website',
+  width: 200,
+  cellType: 'link',
+  templateLink: 'https://{website}',
+  linkJump: true,
+  style: {
+    color: '#1e88e5',
+    textDecoration: 'underline',
+    cursor: 'pointer'
+  }
+}
+```
+
+#### Image Columns
+```javascript
+{
+  field: 'avatar',
+  caption: 'Avatar',
+  width: 80,
+  cellType: 'image',
+  keepAspectRatio: true,
+  imageAutoSizing: true,
+  style: {
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: '#e0e0e0'
+  }
+}
+```
+
+#### Progress Bar Columns
+```javascript
+{
+  field: 'progress',
+  caption: 'Project Progress',
+  width: 150,
+  cellType: 'progressbar',
+  min: 0,
+  max: 100,
+  style: {
+    barColor: '#4caf50',
+    barBgColor: '#e8f5e8',
+    barHeight: 20,
+    textAlign: 'center',
+    textColor: '#ffffff',
+    borderRadius: 10
+  },
+  format: (value) => value + '%'
+}
+```
+
+#### Chart Columns
+```javascript
+{
+  field: 'monthlyData',
+  caption: 'Monthly Trend',
+  width: 200,
+  cellType: 'chart',
+  chartSpec: {
+    type: 'line',
+    data: {
+      values: [] // Will be populated from row data
+    },
+    xField: 'month',
+    yField: 'value',
+    point: {
+      visible: true,
+      size: 3
+    },
+    line: {
+      style: {
+        stroke: '#1e88e5',
+        lineWidth: 2
+      }
+    },
+    axes: [
+      {
+        orient: 'bottom',
+        visible: false
+      },
+      {
+        orient: 'left',
+        visible: false
+      }
+    ]
+  }
+}
+```
+
+### ListTable Advanced Features
+
+#### Sorting Configuration
+```javascript
+const table = new ListTable({
+  // ... other options
+  sortState: {
+    field: 'name',
+    order: 'asc' // 'asc', 'desc', or 'normal'
+  },
+  columns: [
+    {
+      field: 'name',
+      caption: 'Name',
+      sort: true, // Enable sorting for this column
+      sortCompare: (a, b, order) => {
+        // Custom sorting logic
+        if (order === 'asc') {
+          return a.localeCompare(b);
+        } else {
+          return b.localeCompare(a);
+        }
+      }
+    }
+  ]
+});
+```
+
+#### Selection and Interaction
+```javascript
+const table = new ListTable({
+  // ... other options
+  select: {
+    mode: 'row', // 'cell', 'row', 'column'
+    headerSelectMode: true,
+    disableHeaderSelect: false,
+    disableSelect: false
+  },
+  hover: {
+    highlightMode: 'row', // 'cell', 'row', 'column', 'cross'
+    disableHover: false
+  },
+  keyboardOptions: {
+    selectAllOnCtrlA: true,
+    copySelected: true,
+    pasteValueToCell: true,
+    moveEditCellOnArrowKeys: true
+  }
+});
+```
+
+#### Editing and Data Manipulation
+```javascript
+const table = new ListTable({
+  // ... other options
+  editor: 'input', // Global editor
+  columns: [
+    {
+      field: 'name',
+      caption: 'Name',
+      editor: 'input',
+      style: {
+        bgColor: (args) => {
+          if (args.row % 2 === 0) return '#f8f9fa';
+          return '#ffffff';
+        }
+      }
+    },
+    {
+      field: 'status',
+      caption: 'Status',
+      editor: 'list',
+      editorProps: {
+        values: ['Active', 'Inactive', 'Pending']
+      }
+    },
+    {
+      field: 'startDate',
+      caption: 'Start Date',
+      editor: 'date',
+      editorProps: {
+        format: 'YYYY-MM-DD'
+      }
+    }
+  ]
+});
+
+// Event handling for data changes
+table.on('change_cell_value', (args) => {
+  console.log('Cell value changed:', {
+    col: args.col,
+    row: args.row,
+    field: args.field,
+    oldValue: args.oldValue,
+    newValue: args.newValue
+  });
+});
+```
+
+#### Frozen Columns and Rows
+```javascript
+const table = new ListTable({
+  // ... other options
+  frozenColCount: 2, // Freeze first 2 columns
+  frozenRowCount: 1, // Freeze header row
+  rightFrozenColCount: 1, // Freeze last column
+  bottomFrozenRowCount: 1 // Freeze last row
+});
+```
+
+### ListTable Performance Optimization
+
+#### Large Dataset Handling
+```javascript
+const table = new ListTable({
+  // ... other options
+  records: [], // Start with empty records
+  pagination: {
+    enable: true,
+    pageSize: 100,
+    currentPage: 1
+  },
+  // Enable virtual scrolling
+  scrollMode: 'virtual'
+});
+
+// Load data progressively
+async function loadData(page, pageSize) {
+  const response = await fetch(`/api/data?page=${page}&size=${pageSize}`);
+  const data = await response.json();
+  
+  if (page === 1) {
+    table.updateRecords(data.records);
+  } else {
+    table.addRecords(data.records);
+  }
+}
+```
+
+#### Memory Management
+```javascript
+// Dispose table when no longer needed
+table.release();
+
+// Clear data without destroying table
+table.updateRecords([]);
+
+// Update specific records efficiently
+table.updateRecords(newData, [rowIndex1, rowIndex2]);
+```
+
+## PIVOTTABLE COMPREHENSIVE GUIDE
+
+### Basic PivotTable Creation
+```javascript
+import { PivotTable } from '@visactor/vtable';
+
+const pivotTable = new PivotTable({
+  container: document.getElementById('pivotContainer'),
+  records: [
+    {
+      region: 'North',
+      category: 'Electronics',
+      product: 'Laptop',
+      quarter: 'Q1',
+      sales: 50000,
+      profit: 10000,
+      units: 100
+    },
+    {
+      region: 'North',
+      category: 'Electronics',
+      product: 'Phone',
+      quarter: 'Q1',
+      sales: 30000,
+      profit: 6000,
+      units: 150
+    }
+    // ... more data
+  ],
+  rows: [
+    {
+      dimensionKey: 'region',
+      caption: 'Sales Region',
+      width: 'auto',
+      headerStyle: {
+        bgColor: '#4472c4',
+        color: 'white',
+        fontWeight: 'bold'
+      },
+      headerType: 'text'
+    },
+    {
+      dimensionKey: 'category',
+      caption: 'Product Category',
+      width: 'auto',
+      headerStyle: {
+        bgColor: '#70ad47',
+        color: 'white'
+      }
+    }
+  ],
+  columns: [
+    {
+      dimensionKey: 'quarter',
+      caption: 'Quarter',
+      width: 'auto',
+      headerStyle: {
+        bgColor: '#ffc000',
+        color: 'black',
+        fontWeight: 'bold'
+      }
+    }
+  ],
+  indicators: [
+    {
+      indicatorKey: 'sales',
+      caption: 'Total Sales',
+      width: 120,
+      format: (rec) => '$' + Number(rec.sales).toLocaleString(),
+      aggregation: 'SUM',
+      style: {
+        textAlign: 'right',
+        fontFamily: 'monospace',
+        bgColor: (args) => {
+          const value = Number(args.value);
+          if (value > 100000) return '#d4edda';
+          if (value > 50000) return '#fff3cd';
+          return '#f8d7da';
+        }
+      }
+    },
+    {
+      indicatorKey: 'profit',
+      caption: 'Profit Margin',
+      width: 100,
+      format: (rec) => '$' + Number(rec.profit).toLocaleString(),
+      aggregation: 'SUM',
+      style: {
+        textAlign: 'right',
+        color: (args) => {
+          return Number(args.value) > 0 ? '#27ae60' : '#e74c3c';
+        }
+      }
+    }
+  ],
+  corner: {
+    titleOnDimension: 'row',
+    headerStyle: {
+      bgColor: '#2c3e50',
+      color: 'white',
+      fontWeight: 'bold'
+    }
+  }
+});
+```
+
+### PivotTable Advanced Dimensions
+
+#### Hierarchical Row Dimensions
+```javascript
+const pivotTable = new PivotTable({
+  // ... other options
+  rows: [
+    {
+      dimensionKey: 'country',
+      caption: 'Country',
+      width: 150,
+      headerStyle: {
+        bgColor: '#34495e',
+        color: 'white',
+        fontWeight: 'bold'
+      },
+      headerType: 'text',
+      showSort: true,
+      headerIcon: {
+        type: 'svg',
+        svg: '<svg>...</svg>',
+        width: 16,
+        height: 16
+      }
+    },
+    {
+      dimensionKey: 'state',
+      caption: 'State/Province',
+      width: 130,
+      headerStyle: {
+        bgColor: '#7f8c8d',
+        color: 'white'
+      },
+      showSort: true
+    },
+    {
+      dimensionKey: 'city',
+      caption: 'City',
+      width: 120,
+      headerStyle: {
+        bgColor: '#95a5a6',
+        color: 'black'
+      }
+    }
+  ]
+});
+```
+
+#### Complex Column Dimensions
+```javascript
+const pivotTable = new PivotTable({
+  // ... other options
+  columns: [
+    {
+      dimensionKey: 'year',
+      caption: 'Year',
+      width: 80,
+      headerStyle: {
+        bgColor: '#e67e22',
+        color: 'white',
+        fontWeight: 'bold'
+      }
+    },
+    {
+      dimensionKey: 'quarter',
+      caption: 'Quarter',
+      width: 80,
+      headerStyle: {
+        bgColor: '#f39c12',
+        color: 'white'
+      }
+    },
+    {
+      dimensionKey: 'month',
+      caption: 'Month',
+      width: 80,
+      headerStyle: {
+        bgColor: '#f1c40f',
+        color: 'black'
+      }
+    }
+  ]
+});
+```
+
+### PivotTable Indicators and Aggregations
+
+#### Multiple Indicators with Different Aggregations
+```javascript
+const pivotTable = new PivotTable({
+  // ... other options
+  indicators: [
+    {
+      indicatorKey: 'revenue',
+      caption: 'Total Revenue',
+      width: 120,
+      format: (rec) => '$' + Number(rec).toLocaleString(),
+      aggregation: 'SUM',
+      style: {
+        textAlign: 'right',
+        fontWeight: 'bold',
+        bgColor: '#e8f5e8'
+      }
+    },
+    {
+      indicatorKey: 'avgOrderValue',
+      caption: 'Avg Order Value',
+      width: 120,
+      format: (rec) => '$' + Number(rec).toFixed(2),
+      aggregation: 'AVG',
+      style: {
+        textAlign: 'right',
+        bgColor: '#e8f0ff'
+      }
+    },
+    {
+      indicatorKey: 'orderCount',
+      caption: 'Order Count',
+      width: 100,
+      format: (rec) => Number(rec).toLocaleString(),
+      aggregation: 'COUNT',
+      style: {
+        textAlign: 'center',
+        bgColor: '#fff8e8'
+      }
+    },
+    {
+      indicatorKey: 'maxSale',
+      caption: 'Largest Sale',
+      width: 120,
+      format: (rec) => '$' + Number(rec).toLocaleString(),
+      aggregation: 'MAX',
+      style: {
+        textAlign: 'right',
+        bgColor: '#ffe8e8'
+      }
+    },
+    {
+      indicatorKey: 'minSale',
+      caption: 'Smallest Sale',
+      width: 120,
+      format: (rec) => '$' + Number(rec).toLocaleString(),
+      aggregation: 'MIN',
+      style: {
+        textAlign: 'right',
+        bgColor: '#f0e8ff'
+      }
+    }
+  ]
+});
+```
+
+#### Custom Aggregation Functions
+```javascript
+const pivotTable = new PivotTable({
+  // ... other options
+  indicators: [
+    {
+      indicatorKey: 'weightedAverage',
+      caption: 'Weighted Average',
+      width: 130,
+      format: (rec) => Number(rec).toFixed(2),
+      aggregation: (values, records) => {
+        let totalWeight = 0;
+        let weightedSum = 0;
+        
+        records.forEach((record, index) => {
+          const weight = record.weight || 1;
+          const value = values[index];
+          totalWeight += weight;
+          weightedSum += value * weight;
+        });
+        
+        return totalWeight > 0 ? weightedSum / totalWeight : 0;
+      },
+      style: {
+        textAlign: 'right',
+        fontStyle: 'italic'
+      }
+    }
+  ]
+});
+```
+
+### PivotTable Data Configuration
+
+#### Data Aggregation Rules
+```javascript
+const pivotTable = new PivotTable({
+  // ... other options
+  dataConfig: {
+    aggregationRules: [
+      {
+        indicatorKey: 'sales',
+        field: 'salesAmount',
+        aggregationType: 'SUM'
+      },
+      {
+        indicatorKey: 'avgDiscount',
+        field: 'discount',
+        aggregationType: 'AVG'
+      },
+      {
+        indicatorKey: 'orderCount',
+        field: 'orderId',
+        aggregationType: 'COUNT'
+      }
+    ],
+    derivedFieldRules: [
+      {
+        fieldName: 'profitMargin',
+        derivedFunc: (record) => {
+          const sales = record.salesAmount || 0;
+          const cost = record.cost || 0;
+          return sales > 0 ? ((sales - cost) / sales * 100).toFixed(2) : 0;
+        }
+      }
+    ],
+    totals: {
+      row: {
+        showGrandTotals: true,
+        showSubTotals: true,
+        subTotalsDimensions: ['region', 'category'],
+        grandTotalLabel: 'Grand Total',
+        subTotalLabel: 'Subtotal'
+      },
+      column: {
+        showGrandTotals: true,
+        showSubTotals: true,
+        subTotalsDimensions: ['year'],
+        grandTotalLabel: 'Total',
+        subTotalLabel: 'Subtotal'
+      }
+    }
+  }
+});
+```
+
+## PIVOTCHART COMPREHENSIVE GUIDE
+
+### Basic PivotChart Creation
+```javascript
+import { PivotChart } from '@visactor/vtable';
+
+const pivotChart = new PivotChart({
+  container: document.getElementById('chartContainer'),
+  records: salesData,
+  rows: [
+    {
+      dimensionKey: 'category',
+      caption: 'Product Category',
+      width: 150
+    }
+  ],
+  columns: [
+    {
+      dimensionKey: 'quarter',
+      caption: 'Quarter',
+      width: 100
+    }
+  ],
+  indicators: [
+    {
+      indicatorKey: 'sales',
+      caption: 'Sales Trend',
+      width: 300,
+      chartSpec: {
+        type: 'line',
+        data: {
+          id: 'data'
+        },
+        xField: 'quarter',
+        yField: 'sales',
+        seriesField: 'category',
+        color: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'],
+        point: {
+          visible: true,
+          size: 4,
+          style: {
+            stroke: '#ffffff',
+            strokeWidth: 2
+          }
+        },
+        line: {
+          style: {
+            lineWidth: 3,
+            lineCap: 'round',
+            lineJoin: 'round'
+          }
+        },
+        axes: [
+          {
+            orient: 'bottom',
+            type: 'band',
+            tick: {
+              visible: true,
+              tickSize: 5
+            },
+            label: {
+              style: {
+                fontSize: 12,
+                fill: '#666666'
+              }
+            }
+          },
+          {
+            orient: 'left',
+            type: 'linear',
+            tick: {
+              visible: true,
+              tickSize: 5
+            },
+            label: {
+              formatMethod: (value) => '$' + (value / 1000) + 'K',
+              style: {
+                fontSize: 12,
+                fill: '#666666'
+              }
+            }
+          }
+        ],
+        legends: [
+          {
+            visible: true,
+            position: 'top',
+            item: {
+              visible: true,
+              background: {
+                visible: false
+              },
+              label: {
+                style: {
+                  fontSize: 12,
+                  fill: '#333333'
+                }
+              }
+            }
+          }
+        ],
+        tooltip: {
+          visible: true,
+          mark: {
+            visible: true
+          },
+          style: {
+            panel: {
+              padding: 10,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              border: {
+                color: '#ccc',
+                width: 1,
+                radius: 4
+              }
+            },
+            titleLabel: {
+              fontSize: 14,
+              fontColor: '#ffffff',
+              fontWeight: 'bold'
+            },
+            keyLabel: {
+              fontSize: 12,
+              fontColor: '#ffffff'
+            },
+            valueLabel: {
+              fontSize: 12,
+              fontColor: '#ffffff'
+            }
+          }
+        }
+      }
+    }
+  ],
+  indicatorsAsCol: false,
+  corner: {
+    titleOnDimension: 'row'
+  },
+  defaultHeaderRowHeight: 50,
+  defaultRowHeight: 250
+});
+```
+
+### PivotChart Chart Types and Configurations
+
+#### Bar Charts in PivotChart
+```javascript
+{
+  indicatorKey: 'sales',
+  caption: 'Sales by Category',
+  width: 350,
+  chartSpec: {
+    type: 'bar',
+    data: { id: 'data' },
+    xField: 'category',
+    yField: 'sales',
+    seriesField: 'region',
+    color: ['#5470c6', '#91cc75', '#fac858', '#ee6666'],
+    bar: {
+      cornerRadius: [4, 4, 0, 0],
+      style: {
+        stroke: '#ffffff',
+        strokeWidth: 1
+      }
+    },
+    barBackground: {
+      visible: true,
+      style: {
+        fill: '#f0f0f0',
+        fillOpacity: 0.3
+      }
+    },
+    label: {
+      visible: true,
+      position: 'top',
+      formatMethod: (value) => '$' + (value / 1000) + 'K',
+      style: {
+        fontSize: 10,
+        fill: '#333333'
+      }
+    }
+  }
+}
+```
+
+#### Area Charts in PivotChart
+```javascript
+{
+  indicatorKey: 'revenue',
+  caption: 'Revenue Trend',
+  width: 400,
+  chartSpec: {
+    type: 'area',
+    data: { id: 'data' },
+    xField: 'month',
+    yField: 'revenue',
+    seriesField: 'product',
+    color: ['#667eea', '#764ba2', '#f093fb', '#f5576c'],
+    area: {
+      style: {
+        fillOpacity: 0.6,
+        stroke: '#ffffff',
+        strokeWidth: 2
+      }
+    },
+    line: {
+      style: {
+        lineWidth: 2,
+        lineCap: 'round'
+      }
+    },
+    point: {
+      visible: false
+    },
+    stack: true,
+    axes: [
+      {
+        orient: 'bottom',
+        type: 'band',
+        label: {
+          angle: -45,
+          style: {
+            fontSize: 10,
+            fill: '#666666'
+          }
+        }
+      },
+      {
+        orient: 'left',
+        type: 'linear',
+        label: {
+          formatMethod: (value) => '$' + (value / 1000000) + 'M'
+        }
+      }
+    ]
+  }
+}
+```
+
+#### Pie Charts in PivotChart
+```javascript
+{
+  indicatorKey: 'marketShare',
+  caption: 'Market Share',
+  width: 300,
+  chartSpec: {
+    type: 'pie',
+    data: { id: 'data' },
+    categoryField: 'category',
+    valueField: 'share',
+    color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b'],
+    pie: {
+      style: {
+        stroke: '#ffffff',
+        strokeWidth: 2
+      },
+      state: {
+        hover: {
+          outerRadius: 0.85,
+          stroke: '#000000',
+          strokeWidth: 1
+        }
+      }
+    },
+    label: {
+      visible: true,
+      position: 'outside',
+      formatMethod: (value, datum) => {
+        return datum.category + '\n' + (value * 100).toFixed(1) + '%';
+      },
+      style: {
+        fontSize: 10,
+        fill: '#333333'
+      }
+    },
+    legends: [
+      {
+        visible: true,
+        position: 'right',
+        item: {
+          shape: {
+            style: {
+              symbolType: 'circle',
+              size: 8
+            }
+          }
+        }
+      }
+    ]
+  }
+}
+```
+
+### PivotChart Interactive Features
+
+#### Chart Events and Interactions
+```javascript
+const pivotChart = new PivotChart({
+  // ... other options
+  indicators: [
+    {
+      indicatorKey: 'sales',
+      caption: 'Interactive Sales Chart',
+      width: 400,
+      chartSpec: {
+        type: 'bar',
+        // ... chart config
+        interaction: [
+          {
+            type: 'element-highlight'
+          },
+          {
+            type: 'element-select'
+          }
+        ],
+        crosshair: {
+          xField: {
+            visible: true,
+            line: {
+              style: {
+                stroke: '#000000',
+                strokeWidth: 1,
+                opacity: 0.5
+              }
+            }
+          },
+          yField: {
+            visible: true,
+            line: {
+              style: {
+                stroke: '#000000',
+                strokeWidth: 1,
+                opacity: 0.5
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+});
+
+// Chart event handling
+pivotChart.on('click_cell', (args) => {
+  if (args.cellType === 'body' && args.cellHeaderPaths.colHeaderPaths) {
+    console.log('Chart cell clicked:', args);
+    // Handle chart interaction
+  }
+});
+```
+
+### PivotChart Advanced Customization
+
+#### Multi-Chart Indicators
+```javascript
+const pivotChart = new PivotChart({
+  // ... other options
+  indicators: [
+    {
+      indicatorKey: 'sales',
+      caption: 'Sales Performance',
+      width: 300,
+      chartSpec: {
+        type: 'line',
+        // ... line chart config
+      }
+    },
+    {
+      indicatorKey: 'profit',
+      caption: 'Profit Analysis',
+      width: 300,
+      chartSpec: {
+        type: 'bar',
+        // ... bar chart config
+      }
+    },
+    {
+      indicatorKey: 'growth',
+      caption: 'Growth Rate',
+      width: 250,
+      chartSpec: {
+        type: 'pie',
+        // ... pie chart config
+      }
+    }
+  ]
+});
+```
+
+## COMPREHENSIVE STYLING AND THEMING
+
+### Built-in Themes
+```javascript
+import { themes } from '@visactor/vtable';
+
+// Available built-in themes
+const table = new ListTable({
+  // ... other options
+  theme: 'DEFAULT' // 'DEFAULT', 'ARCO', 'BRIGHT', 'DARK', 'SIMPLIFY'
+});
+
+// Apply theme programmatically
+table.updateTheme('DARK');
+```
+
+### Custom Theme Creation
+```javascript
+import { themes } from '@visactor/vtable';
+
+// Register custom theme
+const customTheme = {
+  defaultStyle: {
+    borderLineWidth: 1,
+    borderColor: '#e1e4e8',
+    color: '#24292e',
+    bgColor: '#ffffff',
+    fontSize: 14,
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif'
+  },
+  headerStyle: {
+    borderLineWidth: 1,
+    borderColor: '#d1d9e0',
+    color: '#24292e',
+    bgColor: '#f6f8fa',
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'left'
+  },
+  rowHeaderStyle: {
+    borderLineWidth: 1,
+    borderColor: '#d1d9e0',
+    color: '#24292e',
+    bgColor: '#f6f8fa',
+    fontSize: 14,
+    fontWeight: '500'
+  },
+  cornerHeaderStyle: {
+    borderLineWidth: 1,
+    borderColor: '#d1d9e0',
+    color: '#586069',
+    bgColor: '#fafbfc',
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  bodyStyle: {
+    borderLineWidth: 1,
+    borderColor: '#e1e4e8',
+    color: '#24292e',
+    bgColor: '#ffffff',
+    fontSize: 14,
+    hover: {
+      cellBgColor: '#f1f8ff',
+      inlineRowBgColor: '#f1f8ff',
+      inlineColumnBgColor: '#f1f8ff'
+    },
+    selected: {
+      cellBgColor: '#cce5ff',
+      cellBorderColor: '#0366d6'
+    }
+  },
+  frameStyle: {
+    borderLineWidth: 2,
+    borderColor: '#d1d9e0',
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowBlur: 4,
+    shadowOffsetX: 0,
+    shadowOffsetY: 2
+  }
+};
+
+themes.register('GITHUB', customTheme);
+
+// Use custom theme
+const table = new ListTable({
+  // ... other options
+  theme: 'GITHUB'
+});
+```
+
+### Dynamic Styling with Functions
+```javascript
+const table = new ListTable({
+  // ... other options
+  columns: [
+    {
+      field: 'status',
+      caption: 'Status',
+      width: 120,
+      style: {
+        bgColor: (args) => {
+          const { row, col, dataValue, table } = args;
+          switch (dataValue) {
+            case 'Active': return '#d4edda';
+            case 'Inactive': return '#f8d7da';
+            case 'Pending': return '#fff3cd';
+            default: return '#ffffff';
+          }
+        },
+        color: (args) => {
+          switch (args.dataValue) {
+            case 'Active': return '#155724';
+            case 'Inactive': return '#721c24';
+            case 'Pending': return '#856404';
+            default: return '#333333';
+          }
+        },
+        fontWeight: (args) => {
+          return args.dataValue === 'Active' ? 'bold' : 'normal';
+        }
+      }
+    },
+    {
+      field: 'score',
+      caption: 'Performance Score',
+      width: 150,
+      style: {
+        bgColor: (args) => {
+          const score = Number(args.dataValue);
+          if (score >= 90) return '#d4edda';
+          if (score >= 70) return '#fff3cd';
+          if (score >= 50) return '#ffeaa7';
+          return '#f8d7da';
+        },
+        color: (args) => {
+          const score = Number(args.dataValue);
+          if (score >= 90) return '#155724';
+          if (score >= 70) return '#856404';
+          if (score >= 50) return '#b8860b';
+          return '#721c24';
+        }
+      }
+    }
+  ]
+});
+```
+
+### Conditional Formatting
+```javascript
+const table = new ListTable({
+  // ... other options
+  columns: [
+    {
+      field: 'sales',
+      caption: 'Sales Amount',
+      width: 150,
+      style: {
+        bgColor: (args) => {
+          const value = Number(args.dataValue);
+          const max = Math.max(...args.table.records.map(r => Number(r.sales)));
+          const min = Math.min(...args.table.records.map(r => Number(r.sales)));
+          const ratio = (value - min) / (max - min);
+          
+          // Heat map coloring
+          const red = Math.floor(255 - (ratio * 100));
+          const green = Math.floor(255 - (ratio * 50));
+          const blue = Math.floor(255 - (ratio * 50));
+          
+          return `rgb(${red}, ${green}, ${blue})`;
+        },
+        color: (args) => {
+          const value = Number(args.dataValue);
+          const avg = args.table.records.reduce((sum, r) => sum + Number(r.sales), 0) / args.table.records.length;
+          return value > avg ? '#ffffff' : '#000000';
+        }
+      }
+    }
+  ]
+});
+```
+
+## COMPREHENSIVE EVENT HANDLING
+
+### Table Events
+```javascript
+const table = new ListTable({
+  // ... configuration
+});
+
+// Cell interaction events
+table.on('click_cell', (args) => {
+  console.log('Cell clicked:', {
+    col: args.col,
+    row: args.row,
+    field: args.field,
+    value: args.value,
+    cellType: args.cellType
+  });
+});
+
+table.on('dblclick_cell', (args) => {
+  console.log('Cell double-clicked:', args);
+  // Start editing or show detail view
+});
+
+table.on('mouseenter_cell', (args) => {
+  console.log('Mouse entered cell:', args);
+  // Show hover effects or tooltips
+});
+
+table.on('mouseleave_cell', (args) => {
+  console.log('Mouse left cell:', args);
+  // Remove hover effects
+});
+
+// Selection events
+table.on('selected_cell', (args) => {
+  console.log('Cell selected:', args);
+});
+
+table.on('selected_clear', (args) => {
+  console.log('Selection cleared');
+});
+
+// Editing events
+table.on('change_cell_value', (args) => {
+  console.log('Cell value changed:', {
+    col: args.col,
+    row: args.row,
+    field: args.field,
+    oldValue: args.oldValue,
+    newValue: args.newValue
+  });
+  
+  // Validate and save changes
+  if (validateCellValue(args.newValue, args.field)) {
+    saveToDatabase(args);
+  } else {
+    // Revert change
+    table.changeCellValue(args.col, args.row, args.oldValue);
+  }
+});
+
+table.on('change_header_position', (args) => {
+  console.log('Header position changed:', args);
+});
+
+// Scroll events
+table.on('scroll', (args) => {
+  console.log('Table scrolled:', {
+    scrollLeft: args.scrollLeft,
+    scrollTop: args.scrollTop
+  });
+});
+
+// Resize events
+table.on('resize_column', (args) => {
+  console.log('Column resized:', {
+    col: args.col,
+    oldWidth: args.oldWidth,
+    newWidth: args.newWidth
+  });
+  
+  // Save column width preferences
+  saveColumnWidthPreference(args.col, args.newWidth);
+});
+
+table.on('resize_column_end', (args) => {
+  console.log('Column resize ended:', args);
+});
+
+// Sort events
+table.on('sort_click', (args) => {
+  console.log('Sort clicked:', {
+    col: args.col,
+    field: args.field,
+    order: args.order
+  });
+});
+
+// Menu events
+table.on('dropdownmenu_click', (args) => {
+  console.log('Dropdown menu clicked:', args);
+});
+
+table.on('contextmenu_click', (args) => {
+  console.log('Context menu clicked:', args);
+});
+
+// Keyboard events
+table.on('keydown', (args) => {
+  console.log('Key pressed:', {
+    key: args.key,
+    code: args.code,
+    ctrlKey: args.ctrlKey,
+    shiftKey: args.shiftKey
+  });
+  
+  // Handle custom keyboard shortcuts
+  if (args.ctrlKey && args.key === 's') {
+    args.event.preventDefault();
+    saveTableData();
+  }
+});
+```
+
+### PivotTable Specific Events
+```javascript
+const pivotTable = new PivotTable({
+  // ... configuration
+});
+
+// Pivot-specific events
+pivotTable.on('pivot_sort_click', (args) => {
+  console.log('Pivot sort clicked:', args);
+});
+
+pivotTable.on('drill_menu_click', (args) => {
+  console.log('Drill menu clicked:', args);
+  
+  // Handle drill-down/drill-up
+  if (args.menuKey === 'drill_down') {
+    performDrillDown(args.dimensionKey, args.value);
+  } else if (args.menuKey === 'drill_up') {
+    performDrillUp(args.dimensionKey);
+  }
+});
+
+pivotTable.on('tree_hierarchy_state_change', (args) => {
+  console.log('Tree hierarchy changed:', args);
+});
+```
+
+## ADVANCED PERFORMANCE OPTIMIZATION
+
+### Virtual Scrolling Configuration
+```javascript
+const table = new ListTable({
+  // ... other options
+  records: [], // Start empty for dynamic loading
+  scrollMode: 'virtual',
+  overscanRowCount: 5, // Render extra rows for smooth scrolling
+  // ... other options
+});
+
+// Implement dynamic data loading
+let currentPage = 0;
+const pageSize = 100;
+let loading = false;
+
+table.on('scroll', async (args) => {
+  const { scrollTop, scrollHeight, clientHeight } = args;
+  const scrollPercentage = scrollTop / (scrollHeight - clientHeight);
+  
+  // Load more data when scrolled near bottom
+  if (scrollPercentage > 0.8 && !loading) {
+    loading = true;
+    try {
+      const newData = await loadData(currentPage + 1, pageSize);
+      if (newData.length > 0) {
+        table.addRecords(newData);
+        currentPage++;
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      loading = false;
+    }
+  }
+});
+
+async function loadData(page, size) {
+  const response = await fetch(`/api/data?page=${page}&size=${size}`);
+  const data = await response.json();
+  return data.items;
+}
+```
+
+### Memory Management and Cleanup
+```javascript
+// Proper cleanup to prevent memory leaks
+function cleanupTable(table) {
+  // Remove all event listeners
+  table.off('click_cell');
+  table.off('change_cell_value');
+  table.off('scroll');
+  
+  // Clear data
+  table.updateRecords([]);
+  
+  // Release table resources
+  table.release();
+}
+
+// Use WeakMap for storing table references
+const tableInstances = new WeakMap();
+
+function createTable(container, config) {
+  const table = new ListTable({
+    container,
+    ...config
+  });
+  
+  tableInstances.set(container, table);
+  return table;
+}
+
+// Cleanup when container is removed
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    mutation.removedNodes.forEach((node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const table = tableInstances.get(node);
+        if (table) {
+          cleanupTable(table);
+          tableInstances.delete(node);
+        }
+      }
+    });
+  });
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+```
+
+### Large Dataset Optimization
+```javascript
+// Optimize for large datasets
+const optimizedTable = new ListTable({
+  container: document.getElementById('container'),
+  // Use lazy loading for columns
+  columns: generateColumnsLazily(),
+  // Start with empty records
+  records: [],
+  // Enable virtual scrolling
+  scrollMode: 'virtual',
+  // Optimize rendering
+  renderMode: 'canvas', // Use canvas for better performance
+  // Disable expensive features for large datasets
+  hover: {
+    highlightMode: 'cell' // Avoid 'row' for very large tables
+  },
+  // Use fixed row heights for better performance
+  defaultRowHeight: 40,
+  // Minimize style calculations
+  theme: 'SIMPLIFY'
+});
+
+function generateColumnsLazily() {
+  // Generate columns on-demand to reduce initial load time
+  return new Proxy([], {
+    get(target, prop) {
+      if (typeof prop === 'string' && !isNaN(prop)) {
+        const index = parseInt(prop);
+        if (!target[index]) {
+          target[index] = createColumn(index);
+        }
+      }
+      return target[prop];
+    }
+  });
+}
+
+function createColumn(index) {
+  return {
+    field: `field${index}`,
+    caption: `Column ${index}`,
+    width: 120,
+    style: {
+      textAlign: 'left'
+    }
+  };
+}
+```
+
+## INTEGRATION WITH FRAMEWORKS
+
+### React Integration
+```javascript
+// React Component
+import React, { useEffect, useRef, useState } from 'react';
+import { ListTable } from '@visactor/vtable';
+
+const VTableComponent = ({ data, columns, onCellClick }) => {
+  const containerRef = useRef(null);
+  const tableRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (containerRef.current && data && columns) {
+      // Initialize table
+      tableRef.current = new ListTable({
+        container: containerRef.current,
+        columns: columns,
+        records: data,
+        autoFillWidth: true,
+        autoFillHeight: true
+      });
+
+      // Add event listeners
+      tableRef.current.on('click_cell', (args) => {
+        if (onCellClick) {
+          onCellClick(args);
+        }
+      });
+
+      setLoading(false);
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (tableRef.current) {
+        tableRef.current.release();
+      }
+    };
+  }, [data, columns, onCellClick]);
+
+  useEffect(() => {
+    // Update data when props change
+    if (tableRef.current && data) {
+      tableRef.current.updateRecords(data);
+    }
+  }, [data]);
+
+  if (loading) {
+    return <div>Loading table...</div>;
+  }
+
+  return (
+    <div 
+      ref={containerRef} 
+      style={{ width: '100%', height: '500px' }}
+    />
+  );
+};
+
+// Usage
+const App = () => {
+  const [tableData, setTableData] = useState([]);
+  const [tableColumns, setTableColumns] = useState([]);
+
+  useEffect(() => {
+    // Load data
+    fetchTableData().then(data => {
+      setTableData(data.records);
+      setTableColumns(data.columns);
+    });
+  }, []);
+
+  const handleCellClick = (args) => {
+    console.log('Cell clicked in React:', args);
+  };
+
+  return (
+    <div>
+      <h1>VTable in React</h1>
+      <VTableComponent 
+        data={tableData}
+        columns={tableColumns}
+        onCellClick={handleCellClick}
+      />
+    </div>
+  );
+};
+```
+
+### Vue.js Integration
+```javascript
+// Vue Component
+<template>
+  <div>
+    <div v-if="loading">Loading table...</div>
+    <div 
+      ref="tableContainer" 
+      v-show="!loading"
+      :style="{ width: '100%', height: '500px' }"
+    ></div>
+  </div>
+</template>
+
+<script>
+import { ListTable } from '@visactor/vtable';
+
+export default {
+  name: 'VTableComponent',
+  props: {
+    data: {
+      type: Array,
+      required: true
+    },
+    columns: {
+      type: Array,
+      required: true
+    }
+  },
+  data() {
+    return {
+      table: null,
+      loading: true
+    };
+  },
+  mounted() {
+    this.initTable();
+  },
+  beforeUnmount() {
+    if (this.table) {
+      this.table.release();
+    }
+  },
+  watch: {
+    data: {
+      handler(newData) {
+        if (this.table && newData) {
+          this.table.updateRecords(newData);
+        }
+      },
+      deep: true
+    },
+    columns: {
+      handler(newColumns) {
+        if (newColumns && newColumns.length > 0) {
+          this.initTable();
+        }
+      },
+      deep: true
+    }
+  },
+  methods: {
+    initTable() {
+      if (this.$refs.tableContainer && this.data && this.columns) {
+        // Clean up existing table
+        if (this.table) {
+          this.table.release();
+        }
+
+        // Create new table
+        this.table = new ListTable({
+          container: this.$refs.tableContainer,
+          columns: this.columns,
+          records: this.data,
+          autoFillWidth: true,
+          autoFillHeight: true
+        });
+
+        // Add event listeners
+        this.table.on('click_cell', (args) => {
+          this.$emit('cell-click', args);
+        });
+
+        this.table.on('change_cell_value', (args) => {
+          this.$emit('cell-change', args);
+        });
+
+        this.loading = false;
+      }
+    }
+  }
+};
+</script>
+```
+
+This comprehensive documentation covers the complete VTable library functionality, from basic usage to advanced features, performance optimization, framework integration, and detailed API reference. The documentation is designed to help developers at all levels understand and effectively use VTable for their data visualization and analysis needs.
+
+VTable is a powerful, flexible library that can handle everything from simple data tables to complex analytical dashboards with embedded charts and visualizations. Its canvas-based rendering engine ensures high performance even with large datasets, while its extensive API provides the flexibility needed for custom implementations.
+
+Key strengths of VTable include:
+- High-performance rendering capable of handling millions of rows
+- Three distinct table types for different use cases
+- Comprehensive theming and styling system
+- Extensive event handling for interactive applications
+- Framework integrations for React, Vue, and Angular
+- Virtual scrolling and memory optimization
+- Rich visualization capabilities with embedded charts
+- Comprehensive TypeScript support
+- Professional-grade features like pivot tables and data analysis tools
+
+Whether you're building a simple data grid, a complex business intelligence dashboard, or an interactive data exploration tool, VTable provides the tools and performance needed to create exceptional user experiences.
