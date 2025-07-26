@@ -455,6 +455,132 @@
             logElement.innerHTML += `[${timestamp}] ${message}\n`;
             logElement.scrollTop = logElement.scrollHeight;
         }
+
+        // Add a new frozen columns demo at the end
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add frozen columns example
+            const frozenExample = document.createElement('div');
+            frozenExample.className = 'example';
+            frozenExample.innerHTML = `
+                <h2>🔒 Frozen Columns Demo</h2>
+                <p>See how frozen columns work with horizontal scrolling - the first 2 columns stay visible while others scroll:</p>
+                
+                <div class="controls">
+                    <button class="control-button" onclick="toggleFrozenColumns()">Toggle Frozen Columns</button>
+                    <button class="control-button" onclick="addMoreColumns()">Add More Columns</button>
+                    <span id="frozen-status">Frozen: 2 columns</span>
+                </div>
+                
+                <div id="frozen-demo-table" class="table-container"></div>
+                
+                <div class="event-log" id="frozen-log">Frozen column operations will be logged here...</div>
+            `;
+            
+            document.querySelector('.container').appendChild(frozenExample);
+            
+            // Initialize frozen columns table
+            initializeFrozenDemo();
+        });
+
+        let frozenDemoTable;
+        let frozenColumnCount = 2;
+
+        function initializeFrozenDemo() {
+            // Generate wide dataset for horizontal scrolling
+            const wideData = Array.from({length: 50}, (_, i) => {
+                const row = {
+                    id: i + 1,
+                    name: `Employee ${i + 1}`,
+                    department: ['Engineering', 'Marketing', 'Sales', 'HR'][i % 4],
+                    salary: Math.floor(Math.random() * 50000) + 50000
+                };
+                
+                // Add many columns to demonstrate horizontal scrolling
+                for (let j = 5; j <= 15; j++) {
+                    row[`data${j}`] = `Value ${i}-${j}`;
+                }
+                
+                return row;
+            });
+
+            const wideColumns = [
+                { field: 'id', title: 'ID', width: 60 },
+                { field: 'name', title: 'Employee Name', width: 150 },
+                { field: 'department', title: 'Department', width: 120 },
+                { field: 'salary', title: 'Salary', width: 100, format: (rec) => '$' + Number(rec).toLocaleString() }
+            ];
+            
+            // Add many columns
+            for (let j = 5; j <= 15; j++) {
+                wideColumns.push({
+                    field: `data${j}`,
+                    title: `Column ${j}`,
+                    width: 100
+                });
+            }
+
+            frozenDemoTable = new VTable.ListTable({
+                container: document.getElementById('frozen-demo-table'),
+                records: wideData,
+                columns: wideColumns,
+                frozenColCount: frozenColumnCount,
+                theme: {
+                    frozenColumnBackgroundColor: '#f0f8ff'
+                }
+            });
+
+            logFrozenDemo(`Initialized table with ${frozenColumnCount} frozen columns`);
+        }
+
+        function toggleFrozenColumns() {
+            frozenColumnCount = frozenColumnCount === 2 ? 0 : 2;
+            
+            frozenDemoTable.updateOption({
+                frozenColCount: frozenColumnCount
+            });
+            
+            document.getElementById('frozen-status').textContent = `Frozen: ${frozenColumnCount} columns`;
+            logFrozenDemo(`Toggled frozen columns: ${frozenColumnCount} columns now frozen`);
+        }
+
+        function addMoreColumns() {
+            const currentColumns = frozenDemoTable.getAllColumns();
+            const newColumns = [...currentColumns];
+            
+            // Add 3 more columns
+            for (let i = 1; i <= 3; i++) {
+                const newIndex = currentColumns.length + i;
+                newColumns.push({
+                    field: `extra${newIndex}`,
+                    title: `Extra ${newIndex}`,
+                    width: 100
+                });
+            }
+            
+            // Update data to include new columns
+            const currentData = frozenDemoTable.records.map(record => ({
+                ...record,
+                [`extra${currentColumns.length + 1}`]: `Extra ${record.id}-1`,
+                [`extra${currentColumns.length + 2}`]: `Extra ${record.id}-2`,
+                [`extra${currentColumns.length + 3}`]: `Extra ${record.id}-3`
+            }));
+            
+            frozenDemoTable.updateOption({
+                columns: newColumns,
+                records: currentData
+            });
+            
+            logFrozenDemo(`Added 3 more columns (total: ${newColumns.length})`);
+        }
+
+        function logFrozenDemo(message) {
+            const logElement = document.getElementById('frozen-log');
+            if (logElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `[${timestamp}] ${message}\n`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
     </script>
 </body>
 </html>
