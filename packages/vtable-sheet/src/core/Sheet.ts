@@ -166,12 +166,14 @@ export class Sheet extends EventTarget implements ISheetAPI {
       pasteValueToCell: true,
       showCopyCellBorder: true
     };
+
     return {
       ...this.options,
       records: this.options.data,
       container: this.element,
       showHeader: isShowTableHeader,
       keyboardOptions
+
       // 其他特定配置
     };
   }
@@ -198,6 +200,10 @@ export class Sheet extends EventTarget implements ISheetAPI {
         });
 
         if (formula) {
+          // 进入编辑状态前触发高亮
+          const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
+          this.parent.cellHighlightManager.highlightFormulaCells(displayFormula);
+
           // 进入编辑状态
           this.tableInstance.startEditCell(event.col, event.row, formula);
         } else {
