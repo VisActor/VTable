@@ -13,6 +13,7 @@ import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
 import { FormulaAutocomplete } from './formula-autocomplete';
 import { formulaEditor } from './formula-editor';
+import { CellHighlightManager } from '../managers/cell-highlight-manager';
 
 // const input_editor = new VTable_editors.InputEditor();
 // VTable.register.editor('input', input_editor);
@@ -36,6 +37,8 @@ export default class VTableSheet {
   private sheetInstances: Map<string, Sheet> = new Map();
   /** 公式自动补全 */
   private formulaAutocomplete: FormulaAutocomplete | null = null;
+  /** 单元格高亮管理器 */
+  private cellHighlightManager: CellHighlightManager;
 
   /** UI组件 */
   private rootElement: HTMLElement;
@@ -65,6 +68,7 @@ export default class VTableSheet {
     this.filterManager = new FilterManager(this);
     this.eventManager = new EventManager(this);
     this.dragManager = new SheetTabDragManager(this);
+    this.cellHighlightManager = new CellHighlightManager(this);
     // 初始化UI
     this.initUI();
 
@@ -185,20 +189,18 @@ export default class VTableSheet {
             col: selection.startCol
           });
           if (formula) {
-            // 在单元格中显示公式
-            this.isUpdatingFromFormula = true;
-            this.activeSheet.tableInstance?.changeCellValue(
-              selection.startCol,
-              selection.startRow,
-              formula.startsWith('=') ? formula : `=${formula}`
-            );
-            this.isUpdatingFromFormula = false;
+            // 显示公式
+            const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
+            formulaInput.value = displayFormula;
+            // 触发高亮
+            this.cellHighlightManager.highlightFormulaCells(displayFormula);
           }
         }
       }
     });
     formulaInput.addEventListener('blur', () => {
       this.deactivateFormulaBar();
+      this.cellHighlightManager.clearHighlights();
       // 当失去焦点时，如果没有确认修改，恢复显示计算值
       if (this.activeSheet) {
         const selection = this.activeSheet.getSelection();
@@ -263,6 +265,7 @@ export default class VTableSheet {
     if (formulaBar) {
       formulaBar.classList.remove('active');
     }
+    this.cellHighlightManager.clearHighlights();
   }
 
   /**
@@ -778,6 +781,12 @@ export default class VTableSheet {
       select: {
         makeSelectCellVisible: false
       },
+      style: {
+        borderColor: ['#E1E4E8', '#E1E4E8', '#E1E4E8', '#E1E4E8'],
+        borderLineWidth: [1, 1, 1, 1],
+        borderLineDash: [null, null, null, null],
+        padding: [8, 8, 8, 8]
+      },
       editCellTrigger: ['api', 'keydown']
     } as any);
 
@@ -864,14 +873,6 @@ export default class VTableSheet {
     // 更新公式输入框
     const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
     if (formulaInput) {
-      // 如果是刚按下回车键，直接清空公式栏并返回
-      if (this.isEnterKeyPressed) {
-        formulaInput.value = '';
-        this.isEnterKeyPressed = false;
-        return;
-      }
-
-      const cellValue = this.activeSheet.getCellValue(selection.startRow, selection.startCol);
       const formula = this.formulaManager.getCellFormula({
         sheet: this.activeSheet.getKey(),
         row: selection.startRow,
@@ -881,21 +882,8 @@ export default class VTableSheet {
       if (formula) {
         const displayFormula = formula.startsWith('=') ? formula : '=' + formula;
         formulaInput.value = displayFormula;
-
-        try {
-          const result = this.formulaManager.getCellValue({
-            sheet: this.activeSheet.getKey(),
-            row: selection.startRow,
-            col: selection.startCol
-          });
-          this.isUpdatingFromFormula = true;
-          this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, result.value);
-          this.isUpdatingFromFormula = false;
-        } catch (error) {
-          this.isUpdatingFromFormula = false;
-          console.warn('Error updating cell with formula result:', error);
-        }
       } else {
+        const cellValue = this.activeSheet.getCellValue(selection.startRow, selection.startCol);
         formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
       }
     }
@@ -918,15 +906,13 @@ export default class VTableSheet {
 
     const value = input.value;
 
-    // 输入公式时，单元格显示公式本身，不计算结果
-    this.isUpdatingFromFormula = true;
+    // 如果是公式，高亮引用的单元格
     if (value.startsWith('=')) {
-      // 直接显示公式文本，不进行计算
-      this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
+      this.cellHighlightManager.highlightFormulaCells(value);
     } else {
-      // 普通值，正常同步显示
-      this.activeSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
+      this.cellHighlightManager.clearHighlights();
     }
+
     this.isUpdatingFromFormula = false;
   }
 
@@ -1234,6 +1220,9 @@ export default class VTableSheet {
 
     if (this.formulaAutocomplete) {
       this.formulaAutocomplete.destroy();
+    }
+    if (this.cellHighlightManager) {
+      this.cellHighlightManager.destroy();
     }
   }
 

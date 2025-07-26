@@ -21,12 +21,38 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
   createElement(): void {
     super.createElement();
 
-    // 此时 this.element 应该已经被创建
     if (this.element && this.sheet) {
-      // 延迟初始化自动补全，确保元素已添加到 DOM
+      // 添加输入事件监听
+      this.element.addEventListener('input', e => {
+        this.handleFormulaInput(e);
+      });
+
+      // 延迟初始化自动补全
       setTimeout(() => {
         this.initAutocomplete();
       }, 50);
+    }
+  }
+
+  /**
+   * 处理公式输入
+   */
+  private handleFormulaInput(event: Event): void {
+    if (!this.sheet || !this.element) {
+      return;
+    }
+
+    const value = this.element.value;
+
+    // 获取高亮管理器
+    const highlightManager = (this.sheet as any).cellHighlightManager;
+
+    if (highlightManager) {
+      if (value.startsWith('=')) {
+        highlightManager.highlightFormulaCells(value);
+      } else {
+        highlightManager.clearHighlights();
+      }
     }
   }
 
@@ -90,7 +116,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     super.onStart(context);
 
     // 如果是公式，显示公式而不是计算结果
-    if (this.sheet && typeof context.value === 'string' && !context.value.startsWith('=')) {
+    if (this.sheet && typeof context.value === 'string') {
       const formula = this.sheet.getFormulaManager().getCellFormula({
         sheet: this.sheet.getActiveSheet()?.getKey() || '',
         row: context.row,
@@ -99,6 +125,11 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
 
       if (formula) {
         this.setValue(formula);
+        // 触发高亮
+        const highlightManager = (this.sheet as any).cellHighlightManager;
+        if (highlightManager) {
+          highlightManager.highlightFormulaCells(formula);
+        }
       }
     }
   }
@@ -111,6 +142,12 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     if (this.formulaAutocomplete) {
       this.formulaAutocomplete.destroy();
       this.formulaAutocomplete = null;
+    }
+    if (this.sheet) {
+      const highlightManager = (this.sheet as any).cellHighlightManager;
+      if (highlightManager) {
+        highlightManager.clearHighlights();
+      }
     }
 
     super.onEnd();
