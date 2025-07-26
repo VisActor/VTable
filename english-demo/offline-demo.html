@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTable - English Documentation Demo (Offline Version)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            background: white;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+
+        .example {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .example:last-child {
+            border-bottom: none;
+        }
+
+        .example-title {
+            font-size: 1.3rem;
+            color: #495057;
+            margin-bottom: 1rem;
+        }
+
+        .example-description {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .demo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .demo-table th {
+            background: #4a90e2;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .demo-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .demo-table tr:hover {
+            background-color: #e6f3ff;
+        }
+
+        .demo-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #495057;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .salary-high {
+            background-color: #d4edda !important;
+            color: #155724;
+        }
+
+        .salary-medium {
+            background-color: #fff3cd !important;
+            color: #856404;
+        }
+
+        .salary-low {
+            background-color: #f8d7da !important;
+            color: #721c24;
+        }
+
+        .status-active {
+            background-color: #d4edda !important;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background-color: #f8d7da !important;
+            color: #721c24;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+        }
+
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .alert {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>VTable</h1>
+            <p>High-Performance Multidimensional Data Analysis Table - English Documentation</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Introduction Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">🚀 Introduction to VTable</h2>
+                <p class="section-description">
+                    VTable is a powerful, high-performance table component for handling large datasets with advanced features like pivoting, charting, and extensive customization options.
+                </p>
+            </div>
+            
+            <div class="alert">
+                <strong>Note:</strong> This is a demo version showing table layouts with HTML/CSS. 
+                For fully interactive VTable examples with all features, please check the 
+                <a href="https://github.com/VisActor/VTable" target="_blank">official repository</a> and 
+                <a href="https://visactor.io/vtable" target="_blank">documentation</a>.
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Extreme Performance</h3>
+                    <p>Handle millions of data points with smooth scrolling and fast rendering using canvas-based architecture.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Multidimensional Analysis</h3>
+                    <p>Built-in pivot table functionality with automatic data analysis and presentation capabilities.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Rich Customization</h3>
+                    <p>Extensive styling options, themes, and seamless integration with VChart for embedded visualizations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Interactive Features</h3>
+                    <p>Built-in sorting, filtering, editing, and selection capabilities with extensive event handling.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Basic Examples Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">📝 Basic Examples</h2>
+                <p class="section-description">
+                    Learn the fundamentals with simple, practical examples that you can use as starting points for your own tables.
+                </p>
+            </div>
+
+            <div class="example">
+                <h3 class="example-title">Simple List Table</h3>
+                <p class="example-description">
+                    Create a basic data table with columns and rows. This is the most common use case for displaying tabular data.
+                </p>
+                
+                <table class="demo-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>City</th>
+                            <th>Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>30</td>
+                            <td>New York</td>
+                            <td>$75,000</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Jane Smith</td>
+                            <td>25</td>
+                            <td>Los Angeles</td>
+                            <td>$80,000</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Bob Johnson</td>
+                            <td>35</td>
+                            <td>Chicago</td>
+                            <td>$70,000</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Alice Brown</td>
+                            <td>28</td>
+                            <td>Houston</td>
+                            <td>$85,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-block">
+                    <pre><code>// VTable Basic Configuration
+const option = {
+    container: document.getElementById('table'),
+    records: [
+        { id: 1, name: 'John Doe', age: 30, city: 'New York', salary: 75000 },
+        { id: 2, name: 'Jane Smith', age: 25, city: 'Los Angeles', salary: 80000 },
+        // ... more data
+    ],
+    columns: [
+        { field: 'id', title: 'ID', width: 80 },
+        { field: 'name', title: 'Name', width: 150 },
+        { field: 'age', title: 'Age', width: 80 },
+        { field: 'city', title: 'City', width: 120 },
+        { field: 'salary', title: 'Salary', width: 100 }
+    ]
+};
+
+const table = new VTable.ListTable(option);</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Styling Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">🎨 Styling & Colors</h2>
+                <p class="section-description">
+                    Customize the appearance of your tables with colors, fonts, borders, and themes to match your brand or design requirements.
+                </p>
+            </div>
+
+            <div class="example">
+                <h3 class="example-title">Conditional Styling</h3>
+                <p class="example-description">
+                    Apply different styles based on data values to highlight important information.
+                </p>
+                
+                <table class="demo-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Alice Johnson</td>
+                            <td>Engineering</td>
+                            <td class="salary-high">$85,000</td>
+                            <td class="status-active">Active</td>
+                        </tr>
+                        <tr>
+                            <td>Bob Smith</td>
+                            <td>Marketing</td>
+                            <td class="salary-medium">$72,000</td>
+                            <td class="status-active">Active</td>
+                        </tr>
+                        <tr>
+                            <td>Carol Davis</td>
+                            <td>Engineering</td>
+                            <td class="salary-high">$92,000</td>
+                            <td class="status-inactive">Inactive</td>
+                        </tr>
+                        <tr>
+                            <td>David Wilson</td>
+                            <td>Sales</td>
+                            <td class="salary-low">$68,000</td>
+                            <td class="status-active">Active</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-block">
+                    <pre><code>// Conditional Styling Example
+{
+    field: 'salary',
+    title: 'Salary',
+    width: 100,
+    style: {
+        bgColor(args) {
+            const { dataValue } = args;
+            if (dataValue >= 80000) return '#d4edda'; // Green for high salary
+            if (dataValue >= 75000) return '#fff3cd'; // Yellow for medium
+            return '#f8d7da'; // Red for low salary
+        },
+        color(args) {
+            const { dataValue } = args;
+            if (dataValue >= 80000) return '#155724';
+            if (dataValue >= 75000) return '#856404';
+            return '#721c24';
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Features Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">⭐ Advanced Features</h2>
+                <p class="section-description">
+                    Explore powerful features like embedded charts, custom cell types, and complex layouts.
+                </p>
+            </div>
+
+            <div class="example">
+                <h3 class="example-title">Progress Bars and Indicators</h3>
+                <p class="example-description">
+                    Add visual indicators like progress bars to make data more intuitive.
+                </p>
+                
+                <table class="demo-table">
+                    <thead>
+                        <tr>
+                            <th>Project Name</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Website Redesign</td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 85%"></div>
+                                </div>
+                                85%
+                            </td>
+                            <td class="status-active">On Track</td>
+                        </tr>
+                        <tr>
+                            <td>Mobile App</td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 65%"></div>
+                                </div>
+                                65%
+                            </td>
+                            <td class="salary-medium">At Risk</td>
+                        </tr>
+                        <tr>
+                            <td>Database Migration</td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 95%"></div>
+                                </div>
+                                95%
+                            </td>
+                            <td class="status-active">Complete</td>
+                        </tr>
+                        <tr>
+                            <td>API Development</td>
+                            <td>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: 45%"></div>
+                                </div>
+                                45%
+                            </td>
+                            <td class="salary-low">Behind</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="code-block">
+                    <pre><code>// Progress Bar Configuration
+{
+    field: 'progress',
+    title: 'Progress',
+    width: 200,
+    cellType: 'progressbar',
+    style: {
+        barColor: '#4CAF50',
+        barBgColor: '#e0e0e0',
+        textColor: '#333'
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customization Guide -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">🔧 Complete Customization Guide</h2>
+                <p class="section-description">
+                    Learn how to fully customize every aspect of your VTable to meet specific requirements.
+                </p>
+            </div>
+
+            <div class="example">
+                <h3 class="example-title">Getting Started</h3>
+                
+                <div class="code-block">
+                    <pre><code>// Installation
+npm install @visactor/vtable
+
+// Basic Import
+import * as VTable from '@visactor/vtable';
+
+// Create a simple table
+const option = {
+    container: document.getElementById('tableContainer'),
+    records: yourData,
+    columns: [
+        { field: 'name', title: 'Name', width: 150 },
+        { field: 'age', title: 'Age', width: 80 },
+        { field: 'city', title: 'City', width: 120 }
+    ]
+};
+
+const table = new VTable.ListTable(option);</code></pre>
+                </div>
+
+                <h4>Key Configuration Options:</h4>
+                <ul>
+                    <li><strong>Theme Customization:</strong> Complete control over colors, fonts, and styling</li>
+                    <li><strong>Cell Types:</strong> Text, numbers, progress bars, charts, images, and custom renderers</li>
+                    <li><strong>Interactive Features:</strong> Sorting, filtering, editing, selection, and drag & drop</li>
+                    <li><strong>Performance:</strong> Virtual scrolling, lazy loading, and efficient rendering for large datasets</li>
+                    <li><strong>Events:</strong> Comprehensive event system for user interactions and data changes</li>
+                </ul>
+
+                <h4>Common Use Cases:</h4>
+                <ul>
+                    <li>Data dashboards and business intelligence</li>
+                    <li>Admin panels and content management</li>
+                    <li>Financial reports and analytics</li>
+                    <li>E-commerce product catalogs</li>
+                    <li>Scientific data visualization</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Links and Resources -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">📚 Resources & Links</h2>
+                <p class="section-description">
+                    Additional resources to help you get the most out of VTable.
+                </p>
+            </div>
+
+            <div class="example">
+                <h3 class="example-title">Official Documentation</h3>
+                <ul>
+                    <li><a href="https://github.com/VisActor/VTable" target="_blank">GitHub Repository</a> - Source code, issues, and contributions</li>
+                    <li><a href="https://visactor.io/vtable" target="_blank">Official Website</a> - Complete documentation and tutorials</li>
+                    <li><a href="https://visactor.io/vtable/example" target="_blank">Live Examples</a> - Interactive demos and code samples</li>
+                    <li><a href="https://visactor.io/vtable/option/ListTable" target="_blank">API Reference</a> - Detailed API documentation</li>
+                </ul>
+
+                <h3 class="example-title">Community</h3>
+                <ul>
+                    <li>Report bugs and request features on <a href="https://github.com/VisActor/VTable/issues" target="_blank">GitHub Issues</a></li>
+                    <li>Contribute to the project via <a href="https://github.com/VisActor/VTable/pulls" target="_blank">Pull Requests</a></li>
+                    <li>Join discussions in the community forums</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 VTable Examples. Created for educational purposes.</p>
+            <p>
+                <a href="https://github.com/VisActor/VTable" style="color: #ffc107;">GitHub Repository</a> | 
+                <a href="https://visactor.io/vtable" style="color: #ffc107;">Official Documentation</a>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                English translation and documentation prepared by <a href="https://osvm.ai" style="color: #ffc107;">osvm.ai</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
