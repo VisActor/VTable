@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTable - Interactive Behavior Examples</title>
+    <script src="https://unpkg.com/@visactor/vtable/dist/vtable.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .example {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .table-container {
+            height: 350px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .controls {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .control-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .control-button:hover {
+            background: #5a6fd8;
+        }
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .filter-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            flex: 1;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VTable Interactive Behavior Examples</h1>
+        
+        <div class="example">
+            <h2>Advanced Sorting & Filtering</h2>
+            <p>Multi-column sorting with custom sort functions and real-time filtering:</p>
+            
+            <div class="controls">
+                <input type="text" id="name-filter" class="filter-input" placeholder="Filter by name...">
+                <input type="text" id="department-filter" class="filter-input" placeholder="Filter by department...">
+                <button class="control-button" onclick="clearFilters()">Clear Filters</button>
+                <button class="control-button" onclick="exportData()">Export Data</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-records">0</div>
+                    <div>Total Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="filtered-records">0</div>
+                    <div>Filtered Records</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="selected-records">0</div>
+                    <div>Selected Records</div>
+                </div>
+            </div>
+            
+            <div id="advanced-table" class="table-container"></div>
+        </div>
+
+        <div class="example">
+            <h2>Editable Table with Validation</h2>
+            <p>Click on cells to edit values. Changes are validated in real-time:</p>
+            
+            <div class="controls">
+                <button class="control-button" onclick="addNewRow()">Add New Row</button>
+                <button class="control-button" onclick="deleteSelected()">Delete Selected</button>
+                <button class="control-button" onclick="saveChanges()">Save Changes</button>
+                <button class="control-button" onclick="resetData()">Reset Data</button>
+            </div>
+            
+            <div id="editable-table" class="table-container"></div>
+            <div id="edit-log" class="event-log"></div>
+        </div>
+
+        <div class="example">
+            <h2>Context Menu & Custom Actions</h2>
+            <p>Right-click on cells to see context menu with custom actions:</p>
+            <div id="context-table" class="table-container"></div>
+        </div>
+
+        <div class="example">
+            <h2>Keyboard Navigation</h2>
+            <p>Use arrow keys to navigate, Enter to edit, Escape to cancel, Space to select:</p>
+            <div id="keyboard-table" class="table-container"></div>
+            <div id="keyboard-log" class="event-log"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let employeeData = [
+            { id: 1, name: 'Alice Johnson', department: 'Engineering', salary: 85000, email: 'alice@company.com', active: true },
+            { id: 2, name: 'Bob Smith', department: 'Marketing', salary: 72000, email: 'bob@company.com', active: true },
+            { id: 3, name: 'Carol Davis', department: 'Engineering', salary: 92000, email: 'carol@company.com', active: false },
+            { id: 4, name: 'David Wilson', department: 'Sales', salary: 68000, email: 'david@company.com', active: true },
+            { id: 5, name: 'Eva Brown', department: 'HR', salary: 75000, email: 'eva@company.com', active: true },
+            { id: 6, name: 'Frank Miller', department: 'Engineering', salary: 98000, email: 'frank@company.com', active: true },
+            { id: 7, name: 'Grace Lee', department: 'Marketing', salary: 78000, email: 'grace@company.com', active: false },
+            { id: 8, name: 'Henry Taylor', department: 'Sales', salary: 71000, email: 'henry@company.com', active: true }
+        ];
+
+        let filteredData = [...employeeData];
+        let advancedTable, editableTable, contextTable, keyboardTable;
+
+        // Initialize tables when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initAdvancedTable();
+            initEditableTable();
+            initContextTable();
+            initKeyboardTable();
+            updateStats();
+        });
+
+        function initAdvancedTable() {
+            advancedTable = new VTable.ListTable({
+                container: document.getElementById('advanced-table'),
+                records: filteredData,
+                columns: [
+                    { 
+                        field: '',
+                        title: '',
+                        width: 40,
+                        cellType: 'checkbox'
+                    },
+                    { 
+                        field: 'name', 
+                        title: 'Name ↕', 
+                        width: 150, 
+                        sort: true,
+                        sortType: 'normal'
+                    },
+                    { 
+                        field: 'department', 
+                        title: 'Department ↕', 
+                        width: 120, 
+                        sort: true
+                    },
+                    { 
+                        field: 'salary', 
+                        title: 'Salary ↕', 
+                        width: 100, 
+                        sort: true,
+                        sortType: 'number'
+                    },
+                    { 
+                        field: 'email', 
+                        title: 'Email', 
+                        width: 180
+                    },
+                    { 
+                        field: 'active', 
+                        title: 'Status', 
+                        width: 80,
+                        style: {
+                            bgColor(args) {
+                                return args.dataValue ? '#d4edda' : '#f8d7da';
+                            },
+                            color(args) {
+                                return args.dataValue ? '#155724' : '#721c24';
+                            }
+                        },
+                        fieldFormat(data) {
+                            return data ? 'Active' : 'Inactive';
+                        }
+                    }
+                ]
+            });
+
+            // Selection change event
+            advancedTable.on('checkbox_state_change', updateStats);
+
+            // Set up filters
+            document.getElementById('name-filter').addEventListener('input', applyFilters);
+            document.getElementById('department-filter').addEventListener('input', applyFilters);
+        }
+
+        function initEditableTable() {
+            const editableData = [
+                { id: 1, product: 'Laptop', price: 999, stock: 50, category: 'Electronics' },
+                { id: 2, product: 'Mouse', price: 25, stock: 200, category: 'Electronics' },
+                { id: 3, product: 'Desk', price: 299, stock: 15, category: 'Furniture' },
+                { id: 4, product: 'Chair', price: 199, stock: 30, category: 'Furniture' }
+            ];
+
+            editableTable = new VTable.ListTable({
+                container: document.getElementById('editable-table'),
+                records: editableData,
+                columns: [
+                    { 
+                        field: '',
+                        title: '',
+                        width: 40,
+                        cellType: 'checkbox'
+                    },
+                    { 
+                        field: 'id', 
+                        title: 'ID', 
+                        width: 60,
+                        editor: {
+                            type: 'input',
+                            validate: (value) => !isNaN(value) && value > 0
+                        }
+                    },
+                    { 
+                        field: 'product', 
+                        title: 'Product', 
+                        width: 150,
+                        editor: {
+                            type: 'input',
+                            validate: (value) => value && value.length > 0
+                        }
+                    },
+                    { 
+                        field: 'price', 
+                        title: 'Price ($)', 
+                        width: 100,
+                        editor: {
+                            type: 'input',
+                            validate: (value) => !isNaN(value) && value >= 0
+                        }
+                    },
+                    { 
+                        field: 'stock', 
+                        title: 'Stock', 
+                        width: 80,
+                        editor: {
+                            type: 'input',
+                            validate: (value) => !isNaN(value) && value >= 0
+                        }
+                    },
+                    { 
+                        field: 'category', 
+                        title: 'Category', 
+                        width: 120,
+                        editor: {
+                            type: 'select',
+                            options: ['Electronics', 'Furniture', 'Clothing', 'Books']
+                        }
+                    }
+                ]
+            });
+
+            // Edit events
+            editableTable.on('change_cell_value', (args) => {
+                logEdit(`Cell edited: ${args.field} changed to "${args.value}" in row ${args.row}`);
+            });
+        }
+
+        function initContextTable() {
+            contextTable = new VTable.ListTable({
+                container: document.getElementById('context-table'),
+                records: employeeData.slice(0, 5),
+                columns: [
+                    { field: 'name', title: 'Name', width: 150 },
+                    { field: 'department', title: 'Department', width: 120 },
+                    { field: 'salary', title: 'Salary', width: 100 },
+                    { field: 'email', title: 'Email', width: 180 }
+                ],
+                menu: {
+                    contextMenuItems: [
+                        {
+                            text: 'Copy Cell',
+                            icon: '📋',
+                            action: (args) => {
+                                navigator.clipboard.writeText(args.value);
+                                alert('Cell value copied to clipboard!');
+                            }
+                        },
+                        {
+                            text: 'Send Email',
+                            icon: '📧',
+                            action: (args) => {
+                                if (args.field === 'email') {
+                                    window.open(`mailto:${args.value}`);
+                                }
+                            }
+                        },
+                        {
+                            text: 'View Details',
+                            icon: '👁️',
+                            action: (args) => {
+                                const record = args.table.getCellRecord(args.col, args.row);
+                                alert(`Details for ${record.name}:\nDepartment: ${record.department}\nSalary: $${record.salary}`);
+                            }
+                        }
+                    ]
+                }
+            });
+        }
+
+        function initKeyboardTable() {
+            keyboardTable = new VTable.ListTable({
+                container: document.getElementById('keyboard-table'),
+                records: employeeData.slice(0, 4),
+                columns: [
+                    { field: 'name', title: 'Name', width: 150 },
+                    { field: 'department', title: 'Department', width: 120 },
+                    { field: 'salary', title: 'Salary', width: 100 }
+                ],
+                keyboardOptions: {
+                    selectAllOnCtrlA: true,
+                    copySelected: true,
+                    pasteValueToCell: true
+                }
+            });
+
+            // Keyboard events
+            keyboardTable.on('keydown', (args) => {
+                logKeyboard(`Key pressed: ${args.key} at row ${args.row}, col ${args.col}`);
+            });
+
+            keyboardTable.on('selected_cell', (args) => {
+                logKeyboard(`Cell selected: row ${args.row}, col ${args.col}`);
+            });
+        }
+
+        // Helper functions
+        function applyFilters() {
+            const nameFilter = document.getElementById('name-filter').value.toLowerCase();
+            const deptFilter = document.getElementById('department-filter').value.toLowerCase();
+
+            filteredData = employeeData.filter(item => {
+                const nameMatch = !nameFilter || item.name.toLowerCase().includes(nameFilter);
+                const deptMatch = !deptFilter || item.department.toLowerCase().includes(deptFilter);
+                return nameMatch && deptMatch;
+            });
+
+            advancedTable.updateOption({ records: filteredData });
+            updateStats();
+        }
+
+        function clearFilters() {
+            document.getElementById('name-filter').value = '';
+            document.getElementById('department-filter').value = '';
+            applyFilters();
+        }
+
+        function updateStats() {
+            document.getElementById('total-records').textContent = employeeData.length;
+            document.getElementById('filtered-records').textContent = filteredData.length;
+            
+            // Count selected records (this would need proper implementation)
+            document.getElementById('selected-records').textContent = '0';
+        }
+
+        function exportData() {
+            const csvContent = "data:text/csv;charset=utf-8," + 
+                ["Name,Department,Salary,Email,Status"].concat(
+                    filteredData.map(row => 
+                        `"${row.name}","${row.department}",${row.salary},"${row.email}","${row.active ? 'Active' : 'Inactive'}"`
+                    )
+                ).join('\n');
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', encodeURI(csvContent));
+            link.setAttribute('download', 'employee_data.csv');
+            link.click();
+        }
+
+        function addNewRow() {
+            const newId = Math.max(...editableTable.records.map(r => r.id)) + 1;
+            const newRow = {
+                id: newId,
+                product: 'New Product',
+                price: 0,
+                stock: 0,
+                category: 'Electronics'
+            };
+            
+            editableTable.addRecord(newRow);
+            logEdit(`New row added with ID: ${newId}`);
+        }
+
+        function deleteSelected() {
+            // This would need proper implementation to get selected rows
+            logEdit('Delete selected functionality would be implemented here');
+        }
+
+        function saveChanges() {
+            logEdit('Changes saved successfully!');
+        }
+
+        function resetData() {
+            location.reload();
+        }
+
+        function logEdit(message) {
+            const logElement = document.getElementById('edit-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function logKeyboard(message) {
+            const logElement = document.getElementById('keyboard-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+    </script>
+</body>
+</html>

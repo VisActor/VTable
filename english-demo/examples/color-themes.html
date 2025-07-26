@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTable - Color Themes Example</title>
+    <script src="https://unpkg.com/@visactor/vtable/dist/vtable.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .example {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .table-container {
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .theme-selector {
+            margin: 20px 0;
+        }
+        .theme-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .theme-button:hover {
+            background: #5a6fd8;
+        }
+        .theme-button.active {
+            background: #4c63d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VTable Color Themes & Customization</h1>
+        
+        <div class="example">
+            <h2>Interactive Theme Switcher</h2>
+            <p>Click the buttons below to see different color themes applied to the same data:</p>
+            
+            <div class="theme-selector">
+                <button class="theme-button active" onclick="applyTheme('default')">Default</button>
+                <button class="theme-button" onclick="applyTheme('dark')">Dark Mode</button>
+                <button class="theme-button" onclick="applyTheme('corporate')">Corporate Blue</button>
+                <button class="theme-button" onclick="applyTheme('nature')">Nature Green</button>
+                <button class="theme-button" onclick="applyTheme('sunset')">Sunset Orange</button>
+                <button class="theme-button" onclick="applyTheme('minimal')">Minimal Gray</button>
+            </div>
+            
+            <div id="theme-table" class="table-container"></div>
+        </div>
+
+        <div class="example">
+            <h2>Conditional Color Coding</h2>
+            <p>This example shows how to use color coding based on data values:</p>
+            <div id="conditional-table" class="table-container"></div>
+        </div>
+
+        <div class="example">
+            <h2>Custom Brand Colors</h2>
+            <p>Example of how to apply your brand colors to create a consistent look:</p>
+            <div id="brand-table" class="table-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const employeeData = [
+            { id: 1, name: 'Alice Johnson', department: 'Engineering', salary: 85000, performance: 95, years: 3 },
+            { id: 2, name: 'Bob Smith', department: 'Marketing', salary: 72000, performance: 88, years: 5 },
+            { id: 3, name: 'Carol Davis', department: 'Engineering', salary: 92000, performance: 92, years: 7 },
+            { id: 4, name: 'David Wilson', department: 'Sales', salary: 68000, performance: 85, years: 2 },
+            { id: 5, name: 'Eva Brown', department: 'HR', salary: 75000, performance: 90, years: 4 },
+            { id: 6, name: 'Frank Miller', department: 'Engineering', salary: 98000, performance: 97, years: 8 },
+            { id: 7, name: 'Grace Lee', department: 'Marketing', salary: 78000, performance: 89, years: 3 },
+            { id: 8, name: 'Henry Taylor', department: 'Sales', salary: 71000, performance: 87, years: 6 }
+        ];
+
+        const salesData = [
+            { product: 'Laptop Pro', revenue: 156000, growth: 15, category: 'Electronics' },
+            { product: 'Smartphone X', revenue: 234000, growth: 23, category: 'Electronics' },
+            { product: 'Office Chair', revenue: 45000, growth: -5, category: 'Furniture' },
+            { product: 'Standing Desk', revenue: 67000, growth: 8, category: 'Furniture' },
+            { product: 'Wireless Headphones', revenue: 89000, growth: 31, category: 'Electronics' },
+            { product: 'Monitor 4K', revenue: 112000, growth: 12, category: 'Electronics' }
+        ];
+
+        // Theme definitions
+        const themes = {
+            default: {
+                headerStyle: {
+                    bgColor: '#f8f9fa',
+                    color: '#495057',
+                    borderColor: '#dee2e6'
+                },
+                bodyStyle: {
+                    hover: { bgColor: '#f8f9fa' },
+                    selected: { bgColor: '#e9ecef' }
+                }
+            },
+            dark: {
+                defaultStyle: {
+                    bgColor: '#2c3e50',
+                    color: '#ecf0f1',
+                    borderColor: '#34495e'
+                },
+                headerStyle: {
+                    bgColor: '#1a252f',
+                    color: '#ffffff',
+                    borderColor: '#34495e'
+                },
+                bodyStyle: {
+                    hover: { bgColor: '#34495e' },
+                    selected: { bgColor: '#3498db' }
+                }
+            },
+            corporate: {
+                headerStyle: {
+                    bgColor: '#1e3a8a',
+                    color: '#ffffff',
+                    fontWeight: 'bold'
+                },
+                bodyStyle: {
+                    hover: { bgColor: '#dbeafe' },
+                    selected: { bgColor: '#3b82f6', color: '#ffffff' }
+                }
+            },
+            nature: {
+                headerStyle: {
+                    bgColor: '#166534',
+                    color: '#ffffff',
+                    fontWeight: 'bold'
+                },
+                bodyStyle: {
+                    hover: { bgColor: '#dcfce7' },
+                    selected: { bgColor: '#22c55e', color: '#ffffff' }
+                }
+            },
+            sunset: {
+                headerStyle: {
+                    bgColor: '#ea580c',
+                    color: '#ffffff',
+                    fontWeight: 'bold'
+                },
+                bodyStyle: {
+                    hover: { bgColor: '#fed7aa' },
+                    selected: { bgColor: '#f97316', color: '#ffffff' }
+                }
+            },
+            minimal: {
+                headerStyle: {
+                    bgColor: '#f3f4f6',
+                    color: '#374151',
+                    borderColor: '#d1d5db'
+                },
+                bodyStyle: {
+                    hover: { bgColor: '#f9fafb' },
+                    selected: { bgColor: '#e5e7eb' }
+                },
+                defaultStyle: {
+                    borderColor: '#e5e7eb'
+                }
+            }
+        };
+
+        let currentTable = null;
+
+        function applyTheme(themeName) {
+            // Update active button
+            document.querySelectorAll('.theme-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Destroy existing table
+            if (currentTable) {
+                currentTable.destroy();
+            }
+
+            // Create new table with theme
+            const option = {
+                container: document.getElementById('theme-table'),
+                records: employeeData,
+                columns: [
+                    { field: 'id', title: 'ID', width: 60 },
+                    { field: 'name', title: 'Employee Name', width: 150 },
+                    { field: 'department', title: 'Department', width: 120 },
+                    { field: 'salary', title: 'Salary ($)', width: 100 },
+                    { field: 'performance', title: 'Performance (%)', width: 120 },
+                    { field: 'years', title: 'Years', width: 80 }
+                ],
+                theme: themes[themeName]
+            };
+
+            currentTable = new VTable.ListTable(option);
+        }
+
+        // Initialize examples when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply default theme
+            applyTheme('default');
+
+            // Conditional color coding table
+            const conditionalOption = {
+                container: document.getElementById('conditional-table'),
+                records: salesData,
+                columns: [
+                    { field: 'product', title: 'Product', width: 150 },
+                    { field: 'category', title: 'Category', width: 120 },
+                    { 
+                        field: 'revenue', 
+                        title: 'Revenue ($)', 
+                        width: 120,
+                        style: {
+                            bgColor(args) {
+                                const value = args.dataValue;
+                                if (value > 150000) return '#d4edda'; // Green for high revenue
+                                if (value > 80000) return '#fff3cd';  // Yellow for medium
+                                return '#f8d7da'; // Red for low
+                            },
+                            color(args) {
+                                const value = args.dataValue;
+                                if (value > 150000) return '#155724';
+                                if (value > 80000) return '#856404';
+                                return '#721c24';
+                            }
+                        }
+                    },
+                    { 
+                        field: 'growth', 
+                        title: 'Growth (%)', 
+                        width: 100,
+                        style: {
+                            bgColor(args) {
+                                const value = args.dataValue;
+                                if (value > 20) return '#d1ecf1';
+                                if (value > 0) return '#d4edda';
+                                return '#f8d7da';
+                            },
+                            color(args) {
+                                const value = args.dataValue;
+                                if (value > 20) return '#0c5460';
+                                if (value > 0) return '#155724';
+                                return '#721c24';
+                            }
+                        }
+                    }
+                ]
+            };
+            new VTable.ListTable(conditionalOption);
+
+            // Brand colors table
+            const brandOption = {
+                container: document.getElementById('brand-table'),
+                records: employeeData.slice(0, 5),
+                columns: [
+                    { field: 'name', title: 'Employee', width: 150 },
+                    { field: 'department', title: 'Department', width: 120 },
+                    { field: 'performance', title: 'Performance', width: 120 },
+                    { field: 'years', title: 'Experience', width: 100 }
+                ],
+                theme: {
+                    headerStyle: {
+                        bgColor: '#6366f1', // Brand purple
+                        color: '#ffffff',
+                        fontWeight: 'bold',
+                        fontSize: 14
+                    },
+                    bodyStyle: {
+                        hover: { 
+                            bgColor: '#f0f9ff',
+                            inlineColumnBgColor: '#e0f2fe'
+                        },
+                        selected: { 
+                            bgColor: '#6366f1',
+                            color: '#ffffff'
+                        }
+                    },
+                    defaultStyle: {
+                        borderColor: '#e0e7ff'
+                    }
+                }
+            };
+            new VTable.ListTable(brandOption);
+        });
+    </script>
+</body>
+</html>
