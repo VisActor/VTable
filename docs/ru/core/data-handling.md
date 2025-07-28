@@ -1,17 +1,17 @@
-# VTable Data Handling Guide
+# Руководство по работе с данными VTable
 
-This guide covers all aspects of data handling in VTable, from basic data binding to advanced data processing and manipulation.
+Это руководство охватывает все аспекты работы с данными в VTable, от базовой привязки данных до продвинутой обработки и манипуляции данными.
 
-## Data Sources
+## Источники данных
 
-### Basic Array Data
-The most common data format is an array of objects:
+### Базовые данные массива
+Наиболее распространенный формат данных - это массив объектов:
 
 ```javascript
 const records = [
-  { id: 1, name: 'John Doe', department: 'Sales', salary: 65000 },
-  { id: 2, name: 'Jane Smith', department: 'Marketing', salary: 70000 },
-  { id: 3, name: 'Bob Johnson', department: 'Engineering', salary: 85000 }
+  { id: 1, name: 'Иван Иванов', department: 'Продажи', salary: 65000 },
+  { id: 2, name: 'Анна Петрова', department: 'Маркетинг', salary: 70000 },
+  { id: 3, name: 'Сергей Сидоров', department: 'Разработка', salary: 85000 }
 ];
 
 const table = new VTable.ListTable({
@@ -19,16 +19,16 @@ const table = new VTable.ListTable({
   records: records,
   columns: [
     { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 150 },
-    { field: 'department', caption: 'Department', width: 120 },
-    { field: 'salary', caption: 'Salary', width: 100 }
+    { field: 'name', caption: 'Имя', width: 150 },
+    { field: 'department', caption: 'Отдел', width: 120 },
+    { field: 'salary', caption: 'Зарплата', width: 100 }
   ]
 });
 ```
 
-### Loading Data from APIs
+### Загрузка данных из API
 ```javascript
-// Load data asynchronously
+// Асинхронная загрузка данных
 async function loadTableData() {
   try {
     const response = await fetch('/api/employees');
@@ -41,11 +41,11 @@ async function loadTableData() {
     });
     
   } catch (error) {
-    console.error('Failed to load data:', error);
+    console.error('Не удалось загрузить данные:', error);
   }
 }
 
-// With error handling and loading states
+// С обработкой ошибок и состояниями загрузки
 async function loadDataWithStates() {
   const loadingElement = document.getElementById('loading');
   const errorElement = document.getElementById('error');

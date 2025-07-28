@@ -1,21 +1,21 @@
 ---
-title: 8.  In the VTable integrated VChart chart scene, how to deal with the truncation of dots at the edge?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+title: 8. В сценарии интеграции VTable с VChart, как решить проблему обрезки точек на краях?</br>
+key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Визуализация,Диаграмма,Данные,Таблица,График,Gis,LLM
 ---
-## Title
+## Заголовок
 
-In the VTable integrated VChart chart scene, how to deal with the truncation of dots at the edge?</br>
-## Description
+В сценарии интеграции VTable с VChart, как решить проблему обрезки точек на краях?</br>
+## Описание
 
-In the VTable integrated VChart chart scenario, how to avoid the edge points being truncated when drawing points on the chart.</br>
+В сценарии интеграции VTable с VChart, как избежать обрезки крайних точек при отрисовке точек на диаграмме.</br>
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/RUjJbYCjXoTh14xvUwgcDPTAncf.gif' alt='' width='1280' height='372'>
 
-## Solution
+## Решение
 
-Configure innerOffset on the axes axis. After adding it as above, there will be a certain distance between the elements on the chart and the edge of the table.</br>
+Настройте innerOffset на оси axes. После добавления как показано выше, между элементами диаграммы и краем таблицы будет определенное расстояние.</br>
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/XtTLbGtHNoWltwxvjj5c0MOAn1g.gif' alt='' width='1280' height='312'>
 
-## Code Example
+## Пример кода
 
 ```
 
@@ -43,14 +43,14 @@ const option = {
 
 const tableInstance = new VTable.ListTable(container, option);</br>
 ```
-## Results
+## Результаты
 
-Online effect reference:https://visactor.io/vtable/demo/table-type/pivot-chart-scatter</br>
+Ссылка на онлайн-эффект: https://visactor.io/vtable/demo/table-type/pivot-chart-scatter</br>
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HHa6b0VRgoHT47xrWZrcvaDlnxf.gif' alt='' width='1047' height='580'>
 
-## Related Documents
+## Связанные документы
 
-Related api：https://visactor.io/vtable/option/PivotTable#axes</br>
+Связанное API：https://visactor.io/vtable/option/PivotTable#axes</br>
 github：https://github.com/VisActor/VTable</br>
 
 
