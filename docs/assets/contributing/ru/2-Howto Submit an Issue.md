@@ -1,59 +1,59 @@
 ---
-title: 2. How to Submit an Issue
+title: 2. Как Отправить Issue
 
-key words: VisActor, VChart, VTable, VStrory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, Gis, LLM
+key words: VisActor, VChart, VTable, VStrory, VMind, VGrammar, VRender, Визуализация, Диаграмма, Данные, Таблица, График, ГИС, LLM
 ---
-In each project's issues section, you can create, search, and manage issues.
+В разделе issues каждого проекта вы можете создавать, искать и управлять проблемами.
 
-For example, VTable issues: [https://github.com/VisActor/VTable/issues](https://github.com/VisActor/VTable/issues)
+Например, issues VTable: [https://github.com/VisActor/VTable/issues](https://github.com/VisActor/VTable/issues)
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-issues.png' alt='' width='1000' height='auto'>
 
-# Check for Existing Issues
+# Проверка Существующих Issues
 
-You can determine if an issue already exists by using search filters and reviewing issue details.
+Вы можете определить, существует ли уже проблема, используя фильтры поиска и просматривая детали issue.
 
-# Create a New Issue
+# Создание Нового Issue
 
-If no similar issue is found, you can click the "New issue" button.
+Если похожий issue не найден, вы можете нажать кнопку "New issue".
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DuonbEBS2oFVGJx7weQcP6Znnbb.gif' alt='' width='1000' height='auto'>
 
-Select "**Documentation Request**", click the "Get Start" button, and fill out the issue form.
+Выберите "**Documentation Request**", нажмите кнопку "Get Start" и заполните форму issue.
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/C4j0bGZZvoc2RLxqEGgcRahTnAb.gif' alt='' width='1000' height='auto'>
 
-# **Submit the Issue**
+# **Отправка Issue**
 
-Once the issue form is completed, click the "Submit new issue" button to submit your issue.
+После заполнения формы issue нажмите кнопку "Submit new issue", чтобы отправить ваш issue.
 
-# **Follow Up on the Issue**
+# **Отслеживание Issue**
 
-After submission, you can monitor the status of your issue in the repository's "Issues" tab. The project developers might ask for more information or inform you that they are addressing the issue.
+После отправки вы можете отслеживать статус вашего issue во вкладке "Issues" репозитория. Разработчики проекта могут запросить дополнительную информацию или сообщить вам, что они работают над решением проблемы.
 
-# **Close the Issue**
+# **Закрытие Issue**
 
-If your problem has been resolved or your request has been fulfilled, the project developers will close the issue. You may also close the issue yourself if you believe it has been resolved or if further assistance is no longer needed.
+Если ваша проблема была решена или ваш запрос был выполнен, разработчики проекта закроют issue. Вы также можете закрыть issue самостоятельно, если считаете, что он был решен или если дальнейшая помощь больше не нужна.
 
-By following these steps, you can successfully submit an issue for an open-source project on GitHub. Remember to be as detailed and clear as possible when describing your issue, as this helps project developers understand and resolve your problem more quickly.
+Следуя этим шагам, вы можете успешно отправить issue для проекта с открытым исходным кодом на GitHub. Помните, что нужно быть максимально подробным и ясным при описании вашей проблемы, поскольку это помогает разработчикам проекта понять и решить вашу проблему быстрее.
 
-# Next Steps
+# Следующие Шаги
 
-By now, you should be familiar with the concept of issues. Please continue reading the next section of the tutorial to start on different types of tasks.
+К настоящему времени вы должны быть знакомы с концепцией issues. Пожалуйста, продолжите чтение следующего раздела руководства, чтобы начать работу с различными типами задач.
 
 GitHub: [github.com/VisActor](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FVisActor)
 
-VisActor WeChat Subscription (You can join the WeChat group via the subscription menu):
+Подписка VisActor WeChat (Вы можете присоединиться к группе WeChat через меню подписки):
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Cif0bZfEHoAmLgxSnqzclTqKnIf.gif' alt='' width='258' height='auto'>
 
-VisActor Official Website: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)
+Официальный сайт VisActor: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)
 
-Feishu Group:
+Группа Feishu:
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BOeVb2CDmozsl9xl8vcc7hzVn8c.gif' alt='' width='264' height='auto'>
 
 Discord: [https://discord.com/invite/3wPyxVyH6m](https://discord.com/invite/3wPyxVyH6m)
 
-# This Document Was Contributed By
+# Этот Документ Был Подготовлен
 [玄魂](https://github.com/xuanhun)

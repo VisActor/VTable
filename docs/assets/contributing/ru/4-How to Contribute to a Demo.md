@@ -1,26 +1,26 @@
 ---
-title: 4. How to Contribute to a Demo
+title: 4. Как Вносить Вклад в Демо
 
-key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, GIS, LLM
+key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Визуализация, Диаграмма, Данные, Таблица, График, ГИС, LLM
 ---
 
-# Creating a Branch
+# Создание Ветки
 
-The default branch for VTable is the develop branch. Whether it's for feature development, bug fixes, or documentation writing, please create a new branch before merging it into the develop branch. Use the following code to create a branch:
+Ветка по умолчанию для VTable - это ветка develop. Будь то разработка функций, исправление ошибок или написание документации, пожалуйста, создайте новую ветку перед объединением ее с веткой develop. Используйте следующий код для создания ветки:
 
 ```
-// Create a documentation/demo branch
+// Создание ветки документации/демо
 git checkout -b docs/add-funnel-demo
 
 ```
 
-# Finding or Creating an Issue
+# Поиск или Создание Issue
 
-In principle, we require that each PR must have a corresponding issue. Before starting development, please ensure there is a corresponding issue, and that the issue is not already claimed.
+В принципе, мы требуем, чтобы каждый PR имел соответствующий issue. Перед началом разработки, пожалуйста, убедитесь, что есть соответствующий issue, и что issue еще не заявлен.
 
-## Searching for Demo Issues
+## Поиск Issues по Демо
 
-You can search for demo-related issues using the following method:
+Вы можете искать issues, связанные с демо, используя следующий метод:
 
 ```
  label:demos 

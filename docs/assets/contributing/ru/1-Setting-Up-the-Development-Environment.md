@@ -1,119 +1,119 @@
 ---
-title: 1-Setting-Up-the-Development-Environment
+title: 1-Настройка-Среды-Разработки
 
-key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, GIS, LLM
+key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Визуализация, Диаграмма, Данные, Таблица, График, ГИС, LLM
 ---
 # Github 
 
-## 1.1 Register an Account
+## 1.1 Регистрация Аккаунта
 
-The VisActor team usually develops and maintains issues on GitHub. Please visit [GitHub](https://github.com/), click the `Sign up` button on the top right to register your account, and start your journey into open source.
+Команда VisActor обычно разрабатывает и поддерживает проекты на GitHub. Пожалуйста, посетите [GitHub](https://github.com/), нажмите кнопку `Sign up` в правом верхнем углу, чтобы зарегистрировать свой аккаунт и начать свое путешествие в открытый исходный код.
 
-If you are unable to access GitHub due to certain restrictions, please let us know and use [Gitee](https://gitee.com/VisActor/VTable) for project development.
+Если вы не можете получить доступ к GitHub из-за определенных ограничений, пожалуйста, сообщите нам об этом и используйте [Gitee](https://gitee.com/VisActor/VTable) для разработки проекта.
 
-## 1.2 Fork the Project
+## 1.2 Форк Проекта
 
-First, you need to fork this project. Go to the [VTable project page](https://github.com/VisActor/VTable) and click the Fork button on the top right.
+Сначала вам нужно создать форк этого проекта. Перейдите на [страницу проекта VTable](https://github.com/VisActor/VTable) и нажмите кнопку Fork в правом верхнем углу.
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-fork.png' alt='' width='1000' height='auto'>
 
-The project will appear as xxxx (your GitHub username)/vtable in your GitHub account.
+Проект появится как xxxx (ваше имя пользователя GitHub)/vtable в вашем аккаунте GitHub.
 
 <img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-fork-self.png' alt='' width='849' height='auto'>
 
-# Local Development Environment
+# Локальная Среда Разработки
 
-## 2.1 Install Git
+## 2.1 Установка Git
 
-Since the code is hosted on GitHub, we use git for version control.
+Поскольку код хранится на GitHub, мы используем git для контроля версий.
 
-Git is a version control system that helps track and manage code changes in software development projects. It aids developers in recording and managing code history, making team collaboration, code version control, and code merging easier. With Git, you can track each version of every file, switching and comparing between different versions easily. Git also offers branch management features, enabling simultaneous multiple parallel development tasks.
+Git - это система контроля версий, которая помогает отслеживать и управлять изменениями кода в проектах разработки программного обеспечения. Она помогает разработчикам записывать и управлять историей кода, делая командную работу, контроль версий кода и слияние кода проще. С Git вы можете отслеживать каждую версию каждого файла, легко переключаться и сравнивать между различными версиями. Git также предлагает функции управления ветками, позволяя одновременно выполнять несколько параллельных задач разработки.
 
-*  Visit the Git official website: [https://git-scm.com/](https://git-scm.com/)
+*  Посетите официальный веб-сайт Git: [https://git-scm.com/](https://git-scm.com/)
 
-*  Download the latest version of the Git installer.
+*  Скачайте последнюю версию установщика Git.
 
-*  Run the downloaded installer and follow the prompts in the installation wizard.
+*  Запустите скачанный установщик и следуйте указаниям мастера установки.
 
-*  After installation, you can verify the installation by using `git version` in the command line.
+*  После установки вы можете проверить установку, используя `git version` в командной строке.
 
 ```
 HM4G2J09L6:~ xuanhun$ git version
 **git version 2.39.2 (Apple Git-143)**
 ```
 
-## 2.2 Install a Development Tool (Recommended: VSCode)
+## 2.2 Установка Инструмента Разработки (Рекомендуется: VSCode)
 
-VisActor predominantly uses a frontend tech stack. There are many tools available for frontend development, but we recommend using VSCode. Of course, you can use any development tool you prefer.
+VisActor преимущественно использует стек технологий фронтенда. Существует множество инструментов для фронтенд-разработки, но мы рекомендуем использовать VSCode. Конечно, вы можете использовать любой инструмент разработки, который предпочитаете.
 
-If you're not familiar with VSCode, it might be helpful to read the official documentation: https://vscode.js.cn/docs/setup/setup-overview
+Если вы не знакомы с VSCode, может быть полезно прочитать официальную документацию: https://vscode.js.cn/docs/setup/setup-overview
 
-## 2.3 Install Doubao Marscode AI Programming Assistant
-
-
-[Marscode AI Programming Assistant](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)
+## 2.3 Установка Помощника ИИ Программирования Doubao Marscode
 
 
-Doubao MarsCode Programming Assistant is an AI coding assistant from Doubao that provides AI features represented by intelligent code completion. It supports mainstream programming languages and IDEs, offering suggestions for writing a single line of code or an entire function during development. In addition, it offers features like code explanation, unit test generation, and problem fixing, improving development efficiency and quality. For more information, please refer to the [Doubao MarsCode Programming Assistant documentation](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a).
+[Помощник ИИ Программирования Marscode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a)
+
+
+Помощник Программирования Doubao MarsCode - это ИИ помощник программирования от Doubao, который предоставляет функции ИИ, представленные интеллектуальным завершением кода. Он поддерживает основные языки программирования и IDE, предлагая предложения для написания одной строки кода или целой функции во время разработки. Кроме того, он предлагает такие функции, как объяснение кода, генерация модульных тестов и исправление проблем, повышая эффективность и качество разработки. Для получения дополнительной информации, пожалуйста, обратитесь к [документации Помощника Программирования Doubao MarsCode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a).
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DLaKb4PysoADAZx0x1RcYjXbnBe.gif' alt='' width='760' height='auto'>
 
-With Marscode, VisActor developers can more easily understand code, write documentation, develop features, and perform unit testing. Detailed examples will be provided in specific task contribution guides.
+С Marscode разработчики VisActor могут легче понимать код, писать документацию, разрабатывать функции и выполнять модульное тестирование. Подробные примеры будут предоставлены в конкретных руководствах по вкладу в задачи.
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BQeib7E2gonoOaxLPqjcRtAYngh.gif' alt='' width='1000' height='auto'>
 
-## 2.4 Clone the Code to Local
+## 2.4 Клонирование Кода Локально
 
-Enter the VTable folder and add the remote address for VTable.
+Войдите в папку VTable и добавьте удаленный адрес для VTable.
 
 ```
 git remote add upstream https://github.com/VisActor/VTable.git
 ```
 
-Get the latest source code for VTable.
+Получите последний исходный код для VTable.
 
 ```
 git pull upstream develop
 ```
 
-# Initialize the Project
+# Инициализация Проекта
 
-First, globally install [<u>@microsoft/rush</u>](https://rushjs.io/pages/intro/get_started/)
+Сначала глобально установите [<u>@microsoft/rush</u>](https://rushjs.io/pages/intro/get_started/)
 
 ```
 $ npm i --global @microsoft/rush
 ```
 
-Then, execute the command to view the demo
+Затем выполните команду для просмотра демо
 
 ```
-# Install dependencies
+# Установка зависимостей
 $ rush update
-# Start the demo page for vtable
+# Запуск демо-страницы для vtable
 $ cd ./packages/vtable && rushx demo
-# Start the demo page for react-vtable
+# Запуск демо-страницы для react-vtable
 $ cd ./packages/react-vtable && rushx start
-# Start the local documentation site
+# Запуск локального сайта документации
 $ rush docs
 ```
 
-# Next Steps
+# Следующие Шаги
 
-At this point, you have completed the preparations for developing the code. Please continue reading the next tutorial to begin working on different types of tasks.
+На этом этапе вы завершили подготовку к разработке кода. Пожалуйста, продолжите чтение следующего руководства, чтобы начать работу над различными типами задач.
 
 github: [github.com/VisActor](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FVisActor)
 
-VisActor WeChat subscription message (you can join the WeChat group via the subscription menu):
+Подписка на WeChat VisActor (вы можете присоединиться к группе WeChat через меню подписки):
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/KLjmbz9TtoGzPIxarv7cmhpgnSY.gif' alt='' width='258' height='auto'>
 
-VisActor official website: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)
+Официальный сайт VisActor: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)
 
-Feishu group:
+Группа Feishu:
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Cv9xb0zzLoUWyaxMVgccWuGPn7d.gif' alt='' width='264' height='auto'>
 
 discord: https://discord.com/invite/3wPyxVyH6m
 
-# This Document Was Contributed By
+# Этот Документ Был Подготовлен
 [玄魂](https://github.com/xuanhun)

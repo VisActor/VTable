@@ -1,24 +1,24 @@
 ---
-title: 3-How to Contribute Documentation
+title: 3-Как Вносить Вклад в Документацию
 
-keywords: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, Gis, LLM
+keywords: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Визуализация, Диаграмма, Данные, Таблица, График, ГИС, LLM
 ---
-# Create a Branch
+# Создание Ветки
 
-The default branch for VTable is the develop branch. Whether it is for feature development, bug fixes, or documentation writing, please create a new branch and then merge it into the develop branch. Use the following command to create a branch:
+Ветка по умолчанию для VTable - это ветка develop. Будь то разработка функций, исправление ошибок или написание документации, пожалуйста, создайте новую ветку, а затем объедините ее с веткой develop. Используйте следующую команду для создания ветки:
 
 ```bash
-// Create a documentation/demo branch
+// Создание ветки документации/демо
 git checkout -b docs/add-funnel-demo
 ```
 
-# Find or Create an Issue
+# Найти или Создать Issue
 
-In principle, we require each PR to have a corresponding issue. Before starting development, please confirm whether there is a corresponding issue, and that the issue has not been claimed.
+В принципе, мы требуем, чтобы каждый PR имел соответствующий issue. Перед началом разработки, пожалуйста, подтвердите, есть ли соответствующий issue, и что issue не был заявлен.
 
-## Search for Documentation Issues
+## Поиск Issues по Документации
 
-You can search for documentation-related issues using the following filter:
+Вы можете искать issues, связанные с документацией, используя следующий фильтр:
 
 ```
 is:open label:docs
@@ -26,7 +26,7 @@ is:open label:docs
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/JkscbtGcbo9iQRxuAR2clnx6n9J.gif' alt='' width='801' height='auto'>
 
-Some features may be associated with the doc label, so check if the issue is purely a documentation task.
+Некоторые функции могут быть связаны с меткой doc, поэтому проверьте, является ли issue чисто задачей по документации.
 
 ## Create a Documentation Issue
 
