@@ -5,14 +5,16 @@
       "path": "1-How to implement multi-level headers in a basic table",
       "title": {
         "zh": "1.基本表格ListTable怎么实现多层表头？",
-        "en": "1.How to implement multi-level headers in a basic table (ListTable)?"
+        "en": "1.How to implement multi-level headers in a basic table (ListTable)?",
+        "ru": "1.Как реализовать многоуровневые заголовки в базовой таблице (ListTable)?"
       }
     },
     {
       "path": "2-How to specify the width of a column and enable automatic line wrapping in a table component",
       "title": {
         "zh": "2.表格组件中如何实现指定一列的宽度，内容自动换行？",
-        "en": "2.How to specify the width of a column and enable automatic line wrapping in a table component?"
+        "en": "2.How to specify the width of a column and enable automatic line wrapping in a table component?",
+        "ru": "2.Как указать ширину столбца и включить автоматический перенос строк в компоненте таблицы?"
       }
     },
     {

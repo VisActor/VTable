@@ -5,28 +5,32 @@
       "path": "1-Setting-Up-the-Development-Environment",
       "title": {
         "zh": "1.搭建开发环境",
-        "en": "1-Setting-Up-the-Development-Environment"
+        "en": "1-Setting-Up-the-Development-Environment",
+        "ru": "1-Настройка среды разработки"
       }
     },
     {
       "path": "2-Howto Submit an Issue",
       "title": {
         "zh": "2.如何提issue",
-        "en": "2-Howto Submit an Issue"
+        "en": "2-Howto Submit an Issue",
+        "ru": "2-Как отправить проблему"
       }
     },
     {
       "path": "3-How to Contribute Documentation",
       "title": {
         "zh": "3.如何贡献文档",
-        "en": "3-How to Contribute Documentation"
+        "en": "3-How to Contribute Documentation",
+        "ru": "3-Как внести вклад в документацию"
       }
     },
     {
       "path": "4-How to Contribute to a Demo",
       "title": {
         "zh": "4.如何贡献demo",
-        "en": "4-How to Contribute to a Demo"
+        "en": "4-How to Contribute to a Demo",
+        "ru": "4-Как внести вклад в демо"
       }
     },
     {
