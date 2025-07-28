@@ -1,32 +1,32 @@
-# Can the VTable table component copy the contents of selected cells?
+# Может ли табличный компонент VTable копировать содержимое выбранных ячеек?
 
-## Question Description
+## Описание вопроса
 
-How can VTable enable shortcut keys to copy the contents of selected cells? Such as copying to excel.
+Как VTable может включить горячие клавиши для копирования содержимого выбранных ячеек? Например, копирование в Excel.
 
-## Solution
+## Решение
 
-VTable has a special shortcut key configuration item keyboardOptions, as follows:
+VTable имеет специальный элемент конфигурации горячих клавиш keyboardOptions, как показано ниже:
 
 ```javascript
 {
    ...
    keyboardOptions:
    {
-      /** 开启快捷键全选 默认：false */
+      /** Включить горячую клавишу выбрать все по умолчанию: false */
       selectAllOnCtrlA?: boolean |SelectAllOnCtrlAOption;
-      /** 快捷键复制 默认不开启*/
-      copySelected?: boolean; //这个copy快捷键是和浏览器的快捷键一致的
+      /** Горячая клавиша копирования по умолчанию не включена*/
+      copySelected?: boolean; //эта горячая клавиша копирования согласуется с горячей клавишей браузера
    }
 }
 ```
 
-## Results
+## Результаты
 
-[Online demo](https://codesandbox.io/s/vtable-copy-sdwjhd)
+[Онлайн демо](https://codesandbox.io/s/vtable-copy-sdwjhd)
 
-## Quote
+## Ссылки
 
-- [Selection Interaction Tutorial](https://visactor.io/vtable/guide/interaction/select)
-- [Related api](https://visactor.io/vtable/option/ListTable#keyboardOptions.copySelected)
+- [Руководство по взаимодействию выбора](https://visactor.io/vtable/guide/interaction/select)
+- [Связанное API](https://visactor.io/vtable/option/ListTable#keyboardOptions.copySelected)
 - [github](https://github.com/VisActor/VTable)
