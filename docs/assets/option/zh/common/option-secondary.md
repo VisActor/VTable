@@ -58,7 +58,6 @@ containerFit: {
 
 与自适应模式（`widthMode: 'adaptive'` 或 `heightMode: 'adaptive'`）拉伸内容以填充容器不同，`containerFit` 保持原始内容尺寸，并适当填充剩余空间。
 
-
 #${prefix} autoWrapText(boolean) = false
 
 是否自动换行
@@ -153,7 +152,7 @@ containerFit: {
 
 快捷键功能设置，具体配置项：
 
-##${prefix} selectAllOnCtrlA(boolean) = false
+##${prefix} selectAllOnCtrlA(boolean) = false|SelectAllOnCtrlAOption
 开启快捷键全选。
 支持 `boolean` 或者具体配置类型`SelectAllOnCtrlAOption`。
 
@@ -163,6 +162,11 @@ export interface SelectAllOnCtrlAOption {
   disableRowSeriesNumberSelect?: boolean;  //快捷键全选时，是否禁止选中行序列号。
 }
 ```
+###${prefix} disableHeaderSelect(boolean) = false
+快捷键全选时，是否禁止选中表头。
+
+###${prefix} disableRowSeriesNumberSelect(boolean) = false
+快捷键全选时，是否禁止选中行序列号。
 
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
@@ -203,7 +207,7 @@ export interface SelectAllOnCtrlAOption {
 
 ##${prefix} contextmenuReturnAllSelectedCells(boolean) = true
 
-右键菜单事件回传给用户参数中是否组织所有选中cells信息，默认true。如果不需要最好主动设置为false。
+右键菜单事件回传给用户参数中是否组织所有选中 cells 信息，默认 true。如果不需要最好主动设置为 false。
 
 #${prefix} excelOptions(Object)
 
@@ -424,6 +428,10 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
     ]
 }
 ```
+
+#${prefix} chartOption(Object)
+
+具体同 VChart 的 Option 配置。会与表格中标准的 chart Option 配置进行合并，后在图表中使用。
 
 #${prefix} customRender(Function|Object)
 
@@ -693,3 +701,14 @@ animationAppear?: boolean | {
 validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
 ```
 
+#${prefix} canvas(HTMLCanvasElement)
+
+表格的 canvas 元素。默认不需要配置，如果需要表格在已经存在的 canvas 中渲染，需要配置该属性。
+
+#${prefix} viewBox({x1: number, y1: number, x2: number, y2: number})
+
+表格在 canvas 中的位置和大小。只有在配置了 canvas 属性后，才需要配置该属性。
+
+#${prefix} disableInteraction(boolean) = false
+
+是否禁用表格所有交互。

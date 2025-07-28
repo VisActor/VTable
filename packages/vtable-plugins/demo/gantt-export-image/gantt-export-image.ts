@@ -270,6 +270,30 @@ export function createTable() {
   const option = {
     overscrollBehavior: 'none',
     records,
+    dependency: {
+      links: [
+        {
+          type: VTableGantt.TYPES.DependencyType.FinishToStart,
+          linkedFromTaskKey: 1,
+          linkedToTaskKey: 2
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToFinish,
+          linkedFromTaskKey: 2,
+          linkedToTaskKey: 3
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.StartToStart,
+          linkedFromTaskKey: 3,
+          linkedToTaskKey: 4
+        },
+        {
+          type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+          linkedFromTaskKey: 4,
+          linkedToTaskKey: 5
+        }
+      ]
+    },
     taskListTable: {
       columns,
       tableWidth: 300,

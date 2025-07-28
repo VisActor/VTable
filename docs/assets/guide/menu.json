@@ -450,6 +450,13 @@
             "zh": "行序号",
             "en": "row series number"
           }
+        },
+        {
+          "path": "render_on_current_canvas",
+          "title": {
+            "zh": "在已有的 canvas 中渲染表格",
+            "en": "render on current canvas"
+          }
         }
       ]
     },
@@ -849,6 +856,13 @@
           "title": {
             "zh": "行列新增插件",
             "en": "add row column plugin"
+          }
+        },
+        {
+          "path": "paste-add-row-column",
+          "title": {
+            "zh": "粘贴新增行和列插件",
+            "en": "paste add row and column plugin"
           }
         },
         {

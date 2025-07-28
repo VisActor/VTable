@@ -14,7 +14,7 @@ export interface IRowSeriesNumber {
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
   title?: string;
-  // field?: FieldDef;
+  field?: string | number;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -38,6 +38,8 @@ The specific configuration items are described as follows:
 
 - width: The line number width can be configured with number or 'auto'. (Default uses defaultColWidth, which defaults to 80)
 - title: row number title, empty by default
+- field: The field corresponding to the row number, if not configured, the row number starts from 1.
+You can also use this field to configure the checkbox selection state.
 - format: row serial number formatting function, empty by default. Through this configuration, numerical serial numbers can be converted into custom serial numbers, such as using a, b, c...
 - cellType: row number cell type, default is text
 - style: row number body cell style
