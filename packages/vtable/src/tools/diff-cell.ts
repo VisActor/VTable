@@ -41,6 +41,12 @@ export function diffCellAddress(
       updateCellPositionsRowDirection.push(parentCellAddress);
     }
   }
+
+  // 如果updateCellPositionsRowDirection中没有{col,row}，则添加；目的是在有懒加载icon的情况下，更新按钮状态，与列表状态保持一致
+  if (!updateCellPositionsRowDirection.some(item => item.col === col && item.row === row)) {
+    updateCellPositionsRowDirection.push({ col, row });
+  }
+
   return {
     addCellPositionsRowDirection,
     removeCellPositionsRowDirection,

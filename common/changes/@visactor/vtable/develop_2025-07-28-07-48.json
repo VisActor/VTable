@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: fix loading icon update in pivot-table #4236",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
