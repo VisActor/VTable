@@ -1,23 +1,23 @@
 #
 
-## Question Description
+## Описание вопроса
 
 ![image](/vtable/faq/xxx.png)
 
-## Solution
+## Решение
 
-## Code Example
+## Пример кода
 
 ```javascript
 
 ```
 
-## Results
+## Результаты
 
-[Online demo]()
+[Онлайн демо]()
 
 ![result](/vtable/faq/xxx.png)
 
-## Quote
+## Ссылки
 
 - [github](https://github.com/VisActor/VTable)

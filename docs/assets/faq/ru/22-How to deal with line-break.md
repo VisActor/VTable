@@ -1,12 +1,12 @@
-# How to deal with line-break
+# Как обрабатывать переносы строк
 
-## Problem Description
+## Описание проблемы
 
-How to handle newline character `\n` in VTable?
+Как обрабатывать символ новой строки `\n` в VTable?
 
-## solution
+## Решение
 
-Line breaks are not parsed by default in VTable and will be drawn as a space in canvas. You can enable newline parsing by configuring `enableLineBreak: true`. At this time, the newline characters in the string will be parsed into newlines, and the string will be parsed into multiple lines.
+Переносы строк по умолчанию не парсятся в VTable и будут отображаться как пробел на холсте. Вы можете включить парсинг новых строк, настроив `enableLineBreak: true`. В этом случае символы новой строки в строке будут парситься как переносы строк, и строка будет парситься в несколько строк.
 
 ```
    const option = {
@@ -15,7 +15,7 @@ Line breaks are not parsed by default in VTable and will be drawn as a space in 
    }
 ```
 
-## Related documents
+## Связанные документы
 
-- [Tutorial](https://www.visactor.io/vtable/option/ListTable#enableLineBreak)
+- [Руководство](https://www.visactor.io/vtable/option/ListTable#enableLineBreak)
 - [github](https://github.com/VisActor/VTable)

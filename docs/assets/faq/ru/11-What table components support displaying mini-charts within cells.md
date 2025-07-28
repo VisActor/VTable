@@ -1,30 +1,30 @@
-# What table components support displaying mini-charts within cells?
+# Какие табличные компоненты поддерживают отображение мини-диаграмм в ячейках?
 
-## Question Description
+## Описание вопроса
 
-I would like to have a separate column in the sales statistics table to display mini-line charts that reflect the displayed growth trends, similar to the daily candlestick list in stock charts.
+Я хотел бы иметь отдельный столбец в таблице статистики продаж для отображения мини-линейных диаграмм, которые отражают отображаемые тенденции роста, аналогично ежедневному списку свечей в биржевых диаграммах.
 
 ![](/vtable/faq/11-0.png)
 
-## Solution
+## Решение
 
-VTable can configure the columnType as "sparkline" to display cells as mini-charts. The specific style of the mini-charts can be set using **sparklineSpec**. The advantage is that the integration of charts and tables creates a seamless experience without a sense of detachment, providing optimal performance and user experience.
+VTable может настроить columnType как "sparkline" для отображения ячеек в виде мини-диаграмм. Конкретный стиль мини-диаграмм можно установить с помощью **sparklineSpec**. Преимущество заключается в том, что интеграция диаграмм и таблиц создает бесшовный опыт без ощущения отрыва, обеспечивая оптимальную производительность и пользовательский опыт.
 
-## Code Example
+## Пример кода
 
 ```javascript
 
 ```
 
-## Results
+## Результаты
 
-[Online demo](https://codesandbox.io/s/vtable-list-table-jw8yr8?file=/src/index.ts)
+[Онлайн демо](https://codesandbox.io/s/vtable-list-table-jw8yr8?file=/src/index.ts)
 
 ![result](/vtable/faq/11-1.png)
 
-## Quote
+## Ссылки
 
-- [Sparkline Tutorial](https://visactor.io/vtable/guide/cell_type/sparkline)
-- [Custom cell layout demo](https://visactor.io/vtable/demo/cell-type/multi-type)
-- [Related api](https://visactor.io/vtable/option/ListTable-columns-sparkline#cellType)
+- [Руководство по Sparkline](https://visactor.io/vtable/guide/cell_type/sparkline)
+- [Демо пользовательского макета ячеек](https://visactor.io/vtable/demo/cell-type/multi-type)
+- [Связанное API](https://visactor.io/vtable/option/ListTable-columns-sparkline#cellType)
 - [github](https://github.com/VisActor/VTable)
