@@ -1,20 +1,20 @@
 ---
 category: examples
-group: Basic Features
-title: Merge Cells
+group: Основные функции
+title: Объединение ячеек
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png
 option: ListTable-columns-text#mergeCell
 ---
 
-# Merge cells
+# Объединение ячеек
 
-Automatically merge cells with the same content through configuration
+Автоматическое объединение ячеек с одинаковым содержимым через конфигурацию
 
-## Key Configurations
+## Ключевые конфигурации
 
-*   `mergeCell`  Merge adjacent cells with the same content in the same column
+*   `mergeCell`  Объединить соседние ячейки с одинаковым содержимым в одном столбце
 
-## Code demo
+## Демонстрация кода
 
 ```javascript livedemo template=vtable
 

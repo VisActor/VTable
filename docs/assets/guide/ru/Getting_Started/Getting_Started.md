@@ -1,14 +1,14 @@
-# Get started quickly
+# Быстрое начало
 
-In this tutorial, we will introduce how to draw a simple basic table using VTable. VTable is an easy-to-use, high-performance, rich visualization type front-end visualization table library.
+В этом руководстве мы представим, как нарисовать простую базовую таблицу с помощью VTable. VTable - это простая в использовании, высокопроизводительная библиотека таблиц для фронтенд-визуализации с богатыми типами визуализации.
 
-## Get VTable
+## Получение VTable
 
-You can get VTable in several ways.
+Вы можете получить VTable несколькими способами.
 
-### Use the NPM package
+### Использование пакета NPM
 
-First, you need to install VTable in the project root directory with the following command:
+Сначала вам нужно установить VTable в корневом каталоге проекта с помощью следующей команды:
 
 ```sh
 # 使用 npm 安装

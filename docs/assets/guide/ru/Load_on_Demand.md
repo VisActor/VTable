@@ -1,17 +1,17 @@
-# VTable on-demand loading
+# Загрузка VTable по требованию
 
-By default, `ListTable`, `PivotTable` and `PivotChart` introduced from `@visactor/vtable` package contain all table-related components, which is a complete table component library.
+По умолчанию `ListTable`, `PivotTable` и `PivotChart`, импортированные из пакета `@visactor/vtable`, содержат все компоненты, связанные с таблицами, что представляет собой полную библиотеку табличных компонентов.
 
-In order to meet the needs of package size optimization, VTable provides two types, `ListTableSimple` and `PivotTableSimple`, which are the most simplified lists and pivot tables, respectively. They only support text display and do not contain external components such as menus and titles. If you need some functions, you can load them on demand. The usage is as follows:
+Для удовлетворения потребностей в оптимизации размера пакета, VTable предоставляет два типа: `ListTableSimple` и `PivotTableSimple`, которые являются наиболее упрощенными списками и сводными таблицами соответственно. Они поддерживают только отображение текста и не содержат внешних компонентов, таких как меню и заголовки. Если вам нужны некоторые функции, вы можете загружать их по требованию. Использование следующее:
 
 ```js
-// ListTableSimple, PivotTableSimple are the simplest list and pivot table components, which do not include cell types and any components other than text
+// ListTableSimple, PivotTableSimple - самые простые компоненты списка и сводной таблицы, которые не включают типы ячеек и любые компоненты, кроме текста
 import {ListTableSimple, PivotTableSimple, registerTitle, registerTooltip} from '@visactor/vtable';
 
-// Register title component
+// Зарегистрировать компонент заголовка
 registerTitle();
 
-// Register tooltip component
+// Зарегистрировать компонент подсказки
 registerTooltip();
 ```
 

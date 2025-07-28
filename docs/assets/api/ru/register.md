@@ -2,13 +2,13 @@
 
 # register
 
-The features that can be globally registered in the table library are theme, icon, and chartModule, which correspond to theme, icon, and chart registration respectively.
+Функции, которые могут быть глобально зарегистрированы в библиотеке таблиц: theme, icon и chartModule, что соответствует регистрации темы, иконки и диаграммы соответственно.
 
 ## theme(Function)
 
-[Usage example](../demo/theme/register):
+[Пример использования](../demo/theme/register):
 
-- Register theme code as follows:
+- Код регистрации темы следующий:
 
 ```
 VTable.register.theme('themeRegisterOne',{
@@ -19,17 +19,17 @@ VTable.register.theme('themeRegisterOne',{
 })
 ```
 
-- Explanation of register.theme function parameters:
+- Объяснение параметров функции register.theme:
 
 ```
 function theme(name: string, theme?: ITableThemeDefine){}
 ```
 
-The structure of ITableThemeDefine can be found in [theme](../option/ListTable#theme)
+Структуру ITableThemeDefine можно найти в [theme](../option/ListTable#theme)
 
-- Usage:
+- Использование:
 
-After registration, you can use the registered name in the option to apply the theme:
+После регистрации вы можете использовать зарегистрированное имя в опции для применения темы:
 
 ```
 const tableInstance = new VTable.PivotTable({
@@ -41,11 +41,11 @@ const tableInstance = new VTable.PivotTable({
 
 ## icon(Function)
 
-By registering icons, you can display icons in the table or replace built-in function icons such as pin freeze icon.
+Регистрируя иконки, вы можете отображать иконки в таблице или заменять встроенные функциональные иконки, такие как иконка закрепления pin freeze.
 
-[Usage example](../demo/custom-render/custom-icon):
+[Пример использования](../demo/custom-render/custom-icon):
 
-- Register icon code as follows:
+- Код регистрации иконки следующий:
 
 ```
 VTable.register.icon('order',{
@@ -67,15 +67,15 @@ VTable.register.icon('order',{
   );
 ```
 
-- Explanation of register.icon function parameters:
+- Объяснение параметров функции register.icon:
 
 ```
 function icon(name: string, icon?: ColumnIconOption){}
 ```
 
-- Usage:
+- Использование:
 
-1. After registering the icon, display the icon in the header or body cell content:
+1. После регистрации иконки отображать иконку в заголовке или содержимом ячейки тела:
 
 ```
 const tableInstance = new VTable.PivotTable({
@@ -92,7 +92,7 @@ const tableInstance = new VTable.PivotTable({
 });
 ```
 
-- ColumnIconOption definition:
+- Определение ColumnIconOption:
 
 ```
 type ColumnIconOption = ImageIcon | SvgIcon;
@@ -100,36 +100,36 @@ type ColumnIconOption = ImageIcon | SvgIcon;
 
 ###ImageIcon(Object)
 
-register image resource.
+зарегистрировать ресурс изображения.
 
 {{ use: image-icon(  prefix = '####') }}
 
 ###SvgIcon(Object)
 
-register svg resource.
+зарегистрировать ресурс svg.
 
 {{ use: svg-icon(  prefix = '####') }}
 
 ###TextIcon(Object)
 
-register text resource.
+зарегистрировать текстовый ресурс.
 
 {{ use: text-icon(  prefix = '####') }}
 
 ## chartModule(Function)
 
-[Usage example](../demo/cell-type/chart):
+[Пример использования](../demo/cell-type/chart):
 
-- Register chartModule code as follows:
+- Код регистрации chartModule следующий:
 
 ```
 VTable.register.chartModule('chartspace', ChartSpace);
 ```
 
-- register.chartTyle function definition:
+- Определение функции register.chartTyle:
 
 ```
 function chartModule(name: string, chartModule?: any){}
 ```
 
-In this case, chartModule is a chart component. For example, [VChart](https://visactor.io/vchart).
+В этом случае chartModule является компонентом диаграммы. Например, [VChart](https://visactor.io/vchart).

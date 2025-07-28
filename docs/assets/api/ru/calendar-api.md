@@ -1,22 +1,22 @@
 {{ target: calendar-api }}
 
-# Calendar API
+# API календаря
 
-## Methods
+## Методы
 
-The methods currently supported by the calendar chart are as follows:
+Методы, в настоящее время поддерживаемые диаграммой календаря, следующие:
 
 ### get table()
 
-Get the VTable instance corresponding to the calendar chart.
+Получить экземпляр VTable, соответствующий диаграмме календаря.
 
 ### get selectedDate()
 
-Get the currently selected date.
+Получить текущую выбранную дату.
 
 ### jumpToDate(Function)
 
-Jump to the specified date.
+Перейти к указанной дате.
 
 ```
 jumpToDate(date: Date, animation?: boolean | TYPES.ITableAnimationOption) => void
@@ -25,7 +25,7 @@ jumpToDate(date: Date, animation?: boolean | TYPES.ITableAnimationOption) => voi
 
 ### jumpToCurrentMonth(Function)
 
-Jump to the current month.
+Перейти к текущему месяцу.
 
 ```
 jumpToCurrentMonth(animation?: boolean | TYPES.ITableAnimationOption) => void
@@ -34,7 +34,7 @@ jumpToCurrentMonth(animation?: boolean | TYPES.ITableAnimationOption) => void
 
 ### getCellLocation(Function)
 
-Get the cell location corresponding to the specified date.
+Получить расположение ячейки, соответствующее указанной дате.
 
 ```
 getCellLocation(date: Date) => { col: number; row: number }
@@ -42,7 +42,7 @@ getCellLocation(date: Date) => { col: number; row: number }
 
 ### getCellDate(Function)
 
-Get the date corresponding to the specified cell location.
+Получить дату, соответствующую указанному расположению ячейки.
 
 ```
 getCellDate(col: number, row: number) => Date
@@ -50,7 +50,7 @@ getCellDate(col: number, row: number) => Date
 
 ### addCustomEvent(Function)
 
-Add a custom event.
+Добавить пользовательское событие.
 
 ```
 addCustomEvent(event: ICustomEvent) => void
@@ -58,7 +58,7 @@ addCustomEvent(event: ICustomEvent) => void
 
 ### addCustomEvents(Function)
 
-Add custom events in batches.
+Добавить пользовательские события пакетно.
 
 ```
 addCustomEvents(events: ICustomEvent[]) => void
@@ -66,7 +66,7 @@ addCustomEvents(events: ICustomEvent[]) => void
 
 ### removeCustomEvent(Function)
 
-Remove a custom event.
+Удалить пользовательское событие.
 
 ```
 removeCustomEvent(id: string) => void
@@ -74,7 +74,7 @@ removeCustomEvent(id: string) => void
 
 ### removeCustomEvents(Function)
 
-Remove custom events in batches.
+Удалить пользовательские события пакетно.
 
 ```
 removeCustomEvents(ids: string[]) => void
@@ -82,7 +82,7 @@ removeCustomEvents(ids: string[]) => void
 
 ### updateCustomEvent(Function)
 
-Update custom schedule.
+Обновить пользовательское расписание.
 
 ```
 updateCustomEvents(events: ICustomEvent) => void
@@ -90,7 +90,7 @@ updateCustomEvents(events: ICustomEvent) => void
 
 ### updateCustomEvents(Function)
 
-Batch update custom schedule.
+Пакетное обновление пользовательского расписания.
 
 ```
 updateCustomEvents(events: ICustomEvent[]) => void
@@ -98,7 +98,7 @@ updateCustomEvents(events: ICustomEvent[]) => void
 
 ### getCellCustomEventByLocation(Function)
 
-Get the custom schedule corresponding to the specified cell location.
+Получить пользовательское расписание, соответствующее указанному расположению ячейки.
 
 ```
 getCellCustomEventByLocation(col: number, row: number) => ICustomEvent[]
@@ -106,21 +106,21 @@ getCellCustomEventByLocation(col: number, row: number) => ICustomEvent[]
 
 ### release(Function)
 
-Release the calendar image.
+Освободить изображение календаря.
 
 ```
 release() => void
 ```
 
-## Events
+## События
 
-Like VTable instances, the calendar chart also supports event monitoring, the specific events are as follows:
+Как и экземпляры VTable, диаграмма календаря также поддерживает мониторинг событий, конкретные события следующие:
 
 ### CALENDAR_DATE_CLICK
 
-Triggered when clicking the date of the calendar chart.
+Срабатывает при клике на дату диаграммы календаря.
 
-Event parameters:
+Параметры события:
 
 ```
 { date: Date; tableEvent: MousePointerCellEvent }
@@ -128,9 +128,9 @@ Event parameters:
 
 ### SELECTED_DATE
 
-Triggered when a date is selected.
+Срабатывает при выборе даты.
 
-Event parameters:
+Параметры события:
 
 ```
 { date: Date; tableEvent: SelectedCellEvent }
@@ -138,13 +138,13 @@ Event parameters:
 
 ### SELECTED_DATE_CLEAR
 
-Triggered when a date is unselected.
+Срабатывает при отмене выбора даты.
 
 ### DRAG_SELECT_DATE_END
 
-Triggered when dragging the selected date ends.
+Срабатывает когда завершается перетаскивание выбранной даты.
 
-Event parameters:
+Параметры события:
 
 ```
 { date: Date[]; tableEvent: MousePointerCellEvent }
@@ -152,9 +152,9 @@ Event parameters:
 
 ### CALENDAR_CUSTOM_EVENT_CLICK
 
-Triggered when clicking a custom schedule.
+Срабатывает при клике на пользовательское расписание.
 
-Event parameters:
+Параметры события:
 
 ```
 { date: Date; tableEvent: MousePointerCellEvent; customEvent: IEventData }

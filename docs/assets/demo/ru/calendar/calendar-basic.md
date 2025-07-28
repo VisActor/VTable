@@ -1,17 +1,17 @@
 ---
 category: examples
-group: Calendar
-title: Calendar
+group: Календарь
+title: Календарь
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calendar-basic.png
 link: calendar/introduction
 option: Calendar#startDate
 ---
 
-# Calendar
+# Календарь
 
-Calendar basic usage.
+Основное использование календаря.
 
-## Key Configurations
+## Ключевые конфигурации
 
 - `Calendar`
 
