@@ -38,7 +38,7 @@
     "@visactor/vutils": "~0.19.1"
   },
   "devDependencies": {
-    "@visactor/vchart": "2.0.1",
+    "@visactor/vchart": "2.0.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

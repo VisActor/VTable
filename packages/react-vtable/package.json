@@ -55,7 +55,7 @@
     "react-reconciler": "0.29.2"
   },
   "devDependencies": {
-    "@visactor/vchart": "2.0.1",
+    "@visactor/vchart": "2.0.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
