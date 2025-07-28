@@ -1,111 +1,111 @@
 ---
-category: examples
-group: Business
-title: Sales bubble chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sales-bubble.png
-link: custom_define/custom_render
-option: PivotTable#customRender.elements
+категория: примеры
+группа: Business
+заголовок: Продажи bubble график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/Продажи-bubble.png
+ссылка: пользовательский_define/пользовательский_render
+опция: сводныйтаблица#пользовательскийRender.elements
 ---
 
-# Sales bubble chart
+# Продажи bubble график
 
-Map sales to circle size and color to help you gain more visual insights into your data.
+Map Продажи к circle размер и цвет к help you gain more visual insights into your данные.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
-- `customRender`
+- `сводныйтаблица`
+- `пользовательскийRender`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-function getColor(min, max, value, opacity) {
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+функция getColor(min, max, значение, opaГород) {
   if (max === min) {
-    if (value > 0) {
-      return `rgba(255,0,0,${opacity})`;
+    if (значение > 0) {
+      возврат `rgba(255,0,0,${opaГород})`;
     }
-    return `rgba(255,255,255,${opacity})`;
+    возврат `rgba(255,255,255,${opaГород})`;
   }
-  if (value === '') {
-    return `rgba(255,255,255,${opacity})`;
+  if (значение === '') {
+    возврат `rgba(255,255,255,${opaГород})`;
   }
-  const c = (value - min) / (max - min) + 0.1;
+  const c = (значение - min) / (max - min) + 0.1;
   const red = (1 - c) * 200 + 55;
   const green = (1 - c) * 200 + 55;
-  return `rgba(${red},${green},255,${opacity})`;
+  возврат `rgba(${red},${green},255,${opaГород})`;
 }
 
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery'
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region'
+          dimensionKey: 'Регион',
+          заголовок: 'Регион'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment'
+          заголовок: 'Segment'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales'
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи'
         }
       ],
       corner: {
-        titleOnDimension: 'none'
+        titleOnDimension: 'никто'
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           }
         ],
         totals: {
           row: {
             showSubTotals: true,
-            subTotalsDimensions: ['Category'],
+            subTotalsDimensions: ['Категория'],
             subTotalLabel: 'subtotal'
           }
         }
       },
-      tooltip: {
-        isShowOverflowTextTooltip: true
+      Подсказка: {
+        isShowOverflowTextПодсказка: true
       },
-      hideIndicatorName: true,
-      defaultHeaderRowHeight: 30,
-      defaultRowHeight: 40,
-      defaultColWidth: 60,
-      widthMode: 'autoWidth',
+      hideIndicatorимя: true,
+      defaultHeaderRowвысота: 30,
+      defaultRowвысота: 40,
+      defaultColширина: 60,
+      ширинаMode: 'автоширина',
       keyboardOptions: {
         copySelected: true
       },
-      customRender: {
+      пользовательскийRender: {
         elements: [
           {
-            type: 'circle',
+            тип: 'circle',
             x: '50%',
             y: '50%',
-            radius: value => {
-              const percent = Math.max(5, (Number(value) / 59645 / 2) * 100);
-              return `${percent}%`;
+            radius: значение => {
+              const percent = Math.max(5, (число(значение) / 59645 / 2) * 100);
+              возврат `${percent}%`;
             },
-            fill: value => {
-              const color = getColor(80, 59645, value, 0.5);
-              const color1 = getColor(80, 59645, value, 1);
-              return {
+            fill: значение => {
+              const цвет = getColor(80, 59645, значение, 0.5);
+              const color1 = getColor(80, 59645, значение, 1);
+              возврат {
                 gradient: 'linear',
                 x0: 0,
                 y0: 1,
@@ -114,11 +114,11 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                 stops: [
                   {
                     offset: 0,
-                    color: color
+                    цвет: цвет
                   },
                   {
                     offset: 1,
-                    color: color1
+                    цвет: color1
                   }
                 ]
               };
@@ -127,29 +127,29 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         ],
         renderDefault: false
       },
-      theme: {
+      тема: {
         headerStyle: {
-          borderLineWidth: 0,
-          color: '#434343',
+          borderLineширина: 0,
+          цвет: '#434343',
           fontSize: 12
         },
         rowHeaderStyle: {
-          borderLineWidth: 0,
-          color: '#434343',
+          borderLineширина: 0,
+          цвет: '#434343',
           fontSize: 12
         },
         cornerHeaderStyle: {
-          borderLineWidth: 0,
-          color: '#434343',
+          borderLineширина: 0,
+          цвет: '#434343',
           fontSize: 12
         },
         bodyStyle: {
-          borderLineWidth: 0
+          borderLineширина: 0
         }
       }
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = таблицаInstance;
   })
-  .catch(err => console.error(err));
+  .catch(err => console.ошибка(err));
 ```

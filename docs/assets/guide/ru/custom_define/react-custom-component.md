@@ -1,111 +1,111 @@
-# React-VTable custom components
+# React-Vтаблица пользовательский компонентs
 
-## Custom cell components
+## пользовательский cell компонентs
 
-To help react developers quickly implement custom cell content, React-VTable provides the ability to encapsulate components and use them in cells.
+к help react developers quickly implement пользовательский cell content, React-Vтаблица provides the ability к encapsulate компонентs и use them в cells.
 
-### Component usage
+### компонент usвозраст
 
-*To use custom cell component, need to use react 18 version*
+*к use пользовательский cell компонент, need к use react 18 version*
 
-Custom cell components are encapsulated based on [custom layout](../custom_define/custom_layout), and their usage is similar to custom layout. To use components in `ListColumn`, custom components need to pass in the `role` attribute to identify the component as a custom cell component; the `custom-layout` component will take effect in the table content part, and the `header-custom-layout` component will take effect in the table header part. There can be at most one `custom-layout` component in each column, and at most one `header-custom-layout` component.
+пользовательский cell компонентs are encapsulated based на [пользовательский макет](../пользовательский_define/пользовательский_макет), и their usвозраст is similar к пользовательский макет. к use компонентs в `списокColumn`, пользовательский компонентs need к pass в the `role` attribute к identify the компонент as a пользовательский cell компонент; the `пользовательский-макет` компонент will take effect в the таблица content part, и the `header-пользовательский-макет` компонент will take effect в the таблица header part. There can be в most one `пользовательский-макет` компонент в каждый column, и в most one `header-пользовательский-макет` компонент.
 
 ```tsx
-  <ListTable records={records}>
-    <ListColumn field={'bloggerName'} title={'bloggerName'} width={330} disableHover={true}>
-      <CustomLayoutComponent role={'custom-layout'} info={bodyInfo}/>
-      <HeaderCustomLayoutComponent role={'header-custom-layout'} info={headerInfo}/>
-    </ListColumn>
+  <списоктаблица records={records}>
+    <списокColumn поле={'bloggerимя'} title={'bloggerимя'} ширина={330} disableHover={true}>
+      <пользовательскиймакеткомпонент role={'пользовательский-макет'} информация={bodyInfo}/>
+      <Headerпользовательскиймакеткомпонент role={'header-пользовательский-макет'} информация={headerInfo}/>
+    </списокColumn>
     // ......
-  </ListTable>
+  </списоктаблица>
 ```
 
-### Component encapsulation
+### компонент encapsulation
 
-#### Default properties
+#### по умолчанию свойства
 
-In the component, in addition to user-defined properties, like custom layouts, react-vtable also provides some default properties for components to use
+в the компонент, в addition к user-defined свойства, like пользовательский макетs, react-vтаблица also provides некоторые по умолчанию свойства для компонентs к use
 
 ```tsx
-interface CustomLayoutProps {
-  table: ListTable; // 表格实例
-  row: number; // 行号
-  col: number; // 列号
-  value: FieldData; // 单元格展示数据
-  dataValue: FieldData; // 单元格原始数据
+интерфейс пользовательскиймакетProps {
+  таблица: списоктаблица; // 表格实例
+  row: число; // 行号
+  col: число; // 列号
+  значение: поледанные; // 单元格展示数据
+  данныеValue: поледанные; // 单元格原始数据
   rect?: RectProps; // 单元格布局信息
 }
-const CustomLayoutComponent = (props: CustomLayoutProps & UserProps) => {
-  const { table, row, col, rect, text } = props;
+const пользовательскиймакеткомпонент = (props: пользовательскиймакетProps & UserProps) => {
+  const { таблица, row, col, rect, текст } = props;
   // ......
 }
 ```
 
 #### Label
 
-The label returned by the component must be based on the element label provided by react-vtable (HTML tags or DOM react components cannot be used directly. If you need to use them, please refer to the next section)
+The label returned по the компонент must be based на the element label provided по react-vтаблица (HTML tags или DOM react компонентs cannot be used directly. If you need к use them, please refer к the следующий section)
 
 ```tsx
-import { Group, Text } from '@visactor/react-vtable';
+import { Group, текст } от '@visactor/react-vтаблица';
 
-const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }) => {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+const пользовательскиймакеткомпонент = (props: пользовательскиймакетFunctionArg & { текст: строка }) => {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const [hover, setHover] = useState(false);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const [навести, setHover] = useState(false);
 
-  const fieldData = [
+  const поледанные = [
     {
-      value: 'a',
+      значение: 'a',
       label: 'a'
     },
     {
-      value: 'b',
+      значение: 'b',
       label: 'b'
     }
   ];
 
   const groupRef = useRef(null);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
-        alignItems: 'center',
-        alignContent: 'center'
+        alignItems: 'центр',
+        alignContent: 'центр'
       }}
       ref={groupRef}
     >
-      {fieldData.map(item => {
-        return (
-          <Text
-            key={item.value}
+      {поледанные.map(item => {
+        возврат (
+          <текст
+            key={item.значение}
             attribute={{
-              text: `${text}-${row}`,
-              fill: hover ? 'red' : '#000'
+              текст: `${текст}-${row}`,
+              fill: навести ? 'red' : '#000'
             }}
-            onMouseEnter={(event: any) => {
-              // eslint-disable-next-line no-console, no-undef
-              console.log('groupRef', groupRef.current);
+            onMouseEnter={(событие: любой) => {
+              // eslint-отключить-следующий-line no-console, no-undef
+              console.log('groupRef', groupRef.текущий);
               setHover(true);
-              event.currentTarget.stage.renderNextFrame();
+              событие.currentTarget.stвозраст.renderNextFrame();
             }}
-            onMouseLeave={(event: any) => {
+            onMouseLeave={(событие: любой) => {
               setHover(false);
-              event.currentTarget.stage.renderNextFrame();
+              событие.currentTarget.stвозраст.renderNextFrame();
             }}
           />
         );
       })}
-      {hover && (
-        <Text
+      {навести && (
+        <текст
           attribute={{
-            text: 'hover',
+            текст: 'навести',
             fill: 'blue',
           }}
         />
@@ -115,52 +115,52 @@ const CustomLayoutComponent = (props: CustomLayoutFunctionArg & { text: string }
 };
 ```
 
-### Basic graphic component
+### базовый graphic компонент
 
-Basic graphics:
+базовый graphics:
 
-* Text
+* текст
 * Rect
-* Image
+* Imвозраст
 * Line
 * ​​Arc
 * Circle
 * Group
 
-For specific configuration properties, please refer to [`VRender element configuration`](https://visactor.io/vrender/option/Group), and for specific usage and layout, please refer to [custom layout](../custom_define/custom_layout), [reference example](../../demo-react/component/cell-custom-layout-dom).
+для specific configuration свойства, please refer к [`VRender element configuration`](https://visactor.io/vrender/option/Group), и для specific usвозраст и макет, please refer к [пользовательский макет](../пользовательский_define/пользовательский_макет), [reference пример](../../демонстрация-react/компонент/cell-пользовательский-макет-dom).
 
-<div style="display: flex; justify-content: center;">
-<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png" style="flex: 0 0 50%; padding: 10px;">
+<div style="display: flex; justify-content: центр;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-cell-макет-jsx.png" style="flex: 0 0 50%; заполнение: 10px;">
 </div>
 
-### React-VTable component
+### React-Vтаблица компонент
 
-In order to facilitate users to quickly implement customized cell content, React-VTable provides some commonly used components in table scenarios:
+в order к facilitate users к quickly implement пользовательскийized cell content, React-Vтаблица provides некоторые commonly used компонентs в таблица scenarios:
 
 #### Tag
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState } = React;
-const { ListTable, ListColumn, Group, Tag } = ReactVTable;
+const { списоктаблица, списокColumn, Group, Tag } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
@@ -170,11 +170,11 @@ function Cell(props) {
           fontFamily: 'sans-serif',
           fill: 'rgb(51, 101, 238)'
         }}
-        padding={[8, 10]}
+        заполнение={[8, 10]}
         panelStyle={{
-          visible: true,
+          видимый: true,
           fill: '#e6fffb',
-          lineWidth: 1,
+          lineширина: 1,
           cornerRadius: 4
         }}
       >tag-1</Tag>
@@ -184,11 +184,11 @@ function Cell(props) {
           fontFamily: 'sans-serif',
           fill: 'rgb(51, 141, 38)'
         }}
-        padding={[8, 10]}
+        заполнение={[8, 10]}
         panelStyle={{
-          visible: true,
+          видимый: true,
           fill: '#e6fffb',
-          lineWidth: 1,
+          lineширина: 1,
           cornerRadius: 4
         }}
       >tag-2</Tag>
@@ -196,72 +196,72 @@ function Cell(props) {
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
     >
-      <ListColumn field={'name'} title={'Tag Component'} width={200}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'Tag компонент'} ширина={200}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-API
+апи
 
-| Property | Type | Description |
+| Property | тип | Description |
 | --- | --- | --- |
-| text | string | Text content |
-| textStyle | [TextStyleOption](https://visactor.io/vrender/option/Text#attribute) | Text style |
-| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | Label background style |
-| padding | number \| number[] | Padding |
-| minWidth | number | Maximum width of label |
-| maxWidth | number | Minimum width of label |
+| текст | строка | текст content |
+| textStyle | [TextStyleOption](https://visactor.io/vrender/option/текст#attribute) | текст style |
+| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | Label фон style |
+| заполнение | число \| число[] | заполнение |
+| minширина | число | Maximum ширина из label |
+| maxширина | число | Minimum ширина из label |
 
-#### Radio
+#### переключатель
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState, useEffect } = React;
-const { ListTable, ListColumn, Group, Radio } = ReactVTable;
+const { списоктаблица, списокColumn, Group, переключатель } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
   const [checkedIndex, setCheckedIndex] = useState(0);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
-      <Radio 
+      <переключатель 
         textStyle={{
           fontSize: 14,
           fontFamily: 'sans-serif',
@@ -273,8 +273,8 @@ function Cell(props) {
             setCheckedIndex(0);
           }
         }}
-      >radio-1</Radio>
-      <Radio 
+      >переключатель-1</переключатель>
+      <переключатель 
         textStyle={{
           fontSize: 14,
           fontFamily: 'sans-serif',
@@ -286,8 +286,8 @@ function Cell(props) {
             setCheckedIndex(1);
           }
         }}
-      >radio-2</Radio>
-      <Radio 
+      >переключатель-2</переключатель>
+      <переключатель 
         textStyle={{
           fontSize: 14,
           fontFamily: 'sans-serif',
@@ -300,331 +300,331 @@ function Cell(props) {
             setCheckedIndex(2);
           }
         }}
-      >radio-3</Radio>
-      <Radio 
-        text={{
+      >переключатель-3</переключатель>
+      <переключатель 
+        текст={{
           fontSize: 14,
           fontFamily: 'sans-serif',
           fill: 'rgb(51, 101, 238)'
         }}
-        disabled={true}
+        отключен={true}
         checked={checkedIndex === 3}
         onChange={(checked) => {
           if (checked) {
             setCheckedIndex(3);
           }
         }}
-      >radio-4</Radio>
+      >переключатель-4</переключатель>
     </Group>
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
-      select={{disableSelect: true}}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
+      выбрать={{disableSelect: true}}
     >
-      <ListColumn field={'name'} title={'Radio Component'} width={330}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'переключатель компонент'} ширина={330}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-API
+апи
 
-| Property | Type | Description |
+| Property | тип | Description |
 | --- | --- | --- |
-| text | string | Text content |
-| textStyle | [TextStyleOption](https://visactor.io/vrender/option/Text#attribute) & {disableFill?: string} | Text style |
-| circleStyle | [ArcStyleOption](https://visactor.io/vrender/option/Arc#attribute) & {disableFill?: string;checkedFill?: string;checkedStroke?: string;disableCheckedFill?: string;disableCheckedStroke?: string;} | Circular check icon style |
-| interactive | boolean | Interactive |
-| disabled | boolean | Disable radio button |
-| checked | boolean | Checked |
+| текст | строка | текст content |
+| textStyle | [TextStyleOption](https://visactor.io/vrender/option/текст#attribute) & {disableFill?: строка} | текст style |
+| circleStyle | [ArcStyleOption](https://visactor.io/vrender/option/Arc#attribute) & {disableFill?: строка;checkedFill?: строка;checkedStrхорошоe?: строка;disableCheckedFill?: строка;disableCheckedStrхорошоe?: строка;} | Circular check иконка style |
+| interactive | логический | Interactive |
+| отключен | логический | отключить переключатель Кнопка |
+| checked | логический | Checked |
 | cursor | Cursor | cursor style |
-| disableCursor | Cursor | Disable cursor style |
-| spaceBetweenTextAndIcon | number | Icon text spacing |
-| onChange | (checked: boolean) => void | Checked state change callback |
+| disableCursor | Cursor | отключить cursor style |
+| spaceBetweenTextAndиконка | число | иконка текст spacing |
+| onChange | (checked: логический) => void | Checked state change обратный вызов |
 
-#### Checkbox
+#### флажок
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState, useEffect } = React;
-const { ListTable, ListColumn, Group, Checkbox } = ReactVTable;
+const { списоктаблица, списокColumn, Group, флажок } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
-      <Checkbox 
+      <флажок 
         textStyle={{
           fontSize: 14,
           fontFamily: 'sans-serif',
           fill: 'rgb(51, 101, 238)'
         }}
-      >checkbox-1</Checkbox>
-      <Checkbox 
+      >флажок-1</флажок>
+      <флажок 
         textStyle={{
           fontSize: 14,
           fontFamily: 'sans-serif',
           fill: 'rgb(51, 101, 238)'
         }}
-      >checkbox-2</Checkbox>
+      >флажок-2</флажок>
     </Group>
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
-      select={{disableSelect: true}}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
+      выбрать={{disableSelect: true}}
     >
-      <ListColumn field={'name'} title={'Radio Component'} width={330}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'переключатель компонент'} ширина={330}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-API
+апи
 
-| Attributes | Type | Description | --- | --- | --- | | text | string | Text content | | textStyle | [TextStyleOption](https://visactor.io/vrender/option/Text#attribute ) & {disableFill?: string} | text style | | boxStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) & {disableFill?: string;checkedFill?: string;checkedStroke?: string;disableCheckedFill?: string;disableCheckedStroke?: string;} | Check icon style | | iconStyle | [ImageStyleOption](https://visactor.io/vrender/option/Image#attribute) & {{checkIconImage?: string \| HTMLImageElement \| HTMLCanvasElement;indeterminateIconImage?: string \| HTMLImageElement \| HTMLCanvasElement;}} | Check icon background style|
-| interactive | boolean | Is it interactive?|
-| disabled | boolean | Is the radio button disabled?|
-| checked | boolean | Is it checked?|
-| indeterminate | boolean | Is the indeterminate state displayed? |
+| Attributes | тип | Description | --- | --- | --- | | текст | строка | текст content | | textStyle | [TextStyleOption](https://visactor.io/vrender/option/текст#attribute ) & {disableFill?: строка} | текст style | | boxStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) & {disableFill?: строка;checkedFill?: строка;checkedStrхорошоe?: строка;disableCheckedFill?: строка;disableCheckedStrхорошоe?: строка;} | Check иконка style | | иконкаStyle | [ImвозрастStyleOption](https://visactor.io/vrender/option/Imвозраст#attribute) & {{checkиконкаImвозраст?: строка \| HTMLImвозрастElement \| HTMLCanvasElement;indeterminateиконкаImвозраст?: строка \| HTMLImвозрастElement \| HTMLCanvasElement;}} | Check иконка фон style|
+| interactive | логический | Is it interactive?|
+| отключен | логический | Is the переключатель Кнопка отключен?|
+| checked | логический | Is it checked?|
+| indeterminate | логический | Is the indeterminate state displayed? |
 | cursor | Cursor | cursor style|
-| disableCursor | Cursor | Cursor style when disabled|
-| spaceBetweenTextAndIcon | number | Icon text spacing|
-| onChange | (checked: boolean) => void | Selected state change callback |
+| disableCursor | Cursor | Cursor style when отключен|
+| spaceBetweenTextAndиконка | число | иконка текст spacing|
+| onChange | (checked: логический) => void | Selected state change обратный вызов |
 
-#### Button
+#### Кнопка
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState, useEffect } = React;
-const { ListTable, ListColumn, Group, Button } = ReactVTable;
+const { списоктаблица, списокColumn, Group, Кнопка } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
-      <Button>button-1</Button>
-      <Button disabled={true}>button-2</Button>
+      <Кнопка>Кнопка-1</Кнопка>
+      <Кнопка отключен={true}>Кнопка-2</Кнопка>
     </Group>
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
-      select={{disableSelect: true}}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
+      выбрать={{disableSelect: true}}
     >
-      <ListColumn field={'name'} title={'Radio Component'} width={330}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'переключатель компонент'} ширина={330}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-API
+апи
 
-| Property | Type | Description |
+| Property | тип | Description |
 | --- | --- | --- |
-| textStyle | [TextStyleOption](https://visactor.io/vrender/option/Text#attribute) | Text style |
-| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | Background style |
-| padding | number \| number[] | Padding |
-| disabled | boolean | Disabled |
+| textStyle | [TextStyleOption](https://visactor.io/vrender/option/текст#attribute) | текст style |
+| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | фон style |
+| заполнение | число \| число[] | заполнение |
+| отключен | логический | отключен |
 | cursor | Cursor | cursor style |
-| minWidth | number | Minimum button width |
-| maxWidth | number | Maximum button width |
-| onClick | (event: MouseEvent) => void | Click event callback |
-| state | {textStyle?: {hover?: [TextStyleOption](https://visactor.io/vrender/option/Text#attribute); disabled?: [TextStyleOption](https://visactor.io/vrender/option/Text#attribute);};panelStyle?: {hover?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);disabled?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);};} | State Style |
+| minширина | число | Minimum Кнопка ширина |
+| maxширина | число | Maximum Кнопка ширина |
+| onНажать | (событие: Mouseсобытие) => void | Нажать событие обратный вызов |
+| state | {textStyle?: {навести?: [TextStyleOption](https://visactor.io/vrender/option/текст#attribute); отключен?: [TextStyleOption](https://visactor.io/vrender/option/текст#attribute);};panelStyle?: {навести?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);отключен?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);};} | State Style |
 
 #### Link
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState, useEffect } = React;
-const { ListTable, ListColumn, Group, Link } = ReactVTable;
+const { списоктаблица, списокColumn, Group, Link } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
       <Link href="#">link-1</Link>
-      <Link href="#" disabled={true}>link-2</Link>
-      <Link href="#" icon>link-3</Link>
+      <Link href="#" отключен={true}>link-2</Link>
+      <Link href="#" иконка>link-3</Link>
     </Group>
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
-      select={{disableSelect: true}}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
+      выбрать={{disableSelect: true}}
     >
-      <ListColumn field={'name'} title={'Radio Component'} width={330}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'переключатель компонент'} ширина={330}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-API
+апи
 
-| Property | Type | Description |
+| Property | тип | Description |
 | --- | --- | --- |
-| textStyle | [TextStyleOption](https://visactor.io/vrender/option/Text#attribute) | Text style |
-| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | Background style |
-| disabled | boolean | Disabled |
+| textStyle | [TextStyleOption](https://visactor.io/vrender/option/текст#attribute) | текст style |
+| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | фон style |
+| отключен | логический | отключен |
 | cursor | Cursor | cursor style |
-| minWidth | number | Minimum link width |
-| maxWidth | number | Maximum link width |
-| onClick | (event: MouseEvent) => void | Click event callback |
-| state | {textStyle?: {hover?: [TextStyleOption](https://visactor.io/vrender/option/Text#attribute); disabled?: [TextStyleOption](https://visactor.io/vrender/option/Text#attribute);};panelStyle?: {hover?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);disabled?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);};} | Status style |
-| icon | boolean | Whether to display the left icon |
-| space | number | Spacing between icon and text |
-| href | string | Link address |
+| minширина | число | Minimum link ширина |
+| maxширина | число | Maximum link ширина |
+| onНажать | (событие: Mouseсобытие) => void | Нажать событие обратный вызов |
+| state | {textStyle?: {навести?: [TextStyleOption](https://visactor.io/vrender/option/текст#attribute); отключен?: [TextStyleOption](https://visactor.io/vrender/option/текст#attribute);};panelStyle?: {навести?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);отключен?: [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute);};} | Status style |
+| иконка | логический | Whether к display the лево иконка |
+| space | число | Spacing between иконка и текст |
+| href | строка | Link address |
 
 #### Avatar
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState, useEffect } = React;
-const { ListTable, ListColumn, Group, Avatar, Image } = ReactVTable;
+const { списоктаблица, списокColumn, Group, Avatar, Imвозраст } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
       <Avatar>A-1</Avatar>
       <Avatar shape={'square'}>A-2</Avatar>
       <Avatar>
-        <Image
+        <Imвозраст
           attribute={{
-            image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+            imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg'
           }}
         />
       </Avatar>
@@ -632,77 +632,77 @@ function Cell(props) {
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
-      select={{disableSelect: true}}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
+      выбрать={{disableSelect: true}}
     >
-      <ListColumn field={'name'} title={'Radio Component'} width={330}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'переключатель компонент'} ширина={330}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-API
+апи
 
-| Property | Type | Description |
+| Property | тип | Description |
 | --- | --- | --- |
-| textStyle | [TextStyleOption](https://visactor.io/vrender/option/Text#attribute) | Text style |
-| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | Background style |
-| size | number | Size |
+| textStyle | [TextStyleOption](https://visactor.io/vrender/option/текст#attribute) | текст style |
+| panelStyle | [RectStyleOption](https://visactor.io/vrender/option/Rect#attribute) | фон style |
+| размер | число | размер |
 | shape | 'circle' \| 'square' | Shape |
-| autoFixFontSize | boolean | Whether to automatically adjust the font size |
-| onClick | (event: MouseEvent) => void | Click event callback |
+| автоFixFontSize | логический | Whether к автоmatically adjust the шрифт размер |
+| onНажать | (событие: Mouseсобытие) => void | Нажать событие обратный вызов |
 
 #### Popover
 
-```javascript livedemo template=vtable-react
+```javascript liveдемонстрация template=vтаблица-react
 const { useCallback, useRef, useState, useEffect } = React;
-const { ListTable, ListColumn, Group, Avatar, Popover } = ReactVTable;
+const { списоктаблица, списокColumn, Group, Avatar, Popover } = ReactVтаблица;
 
-function Cell(props) {
-  const { table, row, col, rect, text } = props;
-  if (!table || row === undefined || col === undefined) {
-    return null;
+функция Cell(props) {
+  const { таблица, row, col, rect, текст } = props;
+  if (!таблица || row === undefined || col === undefined) {
+    возврат null;
   }
-  const { height, width } = rect || table.getCellRect(col, row);
-  const record = table.getRecordByRowCol(col, row);
+  const { высота, ширина } = rect || таблица.getCellRect(col, row);
+  const record = таблица.getRecordByRowCol(col, row);
 
-  return (
+  возврат (
     <Group
       attribute={{
-        width,
-        height,
+        ширина,
+        высота,
         display: 'flex',
         flexWrap: 'wrap',
         flexDirection: 'row',
-        alignItems: 'center',
-        alignContent: 'center',
+        alignItems: 'центр',
+        alignContent: 'центр',
         justifyContent: 'space-around'
       }}
     >
       <Popover
         content={
           <span>
-            <p>Here is the text content</p>
+            <p>Here is the текст content</p>
           </span>
         }
-        position={'bottom'}
+        позиция={'низ'}
       >
         <Avatar>A-1</Avatar>
       </Popover>
@@ -710,142 +710,142 @@ function Cell(props) {
   );
 }
 
-function App() {
-  const visible = useRef(false);
-  const tableInstance = useRef(null);
+функция App() {
+  const видимый = useRef(false);
+  const таблицаInstance = useRef(null);
 
-  return (
-    <ListTable
-      ref={tableInstance}
-      records={[{name: 1}]}
-      select={{disableSelect: true}}
+  возврат (
+    <списоктаблица
+      ref={таблицаInstance}
+      records={[{имя: 1}]}
+      выбрать={{disableSelect: true}}
       ReactDOM={ReactDom}
     >
-      <ListColumn field={'name'} title={'Radio Component'} width={330}>
-        <Cell role={'custom-layout'}/>
-      </ListColumn>
-    </ListTable>
+      <списокColumn поле={'имя'} title={'переключатель компонент'} ширина={330}>
+        <Cell role={'пользовательский-макет'}/>
+      </списокColumn>
+    </списоктаблица>
   );
 }
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
-window.customRelease = () => {
+// Релиз react instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```
 
-It should be noted that the `Popover` component uses the DOM solution, and `ReactDom` needs to be passed in the `ReactDOM` attribute, otherwise it cannot be rendered normally; the `ReactNode` type received by the `content` attribute needs to be a DOM tag or component, otherwise it cannot be rendered normally.
+It should be noted that the `Popover` компонент uses the DOM solution, и `ReactDom` needs к be passed в the `ReactDOM` attribute, otherwise it cannot be rendered normally; the `ReactNode` тип received по the `content` attribute needs к be a DOM tag или компонент, otherwise it cannot be rendered normally.
 
-API
+апи
 
-| Property | Type | Description |
+| Property | тип | Description |
 | --- | --- | --- |
-| defaultPopupVisible | boolean | Whether to display the bubble card by default |
-| popupVisible | boolean | Whether to display the bubble card |
-| position | 'top' \| 'tl' \| 'tr' \| 'bottom' \| 'bl' \| 'br' \| 'left' \| 'lt' \| 'lb' \| 'right' \| 'rt' \| 'rb' | Bubble card position |
-| content | ReactNode | Bubble card content (DOM tag or component) |
+| defaultPopupVisible | логический | Whether к display the bubble card по по умолчанию |
+| popupVisible | логический | Whether к display the bubble card |
+| позиция | 'верх' \| 'tl' \| 'tr' \| 'низ' \| 'bl' \| 'br' \| 'лево' \| 'lt' \| 'lb' \| 'право' \| 'rt' \| 'rb' | Bubble card позиция |
+| content | ReactNode | Bubble card content (DOM tag или компонент) |
 
-The React-VTable component library is being continuously enriched. Developers are welcome to encapsulate new components during use and build a component library ecosystem together.
+The React-Vтаблица компонент library is being continuously enriched. Developers are welcome к encapsulate новый компонентs during use и build a компонент library ecosystem together.
 
-#### Use DOM react components
+#### Use DOM react компонентs
 
-If you need to use DOM react components in components, you can specify the `react` attribute in the `attribute` property of the element component and pass the react component as the `element` property:
+If you need к use DOM react компонентs в компонентs, Вы можете specify the `react` attribute в the `attribute` property из the element компонент и pass the react компонент as the `element` property:
 
 ```tsx
 <Group
   attribute={{
     // ......
     react: {
-      pointerEvents: true,
-      container: table.bodyDomContainer, // table.headerDomContainer
-      anchorType: 'bottom-right',
-      element: <CardInfo record={record} hover={hover} row={row} />
+      pointerсобытиеs: true,
+      container: таблица.bodyDomContainer, // таблица.headerDomContainer
+      anchorType: 'низ-право',
+      element: <CardInfo record={record} навести={навести} row={row} />
     }
   }}
-  onMouseEnter={(event) => {
+  onMouseEnter={(событие) => {
     setHover(true);
-    event.currentTarget.stage.renderNextFrame();
+    событие.currentTarget.stвозраст.renderNextFrame();
   }}
-  onMouseLeave={(event) => {
+  onMouseLeave={(событие) => {
     setHover(false);
-    event.currentTarget.stage.renderNextFrame();
+    событие.currentTarget.stвозраст.renderNextFrame();
   }}
 >
 // ...
 </Group>
 ```
 
-<div style="display: flex; justify-content: center;">
-<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-dom-component.gif" style="flex: 0 0 50%; padding: 10px;">
+<div style="display: flex; justify-content: центр;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-vтаблица-dom-компонент.gif" style="flex: 0 0 50%; заполнение: 10px;">
 </div>
 
-The following properties are also supported in react:
-* `pointerEvents` whether to respond to mouse events
-* `penetrateEventList` Mouse event penetration list, used to specify which mouse events need to be penetrated to the VTable (currently only supports `wheel`)
-* `container` Container, used to limit the component display area in the table when scrolling. If you need to limit the component display in the table content area, you need to specify it as `table.bodyDomContainer`; if you need to limit the component display in the table header area, you need to specify it as `table.headerDomContainer`; if it is a pop-up window or menu component, you do not need to configure this property
-* `anchorType` Anchor type, used to specify the anchor position of the upper left corner of the component relative to the cell
-  * 'top'
-  * 'bottom'
-  * 'left'
-  * 'right'
-  * 'top-right'
-  * 'top-left'
-  * 'bottom-right'
-  * 'bottom-left'
-  * 'center'
+Следующий свойства are also supported в react:
+* `pointerсобытиеs` whether к respond к mouse событиеs
+* `penetrateсобытиесписок` Mouse событие penetration список, used к specify which mouse событиеs need к be penetrated к the Vтаблица (currently only supports `wheel`)
+* `container` Container, used к limit the компонент display area в the таблица when scrolling. If you need к limit the компонент display в the таблица content area, you need к specify it as `таблица.bodyDomContainer`; if you need к limit the компонент display в the таблица header area, you need к specify it as `таблица.headerDomContainer`; if it is a pop-up window или меню компонент, you do не need к configure this property
+* `anchorType` Anchor тип, used к specify the anchor позиция из the upper лево corner из the компонент relative к the cell
+  * 'верх'
+  * 'низ'
+  * 'лево'
+  * 'право'
+  * 'верх-право'
+  * 'верх-лево'
+  * 'низ-право'
+  * 'низ-лево'
+  * 'центр'
 
-We recommend that users use the meta tags provided by react-vtable for the content displayed in the cell. For pop-ups, menus and other components triggered in the cell, you can use DOM react components. This is the best performance solution. [Reference example](../../demo-react/component/cell-custom-component).
+We recommend that users use the meta tags provided по react-vтаблица для the content displayed в the cell. для pop-ups, менюs и other компонентs triggered в the cell, Вы можете use DOM react компонентs. This is the best Производительность solution. [Reference пример](../../демонстрация-react/компонент/cell-пользовательский-компонент).
 
-If you need to display content in a cell, use DOM react components. You need to specify `react.container` according to the restrictions on components displayed in the table content area. It should be noted that this method requires frequent updates of component-related DOM, which will have a certain impact on performance. You can refer to [custom layout](../custom_define/custom_layout). We strongly recommend that the content components in the cell use the meta tags provided by react-vtable, which is the best solution for performance.
+If you need к display content в a cell, use DOM react компонентs. You need к specify `react.container` according к the restrictions на компонентs displayed в the таблица content area. It should be noted that this method requires frequent updates из компонент-related DOM, which will have a certain impact на Производительность. Вы можете refer к [пользовательский макет](../пользовательский_define/пользовательский_макет). We strongly recommend that the content компонентs в the cell use the meta tags provided по react-vтаблица, which is the best solution для Производительность.
 
-## Custom external components
+## пользовательский external компонентs
 
-In order to facilitate the overlay of external components on the React-VTable component, React-VTable provides the `CustomComponent` tool component, which allows you to quickly locate external components in the table, and can be used to quickly implement functional components such as pop-ups and menus.
+в order к facilitate the overlay из external компонентs на the React-Vтаблица компонент, React-Vтаблица provides the `пользовательскийкомпонент` tool компонент, which allows you к quickly locate external компонентs в the таблица, и can be used к quickly implement functional компонентs such as pop-ups и менюs.
 
 ```jsx
-<ListTable option={option} onMouseEnterCell={updatePos} onMouseLeaveTable={hide} onReady={ready}>
-  <CustomComponent width="50%" height="100%" displayMode="cell" col={col} row={row} anchor="bottom-right" dx="-50%">
-    <UserComponent value={value} />
-  </CustomComponent>
-</ListTable>
+<списоктаблица option={option} onMouseEnterCell={updatePos} onMouseLeaveтаблица={скрыть} onReady={ready}>
+  <пользовательскийкомпонент ширина="50%" высота="100%" displayMode="cell" col={col} row={row} anchor="низ-право" dx="-50%">
+    <Userкомпонент значение={значение} />
+  </пользовательскийкомпонент>
+</списоктаблица>
 ```
 
-Among them, `CustomComponent` is used as a container to position in the table and automatically match the size (based on the anchored cell). There are two specific ways to use it:
+Among them, `пользовательскийкомпонент` is used as a container к позиция в the таблица и автоmatically match the размер (based на the anchored cell). There are two specific ways к use it:
 
 1. Absolute positioning
 
-For absolute positioning, you need to specify `displayMode` as `position`, and you need to specify `x` and `y` attributes to position the container to the specified pixel position in the table (based on the upper left corner). The `width` and `height` attributes specify the pixel size of the container.
+для absolute positioning, you need к specify `displayMode` as `позиция`, и you need к specify `x` и `y` attributes к позиция the container к the specified pixel позиция в the таблица (based на the upper лево corner). The `ширина` и `высота` attributes specify the pixel размер из the container.
 
 2. Relative positioning
 
-For relative positioning, you need to specify `displayMode` as `cell`, the container is positioned relative to the cell, the `col` and `row` attributes are used to specify the anchored cell coordinates, the `anchor` attribute specifies the anchor position of the container relative to the cell, the `dx` and `dy` attributes specify the offset of the container relative to the anchored cell, and the `width` and `height` attributes specify the size of the container. The `dx` `dy` `width` and `height` attributes all support units of pixels or percentages. When the percentage is calculated relative to the size of the cell.
+для relative positioning, you need к specify `displayMode` as `cell`, the container is positioned relative к the cell, the `col` и `row` attributes are used к specify the anchored cell coordinates, the `anchor` attribute specifies the anchor позиция из the container relative к the cell, the `dx` и `dy` attributes specify the offset из the container relative к the anchored cell, и the `ширина` и `высота` attributes specify the размер из the container. The `dx` `dy` `ширина` и `высота` attributes все support units из pixels или percentвозрастs. When the percentвозраст is calculated relative к the размер из the cell.
 
-### API
+### апи
 
 ```ts
-interface CustomComponentProps {
+интерфейс пользовательскийкомпонентProps {
    children: React.ReactNode;
-   displayMode: 'position' | 'cell'; // Positioning mode
-   col?: number; // Anchored column coordinates
-   row?: number; // Anchored row coordinates
+   displayMode: 'позиция' | 'cell'; // Positioning mode
+   col?: число; // Anchored column coordinates
+   row?: число; // Anchored row coordinates
    anchor?:
-   | 'top-left'
-   | 'top-center'
-   | 'top-right'
-   | 'middle-left'
-   | 'middle-center'
-   | 'middle-right'
-   | 'bottom-left'
-   | 'bottom-center'
-   | 'bottom-right'; // Anchored position
-   dx?: number | string; // x-direction offset
-   dy?: number | string; // y-direction offset
-   width?: number | string; // container width
-   height?: number | string; // container height
+   | 'верх-лево'
+   | 'верх-центр'
+   | 'верх-право'
+   | 'середина-лево'
+   | 'середина-центр'
+   | 'середина-право'
+   | 'низ-лево'
+   | 'низ-центр'
+   | 'низ-право'; // Anchored позиция
+   dx?: число | строка; // x-direction offset
+   dy?: число | строка; // y-direction offset
+   ширина?: число | строка; // container ширина
+   высота?: число | строка; // container высота
 }
 ```
 
-Custom external component demo: [custom component demo](../../demo-react/component/custom-component)
+пользовательский external компонент демонстрация: [пользовательский компонент демонстрация](../../демонстрация-react/компонент/пользовательский-компонент)

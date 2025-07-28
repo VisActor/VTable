@@ -1,63 +1,63 @@
-# Calendar chart custom date cell
+# календарь график пользовательский date cell
 
-Using the relevant custom capabilities provided by VTable, you can customize the content displayed in the cell. Through the configuration transfer of tableOptions, you can use all the custom cell capabilities supported by VTable. For example, when returning renderDefault: true, the custom content can be displayed together with the original date content in the cell, just like defining a VTable table to customize the content in the calendar chart cell.
+Using the relevant пользовательский capabilities provided по Vтаблица, Вы можете пользовательскийize the content displayed в the cell. Through the configuration transfer из таблицаOptions, Вы можете use все the пользовательский cell capabilities supported по Vтаблица. для пример, when returning renderDefault: true, the пользовательский content can be displayed together с the original date content в the cell, just like defining a Vтаблица таблица к пользовательскийize the content в the календарь график cell.
 
-Here, the GIF image component provided by VRender is used, and a dynamic weather effect is drawn in each cell using customLayout:
+Here, the GIF imвозраст компонент provided по VRender is used, и a dynamic weather effect is drawn в каждый cell using пользовательскиймакет:
 
-```javascript livedemo template=vtable
-// import * as VRender from '@visactor/vtable/es/vrender';
+```javascript liveдемонстрация template=vтаблица
+// import * as VRender от '@visactor/vтаблица/es/vrender';
 
 const {
   createGroup,
-  GifImage,
+  GifImвозраст,
   container,
-  gifImageModule,
-  gifImageCanvasPickModule
+  gifImвозрастModule,
+  gifImвозрастCanvasPickModule
 } = VRender;
 
 const gifs = [
-  '/icons8-雨.gif',
-  '/icons8-夏季.gif',
-  '/icons8-多云兼雨.gif',
-  '/icons8-有风的天气.gif',
-  '/icons8-冬季.gif',
-  '/icons8-小雨2.gif',
-  '/icons8-瓢泼大雨.gif',
-  '/icons8-白天晴间多云.gif'
+  '/иконкаs8-雨.gif',
+  '/иконкаs8-夏季.gif',
+  '/иконкаs8-多云兼雨.gif',
+  '/иконкаs8-有风的天气.gif',
+  '/иконкаs8-冬季.gif',
+  '/иконкаs8-小雨2.gif',
+  '/иконкаs8-瓢泼大雨.gif',
+  '/иконкаs8-白天晴间多云.gif'
 ];
 
-container.load(gifImageModule);
-container.load(gifImageCanvasPickModule);
+container.load(gifImвозрастModule);
+container.load(gifImвозрастCanvasPickModule);
 
-const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
+const календарьInstance = новый Vтаблицакалендарь.календарь(document.getElementById(CONTAINER_ID), {
   rangeDays: 20,
-  tableOptions: {
-    customLayout: args => {
-      const { table, row, col, rect } = args;
-      const record = table.getCellOriginRecord(col, row);
-      const { height, width } = rect ?? table.getCellRect(col, row);
+  таблицаOptions: {
+    пользовательскиймакет: args => {
+      const { таблица, row, col, rect } = args;
+      const record = таблица.getCellOriginRecord(col, row);
+      const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
 
       const container = createGroup({
-        height,
-        width,
+        высота,
+        ширина,
         // fill: 'yellow',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'центр',
+        alignItems: 'центр',
         flexWrap: 'nowrap'
       });
 
       const gif = gifs[Math.floor(Math.random() * gifs.length)];
-      const image = new GifImage({
-        width: 50,
-        height: 50,
-        gifImage: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media' + gif
+      const imвозраст = новый GifImвозраст({
+        ширина: 50,
+        высота: 50,
+        gifImвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media' + gif
       });
 
-      container.add(image);
+      container.add(imвозраст);
 
-      return {
+      возврат {
         rootContainer: container,
         renderDefault: true
       };
@@ -65,5 +65,5 @@ const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CON
   }
 });
 
-window['calendarInstance'] = calendarInstance;
+window['календарьInstance'] = календарьInstance;
 ```

@@ -1,101 +1,101 @@
-{{ target: table-pivotTable }}
+{{ target: таблица-сводныйтаблица }}
 
-# PivotTable
+# сводныйтаблица
 
-Pivot table, configure the corresponding type PivotTableConstructorOptions, with specific options as follows:
+сводный таблица, configure the corresponding тип сводныйтаблицаConstructorOptions, с specific options as follows:
 
 {{ use: common-option-important(
     prefix = '#',
-    tableType = 'pivotTable'
+    таблицаType = 'сводныйтаблица'
 ) }}
 
-## records(Array)
+## records(массив)
 
-tabular data.
-Currently, it supports incoming flattened data formats, taking the sales of large supermarkets in North America as an example:
+tabular данные.
+Currently, it supports incoming flattened данные formats, taking the Продажи из large supermarkets в North America as an пример:
 
 ```
 [
   {
-    "Category": "Technology",
-    "Sales": "650.5600051879883",
-    "City": "Amarillo"
+    "Категория": "Technology",
+    "Продажи": "650.5600051879883",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Technology",
-    "Profit": "94.46999931335449",
-    "City": "Amarillo"
+    "Категория": "Technology",
+    "Прибыль": "94.46999931335449",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Furniture",
-    "Quantity": "14",
-    "City": "Amarillo"
+    "Категория": "Furniture",
+    "Количество": "14",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Furniture",
-    "Sales": "3048.5829124450684",
-    "City": "Amarillo"
+    "Категория": "Furniture",
+    "Продажи": "3048.5829124450684",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Furniture",
-    "Profit": "-507.70899391174316",
-    "City": "Amarillo"
+    "Категория": "Furniture",
+    "Прибыль": "-507.70899391174316",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Office Supplies",
-    "Quantity": "60",
-    "City": "Anaheim"
+    "Категория": "Office Supplies",
+    "Количество": "60",
+    "Город": "Anaheim"
   }
 ]
 ```
 
-## dataConfig(IDataConfig)
+## данныеConfig(IданныеConfig)
 
-Data analysis related configuration .
+данные analysis related configuration .
 
 ```
 /**
- * Data processing configuration
+ * данные processing configuration
  */
-export interface IDataConfig {
-  aggregationRules?: AggregationRules; //Aggregation value calculation rules according to row and column dimensions;
-  sortRules?: SortRules; //Sort rules;
+export интерфейс IданныеConfig {
+  aggregationRules?: AggregationRules; //Aggregation значение calculation rules according к row и column dimensions;
+  сортировкаRules?: сортировкаRules; //сортировка rules;
   filterRules?: FilterRules; //Filter rules;
-  totals?: Totals; //Subtotal or total;
+  totals?: Totals; //Subtotal или total;
   /**
-   * At present, mapping is not easy to use. It is not recommended to use it. It is recommended to use style first.
+   * в present, mapping is не easy к use. It is не recommended к use it. It is recommended к use style первый.
    */
   mappingRules?: MappingRules;
-  derivedFieldRules?: DerivedFieldRules;
+  derivedполеRules?: DerivedполеRules;
   /**
-   * Whether to update total and subtotal after editing.
-   * @default false
+   * Whether к update total и subtotal after editing.
+   * @по умолчанию false
    */
-  updateAggregationOnEditCell?: boolean;
+  updateAggregationOnEditCell?: логический;
 }
 ```
 
 ### aggregationRules(AggregationRules)
 
-Find the aggregation method of indicators; the specific definition of AggregationRules is as follows:
+Find the aggregation method из indicators; the specific definition из AggregationRules is as follows:
 
 ```
-export type AggregationRules = AggregationRule<AggregationType>[];
+export тип AggregationRules = AggregationRule<AggregationType>[];
 
-export interface AggregationRule<T extends AggregationType> {
-  /** Different from field, re-create the key value for use by configuring indicators */
-  indicatorKey: string;
-  // You can collect the aggregate results of a single field, or collect the aggregate results of multiple fields
-  field: T extends AggregationType.RECORD ? string[] | string : string;
+export интерфейс AggregationRule<T extends AggregationType> {
+  /** Different от поле, re-create the key значение для use по configuring indicators */
+  indicatorKey: строка;
+  // Вы можете collect the aggregate results из a single поле, или collect the aggregate results из multiple полеs
+  поле: T extends AggregationType.RECORD ? строка[] | строка : строка;
   aggregationType: T;
   /**Formatting calculation results */
-  formatFun?: (num: number) => string;
-  /** when aggregationType set AggregationType.CUSTOM，please set this aggregationFun。*/
-  aggregationFun?: T extends AggregationType.CUSTOM ? (values: any[], records: any[]) => any : undefined;
+  formatFun?: (num: число) => строка;
+  /** when aggregationType set AggregationType.пользовательский，please set this aggregationFun。*/
+  aggregationFun?: T extends AggregationType.пользовательский ? (values: любой[], records: любой[]) => любой : undefined;
 }
 ```
 
-Among them, the AggregationType aggregation methods include the following 6 types, the most commonly used one is SUM. The RECORD type is mainly used internally by perspectives.
+Among them, the AggregationType aggregation методы include Следующий 6 types, the most commonly used one is SUM. The RECORD тип is mainly used internally по perspectives.
 
 ```
 export enum AggregationType {
@@ -105,222 +105,222 @@ export enum AggregationType {
   MAX = 'MAX',
   AVG = 'AVG',
   COUNT = 'COUNT',
-  NONE = 'NONE',
-  CUSTOM = 'CUSTOM'
+  никто = 'никто',
+  пользовательский = 'пользовательский'
 }
 ```
 
-In addition to the several built-in aggregation methods mentioned above in VTable, it also supports registering and defining aggregation methods. To use custom aggregation types, you need to first define a custom aggregation class, inherit the built-in Aggregator class, register it in VTable, and then implement the aggregation logic in the custom aggregation class. For details, please refer to the [demo](../demo/data-analysis/pivot-analysis-customAggregator)
+в addition к the several built-в aggregation методы mentioned above в Vтаблица, it also supports регистрацияing и defining aggregation методы. к use пользовательский aggregation types, you need к первый define a пользовательский aggregation class, inherit the built-в Aggregator class, регистрация it в Vтаблица, и then implement the aggregation logic в the пользовательский aggregation class. для details, please refer к the [демонстрация](../демонстрация/данные-analysis/сводный-analysis-пользовательскийAggregator)
 
-### sortRules(SortRules)
+### сортировкаRules(сортировкаRules)
 
-Sorting rule configuration, specifically defined as follows:
-
-```
-export type SortRules = SortRule[];
-export type SortRule = SortTypeRule | SortByRule | SortByIndicatorRule | SortFuncRule;
-```
-
-The sorting rules support four methods:
-
-1. SortTypeRule: Sorts by field, such as sorting by year in ascending order: `{"sortField": "Year", "sortType": "ASC"}`. ASC DESC sorts in ascending or descending order according to the natural order of pinyin or numbers, and NORMAL sorts according to the order in records.
+сортировкаing rule configuration, specifically defined as follows:
 
 ```
-//1. Specify the sort type
-export interface SortTypeRule {
-  /**Sorting dimension */
-  sortField: string;
-  /**Ascending or descending order ASC or DESC NORMAL*/
-  sortType?: SortType;
+export тип сортировкаRules = сортировкаRule[];
+export тип сортировкаRule = сортировкаTypeRule | сортировкаByRule | сортировкаByIndicatorRule | сортировкаFuncRule;
+```
+
+The сортировкаing rules support four методы:
+
+1. сортировкаTypeRule: сортировкаs по поле, such as сортировкаing по year в ascending порядок: `{"сортировкаполе": "Year", "сортировкаType": "ASC"}`. ASC DESC сортировкаs в ascending или descending order according к the natural order из pinyin или numbers, и NORMAL сортировкаs according к the order в records.
+
+```
+//1. Specify the сортировка тип
+export интерфейс сортировкаTypeRule {
+  /**сортировкаing dimension */
+  сортировкаполе: строка;
+  /**Ascending или descending order ASC или DESC NORMAL*/
+  сортировкаType?: сортировкаType;
 }
 ```
 
-2. SortByRule: Sorts by specifying the order of dimension members, such as sorting by region dimension values: `{"sortField": "Region", "sortBy": ["华南","华中","华北","中南","西南"]}`. ASC DESC sorts in ascending or descending order according to the order specified by sortBy, and NORMAL sorts according to the order in records.
+2. сортировкаByRule: сортировкаs по specifying the order из dimension members, such as сортировкаing по Регион dimension values: `{"сортировкаполе": "Регион", "сортировкаBy": ["华南","华中","华北","中南","西南"]}`. ASC DESC сортировкаs в ascending или descending order according к the order specified по сортировкаBy, и NORMAL сортировкаs according к the order в records.
 
 ```
-//2. Sort by specifying the order of dimension members
-export interface SortByRule {
-  /**Sorting dimension */
-  sortField: string;
-  /**Sort by specifying a specific order */
-  sortBy?: string[];
-  /**Ascending or descending order ASC or DESC NORMAL*/
-  sortType?: SortType;
+//2. сортировка по specifying the order из dimension members
+export интерфейс сортировкаByRule {
+  /**сортировкаing dimension */
+  сортировкаполе: строка;
+  /**сортировка по specifying a specific order */
+  сортировкаBy?: строка[];
+  /**Ascending или descending order ASC или DESC NORMAL*/
+  сортировкаType?: сортировкаType;
 }
 ```
 
-3. SortByIndicatorRule: Sorts by indicator values, such as sorting by the sales amount of the office category in descending order to sort the region dimension values: `{sortField:'Region', sortByIndicator: "Sales", sortType: "DESC", query:['办公用品']}`. ASC DESC sorts in ascending or descending order according to the indicator value specified by sortBy, and NORMAL sorts according to the order in records.
+3. сортировкаByIndicatorRule: сортировкаs по indicator values, such as сортировкаing по the Продажи amount из the office Категория в descending order к сортировка the Регион dimension values: `{сортировкаполе:'Регион', сортировкаByIndicator: "Продажи", сортировкаType: "DESC", query:['办公用品']}`. ASC DESC сортировкаs в ascending или descending order according к the indicator значение specified по сортировкаBy, и NORMAL сортировкаs according к the order в records.
 
 ```
-//3. Sort by indicator values
-export interface SortByIndicatorRule {
-  /**Sorting dimension */
-  sortField: string;
-  /**Ascending or descending order ASC or DESC NORMAL*/
-  sortType?: SortType;
-  /**Sort by a specific indicator value */
-  sortByIndicator?: string;
-  /**If sorting by indicator values, another dimension member value (row or column) needs to be specified. For example, sorting by office supplies ['办公用品', '纸张'] */
-  query?: string[];
+//3. сортировка по indicator values
+export интерфейс сортировкаByIndicatorRule {
+  /**сортировкаing dimension */
+  сортировкаполе: строка;
+  /**Ascending или descending order ASC или DESC NORMAL*/
+  сортировкаType?: сортировкаType;
+  /**сортировка по a specific indicator значение */
+  сортировкаByIndicator?: строка;
+  /**If сортировкаing по indicator values, another dimension member значение (row или column) needs к be specified. для пример, сортировкаing по office supplies ['办公用品', '纸张'] */
+  query?: строка[];
 }
 ```
 
-4. SortFuncRule: Supports custom sorting rules through functions, such as sorting by calculated indicator values: `{"sortField": "Region", sortFunc: (a, b) => a.sales - b.sales}`. ASC DESC NORMAL all follow the sorting logic in sortFunc.
+4. сортировкаFuncRule: Supports пользовательский сортировкаing rules through functions, such as сортировкаing по calculated indicator values: `{"сортировкаполе": "Регион", сортировкаFunc: (a, b) => a.Продажи - b.Продажи}`. ASC DESC NORMAL все follow the сортировкаing logic в сортировкаFunc.
 
 ```
-//4. Custom sorting function
-export interface SortFuncRule {
-  /**Sorting dimension */
-  sortField: string;
-  /**Custom sorting function */
-  sortFunc?: (a: any, b: any) => number;
-  /**Ascending or descending order ASC or DESC NORMAL*/
-  sortType?: SortType;
+//4. пользовательский сортировкаing функция
+export интерфейс сортировкаFuncRule {
+  /**сортировкаing dimension */
+  сортировкаполе: строка;
+  /**пользовательский сортировкаing функция */
+  сортировкаFunc?: (a: любой, b: любой) => число;
+  /**Ascending или descending order ASC или DESC NORMAL*/
+  сортировкаType?: сортировкаType;
 }
 ```
 
 ### filterRules(FilterRules)
 
-Data filtering rules, specific type definition:
+данные filtering rules, specific тип definition:
 
 ```
-export type FilterRules = FilterRule[];
+export тип FilterRules = FilterRule[];
 ```
 
-Multiple filtering rules can be set, and data will be retained only if each filtering rule is met.
+Multiple filtering rules can be set, и данные will be retained only if каждый filtering rule is met.
 
 ```
-//#region filter rules
-export interface FilterRule {
-  filterKey?: string;
+//#Регион filter rules
+export интерфейс FilterRule {
+  filterKey?: строка;
   filteredValues?: unknown[];
-  filterFunc?: (row: Record<string, any>) => boolean;
+  filterFunc?: (row: Record<строка, любой>) => логический;
 }
 ```
 
 ### totals(Totals)
 
-Set up totals, subtotals, and grand totals.
+Set up totals, subtotals, и grand totals.
 
 ```
-export interface Totals {
+export интерфейс Totals {
   row?: Total & {
-    showGrandTotalsOnTop?: boolean;
-    showSubTotalsOnTop?: boolean;
+    showGrandTotalsOnTop?: логический;
+    showSubTotalsOnTop?: логический;
   };
   column?: Total & {
-    showGrandTotalsOnLeft?: boolean;
-    showSubTotalsOnLeft?: boolean;
+    showGrandTotalsOnLeft?: логический;
+    showSubTotalsOnLeft?: логический;
   };
 }
 ```
 
-Row or column methods set summary rules respectively:
+Row или column методы set summary rules respectively:
 
 ```
-export interface Total {
-  // Whether to display the total
-  showGrandTotals: boolean;
-  // Whether to display subtotals
-  showSubTotals: boolean;
+export интерфейс Total {
+  // Whether к display the total
+  showGrandTotals: логический;
+  // Whether к display subtotals
+  showSubTotals: логический;
   // Subtotal summary dimension definition
-  subTotalsDimensions?: string[];
-  //Default 'total'
-  grandTotalLabel?: string;
-  //Default 'Subtotal'
-  subTotalLabel?: string;
+  subTotalsDimensions?: строка[];
+  //по умолчанию 'total'
+  grandTotalLabel?: строка;
+  //по умолчанию 'Subtotal'
+  subTotalLabel?: строка;
 }
 ```
 
-### derivedFieldRules(DerivedFieldRules)
+### derivedполеRules(DerivedполеRules)
 
-Add a derived field. The vtable will generate a new field based on the rules defined by the derived field and add the new field to the data. The new field can be used as a dimension item or an indicator item.
-
-```
-export type DerivedFieldRules = DerivedFieldRule[];
-```
-
-The specific function is to generate new fields for source data, which is customized by the user. This function mainly adds a new field to each piece of data. This field can be used in other data rules, such as sort or as indicators or columns. of a certain dimension.
+Add a derived поле. The vтаблица will generate a новый поле based на the rules defined по the derived поле и add the новый поле к the данные. The новый поле can be used as a dimension item или an indicator item.
 
 ```
-export interface DerivedFieldRule {
-  fieldName?: string;
-  derivedFunc?: (record: Record<string, any>) => any;
+export тип DerivedполеRules = DerivedполеRule[];
+```
+
+The specific функция is к generate новый полеs для source данные, which is пользовательскийized по the user. This функция mainly adds a новый поле к каждый piece из данные. This поле can be used в other данные rules, such as сортировка или as indicators или columns. из a certain dimension.
+
+```
+export интерфейс DerivedполеRule {
+  полеимя?: строка;
+  derivedFunc?: (record: Record<строка, любой>) => любой;
 }
 ```
 
-### calculatedFieldRules (CalculatedFieldRules)
+### calculatedполеRules (CalculatedполеRules)
 
-Calculated fields are similar to the calculated fields in Excel pivot tables. New indicator values can be calculated through calculated fields, and they are all recalculated based on the summary results. Note: Different from derived fields.
-
-```
-export type CalculateddFieldRules = CalculateddFieldRule[];
-```
+Calculated полеs are similar к the calculated полеs в Excel сводный таблицаs. новый indicator values can be calculated through calculated полеs, и they are все recalculated based на the summary results. Note: Different от derived полеs.
 
 ```
-export interface CalculatedFieldRule {
-  /** Unique identifier, which can be used as the key of a new indicator and used to configure indicators to be displayed in a pivot table. */
-  key: string;
-  /** The indicator that the calculated field depends on, which can be the corresponding indicator field in records or not the field in data records
-  * If the dependent indicator is not in records, it needs to be explicitly configured in aggregationRules, specifying the aggregation rule and indicatorKey to be used in dependIndicatorKeys. */
-  dependIndicatorKeys: string[];
-  /** The calculation function of the calculated field. The dependent indicator value is passed in as a parameter, and the return value is used as the value of the calculated field. */
-  calculateFun?: (dependFieldsValue: any) => any;
+export тип CalculateddполеRules = CalculateddполеRule[];
+```
+
+```
+export интерфейс CalculatedполеRule {
+  /** Unique identifier, which can be used as the key из a новый indicator и used к configure indicators к be displayed в a сводный таблица. */
+  key: строка;
+  /** The indicator that the calculated поле depends на, which can be the corresponding indicator поле в records или не the поле в данные records
+  * If the dependent indicator is не в records, it needs к be explicitly configured в aggregationRules, specifying the aggregation rule и indicatorKey к be used в dependIndicatorKeys. */
+  dependIndicatorKeys: строка[];
+  /** The calculation функция из the calculated поле. The dependent indicator значение is passed в as a параметр, и the возврат значение is used as the значение из the calculated поле. */
+  calculateFun?: (dependполеsValue: любой) => любой;
 }
 ```
-### updateAggregationOnEditCell (boolean)
+### updateAggregationOnEditCell (логический)
 
-Whether to update total and subtotal after editing cell value. Default value is false.
+Whether к update total и subtotal after editing cell значение. по умолчанию значение is false.
 
-For details, please refer to the [demo](../demo/data-analysis/pivot-analysis-updateTotalData)
+для details, please refer к the [демонстрация](../демонстрация/данные-analysis/сводный-analysis-updateTotalданные)
 
-## columnTree(Array)
+## columnTree(массив)
 
-Column header tree, type: `(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of non-indicator dimensions, and IIndicatorHeaderNode refers to the indicator name node.
+Column header tree, тип: `(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers к the dimension значение node из non-indicator dimensions, и IIndicatorHeaderNode refers к the indicator имя node.
 
-** Specific configuration of IDimensionHeaderNode is as follows: **
+** Specific configuration из IDimensionHeaderNode is as follows: **
 
 ```
-export interface IDimensionHeaderNode {
+export интерфейс IDimensionHeaderNode {
   /**
-   * Unique identifier of the dimension, corresponding to the field name in the dataset
+   * Unique identifier из the dimension, corresponding к the поле имя в the данныеset
    */
-  dimensionKey: string | number;
-  /** Dimension member value */
-  value: string;
-  /** The tree structure of the sub-dimensions under the member. true is generally used to display the fold and expand buttons and to perform lazy loading to obtain data.  */
+  dimensionKey: строка | число;
+  /** Dimension member значение */
+  значение: строка;
+  /** The tree structure из the sub-dimensions under the member. true is generally used к display the fold и развернуть Кнопкаs и к perform lazy загрузка к obtain данные.  */
   children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] | true;
-  /** Collapse status Used with tree structure display. Note: only valid in rowTree */
+  /** свернуть status Used с tree structure display. Note: only valid в rowTree */
   hierarchyState?: HierarchyState;
-  /** Whether it is a virtual node. If configured to true, this dimension field will be ignored when analyzing based on records data */
-  virtual?: boolean;
-  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
-  levelSpan?: number;
+  /** Whether it is a virtual node. If configured к true, this dimension поле will be ignored when analyzing based на records данные */
+  virtual?: логический;
+  /** Merge display из this dimension значение across cells, по умолчанию is 1. If the maximum число из header levels is 5, then the последний level will merge as many cells as there are levels лево. */
+  levelSpan?: число;
 }
 ```
 
-** Specific configuration of IIndicatorHeaderNode is as follows: **
+** Specific configuration из IIndicatorHeaderNode is as follows: **
 
 ```
-export interface IIndicatorHeaderNode {
+export интерфейс IIndicatorHeaderNode {
   /**
-   * The key value of the indicator corresponds to the field name in the dataset
+   * The key значение из the indicator corresponds к the поле имя в the данныеset
    */
-  indicatorKey: string | number;
+  indicatorKey: строка | число;
   /**
-   * Indicator name, such as: "Sales Amount", "example", corresponding to the value displayed in the cell. Optional, if not filled in, the value will be taken from the corresponding configuration in indicators
+   * Indicator имя, such as: "Продажи Amount", "пример", corresponding к the значение displayed в the cell. необязательный, if не filled в, the значение will be taken от the corresponding configuration в indicators
    */
-  value?: string;
-  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
-  levelSpan?: number;
-  /** Whether to hide this indicator node */
-  hide?: boolean;
+  значение?: строка;
+  /** Merge display из this dimension значение across cells, по умолчанию is 1. If the maximum число из header levels is 5, then the последний level will merge as many cells as there are levels лево. */
+  levelSpan?: число;
+  /** Whether к скрыть this indicator node */
+  скрыть?: логический;
 }
 ```
 
-## rowTree(Array)
+## rowTree(массив)
 
-Row header tree, with a structure similar to columnTree.
+Row header tree, с a structure similar к columnTree.
 
 {{ use: columns-dimension-define( prefix = '#',) }}
 
@@ -328,117 +328,117 @@ Row header tree, with a structure similar to columnTree.
 
 {{ use: indicators-define( prefix = '#',) }}
 
-## indicatorsAsCol(boolean) = true
+## indicatorsAsCol(логический) = true
 
-The indicator is displayed on the column, default is true. If configured to false, it will be displayed in rows and the indicator will be displayed in rows.
+The indicator is displayed на the column, по умолчанию is true. If configured к false, it will be displayed в rows и the indicator will be displayed в rows.
 
 ## rowHierarchyType('grid' | 'tree' | 'grid-tree')
 
-Hierarchy display style for dimensional structure, flat or tree.
+Hierarchy display style для dimensional structure, flat или tree.
 
-[Flat Example](../demo/table-type/pivot-table) [Tree Example](../demo/table-type/pivot-analysis-table-tree) [Grid Tree Example](../demo/table-type/pivot-analysis-table-grid-tree)
+[Flat пример](../демонстрация/таблица-тип/сводный-таблица) [Tree пример](../демонстрация/таблица-тип/сводный-analysis-таблица-tree) [Grid Tree пример](../демонстрация/таблица-тип/сводный-analysis-таблица-grid-tree)
 
 {{ use: extension-rows-dimension-define( prefix = '#',) }}
 
-## rowExpandLevel(number)
+## rowExpandLevel(число)
 
-Initial expansion level. In addition to configuring the expansion level of the unified node here, you can also set the expansion status of each node with the configuration item `hierarchyState`.
+Initial expansion level. в addition к configuring the expansion level из the unified node here, Вы можете also set the expansion status из каждый node с the configuration item `hierarchyState`.
 
-## rowHierarchyIndent(number)
+## rowHierarchyIndent(число)
 
-If tree display is set, the indentation distance of content displayed in the child cell compared to its parent cell content.
+If tree display is set, the indentation distance из content displayed в the child cell compared к its parent cell content.
 
-## rowHierarchyTextStartAlignment(boolean) = false
+## rowHierarchyTextStartAlignment(логический) = false
 
-Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+Whether nodes в the same level are aligned по текст, such as nodes без collapsed expansion иконкаs и nodes с иконкаs. по умолчанию is false
 
 ## columnHierarchyType('grid' |'grid-tree')
 
-Hierarchical dimension structure display style in column headers, flat or tree structure.
+Hierarchical dimension structure display style в column headers, flat или tree structure.
 
-## columnExpandLevel(number)
+## columnExpandLevel(число)
 
-Initial expansion level for column headers, default is 1.
+Initial expansion level для column headers, по умолчанию is 1.
 
-## indicatorTitle(string)
+## indicatorTitle(строка)
 
-Indicator title used to display the value in the corner header
+Indicator title used к display the значение в the corner header
 
-## corner(Object)
+## corner(объект)
 
-Corner header configuration and custom styles.
-{{ use: pivot-corner-define( prefix = '###',) }}
+Corner header configuration и пользовательский styles.
+{{ use: сводный-corner-define( prefix = '###',) }}
 
-## hideIndicatorName(boolean) = false
+## hideIndicatorимя(логический) = false
 
-Whether to hide the indicator name
+Whether к скрыть the indicator имя
 
-## showRowHeader(boolean) = true
+## showRowHeader(логический) = true
 
-Whether to display the row header.
+Whether к display the row header.
 
-## showColumnHeader(boolean) = true
+## showColumnHeader(логический) = true
 
-Whether to display the column header.
+Whether к display the column header.
 
-## rowHeaderTitle(Object)
+## rowHeaderTitle(объект)
 
-Add a row in the row header to display the dimension name, which can be customized or display the title combined name
+Add a row в the row header к display the dimension имя, which can be пользовательскийized или display the title combined имя
 
-{{ use: pivot-header-title( prefix = '###',) }}
+{{ use: сводный-header-title( prefix = '###',) }}
 
-## columnHeaderTitle(Object)
+## columnHeaderTitle(объект)
 
-Add a row in the column header to display the dimension name, which can be customized or display the title combined name
+Add a row в the column header к display the dimension имя, which can be пользовательскийized или display the title combined имя
 
-{{ use: pivot-header-title( prefix = '###',) }}
+{{ use: сводный-header-title( prefix = '###',) }}
 
-## pivotSortState(Array)
+## сводныйсортировкаState(массив)
 
-Set the sorting state, only corresponding to the display effect of the button without data sorting logic
+Set the сортировкаing state, only corresponding к the display effect из the Кнопка без данные сортировкаing logic
 
 ```
  {
     dimensions: IDimensionInfo[];
-    order: 'desc' | 'asc' | 'normal';
+    порядок: 'desc' | 'asc' | 'normal';
   }[];
 ```
 
-- dimensions Set the dimensions to be sorted, which is an array of IDimensionInfo type.
+- dimensions Set the dimensions к be сортировкаed, which is an массив из IDimensionInfo тип.
 
 {{ use: common-IDimensionInfo()}}
 
-- order specifies the sorting method, which can be 'desc' (descending), 'asc' (ascending) or 'normal' (unsorted).
+- order specifies the сортировкаing method, which can be 'desc' (descending), 'asc' (ascending) или 'normal' (unсортировкаed).
 
 {{ use: common-option-secondary(
     prefix = '#',
-    tableType = 'pivotTable'
+    таблицаType = 'сводныйтаблица'
 ) }}
 
-## supplementIndicatorNodes(boolean) = true
+## supplementIndicatorNodes(логический) = true
 
-Whether to add index nodes to the corresponding custom table headers such as rowTree or columnTree. Default is true
+Whether к add index nodes к the corresponding пользовательский таблица headers such as rowTree или columnTree. по умолчанию is true
 
-## parseCustomTreeToMatchRecords(boolean) = true
+## parseпользовательскийTreeToMatchRecords(логический) = true
 
-If you have configured rowTree or columnTree and it is a non-regular tree structure, you need to turn on this configuration to match the corresponding data record.
+If you have configured rowTree или columnTree и it is a non-regular tree structure, you need к turn на this configuration к match the corresponding данные record.
 
-The regular tree structure refers to: the nodes on the same layer have the same dimension keys.
+The regular tree structure refers к: the nodes на the same layer have the same dimension keys.
 
-The non-regular tree structure is the tree where nodes on the same layer exist with different dimension values.
+The non-regular tree structure is the tree where nodes на the same layer exist с different dimension values.
 
-## columnWidthConfig(Array)
+## columnширинаConfig(массив)
 
-Set column width based on dimension information
+Set column ширина based на dimension information
 
 ```
 {
   dimensions: IDimensionInfo[];
-  width: number;
+  ширина: число;
 }[];
 ```
 
-- dimensions The dimension information of each level of the dimension is an array of IDimensionInfo type. The vtable will locate the specific column according to this path.
+- dimensions The dimension information из каждый level из the dimension is an массив из IDimensionInfo тип. The vтаблица will locate the specific column according к this path.
   {{ use: common-IDimensionInfo()}}
 
--width specifies the column width.
+-ширина specifies the column ширина.

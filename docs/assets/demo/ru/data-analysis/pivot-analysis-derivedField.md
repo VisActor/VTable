@@ -1,121 +1,121 @@
 ---
-category: examples
-group: data-analysis
-title: Derived Field
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-derivedField.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.derivedFieldRules
+категория: примеры
+группа: данные-analysis
+заголовок: Derived поле
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-derivedполе.png
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.derivedполеRules
 ---
 
-# Derived Field
+# Derived поле
 
-To pivot analysis table data data filtering rules, configure derivedFieldRules in dataConfig.
+к сводный analysis таблица данные данные filtering rules, configure derivedполеRules в данныеConfig.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules, optional configuration items
+- `данныеConfig` configures данные rules, необязательный configuration items
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
           dimensionKey: 'Year',
-          title: 'Year',
+          заголовок: 'Year',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Month',
-          title: 'Month',
+          заголовок: 'Month',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
@@ -126,27 +126,27 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        derivedFieldRules: [
+      данныеConfig: {
+        derivedполеRules: [
           {
-            fieldName: 'Year',
-            derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%y', true)
+            полеимя: 'Year',
+            derivedFunc: Vтаблица.данныеStatistics.dateFormat('Дата Заказа', '%y', true)
           },
           {
-            fieldName: 'Month',
-            derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true)
+            полеимя: 'Month',
+            derivedFunc: Vтаблица.данныеStatistics.dateFormat('Дата Заказа', '%n', true)
           }
         ],
-        sortRules: [
+        сортировкаRules: [
           {
-            sortField: 'Month',
-            sortBy: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            сортировкаполе: 'Month',
+            сортировкаBy: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
           }
         ]
       },
-、      widthMode: 'standard'
+、      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

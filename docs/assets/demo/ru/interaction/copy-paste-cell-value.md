@@ -1,100 +1,100 @@
 ---
-category: examples
-group: Interaction
-title: Copy and paste cell value
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/copy-paste-cell-value.gif
-link: interaction/keyboard
-option: ListTable#keyboardOptions.pasteValueToCell
+категория: примеры
+группа: Interaction
+заголовок: Copy и paste cell значение
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/copy-paste-cell-значение.gif
+ссылка: interaction/keyboard
+опция: списоктаблица#keyboardOptions.pasteValueToCell
 ---
 
-# Copy and paste cell value
+# Copy и paste cell значение
 
-Use shortcut keys to copy the contents of the selected cell and paste the contents of the clipboard into the cell.
+Use shortcut keys к copy the contents из the selected cell и paste the contents из the clipboard into the cell.
 
-Please configure the following two configuration items to be true!
+Please configure Следующий two configuration items к be true!
 - keyboardOptions.pasteValueToCell
 - keyboardOptions.copySelected
 
-Note: VTable has been verified internally, and only editable cells are allowed to be pasted. Therefore, in the business scenario where pasting is required, please ensure that an editor is configured. The editor supports configuring empty strings (that is, non-existent editors).
+Note: Vтаблица has been verified internally, и only ediтаблица cells are allowed к be pasted. Therefore, в the business scenario where pasting is обязательный, please ensure that an editor is configured. The editor supports configuring empty strings (that is, non-existent editors).
 
-Other shortcut keys refer to [Tutorial](../../guide/shortcut).
+Other shortcut keys refer к [Tutorial](../../guide/shortcut).
 
-## Key Configurations
+## Ключевые Конфигурации
 
 - keyboardOptions.pasteValueToCell
 - keyboardOptions.copySelected
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       frozenColCount: 1,
-      overscrollBehavior: 'none',
+      overscrollBehavior: 'никто',
       keyboardOptions: {
         moveEditCellOnArrowKeys: true,
         copySelected: true,
@@ -102,7 +102,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       },
       editor: '' // Configure an empty editor that can be pasted into cells everywhere
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

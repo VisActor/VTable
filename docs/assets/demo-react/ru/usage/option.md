@@ -1,47 +1,47 @@
 ---
-category: examples
-group: usage
-title: full option
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
-order: 1-1
-link: Developer_Ecology/react
+категория: примеры
+группа: usвозраст
+заголовок: full option
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию.png
+порядок: 1-1
+ссылка: Developer_Ecology/react
 ---
 
 # full option
 
-You can use the complete option of VTable directly and pass the option into the table component as a prop.
+Вы можете use the complete option из Vтаблица directly и pass the option into the таблица компонент as a prop.
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-react
-// import * as ReactVTable from '@visactor/react-vtable';
+```javascript liveдемонстрация template=vтаблица-react
+// import * as ReactVтаблица от '@visactor/react-vтаблица';
 const option = {
   columns: [
     {
-      field: '0',
-      title: 'name'
+      поле: '0',
+      заголовок: 'имя'
     },
     {
-      field: '1',
-      title: 'age'
+      поле: '1',
+      заголовок: 'возраст'
     },
     {
-      field: '2',
-      title: 'gender'
+      поле: '2',
+      заголовок: 'пол'
     },
     {
-      field: '3',
-      title: 'hobby'
+      поле: '3',
+      заголовок: 'хобби'
     }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
+  records: новый массив(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
-root.render(<ReactVTable.ListTable option={option} height={'500px'} />);
+root.render(<ReactVтаблица.списоктаблица option={option} высота={'500px'} />);
 
-// release openinula instance, do not copy
-window.customRelease = () => {
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```

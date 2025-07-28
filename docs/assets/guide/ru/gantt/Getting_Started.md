@@ -1,150 +1,150 @@
-# Getting Started
+# Начало Работы
 
-In this tutorial, we will introduce how to use @visactor/vtable-gantt to draw a simple Gantt chart.
+в this tutorial, we will introduce how к use @visactor/vтаблица-гантт к draw a simple гантт график.
 
-## Getting @visactor/vtable-gantt
+## Getting @visactor/vтаблица-гантт
 
-**Please note that @visactor/vtable-gantt is built on @visactor/vtable, so you need to install @visactor/vtable first to use @visactor/vtable-gantt.**
+**Please note that @visactor/vтаблица-гантт is built на @visactor/vтаблица, so you need к install @visactor/vтаблица первый к use @visactor/vтаблица-гантт.**
 
-You can get it in the following ways:
+Вы можете get it в Следующий ways:
 
-### Using NPM Package
+### Using NPM Packвозраст
 
-First, you need to install it in the root directory of your project using the following commands:
+первый, you need к install it в the root directory из your project using Следующий commands:
 
 ```sh
 
 # Install using npm
-npm install @visactor/vtable
-npm install @visactor/vtable-gantt
+npm install @visactor/vтаблица
+npm install @visactor/vтаблица-гантт
 
 # Install using yarn
-yarn add @visactor/vtable
-yarn add @visactor/vtable-gantt
+yarn add @visactor/vтаблица
+yarn add @visactor/vтаблица-гантт
 ```
 
 ### Using CDN
 
-You can also get the built vtable-gantt file through CDN.
+Вы можете also get the built vтаблица-гантт file through CDN.
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable-gantt/dist/vtable-gantt.min.js"></script>
+<script src="https://unpkg.com/@visactor/vтаблица-гантт/dist/vтаблица-гантт.min.js"></script>
 <script>
-  const ganttInstance = new VTableGantt.Gantt(domContainer, option);
+  const ганттInstance = новый Vтаблицагантт.гантт(domContainer, option);
 </script>
 ```
 
-If you need to use the related functions of VTable or VRender, such as editing cells or custom rendering, please note that you should use VTableGantt.VTable and VTableGantt.VRender.
+If you need к use the related functions из Vтаблица или VRender, such as editing cells или пользовательский rendering, please note that you should use Vтаблицагантт.Vтаблица и Vтаблицагантт.VRender.
 
-To introduce the ability of VTable, such as:
+к introduce the ability из Vтаблица, such as:
 
 ```
-// Register icon or editor
-VTableGantt.VTable.register.***
-// Reference the theme of VTable
-VTableGantt.VTable.themes.***
-// Reference the custom rendering element of VTable
-VTableGantt.VTable.CustomLayout.***
+// регистрация иконка или editor
+Vтаблицагантт.Vтаблица.регистрация.***
+// Reference the тема из Vтаблица
+Vтаблицагантт.Vтаблица.темаs.***
+// Reference the пользовательский rendering element из Vтаблица
+Vтаблицагантт.Vтаблица.пользовательскиймакет.***
 ```
 
-To introduce the ability of VRender to achieve custom rendering, such as:
+к introduce the ability из VRender к achieve пользовательский rendering, such as:
 
 ```
 // Use the Group element
-VTableGantt.VRender.Group()
+Vтаблицагантт.VRender.Group()
 ```
 
-## Importing VTableGantt
+## Importing Vтаблицагантт
 
-### Importing via NPM Package
+### Importing via NPM Packвозраст
 
-At the top of your JavaScript file, use `import` to bring in vtable-gantt:
+в the верх из your JavaScript file, use `import` к bring в vтаблица-гантт:
 
 ```js
-import { Gantt } from '@visactor/vtable-gantt';
+import { гантт } от '@visactor/vтаблица-гантт';
 
-const ganttInstance = new Gantt(domContainer, option);
+const ганттInstance = новый гантт(domContainer, option);
 ```
 
 ### Importing via script tag
 
-By directly adding a `<script>` tag in the HTML file, import the built vtable-gantt file:
+по directly adding a `<script>` tag в the HTML file, import the built vтаблица-гантт file:
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable-gantt/dist/vtable-gantt.min.js"></script>
+<script src="https://unpkg.com/@visactor/vтаблица-гантт/dist/vтаблица-гантт.min.js"></script>
 <script>
-  const ganttInstance = new VTableGantt.Gantt(domContainer, option);
+  const ганттInstance = новый Vтаблицагантт.гантт(domContainer, option);
 </script>
 ```
 
-## Drawing a Simple Gantt Chart
+## Drawing a Simple гантт график
 
-Before drawing, we need to prepare a DOM container with width and height for VTableGantt, and this container must be relatively positioned, i.e., its position must be set to 'absolute' or 'relative'.
+Before drawing, we need к prepare a DOM container с ширина и высота для Vтаблицагантт, и this container must be relatively positioned, i.e., its позиция must be set к 'absolute' или 'relative'.
 
-**Please ensure that the container's width and height values are integers, as VTable's internal logic uses the container's offsetWidth, offsetHeight, clientWidth, and clientHeight properties. If the container's width and height are decimals, it may cause errors in the values taken, potentially leading to table jitter issues.**
+**Please ensure that the container's ширина и высота values are integers, as Vтаблица's internal logic uses the container's offsetширина, offsetвысота, clientширина, и clientвысота свойства. If the container's ширина и высота are decimals, it may cause errors в the values taken, potentially leading к таблица jitter issues.**
 
 ```html
 <body>
-  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
+  <div id="таблицаContainer" style="позиция: absolute; ширина: 600px;высота:400px;"></div>
 </body>
 ```
 
-Next, we create a `Gantt` instance and pass in the Gantt chart configuration options:
+следующий, we create a `гантт` instance и pass в the гантт график configuration options:
 
-```javascript livedemo template=vtable
-let ganttInstance;
+```javascript liveдемонстрация template=vтаблица
+let ганттInstance;
 const records = [
   {
     id: 1,
-    title: 'Task 1',
+    заголовок: 'Task 1',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-07-26',
+    начало: '2024-07-24',
+    конец: '2024-07-26',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 2,
-    title: 'Task 2',
+    заголовок: 'Task 2',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '07/24/2024',
-    end: '08/04/2024',
+    начало: '07/24/2024',
+    конец: '08/04/2024',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 3,
-    title: 'Task 3',
+    заголовок: 'Task 3',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-08-04',
-    end: '2024-08-04',
+    начало: '2024-08-04',
+    конец: '2024-08-04',
     progress: 100,
     priority: 'P1'
   },
   {
     id: 4,
-    title: 'Task 4',
+    заголовок: 'Task 4',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-26',
-    end: '2024-07-28',
+    начало: '2024-07-26',
+    конец: '2024-07-28',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 5,
-    title: 'Task 5',
+    заголовок: 'Task 5',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-26',
-    end: '2024-07-28',
+    начало: '2024-07-26',
+    конец: '2024-07-28',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 6,
-    title: 'Task 6',
+    заголовок: 'Task 6',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-29',
-    end: '2024-08-11',
+    начало: '2024-07-29',
+    конец: '2024-08-11',
     progress: 100,
     priority: 'P1'
   }
@@ -152,50 +152,50 @@ const records = [
 
 const columns = [
   {
-    field: 'title',
-    title: 'title',
-    width: 'auto',
-    sort: true,
+    поле: 'title',
+    заголовок: 'title',
+    ширина: 'авто',
+    сортировка: true,
     tree: true,
-    editor: 'input'
+    editor: 'ввод'
   },
   {
-    field: 'start',
-    title: 'start',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'начало',
+    заголовок: 'начало',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   },
   {
-    field: 'end',
-    title: 'end',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'конец',
+    заголовок: 'конец',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   }
 ];
 const option = {
-  overscrollBehavior: 'none',
+  overscrollBehavior: 'никто',
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns,
-    tableWidth: 250,
-    minTableWidth: 100,
-    maxTableWidth: 600,
-    theme: {
+    таблицаширина: 250,
+    minтаблицаширина: 100,
+    maxтаблицаширина: 600,
+    тема: {
       headerStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: 1,
+        borderLineширина: 1,
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'red',
+        цвет: 'red',
         bgColor: '#EEF1F5'
       },
       bodyStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: [1, 0, 1, 0],
+        borderLineширина: [1, 0, 1, 0],
         fontSize: 16,
-        color: '#4D4D4D',
+        цвет: '#4D4D4D',
         bgColor: '#FFF'
       }
     }
@@ -203,40 +203,40 @@ const option = {
   },
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 2,
+      borderLineширина: 2,
       borderColor: '#e1e4e8',
       cornerRadius: 8
     },
     verticalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     },
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     },
     verticalSplitLineMoveable: true,
     verticalSplitLineHighlight: {
       lineColor: 'green',
-      lineWidth: 3
+      lineширина: 3
     }
   },
   grid: {
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 40,
-  rowHeight: 40,
+  headerRowвысота: 40,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
     resizable: true,
     moveable: true,
     hoverBarStyle: {
@@ -246,32 +246,32 @@ const option = {
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 16,
-      textAlign: 'left',
+      textAlign: 'лево',
       textOverflow: 'ellipsis'
     },
     barStyle: {
-      width: 20,
-      /** Task bar color */
+      ширина: 20,
+      /** Task bar цвет */
       barColor: '#ee8800',
-      /** Completed part of the task bar color */
+      /** Completed part из the task bar цвет */
       completedBarColor: '#91e8e0',
       /** Task bar corner radius */
       cornerRadius: 8,
-      /** Task bar border */
-      borderLineWidth: 1,
-      /** Border color */
+      /** Task bar граница */
+      borderLineширина: 1,
+      /** граница цвет */
       borderColor: 'black'
     }
   },
   timelineHeader: {
-    colWidth: 100,
+    colширина: 100,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     scales: [
@@ -280,33 +280,33 @@ const option = {
         step: 1,
         startOfWeek: 'sunday',
         format(date) {
-          return `Week ${date.dateIndex}`;
+          возврат `Week ${date.dateIndex}`;
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5',
           textStick: true
-          // padding: [0, 30, 0, 20]
+          // заполнение: [0, 30, 0, 20]
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5'
         }
       }
@@ -316,16 +316,16 @@ const option = {
     {
       date: '2024/8/02',
       scrollToMarkLine: true,
-      position: 'left',
+      позиция: 'лево',
       style: {
         lineColor: 'red',
-        lineWidth: 1
+        lineширина: 1
       }
     }
   ],
   rowSeriesNumber: {
-    title: 'Row Number',
-    dragOrder: true,
+    заголовок: 'Row число',
+    dragпорядок: true,
     headerStyle: {
       bgColor: '#EEF1F5',
       borderColor: '#e1e4e8'
@@ -336,16 +336,16 @@ const option = {
   },
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'scrolling',
-    width: 6,
+    видимый: 'scrolling',
+    ширина: 6,
     scrollSliderCornerRadius: 2,
     scrollSliderColor: '#5cb85c'
   }
 };
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 ```
 
-At this point, you have successfully drawn a simple Gantt chart!
+в this point, you have successfully drawn a simple гантт график!
 
-I hope this tutorial helps you learn how to use Gantt. Next, you can delve into the various configuration options of vtable-gantt to customize more diverse table effects.
+I hope this tutorial helps you learn how к use гантт. следующий, Вы можете delve into the various configuration options из vтаблица-гантт к пользовательскийize more diverse таблица effects.

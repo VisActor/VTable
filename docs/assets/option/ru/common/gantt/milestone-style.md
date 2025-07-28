@@ -1,29 +1,29 @@
-{{ target: common-gantt-task-bar-milestone-style }}
+{{ target: common-гантт-task-bar-milestone-style }}
 
-The definition of IMilestoneStyle is:
+The definition из IMilestoneStyle is:
 
 ```
-export interface IMilestoneStyle {
-  /** Milestone border color */
-  borderColor?: string;
-  /** Milestone border width */
-  borderLineWidth?: number;
-  /** Milestone fill color */
-  fillColor?: string;
+export интерфейс IMilestoneStyle {
+  /** Milestone граница цвет */
+  borderColor?: строка;
+  /** Milestone граница ширина */
+  borderLineширина?: число;
+  /** Milestone fill цвет */
+  fillColor?: строка;
   /** Milestone square corner radius */
-  cornerRadius?: number;
-  /** The milestone is a square by default, and this width configures the length of the square edge */
-  width?: number;
-  /** The milestone label. Supports either a fixed string or a template string */
+  cornerRadius?: число;
+  /** The milestone is a square по по умолчанию, и this ширина configures the length из the square edge */
+  ширина?: число;
+  /** The milestone label. Supports either a fixed строка или a template строка */
   labelText?: ITaskBarLabelText;
-  /** Milestone Text Style */
+  /** Milestone текст Style */
   labelTextStyle:{
-    fontFamily?: string;
-    fontSize?: number;
-    color?: string;
-    padding?: number | number[];
+    fontFamily?: строка;
+    fontSize?: число;
+    цвет?: строка;
+    заполнение?: число | число[];
   }
-  /** Position of text relative to milestone */
-  textOrient?: 'left' | 'top' | 'right' | 'bottom';
+  /** позиция из текст relative к milestone */
+  textOrient?: 'лево' | 'верх' | 'право' | 'низ';
 }
 ```

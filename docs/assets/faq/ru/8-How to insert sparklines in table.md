@@ -1,21 +1,21 @@
-# VTable Usage Issue: How to insert sparklines in table?
+# Vтаблица Usвозраст Issue: How к insert sparklines в таблица?
 
 ## Question Description
 
-A mini-line chart reflecting the dynamics of a set of data needs to be displayed in a cell in a column of the table. How to achieve this effect in VTable?
+A mini-line график reflecting the dynamics из a set из данные needs к be displayed в a cell в a column из the таблица. How к achieve this effect в Vтаблица?
 
 ## Solution
 
-In VTable, you can specify the column to be a sparkline type cell by setting `cellType` to `sparkline` in `columns`.
+в Vтаблица, Вы можете specify the column к be a sparkline тип cell по setting `cellType` к `sparkline` в `columns`.
 
-1. sparkLine data
-   The data specified by the `sparkline` type cell can be an array of numbers (the number will default to y field in the sparkline, and x field will be automatically filled in order), or it can be an array of x, y objects:
+1. sparkLine данные
+   The данные specified по the `sparkline` тип cell can be an массив из numbers (the число will по умолчанию к y поле в the sparkline, и x поле will be автоmatically filled в order), или it can be an массив из x, y objects:
 
 ```javascript
 // ......
 {
-  lineData1: [10, 20, 30, 40, 60, 30, 10],
-  lineData2: [
+  lineданные1: [10, 20, 30, 40, 60, 30, 10],
+  lineданные2: [
     { x: 0, y: 10 },
     { x: 1, y: 40 },
     { x: 2, y: 60 },
@@ -30,116 +30,116 @@ In VTable, you can specify the column to be a sparkline type cell by setting `ce
 ```
 
 2. sparkline style
-   In `columns`, in addition to configuring the `cellType` as `sparkline`, you can also configure the sparkline style spec through `sparklineSpec` (if not configured using default style), and the spec rules refer to VChart:
+   в `columns`, в addition к configuring the `cellType` as `sparkline`, Вы можете also configure the sparkline style spec through `sparklineSpec` (if не configured using по умолчанию style), и the spec rules refer к Vграфик:
 
 ```javascript
 const baseSpec: TYPES.SparklineSpec = {
-  type: 'line',
-  xField: {
-    field: 'x',
+  тип: 'line',
+  xполе: {
+    поле: 'x',
     domain: [0, 1, 2, 3, 4, 5, 6, 7, 8]
   },
-  yField: {
-    field: 'y',
+  yполе: {
+    поле: 'y',
     domain: [0, 80]
   },
   smooth: true,
-  pointShowRule: 'all',
+  pointShowRule: 'все',
   line: {
     style: {
-      stroke: '#2E62F1',
-      strokeWidth: 2
+      strхорошоe: '#2E62F1',
+      strхорошоeширина: 2
     }
   },
   point: {
-    hover: {
-      stroke: 'blue',
-      strokeWidth: 1,
+    навести: {
+      strхорошоe: 'blue',
+      strхорошоeширина: 1,
       fill: 'red',
       shape: 'circle',
-      size: 4
+      размер: 4
     },
     style: {
-      stroke: 'red',
-      strokeWidth: 1,
+      strхорошоe: 'red',
+      strхорошоeширина: 1,
       fill: 'yellow',
       shape: 'circle',
-      size: 2
+      размер: 2
     }
   },
   crosshair: {
     style: {
-      stroke: 'gray',
-      strokeWidth: 1
+      strхорошоe: 'gray',
+      strхорошоeширина: 1
     }
   }
 };
 
-// option: ......
+// опция: ......
 columns: [
   {
-    field: 'lineData2',
-    title: 'spark line2',
+    поле: 'lineданные2',
+    заголовок: 'spark line2',
     cellType: 'sparkline',
-    width: 250,
+    ширина: 250,
     sparklineSpec: baseSpec
   }
 ];
 ```
 
-- type: the type of sparkline, currently only supports line
-- xField: x-axis dimension information, configure the data field for x-axis mapping, x-axis data range, etc.
-- yField: y-axis dimension information, configure the data field for y-axis mapping, y-axis data range, etc.
+- тип: the тип из sparkline, currently only supports line
+- xполе: x-axis dimension information, configure the данные поле для x-axis mapping, x-axis данные range, etc.
+- yполе: y-axis dimension information, configure the данные поле для y-axis mapping, y-axis данные range, etc.
 - smooth: whether the polyline is displayed smoothly
-- pointShowRule: The display rule of the vertex, which supports the following configurations:
-  - all: show all points
-  - none: do not display points
-  - isolatedPoint: Indicates that only isolated points are displayed (the front and rear values are empty)
+- pointShowRule: The display rule из the vertex, which supports Следующий configurations:
+  - все: показать все points
+  - никто: do не display points
+  - isolatedPoint: Indicates that only isolated points are displayed (the front и rear values are empty)
 - line: polyline style
-- point: style of vertex
+- point: style из vertex
 - crosshair: interactively displayed crosshair style
 
-## Code Example
+## код пример
 
 ```javascript
 const baseSpec: TYPES.SparklineSpec = {
-  type: 'line',
-  xField: {
-    field: 'x',
+  тип: 'line',
+  xполе: {
+    поле: 'x',
     domain: [0, 1, 2, 3, 4, 5, 6, 7, 8]
   },
-  yField: {
-    field: 'y',
+  yполе: {
+    поле: 'y',
     domain: [0, 80]
   },
   smooth: true,
-  pointShowRule: 'all',
+  pointShowRule: 'все',
   line: {
     style: {
-      stroke: '#2E62F1',
-      strokeWidth: 2
+      strхорошоe: '#2E62F1',
+      strхорошоeширина: 2
     }
   },
   point: {
-    hover: {
-      stroke: 'blue',
-      strokeWidth: 1,
+    навести: {
+      strхорошоe: 'blue',
+      strхорошоeширина: 1,
       fill: 'red',
       shape: 'circle',
-      size: 4
+      размер: 4
     },
     style: {
-      stroke: 'red',
-      strokeWidth: 1,
+      strхорошоe: 'red',
+      strхорошоeширина: 1,
       fill: 'yellow',
       shape: 'circle',
-      size: 2
+      размер: 2
     }
   },
   crosshair: {
     style: {
-      stroke: 'gray',
-      strokeWidth: 1
+      strхорошоe: 'gray',
+      strхорошоeширина: 1
     }
   }
 };
@@ -148,25 +148,25 @@ const records = generateRecords(10);
 
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 80
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 80
   },
   {
-    field: 'lineData1',
-    title: 'spark line1',
+    поле: 'lineданные1',
+    заголовок: 'spark line1',
     cellType: 'sparkline',
-    width: 250
+    ширина: 250
   },
   {
-    field: 'lineData2',
-    title: 'spark line2',
+    поле: 'lineданные2',
+    заголовок: 'spark line2',
     cellType: 'sparkline',
-    width: 250,
+    ширина: 250,
     sparklineSpec: baseSpec
   }
 ];
-const option: TYPES.ListTableConstructorOptions = {
+const опция: TYPES.списоктаблицаConstructorOptions = {
   records,
   columns
 };
@@ -174,12 +174,12 @@ const option: TYPES.ListTableConstructorOptions = {
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-miniline-w536q9)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-miniline-w536q9)
 
-![result](/vtable/faq/8-0.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/8-0.png)
 
 ## Quote
 
-- [Cell Type Demo](https://www.visactor.io/vtable/demo/cell-type/multi-type)
-- [Sparkline Tutorial](https://visactor.io/vtable/guide/cell_type/sparkline)
-- [github](https://github.com/VisActor/VTable)
+- [Cell тип демонстрация](https://www.visactor.io/vтаблица/демонстрация/cell-тип/multi-тип)
+- [Sparkline Tutorial](https://visactor.io/vтаблица/guide/cell_type/sparkline)
+- [github](https://github.com/VisActor/Vтаблица)

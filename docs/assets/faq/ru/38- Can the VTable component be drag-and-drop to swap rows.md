@@ -1,67 +1,67 @@
 ---
-title: 16. Can the VTable component be drag-and-drop to swap rows</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 16. Can the Vтаблица компонент be перетаскивание-и-отпускание к swap rows</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question Title
 
-Can the VTable component be drag-and-drop to swap rows?</br>
+Can the Vтаблица компонент be перетаскивание-и-отпускание к swap rows?</br>
 ## Question Description
 
-How can the VTable basic table ListTable perform drag-and-drop row swapping?</br>
+How can the Vтаблица базовый таблица списоктаблица perform перетаскивание-и-отпускание row swapping?</br>
 ## Solution
 
-The VTable pivot table supports drag-and-drop header row swapping, while the basic table requires the configuration of serial numbers to achieve this. There is a configuration item called `dragOrder` that indicates whether the drag-and-drop order is enabled. After configuring this to true, a drag-and-drop button icon will be displayed, which requires mouse operation to perform drag-and-drop swapping. At the same time, this icon can be replaced with the icon required by your business.</br>
+The Vтаблица сводный таблица supports перетаскивание-и-отпускание header row swapping, while the базовый таблица requires the configuration из serial numbers к achieve this. There is a configuration item called `dragOrder` that indicates whether the перетаскивание-и-отпускание order is включен. After configuring this к true, a перетаскивание-и-отпускание Кнопка иконка will be displayed, which requires mouse operation к perform перетаскивание-и-отпускание swapping. в the same time, this иконка can be replaced с the иконка обязательный по your business.</br>
 ```
-export interface IRowSeriesNumber {
-  width?: number | 'auto';
-  title?: string;
-  format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+export интерфейс IRowSeriesNumber {
+  ширина?: число | 'авто';
+  title?: строка;
+  format?: (col?: число, row?: число, таблица?: Baseтаблицаапи) => любой;
+  cellType?: 'текст' | 'link' | 'imвозраст' | 'video' | 'флажок';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
-  icon?:
-    | string
-    | ColumnIconOption
-    | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
-/** Whether it can be rearranged by drag and drop */
-  dragOrder?: boolean;
+  headerиконка?: строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[];
+  иконка?:
+    | строка
+    | ColumnиконкаOption
+    | (строка | ColumnиконкаOption)[]
+    | ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
+/** Whether it can be rearranged по перетаскивание и отпускание */
+  dragOrder?: логический;
 }</br>
 ```
 
 
-## Code Examples
+## код примеры
 
 ```
 const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       rowSeriesNumber: {
-        title: '序号',
+        заголовок: '序号',
         **dragOrder**: true,
-        width: 'auto',
+        ширина: 'авто',
         headerStyle: {
-          color: 'black',
+          цвет: 'black',
           bgColor: 'pink'
         },
         style: {
-          color: 'red'
+          цвет: 'red'
         }
       }
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);</br>
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);</br>
 ```
-## Results Show
+## Results показать
 
-Online effect reference: [https://visactor.io/vtable/demo/interaction/move-row-position](https%3A%2F%2Fvisactor.io%2Fvtable%2Fdemo%2Finteraction%2Fmove-row-position)</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PyqpbOX0modx4txoZKCcE3SFnne.gif' alt='' width='842' height='552'>
+Online effect reference: [https://visactor.io/vтаблица/демонстрация/interaction/move-row-позиция](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fдемонстрация%2Finteraction%2Fmove-row-позиция)</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PyqpbOX0modx4txoZKCcE3SFnne.gif' alt='' ширина='842' высота='552'>
 
 ## Related documents
 
-Demo of drag-and-drop row movement: [https://visactor.io/vtable/demo/interaction/move-row-position](https%3A%2F%2Fvisactor.io%2Fvtable%2Fdemo%2Finteraction%2Fmove-row-position)</br>
-Tutorial on drag-and-drop row movement: [https://visactor.io/vtable/guide/basic_function/row_series_number](https%3A%2F%2Fvisactor.io%2Fvtable%2Fguide%2Fbasic_function%2Frow_series_number)</br>
-API: [https://visactor.io/vtable/option/ListTable#rowSeriesNumber](https%3A%2F%2Fvisactor.io%2Fvtable%2Foption%2FListTable%23rowSeriesNumber)</br>
-GitHub: [https://github.com/VisActor/VTable](https%3A%2F%2Fgithub.com%2FVisActor%2FVTable)</br>
+демонстрация из перетаскивание-и-отпускание row movement: [https://visactor.io/vтаблица/демонстрация/interaction/move-row-позиция](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fдемонстрация%2Finteraction%2Fmove-row-позиция)</br>
+Tutorial на перетаскивание-и-отпускание row movement: [https://visactor.io/vтаблица/guide/базовый_function/row_series_number](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fguide%2Fбазовый_function%2Frow_series_number)</br>
+апи: [https://visactor.io/vтаблица/option/списоктаблица#rowSeriesNumber](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Foption%2Fсписоктаблица%23rowSeriesNumber)</br>
+GitHub: [https://github.com/VisActor/Vтаблица](https%3A%2F%2Fgithub.com%2FVisActor%2FVтаблица)</br>
 

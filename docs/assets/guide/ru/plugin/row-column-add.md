@@ -1,95 +1,95 @@
-# Row and Column Addition Plugin
+# Row и Column Addition Plugin
 
 ## Introduction
 
-AddRowColumnPlugin is a plugin designed to extend VTable with dynamic row and column addition capabilities.
+AddRowColumnPlugin is a plugin designed к extend Vтаблица с dynamic row и column addition capabilities.
 
-This plugin monitors the `vTable` instance's `MOUSEENTER_CELL`, `MOUSELEAVE_CELL`, and `MOUSELEAVE_TABLE` events!
+This plugin monitors the `vтаблица` instance's `MOUSEENTER_CELL`, `MOUSELEAVE_CELL`, и `MOUSELEAVE_таблица` событиеs!
 
-When the mouse hovers over a table cell, dots and plus signs for adding rows and columns will be displayed; when the mouse leaves the table cell, these indicators will be hidden.
+When the mouse hovers over a таблица cell, dots и plus signs для adding rows и columns will be displayed; when the mouse leaves the таблица cell, these indicators will be скрытый.
 
 ## Plugin Configuration
 
-Configuration options for the row and column addition plugin:
+Configuration options для the row и column addition plugin:
 
 ```ts
-export interface AddRowColumnOptions {
+export интерфейс AddRowColumnOptions {
   /**
-   * Whether to enable column addition
+   * Whether к включить column addition
    */
-  addColumnEnable?: boolean;
+  addColumnEnable?: логический;
   /**
-   * Whether to enable row addition
+   * Whether к включить row addition
    */
-  addRowEnable?: boolean;
+  addRowEnable?: логический;
   /**
-   * Callback function for adding a column
+   * обратный вызов функция для adding a column
    */
-  addColumnCallback?: (col: number) => void;
+  addColumnCallback?: (col: число) => void;
   /**
-   * Callback function for adding a row
+   * обратный вызов функция для adding a row
    */
-  addRowCallback?: (row: number) => void;
+  addRowCallback?: (row: число) => void;
 }
 ```
 
-## Plugin Example
-Initialize the plugin object and add it to the vTable configuration's plugins.
+## Plugin пример
+Initialize the plugin объект и add it к the vтаблица configuration's plugins.
 ```
-const addRowColumn = new AddRowColumnPlugin();
+const addRowColumn = новый AddRowColumnPlugin();
 const option = {
   records,
   columns,
-  padding: 30,
+  заполнение: 30,
   plugins: [addRowColumn]
 };
 ```
-To control the content of newly added row data and update data and column information after adding columns, you can use the configuration options provided by the plugin. When initializing the plugin object, provide hook functions for adding rows and columns, and set the values for new rows or column information in these functions.
+к control the content из newly added row данные и update данные и column information after adding columns, Вы можете use the configuration options provided по the plugin. When initializing the plugin объект, provide hoхорошо functions для adding rows и columns, и set the values для новый rows или column information в these functions.
 ```ts
- const addRowColumn = new AddRowColumnPlugin({
+ const addRowColumn = новый AddRowColumnPlugin({
     addColumnCallback: col => {
       columns.splice(addColIndex, 0, {
-          field: ``,
-          title: `New Column ${col}`,
-          width: 100
+          поле: ``,
+          заголовок: `новый Column ${col}`,
+          ширина: 100
         });
-      this.table.updateColumns(columns);
-      const newRecords = tableInstance.records.map(record => {
-        if (Array.isArray(record)) {
+      this.таблица.updateColumns(columns);
+      const newRecords = таблицаInstance.records.map(record => {
+        if (массив.isArray(record)) {
           record.splice(col - 1, 0, '');
         }
-        return record;
+        возврат record;
       });
-      tableInstance.setRecords(newRecords);
+      таблицаInstance.setRecords(newRecords);
     },
     addRowCallback: row => {
-      tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
+      таблицаInstance.addRecord([], row - таблицаInstance.columnHeaderLevelCount);
     }
   });
 ```
 
-Runnable example:
+Runnable пример:
 
-```javascript livedemo template=vtable
-//  import * as VTable from '@visactor/vtable';
-// 使用时需要引入插件包@visactor/vtable-plugins
-// import * as VTablePlugins from '@visactor/vtable-plugins';
-// 正常使用方式 const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
-// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
-  const addRowColumn = new VTablePlugins.AddRowColumnPlugin();
+```javascript liveдемонстрация template=vтаблица
+//  import * as Vтаблица от '@visactor/vтаблица';
+// 使用时需要引入插件包@visactor/vтаблица-plugins
+// import * as VтаблицаPlugins от '@visactor/vтаблица-plugins';
+// 正常使用方式 const columnSeries = новый Vтаблица.plugins.ColumnSeriesPlugin({});
+// 官网编辑器中将 Vтаблица.plugins重命名成了VтаблицаPlugins
+  const addRowColumn = новый VтаблицаPlugins.AddRowColumnPlugin();
 const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
+  возврат массив.от(новый массив(count)).map((_, i) => ({
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `小明${i + 1}`,
-    lastName: '王',
+    имя: `小明${i + 1}`,
+    lastимя: '王',
     date1: '2022年9月1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
-    city: 'beijing',
-    image:
-      '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
+    work: i % 2 === 0 ? 'back-конец engineer' + (i + 1) : 'front-конец engineer' + (i + 1),
+    Город: 'beijing',
+    imвозраст:
+      '<svg ширина="16" высота="16" viewBox="0 0 48 48" fill="никто" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" strхорошоe="#f5a623" strхорошоe-ширина="1" strхорошоe-linecap="round" strхорошоe-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" strхорошоe="#f5a623" strхорошоe-ширина="1" strхорошоe-linejoin="round"/></svg>'
   }));
 };
 
@@ -98,10 +98,10 @@ const generatePersons = count => {
     rowSeriesNumber: {},
     columns:[
     {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
+      поле: 'email1',
+      заголовок: 'email',
+      ширина: 200,
+      сортировка: true,
       style: {
         underline: true,
         underlineDash: [2, 0],
@@ -110,30 +110,30 @@ const generatePersons = count => {
     },
 
         {
-          field: 'name',
-          title: 'First Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'первый имя',
+          ширина: 200
         },
         {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'последний имя',
+          ширина: 200
         },
 
     {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
+      поле: 'date1',
+      заголовок: 'birthday',
+      ширина: 200
     },
     {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+      поле: 'sex',
+      заголовок: 'sex',
+      ширина: 100
     }
   ],
 
     plugins: [addRowColumn]
   };
-  const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
-  window.tableInstance = tableInstance;
+  const таблицаInstance = новый Vтаблица.списоктаблица( document.getElementById(CONTAINER_ID),option);
+  window.таблицаInstance = таблицаInstance;
 ```

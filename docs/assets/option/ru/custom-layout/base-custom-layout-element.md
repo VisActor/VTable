@@ -1,59 +1,59 @@
-{{ target: base-custom-layout-element }}
+{{ target: base-пользовательский-макет-element }}
 
-${prefix} id (string)
+${prefix} id (строка)
 
-The unique identifier of the element.
+The unique identifier из the element.
 
-${prefix} marginLeft (number)
+${prefix} marginLeft (число)
 
-The left margin of the element.
+The лево отступ из the element.
 
-${prefix} marginRight (number)
+${prefix} marginRight (число)
 
-The right margin of the element.
+The право отступ из the element.
 
-${prefix} marginTop (number)
+${prefix} marginTop (число)
 
-The top margin of the element.
+The верх отступ из the element.
 
-${prefix} marginBottom (number)
+${prefix} marginBottom (число)
 
-The bottom margin of the element.
+The низ отступ из the element.
 
-${prefix} background (Object)
+${prefix} фон (объект)
 
-The background settings of the element.
+The фон settings из the element.
 
 Configurable options include:
 
-#${prefix} fill (boolean)
+#${prefix} fill (логический)
 
-Whether to fill the background color.
+Whether к fill the фон цвет.
 
-#${prefix} stroke (boolean)
+#${prefix} strхорошоe (логический)
 
-Whether to stroke the border.
+Whether к strхорошоe the граница.
 
-#${prefix} stroke (string)
+#${prefix} strхорошоe (строка)
 
-Stroke color.
+Strхорошоe цвет.
 
-#${prefix} fill (string)
+#${prefix} fill (строка)
 
-Fill color.
+Fill цвет.
 
-#${prefix} lineWidth (number)
+#${prefix} lineширина (число)
 
-Border width.
+граница ширина.
 
-#${prefix} cornerRadius (number)
+#${prefix} cornerRadius (число)
 
-Border corner radius.
+граница corner radius.
 
-#${prefix} expandX (number)
+#${prefix} expandX (число)
 
 Horizontal expansion amount.
 
-#${prefix} expandY (number)
+#${prefix} expandY (число)
 
 Vertical expansion amount.

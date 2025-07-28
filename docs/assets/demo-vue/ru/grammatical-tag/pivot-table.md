@@ -1,148 +1,148 @@
 ---
-category: examples
-group: grammatical-tag
-title: Pivot Analysis Table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-pivot-table.png
-order: 1-1
-link: Developer_Ecology/vue
+категория: примеры
+группа: grammatical-tag
+заголовок: сводный Analysis таблица
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-сводный-таблица.png
+порядок: 1-1
+ссылка: Developer_Ecology/vue
 ---
 
-# Pivot Analysis Table
+# сводный Analysis таблица
 
-The props accepted by PivotTable&PivotChart are consistent with the options, and the semantic subcomponents are as follows:
+The props accepted по сводныйтаблица&сводныйграфик are consistent с the options, и the semantic subкомпонентs are as follows:
 
-- PivotColumnDimension: Configuration of dimensions on columns, consistent with the definition of columns in options [api](../../option/PivotTable-columns-text#headerType)
-- PivotRowDimension: Configuration of dimensions on rows, consistent with the definition of rows in options [api](../../option/PivotTable-rows-text#headerType)
-- PivotIndicator: Configuration of indicators, consistent with the definition of indicators in options [api](../../option/PivotTable-indicators-text#cellType)
-- PivotColumnHeaderTitle: Configuration of column header titles, consistent with the definition of columnHeaderTitle in options [api](../../option/PivotTable#rowHeaderTitle)
-- PivotRowHeaderTitle: Configuration of row header titles, consistent with the definition of rowHeaderTitle in options [api](../../option/PivotTable#columnHeaderTitle)
-- PivotCorner: Configuration of corner headers, consistent with the definition of corner in options [api](../../option/PivotTable#corner)
+- сводныйColumnDimension: Configuration из dimensions на columns, consistent с the definition из columns в options [апи](../../option/сводныйтаблица-columns-текст#headerType)
+- сводныйRowDimension: Configuration из dimensions на rows, consistent с the definition из rows в options [апи](../../option/сводныйтаблица-rows-текст#headerType)
+- сводныйIndicator: Configuration из indicators, consistent с the definition из indicators в options [апи](../../option/сводныйтаблица-indicators-текст#cellType)
+- сводныйColumnHeaderзаголовок: Configuration из column header titles, consistent с the definition из columnHeaderTitle в options [апи](../../option/сводныйтаблица#rowHeaderTitle)
+- сводныйRowHeaderзаголовок: Configuration из row header titles, consistent с the definition из rowHeaderTitle в options [апи](../../option/сводныйтаблица#columnHeaderTitle)
+- сводныйCorner: Configuration из corner headers, consistent с the definition из corner в options [апи](../../option/сводныйтаблица#corner)
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-  <PivotTable :options="tableOptions" :records="data" ref="pivotTableRef">
-    <PivotColumnDimension title="Category" dimensionKey="Category" :headerStyle="{ textStick: true }" width="auto" />
+  <сводныйтаблица :options="таблицаOptions" :records="данные" ref="сводныйтаблицаRef">
+    <сводныйColumnDimension title="Категория" dimensionKey="Категория" :headerStyle="{ textStick: true }" ширина="авто" />
 
-    <PivotRowDimension
-    v-for="(row, index) in rows"
+    <сводныйRowDimension
+    v-для="(row, index) в rows"
     :key="index"
     :dimensionKey="row.dimensionKey"
     :title="row.title"
     :headerStyle="row.headerStyle"
-    :width="row.width"
+    :ширина="row.ширина"
     />
 
-    <PivotIndicator
-    v-for="(indicator, index) in indicators"
+    <сводныйIndicator
+    v-для="(indicator, index) в indicators"
     :key="index"
     :indicatorKey="indicator.indicatorKey"
     :title="indicator.title"
-    :width="indicator.width"
-    :showSort="indicator.showSort"
+    :ширина="indicator.ширина"
+    :showсортировка="indicator.showсортировка"
     :headerStyle="indicator.headerStyle"
     :format="indicator.format"
     :style="indicator.style"
     />
 
-    <PivotCorner titleOnDimension="row" :headerStyle="{ textStick: true }" />
+    <сводныйCorner titleOnDimension="row" :headerStyle="{ textStick: true }" />
 
-    <Menu menuType="html" :contextMenuItems="['copy', 'paste', 'delete', '...']" />
-  </PivotTable>
+    <меню менюType="html" :contextменюItems="['copy', 'paste', 'delete', '...']" />
+  </сводныйтаблица>
   `,
-  data() {
-    return {
-      pivotTableRef: ref(null),
-      data: ref([]),
-      tableOptions: {
-        tooltip: {
-          isShowOverflowTextTooltip: true
+  данные() {
+    возврат {
+      сводныйтаблицаRef: ref(null),
+      данные: ref([]),
+      таблицаOptions: {
+        Подсказка: {
+          isShowOverflowTextПодсказка: true
         },
-        dataConfig: {
-          sortRules: [
+        данныеConfig: {
+          сортировкаRules: [
             {
-              sortField: 'Category',
-              sortBy: ['Office Supplies', 'Technology', 'Furniture']
+              сортировкаполе: 'Категория',
+              сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
             }
           ]
         },
-        widthMode: 'standard'
+        ширинаMode: 'standard'
       },
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: { fontWeight: 'normal' },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              return args.dataValue >= 0 ? 'black' : 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              возврат args.данныеValue >= 0 ? 'black' : 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: { fontWeight: 'normal' },
-          format: rec => '$' + Number(rec).toFixed(2),
+          format: rec => '$' + число(rec).toFixed(2),
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              return args.dataValue >= 0 ? 'black' : 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              возврат args.данныеValue >= 0 ? 'black' : 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: { fontWeight: 'normal' },
-          format: rec => '$' + Number(rec).toFixed(2),
+          format: rec => '$' + число(rec).toFixed(2),
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              return args.dataValue >= 0 ? 'black' : 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              возврат args.данныеValue >= 0 ? 'black' : 'red';
             }
           }
         }
       ],
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: { textStick: true },
-          width: 'auto'
+          ширина: 'авто'
         }
       ]
     };
   },
   mounted() {
-    fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+    fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
       .then(res => res.json())
-      .then(jsonData => {
-        this.data = jsonData;
+      .then(jsonданные => {
+        this.данные = jsonданные;
       });
   }
 });
 
-app.component('PivotTable', VueVTable.PivotTable);
-app.component('PivotColumnDimension', VueVTable.PivotColumnDimension);
-app.component('PivotRowDimension', VueVTable.PivotRowDimension);
-app.component('PivotIndicator', VueVTable.PivotIndicator);
-app.component('PivotCorner', VueVTable.PivotCorner);
-app.component('Menu', VueVTable.Menu);
+app.компонент('сводныйтаблица', VueVтаблица.сводныйтаблица);
+app.компонент('сводныйColumnDimension', VueVтаблица.сводныйColumnDimension);
+app.компонент('сводныйRowDimension', VueVтаблица.сводныйRowDimension);
+app.компонент('сводныйIndicator', VueVтаблица.сводныйIndicator);
+app.компонент('сводныйCorner', VueVтаблица.сводныйCorner);
+app.компонент('меню', VueVтаблица.меню);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

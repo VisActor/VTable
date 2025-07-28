@@ -2,25 +2,25 @@
 
 #${prefix} indicators
 
-The specific configuration of each indicator in the pivot table, such as style, format, title, etc., needs to be separately set for each type of indicator. The configuration items vary slightly according to the different `cellType`. `cellType` can support: `'text' | 'link' | 'image' | 'video' | 'progressbar' | 'sparkline'`. The specific configuration items for each `cellType` are as follows:
+The specific configuration из каждый indicator в the сводный таблица, such as style, format, title, etc., needs к be separately set для каждый тип из indicator. The configuration items vary slightly according к the different `cellType`. `cellType` can support: `'текст' | 'link' | 'imвозраст' | 'video' | 'progressbar' | 'sparkline'`. The specific configuration items для каждый `cellType` are as follows:
 
-{{ use: text-indicator-type(
+{{ use: текст-indicator-тип(
     prefix = ${prefix}) }}
 
-{{ use: link-indicator-type(
+{{ use: link-indicator-тип(
     prefix = ${prefix}) }}
 
-{{ use: image-indicator-type(
+{{ use: imвозраст-indicator-тип(
     prefix = ${prefix}) }}
 
-{{ use: video-indicator-type(
+{{ use: video-indicator-тип(
     prefix = ${prefix}) }}
 
-{{ use: progressbar-indicator-type(
+{{ use: progressbar-indicator-тип(
     prefix = ${prefix}) }}
 
-{{ use: sparkline-indicator-type(
+{{ use: sparkline-indicator-тип(
     prefix = ${prefix}) }}
 
-{{ use: chart-indicator-type(
+{{ use: график-indicator-тип(
     prefix = ${prefix}) }}

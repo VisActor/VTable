@@ -1,93 +1,93 @@
 ---
-category: examples
-group: Component
-title: Scrollbar
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/scrollbar.png
-link: interaction/scroll
-option: ListTable#theme.scrollStyle.scrollRailColor
+категория: примеры
+группа: компонент
+заголовок: Scrollbar
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/scrollbar.png
+ссылка: interaction/прокрутка
+опция: списоктаблица#тема.scrollStyle.scrollRailColor
 ---
 
-# scroll bar
+# прокрутка bar
 
-This example show scrollbar configurable styles.
+This пример показать scrollbar configurable styles.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `theme.scrollStyle` Set the style of the scroll bar
+- `тема.scrollStyle` Set the style из the прокрутка bar
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       frozenColCount: 1,
-      theme: VTable.themes.ARCO.extends({
+      тема: Vтаблица.темаs.ARCO.extends({
         scrollStyle: {
-          visible: 'always',
+          видимый: 'always',
           scrollSliderColor: 'purple',
           scrollRailColor: '#bac3cc',
           hoverOn: false,
@@ -95,7 +95,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       })
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

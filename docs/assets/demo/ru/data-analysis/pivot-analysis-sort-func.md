@@ -1,121 +1,121 @@
 ---
-category: examples
-group: data-analysis
-title: Sort Function
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-func.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.sortRules
+категория: примеры
+группа: данные-analysis
+заголовок: сортировка функция
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-сортировка-func.png
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.сортировкаRules
 ---
 
-# Custom sorting of pivot analysis table
+# пользовательский сортировкаing из сводный analysis таблица
 
-The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority.
+The сводный таблица is сортировкаed according к the dimension значение из a certain dimension. сортировкаRules can be configured в данныеConfig. Multiple сортировкаing rules can be configured. The one configured первый has a higher priority.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules, optional configuration items
+- `данныеConfig` configures данные rules, необязательный configuration items
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
@@ -126,32 +126,32 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Sub-Category',
-            sortFunc: (a, b) => {
-              const indexA = SubCategoryOrder.indexOf(a);
-              const indexB = SubCategoryOrder.indexOf(b);
-              return (indexA === -1 ? 100 : indexA) > (indexB === -1 ? 100 : indexB) ? 1 : -1;
+            сортировкаполе: 'Sub-Категория',
+            сортировкаFunc: (a, b) => {
+              const indexA = SubКатегорияOrder.indexOf(a);
+              const indexB = SubКатегорияOrder.indexOf(b);
+              возврат (indexA === -1 ? 100 : indexA) > (indexB === -1 ? 100 : indexB) ? 1 : -1;
             }
           }
         ]
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    const SubCategoryOrder = [
+    const SubКатегорияOrder = [
       'Chairs',
-      'Tables',
+      'таблицаs',
       'Furnishings',
-      'Bookcases',
+      'Boхорошоcases',
       'Labels',
       'Paper',
       'Technology',
       'Appliances',
       'Art'
     ];
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

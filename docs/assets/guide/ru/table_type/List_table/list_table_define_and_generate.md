@@ -1,49 +1,49 @@
-In this section, we will introduce the core configuration items of the basic table to help you understand the basic usage of the table. We will provide a simple example demonstration to help you get started quickly. More complex configurations and advanced features will be introduced and explained in detail in subsequent chapters.
+в this section, we will introduce the core configuration items из the базовый таблица к help you understand the базовый usвозраст из the таблица. We will provide a simple пример демонстрацияnstration к help you get started quickly. More complex configurations и advanced возможности will be introduced и explained в detail в subsequent chapters.
 
 ## Core configuration
 
-The following are the Key Configurations items of the basic table and their descriptions:
+Следующий are the Ключевые Конфигурации items из the базовый таблица и their descriptions:
 
-*   `container`: The container DOM element of the table, which needs to have width and height.
-*   `records`: The data of the table, represented as an array.
-*   `columns`: Configuration of table columns, each column needs to set configuration items separately, including column type, width, title, etc. Supported column types are: 'text', 'link', 'image', 'video', 'sparkline', 'progressbar', 'chart'. The configuration items for each column type are slightly different, please flexibly add specific configurations according to the required type, you can refer to[Document](../../guide/cell_type/cellType).
-*   `frozenColCount`: Specifies the number of frozen columns.
-*   `transpose`: Whether to transpose the table, the default is false.
-*   `showHeader`: Whether to display the header, the default is true.
-*   `pagination`: Paging configuration, including the total number of records, the number of records per page, the current page number, etc.
-*   `sortState`: Sort state, which specifies the sort by field and sort rule.
-*   `theme`: Table Theme, which can be a built-in Theme or a custom Theme.
-*   `widthMode`: The calculation mode of the table column width.
+*   `container`: The container DOM element из the таблица, which needs к have ширина и высота.
+*   `records`: The данные из the таблица, represented as an массив.
+*   `columns`: Configuration из таблица columns, каждый column needs к set configuration items separately, including column тип, ширина, title, etc. Supported column types are: 'текст', 'link', 'imвозраст', 'video', 'sparkline', 'progressbar', 'график'. The configuration items для каждый column тип are slightly different, please flexibly add specific configurations according к the обязательный тип, Вы можете refer к[Document](../../guide/cell_type/cellType).
+*   `frozenColCount`: Specifies the число из frozen columns.
+*   `transpose`: Whether к transpose the таблица, the по умолчанию is false.
+*   `showHeader`: Whether к display the header, the по умолчанию is true.
+*   `pagination`: Paging configuration, including the total число из records, the число из records per pвозраст, the текущий pвозраст число, etc.
+*   `сортировкаState`: сортировка state, which specifies the сортировка по поле и сортировка rule.
+*   `тема`: таблица тема, which can be a built-в тема или a пользовательский тема.
+*   `ширинаMode`: The calculation mode из the таблица column ширина.
 
-## Example: Create a simple basic table
+## пример: Create a simple базовый таблица
 
-Here is a simple example of how to use a basic table to present data:
+Here is a simple пример из how к use a базовый таблица к present данные:
 
-```javascript livedemo  template=vtable
+```javascript liveдемонстрация  template=vтаблица
 
  const option = {
     container: document.getElementById(CONTAINER_ID),
     columns : [
         {
-            "field": "订单 ID",
+            "поле": "订单 ID",
             "title": "订单 ID",
-            "sort": true,
-            "width":'auto',
+            "сортировка": true,
+            "ширина":'авто',
         },
         {
-            "field": "邮寄方式",
+            "поле": "邮寄方式",
             "title": "邮寄方式"
         },
         {
-            "field": "类别",
+            "поле": "类别",
             "title": "类别"
         },
         {
-            "field": "子类别",
+            "поле": "子类别",
             "title": "子类别"
         },
         {
-            "field": "销售额",
+            "поле": "销售额",
             "title": "销售额"
         },
     ],
@@ -65,8 +65,8 @@ Here is a simple example of how to use a basic table to present data:
         // ...
     ],
 }
-const tableInstance = new ListTable(option);
+const таблицаInstance = новый списоктаблица(option);
 
 ```
 
-In the above example, we created a basic table using a simple dataset and column definition. You can modify the data and column definitions to suit your needs.
+в the above пример, we created a базовый таблица using a simple данныеset и column definition. Вы можете modify the данные и column definitions к suit your needs.

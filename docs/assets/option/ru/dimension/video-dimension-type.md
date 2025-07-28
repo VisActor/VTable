@@ -1,13 +1,13 @@
-{{ target: video-dimension-type }}
+{{ target: video-dimension-тип }}
 
-#${prefix} ${dimensionHeaderType}.video(string)
+#${prefix} ${dimensionHeaderType}.video(строка)
 
-Specifies the column type as `'video'`, headerType can be omitted and defaults to 'text'
+Specifies the column тип as `'video'`, headerType can be omitted и defaults к 'текст'
 
-##${prefix} headerType(string) = 'video'
+##${prefix} headerType(строка) = 'video'
 
-Specifies the column type as `'video'`, headerType can be omitted and defaults to `'text'`. All configuration items are the same as image type, please refer to image type configuration items.
+Specifies the column тип as `'video'`, headerType can be omitted и defaults к `'текст'`. все configuration items are the same as imвозраст тип, please refer к imвозраст тип configuration items.
 
-##${prefix} clickToPreview(boolean) = true
+##${prefix} НажатьToPreview(логический) = true
 
-Whether to enable click preview.
+Whether к включить Нажать preview.

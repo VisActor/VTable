@@ -2,9 +2,9 @@
 
 Тип CellRange определен как:
 ```
-interface CellRange {
-  start: CellAddress;
-  end: CellAddress;
+интерфейс CellRange {
+  начало: CellAddress;
+  конец: CellAddress;
 }
 ```
 {{ use: CellAddress() }}

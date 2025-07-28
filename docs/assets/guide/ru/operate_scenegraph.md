@@ -1,31 +1,31 @@
 # Operate Scenegraph (Advanced)
 
-In some scenarios, it is necessary to operate on the scenegraph, such as updating a single node (cell) or obtaining information about a node.
+в некоторые scenarios, it is necessary к operate на the scenegraph, such as updating a single node (cell) или obtaining information about a node.
 
-The following mainly introduces the currently stable interfaces. Since the implementation of the scenegraph is still being iterated, it is not guaranteed that the following interfaces will not change.
+Следующий mainly introduces the currently sтаблица interfaces. Since the implementation из the scenegraph is still being iterated, it is не guaranteed that Следующий interfaces will не change.
 
 ## Get Scenegraph
 
 ```ts
-tableInstance.scenegraph;
+таблицаInstance.scenegraph;
 ```
 
-## Get the node of the corresponding cell in the scenegraph
+## Get the node из the corresponding cell в the scenegraph
 
 ```ts
-tableInstance.scenegraph.getCell(colIndex, rowIndex);
+таблицаInstance.scenegraph.getCell(colIndex, rowIndex);
 ```
 
 
-## Get the node of the corresponding cell in the scenegraph
+## Get the node из the corresponding cell в the scenegraph
 
 ```ts
-tableInstance.scenegraph.updateCellContent();
+таблицаInstance.scenegraph.updateCellContent();
 ```
 
-## Get the cell node of the corresponding node
+## Get the cell node из the corresponding node
 
 ```ts
-VTable.getTargetCell(e.target);
+Vтаблица.getTargetCell(e.target);
 ```
 

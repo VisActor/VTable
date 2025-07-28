@@ -1,216 +1,216 @@
 ---
-category: examples
-group: gantt
-title: Gantt Project Task Show Mode
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-show-mode.gif
-link: gantt/gantt_task_show_mode
-option: Gantt#tasksShowMode
+категория: примеры
+группа: гантт
+заголовок: гантт Project Task показать Mode
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-project-показать-mode.gif
+ссылка: гантт/гантт_task_show_mode
+опция: гантт#tasksShowMode
 ---
 
-# Gantt Project Task Show Mode
+# гантт Project Task показать Mode
 
-In the above example, the main purpose is to show the effect of the `Gantt#tasksShowMode` option. However, the `Project_Sub_Tasks_Inline` mode is special, so it is displayed separately. This mode requires setting the `type` of the data item to `project` to take effect.
+в the above пример, the main purpose is к показать the effect из the `гантт#tasksShowMode` option. However, the `Project_Sub_Tasks_Inline` mode is special, so it is displayed separately. This mode requires setting the `тип` из the данные item к `project` к take effect.
 
 ## Key Configuration
 
-- `Gantt`
-- `Gantt#tasksShowMode`
+- `гантт`
+- `гантт#tasksShowMode`
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// import * as VTableGantt from '@visactor/vtable-gantt';
-let ganttInstance;
+```javascript liveдемонстрация template=vтаблица
+// import * as Vтаблицагантт от '@visactor/vтаблица-гантт';
+let ганттInstance;
 const records = [
   {
     id: 0,
-    name: 'Planning',
-    type: 'project',
+    имя: 'Planning',
+    тип: 'project',
     children: [
       {
         id: 1,
-        name: 'Michael Smith 1',
-        start: '2024-11-15',
-        end: '2024-11-15',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        имя: 'Michael Smith 1',
+        начало: '2024-11-15',
+        конец: '2024-11-15',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
       },
       {
         id: 2,
-        name: 'Emily 2',
-        start: '2024-11-17',
-        end: '2024-11-18',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        имя: 'Emily 2',
+        начало: '2024-11-17',
+        конец: '2024-11-18',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
       },
       {
         id: 3,
-        name: 'Rramily 3',
-        start: '2024-11-19',
-        end: '2024-11-20',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        имя: 'Rramily 3',
+        начало: '2024-11-19',
+        конец: '2024-11-20',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
       },
       {
         id: 4,
-        name: 'Lichael Join 4',
-        start: '2024-11-21',
-        end: '2024-11-21',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        имя: 'Lichael Join 4',
+        начало: '2024-11-21',
+        конец: '2024-11-21',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
       }
     ]
   },
   {
     id: 300,
-    name: 'Research',
-     type: 'project',
+    имя: 'Research',
+     тип: 'project',
     children: [
       {
         id: 5,
-        name: 'Ryan 5',
-        start: '2024-11-18',
-        end: '2024-11-21',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+        имя: 'Ryan 5',
+        начало: '2024-11-18',
+        конец: '2024-11-21',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/rabbit.jpg'
       }
     ]
   },
   {
-    name: 'Goal Setting',
-    type: 'project',
+    имя: 'Goal Setting',
+    тип: 'project',
     children: [
       {
         id: 6,
-        name: 'Daniel Davis 6',
-        start: '2024-11-21',
-        end: '2024-11-22',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+        имя: 'Daniel Davis 6',
+        начало: '2024-11-21',
+        конец: '2024-11-22',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/cat.jpg'
       },
       {
         id: 7,
-        name: 'Lauren 7',
-        start: '2024-11-18',
-        end: '2024-11-19',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+        имя: 'Lauren 7',
+        начало: '2024-11-18',
+        конец: '2024-11-19',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg'
       }
     ]
   },
 
   {
-    name: 'Strategy',
-    type: 'project',
+    имя: 'Strategy',
+    тип: 'project',
     children: [
       {
         id: 8,
-        name: 'Tacarah Siller 8',
-        start: '2024-11-20',
-        end: '2024-11-21',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        имя: 'Tacarah Siller 8',
+        начало: '2024-11-20',
+        конец: '2024-11-21',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
       },
       {
         id: 9,
-        name: 'Camentew Olision 9',
-        start: '2024-11-25',
-        end: '2024-11-26',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        имя: 'Camentew Olision 9',
+        начало: '2024-11-25',
+        конец: '2024-11-26',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
       },
       {
         id: 10,
-        name: 'Sarah Miller 10',
-        start: '2024-11-17',
-        end: '2024-11-18',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        имя: 'Sarah Miller 10',
+        начало: '2024-11-17',
+        конец: '2024-11-18',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
       },
       {
         id: 11,
-        name: 'Matthew Wilson 11',
-        start: '2024-11-22',
-        end: '2024-11-25',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        имя: 'Matthew Wilson 11',
+        начало: '2024-11-22',
+        конец: '2024-11-25',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
       },
       {
         id: 12,
-        name: 'Grarah Poliller 12',
-        start: '2024-11-23',
-        end: '2024-11-24',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        имя: 'Grarah Poliller 12',
+        начало: '2024-11-23',
+        конец: '2024-11-24',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
       }
     ]
   },
   {
-    name: 'Execution',
-    type: 'project',
+    имя: 'Execution',
+    тип: 'project',
     children: [
       {
         id: 13,
-        name: 'Ashley Taylor 13',
-        start: '2024-11-22',
-        end: '2024-11-25',
+        имя: 'Ashley Taylor 13',
+        начало: '2024-11-22',
+        конец: '2024-11-25',
 
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/rabbit.jpg'
       },
       {
         id: 14,
-        name: 'Megan 14',
-        start: '2024-11-27',
-        end: '2024-11-30',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+        имя: 'Megan 14',
+        начало: '2024-11-27',
+        конец: '2024-11-30',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/cat.jpg'
       },
       {
         id: 15,
-        name: 'David 15',
-        start: '2024-12-10',
-        end: '2024-12-18',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+        имя: 'David 15',
+        начало: '2024-12-10',
+        конец: '2024-12-18',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg'
       }
     ]
   },
   {
-    name: 'Monitoring',
-    type: 'project',
+    имя: 'Monitoring',
+    тип: 'project',
     children: [
       {
         id: 16,
-        name: 'Hannah 16',
-        start: '2024-11-20',
-        end: '2024-11-30',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+        имя: 'Hannah 16',
+        начало: '2024-11-20',
+        конец: '2024-11-30',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
       },
       {
         id: 17,
-        name: 'Andrew 17',
-        start: '2024-12-02',
-        end: '2024-12-18',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+        имя: 'Andrew 17',
+        начало: '2024-12-02',
+        конец: '2024-12-18',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
       }
     ]
   },
   {
-    name: 'Reporting',
-   type: 'project',
+    имя: 'Reporting',
+   тип: 'project',
     children: [
       {
         id: 18,
-        name: 'Joshua Anderson 18',
-        start: '2024-12-22',
-        end: '2024-12-28',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg'
+        имя: 'Joshua Anderson 18',
+        начало: '2024-12-22',
+        конец: '2024-12-28',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/rabbit.jpg'
       }
     ]
   },
   {
-    name: 'Process review',
-   type: 'project',
+    имя: 'Process review',
+   тип: 'project',
     children: [
       {
         id: 19,
-        name: 'Christopher Moore 19',
-        start: '2024-11-25',
-        end: '2024-11-30',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg'
+        имя: 'Christopher Moore 19',
+        начало: '2024-11-25',
+        конец: '2024-11-30',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/cat.jpg'
       },
       {
         id: 20,
-        name: 'Emma 20',
-        start: '2024-12-01',
-        end: '2024-12-18',
-        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg'
+        имя: 'Emma 20',
+        начало: '2024-12-01',
+        конец: '2024-12-18',
+        avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg'
       }
     ]
   }
@@ -218,31 +218,31 @@ const records = [
 
 const columns = [
   {
-    field: 'name',
-    title: 'PROCESS',
-    width: 150,
+    поле: 'имя',
+    заголовок: 'PROCESS',
+    ширина: 150,
     tree: true
   }
 ];
 const option = {
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns: columns,
-    theme: {
+    тема: {
       bodyStyle: {
         bgColor: 'white',
-        color: 'rgb(115 115 115)'
+        цвет: 'rgb(115 115 115)'
       },
       headerStyle: {
-        color: 'white'
+        цвет: 'white'
       }
     }
   },
   groupBy: true,
-  tasksShowMode: VTableGantt.TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
+  tasksShowMode: Vтаблицагантт.TYPES.TasksShowMode.Project_Sub_Tasks_Inline,
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 1,
+      borderLineширина: 1,
       borderColor: '#e1e4e8',
       cornerRadius: 8
     },
@@ -250,29 +250,29 @@ const option = {
   },
   grid: {
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 60,
-  rowHeight: 40,
+  headerRowвысота: 60,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
-    labelText: '{name}',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
+    labelText: '{имя}',
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 14,
-      textAlign: 'center',
-      color: 'white'
+      textAlign: 'центр',
+      цвет: 'white'
     },
     barStyle: {
-      width: 22,
+      ширина: 22,
       /** 任务条的颜色 */
       barColor: 'rgb(68 99 244)',
       /** 已完成部分任务条的颜色 */
@@ -280,39 +280,39 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 15,
       borderColor: 'black',
-      borderLineWidth: 1
+      borderLineширина: 1
     }
   },
   dependency: {
-    linkCreatable: true,
+    linkCreaтаблица: true,
     links: [
       {
-        type: VTableGantt.TYPES.DependencyType.StartToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.StartToStart,
         linkedFromTaskKey: 1,
         linkedToTaskKey: 2
       },
       {
-        type: VTableGantt.TYPES.DependencyType.FinishToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.FinishToStart,
         linkedFromTaskKey: 2,
         linkedToTaskKey: 3
       },
       {
-        type: VTableGantt.TYPES.DependencyType.StartToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.StartToStart,
         linkedFromTaskKey: 3,
         linkedToTaskKey: 5
       },
       {
-        type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+        тип: Vтаблицагантт.TYPES.DependencyType.FinishToFinish,
         linkedFromTaskKey: 5,
         linkedToTaskKey: 4
       },
       {
-        type: VTableGantt.TYPES.DependencyType.StartToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.StartToStart,
         linkedFromTaskKey: 8,
         linkedToTaskKey: 9
       },
       {
-        type: VTableGantt.TYPES.DependencyType.FinishToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.FinishToStart,
         linkedFromTaskKey: 9,
         linkedToTaskKey: 10
       }
@@ -321,11 +321,11 @@ const option = {
   timelineHeader: {
     verticalLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 1
+      lineширина: 1
     },
     horizontalLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 1
+      lineширина: 1
     },
     backgroundColor: '#63a8ff',
     scales: [
@@ -333,12 +333,12 @@ const option = {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white'
+          цвет: 'white'
         }
       }
     ]
@@ -348,13 +348,13 @@ const option = {
 
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'none',
-    width: 6,
+    видимый: 'никто',
+    ширина: 6,
     scrollSliderCornerRadius: 2,
     scrollSliderColor: '#5cb85c'
   }
 };
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 
 ```

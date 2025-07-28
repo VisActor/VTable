@@ -1,126 +1,126 @@
 ---
-title: 7. VTable usage issue: How to obtain the total number of rows in a table and the actual height of the content</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 7. Vтаблица usвозраст issue: How к obtain the total число из rows в a таблица и the actual высота из the content</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to get the total number of rows in the table and the actual height of the content</br>
+How к get the total число из rows в the таблица и the actual высота из the content</br>
 
 
 ## Problem Description
 
-How to obtain the total number of rows in the current table and the actual height of the content from the table instance through the API</br>
+How к obtain the total число из rows в the текущий таблица и the actual высота из the content от the таблица instance through the апи</br>
 
 
 ## Solution 
 
-1. 1. The `colCount` and `rowCount` attributes in the table instance can obtain the number of rows and columns of the current table.</br>
-1. The table example provides methods `getAllRowsHeight` and `getAllColsWidth`, which can obtain the total column width and total row height of the current table content.</br>
+1. 1. The `colCount` и `rowCount` attributes в the таблица instance can obtain the число из rows и columns из the текущий таблица.</br>
+1. The таблица пример provides методы `getAllRowsвысота` и `getAllColsширина`, which can obtain the total column ширина и total row высота из the текущий таблица content.</br>
 
 
-## Code example
+## код пример
 
 ```
-const tableInstance = new VTable.ListTable(container, option);
+const таблицаInstance = новый Vтаблица.списоктаблица(container, option);
 
-console.log(tableInstance.colCount);
-console.log(tableInstance.rowCount);
-console.log(tableInstance.getAllRowsHeight());
-console.log(tableInstance.getAllColsWidth());</br>
+console.log(таблицаInstance.colCount);
+console.log(таблицаInstance.rowCount);
+console.log(таблицаInstance.getAllRowsвысота());
+console.log(таблицаInstance.getAllColsширина());</br>
 ```
 ## Results display 
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BkY5bNB5IoJy9fxfzXrcR2CRnud.gif' alt='' width='1662' height='1044'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BkY5bNB5IoJy9fxfzXrcR2CRnud.gif' alt='' ширина='1662' высота='1044'>
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/MS4wbCflioPjNBxiGoMcHeGQnng.gif' alt='' width='246' height='152'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/MS4wbCflioPjNBxiGoMcHeGQnng.gif' alt='' ширина='246' высота='152'>
 
-Complete sample code (you can paste it into the [editor](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree) to try it out):</br>
+Complete sample код (Вы можете paste it into the [editor](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree) к try it out):</br>
 ```
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
     {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto"
+        "поле": "ID Заказа",
+        "title": "ID Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Customer ID",
-        "title": "Customer ID",
-        "width": "auto"
+        "поле": "пользовательскийer ID",
+        "title": "пользовательскийer ID",
+        "ширина": "авто"
     },
     {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto"
+        "поле": "Product имя",
+        "title": "Product имя",
+        "ширина": "авто"
     },
     {
-        "field": "Category",
-        "title": "Category",
-        "width": "auto"
+        "поле": "Категория",
+        "title": "Категория",
+        "ширина": "авто"
     },
     {
-        "field": "Sub-Category",
-        "title": "Sub-Category",
-        "width": "auto"
+        "поле": "Sub-Категория",
+        "title": "Sub-Категория",
+        "ширина": "авто"
     },
     {
-        "field": "Region",
-        "title": "Region",
-        "width": "auto"
+        "поле": "Регион",
+        "title": "Регион",
+        "ширина": "авто"
     },
     {
-        "field": "City",
-        "title": "City",
-        "width": "auto"
+        "поле": "Город",
+        "title": "Город",
+        "ширина": "авто"
     },
     {
-        "field": "Order Date",
-        "title": "Order Date",
-        "width": "auto"
+        "поле": "Дата Заказа",
+        "title": "Дата Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Quantity",
-        "title": "Quantity",
-        "width": "auto"
+        "поле": "Количество",
+        "title": "Количество",
+        "ширина": "авто"
     },
     {
-        "field": "Sales",
-        "title": "Sales",
-        "width": "auto"
+        "поле": "Продажи",
+        "title": "Продажи",
+        "ширина": "авто"
     },
     {
-        "field": "Profit",
-        "title": "Profit",
-        "width": "auto"
+        "поле": "Прибыль",
+        "title": "Прибыль",
+        "ширина": "авто"
     }
 ];
 
 const option = {
-  records:data,
+  records:данные,
   columns,
-  widthMode:'standard'
+  ширинаMode:'standard'
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
 
-console.log(tableInstance.colCount);
-console.log(tableInstance.rowCount);
-console.log(tableInstance.getAllRowsHeight());
-console.log(tableInstance.getAllColsWidth());
+console.log(таблицаInstance.colCount);
+console.log(таблицаInstance.rowCount);
+console.log(таблицаInstance.getAllRowsвысота());
+console.log(таблицаInstance.getAllColsширина());
     })</br>
 ```
 ## Related documents
 
-Related API：</br>
-https://www.visactor.io/vtable/api/Properties#rowCount</br>
-https://www.visactor.io/vtable/api/Properties#colCount</br>
-https://www.visactor.io/vtable/api/Methods#getAllColsWidth</br>
-https://www.visactor.io/vtable/api/Methods#getAllRowsHeight</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи：</br>
+https://www.visactor.io/vтаблица/апи/свойства#rowCount</br>
+https://www.visactor.io/vтаблица/апи/свойства#colCount</br>
+https://www.visactor.io/vтаблица/апи/методы#getAllColsширина</br>
+https://www.visactor.io/vтаблица/апи/методы#getAllRowsвысота</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

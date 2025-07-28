@@ -14,23 +14,23 @@
 
 ```bash
 # npm
-npm install @visactor/vtable
+npm install @visactor/VTable
 
 # yarn
-yarn add @visactor/vtable
+yarn add @visactor/VTable
 
 # pnpm
-pnpm add @visactor/vtable
+pnpm add @visactor/VTable
 ```
 
 ### Установка через CDN
 
 ```html
 <!-- Для продакшена -->
-<script src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"></script>
+<script src="https://unpkg.com/@visactor/VTable@latest/build/index.min.js"></script>
 
 <!-- Для разработки -->
-<script src="https://unpkg.com/@visactor/vtable@latest/build/index.js"></script>
+<script src="https://unpkg.com/@visactor/VTable@latest/build/index.js"></script>
 ```
 
 ## Ваша первая таблица
@@ -41,12 +41,12 @@ pnpm add @visactor/vtable
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My First VTable</title>
+    <title>My первый VTable</title>
     <style>
         #tableContainer {
-            width: 800px;
-            height: 600px;
-            margin: 20px;
+            ширина: 800px;
+            высота: 600px;
+            отступ: 20px;
         }
     </style>
 </head>
@@ -60,14 +60,14 @@ pnpm add @visactor/vtable
 ### JavaScript Implementation
 
 ```javascript
-import * as VTable from '@visactor/vtable';
+import * as VTable от '@visactor/VTable';
 
 // Define your data
 const records = [
-    { id: 1, name: 'John Doe', department: 'Engineering', salary: 85000, status: 'Active' },
-    { id: 2, name: 'Jane Smith', department: 'Marketing', salary: 75000, status: 'Active' },
-    { id: 3, name: 'Bob Johnson', department: 'Sales', salary: 65000, status: 'Inactive' },
-    { id: 4, name: 'Alice Brown', department: 'HR', salary: 70000, status: 'Active' }
+    { id: 1, name: 'John Doe', department: 'Engineering', salary: 85000, status: 'активный' },
+    { id: 2, name: 'Jane Smith', department: 'Marketing', salary: 75000, status: 'активный' },
+    { id: 3, name: 'Bob Johnson', department: 'Sales', salary: 65000, status: 'неактивный' },
+    { id: 4, name: 'Alice Brown', department: 'HR', salary: 70000, status: 'активный' }
 ];
 
 // Define columns
@@ -75,15 +75,15 @@ const columns = [
     {
         field: 'id',
         caption: 'ID',
-        width: 80,
+        ширина: 80,
         style: {
-            textAlign: 'center'
+            textAlign: 'центр'
         }
     },
     {
         field: 'name',
         caption: 'Employee Name',
-        width: 150,
+        ширина: 150,
         style: {
             fontWeight: 'bold'
         }
@@ -91,34 +91,34 @@ const columns = [
     {
         field: 'department',
         caption: 'Department',
-        width: 120
+        ширина: 120
     },
     {
         field: 'salary',
         caption: 'Salary',
-        width: 100,
+        ширина: 100,
         style: {
-            textAlign: 'right'
+            textAlign: 'право'
         },
-        format: (value) => '$' + value.toLocaleString()
+        format: (значение) => '$' + значение.toLocaleString()
     },
     {
         field: 'status',
         caption: 'Status',
-        width: 100,
+        ширина: 100,
         style: {
-            textAlign: 'center'
+            textAlign: 'центр'
         }
     }
 ];
 
 // Create the table
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
     container: document.getElementById('tableContainer'),
     columns: columns,
     records: records,
     autoFillWidth: true,
-    hover: {
+    навести: {
         highlightMode: 'row'
     }
 });
@@ -127,13 +127,13 @@ const table = new VTable.ListTable({
 ## Core Concepts
 
 ### 1. Container Element
-Every VTable needs a DOM container element:
+каждый VTable needs a DOM container element:
 ```javascript
 container: document.getElementById('tableContainer')
 ```
 
 ### 2. Data Records
-Your data as an array of objects:
+Your data as an массив из objects:
 ```javascript
 const records = [
     { field1: 'value1', field2: 'value2' },
@@ -142,13 +142,13 @@ const records = [
 ```
 
 ### 3. Column Definitions
-Define how each column should behave:
+Define how каждый column should behave:
 ```javascript
 const columns = [
     {
         field: 'fieldName',    // Data field
-        caption: 'Display Name', // Header text
-        width: 150,            // Column width
+        caption: 'Display Name', // Header текст
+        ширина: 150,            // Column ширина
         style: { /* styling */ } // Custom styles
     }
 ];
@@ -158,99 +158,99 @@ const columns = [
 
 ### Table Sizing
 ```javascript
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
     // ... other options
-    width: 800,           // Fixed width
-    height: 600,          // Fixed height
-    autoFillWidth: true,  // Auto-fill container width
-    autoFillHeight: true  // Auto-fill container height
+    ширина: 800,           // Fixed ширина
+    высота: 600,          // Fixed высота
+    autoFillWidth: true,  // Auto-fill container ширина
+    autoFillHeight: true  // Auto-fill container высота
 });
 ```
 
-### Row and Column Styling
+### Row и Column Styling
 ```javascript
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
     // ... other options
-    theme: 'DEFAULT',     // Built-in theme
-    rowHeight: 40,        // Row height
-    headerHeight: 50,     // Header row height
+    theme: 'по умолчанию',     // Built-в theme
+    rowHeight: 40,        // Row высота
+    headerHeight: 50,     // Header row высота
     alternateRowColor: '#f8f9fa' // Zebra striping
 });
 ```
 
 ### Interactive Features
 ```javascript
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
     // ... other options
     sortState: {
         field: 'name',
         order: 'asc'
     },
-    hover: {
+    навести: {
         highlightMode: 'row'
     },
-    select: {
-        mode: 'cell'        // or 'row', 'column'
+    выбрать: {
+        mode: 'cell'        // или 'row', 'column'
     }
 });
 ```
 
 ## Common Patterns
 
-### Loading Data from API
+### загрузка Data от API
 ```javascript
-async function loadTableData() {
+async функция loadTableData() {
     try {
         const response = await fetch('/api/employees');
         const data = await response.json();
         
-        const table = new VTable.ListTable({
+        const table = новый VTable.ListTable({
             container: document.getElementById('tableContainer'),
             columns: columns,
             records: data.employees
         });
-    } catch (error) {
-        console.error('Failed to load data:', error);
+    } catch (ошибка) {
+        console.ошибка('Failed к load data:', ошибка);
     }
 }
 ```
 
 ### Dynamic Updates
 ```javascript
-// Add new record
-table.addRecord({ id: 5, name: 'New Employee', department: 'IT' });
+// Add новый record
+table.addRecord({ id: 5, name: 'новый Employee', department: 'IT' });
 
 // Update existing record
 table.updateRecords([{ id: 1, name: 'Updated Name' }], [0]);
 
 // Remove record
-table.removeRecord(2); // Remove record at index 2
+table.removeRecord(2); // Remove record в index 2
 ```
 
 ### Event Handling
 ```javascript
-// Cell click event
-table.on('click_cell', (event) => {
-    console.log('Cell clicked:', event.col, event.row, event.value);
+// Cell нажать event
+table.на('click_cell', (event) => {
+    console.log('Cell clicked:', event.col, event.row, event.значение);
 });
 
 // Selection change
-table.on('selected_cell', (event) => {
+table.на('selected_cell', (event) => {
     console.log('Cell selected:', event.col, event.row);
 });
 
 // Data change
-table.on('change_cell_value', (event) => {
-    console.log('Value changed:', event.col, event.row, event.oldValue, event.newValue);
+table.на('change_cell_value', (event) => {
+    console.log('значение changed:', event.col, event.row, event.oldValue, event.newValue);
 });
 ```
 
-## Next Steps
+## следующий Steps
 
 Now that you have a basic table running, explore these topics:
 
-1. **[Column Types](./core/columns.md)** - Different column types and configurations
-2. **[Styling Guide](./core/styling.md)** - Custom themes and visual design
+1. **[Column Types](./core/columns.md)** - Different column types и configurations
+2. **[Styling Guide](./core/styling.md)** - Custom themes и visual design
 3. **[Interactive Features](./advanced/interactions.md)** - Sorting, filtering, editing
 4. **[Performance Tips](./advanced/performance.md)** - Optimizing large datasets
 
@@ -258,18 +258,18 @@ Now that you have a basic table running, explore these topics:
 
 ### Common Issues
 
-**Table not showing:**
+**Table не showing:**
 - Check if container element exists
-- Verify container has dimensions (width/height)
-- Check console for JavaScript errors
+- Verify container has dimensions (ширина/высота)
+- Check console для JavaScript errors
 
-**Data not displaying:**
-- Ensure field names in columns match data properties
-- Check data format is array of objects
-- Verify records are not empty
+**Data не displaying:**
+- Ensure field names в columns match data properties
+- Check data format is массив из objects
+- Verify records are не empty
 
 **Performance issues:**
-- Consider virtual scrolling for large datasets
+- Consider virtual scrolling для large datasets
 - Optimize column rendering
 - Use appropriate data structures
 
@@ -278,4 +278,4 @@ Now that you have a basic table running, explore these topics:
 - Check the [FAQ](./faq.md)
 - Browse [examples](./examples/)
 - Search existing [GitHub issues](https://github.com/VisActor/VTable/issues)
-- Create a new issue with minimal reproduction case
+- Create a новый issue с minimal reproduction case

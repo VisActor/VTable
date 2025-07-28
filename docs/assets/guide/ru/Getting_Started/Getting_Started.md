@@ -12,20 +12,20 @@
 
 ```sh
 # 使用 npm 安装
-npm install @visactor/vtable
+npm install @visactor/VTable
 
 # 使用 yarn 安装
-yarn add @visactor/vtable
+yarn add @visactor/VTable
 ```
 
 ### Use CDN
 
-You can also get the built VTable file through the CDN.
+Вы можете also get the built VTable file through the CDN.
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable/dist/vtable.min.js"></script>
+<script src="https://unpkg.com/@visactor/VTable/dist/VTable.min.js"></script>
 <script>
-  const tableInstance = new VTable.ListTable(option);
+  const tableInstance = новый VTable.ListTable(option);
 </script>
 ```
 
@@ -33,42 +33,42 @@ You can also get the built VTable file through the CDN.
 
 ### Imported via NPM package
 
-Use at the top of a JavaScript file `import` Introducing VTable:
+Use в the верх из a JavaScript file `import` Introducing VTable:
 
 ```js
-import * as VTable from '@visactor/vtable';
+import * as VTable от '@visactor/VTable';
 
-or;
+или;
 
-import { ListTable, PivotTable, TYPES, themes } from '@visactor/vtable';
+import { ListTable, PivotTable, TYPES, themes } от '@visactor/VTable';
 ```
 
 ### Import using script tags
 
-By adding directly in the HTML file `<script>` Tag, import the built vtable file:
+по adding directly в the HTML file `<script>` Tag, import the built VTable file:
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable/dist/vtable.min.js"></script>
+<script src="https://unpkg.com/@visactor/VTable/dist/VTable.min.js"></script>
 <script>
-  const tableInstance = new VTable.ListTable(option);
+  const tableInstance = новый VTable.ListTable(option);
 </script>
 ```
 
 ## Draw a simple table
 
-Before drawing we need to prepare a DOM container with height and width for VTable.
+Before drawing we need к prepare a DOM container с высота и ширина для VTable.
 
-**Please make sure that the width and height of the container are integers. The offsetWidth, offsetHeight, clientWidth, and clientHeight properties of the container will be used in the internal logic of VTable. If the width and height of the container are decimals, the values will be inaccurate, which may cause table jitter problems.**
+**Please make sure that the ширина и высота из the container are integers. The offsetWidth, offsetHeight, clientWidth, и clientHeight properties из the container will be used в the internal logic из VTable. If the ширина и высота из the container are decimals, the values will be inaccurate, which may cause table jitter problems.**
 
 ```html
 <body>
-  <div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
+  <div id="tableContainer" style="позиция: absolute; ширина: 600px;высота:400px;"></div>
 </body>
 ```
 
-Next, we create a `Vtable.ListTable` Example, pass in the table configuration item:
+следующий, we create a `VTable.ListTable` Example, pass в the table configuration item:
 
-```javascript livedemo template=vtable
+```javascript livedemo template=VTable
 const records = [
   {
     230517143221027: 'CA-2018-156720',
@@ -112,11 +112,11 @@ const records = [
   {
     230517143221027: 'CA-2018-143259',
     230517143221030: 'PO-18865',
-    230517143221032: 'Wilson Jones Legal Size Ring Binders',
+    230517143221032: 'Wilson Jones Legal размер Ring Binders',
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York City',
     230517143221029: '2018-12-30',
     230517143221042: '3',
     230517143221040: '52.776',
@@ -129,7 +129,7 @@ const records = [
     230517143221023: 'Technology',
     230517143221034: 'Phones',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York City',
     230517143221029: '2018-12-30',
     230517143221042: '7',
     230517143221040: '90.93',
@@ -142,7 +142,7 @@ const records = [
     230517143221023: 'Furniture',
     230517143221034: 'Bookcases',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York City',
     230517143221029: '2018-12-30',
     230517143221042: '4',
     230517143221040: '323.136',
@@ -177,7 +177,7 @@ const records = [
   {
     230517143221027: 'US-2018-158526',
     230517143221030: 'KH-16360',
-    230517143221032: 'Global Leather and Oak Executive Chair, Black',
+    230517143221032: 'Global Leather и Oak Executive Chair, Black',
     230517143221023: 'Furniture',
     230517143221034: 'Chairs',
     230517143221037: 'South',
@@ -190,7 +190,7 @@ const records = [
   {
     230517143221027: 'US-2018-158526',
     230517143221030: 'KH-16360',
-    230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener with Auto Stop',
+    230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener с Auto Stop',
     230517143221023: 'Office Supplies',
     230517143221034: 'Art',
     230517143221037: 'South',
@@ -203,7 +203,7 @@ const records = [
   {
     230517143221027: 'US-2018-158526',
     230517143221030: 'KH-16360',
-    230517143221032: 'GBC ProClick Spines for 32-Hole Punch',
+    230517143221032: 'GBC ProClick Spines для 32-Hole Punch',
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'South',
@@ -285,7 +285,7 @@ const records = [
     230517143221023: 'Office Supplies',
     230517143221034: 'Fasteners',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York City',
     230517143221029: '2018-12-29',
     230517143221042: '3',
     230517143221040: '6.03',
@@ -323,57 +323,57 @@ const columns = [
   {
     field: '230517143221027',
     title: 'Order ID',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221030',
     title: 'Customer ID',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221032',
     title: 'Product Name',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221023',
     title: 'Category',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221034',
     title: 'Sub-Category',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221037',
     title: 'Region',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221024',
     title: 'City',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221029',
     title: 'Order Date',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221042',
     title: 'Quantity',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221040',
     title: 'Sales',
-    width: 'auto'
+    ширина: 'auto'
   },
   {
     field: '230517143221041',
     title: 'Profit',
-    width: 'auto'
+    ширина: 'auto'
   }
 ];
 
@@ -384,10 +384,10 @@ const option = {
   widthMode: 'standard'
 };
 
-// 创建 vtable 实例
-const tableInstance = new VTable.ListTable(option);
+// 创建 VTable 实例
+const tableInstance = новый VTable.ListTable(option);
 ```
 
-At this point, you have successfully drawn a simple table!
+в this point, you have successfully drawn a simple table!
 
-Hope this tutorial helps you learn how to use VTable. Next, you can learn more about the various configuration options of VTable and customize more rich and varied table effects.
+Hope this tutorial helps you learn how к use VTable. следующий, Вы можете learn more about the various configuration options из VTable и customize more rich и varied table effects.

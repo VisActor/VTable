@@ -1,40 +1,40 @@
-{{ target: common-gantt-frame }}
+{{ target: common-гантт-frame }}
 
 
 ${prefix} outerFrameStyle(IFrameStyle)
 
 Outer frame style
 
-Optional
+необязательный
 
-{{ use: common-gantt-frame-style }}
+{{ use: common-гантт-frame-style }}
 
 ${prefix} verticalSplitLine(ILineStyle)
 
 Vertical split line style
 
-Optional
+необязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
 ${prefix} horizontalSplitLine(ILineStyle)
 
 Horizontal split line style
 
-Optional
+необязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
-${prefix} verticalSplitLineMoveable(boolean)
+${prefix} verticalSplitLineMoveable(логический)
 
 Is the vertical split line movable
 
-Optional
+необязательный
 
 ${prefix} verticalSplitLineHighlight(ILineStyle)
 
-Highlight line style for column width adjustment
+Highlight line style для column ширина adjustment
 
-Optional
+необязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}

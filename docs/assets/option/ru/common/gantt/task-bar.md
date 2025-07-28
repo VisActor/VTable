@@ -1,213 +1,213 @@
-{{ target: common-gantt-task-bar }}
+{{ target: common-гантт-task-bar }}
 
-${prefix} startDateField(string)
+${prefix} startDateполе(строка)
 
-The data field name corresponding to the task start date. By default, the field value in records is taken as 'startDate'.
+The данные поле имя corresponding к the task начало date. по по умолчанию, the поле значение в records is taken as 'startDate'.
 
-Optional
+необязательный
 
-${prefix} endDateField(string)
+${prefix} endDateполе(строка)
 
-The data field name corresponding to the task end date. By default, the field value in records is taken as 'endDate'.
+The данные поле имя corresponding к the task конец date. по по умолчанию, the поле значение в records is taken as 'endDate'.
 
-Optional
+необязательный
 
-${prefix} progressField(string)
+${prefix} progressполе(строка)
 
-The data field name corresponding to the task progress.
+The данные поле имя corresponding к the task progress.
 
-Optional
+необязательный
 
 ${prefix} labelText(ITaskBarLabelText)
 
-The text displayed on the task bar. You can configure fixed text or string templates \`$\{fieldName\}\`. Field names can be used in the template, such as \`$\{title\}+completed$\{progress\}\`, \`$\{startDate\}-$\{endDate\}\`.
+The текст displayed на the task bar. Вы можете configure fixed текст или строка templates \`$\{полеимя\}\`. поле имяs can be used в the template, such as \`$\{title\}+completed$\{progress\}\`, \`$\{startDate\}-$\{endDate\}\`.
 
-Optional
+необязательный
 
 ${prefix} labelTextStyle(ITaskBarLabelTextStyle)
 
-The style of the text on the task bar.
+The style из the текст на the task bar.
 
-{{ use: common-gantt-task-bar-label-text-style }}
+{{ use: common-гантт-task-bar-label-текст-style }}
 
-Optional
+необязательный
 
-${prefix} barStyle(ITaskBarStyle|Function)
+${prefix} barStyle(ITaskBarStyle|функция)
 
-Optional
+необязательный
 
-The style of the task bar, you can configure the function to return different styles based on the situation.
+The style из the task bar, Вы можете configure the функция к возврат different styles based на the situation.
 
 ```
 barStyle?: ITaskBarStyle | ((args: TaskBarInteractionArgumentType) => ITaskBarStyle);
 
 // TaskBarInteractionArgumentType definition:
-export type TaskBarInteractionArgumentType = {
-  taskRecord: any;
-  index: number;
-  subIndex?: number;
+export тип TaskBarInteractionArgumentType = {
+  taskRecord: любой;
+  index: число;
+  subIndex?: число;
   startDate: Date;
   endDate: Date;
-  ganttInstance: Gantt;
+  ганттInstance: гантт;
 };
 ```
 
 
-{{ use: common-gantt-task-bar-style }}
+{{ use: common-гантт-task-bar-style }}
 
 ${prefix} milestoneStyle(ITaskBarStyle)
 
 milestone style
 
-Optional
+необязательный
 
-{{ use: common-gantt-task-bar-milestone-style }}
+{{ use: common-гантт-task-bar-milestone-style }}
 
-${prefix} customLayout(ITaskBarCustomLayout)
+${prefix} пользовательскиймакет(ITaskBarпользовательскиймакет)
 
-Custom layout rendering.
+пользовательский макет rendering.
 
-Optional
+необязательный
 
-{{ use: common-gantt-task-bar-custom-layout }}
+{{ use: common-гантт-task-bar-пользовательский-макет }}
 
-${prefix} resizable(boolean | [ boolean, boolean ] | Function) = true
+${prefix} resizable(логический | [ логический, логический ] | функция) = true
 
-Whether the task bar can be resized. The default is true.
+Whether the task bar can be resized. The по умолчанию is true.
 
-Optional
+необязательный
 
 ```
- /** Whether the task bar can be resized. The configuration function can return whether the size can be resized depending on the situation */
+ /** Whether the task bar can be resized. The configuration функция can возврат whether the размер can be resized depending на the situation */
     resizable?:
-      | boolean
-      | [boolean, boolean]
-      | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
+      | логический
+      | [логический, логический]
+      | ((interactionArgs: TaskBarInteractionArgumentType) => логический | [логический, логический]);
 
-export type TaskBarInteractionArgumentType = {
-  taskRecord: any;
-  index: number;
+export тип TaskBarInteractionArgumentType = {
+  taskRecord: любой;
+  index: число;
   startDate: Date;
   endDate: Date;
-  ganttInstance: Gantt;
+  ганттInstance: гантт;
 };
 ```
 
-${prefix} moveable(boolean | Function) = true
+${prefix} moveable(логический | функция) = true
 
-Whether the task bar can be moved. The default is true.
+Whether the task bar can be moved. The по умолчанию is true.
 
-Optional
+необязательный
 
 ```
-moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+moveable?: логический | ((interactionArgs: TaskBarInteractionArgumentType) => логический);
 
-export type TaskBarInteractionArgumentType = {
-  taskRecord: any;
-  index: number;
+export тип TaskBarInteractionArgumentType = {
+  taskRecord: любой;
+  index: число;
   startDate: Date;
   endDate: Date;
-  ganttInstance: Gantt;
+  ганттInstance: гантт;
 };
 ```
 
-${prefix} moveToExtendDateRange(boolean) = true
+${prefix} moveToExtendDateRange(логический) = true
 
-Whether to move the task bar to the extended date range. The default is true.
+Whether к move the task bar к the extended date range. The по умолчанию is true.
 
 ${prefix} hoverBarStyle(ITaskBarHoverStyle)
 
-Taskbar hover style
+Taskbar навести style
 
-Not required
+не обязательный
 
 ```
-export type ITaskBarHoverStyle = {
-/** Rounded corners of the task bar */
-cornerRadius?: number;
-barOverlayColor?: string;
+export тип ITaskBarHoverStyle = {
+/** Rounded corners из the task bar */
+cornerRadius?: число;
+barOverlayColor?: строка;
 };
 ```
 
 ${prefix} selectedBarStyle(ITaskBarSelectedStyle)
 
-The style of the taskbar when selected
+The style из the taskbar when selected
 
-Not required
+не обязательный
 
 ```
-export type ITaskBarSelectedStyle = {
-shadowBlur?: number; //Shadow width
-shadowOffsetX?: number; //Offset in x direction
-shadowOffsetY?: number; //Y direction offset
-shadowColor?: string; //shadow color
-borderColor?: string; //Border color
-borderLineWidth?: number;
+export тип ITaskBarSelectedStyle = {
+shadowBlur?: число; //Shadow ширина
+shadowOffsetX?: число; //Offset в x direction
+shadowOffsetY?: число; //Y direction offset
+shadowColor?: строка; //shadow цвет
+borderColor?: строка; //граница цвет
+borderLineширина?: число;
 };
 ```
 
-${prefix} selectable(boolean)
+${prefix} selecтаблица(логический)
 
-Whether the service clause is optional, the default is true
+Whether the service clause is необязательный, the по умолчанию is true
 
-Not required
+не обязательный
 
-${prefix} scheduleCreatable(boolean | Function) = true
+${prefix} scheduleCreaтаблица(логический | функция) = true
 
-When there is no scheduling data, scheduling can be done by creating a task bar. When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, `scheduleCreatable` defaults to `true`, otherwise, when `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, `scheduleCreatable` defaults to `false`.
+When there is no scheduling данные, scheduling can be done по creating a task bar. When `tasksShowMode` is `TasksShowMode.Tasks_Separate` или `TasksShowMode.Sub_Tasks_Separate`, `scheduleCreaтаблица` defaults к `true`, otherwise, when `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, или `TasksShowMode.Sub_Tasks_Compact`, `scheduleCreaтаблица` defaults к `false`.
 
-Optional
+необязательный
 
 ```
-scheduleCreatable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+scheduleCreaтаблица?: логический | ((interactionArgs: TaskBarInteractionArgumentType) => логический);
 
-export type TaskBarInteractionArgumentType = {
-  taskRecord: any;
-  index: number;
+export тип TaskBarInteractionArgumentType = {
+  taskRecord: любой;
+  index: число;
   startDate: Date;
   endDate: Date;
-  ganttInstance: Gantt;
+  ганттInstance: гантт;
 };
 ```
 
-${prefix} scheduleCreation(Object)
+${prefix} scheduleCreation(объект)
 
-For tasks without assigned dates, you can display the create button.
+для tasks без assigned dates, Вы можете display the create Кнопка.
 
-Optional
+необязательный
 
-#${prefix} buttonStyle(Object)
+#${prefix} КнопкаStyle(объект)
 
-The style of the new task bar button can be configured, and the styles that can be configured are:
+The style из the новый task bar Кнопка can be configured, и the styles that can be configured are:
 
 ```
 {
-  lineColor?: string;
-  lineWidth?: number;
-  lineDash?: number[];
-  cornerRadius?: number;
-  backgroundColor?: string;
+  lineColor?: строка;
+  lineширина?: число;
+  lineDash?: число[];
+  cornerRadius?: число;
+  backgroundColor?: строка;
 };
 ```
 
-Optional
+необязательный
 
-#${prefix} customLayout(ICreationCustomLayout)
+#${prefix} пользовательскиймакет(ICreationпользовательскиймакет)
 
-Custom rendering of the task bar creation button.
+пользовательский rendering из the task bar creation Кнопка.
 
-Optional
+необязательный
 
-{{ use: common-gantt-task-creation-custom-layout }}
+{{ use: common-гантт-task-creation-пользовательский-макет }}
 
-${prefix} maxWidth(number)
+${prefix} maxширина(число)
 
-The maximum width of the task bar creation button.
+The maximum ширина из the task bar creation Кнопка.
 
-Optional
+необязательный
 
-${prefix} minWidth(number)
+${prefix} minширина(число)
 
-The minimum width of the task bar creation button.
+The minimum ширина из the task bar creation Кнопка.
 
-Optional
+необязательный

@@ -1,80 +1,80 @@
-# Custom Rendering
+# пользовательский Rendering
 
-In the field of data analysis, to present data more intuitively, we often use charts or grids. In some specific scenarios, we wish to add more expressive and personalized display effects to certain cells of a table. At this time, the custom rendering function of table cell content becomes particularly important. Through custom rendering of cell content, we can achieve the following types of scenario needs:
+в the поле из данные analysis, к present данные more intuitively, we often use графикs или grids. в некоторые specific scenarios, we wish к add more expressive и personalized display effects к certain cells из a таблица. в this time, the пользовательский rendering функция из таблица cell content becomes particularly important. Through пользовательский rendering из cell content, we can achieve Следующий types из scenario needs:
 
-1. Rich text display. Display text with various styles and layouts within a cell, making it easy for users to quickly grasp key information.
+1. Rich текст display. Display текст с various styles и макетs within a cell, making it easy для users к quickly grasp key information.
 
-2. Mixed text and image display. Display images or icons in cells according to data, making the data more intuitive.
+2. Mixed текст и imвозраст display. Display imвозрастs или иконкаs в cells according к данные, making the данные more intuitive.
 
-3. Graphical data display. Display data in a graphical way, such as circles, rectangles, etc., making data comparison and analysis more intuitive.
+3. Graphical данные display. Display данные в a graphical way, such as circles, rectangles, etc., making данные comparison и analysis more intuitive.
 
-4. Custom cell layout. Arrange custom rendering elements in any layout within a cell to meet special layout needs.
+4. пользовательский cell макет. Arrange пользовательский rendering elements в любой макет within a cell к meet special макет needs.
 
-In the VTable library, we can achieve the above scenario needs by defining `custom rendering of table cell content`. Because it is more flexible, it can be customized according to business data, but the cost to the integrator is also higher, requiring their own calculation of positions, etc. (While drawing custom content, if you want to draw the default content according to the internal logic of VTable, please set renderDefault to true.)
+в the Vтаблица library, we can achieve the above scenario needs по defining `пользовательский rendering из таблица cell content`. Because it is more flexible, it can be пользовательскийized according к business данные, but the cost к the integrator is also higher, requiring their own calculation из positions, etc. (While drawing пользовательский content, if you want к draw the по умолчанию content according к the internal logic из Vтаблица, please set renderDefault к true.)
 
 ## Case Analysis
 
-Next, we will explain the implementation process using the effect shown in the following figure as an example.
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170d.png)
+следующий, we will explain the implementation process using the effect shown в Следующий figure as an пример.
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170d.png)
 
-### Preparing Data:
+### Preparing данные:
 
-The body data cell part of the table in the figure above has two rows, corresponding to the two pieces of data in our records.
+The body данные cell part из the таблица в the figure above has two rows, corresponding к the two pieces из данные в our records.
 
 ```
     records:[
       {
-        'type': 'important',
+        'тип': 'important',
         "urgency": ['crisis','urgent problem','tasks that must be completed within a limited time'],
-        "not_urgency": ['preventive measures','development relationship','identify new development opportunities','establish long-term goals'],
+        "not_urgency": ['prсобытиеive measures','development relationship','identify новый development opportunities','establish long-term goals'],
       },
       {
-        'type': 'Not\nimportant',
+        'тип': 'не\nimportant',
         "urgency": ['Receive visitors','Certain calls, reports, letters, etc','Urgent matters','Public activities'],
-        "not_urgency": ['Trivial busy work','Some letters','Some phone calls','Time-killing activities','Some pleasant activities'],
+        "not_urgency": ['Trivial busy work','некоторые letters','некоторые phone calls','Time-killing activities','некоторые pleasant activities'],
       },
     ],
 ```
 
 ### Content Decomposition
 
-Let's analyze the composition of each cell's display content:
+Let's analyze the composition из каждый cell's display content:
 
 - Title
-- List of items
-- Title background rectangle
-- List symbols (circle, rectangle, star)
+- список из items
+- Title фон rectangle
+- список symbols (circle, rectangle, star)
 
-Therefore, we need to use a variety of custom elements:
+Therefore, we need к use a variety из пользовательский elements:
 
-- The title corresponds to the [text](../../option/ListTable#customRender.elements.text.type) type
-- The text part of the item list uses [text](../../option/ListTable#customRender.elements.text.type)
-- The title background rectangle uses [rect](../../option/ListTable#customRender.elements.rect.type) element
-- List symbols (circle, rectangle, star) correspond to [circle](../../option/ListTable#customRender.elements.circle.type), [rect](../../option/ListTable#customRender.elements.rect.type), [icon](../../option/ListTable#customRender.elements.icon.type) types respectively
+- The title corresponds к the [текст](../../option/списоктаблица#пользовательскийRender.elements.текст.тип) тип
+- The текст part из the item список uses [текст](../../option/списоктаблица#пользовательскийRender.elements.текст.тип)
+- The title фон rectangle uses [rect](../../option/списоктаблица#пользовательскийRender.elements.rect.тип) element
+- список symbols (circle, rectangle, star) correspond к [circle](../../option/списоктаблица#пользовательскийRender.elements.circle.тип), [rect](../../option/списоктаблица#пользовательскийRender.elements.rect.тип), [иконка](../../option/списоктаблица#пользовательскийRender.elements.иконка.тип) types respectively
 
-### How to Use Custom Rendering Interface
+### How к Use пользовательский Rendering интерфейс
 
-In VTable, we can define custom rendering in the following two ways:
+в Vтаблица, we can define пользовательский rendering в Следующий two ways:
 
-- `customRender` for global custom rendering settings, recommended if the layout of each column is basically consistent;
-- `columns.customRender` for column-specific custom rendering, recommended if the layout of each column is different;
+- `пользовательскийRender` для global пользовательский rendering settings, recommended if the макет из каждый column is базовыйally consistent;
+- `columns.пользовательскийRender` для column-specific пользовательский rendering, recommended if the макет из каждый column is different;
 
 The configuration content supports two forms:
 
-- Object form
-- Function form, which can return different results combined with business logic
+- объект form
+- функция form, which can возврат different results combined с business logic
 
-For specific parameter descriptions, refer to the API documentation [customRender](https://visactor.io/vtable/option/ListTable#customRender.elements)
+для specific параметр descriptions, refer к the апи Документация [пользовательскийRender](https://visactor.io/vтаблица/option/списоктаблица#пользовательскийRender.elements)
 
-From the example effect diagram above, it can be seen that the layouts of the `urgency` and `not urgency` columns are consistent, so here I adopt the global setting method.
+от the пример effect diagram above, it can be seen that the макетs из the `urgency` и `не urgency` columns are consistent, so here I adopt the global setting method.
 
-```javascript livedemo  template=vtable
+```javascript liveдемонстрация  template=vтаблица
 const option = {
   columns: [
     {
-      field: 'type',
-      title: '',
-      width: 170,
+      поле: 'тип',
+      заголовок: '',
+      ширина: 170,
       headerStyle: {
         bgColor: '#a23be1'
       },
@@ -83,33 +83,33 @@ const option = {
         fontWeight: 600,
         bgColor: '#a23be1',
         fontSize: 26,
-        padding: 20,
-        lineHeight: 32,
-        color: 'white'
+        заполнение: 20,
+        lineвысота: 32,
+        цвет: 'white'
       }
     },
     {
-      field: 'urgency',
-      title: 'urgency',
-      width: 400,
+      поле: 'urgency',
+      заголовок: 'urgency',
+      ширина: 400,
       headerStyle: {
-        lineHeight: 50,
+        lineвысота: 50,
         fontSize: 26,
         fontWeight: 600,
         bgColor: '#a23be1',
-        color: 'white',
-        textAlign: 'center'
+        цвет: 'white',
+        textAlign: 'центр'
       }
     },
     {
-      field: 'not_urgency',
-      title: 'not urgency',
-      width: 400,
+      поле: 'not_urgency',
+      заголовок: 'не urgency',
+      ширина: 400,
       headerStyle: {
-        lineHeight: 50,
+        lineвысота: 50,
         bgColor: '#a23be1',
-        color: 'white',
-        textAlign: 'center',
+        цвет: 'white',
+        textAlign: 'центр',
         fontSize: 26,
         fontWeight: 600
       },
@@ -122,127 +122,127 @@ const option = {
   ],
   records: [
     {
-      type: 'important',
+      тип: 'important',
       urgency: ['crisis', 'urgent problem', 'tasks that must be completed within a limited time'],
       not_urgency: [
-        'preventive measures',
+        'prсобытиеive measures',
         'development relationship',
-        'identify new development opportunities',
+        'identify новый development opportunities',
         'establish long-term goals'
       ]
     },
     {
-      type: 'Not\nimportant',
+      тип: 'не\nimportant',
       urgency: ['Receive visitors', 'Certain calls, reports, letters, etc', 'Urgent matters', 'Public activities'],
       not_urgency: [
         'Trivial busy work',
-        'Some letters',
-        'Some phone calls',
+        'некоторые letters',
+        'некоторые phone calls',
         'Time-killing activities',
-        'Some pleasant activities'
+        'некоторые pleasant activities'
       ]
     }
   ],
-  defaultRowHeight: 80,
-  autoRowHeight: true,
-  widthMode: 'standard',
-  autoWrapText: true,
-  customRender(args) {
-    if (args.row === 0 || args.col === 0) return null;
+  defaultRowвысота: 80,
+  автоRowвысота: true,
+  ширинаMode: 'standard',
+  автоWrapText: true,
+  пользовательскийRender(args) {
+    if (args.row === 0 || args.col === 0) возврат null;
     console.log(args);
-    const { width, height } = args.rect;
-    const { dataValue, table, row, col } = args;
+    const { ширина, высота } = args.rect;
+    const { данныеValue, таблица, row, col } = args;
     const elements = [];
-    let top = 30;
-    const left = 15;
-    let maxWidth = 0;
+    let верх = 30;
+    const лево = 15;
+    let maxширина = 0;
     elements.push({
-      type: 'rect',
+      тип: 'rect',
       fill: '#a23be1',
-      x: left + 20,
-      y: top - 20,
-      width: 300,
-      height: 28
+      x: лево + 20,
+      y: верх - 20,
+      ширина: 300,
+      высота: 28
     });
     elements.push({
-      type: 'text',
+      тип: 'текст',
       fill: 'white',
       fontSize: 20,
       fontWeight: 500,
-      textBaseline: 'middle',
-      text:
+      textBaseline: 'середина',
+      текст:
         col === 1
           ? row === 1
             ? 'important & urgency'
-            : 'not important but urgency'
+            : 'не important but urgency'
           : row === 1
-          ? 'important but not urgency'
-          : 'not important & not urgency',
-      x: left + 50,
-      y: top - 5
+          ? 'important but не urgency'
+          : 'не important & не urgency',
+      x: лево + 50,
+      y: верх - 5
     });
-    dataValue.forEach((item, i) => {
-      top += 35;
+    данныеValue.forEach((item, i) => {
+      верх += 35;
       if (col == 1) {
         if (row === 1)
           elements.push({
-            type: 'icon',
-            svg: '<svg t="1687586728544" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1480" width="200" height="200"><path d="M576.4 203.3c46.7 90.9 118.6 145.5 215.7 163.9 97.1 18.4 111.5 64.9 43.3 139.5s-95.6 162.9-82.3 265.2c13.2 102.3-24.6 131-113.4 86.2s-177.7-44.8-266.6 0-126.6 16-113.4-86.2c13.2-102.3-14.2-190.7-82.4-265.2-68.2-74.6-53.7-121.1 43.3-139.5 97.1-18.4 169-73 215.7-163.9 46.6-90.9 93.4-90.9 140.1 0z" fill="#733FF1" p-id="1481"></path></svg>',
-            x: left - 6,
-            y: top - 6,
-            width: 12,
-            height: 12
+            тип: 'иконка',
+            svg: '<svg t="1687586728544" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1480" ширина="200" высота="200"><path d="M576.4 203.3c46.7 90.9 118.6 145.5 215.7 163.9 97.1 18.4 111.5 64.9 43.3 139.5s-95.6 162.9-82.3 265.2c13.2 102.3-24.6 131-113.4 86.2s-177.7-44.8-266.6 0-126.6 16-113.4-86.2c13.2-102.3-14.2-190.7-82.4-265.2-68.2-74.6-53.7-121.1 43.3-139.5 97.1-18.4 169-73 215.7-163.9 46.6-90.9 93.4-90.9 140.1 0z" fill="#733FF1" p-id="1481"></path></svg>',
+            x: лево - 6,
+            y: верх - 6,
+            ширина: 12,
+            высота: 12
           });
         else
           elements.push({
-            type: 'circle',
-            stroke: '#000',
+            тип: 'circle',
+            strхорошоe: '#000',
             fill: 'yellow',
-            x: left,
-            y: top,
+            x: лево,
+            y: верх,
             radius: 3
           });
       } else {
         elements.push({
-          type: 'rect',
-          stroke: '#000',
+          тип: 'rect',
+          strхорошоe: '#000',
           fill: 'blue',
-          x: left - 3,
-          y: top - 3,
-          width: 6,
-          height: 6
+          x: лево - 3,
+          y: верх - 3,
+          ширина: 6,
+          высота: 6
         });
       }
       elements.push({
-        type: 'text',
+        тип: 'текст',
         fill: 'blue',
-        font: '14px sans-serif',
-        baseline: 'top',
-        text: item,
-        x: left + 10,
-        y: top + 5
+        шрифт: '14px sans-serif',
+        baseline: 'верх',
+        текст: item,
+        x: лево + 10,
+        y: верх + 5
       });
-      maxWidth = Math.max(maxWidth, table.measureText(item, { fontSize: '15' }).width);
+      maxширина = Math.max(maxширина, таблица.measureText(item, { fontSize: '15' }).ширина);
     });
-    return {
+    возврат {
       elements,
-      expectedHeight: top + 20,
-      expectedWidth: maxWidth + 20
+      expectedвысота: верх + 20,
+      expectedширина: maxширина + 20
     };
   }
 };
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 ```
 
-## Custom Rendering for Header Cells
+## пользовательский Rendering для Header Cells
 
-To customize the rendering of header cells, you can use `columns.headerCustomRender`. Its usage is similar to `columns.customRender`.
+к пользовательскийize the rendering из header cells, Вы можете use `columns.headerпользовательскийRender`. Its usвозраст is similar к `columns.пользовательскийRender`.
 
-## Custom Rendering for Body Cells
+## пользовательский Rendering для Body Cells
 
-The demo mentioned above, `customRender`, is for custom rendering of body cells.
+The демонстрация mentioned above, `пользовательскийRender`, is для пользовательский rendering из body cells.
 
-## Auto Layout Usage
+## авто макет Usвозраст
 
-In some scenarios, we want the custom-rendered elements to automatically layout to fit the cell size. Or, if you prefer to layout in a more flexible way, using an approach closer to html/react for coding, then you can refer to the tutorial [Custom Rendering Auto Layout](../custom_define/custom_layout).
+в некоторые scenarios, we want the пользовательский-rendered elements к автоmatically макет к fit the cell размер. или, if you prefer к макет в a more flexible way, using an approach closer к html/react для coding, then Вы можете refer к the tutorial [пользовательский Rendering авто макет](../пользовательский_define/пользовательский_макет).

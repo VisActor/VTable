@@ -1,103 +1,103 @@
 # Excel export
 
-The `@visactor/vtable-export` package is a tool packaged for VTable table export. It supports export in both CSV and Excel formats.
+The `@visactor/vтаблица-export` packвозраст is a tool packвозрастd для Vтаблица таблица export. It supports export в both CSV и Excel formats.
 
-## Usage
+## Usвозраст
 
 ### import
 
-First, you need to install the `@visactor/vtable` and `@visactor/vtable-export` packages in your application, then introduce them in your code to generate a table instance and export it:
+первый, you need к install the `@visactor/vтаблица` и `@visactor/vтаблица-export` packвозрастs в your application, then introduce them в your код к generate a таблица instance и export it:
 
 ```js
-import * as VTable from '@visactor/vtable';
-import { downloadExcel, exportVTableToExcel } from '@visactor/vtable-export';
+import * as Vтаблица от '@visactor/vтаблица';
+import { downloadExcel, exportVтаблицаToExcel } от '@visactor/vтаблица-export';
 
 //config option
 //......
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
 // download csv file
-await downloadExcel(exportVTableToExcel(tableInstance, optionForExport), 'export-csv');
+await downloadExcel(exportVтаблицаToExcel(таблицаInstance, optionForExport), 'export-csv');
 ```
 
-- `exportVTableToExcel`: Table output tool, outputs table instances as an ArrayBuffer in Excel format; option is an optional parameter, see below for configuration items
-- `downloadExcel`: Download tool to download the ArrayBuffer in Excel format as a file in the browser environment
-- If it is a server environment, you can process the Excel format ArrayBuffer converted by `exportVTableToExcel` yourself.
-- The excel export function is currently being improved. Currently, it only supports the export of text-type cells, and will support more types such as sparkline in the future.
+- `exportVтаблицаToExcel`: таблица output tool, outputs таблица instances as an ArrayBuffer в Excel format; option is an необязательный параметр, see below для configuration items
+- `downloadExcel`: Download tool к download the ArrayBuffer в Excel format as a file в the browser environment
+- If it is a server environment, Вы можете process the Excel format ArrayBuffer converted по `exportVтаблицаToExcel` yourself.
+- The excel export функция is currently being improved. Currently, it only supports the export из текст-тип cells, и will support more types such as sparkline в the future.
 
-Reference[demo](../../demo/export/table-export)
+Reference[демонстрация](../../демонстрация/export/таблица-export)
 
 ### umd
 
-You can also directly introduce the umd product of the `@visactor/vtable-export` package in HTML:
+Вы можете also directly introduce the umd product из the `@visactor/vтаблица-export` packвозраст в HTML:
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable-export@latest/dist/vtable-export.js"></script>
+<script src="https://unpkg.com/@visactor/vтаблица-export@latest/dist/vтаблица-export.js"></script>
 ```
 
-Find the corresponding tool in the global variable `VTable.export` and use the same method as above:
+Find the corresponding tool в the global variable `Vтаблица.export` и use the same method as above:
 
 ```js
-const { downloadCsv, exportVTableToCsv } = VTable.export;
+const { downloadCsv, exportVтаблицаToCsv } = Vтаблица.export;
 // ......
 ```
 
 ## Options
 
-### ignoreIcon
+### ignoreиконка
 
-By default, when the cell has an icon, the icon and text will be treated as an image when exporting. If you do not need to export the icon, you can set `ignoreIcon` to true, and only the text will be output.
+по по умолчанию, when the cell has an иконка, the иконка и текст will be treated as an imвозраст when exporting. If you do не need к export the иконка, Вы можете set `ignoreиконка` к true, и only the текст will be output.
 
 ### formatExportOutput
 
-By default, when exporting, the text or image inside the exported cell will be output to Excel. If you need to customize the export content, you can set `formatExportOutput` to a function, and the return value of the function is the exported string. If the return value is `undefined`, the default export logic will be processed.
+по по умолчанию, when exporting, the текст или imвозраст inside the exported cell will be output к Excel. If you need к пользовательскийize the export content, Вы можете set `formatExportOutput` к a функция, и the возврат значение из the функция is the exported строка. If the возврат значение is `undefined`, the по умолчанию export logic will be processed.
 
 ```ts
-type CellInfo = {
-  cellType: string;
-  cellValue: string;
-  table: IVTable;
-  col: number;
-  row: number;
+тип CellInfo = {
+  cellType: строка;
+  cellValue: строка;
+  таблица: IVтаблица;
+  col: число;
+  row: число;
 };
 
-type ExportVTableToExcelOptions = {
-  ignoreIcon?: boolean;
-  formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
+тип ExportVтаблицаToExcelOptions = {
+  ignoreиконка?: логический;
+  formatExportOutput?: (cellInfo: CellInfo) => строка | undefined;
 };
 ```
 
 ```js
 const excelOption = {
-  formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
-    if (cellType === 'checkbox') {
-      return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+  formatExportOutput: ({ cellType, cellValue, таблица, col, row }) => {
+    if (cellType === 'флажок') {
+      возврат таблица.getCellCheckboxState(col, row) ? 'true' : 'false';
     }
   }
 };
-await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVтаблицаToExcel(таблицаInstance, excelOption));
 ```
 
 ### formatExcelJSCell
 
-If you need to further customize the export style, you can set `formatExcelJSCell` to a function. The function parameters are cell information `cellInfo` and ExcelJS cell objects `cellInExceljs`. The function return value is the ExcelJS cell object. If `undefined` is returned, the default export logic is used. You can automatically set ExcelJS cell properties in the function. For details, please refer to https://github.com/exceljs/exceljs?tab=readme-ov-file#styles
+If you need к further пользовательскийize the export style, Вы можете set `formatExcelJSCell` к a функция. The функция parameters are cell information `cellInfo` и ExcelJS cell objects `cellInExceljs`. The функция возврат значение is the ExcelJS cell объект. If `undefined` is returned, the по умолчанию export logic is used. Вы можете автоmatically set ExcelJS cell свойства в the функция. для details, please refer к https://github.com/exceljs/exceljs?tab=readme-ov-file#styles
 
 ```ts
-type CellInfo = {
-  cellType: string;
-  cellValue: string;
-  table: IVTable;
-  col: number;
-  row: number;
+тип CellInfo = {
+  cellType: строка;
+  cellValue: строка;
+  таблица: IVтаблица;
+  col: число;
+  row: число;
 };
 
-type ExportVTableToExcelOptions = {
+тип ExportVтаблицаToExcelOptions = {
   // ......
   formatExceljsCell?: (cellInfo: CellInfo, cellInExceljs: ExcelJS.Cell) => ExcelJS.Cell;
 };
 ```
 
-Here is an example of specifying the number format for the first column as a percentage:
+Here is an пример из specifying the число format для the первый column as a percentвозраст:
 
 ```js
 const excelOption = {
@@ -105,44 +105,44 @@ const excelOption = {
     if (cellInfo.col === 1) {
       cellInExceljs.numFmt = '0.00%';
     }
-    return cellInExceljs;
+    возврат cellInExceljs;
   }
 };
-await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVтаблицаToExcel(таблицаInstance, excelOption));
 ```
 
-If you want to export the original record field value instead of the format displayed in the table, you can use the table.getCellOriginValue(col,row) method to get it and assign it to cellInExceljs.value.
+If you want к export the original record поле значение instead из the format displayed в the таблица, Вы можете use the таблица.getCellOriginValue(col,row) method к get it и assign it к cellInExceljs.значение.
 
 ```js
 const excelOption = {
   formatExcelJSCell: (cellInfo, cellInExceljs) => {
-    cellInExceljs.value = table.getCellOriginValue(cellInfo.col, cellInfo.row);
-    return cellInExceljs;
+    cellInExceljs.значение = таблица.getCellOriginValue(cellInfo.col, cellInfo.row);
+    возврат cellInExceljs;
   }
 };
-await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVтаблицаToExcel(таблицаInstance, excelOption));
 ```
 
 ### excelJSWorksheetCallback
 
-`@visactor/vtable-export` uses the `exceljs` library as a tool for exporting Excel files. If you need to further customize the ExcelJS Worksheet object (such as adding a page footer), you can set `excelJSWorksheetCallback` to a function whose parameter is the ExcelJS Worksheet object. You can operate the ExcelJS Worksheet in the function.For detailed usage of `exceljs`, please refer to [exceljs](https://github.com/exceljs/exceljs/blob/master/README.md)
+`@visactor/vтаблица-export` uses the `exceljs` library as a tool для exporting Excel files. If you need к further пользовательскийize the ExcelJS Worksheet объект (such as adding a pвозраст footer), Вы можете set `excelJSWorksheetCallback` к a функция whose параметр is the ExcelJS Worksheet объект. Вы можете operate the ExcelJS Worksheet в the функция.для detailed usвозраст из `exceljs`, please refer к [exceljs](https://github.com/exceljs/exceljs/blob/master/README.md)
 
 ```js
 const excelOption = {
   excelJSWorksheetCallback: worksheet => {
-    // Add page and footer
+    // Add pвозраст и footer
     worksheet.headerFooter.oddHeader = 'Hello Exceljs';
     worksheet.headerFooter.oddFooter = 'Hello World';
   }
 };
-await downloadExcel(await exportVTableToExcel(tableInstance, excelOption));
+await downloadExcel(await exportVтаблицаToExcel(таблицаInstance, excelOption));
 ```
 
 ### requestIdleCallback
 
-`@visactor/vtable-export` uses the `exceljs` library as a tool for exporting Excel files. If you need tosolve the impact on page performance during the export process, you can set the `optimization` parameter to enable `requestIdleCallback`.
+`@visactor/vтаблица-export` uses the `exceljs` library as a tool для exporting Excel files. If you need tosolve the impact на pвозраст Производительность during the export process, Вы можете set the `optimization` параметр к включить `requestIdleCallback`.
 
 ```js
 const excelOption = {};
-await downloadExcel(await exportVTableToExcel(tableInstance, excelOption， true));
+await downloadExcel(await exportVтаблицаToExcel(таблицаInstance, excelOption， true));
 ```

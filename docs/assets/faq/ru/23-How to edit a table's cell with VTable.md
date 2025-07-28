@@ -1,53 +1,53 @@
 ---
-title: How to edit a table's cell with VTable?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: How к edit a таблица's cell с Vтаблица?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 
 
 ## Title
 
-Can an editable table enter the editing state directly when clicked, instead of double clicking a cell to make it editable?</br>
+Can an ediтаблица таблица enter the editing state directly when Нажатьed, instead из double Нажатьing a cell к make it ediтаблица?</br>
 
 
 ## Description
 
-In the table editing scenario, double-clicking to enter the editing state would be cumbersome, and you need to enter the editing state directly.</br>
+в the таблица editing scenario, double-Нажатьing к enter the editing state would be cumbersome, и you need к enter the editing state directly.</br>
 
 
 ## Solution 
 
-You can configure editCellTrigger to click in the table initialization option. The configuration item is defined as follows:</br>
+Вы можете configure editCellTrigger к Нажать в the таблица initialization option. The configuration item is defined as follows:</br>
 ```
-/** Edit triggering time: double click event | single click event | api to manually start editing. Default is double click 'doubleclick' */
-editCellTrigger?: 'doubleclick' | 'click' | 'api';</br>
+/** Edit triggering time: double Нажать событие | single Нажать событие | апи к manually начало editing. по умолчанию is double Нажать 'doubleНажать' */
+editCellTrigger?: 'doubleНажать' | 'Нажать' | 'апи';</br>
 ```
 
 
-## Code Example
+## код пример
 
 ```
   const option = {
     records,
     columns,
-    autoWrapText: true,
-    limitMaxAutoWidth: 600,
-    heightMode: 'autoHeight',
-    editCellTrigger: 'click' // Set the edit trigger timing
+    автоWrapText: true,
+    limitMaxавтоширина: 600,
+    высотаMode: 'автовысота',
+    editCellTrigger: 'Нажать' // Set the edit trigger timing
   };
-  const tableInstance = new VTable.ListTable(container, option);</br>
+  const таблицаInstance = новый Vтаблица.списоктаблица(container, option);</br>
 ```
 
 
 ## Results
 
-Online effect reference: https://visactor.io/vtable/demo/edit/edit-cell</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VaIKbqfnBo2cUDx8AVVcstO6nxb.gif' alt='' width='2136' height='970'>
+Online effect reference: https://visactor.io/vтаблица/демонстрация/edit/edit-cell</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VaIKbqfnBo2cUDx8AVVcstO6nxb.gif' alt='' ширина='2136' высота='970'>
 
 
 
 ## Related Documents
 
-Edit table demo: https://visactor.io/vtable/demo/edit/edit-cell</br>
-Edit table tutorial: https://visactor.io/vtable/guide/edit/edit_cell</br>
-Related API: https://visactor.io/vtable/option/ListTable#editCellTrigger</br>
-github: https://github.com/VisActor/VTable</br>
+Edit таблица демонстрация: https://visactor.io/vтаблица/демонстрация/edit/edit-cell</br>
+Edit таблица tutorial: https://visactor.io/vтаблица/guide/edit/edit_cell</br>
+Related апи: https://visactor.io/vтаблица/option/списоктаблица#editCellTrigger</br>
+github: https://github.com/VisActor/Vтаблица</br>

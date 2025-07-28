@@ -1,109 +1,109 @@
 ---
-category: examples
-group: edit
-title: fill handle
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/fill-handle.gif
-link: edit/fill-handle
-option: ListTable#excelOptions.fillHandle
+категория: примеры
+группа: edit
+заголовок: fill handle
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/fill-handle.gif
+ссылка: edit/fill-handle
+опция: списоктаблица#excelOptions.fillHandle
 ---
 
 # Fill Handle
 
-When a cell is selected, a fill handle will appear above the cell, and you can drag the fill handle to edit the cell's value. Or double-click the fill handle to change the value of the cell you want to edit (This example does not implement this logic).
+When a cell is selected, a fill handle will appear above the cell, и Вы можете перетаскивание the fill handle к edit the cell's значение. или double-Нажать the fill handle к change the значение из the cell you want к edit (This пример does не implement this logic).
 
-## Key Configurations
+## Ключевые Конфигурации
 
--`ListTable.excelOptions.fillHandle`
+-`списоктаблица.excelOptions.fillHandle`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       excelOptions: {
         fillHandle: true
       }
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
     // 记录 拖拽填充柄之前的选中范围
     let beforeDragMaxCol;
     let beforeDragMinCol;
     let beforeDragMaxRow;
     let beforeDragMinRow;
-    tableInstance.on('mousedown_fill_handle', arg => {
-      const startSelectCellRange = tableInstance.getSelectedCellRanges()[0];
-      beforeDragMaxCol = Math.max(startSelectCellRange.start.col, startSelectCellRange.end.col);
-      beforeDragMinCol = Math.min(startSelectCellRange.start.col, startSelectCellRange.end.col);
-      beforeDragMaxRow = Math.max(startSelectCellRange.start.row, startSelectCellRange.end.row);
-      beforeDragMinRow = Math.min(startSelectCellRange.start.row, startSelectCellRange.end.row);
+    таблицаInstance.на('mousedown_fill_handle', arg => {
+      const startSelectCellRange = таблицаInstance.getSelectedCellRanges()[0];
+      beforeDragMaxCol = Math.max(startSelectCellRange.начало.col, startSelectCellRange.конец.col);
+      beforeDragMinCol = Math.min(startSelectCellRange.начало.col, startSelectCellRange.конец.col);
+      beforeDragMaxRow = Math.max(startSelectCellRange.начало.row, startSelectCellRange.конец.row);
+      beforeDragMinRow = Math.min(startSelectCellRange.начало.row, startSelectCellRange.конец.row);
       console.log('mousedown_fill_handle', beforeDragMinCol, beforeDragMinRow, beforeDragMaxCol, beforeDragMaxRow);
     });
-    tableInstance.on('drag_fill_handle_end', arg => {
+    таблицаInstance.на('drag_fill_handle_end', arg => {
       console.log('drag_fill_handle_end', arg);
 
       const direciton = arg.direction;
@@ -111,49 +111,49 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       let startChangeCellRow;
       let endChangeCellCol;
       let endChangeCellRow;
-      const endSelectCellRange = tableInstance.getSelectedCellRanges()[0];
+      const endSelectCellRange = таблицаInstance.getSelectedCellRanges()[0];
       //根据填充方向 确定需要填充值的范围
-      if (direciton === 'bottom') {
+      if (direciton === 'низ') {
         startChangeCellCol = beforeDragMinCol;
         startChangeCellRow = beforeDragMaxRow + 1;
         endChangeCellCol = beforeDragMaxCol;
-        endChangeCellRow = endSelectCellRange.end.row;
-      } else if (direciton === 'right') {
+        endChangeCellRow = endSelectCellRange.конец.row;
+      } else if (direciton === 'право') {
         startChangeCellCol = beforeDragMaxCol + 1;
         startChangeCellRow = beforeDragMinRow;
-        endChangeCellCol = endSelectCellRange.end.col;
+        endChangeCellCol = endSelectCellRange.конец.col;
         endChangeCellRow = beforeDragMaxRow;
-      } else if (direciton === 'top') {
+      } else if (direciton === 'верх') {
         startChangeCellCol = beforeDragMinCol;
         startChangeCellRow = beforeDragMinRow - 1;
         endChangeCellCol = beforeDragMaxCol;
-        endChangeCellRow = endSelectCellRange.end.row;
-      } else if (direciton === 'left') {
+        endChangeCellRow = endSelectCellRange.конец.row;
+      } else if (direciton === 'лево') {
         startChangeCellCol = beforeDragMinCol - 1;
         startChangeCellRow = beforeDragMinRow;
-        endChangeCellCol = endSelectCellRange.end.col;
+        endChangeCellCol = endSelectCellRange.конец.col;
         endChangeCellRow = beforeDragMaxRow;
       }
-      changeTableValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow);
+      changeтаблицаValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow);
     });
-    tableInstance.on('dblclick_fill_handle', arg => {
-      console.log('dblclick_fill_handle');
+    таблицаInstance.на('dblНажать_fill_handle', arg => {
+      console.log('dblНажать_fill_handle');
     });
 
-    function changeTableValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow) {
+    функция changeтаблицаValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow) {
       const startCol = Math.min(startChangeCellCol, endChangeCellCol);
       const startRow = Math.min(startChangeCellRow, endChangeCellRow);
       const endCol = Math.max(startChangeCellCol, endChangeCellCol);
       const endRow = Math.max(startChangeCellRow, endChangeCellRow);
       const values = [];
-      for (let row = startRow; row <= endRow; row++) {
+      для (let row = startRow; row <= endRow; row++) {
         const rowValues = [];
-        for (let col = startCol; col <= endCol; col++) {
+        для (let col = startCol; col <= endCol; col++) {
           rowValues.push(`col-row:${col}-${row}`);
         }
         values.push(rowValues);
       }
-      tableInstance.changeCellValues(startCol, startRow, values);
+      таблицаInstance.changeCellValues(startCol, startRow, values);
     }
   });
 ```

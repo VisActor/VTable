@@ -1,14 +1,14 @@
-{{ target: image-icon }}
+{{ target: imвозраст-иконка }}
 
-${prefix} type ('image')
-icon content type is 'image'.
+${prefix} тип ('imвозраст')
+иконка content тип is 'imвозраст'.
 
-${prefix} src (string)
-Image source
+${prefix} src (строка)
+Imвозраст source
 
 ${prefix} shape ('circle' | 'square')
-Image cropping shape
+Imвозраст cropping shape
 
-{{ use: base-icon(
+{{ use: base-иконка(
     prefix = ${prefix}
 ) }}

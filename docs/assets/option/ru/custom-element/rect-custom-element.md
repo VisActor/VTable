@@ -1,35 +1,35 @@
-{{ target: rect-custom-element }}
+{{ target: rect-пользовательский-element }}
 
-${prefix} type (string) ='rect'
+${prefix} тип (строка) ='rect'
 
-**Required**
+**обязательный**
 
-Element type, in this case, a rectangle.
+Element тип, в this case, a rectangle.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number | string | ((value: string) => number | string))
+${prefix} ширина (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-Rectangle width, can be a number, string, or a function that returns a number or string.
+Rectangle ширина, can be a число, строка, или a функция that returns a число или строка.
 
-${prefix} height (number | string | ((value: string) => number | string))
+${prefix} высота (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-Rectangle height, can be a number, string, or a function that returns a number or string.
+Rectangle высота, can be a число, строка, или a функция that returns a число или строка.
 
-${prefix} stroke (string | ((value: string) => string))
+${prefix} strхорошоe (строка | ((значение: строка) => строка))
 
-Rectangle stroke color, can be a string or a function that returns a string.
+Rectangle strхорошоe цвет, can be a строка или a функция that returns a строка.
 
-${prefix} fill (string | ((value: string) => string))
+${prefix} fill (строка | ((значение: строка) => строка))
 
-Rectangle fill color, can be a string or a function that returns a string.
+Rectangle fill цвет, can be a строка или a функция that returns a строка.
 
-${prefix} radius (number | string | ((value: string) => number | string))
+${prefix} radius (число | строка | ((значение: строка) => число | строка))
 
-Rectangle corner radius, can be a number, string, or a function that returns a number or string.
+Rectangle corner radius, can be a число, строка, или a функция that returns a число или строка.

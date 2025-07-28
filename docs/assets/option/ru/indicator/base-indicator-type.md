@@ -1,60 +1,60 @@
-{{ target: base-indicator-type }}
+{{ target: base-indicator-тип }}
 
-${prefix} indicatorKey(string)
+${prefix} indicatorKey(строка)
 
-**Required** The unique identifier of the indicator
+**обязательный** The unique identifier из the indicator
 
-${prefix} title(string)
+${prefix} title(строка)
 
-Indicator name
+Indicator имя
 
-${prefix} format(FieldFormat)
+${prefix} format(полеFormat)
 
-Indicator value formatting
+Indicator значение formatting
 
 ```
-type FieldFormat = (value: number|string, col:number, row:number, table:PivotTable) => any;
+тип полеFormat = (значение: число|строка, col:число, row:число, таблица:сводныйтаблица) => любой;
 ```
 
-${prefix} headerFormat(FieldFormat)
+${prefix} headerFormat(полеFormat)
 
 indicator title format
 
 ```
-type FieldFormat = (title: number|string, col:number, row:number, table:PivotTable) => any;
+тип полеFormat = (заголовок: число|строка, col:число, row:число, таблица:сводныйтаблица) => любой;
 ```
 
-${prefix} width(number|string)
+${prefix} ширина(число|строка)
 
-Width specification of the indicator column. If the indicator is displayed in rows, this configuration is not applied.
-Width specification can be a specific value, 'auto', or a percentage such as '20%'.
-If 'auto' is specified, the column width will be adjusted automatically based on the length of the text in the entire column;
-If a percentage is specified, the current column width will be adjusted according to the total width of the table;
+ширина specification из the indicator column. If the indicator is displayed в rows, this configuration is не applied.
+ширина specification can be a specific значение, 'авто', или a percentвозраст such as '20%'.
+If 'авто' is specified, the column ширина will be adjusted автоmatically based на the length из the текст в the entire column;
+If a percentвозраст is specified, the текущий column ширина will be adjusted according к the total ширина из the таблица;
 
-${prefix} maxWidth(number|string)
+${prefix} maxширина(число|строка)
 
-Maximum width of the indicator column
+Maximum ширина из the indicator column
 
-${prefix} minWidth(number|string)
+${prefix} minширина(число|строка)
 
-Minimum width of the indicator column
+Minimum ширина из the indicator column
 
-${prefix} headerType(string) = 'text'
+${prefix} headerType(строка) = 'текст'
 
-Specify the header type, options: `'text'|'link'|'image'|'video'`, default `'text'`.
+Specify the header тип, options: `'текст'|'link'|'imвозраст'|'video'`, по умолчанию `'текст'`.
 
 ${prefix} headerStyle(TODO)
 
-Header cell style. Configuration items vary slightly depending on the headerType. Configurations for each headerStyle can be referred to as follows:
+Header cell style. Configuration items vary slightly depending на the headerType. Configurations для каждый headerStyle can be referred к as follows:
 
-- For headerType 'text', see [headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
-- For headerType 'link', see [headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
-- For headerType 'image', see [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
-- For headerType 'video', see [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- для headerType 'текст', see [headerStyle](../option/сводныйтаблица-columns-текст#headerStyle.bgColor)
+- для headerType 'link', see [headerStyle](../option/сводныйтаблица-columns-link#headerStyle.bgColor)
+- для headerType 'imвозраст', see [headerStyle](../option/сводныйтаблица-columns-imвозраст#headerStyle.bgColor)
+- для headerType 'video', see [headerStyle](../option/сводныйтаблица-columns-imвозраст#headerStyle.bgColor)
 
 ${prefix} style
 
-Body cell style, type declaration:
+Body cell style, тип declaration:
 
 ```
 style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
@@ -62,135 +62,135 @@ style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
 
 {{ use: common-StylePropertyFunctionArg() }}
 
-IStyleOption type structure is as follows:
+IStyleOption тип structure is as follows:
 
 {{ use: common-style(
   prefix = ${prefix},
-  isImage = ${isImage},
+  isImвозраст = ${isImвозраст},
   isProgressbar = ${isProgressbar},
 ) }}
 
-${prefix} headerIcon(string|Object|Array|Function)
+${prefix} headerиконка(строка|объект|массив|функция)
 
-Header cell icon configuration
-
-```
-  headerIcon?:
-    | string
-    | ColumnIconOption
-    | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
-```
-
-ColumnIconOption can refer to [definition](/en/option.html#PivotTable-indicators-text.icon.ColumnIconOption_definition：)
-
-${prefix} icon(string|Object|Array|Funciton)
-
-Body cell icon configuration.
+Header cell иконка configuration
 
 ```
-icon?:
-    | string
-    | ColumnIconOption
-    | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+  headerиконка?:
+    | строка
+    | ColumnиконкаOption
+    | (строка | ColumnиконкаOption)[]
+    | ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
 ```
 
-#${prefix}ColumnIconOption
+ColumnиконкаOption can refer к [definition](/en/option.html#сводныйтаблица-indicators-текст.иконка.ColumnиконкаOption_definition：)
+
+${prefix} иконка(строка|объект|массив|Funciton)
+
+Body cell иконка configuration.
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
+иконка?:
+    | строка
+    | ColumnиконкаOption
+    | (строка | ColumnиконкаOption)[]
+    | ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
 ```
 
-#${prefix}ImageIcon(Object)
-type is set to 'image'. The image address needs to be set in src
-{{ use: image-icon(  prefix = '##' + ${prefix}) }}
-
-#${prefix}SvgIcon(Object)
-type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
-{{ use: svg-icon(  prefix = '##' + ${prefix}) }}
-
-#${prefix}TextIcon(Object)
-type is set to 'text'. You need to configure the text content in content
-{{ use: text-icon(  prefix = '##' + ${prefix}) }}
-
-${prefix} headerCustomRender(Function|Object)
-Custom rendering content definition for the indicator name header. For details, please refer to [Basic table custom rendering configuration](../option/ListTable-columns-text#headerCustomRender)
-
-${prefix} headerCustomLayout(Function)
-
-Custom layout elements for the indicator name header cell.
+#${prefix}ColumnиконкаOption
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+тип ColumnиконкаOption = Imвозрастиконка | Svgиконка | Textиконка;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+#${prefix}Imвозрастиконка(объект)
+тип is set к 'imвозраст'. The imвозраст address needs к be set в src
+{{ use: imвозраст-иконка(  prefix = '##' + ${prefix}) }}
 
-{{ use: custom-layout(
+#${prefix}Svgиконка(объект)
+тип is set к 'svg'. You need к configure the svg address или the complete svg file строка в svg
+{{ use: svg-иконка(  prefix = '##' + ${prefix}) }}
+
+#${prefix}Textиконка(объект)
+тип is set к 'текст'. You need к configure the текст content в content
+{{ use: текст-иконка(  prefix = '##' + ${prefix}) }}
+
+${prefix} headerпользовательскийRender(функция|объект)
+пользовательский rendering content definition для the indicator имя header. для details, please refer к [базовый таблица пользовательский rendering configuration](../option/списоктаблица-columns-текст#headerпользовательскийRender)
+
+${prefix} headerпользовательскиймакет(функция)
+
+пользовательский макет elements для the indicator имя header cell.
+
+```
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
+```
+
+{{ use: common-пользовательскийRenderFunctionArg() }}
+
+{{ use: пользовательский-макет(
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} customRender(Function|Object)
+${prefix} пользовательскийRender(функция|объект)
 
-Custom rendering content definition for the indicator value body cell, either in function or object form. The type is `ICustomRenderFuc | ICustomRenderObj`.
+пользовательский rendering content definition для the indicator значение body cell, either в функция или объект form. The тип is `IпользовательскийRenderFuc | IпользовательскийRenderObj`.
 
-The ICustomRenderFuc is defined as follows:
+The IпользовательскийRenderFuc is defined as follows:
 
 ```
- type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+ тип IпользовательскийRenderFuc = (args: пользовательскийRenderFunctionArg) => IпользовательскийRenderObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: common-custom-render-object(
+{{ use: common-пользовательский-render-объект(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} customLayout(Function)
+${prefix} пользовательскиймакет(функция)
 
-Custom layout elements for the indicator value body cell.
+пользовательский макет elements для the indicator значение body cell.
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: custom-layout(
+{{ use: пользовательский-макет(
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(MenuListItem[]|Function)
-Dropdown menu item configuration. Dropdown menu items can be first-level menu items or second-level menu items, and only one configuration is required.
+${prefix} dropDownменю(менюсписокItem[]|функция)
+выпадающий список меню item configuration. выпадающий список меню items can be первый-level меню items или second-level меню items, и only one configuration is обязательный.
 
-具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+具体类型为 `менюсписокItem[] | ((args: { row: число; col: число; таблица: Baseтаблицаапи }) => менюсписокItem[])`。
 
-{{ use: common-menu-list-item() }}
+{{ use: common-меню-список-item() }}
 
-${prefix} showSort(boolean|Function)
-Whether to display the sorting icon, no data sorting logic
-
-```
-  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
-```
-
-${prefix} hide(boolean|Function)
-hide indicator, default false
+${prefix} showсортировка(логический|функция)
+Whether к display the сортировкаing иконка, no данные сортировкаing logic
 
 ```
-  hide?:  boolean | ((args: { dimensionPaths: IDimensionInfo[]; table: BaseTableAPI }) => boolean);
+  showсортировка?: логический | ((args: { row: число; col: число; таблица: Baseтаблицаапи }) => логический);
 ```
 
-${prefix} disableColumnResize(boolean)
-Whether to disable column width adjustment. If it is a transposed table or the indicator is specified in the row direction of the pivot table, this configuration does not take effect.
+${prefix} скрыть(логический|функция)
+скрыть indicator, по умолчанию false
 
-${prefix} editor (string|Object|Function)
+```
+  скрыть?:  логический | ((args: { dimensionPaths: IDimensionInfo[]; таблица: Baseтаблицаапи }) => логический);
+```
+
+${prefix} disableColumnResize(логический)
+Whether к отключить column ширина adjustment. If it is a transposed таблица или the indicator is specified в the row direction из the сводный таблица, this configuration does не take effect.
+
+${prefix} editor (строка|объект|функция)
 
 Configure the indicator cell editor
 
 ```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+editor?: строка | IEditor | ((args: BaseCellInfo & { таблица: Baseтаблицаапи }) => строка | IEditor);
 ```
 
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+Among them, IEditor is the editor интерфейс defined в @visactor/vтаблица-editors. для details, please refer к the source код: https://github.com/VisActor/Vтаблица/blob/main/packвозрастs/vтаблица-editors/src/types.ts .

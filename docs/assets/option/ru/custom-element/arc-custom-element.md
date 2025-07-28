@@ -1,33 +1,33 @@
-{{ target: arc-custom-element }}
+{{ target: arc-пользовательский-element }}
 
-${prefix} type (string) ='arc'
+${prefix} тип (строка) ='arc'
 
-**Required**
+**обязательный**
 
-Element type, here is an arc.
+Element тип, here is an arc.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} radius (number | string | ((value: string) => number | string))
+${prefix} radius (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-Arc radius, can be a number, a string, or a function that returns a number or string.
+Arc radius, can be a число, a строка, или a функция that returns a число или строка.
 
-${prefix} startAngle (number | ((value: string) => number))
+${prefix} startAngle (число | ((значение: строка) => число))
 
-Arc starting angle, can be a number or a function that returns a number.
+Arc starting angle, can be a число или a функция that returns a число.
 
-${prefix} endAngle (number | ((value: string) => number))
+${prefix} endAngle (число | ((значение: строка) => число))
 
-Arc ending angle, can be a number or a function that returns a number.
+Arc ending angle, can be a число или a функция that returns a число.
 
-${prefix} stroke (string | ((value: string) => string))
+${prefix} strхорошоe (строка | ((значение: строка) => строка))
 
-Arc stroke color, can be a string or a function that returns a string.
+Arc strхорошоe цвет, can be a строка или a функция that returns a строка.
 
-${prefix} fill (string | ((value: string) => string))
+${prefix} fill (строка | ((значение: строка) => строка))
 
-Arc fill color, can be a string or a function that returns a string.
+Arc fill цвет, can be a строка или a функция that returns a строка.

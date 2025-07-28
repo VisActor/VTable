@@ -1,33 +1,33 @@
-{{ target: base-custom-element }}
+{{ target: base-пользовательский-element }}
 
-${prefix} elementKey (string)
+${prefix} elementKey (строка)
 
-The unique identifier of the element.
+The unique identifier из the element.
 
-${prefix} x (number | string | ((value: string) => number | string))
+${prefix} x (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-The x-coordinate of the element, which can be a number, a string, or a function returning a number or a string. TODO What are the rules when using a string?
+The x-coordinate из the element, which can be a число, a строка, или a функция returning a число или a строка. TODO What are the rules when using a строка?
 
-${prefix} y (number | string | ((value: string) => number | string))
+${prefix} y (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-The y-coordinate of the element, which can be a number, a string, or a function returning a number or a string.
+The y-coordinate из the element, which can be a число, a строка, или a функция returning a число или a строка.
 
-${prefix} dx (number)
+${prefix} dx (число)
 
-The x-offset of the element. TODO Explain further here.
+The x-offset из the element. TODO Explain further here.
 
-${prefix} dy (number)
+${prefix} dy (число)
 
-The y-offset of the element.
+The y-offset из the element.
 
-${prefix} pickable (boolean)
+${prefix} pickable (логический)
 
-Whether the element is interactive, the interactive element will be displayed in the `target` of the interaction event callback parameter when it is interacted.
+Whether the element is interactive, the interactive element will be displayed в the `target` из the interaction событие обратный вызов параметр when it is interacted.
 
-${prefix} cursor (string)
+${prefix} cursor (строка)
 
 The CSS style when the pointer hovers over the element.

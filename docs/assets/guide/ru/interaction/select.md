@@ -1,60 +1,60 @@
-# Select cell
+# выбрать cell
 
-## Mouse click selection
+## Mouse Нажать selection
 
-When using VTable for data analytics, individual cells can be selected with a mouse click. Once a cell is selected, you can manipulate the cell or get the corresponding data. By default, VTable allows click-to-select cells.
+When using Vтаблица для данные analytics, individual cells can be selected с a mouse Нажать. Once a cell is selected, Вы можете manipulate the cell или get the corresponding данные. по по умолчанию, Vтаблица allows Нажать-к-выбрать cells.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/48c337ece11d289fc4644a20d.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/48c337ece11d289fc4644a20d.png)
 
-As shown above, after clicking on cell (2,3), the cell is selected.
+As shown above, after Нажатьing на cell (2,3), the cell is selected.
 
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set `select.headerSelectMode` to `'cell'`, Or if you only want to select cells in the body, you can set `select.headerSelectMode` to `'body'`.
+Нажатьing на the header cell will выбрать the entire row или column по по умолчанию. If you only want к выбрать the текущий cell, Вы можете set `выбрать.headerSelectMode` к `'cell'`, или if you only want к выбрать cells в the body, Вы можете set `выбрать.headerSelectMode` к `'body'`.
 
 ## Mouse box selection
 
-In addition to clicking on a single cell, VTable also supports mouse box selection, which can select multiple cells by dragging the mouse. This feature allows the user to select multiple cells at once (Hold down ctrl or shift to make multiple selections). By default, VTable has mouse box selection turned on.
+в addition к Нажатьing на a single cell, Vтаблица also supports mouse box selection, which can выбрать multiple cells по dragging the mouse. This feature allows the user к выбрать multiple cells в once (Hold down ctrl или shift к make multiple selections). по по умолчанию, Vтаблица has mouse box selection turned на.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60f.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60f.png)
 
-As shown in the image above, the user selects multiple cells by dragging the mouse.
+As shown в the imвозраст above, the user selects multiple cells по dragging the mouse.
 
-## Call interface selection
+## Call интерфейс selection
 
-A certain business scenario, such as linkage selection with other modules, is not a manual mouse-triggered selection. The selection can be completed with the help of the interface.
+A certain business scenario, such as linkвозраст selection с other modules, is не a manual mouse-triggered selection. The selection can be completed с the help из the интерфейс.
 
 ### Single cell selection
 
-Usage is as follows:
+Usвозраст is as follows:
 
 ```
-// Select cells in 4 columns and 5 rows
-tableInstance.selectCell(4,5);
+// выбрать cells в 4 columns и 5 rows
+таблицаInstance.selectCell(4,5);
 ```
 
 ### Cell range selected
 
-Call the interface selectCells, the usage is as follows:
+Call the интерфейс selectCells, the usвозраст is as follows:
 
 ```
-// Two ranges in the table: from column 1, row 2 to column 4, row 2 and from column 3, row 5 to column 7, row 8
-tableInstance.selectCells([{start:{col:1,row:2},end:{col:4,row:2}},{start:{col:3,row:5},end:{col:7 ,row:8}}]);
+// Two ranges в the таблица: от column 1, row 2 к column 4, row 2 и от column 3, row 5 к column 7, row 8
+таблицаInstance.selectCells([{начало:{col:1,row:2},конец:{col:4,row:2}},{начало:{col:3,row:5},конец:{col:7 ,row:8}}]);
 ```
 
-### Clear current selection
+### Clear текущий selection
 
-call api `clearSelected`.
+call апи `clearSelected`.
 
-## Select style
+## выбрать style
 
-When one or more cells are selected, VTable applies specific styles to enable the user to identify the selected cells. can be passed `theme.selectionStyle` Configure the selected style.
+When one или more cells are selected, Vтаблица applies specific styles к включить the user к identify the selected cells. can be passed `тема.selectionStyle` Configure the selected style.
 
-For example, to set the background color of the selected cell to purple, you can configure it like this:
+для пример, к set the фон цвет из the selected cell к purple, Вы можете configure it like this:
 
 ```javascript
-const = new VTable.ListTable({
-  theme: {
+const = новый Vтаблица.списоктаблица({
+  тема: {
     selectionStyle: {
-        cellBorderLineWidth: 2,
+        cellBorderLineширина: 2,
         cellBorderColor: '#9900ff',
         cellBgColor: 'rgba(153,0,255,0.2)',
     }
@@ -62,28 +62,28 @@ const = new VTable.ListTable({
 });
 ```
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270909.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270909.png)
 
-As shown in the image above, the background color of the selected cell is purple.
+As shown в the imвозраст above, the фон цвет из the selected cell is purple.
 
-## Select and highlight the entire row and column
+## выбрать и highlight the entire row и column
 
-Clicking a cell may require highlighting the entire row or column, which can be achieved through the following configuration:
+Нажатьing a cell may require highlighting the entire row или column, which can be achieved through Следующий configuration:
 
 ```
-  select: {
-    highlightMode: 'cross' // can be configured as 'cross' or 'row' or 'column'
+  выбрать: {
+    highlightMode: 'cross' // can be configured as 'cross' или 'row' или 'column'
   }
 ```
 
-Note: If you select multiple cells, the highlight effect will disappear.
+Note: If you выбрать multiple cells, the highlight effect will disappear.
 
-The highlighting style can be configured in the style.
+The highlighting style can be configured в the style.
 
-Global configuration: in `theme.selectionStyle`, the specific configuration method is:
+Global configuration: в `тема.selectionStyle`, the specific configuration method is:
 
 ```
-theme:{
+тема:{
   selectionStyle:{
     inlineRowBgColor: 'rgb(160,207,245)',
     inlineColumnBgColor: 'rgb(160,207,245)'
@@ -91,18 +91,18 @@ theme:{
 }
 ```
 
-You can also configure headerStyle and bodyStyle separately. The specific configuration method is:
+Вы можете also configure headerStyle и bodyStyle separately. The specific configuration method is:
 
 ```
-theme:{
+тема:{
   headerStyle: {
-    select: {
+    выбрать: {
       inlineRowBgColor: 'rgb(0,207,245)',
       inlineColumnBgColor: 'rgb(0,207,245)'
     }
   },
   bodyStyle: {
-    select: {
+    выбрать: {
       inlineRowBgColor: 'rgb(0,207,245)',
       inlineColumnBgColor: 'rgb(0,207,245)'
     }
@@ -110,75 +110,75 @@ theme:{
 }
 ```
 
-## Choose to copy cell contents
+## Choose к copy cell contents
 
-VTable provides a copy shortcut function, users can set `keyboardOptions.copySelected` for `true`, to enable the shortcut copy function:
+Vтаблица provides a copy shortcut функция, users can set `keyboardOptions.copySelected` для `true`, к включить the shortcut copy функция:
 
 ```javascript
-const table = new VTable.ListTable({
+const таблица = новый Vтаблица.списоктаблица({
   keyboardOptions: {
     copySelected: true
   }
 });
 ```
 
-After enabling shortcut keys, users can use the browser's built-in copy shortcut keys (such as Ctrl+C, Cmd+C) to copy the selected cell content. VTable maintains two copy formats:
+After enabling shortcut keys, users can use the browser's built-в copy shortcut keys (such as Ctrl+C, Cmd+C) к copy the selected cell content. Vтаблица maintains two copy formats:
 
 ```
-new ClipboardItem({
-'text/html': new Blob([dataHTML], { type: 'text/html' }),
-'text/plain': new Blob([data], { type: 'text/plain' })
+новый ClipboardItem({
+'текст/html': новый Blob([данныеHTML], { тип: 'текст/html' }),
+'текст/plain': новый Blob([данные], { тип: 'текст/plain' })
 })
 ```
 
-For specific implementation logic, please refer to the code logic https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/event/listener/container-dom.ts
+для specific implementation logic, please refer к the код logic https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/событие/списокener/container-dom.ts
 
 **Copy other related content:**
 
-1. There is also an event called `copy_data` to match the copying of content. This event will be triggered when copying and return the content copied to the clipboard.
+1. There is also an событие called `copy_данные` к match the copying из content. This событие will be triggered when copying и возврат the content copied к the clipboard.
 
-2. If you want to obtain the selected content as the copy content through the interface, you can call the interface `getCopyValue`.
+2. If you want к obtain the selected content as the copy content through the интерфейс, Вы можете call the интерфейс `getCopyValue`.
 
-3. In addition, we provide the configuration item `formatCopyValue` to format the copied content. For example, if you want to add a suffix `"Copy content from XXXX"` to the copied content
+3. в addition, we provide the configuration item `formatCopyValue` к format the copied content. для пример, if you want к add a suffix `"Copy content от XXXX"` к the copied content
 
-## Open Select All
+## открыть выбрать все
 
-When operating on table data, the user may want to shortcut all the contents of the table. The Open Select All function allows the user to select all the contents of the table at once by holding down the Ctrl key and pressing the A key. It should be noted that this function is turned off by default, and the Select All function is turned on with the following configuration:
+When operating на таблица данные, the user may want к shortcut все the contents из the таблица. The открыть выбрать все функция allows the user к выбрать все the contents из the таблица в once по holding down the Ctrl key и pressing the A key. It should be noted that this функция is turned off по по умолчанию, и the выбрать все функция is turned на с Следующий configuration:
 
 ```
     keyboardOptions: {
-        selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
+        selectAllOnCtrlA?: логический | SelectAllOnCtrlAOption;
     }
 ```
 
-If you do not want to select the table header or row number column at the same time, you can configure it according to `SelectAllOnCtrlAOption`.
+If you do не want к выбрать the таблица header или row число column в the same time, Вы можете configure it according к `SelectAllOnCtrlAOption`.
 
-## Disable Select Interaction
+## отключить выбрать Interaction
 
-In some cases, you may not want the user to select a cell `select` Configuration disables selection interaction.
+в некоторые cases, you may не want the user к выбрать a cell `выбрать` Configuration disables selection interaction.
 
-For example, to disable selection interactions for all cells, you can `select.disableSelect` Set to `true`:
+для пример, к отключить selection interactions для все cells, Вы можете `выбрать.disableSelect` Set к `true`:
 
 ```javascript
-const table new VTable.ListTable({
-  select: {
+const таблица новый Vтаблица.списоктаблица({
+  выбрать: {
     disableSelect: true
   }
 });
 ```
 
-To disable the selection of header cells, you can `select.disableHeaderSelect` Set to `true`:
+к отключить the selection из header cells, Вы можете `выбрать.disableHeaderSelect` Set к `true`:
 
 ```javascript
-const table = new VTable.ListTable({
-  select: {
+const таблица = новый Vтаблица.списоктаблица({
+  выбрать: {
     disableHeaderSelect: true
   }
 });
 ```
 
-After disabling selection interaction, the user cannot select cells by clicking or dragging the mouse.
+After disabling selection interaction, the user cannot выбрать cells по Нажатьing или dragging the mouse.
 
-There are special needs that do not want users to be able to select certain columns in the table. For this requirement, VTable provides a configuration item column.disableSelect and disableHeaderSelect on the column, which allows us to prohibit the selection of a certain column \[PivotTable does not have this configuration].
+There are special needs that do не want users к be able к выбрать certain columns в the таблица. для this requirement, Vтаблица provides a configuration item column.disableSelect и disableHeaderSelect на the column, which allows us к prohibit the selection из a certain column \[сводныйтаблица does не have this configuration].
 
-So far, we have introduced the cell selection functions of VTable, including mouse click selection, mouse box selection, disabling interaction selection, selecting styles, and choosing to copy cell content. By mastering these functions, you can more easily perform data analytics and processing in VTable.
+So far, we have introduced the cell selection functions из Vтаблица, including mouse Нажать selection, mouse box selection, disabling interaction selection, selecting styles, и choosing к copy cell content. по mastering these functions, Вы можете more easily perform данные analytics и processing в Vтаблица.

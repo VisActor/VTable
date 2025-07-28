@@ -1,14 +1,14 @@
-# How to automatically calculate the width and height of cells in a table component based on the content?
+# How к автоmatically calculate the ширина и высота из cells в a таблица компонент based на the content?
 
 ## Question Description
 
-I have a requirement where the cell content in a table may contain line breaks, and the content length may vary for cells in the same column. Additionally, the style of cells in the same row may differ. However, I want the content to be fully displayed, so I need a table component that can automatically adjust the width and height of cells based on their content. How can I achieve this effect in VTable?
+I have a requirement where the cell content в a таблица may contain line breaks, и the content length may vary для cells в the same column. Additionally, the style из cells в the same row may differ. However, I want the content к be fully displayed, so I need a таблица компонент that can автоmatically adjust the ширина и высота из cells based на their content. How can I achieve this effect в Vтаблица?
 
 ## Solution
 
-VTable supports a configurable auto-sizing mode for width and height calculation!
+Vтаблица supports a configurable авто-sizing mode для ширина и высота calculation!
 
-## Code Example
+## код пример
 
 ```javascript
 const records = [
@@ -30,7 +30,7 @@ const records = [
   {
     "230517143221027": "CA-2018-143259",
     "230517143221030": "PO-18865",
-    "230517143221032": "Bush Westfield Collection Bookcases, Fully Assembled",
+    "230517143221032": "Bush Westполе Collection Boхорошоcases, Fully Assembled",
   },
   {
     "230517143221027": "CA-2018-126221",
@@ -42,20 +42,20 @@ const records = [
 
 const columns = [
   {
-    field: "230517143221027",
-    title: "Order ID"
+    поле: "230517143221027",
+    заголовок: "ID Заказа"
   },
   {
-    field: "230517143221030",
-    title: "Customer ID"
+    поле: "230517143221030",
+    заголовок: "пользовательскийer ID"
   },
   {
-    field: "230517143221032",
-    title: "Product Name",
+    поле: "230517143221032",
+    заголовок: "Product имя",
     style: {
-      fontSize(args: any) {
-        if (args.row % 2 === 1) return 20;
-        return 12;
+      fontSize(args: любой) {
+        if (args.row % 2 === 1) возврат 20;
+        возврат 12;
       }
     }
   }
@@ -64,13 +64,13 @@ const columns = [
 const option = {
   records,
   columns,
-  limitMaxAutoWidth: 800,
-  widthMode: "autoWidth",
-  heightMode: "autoHeight"
+  limitMaxавтоширина: 800,
+  ширинаMode: "автоширина",
+  высотаMode: "автовысота"
 };
 
-// 创建 VTable 实例
-const vtableInstance = new VTable.ListTable(
+// 创建 Vтаблица 实例
+const vтаблицаInstance = новый Vтаблица.списоктаблица(
   document.getElementById("container")!,
   option
 );
@@ -78,13 +78,13 @@ const vtableInstance = new VTable.ListTable(
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-widthmode-heightmode-56m24x)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-ширинаmode-высотаmode-56m24x)
 
-![result](/vtable/faq/3-0.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/3-0.png)
 
 ## Quote
 
-- [List Table demo](https://visactor.io/vtable/demo/table-type/list-table)
-- [rowHeight columnWidth Tutorial](https://visactor.io/vtable/guide/basic_function/row_height_column_width)
-- [Related api](<https://visactor.io/vtable/option/ListTable#widthMode('standard'%20%7C%20'adaptive'%20%7C%20'autoWidth')%20=%20'standard'>)
-- [github](https://github.com/VisActor/VTable)
+- [список таблица демонстрация](https://visactor.io/vтаблица/демонстрация/таблица-тип/список-таблица)
+- [rowвысота columnширина Tutorial](https://visactor.io/vтаблица/guide/базовый_function/row_высота_column_ширина)
+- [Related апи](<https://visactor.io/vтаблица/option/списоктаблица#ширинаMode('standard'%20%7C%20'adaptive'%20%7C%20'автоширина')%20=%20'standard'>)
+- [github](https://github.com/VisActor/Vтаблица)

@@ -1,27 +1,27 @@
 {{ target: ICellHeaderPaths }}
-The definition of ICellHeaderPaths type is:
+The definition из ICellHeaderPaths тип is:
 ```
-export type ICellHeaderPaths = IListTableCellHeaderPaths | IPivotTableCellHeaderPaths;
-export type IListTableCellHeaderPaths = {
+export тип ICellHeaderPaths = IсписоктаблицаCellHeaderPaths | IсводныйтаблицаCellHeaderPaths;
+export тип IсписоктаблицаCellHeaderPaths = {
   readonly colHeaderPaths?: {
-    field: FieldDef;
+    поле: полеDef;
   }[];
   readonly rowHeaderPaths?: {
-    field: FieldDef;
+    поле: полеDef;
   }[];
 };
-export type IPivotTableCellHeaderPaths = {
-  /** Column header information of multi-level paths in list headers */
+export тип IсводныйтаблицаCellHeaderPaths = {
+  /** Column header information из multi-level paths в список headers */
   readonly colHeaderPaths?: {
-    dimensionKey?: string;
-    indicatorKey?: string;
-    value?: string;
+    dimensionKey?: строка;
+    indicatorKey?: строка;
+    значение?: строка;
   }[];
-  /** Row header information of multi-level paths in row headers */
+  /** Row header information из multi-level paths в row headers */
   readonly rowHeaderPaths?: {
-    dimensionKey?: string;
-    indicatorKey?: string;
-    value?: string;
+    dimensionKey?: строка;
+    indicatorKey?: строка;
+    значение?: строка;
   }[];
 };
 ```

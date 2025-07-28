@@ -1,112 +1,112 @@
 ---
-category: examples
-group: Component
-title: legend
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/legend.png
-link: components/legend
-option: ListTable-legends-discrete#type
+категория: примеры
+группа: компонент
+заголовок: легенда
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/легенда.png
+ссылка: компонентs/легенда
+опция: списоктаблица-легендаs-discrete#тип
 ---
 
-# Legend
+# легенда
 
-In this example, the background color of the cell is mapped by the category Dimension value to generate a legend item, and the click event of the legend item is listened for to highlight the cell content.
+в this пример, the фон цвет из the cell is mapped по the Категория Dimension значение к generate a легенда item, и the Нажать событие из the легенда item is списокened для к highlight the cell content.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
+- `легенда` Configuration таблица легенда, please refer к: https://www.visactor.io/vтаблица/option/списоктаблица#легенда
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
-    const categorys = ['Office Supplies', 'Technology', 'Furniture'];
-    const colorToCategory = ['rgba(255, 127, 14,1)', 'rgba(227, 119, 194, 1)', 'rgba(44, 160, 44, 1)'];
-    const colorToCategoryUnactive = ['rgba(255, 127, 14, .2)', 'rgba(227, 119, 194, .2)', 'rgba(44, 160, 44, .2)'];
+  .then(данные => {
+    const Категорияs = ['Office Supplies', 'Technology', 'Furniture'];
+    const colorToКатегория = ['rgba(255, 127, 14,1)', 'rgba(227, 119, 194, 1)', 'rgba(44, 160, 44, 1)'];
+    const colorToКатегорияUnactive = ['rgba(255, 127, 14, .2)', 'rgba(227, 119, 194, .2)', 'rgba(44, 160, 44, .2)'];
 
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: '200'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: '200'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto',
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто',
         style: {
           // bgColor(args) {
-          //   const index = categorys.indexOf(args.value);
-          //   return colorToCategory[index];
+          //   const index = Категорияs.indexOf(args.значение);
+          //   возврат colorToКатегория[index];
           // }
         }
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
-      tooltip: {
-        isShowOverflowTextTooltip: true
+      ширинаMode: 'standard',
+      Подсказка: {
+        isShowOverflowTextПодсказка: true
       },
-      theme: VTable.themes.DEFAULT.extends({
+      тема: Vтаблица.темаs.по умолчанию.extends({
         bodyStyle: {
           bgColor(args) {
             const { row, col } = args;
-            const record = args.table.getCellOriginRecord(col, row);
-            return colorToCategory[categorys.indexOf(record.Category)];
+            const record = args.таблица.getCellOriginRecord(col, row);
+            возврат colorToКатегория[Категорияs.indexOf(record.Категория)];
           }
         }
       }),
-      legends: {
-        data: [
+      легендаs: {
+        данные: [
           {
             label: 'Office Supplies',
             shape: {
@@ -129,40 +129,40 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             }
           }
         ],
-        orient: 'top',
-        position: 'start',
+        orient: 'верх',
+        позиция: 'начало',
         maxRow: 1,
-        padding: 10
+        заполнение: 10
       }
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = tableInstance;
-    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
-    tableInstance.on(LEGEND_ITEM_CLICK, args => {
-      const highlightCategorys = args.value;
-      tableInstance.updateTheme(
-        VTable.themes.DEFAULT.extends({
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = таблицаInstance;
+    const { легенда_ITEM_Нажать } = Vтаблица.списоктаблица.событие_TYPE;
+    таблицаInstance.на(легенда_ITEM_Нажать, args => {
+      const highlightКатегорияs = args.значение;
+      таблицаInstance.updateтема(
+        Vтаблица.темаs.по умолчанию.extends({
           bodyStyle: {
-            color(args) {
+            цвет(args) {
               const { row, col } = args;
-              const record = tableInstance.getCellOriginRecord(col, row);
-              if (highlightCategorys.indexOf(record.Category) >= 0) {
-                return 'black';
+              const record = таблицаInstance.getCellOriginRecord(col, row);
+              if (highlightКатегорияs.indexOf(record.Категория) >= 0) {
+                возврат 'black';
               }
-              return '#e5dada';
+              возврат '#e5dada';
             },
             bgColor(args) {
               const { row, col } = args;
-              const record = tableInstance.getCellOriginRecord(col, row);
-              if (highlightCategorys.indexOf(record.Category) >= 0) {
-                return colorToCategory[categorys.indexOf(record.Category)];
+              const record = таблицаInstance.getCellOriginRecord(col, row);
+              if (highlightКатегорияs.indexOf(record.Категория) >= 0) {
+                возврат colorToКатегория[Категорияs.indexOf(record.Категория)];
               }
-              return colorToCategoryUnactive[categorys.indexOf(record.Category)];
+              возврат colorToКатегорияUnactive[Категорияs.indexOf(record.Категория)];
             }
           }
         })
       );
-      console.log(tableInstance.stateManager?.select);
+      console.log(таблицаInstance.stateManвозрастr?.выбрать);
     });
   });
 ```

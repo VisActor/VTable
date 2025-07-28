@@ -1,67 +1,67 @@
 ---
-category: examples
-group: Business
-title: Song Play Ranking
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/music-play.png
-option: ListTable#theme
+категория: примеры
+группа: Business
+заголовок: Song Play Ranking
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/music-play.png
+опция: списоктаблица#тема
 ---
 
 # Song Play Ranking
 
-This example, with a background image, uses the transparent background color of the table to show an individual's song playlist charts on a music playback platform.
+This пример, с a фон imвозраст, uses the transparent фон цвет из the таблица к показать an individual's song playсписок графикs на a music playback platform.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `theme` Configure the styles of each area of the table
+- `тема` Configure the styles из каждый area из the таблица
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-function getBackgroundColor(args) {
-  const { row, table } = args;
-  const index = row - table.frozenRowCount;
+```javascript liveдемонстрация template=vтаблица
+функция getBackgroundColor(args) {
+  const { row, таблица } = args;
+  const index = row - таблица.frozenRowCount;
   if (!(index & 1)) {
-    return 'rgba(255,255,255,0.2)';
+    возврат 'rgba(255,255,255,0.2)';
   }
-  return 'rgba(255,255,255,0.5)';
+  возврат 'rgba(255,255,255,0.5)';
 }
 const container = document.getElementById(CONTAINER_ID);
-container.style.padding = '30px';
-container.style.backgroundImage = `url('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/background-image-music.jpeg')`;
+container.style.заполнение = '30px';
+container.style.backgroundImвозраст = `url('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/фон-imвозраст-music.jpeg')`;
 container.style.backgroundRepeat = 'no-repeat';
 container.style.backgroundSize = 'cover';
-container.style.backgroundPosition = 'center center';
+container.style.backgroundPosition = 'центр центр';
 const options = {
   columns: [
     {
-      field: 'music_name',
-      title: '歌曲名',
-      width: 'auto',
-      icon: {
-        type: 'image',
-        src: 'music_image',
-        name: 'music_image',
+      поле: 'music_имя',
+      заголовок: '歌曲名',
+      ширина: 'авто',
+      иконка: {
+        тип: 'imвозраст',
+        src: 'music_imвозраст',
+        имя: 'music_imвозраст',
         shape: 'circle',
-        width: 50,
-        height: 50,
-        positionType: VTable.TYPES.IconPosition.contentLeft,
+        ширина: 50,
+        высота: 50,
+        positionType: Vтаблица.TYPES.иконкаPosition.contentLeft,
         marginRight: 20,
         marginLeft: 0,
         cursor: 'pointer'
       }
     },
     {
-      field: 'singer',
-      title: '歌手',
-      width: 'auto',
-      icon: {
-        type: 'image',
-        src: 'singer_image',
-        name: 'singer_image',
+      поле: 'singer',
+      заголовок: '歌手',
+      ширина: 'авто',
+      иконка: {
+        тип: 'imвозраст',
+        src: 'singer_imвозраст',
+        имя: 'singer_imвозраст',
         shape: 'circle',
-        width: 50,
-        height: 50,
-        positionType: VTable.TYPES.IconPosition.contentLeft,
+        ширина: 50,
+        высота: 50,
+        positionType: Vтаблица.TYPES.иконкаPosition.contentLeft,
         marginRight: 20,
         marginLeft: 0,
         cursor: 'pointer'
@@ -69,112 +69,112 @@ const options = {
     },
 
     {
-      field: 'public_year',
-      title: '发行时间',
-      width: 'auto'
+      поле: 'public_year',
+      заголовок: '发行时间',
+      ширина: 'авто'
     },
     {
-      field: 'play_count',
-      title: '播放次数',
-      width: 'auto'
+      поле: 'play_count',
+      заголовок: '播放次数',
+      ширина: 'авто'
     }
   ],
   records: [
     {
-      music_name: '小美满',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/xiaomeiman.jpeg',
+      music_имя: '小美满',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/xiaomeiman.jpeg',
       singer: '周深',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/zhoushen.jpeg',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/zhoushen.jpeg',
       public_year: '2024',
       play_count: 400
     },
     {
-      music_name: 'I Am You',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/iamyou.jpeg',
+      music_имя: 'I Am You',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/iamyou.jpeg',
       singer: 'Kim Taylor',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/KimTaylor.png',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/KimTaylor.png',
       public_year: '2008',
       play_count: 380
     },
     {
-      music_name: 'Reality',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/reality.jpeg',
+      music_имя: 'Reality',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/reality.jpeg',
       singer: 'Lost Frequencies',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/LostFrequencies.png',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/LostFrequencies.png',
       public_year: '2015',
       play_count: 370
     },
     {
-      music_name: '无名的人',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/wumingderen.webp',
+      music_имя: '无名的人',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/wumingderen.webp',
       singer: '毛不易',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/maobuyi.webp',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/maobuyi.webp',
       public_year: '2021',
       play_count: 380
     },
     {
-      music_name: 'My love',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/mylove.jpeg',
+      music_имя: 'My love',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/mylove.jpeg',
       singer: 'Westlife',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Westlife.jpeg',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/Westlife.jpeg',
       public_year: '2000',
       play_count: 330
     },
     {
-      music_name: '彩虹的微笑',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/caihongdeweixiao.jpeg',
+      music_имя: '彩虹的微笑',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/caihongdeweixiao.jpeg',
       singer: '王心凌',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/wangxinling.jpeg',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/wangxinling.jpeg',
       public_year: '2006',
       play_count: 300
     },
     {
-      music_name: '手心的太阳',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/shouxindetaiyang.jpeg',
+      music_имя: '手心的太阳',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/shouxindetaiyang.jpeg',
       singer: '张韶涵',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/zhangshaohan.jpeg',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/zhangshaohan.jpeg',
       public_year: '2004',
       play_count: 230
     },
     {
-      music_name: '明明就',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/mingmingjiu.jpeg',
+      music_имя: '明明就',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/mingmingjiu.jpeg',
       singer: '周杰伦',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/zhoujielun.jpeg',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/zhoujielun.jpeg',
       public_year: '2012',
       play_count: 130
     },
     {
-      music_name: '声声慢',
-      music_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/shengshengman.jpeg',
+      music_имя: '声声慢',
+      music_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/shengshengman.jpeg',
       singer: '崔开潮',
-      singer_image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/cuikaichao.jpeg',
+      singer_imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/cuikaichao.jpeg',
       public_year: '2017',
       play_count: 30
     }
   ],
-  heightMode: 'autoHeight',
-  theme: {
+  высотаMode: 'автовысота',
+  тема: {
     underlayBackgroundColor: 'rgba(255,255,255,0)',
     headerStyle: {
       bgColor: '#f58d17',
-      color: '#FFF',
-      borderLineWidth: 0,
+      цвет: '#FFF',
+      borderLineширина: 0,
       fontSize: 26
     },
     bodyStyle: {
       bgColor: getBackgroundColor,
-      color: '#FFF',
-      borderLineWidth: 0,
+      цвет: '#FFF',
+      borderLineширина: 0,
       fontSize: 22
     },
     frameStyle: {
       borderColor: 'rgba(255,255,255,0.2)',
-      borderLineWidth: 20,
+      borderLineширина: 20,
       cornerRadius: 8
     }
   }
 };
-const tableInstance = new VTable.ListTable(container, options);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(container, options);
+window['таблицаInstance'] = таблицаInstance;
 ```

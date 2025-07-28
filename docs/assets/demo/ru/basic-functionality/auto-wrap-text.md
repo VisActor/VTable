@@ -1,84 +1,84 @@
 ---
-category: examples
-group: Basic Features
-title: Line Wrapping
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
-order: 3-1
-link: basic_function/auto_wrap_text
-option: ListTable#autoWrapText
+категория: примеры
+группа: базовый возможности
+заголовок: Line Wrapping
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/авто-wrap-текст.gif
+порядок: 3-1
+ссылка: базовый_function/авто_wrap_text
+опция: списоктаблица#автоWrapText
 ---
 
 # line wrapping
 
-Auto-wrap is turned on. When the column width changes, the text will automatically calculate the display content according to the width. When using this function, you need to set `heightMode: 'autoHeight'` to display the wrapped text.
+авто-wrap is turned на. When the column ширина changes, the текст will автоmatically calculate the display content according к the ширина. When using this функция, you need к set `высотаMode: 'автовысота'` к display the wrapped текст.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- 'AutoWrapText: true 'Enable line wrapping
+- 'автоWrapText: true 'включить line wrapping
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name'
+        поле: 'Product имя',
+        заголовок: 'Product имя'
       },
       {
-        field: 'Category',
-        title: 'Category'
+        поле: 'Категория',
+        заголовок: 'Категория'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория'
       },
       {
-        field: 'Region',
-        title: 'Region'
+        поле: 'Регион',
+        заголовок: 'Регион'
       },
       {
-        field: 'City',
-        title: 'City'
+        поле: 'Город',
+        заголовок: 'Город'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity'
+        поле: 'Количество',
+        заголовок: 'Количество'
       },
       {
-        field: 'Sales',
-        title: 'Sales'
+        поле: 'Продажи',
+        заголовок: 'Продажи'
       },
       {
-        field: 'Profit',
-        title: 'Profit'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
-      autoWrapText: true,
-      heightMode: 'autoHeight',
-      defaultColWidth: 150
+      ширинаMode: 'standard',
+      автоWrapText: true,
+      высотаMode: 'автовысота',
+      defaultColширина: 150
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

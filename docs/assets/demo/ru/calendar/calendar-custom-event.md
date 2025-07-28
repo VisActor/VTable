@@ -1,116 +1,116 @@
 ---
-category: examples
-group: Calendar
-title: Calendar custom event
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calendar-custom-event.gif
-link: calendar/introduction
-option: Calendar#startDate
+категория: примеры
+группа: календарь
+заголовок: календарь пользовательский событие
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/календарь-пользовательский-событие.gif
+ссылка: календарь/introduction
+опция: календарь#startDate
 ---
 
-# Calendar Custom Event
+# календарь пользовательский событие
 
-Custom event in Calendar.
+пользовательский событие в календарь.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `addCustomEvent` Add custom event
-- `removeCustomEvent` Remove custom event
+- `addпользовательскийсобытие` Add пользовательский событие
+- `removeпользовательскийсобытие` Remove пользовательский событие
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'gray'];
 
-const customEvents = [];
+const пользовательскийсобытиеs = [];
 const container = document.getElementById(CONTAINER_ID);
-const calendar = new VTableCalendar.Calendar(container, {
-  tableOptions: {
-    theme: {
+const календарь = новый Vтаблицакалендарь.календарь(container, {
+  таблицаOptions: {
+    тема: {
       headerStyle: {
-        color: args => {
+        цвет: args => {
           if (args.col === 0) {
-            return 'red';
+            возврат 'red';
           }
-          return '#000';
+          возврат '#000';
         }
       }
     }
   }
 });
 
-const info = document.createElement('div');
-info.innerText = 'Select Date and Click Button';
-info.style.position = 'absolute';
-info.style.top = '10px';
-info.style.right = '210px';
-info.style.zIndex = '100';
-info.style.color = '#999';
-container?.appendChild(info);
+const информация = document.createElement('div');
+информация.innerText = 'выбрать Date и Нажать Кнопка';
+информация.style.позиция = 'absolute';
+информация.style.верх = '10px';
+информация.style.право = '210px';
+информация.style.zIndex = '100';
+информация.style.цвет = '#999';
+container?.appendChild(информация);
 
-const bottomAddButton = document.createElement('button');
-bottomAddButton.innerText = 'Add Event';
-bottomAddButton.style.position = 'absolute';
-bottomAddButton.style.top = '10px';
-bottomAddButton.style.right = '110px';
-bottomAddButton.style.zIndex = '100';
-container?.appendChild(bottomAddButton);
+const bottomAddКнопка = document.createElement('Кнопка');
+bottomAddКнопка.innerText = 'Add событие';
+bottomAddКнопка.style.позиция = 'absolute';
+bottomAddКнопка.style.верх = '10px';
+bottomAddКнопка.style.право = '110px';
+bottomAddКнопка.style.zIndex = '100';
+container?.appendChild(bottomAddКнопка);
 
-let listEventIndex = 0;
-let barEventIndex = 0;
-bottomAddButton.addEventListener('click', () => {
-  const selectedDates = calendar.selectedDate;
+let списоксобытиеIndex = 0;
+let barсобытиеIndex = 0;
+bottomAddКнопка.addсобытиесписокener('Нажать', () => {
+  const selectedDates = календарь.selectedDate;
   if (selectedDates.length === 0) {
-    return;
+    возврат;
   }
 
   if (selectedDates.length > 1) {
     const startDate = selectedDates[0].date;
     const endDate = selectedDates[selectedDates.length - 1].date;
-    calendar.addCustomEvent({
-      id: `bar-event-${barEventIndex}`,
+    календарь.addпользовательскийсобытие({
+      id: `bar-событие-${barсобытиеIndex}`,
       startDate,
       endDate,
-      text: `Bar Event ${barEventIndex}`,
-      type: 'bar',
-      bgColor: unicColorPool[barEventIndex % unicColorPool.length],
-      color: '#fff'
+      текст: `Bar событие ${barсобытиеIndex}`,
+      тип: 'bar',
+      bgColor: unicColorPool[barсобытиеIndex % unicColorPool.length],
+      цвет: '#fff'
     });
-    barEventIndex++;
+    barсобытиеIndex++;
   } else {
     const date = selectedDates[0].date;
-    calendar.addCustomEvent({
-      id: `list-event-${listEventIndex}`,
+    календарь.addпользовательскийсобытие({
+      id: `список-событие-${списоксобытиеIndex}`,
       date,
-      text: `List Event ${listEventIndex}`,
-      type: 'list',
-      color: unicColorPool[listEventIndex % unicColorPool.length]
+      текст: `список событие ${списоксобытиеIndex}`,
+      тип: 'список',
+      цвет: unicColorPool[списоксобытиеIndex % unicColorPool.length]
     });
-    listEventIndex++;
+    списоксобытиеIndex++;
   }
 });
 
-const bottomDeleteButton = document.createElement('button');
-bottomDeleteButton.innerText = 'Delete Event';
-bottomDeleteButton.style.position = 'absolute';
-bottomDeleteButton.style.top = '10px';
-bottomDeleteButton.style.right = '10px';
-bottomDeleteButton.style.zIndex = '100';
-container?.appendChild(bottomDeleteButton);
-bottomDeleteButton.addEventListener('click', () => {
-  const selectedDates = calendar.selectedDate;
+const bottomDeleteКнопка = document.createElement('Кнопка');
+bottomDeleteКнопка.innerText = 'Delete событие';
+bottomDeleteКнопка.style.позиция = 'absolute';
+bottomDeleteКнопка.style.верх = '10px';
+bottomDeleteКнопка.style.право = '10px';
+bottomDeleteКнопка.style.zIndex = '100';
+container?.appendChild(bottomDeleteКнопка);
+bottomDeleteКнопка.addсобытиесписокener('Нажать', () => {
+  const selectedDates = календарь.selectedDate;
   if (selectedDates.length === 0) {
-    return;
+    возврат;
   }
 
-  const idSet = new Set();
-  selectedDates.map(data => {
-    calendar.getCellCustomEventByLocation(data.col, data.row).map(event => {
-      event.id && idSet.add(event.id);
+  const idSet = новый Set();
+  selectedDates.map(данные => {
+    календарь.getCellпользовательскийсобытиеByLocation(данные.col, данные.row).map(событие => {
+      событие.id && idSet.add(событие.id);
     });
   });
 
-  calendar.removeCustomEvents(Array.from(idSet));
+  календарь.removeпользовательскийсобытиеs(массив.от(idSet));
 });
 
-window['calendar'] = calendar;
+window['календарь'] = календарь;
 ```

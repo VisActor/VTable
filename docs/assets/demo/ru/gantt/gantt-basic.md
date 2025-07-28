@@ -1,69 +1,69 @@
 ---
-category: examples
-group: gantt
-title: Basic Usage of Gantt Chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-basic-preview.png
-link: gantt/introduction
-option: Gantt#taskBar
+категория: примеры
+группа: гантт
+заголовок: базовый Usвозраст из гантт график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-базовый-preview.png
+ссылка: гантт/introduction
+опция: гантт#taskBar
 ---
 
-# Basic Usage of Gantt Chart
+# базовый Usвозраст из гантт график
 
-This example demonstrates the basic usage of the Gantt chart. The task types include the default `Task` type, the `Milestone` type, and the `Project` type. The `Project` type is used to represent projects and can contain multiple sub-tasks. For details, see [Gantt Project Task Display Mode](./gantt_project_taskShowMode).
+This пример демонстрацияnstrates the базовый usвозраст из the гантт график. The task types include the по умолчанию `Task` тип, the `Milestone` тип, и the `Project` тип. The `Project` тип is used к represent projects и can contain multiple sub-tasks. для details, see [гантт Project Task Display Mode](./гантт_project_taskShowMode).
 
 ## Key Configuration
 
-- `Gantt`
+- `гантт`
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// import * as VTableGantt from '@visactor/vtable-gantt';
-let ganttInstance;
+```javascript liveдемонстрация template=vтаблица
+// import * as Vтаблицагантт от '@visactor/vтаблица-гантт';
+let ганттInstance;
 const records = [
   {
     id: 1,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-15',
+    начало: '2024-07-24',
+    конец: '2024-08-15',
     progress: 31,
     priority: 'P0',
     children: [
       {
         id: 2,
-        title: 'Project Feature Review',
+        заголовок: 'Project Feature Review',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-07-24',
+        начало: '2024-07-24',
+        конец: '2024-07-24',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024/07/25',
-        end: '2024/07/26',
+        начало: '2024/07/25',
+        конец: '2024/07/26',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 3,
-        title: 'Project Create',
+        заголовок: 'Project Create',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024/07/27',
-        end: '2024/07/26',
+        начало: '2024/07/27',
+        конец: '2024/07/26',
         progress: 100,
         priority: 'P1',
-        type: 'milestone'
+        тип: 'milestone'
       },
       {
         id: 3,
-        title: 'Develop feature 1',
+        заголовок: 'Develop feature 1',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024/08/01',
-        end: '2024/08/15',
+        начало: '2024/08/01',
+        конец: '2024/08/15',
         progress: 0,
         priority: 'P1'
       }
@@ -71,82 +71,82 @@ const records = [
   },
   {
     id: 2,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '07/24/2024',
-    end: '08/04/2024',
+    начало: '07/24/2024',
+    конец: '08/04/2024',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 3,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    начало: '2024-07-24',
+    конец: '2024-08-04',
     progress: 100,
     priority: 'P1',
     children: [
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-08-01',
-        end: '2024-08-01',
+        начало: '2024-08-01',
+        конец: '2024-08-01',
         progress: 90,
         priority: 'P0'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-30',
-        end: '2024-08-04',
+        начало: '2024-07-30',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024.07.26',
-        end: '2024.07.08',
+        начало: '2024.07.26',
+        конец: '2024.07.08',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '07.24.2024',
-        end: '08.04.2024',
+        начало: '07.24.2024',
+        конец: '08.04.2024',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-16',
-        end: '2024-07-18',
+        начало: '2024-07-16',
+        конец: '2024-07-18',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-08-09',
-        end: '2024-09-11',
+        начало: '2024-08-09',
+        конец: '2024-09-11',
         progress: 100,
         priority: 'P1'
       }
@@ -155,53 +155,53 @@ const records = [
 
   {
     id: 1,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-28',
-    type: 'milestone'
+    начало: '2024-07-28',
+    тип: 'milestone'
   },
   {
     id: 2,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-26',
-    end: '2024-07-28',
+    начало: '2024-07-26',
+    конец: '2024-07-28',
     progress: 60,
     priority: 'P0',
     children: [
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1',
         children: [
           {
             id: 1,
-            title: 'Software Development',
+            заголовок: 'Software Development',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-24',
-            end: '2024-08-04',
+            начало: '2024-07-24',
+            конец: '2024-08-04',
             progress: 31,
             priority: 'P0'
           },
           {
             id: 2,
-            title: 'Scope',
+            заголовок: 'Scope',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-26',
-            end: '2024-07-28',
+            начало: '2024-07-26',
+            конец: '2024-07-28',
             progress: 60,
             priority: 'P0'
           },
           {
             id: 3,
-            title: 'Determine project scope',
+            заголовок: 'Determine project scope',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-29',
-            end: '2024-07-31',
+            начало: '2024-07-29',
+            конец: '2024-07-31',
             progress: 100,
             priority: 'P1'
           }
@@ -209,37 +209,37 @@ const records = [
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0',
         children: [
           {
             id: 1,
-            title: 'Software Development',
+            заголовок: 'Software Development',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-24',
-            end: '2024-08-04',
+            начало: '2024-07-24',
+            конец: '2024-08-04',
             progress: 31,
             priority: 'P0'
           },
           {
             id: 2,
-            title: 'Scope',
+            заголовок: 'Scope',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-06',
-            end: '2024-07-08',
+            начало: '2024-07-06',
+            конец: '2024-07-08',
             progress: 60,
             priority: 'P0'
           },
           {
             id: 3,
-            title: 'Determine project scope',
+            заголовок: 'Determine project scope',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-29',
-            end: '2024-07-31',
+            начало: '2024-07-29',
+            конец: '2024-07-31',
             progress: 100,
             priority: 'P1'
           }
@@ -247,37 +247,37 @@ const records = [
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-26',
-        end: '2024-07-28',
+        начало: '2024-07-26',
+        конец: '2024-07-28',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1',
         children: [
           {
             id: 1,
-            title: 'Software Development',
+            заголовок: 'Software Development',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-24',
-            end: '2024-08-04',
+            начало: '2024-07-24',
+            конец: '2024-08-04',
             progress: 31,
             priority: 'P0'
           },
           {
             id: 2,
-            title: 'Scope',
+            заголовок: 'Scope',
             developer: 'liufangfang.jane@bytedance.com',
-            start: '2024-07-06',
-            end: '2024-07-08',
+            начало: '2024-07-06',
+            конец: '2024-07-08',
             progress: 60,
             priority: 'P0'
           }
@@ -285,28 +285,28 @@ const records = [
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-26',
-        end: '2024-07-28',
+        начало: '2024-07-26',
+        конец: '2024-07-28',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1'
       }
@@ -315,55 +315,55 @@ const records = [
 
   {
     id: 3,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-29',
-    end: '2024-07-31',
+    начало: '2024-07-29',
+    конец: '2024-07-31',
     progress: 100,
     priority: 'P1',
     children: [
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-23',
-        end: '2024-07-28',
+        начало: '2024-07-23',
+        конец: '2024-07-28',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-30',
-        end: '2024-08-14',
+        начало: '2024-07-30',
+        конец: '2024-08-14',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 60,
         priority: 'P0'
       }
@@ -371,37 +371,37 @@ const records = [
   },
   {
     id: 1,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    начало: '2024-07-24',
+    конец: '2024-08-04',
     progress: 31,
     priority: 'P0',
     children: [
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024/07/24',
-        end: '2024/08/04',
+        начало: '2024/07/24',
+        конец: '2024/08/04',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-08-04',
-        end: '2024-08-04',
+        начало: '2024-08-04',
+        конец: '2024-08-04',
         progress: 90,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '07/24/2024',
-        end: '08/04/2024',
+        начало: '07/24/2024',
+        конец: '08/04/2024',
         progress: 60,
         priority: 'P0'
       }
@@ -409,100 +409,100 @@ const records = [
   },
   {
     id: 2,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-27',
-    end: '2024-07-28',
+    начало: '2024-07-27',
+    конец: '2024-07-28',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 3,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-29',
-    end: '2024-07-31',
+    начало: '2024-07-29',
+    конец: '2024-07-31',
     progress: 100,
     priority: 'P1',
     children: [
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '07.24.2024',
-        end: '08.04.2024',
+        начало: '07.24.2024',
+        конец: '08.04.2024',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-26',
-        end: '2024-07-28',
+        начало: '2024-07-26',
+        конец: '2024-07-28',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-08-09',
-        end: '2024-09-11',
+        начало: '2024-08-09',
+        конец: '2024-09-11',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-26',
-        end: '2024-07-28',
+        начало: '2024-07-26',
+        конец: '2024-07-28',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-26',
-        end: '2024-07-28',
+        начало: '2024-07-26',
+        конец: '2024-07-28',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1'
       }
@@ -510,46 +510,46 @@ const records = [
   },
   {
     id: 1,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    начало: '2024-07-24',
+    конец: '2024-08-04',
     progress: 31,
     priority: 'P0',
     children: [
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 100,
         priority: 'P1'
       },
       {
         id: 1,
-        title: 'Software Development',
+        заголовок: 'Software Development',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-24',
-        end: '2024-08-04',
+        начало: '2024-07-24',
+        конец: '2024-08-04',
         progress: 31,
         priority: 'P0'
       },
       {
         id: 2,
-        title: 'Scope',
+        заголовок: 'Scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024.07.06',
-        end: '2024.07.08',
+        начало: '2024.07.06',
+        конец: '2024.07.08',
         progress: 60,
         priority: 'P0'
       },
       {
         id: 3,
-        title: 'Determine project scope',
+        заголовок: 'Determine project scope',
         developer: 'liufangfang.jane@bytedance.com',
-        start: '2024-07-29',
-        end: '2024-07-31',
+        начало: '2024-07-29',
+        конец: '2024-07-31',
         progress: 100,
         priority: 'P1'
       }
@@ -559,71 +559,71 @@ const records = [
 
 const columns = [
   {
-    field: 'title',
-    title: 'title',
-    width: 'auto',
-    sort: true,
+    поле: 'title',
+    заголовок: 'title',
+    ширина: 'авто',
+    сортировка: true,
     tree: true,
-    editor: 'input'
+    editor: 'ввод'
   },
   {
-    field: 'start',
-    title: 'start',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'начало',
+    заголовок: 'начало',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   },
   {
-    field: 'end',
-    title: 'end',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'конец',
+    заголовок: 'конец',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   },
   {
-    field: 'priority',
-    title: 'priority',
-    width: 'auto',
-    sort: true,
-    editor: 'input'
+    поле: 'priority',
+    заголовок: 'priority',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'ввод'
   },
   {
-    field: 'progress',
-    title: 'progress',
-    width: 'auto',
-    sort: true,
+    поле: 'progress',
+    заголовок: 'progress',
+    ширина: 'авто',
+    сортировка: true,
     headerStyle: {
       borderColor: '#e1e4e8'
     },
     style: {
       borderColor: '#e1e4e8',
-      color: 'green'
+      цвет: 'green'
     },
-    editor: 'input'
+    editor: 'ввод'
   }
 ];
 const option = {
-  overscrollBehavior: 'none',
+  overscrollBehavior: 'никто',
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns,
-    tableWidth: 250,
-    minTableWidth: 100,
-    maxTableWidth: 600,
-    theme: {
+    таблицаширина: 250,
+    minтаблицаширина: 100,
+    maxтаблицаширина: 600,
+    тема: {
       headerStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: 1,
+        borderLineширина: 1,
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'red',
+        цвет: 'red',
         bgColor: '#EEF1F5'
       },
       bodyStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: [1, 0, 1, 0],
+        borderLineширина: [1, 0, 1, 0],
         fontSize: 16,
-        color: '#4D4D4D',
+        цвет: '#4D4D4D',
         bgColor: '#FFF'
       }
     }
@@ -631,37 +631,37 @@ const option = {
   },
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 2,
+      borderLineширина: 2,
       borderColor: '#e1e4e8',
       cornerRadius: 8
     },
     verticalSplitLineMoveable: true,
     verticalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     },
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     }
   },
   grid: {
     weekendBackgroundColor: '#f8f8f8',
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 40,
-  rowHeight: 40,
+  headerRowвысота: 40,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
     // resizable: false,
     moveable: true,
     hoverBarStyle: {
@@ -669,14 +669,14 @@ const option = {
     },
     labelText: '{title} {progress}%',
     labelTextStyle: {
-      // padding: 2,
+      // заполнение: 2,
       fontFamily: 'Arial',
       fontSize: 16,
-      textAlign: 'left',
+      textAlign: 'лево',
       textOverflow: 'ellipsis'
     },
     barStyle: {
-      width: 20,
+      ширина: 20,
       /** 任务条的颜色 */
       barColor: '#ee8800',
       /** 已完成部分任务条的颜色 */
@@ -684,26 +684,26 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderLineWidth: 1,
+      borderLineширина: 1,
       /** 边框颜色 */
       borderColor: 'black'
     },
     milestoneStyle: {
       borderColor: 'red',
-      borderLineWidth: 1,
+      borderLineширина: 1,
       fillColor: 'green',
-      width: 15
+      ширина: 15
     }
   },
   timelineHeader: {
-    colWidth: 50,
+    colширина: 50,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     scales: [
@@ -712,33 +712,33 @@ const option = {
         step: 1,
         startOfWeek: 'sunday',
         format(date) {
-          return `Week ${date.dateIndex}`;
+          возврат `Week ${date.dateIndex}`;
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5',
           textStick: true
-          // padding: [0, 30, 0, 20]
+          // заполнение: [0, 30, 0, 20]
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5'
         }
       }
@@ -748,7 +748,7 @@ const option = {
     {
       date: '2024-07-28',
       style: {
-        lineWidth: 1,
+        lineширина: 1,
         lineColor: 'blue',
         lineDash: [8, 4]
       }
@@ -756,15 +756,15 @@ const option = {
     {
       date: '2024-08-17',
       style: {
-        lineWidth: 2,
+        lineширина: 2,
         lineColor: 'red',
         lineDash: [8, 4]
       }
     }
   ],
   rowSeriesNumber: {
-    title: '行号',
-    dragOrder: true,
+    заголовок: '行号',
+    dragпорядок: true,
     headerStyle: {
       bgColor: '#EEF1F5',
       borderColor: '#e1e4e8'
@@ -775,12 +775,12 @@ const option = {
   },
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'scrolling',
-    width: 6,
+    видимый: 'scrolling',
+    ширина: 6,
     scrollSliderCornerRadius: 2,
     scrollSliderColor: '#5cb85c'
   }
 };
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 ```

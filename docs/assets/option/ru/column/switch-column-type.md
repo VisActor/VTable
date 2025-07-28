@@ -1,38 +1,38 @@
-{{ target: switch-cell-type }}
+{{ target: switch-cell-тип }}
 
-#${prefix} columns.switch(string)
+#${prefix} columns.switch(строка)
 
-Specifies the cell type of this column or row as 'switch'. If cellType is not specified, it defaults to 'text'
+Specifies the cell тип из this column или row as 'switch'. If cellType is не specified, it defaults к 'текст'
 
-##${prefix} cellType(string) = 'switch'
+##${prefix} cellType(строка) = 'switch'
 
-Specifies the cell type of this column or row as 'switch'. If cellType is not specified, it defaults to 'text'
+Specifies the cell тип из this column или row as 'switch'. If cellType is не specified, it defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##'+${prefix},
     isSwitch = true
 ) }}
 
-##${prefix} checked(boolean|Function) = false
+##${prefix} checked(логический|функция) = false
 
-**Switch type specific configuration**
+**Switch тип specific configuration**
 
-Determines whether the switch is in checked state. Setting this here specifies the state for the entire column. If there is a corresponding state in the record data entry, the data state takes precedence
+Determines whether the switch is в checked state. Setting this here specifies the state для the entire column. If there is a corresponding state в the record данные entry, the данные state takes precedence
 
-##${prefix} disable(boolean|Function) = false
+##${prefix} отключить(логический|функция) = false
 
-**Switch type specific configuration**
+**Switch тип specific configuration**
 
-Determines whether the switch is in a disabled state (preventing interaction)
+Determines whether the switch is в a отключен state (prсобытиеing interaction)
 
-##${prefix} checkedText(string)
+##${prefix} checkedText(строка)
 
-**Switch type specific configuration**
+**Switch тип specific configuration**
 
-The text content displayed when the switch is in checked state
+The текст content displayed when the switch is в checked state
 
-##${prefix} uncheckedText(string)
+##${prefix} uncheckedText(строка)
 
-**Switch type specific configuration**
+**Switch тип specific configuration**
 
-The text content displayed when the switch is in unchecked state
+The текст content displayed when the switch is в unchecked state

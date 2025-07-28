@@ -1,51 +1,51 @@
-# Pivot table sorting function
+# сводный таблица сортировкаing функция
 
-The sorting capability of a pivot table can be implemented in the following ways:
+The сортировкаing capability из a сводный таблица can be implemented в Следующий ways:
 
-1. Pivot table customizes the tree structure of the table header. RowTree and columnTree can be passed in and displayed according to this structure. At this time, even if sortRule is configured, it will not work. This method is used when the table header has a default order or a special structure, or the sorting rules are complex. You can refer to the tutorial: [Custom header dimension tree](../../table_type/Pivot_table/custom_header).
-2. Add `sort:true` in the dimension or indicator configuration to enable sorting. The sort button will be displayed and clicking the button will trigger sorting. Sorting through the interface: Call the interface `updateSortRules` to sort.
-3. Other special requirements: only display the sorting status, do not use the VTable sorting logic
+1. сводный таблица пользовательскийizes the tree structure из the таблица header. RowTree и columnTree can be passed в и displayed according к this structure. в this time, even if сортировкаRule is configured, it will не work. This method is used when the таблица header has a по умолчанию order или a special structure, или the сортировкаing rules are complex. Вы можете refer к the tutorial: [пользовательский header dimension tree](../../таблица_type/сводный_таблица/пользовательский_header).
+2. Add `сортировка:true` в the dimension или indicator configuration к включить сортировкаing. The сортировка Кнопка will be displayed и Нажатьing the Кнопка will trigger сортировкаing. сортировкаing through the интерфейс: Call the интерфейс `updateсортировкаRules` к сортировка.
+3. Other special requirements: only display the сортировкаing status, do не use the Vтаблица сортировкаing logic
 
-**Note that the three sorting methods should not be mixed**
+**Note that the three сортировкаing методы should не be mixed**
 
-Next, we will mainly introduce the following implementation methods and precautions.
+следующий, we will mainly introduce Следующий implementation методы и precautions.
 
-## Configure sort to enable sorting
+## Configure сортировка к включить сортировкаing
 
-### Sort by dimension value
+### сортировка по dimension значение
 
-The sort configuration can be set in rows or columns, at which point the corner cells displaying the dimension names will display sort buttons, and clicking the buttons will trigger sorting. The specific sorting rules triggered will correspond to the configurations in dataConfig.sortRule. If there is no matching sorting rule in sortRule, it will sort according to the default rule, which is alphabetical order.
+The сортировка configuration can be set в rows или columns, в which point the corner cells displaying the dimension имяs will display сортировка Кнопкаs, и Нажатьing the Кнопкаs will trigger сортировкаing. The specific сортировкаing rules triggered will correspond к the configurations в данныеConfig.сортировкаRule. If there is no matching сортировкаing rule в сортировкаRule, it will сортировка according к the по умолчанию rule, which is alphabetical order.
 
-The following is an example of configuring sort in rows to enable sorting:
+Следующий is an пример из configuring сортировка в rows к включить сортировкаing:
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
-          sort: true
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
+          сортировка: true
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
-          sort: true
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
+          сортировка: true
         }
       ],
-      columns: ['Region', 'Segment'],
+      columns: ['Регион', 'Segment'],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales'
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи'
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit'
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль'
         }
       ],
       corner: {
@@ -54,40 +54,40 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      defaultColWidth: 130
+      defaultColширина: 130
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```
 
-In the above code, `sort` is `true`, which means that the dimension values corresponding to the row headers can be sorted, and the cells in the corner headers will display the sort icon.
+в the above код, `сортировка` is `true`, which means that the dimension values corresponding к the row headers can be сортировкаed, и the cells в the corner headers will display the сортировка иконка.
 
-### Sort by indicator value
+### сортировка по indicator значение
 
-The configuration of sort can be set in indicators, at which point the row header or column header cells displaying the indicator names will display sort buttons, and clicking the buttons will trigger sorting. The specific sorting rules are sorted by the size of the indicator.
+The configuration из сортировка can be set в indicators, в which point the row header или column header cells displaying the indicator имяs will display сортировка Кнопкаs, и Нажатьing the Кнопкаs will trigger сортировкаing. The specific сортировкаing rules are сортировкаed по the размер из the indicator.
 
-Here is an example of configuring sort in indicators to enable sorting:
+Here is an пример из configuring сортировка в indicators к включить сортировкаing:
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
-      rows: ['Category', 'Sub-Category'],
-      columns: ['Region', 'Segment'],
+      records: данные,
+      rows: ['Категория', 'Sub-Категория'],
+      columns: ['Регион', 'Segment'],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          sort: true
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          сортировка: true
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          sort: true
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          сортировка: true
         }
       ],
       corner: {
@@ -96,48 +96,48 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      defaultColWidth: 130
+      defaultColширина: 130
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```
 
-In the above code, `sort` is `true`, which means that sorting is supported by indicator value, and the cells in the row header or column header will display the sort icon.
+в the above код, `сортировка` is `true`, which means that сортировкаing is supported по indicator значение, и the cells в the row header или column header will display the сортировка иконка.
 
-### Initialize sorting status
+### Initialize сортировкаing status
 
-Please configure the data analysis dataConfig.sortRule to set the initial sorting state. If sort is configured on the corresponding indicator or dimension, the corresponding sorting icon state will appear.
+Please configure the данные analysis данныеConfig.сортировкаRule к set the initial сортировкаing state. If сортировка is configured на the corresponding indicator или dimension, the corresponding сортировкаing иконка state will appear.
 
-The following example:
+Следующий пример:
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
-      rows: ['Category', 'Sub-Category'],
-      columns: ['Region', 'Segment'],
+      records: данные,
+      rows: ['Категория', 'Sub-Категория'],
+      columns: ['Регион', 'Segment'],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          sort: true
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          сортировка: true
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          sort: true
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          сортировка: true
         }
       ],
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Sub-Category',
-            sortByIndicator: 'Sales',
-            sortType: VTable.TYPES.SortType.DESC,
+            сортировкаполе: 'Sub-Категория',
+            сортировкаByIndicator: 'Продажи',
+            сортировкаType: Vтаблица.TYPES.сортировкаType.DESC,
             query: ['Central', 'Corporate']
           }
         ]
@@ -148,40 +148,40 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      defaultColWidth: 130
+      defaultColширина: 130
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```
 
-This example configures the initial sorting rule, which sorts the indicator values in descending order according to the column header dimension path of `['Central', 'Corporate', 'Sales']`. At the same time, the sorting icon in the corresponding header cell changes to the descending state icon.
+This пример configures the initial сортировкаing rule, which сортировкаs the indicator values в descending order according к the column header dimension path из `['Central', 'Corporate', 'Продажи']`. в the same time, the сортировкаing иконка в the corresponding header cell changes к the descending state иконка.
 
-### Update sorting through the interface
+### Update сортировкаing through the интерфейс
 
-The update sorting interface of the pivot table is `updateSortRules`, which can be called to update the sorting status.If sort is configured on the corresponding indicator or dimension, the corresponding sorting icon state will appear.
+The update сортировкаing интерфейс из the сводный таблица is `updateсортировкаRules`, which can be called к update the сортировкаing status.If сортировка is configured на the corresponding indicator или dimension, the corresponding сортировкаing иконка state will appear.
 
-Here is an example of updating the order through the interface:
+Here is an пример из updating the order through the интерфейс:
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
-      rows: ['Category', 'Sub-Category'],
-      columns: ['Region', 'Segment'],
+      records: данные,
+      rows: ['Категория', 'Sub-Категория'],
+      columns: ['Регион', 'Segment'],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          sort: true
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          сортировка: true
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          sort: true
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          сортировка: true
         }
       ],
       corner: {
@@ -190,67 +190,67 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      defaultColWidth: 130
+      defaultColширина: 130
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
-    tableInstance.updateSortRules([
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
+    таблицаInstance.updateсортировкаRules([
       {
-        sortField: 'Sub-Category',
-        sortByIndicator: 'Sales',
-        sortType: VTable.TYPES.SortType.DESC,
+        сортировкаполе: 'Sub-Категория',
+        сортировкаByIndicator: 'Продажи',
+        сортировкаType: Vтаблица.TYPES.сортировкаType.DESC,
         query: ['Central', 'Corporate']
       }
     ]);
   });
 ```
 
-### Listen for sort icon click events
+### списокen для сортировка иконка Нажать событиеs
 
-The sort icon click event is monitored as `pivot_sort_click`.
+The сортировка иконка Нажать событие is monitored as `сводный_сортировка_Нажать`.
 
-## Sorting by interface
+## сортировкаing по интерфейс
 
-If you need to sort through the interface, you can update the sorting status by calling the `updateSortRules` interface.
+If you need к сортировка through the интерфейс, Вы можете update the сортировкаing status по calling the `updateсортировкаRules` интерфейс.
 
-## Show only sort icons
+## показать only сортировка иконкаs
 
-If there is a special setting panel in the business scenario, and there are special sorting options for users to operate, but the corresponding sorting status needs to be displayed in the table, you can configure `showSort: true` or `showSortInCorner: true` to display the sorting status. If there is a need to monitor icon clicks, you can monitor the event `pivot_sort_click`.
+If there is a special setting panel в the business scenario, и there are special сортировкаing options для users к operate, but the corresponding сортировкаing status needs к be displayed в the таблица, Вы можете configure `showсортировка: true` или `showсортировкаInCorner: true` к display the сортировкаing status. If there is a need к monitor иконка Нажатьs, Вы можете monitor the событие `сводный_сортировка_Нажать`.
 
-At the same time, you can set pivotSortState on option to set the state of the initial sort icon.
+в the same time, Вы можете set сводныйсортировкаState на option к set the state из the initial сортировка иконка.
 
-Let’s look at the usage example:
+Let’s loхорошо в the usвозраст пример:
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
-          showSort: true
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
+          showсортировка: true
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
-          showSort: true
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
+          showсортировка: true
         }
       ],
-      columns: ['Region', 'Segment'],
+      columns: ['Регион', 'Segment'],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          showSort: true
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          showсортировка: true
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          showSort: true
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          showсортировка: true
         }
       ],
       corner: {
@@ -259,46 +259,46 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      pivotSortState: [
+      сводныйсортировкаState: [
         {
           dimensions: [
             {
-              dimensionKey: 'Category',
-              value: 'Furniture',
-              isPivotCorner: false,
+              dimensionKey: 'Категория',
+              значение: 'Furniture',
+              isсводныйCorner: false,
               indicatorKey: undefined
             }
           ],
-          order: 'desc'
+          порядок: 'desc'
         },
         {
           dimensions: [
             {
-              dimensionKey: 'Region',
-              value: 'Central',
-              isPivotCorner: false,
+              dimensionKey: 'Регион',
+              значение: 'Central',
+              isсводныйCorner: false,
               indicatorKey: undefined
             },
             {
               dimensionKey: 'Segment',
-              value: 'Consumer',
-              isPivotCorner: false,
+              значение: 'Consumer',
+              isсводныйCorner: false,
               indicatorKey: undefined
             },
             {
-              indicatorKey: 'Sales',
-              value: 'Sales',
-              isPivotCorner: false
+              indicatorKey: 'Продажи',
+              значение: 'Продажи',
+              isсводныйCorner: false
             }
           ],
-          order: 'asc'
+          порядок: 'asc'
         }
       ],
-      defaultColWidth: 130
+      defaultColширина: 130
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
-    tableInstance.on('pivot_sort_click', e => {
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
+    таблицаInstance.на('сводный_сортировка_Нажать', e => {
       console.log(e);
       // 执行业务逻辑 ...
       // 如果执行业务逻辑后还需要更新排序状态，可以先调用updateOption来更新配置，目前还未提供专门更新的接口
@@ -306,8 +306,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
   });
 ```
 
-In the above example, pivotSortState is configured with two sorting rules. It will display descending icons on cells with dimension path ['Furniture'] in the row header, and ascending icons on cells with dimension path ['Central', 'Consumer', 'Sales'] in the column header.
+в the above пример, сводныйсортировкаState is configured с two сортировкаing rules. It will display descending иконкаs на cells с dimension path ['Furniture'] в the row header, и ascending иконкаs на cells с dimension path ['Central', 'Consumer', 'Продажи'] в the column header.
 
 ## other
 
-Here's another emphasis: **the three sorting methods mentioned at the beginning of the tutorial should not be mixed**, for example: the sortRule method should not be used in cases where a custom table header tree structure is defined or showSort is configured; similarly, the pivotSortState configuration should not be used when sort is configured.
+Here's another emphasis: **the three сортировкаing методы mentioned в the beginning из the tutorial should не be mixed**, для пример: the сортировкаRule method should не be used в cases where a пользовательский таблица header tree structure is defined или showсортировка is configured; similarly, the сводныйсортировкаState configuration should не be used when сортировка is configured.

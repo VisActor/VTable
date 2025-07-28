@@ -1,37 +1,37 @@
-In this article, we will describe how to use the table transpose feature in ListTable.
+в this article, we will describe how к use the таблица transpose feature в списоктаблица.
 
-## The concept and function of table transpose
+## The concept и функция из таблица transpose
 
-Table transpose is an operation that swaps rows and columns, that is, the original rows become columns, and the original columns become rows. Through table transpose, we can change the way the data is presented to better suit our needs and analysis perspectives.
+таблица transpose is an operation that swaps rows и columns, that is, the original rows become columns, и the original columns become rows. Through таблица transpose, we can change the way the данные is presented к better suit our needs и analysis perspectives.
 
-## example
+## пример
 
-In ListTable, we can set `transpose `Parameters to enable the table transpose feature.
+в списоктаблица, we can set `transpose `Parameters к включить the таблица transpose feature.
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const option = {
     container: document.getElementById(CONTAINER_ID),
     columns : [
         {
-            "field": "订单 ID",
+            "поле": "订单 ID",
             "title": "订单 ID",
-            "sort": true,
-            "width":'auto'
+            "сортировка": true,
+            "ширина":'авто'
         },
         {
-            "field": "邮寄方式",
+            "поле": "邮寄方式",
             "title": "邮寄方式"
         },
         {
-            "field": "类别",
+            "поле": "类别",
             "title": "类别"
         },
         {
-            "field": "子类别",
+            "поле": "子类别",
             "title": "子类别"
         },
         {
-            "field": "销售额",
+            "поле": "销售额",
             "title": "销售额"
         },
     ],
@@ -52,11 +52,11 @@ const option = {
         },
         // ...
     ],
-    defaultColWidth:160,
-    defaultHeaderColWidth:120,
+    defaultColширина:160,
+    defaultHeaderColширина:120,
     transpose:true
 }
-const tableInstance = new ListTable(option);
+const таблицаInstance = новый списоктаблица(option);
 ```
 
-In the above example, by `transpose` Parameters are set to `true`, the table transpose function is enabled. Please flexibly use table transpose to display and analyze your data according to the actual situation and needs.
+в the above пример, по `transpose` Parameters are set к `true`, the таблица transpose функция is включен. Please flexibly use таблица transpose к display и analyze your данные according к the actual situation и needs.

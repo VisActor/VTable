@@ -1,25 +1,25 @@
-{{ target: common-calendar-custom-event-option }}
+{{ target: common-календарь-пользовательский-событие-option }}
 
-${prefix} contentHeight(number)
+${prefix} contentвысота(число)
 
-Customize the display height of the schedule.
+пользовательскийize the display высота из the schedule.
 
-${prefix} barHeight(number)
+${prefix} barвысота(число)
 
-Customize the bar height of the schedule of bar type.
+пользовательскийize the bar высота из the schedule из bar тип.
 
-${prefix} fontSize(number)
+${prefix} fontSize(число)
 
-Customize the font size of the schedule.
+пользовательскийize the шрифт размер из the schedule.
 
-${prefix} contentPadding(number)
+${prefix} contentPadding(число)
 
-Customize the content padding of the schedule.
+пользовательскийize the content заполнение из the schedule.
 
-${prefix} barCornerRadius(number)
+${prefix} barCornerRadius(число)
 
-Customize the bar corner radius of the schedule of bar type.
+пользовательскийize the bar corner radius из the schedule из bar тип.
 
-${prefix} circleRadius(number)
+${prefix} circleRadius(число)
 
-Customize the circle radius of the schedule of list type.
+пользовательскийize the circle radius из the schedule из список тип.

@@ -1,93 +1,93 @@
 ---
-category: examples
-group: Component
-title: empty tip
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/empty-tip.png
-link: components/empty-tip
-option: ListTable#emptyTip
+категория: примеры
+группа: компонент
+заголовок: empty tip
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/empty-tip.png
+ссылка: компонентs/empty-tip
+опция: списоктаблица#emptyTip
 ---
 
 # Empty Tip
 
-When `emptyTip` is configured, when the table data is empty, an empty data prompt will be displayed. You can configure the prompt text, prompt icon, prompt style, etc.
+When `emptyTip` is configured, when the таблица данные is empty, an empty данные prompt will be displayed. Вы можете configure the prompt текст, prompt иконка, prompt style, etc.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `emptyTip` Configure empty data prompt. For details, please refer to: https://www.visactor.io/vtable/option/ListTable#emptyTip
+- `emptyTip` Configure empty данные prompt. для details, please refer к: https://www.visactor.io/vтаблица/option/списоктаблица#emptyTip
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
 
 const columns = [
   {
-    field: 'Order ID',
-    title: 'Order ID',
-    width: 'auto'
+    поле: 'ID Заказа',
+    заголовок: 'ID Заказа',
+    ширина: 'авто'
   },
   {
-    field: 'Customer ID',
-    title: 'Customer ID',
-    width: 'auto'
+    поле: 'пользовательскийer ID',
+    заголовок: 'пользовательскийer ID',
+    ширина: 'авто'
   },
   {
-    field: 'Product Name',
-    title: 'Product Name',
-    width: '200'
+    поле: 'Product имя',
+    заголовок: 'Product имя',
+    ширина: '200'
   },
   {
-    field: 'Category',
-    title: 'Category',
-    width: 'auto'
+    поле: 'Категория',
+    заголовок: 'Категория',
+    ширина: 'авто'
   },
   {
-    field: 'Sub-Category',
-    title: 'Sub-Category',
-    width: 'auto'
+    поле: 'Sub-Категория',
+    заголовок: 'Sub-Категория',
+    ширина: 'авто'
   },
   {
-    field: 'Region',
-    title: 'Region',
-    width: 'auto'
+    поле: 'Регион',
+    заголовок: 'Регион',
+    ширина: 'авто'
   },
   {
-    field: 'City',
-    title: 'City',
-    width: 'auto'
+    поле: 'Город',
+    заголовок: 'Город',
+    ширина: 'авто'
   },
   {
-    field: 'Order Date',
-    title: 'Order Date',
-    width: 'auto'
+    поле: 'Дата Заказа',
+    заголовок: 'Дата Заказа',
+    ширина: 'авто'
   },
   {
-    field: 'Quantity',
-    title: 'Quantity',
-    width: 'auto'
+    поле: 'Количество',
+    заголовок: 'Количество',
+    ширина: 'авто'
   },
   {
-    field: 'Sales',
-    title: 'Sales',
-    width: 'auto'
+    поле: 'Продажи',
+    заголовок: 'Продажи',
+    ширина: 'авто'
   },
   {
-    field: 'Profit',
-    title: 'Profit',
-    width: 'auto'
+    поле: 'Прибыль',
+    заголовок: 'Прибыль',
+    ширина: 'авто'
   }
 ];
 
 const option = {
   columns,
-  widthMode: 'standard',
-  tooltip: {
-    isShowOverflowTextTooltip: true
+  ширинаMode: 'standard',
+  Подсказка: {
+    isShowOverflowTextПодсказка: true
   },
   emptyTip: {
-    text: 'no data records'
+    текст: 'no данные records'
   }
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

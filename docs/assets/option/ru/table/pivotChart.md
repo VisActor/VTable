@@ -1,95 +1,95 @@
-{{ target: table-pivotChart }}
+{{ target: таблица-сводныйграфик }}
 
-#PivotChart
+#сводныйграфик
 
-Pivot table, configure the corresponding type PivotChartConstructorOptions, the specific configuration items are as follows:
+сводный таблица, configure the corresponding тип сводныйграфикConstructorOptions, the specific configuration items are as follows:
 
 {{ use: common-option-important(
     prefix = '#',
-    tableType = 'pivotChart'
+    таблицаType = 'сводныйграфик'
 ) }}
 
-## records(Array)
+## records(массив)
 
-tabular data.
-The currently supported data formats are, taking the sales of large supermarkets in North America as an example:
+tabular данные.
+The currently supported данные formats are, taking the Продажи из large supermarkets в North America as an пример:
 
 ```
 [
   {
-    "Category": "Technology",
-    "Sales": "650.5600051879883",
-    "City": "Amarillo"
+    "Категория": "Technology",
+    "Продажи": "650.5600051879883",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Technology",
-    "Profit": "94.46999931335449",
-    "City": "Amarillo"
+    "Категория": "Technology",
+    "Прибыль": "94.46999931335449",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Furniture",
-    "Quantity": "14",
-    "City": "Amarillo"
+    "Категория": "Furniture",
+    "Количество": "14",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Furniture",
-    "Sales": "3048.5829124450684",
-    "City": "Amarillo"
+    "Категория": "Furniture",
+    "Продажи": "3048.5829124450684",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Furniture",
-    "Profit": "-507.70899391174316",
-    "City": "Amarillo"
+    "Категория": "Furniture",
+    "Прибыль": "-507.70899391174316",
+    "Город": "Amarillo"
   },
   {
-    "Category": "Office Supplies",
-    "Quantity": "60",
-    "City": "Anaheim"
+    "Категория": "Office Supplies",
+    "Количество": "60",
+    "Город": "Anaheim"
   }
 ]
 ```
 
-## columnTree(Array)
+## columnTree(массив)
 
-List header tree, type:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers to the dimension value node of the dimension non-indicator, and IIndicatorHeaderNode refers to the indicator name node.
+список header tree, тип:`(IDimensionHeaderNode|IIndicatorHeaderNode)[]`. Among them, IDimensionHeaderNode refers к the dimension значение node из the dimension non-indicator, и IIndicatorHeaderNode refers к the indicator имя node.
 
-** The specific configuration items of IDimensionHeaderNode are as follows:**
+** The specific configuration items из IDimensionHeaderNode are as follows:**
 
 ```
-export interface IDimensionHeaderNode {
+export интерфейс IDimensionHeaderNode {
   /**
-   * The unique identifier of the dimension, corresponding to the field name of the dataset
+   * The unique identifier из the dimension, corresponding к the поле имя из the данныеset
    */
-  dimensionKey: string | number;
-  /** dimension member value */
-  value: string;
+  dimensionKey: строка | число;
+  /** dimension member значение */
+  значение: строка;
   /** Subdimension tree structure under dimension members. */
   children?: (IDimensionHeaderNode|IIndicatorHeaderNode)[] ;
-  /** The collapsed state is used with the tree structure display. Note: only valid in rowTree */
+  /** The collapsed state is used с the tree structure display. Note: only valid в rowTree */
   hierarchyState?: HierarchyState;
-  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
-  levelSpan?: number;
+  /** Merge display из this dimension значение across cells, по умолчанию is 1. If the maximum число из header levels is 5, then the последний level will merge as many cells as there are levels лево. */
+  levelSpan?: число;
 }
 ```
 
 ** IIndicatorHeaderNode specific configuration items are as follows:**
 
 ```
-export interface IIndicatorHeaderNode {
+export интерфейс IIndicatorHeaderNode {
   /**
-   * The key value of the indicator corresponds to the field name of the data set
+   * The key значение из the indicator corresponds к the поле имя из the данные set
    */
-  indicatorKey: string | number;
+  indicatorKey: строка | число;
   /**
-   * Indicator names such as: "sales", "for example", correspond to the value displayed in the cell. You can leave it blank, if you don’t fill it in, take the value from the corresponding configuration of the indicators and display it
+   * Indicator имяs such as: "Продажи", "для пример", correspond к the значение displayed в the cell. Вы можете leave it blank, if you don’t fill it в, take the значение от the corresponding configuration из the indicators и display it
    */
-  value?: string;
-  /** Merge display of this dimension value across cells, default is 1. If the maximum number of header levels is 5, then the last level will merge as many cells as there are levels left. */
-  levelSpan?: number;
+  значение?: строка;
+  /** Merge display из this dimension значение across cells, по умолчанию is 1. If the maximum число из header levels is 5, then the последний level will merge as many cells as there are levels лево. */
+  levelSpan?: число;
 }
 ```
 
-##rowTree(Array)
+##rowTree(массив)
 
 Row header tree, same structure as columnTree.
 
@@ -97,59 +97,59 @@ Row header tree, same structure as columnTree.
 
 {{ use: rows-dimension-define( prefix = '#',) }}
 
-## indicators(Array)
+## indicators(массив)
 
-The specific configuration of each indicator in the perspective combination chart, such as style, format, title, etc., is different from the pivot table. The indicator type here only supports the configuration of the chart type.
+The specific configuration из каждый indicator в the perspective combination график, such as style, format, title, etc., is different от the сводный таблица. The indicator тип here only supports the configuration из the график тип.
 
-{{ use: chart-indicator-type(
+{{ use: график-indicator-тип(
     prefix = '#') }}
 
-## indicatorsAsCol(boolean) = true
+## indicatorsAsCol(логический) = true
 
-The indicator is displayed on the column, default is true. If configured to false, it will be displayed in rows and the indicator will be displayed in rows.
+The indicator is displayed на the column, по умолчанию is true. If configured к false, it will be displayed в rows и the indicator will be displayed в rows.
 
-## indicatorTitle(string)
+## indicatorTitle(строка)
 
-indicator header for displaying the value to the corner header
+indicator header для displaying the значение к the corner header
 
-## corner(Object)
+## corner(объект)
 
-The configuration and style customization of the corner table header.
-{{ use: pivot-corner-define( prefix = '###',) }}
+The configuration и style пользовательскийization из the corner таблица header.
+{{ use: сводный-corner-define( prefix = '###',) }}
 
-## hideIndicatorName(boolean) = false
+## hideIndicatorимя(логический) = false
 
-Whether to hide the indicator name
+Whether к скрыть the indicator имя
 
-## showRowHeader(boolean) = true
+## showRowHeader(логический) = true
 
-Whether to display row headers.
+Whether к display row headers.
 
-## showColumnHeader(boolean) = true
+## showColumnHeader(логический) = true
 
-Whether to show column headers.
+Whether к показать column headers.
 
-##rowHeaderTitle(Object)
+##rowHeaderTitle(объект)
 
-Add a line to the top of the row header to display the dimension name, which can be customized or display the combination name of title
+Add a line к the верх из the row header к display the dimension имя, which can be пользовательскийized или display the combination имя из title
 
-{{ use: pivot-header-title( prefix = '###',) }}
+{{ use: сводный-header-title( prefix = '###',) }}
 
-## columnHeaderTitle(Object)
+## columnHeaderTitle(объект)
 
-Add a line to the top of the column header to display the dimension name, which can be customized or display the combination name of title
+Add a line к the верх из the column header к display the dimension имя, which can be пользовательскийized или display the combination имя из title
 
-{{ use: pivot-header-title( prefix = '###',) }}
+{{ use: сводный-header-title( prefix = '###',) }}
 
-## renderChartAsync(boolean)
+## renderграфикAsync(логический)
 
-Whether to enable asynchronous rendering of charts
+Whether к включить asynchronous rendering из графикs
 
-## renderChartAsyncBatchCount(number)
+## renderграфикAsyncBatchCount(число)
 
-Turn on asynchronous rendering of charts. The number of progressively rendered charts in each batch is recommended to be 5-10. The details can be adjusted depending on the overall effect. Default value is 5.
+Turn на asynchronous rendering из графикs. The число из progressively rendered графикs в каждый batch is recommended к be 5-10. The details can be adjusted depending на the overall effect. по умолчанию значение is 5.
 
 {{ use: common-option-secondary(
       prefix = '#',
-      tableType = 'pivotChart'
+      таблицаType = 'сводныйграфик'
   ) }}

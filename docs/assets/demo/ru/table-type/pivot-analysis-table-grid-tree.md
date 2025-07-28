@@ -1,68 +1,68 @@
 ---
-category: examples
-group: table-type
-title: Pivot Table Grid Tree Mode
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-grid-tree.gif
-link: data_analysis/pivot_table_tree
-option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree'%7C'grid-tree')
+категория: примеры
+группа: таблица-тип
+заголовок: сводный таблица Grid Tree Mode
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-таблица-grid-tree.gif
+ссылка: данные_analysis/сводный_таблица_tree
+опция: сводныйтаблица#rowHierarchyType('grid'%20%7C%20'tree'%7C'grid-tree')
 ---
 
-# Pivot Table Grid Tree Mode
+# сводный таблица Grid Tree Mode
 
-Pivot analysis table with grid tree display mode
+сводный analysis таблица с grid tree display mode
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable` Table type
-- `rowHierarchyType` Set the hierarchical display to `grid-tree`, defaults to tiling mode `grid`.
-- `columnHierarchyType` Set the hierarchical display to `grid-tree`, defaults to tiling mode `grid`.
-- `rowExpandLevel` Set default expanded level, defaults to `1`.
-- `columnExpandLevel` Set default expanded level, defaults to `1`.
-- `indicatorsAsCol` Whether to display indicators as column headers, defaults to `true`.
+- `сводныйтаблица` таблица тип
+- `rowHierarchyType` Set the hierarchical display к `grid-tree`, defaults к tiling mode `grid`.
+- `columnHierarchyType` Set the hierarchical display к `grid-tree`, defaults к tiling mode `grid`.
+- `rowExpandLevel` Set по умолчанию expanded level, defaults к `1`.
+- `columnExpandLevel` Set по умолчанию expanded level, defaults к `1`.
+- `indicatorsAsCol` Whether к display indicators as column headers, defaults к `true`.
 - `columns` Column dimension configuration
 - `rows` Row dimension configuration
 - `indicators` Indicator configuration
-- `dataConfig` Configure data rules, optional configuration items
+- `данныеConfig` Configure данные rules, необязательный configuration items
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 const option = {
-    rows: ['Order Year','Region', 'Segment','Ship Mode'],
-    columns: ['Category', 'Sub-Category'],
-    indicators: ['Sales', 'Profit'],
-    enableDataAnalysis: true,
-    indicatorTitle: 'Indicators',
+    rows: ['Order Year','Регион', 'Segment','Ship Mode'],
+    columns: ['Категория', 'Sub-Категория'],
+    indicators: ['Продажи', 'Прибыль'],
+    enableданныеAnalysis: true,
+    indicatorзаголовок: 'Indicators',
     //indicatorsAsCol: false,
     rowHierarchyType:'grid-tree',
     columnHierarchyType:'grid-tree',
     corner: { titleOnDimension: 'column' },
-    dataConfig: {
+    данныеConfig: {
       totals: {
         row: {
           showGrandTotals: true,
           showSubTotals: true,
-          subTotalsDimensions: ['Order Year','Region', 'Segment'],
+          subTotalsDimensions: ['Order Year','Регион', 'Segment'],
           grandTotalLabel: 'Total',
           subTotalLabel: 'SubTotal'
         },
         column: {
           showGrandTotals: true,
           showSubTotals: true,
-          subTotalsDimensions: ['Category'],
+          subTotalsDimensions: ['Категория'],
           grandTotalLabel: 'Total',
           subTotalLabel: 'SubTotal'
         }
       }
     },
-    records:data,
-    widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
+    records:данные,
+    ширинаMode: 'автоширина' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

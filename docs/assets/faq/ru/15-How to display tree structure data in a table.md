@@ -1,22 +1,22 @@
-# How to display tree structure data in a table?
+# How к display tree structure данные в a таблица?
 
 ## Question Description
 
-How can we implement the display of hierarchical data in a table component on a frontend web page, as shown in the diagram?
-![image](/vtable/faq/15-0.png)
+How can we implement the display из hierarchical данные в a таблица компонент на a frontend web pвозраст, as shown в the diagram?
+![imвозраст](/vтаблица/Часто Задаваемые Вопросы/15-0.png)
 
 ## Solution
 
-VTable's two table forms, the basic table ListTable and the pivot table PivotTable, can achieve this kind of tree display, and the usage is quite simple.
-Let me give you an example of a basic table displayed as a tree structure. There are two main configurations:
-(1) You need to configure the tree bit true on the column.
-(2) It needs to be data with children hierarchical structure
-You can refer to the two examples on the official website:
+Vтаблица's two таблица forms, the базовый таблица списоктаблица и the сводный таблица сводныйтаблица, can achieve this kind из tree display, и the usвозраст is quite simple.
+Let me give you an пример из a базовый таблица displayed as a tree structure. There are two main configurations:
+(1) You need к configure the tree bit true на the column.
+(2) It needs к be данные с children hierarchical structure
+Вы можете refer к the two примеры на the official website:
 
-1. Basic table tree: https://visactor.io/vtable/demo/table-type/list-table-tree
-2. Pivot table tree: https://visactor.io/vtable/demo/table-type/pivot-table-tree
+1. базовый таблица tree: https://visactor.io/vтаблица/демонстрация/таблица-тип/список-таблица-tree
+2. сводный таблица tree: https://visactor.io/vтаблица/демонстрация/таблица-тип/сводный-таблица-tree
 
-## Code Example
+## код пример
 
 ```javascript
 const option = {
@@ -29,18 +29,18 @@ const option = {
         "group": "Recruiting Group",
         "children": [
           {
-            "name": "John Smith",
-            "position": "Recruiting Manager",
+            "имя": "John Smith",
+            "позиция": "Recruiting Manвозрастr",
             "salary": "$8000"
           },
           {
-            "name": "Emily Johnson",
-            "position": "Recruiting Supervisor",
+            "имя": "Emily Johnson",
+            "позиция": "Recruiting Supervisor",
             "salary": "$6000"
           },
           {
-            "name": "Michael Davis",
-            "position": "Recruiting Specialist",
+            "имя": "Michael Davis",
+            "позиция": "Recruiting Speciaсписок",
             "salary": "$4000"
           }
         ],
@@ -49,9 +49,9 @@ const option = {
   ],
   columns: [
     {
-        "field": "group",
+        "поле": "group",
         "title": "department",
-        "width": "auto",
+        "ширина": "авто",
          tree: true,
       },
       ...
@@ -61,12 +61,12 @@ const option = {
 
 ## Results
 
-[Online demo](https://visactor.io/vtable/demo/table-type/list-table-tree)
+[Online демонстрация](https://visactor.io/vтаблица/демонстрация/таблица-тип/список-таблица-tree)
 
-![result](/vtable/faq/15-1.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/15-1.png)
 
 ## Quote
 
-- [Tree table Tutorial](https://visactor.io/vtable/guide/table_type/List_table/tree_list)
-- [Related api](https://visactor.io/vtable/option/ListTable-columns-text#tree)
-- [github](https://github.com/VisActor/VTable)
+- [Tree таблица Tutorial](https://visactor.io/vтаблица/guide/таблица_type/список_таблица/tree_список)
+- [Related апи](https://visactor.io/vтаблица/option/списоктаблица-columns-текст#tree)
+- [github](https://github.com/VisActor/Vтаблица)

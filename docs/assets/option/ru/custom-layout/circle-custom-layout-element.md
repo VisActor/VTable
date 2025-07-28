@@ -1,27 +1,27 @@
-{{ target: circle-custom-layout-element }}
+{{ target: circle-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} radius (number)
+${prefix} radius (число)
 
-**Required**
+**обязательный**
 
 Circle radius.
 
-${prefix} radian (number)
+${prefix} radian (число)
 
 Arc radian.
 
-${prefix} lineWidth (number)
+${prefix} lineширина (число)
 
-Border width.
+граница ширина.
 
-${prefix} fill (string)
+${prefix} fill (строка)
 
-Fill color.
+Fill цвет.
 
-${prefix} stroke (string)
+${prefix} strхорошоe (строка)
 
-Stroke color.
+Strхорошоe цвет.

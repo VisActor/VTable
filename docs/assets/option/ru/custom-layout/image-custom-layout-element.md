@@ -1,25 +1,25 @@
-{{ target: image-custom-layout-element }}
+{{ target: imвозраст-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number)
+${prefix} ширина (число)
 
-**Required**
+**обязательный**
 
-The width of the image.
+The ширина из the imвозраст.
 
-${prefix} height (number)
+${prefix} высота (число)
 
-**Required**
+**обязательный**
 
-The height of the image.
+The высота из the imвозраст.
 
-${prefix} src (string)
+${prefix} src (строка)
 
-The URL of the image.
+The URL из the imвозраст.
 
 ${prefix} shape ('circle' | 'square')
 
-The shape of the image, which can be 'circle' (round) or 'square' (square), with the default being 'square'.
+The shape из the imвозраст, which can be 'circle' (round) или 'square' (square), с the по умолчанию being 'square'.

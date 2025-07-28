@@ -1,57 +1,57 @@
-{{ target: icon-custom-element }}
+{{ target: иконка-пользовательский-element }}
 
-${prefix} type (string) ='icon'
+${prefix} тип (строка) ='иконка'
 
-**Required**
+**обязательный**
 
-Element type, which is an icon in this case.
+Element тип, which is an иконка в this case.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} svg (string | ((value: string) => string))
+${prefix} svg (строка | ((значение: строка) => строка))
 
-**Required**
+**обязательный**
 
-The SVG string of the icon, it can be a string or a function returning a string.
+The SVG строка из the иконка, it can be a строка или a функция returning a строка.
 
-${prefix} width (number | string | ((value: string) => number | string))
+${prefix} ширина (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-Icon width, it can be a number, a string or a function returning a number or a string.
+иконка ширина, it can be a число, a строка или a функция returning a число или a строка.
 
-${prefix} height (number | string | ((value: string) => number | string))
+${prefix} высота (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-Icon height, it can be a number, a string or a function returning a number or a string.
+иконка высота, it can be a число, a строка или a функция returning a число или a строка.
 
-${prefix} hover (Object)
+${prefix} навести (объект)
 
 Effects when the mouse hovers over it.
 
-#${prefix} x (number | string)
+#${prefix} x (число | строка)
 
-The x coordinate of the hover effect.
+The x coordinate из the навести effect.
 
-#${prefix} y (number | string)
+#${prefix} y (число | строка)
 
-The y coordinate of the hover effect.
+The y coordinate из the навести effect.
 
-#${prefix} width (number | string | ((value: string) => number | string))
+#${prefix} ширина (число | строка | ((значение: строка) => число | строка))
 
-The width of the hover effect, it can be a number, a string or a function returning a number or a string.
+The ширина из the навести effect, it can be a число, a строка или a функция returning a число или a строка.
 
-#${prefix} height (number | string | ((value: string) => number | string))
+#${prefix} высота (число | строка | ((значение: строка) => число | строка))
 
-The height of the hover effect, it can be a number, a string or a function returning a number or a string.
+The высота из the навести effect, it can be a число, a строка или a функция returning a число или a строка.
 
-#${prefix} bgColor (string)
+#${prefix} bgColor (строка)
 
-Background color of the mouse hover effect.
+фон цвет из the mouse навести effect.
 
-#${prefix} radius (number)
+#${prefix} radius (число)
 
-Border radius of the mouse hover effect.
+граница radius из the mouse навести effect.

@@ -1,22 +1,22 @@
-{{ target: common-gantt-task-bar-style }}
+{{ target: common-гантт-task-bar-style }}
 
-The definition of ITaskBarStyle is:
+The definition из ITaskBarStyle is:
 
 ```
-export interface ITaskBarStyle {
-  /** The color of the task bar */
-  barColor?: string;
-  /** The color of the completed part of the task bar */
-  completedBarColor?: string;
-  /** The width of the task bar */
-  width?: number;
-  /** The corner radius of the task bar */
-  cornerRadius?: number;
-  /** The border width of the task bar */
-  borderLineWidth?: number;
-  /** The border color of the task bar */
-  borderColor?: string;
-  / ** The minimum size of the task bar, when the width of the task bar is calculated to be too small, it can ensure that the task bar can be displayed normally */
-  minSize?: number;
+export интерфейс ITaskBarStyle {
+  /** The цвет из the task bar */
+  barColor?: строка;
+  /** The цвет из the completed part из the task bar */
+  completedBarColor?: строка;
+  /** The ширина из the task bar */
+  ширина?: число;
+  /** The corner radius из the task bar */
+  cornerRadius?: число;
+  /** The граница ширина из the task bar */
+  borderLineширина?: число;
+  /** The граница цвет из the task bar */
+  borderColor?: строка;
+  / ** The minimum размер из the task bar, when the ширина из the task bar is calculated к be too small, it can ensure that the task bar can be displayed normally */
+  minSize?: число;
 }
 ```

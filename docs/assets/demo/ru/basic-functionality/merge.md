@@ -3,7 +3,7 @@ category: examples
 group: Основные функции
 title: Объединение ячеек
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png
-option: ListTable-columns-text#mergeCell
+option: ListTable-columns-текст#mergeCell
 ---
 
 # Объединение ячеек
@@ -16,7 +16,7 @@ option: ListTable-columns-text#mergeCell
 
 ## Демонстрация кода
 
-```javascript livedemo template=vtable
+```javascript livedemo template=VTable
 
 let  tableInstance;
   fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
@@ -27,36 +27,36 @@ const columns =[
   {
         "field": "Category",
         "title": "Category",
-        "width": "auto",
+        "ширина": "auto",
         sort:true,
         "mergeCell": true,
         style:{
           "textStick":true,
-          textAlign:'right'
-          // textBaseline:"bottom"
+          textAlign:'право'
+          // textBaseline:"низ"
         }
     },
     {
         "field": "Sub-Category",
         "title": "Sub-Category",
-        "width": "auto",
+        "ширина": "auto",
         sort:true,
         "mergeCell": true,
     },
     {
         "field": "Order ID",
         "title": "Order ID",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "Customer ID",
         "title": "Customer ID",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "Product Name",
         "title": "Product Name",
-        "width": "auto",
+        "ширина": "auto",
         headerStyle:{
           "textStick":true,
         }
@@ -64,32 +64,32 @@ const columns =[
     {
         "field": "Region",
         "title": "Region",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "City",
         "title": "City",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "Order Date",
         "title": "Order Date",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "Quantity",
         "title": "Quantity",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "Sales",
         "title": "Sales",
-        "width": "auto"
+        "ширина": "auto"
     },
     {
         "field": "Profit",
         "title": "Profit",
-        "width": "auto"
+        "ширина": "auto"
     }
 ];
 
@@ -97,7 +97,7 @@ const option = {
   records:data,
   columns,
   widthMode:'standard',
-  hover:{
+  навести:{
     highlightMode:'row'
   },
   sortState:{
@@ -105,7 +105,7 @@ const option = {
     order:'asc'
   }
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+tableInstance = новый VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window['tableInstance'] = tableInstance;
     })
 ```

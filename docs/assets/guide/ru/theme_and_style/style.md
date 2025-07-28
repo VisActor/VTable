@@ -1,167 +1,167 @@
 # Style Style Introduction
 
-The table style configuration provides flexibility and customization, enabling users to design and beautify the table presentation according to the business data type of each column. If you need to consider the style from the table as a whole, you can use it[Theme](../../guide/theme_and_style/theme).
+The таблица style configuration provides flexibility и пользовательскийization, enabling users к design и beautify the таблица presentation according к the business данные тип из каждый column. If you need к consider the style от the таблица as a whole, Вы можете use it[тема](../../guide/тема_and_style/тема).
 
-This document describes how to use style and headerStyle to configure table styles to help users better understand and use these features.
+This document describes how к use style и headerStyle к configure таблица styles к help users better understand и use these возможности.
 
 ## A brief introduction
 
-The style refinement configuration of cells in VTable, including cell styles, header cell styles, etc. The configuration of styles is listed as a group of separate configurations (if it is a transposed table, it is used to behave as a group of configuration styles).
+The style refinement configuration из cells в Vтаблица, including cell styles, header cell styles, etc. The configuration из styles is списокed as a group из separate configurations (if it is a transposed таблица, it is used к behave as a group из configuration styles).
 
 ## Header cell style configuration
 
-Configure headerStyle in each item of columns. If it is in the pivot table, it corresponds to columns and rows. Example code:
+Configure headerStyle в каждый item из columns. If it is в the сводный таблица, it corresponds к columns и rows. пример код:
 
-     import * as vTable from '@visactor/vtable';
+     import * as vтаблица от '@visactor/vтаблица';
 
-     const option: vTable.ListTableConstructorOptions = {
+     const опция: vтаблица.списоктаблицаConstructorOptions = {
      columns: [
       {
-        field: 'id',
-        title: 'ID',
+        поле: 'id',
+        заголовок: 'ID',
         headerStyle: {
           bgColor: 'red',
-          autoWrapText: true,
-          lineHeight: 20,
-          lineClamp: 'auto',
-          textBaseline: "top",
-          color:"yellow"
+          автоWrapText: true,
+          lineвысота: 20,
+          lineClamp: 'авто',
+          textBaseline: "верх",
+          цвет:"yellow"
         },
       }
       ...
     ];
 
-    const tableInstance = new VTable.ListTable(option);
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0b.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0b.png)
 
 ## Body cell style configuration
 
-Configure style in each item of columns. If it is in the pivot table, it corresponds to columns and rows. Example code:
+Configure style в каждый item из columns. If it is в the сводный таблица, it corresponds к columns и rows. пример код:
 
-     import * as vTable from '@visactor/vtable';
+     import * as vтаблица от '@visactor/vтаблица';
 
-     const option: vTable.ListTableConstructorOptions = {
+     const опция: vтаблица.списоктаблицаConstructorOptions = {
      columns: [
       {
-        field: 'id',
-        title: 'ID',
+        поле: 'id',
+        заголовок: 'ID',
         style: {
           bgColor: 'green',
-          autoWrapText: true,
-          lineHeight: 20,
-          lineClamp: 'auto',
-          textBaseline: "top",
-          color:"yellow"
+          автоWrapText: true,
+          lineвысота: 20,
+          lineClamp: 'авто',
+          textBaseline: "верх",
+          цвет:"yellow"
         },
       }
       ...
     ];
 
-    const tableInstance = new VTable.ListTable(option);
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270908.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270908.png)
 
-Style provides a series of cell configurations, briefly described below.
+Style provides a series из cell configurations, briefly described below.
 
 ## Specific introduction
 
-### Cell background color
+### Cell фон цвет
 
-`bgColor`: Defines the background color of the cell. Use string or function parameters to set the color.
+`bgColor`: Defines the фон цвет из the cell. Use строка или функция parameters к set the цвет.
 
-### Text style
+### текст style
 
-- `textAlign`: Defines the horizontal alignment of text in cells
-- `textBaseline`: Defines the vertical alignment of text in cells
-- `color`: Defines the text color of the cell
-- `fontSize`: define cell text size
-- `fontFamily`: Defines the text font of the cell
-- `fontWeight`: Defines the text font weight of the unit
-- `fontVariant`: Defines the text weight of the cell
-- 'FontStyle: Defines the text font style of the cell
+- `textAlign`: Defines the horizontal alignment из текст в cells
+- `textBaseline`: Defines the vertical alignment из текст в cells
+- `цвет`: Defines the текст цвет из the cell
+- `fontSize`: define cell текст размер
+- `fontFamily`: Defines the текст шрифт из the cell
+- `fontWeight`: Defines the текст шрифт weight из the unit
+- `fontVariant`: Defines the текст weight из the cell
+- 'FontStyle: Defines the текст шрифт style из the cell
 
-These settings make it easy to adjust the rendering of text in cells.
+These settings make it easy к adjust the rendering из текст в cells.
 
-### border
+### граница
 
-Contains the following configuration items:
+Contains Следующий configuration items:
 
-- `borderColor`Set the color of the border for the cell
-- `borderLineWidth`: cell sets the width of the border
-- `borderLineDash`: Set the line dashed style of the border for the cell
+- `borderColor`Set the цвет из the граница для the cell
+- `borderLineширина`: cell sets the ширина из the граница
+- `borderLineDash`: Set the line dashed style из the граница для the cell
 
-### Line height, line feed settings
+### Line высота, line feed settings
 
-- `lineHeight`: set text height for cell content
-- `textOverflow`: Sets the ellipsed form of the text. This configuration has no effect if autoWrapText sets line wrapping
+- `lineвысота`: set текст высота для cell content
+- `textOverflow`: Sets the ellipsed form из the текст. This configuration has no effect if автоWrapText sets line wrapping
 
 ### Underscore, underline settings
 
-- `underline`: set underscores for single cells
-- `underlineDash`: Dashed style of underline.
-- `underlineOffset`: The distance between underline and text.
-- `lineThrough`: underline cell text
+- `underline`: set underscores для single cells
+- `underlineDash`: Dashed style из underline.
+- `underlineOffset`: The distance between underline и текст.
+- `lineThrough`: underline cell текст
 
-### Link text color
+### Link текст цвет
 
-`linkColor`: Set the text color of the link type.
+`linkColor`: Set the текст цвет из the link тип.
 
-### Mouse hover style
+### Mouse навести style
 
-`cursor`: mouse hover to cell mouse style
+`cursor`: mouse навести к cell mouse style
 
-### Text adsorption effect
+### текст adsorption effect
 
-`textStick`: Set whether the text of the cell has an adsorption fruit \[Dynamically adjust the position of the cell content when scrolling].Can be set to true to enable, or set to 'horizontal' or 'vertical' to specify in which direction to snap only.
-`textStickBaseOnAlign`: When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position) )
+`textStick`: Set whether the текст из the cell has an adsorption fruit \[Dynamically adjust the позиция из the cell content when scrolling].Can be set к true к включить, или set к 'horizontal' или 'vertical' к specify в which direction к snap only.
+`textStickBaseOnAlign`: When the cell текст has an adsorption effect [the текст can dynamically adjust its позиция when scrolling], the basis для adsorption is the horizontal alignment из the cell. для пример, when `textStickBaseOnAlign` is `true` и `textAlign` is `'центр'`, the текст will be adsorbed к the horizontal центр из the cell; otherwise, it will be adsorbed к the лево или право edge из the cell (depending на the прокрутка позиция) )
 
 ### Cell Tag
 
 `marked`: Set whether the cell has a record style
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/cell-marked.jpeg)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/cell-marked.jpeg)
 
 ### line wrapping
 
-`autoWrapText`: Set cell wrapping
+`автоWrapText`: Set cell wrapping
 
-### Maximum number of rows setting
+### Maximum число из rows setting
 
-- `lineClamp`: Set the maximum number of rows of the unit, you can set number or'auto ', set it to'auto', it will be automatically calculated
+- `lineClamp`: Set the maximum число из rows из the unit, Вы можете set число или'авто ', set it к'авто', it will be автоmatically calculated
 
-### Cell padding
+### Cell заполнение
 
-- `padding`: defines the padding of the cell
+- `заполнение`: defines the заполнение из the cell
 
-The width and height of a cell consists of two parts: padding and content.
+The ширина и высота из a cell consists из two parts: заполнение и content.
 
-Through the above introduction, you have mastered the use of style in VTable, and then you can create a table with a personalized style according to your needs.
+Through the above introduction, you have mastered the use из style в Vтаблица, и then Вы можете create a таблица с a personalized style according к your needs.
 
-## Custom style
+## пользовательский style
 
-If you need different styles for different cells, you can use the style function:
+If you need different styles для different cells, Вы можете use the style функция:
 
 ```
 style: (args)=>{
-  if(args.value>10)
-    return {color: 'red'};
-  return {color: 'green'};
+  if(args.значение>10)
+    возврат {цвет: 'red'};
+  возврат {цвет: 'green'};
 }
 
 ```
 
-Or set a style in style to a function
+или set a style в style к a функция
 
 ```
 style: {
-  color(args){
-    if(args.value>10)
-      return 'red';
-    return 'green';
+  цвет(args){
+    if(args.значение>10)
+      возврат 'red';
+    возврат 'green';
   }
 }
 
 ```
 
-Or use style registration to change the style through interface calls. For details, please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_style
+или use style registration к change the style through интерфейс calls. для details, please refer к the tutorial: https://visactor.io/vтаблица/guide/пользовательский_define/пользовательский_style

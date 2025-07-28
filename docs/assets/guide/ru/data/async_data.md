@@ -1,34 +1,34 @@
-# Lazy load data asynchronously
-In order to reduce the pressure on the backend to request data, it is recommended to use asynchronous lazy loading of data.
+# Lazy load данные asynchronously
+в order к reduce the pressure на the backend к request данные, it is recommended к use asynchronous lazy загрузка из данные.
 
-## Basic usage
-You need to customize a VTable.data.CachedDataSource data source instance. Set the get method in the instance parameters. This method accepts an index parameter, returns a Promise, and returns data when resolving.
+## базовый usвозраст
+You need к пользовательскийize a Vтаблица.данные.CachedданныеSource данные source instance. Set the get method в the instance parameters. This method accepts an index параметр, returns a Promise, и returns данные when resolving.
 ```
-const loadedData = {}; // Cache requested batch data
-const dataSource = new VTable.data.CachedDataSource({
+const loadedданные = {}; // Cache requested batch данные
+const данныеSource = новый Vтаблица.данные.CachedданныеSource({
     get(index) {
-      //Request 100 pieces of data in each batch 0-99 100-199 200-299
+      //Request 100 pieces из данные в каждый batch 0-99 100-199 200-299
       const loadStartIndex = Math.floor(index / 100) * 100;
       // Determine whether it has been requested?
-      if (!loadedData[loadStartIndex]) {
-        const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
-        loadedData[loadStartIndex] = promiseObject;
+      if (!loadedданные[loadStartIndex]) {
+        const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // возврат Promise объект
+        loadedданные[loadStartIndex] = promiseObject;
       }
-      return loadedData[loadStartIndex].then((data) => {
-        return data[index - loadStartIndex]; //Get the data corresponding to index in the batch data list
+      возврат loadedданные[loadStartIndex].then((данные) => {
+        возврат данные[index - loadStartIndex]; //Get the данные corresponding к index в the batch данные список
       });
     },
-    length: 10000 //all records count
+    length: 10000 //все records count
   });
 ```
 ## Limitations
-- If you use VTable internal sorting, you need to obtain all the data before sorting, so this asynchronous is equivalent to invalidation. It is recommended that the backend implement sorting logic and the frontend only displays the sorting icon.
+- If you use Vтаблица internal сортировкаing, you need к obtain все the данные before сортировкаing, so this asynchronous is equivalent к invalidation. It is recommended that the backend implement сортировкаing logic и the frontend only displays the сортировкаing иконка.
 
-- If automatic column width widthMode:'autoWidth' is turned on or width:'auto' is set in columns, VTable also needs to obtain the value of each cell in the column to obtain the maximum content width, so it will also cause asynchronous failure.
+- If автоmatic column ширина ширинаMode:'автоширина' is turned на или ширина:'авто' is set в columns, Vтаблица also needs к obtain the значение из каждый cell в the column к obtain the maximum content ширина, so it will also cause asynchronous failure.
 
-- Currently, if you double-click the column interval line, there is a logic to calculate the column width, which will cause all data to be requested, you can configure resize.disableDblclickAutoResizeColWidth to true.
+- Currently, if you double-Нажать the column interval line, there is a logic к calculate the column ширина, which will cause все данные к be requested, Вы можете configure изменение размера.disableDblНажатьавтоResizeColширина к true.
 
-- If you right-click on the header, the entire column will be selected, and the right-click event will organize all selected cells information, which will also cause all data to be requested, so you need to configure eventOptions.contextmenuReturnAllSelectedCells to false.
+- If you право-Нажать на the header, the entire column will be selected, и the право-Нажать событие will organize все selected cells information, which will also cause все данные к be requested, so you need к configure событиеOptions.contextменюReturnAllSelectedCells к false.
 
-## demo
-Please refer to [demo](../../demo/performance/async-data)
+## демонстрация
+Please refer к [демонстрация](../../демонстрация/Производительность/async-данные)

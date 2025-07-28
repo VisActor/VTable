@@ -1,144 +1,144 @@
 ---
-category: examples
-group: gantt
-title: Gantt Dependency Link Line
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line.gif
-link: gantt/introduction
-option: Gantt#taskBar
+категория: примеры
+группа: гантт
+заголовок: гантт Dependency Link Line
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-dependency-link-line.gif
+ссылка: гантт/introduction
+опция: гантт#taskBar
 ---
 
-# Gantt Dependency Link Line
+# гантт Dependency Link Line
 
-Gantt chart dependency lines are lines used in the Gantt chart to represent the dependency relationships between tasks. They can help users better understand the relationships between tasks and help users sort and schedule tasks.
+гантт график dependency lines are lines used в the гантт график к represent the dependency relationships between tasks. They can help users better understand the relationships between tasks и help users сортировка и schedule tasks.
 
 ## Key Configuration
 
-- `Gantt`
-- `Gantt#dependency.links` configures the data of the dependencies between task bars
-- `Gantt#dependency.linkLineStyle` configures the style of the dependency line
-- `Gantt#dependency.linkLineSelectedStyle` configures the style of the dependency line when it is selected
+- `гантт`
+- `гантт#dependency.links` configures the данные из the dependencies between task bars
+- `гантт#dependency.linkLineStyle` configures the style из the dependency line
+- `гантт#dependency.linkLineSelectedStyle` configures the style из the dependency line when it is selected
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// import * as VTableGantt from '@visactor/vtable-gantt';
-let ganttInstance;
+```javascript liveдемонстрация template=vтаблица
+// import * as Vтаблицагантт от '@visactor/vтаблица-гантт';
+let ганттInstance;
 const records = [
   {
     id: 1,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-15',
-    end: '2024-07-16',
+    начало: '2024-07-15',
+    конец: '2024-07-16',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 2,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-16',
-    end: '2024-07-17',
+    начало: '2024-07-16',
+    конец: '2024-07-17',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 3,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-18',
-    end: '2024-07-19',
+    начало: '2024-07-18',
+    конец: '2024-07-19',
     progress: 90,
     priority: 'P0'
   },
   {
     id: 4,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024/07/17',
-    end: '2024/07/18',
+    начало: '2024/07/17',
+    конец: '2024/07/18',
     progress: 100,
     priority: 'P1'
   },
   {
     id: 5,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '07/19/2024',
-    end: '07/20/2024',
+    начало: '07/19/2024',
+    конец: '07/20/2024',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 6,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    начало: '2024-07-24',
+    конец: '2024-08-04',
     progress: 100,
     priority: 'P1'
   },
   {
     id: 7,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    начало: '2024-07-24',
+    конец: '2024-08-04',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 8,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024.07.06',
-    end: '2024.07.08',
+    начало: '2024.07.06',
+    конец: '2024.07.08',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 9,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024/07/09',
-    end: '2024/07/11',
+    начало: '2024/07/09',
+    конец: '2024/07/11',
     progress: 100,
     priority: 'P1'
   },
   {
     id: 10,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '07.24.2024',
-    end: '08.04.2024',
+    начало: '07.24.2024',
+    конец: '08.04.2024',
     progress: 31,
     priority: 'P0'
   },
 
   {
     id: 11,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-08-04',
+    начало: '2024-07-24',
+    конец: '2024-08-04',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 12,
-    title: 'Scope',
+    заголовок: 'Scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-06',
-    end: '2024-07-08',
+    начало: '2024-07-06',
+    конец: '2024-07-08',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 13,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-09',
-    end: '2024-07-11',
+    начало: '2024-07-09',
+    конец: '2024-07-11',
     progress: 100,
     priority: 'P1'
   }
@@ -146,124 +146,124 @@ const records = [
 
 const columns = [
   {
-    field: 'title',
-    title: 'title',
-    width: 'auto',
+    поле: 'title',
+    заголовок: 'title',
+    ширина: 'авто',
     tree: true
   },
   {
-    field: 'start',
-    title: 'start',
-    width: 'auto',
-    editor: 'date-input'
+    поле: 'начало',
+    заголовок: 'начало',
+    ширина: 'авто',
+    editor: 'date-ввод'
   },
   {
-    field: 'end',
-    title: 'end',
-    width: 'auto',
-    editor: 'date-input'
+    поле: 'конец',
+    заголовок: 'конец',
+    ширина: 'авто',
+    editor: 'date-ввод'
   },
   {
-    field: 'priority',
-    title: 'priority',
-    width: 'auto',
-    editor: 'input'
+    поле: 'priority',
+    заголовок: 'priority',
+    ширина: 'авто',
+    editor: 'ввод'
   },
   {
-    field: 'progress',
-    title: 'progress',
-    width: 'auto',
+    поле: 'progress',
+    заголовок: 'progress',
+    ширина: 'авто',
     headerStyle: {
       borderColor: '#e1e4e8'
     },
     style: {
       borderColor: '#e1e4e8',
-      color: 'green'
+      цвет: 'green'
     },
-    editor: 'input'
+    editor: 'ввод'
   }
 ];
 const option = {
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns: columns,
-    tableWidth: 400,
-    minTableWidth: 100,
-    maxTableWidth: 600
+    таблицаширина: 400,
+    minтаблицаширина: 100,
+    maxтаблицаширина: 600
   },
   dependency: {
     links: [
       {
-        type: VTableGantt.TYPES.DependencyType.FinishToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.FinishToStart,
         linkedFromTaskKey: 1,
         linkedToTaskKey: 2
       },
       {
-        type: VTableGantt.TYPES.DependencyType.StartToFinish,
+        тип: Vтаблицагантт.TYPES.DependencyType.StartToFinish,
         linkedFromTaskKey: 2,
         linkedToTaskKey: 3
       },
       {
-        type: VTableGantt.TYPES.DependencyType.StartToStart,
+        тип: Vтаблицагантт.TYPES.DependencyType.StartToStart,
         linkedFromTaskKey: 3,
         linkedToTaskKey: 4
       },
       {
-        type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+        тип: Vтаблицагантт.TYPES.DependencyType.FinishToFinish,
         linkedFromTaskKey: 4,
         linkedToTaskKey: 5
       }
     ],
-    // linkSelectable: false,
+    // linkSelecтаблица: false,
     linkSelectedLineStyle: {
       shadowBlur: 5, //阴影宽度
       shadowColor: 'red',
       lineColor: 'red',
-      lineWidth: 1
+      lineширина: 1
     }
   },
   frame: {
     verticalSplitLineMoveable: true,
     outerFrameStyle: {
-      borderLineWidth: 2,
+      borderLineширина: 2,
       borderColor: 'red',
       cornerRadius: 8
     },
     verticalSplitLine: {
-      lineWidth: 3,
+      lineширина: 3,
       lineColor: '#e1e4e8'
     },
     verticalSplitLineHighlight: {
       lineColor: 'green',
-      lineWidth: 3
+      lineширина: 3
     }
   },
   grid: {
     // backgroundColor: 'gray',
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 60,
-  rowHeight: 40,
+  headerRowвысота: 60,
+  rowвысота: 40,
 
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
     labelText: '{title} {progress}%',
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 16,
-      textAlign: 'left'
+      textAlign: 'лево'
     },
     barStyle: {
-      width: 20,
+      ширина: 20,
       /** 任务条的颜色 */
       barColor: '#ee8800',
       /** 已完成部分任务条的颜色 */
@@ -277,44 +277,44 @@ const option = {
       shadowOffsetY: 0, //Y方向偏移
       shadowColor: 'black', //阴影颜色
       borderColor: 'red', //边框颜色
-      borderLineWidth: 1 //边框宽度
+      borderLineширина: 1 //边框宽度
     }
   },
   timelineHeader: {
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     backgroundColor: '#EEF1F5',
-    colWidth: 60,
+    colширина: 60,
     scales: [
       {
         unit: 'week',
         step: 1,
         startOfWeek: 'sunday',
         format(date) {
-          return `Week ${date.dateIndex}`;
+          возврат `Week ${date.dateIndex}`;
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'red'
+          цвет: 'red'
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'red'
+          цвет: 'red'
         }
       }
     ]
@@ -323,22 +323,22 @@ const option = {
   maxDate: '2024-10-15',
 
   rowSeriesNumber: {
-    title: '行号',
-    dragOrder: true,
+    заголовок: '行号',
+    dragпорядок: true,
     headerStyle: {
       bgColor: '#EEF1F5',
       borderColor: '#e1e4e8'
     },
     style: {
-      color: '#000',
+      цвет: '#000',
       fontSize: 14
     }
   },
   scrollStyle: {
-    visible: 'scrolling'
+    видимый: 'scrolling'
   },
-  overscrollBehavior: 'none'
+  overscrollBehavior: 'никто'
 };
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 ```

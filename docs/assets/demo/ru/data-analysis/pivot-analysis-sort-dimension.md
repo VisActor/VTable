@@ -1,122 +1,122 @@
 ---
-category: examples
-group: data-analysis
-title: Sort Dimension
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-sort-dimension.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.sortRules
+категория: примеры
+группа: данные-analysis
+заголовок: сортировка Dimension
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-сортировка-dimension.png
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.сортировкаRules
 ---
 
-# Sort dimension values of pivot analysis table
+# сортировка dimension values из сводный analysis таблица
 
-The pivot table is sorted according to the dimension value of a certain dimension. SortRules can be configured in dataConfig. Multiple sorting rules can be configured. The one configured first has a higher priority. In this example, the rows dimension 'Sub-Category' is configured with sort: true, which will display a sort icon in the header cell that displays the dimension name. Click the icon to sort by dimension value.
+The сводный таблица is сортировкаed according к the dimension значение из a certain dimension. сортировкаRules can be configured в данныеConfig. Multiple сортировкаing rules can be configured. The one configured первый has a higher priority. в this пример, the rows dimension 'Sub-Категория' is configured с сортировка: true, which will display a сортировка иконка в the header cell that displays the dimension имя. Нажать the иконка к сортировка по dimension значение.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules, optional configuration items
+- `данныеConfig` configures данные rules, необязательный configuration items
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
-          sort: true,
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
+          сортировка: true,
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
@@ -127,21 +127,21 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           },
           {
-            sortField: 'Segment',
-            sortBy: ['Home Office', 'Consumer', 'Corporate']
+            сортировкаполе: 'Segment',
+            сортировкаBy: ['Home Office', 'Consumer', 'Corporate']
           }
         ]
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

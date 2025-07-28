@@ -1,97 +1,97 @@
-# Table scrolling
+# таблица scrolling
 
-In the process of data analytics, a large amount of data is usually displayed in the table. In order to display more data content at the same time and provide a better data query body, the scrolling function is particularly important. By scrolling, users can quickly find the desired content in the table and perform subsequent analysis and processing.
+в the process из данные analytics, a large amount из данные is usually displayed в the таблица. в order к display more данные content в the same time и provide a better данные query body, the scrolling функция is particularly important. по scrolling, users can quickly find the desired content в the таблица и perform subsequent analysis и processing.
 
-## Rolling performance advantage
+## Rolling Производительность advantвозраст
 
-The underlying layer of VTable is rendered based on canvas, and only the visual Region content is drawn with each update, ensuring smooth scrolling even when working with big data.
+The underlying layer из Vтаблица is rendered based на canvas, и only the visual Регион content is drawn с каждый update, ensuring smooth scrolling even when working с big данные.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090d.gif)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090d.gif)
 
-## Scroll style
+## прокрутка style
 
-VTable provides rich scroll style configuration items, and users can customize the current scroll bar style according to their own needs. Configure the scroll bar style through ListTable.theme.scrollStyle. The following are the details of the scroll style configuration:
+Vтаблица provides rich прокрутка style configuration items, и users can пользовательскийize the текущий прокрутка bar style according к their own needs. Configure the прокрутка bar style through списоктаблица.тема.scrollStyle. Следующий are the details из the прокрутка style configuration:
 
-- scrollRailColor: Configure the color of the scrollbar track.
-- scrollSliderColor: Configure the color of the scroll bar slider.
-- scrollSliderCornerRadius: The corner radius of the scroll bar slider
-- width: Configure the scroll bar width.
-- visible: Configure whether the scroll bar is visible, and can be configured with values: 'always' | 'scrolling' | 'none' | 'focus', which correspond to: resident display | display when scrolling | display | focus on the canvas. Default is'scrolling '.
-- hoverOn: Specifies whether the scroll bar is suspended on the container or independent of the container. The default is true to float on the container.
-- barToSide: Whether to display to the edge of the container even though the contents are not full. Default false
+- scrollRailColor: Configure the цвет из the scrollbar track.
+- scrollSliderColor: Configure the цвет из the прокрутка bar ползунок.
+- scrollSliderCornerRadius: The corner radius из the прокрутка bar ползунок
+- ширина: Configure the прокрутка bar ширина.
+- видимый: Configure whether the прокрутка bar is видимый, и can be configured с values: 'always' | 'scrolling' | 'никто' | 'фокус', which correspond к: resident display | display when scrolling | display | фокус на the canvas. по умолчанию is'scrolling '.
+- hoverOn: Specifies whether the прокрутка bar is suspended на the container или independent из the container. The по умолчанию is true к float на the container.
+- barToSide: Whether к display к the edge из the container even though the contents are не full. по умолчанию false
 
-Below we show the effect of these configurations with an example:
+Below we показать the effect из these configurations с an пример:
 
-```javascript livedemo  template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация  template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
-      theme: {
+      ширинаMode: 'standard',
+      тема: {
         scrollStyle: {
-          visible: 'always',
+          видимый: 'always',
           scrollSliderColor: 'purple',
           scrollRailColor: '#bac3cc',
           hoverOn: false,
@@ -99,54 +99,54 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       }
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```
 
-## Scroll horizontally
+## прокрутка horizontally
 
-VTable supports horizontal scrolling while holding down the Shift key, or directly dragging the horizontal scroll bar to make it easier for users to browse table data. Of course, if your computer has a touchpad, you can swipe left and right directly on the touchpad to achieve horizontal scrolling.
+Vтаблица supports horizontal scrolling while holding down the Shift key, или directly dragging the horizontal прокрутка bar к make it easier для users к browse таблица данные. из course, if your computer has a touchpad, Вы можете swipe лево и право directly на the touchpad к achieve horizontal scrolling.
 
-## scroll interface
+## прокрутка интерфейс
 
-VTable provides the scrollToCell interface for scrolling to the specified cell location. The method accepts the cellAddr parameter to specify the cell location to scroll to. Example code is as follows:
+Vтаблица provides the scrollToCell интерфейс для scrolling к the specified cell location. The method accepts the cellAddr параметр к specify the cell location к прокрутка к. пример код is as follows:
 
 ```javascript
-table.scrollToCell({ row: 20, col: 10 });
+таблица.scrollToCell({ row: 20, col: 10 });
 ```
 
-In the above example, we will scroll to the cell position with row number 20 and column number 10.
+в the above пример, we will прокрутка к the cell позиция с row число 20 и column число 10.
 
-## Turn off browser default behavior
+## Turn off browser по умолчанию behavior
 
-The browser default behavior can be turned off through the overscrollBehavior attribute of the configuration item, as shown in the following configuration instructions:
+The browser по умолчанию behavior can be turned off through the overscrollBehavior attribute из the configuration item, as shown в Следующий configuration instructions:
 
 ```
   /**
-   * 'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
-   * 'none': When the table scrolls to the top or bottom, the browser's default behavior will not be triggered, that is, when the table scrolls to the boundary and continues to scroll, it will not trigger the scrolling of the parent page.
+   * 'авто': Trigger the browser's по умолчанию behavior when the таблица scrolls к the верх или низ;
+   * 'никто': When the таблица scrolls к the верх или низ, the browser's по умолчанию behavior will не be triggered, that is, when the таблица scrolls к the boundary и continues к прокрутка, it will не trigger the scrolling из the parent pвозраст.
    * */
-  overscrollBehavior?: 'auto' | 'none';
+  overscrollBehavior?: 'авто' | 'никто';
 ```
 
-On a Mac computer, it sometimes appears that 'none' has been set, but the browser's default scrolling is still triggered (such as a rubber band effect or a page rollback is triggered).
+на a Mac computer, it sometimes appears that 'никто' has been set, but the browser's по умолчанию scrolling is still triggered (such as a rubber band effect или a pвозраст rollback is triggered).
 
 <div style="display: flex;">
- <div style="width: 20%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-bounce.gif" />
+ <div style="ширина: 20%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/прокрутка-bounce.gif" />
   </div>
-  <div style="width: 10%; text-align: center;">
+  <div style="ширина: 10%; текст-align: центр;">
   </div>
-  <div style="width: 20%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/scroll-back.jpeg" />
+  <div style="ширина: 20%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/прокрутка-back.jpeg" />
   </div>
 </div>
 
-This problem may be because the browser's default behavior is triggered outside the table, and the effect continues when scrolling in the table. In order to avoid this problem, you can set the css scroll bar style in the page body (and cooperate with VTable The overscrollBehavior is configured with two layers for restrictions):
+This problem may be because the browser's по умолчанию behavior is triggered outside the таблица, и the effect continues when scrolling в the таблица. в order к avoid this problem, Вы можете set the css прокрутка bar style в the pвозраст body (и cooperate с Vтаблица The overscrollBehavior is configured с two layers для restrictions):
 
 ```
-"overscroll-behavior: none;"
+"overscroll-behavior: никто;"
 ```
 
-For specific instructions, please refer to: https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
+для specific instructions, please refer к: https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior

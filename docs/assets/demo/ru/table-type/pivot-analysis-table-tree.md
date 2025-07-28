@@ -1,122 +1,122 @@
 ---
-category: examples
-group: table-type
-title: Pivot Table Row Header Tree Mode
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-tree.gif
-link: data_analysis/pivot_table_tree
-option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree'%7C'grid-tree')
+категория: примеры
+группа: таблица-тип
+заголовок: сводный таблица Row Header Tree Mode
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-таблица-tree.gif
+ссылка: данные_analysis/сводный_таблица_tree
+опция: сводныйтаблица#rowHierarchyType('grid'%20%7C%20'tree'%7C'grid-tree')
 ---
 
-# Pivot Table Row Header Tree Mode
+# сводный таблица Row Header Tree Mode
 
-Pivot analysis tree table
+сводный analysis tree таблица
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
-- `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
+- `сводныйтаблица`
+- `rowHierarchyType` Set the hierarchical presentation к`tree`, defaults к tiling mode`grid`.
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules, optional configuration items
+- `данныеConfig` configures данные rules, необязательный configuration items
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
@@ -127,25 +127,25 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           }
         ],
         totals: {
           row: {
             showSubTotals: true,
-            subTotalsDimensions: ['Category'],
+            subTotalsDimensions: ['Категория'],
             subTotalLabel: 'subtotal'
           }
         }
       },
       rowHierarchyType: 'tree',
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

@@ -1,126 +1,126 @@
 ---
-category: examples
-group: search
-title: Search Component
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
-link: search
+категория: примеры
+группа: search
+заголовок: Search компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-таблица.png
+ссылка: search
 ---
 
-# Search Component
+# Search компонент
 
-Search Component
+Search компонент
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
     const dom = document.getElementById(CONTAINER_ID);
-    tableInstance = new VTable.ListTable(dom, option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(dom, option);
+    window['таблицаInstance'] = таблицаInstance;
 
-    const search = new SearchComponent({
-      table: tableInstance,
-      autoJump: true
+    const search = новый Searchкомпонент({
+      таблица: таблицаInstance,
+      автоJump: true
     });
     window.search = search;
 
     const searchContainer = document.createElement('div');
-    searchContainer.style.position = 'absolute';
-    searchContainer.style.top = '0';
-    searchContainer.style.right = '0';
+    searchContainer.style.позиция = 'absolute';
+    searchContainer.style.верх = '0';
+    searchContainer.style.право = '0';
     searchContainer.style.backgroundColor = '#FFF';
-    const input = document.createElement('input');
-    searchContainer.appendChild(input);
+    const ввод = document.createElement('ввод');
+    searchContainer.appendChild(ввод);
     const result = document.createElement('span');
     result.innerText = '0/0';
     searchContainer.appendChild(result);
-    const searchBtn = document.createElement('button');
+    const searchBtn = document.createElement('Кнопка');
     searchBtn.innerText = 'search';
     searchContainer.appendChild(searchBtn);
-    const nextBtn = document.createElement('button');
-    nextBtn.innerText = 'next';
+    const nextBtn = document.createElement('Кнопка');
+    nextBtn.innerText = 'следующий';
     searchContainer.appendChild(nextBtn);
-    const prevBtn = document.createElement('button');
+    const prevBtn = document.createElement('Кнопка');
     prevBtn.innerText = 'prev';
     searchContainer.appendChild(prevBtn);
-    searchBtn.addEventListener('click', () => {
-      const searchResult = search.search(input.value);
+    searchBtn.addсобытиесписокener('Нажать', () => {
+      const searchResult = search.search(ввод.значение);
       result.innerText =
         searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
     });
-    prevBtn.addEventListener('click', () => {
+    prevBtn.addсобытиесписокener('Нажать', () => {
       const searchResult = search.prev();
       result.innerText =
         searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
     });
-    nextBtn.addEventListener('click', () => {
-      const searchResult = search.next();
+    nextBtn.addсобытиесписокener('Нажать', () => {
+      const searchResult = search.следующий();
       result.innerText =
         searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
     });

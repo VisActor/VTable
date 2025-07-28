@@ -1,44 +1,44 @@
 ---
-category: examples
-group: usage
-title: Using option+record
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-default.png
-order: 1-1
-link: Developer_Ecology/vue
+категория: примеры
+группа: usвозраст
+заголовок: Using option+record
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-по умолчанию.png
+порядок: 1-1
+ссылка: Developer_Ecology/vue
 ---
 
 # Using option+record
 
-You can separate records from options and pass them as a standalone prop to the table component.
+Вы можете separate records от options и pass them as a standalone prop к the таблица компонент.
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-    <ListTable :options="tableOptions" :records="tableRecords"/>
+    <списоктаблица :options="таблицаOptions" :records="таблицаRecords"/>
   `,
-  data() {
-    return {
-      tableOptions: {
+  данные() {
+    возврат {
+      таблицаOptions: {
         columns: [
-          { field: '0', title: 'name' },
-          { field: '1', title: 'age' },
-          { field: '2', title: 'gender' },
-          { field: '3', title: 'hobby' }
+          { поле: '0', заголовок: 'имя' },
+          { поле: '1', заголовок: 'возраст' },
+          { поле: '2', заголовок: 'пол' },
+          { поле: '3', заголовок: 'хобби' }
         ]
       },
-      tableRecords: new Array(1000).fill(['John', 18, 'male', '🏀'])
+      таблицаRecords: новый массив(1000).fill(['John', 18, 'male', '🏀'])
     };
   }
 });
 
-app.component('ListTable', VueVTable.ListTable);
+app.компонент('списоктаблица', VueVтаблица.списоктаблица);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

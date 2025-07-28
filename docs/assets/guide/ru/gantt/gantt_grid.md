@@ -1,83 +1,83 @@
-# Gantt Chart Grid
+# гантт график Grid
 
-The grid lines mainly refer to the grid lines of the left information table of the Gantt chart, the date header and task bar of the right Gantt chart, and the overall outer frame line.
+The grid lines mainly refer к the grid lines из the лево information таблица из the гантт график, the date header и task bar из the право гантт график, и the overall outer frame line.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
-
-
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-structure.png)
 
 
-## Gantt Task List Table Grid Lines
 
-In the Gantt chart, the grid lines of the left information table are rendered and organized by the VTable component, which can be controlled through the `taskListTable` configuration item.
 
-The specific configuration of the left information table can refer to the configuration items of VTable, please refer to the tutorial [theme](https://www.visactor.com/vtable/guide/theme_and_style/theme) or [style](https://www.visactor.com/vtable/guide/theme_and_style/style).
+## гантт Task список таблица Grid Lines
 
-For example, to remove the vertical split lines of the table, you can configure the `theme`:
+в the гантт график, the grid lines из the лево information таблица are rendered и organized по the Vтаблица компонент, which can be controlled through the `taskсписоктаблица` configuration item.
+
+The specific configuration из the лево information таблица can refer к the configuration items из Vтаблица, please refer к the tutorial [тема](https://www.visactor.com/vтаблица/guide/тема_and_style/тема) или [style](https://www.visactor.com/vтаблица/guide/тема_and_style/style).
+
+для пример, к remove the vertical split lines из the таблица, Вы можете configure the `тема`:
 ```
 {
-  "taskListTable": {
-    "theme": {
+  "taskсписоктаблица": {
+    "тема": {
       "bodyStyle": {
-        "borderLineWidth":[1,0]
+        "borderLineширина":[1,0]
       }
     }
   }
 }
 
 ```
-## Date Table Grid Lines
+## Date таблица Grid Lines
 
-The relevant configurations of the date table are in the `timelineHeader` configuration item, where the `verticalLine` configuration item can control the vertical split lines of the date table, and the `horizontalLine` configuration item can control the horizontal split lines of the date table.
+The relevant configurations из the date таблица are в the `timelineHeader` configuration item, where the `verticalLine` configuration item can control the vertical split lines из the date таблица, и the `horizontalLine` configuration item can control the horizontal split lines из the date таблица.
 
 ```
 {
   "timelineHeader": {
     "verticalLine": {
       "lineColor": "red",
-      "lineWidth": 1
+      "lineширина": 1
     },
     "horizontalLine": {
       "lineColor": "red",
-      "lineWidth": 1
+      "lineширина": 1
     }
   }
 }
 ```
 
-## Gantt Task Bar Grid Lines
+## гантт Task Bar Grid Lines
 
-The grid lines of the Gantt task bar can be controlled through the `grid` configuration item. The specific configuration is as follows:
+The grid lines из the гантт task bar can be controlled through the `grid` configuration item. The specific configuration is as follows:
 ```
-export interface IGrid {
-  backgroundColor?: string;
-  /** Set different background colors for different data rows */
-  horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
-  /** Set different background colors for different date columns */
-  verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
-  /** Weekend background color */
-  weekendBackgroundColor?: string;
+export интерфейс IGrid {
+  backgroundColor?: строка;
+  /** Set different фон colors для different данные rows */
+  horizontalBackgroundColor?: строка[] | ((args: GridHorizontalLineStyleArgumentType) => строка);
+  /** Set different фон colors для different date columns */
+  verticalBackgroundColor?: строка[] | ((args: GridVerticalLineStyleArgumentType) => строка);
+  /** Weekend фон цвет */
+  weekendBackgroundColor?: строка;
   /** Vertical interval line style */
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   /** Horizontal interval line style */
   horizontalLine?: ILineStyle | ((args: GridHorizontalLineStyleArgumentType) => ILineStyle);
-  /** The date scale that the vertical line depends on. The default is the smallest time granularity in the timelineHeader scales. */
+  /** The date scale that the vertical line depends на. The по умолчанию is the smallest time granularity в the timelineHeader scales. */
   verticalLineDependenceOnTimeScale?: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
 }
 ```
 
-It can be seen that the `grid` configuration item can control the grid lines of the task bar, including the background color, horizontal split lines, vertical split lines, weekend background color, and the specific date scale that the vertical line depends on.
+It can be seen that the `grid` configuration item can control the grid lines из the task bar, including the фон цвет, horizontal split lines, vertical split lines, weekend фон цвет, и the specific date scale that the vertical line depends на.
 
-The background color and split lines can be configured as arrays to set different background colors for different rows or columns. They can also be configured as functions to set different background colors for different data rows or date columns.
+The фон цвет и split lines can be configured as arrays к set different фон colors для different rows или columns. They can also be configured as functions к set different фон colors для different данные rows или date columns.
 
-For example:
+для пример:
 ```
 {
   "grid": {
     "verticalBackgroundColor": ["#f00", "#0f0"],
     "horizontalBackgroundColor": ["#00f", "#0f0"],
     "verticalBackgroundColor": (args) => {
-      return args.columnIndex % 2 === 0 ? "#f00" : "#0f0";
+      возврат args.columnIndex % 2 === 0 ? "#f00" : "#0f0";
     }
   }
 }
@@ -85,36 +85,36 @@ For example:
 
 
 
-## Gantt Chart Outer Frame Line
+## гантт график Outer Frame Line
 
-The outer frame line of the Gantt chart can be controlled through the `frame.outerFrameStyle` configuration item. The specific configuration is as follows:
+The outer frame line из the гантт график can be controlled through the `frame.outerFrameStyle` configuration item. The specific configuration is as follows:
 ```
 {
   "frame": {
     "outerFrameStyle": {
       "lineColor": "red",
-      "lineWidth": 1
+      "lineширина": 1
     }
   }
 }
 ```
 
-## Gantt Chart Overall Split Line
-The split line between the left information table and the right task bar can be controlled through the `frame.verticalSplitLine` configuration item.
+## гантт график Overall Split Line
+The split line between the лево information таблица и the право task bar can be controlled through the `frame.verticalSplitLine` configuration item.
 
-The split line between the header and the list body can be controlled through the `frame.horizontalSplitLine` configuration item.
+The split line between the header и the список body can be controlled through the `frame.horizontalSplitLine` configuration item.
 
-For example:
+для пример:
 ```
 {
   "frame": {
     "verticalSplitLine": {
       "lineColor": "red",
-      "lineWidth": 1
+      "lineширина": 1
     },
     "horizontalSplitLine": {
       "lineColor": "red",
-      "lineWidth": 1
+      "lineширина": 1
     }
   }
 }

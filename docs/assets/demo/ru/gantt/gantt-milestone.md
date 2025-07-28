@@ -1,103 +1,103 @@
 ---
-category: examples
-group: gantt
-title: Gantt Milestone
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/gantt-label-symbol.jpeg
-link: gantt/introduction
-option: Gantt#taskBar.milestoneStyle
+категория: примеры
+группа: гантт
+заголовок: гантт Milestone
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/гантт-label-symbol.jpeg
+ссылка: гантт/introduction
+опция: гантт#taskBar.milestoneStyle
 ---
 
-# Gantt Milestone
+# гантт Milestone
 
-Milestones in Gantt charts are used to mark important time points in a project. Unlike regular tasks that span over a period, milestones are represented by a distinctive diamond symbol. This example demonstrates milestones in different states, helping you better track key project points.
+Milestones в гантт графикs are used к mark important time points в a project. Unlike regular tasks that span over a period, milestones are represented по a distinctive diamond symbol. This пример демонстрацияnstrates milestones в different states, helping you better track key project points.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `Gantt#taskBar.milestoneStyle`: Configure milestone styles such as size, color, etc.
-- Set `type: 'milestone'` in data to mark a task as milestone
-- Milestone tasks only need to specify the `start` time
+- `гантт#taskBar.milestoneStyle`: Configure milestone styles such as размер, цвет, etc.
+- Set `тип: 'milestone'` в данные к mark a task as milestone
+- Milestone tasks only need к specify the `начало` time
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
     id: '1',
-    title: '项目启动会议',
-    start: '2024-07-01',
-    type: 'milestone',
+    заголовок: '项目启动会议',
+    начало: '2024-07-01',
+    тип: 'milestone',
     progress: 100,
     parent: '0'
   },
   {
     id: '2',
-    title: '项目启动与规划',
-    start: '2024-07-01',
-    end: '2024-07-6',
+    заголовок: '项目启动与规划',
+    начало: '2024-07-01',
+    конец: '2024-07-6',
     progress: 100,
     parent: '0'
   },
   {
     id: '3',
-    title: '需求评审完成',
-    start: '2024-07-6',
-    type: 'milestone',
+    заголовок: '需求评审完成',
+    начало: '2024-07-6',
+    тип: 'milestone',
     progress: 100,
     parent: '0'
   },
   {
     id: '4',
-    title: '技术方案设计',
-    start: '2024-07-6',
-    end: '2024-07-11',
+    заголовок: '技术方案设计',
+    начало: '2024-07-6',
+    конец: '2024-07-11',
     progress: 80,
     parent: '0'
   },
   {
     id: '5',
-    title: '开发环境搭建完成',
-    start: '2024-07-11',
-    type: 'milestone',
+    заголовок: '开发环境搭建完成',
+    начало: '2024-07-11',
+    тип: 'milestone',
     progress: 100,
     parent: '0'
   },
   {
     id: '6',
-    title: '核心功能开发',
-    start: '2024-07-12',
-    end: '2024-07-18',
+    заголовок: '核心功能开发',
+    начало: '2024-07-12',
+    конец: '2024-07-18',
     progress: 60,
     parent: '0'
   },
   {
     id: '7',
-    title: 'Beta版本发布',
-    start: '2024-07-18',
-    type: 'milestone',
+    заголовок: 'Beta版本发布',
+    начало: '2024-07-18',
+    тип: 'milestone',
     progress: 0,
     parent: '0'
   },
   {
     id: '8',
-    title: '系统测试',
-    start: '2024-07-19',
-    end: '2024-07-23',
+    заголовок: '系统测试',
+    начало: '2024-07-19',
+    конец: '2024-07-23',
     progress: 60,
     parent: '0'
   },
   {
     id: '9',
-    title: '性能测试完成',
-    start: '2024-07-24',
-    type: 'milestone',
+    заголовок: '性能测试完成',
+    начало: '2024-07-24',
+    тип: 'milestone',
     progress: 0,
     parent: '0'
   },
   {
     id: '10',
-    title: '正式版本发布',
-    start: '2024-07-27',
-    type: 'milestone',
+    заголовок: '正式版本发布',
+    начало: '2024-07-27',
+    тип: 'milestone',
     progress: 0,
     parent: '0'
   }
@@ -105,126 +105,126 @@ const records = [
 
 const columns = [
   {
-    field: 'title',
-    title: '任务名称',
-    width: 200,
+    поле: 'title',
+    заголовок: '任务名称',
+    ширина: 200,
     style: {
       fontFamily: 'PingFang SC',
-      padding: [8, 16]
+      заполнение: [8, 16]
     }
   },
   {
-    field: 'progress',
-    title: '进度',
-    width: 100,
+    поле: 'progress',
+    заголовок: '进度',
+    ширина: 100,
     style: {
       fontFamily: 'PingFang SC',
-      padding: [8, 16],
-      textAlign: 'center',
-      color: value => (value >= 80 ? '#52c41a' : value >= 30 ? '#1890ff' : '#595959')
+      заполнение: [8, 16],
+      textAlign: 'центр',
+      цвет: значение => (значение >= 80 ? '#52c41a' : значение >= 30 ? '#1890ff' : '#595959')
     }
   }
 ];
 
 const option = {
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns,
-    tableWidth: 280,
-    minTableWidth: 100,
-    maxTableWidth: 600,
-    theme: {
+    таблицаширина: 280,
+    minтаблицаширина: 100,
+    maxтаблицаширина: 600,
+    тема: {
       headerStyle: {
         borderColor: '#f0f0f0',
         fontSize: 13,
         fontFamily: 'PingFang SC',
         fontWeight: 500,
-        color: '#262626',
+        цвет: '#262626',
         bgColor: '#fafafa',
-        padding: [12, 16]
+        заполнение: [12, 16]
       },
       bodyStyle: {
         fontSize: 13,
         fontFamily: 'PingFang SC',
-        color: '#595959',
+        цвет: '#595959',
         bgColor: '#ffffff',
         borderColor: '#f0f0f0',
-        padding: [0, 16]
+        заполнение: [0, 16]
       }
     }
   },
   frame: {
     outerFrameStyle: {
       borderColor: '#ebedf0',
-      borderLineWidth: 1,
+      borderLineширина: 1,
       cornerRadius: 12,
-      padding: [1, 1, 1, 1]
+      заполнение: [1, 1, 1, 1]
     },
     verticalSplitLine: {
       lineColor: '#f0f0f0',
-      lineWidth: 1
+      lineширина: 1
     }
   },
   grid: {
     backgroundColor: '#fafaff',
     weekendBackgroundColor: 'rgba(94, 180, 245, 0.10)',
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#f5f5f5'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#f5f5f5'
     }
   },
-  headerRowHeight: 42,
-  rowHeight: 40,
+  headerRowвысота: 42,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
     moveable: true,
     hoverBarStyle: {
       barOverlayColor: 'rgba(99, 144, 0, 0.2)'
     },
     labelText: '{title} {progress}%',
     labelTextStyle: {
-      // padding: 2,
+      // заполнение: 2,
       fontFamily: 'Arial',
       fontSize: 16,
-      textAlign: 'left',
+      textAlign: 'лево',
       textOverflow: 'ellipsis',
-      color: 'rgb(240, 246, 251)'
+      цвет: 'rgb(240, 246, 251)'
     },
     barStyle: {
-      width: 24,
+      ширина: 24,
       barColor: '#d6e4ff',
       completedBarColor: '#597ef7',
       cornerRadius: 12,
-      borderLineWidth: 2,
+      borderLineширина: 2,
       borderColor: 'rgb(7, 88, 150)'
     },
     milestoneStyle: {
-      width: 16,
-      fillColor: value => (value.record.progress >= 100 ? '#597ef7' : '#d6e4ff'),
+      ширина: 16,
+      fillColor: значение => (значение.record.progress >= 100 ? '#597ef7' : '#d6e4ff'),
       borderColor: '#597ef7',
-      borderLineWidth: 0,
+      borderLineширина: 0,
       labelText: '{title}',
       labelTextStyle: {
         fontSize: 16,
-        color: 'rgb(1, 43, 75)'
+        цвет: 'rgb(1, 43, 75)'
       }
     }
   },
   timelineHeader: {
-    colWidth: 50,
+    colширина: 50,
     backgroundColor: '#fafafa',
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#f0f0f0'
     },
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#f0f0f0'
     },
     scales: [
@@ -232,30 +232,30 @@ const option = {
         unit: 'week',
         step: 1,
         format(date) {
-          return `第${date.dateIndex}周`;
+          возврат `第${date.dateIndex}周`;
         },
         style: {
           fontSize: 12,
           fontFamily: 'PingFang SC',
-          textAlign: 'center',
-          textBaseline: 'middle',
-          color: '#262626',
-          padding: [8, 0]
+          textAlign: 'центр',
+          textBaseline: 'середина',
+          цвет: '#262626',
+          заполнение: [8, 0]
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 12,
           fontFamily: 'PingFang SC',
-          textAlign: 'center',
-          textBaseline: 'middle',
-          color: '#8c8c8c',
-          padding: [8, 0]
+          textAlign: 'центр',
+          textBaseline: 'середина',
+          цвет: '#8c8c8c',
+          заполнение: [8, 0]
         }
       }
     ]
@@ -264,7 +264,7 @@ const option = {
     {
       date: '2024-07-11',
       style: {
-        lineWidth: 1,
+        lineширина: 1,
         lineColor: 'blue',
         lineDash: [8, 4]
       }
@@ -272,15 +272,15 @@ const option = {
     {
       date: '2024-07-22',
       style: {
-        lineWidth: 2,
+        lineширина: 2,
         lineColor: 'red',
         lineDash: [8, 4]
       }
     }
   ],
   rowSeriesNumber: {
-    title: '行号',
-    dragOrder: true,
+    заголовок: '行号',
+    dragпорядок: true,
     headerStyle: {
       bgColor: '#EEF1F5',
       borderColor: '#e1e4e8'
@@ -291,15 +291,15 @@ const option = {
   },
   scrollStyle: {
     scrollRailColor: '#f5f5f5',
-    visible: 'hover',
-    width: 5,
+    видимый: 'навести',
+    ширина: 5,
     scrollSliderColor: '#ccc',
-    hover: {
+    навести: {
       scrollSliderColor: '#bbb'
     }
   }
 };
 
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 ```

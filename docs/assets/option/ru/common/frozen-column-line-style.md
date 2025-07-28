@@ -1,26 +1,26 @@
 {{ target: common-frozen-column-line-style }}
 
-#${prefix} frozenColumnLine(Object)
+#${prefix} frozenColumnLine(объект)
 
 Frozen Column Effect
 
-##${prefix} shadow(Object)
+##${prefix} shadow(объект)
 
 Frozen Column Shadow Effect
 
-###${prefix} width(number)
-Shadow Overall Width
+###${prefix} ширина(число)
+Shadow Overall ширина
 
-###${prefix} startColor(string)
-Start Color
+###${prefix} startColor(строка)
+начало цвет
 
-###${prefix} endColor(string)
-End Color
+###${prefix} endColor(строка)
+конец цвет
 
-###${prefix} visible(string)
+###${prefix} видимый(строка)
 
-Shadow Visible Time, default is `scrolling`.
+Shadow видимый Time, по умолчанию is `scrolling`.
 
-- always: always show
-- scrolling: show when scrolling
+- always: always показать
+- scrolling: показать when scrolling
 

@@ -1,30 +1,30 @@
 ---
-category: examples
-group: export
-title: 表格导出（忽略图标）
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/export-tree.png
-order: 4-6
-link: '../../guide/export/excel'
-# option: ListTable
+категория: примеры
+группа: export
+заголовок: 表格导出（忽略图标）
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/export-tree.png
+порядок: 4-6
+ссылка: '../../guide/export/excel'
+# опция: списоктаблица
 ---
 
 # 表格导出（忽略图标）
 
-By default, when the cell has an icon, the icon and text will be treated as an image when exporting. If you do not need to export the icon, you can set `ignoreIcon` to true, and only the text will be output.
+по по умолчанию, when the cell has an иконка, the иконка и текст will be treated as an imвозраст when exporting. If you do не need к export the иконка, Вы можете set `ignoreиконка` к true, и only the текст will be output.
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// You need to introduce the plug-in package when using it `@visactor/vtable-export`
+```javascript liveдемонстрация template=vтаблица
+// You need к introduce the plug-в packвозраст when using it `@visactor/vтаблица-export`
 // import {
 //   downloadCsv,
-//   exportVTableToCsv,
+//   exportVтаблицаToCsv,
 //   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// When umd is introduced, the export tool will be mounted to VTable.export
+//   exportVтаблицаToExcel,
+// } от "@visactor/vтаблица-export";
+// When umd is introduced, the export tool will be mounted к Vтаблица.export
 
-const data = [
+const данные = [
   {
     类别: '办公用品',
     销售额: 129.696,
@@ -164,47 +164,47 @@ const option = {
   container: document.getElementById(CONTAINER_ID),
   columns: [
     {
-      field: '类别',
+      поле: '类别',
       tree: true,
-      title: '类别',
-      width: 'auto',
-      sort: true
+      заголовок: '类别',
+      ширина: 'авто',
+      сортировка: true
     },
     {
-      field: '销售额',
-      title: '销售额',
-      width: 'auto',
-      sort: true
+      поле: '销售额',
+      заголовок: '销售额',
+      ширина: 'авто',
+      сортировка: true
       // tree: true,
     },
     {
-      field: '利润',
-      title: '利润',
-      width: 'auto',
-      sort: true
+      поле: '利润',
+      заголовок: '利润',
+      ширина: 'авто',
+      сортировка: true
     }
   ],
-  showPin: true, //显示VTable内置冻结列图标
-  widthMode: 'standard',
+  showPin: true, //显示Vтаблица内置冻结列图标
+  ширинаMode: 'standard',
   allowFrozenColCount: 2,
-  records: data,
+  records: данные,
 
   hierarchyIndent: 20,
   hierarchyExpandLevel: 2,
   hierarchyTextStartAlignment: true,
-  sortState: {
-    field: '销售额',
-    order: 'asc'
+  сортировкаState: {
+    поле: '销售额',
+    порядок: 'asc'
   },
-  theme: VTable.themes.BRIGHT,
-  defaultRowHeight: 32
+  тема: Vтаблица.темаs.BRIGHT,
+  defaultRowвысота: 32
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window.таблицаInstance = таблицаInstance;
 
 bindExport();
 
-function bindExport() {
+функция bindExport() {
   let exportContainer = document.getElementById('export-buttom');
   if (exportContainer) {
     exportContainer.parentElement.removeChild(exportContainer);
@@ -212,30 +212,30 @@ function bindExport() {
 
   exportContainer = document.createElement('div');
   exportContainer.id = 'export-buttom';
-  exportContainer.style.position = 'absolute';
-  exportContainer.style.bottom = '0';
-  exportContainer.style.right = '0';
+  exportContainer.style.позиция = 'absolute';
+  exportContainer.style.низ = '0';
+  exportContainer.style.право = '0';
 
-  window['tableInstance'].getContainer().appendChild(exportContainer);
+  window['таблицаInstance'].getContainer().appendChild(exportContainer);
 
-  const exportCsvButton = document.createElement('button');
-  exportCsvButton.innerHTML = 'CSV-export';
-  const exportExcelButton = document.createElement('button');
-  exportExcelButton.innerHTML = 'Excel-export';
-  exportContainer.appendChild(exportCsvButton);
-  exportContainer.appendChild(exportExcelButton);
+  const exportCsvКнопка = document.createElement('Кнопка');
+  exportCsvКнопка.innerHTML = 'CSV-export';
+  const exportExcelКнопка = document.createElement('Кнопка');
+  exportExcelКнопка.innerHTML = 'Excel-export';
+  exportContainer.appendChild(exportCsvКнопка);
+  exportContainer.appendChild(exportExcelКнопка);
 
-  exportCsvButton.addEventListener('click', async () => {
-    if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+  exportCsvКнопка.addсобытиесписокener('Нажать', async () => {
+    if (window.таблицаInstance) {
+      await downloadCsv(exportVтаблицаToCsv(window.таблицаInstance), 'export');
     }
   });
 
-  exportExcelButton.addEventListener('click', async () => {
-    if (window.tableInstance) {
+  exportExcelКнопка.addсобытиесписокener('Нажать', async () => {
+    if (window.таблицаInstance) {
       await downloadExcel(
-        await exportVTableToExcel(window.tableInstance, {
-          ignoreIcon: true
+        await exportVтаблицаToExcel(window.таблицаInstance, {
+          ignoreиконка: true
         }),
         'export'
       );

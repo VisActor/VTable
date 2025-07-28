@@ -1,37 +1,37 @@
 ---
-category: examples
-group: performace
-title: Async Lazy Load Data
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/asyncData.gif
-link: data/async_data
+категория: примеры
+группа: performace
+заголовок: Async Lazy Load данные
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/asyncданные.gif
+ссылка: данные/async_данные
 ---
 
-# Async Lazy Load Data
+# Async Lazy Load данные
 
-In order to reduce the pressure on the backend to request data, you can use this method to lazy load data asynchronously.
+в order к reduce the pressure на the backend к request данные, Вы можете use this method к lazy load данные asynchronously.
 
-Note: If you use VTable internal sorting, you need to obtain all the data before sorting, so this asynchronous is equivalent to invalidation. It is recommended that the backend implement sorting logic and the frontend only displays the sorting icon.
+Note: If you use Vтаблица internal сортировкаing, you need к obtain все the данные before сортировкаing, so this asynchronous is equivalent к invalidation. It is recommended that the backend implement сортировкаing logic и the frontend only displays the сортировкаing иконка.
 
-In addition, if automatic column width widthMode:'autoWidth' is turned on or width:'auto' is set in columns, VTable also needs to obtain the value of each cell in the column to obtain the maximum content width, so it will also cause asynchronous failure.
+в addition, if автоmatic column ширина ширинаMode:'автоширина' is turned на или ширина:'авто' is set в columns, Vтаблица also needs к obtain the значение из каждый cell в the column к obtain the maximum content ширина, so it will also cause asynchronous failure.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- dataSource custom implementation of data acquisition logic
+- данныеSource пользовательский implementation из данные acquisition logic
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const generatePersons = i => {
-  return {
+  возврат {
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `小明${i + 1}`,
-    lastName: '王',
+    имя: `小明${i + 1}`,
+    lastимя: '王',
     date1: '2022年9月1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-    city: 'beijing'
+    work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer',
+    Город: 'beijing'
   };
 };
 
@@ -43,11 +43,11 @@ const generatePersons = i => {
  */
 const getRecordsWithAjax = (startIndex, num) => {
   // console.log('getRecordsWithAjax', startIndex, num);
-  return new Promise(resolve => {
+  возврат новый Promise(resolve => {
     setTimeout(() => {
       console.log('getRecordsWithAjax', startIndex, num);
       const records = [];
-      for (let i = 0; i < num; i++) {
+      для (let i = 0; i < num; i++) {
         records.push(generatePersons(startIndex + i));
       }
       resolve(records);
@@ -55,81 +55,81 @@ const getRecordsWithAjax = (startIndex, num) => {
   });
 };
 
-// create DataSource
-const loadedData = {};
-const dataSource = new VTable.data.CachedDataSource({
+// create данныеSource
+const loadedданные = {};
+const данныеSource = новый Vтаблица.данные.CachedданныеSource({
   get(index) {
     // 每一批次请求100条数据 0-99 100-199 200-299
     const loadStartIndex = Math.floor(index / 100) * 100;
     // 判断是否已请求过？
-    if (!loadedData[loadStartIndex]) {
-      const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // return Promise Object
-      loadedData[loadStartIndex] = promiseObject;
+    if (!loadedданные[loadStartIndex]) {
+      const promiseObject = getRecordsWithAjax(loadStartIndex, 100); // возврат Promise объект
+      loadedданные[loadStartIndex] = promiseObject;
     }
-    return loadedData[loadStartIndex].then(data => {
-      return data[index - loadStartIndex]; //获取批次数据列表中的index对应数据
+    возврат loadedданные[loadStartIndex].then(данные => {
+      возврат данные[index - loadStartIndex]; //获取批次数据列表中的index对应数据
     });
   },
-  length: 10000 //all records count
+  length: 10000 //все records count
 });
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 120
-    // sort: true
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 120
+    // сортировка: true
   },
   {
-    field: 'email1',
-    title: 'email',
-    width: 200
-    // sort: true
+    поле: 'email1',
+    заголовок: 'email',
+    ширина: 200
+    // сортировка: true
   },
   {
-    title: 'full name',
+    заголовок: 'full имя',
     columns: [
       {
-        field: 'name',
-        title: 'First Name',
-        width: 200
+        поле: 'имя',
+        заголовок: 'первый имя',
+        ширина: 200
       },
       {
-        field: 'name',
-        title: 'Last Name',
-        width: 200
+        поле: 'имя',
+        заголовок: 'последний имя',
+        ширина: 200
       }
     ]
   },
   {
-    field: 'date1',
-    title: 'birthday',
-    width: 200
+    поле: 'date1',
+    заголовок: 'birthday',
+    ширина: 200
   },
   {
-    field: 'sex',
-    title: 'sex',
-    width: 100
+    поле: 'sex',
+    заголовок: 'sex',
+    ширина: 100
   },
   {
-    field: 'tel',
-    title: 'telephone',
-    width: 150
+    поле: 'tel',
+    заголовок: 'telephone',
+    ширина: 150
   },
   {
-    field: 'work',
-    title: 'job',
-    width: 200
+    поле: 'work',
+    заголовок: 'job',
+    ширина: 200
   },
   {
-    field: 'city',
-    title: 'city',
-    width: 150
+    поле: 'Город',
+    заголовок: 'Город',
+    ширина: 150
   }
 ];
 const option = {
   columns
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-tableInstance.dataSource = dataSource;
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+таблицаInstance.данныеSource = данныеSource;
+window['таблицаInstance'] = таблицаInstance;
 ```

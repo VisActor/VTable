@@ -1,25 +1,25 @@
-{{ target: line-custom-element }}
+{{ target: line-пользовательский-element }}
 
-${prefix} type (string) ='line'
+${prefix} тип (строка) ='line'
 
 **必填**
 
-Element type, here is an line.
+Element тип, here is an line.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} points ({x: number, y: number}[] | ((value: string) => {x: number, y: number}[]))
+${prefix} points ({x: число, y: число}[] | ((значение: строка) => {x: число, y: число}[]))
 
 **必填**
 
-The coordinates of the points that make up the line.
+The coordinates из the points that make up the line.
 
-${prefix} lineWidth (number | ((value: string) => number))
+${prefix} lineширина (число | ((значение: строка) => число))
 
-stroke width.
+strхорошоe ширина.
 
-${prefix} stroke (string | ((value: string) => string))
+${prefix} strхорошоe (строка | ((значение: строка) => строка))
 
-stroke color.
+strхорошоe цвет.

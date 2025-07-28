@@ -1,41 +1,41 @@
 {{ target: common-switch-style }}
 
-#${prefix} switchStyle(Object)
+#${prefix} switchStyle(объект)
 
 Switch style configuration
 
-##${prefix} circleRadius(number)
+##${prefix} circleRadius(число)
 
-Radius of the switch's circular button
+Radius из the switch's circular Кнопка
 
-##${prefix} boxWidth(number)
+##${prefix} boxширина(число)
 
-Width of the switch background box
+ширина из the switch фон box
 
-##${prefix} boxHeight(number)
+##${prefix} boxвысота(число)
 
-Height of the switch background box
+высота из the switch фон box
 
-##${prefix} spaceBetweenTextAndCircle(number)
+##${prefix} spaceBetweenTextAndCircle(число)
 
-Space between the switch and its text
+Space between the switch и its текст
 
-##${prefix} checkedFill(string)
+##${prefix} checkedFill(строка)
 
-Background fill color when checked
+фон fill цвет when checked
 
-##${prefix} uncheckedFill(string)
+##${prefix} uncheckedFill(строка)
 
-Background fill color when unchecked
+фон fill цвет when unchecked
 
-##${prefix} disableCheckedFill(string)
+##${prefix} disableCheckedFill(строка)
 
-Background fill color when disabled and checked
+фон fill цвет when отключен и checked
 
-##${prefix} disableUncheckedFill(string)
+##${prefix} disableUncheckedFill(строка)
 
-Background fill color when disabled and unchecked
+фон fill цвет when отключен и unchecked
 
-##${prefix} circleFill(string)
+##${prefix} circleFill(строка)
 
-Fill color of the circular button
+Fill цвет из the circular Кнопка

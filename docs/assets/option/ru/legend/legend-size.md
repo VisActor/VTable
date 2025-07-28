@@ -1,41 +1,41 @@
-{{ target: component-legend-size }}
+{{ target: компонент-легенда-размер }}
 
-#${prefix} legends.size(Object)
+#${prefix} легендаs.размер(объект)
 
-Continuous size legend configuration.
+Continuous размер легенда configuration.
 
-**TODO: Add discrete legend illustration**
+**TODO: Add discrete легенда illustration**
 
-##${prefix} type(string) = 'size'
+##${prefix} тип(строка) = 'размер'
 
-**Required**, for declaring the size legend type, the value is `'size'`.
+**обязательный**, для declaring the размер легенда тип, the значение is `'размер'`.
 
-{{ use: component-base-legend(
+{{ use: компонент-base-легенда(
   prefix = '#' + ${prefix} 
 ) }}
 
 {{
-  use: component-continuous-legend(
+  use: компонент-continuous-легенда(
     prefix = '#' + ${prefix} 
   )
 }}
 
-##${prefix} sizeBackground(Object)
+##${prefix} sizeBackground(объект)
 
-**Effective only for size legends, i.e. `type: 'size'`**, size legend background style configuration.
+**Effective only для размер легендаs, i.e. `тип: 'размер'`**, размер легенда фон style configuration.
 
-##${prefix}  sizeRange([number, number])
+##${prefix}  sizeRange([число, число])
 
-**Required**, the shape range of the shape legend, which is an array consisting of two numbers, the start size and the end size, such as `[0, 50]`。
+**обязательный**, the shape range из the shape легенда, which is an массив consisting из two numbers, the начало размер и the конец размер, such as `[0, 50]`。
 
-##${prefix}  value([number, number])
+##${prefix}  значение([число, число])
 
-**Required**The numerical range displayed by the shape legend, which is an array composed of two numbers, the start data and the end data, such as `[0, 100]`。
+**обязательный**The numerical range displayed по the shape легенда, which is an массив composed из two numbers, the начало данные и the конец данные, such as `[0, 100]`。
 
-##${prefix}  max(number)
+##${prefix}  max(число)
 
-**Required**, the maximum value of the shape legend.
+**обязательный**, the maximum значение из the shape легенда.
 
-##${prefix}  min(number)
+##${prefix}  min(число)
 
-**Required**, the minimum value of the shape legend.
+**обязательный**, the minimum значение из the shape легенда.

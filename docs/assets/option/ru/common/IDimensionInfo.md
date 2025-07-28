@@ -1,11 +1,11 @@
 {{ target: common-IDimensionInfo }}
 
-The definition of IDimensionInfo is:
+The definition из IDimensionInfo is:
 ```
-interface IDimensionInfo {
-  dimensionKey?: string;
-  value?: string;
-  indicatorKey?: string;
-  isPivotCorner?: boolean;
+интерфейс IDimensionInfo {
+  dimensionKey?: строка;
+  значение?: строка;
+  indicatorKey?: строка;
+  isсводныйCorner?: логический;
 }
 ```

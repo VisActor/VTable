@@ -1,15 +1,15 @@
 {{ target: image-icon }}
 
-${prefix} type ('image')
+${prefix} тип ('image')
 Тип содержимого иконки - 'image'.
 
-${prefix} src (string)
+${prefix} src (строка)
 URL изображения
 
 ${prefix} shape ('circle' | 'square')
 Форма обрезки изображения
 
-${prefix} isGif (boolean)
+${prefix} isGif (логический)
 является ли gif-изображением
 
 {{ use: base-icon(

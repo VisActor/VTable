@@ -1,74 +1,74 @@
 ---
-title: React-VTable Source Code Analysis Document    
+заголовок: React-Vтаблица Source код Analysis Document    
 
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 # 1. Overall Architecture
 
 
 
-React-VTable 是一个基于 [@visactor/vtable](https://github.com/VisActor/VTable) 封装的 React 组件库，提供了声明式的表格渲染能力。该库主要由以下几个部分组成：    
+React-Vтаблица 是一个基于 [@visactor/vтаблица](https://github.com/VisActor/Vтаблица) 封装的 React 组件库，提供了声明式的表格渲染能力。该库主要由以下几个部分组成：    
 
 
 
-*  **Table Components**: Including main table types such as ListTable, PivotTable, PivotChart    \r
+*  **таблица компонентs**: Including main таблица types such as списоктаблица, сводныйтаблица, сводныйграфик    \r
 
-*  **Table Internal Element Components**: such as ListColumn, PivotDimension, and other table internal configuration components    \r
+*  **таблица Internal Element компонентs**: such as списокColumn, сводныйDimension, и other таблица internal configuration компонентs    \r
 
-*  **Event Handling System**: Unified management of table interaction events    
+*  **событие Handling System**: Unified manвозрастment из таблица interaction событиеs    
 
-*  **Container and Context Management Module**: Handles the rendering container and lifecycle of tables, providing a table state sharing mechanism    \r
+*  **Container и Context Manвозрастment Module**: Handles the rendering container и lifecycle из таблицаs, providing a таблица state sharing mechanism    \r
 
-*  **Custom Components**: Use encapsulated React components or external React components to implement custom rendering functionality    
-
-
-
-![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/VsJvwOhk0hLD5ybWoO0cLzScnFc.gif)
+*  **пользовательский компонентs**: Use encapsulated React компонентs или external React компонентs к implement пользовательский rendering функциональность    
 
 
 
-# 2. Core Components
+![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/VsJvwOhk0hLD5ybWoO0cLzScnFc.gif)
+
+
+
+# 2. Core компонентs
 
 
 
 
-## 2.1 Base Table (BaseTable)
+## 2.1 Base таблица (Baseтаблица)
 
 
 
-`BaseTable` is the foundational component for all table types, defined in `src/tables/base-table.tsx`. It is responsible for:
+`Baseтаблица` is the foundational компонент для все таблица types, defined в `src/таблицаs/base-таблица.tsx`. It is responsible для:
 
 
 
-* Create and manage table instances    
+* Create и manвозраст таблица instances    
 
-*  Handle table option and related configuration    
+*  Handle таблица option и related configuration    
 
-* Manage the lifecycle of the table    
+* Manвозраст the lifecycle из the таблица    
 
-*  Bind event handler    
+*  Bind событие handler    
 
 
 
-The BaseTable component uses React's forwardRef to expose the table instance to the parent component and provides table context through React's Context API.    
+The Baseтаблица компонент uses React's forwardRef к expose the таблица instance к the parent компонент и provides таблица context through React's Context апи.    
 
 
 
 Key Implementation:    
 
 ```xml
-const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
+const Baseтаблица: React.FC<Props> = React.forwardRef((props, ref) => {
   // 状态管理和引用
-  const [updateId, setUpdateId] = useState<number>(0);
-  const tableContext = useRef<TableContextType>({});
-  useImperativeHandle(ref, () => tableContext.current?.table);
+  const [updateId, setUpdateId] = useState<число>(0);
+  const таблицаContext = useRef<таблицаContextType>({});
+  useImperativeHandle(ref, () => таблицаContext.текущий?.таблица);
   
   // 创建表格实例的方法
-  const createTable = useCallback(
+  const createтаблица = useCallback(
     (props: Props) => {
-      const vtable = new props.vtableConstrouctor(props.container, parseOption(props));
+      const vтаблица = новый props.vтаблицаConstrouctor(props.container, parseOption(props));
       // ... 设置表格属性
-      tableContext.current = { ...tableContext.current, table: vtable };
+      таблицаContext.текущий = { ...таблицаContext.текущий, таблица: vтаблица };
       // ... 其他初始化逻辑
     },
     [/* 依赖项 */]
@@ -81,110 +81,110 @@ const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
 ```
 
 
-Each time the props change, obtain the updated table option, compare and determine whether the table needs to be updated. If necessary, create or update the table instance.    
+каждый time the props change, obtain the updated таблица option, compare и determine whether the таблица needs к be updated. If necessary, create или update the таблица instance.    
 
 
 
 Key Implementation:    
 
 ```Typescript
-const BaseTable: React.FC<Props> = React.forwardRef((props, ref) => {
+const Baseтаблица: React.FC<Props> = React.forwardRef((props, ref) => {
   // ...
   // 
     useEffect(() => {
     const newOptionFromChildren = hasOption ? null : parseOptionFromChildren(props);
 
-    if (!tableContext.current?.table) {
-      // ... 创建table实例
-      createTable(props);
+    if (!таблицаContext.текущий?.таблица) {
+      // ... 创建таблица实例
+      createтаблица(props);
       // ...
-      return;
+      возврат;
     }
 
     if (hasOption) {
       // ... 有option prop时只对比option和record两个props
-      if (!isEqual(eventsBinded.current.option, props.option, { skipFunction: skipFunctionDiff })) {
+      if (!isEqual(событиеsBinded.текущий.option, props.option, { skipFunction: skipFunctionDiff })) {
         // ... option发生变化，更新表格实例option
-        tableContext.current.table.updateOption(option as any);
+        таблицаContext.текущий.таблица.updateOption(option as любой);
       } else if (
         hasRecords &&
-        !isEqual(eventsBinded.current.records, props.records, { skipFunction: skipFunctionDiff })
+        !isEqual(событиеsBinded.текущий.records, props.records, { skipFunction: skipFunctionDiff })
       ) {
         // ... record发生变化，更新表格实例option
-        tableContext.current.table.setRecords(props.records as any[]);
+        таблицаContext.текущий.таблица.setRecords(props.records as любой[]);
       }
-      return;
+      возврат;
     }
 
     // ... 从props及children中提取出option
     const newOption = pickWithout(props, notOptionKeys);
     if (
-      !isEqual(newOption, prevOption.current, { skipFunction: skipFunctionDiff }) ||
-      !isEqual(newOptionFromChildren, optionFromChildren.current, { skipFunction: skipFunctionDiff })
+      !isEqual(newOption, prevOption.текущий, { skipFunction: skipFunctionDiff }) ||
+      !isEqual(newOptionFromChildren, optionFromChildren.текущий, { skipFunction: skipFunctionDiff })
     ) {
       // ... option发生变化，更新表格实例option
-      tableContext.current.table.updateOption(option as any);
-    } else if (hasRecords && !isEqual(props.records, prevRecords.current, { skipFunction: skipFunctionDiff })) {
+      таблицаContext.текущий.таблица.updateOption(option as любой);
+    } else if (hasRecords && !isEqual(props.records, prevRecords.текущий, { skipFunction: skipFunctionDiff })) {
       // ... record发生变化，更新表格实例option
-      tableContext.current.table.setRecords(props.records);
+      таблицаContext.текущий.таблица.setRecords(props.records);
     }
     
     // ......
-  }, [createTable, hasOption, hasRecords, parseOption, handleTableRender, renderTable, skipFunctionDiff, props]);
+  }, [createтаблица, hasOption, hasRecords, parseOption, handleтаблицаRender, renderтаблица, skipFunctionDiff, props]);
 });    
 
 ```
-## 2.2 Specific Table Types
+## 2.2 Specific таблица Types
 
 
 
-Similar to VTable, React-VTable provides several main table types:    
+Similar к Vтаблица, React-Vтаблица provides several main таблица types:    
 
 
 
-*  **ListTable**: List table    
+*  **списоктаблица**: список таблица    
 
-*  **PivotTable**: Pivot table    
+*  **сводныйтаблица**: сводный таблица    
 
-*  **PivotChart**: Pivot Table    
+*  **сводныйграфик**: сводный таблица    
 
-*  **Simplified Table**: ListTableSimple and PivotTableSimple, simplified versions split for package size optimization, only containing basic text rendering. You can register the components you need to use as needed.    \r
+*  **Simplified таблица**: списоктаблицаSimple и сводныйтаблицаSimple, simplified versions split для packвозраст размер optimization, only containing базовый текст rendering. Вы можете регистрация the компонентs you need к use as needed.    \r
 
 
 
-These components are created using the `createTable` factory function, for example:    
+These компонентs are created using the `createтаблица` factory функция, для пример:    
 
 
 
 ```xml
-export const ListTable = createTable<React.PropsWithChildren<ListTableProps>>('ListTable', {
-  type: 'list-table',
-  vtableConstrouctor: ListTableConstrouctor as any
+export const списоктаблица = createтаблица<React.PropsWithChildren<списоктаблицаProps>>('списоктаблица', {
+  тип: 'список-таблица',
+  vтаблицаConstrouctor: списоктаблицаConstrouctor as любой
 });    
 
 ```
 
 
-# 3. Component System
+# 3. компонент System
 
 
 
 
-## 3.1 Basic Component Creation
+## 3.1 базовый компонент Creation
 
 
 
 
-React-VTable uses the `createComponent` factory function (defined in `src/table-components/base-component.tsx`) to create various internal table element components:
+React-Vтаблица uses the `createкомпонент` factory функция (defined в `src/таблица-компонентs/base-компонент.tsx`) к create various internal таблица element компонентs:
 
 
 
 ```xml
-export const createComponent = <T extends ComponentProps>(
-  componentName: string,
-  optionName: string,
-  supportedEvents?: Record<string, string> | null,
-  isSingle?: boolean
+export const createкомпонент = <T extends компонентProps>(
+  компонентимя: строка,
+  optionимя: строка,
+  supportedсобытиеs?: Record<строка, строка> | null,
+  isSingle?: логический
 ) => {
   // ...组件实现
 };    
@@ -192,76 +192,76 @@ export const createComponent = <T extends ComponentProps>(
 ```
 
 
-This pattern allows the component to:    \r
+This pattern allows the компонент к:    \r
 
-* Unified event binding handling    
+* Unified событие binding handling    
 
-* Handle component updates and unmounting    
+* Handle компонент updates и unmounting    
 
-* Parse subcomponent structure    
+* Parse subкомпонент structure    
 
-* Manage the state of components in the context of a table    
-
-
-
-## 3.2 Component Types
+* Manвозраст the state из компонентs в the context из a таблица    
 
 
 
-The main component types include:    
+## 3.2 компонент Types
 
 
 
-*  **List Component**: such as `ListColumn`    
-
-*  **Pivot Table Components**: Such as `PivotColumnDimension`, `PivotRowDimension`, `PivotIndicator`, `PivotColumnHeaderTitle`    
-
-*  **UI Components**: such as `Menu`, `Tooltip`, `EmptyTip`    
-
-*  **Custom Component**: such as `CustomComponent`    
+The main компонент types include:    
 
 
 
-These components mainly configure various parts of the table options, such as column attributes, dimensions of the pivot table, etc.; they do not render content and will eventually be converted into attribute values in the table instance options.
+*  **список компонент**: such as `списокColumn`    
+
+*  **сводный таблица компонентs**: Such as `сводныйColumnDimension`, `сводныйRowDimension`, `сводныйIndicator`, `сводныйColumnHeaderTitle`    
+
+*  **UI компонентs**: such as `меню`, `Подсказка`, `EmptyTip`    
+
+*  **пользовательский компонент**: such as `пользовательскийкомпонент`    
 
 
 
-# 4. Event Handling System
+These компонентs mainly configure various parts из the таблица options, such as column attributes, dimensions из the сводный таблица, etc.; they do не render content и will событиеually be converted into attribute values в the таблица instance options.
+
+
+
+# 4. событие Handling System
 
 
 
 
-The event handling system is defined in `src/eventsUtils.ts`, providing:
+The событие handling system is defined в `src/событиеsUtils.ts`, providing:
 
 
 
-*  Event Type Definition    
+*  событие тип Definition    
 
-* Event callback function type    
+* событие обратный вызов функция тип    
 
-* Event binding and unbinding logic    
+* событие binding и unbinding logic    
 
 
 
-Core code for event binding:    \r
+Core код для событие binding:    \r
 
 ```xml
-export const bindEventsToTable = <T extends EventsProps>(
-  table: IVTable,
+export const bindсобытиеsToтаблица = <T extends событиеsProps>(
+  таблица: IVтаблица,
   newProps?: T | null,
   prevProps?: T | null,
-  supportedEvents: Record<string, string> = TABLE_EVENTS
+  supportedсобытиеs: Record<строка, строка> = таблица_событиеS
 ) => {
   // ... 事件处理逻辑
   // 获取新旧props中的事件
-  const prevEventProps: EventsProps = prevProps ? findEventProps(prevProps, supportedEvents) : null;
-  const newEventProps: EventsProps = newProps ? findEventProps(newProps, supportedEvents) : null;
+  const prevсобытиеProps: событиеsProps = prevProps ? findсобытиеProps(prevProps, supportedсобытиеs) : null;
+  const newсобытиеProps: событиеsProps = newProps ? findсобытиеProps(newProps, supportedсобытиеs) : null;
 
-  if (prevEventProps) {
+  if (prevсобытиеProps) {
     // ... 解绑旧事件
   }
   
-  if (newEventProps) {
+  if (newсобытиеProps) {
     // ... 绑定新事件
   }
 };    
@@ -269,20 +269,20 @@ export const bindEventsToTable = <T extends EventsProps>(
 ```
 
 
-The table events in the event system are the same as VTable. The names of event callbacks have been modified according to the specifications for installing React components. The corresponding relationships are as follows:    \r
+The таблица событиеs в the событие system are the same as Vтаблица. The имяs из событие callbacks have been modified according к the specifications для installing React компонентs. The corresponding relationships are as follows:    \r
 
-<table><colgroup><col style="width: 181px"><col style="width: 160px"></colgroup><tbody><tr><td rowspan="1" colspan="1">
+<таблица><colgroup><col style="ширина: 181px"><col style="ширина: 160px"></colgroup><tbody><tr><td rowspan="1" colspan="1">
 
-React-VTable Event Callback    
+React-Vтаблица событие обратный вызов    
 </td><td rowspan="1" colspan="1">
 
-VTable Event Name    \r
+Vтаблица событие имя    \r
 </td></tr><tr><td rowspan="1" colspan="1">
 
-onClickCell    
+onНажатьCell    
 </td><td rowspan="1" colspan="1">
 
-click_cell    
+Нажать_cell    
 </td></tr><tr><td rowspan="1" colspan="1">
 
 onSelectedCell    
@@ -303,56 +303,56 @@ onResizeColumn
 resize_column    
 </td></tr><tr><td rowspan="1" colspan="1">
 
-onSortClick    
+onсортировкаНажать    
 </td><td rowspan="1" colspan="1">
 
-sort_click    
+сортировка_Нажать    
 </td></tr><tr><td rowspan="1" colspan="1">
 
 onScroll    
 </td><td rowspan="1" colspan="1">
 
-scroll    
+прокрутка    
 </td></tr><tr><td rowspan="1" colspan="1">
 
 ...    
 </td><td rowspan="1" colspan="1">
 
 ...    
-</td></tr></tbody></table>
+</td></tr></tbody></таблица>
 
 
-# 5. Context and Containers
-
-
-
-## 5.1 Table Context
+# 5. Context и Containers
 
 
 
-
-The table context is defined in `src/context/table.tsx`, providing a shared mechanism for table instances and configurations.
-
-
-
-## 5.2 Container Components
+## 5.1 таблица Context
 
 
 
 
-`withContainer` is a higher-order component, defined in `src/containers/withContainer.tsx`, responsible for:    
+The таблица context is defined в `src/context/таблица.tsx`, providing a shared mechanism для таблица instances и configurations.
 
 
 
-* Create and manage the DOM container for tables    
-
-* Handling table size settings and updates    
-
-* Manage the lifecycle of containers    
+## 5.2 Container компонентs
 
 
 
-# 6. Custom Rendering
+
+`withContainer` is a higher-order компонент, defined в `src/containers/withContainer.tsx`, responsible для:    
+
+
+
+* Create и manвозраст the DOM container для таблицаs    
+
+* Handling таблица размер settings и updates    
+
+* Manвозраст the lifecycle из containers    
+
+
+
+# 6. пользовательский Rendering
 
 
 
@@ -362,77 +362,77 @@ The table context is defined in `src/context/table.tsx`, providing a shared mech
 
 
 
-`custom` directory contains the following key files:    
+`пользовательский` directory contains Следующий key files:    
 
 
 
-*  `custom-layout.tsx`: CustomLayout component    
+*  `пользовательский-макет.tsx`: пользовательскиймакет компонент    
 
-* `vtable-react-attribute-plugin.ts`: VRender renders React component plugin    
+* `vтаблица-react-attribute-plugin.ts`: VRender renders React компонент plugin    
 
-*  `vtable-browser-env-contribution.ts`: VRender browser environment adaptation plugin    
+*  `vтаблица-browser-env-contribution.ts`: VRender browser environment adaptation plugin    
 
 * `reconciler.ts`: React rendering coordinator    
 
-* `graphic.ts`: Custom layout graphic component    
+* `graphic.ts`: пользовательский макет graphic компонент    
 
 
 
-## 6.2 CustomLayout Component
+## 6.2 пользовательскиймакет компонент
 
 
 
 
-The CustomLayout component enhances the custom rendering capabilities for VTable, allowing users to encapsulate their own React components using the CustomLayout component functionality, and use native DOM React components within the component.    
+The пользовательскиймакет компонент enhances the пользовательский rendering capabilities для Vтаблица, allowing users к encapsulate their own React компонентs using the пользовательскиймакет компонент функциональность, и use native DOM React компонентs within the компонент.    
 
-The CustomLayout component is usually used as a subcomponent of columns, dimensions, or metrics. A CustomLayout component corresponds to multiple cells, which means it corresponds to multiple actual rendered component instances. Therefore, the main task within the CustomLayout component is to handle such correspondences.    \r
+The пользовательскиймакет компонент is usually used as a subкомпонент из columns, dimensions, или metrics. A пользовательскиймакет компонент corresponds к multiple cells, which means it corresponds к multiple actual rendered компонент instances. Therefore, the main task within the пользовательскиймакет компонент is к handle such correspondences.    \r
 
 
 
-`custom-layout.tsx` implements the core component of CustomLayout:    
+`пользовательский-макет.tsx` implements the core компонент из пользовательскиймакет:    
 
 ```xml
-export const CustomLayout: React.FC<CustomLayoutProps> = ({ children, componentId }) => {
-  // ... 创建Map，存储该CustomLayout对应所有单元格的组件实例
-  const container = useRef<Map<string, FiberRoot>>(new Map());
+export const пользовательскиймакет: React.FC<пользовательскиймакетProps> = ({ children, компонентId }) => {
+  // ... 创建Map，存储该пользовательскиймакет对应所有单元格的组件实例
+  const container = useRef<Map<строка, FiberRoot>>(новый Map());
   
-  const createGraphic: ICustomLayoutFuc = useCallback(
+  const createGraphic: IпользовательскиймакетFuc = useCallback(
     args => {
       // ... 使用reconcilor创建自定义组件
     },
     [children]
   );
 
-  const removeContainer = useCallback((col: number, row: number) => {
+  const removeContainer = useCallback((col: число, row: число) => {
      // ... 使用reconcilor删除自定义组件
   }, []);
 
-  useLayoutEffect(() => {
+  useмакетEffect(() => {
     // ...
-    if (table && !table.reactCustomLayout?.hasReactCreateGraphic(componentId, isHeaderCustomLayout)) {
+    if (таблица && !таблица.reactпользовательскиймакет?.hasReactCreateGraphic(компонентId, isHeaderпользовательскиймакет)) {
       // ... 如果该组件没有在表格中，记录创建与删除方法，并更新表格
-      table.reactCustomLayout?.setReactCreateGraphic(
-        componentId,
+      таблица.reactпользовательскиймакет?.setReactCreateGraphic(
+        компонентId,
         createGraphic,
-        isHeaderCustomLayout
+        isHeaderпользовательскиймакет
       );
-      table.reactCustomLayout?.setReactRemoveGraphic(componentId, removeContainer, isHeaderCustomLayout);
-      table.reactCustomLayout?.updateCustomCell(componentId, isHeaderCustomLayout); // update cell content
-    } else if (table) {
+      таблица.reactпользовательскиймакет?.setReactRemoveGraphic(компонентId, removeContainer, isHeaderпользовательскиймакет);
+      таблица.reactпользовательскиймакет?.updateпользовательскийCell(компонентId, isHeaderпользовательскиймакет); // update cell content
+    } else if (таблица) {
       // ... 如果该组件在表格中，更新创建方法，并更新以创建的组件
-      table.reactCustomLayout?.setReactCreateGraphic(
-        componentId,
+      таблица.reactпользовательскиймакет?.setReactCreateGraphic(
+        компонентId,
         createGraphic,
-        isHeaderCustomLayout
+        isHeaderпользовательскиймакет
       );
 
-      container.current.forEach((value, key) => {
+      container.текущий.forEach((значение, key) => {
         // 更新所有已创建的组件
       });
     }
   });
 
-  return null;
+  возврат null;
 };    
 
 ```
@@ -443,7 +443,7 @@ export const CustomLayout: React.FC<CustomLayoutProps> = ({ children, componentI
 
 
 
-`reconciler.ts` implements the React rendering reconciler based on `react-reconciler`, responsible for coordinating React components with the VTable rendering system. Using Reconciler, the primitives in VTable custom rendering can be encapsulated as components in a React way. For detailed `react-reconciler` configuration, refer to https://github.com/facebook/react/tree/main/packages/react-reconciler    
+`reconciler.ts` implements the React rendering reconciler based на `react-reconciler`, responsible для coordinating React компонентs с the Vтаблица rendering system. Using Reconciler, the primitives в Vтаблица пользовательский rendering can be encapsulated as компонентs в a React way. для detailed `react-reconciler` configuration, refer к https://github.com/faceboхорошо/react/tree/main/packвозрастs/react-reconciler    
 
 
 
@@ -452,12 +452,12 @@ export const CustomLayout: React.FC<CustomLayoutProps> = ({ children, componentI
 
 
 
-VRender supports users in configuring React DOM components in the react attribute of primitives. VTable's custom rendering uses this feature, allowing users to use React DOM components in encapsulated custom components.    
+VRender supports users в configuring React DOM компонентs в the react attribute из primitives. Vтаблица's пользовательский rendering uses this feature, allowing users к use React DOM компонентs в encapsulated пользовательский компонентs.    
 
-`vtable-react-attribute-plugin.ts` implements the VRender rendering React component plugin, which is an extension of the ReactAttributePlugin provided by VRender, with some customization for table scenarios:    
+`vтаблица-react-attribute-plugin.ts` implements the VRender rendering React компонент plugin, which is an extension из the ReactAttributePlugin provided по VRender, с некоторые пользовательскийization для таблица scenarios:    
 
 ```xml
-export class VTableReactAttributePlugin extends ReactAttributePlugin {
+export class VтаблицаReactAttributePlugin extends ReactAttributePlugin {
   // ... 渲染graphic对应的HTMLElement
   renderGraphicHTML(graphic: IGraphic) {
     // ... 获取正确的HTML容器
@@ -472,7 +472,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
 
     if (!this.htmlMap || !this.htmlMap[id]) {
       // 创建容器
-      const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
+      const { wrapContainer, nativeContainer } = this.getWrapContainer(stвозраст, container);
 
       if (wrapContainer) {
         if (!this.htmlMap) {
@@ -490,7 +490,7 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
 
   updateStyleOfWrapContainer(
     graphic: IGraphic,
-    stage: IStage,
+    stвозраст: IStвозраст,
     wrapContainer: HTMLElement,
     nativeContainer: HTMLElement,
     options: SimpleDomStyleOptions & CommonDomOptions
@@ -507,51 +507,51 @@ export class VTableReactAttributePlugin extends ReactAttributePlugin {
 
 
 
-`vtable-browser-env-contribution.ts` provides an adaptation layer for the browser environment, and is also an extension of the BrowserEnvContribution plugin provided by VRender, with some customization for table scenarios:    
+`vтаблица-browser-env-contribution.ts` provides an adaptation layer для the browser environment, и is also an extension из the BrowserEnvContribution plugin provided по VRender, с некоторые пользовательскийization для таблица scenarios:    
 
 
 
 ```xml
-class VTableBrowserEnvContribution extends BrowserEnvContribution {
+class VтаблицаBrowserEnvContribution extends BrowserEnvContribution {
   // 更新HTMLElement
-  updateDom(dom: HTMLElement, params: CreateDOMParamsTypeForVTable): boolean {
-    const tableDiv = dom.parentElement;
-    if (tableDiv && params.graphic) {
+  updateDom(dom: HTMLElement, params: CreateDOMParamsTypeForVтаблица): логический {
+    const таблицаDiv = dom.parentElement;
+    if (таблицаDiv && params.graphic) {
       // 获取该HTMLElement在表格中的位置和范围
-      const top = parseInt(params.style.top, 10);
-      const left = parseInt(params.style.left, 10);
+      const верх = parseInt(params.style.верх, 10);
+      const лево = parseInt(params.style.лево, 10);
 
-      let domWidth;
-      let domHeight;
-      if ((dom.style.display = 'none')) {
+      let domширина;
+      let domвысота;
+      if ((dom.style.display = 'никто')) {
         const cellGroup = getTargetCell(params.graphic);
-        domWidth = cellGroup.attribute.width ?? 1;
-        domHeight = cellGroup.attribute.height ?? 1;
+        domширина = cellGroup.attribute.ширина ?? 1;
+        domвысота = cellGroup.attribute.высота ?? 1;
       } else {
-        domWidth = dom.offsetWidth;
-        domHeight = dom.offsetHeight;
+        domширина = dom.offsetширина;
+        domвысота = dom.offsetвысота;
       }
-      if (top + domHeight < 0 || left + domWidth < 0 || top > tableDiv.offsetHeight || left > tableDiv.offsetWidth) {
-        // 如果超过表格显示范围，将style.display置为'none'，提升交互性能
-        dom.style.display = 'none';
-        return false;
+      if (верх + domвысота < 0 || лево + domширина < 0 || верх > таблицаDiv.offsetвысота || лево > таблицаDiv.offsetширина) {
+        // 如果超过表格显示范围，将style.display置为'никто'，提升交互性能
+        dom.style.display = 'никто';
+        возврат false;
       }
     }
 
     // ... 更新style
 
-    return true;
+    возврат true;
   }
 }    
 
 ```
 
 
-## 6.6 Primitive Components
+## 6.6 Primitive компонентs
 
 
 
-`graphic.ts` provides a componentized encapsulation of custom rendering primitives in VTable, allowing users to directly reference these primitive components from the @visactor/react-vtable repository.    
+`graphic.ts` provides a компонентized encapsulation из пользовательский rendering primitives в Vтаблица, allowing users к directly reference these primitive компонентs от the @visactor/react-vтаблица repository.    
 
 
 
@@ -560,19 +560,19 @@ class VTableBrowserEnvContribution extends BrowserEnvContribution {
 
 
 
-1. User creates a table component and configures properties    
+1. User creates a таблица компонент и configures свойства    
 
-2. Internal components (such as ListColumn) parse configuration through the `parseOption` method    
+2. Internal компонентs (such as списокColumn) parse configuration through the `parseOption` method    
 
-3. BaseTable creates a VTable instance and applies the configuration    
+3. Baseтаблица creates a Vтаблица instance и applies the configuration    
 
-4. Event system binds user-provided event handler functions    
+4. событие system binds user-provided событие handler functions    
 
-5. Handling Custom Components    
+5. Handling пользовательский компонентs    
 
-![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/Ujqcwmt3mhcO1ObYXGCcHFainRb.gif)
+![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/Ujqcwmt3mhcO1ObYXGCcHFainRb.gif)
 
 
 
-# This document was revised and organized by the following personnel 
+# This document was revised и organized по Следующий personnel 
  [玄魂](https://github.com/xuanhun)

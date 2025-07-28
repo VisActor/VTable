@@ -1,11 +1,11 @@
 {{target: option}}
 
-{{import: table-listTable}}
+{{import: таблица-списоктаблица}}
 
-{{import: table-pivotTable}}
+{{import: таблица-сводныйтаблица}}
 
-{{import: table-pivotChart}}
+{{import: таблица-сводныйграфик}}
 
-{{import: gantt}}
+{{import: гантт}}
 
-{{import: calendar}}
+{{import: календарь}}

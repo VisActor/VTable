@@ -1,107 +1,107 @@
 ---
-category: examples
-group: Animation
-title: Carousel Animation
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/carousel-animation.gif
-link: animation/carousel_animation
+категория: примеры
+группа: Animation
+заголовок: Carousel Animation
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/carousel-animation.gif
+ссылка: animation/carousel_animation
 ---
 
 # Carousel Animation
 
-Table carousel animation display
+таблица carousel animation display
 
 ## Key Configuration
 
-- `TableCarouselAnimationPlugin` Carousel animation plugin
-  - `rowCount` Number of rows scrolled in one animation
-  - `colCount` Number of columns scrolled in one animation
-  - `animationDuration` Duration of a single scroll animation
+- `таблицаCarouselAnimationPlugin` Carousel animation plugin
+  - `rowCount` число из rows scrolled в one animation
+  - `colCount` число из columns scrolled в one animation
+  - `animationDuration` Duration из a single прокрутка animation
   - `animationDelay` Time interval between animations
-  - `animationEasing` Animation easing function
+  - `animationEasing` Animation easing функция
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// use this for project
-// import * as VTable from '@visactor/vtable';
-// import * as VTablePlugins from '@visactor/vtable-plugins';
+```javascript liveдемонстрация template=vтаблица
+// use this для project
+// import * as Vтаблица от '@visactor/vтаблица';
+// import * as VтаблицаPlugins от '@visactor/vтаблица-plugins';
 
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные100.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
 
-    const animationPlugin = new VTablePlugins.TableCarouselAnimationPlugin( {
+    const animationPlugin = новый VтаблицаPlugins.таблицаCarouselAnimationPlugin( {
       rowCount: 2,
-      autoPlay: true,
-      autoPlayDelay: 1000
+      автоPlay: true,
+      автоPlayDelay: 1000
     });
     const columns = [
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data.slice(0, 20),
+      records: данные.slice(0, 20),
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       plugins: [animationPlugin]
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
 
     
   });

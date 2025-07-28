@@ -1,21 +1,21 @@
 {{ target: CellAddress }}
 Определение типа для CellAddress:
 ```
-interface CellAddress {
-  col: number;
-  row: number;
+интерфейс CellAddress {
+  col: число;
+  row: число;
 }
 ```
 
 {{ target: CellAddressWithBound }}
 Определение типа для CellAddressWithBound:
 ```
-interface CellAddressWithBound {
-  col: number;
-  row: number;
+интерфейс CellAddressWithBound {
+  col: число;
+  row: число;
   rect?: RectProps;
-  x?: number;
-  y?: number;
+  x?: число;
+  y?: число;
 }
 ```
 {{ use: RectProps() }}

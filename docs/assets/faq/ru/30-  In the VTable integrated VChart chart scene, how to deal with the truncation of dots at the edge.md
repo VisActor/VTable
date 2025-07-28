@@ -8,12 +8,12 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Визуали�
 ## Описание
 
 В сценарии интеграции VTable с VChart, как избежать обрезки крайних точек при отрисовке точек на диаграмме.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/RUjJbYCjXoTh14xvUwgcDPTAncf.gif' alt='' width='1280' height='372'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/RUjJbYCjXoTh14xvUwgcDPTAncf.gif' alt='' ширина='1280' высота='372'>
 
 ## Решение
 
 Настройте innerOffset на оси axes. После добавления как показано выше, между элементами диаграммы и краем таблицы будет определенное расстояние.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/XtTLbGtHNoWltwxvjj5c0MOAn1g.gif' alt='' width='1280' height='312'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/XtTLbGtHNoWltwxvjj5c0MOAn1g.gif' alt='' ширина='1280' высота='312'>
 
 ## Пример кода
 
@@ -22,35 +22,35 @@ key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Визуали�
 const option = {
   axes: [
           {
-            orient: 'left',
-            type: 'linear',
+            orient: 'лево',
+            тип: 'linear',
             innerOffset: {
-              top: 4,
-              bottom: 4,
+              верх: 4,
+              низ: 4,
             }
           },
           {
-            orient: 'bottom',
-            type: 'band',
+            orient: 'низ',
+            тип: 'band',
             innerOffset: {
-              left: 4,
-              right: 4,
+              лево: 4,
+              право: 4,
             }
           }
         ]
   ...
 }
 
-const tableInstance = new VTable.ListTable(container, option);</br>
+const tableInstance = новый VTable.ListTable(container, option);</br>
 ```
 ## Результаты
 
-Ссылка на онлайн-эффект: https://visactor.io/vtable/demo/table-type/pivot-chart-scatter</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HHa6b0VRgoHT47xrWZrcvaDlnxf.gif' alt='' width='1047' height='580'>
+Ссылка на онлайн-эффект: https://visactor.io/VTable/demo/table-тип/pivot-chart-scatter</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HHa6b0VRgoHT47xrWZrcvaDlnxf.gif' alt='' ширина='1047' высота='580'>
 
 ## Связанные документы
 
-Связанное API：https://visactor.io/vtable/option/PivotTable#axes</br>
+Связанное API：https://visactor.io/VTable/option/PivotTable#axes</br>
 github：https://github.com/VisActor/VTable</br>
 
 

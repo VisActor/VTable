@@ -1,171 +1,171 @@
 ---
-category: examples
-group: Basic Features
-title: Display dimension names in pivot table headers
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-corner-title.png
-link: table_type/Pivot_table/pivot_table_useage
-option: PivotTable#corner
+категория: примеры
+группа: базовый возможности
+заголовок: Display dimension имяs в сводный таблица headers
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-таблица-corner-title.png
+ссылка: таблица_type/сводный_таблица/сводный_таблица_useвозраст
+опция: сводныйтаблица#corner
 ---
 
-# Display dimension names in pivot table headers
+# Display dimension имяs в сводный таблица headers
 
-If you set the header title display content basis to `'all'`, the header cell content will be the concatenation of the row dimension name and the column dimension name.
+If you set the header title display content basis к `'все'`, the header cell content will be the concatenation из the row dimension имя и the column dimension имя.
 
-titleOnDimension The corner title displays content based on:
+titleOnDimension The corner title displays content based на:
 
-- 'column' column dimension name as header cell content
-- 'row' row dimension name as header cell content
-- 'none' means the header cell content is empty
-- 'all' means the header cell content is the concatenation of the row dimension name and the column dimension name
+- 'column' column dimension имя as header cell content
+- 'row' row dimension имя as header cell content
+- 'никто' means the header cell content is empty
+- 'все' means the header cell content is the concatenation из the row dimension имя и the column dimension имя
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `corner.titleOnDimension` Corner title display content based on
+- `corner.titleOnDimension` Corner title display content based на
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Row Totals') {
-                return '#ff9900';
+              if (arg.данныеValue === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          sort: true,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          сортировка: true,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          sort: true,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          сортировка: true,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         }
       ],
       corner: {
-        titleOnDimension: 'all'
+        titleOnDimension: 'все'
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

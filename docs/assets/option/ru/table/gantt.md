@@ -1,31 +1,31 @@
-{{ target: gantt }}
+{{ target: гантт }}
 
-# Gantt
+# гантт
 
-Gantt chart configuration, corresponding type is GanttConstructorOptions, specific configuration items are as follows:
+гантт график configuration, corresponding тип is ганттConstructorOptions, specific configuration items are as follows:
 
-## records(Array)
+## records(массив)
 
-Data collection.
+данные collection.
 
-Optional
+необязательный
 
-## taskListTable(Object)
+## taskсписоктаблица(объект)
 
-Configuration related to the task list table on the left.
+Configuration related к the task список таблица на the лево.
 
-Optional
+необязательный
 
-{{ use: common-gantt-task-list-table(prefix = '###') }}
+{{ use: common-гантт-task-список-таблица(prefix = '###') }}
 
-## timelineHeader(Object)
+## timelineHeader(объект)
 
 Time scale configuration.
 
 ```
   {
-    backgroundColor?: string;
-    colWidth?: number;
+    backgroundColor?: строка;
+    colширина?: число;
     /** Vertical line style */
     verticalLine?: ILineStyle;
     /** Horizontal line style */
@@ -34,160 +34,160 @@ Time scale configuration.
   }
 ```
 
-### backgroundColor(string)
+### backgroundColor(строка)
 
-Time scale background color.
+Time scale фон цвет.
 
-### colWidth(number)
+### colширина(число)
 
-Column width.
+Column ширина.
 
 ### verticalLine(ILineStyle)
 
 Vertical line style.
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
 ### horizontalLine(ILineStyle)
 
 Horizontal line style.
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
-### scales(Array<ITimelineScale>)
+### scales(массив<ITimelineScale>)
 
-Time scale configuration array.
+Time scale configuration массив.
 
-{{ use: common-gantt-timeline-scale( prefix = '####') }}
+{{ use: common-гантт-timeline-scale( prefix = '####') }}
 
-## taskBar(Object)
+## taskBar(объект)
 
 Set task bar style.
 
-Optional
+необязательный
 
-{{ use: common-gantt-task-bar(prefix = '###')}}
+{{ use: common-гантт-task-bar(prefix = '###')}}
 
 ## tasksShowMode(TasksShowMode)
 
-Task bar display mode. It is configured using the enumeration type `TasksShowMode`.
+Task bar display mode. It is configured using the enumeration тип `TasksShowMode`.
 
-Optional
+необязательный
 
-- `TasksShowMode.Tasks_Separate`: Each task node is displayed in a separate row, with the parent task occupying one row and child tasks occupying one row each. This is the default display effect!
-- `TasksShowMode.Sub_Tasks_Separate`: The parent task node is omitted and not displayed, and all child task nodes are displayed in separate rows.
-- `TasksShowMode.Sub_Tasks_Inline`: The parent task node is omitted and not displayed, and all child task nodes are placed in the same row for display.
-- `TasksShowMode.Sub_Tasks_Arrange`: The parent task node is omitted and not displayed, and all child tasks will maintain the data order in the records and ensure that the nodes are displayed without overlapping.
-- `TasksShowMode.Sub_Tasks_Compact`: The parent task node is omitted and not displayed, and all child tasks will be arranged according to the date attribute and ensure a compact display without overlapping nodes.
+- `TasksShowMode.Tasks_Separate`: каждый task node is displayed в a separate row, с the parent task occupying one row и child tasks occupying one row каждый. This is the по умолчанию display effect!
+- `TasksShowMode.Sub_Tasks_Separate`: The parent task node is omitted и не displayed, и все child task nodes are displayed в separate rows.
+- `TasksShowMode.Sub_Tasks_Inline`: The parent task node is omitted и не displayed, и все child task nodes are placed в the same row для display.
+- `TasksShowMode.Sub_Tasks_Arrange`: The parent task node is omitted и не displayed, и все child tasks will maintain the данные order в the records и ensure that the nodes are displayed без overlapping.
+- `TasksShowMode.Sub_Tasks_Compact`: The parent task node is omitted и не displayed, и все child tasks will be arranged according к the date attribute и ensure a compact display без overlapping nodes.
 
-## taskKeyField(string)
+## taskKeyполе(строка)
 
-The field name that uniquely identifies the data entry, default is 'id'
+The поле имя that uniquely identifies the данные entry, по умолчанию is 'id'
 
-Not required
+не обязательный
 
-## dependency(Object)
+## dependency(объект)
 
-Set dependency line relationship and style
+Set dependency line relationship и style
 
-Not required
+не обязательный
 
-{{ use: common-gantt-dependency-line(prefix = '###')}}
+{{ use: common-гантт-dependency-line(prefix = '###')}}
 
 ## grid(IGrid)
 
 Grid style.
 
-Optional
+необязательный
 
-{{ use: common-gantt-grid(prefix = '###') }}
+{{ use: common-гантт-grid(prefix = '###') }}
 
-## markLine(boolean | IMarkLine | Array<IMarkLine>)
+## markLine(логический | IMarkLine | массив<IMarkLine>)
 
-Mark line configuration. If set to true, today will be automatically marked.
+Mark line configuration. If set к true, today will be автоmatically marked.
 
-Optional
+необязательный
 
-{{use: common-gantt-mark-line(prefix = '###')}}
+{{use: common-гантт-mark-line(prefix = '###')}}
 
 ## markLineCreateOptions(IMarkLineCreateOptions)
 
-configuration of the mark line creation.
+configuration из the mark line creation.
 
-Optional
+необязательный
 
-{{use: common-gantt-create-mark-line(prefix = '###')}}
+{{use: common-гантт-create-mark-line(prefix = '###')}}
 
-## frame(Object)
+## frame(объект)
 
-Configuration of the entire outer frame and horizontal and vertical dividing lines.
+Configuration из the entire outer frame и horizontal и vertical dividing lines.
 
-Optional
+необязательный
 
-{{ use: common-gantt-frame(prefix = '###') }}
+{{ use: common-гантт-frame(prefix = '###') }}
 
-## minDate(string)
+## minDate(строка)
 
-Specify the minimum date for the entire Gantt chart.
+Specify the minimum date для the entire гантт график.
 
-Optional
+необязательный
 
-## maxDate(string)
+## maxDate(строка)
 
-Specify the maximum date for the entire Gantt chart. If not set, the default rule is used.
+Specify the maximum date для the entire гантт график. If не set, the по умолчанию rule is used.
 
-Optional
+необязательный
 
-## headerRowHeight(number)
+## headerRowвысота(число)
 
-Default row height for the top header section. If you want to configure according to the header level, please configure it in timelineHeader.scale.
+по умолчанию row высота для the верх header section. If you want к configure according к the header level, please configure it в timelineHeader.scale.
 
-Optional
+необязательный
 
-## rowHeight(number)
+## rowвысота(число)
 
-Default row height for data.
+по умолчанию row высота для данные.
 
-Optional
+необязательный
 
 ## rowSeriesNumber(IRowSeriesNumber)
 
-Row number configuration.
+Row число configuration.
 
-Optional
+необязательный
 
-{{ use: row-series-number(
+{{ use: row-series-число(
     prefix = '###',
 ) }}
 
-## overscrollBehavior('auto' | 'none') = 'auto'
+## overscrollBehavior('авто' | 'никто') = 'авто'
 
-Scroll behavior configuration.
+прокрутка behavior configuration.
 
-- 'auto': Consistent with browser scroll behavior, triggers the browser's default behavior when the table scrolls to the top/bottom.
-- 'none': When the table scrolls to the top/bottom, it no longer triggers the parent container to scroll.
+- 'авто': Consistent с browser прокрутка behavior, triggers the browser's по умолчанию behavior when the таблица scrolls к the верх/низ.
+- 'никто': When the таблица scrolls к the верх/низ, it no longer triggers the parent container к прокрутка.
 
-Optional
+необязательный
 
 ## scrollStyle(IScrollStyle)
 
 Scrollbar style.
 
-Optional
+необязательный
 
-For specific reference, see the configuration in ListTable: [Specific configuration](./ListTable#theme.scrollStyle)
+для specific reference, see the configuration в списоктаблица: [Specific configuration](./списоктаблица#тема.scrollStyle)
 
-## pixelRatio(number)
+## pixelRatio(число)
 
 Pixel ratio.
 
-Optional
+необязательный
 
-## dateFormat(string)
+## dateFormat(строка)
 
-The date format of the new schedule. The date data will be added to the date field value in the data record. The default value is 'yyyy-mm-dd'.
+The date format из the новый schedule. The date данные will be added к the date поле значение в the данные record. The по умолчанию значение is 'yyyy-mm-dd'.
 
-Not required
+не обязательный
 
 ```
 dateFormat?:
@@ -201,18 +201,18 @@ dateFormat?:
 | 'mm.dd.yyyy';
 ```
 
-## underlayBackgroundColor(string)
+## underlayBackgroundColor(строка)
 
-The fill color of the canvas outside the drawing range is '#fff' by default, and it also matches the background color of the table on the left.
+The fill цвет из the canvas outside the drawing range is '#fff' по по умолчанию, и it also matches the фон цвет из the таблица на the лево.
 
-Not required
+не обязательный
 
-## eventOptions(IEventOptions)
+## событиеOptions(IсобытиеOptions)
 
-Settings related to event triggering, specific configuration items:
+Settings related к событие triggering, specific configuration items:
 
-### preventDefaultContextMenu(boolean) = true
+### prсобытиеDefaultContextменю(логический) = true
 
-Prevent the default behavior of the right mouse button
+Prсобытие the по умолчанию behavior из the право mouse Кнопка
 
-Optional
+необязательный

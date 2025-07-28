@@ -1,183 +1,183 @@
 ---
-category: examples
-group: table-type
-title: Basic table tree display (lazy loading of child node data)
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree-lazy-load-en.gif
-link: table_type/List_table/tree_list
-option: ListTable-columns-text#tree
+категория: примеры
+группа: таблица-тип
+заголовок: базовый таблица tree display (lazy загрузка из child node данные)
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-tree-lazy-load-en.gif
+ссылка: таблица_type/список_таблица/tree_список
+опция: списоктаблица-columns-текст#tree
 ---
 
-# Basic table tree display (lazy loading of child node data)
+# базовый таблица tree display (lazy загрузка из child node данные)
 
-Basic table tree display, turn on the tree mode of a certain column, if the children of the corresponding data is set to true instead of a specific data collection, then when clicked, you can listen to the `TREE_HIERARCHY_STATE_CHANGE` event to request the children data and return it to the table component.
+базовый таблица tree display, turn на the tree mode из a certain column, if the children из the corresponding данные is set к true instead из a specific данные collection, then when Нажатьed, Вы можете списокen к the `TREE_HIERARCHY_STATE_CHANGE` событие к request the children данные и возврат it к the таблица компонент.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- tree:true Set to enable tree display on a certain column
-- children: true Set to enable tree display on a certain row of data and lazily load child node data
-- setRecordChildren(children: any[], col: number, row: number) Call this method after lazily loading child node data in a row of data and return it to the table component
-- TREE_HIERARCHY_STATE_CHANGE tree display state change events
-- cellType: 'checkbox' Turns on the checkbox. Use it with tree:true to display the checkbox in a tree format.
-- enableCheckboxCascade: true It is used globally to turn on the checkbox cascade. It must be used with cellType: 'checkbox' and tree:true to synchronize the parent and child element selections.
+- tree:true Set к включить tree display на a certain column
+- children: true Set к включить tree display на a certain row из данные и lazily load child node данные
+- setRecordChildren(children: любой[], col: число, row: число) Call this method after lazily загрузка child node данные в a row из данные и возврат it к the таблица компонент
+- TREE_HIERARCHY_STATE_CHANGE tree display state change событиеs
+- cellType: 'флажок' Turns на the флажок. Use it с tree:true к display the флажок в a tree format.
+- enableCheckboxCascade: true It is used globally к turn на the флажок cascade. It must be used с cellType: 'флажок' и tree:true к synchronize the parent и child element selections.
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// Register the loading icon
-VTable.register.icon('loading', {
-  type: 'image',
-  width: 16,
-  height: 16,
-  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
-  name: 'loading', // Define the name of the icon, which will be used as the key value for caching in the internal cache
-  positionType: VTable.TYPES.IconPosition.absoluteRight, // Specify the position, which can be before or after the text, or left or right of the cell
-  marginLeft: 0, // The left content interval in the specific position
-  marginRight: 4, // The right content interval in the specific position
-  visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'click_cell'
-  hover: {
-    // The size of the hot area
-    width: 22,
-    height: 22,
+```javascript liveдемонстрация template=vтаблица
+// регистрация the загрузка иконка
+Vтаблица.регистрация.иконка('загрузка', {
+  тип: 'imвозраст',
+  ширина: 16,
+  высота: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/загрузка-circle.gif',
+  имя: 'загрузка', // Define the имя из the иконка, which will be used as the key значение для caching в the internal cache
+  positionType: Vтаблица.TYPES.иконкаPosition.absoluteRight, // Specify the позиция, which can be before или after the текст, или лево или право из the cell
+  marginLeft: 0, // The лево content interval в the specific позиция
+  marginRight: 4, // The право content interval в the specific позиция
+  visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'Нажать_cell'
+  навести: {
+    // The размер из the hot area
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101,117,168,0.1)'
   },
   isGif: true
 });
 
-let tableInstance;
-const data = [
+let таблицаInstance;
+const данные = [
   {
-    category: 'Office Supplies',
-    sales: '129.696',
-    quantity: '2',
-    profit: '-60.704',
+    категория: 'Office Supplies',
+    Продажи: '129.696',
+    Количество: '2',
+    Прибыль: '-60.704',
     children: [
       {
-        category: 'envelope', // 对应原子category
-        sales: '125.44',
-        quantity: '2',
-        profit: '42.56',
+        категория: 'envelope', // 对应原子Категория
+        Продажи: '125.44',
+        Количество: '2',
+        Прибыль: '42.56',
         children: [
           {
-            category: 'yellow envelope',
-            sales: '125.44',
-            quantity: '2',
-            profit: '42.56'
+            категория: 'yellow envelope',
+            Продажи: '125.44',
+            Количество: '2',
+            Прибыль: '42.56'
           },
           {
-            category: 'white envelope',
-            sales: '1375.92',
-            quantity: '3',
-            profit: '550.2'
+            категория: 'white envelope',
+            Продажи: '1375.92',
+            Количество: '3',
+            Прибыль: '550.2'
           }
         ]
       },
       {
-        category: 'utensil', // 对应原子category
-        sales: '1375.92',
-        quantity: '3',
-        profit: '550.2',
+        категория: 'utensil', // 对应原子Категория
+        Продажи: '1375.92',
+        Количество: '3',
+        Прибыль: '550.2',
         children: [
           {
-            category: 'stapler',
-            sales: '125.44',
-            quantity: '2',
-            profit: '42.56'
+            категория: 'stapler',
+            Продажи: '125.44',
+            Количество: '2',
+            Прибыль: '42.56'
           },
           {
-            category: 'calculator',
-            sales: '1375.92',
-            quantity: '3',
-            profit: '550.2'
+            категория: 'calculator',
+            Продажи: '1375.92',
+            Количество: '3',
+            Прибыль: '550.2'
           }
         ]
       }
     ]
   },
   {
-    category: 'technology',
-    sales: '229.696',
-    quantity: '20',
-    profit: '90.704',
+    категория: 'technology',
+    Продажи: '229.696',
+    Количество: '20',
+    Прибыль: '90.704',
     children: [
       {
-        category: 'equipment', // 对应原子category
-        sales: '225.44',
-        quantity: '5',
-        profit: '462.56'
+        категория: 'equipment', // 对应原子Категория
+        Продажи: '225.44',
+        Количество: '5',
+        Прибыль: '462.56'
       },
       {
-        category: 'Accessories', // 对应原子category
-        sales: '375.92',
-        quantity: '8',
-        profit: '550.2'
+        категория: 'Accessories', // 对应原子Категория
+        Продажи: '375.92',
+        Количество: '8',
+        Прибыль: '550.2'
       },
       {
-        category: 'copier', // 对应原子category
-        sales: '425.44',
-        quantity: '7',
-        profit: '342.56'
+        категория: 'copier', // 对应原子Категория
+        Продажи: '425.44',
+        Количество: '7',
+        Прибыль: '342.56'
       },
       {
-        category: 'telephone', // 对应原子category
-        sales: '175.92',
-        quantity: '6',
-        profit: '750.2'
+        категория: 'telephone', // 对应原子Категория
+        Продажи: '175.92',
+        Количество: '6',
+        Прибыль: '750.2'
       }
     ]
   },
   {
-    category: 'furniture',
-    sales: '129.696',
-    quantity: '2',
-    profit: '-60.704',
+    категория: 'furniture',
+    Продажи: '129.696',
+    Количество: '2',
+    Прибыль: '-60.704',
     children: [
       {
-        category: 'desk', // 对应原子category
-        sales: '125.44',
-        quantity: '2',
-        profit: '42.56',
+        категория: 'desk', // 对应原子Категория
+        Продажи: '125.44',
+        Количество: '2',
+        Прибыль: '42.56',
         children: [
           {
-            category: 'yellow desk',
-            sales: '125.44',
-            quantity: '2',
-            profit: '42.56'
+            категория: 'yellow desk',
+            Продажи: '125.44',
+            Количество: '2',
+            Прибыль: '42.56'
           },
           {
-            category: 'white desk',
-            sales: '1375.92',
-            quantity: '3',
-            profit: '550.2'
+            категория: 'white desk',
+            Продажи: '1375.92',
+            Количество: '3',
+            Прибыль: '550.2'
           }
         ]
       },
       {
-        category: 'chair', // 对应原子category
-        sales: '1375.92',
-        quantity: '3',
-        profit: '550.2',
+        категория: 'chair', // 对应原子Категория
+        Продажи: '1375.92',
+        Количество: '3',
+        Прибыль: '550.2',
         children: [
           {
-            category: 'boss chairs',
-            sales: '125.44',
-            quantity: '2',
-            profit: '42.56'
+            категория: 'boss chairs',
+            Продажи: '125.44',
+            Количество: '2',
+            Прибыль: '42.56'
           },
           {
-            category: 'sofa chair',
-            sales: '1375.92',
-            quantity: '3',
-            profit: '550.2'
+            категория: 'sofa chair',
+            Продажи: '1375.92',
+            Количество: '3',
+            Прибыль: '550.2'
           }
         ]
       }
     ]
   },
   {
-    category: 'Home appliances(lazy load)',
-    sales: '229.696',
-    quantity: '20',
-    profit: '90.704',
+    категория: 'Home appliances(lazy load)',
+    Продажи: '229.696',
+    Количество: '20',
+    Прибыль: '90.704',
     children: true
   }
 ];
@@ -185,85 +185,85 @@ const option = {
   container: document.getElementById(CONTAINER_ID),
   columns: [
     {
-      field: 'category',
-      // Supports checkbox tree display.
-      // To synchronize parent and child element checkboxes, be sure to configure enableCheckboxCascade: true in the option global configuration.
-      // cellType: 'checkbox',
+      поле: 'Категория',
+      // Supports флажок tree display.
+      // к synchronize parent и child element checkboxes, be sure к configure enableCheckboxCascade: true в the option global configuration.
+      // cellType: 'флажок',
       tree: true,
-      title: 'category',
-      width: 'auto',
-      sort: true
+      заголовок: 'Категория',
+      ширина: 'авто',
+      сортировка: true
     },
     {
-      field: 'sales',
-      title: 'sales',
-      width: 'auto',
-      sort: true
+      поле: 'Продажи',
+      заголовок: 'Продажи',
+      ширина: 'авто',
+      сортировка: true
       // tree: true,
     },
     {
-      field: 'profit',
-      title: 'profit',
-      width: 'auto',
-      sort: true
+      поле: 'Прибыль',
+      заголовок: 'Прибыль',
+      ширина: 'авто',
+      сортировка: true
     }
   ],
   // enableCheckboxCascade:true,
-  showPin: true, //显示VTable内置冻结列图标
-  widthMode: 'standard',
+  showPin: true, //显示Vтаблица内置冻结列图标
+  ширинаMode: 'standard',
   allowFrozenColCount: 2,
-  records: data,
+  records: данные,
 
   hierarchyIndent: 20,
   hierarchyExpandLevel: 2,
   hierarchyTextStartAlignment: true,
-  sortState: {
-    field: 'sales',
-    order: 'asc'
+  сортировкаState: {
+    поле: 'Продажи',
+    порядок: 'asc'
   },
-  theme: VTable.themes.BRIGHT,
-  defaultRowHeight: 32
+  тема: Vтаблица.темаs.BRIGHT,
+  defaultRowвысота: 32
 };
 
-const instance = new VTable.ListTable(option);
+const instance = новый Vтаблица.списоктаблица(option);
 
-const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
+const { TREE_HIERARCHY_STATE_CHANGE } = Vтаблица.списоктаблица.событие_TYPE;
+instance.на(TREE_HIERARCHY_STATE_CHANGE, args => {
   // TODO 调用接口插入设置子节点的数据
-  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
-    const record = args.originData;
+  if (args.hierarchyState === Vтаблица.TYPES.HierarchyState.развернуть && !массив.isArray(args.originданные.children)) {
+    const record = args.originданные;
     instance.setLoadingHierarchyState(args.col, args.row);
     setTimeout(() => {
       const children = [
         {
-          category: record['category'] + ' - category 1',
-          sales: 2,
-          quantity: 5,
-          profit: 4
+          категория: record['Категория'] + ' - Категория 1',
+          Продажи: 2,
+          Количество: 5,
+          Прибыль: 4
         },
         {
-          category: record['category'] + ' - category 2',
-          sales: 3,
-          quantity: 8,
-          profit: 5
+          категория: record['Категория'] + ' - Категория 2',
+          Продажи: 3,
+          Количество: 8,
+          Прибыль: 5
         },
         {
-          category: record['category'] + ' - category 3(lazy load)',
-          sales: 4,
-          quantity: 20,
-          profit: 90.704,
+          категория: record['Категория'] + ' - Категория 3(lazy load)',
+          Продажи: 4,
+          Количество: 20,
+          Прибыль: 90.704,
           children: true
         },
         {
-          category: record['category'] + ' - category 4',
-          sales: 5,
-          quantity: 6,
-          profit: 7
+          категория: record['Категория'] + ' - Категория 4',
+          Продажи: 5,
+          Количество: 6,
+          Прибыль: 7
         }
       ];
       instance.setRecordChildren(children, args.col, args.row);
     }, 2000);
   }
 });
-window['tableInstance'] = tableInstance;
+window['таблицаInstance'] = таблицаInstance;
 ```

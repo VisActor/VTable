@@ -1,25 +1,25 @@
-# Title Introduction to the use of table coordinate axes
-The axis component in the VTable table library allows you to configure the axis in the cell in the perspective view. This tutorial will guide you on how to use this feature effectively.
+# Title Introduction к the use из таблица coordinate axes
+The axis компонент в the Vтаблица таблица library allows you к configure the axis в the cell в the perspective view. This tutorial will guide you на how к use this feature effectively.
 
-## Example and configuration introduction
-Here is an example configuration:
+## пример и configuration introduction
+Here is an пример configuration:
 
 ```
 axes: [
   {
-    type: 'band',
-    visible: true,
-    orient: 'bottom',
+    тип: 'band',
+    видимый: true,
+    orient: 'низ',
     domainLine: {
-      visible: true,
+      видимый: true,
       style: {
-        lineWidth: 1,
-        stroke: '#989999'
+        lineширина: 1,
+        strхорошоe: '#989999'
       }
     },
-    title: {
-      visible: false,
-      text: 'region',
+    заголовок: {
+      видимый: false,
+      текст: 'Регион',
       style: {
         fontSize: 12,
         fill: '#363839',
@@ -27,7 +27,7 @@ axes: [
       }
     },
     label: {
-      visible: true,
+      видимый: true,
       space: 4,
       style: {
         fontSize: 12,
@@ -38,19 +38,19 @@ axes: [
     }
   },
   {
-    type: 'linear',
-    orient: 'left',
-    visible: true,
+    тип: 'linear',
+    orient: 'лево',
+    видимый: true,
     domainLine: {
-      visible: true,
+      видимый: true,
       style: {
-        lineWidth: 1,
-        stroke: 'rgba(255, 255, 255, 0)'
+        lineширина: 1,
+        strхорошоe: 'rgba(255, 255, 255, 0)'
       }
     },
-    title: {
-      visible: true,
-      text: 'title',
+    заголовок: {
+      видимый: true,
+      текст: 'title',
       style: {
         fontSize: 12,
         fill: '#363839',
@@ -58,11 +58,11 @@ axes: [
       }
     },
     label: {
-      visible: true,
+      видимый: true,
       space: 8,
       style: {
         fontSize: 12,
-        maxLineWidth: 174,
+        maxLineширина: 174,
         fill: '#6F6F6F',
         angle: 0,
         fontWeight: 'normal'
@@ -71,32 +71,32 @@ axes: [
   }
 ],
 ```
-In the example above, the lower horizontal discrete axis and the left vertical continuous axis are configured separately. Now let's walk through the options available for customization:
+в the пример above, the lower horizontal discrete axis и the лево vertical continuous axis are configured separately. Now let's walk through the options доступный для пользовательскийization:
 
-- type: The type of coordinate axis. Currently, it supports two types: `band` and `linear`, which correspond to discrete and continuous coordinate axes respectively.
-- orient: The position of the coordinate axis, which can be set to `top`, `bottom`, `left` or `right`, indicating that the axis cell is located at the top, bottom, left or right of the perspective. In the example, we set the discrete axis to `bottom`, relative to the bottom of the perspective, and the continuous axis to `left`, relative to the left side of the perspective.
-- visible: Whether the coordinate axis is displayed, supports two configurations of `true` and `false`.
-- domainLine: the main axis of the coordinate axis, supports the following configurations:
-  - visible: Whether the main axis is displayed, supports two configurations of `true` and `false`.
-  - style: the style of the main axis, the following configurations are supported:
-    - lineWidth: main axis line width.
-    - stroke: main axis line color.
-- title: The title of the axis, supports the following configurations:
-  - visible: Whether the title is displayed, supports two configurations of `true` and `false`.
-  - text: The text content of the title.
-  - style: The style of the title, supports the following configurations:
-    - fontSize: text size.
-    - fill: text color.
-    - fontWeight: text thickness.
-- laebl: axis label, supports the following configurations:
-  - visible: whether the label is displayed, supports `true` and `false` two configurations.
-  - space: the distance between the label and the axis.
-  - style: The style of the label, which supports the following configurations:
-    - fontSize: text size.
-    - maxLineWidth: text display maximum width
-    - fill: text color.
-    - angle: text selection angle
-    - fontWeight: text thickness.
+- тип: The тип из coordinate axis. Currently, it supports two types: `band` и `linear`, which correspond к discrete и continuous coordinate axes respectively.
+- orient: The позиция из the coordinate axis, which can be set к `верх`, `низ`, `лево` или `право`, indicating that the axis cell is located в the верх, низ, лево или право из the perspective. в the пример, we set the discrete axis к `низ`, relative к the низ из the perspective, и the continuous axis к `лево`, relative к the лево side из the perspective.
+- видимый: Whether the coordinate axis is displayed, supports two configurations из `true` и `false`.
+- domainLine: the main axis из the coordinate axis, supports Следующий configurations:
+  - видимый: Whether the main axis is displayed, supports two configurations из `true` и `false`.
+  - style: the style из the main axis, Следующий configurations are supported:
+    - lineширина: main axis line ширина.
+    - strхорошоe: main axis line цвет.
+- заголовок: The title из the axis, supports Следующий configurations:
+  - видимый: Whether the title is displayed, supports two configurations из `true` и `false`.
+  - текст: The текст content из the title.
+  - style: The style из the title, supports Следующий configurations:
+    - fontSize: текст размер.
+    - fill: текст цвет.
+    - fontWeight: текст thickness.
+- laebl: axis label, supports Следующий configurations:
+  - видимый: whether the label is displayed, supports `true` и `false` two configurations.
+  - space: the distance between the label и the axis.
+  - style: The style из the label, which supports Следующий configurations:
+    - fontSize: текст размер.
+    - maxLineширина: текст display maximum ширина
+    - fill: текст цвет.
+    - angle: текст selection angle
+    - fontWeight: текст thickness.
 
 
-Please note that the above example only shows a subset of the axis component's configuration options! For more configuration, please go to [option description](https://visactor.io/vtable/option/PivotChart#axes)
+Please note that the above пример only shows a subset из the axis компонент's configuration options! для more configuration, please go к [option description](https://visactor.io/vтаблица/option/сводныйграфик#axes)

@@ -1,18 +1,18 @@
-{{ target: common-menu-list-item }}
+{{ target: common-меню-список-item }}
 
-MenuListItem definition is as follows:
+менюсписокItem definition is as follows:
 
 ```
-type MenuListItem =
-  | string
+тип менюсписокItem =
+  | строка
   | {
-      text?: string;
-      type?: 'title' | 'item' | 'split';
-      menuKey?: string;
-      icon?: Icon;
-      selectedIcon?: Icon;
-      stateIcon?: Icon;
-      children?: MenuListItem[];
-      disabled?: boolean;
+      текст?: строка;
+      тип?: 'title' | 'item' | 'split';
+      менюKey?: строка;
+      иконка?: иконка;
+      selectedиконка?: иконка;
+      stateиконка?: иконка;
+      children?: менюсписокItem[];
+      отключен?: логический;
     };
 ```

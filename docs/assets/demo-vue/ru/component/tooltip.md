@@ -1,52 +1,52 @@
 ---
-category: examples
-group: component
-title: Tooltip Component
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-tooltip.png
-order: 1-1
-link: table_type/List_table/list_table_define_and_generate
-option: ListTable#tooltip
+категория: примеры
+группа: компонент
+заголовок: Подсказка компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-Подсказка.png
+порядок: 1-1
+ссылка: таблица_type/список_таблица/список_таблица_define_and_generate
+опция: списоктаблица#Подсказка
 ---
 
-# Tooltip Component
+# Подсказка компонент
 
-You can directly use the `Tooltip` configuration menu component, which is consistent with `option.tooltip`.
+Вы можете directly use the `Подсказка` configuration меню компонент, which is consistent с `option.Подсказка`.
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-   <ListTable :options="tableOptions" >
+   <списоктаблица :options="таблицаOptions" >
     
-    <ListColumn v-for="(column, index) in columns" :key="index" :field="column.field" :title="column.title" />
+    <списокColumn v-для="(column, index) в columns" :key="index" :поле="column.поле" :title="column.title" />
     
-    <Tooltip :isShowOverflowTextTooltip="true" />   
+    <Подсказка :isShowOverflowTextПодсказка="true" />   
 
-   </ListTable>
+   </списоктаблица>
   `,
-  data() {
-    return {
+  данные() {
+    возврат {
       columns: [
-        { field: '0', title: 'Name' },
-        { field: '1', title: 'Address' },
-        { field: '2', title: 'Phone' }
+        { поле: '0', заголовок: 'имя' },
+        { поле: '1', заголовок: 'Address' },
+        { поле: '2', заголовок: 'Phone' }
       ],
-      tableOptions: {
-        records: new Array(1000).fill(['John Doe', 'xxx.xxx.xxx.xxx', '12345678901'])
+      таблицаOptions: {
+        records: новый массив(1000).fill(['John Doe', 'xxx.xxx.xxx.xxx', '12345678901'])
       }
     };
   }
 });
 
-app.component('ListTable', VueVTable.ListTable);
-app.component('ListColumn', VueVTable.ListColumn);
-app.component('Tooltip', VueVTable.Tooltip);
+app.компонент('списоктаблица', VueVтаблица.списоктаблица);
+app.компонент('списокColumn', VueVтаблица.списокColumn);
+app.компонент('Подсказка', VueVтаблица.Подсказка);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

@@ -1,75 +1,75 @@
-{{ target: table-listTable }}
+{{ target: таблица-списоктаблица }}
 
-# ListTable
+# списоктаблица
 
-A basic table, configures the corresponding ListTableConstructorOptions type, specific configuration items are as follows:
+A базовый таблица, configures the corresponding списоктаблицаConstructorOptions тип, specific configuration items are as follows:
 
 {{ use: common-option-important(
     prefix = '#',
-    tableType = 'listTable'
+    таблицаType = 'списоктаблица'
 ) }}
 
-## records(Array)
+## records(массив)
 
-tabular data.
-Currently supported data formats, taking human information as an example:
+tabular данные.
+Currently supported данные formats, taking human information as an пример:
 
 ```
 [
-  {"name": "Zhang San","age": 20,"sex": "male","phone": "123456789","address": "Haidian District, Beijing"},
-  {"name": "Li Si","age": 30,"sex": "female","phone": "23456789","address": "Haidian District, Beijing"},
-  {"name": "Wang Wu","age": 40,"sex": "male","phone": "3456789","address": "Haidian District, Beijing"}
+  {"имя": "Zhang San","возраст": 20,"sex": "male","phone": "123456789","address": "Haidian District, Beijing"},
+  {"имя": "Li Si","возраст": 30,"sex": "female","phone": "23456789","address": "Haidian District, Beijing"},
+  {"имя": "Wang Wu","возраст": 40,"sex": "male","phone": "3456789","address": "Haidian District, Beijing"}
 ]
 
 {{ use: column-define( prefix = '#',) }}
 
 
-## transpose(boolean) = false
+## transpose(логический) = false
 
-Whether to transpose, default is false
+Whether к transpose, по умолчанию is false
 
-## showHeader(boolean) = true
+## showHeader(логический) = true
 
-Whether to display the table header.
+Whether к display the таблица header.
 
 
 ## pagination(IPagination)
 
 Pagination configuration.
 
-The basic table and VTable data analysis pivot table support paging, but the pivot combination chart does not support paging.
+The базовый таблица и Vтаблица данные analysis сводный таблица support paging, but the сводный combination график does не support paging.
 
-The specific types of IPagination are as follows:
+The specific types из IPagination are as follows:
 
-### totalCount (number)
+### totalCount (число)
 
-The total number of data items.
+The total число из данные items.
 
-Not required! This field VTable in the pivot table will be automatically supplemented to help users obtain the total number of data items
+не обязательный! This поле Vтаблица в the сводный таблица will be автоmatically supplemented к help users obtain the total число из данные items
 
-### perPageCount (number)
+### perPвозрастCount (число)
 
-Display the number of data items per page.
+Display the число из данные items per pвозраст.
 
-Note! The perPageCount in the pivot table will be automatically corrected to an integer multiple of the number of indicators.
+Note! The perPвозрастCount в the сводный таблица will be автоmatically corrected к an integer multiple из the число из indicators.
 
-### currentPage (number)
-Current page number.
+### currentPвозраст (число)
+текущий pвозраст число.
 
-## multipleSort (boolean)
-Enables sorting by multiple columns.
+## multipleсортировка (логический)
+Enables сортировкаing по multiple columns.
 
-## sortState(SortState | SortState[])
+## сортировкаState(сортировкаState | сортировкаState[])
 
-Sorting state. SortState is defined as follows:
+сортировкаing state. сортировкаState is defined as follows:
 
 ```
 
-SortState {
-/** Sorting criterion field \*/
-field: string;
-/** Sorting rule \*/
-order: 'desc' | 'asc' | 'normal';
+сортировкаState {
+/** сортировкаing criterion поле \*/
+поле: строка;
+/** сортировкаing rule \*/
+порядок: 'desc' | 'asc' | 'normal';
 }
 
 ```
@@ -77,90 +77,90 @@ order: 'desc' | 'asc' | 'normal';
 
 {{ use: common-option-secondary(
     prefix = '#',
-    tableType = 'listTable'
+    таблицаType = 'списоктаблица'
 ) }}
 ```
 
-## hierarchyIndent(number)
+## hierarchyIndent(число)
 
-When displayed as a tree structure, the indentation value of each layer of content.
+When displayed as a tree structure, the indentation значение из каждый layer из content.
 
-## hierarchyExpandLevel(number)
+## hierarchyExpandLevel(число)
 
-When displayed as a tree structure, the number of levels is expanded by default. The default value is 1, which only displays the root node. If configured to `Infinity`, all nodes will be expanded.
+When displayed as a tree structure, the число из levels is expanded по по умолчанию. The по умолчанию значение is 1, which only displays the root node. If configured к `Infinity`, все nodes will be expanded.
 
-## hierarchyTextStartAlignment(boolean) = false
+## hierarchyTextStartAlignment(логический) = false
 
-Whether nodes at the same level are aligned by text, such as nodes without collapsed expansion icons and nodes with icons. Default is false
+Whether nodes в the same level are aligned по текст, such as nodes без collapsed expansion иконкаs и nodes с иконкаs. по умолчанию is false
 
 ## headerHierarchyType('grid-tree')
 
-Defines the hierarchy display mode for headers. When set to 'grid-tree', it enables tree-style expand/collapse functionality in the header structure.
+Defines the hierarchy display mode для headers. When set к 'grid-tree', it enables tree-style развернуть/свернуть функциональность в the header structure.
 
-## headerExpandLevel(number)
+## headerExpandLevel(число)
 
-Sets the initial expansion level of headers. Defaults to 1.
+Sets the initial expansion level из headers. Defaults к 1.
 
-## aggregation(Aggregation|CustomAggregation|Array|Function)
+## aggregation(Aggregation|пользовательскийAggregation|массив|функция)
 
-Data aggregation summary analysis configuration, global configuration, each column will have aggregation logic, it can also be configured in the column (columns) definition, the configuration in the column has a higher priority.
+данные aggregation summary analysis configuration, global configuration, каждый column will have aggregation logic, it can also be configured в the column (columns) definition, the configuration в the column has a higher priority.
 
 ```
 aggregation?:
     | Aggregation
-    | CustomAggregation
-    | (Aggregation | CustomAggregation)[]
+    | пользовательскийAggregation
+    | (Aggregation | пользовательскийAggregation)[]
     | ((args: {
-        col: number;
-        field: string;
-      }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
+        col: число;
+        поле: строка;
+      }) => Aggregation | пользовательскийAggregation | (Aggregation | пользовательскийAggregation)[] | null);
 ```
 
 Among them:
 
 ```
-type Aggregation = {
+тип Aggregation = {
   aggregationType: AggregationType;
-  showOnTop?: boolean;
-  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+  showOnTop?: логический;
+  formatFun?: (значение: число, col: число, row: число, таблица: Baseтаблицаапи) => строка | число;
 };
 
-type CustomAggregation = {
-  aggregationType: AggregationType.CUSTOM;
-  aggregationFun: (values: any[], records: any[]) => any;
-  showOnTop?: boolean;
-  formatFun?: (value: number, col: number, row: number, table: BaseTableAPI) => string | number;
+тип пользовательскийAggregation = {
+  aggregationType: AggregationType.пользовательский;
+  aggregationFun: (values: любой[], records: любой[]) => любой;
+  showOnTop?: логический;
+  formatFun?: (значение: число, col: число, row: число, таблица: Baseтаблицаапи) => строка | число;
 };
 ```
 
-## showAggregationWhenEmpty(boolean)
+## showAggregationWhenEmpty(логический)
 
-Display aggregation result when data is empty.
+Display aggregation result when данные is empty.
 
-## groupBy(string|string[])
+## groupBy(строка|строка[])
 
-Enable the group display function to display the hierarchical structure of the group fields in the data. The value is the group field name, which can be configured as one field or an array of multiple fields.
+включить the group display функция к display the hierarchical structure из the group полеs в the данные. The значение is the group поле имя, which can be configured as one поле или an массив из multiple полеs.
 
-## enableTreeStickCell(boolean) = false
+## enableTreeStickCell(логический) = false
 
-Enable the group title sticking function.
+включить the group title sticking функция.
 
-## groupTitleFieldFormat(Function)
+## groupTitleполеFormat(функция)
 
-Customize the group title.
+пользовательскийize the group title.
 
-## groupTitleCustomLayout(CustomLayout)
+## groupTitleпользовательскиймакет(пользовательскиймакет)
 
-Customize the group title layout.
+пользовательскийize the group title макет.
 
-## customComputeRowHeight(Function)
+## пользовательскийComputeRowвысота(функция)
 
-Code VTable internally calculates the row height. Users can customize the method for calculating row height.If number is returned, it is the line height, if auto is returned, it is the automatic line height, and undefined is the default line height.
+код Vтаблица internally calculates the row высота. Users can пользовательскийize the method для calculating row высота.If число is returned, it is the line высота, if авто is returned, it is the автоmatic line высота, и undefined is the по умолчанию line высота.
 
 ```
-customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => number|'auto'|undefined;
+пользовательскийComputeRowвысота?: (computeArgs: { row: число; таблица: списоктаблицаапи }) => число|'авто'|undefined;
 ```
 
-## tableSizeAntiJitter(boolean) = false
+## таблицаSizeAntiJitter(логический) = false
 
-If the table jitter occurs, check whether the width and height of the upper dom container are caused by decimal numbers. If it is not guaranteed to be an integer, set this configuration item to true
+If the таблица jitter occurs, check whether the ширина и высота из the upper dom container are caused по decimal numbers. If it is не guaranteed к be an integer, set this configuration item к true

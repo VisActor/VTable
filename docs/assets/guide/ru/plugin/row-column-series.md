@@ -1,140 +1,140 @@
-# Row and Column Series Plugins
+# Row и Column Series Plugins
 
 ## Introduction
 
-ColumnSeriesPlugin and RowSeriesPlugin are VTable extension components that automatically generate row and column numbers.
+ColumnSeriesPlugin и RowSeriesPlugin are Vтаблица extension компонентs that автоmatically generate row и column numbers.
 
-<div style="display: flex; justify-content: center;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-column-series.png" style="flex: 0 0 50%; padding: 10px;">
+<div style="display: flex; justify-content: центр;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/row-column-series.png" style="flex: 0 0 50%; заполнение: 10px;">
 </div>
 
 ## Plugin Parameters
 
 ```typescript
-export interface ColumnSeriesOptions {
-  columnCount: number;
-  generateColumnTitle?: (index: number) => string; // Custom column title generation function
-  generateColumnField?: (index: number) => string;// Custom column field name generation function
+export интерфейс ColumnSeriesOptions {
+  columnCount: число;
+  generateColumnTitle?: (index: число) => строка; // пользовательский column title generation функция
+  generateColumnполе?: (index: число) => строка;// пользовательский column поле имя generation функция
   /**
-   * Whether to automatically extend columns
-   * @default true
+   * Whether к автоmatically extend columns
+   * @по умолчанию true
    */
-  autoExtendColumnTriggerKeys?: ('ArrowRight' | 'Tab')[];
+  автоExtendColumnTriggerKeys?: ('ArrowRight' | 'Tab')[];
 }
 
-export interface RowSeriesOptions {
-  rowCount: number;
-  fillRowRecord?: (index: number) => any; // Custom data generation function for filling empty rows
-  rowSeriesNumber?: VTable.TYPES.IRowSeriesNumber;
+export интерфейс RowSeriesOptions {
+  rowCount: число;
+  fillRowRecord?: (index: число) => любой; // пользовательский данные generation функция для filling empty rows
+  rowSeriesNumber?: Vтаблица.TYPES.IRowSeriesNumber;
   /**
-   * Whether to automatically extend rows
-   * @default true
+   * Whether к автоmatically extend rows
+   * @по умолчанию true
    */
-  autoExtendRowTriggerKeys?: ('ArrowDown' | 'Enter')[];
+  автоExtendRowTriggerKeys?: ('ArrowDown' | 'Enter')[];
 }
 ```
 
-In the column series plugin configuration, in addition to setting the number of columns to generate, you can also configure the field names and titles needed for VTable column configuration.
+в the column series plugin configuration, в addition к setting the число из columns к generate, Вы можете also configure the поле имяs и titles needed для Vтаблица column configuration.
 
-In the row series plugin configuration, `rowCount` can be set to configure the number of rows to generate, `rowSeriesNumber` can be used to configure row numbering, which takes precedence over the options.rowSeriesNumber in the VTable instance initialization. `fillRowRecord` can be configured to generate row data; if not configured, it defaults to returning an empty object `{}`.
+в the row series plugin configuration, `rowCount` can be set к configure the число из rows к generate, `rowSeriesNumber` can be used к configure row numbering, which takes precedence over the options.rowSeriesNumber в the Vтаблица instance initialization. `fillRowRecord` can be configured к generate row данные; if не configured, it defaults к returning an empty объект `{}`.
 
-## Basic Usage
+## базовый Usвозраст
 
 ```typescript
-import * as VTable from '@visactor/vtable';
-import { ColumnSeriesPlugin } from '@visactor/vtable-plugins';
+import * as Vтаблица от '@visactor/vтаблица';
+import { ColumnSeriesPlugin } от '@visactor/vтаблица-plugins';
 
 // Create a ColumnSeries plugin instance
-const columnSeries = new ColumnSeriesPlugin({
-  columnCount: 100  // Set the number of columns
+const columnSeries = новый ColumnSeriesPlugin({
+  columnCount: 100  // Set the число из columns
 });
 
 // Create a RowSeries plugin instance
-const rowSeries = new RowSeriesPlugin({
-  rowCount: 100  // Set the number of rows
+const rowSeries = новый RowSeriesPlugin({
+  rowCount: 100  // Set the число из rows
 });
 
-// Use the plugins in VTable options
-const option: VTable.ListTableConstructorOptions = {
+// Use the plugins в Vтаблица options
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   container: document.getElementById('container'),
-  records: data,
+  records: данные,
   plugins: [columnSeries, rowSeries],
-  // Other VTable configurations...
+  // Other Vтаблица configurations...
 };
 
-// Create the table instance
-const tableInstance = new VTable.ListTable(option);
+// Create the таблица instance
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 ```
 
-## Advanced Usage
+## Advanced Usвозраст
 
-### Custom Column Titles and Field Names
+### пользовательский Column Titles и поле имяs
 
 ```typescript
-const columnSeries = new ColumnSeriesPlugin({
+const columnSeries = новый ColumnSeriesPlugin({
   columnCount: 100,
-  // Custom column title generation
-  columnTitleGenerator: (index) => `Custom Title ${index}`,
-  // Custom field name generation
-  columnFieldGenerator: (index) => `field_${index}`
+  // пользовательский column title generation
+  columnTitleGenerator: (index) => `пользовательский Title ${index}`,
+  // пользовательский поле имя generation
+  columnполеGenerator: (index) => `поле_${index}`
 });
 ```
 
-### Custom Row Data
+### пользовательский Row данные
 
 ```typescript
-const rowSeries = new RowSeriesPlugin({
+const rowSeries = новый RowSeriesPlugin({
   rowCount: 100,
-  // Custom row data generation returning an empty array
+  // пользовательский row данные generation returning an empty массив
   fillRowRecord: (index) => ([])
 });
 
-// or
-const rowSeries = new RowSeriesPlugin({
+// или
+const rowSeries = новый RowSeriesPlugin({
   rowCount: 100,
-  // Custom row data generation
-  fillRowRecord: (index) => (['Name', 'Age', 'Address'])
+  // пользовательский row данные generation
+  fillRowRecord: (index) => (['имя', 'возраст', 'Address'])
 });
 ```
 
-## Specific Example
+## Specific пример
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 
-let tableInstance;
-//  import * as VTable from '@visactor/vtable';
-// 使用时需要引入插件包@visactor/vtable-plugins
-// import * as VTablePlugins from '@visactor/vtable-plugins';
-// 正常使用方式 const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
-// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+let таблицаInstance;
+//  import * as Vтаблица от '@visactor/vтаблица';
+// 使用时需要引入插件包@visactor/vтаблица-plugins
+// import * as VтаблицаPlugins от '@visactor/vтаблица-plugins';
+// 正常使用方式 const columnSeries = новый Vтаблица.plugins.ColumnSeriesPlugin({});
+// 官网编辑器中将 Vтаблица.plugins重命名成了VтаблицаPlugins
 
 // 创建 ColumnSeries 插件实例
-const columnSeries = new VTablePlugins.ColumnSeriesPlugin({
+const columnSeries = новый VтаблицаPlugins.ColumnSeriesPlugin({
   columnCount: 100,
   // 自定义列标题生成
   // generateColumnTitle(index)
   // {
-  //   return `自定义标题 ${index}`
+  //   возврат `自定义标题 ${index}`
   // },
   // 自定义字段名生成
-  generateColumnField: (index) => `field_${index}`
+  generateColumnполе: (index) => `поле_${index}`
 }); 
 
 // 创建 RowSeries 插件实例
-const rowSeries = new VTablePlugins.RowSeriesPlugin({
+const rowSeries = новый VтаблицаPlugins.RowSeriesPlugin({
   rowCount: 100,
   // 自定义行数据生成
   fillRowRecord: (index) => ([])
 });
 
-// 在 VTable 选项中使用插件
+// 在 Vтаблица 选项中使用插件
 const option = {
   records: [],
   plugins: [columnSeries, rowSeries],
-  // 其他 VTable 配置...
+  // 其他 Vтаблица 配置...
 };
 
 // 创建表格实例
-tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
-window.tableInstance = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица( document.getElementById(CONTAINER_ID),option);
+window.таблицаInstance = таблицаInstance;
 ```

@@ -1,90 +1,90 @@
 ---
-category: examples
-group: Basic Features
-title: Pre Sort
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-sort.png
-order: 3-2
-link: basic_function/sort/list_sort
+категория: примеры
+группа: базовый возможности
+заголовок: Pre сортировка
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/pre-сортировка.png
+порядок: 3-2
+ссылка: базовый_function/сортировка/список_сортировка
 ---
 
-# Pre Sort
+# Pre сортировка
 
-In the case of large amounts of data, the first sorting may take a long time, and pre-sorting can be used to improve the performance of the sorting function.
+в the case из large amounts из данные, the первый сортировкаing may take a long time, и pre-сортировкаing can be used к improve the Производительность из the сортировкаing функция.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-Set the pre-sorted data fields and sort order through the `setSortedIndexMap` method.
+Set the pre-сортировкаed данные полеs и сортировка order through the `setсортировкаedIndexMap` method.
 
 ```
-setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+setсортировкаedIndexMap: (поле: полеDef, filedMap: IсортировкаedMапиtem) => void;
 
-interface ISortedMapItem {
-  asc?: (number | number[])[];
-  desc?: (number | number[])[];
-  normal?: (number | number[])[];
+интерфейс IсортировкаedMапиtem {
+  asc?: (число | число[])[];
+  desc?: (число | число[])[];
+  normal?: (число | число[])[];
 }
 ```
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data/pre-sort.json')
+```javascript liveдемонстрация template=vтаблица
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/test-демонстрация-данные/pre-сортировка.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'id',
-        title: 'ID',
-        width: 80,
-        sort: true
+        поле: 'id',
+        заголовок: 'ID',
+        ширина: 80,
+        сортировка: true
       },
       {
-        field: 'email1',
-        title: 'email(pre-sorted)',
-        width: 250,
-        sort: true
+        поле: 'email1',
+        заголовок: 'email(pre-сортировкаed)',
+        ширина: 250,
+        сортировка: true
       },
       {
-        field: 'hobbies',
-        title: 'hobbies(unsorted)',
-        width: 200,
-        sort: true
+        поле: 'hobbies',
+        заголовок: 'hobbies(unсортировкаed)',
+        ширина: 200,
+        сортировка: true
       },
       {
-        field: 'birthday',
-        title: 'birthday',
-        width: 120
+        поле: 'birthday',
+        заголовок: 'birthday',
+        ширина: 120
       },
       {
-        field: 'sex',
-        title: 'sex',
-        width: 100
+        поле: 'sex',
+        заголовок: 'sex',
+        ширина: 100
       },
       {
-        field: 'tel',
-        title: 'telephone',
-        width: 150
+        поле: 'tel',
+        заголовок: 'telephone',
+        ширина: 150
       },
       {
-        field: 'work',
-        title: 'job',
-        width: 200
+        поле: 'work',
+        заголовок: 'job',
+        ширина: 200
       },
       {
-        field: 'city',
-        title: 'city',
-        width: 150
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 150
       }
     ];
     const option = {
-      records: data.data,
+      records: данные.данные,
       columns
     };
-    const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
 
-    data.sort.forEach(item => {
-      tableInstance.setSortedIndexMap(item.key, item.value);
+    данные.сортировка.forEach(item => {
+      таблицаInstance.setсортировкаedIndexMap(item.key, item.значение);
     });
   });
 ```

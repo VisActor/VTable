@@ -1,38 +1,38 @@
 ---
-category: examples
-group: Component
-title: Color legend
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/color-legend.png
-option: ListTable-legends-color#type
+категория: примеры
+группа: компонент
+заголовок: цвет легенда
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/цвет-легенда.png
+опция: списоктаблица-легендаs-цвет#тип
 ---
 
-# Color legend
+# цвет легенда
 
-This example shows the configuration and application scenarios of the color legend
+This пример shows the configuration и application scenarios из the цвет легенда
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `legend` Configuration table legend, please refer to: https://www.visactor.io/vtable/option/ListTable#legend
+- `легенда` Configuration таблица легенда, please refer к: https://www.visactor.io/vтаблица/option/списоктаблица#легенда
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-function getColor(min, max, n) {
+```javascript liveдемонстрация template=vтаблица
+функция getColor(min, max, n) {
   if (max === min) {
     if (n > 0) {
-      return 'rgb(255,0,0)';
+      возврат 'rgb(255,0,0)';
     }
-    return 'rgb(255,255,255)';
+    возврат 'rgb(255,255,255)';
   }
-  if (n === '') return 'rgb(255,255,255)';
+  if (n === '') возврат 'rgb(255,255,255)';
   const c = (n - min) / (max - min) + 0.1;
   const red = (1 - c) * 200 + 55;
   const green = (1 - c) * 200 + 55;
-  return `rgb(${red},${green},255)`;
+  возврат `rgb(${red},${green},255)`;
 }
 const option = {
-  resize: {
-    columnResizeType: 'all'
+  изменение размера: {
+    columnResizeType: 'все'
   },
   records: [
     {
@@ -129,33 +129,33 @@ const option = {
   rowTree: [
     {
       dimensionKey: '220922103859014',
-      value: 'North East'
+      значение: 'North East'
     },
     {
       dimensionKey: '220922103859014',
-      value: 'Central South'
+      значение: 'Central South'
     },
     {
       dimensionKey: '220922103859014',
-      value: 'East China'
+      значение: 'East China'
     },
     {
       dimensionKey: '220922103859014',
-      value: 'North China'
+      значение: 'North China'
     },
     {
       dimensionKey: '220922103859014',
-      value: 'North West'
+      значение: 'North West'
     },
     {
       dimensionKey: '220922103859014',
-      value: 'South West'
+      значение: 'South West'
     }
   ],
   columnTree: [
     {
       dimensionKey: '220922103859015',
-      value: 'Technology',
+      значение: 'Technology',
       children: [
         {
           indicatorKey: '220922103859011'
@@ -164,7 +164,7 @@ const option = {
     },
     {
       dimensionKey: '220922103859015',
-      value: 'Office Supplies',
+      значение: 'Office Supplies',
       children: [
         {
           indicatorKey: '220922103859011'
@@ -173,7 +173,7 @@ const option = {
     },
     {
       dimensionKey: '220922103859015',
-      value: 'Furniture',
+      значение: 'Furniture',
       children: [
         {
           indicatorKey: '220922103859011'
@@ -184,9 +184,9 @@ const option = {
   rows: [
     {
       dimensionKey: '220922103859014',
-      title: 'Area',
-      width: 'auto',
-      showSort: false,
+      заголовок: 'Area',
+      ширина: 'авто',
+      showсортировка: false,
       headerType: 'link',
       linkDetect: true,
       linkJump: false
@@ -195,11 +195,11 @@ const option = {
   columns: [
     {
       dimensionKey: '220922103859015',
-      title: 'Category',
+      заголовок: 'Категория',
       headerStyle: {
-        textAlign: 'right'
+        textAlign: 'право'
       },
-      showSort: false,
+      showсортировка: false,
       headerType: 'link',
       linkDetect: true,
       linkJump: false
@@ -208,65 +208,65 @@ const option = {
   indicators: [
     {
       indicatorKey: '220922103859011',
-      width: 200,
-      showSort: false,
-      format(value) {
-        return Math.round(value);
+      ширина: 200,
+      showсортировка: false,
+      format(значение) {
+        возврат Math.round(значение);
       },
       style: {
         bgColor: args => {
-          return getColor(100000, 2000000, args.dataValue);
+          возврат getColor(100000, 2000000, args.данныеValue);
         }
       }
     }
   ],
   corner: {
-    titleOnDimension: 'none',
+    titleOnDimension: 'никто',
     headerStyle: {
       textStick: true
     }
   },
-  hideIndicatorName: true,
-  theme: {
+  hideIndicatorимя: true,
+  тема: {
     defaultStyle: {
-      borderLineWidth: 0
+      borderLineширина: 0
     },
     bodyStyle: {
-      color: 'white'
+      цвет: 'white'
     }
   },
-  legends: {
-    orient: 'top',
-    position: 'start',
-    type: 'color',
+  легендаs: {
+    orient: 'верх',
+    позиция: 'начало',
+    тип: 'цвет',
     colors: ['rgb(235,235,255)', 'rgb(35,35,255)'],
-    value: [100000, 2000000],
+    значение: [100000, 2000000],
     max: 2000000,
     min: 100000
   }
 };
 
-const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 
-const { LEGEND_CHANGE } = VTable.ListTable.EVENT_TYPE;
+const { легенда_CHANGE } = Vтаблица.списоктаблица.событие_TYPE;
 
 // 监听图例范围的改变，将所需范围外的数据变化颜色
-tableInstance.on(LEGEND_CHANGE, args => {
-  const size = args.value;
-  tableInstance.updateTheme({
+таблицаInstance.на(легенда_CHANGE, args => {
+  const размер = args.значение;
+  таблицаInstance.updateтема({
     defaultStyle: {
-      borderLineWidth: 0
+      borderLineширина: 0
     },
     bodyStyle: {
-      color(args) {
-        const value = Number(args.dataValue);
-        if (value < size[0]) {
-          return 'red';
-        } else if (value > size[1]) {
-          return '#4dfa40';
+      цвет(args) {
+        const значение = число(args.данныеValue);
+        if (значение < размер[0]) {
+          возврат 'red';
+        } else if (значение > размер[1]) {
+          возврат '#4dfa40';
         }
-        return 'white';
+        возврат 'white';
       }
     }
   });

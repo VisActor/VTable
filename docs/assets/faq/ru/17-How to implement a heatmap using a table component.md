@@ -1,30 +1,30 @@
-# How to implement a heatmap using a table component?
+# How к implement a heatmap using a таблица компонент?
 
 ## Question Description
 
-I would like to implement a simple heatmap using a table, where the background color of each cell is determined by its value. Could you please suggest a simple way to achieve this?
-![image](/vtable/faq/17-0.png)
+I would like к implement a simple heatmap using a таблица, where the фон цвет из каждый cell is determined по its значение. Could you please suggest a simple way к achieve this?
+![imвозраст](/vтаблица/Часто Задаваемые Вопросы/17-0.png)
 
 ## Solution
 
-VTable allows flexible customization of each cell's background color and border color, and it supports custom functions for implementation.
-You can find an example of a heatmap on the official website of VTable: https://visactor.io/vtable/demo/business/color-level
+Vтаблица allows flexible пользовательскийization из каждый cell's фон цвет и граница цвет, и it supports пользовательский functions для implementation.
+Вы можете find an пример из a heatmap на the official website из Vтаблица: https://visactor.io/vтаблица/демонстрация/business/цвет-level
 
-## Code Example
+## код пример
 
 ```javascript
   indicators: [
           {
             indicatorKey: '220922103859011',
-            width: 200,
-            showSort: false,
+            ширина: 200,
+            showсортировка: false,
             format(rec){
-              return Math.round(rec['220922103859011']);
+              возврат Math.round(rec['220922103859011']);
             },
             style: {
-              color: "white",
+              цвет: "white",
               bgColor: (args) => {
-                return getColor(100000,2000000,args.dataValue)
+                возврат getColor(100000,2000000,args.данныеValue)
               },
             },
           },
@@ -33,12 +33,12 @@ You can find an example of a heatmap on the official website of VTable: https://
 
 ## Results
 
-[Online demo]()
+[Online демонстрация]()
 
-![result](/vtable/faq/17-1.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/17-1.png)
 
 ## Quote
 
-- [Cell background color Tutorial](https://visactor.io/vtable/guide/theme_and_style/style)
-- [Related api](https://visactor.io/vtable/option/PivotTable-indicators-text#style.bgColor)
-- [github](https://github.com/VisActor/VTable)
+- [Cell фон цвет Tutorial](https://visactor.io/vтаблица/guide/тема_and_style/style)
+- [Related апи](https://visactor.io/vтаблица/option/сводныйтаблица-indicators-текст#style.bgColor)
+- [github](https://github.com/VisActor/Vтаблица)

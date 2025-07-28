@@ -1,41 +1,41 @@
-{{ target: calendar }}
+{{ target: календарь }}
 
-# Calendar
+# календарь
 
-Gantt chart configuration, the corresponding type is CalendarConstructorOptions, the specific configuration items are as follows:
+гантт график configuration, the corresponding тип is календарьConstructorOptions, the specific configuration items are as follows:
 
 ## startDate(Date)
 
-The start date of the calendar.
+The начало date из the календарь.
 
 ## endDate(Date)
 
-The end date of the calendar.
+The конец date из the календарь.
 
 ## currentDate(Date)
 
-The current date of the calendar.
+The текущий date из the календарь.
 
-## rangeDays(number)
+## rangeDays(число)
 
-The date range displayed in the calendar (if startDate&endDate is not configured, the dates before and after rangeDays will be taken from currentDate as startDate&endDate, the default is 90 days).
+The date range displayed в the календарь (if startDate&endDate is не configured, the dates before и after rangeDays will be taken от currentDate as startDate&endDate, the по умолчанию is 90 days).
 
-## dayTitles(string[])
+## dayTitles(строка[])
 
-The title of the calendar (can be replaced with different languages).
+The title из the календарь (can be replaced с different languвозрастs).
 
-## customEventOptions(ICustomEventOptions)
+## пользовательскийсобытиеOptions(IпользовательскийсобытиеOptions)
 
-Configuration of custom schedules.
+Configuration из пользовательский schedules.
 
-{{ use: common-calendar-custom-event-option(prefix = '###') }}
+{{ use: common-календарь-пользовательский-событие-option(prefix = '###') }}
 
-## customEvents(ICustomEvent[])
+## пользовательскийсобытиеs(Iпользовательскийсобытие[])
 
-Array of custom events.
+массив из пользовательский событиеs.
 
-{{ use: common-calendar-custom-event(prefix = '###') }}
+{{ use: common-календарь-пользовательский-событие(prefix = '###') }}
 
-## tableOptions(ListTableConstructorOptions)
+## таблицаOptions(списоктаблицаConstructorOptions)
 
-Calendar table configuration (the configuration here will be passed to the corresponding VTable instance for deep customization).
+календарь таблица configuration (the configuration here will be passed к the corresponding Vтаблица instance для deep пользовательскийization).

@@ -1,33 +1,33 @@
-{{ target: container-custom-layout-element }}
+{{ target: container-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number)
+${prefix} ширина (число)
 
-The width of the container.
+The ширина из the container.
 
-${prefix} height (number)
+${prefix} высота (число)
 
-The height of the container.
+The высота из the container.
 
 ${prefix} direction ('row' | 'column') = 'row'
 
-The main layout direction of the container, which can be 'row' (horizontal) or 'column' (vertical), default is 'row'.
+The main макет direction из the container, which can be 'row' (horizontal) или 'column' (vertical), по умолчанию is 'row'.
 
-${prefix} justifyContent ('start' | 'end' | 'center') = 'start'
+${prefix} justifyContent ('начало' | 'конец' | 'центр') = 'начало'
 
-The alignment method along the main axis, which can be 'start' (beginning), 'end' (ending), or 'center' (centered), default is 'start'.
+The alignment method along the main axis, which can be 'начало' (beginning), 'конец' (ending), или 'центр' (centered), по умолчанию is 'начало'.
 
-${prefix} alignItems ('start' | 'end' | 'center') = 'start'
+${prefix} alignItems ('начало' | 'конец' | 'центр') = 'начало'
 
-The alignment method along the cross axis, which can be 'start' (beginning), 'end' (ending), or 'center' (centered), default is 'start'.
+The alignment method along the cross axis, which can be 'начало' (beginning), 'конец' (ending), или 'центр' (centered), по умолчанию is 'начало'.
 
-${prefix} alignContent ('start' | 'end' | 'center')
+${prefix} alignContent ('начало' | 'конец' | 'центр')
 
-The alignment method along the cross axis when the container has multiple axes, which can be 'start' (beginning), 'end' (ending), or 'center' (centered), default is undefined.
+The alignment method along the cross axis when the container has multiple axes, which can be 'начало' (beginning), 'конец' (ending), или 'центр' (centered), по умолчанию is undefined.
 
-${prefix} showBounds (boolean) = false
+${prefix} showBounds (логический) = false
 
-Whether to display the container boundary box, default is false.
+Whether к display the container boundary box, по умолчанию is false.

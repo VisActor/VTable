@@ -3,21 +3,21 @@
 
 ```
   {
-    col: number;
-    row: number;
-    menuKey: string;
-    text: string;
-    highlight: boolean;
-    field?: string;
+    col: число;
+    row: число;
+    menuKey: строка;
+    текст: строка;
+    highlight: логический;
+    field?: строка;
     /**отформатированное значение */
-    value?: string;
+    значение?: строка;
     /**исходное значение */
-    dataValue?: string;
-    subIndex?: number;
+    dataValue?: строка;
+    subIndex?: число;
 
-    dimensionKey?: string | number;
-    isPivotCorner?: boolean;
-    customInfo?: any;
+    dimensionKey?: строка | число;
+    isPivotCorner?: логический;
+    customInfo?: любой;
 
     cellHeaderPaths?: ICellHeaderPaths;
     cellLocation: CellLocation;

@@ -1,140 +1,140 @@
-# VTable Gantt Tasks
+# Vтаблица гантт Tasks
 
-## Task Type
+## Task тип
 
-In the VTable Gantt chart, tasks are divided into three predefined types, each with different visual representations and characteristics. The task type is specified by the `type` property in the data item (the value corresponds to the value in the `TaskType` enumeration).
+в the Vтаблица гантт график, tasks are divided into three predefined types, каждый с different visual representations и characteristics. The task тип is specified по the `тип` property в the данные item (the значение corresponds к the значение в the `TaskType` enumeration).
 
 ### Normal Task
 
-The default task type is `TaskType.TASK`. These tasks can be dragged and resized, and their duration and progress are not affected by their sub-tasks.
+The по умолчанию task тип is `TaskType.TASK`. These tasks can be dragged и resized, и their duration и progress are не affected по their sub-tasks.
 
 ```javascript
 // 指定普通任务
-const data = [
-  { id: 2, text: "任务 #1", startDate: "2023-04-12", endDate: "2023-04-15", type: "task" }
+const данные = [
+  { id: 2, текст: "任务 #1", startDate: "2023-04-12", endDate: "2023-04-15", тип: "task" }
 ];
 // 或者省略type（默认为task）
-const data = [
-  { id: 2, text: "任务 #1", startDate: "2023-04-12", endDate: "2023-04-15" }
+const данные = [
+  { id: 2, текст: "任务 #1", startDate: "2023-04-12", endDate: "2023-04-15" }
 ];
 ```
 
 Normal task characteristics:
-- Can have one parent task and an arbitrary number of sub-tasks
-- Can be dragged and resized
-- Does not depend on sub-tasks, so even if their sub-tasks are dragged, the task's duration and progress will not change
-- Can be displayed on project tasks
+- Can have one parent task и an arbitrary число из sub-tasks
+- Can be dragged и resized
+- Does не depend на sub-tasks, so even if their sub-tasks are dragged, the task's duration и progress will не change
+- Can be displayed на project tasks
 
 ### Project Task
 
-Project task (`TaskType.PROJECT`) is a special type of task whose start time depends on the earliest sub-task start time, and the end time depends on the latest sub-task end time. The duration of the project task depends on its sub-tasks and will change accordingly.
+Project task (`TaskType.PROJECT`) is a special тип из task whose начало time depends на the earliest sub-task начало time, и the конец time depends на the latest sub-task конец time. The duration из the project task depends на its sub-tasks и will change accordingly.
 
 ```javascript
 // 指定项目任务
-const data = [
+const данные = [
   { 
     id: 1, 
-    text: "项目 #1", 
-    type: "project", 
+    текст: "项目 #1", 
+    тип: "project", 
     children: [
-      { id: 2, text: "子任务 #1", startDate: "2023-04-12", endDate: "2023-04-15" },
-      { id: 3, text: "里程碑", type: "milestone", startDate: "2023-04-14" }
+      { id: 2, текст: "子任务 #1", startDate: "2023-04-12", endDate: "2023-04-15" },
+      { id: 3, текст: "里程碑", тип: "milestone", startDate: "2023-04-14" }
     ]
   }
 ];
 ```
 
 Project task characteristics:
-- Can have one parent task and an arbitrary number of sub-tasks
-- Cannot be dragged and resized
-- Depends on sub-tasks, if the user drags the sub-tasks, the project task will correspondingly adjust its duration
-- Ignores the `startDate` and `endDate` properties
-- The progress of the project is independently specified and does not depend on the sub-tasks (if automatic calculation is needed, it needs to be implemented by oneself)
+- Can have one parent task и an arbitrary число из sub-tasks
+- Cannot be dragged и resized
+- Depends на sub-tasks, if the user drags the sub-tasks, the project task will correspondingly adjust its duration
+- Ignores the `startDate` и `endDate` свойства
+- The progress из the project is independently specified и does не depend на the sub-tasks (if автоmatic calculation is needed, it needs к be implemented по oneself)
 
 
 ### Milestone
 
-Milestone (`TaskType.MILESTONE`) is a task with zero duration, typically used to mark important dates in projects. Milestones are represented by a diamond icon in the Gantt chart.
+Milestone (`TaskType.MILESTONE`) is a task с zero duration, typically used к mark important dates в projects. Milestones are represented по a diamond иконка в the гантт график.
 
 ```javascript
 // 指定里程碑
-const data = [
-  { id: 3, text: "Alpha发布", type: "milestone", startDate: "2023-04-14" }
+const данные = [
+  { id: 3, текст: "Alpha发布", тип: "milestone", startDate: "2023-04-14" }
 ];
 ```
 
 Milestone characteristics:
-- Can have one parent task and an arbitrary number of sub-tasks
-- Cannot be dragged and resized
-- Has zero duration and always maintains this characteristic
-- Ignores the `endDate` and `progress` properties
+- Can have one parent task и an arbitrary число из sub-tasks
+- Cannot be dragged и resized
+- Has zero duration и always maintains this characteristic
+- Ignores the `endDate` и `progress` свойства
 
-## Task Properties
+## Task свойства
 
-VTable Gantt chart tasks can include various properties, here is the complete list of properties and their purposes.
+Vтаблица гантт график tasks can include various свойства, here is the complete список из свойства и their purposes.
 
-### Required Properties
+### обязательный свойства
 
-  These properties must be defined in the data, otherwise the Gantt chart will not render the task correctly:
+  These свойства must be defined в the данные, otherwise the гантт график will не render the task correctly:
 
-| Property Name | Type | Description | Configuration Property Name |
+| Property имя | тип | Description | Configuration Property имя |
 |-------|------|------| --------- |
-| **startDate** | Date \| string | The planned start date of the task, can be a date object or date string | taskBar.startDateField |
-| **endDate** | Date \| string | The planned completion date of the task, can be a date object or date string | taskBar.endDateField |
-| **task title[any field name]** | string | The name or description text of the task, used to display on the task bar | No need to configure |
+| **startDate** | Date \| строка | The planned начало date из the task, can be a date объект или date строка | taskBar.startDateполе |
+| **endDate** | Date \| строка | The planned completion date из the task, can be a date объект или date строка | taskBar.endDateполе |
+| **task title[любой поле имя]** | строка | The имя или description текст из the task, used к display на the task bar | No need к configure |
 
 
-### Optional Properties
+### необязательный свойства
 
-These properties are used to extend the functionality and visual representation of tasks:
+These свойства are used к extend the функциональность и visual representation из tasks:
 
-| Property Name | Type | Description | Configuration Property Name |
+| Property имя | тип | Description | Configuration Property имя |
 |-------|------|------| --------- |
-| **task id[any field name]** | string \| number | task id, depends on the configuration of the link line | taskKeyField |
-| **type** | string | task type, can be `task` (default), `project` or `milestone` |  |
-| **progress** | number | The percentage of task completion, range 0-100 | taskBar.progressField |
-| **children** | Array | The array of sub-tasks, used to build the task hierarchy | Fixed value |
-| **hierarchyState** | string | The expansion state of the tree structure, can be `expand` or `collapse` | Fixed value |
+| **task id[любой поле имя]** | строка \| число | task id, depends на the configuration из the link line | taskKeyполе |
+| **тип** | строка | task тип, can be `task` (по умолчанию), `project` или `milestone` |  |
+| **progress** | число | The percentвозраст из task completion, range 0-100 | taskBar.progressполе |
+| **children** | массив | The массив из sub-tasks, used к build the task hierarchy | Fixed значение |
+| **hierarchyState** | строка | The expansion state из the tree structure, can be `развернуть` или `свернуть` | Fixed значение |
 
 
-### Example
+### пример
 
-Here is an example of a task data with multiple properties:
+Here is an пример из a task данные с multiple свойства:
 
 ```javascript
-const ganttData = [
+const ганттданные = [
   { 
     id: 1, 
-    text: "项目A", 
-    type: "project",
-    hierarchyState: "expand",
+    текст: "项目A", 
+    тип: "project",
+    hierarchyState: "развернуть",
     progress: 0.6,
     children: [
       { 
         id: 2, 
-        text: "调研阶段", 
+        текст: "调研阶段", 
         startDate: "2023-04-01", 
         endDate: "2023-04-10",
         progress: 1
       },
       { 
         id: 3, 
-        text: "开发阶段", 
+        текст: "开发阶段", 
         startDate: "2023-04-11", 
         endDate: "2023-04-25",
         progress: 0.7
       },
       { 
         id: 4, 
-        text: "测试阶段", 
+        текст: "测试阶段", 
         startDate: "2023-04-26", 
         endDate: "2023-05-05",
         progress: 0.3
       },
       { 
         id: 5, 
-        text: "里程碑：版本发布", 
-        type: "milestone", 
+        текст: "里程碑：版本发布", 
+        тип: "milestone", 
         startDate: "2023-05-06"
       }
     ]
@@ -144,22 +144,22 @@ const ganttData = [
 
 ## Task Tree Operations
 
-VTable-Gantt Gantt chart supports task data with tree structure, representing the parent-child relationship and hierarchical structure between tasks.
+Vтаблица-гантт гантт график supports task данные с tree structure, representing the parent-child relationship и hierarchical structure between tasks.
 
 ### Parent-Child Task Relationship
 
-In the VTable-Gantt Gantt chart, the parent-child task relationship can be established in this ways:
+в the Vтаблица-гантт гантт график, the parent-child task relationship can be established в this ways:
 
 1. **Using the children property** (recommended):
 
 ```javascript
-const data = [
+const данные = [
   { 
     id: 1, 
-    text: "父任务", 
+    текст: "父任务", 
     children: [
-      { id: 2, text: "子任务1", startDate: "2023-04-01", endDate: "2023-04-05" },
-      { id: 3, text: "子任务2", startDate: "2023-04-06", endDate: "2023-04-10" }
+      { id: 2, текст: "子任务1", startDate: "2023-04-01", endDate: "2023-04-05" },
+      { id: 3, текст: "子任务2", startDate: "2023-04-06", endDate: "2023-04-10" }
     ]
   }
 ];
@@ -169,33 +169,33 @@ const data = [
 
 ### Tree Expansion State (Hierarchy State)
 
-VTable-Gantt Gantt chart supports tree structure expansion and folding functionality, controlled by the `hierarchyState` property of the task:
+Vтаблица-гантт гантт график supports tree structure expansion и folding функциональность, controlled по the `hierarchyState` property из the task:
 
 ```javascript
-const data = [
+const данные = [
   { 
     id: 1, 
-    text: "父任务", 
-    hierarchyState: "collapse",  // 初始状态为折叠
+    текст: "父任务", 
+    hierarchyState: "свернуть",  // 初始状态为折叠
     children: [
-      { id: 2, text: "子任务1", startDate: "2023-04-01", endDate: "2023-04-05" },
-      { id: 3, text: "子任务2", startDate: "2023-04-06", endDate: "2023-04-10" }
+      { id: 2, текст: "子任务1", startDate: "2023-04-01", endDate: "2023-04-05" },
+      { id: 3, текст: "子任务2", startDate: "2023-04-06", endDate: "2023-04-10" }
     ]
   }
 ];
 ```
 
-In the `Project_Sub_Tasks_Inline` mode, the expansion/folding behavior of project tasks can be controlled by the `projectSubTasksExpandable` configuration:
+в the `Project_Sub_Tasks_Inline` mode, the expansion/folding behavior из project tasks can be controlled по the `projectSubTasksExpandable` configuration:
 
 ```javascript
-const ganttOptions = {
+const ганттOptions = {
   tasksShowMode: "Project_Sub_Tasks_Inline",
   projectSubTasksExpandable: true,  // 允许项目子任务展开/折叠
 };
 ```
 
-When `projectSubTasksExpandable` is set to `true` (default value), project tasks can be expanded/collapsed. When collapsed, sub-tasks will be displayed within the project task row; when expanded, sub-tasks will be displayed in a regular tree structure.
+When `projectSubTasksExpandable` is set к `true` (по умолчанию значение), project tasks can be expanded/collapsed. When collapsed, sub-tasks will be displayed within the project task row; when expanded, sub-tasks will be displayed в a regular tree structure.
 
-  When `projectSubTasksExpandable` is set to `false`, project tasks will not have an expand/collapse icon, and sub-tasks will be displayed within the project task row.
+  When `projectSubTasksExpandable` is set к `false`, project tasks will не have an развернуть/свернуть иконка, и sub-tasks will be displayed within the project task row.
 
 

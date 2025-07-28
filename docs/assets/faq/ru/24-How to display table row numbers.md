@@ -1,66 +1,66 @@
 ---
-title: VTable usage problem: How to display table row numbers</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст problem: How к display таблица row numbers</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 # Question title
 
-How to display the serial number of each row in a table.</br>
+How к display the serial число из каждый row в a таблица.</br>
 
 
 # Problem Description
 
-Through configuration, add a column before the first column of the table to display the row number of each row.</br>
+Through configuration, add a column before the первый column из the таблица к display the row число из каждый row.</br>
 
 
 # Solution 
 
-`rowSeriesNumber` can be configured in the `option` of table initialization. This configuration item is defined as follows:</br>
+`rowSeriesNumber` can be configured в the `option` из таблица initialization. This configuration item is defined as follows:</br>
 ```
-interface IRowSeriesNumber {
-  width?: number | 'auto'; // width of the line number column
-  title?: string; // Row serial number title, empty by default
-  format?: (col?: number, row?: number, table?: BaseTableAPI) => any; // Row serial number formatting function, empty by default. Through this configuration, you can convert numerical type serial numbers into custom serial numbers, such as using a, b, c...
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';  // Row serial number cell type, default is text
-  style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // Body cell style, please refer to:[style](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Foption%2FListTable-columns-text%23style.bgColor)
-  headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // Header cell style, please refer to:[headerStyle](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Foption%2FPivotTable-columns-text%23headerStyle.bgColor)
-  dragOrder?: boolean; // Whether the row serial number sequence can be dragged. The default is false. If set to true, the icon at the dragging position will be displayed, and you can drag and drop on the icon to change its position. If you need to replace the icon, you can configure it yourself. Please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_icon for the chapter on resetting function icons.
+интерфейс IRowSeriesNumber {
+  ширина?: число | 'авто'; // ширина из the line число column
+  title?: строка; // Row serial число title, empty по по умолчанию
+  format?: (col?: число, row?: число, таблица?: Baseтаблицаапи) => любой; // Row serial число formatting функция, empty по по умолчанию. Through this configuration, Вы можете convert numerical тип serial numbers into пользовательский serial numbers, such as using a, b, c...
+  cellType?: 'текст' | 'link' | 'imвозраст' | 'video' | 'флажок';  // Row serial число cell тип, по умолчанию is текст
+  style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // Body cell style, please refer к:[style](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Foption%2Fсписоктаблица-columns-текст%23style.bgColor)
+  headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption); // Header cell style, please refer к:[headerStyle](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Foption%2Fсводныйтаблица-columns-текст%23headerStyle.bgColor)
+  dragOrder?: логический; // Whether the row serial число sequence can be dragged. The по умолчанию is false. If set к true, the иконка в the dragging позиция will be displayed, и Вы можете перетаскивание и отпускание на the иконка к change its позиция. If you need к replace the иконка, Вы можете configure it yourself. Please refer к the tutorial: https://visactor.io/vтаблица/guide/пользовательский_define/пользовательский_иконка для the chapter на resetting функция иконкаs.
 }</br>
 ```
 
 
-## code example
+## код пример
 
 ```
 const option = {
-  records: data,
+  records: данные,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   rowSeriesNumber: {
-    title: '序号',
-    width: 'auto',
+    заголовок: '序号',
+    ширина: 'авто',
     headerStyle: {
-      color: 'black',
+      цвет: 'black',
       bgColor: 'pink'
     },
     style: {
-      color: 'red'
+      цвет: 'red'
     }
   }
 };
-const tableInstance = new VTable.ListTable(container, option);</br>
+const таблицаInstance = новый Vтаблица.списоктаблица(container, option);</br>
 ```
 ## Results display 
 
-Online effect reference: https://www.visactor.io/vtable/demo/basic-functionality/row-series-number</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/CYGRblW5toHUdNx1m3jcWEYnnVe.gif' alt='' width='709' height='403'>
+Online effect reference: https://www.visactor.io/vтаблица/демонстрация/базовый-функциональность/row-series-число</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/CYGRblW5toHUdNx1m3jcWEYnnVe.gif' alt='' ширина='709' высота='403'>
 
 
 
 ## Related documents
 
-Line number demo: https://www.visactor.io/vtable/demo/basic-functionality/row-series-number</br>
-Related API: https://www.visactor.io/vtable/option/ListTable#rowSeriesNumber</br>
-github: https://github.com/VisActor/VTable</br>
+Line число демонстрация: https://www.visactor.io/vтаблица/демонстрация/базовый-функциональность/row-series-число</br>
+Related апи: https://www.visactor.io/vтаблица/option/списоктаблица#rowSeriesNumber</br>
+github: https://github.com/VisActor/Vтаблица</br>
 
 
 

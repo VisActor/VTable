@@ -1,37 +1,37 @@
 ---
-category: examples
-group: usage
-title: grammatical tag
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
-order: 1-1
-link: Developer_Ecology/openinula
+категория: примеры
+группа: usвозраст
+заголовок: grammatical tag
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию-новый.png
+порядок: 1-1
+ссылка: Developer_Ecology/openinula
 ---
 
 # grammatical tag
 
-Use syntax tags to assemble a complete table configuration and generate tables in the form of subcomponents.
+Use syntax tags к assemble a complete таблица configuration и generate таблицаs в the form из subкомпонентs.
 
-- ListColumn: List column, consistent with the definition of columns in option [api](../../option/ListTable-columns-text#cellType)
+- списокColumn: список column, consistent с the definition из columns в option [апи](../../option/списоктаблица-columns-текст#cellType)
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-openinula
-// import * as InulaVTable from '@visactor/openinula-vtable';
-const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
+```javascript liveдемонстрация template=vтаблица-openinula
+// import * as InulaVтаблица от '@visactor/openinula-vтаблица';
+const records = новый массив(1000).fill(['John', 18, 'male', '🏀']);
 
 const root = document.getElementById(CONTAINER_ID);
 Inula.render(
-  <InulaVTable.ListTable records={records} height={'500px'}>
-    <InulaVTable.ListColumn field={'0'} title={'name'} />
-    <InulaVTable.ListColumn field={'1'} title={'age'} />
-    <InulaVTable.ListColumn field={'2'} title={'gender'} />
-    <InulaVTable.ListColumn field={'3'} title={'hobby'} />
-  </InulaVTable.ListTable>,
+  <InulaVтаблица.списоктаблица records={records} высота={'500px'}>
+    <InulaVтаблица.списокColumn поле={'0'} title={'имя'} />
+    <InulaVтаблица.списокColumn поле={'1'} title={'возраст'} />
+    <InulaVтаблица.списокColumn поле={'2'} title={'пол'} />
+    <InulaVтаблица.списокColumn поле={'3'} title={'хобби'} />
+  </InulaVтаблица.списоктаблица>,
   root
 );
 
-// release openinula instance, do not copy
-window.customRelease = () => {
-  Inula.unmountComponentAtNode(root);
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
+  Inula.unmountкомпонентAtNode(root);
 };
 ```

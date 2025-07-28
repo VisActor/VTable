@@ -1,531 +1,531 @@
-{{ target: component-legend-discrete }}
+{{ target: компонент-легенда-discrete }}
 
-#${prefix}  legends.discrete(string)
+#${prefix}  легендаs.discrete(строка)
 
-Discrete legend configuration. Please refer to [Configuration](https://visactor.io/vchart/option/barChart#legends-discrete.type) and [Legend demo](https://visactor.io/vchart/example) in VChart
+Discrete легенда configuration. Please refer к [Configuration](https://visactor.io/vграфик/option/barграфик#легендаs-discrete.тип) и [легенда демонстрация](https://visactor.io/vграфик/пример) в Vграфик
 
-##${prefix}  type(string) = 'discrete'
+##${prefix}  тип(строка) = 'discrete'
 
-**Optional**, discrete legend type declaration, optional because legend type defaults to `'discrete'`.
+**необязательный**, discrete легенда тип declaration, необязательный because легенда тип defaults к `'discrete'`.
 
-{{ use: component-base-legend(
+{{ use: компонент-base-легенда(
   prefix = '#' + ${prefix} 
 ) }}
 
-##${prefix}  defaultSelected(Array)
+##${prefix}  defaultSelected(массив)
 
-Sets the legend item that is selected by default when the legend is initialized. The elements in the array are the names of the legend items, such as `['Legend 1', 'Legend 2']` means that the legend items named `'Legend 1'` and `'Legend 2'` are selected by default.
+Sets the легенда item that is selected по по умолчанию when the легенда is initialized. The elements в the массив are the имяs из the легенда items, such as `['легенда 1', 'легенда 2']` means that the легенда items имяd `'легенда 1'` и `'легенда 2'` are selected по по умолчанию.
 
-##${prefix}  select(boolean) = true
+##${prefix}  выбрать(логический) = true
 
-Whether to enable the selection function of the legend, which is enabled by default.
+Whether к включить the selection функция из the легенда, which is включен по по умолчанию.
 
-##${prefix}  selectedMode(string) = 'multiple'
+##${prefix}  selectedMode(строка) = 'multiple'
 
-The selection mode of the legend, optional values: `'multiple'`, `'single'`, respectively represent multiple selection and single selection.
+The selection mode из the легенда, необязательный values: `'multiple'`, `'single'`, respectively represent multiple selection и single selection.
 
-##${prefix}  hover(boolean) = true
+##${prefix}  навести(логический) = true
 
-Whether to enable hover interaction.
+Whether к включить навести interaction.
 
-##${prefix}  allowAllCanceled(boolean) = false
+##${prefix}  allowAllотменаed(логический) = false
 
-Whether to allow unchecking all legend items, the default is not allowed, only valid when `selectedMode` is `'multiple'`.
+Whether к allow unchecking все легенда items, the по умолчанию is не allowed, only valid when `selectedMode` is `'multiple'`.
 
-##${prefix}  reversed(boolean) = false
+##${prefix}  reversed(логический) = false
 
-Whether to reverse the order of legend items, the default is not reversed.
+Whether к reverse the order из легенда items, the по умолчанию is не reversed.
 
-##${prefix}  maxWidth(number)
+##${prefix}  maxширина(число)
 
-The maximum width of the legend as a whole, which determines whether the legend of the horizontal layout (orient property is `'left'` | `'right'`) automatically wraps.
+The maximum ширина из the легенда as a whole, which determines whether the легенда из the horizontal макет (orient property is `'лево'` | `'право'`) автоmatically wraps.
 
-##${prefix}  maxRow(number)
+##${prefix}  maxRow(число)
 
-It only takes effect when `orient` is `'left'` | `'right'`, which indicates the maximum number of rows of legend items, and legend items exceeding the maximum number of rows will be hidden.
+It only takes effect when `orient` is `'лево'` | `'право'`, which indicates the maximum число из rows из легенда items, и легенда items exceeding the maximum число из rows will be скрытый.
 
-##${prefix}  maxHeight(number)
+##${prefix}  maxвысота(число)
 
-The maximum height of the legend as a whole, which determines whether the legend of the vertical layout (orient attribute is `'top'` | `'bottom'`) automatically wraps.
+The maximum высота из the легенда as a whole, which determines whether the легенда из the vertical макет (orient attribute is `'верх'` | `'низ'`) автоmatically wraps.
 
-##${prefix}  maxCol(number)
+##${prefix}  maxCol(число)
 
-It only takes effect when `orient` is `'top'` | `'bottom'`, indicating the maximum number of columns of legend items, and legend items exceeding the maximum number of columns will be hidden.
+It only takes effect when `orient` is `'верх'` | `'низ'`, indicating the maximum число из columns из легенда items, и легенда items exceeding the maximum число из columns will be скрытый.
 
-##${prefix}  item(Object)
+##${prefix}  item(объект)
 
-Legend item configuration, including graphics, text and other configurations inside the legend item.
+легенда item configuration, including graphics, текст и other configurations inside the легенда item.
 
-####visible(boolean) = true
+####видимый(логический) = true
 
-Whether to display the legend item, it is displayed by default.
+Whether к display the легенда item, it is displayed по по умолчанию.
 
-###${prefix}  spaceCol(number)
+###${prefix}  spaceCol(число)
 
-Column spacing, horizontal spacing of legend items.
+Column spacing, horizontal spacing из легенда items.
 
-###${prefix}  spaceRow(number)
+###${prefix}  spaceRow(число)
 
-Row spacing, vertical spacing of legend items.
+Row spacing, vertical spacing из легенда items.
 
-###${prefix}  maxWidth(number|string)
+###${prefix}  maxширина(число|строка)
 
-The maximum width of the legend item, defaults to null. Percentage can be used to indicate the proportion of the width of the display area.
+The maximum ширина из the легенда item, defaults к null. Percentвозраст can be used к indicate the proportion из the ширина из the display area.
 
-###${prefix}  width(number|string)
+###${prefix}  ширина(число|строка)
 
-The width of the legend item, calculated automatically by default. Percentage can be used to indicate the proportion of the width of the display area.
+The ширина из the легенда item, calculated автоmatically по по умолчанию. Percentвозраст can be used к indicate the proportion из the ширина из the display area.
 
-####height(number|string)
+####высота(число|строка)
 
-The height setting of the legend item, if not set, it will be automatically calculated by default. Percentage can be used to represent the height ratio of the display area.
+The высота setting из the легенда item, if не set, it will be автоmatically calculated по по умолчанию. Percentвозраст can be used к represent the высота ratio из the display area.
 
-###${prefix}  padding(number|number[]|Object)
+###${prefix}  заполнение(число|число[]|объект)
 
-{{ use: common-padding(
-  componentName='Legend item'
+{{ use: common-заполнение(
+  компонентимя='легенда item'
 ) }}
 
-###${prefix}  background(Object)
+###${prefix}  фон(объект)
 
-Background configuration for legend items.
+фон configuration для легенда items.
 
-#####visible(boolean) = false
+#####видимый(логический) = false
 
-Whether to show the legend item background.
+Whether к показать the легенда item фон.
 
-####${prefix}  style(Object)
+####${prefix}  style(объект)
 
-Style configuration for legend item background.
+Style configuration для легенда item фон.
 
 {{ use: graphic-rect(
   prefix = '#####'
 ) }}
 
-####${prefix}  state(Object)
+####${prefix}  state(объект)
 
-The style configuration of the legend item background in different interaction states. Currently, the interaction states supported by the legend component are:
+The style configuration из the легенда item фон в different interaction states. Currently, the interaction states supported по the легенда компонент are:
 
 - `'selected'`: selected state
 - `'unSelected'`: unselected state
-- `'selectedHover'`: selected and hover state
-- `'unSelectedHover'`: unselected and hover state
+- `'selectedHover'`: selected и навести state
+- `'unSelectedHover'`: unselected и навести state
 
-#####${prefix}  selected(Object)
+#####${prefix}  selected(объект)
 
-The style configuration of the background selected state.
-
-{{ use: graphic-rect(
-  prefix = '######'
-) }}
-
-######unSelected(Object)
-
-Style configuration for the background unselected state.
+The style configuration из the фон selected state.
 
 {{ use: graphic-rect(
   prefix = '######'
 ) }}
 
-######selectedHover(Object)
+######unSelected(объект)
 
-Style configuration for background selected and hover state.
-
-{{ use: graphic-rect(
-  prefix = '######'
-) }}
-
-######unSelectedHover(Object)
-
-The style configuration of background unselected and hover state.
+Style configuration для the фон unselected state.
 
 {{ use: graphic-rect(
   prefix = '######'
 ) }}
 
-###${prefix}  shape(Object)
+######selectedHover(объект)
 
-Configuration of the shape icon for the legend item.
+Style configuration для фон selected и навести state.
 
-#####visible(boolean) = false
+{{ use: graphic-rect(
+  prefix = '######'
+) }}
 
-Whether to display the shape icon of the legend item.
+######unSelectedHover(объект)
 
-####${prefix}  space(number)
+The style configuration из фон unselected и навести state.
 
-The distance between the shape and the following label.
+{{ use: graphic-rect(
+  prefix = '######'
+) }}
 
-####${prefix}  style(Object)
+###${prefix}  shape(объект)
 
-The shape configuration for the icon.
+Configuration из the shape иконка для the легенда item.
+
+#####видимый(логический) = false
+
+Whether к display the shape иконка из the легенда item.
+
+####${prefix}  space(число)
+
+The distance between the shape и Следующий label.
+
+####${prefix}  style(объект)
+
+The shape configuration для the иконка.
 
 {{ use: graphic-symbol(
   prefix = '#####'
 ) }}
 
-####${prefix}  state(Object)
+####${prefix}  state(объект)
 
-The style configuration of the legend item shape in different interaction states. Currently, the interaction states supported by the legend component are:
+The style configuration из the легенда item shape в different interaction states. Currently, the interaction states supported по the легенда компонент are:
 
 - `'selected'`: selected state
 - `'unSelected'`: unselected state
-- `'selectedHover'`: selected and hover state
-- `'unSelectedHover'`: unselected and hover state
+- `'selectedHover'`: selected и навести state
+- `'unSelectedHover'`: unselected и навести state
 
-#####${prefix}  selected(Object)
+#####${prefix}  selected(объект)
 
-Legend item shape The style configuration of the selected state.
-
-{{ use: graphic-symbol(
-  prefix = '######'
-) }}
-
-######unSelected(Object)
-
-Style configuration for the legend item shape state.
+легенда item shape The style configuration из the selected state.
 
 {{ use: graphic-symbol(
   prefix = '######'
 ) }}
 
-######selectedHover(Object)
+######unSelected(объект)
 
-The legend item shape is selected and the style configuration of the hover state.
-
-{{ use: graphic-symbol(
-  prefix = '######'
-) }}
-
-######unSelectedHover(Object)
-
-The legend item shape is not selected and the style configuration of the hover state.
+Style configuration для the легенда item shape state.
 
 {{ use: graphic-symbol(
   prefix = '######'
 ) }}
 
-####label(Object)
+######selectedHover(объект)
 
-Text configuration for legend entries.
+The легенда item shape is selected и the style configuration из the навести state.
 
-####${prefix}  space(number)
+{{ use: graphic-symbol(
+  prefix = '######'
+) }}
 
-The distance between the legend item label and the following value.
+######unSelectedHover(объект)
 
-####${prefix}  formatMethod(Function)
+The легенда item shape is не selected и the style configuration из the навести state.
 
-The text formatting method of the label, which can customize the display text of the label. The parameters of the function are:
+{{ use: graphic-symbol(
+  prefix = '######'
+) }}
+
+####label(объект)
+
+текст configuration для легенда entries.
+
+####${prefix}  space(число)
+
+The distance between the легенда item label и Следующий значение.
+
+####${prefix}  formatMethod(функция)
+
+The текст formatting method из the label, which can пользовательскийize the display текст из the label. The parameters из the функция are:
 
 ```ts
 /**
- * @params text original text
- * @params item The drawing data of the legend item
- * @params index index of legend item
+ * @params текст original текст
+ * @params item The drawing данные из the легенда item
+ * @params index index из легенда item
  */
-(text: StringOrNumber, item: LegendItemDatum, index: number) => any;
+(текст: StringOrNumber, item: легендаItemDatum, index: число) => любой;
 ```
 
-The plot data types for legend items are:
+The plot данные types для легенда items are:
 
 ```ts
-export type LegendItemDatum = {
+export тип легендаItemDatum = {
   /**
-   * The unique identifier of this piece of data, which can be used for animation or search
+   * The unique identifier из this piece из данные, which can be used для animation или search
    */
-  id?: string;
-  /** display text */
-  label: string;
-  /** Display Data */
-  value?: string | number;
-  /** The shape definition before the legend item */
+  id?: строка;
+  /** display текст */
+  label: строка;
+  /** Display данные */
+  значение?: строка | число;
+  /** The shape definition before the легенда item */
   shape: {
-    symbolType?: string;
-    fill?: string;
-    stroke?: string;
+    symbolType?: строка;
+    fill?: строка;
+    strхорошоe?: строка;
   };
-  [key: string]: any;
+  [key: строка]: любой;
 };
 ```
 
-####${prefix}  style(Object)
+####${prefix}  style(объект)
 
-Style configuration for legend item label.
+Style configuration для легенда item label.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '#####'
 ) }}
 
-####${prefix}  state(Object)
+####${prefix}  state(объект)
 
-The style configuration of the legend item label in different interaction states. Currently, the interaction states supported by the legend component are:
+The style configuration из the легенда item label в different interaction states. Currently, the interaction states supported по the легенда компонент are:
 
 - `'selected'`: selected state
 - `'unSelected'`: unselected state
-- `'selectedHover'`: selected and hover state
-- `'unSelectedHover'`: unselected and hover state
+- `'selectedHover'`: selected и навести state
+- `'unSelectedHover'`: unselected и навести state
 
-#####${prefix}  selected(Object)
+#####${prefix}  selected(объект)
 
-The style configuration of the selected state of the legend item label.
+The style configuration из the selected state из the легенда item label.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-######unSelected(Object)
+######unSelected(объект)
 
-The style configuration of the unselected state of the legend item label.
+The style configuration из the unselected state из the легенда item label.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-######selectedHover(Object)
+######selectedHover(объект)
 
-The style configuration of the legend item label selected and hover state.
+The style configuration из the легенда item label selected и навести state.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-######unSelectedHover(Object)
+######unSelectedHover(объект)
 
-The style configuration of the legend item label unselected and hover state.
+The style configuration из the легенда item label unselected и навести state.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-###${prefix}  value(Object)
+###${prefix}  значение(объект)
 
-The value configuration of the legend item.
+The значение configuration из the легенда item.
 
-####${prefix}  space(number)
+####${prefix}  space(число)
 
-The distance between the legend item value and the following elements.
+The distance between the легенда item значение и Следующий elements.
 
-####${prefix}  alignRight(boolean) = false
+####${prefix}  alignRight(логический) = false
 
-Whether to align the value to the right side of the overall legend item, **only takes effect when setting the legend item width `itemWidth`**.
+Whether к align the значение к the право side из the overall легенда item, **only takes effect when setting the легенда item ширина `itemширина`**.
 
-####${prefix}  formatMethod(Function)
+####${prefix}  formatMethod(функция)
 
-The text formatting method of value, you can customize the display text of value. The parameters of the function are:
+The текст formatting method из значение, Вы можете пользовательскийize the display текст из значение. The parameters из the функция are:
 
 ```ts
 /**
- * @params text original text
- * @params item The drawing data of the legend item
- * @params index index of legend item
+ * @params текст original текст
+ * @params item The drawing данные из the легенда item
+ * @params index index из легенда item
  */
-(text: StringOrNumber, item: LegendItemDatum, index: number) => any;
+(текст: StringOrNumber, item: легендаItemDatum, index: число) => любой;
 ```
 
-The plot data types for legend items are:
+The plot данные types для легенда items are:
 
 ```ts
-export type LegendItemDatum = {
+export тип легендаItemDatum = {
   /**
-   * The unique identifier of this piece of data, which can be used for animation or search
+   * The unique identifier из this piece из данные, which can be used для animation или search
    */
-  id?: string;
-  /** display text */
-  label: string;
-  /** Display Data */
-  value?: string | number;
-  /** The shape definition before the legend item */
+  id?: строка;
+  /** display текст */
+  label: строка;
+  /** Display данные */
+  значение?: строка | число;
+  /** The shape definition before the легенда item */
   shape: {
-    symbolType?: string;
-    fill?: string;
-    stroke?: string;
+    symbolType?: строка;
+    fill?: строка;
+    strхорошоe?: строка;
   };
-  [key: string]: any;
+  [key: строка]: любой;
 };
 ```
 
-####${prefix}  style(Object)
+####${prefix}  style(объект)
 
-Style configuration for legend item value.
+Style configuration для легенда item значение.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '#####'
 ) }}
 
-####${prefix}  state(Object)
+####${prefix}  state(объект)
 
-The style configuration of the legend item value in different interaction states. Currently, the interaction states supported by the legend component are:
+The style configuration из the легенда item значение в different interaction states. Currently, the interaction states supported по the легенда компонент are:
 
 - `'selected'`: selected state
 - `'unSelected'`: unselected state
-- `'selectedHover'`: selected and hover state
-- `'unSelectedHover'`: unselected and hover state
+- `'selectedHover'`: selected и навести state
+- `'unSelectedHover'`: unselected и навести state
 
-#####${prefix}  selected(Object)
+#####${prefix}  selected(объект)
 
-The style configuration of the legend item value selected state.
+The style configuration из the легенда item значение selected state.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-######unSelected(Object)
+######unSelected(объект)
 
-Legend item value Style configuration for unselected state.
+легенда item значение Style configuration для unselected state.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-######selectedHover(Object)
+######selectedHover(объект)
 
-The style configuration of legend item value selected and hover state.
+The style configuration из легенда item значение selected и навести state.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-######unSelectedHover(Object)
+######unSelectedHover(объект)
 
-The legend item value is not selected and the style configuration of the hover state.
+The легенда item значение is не selected и the style configuration из the навести state.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '######'
 ) }}
 
-###${prefix}  focusIconStyle(Object)
+###${prefix}  focusиконкаStyle(объект)
 
-Focus button style configuration.
+фокус Кнопка style configuration.
 
 {{ use: graphic-symbol(
   prefix = '####'
 ) }}
 
-##${prefix}  autoPage(boolean) = true
+##${prefix}  автоPвозраст(логический) = true
 
-Whether to enable automatic page turning, it is enabled by default.
+Whether к включить автоmatic pвозраст turning, it is включен по по умолчанию.
 
-###pager(Object)
+###pвозрастr(объект)
 
-Page turner configuration.
+Pвозраст turner configuration.
 
-###${prefix}  layout(string)
+###${prefix}  макет(строка)
 
-The layout of the page turner, optional values are `'horizontal'` and `'vertical'`. The default value logic is:
+The макет из the pвозраст turner, необязательный values are `'horizontal'` и `'vertical'`. The по умолчанию значение logic is:
 
-- When legend `orient` is `'left'` or `'right'`, it defaults to `'vertical'`.
-- When the legend `orient` is `'top'` or `'bottom'`, it defaults to `'horizontal'`.
+- When легенда `orient` is `'лево'` или `'право'`, it defaults к `'vertical'`.
+- When the легенда `orient` is `'верх'` или `'низ'`, it defaults к `'horizontal'`.
 
-###${prefix}  defaultCurrent(number)
+###${prefix}  defaultCurrent(число)
 
-The default is the current page number.
+The по умолчанию is the текущий pвозраст число.
 
-###${prefix}  padding(number|number[]|Object)
+###${prefix}  заполнение(число|число[]|объект)
 
-{{ use: common-padding(
-  componentName='Page Turner'
+{{ use: common-заполнение(
+  компонентимя='Pвозраст Turner'
 ) }}
 
-###${prefix}  space(number)
+###${prefix}  space(число)
 
-The spacing between the page turner and the legend.
+The spacing between the pвозраст turner и the легенда.
 
-###${prefix}  animation(boolean) = true
+###${prefix}  animation(логический) = true
 
-Whether to enable animation.
+Whether к включить animation.
 
-###${prefix}  animationDuration(number) = 450
+###${prefix}  animationDuration(число) = 450
 
-Animation duration, in ms.
+Animation duration, в ms.
 
-###${prefix}  animationEasing(string) = 'quadIn'
+###${prefix}  animationEasing(строка) = 'quadIn'
 
 Animation easing effect.
 
-####textStyle(Object)
+####textStyle(объект)
 
-Text style configuration.
+текст style configuration.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '####'
 ) }}
 
-###${prefix}  handler(Object)
+###${prefix}  handler(объект)
 
-Style configuration for page turner buttons.
+Style configuration для pвозраст turner Кнопкаs.
 
-####${prefix}  space(number) = 8
+####${prefix}  space(число) = 8
 
-The distance between the button and the text content area, the default is 8.
+The distance between the Кнопка и the текст content area, the по умолчанию is 8.
 
-####${prefix}  preShape(string)
+####${prefix}  preShape(строка)
 
-Page turner previous page button shape.
+Pвозраст turner предыдущий pвозраст Кнопка shape.
 
-####${prefix}  nextShape(string)
+####${prefix}  nextShape(строка)
 
-Page turner next page button shape.
+Pвозраст turner следующий pвозраст Кнопка shape.
 
-####${prefix}  style(Object)
+####${prefix}  style(объект)
 
-Style configuration for page turner buttons.
+Style configuration для pвозраст turner Кнопкаs.
 
 {{ use: graphic-symbol(
   prefix = '#####'
 ) }}
 
-####${prefix}  state(Object)
+####${prefix}  state(объект)
 
-The style configuration of the page turner button in different interaction states. Currently, the interaction states supported by the page turner are:
+The style configuration из the pвозраст turner Кнопка в different interaction states. Currently, the interaction states supported по the pвозраст turner are:
 
-- `'hover'`: hover state
-- `'disable'`: Disabled state style
+- `'навести'`: навести state
+- `'отключить'`: отключен state style
 
-#####${prefix}  hover(Object)
+#####${prefix}  навести(объект)
 
-Style configuration for page turner button hover state.
-
-{{ use: graphic-symbol(
-  prefix = '######'
-) }}
-
-#####${prefix}  disable(Object)
-
-Style configuration for the unavailable state of the page turner button.
+Style configuration для pвозраст turner Кнопка навести state.
 
 {{ use: graphic-symbol(
   prefix = '######'
 ) }}
 
-##${prefix}  data(Array)
+#####${prefix}  отключить(объект)
 
-Custom configuration for discrete legend data. `data: LegendItemDatum[]`
+Style configuration для the недоступный state из the pвозраст turner Кнопка.
+
+{{ use: graphic-symbol(
+  prefix = '######'
+) }}
+
+##${prefix}  данные(массив)
+
+пользовательский configuration для discrete легенда данные. `данные: легендаItemDatum[]`
 
 ```ts
-// type of legend data
-type LegendItemDatum = {
+// тип из легенда данные
+тип легендаItemDatum = {
   /**
-   * The unique identifier of this piece of data, which can be used for animation or search
+   * The unique identifier из this piece из данные, which can be used для animation или search
    */
-  id?: string;
-  /** display text */
-  label: string;
-  /** Display Data */
-  value?: string | number;
-  /** The shape definition before the legend item */
+  id?: строка;
+  /** display текст */
+  label: строка;
+  /** Display данные */
+  значение?: строка | число;
+  /** The shape definition before the легенда item */
   shape: {
-    symbolType?: string;
-    fill?: string;
-    stroke?: string;
-    stroke?: boolean;
+    symbolType?: строка;
+    fill?: строка;
+    strхорошоe?: строка;
+    strхорошоe?: логический;
   };
-  [key: string]: any;
+  [key: строка]: любой;
 };
 ```
 
-{{ use: common-layout-item(
+{{ use: common-макет-item(
   prefix = '##',
-  defaultLayoutType = 'normal',
-  defaultLayoutLevel = 50,
-  defaultLayoutZIndex = 500,
+  defaultмакетType = 'normal',
+  defaultмакетLevel = 50,
+  defaultмакетZIndex = 500,
   noOrient = true
 ) }}

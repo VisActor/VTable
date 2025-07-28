@@ -1,89 +1,89 @@
-# Gantt Mark Line
+# гантт Mark Line
 
-VTable-Gantt component supports adding mark lines on the Gantt chart, which can be used to represent important time nodes of the entire project.
+Vтаблица-гантт компонент supports adding mark lines на the гантт график, which can be used к represent important time nodes из the entire project.
 
 ## Configuration
 
-markLine supports (boolean | IMarkLine | Array<IMarkLine>) type,
+markLine supports (логический | IMarkLine | массив<IMarkLine>) тип,
 
-- boolean: Whether to display the mark line, the default is false. When the mark line configuration is false, the mark line is not displayed.
+- логический: Whether к display the mark line, the по умолчанию is false. When the mark line configuration is false, the mark line is не displayed.
 - IMarkLine: Single mark line configuration
-- Array<IMarkLine>: Multiple mark line configurations
+- массив<IMarkLine>: Multiple mark line configurations
 
-The configuration items of IMarkLine are as follows:
+The configuration items из IMarkLine are as follows:
 
 ```javascript
-export interface IMarkLine {
-  date: string;
+export интерфейс IMarkLine {
+  date: строка;
   style?: ILineStyle;
-  /** The position of the mark line under the date column. The default is 'left'. */
-  position?: 'left' | 'right' | 'middle' | 'date';
-    /** Automatically scroll the date range to include this mark line. */
-  scrollToMarkLine?: boolean;
-  content?: string; // markLine中内容
-  /** The style of the content in the markLine. */
+  /** The позиция из the mark line under the date column. The по умолчанию is 'лево'. */
+  позиция?: 'лево' | 'право' | 'середина' | 'date';
+    /** автоmatically прокрутка the date range к include this mark line. */
+  scrollToMarkLine?: логический;
+  content?: строка; // markLine中内容
+  /** The style из the content в the markLine. */
   contentStyle?: {
-    color?: string;
-    fontSize?: string;
-    fontWeight?: string;
-    lineHeight?: string;
-    backgroundColor?: string;
-    cornerRadius?: string;
+    цвет?: строка;
+    fontSize?: строка;
+    fontWeight?: строка;
+    lineвысота?: строка;
+    backgroundColor?: строка;
+    cornerRadius?: строка;
   }
 }
 ```
 
 ## Mark Line Style
 
-The configuration example of the mark line style is as follows:
+The configuration пример из the mark line style is as follows:
 
 ```javascript
-const ganttOptions = {
+const ганттOptions = {
   markLine: [
     {
       date: '2024-01-01',
       style: {
-        color: 'red',
+        цвет: 'red',
       },
     },
     {
       date: '2024-01-02',
       style: {
-        color: 'blue',
+        цвет: 'blue',
       },
     },
   ],
 };
 
-## Mark Line Position
+## Mark Line позиция
 
-The position configuration of markLine supports 'left' | 'right' | 'middle' | 'date' four types,
+The позиция configuration из markLine supports 'лево' | 'право' | 'середина' | 'date' four types,
 
-- 'left': The mark line is displayed on the left of the date column
-- 'right': The mark line is displayed on the right of the date column
-- 'middle': The mark line is displayed in the middle of the date column
-- 'date': The mark line is displayed in the position of the date column
+- 'лево': The mark line is displayed на the лево из the date column
+- 'право': The mark line is displayed на the право из the date column
+- 'середина': The mark line is displayed в the середина из the date column
+- 'date': The mark line is displayed в the позиция из the date column
 
-## Mark Line Content and Style
+## Mark Line Content и Style
 
-The content configuration of markLine supports string type,
+The content configuration из markLine supports строка тип,
 
-- string: Mark line content
+- строка: Mark line content
 
-The content style configuration of markLine supports ITaskBarLabelTextStyle type,
+The content style configuration из markLine supports ITaskBarLabelTextStyle тип,
 
 - ITaskBarLabelTextStyle: Mark line content style
 
-Example:
+пример:
 
 ```javascript
-const ganttOptions = {
+const ганттOptions = {
   markLine: [
     {
       date: '2024-01-01',
       content: '项目启动',
       contentStyle: {
-        color: 'red',
+        цвет: 'red',
         fontSize: '16px',
         fontWeight: 'bold',
       },
@@ -92,16 +92,16 @@ const ganttOptions = {
 };  
 ```
 
-## Whether the Gantt chart automatically scrolls to the mark line position
+## Whether the гантт график автоmatically scrolls к the mark line позиция
 
-The scroll configuration of markLine supports boolean type,
+The прокрутка configuration из markLine supports логический тип,
 
-- boolean: Whether to automatically scroll to the mark line
+- логический: Whether к автоmatically прокрутка к the mark line
 
-Example:
+пример:
 
 ```javascript
-const ganttOptions = {
+const ганттOptions = {
   markLine: [
     {
       date: '2024-01-01',
@@ -110,4 +110,4 @@ const ganttOptions = {
   ],
 };
 ```
-Normally, if the date '2024-01-01' is outside the display range of the Gantt chart, when the `scrollToMarkLine: true` configuration is set, the Gantt chart will automatically scroll to the mark line position.
+Normally, if the date '2024-01-01' is outside the display range из the гантт график, when the `scrollToMarkLine: true` configuration is set, the гантт график will автоmatically прокрутка к the mark line позиция.

@@ -1,44 +1,44 @@
-{{ target: progressbar-cell-type }}
+{{ target: progressbar-cell-тип }}
 
-#${prefix} columns.progressbar(string)
+#${prefix} columns.progressbar(строка)
 
-Specify the column type as 'progressbar', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'progressbar', cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'progressbar'
+##${prefix} cellType(строка) = 'progressbar'
 
-Specify the column type as 'progressbar', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'progressbar', cellType can be omitted и defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##'+${prefix},
     isProgressbar = true
 ) }}
 
-##${prefix} min(number|Function) = 0
+##${prefix} min(число|функция) = 0
 
-**Configuration item exclusive to progressbar type**  
+**Configuration item exclusive к progressbar тип**  
 
-The minimum value of the progress bar display range, support dynamic acquisition through functions
+The minimum значение из the progress bar display range, support dynamic acquisition through functions
 
-##${prefix} max(number|Function) = 100
+##${prefix} max(число|функция) = 100
 
-**Configuration item exclusive to progressbar type**  
+**Configuration item exclusive к progressbar тип**  
 
-The maximum value of the progress bar display range, support dynamic acquisition through functions
+The maximum значение из the progress bar display range, support dynamic acquisition through functions
 
-##${prefix} barType(string) = 'default'
+##${prefix} barType(строка) = 'по умолчанию'
 
-**Configuration item exclusive to progressbar type** 
+**Configuration item exclusive к progressbar тип** 
 
-Progress bar type. Default is 'default'.
+Progress bar тип. по умолчанию is 'по умолчанию'.
 
-- default: Progress bar from min to max
+- по умолчанию: Progress bar от min к max
 
-- negative: With min as a negative value, the progress bar will be divided into positive and negative directions at 0
+- negative: с min as a negative значение, the progress bar will be divided into positive и negative directions в 0
 
-- negative_no_axis: Display the same as 'negative' but without a 0-value axis
+- negative_no_axis: Display the same as 'negative' but без a 0-значение axis
 
-##${prefix} dependField(string)
+##${prefix} dependполе(строка)
 
-**Configuration item exclusive to progressbar type**
+**Configuration item exclusive к progressbar тип**
 
-Data dependency for the progress graph. If the text displayed in the cell and the data field used by the progress graph are different, configure the data field used by the progress graph in dependField.
+данные dependency для the progress graph. If the текст displayed в the cell и the данные поле used по the progress graph are different, configure the данные поле used по the progress graph в dependполе.

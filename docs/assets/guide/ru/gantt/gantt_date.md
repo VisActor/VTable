@@ -1,16 +1,16 @@
-# Gantt Date Related
+# гантт Date Related
 
-## Gantt Time Axis Date Range
+## гантт Time Axis Date Range
 
-The Gantt time axis date range determines the display range of the time axis. It can be set using the `minDate` and `maxDate` options.
+The гантт time axis date range determines the display range из the time axis. It can be set using the `minDate` и `maxDate` options.
 
-## Gantt Task Bar Date Range
+## гантт Task Bar Date Range
 
-The Gantt task bar date range determines the display range of the task bar. It is related to the `[startDateField]` and `[endDateField]` fields in the records.
+The гантт task bar date range determines the display range из the task bar. It is related к the `[startDateполе]` и `[endDateполе]` полеs в the records.
 
 ## Date Format
 
-VTable-Gantt components support interactive scheduling for unscheduled tasks. The date format for new scheduled tasks can be set using the `dateFormat` configuration option. The date data will be added to the date field value in the data record, with the default format being 'yyyy-mm-dd'.
+Vтаблица-гантт компонентs support interactive scheduling для unscheduled tasks. The date format для новый scheduled tasks can be set using the `dateFormat` configuration option. The date данные will be added к the date поле значение в the данные record, с the по умолчанию format being 'yyyy-mm-dd'.
 
 Other formats include:
 ```
@@ -25,23 +25,23 @@ Other formats include:
     | 'mm.dd.yyyy';
 ```
 
-The Gantt component exposes a simple date formatting utility method:
+The гантт компонент exposes a simple date formatting utility method:
 ```
-import { tools } from '@visactor/vtable-gantt';
+import { tools } от '@visactor/vтаблица-гантт';
 // Format date
-const date = tools.formatDate(new Date(), 'yyyy-mm-dd');
-// Other methods: tools.getWeekNumber, tools.getTodayNearDay, tools.getWeekday
+const date = tools.formatDate(новый Date(), 'yyyy-mm-dd');
+// Other методы: tools.getWeekNumber, tools.getTodayNearDay, tools.getWeekday
 ```
 
-## Data Item Date Requirements
+## данные Item Date Requirements
 
-Under normal configuration, the date requirements for data items are as follows:
+Under normal configuration, the date requirements для данные items are as follows:
 
-- The `[startDateField]` and `[endDateField]` fields in the records are date strings, formatted as `yyyy-mm-dd`
+- The `[startDateполе]` и `[endDateполе]` полеs в the records are date strings, formatted as `yyyy-mm-dd`
 
-Consider the minimum time granularity `scales`, if the minimum time granularity is a time level such as hours or seconds, the date requirements for data items are as follows:
+Consider the minimum time granularity `scales`, if the minimum time granularity is a time level such as hours или seconds, the date requirements для данные items are as follows:
 
-- The `[startDateField]` and `[endDateField]` fields in the records are date objects, formatted as `yyyy-mm-dd hh:mm:ss`
+- The `[startDateполе]` и `[endDateполе]` полеs в the records are date objects, formatted as `yyyy-mm-dd hh:mm:ss`
 
 ## Related Interfaces
 

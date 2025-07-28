@@ -1,147 +1,147 @@
 ---
-category: examples
-group: list-table-data-analysis
-title: Set multiple aggregation and aggregation summary methods for the same column of data
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-multiple-aggregation.png
-link: data_analysis/list_table_dataAnalysis
-option: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
+категория: примеры
+группа: список-таблица-данные-analysis
+заголовок: Set multiple aggregation и aggregation summary методы для the same column из данные
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-таблица-multiple-aggregation.png
+ссылка: данные_analysis/список_таблица_данныеAnalysis
+опция: списоктаблица-columns-текст#aggregation(Aggregation%20%7C%20пользовательскийAggregation%20%7C%20Array)
 ---
 
-# Set multiple aggregation and aggregation summary methods for the same column of data
+# Set multiple aggregation и aggregation summary методы для the same column из данные
 
-Basic table aggregation calculation, each column can set the aggregation method, and supports summation, average, maximum and minimum, and custom function summary logic. The same column and multiple aggregation methods are set, and the results are displayed in multiple rows.
+базовый таблица aggregation calculation, каждый column can set the aggregation method, и supports summation, averвозраст, maximum и minimum, и пользовательский функция summary logic. The same column и multiple aggregation методы are set, и the results are displayed в multiple rows.
 
-And this sample data supports editing, and the values that need to be aggregated are automatically calculated after editing.
+и this sample данные supports editing, и the values that need к be aggregated are автоmatically calculated after editing.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `ListTable`
+- `списоктаблица`
 - `columns.aggregation` Configure aggregation calculations
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-const input_editor = new VTable_editors.InputEditor({});
-VTable.register.editor('input', input_editor);
+```javascript liveдемонстрация template=vтаблица
+const input_editor = новый Vтаблица_editors.InputEditor({});
+Vтаблица.регистрация.editor('ввод', input_editor);
 const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
+  возврат массив.от(новый массив(count)).map((_, i) => ({
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `小明${i + 1}`,
-    lastName: '王',
+    имя: `小明${i + 1}`,
+    lastимя: '王',
     date1: '2022年9月1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
-    city: 'beijing',
+    work: i % 2 === 0 ? 'back-конец engineer' + (i + 1) : 'front-конец engineer' + (i + 1),
+    Город: 'beijing',
     salary: Math.round(Math.random() * 10000)
   }));
 };
-var tableInstance;
+var таблицаInstance;
 
 const records = generatePersons(300);
 const columns = [
   {
-    field: '',
-    title: '行号',
-    width: 80,
-    fieldFormat(data, col, row, table) {
-      return row - 1;
+    поле: '',
+    заголовок: '行号',
+    ширина: 80,
+    полеFormat(данные, col, row, таблица) {
+      возврат row - 1;
     },
     aggregation: {
-      aggregationType: VTable.TYPES.AggregationType.NONE,
+      aggregationType: Vтаблица.TYPES.AggregationType.никто,
       formatFun() {
-        return '汇总：';
+        возврат '汇总：';
       }
     }
   },
   {
-    field: 'id',
-    title: 'ID',
-    width: '1%',
-    minWidth: 200,
-    sort: true
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: '1%',
+    minширина: 200,
+    сортировка: true
   },
   {
-    field: 'email1',
-    title: 'email',
-    width: 200,
-    sort: true
+    поле: 'email1',
+    заголовок: 'email',
+    ширина: 200,
+    сортировка: true
   },
   {
-    title: 'full name',
+    заголовок: 'full имя',
     columns: [
       {
-        field: 'name',
-        title: 'First Name',
-        width: 200
+        поле: 'имя',
+        заголовок: 'первый имя',
+        ширина: 200
       },
       {
-        field: 'name',
-        title: 'Last Name',
-        width: 200
+        поле: 'имя',
+        заголовок: 'последний имя',
+        ширина: 200
       }
     ]
   },
   {
-    field: 'date1',
-    title: 'birthday',
-    width: 200
+    поле: 'date1',
+    заголовок: 'birthday',
+    ширина: 200
   },
   {
-    field: 'sex',
-    title: 'sex',
-    width: 100
+    поле: 'sex',
+    заголовок: 'sex',
+    ширина: 100
   },
   {
-    field: 'tel',
-    title: 'telephone',
-    width: 150
+    поле: 'tel',
+    заголовок: 'telephone',
+    ширина: 150
   },
   {
-    field: 'work',
-    title: 'job',
-    width: 200
+    поле: 'work',
+    заголовок: 'job',
+    ширина: 200
   },
   {
-    field: 'city',
-    title: 'city',
-    width: 150
+    поле: 'Город',
+    заголовок: 'Город',
+    ширина: 150
   },
   {
-    field: 'date1',
-    title: 'birthday',
-    width: 200
+    поле: 'date1',
+    заголовок: 'birthday',
+    ширина: 200
   },
   {
-    field: 'salary',
-    title: 'salary',
-    width: 100
+    поле: 'salary',
+    заголовок: 'salary',
+    ширина: 100
   },
   {
-    field: 'salary',
-    title: 'salary',
-    width: 100,
+    поле: 'salary',
+    заголовок: 'salary',
+    ширина: 100,
     aggregation: [
       {
-        aggregationType: VTable.TYPES.AggregationType.MAX,
+        aggregationType: Vтаблица.TYPES.AggregationType.MAX,
         // showOnTop: true,
-        formatFun(value) {
-          return '最高薪资:' + Math.round(value) + '元';
+        formatFun(значение) {
+          возврат '最高薪资:' + Math.round(значение) + '元';
         }
       },
       {
-        aggregationType: VTable.TYPES.AggregationType.MIN,
+        aggregationType: Vтаблица.TYPES.AggregationType.MIN,
         showOnTop: true,
-        formatFun(value) {
-          return '最低薪资:' + Math.round(value) + '元';
+        formatFun(значение) {
+          возврат '最低薪资:' + Math.round(значение) + '元';
         }
       },
       {
-        aggregationType: VTable.TYPES.AggregationType.AVG,
+        aggregationType: Vтаблица.TYPES.AggregationType.AVG,
         showOnTop: false,
-        formatFun(value, col, row, table) {
-          return '平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+        formatFun(значение, col, row, таблица) {
+          возврат '平均:' + Math.round(значение) + '元 (共计' + таблица.recordsCount + '条数据)';
         }
       }
     ]
@@ -150,97 +150,97 @@ const columns = [
 const option = {
   container: document.getElementById(CONTAINER_ID),
   records,
-  // dataConfig: {
+  // данныеConfig: {
   //   filterRules: [
   //     {
-  //       filterFunc: (record: Record<string, any>) => {
-  //         return record.id % 2 === 0;
+  //       filterFunc: (record: Record<строка, любой>) => {
+  //         возврат record.id % 2 === 0;
   //       }
   //     }
   //   ]
   // },
   columns,
-  tooltip: {
-    isShowOverflowTextTooltip: true
+  Подсказка: {
+    isShowOverflowTextПодсказка: true
   },
   frozenColCount: 1,
   bottomFrozenRowCount: 2,
   rightFrozenColCount: 1,
-  overscrollBehavior: 'none',
-  autoWrapText: true,
-  widthMode: 'autoWidth',
-  heightMode: 'autoHeight',
-  dragOrder: {
-    dragHeaderMode: 'all'
+  overscrollBehavior: 'никто',
+  автоWrapText: true,
+  ширинаMode: 'автоширина',
+  высотаMode: 'автовысота',
+  dragпорядок: {
+    dragHeaderMode: 'все'
   },
   keyboardOptions: {
     pasteValueToCell: true
   },
-  eventOptions: {
-    preventDefaultContextMenu: false
+  событиеOptions: {
+    prсобытиеDefaultContextменю: false
   },
   pagination: {
-    perPageCount: 100,
-    currentPage: 0
+    perPвозрастCount: 100,
+    currentPвозраст: 0
   },
-  theme: VTable.themes.DEFAULT.extends({
+  тема: Vтаблица.темаs.по умолчанию.extends({
     bottomFrozenStyle: {
       bgColor: '#ECF1F5',
-      borderLineWidth: [6, 0, 1, 0],
+      borderLineширина: [6, 0, 1, 0],
       borderColor: ['gray']
     }
   }),
-  editor: 'input',
-  headerEditor: 'input',
+  editor: 'ввод',
+  headerEditor: 'ввод',
   aggregation(args) {
     if (args.col === 1) {
-      return [
+      возврат [
         {
-          aggregationType: VTable.TYPES.AggregationType.MAX,
-          formatFun(value) {
-            return '最大ID:' + Math.round(value) + '号';
+          aggregationType: Vтаблица.TYPES.AggregationType.MAX,
+          formatFun(значение) {
+            возврат '最大ID:' + Math.round(значение) + '号';
           }
         },
         {
-          aggregationType: VTable.TYPES.AggregationType.MIN,
+          aggregationType: Vтаблица.TYPES.AggregationType.MIN,
           showOnTop: false,
-          formatFun(value, col, row, table) {
-            return '最小ID:' + Math.round(value) + '号';
+          formatFun(значение, col, row, таблица) {
+            возврат '最小ID:' + Math.round(значение) + '号';
           }
         }
       ];
     }
-    if (args.field === 'salary') {
-      return [
+    if (args.поле === 'salary') {
+      возврат [
         {
-          aggregationType: VTable.TYPES.AggregationType.MIN,
-          formatFun(value) {
-            return '最低低低薪资:' + Math.round(value) + '元';
+          aggregationType: Vтаблица.TYPES.AggregationType.MIN,
+          formatFun(значение) {
+            возврат '最低低低薪资:' + Math.round(значение) + '元';
           }
         },
         {
-          aggregationType: VTable.TYPES.AggregationType.AVG,
+          aggregationType: Vтаблица.TYPES.AggregationType.AVG,
           showOnTop: false,
-          formatFun(value, col, row, table) {
-            return '平均平均平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+          formatFun(значение, col, row, таблица) {
+            возврат '平均平均平均:' + Math.round(значение) + '元 (共计' + таблица.recordsCount + '条数据)';
           }
         }
       ];
     }
-    return null;
+    возврат null;
   }
   // transpose: true
-  // widthMode: 'adaptive'
+  // ширинаMode: 'adaptive'
 };
-tableInstance = new VTable.ListTable(option);
-// tableInstance.updateFilterRules([
+таблицаInstance = новый Vтаблица.списоктаблица(option);
+// таблицаInstance.updateFilterRules([
 //   {
 //     filterKey: 'sex',
 //     filteredValues: ['boy']
 //   }
 // ]);
-window.tableInstance = tableInstance;
-tableInstance.on('change_cell_value', arg => {
+window.таблицаInstance = таблицаInstance;
+таблицаInstance.на('change_cell_value', arg => {
   console.log(arg);
 });
 ```

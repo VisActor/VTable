@@ -1,180 +1,180 @@
-# Performance Optimization Guide for VTable
+# Производительность Optimization Guide для Vтаблица
 
-This comprehensive guide covers advanced performance optimization techniques for VTable, enabling you to handle millions of rows with smooth interactions.
+This comprehensive guide covers advanced Производительность optimization techniques для Vтаблица, enabling you к handle millions из rows с smooth interactions.
 
 ## Overview
 
-VTable is built with performance as a core principle, leveraging canvas-based rendering and virtual scrolling to handle massive datasets. This guide provides detailed strategies to maximize performance for your specific use case.
+Vтаблица is built с Производительность as a core principle, leveraging canvas-based rendering и virtual scrolling к handle massive данныеsets. This guide provides detailed strategies к maximize Производительность для your specific use case.
 
-## Virtual Scrolling and Large Datasets
+## Virtual Scrolling и Large данныеsets
 
 ### Understanding Virtual Scrolling
 
-VTable uses virtual scrolling to render only visible rows, dramatically reducing DOM elements and memory usage:
+Vтаблица uses virtual scrolling к render only видимый rows, dramatically reducing DOM elements и memory usвозраст:
 
 ```javascript
-import { ListTable } from '@visactor/vtable';
+import { списоктаблица } от '@visactor/vтаблица';
 
-// Configuration for large datasets
-const performantTable = new ListTable({
+// Configuration для large данныеsets
+const performantтаблица = новый списоктаблица({
   container: document.getElementById('container'),
   columns: columns,
-  records: largeDataset, // Can handle 100K+ records
+  records: largeданныеset, // Can handle 100K+ records
   
-  // Performance optimizations
-  enabledTreeStick: false, // Disable tree sticking for better performance
-  scrollSliderOption: {
-    width: 14,
+  // Производительность optimizations
+  enabledTreeStick: false, // отключить tree sticking для better Производительность
+  scrollSliderопция: {
+    ширина: 14,
     scrollRailColor: 'rgba(100,100,100,0.2)',
     scrollSliderColor: 'rgba(100,100,100,0.5)'
   },
   
   // Virtual scrolling settings
   pixelRatio: window.devicePixelRatio || 1,
-  renderMode: 'html', // or 'canvas' for maximum performance
+  renderMode: 'html', // или 'canvas' для maximum Производительность
   
-  // Row height optimization
-  defaultRowHeight: 40,
-  defaultHeaderRowHeight: 50,
+  // Row высота optimization
+  defaultRowвысота: 40,
+  defaultHeaderRowвысота: 50,
   
-  // Column width optimization
-  limitMaxAutoWidth: 450,
-  minColumnWidth: 50,
-  maxColumnWidth: 800
+  // Column ширина optimization
+  limitMaxавтоширина: 450,
+  minColumnширина: 50,
+  maxColumnширина: 800
 });
 ```
 
-### Memory Management Strategies
+### Memory Manвозрастment Strategies
 
-#### 1. Data Pagination and Lazy Loading
+#### 1. данные Pagination и Lazy загрузка
 
 ```javascript
-class DataManager {
+class данныеManвозрастr {
   constructor() {
-    this.pageSize = 1000;
-    this.cache = new Map();
+    this.pвозрастSize = 1000;
+    this.cache = новый Map();
   }
   
-  async loadPage(pageIndex) {
-    if (this.cache.has(pageIndex)) {
-      return this.cache.get(pageIndex);
+  async loadPвозраст(pвозрастIndex) {
+    if (this.cache.has(pвозрастIndex)) {
+      возврат this.cache.get(pвозрастIndex);
     }
     
-    const data = await this.fetchDataFromAPI(pageIndex, this.pageSize);
-    this.cache.set(pageIndex, data);
+    const данные = await this.fetchданныеFromапи(pвозрастIndex, this.pвозрастSize);
+    this.cache.set(pвозрастIndex, данные);
     
     // Implement LRU cache eviction
-    if (this.cache.size > 10) {
-      const firstKey = this.cache.keys().next().value;
+    if (this.cache.размер > 10) {
+      const firstKey = this.cache.keys().следующий().значение;
       this.cache.delete(firstKey);
     }
     
-    return data;
+    возврат данные;
   }
   
-  async fetchDataFromAPI(page, size) {
-    const response = await fetch(`/api/data?page=${page}&size=${size}`);
-    return response.json();
+  async fetchданныеFromапи(pвозраст, размер) {
+    const response = await fetch(`/апи/данные?pвозраст=${pвозраст}&размер=${размер}`);
+    возврат response.json();
   }
 }
 
-// Integrate with VTable
-const dataManager = new DataManager();
-let currentPage = 0;
+// Integrate с Vтаблица
+const данныеManвозрастr = новый данныеManвозрастr();
+let currentPвозраст = 0;
 
-const table = new ListTable({
+const таблица = новый списоктаблица({
   container: document.getElementById('container'),
   columns: columns,
-  records: await dataManager.loadPage(0),
+  records: await данныеManвозрастr.loadPвозраст(0),
   
-  // Enable pagination
+  // включить pagination
   pagination: {
-    perPageSize: 1000,
-    currentPage: 0,
+    perPвозрастSize: 1000,
+    currentPвозраст: 0,
     totalCount: 1000000 // Total records
   }
 });
 
-// Handle page changes
-table.on('scroll', async (event) => {
-  const { scrollTop, scrollHeight, clientHeight } = event;
-  const scrollPercentage = scrollTop / (scrollHeight - clientHeight);
+// Handle pвозраст changes
+таблица.на('прокрутка', async (событие) => {
+  const { scrollTop, scrollвысота, clientвысота } = событие;
+  const scrollPercentвозраст = scrollTop / (scrollвысота - clientвысота);
   
-  if (scrollPercentage > 0.8) { // Load next page when 80% scrolled
-    currentPage++;
-    const newData = await dataManager.loadPage(currentPage);
-    table.addRecords(newData);
+  if (scrollPercentвозраст > 0.8) { // Load следующий pвозраст when 80% scrolled
+    currentPвозраст++;
+    const newданные = await данныеManвозрастr.loadPвозраст(currentPвозраст);
+    таблица.addRecords(newданные);
   }
 });
 ```
 
-#### 2. Efficient Data Structures
+#### 2. Efficient данные Structures
 
 ```javascript
-// Use efficient data structures for better performance
-class OptimizedDataStore {
-  constructor(rawData) {
-    this.data = new Map();
-    this.sortedIndices = [];
-    this.filterCache = new Map();
+// Use efficient данные structures для better Производительность
+class OptimizedданныеStore {
+  constructor(rawданные) {
+    this.данные = новый Map();
+    this.сортировкаedIndices = [];
+    this.filterCache = новый Map();
     
-    this.buildIndices(rawData);
+    this.buildIndices(rawданные);
   }
   
-  buildIndices(rawData) {
-    rawData.forEach((record, index) => {
-      this.data.set(index, record);
-      this.sortedIndices.push(index);
+  buildIndices(rawданные) {
+    rawданные.forEach((record, index) => {
+      this.данные.set(index, record);
+      this.сортировкаedIndices.push(index);
     });
   }
   
-  // Efficient sorting without data copying
-  sort(field, order = 'asc') {
-    this.sortedIndices.sort((a, b) => {
-      const valueA = this.data.get(a)[field];
-      const valueB = this.data.get(b)[field];
+  // Efficient сортировкаing без данные copying
+  сортировка(поле, order = 'asc') {
+    this.сортировкаedIndices.сортировка((a, b) => {
+      const valueA = this.данные.get(a)[поле];
+      const valueB = this.данные.get(b)[поле];
       
       if (order === 'asc') {
-        return valueA > valueB ? 1 : -1;
+        возврат valueA > valueB ? 1 : -1;
       } else {
-        return valueA < valueB ? 1 : -1;
+        возврат valueA < valueB ? 1 : -1;
       }
     });
   }
   
-  // Efficient filtering with caching
+  // Efficient filtering с caching
   filter(predicate) {
     const cacheKey = predicate.toString();
     if (this.filterCache.has(cacheKey)) {
-      return this.filterCache.get(cacheKey);
+      возврат this.filterCache.get(cacheKey);
     }
     
-    const filtered = this.sortedIndices.filter(index => 
-      predicate(this.data.get(index))
+    const filtered = this.сортировкаedIndices.filter(index => 
+      predicate(this.данные.get(index))
     );
     
     this.filterCache.set(cacheKey, filtered);
-    return filtered;
+    возврат filtered;
   }
   
-  getRecords(start, end) {
-    return this.sortedIndices
-      .slice(start, end)
-      .map(index => this.data.get(index));
+  getRecords(начало, конец) {
+    возврат this.сортировкаedIndices
+      .slice(начало, конец)
+      .map(index => this.данные.get(index));
   }
 }
 ```
 
-## Rendering Performance
+## Rendering Производительность
 
 ### Canvas vs HTML Rendering
 
 ```javascript
-// Canvas rendering for maximum performance
-const canvasTable = new ListTable({
+// Canvas rendering для maximum Производительность
+const canvasтаблица = новый списоктаблица({
   container: document.getElementById('container'),
   columns: columns,
-  records: data,
+  records: данные,
   
   // Canvas rendering configuration
   renderMode: 'canvas',
@@ -182,28 +182,28 @@ const canvasTable = new ListTable({
   
   // Canvas-specific optimizations
   canvasOptions: {
-    enableDirtyBounds: true, // Only redraw changed regions
-    enableMultipleCanvas: true, // Use multiple canvases for better performance
+    enableDirtyBounds: true, // Only redraw changed Регионs
+    enableMultipleCanvas: true, // Use multiple canvases для better Производительность
     smoothScrolling: true,
     animationFrameThrottle: 16 // 60fps
   },
   
-  // Disable expensive features for performance
-  hover: {
-    disableHover: true // Disable hover effects
+  // отключить expensive возможности для Производительность
+  навести: {
+    disableHover: true // отключить навести effects
   },
   
-  select: {
+  выбрать: {
     disableSelect: false,
     highlightMode: 'cell' // More efficient than 'row'
   }
 });
 
-// HTML rendering for better accessibility
-const htmlTable = new ListTable({
+// HTML rendering для better accessibility
+const htmlтаблица = новый списоктаблица({
   container: document.getElementById('container'),
   columns: columns,
-  records: data,
+  records: данные,
   
   renderMode: 'html',
   
@@ -221,49 +221,49 @@ const htmlTable = new ListTable({
 ```javascript
 const optimizedColumns = [
   {
-    field: 'id',
+    поле: 'id',
     caption: 'ID',
-    width: 80,
-    // Simple text rendering - fastest
-    cellType: 'text'
+    ширина: 80,
+    // Simple текст rendering - fastest
+    cellType: 'текст'
   },
   {
-    field: 'name',
-    caption: 'Name',
-    width: 200,
-    // Custom renderer with caching
-    customRender: (args) => {
-      const { value, table, row, col } = args;
+    поле: 'имя',
+    caption: 'имя',
+    ширина: 200,
+    // пользовательский renderer с caching
+    пользовательскийRender: (args) => {
+      const { значение, таблица, row, col } = args;
       
-      // Use render caching for expensive operations
-      const cacheKey = `name_${row}_${col}_${value}`;
-      if (table._renderCache && table._renderCache.has(cacheKey)) {
-        return table._renderCache.get(cacheKey);
+      // Use render caching для expensive operations
+      const cacheKey = `имя_${row}_${col}_${значение}`;
+      if (таблица._renderCache && таблица._renderCache.has(cacheKey)) {
+        возврат таблица._renderCache.get(cacheKey);
       }
       
-      const result = `<span class="name-cell">${value}</span>`;
+      const result = `<span class="имя-cell">${значение}</span>`;
       
-      if (!table._renderCache) {
-        table._renderCache = new Map();
+      if (!таблица._renderCache) {
+        таблица._renderCache = новый Map();
       }
-      table._renderCache.set(cacheKey, result);
+      таблица._renderCache.set(cacheKey, result);
       
-      return result;
+      возврат result;
     }
   },
   {
-    field: 'status',
+    поле: 'status',
     caption: 'Status',
-    width: 120,
-    // Use built-in cell types when possible
-    cellType: 'text',
+    ширина: 120,
+    // Use built-в cell types when possible
+    cellType: 'текст',
     style: {
-      // Pre-define styles to avoid runtime calculations
+      // Pre-define styles к avoid runtime calculations
       bgColor: (args) => {
-        switch (args.value) {
-          case 'active': return '#e8f5e8';
-          case 'inactive': return '#ffe8e8';
-          default: return '#f5f5f5';
+        switch (args.значение) {
+          case 'активный': возврат '#e8f5e8';
+          case 'неактивный': возврат '#ffe8e8';
+          по умолчанию: возврат '#f5f5f5';
         }
       }
     }
@@ -271,15 +271,15 @@ const optimizedColumns = [
 ];
 ```
 
-## Event Handling Optimization
+## событие Handling Optimization
 
-### Efficient Event Management
+### Efficient событие Manвозрастment
 
 ```javascript
-// Debounced event handling for better performance
-function debounce(func, wait) {
+// Debounced событие handling для better Производительность
+функция debounce(func, wait) {
   let timeout;
-  return function executedFunction(...args) {
+  возврат функция executedFunction(...args) {
     const later = () => {
       clearTimeout(timeout);
       func(...args);
@@ -289,10 +289,10 @@ function debounce(func, wait) {
   };
 }
 
-// Throttled scroll handling
-function throttle(func, limit) {
+// Throttled прокрутка handling
+функция throttle(func, limit) {
   let inThrottle;
-  return function() {
+  возврат функция() {
     const args = arguments;
     const context = this;
     if (!inThrottle) {
@@ -303,30 +303,30 @@ function throttle(func, limit) {
   };
 }
 
-const table = new ListTable({
+const таблица = новый списоктаблица({
   container: document.getElementById('container'),
   columns: columns,
-  records: data
+  records: данные
 });
 
-// Optimized event listeners
+// Optimized событие списокeners
 const debouncedResize = debounce(() => {
-  table.updateSize();
+  таблица.updateSize();
 }, 250);
 
-const throttledScroll = throttle((event) => {
-  // Handle scroll events efficiently
-  console.log('Scroll position:', event.scrollTop);
+const throttledScroll = throttle((событие) => {
+  // Handle прокрутка событиеs efficiently
+  console.log('прокрутка позиция:', событие.scrollTop);
 }, 50);
 
-// Use event delegation
-table.on('scroll', throttledScroll);
-window.addEventListener('resize', debouncedResize);
+// Use событие delegation
+таблица.на('прокрутка', throttledScroll);
+window.addсобытиесписокener('изменение размера', debouncedResize);
 
-// Clean up event listeners
-function cleanup() {
-  window.removeEventListener('resize', debouncedResize);
-  table.release(); // Proper cleanup
+// Clean up событие списокeners
+функция cleanup() {
+  window.removeсобытиесписокener('изменение размера', debouncedResize);
+  таблица.Релиз(); // Proper cleanup
 }
 ```
 
@@ -334,9 +334,9 @@ function cleanup() {
 
 ```javascript
 // Efficient batch updates
-class BatchUpdateManager {
-  constructor(table) {
-    this.table = table;
+class BatchUpdateManвозрастr {
+  constructor(таблица) {
+    this.таблица = таблица;
     this.pendingUpdates = [];
     this.updateTimer = null;
   }
@@ -350,77 +350,77 @@ class BatchUpdateManager {
     
     this.updateTimer = setTimeout(() => {
       this.processBatch();
-    }, 16); // Process at 60fps
+    }, 16); // Process в 60fps
   }
   
   processBatch() {
-    if (this.pendingUpdates.length === 0) return;
+    if (this.pendingUpdates.length === 0) возврат;
     
     // Begin batch update
-    this.table.beginUpdate();
+    this.таблица.beginUpdate();
     
     try {
       this.pendingUpdates.forEach(operation => {
-        switch (operation.type) {
+        switch (operation.тип) {
           case 'add':
-            this.table.addRecord(operation.record);
+            this.таблица.addRecord(operation.record);
             break;
           case 'update':
-            this.table.updateRecord(operation.index, operation.record);
+            this.таблица.updateRecord(operation.index, operation.record);
             break;
           case 'delete':
-            this.table.deleteRecord(operation.index);
+            this.таблица.deleteRecord(operation.index);
             break;
         }
       });
     } finally {
-      // End batch update and trigger single re-render
-      this.table.endUpdate();
+      // конец batch update и trigger single re-render
+      this.таблица.endUpdate();
       this.pendingUpdates = [];
     }
   }
 }
 
-// Usage
-const batchManager = new BatchUpdateManager(table);
+// Usвозраст
+const batchManвозрастr = новый BatchUpdateManвозрастr(таблица);
 
 // Queue multiple updates
-batchManager.queueUpdate({ type: 'add', record: newRecord1 });
-batchManager.queueUpdate({ type: 'add', record: newRecord2 });
-batchManager.queueUpdate({ type: 'update', index: 5, record: updatedRecord });
-// All updates will be processed in a single batch
+batchManвозрастr.queueUpdate({ тип: 'add', record: newRecord1 });
+batchManвозрастr.queueUpdate({ тип: 'add', record: newRecord2 });
+batchManвозрастr.queueUpdate({ тип: 'update', index: 5, record: updatedRecord });
+// все updates will be processed в a single batch
 ```
 
 ## Best Practices Summary
 
 ### Do's
-- Use virtual scrolling for large datasets (>1000 rows)
-- Implement proper data pagination and caching
-- Use canvas rendering for maximum performance
-- Debounce/throttle event handlers
+- Use virtual scrolling для large данныеsets (>1000 rows)
+- Implement proper данные pagination и caching
+- Use canvas rendering для maximum Производительность
+- Debounce/throttle событие handlers
 - Batch DOM updates
-- Clean up event listeners and references
-- Monitor performance metrics
+- Clean up событие списокeners и references
+- Monitor Производительность metrics
 
 ### Don'ts
-- Don't load all data at once for large datasets
-- Don't use complex custom renderers without caching
-- Don't forget to call `table.release()` when destroying tables
-- Don't bind event listeners inside render functions
-- Don't perform expensive operations in scroll handlers
-- Don't keep references to destroyed table instances
+- Don't load все данные в once для large данныеsets
+- Don't use complex пользовательский renderers без caching
+- Don't forget к call `таблица.Релиз()` when destroying таблицаs
+- Don't bind событие списокeners inside render functions
+- Don't perform expensive operations в прокрутка handlers
+- Don't keep references к destroyed таблица instances
 
-### Performance Checklist
+### Производительность Checkсписок
 
-- [ ] Virtual scrolling enabled for datasets >1000 rows
-- [ ] Data pagination implemented
-- [ ] Proper memory management in place
-- [ ] Event handlers optimized with debouncing/throttling
-- [ ] Canvas rendering enabled for maximum performance
-- [ ] Batch updates implemented for multiple operations
-- [ ] Performance monitoring in place
+- [ ] Virtual scrolling включен для данныеsets >1000 rows
+- [ ] данные pagination implemented
+- [ ] Proper memory manвозрастment в place
+- [ ] событие handlers optimized с debouncing/throttling
+- [ ] Canvas rendering включен для maximum Производительность
+- [ ] Batch updates implemented для multiple operations
+- [ ] Производительность monitoring в place
 - [ ] Proper cleanup procedures implemented
-- [ ] Memory leak prevention measures active
-- [ ] Render caching for expensive operations
+- [ ] Memory leak prсобытиеion measures активный
+- [ ] Render caching для expensive operations
 
-This comprehensive performance guide ensures your VTable implementation can handle enterprise-scale data with smooth, responsive interactions.
+This comprehensive Производительность guide ensures your Vтаблица implementation can handle enterprise-scale данные с smooth, responsive interactions.

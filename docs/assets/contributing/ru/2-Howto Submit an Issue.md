@@ -7,7 +7,7 @@ key words: VisActor, VChart, VTable, VStrory, VMind, VGrammar, VRender, Визу
 
 Например, issues VTable: [https://github.com/VisActor/VTable/issues](https://github.com/VisActor/VTable/issues)
 
-<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-issues.png' alt='' width='1000' height='auto'>
+<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-issues.png' alt='' ширина='1000' высота='auto'>
 
 # Проверка Существующих Issues
 
@@ -15,17 +15,17 @@ key words: VisActor, VChart, VTable, VStrory, VMind, VGrammar, VRender, Визу
 
 # Создание Нового Issue
 
-Если похожий issue не найден, вы можете нажать кнопку "New issue".
+Если похожий issue не найден, вы можете нажать кнопку "новый issue".
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DuonbEBS2oFVGJx7weQcP6Znnbb.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DuonbEBS2oFVGJx7weQcP6Znnbb.gif' alt='' ширина='1000' высота='auto'>
 
-Выберите "**Documentation Request**", нажмите кнопку "Get Start" и заполните форму issue.
+Выберите "**Documentation Request**", нажмите кнопку "Get начало" и заполните форму issue.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/C4j0bGZZvoc2RLxqEGgcRahTnAb.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/C4j0bGZZvoc2RLxqEGgcRahTnAb.gif' alt='' ширина='1000' высота='auto'>
 
 # **Отправка Issue**
 
-После заполнения формы issue нажмите кнопку "Submit new issue", чтобы отправить ваш issue.
+После заполнения формы issue нажмите кнопку "Submit новый issue", чтобы отправить ваш issue.
 
 # **Отслеживание Issue**
 
@@ -45,13 +45,13 @@ GitHub: [github.com/VisActor](https://link.juejin.cn/?target=https%3A%2F%2Fgithu
 
 Подписка VisActor WeChat (Вы можете присоединиться к группе WeChat через меню подписки):
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Cif0bZfEHoAmLgxSnqzclTqKnIf.gif' alt='' width='258' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Cif0bZfEHoAmLgxSnqzclTqKnIf.gif' alt='' ширина='258' высота='auto'>
 
 Официальный сайт VisActor: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)
 
 Группа Feishu:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BOeVb2CDmozsl9xl8vcc7hzVn8c.gif' alt='' width='264' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BOeVb2CDmozsl9xl8vcc7hzVn8c.gif' alt='' ширина='264' высота='auto'>
 
 Discord: [https://discord.com/invite/3wPyxVyH6m](https://discord.com/invite/3wPyxVyH6m)
 

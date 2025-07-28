@@ -1,14 +1,14 @@
-{{ target: common-CustomRenderFunctionArg }}
-The type declaration for callback function argument CustomRenderFunctionArg is:
+{{ target: common-пользовательскийRenderFunctionArg }}
+The тип declaration для обратный вызов функция argument пользовательскийRenderFunctionArg is:
 ```
-interface CustomRenderFunctionArg {
-  row: number;
-  col: number;
-  table: TableAPI;
-  /**Formatted value */
-  value: string|number;
-  /**Original value */
-  dataValue: string|number;
+интерфейс пользовательскийRenderFunctionArg {
+  row: число;
+  col: число;
+  таблица: таблицаапи;
+  /**Formatted значение */
+  значение: строка|число;
+  /**Original значение */
+  данныеValue: строка|число;
   rect?: RectProps;
 }
 ```

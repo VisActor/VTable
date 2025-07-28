@@ -1,22 +1,22 @@
-## Basic table grouping display
+## базовый таблица grouping display
 
-In this tutorial, we will learn how to use the basic table grouping display function in VTable.
+в this tutorial, we will learn how к use the базовый таблица grouping display функция в Vтаблица.
 
-## Usage scenario
+## Usвозраст scenario
 
-The basic table grouping display function is applicable to a variety of scenarios, such as:
+The базовый таблица grouping display функция is applicable к a variety из scenarios, such as:
 
-- Financial statements: You can group and display according to different account types (such as income, expenditure, assets, liabilities) to help you understand the financial situation more clearly.
+- Financial statements: Вы можете group и display according к different account types (such as income, expenditure, assets, liabilities) к help you understand the financial situation more clearly.
 
-- Sales data analysis: You can group by product category, region, salesperson, etc., to facilitate comparison and analysis of sales performance in different categories or regions.
+- Продажи данные analysis: Вы можете group по product Категория, Регион, Продажиperson, etc., к facilitate comparison и analysis из Продажи Производительность в different categories или Регионs.
 
-- Project management: You can group by project stage, responsible team, priority, etc. to help better track and manage project progress.
+- Project manвозрастment: Вы можете group по project stвозраст, responsible team, priority, etc. к help better track и manвозраст project progress.
 
-- Human resource management: You can group by department, position, years of work, etc. to facilitate employee management and performance evaluation.
+- Human resource manвозрастment: Вы можете group по department, позиция, years из work, etc. к facilitate employee manвозрастment и Производительность evaluation.
 
-## Usage method
+## Usвозраст method
 
-In the option of ListTable, configure the `groupBy` field, the value is the grouping field name, you can configure a single field, or you can configure an array of multiple fields.
+в the option из списоктаблица, configure the `groupBy` поле, the значение is the grouping поле имя, Вы можете configure a single поле, или Вы можете configure an массив из multiple полеs.
 ```
 {
   // ...
@@ -30,151 +30,151 @@ In the option of ListTable, configure the `groupBy` field, the value is the grou
   groupBy: ['key1', 'key2'],
 }
 ```
-## Example
-```javascript livedemo template=vtable
+## пример
+```javascript liveдемонстрация template=vтаблица
 const records = [
    {
-      name: 'John Smith',
-      position: 'Recruiting Manager',
+      имя: 'John Smith',
+      позиция: 'Recruiting Manвозрастr',
       salary: '$8000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Emily Johnson',
-      position: 'Recruiting Supervisor',
+      имя: 'Emily Johnson',
+      позиция: 'Recruiting Supervisor',
       salary: '$6000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Michael Davis',
-      position: 'Recruiting Specialist',
+      имя: 'Michael Davis',
+      позиция: 'Recruiting Speciaсписок',
       salary: '$4000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Jessica Brown',
-      position: 'Training Manager',
+      имя: 'Jessica Brown',
+      позиция: 'Training Manвозрастr',
       salary: '$8000',
-      group: 'Training Group',
+      группа: 'Training Group',
     },
     {
-      name: 'Andrew Wilson',
-      position: 'Training Supervisor',
+      имя: 'Andrew Wilson',
+      позиция: 'Training Supervisor',
       salary: '$6000',
-      group: 'Training Group',
+      группа: 'Training Group',
     }
 ];
 const columns = [
   {
-    field: 'name',
-    title: 'Name',
-    width: 'auto',
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 'авто',
   },
   {
-    field: 'position',
-    title: 'Position',
-    width: 'auto',
+    поле: 'позиция',
+    заголовок: 'позиция',
+    ширина: 'авто',
   },
   {
-    field: 'salary',
-    title: 'Salary',
-    width: 'auto',
+    поле: 'salary',
+    заголовок: 'Salary',
+    ширина: 'авто',
   },
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   groupBy: 'group'
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
-## Custom Group Title Text Format
+## пользовательский Group Title текст Format
 
-In the option, you can configure the `groupTitleFieldFormat` property to customize the text format of group titles. This property is a function that receives the grouping field name and group value as parameters and returns the text content to be displayed.
+в the option, Вы можете configure the `groupTitleполеFormat` property к пользовательскийize the текст format из group titles. This property is a функция that receives the grouping поле имя и group значение as parameters и returns the текст content к be displayed.
 
 ```ts
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   // ...
   groupBy: 'group',
-  groupTitleFieldFormat: (record, col, row, table) => {
-    return record.vtableMergeName + '(' + record.children.length + ')';
+  groupTitleполеFormat: (record, col, row, таблица) => {
+    возврат record.vтаблицаMergeимя + '(' + record.children.length + ')';
   }
 };
 ```
 
-Example:
-```javascript livedemo template=vtable
+пример:
+```javascript liveдемонстрация template=vтаблица
 const records = [
    {
-      name: 'John Smith',
-      position: 'Recruiting Manager',
+      имя: 'John Smith',
+      позиция: 'Recruiting Manвозрастr',
       salary: '$8000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Emily Johnson',
-      position: 'Recruiting Supervisor',
+      имя: 'Emily Johnson',
+      позиция: 'Recruiting Supervisor',
       salary: '$6000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Jessica Brown',
-      position: 'Training Manager',
+      имя: 'Jessica Brown',
+      позиция: 'Training Manвозрастr',
       salary: '$8000',
-      group: 'Training Group',
+      группа: 'Training Group',
     }
 ];
 const columns = [
   {
-    field: 'name',
-    title: 'Name',
-    width: 'auto',
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 'авто',
   },
   {
-    field: 'position',
-    title: 'Position',
-    width: 'auto',
+    поле: 'позиция',
+    заголовок: 'позиция',
+    ширина: 'авто',
   },
   {
-    field: 'salary',
-    title: 'Salary',
-    width: 'auto',
+    поле: 'salary',
+    заголовок: 'Salary',
+    ширина: 'авто',
   },
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   groupBy: 'group',
-  groupTitleFieldFormat: (record, col, row, table) => {
-    return record.vtableMergeName + '(' + record.children.length + ')';
+  groupTitleполеFormat: (record, col, row, таблица) => {
+    возврат record.vтаблицаMergeимя + '(' + record.children.length + ')';
   }
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
-## Specify the display style of the group title
+## Specify the display style из the group title
 
-In the theme, you can configure the groupTitleStyle property to specify the display style of the group title. If you need to specify the style of group titles at different levels, you can use the function to get the level of the current node through the `table.getGroupTitleLevel(col, row)` method to specify the styles of different levels.
+в the тема, Вы можете configure the groupTitleStyle property к specify the display style из the group title. If you need к specify the style из group titles в different levels, Вы можете use the функция к get the level из the текущий node through the `таблица.getGroupTitleLevel(col, row)` method к specify the styles из different levels.
 
 ```ts
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   // ...
-  groupBy: ['Category', 'Sub-Category'],
-  theme: VTable.themes.DEFAULT.extends({
+  groupBy: ['Категория', 'Sub-Категория'],
+  тема: Vтаблица.темаs.по умолчанию.extends({
     groupTitleStyle: {
       fontWeight: 'bold',
       bgColor: args => {
-        const { col, row, table } = args;
-        const index = table.getGroupTitleLevel(col, row); // Get the level of the current node
+        const { col, row, таблица } = args;
+        const index = таблица.getGroupTitleLevel(col, row); // Get the level из the текущий node
         if (index !== undefined) {
-          return titleColorPool[index % titleColorPool.length];
+          возврат titleColorPool[index % titleColorPool.length];
         }
       }
     }
@@ -182,120 +182,120 @@ const option: VTable.ListTableConstructorOptions = {
 };
 ```
 
-<div style="width: 80%; text-align: center;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group.jpeg" />
+<div style="ширина: 80%; текст-align: центр;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-group.jpeg" />
 </div>
 
-## Group title Sticky function
+## Group title Sticky функция
 
-In option, you can configure the `enableTreeStickCell` property to enable the group title sticky function. After enabling it, when the table is scrolled, the group title will automatically adsorb to the top of the table.
+в option, Вы можете configure the `enableTreeStickCell` property к включить the group title sticky функция. After enabling it, when the таблица is scrolled, the group title will автоmatically adsorb к the верх из the таблица.
 
 ```ts
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   // ...
-  groupBy: ['Category', 'Sub-Category'],
+  groupBy: ['Категория', 'Sub-Категория'],
   enableTreeStickCell: true
 };
 ```
 
-## Group Title Customization
+## Group Title пользовательскийization
 
-In option, you can configure the `groupTitleCustomLayout` property to customize the layout in the group title.
+в option, Вы можете configure the `groupTitleпользовательскиймакет` property к пользовательскийize the макет в the group title.
 
-```javascript livedemo template=vtable
-// only use for website
-const {createGroup, createText, createImage} = VRender;
-// use this for project
-// import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+```javascript liveдемонстрация template=vтаблица
+// only use для website
+const {createGroup, createText, createImвозраст} = VRender;
+// use this для project
+// import {createGroup, createText, createImвозраст} от '@visactor/vтаблица/es/vrender';
 
 const records = [
    {
-      name: 'John Smith',
-      position: 'Recruiting Manager',
+      имя: 'John Smith',
+      позиция: 'Recruiting Manвозрастr',
       salary: '$8000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Emily Johnson',
-      position: 'Recruiting Supervisor',
+      имя: 'Emily Johnson',
+      позиция: 'Recruiting Supervisor',
       salary: '$6000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Michael Davis',
-      position: 'Recruiting Specialist',
+      имя: 'Michael Davis',
+      позиция: 'Recruiting Speciaсписок',
       salary: '$4000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Jessica Brown',
-      position: 'Training Manager',
+      имя: 'Jessica Brown',
+      позиция: 'Training Manвозрастr',
       salary: '$8000',
-      group: 'Training Group',
+      группа: 'Training Group',
     },
     {
-      name: 'Andrew Wilson',
-      position: 'Training Supervisor',
+      имя: 'Andrew Wilson',
+      позиция: 'Training Supervisor',
       salary: '$6000',
-      group: 'Training Group',
+      группа: 'Training Group',
     }
 ];
 const columns = [
   {
-    field: 'name',
-    title: 'Name',
-    width: 'auto',
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 'авто',
   },
   {
-    field: 'position',
-    title: 'Position',
-    width: 'auto',
+    поле: 'позиция',
+    заголовок: 'позиция',
+    ширина: 'авто',
   },
   {
-    field: 'salary',
-    title: 'Salary',
-    width: 'auto',
+    поле: 'salary',
+    заголовок: 'Salary',
+    ширина: 'авто',
   },
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   groupBy: 'group',
-  groupTitleCustomLayout: args => {
-    const { table, row, col, rect } = args;
-    const record = table.getCellOriginRecord(col, row);
-    const { height, width } = rect ?? table.getCellRect(col, row);
-    const hierarchyState = table.getHierarchyState(col, row);
-    const bloggerAvatar = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg';
-    const collapseRight = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="0.65"/>
+  groupTitleпользовательскиймакет: args => {
+    const { таблица, row, col, rect } = args;
+    const record = таблица.getCellOriginRecord(col, row);
+    const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
+    const hierarchyState = таблица.getHierarchyState(col, row);
+    const bloggerAvatar = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg';
+    const collapseRight = `<svg xmlns="http://www.w3.org/2000/svg" ширина="16" высота="16" viewBox="0 0 16 16" fill="никто">
+            <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opaГород="0.65"/>
           </svg>`;
-    const collapseDown = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-    <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="0.65"/>
+    const collapseDown = `<svg xmlns="http://www.w3.org/2000/svg" ширина="16" высота="16" viewBox="0 0 16 16" fill="никто">
+    <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opaГород="0.65"/>
     </svg>`;
     const container = createGroup({
-      height,
-      width,
+      высота,
+      ширина,
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
       cursor: 'pointer',
-      alignItems: 'center'
+      alignItems: 'центр'
     });
-    const icon = createImage({
+    const иконка = createImвозраст({
       // id: 'hierarchy',
-      image: hierarchyState === 'collapse' ? collapseRight : collapseDown,
-      width: 18,
-      height: 18,
+      imвозраст: hierarchyState === 'свернуть' ? collapseRight : collapseDown,
+      ширина: 18,
+      высота: 18,
       boundsPadding: [0, 0, 0, 10],
       cursor: 'pointer'
     });
-    icon.stateProxy = (stateName) => {
-      if (stateName === 'hover') {
-        return {
-          background: {
+    иконка.stateProxy = (stateимя) => {
+      if (stateимя === 'навести') {
+        возврат {
+          фон: {
             fill: '#ccc',
             cornerRadius: 5,
             expandX: 1,
@@ -304,148 +304,148 @@ const option = {
         };
       }
     };
-    icon.addEventListener('pointerenter', event => {
-      event.currentTarget.addState('hover', true, false);
-      event.currentTarget.stage.renderNextFrame();
+    иконка.addсобытиесписокener('pointerenter', событие => {
+      событие.currentTarget.addState('навести', true, false);
+      событие.currentTarget.stвозраст.renderNextFrame();
     });
-    icon.addEventListener('pointerleave', event => {
-      event.currentTarget.removeState('hover', false);
-      event.currentTarget.stage.renderNextFrame();
+    иконка.addсобытиесписокener('pointerleave', событие => {
+      событие.currentTarget.removeState('навести', false);
+      событие.currentTarget.stвозраст.renderNextFrame();
     });
-    container.add(icon);
+    container.add(иконка);
     const taskGroup = createGroup({
-      height,
-      width: 340,
+      высота,
+      ширина: 340,
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
       cursor: 'pointer',
-      alignItems: 'center',
+      alignItems: 'центр',
       justifyContent: 'space-between'
     });
     const leftGroup = createGroup({
-      height,
+      высота,
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
       cursor: 'pointer',
-      alignItems: 'center'
+      alignItems: 'центр'
     });
-    const avatar = createImage({
-      image: bloggerAvatar,
-      width: 24,
-      height: 24,
+    const avatar = createImвозраст({
+      imвозраст: bloggerAvatar,
+      ширина: 24,
+      высота: 24,
       boundsPadding: [0, 8, 0, 8],
       cursor: 'pointer',
       cornerRadius: 12
     });
-    const bloggerName = createText({
-      text: record.vtableMergeName,
+    const bloggerимя = createText({
+      текст: record.vтаблицаMergeимя,
       fontSize: 14,
       fill: 'black'
     });
     leftGroup.add(avatar);
-    leftGroup.add(bloggerName);
+    leftGroup.add(bloggerимя);
     taskGroup.add(leftGroup);
-    const info = createText({
-      text: `${record.children.length} 条记录`,
+    const информация = createText({
+      текст: `${record.children.length} 条记录`,
       fontSize: 12
     });
-    taskGroup.add(info);
+    taskGroup.add(информация);
     container.add(taskGroup);
-    container.addEventListener('click', e => {
+    container.addсобытиесписокener('Нажать', e => {
       const { col, row } = e.currentTarget.parent;
-      const hierarchyState = table.getHierarchyState(col, row);
-      icon.setAttribute('image', hierarchyState === 'collapse' ? collapseDown : collapseRight);
-      table.toggleHierarchyState(col, row);
+      const hierarchyState = таблица.getHierarchyState(col, row);
+      иконка.setAttribute('imвозраст', hierarchyState === 'свернуть' ? collapseDown : collapseRight);
+      таблица.toggleHierarchyState(col, row);
     });
 
-    return {
+    возврат {
       rootContainer: container,
       renderDefault: false
     };
   }
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
-## Group checkbox
+## Group флажок
 
-In `rowSeriesNumber`, you can configure `enableTreeCheckbox` to enable the group checkbox.
-If enabled, checkbox will be displayed in the left of group title, and it will be synced with the children checkbox.
+в `rowSeriesNumber`, Вы можете configure `enableTreeCheckbox` к включить the group флажок.
+If включен, флажок will be displayed в the лево из group title, и it will be synced с the children флажок.
 
-```javascript livedemo template=vtable
-// only use for website
-const {createGroup, createText, createImage} = VRender;
-// use this for project
-// import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+```javascript liveдемонстрация template=vтаблица
+// only use для website
+const {createGroup, createText, createImвозраст} = VRender;
+// use this для project
+// import {createGroup, createText, createImвозраст} от '@visactor/vтаблица/es/vrender';
 
 const records = [
    {
-      name: 'John Smith',
-      position: 'Recruiting Manager',
+      имя: 'John Smith',
+      позиция: 'Recruiting Manвозрастr',
       salary: '$8000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Emily Johnson',
-      position: 'Recruiting Supervisor',
+      имя: 'Emily Johnson',
+      позиция: 'Recruiting Supervisor',
       salary: '$6000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Michael Davis',
-      position: 'Recruiting Specialist',
+      имя: 'Michael Davis',
+      позиция: 'Recruiting Speciaсписок',
       salary: '$4000',
-      group: 'Recruiting Group'
+      группа: 'Recruiting Group'
     },
     {
-      name: 'Jessica Brown',
-      position: 'Training Manager',
+      имя: 'Jessica Brown',
+      позиция: 'Training Manвозрастr',
       salary: '$8000',
-      group: 'Training Group',
+      группа: 'Training Group',
     },
     {
-      name: 'Andrew Wilson',
-      position: 'Training Supervisor',
+      имя: 'Andrew Wilson',
+      позиция: 'Training Supervisor',
       salary: '$6000',
-      group: 'Training Group',
+      группа: 'Training Group',
     }
 ];
 const columns = [
   {
-    field: 'name',
-    title: 'Name',
-    width: 'auto',
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 'авто',
   },
   {
-    field: 'position',
-    title: 'Position',
-    width: 'auto',
+    поле: 'позиция',
+    заголовок: 'позиция',
+    ширина: 'авто',
   },
   {
-    field: 'salary',
-    title: 'Salary',
-    width: 'auto',
+    поле: 'salary',
+    заголовок: 'Salary',
+    ширина: 'авто',
   },
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   groupBy: 'group',
 
   rowSeriesNumber: {
-    width: 50,
+    ширина: 50,
     format: () => {
-      return '';
+      возврат '';
     },
-    cellType: 'checkbox',
+    cellType: 'флажок',
     enableTreeCheckbox: true
   }
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

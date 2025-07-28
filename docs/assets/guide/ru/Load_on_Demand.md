@@ -1,12 +1,12 @@
 # Загрузка VTable по требованию
 
-По умолчанию `ListTable`, `PivotTable` и `PivotChart`, импортированные из пакета `@visactor/vtable`, содержат все компоненты, связанные с таблицами, что представляет собой полную библиотеку табличных компонентов.
+По умолчанию `ListTable`, `PivotTable` и `PivotChart`, импортированные из пакета `@visactor/VTable`, содержат все компоненты, связанные с таблицами, что представляет собой полную библиотеку табличных компонентов.
 
 Для удовлетворения потребностей в оптимизации размера пакета, VTable предоставляет два типа: `ListTableSimple` и `PivotTableSimple`, которые являются наиболее упрощенными списками и сводными таблицами соответственно. Они поддерживают только отображение текста и не содержат внешних компонентов, таких как меню и заголовки. Если вам нужны некоторые функции, вы можете загружать их по требованию. Использование следующее:
 
 ```js
 // ListTableSimple, PivotTableSimple - самые простые компоненты списка и сводной таблицы, которые не включают типы ячеек и любые компоненты, кроме текста
-import {ListTableSimple, PivotTableSimple, registerTitle, registerTooltip} from '@visactor/vtable';
+import {ListTableSimple, PivotTableSimple, registerTitle, registerTooltip} от '@visactor/VTable';
 
 // Зарегистрировать компонент заголовка
 registerTitle();
@@ -15,7 +15,7 @@ registerTitle();
 registerTooltip();
 ```
 
-## Load functions on demand
+## Load functions на demand
 
 ### Functional components
 
@@ -24,29 +24,29 @@ registerTooltip();
 * registerLegend: legend component
 * registerMenu: menu component
 * registerTitle: title component
-* registerTooltip: tooltip component
+* registerTooltip: подсказка component
 * registerAnimation: animation component
 
-### Cell type
+### Cell тип
 
 * registerChartCell: chart cell
-* registerCheckboxCell: checkbox cell
+* registerCheckboxCell: флажок cell
 * registerImageCell: Image cell
 * registerProgressBarCell: Progress bar cell
-* registerRadioCell: Radio button cell
+* registerRadioCell: переключатель кнопка cell
 * registerSparkLineCell: Sparkline cell
-* registerTextCell: Text cell
+* registerTextCell: текст cell
 * registerVideoCell: Video cell
 
-## react-vtable on-demand loading
+## react-VTable на-demand загрузка
 
-Similar to VTable, react-vtable also provides two components, `ListTableSimple` and `PivotTableSimple`, which are the most simplified list and pivot table respectively. They only support text type display and do not include external components such as menus and titles.
+Similar к VTable, react-VTable also provides two components, `ListTableSimple` и `PivotTableSimple`, which are the most simplified list и pivot table respectively. They only support текст тип display и do не include external components such as menus и titles.
 
 ```tsx
-function App() {
-  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
+функция App() {
+  const records = новый массив(10).fill(['John', 18, 'male', '🏀']);
 
-  return (
+  возврат (
     <ListTableSimple records={records}>
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
@@ -57,20 +57,20 @@ function App() {
 }
 ```
 
-It should be noted that if react-vtable needs to register components, it is necessary to first introduce the registration function in the vtable package for on-demand registration. The versions of `'@visactor/vtable'` and `'@visactor/react-vtable'` used in the project need to be consistent.
+It should be noted that if react-VTable needs к register components, it is necessary к первый introduce the registration функция в the VTable package для на-demand registration. The versions из `'@visactor/VTable'` и `'@visactor/react-VTable'` used в the project need к be consistent.
 
 ```tsx
-import {ListTableSimple} form '@visactor/react-vtable';
-import {registerTitle, registerTooltip} from '@visactor/vtable';
+import {ListTableSimple} form '@visactor/react-VTable';
+import {registerTitle, registerTooltip} от '@visactor/VTable';
 
 registerTitle();
 
-function App() {
-  const records = new Array(10).fill(['John', 18, 'male', '🏀']);
+функция App() {
+  const records = новый массив(10).fill(['John', 18, 'male', '🏀']);
 
-  return (
+  возврат (
     <ListTableSimple records={records}>
-      <Title text={'title'} />
+      <Title текст={'title'} />
       <ListColumn field={'0'} title={'name'} />
       <ListColumn field={'1'} title={'age'} />
       <ListColumn field={'2'} title={'sex'} />

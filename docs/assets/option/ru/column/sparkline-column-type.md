@@ -1,22 +1,22 @@
-{{ target: sparkline-cell-type }}
+{{ target: sparkline-cell-тип }}
 
-#${prefix} columns.sparkline(string)
+#${prefix} columns.sparkline(строка)
 
-Specify the column type as 'sparkline', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'sparkline', cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'sparkline'
+##${prefix} cellType(строка) = 'sparkline'
 
-Specify the column type as 'sparkline', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'sparkline', cellType can be omitted и defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##'+${prefix}
 ) }}
 
-##${prefix} sparklineSpec(SparklineSpec | Function)
+##${prefix} sparklineSpec(SparklineSpec | функция)
 
-**Sparkline type exclusive configuration item**
+**Sparkline тип exclusive configuration item**
 
-Configure the specific spec configuration item of the mini chart
+Configure the specific spec configuration item из the mini график
 
 
 ```

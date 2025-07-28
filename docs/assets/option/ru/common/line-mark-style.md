@@ -1,13 +1,13 @@
 {{ target: line-mark-style }}
 
-${prefix} stroke(string)
+${prefix} strхорошоe(строка)
 
 Line style
 
-${prefix} strokeWidth(number[])
+${prefix} strхорошоeширина(число[])
 
-Line width
+Line ширина
 
 ${prefix} interpolate('linear' | 'monotone')
 
-Used to specify the interpolation method of the polyline, 'linear' directly connects adjacent data points, 'monotone' uses a smooth curve interpolation method between adjacent data points, making the polyline look smoother and more natural.
+Used к specify the interpolation method из the polyline, 'linear' directly connects adjacent данные points, 'monotone' uses a smooth curve interpolation method between adjacent данные points, making the polyline loхорошо smoother и more natural.

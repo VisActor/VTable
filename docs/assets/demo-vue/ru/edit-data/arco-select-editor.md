@@ -1,44 +1,44 @@
 ---
-category: examples
-group: edit-cell
-title: Using Arco Select in Custom Editor
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-editor-arco-select.png
-link: Developer_Ecology/vue
+категория: примеры
+группа: edit-cell
+заголовок: Using Arco выбрать в пользовательский Editor
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-editor-arco-выбрать.png
+ссылка: Developer_Ecology/vue
 ---
 
-# Using Arco Select in Custom Editor
+# Using Arco выбрать в пользовательский Editor
 
-Create a custom editor class `ArcoListEditor` and implement the `onStart` method to create an Arco Design `Select` component and mount it to the editor container. Complete the `isEditorElement` and `onEnd` methods.
+Create a пользовательский editor class `ArcoсписокEditor` и implement the `onStart` method к create an Arco Design `выбрать` компонент и mount it к the editor container. Complete the `isEditorElement` и `onEnd` методы.
 
 References:
 
-https://visactor.io/vtable/guide/edit/edit_cell
+https://visactor.io/vтаблица/guide/edit/edit_cell
 
-https://arco.design/vue/components/select
+https://arco.design/vue/компонентs/выбрать
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
-class ArcoListEditor {
+```javascript liveдемонстрация template=vтаблица-vue
+class ArcoсписокEditor {
   root = null;
   element = null;
   container = null;
   currentValue = null;
 
   onStart(editorContext) {
-    const { container, referencePosition, value } = editorContext;
+    const { container, referencePosition, значение } = editorContext;
     this.container = container;
-    this.createElement(value);
-    if (value) this.setValue(value);
+    this.createElement(значение);
+    if (значение) this.setValue(значение);
     if (referencePosition?.rect) this.adjustPosition(referencePosition.rect);
   }
 
   createElement(defaultValue) {
     const div = document.createElement('div');
-    div.style.position = 'absolute';
-    div.style.width = '100%';
-    div.style.padding = '1px';
-    div.style.boxSizing = 'border-box';
+    div.style.позиция = 'absolute';
+    div.style.ширина = '100%';
+    div.style.заполнение = '1px';
+    div.style.boxSizing = 'граница-box';
     this.container?.appendChild(div);
 
     const app = this.createVueApp(defaultValue);
@@ -49,30 +49,30 @@ class ArcoListEditor {
 
   createVueApp(defaultValue) {
     const self = this;
-    return createApp({
-      data() {
-        return {
+    возврат createApp({
+      данные() {
+        возврат {
           currentValue: defaultValue,
           options: ['Beijing', 'Shanghai', 'Guangzhou']
         };
       },
       render() {
-        return h('div', {}, [
+        возврат h('div', {}, [
           h(
-            ArcoDesignVue.Select,
+            ArкодsignVue.выбрать,
             {
-              style: { height: '32px' },
-              placeholder: 'Select city',
+              style: { высота: '32px' },
+              placeholder: 'выбрать Город',
               modelValue: this.currentValue,
-              'onUpdate:modelValue': value => {
-                this.currentValue = value;
-                self.setValue(value);
+              'onUpdate:modelValue': значение => {
+                this.currentValue = значение;
+                self.setValue(значение);
               }
             },
             {
-              default: () =>
+              по умолчанию: () =>
                 this.options.map(option =>
-                  h(ArcoDesignVue.Option, { key: option, value: option, class: 'arco-select-vtable' }, { default: () => option })
+                  h(ArкодsignVue.Option, { key: option, значение: option, class: 'arco-выбрать-vтаблица' }, { по умолчанию: () => option })
                 )
             }
           )
@@ -82,19 +82,19 @@ class ArcoListEditor {
   }
 
   getValue() {
-    return this.currentValue;
+    возврат this.currentValue;
   }
 
-  setValue(value) {
-    this.currentValue = value;
+  setValue(значение) {
+    this.currentValue = значение;
   }
 
   adjustPosition(rect) {
     if (this.element) {
-      this.element.style.top = `${rect.top}px`;
-      this.element.style.left = `${rect.left}px`;
-      this.element.style.width = `${rect.width}px`;
-      this.element.style.height = `${rect.height}px`;
+      this.element.style.верх = `${rect.верх}px`;
+      this.element.style.лево = `${rect.лево}px`;
+      this.element.style.ширина = `${rect.ширина}px`;
+      this.element.style.высота = `${rect.высота}px`;
     }
   }
 
@@ -110,48 +110,48 @@ class ArcoListEditor {
   }
 
   isEditorElement(target) {
-    return this.element?.contains(target) || this.isClickPopUp(target);
+    возврат this.element?.contains(target) || this.isНажатьPopUp(target);
   }
 
-  isClickPopUp(target) {
+  isНажатьPopUp(target) {
     while (target) {
-      if (target.classList && target.classList.contains('arco-select-vtable')) {
-        return true;
+      if (target.classсписок && target.classсписок.contains('arco-выбрать-vтаблица')) {
+        возврат true;
       }
       target = target.parentNode;
     }
-    return false;
+    возврат false;
   }
 }
 
-const input_editor = new VTable_editors.InputEditor();
-const date_input_editor = new VTable_editors.DateInputEditor();
-VTable.register.editor('input-editor', input_editor);
-VTable.register.editor('date-input-editor', date_input_editor);
-VTable.register.editor('arcoVue-editor', new ArcoListEditor());
+const input_editor = новый Vтаблица_editors.InputEditor();
+const date_input_editor = новый Vтаблица_editors.DateInputEditor();
+Vтаблица.регистрация.editor('ввод-editor', input_editor);
+Vтаблица.регистрация.editor('date-ввод-editor', date_input_editor);
+Vтаблица.регистрация.editor('arcoVue-editor', новый ArcoсписокEditor());
 
-function generateRandomString(length) {
+функция generateRandomString(length) {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  for (let i = 0; i < length; i++) {
+  для (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
-  return result;
+  возврат result;
 }
 
 const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => {
-    const first = generateRandomString(10);
-    const last = generateRandomString(4);
-    return {
+  возврат массив.от(новый массив(count)).map((_, i) => {
+    const первый = generateRandomString(10);
+    const последний = generateRandomString(4);
+    возврат {
       id: i + 1,
-      email1: `${first}_${last}@xxx.com`,
-      name: first,
-      lastName: last,
+      email1: `${первый}_${последний}@xxx.com`,
+      имя: первый,
+      lastимя: последний,
       address: `No.${i + 100} ${generateRandomString(10)} ${generateRandomString(5)} ${generateRandomString(5)}`,
       sex: i % 2 === 0 ? 'boy' : 'girl',
-      work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-      city: 'beijing'
+      work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer',
+      Город: 'beijing'
     };
   });
 };
@@ -159,43 +159,43 @@ const generatePersons = count => {
 const records = generatePersons(10);
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 80,
-    sort: true
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 80,
+    сортировка: true
   },
   {
-    field: 'full name',
-    title: 'Full name',
+    поле: 'full имя',
+    заголовок: 'Full имя',
     columns: [
       {
-        field: 'name',
-        title: 'First Name\n(input editor)',
-        width: 140,
-        editor: 'input-editor'
+        поле: 'имя',
+        заголовок: 'первый имя\n(ввод editor)',
+        ширина: 140,
+        editor: 'ввод-editor'
       },
       {
-        field: 'lastName',
-        title: 'Last Name\n(input editor)',
-        width: 100,
-        editor: 'input-editor'
+        поле: 'lastимя',
+        заголовок: 'последний имя\n(ввод editor)',
+        ширина: 100,
+        editor: 'ввод-editor'
       }
     ]
   },
   {
-    field: 'address',
-    title: 'location\n(arcoVue-editor)',
-    width: 400,
+    поле: 'address',
+    заголовок: 'location\n(arcoVue-editor)',
+    ширина: 400,
     editor: 'arcoVue-editor'
   }
 ];
 
 const option = {
   enableLineBreak: true,
-  autoWrapText: true,
-  limitMaxAutoWidth: 700,
-  heightMode: 'autoHeight',
-  editCellTrigger: 'click',
+  автоWrapText: true,
+  limitMaxавтоширина: 700,
+  высотаMode: 'автовысота',
+  editCellTrigger: 'Нажать',
   keyboardOptions: {
     copySelected: true,
     pasteValueToCell: true,
@@ -205,20 +205,20 @@ const option = {
 
 const app = createApp({
   template: `
-    <ListTable :options="option" :records="records">
-      <ListColumn
-        v-for="column in columns"
-        :key="column.field"
-        :field="column.field"
+    <списоктаблица :options="option" :records="records">
+      <списокColumn
+        v-для="column в columns"
+        :key="column.поле"
+        :поле="column.поле"
         :title="column.title"
-        :width="column.width"
+        :ширина="column.ширина"
         :columns="column.columns"
         :editor="column.editor"
       />
-    </ListTable>
+    </списоктаблица>
   `,
-  data() {
-    return {
+  данные() {
+    возврат {
       records,
       columns,
       option
@@ -226,13 +226,13 @@ const app = createApp({
   }
 });
 
-app.component('ListTable', VueVTable.ListTable);
-app.component('ListColumn', VueVTable.ListColumn);
+app.компонент('списоктаблица', VueVтаблица.списоктаблица);
+app.компонент('списокColumn', VueVтаблица.списокColumn);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

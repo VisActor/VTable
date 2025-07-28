@@ -2,22 +2,22 @@
 Тип CellInfo определен как:
 ```
 {
-  col: number;
-  row: number;
-  title?: string;
+  col: число;
+  row: число;
+  title?: строка;
   /**Имя измерения */
-  field?: string;
+  field?: строка;
   /**Пути заголовков ячеек строк */
   cellHeaderPaths?: ICellHeaderPaths;
   /**Позиция ячейки */
   cellRange?: RectProps;
   /**Полные данные - исходные данные */
-  originData?: any;
+  originData?: любой;
   /**Значение после форматирования */
-  value?: string|number;
+  значение?: строка|число;
   /**Исходное значение */
-  dataValue?: string|number;
+  dataValue?: строка|число;
   cellLocation?: CellLocation;
-  cellType?: string;
+  cellType?: строка;
 };
 ```

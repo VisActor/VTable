@@ -3,11 +3,11 @@
 
 ```
 {
-  col: number;
-  row: number;
+  col: число;
+  row: число;
   rect?: RectProps;
-  x?: number;
-  y?: number;
+  x?: число;
+  y?: число;
   ranges: CellRange[];
 }
 ```

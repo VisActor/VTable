@@ -1,74 +1,74 @@
 ---
 category: examples
 group: component
-title: Custom Component
+title: Пользовательский Компонент
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-component.png
 order: 1-1
 link: Developer_Ecology/react
 ---
 
-# Custom Component
+# Пользовательский Компонент
 
-The `CustomComponent` component facilitates overlaying external components on React-VTable components.
+Компонент `CustomComponent` облегчает наложение внешних компонентов на компоненты React-VTable.
 
-## Code Example
+## Пример Кода
 
-```javascript livedemo template=vtable-react
-// import * as ReactVTable from '@visactor/react-vtable';
+```javascript livedemo template=VTable-react
+// import * as ReactVTable от '@visactor/react-VTable';
 
 const { useCallback, useRef, useState } = React;
 const { ListTable, CustomComponent } = ReactVTable;
-const { Popconfirm, Message, Button } = ArcoDesign;
+const { Popconfirm, сообщение, кнопка } = ArcoDesign;
 
-function Tooltip(props) {
-  return (
-    <div style={{ width: '100%', height: '100%', border: '1px solid #333', backgroundColor: '#ccc', fontSize: 10 }}>
-      {`${props.value}(click to show more)`}
+функция подсказка(props) {
+  возврат (
+    <div style={{ ширина: '100%', высота: '100%', граница: '1px solid #333', backgroundColor: '#ccc', fontSize: 10 }}>
+      {`${props.значение}(нажмите, чтобы показать больше)`}
     </div>
   );
 }
 
-function App() {
+функция App() {
   const [hoverCol, setHoverCol] = useState(-1);
   const [hoverRow, setHoverRow] = useState(-1);
   const [clickCol, setClickCol] = useState(-1);
   const [clickRow, setClickRow] = useState(-1);
-  const [value, setValue] = useState('');
-  const visible = useRef(false);
+  const [значение, setValue] = useState('');
+  const видимый = useRef(false);
   const tableInstance = useRef(null);
 
   const option = {
     columns: [
       {
         field: '0',
-        title: 'name'
+        title: 'имя'
       },
       {
         field: '1',
-        title: 'age'
+        title: 'возраст'
       },
       {
         field: '2',
-        title: 'gender'
+        title: 'пол'
       },
       {
         field: '3',
-        title: 'hobby'
+        title: 'хобби'
       }
     ],
-    records: new Array(1000).fill(['John', 18, 'male', '🏀'])
+    records: новый массив(1000).fill(['John', 18, 'male', '🏀'])
   };
 
   const updateHoverPos = useCallback(args => {
-    if (visible.current) {
-      return;
+    if (видимый.текущий) {
+      возврат;
     }
     setHoverCol(args.col);
     setHoverRow(args.row);
-    const cellValue = tableInstance.current.getCellValue(args.col, args.row);
+    const cellValue = tableInstance.текущий.getCellValue(args.col, args.row);
     setValue(cellValue);
   }, []);
-  const hide = useCallback(() => {
+  const скрыть = useCallback(() => {
     setHoverCol(-1);
     setHoverRow(-1);
   }, []);
@@ -80,53 +80,53 @@ function App() {
 
   const ready = (instance, isInitial) => {
     if (isInitial) {
-      tableInstance.current = instance;
+      tableInstance.текущий = instance;
     }
   };
 
-  return (
+  возврат (
     <ListTable
       option={option}
       onMouseEnterCell={updateHoverPos}
-      onMouseLeaveTable={hide}
+      onMouseLeaveTable={скрыть}
       onClickCell={updateClickPos}
       onReady={ready}
     >
       <CustomComponent
-        width="80%"
-        height="100%"
+        ширина="80%"
+        высота="100%"
         displayMode="cell"
         col={hoverCol}
         row={hoverRow}
-        anchor="bottom-right"
+        anchor="низ-право"
         dx="-80%"
       >
-        <Tooltip value={value} />
+        <подсказка значение={значение} />
       </CustomComponent>
-      <CustomComponent width="100%" height="100%" displayMode="cell" col={clickCol} row={clickRow} anchor="top-left">
+      <CustomComponent ширина="100%" высота="100%" displayMode="cell" col={clickCol} row={clickRow} anchor="верх-лево">
         <Popconfirm
           focusLock
-          title="Popconfirm"
-          content="Click component!"
+          title="Подтверждение"
+          content="Нажмите компонент!"
           onOk={() => {
-            Message.info({
-              content: 'ok'
+            сообщение.информация({
+              content: 'хорошо'
             });
             setClickCol(-1);
             setClickRow(-1);
           }}
           onCancel={() => {
-            Message.error({
-              content: 'cancel'
+            сообщение.ошибка({
+              content: 'отмена'
             });
             setClickCol(-1);
             setClickRow(-1);
           }}
           onVisibleChange={popVisible => {
-            visible.current = popVisible;
+            видимый.текущий = popVisible;
           }}
         >
-          <Button style={{ width: '100%', height: '100%' }}>Click</Button>
+          <кнопка style={{ ширина: '100%', высота: '100%' }}>Нажать</кнопка>
         </Popconfirm>
       </CustomComponent>
     </ListTable>
@@ -136,7 +136,8 @@ function App() {
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(<App />);
 
-// release react instance, do not copy
+// release react instance, do не copy
+// освободить экземпляр react, не копировать
 window.customRelease = () => {
   root.unmount();
 };

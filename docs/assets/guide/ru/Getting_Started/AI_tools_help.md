@@ -1,100 +1,100 @@
-# AI Tools Help VTable Component Development
+# AI Tools Help Vтаблица компонент Development
 
-In this tutorial, we will demonstrate how to cleverly utilize VTable component documentation along with tools like Cursor and DeepSeek to let AI automatically generate the code we need. Let's dive into the detailed process.
+в this tutorial, we will демонстрацияnstrate how к cleverly utilize Vтаблица компонент Документация along с tools like Cursor и DeepSeek к let AI автоmatically generate the код we need. Let's dive into the detailed process.
 
 ## Development Steps
 ### Create Initial Project
-First, let's create a simple initial project (using Vue as an example). Run the relevant commands to set up the basic environment for using VTable components.
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/1.png" />
-    <!-- <p>Each row in the table stores sales data for a product category in a region during a specific time period</p> -->
+первый, let's create a simple initial project (using Vue as an пример). Run the relevant commands к set up the базовый environment для using Vтаблица компонентs.
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/1.png" />
+    <!-- <p>каждый row в the таблица stores Продажи данные для a product Категория в a Регион during a specific time period</p> -->
   </div>
 
-### Configure DeepSeek Model in Cursor
-This is not limited to the DeepSeek model - other models can be used as well.
+### Configure DeepSeek Model в Cursor
+This is не limited к the DeepSeek model - other models can be used as well.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/2.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/2.png" />
   </div>
 
-### Invoke AI Interaction Panel in Cursor and Generate Code
+### Invхорошоe AI Interaction Panel в Cursor и Generate код
 
-After setting up the project environment, use cmd + i to bring up the AI interaction panel. We'll directly ask AI to generate some basic code for inserting a VTable.
+After setting up the project environment, use cmd + i к bring up the AI interaction panel. We'll directly ask AI к generate некоторые базовый код для inserting a Vтаблица.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/3.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/3.png" />
   </div>
 
-However, the initial generation shows that AI doesn't recognize VTable's ListTable, possibly due to inability to accurately identify VTable's ListTable configuration.
+However, the initial generation shows that AI doesn't recognize Vтаблица's списоктаблица, possibly due к inability к accurately identify Vтаблица's списоктаблица configuration.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/4.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/4.png" />
   </div>
 
-### Inject Official Documentation into @Docs
+### Inject Official Документация into @Docs
 
-To solve this issue, we inject the official documentation into @Docs.
+к solve this issue, we inject the official Документация into @Docs.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/5.gif" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/5.gif" />
   </div>
 
-By explicitly specifying VisActor VTable in @Docs within the prompt, we're delighted to find that AI can now correctly write implementation logic according to VTable's options.
+по explicitly specifying VisActor Vтаблица в @Docs within the prompt, we're delighted к find that AI can now correctly write implementation logic according к Vтаблица's options.
 
- <div style="width: 50%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/6.png" />
+ <div style="ширина: 50%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/6.png" />
   </div>
 
-### Code Application and Effect Display
+### код Application и Effect Display
 
-Copy the generated code to the appropriate file and run the project to see the initial effect - the table is correctly generated.
+Copy the generated код к the appropriate file и run the project к see the initial effect - the таблица is correctly generated.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/7.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/7.png" />
   </div>
 
-Then, we ask AI to modify the table style. AI provides reasonable modification suggestions.
+Then, we ask AI к modify the таблица style. AI provides reasonable modification suggestions.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/8.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/8.png" />
   </div>
 
 After running the project again, we get a display effect that better meets our requirements:
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/9.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/9.png" />
   </div>
 
-Here's another mention of Cursor's awesome capability: the powerful one-click apply to source file function - clicking Apply eliminates the need for copy and paste.
+Here's another mention из Cursor's awesome capability: the powerful one-Нажать apply к source file функция - Нажатьing Apply eliminates the need для copy и paste.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/ai-tools/10.png" />
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/ai-tools/10.png" />
   </div>
 
-## Advantages of Combining VTable Component Library with Cursor
+## Advantвозрастs из Combining Vтаблица компонент Library с Cursor
 
 1. Improve Development Efficiency
 
-- Quick Access: Directly consult VTable API documentation through Cursor
-- Smart Suggestions: Precise code completion based on VTable documentation
+- Quick Access: Directly consult Vтаблица апи Документация through Cursor
+- Smart Suggestions: Precise код completion based на Vтаблица Документация
 
 2. Enhanced Development Experience
 
-- Seamless Integration: Get VTable usage guidance directly in the development environment
-- Real-time Feedback: Quickly validate code effects
+- Seamless Integration: Get Vтаблица usвозраст guidance directly в the development environment
+- Real-time Feedback: Quickly validate код effects
 
 3. Reduce Learning Costs
 
-- Documentation Assistance: Access VTable official examples anytime
-- Code Generation: Automatically generate code compliant with VTable standards
+- Документация Assistance: Access Vтаблица official примеры anytime
+- код Generation: автоmatically generate код compliant с Vтаблица standards
 
-4. Improve Code Quality
+4. Improve код Quality
 
-- Standard Checking: Ensure code follows VTable best practices
-- Performance Optimization: Automatically generate high-performance table configurations
+- Standard Checking: Ensure код follows Vтаблица best practices
+- Производительность Optimization: автоmatically generate high-Производительность таблица configurations
 
-VisActor VTable provides developers with a powerful table solution, and combined with AI tools, it significantly improves development efficiency while reducing learning costs. Visit the VisActor official website to learn more about VTable features and cases.
+VisActor Vтаблица provides developers с a powerful таблица solution, и combined с AI tools, it significantly improves development efficiency while reducing learning costs. Visit the VisActor official website к learn more about Vтаблица возможности и cases.
 
-## This document was contributed by:
+## This document was contributed по:
 
 [fangsmile](https://github.com/fangsmile)

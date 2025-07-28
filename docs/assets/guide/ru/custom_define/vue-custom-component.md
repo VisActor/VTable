@@ -1,115 +1,115 @@
-# Vue-VTable Custom Component
+# Vue-Vтаблица пользовательский компонент
 
-## Custom Cell Component
+## пользовательский Cell компонент
 
-To facilitate Vue developers in quickly implementing custom cell content, Vue-VTable provides the capability to encapsulate components and use them within cells.
+к facilitate Vue developers в quickly implementing пользовательский cell content, Vue-Vтаблица provides the capability к encapsulate компонентs и use them within cells.
 
-### Component Usage
+### компонент Usвозраст
 
-The custom cell component is encapsulated based on the [custom layout](../custom_define/custom_layout) and is used similarly to custom layouts. In `ListColumn`, you can use the component through the `#customLayout` slot and the `<ListColumn>` component to customize column rendering using templates. The `#customLayout` slot returns the following parameters:
+The пользовательский cell компонент is encapsulated based на the [пользовательский макет](../пользовательский_define/пользовательский_макет) и is used similarly к пользовательский макетs. в `списокColumn`, Вы можете use the компонент through the `#пользовательскиймакет` slot и the `<списокColumn>` компонент к пользовательскийize column rendering using templates. The `#пользовательскиймакет` slot returns Следующий parameters:
 ```tsx
-interface CustomLayoutProps {
-  table: ListTable; // Table instance
-  row: number; // Row number
-  col: number; // Column number
-  value: FieldData; // Cell display data
-  dataValue: FieldData; // Original cell data
-  rect?: RectProps; // Cell layout information
+интерфейс пользовательскиймакетProps {
+  таблица: списоктаблица; // таблица instance
+  row: число; // Row число
+  col: число; // Column число
+  значение: поледанные; // Cell display данные
+  данныеValue: поледанные; // Original cell данные
+  rect?: RectProps; // Cell макет information
 }
 ```
 
-The example code demonstrates how to use the `ListColumn` component within the `ListTable` component and customize column rendering through the `#customLayout` slot. The specific implementation includes using the `Group` component to layout cell content.
+The пример код демонстрацияnstrates how к use the `списокColumn` компонент within the `списоктаблица` компонент и пользовательскийize column rendering through the `#пользовательскиймакет` slot. The specific implementation includes using the `Group` компонент к макет cell content.
 
 ```tsx
-import { ListTable, ListColumn } from '@visactor/vue-vtable';
-import { Group, Text, Image, Radio, CheckBox, Tag } from '@visactor/vue-vtable';
-import * as VTable from '@visactor/vtable';
+import { списоктаблица, списокColumn } от '@visactor/vue-vтаблица';
+import { Group, текст, Imвозраст, переключатель, флажок, Tag } от '@visactor/vue-vтаблица';
+import * as Vтаблица от '@visactor/vтаблица';
 
-<ListTable>
-  <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
+<списоктаблица>
+  <списокColumn :поле="'bloggerимя'" :title="'anchor nickимя'" :ширина="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
 
-    <template #customLayout="{ table, row, col, rect, record, height, width }">
+    <template #пользовательскиймакет="{ таблица, row, col, rect, record, высота, ширина }">
 
-      <Group :height="height" :width="width" display="flex" flexDirection="row" flexWrap="nowrap">
+      <Group :высота="высота" :ширина="ширина" display="flex" flexDirection="row" flexWrap="nowrap">
         <!-- Avatar Group -->
-        <Group :height="height" :width="60" display="flex" flexDirection="column" alignItems="center" justifyContent="space-around">
-          <Image id="icon0" :width="50" :height="50" :image="record.bloggerAvatar" :cornerRadius="25" />
+        <Group :высота="высота" :ширина="60" display="flex" flexDirection="column" alignItems="центр" justifyContent="space-around">
+          <Imвозраст id="иконка0" :ширина="50" :высота="50" :imвозраст="record.bloggerAvatar" :cornerRadius="25" />
         </Group>
-        <!-- Blogger Info Group -->
-        <Group :height="height" :width="width - 60" display="flex" flexDirection="column" flexWrap="nowrap">
-          <!-- Blogger Name and Location -->
-          <Group :height="height / 2" :width="width" display="flex" alignItems="flex-end">
-            <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
-            <Image id="location" image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
-              :width="15" :height="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer"
-              @mouseEnter="handleMoueEnter($event)" @click="handleMouseClick($event)" @mouseLeave="handleMoueLeave($event)" />
-            <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
+        <!-- Blogger информация Group -->
+        <Group :высота="высота" :ширина="ширина - 60" display="flex" flexDirection="column" flexWrap="nowrap">
+          <!-- Blogger имя и Location -->
+          <Group :высота="высота / 2" :ширина="ширина" display="flex" alignItems="flex-конец">
+            <текст ref="textRef" :текст="record.bloggerимя" :fontSize="13" fontFamily="sans-serif" fill="black" />
+            <Imвозраст id="location" imвозраст="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/location.svg"
+              :ширина="15" :высота="15" :boundsPadding="[0, 0, 0, 10]" cursor="pointer"
+              @mouseEnter="handleMoueEnter($событие)" @Нажать="handleMouseНажать($событие)" @mouseLeave="handleMoueLeave($событие)" />
+            <текст :текст="record.Город" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
           </Group>
           <!-- Tags Group -->
-          <Group :height="height / 2" :width="width" display="flex" alignItems="center">
-            <Tag v-for="tag in record?.tags" :key="tag" :text="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ visible: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
+          <Group :высота="высота / 2" :ширина="ширина" display="flex" alignItems="центр">
+            <Tag v-для="tag в record?.tags" :key="tag" :текст="tag" :textStyle="{ fontSize: 10, fontFamily: 'sans-serif', fill: 'rgb(51, 101, 238)' }" :panel="{ видимый: true, fill: '#f4f4f2', cornerRadius: 5 }" :space="5" :boundsPadding="[0, 0, 0, 5]" />
           </Group>
         </Group>
       </Group>
 
     </template>
 
-  </ListColumn>
-</ListTable>
+  </списокColumn>
+</списоктаблица>
 ```
 
-### Component Encapsulation
+### компонент Encapsulation
 
 #### Tags
 
-The tags returned by the component must be based on the graphical tags provided by vue-vtable (HTML tags or Vue components cannot be used directly).
+The tags returned по the компонент must be based на the graphical tags provided по vue-vтаблица (HTML tags или Vue компонентs cannot be used directly).
 
 ```tsx
-import { ListTable, ListColumn } from '@visactor/vue-vtable';
-import { Group, Text, Image, Radio, CheckBox, Tag } from '@visactor/vue-vtable';
-import * as VTable from '@visactor/vtable';
+import { списоктаблица, списокColumn } от '@visactor/vue-vтаблица';
+import { Group, текст, Imвозраст, переключатель, флажок, Tag } от '@visactor/vue-vтаблица';
+import * as Vтаблица от '@visactor/vтаблица';
 
-<ListTable>
-  <ListColumn :field="'bloggerName'" :title="'anchor nickname'" :width="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
+<списоктаблица>
+  <списокColumn :поле="'bloggerимя'" :title="'anchor nickимя'" :ширина="330" :style="{ fontFamily: 'Arial', fontWeight: 500 }">
 
-    <template #customLayout="{ table, row, col, rect, record, height, width }">
+    <template #пользовательскиймакет="{ таблица, row, col, rect, record, высота, ширина }">
 
-      <!-- Blogger Name and Location -->
-      <Group :height="height / 2" :width="width" display="flex" alignItems="flex-end">
-        <Text ref="textRef" :text="record.bloggerName" :fontSize="13" fontFamily="sans-serif" fill="black" />
-        <Image
+      <!-- Blogger имя и Location -->
+      <Group :высота="высота / 2" :ширина="ширина" display="flex" alignItems="flex-конец">
+        <текст ref="textRef" :текст="record.bloggerимя" :fontSize="13" fontFamily="sans-serif" fill="black" />
+        <Imвозраст
           id="location"
-          image="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg"
-          :width="15"
-          :height="15"
+          imвозраст="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/location.svg"
+          :ширина="15"
+          :высота="15"
           :boundsPadding="[0, 0, 0, 10]"
           cursor="pointer"
-          @mouseEnter="handleMoueEnter($event)"
-          @click="handleMouseClick($event)"
-          @mouseLeave="handleMoueLeave($event)"
+          @mouseEnter="handleMoueEnter($событие)"
+          @Нажать="handleMouseНажать($событие)"
+          @mouseLeave="handleMoueLeave($событие)"
         />
-        <Text :text="record.city" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
+        <текст :текст="record.Город" :fontSize="11" fontFamily="sans-serif" fill="#6f7070" />
       </Group>
 
     </template>
 
-  </ListColumn>
-</ListTable>
+  </списокColumn>
+</списоктаблица>
 ```
 
-### Basic Primitive Components
+### базовый Primitive компонентs
 
-Basic primitives:
+базовый primitives:
 
 * Group 
-* Text
-* Image 
-* Radio
-* CheckBox
+* текст
+* Imвозраст 
+* переключатель
+* флажок
 * Tag
 
-For specific configuration properties, refer to [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group). For specific usage and layout, refer to [custom layout](../custom_define/custom_layout) and [reference examples](../../demo-vue/custom-layout/cell-custom-component).
+для specific configuration свойства, refer к [`VRender Primitive Configuration`](https://visactor.io/vrender/option/Group). для specific usвозраст и макет, refer к [пользовательский макет](../пользовательский_define/пользовательский_макет) и [reference примеры](../../демонстрация-vue/пользовательский-макет/cell-пользовательский-компонент).
 
-<div style="display: flex; justify-content: center;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png" style="flex: 0 0 50%; padding: 10px;">
+<div style="display: flex; justify-content: центр;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-cell-макет-jsx.png" style="flex: 0 0 50%; заполнение: 10px;">
 </div>

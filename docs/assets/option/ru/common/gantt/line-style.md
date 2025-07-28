@@ -1,10 +1,10 @@
-{{ target: common-gantt-line-style }}
+{{ target: common-гантт-line-style }}
 
-The definition of ILineStyle is:
+The definition из ILineStyle is:
 ```
-export type ILineStyle = {
-  lineColor?: string;
-  lineWidth?: number;
-  lineDash?: number[];
+export тип ILineStyle = {
+  lineColor?: строка;
+  lineширина?: число;
+  lineDash?: число[];
 };
 ```

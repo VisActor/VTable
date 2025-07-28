@@ -1,117 +1,117 @@
 # Node Server Rendering
 
-VTable provides Node server rendering capabilities. You can use VTable to generate chart images in the Node environment. The following will introduce how to use [node-canvas](https://github.com/Automattic/node-canvas) to achieve server-side rendering of charts.
+Vтаблица provides Node server rendering capabilities. Вы можете use Vтаблица к generate график imвозрастs в the Node environment. Следующий will introduce how к use [node-canvas](https://github.com/автоmattic/node-canvas) к achieve server-side rendering из графикs.
 
-## How to use
+## How к use
 
-VTable's Node server rendering capabilities are provided by the underlying rendering engine [VRender](https://github.com/VisActor/VRender). The usage is very simple, and the following is a simple example to illustrate:
+Vтаблица's Node server rendering capabilities are provided по the underlying rendering engine [VRender](https://github.com/VisActor/VRender). The usвозраст is very simple, и Следующий is a simple пример к illustrate:
 
 ```ts
 const fs = require('fs');
 
-const VTable = require('@visactor/vtable');
+const Vтаблица = require('@visactor/vтаблица');
 const Canvas = require('canvas');
 const {Resvg} = require('@resvg/resvg-js');
 
 const generatePersons = (count) => {
-  return Array.from(new Array(count)).map((_, i) => ({
+  возврат массив.от(новый массив(count)).map((_, i) => ({
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `John${i + 1}`,
-    lastName: 'Smith',
+    имя: `John${i + 1}`,
+    lastимя: 'Smith',
     date1: '2022,9,1',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-    city: 'new york'
+    work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer',
+    Город: 'новый york'
   }));
 };
 
 const records = generatePersons(20);
-const columns: VTable.ColumnsDefine = [
+const columns: Vтаблица.ColumnsDefine = [
   {
-    field: 'id',
-    title: 'ID ff',
-    width: '1%',
-    minWidth: 200,
-    sort: true
+    поле: 'id',
+    заголовок: 'ID ff',
+    ширина: '1%',
+    minширина: 200,
+    сортировка: true
   },
   {
-    field: 'email1',
-    title: 'email',
-    width: 200,
-    sort: true
+    поле: 'email1',
+    заголовок: 'email',
+    ширина: 200,
+    сортировка: true
   },
   {
-    title: 'full name',
+    заголовок: 'full имя',
     columns: [
       {
-        field: 'name',
-        title: 'First Name',
-        width: 200
+        поле: 'имя',
+        заголовок: 'первый имя',
+        ширина: 200
       },
       {
-        field: 'name',
-        title: 'Last Name',
-        width: 200
+        поле: 'имя',
+        заголовок: 'последний имя',
+        ширина: 200
       }
     ]
   },
   {
-    field: 'date1',
-    title: 'birthday',
-    width: 200
+    поле: 'date1',
+    заголовок: 'birthday',
+    ширина: 200
   },
   {
-    field: 'sex',
-    title: 'sex',
-    width: 100
+    поле: 'sex',
+    заголовок: 'sex',
+    ширина: 100
   },
   {
-    field: 'tel',
-    title: 'telephone',
-    width: 150
+    поле: 'tel',
+    заголовок: 'telephone',
+    ширина: 150
   },
   {
-    field: 'work',
-    title: 'job',
-    width: 200
+    поле: 'work',
+    заголовок: 'job',
+    ширина: 200
   },
   {
-    field: 'city',
-    title: 'city',
-    width: 150
+    поле: 'Город',
+    заголовок: 'Город',
+    ширина: 150
   }
 ];
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   records,
   columns,
 
-  // Declare the rendering environment to be used and the corresponding rendering environment parameters
+  // Declare the rendering environment к be used и the corresponding rendering environment parameters
   pixelRatio: 2, // dpr
   mode: 'node',
   modeParams: {
     createCanvas: canvas.createCanvas,
-    createImageData: canvas.createImageData,
-    loadImage: canvas.loadImage,
-    Resvg: Resvg // for svg
+    createImвозрастданные: canvas.createImвозрастданные,
+    loadImвозраст: canvas.loadImвозраст,
+    Resvg: Resvg // для svg
   },
-  canvasWidth: 1000,
-  canvasHeight: 700
+  canvasширина: 1000,
+  canvasвысота: 700
 };
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
 
-// export image
-const buffer = tableInstance.getImageBuffer();
-fs.writeFileSync(`./list-table.png`, buffer);
+// export imвозраст
+const buffer = таблицаInstance.getImвозрастBuffer();
+fs.writeFileSync(`./список-таблица.png`, buffer);
 ```
 
 Among them:
-* `pixelRatio` is the dpr of the output image, the default is 1
-* `mode` is the rendering environment, which needs to be set to `node`
-* `modeParams` is the parameters of the rendering environment:
-  * `createCanvas` is the method for creating canvas
-  * `createImageData` is the method for creating imageData
-  * `loadImage` is the method for loading images
-  * `Resvg` is the tool for svg rendering
+* `pixelRatio` is the dpr из the output imвозраст, the по умолчанию is 1
+* `mode` is the rendering environment, which needs к be set к `node`
+* `modeParams` is the parameters из the rendering environment:
+  * `createCanvas` is the method для creating canvas
+  * `createImвозрастданные` is the method для creating imвозрастданные
+  * `loadImвозраст` is the method для загрузка imвозрастs
+  * `Resvg` is the tool для svg rendering

@@ -1,31 +1,31 @@
-# Gantt Task Bar Layout Mode
+# гантт Task Bar макет Mode
 
-In Gantt, the layout mode of the task bar determines the display effect of the task bar. It can be set through the `tasksShowMode` configuration item, and Gantt provides the following six modes:
+в гантт, the макет mode из the task bar determines the display effect из the task bar. It can be set through the `tasksShowMode` configuration item, и гантт provides Следующий six modes:
 
-- `Tasks_Separate`: Each task node is displayed in a separate line, with the parent task occupying one line and the sub-tasks occupying one line respectively. This is the default display effect!
-- `Sub_Tasks_Separate`: The parent task node is not displayed, and all sub-task nodes are displayed in a separate line. (Only one level of sub-tasks are supported.)
-- `Sub_Tasks_Inline`: The parent task node is not displayed, and all sub-task nodes are displayed on the same line. (Only one level of sub-tasks are supported.)
-- `Sub_Tasks_Arrange`: The parent task node is not displayed, and all sub-task nodes will maintain the order of the data in `records`, and ensure that the nodes are not overlapped. (Only one level of sub-tasks are supported.)
-- `Sub_Tasks_Compact`: The parent task node is not displayed, and all sub-task nodes will be arranged according to the `start` property of the date, and ensure that the nodes are displayed in a compact manner without overlapping. (Only one level of sub-tasks are supported.)
-- `Project_Sub_Tasks_Inline`: For tasks set with the `type` property as `project`, the display mode will be `Sub_Tasks_Inline` (non-expanded state). Other tasks with a type other than `project` will still be displayed in the `Tasks_Separate` mode. (The level of sub-tasks is not limited.)
+- `Tasks_Separate`: каждый task node is displayed в a separate line, с the parent task occupying one line и the sub-tasks occupying one line respectively. This is the по умолчанию display effect!
+- `Sub_Tasks_Separate`: The parent task node is не displayed, и все sub-task nodes are displayed в a separate line. (Only one level из sub-tasks are supported.)
+- `Sub_Tasks_Inline`: The parent task node is не displayed, и все sub-task nodes are displayed на the same line. (Only one level из sub-tasks are supported.)
+- `Sub_Tasks_Arrange`: The parent task node is не displayed, и все sub-task nodes will maintain the order из the данные в `records`, и ensure that the nodes are не overlapped. (Only one level из sub-tasks are supported.)
+- `Sub_Tasks_Compact`: The parent task node is не displayed, и все sub-task nodes will be arranged according к the `начало` property из the date, и ensure that the nodes are displayed в a compact manner без overlapping. (Only one level из sub-tasks are supported.)
+- `Project_Sub_Tasks_Inline`: для tasks set с the `тип` property as `project`, the display mode will be `Sub_Tasks_Inline` (non-expanded state). Other tasks с a тип other than `project` will still be displayed в the `Tasks_Separate` mode. (The level из sub-tasks is не limited.)
 
 
 # Configuration Method
 
-The configuration method of the Gantt task bar layout mode is as follows:
+The configuration method из the гантт task bar макет mode is as follows:
 
 ```
-import * as VTableGantt from '@visactor/vtable-gantt';
+import * as Vтаблицагантт от '@visactor/vтаблица-гантт';
 const options={
     ...
-    tasksShowMode: VTableGantt.TYPES.TasksShowMode.Sub_Tasks_Compact,
+    tasksShowMode: Vтаблицагантт.TYPES.TasksShowMode.Sub_Tasks_Compact,
     ...
 }
 ```
 
-# Example Display
+# пример Display
 
-The following shows the effect of different task bar layout modes, using the following data as an example:
+Следующий shows the effect из different task bar макет modes, using Следующий данные as an пример:
 
 ```
 const options={
@@ -33,37 +33,37 @@ const options={
   records:[
     {
       id: 0,
-      name: 'Planning',
-      start: '2024-11-15',
-      end: '2024-11-21',
+      имя: 'Planning',
+      начало: '2024-11-15',
+      конец: '2024-11-21',
       children: [
         {
           id: 1,
-          name: 'Michael Smith',
-          start: '2024-11-15',
-          end: '2024-11-17',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+          имя: 'Michael Smith',
+          начало: '2024-11-15',
+          конец: '2024-11-17',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
         },
         {
           id: 2,
-          name: 'Emily',
-          start: '2024-11-17',
-          end: '2024-11-18',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+          имя: 'Emily',
+          начало: '2024-11-17',
+          конец: '2024-11-18',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
         },
         {
           id: 3,
-          name: 'Rramily',
-          start: '2024-11-19',
-          end: '2024-11-20',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg'
+          имя: 'Rramily',
+          начало: '2024-11-19',
+          конец: '2024-11-20',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg'
         },
         {
           id: 4,
-          name: 'Lichael Join',
-          start: '2024-11-18',
-          end: '2024-11-19',
-          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg'
+          имя: 'Lichael Join',
+          начало: '2024-11-18',
+          конец: '2024-11-19',
+          avatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg'
         }
       ]
     },
@@ -74,14 +74,14 @@ const options={
 
 ## Tasks_Separate
 
-In this mode:
+в this mode:
 - The parent task occupies one line
-- Each sub-task occupies one line
-- Suitable for scenarios that need a clear display of the hierarchical structure of each task
+- каждый sub-task occupies one line
+- Suiтаблица для scenarios that need a clear display из the hierarchical structure из каждый task
 
-The display effect of the above data is: the parent task `id: 0` occupies one line, and the sub-tasks `id: 1~4` each occupy one line. The layout effect is as follows:
+The display effect из the above данные is: the parent task `id: 0` occupies one line, и the sub-tasks `id: 1~4` каждый occupy one line. The макет effect is as follows:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-task-separate.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-task-separate.png)
 
 ## Sub_Tasks_Separate
 
@@ -90,59 +90,59 @@ The display effect of the above data is: the parent task `id: 0` occupies one li
 - 每个子任务分别占用一行
 - 适合只关注具体子任务情况而非分组的场景
 
-The display effect of the above data is: the parent task `id: 0` only shows the task name in the first column, and the sub-tasks `id: 1~4` each occupy one line (note that there is no row split line here). The layout effect is as follows:
+The display effect из the above данные is: the parent task `id: 0` only shows the task имя в the первый column, и the sub-tasks `id: 1~4` каждый occupy one line (note that there is no row split line here). The макет effect is as follows:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-sub-task-separate.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-sub-task-separate.png)
 
 ## Sub_Tasks_Inline
 
-In this mode:
-- The parent task node is not displayed
-- All sub-task nodes are displayed on the same line
-- Suitable for scenarios that need a compact display of related sub-tasks
+в this mode:
+- The parent task node is не displayed
+- все sub-task nodes are displayed на the same line
+- Suiтаблица для scenarios that need a compact display из related sub-tasks
 
-The display effect of the above data is: the parent task `id: 0` only shows the task name in the first column, and the sub-tasks `id: 1~4` are displayed on the same line. The layout effect is as follows:
+The display effect из the above данные is: the parent task `id: 0` only shows the task имя в the первый column, и the sub-tasks `id: 1~4` are displayed на the same line. The макет effect is as follows:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-sub-task-inline.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-sub-task-inline.png)
 
 ## Sub_Tasks_Arrange
 
- `Sub_Tasks_Arrange` show mode will not display the parent task node, and all sub-task nodes will maintain the order of the data in `records`, and ensure that the nodes are not overlapped. 
+ `Sub_Tasks_Arrange` показать mode will не display the parent task node, и все sub-task nodes will maintain the order из the данные в `records`, и ensure that the nodes are не overlapped. 
 
-In this mode:
-- The parent task node is not displayed
-- The sub-task nodes will be arranged in the order of the data in `records`, and the nodes will not overlap.
-- Suitable for scenarios that need to maintain the original data order
+в this mode:
+- The parent task node is не displayed
+- The sub-task nodes will be arranged в the order из the данные в `records`, и the nodes will не overlap.
+- Suiтаблица для scenarios that need к maintain the original данные order
 
 
-The display effect of the above data is: the parent task `id: 0` only shows the task name in the first column, and the sub-tasks `id: 1~4` will be arranged in the order of the records, and the nodes will not overlap. The layout effect is as follows:
+The display effect из the above данные is: the parent task `id: 0` only shows the task имя в the первый column, и the sub-tasks `id: 1~4` will be arranged в the order из the records, и the nodes will не overlap. The макет effect is as follows:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-sub-task-arrange.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-sub-task-arrange.png)
 
 ## Sub_Tasks_Compact
 
-`Sub_Tasks_Compact` show mode will not display the parent task node, and all sub-task nodes will be arranged according to the `start` property of the date, and ensure that the nodes are displayed in a compact manner without overlapping.
+`Sub_Tasks_Compact` показать mode will не display the parent task node, и все sub-task nodes will be arranged according к the `начало` property из the date, и ensure that the nodes are displayed в a compact manner без overlapping.
 
-In this mode:
-- The parent task node is not displayed
-- The sub-task nodes will be arranged according to the `start` property of the date, and the nodes will be displayed in a compact manner without overlapping.
-- Suitable for scenarios that need to maximize the use of space
+в this mode:
+- The parent task node is не displayed
+- The sub-task nodes will be arranged according к the `начало` property из the date, и the nodes will be displayed в a compact manner без overlapping.
+- Suiтаблица для scenarios that need к maximize the use из space
 
-The display effect of the above data is: the parent task `id: 0` only shows the task name in the first column, and the sub-tasks `id: 1~4` will be arranged according to the `start` property of the date, and the nodes will be displayed in a compact manner without overlapping. The layout effect is as follows:
+The display effect из the above данные is: the parent task `id: 0` only shows the task имя в the первый column, и the sub-tasks `id: 1~4` will be arranged according к the `начало` property из the date, и the nodes will be displayed в a compact manner без overlapping. The макет effect is as follows:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-sub-task-compact.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-sub-task-compact.png)
 
-**Note: The difference between `Sub_Tasks_Compact` and `Sub_Tasks_Arrange` is that `Arrange` will not change the order of the data in `records`, but the layout is not the most compact. On the other hand, `Compact` will change the order of the data in `records`, but the layout is the most compact, and the layout will be triggered to be re-arranged when the task position is moved.**
+**Note: The difference between `Sub_Tasks_Compact` и `Sub_Tasks_Arrange` is that `Arrange` will не change the order из the данные в `records`, but the макет is не the most compact. на the other hand, `Compact` will change the order из the данные в `records`, but the макет is the most compact, и the макет will be triggered к be re-arranged when the task позиция is moved.**
 
 ## Project_Sub_Tasks_Inline
 
-In this mode:
-- Only project type tasks are specially processed, and other tasks are displayed normally
-- When the project task is folded, the sub-tasks will be displayed inline on the project task line
-- When the project task is expanded, the sub-tasks will be displayed in the regular tree structure
-- The `projectSubTasksExpandable` configuration item controls whether to support the expansion/folding function
-- Suitable for scenarios that need to distinguish between project tasks and normal tasks
+в this mode:
+- Only project тип tasks are specially processed, и other tasks are displayed normally
+- When the project task is folded, the sub-tasks will be displayed inline на the project task line
+- When the project task is expanded, the sub-tasks will be displayed в the regular tree structure
+- The `projectSubTasksExpandable` configuration item controls whether к support the expansion/folding функция
+- Suiтаблица для scenarios that need к distinguish between project tasks и normal tasks
 
-The display effect of the above data is: when the project task `id: 0` is in the folded state, the sub-tasks `id: 1~4` will be displayed inline on the project task line, and when the project task `id: 0` is in the expanded state, the sub-tasks `id: 1~4` will be displayed in the regular tree structure. The layout effect is as follows:
+The display effect из the above данные is: when the project task `id: 0` is в the folded state, the sub-tasks `id: 1~4` will be displayed inline на the project task line, и when the project task `id: 0` is в the expanded state, the sub-tasks `id: 1~4` will be displayed в the regular tree structure. The макет effect is as follows:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-project-sub-tasks-inline.gif)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-project-sub-tasks-inline.gif)

@@ -1,25 +1,25 @@
 ---
-category: examples
-group: Business
-title: China’s population pyramid in 2023
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/population-pyramid.png
+категория: примеры
+группа: Business
+заголовок: China’s population pyramid в 2023
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/population-pyramid.png
 ---
 
-# China’s population pyramid in 2023
+# China’s population pyramid в 2023
 
 China's population distribution map.
 
-Data source: https://population-pyramid.net/zh-cn
+данные source: https://population-pyramid.net/zh-cn
 
-## Key Configurations
+## Ключевые Конфигурации
 
 - `title` defines the title
-- `theme` defines the table style
-- `cellType: 'progressbar'` specifies the progress chart
+- `тема` defines the таблица style
+- `cellType: 'progressbar'` specifies the progress график
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   [0, 5634674, 5063545],
   [1, 5705095, 5104886],
@@ -128,68 +128,68 @@ const records = [
 ];
 const columns = [
   {
-    field: '0',
-    title: 'Age',
-    width: 'auto',
+    поле: '0',
+    заголовок: 'возраст',
+    ширина: 'авто',
     mergeCell: true,
-    fieldFormat(args) {
+    полеFormat(args) {
       if (args[0] >= 100) {
-        return 100;
+        возврат 100;
       }
-      return Math.round(args[0] / 5) * 5;
+      возврат Math.round(args[0] / 5) * 5;
     },
     style: {
-      color: 'green',
+      цвет: 'green',
       fontWeight: 'bold'
     }
   },
   {
-    field: '1',
-    title: 'Male (Population)',
-    width: 'auto',
-    fieldFormat(args) {
-      return '';
+    поле: '1',
+    заголовок: 'Male (Population)',
+    ширина: 'авто',
+    полеFormat(args) {
+      возврат '';
     },
     cellType: 'progressbar',
     min: 0,
     max: 13601860 + 1000000,
     style: {
-      color: 'red',
-      barHeight: 5,
+      цвет: 'red',
+      barвысота: 5,
       barColor: '#4cba72',
       barRightToLeft: true
     }
   },
   {
-    field: '2',
-    title: 'Female (Population)',
-    width: 'auto',
+    поле: '2',
+    заголовок: 'Female (Population)',
+    ширина: 'авто',
     cellType: 'progressbar',
-    fieldFormat(args) {
-      return '';
+    полеFormat(args) {
+      возврат '';
     },
     min: 0,
     max: 13601860 + 1000000, //12693324,
     style: {
-      color: 'red',
-      barHeight: 5,
+      цвет: 'red',
+      barвысота: 5,
       showBarMark: true
     }
   },
   {
-    field: '0',
-    title: 'Age',
-    width: 'auto',
+    поле: '0',
+    заголовок: 'возраст',
+    ширина: 'авто',
     style: {
-      color: '#ff689d',
+      цвет: '#ff689d',
       fontWeight: 'bold'
     },
     mergeCell: true,
-    fieldFormat(args) {
+    полеFormat(args) {
       if (args[0] === '100+') {
-        return 100;
+        возврат 100;
       }
-      return Math.round(args[0] / 5) * 5;
+      возврат Math.round(args[0] / 5) * 5;
     }
   }
 ];
@@ -197,45 +197,45 @@ const columns = [
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
 
-  sortState: {
-    field: '0',
-    order: 'desc'
+  сортировкаState: {
+    поле: '0',
+    порядок: 'desc'
   },
-  hover: {
+  навести: {
     highlightMode: 'cell',
     disableHover: true
   },
-  defaultRowHeight: 6,
-  defaultHeaderRowHeight: 30,
-  title: {
-    text: 'China Population 2023 Pyramid: 1,425,849,286',
-    padding: 10,
-    orient: 'top',
+  defaultRowвысота: 6,
+  defaultHeaderRowвысота: 30,
+  заголовок: {
+    текст: 'China Population 2023 Pyramid: 1,425,849,286',
+    заполнение: 10,
+    orient: 'верх',
     textStyle: { fill: '#16cdcd' }
   },
-  theme: VTable.themes.DEFAULT.extends({
+  тема: Vтаблица.темаs.по умолчанию.extends({
     headerStyle: {
-      color: '#dfeef7',
+      цвет: '#dfeef7',
       bgColor: '#038dc8'
     },
     bodyStyle: {
       bgColor(args) {
-        const { row, table } = args;
-        const value = parseInt(table.getCellValue(0, row) ?? '0', 10);
-        if (value % 10 === 0) {
-          return '#FAF9FB';
+        const { row, таблица } = args;
+        const значение = parseInt(таблица.getCellValue(0, row) ?? '0', 10);
+        if (значение % 10 === 0) {
+          возврат '#FAF9FB';
         }
-        return '#FDFDFD';
+        возврат '#FDFDFD';
       }
     },
     frameStyle: {
       borderColor: '#1d80b0',
-      borderLineWidth: 2
+      borderLineширина: 2
     }
   })
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window.таблицаInstance = таблицаInstance;
 ```

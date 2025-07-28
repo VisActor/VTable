@@ -1,92 +1,92 @@
-{{ target: component-base-legend }}
+{{ target: компонент-base-легенда }}
 
-<!-- ILegendCommonSpec legend common configuration -->
+<!-- IлегендаCommonSpec легенда common configuration -->
 
-#${prefix} visible(boolean) = true
+#${prefix} видимый(логический) = true
 
-Whether to show the legend. Displayed by default, and the type defaults to `'discrete'`.
+Whether к показать the легенда. Displayed по по умолчанию, и the тип defaults к `'discrete'`.
 
-#${prefix} orient(string)
+#${prefix} orient(строка)
 
-Legend position, optional values: `'left'`, `'top'`, `'right'`, `'bottom'`, respectively represent the four directions of left, top, right, and bottom.
+легенда позиция, необязательный values: `'лево'`, `'верх'`, `'право'`, `'низ'`, respectively represent the four directions из лево, верх, право, и низ.
 
-#${prefix} position(string) = 'middle'
+#${prefix} позиция(строка) = 'середина'
 
-The alignment of the legend in the current row and column, start|center|end.
+The alignment из the легенда в the текущий row и column, начало|центр|конец.
 
-#${prefix} interactive(boolean) = true
+#${prefix} interactive(логический) = true
 
-Whether to enable the interaction of the legend, it is enabled by default.
+Whether к включить the interaction из the легенда, it is включен по по умолчанию.
 
-#${prefix} filter(boolean) = true
+#${prefix} filter(логический) = true
 
-Whether to perform data filtering, the default is true. After this property is turned off, the click event of the legend will not trigger data filtering.
+Whether к perform данные filtering, the по умолчанию is true. After this property is turned off, the Нажать событие из the легенда will не trigger данные filtering.
 
-#${prefix} title(Object)
+#${prefix} title(объект)
 
-Legend title configuration, which is not displayed by default.
+легенда title configuration, which is не displayed по по умолчанию.
 
-##${prefix} visible(boolean) = false
+##${prefix} видимый(логический) = false
 
-Whether to display the title or not by default.
+Whether к display the title или не по по умолчанию.
 
-##${prefix} text(string|string[]|number|number[])
+##${prefix} текст(строка|строка[]|число|число[])
 
-Legend title content, if line break is required, use array form, such as ['abc', '123'].
+легенда title content, if line break is обязательный, use массив form, such as ['abc', '123'].
 
-##${prefix} align(string) = 'start'
+##${prefix} align(строка) = 'начало'
 
-The alignment of the title in the current display area. The optional values are: `'start'`, `'center'`, `'end'`, representing the start, center, and end respectively.
+The alignment из the title в the текущий display area. The необязательный values are: `'начало'`, `'центр'`, `'конец'`, representing the начало, центр, и конец respectively.
 
-##${prefix} space(number)
+##${prefix} space(число)
 
-The distance between the title and the legend content.
+The distance between the title и the легенда content.
 
-##${prefix} padding(number|number[]|Object)
+##${prefix} заполнение(число|число[]|объект)
 
-{{ use: common-padding(
-  componentName='Legend Title'
+{{ use: common-заполнение(
+  компонентимя='легенда Title'
 ) }}
 
-##${prefix} textStyle(Object)
+##${prefix} textStyle(объект)
 
-Legend text style configuration.
+легенда текст style configuration.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
 prefix = '##' + ${prefix}
 ) }}
 
-##${prefix} shape(Object)
+##${prefix} shape(объект)
 
-Graphical configuration for legend markers, not displayed by default.
+Graphical configuration для легенда markers, не displayed по по умолчанию.
 
-###${prefix} visible(boolean) = false
+###${prefix} видимый(логический) = false
 
-Whether to display, the default is not displayed.
+Whether к display, the по умолчанию is не displayed.
 
-###${prefix} space(number)
+###${prefix} space(число)
 
-The spacing between shape and text.
+The spacing between shape и текст.
 
-###${prefix} style(Object)
+###${prefix} style(объект)
 
-The style configuration of shape, you can configure the shape, size, color, etc. of shape.
+The style configuration из shape, Вы можете configure the shape, размер, цвет, etc. из shape.
 
 {{ use: graphic-symbol(
   prefix = '###' + ${prefix}
 ) }}
 
-##${prefix} background(Object)
+##${prefix} фон(объект)
 
-The background panel configuration of the title, which is not displayed by default.
+The фон panel configuration из the title, which is не displayed по по умолчанию.
 
-###${prefix} visible(boolean) = false
+###${prefix} видимый(логический) = false
 
-Whether to draw the title background.
+Whether к draw the title фон.
 
-###${prefix} style(Object)
+###${prefix} style(объект)
 
-Title background style configuration.
+Title фон style configuration.
 
 {{
   use: graphic-rect(
@@ -94,31 +94,31 @@ Title background style configuration.
   )
 }}
 
-##${prefix} minWidth(number) = 30
+##${prefix} minширина(число) = 30
 
-The minimum width configuration of the title, in px.
+The minimum ширина configuration из the title, в px.
 
-##${prefix} maxWidth(number)
+##${prefix} maxширина(число)
 
-The maximum width configuration of the title, in pixels. When the text exceeds the maximum width, it will be omitted automatically.
+The maximum ширина configuration из the title, в pixels. When the текст exceeds the maximum ширина, it will be omitted автоmatically.
 
-#${prefix} background(Object)
+#${prefix} фон(объект)
 
-The legend organizes the background configuration.
+The легенда organizes the фон configuration.
 
-##${prefix} visible(boolean) = false
+##${prefix} видимый(логический) = false
 
-Whether to draw the legend background, the default is not drawn.
+Whether к draw the легенда фон, the по умолчанию is не drawn.
 
-##${prefix} padding(number|number[]|Object)
+##${prefix} заполнение(число|число[]|объект)
 
-{{ use: common-padding(
-  componentName='Legend Background'
+{{ use: common-заполнение(
+  компонентимя='легенда фон'
 ) }}
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Legend background style configuration.
+легенда фон style configuration.
 
 {{
   use: graphic-rect(

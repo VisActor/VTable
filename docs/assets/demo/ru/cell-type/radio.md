@@ -1,187 +1,187 @@
 ---
-category: examples
-group: Cell Type
-title: Radio Type
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/radio.png
-link: cell_type/radio
-option: ListTable-columns-checkbox#cellType
+категория: примеры
+группа: Cell тип
+заголовок: переключатель тип
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/переключатель.png
+ссылка: cell_type/переключатель
+опция: списоктаблица-columns-флажок#cellType
 ---
 
-# Radio Type
+# переключатель тип
 
-Demonstrate multiple ways to use radio
+демонстрацияnstrate multiple ways к use переключатель
 
 ## Critical Configuration
 
-cellType: 'radio';
+cellType: 'переключатель';
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
-    productName: 'aaaa',
+    productимя: 'aaaa',
     price: 20,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio a',
+      текст: 'column переключатель a',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: true, disable: false },
-      { text: 'cell radio 2', checked: false, disable: false }
+      { текст: 'cell переключатель 1', checked: true, отключить: false },
+      { текст: 'cell переключатель 2', checked: false, отключить: false }
     ]
   },
   {
-    productName: 'bbbb',
+    productимя: 'bbbb',
     price: 18,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio b',
+      текст: 'column переключатель b',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: false, disable: false },
-      { text: 'cell radio 2', checked: true, disable: false }
+      { текст: 'cell переключатель 1', checked: false, отключить: false },
+      { текст: 'cell переключатель 2', checked: true, отключить: false }
     ]
   },
   {
-    productName: 'cccc',
+    productимя: 'cccc',
     price: 16,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio c',
+      текст: 'column переключатель c',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: true, disable: false },
-      { text: 'cell radio 2', checked: false, disable: false }
+      { текст: 'cell переключатель 1', checked: true, отключить: false },
+      { текст: 'cell переключатель 2', checked: false, отключить: false }
     ]
   },
   {
-    productName: 'dddd',
+    productимя: 'dddd',
     price: 14,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio d',
+      текст: 'column переключатель d',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: false, disable: true },
-      { text: 'cell radio 2', checked: true, disable: false }
+      { текст: 'cell переключатель 1', checked: false, отключить: true },
+      { текст: 'cell переключатель 2', checked: true, отключить: false }
     ]
   },
   {
-    productName: 'eeee',
+    productимя: 'eeee',
     price: 12,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio e',
+      текст: 'column переключатель e',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: true, disable: false },
-      { text: 'cell radio 2', checked: false, disable: false }
+      { текст: 'cell переключатель 1', checked: true, отключить: false },
+      { текст: 'cell переключатель 2', checked: false, отключить: false }
     ]
   },
   {
-    productName: 'ffff',
+    productимя: 'ffff',
     price: 10,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio f',
+      текст: 'column переключатель f',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: false, disable: false },
-      { text: 'cell radio 2', checked: true, disable: false }
+      { текст: 'cell переключатель 1', checked: false, отключить: false },
+      { текст: 'cell переключатель 2', checked: true, отключить: false }
     ]
   },
   {
-    productName: 'gggg',
+    productимя: 'gggg',
     price: 10,
-    radio1: 'radio info',
+    radio1: 'переключатель информация',
     radio2: true,
     radio3: {
-      text: 'column radio g',
+      текст: 'column переключатель g',
       checked: false,
-      disable: false
+      отключить: false
     },
-    radio4: ['cell radio 1', 'cell radio 2'],
+    radio4: ['cell переключатель 1', 'cell переключатель 2'],
     radio5: [
-      { text: 'cell radio 1', checked: true, disable: false },
-      { text: 'cell radio 2', checked: false, disable: false }
+      { текст: 'cell переключатель 1', checked: true, отключить: false },
+      { текст: 'cell переключатель 2', checked: false, отключить: false }
     ]
   }
 ];
 
 const columns = [
   {
-    field: 'isCheck',
-    title: '',
-    width: 50,
-    cellType: 'radio'
+    поле: 'isCheck',
+    заголовок: '',
+    ширина: 50,
+    cellType: 'переключатель'
   },
   {
-    field: 'productName',
-    title: 'product name',
-    width: 160
+    поле: 'productимя',
+    заголовок: 'product имя',
+    ширина: 160
   },
   {
-    field: 'price',
-    title: 'price',
-    width: 120
+    поле: 'price',
+    заголовок: 'price',
+    ширина: 120
   },
   {
-    field: 'radio1',
-    title: 'column radio disable',
-    width: 200,
-    cellType: 'radio',
-    disable: true,
+    поле: 'radio1',
+    заголовок: 'column переключатель отключить',
+    ширина: 200,
+    cellType: 'переключатель',
+    отключить: true,
     checked: args => {
-      if (args.row === 3) return true;
+      if (args.row === 3) возврат true;
     }
   },
   {
-    field: 'radio3',
-    title: 'column radio data config',
-    width: 230,
-    cellType: 'radio'
+    поле: 'radio3',
+    заголовок: 'column переключатель данные config',
+    ширина: 230,
+    cellType: 'переключатель'
   },
   {
-    field: 'radio4',
-    title: 'cell radio',
-    width: 140,
-    cellType: 'radio',
+    поле: 'radio4',
+    заголовок: 'cell переключатель',
+    ширина: 140,
+    cellType: 'переключатель',
     style: {
       spaceBetweenRadio: 4
     }
   },
   {
-    field: 'radio5',
-    title: 'cell radio data config',
-    width: 240,
+    поле: 'radio5',
+    заголовок: 'cell переключатель данные config',
+    ширина: 240,
     radioDirectionInCell: 'horizontal',
     radioCheckType: 'cell',
-    cellType: 'radio',
+    cellType: 'переключатель',
     style: {
       spaceBetweenRadio: 8
     }
@@ -190,8 +190,8 @@ const columns = [
 const option = {
   records,
   columns,
-  heightMode: 'autoHeight'
+  высотаMode: 'автовысота'
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

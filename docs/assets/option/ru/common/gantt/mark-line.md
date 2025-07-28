@@ -1,73 +1,73 @@
-{{ target: common-gantt-mark-line }}
+{{ target: common-гантт-mark-line }}
 
 IMarkLine specific definition:
 
 ```
-export interface IMarkLine {
-  date: string;
+export интерфейс IMarkLine {
+  date: строка;
   style?: ILineStyle;
-  /** The position where the mark line is displayed under the date column. Default is 'left' */
-  position?: 'left' | 'right' | 'middle' | 'date';
-  /** Automatically include the mark line within the date range */
-  scrollToMarkLine?: boolean;
-  content?: string; // markLine content
+  /** The позиция where the mark line is displayed under the date column. по умолчанию is 'лево' */
+  позиция?: 'лево' | 'право' | 'середина' | 'date';
+  /** автоmatically include the mark line within the date range */
+  scrollToMarkLine?: логический;
+  content?: строка; // markLine content
   /** markLine content style */
   contentStyle?: {
-    color?: string;
-    fontSize?: string;
-    fontWeight?: string;
-    lineHeight?: string;
-    backgroundColor?: string;
-    cornerRadius?: string;
+    цвет?: строка;
+    fontSize?: строка;
+    fontWeight?: строка;
+    lineвысота?: строка;
+    backgroundColor?: строка;
+    cornerRadius?: строка;
   }
 }
 ```
 
-${prefix} date(string)
+${prefix} date(строка)
 
 Specify date
 
-Required
+обязательный
 
 ${prefix} style(ILineStyle)
 
 Mark line style
 
-Optional
+необязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
-${prefix} position('left' | 'right' | 'middle' | 'date')
+${prefix} позиция('лево' | 'право' | 'середина' | 'date')
 
-The position where the mark line is displayed under the date column. Default is 'left'
+The позиция where the mark line is displayed under the date column. по умолчанию is 'лево'
 
-'date 'is located based on the specific time
+'date 'is located based на the specific time
 
-Optional
+необязательный
 
-${prefix} scrollToMarkLine(boolean)
+${prefix} scrollToMarkLine(логический)
 
-Automatically include the mark line within the date range. If set to true and the mark line is not within the display range, it will automatically scroll to the display range.
+автоmatically include the mark line within the date range. If set к true и the mark line is не within the display range, it will автоmatically прокрутка к the display range.
 
-Default is true. If markLine is an array and multiple mark lines have scrollToMarkLine set to true, only the first one set to true will be recognized.
+по умолчанию is true. If markLine is an массив и multiple mark lines have scrollToMarkLine set к true, only the первый one set к true will be recognized.
 
-If no value is set, the first one is defaulted to true.
+If no значение is set, the первый one is defaulted к true.
 
-Optional
+необязательный
 
 ${prefix} contentStyle
 
 markLine content style
 
-Optional
+необязательный
 
 ```
-export type IContentStyle = {
-    color?: string;
-    fontSize?: string;
-    fontWeight?: string;
-    lineHeight?: string;
-    backgroundColor?: string;
-    cornerRadius?: string;
+export тип иконкаtentStyle = {
+    цвет?: строка;
+    fontSize?: строка;
+    fontWeight?: строка;
+    lineвысота?: строка;
+    backgroundColor?: строка;
+    cornerRadius?: строка;
 };
 ```

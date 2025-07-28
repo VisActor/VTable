@@ -1,44 +1,44 @@
-# Customize header dimension tree
+# пользовательскийize header dimension tree
 
-In some business scenarios, facing huge amounts of database data and complex filtering or sorting rules, VTable's data analytics capabilities will not be able to meet business requirements. At this time, it can be achieved by customizing the row and column header dimension trees'rowTree 'and'columnTree'.
+в некоторые business scenarios, facing huge amounts из данныеbase данные и complex filtering или сортировкаing rules, Vтаблица's данные analytics capabilities will не be able к meet business requirements. в this time, it can be achieved по пользовательскийizing the row и column header dimension trees'rowTree 'и'columnTree'.
 
-   <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
-    <p>custom rowTree columnTree</p>
+   <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/пользовательский-tree.png" />
+    <p>пользовательский rowTree columnTree</p>
   </div>
 
-# Example
+# пример
 
-Custom tree configuration:
+пользовательский tree configuration:
 
 ```javascript
 const option = {
   rowTree: [
     {
-      dimensionKey: 'region',
-      value: '中南',
+      dimensionKey: 'Регион',
+      значение: '中南',
       children: [
         {
           dimensionKey: 'province',
-          value: '广东'
+          значение: '广东'
         },
         {
           dimensionKey: 'province',
-          value: '广西'
+          значение: '广西'
         }
       ]
     },
     {
-      dimensionKey: 'region',
-      value: '华东',
+      dimensionKey: 'Регион',
+      значение: '华东',
       children: [
         {
           dimensionKey: 'province',
-          value: '上海'
+          значение: '上海'
         },
         {
           dimensionKey: 'province',
-          value: '山东'
+          значение: '山东'
         }
       ]
     }
@@ -46,127 +46,127 @@ const option = {
   columnTree: [
     {
       dimensionKey: 'year',
-      value: '2016',
+      значение: '2016',
       children: [
         {
           dimensionKey: 'quarter',
-          value: '2016-Q1',
+          значение: '2016-Q1',
           children: [
             {
-              indicatorKey: 'sales',
-              value: 'sales'
+              indicatorKey: 'Продажи',
+              значение: 'Продажи'
             },
             {
-              indicatorKey: 'profit',
-              value: 'profit'
+              indicatorKey: 'Прибыль',
+              значение: 'Прибыль'
             }
           ]
         },
         {
           dimensionKey: 'quarter',
-          value: '2016-Q2',
+          значение: '2016-Q2',
           children: [
             {
-              indicatorKey: 'sales',
-              value: 'sales'
+              indicatorKey: 'Продажи',
+              значение: 'Продажи'
             },
             {
-              indicatorKey: 'profit',
-              value: 'profit'
+              indicatorKey: 'Прибыль',
+              значение: 'Прибыль'
             }
           ]
         }
       ]
     }
   ],
-  indicators: ['sales', 'profit'],
+  indicators: ['Продажи', 'Прибыль'],
   corner: {
-    titleOnDimension: 'none'
+    titleOnDimension: 'никто'
   },
   records: [
     {
-      region: '中南',
+      Регион: '中南',
       province: '广东',
       year: '2016',
       quarter: '2016-Q1',
-      sales: 1243,
-      profit: 546
+      Продажи: 1243,
+      Прибыль: 546
     },
     {
-      region: '中南',
+      Регион: '中南',
       province: '广东',
       year: '2016',
       quarter: '2016-Q2',
-      sales: 2243,
-      profit: 169
+      Продажи: 2243,
+      Прибыль: 169
     },
     {
-      region: '中南',
+      Регион: '中南',
       province: '广西',
       year: '2016',
       quarter: '2016-Q1',
-      sales: 3043,
-      profit: 1546
+      Продажи: 3043,
+      Прибыль: 1546
     },
     {
-      region: '中南',
+      Регион: '中南',
       province: '广西',
       year: '2016',
       quarter: '2016-Q2',
-      sales: 1463,
-      profit: 609
+      Продажи: 1463,
+      Прибыль: 609
     },
     {
-      region: '华东',
+      Регион: '华东',
       province: '上海',
       year: '2016',
       quarter: '2016-Q1',
-      sales: 4003,
-      profit: 1045
+      Продажи: 4003,
+      Прибыль: 1045
     },
     {
-      region: '华东',
+      Регион: '华东',
       province: '上海',
       year: '2016',
       quarter: '2016-Q2',
-      sales: 5243,
-      profit: 3169
+      Продажи: 5243,
+      Прибыль: 3169
     },
     {
-      region: '华东',
+      Регион: '华东',
       province: '山东',
       year: '2016',
       quarter: '2016-Q1',
-      sales: 4543,
-      profit: 3456
+      Продажи: 4543,
+      Прибыль: 3456
     },
     {
-      region: '华东',
+      Регион: '华东',
       province: '山东',
       year: '2016',
       quarter: '2016-Q2',
-      sales: 6563,
-      profit: 3409
+      Продажи: 6563,
+      Прибыль: 3409
     }
   ]
 };
 ```
 
-VTable official website example: https://visactor.io/vtable/demo/table-type/pivot-table.
+Vтаблица official website пример: https://visactor.io/vтаблица/демонстрация/таблица-тип/сводный-таблица.
 
-The complexity of custom trees lies in the formation of row and column dimension trees, which can be selected according to business scenarios. If you have complex sorting, summarization or paging rules, you can choose to use custom methods.
+The complexity из пользовательский trees lies в the formation из row и column dimension trees, which can be selected according к business scenarios. If you have complex сортировкаing, summarization или paging rules, Вы можете choose к use пользовательский методы.
 
-If rowHierarchyType is set to tree and you expect to load lazily when you click to expand the node, you also need to use a pivot table with a custom header. For the specific demo, please refer to: [Pivot table tree lazy load](../../../demo/table-type/pivot-table-tree-lazy-load).
+If rowHierarchyType is set к tree и you expect к load lazily when you Нажать к развернуть the node, you also need к use a сводный таблица с a пользовательский header. для the specific демонстрация, please refer к: [сводный таблица tree lazy load](../../../демонстрация/таблица-тип/сводный-таблица-tree-lazy-load).
 
-If you want to display the sort icon, you can add `showSort` to the dimension (rows or columns) or indicator (indicators) configuration to display the button, and then handle the logic after clicking the sort by listening to the event `PIVOT_SORT_CLICK`.
+If you want к display the сортировка иконка, Вы можете add `showсортировка` к the dimension (rows или columns) или indicator (indicators) configuration к display the Кнопка, и then handle the logic after Нажатьing the сортировка по списокening к the событие `сводный_сортировка_Нажать`.
 
 # Virtual header node
 
-In some scenarios of pivot table analysis, the table structure and data to be displayed do not match perfectly. For example, the pivot table may only have row dimensions and indicator values. When there are many fields for indicator values, you want to group the indicators by customizing column headers. In fact, the column headers are virtual, and the data records are not associated with corresponding dimension fields, and the number of levels is uncertain.
+в некоторые scenarios из сводный таблица analysis, the таблица structure и данные к be displayed do не match perfectly. для пример, the сводный таблица may only have row dimensions и indicator values. When there are many полеs для indicator values, you want к group the indicators по пользовательскийizing column headers. в fact, the column headers are virtual, и the данные records are не associated с corresponding dimension полеs, и the число из levels is uncertain.
 
-Based on this scenario, VTable provides the function of virtual header node, through which the headers on the column can be grouped. [For a specific example](../../../demo/table-type/pivot-table-virtual-header)。
+Based на this scenario, Vтаблица provides the функция из virtual header node, through which the headers на the column can be grouped. [для a specific пример](../../../демонстрация/таблица-тип/сводный-таблица-virtual-header)。
 
-Just add `virtual: true` when configuring the nodes in rowTree columnTree.
+Just add `virtual: true` when configuring the nodes в rowTree columnTree.
 
 like:
 
@@ -174,90 +174,90 @@ like:
 rowTree: [
   {
     dimensionKey: 'Segment-1',
-    value: 'Segment-1 (virtual-node)',
+    значение: 'Segment-1 (virtual-node)',
     virtual: true,
     children: [
       {
-      indicatorKey: 'Quantity',
-      value: 'Quantity'
+      indicatorKey: 'Количество',
+      значение: 'Количество'
       },
       {
-      indicatorKey: 'Sales',
-      value: 'Sales'
+      indicatorKey: 'Продажи',
+      значение: 'Продажи'
       },
       {
-      indicatorKey: 'Profit',
-      value: 'Profit'
+      indicatorKey: 'Прибыль',
+      значение: 'Прибыль'
       }
     ]
   }
 ],
 ```
 
-Specific demo: https://visactor.io/vtable/demo/table-type/pivot-table-virtual-header
+Specific демонстрация: https://visactor.io/vтаблица/демонстрация/таблица-тип/сводный-таблица-virtual-header
 
-# Custom Header Cross-column Merge
+# пользовательский Header Cross-column Merge
 
-In the nodes of rowTree or columnTree, configure levelSpan, which is 1 by default. This configuration can specify the range of header cell merging. If the maximum number of header levels is 3, there are a total of three dimension levels, and the middle dimension sets levelSpan to 2, then the last level will be merged as large as the number of levels, and there will be no space. The effect of the following example:
+в the nodes из rowTree или columnTree, configure levelSpan, which is 1 по по умолчанию. This configuration can specify the range из header cell merging. If the maximum число из header levels is 3, there are a total из three dimension levels, и the середина dimension sets levelSpan к 2, then the последний level will be merged as large as the число из levels, и there will be no space. The effect из Следующий пример:
 
-   <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/levelSpan-effect.jpeg" />
+   <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/levelSpan-effect.jpeg" />
     <p>levelSpan</p>
   </div>
   
-# Custom tree completion indicator node
+# пользовательский tree completion indicator node
 
-By default, VTable will automatically complete the indicator node. For example, the user can pass in a dimension tree without an indicator node:
+по по умолчанию, Vтаблица will автоmatically complete the indicator node. для пример, the user can pass в a dimension tree без an indicator node:
 
 ```
 rowTree: [
   {
-    dimensionKey: 'Region',
-    value: 'North',
+    dimensionKey: 'Регион',
+    значение: 'North',
   }
 ],
 ```
 
-At the same time, the user configures indicator information in indicators:
+в the same time, the user configures indicator information в indicators:
 
 ```
-indicators: ['Sales', 'Profit'],
+indicators: ['Продажи', 'Прибыль'],
 indicatorsAsCol:false,
 ```
 
-VTable will automatically complete the indicator nodes into the row dimension header tree:
+Vтаблица will автоmatically complete the indicator nodes into the row dimension header tree:
 
 ```
 rowTree: [
   {
-    dimensionKey: 'Region',
-    value: 'North',
+    dimensionKey: 'Регион',
+    значение: 'North',
     children: [
       {
-        indicatorKey: 'Sales',
-        value: 'Sales'
+        indicatorKey: 'Продажи',
+        значение: 'Продажи'
       },
       {
-        indicatorKey: 'Profit',
-        value: 'Profit'
+        indicatorKey: 'Прибыль',
+        значение: 'Прибыль'
       }
     ]
   }
 ],
 ```
 
-If you don't need to automatically complete indicator nodes, you can turn off automatic completion by setting `supplementIndicatorNodes: false`.
+If you don't need к автоmatically complete indicator nodes, Вы можете turn off автоmatic completion по setting `supplementIndicatorNodes: false`.
 
-# Custom tree irregular case
+# пользовательский tree irregular case
 
-The `parseCustomTreeToMatchRecords` configuration needs to be turned on if you have configured rowTree or columnTree and it is a non-regular tree structure to match the corresponding data record.
+The `parseпользовательскийTreeToMatchRecords` configuration needs к be turned на if you have configured rowTree или columnTree и it is a non-regular tree structure к match the corresponding данные record.
 
-The regular tree structure refers to: the nodes on the same layer have the same dimension keys.
+The regular tree structure refers к: the nodes на the same layer have the same dimension keys.
 
-The non-regular tree structure is the tree where nodes on the same layer exist with different dimension values.
+The non-regular tree structure is the tree where nodes на the same layer exist с different dimension values.
 
-# Hide indicator node
+# скрыть indicator node
 
-In the nodes of rowTree or columnTree, configure hide: true, you can hide the indicator node.
+в the nodes из rowTree или columnTree, configure скрыть: true, Вы можете скрыть the indicator node.
 
-It can also be hidden using the `hide` configuration item in `indicators`.
+It can also be скрытый using the `скрыть` configuration item в `indicators`.

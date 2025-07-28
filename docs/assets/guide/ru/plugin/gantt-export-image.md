@@ -1,97 +1,97 @@
-# Gantt Chart Export Plugin
+# гантт график Export Plugin
 
 ## Feature Introduction
 
-`ExportGanttPlugin` is a plugin written to support the full export of Gantt charts and to adapt to the size of the Gantt chart.
+`ExportганттPlugin` is a plugin written к support the full export из гантт графикs и к adapt к the размер из the гантт график.
 
-This plugin will take effect when the Gantt chart is being `constructor`
+This plugin will take effect when the гантт график is being `constructor`
 
-When you need to export an image, you can execute`exportGanttPlugin.exportToImage` to do so.
+When you need к export an imвозраст, Вы можете execute`exportганттPlugin.exportToImвозраст` к do so.
 
-However, since the current implementation principle is to create a container large enough to hold the entire gantt component, and then put our gantt component in it and export it using the toDataURL, there will be a size limit, which may lead to export failure
+However, since the текущий implementation principle is к create a container large enough к hold the entire гантт компонент, и then put our гантт компонент в it и export it using the toданныеURL, there will be a размер limit, which may lead к export failure
 
 ## Plugin Configuration
 
-When you call`exportGanttPlugin.exportToImage`,it also needs to accept the following parameters to change the export image settings
+When you call`exportганттPlugin.exportToImвозраст`,it also needs к accept Следующий parameters к change the export imвозраст settings
 ```
-fileName: 'Gantt chart export test',
-type: formatSelect.value as 'png' | 'jpeg',
+fileимя: 'гантт график export test',
+тип: formatSelect.значение as 'png' | 'jpeg',
 // resolution ratio
-scale: Number(scaleSelect.value),
-backgroundColor: bgColorInput.value,
-// The quality of the exported pictures
+scale: число(scaleSelect.значение),
+backgroundColor: bgColorInput.значение,
+// The quality из the exported pictures
 quality: 1
 ```
 
-## Plugin example
-Initialize the plugin object and add it to the plugins in the Gantt configuration
+## Plugin пример
+Initialize the plugin объект и add it к the plugins в the гантт configuration
 ```
-const exportGanttPlugin = new ExportGanttPlugin();
+const exportганттPlugin = новый ExportганттPlugin();
 const option = {
   records,
   columns,
-  padding: 30,
-  plugins: [exportGanttPlugin]
+  заполнение: 30,
+  plugins: [exportганттPlugin]
 };
 ```
 
-```javascript livedemo template=vtable
-//  The plugin package needs to be introduced when in use@visactor/vtable-plugins
-//  import * as VTablePlugins from '@visactor/vtable-plugins';
-const EXPORT_PANEL_ID = 'gantt-export-panel';
-const exportGanttPlugin = new VTablePlugins.ExportGanttPlugin();
+```javascript liveдемонстрация template=vтаблица
+//  The plugin packвозраст needs к be introduced when в use@visactor/vтаблица-plugins
+//  import * as VтаблицаPlugins от '@visactor/vтаблица-plugins';
+const EXPORT_PANEL_ID = 'гантт-export-panel';
+const exportганттPlugin = новый VтаблицаPlugins.ExportганттPlugin();
 const records = [
   {
     id: 1,
-    title: 'Task 1',
+    заголовок: 'Task 1',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-07-26',
+    начало: '2024-07-24',
+    конец: '2024-07-26',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 2,
-    title: 'Task 2',
+    заголовок: 'Task 2',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '07/24/2024',
-    end: '08/04/2024',
+    начало: '07/24/2024',
+    конец: '08/04/2024',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 3,
-    title: 'Task 3',
+    заголовок: 'Task 3',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-08-04',
-    end: '2024-08-04',
+    начало: '2024-08-04',
+    конец: '2024-08-04',
     progress: 100,
     priority: 'P1'
   },
   {
     id: 4,
-    title: 'Task 4',
+    заголовок: 'Task 4',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-26',
-    end: '2024-07-28',
+    начало: '2024-07-26',
+    конец: '2024-07-28',
     progress: 31,
     priority: 'P0'
   },
   {
     id: 5,
-    title: 'Task 5',
+    заголовок: 'Task 5',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-26',
-    end: '2024-07-28',
+    начало: '2024-07-26',
+    конец: '2024-07-28',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 6,
-    title: 'Task 6',
+    заголовок: 'Task 6',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-29',
-    end: '2024-08-11',
+    начало: '2024-07-29',
+    конец: '2024-08-11',
     progress: 100,
     priority: 'P1'
   }
@@ -99,50 +99,50 @@ const records = [
 
 const columns = [
   {
-    field: 'title',
-    title: 'title',
-    width: 'auto',
-    sort: true,
+    поле: 'title',
+    заголовок: 'title',
+    ширина: 'авто',
+    сортировка: true,
     tree: true,
-    editor: 'input'
+    editor: 'ввод'
   },
   {
-    field: 'start',
-    title: 'start',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'начало',
+    заголовок: 'начало',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   },
   {
-    field: 'end',
-    title: 'end',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'конец',
+    заголовок: 'конец',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   }
 ];
 const option = {
-  overscrollBehavior: 'none',
+  overscrollBehavior: 'никто',
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns,
-    tableWidth: 250,
-    minTableWidth: 100,
-    maxTableWidth: 600,
-    theme: {
+    таблицаширина: 250,
+    minтаблицаширина: 100,
+    maxтаблицаширина: 600,
+    тема: {
       headerStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: 1,
+        borderLineширина: 1,
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'red',
+        цвет: 'red',
         bgColor: '#EEF1F5'
       },
       bodyStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: [1, 0, 1, 0],
+        borderLineширина: [1, 0, 1, 0],
         fontSize: 16,
-        color: '#4D4D4D',
+        цвет: '#4D4D4D',
         bgColor: '#FFF'
       }
     }
@@ -150,40 +150,40 @@ const option = {
   },
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 2,
+      borderLineширина: 2,
       borderColor: '#e1e4e8',
       cornerRadius: 8
     },
     verticalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     },
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     },
     verticalSplitLineMoveable: true,
     verticalSplitLineHighlight: {
       lineColor: 'green',
-      lineWidth: 3
+      lineширина: 3
     }
   },
   grid: {
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 40,
-  rowHeight: 40,
+  headerRowвысота: 40,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
     resizable: true,
     moveable: true,
     hoverBarStyle: {
@@ -193,11 +193,11 @@ const option = {
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 16,
-      textAlign: 'left',
+      textAlign: 'лево',
       textOverflow: 'ellipsis'
     },
     barStyle: {
-      width: 20,
+      ширина: 20,
       /** 任务条的颜色 */
       barColor: '#ee8800',
       /** 已完成部分任务条的颜色 */
@@ -205,20 +205,20 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderLineWidth: 1,
+      borderLineширина: 1,
       /** 边框颜色 */
       borderColor: 'black'
     }
   },
   timelineHeader: {
-    colWidth: 100,
+    colширина: 100,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     scales: [
@@ -227,33 +227,33 @@ const option = {
         step: 1,
         startOfWeek: 'sunday',
         format(date) {
-          return `Week ${date.dateIndex}`;
+          возврат `Week ${date.dateIndex}`;
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5',
           textStick: true
-          // padding: [0, 30, 0, 20]
+          // заполнение: [0, 30, 0, 20]
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5'
         }
       }
@@ -263,16 +263,16 @@ const option = {
     {
       date: '2024/8/02',
       scrollToMarkLine: true,
-      position: 'left',
+      позиция: 'лево',
       style: {
         lineColor: 'red',
-        lineWidth: 1
+        lineширина: 1
       }
     }
   ],
   rowSeriesNumber: {
-    title: '行号',
-    dragOrder: true,
+    заголовок: '行号',
+    dragпорядок: true,
     headerStyle: {
       bgColor: '#EEF1F5',
       borderColor: '#e1e4e8'
@@ -283,71 +283,71 @@ const option = {
   },
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'scrolling',
-    width: 6,
+    видимый: 'scrolling',
+    ширина: 6,
     scrollSliderCornerRadius: 2,
     scrollSliderColor: '#5cb85c'
   },
-  plugins: [exportGanttPlugin]
+  plugins: [exportганттPlugin]
 };
 
 const container = document.getElementById(CONTAINER_ID);
 
 const wrapper = document.createElement('div');
-wrapper.style.height = '100%';
-wrapper.style.width = '100%';
-wrapper.style.position = 'relative';
+wrapper.style.высота = '100%';
+wrapper.style.ширина = '100%';
+wrapper.style.позиция = 'relative';
 container.appendChild(wrapper);
 
 const exportPanel = document.createElement('div');
 exportPanel.id = EXPORT_PANEL_ID;
-exportPanel.style.cssText = 'padding: 2px; background-color: #f6f6f6; margin-bottom: 2px; position: absolute; z-index: 1; border: 1px solid black; opacity: 0.5;';
+exportPanel.style.cssText = 'заполнение: 2px; фон-цвет: #f6f6f6; отступ-низ: 2px; позиция: absolute; z-index: 1; bпорядок: 1px solid black; opaГород: 0.5;';
 wrapper.appendChild(exportPanel);
 
-const ganttContainer = document.createElement('div');
-ganttContainer.style.height = '100%';
-ganttContainer.style.width = '100%';
-ganttContainer.style.position = 'relative'; 
-wrapper.appendChild(ganttContainer);
+const ганттContainer = document.createElement('div');
+ганттContainer.style.высота = '100%';
+ганттContainer.style.ширина = '100%';
+ганттContainer.style.позиция = 'relative'; 
+wrapper.appendChild(ганттContainer);
 
-const formatSelect = document.createElement('select');
+const formatSelect = document.createElement('выбрать');
 formatSelect.innerHTML = `
-<option value="png">PNG</option>
+<option значение="png">PNG</option>
 `;
 formatSelect.style.marginRight = '5px';
 
-const scaleSelect = document.createElement('select');
+const scaleSelect = document.createElement('выбрать');
 scaleSelect.innerHTML = `
-<option value="1">1x</option>
-<option value="2">2x</option>
-<option value="3">3x</option>
+<option значение="1">1x</option>
+<option значение="2">2x</option>
+<option значение="3">3x</option>
 `;
 scaleSelect.style.marginRight = '5px';
 
-const bgColorInput = document.createElement('input');
-bgColorInput.type = 'color';
-bgColorInput.value = '#ffffff';
+const bgColorInput = document.createElement('ввод');
+bgColorInput.тип = 'цвет';
+bgColorInput.значение = '#ffffff';
 bgColorInput.style.marginRight = '5px';
 
-const exportButton = document.createElement('button');
-exportButton.textContent = '导出甘特图';
-exportButton.style.marginLeft = '5px';
+const exportКнопка = document.createElement('Кнопка');
+exportКнопка.textContent = '导出甘特图';
+exportКнопка.style.marginLeft = '5px';
 
-const getBase64Button = document.createElement('button');
-getBase64Button.textContent = '获取 Base64';
-getBase64Button.style.marginLeft = '5px';
-getBase64Button.style.backgroundColor = '#e8f4ff';
+const getBase64Кнопка = document.createElement('Кнопка');
+getBase64Кнопка.textContent = '获取 Base64';
+getBase64Кнопка.style.marginLeft = '5px';
+getBase64Кнопка.style.backgroundColor = '#e8f4ff';
 
 const base64Result = document.createElement('div');
 base64Result.style.marginTop = '10px';
 base64Result.style.fontSize = '12px';
-base64Result.style.color = '#666';
-base64Result.style.display = 'none';
-base64Result.style.padding = '5px';
+base64Result.style.цвет = '#666';
+base64Result.style.display = 'никто';
+base64Result.style.заполнение = '5px';
 base64Result.style.backgroundColor = '#f8f8f8';
 base64Result.style.borderRadius = '3px';
-base64Result.style.maxWidth = '100%';
-base64Result.style.overflow = 'hidden';
+base64Result.style.maxширина = '100%';
+base64Result.style.overflow = 'скрытый';
 base64Result.style.textOverflow = 'ellipsis';
 base64Result.style.whiteSpace = 'nowrap';
 
@@ -355,7 +355,7 @@ const infoText = document.createElement('div');
 infoText.innerHTML = '导出功能会直接捕获完整的甘特图和任务列表，即使部分内容在滚动区域外。';
 infoText.style.marginTop = '10px';
 infoText.style.fontSize = '12px';
-infoText.style.color = '#666';
+infoText.style.цвет = '#666';
 
 exportPanel.appendChild(document.createTextNode('格式: '));
 exportPanel.appendChild(formatSelect);
@@ -363,66 +363,66 @@ exportPanel.appendChild(document.createTextNode('缩放: '));
 exportPanel.appendChild(scaleSelect);
 exportPanel.appendChild(document.createTextNode('背景色: '));
 exportPanel.appendChild(bgColorInput);
-exportPanel.appendChild(exportButton);
-exportPanel.appendChild(getBase64Button);
+exportPanel.appendChild(exportКнопка);
+exportPanel.appendChild(getBase64Кнопка);
 exportPanel.appendChild(infoText);
 exportPanel.appendChild(base64Result);
 
-const gantt = new VTableGantt.Gantt(ganttContainer, option);
+const гантт = новый Vтаблицагантт.гантт(ганттContainer, option);
 
-exportButton.onclick = async () => {
+exportКнопка.onНажать = async () => {
   try {
-    exportButton.disabled = true;
-    exportButton.textContent = '导出中...';
+    exportКнопка.отключен = true;
+    exportКнопка.textContent = '导出中...';
     
-    await exportGanttPlugin.exportToImage({
-        fileName: '甘特图导出测试',
-        type: 'png',
-        scale: Number(scaleSelect.value),
-        backgroundColor: bgColorInput.value,
+    await exportганттPlugin.exportToImвозраст({
+        fileимя: '甘特图导出测试',
+        тип: 'png',
+        scale: число(scaleSelect.значение),
+        backgroundColor: bgColorInput.значение,
         quality: 1
     });
 
-    exportButton.textContent = '导出成功！';
+    exportКнопка.textContent = '导出成功！';
     setTimeout(() => {
-        exportButton.disabled = false;
-        exportButton.textContent = '导出甘特图';
+        exportКнопка.отключен = false;
+        exportКнопка.textContent = '导出甘特图';
     }, 2000);
-  } catch (error) {
-    exportButton.textContent = '导出失败';
+  } catch (ошибка) {
+    exportКнопка.textContent = '导出失败';
     setTimeout(() => {
-        exportButton.disabled = false;
-        exportButton.textContent = '导出甘特图';
+        exportКнопка.отключен = false;
+        exportКнопка.textContent = '导出甘特图';
     }, 2000);
   }
 };
 
 
-getBase64Button.onclick = async () => {
+getBase64Кнопка.onНажать = async () => {
   try {
-    getBase64Button.disabled = true;
-    getBase64Button.textContent = '获取中...';
-    base64Result.style.display = 'none';
+    getBase64Кнопка.отключен = true;
+    getBase64Кнопка.textContent = '获取中...';
+    base64Result.style.display = 'никто';
 
-    const base64Data = await exportGanttPlugin.exportToImage({
-      type: 'png',
-      scale: Number(scaleSelect.value),
-      backgroundColor: bgColorInput.value,
+    const base64данные = await exportганттPlugin.exportToImвозраст({
+      тип: 'png',
+      scale: число(scaleSelect.значение),
+      backgroundColor: bgColorInput.значение,
       quality: 1,
       download: false 
     });
 
-    if (base64Data) {
-      const displayText = base64Data.substring(0, 64) + '...';
+    if (base64данные) {
+      const displayText = base64данные.substring(0, 64) + '...';
       base64Result.textContent = displayText;
       base64Result.style.display = 'block';
-      base64Result.title = base64Data;
+      base64Result.title = base64данные;
       
       try {
-        await navigator.clipboard.writeText(base64Data);
-        getBase64Button.textContent = '已复制到剪贴板';
+        await navigator.clipboard.writeText(base64данные);
+        getBase64Кнопка.textContent = '已复制到剪贴板';
       } catch (clipboardError) {
-        getBase64Button.textContent = '获取成功';
+        getBase64Кнопка.textContent = '获取成功';
         console.warn('无法复制到剪贴板:', clipboardError);
       }
       
@@ -430,28 +430,28 @@ getBase64Button.onclick = async () => {
     } else {
       base64Result.textContent = '获取Base64数据失败';
       base64Result.style.display = 'block';
-      getBase64Button.textContent = '获取失败';
+      getBase64Кнопка.textContent = '获取失败';
     }
     
     setTimeout(() => {
-      getBase64Button.disabled = false;
-      if (getBase64Button.textContent === '获取中...' || getBase64Button.textContent === '获取失败' || getBase64Button.textContent === '已复制到剪贴板') {
-        getBase64Button.textContent = '获取 Base64';
+      getBase64Кнопка.отключен = false;
+      if (getBase64Кнопка.textContent === '获取中...' || getBase64Кнопка.textContent === '获取失败' || getBase64Кнопка.textContent === '已复制到剪贴板') {
+        getBase64Кнопка.textContent = '获取 Base64';
       }
     }, 3000);
-  } catch (error) {
-    console.error('获取Base64失败:', error);
-    base64Result.textContent = `获取失败: ${error instanceof Error ? error.message : '未知错误'}`;
+  } catch (ошибка) {
+    console.ошибка('获取Base64失败:', ошибка);
+    base64Result.textContent = `获取失败: ${ошибка instanceof ошибка ? ошибка.messвозраст : '未知错误'}`;
     base64Result.style.display = 'block';
-    getBase64Button.textContent = '获取失败';
+    getBase64Кнопка.textContent = '获取失败';
     
     setTimeout(() => {
-      getBase64Button.disabled = false;
-      getBase64Button.textContent = '获取 Base64';
+      getBase64Кнопка.отключен = false;
+      getBase64Кнопка.textContent = '获取 Base64';
     }, 2000);
   }
 };
 ```
-# This document was contributed by:
+# This document was contributed по:
 
 [Abstract chips](https://github.com/Violet2314)

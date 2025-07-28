@@ -1,58 +1,58 @@
 ---
-category: examples
-group: Business
-title: Trend table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/trend.png
-order: 9-4
+категория: примеры
+группа: Business
+заголовок: Trend таблица
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/trend.png
+порядок: 9-4
 ---
 
-# Trend table
+# Trend таблица
 
-This example analyzes sales data at different time granularities and month-on-month ratios, and uses a mini-line chart to show product sales trends from 2020-2021.
+This пример analyzes Продажи данные в different time granularities и month-на-month ratios, и uses a mini-line график к показать product Продажи trends от 2020-2021.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `indicators[x].icon` Display different icons based on sales value to indicate rise and fall
+- `indicators[x].иконка` Display different иконкаs based на Продажи значение к indicate rise и fall
 
-- `indicators[x].cellType` Set to sparkline to display miniatures
+- `indicators[x].cellType` Set к sparkline к display miniatures
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-function generateLineData1(count) {
-  const lineData = [];
-  for (let i = 0; i < count; i++) {
-    lineData.push({ x: i, y: Math.floor(Math.random() * 500) });
+```javascript liveдемонстрация template=vтаблица
+функция generateLineданные1(count) {
+  const lineданные = [];
+  для (let i = 0; i < count; i++) {
+    lineданные.push({ x: i, y: Math.floor(Math.random() * 500) });
   }
-  return lineData;
+  возврат lineданные;
 }
 
 const option = {
   rowTree: [
     {
-      dimensionKey: 'order_data',
-      value: 'Order Number'
+      dimensionKey: 'order_данные',
+      значение: 'Order число'
     },
     {
-      dimensionKey: 'order_data',
-      value: 'Profit Amount'
+      dimensionKey: 'order_данные',
+      значение: 'Прибыль Amount'
     },
     {
-      dimensionKey: 'order_data',
-      value: 'Sales Amount'
+      dimensionKey: 'order_данные',
+      значение: 'Продажи Amount'
     },
     {
-      dimensionKey: 'order_data',
-      value: 'Transportation Cost'
+      dimensionKey: 'order_данные',
+      значение: 'Transportation Cost'
     }
   ],
   columnTree: [
     {
       dimensionKey: 'time',
-      value: '2020',
+      значение: '2020',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -61,10 +61,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2021',
+      значение: '2021',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -73,10 +73,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2020Q1',
+      значение: '2020Q1',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -85,10 +85,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2020Q2',
+      значение: '2020Q2',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -97,10 +97,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2020Q3',
+      значение: '2020Q3',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -109,10 +109,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2020Q4',
+      значение: '2020Q4',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -121,10 +121,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2021Q1',
+      значение: '2021Q1',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -133,10 +133,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2021Q2',
+      значение: '2021Q2',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -145,10 +145,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2021Q3',
+      значение: '2021Q3',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -157,10 +157,10 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: '2021Q4',
+      значение: '2021Q4',
       children: [
         {
-          indicatorKey: 'data'
+          indicatorKey: 'данные'
         },
         {
           indicatorKey: 'ratio'
@@ -169,468 +169,468 @@ const option = {
     },
     {
       dimensionKey: 'time',
-      value: 'line',
+      значение: 'line',
       children: [
         {
-          indicatorKey: 'lineData',
-          value: 'Trend '
+          indicatorKey: 'lineданные',
+          значение: 'Trend '
         }
       ]
     }
   ],
   rows: [
     {
-      dimensionKey: 'order_data',
-      title: 'Order Data',
+      dimensionKey: 'order_данные',
+      заголовок: 'Order данные',
       headerStyle: {
         textStick: true
       },
-      width: '100',
-      showSort: false
+      ширина: '100',
+      showсортировка: false
     }
   ],
   columns: [
     {
       dimensionKey: 'time',
-      title: 'Quarter',
-      width: '200',
-      showSort: false,
+      заголовок: 'Quarter',
+      ширина: '200',
+      showсортировка: false,
       headerStyle: {
-        textAlign: 'center',
-        borderLineWidth: args => {
+        textAlign: 'центр',
+        borderLineширина: args => {
           const { col, row } = args;
-          const cellHeaderPaths = args.table.getCellHeaderPaths(args.col, args.row);
+          const cellHeaderPaths = args.таблица.getCellHeaderPaths(args.col, args.row);
           if (
-            cellHeaderPaths.colHeaderPaths[0].value === '2020Q1' ||
-            cellHeaderPaths.colHeaderPaths[0].value === '2021Q1' ||
-            cellHeaderPaths.colHeaderPaths[0].value === 'line'
+            cellHeaderPaths.colHeaderPaths[0].значение === '2020Q1' ||
+            cellHeaderPaths.colHeaderPaths[0].значение === '2021Q1' ||
+            cellHeaderPaths.colHeaderPaths[0].значение === 'line'
           )
-            return [0, 0, 0, 1];
-          return [0, 0, 0, 0];
+            возврат [0, 0, 0, 1];
+          возврат [0, 0, 0, 0];
         }
       }
     },
     {
       dimensionKey: 'year',
-      title: 'Year',
-      width: '200',
-      showSort: false,
+      заголовок: 'Year',
+      ширина: '200',
+      showсортировка: false,
       headerStyle: {
-        textAlign: 'center'
+        textAlign: 'центр'
       }
     }
   ],
   indicators: [
     {
-      indicatorKey: 'data',
-      value: 'Data',
-      width: 'auto',
+      indicatorKey: 'данные',
+      значение: 'данные',
+      ширина: 'авто',
       style: {
-        textAlign: 'right',
-        borderLineWidth: args => {
-          const cellHeaderPaths = args.table.getCellHeaderPaths(args.col, args.row);
+        textAlign: 'право',
+        borderLineширина: args => {
+          const cellHeaderPaths = args.таблица.getCellHeaderPaths(args.col, args.row);
           if (
-            cellHeaderPaths.colHeaderPaths[0].value === '2020Q1' ||
-            cellHeaderPaths.colHeaderPaths[0].value === '2021Q1'
+            cellHeaderPaths.colHeaderPaths[0].значение === '2020Q1' ||
+            cellHeaderPaths.colHeaderPaths[0].значение === '2021Q1'
           )
-            return [0, 0, 0, 1];
-          return [0, 0, 0, 0];
+            возврат [0, 0, 0, 1];
+          возврат [0, 0, 0, 0];
         },
-        padding: [8, 5, 8, 20]
+        заполнение: [8, 5, 8, 20]
       }
     },
     {
       indicatorKey: 'ratio',
-      title: '环比',
-      width: 'auto',
-      format: value => {
-        if (value) return value * 100 + '%';
-        return '-';
+      заголовок: '环比',
+      ширина: 'авто',
+      format: значение => {
+        if (значение) возврат значение * 100 + '%';
+        возврат '-';
       },
-      icon: args => {
-        const { dataValue } = args;
-        if (dataValue > 0) {
-          return {
-            type: 'svg',
-            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/up-arrow.svg',
-            width: 12,
-            height: 12,
-            name: 'up-green',
-            positionType: VTable.TYPES.IconPosition.inlineEnd
+      иконка: args => {
+        const { данныеValue } = args;
+        if (данныеValue > 0) {
+          возврат {
+            тип: 'svg',
+            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/up-arrow.svg',
+            ширина: 12,
+            высота: 12,
+            имя: 'up-green',
+            positionType: Vтаблица.TYPES.иконкаPosition.inlineEnd
           };
-        } else if (dataValue < 0)
-          return {
-            type: 'svg',
-            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/down-arrow.svg',
-            width: 14,
-            height: 14,
-            name: 'down-red',
-            positionType: VTable.TYPES.IconPosition.inlineEnd
+        } else if (данныеValue < 0)
+          возврат {
+            тип: 'svg',
+            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/down-arrow.svg',
+            ширина: 14,
+            высота: 14,
+            имя: 'down-red',
+            positionType: Vтаблица.TYPES.иконкаPosition.inlineEnd
           };
-        return '';
+        возврат '';
       },
       style: {
-        textAlign: 'left',
-        borderLineWidth: [0, 0, 0, 0],
-        padding: [8, 20, 8, 5],
-        color: args => {
-          const { dataValue } = args;
-          if (dataValue > 0) return 'green';
-          return 'red';
+        textAlign: 'лево',
+        borderLineширина: [0, 0, 0, 0],
+        заполнение: [8, 20, 8, 5],
+        цвет: args => {
+          const { данныеValue } = args;
+          if (данныеValue > 0) возврат 'green';
+          возврат 'red';
         }
       }
     },
     {
-      indicatorKey: 'lineData',
-      title: 'Trend ',
-      width: '300',
+      indicatorKey: 'lineданные',
+      заголовок: 'Trend ',
+      ширина: '300',
       cellType: 'sparkline',
       sparklineSpec: {
-        type: 'line',
-        xField: 'x',
-        yField: 'y',
-        pointShowRule: 'none',
+        тип: 'line',
+        xполе: 'x',
+        yполе: 'y',
+        pointShowRule: 'никто',
         smooth: true,
         line: {
           style: {
-            stroke: '#2E62F1',
-            strokeWidth: 2
+            strхорошоe: '#2E62F1',
+            strхорошоeширина: 2
             // interpolate: 'monotone',
           }
         },
         point: {
-          hover: {
-            stroke: 'blue',
-            strokeWidth: 1,
+          навести: {
+            strхорошоe: 'blue',
+            strхорошоeширина: 1,
             fill: 'red',
             shape: 'circle',
-            size: 4
+            размер: 4
           },
           style: {
-            stroke: 'red',
-            strokeWidth: 1,
+            strхорошоe: 'red',
+            strхорошоeширина: 1,
             fill: 'yellow',
             shape: 'circle',
-            size: 2
+            размер: 2
           }
         },
         crosshair: {
           style: {
-            stroke: 'gray',
-            strokeWidth: 1
+            strхорошоe: 'gray',
+            strхорошоeширина: 1
           }
         }
       },
       style: {
-        textAlign: 'left',
-        borderLineWidth: [0, 1, 0, 1],
-        padding: [8, 0, 8, 5]
+        textAlign: 'лево',
+        borderLineширина: [0, 1, 0, 1],
+        заполнение: [8, 0, 8, 5]
       }
     }
   ],
   corner: {
-    titleOnDimension: 'none',
+    titleOnDimension: 'никто',
     headerStyle: {
-      color: 'red'
+      цвет: 'red'
     }
   },
   showColumnHeader: true,
   showRowHeader: true,
-  hideIndicatorName: true,
+  hideIndicatorимя: true,
   records: [
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2020',
-      data: 12304,
+      данные: 12304,
       ratio: 0.11
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2020',
-      data: 102504,
+      данные: 102504,
       ratio: 0.11
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2020',
-      data: 202504,
+      данные: 202504,
       ratio: 0.11
     },
     {
-      order_data: 'transportation Cost',
+      order_данные: 'transportation Cost',
       time: '2020',
-      data: 6504,
+      данные: 6504,
       ratio: 0.11
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2021',
-      data: 19304,
+      данные: 19304,
       ratio: -0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2021',
-      data: 302504,
+      данные: 302504,
       ratio: -0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2020',
-      data: 302504,
+      данные: 302504,
       ratio: 0.11
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2021',
-      data: 9504,
+      данные: 9504,
       ratio: -0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2020Q1',
-      data: 2304
+      данные: 2304
       // "ratio":0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2020Q2',
-      data: 2504,
+      данные: 2504,
       ratio: 0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2020Q3',
-      data: 2904,
+      данные: 2904,
       ratio: 0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2020Q4',
-      data: 2704,
+      данные: 2704,
       ratio: -0.08
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2021Q1',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2021Q2',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2021Q3',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: '2021Q4',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2020Q1',
-      data: 2304
+      данные: 2304
       // "ratio":0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2020Q2',
-      data: 2504,
+      данные: 2504,
       ratio: 0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2020Q3',
-      data: 2904,
+      данные: 2904,
       ratio: 0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2020Q4',
-      data: 2704,
+      данные: 2704,
       ratio: -0.08
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2021Q1',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2021Q2',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2021Q3',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: '2021Q4',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2020Q1',
-      data: 2304
+      данные: 2304
       // "ratio":0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2020Q2',
-      data: 2504,
+      данные: 2504,
       ratio: 0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2020Q3',
-      data: 2904,
+      данные: 2904,
       ratio: 0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2020Q4',
-      data: 2704,
+      данные: 2704,
       ratio: -0.08
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2021Q1',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2021Q2',
-      data: 5304,
+      данные: 5304,
       ratio: 0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2021Q3',
-      data: 3304,
+      данные: 3304,
       ratio: 0.12
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: '2021Q4',
-      data: 3304,
+      данные: 3304,
       ratio: 0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2020Q1',
-      data: 2304
+      данные: 2304
       // "ratio":0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2020Q2',
-      data: 2504,
+      данные: 2504,
       ratio: 0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2020Q3',
-      data: 2904,
+      данные: 2904,
       ratio: 0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2020Q4',
-      data: 2704,
+      данные: 2704,
       ratio: -0.08
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2021Q1',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2021Q2',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2021Q3',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: '2021Q4',
-      data: 2304,
+      данные: 2304,
       ratio: 0.12
     },
     {
-      order_data: 'Order Number',
+      order_данные: 'Order число',
       time: 'line',
-      lineData: generateLineData1(30)
+      lineданные: generateLineданные1(30)
     },
     {
-      order_data: 'Profit Amount',
+      order_данные: 'Прибыль Amount',
       time: 'line',
-      lineData: generateLineData1(30)
+      lineданные: generateLineданные1(30)
     },
     {
-      order_data: 'Sales Amount',
+      order_данные: 'Продажи Amount',
       time: 'line',
-      lineData: generateLineData1(30)
+      lineданные: generateLineданные1(30)
     },
     {
-      order_data: 'Transportation Cost',
+      order_данные: 'Transportation Cost',
       time: 'line',
-      lineData: generateLineData1(30)
+      lineданные: generateLineданные1(30)
     }
   ],
-  theme: {
+  тема: {
     headerStyle: {
       frameStyle: {
         borderColor: 'green',
-        borderLineWidth: [0, 0, 2, 0]
+        borderLineширина: [0, 0, 2, 0]
       },
-      borderLineWidth: [0, 1, 0, 1]
+      borderLineширина: [0, 1, 0, 1]
     },
     rowHeaderStyle: {
-      borderLineWidth: 0,
+      borderLineширина: 0,
       frameStyle: {
         borderColor: 'red',
-        borderLineWidth: [0, 2, 0, 0]
+        borderLineширина: [0, 2, 0, 0]
       }
     },
     cornerHeaderStyle: {
       frameStyle: {
         borderColor: [null, 'red', 'green', null],
-        borderLineWidth: [0, 2, 2, 0]
+        borderLineширина: [0, 2, 2, 0]
       },
       borderColor: [null, null, null, null]
     }
   },
-  defaultColWidth: 200,
-  resize: {
+  defaultColширина: 200,
+  изменение размера: {
     columnResizeType: 'indicatorGroup'
   }
 };
-const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
 ## Related Tutorials
 
-[performance optimization](link)
+[Производительность optimization](link)

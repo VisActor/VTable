@@ -1,50 +1,50 @@
-{{ target: common-theme-style }}
+{{ target: common-тема-style }}
 
 {{ use: common-style(
   prefix = ${prefix},
 ) }}
 
-#${prefix} hover(Object)
+#${prefix} навести(объект)
 
 Effects when hovering over a cell
 
 ##${prefix} cellBgColor(ColorPropertyDefine)
-Background color of the cell in the interaction
-{{ use: common-color(
+фон цвет из the cell в the interaction
+{{ use: common-цвет(
   prefix = ${prefix}
   ) }}
 
 ##${prefix} inlineRowBgColor(ColorPropertyDefine)
-Background color of the entire row in the interaction
-{{ use: common-color(
+фон цвет из the entire row в the interaction
+{{ use: common-цвет(
   prefix = ${prefix}
   ) }}
 
 ##${prefix} inlineColumnBgColor(ColorPropertyDefine)
-Background color of the entire column in the interaction
-{{ use: common-color(
+фон цвет из the entire column в the interaction
+{{ use: common-цвет(
   prefix = ${prefix}
   ) }}
 
-#${prefix} select(Object)
+#${prefix} выбрать(объект)
 
-Select highlight style
+выбрать highlight style
 
 ##${prefix} inlineRowBgColor(ColorPropertyDefine)
-The highlight color of the entire row when selected
-{{ use: common-color(
+The highlight цвет из the entire row when selected
+{{ use: common-цвет(
 prefix = ${prefix}
 ) }}
 
 ##${prefix} inlineColumnBgColor(ColorPropertyDefine)
-The highlight color of the entire column when selected
-{{ use: common-color(
+The highlight цвет из the entire column when selected
+{{ use: common-цвет(
 prefix = ${prefix}
 ) }}
 
 #${prefix} frameStyle(FrameStyle)
 
-Outer border style of the current section, such as the overall outer border of the body or the overall outer border of the header
+Outer граница style из the текущий section, such as the overall outer граница из the body или the overall outer граница из the header
 
 {{ use: common-frame-style(
   prefix = '#'+${prefix}

@@ -1,23 +1,23 @@
-# Custom interactive components
+# пользовательский interactive компонентs
 
-Custom primitives in custom rendering and custom layout can use the components provided by `VRender`. Currently, the following components are supported:
+пользовательский primitives в пользовательский rendering и пользовательский макет can use the компонентs provided по `VRender`. Currently, Следующий компонентs are supported:
 
-## TextAutoPoptip
+## TextавтоPoptip
 
-The `TextAutoPoptip` component is an interactive component provided by `VRender`. Its function is that when the text is too long and is omitted, hover over the text and a poptip will automatically pop up to display the entire content of the text.
+The `TextавтоPoptip` компонент is an interactive компонент provided по `VRender`. Its функция is that when the текст is too long и is omitted, навести over the текст и a poptip will автоmatically pop up к display the entire content из the текст.
 
-``` javascript livedemo  template=vtable
-// only use for website
+``` javascript liveдемонстрация  template=vтаблица
+// only use для website
 const {createGroup, createText} = VRender;
-// use this for project
-// import {createGroup, createText} from '@visactor/vtable/es/vrender';
+// use this для project
+// import {createGroup, createText} от '@visactor/vтаблица/es/vrender';
 
   const option = {
     columns:[
       {
-        field: 'type',
-        title:'',
-        width:170,
+        поле: 'тип',
+        заголовок:'',
+        ширина:170,
         headerStyle:{
           bgColor:'#4991e3'
         },
@@ -26,67 +26,67 @@ const {createGroup, createText} = VRender;
           fontWeight:600,
           bgColor:'#4991e3',
           fontSize:26,
-          padding:20,
-          lineHeight:32,
-          color:'white'
+          заполнение:20,
+          lineвысота:32,
+          цвет:'white'
         },
       }, 
       {
-        field: 'urgency',
-        title:'urgency',
-        width:400,
+        поле: 'urgency',
+        заголовок:'urgency',
+        ширина:400,
         headerStyle:{
-          lineHeight:50,
+          lineвысота:50,
           fontSize:26,
           fontWeight:600,
           bgColor:'#4991e3',
-          color:'white',
-          textAlign:'center'
+          цвет:'white',
+          textAlign:'центр'
         },
-      customLayout(args){
-        const { width, height}= args.rect;
-        const {dataValue,table,row } =args;
+      пользовательскиймакет(args){
+        const { ширина, высота}= args.rect;
+        const {данныеValue,таблица,row } =args;
         const elements=[];
-        let top=30;
-        const left=15;
+        let верх=30;
+        const лево=15;
 
         const container = createGroup({
-          height,
-          width,
+          высота,
+          ширина,
           display: 'flex',
           flexDirection: 'row',
-          alignContent: 'center',
-          alignItems: 'center',
+          alignContent: 'центр',
+          alignItems: 'центр',
           justifyContent: 'space-around',
         });
 
-        const text = createText({
+        const текст = createText({
           fill: '#000',
           fontSize: 20,
           fontWeight: 500, 
-          textBaseline: 'top',
-          text: row===1? 'important but not urgency':'not important and not urgency',
+          textBaseline: 'верх',
+          текст: row===1? 'important but не urgency':'не important и не urgency',
 
-          maxLineWidth: 200,
+          maxLineширина: 200,
           pickable: true
         });
 
-        container.add(text);
+        container.add(текст);
         
-        return {
+        возврат {
           rootContainer: container,
         }
       }
     },
     {
-      field: 'not_urgency',
-      title:'not urgency',
-      width:400,
+      поле: 'not_urgency',
+      заголовок:'не urgency',
+      ширина:400,
       headerStyle:{
-          lineHeight:50,
+          lineвысота:50,
           bgColor:'#4991e3',
-          color:'white',
-          textAlign:'center',
+          цвет:'white',
+          textAlign:'центр',
           fontSize:26,
           fontWeight:600,
       },
@@ -95,85 +95,85 @@ const {createGroup, createText} = VRender;
         fontSize:12,
         fontWeight:'bold'
       },
-      customRender(args){
+      пользовательскийRender(args){
         console.log(args);
-        const { width, height}= args.rect;
-        const {dataValue,table,row} =args;
+        const { ширина, высота}= args.rect;
+        const {данныеValue,таблица,row} =args;
         const elements=[];
-        let top=30;
-        const left=15;
-        let maxWidth=0;
+        let верх=30;
+        const лево=15;
+        let maxширина=0;
 
         elements.push({
-          type: 'text',
+          тип: 'текст',
           fill: '#000',
           fontSize: 20,
           fontWeight: 500, 
-          textBaseline: 'middle',
-          text: row===1? 'important but not urgency':'not important and not urgency',
-          x: left+50,
-          y: top-5,
+          textBaseline: 'середина',
+          текст: row===1? 'important but не urgency':'не important и не urgency',
+          x: лево+50,
+          y: верх-5,
 
-          maxLineWidth: 200,
+          maxLineширина: 200,
           pickable: true
         });
         
-        return {
+        возврат {
           elements,
-          expectedHeight:top+20,
-          expectedWidth: 100,
+          expectedвысота:верх+20,
+          expectedширина: 100,
         }
       }
     }, 
     ],
     records:[
       {
-        'type': 'important',
+        'тип': 'important',
         "urgency": ['crisis','urgent problem','tasks that must be completed within a limited time'],
-        "not_urgency": ['preventive measures','development relationship','identify new development opportunities','establish long-term goals'],
+        "not_urgency": ['prсобытиеive measures','development relationship','identify новый development opportunities','establish long-term goals'],
       },
       {
-        'type': 'Not\nimportant',
+        'тип': 'не\nimportant',
         "urgency": ['Receive visitors','Certain calls, reports, letters, etc','Urgent matters','Public activities'],
-        "not_urgency": ['Trivial busy work','Some letters','Some phone calls','Time-killing activities','Some pleasant activities'],
+        "not_urgency": ['Trivial busy work','некоторые letters','некоторые phone calls','Time-killing activities','некоторые pleasant activities'],
       },
     ],
-    defaultRowHeight:80,
-    heightMode:'autoHeight',
-    widthMode:'standard',
-    autoWrapText:true,
-    theme: VTable.themes.DEFAULT.extends({
+    defaultRowвысота:80,
+    высотаMode:'автовысота',
+    ширинаMode:'standard',
+    автоWrapText:true,
+    тема: Vтаблица.темаs.по умолчанию.extends({
       textPopTipStyle: {
-        // title: 'title'
+        // заголовок: 'title'
       }
     })
   };
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 ```
 
-To use the `TextAutoPoptip` component, you need to configure the corresponding `text` primitive with `pickable: true` to enable interaction. At this time, the `TextAutoPoptip` component will automatically start when the `text` primitive is omitted by the `maxLineWidth` attribute. If you want to disable component retention interaction, you need to configure the `disableAutoClipedPoptip` attribute on the `text` primitive to `true`.
+к use the `TextавтоPoptip` компонент, you need к configure the corresponding `текст` primitive с `pickable: true` к включить interaction. в this time, the `TextавтоPoptip` компонент will автоmatically начало when the `текст` primitive is omitted по the `maxLineширина` attribute. If you want к отключить компонент retention interaction, you need к configure the `disableавтоClipedPoptip` attribute на the `текст` primitive к `true`.
 
-The `poptip` style popped up by the `TextAutoPoptip` component can be configured in `theme.textPopTipStyle`. Some common properties are as follows:
+The `poptip` style popped up по the `TextавтоPoptip` компонент can be configured в `тема.textPopTipStyle`. некоторые common свойства are as follows:
 
-| Name | Type | Description |
+| имя | тип | Description |
 | :-----| :---- | :---- |
-|position|'auto' \| 'top' \| 'tl' \| 'tr' \| 'bottom' \| 'bl' \| 'br' \| 'left' \| 'lt' \| 'lb ' \| 'right' \| 'rt' \| 'rb'|`poptip` is displayed relative to the position of the primitive|
-|title|string \| string[] \| number \| number[]|The content of `title` in `poptip`|
-|titleStyle|Partial\<ITextGraphicAttribute\>|The style of the `title` content in `poptip`|
-|titleFormatMethod|(t: string \| string[] \| number \| number[]) => string \| string[] \| number \| number[]|format method for `title` content in `poptip`|
-|content|string \| string[] \| number \| number[]|The content of `content` in `poptip`, the default is the complete string|
-|contentStyle|Partial<ITextGraphicAttribute>|The style of the `content` content in `poptip`|
-|contentFormatMethod|(t: string \| string[] \| number \| number[]) => string \| string[] \| number \| number[]|The format method of `content` in `poptip`|
-|space|number|Distance between `title` and `content`|
-|padding|Padding|padding in `poptip`|
-|panel|BackgroundAttributes & ISymbolGraphicAttribute & {space?:number;}|Background style in `poptip`|
-|minWidth|number|Maximum width in `poptip`|
-|maxWidth|number|The minimum width in `poptip`|
-|maxWidthPercent|number|Maximum width percentage in `poptip`|
-|visible|boolean|whether `poptip` is visible|
-|visibleFunc|(graphic: IGraphic) => boolean|whether `poptip` is visible function|
-|dx|number|`poptip`x-direction offset|
-|dy|number|`poptip`y direction offset|
+|позиция|'авто' \| 'верх' \| 'tl' \| 'tr' \| 'низ' \| 'bl' \| 'br' \| 'лево' \| 'lt' \| 'lb ' \| 'право' \| 'rt' \| 'rb'|`poptip` is displayed relative к the позиция из the primitive|
+|title|строка \| строка[] \| число \| число[]|The content из `title` в `poptip`|
+|titleStyle|Partial\<ITextGraphicAttribute\>|The style из the `title` content в `poptip`|
+|titleFormatMethod|(t: строка \| строка[] \| число \| число[]) => строка \| строка[] \| число \| число[]|format method для `title` content в `poptip`|
+|content|строка \| строка[] \| число \| число[]|The content из `content` в `poptip`, the по умолчанию is the complete строка|
+|contentStyle|Partial<ITextGraphicAttribute>|The style из the `content` content в `poptip`|
+|contentFormatMethod|(t: строка \| строка[] \| число \| число[]) => строка \| строка[] \| число \| число[]|The format method из `content` в `poptip`|
+|space|число|Distance between `title` и `content`|
+|заполнение|заполнение|заполнение в `poptip`|
+|panel|BackgroundAttributes & ISymbolGraphicAttribute & {space?:число;}|фон style в `poptip`|
+|minширина|число|Maximum ширина в `poptip`|
+|maxширина|число|The minimum ширина в `poptip`|
+|maxширинаPercent|число|Maximum ширина percentвозраст в `poptip`|
+|видимый|логический|whether `poptip` is видимый|
+|visibleFunc|(graphic: IGraphic) => логический|whether `poptip` is видимый функция|
+|dx|число|`poptip`x-direction offset|
+|dy|число|`poptip`y direction offset|
 
 <!-- |state|StateStyle|discription| -->

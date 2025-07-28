@@ -1,33 +1,33 @@
 ---
-title: VTable usage issue: How to add column total information to the list</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к add column total information к the список</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to add column total information to the list</br>
+How к add column total information к the список</br>
 
 
 ## Problem description
 
-In the list, you hope to display the total information of a column, such as sum, average, etc.</br>
+в the список, you hope к display the total information из a column, such as sum, averвозраст, etc.</br>
 
 
 ## Solution
 
-VTable provides `aggregation `configuration for configuring data aggregation rules and display positions in the table. You can configure `aggregation `to specify global rules for aggregation in options, or configure `aggregation `to specify aggregation rules for each column. The following properties need to be configured in `aggregation `:</br>
+Vтаблица provides `aggregation `configuration для configuring данные aggregation rules и display positions в the таблица. Вы можете configure `aggregation `к specify global rules для aggregation в options, или configure `aggregation `к specify aggregation rules для каждый column. Следующий свойства need к be configured в `aggregation `:</br>
 *  aggregationType: </br>
-*  Sum, set `aggregationType `to `AggregationType. SUM`</br>
-*  Average, set `aggregationType `to `AggregationType. AVG`</br>
-*  Maximum value, set `aggregationType `to `AggregationType. MAX`</br>
-*  Minimum, set `aggregationType `to `AggregationType. MIN`</br>
-*  Count, set `aggregationType `to `AggregationType. COUNT`</br>
-*  Custom function, set `aggregationType `to `AggregationType. CUSTOM `, set custom aggregation logic through `aggregationFun `</br>
-*  aggregationFun: Custom aggregation logic when `aggregationType is AggregationType. CUSTOM `</br>
-*  showOnTop: Controls the display position of the aggregated results. The default is `false `, which means the aggregated results are displayed at the bottom of the body. If set to `true `, the aggregated results are displayed at the top of the body.</br>
-*  FormatFun: Set the formatting function of aggregate values, and customize the display format of aggregate values.</br>
+*  Sum, set `aggregationType `к `AggregationType. SUM`</br>
+*  Averвозраст, set `aggregationType `к `AggregationType. AVG`</br>
+*  Maximum значение, set `aggregationType `к `AggregationType. MAX`</br>
+*  Minimum, set `aggregationType `к `AggregationType. MIN`</br>
+*  Count, set `aggregationType `к `AggregationType. COUNT`</br>
+*  пользовательский функция, set `aggregationType `к `AggregationType. пользовательский `, set пользовательский aggregation logic through `aggregationFun `</br>
+*  aggregationFun: пользовательский aggregation logic when `aggregationType is AggregationType. пользовательский `</br>
+*  showOnTop: Controls the display позиция из the aggregated results. The по умолчанию is `false `, which means the aggregated results are displayed в the низ из the body. If set к `true `, the aggregated results are displayed в the верх из the body.</br>
+*  FormatFun: Set the formatting функция из aggregate values, и пользовательскийize the display format из aggregate values.</br>
 
 
-## Code example
+## код пример
 
 ```
 const options = {
@@ -36,10 +36,10 @@ const options = {
       {
         aggregation: [
           {
-            aggregationType: VTable.TYPES.AggregationType.MAX,
+            aggregationType: Vтаблица.TYPES.AggregationType.MAX,
             // showOnTop: true,
-            formatFun(value) {
-              return '最高薪资:' + Math.round(value) + '元';
+            formatFun(значение) {
+              возврат '最高薪资:' + Math.round(значение) + '元';
             }
           }
         ]
@@ -50,16 +50,16 @@ const options = {
 ```
 
 
-## Results show
+## Results показать
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VN6mb0xWNoVFvMxpCSPcjpBhndf.gif' alt='' width='1690' height='1064'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VN6mb0xWNoVFvMxpCSPcjpBhndf.gif' alt='' ширина='1690' высота='1064'>
 
-Example code: https://www.visactor.io/vtable/demo/list-table-data-analysis/list-table-aggregation-multiple</br>
+пример код: https://www.visactor.io/vтаблица/демонстрация/список-таблица-данные-analysis/список-таблица-aggregation-multiple</br>
 ## Related Documents
 
-Basic Table Data Analysis Tutorial: https://www.visactor.io/vtable/guide/data_analysis/list_table_dataAnalysis</br>
-Related api: https://www.visactor.io/vtable/option/ListTable#aggregation</br>
-github：https://github.com/VisActor/VTable</br>
+базовый таблица данные Analysis Tutorial: https://www.visactor.io/vтаблица/guide/данные_analysis/список_таблица_данныеAnalysis</br>
+Related апи: https://www.visactor.io/vтаблица/option/списоктаблица#aggregation</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

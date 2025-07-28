@@ -1,51 +1,51 @@
-{{ target: base-cell-type }}
+{{ target: base-cell-тип }}
 
-${prefix} headerType(string) = 'text'
+${prefix} headerType(строка) = 'текст'
 
-Specify header type, optional: `'text'|'link'|'image'|'video'|'checkbox'`, default `'text'`.
+Specify header тип, необязательный: `'текст'|'link'|'imвозраст'|'video'|'флажок'`, по умолчанию `'текст'`.
 
-${prefix} field(string)
+${prefix} поле(строка)
 
-**Required** Specify the header field, corresponding to the data source attribute
+**обязательный** Specify the header поле, corresponding к the данные source attribute
 
-${prefix} fieldFormat(FieldFormat)
+${prefix} полеFormat(полеFormat)
 
-Configure data formatting
+Configure данные formatting
 
 ```
-type FieldFormat = (record: any) => any;
+тип полеFormat = (record: любой) => любой;
 ```
 
-${prefix} width(number|string)
+${prefix} ширина(число|строка)
 
-Specifies the column width, which can be a specific value, 'auto', or a percentage like '20%'.
-If 'auto' is specified, the column width will be automatically adjusted according to the length of the entire column text;
-If a percentage is specified, the current column width will be adjusted according to the total table width;
+Specifies the column ширина, which can be a specific значение, 'авто', или a percentвозраст like '20%'.
+If 'авто' is specified, the column ширина will be автоmatically adjusted according к the length из the entire column текст;
+If a percentвозраст is specified, the текущий column ширина will be adjusted according к the total таблица ширина;
 
-${prefix} maxWidth(number|string)
+${prefix} maxширина(число|строка)
 
-Limit the maximum column width of this column
+Limit the maximum column ширина из this column
 
-${prefix} minWidth(number|string)
+${prefix} minширина(число|строка)
 
-Limit the minimum column width of this column
+Limit the minimum column ширина из this column
 
-${prefix} title(string)
+${prefix} title(строка)
 
-Header name
+Header имя
 
-${prefix} headerStyle(IStyleOption|Function)
+${prefix} headerStyle(IStyleOption|функция)
 
-Header cell style, configuration options are slightly different depending on the headerType. The configuration options for each headerStyle can be referred to:
+Header cell style, configuration options are slightly different depending на the headerType. The configuration options для каждый headerStyle can be referred к:
 
-- When headerType is 'text', it corresponds to [headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
-- When headerType is 'link', it corresponds to [headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
-- When headerType is 'image', it corresponds to [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
-- When headerType is 'video', it corresponds to [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- When headerType is 'текст', it corresponds к [headerStyle](../option/сводныйтаблица-columns-текст#headerStyle.bgColor)
+- When headerType is 'link', it corresponds к [headerStyle](../option/сводныйтаблица-columns-link#headerStyle.bgColor)
+- When headerType is 'imвозраст', it corresponds к [headerStyle](../option/сводныйтаблица-columns-imвозраст#headerStyle.bgColor)
+- When headerType is 'video', it corresponds к [headerStyle](../option/сводныйтаблица-columns-imвозраст#headerStyle.bgColor)
 
 ${prefix} style
 
-Body cell style, type declaration:
+Body cell style, тип declaration:
 
 ```
 style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
@@ -53,162 +53,162 @@ style?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => IStyleOption);
 
 {{ use: common-StylePropertyFunctionArg() }}
 
-The type structure of IStyleOption is as follows:
+The тип structure из IStyleOption is as follows:
 
 {{ use: common-style(
   prefix = ${prefix},
-  isImage = ${isImage},
+  isImвозраст = ${isImвозраст},
   isProgressbar = ${isProgressbar},
   isCheckbox = ${isCheckbox},
   isRadio = ${isRadio},
   isSwitch = ${isSwitch},
-  isButton = ${isButton},
+  isКнопка = ${isКнопка},
 ) }}
 
-${prefix} headerIcon(string|Object|Array)
+${prefix} headerиконка(строка|объект|массив)
 
-Header cell icon configuration. Available configuration types are:
-
-```
-string | ColumnIconOption | (string | ColumnIconOption)[];
-```
-
-For the specific configuration of ColumnIconOption, refer to the [definition](./ListTable-columns-text#icon.ColumnIconOption)
-
-${prefix} icon(string|Object|Array|Funciton)
-
-Body cell icon configuration.
+Header cell иконка configuration. доступный configuration types are:
 
 ```
-icon?:
-    | string
-    | ColumnIconOption
-    | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[];
 ```
 
-#${prefix} ColumnIconOption
+для the specific configuration из ColumnиконкаOption, refer к the [definition](./списоктаблица-columns-текст#иконка.ColumnиконкаOption)
+
+${prefix} иконка(строка|объект|массив|Funciton)
+
+Body cell иконка configuration.
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
+иконка?:
+    | строка
+    | ColumnиконкаOption
+    | (строка | ColumnиконкаOption)[]
+    | ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
 ```
 
-#${prefix} ImageIcon(Object)
-type is set to 'image'. The image address needs to be set in src
-{{ use: image-icon(  prefix = '##' + ${prefix}) }}
-
-#${prefix} SvgIcon(Object)
-type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
-{{ use: svg-icon(  prefix = '##' + ${prefix}) }}
-
-#${prefix} TextIcon(Object)
-type is set to 'text'. You need to configure the text content in content
-{{ use: text-icon(  prefix = '##' + ${prefix}) }}
-
-${prefix} sort(boolean|Function)
-
-Whether to support sorting, or define a function to specify sorting rules
-
-${prefix} showSort(boolean)
-
-Whether to display the sort icon, no real sorting logic. If the sort field is set, this can be omitted
-
-${prefix} disableHover(boolean)
-This column does not support hover interaction behavior
-
-${prefix} disableSelect(boolean | ((col: number, row: number, table: BaseTableAPI) => boolean))
-This column does not support selection
-
-${prefix} disableHeaderHover(boolean)
-This header column does not support hover interaction behavior
-
-${prefix} disableHeaderSelect(boolean)
-This header column does not support selection
-
-${prefix} description(string)
-The description of the header when hover, which will be displayed in the form of a tooltip
-
-${prefix} dropDownMenu(MenuListItem[])
-The drop-down menu item configuration. The drop-down menu item can be a first-level menu item or a second-level menu item, as long as there is a configuration.
-
-具体类型为 `MenuListItem[]`。
-
-{{ use: common-menu-list-item() }}
-
-${prefix} headerCustomRender(Function|Object)
-
-Custom rendering of header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
-
-[demo link](../demo/custom-render/custom-render) [tutorial link](../guide/custom_define/custom_render)
-
-The definition of ICustomRenderFuc is:
+#${prefix} ColumnиконкаOption
 
 ```
- type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+тип ColumnиконкаOption = Imвозрастиконка | Svgиконка | Textиконка;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+#${prefix} Imвозрастиконка(объект)
+тип is set к 'imвозраст'. The imвозраст address needs к be set в src
+{{ use: imвозраст-иконка(  prefix = '##' + ${prefix}) }}
 
-{{ use: common-custom-render-object(
+#${prefix} Svgиконка(объект)
+тип is set к 'svg'. You need к configure the svg address или the complete svg file строка в svg
+{{ use: svg-иконка(  prefix = '##' + ${prefix}) }}
+
+#${prefix} Textиконка(объект)
+тип is set к 'текст'. You need к configure the текст content в content
+{{ use: текст-иконка(  prefix = '##' + ${prefix}) }}
+
+${prefix} сортировка(логический|функция)
+
+Whether к support сортировкаing, или define a функция к specify сортировкаing rules
+
+${prefix} showсортировка(логический)
+
+Whether к display the сортировка иконка, no real сортировкаing logic. If the сортировка поле is set, this can be omitted
+
+${prefix} disableHover(логический)
+This column does не support навести interaction behavior
+
+${prefix} disableSelect(логический | ((col: число, row: число, таблица: Baseтаблицаапи) => логический))
+This column does не support selection
+
+${prefix} disableHeaderHover(логический)
+This header column does не support навести interaction behavior
+
+${prefix} disableHeaderSelect(логический)
+This header column does не support selection
+
+${prefix} description(строка)
+The description из the header when навести, which will be displayed в the form из a Подсказка
+
+${prefix} dropDownменю(менюсписокItem[])
+The отпускание-down меню item configuration. The отпускание-down меню item can be a первый-level меню item или a second-level меню item, as long as there is a configuration.
+
+具体类型为 `менюсписокItem[]`。
+
+{{ use: common-меню-список-item() }}
+
+${prefix} headerпользовательскийRender(функция|объект)
+
+пользовательский rendering из header cell, в функция или объект form. The тип is: `IпользовательскийRenderFuc | IпользовательскийRenderObj`.
+
+[демонстрация link](../демонстрация/пользовательский-render/пользовательский-render) [tutorial link](../guide/пользовательский_define/пользовательский_render)
+
+The definition из IпользовательскийRenderFuc is:
+
+```
+ тип IпользовательскийRenderFuc = (args: пользовательскийRenderFunctionArg) => IпользовательскийRenderObj;
+```
+
+{{ use: common-пользовательскийRenderFunctionArg() }}
+
+{{ use: common-пользовательский-render-объект(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} headerCustomLayout(Function)
+${prefix} headerпользовательскиймакет(функция)
 
-Custom layout element definition for header cell, suitable for complex layout cell content.
+пользовательский макет element definition для header cell, suiтаблица для complex макет cell content.
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: custom-layout(
+{{ use: пользовательский-макет(
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} customRender(Function|Object)
-Custom rendering for body cell header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
+${prefix} пользовательскийRender(функция|объект)
+пользовательский rendering для body cell header cell, в функция или объект form. The тип is: `IпользовательскийRenderFuc | IпользовательскийRenderObj`.
 
-[demo link](../demo/custom-render/custom-render) [tutorial link](../guide/custom_define/custom_render)
+[демонстрация link](../демонстрация/пользовательский-render/пользовательский-render) [tutorial link](../guide/пользовательский_define/пользовательский_render)
 
-The definition of ICustomRenderFuc is:
+The definition из IпользовательскийRenderFuc is:
 
 ```
- type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+ тип IпользовательскийRenderFuc = (args: пользовательскийRenderFunctionArg) => IпользовательскийRenderObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: common-custom-render-object(
+{{ use: common-пользовательский-render-объект(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} customLayout(Function)
+${prefix} пользовательскиймакет(функция)
 
-Custom layout element definition for body cell, suitable for complex layout content.
+пользовательский макет element definition для body cell, suiтаблица для complex макет content.
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: custom-layout(
+{{ use: пользовательский-макет(
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dragHeader(boolean)
+${prefix} dragHeader(логический)
 Whether the header can be dragged
 
-${prefix} columnWidthComputeMode(string)
-Column width calculation mode: `'normal' | 'only-header' | 'only-body'`, only-header considers only the header content only-body considers only the body content normal can display all content
+${prefix} columnширинаComputeMode(строка)
+Column ширина calculation mode: `'normal' | 'only-header' | 'only-body'`, only-header considers only the header content only-body considers only the body content normal can display все content
 
-${prefix} disableColumnResize(boolean)
-Whether to disable column width adjustment. If it is a transposed table or a pivot table with row-oriented indicators, this configuration does not take effect.
+${prefix} disableColumnResize(логический)
+Whether к отключить column ширина adjustment. If it is a transposed таблица или a сводный таблица с row-oriented indicators, this configuration does не take effect.
 
-${prefix} tree (boolean)
-Whether to display this column as a tree structure, which needs to be combined with the records data structure to be implemented, the nodes that need to be expanded are configured with `children` to accommodate sub-node data. For example:
+${prefix} tree (логический)
+Whether к display this column as a tree structure, which needs к be combined с the records данные structure к be implemented, the nodes that need к be expanded are configured с `children` к accommodate sub-node данные. для пример:
 
 ```
 {
@@ -220,8 +220,8 @@ Whether to display this column as a tree structure, which needs to be combined w
         "monthly_expense": "$25000",
         "children": [
           {
-            "name": "John Smith",
-            "position": "Recruiting Manager",
+            "имя": "John Smith",
+            "позиция": "Recruiting Manвозрастr",
             "salary": "$8000"
           },
       }
@@ -229,44 +229,44 @@ Whether to display this column as a tree structure, which needs to be combined w
 }
 ```
 
-${prefix} editor (string|Object|Function)
+${prefix} editor (строка|объект|функция)
 
 Configure the column cell editor
 
 ```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+editor?: строка | IEditor | ((args: BaseCellInfo & { таблица: Baseтаблицаапи }) => строка | IEditor);
 ```
 
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+Among them, IEditor is the editor интерфейс defined в @visactor/vтаблица-editors. для details, please refer к the source код: https://github.com/VisActor/Vтаблица/blob/main/packвозрастs/vтаблица-editors/src/types.ts .
 
-${prefix} headerEditor (string|Object|Function)
+${prefix} headerEditor (строка|объект|функция)
 
-Configure the display title of this column header
+Configure the display title из this column header
 
 ```
-headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+headerEditor?: строка | IEditor | ((args: BaseCellInfo & { таблица: Baseтаблицаапи }) => строка | IEditor);
 ```
 
-${prefix} levelSpan(number)
-Optional. The number of row levels the header cell spans. Defaults to 1. If the levels do not reach the maximum, the last level cells will merge all remaining levels.
+${prefix} levelSpan(число)
+необязательный. The число из row levels the header cell spans. Defaults к 1. If the levels do не reach the maximum, the последний level cells will merge все remaining levels.
 
-${prefix} columns (Array)
-Configure arrays with upper columns, nesting structures to describe column grouping relationships.
+${prefix} columns (массив)
+Configure arrays с upper columns, nesting structures к describe column grouping relationships.
 
-${prefix} hideColumnsSubHeader(boolean) = false
-Whether to hide the header title of the subtable header. The default value is not hidden.
+${prefix} hideColumnsSubHeader(логический) = false
+Whether к скрыть the header title из the subтаблица header. The по умолчанию значение is не скрытый.
 
-${prefix} aggregation(Aggregation | CustomAggregation | Array)
+${prefix} aggregation(Aggregation | пользовательскийAggregation | массив)
 
-Not required.
+не обязательный.
 
-Data aggregation summary configuration to analyze the column data.
+данные aggregation summary configuration к analyze the column данные.
 
-Global options can also be configured to configure aggregation rules for each column.
+Global options can also be configured к configure aggregation rules для каждый column.
 
-Please refer to [the tutorial document](https://visactor.io/vtable/guide/data_analysis/list_table_dataAnalysis)
+Please refer к [the tutorial document](https://visactor.io/vтаблица/guide/данные_analysis/список_таблица_данныеAnalysis)
 
-${prefix} hide(boolean) = false
-Not required.
+${prefix} скрыть(логический) = false
+не обязательный.
 
-Weather hide column.
+Weather скрыть column.

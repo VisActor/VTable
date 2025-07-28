@@ -1,217 +1,217 @@
-# ListTable sorting function
+# списоктаблица сортировкаing функция
 
-In the process of data analytics, the sorting (sorting) function is very important for the organization and analysis of data. By sorting, users can quickly arrange the data they care about in front, improve the efficiency of data search and analysis, and quickly find outliers and patterns in the data.
+в the process из данные analytics, the сортировкаing (сортировкаing) функция is very important для the organization и analysis из данные. по сортировкаing, users can quickly arrange the данные they care about в front, improve the efficiency из данные search и analysis, и quickly find outliers и patterns в the данные.
 
-VTable provides rich sorting functions, users can easily open on demand, customize sorting rules, set initial sorting status, etc.
+Vтаблица provides rich сортировкаing functions, users can easily открыть на demand, пользовательскийize сортировкаing rules, set initial сортировкаing status, etc.
 
-## Enable sorting
+## включить сортировкаing
 
-To use the sorting function of VTable, you need to configure the table columns first. exist `columns` The configuration items for each column need to be set according to cellType (column type). In this tutorial, we mainly focus on sorting-related configurations.
+к use the сортировкаing функция из Vтаблица, you need к configure the таблица columns первый. exist `columns` The configuration items для каждый column need к be set according к cellType (column тип). в this tutorial, we mainly фокус на сортировкаing-related configurations.
 
-Here is an example of enabling sorting:
+Here is an пример из enabling сортировкаing:
 
 ```js
-const listTable = new ListTable({
+const списоктаблица = новый списоктаблица({
   // ...other configuration items
   columns: [
     {
-      title: 'Name',
-      field: 'name',
-      cellType: 'text',
-      sort: true
+      заголовок: 'имя',
+      поле: 'имя',
+      cellType: 'текст',
+      сортировка: true
     },
     {
-      title: 'Age',
-      field: 'age',
-      cellType: 'text',
-      sort: (v1, v2, order) => {
+      заголовок: 'возраст',
+      поле: 'возраст',
+      cellType: 'текст',
+      сортировка: (v1, v2, order) => {
         if (order === 'desc') {
-          return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+          возврат v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
         }
-        return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        возврат v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
       }
     }
   ]
 });
 ```
 
-In the above code,`sort` for `true`, indicating that the column supports sorting and uses the built-in collation.
+в the above код,`сортировка` для `true`, indicating that the column supports сортировкаing и uses the built-в collation.
 
-## Sorting Settings
+## сортировкаing Settings
 
-VTable allows users to customize collations. To specify a collation, you need to `sort` Set as a function. The function takes two arguments `a` and `b`, representing two values to compare. When the function returns a negative value,`a` line up in `b` Front; when the return value is positive,`a` line up in `b` Later; when the return value is 0,`a` and `b` The relative position remains unchanged.
+Vтаблица allows users к пользовательскийize collations. к specify a collation, you need к `сортировка` Set as a функция. The функция takes two arguments `a` и `b`, representing two values к compare. When the функция returns a negative значение,`a` line up в `b` Front; when the возврат значение is positive,`a` line up в `b` Later; when the возврат значение is 0,`a` и `b` The relative позиция remains unchanged.
 
-Here is an example of a custom collation:
+Here is an пример из a пользовательский collation:
 
 ```js
-const listTable = new ListTable({
+const списоктаблица = новый списоктаблица({
   // ...other configuration items
   columns: [
     {
-      title: 'Name',
-      field: 'name',
-      cellType: 'text',
-      sort: (a, b) => a.localeCompare(b)
+      заголовок: 'имя',
+      поле: 'имя',
+      cellType: 'текст',
+      сортировка: (a, b) => a.localeCompare(b)
     },
     {
-      title: 'Age',
-      field: 'age',
-      cellType: 'text',
-      sort: (a, b) => parseInt(a) - parseInt(b)
+      заголовок: 'возраст',
+      поле: 'возраст',
+      cellType: 'текст',
+      сортировка: (a, b) => parseInt(a) - parseInt(b)
     }
   ]
 });
 ```
 
-In the above code,`Name` Column usage `localeCompare` The function sorts to ensure the correct sorting result of Chinese characters;`Age` Columns are sorted by number size.
+в the above код,`имя` Column usвозраст `localeCompare` The функция сортировкаs к ensure the correct сортировкаing result из Chinese characters;`возраст` Columns are сортировкаed по число размер.
 
-## Multiple column sorting
+## Multiple column сортировкаing
 
-VTable allows sorting by multiple columns when the `multipleSort` option is enabled. This feature allows users to sort data in the table by more than one column, providing a more detailed view of data based on multiple criteria. To enable multi-column sorting, configure the `multipleSort` option in the `ListTable` configuration.
+Vтаблица allows сортировкаing по multiple columns when the `multipleсортировка` option is включен. This feature allows users к сортировка данные в the таблица по more than one column, providing a more detailed view из данные based на multiple criteria. к включить multi-column сортировкаing, configure the `multipleсортировка` option в the `списоктаблица` configuration.
 
-The `multipleSort` option is a boolean type and can be set as follows:
+The `multipleсортировка` option is a логический тип и can be set as follows:
 
 ```ts
-ListTable({
+списоктаблица({
   // ...other configuration items
   columns: [
     // ...column configurations
   ],
-  multipleSort: true
+  multipleсортировка: true
 });
 ```
 
-If enabled, users, when clicking on the sort icon in the column headers, can add additional sort criteria without removing the previous sort.
+If включен, users, when Нажатьing на the сортировка иконка в the column headers, can add additional сортировка criteria без removing the предыдущий сортировка.
 
-Example:
+пример:
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
-  { name: 'Bill', age: 18 },
-  { name: 'Alex', age: 31 },
-  { name: 'Bob', age: 31 },
-  { name: 'Bruce', age: 22 },
-  { name: 'Anna', age: 22 },
-  { name: 'Martha', age: 45 },
-  { name: 'Steve', age: 29 },
-  { name: 'John', age: 31 },
-  { name: 'Kate', age: 18 },
-  { name: 'Lisa', age: 22 }
+  { имя: 'Bill', возраст: 18 },
+  { имя: 'Alex', возраст: 31 },
+  { имя: 'Bob', возраст: 31 },
+  { имя: 'Bruce', возраст: 22 },
+  { имя: 'Anna', возраст: 22 },
+  { имя: 'Martha', возраст: 45 },
+  { имя: 'Steve', возраст: 29 },
+  { имя: 'John', возраст: 31 },
+  { имя: 'Kate', возраст: 18 },
+  { имя: 'Lisa', возраст: 22 }
 ];
 
 const columns = [
   {
-    field: 'name',
-    title: 'Name',
-    width: 'auto',
-    sort: true
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 'авто',
+    сортировка: true
   },
   {
-    field: 'age',
-    title: 'Age',
-    width: 'auto',
-    sort: true
+    поле: 'возраст',
+    заголовок: 'возраст',
+    ширина: 'авто',
+    сортировка: true
   }
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard',
-  multipleSort: true
+  ширинаMode: 'standard',
+  multipleсортировка: true
 };
 
-// 创建 VTable 实例
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = tableInstance;
+// 创建 Vтаблица 实例
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window.таблицаInstance = таблицаInstance;
 ```
 
-## Initial sorting state
+## Initial сортировкаing state
 
-VTable supports setting the initial sorting state for the table. To set the initial sorting state, you can `ListTable` Used in configuration items `sortState` Configure.`sortState` Type is `SortState` or `SortState[]`Among them,`SortState` Defined as follows:
+Vтаблица supports setting the initial сортировкаing state для the таблица. к set the initial сортировкаing state, Вы можете `списоктаблица` Used в configuration items `сортировкаState` Configure.`сортировкаState` тип is `сортировкаState` или `сортировкаState[]`Among them,`сортировкаState` Defined as follows:
 
 ```ts
-SortState {
-  /** Sort By Field */
-  field: string;
-  /** Sorting rules */
-  order: 'desc' | 'asc' | 'normal';
+сортировкаState {
+  /** сортировка по поле */
+  поле: строка;
+  /** сортировкаing rules */
+  порядок: 'desc' | 'asc' | 'normal';
 }
 ```
 
-Here is an example of setting the initial sort state:
+Here is an пример из setting the initial сортировка state:
 
 ```js
-const listTable = new ListTable({
+const списоктаблица = новый списоктаблица({
   // ...other configuration items
   columns: [
     // ...column configuration
   ],
-  sortState: [
+  сортировкаState: [
     {
-      field: 'age',
-      order: 'desc'
+      поле: 'возраст',
+      порядок: 'desc'
     }
   ]
 });
 ```
 
-In the above code, the initial sorting state of the table is in descending order by age.
+в the above код, the initial сортировкаing state из the таблица is в descending order по возраст.
 
-## Sort state setting interface(update sort rule)
+## сортировка state setting интерфейс(update сортировка rule)
 
-VTable provides the `updateSortState` property for setting the sorting state.
-Interface Description:
+Vтаблица provides the `updateсортировкаState` property для setting the сортировкаing state.
+интерфейс Description:
 
 ```
   /**
-   * Update sort status
-   * @param sortState The sorting state to be set
-   * @param executeSort Whether to execute internal sorting logic, setting false will only update the icon status and not perform data sorting
+   * Update сортировка status
+   * @param сортировкаState The сортировкаing state к be set
+   * @param executeсортировка Whether к execute internal сортировкаing logic, setting false will only update the иконка status и не perform данные сортировкаing
    */
-  updateSortState(sortState: SortState[] | SortState | null, executeSort: boolean = true)
+  updateсортировкаState(сортировкаState: сортировкаState[] | сортировкаState | null, executeсортировка: логический = true)
 ```
 
-When you need to modify the sorting status, you can call this interface directly. For example:
+When you need к modify the сортировкаing status, Вы можете call this интерфейс directly. для пример:
 
 ```js
-tableInstance.updateSortState({
-  field: 'name',
-  order: 'asc'
+таблицаInstance.updateсортировкаState({
+  поле: 'имя',
+  порядок: 'asc'
 });
 ```
 
-By using the `updateSortState` interface, users can dynamically adjust the sorting state of the table at any time to meet real-time analysis needs.
+по using the `updateсортировкаState` интерфейс, users can dynamically adjust the сортировкаing state из the таблица в любой time к meet real-time analysis needs.
 
-## Disable internal sorting
+## отключить internal сортировкаing
 
-In some scenarios, the execution of sorting logic is not expected to be performed by VTable, for example: the backend is responsible for sorting.
+в некоторые scenarios, the execution из сортировкаing logic is не expected к be performed по Vтаблица, для пример: the backend is responsible для сортировкаing.
 
-You can use the following configuration and process:
+Вы можете use Следующий configuration и process:
 
-1. Set `sort` to false;
+1. Set `сортировка` к false;
 
-2. If you need to display the sort button, set `sortState` to true;
+2. If you need к display the сортировка Кнопка, set `сортировкаState` к true;
 
-3. Use the `sort_click` event to know that the user has clicked the sort button. Note that the event callback function needs to return false to disable the internal sorting logic of VTable:
+3. Use the `сортировка_Нажать` событие к know that the user has Нажатьed the сортировка Кнопка. Note that the событие обратный вызов функция needs к возврат false к отключить the internal сортировкаing logic из Vтаблица:
 
 ```
-tableInstance.on('sort_click', args => {
+таблицаInstance.на('сортировка_Нажать', args => {
     .....
-    return false; //returning false means not executing the internal sorting logic
+    возврат false; //returning false means не executing the internal сортировкаing logic
   });
 ```
 
-4. After listening to the sort button click, execute the business layer's sorting logic. After the sorting is completed, you need to use `setRecords` to update the data to the table.
+4. After списокening к the сортировка Кнопка Нажать, execute the business layer's сортировкаing logic. After the сортировкаing is completed, you need к use `setRecords` к update the данные к the таблица.
    Note:
 
-- When calling the setRecords interface, the sortState in the second parameter option needs to be set to null, which clears the internal sorting state (otherwise, when the setRecords is called, vtable will sort the data according to the last set sorting state)
+- When calling the setRecords интерфейс, the сортировкаState в the second параметр option needs к be set к null, which clears the internal сортировкаing state (otherwise, when the setRecords is called, vтаблица will сортировка the данные according к the последний set сортировкаing state)
 
-5. If you need to correspondingly switch the status of the sort icon, you need to use the `updateSortState` interface, note that the second parameter of the interface needs to be set to false, so that you can only switch the sort icon without executing the vtable's sorting logic.
+5. If you need к correspondingly switch the status из the сортировка иконка, you need к use the `updateсортировкаState` интерфейс, note that the second параметр из the интерфейс needs к be set к false, so that Вы можете only switch the сортировка иконка без executing the vтаблица's сортировкаing logic.
 
-Example:
+пример:
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
     230517143221027: 'CA-2018-10',
@@ -233,7 +233,7 @@ const records = [
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'West',
-    230517143221024: 'Fairfield',
+    230517143221024: 'Fairполе',
     230517143221029: '2018-12-30',
     230517143221042: '2',
     230517143221040: '20.72',
@@ -246,7 +246,7 @@ const records = [
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'West',
-    230517143221024: 'Fairfield',
+    230517143221024: 'Fairполе',
     230517143221029: '2018-12-30',
     230517143221042: '2',
     230517143221040: '13.904',
@@ -255,11 +255,11 @@ const records = [
   {
     230517143221027: 'CA-2018-80',
     230517143221030: 'PO-18865',
-    230517143221032: 'Wilson Jones Legal Size Ring Binders',
+    230517143221032: 'Wilson Jones Legal размер Ring Binders',
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York Город',
     230517143221029: '2018-12-30',
     230517143221042: '3',
     230517143221040: '52.776',
@@ -272,7 +272,7 @@ const records = [
     230517143221023: 'Technology',
     230517143221034: 'Phones',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York Город',
     230517143221029: '2018-12-30',
     230517143221042: '7',
     230517143221040: '90.93',
@@ -281,11 +281,11 @@ const records = [
   {
     230517143221027: 'CA-2018-40',
     230517143221030: 'PO-18865',
-    230517143221032: 'Bush Westfield Collection Bookcases, Fully Assembled',
+    230517143221032: 'Bush Westполе Collection Boхорошоcases, Fully Assembled',
     230517143221023: 'Furniture',
-    230517143221034: 'Bookcases',
+    230517143221034: 'Boхорошоcases',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York Город',
     230517143221029: '2018-12-30',
     230517143221042: '4',
     230517143221040: '323.136',
@@ -320,7 +320,7 @@ const records = [
   {
     230517143221027: 'US-2018-90',
     230517143221030: 'KH-16360',
-    230517143221032: 'Global Leather and Oak Executive Chair, Black',
+    230517143221032: 'Global Leather и Oak Executive Chair, Black',
     230517143221023: 'Furniture',
     230517143221034: 'Chairs',
     230517143221037: 'South',
@@ -333,7 +333,7 @@ const records = [
   {
     230517143221027: 'US-2018-10',
     230517143221030: 'KH-16360',
-    230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener with Auto Stop',
+    230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener с авто Stop',
     230517143221023: 'Office Supplies',
     230517143221034: 'Art',
     230517143221037: 'South',
@@ -346,7 +346,7 @@ const records = [
   {
     230517143221027: 'US-2018-40',
     230517143221030: 'KH-16360',
-    230517143221032: 'GBC ProClick Spines for 32-Hole Punch',
+    230517143221032: 'GBC ProНажать Spines для 32-Hole Punch',
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'South',
@@ -386,85 +386,85 @@ const records = [
 
 const columns = [
   {
-    field: '230517143221027',
-    title: 'Order ID',
-    width: 'auto',
-    sort: false,
-    showSort: true
+    поле: '230517143221027',
+    заголовок: 'ID Заказа',
+    ширина: 'авто',
+    сортировка: false,
+    showсортировка: true
   },
   {
-    field: '230517143221030',
-    title: 'Customer ID',
-    width: 'auto',
-    showSort: true
+    поле: '230517143221030',
+    заголовок: 'пользовательскийer ID',
+    ширина: 'авто',
+    showсортировка: true
   },
   {
-    field: '230517143221032',
-    title: 'Product Name',
-    width: 'auto'
+    поле: '230517143221032',
+    заголовок: 'Product имя',
+    ширина: 'авто'
   },
   {
-    field: '230517143221023',
-    title: 'Category',
-    width: 'auto'
+    поле: '230517143221023',
+    заголовок: 'Категория',
+    ширина: 'авто'
   },
   {
-    field: '230517143221034',
-    title: 'Sub-Category',
-    width: 'auto'
+    поле: '230517143221034',
+    заголовок: 'Sub-Категория',
+    ширина: 'авто'
   },
   {
-    field: '230517143221037',
-    title: 'Region',
-    width: 'auto'
+    поле: '230517143221037',
+    заголовок: 'Регион',
+    ширина: 'авто'
   },
   {
-    field: '230517143221024',
-    title: 'City',
-    width: 'auto'
+    поле: '230517143221024',
+    заголовок: 'Город',
+    ширина: 'авто'
   },
   {
-    field: '230517143221029',
-    title: 'Order Date',
-    width: 'auto'
+    поле: '230517143221029',
+    заголовок: 'Дата Заказа',
+    ширина: 'авто'
   },
   {
-    field: '230517143221042',
-    title: 'Quantity',
-    width: 'auto'
+    поле: '230517143221042',
+    заголовок: 'Количество',
+    ширина: 'авто'
   },
   {
-    field: '230517143221040',
-    title: 'Sales',
-    width: 'auto'
+    поле: '230517143221040',
+    заголовок: 'Продажи',
+    ширина: 'авто'
   },
   {
-    field: '230517143221041',
-    title: 'Profit',
-    width: 'auto'
+    поле: '230517143221041',
+    заголовок: 'Прибыль',
+    ширина: 'авто'
   }
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard'
+  ширинаMode: 'standard'
 };
 
-// 创建 VTable 实例
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = tableInstance;
-let clickCount = 0;
-tableInstance.on('sort_click', args => {
-  clickCount++;
-  const sortState = clickCount % 3 === 0 ? 'desc' : clickCount % 3 === 1 ? 'asc' : 'normal';
-  sortRecords(args.field, sortState)
+// 创建 Vтаблица 实例
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window.таблицаInstance = таблицаInstance;
+let НажатьCount = 0;
+таблицаInstance.на('сортировка_Нажать', args => {
+  НажатьCount++;
+  const сортировкаState = НажатьCount % 3 === 0 ? 'desc' : НажатьCount % 3 === 1 ? 'asc' : 'normal';
+  сортировкаRecords(args.поле, сортировкаState)
     .then(records => {
-      tableInstance.setRecords(records, { sortState: null });
-      tableInstance.updateSortState(
+      таблицаInstance.setRecords(records, { сортировкаState: null });
+      таблицаInstance.updateсортировкаState(
         {
-          field: args.field,
-          order: sortState
+          поле: args.поле,
+          порядок: сортировкаState
         },
         false
       );
@@ -472,91 +472,91 @@ tableInstance.on('sort_click', args => {
     .catch(e => {
       throw e;
     });
-  return false; //return false代表不执行内部排序逻辑
+  возврат false; //возврат false代表不执行内部排序逻辑
 });
-function sortRecords(field, sort) {
-  const promise = new Promise((resolve, reject) => {
-    records.sort((a, b) => {
-      return sort === 'asc' ? b[field].localeCompare(a[field]) : a[field].localeCompare(b[field]);
+функция сортировкаRecords(поле, сортировка) {
+  const promise = новый Promise((resolve, reject) => {
+    records.сортировка((a, b) => {
+      возврат сортировка === 'asc' ? b[поле].localeCompare(a[поле]) : a[поле].localeCompare(b[поле]);
     });
     resolve(records);
   });
-  return promise;
+  возврат promise;
 }
 ```
 
-## Replace the default sort icon
+## Replace the по умолчанию сортировка иконка
 
-If you do not want to use the internal icon, you can use the icon customization function to replace it. Follow the reference tutorial: https://www.visactor.io/vtable/guide/custom_define/custom_icon
+If you do не want к use the internal иконка, Вы можете use the иконка пользовательскийization функция к replace it. Follow the reference tutorial: https://www.visactor.io/vтаблица/guide/пользовательский_define/пользовательский_иконка
 
-Here is an example of replacing the sort icon:
+Here is an пример из replacing the сортировка иконка:
 
-Note: Configuration of `name` and `funcType`
+Note: Configuration из `имя` и `funcType`
 
 ```
-VTable.register.icon("frozenCurrent", {
-  type: "svg",
-  svg: "/sort.svg",
-  width: 22,
-  height: 22,
-  name: "sort_normal",
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка("frozenCurrent", {
+  тип: "svg",
+  svg: "/сортировка.svg",
+  ширина: 22,
+  высота: 22,
+  имя: "сортировка_normal",
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   marginRight: 0,
-  funcType: VTable.TYPES.IconFuncTypeEnum.sort,
-  hover: {
-    width: 22,
-    height: 22,
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.сортировка,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: "rgba(101, 117, 168, 0.1)",
   },
   cursor: "pointer",
 });
 ```
 
-## Hide sort icon
+## скрыть сортировка иконка
 
-We provide `showSort` configuration to hide the sorting icon, but the sorting logic can be executed normally
+We provide `showсортировка` configuration к скрыть the сортировкаing иконка, but the сортировкаing logic can be executed normally
 
-Here is an example of hiding the sort icon:
+Here is an пример из hiding the сортировка иконка:
 
 ```js
-const listTable = new ListTable({
+const списоктаблица = новый списоктаблица({
   // ...Other configuration items
   columns: [
     {
-      title: 'Name',
-      field: 'name',
-      cellType: 'text',
-      showSort: false,
-      sort: true // Use built-in default sorting logic
+      заголовок: 'имя',
+      поле: 'имя',
+      cellType: 'текст',
+      showсортировка: false,
+      сортировка: true // Use built-в по умолчанию сортировкаing logic
     },
     {
-      title: 'Age',
-      field: 'age',
-      cellType: 'text',
-      showSort: false,
-      sort: (v1, v2, order) => {
-        // Use custom sorting logic
+      заголовок: 'возраст',
+      поле: 'возраст',
+      cellType: 'текст',
+      showсортировка: false,
+      сортировка: (v1, v2, order) => {
+        // Use пользовательский сортировкаing logic
         if (order === 'desc') {
-          return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+          возврат v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
         }
-        return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+        возврат v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
       }
     }
   ]
 });
 ```
 
-## Pre Sort
+## Pre сортировка
 
-In the case of large amounts of data, the first sorting may take a long time, and pre-sorting can be used to improve the performance of the sorting function. Set the pre-sorted data fields and sort order through the `setSortedIndexMap` method.
+в the case из large amounts из данные, the первый сортировкаing may take a long time, и pre-сортировкаing can be used к improve the Производительность из the сортировкаing функция. Set the pre-сортировкаed данные полеs и сортировка order through the `setсортировкаedIndexMap` method.
 
 ```js
-interface ISortedMapItem {
-  asc?: (number | number[])[];
-  desc?: (number | number[])[];
-  normal?: (number | number[])[];
+интерфейс IсортировкаedMапиtem {
+  asc?: (число | число[])[];
+  desc?: (число | число[])[];
+  normal?: (число | число[])[];
 }
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-tableInstance.setSortedIndexMap(field, filedMap as ISortedMapItem);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+таблицаInstance.setсортировкаedIndexMap(поле, filedMap as IсортировкаedMапиtem);
 ```

@@ -1,21 +1,21 @@
-{{ target: common-gantt-date-header-custom-layout }}
-The custom rendering of the date header corresponds to the type IDateCustomLayout. The specific configuration items are as follows:
+{{ target: common-гантт-date-header-пользовательский-макет }}
+The пользовательский rendering из the date header corresponds к the тип IDateпользовательскиймакет. The specific configuration items are as follows:
 ```
-export type DateCustomLayoutArgumentType = {
-  width: number;
-  height: number;
-  index: number;
-  /** The position of the current date in the date scale. For example, the fourth quarter in a quarterly date returns 4. */
-  dateIndex: number;
-  title: string;
+export тип DateпользовательскиймакетArgumentType = {
+  ширина: число;
+  высота: число;
+  index: число;
+  /** The позиция из the текущий date в the date scale. для пример, the fourth quarter в a quarterly date returns 4. */
+  dateIndex: число;
+  заголовок: строка;
   startDate: Date;
   endDate: Date;
-  days: number;
-  ganttInstance: Gantt;
+  days: число;
+  ганттInstance: гантт;
 };
-export type IDateCustomLayout = (args: DateCustomLayoutArgumentType) => IDateCustomLayoutObj;
-export type IDateCustomLayoutObj = {
+export тип IDateпользовательскиймакет = (args: DateпользовательскиймакетArgumentType) => IDateпользовательскиймакетObj;
+export тип IDateпользовательскиймакетObj = {
   rootContainer: VRender.Group;
-  renderDefaultText?: boolean; // Default is false
+  renderDefaultText?: логический; // по умолчанию is false
 };
 ```

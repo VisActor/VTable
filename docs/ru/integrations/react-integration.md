@@ -1,95 +1,95 @@
-# React Integration Guide for VTable
+# React Integration Guide для Vтаблица
 
-This comprehensive guide covers everything you need to integrate VTable with React applications, from basic usage to advanced patterns and optimizations.
+This comprehensive guide covers everything you need к integrate Vтаблица с React applications, от базовый usвозраст к advanced patterns и optimizations.
 
-## Installation and Setup
+## Installation и Setup
 
-### Installing React VTable
+### Installing React Vтаблица
 
 ```bash
-# Install both the core library and React wrapper
-npm install @visactor/vtable @visactor/react-vtable
+# Install both the core library и React wrapper
+npm install @visactor/vтаблица @visactor/react-vтаблица
 
-# Or with yarn
-yarn add @visactor/vtable @visactor/react-vtable
+# или с yarn
+yarn add @visactor/vтаблица @visactor/react-vтаблица
 
-# Or with pnpm
-pnpm add @visactor/vtable @visactor/react-vtable
+# или с pnpm
+pnpm add @visactor/vтаблица @visactor/react-vтаблица
 ```
 
-### Basic Integration
+### базовый Integration
 
 ```jsx
-import React, { useState, useEffect } from 'react';
-import { ListTable } from '@visactor/react-vtable';
+import React, { useState, useEffect } от 'react';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-function BasicTable() {
-  const [data, setData] = useState([]);
+функция базовыйтаблица() {
+  const [данные, setданные] = useState([]);
   
   useEffect(() => {
-    // Load your data
-    setData([
-      { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
-      // ... more data
+    // Load your данные
+    setданные([
+      { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+      { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' },
+      // ... more данные
     ]);
   }, []);
 
   const columns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 },
-    { field: 'status', caption: 'Status', width: 120 }
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 },
+    { поле: 'status', caption: 'Status', ширина: 120 }
   ];
 
-  return (
-    <div style={{ width: '100%', height: '600px' }}>
-      <ListTable
+  возврат (
+    <div style={{ ширина: '100%', высота: '600px' }}>
+      <списоктаблица
         columns={columns}
-        records={data}
-        defaultRowHeight={40}
-        defaultHeaderRowHeight={50}
+        records={данные}
+        defaultRowвысота={40}
+        defaultHeaderRowвысота={50}
       />
     </div>
   );
 }
 
-export default BasicTable;
+export по умолчанию базовыйтаблица;
 ```
 
 ## Advanced React Patterns
 
-### 1. Using Hooks for State Management
+### 1. Using Hoхорошоs для State Manвозрастment
 
 ```jsx
-import React, { useState, useCallback, useMemo } from 'react';
-import { ListTable } from '@visactor/react-vtable';
+import React, { useState, useCallback, useMemo } от 'react';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-function useTableData(initialData = []) {
-  const [data, setData] = useState(initialData);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+функция useтаблицаданные(initialданные = []) {
+  const [данные, setданные] = useState(initialданные);
+  const [загрузка, setLoading] = useState(false);
+  const [ошибка, setError] = useState(null);
   
   const addRecord = useCallback((record) => {
-    setData(prev => [...prev, { ...record, id: Date.now() }]);
+    setданные(prev => [...prev, { ...record, id: Date.now() }]);
   }, []);
   
   const updateRecord = useCallback((id, updates) => {
-    setData(prev => prev.map(record => 
+    setданные(prev => prev.map(record => 
       record.id === id ? { ...record, ...updates } : record
     ));
   }, []);
   
   const deleteRecord = useCallback((id) => {
-    setData(prev => prev.filter(record => record.id !== id));
+    setданные(prev => prev.filter(record => record.id !== id));
   }, []);
   
-  const loadData = useCallback(async (fetchFn) => {
+  const loadданные = useCallback(async (fetchFn) => {
     setLoading(true);
     setError(null);
     try {
-      const newData = await fetchFn();
-      setData(newData);
+      const newданные = await fetchFn();
+      setданные(newданные);
     } catch (err) {
       setError(err);
     } finally {
@@ -97,182 +97,182 @@ function useTableData(initialData = []) {
     }
   }, []);
   
-  return {
-    data,
-    loading,
-    error,
+  возврат {
+    данные,
+    загрузка,
+    ошибка,
     addRecord,
     updateRecord,
     deleteRecord,
-    loadData
+    loadданные
   };
 }
 
-function AdvancedTable() {
-  const { data, loading, error, addRecord, updateRecord, deleteRecord } = useTableData();
+функция Advancedтаблица() {
+  const { данные, загрузка, ошибка, addRecord, updateRecord, deleteRecord } = useтаблицаданные();
   
   const columns = useMemo(() => [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
     { 
-      field: 'email', 
+      поле: 'email', 
       caption: 'Email', 
-      width: 250,
-      editor: 'input'
+      ширина: 250,
+      editor: 'ввод'
     },
     { 
-      field: 'status', 
+      поле: 'status', 
       caption: 'Status', 
-      width: 120,
-      editor: 'select',
+      ширина: 120,
+      editor: 'выбрать',
       editorOptions: {
-        values: ['Active', 'Inactive', 'Pending']
+        values: ['активный', 'неактивный', 'Pending']
       }
     },
     {
-      field: 'actions',
+      поле: 'actions',
       caption: 'Actions',
-      width: 150,
-      cellType: 'button',
-      customRender: ({ record }) => (
-        <button onClick={() => deleteRecord(record.id)}>
+      ширина: 150,
+      cellType: 'Кнопка',
+      пользовательскийRender: ({ record }) => (
+        <Кнопка onНажать={() => deleteRecord(record.id)}>
           Delete
-        </button>
+        </Кнопка>
       )
     }
   ], [deleteRecord]);
   
   const handleCellEdit = useCallback((args) => {
-    const { row, field, value } = args;
-    const record = data[row];
+    const { row, поле, значение } = args;
+    const record = данные[row];
     if (record) {
-      updateRecord(record.id, { [field]: value });
+      updateRecord(record.id, { [поле]: значение });
     }
-  }, [data, updateRecord]);
+  }, [данные, updateRecord]);
   
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (загрузка) возврат <div>загрузка...</div>;
+  if (ошибка) возврат <div>ошибка: {ошибка.messвозраст}</div>;
   
-  return (
-    <div style={{ width: '100%', height: '600px' }}>
-      <button 
-        onClick={() => addRecord({ 
-          name: 'New User', 
-          email: 'new@example.com', 
+  возврат (
+    <div style={{ ширина: '100%', высота: '600px' }}>
+      <Кнопка 
+        onНажать={() => addRecord({ 
+          имя: 'новый User', 
+          email: 'новый@пример.com', 
           status: 'Pending' 
         })}
         style={{ marginBottom: '10px' }}
       >
         Add Record
-      </button>
+      </Кнопка>
       
-      <ListTable
+      <списоктаблица
         columns={columns}
-        records={data}
+        records={данные}
         onAfterCellEdit={handleCellEdit}
-        defaultRowHeight={40}
-        defaultHeaderRowHeight={50}
+        defaultRowвысота={40}
+        defaultHeaderRowвысота={50}
       />
     </div>
   );
 }
 ```
 
-### 2. Context and State Management Integration
+### 2. Context и State Manвозрастment Integration
 
 ```jsx
-import React, { createContext, useContext, useReducer } from 'react';
-import { ListTable } from '@visactor/react-vtable';
+import React, { createContext, useContext, useReducer } от 'react';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-// Table state management
-const TableContext = createContext();
+// таблица state manвозрастment
+const таблицаContext = createContext();
 
-const tableReducer = (state, action) => {
-  switch (action.type) {
-    case 'SET_DATA':
-      return { ...state, data: action.payload };
+const таблицаReducer = (state, action) => {
+  switch (action.тип) {
+    case 'SET_данные':
+      возврат { ...state, данные: action.payload };
     case 'ADD_RECORD':
-      return { ...state, data: [...state.data, action.payload] };
+      возврат { ...state, данные: [...state.данные, action.payload] };
     case 'UPDATE_RECORD':
-      return {
+      возврат {
         ...state,
-        data: state.data.map(record =>
+        данные: state.данные.map(record =>
           record.id === action.payload.id ? action.payload : record
         )
       };
     case 'DELETE_RECORD':
-      return {
+      возврат {
         ...state,
-        data: state.data.filter(record => record.id !== action.payload)
+        данные: state.данные.filter(record => record.id !== action.payload)
       };
     case 'SET_SELECTION':
-      return { ...state, selection: action.payload };
+      возврат { ...state, selection: action.payload };
     case 'SET_FILTER':
-      return { ...state, filter: action.payload };
-    case 'SET_SORT':
-      return { ...state, sort: action.payload };
-    default:
-      return state;
+      возврат { ...state, filter: action.payload };
+    case 'SET_сортировка':
+      возврат { ...state, сортировка: action.payload };
+    по умолчанию:
+      возврат state;
   }
 };
 
-export function TableProvider({ children }) {
-  const [state, dispatch] = useReducer(tableReducer, {
-    data: [],
+export функция таблицаProvider({ children }) {
+  const [state, dispatch] = useReducer(таблицаReducer, {
+    данные: [],
     selection: [],
     filter: null,
-    sort: null
+    сортировка: null
   });
   
-  const value = {
+  const значение = {
     ...state,
     dispatch,
-    setData: (data) => dispatch({ type: 'SET_DATA', payload: data }),
-    addRecord: (record) => dispatch({ type: 'ADD_RECORD', payload: record }),
-    updateRecord: (record) => dispatch({ type: 'UPDATE_RECORD', payload: record }),
-    deleteRecord: (id) => dispatch({ type: 'DELETE_RECORD', payload: id }),
-    setSelection: (selection) => dispatch({ type: 'SET_SELECTION', payload: selection }),
-    setFilter: (filter) => dispatch({ type: 'SET_FILTER', payload: filter }),
-    setSort: (sort) => dispatch({ type: 'SET_SORT', payload: sort })
+    setданные: (данные) => dispatch({ тип: 'SET_данные', payload: данные }),
+    addRecord: (record) => dispatch({ тип: 'ADD_RECORD', payload: record }),
+    updateRecord: (record) => dispatch({ тип: 'UPDATE_RECORD', payload: record }),
+    deleteRecord: (id) => dispatch({ тип: 'DELETE_RECORD', payload: id }),
+    setSelection: (selection) => dispatch({ тип: 'SET_SELECTION', payload: selection }),
+    setFilter: (filter) => dispatch({ тип: 'SET_FILTER', payload: filter }),
+    setсортировка: (сортировка) => dispatch({ тип: 'SET_сортировка', payload: сортировка })
   };
   
-  return (
-    <TableContext.Provider value={value}>
+  возврат (
+    <таблицаContext.Provider значение={значение}>
       {children}
-    </TableContext.Provider>
+    </таблицаContext.Provider>
   );
 }
 
-export function useTable() {
-  const context = useContext(TableContext);
+export функция useтаблица() {
+  const context = useContext(таблицаContext);
   if (!context) {
-    throw new Error('useTable must be used within a TableProvider');
+    throw новый ошибка('useтаблица must be used within a таблицаProvider');
   }
-  return context;
+  возврат context;
 }
 
-function ConnectedTable() {
-  const { data, selection, setSelection, updateRecord } = useTable();
+функция Connectedтаблица() {
+  const { данные, selection, setSelection, updateRecord } = useтаблица();
   
   const columns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 },
-    { field: 'status', caption: 'Status', width: 120 }
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 },
+    { поле: 'status', caption: 'Status', ширина: 120 }
   ];
   
-  return (
-    <ListTable
+  возврат (
+    <списоктаблица
       columns={columns}
-      records={data}
-      select={{
+      records={данные}
+      выбрать={{
         enableRowSelect: true,
         enableColumnSelect: false
       }}
       onSelectionChanged={(selection) => setSelection(selection)}
       onAfterCellEdit={(args) => {
-        const { row, field, value } = args;
-        const record = { ...data[row], [field]: value };
+        const { row, поле, значение } = args;
+        const record = { ...данные[row], [поле]: значение };
         updateRecord(record);
       }}
     />
@@ -280,36 +280,36 @@ function ConnectedTable() {
 }
 ```
 
-### 3. Performance Optimization with React
+### 3. Производительность Optimization с React
 
 ```jsx
-import React, { memo, useMemo, useCallback, useRef } from 'react';
-import { ListTable } from '@visactor/react-vtable';
+import React, { memo, useMemo, useCallback, useRef } от 'react';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-// Memoized table component for performance
-const OptimizedTable = memo(({ 
-  data, 
+// Memoized таблица компонент для Производительность
+const Optimizedтаблица = memo(({ 
+  данные, 
   columns, 
   onCellEdit, 
   onSelectionChange,
-  height = 600 
+  высота = 600 
 }) => {
-  const tableRef = useRef(null);
+  const таблицаRef = useRef(null);
   
-  // Memoize columns to prevent unnecessary re-renders
+  // Memoize columns к prсобытие unnecessary re-renders
   const memoizedColumns = useMemo(() => columns, [columns]);
   
-  // Memoize data transformation
-  const processedData = useMemo(() => {
-    // Apply any data transformations here
-    return data.map(record => ({
+  // Memoize данные transformation
+  const processedданные = useMemo(() => {
+    // Apply любой данные transformations here
+    возврат данные.map(record => ({
       ...record,
-      // Add computed fields if needed
-      fullName: `${record.firstName} ${record.lastName}`
+      // Add computed полеs if needed
+      fullимя: `${record.firstимя} ${record.lastимя}`
     }));
-  }, [data]);
+  }, [данные]);
   
-  // Stable event handlers
+  // Sтаблица событие handlers
   const handleCellEdit = useCallback((args) => {
     if (onCellEdit) {
       onCellEdit(args);
@@ -322,17 +322,17 @@ const OptimizedTable = memo(({
     }
   }, [onSelectionChange]);
   
-  return (
-    <div style={{ width: '100%', height: height }}>
-      <ListTable
-        ref={tableRef}
+  возврат (
+    <div style={{ ширина: '100%', высота: высота }}>
+      <списоктаблица
+        ref={таблицаRef}
         columns={memoizedColumns}
-        records={processedData}
+        records={processedданные}
         onAfterCellEdit={handleCellEdit}
         onSelectionChanged={handleSelectionChange}
-        // Performance optimizations
-        defaultRowHeight={40}
-        defaultHeaderRowHeight={50}
+        // Производительность optimizations
+        defaultRowвысота={40}
+        defaultHeaderRowвысота={50}
         enabledTreeStick={false}
         pixelRatio={window.devicePixelRatio || 1}
       />
@@ -340,35 +340,35 @@ const OptimizedTable = memo(({
   );
 });
 
-OptimizedTable.displayName = 'OptimizedTable';
+Optimizedтаблица.displayимя = 'Optimizedтаблица';
 ```
 
-### 4. Custom Cell Renderers with React Components
+### 4. пользовательский Cell Renderers с React компонентs
 
 ```jsx
-import React from 'react';
-import { ListTable } from '@visactor/react-vtable';
+import React от 'react';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-// Custom React component for cell rendering
-function StatusBadge({ status }) {
+// пользовательский React компонент для cell rendering
+функция StatusBadge({ status }) {
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Active': return '#10b981';
-      case 'Inactive': return '#ef4444';
-      case 'Pending': return '#f59e0b';
-      default: return '#6b7280';
+      case 'активный': возврат '#10b981';
+      case 'неактивный': возврат '#ef4444';
+      case 'Pending': возврат '#f59e0b';
+      по умолчанию: возврат '#6b7280';
     }
   };
   
-  return (
+  возврат (
     <span
       style={{
         display: 'inline-block',
-        padding: '4px 8px',
+        заполнение: '4px 8px',
         borderRadius: '4px',
         fontSize: '12px',
         fontWeight: 'bold',
-        color: 'white',
+        цвет: 'white',
         backgroundColor: getStatusColor(status)
       }}
     >
@@ -377,44 +377,44 @@ function StatusBadge({ status }) {
   );
 }
 
-function ActionButtons({ record, onEdit, onDelete }) {
-  return (
+функция ActionКнопкаs({ record, onEdit, onDelete }) {
+  возврат (
     <div style={{ display: 'flex', gap: '8px' }}>
-      <button
-        onClick={() => onEdit(record)}
+      <Кнопка
+        onНажать={() => onEdit(record)}
         style={{
-          padding: '4px 8px',
+          заполнение: '4px 8px',
           backgroundColor: '#3b82f6',
-          color: 'white',
-          border: 'none',
+          цвет: 'white',
+          bпорядок: 'никто',
           borderRadius: '4px',
           cursor: 'pointer'
         }}
       >
         Edit
-      </button>
-      <button
-        onClick={() => onDelete(record.id)}
+      </Кнопка>
+      <Кнопка
+        onНажать={() => onDelete(record.id)}
         style={{
-          padding: '4px 8px',
+          заполнение: '4px 8px',
           backgroundColor: '#ef4444',
-          color: 'white',
-          border: 'none',
+          цвет: 'white',
+          bпорядок: 'никто',
           borderRadius: '4px',
           cursor: 'pointer'
         }}
       >
         Delete
-      </button>
+      </Кнопка>
     </div>
   );
 }
 
-function TableWithCustomRenderers() {
-  const data = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
-    // ... more data
+функция таблицаWithпользовательскийRenderers() {
+  const данные = [
+    { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+    { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' },
+    // ... more данные
   ];
   
   const handleEdit = useCallback((record) => {
@@ -426,21 +426,21 @@ function TableWithCustomRenderers() {
   }, []);
   
   const columns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 },
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 },
     {
-      field: 'status',
+      поле: 'status',
       caption: 'Status',
-      width: 120,
-      customRender: ({ value }) => <StatusBadge status={value} />
+      ширина: 120,
+      пользовательскийRender: ({ значение }) => <StatusBadge status={значение} />
     },
     {
-      field: 'actions',
+      поле: 'actions',
       caption: 'Actions',
-      width: 200,
-      customRender: ({ record }) => (
-        <ActionButtons
+      ширина: 200,
+      пользовательскийRender: ({ record }) => (
+        <ActionКнопкаs
           record={record}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -449,118 +449,118 @@ function TableWithCustomRenderers() {
     }
   ];
   
-  return (
-    <div style={{ width: '100%', height: '600px' }}>
-      <ListTable
+  возврат (
+    <div style={{ ширина: '100%', высота: '600px' }}>
+      <списоктаблица
         columns={columns}
-        records={data}
-        defaultRowHeight={50}
-        defaultHeaderRowHeight={50}
+        records={данные}
+        defaultRowвысота={50}
+        defaultHeaderRowвысота={50}
       />
     </div>
   );
 }
 ```
 
-## React Hooks for VTable
+## React Hoхорошоs для Vтаблица
 
-### Custom Hook for Table Management
+### пользовательский Hoхорошо для таблица Manвозрастment
 
 ```jsx
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } от 'react';
 
-export function useVTable(initialData = [], initialColumns = []) {
-  const [data, setData] = useState(initialData);
+export функция useVтаблица(initialданные = [], initialColumns = []) {
+  const [данные, setданные] = useState(initialданные);
   const [columns, setColumns] = useState(initialColumns);
   const [selection, setSelection] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const tableRef = useRef(null);
+  const [загрузка, setLoading] = useState(false);
+  const [ошибка, setError] = useState(null);
+  const таблицаRef = useRef(null);
   
-  // Data operations
+  // данные operations
   const addRecord = useCallback((record) => {
-    setData(prev => [...prev, { ...record, id: Date.now() }]);
+    setданные(prev => [...prev, { ...record, id: Date.now() }]);
   }, []);
   
   const updateRecord = useCallback((id, updates) => {
-    setData(prev => prev.map(record => 
+    setданные(prev => prev.map(record => 
       record.id === id ? { ...record, ...updates } : record
     ));
   }, []);
   
   const deleteRecord = useCallback((id) => {
-    setData(prev => prev.filter(record => record.id !== id));
+    setданные(prev => prev.filter(record => record.id !== id));
   }, []);
   
   const bulkDelete = useCallback((ids) => {
-    setData(prev => prev.filter(record => !ids.includes(record.id)));
+    setданные(prev => prev.filter(record => !ids.includes(record.id)));
   }, []);
   
-  // Table operations
-  const exportData = useCallback((format = 'csv') => {
-    if (tableRef.current) {
-      tableRef.current.exportCsv();
+  // таблица operations
+  const exportданные = useCallback((format = 'csv') => {
+    if (таблицаRef.текущий) {
+      таблицаRef.текущий.exportCsv();
     }
   }, []);
   
-  const refreshTable = useCallback(() => {
-    if (tableRef.current) {
-      tableRef.current.updateSize();
+  const refreshтаблица = useCallback(() => {
+    if (таблицаRef.текущий) {
+      таблицаRef.текущий.updateSize();
     }
   }, []);
   
   // Filter operations
-  const filterData = useCallback((predicate) => {
-    const filtered = initialData.filter(predicate);
-    setData(filtered);
-  }, [initialData]);
+  const filterданные = useCallback((predicate) => {
+    const filtered = initialданные.filter(predicate);
+    setданные(filtered);
+  }, [initialданные]);
   
   const clearFilter = useCallback(() => {
-    setData(initialData);
-  }, [initialData]);
+    setданные(initialданные);
+  }, [initialданные]);
   
-  // Sort operations
-  const sortData = useCallback((field, order = 'asc') => {
-    setData(prev => [...prev].sort((a, b) => {
-      const valueA = a[field];
-      const valueB = b[field];
+  // сортировка operations
+  const сортировкаданные = useCallback((поле, order = 'asc') => {
+    setданные(prev => [...prev].сортировка((a, b) => {
+      const valueA = a[поле];
+      const valueB = b[поле];
       
       if (order === 'asc') {
-        return valueA > valueB ? 1 : -1;
+        возврат valueA > valueB ? 1 : -1;
       } else {
-        return valueA < valueB ? 1 : -1;
+        возврат valueA < valueB ? 1 : -1;
       }
     }));
   }, []);
   
-  return {
+  возврат {
     // State
-    data,
+    данные,
     columns,
     selection,
-    loading,
-    error,
-    tableRef,
+    загрузка,
+    ошибка,
+    таблицаRef,
     
-    // Data operations
+    // данные operations
     addRecord,
     updateRecord,
     deleteRecord,
     bulkDelete,
     
-    // Table operations
-    exportData,
-    refreshTable,
+    // таблица operations
+    exportданные,
+    refreshтаблица,
     
     // Filter operations
-    filterData,
+    filterданные,
     clearFilter,
     
-    // Sort operations
-    sortData,
+    // сортировка operations
+    сортировкаданные,
     
     // State setters
-    setData,
+    setданные,
     setColumns,
     setSelection,
     setLoading,
@@ -569,38 +569,38 @@ export function useVTable(initialData = [], initialColumns = []) {
 }
 ```
 
-### Usage of Custom Hook
+### Usвозраст из пользовательский Hoхорошо
 
 ```jsx
-import React from 'react';
-import { ListTable } from '@visactor/react-vtable';
-import { useVTable } from './hooks/useVTable';
+import React от 'react';
+import { списоктаблица } от '@visactor/react-vтаблица';
+import { useVтаблица } от './hoхорошоs/useVтаблица';
 
-function SmartTable() {
+функция Smartтаблица() {
   const {
-    data,
+    данные,
     columns,
     selection,
-    loading,
-    tableRef,
+    загрузка,
+    таблицаRef,
     addRecord,
     updateRecord,
     deleteRecord,
     bulkDelete,
-    exportData,
+    exportданные,
     setSelection
-  } = useVTable(
-    // Initial data
+  } = useVтаблица(
+    // Initial данные
     [
-      { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' }
+      { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+      { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' }
     ],
     // Initial columns
     [
-      { field: 'id', caption: 'ID', width: 80 },
-      { field: 'name', caption: 'Name', width: 200 },
-      { field: 'email', caption: 'Email', width: 250 },
-      { field: 'status', caption: 'Status', width: 120 }
+      { поле: 'id', caption: 'ID', ширина: 80 },
+      { поле: 'имя', caption: 'имя', ширина: 200 },
+      { поле: 'email', caption: 'Email', ширина: 250 },
+      { поле: 'status', caption: 'Status', ширина: 120 }
     ]
   );
   
@@ -610,52 +610,52 @@ function SmartTable() {
   
   const handleBulkDelete = useCallback(() => {
     if (selection.length > 0) {
-      const selectedIds = selection.map(sel => data[sel.row].id);
+      const selectedIds = selection.map(sel => данные[sel.row].id);
       bulkDelete(selectedIds);
       setSelection([]);
     }
-  }, [selection, data, bulkDelete, setSelection]);
+  }, [selection, данные, bulkDelete, setSelection]);
   
-  return (
+  возврат (
     <div>
       <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
-        <button onClick={() => addRecord({ 
-          name: 'New User', 
-          email: 'new@example.com', 
+        <Кнопка onНажать={() => addRecord({ 
+          имя: 'новый User', 
+          email: 'новый@пример.com', 
           status: 'Pending' 
         })}>
           Add Record
-        </button>
+        </Кнопка>
         
-        <button 
-          onClick={handleBulkDelete}
-          disabled={selection.length === 0}
+        <Кнопка 
+          onНажать={handleBulkDelete}
+          отключен={selection.length === 0}
         >
           Delete Selected ({selection.length})
-        </button>
+        </Кнопка>
         
-        <button onClick={() => exportData('csv')}>
+        <Кнопка onНажать={() => exportданные('csv')}>
           Export CSV
-        </button>
+        </Кнопка>
       </div>
       
-      <div style={{ width: '100%', height: '600px' }}>
-        <ListTable
-          ref={tableRef}
+      <div style={{ ширина: '100%', высота: '600px' }}>
+        <списоктаблица
+          ref={таблицаRef}
           columns={columns}
-          records={data}
-          select={{
+          records={данные}
+          выбрать={{
             enableRowSelect: true,
             enableMultiSelect: true
           }}
           onSelectionChanged={handleSelectionChange}
           onAfterCellEdit={(args) => {
-            const { row, field, value } = args;
-            const record = data[row];
-            updateRecord(record.id, { [field]: value });
+            const { row, поле, значение } = args;
+            const record = данные[row];
+            updateRecord(record.id, { [поле]: значение });
           }}
-          defaultRowHeight={40}
-          defaultHeaderRowHeight={50}
+          defaultRowвысота={40}
+          defaultHeaderRowвысота={50}
         />
       </div>
     </div>
@@ -663,57 +663,57 @@ function SmartTable() {
 }
 ```
 
-## Integration with Popular React Libraries
+## Integration с Popular React Libraries
 
 ### 1. React Router Integration
 
 ```jsx
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
-import { ListTable } from '@visactor/react-vtable';
+import React от 'react';
+import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } от 'react-router-dom';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-function UserTable() {
+функция Userтаблица() {
   const navigate = useNavigate();
   
   const columns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 },
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 },
     {
-      field: 'actions',
+      поле: 'actions',
       caption: 'Actions',
-      width: 150,
-      customRender: ({ record }) => (
-        <button onClick={() => navigate(`/user/${record.id}`)}>
+      ширина: 150,
+      пользовательскийRender: ({ record }) => (
+        <Кнопка onНажать={() => navigate(`/user/${record.id}`)}>
           View Details
-        </button>
+        </Кнопка>
       )
     }
   ];
   
-  return (
-    <ListTable
+  возврат (
+    <списоктаблица
       columns={columns}
-      records={data}
-      onDoubleClickCell={(args) => {
-        const record = data[args.row];
+      records={данные}
+      onDoubleНажатьCell={(args) => {
+        const record = данные[args.row];
         navigate(`/user/${record.id}`);
       }}
     />
   );
 }
 
-function UserDetail() {
+функция UserDetail() {
   const { id } = useParams();
-  // Load and display user details
-  return <div>User Details for ID: {id}</div>;
+  // Load и display user details
+  возврат <div>User Details для ID: {id}</div>;
 }
 
-function App() {
-  return (
+функция App() {
+  возврат (
     <Router>
       <Routes>
-        <Route path="/" element={<UserTable />} />
+        <Route path="/" element={<Userтаблица />} />
         <Route path="/user/:id" element={<UserDetail />} />
       </Routes>
     </Router>
@@ -724,9 +724,9 @@ function App() {
 ### 2. Redux Integration
 
 ```jsx
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { ListTable } from '@visactor/react-vtable';
+import React от 'react';
+import { useSelector, useDispatch } от 'react-redux';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
 // Redux actions
 const ADD_RECORD = 'ADD_RECORD';
@@ -734,76 +734,76 @@ const UPDATE_RECORD = 'UPDATE_RECORD';
 const DELETE_RECORD = 'DELETE_RECORD';
 const SET_SELECTION = 'SET_SELECTION';
 
-export const addRecord = (record) => ({ type: ADD_RECORD, payload: record });
-export const updateRecord = (id, updates) => ({ type: UPDATE_RECORD, payload: { id, updates } });
-export const deleteRecord = (id) => ({ type: DELETE_RECORD, payload: id });
-export const setSelection = (selection) => ({ type: SET_SELECTION, payload: selection });
+export const addRecord = (record) => ({ тип: ADD_RECORD, payload: record });
+export const updateRecord = (id, updates) => ({ тип: UPDATE_RECORD, payload: { id, updates } });
+export const deleteRecord = (id) => ({ тип: DELETE_RECORD, payload: id });
+export const setSelection = (selection) => ({ тип: SET_SELECTION, payload: selection });
 
 // Redux reducer
 const initialState = {
-  data: [],
+  данные: [],
   selection: []
 };
 
-export const tableReducer = (state = initialState, action) => {
-  switch (action.type) {
+export const таблицаReducer = (state = initialState, action) => {
+  switch (action.тип) {
     case ADD_RECORD:
-      return {
+      возврат {
         ...state,
-        data: [...state.data, { ...action.payload, id: Date.now() }]
+        данные: [...state.данные, { ...action.payload, id: Date.now() }]
       };
     case UPDATE_RECORD:
-      return {
+      возврат {
         ...state,
-        data: state.data.map(record =>
+        данные: state.данные.map(record =>
           record.id === action.payload.id
             ? { ...record, ...action.payload.updates }
             : record
         )
       };
     case DELETE_RECORD:
-      return {
+      возврат {
         ...state,
-        data: state.data.filter(record => record.id !== action.payload)
+        данные: state.данные.filter(record => record.id !== action.payload)
       };
     case SET_SELECTION:
-      return {
+      возврат {
         ...state,
         selection: action.payload
       };
-    default:
-      return state;
+    по умолчанию:
+      возврат state;
   }
 };
 
-// Connected component
-function ReduxTable() {
-  const { data, selection } = useSelector(state => state.table);
+// Connected компонент
+функция Reduxтаблица() {
+  const { данные, selection } = useSelector(state => state.таблица);
   const dispatch = useDispatch();
   
   const columns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 }
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 }
   ];
   
-  return (
+  возврат (
     <div>
-      <button onClick={() => dispatch(addRecord({ 
-        name: 'New User', 
-        email: 'new@example.com' 
+      <Кнопка onНажать={() => dispatch(addRecord({ 
+        имя: 'новый User', 
+        email: 'новый@пример.com' 
       }))}>
         Add Record
-      </button>
+      </Кнопка>
       
-      <ListTable
+      <списоктаблица
         columns={columns}
-        records={data}
+        records={данные}
         onSelectionChanged={(sel) => dispatch(setSelection(sel))}
         onAfterCellEdit={(args) => {
-          const { row, field, value } = args;
-          const record = data[row];
-          dispatch(updateRecord(record.id, { [field]: value }));
+          const { row, поле, значение } = args;
+          const record = данные[row];
+          dispatch(updateRecord(record.id, { [поле]: значение }));
         }}
       />
     </div>
@@ -813,71 +813,71 @@ function ReduxTable() {
 
 ## Best Practices
 
-### 1. Performance Optimization
+### 1. Производительность Optimization
 
 ```jsx
-// Use React.memo for stable props
-const MemoizedTable = React.memo(ListTable, (prevProps, nextProps) => {
-  return (
+// Use React.memo для sтаблица props
+const Memoizedтаблица = React.memo(списоктаблица, (prevProps, nextProps) => {
+  возврат (
     prevProps.records === nextProps.records &&
     prevProps.columns === nextProps.columns
   );
 });
 
-// Use useMemo for expensive computations
-const processedData = useMemo(() => {
-  return data.map(record => ({
+// Use useMemo для expensive computations
+const processedданные = useMemo(() => {
+  возврат данные.map(record => ({
     ...record,
-    computedField: expensiveComputation(record)
+    computedполе: expensiveComputation(record)
   }));
-}, [data]);
+}, [данные]);
 
-// Use useCallback for event handlers
+// Use useCallback для событие handlers
 const handleCellEdit = useCallback((args) => {
   // Handle edit
 }, [dependencies]);
 ```
 
-### 2. Error Handling
+### 2. ошибка Handling
 
 ```jsx
-import React, { ErrorBoundary } from 'react';
+import React, { ErrorBoundary } от 'react';
 
-class TableErrorBoundary extends React.Component {
+class таблицаErrorBoundary extends React.компонент {
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, ошибка: null };
   }
   
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
+  static getDerivedStateFromError(ошибка) {
+    возврат { hasError: true, ошибка };
   }
   
-  componentDidCatch(error, errorInfo) {
-    console.error('Table error:', error, errorInfo);
+  компонентDidCatch(ошибка, errorInfo) {
+    console.ошибка('таблица ошибка:', ошибка, errorInfo);
   }
   
   render() {
     if (this.state.hasError) {
-      return (
+      возврат (
         <div>
-          <h2>Something went wrong with the table.</h2>
+          <h2>Something went wrong с the таблица.</h2>
           <details>
-            {this.state.error && this.state.error.toString()}
+            {this.state.ошибка && this.state.ошибка.toString()}
           </details>
         </div>
       );
     }
     
-    return this.props.children;
+    возврат this.props.children;
   }
 }
 
-function SafeTable(props) {
-  return (
-    <TableErrorBoundary>
-      <ListTable {...props} />
-    </TableErrorBoundary>
+функция Safeтаблица(props) {
+  возврат (
+    <таблицаErrorBoundary>
+      <списоктаблица {...props} />
+    </таблицаErrorBoundary>
   );
 }
 ```
@@ -885,26 +885,26 @@ function SafeTable(props) {
 ### 3. Testing
 
 ```jsx
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { ListTable } from '@visactor/react-vtable';
+import React от 'react';
+import { render, screen, fireсобытие } от '@testing-library/react';
+import { списоктаблица } от '@visactor/react-vтаблица';
 
-describe('VTable Integration', () => {
-  const mockData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' }
+describe('Vтаблица Integration', () => {
+  const mockданные = [
+    { id: 1, имя: 'John Doe', email: 'john@пример.com' }
   ];
   
   const mockColumns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 }
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 }
   ];
   
-  test('renders table with data', () => {
+  test('renders таблица с данные', () => {
     render(
-      <ListTable
+      <списоктаблица
         columns={mockColumns}
-        records={mockData}
+        records={mockданные}
       />
     );
     
@@ -915,9 +915,9 @@ describe('VTable Integration', () => {
     const handleEdit = jest.fn();
     
     render(
-      <ListTable
+      <списоктаблица
         columns={mockColumns}
-        records={mockData}
+        records={mockданные}
         onAfterCellEdit={handleEdit}
       />
     );
@@ -930,4 +930,4 @@ describe('VTable Integration', () => {
 });
 ```
 
-This comprehensive React integration guide provides everything needed to effectively use VTable in React applications, from basic usage to advanced patterns and best practices.
+This comprehensive React integration guide provides everything needed к effectively use Vтаблица в React applications, от базовый usвозраст к advanced patterns и best practices.

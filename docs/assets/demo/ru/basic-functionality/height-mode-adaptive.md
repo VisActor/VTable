@@ -1,93 +1,93 @@
 ---
-category: examples
-group: Basic Features
-title: Row Height Mode - Fits Container Width
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png
-order: 3-5
-link: basic_function/row_height_column_width
-option: ListTable#heightMode
+категория: примеры
+группа: базовый возможности
+заголовок: Row высота Mode - Fits Container ширина
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/ширина-mode-adaptive.png
+порядок: 3-5
+ссылка: базовый_function/row_высота_column_ширина
+опция: списоктаблица#высотаMode
 ---
 
-# Row Height Mode - Fits to Container Height
+# Row высота Mode - Fits к Container высота
 
-Table row height fits container height
+таблица row высота fits container высота
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `heightMode: 'adaptive'`
+- `высотаMode: 'adaptive'`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_список100.json')
   .then(res => res.json())
-  .then(data => {
-    data = data.slice(0, 10);
+  .then(данные => {
+    данные = данные.slice(0, 10);
     const columns = [
       {
-        field: '230517143221027',
-        title: 'Order ID',
-        width: 'auto'
+        поле: '230517143221027',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: '230517143221030',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: '230517143221030',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: '230517143221032',
-        title: 'Product Name',
-        width: 'auto'
+        поле: '230517143221032',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: '230517143221023',
-        title: 'Category',
-        width: 'auto'
+        поле: '230517143221023',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: '230517143221034',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: '230517143221034',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: '230517143221037',
-        title: 'Region',
-        width: 'auto'
+        поле: '230517143221037',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: '230517143221024',
-        title: 'City',
-        width: 'auto'
+        поле: '230517143221024',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: '230517143221029',
-        title: 'Order Date',
-        width: 'auto'
+        поле: '230517143221029',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: '230517143221042',
-        title: 'Quantity',
-        width: 'auto'
+        поле: '230517143221042',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: '230517143221040',
-        title: 'Sales',
-        width: 'auto'
+        поле: '230517143221040',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: '230517143221041',
-        title: 'Profit',
-        width: 'auto'
+        поле: '230517143221041',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      heightMode: 'adaptive'
+      высотаMode: 'adaptive'
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

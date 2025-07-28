@@ -1,29 +1,29 @@
-{{ target: common-table-frame-style }}
+{{ target: common-таблица-frame-style }}
 
 #${prefix} frameStyle(FrameStyle)
 
-Table outer border style
+таблица outer граница style
 
 {{ use: common-frame-style(
   prefix = '#'+${prefix}
   ) }}
 
-##${prefix} shadowBlur(number)
+##${prefix} shadowBlur(число)
 
-Shadow width
+Shadow ширина
 
-##${prefix} shadowOffsetX(number)
+##${prefix} shadowOffsetX(число)
 
 Shadow X-direction offset
 
-##${prefix} shadowOffsetY(number)
+##${prefix} shadowOffsetY(число)
 
 Shadow Y-direction offset
 
-##${prefix} shadowColor(string)
+##${prefix} shadowColor(строка)
 
-Shadow color
+Shadow цвет
 
-##${prefix} cornerRadius(number)
+##${prefix} cornerRadius(число)
 
-Border corner radius
+граница corner radius

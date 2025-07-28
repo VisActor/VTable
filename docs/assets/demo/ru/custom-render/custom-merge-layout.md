@@ -1,41 +1,41 @@
 ---
-category: examples
-group: Custom
-title: Custom Merge
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge-custom.png
-link: custom_define/custom_merge
-option: ListTable-columns-text#customLayout
+категория: примеры
+группа: пользовательский
+заголовок: пользовательский Merge
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-merge-пользовательский.png
+ссылка: пользовательский_define/пользовательский_merge
+опция: списоктаблица-columns-текст#пользовательскиймакет
 ---
 
-#Cell custom merge
+#Cell пользовательский merge
 
-In cell custom merging, you can also use `customRender` or `customLayout` to implement custom rendering or custom layout in custom merged cells.
+в cell пользовательский merging, Вы можете also use `пользовательскийRender` или `пользовательскиймакет` к implement пользовательский rendering или пользовательский макет в пользовательский merged cells.
 
 ## 代码演示
 
-```javascript livedemo template=vtable
-const VGroup = VTable.VGroup;
-const VText = VTable.VText;
-const VImage = VTable.VImage;
-const VTag = VTable.VTag;
+```javascript liveдемонстрация template=vтаблица
+const VGroup = Vтаблица.VGroup;
+const VText = Vтаблица.VText;
+const VImвозраст = Vтаблица.VImвозраст;
+const VTag = Vтаблица.VTag;
 
 const option = {
   container: document.getElementById('container'),
   columns: [
     {
-      field: 'bloggerId',
-      title: 'bloggerId'
+      поле: 'bloggerId',
+      заголовок: 'bloggerId'
     },
     {
-      field: 'bloggerName',
-      title: 'bloggerName',
-      width: 330
+      поле: 'bloggerимя',
+      заголовок: 'bloggerимя',
+      ширина: 330
     },
     {
-      field: 'fansCount',
-      title: 'fansCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'fansCount',
+      заголовок: 'fansCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -44,8 +44,8 @@ const option = {
       }
     },
     {
-      field: 'worksCount',
-      title: 'worksCount',
+      поле: 'worksCount',
+      заголовок: 'worksCount',
       style: {
         fontFamily: 'Arial',
         fontSize: 12,
@@ -53,10 +53,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -65,10 +65,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -77,181 +77,181 @@ const option = {
       }
     },
     {
-      field: '',
-      title: 'operation',
-      width: 100,
-      icon: ['favorite', 'message']
+      поле: '',
+      заголовок: 'operation',
+      ширина: 100,
+      иконка: ['favorite', 'messвозраст']
     }
   ],
   records: [
     {
       bloggerId: 1,
-      bloggerName: 'Virtual Anchor Xiaohua',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+      bloggerимя: 'Virtual Anchor Xiaohua',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg',
       introduction:
-        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation and food. I hope to share happy moments with you through live broadcast.',
+        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation и food. I hope к share happy moments с you through live broadcast.',
       fansCount: 400,
       worksCount: 10,
       viewCount: 5,
-      city: 'Dream City',
+      Город: 'Dream Город',
       tags: ['game', 'anime', 'food']
     },
     {
       bloggerId: 2,
-      bloggerName: 'Virtual anchor little wolf',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg',
+      bloggerимя: 'Virtual anchor little wolf',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg',
       introduction:
-        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.',
+        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel и photography, и I hope к explore the beauty из the world с you through live broadcast.',
       fansCount: 800,
       worksCount: 20,
       viewCount: 15,
-      city: 'City of Music',
+      Город: 'Город из Music',
       tags: ['music', 'travel', 'photography']
     },
     {
       bloggerId: 3,
-      bloggerName: 'Virtual anchor bunny',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg',
+      bloggerимя: 'Virtual anchor bunny',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/rabbit.jpg',
       introduction:
-        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts and beauty makeup. I hope to share creativity and fashion with you through live broadcast.',
+        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts и beauty makeup. I hope к share creativity и fashion с you through live broadcast.',
       fansCount: 600,
       worksCount: 15,
       viewCount: 10,
-      city: 'City of Art',
+      Город: 'Город из Art',
       tags: ['painting', 'handmade', 'beauty makeup']
     },
     {
       bloggerId: 4,
-      bloggerName: 'Virtual anchor kitten',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg',
+      bloggerимя: 'Virtual anchor kitten',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/cat.jpg',
       introduction:
-        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness and cooking. I hope to live a healthy and happy life with everyone through the live broadcast.',
+        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness и coхорошоing. I hope к live a healthy и happy life с everyone through the live broadcast.',
       fansCount: 1000,
       worksCount: 30,
       viewCount: 20,
-      city: 'Health City',
-      tags: ['dance', 'fitness', 'cooking']
+      Город: 'Health Город',
+      tags: ['dance', 'fitness', 'coхорошоing']
     },
     {
       bloggerId: 5,
-      bloggerName: 'Virtual anchor Bear',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+      bloggerимя: 'Virtual anchor Bear',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg',
       introduction:
-        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading and philosophy, I hope to explore the meaning of life with you through live broadcast.',
+        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading и philosophy, I hope к explore the meaning из life с you through live broadcast.',
       fansCount: 1200,
       worksCount: 25,
       viewCount: 18,
-      city: 'City of Wisdom',
+      Город: 'Город из Wisdom',
       tags: ['Movie', 'Literature']
     },
     {
       bloggerId: 6,
-      bloggerName: 'Virtual anchor bird',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg',
+      bloggerимя: 'Virtual anchor bird',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bird.jpeg',
       introduction:
-        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting and variety shows. I hope to be happy with everyone through the live broadcast.',
+        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting и variety shows. I hope к be happy с everyone through the live broadcast.',
       fansCount: 900,
       worksCount: 12,
       viewCount: 8,
-      city: 'Happy City',
-      tags: ['music', 'performance', 'variety']
+      Город: 'Happy Город',
+      tags: ['music', 'Производительность', 'variety']
     },
     {},
     {}
   ],
-  defaultRowHeight: 40,
-  customMergeCell: (col, row, table) => {
-    if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
-      return {
+  defaultRowвысота: 40,
+  пользовательскийMergeCell: (col, row, таблица) => {
+    if (col >= 0 && col < таблица.colCount && row === таблица.rowCount - 2) {
+      возврат {
         range: {
-          start: {
+          начало: {
             col: 0,
-            row: table.rowCount - 2
+            row: таблица.rowCount - 2
           },
-          end: {
-            col: table.colCount - 1,
-            row: table.rowCount - 2
+          конец: {
+            col: таблица.colCount - 1,
+            row: таблица.rowCount - 2
           }
         },
-        customLayout: args => {
-          const { table, row, col, rect } = args;
-          const { height, width } = rect || table.getCellRect(col, row);
+        пользовательскиймакет: args => {
+          const { таблица, row, col, rect } = args;
+          const { высота, ширина } = rect || таблица.getCellRect(col, row);
           const container = (
             <VGroup
               attribute={{
                 id: 'container',
-                width,
-                height,
+                ширина,
+                высота,
                 display: 'flex',
                 flexWrap: 'nowrap',
-                alignItems: 'center',
-                justifyContent: 'center'
+                alignItems: 'центр',
+                justifyContent: 'центр'
               }}
             >
               <VText
                 attribute={{
-                  id: 'text',
-                  text: 'Created by ',
+                  id: 'текст',
+                  текст: 'Created по ',
                   fontSize: 14,
                   fontFamily: 'sans-serif',
                   fill: 'black',
-                  textAlign: 'left',
-                  textBaseline: 'top',
+                  textAlign: 'лево',
+                  textBaseline: 'верх',
                   boundsPadding: [0, 0, 0, 10]
                 }}
               ></VText>
               <VTag
                 attribute={{
-                  text: 'VisActor',
+                  текст: 'VisActor',
                   textStyle: {
                     fontSize: 14,
                     fontFamily: 'sans-serif',
                     fill: 'rgb(51, 101, 238)'
                   },
                   panel: {
-                    visible: true,
+                    видимый: true,
                     fill: '#e6fffb',
-                    lineWidth: 1,
+                    lineширина: 1,
                     cornerRadius: 4
                   }
                 }}
               ></VTag>
             </VGroup>
           );
-          return {
+          возврат {
             rootContainer: container,
             renderDefault: false
           };
         }
       };
-    } else if (col >= 0 && col < table.colCount && row === table.rowCount - 1) {
-      return {
-        text: 'a',
+    } else if (col >= 0 && col < таблица.colCount && row === таблица.rowCount - 1) {
+      возврат {
+        текст: 'a',
         range: {
-          start: {
+          начало: {
             col: 0,
-            row: table.rowCount - 1
+            row: таблица.rowCount - 1
           },
-          end: {
-            col: table.colCount - 1,
-            row: table.rowCount - 1
+          конец: {
+            col: таблица.colCount - 1,
+            row: таблица.rowCount - 1
           }
         },
-        customRender: args => {
-          const { width, height } = args.rect;
-          const { dataValue, table, row } = args;
+        пользовательскийRender: args => {
+          const { ширина, высота } = args.rect;
+          const { данныеValue, таблица, row } = args;
           const elements = [];
           elements.push({
-            type: 'text',
+            тип: 'текст',
             fill: '#000',
             fontSize: 12,
             fontWeight: 500,
-            textBaseline: 'top',
-            text: '© 2024 VisActor',
-            x: width / 2 - 50,
+            textBaseline: 'верх',
+            текст: '© 2024 VisActor',
+            x: ширина / 2 - 50,
             y: 14
           });
-          return {
+          возврат {
             elements
           };
         }
@@ -260,6 +260,6 @@ const option = {
   }
 };
 
-const instance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = instance;
+const instance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window.таблицаInstance = instance;
 ```

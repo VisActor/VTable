@@ -2,4 +2,4 @@
 
 #${prefix} container(HTMLElement)
 
-Container DOM, requires width.
+Container DOM, requires ширина.

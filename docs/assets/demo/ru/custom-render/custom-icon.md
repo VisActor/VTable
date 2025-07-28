@@ -1,164 +1,164 @@
 ---
-category: examples
-group: Custom
-title: Custom Icon
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-icon.png
-link: custom_define/custom_icon
+категория: примеры
+группа: пользовательский
+заголовок: пользовательский иконка
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-иконка.png
+ссылка: пользовательский_define/пользовательский_иконка
 ---
 
-# Custom Icon
+# пользовательский иконка
 
-Display icon content in cells.
+Display иконка content в cells.
 
-Register the icon information globally through `VTable.register.icon`, and then directly configure the registration name in the icon or headerIcon in the column, or configure the complete icon information in the icon or headerIcon
+регистрация the иконка information globally through `Vтаблица.регистрация.иконка`, и then directly configure the registration имя в the иконка или headerиконка в the column, или configure the complete иконка information в the иконка или headerиконка
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.register.icon` Registered custom icons can be used with columns \[x] .icon or columns \[x] .headerIcon. Or reset the internal icon
+- `Vтаблица.регистрация.иконка` регистрацияed пользовательский иконкаs can be used с columns \[x] .иконка или columns \[x] .headerиконка. или reset the internal иконка
 
-The names of the built-in function icons are:
-`'sort_upward',
-'sort_downward',
-'sort_normal',
+The имяs из the built-в функция иконкаs are:
+`'сортировка_upward',
+'сортировка_downward',
+'сортировка_normal',
 'frozen',
 'frozen',
 'frozenCurrent',
-'dropdownIcon',
-'dropdownIcon_hover',
-'expand',
-'collapse',`
+'dropdownиконка',
+'dropdownиконка_hover',
+'развернуть',
+'свернуть',`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// #region 为自定义弹出框做准备
+```javascript liveдемонстрация template=vтаблица
+// #Регион 为自定义弹出框做准备
 const container = document.getElementById(CONTAINER_ID);
-const popup = document.createElement('div');
-Object.assign(popup.style, {
-  position: 'fixed',
-  width: '300px',
+const всплывающее окно = document.createElement('div');
+объект.assign(всплывающее окно.style, {
+  позиция: 'fixed',
+  ширина: '300px',
   backgroundColor: '#f1f1f1',
-  border: '1px solid #ccc',
-  padding: '10px',
-  textAlign: 'left'
+  bпорядок: '1px solid #ccc',
+  заполнение: '10px',
+  textAlign: 'лево'
 });
-function showTooltip(infoList, x, y) {
-  popup.innerHTML = '';
-  popup.id = 'popup';
-  popup.style.left = x + 'px';
-  popup.style.top = y + 'px';
+функция showПодсказка(infoсписок, x, y) {
+  всплывающее окно.innerHTML = '';
+  всплывающее окно.id = 'всплывающее окно';
+  всплывающее окно.style.лево = x + 'px';
+  всплывающее окно.style.верх = y + 'px';
   const heading = document.createElement('h4');
-  heading.textContent = 'Customer Information:';
-  heading.style.margin = '0px';
-  popup.appendChild(heading);
-  for (let i = 0; i < infoList.length; i++) {
-    const info = infoList[i];
+  heading.textContent = 'пользовательскийer Information:';
+  heading.style.отступ = '0px';
+  всплывающее окно.appendChild(heading);
+  для (let i = 0; i < infoсписок.length; i++) {
+    const информация = infoсписок[i];
     const info1 = document.createElement('p');
-    info1.textContent = info;
-    popup.appendChild(info1);
+    info1.textContent = информация;
+    всплывающее окно.appendChild(info1);
   }
   // 将弹出框添加到文档主体中
-  document.body.appendChild(popup);
+  document.body.appendChild(всплывающее окно);
 }
 
-function hideTooltip() {
-  if (document.body.contains(popup)) {
-    document.body.removeChild(popup);
+функция hideПодсказка() {
+  if (document.body.contains(всплывающее окно)) {
+    document.body.removeChild(всплывающее окно);
   }
 }
-// #endregion 为自定义弹出框做准备
+// #endРегион 为自定义弹出框做准备
 
-VTable.register.icon('freeze', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/freeze.svg',
-  width: 22,
-  height: 22,
-  name: 'freeze',
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  positionType: VTable.TYPES.IconPosition.right,
+Vтаблица.регистрация.иконка('freeze', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/freeze.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'freeze',
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  positionType: Vтаблица.TYPES.иконкаPosition.право,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
-VTable.register.icon('frozenCurrent', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozenCurrent.svg',
-  width: 22,
-  height: 22,
-  name: 'frozenCurrent',
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  positionType: VTable.TYPES.IconPosition.right,
+Vтаблица.регистрация.иконка('frozenCurrent', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/frozenCurrent.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'frozenCurrent',
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  positionType: Vтаблица.TYPES.иконкаPosition.право,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
-    bgColor: 'rgba(101, 117, 168, 0.1)'
-  },
-  cursor: 'pointer'
-});
-
-VTable.register.icon('frozen', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozen.svg',
-  width: 22,
-  height: 22,
-  name: 'frozen',
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  positionType: VTable.TYPES.IconPosition.right,
-  marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
 
-VTable.register.icon('order', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg',
-  width: 22,
-  height: 22,
-  name: 'order',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('frozen', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/frozen.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'frozen',
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  positionType: Vтаблица.TYPES.иконкаPosition.право,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
-  // tooltip: {
+});
+
+Vтаблица.регистрация.иконка('order', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/order.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'order',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
+  marginRight: 0,
+  навести: {
+    ширина: 22,
+    высота: 22,
+    bgColor: 'rgba(101, 117, 168, 0.1)'
+  },
+  cursor: 'pointer'
+  // Подсказка: {
   //   style: {
   //     bgColor:'gray',
   //     fontSize:6
   //   },
   //   // 气泡框，按钮的的解释信息
-  //   title: '点击可复制',
-  //   placement: VTable.TYPES.Placement.top,
+  //   заголовок: '点击可复制',
+  //   placement: Vтаблица.TYPES.Placement.верх,
   // },
 });
 
-VTable.register.icon('text-button', {
-  type: 'text',
-  content: 'click',
-  name: 'text-button',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('текст-Кнопка', {
+  тип: 'текст',
+  content: 'Нажать',
+  имя: 'текст-Кнопка',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   style: {
     fill: 'red',
     cursor: 'pointer'
   }
 });
 
-VTable.register.icon('text-button1', {
-  type: 'text',
-  content: 'click',
-  name: 'text-button',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('текст-Кнопка1', {
+  тип: 'текст',
+  content: 'Нажать',
+  имя: 'текст-Кнопка',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   marginLeft: 10,
   style: {
     cursor: 'pointer',
@@ -166,124 +166,124 @@ VTable.register.icon('text-button1', {
   }
 });
 
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
-    data.forEach((data, index) => {
-      data['avatar'] = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/avatar/' + (index % 10) + '.jpeg';
+  .then(данные => {
+    данные.forEach((данные, index) => {
+      данные['avatar'] = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/avatar/' + (index % 10) + '.jpeg';
     });
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto',
-        icon: 'order'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто',
+        иконка: 'order'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Customer Name',
-        title: 'Customer',
-        width: 'auto',
-        icon: {
-          type: 'image',
+        поле: 'пользовательскийer имя',
+        заголовок: 'пользовательскийer',
+        ширина: 'авто',
+        иконка: {
+          тип: 'imвозраст',
           src: 'avatar',
-          name: 'avatar_pic',
+          имя: 'avatar_pic',
           shape: 'circle',
           //定义文本内容行内图标，第一个字符展示
-          width: 30, // Optional
-          height: 30,
-          positionType: VTable.TYPES.IconPosition.contentLeft,
+          ширина: 30, // необязательный
+          высота: 30,
+          positionType: Vтаблица.TYPES.иконкаPosition.contentLeft,
           marginRight: 20,
           marginLeft: 0,
           cursor: 'pointer'
         }
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto',
-        headerIcon: [
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто',
+        headerиконка: [
           {
-            name: 'question',
-            type: 'svg',
+            имя: 'question',
+            тип: 'svg',
             marginLeft: 10,
-            positionType: VTable.TYPES.IconPosition.contentRight,
-            width: 20,
-            height: 20,
-            svg: `<svg t="1706853751091" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4226" width="200" height="200"><path d="M533.333333 85.333333c-247.426667 0-448 200.573333-448 448s200.573333 448 448 448 448-200.573333 448-448-200.573333-448-448-448z m0 853.333334c-223.86 0-405.333333-181.473333-405.333333-405.333334s181.473333-405.333333 405.333333-405.333333 405.333333 181.473333 405.333334 405.333333-181.473333 405.333333-405.333334 405.333334z m21.333334-192a21.333333 21.333333 0 1 1-21.333334-21.333334 21.333333 21.333333 0 0 1 21.333334 21.333334z m-21.333334-85.333334a21.333333 21.333333 0 0 1-21.333333-21.333333v-42.666667a21.333333 21.333333 0 0 1 6.246667-15.086666c13.1-13.093333 28.9-24.886667 45.633333-37.333334C601.333333 516.966667 640 488.1 640 448c0-58.813333-47.853333-106.666667-106.666667-106.666667s-106.666667 47.853333-106.666666 106.666667a21.333333 21.333333 0 0 1-42.666667 0 149.333333 149.333333 0 0 1 298.666667 0c0 28.113333-10.6 53.873333-32.406667 78.74-17.593333 20.046667-39.593333 36.466667-60.873333 52.34-12.666667 9.453333-24.76 18.473333-34.72 27.433333V640a21.333333 21.333333 0 0 1-21.333334 21.333333z" fill="#5C5C66" p-id="4227"></path></svg>`,
-            tooltip: {
+            positionType: Vтаблица.TYPES.иконкаPosition.contentRight,
+            ширина: 20,
+            высота: 20,
+            svg: `<svg t="1706853751091" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4226" ширина="200" высота="200"><path d="M533.333333 85.333333c-247.426667 0-448 200.573333-448 448s200.573333 448 448 448 448-200.573333 448-448-200.573333-448-448-448z m0 853.333334c-223.86 0-405.333333-181.473333-405.333333-405.333334s181.473333-405.333333 405.333333-405.333333 405.333333 181.473333 405.333334 405.333333-181.473333 405.333333-405.333334 405.333334z m21.333334-192a21.333333 21.333333 0 1 1-21.333334-21.333334 21.333333 21.333333 0 0 1 21.333334 21.333334z m-21.333334-85.333334a21.333333 21.333333 0 0 1-21.333333-21.333333v-42.666667a21.333333 21.333333 0 0 1 6.246667-15.086666c13.1-13.093333 28.9-24.886667 45.633333-37.333334C601.333333 516.966667 640 488.1 640 448c0-58.813333-47.853333-106.666667-106.666667-106.666667s-106.666667 47.853333-106.666666 106.666667a21.333333 21.333333 0 0 1-42.666667 0 149.333333 149.333333 0 0 1 298.666667 0c0 28.113333-10.6 53.873333-32.406667 78.74-17.593333 20.046667-39.593333 36.466667-60.873333 52.34-12.666667 9.453333-24.76 18.473333-34.72 27.433333V640a21.333333 21.333333 0 0 1-21.333334 21.333333z" fill="#5C5C66" p-id="4227"></path></svg>`,
+            Подсказка: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
-              title: 'this is product name',
-              placement: VTable.TYPES.Placement.right
+              заголовок: 'this is product имя',
+              placement: Vтаблица.TYPES.Placement.право
             }
           }
         ]
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'null',
-        title: 'text icon',
-        width: 'auto',
-        icon: ['text-button', 'text-button1']
+        поле: 'null',
+        заголовок: 'текст иконка',
+        ширина: 'авто',
+        иконка: ['текст-Кнопка', 'текст-Кнопка1']
       },
       {
-        field: '2234',
-        title: 'single line',
-        width: 120,
-        icon: [
+        поле: '2234',
+        заголовок: 'single line',
+        ширина: 120,
+        иконка: [
           {
-            name: 'edit',
-            type: 'svg',
+            имя: 'edit',
+            тип: 'svg',
             marginLeft: 10,
-            positionType: VTable.TYPES.IconPosition.left,
-            width: 20,
-            height: 20,
-            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/edit.svg',
-            tooltip: {
+            positionType: Vтаблица.TYPES.иконкаPosition.лево,
+            ширина: 20,
+            высота: 20,
+            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/edit.svg',
+            Подсказка: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
-              title: '编辑',
-              placement: VTable.TYPES.Placement.right
+              заголовок: '编辑',
+              placement: Vтаблица.TYPES.Placement.право
             }
           },
           {
-            name: 'delete',
-            type: 'svg',
+            имя: 'delete',
+            тип: 'svg',
             marginLeft: 20,
-            positionType: VTable.TYPES.IconPosition.left,
-            width: 20,
-            height: 20,
-            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/delete.svg',
-            tooltip: {
+            positionType: Vтаблица.TYPES.иконкаPosition.лево,
+            ширина: 20,
+            высота: 20,
+            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/delete.svg',
+            Подсказка: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
-              title: '删除',
-              placement: VTable.TYPES.Placement.right
+              заголовок: '删除',
+              placement: Vтаблица.TYPES.Placement.право
             }
           }
         ]
@@ -291,74 +291,74 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       allowFrozenColCount: 3,
       frozenColCount: 1,
       rightFrozenColCount: 2
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
 
-    tableInstance.on('click_cell', args => {
-      console.log('click_cell', args);
-      const { col, row, targetIcon } = args;
-      if (targetIcon) {
-        if (targetIcon.name === 'edit') {
-          window?.alert?.('编辑第 ' + (row - tableInstance.columnHeaderLevelCount + 1) + ' 条数据');
-        } else if (targetIcon.name === 'delete') {
-          data.splice(row - tableInstance.columnHeaderLevelCount, 1);
-          tableInstance.setRecords(data);
-        } else if (targetIcon.name === 'order') {
-          const value = tableInstance.getCellValue(col, row);
-          window?.alert?.('已复制订单号： ' + value);
-        } else if (targetIcon.name === 'question') {
-          const value = tableInstance.getCellValue(col, row);
-          window?.alert?.('question: ' + value);
+    таблицаInstance.на('Нажать_cell', args => {
+      console.log('Нажать_cell', args);
+      const { col, row, targetиконка } = args;
+      if (targetиконка) {
+        if (targetиконка.имя === 'edit') {
+          window?.предупреждение?.('编辑第 ' + (row - таблицаInstance.columnHeaderLevelCount + 1) + ' 条数据');
+        } else if (targetиконка.имя === 'delete') {
+          данные.splice(row - таблицаInstance.columnHeaderLevelCount, 1);
+          таблицаInstance.setRecords(данные);
+        } else if (targetиконка.имя === 'order') {
+          const значение = таблицаInstance.getCellValue(col, row);
+          window?.предупреждение?.('已复制订单号： ' + значение);
+        } else if (targetиконка.имя === 'question') {
+          const значение = таблицаInstance.getCellValue(col, row);
+          window?.предупреждение?.('question: ' + значение);
         }
       }
     });
-    let hoverIconKey;
-    tableInstance.on('mousemove_cell', args => {
+    let hoverиконкаKey;
+    таблицаInstance.на('mousemove_cell', args => {
       console.log('mousemove_cell', args);
-      const { col, row, targetIcon } = args;
-      if (targetIcon) {
-        const key = `${col}-${row}-${targetIcon?.name}`;
-        if (targetIcon?.name === 'order') {
-          if (hoverIconKey !== key) {
-            hoverIconKey = key;
-            tableInstance.showTooltip(col, row, {
-              content: 'Click to Copy：' + tableInstance.getCellValue(col, row),
-              referencePosition: { rect: targetIcon.position, placement: VTable.TYPES.Placement.right }, //TODO
+      const { col, row, targetиконка } = args;
+      if (targetиконка) {
+        const key = `${col}-${row}-${targetиконка?.имя}`;
+        if (targetиконка?.имя === 'order') {
+          if (hoverиконкаKey !== key) {
+            hoverиконкаKey = key;
+            таблицаInstance.showПодсказка(col, row, {
+              content: 'Нажать к Copy：' + таблицаInstance.getCellValue(col, row),
+              referencePosition: { rect: targetиконка.позиция, placement: Vтаблица.TYPES.Placement.право }, //TODO
               style: {
                 bgColor: 'black',
-                color: 'white',
-                font: 'normal bold normal 14px/1 STKaiti',
+                цвет: 'white',
+                шрифт: 'normal bold normal 14px/1 STKaiti',
                 arrowMark: true
               }
             });
           }
-        } else if (targetIcon?.name === 'avatar_pic') {
-          if (hoverIconKey !== key) {
-            hoverIconKey = key;
-            const cellRange = tableInstance.getCellRelativeRect(col, row);
+        } else if (targetиконка?.имя === 'avatar_pic') {
+          if (hoverиконкаKey !== key) {
+            hoverиконкаKey = key;
+            const cellRange = таблицаInstance.getCellRelativeRect(col, row);
             const container = document.getElementById(CONTAINER_ID);
             const containerRect = container.getBoundingClientRect();
-            // if (!tableInstance.isHeader(col, row)) {
-            const record = tableInstance.getCellOriginRecord(col, row);
-            showTooltip(
-              ['ID: ' + record['Customer ID'], 'Name: ' + record['Customer Name'], 'City: ' + record['City']],
-              cellRange?.left + containerRect.left,
-              cellRange?.bottom + containerRect.top
+            // if (!таблицаInstance.isHeader(col, row)) {
+            const record = таблицаInstance.getCellOriginRecord(col, row);
+            showПодсказка(
+              ['ID: ' + record['пользовательскийer ID'], 'имя: ' + record['пользовательскийer имя'], 'Город: ' + record['Город']],
+              cellRange?.лево + containerRect.лево,
+              cellRange?.низ + containerRect.верх
             );
           }
         } else {
-          hideTooltip();
+          hideПодсказка();
         }
       } else {
-        hoverIconKey = '';
-        hideTooltip();
+        hoverиконкаKey = '';
+        hideПодсказка();
       }
     });
   });

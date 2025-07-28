@@ -1,17 +1,17 @@
-{{ target: pivot-header-title }}
+{{ target: сводный-header-title }}
 
-${prefix} title(true|string) = true
+${prefix} title(true|строка) = true
 
-Display the header title. The default is true, and the content displayed is a combination of the dimension names of each level, such as 'Region|Province'.
+Display the header title. The по умолчанию is true, и the content displayed is a combination из the dimension имяs из каждый level, such as 'Регион|Province'.
 
-${prefix} headerType(string)
+${prefix} headerType(строка)
 
-Header type can be specified as `'text'|'image'|'link'`.
+Header тип can be specified as `'текст'|'imвозраст'|'link'`.
 
 ${prefix} headerStyle(TODO)
 
-Header cell style, configuration items are slightly different based on the headerType. Configuration items for each headerStyle can be found at:
+Header cell style, configuration items are slightly different based на the headerType. Configuration items для каждый headerStyle can be found в:
 
-- For headerType 'text', refer to [headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
-- For headerType 'link', refer to [headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
-- For headerType 'image', refer to [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- для headerType 'текст', refer к [headerStyle](../option/сводныйтаблица-columns-текст#headerStyle.bgColor)
+- для headerType 'link', refer к [headerStyle](../option/сводныйтаблица-columns-link#headerStyle.bgColor)
+- для headerType 'imвозраст', refer к [headerStyle](../option/сводныйтаблица-columns-imвозраст#headerStyle.bgColor)

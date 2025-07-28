@@ -2,52 +2,52 @@
 
 #${prefix} columns
 
-Table column configuration, each column needs to set configuration items separately, and the configuration items differ slightly depending on the cellType. cellType can support: `'text' | 'link' | 'image' | 'video' | 'sparkline' | 'progressbar' | 'chart`， The specific configuration items for each cellType are as follows:
+таблица column configuration, каждый column needs к set configuration items separately, и the configuration items differ slightly depending на the cellType. cellType can support: `'текст' | 'link' | 'imвозраст' | 'video' | 'sparkline' | 'progressbar' | 'график`， The specific configuration items для каждый cellType are as follows:
 
-{{ use: text-cell-type(
+{{ use: текст-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: link-cell-type(
+{{ use: link-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: image-cell-type(
+{{ use: imвозраст-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: video-cell-type(
+{{ use: video-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: progressbar-cell-type(
+{{ use: progressbar-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: sparkline-cell-type(
+{{ use: sparkline-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: chart-cell-type(
+{{ use: график-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: checkbox-cell-type(
+{{ use: флажок-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: radio-cell-type(
+{{ use: переключатель-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: switch-cell-type(
+{{ use: switch-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: button-cell-type(
+{{ use: Кнопка-cell-тип(
     prefix = ${prefix}
 ) }}
 
-{{ use: composite-cell-type(
+{{ use: composite-cell-тип(
     prefix = ${prefix}
 ) }}

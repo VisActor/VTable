@@ -1,31 +1,31 @@
 ---
-title: How to customize highlighted cells in the VTable component</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: How к пользовательскийize highlighted cells в the Vтаблица компонент</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to customize highlighted cells in the VTable component?</br>
+How к пользовательскийize highlighted cells в the Vтаблица компонент?</br>
 ## Problem description
 
-How to customize highlighted cells and specify the highlighting style using the VTable table component?</br>
+How к пользовательскийize highlighted cells и specify the highlighting style using the Vтаблица таблица компонент?</br>
 ## Solution
 
-VTable supports custom cell styles, which can be used to implement custom highlighting function.</br>
+Vтаблица supports пользовательский cell styles, which can be used к implement пользовательский highlighting функция.</br>
 ### Registration style
 
-First, you need to register a custom style</br>
-Need to define `id `and `style `two attributes:</br>
-*  Id: the unique id of the custom style</br>
-*  Style: Custom cell style, the same as the `style `configuration in the `column `, the final presentation effect is the fusion of the original cell style and the custom style</br>
-Custom style registration is divided into two ways, `option `configuration and API configuration:</br>
-*  The customCellStyle property in the option option receives an array composed of multiple custom style objects.</br>
+первый, you need к регистрация a пользовательский style</br>
+Need к define `id `и `style `two attributes:</br>
+*  Id: the unique id из the пользовательский style</br>
+*  Style: пользовательский cell style, the same as the `style `configuration в the `column `, the final presentation effect is the fusion из the original cell style и the пользовательский style</br>
+пользовательский style registration is divided into two ways, `option `configuration и апи configuration:</br>
+*  The пользовательскийCellStyle property в the option option receives an массив composed из multiple пользовательский style objects.</br>
 ```
 // init option
 const option = {
   // ......
-  customCellStyle: [
+  пользовательскийCellStyle: [
     {
-      id: 'custom-1',
+      id: 'пользовательский-1',
       style: {
         bgColor: 'red'
       }
@@ -33,67 +33,67 @@ const option = {
   ]
 }</br>
 ```
-*  The API can register custom styles through the `registerCustomCellStyle `methods provided by the VTable instance:</br>
+*  The апи can регистрация пользовательский styles through the `регистрацияпользовательскийCellStyle `методы provided по the Vтаблица instance:</br>
 ```
-instance.registerCustomCellStyle(id, style)</br>
+instance.регистрацияпользовательскийCellStyle(id, style)</br>
 ```
 ### Assignment style
 
-To use a registered custom style, you need to assign the custom style to the cell. Assignment requires defining two properties, `cellPosition `and `customStyleId `:</br>
-*  cellPosition: Cell position information, supports configuring individual cells and cell ranges.</br>
-*  Single cell: `{row: number, col: number}`</br>
-*  Cell range: `{range: {start: {row: number, col: number}, end: {row: number, col: number}}}`</br>
-*  customStyleId: Custom style id, the same as the id defined when registering custom styles</br>
-There are two ways to allocate, configure in `option `and configure using API:</br>
-*  The `customCellStyleArrangement `property in option receives an array of custom assignment style objects:</br>
+к use a регистрацияed пользовательский style, you need к assign the пользовательский style к the cell. Assignment requires defining two свойства, `cellPosition `и `пользовательскийStyleId `:</br>
+*  cellPosition: Cell позиция information, supports configuring individual cells и cell ranges.</br>
+*  Single cell: `{row: число, col: число}`</br>
+*  Cell range: `{range: {начало: {row: число, col: число}, конец: {row: число, col: число}}}`</br>
+*  пользовательскийStyleId: пользовательский style id, the same as the id defined when регистрацияing пользовательский styles</br>
+There are two ways к allocate, configure в `option `и configure using апи:</br>
+*  The `пользовательскийCellStyleArrangement `property в option receives an массив из пользовательский assignment style objects:</br>
 ```
 // init option
 const option = {
   // ......
-  customCellStyleArrangement: [
+  пользовательскийCellStyleArrangement: [
     {
       cellPosition: {
         col: 3,
         row: 4
       },
-      customStyleId: 'custom-1'
+      пользовательскийStyleId: 'пользовательский-1'
     },
     {
       cellPosition: {
         range: {
-          start: {
+          начало: {
             col: 5,
             row: 5
           },
-          end: {
+          конец: {
             col: 7,
             row: 7
           }
         }
       },
-      customStyleId: 'custom-2'
+      пользовательскийStyleId: 'пользовательский-2'
     }
   ]
 }</br>
 ```
-*  The API can assign custom styles through the `arrangeCustomCellStyle `methods provided by the VTable instance:</br>
+*  The апи can assign пользовательский styles through the `arrangeпользовательскийCellStyle `методы provided по the Vтаблица instance:</br>
 ```
-instance.arrangeCustomCellStyle(cellPosition, customStyleId)</br>
+instance.arrangeпользовательскийCellStyle(cellPosition, пользовательскийStyleId)</br>
 ```
-### Update and delete styles
+### Update и delete styles
 
-Custom style After registration, you can update the custom style of the same id through `registerCustomCellStyle `method. After the update, the cell style of the assigned custom style will be updated; if `newStyle `is `undefined `| `null `, it means to delete the custom style. After deletion, the cell style of the assigned custom style will restore the default style</br>
+пользовательский style After registration, Вы можете update the пользовательский style из the same id through `регистрацияпользовательскийCellStyle `method. After the update, the cell style из the assigned пользовательский style will be updated; if `newStyle `is `undefined `| `null `, it means к delete the пользовательский style. After deletion, the cell style из the assigned пользовательский style will restore the по умолчанию style</br>
 ```
-instance.registerCustomCellStyle(id, newStyle)</br>
+instance.регистрацияпользовательскийCellStyle(id, newStyle)</br>
 ```
-The assigned custom style cell area can be updated by `arrangeCustomCellStyle `method, and the style of the cell area will be updated after the update; if the `customStyleId `is `undefined `| `null `, it means that the restored cell style is the default style</br>
-## Code example
+The assigned пользовательский style cell area can be updated по `arrangeпользовательскийCellStyle `method, и the style из the cell area will be updated after the update; if the `пользовательскийStyleId `is `undefined `| `null `, it means that the restored cell style is the по умолчанию style</br>
+## код пример
 
-demo：https://visactor.io/vtable/demo/custom-render/custom-style</br>
+демонстрация：https://visactor.io/vтаблица/демонстрация/пользовательский-render/пользовательский-style</br>
 ## Related Documents
 
-Related api: https://visactor.io/vtable/option/ListTable-columns-text#style.fontSize</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://visactor.io/vтаблица/option/списоктаблица-columns-текст#style.fontSize</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

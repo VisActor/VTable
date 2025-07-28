@@ -1,27 +1,27 @@
-{{ target: icon-custom-layout-element }}
+{{ target: иконка-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number)
+${prefix} ширина (число)
 
-**Required**
+**обязательный**
 
-The width of the icon.
+The ширина из the иконка.
 
-${prefix} height (number)
+${prefix} высота (число)
 
-**Required**
+**обязательный**
 
-The height of the icon.
+The высота из the иконка.
 
-##${prefix} svg (string)
+##${prefix} svg (строка)
 
-The SVG string or URL of the icon.
+The SVG строка или URL из the иконка.
 
-##${prefix} iconName (string)
+##${prefix} иконкаимя (строка)
 
-The name of the icon. Specify the registered icon by its name.
+The имя из the иконка. Specify the регистрацияed иконка по its имя.
 
-TODO Reference documentation for registering images
+TODO Reference Документация для регистрацияing imвозрастs

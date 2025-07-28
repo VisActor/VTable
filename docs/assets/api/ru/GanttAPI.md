@@ -1,42 +1,42 @@
-{{ target: gantt-api }}
+{{ target: гантт-апи }}
 
-# Gantt API
+# гантт апи
 
-## Methods
+## методы
 
-The methods currently supported by the Gantt chart are as follows:
+The методы currently supported по the гантт график are as follows:
 
-### Left Task Information Table Interface Call
+### лево Task Information таблица интерфейс Call
 
-Since the left information list is a complete ListTable, you can directly obtain the instance of the left table for custom operations.
+Since the лево information список is a complete списоктаблица, Вы можете directly obtain the instance из the лево таблица для пользовательский operations.
 
-The following is an example of obtaining the selected state of the table:
+Следующий is an пример из obtaining the selected state из the таблица:
 
 ```
-  const tableInstance = new Gantt(containerDom, options);
-  const selectedCells = tableInstance.taskListTableInstance.getSelectedCellInfos();
+  const таблицаInstance = новый гантт(containerDom, options);
+  const selectedCells = таблицаInstance.taskсписоктаблицаInstance.getSelectedCellInfos();
   console.log(selectedCells);
 ```
 
-For specific ListTable interfaces, refer to: https://visactor.io/vtable/api/Methods
+для specific списоктаблица interfaces, refer к: https://visactor.io/vтаблица/апи/методы
 
-### updateOption(Function)
+### updateOption(функция)
 
 Update options
 
 ```
-  updateOption: (options: GanttConstructorOptions) => void
+  updateопция: (options: ганттConstructorOptions) => void
 ```
 
-### setRecords(Function)
+### setRecords(функция)
 
-Set data
+Set данные
 
 ```
-  setRecords: (records: any[]) => void
+  setRecords: (records: любой[]) => void
 ```
 
-### updateScales(Function)
+### updateScales(функция)
 
 Update timeline scales
 
@@ -44,17 +44,17 @@ Update timeline scales
   updateScales: (scales: ITimelineScale[]) => void
 ```
 
-{{ use: common-gantt-timeline-scale }}
+{{ use: common-гантт-timeline-scale }}
 
-### updateDateRange(Function)
+### updateDateRange(функция)
 
-update gantt chart date range
+update гантт график date range
 
 ```
-  updateDateRange: (minDate: string, maxDate: string) => void
+  updateDateRange: (minDate: строка, maxDate: строка) => void
 ```
 
-### updateMarkLine(Function)
+### updateMarkLine(функция)
 
 update markLine
 
@@ -62,7 +62,7 @@ update markLine
   updateMarkLine: (markLine: IMarkLine[]) => void
 ```
 
-### addMarkLine(Function)
+### addMarkLine(функция)
 
 add markLine
 
@@ -70,325 +70,325 @@ add markLine
   addMarkLine: (markLine: IMarkLine) => void
 ```
 
-### updateCurrentMarkLine(Function)
+### updateCurrentMarkLine(функция)
 
-update one markLine。 date and content are required
+update one markLine。 date и content are обязательный
 
 ```
   updateCurrentMarkLine: (markLine: IMarkLine) => void
 ```
 
-### updateTaskRecord(Function)
+### updateTaskRecord(функция)
 
-Update a specific data record
-
-```
-  /** Updating data information can be passed into a specific index, and updating subtasks can also be passed into an index array */
-  updateTaskRecord(record: any, task_index: number | number[]): void;
-  updateTaskRecord(record: any, task_index: number, sub_task_index: number): void;
-```
-
-### release(Function)
-
-Release the Gantt instance
+Update a specific данные record
 
 ```
-  release: () => void
+  /** Updating данные information can be passed into a specific index, и updating subtasks can also be passed into an index массив */
+  updateTaskRecord(record: любой, task_index: число | число[]): void;
+  updateTaskRecord(record: любой, task_index: число, sub_task_index: число): void;
 ```
 
-### addLink(Function)
+### Релиз(функция)
+
+Релиз the гантт instance
+
+```
+  Релиз: () => void
+```
+
+### addLink(функция)
 
 Add Dependencies
 
 ```
-addLink: (link: ITaskLink) => void
+addссылка: (ссылка: ITaskLink) => void
 ```
 
-### deleteLink(Function)
+### deleteLink(функция)
 
 Removing Dependencies
 
 ```
-deleteLink: (link: ITaskLink) => void
+deleteссылка: (ссылка: ITaskLink) => void
 
 ```
 
 ### scrollTop
 
-Get or set the vertical scroll value to a specified position.
+Get или set the vertical прокрутка значение к a specified позиция.
 
 ### scrollLeft
 
-Get or set the horizontal scroll value to a specified position.
+Get или set the horizontal прокрутка значение к a specified позиция.
 
-### getTaskBarRelativeRect(Function)
+### getTaskBarRelativeRect(функция)
 
-Get the position of the task bar. The position relative to the top-left corner of the Gantt chart.
+Get the позиция из the task bar. The позиция relative к the верх-лево corner из the гантт график.
 
 ```
-  getTaskBarRelativeRect:(index: number) =>{
-    left: number;
-    top: number;
-    width: number;
-    height: number;
+  getTaskBarRelativeRect:(index: число) =>{
+    лево: число;
+    верх: число;
+    ширина: число;
+    высота: число;
   }
 ```
 
-## Events
+## событиеs
 
-The Gantt chart event list allows you to listen to the required events and implement custom business logic as needed.
+The гантт график событие список allows you к списокen к the обязательный событиеs и implement пользовательский business logic as needed.
 
-Usage example:
+Usвозраст пример:
 
 ```
-  const tableInstance = new Gantt(containerDom, options);
+  const таблицаInstance = новый гантт(containerDom, options);
 
   const {
-      CLICK_TASK_BAR
-    } = EVENT_TYPES;
+      Нажать_TASK_BAR
+    } = событие_TYPES;
 
-  tableInstance.on(CLICK_TASK_BAR, (args) => console.log(CLICK_CELL, args));
+  таблицаInstance.на(Нажать_TASK_BAR, (args) => console.log(Нажать_CELL, args));
 ```
 
-Supported event types:
+Supported событие types:
 
 ```
-export interface EVENT_TYPES {
+export интерфейс событие_TYPES {
   /**
-   * Scroll table event
+   * прокрутка таблица событие
    */
-  SCROLL: 'scroll';
+  прокрутка: 'прокрутка';
   /**
-   * Change date range event
+   * Change date range событие
    */
   CHANGE_DATE_RANGE: 'change_date_range';
   /**
-   * Click task bar event
+   * Нажать task bar событие
    */
-  CLICK_TASK_BAR: 'click_task_bar';
+  Нажать_TASK_BAR: 'Нажать_task_bar';
   /**
-   * Right-click task bar event
+   * право-Нажать task bar событие
    */
-  CONTEXTMENU_TASK_BAR: 'contextmenu_task_bar';
+  CONTEXTменю_TASK_BAR: 'contextменю_task_bar';
   /**
-   * Mouse enter task bar event
+   * Mouse enter task bar событие
    */
   MOUSEENTER_TASK_BAR: 'mouseenter_task_bar';
   /**
-   * Mouse leave task bar event
+   * Mouse leave task bar событие
    */
   MOUSELEAVE_TASK_BAR: 'mouseleave_task_bar';
 
   /**
-   * Create task schedule event
+   * Create task schedule событие
    */
   CREATE_TASK_SCHEDULE: 'create_task_schedule';
   /**
-   * Create dependency line event
+   * Create dependency line событие
    */
-  CREATE_DEPENDENCY_LINK: 'create_dependency_link';
+  CREATE_DEPENDENCY_ссылка: 'create_dependency_link';
 }
 ```
 
-### Left Task Information Table Event Listener
+### лево Task Information таблица событие списокener
 
-Since the left information list is a complete ListTable, you can directly obtain the instance of the left table to listen to events.
+Since the лево information список is a complete списоктаблица, Вы можете directly obtain the instance из the лево таблица к списокen к событиеs.
 
-The following is an example of listening to the table cell selection event:
+Следующий is an пример из списокening к the таблица cell selection событие:
 
 ```
-  const tableInstance = new Gantt(containerDom, options);
-  tableInstance.taskListTableInstance.on('click_cell', (args) => {});
+  const таблицаInstance = новый гантт(containerDom, options);
+  таблицаInstance.taskсписоктаблицаInstance.на('Нажать_cell', (args) => {});
 ```
 
-For specific ListTable events, refer to: https://visactor.io/vtable/api/events
+для specific списоктаблица событиеs, refer к: https://visactor.io/vтаблица/апи/событиеs
 
-### SCROLL
+### прокрутка
 
-Scroll table event
+прокрутка таблица событие
 
-Event callback parameters:
+событие обратный вызов parameters:
 
 ```
  {
-    scrollLeft: number;
-    scrollTop: number;
+    scrollLeft: число;
+    scrollTop: число;
     scrollDirection: 'horizontal' | 'vertical';
-    scrollRatioX?: number;
-    scrollRatioY?: number;
+    scrollRatioX?: число;
+    scrollRatioY?: число;
   }
 ```
 
 ### CHANGE_DATE_RANGE
 
-Change date range event
+Change date range событие
 
-Event callback parameters:
+событие обратный вызов parameters:
 
 ```
  {
-    /** The index of the data being changed */
-    index: number;
-    /** The new start date */
+    /** The index из the данные being changed */
+    index: число;
+    /** The новый начало date */
     startDate: Date;
-    /** The new end date */
+    /** The новый конец date */
     endDate: Date;
-    /** The old start date */
+    /** The старый начало date */
     oldStartDate: Date;
-    /** The old end date */
+    /** The старый конец date */
     oldEndDate: Date;
-    /** The updated data record */
-    record: any;
+    /** The updated данные record */
+    record: любой;
   };
 ```
 
-### CLICK_TASK_BAR
+### Нажать_TASK_BAR
 
-Click task bar event
+Нажать task bar событие
 
-Event callback parameters:
+событие обратный вызов parameters:
 
 ```
  {
-    index: number;
-    record: any;
-    event: Event;
-    federatedEvent: FederatedPointerEvent;
+    index: число;
+    record: любой;
+    событие: событие;
+    federatedсобытие: FederatedPointerсобытие;
   }
 ```
 
 ### MOUSEENTER_TASK_BAR
 
-Mouse enter task bar event
+Mouse enter task bar событие
 
-Event callback parameters:
+событие обратный вызов parameters:
 
 ```
  {
-    index: number;
-    record: any;
-    event: Event;
-    federatedEvent: FederatedPointerEvent;
+    index: число;
+    record: любой;
+    событие: событие;
+    federatedсобытие: FederatedPointerсобытие;
   }
 ```
 
 ### MOUSELEAVE_TASK_BAR
 
-Mouse leave task bar event
+Mouse leave task bar событие
 
-Event callback parameters:
+событие обратный вызов parameters:
 
 ```
  {
-    index: number;
-    record: any;
-    event: Event;
-    federatedEvent: FederatedPointerEvent;
+    index: число;
+    record: любой;
+    событие: событие;
+    federatedсобытие: FederatedPointerсобытие;
   }
 ```
 
 ### CREATE_TASK_SCHEDULE
 
-Events that schedule scheduled tasks
+событиеs that schedule scheduled tasks
 
-Event return parameters:
+событие возврат parameters:
 
 ```
 {
-federatedEvent: FederatedPointerEvent;
-event: Event;
-/** The first data */
-index: number;
+federatedсобытие: FederatedPointerсобытие;
+событие: событие;
+/** The первый данные */
+index: число;
 /** The starting date after the change */
 startDate: Date;
-/** The changed end date */
+/** The changed конец date */
 endDate: Date;
-/** The changed data entry */
-record: any;
+/** The changed данные entry */
+record: любой;
 };
 ```
 
 ### CREATE_DEPENDENCY_LINK
 
-Events that create dependency lines
-Event return parameters:
+событиеs that create dependency lines
+событие возврат parameters:
 
 ```
 {
-    federatedEvent: FederatedPointerEvent;
-    event: Event;
+    federatedсобытие: FederatedPointerсобытие;
+    событие: событие;
     /** dependency link */
-    link: ITaskLink;
+    ссылка: ITaskLink;
   };
 ```
 
-### CLICK_DEPENDENCY_LINK_POINT
+### Нажать_DEPENDENCY_LINK_POINT
 
-Events that click dependency line point
-Event return parameters:
+событиеs that Нажать dependency line point
+событие возврат parameters:
 
 ```
 {
-   event: Event;
-    /** click start or end link point */
-    point: 'start' | 'end';
-    /** the data order */
-    index: number;
-    /** the data info */
-    record: any;
+   событие: событие;
+    /** Нажать начало или конец link point */
+    point: 'начало' | 'конец';
+    /** the данные order */
+    index: число;
+    /** the данные информация */
+    record: любой;
   };
 ```
 
-### CONTEXTMENU_DEPENDENCY_LINK
+### CONTEXTменю_DEPENDENCY_LINK
 
-Events that right-click dependency line
-Event return parameters:
+событиеs that право-Нажать dependency line
+событие возврат parameters:
 
 ```
 {
-    federatedEvent: FederatedPointerEvent;
-    event: Event;
+    federatedсобытие: FederatedPointerсобытие;
+    событие: событие;
     /** dependency link */
-    link: ITaskLink;
+    ссылка: ITaskLink;
   };
 ```
 
 ### DELETE_DEPENDENCY_LINK
 
-Events that delete dependency line
-Event return parameters:
+событиеs that delete dependency line
+событие возврат parameters:
 
 ```
 {
-    event: Event;
+    событие: событие;
     /** dependency link */
-    link: ITaskLink;
+    ссылка: ITaskLink;
   };
 ```
 
-### CLICK_MARKLINE_CREATE
+### Нажать_MARKLINE_CREATE
 
 点击创建 markLine 事件
-Events that click to create markLine
-Event return parameters:
+событиеs that Нажать к create markLine
+событие возврат parameters:
 
 ```
 {
-    event: Event;
-    data: ITimelineDateInfo; // time information
-    position: IPosition; // position information
+    событие: событие;
+    данные: ITimelineDateInfo; // time information
+    позиция: IPosition; // позиция information
   };
 ```
 
-### CLICK_MARKLINE_CONTENT
+### Нажать_MARKLINE_CONTENT
 
-Events that click markLine content
-Event return parameters:
+событиеs that Нажать markLine content
+событие возврат parameters:
 
 ```
 {
-    event: Event;
-    data: IMarkLine; // markLine information
-    position: IPosition; // position information
+    событие: событие;
+    данные: IMarkLine; // markLine information
+    позиция: IPosition; // позиция information
   };
 ```

@@ -1,4 +1,4 @@
-{{ target: common-gantt-dependency-line }}
+{{ target: common-гантт-dependency-line }}
 
 Specific definition:
 
@@ -6,41 +6,41 @@ Specific definition:
 {
   links: ITaskLink[];
   linkLineStyle?: ILineStyle;
-  linkCreatable?: boolean;
-  linkSelectable?: boolean;
-  linkDeletable?: boolean;
+  linkCreaтаблица?: логический;
+  linkSelecтаблица?: логический;
+  linkDeleтаблица?: логический;
   linkSelectedLineStyle?: ITaskLinkSelectedStyle;
-  /** Create an operation point for the association line */
+  /** Create an operation point для the association line */
   linkCreatePointStyle?: IPointStyle;
-  /** Create the operating point response status effect of the association line */
+  /** Create the operating point response status effect из the association line */
   linkCreatingPointStyle?: IPointStyle;
-  /** Create an operation line style for the association line */
+  /** Create an operation line style для the association line */
   linkCreatingLineStyle?: ILineStyle;
 }
 ```
 
 ${prefix} links(ITaskLink[])
 
-Specifies the direct dependency of the task, array type, and the array elements are of ITaskLink type.
+Specifies the direct dependency из the task, массив тип, и the массив elements are из ITaskLink тип.
 
-Required
+обязательный
 
 ITaskLink is defined as:
 
 ```
-export type ITaskLink = {
-  /** Type */
-  type: DependencyType;
-  /** Start task ID. Array for better tree search */
-  linkedFromTaskKey?: string | number | (string | number)[];
-  /** End task ID. Array for better tree search */
-  linkedToTaskKey?: string | number | (string | number)[];
+export тип ITaskLink = {
+  /** тип */
+  тип: DependencyType;
+  /** начало task ID. массив для better tree search */
+  linkedFromTaskKey?: строка | число | (строка | число)[];
+  /** конец task ID. массив для better tree search */
+  linkedToTaskKey?: строка | число | (строка | число)[];
   /** Line style */
   linkLineStyle?: ILineStyle;
 };
 ```
 
-The DependencyType enumeration type is defined as:
+The DependencyType enumeration тип is defined as:
 
 ```
 export enum DependencyType {
@@ -55,61 +55,61 @@ ${prefix} linkLineStyle(ILineStyle)
 
 Dependency line style
 
-Not required
+не обязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
-${prefix} linkCreatable(boolean)
-Whether the dependency line can be created, the default value is false. If true, when clicking the task bar, an operation point for creating a dependency line will appear.
+${prefix} linkCreaтаблица(логический)
+Whether the dependency line can be created, the по умолчанию значение is false. If true, when Нажатьing the task bar, an operation point для creating a dependency line will appear.
 
-Not required
+не обязательный
 
-${prefix} linkDeletable(boolean)
-Whether the dependency line can be deleted, the default value is false.
+${prefix} linkDeleтаблица(логический)
+Whether the dependency line can be deleted, the по умолчанию значение is false.
 
-Not required
+не обязательный
 
-${prefix} linkSelectable(boolean)
-Whether the dependency line is selectable, the default is true
+${prefix} linkSelecтаблица(логический)
+Whether the dependency line is selecтаблица, the по умолчанию is true
 
-Not required
+не обязательный
 
 ${prefix} linkSelectedLineStyle(ITaskLinkSelectedStyle)
 
 Dependency line selection style
 
-Not required
+не обязательный
 
 ```
-export type ITaskLinkSelectedStyle = ILineStyle & {
-shadowBlur?: number; //Shadow width
-shadowOffset?: number; //Offset
-shadowColor?: string; //shadow color
+export тип ITaskLinkSelectedStyle = ILineStyle & {
+shadowBlur?: число; //Shadow ширина
+shadowOffset?: число; //Offset
+shadowColor?: строка; //shadow цвет
 };
 ```
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
 ${prefix} linkCreatePointStyle(IPointStyle)
 
-Click the task bar to create a dependency line operation point style
+Нажать the task bar к create a dependency line operation point style
 
-Not required
+не обязательный
 
-{{ use: common-gantt-point-style }}
+{{ use: common-гантт-point-style }}
 
 ${prefix} linkCreatingPointStyle(IPointStyle)
 
 Operation point response state effect when creating dependency lines
 
-Not required
+не обязательный
 
-{{ use: common-gantt-point-style }}
+{{ use: common-гантт-point-style }}
 
 ${prefix} linkCreatingLineStyle(ILineStyle)
 
-The style of the action line when creating a dependency line
+The style из the action line when creating a dependency line
 
-Not required
+не обязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}

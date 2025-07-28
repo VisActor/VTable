@@ -1,144 +1,144 @@
-{{ target: base-icon }}
+{{ target: base-иконка }}
 
-${prefix} type ('text' | 'svg' | 'path' | 'image')
-Specify the content type of the icon, such as svg text. Can be used to constrain the definition of different types of attributes.
+${prefix} тип ('текст' | 'svg' | 'path' | 'imвозраст')
+Specify the content тип из the иконка, such as svg текст. Can be used к constrain the definition из different types из attributes.
 
-${prefix} width (number)
-The width of the icon.
+${prefix} ширина (число)
+The ширина из the иконка.
 
-${prefix} height (number)
-The height of the icon.
+${prefix} высота (число)
+The высота из the иконка.
 
-${prefix} positionType (IconPosition)
-IconPosition enumeration type.
+${prefix} positionType (иконкаPosition)
+иконкаPosition enumeration тип.
 
 ```
 /**
-* Icon location
-* inlineFront: the front of the text content,
-* inlineEnd: after the text content
+* иконка location
+* inlineFront: the front из the текст content,
+* inlineEnd: after the текст content
 *
 */
-export enum IconPosition {
-  /**Button on the left side of the cell and affected by padding */
-  left = 'left',
-  /**The button on the right side of the cell is affected by padding, such as the pin chart */
-  right = 'right',
-  /**The icon fixed on the right side does not occupy space, is not affected by padding, and may cover the content, such as dropDown */
+export enum иконкаPosition {
+  /**Кнопка на the лево side из the cell и affected по заполнение */
+  лево = 'лево',
+  /**The Кнопка на the право side из the cell is affected по заполнение, such as the pin график */
+  право = 'право',
+  /**The иконка fixed на the право side does не occupy space, is не affected по заполнение, и may cover the content, such as выпадающий список */
   absoluteRight = 'absoluteRight',
-  /**The icon on the left side of the cell content block follows the text positioning and does not wrap with the text */
+  /**The иконка на the лево side из the cell content block follows the текст positioning и does не wrap с the текст */
   contentLeft = 'contentLeft',
-  /**The icon on the right side of the cell content block follows the text positioning and does not wrap with the text */
+  /**The иконка на the право side из the cell content block follows the текст positioning и does не wrap с the текст */
   contentRight = 'contentRight',
-  /**Free positioning in the cell */
+  /**Free positioning в the cell */
   absolute = 'absolute',
 
-  /**The icon in front of the text line content follows the text positioning and wraps with the text */
+  /**The иконка в front из the текст line content follows the текст positioning и wraps с the текст */
   inlineFront = 'inlineFront',
-  /**The icon after the text line content, positioned with the text, and wrapped with the text. For example, the sort chart is placed in the first line of the text content */
+  /**The иконка after the текст line content, positioned с the текст, и wrapped с the текст. для пример, the сортировка график is placed в the первый line из the текст content */
   inlineEnd = 'inlineEnd',
 }
 ```
 
-${prefix} marginRight (number)
-The spacing distance from the right element, or the spacing distance from the cell boundary.
+${prefix} marginRight (число)
+The spacing distance от the право element, или the spacing distance от the cell boundary.
 
-${prefix} marginLeft (number)
-The spacing distance from the left element, or the spacing distance from the cell boundary.
+${prefix} marginLeft (число)
+The spacing distance от the лево element, или the spacing distance от the cell boundary.
 
-${prefix} name (string)
-The name of the icon, which will be used as the key for internal caching.
+${prefix} имя (строка)
+The имя из the иконка, which will be used as the key для internal caching.
 
-${prefix} funcType (IconFuncTypeEnum)
+${prefix} funcType (иконкаFuncTypeEnum)
 
-When resetting the icon inside VTable, you need to specify the functional type of the icon.
+When resetting the иконка inside Vтаблица, you need к specify the functional тип из the иконка.
 
-Especially for functional icons with toggleable states, please be sure to configure funcType, such as sorting function with funcType set to sort, and name set to sort_normal, sort_downward, or sort_upward. This way, the corresponding icon can be replaced accurately.
+Especially для functional иконкаs с toggleable states, please be sure к configure funcType, such as сортировкаing функция с funcType set к сортировка, и имя set к сортировка_normal, сортировка_downward, или сортировка_upward. This way, the corresponding иконка can be replaced accurately.
 
-IconFuncTypeEnum enumeration definition:
+иконкаFuncTypeEnum enumeration definition:
 
 ```
-enum IconFuncTypeEnum {
+enum иконкаFuncTypeEnum {
   frozen = 'frozen',
-  sort = 'sort',
-  dropDown = 'dropDown',
+  сортировка = 'сортировка',
+  выпадающий список = 'выпадающий список',
   dropDownState = 'dropDownState',
   play = 'play',
-  damagePic = 'damagePic',
-  expand = 'expand',
-  collapse = 'collapse',
+  damвозрастPic = 'damвозрастPic',
+  развернуть = 'развернуть',
+  свернуть = 'свернуть',
   drillDown = 'drillDown',
   drillUp = 'drillUp'
 }
 ```
 
-${prefix} hover (Object)
+${prefix} навести (объект)
 
-Size of hover response hotzone and hover effect background color.
+размер из навести response hotzone и навести effect фон цвет.
 
-#${prefix} width (number)
-Width of the hover response hotzone.
+#${prefix} ширина (число)
+ширина из the навести response hotzone.
 
-#${prefix} height (number)
-Height of the hover response hotzone.
+#${prefix} высота (число)
+высота из the навести response hotzone.
 
-#${prefix} bgColor (string)
-Background color for hover effect.
+#${prefix} bgColor (строка)
+фон цвет для навести effect.
 
-#${prefix} image (string)
-Image for hover effect.
+#${prefix} imвозраст (строка)
+Imвозраст для навести effect.
 
-${prefix} cursor (string)
-Specific mouse style when hovering over the icon.
+${prefix} cursor (строка)
+Specific mouse style when hovering over the иконка.
 
-${prefix} visibleTime ('always' | 'mouseenter_cell' | 'click_cell')
-Visibility, default to 'always'. Optional values are 'always', 'mouseenter_cell', or 'click_cell'. Recommendation: If you need to use 'mouseenter_cell' or 'click_cell', it is recommended to set positionTyle to absoluteRight (i.e., non-occupying) to avoid visual display issues.
+${prefix} visibleTime ('always' | 'mouseenter_cell' | 'Нажать_cell')
+Visibility, по умолчанию к 'always'. необязательный values are 'always', 'mouseenter_cell', или 'Нажать_cell'. Recommendation: If you need к use 'mouseenter_cell' или 'Нажать_cell', it is recommended к set positionTyle к absoluteRight (i.e., non-occupying) к avoid visual display issues.
 
-${prefix} tooltip (Object)
-Tooltip, button explanation information, currently only supports hover behavior triggering.
+${prefix} Подсказка (объект)
+Подсказка, Кнопка explanation information, currently only supports навести behavior triggering.
 
-#${prefix} title (string)
-Title of the tooltip.
+#${prefix} title (строка)
+Title из the Подсказка.
 
 #${prefix} placement (Placement)
-Tooltip position, optional values are top, left, right, or bottom.
+Подсказка позиция, необязательный values are верх, лево, право, или низ.
 Placement enumeration definition:
 
 ```
  enum Placement {
-  top = 'top',
-  bottom = 'bottom',
-  left = 'left',
-  right = 'right'
+  верх = 'верх',
+  низ = 'низ',
+  лево = 'лево',
+  право = 'право'
 }
 ```
 
-#${prefix} disappearDelay (number)
-The delay time for the tooltip to disappear. If you need to move the mouse to the tooltip, please configure this parameter.
+#${prefix} disappearDelay (число)
+The delay time для the Подсказка к disappear. If you need к move the mouse к the Подсказка, please configure this параметр.
 
-#${prefix} style (Object)
-The style of the tooltip. If not configured, the theme style will be used.
+#${prefix} style (объект)
+The style из the Подсказка. If не configured, the тема style will be used.
 
-##${prefix} font (string)
-Tooltip font.
+##${prefix} шрифт (строка)
+Подсказка шрифт.
 
-##${prefix} color (string)
-Tooltip text color.
+##${prefix} цвет (строка)
+Подсказка текст цвет.
 
-##${prefix} padding (number[])
-Tooltip padding. Format is [top, right, bottom, left].
+##${prefix} заполнение (число[])
+Подсказка заполнение. Format is [верх, право, низ, лево].
 
-##${prefix} bgColor (string)
-Tooltip background color.
+##${prefix} bgColor (строка)
+Подсказка фон цвет.
 
-##${prefix} arrowMark (boolean)
-Whether the tooltip displays an arrow.
+##${prefix} arrowMark (логический)
+Whether the Подсказка displays an arrow.
 
-##${prefix} maxWidth (number)
-The maximum width of the tooltip.
+##${prefix} maxширина (число)
+The maximum ширина из the Подсказка.
 
-##${prefix} maxHeight (number)
-The maximum height of the tooltip.
+##${prefix} maxвысота (число)
+The maximum высота из the Подсказка.
 
-${prefix} interactive (boolean)
-Whether it is interactive, default is true. Currently known non-interactive buttons are dropdown menu states.
+${prefix} interactive (логический)
+Whether it is interactive, по умолчанию is true. Currently known non-interactive Кнопкаs are выпадающий список меню states.

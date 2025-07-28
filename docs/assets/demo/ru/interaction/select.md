@@ -1,112 +1,112 @@
 ---
-category: examples
-group: Interaction
-title: Select cell
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
-link: interaction/select
-option: ListTable#keyboardOptions
+категория: примеры
+группа: Interaction
+заголовок: выбрать cell
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/выбрать.png
+ссылка: interaction/выбрать
+опция: списоктаблица#keyboardOptions
 ---
 
-# Select cell
+# выбрать cell
 
-Click on a cell to make a single selection, and drag to make a brush selection.
+Нажать на a cell к make a single selection, и перетаскивание к make a brush selection.
 
-Hold down ctrl or shift to make multiple selections.
+Hold down ctrl или shift к make multiple selections.
 
-Turn on the shortcut key selectAllOnCtrlA configuration to select all.
+Turn на the shortcut key selectAllOnCtrlA configuration к выбрать все.
 
-Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set `select.headerSelectMode` to `'cell'`, Or if you only want to select cells in the body, you can set `select.headerSelectMode` to `'body'`..
+Нажатьing на the header cell will выбрать the entire row или column по по умолчанию. If you only want к выбрать the текущий cell, Вы можете set `выбрать.headerSelectMode` к `'cell'`, или if you only want к выбрать cells в the body, Вы можете set `выбрать.headerSelectMode` к `'body'`..
 
-## Key Configurations
+## Ключевые Конфигурации
 
 - `keyboardOptions: {
     selectAllOnCtrlA: true,
     copySelected: true
 }`
-  Enable the ctrl + A optional function and shortcut to copy the selected content.
+  включить the ctrl + A необязательный функция и shortcut к copy the selected content.
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       keyboardOptions: {
         selectAllOnCtrlA: true,
         copySelected: true
       },
-      theme: VTable.themes.ARCO.extends({
+      тема: Vтаблица.темаs.ARCO.extends({
         selectionStyle: {
-          cellBorderLineWidth: 2,
+          cellBorderLineширина: 2,
           cellBorderColor: '#9900ff',
           cellBgColor: 'rgba(153,0,255,0.2)'
         }
       })
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

@@ -1,132 +1,132 @@
 ---
-category: examples
-group: Custom
-title: 单元格自定义布局（JSX）
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout-jsx.png
-link: custom_define/custom_layout
-option: ListTable-columns-text#customLayout
+категория: примеры
+группа: пользовательский
+заголовок: 单元格自定义布局（JSX）
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-cell-макет-jsx.png
+ссылка: пользовательский_define/пользовательский_макет
+опция: списоктаблица-columns-текст#пользовательскиймакет
 ---
 
-# Cell custom layout
+# Cell пользовательский макет
 
-Using JSX to describe custom cell content can more clearly express the hierarchical relationship between graphics elements and increase maintainability.
+Using JSX к describe пользовательский cell content can more clearly express the hierarchical relationship between graphics elements и increase maintainability.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `customLayout` Configure the API to return what needs to be rendered
+- `пользовательскиймакет` Configure the апи к возврат what needs к be rendered
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-const VGroup = VTable.VGroup;
-const VText = VTable.VText;
-const VImage = VTable.VImage;
-const VTag = VTable.VTag;
+```javascript liveдемонстрация template=vтаблица
+const VGroup = Vтаблица.VGroup;
+const VText = Vтаблица.VText;
+const VImвозраст = Vтаблица.VImвозраст;
+const VTag = Vтаблица.VTag;
 
 const option = {
   container: document.getElementById('container'),
   columns: [
     {
-      field: 'bloggerId',
-      title: 'order number'
+      поле: 'bloggerId',
+      заголовок: 'order число'
     },
     {
-      field: 'bloggerName',
-      title: 'anchor nickname',
-      width: 330,
-      customLayout: args => {
-        const { table, row, col, rect } = args;
-        const { height, width } = rect || table.getCellRect(col, row);
-        const record = table.getRecordByRowCol(col, row);
+      поле: 'bloggerимя',
+      заголовок: 'anchor nickимя',
+      ширина: 330,
+      пользовательскиймакет: args => {
+        const { таблица, row, col, rect } = args;
+        const { высота, ширина } = rect || таблица.getCellRect(col, row);
+        const record = таблица.getRecordByRowCol(col, row);
         // const jsx = jsx;
         const container = (
           <VGroup
             attribute={{
               id: 'container',
-              width,
-              height,
+              ширина,
+              высота,
               display: 'flex',
               flexWrap: 'nowrap',
-              justifyContent: 'flex-start',
-              alignContent: 'center'
+              justifyContent: 'flex-начало',
+              alignContent: 'центр'
             }}
           >
             <VGroup
               attribute={{
-                id: 'container-left',
-                width: 60,
-                height,
+                id: 'container-лево',
+                ширина: 60,
+                высота,
                 fill: 'red',
-                opacity: 0.1,
+                opaГород: 0.1,
                 display: 'flex',
                 justifyContent: 'space-around',
-                alignItems: 'center'
+                alignItems: 'центр'
               }}
             >
-              <VImage
+              <VImвозраст
                 attribute={{
-                  id: 'icon0',
-                  width: 50,
-                  height: 50,
-                  image: record.bloggerAvatar,
+                  id: 'иконка0',
+                  ширина: 50,
+                  высота: 50,
+                  imвозраст: record.bloggerAvatar,
                   cornerRadius: 25
                 }}
-              ></VImage>
+              ></VImвозраст>
             </VGroup>
             <VGroup
-              id="container-right"
+              id="container-право"
               attribute={{
-                id: 'container-right',
-                width: width - 60,
-                height,
+                id: 'container-право',
+                ширина: ширина - 60,
+                высота,
                 fill: 'yellow',
-                opacity: 0.1,
+                opaГород: 0.1,
                 display: 'flex',
                 flexWrap: 'nowrap',
                 flexDirection: 'column',
                 justifyContent: 'space-around',
-                alignItems: 'center'
+                alignItems: 'центр'
               }}
             >
               <VGroup
                 attribute={{
-                  id: 'container-right-top',
+                  id: 'container-право-верх',
                   fill: 'red',
-                  opacity: 0.1,
-                  width: width - 60,
-                  height: height / 2,
+                  opaГород: 0.1,
+                  ширина: ширина - 60,
+                  высота: высота / 2,
                   display: 'flex',
                   flexWrap: 'wrap',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center'
+                  justifyContent: 'flex-начало',
+                  alignItems: 'центр'
                 }}
               >
                 <VText
                   attribute={{
-                    id: 'bloggerName',
-                    text: record.bloggerName,
+                    id: 'bloggerимя',
+                    текст: record.bloggerимя,
                     fontSize: 13,
                     fontFamily: 'sans-serif',
                     fill: 'black',
-                    textAlign: 'left',
-                    textBaseline: 'top',
+                    textAlign: 'лево',
+                    textBaseline: 'верх',
                     boundsPadding: [0, 0, 0, 10]
                   }}
                 ></VText>
-                <VImage
+                <VImвозраст
                   attribute={{
-                    id: 'location-icon',
-                    width: 15,
-                    height: 15,
-                    image:
-                      '<svg t="1684484908497" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2429" width="200" height="200"><path d="M512 512a136.533333 136.533333 0 1 1 136.533333-136.533333 136.533333 136.533333 0 0 1-136.533333 136.533333z m0-219.272533a81.92 81.92 0 1 0 81.92 81.92 81.92 81.92 0 0 0-81.92-81.92z" fill="#0073FF" p-id="2430"></path><path d="M512 831.214933a27.306667 27.306667 0 0 1-19.2512-8.055466l-214.493867-214.357334a330.5472 330.5472 0 1 1 467.490134 0l-214.357334 214.357334a27.306667 27.306667 0 0 1-19.387733 8.055466z m0-732.091733a275.933867 275.933867 0 0 0-195.106133 471.04L512 765.269333l195.106133-195.106133A275.933867 275.933867 0 0 0 512 99.1232z" fill="#0073FF" p-id="2431"></path><path d="M514.321067 979.490133c-147.456 0-306.107733-37.000533-306.107734-118.3744 0-45.602133 51.746133-81.92 145.681067-102.4a27.306667 27.306667 0 1 1 11.605333 53.384534c-78.370133 17.066667-102.673067 41.915733-102.673066 49.015466 0 18.432 88.064 63.761067 251.4944 63.761067s251.4944-45.192533 251.4944-63.761067c0-7.3728-25.258667-32.768-106.496-49.834666a27.306667 27.306667 0 1 1 11.195733-53.384534c96.6656 20.343467 150.186667 56.9344 150.186667 103.2192-0.273067 80.964267-158.9248 118.3744-306.3808 118.3744z" fill="#0073FF" p-id="2432"></path></svg>',
+                    id: 'location-иконка',
+                    ширина: 15,
+                    высота: 15,
+                    imвозраст:
+                      '<svg t="1684484908497" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2429" ширина="200" высота="200"><path d="M512 512a136.533333 136.533333 0 1 1 136.533333-136.533333 136.533333 136.533333 0 0 1-136.533333 136.533333z m0-219.272533a81.92 81.92 0 1 0 81.92 81.92 81.92 81.92 0 0 0-81.92-81.92z" fill="#0073FF" p-id="2430"></path><path d="M512 831.214933a27.306667 27.306667 0 0 1-19.2512-8.055466l-214.493867-214.357334a330.5472 330.5472 0 1 1 467.490134 0l-214.357334 214.357334a27.306667 27.306667 0 0 1-19.387733 8.055466z m0-732.091733a275.933867 275.933867 0 0 0-195.106133 471.04L512 765.269333l195.106133-195.106133A275.933867 275.933867 0 0 0 512 99.1232z" fill="#0073FF" p-id="2431"></path><path d="M514.321067 979.490133c-147.456 0-306.107733-37.000533-306.107734-118.3744 0-45.602133 51.746133-81.92 145.681067-102.4a27.306667 27.306667 0 1 1 11.605333 53.384534c-78.370133 17.066667-102.673067 41.915733-102.673066 49.015466 0 18.432 88.064 63.761067 251.4944 63.761067s251.4944-45.192533 251.4944-63.761067c0-7.3728-25.258667-32.768-106.496-49.834666a27.306667 27.306667 0 1 1 11.195733-53.384534c96.6656 20.343467 150.186667 56.9344 150.186667 103.2192-0.273067 80.964267-158.9248 118.3744-306.3808 118.3744z" fill="#0073FF" p-id="2432"></path></svg>',
                     boundsPadding: [0, 0, 0, 10],
                     cursor: 'pointer'
                   }}
-                  stateProxy={stateName => {
-                    if (stateName === 'hover') {
-                      return {
-                        background: {
+                  stateProxy={stateимя => {
+                    if (stateимя === 'навести') {
+                      возврат {
+                        фон: {
                           fill: '#c90',
                           cornerRadius: 5,
                           expandX: 1,
@@ -135,65 +135,65 @@ const option = {
                       };
                     }
                   }}
-                  onMouseEnter={event => {
-                    event.currentTarget.addState('hover', true, false);
-                    event.currentTarget.stage.renderNextFrame();
+                  onMouseEnter={событие => {
+                    событие.currentTarget.addState('навести', true, false);
+                    событие.currentTarget.stвозраст.renderNextFrame();
                   }}
-                  onMouseLeave={event => {
-                    event.currentTarget.removeState('hover', false);
-                    event.currentTarget.stage.renderNextFrame();
+                  onMouseLeave={событие => {
+                    событие.currentTarget.removeState('навести', false);
+                    событие.currentTarget.stвозраст.renderNextFrame();
                   }}
-                ></VImage>
+                ></VImвозраст>
                 <VText
                   attribute={{
-                    id: 'locationName',
-                    text: record.city,
+                    id: 'locationимя',
+                    текст: record.Город,
                     fontSize: 11,
                     fontFamily: 'sans-serif',
                     fill: '#6f7070',
-                    textAlign: 'left',
-                    textBaseline: 'top'
+                    textAlign: 'лево',
+                    textBaseline: 'верх'
                   }}
                 ></VText>
               </VGroup>
               <VGroup
                 attribute={{
-                  id: 'container-right-bottom',
+                  id: 'container-право-низ',
                   fill: 'green',
-                  opacity: 0.1,
-                  width: width - 60,
-                  height: height / 2,
+                  opaГород: 0.1,
+                  ширина: ширина - 60,
+                  высота: высота / 2,
                   display: 'flex',
                   flexWrap: 'wrap',
-                  justifyContent: 'flex-start',
-                  alignItems: 'center'
+                  justifyContent: 'flex-начало',
+                  alignItems: 'центр'
                 }}
               >
                 {record.tags.length
                   ? record.tags.map((str, i) => (
                       // <VText attribute={{
-                      //   text: str,
+                      //   текст: str,
                       //   fontSize: 10,
                       //   fontFamily: 'sans-serif',
                       //   fill: 'rgb(51, 101, 238)',
-                      //   textAlign: 'left',
+                      //   textAlign: 'лево',
                       //   textBaseline: 'rop',
                       // boundsPadding: [0, 0, 0, 10],
                       // }}></VText>
                       <VTag
                         attribute={{
-                          text: str,
+                          текст: str,
                           textStyle: {
                             fontSize: 10,
                             fontFamily: 'sans-serif',
                             fill: 'rgb(51, 101, 238)'
-                            // textAlign: 'left',
+                            // textAlign: 'лево',
                             // textBaseline: 'rop',
                           },
                           panel: {
-                            visible: true,
+                            видимый: true,
                             fill: '#e6fffb',
-                            lineWidth: 1,
+                            lineширина: 1,
                             cornerRadius: 4
                           },
                           boundsPadding: [0, 0, 0, 10]
@@ -206,18 +206,18 @@ const option = {
           </VGroup>
         );
 
-        // decode(container)
-        return {
+        // deкод(container)
+        возврат {
           rootContainer: container,
           renderDefault: false
         };
       }
     },
     {
-      field: 'fansCount',
-      title: 'fansCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'fansCount',
+      заголовок: 'fansCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -226,8 +226,8 @@ const option = {
       }
     },
     {
-      field: 'worksCount',
-      title: 'worksCount',
+      поле: 'worksCount',
+      заголовок: 'worksCount',
       style: {
         fontFamily: 'Arial',
         fontSize: 12,
@@ -235,10 +235,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -247,10 +247,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -259,93 +259,93 @@ const option = {
       }
     },
     {
-      field: '',
-      title: 'operation',
-      width: 100,
-      icon: ['favorite', 'message']
+      поле: '',
+      заголовок: 'operation',
+      ширина: 100,
+      иконка: ['favorite', 'messвозраст']
     }
   ],
   records: [
     {
       bloggerId: 1,
-      bloggerName: 'Virtual Anchor Xiaohua',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+      bloggerимя: 'Virtual Anchor Xiaohua',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg',
       introduction:
-        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation and food. I hope to share happy moments with you through live broadcast.',
+        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation и food. I hope к share happy moments с you through live broadcast.',
       fansCount: 400,
       worksCount: 10,
       viewCount: 5,
-      city: 'Dream City',
+      Город: 'Dream Город',
       tags: ['game', 'anime', 'food']
     },
     {
       bloggerId: 2,
-      bloggerName: 'Virtual anchor little wolf',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg',
+      bloggerимя: 'Virtual anchor little wolf',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg',
       introduction:
-        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.',
+        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel и photography, и I hope к explore the beauty из the world с you through live broadcast.',
       fansCount: 800,
       worksCount: 20,
       viewCount: 15,
-      city: 'City of Music',
+      Город: 'Город из Music',
       tags: ['music', 'travel', 'photography']
     },
     {
       bloggerId: 3,
-      bloggerName: 'Virtual anchor bunny',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg',
+      bloggerимя: 'Virtual anchor bunny',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/rabbit.jpg',
       introduction:
-        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts and beauty makeup. I hope to share creativity and fashion with you through live broadcast.',
+        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts и beauty makeup. I hope к share creativity и fashion с you through live broadcast.',
       fansCount: 600,
       worksCount: 15,
       viewCount: 10,
-      city: 'City of Art',
+      Город: 'Город из Art',
       tags: ['painting', 'handmade', 'beauty makeup']
     },
     {
       bloggerId: 4,
-      bloggerName: 'Virtual anchor kitten',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg',
+      bloggerимя: 'Virtual anchor kitten',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/cat.jpg',
       introduction:
-        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness and cooking. I hope to live a healthy and happy life with everyone through the live broadcast.',
+        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness и coхорошоing. I hope к live a healthy и happy life с everyone through the live broadcast.',
       fansCount: 1000,
       worksCount: 30,
       viewCount: 20,
-      city: 'Health City',
-      tags: ['dance', 'fitness', 'cooking']
+      Город: 'Health Город',
+      tags: ['dance', 'fitness', 'coхорошоing']
     },
     {
       bloggerId: 5,
-      bloggerName: 'Virtual anchor Bear',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+      bloggerимя: 'Virtual anchor Bear',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg',
       introduction:
-        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading and philosophy, I hope to explore the meaning of life with you through live broadcast.',
+        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading и philosophy, I hope к explore the meaning из life с you through live broadcast.',
       fansCount: 1200,
       worksCount: 25,
       viewCount: 18,
-      city: 'City of Wisdom',
+      Город: 'Город из Wisdom',
       tags: ['Movie', 'Literature']
     },
     {
       bloggerId: 6,
-      bloggerName: 'Virtual anchor bird',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg',
+      bloggerимя: 'Virtual anchor bird',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bird.jpeg',
       introduction:
-        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting and variety shows. I hope to be happy with everyone through the live broadcast.',
+        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting и variety shows. I hope к be happy с everyone through the live broadcast.',
       fansCount: 900,
       worksCount: 12,
       viewCount: 8,
-      city: 'Happy City',
-      tags: ['music', 'performance', 'variety']
+      Город: 'Happy Город',
+      tags: ['music', 'Производительность', 'variety']
     }
   ],
-  defaultRowHeight: 80
+  defaultRowвысота: 80
 };
 
-const instance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-// bindDebugTool(instance.scenegraph.stage, {
-//   customGrapicKeys: ["role"]
+const instance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+// bindDebugTool(instance.scenegraph.stвозраст, {
+//   пользовательскийGrапиcKeys: ["role"]
 // });
 // 只为了方便控制太调试用，不要拷贝
-window.tableInstance = instance;
+window.таблицаInstance = instance;
 ```

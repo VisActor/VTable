@@ -1,255 +1,255 @@
-# data type
+# данные тип
 
-In the field of data analytics and visualization, one of the typical applications of VTable is to display and present various types of data. The so-called types here include: text, links, pictures, videos, progress bars, and charts. By supporting multiple column types, VTable can provide users with a richer and more diverse data experience, allowing users to observe and understand data from different perspectives and Dimensions.
+в the поле из данные analytics и visualization, one из the typical applications из Vтаблица is к display и present various types из данные. The so-called types here include: текст, links, pictures, videos, progress bars, и графикs. по supporting multiple column types, Vтаблица can provide users с a richer и more diverse данные experience, allowing users к observe и understand данные от different perspectives и Dimensions.
 
-Next, this article will focus on the various column types and their usage and characteristics to help you gain insight into data lake visualization using VTable.
+следующий, this article will фокус на the various column types и their usвозраст и characteristics к help you gain insight into данные lake visualization using Vтаблица.
 
-## Support type
+## Support тип
 
-There are 7 data types supported by VTable, namely:
+There are 7 данные types supported по Vтаблица, имяly:
 
-1.  Text
+1.  текст
 2.  Link
-3.  Image
+3.  Imвозраст
 4.  Video
 5.  progressbar
 6.  Sparkline
-7.  Chart
+7.  график
 
-Next, we'll cover each column type one by one.
+следующий, we'll cover каждый column тип one по one.
 
-## Text
+## текст
 
-Columns with column type "text" are mainly used to display text data and are the most common type of table column. It is flexible because text can be displayed and processed by setting different formatting functions and custom styles.
+Columns с column тип "текст" are mainly used к display текст данные и are the most common тип из таблица column. It is flexible because текст can be displayed и processed по setting different formatting functions и пользовательский styles.
 
-First, let's look at a `cellType: 'text'` Example of:
+первый, let's loхорошо в a `cellType: 'текст'` пример из:
 
 ```javascript
 {
-  cellType: 'text',
-  field: 'name',
-  title: '姓名',
+  cellType: 'текст',
+  поле: 'имя',
+  заголовок: '姓名',
 }
 ```
 
-In this example:
+в this пример:
 
-*   `cellType: 'text'` Represents the current column used to display text data.
-*   `field: 'name'` Specifies the data field that currently represents the name.
-*   `title: '姓名'` Set a column header named "Name" for the header.
+*   `cellType: 'текст'` Represents the текущий column used к display текст данные.
+*   `поле: 'имя'` Specifies the данные поле that currently represents the имя.
+*   `заголовок: '姓名'` Set a column header имяd "имя" для the header.
 
-It should be noted that if the current `cellType` Item defaults, defaults to type'text '.
+It should be noted that if the текущий `cellType` Item defaults, defaults к тип'текст '.
 
-Next, we process the text by setting formatting functions and custom styles:
+следующий, we process the текст по setting formatting functions и пользовательский styles:
 
 ```javascript
 {
-  cellType: 'text',
-  field: 'name',
-  title: '姓名',
-  fieldFormat: (record) => record.name.toUpperCase(),
+  cellType: 'текст',
+  поле: 'имя',
+  заголовок: '姓名',
+  полеFormat: (record) => record.имя.toUpperCase(),
   style: {
-    color: 'blue',
+    цвет: 'blue',
   },
 }
 ```
 
-In this example:
+в this пример:
 
-*   `fieldFormat: (record) => record.name.toUpperCase()` Indicates that all name fields in the data source are displayed in uppercase letters.
-*   `style: { color 'blue' }` Indicates that the text display color is set to blue.
+*   `полеFormat: (record) => record.имя.toUpperCase()` Indicates that все имя полеs в the данные source are displayed в uppercase letters.
+*   `style: { цвет 'blue' }` Indicates that the текст display цвет is set к blue.
 
-With the above settings, we can customize the columns of type "text" to a certain extent to meet the needs of data presentation.
+с the above settings, we can пользовательскийize the columns из тип "текст" к a certain extent к meet the needs из данные presentation.
 
 ## Link
 
-When the column type is "link", it is used to display the data of the link type. Similar to the "text" type, the "link" type also has high flexibility. The link can be displayed and processed by setting different formatting functions, styles, and the jump address when clicking, whether to detect the legitimacy of the link, etc.
+When the column тип is "link", it is used к display the данные из the link тип. Similar к the "текст" тип, the "link" тип also has high flexibility. The link can be displayed и processed по setting different formatting functions, styles, и the jump address when Нажатьing, whether к detect the legitimacy из the link, etc.
 
-Show one below `cellType: 'link'` Example, and process the link type data by setting the jump address and detecting the legitimacy of the link:
+показать one below `cellType: 'link'` пример, и process the link тип данные по setting the jump address и detecting the legitimacy из the ссылка:
 
 ```javascript
 {
   cellType: 'link',
-  field: 'homepage',
-  title: '主页',
+  поле: 'homepвозраст',
+  заголовок: '主页',
   linkJump: true,
   linkDetect: true,
 }
 ```
 
-In this example:
+в this пример:
 
-*   `linkJump: true` Indicates that the link can be clicked to jump.
-*   `linkDetect: true` Indicates that the link is to be regularized, and if the link conforms to the link rules, it will be displayed as a link.
-    In addition, the hyperlinke form can also support template links, such as setting templateLink:
+*   `linkJump: true` Indicates that the link can be Нажатьed к jump.
+*   `linkDetect: true` Indicates that the link is к be regularized, и if the link conforms к the link rules, it will be displayed as a link.
+    в addition, the hyperlinke form can also support template links, such as setting templateссылка:
 
 ```javascript
 {
-  templateLink:https://www.google.com.hk/search?q={name}', //name是数据源属性字段名。
+  templateссылка:https://www.google.com.hk/search?q={имя}', //имя是数据源属性字段名。
 }
 ```
 
-Through the above settings, we can customize the column of type "link" to meet the needs of data display.
+Through the above settings, we can пользовательскийize the column из тип "link" к meet the needs из данные display.
 
-## Image
+## Imвозраст
 
-When the column type is "image", it is used to display the data of the picture type. The "image" type has certain flexibility, and the data can be processed by setting different image display methods and customizing styles such as maintaining the aspect ratio, maintaining the original size of the picture, etc.
+When the column тип is "imвозраст", it is used к display the данные из the picture тип. The "imвозраст" тип has certain flexibility, и the данные can be processed по setting different imвозраст display методы и пользовательскийizing styles such as maintaining the aspect ratio, maintaining the original размер из the picture, etc.
 
-Show one below `cellType: 'image'` For example, we process the data of the picture type by setting the properties of maintaining the aspect ratio and the picture automatically stretching the cell size:
+показать one below `cellType: 'imвозраст'` для пример, we process the данные из the picture тип по setting the свойства из maintaining the aspect ratio и the picture автоmatically stretching the cell размер:
 
 ```javascript
 {
-  cellType: 'image',
-  field: 'avatar',
-  title: '头像',
+  cellType: 'imвозраст',
+  поле: 'avatar',
+  заголовок: '头像',
   keepAspectRatio: true,
-  imageAutoSizing: true,
+  imвозраставтоSizing: true,
 }
 ```
 
-In this example:
+в this пример:
 
-*   `keepAspectRatio: true` Indicates that you want to keep the aspect ratio of the picture displayed.
-*   `imageAutoSizing: true` Indicates that you want to automatically expand the size of the cell according to the size of the picture.
+*   `keepAspectRatio: true` Indicates that you want к keep the aspect ratio из the picture displayed.
+*   `imвозраставтоSizing: true` Indicates that you want к автоmatically развернуть the размер из the cell according к the размер из the picture.
 
-Through the above settings, we can customize the columns of the "image" type to meet the needs of data display.
+Through the above settings, we can пользовательскийize the columns из the "imвозраст" тип к meet the needs из данные display.
 
 
 ## Video
 
-When the column type is "video", it is used to display the data of the video type. All configuration items of "video" are the same as image, you can refer to the image type configuration item.
+When the column тип is "video", it is used к display the данные из the video тип. все configuration items из "video" are the same as imвозраст, Вы можете refer к the imвозраст тип configuration item.
 
 ## progressbar
 
-When the column type is "progressbar", it is used to display the data of the progress bar type. The progress bar data can be processed by setting the type of the progress bar, the data range of the progress bar, etc.
+When the column тип is "progressbar", it is used к display the данные из the progress bar тип. The progress bar данные can be processed по setting the тип из the progress bar, the данные range из the progress bar, etc.
 
-Show one below `cellType: 'progressbar'` Example of:
+показать one below `cellType: 'progressbar'` пример из:
 
 ```javascript
 {
   cellType: 'progressbar',
-  field: 'progress',
-  title: '进度',
+  поле: 'progress',
+  заголовок: '进度',
   min: 0,
   max: 100,
-  barType: 'default',
+  barType: 'по умолчанию',
 }
 ```
 
-In this example:
+в this пример:
 
-*   `min: 0` Represents the minimum data for the progress bar display range.
-*   `max: 100` Represents the maximum data for the scope of the progress bar display.
-*   `barType: 'default'` represent**Progress Bar Type**Is the default type.
+*   `min: 0` Represents the minimum данные для the progress bar display range.
+*   `max: 100` Represents the maximum данные для the scope из the progress bar display.
+*   `barType: 'по умолчанию'` represent**Progress Bar тип**Is the по умолчанию тип.
 
 
 ## Sparkline
 
-When the column type is "sparkline", it is used to display the data of the miniature type. The "sparkline" type has high flexibility, and the data of the miniature can be processed by setting the specific spec configuration item of the miniature.
+When the column тип is "sparkline", it is used к display the данные из the miniature тип. The "sparkline" тип has high flexibility, и the данные из the miniature can be processed по setting the specific spec configuration item из the miniature.
 
-Show one below `cellType: 'sparkline'` Example of:
+показать one below `cellType: 'sparkline'` пример из:
 
 ```javascript
 {
   cellType: 'sparkline',
-  field: 'trend',
-  title: '趋势',
+  поле: 'trend',
+  заголовок: '趋势',
   sparklineSpec: {
-    type: 'line',
-    xField: 'x',
-    yField: 'y',
+    тип: 'line',
+    xполе: 'x',
+    yполе: 'y',
     line: {
       style: {
-        stroke: '#2E62F1',
-        strokeWidth: 2
+        strхорошоe: '#2E62F1',
+        strхорошоeширина: 2
       }
     },
     point: {
-      hover: {
-        stroke: 'blue',
-        strokeWidth: 1,
+      навести: {
+        strхорошоe: 'blue',
+        strхорошоeширина: 1,
         fill: 'red',
         shape: 'circle',
-        size: 4
+        размер: 4
       }
     }
   }
 }
 ```
 
-In this example:
+в this пример:
 
-*   `sparklineSpec` The type of miniature and specific configuration items are set.
+*   `sparklineSpec` The тип из miniature и specific configuration items are set.
 
 
-## Chart
+## график
 
-When the column type is "chart", it is used to display the data of the chart type. Before using this type, you need to register a chart type through VTable.chart.register. For details, please refer to the tutorial.[Vchart registration](../../guide/cell_type/chart)Example of use after registration:
+When the column тип is "график", it is used к display the данные из the график тип. Before using this тип, you need к регистрация a график тип through Vтаблица.график.регистрация. для details, please refer к the tutorial.[Vграфик registration](../../guide/cell_type/график)пример из use after registration:
 
-Show one below `cellType: 'chart'` Example of:
+показать one below `cellType: 'график'` пример из:
 
 ```javascript
 {
-  cellType: 'chart',
-  field: 'chartData',
-  title: '销售趋势',
-  chartModule: 'vchart',
-  chartSpec: {
-    type: 'common',
+  cellType: 'график',
+  поле: 'графикданные',
+  заголовок: '销售趋势',
+  графикModule: 'vграфик',
+  графикSpec: {
+    тип: 'common',
     series: [
       {
-        type: 'line',
-        data: {
-          id: 'data',
+        тип: 'line',
+        данные: {
+          id: 'данные',
         },
-        xField: 'x',
-        yField: 'y',
-        seriesField: 'type',
+        xполе: 'x',
+        yполе: 'y',
+        seriesполе: 'тип',
       },
     ],
     axes: [
-      { orient: 'left', range: { min: 0 } },
-      { orient: 'bottom', label: { visible: true }, type: 'band' },
+      { orient: 'лево', range: { min: 0 } },
+      { orient: 'низ', label: { видимый: true }, тип: 'band' },
     ],
-    legends: [
+    легендаs: [
       {
-        visible: true,
-        orient: 'bottom',
+        видимый: true,
+        orient: 'низ',
       },
     ],
   },
 }
 ```
 
-In this example:
+в this пример:
 
-*   `chartModule: 'vchart'` Use the chart library component built into VTable, registered under the name vchart
-*   `chartSpec` The chart type and specific configuration items are set, and the specific configuration items need to be referred to.[VChart](https://visactor.io/vchart).
+*   `графикModule: 'vграфик'` Use the график library компонент built into Vтаблица, регистрацияed under the имя vграфик
+*   `графикSpec` The график тип и specific configuration items are set, и the specific configuration items need к be referred к.[Vграфик](https://visactor.io/vграфик).
 
 ## Composite cellType
 
-In some demand scenarios, it may be expected to display different data types in different data situations or in different rows and columns. The above cellType writing method clearly specifies what type a column must be (the transposed table specifies what type a row must be). We Supports cellType function customization, and can specify different types according to demand logic:
+в некоторые demand scenarios, it may be expected к display different данные types в different данные situations или в different rows и columns. The above cellType writing method clearly specifies what тип a column must be (the transposed таблица specifies what тип a row must be). We Supports cellType функция пользовательскийization, и can specify different types according к demand logic:
 
-The following shows an example of `cellType: ()=>{}`: (Please refer to [Example](https://visactor.io/vtable/demo/cell-type/composite-cellType))
+Следующий shows an пример из `cellType: ()=>{}`: (Please refer к [пример](https://visactor.io/vтаблица/демонстрация/cell-тип/composite-cellType))
  
 ```javascript
 {
-    field: 'image',
-    title: 'bird image',
+    поле: 'imвозраст',
+    заголовок: 'bird imвозраст',
     cellType(args){
       if(args.row%3===1)
-        return 'image';
+        возврат 'imвозраст';
       else if(args.row%3===2)
-        return 'link';
-      return 'text'
+        возврат 'link';
+      возврат 'текст'
     },
-    fieldFormat(record){
+    полеFormat(record){
       debugger
-      if(record.name===='Magpie')
-        return 'Magpie's access address:'+record.image;
-      return record.image;
+      if(record.имя===='Magpie')
+        возврат 'Magpie's access address:'+record.imвозраст;
+      возврат record.imвозраст;
     },
-    width:'auto',
+    ширина:'авто',
     keepAspectRatio:true,
   }
 ```

@@ -1,35 +1,35 @@
-{{ target: pivot-corner-define }}
+{{ target: сводный-corner-define }}
 
-${prefix} titleOnDimension(string) ='row'
+${prefix} titleOnDimension(строка) ='row'
 
-Corner header content display based on:
+Corner header content display based на:
 
-- 'column' The column dimension name is used as the corner header cell content
-- 'row' The row dimension name is used as the corner header cell content
-- 'none' The corner header cell content is empty
-- 'all' means the header cell content is the concatenation of the row dimension name and the column dimension name
+- 'column' The column dimension имя is used as the corner header cell content
+- 'row' The row dimension имя is used as the corner header cell content
+- 'никто' The corner header cell content is empty
+- 'все' means the header cell content is the concatenation из the row dimension имя и the column dimension имя
 
-${prefix} customRender(Function|Object)
-Custom rendering for body corner header cell, in function or object form. The type is: `ICustomRenderFuc | ICustomRenderObj`.
+${prefix} пользовательскийRender(функция|объект)
+пользовательский rendering для body corner header cell, в функция или объект form. The тип is: `IпользовательскийRenderFuc | IпользовательскийRenderObj`.
 
-[demo link](../demo/custom-render/complex-corner)
+[демонстрация link](../демонстрация/пользовательский-render/complex-corner)
 
-${prefix} customLayout(Function)
+${prefix} пользовательскиймакет(функция)
 
-Custom layout element definition for body cell, suitable for complex layout content.
+пользовательский макет element definition для body cell, suiтаблица для complex макет content.
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
 ```
 
-${prefix} headerType(string)
+${prefix} headerType(строка)
 
-Header type, can be set to `'text'|'image'|'link'`.
+Header тип, can be set к `'текст'|'imвозраст'|'link'`.
 
 ${prefix} headerStyle(TODO)
 
-Header cell style, the configuration items vary slightly depending on the headerType. The configuration items for each headerStyle can be found at:
+Header cell style, the configuration items vary slightly depending на the headerType. The configuration items для каждый headerStyle can be found в:
 
-- For headerType 'text', refer to [headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
-- For headerType 'link', refer to [headerStyle](../option/PivotTable-columns-link#headerStyle.bgColor)
-- For headerType 'image', refer to [headerStyle](../option/PivotTable-columns-image#headerStyle.bgColor)
+- для headerType 'текст', refer к [headerStyle](../option/сводныйтаблица-columns-текст#headerStyle.bgColor)
+- для headerType 'link', refer к [headerStyle](../option/сводныйтаблица-columns-link#headerStyle.bgColor)
+- для headerType 'imвозраст', refer к [headerStyle](../option/сводныйтаблица-columns-imвозраст#headerStyle.bgColor)

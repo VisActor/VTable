@@ -1,119 +1,119 @@
 ---
-category: examples
-group: data-analysis
-title: Pivot Analysis Update Subtotal Total Using Editor
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-updateTotalData.gif
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.updateAggregationOnEditCell
+категория: примеры
+группа: данные-analysis
+заголовок: сводный Analysis Update Subtotal Total Using Editor
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-updateTotalданные.gif
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.updateAggregationOnEditCell
 ---
 
-# Pivot Analysis - Update Subtotal Total Using Editor
+# сводный Analysis - Update Subtotal Total Using Editor
 
-To summarize table data in pivot analysis, configure totals in dataConfig to set the total subtotal of the row and column dimensions, and configure updateAggregationOnEditCell to true to update the subtotal total when editing the cell.
+к summarize таблица данные в сводный analysis, configure totals в данныеConfig к set the total subtotal из the row и column dimensions, и configure updateAggregationOnEditCell к true к update the subtotal total when editing the cell.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig`
+- `данныеConfig`
 - `updateAggregationOnEditCell` When updateAggregationOnEditCell is true, the subtotal total will be updated when editing the cell.
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-const input_editor = new VTable_editors.InputEditor();
-VTable.register.editor('input', input_editor);
-const sumNumberFormat = VTable.DataStatistics.numberFormat({
+```javascript liveдемонстрация template=vтаблица
+const input_editor = новый Vтаблица_editors.InputEditor();
+Vтаблица.регистрация.editor('ввод', input_editor);
+const sumNumberFormat = Vтаблица.данныеStatistics.numberFormat({
   prefix: '$'
 });
-const countNumberFormat = VTable.DataStatistics.numberFormat({
+const countNumberFormat = Vтаблица.данныеStatistics.numberFormat({
   digitsAfterDecimal: 0,
   thousandsSep: '',
   suffix: ' orders'
 });
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
-      indicators: ['TotalSales', 'OrderCount', 'AverageOrderSales', 'MaxOrderSales', 'MinOrderSales'],
+      indicators: ['TotalПродажи', 'OrderCount', 'AverвозрастOrderПродажи', 'MaxOrderПродажи', 'MinOrderПродажи'],
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
           textStick: true
         }
       },
-      dataConfig: {
+      данныеConfig: {
         updateAggregationOnEditCell: true,
         aggregationRules: [
           //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
           {
-            indicatorKey: 'TotalSales', //指标名称
-            field: 'Sales', //指标依据字段
-            aggregationType: VTable.TYPES.AggregationType.SUM, //计算类型
+            indicatorKey: 'TotalПродажи', //指标名称
+            поле: 'Продажи', //指标依据字段
+            aggregationType: Vтаблица.TYPES.AggregationType.SUM, //计算类型
             formatFun: sumNumberFormat
           },
           {
             indicatorKey: 'OrderCount', //指标名称
-            field: 'Sales', //指标依据字段
-            aggregationType: VTable.TYPES.AggregationType.COUNT, //计算类型
+            поле: 'Продажи', //指标依据字段
+            aggregationType: Vтаблица.TYPES.AggregationType.COUNT, //计算类型
             formatFun: countNumberFormat
           },
           {
-            indicatorKey: 'AverageOrderSales', //指标名称
-            field: 'Sales', //指标依据字段
-            aggregationType: VTable.TYPES.AggregationType.AVG, //计算类型
+            indicatorKey: 'AverвозрастOrderПродажи', //指标名称
+            поле: 'Продажи', //指标依据字段
+            aggregationType: Vтаблица.TYPES.AggregationType.AVG, //计算类型
             formatFun: sumNumberFormat
           },
           {
-            indicatorKey: 'MaxOrderSales', //指标名称
-            field: 'Sales', //指标依据字段
-            aggregationType: VTable.TYPES.AggregationType.MAX, //计算类型
+            indicatorKey: 'MaxOrderПродажи', //指标名称
+            поле: 'Продажи', //指标依据字段
+            aggregationType: Vтаблица.TYPES.AggregationType.MAX, //计算类型
             formatFun: sumNumberFormat
           },
           {
-            indicatorKey: 'MinOrderSales', //指标名称
-            field: 'Sales', //指标依据字段
-            aggregationType: VTable.TYPES.AggregationType.MIN, //计算类型
+            indicatorKey: 'MinOrderПродажи', //指标名称
+            поле: 'Продажи', //指标依据字段
+            aggregationType: Vтаблица.TYPES.AggregationType.MIN, //计算类型
             formatFun: sumNumberFormat
           }
         ],
@@ -128,10 +128,10 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         }
       },
-      editor: 'input',
-      widthMode: 'autoWidth'
+      editor: 'ввод',
+      ширинаMode: 'автоширина'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = таблицаInstance;
   });
 ```

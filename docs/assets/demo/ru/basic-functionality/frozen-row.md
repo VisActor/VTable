@@ -1,131 +1,131 @@
 ---
-category: examples
-group: Basic Features
-title: Freeze Row
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-row.gif
-link: basic_function/frozen_column_row
-option: ListTable#frozenRowCount
+категория: примеры
+группа: базовый возможности
+заголовок: Freeze Row
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/frozen-row.gif
+ссылка: базовый_function/frozen_column_row
+опция: списоктаблица#frozenRowCount
 ---
 
 # Freeze Row
 
-In order to keep these key information rows visible throughout the horizontal scroll, we need to "freeze" these rows.
+в order к keep these key information rows видимый throughout the horizontal прокрутка, we need к "freeze" these rows.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `frozenRowCount` The number of frozen rows (including header), default is the number of header rows
+- `frozenRowCount` The число из frozen rows (including header), по умолчанию is the число из header rows
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: {
             textStick: true,
-            color: args => {
+            цвет: args => {
               if (args.row < 4) {
-                return 'red';
+                возврат 'red';
               }
-              return '#000';
+              возврат '#000';
             },
             bgColor: args => {
               if (args.row < 4) {
-                return 'rgba(255, 0, 0, 0.1)';
+                возврат 'rgba(255, 0, 0, 0.1)';
               }
-              return '#fff';
+              возврат '#fff';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor: args => {
               if (args.row < 4) {
-                return 'rgba(255, 0, 0, 0.1)';
+                возврат 'rgba(255, 0, 0, 0.1)';
               }
-              return '#fff';
+              возврат '#fff';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor: args => {
               if (args.row < 4) {
-                return 'rgba(255, 0, 0, 0.1)';
+                возврат 'rgba(255, 0, 0, 0.1)';
               }
-              return '#fff';
+              возврат '#fff';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor: args => {
               if (args.row < 4) {
-                return 'rgba(255, 0, 0, 0.1)';
+                возврат 'rgba(255, 0, 0, 0.1)';
               }
-              return '#fff';
+              возврат '#fff';
             }
           }
         }
@@ -136,18 +136,18 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           }
         ]
       },
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       frozenRowCount: 4
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

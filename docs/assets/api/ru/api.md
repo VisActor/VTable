@@ -1,13 +1,13 @@
-{{ target: api }}
+{{ target: апи }}
 
-{{ import: table-methods }}
+{{ import: таблица-методы }}
 
-{{ import: table-properties }}
+{{ import: таблица-свойства }}
 
-{{ import: table-events }}
+{{ import: таблица-событиеs }}
 
-{{ import: table-register }}
+{{ import: таблица-регистрация }}
 
-{{ import: gantt-api }}
+{{ import: гантт-апи }}
 
-{{ import: calendar-api }}
+{{ import: календарь-апи }}

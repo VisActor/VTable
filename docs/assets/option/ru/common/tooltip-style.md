@@ -1,21 +1,21 @@
-{{ target: common-tooltip-style }}
+{{ target: common-Подсказка-style }}
 
-#${prefix} tooltipStyle(Object)
+#${prefix} ПодсказкаStyle(объект)
 
-Tooltip style settings
+Подсказка style settings
 
-##${prefix} font(string)
+##${prefix} шрифт(строка)
 
-Tooltip text style
+Подсказка текст style
 
-##${prefix} color(string)
+##${prefix} цвет(строка)
 
-Tooltip text color
+Подсказка текст цвет
 
-##${prefix} padding(number[])
+##${prefix} заполнение(число[])
 
-Tooltip padding, set separately for top, right, bottom, and left
+Подсказка заполнение, set separately для верх, право, низ, и лево
 
-##${prefix} bgColor(string)
+##${prefix} bgColor(строка)
 
-Tooltip background color
+Подсказка фон цвет

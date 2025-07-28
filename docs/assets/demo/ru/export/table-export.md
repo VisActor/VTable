@@ -1,107 +1,107 @@
 ---
-category: examples
-group: export
-title: table export
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-order: 4-6
-link: '../../guide/export/excel'
-# option: ListTable
+категория: примеры
+группа: export
+заголовок: таблица export
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-таблица.png
+порядок: 4-6
+ссылка: '../../guide/export/excel'
+# опция: списоктаблица
 ---
 
-# table export
+# таблица export
 
-Using the `@visactor/table-export` tool, the table export function can be implemented very simply. The following is a simple example that demonstrates how to use VTable to implement the table export function.
+Using the `@visactor/таблица-export` tool, the таблица export функция can be implemented very simply. Следующий is a simple пример that демонстрацияnstrates how к use Vтаблица к implement the таблица export функция.
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// You need to introduce the plug-in package when using it `@visactor/vtable-export`
+```javascript liveдемонстрация template=vтаблица
+// You need к introduce the plug-в packвозраст when using it `@visactor/vтаблица-export`
 // import {
 //   downloadCsv,
-//   exportVTableToCsv,
+//   exportVтаблицаToCsv,
 //   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// When umd is introduced, the export tool will be mounted to VTable.export
+//   exportVтаблицаToExcel,
+// } от "@visactor/vтаблица-export";
+// When umd is introduced, the export tool will be mounted к Vтаблица.export
 
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return '#000000';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат '#000000';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return '#000000';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат '#000000';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return '#000000';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат '#000000';
+              возврат 'red';
             }
           }
         }
@@ -112,23 +112,23 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           }
         ]
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
 
     bindExport();
   });
 
-function bindExport() {
+функция bindExport() {
   let exportContainer = document.getElementById('export-buttom');
   if (exportContainer) {
     exportContainer.parentElement.removeChild(exportContainer);
@@ -136,26 +136,26 @@ function bindExport() {
 
   exportContainer = document.createElement('div');
   exportContainer.id = 'export-buttom';
-  exportContainer.style.position = 'absolute';
-  exportContainer.style.bottom = '0';
-  exportContainer.style.right = '0';
+  exportContainer.style.позиция = 'absolute';
+  exportContainer.style.низ = '0';
+  exportContainer.style.право = '0';
 
-  window['tableInstance'].getContainer().appendChild(exportContainer);
+  window['таблицаInstance'].getContainer().appendChild(exportContainer);
 
-  const exportCsvButton = document.createElement('button');
-  const exportExcelButton = document.createElement('button');
-  exportContainer.appendChild(exportCsvButton);
-  exportContainer.appendChild(exportExcelButton);
+  const exportCsvКнопка = document.createElement('Кнопка');
+  const exportExcelКнопка = document.createElement('Кнопка');
+  exportContainer.appendChild(exportCsvКнопка);
+  exportContainer.appendChild(exportExcelКнопка);
 
-  exportCsvButton.addEventListener('click', async () => {
-    if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+  exportCsvКнопка.addсобытиесписокener('Нажать', async () => {
+    if (window.таблицаInstance) {
+      await downloadCsv(exportVтаблицаToCsv(window.таблицаInstance), 'export');
     }
   });
 
-  exportExcelButton.addEventListener('click', async () => {
-    if (window.tableInstance) {
-      await downloadExcel(await exportVTableToExcel(window.tableInstance), 'export');
+  exportExcelКнопка.addсобытиесписокener('Нажать', async () => {
+    if (window.таблицаInstance) {
+      await downloadExcel(await exportVтаблицаToExcel(window.таблицаInstance), 'export');
     }
   });
 }

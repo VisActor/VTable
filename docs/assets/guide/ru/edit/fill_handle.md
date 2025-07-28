@@ -1,8 +1,8 @@
 # fill handle
 
-In the table editing scenario, we provide the fill handle capability, which can be enabled through the configuration item `fillHandle: true`. The fill handle can help users quickly fill in cell values and improve editing efficiency.
+в the таблица editing scenario, we provide the fill handle capability, which can be включен through the configuration item `fillHandle: true`. The fill handle can help users quickly fill в cell values и improve editing efficiency.
 
-Enable the fill handle capability configuration item:
+включить the fill handle capability configuration item:
 
 ```javascript
 {
@@ -12,51 +12,51 @@ Enable the fill handle capability configuration item:
 }
 ```
 
-More capabilities similar to excel editing operations will be expanded in excelOptions in the future.
+More capabilities similar к excel editing operations will be expanded в excelOptions в the future.
 
-# How to use the fill handle
+# How к use the fill handle
 
-VTable only implements the fill handle effect from the UI level, and the actual fill content generation logic needs to be implemented by the business side.
+Vтаблица only implements the fill handle effect от the UI level, и the actual fill content generation logic needs к be implemented по the business side.
 
-When fillHandle: true is configured, the fill handle icon will be automatically displayed in the lower right corner.
+When fillHandle: true is configured, the fill handle иконка will be автоmatically displayed в the lower право corner.
 
-![fill-handle-icon](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/fill-handle-icon.jpeg)
+![fill-handle-иконка](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/fill-handle-иконка.jpeg)
 
-Next, we will introduce the process of combining events to populate content.
+следующий, we will introduce the process из combining событиеs к populate content.
 
-## 1. Listen to the `mousedown_fill_handle` event
+## 1. списокen к the `mousedown_fill_handle` событие
 
-This event is triggered when the mouse clicks on the fill handle icon. You can obtain the current selection range by listening to this event in order to prepare for subsequent generation of cell content.
+This событие is triggered when the mouse Нажатьs на the fill handle иконка. Вы можете obtain the текущий selection range по списокening к this событие в order к prepare для subsequent generation из cell content.
 
 ```javascript
-tableInstance.on('mousedown_fill_handle', arg => {
-  const startSelectCellRange = tableInstance.getSelectedCellRanges()[0];
-  beforeDragMaxCol = Math.max(startSelectCellRange.start.col, startSelectCellRange.end.col);
-  beforeDragMinCol = Math.min(startSelectCellRange.start.col, startSelectCellRange.end.col);
-  beforeDragMaxRow = Math.max(startSelectCellRange.start.row, startSelectCellRange.end.row);
-  beforeDragMinRow = Math.min(startSelectCellRange.start.row, startSelectCellRange.end.row);
+таблицаInstance.на('mousedown_fill_handle', arg => {
+  const startSelectCellRange = таблицаInstance.getSelectedCellRanges()[0];
+  beforeDragMaxCol = Math.max(startSelectCellRange.начало.col, startSelectCellRange.конец.col);
+  beforeDragMinCol = Math.min(startSelectCellRange.начало.col, startSelectCellRange.конец.col);
+  beforeDragMaxRow = Math.max(startSelectCellRange.начало.row, startSelectCellRange.конец.row);
+  beforeDragMinRow = Math.min(startSelectCellRange.начало.row, startSelectCellRange.конец.row);
   console.log('mousedown_fill_handle', beforeDragMinCol, beforeDragMinRow, beforeDragMaxCol, beforeDragMaxRow);
 });
 ```
 
-## 2. Listen to the `drag_fill_handle_end` event
+## 2. списокen к the `drag_fill_handle_end` событие
 
-This event is triggered by releasing the mouse after dragging the fill handle. By listening to this event, you can learn the direction of the fill handle and the specific range of cells that need to be filled.
+This событие is triggered по releasing the mouse after dragging the fill handle. по списокening к this событие, Вы можете learn the direction из the fill handle и the specific range из cells that need к be filled.
 
-Call the interface `getSelectedCellRange()` as in the previous step to know the currently selected range. Combined with the direction of the fill handle, you can calculate the range of cells that need to be filled.
+Call the интерфейс `getSelectedCellRange()` as в the предыдущий step к know the currently selected range. Combined с the direction из the fill handle, Вы можете calculate the range из cells that need к be filled.
 
-You can also call the interface `getSelectedCellInfos()` to get the value of the currently selected cell.
+Вы можете also call the интерфейс `getSelectedCellInfos()` к get the значение из the currently selected cell.
 
-## 3. Fill in the content into the table
+## 3. Fill в the content into the таблица
 
-The above two steps generate the content that needs to be filled, and use the interface `changeCellValues` to change the value of the cell.
+The above two steps generate the content that needs к be filled, и use the интерфейс `changeCellValues` к change the значение из the cell.
 
-Interface definition: https://visactor.io/vtable/api/Methods#changeCellValues
+интерфейс definition: https://visactor.io/vтаблица/апи/методы#changeCellValues
 
-# Double-click the fill handle icon event
+# Double-Нажать the fill handle иконка событие
 
-The `dblclick_fill_handle` event is triggered when the fill handle icon is double-clicked. You can fill subsequent cell contents by listening to this event.
+The `dblНажать_fill_handle` событие is triggered when the fill handle иконка is double-Нажатьed. Вы можете fill subsequent cell contents по списокening к this событие.
 
-# Example demo
+# пример демонстрация
 
-Example address: https://visactor.io/vtable/demo/edit/fill-handle
+пример address: https://visactor.io/vтаблица/демонстрация/edit/fill-handle

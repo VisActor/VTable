@@ -1,28 +1,28 @@
 ---
-category: examples
-group: Business
-title: Product Compare Table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-compare.png
-order: 9-11
-option: PivotTable#rowTree
+категория: примеры
+группа: Business
+заголовок: Product Compare таблица
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-compare.png
+порядок: 9-11
+опция: сводныйтаблица#rowTree
 ---
 
-# Product Compare Table
+# Product Compare таблица
 
-How to Choose a Robotic Vacuum & Mop❓︎ Multi-dimensional Product Configuration Parameter Comparison to Help You Decide ‼️
+How к Choose a Robotic Vacuum & Mop❓︎ Multi-dimensional Product Configuration параметр Comparison к Help You Decide ‼️
 
-This example customizes the row header tree by configuring `PivotTable.rowTree`; and sets the background color of rows with different indicator values to red using `indicators[x].style.bgColor`, making it easy to spot differences at a glance.
+This пример пользовательскийizes the row header tree по configuring `сводныйтаблица.rowTree`; и sets the фон цвет из rows с different indicator values к red using `indicators[x].style.bgColor`, making it easy к spot differences в a glance.
 
 Contributor: [Jacleklm](https://github.com/Jacleklm)
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable.rowTree` Customize row header dimension tree
-- `indicators[x].style.bgColor` Configure the background color of a Metirc content
+- `сводныйтаблица.rowTree` пользовательскийize row header dimension tree
+- `indicators[x].style.bgColor` Configure the фон цвет из a Metirc content
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
     1: '交互功能族',
@@ -30,8 +30,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '基础语音',
     is_diff: true
@@ -42,8 +42,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -54,8 +54,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -66,8 +66,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '超声波 + 视觉',
     is_diff: true
@@ -78,8 +78,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -90,8 +90,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '凸起雷达+视觉',
     is_diff: true
@@ -103,8 +103,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '10.2 cm',
     is_diff: true
@@ -116,8 +116,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '2 cm',
     is_diff: true
@@ -129,8 +129,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '前向+侧向',
     is_diff: false
@@ -142,8 +142,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '视觉+光学传感器',
     is_diff: true
@@ -155,8 +155,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -167,8 +167,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '7000 Pa',
     is_diff: true
@@ -179,8 +179,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '增压吸尘',
     is_diff: false
@@ -192,8 +192,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -205,8 +205,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '单',
     is_diff: false
@@ -218,8 +218,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -231,8 +231,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -244,8 +244,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '普通边刷',
     is_diff: true
@@ -257,8 +257,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -270,8 +270,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -283,8 +283,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '单胶刷',
     is_diff: true
@@ -296,8 +296,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '机身尘盒',
     is_diff: false
@@ -309,8 +309,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '0.35 L',
     is_diff: true
@@ -322,8 +322,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -334,8 +334,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '拖布外扩',
     is_diff: true
@@ -346,8 +346,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '自动补水',
     is_diff: false
@@ -358,8 +358,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -370,8 +370,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -383,8 +383,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '双圆盘旋转拖布',
     is_diff: false
@@ -396,8 +396,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -409,8 +409,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -422,8 +422,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -434,8 +434,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -446,8 +446,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '选配',
     is_diff: false
@@ -458,8 +458,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -471,8 +471,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '基站集尘袋',
     is_diff: false
@@ -484,8 +484,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '2.7 L',
     is_diff: true
@@ -497,8 +497,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -509,8 +509,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '4 L',
     is_diff: true
@@ -521,8 +521,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '3.5 L',
     is_diff: true
@@ -533,8 +533,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -545,8 +545,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '智控热水',
     is_diff: true
@@ -557,8 +557,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P10',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-0.png',
-    release_time: '2023-08-29',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-0.png',
+    Релиз_time: '2023-08-29',
     first_price: 3999,
     product_feature: '标配',
     is_diff: false
@@ -569,8 +569,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '语音大模型',
     is_diff: true
@@ -581,8 +581,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -593,8 +593,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -605,8 +605,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '超声波 + 视觉',
     is_diff: true
@@ -617,8 +617,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -629,8 +629,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '凸起雷达+视觉',
     is_diff: true
@@ -642,8 +642,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '10.3 cm',
     is_diff: true
@@ -655,8 +655,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '4 cm',
     is_diff: true
@@ -668,8 +668,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '前向+侧向',
     is_diff: false
@@ -681,8 +681,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '光学传感器',
     is_diff: true
@@ -694,8 +694,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -706,8 +706,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '18500 Pa',
     is_diff: true
@@ -718,8 +718,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '增压吸尘',
     is_diff: false
@@ -731,8 +731,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -744,8 +744,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '单',
     is_diff: false
@@ -757,8 +757,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -770,8 +770,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -783,8 +783,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '防缠绕边刷',
     is_diff: true
@@ -796,8 +796,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -809,8 +809,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -822,8 +822,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '气旋导流双毛胶对刷',
     is_diff: true
@@ -835,8 +835,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '机身尘盒',
     is_diff: false
@@ -848,8 +848,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '0.35 L',
     is_diff: true
@@ -861,8 +861,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -873,8 +873,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '拖布外扩',
     is_diff: true
@@ -885,8 +885,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '自动补水',
     is_diff: false
@@ -897,8 +897,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -909,8 +909,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -922,8 +922,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '双圆盘旋转拖布',
     is_diff: false
@@ -935,8 +935,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -948,8 +948,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -961,8 +961,8 @@ const records = [
     4: '机器人',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -973,8 +973,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -985,8 +985,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '选配',
     is_diff: false
@@ -997,8 +997,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -1010,8 +1010,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '基站集尘袋',
     is_diff: false
@@ -1023,8 +1023,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '2.5 L',
     is_diff: true
@@ -1036,8 +1036,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -1048,8 +1048,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '4 L',
     is_diff: true
@@ -1060,8 +1060,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '3.5 L',
     is_diff: true
@@ -1072,8 +1072,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -1084,8 +1084,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '智控热水',
     is_diff: true
@@ -1096,8 +1096,8 @@ const records = [
     4: '基站',
     brand: '某石',
     product: 'P20',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-1.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-1.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '标配',
     is_diff: false
@@ -1108,8 +1108,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '语音大模型',
     is_diff: true
@@ -1120,8 +1120,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: false
@@ -1132,8 +1132,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1144,8 +1144,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '超声波 + 视觉',
     is_diff: true
@@ -1156,8 +1156,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: false
@@ -1168,8 +1168,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '凸起雷达+视觉',
     is_diff: true
@@ -1181,8 +1181,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '10.38 cm',
     is_diff: true
@@ -1194,8 +1194,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '2.2 cm',
     is_diff: true
@@ -1207,8 +1207,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '前向+侧向',
     is_diff: false
@@ -1220,8 +1220,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '视觉+光学传感器',
     is_diff: true
@@ -1233,8 +1233,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: true
@@ -1245,8 +1245,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '11000 Pa',
     is_diff: true
@@ -1257,8 +1257,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '增压吸尘',
     is_diff: false
@@ -1270,8 +1270,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1283,8 +1283,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '单',
     is_diff: false
@@ -1296,8 +1296,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1309,8 +1309,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1322,8 +1322,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '防缠绕边刷',
     is_diff: true
@@ -1335,8 +1335,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1348,8 +1348,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1361,8 +1361,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '剃刀式割毛滚刷',
     is_diff: true
@@ -1374,8 +1374,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '机身尘盒',
     is_diff: false
@@ -1387,8 +1387,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '0.3 L',
     is_diff: true
@@ -1400,8 +1400,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1412,8 +1412,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '拖布外扩 + 扭屁股',
     is_diff: true
@@ -1424,8 +1424,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '自动补水',
     is_diff: false
@@ -1436,8 +1436,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1448,8 +1448,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1461,8 +1461,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '双圆盘旋转拖布',
     is_diff: false
@@ -1474,8 +1474,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: false
@@ -1487,8 +1487,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: true
@@ -1500,8 +1500,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1512,8 +1512,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1524,8 +1524,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '选配',
     is_diff: false
@@ -1536,8 +1536,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '✅',
     is_diff: true
@@ -1549,8 +1549,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '基站集尘袋',
     is_diff: false
@@ -1562,8 +1562,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '3.2 L',
     is_diff: true
@@ -1575,8 +1575,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1587,8 +1587,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '4.5 L',
     is_diff: true
@@ -1599,8 +1599,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '4 L',
     is_diff: true
@@ -1611,8 +1611,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '❌',
     is_diff: false
@@ -1623,8 +1623,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '智控热水',
     is_diff: true
@@ -1635,8 +1635,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-2.png',
-    release_time: '2024-02-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-2.png',
+    Релиз_time: '2024-02-02',
     first_price: 4299,
     product_feature: '标配',
     is_diff: false
@@ -1647,8 +1647,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '语音大模型',
     is_diff: true
@@ -1659,8 +1659,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: false
@@ -1671,8 +1671,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -1683,8 +1683,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '超声波 + 视觉',
     is_diff: true
@@ -1695,8 +1695,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: false
@@ -1707,8 +1707,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '凸起雷达+视觉',
     is_diff: true
@@ -1720,8 +1720,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '10.38 cm',
     is_diff: true
@@ -1733,8 +1733,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '2.2 cm',
     is_diff: true
@@ -1746,8 +1746,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '前向+侧向',
     is_diff: false
@@ -1759,8 +1759,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '视觉+光学传感器',
     is_diff: true
@@ -1772,8 +1772,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: true
@@ -1784,8 +1784,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '12000 Pa',
     is_diff: true
@@ -1796,8 +1796,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '增压吸尘',
     is_diff: false
@@ -1809,8 +1809,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -1822,8 +1822,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '单',
     is_diff: false
@@ -1835,8 +1835,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -1848,8 +1848,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -1861,8 +1861,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '防缠绕边刷',
     is_diff: true
@@ -1874,8 +1874,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -1887,8 +1887,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -1900,8 +1900,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '剃刀式割毛滚刷',
     is_diff: true
@@ -1913,8 +1913,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '机身尘盒',
     is_diff: false
@@ -1926,8 +1926,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '0.3 L',
     is_diff: true
@@ -1939,8 +1939,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -1951,8 +1951,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '拖布外扩 + 扭屁股',
     is_diff: true
@@ -1963,8 +1963,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '自动补水',
     is_diff: false
@@ -1975,8 +1975,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -1987,8 +1987,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -2000,8 +2000,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '双圆盘旋转拖布',
     is_diff: false
@@ -2013,8 +2013,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: false
@@ -2026,8 +2026,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: true
@@ -2039,8 +2039,8 @@ const records = [
     4: '机器人',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -2051,8 +2051,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -2063,8 +2063,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '选配',
     is_diff: false
@@ -2075,8 +2075,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '✅',
     is_diff: true
@@ -2088,8 +2088,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '基站集尘袋',
     is_diff: false
@@ -2101,8 +2101,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '3.2 L',
     is_diff: true
@@ -2114,8 +2114,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -2126,8 +2126,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '4.5 L',
     is_diff: true
@@ -2138,8 +2138,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '4 L',
     is_diff: true
@@ -2150,8 +2150,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '❌',
     is_diff: false
@@ -2162,8 +2162,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '智控热水',
     is_diff: true
@@ -2174,8 +2174,8 @@ const records = [
     4: '基站',
     brand: '某觅',
     product: 'S40',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-3.png',
-    release_time: '2024-05-02',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-3.png',
+    Релиз_time: '2024-05-02',
     first_price: 4699,
     product_feature: '标配',
     is_diff: false
@@ -2186,8 +2186,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '基础语音',
     is_diff: true
@@ -2198,8 +2198,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -2210,8 +2210,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2222,8 +2222,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '超声波',
     is_diff: true
@@ -2234,8 +2234,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -2246,8 +2246,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '凸起雷达+视觉',
     is_diff: true
@@ -2259,8 +2259,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '10.4 cm',
     is_diff: true
@@ -2272,8 +2272,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '2 cm',
     is_diff: true
@@ -2285,8 +2285,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '前向+侧向',
     is_diff: false
@@ -2298,8 +2298,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '光学传感器',
     is_diff: true
@@ -2311,8 +2311,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2323,8 +2323,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '11000 Pa',
     is_diff: true
@@ -2335,8 +2335,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '增压吸尘',
     is_diff: false
@@ -2348,8 +2348,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2361,8 +2361,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '单',
     is_diff: false
@@ -2374,8 +2374,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2387,8 +2387,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2400,8 +2400,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '普通边刷',
     is_diff: true
@@ -2413,8 +2413,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2426,8 +2426,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2439,8 +2439,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '毛胶滚刷',
     is_diff: true
@@ -2452,8 +2452,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '机身尘盒',
     is_diff: false
@@ -2465,8 +2465,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '0.3 L',
     is_diff: true
@@ -2478,8 +2478,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2490,8 +2490,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '拖布外扩',
     is_diff: true
@@ -2502,8 +2502,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '自动补水',
     is_diff: false
@@ -2514,8 +2514,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2526,8 +2526,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -2539,8 +2539,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '双圆盘旋转拖布',
     is_diff: false
@@ -2552,8 +2552,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -2565,8 +2565,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2578,8 +2578,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2590,8 +2590,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2602,8 +2602,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '选配',
     is_diff: false
@@ -2614,8 +2614,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2627,8 +2627,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '基站集尘袋',
     is_diff: false
@@ -2640,8 +2640,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '3.4 L',
     is_diff: true
@@ -2653,8 +2653,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2665,8 +2665,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '4 L',
     is_diff: true
@@ -2677,8 +2677,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '3.5 L',
     is_diff: true
@@ -2689,8 +2689,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2701,8 +2701,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '70℃',
     is_diff: true
@@ -2713,8 +2713,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T30',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-4.png',
-    release_time: '2024-02-04',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-4.png',
+    Релиз_time: '2024-02-04',
     first_price: 3999,
     product_feature: '标配',
     is_diff: false
@@ -2725,8 +2725,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '语音大模型',
     is_diff: true
@@ -2737,8 +2737,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -2749,8 +2749,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -2761,8 +2761,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '超声波 + 视觉',
     is_diff: true
@@ -2773,8 +2773,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -2785,8 +2785,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '隐藏雷达+视觉',
     is_diff: true
@@ -2798,8 +2798,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '8.1 cm',
     is_diff: true
@@ -2811,8 +2811,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '2 cm',
     is_diff: true
@@ -2824,8 +2824,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '前向+侧向',
     is_diff: false
@@ -2837,8 +2837,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '视觉+光学传感器',
     is_diff: true
@@ -2850,8 +2850,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '视觉',
     is_diff: true
@@ -2862,8 +2862,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '15800 Pa',
     is_diff: true
@@ -2874,8 +2874,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '增压吸尘',
     is_diff: false
@@ -2887,8 +2887,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -2900,8 +2900,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '单',
     is_diff: false
@@ -2913,8 +2913,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2926,8 +2926,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -2939,8 +2939,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '普通边刷',
     is_diff: true
@@ -2952,8 +2952,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -2965,8 +2965,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -2978,8 +2978,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '毛胶滚刷',
     is_diff: true
@@ -2991,8 +2991,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '机身尘盒',
     is_diff: false
@@ -3004,8 +3004,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '0.26 L',
     is_diff: true
@@ -3017,8 +3017,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -3029,8 +3029,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '拖布外扩',
     is_diff: true
@@ -3041,8 +3041,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '自动补水',
     is_diff: false
@@ -3053,8 +3053,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -3065,8 +3065,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: true
@@ -3078,8 +3078,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '双圆盘旋转拖布',
     is_diff: false
@@ -3091,8 +3091,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: false
@@ -3104,8 +3104,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -3117,8 +3117,8 @@ const records = [
     4: '机器人',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -3129,8 +3129,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -3141,8 +3141,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '选配',
     is_diff: false
@@ -3153,8 +3153,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '✅',
     is_diff: true
@@ -3166,8 +3166,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '基站集尘袋',
     is_diff: false
@@ -3179,8 +3179,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '3.4 L',
     is_diff: true
@@ -3192,8 +3192,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -3204,8 +3204,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '4 L',
     is_diff: true
@@ -3216,8 +3216,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '3.5 L',
     is_diff: true
@@ -3228,8 +3228,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '❌',
     is_diff: false
@@ -3240,8 +3240,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '70℃',
     is_diff: true
@@ -3252,8 +3252,8 @@ const records = [
     4: '基站',
     brand: '某沃斯',
     product: 'T50',
-    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/product-5.png',
-    release_time: '2024-08-26',
+    first_pic: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/product-5.png',
+    Релиз_time: '2024-08-26',
     first_price: 3999,
     product_feature: '标配',
     is_diff: false
@@ -3262,109 +3262,49 @@ const records = [
 
 const option = {
   records,
-  customComputeRowHeight: args => {
+  пользовательскийComputeRowвысота: args => {
     if (args?.row === 2) {
-      return 100;
+      возврат 100;
     }
   },
   rowTree: [
     {
-      value: '机器人',
+      значение: '机器人',
       children: [
         {
-          value: '交互功能族',
+          значение: '交互功能族',
           children: [
             {
-              value: '语音交互',
+              значение: '语音交互',
               dimensionKey: '3'
             },
             {
-              value: '第三方音箱控制',
+              значение: '第三方音箱控制',
               dimensionKey: '3'
             },
             {
-              value: '视频通话',
+              значение: '视频通话',
               dimensionKey: '3'
             }
           ],
           dimensionKey: '1'
         },
         {
-          value: '智能功能族',
+          значение: '智能功能族',
           children: [
             {
-              value: '悬崖防跌落',
+              значение: '悬崖防跌落',
               dimensionKey: '3'
             },
             {
-              value: '障碍躲避',
+              значение: '障碍躲避',
               children: [
                 {
-                  value: '机身高度',
+                  значение: '机身高度',
                   dimensionKey: '3'
                 },
                 {
-                  value: '越障高度',
-                  dimensionKey: '3'
-                }
-              ],
-              dimensionKey: '2'
-            }
-          ],
-          dimensionKey: '1'
-        },
-        {
-          value: '扫地功能族',
-          children: [
-            {
-              value: '吸力',
-              dimensionKey: '3'
-            },
-            {
-              value: '地毯清洁',
-              dimensionKey: '3'
-            },
-            {
-              value: '边刷',
-              children: [
-                {
-                  value: '边刷数量',
-                  dimensionKey: '3'
-                },
-                {
-                  value: '边刷机械臂',
-                  dimensionKey: '3'
-                },
-                {
-                  value: '边刷结构',
-                  dimensionKey: '3'
-                }
-              ],
-              dimensionKey: '2'
-            },
-            {
-              value: '中滚刷',
-              children: [
-                {
-                  value: '中滚刷控速',
-                  dimensionKey: '3'
-                },
-                {
-                  value: '中滚刷结构',
-                  dimensionKey: '3'
-                }
-              ],
-              dimensionKey: '2'
-            },
-            {
-              value: '机器人集尘',
-              children: [
-                {
-                  value: '集尘方式',
-                  dimensionKey: '3'
-                },
-                {
-                  value: '集尘容量',
+                  значение: '越障高度',
                   dimensionKey: '3'
                 }
               ],
@@ -3374,25 +3314,85 @@ const option = {
           dimensionKey: '1'
         },
         {
-          value: '拖地功能族',
+          значение: '扫地功能族',
           children: [
             {
-              value: '边角拖地',
+              значение: '吸力',
               dimensionKey: '3'
             },
             {
-              value: '热水拖地',
+              значение: '地毯清洁',
               dimensionKey: '3'
             },
             {
-              value: '拖布',
+              значение: '边刷',
               children: [
                 {
-                  value: '拖布结构',
+                  значение: '边刷数量',
                   dimensionKey: '3'
                 },
                 {
-                  value: '拖布抬升',
+                  значение: '边刷机械臂',
+                  dimensionKey: '3'
+                },
+                {
+                  значение: '边刷结构',
+                  dimensionKey: '3'
+                }
+              ],
+              dimensionKey: '2'
+            },
+            {
+              значение: '中滚刷',
+              children: [
+                {
+                  значение: '中滚刷控速',
+                  dimensionKey: '3'
+                },
+                {
+                  значение: '中滚刷结构',
+                  dimensionKey: '3'
+                }
+              ],
+              dimensionKey: '2'
+            },
+            {
+              значение: '机器人集尘',
+              children: [
+                {
+                  значение: '集尘方式',
+                  dimensionKey: '3'
+                },
+                {
+                  значение: '集尘容量',
+                  dimensionKey: '3'
+                }
+              ],
+              dimensionKey: '2'
+            }
+          ],
+          dimensionKey: '1'
+        },
+        {
+          значение: '拖地功能族',
+          children: [
+            {
+              значение: '边角拖地',
+              dimensionKey: '3'
+            },
+            {
+              значение: '热水拖地',
+              dimensionKey: '3'
+            },
+            {
+              значение: '拖布',
+              children: [
+                {
+                  значение: '拖布结构',
+                  dimensionKey: '3'
+                },
+                {
+                  значение: '拖布抬升',
                   dimensionKey: '3'
                 }
               ],
@@ -3405,27 +3405,27 @@ const option = {
       dimensionKey: '4'
     },
     {
-      value: '基站',
+      значение: '基站',
       children: [
         {
-          value: '交互功能族',
+          значение: '交互功能族',
           children: [
             {
-              value: '基站控制',
+              значение: '基站控制',
               dimensionKey: '3'
             }
           ],
           dimensionKey: '1'
         },
         {
-          value: '智能功能族',
+          значение: '智能功能族',
           children: [
             {
-              value: '自动上下水',
+              значение: '自动上下水',
               dimensionKey: '3'
             },
             {
-              value: '基站自清洁',
+              значение: '基站自清洁',
               children: [],
               dimensionKey: '3'
             }
@@ -3433,21 +3433,21 @@ const option = {
           dimensionKey: '1'
         },
         {
-          value: '扫地功能族',
+          значение: '扫地功能族',
           children: [
             {
-              value: '基站集尘',
+              значение: '基站集尘',
               children: [
                 {
-                  value: '集尘能力',
+                  значение: '集尘能力',
                   dimensionKey: '3'
                 },
                 {
-                  value: '集尘容量',
+                  значение: '集尘容量',
                   dimensionKey: '3'
                 },
                 {
-                  value: '集尘烘干',
+                  значение: '集尘烘干',
                   dimensionKey: '3'
                 }
               ],
@@ -3457,22 +3457,22 @@ const option = {
           dimensionKey: '1'
         },
         {
-          value: '拖地功能族',
+          значение: '拖地功能族',
           children: [
             {
-              value: '清水箱容量',
+              значение: '清水箱容量',
               dimensionKey: '3'
             },
             {
-              value: '污水箱容量',
+              значение: '污水箱容量',
               dimensionKey: '3'
             },
             {
-              value: '热水洗拖布',
+              значение: '热水洗拖布',
               dimensionKey: '3'
             },
             {
-              value: '拖布烘干',
+              значение: '拖布烘干',
               dimensionKey: '3'
             }
           ],
@@ -3485,15 +3485,15 @@ const option = {
   rows: [
     {
       dimensionKey: '4',
-      title: '模块',
+      заголовок: '模块',
       headerStyle: {
         bgColor: '#fff'
       },
-      width: 'auto'
+      ширина: 'авто'
     },
     {
       dimensionKey: '1',
-      title: '分类',
+      заголовок: '分类',
       headerStyle: {
         bgColor: '#fff',
         fontWeight: 'normal'
@@ -3501,7 +3501,7 @@ const option = {
     },
     {
       dimensionKey: '2',
-      title: '分组',
+      заголовок: '分组',
       headerStyle: {
         bgColor: '#fff',
         fontWeight: 'normal'
@@ -3509,7 +3509,7 @@ const option = {
     },
     {
       dimensionKey: '3',
-      title: 'feature',
+      заголовок: 'feature',
       headerStyle: {
         bgColor: '#fff',
         fontWeight: 'normal'
@@ -3519,64 +3519,64 @@ const option = {
   columns: [
     {
       dimensionKey: 'brand',
-      title: '品牌',
+      заголовок: '品牌',
       headerStyle: {
         bgColor: '#fff',
-        textAlign: 'center'
+        textAlign: 'центр'
       }
     },
     {
       dimensionKey: 'product',
-      title: '型号',
+      заголовок: '型号',
       headerStyle: {
         bgColor: '#fff',
-        textAlign: 'center'
+        textAlign: 'центр'
       }
     },
     {
       dimensionKey: 'first_pic',
-      title: '图片',
+      заголовок: '图片',
       headerStyle: {
         bgColor: '#fff',
-        textAlign: 'center'
+        textAlign: 'центр'
       },
       keepAspectRatio: true,
-      headerType: 'image'
+      headerType: 'imвозраст'
     },
     {
-      dimensionKey: 'release_time',
-      title: '上市时间',
+      dimensionKey: 'Релиз_time',
+      заголовок: '上市时间',
       headerStyle: {
         bgColor: '#fff',
         fontWeight: 'normal',
-        textAlign: 'center'
+        textAlign: 'центр'
       }
     },
     {
       dimensionKey: 'first_price',
-      title: '价格',
+      заголовок: '价格',
       headerStyle: {
         bgColor: '#fff',
         fontWeight: 'normal',
-        textAlign: 'center'
+        textAlign: 'центр'
       }
     }
   ],
   indicators: [
     {
-      cellType: 'text',
+      cellType: 'текст',
       indicatorKey: 'product_feature',
-      title: 'product_feature',
-      width: '150',
-      showSort: false,
+      заголовок: 'product_feature',
+      ширина: '150',
+      showсортировка: false,
       style: {
-        textAlign: 'center',
+        textAlign: 'центр',
         bgColor: args => {
-          const record = args.table.getCellRawRecord(args?.col, args?.row)?.[0];
+          const record = args.таблица.getCellRawRecord(args?.col, args?.row)?.[0];
           if (record?.is_diff) {
-            return '#fbe9eb';
+            возврат '#fbe9eb';
           }
-          return '#fff';
+          возврат '#fff';
         }
       }
     }
@@ -3587,23 +3587,23 @@ const option = {
       bgColor: '#DFEBE8'
     }
   },
-  dataConfig: {
+  данныеConfig: {
     aggregationRules: [
       {
-        field: 'product_feature',
+        поле: 'product_feature',
         indicatorKey: 'product_feature',
-        aggregationType: 'NONE'
+        aggregationType: 'никто'
       }
     ]
   },
   rowExpandLevel: 4,
-  hideIndicatorName: true,
+  hideIndicatorимя: true,
   rowHierarchyType: 'tree'
 };
 
 const container = document.getElementById(CONTAINER_ID);
-container.style.height = '800px';
-const tableInstance = new VTable.PivotTable(container, option);
+container.style.высота = '800px';
+const таблицаInstance = новый Vтаблица.сводныйтаблица(container, option);
 
-window.tableInstance = tableInstance;
+window.таблицаInstance = таблицаInstance;
 ```

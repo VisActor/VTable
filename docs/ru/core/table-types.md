@@ -9,18 +9,18 @@ VTable предоставляет три основных типа таблиц,
 ### Базовое использование
 
 ```javascript
-import { ListTable } from '@visactor/vtable';
+import { ListTable } от '@visactor/VTable';
 
-const listTable = new ListTable({
+const ListTable = новый ListTable({
   container: document.getElementById('container'),
   columns: [
-    { field: 'id', caption: 'ID', width: 100 },
-    { field: 'name', caption: 'Имя', width: 200 },
-    { field: 'value', caption: 'Значение', width: 150 }
+    { field: 'id', caption: 'ID', ширина: 100 },
+    { field: 'name', caption: 'Имя', ширина: 200 },
+    { field: 'значение', caption: 'Значение', ширина: 150 }
   ],
   records: [
-    { id: 1, name: 'Элемент 1', value: 100 },
-    { id: 2, name: 'Элемент 2', value: 200 }
+    { id: 1, name: 'Элемент 1', значение: 100 },
+    { id: 2, name: 'Элемент 2', значение: 200 }
   ]
 });
 ```
@@ -52,22 +52,22 @@ const listTable = new ListTable({
 ### Продвинутая конфигурация ListTable
 
 ```javascript
-const advancedListTable = new ListTable({
+const advancedListTable = новый ListTable({
   container: document.getElementById('container'),
   columns: [
     {
       field: 'employee',
       caption: 'Сотрудник',
-      width: 200,
+      ширина: 200,
       style: {
         fontWeight: 'bold',
-        color: '#2c3e50'
+        цвет: '#2c3e50'
       }
     },
     {
       field: 'progress',
       caption: 'Прогресс проекта',
-      width: 150,
+      ширина: 150,
       cellType: 'progressbar',
       style: {
         barColor: '#27ae60',
@@ -77,10 +77,10 @@ const advancedListTable = new ListTable({
     {
       field: 'chart',
       caption: 'Производительность',
-      width: 200,
+      ширина: 200,
       cellType: 'chart',
       chartSpec: {
-        type: 'line',
+        тип: 'line',
         data: { values: [] }
       }
     }
@@ -90,10 +90,10 @@ const advancedListTable = new ListTable({
     field: 'employee',
     order: 'asc'
   },
-  hover: {
+  навести: {
     highlightMode: 'row'
   },
-  select: {
+  выбрать: {
     mode: 'row',
     headerSelectMode: true
   }
@@ -107,9 +107,9 @@ const advancedListTable = new ListTable({
 ### Базовое использование
 
 ```javascript
-import { PivotTable } from '@visactor/vtable';
+import { PivotTable } от '@visactor/VTable';
 
-const pivotTable = new PivotTable({
+const PivotTable = новый PivotTable({
   container: document.getElementById('container'),
   records: salesData,
   rows: ['region', 'category'],
@@ -118,15 +118,15 @@ const pivotTable = new PivotTable({
     {
       indicatorKey: 'sales',
       caption: 'Общие продажи',
-      width: 'auto',
-      format: (rec) => '$' + Number(rec.sales).toLocaleString()
+      ширина: 'auto',
+      format: (rec) => '$' + число(rec.sales).toLocaleString()
     },
     {
       indicatorKey: 'profit',
       caption: 'Прибыль',
-      width: 'auto',
+      ширина: 'auto',
       style: {
-        color: (args) => args.value > 0 ? 'green' : 'red'
+        цвет: (args) => args.значение > 0 ? 'green' : 'red'
       }
     }
   ]
@@ -151,46 +151,46 @@ const pivotTable = new PivotTable({
 ### Продвинутые функции PivotTable
 
 ```javascript
-const advancedPivotTable = new PivotTable({
+const advancedPivotTable = новый PivotTable({
   container: document.getElementById('container'),
   records: salesData,
   rows: [
     {
       dimensionKey: 'region',
       caption: 'Регион продаж',
-      width: 'auto',
+      ширина: 'auto',
       headerStyle: {
         bgColor: '#4472c4',
-        color: 'white',
+        цвет: 'white',
         fontWeight: 'bold'
       }
     },
     {
       dimensionKey: 'category',
       caption: 'Категория продукта',
-      width: 'auto'
+      ширина: 'auto'
     }
   ],
   columns: [
     {
       dimensionKey: 'quarter',
       caption: 'Квартал',
-      width: 'auto'
+      ширина: 'auto'
     }
   ],
   indicators: [
     {
       indicatorKey: 'sales',
       caption: 'Выручка',
-      width: 120,
-      format: (rec) => '$' + Number(rec.sales).toLocaleString(),
+      ширина: 120,
+      format: (rec) => '$' + число(rec.sales).toLocaleString(),
       aggregation: 'SUM',
       style: {
         bgColor: (args) => {
-          const value = Number(args.value);
-          if (value > 1000000) return '#d4edda';
-          if (value > 500000) return '#fff3cd';
-          return '#f8d7da';
+          const значение = число(args.значение);
+          if (значение > 1000000) возврат '#d4edda';
+          if (значение > 500000) возврат '#fff3cd';
+          возврат '#f8d7da';
         }
       }
     }
@@ -199,7 +199,7 @@ const advancedPivotTable = new PivotTable({
     titleOnDimension: 'row',
     headerStyle: {
       bgColor: '#70ad47',
-      color: 'white'
+      цвет: 'white'
     }
   },
   dataConfig: {
@@ -228,9 +228,9 @@ const advancedPivotTable = new PivotTable({
 ### Базовое использование
 
 ```javascript
-import { PivotChart } from '@visactor/vtable';
+import { PivotChart } от '@visactor/VTable';
 
-const pivotChart = new PivotChart({
+const PivotChart = новый PivotChart({
   container: document.getElementById('container'),
   records: salesData,
   rows: ['category'],
@@ -239,7 +239,7 @@ const pivotChart = new PivotChart({
     {
       indicatorKey: 'sales',
       caption: 'Сумма продаж',
-      width: 'auto'
+      ширина: 'auto'
     }
   ],
   indicatorsAsCol: false,
@@ -261,7 +261,7 @@ const pivotChart = new PivotChart({
 
 **Конфигурация диаграмм**
 ```javascript
-const pivotChart = new PivotChart({
+const PivotChart = новый PivotChart({
   // ... другие опции
   defaultHeaderRowHeight: 50,
   defaultRowHeight: 200, // Размещение высоты диаграммы
@@ -269,27 +269,27 @@ const pivotChart = new PivotChart({
     {
       indicatorKey: 'sales',
       caption: 'Месячные продажи',
-      width: 300,
+      ширина: 300,
       chartSpec: {
-        type: 'bar',
+        тип: 'bar',
         data: {
           id: 'data'
         },
         xField: 'month',
         yField: 'sales',
         seriesField: 'category',
-        color: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'],
+        цвет: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'],
         bar: {
           cornerRadius: 4
         },
         axes: [
           {
-            orient: 'bottom',
-            type: 'band'
+            orient: 'низ',
+            тип: 'band'
           },
           {
-            orient: 'left',
-            type: 'linear'
+            orient: 'лево',
+            тип: 'linear'
           }
         ]
       }
@@ -310,11 +310,11 @@ const pivotChart = new PivotChart({
 **Динамическая привязка данных**
 ```javascript
 // Данные диаграммы обновляются автоматически с данными сводной таблицы
-pivotChart.on('pivot_sort_click', (args) => {
+PivotChart.на('pivot_sort_click', (args) => {
   console.log('Сводка отсортирована, диаграммы обновятся автоматически');
 });
 
-pivotChart.on('drill_menu_click', (args) => {
+PivotChart.на('drill_menu_click', (args) => {
   console.log('Выполнена детализация, данные диаграммы обновлены');
 });
 ```
@@ -348,7 +348,7 @@ pivotChart.on('drill_menu_click', (args) => {
 
 ```javascript
 // Из ListTable
-const listTable = new ListTable({
+const ListTable = новый ListTable({
   records: salesData,
   columns: [
     { field: 'region', caption: 'Регион' },
@@ -357,7 +357,7 @@ const listTable = new ListTable({
 });
 
 // В PivotTable
-const pivotTable = new PivotTable({
+const PivotTable = новый PivotTable({
   records: salesData,
   rows: ['region'],
   indicators: [
@@ -374,17 +374,17 @@ const commonConfig = {
   container: document.getElementById('container'),
   records: data,
   theme: 'ARCO',
-  hover: { highlightMode: 'row' },
-  select: { mode: 'cell' }
+  навести: { highlightMode: 'row' },
+  выбрать: { mode: 'cell' }
 };
 
 // Применение к разным типам таблиц
-const listTable = new ListTable({
+const ListTable = новый ListTable({
   ...commonConfig,
   columns: listColumns
 });
 
-const pivotTable = new PivotTable({
+const PivotTable = новый PivotTable({
   ...commonConfig,
   rows: ['dimension1'],
   indicators: pivotIndicators

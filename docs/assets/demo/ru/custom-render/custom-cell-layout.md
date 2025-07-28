@@ -1,123 +1,123 @@
 ---
-category: examples
-group: Custom
-title: Cell custom layout
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-cell-layout.png
-link: custom_define/custom_layout
-option: ListTable-columns-text#customLayout
+категория: примеры
+группа: пользовательский
+заголовок: Cell пользовательский макет
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-cell-макет.png
+ссылка: пользовательский_define/пользовательский_макет
+опция: списоктаблица-columns-текст#пользовательскиймакет
 ---
 
-# Cell custom layout
+# Cell пользовательский макет
 
-Customize cell content to achieve image and text mixing effects
+пользовательскийize cell content к achieve imвозраст и текст mixing effects
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `customLayout` Configure the API to return what needs to be rendered
+- `пользовательскиймакет` Configure the апи к возврат what needs к be rendered
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// only use for website
-const { createGroup, createText, createImage, Tag, CheckBox, Radio } = VRender;
-// use this for project
-// import {createGroup, createText, createImage, Tag, CheckBox, Radio} from '@visactor/vtable/es/vrender';
+```javascript liveдемонстрация template=vтаблица
+// only use для website
+const { createGroup, createText, createImвозраст, Tag, флажок, переключатель } = VRender;
+// use this для project
+// import {createGroup, createText, createImвозраст, Tag, флажок, переключатель} от '@visactor/vтаблица/es/vrender';
 
-VTable.register.icon('location', {
-  type: 'svg',
-  name: 'location',
-  positionType: VTable.TYPES.IconPosition.left,
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg'
+Vтаблица.регистрация.иконка('location', {
+  тип: 'svg',
+  имя: 'location',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/location.svg'
 });
-VTable.register.icon('favorite', {
-  type: 'svg',
-  name: 'favorite',
-  positionType: VTable.TYPES.IconPosition.left,
-  width: 20,
-  height: 20,
+Vтаблица.регистрация.иконка('favorite', {
+  тип: 'svg',
+  имя: 'favorite',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
+  ширина: 20,
+  высота: 20,
   cursor: 'pointer',
-  tooltip: {
-    placement: VTable.TYPES.Placement.top,
-    title: 'follow',
+  Подсказка: {
+    placement: Vтаблица.TYPES.Placement.верх,
+    заголовок: 'follow',
     style: {
-      font: '10px Arial',
+      шрифт: '10px Arial',
       bgColor: 'white',
-      color: '#333',
+      цвет: '#333',
       arrowMark: true
     }
   },
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/favorite.svg'
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/favorite.svg'
 });
 
-VTable.register.icon('message', {
-  type: 'svg',
-  name: 'message',
-  positionType: VTable.TYPES.IconPosition.left,
-  width: 20,
-  height: 20,
+Vтаблица.регистрация.иконка('messвозраст', {
+  тип: 'svg',
+  имя: 'messвозраст',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
+  ширина: 20,
+  высота: 20,
   marginLeft: 10,
   cursor: 'pointer',
-  tooltip: {
-    placement: VTable.TYPES.Placement.top,
-    title: 'send message',
+  Подсказка: {
+    placement: Vтаблица.TYPES.Placement.верх,
+    заголовок: 'send messвозраст',
     style: {
-      font: '10px Arial',
+      шрифт: '10px Arial',
       bgColor: 'white',
-      color: '#333',
+      цвет: '#333',
       arrowMark: true
     }
   },
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/message.svg'
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/messвозраст.svg'
 });
 
 const option = {
   columns: [
     {
-      field: 'bloggerId',
-      title: 'order number'
+      поле: 'bloggerId',
+      заголовок: 'order число'
     },
     {
-      field: 'bloggerName',
-      title: 'anchor nickname',
-      width: 330,
+      поле: 'bloggerимя',
+      заголовок: 'anchor nickимя',
+      ширина: 330,
       style: {
         fontFamily: 'Arial',
         fontWeight: 500
       },
-      customLayout: args => {
-        const { table, row, col, rect } = args;
-        const record = table.getCellOriginRecord(col, row);
-        const { height, width } = rect ?? table.getCellRect(col, row);
+      пользовательскиймакет: args => {
+        const { таблица, row, col, rect } = args;
+        const record = таблица.getCellOriginRecord(col, row);
+        const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
 
         const container = createGroup({
-          height,
-          width,
+          высота,
+          ширина,
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'nowrap'
         });
         const containerLeft = createGroup({
-          height,
-          width: 60,
+          высота,
+          ширина: 60,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
+          alignItems: 'центр',
           justifyContent: 'space-around'
         });
         container.add(containerLeft);
 
-        const icon0 = createImage({
-          id: 'icon0',
-          width: 50,
-          height: 50,
-          image: record.bloggerAvatar,
+        const иконка0 = createImвозраст({
+          id: 'иконка0',
+          ширина: 50,
+          высота: 50,
+          imвозраст: record.bloggerAvatar,
           cornerRadius: 25
         });
-        containerLeft.add(icon0);
+        containerLeft.add(иконка0);
 
         const containerRight = createGroup({
-          height,
-          width: width - 60,
+          высота,
+          ширина: ширина - 60,
           display: 'flex',
           flexDirection: 'column',
           flexWrap: 'nowrap'
@@ -125,57 +125,57 @@ const option = {
         container.add(containerRight);
 
         const containerRightTop = createGroup({
-          height: height / 2,
-          width,
+          высота: высота / 2,
+          ширина,
           display: 'flex',
-          alignItems: 'flex-end'
+          alignItems: 'flex-конец'
         });
 
         const containerRightBottom = createGroup({
-          height: height / 2,
-          width,
+          высота: высота / 2,
+          ширина,
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'центр'
         });
 
         containerRight.add(containerRightTop);
         containerRight.add(containerRightBottom);
 
-        const bloggerName = createText({
-          text: record.bloggerName,
+        const bloggerимя = createText({
+          текст: record.bloggerимя,
           fontSize: 13,
           fontFamily: 'sans-serif',
           fill: 'black'
         });
-        containerRightTop.add(bloggerName);
+        containerRightTop.add(bloggerимя);
 
-        const location = createImage({
+        const location = createImвозраст({
           id: 'location',
-          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
-          width: 15,
-          height: 15,
+          imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/location.svg',
+          ширина: 15,
+          высота: 15,
           boundsPadding: [0, 0, 0, 10]
         });
         containerRightTop.add(location);
 
-        const locationName = createText({
-          text: record.city,
+        const locationимя = createText({
+          текст: record.Город,
           fontSize: 11,
           fontFamily: 'sans-serif',
           fill: '#6f7070'
         });
-        containerRightTop.add(locationName);
+        containerRightTop.add(locationимя);
 
-        for (let i = 0; i < record?.tags?.length ?? 0; i++) {
-          const tag = new Tag({
-            text: record.tags[i],
+        для (let i = 0; i < record?.tags?.length ?? 0; i++) {
+          const tag = новый Tag({
+            текст: record.tags[i],
             textStyle: {
               fontSize: 10,
               fontFamily: 'sans-serif',
               fill: 'rgb(51, 101, 238)'
             },
             panel: {
-              visible: true,
+              видимый: true,
               fill: '#f4f4f2',
               cornerRadius: 5
             },
@@ -184,17 +184,17 @@ const option = {
           });
           containerRightBottom.add(tag);
         }
-        return {
+        возврат {
           rootContainer: container,
           renderDefault: false
         };
       }
     },
     {
-      field: 'fansCount',
-      title: 'fansCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'fansCount',
+      заголовок: 'fansCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -203,8 +203,8 @@ const option = {
       }
     },
     {
-      field: 'worksCount',
-      title: 'worksCount',
+      поле: 'worksCount',
+      заголовок: 'worksCount',
       style: {
         fontFamily: 'Arial',
         fontSize: 12,
@@ -212,10 +212,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -224,10 +224,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -236,20 +236,20 @@ const option = {
       }
     },
     {
-      field: '',
-      title: 'Operation options',
-      width: 200,
-      customLayout: args => {
-        const { table, row, col, rect } = args;
-        const { height, width } = rect ?? table.getCellRect(col, row);
+      поле: '',
+      заголовок: 'Operation options',
+      ширина: 200,
+      пользовательскиймакет: args => {
+        const { таблица, row, col, rect } = args;
+        const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
 
         const container = createGroup({
-          height,
-          width,
+          высота,
+          ширина,
           display: 'flex',
           flexDirection: 'column',
-          // alignItems: 'center',
-          justifyContent: 'center'
+          // alignItems: 'центр',
+          justifyContent: 'центр'
         });
 
         const checkboxGroup = createGroup({
@@ -257,42 +257,42 @@ const option = {
           flexDirection: 'row',
           flexWrap: 'no-wrap',
           boundsPadding: [5, 0, 5, 10],
-          justifyContent: 'center'
+          justifyContent: 'центр'
         });
         container.appendChild(checkboxGroup);
 
         const checkboxText = createText({
-          text: 'operate: ',
+          текст: 'operate: ',
           fontSize: 12,
           boundsPadding: [0, 10, 0, 0]
         });
         checkboxGroup.appendChild(checkboxText);
 
-        const checkbox1 = new CheckBox({
-          text: {
-            text: 'like',
+        const checkbox1 = новый флажок({
+          текст: {
+            текст: 'like',
             fontSize: 12
           },
-          spaceBetweenTextAndIcon: 2,
+          spaceBetweenTextAndиконка: 2,
           boundsPadding: [0, 10, 0, 0]
         });
         checkbox1.render();
         checkboxGroup.appendChild(checkbox1);
-        checkbox1.addEventListener('checkbox_state_change', e => {
+        checkbox1.addсобытиесписокener('checkbox_state_change', e => {
           console.log('checkbox_state_change', e);
         });
 
-        const checkbox2 = new CheckBox({
-          text: {
-            text: 'collect',
+        const checkbox2 = новый флажок({
+          текст: {
+            текст: 'collect',
             fontSize: 12
           },
-          spaceBetweenTextAndIcon: 2
+          spaceBetweenTextAndиконка: 2
           // boundsPadding: [10, 0, 0, 10]
         });
         checkbox2.render();
         checkboxGroup.appendChild(checkbox2);
-        checkbox2.addEventListener('checkbox_state_change', e => {
+        checkbox2.addсобытиесписокener('checkbox_state_change', e => {
           console.log('checkbox_state_change', e);
         });
 
@@ -305,136 +305,136 @@ const option = {
         container.appendChild(radioGroup);
 
         const radioText = createText({
-          text: 'type: ',
+          текст: 'тип: ',
           fontSize: 12,
           boundsPadding: [0, 10, 0, 0]
         });
         radioGroup.appendChild(radioText);
 
-        const radio1 = new Radio({
-          text: {
-            text: 'normal',
+        const radio1 = новый переключатель({
+          текст: {
+            текст: 'normal',
             fontSize: 12
           },
           checked: true,
-          spaceBetweenTextAndIcon: 2,
+          spaceBetweenTextAndиконка: 2,
           boundsPadding: [0, 10, 0, 0]
         });
         radio1.render();
         radioGroup.appendChild(radio1);
-        radio1.addEventListener('radio_checked', () => {
+        radio1.addсобытиесписокener('radio_checked', () => {
           if (radio2.attribute.checked) {
             radio2.setAttribute('checked', false);
-            table.scenegraph.updateNextFrame();
+            таблица.scenegraph.updateNextFrame();
           }
         });
 
-        const radio2 = new Radio({
-          text: {
-            text: 'special',
+        const radio2 = новый переключатель({
+          текст: {
+            текст: 'special',
             fontSize: 12
           },
-          spaceBetweenTextAndIcon: 2
+          spaceBetweenTextAndиконка: 2
         });
         radio2.render();
         radioGroup.appendChild(radio2);
-        radio2.addEventListener('radio_checked', () => {
+        radio2.addсобытиесписокener('radio_checked', () => {
           if (radio1.attribute.checked) {
             radio1.setAttribute('checked', false);
-            table.scenegraph.updateNextFrame();
+            таблица.scenegraph.updateNextFrame();
           }
         });
 
-        return {
+        возврат {
           rootContainer: container,
           renderDefault: false
         };
       }
     },
     {
-      field: '',
-      title: 'operation',
-      width: 100,
-      icon: ['favorite', 'message']
+      поле: '',
+      заголовок: 'operation',
+      ширина: 100,
+      иконка: ['favorite', 'messвозраст']
     }
   ],
   records: [
     {
       bloggerId: 1,
-      bloggerName: 'Virtual Anchor Xiaohua',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+      bloggerимя: 'Virtual Anchor Xiaohua',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg',
       introduction:
-        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation and food. I hope to share happy moments with you through live broadcast.',
+        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation и food. I hope к share happy moments с you through live broadcast.',
       fansCount: 400,
       worksCount: 10,
       viewCount: 5,
-      city: 'Dream City',
+      Город: 'Dream Город',
       tags: ['game', 'anime', 'food']
     },
     {
       bloggerId: 2,
-      bloggerName: 'Virtual anchor little wolf',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg',
+      bloggerимя: 'Virtual anchor little wolf',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg',
       introduction:
-        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.',
+        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel и photography, и I hope к explore the beauty из the world с you through live broadcast.',
       fansCount: 800,
       worksCount: 20,
       viewCount: 15,
-      city: 'City of Music',
+      Город: 'Город из Music',
       tags: ['music', 'travel', 'photography']
     },
     {
       bloggerId: 3,
-      bloggerName: 'Virtual anchor bunny',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg',
+      bloggerимя: 'Virtual anchor bunny',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/rabbit.jpg',
       introduction:
-        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts and beauty makeup. I hope to share creativity and fashion with you through live broadcast.',
+        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts и beauty makeup. I hope к share creativity и fashion с you through live broadcast.',
       fansCount: 600,
       worksCount: 15,
       viewCount: 10,
-      city: 'City of Art',
+      Город: 'Город из Art',
       tags: ['painting', 'handmade', 'beauty makeup']
     },
     {
       bloggerId: 4,
-      bloggerName: 'Virtual anchor kitten',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg',
+      bloggerимя: 'Virtual anchor kitten',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/cat.jpg',
       introduction:
-        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness and cooking. I hope to live a healthy and happy life with everyone through the live broadcast.',
+        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness и coхорошоing. I hope к live a healthy и happy life с everyone through the live broadcast.',
       fansCount: 1000,
       worksCount: 30,
       viewCount: 20,
-      city: 'Health City',
-      tags: ['dance', 'fitness', 'cooking']
+      Город: 'Health Город',
+      tags: ['dance', 'fitness', 'coхорошоing']
     },
     {
       bloggerId: 5,
-      bloggerName: 'Virtual anchor Bear',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+      bloggerимя: 'Virtual anchor Bear',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bear.jpg',
       introduction:
-        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading and philosophy, I hope to explore the meaning of life with you through live broadcast.',
+        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading и philosophy, I hope к explore the meaning из life с you through live broadcast.',
       fansCount: 1200,
       worksCount: 25,
       viewCount: 18,
-      city: 'City of Wisdom',
+      Город: 'Город из Wisdom',
       tags: ['Movie', 'Literature']
     },
     {
       bloggerId: 6,
-      bloggerName: 'Virtual anchor bird',
-      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg',
+      bloggerимя: 'Virtual anchor bird',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/bird.jpeg',
       introduction:
-        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting and variety shows. I hope to be happy with everyone through the live broadcast.',
+        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting и variety shows. I hope к be happy с everyone through the live broadcast.',
       fansCount: 900,
       worksCount: 12,
       viewCount: 8,
-      city: 'Happy City',
-      tags: ['music', 'performance', 'variety']
+      Город: 'Happy Город',
+      tags: ['music', 'Производительность', 'variety']
     }
   ],
-  defaultRowHeight: 80
+  defaultRowвысота: 80
 };
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

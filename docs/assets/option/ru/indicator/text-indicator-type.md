@@ -1,13 +1,13 @@
-{{ target: text-indicator-type }}
+{{ target: текст-indicator-тип }}
 
-#${prefix} indicators.text(string)
+#${prefix} indicators.текст(строка)
 
-Specifies the column type as 'text'，cellType can be omitted and defaults to 'text'
+Specifies the column тип as 'текст'，cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'text'
+##${prefix} cellType(строка) = 'текст'
 
-Specifies the column type as 'text'，cellType can be omitted and defaults to 'text'
+Specifies the column тип as 'текст'，cellType can be omitted и defaults к 'текст'
 
-{{ use: base-indicator-type(
+{{ use: base-indicator-тип(
     prefix = '##'+${prefix}
 ) }}

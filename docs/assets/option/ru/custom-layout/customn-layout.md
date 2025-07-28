@@ -1,18 +1,18 @@
-{{ target: custom-layout }}
+{{ target: пользовательский-макет }}
 
-The ICustomLayoutObj type is defined as follows
+The IпользовательскиймакетObj тип is defined as follows
 
 ```
-export type ICustomLayoutObj = {
-  rootContainer: Container | any;
+export тип IпользовательскиймакетObj = {
+  rootContainer: Container | любой;
   /**
-   * Do you still need to render content by default? Only if the configuration is true, it will be drawn. By default, it will not be drawn.
+   * Do you still need к render content по по умолчанию? Only if the configuration is true, it will be drawn. по по умолчанию, it will не be drawn.
    */
-  renderDefault?: boolean;
+  renderDefault?: логический;
   /**
-   * Whether to also enable padding in style
+   * Whether к also включить заполнение в style
    */
-  enableCellPadding?: boolean;
+  enableCellPadding?: логический;
 };
 ```
 
@@ -22,14 +22,14 @@ ${prefix} rootContainer (Container)
 
 root container.
 
-The `VTable.CustomLayout.Group` class needs to be instantiated by the user to act as a container. The container can call the add interface to add custom child elements. The sub-element types that can be added to this container are: `Text`|`Image`|`Icon`|`Rect`|`Circle`|`Line`|`Arc`|`Group`.
+The `Vтаблица.пользовательскиймакет.Group` class needs к be instantiated по the user к act as a container. The container can call the add интерфейс к add пользовательский child elements. The sub-element types that can be added к this container are: `текст`|`Imвозраст`|`иконка`|`Rect`|`Circle`|`Line`|`Arc`|`Group`.
 
-[Please refer to the example for using custom layout](../demo/custom-render/custom-cell-layout)
+[Please refer к the пример для using пользовательский макет](../демонстрация/пользовательский-render/пользовательский-cell-макет)
 
-For details, please refer to the tutorial: [Custom rendering automatic layout](../guide/custom_define/custom_layout)
+для details, please refer к the tutorial: [пользовательский rendering автоmatic макет](../guide/пользовательский_define/пользовательский_макет)
 
-The parameter of the constructor of the Container class is containerOptions, and the specific configuration items are:
+The параметр из the constructor из the Container class is containerOptions, и the specific configuration items are:
 
-${prefix} renderDefault (boolean) = false
+${prefix} renderDefault (логический) = false
 
-Whether the content needs to be rendered by default, it will be drawn only if the configuration is true, and the default value is false.
+Whether the content needs к be rendered по по умолчанию, it will be drawn only if the configuration is true, и the по умолчанию значение is false.

@@ -1,78 +1,78 @@
 ---
-title: VTable usage issue: How to make the table automatically calculate column width based only on the content width of the table header</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к make the таблица автоmatically calculate column ширина based only на the content ширина из the таблица header</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to make the table automatically calculate column width based only on the content width of the table header</br>
+How к make the таблица автоmatically calculate column ширина based only на the content ширина из the таблица header</br>
 
 
 ## Problem description
 
-In automatic width mode, you want the width of a column to be determined only by the content width of the header cell and not affected by the content cell.</br>
+в автоmatic ширина mode, you want the ширина из a column к be determined only по the content ширина из the header cell и не affected по the content cell.</br>
 
 
 ## Solution
 
-VTable provides `columnWidthComputeMode `configuration for specifying the bounded areas that are involved in content width calculations:</br>
+Vтаблица provides `columnширинаComputeMode `configuration для specifying the bounded areas that are involved в content ширина calculations:</br>
 *  'Only-header ': Only the header content is calculated.</br>
-*  'Only-body ': Only calculate the content of the body cell.</br>
-*  'Normal ': Calculate normally, that is, calculate the contents of the header and body cells.</br>
+*  'Only-body ': Only calculate the content из the body cell.</br>
+*  'Normal ': Calculate normally, that is, calculate the contents из the header и body cells.</br>
 
 
-## Code example
+## код пример
 
 ```
 const options = {
     //......
-    columnWidthComputeMode: 'only-header'
+    columnширинаComputeMode: 'only-header'
 };</br>
 ```
 
 
-## Results show
+## Results показать
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/LJk6bcmw3oJM5DxjJkHch69GnMd.gif' alt='' width='758' height='1048'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/LJk6bcmw3oJM5DxjJkHch69GnMd.gif' alt='' ширина='758' высота='1048'>
 
-Full sample code (you can try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree)):</br>
+Full sample код (Вы можете try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree)):</br>
 ```
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
     {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto"
+        "поле": "ID Заказа",
+        "title": "ID Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Customer ID",
-        "title": "Customer ID",
-        "width": "auto"
+        "поле": "пользовательскийer ID",
+        "title": "пользовательскийer ID",
+        "ширина": "авто"
     },
     {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto"
+        "поле": "Product имя",
+        "title": "Product имя",
+        "ширина": "авто"
     }
 ];
 
 const option = {
-  records:data,
+  records:данные,
   columns,
-  widthMode:'standard',
-  columnWidthComputeMode: 'only-header'
+  ширинаMode:'standard',
+  columnширинаComputeMode: 'only-header'
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
     })</br>
 ```
 ## Related Documents
 
-Related api: https://www.visactor.io/vtable/option/ListTable # columnWidthComputeMode</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/option/списоктаблица # columnширинаComputeMode</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

@@ -1,182 +1,182 @@
-# Theme Theme
+# тема тема
 
-In this article, we will learn how to customize and beautify the presentation of data tables with the theme Theme in VTable.
+в this article, we will learn how к пользовательскийize и beautify the presentation из данные таблицаs с the тема тема в Vтаблица.
 
-Theme controls the appearance of the table, makes the table more aesthetic, and has some help for data analytics. It should be noted that: Theme theme is to set the style of the table from the whole, and can also be used through[style](../../guide/theme_and_style/style)To style each column separately.
+тема controls the appearance из the таблица, makes the таблица more aesthetic, и has некоторые help для данные analytics. It should be noted that: тема тема is к set the style из the таблица от the whole, и can also be used through[style](../../guide/тема_and_style/style)к style каждый column separately.
 
-Theme supports setting the static styles of modules such as table header, body and outer border. The settings include: font, font size, color, background color, cell dividing line thickness and color; it also supports dynamic style configuration of each interaction effect module of cells. For example: mouse suspension or style configuration of each cell when selected. For details, please check the configuration items.
+тема supports setting the static styles из modules such as таблица header, body и outer граница. The settings include: шрифт, шрифт размер, цвет, фон цвет, cell dividing line thickness и цвет; it also supports dynamic style configuration из каждый interaction effect module из cells. для пример: mouse suspension или style configuration из каждый cell when selected. для details, please check the configuration items.
 
-## Theme style corresponding structure
+## тема style corresponding structure
 
-Refer to the figure below to learn commonly used configuration items
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60d.jpeg)
+Refer к the figure below к learn commonly used configuration items
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60d.jpeg)
 
-## Header Theme
+## Header тема
 
-The header is an important part of the table display, and its style directly affects the visual effect of the entire table. The configuration item is`theme.headerStyle`We can adjust the background color, border, text style, etc. of the header cells by modifying the configuration items. E.g:
+The header is an important part из the таблица display, и its style directly affects the visual effect из the entire таблица. The configuration item is`тема.headerStyle`We can adjust the фон цвет, граница, текст style, etc. из the header cells по modifying the configuration items. E.g:
 
-- Specify the background color of the header cell: you can pass`theme.headerStyle.bgColor`To set the background color of the header cell, support string (directly specify the color value), function (return the color value according to the condition), and CanvasGradient and CanvasPattern objects.
+- Specify the фон цвет из the header cell: Вы можете pass`тема.headerStyle.bgColor`к set the фон цвет из the header cell, support строка (directly specify the цвет значение), функция (возврат the цвет значение according к the condition), и CanvasGradient и CanvasPattern objects.
 
-- Define the padding of header cells: you can pass`theme.headerStyle.padding`To set the margins of header cells, support values (uniformly set the margins in four directions) and arrays (set the margins in the upper, right, lower and left directions respectively).
+- Define the заполнение из header cells: Вы можете pass`тема.headerStyle.заполнение`к set the margins из header cells, support values (uniformly set the margins в four directions) и arrays (set the margins в the upper, право, lower и лево directions respectively).
 
-- Adjust the horizontal alignment of text in header cells: you can pass`theme.headerStyle.textAlign`To set the horizontal alignment of text, support`left`,`right`and`center`.
+- Adjust the horizontal alignment из текст в header cells: Вы можете pass`тема.headerStyle.textAlign`к set the horizontal alignment из текст, support`лево`,`право`и`центр`.
 
-If it is a pivot table, when you need to configure different Themes for different headers, you can pass`theme.rowHeaderStyle`,`theme.cornerHeaderStyle`To configure separately.
+If it is a сводный таблица, when you need к configure different темаs для different headers, Вы можете pass`тема.rowHeaderStyle`,`тема.cornerHeaderStyle`к configure separately.
 
-## Body Theme
+## Body тема
 
-Body Theme is mainly responsible for the style configuration of data cells, through`theme.bodyStyle`To specify.
+Body тема is mainly responsible для the style configuration из данные cells, through`тема.bodyStyle`к specify.
 
-By modifying the configuration items of the body Theme, you can realize personalized data cell styles. Similar to the header Theme, you can also customize properties such as background color, padding, and text style.
+по modifying the configuration items из the body тема, Вы можете realize personalized данные cell styles. Similar к the header тема, Вы можете also пользовательскийize свойства such as фон цвет, заполнение, и текст style.
 
-## Other Modules Theme Styles
+## Other Modules тема Styles
 
-In addition to the table header and body Theme, VTable also provides a series of Theme configuration items for other subdivision modules, such as:
+в addition к the таблица header и body тема, Vтаблица also provides a series из тема configuration items для other subdivision modules, such as:
 
-- Frame Style: Pass`theme.frameStyle`To set the overall border color, width, line style, shadow effect and other properties of the table.
+- Frame Style: Pass`тема.frameStyle`к set the overall граница цвет, ширина, line style, shadow effect и other свойства из the таблица.
 
-- Column Width Adjustment Style: Pass`theme.columnResize`To set the color, width, etc. of the column width drag bar.
+- Column ширина Adjustment Style: Pass`тема.columnResize`к set the цвет, ширина, etc. из the column ширина перетаскивание bar.
 
-- Scroll Bar Style: Pass`theme.scrollStyle`To set the color of the scroll bar track, the color and width of the slider, etc.
+- прокрутка Bar Style: Pass`тема.scrollStyle`к set the цвет из the прокрутка bar track, the цвет и ширина из the ползунок, etc.
 
-- Drag and drop position marker line style: pass`theme.dragHeaderSplitLine`To set the style of the transposition dividing line of the drag and drop table.
+- перетаскивание и отпускание позиция marker line style: pass`тема.dragHeaderSplitLine`к set the style из the transposition dividing line из the перетаскивание и отпускание таблица.
 
-By personalizing these modules, richer and more diverse table styles can be achieved.
+по personalizing these modules, richer и more diverse таблица styles can be achieved.
 
 ## interactive effect
 
-Set the background effect when the mouse is hovered to a cell by setting the hover background color.
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/48c337ece11d289fc4644a20c.png)
+Set the фон effect when the mouse is hovered к a cell по setting the навести фон цвет.
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/48c337ece11d289fc4644a20c.png)
 
-Set the highlighted border and background color when the cell is selected by setting selectionStyle.
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270906.png)
-Set Column Width Adjust Marker Line Style
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60e.png)
-Drag and drop the header transposition marker line style
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270907.png)
+Set the highlighted граница и фон цвет when the cell is selected по setting selectionStyle.
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270906.png)
+Set Column ширина Adjust Marker Line Style
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/eb08aeafba39ab34c8a08c60e.png)
+перетаскивание и отпускание the header transposition marker line style
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d15626270907.png)
 
-## Built-in Theme
+## Built-в тема
 
-VTable built-in a set of default Theme /DEFAULT, a set of ARCO style, a set of dark Theme /DARK, a set of distinct Theme /BRIGHT, a set of minimalist Theme /SIMPLIFY
+Vтаблица built-в a set из по умолчанию тема /по умолчанию, a set из ARCO style, a set из dark тема /DARK, a set из distinct тема /BRIGHT, a set из minimaсписок тема /SIMPLIFY
 
-**Default Theme Sample Code**
+**по умолчанию тема Sample код**
 
-The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/DEFAULT.ts
-
-    // 使用默认主题
-    option.theme = VTable.themes.DEFAULT;
-
-    const tableInstance = new VTable.ListTable(option);
-
-**ARCO Theme Sample Code**
-
-The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/ARCO.ts
+The specific configuration content can be viewed в: https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/темаs/по умолчанию.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.ARCO;
+    option.тема = Vтаблица.темаs.по умолчанию;
 
-    const tableInstance = new VTable.ListTable(option);
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
-**Dark Theme Sample Code**
+**ARCO тема Sample код**
 
-The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/DARK.ts
-
-    // 使用默认主题
-    option.theme = VTable.themes.DARK;
-
-    const tableInstance = new VTable.ListTable(option);
-
-**Vivid Theme Sample Code**
-
-The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/BRIGHT.ts
+The specific configuration content can be viewed в: https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/темаs/ARCO.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.BRIGHT;
+    option.тема = Vтаблица.темаs.ARCO;
 
-    const tableInstance = new VTable.ListTable(option);
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
-**Minimalist Theme Sample Code**
+**Dark тема Sample код**
 
-The specific configuration content can be viewed at: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/themes/SIMPLIFY.ts
+The specific configuration content can be viewed в: https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/темаs/DARK.ts
 
     // 使用默认主题
-    option.theme = VTable.themes.SIMPLIFY;
+    option.тема = Vтаблица.темаs.DARK;
 
-    const tableInstance = new VTable.ListTable(option);
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
-## Custom Theme
+**Vivid тема Sample код**
 
-If you can't meet the needs, you can expand it on the basis of a certain Theme, or completely customize it.,
+The specific configuration content can be viewed в: https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/темаs/BRIGHT.ts
 
-**Extend customization**
+    // 使用默认主题
+    option.тема = Vтаблица.темаs.BRIGHT;
 
-Such as extending for DEFAULT
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
+
+**Minimaсписок тема Sample код**
+
+The specific configuration content can be viewed в: https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/темаs/SIMPLIFY.ts
+
+    // 使用默认主题
+    option.тема = Vтаблица.темаs.SIMPLIFY;
+
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
+
+## пользовательский тема
+
+If Вы можете't meet the needs, Вы можете развернуть it на the basis из a certain тема, или completely пользовательскийize it.,
+
+**Extend пользовательскийization**
+
+Such as extending для по умолчанию
 
 ```
 
-option.theme = VTable.themes.DEFAULT.extends({ headerStyle:{ color: 'red'}})
+option.тема = Vтаблица.темаs.по умолчанию.extends({ headerStyle:{ цвет: 'red'}})
 
-const tableInstance = new vTable.ListTable(option);
+const таблицаInstance = новый vтаблица.списоктаблица(option);
 ```
 
-**Full Custom Theme**
+**Full пользовательский тема**
 
-```javascript livedemo template=vtable
-//定义theme 类型为IListTableThemeDefine
-const theme = {
+```javascript liveдемонстрация template=vтаблица
+//定义тема 类型为IсписоктаблицатемаDefine
+const тема = {
   //默认样式，如bodyStyle或者headerStyle未设置某项配置则从这里获取相应样式
   defaultStyle: {
-    color: '#1B1F23',
+    цвет: '#1B1F23',
     bgColor: '#EEF1F5',
-    font: '500 12px PingFang SC',
-    lineHeight: 16,
+    шрифт: '500 12px PingFang SC',
+    lineвысота: 16,
     borderColor: '#e1e4e8',
-    padding: [8, 12, 8, 12]
+    заполнение: [8, 12, 8, 12]
   },
   headerStyle: {
-    color: '#1B1F23',
+    цвет: '#1B1F23',
     bgColor: '#EEF1F5',
-    font: '500 12px PingFang SC',
-    lineHeight: 16,
+    шрифт: '500 12px PingFang SC',
+    lineвысота: 16,
     borderColor: '#e1e4e8',
-    padding: [8, 12, 8, 12],
-    hover: {
+    заполнение: [8, 12, 8, 12],
+    навести: {
       //hover状态单元格样式
       cellBgColor: '#c8daf6'
     },
-    click: {
-      //click状态单元格样式
+    Нажать: {
+      //Нажать状态单元格样式
       cellBgColor: '#c8daf6',
       cellBorderColor: ['#e1e4e8', '#e1e4e8', '#3073f2', '#e1e4e8'],
-      cellBorderLineWidth: [0, 1, 3, 1]
+      cellBorderLineширина: [0, 1, 3, 1]
     }
   },
   rowHeaderStyle: {},
   cornerHeaderStyle: {},
   bodyStyle: {
-    padding: [8, 12, 8, 12],
-    color: '#141414',
-    textAlign: 'right',
-    font: '400 12px PingFang SC',
+    заполнение: [8, 12, 8, 12],
+    цвет: '#141414',
+    textAlign: 'право',
+    шрифт: '400 12px PingFang SC',
     bgColor(args) {
       // 支持自定义函数设置，如这里设置第一列指定颜色为yellow 其他为skyblue
       const { col } = args;
       if (col === 4) {
-        return 'yellow';
+        возврат 'yellow';
       } else {
-        return 'skyblue';
+        возврат 'skyblue';
       }
     },
     borderColor: '#e1e4e8',
-    lineHeight: 18,
-    hover: {
+    lineвысота: 18,
+    навести: {
       cellBgColor: '#d6e6fe',
       inlineRowBgColor: '#F3F8FF',
       inlineColumnBgColor: '#F3F8FF'
     },
-    click: {
+    Нажать: {
       cellBgColor: '#d6e6fe',
-      cellBorderLineWidth: 2,
+      cellBorderLineширина: 2,
       inlineColumnBgColor: '#CCE0FF',
       cellBorderColor: '#3073f2'
     }
@@ -184,7 +184,7 @@ const theme = {
   //表格外边框样式
   frameStyle: {
     borderColor: '#d1d5da',
-    borderLineWidth: 1,
+    borderLineширина: 1,
     borderLineDash: [],
     cornerRadius: 10,
     shadowBlur: 6,
@@ -194,109 +194,109 @@ const theme = {
   },
   //拖拽列宽分割线样式
   columnResize: {
-    lineWidth: 1,
+    lineширина: 1,
     lineColor: '#416EFF',
     bgColor: '#D9E2FF',
-    width: 3
+    ширина: 3
   },
   //冻结列分割线样式
   frozenColumnLine: {
     shadow: {
-      width: 4,
+      ширина: 4,
       startColor: 'rgba(00, 24, 47, 0.05)',
       endColor: 'rgba(00, 24, 47, 0)',
-      visible: 'scrolling'
+      видимый: 'scrolling'
     }
   },
   //菜单样式
-  menuStyle: {
-    color: '#000',
+  менюStyle: {
+    цвет: '#000',
     highlightColor: '#2E68CF',
-    font: '12px sans-serif',
+    шрифт: '12px sans-serif',
     highlightFont: '12px sans-serif',
     hoverBgColor: '#EEE'
   }
 };
 
-const data = [
+const данные = [
   {
     10002: '36004.12287902832',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '36004.12287902832',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '-1646.5089945793152',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-1646.5089945793152',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '10899.361869812012',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '10899.361869812012',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '1339.4909970760345',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '1339.4909970760345',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '24157.178108215332',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '24157.178108215332',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '-1997.9050402641296',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-1997.9050402641296',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '43819.33399963379',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '43819.33399963379',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '-1167.6339691877365',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-1167.6339691877365',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
-    230627170530068: 'Bookcases'
+    230627170530068: 'Boхорошоcases'
   },
   {
     10002: '101781.32774353027',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '101781.32774353027',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Chairs'
   },
@@ -305,7 +305,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '4027.58094894886',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Chairs'
   },
@@ -314,7 +314,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '45176.44617843628',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Chairs'
   },
@@ -323,7 +323,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '6612.087041854858',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Chairs'
   },
@@ -332,7 +332,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '85230.64583206177',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Chairs'
   },
@@ -341,7 +341,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '6592.718985438347',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Chairs'
   },
@@ -350,7 +350,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '96260.68257522583',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Chairs'
   },
@@ -359,7 +359,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '9357.765951037407',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Chairs'
   },
@@ -368,7 +368,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '30072.729959964752',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Furnishings'
   },
@@ -377,7 +377,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '7641.274031370878',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Furnishings'
   },
@@ -386,7 +386,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '17306.68389749527',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Furnishings'
   },
@@ -395,7 +395,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '3442.686985105276',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Furnishings'
   },
@@ -404,7 +404,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '15254.369949698448',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Furnishings'
   },
@@ -413,7 +413,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-3906.223020374775',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Furnishings'
   },
@@ -422,7 +422,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '29071.379935264587',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Furnishings'
   },
@@ -431,7 +431,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '5881.414980173111',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Furnishings'
   },
@@ -440,79 +440,79 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '84754.5619468689',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '1482.6120259165764',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '1482.6120259165764',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '43916.19310760498',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '43916.19310760498',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '-4623.056034088135',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-4623.056034088135',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '39154.970703125',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '39154.970703125',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '-3559.6519879102707',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-3559.6519879102707',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '39139.806856155396',
     10003: '230627170530019',
     230627170530016: 'Furniture',
     230627170530019: '39139.806856155396',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '-11025.375987529755',
     10003: '230627170530022',
     230627170530016: 'Furniture',
     230627170530022: '-11025.375987529755',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
-    230627170530068: 'Tables'
+    230627170530068: 'таблицаs'
   },
   {
     10002: '30236.3359644413',
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '30236.3359644413',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Appliances'
   },
@@ -521,7 +521,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '8261.27197098732',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Appliances'
   },
@@ -530,7 +530,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '19525.326094150543',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Appliances'
   },
@@ -539,7 +539,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '4123.939019560814',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Appliances'
   },
@@ -548,7 +548,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '23582.032926678658',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Appliances'
   },
@@ -557,7 +557,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '-2638.6159623861313',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Appliances'
   },
@@ -566,7 +566,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '34188.466317892075',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Appliances'
   },
@@ -575,7 +575,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '8391.413984239101',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Appliances'
   },
@@ -584,7 +584,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '9212.066044569016',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Art'
   },
@@ -593,7 +593,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '2374.101003214717',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Art'
   },
@@ -602,7 +602,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '4655.6219692230225',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Art'
   },
@@ -611,7 +611,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1058.5850008130074',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Art'
   },
@@ -620,7 +620,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '5765.340019583702',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Art'
   },
@@ -629,7 +629,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1195.1630011796951',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Art'
   },
@@ -638,7 +638,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '7485.764034986496',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Art'
   },
@@ -647,7 +647,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1899.942004531622',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Art'
   },
@@ -656,7 +656,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '55961.11282122135',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Binders'
   },
@@ -665,7 +665,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '16096.799980849028',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Binders'
   },
@@ -674,7 +674,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '37030.34099626541',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Binders'
   },
@@ -683,7 +683,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '3900.6622482538223',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Binders'
   },
@@ -692,7 +692,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '56923.28208118677',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Binders'
   },
@@ -701,7 +701,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '-1043.632896721363',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Binders'
   },
@@ -710,7 +710,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '53497.99653959274',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Binders'
   },
@@ -719,7 +719,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '11267.932148218155',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Binders'
   },
@@ -728,7 +728,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '4118.099995136261',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Envelopes'
   },
@@ -737,7 +737,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1908.761996269226',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Envelopes'
   },
@@ -746,7 +746,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '3345.555993080139',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Envelopes'
   },
@@ -755,7 +755,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1465.4750101566315',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Envelopes'
   },
@@ -764,7 +764,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '4636.871988296509',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Envelopes'
   },
@@ -773,7 +773,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1777.5259877443314',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Envelopes'
   },
@@ -782,7 +782,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '4375.874011039734',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Envelopes'
   },
@@ -791,7 +791,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1812.4089943170547',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Envelopes'
   },
@@ -800,7 +800,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '923.2159950733185',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Fasteners'
   },
@@ -809,7 +809,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '275.19199895858765',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Fasteners'
   },
@@ -818,7 +818,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '503.3160014152527',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Fasteners'
   },
@@ -827,7 +827,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '173.71899946779013',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Fasteners'
   },
@@ -836,7 +836,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '778.0299946069717',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Fasteners'
   },
@@ -845,7 +845,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '236.6199992671609',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Fasteners'
   },
@@ -854,7 +854,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '819.7179999351501',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Fasteners'
   },
@@ -863,7 +863,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '263.98999811708927',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Fasteners'
   },
@@ -872,7 +872,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '5078.726016759872',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Labels'
   },
@@ -881,7 +881,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '2303.1279985904694',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Labels'
   },
@@ -890,7 +890,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '2353.179967880249',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'South',
     230627170530068: 'Labels'
   },
@@ -899,7 +899,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1040.771997153759',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'South',
     230627170530068: 'Labels'
   },
@@ -908,7 +908,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '2451.4719779491425',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'Central',
     230627170530068: 'Labels'
   },
@@ -917,7 +917,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1073.0799936652184',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'Central',
     230627170530068: 'Labels'
   },
@@ -926,7 +926,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '2602.934000492096',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'East',
     230627170530068: 'Labels'
   },
@@ -935,7 +935,7 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '1129.2839995622635',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'East',
     230627170530068: 'Labels'
   },
@@ -944,7 +944,7 @@ const data = [
     10003: '230627170530019',
     230627170530016: 'Office Supplies',
     230627170530019: '26663.717969417572',
-    230627170530056: 'Sales',
+    230627170530056: 'Продажи',
     230627170530059: 'West',
     230627170530068: 'Paper'
   },
@@ -953,101 +953,101 @@ const data = [
     10003: '230627170530022',
     230627170530016: 'Office Supplies',
     230627170530022: '12119.230026364326',
-    230627170530056: 'Profit',
+    230627170530056: 'Прибыль',
     230627170530059: 'West',
     230627170530068: 'Paper'
   }
 ];
 const option = {
   container: document.getElementById(CONTAINER_ID),
-  records: data,
+  records: данные,
   rowTree: [
     {
       dimensionKey: '230627170530016',
-      value: 'Furniture',
-      hierarchyState: 'expand',
+      значение: 'Furniture',
+      hierarchyState: 'развернуть',
       children: [
         {
           dimensionKey: '230627170530068',
-          value: 'Bookcases',
-          hierarchyState: 'collapse'
+          значение: 'Boхорошоcases',
+          hierarchyState: 'свернуть'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Chairs',
-          hierarchyState: 'collapse'
+          значение: 'Chairs',
+          hierarchyState: 'свернуть'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Furnishings'
+          значение: 'Furnishings'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Tables'
+          значение: 'таблицаs'
         }
       ]
     },
     {
       dimensionKey: '230627170530016',
-      value: 'Office Supplies',
+      значение: 'Office Supplies',
       children: [
         {
           dimensionKey: '230627170530068',
-          value: 'Appliances'
+          значение: 'Appliances'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Art'
+          значение: 'Art'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Binders'
+          значение: 'Binders'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Envelopes'
+          значение: 'Envelopes'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Fasteners'
+          значение: 'Fasteners'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Labels'
+          значение: 'Labels'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Paper'
+          значение: 'Paper'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Storage'
+          значение: 'Storвозраст'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Supplies'
+          значение: 'Supplies'
         }
       ]
     },
     {
       dimensionKey: '230627170530016',
-      value: 'Technology',
+      значение: 'Technology',
       children: [
         {
           dimensionKey: '230627170530068',
-          value: 'Accessories'
+          значение: 'Accessories'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Copiers'
+          значение: 'Copiers'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Machines'
+          значение: 'Machines'
         },
         {
           dimensionKey: '230627170530068',
-          value: 'Phones'
+          значение: 'Phones'
         }
       ]
     }
@@ -1055,64 +1055,64 @@ const option = {
   columnTree: [
     {
       dimensionKey: '230627170530059',
-      value: 'West',
+      значение: 'West',
       children: [
         {
           dimensionKey: '230627170530056',
-          value: 'Sales',
+          значение: 'Продажи',
           indicatorKey: '230627170530019'
         },
         {
           dimensionKey: '230627170530056',
-          value: 'Profit',
+          значение: 'Прибыль',
           indicatorKey: '230627170530022'
         }
       ]
     },
     {
       dimensionKey: '230627170530059',
-      value: 'South',
+      значение: 'South',
       children: [
         {
           dimensionKey: '230627170530056',
-          value: 'Sales',
+          значение: 'Продажи',
           indicatorKey: '230627170530019'
         },
         {
           dimensionKey: '230627170530056',
-          value: 'Profit',
+          значение: 'Прибыль',
           indicatorKey: '230627170530022'
         }
       ]
     },
     {
       dimensionKey: '230627170530059',
-      value: 'Central',
+      значение: 'Central',
       children: [
         {
           dimensionKey: '230627170530056',
-          value: 'Sales',
+          значение: 'Продажи',
           indicatorKey: '230627170530019'
         },
         {
           dimensionKey: '230627170530056',
-          value: 'Profit',
+          значение: 'Прибыль',
           indicatorKey: '230627170530022'
         }
       ]
     },
     {
       dimensionKey: '230627170530059',
-      value: 'East',
+      значение: 'East',
       children: [
         {
           dimensionKey: '230627170530056',
-          value: 'Sales',
+          значение: 'Продажи',
           indicatorKey: '230627170530019'
         },
         {
           dimensionKey: '230627170530056',
-          value: 'Profit',
+          значение: 'Прибыль',
           indicatorKey: '230627170530022'
         }
       ]
@@ -1121,63 +1121,63 @@ const option = {
   rows: [
     {
       dimensionKey: '230627170530016',
-      title: 'Catogery',
-      width: 'auto'
+      заголовок: 'Catogery',
+      ширина: 'авто'
     },
     {
       dimensionKey: '230627170530068',
-      title: 'Sub-Catogery',
-      width: 'auto'
+      заголовок: 'Sub-Catogery',
+      ширина: 'авто'
     }
   ],
   columns: [
     {
       dimensionKey: '230627170530059',
-      title: 'Region',
+      заголовок: 'Регион',
       headerStyle: {
         textStick: true
       },
-      width: 'auto'
+      ширина: 'авто'
     }
   ],
   indicators: [
     {
       indicatorKey: '230627170530019',
-      title: 'Sales',
-      width: 'auto',
-      showSort: false,
+      заголовок: 'Продажи',
+      ширина: 'авто',
+      showсортировка: false,
       headerStyle: {
         fontWeight: 'normal'
       },
-      format: value => {
-        if (value) return '$' + Number(value).toFixed(2);
-        return '';
+      format: значение => {
+        if (значение) возврат '$' + число(значение).toFixed(2);
+        возврат '';
       },
       style: {
-        padding: [16, 28, 16, 28],
-        color(args) {
-          if (args.dataValue >= 0) return 'black';
-          return 'red';
+        заполнение: [16, 28, 16, 28],
+        цвет(args) {
+          if (args.данныеValue >= 0) возврат 'black';
+          возврат 'red';
         }
       }
     },
     {
       indicatorKey: '230627170530022',
-      title: 'Profit',
-      width: 'auto',
-      showSort: false,
+      заголовок: 'Прибыль',
+      ширина: 'авто',
+      showсортировка: false,
       headerStyle: {
         fontWeight: 'normal'
       },
-      format: value => {
-        if (value) return '$' + Number(value).toFixed(2);
-        return '';
+      format: значение => {
+        if (значение) возврат '$' + число(значение).toFixed(2);
+        возврат '';
       },
       style: {
-        padding: [16, 28, 16, 28],
-        color(args) {
-          if (args.dataValue >= 0) return 'black';
-          return 'red';
+        заполнение: [16, 28, 16, 28],
+        цвет(args) {
+          if (args.данныеValue >= 0) возврат 'black';
+          возврат 'red';
         }
       }
     }
@@ -1188,13 +1188,13 @@ const option = {
       textStick: true
     }
   },
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   rowHierarchyIndent: 20,
   rowHierarchyTextStartAlignment: true,
-  theme
+  тема
 };
 
-const tableInstance = new VTable.PivotTable(option);
+const таблицаInstance = новый Vтаблица.сводныйтаблица(option);
 ```
 
-In short, in VTable, by flexibly using Theme configuration items, we can easily create an exclusive data table style that meets our needs. Please refer to this tutorial to make reasonable configurations based on actual scenarios, and give full play to VTable's powerful Theme customization capabilities.
+в short, в Vтаблица, по flexibly using тема configuration items, we can easily create an exclusive данные таблица style that meets our needs. Please refer к this tutorial к make reasonable configurations based на actual scenarios, и give full play к Vтаблица's powerful тема пользовательскийization capabilities.

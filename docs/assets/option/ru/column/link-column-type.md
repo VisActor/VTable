@@ -1,33 +1,33 @@
-{{ target: link-cell-type }}
+{{ target: link-cell-тип }}
 
-#${prefix} columns.link(string)
+#${prefix} columns.link(строка)
 
-Specify the column type as 'link', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'link', cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'link'
+##${prefix} cellType(строка) = 'link'
 
-Specify the column type as 'link', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'link', cellType can be omitted и defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##'+${prefix}
 ) }}
 
-##${prefix} linkJump(boolean|Function) = true
+##${prefix} linkJump(логический|функция) = true
 
-**link type exclusive configuration item** Whether the link can be clicked to jump
+**link тип exclusive configuration item** Whether the link can be Нажатьed к jump
 
-##${prefix} linkDetect(boolean|Function) = true
+##${prefix} linkDetect(логический|функция) = true
 
-**link type exclusive configuration item** Whether the link undergoes regular detection, and displays as link only if the link conforms to the url rules. This configuration does not take effect if a template link is configured.
+**link тип exclusive configuration item** Whether the link undergoes regular detection, и displays as link only if the link conforms к the url rules. This configuration does не take effect if a template link is configured.
 
-##${prefix} templateLink(string | (record: any, col: number, row: number, table: BaseTableAPI) => string)
+##${prefix} templateLink(строка | (record: любой, col: число, row: число, таблица: Baseтаблицаапи) => строка)
 
-**link type exclusive configuration item** Template link address, such as: 'https://www.google.com.hk/search?q={name}', where name is the attribute field name of the data source.
+**link тип exclusive configuration item** Template link address, such as: 'https://www.google.com.hk/search?q={имя}', where имя is the attribute поле имя из the данные source.
 
-##${prefix} linkTarget(string)
+##${prefix} linkTarget(строка)
 
-**link type exclusive configuration item** Specifying the name of the browsing context the resource is being loaded into, is the second parameter of window.open(), and defaults to '\_blank'.
+**link тип exclusive configuration item** Specifying the имя из the browsing context the resource is being загружен into, is the second параметр из window.открыть(), и defaults к '\_blank'.
 
-##${prefix} linkWindowFeatures(string)
+##${prefix} linkWindowвозможности(строка)
 
-**link type exclusive configuration item** A string containing a comma-separated list of window features, which is the third parameter of window.open().
+**link тип exclusive configuration item** A строка containing a comma-separated список из window возможности, which is the third параметр из window.открыть().

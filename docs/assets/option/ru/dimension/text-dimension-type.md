@@ -1,13 +1,13 @@
-{{ target: text-dimension-type }}
+{{ target: текст-dimension-тип }}
 
-#${prefix} ${dimensionHeaderType}.text(string)
+#${prefix} ${dimensionHeaderType}.текст(строка)
 
-Specify the column type as 'text', headerType can be omitted and the default is 'text'
+Specify the column тип as 'текст', headerType can be omitted и the по умолчанию is 'текст'
 
-##${prefix} headerType(string) = 'text'
+##${prefix} headerType(строка) = 'текст'
 
-Specify the column type as 'text', headerType can be omitted and the default is 'text'
+Specify the column тип as 'текст', headerType can be omitted и the по умолчанию is 'текст'
 
-{{ use: base-dimension-type(
+{{ use: base-dimension-тип(
     prefix = '##'+${prefix}
 ) }}

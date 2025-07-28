@@ -1,81 +1,81 @@
-# How to customize the context menu in the table component?
+# How к пользовательскийize the context меню в the таблица компонент?
 
 ## Question Description
 
-How to customize the context in the header part of the table component to support different cells displaying different menu items.
+How к пользовательскийize the context в the header part из the таблица компонент к support different cells displaying different меню items.
 
 ## Solution
 
-In the menu attribute configuration option, configure contextMenuItems, which supports two configuration modes:
+в the меню attribute configuration option, configure contextменюItems, which supports two configuration modes:
 
-1. Configure the item array, right-clicking the table area will display the same menu items
+1. Configure the item массив, право-Нажатьing the таблица area will display the same меню items
 
 ```javascript
-menu: {
-  contextMenuItems: [
-    { text: '复制表头', menuKey: '复制表头$1' },
-    { text: '复制单元格', menuKey: '复制单元格$1' }
+меню: {
+  contextменюItems: [
+    { текст: '复制表头', менюKey: '复制表头$1' },
+    { текст: '复制单元格', менюKey: '复制单元格$1' }
   ];
 }
 ```
 
-2. Configure the callback function. Right-clicking the table area will display different menus according to the different items returned by the callback function
+2. Configure the обратный вызов функция. право-Нажатьing the таблица area will display different менюs according к the different items returned по the обратный вызов функция
 
 ```javascript
-menu: {
-  contextMenuItems: (field: string, row: number) => {
-    console.log(field, row);
-    return [
-      { text: '复制表头', menuKey: '复制表头$1' },
-      { text: '复制单元格', menuKey: '复制单元格$1' }
+меню: {
+  contextменюItems: (поле: строка, row: число) => {
+    console.log(поле, row);
+    возврат [
+      { текст: '复制表头', менюKey: '复制表头$1' },
+      { текст: '复制单元格', менюKey: '复制单元格$1' }
     ];
   };
 }
 ```
 
-Menu item configuration:
+меню item configuration:
 
-- text: the text of the menu item
-- menuKey: unique identifier of the menu item
+- текст: the текст из the меню item
+- менюKey: unique identifier из the меню item
 
-After the drop-down menu item is selected, the "dropdown_menu_click" event will be triggered, and you can listen to the event and perform related operations.
+After the отпускание-down меню item is selected, the "dropdown_меню_Нажать" событие will be triggered, и Вы можете списокen к the событие и perform related operations.
 
 ```javascript
-table.on('dropdown_menu_click', (args: any) => {
-  console.log('menu_click', args);
+таблица.на('dropdown_меню_Нажать', (args: любой) => {
+  console.log('меню_Нажать', args);
 });
 ```
 
-## Code Example
+## код пример
 
 ```javascript
-const option: TYPES.ListTableConstructorOptions = {
+const опция: TYPES.списоктаблицаConstructorOptions = {
   records,
   columns,
-  heightMode: 'autoHeight',
-  autoWrapText: true,
-  menu: {
-    contextMenuItems: (field: string, row: number) => {
-      console.log(field, row);
-      return [
-        { text: 'copy header', menuKey: 'copy header$1' },
-        { text: 'copy cell', menuKey: 'copy cell$1' }
+  высотаMode: 'автовысота',
+  автоWrapText: true,
+  меню: {
+    contextменюItems: (поле: строка, row: число) => {
+      console.log(поле, row);
+      возврат [
+        { текст: 'copy header', менюKey: 'copy header$1' },
+        { текст: 'copy cell', менюKey: 'copy cell$1' }
       ];
     }
   }
 };
-const table = new ListTable(document.getElementById('container'), option);
-table.on('dropdown_menu_click', (args: any) => {
-  console.log('menu_click', args);
+const таблица = новый списоктаблица(document.getElementById('container'), option);
+таблица.на('dropdown_меню_Нажать', (args: любой) => {
+  console.log('меню_Нажать', args);
 });
 ```
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-context-menu-m8vx7v)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-context-меню-m8vx7v)
 
-![result](/vtable/faq/18-0.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/18-0.png)
 
 ## Quote
 
-- [github](https://github.com/VisActor/VTable)
+- [github](https://github.com/VisActor/Vтаблица)

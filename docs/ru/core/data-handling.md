@@ -14,14 +14,14 @@ const records = [
   { id: 3, name: 'Сергей Сидоров', department: 'Разработка', salary: 85000 }
 ];
 
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
   container: document.getElementById('container'),
   records: records,
   columns: [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Имя', width: 150 },
-    { field: 'department', caption: 'Отдел', width: 120 },
-    { field: 'salary', caption: 'Зарплата', width: 100 }
+    { field: 'id', caption: 'ID', ширина: 80 },
+    { field: 'name', caption: 'Имя', ширина: 150 },
+    { field: 'department', caption: 'Отдел', ширина: 120 },
+    { field: 'salary', caption: 'Зарплата', ширина: 100 }
   ]
 });
 ```
@@ -29,55 +29,55 @@ const table = new VTable.ListTable({
 ### Загрузка данных из API
 ```javascript
 // Асинхронная загрузка данных
-async function loadTableData() {
+async функция loadTableData() {
   try {
     const response = await fetch('/api/employees');
     const data = await response.json();
     
-    const table = new VTable.ListTable({
+    const table = новый VTable.ListTable({
       container: document.getElementById('container'),
       records: data,
       columns: columns
     });
     
-  } catch (error) {
-    console.error('Не удалось загрузить данные:', error);
+  } catch (ошибка) {
+    console.ошибка('Не удалось загрузить данные:', ошибка);
   }
 }
 
 // С обработкой ошибок и состояниями загрузки
-async function loadDataWithStates() {
-  const loadingElement = document.getElementById('loading');
-  const errorElement = document.getElementById('error');
+async функция loadDataWithStates() {
+  const loadingElement = document.getElementById('загрузка');
+  const errorElement = document.getElementById('ошибка');
   
   loadingElement.style.display = 'block';
-  errorElement.style.display = 'none';
+  errorElement.style.display = 'никто';
   
   try {
     const response = await fetch('/api/data');
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw новый ошибка(`HTTP ошибка! status: ${response.status}`);
     }
     
     const data = await response.json();
     
     // Validate data structure
-    if (!Array.isArray(data)) {
-      throw new Error('Expected array of records');
+    if (!массив.isArray(data)) {
+      throw новый ошибка('Expected массив из records');
     }
     
-    const table = new VTable.ListTable({
+    const table = новый VTable.ListTable({
       container: document.getElementById('container'),
       records: data,
       columns: columns
     });
     
-    loadingElement.style.display = 'none';
+    loadingElement.style.display = 'никто';
     
-  } catch (error) {
-    loadingElement.style.display = 'none';
+  } catch (ошибка) {
+    loadingElement.style.display = 'никто';
     errorElement.style.display = 'block';
-    errorElement.textContent = `Failed to load data: ${error.message}`;
+    errorElement.textContent = `Failed к load data: ${ошибка.сообщение}`;
   }
 }
 ```
@@ -86,7 +86,7 @@ async function loadDataWithStates() {
 ```javascript
 class RealTimeTable {
   constructor(containerId, initialData, columns) {
-    this.table = new VTable.ListTable({
+    this.table = новый VTable.ListTable({
       container: document.getElementById(containerId),
       records: initialData,
       columns: columns
@@ -96,20 +96,20 @@ class RealTimeTable {
   }
   
   setupWebSocket() {
-    this.ws = new WebSocket('/api/realtime');
+    this.ws = новый WebSocket('/api/realtime');
     
     this.ws.onmessage = (event) => {
       const update = JSON.parse(event.data);
       this.handleDataUpdate(update);
     };
     
-    this.ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
+    this.ws.onerror = (ошибка) => {
+      console.ошибка('WebSocket ошибка:', ошибка);
     };
   }
   
   handleDataUpdate(update) {
-    switch (update.type) {
+    switch (update.тип) {
       case 'INSERT':
         this.table.addRecord(update.record);
         break;
@@ -127,7 +127,7 @@ class RealTimeTable {
   
   destroy() {
     if (this.ws) {
-      this.ws.close();
+      this.ws.закрыть();
     }
     this.table.release();
   }
@@ -147,13 +147,13 @@ table.addRecords([
   { id: 6, name: 'Diana Davis', department: 'Finance', salary: 75000 }
 ]);
 
-// Add record at specific position
+// Add record в specific позиция
 table.addRecord({ id: 7, name: 'Eva Martinez', department: 'Legal', salary: 80000 }, 2);
 ```
 
 ### Updating Records
 ```javascript
-// Update single record by index
+// Update single record по index
 table.updateRecords([{ id: 1, name: 'John Updated', department: 'Sales', salary: 70000 }], [0]);
 
 // Update multiple records
@@ -162,97 +162,97 @@ table.updateRecords([
   { id: 2, salary: 73000 }
 ], [0, 1]);
 
-// Update all records
+// Update все records
 table.updateRecords(newDataArray);
 
 // Partial updates using changeCellValue
-table.changeCellValue(1, 2, 'New Value'); // col, row, value
+table.changeCellValue(1, 2, 'новый значение'); // col, row, значение
 ```
 
 ### Removing Records
 ```javascript
-// Remove single record by index
+// Remove single record по index
 table.removeRecord(2);
 
 // Remove multiple records
 table.removeRecords([1, 3, 5]);
 
-// Clear all records
+// Clear все records
 table.updateRecords([]);
 ```
 
-### Finding and Filtering Data
+### Finding и Filtering Data
 ```javascript
-// Get record by index
+// Get record по index
 const record = table.getRecordByRowCol(0, 2); // row 2
 
-// Get all records
+// Get все records
 const allRecords = table.records;
 
 // Find records matching criteria
-function findRecords(records, criteria) {
-  return records.filter(record => {
-    return Object.keys(criteria).every(key => {
-      return record[key] === criteria[key];
+функция findRecords(records, criteria) {
+  возврат records.filter(record => {
+    возврат объект.keys(criteria).каждый(key => {
+      возврат record[key] === criteria[key];
     });
   });
 }
 
 const salespeople = findRecords(table.records, { department: 'Sales' });
 
-// Custom filtering with table update
-function filterTable(table, filterFn) {
+// Custom filtering с table update
+функция filterTable(table, filterFn) {
   const originalRecords = table.records;
   const filteredRecords = originalRecords.filter(filterFn);
   table.updateRecords(filteredRecords);
   
-  // Return function to restore original data
-  return () => table.updateRecords(originalRecords);
+  // возврат функция к restore original data
+  возврат () => table.updateRecords(originalRecords);
 }
 
 // Usage
 const restoreData = filterTable(table, record => record.salary > 70000);
-// Later: restoreData(); to show all data again
+// Later: restoreData(); к показать все data again
 ```
 
 ## Data Validation
 
 ### Client-side Validation
 ```javascript
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
   container: document.getElementById('container'),
   records: data,
   columns: [
     {
       field: 'email',
       caption: 'Email',
-      width: 200,
-      editor: 'input',
+      ширина: 200,
+      editor: 'ввод',
       style: {
         bgColor: (args) => {
           const email = args.dataValue;
           const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-          return isValid ? '#ffffff' : '#ffebee';
+          возврат isValid ? '#ffffff' : '#ffebee';
         }
       }
     },
     {
       field: 'age',
       caption: 'Age',
-      width: 80,
-      editor: 'input',
+      ширина: 80,
+      editor: 'ввод',
       style: {
         bgColor: (args) => {
-          const age = Number(args.dataValue);
-          return (age >= 18 && age <= 65) ? '#ffffff' : '#ffebee';
+          const age = число(args.dataValue);
+          возврат (age >= 18 && age <= 65) ? '#ffffff' : '#ffebee';
         }
       }
     }
   ]
 });
 
-// Validation on cell change
-table.on('change_cell_value', (args) => {
+// Validation на cell change
+table.на('change_cell_value', (args) => {
   const { field, newValue, col, row } = args;
   
   let isValid = true;
@@ -264,12 +264,12 @@ table.on('change_cell_value', (args) => {
       errorMessage = 'Please enter a valid email address';
       break;
     case 'age':
-      const age = Number(newValue);
+      const age = число(newValue);
       isValid = age >= 18 && age <= 65;
-      errorMessage = 'Age must be between 18 and 65';
+      errorMessage = 'Age must be between 18 и 65';
       break;
     case 'salary':
-      const salary = Number(newValue);
+      const salary = число(newValue);
       isValid = salary > 0;
       errorMessage = 'Salary must be greater than 0';
       break;
@@ -279,22 +279,22 @@ table.on('change_cell_value', (args) => {
     // Revert the change
     table.changeCellValue(col, row, args.oldValue);
     
-    // Show error message
+    // показать ошибка сообщение
     showErrorMessage(errorMessage);
   } else {
-    // Save to backend
+    // Save к backend
     saveRecordUpdate(args);
   }
 });
 
-function showErrorMessage(message) {
-  // Implementation depends on your UI framework
-  console.error(message);
-  // Or show toast, modal, etc.
+функция showErrorMessage(сообщение) {
+  // Implementation depends на your UI framework
+  console.ошибка(сообщение);
+  // или показать toast, модальное окно, etc.
 }
 ```
 
-### Data Type Enforcement
+### Data тип Enforcement
 ```javascript
 class TypedTable extends VTable.ListTable {
   constructor(options) {
@@ -310,78 +310,78 @@ class TypedTable extends VTable.ListTable {
         types[col.field] = col.dataType;
       }
     });
-    return types;
+    возврат types;
   }
   
   setupTypeValidation() {
-    this.on('change_cell_value', (args) => {
+    this.на('change_cell_value', (args) => {
       const { field, newValue } = args;
       const expectedType = this.columnTypes[field];
       
       if (expectedType && !this.validateType(newValue, expectedType)) {
         // Revert invalid change
         this.changeCellValue(args.col, args.row, args.oldValue);
-        console.error(`Invalid type for ${field}. Expected ${expectedType}`);
+        console.ошибка(`Invalid тип для ${field}. Expected ${expectedType}`);
       }
     });
   }
   
-  validateType(value, type) {
-    switch (type) {
-      case 'number':
-        return !isNaN(Number(value)) && isFinite(Number(value));
+  validateType(значение, тип) {
+    switch (тип) {
+      case 'число':
+        возврат !isNaN(число(значение)) && isFinite(число(значение));
       case 'integer':
-        return Number.isInteger(Number(value));
-      case 'string':
-        return typeof value === 'string';
-      case 'boolean':
-        return typeof value === 'boolean' || value === 'true' || value === 'false';
+        возврат число.isInteger(число(значение));
+      case 'строка':
+        возврат typeof значение === 'строка';
+      case 'логический':
+        возврат typeof значение === 'логический' || значение === 'true' || значение === 'false';
       case 'date':
-        return !isNaN(Date.parse(value));
+        возврат !isNaN(Date.parse(значение));
       case 'email':
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        возврат /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(значение);
       case 'url':
         try {
-          new URL(value);
-          return true;
+          новый URL(значение);
+          возврат true;
         } catch {
-          return false;
+          возврат false;
         }
-      default:
-        return true;
+      по умолчанию:
+        возврат true;
     }
   }
 }
 
 // Usage
-const typedTable = new TypedTable({
+const typedTable = новый TypedTable({
   container: document.getElementById('container'),
   records: data,
   columns: [
-    { field: 'id', caption: 'ID', width: 80, dataType: 'integer' },
-    { field: 'name', caption: 'Name', width: 150, dataType: 'string' },
-    { field: 'email', caption: 'Email', width: 200, dataType: 'email' },
-    { field: 'salary', caption: 'Salary', width: 100, dataType: 'number' },
-    { field: 'active', caption: 'Active', width: 80, dataType: 'boolean' },
-    { field: 'hireDate', caption: 'Hire Date', width: 120, dataType: 'date' }
+    { field: 'id', caption: 'ID', ширина: 80, dataType: 'integer' },
+    { field: 'name', caption: 'Name', ширина: 150, dataType: 'строка' },
+    { field: 'email', caption: 'Email', ширина: 200, dataType: 'email' },
+    { field: 'salary', caption: 'Salary', ширина: 100, dataType: 'число' },
+    { field: 'активный', caption: 'активный', ширина: 80, dataType: 'логический' },
+    { field: 'hireDate', caption: 'Hire Date', ширина: 120, dataType: 'date' }
   ]
 });
 ```
 
-## Data Formatting and Transformation
+## Data Formatting и Transformation
 
-### Value Formatters
+### значение Formatters
 ```javascript
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
   container: document.getElementById('container'),
   records: data,
   columns: [
     {
       field: 'salary',
       caption: 'Salary',
-      width: 120,
-      format: (value) => {
-        return '$' + Number(value).toLocaleString('en-US', {
+      ширина: 120,
+      format: (значение) => {
+        возврат '$' + число(значение).toLocaleString('en-US', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         });
@@ -390,17 +390,17 @@ const table = new VTable.ListTable({
     {
       field: 'percentage',
       caption: 'Performance',
-      width: 100,
-      format: (value) => {
-        return (Number(value) * 100).toFixed(1) + '%';
+      ширина: 100,
+      format: (значение) => {
+        возврат (число(значение) * 100).toFixed(1) + '%';
       }
     },
     {
       field: 'hireDate',
       caption: 'Hire Date',
-      width: 120,
-      format: (value) => {
-        return new Date(value).toLocaleDateString('en-US', {
+      ширина: 120,
+      format: (значение) => {
+        возврат новый Date(значение).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric'
@@ -410,14 +410,14 @@ const table = new VTable.ListTable({
     {
       field: 'status',
       caption: 'Status',
-      width: 100,
-      format: (value) => {
+      ширина: 100,
+      format: (значение) => {
         const statusMap = {
-          'A': 'Active',
-          'I': 'Inactive',
+          'A': 'активный',
+          'I': 'неактивный',
           'P': 'Pending'
         };
-        return statusMap[value] || value;
+        возврат statusMap[значение] || значение;
       }
     }
   ]
@@ -427,34 +427,34 @@ const table = new VTable.ListTable({
 ### Data Preprocessing
 ```javascript
 // Transform data before creating table
-function preprocessData(rawData) {
-  return rawData.map(record => ({
+функция preprocessData(rawData) {
+  возврат rawData.map(record => ({
     ...record,
     // Calculate derived fields
     fullName: `${record.firstName} ${record.lastName}`,
-    yearsEmployed: new Date().getFullYear() - new Date(record.hireDate).getFullYear(),
+    yearsEmployed: новый Date().getFullYear() - новый Date(record.hireDate).getFullYear(),
     salaryRange: categorySalary(record.salary),
     // Normalize values
     department: record.department.toUpperCase(),
     email: record.email.toLowerCase(),
     // Parse dates
-    hireDate: new Date(record.hireDate),
-    // Convert strings to numbers
-    salary: Number(record.salary),
-    age: Number(record.age)
+    hireDate: новый Date(record.hireDate),
+    // Convert strings к numbers
+    salary: число(record.salary),
+    age: число(record.age)
   }));
 }
 
-function categorySalary(salary) {
-  if (salary < 50000) return 'Entry Level';
-  if (salary < 75000) return 'Mid Level';
-  if (salary < 100000) return 'Senior Level';
-  return 'Executive Level';
+функция categorySalary(salary) {
+  if (salary < 50000) возврат 'Entry Level';
+  if (salary < 75000) возврат 'Mid Level';
+  if (salary < 100000) возврат 'Senior Level';
+  возврат 'Executive Level';
 }
 
 // Usage
 const processedData = preprocessData(rawApiData);
-const table = new VTable.ListTable({
+const table = новый VTable.ListTable({
   container: document.getElementById('container'),
   records: processedData,
   columns: columns
@@ -472,7 +472,7 @@ class PaginatedTable {
     this.totalRecords = 0;
     this.allData = [];
     
-    this.table = new VTable.ListTable({
+    this.table = новый VTable.ListTable({
       container: document.getElementById(containerId),
       records: [],
       columns: columns
@@ -500,15 +500,15 @@ class PaginatedTable {
     const controls = document.createElement('div');
     controls.className = 'pagination-controls';
     controls.innerHTML = `
-      <button id="prev-page">Previous</button>
-      <span id="page-info"></span>
-      <button id="next-page">Next</button>
+      <кнопка id="prev-page">предыдущий</кнопка>
+      <span id="page-информация"></span>
+      <кнопка id="следующий-page">следующий</кнопка>
     `;
     
     this.table.container.parentNode.appendChild(controls);
     
     document.getElementById('prev-page').onclick = () => this.previousPage();
-    document.getElementById('next-page').onclick = () => this.nextPage();
+    document.getElementById('следующий-page').onclick = () => this.nextPage();
   }
   
   previousPage() {
@@ -530,35 +530,35 @@ class PaginatedTable {
   
   updatePaginationControls() {
     const totalPages = Math.ceil(this.totalRecords / this.pageSize);
-    document.getElementById('page-info').textContent = 
-      `Page ${this.currentPage} of ${totalPages} (${this.totalRecords} total records)`;
+    document.getElementById('page-информация').textContent = 
+      `Page ${this.currentPage} из ${totalPages} (${this.totalRecords} total records)`;
     
-    document.getElementById('prev-page').disabled = this.currentPage === 1;
-    document.getElementById('next-page').disabled = this.currentPage === totalPages;
+    document.getElementById('prev-page').отключен = this.currentPage === 1;
+    document.getElementById('следующий-page').отключен = this.currentPage === totalPages;
   }
 }
 ```
 
-### Virtual Scrolling for Large Datasets
+### Virtual Scrolling для Large Datasets
 ```javascript
-const largeTable = new VTable.ListTable({
+const largeTable = новый VTable.ListTable({
   container: document.getElementById('container'),
-  records: [], // Start empty
+  records: [], // начало empty
   columns: columns,
-  // Enable virtual scrolling
+  // включить virtual scrolling
   scrollMode: 'virtual',
-  // Optimize for large datasets
+  // Optimize для large datasets
   overscanRowCount: 10,
   defaultRowHeight: 40
 });
 
-// Load data in chunks
+// Load data в chunks
 class VirtualDataLoader {
   constructor(table, dataSource, chunkSize = 1000) {
     this.table = table;
     this.dataSource = dataSource;
     this.chunkSize = chunkSize;
-    this.loadedChunks = new Set();
+    this.loadedChunks = новый Set();
     this.totalRecords = 0;
     
     this.setupScrollListener();
@@ -568,12 +568,12 @@ class VirtualDataLoader {
     // Get total count
     this.totalRecords = await this.dataSource.getCount();
     
-    // Load first chunk
+    // Load первый chunk
     await this.loadChunk(0);
   }
   
   setupScrollListener() {
-    this.table.on('scroll', (args) => {
+    this.table.на('прокрутка', (args) => {
       const { scrollTop, scrollHeight, clientHeight } = args;
       const scrollRatio = scrollTop / (scrollHeight - clientHeight);
       
@@ -587,17 +587,17 @@ class VirtualDataLoader {
   }
   
   async loadChunk(chunkIndex) {
-    if (this.loadedChunks.has(chunkIndex)) return;
+    if (this.loadedChunks.has(chunkIndex)) возврат;
     
     const offset = chunkIndex * this.chunkSize;
     const chunkData = await this.dataSource.getData(offset, this.chunkSize);
     
-    // Merge with existing data
+    // Merge с existing data
     const currentRecords = this.table.records;
     const newRecords = [...currentRecords];
     
-    // Insert chunk data at correct position
-    for (let i = 0; i < chunkData.length; i++) {
+    // Insert chunk data в correct позиция
+    для (let i = 0; i < chunkData.length; i++) {
       newRecords[offset + i] = chunkData[i];
     }
     
@@ -606,7 +606,7 @@ class VirtualDataLoader {
   }
 }
 
-// Data source interface
+// Data source интерфейс
 class APIDataSource {
   constructor(baseUrl) {
     this.baseUrl = baseUrl;
@@ -615,20 +615,20 @@ class APIDataSource {
   async getCount() {
     const response = await fetch(`${this.baseUrl}/count`);
     const data = await response.json();
-    return data.count;
+    возврат data.count;
   }
   
   async getData(offset, limit) {
     const response = await fetch(`${this.baseUrl}/data?offset=${offset}&limit=${limit}`);
     const data = await response.json();
-    return data.records;
+    возврат data.records;
   }
 }
 
 // Usage
-const dataSource = new APIDataSource('/api/employees');
-const loader = new VirtualDataLoader(largeTable, dataSource);
+const dataSource = новый APIDataSource('/api/employees');
+const loader = новый VirtualDataLoader(largeTable, dataSource);
 loader.initialize();
 ```
 
-This comprehensive data handling guide covers all aspects of working with data in VTable, from basic operations to advanced scenarios with large datasets and real-time updates.
+This comprehensive data handling guide covers все aspects из working с data в VTable, от basic operations к advanced scenarios с large datasets и real-time updates.

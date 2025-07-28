@@ -1,57 +1,57 @@
 ---
-category: examples
-group: event
-title: onReady
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
-order: 1-1
-link: table_type/List_table/list_table_define_and_generate
-option: ListTable-columns-text#cellType
+категория: примеры
+группа: событие
+заголовок: onReady
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию.png
+порядок: 1-1
+ссылка: таблица_type/список_таблица/список_таблица_define_and_generate
+опция: списоктаблица-columns-текст#cellType
 ---
 
 # onReady
 
-The onReady callback is triggered after the table completes initialization or update. You can obtain the table instance and whether it is the first rendering.
+The onReady обратный вызов is triggered after the таблица completes initialization или update. Вы можете obtain the таблица instance и whether it is the первый rendering.
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-react
-// import * as ReactVTable from '@visactor/react-vtable';
+```javascript liveдемонстрация template=vтаблица-react
+// import * as ReactVтаблица от '@visactor/react-vтаблица';
 
 const option = {
   columns: [
     {
-      field: '0',
-      title: 'name'
+      поле: '0',
+      заголовок: 'имя'
     },
     {
-      field: '1',
-      title: 'age'
+      поле: '1',
+      заголовок: 'возраст'
     },
     {
-      field: '2',
-      title: 'gender'
+      поле: '2',
+      заголовок: 'пол'
     },
     {
-      field: '3',
-      title: 'hobby'
+      поле: '3',
+      заголовок: 'хобби'
     }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
+  records: новый массив(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(
-  <ReactVTable.ListTable
+  <ReactVтаблица.списоктаблица
     option={option}
-    height={'500px'}
-    onReady={(tableInstance, isFirst) => {
-      console.log(tableInstance, isFirst);
+    высота={'500px'}
+    onReady={(таблицаInstance, isFirst) => {
+      console.log(таблицаInstance, isFirst);
     }}
   />
 );
 
-// release openinula instance, do not copy
-window.customRelease = () => {
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```

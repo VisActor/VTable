@@ -1,158 +1,158 @@
 ---
-category: examples
-group: grammatical-tag
-title: Pivot Combination Chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-pivot-chart.png
-order: 1-1
-link: Developer_Ecology/vue
+категория: примеры
+группа: grammatical-tag
+заголовок: сводный Combination график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-сводный-график.png
+порядок: 1-1
+ссылка: Developer_Ecology/vue
 ---
 
-# Pivot Combination Chart
+# сводный Combination график
 
-The props attributes accepted by PivotTable&PivotChart are consistent with the options, and the semantic subcomponents are as follows:
+The props attributes accepted по сводныйтаблица&сводныйграфик are consistent с the options, и the semantic subкомпонентs are as follows:
 
-- PivotColumnDimension: Configuration of dimensions on the columns, consistent with the definition of columns in options [api](../../option/PivotTable-columns-text#headerType)
-- PivotRowDimension: Configuration of dimensions on the rows, consistent with the definition of rows in options [api](../../option/PivotTable-rows-text#headerType)
-- PivotIndicator: Indicator configuration, consistent with the definition of indicators in options [api](../../option/PivotTable-indicators-text#cellType)
-- PivotColumnHeaderTitle: Column header title configuration, consistent with the definition of columnHeaderTitle in options [api](../../option/PivotTable#rowHeaderTitle)
-- PivotRowHeaderTitle: Row header title configuration, consistent with the definition of rowHeaderTitle in options [api](../../option/PivotTable#columnHeaderTitle)
-- PivotCorner: Corner configuration, consistent with the definition of corner in options [api](../../option/PivotTable#corner)
+- сводныйColumnDimension: Configuration из dimensions на the columns, consistent с the definition из columns в options [апи](../../option/сводныйтаблица-columns-текст#headerType)
+- сводныйRowDimension: Configuration из dimensions на the rows, consistent с the definition из rows в options [апи](../../option/сводныйтаблица-rows-текст#headerType)
+- сводныйIndicator: Indicator configuration, consistent с the definition из indicators в options [апи](../../option/сводныйтаблица-indicators-текст#cellType)
+- сводныйColumnHeaderзаголовок: Column header title configuration, consistent с the definition из columnHeaderTitle в options [апи](../../option/сводныйтаблица#rowHeaderTitle)
+- сводныйRowHeaderзаголовок: Row header title configuration, consistent с the definition из rowHeaderTitle в options [апи](../../option/сводныйтаблица#columnHeaderTitle)
+- сводныйCorner: Corner configuration, consistent с the definition из corner в options [апи](../../option/сводныйтаблица#corner)
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-    <vue-pivot-chart :options="tableOptions" ref="pivotChartRef" @onLegendItemClick="handleLegendItemClick" :height="800">
-      <PivotRowDimension
-        v-for="row in rows"
+    <vue-сводный-график :options="таблицаOptions" ref="сводныйграфикRef" @onлегендаItemНажать="handleлегендаItemНажать" :высота="800">
+      <сводныйRowDimension
+        v-для="row в rows"
         :key="row.dimensionKey"
         :dimensionKey="row.dimensionKey"
         :title="row.title"
         :headerStyle="row.headerStyle"
         :objectHandler="row"
       />
-      <PivotColumnDimension
-        v-for="column in columns"
+      <сводныйColumnDimension
+        v-для="column в columns"
         :key="column.dimensionKey"
         :dimensionKey="column.dimensionKey"
         :title="column.title"
         :headerStyle="column.headerStyle"
         :objectHandler="column"
       />
-      <PivotIndicator
-        v-for="indicator in indicators"
+      <сводныйIndicator
+        v-для="indicator в indicators"
         :key="indicator.indicatorKey"
         :indicatorKey="indicator.indicatorKey"
         :title="indicator.title"
         :cellType="indicator.cellType"
-        :chartModule="indicator.chartModule"
-        :chartSpec="indicator.chartSpec"
+        :графикModule="indicator.графикModule"
+        :графикSpec="indicator.графикSpec"
         :style="indicator.style"
       />
-      <PivotCorner
+      <сводныйCorner
         :titleOnDimension="corner.titleOnDimension"
         :headerStyle="corner.headerStyle"
       />
-    </vue-pivot-chart>
+    </vue-сводный-график>
   `,
-  data() {
-    return {
-      pivotChartRef: ref(null),
-      tableOptions: ref({}),
-      rows: [{ dimensionKey: 'Order Year', title: 'Order Year', headerStyle: { textStick: true } }, 'Ship Mode'],
-      columns: [{ dimensionKey: 'Region', title: 'Region', headerStyle: { textStick: true } }, 'Category'],
+  данные() {
+    возврат {
+      сводныйграфикRef: ref(null),
+      таблицаOptions: ref({}),
+      rows: [{ dimensionKey: 'Order Year', заголовок: 'Order Year', headerStyle: { textStick: true } }, 'Ship Mode'],
+      columns: [{ dimensionKey: 'Регион', заголовок: 'Регион', headerStyle: { textStick: true } }, 'Категория'],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          cellType: 'chart',
-          chartModule: 'vchart',
-          chartSpec: {
-            type: 'common',
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          cellType: 'график',
+          графикModule: 'vграфик',
+          графикSpec: {
+            тип: 'common',
             stack: true,
-            type: 'pie',
-            data: {
-              id: 'data',
-              fields: {
+            тип: 'pie',
+            данные: {
+              id: 'данные',
+              полеs: {
                 'Segment-Indicator': {
-                  sortIndex: 1,
-                  domain: ['Consumer-Quantity', 'Corporate-Quantity', 'Home Office-Quantity']
+                  сортировкаIndex: 1,
+                  domain: ['Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество']
                 }
               }
             },
-            categoryField: 'Segment-Indicator',
-            valueField: 'Quantity',
+            Категорияполе: 'Segment-Indicator',
+            valueполе: 'Количество',
             scales: [
               {
-                id: 'color',
-                type: 'ordinal',
-                domain: ['Consumer-Quantity', 'Corporate-Quantity', 'Home Office-Quantity'],
+                id: 'цвет',
+                тип: 'ordinal',
+                domain: ['Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество'],
                 range: ['#2E62F1', '#4DC36A', '#FF8406']
               }
             ]
           },
-          style: { padding: 1 }
+          style: { заполнение: 1 }
         }
       ],
       corner: {
         titleOnDimension: 'row',
-        headerStyle: { autoWrapText: true }
+        headerStyle: { автоWrapText: true }
       }
     };
   },
-  methods: {
-    handleLegendItemClick(args) {
-      this.pivotChartRef.vTableInstance.updateFilterRules([
-        { filterKey: 'Segment-Indicator', filteredValues: args.value }
+  методы: {
+    handleлегендаItemНажать(args) {
+      this.сводныйграфикRef.vтаблицаInstance.updateFilterRules([
+        { filterKey: 'Segment-Indicator', filteredValues: args.значение }
       ]);
     }
   },
   mounted() {
-    fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+    fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
       .then(res => res.json())
-      .then(data => {
-        this.tableOptions = {
-          hideIndicatorName: true,
+      .then(данные => {
+        this.таблицаOptions = {
+          hideIndicatorимя: true,
           rows: this.rows,
           columns: this.columns,
           indicators: this.indicators,
-          records: data,
-          defaultRowHeight: 200,
-          defaultHeaderRowHeight: 50,
-          defaultColWidth: 280,
-          defaultHeaderColWidth: 100,
-          indicatorTitle: 'Indicator',
-          autoWrapText: true,
-          widthMode: 'adaptive',
-          heightMode: 'adaptive',
-          legends: {
-            orient: 'bottom',
-            type: 'discrete',
-            data: [
-              { label: 'Consumer-Quantity', shape: { fill: '#2E62F1', symbolType: 'circle' } },
-              { label: 'Corporate-Quantity', shape: { fill: '#4DC36A', symbolType: 'square' } },
-              { label: 'Home Office-Quantity', shape: { fill: '#FF8406', symbolType: 'square' } }
+          records: данные,
+          defaultRowвысота: 200,
+          defaultHeaderRowвысота: 50,
+          defaultColширина: 280,
+          defaultHeaderColширина: 100,
+          indicatorзаголовок: 'Indicator',
+          автоWrapText: true,
+          ширинаMode: 'adaptive',
+          высотаMode: 'adaptive',
+          легендаs: {
+            orient: 'низ',
+            тип: 'discrete',
+            данные: [
+              { label: 'Consumer-Количество', shape: { fill: '#2E62F1', symbolType: 'circle' } },
+              { label: 'Corporate-Количество', shape: { fill: '#4DC36A', symbolType: 'square' } },
+              { label: 'Home Office-Количество', shape: { fill: '#FF8406', symbolType: 'square' } }
             ]
           },
-          pagination: { currentPage: 0, perPageCount: 8 }
+          pagination: { currentPвозраст: 0, perPвозрастCount: 8 }
         };
       });
   }
 });
 
-VueVTable.registerChartModule('vchart', VChart);
+VueVтаблица.регистрацияграфикModule('vграфик', Vграфик);
 
-app.component('vue-pivot-chart', VueVTable.PivotChart);
-app.component('PivotRowDimension', VueVTable.PivotRowDimension);
-app.component('PivotColumnDimension', VueVTable.PivotColumnDimension);
-app.component('PivotIndicator', VueVTable.PivotIndicator);
-app.component('PivotCorner', VueVTable.PivotCorner);
+app.компонент('vue-сводный-график', VueVтаблица.сводныйграфик);
+app.компонент('сводныйRowDimension', VueVтаблица.сводныйRowDimension);
+app.компонент('сводныйColumnDimension', VueVтаблица.сводныйColumnDimension);
+app.компонент('сводныйIndicator', VueVтаблица.сводныйIndicator);
+app.компонент('сводныйCorner', VueVтаблица.сводныйCorner);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

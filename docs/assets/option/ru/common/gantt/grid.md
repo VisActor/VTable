@@ -1,16 +1,16 @@
-{{ target: common-gantt-grid }}
+{{ target: common-гантт-grid }}
 
 The IGrid definition is as follows:
 
 ```
-export interface IGrid {
-  backgroundColor?: string;
+export интерфейс IGrid {
+  backgroundColor?: строка;
   /** 需要按数据行设置不同背景色 */
-  horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
+  horizontalBackgroundColor?: строка[] | ((args: GridHorizontalLineStyleArgumentType) => строка);
   /** 需要按日期列设置不同背景色 */
-  verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  verticalBackgroundColor?: строка[] | ((args: GridVerticalLineStyleArgumentType) => строка);
   /** 周末背景色 */
-  weekendBackgroundColor?: string;
+  weekendBackgroundColor?: строка;
   /** 垂直间隔线样式 */
   verticalLine?: ILineStyle | ((args: GridVerticalLineStyleArgumentType) => ILineStyle);
   /** 水平间隔线样式 */
@@ -19,65 +19,65 @@ export interface IGrid {
   verticalLineDependenceOnTimeScale?: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
 }
 
-export type GridVerticalLineStyleArgumentType = {
+export тип GridVerticalLineStyleArgumentType = {
   /** 竖线是第几条线*/
-  index: number;
+  index: число;
   /** 当期日期属于该日期刻度的第几位。如季度日期中第四季度 返回4。 */
-  dateIndex: number;
+  dateIndex: число;
   /** 如果是竖线，date代表分割线指向的具体时间点 */
   date?: Date;
-  ganttInstance: Gantt;
+  ганттInstance: гантт;
 };
 
 
-export type GridHorizontalLineStyleArgumentType = {
+export тип GridHorizontalLineStyleArgumentType = {
   /** 横线是第几条线 也代表了左侧表格的body行号 */
-  index: number;
-  ganttInstance: Gantt;
+  index: число;
+  ганттInstance: гантт;
 };
 
 ```
 
-${prefix} backgroundColor(string)
+${prefix} backgroundColor(строка)
 
-Background color of the grid line area
+фон цвет из the grid line area
 
-Optional
+необязательный
 
-${prefix} weekendBackgroundColor(string)
+${prefix} weekendBackgroundColor(строка)
 
-Optional
+необязательный
 
-${prefix} horizontalBackgroundColor(string)
+${prefix} horizontalBackgroundColor(строка)
 
-Requires setting different background colors horizontally by data rows.
+Requires setting different фон colors horizontally по данные rows.
 
-Optional
+необязательный
 
-${prefix} verticalBackgroundColor(string)
+${prefix} verticalBackgroundColor(строка)
 
-Requires setting different background colors vertically by date columns.
+Requires setting different фон colors vertically по date columns.
 
-Optional
+необязательный
 
-${prefix} verticalLine(ILineStyle | Function)
+${prefix} verticalLine(ILineStyle | функция)
 
 Vertical interval line style
 
-Optional
+необязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
-${prefix} horizontalLine(ILineStyle | Function)
+${prefix} horizontalLine(ILineStyle | функция)
 
 Horizontal interval line style
 
-Optional
+необязательный
 
-{{ use: common-gantt-line-style }}
+{{ use: common-гантт-line-style }}
 
 ${prefix} verticalLineDependenceOnTimeScale('day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second')
 
-The vertical line depends on the date scale. The default is the smallest time scale in the timelineHeader.scales. If set to 'week', the vertical line will be drawn according to the week.
+The vertical line depends на the date scale. The по умолчанию is the smallest time scale в the timelineHeader.scales. If set к 'week', the vertical line will be drawn according к the week.
 
-Optional
+необязательный

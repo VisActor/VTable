@@ -1,116 +1,116 @@
-# Switch Cell Type
+# Switch Cell тип
 
-Switch cell type is suitable for providing switch states in tables, allowing users to select or deselect one or more items. The interactive capability provided by switch cell type is widely used in many applications.
+Switch cell тип is suiтаблица для providing switch states в таблицаs, allowing users к выбрать или отменить выбор one или more items. The interactive capability provided по switch cell тип is widely used в many applications.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/switch.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/switch.png)
 
 ## Switch-specific Configuration Options
 
-The switch cell type has the following specific configuration options:
+The switch cell тип has Следующий specific configuration options:
 
-1. `checked`: Whether the cell is in checked state, default value is false. Supports function configuration, can be different for different cells.
-2. `disable`: Whether the switch can be disabled for clicking, default value is false. Supports function configuration, can be different for different cells.
-3. `checkedText`: Specifies the text for checked state, supports function configuration.
-4. `uncheckedText`: Specifies the text for unchecked state, supports function configuration.
+1. `checked`: Whether the cell is в checked state, по умолчанию значение is false. Supports функция configuration, can be different для different cells.
+2. `отключить`: Whether the switch can be отключен для Нажатьing, по умолчанию значение is false. Supports функция configuration, can be different для different cells.
+3. `checkedText`: Specifies the текст для checked state, supports функция configuration.
+4. `uncheckedText`: Specifies the текст для unchecked state, supports функция configuration.
 
-Example:
+пример:
 
 ```javascript
 {
-  field: 'switch', // Specify the cell's field
-  cellType: 'switch', // Specify the cell to display as switch type
+  поле: 'switch', // Specify the cell's поле
+  cellType: 'switch', // Specify the cell к display as switch тип
   checked: true,
-  disable: false,
-  checkedText: 'on', // Specify text for checked state, supports function configuration
-  uncheckedText: 'off', // Specify text for unchecked state, supports function configuration
+  отключить: false,
+  checkedText: 'на', // Specify текст для checked state, supports функция configuration
+  uncheckedText: 'off', // Specify текст для unchecked state, supports функция configuration
   style: {
-    // Specify text style
-    color: '#FFF',
+    // Specify текст style
+    цвет: '#FFF',
     // ......
     // Specify switch style
     switchStyle: {
-      boxWidth: 40, // Specify switch width
-      boxHeight: 20, // Specify switch height
+      boxширина: 40, // Specify switch ширина
+      boxвысота: 20, // Specify switch высота
       // ......
     }
   }
 }
 ```
 
-## Switch Data Types
+## Switch данные Types
 
-The switch cell type supports `boolean` or `Object` data types, or defaults to false if no value is set.
+The switch cell тип supports `логический` или `объект` данные types, или defaults к false if no значение is set.
 
-1. Setting `boolean` type is most common among the three types. Example switch field configuration:
+1. Setting `логический` тип is most common among the three types. пример switch поле configuration:
 
 ```javascript
 const columns = [
   // ......
   {
-    field: 'switch',
+    поле: 'switch',
     cellType: 'switch'
   }
 ];
 const records = [
-  { name: 'a', switch: true },
-  { name: 'b', switch: false }
+  { имя: 'a', switch: true },
+  { имя: 'b', switch: false }
 ];
 ```
 
-2. Setting `Object` type supports configuring `checked` and `disable`. Example switch field configuration:
+2. Setting `объект` тип supports configuring `checked` и `отключить`. пример switch поле configuration:
 
 ```javascript
 const columns = [
   // ......
   {
-    field: 'switch',
+    поле: 'switch',
     cellType: 'switch'
   }
 ];
 const records = [
-  { name: 'a', switch: { checked: true, disable: false } },
-  { name: 'b', switch: { checked: false, disable: true } }
+  { имя: 'a', switch: { checked: true, отключить: false } },
+  { имя: 'b', switch: { checked: false, отключить: true } }
 ];
 ```
 
 - checked: Whether the cell's switch is checked
-- disable: Whether the cell's switch is disabled
+- отключить: Whether the cell's switch is отключен
 
-Both `checked` and `disable` can be configured in data or in `column`. Configuration in data takes higher priority than configuration in `column`.
+Both `checked` и `отключить` can be configured в данные или в `column`. Configuration в данные takes higher priority than configuration в `column`.
 
-## Switch State Update Event
+## Switch State Update событие
 
-When the switch state is updated, it triggers the `VTable.ListTable.EVENT_TYPE.SWITCH_STATE_CHANGE` event.
+When the switch state is updated, it triggers the `Vтаблица.списоктаблица.событие_TYPE.SWITCH_STATE_CHANGE` событие.
 
 ```javascript
-instance.on(VTable.ListTable.EVENT_TYPE.SWITCH_STATE_CHANGE, e => {
-  console.log(VTable.ListTable.EVENT_TYPE.SWITCH_STATE_CHANGE, e.col, e.row, e.checked);
+instance.на(Vтаблица.списоктаблица.событие_TYPE.SWITCH_STATE_CHANGE, e => {
+  console.log(Vтаблица.списоктаблица.событие_TYPE.SWITCH_STATE_CHANGE, e.col, e.row, e.checked);
 });
 ```
 
-## Getting Switch States via API
+## Getting Switch States via апи
 
-1. Get switch states for all data under a specific field.
+1. Get switch states для все данные under a specific поле.
 
-Note: The order corresponds to the original input records data, not the table display row state values
-
-```
-getSwitchState(field?: string | number): Array
-```
-
-2. Get switch state for a specific cell.
+Note: The order corresponds к the original ввод records данные, не the таблица display row state values
 
 ```
-getCellSwitchState(col: number, row: number): boolean
+getSwitchState(поле?: строка | число): массив
 ```
 
-## Setting Switch States via API
-
-Set switch state for a specific cell.
+2. Get switch state для a specific cell.
 
 ```
-setCellSwitchState(col: number, row: number, checked: boolean)
+getCellSwitchState(col: число, row: число): логический
 ```
 
-[Click to view complete example](../../demo/cell-type/switch)
-Through the above introduction, you have learned how to use switch cell type for data display in VTable. We hope this helps.
+## Setting Switch States via апи
+
+Set switch state для a specific cell.
+
+```
+setCellSwitchState(col: число, row: число, checked: логический)
+```
+
+[Нажать к view complete пример](../../демонстрация/cell-тип/switch)
+Through the above introduction, you have learned how к use switch cell тип для данные display в Vтаблица. We hope this helps.

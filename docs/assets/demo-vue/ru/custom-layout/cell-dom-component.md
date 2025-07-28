@@ -1,70 +1,70 @@
 ---
-category: examples
-group: custom-layout
-title: Cell Rendering DOM Components
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-custom-dom-component.jpeg
-order: 1-2
-link: custom_define/vue-dom-component
+категория: примеры
+группа: пользовательский-макет
+заголовок: Cell Rendering DOM компонентs
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-пользовательский-dom-компонент.jpeg
+порядок: 1-2
+ссылка: пользовательский_define/vue-dom-компонент
 ---
 
-# Cell Rendering DOM Components
+# Cell Rendering DOM компонентs
 
-In `vue-vtable`, you can directly render DOM components within table cells, enabling seamless integration of complex Vue components for highly customizable table displays. Two approaches are supported: **slot-based** and **directly passing components into the `column` configuration**. Both methods require wrapping components with the `Group` component.
+в `vue-vтаблица`, Вы можете directly render DOM компонентs within таблица cells, enabling seamless integration из complex Vue компонентs для highly пользовательскийizable таблица displays. Two approaches are supported: **slot-based** и **directly passing компонентs into the `column` configuration**. Both методы require wrapping компонентs с the `Group` компонент.
 
-**🛠️ Core configuration steps: Enable DOM component rendering**
+**🛠️ Core configuration steps: включить DOM компонент rendering**
 
-To render DOM components in `vue-vtable`, follow these key steps:
+к render DOM компонентs в `vue-vтаблица`, follow these key steps:
 
-- **Pass the `vue` property to the `Group` component**: This allows the `Group` component to recognize and process Vue components.
-- **Enable `customConfig.createReactContainer`**: This configuration creates a table container to ensure Vue components render correctly within the table.
+- **Pass the `vue` property к the `Group` компонент**: This allows the `Group` компонент к recognize и process Vue компонентs.
+- **включить `пользовательскийConfig.createReactContainer`**: This configuration creates a таблица container к ensure Vue компонентs render correctly within the таблица.
 
 **✨ Method 1: Slot-Based Rendering**
 
-Slot-based rendering uses the `headerCustomLayout` and `customLayout` slots of the `ListColumn` component. Custom components must be wrapped in the `Group` component.
+Slot-based rendering uses the `headerпользовательскиймакет` и `пользовательскиймакет` slots из the `списокColumn` компонент. пользовательский компонентs must be wrapped в the `Group` компонент.
 
-- **`headerCustomLayout`**: Customizes header cell rendering.
-- **`customLayout`**: Customizes body cell rendering.
+- **`headerпользовательскиймакет`**: пользовательскийizes header cell rendering.
+- **`пользовательскиймакет`**: пользовательскийizes body cell rendering.
 
 **✨ Method 2: Direct Configuration-Based Rendering**
 
-This method is similar to slot-based rendering but does not use slots. Instead, directly pass virtual nodes via the `element` property in the `column.headerCustomLayout` or `column.customLayout` configuration. The usage aligns with [Custom Components](../../guide/custom_define/custom_layout).
+This method is similar к slot-based rendering but does не use slots. Instead, directly pass virtual nodes via the `element` property в the `column.headerпользовательскиймакет` или `column.пользовательскиймакет` configuration. The usвозраст aligns с [пользовательский компонентs](../../guide/пользовательский_define/пользовательский_макет).
 
 **⚠️ Notes**
 
-- **Enabling Interactions**: If custom cells require mouse interactions, manually enable `pointer-events`. See the example below.
+- **Enabling Interactions**: If пользовательский cells require mouse interactions, manually включить `pointer-событиеs`. See the пример below.
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable-vue
-// In this demo, we show how to render custom Vue components in the table. Specifically:
-// - **Gender Column**: Renders gender headers using the `ArcoDesignVue.Tag` component.
-// - **Comment Column**: Renders comments with the `ArcoDesignVue.Comment` component, including action buttons for likes, favorites, and replies.
+```javascript liveдемонстрация template=vтаблица-vue
+// в this демонстрация, we показать how к render пользовательский Vue компонентs в the таблица. Specifically:
+// - **пол Column**: Renders пол headers using the `ArкодsignVue.Tag` компонент.
+// - **Comment Column**: Renders comments с the `ArкодsignVue.Comment` компонент, including action Кнопкаs для likes, favorites, и replies.
 
 const app = createApp({
   template: `
-   <vue-list-table :options="option" :records="records" ref="tableRef">
-    <ListColumn field="name" title="Name" width="200" />
-    <ListColumn field="age" title="Age" width="150" />
-    <ListColumn field="city" title="City" width="150" />
-    <ListColumn field="gender" title="Gender" width="100">
-      <template #headerCustomLayout="{ width, height }">
-        <Group :width="width" :height="height" display="flex" align-items="center" :vue="{}">
-          <ATag color="green"> Gender </ATag>
+   <vue-список-таблица :options="option" :records="records" ref="таблицаRef">
+    <списокColumn поле="имя" title="имя" ширина="200" />
+    <списокColumn поле="возраст" title="возраст" ширина="150" />
+    <списокColumn поле="Город" title="Город" ширина="150" />
+    <списокColumn поле="пол" title="пол" ширина="100">
+      <template #headerпользовательскиймакет="{ ширина, высота }">
+        <Group :ширина="ширина" :высота="высота" display="flex" align-items="центр" :vue="{}">
+          <ATag цвет="green"> пол </ATag>
         </Group>
       </template>
-    </ListColumn>
-    <ListColumn field="comment" title="Comment" width="300">
-      <template #customLayout="{ width, height, record }">
-        <Group :width="width" :height="height" display="flex" align-items="center" :vue="{}">
+    </списокColumn>
+    <списокColumn поле="comment" title="Comment" ширина="300">
+      <template #пользовательскиймакет="{ ширина, высота, record }">
+        <Group :ширина="ширина" :высота="высота" display="flex" align-items="центр" :vue="{}">
           <AComment author="Socrates" :content="record['comment']" datetime="1 hour">
             <template #actions>
-              <span key="heart" style="cursor: pointer; pointer-events: auto">
+              <span key="heart" style="cursor: pointer; pointer-событиеs: авто">
                 {{ 83 }}
               </span>
-              <span key="star" style="cursor: pointer; pointer-events: auto">
+              <span key="star" style="cursor: pointer; pointer-событиеs: авто">
                 {{ 3 }}
               </span>
-              <span key="reply" style="cursor: pointer; pointer-events: auto"> Reply </span>
+              <span key="reply" style="cursor: pointer; pointer-событиеs: авто"> Reply </span>
             </template>
             <template #avatar>
               <AAvatar>
@@ -77,25 +77,25 @@ const app = createApp({
           </AComment>
         </Group>
       </template>
-    </ListColumn>
-  </vue-list-table>
+    </списокColumn>
+  </vue-список-таблица>
   `,
-  data() {
-    return {
-      tableRef: ref(null),
-      option: {
+  данные() {
+    возврат {
+      таблицаRef: ref(null),
+      опция: {
         records: [
-          { gender: 'Male', name: 'Zhang San', age: 20, city: 'Beijing' },
-          { gender: 'Female', name: 'Li Si', age: 21, city: 'Shanghai' },
-          { gender: 'Male', name: 'Wang Wu', age: 22, city: 'Guangzhou' },
-          { gender: 'Female', name: 'Zhao Liu', age: 23, city: 'Shenzhen' },
-          { gender: 'Male', name: 'Sun Qi', age: 24, city: 'Chengdu' },
-          { gender: 'Female', name: 'Zhou Ba', age: 25, city: 'Chongqing' },
-          { gender: 'Male', name: 'Wu Jiu', age: 26, city: "Xi'an" }
+          { пол: 'Male', имя: 'Zhang San', возраст: 20, Город: 'Beijing' },
+          { пол: 'Female', имя: 'Li Si', возраст: 21, Город: 'Shanghai' },
+          { пол: 'Male', имя: 'Wang Wu', возраст: 22, Город: 'Guangzhou' },
+          { пол: 'Female', имя: 'Zhao Liu', возраст: 23, Город: 'Shenzhen' },
+          { пол: 'Male', имя: 'Sun Qi', возраст: 24, Город: 'Chengdu' },
+          { пол: 'Female', имя: 'Zhou Ba', возраст: 25, Город: 'Chongqing' },
+          { пол: 'Male', имя: 'Wu Jiu', возраст: 26, Город: "Xi'an" }
         ],
-        defaultHeaderRowHeight: 40,
-        defaultRowHeight: 80,
-        customConfig: {
+        defaultHeaderRowвысота: 40,
+        defaultRowвысота: 80,
+        пользовательскийConfig: {
           createReactContainer: true
         }
       }
@@ -103,17 +103,17 @@ const app = createApp({
   }
 });
 
-app.component('vue-list-table', VueVTable.ListTable);
-app.component('ListColumn', VueVTable.ListColumn);
-app.component('Group', VueVTable.Group);
-app.component('ATag', ArcoDesignVue.Tag);
-app.component('AComment', ArcoDesignVue.Comment);
-app.component('AAvatar', ArcoDesignVue.Avatar);
+app.компонент('vue-список-таблица', VueVтаблица.списоктаблица);
+app.компонент('списокColumn', VueVтаблица.списокColumn);
+app.компонент('Group', VueVтаблица.Group);
+app.компонент('ATag', ArкодsignVue.Tag);
+app.компонент('AComment', ArкодsignVue.Comment);
+app.компонент('AAvatar', ArкодsignVue.Avatar);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

@@ -1,90 +1,90 @@
 ---
-title: VTable usage issue: How to implement hover to a cell to show or hide part of the content</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к implement навести к a cell к показать или скрыть part из the content</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to implement hover to a cell to show or hide part of the content</br>
+How к implement навести к a cell к показать или скрыть part из the content</br>
 
 
 ## Problem description
 
-When you want to hover the mouse over a cell, show or hide some elements (icons, text, etc.) in the cell.</br>
+When you want к навести the mouse over a cell, показать или скрыть некоторые elements (иконкаs, текст, etc.) в the cell.</br>
 
 
 ## Solution
 
-You can use [customLayout ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fguide%2Fcustom_define%2Fcustom_layout)to do this: listen to the `onMouseEnter `and `onMouseLeave `events on the container `Group `, and set the corresponding primitive to show or hide in the event callback.</br>
+Вы можете use [пользовательскиймакет ](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fguide%2Fпользовательский_define%2Fпользовательский_макет)к do this: списокen к the `onMouseEnter `и `onMouseLeave `событиеs на the container `Group `, и set the corresponding primitive к показать или скрыть в the событие обратный вызов.</br>
 
 
-## Code example
+## код пример
 
 ```
 const option = {
   columns: [
     {
-      title: 'name',
-      field: 'name',
+      заголовок: 'имя',
+      поле: 'имя',
     },
     {
-      title: 'custom',
-      field: 'custom',
-      width: 120,
-      customLayout: (args) => {
-        const { height, width } = args.rect;
+      заголовок: 'пользовательский',
+      поле: 'пользовательский',
+      ширина: 120,
+      пользовательскиймакет: (args) => {
+        const { высота, ширина } = args.rect;
         const container = (
           <VGroup
             attribute={{
               id: 'container',
-              width,
-              height,
+              ширина,
+              высота,
               display: 'flex',
               flexDirection: 'column',
               flexWrap: 'nowrap'
             }}
-            onMouseEnter={(event) => {
+            onMouseEnter={(событие) => {
               // 查找图元
-              const hoverShowText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-show';
+              const hoverShowText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-показать';
               }, true);
               // 更新图元
-              hoverShowText.setAttribute('opacity', 1);
+              hoverShowText.setAttribute('opaГород', 1);
               // 查找图元
-              const hoverHideText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-hide';
+              const hoverHideText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-скрыть';
               }, true);
-              hoverHideText.setAttribute('opacity', 0);
-              event.currentTarget.stage.renderNextFrame();
+              hoverHideText.setAttribute('opaГород', 0);
+              событие.currentTarget.stвозраст.renderNextFrame();
             }}
-            onMouseLeave={event => {
+            onMouseLeave={событие => {
               // 查找图元
-              const hoverShowText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-show';
+              const hoverShowText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-показать';
               }, true);
               // 更新图元
-              hoverShowText.setAttribute('opacity', 0);
+              hoverShowText.setAttribute('opaГород', 0);
               // 查找图元
-              const hoverHideText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-hide';
+              const hoverHideText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-скрыть';
               }, true);
               // 更新图元
-              hoverHideText.setAttribute('opacity', 1);
-              event.currentTarget.stage.renderNextFrame();
+              hoverHideText.setAttribute('opaГород', 1);
+              событие.currentTarget.stвозраст.renderNextFrame();
             }}
           >
             <VText
               attribute={{
-                id: 'hover-cell-show',
-                text: 'hover cell show',
+                id: 'навести-cell-показать',
+                текст: 'навести cell показать',
                 fill: '#000',
                 boundsPadding: [0, 0, 5, 0],
-                opacity: 0,
+                opaГород: 0,
               }}
             ></VText>
             <VText
               attribute={{
-                id: 'hover-cell-hide',
-                text: 'hover cell hide',
+                id: 'навести-cell-скрыть',
+                текст: 'навести cell скрыть',
                 fill: '#000',
                 boundsPadding: [0, 0, 5, 0],
               }}
@@ -92,107 +92,107 @@ const option = {
           </VGroup>
         );
 
-        return {
+        возврат {
             rootContainer: container,
             renderDefault: false
         };
       }
     }
   ],
-  records:data,
+  records:данные,
 }
 
-const tableInstance = new VTable.ListTable(container, option);</br>
+const таблицаInstance = новый Vтаблица.списоктаблица(container, option);</br>
 ```
-## Results show
+## Results показать
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PyaGbK31PoBxOGxQWkxci1T3nKb.gif' alt='' width='424' height='504'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PyaGbK31PoBxOGxQWkxci1T3nKb.gif' alt='' ширина='424' высота='504'>
 
 
 
-Full sample code (you can try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree)):</br>
+Full sample код (Вы можете try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree)):</br>
 ```
-const { VGroup, VText } = VTable;
-const data = [
+const { VGroup, VText } = Vтаблица;
+const данные = [
   {
-    name: '1',
-    custom: '1',
+    имя: '1',
+    пользовательский: '1',
   },
   {
-    name: '2',
-    custom: '2',
+    имя: '2',
+    пользовательский: '2',
   },
   {
-    name: '3',
-    custom: '3',
+    имя: '3',
+    пользовательский: '3',
   },
   {
-    name: '4',
-    custom: '4',
+    имя: '4',
+    пользовательский: '4',
   },
   {
-    name: '5',
-    custom: '5',
+    имя: '5',
+    пользовательский: '5',
   },
 ]
 const option = {
   columns: [
     {
-      title: 'name',
-      field: 'name',
+      заголовок: 'имя',
+      поле: 'имя',
     },
     {
-      title: 'custom',
-      field: 'custom',
-      width: 120,
-      customLayout: (args) => {
-        const { height, width } = args.rect;
+      заголовок: 'пользовательский',
+      поле: 'пользовательский',
+      ширина: 120,
+      пользовательскиймакет: (args) => {
+        const { высота, ширина } = args.rect;
         const container = (
           <VGroup
             attribute={{
               id: 'container',
-              width,
-              height,
+              ширина,
+              высота,
               display: 'flex',
               flexDirection: 'column',
               flexWrap: 'nowrap'
             }}
-            onMouseEnter={(event) => {
-              const hoverShowText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-show';
+            onMouseEnter={(событие) => {
+              const hoverShowText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-показать';
               }, true);
-              hoverShowText.setAttribute('opacity', 1);
-              const hoverHideText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-hide';
+              hoverShowText.setAttribute('opaГород', 1);
+              const hoverHideText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-скрыть';
               }, true);
-              hoverHideText.setAttribute('opacity', 0);
-              event.currentTarget.stage.renderNextFrame();
+              hoverHideText.setAttribute('opaГород', 0);
+              событие.currentTarget.stвозраст.renderNextFrame();
             }}
-            onMouseLeave={event => {
-              const hoverShowText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-show';
+            onMouseLeave={событие => {
+              const hoverShowText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-показать';
               }, true);
-              hoverShowText.setAttribute('opacity', 0);
-              const hoverHideText = event.currentTarget.find(child => {
-                return child.attribute.id === 'hover-cell-hide';
+              hoverShowText.setAttribute('opaГород', 0);
+              const hoverHideText = событие.currentTarget.find(child => {
+                возврат child.attribute.id === 'навести-cell-скрыть';
               }, true);
-              hoverHideText.setAttribute('opacity', 1);
-              event.currentTarget.stage.renderNextFrame();
+              hoverHideText.setAttribute('opaГород', 1);
+              событие.currentTarget.stвозраст.renderNextFrame();
             }}
           >
             <VText
               attribute={{
-                id: 'hover-cell-show',
-                text: 'hover cell show',
+                id: 'навести-cell-показать',
+                текст: 'навести cell показать',
                 fill: '#000',
                 boundsPadding: [0, 0, 5, 0],
-                opacity: 0,
+                opaГород: 0,
               }}
             ></VText>
             <VText
               attribute={{
-                id: 'hover-cell-hide',
-                text: 'hover cell hide',
+                id: 'навести-cell-скрыть',
+                текст: 'навести cell скрыть',
                 fill: '#000',
                 boundsPadding: [0, 0, 5, 0],
               }}
@@ -200,22 +200,22 @@ const option = {
           </VGroup>
         );
 
-        return {
+        возврат {
             rootContainer: container,
             renderDefault: false
         };
       }
     }
   ],
-  records:data,
+  records:данные,
 }
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);</br>
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);</br>
 ```
 ## Related Documents
 
-Related api: https://www.visactor.io/vtable/guide/custom_define/custom_layout</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/guide/пользовательский_define/пользовательский_макет</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

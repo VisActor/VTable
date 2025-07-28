@@ -1,23 +1,23 @@
-{{ target: text-custom-layout-element }}
+{{ target: текст-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} text (string)
+${prefix} текст (строка)
 
-**Required**
+**обязательный**
 
-Text content.
+текст content.
 
-${prefix} fontSize (number)
+${prefix} fontSize (число)
 
-Font size.
+шрифт размер.
 
-${prefix} fontFamily (string)
+${prefix} fontFamily (строка)
 
-Font family name.
+шрифт family имя.
 
-${prefix} fill (string)
+${prefix} fill (строка)
 
-Fill color.
+Fill цвет.

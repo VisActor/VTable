@@ -1,100 +1,100 @@
 ---
-category: examples
-group: Cell Type
-title: PivotTable display sparkline
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-sparkline.png
-link: cell_type/chart
-option: PivotTable-indicators-chart#cellType
+категория: примеры
+группа: Cell тип
+заголовок: сводныйтаблица display sparkline
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-sparkline.png
+ссылка: cell_type/график
+опция: сводныйтаблица-indicators-график#cellType
 ---
 
-# PivotTable display sparkline
+# сводныйтаблица display sparkline
 
-Display the data corresponding to the cell in the form of a mini chart.
+Display the данные corresponding к the cell в the form из a mini график.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `cellType: 'sparkline'` specifies the type of chart
+- `cellType: 'sparkline'` specifies the тип из график
 - `sparklineSpec: {}` Sparkline spec
-- `dataConfig.aggregationRules` configures aggregation rules. The rule used here is of `RECORD` type, which means that the source data record of a cell needs to be collected as the data source of the mini chart
+- `данныеConfig.aggregationRules` configures aggregation rules. The rule used here is из `RECORD` тип, which means that the source данные record из a cell needs к be collected as the данные source из the mini график
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-VTable.register.chartModule('vchart', VChart);
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        dimensionKey: 'Region',
-        title: 'Region',
+        dimensionKey: 'Регион',
+        заголовок: 'Регион',
         headerStyle: {
           textStick: true
         }
       }
     ];
-    const rows = ['Category'];
+    const rows = ['Категория'];
     const indicators = [
       {
-        indicatorKey: 'Sales',
-        title: 'Sales',
-        width: 120,
+        indicatorKey: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 120,
         format: rec => {
-          return '$' + Number(rec).toFixed(2);
+          возврат '$' + число(rec).toFixed(2);
         }
       },
       {
-        indicatorKey: 'SalesRecords',
-        title: 'Sales Trend',
+        indicatorKey: 'ПродажиRecords',
+        заголовок: 'Продажи Trend',
         cellType: 'sparkline',
-        width: 500,
+        ширина: 500,
         sparklineSpec: {
-          type: 'line',
-          xField: 'Order Date',
-          yField: 'Sales',
-          pointShowRule: 'none',
+          тип: 'line',
+          xполе: 'Дата Заказа',
+          yполе: 'Продажи',
+          pointShowRule: 'никто',
           smooth: true,
           line: {
             style: {
-              stroke: '#2E62F1',
-              strokeWidth: 2
+              strхорошоe: '#2E62F1',
+              strхорошоeширина: 2
               // interpolate: 'monotone',
             }
           },
           point: {
-            hover: {
-              stroke: 'blue',
-              strokeWidth: 1,
+            навести: {
+              strхорошоe: 'blue',
+              strхорошоeширина: 1,
               fill: 'red',
               shape: 'circle',
-              size: 4
+              размер: 4
             },
             style: {
-              stroke: 'red',
-              strokeWidth: 1,
+              strхорошоe: 'red',
+              strхорошоeширина: 1,
               fill: 'yellow',
               shape: 'circle',
-              size: 2
+              размер: 2
             }
           },
           crosshair: {
             style: {
-              stroke: 'gray',
-              strokeWidth: 1
+              strхорошоe: 'gray',
+              strхорошоeширина: 1
             }
           }
         }
       }
     ];
     const option = {
-      dataConfig: {
+      данныеConfig: {
         aggregationRules: [
           //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
           {
-            indicatorKey: 'SalesRecords', //指标名称
-            field: 'Sales', //指标依据字段
-            aggregationType: VTable.TYPES.AggregationType.RECORD //计算类型
+            indicatorKey: 'ПродажиRecords', //指标名称
+            поле: 'Продажи', //指标依据字段
+            aggregationType: Vтаблица.TYPES.AggregationType.RECORD //计算类型
           }
         ]
       },
@@ -102,32 +102,32 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       columns,
       indicators,
       indicatorsAsCol: true,
-      records: data,
-      defaultRowHeight: 80,
-      defaultHeaderRowHeight: 50,
-      defaultColWidth: 280,
-      defaultHeaderColWidth: 130,
-      indicatorTitle: '指标',
-      autoWrapText: true,
-      // widthMode:'adaptive',
-      // heightMode:'adaptive',
+      records: данные,
+      defaultRowвысота: 80,
+      defaultHeaderRowвысота: 50,
+      defaultColширина: 280,
+      defaultHeaderColширина: 130,
+      indicatorзаголовок: '指标',
+      автоWrapText: true,
+      // ширинаMode:'adaptive',
+      // высотаMode:'adaptive',
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
-          autoWrapText: true
+          автоWrapText: true
         }
       }
     };
 
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
-    window.tableInstance = tableInstance;
-    tableInstance.onVChartEvent('click', args => {
-      console.log('onVChartEvent click', args);
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    const { легенда_ITEM_Нажать } = Vтаблица.списоктаблица.событие_TYPE;
+    window.таблицаInstance = таблицаInstance;
+    таблицаInstance.onVграфиксобытие('Нажать', args => {
+      console.log('onVграфиксобытие Нажать', args);
     });
-    tableInstance.onVChartEvent('mouseover', args => {
-      console.log('onVChartEvent mouseover', args);
+    таблицаInstance.onVграфиксобытие('mouseover', args => {
+      console.log('onVграфиксобытие mouseover', args);
     });
-    window.tableInstance = tableInstance;
+    window.таблицаInstance = таблицаInstance;
   });
 ```

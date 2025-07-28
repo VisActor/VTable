@@ -1,65 +1,65 @@
 ---
-category: examples
-group: Cell Type
-title: List table integrated chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart-multiple.png
-link: cell_type/chart
-option: ListTable-columns-chart#cellType
+категория: примеры
+группа: Cell тип
+заголовок: список таблица integrated график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-график-multiple.png
+ссылка: cell_type/график
+опция: списоктаблица-columns-график#cellType
 ---
 
-# Basic table integrated chart
+# базовый таблица integrated график
 
-Combine vchart chart library and render it into tables to enrich visual display forms and improve multi-chart rendering performance. This example refers to vchart’s bar line pie chart. For details, please refer to: https://visactor.io/vchart/demo/progress/linear-progress-with-target-value
+Combine vграфик график library и render it into таблицаs к enrich visual display forms и improve multi-график rendering Производительность. This пример refers к vграфик’s bar line pie график. для details, please refer к: https://visactor.io/vграфик/демонстрация/progress/linear-progress-с-target-значение
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.register.chartModule('vchart', VChart)` registers the chart library for drawing charts. Currently supports VChart
-- `cellType: 'chart'` specifies the type chart
-- `chartModule: 'vchart'` specifies the registered chart library name
-- `chartSpec: {}` chart spec
+- `Vтаблица.регистрация.графикModule('vграфик', Vграфик)` регистрацияs the график library для drawing графикs. Currently supports Vграфик
+- `cellType: 'график'` specifies the тип график
+- `графикModule: 'vграфик'` specifies the регистрацияed график library имя
+- `графикSpec: {}` график spec
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-VTable.register.chartModule('vchart', VChart);
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);
 const columns = [
   {
-    field: 'id',
-    title: 'id',
-    sort: true,
-    width: 80,
+    поле: 'id',
+    заголовок: 'id',
+    сортировка: true,
+    ширина: 80,
     style: {
-      textAlign: 'left',
+      textAlign: 'лево',
       bgColor: '#ea9999'
     }
   },
   {
-    field: 'areaChart',
-    title: 'multiple vchart type',
-    width: '320',
-    cellType: 'chart',
-    chartModule: 'vchart',
-    chartSpec(args) {
+    поле: 'areaграфик',
+    заголовок: 'multiple vграфик тип',
+    ширина: '320',
+    cellType: 'график',
+    графикModule: 'vграфик',
+    графикSpec(args) {
       if (args.row % 3 == 2)
-        return {
-          type: 'area',
-          data: {
-            id: 'data'
+        возврат {
+          тип: 'area',
+          данные: {
+            id: 'данные'
           },
-          xField: 'x',
-          yField: 'y',
-          seriesField: 'type',
+          xполе: 'x',
+          yполе: 'y',
+          seriesполе: 'тип',
           point: {
             style: {
-              fillOpacity: 1,
-              stroke: '#000',
-              strokeWidth: 4
+              fillOpaГород: 1,
+              strхорошоe: '#000',
+              strхорошоeширина: 4
             },
             state: {
-              hover: {
-                fillOpacity: 0.5,
-                stroke: 'blue',
-                strokeWidth: 2
+              навести: {
+                fillOpaГород: 0.5,
+                strхорошоe: 'blue',
+                strхорошоeширина: 2
               },
               selected: {
                 fill: 'red'
@@ -68,81 +68,81 @@ const columns = [
           },
           area: {
             style: {
-              fillOpacity: 0.3,
-              stroke: '#000',
-              strokeWidth: 4
+              fillOpaГород: 0.3,
+              strхорошоe: '#000',
+              strхорошоeширина: 4
             },
             state: {
-              hover: {
-                fillOpacity: 1
+              навести: {
+                fillOpaГород: 1
               },
               selected: {
                 fill: 'red',
-                fillOpacity: 1
+                fillOpaГород: 1
               }
             }
           },
           line: {
             state: {
-              hover: {
-                stroke: 'red'
+              навести: {
+                strхорошоe: 'red'
               },
               selected: {
-                stroke: 'yellow'
+                strхорошоe: 'yellow'
               }
             }
           },
 
           axes: [
             {
-              orient: 'left',
+              orient: 'лево',
               range: {
                 min: 0
               }
             },
             {
-              orient: 'bottom',
+              orient: 'низ',
               label: {
-                visible: true
+                видимый: true
               },
-              type: 'band'
+              тип: 'band'
             }
           ],
-          legends: [
+          легендаs: [
             {
-              visible: true,
-              orient: 'bottom'
+              видимый: true,
+              orient: 'низ'
             }
           ]
         };
       else if (args.row % 3 == 1)
-        return {
-          type: 'common',
+        возврат {
+          тип: 'common',
           series: [
             {
-              type: 'line',
-              data: {
-                id: 'data'
+              тип: 'line',
+              данные: {
+                id: 'данные'
               },
-              xField: 'x',
-              yField: 'y',
-              seriesField: 'type',
+              xполе: 'x',
+              yполе: 'y',
+              seriesполе: 'тип',
               line: {
                 state: {
-                  hover: {
-                    strokeWidth: 4
+                  навести: {
+                    strхорошоeширина: 4
                   },
                   selected: {
-                    stroke: 'red'
+                    strхорошоe: 'red'
                   },
                   hover_reverse: {
-                    stroke: '#ddd'
+                    strхорошоe: '#ddd'
                   }
                 }
               },
               point: {
                 state: {
-                  hover: {
+                  навести: {
                     fill: 'red'
                   },
                   selected: {
@@ -153,77 +153,77 @@ const columns = [
                   }
                 }
               },
-              legends: [
+              легендаs: [
                 {
-                  visible: true,
-                  orient: 'bottom'
+                  видимый: true,
+                  orient: 'низ'
                 }
               ]
             }
           ],
           axes: [
             {
-              orient: 'left',
+              orient: 'лево',
               range: {
                 min: 0
               }
             },
             {
-              orient: 'bottom',
+              orient: 'низ',
               label: {
-                visible: true
+                видимый: true
               },
-              type: 'band'
+              тип: 'band'
             }
           ],
-          legends: [
+          легендаs: [
             {
-              visible: true,
-              orient: 'bottom'
+              видимый: true,
+              orient: 'низ'
             }
           ]
         };
-      return {
-        type: 'pie',
-        data: { id: 'data1' },
-        categoryField: 'y',
-        valueField: 'x'
+      возврат {
+        тип: 'pie',
+        данные: { id: 'данные1' },
+        Категорияполе: 'y',
+        valueполе: 'x'
       };
     }
   },
   {
-    field: 'lineChart',
-    title: 'vchart line',
-    width: '320',
-    cellType: 'chart',
-    chartModule: 'vchart',
-    chartSpec: {
-      type: 'common',
+    поле: 'lineграфик',
+    заголовок: 'vграфик line',
+    ширина: '320',
+    cellType: 'график',
+    графикModule: 'vграфик',
+    графикSpec: {
+      тип: 'common',
       series: [
         {
-          type: 'line',
-          data: {
-            id: 'data'
+          тип: 'line',
+          данные: {
+            id: 'данные'
           },
-          xField: 'x',
-          yField: 'y',
-          seriesField: 'type',
+          xполе: 'x',
+          yполе: 'y',
+          seriesполе: 'тип',
           line: {
             state: {
-              hover: {
-                strokeWidth: 4
+              навести: {
+                strхорошоeширина: 4
               },
               selected: {
-                stroke: 'red'
+                strхорошоe: 'red'
               },
               hover_reverse: {
-                stroke: '#ddd'
+                strхорошоe: '#ddd'
               }
             }
           },
           point: {
             state: {
-              hover: {
+              навести: {
                 fill: 'red'
               },
               selected: {
@@ -234,57 +234,57 @@ const columns = [
               }
             }
           },
-          legends: [
+          легендаs: [
             {
-              visible: true,
-              orient: 'bottom'
+              видимый: true,
+              orient: 'низ'
             }
           ]
         }
       ],
       axes: [
         {
-          orient: 'left',
+          orient: 'лево',
           range: {
             min: 0
           }
         },
         {
-          orient: 'bottom',
+          orient: 'низ',
           label: {
-            visible: true
+            видимый: true
           },
-          type: 'band'
+          тип: 'band'
         }
       ],
-      legends: [
+      легендаs: [
         {
-          visible: true,
-          orient: 'bottom'
+          видимый: true,
+          orient: 'низ'
         }
       ]
     }
   },
   {
-    field: 'barChart',
-    title: 'vchart bar',
-    width: '320',
-    cellType: 'chart',
-    chartModule: 'vchart',
-    chartSpec: {
-      type: 'common',
+    поле: 'barграфик',
+    заголовок: 'vграфик bar',
+    ширина: '320',
+    cellType: 'график',
+    графикModule: 'vграфик',
+    графикSpec: {
+      тип: 'common',
       series: [
         {
-          type: 'bar',
-          data: {
-            id: 'data'
+          тип: 'bar',
+          данные: {
+            id: 'данные'
           },
-          xField: 'x',
-          yField: 'y',
-          seriesField: 'type',
+          xполе: 'x',
+          yполе: 'y',
+          seriesполе: 'тип',
           bar: {
             state: {
-              hover: {
+              навести: {
                 fill: 'green'
               },
               selected: {
@@ -299,85 +299,85 @@ const columns = [
       ],
       axes: [
         {
-          orient: 'left',
+          orient: 'лево',
           range: {
             min: 0
           }
         },
         {
-          orient: 'bottom',
+          orient: 'низ',
           label: {
-            visible: true
+            видимый: true
           },
-          type: 'band'
+          тип: 'band'
         }
       ]
     }
   },
   {
-    field: 'scatterChart',
-    title: 'vchart scatter',
-    width: '320',
-    cellType: 'chart',
-    chartModule: 'vchart',
-    chartSpec: {
-      type: 'common',
+    поле: 'scatterграфик',
+    заголовок: 'vграфик scatter',
+    ширина: '320',
+    cellType: 'график',
+    графикModule: 'vграфик',
+    графикSpec: {
+      тип: 'common',
       series: [
         {
-          type: 'scatter',
-          data: {
-            id: 'data'
+          тип: 'scatter',
+          данные: {
+            id: 'данные'
           },
-          xField: 'x',
-          yField: 'y',
-          seriesField: 'type'
+          xполе: 'x',
+          yполе: 'y',
+          seriesполе: 'тип'
         }
       ],
       axes: [
         {
-          orient: 'left',
+          orient: 'лево',
           range: {
             min: 0
           }
         },
         {
-          orient: 'bottom',
+          orient: 'низ',
           label: {
-            visible: true
+            видимый: true
           },
-          type: 'band'
+          тип: 'band'
         }
       ]
     }
   },
   {
-    field: 'areaChart',
-    title: 'vchart area',
-    width: '320',
-    cellType: 'chart',
-    chartModule: 'vchart',
-    chartSpec: {
-      type: 'common',
+    поле: 'areaграфик',
+    заголовок: 'vграфик area',
+    ширина: '320',
+    cellType: 'график',
+    графикModule: 'vграфик',
+    графикSpec: {
+      тип: 'common',
       series: [
         {
-          type: 'area',
-          data: {
-            id: 'data'
+          тип: 'area',
+          данные: {
+            id: 'данные'
           },
-          xField: 'x',
-          yField: 'y',
-          seriesField: 'type',
+          xполе: 'x',
+          yполе: 'y',
+          seriesполе: 'тип',
           point: {
             style: {
-              fillOpacity: 1,
-              stroke: '#000',
-              strokeWidth: 4
+              fillOpaГород: 1,
+              strхорошоe: '#000',
+              strхорошоeширина: 4
             },
             state: {
-              hover: {
-                fillOpacity: 0.5,
-                stroke: 'blue',
-                strokeWidth: 2
+              навести: {
+                fillOpaГород: 0.5,
+                strхорошоe: 'blue',
+                strхорошоeширина: 2
               },
               selected: {
                 fill: 'red'
@@ -386,27 +386,27 @@ const columns = [
           },
           area: {
             style: {
-              fillOpacity: 0.3,
-              stroke: '#000',
-              strokeWidth: 4
+              fillOpaГород: 0.3,
+              strхорошоe: '#000',
+              strхорошоeширина: 4
             },
             state: {
-              hover: {
-                fillOpacity: 1
+              навести: {
+                fillOpaГород: 1
               },
               selected: {
                 fill: 'red',
-                fillOpacity: 1
+                fillOpaГород: 1
               }
             }
           },
           line: {
             state: {
-              hover: {
-                stroke: 'red'
+              навести: {
+                strхорошоe: 'red'
               },
               selected: {
-                stroke: 'yellow'
+                strхорошоe: 'yellow'
               }
             }
           }
@@ -414,130 +414,130 @@ const columns = [
       ],
       axes: [
         {
-          orient: 'left',
+          orient: 'лево',
           range: {
             min: 0
           }
         },
         {
-          orient: 'bottom',
+          orient: 'низ',
           label: {
-            visible: true
+            видимый: true
           },
-          type: 'band'
+          тип: 'band'
         }
       ],
-      legends: [
+      легендаs: [
         {
-          visible: true,
-          orient: 'bottom'
+          видимый: true,
+          orient: 'низ'
         }
       ]
     }
   }
 ];
 const records = [];
-for (let i = 1; i <= 10; i++)
+для (let i = 1; i <= 10; i++)
   records.push({
     id: i,
-    areaChart: [
-      { x: '0', type: 'A', y: 100 * i },
-      { x: '1', type: 'A', y: '707' },
-      { x: '2', type: 'A', y: '832' },
-      { x: '3', type: 'A', y: '726' },
-      { x: '4', type: 'A', y: '756' },
-      { x: '5', type: 'A', y: '777' },
-      { x: '6', type: 'A', y: '689' },
-      { x: '7', type: 'A', y: '795' },
-      { x: '8', type: 'A', y: '889' },
-      { x: '9', type: 'A', y: '757' },
-      { x: '0', type: 'B', y: '773' },
-      { x: '1', type: 'B', y: '785' },
-      { x: '2', type: 'B', y: '635' },
-      { x: '3', type: 'B', y: '813' },
-      { x: '4', type: 'B', y: '678' },
-      { x: '5', type: 'B', y: 796 + 100 * i },
-      { x: '6', type: 'B', y: '652' },
-      { x: '7', type: 'B', y: '623' },
-      { x: '8', type: 'B', y: '649' },
-      { x: '9', type: 'B', y: '630' }
+    areaграфик: [
+      { x: '0', тип: 'A', y: 100 * i },
+      { x: '1', тип: 'A', y: '707' },
+      { x: '2', тип: 'A', y: '832' },
+      { x: '3', тип: 'A', y: '726' },
+      { x: '4', тип: 'A', y: '756' },
+      { x: '5', тип: 'A', y: '777' },
+      { x: '6', тип: 'A', y: '689' },
+      { x: '7', тип: 'A', y: '795' },
+      { x: '8', тип: 'A', y: '889' },
+      { x: '9', тип: 'A', y: '757' },
+      { x: '0', тип: 'B', y: '773' },
+      { x: '1', тип: 'B', y: '785' },
+      { x: '2', тип: 'B', y: '635' },
+      { x: '3', тип: 'B', y: '813' },
+      { x: '4', тип: 'B', y: '678' },
+      { x: '5', тип: 'B', y: 796 + 100 * i },
+      { x: '6', тип: 'B', y: '652' },
+      { x: '7', тип: 'B', y: '623' },
+      { x: '8', тип: 'B', y: '649' },
+      { x: '9', тип: 'B', y: '630' }
     ],
-    lineChart: [
-      { x: '0', type: 'A', y: 100 * i },
-      { x: '1', type: 'A', y: '707' },
-      { x: '2', type: 'A', y: '832' },
-      { x: '3', type: 'A', y: '726' },
-      { x: '4', type: 'A', y: '756' },
-      { x: '5', type: 'A', y: '777' },
-      { x: '6', type: 'A', y: '689' },
-      { x: '7', type: 'A', y: '795' },
-      { x: '8', type: 'A', y: '889' },
-      { x: '9', type: 'A', y: '757' },
-      { x: '0', type: 'B', y: 500 },
-      { x: '1', type: 'B', y: '785' },
-      { x: '2', type: 'B', y: '635' },
-      { x: '3', type: 'B', y: '813' },
-      { x: '4', type: 'B', y: '678' },
-      { x: '5', type: 'B', y: '796' },
-      { x: '6', type: 'B', y: '652' },
-      { x: '7', type: 'B', y: '623' },
-      { x: '8', type: 'B', y: '649' },
-      { x: '9', type: 'B', y: '630' }
+    lineграфик: [
+      { x: '0', тип: 'A', y: 100 * i },
+      { x: '1', тип: 'A', y: '707' },
+      { x: '2', тип: 'A', y: '832' },
+      { x: '3', тип: 'A', y: '726' },
+      { x: '4', тип: 'A', y: '756' },
+      { x: '5', тип: 'A', y: '777' },
+      { x: '6', тип: 'A', y: '689' },
+      { x: '7', тип: 'A', y: '795' },
+      { x: '8', тип: 'A', y: '889' },
+      { x: '9', тип: 'A', y: '757' },
+      { x: '0', тип: 'B', y: 500 },
+      { x: '1', тип: 'B', y: '785' },
+      { x: '2', тип: 'B', y: '635' },
+      { x: '3', тип: 'B', y: '813' },
+      { x: '4', тип: 'B', y: '678' },
+      { x: '5', тип: 'B', y: '796' },
+      { x: '6', тип: 'B', y: '652' },
+      { x: '7', тип: 'B', y: '623' },
+      { x: '8', тип: 'B', y: '649' },
+      { x: '9', тип: 'B', y: '630' }
     ],
-    barChart: [
-      { x: '0', type: 'A', y: 100 * i },
-      { x: '1', type: 'A', y: '707' },
-      { x: '2', type: 'A', y: '832' },
-      { x: '3', type: 'A', y: '726' },
-      { x: '4', type: 'A', y: '756' },
-      { x: '5', type: 'A', y: '777' },
-      { x: '6', type: 'A', y: '689' },
-      { x: '7', type: 'A', y: '795' },
-      { x: '8', type: 'A', y: '889' },
-      { x: '9', type: 'A', y: '757' },
-      { x: '0', type: 'B', y: 500 },
-      { x: '1', type: 'B', y: '785' },
-      { x: '2', type: 'B', y: '635' },
-      { x: '3', type: 'B', y: '813' },
-      { x: '4', type: 'B', y: '678' },
-      { x: '5', type: 'B', y: '796' },
-      { x: '6', type: 'B', y: '652' },
-      { x: '7', type: 'B', y: '623' },
-      { x: '8', type: 'B', y: '649' },
-      { x: '9', type: 'B', y: '630' }
+    barграфик: [
+      { x: '0', тип: 'A', y: 100 * i },
+      { x: '1', тип: 'A', y: '707' },
+      { x: '2', тип: 'A', y: '832' },
+      { x: '3', тип: 'A', y: '726' },
+      { x: '4', тип: 'A', y: '756' },
+      { x: '5', тип: 'A', y: '777' },
+      { x: '6', тип: 'A', y: '689' },
+      { x: '7', тип: 'A', y: '795' },
+      { x: '8', тип: 'A', y: '889' },
+      { x: '9', тип: 'A', y: '757' },
+      { x: '0', тип: 'B', y: 500 },
+      { x: '1', тип: 'B', y: '785' },
+      { x: '2', тип: 'B', y: '635' },
+      { x: '3', тип: 'B', y: '813' },
+      { x: '4', тип: 'B', y: '678' },
+      { x: '5', тип: 'B', y: '796' },
+      { x: '6', тип: 'B', y: '652' },
+      { x: '7', тип: 'B', y: '623' },
+      { x: '8', тип: 'B', y: '649' },
+      { x: '9', тип: 'B', y: '630' }
     ],
-    scatterChart: [
-      { x: '0', type: 'A', y: 100 * i },
-      { x: '1', type: 'A', y: '707' },
-      { x: '2', type: 'A', y: '832' },
-      { x: '3', type: 'A', y: '726' },
-      { x: '4', type: 'A', y: '756' },
-      { x: '5', type: 'A', y: '777' },
-      { x: '6', type: 'A', y: '689' },
-      { x: '7', type: 'A', y: '795' },
-      { x: '8', type: 'A', y: '889' },
-      { x: '9', type: 'A', y: '757' },
-      { x: '0', type: 'B', y: 500 },
-      { x: '1', type: 'B', y: '785' },
-      { x: '2', type: 'B', y: '635' },
-      { x: '3', type: 'B', y: '813' },
-      { x: '4', type: 'B', y: '678' },
-      { x: '5', type: 'B', y: '796' },
-      { x: '6', type: 'B', y: '652' },
-      { x: '7', type: 'B', y: '623' },
-      { x: '8', type: 'B', y: '649' },
-      { x: '9', type: 'B', y: '630' }
+    scatterграфик: [
+      { x: '0', тип: 'A', y: 100 * i },
+      { x: '1', тип: 'A', y: '707' },
+      { x: '2', тип: 'A', y: '832' },
+      { x: '3', тип: 'A', y: '726' },
+      { x: '4', тип: 'A', y: '756' },
+      { x: '5', тип: 'A', y: '777' },
+      { x: '6', тип: 'A', y: '689' },
+      { x: '7', тип: 'A', y: '795' },
+      { x: '8', тип: 'A', y: '889' },
+      { x: '9', тип: 'A', y: '757' },
+      { x: '0', тип: 'B', y: 500 },
+      { x: '1', тип: 'B', y: '785' },
+      { x: '2', тип: 'B', y: '635' },
+      { x: '3', тип: 'B', y: '813' },
+      { x: '4', тип: 'B', y: '678' },
+      { x: '5', тип: 'B', y: '796' },
+      { x: '6', тип: 'B', y: '652' },
+      { x: '7', тип: 'B', y: '623' },
+      { x: '8', тип: 'B', y: '649' },
+      { x: '9', тип: 'B', y: '630' }
     ]
   });
 const option = {
   records,
   columns,
   transpose: false,
-  defaultColWidth: 200,
-  defaultRowHeight: 200,
-  defaultHeaderRowHeight: 50
+  defaultColширина: 200,
+  defaultRowвысота: 200,
+  defaultHeaderRowвысота: 50
 };
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

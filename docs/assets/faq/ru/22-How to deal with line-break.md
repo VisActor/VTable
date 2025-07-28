@@ -17,5 +17,5 @@
 
 ## Связанные документы
 
-- [Руководство](https://www.visactor.io/vtable/option/ListTable#enableLineBreak)
+- [Руководство](https://www.visactor.io/VTable/option/ListTable#enableLineBreak)
 - [github](https://github.com/VisActor/VTable)

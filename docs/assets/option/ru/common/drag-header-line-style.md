@@ -1,17 +1,17 @@
-{{ target: common-drag-header-line-style }}
+{{ target: common-перетаскивание-header-line-style }}
 
-#${prefix} dragHeaderSplitLine(Object)
+#${prefix} dragHeaderSplitLine(объект)
 
-Drag-and-drop table swap separator line style
+перетаскивание-и-отпускание таблица swap separator line style
 
-##${prefix} lineColor(string)
+##${prefix} lineColor(строка)
 
-Line color
+Line цвет
 
-##${prefix} lineWidth(number)
+##${prefix} lineширина(число)
 
-Line width
+Line ширина
 
-##${prefix} shadowBlockColor(string)
+##${prefix} shadowBlockColor(строка)
 
-Color of the shadow area during dragging
+цвет из the shadow area during dragging

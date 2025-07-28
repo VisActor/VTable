@@ -1,103 +1,103 @@
-# Cell display chart
+# Cell display график
 
-In the previous article, we introduced how to display minigraphs in cells. Minigraphs can do simple trend analysis and style configuration. If you want to apply the more powerful chart VChart to tables, please take a look at this tutorial.
+в the предыдущий article, we introduced how к display minigraphs в cells. Minigraphs can do simple trend analysis и style configuration. If you want к apply the more powerful график Vграфик к таблицаs, please take a loхорошо в this tutorial.
 
-## Inject Chart Components
+## Inject график компонентs
 
-Before using it, you need to inject the used chart library components:
+Before using it, you need к inject the used график library компонентs:
 
-    import VChart from '@visactor/vchart';
-    VTable.register.chartModule('vchart', VChart);
+    import Vграфик от '@visactor/vграфик';
+    Vтаблица.регистрация.графикModule('vграфик', Vграфик);
 
-About why you need to configure a name to register VChart`'vchart'`? We have plans to access other chart libraries.
+About why you need к configure a имя к регистрация Vграфик`'vграфик'`? We have plans к access other график libraries.
 
 ## Related configuration
 
-Table display type`cellType`Set to`chart`Used to generate charts.
+таблица display тип`cellType`Set к`график`Used к generate графикs.
 
-*   cellType: 'chart'//chart chart type
-*   chartModule: 'vchart'//vchart is the name configured during registration
-*   Chart Spec :{ } // chart configuration item, support funciton define
+*   cellType: 'график'//график график тип
+*   графикModule: 'vграфик'//vграфик is the имя configured during registration
+*   график Spec :{ } // график configuration item, support funciton define
 
-Where the chartSpec configuration item corresponds[VChart configuration](https://visactor.io/vchart/option)
+Where the графикSpec configuration item corresponds[Vграфик configuration](https://visactor.io/vграфик/option)
 
-## Chart chart data
+## график график данные
 
-Chart The chart data comes from the records set to the table. If it is basic table data, it can be set as follows:
+график The график данные comes от the records set к the таблица. If it is базовый таблица данные, it can be set as follows:
 
 ```javascript
 [
     {
         "personid": 1,
-        "areaChart": [{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 120},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 111}],
-        "scatterChart": [{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 120},{"x": "0","type": "A","y": 130}]]
+        "areaграфик": [{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 120},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 111}],
+        "scatterграфик": [{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 120},{"x": "0","тип": "A","y": 130}]]
     },
     {
         "personid": 2,
-        "areaChart": [{"x": "0","type": "A","y": 120},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 120},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 111}{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 130}],
-        "scatterChart": [{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 120},{"x": "0","type": "A","y": 130},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 111}{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 100},{"x": "0","type": "A","y": 100}]
+        "areaграфик": [{"x": "0","тип": "A","y": 120},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 120},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 111}{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 130}],
+        "scatterграфик": [{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 120},{"x": "0","тип": "A","y": 130},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 111}{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 100},{"x": "0","тип": "A","y": 100}]
     }
 ]
 ```
 
-There are three fields in our records: persionid, areaChart, scatterChart, where areaChart and scatterChart are the two data that need to be provided for chart use.
+There are three полеs в our records: persionid, areaграфик, scatterграфик, where areaграфик и scatterграфик are the two данные that need к be provided для график use.
 
-## example
+## пример
 
-We use the above data to display different chart effects with different specs:
+We use the above данные к display different график effects с different specs:
 
-```javascript livedemo template=vtable
-VTable.register.chartModule('vchart', VChart);
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);
 const records = [
     {
         "personid": 1,
-        "areaChart": [{"x": "0","type": "A","y": 100},{"x": "1","type": "A","y": 130},{"x": "2","type": "A","y": 120},{"x": "3","type": "A","y": 130},{"x": "4","type": "A","y": 100},{"x": "5","type": "A","y": 111}],
-        "scatterChart": [{"x": "1","type": "A","y": 100},{"x": "2","type": "A","y": 100},{"x": "3","type": "A","y": 130},{"x": "4","type": "A","y": 130},{"x": "5","type": "A","y": 120},{"x": "6","type": "A","y": 130}]
+        "areaграфик": [{"x": "0","тип": "A","y": 100},{"x": "1","тип": "A","y": 130},{"x": "2","тип": "A","y": 120},{"x": "3","тип": "A","y": 130},{"x": "4","тип": "A","y": 100},{"x": "5","тип": "A","y": 111}],
+        "scatterграфик": [{"x": "1","тип": "A","y": 100},{"x": "2","тип": "A","y": 100},{"x": "3","тип": "A","y": 130},{"x": "4","тип": "A","y": 130},{"x": "5","тип": "A","y": 120},{"x": "6","тип": "A","y": 130}]
     },
     {
         "personid": 2,
-        "areaChart": [{"x": "0","type": "A","y": 120},{"x": "1","type": "A","y": 130},{"x": "2","type": "A","y": 120},{"x": "3","type": "A","y": 130},{"x": "4","type": "A","y": 100},{"x": "5","type": "A","y": 111},{"x": "6","type": "A","y": 100},{"x": "7","type": "A","y": 100},{"x": "8","type": "A","y": 130}],
-        "scatterChart": [{"x": "0","type": "A","y": 100},{"x": "1","type": "A","y": 130},{"x": "2","type": "A","y": 120},{"x": "3","type": "A","y": 130},{"x": "4","type": "A","y": 100},{"x": "5","type": "A","y": 111},{"x": "6","type": "A","y": 100},{"x": "7","type": "A","y": 100},{"x": "8","type": "A","y": 100},{"x": "9","type": "A","y": 100}]
+        "areaграфик": [{"x": "0","тип": "A","y": 120},{"x": "1","тип": "A","y": 130},{"x": "2","тип": "A","y": 120},{"x": "3","тип": "A","y": 130},{"x": "4","тип": "A","y": 100},{"x": "5","тип": "A","y": 111},{"x": "6","тип": "A","y": 100},{"x": "7","тип": "A","y": 100},{"x": "8","тип": "A","y": 130}],
+        "scatterграфик": [{"x": "0","тип": "A","y": 100},{"x": "1","тип": "A","y": 130},{"x": "2","тип": "A","y": 120},{"x": "3","тип": "A","y": 130},{"x": "4","тип": "A","y": 100},{"x": "5","тип": "A","y": 111},{"x": "6","тип": "A","y": 100},{"x": "7","тип": "A","y": 100},{"x": "8","тип": "A","y": 100},{"x": "9","тип": "A","y": 100}]
     }
 ];
 
 const columns =[
     {
-      field: 'personid',
-      title: 'personid',
+      поле: 'personid',
+      заголовок: 'personid',
       description: '这是一个标题的详细描述',
-      sort: true,
-      width: 80,
+      сортировка: true,
+      ширина: 80,
       style: {
-        textAlign: 'left',
+        textAlign: 'лево',
         bgColor: '#ea9999'
       }
     },
     {
-      field: 'areaChart',
-      title: 'vchart area',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'area',
-        data: {
-          id: 'data'
+      поле: 'areaграфик',
+      заголовок: 'vграфик area',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'area',
+        данные: {
+          id: 'данные'
         },
-        xField: 'x',
-        yField: 'y',
-        seriesField: 'type',
+        xполе: 'x',
+        yполе: 'y',
+        seriesполе: 'тип',
         point: {
           style: {
-            fillOpacity: 1,
-            stroke: '#000',
-            strokeWidth: 4
+            fillOpaГород: 1,
+            strхорошоe: '#000',
+            strхорошоeширина: 4
           },
           state: {
-            hover: {
-              fillOpacity: 0.5,
-              stroke: 'blue',
-              strokeWidth: 2
+            навести: {
+              fillOpaГород: 0.5,
+              strхорошоe: 'blue',
+              strхорошоeширина: 2
             },
             selected: {
               fill: 'red'
@@ -106,81 +106,81 @@ const columns =[
         },
         area: {
           style: {
-            fillOpacity: 0.3,
-            stroke: '#000',
-            strokeWidth: 4
+            fillOpaГород: 0.3,
+            strхорошоe: '#000',
+            strхорошоeширина: 4
           },
           state: {
-            hover: {
-              fillOpacity: 1
+            навести: {
+              fillOpaГород: 1
             },
             selected: {
               fill: 'red',
-              fillOpacity: 1
+              fillOpaГород: 1
             }
           }
         },
         line: {
           state: {
-            hover: {
-              stroke: 'red'
+            навести: {
+              strхорошоe: 'red'
             },
             selected: {
-              stroke: 'yellow'
+              strхорошоe: 'yellow'
             }
           }
         },
 
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ],
       }
     },
     {
-      field: 'areaChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'areaграфик',
+      заголовок: 'vграфик line',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'line',
-            data: {
-              id: 'data'
+            тип: 'line',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип',
             line: {
               state: {
-                hover: {
-                  strokeWidth: 4
+                навести: {
+                  strхорошоeширина: 4
                 },
                 selected: {
-                  stroke: 'red'
+                  strхорошоe: 'red'
                 },
                 hover_reverse: {
-                  stroke: '#ddd'
+                  strхорошоe: '#ddd'
                 }
               }
             },
             point: {
               state: {
-                hover: {
+                навести: {
                   fill: 'red'
                 },
                 selected: {
@@ -196,41 +196,41 @@ const columns =[
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ],
       }
     },
     {
-      field: 'areaChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'areaграфик',
+      заголовок: 'vграфик line',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'bar',
-            data: {
-              id: 'data'
+            тип: 'bar',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип',
             bar: {
               state: {
-                hover: {
+                навести: {
                   fill: 'green'
                 },
                 selected: {
@@ -245,85 +245,85 @@ const columns =[
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ]
       }
     },
     {
-      field: 'scatterChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'scatterграфик',
+      заголовок: 'vграфик line',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'scatter',
-            data: {
-              id: 'data'
+            тип: 'scatter',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type'
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип'
           }
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ]
       }
     },
     {
-      field: 'areaChart',
-      title: 'vchart area',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'areaграфик',
+      заголовок: 'vграфик area',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'area',
-            data: {
-              id: 'data'
+            тип: 'area',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип',
             point: {
               style: {
-                fillOpacity: 1,
-                stroke: '#000',
-                strokeWidth: 4
+                fillOpaГород: 1,
+                strхорошоe: '#000',
+                strхорошоeширина: 4
               },
               state: {
-                hover: {
-                  fillOpacity: 0.5,
-                  stroke: 'blue',
-                  strokeWidth: 2
+                навести: {
+                  fillOpaГород: 0.5,
+                  strхорошоe: 'blue',
+                  strхорошоeширина: 2
                 },
                 selected: {
                   fill: 'red'
@@ -332,27 +332,27 @@ const columns =[
             },
             area: {
               style: {
-                fillOpacity: 0.3,
-                stroke: '#000',
-                strokeWidth: 4
+                fillOpaГород: 0.3,
+                strхорошоe: '#000',
+                strхорошоeширина: 4
               },
               state: {
-                hover: {
-                  fillOpacity: 1
+                навести: {
+                  fillOpaГород: 1
                 },
                 selected: {
                   fill: 'red',
-                  fillOpacity: 1
+                  fillOpaГород: 1
                 }
               }
             },
             line: {
               state: {
-                hover: {
-                  stroke: 'red'
+                навести: {
+                  strхорошоe: 'red'
                 },
                 selected: {
-                  stroke: 'yellow'
+                  strхорошоe: 'yellow'
                 }
               }
             }
@@ -360,55 +360,55 @@ const columns =[
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ],
        
       }
     },
     {
-      field: 'areaChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'areaграфик',
+      заголовок: 'vграфик line',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'line',
-            data: {
-              id: 'data'
+            тип: 'line',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип',
             line: {
               state: {
-                hover: {
-                  strokeWidth: 4
+                навести: {
+                  strхорошоeширина: 4
                 },
                 selected: {
-                  stroke: 'red'
+                  strхорошоe: 'red'
                 },
                 hover_reverse: {
-                  stroke: '#ddd'
+                  strхорошоe: '#ddd'
                 }
               }
             },
             point: {
               state: {
-                hover: {
+                навести: {
                   fill: 'red'
                 },
                 selected: {
@@ -424,42 +424,42 @@ const columns =[
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ],
        
       }
     },
     {
-      field: 'areaChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'areaграфик',
+      заголовок: 'vграфик line',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'bar',
-            data: {
-              id: 'data'
+            тип: 'bar',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type',
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип',
             bar: {
               state: {
-                hover: {
+                навести: {
                   fill: 'green'
                 },
                 selected: {
@@ -474,53 +474,53 @@ const columns =[
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ]
       }
     },
     {
-      field: 'scatterChart',
-      title: 'vchart line',
-      width: '320',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        type: 'common',
+      поле: 'scatterграфик',
+      заголовок: 'vграфик line',
+      ширина: '320',
+      cellType: 'график',
+      графикModule: 'vграфик',
+      графикSpec: {
+        тип: 'common',
         series: [
           {
-            type: 'scatter',
-            data: {
-              id: 'data'
+            тип: 'scatter',
+            данные: {
+              id: 'данные'
             },
-            xField: 'x',
-            yField: 'y',
-            seriesField: 'type'
+            xполе: 'x',
+            yполе: 'y',
+            seriesполе: 'тип'
           }
         ],
         axes: [
           {
-            orient: 'left',
+            orient: 'лево',
             range: {
               min: 0
             }
           },
           {
-            orient: 'bottom',
+            orient: 'низ',
             label: {
-              visible: true
+              видимый: true
             },
-            type: 'band'
+            тип: 'band'
           }
         ]
       }
@@ -529,13 +529,13 @@ const columns =[
 const option = {
   records,
   columns,
-  defaultColWidth: 200,
-  defaultRowHeight: 200,
-  defaultHeaderRowHeight: 50,
-  autoWrapText:true,
+  defaultColширина: 200,
+  defaultRowвысота: 200,
+  defaultHeaderRowвысота: 50,
+  автоWrapText:true,
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 
 ```
 
-Through the above introduction and examples, we can quickly create and configure the table display type sparkline miniature in VTable. Although only line graphs are currently supported, with subsequent development, the functions and types of minigraphs will become more and more perfect, providing more convenient and practical functions for data lake visualization.
+Through the above introduction и примеры, we can quickly create и configure the таблица display тип sparkline miniature в Vтаблица. Although only line graphs are currently supported, с subsequent development, the functions и types из minigraphs will become more и more perfect, providing more convenient и practical functions для данные lake visualization.

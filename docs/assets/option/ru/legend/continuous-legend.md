@@ -1,147 +1,147 @@
-{{ target: component-continuous-legend }}
+{{ target: компонент-continuous-легенда }}
 
-<!-- IContinuousLegendSpec -->
+<!-- иконкаtinuousлегендаSpec -->
 
-#${prefix} field(string)
+#${prefix} поле(строка)
 
-Optional, declare the associated mapping field.
+необязательный, declare the associated mapping поле.
 
-#${prefix} scale(string)
+#${prefix} scale(строка)
 
-Optional, continuous legend associated mapping scale id (this scale needs to be generated through the [global scale](todo) configuration, that is, `spec.scales`). If not specified, it will automatically match according to the legend type.
+необязательный, continuous легенда associated mapping scale id (this scale needs к be generated through the [global scale](todo) configuration, that is, `spec.scales`). If не specified, it will автоmatically match according к the легенда тип.
 
-#${prefix} slidable(boolean) = true
+#${prefix} slidable(логический) = true
 
-Enable slider interaction.
+включить ползунок interaction.
 
-#${prefix} defaultSelected(Array)
+#${prefix} defaultSelected(массив)
 
-Set the default selected legend items when the legend is initialized. Elements in the array correspond to the default filtered data range, such as `[0, 100]` which means filtering data with values between 0 and 100.
+Set the по умолчанию selected легенда items when the легенда is initialized. Elements в the массив correspond к the по умолчанию filtered данные range, such as `[0, 100]` which means filtering данные с values between 0 и 100.
 
-#${prefix} rail(Object)
+#${prefix} rail(объект)
 
-Configuration for the slider rail.
+Configuration для the ползунок rail.
 
-##${prefix} width(number)
+##${prefix} ширина(число)
 
-The width of the sliding rail.
+The ширина из the sliding rail.
 
-##${prefix} height(number)
+##${prefix} высота(число)
 
-The height of the sliding rail.
+The высота из the sliding rail.
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Style configuration for the sliding rail.
+Style configuration для the sliding rail.
 
 {{ use: graphic-rect(
   prefix = '##' + ${prefix}
 ) }}
 
-#${prefix} handler(Object)
+#${prefix} handler(объект)
 
-Configuration for the sliding handle.
+Configuration для the sliding handle.
 
-##${prefix} visible(boolean) = true
+##${prefix} видимый(логический) = true
 
-Whether to display the sliding handle. Displayed by default.
+Whether к display the sliding handle. Displayed по по умолчанию.
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Style configuration for the sliding handle.
+Style configuration для the sliding handle.
 
 {{ use: graphic-symbol(
   prefix = '##' + ${prefix}
 ) }}
 
-#${prefix} track(Object)
+#${prefix} track(объект)
 
-Style settings for the selected area of the slider.
+Style settings для the selected area из the ползунок.
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Style configuration for the selected area of the slider.
+Style configuration для the selected area из the ползунок.
 
 {{ use: graphic-rect(
   prefix = '##' + ${prefix}
 ) }}
 
-#${prefix} startText(Object)
+#${prefix} startText(объект)
 
-Configuration for the legend rail's left text.
+Configuration для the легенда rail's лево текст.
 
-##${prefix} visible(boolean) = false
+##${prefix} видимый(логический) = false
 
-Whether to display the left text of the legend rail.
+Whether к display the лево текст из the легенда rail.
 
-##${prefix} text(string)
+##${prefix} текст(строка)
 
-The content of the left text of the legend rail.
+The content из the лево текст из the легенда rail.
 
-##${prefix} space(number) = 6
+##${prefix} space(число) = 6
 
-The space between the left text of the legend rail and the slider.
+The space between the лево текст из the легенда rail и the ползунок.
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Style configuration for the left text of the legend rail.
+Style configuration для the лево текст из the легенда rail.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '##' + ${prefix}
 ) }}
 
-#${prefix} endText(Object)
+#${prefix} endText(объект)
 
-Configuration for the legend rail's right text.
+Configuration для the легенда rail's право текст.
 
-##${prefix} visible(boolean) = false
+##${prefix} видимый(логический) = false
 
-Whether to display the right text of the legend rail.
+Whether к display the право текст из the легенда rail.
 
-##${prefix} text(string)
+##${prefix} текст(строка)
 
-The content of the right text of the legend rail.
+The content из the право текст из the легенда rail.
 
-##${prefix} space(number) = 6
+##${prefix} space(число) = 6
 
-The space between the right text of the legend rail and the slider.
+The space between the право текст из the легенда rail и the ползунок.
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Style configuration for the right text of the legend rail.
+Style configuration для the право текст из the легенда rail.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '##' + ${prefix}
 ) }}
 
-#${prefix} handlerText(Object)
+#${prefix} handlerText(объект)
 
-Configuration for the text on the slider handle.
+Configuration для the текст на the ползунок handle.
 
-##${prefix} visible(boolean) = false
+##${prefix} видимый(логический) = false
 
-Whether to display the text on the slider handle.
+Whether к display the текст на the ползунок handle.
 
-##${prefix} precision(number)
+##${prefix} precision(число)
 
-The decimal precision of the data display, default 0, no decimal point.
+The decimal precision из the данные display, по умолчанию 0, no decimal point.
 
-##${prefix} formatter(Function)
+##${prefix} formatter(функция)
 
-Formatting function for data display. The function is defined as: `(text: string) => string`.
+Formatting функция для данные display. The функция is defined as: `(текст: строка) => строка`.
 
-##${prefix} space(number) = 6
+##${prefix} space(число) = 6
 
-The space between the text on the slider handle and the slider.
+The space between the текст на the ползунок handle и the ползунок.
 
-##${prefix} style(Object)
+##${prefix} style(объект)
 
-Style configuration for the text on the slider handle.
+Style configuration для the текст на the ползунок handle.
 
-{{ use: graphic-text(
+{{ use: graphic-текст(
   prefix = '##' + ${prefix}
 ) }}
 
-{{ use: component-base-legend(
+{{ use: компонент-base-легенда(
   prefix = ${prefix}
 ) }}

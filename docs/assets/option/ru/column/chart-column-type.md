@@ -1,29 +1,29 @@
-{{ target: chart-cell-type }}
+{{ target: график-cell-тип }}
 
-#${prefix} columns.chart(string)
+#${prefix} columns.график(строка)
 
-Specify the column type as 'chart', the cellType can be omitted and defaults to 'text'
+Specify the column тип as 'график', the cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'chart'
+##${prefix} cellType(строка) = 'график'
 
-Specify the column type as 'chart', the cellType can be omitted and defaults to 'text'
+Specify the column тип as 'график', the cellType can be omitted и defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##'+${prefix},
 ) }}
 
-##${prefix} chartModule(string)
+##${prefix} графикModule(строка)
 
-**Chart type exclusive configuration options**
+**график тип exclusive configuration options**
 
-Corresponding to the injected chart library component name
+Corresponding к the injected график library компонент имя
 
-##${prefix} chartSpec(any|Function)
+##${prefix} графикSpec(любой|функция)
 
-**Chart type exclusive configuration options**
+**график тип exclusive configuration options**
 
-Set the spec of the chart, or set it to a function that returns a different spec. The data displayed in the chart is provided by records.
+Set the spec из the график, или set it к a функция that returns a different spec. The данные displayed в the график is provided по records.
 
-##${prefix} noDataRenderNothing(boolean) = false
+##${prefix} noданныеRenderNothing(логический) = false
 
-Do not render the chart when there is no data. Defaults to false
+Do не render the график when there is no данные. Defaults к false

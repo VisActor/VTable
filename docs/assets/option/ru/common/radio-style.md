@@ -1,53 +1,53 @@
-{{ target: common-radio-style }}
+{{ target: common-переключатель-style }}
 
-#${prefix} radioStyle(Object)
+#${prefix} radioStyle(объект)
 
-Select box style settings
+выбрать box style settings
 
-##${prefix} size(number)
+##${prefix} размер(число)
 
-Select box size
+выбрать box размер
 
-##${prefix} spaceBetweenTextAndIcon(number)
+##${prefix} spaceBetweenTextAndиконка(число)
 
-Selection box and text spacing
+Selection box и текст spacing
 
-##${prefix} spaceBetweenRadio(number)
+##${prefix} spaceBetweenRadio(число)
 
-Multiple radio button boxes in a cell, direct spacing between radio button boxes
+Multiple переключатель Кнопка boxes в a cell, direct spacing between переключатель Кнопка boxes
 
-##${prefix} outerRadius(number)
+##${prefix} outerRadius(число)
 
-The outer radius of the radio button ring icon (will cover size)
+The outer radius из the переключатель Кнопка ring иконка (will cover размер)
 
-##${prefix} innerRadius(number)
+##${prefix} innerRadius(число)
 
-Radio button ring icon inner radius
+переключатель Кнопка ring иконка inner radius
 
-##${prefix} defaultFill(string)
+##${prefix} defaultFill(строка)
 
-Unselected state fill color
+Unselected state fill цвет
 
-##${prefix} defaultStroke(string)
+##${prefix} defaultStrхорошоe(строка)
 
-Unselected state stroke color
+Unselected state strхорошоe цвет
 
-##${prefix} disableFill(string)
+##${prefix} disableFill(строка)
 
-disable state fill color
+отключить state fill цвет
 
-##${prefix} checkedFill(string)
+##${prefix} checkedFill(строка)
 
-checked status fill color
+checked status fill цвет
 
-##${prefix} checkedStroke(string)
+##${prefix} checkedStrхорошоe(строка)
 
-checked status stroke color
+checked status strхорошоe цвет
 
-##${prefix} disableCheckedFill(string)
+##${prefix} disableCheckedFill(строка)
 
-checked status fill color
+checked status fill цвет
 
-##${prefix} disableCheckedStroke(string)
+##${prefix} disableCheckedStrхорошоe(строка)
 
-checked status stroke color
+checked status strхорошоe цвет

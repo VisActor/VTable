@@ -1,477 +1,477 @@
 {{ target: common-option-secondary }}
 
-#${prefix} widthMode('standard' | 'adaptive' | 'autoWidth') = 'standard'
+#${prefix} ширинаMode('standard' | 'adaptive' | 'автоширина') = 'standard'
 
-Table column width calculation mode, can be 'standard' (standard mode), 'adaptive' (container width adaptive mode) or 'autoWidth' (automatic width mode), default is 'standard'.
+таблица column ширина calculation mode, can be 'standard' (standard mode), 'adaptive' (container ширина adaptive mode) или 'автоширина' (автоmatic ширина mode), по умолчанию is 'standard'.
 
-- 'standard': Use the width specified by the width property as the column width.
-- 'adaptive': Use the width of the table container to allocate column width.
-- 'autoWidth': Calculate column width automatically based on the width of the column header and body cells content, ignoring the width property settings.
+- 'standard': Use the ширина specified по the ширина property as the column ширина.
+- 'adaptive': Use the ширина из the таблица container к allocate column ширина.
+- 'автоширина': Calculate column ширина автоmatically based на the ширина из the column header и body cells content, ignoring the ширина property settings.
 
-#${prefix} heightMode('standard' | 'adaptive' | 'autoHeight') = 'standard'
+#${prefix} высотаMode('standard' | 'adaptive' | 'автовысота') = 'standard'
 
-The calculation mode of table row height, which can be 'standard' (standard mode), 'adaptive' (adaptive container height mode) or 'autoHeight' (automatic row height mode), the default is 'standard'.
+The calculation mode из таблица row высота, which can be 'standard' (standard mode), 'adaptive' (adaptive container высота mode) или 'автовысота' (автоmatic row высота mode), the по умолчанию is 'standard'.
 
-- 'standard': use `defaultRowHeight` and `defaultHeaderRowHeight` as row height.
-- 'adaptive': Use the height of the container to assign the height of each row.
-- 'autoHeight': Automatically calculate line height based on content, based on fontSize and lineHeight(font height)，include padding. The related collocation setting item `autoWrapText` automatically wraps the line, and the line height can be calculated according to the content of the multi-line text after the line wrap.
+- 'standard': use `defaultRowвысота` и `defaultHeaderRowвысота` as row высота.
+- 'adaptive': Use the высота из the container к assign the высота из каждый row.
+- 'автовысота': автоmatically calculate line высота based на content, based на fontSize и lineвысота(шрифт высота)，include заполнение. The related collocation setting item `автоWrapText` автоmatically wraps the line, и the line высота can be calculated according к the content из the multi-line текст after the line wrap.
 
-#${prefix} widthAdaptiveMode('only-body' | 'all') = 'only-body'
+#${prefix} ширинаAdaptiveMode('only-body' | 'все') = 'only-body'
 
-The width adaptation strategy in adaptive mode, the default is 'only-body'.
+The ширина adaptation strategy в adaptive mode, the по умолчанию is 'only-body'.
 
-- 'only-body': Only the columns in the body part participate in the width adaptation calculation, and the width of the header part remains unchanged.
-- 'all': All columns participate in width adaptation calculation.
+- 'only-body': Only the columns в the body part participate в the ширина adaptation calculation, и the ширина из the header part remains unchanged.
+- 'все': все columns participate в ширина adaptation calculation.
 
-#${prefix} heightAdaptiveMode('only-body' | 'all') = 'only-body'
+#${prefix} высотаAdaptiveMode('only-body' | 'все') = 'only-body'
 
-The height adaptable strategy in adaptive mode, default is 'only-body'.
+The высота adapтаблица strategy в adaptive mode, по умолчанию is 'only-body'.
 
-- 'only-body': Only the rows in the body part participate in the height adaptation calculation, and the height of the header part remains unchanged.
-- 'all': All columns participate in the height adaptation calculation.
+- 'only-body': Only the rows в the body part participate в the высота adaptation calculation, и the высота из the header part remains unchanged.
+- 'все': все columns participate в the высота adaptation calculation.
 
-#${prefix} autoHeightInAdaptiveMode(boolean) = true
+#${prefix} автовысотаInAdaptiveMode(логический) = true
 
-When the adaptive mode is configured, the default value is true, that is, the length of the container is equal to the height of the stretched row based on the calculation of the height of each row. If you do not need to calculate the row height, set it to false if the default row height is used
+When the adaptive mode is configured, the по умолчанию значение is true, that is, the length из the container is equal к the высота из the stretched row based на the calculation из the высота из каждый row. If you do не need к calculate the row высота, set it к false if the по умолчанию row высота is used
 
-#${prefix} columnWidthComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
+#${prefix} columnширинаComputeMode('normal' | 'only-header' | 'only-body') = 'normal'
 
-When calculating the content width, the limited area participates in the calculation:
+When calculating the content ширина, the limited area participates в the calculation:
 
 - 'only-header': Only the header content is calculated.
 - 'only-body': Only the body cell content is calculated.
-- 'normal': Normal calculation, that is, calculating the header and body cell contents.
+- 'normal': Normal calculation, that is, calculating the header и body cell contents.
 
-#${prefix} containerFit(Object)
+#${prefix} containerFit(объект)
 
-Configuration for adapting the table frame to the container dimensions while preserving content size.
+Configuration для adapting the таблица frame к the container dimensions while preserving content размер.
 
 ```javascript
 containerFit: {
-  width: true,   // boolean
-  height: true   // boolean
+  ширина: true,   // логический
+  высота: true   // логический
 }
 ```
 
-- `width`: Whether to adapt the table frame width to the container width
-- `height`: Whether to adapt the table frame height to the container height
+- `ширина`: Whether к adapt the таблица frame ширина к the container ширина
+- `высота`: Whether к adapt the таблица frame высота к the container высота
 
-Unlike adaptive mode (`widthMode: 'adaptive'` or `heightMode: 'adaptive'`) which stretches content to fill the container, `containerFit` maintains the original content dimensions and fills remaining space appropriately.
+Unlike adaptive mode (`ширинаMode: 'adaptive'` или `высотаMode: 'adaptive'`) which stretches content к fill the container, `containerFit` maintains the original content dimensions и fills remaining space appropriately.
 
-#${prefix} autoWrapText(boolean) = false
+#${prefix} автоWrapText(логический) = false
 
-Whether to automatically wrap text
+Whether к автоmatically wrap текст
 
-#${prefix} autoFillWidth(boolean) = false
-The configuration item autoFillWidth is used to control whether to automatically fill the container width. Different from the effect of `adaptive` adaptive container of width mode `widthMode`, autoFillWidth controls that only when the number of columns is small, the table can automatically fill the width of the container, but when the number of columns exceeds the container, according to the actual situation A scroll bar can appear to set the column width.
+#${prefix} автоFillширина(логический) = false
+The configuration item автоFillширина is used к control whether к автоmatically fill the container ширина. Different от the effect из `adaptive` adaptive container из ширина mode `ширинаMode`, автоFillширина controls that only when the число из columns is small, the таблица can автоmatically fill the ширина из the container, but when the число из columns exceeds the container, according к the actual situation A прокрутка bar can appear к set the column ширина.
 
-#${prefix} autoFillHeight(boolean) = false
-The configuration item autoFillHeight is used to control whether to automatically fill the container height. Different from the effect of `adaptive` adaptive container of height mode `heightMode`, autoFillHeight controls that only when the number of rows is small, the table can automatically fill the height of the container, but when the number of rows exceeds the container, according to the actual situation A scroll bar can appear to set the row height.
+#${prefix} автоFillвысота(логический) = false
+The configuration item автоFillвысота is used к control whether к автоmatically fill the container высота. Different от the effect из `adaptive` adaptive container из высота mode `высотаMode`, автоFillвысота controls that only when the число из rows is small, the таблица can автоmatically fill the высота из the container, but when the число из rows exceeds the container, according к the actual situation A прокрутка bar can appear к set the row высота.
 
-#${prefix} maxCharactersNumber(number) = 200
+#${prefix} maxCharactersNumber(число) = 200
 
-The maximum number of characters that can be displayed in a cell, default is 200
+The maximum число из characters that can be displayed в a cell, по умолчанию is 200
 
-#${prefix} maxOperatableRecordCount(number)
+#${prefix} maxOperaтаблицаRecordCount(число)
 
-Maximum number of operable records, such as the maximum number of data entries that can be copied in a copy operation
+Maximum число из operable records, such as the maximum число из данные entries that can be copied в a copy operation
 
-#${prefix} limitMaxAutoWidth(boolean|number) = 450
+#${prefix} limitMaxавтоширина(логический|число) = 450
 
-Specify the maximum column width when calculating column width, which can be boolean or a specific value. Default is 450.
+Specify the maximum column ширина when calculating column ширина, which can be логический или a specific значение. по умолчанию is 450.
 
-#${prefix} limitMinWidth(boolean|number) = 10
+#${prefix} limitMinширина(логический|число) = 10
 
-Minimum column width limit. If set to true, the column width will be limited to a minimum of 10px when dragging to change the column width. If set to false, there will be no limit. Or set it directly to some numeric value. Default is 10px.
+Minimum column ширина limit. If set к true, the column ширина will be limited к a minimum из 10px when dragging к change the column ширина. If set к false, there will be no limit. или set it directly к некоторые numeric значение. по умолчанию is 10px.
 
-#${prefix} frozenColCount(number) = 0
+#${prefix} frozenColCount(число) = 0
 
-The number of frozen columns
+The число из frozen columns
 
-#${prefix} frozenRowCount(number) = 0
+#${prefix} frozenRowCount(число) = 0
 
-The number of frozen columns(including the header)
+The число из frozen columns(including the header)
 
-#${prefix} rightFrozenColCount(number) = 0
+#${prefix} rightFrozenColCount(число) = 0
 
-Freeze Columns Right
+Freeze Columns право
 
-#${prefix} bottomFrozenRowCount(number) = 0
+#${prefix} bottomFrozenRowCount(число) = 0
 
-number of frozen rows at the bottom
+число из frozen rows в the низ
 
-#${prefix} maxFrozenWidth(number | string) = '80%'
+#${prefix} maxFrozenширина(число | строка) = '80%'
 
-Maximum freezing width, fixed value or percentage. Default is '80%'
+Maximum freezing ширина, fixed значение или percentвозраст. по умолчанию is '80%'
 
-#${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
+#${prefix} unfreezeAllOnExceedsMaxширина(логический) = true
 
-Whether to defrost after the maximum freezing width is exceeded. The default value is true
+Whether к defrost after the maximum freezing ширина is exceeded. The по умолчанию значение is true
 
-#${prefix} allowFrozenColCount(number) = 0
+#${prefix} allowFrozenColCount(число) = 0
 
-Allow the number of frozen columns, indicating how many columns will show the frozen operation button (effective for basic tables)
+Allow the число из frozen columns, indicating how many columns will показать the frozen operation Кнопка (effective для базовый таблицаs)
 
-#${prefix} showFrozenIcon(boolean) = true
+#${prefix} showFrozenиконка(логический) = true
 
-Whether to show the fixed column pin icon, effective for basic tables
+Whether к показать the fixed column pin иконка, effective для базовый таблицаs
 
-#${prefix} defaultRowHeight(number|'auto') = 40
+#${prefix} defaultRowвысота(число|'авто') = 40
 
-Default row height.
+по умолчанию row высота.
 
-- 'auto': The default row height calculated based on the row height. Combined with defaultHeaderRowHeight, it can achieve the effect of automatic row height calculation for the header or body part.
-- Specific value: Set a specific row height.
+- 'авто': The по умолчанию row высота calculated based на the row высота. Combined с defaultHeaderRowвысота, it can achieve the effect из автоmatic row высота calculation для the header или body part.
+- Specific значение: Set a specific row высота.
 
-#${prefix} defaultHeaderRowHeight(Array|number)
+#${prefix} defaultHeaderRowвысота(массив|число)
 
-The default row height of the column header can be set row by row. If not set, the defaultRowHeight value will be used as the row height of the table header.
+The по умолчанию row высота из the column header can be set row по row. If не set, the defaultRowвысота значение will be used as the row высота из the таблица header.
 
 Specific definition:
 
 ```
-defaultHeaderRowHeight?: (number | 'auto') | (number | 'auto')[];
+defaultHeaderRowвысота?: (число | 'авто') | (число | 'авто')[];
 ```
 
-#${prefix} defaultColWidth(number) = 80
+#${prefix} defaultColширина(число) = 80
 
-Column width default value
+Column ширина по умолчанию значение
 
-#${prefix} defaultHeaderColWidth(Array|number)
+#${prefix} defaultHeaderColширина(массив|число)
 
-The default column width of the row header can be set column by column. If not set, the value of defaultColWidth will be used as the column width and height of the header.
+The по умолчанию column ширина из the row header can be set column по column. If не set, the значение из defaultColширина will be used as the column ширина и высота из the header.
 
 Specific definition:
 
 ```
-/** The default column width of the row header can be set column by column. If not, defaultColWidth is used */
-defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
+/** The по умолчанию column ширина из the row header can be set column по column. If не, defaultColширина is used */
+defaultHeaderColширина?: (число | 'авто') | (число | 'авто')[];
 ```
 
-#${prefix} keyboardOptions(Object)
+#${prefix} keyboardOptions(объект)
 
-Shortcut key function settings, specific configuration items:
+Shortcut key функция settings, specific configuration items:
 
-##${prefix} selectAllOnCtrlA(boolean) = false
-Enable the shortcut key Select All.
-Supports `boolean` or specific configuration type `SelectAllOnCtrlAOption`.
+##${prefix} selectAllOnCtrlA(логический) = false
+включить the shortcut key выбрать все.
+Supports `логический` или specific configuration тип `SelectAllOnCtrlAOption`.
 
 ```
-export interface SelectAllOnCtrlAOption {
-disableHeaderSelect?: boolean; //Whether to disable header selection when the shortcut key is used to select all.
-disableRowSeriesNumberSelect?: boolean; //Whether to disable the selection of row sequence numbers when the shortcut key is used to select all.
+export интерфейс SelectAllOnCtrlAOption {
+disableHeaderSelect?: логический; //Whether к отключить header selection when the shortcut key is used к выбрать все.
+disableRowSeriesNumberSelect?: логический; //Whether к отключить the selection из row sequence numbers when the shortcut key is used к выбрать все.
 }
 ```
 
-##${prefix} copySelected(boolean) = false
+##${prefix} copySelected(логический) = false
 
-Enable shortcut key to copy, consistent with the browser's shortcut key.
+включить shortcut key к copy, consistent с the browser's shortcut key.
 
-##${prefix} pasteValueToCell(boolean) = false
+##${prefix} pasteValueToCell(логический) = false
 
-Enable shortcut key to paste, consistent with the browser's shortcut key.Paste takes effect only for cells with an editor configured
+включить shortcut key к paste, consistent с the browser's shortcut key.Paste takes effect only для cells с an editor configured
 
-##${prefix} moveFocusCellOnTab(boolean) = true
-Enable tab key interaction. The default is true. Turn on the tab key to move the selected cell. If you are currently editing a cell, moving to the next cell is also in the editing state.
+##${prefix} moveFocusCellOnTab(логический) = true
+включить tab key interaction. The по умолчанию is true. Turn на the tab key к move the selected cell. If you are currently editing a cell, moving к the следующий cell is also в the editing state.
 
-##${prefix} moveFocusCellOnEnter(boolean) = false
-Enable enter key interaction. Default is false. Press enter key to select next cell. Mutually exclusive with editCellOnEnter. If set to true at the same time, it takes precedence over editCellOnEnter.
+##${prefix} moveFocusCellOnEnter(логический) = false
+включить enter key interaction. по умолчанию is false. Press enter key к выбрать следующий cell. Mutually exclusive с editCellOnEnter. If set к true в the same time, it takes precedence over editCellOnEnter.
 
-##${prefix} editCellOnEnter(boolean) = true
-Enable enter key interaction. Default is true. If the selected cell is editable, enter cell editing.
+##${prefix} editCellOnEnter(логический) = true
+включить enter key interaction. по умолчанию is true. If the selected cell is ediтаблица, enter cell editing.
 
-##${prefix} moveEditCellOnArrowKeys(boolean) = false
-By default, it is not enabled, that is, false. If this configuration is enabled, if the cell is currently being edited, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor of the string in the edit text. The up, down, left, and right arrow keys to switch the selected cell are not affected by this configuration.
+##${prefix} moveEditCellOnArrowKeys(логический) = false
+по по умолчанию, it is не включен, that is, false. If this configuration is включен, if the cell is currently being edited, the arrow keys can move к the следующий cell и enter the editing state, instead из moving the cursor из the строка в the edit текст. The up, down, лево, и право arrow keys к switch the selected cell are не affected по this configuration.
 
-##${prefix} moveEditCellOnArrowKeys(boolean) = false
+##${prefix} moveEditCellOnArrowKeys(логический) = false
 
-The default is not enabled, which is false.
+The по умолчанию is не включен, which is false.
 
-If this configuration is turned on, if you are currently editing a cell, the arrow keys can move to the next cell and enter the editing state, instead of moving the cursor to edit the string within the text.
+If this configuration is turned на, if you are currently editing a cell, the arrow keys can move к the следующий cell и enter the editing state, instead из moving the cursor к edit the строка within the текст.
 
-Switching the selected cells with the up, down, left and right arrow keys is not affected by this configuration.
+Switching the selected cells с the up, down, лево и право arrow keys is не affected по this configuration.
 
-##${prefix} ctrlMultiSelect(boolean) = true
+##${prefix} ctrlMultiSelect(логический) = true
 
-Whether to enable ctrl multi-select. Default is true.
+Whether к включить ctrl multi-выбрать. по умолчанию is true.
 
-#${prefix} eventOptions(Object)
+#${prefix} событиеOptions(объект)
 
-Issue settings related to event triggering, specific configuration items:
+Issue settings related к событие triggering, specific configuration items:
 
-##${prefix} preventDefaultContextMenu(boolean) = true
-prevent the default behavior of the right mouse button
+##${prefix} prсобытиеDefaultContextменю(логический) = true
+prсобытие the по умолчанию behavior из the право mouse Кнопка
 
-##${prefix} contextmenuReturnAllSelectedCells(boolean) = true
+##${prefix} contextменюReturnAllSelectedCells(логический) = true
 
-Whether to return all selected cells information to the user in the contextmenu event parameter. Default is true. If you do not need it, it is best to set it to false.
+Whether к возврат все selected cells information к the user в the contextменю событие параметр. по умолчанию is true. If you do не need it, it is best к set it к false.
 
-#${prefix} excelOptions(Object)
+#${prefix} excelOptions(объект)
 
 Align excel advanced capabilities
 
-##${prefix} fillHandle(boolean) = false
+##${prefix} fillHandle(логический) = false
 
-Fill handle, when set to true, when a cell is selected, the fill handle will be displayed on the lower right side of the cell. You can drag the fill handle to edit the value of the cell. Or double-click the fill handle to change the value of the cell you want to edit.
+Fill handle, when set к true, when a cell is selected, the fill handle will be displayed на the lower право side из the cell. Вы можете перетаскивание the fill handle к edit the значение из the cell. или double-Нажать the fill handle к change the значение из the cell you want к edit.
 
-#${prefix} hover(Object)
+#${prefix} навести(объект)
 
-Hover interaction configuration, specific configuration items as follows:
+навести interaction configuration, specific configuration items as follows:
 
 ##${prefix} highlightMode('cross'|'column'|'row'|'cell') = 'cross'
 
-Hover interaction response mode: cross, entire column, entire row, or single cell.
+навести interaction response mode: cross, entire column, entire row, или single cell.
 
-##${prefix} disableHover(boolean) = false
+##${prefix} disableHover(логический) = false
 
-Do not respond to mouse hover interaction.
+Do не respond к mouse навести interaction.
 
-##${prefix} disableHeaderHover(boolean) = false
+##${prefix} disableHeaderHover(логический) = false
 
-Separately set the header not to respond to mouse hover interaction.
+Separately set the header не к respond к mouse навести interaction.
 
-#${prefix} select(Object)
+#${prefix} выбрать(объект)
 
 Cell selection interaction configuration, specific configuration items as follows:
 
 ##${prefix} highlightMode ('cross' | 'column' | 'row' | 'cell') = 'cell'
 
-Highlight range mode: cross, whole column, whole row or single cell. Default is `cell`
+Highlight range mode: cross, whole column, whole row или single cell. по умолчанию is `cell`
 
 ##${prefix} headerSelectMode ('inline' | 'cell' | 'body') = 'inline'
 
-When clicking on a header cell, whether the entire row or column needs to be selected along with the body.
+When Нажатьing на a header cell, whether the entire row или column needs к be selected along с the body.
 
 Possible values:
 
-'inline': Clicking a row header selects the entire row, and selecting a column header selects the entire column;
+'inline': Нажатьing a row header selects the entire row, и selecting a column header selects the entire column;
 
-'cell': select only the currently clicked header cell;
+'cell': выбрать only the currently Нажатьed header cell;
 
-'body': Do not select the table header. Clicking a row header selects all body cells in the row. Clicking a column header selects all body cells in the column.
+'body': Do не выбрать the таблица header. Нажатьing a row header selects все body cells в the row. Нажатьing a column header selects все body cells в the column.
 
-##${prefix} cornerHeaderSelectMode ('inline' | 'cell' | 'body' | 'all') = 'all'
+##${prefix} cornerHeaderSelectMode ('inline' | 'cell' | 'body' | 'все') = 'все'
 
-When clicking on the corner header cell, the selection mode to be applied.
+When Нажатьing на the corner header cell, the selection mode к be applied.
 
 Possible values:
 
-'inline': Clicking the corner header selects the entire column;
+'inline': Нажатьing the corner header selects the entire column;
 
-'cell': Select only the currently clicked corner header cell;
+'cell': выбрать only the currently Нажатьed corner header cell;
 
-'body': Clicking the corner header selects all body cells;
+'body': Нажатьing the corner header selects все body cells;
 
-'all': Clicking the corner header selects the entire table.
+'все': Нажатьing the corner header selects the entire таблица.
 
-##${prefix} disableSelect (boolean | ((col: number, row: number, table: BaseTableAPI) => boolean)) = false
+##${prefix} disableSelect (логический | ((col: число, row: число, таблица: Baseтаблицаапи) => логический)) = false
 
-Do not respond to mouse select interaction.
+Do не respond к mouse выбрать interaction.
 
-##${prefix} disableHeaderSelect (boolean) = false
+##${prefix} disableHeaderSelect (логический) = false
 
-Separately set the header not to respond to mouse select interaction.
+Separately set the header не к respond к mouse выбрать interaction.
 
-##${prefix} blankAreaClickDeselect(boolean) = false
+##${prefix} blankAreaНажатьDeselect(логический) = false
 
-Whether to cancel the selection when clicking the blank area.
+Whether к отмена the selection when Нажатьing the blank area.
 
-##${prefix} outsideClickDeselect(boolean) = true
+##${prefix} outsideНажатьDeselect(логический) = true
 
-Whether to cancel the selection when clicking outside the table.
+Whether к отмена the selection when Нажатьing outside the таблица.
 
-##${prefix} disableDragSelect(boolean) = true
+##${prefix} disableDragSelect(логический) = true
 
-Whether to disable dragging selection.
+Whether к отключить dragging selection.
 
-##${prefix} highlightInRange(boolean) = false
+##${prefix} highlightInRange(логический) = false
 
-Will the entire row or column be highlighted when select in multiple rows or columns.
+Will the entire row или column be highlighted when выбрать в multiple rows или columns.
 
-##${prefix} makeSelectCellVisible(boolean) = true
+##${prefix} makeSelectCellVisible(логический) = true
 
-Whether to make the selected cell visible, default is true.
+Whether к make the selected cell видимый, по умолчанию is true.
 
-#${prefix} theme(Object)
+#${prefix} тема(объект)
 
-{{ use: common-theme(
+{{ use: common-тема(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} menu(Object)
+#${prefix} меню(объект)
 
-Configuration related to the drop-down menu. Disappearance timing: automatically disappears after clicking the area outside the menu. Specific configuration items as follows:
+Configuration related к the отпускание-down меню. Disappearance timing: автоmatically disappears after Нажатьing the area outside the меню. Specific configuration items as follows:
 
 ##${prefix} renderMode('canvas' | 'html') = 'html'
 
-Menu rendering method, html is currently more complete, default using html rendering method.
+меню rendering method, html is currently more complete, по умолчанию using html rendering method.
 
-##${prefix} defaultHeaderMenuItems(MenuListItem[]|Function)
+##${prefix} defaultHeaderменюItems(менюсписокItem[]|функция)
 
-Global settings for built-in drop-down menus, type is `MenuListItem[] | ((args:{col:number,row:number,table:BaseTableAPI})=>MenuListItem[])`.
+Global settings для built-в отпускание-down менюs, тип is `менюсписокItem[] | ((args:{col:число,row:число,таблица:Baseтаблицаапи})=>менюсписокItem[])`.
 
-Currently only valid for basic tables, it will enable the default drop-down menu function for each header cell.
+Currently only valid для базовый таблицаs, it will включить the по умолчанию отпускание-down меню функция для каждый header cell.
 
-{{ use: common-menu-list-item() }}
+{{ use: common-меню-список-item() }}
 
-##${prefix} contextMenuItems(Array|Function)
+##${prefix} contextменюItems(массив|функция)
 
-Right-click menu. Declaration type:
+право-Нажать меню. Declaration тип:
 
 ```
-MenuListItem[] | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
+менюсписокItem[] | ((поле: строка, row: число, col: число, таблица?: Baseтаблицаапи) => менюсписокItem[]);
 ```
 
-{{ use: common-menu-list-item() }}
+{{ use: common-меню-список-item() }}
 
-##${prefix} dropDownMenuHighlight(Array)
+##${prefix} dropDownменюHighlight(массив)
 
-Set the selected state of the menu. Declaration type is `DropDownMenuHighlightInfo[]`.
-.DropDownMenuHighlightInfo is defined as follows:
+Set the selected state из the меню. Declaration тип is `DropDownменюHighlightInfo[]`.
+.DropDownменюHighlightInfo is defined as follows:
 
 ```
 {
-  /** Set the column number of the cell with the drop-down status */
-  col?: number;
-  /** Set the row number of the cell with the drop-down status */
-  row?: number;
-  /** Set the field name corresponding to the drop-down status, or set dimension information for pivot tables */
-  field?: string | IDimensionInfo[];
-  /** Specify the key value of the drop-down menu item */
-  menuKey?: string;
+  /** Set the column число из the cell с the отпускание-down status */
+  col?: число;
+  /** Set the row число из the cell с the отпускание-down status */
+  row?: число;
+  /** Set the поле имя corresponding к the отпускание-down status, или set dimension information для сводный таблицаs */
+  поле?: строка | IDimensionInfo[];
+  /** Specify the key значение из the отпускание-down меню item */
+  менюKey?: строка;
 }
 ```
 
 {{ use: common-IDimensionInfo()}}
 
-#${prefix} title(Object)
+#${prefix} title(объект)
 
 {{ use: common-title(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} emptyTip(Object)
+#${prefix} emptyTip(объект)
 
-Table empty data prompt.
+таблица empty данные prompt.
 
-You can directly configure `boolean` or `IEmptyTip` type objects. The default value is false, which means no prompt information is displayed.
+Вы можете directly configure `логический` или `IEmptyTip` тип objects. The по умолчанию значение is false, which means no prompt information is displayed.
 
-The IEmptyTip type is defined as follows:
+The IEmptyTip тип is defined as follows:
 
 {{ use: common-emptyTip(
 prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} tooltip(Object)
+#${prefix} Подсказка(объект)
 
-Tooltip related configuration. Specific configuration items are as follows:
+Подсказка related configuration. Specific configuration items are as follows:
 
 ##${prefix} renderMode ('html') = 'html'
 
-Html is currently more complete, default using html rendering method. Currently does not support canvas scheme, will support later.
+Html is currently more complete, по умолчанию using html rendering method. Currently does не support canvas scheme, will support later.
 
-##${prefix} isShowOverflowTextTooltip (boolean)
+##${prefix} isShowOverflowTextПодсказка (логический)
 
-Whether to display overflow text content tooltip when hovering over the cell. Temporarily, renderMode needs to be configured as html to display, and canvas has not been developed yet.
+Whether к display overflow текст content Подсказка when hovering over the cell. Temporarily, renderMode needs к be configured as html к display, и canvas has не been developed yet.
 
-##${prefix} overflowTextTooltipDisappearDelay (number)
+##${prefix} overflowTextПодсказкаDisappearDelay (число)
 
-The overflow text tooltip delays disappearance time. If you need to delay disappearance so that the mouse can move to the tooltip content, you can configure this configuration item.
+The overflow текст Подсказка delays disappearance time. If you need к delay disappearance so that the mouse can move к the Подсказка content, Вы можете configure this configuration item.
 
-##${prefix} confine (boolean) = true
+##${prefix} confine (логический) = true
 
-Whether to confine the tooltip box within the canvas area, default is enabled. It is valid for renderMode:"html".
+Whether к confine the Подсказка box within the canvas area, по умолчанию is включен. It is valid для renderMode:"html".
 
-#${prefix} legends
+#${prefix} легендаs
 
-Legend configuration, currently providing three types of legends, namely discrete legend (`'discrete'`), continuous color legend (`'color'`), and continuous size legend (`'size'`).
+легенда configuration, currently providing three types из легендаs, имяly discrete легенда (`'discrete'`), continuous цвет легенда (`'цвет'`), и continuous размер легенда (`'размер'`).
 
-{{ use: component-legend-discrete(
+{{ use: компонент-легенда-discrete(
   prefix = ${prefix}
 )}}
 
-{{ use: component-legend-color(
+{{ use: компонент-легенда-цвет(
   prefix = ${prefix}
 ) }}
 
-{{ use: component-legend-size(
+{{ use: компонент-легенда-размер(
   prefix = ${prefix}
 ) }}
 
 #${prefix} axes
-Specifically the same as the axis configuration of VChart, it can support [linear axis](https://visactor.io/vchart/option/barChart#axes-linear.type), [discrete axis](https://visactor.io/vchart/ option/barChart#axes-band.type) and [time axis](https://visactor.io/vchart/option/barChart#axes-time.type).
+Specifically the same as the axis configuration из Vграфик, it can support [linear axis](https://visactor.io/vграфик/option/barграфик#axes-linear.тип), [discrete axis](https://visactor.io/vграфик/ option/barграфик#axes-band.тип) и [time axis](https://visactor.io/vграфик/option/barграфик#axes-time.тип).
 
-Supports axis configuration in four directions. By default, the upper axis is at the last row of the column header, the lower axis is at the frozen row at the bottom of the table, the left axis is at the last column of the row header, and the upper axis is at the rightmost fixed column of the header. If axes of a certain orientation are also configured in the spec of the indicator, the priority in the spec is higher.
+Supports axis configuration в four directions. по по умолчанию, the upper axis is в the последний row из the column header, the lower axis is в the frozen row в the низ из the таблица, the лево axis is в the последний column из the row header, и the upper axis is в the rightmost fixed column из the header. If axes из a certain orientation are also configured в the spec из the indicator, the priority в the spec is higher.
 
-Example:
+пример:
 
 ```
 {
   axes: [
       {
-        orient: 'bottom'
+        orient: 'низ'
       },
       {
-        orient: 'left',
-        title: {
-          visible: true
+        orient: 'лево',
+        заголовок: {
+          видимый: true
         }
       },
       {
-        orient: 'right',
-        visible: true,
+        orient: 'право',
+        видимый: true,
         grid: {
-          visible: false
+          видимый: false
         }
       }
     ]
 }
 ```
 
-#${prefix} customRender(Function|Object)
+#${prefix} пользовательскийRender(функция|объект)
 
-Custom rendering in function or object form. Type: `ICustomRenderFuc | ICustomRenderObj`.
+пользовательский rendering в функция или объект form. тип: `IпользовательскийRenderFuc | IпользовательскийRenderObj`.
 
-Where ICustomRenderFuc is defined as:
+Where IпользовательскийRenderFuc is defined as:
 
 ```
- type ICustomRenderFuc = (args: CustomRenderFunctionArg) => ICustomRenderObj;
+ тип IпользовательскийRenderFuc = (args: пользовательскийRenderFunctionArg) => IпользовательскийRenderObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: common-custom-render-object(
+{{ use: common-пользовательский-render-объект(
   prefix = '##' + ${prefix},
 ) }}
 
-## overscrollBehavior(string) = 'auto'
+## overscrollBehavior(строка) = 'авто'
 
-Table scrolling behavior, can be set: 'auto'|'none', the default value is 'auto'.
+таблица scrolling behavior, can be set: 'авто'|'никто', the по умолчанию значение is 'авто'.
 
 ```
-'auto': Trigger the browser's default behavior when the table scrolls to the top or bottom;
-'none': don't triggers the browser's default behavior when the table scrolls to the top or bottom;
+'авто': Trigger the browser's по умолчанию behavior when the таблица scrolls к the верх или низ;
+'никто': don't triggers the browser's по умолчанию behavior when the таблица scrolls к the верх или низ;
 ```
 
-#${prefix} customMergeCell(Function|Object)
-Customize cell merging rules. When the incoming row and column numbers are within the target area, the merging rules are returned:
+#${prefix} пользовательскийMergeCell(функция|объект)
+пользовательскийize cell merging rules. When the incoming row и column numbers are within the target area, the merging rules are returned:
 
-- text: Merge text in cells
+- текст: Merge текст в cells
 - range: merged range
-- style: style of merged cells
-  Example:
+- style: style из merged cells
+  пример:
 
 ```
-  customMergeCell: (col, row, table) => {
+  пользовательскийMergeCell: (col, row, таблица) => {
     if (col > 0 && col < 8 && row > 7 && row < 11) {
-      return {
-        text: 'merge text',
+      возврат {
+        текст: 'merge текст',
         range: {
-          start: {
+          начало: {
             col: 1,
             row: 8
           },
-          end: {
+          конец: {
             col: 7,
             row: 10
           }
@@ -485,214 +485,214 @@ Customize cell merging rules. When the incoming row and column numbers are withi
 
 ```
 
-`customMergeCell` can also be configured as an array of merge rules. Each item in the array is a merge rule. The configuration of the rule is the same as the return value of the `customMergeCell` callback function.
+`пользовательскийMergeCell` can also be configured as an массив из merge rules. каждый item в the массив is a merge rule. The configuration из the rule is the same as the возврат значение из the `пользовательскийMergeCell` обратный вызов функция.
 
-#${prefix} customCellStyle(Array)
+#${prefix} пользовательскийCellStyle(массив)
 
 ```
 {
-   customCellStyle: {id: string;style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption)}[]
+   пользовательскийCellStyle: {id: строка;style: ColumnStyleOption | ((styleArg: StylePropertyFunctionArg) => ColumnStyleOption)}[]
 }
 ```
 
-Custom cell style
+пользовательский cell style
 
-- id: the unique id of the custom style
-- style: Custom cell style, which is the same as the `style` configuration in `column`. The final rendering effect is the fusion of the original style of the cell and the custom style.
+- id: the unique id из the пользовательский style
+- style: пользовательский cell style, which is the same as the `style` configuration в `column`. The final rendering effect is the fusion из the original style из the cell и the пользовательский style.
 
-#${prefix} customCellStyleArrangement(Array)
+#${prefix} пользовательскийCellStyleArrangement(массив)
 
 ```
 {
-  customCellStyleArrangement:
+  пользовательскийCellStyleArrangement:
   {
     cellPosition: {
-      row?: number;
-      col?: number;
+      row?: число;
+      col?: число;
       range?: {
-        start: {row: number; col: number};
-        end: {row: number; col: number}
+        начало: {row: число; col: число};
+        конец: {row: число; col: число}
       }
   };
-  customStyleId: string}[]
+  пользовательскийStyleId: строка}[]
 }
 ```
 
-Custom cell style assignment
+пользовательский cell style assignment
 
-- cellPosition: cell position information, supports configuration of single cells and cell areas
-  - Single cell: `{ row: number, column: number }`
-  - Cell range: `{ range: { start: { row: number, column: number }, end: { row: number, column: number} } }`
-- customStyleId: Custom style id, the same as the id defined when registering the custom style
+- cellPosition: cell позиция information, supports configuration из single cells и cell areas
+  - Single cell: `{ row: число, column: число }`
+  - Cell range: `{ range: { начало: { row: число, column: число }, конец: { row: число, column: число} } }`
+- пользовательскийStyleId: пользовательский style id, the same as the id defined when регистрацияing the пользовательский style
 
 #${prefix} rowSeriesNumber(IRowSeriesNumber)
 
-set row serial number.
-{{ use: row-series-number(
+set row serial число.
+{{ use: row-series-число(
     prefix = '###',
 ) }}
 
-#${prefix} editor (string|Object|Function)
+#${prefix} editor (строка|объект|функция)
 
 Global configuration cell editor
 
 ```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+editor?: строка | IEditor | ((args: BaseCellInfo & { таблица: Baseтаблицаапи }) => строка | IEditor);
 ```
 
-Among them, IEditor is the editor interface defined in @visactor/vtable-editors. For details, please refer to the source code: https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts .
+Among them, IEditor is the editor интерфейс defined в @visactor/vтаблица-editors. для details, please refer к the source код: https://github.com/VisActor/Vтаблица/blob/main/packвозрастs/vтаблица-editors/src/types.ts .
 
-#${prefix} headerEditor (string|Object|Function)
+#${prefix} headerEditor (строка|объект|функция)
 
-** `PivotChart` does not support setting this configuration item. **
-Global configuration table header display title title editor
-
-```
-headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-```
-
-#${prefix} editCellTrigger('doubleclick' | 'click' | 'api' |'keydown') = 'doubleclick'
-
-The trigger timing for entering the editing state.
+** `сводныйграфик` does не support setting this configuration item. **
+Global configuration таблица header display title title editor
 
 ```
-
-/** Edit triggering time: double click event | single click event | api to manually start editing | keydown event. Default is double click 'doubleclick' */
-editCellTrigger?:'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
+headerEditor?: строка | IEditor | ((args: BaseCellInfo & { таблица: Baseтаблицаапи }) => строка | IEditor);
 ```
 
-#${prefix} plugins(IVTablePlugin[])
+#${prefix} editCellTrigger('doubleНажать' | 'Нажать' | 'апи' |'keydown') = 'doubleНажать'
 
-Configure plugins. For details, please refer to the tutorial [click here](../guide/plugin/usage)
-
-```
-plugins?: IVTablePlugin[];
-```
-
-#${prefix} enableLineBreak(boolean) = false
-
-Whether to enable line break, the default is false.
-
-#${prefix} clearDOM(boolean) = true
-
-Whether to clear the container DOM.
-
-#${prefix} canvasWidth(number | 'auto')
-
-Sets the width of the canvas directly. If 'auto' is set, the canvas will be stretched based on the table content.
-
-If not set, the size of the table will be determined based on the container's width and height.
-
-#${prefix} canvasHeight(number | 'auto')
-
-Sets the height of the canvas directly. If 'auto' is set, the canvas will be stretched based on the table content.
-
-If not set, the size of the table will be determined based on the container's width and height.
-
-#${prefix} maxCanvasWidth(number)
-
-The maximum width of the table canvas. Only effective when canvasWidth is set to 'auto'.
-
-#${prefix} maxCanvasHeight(number)
-
-The maximum height of the table canvas. Only effective when canvasHeight is set to 'auto'.
-
-#${prefix} animationAppear(boolean|Object|)
-
-Table entry animation configuration.
+The trigger timing для entering the editing state.
 
 ```
-animationAppear?: boolean | {
-  type?: 'all' | 'one-by-one';
+
+/** Edit triggering time: double Нажать событие | single Нажать событие | апи к manually начало editing | keydown событие. по умолчанию is double Нажать 'doubleНажать' */
+editCellTrigger?:'doubleНажать' | 'Нажать' | 'апи' | 'keydown' | ('doubleНажать' | 'Нажать' | 'апи' | 'keydown')[];
+```
+
+#${prefix} plugins(IVтаблицаPlugin[])
+
+Configure plugins. для details, please refer к the tutorial [Нажать here](../guide/plugin/usвозраст)
+
+```
+plugins?: IVтаблицаPlugin[];
+```
+
+#${prefix} enableLineBreak(логический) = false
+
+Whether к включить line break, the по умолчанию is false.
+
+#${prefix} clearDOM(логический) = true
+
+Whether к clear the container DOM.
+
+#${prefix} canvasширина(число | 'авто')
+
+Sets the ширина из the canvas directly. If 'авто' is set, the canvas will be stretched based на the таблица content.
+
+If не set, the размер из the таблица will be determined based на the container's ширина и высота.
+
+#${prefix} canvasвысота(число | 'авто')
+
+Sets the высота из the canvas directly. If 'авто' is set, the canvas will be stretched based на the таблица content.
+
+If не set, the размер из the таблица will be determined based на the container's ширина и высота.
+
+#${prefix} maxCanvasширина(число)
+
+The maximum ширина из the таблица canvas. Only effective when canvasширина is set к 'авто'.
+
+#${prefix} maxCanvasвысота(число)
+
+The maximum высота из the таблица canvas. Only effective when canvasвысота is set к 'авто'.
+
+#${prefix} animationAppear(логический|объект|)
+
+таблица entry animation configuration.
+
+```
+animationAppear?: логический | {
+  тип?: 'все' | 'one-по-one';
   direction?: 'row' | 'column';
-  duration?: number;
-  delay?: number;
+  duration?: число;
+  delay?: число;
 };
 ```
 
-You can configure true to enable the default animation, or you can configure the animation parameters:
+Вы можете configure true к включить the по умолчанию animation, или Вы можете configure the animation parameters:
 
-- `type` The type of the entry animation, currently supports `all` and `one-by-one`, and the default is `one-by-one`
-- `direction` The direction of the entry animation, currently supports `row` and `column`, and the default is `row`
-- `duration` The duration of a single animation, in milliseconds, for `one-by-one`, it is the duration of one animation, and the default is 500
-- `delay` The delay of the animation, in milliseconds; for `one-by-one`, it is the time difference between the two animations, for `all`, it is the delay of all animations, and the default is 0
+- `тип` The тип из the entry animation, currently supports `все` и `one-по-one`, и the по умолчанию is `one-по-one`
+- `direction` The direction из the entry animation, currently supports `row` и `column`, и the по умолчанию is `row`
+- `duration` The duration из a single animation, в milliseconds, для `one-по-one`, it is the duration из one animation, и the по умолчанию is 500
+- `delay` The delay из the animation, в milliseconds; для `one-по-one`, it is the time difference between the two animations, для `все`, it is the delay из все animations, и the по умолчанию is 0
 
-#${prefix} formatCopyValue((value: string) => string)
+#${prefix} formatCopyValue((значение: строка) => строка)
 
-Format the value when copying.
+Format the значение when copying.
 
-#${prefix} resize(Object)
+#${prefix} изменение размера(объект)
 
-Resizing lineHeight/columnWidth interaction configuration, specific configuration items as follows:
+Resizing lineвысота/columnширина interaction configuration, specific configuration items as follows:
 
-#${prefix} columnResizeMode(string) = 'all'
+#${prefix} columnResizeMode(строка) = 'все'
 
-Mouse hover over the cell right border can drag and adjust column width. This operation can trigger the following range:
+Mouse навести over the cell право граница can перетаскивание и adjust column ширина. This operation can trigger Следующий range:
 
-- 'all' The entire column, including header and body cells, can adjust column width
-- 'none' Disable adjustment
-- 'header' Only adjustable in header cells
-- 'body' Only adjustable in body cells
+- 'все' The entire column, including header и body cells, can adjust column ширина
+- 'никто' отключить adjustment
+- 'header' Only adjusтаблица в header cells
+- 'body' Only adjusтаблица в body cells
 
-#${prefix} rowResizeMode(string) = 'none'
+#${prefix} rowResizeMode(строка) = 'никто'
 
-Mouse hover over the cell bottom border can drag and adjust row height. This operation can trigger the following range:
+Mouse навести over the cell низ граница can перетаскивание и adjust row высота. This operation can trigger Следующий range:
 
-- 'all' The entire row, including header and body cells, can adjust row height
-- 'none' Disable adjustment
-- 'header' Only adjustable in header cells
-- 'body' Only adjustable in body cells
+- 'все' The entire row, including header и body cells, can adjust row высота
+- 'никто' отключить adjustment
+- 'header' Only adjusтаблица в header cells
+- 'body' Only adjusтаблица в body cells
 
-##${prefix} disableDblclickAutoResizeColWidth(boolean) = false
+##${prefix} disableDblНажатьавтоResizeColширина(логический) = false
 
-Disable auto resize column width when double tapping the column border line
+отключить авто изменение размера column ширина when double tapping the column граница line
 
-columnResizeType(string)
+columnResizeType(строка)
 
-Only affects in PivotTable/PivotChard The range of effects when adjusting column width, configurable options:
+Only affects в сводныйтаблица/сводныйChard The range из effects when adjusting column ширина, configurable options:
 
-- `column`: Adjusting the column width only adjusts the current column
-- `indicator`: When adjusting the column width, the corresponding columns of the same indicator will be adjusted
-- `indicatorGroup`: Adjust the width of all indicator columns under the same parent dimension
-- `all`: All column widths are adjusted
+- `column`: Adjusting the column ширина only adjusts the текущий column
+- `indicator`: When adjusting the column ширина, the corresponding columns из the same indicator will be adjusted
+- `indicatorGroup`: Adjust the ширина из все indicator columns under the same parent dimension
+- `все`: все column ширинаs are adjusted
 
-##${prefix} rowResizeType(string)
+##${prefix} rowResizeType(строка)
 
-Only affects in PivotTable/PivotChard Adjust the effective range of row height, configurable items:
+Only affects в сводныйтаблица/сводныйChard Adjust the effective range из row высота, configurable items:
 
-- `row`: adjust the row height only adjust the current row
-- `indicator`: rows corresponding to the same indicator will be adjusted when the row height is adjusted
-- `indicatorGroup`: Adjust the height of all indicator rows under the same parent dimension
-- `all`: All row heights are adjusted
+- `row`: adjust the row высота only adjust the текущий row
+- `indicator`: rows corresponding к the same indicator will be adjusted when the row высота is adjusted
+- `indicatorGroup`: Adjust the высота из все indicator rows under the same parent dimension
+- `все`: все row высотаs are adjusted
 
-#${prefix} dragOrder(Object)
+#${prefix} dragOrder(объект)
 
-#${prefix} dragOrder(Object)
+#${prefix} dragOrder(объект)
 
-Configuration for dragging to move positions.
+Configuration для dragging к move positions.
 
-##${prefix} dragHeaderMode(string) = 'none'
+##${prefix} dragHeaderMode(строка) = 'никто'
 
-Controls the switch for dragging the table header to move positions. After selecting a cell, dragging the cell with the mouse can trigger the move. The range of interchangeable cells can be limited:
+Controls the switch для dragging the таблица header к move positions. After selecting a cell, dragging the cell с the mouse can trigger the move. The range из interchangeable cells can be limited:
 
-- 'all' All table headers can be interchanged
-- 'none' Cannot be interchanged
+- 'все' все таблица headers can be interchanged
+- 'никто' Cannot be interchanged
 - 'column' Only column headers can be interchanged
 - 'row' Only row headers can be interchanged
 
-##${prefix} frozenColDragHeaderMode(string) = 'fixedFrozenCount'
+##${prefix} frozenColDragHeaderMode(строка) = 'fixedFrozenCount'
 
-The rule for dragging the table header to move positions for the frozen part. The default is fixedFrozenCount. Only effective for ListTable type settings!
+The rule для dragging the таблица header к move positions для the frozen part. The по умолчанию is fixedFrozenCount. Only effective для списоктаблица тип settings!
 
-- "disabled" (prohibit adjusting frozen column positions): Do not allow table headers of other columns to move into frozen columns, nor allow frozen columns to move out. Frozen columns remain unchanged.
-- "adjustFrozenCount" (adjust the number of frozen columns according to the interaction results): Allow table headers of other columns to move into frozen columns and frozen columns to move out, and adjust the number of frozen columns according to the dragging action. When the table headers of other columns are dragged into the frozen column position, the number of frozen columns increases; when the table headers of other columns are dragged out of the frozen column position, the number of frozen columns decreases.
-- "fixedFrozenCount" (can adjust frozen columns and keep the number of frozen columns unchanged): Allow freely dragging table headers of other columns into or out of frozen column positions while keeping the number of frozen columns unchanged.
+- "отключен" (prohibit adjusting frozen column positions): Do не allow таблица headers из other columns к move into frozen columns, nor allow frozen columns к move out. Frozen columns remain unchanged.
+- "adjustFrozenCount" (adjust the число из frozen columns according к the interaction results): Allow таблица headers из other columns к move into frozen columns и frozen columns к move out, и adjust the число из frozen columns according к the dragging action. When the таблица headers из other columns are dragged into the frozen column позиция, the число из frozen columns increases; when the таблица headers из other columns are dragged out из the frozen column позиция, the число из frozen columns decreases.
+- "fixedFrozenCount" (can adjust frozen columns и keep the число из frozen columns unchanged): Allow freely dragging таблица headers из other columns into или out из frozen column positions while keeping the число из frozen columns unchanged.
 
-##${prefix} validateDragOrderOnEnd(Function)
+##${prefix} validateDragOrderOnEnd(функция)
 
-Validate when the drag to move position ends.
+Validate when the перетаскивание к move позиция ends.
 
 ```
-validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
+validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => логический;
 ```
 

@@ -1,37 +1,37 @@
 ---
-category: examples
-group: component
-title: tooltip component
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
-order: 1-1
-link: table_type/List_table/list_table_define_and_generate
-option: ListTable#tooltip
+категория: примеры
+группа: компонент
+заголовок: Подсказка компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию.png
+порядок: 1-1
+ссылка: таблица_type/список_таблица/список_таблица_define_and_generate
+опция: списоктаблица#Подсказка
 ---
 
-# tooltip component
+# Подсказка компонент
 
-You can directly use `Tooltip` to configure the menu component, and the configuration is consistent with option.tooltip.
+Вы можете directly use `Подсказка` к configure the меню компонент, и the configuration is consistent с option.Подсказка.
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-react
-// import * as ReactVTable from '@visactor/react-vtable';
+```javascript liveдемонстрация template=vтаблица-react
+// import * as ReactVтаблица от '@visactor/react-vтаблица';
 
-const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
+const records = новый массив(1000).fill(['John', 18, 'male', '🏀']);
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(
-  <ReactVTable.ListTable records={records} height={'500px'}>
-    <ReactVTable.ListColumn field={'0'} title={'name'} />
-    <ReactVTable.ListColumn field={'1'} title={'age'} />
-    <ReactVTable.ListColumn field={'2'} title={'gender'} />
-    <ReactVTable.ListColumn field={'3'} title={'hobby'} />
-    <ReactVTable.Tooltip renderMode={'html'} isShowOverflowTextTooltip={true} />
-  </ReactVTable.ListTable>
+  <ReactVтаблица.списоктаблица records={records} высота={'500px'}>
+    <ReactVтаблица.списокColumn поле={'0'} title={'имя'} />
+    <ReactVтаблица.списокColumn поле={'1'} title={'возраст'} />
+    <ReactVтаблица.списокColumn поле={'2'} title={'пол'} />
+    <ReactVтаблица.списокColumn поле={'3'} title={'хобби'} />
+    <ReactVтаблица.Подсказка renderMode={'html'} isShowOverflowTextПодсказка={true} />
+  </ReactVтаблица.списоктаблица>
 );
 
-// release openinula instance, do not copy
-window.customRelease = () => {
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```

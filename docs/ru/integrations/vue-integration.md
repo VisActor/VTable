@@ -1,32 +1,32 @@
-# Vue Integration Guide for VTable
+# Vue Integration Guide для Vтаблица
 
-This comprehensive guide covers integrating VTable with Vue.js applications, including Vue 2, Vue 3, and the Composition API, with advanced patterns and best practices.
+This comprehensive guide covers integrating Vтаблица с Vue.js applications, including Vue 2, Vue 3, и the Composition апи, с advanced patterns и best practices.
 
-## Installation and Setup
+## Installation и Setup
 
-### Installing Vue VTable
+### Installing Vue Vтаблица
 
 ```bash
-# Install both the core library and Vue wrapper
-npm install @visactor/vtable @visactor/vue-vtable
+# Install both the core library и Vue wrapper
+npm install @visactor/vтаблица @visactor/vue-vтаблица
 
-# Or with yarn
-yarn add @visactor/vtable @visactor/vue-vtable
+# или с yarn
+yarn add @visactor/vтаблица @visactor/vue-vтаблица
 
-# Or with pnpm
-pnpm add @visactor/vtable @visactor/vue-vtable
+# или с pnpm
+pnpm add @visactor/vтаблица @visactor/vue-vтаблица
 ```
 
 ### Vue 3 Setup
 
 ```vue
 <template>
-  <div class="table-container">
-    <VListTable
+  <div class="таблица-container">
+    <Vсписоктаблица
       :columns="columns"
-      :records="data"
-      :defaultRowHeight="40"
-      :defaultHeaderRowHeight="50"
+      :records="данные"
+      :defaultRowвысота="40"
+      :defaultHeaderRowвысота="50"
       @after-cell-edit="handleCellEdit"
       @selection-changed="handleSelectionChange"
     />
@@ -34,30 +34,30 @@ pnpm add @visactor/vtable @visactor/vue-vtable
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { VListTable } from '@visactor/vue-vtable'
+import { ref, onMounted } от 'vue'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
 
-const data = ref([])
+const данные = ref([])
 const columns = ref([
-  { field: 'id', caption: 'ID', width: 80 },
-  { field: 'name', caption: 'Name', width: 200 },
-  { field: 'email', caption: 'Email', width: 250 },
-  { field: 'status', caption: 'Status', width: 120 }
+  { поле: 'id', caption: 'ID', ширина: 80 },
+  { поле: 'имя', caption: 'имя', ширина: 200 },
+  { поле: 'email', caption: 'Email', ширина: 250 },
+  { поле: 'status', caption: 'Status', ширина: 120 }
 ])
 
 onMounted(async () => {
-  // Load your data
-  data.value = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
-    // ... more data
+  // Load your данные
+  данные.значение = [
+    { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+    { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' },
+    // ... more данные
   ]
 })
 
 const handleCellEdit = (args) => {
   console.log('Cell edited:', args)
-  const { row, field, value } = args
-  data.value[row][field] = value
+  const { row, поле, значение } = args
+  данные.значение[row][поле] = значение
 }
 
 const handleSelectionChange = (selection) => {
@@ -66,9 +66,9 @@ const handleSelectionChange = (selection) => {
 </script>
 
 <style scoped>
-.table-container {
-  width: 100%;
-  height: 600px;
+.таблица-container {
+  ширина: 100%;
+  высота: 600px;
 }
 </style>
 ```
@@ -77,12 +77,12 @@ const handleSelectionChange = (selection) => {
 
 ```vue
 <template>
-  <div class="table-container">
-    <VListTable
+  <div class="таблица-container">
+    <Vсписоктаблица
       :columns="columns"
-      :records="data"
-      :defaultRowHeight="40"
-      :defaultHeaderRowHeight="50"
+      :records="данные"
+      :defaultRowвысота="40"
+      :defaultHeaderRowвысота="50"
       @after-cell-edit="handleCellEdit"
       @selection-changed="handleSelectionChange"
     />
@@ -90,37 +90,37 @@ const handleSelectionChange = (selection) => {
 </template>
 
 <script>
-import { VListTable } from '@visactor/vue-vtable'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
 
-export default {
-  name: 'BasicTable',
-  components: {
-    VListTable
+export по умолчанию {
+  имя: 'базовыйтаблица',
+  компонентs: {
+    Vсписоктаблица
   },
-  data() {
-    return {
-      data: [],
+  данные() {
+    возврат {
+      данные: [],
       columns: [
-        { field: 'id', caption: 'ID', width: 80 },
-        { field: 'name', caption: 'Name', width: 200 },
-        { field: 'email', caption: 'Email', width: 250 },
-        { field: 'status', caption: 'Status', width: 120 }
+        { поле: 'id', caption: 'ID', ширина: 80 },
+        { поле: 'имя', caption: 'имя', ширина: 200 },
+        { поле: 'email', caption: 'Email', ширина: 250 },
+        { поле: 'status', caption: 'Status', ширина: 120 }
       ]
     }
   },
   async mounted() {
-    // Load your data
-    this.data = [
-      { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
-      // ... more data
+    // Load your данные
+    this.данные = [
+      { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+      { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' },
+      // ... more данные
     ]
   },
-  methods: {
+  методы: {
     handleCellEdit(args) {
       console.log('Cell edited:', args)
-      const { row, field, value } = args
-      this.$set(this.data[row], field, value)
+      const { row, поле, значение } = args
+      this.$set(this.данные[row], поле, значение)
     },
     handleSelectionChange(selection) {
       console.log('Selection changed:', selection)
@@ -130,96 +130,96 @@ export default {
 </script>
 
 <style scoped>
-.table-container {
-  width: 100%;
-  height: 600px;
+.таблица-container {
+  ширина: 100%;
+  высота: 600px;
 }
 </style>
 ```
 
-## Advanced Vue 3 Patterns with Composition API
+## Advanced Vue 3 Patterns с Composition апи
 
-### 1. Composable for Table Management
+### 1. Composable для таблица Manвозрастment
 
 ```js
-// composables/useVTable.js
-import { ref, computed, reactive, toRefs } from 'vue'
+// composables/useVтаблица.js
+import { ref, computed, reactive, toRefs } от 'vue'
 
-export function useVTable(initialData = [], initialColumns = []) {
+export функция useVтаблица(initialданные = [], initialColumns = []) {
   const state = reactive({
-    data: [...initialData],
+    данные: [...initialданные],
     columns: [...initialColumns],
     selection: [],
-    loading: false,
-    error: null,
-    sortField: null,
-    sortOrder: 'asc',
+    загрузка: false,
+    ошибка: null,
+    сортировкаполе: null,
+    сортировкапорядок: 'asc',
     filters: {}
   })
   
-  // Computed properties
-  const filteredData = computed(() => {
-    let result = state.data
+  // Computed свойства
+  const filteredданные = computed(() => {
+    let result = state.данные
     
     // Apply filters
-    Object.keys(state.filters).forEach(field => {
-      const filterValue = state.filters[field]
+    объект.keys(state.filters).forEach(поле => {
+      const filterValue = state.filters[поле]
       if (filterValue) {
         result = result.filter(record => 
-          String(record[field]).toLowerCase().includes(filterValue.toLowerCase())
+          строка(record[поле]).toLowerCase().includes(filterValue.toLowerCase())
         )
       }
     })
     
-    // Apply sorting
-    if (state.sortField) {
-      result = [...result].sort((a, b) => {
-        const valueA = a[state.sortField]
-        const valueB = b[state.sortField]
+    // Apply сортировкаing
+    if (state.сортировкаполе) {
+      result = [...result].сортировка((a, b) => {
+        const valueA = a[state.сортировкаполе]
+        const valueB = b[state.сортировкаполе]
         
-        if (state.sortOrder === 'asc') {
-          return valueA > valueB ? 1 : -1
+        if (state.сортировкаOrder === 'asc') {
+          возврат valueA > valueB ? 1 : -1
         } else {
-          return valueA < valueB ? 1 : -1
+          возврат valueA < valueB ? 1 : -1
         }
       })
     }
     
-    return result
+    возврат result
   })
   
   const selectedRecords = computed(() => {
-    return state.selection.map(sel => state.data[sel.row]).filter(Boolean)
+    возврат state.selection.map(sel => state.данные[sel.row]).filter(логический)
   })
   
   // Actions
   const addRecord = (record) => {
-    state.data.push({ ...record, id: Date.now() })
+    state.данные.push({ ...record, id: Date.now() })
   }
   
   const updateRecord = (id, updates) => {
-    const index = state.data.findIndex(record => record.id === id)
+    const index = state.данные.findIndex(record => record.id === id)
     if (index !== -1) {
-      Object.assign(state.data[index], updates)
+      объект.assign(state.данные[index], updates)
     }
   }
   
   const deleteRecord = (id) => {
-    const index = state.data.findIndex(record => record.id === id)
+    const index = state.данные.findIndex(record => record.id === id)
     if (index !== -1) {
-      state.data.splice(index, 1)
+      state.данные.splice(index, 1)
     }
   }
   
   const bulkDelete = (ids) => {
-    state.data = state.data.filter(record => !ids.includes(record.id))
+    state.данные = state.данные.filter(record => !ids.includes(record.id))
   }
   
-  const setFilter = (field, value) => {
-    if (value) {
-      state.filters[field] = value
+  const setFilter = (поле, значение) => {
+    if (значение) {
+      state.filters[поле] = значение
     } else {
-      delete state.filters[field]
+      delete state.filters[поле]
     }
   }
   
@@ -227,39 +227,39 @@ export function useVTable(initialData = [], initialColumns = []) {
     state.filters = {}
   }
   
-  const setSort = (field, order = 'asc') => {
-    state.sortField = field
-    state.sortOrder = order
+  const setсортировка = (поле, order = 'asc') => {
+    state.сортировкаполе = поле
+    state.сортировкаOrder = order
   }
   
-  const clearSort = () => {
-    state.sortField = null
-    state.sortOrder = 'asc'
+  const clearсортировка = () => {
+    state.сортировкаполе = null
+    state.сортировкаOrder = 'asc'
   }
   
   const setSelection = (selection) => {
     state.selection = selection
   }
   
-  const loadData = async (fetchFn) => {
-    state.loading = true
-    state.error = null
+  const loadданные = async (fetchFn) => {
+    state.загрузка = true
+    state.ошибка = null
     try {
-      const newData = await fetchFn()
-      state.data = newData
-    } catch (error) {
-      state.error = error
+      const newданные = await fetchFn()
+      state.данные = newданные
+    } catch (ошибка) {
+      state.ошибка = ошибка
     } finally {
-      state.loading = false
+      state.загрузка = false
     }
   }
   
-  return {
+  возврат {
     // State
     ...toRefs(state),
     
     // Computed
-    filteredData,
+    filteredданные,
     selectedRecords,
     
     // Actions
@@ -269,129 +269,129 @@ export function useVTable(initialData = [], initialColumns = []) {
     bulkDelete,
     setFilter,
     clearFilters,
-    setSort,
-    clearSort,
+    setсортировка,
+    clearсортировка,
     setSelection,
-    loadData
+    loadданные
   }
 }
 ```
 
-### Usage of Composable
+### Usвозраст из Composable
 
 ```vue
 <template>
   <div>
     <!-- Toolbar -->
     <div class="toolbar">
-      <button @click="addNewRecord" class="btn-primary">
+      <Кнопка @Нажать="addNewRecord" class="btn-primary">
         Add Record
-      </button>
+      </Кнопка>
       
-      <button 
-        @click="handleBulkDelete"
-        :disabled="selectedRecords.length === 0"
+      <Кнопка 
+        @Нажать="handleBulkDelete"
+        :отключен="selectedRecords.length === 0"
         class="btn-danger"
       >
         Delete Selected ({{ selectedRecords.length }})
-      </button>
+      </Кнопка>
       
       <div class="filters">
-        <input
-          v-model="nameFilter"
-          @input="setFilter('name', $event.target.value)"
-          placeholder="Filter by name..."
-          class="filter-input"
+        <ввод
+          v-model="имяFilter"
+          @ввод="setFilter('имя', $событие.target.значение)"
+          placeholder="Filter по имя..."
+          class="filter-ввод"
         >
         
-        <select
+        <выбрать
           v-model="statusFilter"
-          @change="setFilter('status', $event.target.value)"
-          class="filter-select"
+          @change="setFilter('status', $событие.target.значение)"
+          class="filter-выбрать"
         >
-          <option value="">All Status</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-          <option value="Pending">Pending</option>
-        </select>
+          <option значение="">все Status</option>
+          <option значение="активный">активный</option>
+          <option значение="неактивный">неактивный</option>
+          <option значение="Pending">Pending</option>
+        </выбрать>
         
-        <button @click="clearAllFilters" class="btn-secondary">
+        <Кнопка @Нажать="clearAllFilters" class="btn-secondary">
           Clear Filters
-        </button>
+        </Кнопка>
       </div>
     </div>
     
-    <!-- Loading state -->
-    <div v-if="loading" class="loading">
-      Loading...
+    <!-- загрузка state -->
+    <div v-if="загрузка" class="загрузка">
+      загрузка...
     </div>
     
-    <!-- Error state -->
-    <div v-if="error" class="error">
-      Error: {{ error.message }}
+    <!-- ошибка state -->
+    <div v-if="ошибка" class="ошибка">
+      ошибка: {{ ошибка.messвозраст }}
     </div>
     
-    <!-- Table -->
-    <div class="table-container">
-      <VListTable
+    <!-- таблица -->
+    <div class="таблица-container">
+      <Vсписоктаблица
         :columns="enhancedColumns"
-        :records="filteredData"
-        :defaultRowHeight="40"
-        :defaultHeaderRowHeight="50"
-        :select="{ enableRowSelect: true, enableMultiSelect: true }"
+        :records="filteredданные"
+        :defaultRowвысота="40"
+        :defaultHeaderRowвысота="50"
+        :выбрать="{ enableRowSelect: true, enableMultiSelect: true }"
         @after-cell-edit="handleCellEdit"
         @selection-changed="setSelection"
-        @sort="handleSort"
+        @сортировка="handleсортировка"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { VListTable } from '@visactor/vue-vtable'
-import { useVTable } from '@/composables/useVTable'
+import { ref, computed } от 'vue'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
+import { useVтаблица } от '@/composables/useVтаблица'
 
-// Initial data and columns
-const initialData = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
+// Initial данные и columns
+const initialданные = [
+  { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+  { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' },
 ]
 
 const initialColumns = [
-  { field: 'id', caption: 'ID', width: 80 },
+  { поле: 'id', caption: 'ID', ширина: 80 },
   { 
-    field: 'name', 
-    caption: 'Name', 
-    width: 200,
-    sort: true
+    поле: 'имя', 
+    caption: 'имя', 
+    ширина: 200,
+    сортировка: true
   },
   { 
-    field: 'email', 
+    поле: 'email', 
     caption: 'Email', 
-    width: 250,
-    editor: 'input'
+    ширина: 250,
+    editor: 'ввод'
   },
   { 
-    field: 'status', 
+    поле: 'status', 
     caption: 'Status', 
-    width: 120,
-    editor: 'select',
+    ширина: 120,
+    editor: 'выбрать',
     editorOptions: {
-      values: ['Active', 'Inactive', 'Pending']
+      values: ['активный', 'неактивный', 'Pending']
     },
-    sort: true
+    сортировка: true
   }
 ]
 
 // Use the composable
 const {
-  data,
+  данные,
   columns,
   selection,
-  loading,
-  error,
-  filteredData,
+  загрузка,
+  ошибка,
+  filteredданные,
   selectedRecords,
   addRecord,
   updateRecord,
@@ -399,65 +399,65 @@ const {
   bulkDelete,
   setFilter,
   clearFilters,
-  setSort,
+  setсортировка,
   setSelection
-} = useVTable(initialData, initialColumns)
+} = useVтаблица(initialданные, initialColumns)
 
 // Filter refs
-const nameFilter = ref('')
+const имяFilter = ref('')
 const statusFilter = ref('')
 
-// Enhanced columns with actions
+// Enhanced columns с actions
 const enhancedColumns = computed(() => [
-  ...columns.value,
+  ...columns.значение,
   {
-    field: 'actions',
+    поле: 'actions',
     caption: 'Actions',
-    width: 150,
-    customRender: ({ record }) => {
-      return `
-        <button onclick="editRecord(${record.id})" class="btn-edit">Edit</button>
-        <button onclick="deleteRecord(${record.id})" class="btn-delete">Delete</button>
+    ширина: 150,
+    пользовательскийRender: ({ record }) => {
+      возврат `
+        <Кнопка onНажать="editRecord(${record.id})" class="btn-edit">Edit</Кнопка>
+        <Кнопка onНажать="deleteRecord(${record.id})" class="btn-delete">Delete</Кнопка>
       `
     }
   }
 ])
 
-// Methods
+// методы
 const addNewRecord = () => {
   addRecord({
-    name: 'New User',
-    email: 'new@example.com',
+    имя: 'новый User',
+    email: 'новый@пример.com',
     status: 'Pending'
   })
 }
 
 const handleBulkDelete = () => {
-  if (selectedRecords.value.length > 0) {
-    const ids = selectedRecords.value.map(record => record.id)
+  if (selectedRecords.значение.length > 0) {
+    const ids = selectedRecords.значение.map(record => record.id)
     bulkDelete(ids)
     setSelection([])
   }
 }
 
 const handleCellEdit = (args) => {
-  const { row, field, value } = args
-  const record = filteredData.value[row]
-  updateRecord(record.id, { [field]: value })
+  const { row, поле, значение } = args
+  const record = filteredданные.значение[row]
+  updateRecord(record.id, { [поле]: значение })
 }
 
-const handleSort = (args) => {
-  const { field, order } = args
-  setSort(field, order)
+const handleсортировка = (args) => {
+  const { поле, order } = args
+  setсортировка(поле, order)
 }
 
 const clearAllFilters = () => {
-  nameFilter.value = ''
-  statusFilter.value = ''
+  имяFilter.значение = ''
+  statusFilter.значение = ''
   clearFilters()
 }
 
-// Make functions available globally for custom render
+// Make functions доступный globally для пользовательский render
 window.editRecord = (id) => {
   console.log('Edit record:', id)
   // Implement edit logic
@@ -472,82 +472,82 @@ window.deleteRecord = (id) => {
 .toolbar {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: center;
+  отступ-низ: 1rem;
+  align-items: центр;
   flex-wrap: wrap;
 }
 
 .filters {
   display: flex;
   gap: 0.5rem;
-  align-items: center;
+  align-items: центр;
 }
 
-.filter-input, .filter-select {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.filter-ввод, .filter-выбрать {
+  заполнение: 0.5rem;
+  bпорядок: 1px solid #ddd;
+  граница-radius: 4px;
 }
 
 .btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  фон-цвет: #007bff;
+  цвет: white;
+  bпорядок: никто;
+  заполнение: 0.5rem 1rem;
+  граница-radius: 4px;
   cursor: pointer;
 }
 
 .btn-danger {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  фон-цвет: #dc3545;
+  цвет: white;
+  bпорядок: никто;
+  заполнение: 0.5rem 1rem;
+  граница-radius: 4px;
   cursor: pointer;
 }
 
-.btn-danger:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
+.btn-danger:отключен {
+  фон-цвет: #6c757d;
+  cursor: не-allowed;
 }
 
 .btn-secondary {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  фон-цвет: #6c757d;
+  цвет: white;
+  bпорядок: никто;
+  заполнение: 0.5rem 1rem;
+  граница-radius: 4px;
   cursor: pointer;
 }
 
-.table-container {
-  width: 100%;
-  height: 600px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.таблица-container {
+  ширина: 100%;
+  высота: 600px;
+  bпорядок: 1px solid #ddd;
+  граница-radius: 4px;
 }
 
-.loading, .error {
-  padding: 1rem;
-  text-align: center;
+.загрузка, .ошибка {
+  заполнение: 1rem;
+  текст-align: центр;
 }
 
-.error {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
+.ошибка {
+  цвет: #dc3545;
+  фон-цвет: #f8d7da;
+  bпорядок: 1px solid #f5c6cb;
+  граница-radius: 4px;
 }
 </style>
 ```
 
-## Custom Components and Slots
+## пользовательский компонентs и Slots
 
-### 1. Custom Cell Components
+### 1. пользовательский Cell компонентs
 
 ```vue
-<!-- components/StatusBadge.vue -->
+<!-- компонентs/StatusBadge.vue -->
 <template>
   <span 
     :class="['status-badge', `status-${status.toLowerCase()}`]"
@@ -559,8 +559,8 @@ window.deleteRecord = (id) => {
 <script setup>
 defineProps({
   status: {
-    type: String,
-    required: true
+    тип: строка,
+    обязательный: true
   }
 })
 </script>
@@ -568,62 +568,62 @@ defineProps({
 <style scoped>
 .status-badge {
   display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: bold;
-  text-transform: uppercase;
+  заполнение: 0.25rem 0.5rem;
+  граница-radius: 0.25rem;
+  шрифт-размер: 0.75rem;
+  шрифт-weight: bold;
+  текст-transform: uppercase;
 }
 
-.status-active {
-  background-color: #d4edda;
-  color: #155724;
+.status-активный {
+  фон-цвет: #d4edda;
+  цвет: #155724;
 }
 
-.status-inactive {
-  background-color: #f8d7da;
-  color: #721c24;
+.status-неактивный {
+  фон-цвет: #f8d7da;
+  цвет: #721c24;
 }
 
 .status-pending {
-  background-color: #fff3cd;
-  color: #856404;
+  фон-цвет: #fff3cd;
+  цвет: #856404;
 }
 </style>
 ```
 
 ```vue
-<!-- components/ActionButtons.vue -->
+<!-- компонентs/ActionКнопкаs.vue -->
 <template>
-  <div class="action-buttons">
-    <button 
-      @click="$emit('edit', record)"
+  <div class="action-Кнопкаs">
+    <Кнопка 
+      @Нажать="$emit('edit', record)"
       class="btn btn-sm btn-primary"
     >
       Edit
-    </button>
+    </Кнопка>
     
-    <button 
-      @click="$emit('delete', record.id)"
+    <Кнопка 
+      @Нажать="$emit('delete', record.id)"
       class="btn btn-sm btn-danger"
     >
       Delete
-    </button>
+    </Кнопка>
     
-    <button 
-      @click="$emit('view', record)"
-      class="btn btn-sm btn-info"
+    <Кнопка 
+      @Нажать="$emit('view', record)"
+      class="btn btn-sm btn-информация"
     >
       View
-    </button>
+    </Кнопка>
   </div>
 </template>
 
 <script setup>
 defineProps({
   record: {
-    type: Object,
-    required: true
+    тип: объект,
+    обязательный: true
   }
 })
 
@@ -631,74 +631,74 @@ defineEmits(['edit', 'delete', 'view'])
 </script>
 
 <style scoped>
-.action-buttons {
+.action-Кнопкаs {
   display: flex;
   gap: 0.25rem;
 }
 
 .btn {
-  padding: 0.25rem 0.5rem;
-  border: none;
-  border-radius: 0.25rem;
+  заполнение: 0.25rem 0.5rem;
+  bпорядок: никто;
+  граница-radius: 0.25rem;
   cursor: pointer;
-  font-size: 0.75rem;
+  шрифт-размер: 0.75rem;
 }
 
-.btn-primary { background-color: #007bff; color: white; }
-.btn-danger { background-color: #dc3545; color: white; }
-.btn-info { background-color: #17a2b8; color: white; }
+.btn-primary { фон-цвет: #007bff; цвет: white; }
+.btn-danger { фон-цвет: #dc3545; цвет: white; }
+.btn-информация { фон-цвет: #17a2b8; цвет: white; }
 </style>
 ```
 
-### Using Custom Components in Table
+### Using пользовательский компонентs в таблица
 
 ```vue
 <template>
-  <div class="table-container">
-    <VListTable
+  <div class="таблица-container">
+    <Vсписоктаблица
       :columns="columns"
-      :records="data"
-      :defaultRowHeight="50"
-      :defaultHeaderRowHeight="50"
+      :records="данные"
+      :defaultRowвысота="50"
+      :defaultHeaderRowвысота="50"
     >
-      <!-- Custom cell rendering using slots -->
-      <template #cell="{ column, record, value }">
+      <!-- пользовательский cell rendering using slots -->
+      <template #cell="{ column, record, значение }">
         <StatusBadge 
-          v-if="column.field === 'status'"
-          :status="value"
+          v-if="column.поле === 'status'"
+          :status="значение"
         />
         
-        <ActionButtons
-          v-else-if="column.field === 'actions'"
+        <ActionКнопкаs
+          v-else-if="column.поле === 'actions'"
           :record="record"
           @edit="handleEdit"
           @delete="handleDelete"
           @view="handleView"
         />
         
-        <span v-else>{{ value }}</span>
+        <span v-else>{{ значение }}</span>
       </template>
-    </VListTable>
+    </Vсписоктаблица>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { VListTable } from '@visactor/vue-vtable'
-import StatusBadge from './components/StatusBadge.vue'
-import ActionButtons from './components/ActionButtons.vue'
+import { ref } от 'vue'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
+import StatusBadge от './компонентs/StatusBadge.vue'
+import ActionКнопкаs от './компонентs/ActionКнопкаs.vue'
 
-const data = ref([
-  { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive' },
+const данные = ref([
+  { id: 1, имя: 'John Doe', email: 'john@пример.com', status: 'активный' },
+  { id: 2, имя: 'Jane Smith', email: 'jane@пример.com', status: 'неактивный' },
 ])
 
 const columns = ref([
-  { field: 'id', caption: 'ID', width: 80 },
-  { field: 'name', caption: 'Name', width: 200 },
-  { field: 'email', caption: 'Email', width: 250 },
-  { field: 'status', caption: 'Status', width: 120 },
-  { field: 'actions', caption: 'Actions', width: 200 }
+  { поле: 'id', caption: 'ID', ширина: 80 },
+  { поле: 'имя', caption: 'имя', ширина: 200 },
+  { поле: 'email', caption: 'Email', ширина: 250 },
+  { поле: 'status', caption: 'Status', ширина: 120 },
+  { поле: 'actions', caption: 'Actions', ширина: 200 }
 ])
 
 const handleEdit = (record) => {
@@ -708,7 +708,7 @@ const handleEdit = (record) => {
 
 const handleDelete = (id) => {
   console.log('Delete record:', id)
-  data.value = data.value.filter(record => record.id !== id)
+  данные.значение = данные.значение.filter(record => record.id !== id)
 }
 
 const handleView = (record) => {
@@ -718,58 +718,58 @@ const handleView = (record) => {
 </script>
 ```
 
-## Integration with Vue Ecosystem
+## Integration с Vue Ecosystem
 
 ### 1. Vuex Integration
 
 ```js
-// store/modules/table.js
+// store/modules/таблица.js
 const state = {
-  data: [],
+  данные: [],
   selection: [],
-  loading: false,
-  error: null,
+  загрузка: false,
+  ошибка: null,
   filters: {},
-  sort: { field: null, order: 'asc' }
+  сортировка: { поле: null, порядок: 'asc' }
 }
 
 const mutations = {
-  SET_DATA(state, data) {
-    state.data = data
+  SET_данные(state, данные) {
+    state.данные = данные
   },
   
   ADD_RECORD(state, record) {
-    state.data.push({ ...record, id: Date.now() })
+    state.данные.push({ ...record, id: Date.now() })
   },
   
   UPDATE_RECORD(state, { id, updates }) {
-    const index = state.data.findIndex(record => record.id === id)
+    const index = state.данные.findIndex(record => record.id === id)
     if (index !== -1) {
-      Object.assign(state.data[index], updates)
+      объект.assign(state.данные[index], updates)
     }
   },
   
   DELETE_RECORD(state, id) {
-    state.data = state.data.filter(record => record.id !== id)
+    state.данные = state.данные.filter(record => record.id !== id)
   },
   
   SET_SELECTION(state, selection) {
     state.selection = selection
   },
   
-  SET_LOADING(state, loading) {
-    state.loading = loading
+  SET_LOADING(state, загрузка) {
+    state.загрузка = загрузка
   },
   
-  SET_ERROR(state, error) {
-    state.error = error
+  SET_ERROR(state, ошибка) {
+    state.ошибка = ошибка
   },
   
-  SET_FILTER(state, { field, value }) {
-    if (value) {
-      state.filters = { ...state.filters, [field]: value }
+  SET_FILTER(state, { поле, значение }) {
+    if (значение) {
+      state.filters = { ...state.filters, [поле]: значение }
     } else {
-      const { [field]: _, ...rest } = state.filters
+      const { [поле]: _, ...rest } = state.filters
       state.filters = rest
     }
   },
@@ -778,21 +778,21 @@ const mutations = {
     state.filters = {}
   },
   
-  SET_SORT(state, { field, order }) {
-    state.sort = { field, order }
+  SET_сортировка(state, { поле, order }) {
+    state.сортировка = { поле, order }
   }
 }
 
 const actions = {
-  async loadData({ commit }, fetchFn) {
+  async loadданные({ commit }, fetchFn) {
     commit('SET_LOADING', true)
     commit('SET_ERROR', null)
     
     try {
-      const data = await fetchFn()
-      commit('SET_DATA', data)
-    } catch (error) {
-      commit('SET_ERROR', error)
+      const данные = await fetchFn()
+      commit('SET_данные', данные)
+    } catch (ошибка) {
+      commit('SET_ERROR', ошибка)
     } finally {
       commit('SET_LOADING', false)
     }
@@ -818,57 +818,57 @@ const actions = {
     commit('SET_SELECTION', selection)
   },
   
-  setFilter({ commit }, { field, value }) {
-    commit('SET_FILTER', { field, value })
+  setFilter({ commit }, { поле, значение }) {
+    commit('SET_FILTER', { поле, значение })
   },
   
   clearFilters({ commit }) {
     commit('CLEAR_FILTERS')
   },
   
-  setSort({ commit }, { field, order }) {
-    commit('SET_SORT', { field, order })
+  setсортировка({ commit }, { поле, order }) {
+    commit('SET_сортировка', { поле, order })
   }
 }
 
 const getters = {
-  filteredData: (state) => {
-    let result = [...state.data]
+  filteredданные: (state) => {
+    let result = [...state.данные]
     
     // Apply filters
-    Object.keys(state.filters).forEach(field => {
-      const filterValue = state.filters[field]
+    объект.keys(state.filters).forEach(поле => {
+      const filterValue = state.filters[поле]
       if (filterValue) {
         result = result.filter(record => 
-          String(record[field]).toLowerCase().includes(filterValue.toLowerCase())
+          строка(record[поле]).toLowerCase().includes(filterValue.toLowerCase())
         )
       }
     })
     
-    // Apply sorting
-    if (state.sort.field) {
-      result.sort((a, b) => {
-        const valueA = a[state.sort.field]
-        const valueB = b[state.sort.field]
+    // Apply сортировкаing
+    if (state.сортировка.поле) {
+      result.сортировка((a, b) => {
+        const valueA = a[state.сортировка.поле]
+        const valueB = b[state.сортировка.поле]
         
-        if (state.sort.order === 'asc') {
-          return valueA > valueB ? 1 : -1
+        if (state.сортировка.order === 'asc') {
+          возврат valueA > valueB ? 1 : -1
         } else {
-          return valueA < valueB ? 1 : -1
+          возврат valueA < valueB ? 1 : -1
         }
       })
     }
     
-    return result
+    возврат result
   },
   
   selectedRecords: (state, getters) => {
-    return state.selection.map(sel => getters.filteredData[sel.row]).filter(Boolean)
+    возврат state.selection.map(sel => getters.filteredданные[sel.row]).filter(логический)
   }
 }
 
-export default {
-  namespaced: true,
+export по умолчанию {
+  имяspaced: true,
   state,
   mutations,
   actions,
@@ -876,37 +876,37 @@ export default {
 }
 ```
 
-### Component using Vuex
+### компонент using Vuex
 
 ```vue
 <template>
   <div>
     <div class="toolbar">
-      <button @click="addRecord" class="btn-primary">
+      <Кнопка @Нажать="addRecord" class="btn-primary">
         Add Record
-      </button>
+      </Кнопка>
       
-      <button 
-        @click="bulkDelete"
-        :disabled="selectedRecords.length === 0"
+      <Кнопка 
+        @Нажать="bulkDelete"
+        :отключен="selectedRecords.length === 0"
         class="btn-danger"
       >
         Delete Selected ({{ selectedRecords.length }})
-      </button>
+      </Кнопка>
       
-      <input
-        :value="filters.name || ''"
-        @input="setFilter({ field: 'name', value: $event.target.value })"
-        placeholder="Filter by name..."
-        class="filter-input"
+      <ввод
+        :значение="filters.имя || ''"
+        @ввод="setFilter({ поле: 'имя', значение: $событие.target.значение })"
+        placeholder="Filter по имя..."
+        class="filter-ввод"
       >
     </div>
     
-    <div class="table-container">
-      <VListTable
+    <div class="таблица-container">
+      <Vсписоктаблица
         :columns="columns"
-        :records="filteredData"
-        :loading="loading"
+        :records="filteredданные"
+        :загрузка="загрузка"
         @after-cell-edit="handleCellEdit"
         @selection-changed="setSelection"
       />
@@ -915,55 +915,55 @@ export default {
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useStore } from 'vuex'
-import { VListTable } from '@visactor/vue-vtable'
+import { computed } от 'vue'
+import { useStore } от 'vuex'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
 
 const store = useStore()
 
-// Computed properties from store
-const data = computed(() => store.state.table.data)
-const filteredData = computed(() => store.getters['table/filteredData'])
-const selectedRecords = computed(() => store.getters['table/selectedRecords'])
-const loading = computed(() => store.state.table.loading)
-const filters = computed(() => store.state.table.filters)
+// Computed свойства от store
+const данные = computed(() => store.state.таблица.данные)
+const filteredданные = computed(() => store.getters['таблица/filteredданные'])
+const selectedRecords = computed(() => store.getters['таблица/selectedRecords'])
+const загрузка = computed(() => store.state.таблица.загрузка)
+const filters = computed(() => store.state.таблица.filters)
 
 const columns = [
-  { field: 'id', caption: 'ID', width: 80 },
-  { field: 'name', caption: 'Name', width: 200 },
-  { field: 'email', caption: 'Email', width: 250 },
-  { field: 'status', caption: 'Status', width: 120 }
+  { поле: 'id', caption: 'ID', ширина: 80 },
+  { поле: 'имя', caption: 'имя', ширина: 200 },
+  { поле: 'email', caption: 'Email', ширина: 250 },
+  { поле: 'status', caption: 'Status', ширина: 120 }
 ]
 
-// Methods
+// методы
 const addRecord = () => {
-  store.dispatch('table/addRecord', {
-    name: 'New User',
-    email: 'new@example.com',
+  store.dispatch('таблица/addRecord', {
+    имя: 'новый User',
+    email: 'новый@пример.com',
     status: 'Pending'
   })
 }
 
 const bulkDelete = () => {
-  const ids = selectedRecords.value.map(record => record.id)
-  store.dispatch('table/bulkDelete', ids)
+  const ids = selectedRecords.значение.map(record => record.id)
+  store.dispatch('таблица/bulkDelete', ids)
 }
 
 const handleCellEdit = (args) => {
-  const { row, field, value } = args
-  const record = filteredData.value[row]
-  store.dispatch('table/updateRecord', {
+  const { row, поле, значение } = args
+  const record = filteredданные.значение[row]
+  store.dispatch('таблица/updateRecord', {
     id: record.id,
-    updates: { [field]: value }
+    updates: { [поле]: значение }
   })
 }
 
 const setSelection = (selection) => {
-  store.dispatch('table/setSelection', selection)
+  store.dispatch('таблица/setSelection', selection)
 }
 
-const setFilter = ({ field, value }) => {
-  store.dispatch('table/setFilter', { field, value })
+const setFilter = ({ поле, значение }) => {
+  store.dispatch('таблица/setFilter', { поле, значение })
 }
 </script>
 ```
@@ -973,89 +973,89 @@ const setFilter = ({ field, value }) => {
 ```vue
 <template>
   <div>
-    <VListTable
+    <Vсписоктаблица
       :columns="columns"
-      :records="data"
-      @double-click-cell="navigateToDetail"
+      :records="данные"
+      @double-Нажать-cell="navigateToDetail"
     />
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { VListTable } from '@visactor/vue-vtable'
+import { useRouter } от 'vue-router'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
 
 const router = useRouter()
 
 const columns = [
-  { field: 'id', caption: 'ID', width: 80 },
-  { field: 'name', caption: 'Name', width: 200 },
-  { field: 'email', caption: 'Email', width: 250 },
+  { поле: 'id', caption: 'ID', ширина: 80 },
+  { поле: 'имя', caption: 'имя', ширина: 200 },
+  { поле: 'email', caption: 'Email', ширина: 250 },
   {
-    field: 'actions',
+    поле: 'actions',
     caption: 'Actions',
-    width: 150,
-    customRender: ({ record }) => `
-      <button onclick="viewDetail(${record.id})">View Details</button>
+    ширина: 150,
+    пользовательскийRender: ({ record }) => `
+      <Кнопка onНажать="viewDetail(${record.id})">View Details</Кнопка>
     `
   }
 ]
 
 const navigateToDetail = (args) => {
-  const record = data.value[args.row]
+  const record = данные.значение[args.row]
   router.push(`/user/${record.id}`)
 }
 
-// Make function available globally
+// Make функция доступный globally
 window.viewDetail = (id) => {
   router.push(`/user/${id}`)
 }
 </script>
 ```
 
-## Performance Optimization
+## Производительность Optimization
 
-### 1. Virtual Scrolling and Large Datasets
+### 1. Virtual Scrolling и Large данныеsets
 
 ```vue
 <template>
   <div>
-    <VListTable
+    <Vсписоктаблица
       :columns="columns"
-      :records="data"
+      :records="данные"
       :virtualized="true"
-      :rowHeight="40"
+      :rowвысота="40"
       :bufferSize="10"
-      :enableDataLazyLoad="true"
-      @data-lazy-load="handleLazyLoad"
+      :enableданныеLazyLoad="true"
+      @данные-lazy-load="handleLazyLoad"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } от 'vue'
 
-const data = ref([])
-const loading = ref(false)
-let currentPage = 0
-const pageSize = 100
+const данные = ref([])
+const загрузка = ref(false)
+let currentPвозраст = 0
+const pвозрастSize = 100
 
 const handleLazyLoad = async () => {
-  if (loading.value) return
+  if (загрузка.значение) возврат
   
-  loading.value = true
+  загрузка.значение = true
   try {
-    const newData = await fetchPage(currentPage, pageSize)
-    data.value.push(...newData)
-    currentPage++
+    const newданные = await fetchPвозраст(currentPвозраст, pвозрастSize)
+    данные.значение.push(...newданные)
+    currentPвозраст++
   } finally {
-    loading.value = false
+    загрузка.значение = false
   }
 }
 
-const fetchPage = async (page, size) => {
-  const response = await fetch(`/api/data?page=${page}&size=${size}`)
-  return response.json()
+const fetchPвозраст = async (pвозраст, размер) => {
+  const response = await fetch(`/апи/данные?pвозраст=${pвозраст}&размер=${размер}`)
+  возврат response.json()
 }
 
 onMounted(() => {
@@ -1064,120 +1064,120 @@ onMounted(() => {
 </script>
 ```
 
-### 2. Memoization and Optimization
+### 2. Memoization и Optimization
 
 ```vue
 <template>
   <div>
-    <VListTable
+    <Vсписоктаблица
       :columns="memoizedColumns"
-      :records="processedData"
-      :key="tableKey"
+      :records="processedданные"
+      :key="таблицаKey"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch } от 'vue'
 
 const props = defineProps({
-  rawData: Array,
-  columnConfig: Array
+  rawданные: массив,
+  columnConfig: массив
 })
 
 // Memoized columns
 const memoizedColumns = computed(() => {
-  return props.columnConfig.map(col => ({
+  возврат props.columnConfig.map(col => ({
     ...col,
-    customRender: col.customRender ? 
-      memoizeRenderer(col.customRender) : 
+    пользовательскийRender: col.пользовательскийRender ? 
+      memoizeRenderer(col.пользовательскийRender) : 
       undefined
   }))
 })
 
-// Processed data with memoization
-const processedData = computed(() => {
-  return props.rawData.map(record => ({
+// Processed данные с memoization
+const processedданные = computed(() => {
+  возврат props.rawданные.map(record => ({
     ...record,
-    // Add computed fields
-    fullName: `${record.firstName} ${record.lastName}`,
+    // Add computed полеs
+    fullимя: `${record.firstимя} ${record.lastимя}`,
     formattedDate: formatDate(record.createdAt)
   }))
 })
 
 // Force re-render when needed
-const tableKey = ref(0)
+const таблицаKey = ref(0)
 const forceUpdate = () => {
-  tableKey.value++
+  таблицаKey.значение++
 }
 
 // Memoization helper
 const memoizeRenderer = (renderer) => {
-  const cache = new Map()
+  const cache = новый Map()
   
-  return (args) => {
+  возврат (args) => {
     const key = JSON.stringify(args)
     if (cache.has(key)) {
-      return cache.get(key)
+      возврат cache.get(key)
     }
     
     const result = renderer(args)
     cache.set(key, result)
-    return result
+    возврат result
   }
 }
 
 const formatDate = (date) => {
-  return new Intl.DateTimeFormat('en-US').format(new Date(date))
+  возврат новый Intl.DateTimeFormat('en-US').format(новый Date(date))
 }
 </script>
 ```
 
-## Testing VTable in Vue
+## Testing Vтаблица в Vue
 
-### 1. Unit Testing with Vue Test Utils
+### 1. Unit Testing с Vue Test Utils
 
 ```js
-// tests/VTableComponent.spec.js
-import { mount } from '@vue/test-utils'
-import { VListTable } from '@visactor/vue-vtable'
+// tests/Vтаблицакомпонент.spec.js
+import { mount } от '@vue/test-utils'
+import { Vсписоктаблица } от '@visactor/vue-vтаблица'
 
-describe('VTable Component', () => {
-  const mockData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com' }
+describe('Vтаблица компонент', () => {
+  const mockданные = [
+    { id: 1, имя: 'John Doe', email: 'john@пример.com' }
   ]
   
   const mockColumns = [
-    { field: 'id', caption: 'ID', width: 80 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'email', caption: 'Email', width: 250 }
+    { поле: 'id', caption: 'ID', ширина: 80 },
+    { поле: 'имя', caption: 'имя', ширина: 200 },
+    { поле: 'email', caption: 'Email', ширина: 250 }
   ]
   
-  it('renders table with data', () => {
-    const wrapper = mount(VListTable, {
+  it('renders таблица с данные', () => {
+    const wrapper = mount(Vсписоктаблица, {
       props: {
         columns: mockColumns,
-        records: mockData
+        records: mockданные
       }
     })
     
     expect(wrapper.exists()).toBe(true)
-    // Add more specific assertions based on your table structure
+    // Add more specific assertions based на your таблица structure
   })
   
-  it('emits cell edit event', async () => {
-    const wrapper = mount(VListTable, {
+  it('emits cell edit событие', async () => {
+    const wrapper = mount(Vсписоктаблица, {
       props: {
         columns: mockColumns,
-        records: mockData
+        records: mockданные
       }
     })
     
     // Simulate cell edit
     await wrapper.vm.$emit('after-cell-edit', {
       row: 0,
-      field: 'name',
-      value: 'Jane Doe'
+      поле: 'имя',
+      значение: 'Jane Doe'
     })
     
     expect(wrapper.emitted('after-cell-edit')).toBeTruthy()
@@ -1185,134 +1185,134 @@ describe('VTable Component', () => {
 })
 ```
 
-### 2. E2E Testing with Cypress
+### 2. E2E Testing с Cypress
 
 ```js
-// cypress/integration/vtable.spec.js
-describe('VTable Integration', () => {
+// cypress/integration/vтаблица.spec.js
+describe('Vтаблица Integration', () => {
   beforeEach(() => {
-    cy.visit('/table')
+    cy.visit('/таблица')
   })
   
-  it('displays table data', () => {
-    cy.get('[data-testid="vtable"]').should('be.visible')
-    cy.get('[data-testid="table-row"]').should('have.length.greaterThan', 0)
+  it('displays таблица данные', () => {
+    cy.get('[данные-testid="vтаблица"]').should('be.видимый')
+    cy.get('[данные-testid="таблица-row"]').should('have.length.greaterThan', 0)
   })
   
   it('allows cell editing', () => {
-    cy.get('[data-testid="editable-cell"]').first().click()
-    cy.get('[data-testid="cell-editor"]').type('New Value{enter}')
-    cy.get('[data-testid="editable-cell"]').should('contain', 'New Value')
+    cy.get('[данные-testid="ediтаблица-cell"]').первый().Нажать()
+    cy.get('[данные-testid="cell-editor"]').тип('новый значение{enter}')
+    cy.get('[данные-testid="ediтаблица-cell"]').should('contain', 'новый значение')
   })
   
   it('handles row selection', () => {
-    cy.get('[data-testid="row-checkbox"]').first().click()
-    cy.get('[data-testid="selected-count"]').should('contain', '1')
+    cy.get('[данные-testid="row-флажок"]').первый().Нажать()
+    cy.get('[данные-testid="selected-count"]').should('contain', '1')
   })
 })
 ```
 
 ## Best Practices
 
-### 1. Component Structure
+### 1. компонент Structure
 
 ```vue
 <template>
-  <div class="data-table-wrapper">
-    <!-- Header with controls -->
-    <TableHeader
+  <div class="данные-таблица-wrapper">
+    <!-- Header с controls -->
+    <таблицаHeader
       :selected-count="selectedRecords.length"
-      :total-count="data.length"
+      :total-count="данные.length"
       @add-record="addRecord"
       @bulk-delete="bulkDelete"
-      @export="exportData"
+      @export="exportданные"
     />
     
     <!-- Filters -->
-    <TableFilters
+    <таблицаFilters
       :filters="filters"
       :columns="columns"
       @filter-change="setFilter"
       @clear-filters="clearFilters"
     />
     
-    <!-- Main table -->
-    <VListTable
-      ref="tableRef"
+    <!-- Main таблица -->
+    <Vсписоктаблица
+      ref="таблицаRef"
       :columns="columns"
-      :records="filteredData"
-      :loading="loading"
-      v-bind="tableOptions"
+      :records="filteredданные"
+      :загрузка="загрузка"
+      v-bind="таблицаOptions"
       @after-cell-edit="handleCellEdit"
       @selection-changed="setSelection"
     />
     
-    <!-- Footer with pagination -->
-    <TableFooter
-      :current-page="currentPage"
-      :total-pages="totalPages"
-      :page-size="pageSize"
-      @page-change="handlePageChange"
+    <!-- Footer с pagination -->
+    <таблицаFooter
+      :текущий-pвозраст="currentPвозраст"
+      :total-pвозрастs="totalPвозрастs"
+      :pвозраст-размер="pвозрастSize"
+      @pвозраст-change="handlePвозрастChange"
     />
   </div>
 </template>
 
 <script setup>
-// Component logic here
+// компонент logic here
 </script>
 
 <style scoped>
-.data-table-wrapper {
+.данные-таблица-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  высота: 100%;
   gap: 1rem;
 }
 </style>
 ```
 
-### 2. Error Handling
+### 2. ошибка Handling
 
 ```vue
 <template>
   <div>
-    <ErrorBoundary @error="handleError">
-      <VListTable
+    <ErrorBoundary @ошибка="handleError">
+      <Vсписоктаблица
         :columns="columns"
-        :records="data"
-        @error="handleTableError"
+        :records="данные"
+        @ошибка="handleтаблицаError"
       />
     </ErrorBoundary>
     
-    <!-- Error display -->
-    <div v-if="error" class="error-message">
-      {{ error.message }}
-      <button @click="retry">Retry</button>
+    <!-- ошибка display -->
+    <div v-if="ошибка" class="ошибка-messвозраст">
+      {{ ошибка.messвозраст }}
+      <Кнопка @Нажать="retry">Retry</Кнопка>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import ErrorBoundary from './components/ErrorBoundary.vue'
+import { ref } от 'vue'
+import ErrorBoundary от './компонентs/ErrorBoundary.vue'
 
-const error = ref(null)
+const ошибка = ref(null)
 
 const handleError = (err) => {
-  console.error('Table error:', err)
-  error.value = err
+  console.ошибка('таблица ошибка:', err)
+  ошибка.значение = err
 }
 
-const handleTableError = (err) => {
-  console.error('VTable error:', err)
-  error.value = err
+const handleтаблицаError = (err) => {
+  console.ошибка('Vтаблица ошибка:', err)
+  ошибка.значение = err
 }
 
 const retry = () => {
-  error.value = null
+  ошибка.значение = null
   // Retry logic
 }
 </script>
 ```
 
-This comprehensive Vue integration guide provides everything needed to effectively use VTable in Vue applications, covering both Vue 2 and Vue 3 patterns, advanced techniques, and best practices.
+This comprehensive Vue integration guide provides everything needed к effectively use Vтаблица в Vue applications, covering both Vue 2 и Vue 3 patterns, advanced techniques, и best practices.

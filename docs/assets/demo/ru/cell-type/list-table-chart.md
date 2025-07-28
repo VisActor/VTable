@@ -1,37 +1,37 @@
 ---
-category: examples
-group: Cell Type
-title: List table integrated chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart.png
-link: cell_type/chart
-option: ListTable-columns-chart#cellType
+категория: примеры
+группа: Cell тип
+заголовок: список таблица integrated график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-график.png
+ссылка: cell_type/график
+опция: списоктаблица-columns-график#cellType
 ---
 
-# List table integrated chart
+# список таблица integrated график
 
-Combine vchart chart library and render it into tables to enrich visual display forms and improve multi-chart rendering performance. This example refers to vchart’s bar progress bar. For details, please refer to: https://visactor.io/vchart/demo/progress/linear-progress-with-target-value
+Combine vграфик график library и render it into таблицаs к enrich visual display forms и improve multi-график rendering Производительность. This пример refers к vграфик’s bar progress bar. для details, please refer к: https://visactor.io/vграфик/демонстрация/progress/linear-progress-с-target-значение
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.register.chartModule('vchart', VChart)` registers the chart library for drawing charts. Currently supports VChart
-- `cellType: 'chart'` specifies the type chart
-- `chartModule: 'vchart'` specifies the registered chart library name
-- `chartSpec: {}` chart spec
+- `Vтаблица.регистрация.графикModule('vграфик', Vграфик)` регистрацияs the график library для drawing графикs. Currently supports Vграфик
+- `cellType: 'график'` specifies the тип график
+- `графикModule: 'vграфик'` specifies the регистрацияed график library имя
+- `графикSpec: {}` график spec
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-VTable.register.chartModule('vchart', VChart);
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);
 const records = [
   {
-    projectName: 'Project No.1',
+    projectимя: 'Project No.1',
     startTime: '2023/5/1',
     endTime: '2023/5/10',
     estimateDays: 10,
     goal: 0.6,
     progress: [
       {
-        value: 0.5,
+        значение: 0.5,
         label: '50%',
         goal: 0.6
       }
@@ -39,14 +39,14 @@ const records = [
     master: 'Julin'
   },
   {
-    projectName: 'Project No.2',
+    projectимя: 'Project No.2',
     startTime: '2023/5/1',
     endTime: '2023/5/5',
     estimateDays: 5,
     goal: 0.5,
     progress: [
       {
-        value: 0.5,
+        значение: 0.5,
         label: '50%',
         goal: 0.5
       }
@@ -54,14 +54,14 @@ const records = [
     master: 'Jack'
   },
   {
-    projectName: 'Project No.3',
+    projectимя: 'Project No.3',
     startTime: '2023/5/7',
     endTime: '2023/5/8',
     estimateDays: 3,
     goal: 0.2,
     progress: [
       {
-        value: 0.3,
+        значение: 0.3,
         label: '30%',
         goal: 0.2
       }
@@ -69,14 +69,14 @@ const records = [
     master: 'Mary'
   },
   {
-    projectName: 'Project No.4',
+    projectимя: 'Project No.4',
     startTime: '2023/5/11',
     endTime: '2023/5/12',
     estimateDays: 2,
     goal: 0.8,
     progress: [
       {
-        value: 0.9,
+        значение: 0.9,
         label: '90%',
         goal: 0.8
       }
@@ -84,14 +84,14 @@ const records = [
     master: 'Porry'
   },
   {
-    projectName: 'Project No.5',
+    projectимя: 'Project No.5',
     startTime: '2023/5/0',
     endTime: '2023/5/10',
     estimateDays: 2,
     goal: 1,
     progress: [
       {
-        value: 0.8,
+        значение: 0.8,
         label: '80%',
         goal: 1
       }
@@ -101,47 +101,47 @@ const records = [
 ];
 const columns = [
   {
-    field: 'projectName',
-    title: 'Project Name',
-    width: 'auto',
+    поле: 'projectимя',
+    заголовок: 'Project имя',
+    ширина: 'авто',
     style: {
-      color: '#ff689d',
+      цвет: '#ff689d',
       fontWeight: 'bold'
     }
   },
   {
-    field: 'progress',
-    title: 'Schedule',
-    width: 300,
-    cellType: 'chart',
-    chartModule: 'vchart',
+    поле: 'progress',
+    заголовок: 'Schedule',
+    ширина: 300,
+    cellType: 'график',
+    графикModule: 'vграфик',
     style: {
-      padding: 1
+      заполнение: 1
     },
-    chartSpec: {
-      type: 'linearProgress',
+    графикSpec: {
+      тип: 'linearProgress',
       progress: {
         style: {
           fill: '#32a645',
           lineCap: ''
         }
       },
-      data: {
+      данные: {
         id: 'id0'
       },
       direction: 'horizontal',
-      xField: 'value',
-      yField: 'label',
-      seriesField: 'type',
+      xполе: 'значение',
+      yполе: 'label',
+      seriesполе: 'тип',
       cornerRadius: 20,
-      bandWidth: 12,
-      padding: 10,
+      bandширина: 12,
+      заполнение: 10,
       axes: [
         {
-          orient: 'right',
-          type: 'band',
-          domainLine: { visible: false },
-          tick: { visible: false },
+          orient: 'право',
+          тип: 'band',
+          domainLine: { видимый: false },
+          tick: { видимый: false },
           label: {
             formatMethod: val => val,
             style: {
@@ -150,54 +150,54 @@ const columns = [
               fill: '#32a645'
             }
           },
-          maxWidth: '60%' // 配置坐标轴的最大空间
+          maxширина: '60%' // 配置坐标轴的最大空间
         },
         {
-          orient: 'bottom',
-          label: { visible: true, inside: true },
-          type: 'linear',
-          visible: false,
+          orient: 'низ',
+          label: { видимый: true, inside: true },
+          тип: 'linear',
+          видимый: false,
           grid: {
-            visible: false
+            видимый: false
           }
         }
       ],
       extensionMark: [
         {
-          type: 'rule',
-          dataId: 'id0',
-          visible: true,
+          тип: 'rule',
+          данныеId: 'id0',
+          видимый: true,
           style: {
-            x: (datum, ctx, elements, dataView) => {
+            x: (datum, ctx, elements, данныеView) => {
               debugger;
-              return ctx.valueToX([datum.goal]);
+              возврат ctx.valueToX([datum.goal]);
             },
-            y: (datum, ctx, elements, dataView) => {
-              return ctx.valueToY([datum.label]) - 5;
+            y: (datum, ctx, elements, данныеView) => {
+              возврат ctx.valueToY([datum.label]) - 5;
             },
-            x1: (datum, ctx, elements, dataView) => {
-              return ctx.valueToX([datum.goal]);
+            x1: (datum, ctx, elements, данныеView) => {
+              возврат ctx.valueToX([datum.goal]);
             },
-            y1: (datum, ctx, elements, dataView) => {
-              return ctx.valueToY([datum.label]) + 5;
+            y1: (datum, ctx, elements, данныеView) => {
+              возврат ctx.valueToY([datum.label]) + 5;
             },
-            stroke: 'red',
-            lineWidth: 2
+            strхорошоe: 'red',
+            lineширина: 2
           }
         },
         {
-          type: 'symbol',
-          dataId: 'id0',
-          visible: true,
+          тип: 'symbol',
+          данныеId: 'id0',
+          видимый: true,
           style: {
             symbolType: 'triangleDown',
-            x: (datum, ctx, elements, dataView) => {
-              return ctx.valueToX([datum.goal]);
+            x: (datum, ctx, elements, данныеView) => {
+              возврат ctx.valueToX([datum.goal]);
             },
-            y: (datum, ctx, elements, dataView) => {
-              return ctx.valueToY([datum.label]) - 10;
+            y: (datum, ctx, elements, данныеView) => {
+              возврат ctx.valueToY([datum.label]) - 10;
             },
-            size: 15,
+            размер: 15,
             scaleY: 0.5,
             fill: 'red'
           }
@@ -206,33 +206,33 @@ const columns = [
     }
   },
   {
-    field: 'goal',
-    title: 'Target',
-    width: 'auto',
-    fieldFormat(rec) {
-      return rec.goal * 100 + '%';
+    поле: 'goal',
+    заголовок: 'Target',
+    ширина: 'авто',
+    полеFormat(rec) {
+      возврат rec.goal * 100 + '%';
     },
     style: {
-      color: 'red',
+      цвет: 'red',
       fontWeight: 'bold'
     }
   },
   {
-    field: 'startTime',
-    title: 'Start Time',
-    width: 'auto'
+    поле: 'startTime',
+    заголовок: 'начало Time',
+    ширина: 'авто'
   },
   {
-    field: 'endTime',
-    title: 'End Time',
-    width: 'auto'
+    поле: 'endTime',
+    заголовок: 'конец Time',
+    ширина: 'авто'
   },
   {
-    field: 'master',
-    title: 'Master',
-    width: 'auto',
+    поле: 'master',
+    заголовок: 'Master',
+    ширина: 'авто',
     style: {
-      color: 'purple',
+      цвет: 'purple',
       fontWeight: 'bold'
     }
   }
@@ -241,13 +241,13 @@ const columns = [
 const option = {
   records,
   columns,
-  widthMode: 'standard',
-  hover: {
+  ширинаMode: 'standard',
+  навести: {
     highlightMode: 'cross'
   },
-  defaultRowHeight: 60,
-  autoFillWidth: true
+  defaultRowвысота: 60,
+  автоFillширина: true
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

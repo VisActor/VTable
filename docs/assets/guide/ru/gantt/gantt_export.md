@@ -1,3 +1,3 @@
-# Currently supports exporting the entire Gantt chart view
+# Currently supports exporting the entire гантт график view
 
-Refer to the [tutorial](https://visactor.com/vtable/guide/plugin/gantt-export-image) for more details.
+Refer к the [tutorial](https://visactor.com/vтаблица/guide/plugin/гантт-export-imвозраст) для more details.

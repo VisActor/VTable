@@ -14,41 +14,41 @@
 
 Получить текущую выбранную дату.
 
-### jumpToDate(Function)
+### jumpToDate(функция)
 
 Перейти к указанной дате.
 
 ```
-jumpToDate(date: Date, animation?: boolean | TYPES.ITableAnimationOption) => void
+jumpToDate(date: Date, animation?: логический | TYPES.ITableAnimationOption) => void
 
 ```
 
-### jumpToCurrentMonth(Function)
+### jumpToCurrentMonth(функция)
 
 Перейти к текущему месяцу.
 
 ```
-jumpToCurrentMonth(animation?: boolean | TYPES.ITableAnimationOption) => void
+jumpToCurrentMonth(animation?: логический | TYPES.ITableAnimationOption) => void
 
 ```
 
-### getCellLocation(Function)
+### getCellLocation(функция)
 
 Получить расположение ячейки, соответствующее указанной дате.
 
 ```
-getCellLocation(date: Date) => { col: number; row: number }
+getCellLocation(date: Date) => { col: число; row: число }
 ```
 
-### getCellDate(Function)
+### getCellDate(функция)
 
 Получить дату, соответствующую указанному расположению ячейки.
 
 ```
-getCellDate(col: number, row: number) => Date
+getCellDate(col: число, row: число) => Date
 ```
 
-### addCustomEvent(Function)
+### addCustomEvent(функция)
 
 Добавить пользовательское событие.
 
@@ -56,7 +56,7 @@ getCellDate(col: number, row: number) => Date
 addCustomEvent(event: ICustomEvent) => void
 ```
 
-### addCustomEvents(Function)
+### addCustomEvents(функция)
 
 Добавить пользовательские события пакетно.
 
@@ -64,23 +64,23 @@ addCustomEvent(event: ICustomEvent) => void
 addCustomEvents(events: ICustomEvent[]) => void
 ```
 
-### removeCustomEvent(Function)
+### removeCustomEvent(функция)
 
 Удалить пользовательское событие.
 
 ```
-removeCustomEvent(id: string) => void
+removeCustomEvent(id: строка) => void
 ```
 
-### removeCustomEvents(Function)
+### removeCustomEvents(функция)
 
 Удалить пользовательские события пакетно.
 
 ```
-removeCustomEvents(ids: string[]) => void
+removeCustomEvents(ids: строка[]) => void
 ```
 
-### updateCustomEvent(Function)
+### updateCustomEvent(функция)
 
 Обновить пользовательское расписание.
 
@@ -88,7 +88,7 @@ removeCustomEvents(ids: string[]) => void
 updateCustomEvents(events: ICustomEvent) => void
 ```
 
-### updateCustomEvents(Function)
+### updateCustomEvents(функция)
 
 Пакетное обновление пользовательского расписания.
 
@@ -96,15 +96,15 @@ updateCustomEvents(events: ICustomEvent) => void
 updateCustomEvents(events: ICustomEvent[]) => void
 ```
 
-### getCellCustomEventByLocation(Function)
+### getCellCustomEventByLocation(функция)
 
 Получить пользовательское расписание, соответствующее указанному расположению ячейки.
 
 ```
-getCellCustomEventByLocation(col: number, row: number) => ICustomEvent[]
+getCellCustomEventByLocation(col: число, row: число) => ICustomEvent[]
 ```
 
-### release(Function)
+### release(функция)
 
 Освободить изображение календаря.
 

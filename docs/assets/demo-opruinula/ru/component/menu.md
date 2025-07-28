@@ -1,48 +1,48 @@
 ---
-category: examples
-group: component
-title: menu component
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
-order: 1-1
-link: table_type/List_table/list_table_define_and_generate
-option: ListTable#menu
+категория: примеры
+группа: компонент
+заголовок: меню компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию-новый.png
+порядок: 1-1
+ссылка: таблица_type/список_таблица/список_таблица_define_and_generate
+опция: списоктаблица#меню
 ---
 
-# menu component
+# меню компонент
 
-You can directly use `Menu` to configure the menu component, and the configuration is consistent with option.menu.
+Вы можете directly use `меню` к configure the меню компонент, и the configuration is consistent с option.меню.
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-openinula
-// import * as InulaVTable from '@visactor/openinula-vtable';
+```javascript liveдемонстрация template=vтаблица-openinula
+// import * as InulaVтаблица от '@visactor/openinula-vтаблица';
 
-const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
+const records = новый массив(1000).fill(['John', 18, 'male', '🏀']);
 
 const root = document.getElementById(CONTAINER_ID);
 Inula.render(
-  <InulaVTable.ListTable
+  <InulaVтаблица.списоктаблица
     records={records}
-    height={'500px'}
-    onDropdownMenuClick={args => {
-      console.log('onDropdownMenuClick', args);
+    высота={'500px'}
+    onDropdownменюНажать={args => {
+      console.log('onDropdownменюНажать', args);
     }}
   >
-    <InulaVTable.ListColumn field={'0'} title={'name'} />
-    <InulaVTable.ListColumn field={'1'} title={'age'} />
-    <InulaVTable.ListColumn field={'2'} title={'gender'} />
-    <InulaVTable.ListColumn field={'3'} title={'hobby'} />
-    <InulaVTable.Menu
+    <InulaVтаблица.списокColumn поле={'0'} title={'имя'} />
+    <InulaVтаблица.списокColumn поле={'1'} title={'возраст'} />
+    <InulaVтаблица.списокColumn поле={'2'} title={'пол'} />
+    <InulaVтаблица.списокColumn поле={'3'} title={'хобби'} />
+    <InulaVтаблица.меню
       renderMode={'html'}
-      defaultHeaderMenuItems={['header menu 1', 'header menu 2']}
-      contextMenuItems={['context menu 1', 'context menu 2']}
+      defaultHeaderменюItems={['header меню 1', 'header меню 2']}
+      contextменюItems={['context меню 1', 'context меню 2']}
     />
-  </InulaVTable.ListTable>,
+  </InulaVтаблица.списоктаблица>,
   root
 );
 
-// release openinula instance, do not copy
-window.customRelease = () => {
-  Inula.unmountComponentAtNode(root);
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
+  Inula.unmountкомпонентAtNode(root);
 };
 ```

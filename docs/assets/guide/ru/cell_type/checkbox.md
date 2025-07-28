@@ -1,45 +1,45 @@
-# Checkbox Cell Type
+# флажок Cell тип
 
-Checkbox cell type is suitable for providing multiple-choice options in tables, allowing users to select or deselect one or more items. Checkbox cells are widely used in many applications, including task management, data filtering, permission settings, and more.
+флажок cell тип is suiтаблица для providing multiple-choice options в таблицаs, allowing users к выбрать или отменить выбор one или more items. флажок cells are widely used в many applications, including task manвозрастment, данные filtering, permission settings, и more.
 
-The advantages of checkbox cells in tables are:
+The advantвозрастs из флажок cells в таблицаs are:
 
-1. Checkbox cells are intuitive and flexible to use. Users can select one or multiple options based on their needs to perform specific operations or filter data. This interaction method allows users to have more precise control over their operations, improving user experience and efficiency.
-2. Checkbox cells typically use different icons or colors to represent checked and unchecked states, providing visual feedback. This makes it easy for users to identify which options have been selected and which haven't.
+1. флажок cells are intuitive и flexible к use. Users can выбрать one или multiple options based на their needs к perform specific operations или filter данные. This interaction method allows users к have more precise control over their operations, improving user experience и efficiency.
+2. флажок cells typically use different иконкаs или colors к represent checked и unchecked states, providing visual feedback. This makes it easy для users к identify which options have been selected и which haven't.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/checkbox.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/флажок.png)
 
-## Checkbox-specific Configuration Options
+## флажок-specific Configuration Options
 
-The checkbox type has the following specific configuration options:
+The флажок тип has Следующий specific configuration options:
 
-1. `checked`: Determines whether the cell is in a checked state. Default value is false. Supports function configuration for different cells.
-2. `disable`: Determines whether the checkbox can be disabled. Default value is false. Supports function configuration for different cells.
+1. `checked`: Determines whether the cell is в a checked state. по умолчанию значение is false. Supports функция configuration для different cells.
+2. `отключить`: Determines whether the флажок can be отключен. по умолчанию значение is false. Supports функция configuration для different cells.
 
-Example:
+пример:
 
 ```javascript
 {
-  headerType: 'checkbox', // Specify header cell to display as checkbox
-  cellType: 'checkbox', // Specify body cell to display as checkbox
-  field: 'check',
+  headerType: 'флажок', // Specify header cell к display as флажок
+  cellType: 'флажок', // Specify body cell к display as флажок
+  поле: 'check',
   checked: true,
   disbaled: false
 }
 ```
 
-## Checkbox Data Types
+## флажок данные Types
 
-Checkbox data supports `boolean`, `string`, or `Object` types, or defaults to false if no value is set.
+флажок данные supports `логический`, `строка`, или `объект` types, или defaults к false if no значение is set.
 
-1. Setting `boolean` type is most common. Example with check field:
+1. Setting `логический` тип is most common. пример с check поле:
 
 ```javascript
 const columns = [
   {
-    headerType: 'checkbox', // Specify header cell to display as checkbox
-    cellType: 'checkbox', // Specify body cell to display as checkbox
-    field: 'check'
+    headerType: 'флажок', // Specify header cell к display as флажок
+    cellType: 'флажок', // Specify body cell к display as флажок
+    поле: 'check'
   }
 ];
 const records = [
@@ -58,14 +58,14 @@ const records = [
 ];
 ```
 
-2. If set as a `string` type, the text will be displayed to the right of the checkbox, with the checkbox defaulting to unchecked. Example with product field:
+2. If set as a `строка` тип, the текст will be displayed к the право из the флажок, с the флажок defaulting к unchecked. пример с product поле:
 
 ```javascript
 const columns = [
   {
-    headerType: 'checkbox', // Specify header cell to display as checkbox
-    cellType: 'checkbox', // Specify body cell to display as checkbox
-    field: 'product'
+    headerType: 'флажок', // Specify header cell к display as флажок
+    cellType: 'флажок', // Specify body cell к display as флажок
+    поле: 'product'
   }
 ];
 const records = [
@@ -81,61 +81,61 @@ const records = [
 ];
 ```
 
-3. If each data entry has different states, you can set an Object.
+3. If каждый данные entry has different states, Вы можете set an объект.
 
-The Object supports the following properties:
+The объект supports Следующий свойства:
 
-- text: The text displayed in the checkbox cell
-- checked: Whether the checkbox is checked
-- disable: Whether the checkbox is disabled
+- текст: The текст displayed в the флажок cell
+- checked: Whether the флажок is checked
+- отключить: Whether the флажок is отключен
 
-Example:
+пример:
 
 ```javascript
 const records = [
   {
     percent: '100%',
     check: {
-      text: 'unchecked',
+      текст: 'unchecked',
       checked: false,
-      disable: false
+      отключить: false
     }
   },
   {
     percent: '80%',
     check: {
-      text: 'checked',
+      текст: 'checked',
       checked: true,
-      disable: false
+      отключить: false
     }
   }
 ];
 ```
 
-Both `checked` and `disable` can be configured in the data or in the `column`. Configurations in the data take precedence over configurations in the `column`.
+Both `checked` и `отключить` can be configured в the данные или в the `column`. Configurations в the данные take precedence over configurations в the `column`.
 
-## Getting Checkbox States Through APIs
+## Getting флажок States Through апиs
 
-1. Get the checked states of all checkboxes under a specific field.
+1. Get the checked states из все checkboxes under a specific поле.
 
-Note: The order corresponds to the original input records data, not the table display row states
-
-```javascript
-getCheckboxState(field?: string | number): Array
-```
-
-2. Get the checked state of a specific cell's checkbox.
+Note: The order corresponds к the original ввод records данные, не the таблица display row states
 
 ```javascript
-getCellCheckboxState(col: number, row: number): boolean
+getCheckboxState(поле?: строка | число): массив
 ```
 
-## Setting Checkbox States Through APIs
-
-Set the checked state of a specific cell's checkbox.
+2. Get the checked state из a specific cell's флажок.
 
 ```javascript
-setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate')
+getCellCheckboxState(col: число, row: число): логический
 ```
 
-With the above introduction, you've learned how to use checkbox cell types for data display in VTable. We hope this helps!
+## Setting флажок States Through апиs
+
+Set the checked state из a specific cell's флажок.
+
+```javascript
+setCellCheckboxState(col: число, row: число, checked: логический | 'indeterminate')
+```
+
+с the above introduction, you've learned how к use флажок cell types для данные display в Vтаблица. We hope this helps!

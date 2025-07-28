@@ -1,19 +1,19 @@
-{{ target: line-custom-layout-element }}
+{{ target: line-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix}points ({x: number, y: number}[]) 
+${prefix}points ({x: число, y: число}[]) 
 
 **必填**
 
-The coordinates of the points that make up the line.
+The coordinates из the points that make up the line.
 
-${prefix}lineWidth (number)
+${prefix}lineширина (число)
 
-Stroke width.
+Strхорошоe ширина.
 
-${prefix}stroke (string)
+${prefix}strхорошоe (строка)
 
-Stroke color.
+Strхорошоe цвет.

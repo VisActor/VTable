@@ -1,49 +1,49 @@
-{{ target: common-button-style }}
+{{ target: common-Кнопка-style }}
 
-#${prefix} buttonStyle(Object)
+#${prefix} КнопкаStyle(объект)
 
-Button style configuration
+Кнопка style configuration
 
-##${prefix} buttonColor(string)
+##${prefix} КнопкаColor(строка)
 
-Button background color
+Кнопка фон цвет
 
-##${prefix} buttonBorderColor(string)
+##${prefix} КнопкаBorderColor(строка)
 
-Button border color
+Кнопка граница цвет
 
-##${prefix} buttonLineWidth(number)
+##${prefix} КнопкаLineширина(число)
 
-Button border width
+Кнопка граница ширина
 
-##${prefix} buttonBorderRadius(number)
+##${prefix} КнопкаBorderRadius(число)
 
-Button border radius
+Кнопка граница radius
 
-##${prefix} buttonHoverColor(string)
+##${prefix} КнопкаHoverColor(строка)
 
-Button background color on hover
+Кнопка фон цвет на навести
 
-##${prefix} buttonHoverBorderColor(string)
+##${prefix} КнопкаHoverBorderColor(строка)
 
-Button border color on hover
+Кнопка граница цвет на навести
 
-##${prefix} buttonTextHoverColor(string)
+##${prefix} КнопкаTextHoverColor(строка)
 
-Button text color on hover
+Кнопка текст цвет на навести
 
-##${prefix} buttonDisableColor(string)
+##${prefix} КнопкаDisableColor(строка)
 
-Button background color when disabled
+Кнопка фон цвет when отключен
 
-##${prefix} buttonDisableBorderColor(string)
+##${prefix} КнопкаDisableBorderColor(строка)
 
-Button border color when disabled
+Кнопка граница цвет when отключен
 
-##${prefix} buttonTextDisableColor(string)
+##${prefix} КнопкаTextDisableColor(строка)
 
-Button text color when disabled
+Кнопка текст цвет when отключен
 
-##${prefix} buttonPadding(number)
+##${prefix} КнопкаPadding(число)
 
-Button padding
+Кнопка заполнение

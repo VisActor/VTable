@@ -1,71 +1,71 @@
 ---
-category: examples
-group: grammatical-tag
-title: pivot chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
-order: 1-1
-link: Developer_Ecology/openinula
+категория: примеры
+группа: grammatical-tag
+заголовок: сводный график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-график.png
+порядок: 1-1
+ссылка: Developer_Ecology/openinula
 ---
 
-# pivot chart
+# сводный график
 
-The props attributes accepted by PivotTable&PivotChart are consistent with options. The semantic sub-components are as follows:
+The props attributes accepted по сводныйтаблица&сводныйграфик are consistent с options. The semantic sub-компонентs are as follows:
 
-- PivotColumnDimension: The dimension configuration on the column is consistent with the definition of columns in option [api](../../option/PivotTable-columns-text#headerType)
-- PivotRowDimension: The dimension configuration on the row is consistent with the definition of rows in option [api](../../option/PivotTable-rows-text#headerType)
-- PivotIndicator: indicator configuration, consistent with the definition of indicators in option [api](../../option/PivotTable-indicators-text#cellType)
-- PivotColumnHeaderTitle: column header title configuration, consistent with the definition of columnHeaderTitle in option [api](../../option/PivotTable#rowHeaderTitle)
-- PivotRowHeaderTitle: row header title configuration, consistent with the definition of rowHeaderTitle in option [api](../../option/PivotTable#columnHeaderTitle)
-- PivotCorner: Corner configuration, consistent with the definition of corner in option [api](../../option/PivotTable#corner)
+- сводныйColumnDimension: The dimension configuration на the column is consistent с the definition из columns в option [апи](../../option/сводныйтаблица-columns-текст#headerType)
+- сводныйRowDimension: The dimension configuration на the row is consistent с the definition из rows в option [апи](../../option/сводныйтаблица-rows-текст#headerType)
+- сводныйIndicator: indicator configuration, consistent с the definition из indicators в option [апи](../../option/сводныйтаблица-indicators-текст#cellType)
+- сводныйColumnHeaderзаголовок: column header title configuration, consistent с the definition из columnHeaderTitle в option [апи](../../option/сводныйтаблица#rowHeaderTitle)
+- сводныйRowHeaderзаголовок: row header title configuration, consistent с the definition из rowHeaderTitle в option [апи](../../option/сводныйтаблица#columnHeaderTitle)
+- сводныйCorner: Corner configuration, consistent с the definition из corner в option [апи](../../option/сводныйтаблица#corner)
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-openinula
-// import * as InulaVTable from '@visactor/openinula-vtable';
-// import VChart from '@visactor/vchart';
+```javascript liveдемонстрация template=vтаблица-openinula
+// import * as InulaVтаблица от '@visactor/openinula-vтаблица';
+// import Vграфик от '@visactor/vграфик';
 
-InulaVTable.VTable.register.chartModule('vchart', VChart);
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+InulaVтаблица.Vтаблица.регистрация.графикModule('vграфик', Vграфик);
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const root = document.getElementById(CONTAINER_ID);
     Inula.render(
-      <InulaVTable.PivotChart
-        records={data}
+      <InulaVтаблица.сводныйграфик
+        records={данные}
         indicatorsAsCol={false}
-        defaultRowHeight={200}
-        defaultHeaderRowHeight={50}
-        defaultColWidth={280}
-        defaultHeaderColWidth={100}
+        defaultRowвысота={200}
+        defaultHeaderRowвысота={50}
+        defaultColширина={280}
+        defaultHeaderColширина={100}
       >
-        <InulaVTable.PivotColumnDimension dimensionKey={'Region'} title={'Region'} />
-        <InulaVTable.PivotRowDimension dimensionKey={'Order Year'} title={'Order Year'} />
-        <InulaVTable.PivotRowDimension dimensionKey={'Ship Mode'} title={'Ship Mode'} />
-        <InulaVTable.PivotIndicator
-          indicatorKey={'Quantity'}
-          title={'Quantity'}
-          width={'auto'}
-          cellType={'chart'}
-          chartModule={'vchart'}
-          chartSpec={{
-            // type: 'common',
+        <InulaVтаблица.сводныйColumnDimension dimensionKey={'Регион'} title={'Регион'} />
+        <InulaVтаблица.сводныйRowDimension dimensionKey={'Order Year'} title={'Order Year'} />
+        <InulaVтаблица.сводныйRowDimension dimensionKey={'Ship Mode'} title={'Ship Mode'} />
+        <InulaVтаблица.сводныйIndicator
+          indicatorKey={'Количество'}
+          title={'Количество'}
+          ширина={'авто'}
+          cellType={'график'}
+          графикModule={'vграфик'}
+          графикSpec={{
+            // тип: 'common',
             stack: true,
-            type: 'bar',
-            data: {
-              id: 'data',
-              fields: {
-                //设置xField数据的顺序
-                'Sub-Category': {
-                  sortIndex: 0,
+            тип: 'bar',
+            данные: {
+              id: 'данные',
+              полеs: {
+                //设置xполе数据的顺序
+                'Sub-Категория': {
+                  сортировкаIndex: 0,
                   domain: [
                     'Chairs',
-                    'Tables',
-                    'Bookcases',
+                    'таблицаs',
+                    'Boхорошоcases',
                     'Furnishings',
 
                     'Binders',
                     'Art',
-                    'Storage',
+                    'Storвозраст',
                     'Appliances',
                     'Envelopes',
                     'Fasteners',
@@ -79,29 +79,29 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                   ]
                 },
                 'Segment-Indicator': {
-                  //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                  sortIndex: 1,
+                  //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                  сортировкаIndex: 1,
                   domain: [
-                    'Consumer-Quantity',
-                    'Corporate-Quantity',
-                    'Home Office-Quantity',
-                    'Consumer-Sales',
-                    'Corporate-Sales',
-                    'Home Office-Sales',
-                    'Consumer-Profit',
-                    'Corporate-Profit',
-                    'Home Office-Profit'
+                    'Consumer-Количество',
+                    'Corporate-Количество',
+                    'Home Office-Количество',
+                    'Consumer-Продажи',
+                    'Corporate-Продажи',
+                    'Home Office-Продажи',
+                    'Consumer-Прибыль',
+                    'Corporate-Прибыль',
+                    'Home Office-Прибыль'
                   ]
                   // lockStatisticsByDomain:  true
                 }
               }
             },
-            xField: ['Sub-Category'],
-            yField: 'Quantity',
-            seriesField: 'Segment-Indicator',
+            xполе: ['Sub-Категория'],
+            yполе: 'Количество',
+            seriesполе: 'Segment-Indicator',
             axes: [
-              { orient: 'left', visible: true, label: { visible: true } },
-              { orient: 'bottom', visible: true }
+              { orient: 'лево', видимый: true, label: { видимый: true } },
+              { orient: 'низ', видимый: true }
             ],
             bar: {
               state: {
@@ -110,24 +110,24 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                 },
                 selected_reverse: {
                   // fill: '#ddd'
-                  opacity: 0.2
+                  opaГород: 0.2
                 }
               }
             },
             scales: [
               {
-                id: 'color',
-                type: 'ordinal',
+                id: 'цвет',
+                тип: 'ordinal',
                 domain: [
-                  'Consumer-Quantity',
-                  'Corporate-Quantity',
-                  'Home Office-Quantity',
-                  'Consumer-Sales',
-                  'Corporate-Sales',
-                  'Home Office-Sales',
-                  'Consumer-Profit',
-                  'Corporate-Profit',
-                  'Home Office-Profit'
+                  'Consumer-Количество',
+                  'Corporate-Количество',
+                  'Home Office-Количество',
+                  'Consumer-Продажи',
+                  'Corporate-Продажи',
+                  'Home Office-Продажи',
+                  'Consumer-Прибыль',
+                  'Corporate-Прибыль',
+                  'Home Office-Прибыль'
                 ],
                 range: [
                   '#2E62F1',
@@ -147,35 +147,35 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             ]
           }}
           style={{
-            padding: 1
+            заполнение: 1
           }}
         />
-        <InulaVTable.PivotIndicator
-          indicatorKey={'Sales'}
-          title={'Sales'}
-          width={'auto'}
-          cellType={'chart'}
-          chartModule={'vchart'}
-          chartSpec={{
-            type: 'common',
+        <InulaVтаблица.сводныйIndicator
+          indicatorKey={'Продажи'}
+          title={'Продажи'}
+          ширина={'авто'}
+          cellType={'график'}
+          графикModule={'vграфик'}
+          графикSpec={{
+            тип: 'common',
             series: [
               {
-                type: 'bar',
-                data: {
-                  id: 'data1',
-                  fields: {
-                    //设置xField数据的顺序
-                    'Sub-Category': {
-                      sortIndex: 0,
+                тип: 'bar',
+                данные: {
+                  id: 'данные1',
+                  полеs: {
+                    //设置xполе数据的顺序
+                    'Sub-Категория': {
+                      сортировкаIndex: 0,
                       domain: [
                         'Chairs',
-                        'Tables',
-                        'Bookcases',
+                        'таблицаs',
+                        'Boхорошоcases',
                         'Furnishings',
 
                         'Binders',
                         'Art',
-                        'Storage',
+                        'Storвозраст',
                         'Appliances',
                         'Envelopes',
                         'Fasteners',
@@ -189,27 +189,27 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                       ]
                     },
                     'Segment-Indicator': {
-                      //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                      sortIndex: 1,
+                      //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                      сортировкаIndex: 1,
                       domain: [
-                        'Consumer-Quantity',
-                        'Corporate-Quantity',
-                        'Home Office-Quantity',
-                        'Consumer-Sales',
-                        'Corporate-Sales',
-                        'Home Office-Sales',
-                        'Consumer-Profit',
-                        'Corporate-Profit',
-                        'Home Office-Profit'
+                        'Consumer-Количество',
+                        'Corporate-Количество',
+                        'Home Office-Количество',
+                        'Consumer-Продажи',
+                        'Corporate-Продажи',
+                        'Home Office-Продажи',
+                        'Consumer-Прибыль',
+                        'Corporate-Прибыль',
+                        'Home Office-Прибыль'
                       ]
                       // lockStatisticsByDomain:  true
                     }
                   }
                 },
                 stack: true,
-                xField: ['Sub-Category'],
-                yField: 'Sales',
-                seriesField: 'Segment-Indicator',
+                xполе: ['Sub-Категория'],
+                yполе: 'Продажи',
+                seriesполе: 'Segment-Indicator',
                 bar: {
                   state: {
                     selected: {
@@ -217,28 +217,28 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                     },
                     selected_reverse: {
                       // fill: '#ddd'
-                      opacity: 0.2
+                      opaГород: 0.2
                     }
                   }
                 }
               },
               {
-                type: 'line',
-                data: {
-                  id: 'data2',
-                  fields: {
-                    //设置xField数据的顺序
-                    'Sub-Category': {
-                      sortIndex: 0,
+                тип: 'line',
+                данные: {
+                  id: 'данные2',
+                  полеs: {
+                    //设置xполе数据的顺序
+                    'Sub-Категория': {
+                      сортировкаIndex: 0,
                       domain: [
                         'Chairs',
-                        'Tables',
-                        'Bookcases',
+                        'таблицаs',
+                        'Boхорошоcases',
                         'Furnishings',
 
                         'Binders',
                         'Art',
-                        'Storage',
+                        'Storвозраст',
                         'Appliances',
                         'Envelopes',
                         'Fasteners',
@@ -253,34 +253,34 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                       ]
                     },
                     'Segment-Indicator': {
-                      //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                      sortIndex: 1,
+                      //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                      сортировкаIndex: 1,
                       domain: [
-                        'Consumer-Quantity',
-                        'Corporate-Quantity',
-                        'Home Office-Quantity',
-                        'Consumer-Sales',
-                        'Corporate-Sales',
-                        'Home Office-Sales',
-                        'Consumer-Profit',
-                        'Corporate-Profit',
-                        'Home Office-Profit'
+                        'Consumer-Количество',
+                        'Corporate-Количество',
+                        'Home Office-Количество',
+                        'Consumer-Продажи',
+                        'Corporate-Продажи',
+                        'Home Office-Продажи',
+                        'Consumer-Прибыль',
+                        'Corporate-Прибыль',
+                        'Home Office-Прибыль'
                       ]
                       // lockStatisticsByDomain:  true
                     }
                   }
                 },
                 stack: false,
-                xField: ['Sub-Category'],
-                yField: 'Profit',
-                seriesField: 'Segment-Indicator',
+                xполе: ['Sub-Категория'],
+                yполе: 'Прибыль',
+                seriesполе: 'Segment-Indicator',
                 line: {
                   state: {
                     selected: {
-                      lineWidth: 3
+                      lineширина: 3
                     },
                     selected_reverse: {
-                      lineWidth: 1
+                      lineширина: 1
                     }
                   }
                 },
@@ -298,18 +298,18 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             ],
             scales: [
               {
-                id: 'color',
-                type: 'ordinal',
+                id: 'цвет',
+                тип: 'ordinal',
                 domain: [
-                  'Consumer-Quantity',
-                  'Corporate-Quantity',
-                  'Home Office-Quantity',
-                  'Consumer-Sales',
-                  'Corporate-Sales',
-                  'Home Office-Sales',
-                  'Consumer-Profit',
-                  'Corporate-Profit',
-                  'Home Office-Profit'
+                  'Consumer-Количество',
+                  'Corporate-Количество',
+                  'Home Office-Количество',
+                  'Consumer-Продажи',
+                  'Corporate-Продажи',
+                  'Home Office-Продажи',
+                  'Consumer-Прибыль',
+                  'Corporate-Прибыль',
+                  'Home Office-Прибыль'
                 ],
                 range: [
                   '#2E62F1',
@@ -328,21 +328,21 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
               }
             ]
             // axes: [
-            //   { orient: 'left', visible: true, label: { visible: true } },
-            //   { orient: 'bottom', visible: true }
+            //   { orient: 'лево', видимый: true, label: { видимый: true } },
+            //   { orient: 'низ', видимый: true }
             // ]
           }}
           style={{
-            padding: 1
+            заполнение: 1
           }}
         />
-      </InulaVTable.PivotChart>,
+      </InulaVтаблица.сводныйграфик>,
       root
     );
   });
 
-// release openinula instance, do not copy
-window.customRelease = () => {
-  Inula.unmountComponentAtNode(root);
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
+  Inula.unmountкомпонентAtNode(root);
 };
 ```

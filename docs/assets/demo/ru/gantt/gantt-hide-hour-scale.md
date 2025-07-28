@@ -1,108 +1,108 @@
 ---
-category: examples
-group: gantt
-title: Hide Hour Scale
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-hide-hour-scale.png
-link: gantt/introduction
-option: Gantt#timelineHeader.scales
+категория: примеры
+группа: гантт
+заголовок: скрыть Hour Scale
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-скрыть-hour-scale.png
+ссылка: гантт/introduction
+опция: гантт#timelineHeader.scales
 ---
 
-# Hide Hour Scale, to implement Task Time Less Than Minimum Time Unit
+# скрыть Hour Scale, к implement Task Time Less Than Minimum Time Unit
 
-Hide the bottom time scale by setting the scales visible to false, so that the task time can be less than the minimum time unit.
+скрыть the низ time scale по setting the scales видимый к false, so that the task time can be less than the minimum time unit.
 
-If you want to make the vertical line drawing effect of the grid line consistent with the time scale in the table header, you can achieve this by configuring `grid.verticalLineDependenceOnTimeScale`. For example, in this example, set `grid.verticalLineDependenceOnTimeScale` to `day` to make the vertical line drawing effect of the grid line consistent with the `day` time scale in the time scale of the table header.
+If you want к make the vertical line drawing effect из the grid line consistent с the time scale в the таблица header, Вы можете achieve this по configuring `grid.verticalLineDependenceOnTimeScale`. для пример, в this пример, set `grid.verticalLineDependenceOnTimeScale` к `day` к make the vertical line drawing effect из the grid line consistent с the `day` time scale в the time scale из the таблица header.
 
 ## Key Configuration
 
-- `Gantt`
-- `Gantt#timelineHeader.scales`
-- `Gantt#grid.verticalLineDependenceOnTimeScale`
-## Code Demo
+- `гантт`
+- `гантт#timelineHeader.scales`
+- `гантт#grid.verticalLineDependenceOnTimeScale`
+## код демонстрация
 
-```javascript livedemo template=vtable
-// import * as VTableGantt from '@visactor/vtable-gantt';
-// import { VTable } from '@visactor/vtable-gantt';
-let ganttInstance;
-const flag = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#e16531" xmlns="http://www.w3.org/2000/svg">
+```javascript liveдемонстрация template=vтаблица
+// import * as Vтаблицагантт от '@visactor/vтаблица-гантт';
+// import { Vтаблица } от '@visactor/vтаблица-гантт';
+let ганттInstance;
+const flag = `<svg ширина="24" высота="24" viewBox="0 0 24 24" fill="#e16531" xmlns="http://www.w3.org/2000/svg">
 <path d="M5 15h15.415a1.5 1.5 0 0 0 1.303-2.244l-2.434-4.26a1 1 0 0 1 0-.992l2.434-4.26A1.5 1.5 0 0 0 20.415 1H5a2 
 2 0 0 0-2 2v19a1 1 0 0 0 2 .003V15Z" fill="#e16531"/>
 </svg>
 `;
-const report = `<svg width="24" height="24" viewBox="0 0 24 24" fill="#FFD43C" xmlns="http://www.w3.org/2000/svg">
+const report = `<svg ширина="24" высота="24" viewBox="0 0 24 24" fill="#FFD43C" xmlns="http://www.w3.org/2000/svg">
 <path d="M13.732 2c-.77-1.333-2.694-1.333-3.464 0L.742 19c-.77 1.334.192 3 1.732 3h19.052c1.54 0 2.502-1.666 
 1.733-3L13.732 2ZM10.75 8.25a.75.75 0 0 1 .75-.75h1a.75.75 0 0 1 .75.75v6a.75.75 0 0 1-.75.75h-1a.75.75 0 0 
 1-.75-.75v-6Zm0 8.5a.75.75 0 0 1 .75-.75h1a.75.75 0 0 1 .75.75v1a.75.75 0 0 1-.75.75h-1a.75.75 0 0 1-.75-.75v-1Z" 
 fill="#FFD43C"/>
 </svg>
 `;
-const flagIcon = {
-  type: 'svg',
+const flagиконка = {
+  тип: 'svg',
   svg: flag,
-  width: 20,
-  height: 20,
-  name: 'flag',
-  positionType: VTable.TYPES.IconPosition.left,
+  ширина: 20,
+  высота: 20,
+  имя: 'flag',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   cursor: 'pointer'
 };
-const reportIcon = {
-  type: 'svg',
+const reportиконка = {
+  тип: 'svg',
   svg: report,
-  width: 20,
-  height: 20,
-  name: 'report',
-  positionType: VTable.TYPES.IconPosition.left,
+  ширина: 20,
+  высота: 20,
+  имя: 'report',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   cursor: 'pointer'
 };
-VTable.register.icon('flag', flagIcon);
-VTable.register.icon('report', reportIcon);
-const popup = document.createElement('div');
-Object.assign(popup.style, {
-  position: 'fixed',
-  width: '300px',
+Vтаблица.регистрация.иконка('flag', flagиконка);
+Vтаблица.регистрация.иконка('report', reportиконка);
+const всплывающее окно = document.createElement('div');
+объект.assign(всплывающее окно.style, {
+  позиция: 'fixed',
+  ширина: '300px',
   backgroundColor: '#f1f1f1',
-  border: '1px solid #ccc',
-  padding: '20px',
-  textAlign: 'left'
+  bпорядок: '1px solid #ccc',
+  заполнение: '20px',
+  textAlign: 'лево'
 });
-function showTooltip(infoList, x, y) {
-  popup.innerHTML = '';
-  popup.id = 'popup';
-  popup.style.left = x + 'px';
-  popup.style.top = y + 'px';
+функция showПодсказка(infoсписок, x, y) {
+  всплывающее окно.innerHTML = '';
+  всплывающее окно.id = 'всплывающее окно';
+  всплывающее окно.style.лево = x + 'px';
+  всплывающее окно.style.верх = y + 'px';
   const heading = document.createElement('h4');
   heading.textContent = '任务信息';
-  heading.style.margin = '0px';
-  popup.appendChild(heading);
+  heading.style.отступ = '0px';
+  всплывающее окно.appendChild(heading);
   const keys = {
-    name: '名称',
-    planFinishCalendar: '计划开始',
-    planStartCalendar: '计划结束'
+    имя: '名称',
+    planFinishкалендарь: '计划开始',
+    planStartкалендарь: '计划结束'
   };
-  for (const key in infoList) {
+  для (const key в infoсписок) {
     if (!keys[key]) {
       continue;
     }
-    const info = infoList[key];
+    const информация = infoсписок[key];
     const info1 = document.createElement('p');
-    info1.textContent = keys[key] + ': ' + info;
-    popup.appendChild(info1);
+    info1.textContent = keys[key] + ': ' + информация;
+    всплывающее окно.appendChild(info1);
   }
 
   // 将弹出框添加到文档主体中
-  document.body.appendChild(popup);
+  document.body.appendChild(всплывающее окно);
 }
 
-function hideTooltip() {
-  if (document.body.contains(popup)) {
-    document.body.removeChild(popup);
+функция hideПодсказка() {
+  if (document.body.contains(всплывающее окно)) {
+    document.body.removeChild(всплывающее окно);
   }
 }
-const customLayout = args => {
-  const { width, height, taskRecord } = args;
-  const container = new VTableGantt.VRender.Group({
-    width,
-    height,
+const пользовательскиймакет = args => {
+  const { ширина, высота, taskRecord } = args;
+  const container = новый Vтаблицагантт.VRender.Group({
+    ширина,
+    высота,
     cornerRadius: 10,
     fill: taskRecord?.timeConflict
       ? '#f0943a'
@@ -114,51 +114,51 @@ const customLayout = args => {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    alignItems: 'center',
+    alignItems: 'центр',
     boundsPadding: 10
   });
 
   if (taskRecord?.timeConflict) {
-    const reportIcon = new VTableGantt.VRender.Image({
-      width: 20,
-      height: 20,
-      image: report
+    const reportиконка = новый Vтаблицагантт.VRender.Imвозраст({
+      ширина: 20,
+      высота: 20,
+      imвозраст: report
     });
-    container.add(reportIcon);
+    container.add(reportиконка);
   }
 
   if (taskRecord?.keyNode) {
-    const reportIcon = new VTableGantt.VRender.Image({
-      width: 20,
-      height: 20,
-      image: flag
+    const reportиконка = новый Vтаблицагантт.VRender.Imвозраст({
+      ширина: 20,
+      высота: 20,
+      imвозраст: flag
     });
-    container.add(reportIcon);
+    container.add(reportиконка);
   }
 
-  const name = new VTableGantt.VRender.Text({
-    text: taskRecord.name,
+  const имя = новый Vтаблицагантт.VRender.текст({
+    текст: taskRecord.имя,
     fill: taskRecord?.keyNode ? '#fff' : '#0f2819',
-    suffixPosition: 'end',
+    suffixPosition: 'конец',
     fontSize: 14,
     boundsPadding: 10
   });
 
-  container.add(name);
+  container.add(имя);
 
-  container.addEventListener('mouseenter', event => {
+  container.addсобытиесписокener('mouseenter', событие => {
     const container = document.getElementById(CONTAINER_ID);
     const containerRect = container.getBoundingClientRect();
-    const targetY = event.target.globalAABBBounds.y2;
-    const targetX = event.target.globalAABBBounds.x1;
-    showTooltip(taskRecord, event.client.x, targetY + containerRect.top);
+    const targetY = событие.target.globalAABBBounds.y2;
+    const targetX = событие.target.globalAABBBounds.x1;
+    showПодсказка(taskRecord, событие.client.x, targetY + containerRect.верх);
   });
 
-  container.addEventListener('mouseleave', () => {
-    hideTooltip();
+  container.addсобытиесписокener('mouseleave', () => {
+    hideПодсказка();
   });
 
-  return {
+  возврат {
     rootContainer: container
   };
 };
@@ -168,12 +168,12 @@ const records = [
     key: '0',
     check: {
       checked: false,
-      disable: true
+      отключить: true
     },
-    name: 'FA账期关闭',
-    planStartCalendar: '2025-01-01 10:00:00',
-    planFinishCalendar: '2025-01-03 00:00:00',
-    hierarchyState: 'expand',
+    имя: 'FA账期关闭',
+    planStartкалендарь: '2025-01-01 10:00:00',
+    planFinishкалендарь: '2025-01-03 00:00:00',
+    hierarchyState: 'развернуть',
     keyNode: false,
     timeConflict: false,
     confirmed: false,
@@ -182,12 +182,12 @@ const records = [
         key: '0,0',
         check: {
           checked: false,
-          disable: true
+          отключить: true
         },
-        name: 'FA账期关闭',
-        planStartCalendar: '2025-01-02 13:30',
-        planFinishCalendar: '2025-01-02 15:00',
-        hierarchyState: 'expand',
+        имя: 'FA账期关闭',
+        planStartкалендарь: '2025-01-02 13:30',
+        planFinishкалендарь: '2025-01-02 15:00',
+        hierarchyState: 'развернуть',
         keyNode: true,
         timeConflict: false,
         confirmed: false,
@@ -196,11 +196,11 @@ const records = [
             key: '0,0,0',
             check: {
               checked: false,
-              disable: true
+              отключить: true
             },
-            name: '负责人',
-            // planStartCalendar: '2025-01-02 13:30',
-            // planFinishCalendar: '2025-01-02 15:00',
+            имя: '负责人',
+            // planStartкалендарь: '2025-01-02 13:30',
+            // planFinishкалендарь: '2025-01-02 15:00',
             keyNode: false,
             timeConflict: true,
             confirmed: false
@@ -213,12 +213,12 @@ const records = [
     key: '1',
     check: {
       checked: false,
-      disable: true
+      отключить: true
     },
-    name: 'GL资金结账',
-    planStartCalendar: '2025-01-01 10:00:00',
-    planFinishCalendar: '2025-01-05 00:00:00',
-    hierarchyState: 'expand',
+    имя: 'GL资金结账',
+    planStartкалендарь: '2025-01-01 10:00:00',
+    planFinishкалендарь: '2025-01-05 00:00:00',
+    hierarchyState: 'развернуть',
     keyNode: false,
     timeConflict: false,
     confirmed: false,
@@ -227,12 +227,12 @@ const records = [
         key: '1,0',
         check: {
           checked: false,
-          disable: true
+          отключить: true
         },
-        name: '第三方提现中转核对',
-        planStartCalendar: '2025-01-02 10:30',
-        planFinishCalendar: '2025-01-03 12:00',
-        hierarchyState: 'expand',
+        имя: '第三方提现中转核对',
+        planStartкалендарь: '2025-01-02 10:30',
+        planFinishкалендарь: '2025-01-03 12:00',
+        hierarchyState: 'развернуть',
         keyNode: false,
         timeConflict: false,
         confirmed: false,
@@ -241,11 +241,11 @@ const records = [
             key: '1,0,0',
             check: {
               checked: false,
-              disable: true
+              отключить: true
             },
-            name: '负责人',
-            planStartCalendar: '2025-01-02 10:30',
-            planFinishCalendar: '2025-01-03 12:00',
+            имя: '负责人',
+            planStartкалендарь: '2025-01-02 10:30',
+            planFinishкалендарь: '2025-01-03 12:00',
             keyNode: false,
             timeConflict: false,
             confirmed: false
@@ -256,12 +256,12 @@ const records = [
         key: '1,1',
         check: {
           checked: false,
-          disable: true
+          отключить: true
         },
-        name: '红包提现流水入账',
-        planStartCalendar: '2025-01-03 10:30',
-        planFinishCalendar: '2025-01-03 12:00',
-        hierarchyState: 'expand',
+        имя: '红包提现流水入账',
+        planStartкалендарь: '2025-01-03 10:30',
+        planFinishкалендарь: '2025-01-03 12:00',
+        hierarchyState: 'развернуть',
         keyNode: false,
         timeConflict: false,
         confirmed: false,
@@ -270,11 +270,11 @@ const records = [
             key: '1,1,0',
             check: {
               checked: false,
-              disable: true
+              отключить: true
             },
-            name: '负责人',
-            planStartCalendar: '2025-01-03 10:30',
-            planFinishCalendar: '2025-01-03 12:00',
+            имя: '负责人',
+            planStartкалендарь: '2025-01-03 10:30',
+            planFinishкалендарь: '2025-01-03 12:00',
             keyNode: false,
             timeConflict: false,
             confirmed: false
@@ -285,12 +285,12 @@ const records = [
         key: '1,2',
         check: {
           checked: false,
-          disable: true
+          отключить: true
         },
-        name: '资金中转对平',
-        planStartCalendar: '2025-01-03 16:00',
-        planFinishCalendar: '2025-01-03 19:00',
-        hierarchyState: 'expand',
+        имя: '资金中转对平',
+        planStartкалендарь: '2025-01-03 16:00',
+        planFinishкалендарь: '2025-01-03 19:00',
+        hierarchyState: 'развернуть',
         keyNode: false,
         timeConflict: false,
         confirmed: false,
@@ -299,11 +299,11 @@ const records = [
             key: '1,2,0',
             check: {
               checked: false,
-              disable: true
+              отключить: true
             },
-            name: '负责人',
-            planStartCalendar: '2025-01-03 16:00',
-            planFinishCalendar: '2025-01-03 19:00',
+            имя: '负责人',
+            planStartкалендарь: '2025-01-03 16:00',
+            planFinishкалендарь: '2025-01-03 19:00',
             keyNode: false,
             timeConflict: false,
             confirmed: false
@@ -314,12 +314,12 @@ const records = [
         key: '1,3',
         check: {
           checked: false,
-          disable: true
+          отключить: true
         },
-        name: '投资组完成境内流水认款',
-        planStartCalendar: '2025-01-03 10:00',
-        planFinishCalendar: '2025-01-03 19:00',
-        hierarchyState: 'expand',
+        имя: '投资组完成境内流水认款',
+        planStartкалендарь: '2025-01-03 10:00',
+        planFinishкалендарь: '2025-01-03 19:00',
+        hierarchyState: 'развернуть',
         keyNode: false,
         timeConflict: false,
         confirmed: false,
@@ -328,11 +328,11 @@ const records = [
             key: '1,3,0',
             check: {
               checked: false,
-              disable: true
+              отключить: true
             },
-            name: '负责人',
-            planStartCalendar: '2025-01-03 10:00',
-            planFinishCalendar: '2025-01-03 19:00',
+            имя: '负责人',
+            planStartкалендарь: '2025-01-03 10:00',
+            planFinishкалендарь: '2025-01-03 19:00',
             keyNode: false,
             timeConflict: false,
             confirmed: false
@@ -345,122 +345,122 @@ const records = [
 const columns = [
  
   {
-    field: 'name',
-    title: '任务',
-    width: 220,
+    поле: 'имя',
+    заголовок: '任务',
+    ширина: 220,
     tree: true,
-    icon: ({ table, col, row }) => {
-      const record = table.getCellOriginRecord(col, row);
+    иконка: ({ таблица, col, row }) => {
+      const record = таблица.getCellOriginRecord(col, row);
       if (record.keyNode) {
-        return 'flag';
+        возврат 'flag';
       }
     },
-    style: ({ table, col, row }) => {
-      const record = table.getCellOriginRecord(col, row);
-      return {
+    style: ({ таблица, col, row }) => {
+      const record = таблица.getCellOriginRecord(col, row);
+      возврат {
         // - 已确认-绿底；未确认-白底
         bgColor: record?.timeConflict ? '#f0943a' : record.confirmed ? '#63bb5c' : undefined
       };
     }
   },
   {
-    field: 'planStartCalendar',
-    title: '计划开始',
-    width: 'auto'
+    поле: 'planStartкалендарь',
+    заголовок: '计划开始',
+    ширина: 'авто'
   },
   {
-    field: 'planFinishCalendar',
-    title: '计划完成',
-    width: 'auto'
+    поле: 'planFinishкалендарь',
+    заголовок: '计划完成',
+    ширина: 'авто'
   }
 ];
 const option = {
-  overscrollBehavior: 'none',
+  overscrollBehavior: 'никто',
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     enableTreeNodeMerge: true,
     columns,
-    tableWidth: 'auto',
-    theme: VTable.themes.ARCO.extends({
+    таблицаширина: 'авто',
+    тема: Vтаблица.темаs.ARCO.extends({
       // 表格外边框设置
       frameStyle: {
-        borderLineWidth: 0,
+        borderLineширина: 0,
         shadowBlur: 0
       },
       headerStyle: {
-        hover: {
+        навести: {
           cellBgColor: '#eef1f5'
         }
       },
       bodyStyle: {
         bgColor: '#fff',
-        hover: {
+        навести: {
           cellBgColor: 'rgba(0,0,0,0.03)'
         }
       },
-      tooltipStyle: { color: '#fff', bgColor: '#202328' }
+      ПодсказкаStyle: { цвет: '#fff', bgColor: '#202328' }
     }),
-    tooltip: {
-      isShowOverflowTextTooltip: true
+    Подсказка: {
+      isShowOverflowTextПодсказка: true
     },
-    menu: {
-      contextMenuItems: ['编辑']
+    меню: {
+      contextменюItems: ['编辑']
     },
     frozenColCount: 1
   },
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 1,
+      borderLineширина: 1,
       borderColor: '#e1e4e8',
       cornerRadius: 0
     },
     verticalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 1
+      lineширина: 1
     },
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 1
+      lineширина: 1
     },
     verticalSplitLineMoveable: true,
     verticalSplitLineHighlight: {
       lineColor: 'green',
-      lineWidth: 1
+      lineширина: 1
     }
   },
   grid: {
     // verticalLineDependenceOnTimeScale: 'day',
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 40,
-  rowHeight: 40,
+  headerRowвысота: 40,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'planStartCalendar',
-    endDateField: 'planFinishCalendar',
-    progressField: 'progress',
+    startDateполе: 'planStartкалендарь',
+    endDateполе: 'planFinishкалендарь',
+    progressполе: 'progress',
     resizable: true,
     moveable: true,
-    scheduleCreatable: true,
+    scheduleCreaтаблица: true,
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 14,
-      textAlign: 'right',
+      textAlign: 'право',
       textOverflow: 'ellipsis',
-      textBaseline: 'bottom'
+      textBaseline: 'низ'
     },
     barStyle: {
-      width: 30,
+      ширина: 30,
       /** 任务条的圆角 */
       cornerRadius: 10,
       /** 任务条的边框 */
-      borderLineWidth: 0,
+      borderLineширина: 0,
       /** 边框颜色 */
       borderColor: 'black'
     },
@@ -471,33 +471,33 @@ const option = {
     selectedBarStyle: {
       /** 任务条的颜色 */
       borderColor: '#000000',
-      borderLineWidth: 0
+      borderLineширина: 0
     },
     scheduleCreation: {
-      maxWidth: 100,
-      minWidth: 40
+      maxширина: 100,
+      minширина: 40
     },
-    customLayout
+    пользовательскиймакет
   },
   timelineHeader: {
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     backgroundColor: '#EEF1F5',
-    colWidth: 20,
+    colширина: 20,
     scales: [
       {
         unit: 'day',
         step: 1,
         startOfWeek: 'sunday',
         format(date) {
-          const day = VTableGantt.tools.formatDate(new Date(date.startDate), 'yyyy-mm-dd');
-          return day;
+          const day = Vтаблицагантт.tools.formatDate(новый Date(date.startDate), 'yyyy-mm-dd');
+          возврат day;
         },
         style: {
           fontSize: 16,
@@ -507,7 +507,7 @@ const option = {
       {
         unit: 'hour',
         step: 1,
-        visible: false,
+        видимый: false,
         style: {
           fontSize: 14,
           fontWeight: 'normal'
@@ -519,22 +519,22 @@ const option = {
     {
       date: '2025-01-02 13:30:00',
       scrollToMarkLine: true,
-      position: 'middle',
+      позиция: 'середина',
       style: {
         lineColor: 'red',
-        lineWidth: 1,
+        lineширина: 1,
         lineDash: [5, 5]
       }
     }
   ],
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'scrolling',
-    width: 6,
+    видимый: 'scrolling',
+    ширина: 6,
     scrollSliderCornerRadius: 2,
     scrollSliderColor: '#c0c0c0'
   }
 };
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 ```

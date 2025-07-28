@@ -1,179 +1,179 @@
 ---
-category: examples
-group: Theme
-title: Theme -register
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/register.png
-order: 6-7
-link: theme_and_style/theme
-option: ListTable#theme.bodyStyle.bgColor
+категория: примеры
+группа: тема
+заголовок: тема -регистрация
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/регистрация.png
+порядок: 6-7
+ссылка: тема_and_style/тема
+опция: списоктаблица#тема.bodyStyle.bgColor
 ---
 
-# Form Theme -register
+# Form тема -регистрация
 
-Register a custom theme globally
+регистрация a пользовательский тема globally
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.register.theme` Registering themes globally
-- `theme: xxx` Specify the name of the registered theme
+- `Vтаблица.регистрация.тема` регистрацияing темаs globally
+- `тема: xxx` Specify the имя из the регистрацияed тема
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-VTable.register.theme('themeRegisterOne', {
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.тема('темарегистрацияOne', {
   defaultStyle: {
-    borderLineWidth: 0
+    borderLineширина: 0
   },
   headerStyle: {
     bgColor: '#a881e1',
     borderColor: 'white',
     fontWeight: 'normal',
-    color: 'white'
+    цвет: 'white'
   },
   rowHeaderStyle: {
     bgColor: '#eae1fa',
     borderColor: 'white',
-    borderLineWidth: 1,
+    borderLineширина: 1,
     fontWeight: 'normal'
   },
   cornerHeaderStyle: {
     bgColor: '#a881e1',
     fontWeight: 'normal',
-    color: 'white'
+    цвет: 'white'
   },
   bodyStyle: {
     borderColor: '#f1e8fe',
-    borderLineWidth: 1,
+    borderLineширина: 1,
     bgColor: args => {
       if (args.row & 1) {
-        return '#f8f5fe';
+        возврат '#f8f5fe';
       }
-      return '#FDFDFD';
+      возврат '#FDFDFD';
     }
   }
 });
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rowTree: [
         {
-          dimensionKey: 'City',
-          value: 'Aberdeen'
+          dimensionKey: 'Город',
+          значение: 'Aberdeen'
         },
         {
-          dimensionKey: 'City',
-          value: 'Abilene'
+          dimensionKey: 'Город',
+          значение: 'Abilene'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bowling Green'
+          dimensionKey: 'Город',
+          значение: 'Bowling Green'
         },
         {
-          dimensionKey: 'City',
-          value: 'Boynton Beach'
+          dimensionKey: 'Город',
+          значение: 'Boynton Beach'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bozeman'
+          dimensionKey: 'Город',
+          значение: 'Bozeman'
         },
         {
-          dimensionKey: 'City',
-          value: 'Brentwood'
+          dimensionKey: 'Город',
+          значение: 'Brentwood'
         }
       ],
       columnTree: [
         {
-          dimensionKey: 'Category',
-          value: 'Office Supplies',
+          dimensionKey: 'Категория',
+          значение: 'Office Supplies',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Technology',
+          dimensionKey: 'Категория',
+          значение: 'Technology',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Furniture',
+          dimensionKey: 'Категория',
+          значение: 'Furniture',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         }
       ],
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
-          format: value => {
-            if (value) return '$' + Number(value).toFixed(2);
-            else return '--';
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
+          format: значение => {
+            if (значение) возврат '$' + число(значение).toFixed(2);
+            else возврат '--';
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
-          format: value => {
-            return Number(value).toFixed(2);
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
+          format: значение => {
+            возврат число(значение).toFixed(2);
           }
         }
       ],
@@ -183,10 +183,10 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      widthMode: 'standard',
-      theme: 'themeRegisterOne'
+      ширинаMode: 'standard',
+      тема: 'темарегистрацияOne'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

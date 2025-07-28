@@ -1,25 +1,25 @@
-This section will introduce the definition, function, advantages, applicable scenarios and common uses of the basic table.
+This section will introduce the definition, функция, advantвозрастs, applicable scenarios и common uses из the базовый таблица.
 
-## Introduction to basic tables
+## Introduction к базовый таблицаs
 
-A basic table is a common form of visual data used to present and organize data. It consists of a grid-like structure of rows and columns that presents large amounts of data in a clear, structured manner. Basic tables often provide some interaction and visualization capabilities that enable users to find, sort, paginate, and format data.
+A базовый таблица is a common form из visual данные used к present и organize данные. It consists из a grid-like structure из rows и columns that presents large amounts из данные в a clear, structured manner. базовый таблицаs often provide некоторые interaction и visualization capabilities that включить users к find, сортировка, paginate, и format данные.
 
-## VTable Basic Table Features
+## Vтаблица базовый таблица возможности
 
-The ListTable base table in VTable is a powerful component with the following features:
+The списоктаблица base таблица в Vтаблица is a powerful компонент с Следующий возможности:
 
-*   **Data organization and sorting**: Basic tables provide the ability to sort and group data, enabling users to organize and arrange data according to their needs, so as to better analyze and compare data.
+*   **данные organization и сортировкаing**: базовый таблицаs provide the ability к сортировка и group данные, enabling users к organize и arrange данные according к their needs, so as к better analyze и compare данные.
 
-*   **Flexible data presentation**: Basic tables support multiple column types such as**Text**,**link**,**picture**,**video**,**Trend Chart**,**progress bar**and**chart**, so that you can make suitable presentations according to the different characteristics of the data.
+*   **Flexible данные presentation**: базовый таблицаs support multiple column types such as**текст**,**link**,**picture**,**video**,**Trend график**,**progress bar**и**график**, so that Вы можете make suiтаблица presentations according к the different characteristics из the данные.
 
-*   **data formatting**: You can use data formatting options to adjust how data in the table is displayed, including text formatting, number formatting, and date/time formatting to meet specific needs.
+*   **данные formatting**: Вы можете use данные formatting options к adjust how данные в the таблица is displayed, including текст formatting, число formatting, и date/time formatting к meet specific needs.
 
-*   **paging function**: Basic tables support pagination, which can load large amounts of data in batches and display them on multiple pages, improving performance and user experience.
+*   **paging функция**: базовый таблицаs support pagination, which can load large amounts из данные в batches и display them на multiple pвозрастs, improving Производительность и user experience.
 
-*   **Custom styles and layouts**: You can customize the style of the table and the layout of the cells through configuration options, such as adjusting the row height, column width, table Theme, etc., to meet your design needs.
+*   **пользовательский styles и макетs**: Вы можете пользовательскийize the style из the таблица и the макет из the cells through configuration options, such as adjusting the row высота, column ширина, таблица тема, etc., к meet your design needs.
 
-*   **Interaction and Operational Functions**: Basic tables support a variety of interactive and operational functions, such as column width adjustment, drag and drop table headers, cell selection, etc., providing better user experience and operational flexibility.
+*   **Interaction и Operational Functions**: базовый таблицаs support a variety из interactive и operational functions, such as column ширина adjustment, перетаскивание и отпускание таблица headers, cell selection, etc., providing better user experience и operational flexibility.
 
-*   **Keyboard shortcut support**: The basic table provides keyboard shortcut functions, including select all and copy functions, to provide a more convenient operation method.
+*   **Keyboard shortcut support**: The базовый таблица provides keyboard shortcut functions, including выбрать все и copy functions, к provide a more convenient operation method.
 
-*   **Powerful visualization**: Support a variety of minicharts, and the ability to integrate with VChart to display richer visual charts.
+*   **Powerful visualization**: Support a variety из miniграфикs, и the ability к integrate с Vграфик к display richer visual графикs.

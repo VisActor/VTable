@@ -1,80 +1,80 @@
 ---
-category: examples
-group: Cell Type
-title: Switch Type
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/switch.png
-link: cell_type/switch
-option: ListTable-columns-switch#cellType
+категория: примеры
+группа: Cell тип
+заголовок: Switch тип
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/switch.png
+ссылка: cell_type/switch
+опция: списоктаблица-columns-switch#cellType
 ---
 
-# Switch Type
+# Switch тип
 
-Demonstrates various ways to use the switch type.
+демонстрацияnstrates various ways к use the switch тип.
 
 ## Key Configuration
 
 cellType: 'switch';
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
-  { productName: 'Apple', price: 20, switch: true },
-  { productName: 'Banana', price: 18, switch: false },
-  { productName: 'Cherry', price: 16, switch: true },
-  { productName: 'Date', price: 14, switch: false },
-  { productName: 'Elderberry', price: 12, switch: true },
-  { productName: 'Fig', price: 10, switch: false },
-  { productName: 'Grape', price: 10, switch: true }
+  { productимя: 'Apple', price: 20, switch: true },
+  { productимя: 'Banana', price: 18, switch: false },
+  { productимя: 'Cherry', price: 16, switch: true },
+  { productимя: 'Date', price: 14, switch: false },
+  { productимя: 'Elderberry', price: 12, switch: true },
+  { productимя: 'Fig', price: 10, switch: false },
+  { productимя: 'Grape', price: 10, switch: true }
 ];
 
 const columns = [
   {
-    field: 'productName',
-    title: 'name',
-    width: 120
+    поле: 'productимя',
+    заголовок: 'имя',
+    ширина: 120
   },
   {
-    field: 'price',
-    title: 'price',
-    width: 120
+    поле: 'price',
+    заголовок: 'price',
+    ширина: 120
   },
   {
-    field: 'switch0',
-    title: 'switch',
-    width: 'auto',
+    поле: 'switch0',
+    заголовок: 'switch',
+    ширина: 'авто',
     cellType: 'switch',
-    checkedText: 'on',
+    checkedText: 'на',
     uncheckedText: 'off',
     style: {
-      color: '#FFF'
+      цвет: '#FFF'
     }
   },
   {
-    field: 'switch1',
-    title: 'disabled switch',
-    width: 'auto',
+    поле: 'switch1',
+    заголовок: 'отключен switch',
+    ширина: 'авто',
     cellType: 'switch',
-    checkedText: 'on',
+    checkedText: 'на',
     uncheckedText: 'off',
     style: {
-      color: '#FFF'
+      цвет: '#FFF'
     },
-    disable: true
+    отключить: true
   },
   {
-    field: 'switch',
-    title: 'custom switch',
-    width: 'auto',
+    поле: 'switch',
+    заголовок: 'пользовательский switch',
+    ширина: 'авто',
     cellType: 'switch',
     style: {
-      color: '#FFF'
+      цвет: '#FFF'
     },
     checkedText: args => {
-      return 'on' + args.row;
+      возврат 'на' + args.row;
     },
     uncheckedText: args => {
-      return 'off' + args.row;
+      возврат 'off' + args.row;
     }
   }
 ];
@@ -82,6 +82,6 @@ const option = {
   records,
   columns
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

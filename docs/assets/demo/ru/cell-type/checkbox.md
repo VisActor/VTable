@@ -1,66 +1,66 @@
 ---
-category: examples
-group: Cell Type
-title: Checkbox Type
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox-demo.png
-link: cell_type/checkbox
-option: ListTable-columns-checkbox#cellType
+категория: примеры
+группа: Cell тип
+заголовок: флажок тип
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/флажок-демонстрация.png
+ссылка: cell_type/флажок
+опция: списоктаблица-columns-флажок#cellType
 ---
 
-# Checbox Type
+# Checbox тип
 
-Demonstrate multiple ways to use checkbox
+демонстрацияnstrate multiple ways к use флажок
 
 ## Critical Configuration
 
-cellType: 'checkbox';
+cellType: 'флажок';
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
-  { productName: 'aaaa', price: 20, check: { text: 'unchecked', checked: false, disable: false } },
-  { productName: 'bbbb', price: 18, check: { text: 'checked', checked: true, disable: false } },
-  { productName: 'cccc', price: 16, check: { text: 'disable', checked: true, disable: true } },
-  { productName: 'cccc', price: 14, check: { text: 'disable', checked: false, disable: true } },
-  { productName: 'eeee', price: 12, check: { text: 'checked', checked: false, disable: false } },
-  { productName: 'ffff', price: 10, check: { text: 'checked', checked: false, disable: false } },
-  { productName: 'gggg', price: 10, check: { text: 'checked', checked: false, disable: false } }
+  { productимя: 'aaaa', price: 20, check: { текст: 'unchecked', checked: false, отключить: false } },
+  { productимя: 'bbbb', price: 18, check: { текст: 'checked', checked: true, отключить: false } },
+  { productимя: 'cccc', price: 16, check: { текст: 'отключить', checked: true, отключить: true } },
+  { productимя: 'cccc', price: 14, check: { текст: 'отключить', checked: false, отключить: true } },
+  { productимя: 'eeee', price: 12, check: { текст: 'checked', checked: false, отключить: false } },
+  { productимя: 'ffff', price: 10, check: { текст: 'checked', checked: false, отключить: false } },
+  { productимя: 'gggg', price: 10, check: { текст: 'checked', checked: false, отключить: false } }
 ];
 
 const columns = [
   {
-    field: 'isCheck',
-    title: '',
-    width: 60,
-    headerType: 'checkbox',
-    cellType: 'checkbox'
+    поле: 'isCheck',
+    заголовок: '',
+    ширина: 60,
+    headerType: 'флажок',
+    cellType: 'флажок'
   },
   {
-    field: 'productName',
-    title: 'productName',
-    width: 120
+    поле: 'productимя',
+    заголовок: 'productимя',
+    ширина: 120
   },
   {
-    field: 'price',
-    title: 'checkbox',
-    width: 120,
-    cellType: 'checkbox',
-    disable: true,
+    поле: 'price',
+    заголовок: 'флажок',
+    ширина: 120,
+    cellType: 'флажок',
+    отключить: true,
     checked: true
   },
   {
-    field: 'check',
-    title: 'checkbox',
-    width: 120,
-    cellType: 'checkbox'
-    // disable: true
+    поле: 'check',
+    заголовок: 'флажок',
+    ширина: 120,
+    cellType: 'флажок'
+    // отключить: true
   }
 ];
 const option = {
   records,
   columns
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

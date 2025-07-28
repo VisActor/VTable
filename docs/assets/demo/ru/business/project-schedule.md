@@ -1,38 +1,38 @@
 ---
-category: examples
-group: Business
-title:  Project schedule
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/project-schedule.png
-order: 9-2
+категория: примеры
+группа: Business
+заголовок:  Project schedule
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/project-schedule.png
+порядок: 9-2
 ---
 
 # Project schedule
 
-In this example, the overall schedule is highlighted by setting the background color, and the entire row of background colors is generated according to the length of the project duration, and the attention to the project with a longer total duration is strengthened through the color level visual effect.
+в this пример, the overall schedule is highlighted по setting the фон цвет, и the entire row из фон colors is generated according к the length из the project duration, и the attention к the project с a longer total duration is strengthened through the цвет level visual effect.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-\-`theme.bgColor` Set the background color according to the conditions through the function definition
+\-`тема.bgColor` Set the фон цвет according к the conditions through the функция definition
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-function getColor(min, max, n) {
+```javascript liveдемонстрация template=vтаблица
+функция getColor(min, max, n) {
   if (max === min) {
     if (n > 0) {
-      return 'rgb(255,0,0)';
+      возврат 'rgb(255,0,0)';
     }
-    return 'rgb(255,255,255)';
+    возврат 'rgb(255,255,255)';
   }
-  if (n === '') return 'rgb(255,255,255)';
+  if (n === '') возврат 'rgb(255,255,255)';
   const c = (n - min) / (max - min)+0.1;
   const red = (1 - c) * 200+55;
   const green = (1 - c) * 200+55;
-  return `rgb(${red},${green},255)`;
+  возврат `rgb(${red},${green},255)`;
 }
 const records = [
   {
-    'projectName': 'Project No.1',
+    'projectимя': 'Project No.1',
     "startTime": "2023/5/1",
     "endTime": "2023/5/10",
     "estimateDays": 10,
@@ -48,7 +48,7 @@ const records = [
     "date10":1
   },
   {
-    'projectName': 'Project No.2',
+    'projectимя': 'Project No.2',
     "startTime": "2023/5/1",
     "endTime": "2023/5/5",
     "estimateDays": 5,
@@ -59,7 +59,7 @@ const records = [
     "date5":1,
   },
   {
-    'projectName': 'Project No.3',
+    'projectимя': 'Project No.3',
     "startTime": "2023/5/7",
     "endTime": "2023/5/8",
     "estimateDays": 3,
@@ -68,7 +68,7 @@ const records = [
     "date8":1,
   },
   {
-    'projectName': 'Project No.4',
+    'projectимя': 'Project No.4',
     "startTime": "2023/5/11",
     "endTime": "2023/5/12",
     "estimateDays": 2,
@@ -76,7 +76,7 @@ const records = [
     "date12":1,
   },
   {
-    'projectName': 'Project No.5',
+    'projectимя': 'Project No.5',
     "startTime": "2023/5/0",
     "endTime": "2023/5/10",
     "estimateDays": 2,
@@ -84,7 +84,7 @@ const records = [
     "date10":1,
   },
    {
-    'projectName': 'Project No.6',
+    'projectимя': 'Project No.6',
     "startTime": "2023/5/11",
     "endTime": "2023/5/15",
     "estimateDays": 5,
@@ -95,7 +95,7 @@ const records = [
     "date15":1,
   },
   {
-    'projectName': 'Project No.7',
+    'projectимя': 'Project No.7',
     "startTime": "2023/5/16",
     "endTime": "2023/5/19",
     "estimateDays": 4,
@@ -105,7 +105,7 @@ const records = [
     "date19":1,
   },
      {
-    'projectName': 'Project No.8',
+    'projectимя': 'Project No.8',
     "startTime": "2023/5/13",
     "endTime": "2023/5/15",
     "estimateDays": 3,
@@ -114,7 +114,7 @@ const records = [
     "date15":1,
   },
   {
-    'projectName': 'Project No.9',
+    'projectимя': 'Project No.9',
     "startTime": "2023/5/20",
     "endTime": "2023/5/21",
     "estimateDays": 2,
@@ -122,7 +122,7 @@ const records = [
     "date21":1,
   },
   {
-    'projectName': 'Project No.10',
+    'projectимя': 'Project No.10',
     "startTime": "2023/5/16",
     "endTime": "2023/5/21",
     "estimateDays": 6,
@@ -136,287 +136,287 @@ const records = [
 ];
 const columns =[
     {
-        "field": "projectName",
-        "title": "Project Name",
-        "width": "auto",
+        "поле": "projectимя",
+        "title": "Project имя",
+        "ширина": "авто",
         "style":{
-          color:'#ff689d',
+          цвет:'#ff689d',
           fontWeight:'bold'
         }
     },
     {
-        "field": "startTime",
-        "title": "Start Time",
-        "width": "auto",
+        "поле": "startTime",
+        "title": "начало Time",
+        "ширина": "авто",
     },
     {
-        "field": "endTime",
-        "title": "End Time",
-        "width": "auto"
+        "поле": "endTime",
+        "title": "конец Time",
+        "ширина": "авто"
     },
     {
-        "field": "estimateDays",
+        "поле": "estimateDays",
         "title": "Duration (days)",
-        "width": "auto",
+        "ширина": "авто",
         "style":{
-          color:'red'
+          цвет:'red'
         }
     },
     {
         "title": "Period:2023/5/1-2023/5/15",
         "headerStyle":{
-          textAlign:'center'
+          textAlign:'центр'
         },
         "columns":[
           {
             "title": "Monday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date1",
+                "поле": "date1",
                 "title": "1",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Tuesday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date2",
+                "поле": "date2",
                 "title": "2",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Wednesday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date3",
+                "поле": "date3",
                 "title": "3",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Thursday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date4",
+                "поле": "date4",
                 "title": "4",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Friday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date5",
+                "поле": "date5",
                 "title": "5",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Saturday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date6",
+                "поле": "date6",
                 "title": "6",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Sunday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date7",
+                "поле": "date7",
                 "title": "7",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
           {
             "title": "Monday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date8",
+                "поле": "date8",
                 "title": "8",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Tuesday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date9",
+                "поле": "date9",
                 "title": "9",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Wes day",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date10",
+                "поле": "date10",
                 "title": "10",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Thursday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date11",
+                "поле": "date11",
                 "title": "11",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Friday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date12",
+                "поле": "date12",
                 "title": "12",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Saturday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date13",
+                "поле": "date13",
                 "title": "13",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Sunday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date14",
+                "поле": "date14",
                 "title": "14",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Monday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date15",
+                "поле": "date15",
                 "title": "15",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
           {
             "title": "Tuesday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date16",
+                "поле": "date16",
                 "title": "16",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Wednesday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date17",
+                "поле": "date17",
                 "title": "17",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Thursday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date18",
+                "поле": "date18",
                 "title": "18",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Friday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date19",
+                "поле": "date19",
                 "title": "19",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Saturday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date20",
+                "поле": "date20",
                 "title": "20",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
            {
             "title": "Sunday",
-            "width": "auto",
+            "ширина": "авто",
              "columns":[
               {
-                "field": "date21",
+                "поле": "date21",
                 "title": "21",
-                "width": "auto",
-                "fieldFormat":()=>{return ''}
+                "ширина": "авто",
+                "полеFormat":()=>{возврат ''}
               },
              ]
           },
@@ -427,42 +427,42 @@ const columns =[
 const option = {
   records,
   columns,
-  widthMode: 'standard',
-  hover:{
+  ширинаMode: 'standard',
+  навести:{
     highlightMode: 'cross'
   },
-  theme:VTable.themes.ARCO.extends({
+  тема:Vтаблица.темаs.ARCO.extends({
     headerStyle:{
       bgColor:'#08aff1',
-      color:'#FFF',
-      hover:{
+      цвет:'#FFF',
+      навести:{
         inlineColumnBgColor:'blue'
       }
     },
     bodyStyle:{
-       hover:{
+       навести:{
         cellBgColor:'',
         inlineColumnBgColor:'',
         inlineRowBgColor(args){
           if(args.col===0)
-            return  'blue';
-          return ''
+            возврат  'blue';
+          возврат ''
         }
       },
       bgColor(args){
-        const {table,row,col}=args;
-        if(table.getCellOriginValue(col,row)===1)
-        return '#ffc200';
+        const {таблица,row,col}=args;
+        if(таблица.getCellOriginValue(col,row)===1)
+        возврат '#ffc200';
 
-        return getColor(2,15,table.getCellOriginValue(3,row))
+        возврат getColor(2,15,таблица.getCellOriginValue(3,row))
       }
     }
   })
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
 ## Related Tutorials
 
-[performance optimization](link)
+[Производительность optimization](link)

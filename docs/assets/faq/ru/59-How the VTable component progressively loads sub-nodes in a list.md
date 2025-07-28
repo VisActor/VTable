@@ -1,26 +1,26 @@
 ---
-title: How the VTable component progressively loads sub-nodes in a list</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: How the Vтаблица компонент progressively loads sub-nodes в a список</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to progressively load sub-nodes in a list with the VTable component?</br>
+How к progressively load sub-nodes в a список с the Vтаблица компонент?</br>
 ## Problem description
 
-Using the VTable table component, how to gradually load sub-nodes in the list, click the expand button of the parent node, and then dynamically load the information of the sub-node</br>
+Using the Vтаблица таблица компонент, how к gradually load sub-nodes в the список, Нажать the развернуть Кнопка из the parent node, и then dynamically load the information из the sub-node</br>
 ## Solution
 
-VTable provides `setRecordChildren `API to update the sub-node status of a node, which can be used to implement progressive loading function</br>
-1. Data preparation</br>
-Normally, in the data of the tree structure list, the `children `attribute is an array, which is the sub-node information of the node</br>
+Vтаблица provides `setRecordChildren `апи к update the sub-node status из a node, which can be used к implement progressive загрузка функция</br>
+1. данные preparation</br>
+Normally, в the данные из the tree structure список, the `children `attribute is an массив, which is the sub-node information из the node</br>
 ```
 {
-    name: 'a',
-    value: 10,
+    имя: 'a',
+    значение: 10,
     children: [
         {
-            name: 'a-1',
-            value: 5,
+            имя: 'a-1',
+            значение: 5,
             children: [
                 // ......
             ]
@@ -29,22 +29,22 @@ Normally, in the data of the tree structure list, the `children `attribute is an
     ]
 }</br>
 ```
-How to dynamically load sub-node information, you can configure the `children `property to `true `. At this time, the node will be displayed as the parent node in the table, but clicking the expand button in the cell will trigger relevant events, but the table will not have any active changes.</br>
-1. Monitoring events</br>
-After the expand button is clicked, the `VTable. ListTable.EVENT_TYPE `event will be triggered. You need to listen to this event and use the `setRecordChildren `API to update the sub-node information</br>
+How к dynamically load sub-node information, Вы можете configure the `children `property к `true `. в this time, the node will be displayed as the parent node в the таблица, but Нажатьing the развернуть Кнопка в the cell will trigger relevant событиеs, but the таблица will не have любой активный changes.</br>
+1. Monitoring событиеs</br>
+After the развернуть Кнопка is Нажатьed, the `Vтаблица. списоктаблица.событие_TYPE `событие will be triggered. You need к списокen к this событие и use the `setRecordChildren `апи к update the sub-node information</br>
 ```
-const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
-  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && !Array.isArray(args.originData.children)) {
+const { TREE_HIERARCHY_STATE_CHANGE } = Vтаблица.списоктаблица.событие_TYPE;
+instance.на(TREE_HIERARCHY_STATE_CHANGE, args => {
+  if (args.hierarchyState === Vтаблица.TYPES.HierarchyState.развернуть && !массив.isArray(args.originданные.children)) {
     setTimeout(() => {
       const children = [
         {
-          name: 'a-1',
-          value: 5,
+          имя: 'a-1',
+          значение: 5,
         },
         {
-          name: 'a-2',
-          value: 5
+          имя: 'a-2',
+          значение: 5
         }
       ];
       instance.setRecordChildren(children, args.col, args.row);
@@ -52,14 +52,14 @@ instance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
   }
 });</br>
 ```
-## Code example
+## код пример
 
-demo：https://visactor.io/vtable/demo/table-type/list-table-tree-lazy-load</br>
+демонстрация：https://visactor.io/vтаблица/демонстрация/таблица-тип/список-таблица-tree-lazy-load</br>
 ## Related Documents
 
-Related api: https://visactor.io/vtable/option/ListTable-columns-text#tree</br>
-Tutorial: https://visactor.io/vtable/guide/table_type/List_table/tree_list</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://visactor.io/vтаблица/option/списоктаблица-columns-текст#tree</br>
+Tutorial: https://visactor.io/vтаблица/guide/таблица_type/список_таблица/tree_список</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

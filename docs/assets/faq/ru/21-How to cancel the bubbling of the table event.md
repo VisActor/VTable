@@ -1,38 +1,38 @@
-# How to cancel the bubbling of the table mousedown event
+# How к отмена the bubbling из the таблица mousedown событие
 
 ## Problem Description
 
-In my business scenario, I need to drag the entire table to move the position. However, if the mouse point is dragged on the cell, it will trigger the box selection interaction of the table. In this way, I do not expect to drag the entire table. When the mouse point is clicked, Then respond to the entire table dragging behavior in the blank area of the table.
+в my business scenario, I need к перетаскивание the entire таблица к move the позиция. However, if the mouse point is dragged на the cell, it will trigger the box selection interaction из the таблица. в this way, I do не expect к перетаскивание the entire таблица. When the mouse point is Нажатьed, Then respond к the entire таблица dragging behavior в the blank area из the таблица.
 
-Based on this demand background, how to determine whether the click is on a cell or a blank area of the table?
+Based на this demand фон, how к determine whether the Нажать is на a cell или a blank area из the таблица?
 
 ## solution
 
-This problem can be handled in VTable by listening to the `mousedown_cell` event, but it should be noted that VTable internally listens to pointer events!
+This problem can be handled в Vтаблица по списокening к the `mousedown_cell` событие, but it should be noted that Vтаблица internally списокens к pointer событиеs!
 
-Therefore, if you cancel bubbling directly, you can only cancel the pointerdown event.
+Therefore, if you отмена bubbling directly, Вы можете only отмена the pointerdown событие.
 ```
-  tableInstance.on('mousedown_cell', arg => {
-    arg.event.stopPropagation();
+  таблицаInstance.на('mousedown_cell', arg => {
+    arg.событие.stopPropagation();
   });
 ```
-Therefore, you need to listen to mousedown again to determine the organization event. For correct processing, you can see the following example:
+Therefore, you need к списокen к mousedown again к determine the organization событие. для correct processing, Вы можете see Следующий пример:
 
-## Code Example
+## код пример
 
 ```javascript
-  const tableInstance = new VTable.ListTable(option);
-  window.tableInstance = tableInstance;
-  let isPointerDownOnTable = false;
-  tableInstance.on('mousedown_cell', arg => {
-    isPointerDownOnTable = true;
+  const таблицаInstance = новый Vтаблица.списоктаблица(option);
+  window.таблицаInstance = таблицаInstance;
+  let isPointerDownOnтаблица = false;
+  таблицаInstance.на('mousedown_cell', arg => {
+    isPointerDownOnтаблица = true;
     setTimeout(() => {
-      isPointerDownOnTable = false;
+      isPointerDownOnтаблица = false;
     }, 0);
-    arg.event?.stopPropagation();
+    arg.событие?.stopPropagation();
   });
-  tableInstance.getElement().addEventListener('mousedown', e => {
-    if (isPointerDownOnTable) {
+  таблицаInstance.getElement().addсобытиесписокener('mousedown', e => {
+    if (isPointerDownOnтаблица) {
       e.stopPropagation();
     }
   });
@@ -40,5 +40,5 @@ Therefore, you need to listen to mousedown again to determine the organization e
 
 ## Related documents
 
-- [Tutorial](https://visactor.io/vtable/guide/Event/event_list)
-- [github](https://github.com/VisActor/VTable)
+- [Tutorial](https://visactor.io/vтаблица/guide/событие/событие_список)
+- [github](https://github.com/VisActor/Vтаблица)

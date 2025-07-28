@@ -1,57 +1,57 @@
 ---
-category: examples
-group: component
-title: Menu Component
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-menu.png
-order: 1-1
-link: table_type/List_table/list_table_define_and_generate
-option: ListTable#menu
+категория: примеры
+группа: компонент
+заголовок: меню компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-меню.png
+порядок: 1-1
+ссылка: таблица_type/список_таблица/список_таблица_define_and_generate
+опция: списоктаблица#меню
 ---
 
-# Menu Component
+# меню компонент
 
-You can directly use the `Menu` to configure the menu component, which is consistent with the option.menu configuration.
+Вы можете directly use the `меню` к configure the меню компонент, which is consistent с the option.меню configuration.
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-   <ListTable :options="tableOptions" @onDropdownMenuClick="handleDropdownMenuClick">
+   <списоктаблица :options="таблицаOptions" @onDropdownменюНажать="handleDropdownменюНажать">
     
-    <ListColumn v-for="(column, index) in columns" :key="index" :field="column.field" :title="column.title" />
+    <списокColumn v-для="(column, index) в columns" :key="index" :поле="column.поле" :title="column.title" />
     
-    <Menu menuType="html" :contextMenuItems="['copy', 'paste', 'delete', '...']" />
+    <меню менюType="html" :contextменюItems="['copy', 'paste', 'delete', '...']" />
 
-   </ListTable>
+   </списоктаблица>
   `,
-  data() {
-    return {
+  данные() {
+    возврат {
       columns: [
-        { field: '0', title: 'Name' },
-        { field: '1', title: 'Address' },
-        { field: '2', title: 'Phone' }
+        { поле: '0', заголовок: 'имя' },
+        { поле: '1', заголовок: 'Address' },
+        { поле: '2', заголовок: 'Phone' }
       ],
-      tableOptions: {
-        records: new Array(1000).fill(['John Doe', 'xxx.xxx.xxx.xxx', '12345678901'])
+      таблицаOptions: {
+        records: новый массив(1000).fill(['John Doe', 'xxx.xxx.xxx.xxx', '12345678901'])
       }
     };
   },
-  methods: {
-    handleDropdownMenuClick(args) {
-      console.log('menu click', args);
+  методы: {
+    handleDropdownменюНажать(args) {
+      console.log('меню Нажать', args);
     }
   }
 });
 
-app.component('ListTable', VueVTable.ListTable);
-app.component('ListColumn', VueVTable.ListColumn);
-app.component('Menu', VueVTable.Menu);
+app.компонент('списоктаблица', VueVтаблица.списоктаблица);
+app.компонент('списокColumn', VueVтаблица.списокColumn);
+app.компонент('меню', VueVтаблица.меню);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

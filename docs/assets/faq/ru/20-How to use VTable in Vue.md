@@ -1,33 +1,33 @@
-## How to use VTable in Vue？
+## How к use Vтаблица в Vue？
 
 ## Question Description
 
-VTable does not encapsulate the Vue component, so how do you VTable in Vue?
+Vтаблица does не encapsulate the Vue компонент, so how do you Vтаблица в Vue?
 
 ## Solution
 
-It is recommended to use Vtable in Vue 3.x. If you use vue2, it may cause performance problems. For example, binding the instance of table to the vue component `this.tableInstance = new VTable.ListTable(dom, option)` will cause vue's Responsiveness monitors all changes to the tableInstance attribute, causing table performance to look poor. (If you need to save the variable, you can place it on the window first).
+It is recommended к use Vтаблица в Vue 3.x. If you use vue2, it may cause Производительность problems. для пример, binding the instance из таблица к the vue компонент `this.таблицаInstance = новый Vтаблица.списоктаблица(dom, option)` will cause vue's Responsiveness monitors все changes к the таблицаInstance attribute, causing таблица Производительность к loхорошо poor. (If you need к save the variable, Вы можете place it на the window первый).
 
-The following code uses Vue3!
+Следующий код uses Vue3!
 
-Composite API usage:
+Composite апи usвозраст:
 
-You can refer to[ the online demo ](https://codesandbox.io/p/devbox/magical-nash-t6t33f)for details.
+Вы можете refer к[ the online демонстрация ](https://кодsandbox.io/p/devbox/magical-nash-t6t33f)для details.
 
-## Code Example
+## код пример
 
-- Composition API
+- Composition апи
 
 ```
 <template>
-  <div ref="listTableRef" style="width: 1280px; height: 400px"></div>
+  <div ref="списоктаблицаRef" style="ширина: 1280px; высота: 400px"></div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { ListTable } from "@visactor/vtable";
+import { onMounted, ref } от "vue";
+import { списоктаблица } от "@visactor/vтаблица";
 
-const listTableRef = ref();
+const списоктаблицаRef = ref();
 
 const records = [
   {
@@ -50,7 +50,7 @@ const records = [
     230517143221023: "Office Supplies",
     230517143221034: "Binders",
     230517143221037: "West",
-    230517143221024: "Fairfield",
+    230517143221024: "Fairполе",
     230517143221029: "2018-12-30",
     230517143221042: "2",
     230517143221040: "20.72",
@@ -63,7 +63,7 @@ const records = [
     230517143221023: "Office Supplies",
     230517143221034: "Binders",
     230517143221037: "West",
-    230517143221024: "Fairfield",
+    230517143221024: "Fairполе",
     230517143221029: "2018-12-30",
     230517143221042: "2",
     230517143221040: "13.904",
@@ -72,11 +72,11 @@ const records = [
   {
     230517143221027: "CA-2018-143259",
     230517143221030: "PO-18865",
-    230517143221032: "Wilson Jones Legal Size Ring Binders",
+    230517143221032: "Wilson Jones Legal размер Ring Binders",
     230517143221023: "Office Supplies",
     230517143221034: "Binders",
     230517143221037: "East",
-    230517143221024: "New York City",
+    230517143221024: "новый York Город",
     230517143221029: "2018-12-30",
     230517143221042: "3",
     230517143221040: "52.776",
@@ -89,7 +89,7 @@ const records = [
     230517143221023: "Technology",
     230517143221034: "Phones",
     230517143221037: "East",
-    230517143221024: "New York City",
+    230517143221024: "новый York Город",
     230517143221029: "2018-12-30",
     230517143221042: "7",
     230517143221040: "90.93",
@@ -98,11 +98,11 @@ const records = [
   {
     230517143221027: "CA-2018-143259",
     230517143221030: "PO-18865",
-    230517143221032: "Bush Westfield Collection Bookcases, Fully Assembled",
+    230517143221032: "Bush Westполе Collection Boхорошоcases, Fully Assembled",
     230517143221023: "Furniture",
-    230517143221034: "Bookcases",
+    230517143221034: "Boхорошоcases",
     230517143221037: "East",
-    230517143221024: "New York City",
+    230517143221024: "новый York Город",
     230517143221029: "2018-12-30",
     230517143221042: "4",
     230517143221040: "323.136",
@@ -137,7 +137,7 @@ const records = [
   {
     230517143221027: "US-2018-158526",
     230517143221030: "KH-16360",
-    230517143221032: "Global Leather and Oak Executive Chair, Black",
+    230517143221032: "Global Leather и Oak Executive Chair, Black",
     230517143221023: "Furniture",
     230517143221034: "Chairs",
     230517143221037: "South",
@@ -151,7 +151,7 @@ const records = [
     230517143221027: "US-2018-158526",
     230517143221030: "KH-16360",
     230517143221032:
-      "Panasonic KP-350BK Electric Pencil Sharpener with Auto Stop",
+      "Panasonic KP-350BK Electric Pencil Sharpener с авто Stop",
     230517143221023: "Office Supplies",
     230517143221034: "Art",
     230517143221037: "South",
@@ -164,7 +164,7 @@ const records = [
   {
     230517143221027: "US-2018-158526",
     230517143221030: "KH-16360",
-    230517143221032: "GBC ProClick Spines for 32-Hole Punch",
+    230517143221032: "GBC ProНажать Spines для 32-Hole Punch",
     230517143221023: "Office Supplies",
     230517143221034: "Binders",
     230517143221037: "South",
@@ -233,7 +233,7 @@ const records = [
     230517143221023: "Office Supplies",
     230517143221034: "Paper",
     230517143221037: "Central",
-    230517143221024: "Grand Rapids",
+    230517143221024: "Grand Rапиds",
     230517143221029: "2018-12-29",
     230517143221042: "2",
     230517143221040: "209.7",
@@ -246,7 +246,7 @@ const records = [
     230517143221023: "Office Supplies",
     230517143221034: "Fasteners",
     230517143221037: "East",
-    230517143221024: "New York City",
+    230517143221024: "новый York Город",
     230517143221029: "2018-12-29",
     230517143221042: "3",
     230517143221040: "6.03",
@@ -282,72 +282,72 @@ const records = [
 
 const columns = [
   {
-    field: "230517143221027",
-    title: "Order ID",
-    width: "auto",
+    поле: "230517143221027",
+    заголовок: "ID Заказа",
+    ширина: "авто",
   },
   {
-    field: "230517143221030",
-    title: "Customer ID",
-    width: "auto",
+    поле: "230517143221030",
+    заголовок: "пользовательскийer ID",
+    ширина: "авто",
   },
   {
-    field: "230517143221032",
-    title: "Product Name",
-    width: "auto",
+    поле: "230517143221032",
+    заголовок: "Product имя",
+    ширина: "авто",
   },
   {
-    field: "230517143221023",
-    title: "Category",
-    width: "auto",
+    поле: "230517143221023",
+    заголовок: "Категория",
+    ширина: "авто",
   },
   {
-    field: "230517143221034",
-    title: "Sub-Category",
-    width: "auto",
+    поле: "230517143221034",
+    заголовок: "Sub-Категория",
+    ширина: "авто",
   },
   {
-    field: "230517143221037",
-    title: "Region",
-    width: "auto",
+    поле: "230517143221037",
+    заголовок: "Регион",
+    ширина: "авто",
   },
   {
-    field: "230517143221024",
-    title: "City",
-    width: "auto",
+    поле: "230517143221024",
+    заголовок: "Город",
+    ширина: "авто",
   },
   {
-    field: "230517143221029",
-    title: "Order Date",
-    width: "auto",
+    поле: "230517143221029",
+    заголовок: "Дата Заказа",
+    ширина: "авто",
   },
   {
-    field: "230517143221042",
-    title: "Quantity",
-    width: "auto",
+    поле: "230517143221042",
+    заголовок: "Количество",
+    ширина: "авто",
   },
   {
-    field: "230517143221040",
-    title: "Sales",
-    width: "auto",
+    поле: "230517143221040",
+    заголовок: "Продажи",
+    ширина: "авто",
   },
   {
-    field: "230517143221041",
-    title: "Profit",
-    width: "auto",
+    поле: "230517143221041",
+    заголовок: "Прибыль",
+    ширина: "авто",
   },
 ];
 
 const option = {
   records,
   columns,
-  widthMode: "standard",
+  ширинаMode: "standard",
 };
 
 onMounted(() => {
-  const listTable = new ListTable(listTableRef.value, option);
+  const списоктаблица = новый списоктаблица(списоктаблицаRef.значение, option);
 
-  listTable.on("click_cell", (params) => {
+  списоктаблица.на("Нажать_cell", (params) => {
     console.log(params);
   });
 });
@@ -358,8 +358,8 @@ onMounted(() => {
 
 ## Results
 
-- [Online demo](https://codesandbox.io/p/sandbox/wizardly-dream-ktf74n)
+- [Online демонстрация](https://кодsandbox.io/p/sandbox/wizardly-dream-ktf74n)
 
-## Related Documentation
+## Related Документация
 
-- [GitHub](https://github.com/VisActor/VTable)
+- [GitHub](https://github.com/VisActor/Vтаблица)

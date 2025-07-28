@@ -1,148 +1,148 @@
 # Edit cell
 
-When it comes to business scenarios of editing tables, the VTable library provides corresponding editors so that you can easily implement various editing needs.
+When it comes к business scenarios из editing таблицаs, the Vтаблица library provides corresponding editors so that Вы можете easily implement various editing needs.
 
-# Steps for usage
+# Steps для usвозраст
 
-## 1. Reference the editor package of VTable:
+## 1. Reference the editor packвозраст из Vтаблица:
 
-### Use the NPM package
+### Use the NPM packвозраст
 
-First, make sure you have installed the VTable library and related editor packages correctly. You can install them using the following command:
+первый, make sure you have installed the Vтаблица library и related editor packвозрастs correctly. Вы можете install them using Следующий command:
 
 ```shell
-npm install @visactor/vtable-editors
+npm install @visactor/vтаблица-editors
 ```
 
-Introduce the required type of editor module into your code:
+Introduce the обязательный тип из editor module into your код:
 
 ```javascript
-import { DateInputEditor, InputEditor, TextareaEditor, ListEditor } from '@visactor/vtable-editors';
+import { DateInputEditor, InputEditor, TextareaEditor, списокEditor } от '@visactor/vтаблица-editors';
 ```
 
 ### use CDN
 
-你还可以通过 CDN 获取构建好的 VTable-Editor 文件。
+你还可以通过 CDN 获取构建好的 Vтаблица-Editor 文件。
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable-editors@latest/dist/vtable-editors.min.js"></script>
+<script src="https://unpkg.com/@visactor/vтаблица-editors@latest/dist/vтаблица-editors.min.js"></script>
 <script>
-  const inputEditor = new VTable.editors.InputEditor();
+  const inputEditor = новый Vтаблица.editors.InputEditor();
 </script>
 ```
 
 ## 2. Create editor:
 
-The VTable-ediotrs library currently provides four editor types, including text input boxes, textarea input boxes, date pickers, drop-down lists, etc. You can choose the appropriate editor according to your needs.
+The Vтаблица-ediotrs library currently provides four editor types, including текст ввод boxes, textarea ввод boxes, date pickers, отпускание-down списокs, etc. Вы можете choose the appropriate editor according к your needs.
 
-Here is sample code to create an editor:
-
-```javascript
-const inputEditor = new InputEditor();
-const textAreaEditor = new TextAreaEditor();
-const dateInputEditor = new DateInputEditor();
-const listEditor = new ListEditor({ values: ['Female', 'Male'] });
-```
-
-In the above example, we created a text input box editor (`InputEditor`), a multi-line text area editor (`TextAreaEditor`), a date picker editor (`DateInputEditor`) and a drop-down list editor (`ListEditor`). You can choose the appropriate editor type according to your actual needs.
-
-## 3. Register and use the editor:
-
-Before using the editor, you need to register the editor instance into VTable:
+Here is sample код к create an editor:
 
 ```javascript
-//Register editor to VTable
-VTable.register.editor('name-editor', inputEditor);
-VTable.register.editor('name-editor2', inputEditor2);
-VTable.register.editor('textArea-editor', textAreaEditor);
-VTable.register.editor('number-editor', numberEditor);
-VTable.register.editor('date-editor', dateInputEditor);
-VTable.register.editor('list-editor', listEditor);
+const inputEditor = новый InputEditor();
+const textAreaEditor = новый TextAreaEditor();
+const dateInputEditor = новый DateInputEditor();
+const списокEditor = новый списокEditor({ values: ['Female', 'Male'] });
 ```
 
-Next, you need to specify the editor to use in the columns configuration(If it is a pivot table, configure the editor in indicators):
+в the above пример, we created a текст ввод box editor (`InputEditor`), a multi-line текст area editor (`TextAreaEditor`), a date picker editor (`DateInputEditor`) и a отпускание-down список editor (`списокEditor`). Вы можете choose the appropriate editor тип according к your actual needs.
+
+## 3. регистрация и use the editor:
+
+Before using the editor, you need к регистрация the editor instance into Vтаблица:
+
+```javascript
+//регистрация editor к Vтаблица
+Vтаблица.регистрация.editor('имя-editor', inputEditor);
+Vтаблица.регистрация.editor('имя-editor2', inputEditor2);
+Vтаблица.регистрация.editor('textArea-editor', textAreaEditor);
+Vтаблица.регистрация.editor('число-editor', numberEditor);
+Vтаблица.регистрация.editor('date-editor', dateInputEditor);
+Vтаблица.регистрация.editor('список-editor', списокEditor);
+```
+
+следующий, you need к specify the editor к use в the columns configuration(If it is a сводный таблица, configure the editor в indicators):
 
 ```javascript
 columns: [
-  { title: 'name', field: 'name', editor(args)=>{
+  { заголовок: 'имя', поле: 'имя', editor(args)=>{
     if(args.row%2==0)
-      return 'name-editor';
+      возврат 'имя-editor';
     else
-      return 'name-editor2';
+      возврат 'имя-editor2';
   } },
-  { title: 'age', field: 'age', editor: 'number-editor' },
-  { title: 'gender', field: 'gender', editor: 'list-editor' },
-  { title: 'address', field: 'address', editor: 'textArea-editor' },
-  { title: 'birthday', field: 'birthDate', editor: 'date-editor' },
+  { заголовок: 'возраст', поле: 'возраст', editor: 'число-editor' },
+  { заголовок: 'пол', поле: 'пол', editor: 'список-editor' },
+  { заголовок: 'address', поле: 'address', editor: 'textArea-editor' },
+  { заголовок: 'birthday', поле: 'birthDate', editor: 'date-editor' },
 ]
 ```
 
-In a table, users can start editing by `double-clicking` a cell and then selecting the editor to use for input.
+в a таблица, users can начало editing по `double-Нажатьing` a cell и then selecting the editor к use для ввод.
 
-Note: The editors in the VTable library are all implemented based on the browser's native input box, so problems may occur in some special cases, such as input method input, input method pop-up windows, etc. You can adjust and optimize according to actual needs.
+Note: The editors в the Vтаблица library are все implemented based на the browser's native ввод box, so problems may occur в некоторые special cases, such as ввод method ввод, ввод method pop-up windows, etc. Вы можете adjust и optimize according к actual needs.
 
-Editor configuration can be defined in columns or global options. It also supports custom function writing:
+Editor configuration can be defined в columns или global options. It also supports пользовательский функция writing:
 
 ```
-editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
+editor?: строка | IEditor | ((args: BaseCellInfo & { таблица: Baseтаблицаапи }) => строка | IEditor);
 ```
 
-## 4. Customize an editor:
+## 4. пользовательскийize an editor:
 
-If the several editors provided by the VTable-ediotrs library cannot meet your needs, you can implement a custom editor. To do this, you need to create a class that implements the requirements of the editor interface (`IEditor`) and provides the necessary methods and logic.
+If the several editors provided по the Vтаблица-ediotrs library cannot meet your needs, Вы можете implement a пользовательский editor. к do this, you need к create a class that implements the requirements из the editor интерфейс (`IEditor`) и provides the necessary методы и logic.
 
-You can use the following flow chart to understand the relationship between the editor and VTable:
+Вы можете use Следующий flow график к understand the relationship between the editor и Vтаблица:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/editCellProcess1.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/editCellProcess1.png)
 
-The following is sample code for a custom editor:
+Следующий is sample код для a пользовательский editor:
 
 ```javascript
 class DateEditor implements IEditor {
-  editorConfig: any;
+  editorConfig: любой;
   element: HTMLInputElement;
   container: HTMLElement;
-  successCallback: Function;
-  picker: any;
-  constructor(editorConfig: any) {
+  successCallback: функция;
+  picker: любой;
+  constructor(editorConfig: любой) {
     this.editorConfig = editorConfig;
   }
-  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, value?: string) {
+  beginEditing(container: HTMLElement, referencePosition: { rect: RectProps; placement?: Placement }, значение?: строка) {
     const that = this;
     this.container = container;
-    // const cellValue = luxon.DateTime.fromFormat(value, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
-    const input = document.createElement('input');
+    // const cellValue = luxon.DateTime.fromFormat(значение, 'yyyy年MM月dd日').toFormat('yyyy-MM-dd');
+    const ввод = document.createElement('ввод');
 
-    input.setAttribute('type', 'text');
+    ввод.setAttribute('тип', 'текст');
 
-    input.style.padding = '4px';
-    input.style.width = '100%';
-    input.style.boxSizing = 'border-box';
-    input.style.position = 'absolute';
-    input.value = value as string;
-    this.element = input;
-    container.appendChild(input);
+    ввод.style.заполнение = '4px';
+    ввод.style.ширина = '100%';
+    ввод.style.boxSizing = 'граница-box';
+    ввод.style.позиция = 'absolute';
+    ввод.значение = значение as строка;
+    this.element = ввод;
+    container.appendChild(ввод);
     // Pikaday是一个第三方日历组件
-    const picker = new Pikaday({
-      field: input,
+    const picker = новый Pikaday({
+      поле: ввод,
       format: 'D/M/YYYY',
       toString(date, format) {
-        // you should do formatting based on the passed format,
-        // but we will just return 'D/M/YYYY' for simplicity
+        // you should do formatting based на the passed format,
+        // but we will just возврат 'D/M/YYYY' для simpliГород
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
-        return `${year}年${month}月${day}日`;
+        возврат `${year}年${month}月${day}日`;
       },
       parse(dateString, format) {
-        // dateString is the result of `toString` method
+        // dateString is the result из `toString` method
         const parts = dateString.split('/');
         const day = parseInt(parts[0], 10);
         const month = parseInt(parts[1], 10) - 1;
         const year = parseInt(parts[2], 10);
-        return new Date(year, month, day);
+        возврат новый Date(year, month, day);
       },
-      onSelect: function () {
+      onSelect: функция () {
         const date = this.getDate();
         that.successCallback();
       }
@@ -151,17 +151,17 @@ class DateEditor implements IEditor {
     if (referencePosition?.rect) {
       this.adjustPosition(referencePosition.rect);
     }
-    this.picker.show();
+    this.picker.показать();
   }
 
   adjustPosition(rect: RectProps) {
-    this.element.style.top = rect.top + 'px';
-    this.element.style.left = rect.left + 'px';
-    this.element.style.width = rect.width + 'px';
-    this.element.style.height = rect.height + 'px';
+    this.element.style.верх = rect.верх + 'px';
+    this.element.style.лево = rect.лево + 'px';
+    this.element.style.ширина = rect.ширина + 'px';
+    this.element.style.высота = rect.высота + 'px';
   }
   getValue() {
-    return this.element.value;
+    возврат this.element.значение;
   }
   exit() {
     this.picker.destroy();
@@ -169,168 +169,168 @@ class DateEditor implements IEditor {
   }
   targetIsOnEditor(target: HTMLElement) {
     if (target === this.element || this.picker.el.contains(target)) {
-      return true;
+      возврат true;
     }
-    return false;
+    возврат false;
   }
-  bindSuccessCallback(successCallback: Function) {
+  bindSuccessCallback(successCallback: функция) {
     this.successCallback = successCallback;
   }
 }
-const custom_date_editor = new DateEditor({});
-VTable.register.editor('custom-date', custom_date_editor);
+const пользовательский_date_editor = новый DateEditor({});
+Vтаблица.регистрация.editor('пользовательский-date', пользовательский_date_editor);
 
 ```
 
-In the above example, we created a custom editor named `DateEditor` and implemented the methods required by the `IEditor` interface. Then, we register the custom editor into the VTable through the `VTable.register.editor` method for use in the table.
+в the above пример, we created a пользовательский editor имяd `DateEditor` и implemented the методы обязательный по the `IEditor` интерфейс. Then, we регистрация the пользовательский editor into the Vтаблица through the `Vтаблица.регистрация.editor` method для use в the таблица.
 
-`IEditor` [definition](https://github.com/VisActor/VTable/blob/main/packages/vtable-editors/src/types.ts)：
+`IEditor` [definition](https://github.com/VisActor/Vтаблица/blob/main/packвозрастs/vтаблица-editors/src/types.ts)：
 
 ```ts
-export interface IEditor<V = any> {
+export интерфейс IEditor<V = любой> {
   /** Called when cell enters edit mode. */
   onStart?: (context: EditContext<V>) => void;
   /** called when cell exits edit mode. */
   onEnd?: () => void;
   /**
-   * Called when user click somewhere while editor is in edit mode.
+   * Called when user Нажать somewhere while editor is в edit mode.
    *
-   * If returns falsy, VTable will exit edit mode.
+   * If returns falsy, Vтаблица will exit edit mode.
    *
-   * If returns truthy or not defined, nothing will happen.
-   * Which means, in this scenario, you need to call `endEdit` manually
-   * to end edit mode.
+   * If returns truthy или не defined, nothing will happen.
+   * Which means, в this scenario, you need к call `endEdit` manually
+   * к конец edit mode.
    */
-  isEditorElement?: (target: HTMLElement) => boolean;
+  isEditorElement?: (target: HTMLElement) => логический;
   /**
-   * Called when editor mode is exited by any means.
-   * Expected to return the current value of the cell.
+   * Called when editor mode is exited по любой means.
+   * Expected к возврат the текущий значение из the cell.
    */
   getValue: () => V;
 
   /**
-   * Verify whether the input new value is valid.
-   * true: The verification passes, and the editing state is exited.
-   * false: The verification fails, and the editing state is retained.
-   * ValidateEnum.validateExit: The verification passes, and the editing state is exited.
-   * ValidateEnum.invalidateExit: The verification fails, the editing state is exited, and the old value is retained.
-   * ValidateEnum.validateNotExit: The verification passes, and the editing state is not exited.
-   * ValidateEnum.invalidateNotExit: The verification fails, and the editing state is not exited.
+   * Verify whether the ввод новый значение is valid.
+   * true: The verification passes, и the editing state is exited.
+   * false: The verification fails, и the editing state is retained.
+   * ValidateEnum.validateExit: The verification passes, и the editing state is exited.
+   * ValidateEnum.invalidateExit: The verification fails, the editing state is exited, и the старый значение is retained.
+   * ValidateEnum.validateNotExit: The verification passes, и the editing state is не exited.
+   * ValidateEnum.invalidateNotExit: The verification fails, и the editing state is не exited.
    */
-  validateValue?: (newValue?: any, oldValue?: any, position?: CellAddress, table?: any) => boolean | ValidateEnum;
+  validateValue?: (newValue?: любой, oldValue?: любой, позиция?: CellAddress, таблица?: любой) => логический | ValidateEnum;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface EditContext<V = any> {
-  /** Container element of the VTable instance. */
+// eslint-отключить-следующий-line @typescript-eslint/no-explicit-любой
+export интерфейс EditContext<V = любой> {
+  /** Container element из the Vтаблица instance. */
   container: HTMLElement;
-  /** Position info of the cell that is being edited. */
+  /** позиция информация из the cell that is being edited. */
   referencePosition: ReferencePosition;
-  /** Cell value before editing. */
-  value: V;
+  /** Cell значение before editing. */
+  значение: V;
   /**
-   * Callback function that can be used to end edit mode.
+   * обратный вызов функция that can be used к конец edit mode.
    *
-   * In most cases you don't need to call this function,
-   * since Enter key click is handled by VTable automatically,
-   * and mouse click can be handled by `isEditorElement`.
+   * в most cases you don't need к call this функция,
+   * since Enter key Нажать is handled по Vтаблица автоmatically,
+   * и mouse Нажать can be handled по `isEditorElement`.
    *
-   * However, if your editor has its own complete button,
-   * or you have external elements like Tooltip,
-   * you may want to use this callback to help you
-   * end edit mode.
+   * However, if your editor has its own complete Кнопка,
+   * или you have external elements like Подсказка,
+   * you may want к use this обратный вызов к help you
+   * конец edit mode.
    */
   endEdit: () => void;
 }
 ```
 
-## 5. Edit event listening:
+## 5. Edit событие списокening:
 
-VTable provides the function of editing event listening. You can listen to the editing data event and execute the corresponding logic in the event callback.
+Vтаблица provides the функция из editing событие списокening. Вы можете списокen к the editing данные событие и execute the corresponding logic в the событие обратный вызов.
 
-The following is a sample code for editing event listening:
+Следующий is a sample код для editing событие списокening:
 
 ```javascript
-const tableInstance = new VTable.ListTable(option);
-tableInstance.on('change_cell_value', () => {
-  //Edit cell data
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
+таблицаInstance.на('change_cell_value', () => {
+  //Edit cell данные
 });
 ```
 
-## 6. Obtain data after editing:
+## 6. Obtain данные after editing:
 
-When the user completes editing and submits the data, you can obtain the edited data for subsequent processing. You can directly get the records value
+When the user completes editing и submits the данные, Вы можете obtain the edited данные для subsequent processing. Вы можете directly get the records значение
 
 ```javascript
-// Get the full data of the current table
-tableInstance.records;
+// Get the full данные из the текущий таблица
+таблицаInstance.records;
 ```
 
 ## 7. Edit trigger timing
 
-Editing trigger timing support: double-click a cell to enter editing, click a cell to enter editing, and call the API to manually start editing.
+Editing trigger timing support: double-Нажать a cell к enter editing, Нажать a cell к enter editing, и call the апи к manually начало editing.
 
 ```ts
-interface ListTableConstructorOptions {
-  /** Editing trigger timing Double-click event Click event API manually starts editing. The default is double-click 'doubleclick' */
-  editCellTrigger?: 'doubleclick' | 'click' | 'api' | 'keydown' | ('doubleclick' | 'click' | 'api' | 'keydown')[];
+интерфейс списоктаблицаConstructorOptions {
+  /** Editing trigger timing Double-Нажать событие Нажать событие апи manually starts editing. The по умолчанию is double-Нажать 'doubleНажать' */
+  editCellTrigger?: 'doubleНажать' | 'Нажать' | 'апи' | 'keydown' | ('doubleНажать' | 'Нажать' | 'апи' | 'keydown')[];
   // ...
 }
 ```
 
-## 8. Edit value verification
+## 8. Edit значение verification
 
-If validation is required, please customize the editor to implement the validation function `validateValue`
+If validation is обязательный, please пользовательскийize the editor к implement the validation функция `validateValue`
 
-If this interface is not defined, the edit value will not be checked by default; Support the following return values:
+If this интерфейс is не defined, the edit значение will не be checked по по умолчанию; Support Следующий возврат values:
 
-- true: The verification passes, and the editing state is exited.
-- false: The verification fails, and the editing state is retained.
-- ValidateEnum.validateExit: The verification passes, and the editing state is exited.
-- ValidateEnum.invalidateExit: The verification fails, the editing state is exited, and the old value is retained.
-- ValidateEnum.validateNotExit: The verification passes, and the editing state is not exited.
-- ValidateEnum.invalidateNotExit: The verification fails, and the editing state is not exited.
+- true: The verification passes, и the editing state is exited.
+- false: The verification fails, и the editing state is retained.
+- ValidateEnum.validateExit: The verification passes, и the editing state is exited.
+- ValidateEnum.invalidateExit: The verification fails, the editing state is exited, и the старый значение is retained.
+- ValidateEnum.validateNotExit: The verification passes, и the editing state is не exited.
+- ValidateEnum.invalidateNotExit: The verification fails, и the editing state is не exited.
 
-If you need to implement asynchronous verification, you can return a Promise object, which is resolved with a true value when the verification succeeds and a false value when the verification fails.
+If you need к implement asynchronous verification, Вы можете возврат a Promise объект, which is resolved с a true значение when the verification succeeds и a false значение when the verification fails.
 
-At the same time, when pasting cell data, the validation function `validateValue` will also be called.
+в the same time, when pasting cell данные, the validation функция `validateValue` will also be called.
 
-## 9. Related APIs
+## 9. Related апиs
 
 ```ts
-interface ListTableAPI {
-  /** Set the value of the cell. Note that it corresponds to the original value of the source data, and the vtable instance records will be modified accordingly */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell = false) => void;
+интерфейс списоктаблицаапи {
+  /** Set the значение из the cell. Note that it corresponds к the original значение из the source данные, и the vтаблица instance records will be modified accordingly */
+  changeCellValue: (col: число, row: число, значение: строка | число | null, workOnEdiтаблицаCell = false) => void;
   /**
-   * Batch update data of multiple cells
-   * @param col The starting column number of pasted data
-   * @param row The starting row number of pasted data
-   * @param values Data array of multiple cells
-   * @param workOnEditableCell just can change editable cells
+   * Batch update данные из multiple cells
+   * @param col The starting column число из pasted данные
+   * @param row The starting row число из pasted данные
+   * @param values данные массив из multiple cells
+   * @param workOnEdiтаблицаCell just can change ediтаблица cells
    */
-  changeCellValues(startCol: number, startRow: number, values: string[][], workOnEditableCell = false);
-  /** Get the editor of cell configuration */
-  getEditor: (col: number, row: number) => IEditor;
-  /** Enable cell editing */
-  startEditCell: (col?: number, row?: number, value?: string | number) => void;
-  /** End editing */
+  changeCellValues(startCol: число, startRow: число, values: строка[][], workOnEdiтаблицаCell = false);
+  /** Get the editor из cell configuration */
+  getEditor: (col: число, row: число) => IEditor;
+  /** включить cell editing */
+  startEditCell: (col?: число, row?: число, значение?: строка | число) => void;
+  /** конец editing */
   completeEditCell: () => void;
   // ...
 }
 ```
 
-## ListTable Header Editing Precautions
+## списоктаблица Header Editing Precautions
 
-The basic table supports editing the display title in the header. You can enable this by configuring `headerEditor` globally or within a column. The usage is the same as `editor`.
+The базовый таблица supports editing the display title в the header. Вы можете включить this по configuring `headerEditor` globally или within a column. The usвозраст is the same as `editor`.
 
-## PivotTable Editing Precautions
+## сводныйтаблица Editing Precautions
 
-**Editing the header of the pivot table will modify the field name in the records accordingly;**
+**Editing the header из the сводный таблица will modify the поле имя в the records accordingly;**
 
-**In a pivot table, when a cell in the body corresponds to only one source data record, the field value of the record will be modified accordingly after editing. However, when the cell corresponds to an indicator value that aggregates multiple records, it does not support corresponding modifications to the source data.**
+**в a сводный таблица, when a cell в the body corresponds к only one source данные record, the поле значение из the record will be modified accordingly after editing. However, when the cell corresponds к an indicator значение that aggregates multiple records, it does не support corresponding modifications к the source данные.**
 
-The source data corresponding to a specific cell can be obtained through the interface `getCellOriginRecord`
+The source данные corresponding к a specific cell can be obtained through the интерфейс `getCellOriginRecord`
 
 ## Summary
 
-Through the above steps, you can create a table with editing functions, select the appropriate editor type according to business needs, customize the editor, listen to editing events, and obtain edited data. In this way, users can easily edit the data in the table, and you can process the edited data accordingly.
+Through the above steps, Вы можете create a таблица с editing functions, выбрать the appropriate editor тип according к business needs, пользовательскийize the editor, списокen к editing событиеs, и obtain edited данные. в this way, users can easily edit the данные в the таблица, и Вы можете process the edited данные accordingly.

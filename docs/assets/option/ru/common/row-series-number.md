@@ -1,102 +1,102 @@
-{{ target: row-series-number }}
+{{ target: row-series-число }}
 
-${prefix} title(string)
+${prefix} title(строка)
 
-Row serial number title, empty by default
+Row serial число title, empty по по умолчанию
 
-${prefix} width(number|number)
+${prefix} ширина(число|число)
 
-The row number width can be configured with number or 'auto'. (Default uses defaultColWidth, which defaults to 80)
+The row число ширина can be configured с число или 'авто'. (по умолчанию uses defaultColширина, which defaults к 80)
 
-${prefix} format(Function)
+${prefix} format(функция)
 
-Row serial number formatting function, empty by default. Through this configuration, you can convert numerical type serial numbers into custom serial numbers, such as using a, b, c...
+Row serial число formatting функция, empty по по умолчанию. Through this configuration, Вы можете convert numerical тип serial numbers into пользовательский serial numbers, such as using a, b, c...
 
-${prefix} cellType('text')
+${prefix} cellType('текст')
 
-Row number cell type, default is `text`. Other formats to be determined
+Row число cell тип, по умолчанию is `текст`. Other formats к be determined
 
-${prefix} dragOrder(boolean)
+${prefix} dragOrder(логический)
 
-Whether the row serial number sequence can be dragged. The default is false. If set to true, the icon at the dragging position will be displayed, and you can drag and drop on the icon to change its position. If you need to replace the icon, you can configure it yourself. Please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_icon for the chapter on resetting function icons.
+Whether the row serial число sequence can be dragged. The по умолчанию is false. If set к true, the иконка в the dragging позиция will be displayed, и Вы можете перетаскивание и отпускание на the иконка к change its позиция. If you need к replace the иконка, Вы можете configure it yourself. Please refer к the tutorial: https://visactor.io/vтаблица/guide/пользовательский_define/пользовательский_иконка для the chapter на resetting функция иконкаs.
 
-${prefix} headerStyle(IStyleOption|Function)
+${prefix} headerStyle(IStyleOption|функция)
 
-Table header cell style, please refer to: [headerStyle](../option/PivotTable-columns-text#headerStyle.bgColor)
+таблица header cell style, please refer к: [headerStyle](../option/сводныйтаблица-columns-текст#headerStyle.bgColor)
 
 ${prefix} style
 
-Body cell style, please refer to: [style](../option/ListTable-columns-text#style.bgColor)
+Body cell style, please refer к: [style](../option/списоктаблица-columns-текст#style.bgColor)
 
-${prefix} disableColumnResize(boolean)
+${prefix} disableColumnResize(логический)
 
-Whether to disable row serial number width adjustment.The default is false.
+Whether к отключить row serial число ширина adjustment.The по умолчанию is false.
 
-${prefix} headerIcon(string|Object|Array)
+${prefix} headerиконка(строка|объект|массив)
 
-Table header cell icon configuration. The configurable types are:
-
-```
-string | ColumnIconOption | (string | ColumnIconOption)[];
-```
-
-For detailed configuration of ColumnIconOption, please refer to [Definition](./ListTable-columns-text#icon.ColumnIconOption)
-
-${prefix} icon(string|Object|Array|Funciton)
-
-Body cell icon configuration.
+таблица header cell иконка configuration. The configurable types are:
 
 ```
-icon?:
-| string
-| ColumnIconOption
-| (string | ColumnIconOption)[]
-| ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[];
 ```
 
-#${prefix}ColumnIconOption
+для detailed configuration из ColumnиконкаOption, please refer к [Definition](./списоктаблица-columns-текст#иконка.ColumnиконкаOption)
+
+${prefix} иконка(строка|объект|массив|Funciton)
+
+Body cell иконка configuration.
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon | TextIcon;
+иконка?:
+| строка
+| ColumnиконкаOption
+| (строка | ColumnиконкаOption)[]
+| ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
 ```
 
-#${prefix}ImageIcon(Object)
-type is set to 'image'. The image address needs to be set in src
-{{ use: image-icon( prefix = '##' + ${prefix}) }}
-
-#${prefix}SvgIcon(Object)
-type is set to 'svg'. You need to configure the svg address or the complete svg file string in svg
-{{ use: svg-icon( prefix = '##' + ${prefix}) }}
-
-#${prefix}TextIcon(Object)
-type is set to 'text'. You need to configure the text content in content
-{{ use: text-icon( prefix = '##' + ${prefix}) }}
-
-${prefix} headerCustomLayout(Function)
-The header cell custom layout element definition, this custom form is suitable for cells with complex content layout.
+#${prefix}ColumnиконкаOption
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+тип ColumnиконкаOption = Imвозрастиконка | Svgиконка | Textиконка;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+#${prefix}Imвозрастиконка(объект)
+тип is set к 'imвозраст'. The imвозраст address needs к be set в src
+{{ use: imвозраст-иконка( prefix = '##' + ${prefix}) }}
 
-{{ use: custom-layout(
+#${prefix}Svgиконка(объект)
+тип is set к 'svg'. You need к configure the svg address или the complete svg file строка в svg
+{{ use: svg-иконка( prefix = '##' + ${prefix}) }}
+
+#${prefix}Textиконка(объект)
+тип is set к 'текст'. You need к configure the текст content в content
+{{ use: текст-иконка( prefix = '##' + ${prefix}) }}
+
+${prefix} headerпользовательскиймакет(функция)
+The header cell пользовательский макет element definition, this пользовательский form is suiтаблица для cells с complex content макет.
+
+```
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
+```
+
+{{ use: common-пользовательскийRenderFunctionArg() }}
+
+{{ use: пользовательский-макет(
 prefix = '#'+${prefix},
 ) }}
 
-${prefix} customLayout(Function)
+${prefix} пользовательскиймакет(функция)
 
-The body cell custom layout element definition is suitable for cells with complex content layout.
+The body cell пользовательский макет element definition is suiтаблица для cells с complex content макет.
 
-Defined as the following function:
+Defined as Следующий функция:
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+{{ use: common-пользовательскийRenderFunctionArg() }}
 
-{{ use: custom-layout(
+{{ use: пользовательский-макет(
 prefix = '#'+${prefix},
 ) }}

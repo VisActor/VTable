@@ -1,43 +1,43 @@
 ---
-title: 33. After custom rendering in the column configuration of the VTable component, the icon configuration fails. How to solve this?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 33. After пользовательский rendering в the column configuration из the Vтаблица компонент, the иконка configuration fails. How к solve this?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question Title
 
-After custom rendering in the column configuration of the VTable component, the icon configuration fails. How to solve this?</br>
+After пользовательский rendering в the column configuration из the Vтаблица компонент, the иконка configuration fails. How к solve this?</br>
 ## Problem Description
 
-We have used the customLayout or customRender configuration for custom rendering in business scenarios, but we also want to use the icon button icon feature of VTable itself. However, after both configurations are enabled, the icon does not display correctly. Is there any way to make both configurations work properly?</br>
-As shown below, only the content of customRender is displayed. The icon configuration icon is not displayed.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BloSbz1VaoStC5xeL28coNMnnFc.gif' alt='' width='2512' height='522'>
+We have used the пользовательскиймакет или пользовательскийRender configuration для пользовательский rendering в business scenarios, but we also want к use the иконка Кнопка иконка feature из Vтаблица itself. However, after both configurations are включен, the иконка does не display correctly. Is there любой way к make both configurations work properly?</br>
+As shown below, only the content из пользовательскийRender is displayed. The иконка configuration иконка is не displayed.</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BloSbz1VaoStC5xeL28coNMnnFc.gif' alt='' ширина='2512' высота='522'>
 
 ## Solution
 
-You can solve this problem by using renderDefault of the custom rendering configuration.</br>
+Вы можете solve this problem по using renderDefault из the пользовательский rendering configuration.</br>
 However, after configuration, you may find unwanted content being drawn.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/KOTybyej9oA4sExlrxzcBESZnlb.gif' alt='' width='832' height='366'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/KOTybyej9oA4sExlrxzcBESZnlb.gif' alt='' ширина='832' высота='366'>
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/OmiNbNeMdoRVevxjTPxczxWanKf.gif' alt='' width='2446' height='628'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/OmiNbNeMdoRVevxjTPxczxWanKf.gif' alt='' ширина='2446' высота='628'>
 
-To solve this problem, you can use fieldFormat to directly return an empty value with this custom function, so that the default text content will not be drawn.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/QNyOb8RFfoKdLbxpPl5c7KMwnR6.gif' alt='' width='1978' height='396'>
+к solve this problem, Вы можете use полеFormat к directly возврат an empty значение с this пользовательский функция, so that the по умолчанию текст content will не be drawn.</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/QNyOb8RFfхорошоdLbxpPl5c7KMwnR6.gif' alt='' ширина='1978' высота='396'>
 
-## Code Examples
+## код примеры
 
-You can paste it into the official editor for testing:</br>
-https://visactor.io/vtable/demo/custom-render/custom-render</br>
+Вы можете paste it into the official editor для testing:</br>
+https://visactor.io/vтаблица/демонстрация/пользовательский-render/пользовательский-render</br>
 ```
 const option = {
     columns:[
     {
-      field: 'not_urgency',
-      title:'not urgency',
-      width:400,
+      поле: 'not_urgency',
+      заголовок:'не urgency',
+      ширина:400,
       headerStyle:{
-          lineHeight:50,
+          lineвысота:50,
           bgColor:'#4991e3',
-          color:'white',
-          textAlign:'center',
+          цвет:'white',
+          textAlign:'центр',
           fontSize:26,
           fontWeight:600,
       },
@@ -46,53 +46,53 @@ const option = {
         fontSize:12,
         fontWeight:'bold'
       },
-      fieldFormat:()=>'',
-      icon:{
-              name: 'detail',
-              type: 'svg',
-              svg: `<svg t="1710211168958" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3209" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200"><path d="M722.944 256l-153.6 153.6c-3.072 3.072-5.12 6.656-7.168 10.24-1.536 4.096-2.56 8.192-2.56 12.288v1.536c0 4.096 1.024 7.68 2.56 11.264 1.536 3.584 3.584 6.656 6.656 9.728 3.072 3.072 6.656 5.12 10.24 7.168 4.096 1.536 8.192 2.56 12.288 2.56 4.096 0 8.192-1.024 12.288-2.56 4.096-1.536 7.168-4.096 10.24-7.168l153.6-153.6v114.688c0 2.048 0 4.096 0.512 6.144 0.512 2.048 1.024 4.096 2.048 6.144 1.024 2.048 1.536 3.584 3.072 5.632 1.024 1.536 2.56 3.584 4.096 4.608 1.536 1.536 3.072 2.56 4.608 4.096 1.536 1.024 3.584 2.048 5.632 3.072 2.048 1.024 4.096 1.536 6.144 2.048 2.048 0.512 4.096 0.512 6.144 0.512 2.048 0 4.096 0 6.144-0.512 2.048-0.512 4.096-1.024 6.144-2.048 2.048-1.024 3.584-1.536 5.632-3.072 1.536-1.024 3.584-2.56 4.608-4.096 1.536-1.536 2.56-3.072 4.096-4.608 1.024-1.536 2.048-3.584 3.072-5.632 1.024-2.048 1.536-4.096 2.048-6.144 0.512-2.048 0.512-4.096 0.512-6.144V223.744c0-4.096-1.024-8.192-2.56-12.288-1.536-4.096-4.096-7.168-7.168-10.24h-0.512c-3.072-3.072-6.656-5.12-10.24-6.656-4.096-1.536-7.68-2.56-12.288-2.56h-192c-2.048 0-4.096 0-6.144 0.512-2.048 0.512-4.096 1.024-6.144 2.048-2.048 1.024-3.584 1.536-5.632 3.072-1.536 1.024-3.584 2.56-4.608 4.096-1.536 1.536-2.56 3.072-4.096 4.608-1.024 1.536-2.048 3.584-3.072 5.632-1.024 2.048-1.536 4.096-2.048 6.144-0.512 2.048-0.512 4.096-0.512 6.144s0 4.096 0.512 6.144c0.512 2.048 1.024 4.096 2.048 6.144 1.024 2.048 1.536 3.584 3.072 5.632 1.024 1.536 2.56 3.584 4.096 4.608 1.536 1.536 3.072 2.56 4.608 4.096 1.536 1.024 3.584 2.048 5.632 3.072 2.048 1.024 4.096 1.536 6.144 2.048 2.048 0.512 4.096 0.512 6.144 0.512h115.712z m-268.288 358.4l-153.6 153.6h114.688c2.048 0 4.096 0 6.144 0.512 2.048 0.512 4.096 1.024 6.144 2.048 2.048 1.024 3.584 1.536 5.632 3.072 1.536 1.024 3.584 2.56 4.608 4.096 1.536 1.536 2.56 3.072 4.096 4.608 1.024 1.536 2.048 3.584 3.072 5.632 1.024 2.048 1.536 4.096 2.048 6.144 0.512 2.048 0.512 4.096 0.512 6.144 0 2.048 0 4.096-0.512 6.144-0.512 2.048-1.024 4.096-2.048 6.144-1.024 2.048-1.536 3.584-3.072 5.632-1.024 1.536-2.56 3.584-4.096 4.608-1.536 1.536-3.072 2.56-4.608 4.096-1.536 1.024-3.584 2.048-5.632 3.072-2.048 1.024-4.096 1.536-6.144 2.048-2.048 0.512-4.096 0.512-6.144 0.512H224.256c-2.048 0-4.096 0-6.144-0.512-2.048-0.512-4.096-1.024-6.144-2.048-2.048-1.024-3.584-1.536-5.632-3.072-1.536-1.024-3.584-2.56-4.608-4.096-1.536-1.536-2.56-3.072-4.096-4.608-1.024-1.536-2.048-3.584-3.072-5.632-1.024-2.048-1.536-4.096-2.048-6.144-0.512-2.048-0.512-4.096-0.512-6.144v-192.512c0-2.048 0-4.096 0.512-6.144 0.512-2.048 1.024-4.096 2.048-6.144 1.024-2.048 1.536-3.584 3.072-5.632 1.024-1.536 2.56-3.584 4.096-4.608 1.536-1.536 3.072-2.56 4.608-4.096 1.536-1.024 3.584-2.048 5.632-3.072 2.048-1.024 4.096-1.536 6.144-2.048 2.048-0.512 4.096-0.512 6.144-0.512s4.096 0 6.144 0.512c2.048 0.512 4.096 1.024 6.144 2.048 2.048 1.024 3.584 1.536 5.632 3.072 1.536 1.024 3.584 2.56 4.608 4.096 1.536 1.536 2.56 3.072 4.096 4.608 1.024 1.536 2.048 3.584 3.072 5.632 1.024 2.048 1.536 4.096 2.048 6.144 0.512 2.048 0.512 4.096 0.512 6.144v114.688l153.6-153.6c3.072-3.072 6.656-5.12 10.24-7.168 4.096-1.536 8.192-2.56 12.288-2.56 4.096 0 8.192 1.024 12.288 2.56 4.096 1.536 7.168 3.584 10.24 6.656h0.512c3.072 3.072 5.12 6.656 7.168 10.24 1.536 4.096 2.56 8.192 2.56 12.288 0 4.096-1.024 8.192-2.56 12.288-3.072 5.12-5.12 8.704-8.192 11.264z" p-id="3210" fill="#999999"></path></svg>`,
+      полеFormat:()=>'',
+      иконка:{
+              имя: 'detail',
+              тип: 'svg',
+              svg: `<svg t="1710211168958" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3209" xmlns:xlink="http://www.w3.org/1999/xlink" ширина="200" высота="200"><path d="M722.944 256l-153.6 153.6c-3.072 3.072-5.12 6.656-7.168 10.24-1.536 4.096-2.56 8.192-2.56 12.288v1.536c0 4.096 1.024 7.68 2.56 11.264 1.536 3.584 3.584 6.656 6.656 9.728 3.072 3.072 6.656 5.12 10.24 7.168 4.096 1.536 8.192 2.56 12.288 2.56 4.096 0 8.192-1.024 12.288-2.56 4.096-1.536 7.168-4.096 10.24-7.168l153.6-153.6v114.688c0 2.048 0 4.096 0.512 6.144 0.512 2.048 1.024 4.096 2.048 6.144 1.024 2.048 1.536 3.584 3.072 5.632 1.024 1.536 2.56 3.584 4.096 4.608 1.536 1.536 3.072 2.56 4.608 4.096 1.536 1.024 3.584 2.048 5.632 3.072 2.048 1.024 4.096 1.536 6.144 2.048 2.048 0.512 4.096 0.512 6.144 0.512 2.048 0 4.096 0 6.144-0.512 2.048-0.512 4.096-1.024 6.144-2.048 2.048-1.024 3.584-1.536 5.632-3.072 1.536-1.024 3.584-2.56 4.608-4.096 1.536-1.536 2.56-3.072 4.096-4.608 1.024-1.536 2.048-3.584 3.072-5.632 1.024-2.048 1.536-4.096 2.048-6.144 0.512-2.048 0.512-4.096 0.512-6.144V223.744c0-4.096-1.024-8.192-2.56-12.288-1.536-4.096-4.096-7.168-7.168-10.24h-0.512c-3.072-3.072-6.656-5.12-10.24-6.656-4.096-1.536-7.68-2.56-12.288-2.56h-192c-2.048 0-4.096 0-6.144 0.512-2.048 0.512-4.096 1.024-6.144 2.048-2.048 1.024-3.584 1.536-5.632 3.072-1.536 1.024-3.584 2.56-4.608 4.096-1.536 1.536-2.56 3.072-4.096 4.608-1.024 1.536-2.048 3.584-3.072 5.632-1.024 2.048-1.536 4.096-2.048 6.144-0.512 2.048-0.512 4.096-0.512 6.144s0 4.096 0.512 6.144c0.512 2.048 1.024 4.096 2.048 6.144 1.024 2.048 1.536 3.584 3.072 5.632 1.024 1.536 2.56 3.584 4.096 4.608 1.536 1.536 3.072 2.56 4.608 4.096 1.536 1.024 3.584 2.048 5.632 3.072 2.048 1.024 4.096 1.536 6.144 2.048 2.048 0.512 4.096 0.512 6.144 0.512h115.712z m-268.288 358.4l-153.6 153.6h114.688c2.048 0 4.096 0 6.144 0.512 2.048 0.512 4.096 1.024 6.144 2.048 2.048 1.024 3.584 1.536 5.632 3.072 1.536 1.024 3.584 2.56 4.608 4.096 1.536 1.536 2.56 3.072 4.096 4.608 1.024 1.536 2.048 3.584 3.072 5.632 1.024 2.048 1.536 4.096 2.048 6.144 0.512 2.048 0.512 4.096 0.512 6.144 0 2.048 0 4.096-0.512 6.144-0.512 2.048-1.024 4.096-2.048 6.144-1.024 2.048-1.536 3.584-3.072 5.632-1.024 1.536-2.56 3.584-4.096 4.608-1.536 1.536-3.072 2.56-4.608 4.096-1.536 1.024-3.584 2.048-5.632 3.072-2.048 1.024-4.096 1.536-6.144 2.048-2.048 0.512-4.096 0.512-6.144 0.512H224.256c-2.048 0-4.096 0-6.144-0.512-2.048-0.512-4.096-1.024-6.144-2.048-2.048-1.024-3.584-1.536-5.632-3.072-1.536-1.024-3.584-2.56-4.608-4.096-1.536-1.536-2.56-3.072-4.096-4.608-1.024-1.536-2.048-3.584-3.072-5.632-1.024-2.048-1.536-4.096-2.048-6.144-0.512-2.048-0.512-4.096-0.512-6.144v-192.512c0-2.048 0-4.096 0.512-6.144 0.512-2.048 1.024-4.096 2.048-6.144 1.024-2.048 1.536-3.584 3.072-5.632 1.024-1.536 2.56-3.584 4.096-4.608 1.536-1.536 3.072-2.56 4.608-4.096 1.536-1.024 3.584-2.048 5.632-3.072 2.048-1.024 4.096-1.536 6.144-2.048 2.048-0.512 4.096-0.512 6.144-0.512s4.096 0 6.144 0.512c2.048 0.512 4.096 1.024 6.144 2.048 2.048 1.024 3.584 1.536 5.632 3.072 1.536 1.024 3.584 2.56 4.608 4.096 1.536 1.536 2.56 3.072 4.096 4.608 1.024 1.536 2.048 3.584 3.072 5.632 1.024 2.048 1.536 4.096 2.048 6.144 0.512 2.048 0.512 4.096 0.512 6.144v114.688l153.6-153.6c3.072-3.072 6.656-5.12 10.24-7.168 4.096-1.536 8.192-2.56 12.288-2.56 4.096 0 8.192 1.024 12.288 2.56 4.096 1.536 7.168 3.584 10.24 6.656h0.512c3.072 3.072 5.12 6.656 7.168 10.24 1.536 4.096 2.56 8.192 2.56 12.288 0 4.096-1.024 8.192-2.56 12.288-3.072 5.12-5.12 8.704-8.192 11.264z" p-id="3210" fill="#999999"></path></svg>`,
               marginRight: 8,
-              positionType: VTable.TYPES.IconPosition.absoluteRight,
-              width: 16,
-              height: 16,
+              positionType: Vтаблица.TYPES.иконкаPosition.absoluteRight,
+              ширина: 16,
+              высота: 16,
               cursor: 'pointer',
               visibleTime: 'mouseenter_cell',
               funcType: 'record_detail',
-              tooltip: {
-                title:'展开详情',
+              Подсказка: {
+                заголовок:'展开详情',
                 style: {
                   fontSize: 12,
-                  padding: [8, 8, 8, 8],
+                  заполнение: [8, 8, 8, 8],
                   bgColor: '#46484a',
                   arrowMark: true,
-                  color: 'white',
-                  maxHeight: 100,
-                  maxWidth: 200
+                  цвет: 'white',
+                  maxвысота: 100,
+                  maxширина: 200
                 },
-                placement: VTable.TYPES.Placement.top
+                placement: Vтаблица.TYPES.Placement.верх
               }
             },
-      customRender(args){
-        const { width, height}= args.rect;
-        const {dataValue,table,row} =args;
+      пользовательскийRender(args){
+        const { ширина, высота}= args.rect;
+        const {данныеValue,таблица,row} =args;
         const elements=[];
-        let top=30;
-        const left=15;
-        let maxWidth=0;
+        let верх=30;
+        const лево=15;
+        let maxширина=0;
           elements.push({
-            type: 'text',
+            тип: 'текст',
             fill: 'red',
             fontSize: 20,
             fontWeight: 500, 
-            textBaseline: 'middle',
-            text: row===1? 'important but not urgency':'not important and not urgency',
-            x: left+50,
-            y: top-5,
+            textBaseline: 'середина',
+            текст: row===1? 'important but не urgency':'не important и не urgency',
+            x: лево+50,
+            y: верх-5,
           });
-        return {
+        возврат {
           elements,
-          expectedHeight:top+20,
-          expectedWidth: 300,
+          expectedвысота:верх+20,
+          expectedширина: 300,
           renderDefault:true
         }
       }
@@ -100,28 +100,28 @@ const option = {
     ],
     records:[
       {
-        'type': 'important',
+        'тип': 'important',
         "urgency": ['crisis','urgent problem','tasks that must be completed within a limited time'],
-        "not_urgency": ['preventive measures','development relationship','identify new development opportunities','establish long-term goals'],
+        "not_urgency": ['prсобытиеive measures','development relationship','identify новый development opportunities','establish long-term goals'],
       },
       {
-        'type': 'Not\nimportant',
+        'тип': 'не\nimportant',
         "urgency": ['Receive visitors','Certain calls, reports, letters, etc','Urgent matters','Public activities'],
-        "not_urgency": ['Trivial busy work','Some letters','Some phone calls','Time-killing activities','Some pleasant activities'],
+        "not_urgency": ['Trivial busy work','некоторые letters','некоторые phone calls','Time-killing activities','некоторые pleasant activities'],
       },
     ],
-    defaultRowHeight:80,
-    heightMode:'autoHeight',
-    widthMode:'standard',
-    autoWrapText:true,
+    defaultRowвысота:80,
+    высотаMode:'автовысота',
+    ширинаMode:'standard',
+    автоWrapText:true,
   };
   
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;</br>
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;</br>
 ```
 ## Relevant Documents
 
-Related API: [https://visactor.io/vtable/option/ListTable-columns-text#customRender.renderDefault](https%3A%2F%2Fvisactor.io%2Fvtable%2Foption%2FListTable-columns-text%23customRender.renderDefault)</br>
-Tutorial：https://visactor.io/vtable/demo/custom-render/custom-render</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: [https://visactor.io/vтаблица/option/списоктаблица-columns-текст#пользовательскийRender.renderDefault](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Foption%2Fсписоктаблица-columns-текст%23пользовательскийRender.renderDefault)</br>
+Tutorial：https://visactor.io/vтаблица/демонстрация/пользовательский-render/пользовательский-render</br>
+github：https://github.com/VisActor/Vтаблица</br>
 

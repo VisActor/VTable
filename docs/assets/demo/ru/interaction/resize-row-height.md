@@ -1,114 +1,114 @@
 ---
-category: examples
-group: Interaction
-title: Adjust row height
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-height-resize.gif
-order: 4-4
-link: '/interaction/resize_row_height'
-option: ListTable#rowResizeMode
+категория: примеры
+группа: Interaction
+заголовок: Adjust row высота
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/row-высота-изменение размера.gif
+порядок: 4-4
+ссылка: '/interaction/resize_row_высота'
+опция: списоктаблица#rowResizeMode
 ---
 
-# Adjust row height
+# Adjust row высота
 
-The mouse style for adjusting the row height appears when the mouse is placed on the row spacer, and the row height can be adjusted by dragging.
+The mouse style для adjusting the row высота appears when the mouse is placed на the row spacer, и the row высота can be adjusted по dragging.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-*   `rowResizeMode: 'all' | 'none' | 'header' | 'body'` Specify the Region where the row height can be adjusted
-*   `rowResizeType: 'row' | 'indicator' | 'all' | 'indicatorGroup'` Adjust the effective range of the row height, configurable items:
+*   `rowResizeMode: 'все' | 'никто' | 'header' | 'body'` Specify the Регион where the row высота can be adjusted
+*   `rowResizeType: 'row' | 'indicator' | 'все' | 'indicatorGroup'` Adjust the effective range из the row высота, configurable items:
 
-    *   row: adjust the row height to adjust only the current row
-    *   Indicator: rows corresponding to the same Metirc will be adjusted when adjusting the row height
-    *   indicatorGroup: Adjust the height of all Metirc rows under the same parent Dimension
-    *   All: All row heights are adjusted
+    *   row: adjust the row высота к adjust only the текущий row
+    *   Indicator: rows corresponding к the same Metirc will be adjusted when adjusting the row высота
+    *   indicatorгруппа: Adjust the высота из все Metirc rows under the same parent Dimension
+    *   все: все row высотаs are adjusted
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const option = {
   columnResizeMode:'header',
-  records:data,
+  records:данные,
     "rows": [
         {
-            "dimensionKey": "City",
-            "title": "City",
+            "dimensionKey": "Город",
+            "title": "Город",
             "headerStyle": {
                 "textStick": true
             },
-            "width": "auto",
+            "ширина": "авто",
         },
     ],
     "columns": [
         {
-           "dimensionKey": "Category",
-            "title": "Category",
+           "dimensionKey": "Категория",
+            "title": "Категория",
             "headerStyle": {
                 "textStick": true
             },
-            "width": "auto",
+            "ширина": "авто",
         },
     ],
     "indicators": [
                 {
-                    "indicatorKey": "Quantity",
-                    "title": "Quantity",
-                    "width": "auto",
-                    "showSort": false,
+                    "indicatorKey": "Количество",
+                    "title": "Количество",
+                    "ширина": "авто",
+                    "showсортировка": false,
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(value)=>{return '$'+Number(value).toFixed(2)},
+                    "format":(значение)=>{возврат '$'+число(значение).toFixed(2)},
                     style:{
-                      padding:[16,28,16,28],
-                      color(args){
-                        if(args.dataValue>=0)
-                        return 'black';
-                        return 'red'
+                      заполнение:[16,28,16,28],
+                      цвет(args){
+                        if(args.данныеValue>=0)
+                        возврат 'black';
+                        возврат 'red'
                       }
                     }
                 },
                 {
-                    "indicatorKey": "Sales",
-                    "title": "Sales",
-                    "width": "auto",
-                    "showSort": false,
+                    "indicatorKey": "Продажи",
+                    "title": "Продажи",
+                    "ширина": "авто",
+                    "showсортировка": false,
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(value)=>{ 
-                      if(value)
-                      return '$'+Number(value).toFixed(2);
-                      else return '--';},
+                    "format":(значение)=>{ 
+                      if(значение)
+                      возврат '$'+число(значение).toFixed(2);
+                      else возврат '--';},
                     style:{
-                      padding:[16,28,16,28],
-                      color(args){
-                        if(args.dataValue>=0)
-                        return 'black';
-                        return 'red'
+                      заполнение:[16,28,16,28],
+                      цвет(args){
+                        if(args.данныеValue>=0)
+                        возврат 'black';
+                        возврат 'red'
                       }
                     }
                 },
                 {
-                    "indicatorKey": "Profit",
-                    "title": "Profit",
-                    "width": "auto",
-                    "showSort": false,
+                    "indicatorKey": "Прибыль",
+                    "title": "Прибыль",
+                    "ширина": "авто",
+                    "showсортировка": false,
                     "headerStyle":{
                       fontWeight: "normal",
                     },
-                    "format":(value)=>{return '$'+Number(value).toFixed(2)},
+                    "format":(значение)=>{возврат '$'+число(значение).toFixed(2)},
                     style:{
-                      padding:[16,28,16,28],
-                      color(args){
-                        if(args.dataValue>=0)
-                        return 'black';
-                        return 'red'
+                      заполнение:[16,28,16,28],
+                      цвет(args){
+                        if(args.данныеValue>=0)
+                        возврат 'black';
+                        возврат 'red'
                       }
                     }
                 }
@@ -120,12 +120,12 @@ const option = {
         }
     },
   indicatorsAsCol: false,
-  widthMode:'standard',
+  ширинаMode:'standard',
   rowResizeType: 'row',
-  rowResizeMode: 'all',
-  defaultHeaderColWidth: 100
+  rowResizeMode: 'все',
+  defaultHeaderColширина: 100
 };
-tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
     })
 ```

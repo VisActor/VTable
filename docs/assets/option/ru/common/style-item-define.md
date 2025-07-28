@@ -1,9 +1,9 @@
-{{ target: common-color }}
+{{ target: common-цвет }}
 
 ```
-  type ColorPropertyDefine =
-  | string
-  | ((args: StylePropertyFunctionArg) => string)
+  тип ColorPropertyDefine =
+  | строка
+  | ((args: StylePropertyFunctionArg) => строка)
   | ((args: StylePropertyFunctionArg) => CanvasGradient)
   | ((args: StylePropertyFunctionArg) => CanvasPattern);
 ```
@@ -11,105 +11,105 @@
 {{ target: common-colors }}
 
 ```
-type ColorsPropertyDefine =
+тип ColorsPropertyDefine =
   | ColorPropertyDefine
-  | (string | null)[]
-  | ((args: StylePropertyFunctionArg) => (string | null)[]);
+  | (строка | null)[]
+  | ((args: StylePropertyFunctionArg) => (строка | null)[]);
 ```
 
-{{ target: common-font-style }}
+{{ target: common-шрифт-style }}
 
 ```
-type FontStylePropertyDefine = string | ((args: StylePropertyFunctionArg) => string);
+тип FontStylePropertyDefine = строка | ((args: StylePropertyFunctionArg) => строка);
 ```
 
-{{ target: common-font-size }}
+{{ target: common-шрифт-размер }}
 
 ```
-type FontSizePropertyDefine = number | ((args: StylePropertyFunctionArg) => number)
+тип FontSizePropertyDefine = число | ((args: StylePropertyFunctionArg) => число)
 ```
 
-{{ target: common-font-family }}
+{{ target: common-шрифт-family }}
 
 ```
-type FontFamilyPropertyDefine = string | ((args: StylePropertyFunctionArg) => string);
+тип FontFamilyPropertyDefine = строка | ((args: StylePropertyFunctionArg) => строка);
 ```
 
-{{ target: common-font-variant }}
+{{ target: common-шрифт-variant }}
 
 ```
-type FontVariantPropertyDefine = string | ((args: StylePropertyFunctionArg) => string);
+тип FontVariantPropertyDefine = строка | ((args: StylePropertyFunctionArg) => строка);
 ```
 
-{{ target: common-font-weight }}
+{{ target: common-шрифт-weight }}
 
 ```
-type FontWeightPropertyDefine =
-  | string
-  | number
-  | ((args: StylePropertyFunctionArg) => string | number);
+тип FontWeightPropertyDefine =
+  | строка
+  | число
+  | ((args: StylePropertyFunctionArg) => строка | число);
 ```
 
-{{ target: common-padding }}
+{{ target: common-заполнение }}
 
 ```
-type PaddingPropertyDefine = number | ((args: StylePropertyFunctionArg) => number);
+тип PaddingPropertyDefine = число | ((args: StylePropertyFunctionArg) => число);
 ```
 
 {{ target: common-paddings }}
-{{ use: common-padding(
+{{ use: common-заполнение(
   prefix = ${prefix}
   ) }}
 
 ```
-type PaddingsPropertyDefine =
+тип PaddingsPropertyDefine =
   | PaddingPropertyDefine
-  | (number | null)[]
-  | ((args: StylePropertyFunctionArg) => (number | null)[]);
+  | (число | null)[]
+  | ((args: StylePropertyFunctionArg) => (число | null)[]);
 ```
 
-{{ target: common-lineWidth }}
+{{ target: common-lineширина }}
 
 ```
-type LineWidthPropertyDefine = number | ((args: StylePropertyFunctionArg) => number);
+тип LineширинаPropertyDefine = число | ((args: StylePropertyFunctionArg) => число);
 ```
 
-{{ target: common-lineWidths }}
-{{ use: common-lineWidth(
+{{ target: common-lineширинаs }}
+{{ use: common-lineширина(
   prefix = ${prefix}
   ) }}
 
 ```
-type LineWidthsPropertyDefine =
-  | LineWidthPropertyDefine
-  | (number | null)[]
-  | ((args: StylePropertyFunctionArg) => (number | null)[]);
+тип LineширинаsPropertyDefine =
+  | LineширинаPropertyDefine
+  | (число | null)[]
+  | ((args: StylePropertyFunctionArg) => (число | null)[]);
 ```
 
 {{ target: common-lineThrough }}
 
 ```
-type LineThroughPropertyDefine = boolean | ((args: StylePropertyFunctionArg) => boolean);
+тип LineThroughPropertyDefine = логический | ((args: StylePropertyFunctionArg) => логический);
 ```
 
 {{ target: common-underline }}
 
 ```
-type UnderlinePropertyDefine = boolean | ((args: StylePropertyFunctionArg) => boolean);
+тип UnderlinePropertyDefine = логический | ((args: StylePropertyFunctionArg) => логический);
 ```
 
 {{ target: common-underlineDash }}
 
 ```
-type LineDashPropertyDefine = Array<number> | ((args: StylePropertyFunctionArg) => Array<number>);
+тип LineDashPropertyDefine = массив<число> | ((args: StylePropertyFunctionArg) => массив<число>);
 ```
 
 {{ target: common-lineDash }}
 
 ```
-type LineDashPropertyDefine =
-  | Array<number>
-  | ((args: StylePropertyFunctionArg) => Array<number>);
+тип LineDashPropertyDefine =
+  | массив<число>
+  | ((args: StylePropertyFunctionArg) => массив<число>);
 ```
 
 {{ target: common-lineDashs }}
@@ -118,35 +118,35 @@ type LineDashPropertyDefine =
   ) }}
 
 ```
-type LineDashsPropertyDefine =
+тип LineDashsPropertyDefine =
   | LineDashPropertyDefine
-  | (Array<number> | null)[]
-  | ((args: StylePropertyFunctionArg) => (Array<number> | null)[]);
+  | (массив<число> | null)[]
+  | ((args: StylePropertyFunctionArg) => (массив<число> | null)[]);
 ```
 
 {{ target: common-cursor }}
 
 ```
-type CursorPropertyDefine = string | ((args: StylePropertyFunctionArg) => string);
+тип CursorPropertyDefine = строка | ((args: StylePropertyFunctionArg) => строка);
 
 ```
 
 {{ target: common-marked }}
 
 ```
-type MarkedPropertyDefine = boolean | MarkCellStyle | ((args: StylePropertyFunctionArg) => boolean | MarkCellStyle);
+тип MarkedPropertyDefine = логический | MarkCellStyle | ((args: StylePropertyFunctionArg) => логический | MarkCellStyle);
 
-type MarkCellStyle = {
+тип MarkCellStyle = {
   /** 标记背景色 默认蓝色*/
   bgColor?: CanvasRenderingContext2D['fillStyle'];
   /** 标记形状 默认'sector' */
   shape?: 'rect' | 'triangle' | 'sector';
-  /** 标记位置 默认'right-top' */
-  position?: 'left-top' | 'left-bottom' | 'right-top' | 'right-bottom';
+  /** 标记位置 默认'право-верх' */
+  позиция?: 'лево-верх' | 'лево-низ' | 'право-верх' | 'право-низ';
   /** 标记大小 默认10 */
-  size?: number;
+  размер?: число;
   /** 标记偏移量 默认0 */
-  offset?: number;
+  offset?: число;
 };
 
 ```
@@ -154,17 +154,17 @@ type MarkCellStyle = {
 {{ target: common-colorsDef }}
 
 ```
-type ColorsDef = string | (string | null)[];
+тип ColorsDef = строка | (строка | null)[];
 ```
 
-{{ target: common-lineWidthsDef }}
+{{ target: common-lineширинаsDef }}
 
 ```
-type LineWidthsDef = number | (number | null)[];
+тип LineширинаsDef = число | (число | null)[];
 ```
 
 {{ target: common-lineDashsDef }}
 
 ```
-LineDashsDef = number[] | (number[] | null)[];
+LineDashsDef = число[] | (число[] | null)[];
 ```

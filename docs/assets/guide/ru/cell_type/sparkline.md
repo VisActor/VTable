@@ -1,27 +1,27 @@
-# Miniatures show meaning in tables
+# Miniatures показать meaning в таблицаs
 
-In the process of data analytics, tables are a common form of representation, which can clearly display data and facilitate reading. However, when the amount of data that needs to be displayed is large or the trend and distribution of the data need to be displayed more intuitively, it may be difficult to rely on tables alone to meet the needs. At this time, the miniature can come into play.
+в the process из данные analytics, таблицаs are a common form из representation, which can clearly display данные и facilitate reading. However, when the amount из данные that needs к be displayed is large или the trend и distribution из the данные need к be displayed more intuitively, it may be difficult к rely на таблицаs alone к meet the needs. в this time, the miniature can come into play.
 
-A minigraph is a small chart embedded in a table, which can be used to display information such as trends and distributions without affecting the original table data display. By embedding minigraphs in tables, we can make the data more vivid and intuitive, which helps to better perform data analytics.
+A minigraph is a small график embedded в a таблица, which can be used к display information such as trends и distributions без affecting the original таблица данные display. по embedding minigraphs в таблицаs, we can make the данные more vivid и intuitive, which helps к better perform данные analytics.
 
-# Chart Types Supported by Minicharts
+# график Types Supported по Miniграфикs
 
-In VTable, the table shows the type`cellType`Set to`sparkline`Used to generate minigraphs. At present, the miniature chart types provided by VTable only support line graphs. Over time, VTable will gradually enrich the chart types of minigraphs, and will also support various miniature chart types such as bar graphs and area graphs in the future.
+в Vтаблица, the таблица shows the тип`cellType`Set к`sparkline`Used к generate minigraphs. в present, the miniature график types provided по Vтаблица only support line graphs. Over time, Vтаблица will gradually enrich the график types из minigraphs, и will also support various miniature график types such as bar graphs и area graphs в the future.
 
-# Introduction to sparklineSpec configuration for miniatures
+# Introduction к sparklineSpec configuration для miniatures
 
-SparklineSpec is a configuration object used to set the specific style and behavior of the miniature.
+SparklineSpec is a configuration объект used к set the specific style и behavior из the miniature.
 
-This configuration item can be defaulted and will use the internal default configuration. At the same time, it can be a static object or a function that dynamically generates configuration objects based on cell information. The example code is as follows:
+This configuration item can be defaulted и will use the internal по умолчанию configuration. в the same time, it can be a static объект или a функция that dynamically generates configuration objects based на cell information. The пример код is as follows:
 
 ```typescript{
   // ...其他配置
   columns: [
     {
-      field: 'timeSeriesData',
+      поле: 'timeSeriesданные',
       cellType: 'sparkline',
       sparklineSpec: {
-        type: 'line',
+        тип: 'line',
         // ...其他sparklineSpec配置
       },
       // ...其他配置
@@ -32,18 +32,18 @@ This configuration item can be defaulted and will use the internal default confi
 }
 ```
 
-Or:
+или:
 
 ```typescript
 {
   // ...其他配置
   columns: [
     {
-      field: 'timeSeriesData',
+      поле: 'timeSeriesданные',
       cellType: 'sparkline',
       sparklineSpec: (cellInfo) => {
-        return {
-          type: 'line',
+        возврат {
+          тип: 'line',
           // ...根据cellInfo动态配置
         };
       },
@@ -55,87 +55,87 @@ Or:
 }
 ```
 
-Currently,[sparklineSpec](../../option/ListTable-columns-sparkline#sparklineSpec.type)For specific configurable content, please refer to the api.
+Currently,[sparklineSpec](../../option/списоктаблица-columns-sparkline#sparklineSpec.тип)для specific configurable content, please refer к the апи.
 
-## example
+## пример
 
-This example will show the miniature effect in different configurations:
+This пример will показать the miniature effect в different configurations:
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
-   'lineData':[50,20,20,40,60,50,70],
-   'lineData2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
+   'lineданные':[50,20,20,40,60,50,70],
+   'lineданные2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
   },
   {
-   'lineData':[50,20,60,40,60,50,70],
-   'lineData2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
+   'lineданные':[50,20,60,40,60,50,70],
+   'lineданные2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
   },
   {
-   'lineData':[50,50,20,40,10,50,70],
-   'lineData2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
+   'lineданные':[50,50,20,40,10,50,70],
+   'lineданные2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
   },
   {
-   'lineData':[70,20,20,40,60,50,70],
-   'lineData2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
+   'lineданные':[70,20,20,40,60,50,70],
+   'lineданные2':[{x:1,y:1500},{x:2,y:1480},{x:3,y:1520},{x:4,y:1550},{x:5,y:1600}],
   }
 ];
 
 const columns = [
   {
-    field: 'lineData',
-    title: 'sparkline',
+    поле: 'lineданные',
+    заголовок: 'sparkline',
     cellType: 'sparkline',
-    width:300,
+    ширина:300,
     sparklineSpec: {
-        type: 'line',
-        pointShowRule: 'none',
+        тип: 'line',
+        pointShowRule: 'никто',
         smooth: true,
         line: {
           style: {
-            stroke: '#2E62F1',
-            strokeWidth: 2,
+            strхорошоe: '#2E62F1',
+            strхорошоeширина: 2,
           },
         },
         point: {
-          hover: {
-              stroke: 'blue',
-              strokeWidth: 1,
+          навести: {
+              strхорошоe: 'blue',
+              strхорошоeширина: 1,
               fill: 'red',
               shape: 'circle',
-              size: 4,
+              размер: 4,
           },
           style: {
-            stroke: 'red',
-            strokeWidth: 1,
+            strхорошоe: 'red',
+            strхорошоeширина: 1,
             fill: 'yellow',
             shape: 'circle',
-            size: 2,
+            размер: 2,
           },
         },
         crosshair: {
           style: {
-            stroke: 'gray',
-            strokeWidth: 1,
+            strхорошоe: 'gray',
+            strхорошоeширина: 1,
           },
         },
       },
   },
   {
-    field: 'lineData2',
-    title: 'sparkline 2',
+    поле: 'lineданные2',
+    заголовок: 'sparkline 2',
     cellType: 'sparkline',
-    width:300,
+    ширина:300,
     sparklineSpec: {
-        type: 'line', 
-        xField: 'x',
-        yField: 'y',
-        pointShowRule: 'all',
+        тип: 'line', 
+        xполе: 'x',
+        yполе: 'y',
+        pointShowRule: 'все',
         smooth: true,
         line: {
           style: {
-            stroke: '#2E62F1',
-            strokeWidth: 2,
+            strхорошоe: '#2E62F1',
+            strхорошоeширина: 2,
           },
         },
       },
@@ -145,11 +145,11 @@ const option = {
   container:  document.getElementById(CONTAINER_ID),
   records,
   columns,
-  autoWrapText:true,
-  autoRowHeight:true
+  автоWrapText:true,
+  автоRowвысота:true
 };
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
 ```
 
-Through the above introduction and examples, we can quickly create and configure the table display type sparkline miniature in VTable. Although only line graphs are currently supported, with subsequent development, the functions and types of minigraphs will become more and more perfect, providing more convenient and practical functions for data lake visualization.
+Through the above introduction и примеры, we can quickly create и configure the таблица display тип sparkline miniature в Vтаблица. Although only line graphs are currently supported, с subsequent development, the functions и types из minigraphs will become more и more perfect, providing more convenient и practical functions для данные lake visualization.

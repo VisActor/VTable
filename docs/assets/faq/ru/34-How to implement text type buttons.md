@@ -1,48 +1,48 @@
 ---
-title: VTable usage issue: How to implement text type buttons</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к implement текст тип Кнопкаs</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to implement text type buttons</br>
+How к implement текст тип Кнопкаs</br>
 
 
 ## Problem description
 
-Hope to display text type buttons in the cell, click to operate.</br>
+Hope к display текст тип Кнопкаs в the cell, Нажать к operate.</br>
 
 
 ## Solution
 
-You can use the `customLayout `feature to customize button elements and bind corresponding events</br>
+Вы можете use the `пользовательскиймакет `feature к пользовательскийize Кнопка elements и bind corresponding событиеs</br>
 
 
-## Code example
+## код пример
 
 ```
-import {createGroup, createText} from '@visactor/vtable/es/vrender';
+import {createGroup, createText} от '@visactor/vтаблица/es/vrender';
 
-  const option: VTable.ListTableConstructorOptions = {
+  const опция: Vтаблица.списоктаблицаConstructorOptions = {
     columns: [
       // ......
       {
-        field: 'worksCount',
-        title: 'operation',
-        width: 110,
-        customLayout: (args: VTable.TYPES.CustomRenderFunctionArg) => {
-          const { table, row, col, rect } = args;
-          const { height, width } = rect ?? table.getCellRect(col, row);
+        поле: 'worksCount',
+        заголовок: 'operation',
+        ширина: 110,
+        пользовательскиймакет: (args: Vтаблица.TYPES.пользовательскийRenderFunctionArg) => {
+          const { таблица, row, col, rect } = args;
+          const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
 
           const container = createGroup({
-            height,
-            width,
+            высота,
+            ширина,
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'nowrap'
           });
 
           const editText = createText({
-            text: '编辑',
+            текст: '编辑',
             fontSize: 13,
             fontFamily: 'sans-serif',
             fill: '#2440b3', // #315efb
@@ -50,28 +50,28 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
             underline: 0,
             cursor: 'pointer'
           });
-          editText.stateProxy = (stateName: string) => {
-            if (stateName === 'hover') {
-              return {
+          editText.stateProxy = (stateимя: строка) => {
+            if (stateимя === 'навести') {
+              возврат {
                 fill: '#315efb',
                 underline: 1
               };
             }
           };
-          editText.addEventListener('mouseenter', e => {
-            editText.addState('hover', true, false);
-            table.scenegraph.updateNextFrame();
+          editText.addсобытиесписокener('mouseenter', e => {
+            editText.addState('навести', true, false);
+            таблица.scenegraph.updateNextFrame();
           });
-          editText.addEventListener('mouseleave', e => {
-            editText.removeState('hover', false);
-            table.scenegraph.updateNextFrame();
+          editText.addсобытиесписокener('mouseleave', e => {
+            editText.removeState('навести', false);
+            таблица.scenegraph.updateNextFrame();
           });
-          editText.addEventListener('click', e => {
-            console.log('edit click');
+          editText.addсобытиесписокener('Нажать', e => {
+            console.log('edit Нажать');
           });
           container.add(editText);
 
-          return {
+          возврат {
             rootContainer: container,
             renderDefault: false
           };
@@ -81,46 +81,46 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
     // ......
   };</br>
 ```
-## Results show
+## Results показать
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/UK7fbpamQorpNnxaMjtcO3Genpe.gif' alt='' width='384' height='564'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/UK7fbpamQorpNnxaMjtcO3Genpe.gif' alt='' ширина='384' высота='564'>
 
 
 
-Complete sample code (you can try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree)):</br>
+Complete sample код (Вы можете try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree)):</br>
 ```
-import {createGroup, createText} from '@visactor/vtable/es/vrender';
+import {createGroup, createText} от '@visactor/vтаблица/es/vrender';
 
   const option = {
     container: document.getElementById(CONTAINER_ID),
     columns: [
       {
-        field: 'bloggerId',
-        title: 'index'
+        поле: 'bloggerId',
+        заголовок: 'index'
       },
       {
-        field: 'worksCount',
-        title: 'operation',
+        поле: 'worksCount',
+        заголовок: 'operation',
         style: {
           fontFamily: 'Arial',
           fontSize: 12,
           fontWeight: 'bold'
         },
-        width: 110,
-        customLayout: (args) => {
-          const { table, row, col, rect } = args;
-          const { height, width } = rect ?? table.getCellRect(col, row);
+        ширина: 110,
+        пользовательскиймакет: (args) => {
+          const { таблица, row, col, rect } = args;
+          const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
 
           const container = createGroup({
-            height,
-            width,
+            высота,
+            ширина,
             display: 'flex',
             flexDirection: 'row',
             flexWrap: 'nowrap'
           });
 
           const editText = createText({
-            text: '编辑',
+            текст: '编辑',
             fontSize: 13,
             fontFamily: 'sans-serif',
             fill: '#2440b3', // #315efb
@@ -128,29 +128,29 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
             underline: 0,
             cursor: 'pointer'
           });
-          editText.stateProxy = (stateName) => {
-            if (stateName === 'hover') {
-              return {
+          editText.stateProxy = (stateимя) => {
+            if (stateимя === 'навести') {
+              возврат {
                 fill: '#315efb',
                 underline: 1
               };
             }
           };
-          editText.addEventListener('mouseenter', e => {
-            editText.addState('hover', true, false);
-            table.scenegraph.updateNextFrame();
+          editText.addсобытиесписокener('mouseenter', e => {
+            editText.addState('навести', true, false);
+            таблица.scenegraph.updateNextFrame();
           });
-          editText.addEventListener('mouseleave', e => {
-            editText.removeState('hover', false);
-            table.scenegraph.updateNextFrame();
+          editText.addсобытиесписокener('mouseleave', e => {
+            editText.removeState('навести', false);
+            таблица.scenegraph.updateNextFrame();
           });
-          editText.addEventListener('click', e => {
-            console.log('edit click');
+          editText.addсобытиесписокener('Нажать', e => {
+            console.log('edit Нажать');
           });
           container.add(editText);
 
           const deleteText = createText({
-            text: '删除',
+            текст: '删除',
             fontSize: 13,
             fontFamily: 'sans-serif',
             fill: '#2440b3', // #315efb
@@ -158,28 +158,28 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
             underline: 0,
             cursor: 'pointer'
           });
-          deleteText.stateProxy = (stateName) => {
-            if (stateName === 'hover') {
-              return {
+          deleteText.stateProxy = (stateимя) => {
+            if (stateимя === 'навести') {
+              возврат {
                 fill: '#315efb',
                 underline: 1
               };
             }
           };
-          deleteText.addEventListener('mouseenter', e => {
-            deleteText.addState('hover', true, false);
-            table.scenegraph.updateNextFrame();
+          deleteText.addсобытиесписокener('mouseenter', e => {
+            deleteText.addState('навести', true, false);
+            таблица.scenegraph.updateNextFrame();
           });
-          deleteText.addEventListener('mouseleave', e => {
-            deleteText.removeState('hover', false);
-            table.scenegraph.updateNextFrame();
+          deleteText.addсобытиесписокener('mouseleave', e => {
+            deleteText.removeState('навести', false);
+            таблица.scenegraph.updateNextFrame();
           });
-          deleteText.addEventListener('click', e => {
-            console.log('delete click');
+          deleteText.addсобытиесписокener('Нажать', e => {
+            console.log('delete Нажать');
           });
           container.add(deleteText);
 
-          return {
+          возврат {
             rootContainer: container,
             renderDefault: false
           };
@@ -206,15 +206,15 @@ import {createGroup, createText} from '@visactor/vtable/es/vrender';
         bloggerId: 6,
       }
     ],
-    defaultRowHeight: 40
+    defaultRowвысота: 40
   };
 
-  const instance = new VTable.ListTable(option);</br>
+  const instance = новый Vтаблица.списоктаблица(option);</br>
 ```
 ## Related Documents
 
-Related api: https://www.visactor.io/vtable/guide/custom_define/custom_layout</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/guide/пользовательский_define/пользовательский_макет</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

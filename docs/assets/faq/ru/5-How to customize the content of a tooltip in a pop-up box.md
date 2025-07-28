@@ -1,34 +1,34 @@
-# VTable Usage Issue: How to customize the content of a tooltip in a pop-up box?
+# Vтаблица Usвозраст Issue: How к пользовательскийize the content из a Подсказка в a pop-up box?
 
 ## Question Description
 
-When hovering the mouse over a cell, I want to display contextual information about that cell, and I want the tooltip box to have a completely customized style. How can I achieve this using VTable?
+When hovering the mouse over a cell, I want к display contextual information about that cell, и I want the Подсказка box к have a completely пользовательскийized style. How can I achieve this using Vтаблица?
 
 ## Solution
 
-One flexible approach is to listen to the `mouseenter_cell` and `mouseleave_cell` events of the VTable instance. Show or hide the custom DOM elements accordingly, and calculate the position to display the tooltip based on the `cellRange` parameter from the VTable event. Demo: https://visactor.io/vtable/demo/component/tooltip_custom_content
+One flexible approach is к списокen к the `mouseenter_cell` и `mouseleave_cell` событиеs из the Vтаблица instance. показать или скрыть the пользовательский DOM elements accordingly, и calculate the позиция к display the Подсказка based на the `cellRange` параметр от the Vтаблица событие. демонстрация: https://visactor.io/vтаблица/демонстрация/компонент/Подсказка_пользовательский_content
 
-## Code Example
+## код пример
 
 ```javascript
-tableInstance.on('mouseenter_cell', args => {
+таблицаInstance.на('mouseenter_cell', args => {
   const { cellRange, col, row } = args;
-  showTooltip(cellRange); //yourself function
+  showПодсказка(cellRange); //yourself функция
 });
-tableInstance.on('mouseleave_cell', args => {
+таблицаInstance.на('mouseleave_cell', args => {
   const { cellRange, col, row } = args;
-  hideTooltip(); //yourself function
+  hideПодсказка(); //yourself функция
 });
 ```
 
 ## Results
 
-[Online demo](https://visactor.io/vtable/demo/component/tooltip_custom_content)
+[Online демонстрация](https://visactor.io/vтаблица/демонстрация/компонент/Подсказка_пользовательский_content)
 
-![result](/vtable/faq/5-0.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/5-0.png)
 
 ## Quote
 
-- [Table tooltip demo](https://visactor.io/vtable/demo/component/tooltip_custom_content)
-- [Tooltip Tutorial](https://visactor.io/vtable/guide/components/tooltip)
-- [github](https://github.com/VisActor/VTable)
+- [таблица Подсказка демонстрация](https://visactor.io/vтаблица/демонстрация/компонент/Подсказка_пользовательский_content)
+- [Подсказка Tutorial](https://visactor.io/vтаблица/guide/компонентs/Подсказка)
+- [github](https://github.com/VisActor/Vтаблица)

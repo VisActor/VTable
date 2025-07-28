@@ -1,160 +1,160 @@
 ---
-title: 32. Does the tooltip of the VTable component support selecting text and having a scrolling effect for overflowing content?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 32. Does the Подсказка из the Vтаблица компонент support selecting текст и having a scrolling effect для overflowing content?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Problem Title
 
-Does the tooltip of the VTable component support selecting text and having a scrolling effect for overflowing content?</br>
+Does the Подсказка из the Vтаблица компонент support selecting текст и having a scrolling effect для overflowing content?</br>
 ## Problem Description
 
-I utilized the tooltip feature of the VTable component, which means when the cell content is too long, a tooltip will appear when the mouse hovers over the cell.</br>
-However, I found that the content of this tooltip cannot be selected because when the mouse leaves the cell and tries to move to the tooltip, the tooltip disappears and it is impossible to move the mouse over it. Also, when the content is too long, the tooltip will be stretched very large, resulting in an ugly effect. I hope that when the content is very long, I can scroll through it. Can VTable achieve the effect I need?</br>
+I utilized the Подсказка feature из the Vтаблица компонент, which means when the cell content is too long, a Подсказка will appear when the mouse hovers over the cell.</br>
+However, I found that the content из this Подсказка cannot be selected because when the mouse leaves the cell и tries к move к the Подсказка, the Подсказка disappears и it is impossible к move the mouse over it. Also, when the content is too long, the Подсказка will be stretched very large, resulting в an ugly effect. I hope that when the content is very long, I can прокрутка through it. Can Vтаблица achieve the effect I need?</br>
 ## Solution
 
-VTable provides a configuration solution to this problem. First, normally, as soon as the mouse leaves the cell with the overflowing text, the `tooltip` disappears immediately, making it impossible to move the mouse to the tooltip. Therefore, a new configuration called `overflowTextTooltipDisappearDelay` is added to the tooltip configuration to delay the disappearance of the tooltip. After configuring this, the mouse has enough time to move to the tooltip, thus solving the need to select and copy text. (The usage of tooltips for Icons is similar!)</br>
+Vтаблица provides a configuration solution к this problem. первый, normally, as soon as the mouse leaves the cell с the overflowing текст, the `Подсказка` disappears immediately, making it impossible к move the mouse к the Подсказка. Therefore, a новый configuration called `overflowTextПодсказкаDisappearDelay` is added к the Подсказка configuration к delay the disappearance из the Подсказка. After configuring this, the mouse has enough time к move к the Подсказка, thus solving the need к выбрать и copy текст. (The usвозраст из Подсказкаs для иконкаs is similar!)</br>
 ```
-  /** tooltip相关配置 */
-  tooltip?: {
+  /** Подсказка相关配置 */
+  Подсказка?: {
     /** html目前实现较完整 先默认html渲染方式 */
     renderMode?: 'html'; // 目前暂不支持canvas方案
-    /**  Whether to show the thumbnail tooltip. Instead of the original hover:isShowTooltip configuration, it is temporarily necessary to set the renderMode configuration to html in order to display it. canvas has not been developed yet.*/
-    isShowOverflowTextTooltip?: boolean;
-*** /** Abbreviation text prompt box delayed disappearance time **/***
-**    overflowTextTooltipDisappearDelay?: number;**
-    /** 是否将 tooltip 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
-    confine?: boolean;
+    /**  Whether к показать the thumbnail Подсказка. Instead из the original навести:isShowПодсказка configuration, it is temporarily necessary к set the renderMode configuration к html в order к display it. canvas has не been developed yet.*/
+    isShowOverflowTextПодсказка?: логический;
+*** /** Abbreviation текст prompt box delayed disappearance time **/***
+**    overflowTextПодсказкаDisappearDelay?: число;**
+    /** 是否将 Подсказка 框限制在画布区域内，默认开启。针对renderMode:"html"有效 */
+    confine?: логический;
   };</br>
 ```
-To limit the size of a tooltip pop-up box, you can configure it in the style of the tooltip. The specific style definition is as follows:</br>
+к limit the размер из a Подсказка pop-up box, Вы можете configure it в the style из the Подсказка. The specific style definition is as follows:</br>
 ```
 /**
- * Bubble box, button explanation information
+ * Bubble box, Кнопка explanation information
  */
-export type TooltipStyle = {
-  fontFamily?: string;
-  fontSize?: number;
-  color?: string;
-  padding?: number[];
-  bgColor?: string;
-**  maxWidth?: number;**
-**  maxHeight?: number;**
+export тип ПодсказкаStyle = {
+  fontFamily?: строка;
+  fontSize?: число;
+  цвет?: строка;
+  заполнение?: число[];
+  bgColor?: строка;
+**  maxширина?: число;**
+**  maxвысота?: число;**
 };</br>
 ```
-Configure it by putting it in the theme.</br>
+Configure it по putting it в the тема.</br>
 ```
 const option={
-   tooltip: {
+   Подсказка: {
       renderMode: 'html',
-      isShowOverflowTextTooltip: true,
-      overflowTextTooltipDisappearDelay: 1000
+      isShowOverflowTextПодсказка: true,
+      overflowTextПодсказкаDisappearDelay: 1000
     },
-    theme:{
-        tooltipStyle:{
-            **maxWidth：200，**
-            **maxHeight：100**
+    тема:{
+        ПодсказкаStyle:{
+            **maxширина：200，**
+            **maxвысота：100**
         }
     }
 }</br>
 ```
 
 
-## Code Examples
+## код примеры
 
-You can paste it into the official editor for testing:</br>
-https://visactor.io/vtable/demo/component/tooltip</br>
+Вы можете paste it into the official editor для testing:</br>
+https://visactor.io/vтаблица/демонстрация/компонент/Подсказка</br>
 ```
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: '200'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: '200'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
-      tooltip: {
+      ширинаMode: 'standard',
+      Подсказка: {
         renderMode: 'html',
-        isShowOverflowTextTooltip: true,
-        overflowTextTooltipDisappearDelay: 1000
+        isShowOverflowTextПодсказка: true,
+        overflowTextПодсказкаDisappearDelay: 1000
       },
-      theme:{
-          tooltipStyle:{
-              maxWidth:200,
-              maxHeight:60
+      тема:{
+          ПодсказкаStyle:{
+              maxширина:200,
+              maxвысота:60
           }
       }
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
 
   });</br>
 ```
 ## Result Presentation
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Dx0ibyoBrouD0xxZykIco2CCnTe.gif' alt='' width='1512' height='1092'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Dx0ibyoBrouD0xxZykIco2CCnTe.gif' alt='' ширина='1512' высота='1092'>
 
-## Related Documentation
+## Related Документация
 
-Related API: https://www.visactor.io/vtable/api/Methods#showTooltip</br>
-Tutorial: https://www.visactor.io/vtable/guide/components/tooltip</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/апи/методы#showПодсказка</br>
+Tutorial: https://www.visactor.io/vтаблица/guide/компонентs/Подсказка</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

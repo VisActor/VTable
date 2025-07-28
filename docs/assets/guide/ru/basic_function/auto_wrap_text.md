@@ -1,168 +1,168 @@
 # line wrapping
 
-Line wrapping is especially meaningful for long content or cell content that contains transitions, which can effectively improve the overall layout and readability of the table. For example, when there is a column containing long content such as a work introduction, comments, or user feedback, the readability of the table may be reduced. Therefore, the automatic line wrapping function came into being.
+Line wrapping is especially meaningful для long content или cell content that contains transitions, which can effectively improve the overall макет и readability из the таблица. для пример, when there is a column containing long content such as a work introduction, comments, или user feedback, the readability из the таблица may be reduced. Therefore, the автоmatic line wrapping функция came into being.
 
-Next, we'll learn about the configuration of line wrapping and how to use it.
+следующий, we'll learn about the configuration из line wrapping и how к use it.
 
 ## Related configuration
 
-In VTable, the setting of line wrapping is relatively simple. If each column requires line wrapping, you can use the global configuration item`autoWrapText`If you don't want to specify wrapping globally, you can set it by column. The specific configuration items are in`columns.style.autoWrapText`.
+в Vтаблица, the setting из line wrapping is relatively simple. If каждый column requires line wrapping, Вы можете use the global configuration item`автоWrapText`If you don't want к specify wrapping globally, Вы можете set it по column. The specific configuration items are в`columns.style.автоWrapText`.
 
-- `autoWrapText: boolean`: Whether the global configuration allows line wrapping, the default value is`false`If set to`true`, the cells in the current column are wrapped according to their contents.
+- `автоWrapText: логический`: Whether the global configuration allows line wrapping, the по умолчанию значение is`false`If set к`true`, the cells в the текущий column are wrapped according к their contents.
 
-Other related configuration items that will affect the function change are:
+Other related configuration items that will affect the функция change are:
 
-- `columns.style.lineClamp: number | string`: Set the maximum number of rows in a cell, support numbers or`'auto'`Value. If set to`'auto'`, the number of rows is automatically calculated based on the cell content length.
+- `columns.style.lineClamp: число | строка`: Set the maximum число из rows в a cell, support numbers или`'авто'`значение. If set к`'авто'`, the число из rows is автоmatically calculated based на the cell content length.
 
-Next, we'll demonstrate how to use the line wrap feature with a practical example.
+следующий, we'll демонстрацияnstrate how к use the line wrap feature с a practical пример.
 
-## example
+## пример
 
-### Example 1: Basic use of line wrapping
+### пример 1: базовый use из line wrapping
 
-In this example, we'll show how to set a line wrap feature for columns that contain longer text content.
+в this пример, we'll показать how к set a line wrap feature для columns that contain longer текст content.
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 // 设置表格列配置
 const records = [
   {
-    name: 'pigeon',
-    introduction: 'The pigeon is a common urban bird with gray plumage and a short, stout beak'
+    имя: 'pigeon',
+    introduction: 'The pigeon is a common urban bird с gray plumвозраст и a short, stout beak'
   },
   {
-    name: 'Swallow',
-    introduction: 'Swallow is a kind of bird that is good at flying, usually perches near houses and buildings.'
+    имя: 'Swallow',
+    introduction: 'Swallow is a kind из bird that is good в flying, usually perches near houses и buildings.'
   },
   {
-    name: 'Magpie',
+    имя: 'Magpie',
     introduction:
-      'The magpie is a common small bird mainly found in Asia. They are small in size with a black head and throat, gray back and white belly. Magpies are social animals and often live in woods Breeding nests in China or in urban parks, feeding on insects, fruit and seeds. They are also highly intelligent and social, and are considered an intelligent, playful bird.'
+      'The magpie is a common small bird mainly found в Asia. They are small в размер с a black head и throat, gray back и white belly. Magpies are social animals и often live в woods Breeding nests в China или в urban parks, feeding на insects, fruit и seeds. They are also highly intelligent и social, и are considered an intelligent, playful bird.'
   },
   {
-    name: 'Peacock',
+    имя: 'Peacock',
     introduction:
-      'The peacock is a large, beautiful bird with brilliant blue-green plumage and a long tail. Native to South Asia, it feeds on insects, fruit, and seeds.'
+      'The peacock is a large, beautiful bird с brilliant blue-green plumвозраст и a long tail. Native к South Asia, it feeds на insects, fruit, и seeds.'
   },
   {
-    name: 'Peacock',
+    имя: 'Peacock',
     introduction:
-      'The flamingo is a beautiful pink bird with long legs and neck, good at swimming, and is a common bird in tropical areas.'
+      'The flamingo is a beautiful pink bird с long legs и neck, good в swimming, и is a common bird в tropical areas.'
   },
   {
-    name: 'ostrich',
+    имя: 'ostrich',
     introduction:
-      'The ostrich is a large bird that cannot fly and runs fast. It is one of the largest birds in the world'
+      'The ostrich is a large bird that cannot fly и runs fast. It is one из the largest birds в the world'
   },
   {
-    name: 'Mandarin Duck',
+    имя: 'Mandarin Duck',
     introduction:
-      'Mandarin duck is a kind of two-winged bird. The head of the male bird is blue and the head of the female bird is brown. It usually perches and mates in pairs. It is one of the symbols in Chinese culture.'
+      'Mandarin duck is a kind из two-winged bird. The head из the male bird is blue и the head из the female bird is brown. It usually perches и mates в pairs. It is one из the symbols в Chinese culture.'
   }
 ];
 
 const columns = [
   {
-    field: 'name',
-    title: 'name',
+    поле: 'имя',
+    заголовок: 'имя',
     cellType: 'link',
-    templateLink: 'https://www.google.com.hk/search?q={name}',
+    templateссылка: 'https://www.google.com.hk/search?q={имя}',
     linkJump: true,
-    width: 100
+    ширина: 100
   },
   {
-    field: 'introduction',
-    title: 'introduction',
-    cellType: 'text',
-    width: 200,
+    поле: 'introduction',
+    заголовок: 'introduction',
+    cellType: 'текст',
+    ширина: 200,
     style: {
-      autoWrapText: true
+      автоWrapText: true
     }
   },
   {
-    field: 'introduction',
-    title: 'introduction',
-    cellType: 'text',
-    width: 200
+    поле: 'introduction',
+    заголовок: 'introduction',
+    cellType: 'текст',
+    ширина: 200
   }
 ];
 const option = {
   container: document.getElementById(CONTAINER_ID),
   records,
   columns,
-  defaultRowHeight: 120
+  defaultRowвысота: 120
 };
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 ```
 
-As shown above,`introduction`The text content of the column is automatically wrapped according to the column, improving table readability.
+As shown above,`introduction`The текст content из the column is автоmatically wrapped according к the column, improving таблица readability.
 
-### Example 2: Setting a line wrap for the maximum number of lines
+### пример 2: Setting a line wrap для the maximum число из lines
 
-In this example, we will set a maximum number of rows limit, and when the cell content exceeds the maximum number of rows, it will be displayed with an ellipsis.
+в this пример, we will set a maximum число из rows limit, и when the cell content exceeds the maximum число из rows, it will be displayed с an ellipsis.
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
-    name: 'pigeon',
-    introduction: 'The pigeon is a common urban bird with gray plumage and a short, stout beak'
+    имя: 'pigeon',
+    introduction: 'The pigeon is a common urban bird с gray plumвозраст и a short, stout beak'
   },
   {
-    name: 'Swallow',
-    introduction: 'Swallow is a kind of bird that is good at flying, usually perches near houses and buildings.'
+    имя: 'Swallow',
+    introduction: 'Swallow is a kind из bird that is good в flying, usually perches near houses и buildings.'
   },
   {
-    name: 'Magpie',
+    имя: 'Magpie',
     introduction:
-      'The magpie is a common small bird mainly found in Asia. They are small in size with a black head and throat, gray back and white belly. Magpies are social animals and often live in woods Breeding nests in China or in urban parks, feeding on insects, fruit and seeds. They are also highly intelligent and social, and are considered an intelligent, playful bird.'
+      'The magpie is a common small bird mainly found в Asia. They are small в размер с a black head и throat, gray back и white belly. Magpies are social animals и often live в woods Breeding nests в China или в urban parks, feeding на insects, fruit и seeds. They are also highly intelligent и social, и are considered an intelligent, playful bird.'
   },
   {
-    name: 'Peacock',
+    имя: 'Peacock',
     introduction:
-      'The peacock is a large, beautiful bird with brilliant blue-green plumage and a long tail. Native to South Asia, it feeds on insects, fruit, and seeds.'
+      'The peacock is a large, beautiful bird с brilliant blue-green plumвозраст и a long tail. Native к South Asia, it feeds на insects, fruit, и seeds.'
   },
   {
-    name: 'Peacock',
+    имя: 'Peacock',
     introduction:
-      'The flamingo is a beautiful pink bird with long legs and neck, good at swimming, and is a common bird in tropical areas.'
+      'The flamingo is a beautiful pink bird с long legs и neck, good в swimming, и is a common bird в tropical areas.'
   },
   {
-    name: 'ostrich',
+    имя: 'ostrich',
     introduction:
-      'The ostrich is a large bird that cannot fly and runs fast. It is one of the largest birds in the world'
+      'The ostrich is a large bird that cannot fly и runs fast. It is one из the largest birds в the world'
   },
   {
-    name: 'Mandarin Duck',
+    имя: 'Mandarin Duck',
     introduction:
-      'Mandarin duck is a kind of two-winged bird. The head of the male bird is blue and the head of the female bird is brown. It usually perches and mates in pairs. It is one of the symbols in Chinese culture.'
+      'Mandarin duck is a kind из two-winged bird. The head из the male bird is blue и the head из the female bird is brown. It usually perches и mates в pairs. It is one из the symbols в Chinese culture.'
   }
 ];
 
 const columns = [
   {
-    field: 'name',
-    title: 'name',
+    поле: 'имя',
+    заголовок: 'имя',
     cellType: 'link',
-    templateLink: 'https://www.google.com.hk/search?q={name}',
+    templateссылка: 'https://www.google.com.hk/search?q={имя}',
     linkJump: true,
-    width: 100
+    ширина: 100
   },
   {
-    field: 'introduction',
-    title: 'introduction',
-    cellType: 'text',
-    width: 200,
+    поле: 'introduction',
+    заголовок: 'introduction',
+    cellType: 'текст',
+    ширина: 200,
     style: {
-      autoWrapText: true,
+      автоWrapText: true,
       lineClamp: 2
     }
   },
   {
-    field: 'introduction',
-    title: 'introduction',
-    cellType: 'text',
-    width: 200,
+    поле: 'introduction',
+    заголовок: 'introduction',
+    cellType: 'текст',
+    ширина: 200,
     style: {
-      autoWrapText: true,
+      автоWrapText: true,
       lineClamp: 3
     }
   }
@@ -171,11 +171,11 @@ const option = {
   container: document.getElementById(CONTAINER_ID),
   records,
   columns,
-  defaultRowHeight: 120
+  defaultRowвысота: 120
 };
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 ```
 
-As shown above, the first`introduction`Column sets the maximum number of rows to 2 rows, the second`introduction`The maximum number of rows is set to 3 rows. Text content beyond the maximum row will be displayed with an ellipsis. This can effectively avoid table layout problems caused by too long cell content, and maintain the consistency of table row heights.
+As shown above, the первый`introduction`Column sets the maximum число из rows к 2 rows, the second`introduction`The maximum число из rows is set к 3 rows. текст content beyond the maximum row will be displayed с an ellipsis. This can effectively avoid таблица макет problems caused по too long cell content, и maintain the consistency из таблица row высотаs.
 
-So far, we have introduced the meaning of the line wrapping function in VTable in detail, related configurations and usage examples. By using the line wrapping function correctly, you can better optimize the table layout and improve the effect of data lake visualization. It not only improves the efficiency of data analytics, but also brings users a more comfortable reading experience.
+So far, we have introduced the meaning из the line wrapping функция в Vтаблица в detail, related configurations и usвозраст примеры. по using the line wrapping функция correctly, Вы можете better optimize the таблица макет и improve the effect из данные lake visualization. It не only improves the efficiency из данные analytics, but also brings users a more comforтаблица reading experience.

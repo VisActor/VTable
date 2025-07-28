@@ -1,131 +1,131 @@
 ---
-title: VTable usage problem: How to set the expanded and collapsed state of the tree structure</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст problem: How к set the expanded и collapsed state из the tree structure</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to set the expanded and collapsed state of the tree structure in a tree-structured table.</br>
+How к set the expanded и collapsed state из the tree structure в a tree-structured таблица.</br>
 
 
 ## Problem Description
 
-Through configuration, set the expanded and collapsed state of the tree structure table and customize the display style of the tree structure.</br>
+Through configuration, set the expanded и collapsed state из the tree structure таблица и пользовательскийize the display style из the tree structure.</br>
 
 
 ## Solution
 
-1. 1. `hierarchyExpandLevel` can be configured in the `option` of table initialization. This configuration item is defined as follows: When displayed as a tree structure, the number of levels is expanded by default. The default setting is 1 to display only the root node, and the configuration of `Infinity` will expand all nodes.</br>
-1. You can also obtain the expanded and collapsed status of a certain cell through the API after the table is initialized, and set the expanded and collapsed status of a certain cell through the API.</br>
+1. 1. `hierarchyExpandLevel` can be configured в the `option` из таблица initialization. This configuration item is defined as follows: When displayed as a tree structure, the число из levels is expanded по по умолчанию. The по умолчанию setting is 1 к display only the root node, и the configuration из `Infinity` will развернуть все nodes.</br>
+1. Вы можете also obtain the expanded и collapsed status из a certain cell through the апи after the таблица is initialized, и set the expanded и collapsed status из a certain cell through the апи.</br>
 ```
-// Get the tree-shaped expanded or collapsed state of a certain cell
-getHierarchyState(col: number, row: number) : HierarchyState | null;
+// Get the tree-shaped expanded или collapsed state из a certain cell
+getHierarchyState(col: число, row: число) : HierarchyState | null;
 enum HierarchyState {
-  expand = 'expand',
-  collapse = 'collapse',
-  none = 'none'
+  развернуть = 'развернуть',
+  свернуть = 'свернуть',
+  никто = 'никто'
 }
 
 // Header switch level status
-toggleHierarchyState(col: number, row: number): viod;</br>
+toggleHierarchyState(col: число, row: число): viod;</br>
 ```
-## Code example 
+## код пример 
 
 ```
 const option = {
-  records:data,
+  records:данные,
   columns,
-  widthMode:'standard',
+  ширинаMode:'standard',
   hierarchyExpandLevel: 2,
 };
-const tableInstance = new VTable.ListTable(container, option);
+const таблицаInstance = новый Vтаблица.списоктаблица(container, option);
 
-const state = tableInstance.getHierarchyState(0,1);
-if (state === 'expand') {
-    tableInstance.toggleHierarchyState(0,1);
+const state = таблицаInstance.getHierarchyState(0,1);
+if (state === 'развернуть') {
+    таблицаInstance.toggleHierarchyState(0,1);
 }</br>
 ```
 ## Results display 
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/XBKlb2ZSXo9AfZxd762ccFDenoc.gif' alt='' width='1662' height='1044'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/XBKlb2ZSXo9AfZxd762ccFDenoc.gif' alt='' ширина='1662' высота='1044'>
 
-Complete sample code (you can paste it into the [editor](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree) to try it out):</br>
+Complete sample код (Вы можете paste it into the [editor](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree) к try it out):</br>
 ```
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/company_struct.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/company_struct.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
     {
-        "field": "group",
+        "поле": "group",
         "title": "department",
-        "width": "auto",
+        "ширина": "авто",
          tree: true,
-         fieldFormat(rec){
-            return rec['department']??rec['group']??rec['name'];
+         полеFormat(rec){
+            возврат rec['department']??rec['group']??rec['имя'];
          }
     },
     {
-        "field": "total_children",
+        "поле": "total_children",
         "title": "memebers count",
-        "width": "auto",
-        fieldFormat(rec){
-          if(rec?.['position']){
-            return `position:  ${rec['position']}`
+        "ширина": "авто",
+        полеFormat(rec){
+          if(rec?.['позиция']){
+            возврат `позиция:  ${rec['позиция']}`
           }else
-          return rec?.['total_children'];
+          возврат rec?.['total_children'];
         }
     },
     {
-        "field": "monthly_expense",
+        "поле": "monthly_expense",
         "title": "monthly expense",
-        "width": "auto",
-        fieldFormat(rec){
+        "ширина": "авто",
+        полеFormat(rec){
           if(rec?.['salary']){
-            return `salary:  ${rec['salary']}`
+            возврат `salary:  ${rec['salary']}`
           }else
-          return rec?.['monthly_expense'];
+          возврат rec?.['monthly_expense'];
         }
     },
     {
-        "field": "new_hires_this_month",
-        "title": "new hires this month",
-        "width": "auto"
+        "поле": "new_hires_this_month",
+        "title": "новый hires this month",
+        "ширина": "авто"
     },
     {
-        "field": "resignations_this_month",
+        "поле": "resignations_this_month",
         "title": "resignations this month",
-        "width": "auto"
+        "ширина": "авто"
     },
     {
-        "field": "complaints_and_suggestions",
+        "поле": "complaints_and_suggestions",
         "title": "recived complaints counts",
-        "width": "auto"
+        "ширина": "авто"
     },
    
 ];
 
 const option = {
-  records:data,
+  records:данные,
   columns,
-  widthMode:'standard',
+  ширинаMode:'standard',
   hierarchyExpandLevel: 2,
 };
 
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
 
-const state = tableInstance.getHierarchyState(0,1);
-if (state === 'expand') {
-    tableInstance.toggleHierarchyState(0,1);
+const state = таблицаInstance.getHierarchyState(0,1);
+if (state === 'развернуть') {
+    таблицаInstance.toggleHierarchyState(0,1);
 }
     })</br>
 ```
 ## Related documents
 
-Tree mode demo：https://www.visactor.io/vtable/demo/table-type/list-table-tree</br>
-Related api：https://www.visactor.io/vtable/option/ListTable#hierarchyExpandLevel</br>
-github：https://github.com/VisActor/VTable</br>
+Tree mode демонстрация：https://www.visactor.io/vтаблица/демонстрация/таблица-тип/список-таблица-tree</br>
+Related апи：https://www.visactor.io/vтаблица/option/списоктаблица#hierarchyExpandLevel</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

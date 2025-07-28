@@ -1,161 +1,161 @@
-{{ target: common-theme }}
+{{ target: common-тема }}
 
-Table theme, which has built-in theme names DEFAULT, ARCO, BRIGHT, DARK, SIMPLIFY. The configuration can be made using built-in types or directly with string names:
+таблица тема, which has built-в тема имяs по умолчанию, ARCO, BRIGHT, DARK, SIMPLIFY. The configuration can be made using built-в types или directly с строка имяs:
 
-- `VTable.themes.DEFAULT`
-- `VTable.themes.ARCO;`
-- `VTable.themes.BRIGHT`
-- `VTable.themes.DARK`
-- `VTable.themes.SIMPLIFY`
+- `Vтаблица.темаs.по умолчанию`
+- `Vтаблица.темаs.ARCO;`
+- `Vтаблица.темаs.BRIGHT`
+- `Vтаблица.темаs.DARK`
+- `Vтаблица.темаs.SIMPLIFY`
 
-or
+или
 
-- `'default'`
+- `'по умолчанию'`
 - `'arco'`
 - `'bright'`
 - `'dark'`
 - `'simplify'`
 
-You can also extend built-in themes, for example, change the font based on the ARCO theme:
+Вы можете also extend built-в темаs, для пример, change the шрифт based на the ARCO тема:
 
 ```
-VTable.themes.ARCO.extend({
+Vтаблица.темаs.ARCO.extend({
   fontSize: '14px',
   fontFamily: 'PingFangSC'
 })
 ```
 
-Or you can directly define a custom theme:
+или Вы можете directly define a пользовательский тема:
 
 ```
 {
   defaultStyle:{
-    borderLineWidth:0,
+    borderLineширина:0,
   },
   headerStyle:{
     frameStyle:{
       borderColor:'blue',
-      borderLineWidth:[0,0,1,0]
+      borderLineширина:[0,0,1,0]
     }
   },
   rowHeaderStyle:{
     frameStyle:{
       borderColor:'blue',
-      borderLineWidth:[0,1,0,0]
+      borderLineширина:[0,1,0,0]
     }
   },
   cornerHeaderStyle:{
     frameStyle:{
       borderColor:'blue',
-      borderLineWidth:[0,1,1,0]
+      borderLineширина:[0,1,1,0]
     }
   }
 }
 ```
 
-#${prefix} underlayBackgroundColor(string)
-The color filled in the canvas outside the table drawing area
+#${prefix} underlayBackgroundColor(строка)
+The цвет filled в the canvas outside the таблица drawing area
 
-#${prefix} cellInnerBorder(boolean)
-Whether the cell draws an inner border. If false, the border of the border cell close to the border will be hidden.
+#${prefix} cellInnerBorder(логический)
+Whether the cell draws an inner граница. If false, the граница из the граница cell закрыть к the граница will be скрытый.
 
-#${prefix} bodyStyle(Object)
+#${prefix} bodyStyle(объект)
 
 Body cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} headerStyle(Object)
+#${prefix} headerStyle(объект)
 
-List header cell style configuration
+список header cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} rowHeaderStyle(Object)
+#${prefix} rowHeaderStyle(объект)
 
 Row header cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} cornerHeaderStyle(Object)
+#${prefix} cornerHeaderStyle(объект)
 
 Corner header cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} cornerLeftBottomCellStyle(Object)
+#${prefix} cornerLeftBottomCellStyle(объект)
 
-Corner left bottom cell style configuration
+Corner лево низ cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} cornerRightBottomCellStyle(Object)
+#${prefix} cornerRightBottomCellStyle(объект)
 
-Corner right bottom cell style configuration
+Corner право низ cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} bottomFrozenStyle(Object)
+#${prefix} bottomFrozenStyle(объект)
 
-Bottom frozen area style configuration
+низ frozen area style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} rightFrozenStyle(Object)
+#${prefix} rightFrozenStyle(объект)
 
-Right frozen area style configuration
+право frozen area style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} cornerRightTopCellStyle(Object)
+#${prefix} cornerRightTopCellStyle(объект)
 
-Corner right top cell style configuration
+Corner право верх cell style configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} groupTitleStyle(Object)
+#${prefix} groupTitleStyle(объект)
 
-Group title style configuration in grouping display mode
+Group title style configuration в grouping display mode
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-#${prefix} defaultStyle(Object)
+#${prefix} defaultStyle(объект)
 
-Common style, if the items in headerStyle, rowHeaderStyle, and defaultStyle are not configured, the items in this will be used for configuration
+Common style, if the items в headerStyle, rowHeaderStyle, и defaultStyle are не configured, the items в this will be used для configuration
 
-{{ use: common-theme-style(
+{{ use: common-тема-style(
   prefix = '#' + ${prefix},
 ) }}
 
-{{ use: common-table-frame-style(
+{{ use: common-таблица-frame-style(
   prefix = ${prefix}
   ) }}
 
-{{ use: common-column-resize-style(
+{{ use: common-column-изменение размера-style(
   prefix = ${prefix}
   ) }}
 
-{{ use: common-drag-header-line-style(
+{{ use: common-перетаскивание-header-line-style(
   prefix = ${prefix}
   ) }}
 
@@ -163,19 +163,19 @@ Common style, if the items in headerStyle, rowHeaderStyle, and defaultStyle are 
   prefix = ${prefix}
   ) }}
 
-{{ use: common-scroll-style (
+{{ use: common-прокрутка-style (
   prefix = ${prefix}
   ) }}
 
-{{ use: common-tooltip-style (
+{{ use: common-Подсказка-style (
   prefix = ${prefix}
   ) }}
 
-{{ use: common-checkbox-style (
+{{ use: common-флажок-style (
   prefix = ${prefix}
   ) }}
 
-{{ use: common-radio-style (
+{{ use: common-переключатель-style (
   prefix = ${prefix}
   ) }}
 
@@ -183,71 +183,71 @@ Common style, if the items in headerStyle, rowHeaderStyle, and defaultStyle are 
   prefix = ${prefix}
   ) }}
 
-{{ use: common-button-style (
+{{ use: common-Кнопка-style (
   prefix = ${prefix}
   ) }}
 
-#${prefix} selectionStyle(Object)
+#${prefix} selectionStyle(объект)
 
 Selection box style
 
-##${prefix} cellBgColor(string)
-Selection box background color, requires transparency setting
+##${prefix} cellBgColor(строка)
+Selection box фон цвет, requires transparency setting
 
-##${prefix} cellBorderColor(string)
-Selection box border color
+##${prefix} cellBorderColor(строка)
+Selection box граница цвет
 
-##${prefix} cellBorderLineWidth(number)
-Selection box border thickness
+##${prefix} cellBorderLineширина(число)
+Selection box граница thickness
 
 ##${prefix} inlineRowBgColor(ColorPropertyDefine)
-The highlight color of the entire row when selected
-{{ use: common-color(
+The highlight цвет из the entire row when selected
+{{ use: common-цвет(
 prefix = ${prefix}
 ) }}
 
 ##${prefix} inlineColumnBgColor(ColorPropertyDefine)
-The highlight color of the entire column when selected
-{{ use: common-color(
+The highlight цвет из the entire column when selected
+{{ use: common-цвет(
 prefix = ${prefix}
 ) }}
 
-##${prefix} selectionFillMode(boolean)
-Fill color rules for the selected area
+##${prefix} selectionFillMode(логический)
+Fill цвет rules для the selected area
 
-- `overlay`: The fill color of the selected area will cover the background color of the cell (usually a color value with transparency)
-- `replace`: The fill color of the selected area will replace the background color of the cell
-  {{ use: common-color(
+- `overlay`: The fill цвет из the selected area will cover the фон цвет из the cell (usually a цвет значение с transparency)
+- `replace`: The fill цвет из the selected area will replace the фон цвет из the cell
+  {{ use: common-цвет(
     prefix = ${prefix}
     ) }}
 
-##${prefix} functionalIconsStyle(Object)
-VTable internal functional button icon color and size configuration. If the icon is not clear, it can be adjusted according to the actual situation. If the size is not suitable, it can be adjusted appropriately.
+##${prefix} functionalиконкаsStyle(объект)
+Vтаблица internal functional Кнопка иконка цвет и размер configuration. If the иконка is не clear, it can be adjusted according к the actual situation. If the размер is не suiтаблица, it can be adjusted appropriately.
 
 ```
-  functionalIconsStyle?: {
-    sort_color?: string;
-    sort_color_opacity?: string;
-    sort_color_2?: string;
-    sort_color_opacity_2?: string;
-    sort_size?: number;
-    sort_size_2?: number;
-    frozen_color?: string;
-    frozen_color_opacity?: string;
-    frozen_color_2?: string;
-    frozen_color_opacity_2?: string;
-    frozen_size?: number;
-    frozen_size_2?: number;
-    collapse_color?: string;
-    collapse_color_opacity?: string;
-    collapse_size?: number;
-    collapse_size_2?: number;
-    expand_color?: string;
-    expand_color_opacity?: string;
-    expand_size?: number;
-    expand_size_2?: number;
-    dragReorder_color?: string;
-    dragReorder_color_opacity?: string;
-    dragReorder_size?: number;
+  functionalиконкаsStyle?: {
+    сортировка_color?: строка;
+    сортировка_color_opaГород?: строка;
+    сортировка_color_2?: строка;
+    сортировка_color_opaГород_2?: строка;
+    сортировка_size?: число;
+    сортировка_size_2?: число;
+    frozen_color?: строка;
+    frozen_color_opaГород?: строка;
+    frozen_color_2?: строка;
+    frozen_color_opaГород_2?: строка;
+    frozen_size?: число;
+    frozen_size_2?: число;
+    collapse_color?: строка;
+    collapse_color_opaГород?: строка;
+    collapse_size?: число;
+    collapse_size_2?: число;
+    expand_color?: строка;
+    expand_color_opaГород?: строка;
+    expand_size?: число;
+    expand_size_2?: число;
+    dragReorder_color?: строка;
+    dragReorder_color_opaГород?: строка;
+    dragReorder_size?: число;
   };
 ```

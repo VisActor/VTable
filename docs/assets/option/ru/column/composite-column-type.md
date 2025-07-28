@@ -1,11 +1,11 @@
-{{ target: composite-cell-type }}
+{{ target: composite-cell-тип }}
 
-#${prefix} columns.function(string)
+#${prefix} columns.функция(строка)
 
-Specify the column or row cell type as a custom function.
+Specify the column или row cell тип as a пользовательский функция.
 
-##${prefix} cellType(string) = 'function'
+##${prefix} cellType(строка) = 'функция'
 
-Specify the column or row cell type as a custom function.
+Specify the column или row cell тип as a пользовательский функция.
 
-Specific usage examples can be found: [Composite Cells](../demo/cell-type/composite-cellType)
+Specific usвозраст примеры can be found: [Composite Cells](../демонстрация/cell-тип/composite-cellType)

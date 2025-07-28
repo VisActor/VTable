@@ -1,197 +1,197 @@
 ---
-title: Using Cursor with DeepSeek to Quickly Get Started with Unfamiliar Components
+заголовок: Using Cursor с DeepSeek к Quickly Get Started с Unfamiliar компонентs
 
-key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, Gis, LLM
+key words: VisActor, Vграфик, Vтаблица, VStory, VMind, VGrammar, VRender, Visualization, график, данные, таблица, Graph, Gis, LLM
 ---
-In today's software development field, developers face the challenge of continuously improving development efficiency and reducing the learning curve. The core purpose of this document is to help developers achieve this goal, especially by cleverly using **component official documentation** and combining tools like **Cursor** and **DeepSeek** to let AI automatically generate the required code, quickly lowering the entry barrier. Next, we will experiment with several projects in the relatively new open-source project, VisActor (https://www.visactor.com; https://www.visactor.io/), an open-source visualization solution, to see how effective it is.
+в today's software development поле, developers face the challenge из continuously improving development efficiency и reducing the learning curve. The core purpose из this document is к help developers achieve this goal, especially по cleverly using **компонент official Документация** и combining tools like **Cursor** и **DeepSeek** к let AI автоmatically generate the обязательный код, quickly lowering the entry barrier. следующий, we will experiment с several projects в the relatively новый открыть-source project, VisActor (https://www.visactor.com; https://www.visactor.io/), an открыть-source visualization solution, к see how effective it is.
 
 # Preparation
 
 ## Create a Test Project
 
-For example, I have a simple project initialized with `npx create-react-app my-app --template typescript`, which looks like this after starting:
+для пример, I have a simple project initialized с `npx create-react-app my-app --template typescript`, which loхорошоs like this after starting:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/C4cabsu8goKMv4xiaBtcDqvmnuf.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/C4cabsu8gхорошоMv4xiaBtcDqvmnuf.gif' alt='' ширина='1000' высота='авто'>
 
-## Obtain DeepSeek API Key
+## Obtain DeepSeek апи Key
 
-Register with DeepSeek and create your API key on the [DeepSeek API](https://platform.deepseek.com/api_keys) official website.
+регистрация с DeepSeek и create your апи key на the [DeepSeek апи](https://platform.deepseek.com/апи_keys) official website.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/JNQPbFzIOoYknHxr3aDcg60onCg.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/JNQPbFzIOoYknHxr3aDcg60onCg.gif' alt='' ширина='1000' высота='авто'>
 
 ## Configure Cursor
 
 Official website: https://www.cursor.com/
 
-Download and register, open your VChart project with Cursor, and configure Cursor.
+Download и регистрация, открыть your Vграфик project с Cursor, и configure Cursor.
 
-Using DeepSeek-V3 as an example, its API model name is `deepseek-chat`, and the API address is https://api.deepseek.com/v1. For more details, see the [API usage official website](https://api-docs.deepseek.com/zh-cn).
+Using DeepSeek-V3 as an пример, its апи model имя is `deepseek-chat`, и the апи address is https://апи.deepseek.com/v1. для more details, see the [апи usвозраст official website](https://апи-docs.deepseek.com/zh-cn).
 
-Create a new model on the model page, set the corresponding API address and model name.
+Create a новый model на the model pвозраст, set the corresponding апи address и model имя.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WBBCb55WwoF3HUxnhGtc6P5Un5c.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WBBCb55WwoF3HUxnhGtc6P5Un5c.gif' alt='' ширина='1000' высота='авто'>
 
-Of course, you can also use any other AI model; here, we use DeepSeek.
+из course, Вы можете also use любой other AI model; here, we use DeepSeek.
 
 # Inject Official Tutorial into @Docs
 
 # Practical Verification
 
-## VTable Test
+## Vтаблица Test
 
-VTable (https://www.visactor.io/vtable/; https://www.visactor.com/vtable/) is a powerful table component in the VisActor visualization library. It is designed to meet diverse data presentation needs, offering high flexibility and customizability. Whether it's simple data listing or complex data analysis display scenarios, VTable can provide excellent solutions.
+Vтаблица (https://www.visactor.io/vтаблица/; https://www.visactor.com/vтаблица/) is a powerful таблица компонент в the VisActor visualization library. It is designed к meet diverse данные presentation needs, offering high flexibility и пользовательскийizability. Whether it's simple данные списокing или complex данные analysis display scenarios, Vтаблица can provide excellent solutions.
 
-VTable has the following core features:
+Vтаблица has Следующий core возможности:
 
-- Supports various table types: basic tables, pivot tables, transposed tables, pivot charts, etc.
+- Supports various таблица types: базовый таблицаs, сводный таблицаs, transposed таблицаs, сводный графикs, etc.
 
-- Powerful interaction features: sorting, filtering, row and column dragging, cell editing, etc.
+- Powerful interaction возможности: сортировкаing, filtering, row и column dragging, cell editing, etc.
 
-- Rich cell types: text, charts, progress bars, checkboxes, sparklines, etc.
+- Rich cell types: текст, графикs, progress bars, checkboxes, sparklines, etc.
 
-- High-performance rendering: supports smooth display of millions of data
+- High-Производительность rendering: supports smooth display из millions из данные
 
-- Multi-platform adaptation: perfect support for mainstream frameworks like Vue, React
+- Multi-platform adaptation: perfect support для mainstream frameworks like Vue, React
 
-### Invoke AI Interaction Panel in Cursor and Generate Code
+### Invхорошоe AI Interaction Panel в Cursor и Generate код
 
-After setting up the project environment, use `cmd + i` to invoke the AI interaction panel. We directly let AI generate a basic table code snippet for inserting VTable.
+After setting up the project environment, use `cmd + i` к invхорошоe the AI interaction panel. We directly let AI generate a базовый таблица код snippet для inserting Vтаблица.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/AIWSbqgyhog1DZxaYGCcl9kinsb.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/AIWSbqgyhog1DZxaYGCcl9kinsb.gif' alt='' ширина='1000' высота='авто'>
 
-However, the initial generation result shows that AI does not recognize VTable's `ListTable`, possibly due to the inability to accurately recognize VTable's ListTable configuration.
+However, the initial generation result shows that AI does не recognize Vтаблица's `списоктаблица`, possibly due к the inability к accurately recognize Vтаблица's списоктаблица configuration.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/IfZ4bjODTocB2oxPfDScNdvnnEg.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/IfZ4bjODTocB2oxPfDScNdvnnEg.gif' alt='' ширина='1000' высота='авто'>
 
 ### Inject Official Tutorial into @Docs
 
-To solve the above problem, we inject the official tutorial into @Docs.
+к solve the above problem, we inject the official tutorial into @Docs.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DOapbrW3gowfgDxw6v9cagArnPe.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DOapbrW3gowfgDxw6v9cagArnPe.gif' alt='' ширина='1000' высота='авто'>
 
-Explicitly specify `VisActor VTable` in the `prompt` in @Docs. After this step, we are pleasantly surprised to find that AI can correctly write the implementation logic according to the `option` in VTable.
+Explicitly specify `VisActor Vтаблица` в the `prompt` в @Docs. After this step, we are pleasantly surprised к find that AI can correctly write the implementation logic according к the `option` в Vтаблица.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HOHPbR1gho68fAxnA0XcWR3Xnuc.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HOHPbR1gho68fAxnA0XcWR3Xnuc.gif' alt='' ширина='1000' высота='авто'>
 
-### Code Application and Effect Display
+### код Application и Effect Display
 
-Copy the generated code into the corresponding file, run the project, and you can see the initial effect, with the table correctly generated.
+Copy the generated код into the corresponding file, run the project, и Вы можете see the initial effect, с the таблица correctly generated.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Vbf8bECXsoJngRxMxdzcbZgunfb.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Vbf8bECXsoJngRxMxdzcbZgunfb.gif' alt='' ширина='1000' высота='авто'>
 
-Then, we continue to let AI modify the table style. AI provided reasonable modification suggestions,
+Then, we continue к let AI modify the таблица style. AI provided reasonable modification suggestions,
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/CM5lbR4tIokooxxxNotcvtakngd.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/CM5lbR4tIхорошоooxxxNotcvtakngd.gif' alt='' ширина='1000' высота='авто'>
 
 After running the project again, we got a display effect that better meets the requirements:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Co0mb5MdhoTuE1xGpwtcqC5Vngu.gif' alt='' width='406' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Co0mb5MdhoTuE1xGpwtcqC5Vngu.gif' alt='' ширина='406' высота='авто'>
 
-## VChart Test
+## Vграфик Test
 
-### Add a Bar Chart
+### Add a Bar график
 
-Invoke AI interaction with the `cmd+i` command, and let AI help us generate a simple bar chart code first.
+Invхорошоe AI interaction с the `cmd+i` command, и let AI help us generate a simple bar график код первый.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WnzubAlKKo70ePxjlVbclc6ynmg.gif' alt='' width='970' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WnzubAlKKo70ePxjlVbclc6ynmg.gif' alt='' ширина='970' высота='авто'>
 
-Directly apply this spec, and we check the result; a simple bar chart is rendered. It can be seen that DeepSeek has a certain understanding of VChart, and simple charts can be directly added. Let's try a more complex scenario.
+Directly apply this spec, и we check the result; a simple bar график is rendered. It can be seen that DeepSeek has a certain understanding из Vграфик, и simple графикs can be directly added. Let's try a more complex scenario.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HYjbb8u8ToXkbBxJ8o6cGqPgn8f.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HYjbb8u8ToXkbBxJ8o6cGqPgn8f.gif' alt='' ширина='1000' высота='авто'>
 
 ### Complex Scenario, Inject Docs
 
-We hope to add an average auxiliary line on the y-axis, check the result, but the result is incorrect. Upon closer inspection, it can be found that although the markLine is written as if it is correct, the spec does not conform to the specification, and the average line is calculated. We solve this problem by injecting docs.
+We hope к add an averвозраст auxiliary line на the y-axis, check the result, but the result is incorrect. Upon closer inspection, it can be found that although the markLine is written as if it is correct, the spec does не conform к the specification, и the averвозраст line is calculated. We solve this problem по injecting docs.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/UJdkbdp0poJRSzxy94kcOHqZnsd.gif' alt='' width='980' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/UJdkbdp0poJRSzxy94kcOHqZnsd.gif' alt='' ширина='980' высота='авто'>
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/RQgwbW3WGopiNAxoEAXcJhornqc.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/RQgwbW3WGopiNAxoEAXcJhornqc.gif' alt='' ширина='1000' высота='авто'>
 
 #### Set Docs
 
-Enter the Cursor settings page, select `Features`, add new docs, the docs address is https://visactor.com/vchart (https://visactor.io/vchart); you can also directly add through @Docs on the editing page.
+Enter the Cursor settings pвозраст, выбрать `возможности`, add новый docs, the docs address is https://visactor.com/vграфик (https://visactor.io/vграфик); Вы можете also directly add through @Docs на the editing pвозраст.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/JQarbKxBEoKc3FxjN4Fc9jydnXb.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/JQarbKxBEхорошоc3FxjN4Fc9jydnXb.gif' alt='' ширина='1000' высота='авто'>
 
 ### Experimental Results
 
-By editing again with the newly added docs, the correct result can be obtained!
+по editing again с the newly added docs, the correct result can be obtained!
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PJXKbmAccoeUmjxXButcR45dnZe.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PJXKbmAccoeUmjxXButcR45dnZe.gif' alt='' ширина='1000' высота='авто'>
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/SIFlbNJ5eo0bbjxRRMCcoruFnWp.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/SIFlbNJ5eo0bbjxRRMCcoruFnWp.gif' alt='' ширина='1000' высота='авто'>
 
 ## VStory Test
 
-VStory (GitHub: https://github.com/VisActor/VStory/; site: https://www.visactor.io/vstory/, https://www.visactor.com/vstory/) is a narrative-oriented visualization development framework that integrates the capabilities of all VisActor visualization components, making it more challenging to use. We conduct a simple test.
+VStory (GitHub: https://github.com/VisActor/VStory/; site: https://www.visactor.io/vstory/, https://www.visactor.com/vstory/) is a narrative-oriented visualization development framework that integrates the capabilities из все VisActor visualization компонентs, making it more challenging к use. We conduct a simple test.
 
-Invoke AI interaction with the `cmd+i` command, and let AI help us generate a simple dashboard demo first.
+Invхорошоe AI interaction с the `cmd+i` command, и let AI help us generate a simple dashboard демонстрация первый.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WNZAbOsbVoBd46xTGChcqbm3nbh.gif' alt='' width='766' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WNZAbOsbVoBd46xTGChcqbm3nbh.gif' alt='' ширина='766' высота='авто'>
 
-It can be found that it is completely incorrect because DeepSeek uses data from 2023, and VStory had not been released at that time, so it does not know how to use it. At this point, we need to let it read the documentation to learn.
+It can be found that it is completely incorrect because DeepSeek uses данные от 2023, и VStory had не been Релизd в that time, so it does не know how к use it. в this point, we need к let it read the Документация к learn.
 
 ### Inject Docs
 
-We solve this problem by injecting docs.
+We solve this problem по injecting docs.
 
-Enter the Cursor settings page, select `Features`, add new docs, the docs address is https://visactor.com/vstory/guide/tutorial_docs/VStory_Website_Guide; you can also directly add through @Docs on the editing page.
+Enter the Cursor settings pвозраст, выбрать `возможности`, add новый docs, the docs address is https://visactor.com/vstory/guide/tutorial_docs/VStory_Website_Guide; Вы можете also directly add through @Docs на the editing pвозраст.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/OtoTbG06lodqIaxBCkscQztNnoh.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/OtoTbG06lodqIaxBCkscQztNnoh.gif' alt='' ширина='1000' высота='авто'>
 
 ### Experimental Results
 
-By editing again with the newly added docs, the correct result can be obtained!
+по editing again с the newly added docs, the correct result can be obtained!
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HqKdbVHgYoM9a6xmsZqcuZ4QnDq.gif' alt='' width='754' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/HqKdbVHgYoM9a6xmsZqcuZ4QnDq.gif' alt='' ширина='754' высота='авто'>
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/X1UZb9HXsoIdiRxqLCucJbqPnZc.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/X1UZb9HXsoIdiRxqLCucJbqPnZc.gif' alt='' ширина='1000' высота='авто'>
 
-**Since VStory uses VChart, VTable, and VRender, to achieve better results, you should add the documentation of VChart, VTable, and VRender to the context simultaneously.**
+**Since VStory uses Vграфик, Vтаблица, и VRender, к achieve better results, you should add the Документация из Vграфик, Vтаблица, и VRender к the context simultaneously.**
 
 # Simple Summary
 
 1. Improve Development Efficiency
 
-- Quick Access: Directly access VisActor API documentation through Cursor
+- Quick Access: Directly access VisActor апи Документация through Cursor
 
-- Intelligent Suggestions: Precise code completion based on VisActor documentation
+- Intelligent Suggestions: Precise код completion based на VisActor Документация
 
 2. Enhance Development Experience
 
-- Seamless Integration: Directly obtain VTable usage guidance in the development environment
+- Seamless Integration: Directly obtain Vтаблица usвозраст guidance в the development environment
 
-- Real-time Feedback: Quickly verify code effects
+- Real-time Feedback: Quickly verify код effects
 
 3. Reduce Learning Costs
 
-- Documentation Assistance: Access VisActor official examples at any time
+- Документация Assistance: Access VisActor official примеры в любой time
 
-- Code Generation: Automatically generate code that complies with VisActor standards
+- код Generation: автоmatically generate код that complies с VisActor standards
 
-4. Improve Code Quality
+4. Improve код Quality
 
-- Standard Check: Ensure code complies with VTable best practices
+- Standard Check: Ensure код complies с Vтаблица best practices
 
-- Performance Optimization: Automatically generate high-performance table configurations
+- Производительность Optimization: автоmatically generate high-Производительность таблица configurations
 
 # Contact Us
 
 GitHub: [github.com/VisActor](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FVisActor)
 
-Leave a message on the VisActor WeChat subscription account (you can join the WeChat group through the subscription account menu):
+Leave a messвозраст на the VisActor WeChat subscription account (Вы можете join the WeChat group through the subscription account меню):
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VyPsbaIz8offShxlv0ZcqqD8nfd.gif' alt='' width='258' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/VyPsbaIz8offShxlv0ZcqqD8nfd.gif' alt='' ширина='258' высота='авто'>
 
-VisActor official website: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable); [www.visactor.](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)com
+VisActor official website: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvтаблица); [www.visactor.](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvтаблица)com
 
-Feishu Group:
+Feishu группа:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/NAQhbtdelofTIyxk9pgcE3hqnQG.gif' alt='' width='264' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/NAQhbtdelofTIyxk9pgcE3hqnQG.gif' alt='' ширина='264' высота='авто'>
 
 Discord: https://discord.com/invite/3wPyxVyH6m 
 
 
 ---
 
-The doc is contributed by [玄魂](https://github.com/xuanhun)
+The doc is contributed по [玄魂](https://github.com/xuanhun)

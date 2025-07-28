@@ -1,96 +1,96 @@
-# Data sources and formats
+# данные sources и formats
 
-In order to better display and analyze data, we need to understand the format and meaning of tabular data in VTable. Next we will discuss the data forms of two table types in VTable: the basic table (ListTable) data source, and the pivottable (PivotTable) data source.
+в order к better display и analyze данные, we need к understand the format и meaning из tabular данные в Vтаблица. следующий we will discuss the данные forms из two таблица types в Vтаблица: the базовый таблица (списоктаблица) данные source, и the сводныйтаблица (сводныйтаблица) данные source.
 
-## Data format form
+## данные format form
 
-In VTable, the main data format we need to deal with is a JSON array. For example, the following is JSON data taking human information as an example:
+в Vтаблица, the main данные format we need к deal с is a JSON массив. для пример, Следующий is JSON данные taking human information as an пример:
 
 ```json
 [
-  { "name": "zhang_san", "age": 20, "sex": "", "phone": "123456789", "address": "beijing haidian" },
-  { "name": "li_si", "age": 30, "sex": "female", "phone": "23456789", "address": "beijing chaoyang" },
-  { "name": "wang_wu", "age": 40, "sex": "male", "phone": "3456789", "address": "beijing fengtai" }
+  { "имя": "zhang_san", "возраст": 20, "sex": "", "phone": "123456789", "address": "beijing haidian" },
+  { "имя": "li_si", "возраст": 30, "sex": "female", "phone": "23456789", "address": "beijing chaoyang" },
+  { "имя": "wang_wu", "возраст": 40, "sex": "male", "phone": "3456789", "address": "beijing fengtai" }
 ]
 ```
 
-At the same time: the data structure of two-dimensional array can also support setting.
+в the same time: the данные structure из two-dimensional массив can also support setting.
 
-Next we will describe how to apply this data to basic tables and pivot tables, respectively.
+следующий we will describe how к apply this данные к базовый таблицаs и сводный таблицаs, respectively.
 
-## Basic tabular data
+## базовый tabular данные
 
-### JSON data
+### JSON данные
 
-In a basic table, data is presented in units of behavior, and each row contains multiple fields (columns). For example: name, age, gender, and address. Each object in the data item will correspond to a row.
+в a базовый таблица, данные is presented в units из behavior, и каждый row contains multiple полеs (columns). для пример: имя, возраст, пол, и address. каждый объект в the данные item will correspond к a row.
 
-Creating a basic table based on the above JSON data should configure the corresponding [`ListTableConstructorOptions`](../../option/ListTable#container) Assign, and will `records` Configure as a data source.
+Creating a базовый таблица based на the above JSON данные should configure the corresponding [`списоктаблицаConstructorOptions`](../../option/списоктаблица#container) Assign, и will `records` Configure as a данные source.
 
-Example:
+пример:
 
-```javascript livedemo  template=vtable
+```javascript liveдемонстрация  template=vтаблица
 const option = {
   columns: [
     {
-      field: 'name',
-      title: 'name',
-      sort: true,
-      width: 'auto'
+      поле: 'имя',
+      заголовок: 'имя',
+      сортировка: true,
+      ширина: 'авто'
     },
     {
-      field: 'age',
-      title: 'age'
+      поле: 'возраст',
+      заголовок: 'возраст'
     },
     {
-      field: 'sex',
-      title: 'sex'
+      поле: 'sex',
+      заголовок: 'sex'
     },
     {
-      field: 'phone',
-      title: 'phone'
+      поле: 'phone',
+      заголовок: 'phone'
     },
     {
-      field: 'address',
-      title: 'address'
+      поле: 'address',
+      заголовок: 'address'
     }
   ],
   records: [
-    { name: 'zhang_san', age: 20, sex: 'female', phone: '123456789', address: 'beijing haidian' },
-    { name: 'li_si', age: 30, sex: 'female', phone: '23456789', address: 'beijing chaoyang' },
-    { name: 'wang_wu', age: 40, sex: 'male', phone: '3456789', address: 'beijing fengtai' }
+    { имя: 'zhang_san', возраст: 20, sex: 'female', phone: '123456789', address: 'beijing haidian' },
+    { имя: 'li_si', возраст: 30, sex: 'female', phone: '23456789', address: 'beijing chaoyang' },
+    { имя: 'wang_wu', возраст: 40, sex: 'male', phone: '3456789', address: 'beijing fengtai' }
   ]
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 ```
 
-### Two-dimensional array structure
+### Two-dimensional массив structure
 
-If you use a two-dimensional array as the data source, you can run it as follows:
+If you use a two-dimensional массив as the данные source, Вы можете run it as follows:
 
-```javascript livedemo  template=vtable
+```javascript liveдемонстрация  template=vтаблица
 const option = {
   columns: [
     {
-      field: '0',
-      title: 'name',
-      sort: true,
-      width: 'auto'
+      поле: '0',
+      заголовок: 'имя',
+      сортировка: true,
+      ширина: 'авто'
     },
     {
-      field: '1',
-      title: 'age'
+      поле: '1',
+      заголовок: 'возраст'
     },
     {
-      field: '2',
-      title: 'sex'
+      поле: '2',
+      заголовок: 'sex'
     },
     {
-      field: '3',
-      title: 'phone'
+      поле: '3',
+      заголовок: 'phone'
     },
     {
-      field: '4',
-      title: 'address'
+      поле: '4',
+      заголовок: 'address'
     }
   ],
   records: [
@@ -99,12 +99,12 @@ const option = {
     ['wang_wu', 40, 'male', '3456789', 'beijing fengtai']
   ]
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 ```
 
-### Special usage of multi-level data
+### Special usвозраст из multi-level данные
 
-A data source with a multi-level data structure can be implemented by setting `records` to `[{}]`.
+A данные source с a multi-level данные structure can be implemented по setting `records` к `[{}]`.
 like:
 
 ```
@@ -113,68 +113,68 @@ records:
   {
     id: "7981",
     details:
-    productName:'fff'
+    productимя:'fff'
   }
 ]
 ```
 
-details is an object in the data entry. In the data source, the corresponding value can be obtained through `details.name`.
+details is an объект в the данные entry. в the данные source, the corresponding значение can be obtained through `details.имя`.
 
-You need to configure the above multi-level objects in columns like this:
+You need к configure the above multi-level objects в columns like this:
 
 ```
 const columns = [
   {
-    "field": ['details','productName'],
-    "title": "Order productName",
-    "width": "auto"
+    "поле": ['details','productимя'],
+    "title": "Order productимя",
+    "ширина": "авто"
   },
 ]
 ```
 
 The effect is as follows:
 
-<div style="width: 50%; text-align: center;">
-<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/list-record-obj.png" />
+<div style="ширина: 50%; текст-align: центр;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/список-record-obj.png" />
 </div>
 
-## Pivot Table Data
+## сводный таблица данные
 
-The main purpose of pivot tables is to display and analyze data in multiple Dimensions. When configuring pivot tables, we need to specify grouping (row and column) Dimensions and Metirc Dimensions. For example, we can group data by gender and calculate the number of people and average age for each.
+The main purpose из сводный таблицаs is к display и analyze данные в multiple Dimensions. When configuring сводный таблицаs, we need к specify grouping (row и column) Dimensions и Metirc Dimensions. для пример, we can group данные по пол и calculate the число из people и averвозраст возраст для каждый.
 
-Its configuration item is [`PivotTableConstructorOptions`](https://visactor.io/vtable/option/PivotTable)Similar to the basic table, we first use JSON data as the data source for the pivot tableNote: This data is the result dataset after aggregated analysis
+Its configuration item is [`сводныйтаблицаConstructorOptions`](https://visactor.io/vтаблица/option/сводныйтаблица)Similar к the базовый таблица, we первый use JSON данные as the данные source для the сводный таблицаNote: This данные is the result данныеset after aggregated analysis
 
 ```json
 [
-  { "age": 30, "sex": "male", "city": "北京", "income": 430 },
-  { "age": 30, "sex": "female", "city": "上海", "income": 440 },
-  { "age": 30, "sex ": "male", "city": "深圳", "income": 420 },
-  { "age": 25, "sex": "male", "city": "北京", "income": 400 },
-  { "age": 25, "sex": "female", "city": "上海", "income": 400 },
-  { "age": 25, "sex ": "male", "city": "深圳", "income": 380 }
+  { "возраст": 30, "sex": "male", "Город": "北京", "income": 430 },
+  { "возраст": 30, "sex": "female", "Город": "上海", "income": 440 },
+  { "возраст": 30, "sex ": "male", "Город": "深圳", "income": 420 },
+  { "возраст": 25, "sex": "male", "Город": "北京", "income": 400 },
+  { "возраст": 25, "sex": "female", "Город": "上海", "income": 400 },
+  { "возраст": 25, "sex ": "male", "Город": "深圳", "income": 380 }
 ]
 ```
 
-Example:
+пример:
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const option = {
   container: document.getElementById(CONTAINER_ID),
   indicatorsAsCol: false,
   rowTree: [
     {
-      dimensionKey: 'city',
-      value: 'beijing',
+      dimensionKey: 'Город',
+      значение: 'beijing',
       children: [
         {
           indicatorKey: 'income',
-          value: 'income'
+          значение: 'income'
         }
       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shanghai',
+      dimensionKey: 'Город',
+      значение: 'shanghai',
       children: [
         {
           indicatorKey: 'income'
@@ -182,8 +182,8 @@ const option = {
       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shenzhen',
+      dimensionKey: 'Город',
+      значение: 'shenzhen',
       children: [
         {
           indicatorKey: 'income'
@@ -194,29 +194,29 @@ const option = {
   columnTree: [
     {
       dimensionKey: 'sex',
-      value: 'male',
+      значение: 'male',
       children: [
         {
-          dimensionKey: 'age',
-          value: '30'
+          dimensionKey: 'возраст',
+          значение: '30'
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          dimensionKey: 'возраст',
+          значение: '25'
         }
       ]
     },
     {
       dimensionKey: 'sex',
-      value: 'female',
+      значение: 'female',
       children: [
         {
-          dimensionKey: 'age',
-          value: '30'
+          dimensionKey: 'возраст',
+          значение: '30'
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          dimensionKey: 'возраст',
+          значение: '25'
         }
       ]
     }
@@ -224,25 +224,25 @@ const option = {
   indicators: [
     {
       indicatorKey: 'income',
-      title: 'income'
+      заголовок: 'income'
     }
   ],
   records: [
-    { age: 30, sex: 'male', city: 'beijing', income: 400 },
-    { age: 30, sex: 'female', city: 'shanghai', income: 410 },
-    { age: 30, 'sex ': 'female', city: 'shenzhen', income: 420 },
-    { age: 25, sex: 'male', city: 'beijing', income: 430 },
-    { age: 30, 'sex ': 'male', city: 'shenzhen', income: 440 },
-    { age: 25, sex: 'male', city: 'shanghai', income: 450 },
-    { age: 25, sex: 'female', city: 'shanghai', income: 460 },
-    { age: 25, 'sex ': 'male', city: 'shenzhen', income: 470 }
+    { возраст: 30, sex: 'male', Город: 'beijing', income: 400 },
+    { возраст: 30, sex: 'female', Город: 'shanghai', income: 410 },
+    { возраст: 30, 'sex ': 'female', Город: 'shenzhen', income: 420 },
+    { возраст: 25, sex: 'male', Город: 'beijing', income: 430 },
+    { возраст: 30, 'sex ': 'male', Город: 'shenzhen', income: 440 },
+    { возраст: 25, sex: 'male', Город: 'shanghai', income: 450 },
+    { возраст: 25, sex: 'female', Город: 'shanghai', income: 460 },
+    { возраст: 25, 'sex ': 'male', Город: 'shenzhen', income: 470 }
   ],
-  defaultHeaderColWidth: 100
+  defaultHeaderColширина: 100
 };
-const tableInstance = new VTable.PivotTable(option);
+const таблицаInstance = новый Vтаблица.сводныйтаблица(option);
 ```
 
-At the same time, the records data format also supports cell-by-cell corresponding configuration:
+в the same time, the records данные format also supports cell-по-cell corresponding configuration:
 
 ```
 records:[
@@ -253,15 +253,15 @@ records:[
 
 ```
 
-Example of setting up records with a two-dimensional array:
+пример из setting up records с a two-dimensional массив:
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const option = {
   container: document.getElementById(CONTAINER_ID),
   rowTree: [
     {
-      dimensionKey: 'city',
-      value: 'beijing',
+      dimensionKey: 'Город',
+      значение: 'beijing',
       children: [
         {
           indicatorKey: 'income'
@@ -269,8 +269,8 @@ const option = {
       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shanghai',
+      dimensionKey: 'Город',
+      значение: 'shanghai',
       children: [
         {
           indicatorKey: 'income'
@@ -278,8 +278,8 @@ const option = {
       ]
     },
     {
-      dimensionKey: 'city',
-      value: 'shenzhen',
+      dimensionKey: 'Город',
+      значение: 'shenzhen',
       children: [
         {
           indicatorKey: 'income'
@@ -290,29 +290,29 @@ const option = {
   columnTree: [
     {
       dimensionKey: 'sex',
-      value: 'male',
+      значение: 'male',
       children: [
         {
-          dimensionKey: 'age',
-          value: '30'
+          dimensionKey: 'возраст',
+          значение: '30'
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          dimensionKey: 'возраст',
+          значение: '25'
         }
       ]
     },
     {
       dimensionKey: 'sex',
-      value: 'female',
+      значение: 'female',
       children: [
         {
-          dimensionKey: 'age',
-          value: '30'
+          dimensionKey: 'возраст',
+          значение: '30'
         },
         {
-          dimensionKey: 'age',
-          value: '25'
+          dimensionKey: 'возраст',
+          значение: '25'
         }
       ]
     }
@@ -320,7 +320,7 @@ const option = {
   indicators: [
     {
       indicatorKey: 'income',
-      title: 'income'
+      заголовок: 'income'
     }
   ],
   records: [
@@ -328,28 +328,28 @@ const option = {
     [300, 550, 557, 425],
     [430, 450, 607, 455]
   ],
-  defaultHeaderColWidth: 100
+  defaultHeaderColширина: 100
 };
-const tableInstance = new VTable.PivotTable(option);
+const таблицаInstance = новый Vтаблица.сводныйтаблица(option);
 ```
 
-## Data interface
+## данные интерфейс
 
-### Reset data
+### Reset данные
 
-You can use setRecords to change table data. Please check the api documentation for details.
+Вы можете use setRecords к change таблица данные. Please check the апи Документация для details.
 
-### adding data
+### adding данные
 
-You can use `addRecords` or `addRecord` to add table data. Please check the api documentation for details.
+Вы можете use `addRecords` или `addRecord` к add таблица данные. Please check the апи Документация для details.
 
-### delete data
+### delete данные
 
-Table data can be deleted using `deleteRecords`. Please check the api documentation for details.
+таблица данные can be deleted using `deleteRecords`. Please check the апи Документация для details.
 
-### change the data
+### change the данные
 
-Table data can be modified using `updateRecords`. Please check the api documentation for details.
+таблица данные can be modified using `updateRecords`. Please check the апи Документация для details.
 
 ```javascript
   /**
@@ -357,32 +357,32 @@ Table data can be modified using `updateRecords`. Please check the api documenta
    * @param records 修改数据条目
    * @param recordIndexs 对应修改数据的索引
    * 基本表格中显示在body中的索引，即要修改的是body部分的第几行数据；
-   * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为data的原始数据索引；
+   * 如果是树形结构的话 recordIndexs 为数组，数组中每个元素为данные的原始数据索引；
    */
-  updateRecords(records: any[], recordIndexs: (number | number[])[])
+  updateRecords(records: любой[], recordIndexs: (число | число[])[])
 ```
 
-Or you can modify a certain data field using the `changeCellValue` or `changeCellValues` interface.
+или Вы можете modify a certain данные поле using the `changeCellValue` или `changeCellValues` интерфейс.
 
-### Tree structure data update
+### Tree structure данные update
 
-In the tree (group) structure, the data update is passed in `recordIndex` as an array, representing the index of the data in the table body. In addition, in the case of sorting, `recordIndex` is the original data structure, and it may not be consistent with the hierarchical order displayed in the table. Therefore, in the tree (group) structure table, please use the `getRecordIndexByCell` interface to get the correct `recordIndex`, and then use the `updateRecords` interface to update the data.
+в the tree (group) structure, the данные update is passed в `recordIndex` as an массив, representing the index из the данные в the таблица body. в addition, в the case из сортировкаing, `recordIndex` is the original данные structure, и it may не be consistent с the hierarchical order displayed в the таблица. Therefore, в the tree (group) structure таблица, please use the `getRecordIndexByCell` интерфейс к get the correct `recordIndex`, и then use the `updateRecords` интерфейс к update the данные.
 
 ```javascript
-const recordIndex = tableInstance.getRecordIndexByCell(col, row);
-tableInstance.updateRecords([newRecord], [recordIndex]);
+const recordIndex = таблицаInstance.getRecordIndexByCell(col, row);
+таблицаInstance.updateRecords([newRecord], [recordIndex]);
 ```
 
-## Empty data prompt
+## Empty данные prompt
 
-If the data source is not passed, or an empty array is passed, you can configure emptyTip to display an empty data prompt.
+If the данные source is не passed, или an empty массив is passed, Вы можете configure emptyTip к display an empty данные prompt.
 
-Both the prompt message and the icon are configurable.
+Both the prompt messвозраст и the иконка are configurable.
 
-Configuration reference: https://visactor.io/vtable/option/ListTable#emptyTip
+Configuration reference: https://visactor.io/vтаблица/option/списоктаблица#emptyTip
 
-Example reference: https://visactor.io/vtable/demo/component/emptyTip
+пример reference: https://visactor.io/vтаблица/демонстрация/компонент/emptyTip
 
 ## summarize
 
-In this tutorial, we learned how to use tabular data in VTable. We first learned what data means in tables, and the data formats of two tables in VTable (basic table and pivot table). In order to help you better understand the correspondence between data formats and tables, we discussed the correspondence between basic tables and pivot tables respectively.
+в this tutorial, we learned how к use tabular данные в Vтаблица. We первый learned what данные means в таблицаs, и the данные formats из two таблицаs в Vтаблица (базовый таблица и сводный таблица). в order к help you better understand the correspondence between данные formats и таблицаs, we discussed the correspondence between базовый таблицаs и сводный таблицаs respectively.

@@ -1,37 +1,37 @@
 ---
-category: examples
-group: edit
-title: custom date editor
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-date-editor.png
-link: edit/edit_cell
-option: ListTable-columns-text#editor
+категория: примеры
+группа: edit
+заголовок: пользовательский date editor
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-date-editor.png
+ссылка: edit/edit_cell
+опция: списоктаблица-columns-текст#editor
 ---
 
-# custom date editor
+# пользовательский date editor
 
-This example shows how to customize a date editor.
+This пример shows how к пользовательскийize a date editor.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.register.editor` register editor
+- `Vтаблица.регистрация.editor` регистрация editor
 - `column.editor` editor config
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-// Need to introduce the plug-in package @visactor/vtable-editors when using it
-// import * as VTable_editors from '@visactor/vtable-editors';
-//Normal usage const input_editor = new VTable.editors.InputEditor();
-//VTable.editors is renamed to VTable_editors in the official website editor
-const input_editor = new VTable_editors.InputEditor();
-VTable.register.editor('input-editor', input_editor);
-const timestamp = new Date().getTime();
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+// Need к introduce the plug-в packвозраст @visactor/vтаблица-editors when using it
+// import * as Vтаблица_editors от '@visactor/vтаблица-editors';
+//Normal usвозраст const input_editor = новый Vтаблица.editors.InputEditor();
+//Vтаблица.editors is reимяd к Vтаблица_editors в the official website editor
+const input_editor = новый Vтаблица_editors.InputEditor();
+Vтаблица.регистрация.editor('ввод-editor', input_editor);
+const timestamp = новый Date().getTime();
 const cssUrl = `https://pikaday.com/css/pikaday.css?t=${timestamp}`;
 const jsUrl = `https://pikaday.com/pikaday.js?t=${timestamp}`;
 
-function loadCSS(url) {
-  return new Promise((resolve, reject) => {
+функция loadCSS(url) {
+  возврат новый Promise((resolve, reject) => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = url;
@@ -41,8 +41,8 @@ function loadCSS(url) {
   });
 }
 
-function loadJS(url) {
-  return new Promise((resolve, reject) => {
+функция loadJS(url) {
+  возврат новый Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = url;
     script.onload = resolve;
@@ -51,44 +51,44 @@ function loadJS(url) {
   });
 }
 
-Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
+Promise.все([loadCSS(cssUrl), loadJS(jsUrl)])
   .then(() => {
-    // 自定义日期编辑组件  请按照编辑器插件@visactor/vtable-editors中定义的IEditor接口来实现
+    // 自定义日期编辑组件  请按照编辑器插件@visactor/vтаблица-editors中定义的IEditor接口来实现
     class DateEditor {
       constructor(editorConfig) {
         this.editorConfig = editorConfig;
       }
 
-      onStart({ container, referencePosition, value, endEdit }) {
+      onStart({ container, referencePosition, значение, endEdit }) {
         const that = this;
         this.container = container;
         this.successCallback = endEdit;
-        const input = document.createElement('input');
+        const ввод = document.createElement('ввод');
 
-        input.setAttribute('type', 'text');
-        input.style.padding = '4px';
-        input.style.width = '100%';
-        input.style.boxSizing = 'border-box';
-        input.style.position = 'absolute';
-        input.value = value;
-        this.element = input;
-        container.appendChild(input);
+        ввод.setAttribute('тип', 'текст');
+        ввод.style.заполнение = '4px';
+        ввод.style.ширина = '100%';
+        ввод.style.boxSizing = 'граница-box';
+        ввод.style.позиция = 'absolute';
+        ввод.значение = значение;
+        this.element = ввод;
+        container.appendChild(ввод);
 
-        const picker = new Pikaday({
-          field: input,
+        const picker = новый Pikaday({
+          поле: ввод,
           format: 'D/M/YYYY',
           toString(date, format) {
             const day = date.getDate();
             const month = date.getMonth() + 1;
             const year = date.getFullYear();
-            return `${year}-${month}-${day}`;
+            возврат `${year}-${month}-${day}`;
           },
           parse(dateString, format) {
             const parts = dateString.split('/');
             const day = parseInt(parts[0], 10);
             const month = parseInt(parts[1], 10) - 1;
             const year = parseInt(parts[2], 10);
-            return new Date(year, month, day);
+            возврат новый Date(year, month, day);
           },
           onSelect() {
             const date = this.getDate();
@@ -99,18 +99,18 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
         if (referencePosition?.rect) {
           this.adjustPosition(referencePosition.rect);
         }
-        this.picker.show();
+        this.picker.показать();
       }
 
       adjustPosition(rect) {
-        this.element.style.top = rect.top + 'px';
-        this.element.style.left = rect.left + 'px';
-        this.element.style.width = rect.width + 'px';
-        this.element.style.height = rect.height + 'px';
+        this.element.style.верх = rect.верх + 'px';
+        this.element.style.лево = rect.лево + 'px';
+        this.element.style.ширина = rect.ширина + 'px';
+        this.element.style.высота = rect.высота + 'px';
       }
 
       getValue() {
-        return this.element.value;
+        возврат this.element.значение;
       }
 
       onEnd() {
@@ -120,28 +120,28 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
 
       isEditorElement(target) {
         if (target === this.element || this.picker.el.contains(target)) {
-          return true;
+          возврат true;
         }
-        return false;
+        возврат false;
       }
     }
-    const custom_date_editor = new DateEditor();
-    VTable.register.editor('custom-date', custom_date_editor);
+    const пользовательский_date_editor = новый DateEditor();
+    Vтаблица.регистрация.editor('пользовательский-date', пользовательский_date_editor);
 
-    function generateRandomString(length) {
+    функция generateRandomString(length) {
       let result = '';
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-      for (let i = 0; i < length; i++) {
+      для (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-      return result;
+      возврат result;
     }
-    function generateRandomHobbies() {
+    функция generateRandomHobbies() {
       const hobbies = [
-        'Reading books',
+        'Reading boхорошоs',
         'Playing video games',
         'Watching movies',
-        'Cooking',
+        'Coхорошоing',
         'Hiking',
         'Traveling',
         'Photography',
@@ -155,26 +155,26 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
       const numHobbies = Math.floor(Math.random() * 3) + 1; // 生成 1-3 之间的随机整数
       const selectedHobbies = [];
 
-      for (let i = 0; i < numHobbies; i++) {
+      для (let i = 0; i < numHobbies; i++) {
         const randomIndex = Math.floor(Math.random() * hobbies.length);
-        const hobby = hobbies[randomIndex];
-        selectedHobbies.push(hobby);
+        const хобби = hobbies[randomIndex];
+        selectedHobbies.push(хобби);
         hobbies.splice(randomIndex, 1); // 确保每个爱好只选一次
       }
 
-      return selectedHobbies.join(', ');
+      возврат selectedHobbies.join(', ');
     }
-    function generateRandomBirthday() {
-      const start = new Date('1970-01-01');
-      const end = new Date('2000-12-31');
-      const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    функция generateRandomBirthday() {
+      const начало = новый Date('1970-01-01');
+      const конец = новый Date('2000-12-31');
+      const randomDate = новый Date(начало.getTime() + Math.random() * (конец.getTime() - начало.getTime()));
       const year = randomDate.getFullYear();
       const month = randomDate.getMonth() + 1;
       const day = randomDate.getDate();
-      return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+      возврат `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
     }
-    function generateRandomPhoneNumber() {
-      const areaCode = [
+    функция generateRandomPhoneNumber() {
+      const areaкод = [
         '130',
         '131',
         '132',
@@ -209,101 +209,101 @@ Promise.all([loadCSS(cssUrl), loadJS(jsUrl)])
         '188',
         '189'
       ];
-      const prefix = areaCode[Math.floor(Math.random() * areaCode.length)];
-      const suffix = String(Math.random()).substr(2, 8);
-      return prefix + suffix;
+      const prefix = areaкод[Math.floor(Math.random() * areaкод.length)];
+      const suffix = строка(Math.random()).substr(2, 8);
+      возврат prefix + suffix;
     }
     const generatePersons = count => {
-      return Array.from(new Array(count)).map((_, i) => {
-        const first = generateRandomString(10);
-        const last = generateRandomString(4);
-        return {
+      возврат массив.от(новый массив(count)).map((_, i) => {
+        const первый = generateRandomString(10);
+        const последний = generateRandomString(4);
+        возврат {
           id: i + 1,
-          email1: `${first}_${last}@xxx.com`,
-          name: first,
-          lastName: last,
+          email1: `${первый}_${последний}@xxx.com`,
+          имя: первый,
+          lastимя: последний,
           hobbies: generateRandomHobbies(),
           birthday: generateRandomBirthday(),
           tel: generateRandomPhoneNumber(),
           sex: i % 2 === 0 ? 'boy' : 'girl',
-          work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-          city: 'beijing'
+          work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer',
+          Город: 'beijing'
         };
       });
     };
     const records = generatePersons(10);
     const columns = [
       {
-        field: 'id',
-        title: 'ID',
-        width: 80,
-        sort: true
+        поле: 'id',
+        заголовок: 'ID',
+        ширина: 80,
+        сортировка: true
       },
       // {
-      //   field: 'email1',
-      //   title: 'email',
-      //   width: 'auto',
-      //   sort: true,
-      //   editor: 'input-editor'
+      //   поле: 'email1',
+      //   заголовок: 'email',
+      //   ширина: 'авто',
+      //   сортировка: true,
+      //   editor: 'ввод-editor'
       // },
       {
-        field: 'full name',
-        title: 'Full name',
+        поле: 'full имя',
+        заголовок: 'Full имя',
         columns: [
           {
-            field: 'name',
-            title: 'First Name\n(input editor)',
-            width: 120,
-            editor: 'input-editor'
+            поле: 'имя',
+            заголовок: 'первый имя\n(ввод editor)',
+            ширина: 120,
+            editor: 'ввод-editor'
           },
           {
-            field: 'lastName',
-            title: 'Last Name\n(input editor)',
-            width: 100,
-            editor: 'input-editor'
+            поле: 'lastимя',
+            заголовок: 'последний имя\n(ввод editor)',
+            ширина: 100,
+            editor: 'ввод-editor'
           }
         ]
       },
       // {
-      //   field: 'hobbies',
-      //   title: 'hobbies',
-      //   width: 100,
-      //   editor: 'input-editor'
+      //   поле: 'hobbies',
+      //   заголовок: 'hobbies',
+      //   ширина: 100,
+      //   editor: 'ввод-editor'
       // },
       {
-        field: 'birthday',
-        title: 'birthday\n(custom date editor)',
-        width: 120,
-        editor: 'custom-date'
+        поле: 'birthday',
+        заголовок: 'birthday\n(пользовательский date editor)',
+        ширина: 120,
+        editor: 'пользовательский-date'
       },
       {
-        field: 'tel',
-        title: 'telephone',
-        width: 150
+        поле: 'tel',
+        заголовок: 'telephone',
+        ширина: 150
       },
       {
-        field: 'work',
-        title: 'job',
-        width: 200
+        поле: 'work',
+        заголовок: 'job',
+        ширина: 200
       },
       {
-        field: 'city',
-        title: 'city',
-        width: 150
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 150
       }
     ];
     const option = {
       container: document.getElementById(CONTAINER_ID),
       records,
       columns,
-      autoWrapText: true,
-      limitMaxAutoWidth: 600,
-      heightMode: 'autoHeight'
+      автоWrapText: true,
+      limitMaxавтоширина: 600,
+      высотаMode: 'автовысота'
     };
-    tableInstance = new VTable.ListTable(option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(option);
+    window['таблицаInstance'] = таблицаInstance;
   })
-  .catch(error => {
+  .catch(ошибка => {
     // 处理加载错误
   });
 ```

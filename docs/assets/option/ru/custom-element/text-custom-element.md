@@ -1,125 +1,125 @@
-{{ target: text-custom-element }}
+{{ target: текст-пользовательский-element }}
 
-${prefix} type (string) ='text'
+${prefix} тип (строка) ='текст'
 
-**Required**
+**обязательный**
 
-Element type, here for text.
+Element тип, here для текст.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} text (string | ((value: string) => string))
+${prefix} текст (строка | ((значение: строка) => строка))
 
-**Required**
+**обязательный**
 
-Text content, can be a string or a function that returns a string.
+текст content, can be a строка или a функция that returns a строка.
 
-${prefix} stroke (string | ((value: string) => string))
+${prefix} strхорошоe (строка | ((значение: строка) => строка))
 
-Text stroke color, can be a string or a function that returns a string.
+текст strхорошоe цвет, can be a строка или a функция that returns a строка.
 
-${prefix} fill (string | ((value: string) => string))
+${prefix} fill (строка | ((значение: строка) => строка))
 
-Text fill color, can be a string or a function that returns a string.
+текст fill цвет, can be a строка или a функция that returns a строка.
 
-${prefix} fontSize (number | ((value: string) => number))
+${prefix} fontSize (число | ((значение: строка) => число))
 
-Text font size, can be a number or a function that returns a number.
+текст шрифт размер, can be a число или a функция that returns a число.
 
-${prefix} fontFamily (string | ((value: string) => string))
+${prefix} fontFamily (строка | ((значение: строка) => строка))
 
-Text font family, can be a string or a function that returns a string.
+текст шрифт family, can be a строка или a функция that returns a строка.
 
-${prefix} fontWeight (string | number | ((value: string) => string | number))
+${prefix} fontWeight (строка | число | ((значение: строка) => строка | число))
 
-Text font weight, can be a string, number or a function returning a string or number.
+текст шрифт weight, can be a строка, число или a функция returning a строка или число.
 
-${prefix} fontVariant (string)
+${prefix} fontVariant (строка)
 
-Text font variant.
+текст шрифт variant.
 
-${prefix} fontStyle (string)
+${prefix} fontStyle (строка)
 
-Text font style.
+текст шрифт style.
 
-${prefix} ellipsis (boolean|string)
+${prefix} ellipsis (логический|строка)
 
-Whether to enable text overflow ellipsis, can be a boolean or a string. If it's a string, it means using a custom ellipsis.
+Whether к включить текст overflow ellipsis, can be a логический или a строка. If it's a строка, it means using a пользовательский ellipsis.
 
-${prefix} maxLineWidth (number)
+${prefix} maxLineширина (число)
 
-The maximum width of the text.
+The maximum ширина из the текст.
 
 ${prefix} textAlign (TextAlignType)
 
-Text alignment method.
+текст alignment method.
 
 ```
-TextAlignType = 'left' | 'right' | 'center' | 'start' | 'end';
+TextAlignType = 'лево' | 'право' | 'центр' | 'начало' | 'конец';
 ```
 
 ${prefix} textBaseline (TextBaselineType)
 
-Text baseline.
+текст baseline.
 
 ```
-type TextBaselineType = 'top' | 'middle' | 'bottom' | 'alphabetic';
+тип TextBaselineType = 'верх' | 'середина' | 'низ' | 'alphabetic';
 ```
 
-${prefix} lineHeight (number)
+${prefix} lineвысота (число)
 
-Text line height.
+текст line высота.
 
-${prefix} underline (number)
+${prefix} underline (число)
 
-Text underline thickness.
+текст underline thickness.
 
-${prefix} underlineDash (number[])
+${prefix} underlineDash (число[])
 
-Dashed style for text underlining.
+Dashed style для текст underlining.
 
-${prefix} underlineOffset (number)
+${prefix} underlineOffset (число)
 
-The distance between the text underline and the text.
+The distance between the текст underline и the текст.
 
-${prefix} lineThrough (number)
+${prefix} lineThrough (число)
 
-Text strikethrough thickness.
+текст strikethrough thickness.
 
-${prefix} heightLimit (number)
+${prefix} высотаLimit (число)
 
-Text height limit.
+текст высота limit.
 
-${prefix} lineClamp (number)
+${prefix} lineClamp (число)
 
-Text line number limit.
+текст line число limit.
 
-${prefix} width (number)
+${prefix} ширина (число)
 
-Text width.
+текст ширина.
 
-${prefix} height (number)
+${prefix} высота (число)
 
-Text height.
+текст высота.
 
-${prefix} background (Object)
+${prefix} фон (объект)
 
-Text background.
+текст фон.
 
-#${prefix} fill (string)
+#${prefix} fill (строка)
 
-Background color.
+фон цвет.
 
-#${prefix} expandY (number)
+#${prefix} expandY (число)
 
 Vertical expansion amount.
 
-#${prefix} expandX (number)
+#${prefix} expandX (число)
 
 Horizontal expansion amount.
 
-#${prefix} cornerRadius (number)
+#${prefix} cornerRadius (число)
 
-Border corner radius.
+граница corner radius.

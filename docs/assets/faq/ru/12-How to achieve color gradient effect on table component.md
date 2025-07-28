@@ -1,28 +1,28 @@
-# How to achieve color gradient effect on table component?
+# How к achieve цвет gradient effect на таблица компонент?
 
 ## Question Description
 
-The background of the cells on the table is displayed in different colors according to different data, realizing a color scale effect. How to achieve this effect on VTable?
+The фон из the cells на the таблица is displayed в different colors according к different данные, realizing a цвет scale effect. How к achieve this effect на Vтаблица?
 
-![image](/vtable/faq/12-0.png)
+![imвозраст](/vтаблица/Часто Задаваемые Вопросы/12-0.png)
 
 ## Solution
 
-You can achieve the color scale effect by setting `bgColor` in `style` as a function in `columns` and returning different color values based on different data:
+Вы можете achieve the цвет scale effect по setting `bgColor` в `style` as a функция в `columns` и returning different цвет values based на different данные:
 
 ```javascript
-const BG_COLOR = (args: TYPES.StylePropertyFunctionArg): string => {
-  const num = args.value;
-  if (Number(num) > 80) {
-    return '#6690FF';
+const BG_COLOR = (args: TYPES.StylePropertyFunctionArg): строка => {
+  const num = args.значение;
+  if (число(num) > 80) {
+    возврат '#6690FF';
   }
-  if (Number(num) > 50) {
-    return '#84A9FF';
+  if (число(num) > 50) {
+    возврат '#84A9FF';
   }
-  if (Number(num) > 20) {
-    return '#ADC8FF';
+  if (число(num) > 20) {
+    возврат '#ADC8FF';
   }
-  return '#D6E4FF';
+  возврат '#D6E4FF';
 };
 
 const columns = [
@@ -34,53 +34,53 @@ const columns = [
 ];
 ```
 
-## Code Example
+## код пример
 
 ```javascript
-const BG_COLOR = (args: TYPES.StylePropertyFunctionArg): string => {
-  const num = args.value;
-  if (Number(num) > 80) {
-    return '#6690FF';
+const BG_COLOR = (args: TYPES.StylePropertyFunctionArg): строка => {
+  const num = args.значение;
+  if (число(num) > 80) {
+    возврат '#6690FF';
   }
-  if (Number(num) > 50) {
-    return '#84A9FF';
+  if (число(num) > 50) {
+    возврат '#84A9FF';
   }
-  if (Number(num) > 20) {
-    return '#ADC8FF';
+  if (число(num) > 20) {
+    возврат '#ADC8FF';
   }
-  return '#D6E4FF';
+  возврат '#D6E4FF';
 };
 
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 80
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 80
   },
   {
-    field: 'value',
-    title: 'progress',
+    поле: 'значение',
+    заголовок: 'progress',
     style: {
       bgColor: BG_COLOR
     },
-    width: 250
+    ширина: 250
   }
 ];
-const option: TYPES.ListTableConstructorOptions = {
+const опция: TYPES.списоктаблицаConstructorOptions = {
   records,
   columns
 };
-new ListTable(document.getElementById('container'), option);
+новый списоктаблица(document.getElementById('container'), option);
 ```
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-color-step-n9ngjq)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-цвет-step-n9ngjq)
 
-![result](/vtable/faq/12-1.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/12-1.png)
 
 ## Quote
 
-- [Color step Demo](https://visactor.io/vtable/demo/business/color-level)
-- [Background Color api](https://visactor.io/vtable/option/ListTable-columns-text#style.bgColor)
-- [github](https://github.com/VisActor/VTable)
+- [цвет step демонстрация](https://visactor.io/vтаблица/демонстрация/business/цвет-level)
+- [фон цвет апи](https://visactor.io/vтаблица/option/списоктаблица-columns-текст#style.bgColor)
+- [github](https://github.com/VisActor/Vтаблица)

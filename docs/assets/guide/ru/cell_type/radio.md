@@ -1,54 +1,54 @@
-# radio button type
+# переключатель Кнопка тип
 
-Radio button type cells are suitable for users to select one of multiple items in the table. Radio button type cells are widely used in many applications, including task management, data filtering, permission settings, etc.
+переключатель Кнопка тип cells are suiтаблица для users к выбрать one из multiple items в the таблица. переключатель Кнопка тип cells are widely used в many applications, including task manвозрастment, данные filtering, permission settings, etc.
 
-The advantages of radio button cells in tables are as follows:
+The advantвозрастs из переключатель Кнопка cells в таблицаs are as follows:
 
-1. The use of radio button type cells is very intuitive and flexible. Users can select an option in a column or cell to perform specific actions or filter data according to their needs. This interaction method enables users to control their operations more finely, improving user experience and efficiency.
-2. Radio button type cells usually use different icons or colors to indicate selected and unselected states, providing visual feedback. This way the user can easily identify which options have been selected and which have not.
+1. The use из переключатель Кнопка тип cells is very intuitive и flexible. Users can выбрать an option в a column или cell к perform specific actions или filter данные according к their needs. This interaction method enables users к control their operations more finely, improving user experience и efficiency.
+2. переключатель Кнопка тип cells usually use different иконкаs или colors к indicate selected и unselected states, providing visual feedback. This way the user can easily identify which options have been selected и which have не.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/radio.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/переключатель.png)
 
-## Introduction to the exclusive configuration items of radio radio button
+## Introduction к the exclusive configuration items из переключатель переключатель Кнопка
 
-The unique configuration items of the radio radio button type in the configuration are as follows:
+The unique configuration items из the переключатель переключатель Кнопка тип в the configuration are as follows:
 
-1. `checked`: Whether the cell is selected. The default value is false. Configuration functions are supported. Different cell configurations are different.
-2. `disable`: Whether the cell radio button can be click-disabled. The default value is false. It supports configuration functions and has different configurations for different cells.
-3. `radioCheckType`: The only range of the radio button, the default value is `column`:
+1. `checked`: Whether the cell is selected. The по умолчанию значение is false. Configuration functions are supported. Different cell configurations are different.
+2. `отключить`: Whether the cell переключатель Кнопка can be Нажать-отключен. The по умолчанию значение is false. It supports configuration functions и has different configurations для different cells.
+3. `radioCheckType`: The only range из the переключатель Кнопка, the по умолчанию значение is `column`:
 
-    * `column`: The radio button is the only one selected in a column
-    * `cell`: The radio button is uniquely selected in a cell
+    * `column`: The переключатель Кнопка is the only one selected в a column
+    * `cell`: The переключатель Кнопка is uniquely selected в a cell
 
-4. `radioDirectionInCell`: When there are multiple radio button boxes in a radio button type cell, the direction in which the radio button boxes are arranged. The default value is `vertical`:
+4. `radioDirectionInCell`: When there are multiple переключатель Кнопка boxes в a переключатель Кнопка тип cell, the direction в which the переключатель Кнопка boxes are arranged. The по умолчанию значение is `vertical`:
 
-    * `vertical`: The radio buttons are arranged vertically
-    * `horizontal`: horizontal arrangement of radio buttons
+    * `vertical`: The переключатель Кнопкаs are arranged vertically
+    * `horizontal`: horizontal arrangement из переключатель Кнопкаs
 
-Example:
+пример:
 ```javascript
 {
-   headerType: 'radio', //Specify the header cell to be displayed as a radio button
-   cellType: 'radio',//Specify the body cell to be displayed as a radio button
-   field: 'check',
-   checked: (args) => { if (args.row === 3) return true },
-   disabled: false,
+   headerType: 'переключатель', //Specify the header cell к be displayed as a переключатель Кнопка
+   cellType: 'переключатель',//Specify the body cell к be displayed as a переключатель Кнопка
+   поле: 'check',
+   checked: (args) => { if (args.row === 3) возврат true },
+   отключен: false,
    radioCheckType: 'column',
    radioDirectionInCell: 'vertical',
 }
 ```
 
-## Introduction to the exclusive data type of radio radio button
+## Introduction к the exclusive данные тип из переключатель переключатель Кнопка
 
-The data corresponding to radio supports `boolean` `string` `Object`, or an array composed of `string` `Object`. In this case, multiple radio button boxes will be displayed in the cell; if the value is not set, the default is false.
+The данные corresponding к переключатель supports `логический` `строка` `объект`, или an массив composed из `строка` `объект`. в this case, multiple переключатель Кнопка boxes will be displayed в the cell; if the значение is не set, the по умолчанию is false.
 
-1. Among the three types, it is more common to set the `boolean` type. For example, the check field is set as follows:
+1. Among the three types, it is more common к set the `логический` тип. для пример, the check поле is set as follows:
 ```
 const columns=[
    {
-     headerType: 'radio', //Specify the header cell to be displayed as a radio button
-     cellType: 'radio',//Specify the body cell to be displayed as a radio button
-     field: 'check',
+     headerType: 'переключатель', //Specify the header cell к be displayed as a переключатель Кнопка
+     cellType: 'переключатель',//Specify the body cell к be displayed as a переключатель Кнопка
+     поле: 'check',
    }
 ]
 const records = [
@@ -67,13 +67,13 @@ const records = [
 ]
 ```
 
-2. If set to `string` type, the text will be displayed on the right side of the radio box, and the radio button will be unselected by default. For example, the product field is set as follows:
+2. If set к `строка` тип, the текст will be displayed на the право side из the переключатель box, и the переключатель Кнопка will be unselected по по умолчанию. для пример, the product поле is set as follows:
 ```
 const columns=[
    {
-     headerType: 'radio', //Specify the header cell to be displayed as a radio button
-     cellType: 'radio',//Specify the body cell to be displayed as a radio button
-     field: 'product',
+     headerType: 'переключатель', //Specify the header cell к be displayed as a переключатель Кнопка
+     cellType: 'переключатель',//Specify the body cell к be displayed as a переключатель Кнопка
+     поле: 'product',
    }
 ]
 const records = [
@@ -89,53 +89,53 @@ const records = [
 ]
 ```
 
-3. If each state of the data item is different, you can set the Object object.
+3. If каждый state из the данные item is different, Вы можете set the объект объект.
 
-The Object object supports configuring the following properties:
+The объект объект supports configuring Следующий свойства:
 
-* text: The text displayed in the radio button of this cell
-* checked: Whether the cell radio button is selected
-* disable: Whether the cell radio button is disabled
+* текст: The текст displayed в the переключатель Кнопка из this cell
+* checked: Whether the cell переключатель Кнопка is selected
+* отключить: Whether the cell переключатель Кнопка is отключен
 
-Example:
+пример:
 ```javasxript
 const records = [
    {
      percent: '100%',
      check: {
-       text: 'unchecked',
+       текст: 'unchecked',
        checked: false,
-       disable: false
+       отключить: false
      }
    },
    {
      percent: '80%',
      check: {
-       text: 'checked',
+       текст: 'checked',
        checked: true,
-       disable: false
+       отключить: false
      }
    }
 ];
 ```
 
-`checked` and `disable` support configuration in both data and `column`. The priority of configuration in data is higher than the configuration in `column`.
+`checked` и `отключить` support configuration в both данные и `column`. The priority из configuration в данные is higher than the configuration в `column`.
 
-## Get the data selection status through the interface
+## Get the данные selection status through the интерфейс
 
-Get the selected status of all radio data under a certain field:
+Get the selected status из все переключатель данные under a certain поле:
 
-Note: The order corresponds to the original incoming data records and does not correspond to the status value of the row displayed in the table.
+Note: The order corresponds к the original incoming данные records и does не correspond к the status значение из the row displayed в the таблица.
 ```
-getRadioState(field?: string | number): number | Record<number, boolean | number>
-```
-
-Get the radio status of a certain cell:
-
-Note: If a cell contains multiple radio button boxes, the return value is number, which refers to the index of the selected radio in the cell, otherwise the return value is boolean.
-```
-getCellRadioState(col: number, row: number): boolean | number
+getRadioState(поле?: строка | число): число | Record<число, логический | число>
 ```
 
+Get the переключатель status из a certain cell:
 
-Through the above introduction, you have learned how to use the radio radio button type to display data in the VTable table. I hope it will be helpful to you.
+Note: If a cell contains multiple переключатель Кнопка boxes, the возврат значение is число, which refers к the index из the selected переключатель в the cell, otherwise the возврат значение is логический.
+```
+getCellRadioState(col: число, row: число): логический | число
+```
+
+
+Through the above introduction, you have learned how к use the переключатель переключатель Кнопка тип к display данные в the Vтаблица таблица. I hope it will be helpful к you.

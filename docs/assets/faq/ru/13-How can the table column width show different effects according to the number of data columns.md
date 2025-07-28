@@ -1,44 +1,44 @@
-# How can the table column width show different effects according to the number of data columns?
+# How can the таблица column ширина показать different effects according к the число из данные columns?
 
 ## Question Description
 
-When using VTable table library to display report data, if the total number of columns is not enough to support the width of the entire container, I think it can automatically widen to adapt to the container size, but when the total width of the column is larger than the container width, you can scroll horizontally. How can this effect be achieved?
+When using Vтаблица таблица library к display report данные, if the total число из columns is не enough к support the ширина из the entire container, I think it can автоmatically widen к adapt к the container размер, but when the total ширина из the column is larger than the container ширина, Вы можете прокрутка horizontally. How can this effect be achieved?
 
 ## Solution
 
-Based on your question, my understanding is that you want to dynamically adjust the width mode based on the total column width of the data. In VTable, the width mode widthMode has:
+Based на your question, my understanding is that you want к dynamically adjust the ширина mode based на the total column ширина из the данные. в Vтаблица, the ширина mode ширинаMode has:
 
-- standard sets the width of each column according to the with setting
-- autoWidth automatically calculates column width based on cell content
-- adaptive scales according to the width of the container to fill the width of the container.
-  That is, if the number of columns is too small to cover the container, you want the adaptive effect. If the total column width exceeds the container width, you want the standard or autoWidth effect. There are two ways to do this:
+- standard sets the ширина из каждый column according к the с setting
+- автоширина автоmatically calculates column ширина based на cell content
+- adaptive scales according к the ширина из the container к fill the ширина из the container.
+  That is, if the число из columns is too small к cover the container, you want the adaptive effect. If the total column ширина exceeds the container ширина, you want the standard или автоширина effect. There are two ways к do this:
 
-1. You can use the interface of the VTable instance, getAllColsWidth, to get the total column width and the width of the container for comparison, and then change the widthMode according to the situation.
-2. A relatively trouble-free way, VTable provides a very optimized configuration item `autoFillWidth`. Configuring this can perfectly achieve the effect you want. There is also a corresponding height setting `autoFillWidth`.
+1. Вы можете use the интерфейс из the Vтаблица instance, getAllColsширина, к get the total column ширина и the ширина из the container для comparison, и then change the ширинаMode according к the situation.
+2. A relatively trouble-free way, Vтаблица provides a very optimized configuration item `автоFillширина`. Configuring this can perfectly achieve the effect you want. There is also a corresponding высота setting `автоFillширина`.
 
-![](/vtable/faq/13-0.png)
+![](/vтаблица/Часто Задаваемые Вопросы/13-0.png)
 
-## Code Example
+## код пример
 
 ```javascript
 const option = {
   records,
   columns,
-  limitMaxAutoWidth: 800,
-  autoFillWidth: true
-  // widthMode: "autoWidth",
-  // heightMode: "autoHeight"
+  limitMaxавтоширина: 800,
+  автоFillширина: true
+  // ширинаMode: "автоширина",
+  // высотаMode: "автовысота"
 };
 ```
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-autfillwidth-6kz69n)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-autfillширина-6kz69n)
 
-![result](/vtable/faq/13-1.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/13-1.png)
 
 ## Quote
 
-- [Column width Tutorial](https://visactor.io/vtable/guide/basic_function/row_height_column_width)
-- [Related api](https://visactor.io/vtable/option/ListTable#autoFillWidth)
-- [github](https://github.com/VisActor/VTable)
+- [Column ширина Tutorial](https://visactor.io/vтаблица/guide/базовый_function/row_высота_column_ширина)
+- [Related апи](https://visactor.io/vтаблица/option/списоктаблица#автоFillширина)
+- [github](https://github.com/VisActor/Vтаблица)

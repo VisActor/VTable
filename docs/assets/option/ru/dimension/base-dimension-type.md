@@ -1,39 +1,39 @@
-{{ target: base-dimension-type }}
+{{ target: base-dimension-тип }}
 
-${prefix} dimensionKey(string)
+${prefix} dimensionKey(строка)
 
-**Required** Unique identifier of the dimension, corresponding to the field name of the dataset
+**обязательный** Unique identifier из the dimension, corresponding к the поле имя из the данныеset
 
-${prefix} title(string)
+${prefix} title(строка)
 
-**Required** Dimension name, the angle header can be configured to display the dimension name
+**обязательный** Dimension имя, the angle header can be configured к display the dimension имя
 
-${prefix} headerFormat(FieldFormat)
+${prefix} headerFormat(полеFormat)
 
-Format of the dimension value
+Format из the dimension значение
 
 ```
-type FieldFormat = (title: number|string, col:number, row:number, table:PivotTable) => any;
+тип полеFormat = (заголовок: число|строка, col:число, row:число, таблица:сводныйтаблица) => любой;
 ```
 
-${prefix} width(number|string)
+${prefix} ширина(число|строка)
 
-This property takes effect when the dimension serves as a row header and represents the width of the dimension cell.
-The column width can be specified as a specific number, 'auto', or a percentage like '20%'.
-If 'auto' is specified, the column width will be adjusted automatically according to the length of the whole column text;
-If a percentage is specified, the current column width will be adjusted according to the total width of the table;
+This property takes effect when the dimension serves as a row header и represents the ширина из the dimension cell.
+The column ширина can be specified as a specific число, 'авто', или a percentвозраст like '20%'.
+If 'авто' is specified, the column ширина will be adjusted автоmatically according к the length из the whole column текст;
+If a percentвозраст is specified, the текущий column ширина will be adjusted according к the total ширина из the таблица;
 
-${prefix} maxWidth(number|string)
+${prefix} maxширина(число|строка)
 
-This property takes effect when the dimension serves as a row header and represents the maximum width of the dimension cell
+This property takes effect when the dimension serves as a row header и represents the maximum ширина из the dimension cell
 
-${prefix} minWidth(number|string)
+${prefix} minширина(число|строка)
 
-This property takes effect when the dimension serves as a row header and represents the minimum width of the dimension cell
+This property takes effect when the dimension serves as a row header и represents the minimum ширина из the dimension cell
 
-${prefix} headerStyle(IStyleOption|Function)
+${prefix} headerStyle(IStyleOption|функция)
 
-Header cell style, type declaration:
+Header cell style, тип declaration:
 
 ```
 headerStyle?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -41,105 +41,105 @@ headerStyle?: IStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyle
 
 {{ use: common-StylePropertyFunctionArg() }}
 
-IStyleOption type structure is as follows:
+IStyleOption тип structure is as follows:
 
 {{ use: common-style(
   prefix = ${prefix},
-  isImage = ${isImage},
+  isImвозраст = ${isImвозраст},
 ) }}
 
-${prefix} headerIcon(string|Object|Array|Function)
+${prefix} headerиконка(строка|объект|массив|функция)
 
-Header cell icon configuration
-
-```
-  headerIcon?:
-    | string
-    | ColumnIconOption
-    | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
-```
-
-ColumnIconOption specific configuration: https://visactor.io/vtable/option/ListTable-columns-text#icon
-
-${prefix} description(string|Function)
-Description information for header hover, displayed as a tooltip
+Header cell иконка configuration
 
 ```
- description?: string | ((args: CellInfo) => string);
+  headerиконка?:
+    | строка
+    | ColumnиконкаOption
+    | (строка | ColumnиконкаOption)[]
+    | ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
 ```
 
-${prefix} cornerDescription(string)
+ColumnиконкаOption specific configuration: https://visactor.io/vтаблица/option/списоктаблица-columns-текст#иконка
 
-Description information for hover, displayed as a tooltip
-
-${prefix} headerCustomRender(Function|Object)
-
-Custom rendering function for header cells, you can specify the rendering method for headers. For details, please refer to [Basic table custom rendering configuration](../option/ListTable-columns-text#headerCustomRender)
-
-${prefix} headerCustomLayout(Function)
-
-Custom layout element definition for header cells, this customization is suitable for cells with complex content layouts.
+${prefix} description(строка|функция)
+Description information для header навести, displayed as a Подсказка
 
 ```
-(args: CustomRenderFunctionArg) => ICustomLayoutObj;
+ description?: строка | ((args: CellInfo) => строка);
 ```
 
-{{ use: common-CustomRenderFunctionArg() }}
+${prefix} cornerDescription(строка)
 
-{{ use: custom-layout(
+Description information для навести, displayed as a Подсказка
+
+${prefix} headerпользовательскийRender(функция|объект)
+
+пользовательский rendering функция для header cells, Вы можете specify the rendering method для headers. для details, please refer к [базовый таблица пользовательский rendering configuration](../option/списоктаблица-columns-текст#headerпользовательскийRender)
+
+${prefix} headerпользовательскиймакет(функция)
+
+пользовательский макет element definition для header cells, this пользовательскийization is suiтаблица для cells с complex content макетs.
+
+```
+(args: пользовательскийRenderFunctionArg) => IпользовательскиймакетObj;
+```
+
+{{ use: common-пользовательскийRenderFunctionArg() }}
+
+{{ use: пользовательский-макет(
     prefix =  '#'+${prefix},
 ) }}
 
-${prefix} dropDownMenu(MenuListItem[]|Function)
-Dropdown menu item configuration. Dropdown menu items can be top-level menu items or second-level menu items, and only one configuration is required.
+${prefix} dropDownменю(менюсписокItem[]|функция)
+выпадающий список меню item configuration. выпадающий список меню items can be верх-level меню items или second-level меню items, и only one configuration is обязательный.
 
-具体类型为 `MenuListItem[] | ((args: { row: number; col: number; table: BaseTableAPI }) => MenuListItem[])`。
+具体类型为 `менюсписокItem[] | ((args: { row: число; col: число; таблица: Baseтаблицаапи }) => менюсписокItem[])`。
 
-{{ use: common-menu-list-item() }}
+{{ use: common-меню-список-item() }}
 
-${prefix} cornerDropDownMenu(Array)
-Angle header cell display drop-down button and drop-down menu item configuration. Dropdown menu items can be top-level menu items or second-level menu items, and only one configuration is required. The specific type is MenuListItem[].
+${prefix} cornerDropDownменю(массив)
+Angle header cell display отпускание-down Кнопка и отпускание-down меню item configuration. выпадающий список меню items can be верх-level меню items или second-level меню items, и only one configuration is обязательный. The specific тип is менюсписокItem[].
 
-${prefix} cornerHeaderIcon(string|Object|Array|Function)
+${prefix} cornerHeaderиконка(строка|объект|массив|функция)
 
-Pivot table corner cell icon configuration
+сводный таблица corner cell иконка configuration
 
 ```
-cornerHeaderIcon?:
-| string
-| ColumnIconOption
-| (string | ColumnIconOption)[]
-| ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
+cornerHeaderиконка?:
+| строка
+| ColumnиконкаOption
+| (строка | ColumnиконкаOption)[]
+| ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
 ```
 
-For the specific configuration of ColumnIconOption, please refer to: https://visactor.io/vtable/option/ListTable-columns-text#icon
+для the specific configuration из ColumnиконкаOption, please refer к: https://visactor.io/vтаблица/option/списоктаблица-columns-текст#иконка
 
-${prefix} dragHeader(boolean)
+${prefix} dragHeader(логический)
 Whether the header can be dragged
 
-${prefix} drillDown(boolean)
-Display drill-down icon, clicking it will trigger a corresponding event
+${prefix} drillDown(логический)
+Display drill-down иконка, Нажатьing it will trigger a corresponding событие
 
-${prefix} drillUp(boolean)
-Display drill-up icon, clicking it will trigger a corresponding event
+${prefix} drillUp(логический)
+Display drill-up иконка, Нажатьing it will trigger a corresponding событие
 
-${prefix} showSort(boolean|Function)
-Whether the dimension value cell displays the sort icon. Clicking it does not have data sorting logic.
+${prefix} showсортировка(логический|функция)
+Whether the dimension значение cell displays the сортировка иконка. Нажатьing it does не have данные сортировкаing logic.
 
 ```
-  showSort?: boolean | ((args: { row: number; col: number; table: BaseTableAPI }) => boolean);
+  showсортировка?: логический | ((args: { row: число; col: число; таблица: Baseтаблицаапи }) => логический);
 ```
 
-${prefix} sort(boolean)
-Whether the corresponding dimension header cell displays the sort icon.
+${prefix} сортировка(логический)
+Whether the corresponding dimension header cell displays the сортировка иконка.
 
-Sorting rules:
+сортировкаing rules:
 
-If the sorting rules for this dimension are configured in dataConfig.sortRules, the data is sorted according to the rules in dataConfig.sortRules.
+If the сортировкаing rules для this dimension are configured в данныеConfig.сортировкаRules, the данные is сортировкаed according к the rules в данныеConfig.сортировкаRules.
 
-If the sorting rules for the dimension are not configured in dataConfig.sortRules, the default is to use the natural sorting of the dimension value string.
+If the сортировкаing rules для the dimension are не configured в данныеConfig.сортировкаRules, the по умолчанию is к use the natural сортировкаing из the dimension значение строка.
 
-${prefix} showSortInCorner(boolean)
+${prefix} showсортировкаInCorner(логический)
 
-Whether to display sorting in the dimension name cell in the corner header. Clicking it does not have data sorting logic
+Whether к display сортировкаing в the dimension имя cell в the corner header. Нажатьing it does не have данные сортировкаing logic

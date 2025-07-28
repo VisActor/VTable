@@ -1,97 +1,97 @@
 ---
-category: examples
-group: Component
-title: title
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/title.png
-link: components/title
-option: ListTable#title.visible
+категория: примеры
+группа: компонент
+заголовок: title
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/title.png
+ссылка: компонентs/title
+опция: списоктаблица#title.видимый
 ---
 
 # Title
 
-In this example, the main subheadings of the table are configured and styled separately.
+в this пример, the main subheadings из the таблица are configured и styled separately.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `title` Configure the table title, please refer to: https://www.visactor.io/vtable/option/ListTable#title
+- `title` Configure the таблица title, please refer к: https://www.visactor.io/vтаблица/option/списоктаблица#title
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: '200'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: '200'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
-      tooltip: {
-        isShowOverflowTextTooltip: true
+      ширинаMode: 'standard',
+      Подсказка: {
+        isShowOverflowTextПодсказка: true
       },
-      title: {
-        text: 'North American supermarket sales analysis',
-        subtext: `The data includes 15 to 18 years of retail transaction data for North American supermarket`,
-        orient: 'top',
-        padding: 20,
+      заголовок: {
+        текст: 'North American supermarket Продажи analysis',
+        subtext: `The данные includes 15 к 18 years из retail transaction данные для North American supermarket`,
+        orient: 'верх',
+        заполнение: 20,
         textStyle: {
           fontSize: 30,
           fill: 'black'
@@ -102,20 +102,20 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       }
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
-    tableInstance.on('mouseenter_cell', args => {
-      const { col, row, targetIcon } = args;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
+    таблицаInstance.на('mouseenter_cell', args => {
+      const { col, row, targetиконка } = args;
       if (col === 0 && row >= 1) {
-        const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
-        tableInstance.showTooltip(col, row, {
-          content: 'Order ID：' + tableInstance.getCellValue(col, row),
-          referencePosition: { rect, placement: VTable.TYPES.Placement.right }, //TODO
-          className: 'defineTooltip',
+        const rect = таблицаInstance.getVisibleCellRangeRelativeRect({ col, row });
+        таблицаInstance.showПодсказка(col, row, {
+          content: 'ID Заказа：' + таблицаInstance.getCellValue(col, row),
+          referencePosition: { rect, placement: Vтаблица.TYPES.Placement.право }, //TODO
+          classимя: 'defineПодсказка',
           style: {
             bgColor: 'black',
-            color: 'white',
-            font: 'normal bold normal 14px/1 STKaiti',
+            цвет: 'white',
+            шрифт: 'normal bold normal 14px/1 STKaiti',
             arrowMark: true
           }
         });

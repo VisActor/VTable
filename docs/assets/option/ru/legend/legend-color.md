@@ -1,37 +1,37 @@
-{{ target: component-legend-color }}
+{{ target: компонент-легенда-цвет }}
 
-#${prefix} legends.color(Object)
+#${prefix} легендаs.цвет(объект)
 
-Continuous color legend configuration.
+Continuous цвет легенда configuration.
 
-**TODO: Add discrete legend illustration**
+**TODO: Add discrete легенда illustration**
 
-##${prefix} type(string) = 'color'
+##${prefix} тип(строка) = 'цвет'
 
-**Required**, used to declare the color legend type, the value is `'color'`.
+**обязательный**, used к declare the цвет легенда тип, the значение is `'цвет'`.
 
-{{ use: component-base-legend(
+{{ use: компонент-base-легенда(
   prefix = '#' + ${prefix} 
 ) }}
 
 {{
-  use: component-continuous-legend(
+  use: компонент-continuous-легенда(
     prefix = '#' + ${prefix} 
   )
 }}
 
-##${prefix}  colors(string[])
+##${prefix}  colors(строка[])
 
-**Required**,  The color range of the color legend, which is an array composed of a set of color strings, such as `['#2ec7c9','#b6a2de','#5ab1ef]`.
+**обязательный**,  The цвет range из the цвет легенда, which is an массив composed из a set из цвет strings, such as `['#2ec7c9','#b6a2de','#5ab1ef]`.
 
-##${prefix}  value([number, number])
+##${prefix}  значение([число, число])
 
-**Required**, The numerical range displayed by the color legend, which is an array composed of two numbers, the start data and the end data, such as `[0, 100]`.
+**обязательный**, The numerical range displayed по the цвет легенда, which is an массив composed из two numbers, the начало данные и the конец данные, such as `[0, 100]`.
 
-##${prefix}  max(number)
+##${prefix}  max(число)
 
-**Required**, the maximum value of the color legend.
+**обязательный**, the maximum значение из the цвет легенда.
 
-##${prefix}  min(number)
+##${prefix}  min(число)
 
-**Required**, the minimum value of the color legend.
+**обязательный**, the minimum значение из the цвет легенда.

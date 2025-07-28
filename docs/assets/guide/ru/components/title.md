@@ -1,15 +1,15 @@
-# title Introduction to the use of table titles
-The Title component in the VTable table library allows you to configure the main title and subtitle of the table and apply different styles to them. This tutorial will guide you on how to use this feature effectively.
+# title Introduction к the use из таблица titles
+The Title компонент в the Vтаблица таблица library allows you к configure the main title и subtitle из the таблица и apply different styles к them. This tutorial will guide you на how к use this feature effectively.
 
-## Example and configuration introduction
-Here is an example configuration:
+## пример и configuration introduction
+Here is an пример configuration:
 
 ```
-title: {
-      text: 'North American supermarket sales analysis',
-      subtext: `The data includes 15 to 18 years of retail transaction data for North American supermarket`,
-      orient: 'top',
-      padding: 20,
+заголовок: {
+      текст: 'North American supermarket Продажи analysis',
+      subtext: `The данные includes 15 к 18 years из retail transaction данные для North American supermarket`,
+      orient: 'верх',
+      заполнение: 20,
       textStyle: {
         fontSize: 30,
         fill: 'black'
@@ -20,14 +20,14 @@ title: {
       }
     },
 ```
-In the example above, we set the main title to 'North American supermarket sales analysis' and the subtitle to 'The data includes 15 to 18 years of retail transaction data for North American supermarket'. Now let's walk through the customization options one by one:
+в the пример above, we set the main title к 'North American supermarket Продажи analysis' и the subtitle к 'The данные includes 15 к 18 years из retail transaction данные для North American supermarket'. Now let's walk through the пользовательскийization options one по one:
 
-- text: The text content of the main title.
-- subtext: the text content of the subtitle.
-- orient: the direction of the title. Can be set to 'top', 'bottom', 'left' or 'right', indicating that the title is at the top, bottom, left or right of the table. In the example, we set it to 'top', which means the title is at the top of the table.
-- padding: the padding of the title. Can be set to a number that represents the spacing between the title and the edge of the table. In the example we set it to 20.
-- textStyle: style setting for the main title. You can use this option to set style attributes such as font size and color. In the example we set the font size to 30 and the color to 'black'.
-- subtextStyle: style setting for subtitle. You can use this option to set style attributes such as font size and color. In the example, we set the font size to 20 and the color to 'blue'.
-By using the above configurations, you can customize the content and style of the main and subtitles to better meet your needs and design style.
+- текст: The текст content из the main title.
+- subtext: the текст content из the subtitle.
+- orient: the direction из the title. Can be set к 'верх', 'низ', 'лево' или 'право', indicating that the title is в the верх, низ, лево или право из the таблица. в the пример, we set it к 'верх', which means the title is в the верх из the таблица.
+- заполнение: the заполнение из the title. Can be set к a число that represents the spacing between the title и the edge из the таблица. в the пример we set it к 20.
+- textStyle: style setting для the main title. Вы можете use this option к set style attributes such as шрифт размер и цвет. в the пример we set the шрифт размер к 30 и the цвет к 'black'.
+- subtextStyle: style setting для subtitle. Вы можете use this option к set style attributes such as шрифт размер и цвет. в the пример, we set the шрифт размер к 20 и the цвет к 'blue'.
+по using the above configurations, Вы можете пользовательскийize the content и style из the main и subtitles к better meet your needs и design style.
 
-Note that the above example only shows some of the configuration options for the title component! For more configuration, please go to [option description](https://visactor.io/vtable/option/ListTable#title.visible)
+Note that the above пример only shows некоторые из the configuration options для the title компонент! для more configuration, please go к [option description](https://visactor.io/vтаблица/option/списоктаблица#title.видимый)

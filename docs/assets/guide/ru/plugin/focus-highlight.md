@@ -1,61 +1,61 @@
-# Focus Highlight Plugin
+# фокус Highlight Plugin
 
-VTable provides a focus highlight plugin that supports highlighting specified areas.
+Vтаблица provides a фокус highlight plugin that supports highlighting specified areas.
 
-<div style="display: flex; justify-content: center;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/invert-highlight.png" style="flex: 0 0 50%; padding: 10px;">
+<div style="display: flex; justify-content: центр;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/invert-highlight.png" style="flex: 0 0 50%; заполнение: 10px;">
 </div>
 
-## Focus Highlight Plugin Configuration Options
+## фокус Highlight Plugin Configuration Options
 
-- `FocusHighlightPlugin` Focus Highlight Plugin, can be configured with the following parameters:
-  - `fill` Focus highlight background color
-  - `opacity` Focus highlight opacity
-  - `highlightRange` Initial focus highlight range
+- `FocusHighlightPlugin` фокус Highlight Plugin, can be configured с Следующий parameters:
+  - `fill` фокус highlight фон цвет
+  - `opaГород` фокус highlight opaГород
+  - `highlightRange` Initial фокус highlight range
 
 ```
-export interface FocusHighlightPluginOptions {
-  fill?: string;
-  opacity?: number;
+export интерфейс FocusHighlightPluginOptions {
+  fill?: строка;
+  opaГород?: число;
   highlightRange?: CellRange;
 }
 ```
 
-## Usage Example:
+## Usвозраст пример:
 
 
-```javascript livedemo template=vtable
-//  import * as VTable from '@visactor/vtable';
-// 使用时需要引入插件包@visactor/vtable-plugins
-// import * as VTablePlugins from '@visactor/vtable-plugins';
-// 正常使用方式 const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
-// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+```javascript liveдемонстрация template=vтаблица
+//  import * as Vтаблица от '@visactor/vтаблица';
+// 使用时需要引入插件包@visactor/vтаблица-plugins
+// import * as VтаблицаPlugins от '@visactor/vтаблица-plugins';
+// 正常使用方式 const columnSeries = новый Vтаблица.plugins.ColumnSeriesPlugin({});
+// 官网编辑器中将 Vтаблица.plugins重命名成了VтаблицаPlugins
 
 const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
+  возврат массив.от(новый массив(count)).map((_, i) => ({
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `小明${i + 1}`,
-    lastName: '王',
+    имя: `小明${i + 1}`,
+    lastимя: '王',
     date1: '2022年9月1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
-    city: 'beijing',
-    image:
-      '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
+    work: i % 2 === 0 ? 'back-конец engineer' + (i + 1) : 'front-конец engineer' + (i + 1),
+    Город: 'beijing',
+    imвозраст:
+      '<svg ширина="16" высота="16" viewBox="0 0 48 48" fill="никто" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" strхорошоe="#f5a623" strхорошоe-ширина="1" strхорошоe-linecap="round" strхорошоe-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" strхорошоe="#f5a623" strхорошоe-ширина="1" strхорошоe-linejoin="round"/></svg>'
   }));
 };
 
-  const highlightPlugin = new VTablePlugins.FocusHighlightPlugin({
+  const highlightPlugin = новый VтаблицаPlugins.FocusHighlightPlugin({
     fill: '#000',
-    opacity: 0.5,
+    opaГород: 0.5,
     highlightRange: {
-      start: {
+      начало: {
         col: 4,
         row: 4
       },
-      end: {
+      конец: {
         col: 4,
         row: 4
       }
@@ -65,17 +65,17 @@ const generatePersons = count => {
     records: generatePersons(20),
     columns:[
     {
-      field: 'id',
-      title: 'ID',
-      width: 'auto',
-      minWidth: 50,
-      sort: true
+      поле: 'id',
+      заголовок: 'ID',
+      ширина: 'авто',
+      minширина: 50,
+      сортировка: true
     },
     {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true,
+      поле: 'email1',
+      заголовок: 'email',
+      ширина: 200,
+      сортировка: true,
       style: {
         underline: true,
         underlineDash: [2, 0],
@@ -83,36 +83,36 @@ const generatePersons = count => {
       }
     },
     {
-      title: 'full name',
+      заголовок: 'full имя',
       columns: [
         {
-          field: 'name',
-          title: 'First Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'первый имя',
+          ширина: 200
         },
         {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'последний имя',
+          ширина: 200
         }
       ]
     },
     {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
+      поле: 'date1',
+      заголовок: 'birthday',
+      ширина: 200
     },
     {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+      поле: 'sex',
+      заголовок: 'sex',
+      ширина: 100
     }
   ],
-    theme: VTable.themes.DARK,
+    тема: Vтаблица.темаs.DARK,
     plugins: [highlightPlugin]
   };
-  const tableInstance = new VTable.ListTable( document.getElementById(CONTAINER_ID),option);
-  window.tableInstance = tableInstance;
+  const таблицаInstance = новый Vтаблица.списоктаблица( document.getElementById(CONTAINER_ID),option);
+  window.таблицаInstance = таблицаInstance;
 ```
 
-For specific usage, refer to the [demo](../../demo/interaction/head-highlight)
+для specific usвозраст, refer к the [демонстрация](../../демонстрация/interaction/head-highlight)

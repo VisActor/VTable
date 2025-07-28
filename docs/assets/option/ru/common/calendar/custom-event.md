@@ -1,41 +1,41 @@
-{{ target: common-calendar-custom-event }}
+{{ target: common-календарь-пользовательский-событие }}
 
-${prefix} type('list' | 'bar')
+${prefix} тип('список' | 'bar')
 
-Schedule type, list is a schedule within a single day, bar is a schedule across multiple days.
+Schedule тип, список is a schedule within a single day, bar is a schedule across multiple days.
 
-${prefix} id(string)
+${prefix} id(строка)
 
-Schedule id, used to distinguish different schedules
-
-${prefix} startDate(Date)
-
-Schedule start date (for schedules spanning multiple days)
+Schedule id, used к distinguish different schedules
 
 ${prefix} startDate(Date)
 
-Schedule start date (for schedules spanning multiple days)
+Schedule начало date (для schedules spanning multiple days)
+
+${prefix} startDate(Date)
+
+Schedule начало date (для schedules spanning multiple days)
 
 ${prefix} endDate(Date)
 
-Schedule start date (for schedules spanning multiple days)
+Schedule начало date (для schedules spanning multiple days)
 
 ${prefix} date(Date)
 
-Schedule date (for schedules within a single day)
+Schedule date (для schedules within a single day)
 
-${prefix} text(string)
+${prefix} текст(строка)
 
 Schedule content
 
-${prefix} color(string)
+${prefix} цвет(строка)
 
-Schedule text display color
+Schedule текст display цвет
 
-${prefix} bgColor(string)
+${prefix} bgColor(строка)
 
-Schedule bar display color
+Schedule bar display цвет
 
-${prefix} customInfo(any)
+${prefix} пользовательскийInfo(любой)
 
-Schedule custom information
+Schedule пользовательский information

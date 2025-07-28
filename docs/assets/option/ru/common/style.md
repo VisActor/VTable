@@ -2,111 +2,111 @@
 
 #${prefix} bgColor(ColorPropertyDefine)
 
-Define the background color of the cell
+Define the фон цвет из the cell
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
-#${prefix} padding(Object)
-Define the cell's padding
+#${prefix} заполнение(объект)
+Define the cell's заполнение
 {{ use: common-paddings(
   prefix = ${prefix},
 ) }}
 #${prefix} textAlign(CanvasTextAlign)
-Define the horizontal alignment of the text inside the cell
+Define the horizontal alignment из the текст inside the cell
 
 #${prefix} textBaseline(CanvasTextBaseline)
-Define the vertical alignment of the text inside the cell
+Define the vertical alignment из the текст inside the cell
 
-#${prefix} color(ColorPropertyDefine)
-Define the text color of the cell
-{{ use: common-color(
+#${prefix} цвет(ColorPropertyDefine)
+Define the текст цвет из the cell
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
-#${prefix} strokeColor(ColorPropertyDefine)
-Define the text stroke color of the cell
-{{ use: common-color(
+#${prefix} strхорошоeColor(ColorPropertyDefine)
+Define the текст strхорошоe цвет из the cell
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
 #${prefix} fontSize(FontSizePropertyDefine)
-Define the text size of the cell
-{{ use: common-font-size(
+Define the текст размер из the cell
+{{ use: common-шрифт-размер(
   prefix = ${prefix},
 ) }}
 
 #${prefix} fontFamily(FontFamilyPropertyDefine)
-Define the text font of the cell
-{{ use: common-font-family(
+Define the текст шрифт из the cell
+{{ use: common-шрифт-family(
   prefix = ${prefix},
 ) }}
 
 #${prefix} fontWeight(FontWeightPropertyDefine)
-Define the font weight of the text in the cell
-{{ use: common-font-weight(
+Define the шрифт weight из the текст в the cell
+{{ use: common-шрифт-weight(
   prefix = ${prefix}
   ) }}
 
 #${prefix} fontVariant(FontVariantPropertyDefine)
-Define the font variant of the text in the cell
-{{ use: common-font-variant(
+Define the шрифт variant из the текст в the cell
+{{ use: common-шрифт-variant(
   prefix = ${prefix}
   ) }}
 
 #${prefix} fontStyle(FontStylePropertyDefine)
-Define the font style of the text in the cell
-{{ use: common-font-style(
+Define the шрифт style из the текст в the cell
+{{ use: common-шрифт-style(
   prefix = ${prefix}
   ) }}
 
-#${prefix} textOverflow(string)
-Set the text ellipsis style. This is invalid if autoWrapText is set to autoLineBreak.
+#${prefix} textOverflow(строка)
+Set the текст ellipsis style. This is invalid if автоWrapText is set к автоLineBreak.
 
 #${prefix} borderColor(ColorsPropertyDefine)
-Set the border color of the cell
+Set the граница цвет из the cell
 {{ use: common-colors(
   prefix = ${prefix}
   ) }}
 
-#${prefix} borderLineWidth(LineWidthsPropertyDefine)
-Set the border width of the cell
-{{ use: common-lineWidths(
+#${prefix} borderLineширина(LineширинаsPropertyDefine)
+Set the граница ширина из the cell
+{{ use: common-lineширинаs(
   prefix = ${prefix}
   ) }}
 
 #${prefix} borderLineDash(LineDashsPropertyDefine)
-Set the border dashed style of the cell
+Set the граница dashed style из the cell
 {{ use: common-lineDashs(
   prefix = ${prefix}
   ) }}
 
-#${prefix} lineHeight(number)
-Set the text font line height of the text content in the cell
+#${prefix} lineвысота(число)
+Set the текст шрифт line высота из the текст content в the cell
 
 #${prefix} underline(UnderlinePropertyDefine)
-Set the underline for the text content of the cell
+Set the underline для the текст content из the cell
 {{ use: common-underline(
   prefix = ${prefix}
   ) }}
 #${prefix} underlineDash(LineDashPropertyDefine)
-Set the dashed underline style for cell text content
+Set the dashed underline style для cell текст content
 {{ use: common-underlineDash(
   prefix = ${prefix}
   ) }}
 
-#${prefix} underlineOffset(number)
-Set the distance between underline and text for cell text content
+#${prefix} underlineOffset(число)
+Set the distance between underline и текст для cell текст content
 #${prefix} lineThrough(LineThroughPropertyDefine)
-Set the line-through for the text content of the cell
+Set the line-through для the текст content из the cell
 {{ use: common-lineThrough(
   prefix = ${prefix}
   ) }}
 
 #${prefix} linkColor(ColorPropertyDefine)
-Set the text color for links
-{{ use: common-color(
+Set the текст цвет для links
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
@@ -116,11 +116,11 @@ Mouse cursor style when hovering over the cell
   prefix = ${prefix}
   ) }}
 
-#${prefix} textStick(boolean | 'horizontal' | 'vertical')
-Set whether the text in the cell has a sticking effect 【Text can dynamically adjust its position when scrolling】.Can be set to true to enable, or set to 'horizontal' or 'vertical' to specify in which direction to snap only.
+#${prefix} textStick(логический | 'horizontal' | 'vertical')
+Set whether the текст в the cell has a sticking effect 【текст can dynamically adjust its позиция when scrolling】.Can be set к true к включить, или set к 'horizontal' или 'vertical' к specify в which direction к snap only.
 
-#${prefix} textStickBaseOnAlign(boolean)
-When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position)
+#${prefix} textStickBaseOnAlign(логический)
+When the cell текст has an adsorption effect [the текст can dynamically adjust its позиция when scrolling], the basis для adsorption is the horizontal alignment из the cell. для пример, when `textStickBaseOnAlign` is `true` и `textAlign` is `'центр'`, the текст will be adsorbed к the horizontal центр из the cell; otherwise, it will be adsorbed к the лево или право edge из the cell (depending на the прокрутка позиция)
 
 #${prefix} marked(MarkedPropertyDefine)
 
@@ -129,123 +129,123 @@ Set whether the cell has a marked style
   prefix = ${prefix}
   ) }}
   
-#${prefix} autoWrapText(boolean)
-Set whether the cell's text should automatically wrap
+#${prefix} автоWrapText(логический)
+Set whether the cell's текст should автоmatically wrap
 
-#${prefix} lineClamp(number|string)
-Set the maximum number of lines for the cell, can be a number or 'auto'. If set to 'auto', it will be calculated automatically
+#${prefix} lineClamp(число|строка)
+Set the maximum число из lines для the cell, can be a число или 'авто'. If set к 'авто', it will be calculated автоmatically
 
-{{ if: ${isImage} }}
+{{ if: ${isImвозраст} }}
 
-#${prefix} margin(number)
+#${prefix} отступ(число)
 
-** Configuration specific to image type ** Image positioning margin within the cell
+** Configuration specific к imвозраст тип ** Imвозраст positioning отступ within the cell
 
 {{ /if }}
 
 {{ if: ${isProgressbar} }}
 
-#${prefix} showBar(boolean|Function)
+#${prefix} showBar(логический|функция)
 
-Whether to display the progress bar
+Whether к display the progress bar
 
 ```
- showBar?:boolean | ((args: StylePropertyFunctionArg) => boolean)
+ showBar?:логический | ((args: StylePropertyFunctionArg) => логический)
 ```
 
 #${prefix} barColor(ColorPropertyDefine)
 
-Progress bar color
+Progress bar цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
 #${prefix} barBgColor(ColorPropertyDefine)
 
-Progress bar background color
+Progress bar фон цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
-#${prefix} barHeight(number|string)
+#${prefix} barвысота(число|строка)
 
-Progress bar height, can be a specific height value or a percentage.
+Progress bar высота, can be a specific высота значение или a percentвозраст.
 
-#${prefix} barBottom(number|string)
+#${prefix} barBottom(число|строка)
 
-Progress bar distance from the bottom of the cell, can be a specific height value or a percentage.
+Progress bar distance от the низ из the cell, can be a specific высота значение или a percentвозраст.
 
-#${prefix} barPadding(Array)
+#${prefix} barPadding(массив)
 
-Padding inside the progress bar, can be a specific height value or a percentage. Type: `number|string`.
+заполнение inside the progress bar, can be a specific высота значение или a percentвозраст. тип: `число|строка`.
 
 #${prefix} barPositiveColor(ColorPropertyDefine)
 
-Progress bar positive color
+Progress bar positive цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
 #${prefix} barNegativeColor(ColorPropertyDefine)
 
-Progress bar negative color
+Progress bar negative цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
 #${prefix} barAxisColor(ColorPropertyDefine)
 
-Progress bar axis color
+Progress bar axis цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
-#${prefix} barRightToLeft(boolean)
+#${prefix} barRightToLeft(логический)
 
-Whether the progress bar direction is from right to left
+Whether the progress bar direction is от право к лево
 
-#${prefix} showBarMark(boolean)
+#${prefix} showBarMark(логический)
 
-Whether to display progress bar marks
+Whether к display progress bar marks
 
 #${prefix} barMarkPositiveColor(ColorPropertyDefine)
 
-Progress bar positive mark color
+Progress bar positive mark цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
 #${prefix} barMarkNegativeColor(ColorPropertyDefine)
 
-Progress bar negative mark color
+Progress bar negative mark цвет
 
-{{ use: common-color(
+{{ use: common-цвет(
   prefix = ${prefix},
 ) }}
 
-#${prefix} barMarkWidth(number)
+#${prefix} barMarkширина(число)
 
-Progress bar mark width
+Progress bar mark ширина
 
-#${prefix} barMarkPosition(string)
+#${prefix} barMarkPosition(строка)
 
-Progress bar mark position, can be set to `'right' | 'bottom'`, default is `'right'`.
+Progress bar mark позиция, can be set к `'право' | 'низ'`, по умолчанию is `'право'`.
 
-#${prefix} barMarkInBar(boolean)
+#${prefix} barMarkInBar(логический)
 
-Progress bar mark shows inside of bar, default is `true`。
+Progress bar mark shows inside из bar, по умолчанию is `true`。
 
 {{ /if }}
 
 {{ if: ${isCheckbox} }}
 
-{{ use: common-checkbox-style (
+{{ use: common-флажок-style (
   prefix = ${prefix}
   ) }}
 
@@ -253,7 +253,7 @@ Progress bar mark shows inside of bar, default is `true`。
 
 {{ if: ${isRadio} }}
 
-{{ use: common-radio-style (
+{{ use: common-переключатель-style (
   prefix = ${prefix}
   ) }}
 
@@ -267,9 +267,9 @@ Progress bar mark shows inside of bar, default is `true`。
 
 {{ /if }}
 
-{{ if: ${isButton} }}
+{{ if: ${isКнопка} }}
 
-{{ use: common-button-style (
+{{ use: common-Кнопка-style (
   prefix = ${prefix}
   ) }}
 

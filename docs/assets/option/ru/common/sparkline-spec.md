@@ -1,72 +1,72 @@
 {{ target: sparkline-spec }}
 
-#${prefix} type(string)
+#${prefix} тип(строка)
 
-** Required** Currently, only 'line' is supported.
+** обязательный** Currently, only 'line' is supported.
 
-#${prefix} xField(string|Object)
+#${prefix} xполе(строка|объект)
 
-Configure the field name corresponding to the x-axis, supporting the filling of names or objects. The object structure is defined as follows:
-
-```
-{
-  field: string;
-  /** x-axis value domain, x-axis corresponds to discrete axis, need to be reflected in the domain array one by one */
-  domain?: (string|number)[];
-}
-```
-
-Configuration example:
-
-```
-// Only configure the field name, the program will automatically analyze the domain
-xField: 'year'
-```
-or
-```
-xField: {
-  field: 'year',
-  domain: [1990, 1991, 1993, 1995] // Set the x-axis to display the coordinate points corresponding to [1990, 1991, 1993, 1995]
-}
-```
-
-#${prefix} yField(string|Object)
-
-Configure the field name corresponding to the y-axis, supporting the filling of names or objects. The object structure is defined as follows:
+Configure the поле имя corresponding к the x-axis, supporting the filling из имяs или objects. The объект structure is defined as follows:
 
 ```
 {
-  field: string;
-  /** y-axis value domain, y-axis corresponds to continuous axis, domain array only needs to set the maximum and minimum values */
-  domain?: (string|number)[];
-}
-```
-Configuration example:
-
-```
-// Only configure the field name, the program will automatically analyze the domain
-yField: 'sales'
-```
-or
-```
-yField: {
-  field: 'sales',
-  domain: [0, 50000] // Set the maximum and minimum values of the y-axis to 0 to 50,000, which plays a role in calculating the distribution of y-axis coordinates
+  поле: строка;
+  /** x-axis значение domain, x-axis corresponds к discrete axis, need к be reflected в the domain массив one по one */
+  domain?: (строка|число)[];
 }
 ```
 
-#${prefix} pointShowRule('all' | 'none' | 'isolatedPoint')
+Configuration пример:
+
+```
+// Only configure the поле имя, the program will автоmatically analyze the domain
+xполе: 'year'
+```
+или
+```
+xполе: {
+  поле: 'year',
+  domain: [1990, 1991, 1993, 1995] // Set the x-axis к display the coordinate points corresponding к [1990, 1991, 1993, 1995]
+}
+```
+
+#${prefix} yполе(строка|объект)
+
+Configure the поле имя corresponding к the y-axis, supporting the filling из имяs или objects. The объект structure is defined as follows:
+
+```
+{
+  поле: строка;
+  /** y-axis значение domain, y-axis corresponds к continuous axis, domain массив only needs к set the maximum и minimum values */
+  domain?: (строка|число)[];
+}
+```
+Configuration пример:
+
+```
+// Only configure the поле имя, the program will автоmatically analyze the domain
+yполе: 'Продажи'
+```
+или
+```
+yполе: {
+  поле: 'Продажи',
+  domain: [0, 50000] // Set the maximum и minimum values из the y-axis к 0 к 50,000, which plays a role в calculating the distribution из y-axis coordinates
+}
+```
+
+#${prefix} pointShowRule('все' | 'никто' | 'isolatedPoint')
 
 Configure point display rules:
-- all means to display all points
-- none means to not display points
-- isolatedPoint means to display only isolated points (i.e., points with empty values before and after).
+- все means к display все points
+- никто means к не display points
+- isolatedPoint means к display only isolated points (i.e., points с empty values before и after).
 
-#${prefix} smooth(boolean)
+#${prefix} smooth(логический)
 
 Whether the line is smooth.
 
-#${prefix} line(Object)
+#${prefix} line(объект)
 
 Line-related configuration
 
@@ -82,31 +82,31 @@ Configure line style:
 ```
 ILineMarkStyle options:
 
-###${prefix} stroke(string)
+###${prefix} strхорошоe(строка)
 
 Line style
 
-###${prefix} strokeWidth(number)
+###${prefix} strхорошоeширина(число)
 
-Line width
+Line ширина
 
 ###${prefix} interpolate('linear' | 'monotone')
 
-Specifies the interpolation method for the line:
-- 'linear' directly connects adjacent data points
-- 'monotone' a smooth curve interpolation method between adjacent data points, making the line look smoother and more natural.
+Specifies the interpolation method для the line:
+- 'linear' directly connects adjacent данные points
+- 'monotone' a smooth curve interpolation method between adjacent данные points, making the line loхорошо smoother и more natural.
 
-#${prefix} point(Object)
+#${prefix} point(объект)
 
-Point configuration on the line
+Point configuration на the line
 
 ##${prefix} style(ISymbolMarkStyle)
 
-Configure data point style:
+Configure данные point style:
 
 ```
 {
-    /** Data point shape style */
+    /** данные point shape style */
     style: ISymbolMarkStyle;
 };
 ```
@@ -114,37 +114,37 @@ ISymbolMarkStyle options:
 
 ###${prefix} shape('circle')
 
-Data point shape, currently only supports 'circle'
+данные point shape, currently only supports 'circle'
 
-###${prefix} stroke(string)
+###${prefix} strхорошоe(строка)
 
-Shape stroke color
+Shape strхорошоe цвет
 
-###${prefix} strokeWidth(number)
+###${prefix} strхорошоeширина(число)
 
-Shape stroke width
+Shape strхорошоe ширина
 
-###${prefix} fill(string)
+###${prefix} fill(строка)
 
-Data point shape fill color
+данные point shape fill цвет
 
-###${prefix} size(number)
+###${prefix} размер(число)
 
-Data point shape size
+данные point shape размер
 
-##${prefix} hover
+##${prefix} навести
 
-Configure data point style:
+Configure данные point style:
 
 ```
 {
-    /** hover is the data point shape style */
-   hover?: ISymbolMarkStyle | false;
+    /** навести is the данные point shape style */
+   навести?: ISymbolMarkStyle | false;
 };
 ```
-Please refer to the style definition above for the definition of ISymbolMarkStyle.
+Please refer к the style definition above для the definition из ISymbolMarkStyle.
 
-#${prefix} crosshair(Object)
+#${prefix} crosshair(объект)
 
 Crosshair configuration
 
@@ -160,10 +160,10 @@ Configure crosshair style:
 ```
 ILineMarkStyle options:
 
-###${prefix} stroke(string)
+###${prefix} strхорошоe(строка)
 
 Line style
 
-###${prefix} strokeWidth(number)
+###${prefix} strхорошоeширина(число)
 
-Line width
+Line ширина

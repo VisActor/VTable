@@ -1,146 +1,146 @@
 ---
-category: examples
-group: Theme
-title: Theme -extends
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/extend.png
-order: 6-5
-link: theme_and_style/theme
-option: ListTable#theme.bodyStyle.bgColor
+категория: примеры
+группа: тема
+заголовок: тема -extends
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/extend.png
+порядок: 6-5
+ссылка: тема_and_style/тема
+опция: списоктаблица#тема.bodyStyle.bgColor
 ---
 
-# Table Theme -extends
+# таблица тема -extends
 
-Extend and modify based on a certain Theme built into the component
+Extend и modify based на a certain тема built into the компонент
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.themes.ARCO.extends` Configure Theme Name or Customize Theme Style
+- `Vтаблица.темаs.ARCO.extends` Configure тема имя или пользовательскийize тема Style
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rowTree: [
         {
-          dimensionKey: 'City',
-          value: 'Aberdeen'
+          dimensionKey: 'Город',
+          значение: 'Aberdeen'
         },
         {
-          dimensionKey: 'City',
-          value: 'Abilene'
+          dimensionKey: 'Город',
+          значение: 'Abilene'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bowling Green'
+          dimensionKey: 'Город',
+          значение: 'Bowling Green'
         },
         {
-          dimensionKey: 'City',
-          value: 'Boynton Beach'
+          dimensionKey: 'Город',
+          значение: 'Boynton Beach'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bozeman'
+          dimensionKey: 'Город',
+          значение: 'Bozeman'
         },
         {
-          dimensionKey: 'City',
-          value: 'Brentwood'
+          dimensionKey: 'Город',
+          значение: 'Brentwood'
         }
       ],
       columnTree: [
         {
-          dimensionKey: 'Category',
-          value: 'Office Supplies',
+          dimensionKey: 'Категория',
+          значение: 'Office Supplies',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Technology',
+          dimensionKey: 'Категория',
+          значение: 'Technology',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Furniture',
+          dimensionKey: 'Категория',
+          значение: 'Furniture',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         }
       ],
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
-          format: value => {
-            return Number(value).toFixed(2);
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
+          format: значение => {
+            возврат число(значение).toFixed(2);
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
-          format: value => {
-            return Number(value).toFixed(2);
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
+          format: значение => {
+            возврат число(значение).toFixed(2);
           }
         }
       ],
@@ -150,42 +150,42 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      indicatorTitle: 'indicators',
-      widthMode: 'standard',
-      theme: VTable.themes.ARCO.extends({
+      indicatorзаголовок: 'indicators',
+      ширинаMode: 'standard',
+      тема: Vтаблица.темаs.ARCO.extends({
         defaultStyle: {
-          borderLineWidth: 0
+          borderLineширина: 0
         },
         headerStyle: {
           bgColor: '#a881e1',
           borderColor: 'white',
           fontWeight: 'normal',
-          color: 'white'
+          цвет: 'white'
         },
         rowHeaderStyle: {
           bgColor: '#eae1fa',
           borderColor: 'white',
-          borderLineWidth: 1,
+          borderLineширина: 1,
           fontWeight: 'normal'
         },
         cornerHeaderStyle: {
           bgColor: '#a881e1',
           fontWeight: 'normal',
-          color: 'white'
+          цвет: 'white'
         },
         bodyStyle: {
           borderColor: '#f1e8fe',
-          borderLineWidth: 1,
+          borderLineширина: 1,
           bgColor: args => {
             if (args.row & 1) {
-              return '#f8f5fe';
+              возврат '#f8f5fe';
             }
-            return '#FDFDFD';
+            возврат '#FDFDFD';
           }
         }
       })
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

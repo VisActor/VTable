@@ -1,35 +1,35 @@
-{{ target: arc-custom-layout-element }}
+{{ target: arc-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix}radius (number) 
+${prefix}radius (число) 
 
-**Required**
+**обязательный**
 
 Arc radius.
 
-${prefix}startDegree (number)
+${prefix}startDegree (число)
 
-Arc start angle, in degrees.
+Arc начало angle, в degrees.
 
-${prefix}endDegree (number)
+${prefix}endDegree (число)
 
-Arc end angle, in degrees.
+Arc конец angle, в degrees.
 
-${prefix}clockWise (boolean) = true
+${prefix}clockWise (логический) = true
 
-Arc direction, true means clockwise, false means counterclockwise. Default is true.
+Arc direction, true means clockwise, false means counterclockwise. по умолчанию is true.
 
-${prefix}lineWidth (number)
+${prefix}lineширина (число)
 
-Border width.
+граница ширина.
 
-${prefix}fill (string)
+${prefix}fill (строка)
 
-Fill color.
+Fill цвет.
 
-${prefix}stroke (string)
+${prefix}strхорошоe (строка)
 
-Stroke color.
+Strхорошоe цвет.

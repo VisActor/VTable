@@ -1,116 +1,116 @@
 ---
-category: examples
-group: Interaction
-title: Select Highlight Effect
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select-highlight.png
-link: interaction/select
-option: ListTable#select
+категория: примеры
+группа: Interaction
+заголовок: выбрать Highlight Effect
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/выбрать-highlight.png
+ссылка: interaction/выбрать
+опция: списоктаблица#выбрать
 ---
 
-# Select the cell row to highlight the effect
+# выбрать the cell row к highlight the effect
 
-Click on the cell, the entire row or column will be highlighted when the cell is selected. If more than one cell is selected, the highlight effect will disappear.
+Нажать на the cell, the entire row или column will be highlighted when the cell is selected. If more than one cell is selected, the highlight effect will disappear.
 
-The highlighted style can be configured in the style. Global configuration: `theme.selectionStyle`, or it can be configured separately for the header and body. For specific configuration methods, please refer to the tutorial.
+The highlighted style can be configured в the style. Global configuration: `тема.selectionStyle`, или it can be configured separately для the header и body. для specific configuration методы, please refer к the tutorial.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `select: {
+- `выбрать: {
   highlightMode: 'cross'
 }`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       keyboardOptions: {
         selectAllOnCtrlA: true,
         copySelected: true
       },
-      select: {
+      выбрать: {
         highlightMode: 'cross'
       },
-      theme: VTable.themes.ARCO.extends({
+      тема: Vтаблица.темаs.ARCO.extends({
         selectionStyle: {
           cellBgColor: 'rgba(130, 178, 245, 0.2)',
-          cellBorderLineWidth: 2,
+          cellBorderLineширина: 2,
           inlineRowBgColor: 'rgb(160,207,245)',
           inlineColumnBgColor: 'rgb(160,207,245)'
         },
         headerStyle: {
-          select: {
+          выбрать: {
             inlineRowBgColor: 'rgb(0,207,245)',
             inlineColumnBgColor: 'rgb(0,207,245)'
           }
         }
       })
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

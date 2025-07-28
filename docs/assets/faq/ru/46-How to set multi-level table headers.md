@@ -1,52 +1,52 @@
 ---
-title: VTable usage issue: How to set multi-level table headers</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к set multi-level таблица headers</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to set up multi-level headers</br>
+How к set up multi-level headers</br>
 
 
 ## Problem description
 
-How to configure headers to achieve multi-level header grouping effect</br>
+How к configure headers к achieve multi-level header grouping effect</br>
 
 
 ## Solution
 
-In the `column `configuration in VTable, it supports specifying the subordinate table header of the column through the `columns `configuration, and this rule can be used for multi-level nesting</br>
+в the `column `configuration в Vтаблица, it supports specifying the subordinate таблица header из the column through the `columns `configuration, и this rule can be used для multi-level nesting</br>
 
 
-## Code example
+## код пример
 
 ```
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 100
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 100
   },
   {
-    title: 'Name',
+    заголовок: 'имя',
     columns: [
       {
-        field: 'name1',
-        title: 'name1',
-        width: 100
+        поле: 'имя1',
+        заголовок: 'имя1',
+        ширина: 100
       },
       {
-        title: 'name-level-2',
-        width: 150,
+        заголовок: 'имя-level-2',
+        ширина: 150,
         columns: [
           {
-            field: 'name2',
-            title: 'name2',
-            width: 100
+            поле: 'имя2',
+            заголовок: 'имя2',
+            ширина: 100
           },
           {
-            title: 'name3',
-            field: 'name3',
-            width: 150
+            заголовок: 'имя3',
+            поле: 'имя3',
+            ширина: 150
           }
         ]
       }
@@ -62,15 +62,15 @@ const option = {
 ```
 
 
-## Results show
+## Results показать
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/T2Qlb7bjrop6MoxoEYRcXDT2nuc.gif' alt='' width='936' height='680'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/T2Qlb7bjrop6MoxoEYRcXDT2nuc.gif' alt='' ширина='936' высота='680'>
 
-Complete example: https://www.visactor.io/vtable/demo/basic-functionality/list-table-header-group</br>
+Complete пример: https://www.visactor.io/vтаблица/демонстрация/базовый-функциональность/список-таблица-header-group</br>
 ## Related Documents
 
-Related api: https://www.visactor.io/vtable/option/ListTable-columns-text#columns</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/option/списоктаблица-columns-текст#columns</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

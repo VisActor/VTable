@@ -1,37 +1,37 @@
-# Hover interaction
+# навести interaction
 
-Hover interaction is a very useful feature when using VTable for data analytics. With hover interaction, we can highlight cells, entire rows, or entire columns of data when the mouse hovers, helping users better focus on specific information. This tutorial will describe how to use and customize hover interaction in VTable.
+навести interaction is a very useful feature when using Vтаблица для данные analytics. с навести interaction, we can highlight cells, entire rows, или entire columns из данные when the mouse hovers, helping users better фокус на specific information. This tutorial will describe how к use и пользовательскийize навести interaction в Vтаблица.
 
-## Patterns of hover interaction
+## Patterns из навести interaction
 
-VTable supports four hover interaction modes: 'cross', 'column', 'row' and'cell '. By default, the hover interaction mode is'cross'. You can pass`hoverMode`Options to configure.
+Vтаблица supports four навести interaction modes: 'cross', 'column', 'row' и'cell '. по по умолчанию, the навести interaction mode is'cross'. Вы можете pass`hoverMode`Options к configure.
 
-For example, set the hover interaction mode to line cross:
+для пример, set the навести interaction mode к line cross:
 
 ```javascript
-const table = new VTable.ListTable({
-  hover: {
+const таблица = новый Vтаблица.списоктаблица({
+  навести: {
     highlightMode: 'cross'
   }
 });
 ```
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090a.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/a2c7623458257d1562627090a.png)
 
-As shown in the image above, the row and column of the cell are highlighted when the mouse hovers.
+As shown в the imвозраст above, the row и column из the cell are highlighted when the mouse hovers.
 
-## Hover interaction style
+## навести interaction style
 
-VTable allows to customize the style of hover interaction, through`theme.bodyStyle.hover`Configure.
+Vтаблица allows к пользовательскийize the style из навести interaction, through`тема.bodyStyle.навести`Configure.
 
-For example, you can set the background color of a hovering cell:
+для пример, Вы можете set the фон цвет из a hovering cell:
 
 ```javascript
-const table = new VTable.ListTable({
-  theme:
-    VTable.themes.ARCO.extends({
+const таблица = новый Vтаблица.списоктаблица({
+  тема:
+    Vтаблица.темаs.ARCO.extends({
       bodyStyle: {
-        hover:{
+        навести:{
           cellBgColor:'#FFC0CB',
           inlineRowBgColor: '#FFD700', // 金色
           inlineColumnBgColor: '#ADFF2F' // 绿黄色
@@ -41,46 +41,46 @@ const table = new VTable.ListTable({
 });
 ```
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0c.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/0a2e223bdcd7410c08f6a6a0c.png)
 
-As shown in the figure above, the background color of the cell when the mouse hovers is pink, the background color of the entire row where the mouse hovers is gold, and the background color of the entire column where the mouse hovers is green-yellow.
+As shown в the figure above, the фон цвет из the cell when the mouse hovers is pink, the фон цвет из the entire row where the mouse hovers is gold, и the фон цвет из the entire column where the mouse hovers is green-yellow.
 
-## Disable hover interaction
+## отключить навести interaction
 
-VTable allows disabling hover interaction, which is useful for some scenarios where visual interference needs to be reduced.
+Vтаблица allows disabling навести interaction, which is useful для некоторые scenarios where visual interference needs к be reduced.
 
-To disable hover interaction, you can`hover.disableHover`Options are set to`true`See also:
+к отключить навести interaction, Вы можете`навести.disableHover`Options are set к`true`Смотрите также:
 
 ```javascript
-const table = VTable.ListTable({
-  hover: {
+const таблица = Vтаблица.списоктаблица({
+  навести: {
     disableHover: true
   }
 });
 ```
 
-Additionally, if you only want to disable hover interaction for header columns, you can set it as follows:
+Additionally, if you only want к отключить навести interaction для header columns, Вы можете set it as follows:
 
 ```javascript
-const table = VTable.ListTable({
-  hover: {
+const таблица = Vтаблица.списоктаблица({
+  навести: {
     disableHeaderHover: true
   }
 });
 ```
 
-In addition, there are special needs scenarios that only prohibit hover interaction for a certain column, you can use`columns.disableHeaderHover`and`columns.disableHeaderHover`Option:
+в addition, there are special needs scenarios that only prohibit навести interaction для a certain column, Вы можете use`columns.disableHeaderHover`и`columns.disableHeaderHover`опция:
 
-    const table = new VTable.ListTable({
+    const таблица = новый Vтаблица.списоктаблица({
       columns: [
         {
         title·: 'ID',
-        field:'ID',
+        поле:'ID',
           disableHover: true // 禁用某一列表头的hover交互
         }
       ]
     });
 
-When hover interaction is disabled, there will be no highlighting when hovering.
+When навести interaction is отключен, there will be no highlighting when hovering.
 
-So far, we have introduced the hover interaction in VTable, including interactive mode, custom style and disabling hover interaction. By mastering these functions, you can more flexibly customize the hover interaction of the table according to actual needs.
+So far, we have introduced the навести interaction в Vтаблица, including interactive mode, пользовательский style и disabling навести interaction. по mastering these functions, Вы можете more flexibly пользовательскийize the навести interaction из the таблица according к actual needs.

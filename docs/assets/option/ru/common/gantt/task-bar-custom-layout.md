@@ -1,23 +1,23 @@
-{{ target: common-gantt-task-bar-custom-layout }}
-Task bar custom rendering, the corresponding type is ITaskBarCustomLayout, the specific configuration items are as follows:
+{{ target: common-гантт-task-bar-пользовательский-макет }}
+Task bar пользовательский rendering, the corresponding тип is ITaskBarпользовательскиймакет, the specific configuration items are as follows:
 
 ```
-export type TaskBarCustomLayoutArgumentType = {
-  width: number;
-  height: number;
-  index: number;
+export тип TaskBarпользовательскиймакетArgumentType = {
+  ширина: число;
+  высота: число;
+  index: число;
   startDate: Date;
   endDate: Date;
-  taskDays: number;
-  progress: number;
-  taskRecord: any;
-  ganttInstance: Gantt;
+  taskDays: число;
+  progress: число;
+  taskRecord: любой;
+  ганттInstance: гантт;
 };
-export type ITaskBarCustomLayout = (args: TaskBarCustomLayoutArgumentType) => ITaskBarCustomLayoutObj;
-export type ITaskBarCustomLayoutObj = {
+export тип ITaskBarпользовательскиймакет = (args: TaskBarпользовательскиймакетArgumentType) => ITaskBarпользовательскиймакетObj;
+export тип ITaskBarпользовательскиймакетObj = {
   rootContainer: VRender.Group;
-  renderDefaultBar?: boolean; // 默认false
-  renderDefaultResizeIcon?: boolean; // 默认false
-  renderDefaultText?: boolean; // 默认false
+  renderDefaultBar?: логический; // 默认false
+  renderDefaultResizeиконка?: логический; // 默认false
+  renderDefaultText?: логический; // 默认false
 };
 ```

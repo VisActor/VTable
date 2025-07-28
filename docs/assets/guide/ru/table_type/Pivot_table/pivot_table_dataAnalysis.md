@@ -1,3 +1,3 @@
-# Pivot data analysis
+# сводный данные analysis
 
-Please jump to the link: [Pivot Table Data Analysis](../../data_analysis/pivot_table_dataAnalysis)
+Please jump к the ссылка: [сводный таблица данные Analysis](../../данные_analysis/сводный_таблица_данныеAnalysis)

@@ -1,12 +1,12 @@
 ---
-category: examples
-group: Custom
-title: Custom simple corner
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simple-corner.jpeg
-option: ListTable-columns-text#customRender.elements
+категория: примеры
+группа: пользовательский
+заголовок: пользовательский simple corner
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/simple-corner.jpeg
+опция: списоктаблица-columns-текст#пользовательскийRender.elements
 ---
 
-In a pivot table, sometimes it is necessary to implement a slanted header. This can be achieved by customizing `customRender` or `customLayout` in the `corner` area.
+в a сводный таблица, sometimes it is necessary к implement a slanted header. This can be achieved по пользовательскийizing `пользовательскийRender` или `пользовательскиймакет` в the `corner` area.
 
 ```js
 option = {
@@ -16,16 +16,16 @@ option = {
       headerStyle: {
       textStick: true
     },
-    customLayout: (args) => {
-      const {table, row, col, rect} = args;
-      const {height, width} = rect ?? table.getCellRect(col, row);
+    пользовательскиймакет: (args) => {
+      const {таблица, row, col, rect} = args;
+      const {высота, ширина} = rect ?? таблица.getCellRect(col, row);
       const container = createGroup({
-        height,
-        width,
+        высота,
+        ширина,
       });
       // .... other fun call
 
-      return {
+      возврат {
         rootContainer: container,
         renderDefault: false,
         enableCellPadding: false,
@@ -35,44 +35,44 @@ option = {
 }
 ```
 
-## Code Sample
+## код Sample
 
-```javascript livedemo template=vtable
-// only use for website
+```javascript liveдемонстрация template=vтаблица
+// only use для website
 const {createGroup, createText, createLine} = VRender;
-// use this for project
-// import {createGroup, createText, createLine} from '@visactor/vtable/es/vrender';
+// use this для project
+// import {createGroup, createText, createLine} от '@visactor/vтаблица/es/vrender';
 
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
           textStick: true
         },
-        customLayout: (args) => {
-          const {table, row, col, rect} = args;
-          const {height, width} = rect ?? table.getCellRect(col, row);
+        пользовательскиймакет: (args) => {
+          const {таблица, row, col, rect} = args;
+          const {высота, ширина} = rect ?? таблица.getCellRect(col, row);
           const container = createGroup({
-            height,
-            width,
+            высота,
+            ширина,
           });
 
           // 定义文本内容的数组
           const texts = [
-            {text: 'Type', fontSize: 18, x: 40, y: rect.height - 30},
-            {text: 'Data', fontSize: 18, x: rect.width - 60, y: 20},
+            {текст: 'тип', fontSize: 18, x: 40, y: rect.высота - 30},
+            {текст: 'данные', fontSize: 18, x: rect.ширина - 60, y: 20},
           ];
 
-          // add corner text
-          texts.forEach(({text, fontSize, x, y}) => {
+          // add corner текст
+          texts.forEach(({текст, fontSize, x, y}) => {
             container.addChild(
               createText({
-                text,
+                текст,
                 fontSize,
                 fontFamily: 'sans-serif',
                 fill: 'black',
@@ -85,19 +85,19 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           // define the point
           const linePoints = [
             {x: 0, y: 0},
-            {x: rect.width, y: rect.height}
+            {x: rect.ширина, y: rect.высота}
           ];
 
           // add line
           container.addChild(
             createLine({
               points: linePoints,
-              lineWidth: 1,
-              stroke: '#ccc',
+              lineширина: 1,
+              strхорошоe: '#ccc',
             })
           );
 
-          return {
+          возврат {
             rootContainer: container,
             renderDefault: false,
             enableCellPadding: false,
@@ -106,91 +106,91 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       },
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
       ],
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           }
         ]
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

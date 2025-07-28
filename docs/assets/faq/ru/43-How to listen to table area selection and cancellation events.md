@@ -1,73 +1,73 @@
 ---
-title: VTable usage issue: How to listen to table area selection and cancellation events</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к списокen к таблица area selection и отменаlation событиеs</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to listen to the table area selection cancellation event</br>
+How к списокen к the таблица area selection отменаlation событие</br>
 
 
 ## Problem description
 
-Hope to be able to select and cancel events through events (click other areas of the table or click outside the table).</br>
+Hope к be able к выбрать и отмена событиеs through событиеs (Нажать other areas из the таблица или Нажать outside the таблица).</br>
 
 
 ## Solution
 
-VTable provides `**SELECTED_CLEAR **`events that are triggered after an operation is deselected (and there are no selected areas in the current chart area)</br>
+Vтаблица provides `**SELECTED_CLEAR **`событиеs that are triggered after an operation is deselected (и there are no selected areas в the текущий график area)</br>
 
 
-## Code example
+## код пример
 
 ```
-const tableInstance = new VTable.ListTable(option);
-tableInstance.on(VTable.ListTable.EVENT_TYPE.SELECTED_CLEAR, () => {
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
+таблицаInstance.на(Vтаблица.списоктаблица.событие_TYPE.SELECTED_CLEAR, () => {
     console.log("selected clear!");
 });</br>
 ```
 
 
-Full sample code (you can try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree)):</br>
+Full sample код (Вы можете try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree)):</br>
 ```
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
     {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto"
+        "поле": "ID Заказа",
+        "title": "ID Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Customer ID",
-        "title": "Customer ID",
-        "width": "auto"
+        "поле": "пользовательскийer ID",
+        "title": "пользовательскийer ID",
+        "ширина": "авто"
     },
     {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto"
+        "поле": "Product имя",
+        "title": "Product имя",
+        "ширина": "авто"
     }
 ];
 
 const option = {
-  records:data,
+  records:данные,
   columns
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
 
-tableInstance.on(VTable.ListTable.EVENT_TYPE.SELECTED_CLEAR, () => {
+таблицаInstance.на(Vтаблица.списоктаблица.событие_TYPE.SELECTED_CLEAR, () => {
     console.log("selected clear!");
 });
     })</br>
 ```
 ## Related Documents
 
-Related api: https://www.visactor.io/vtable/api/events#SELECTED_CLEAR</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/апи/событиеs#SELECTED_CLEAR</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

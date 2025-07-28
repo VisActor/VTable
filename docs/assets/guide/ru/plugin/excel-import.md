@@ -1,101 +1,101 @@
-# Data Import Plugin
+# данные Import Plugin
 
-## Function Introduction
+## функция Introduction
 
-ExcelImportPlugin is an import plugin designed to provide users with an efficient solution for importing multiple formats of external data files. This plugin supports data import in Excel, CSV, JSON and HTML formats.
+ExcelImportPlugin is an import plugin designed к provide users с an efficient solution для importing multiple formats из external данные files. This plugin supports данные import в Excel, CSV, JSON и HTML formats.
 
-### Supported data formats
+### Supported данные formats
 - Excel File
-- CSV File (Supporting Custom Delimiters)
-- JSON Object
-- HTML Data
+- CSV File (Supporting пользовательский Delimiters)
+- JSON объект
+- HTML данные
 
 ### Service restrictions
-The current version does not support the import function of PivotTable data.
+The текущий version does не support the import функция из сводныйтаблица данные.
 
 ## Plugin configuration
 
 ### ExcelImportOptions
-The plugin constructor accepts a configuration object, which must implement the `ExcelImportOptions` interface. The following is a complete description of the configuration parameters:
+The plugin constructor accepts a configuration объект, which must implement the `ExcelImportOptions` интерфейс. Следующий is a complete description из the configuration parameters:
 
 ```
-interface ExcelImportOptions {
-  id?: string;                        // The unique identifier of the plugin instance, which by default will use excel-import-plugin-${Date.now()};
-  headerRowCount?: number;             // The number of header rows in an Excel file is only valid for Excel format. If not specified, it will be automatically detected.
-  exportData?: boolean;                // Whether to export as JavaScript object format. The default is false.
-  autoTable?: boolean;                 // Whether to automatically replace the table data. The default setting is true.
-  autoColumns?: boolean;               // Whether to automatically generate column configuration, default is true
-  delimiter?: string;                  // CSV file delimiter, default is the English comma
-  batchSize?: number;                  // Batch processing data row count, default value is 1000
-  enableBatchProcessing?: boolean;     // Whether to enable batch processing mode. The default is true.
-  asyncDelay?: number;                 // Asynchronous processing delay time (in milliseconds), default value is 5
+интерфейс ExcelImportOptions {
+  id?: строка;                        // The unique identifier из the plugin instance, which по по умолчанию will use excel-import-plugin-${Date.now()};
+  headerRowCount?: число;             // The число из header rows в an Excel file is only valid для Excel format. If не specified, it will be автоmatically detected.
+  exportданные?: логический;                // Whether к export as JavaScript объект format. The по умолчанию is false.
+  автотаблица?: логический;                 // Whether к автоmatically replace the таблица данные. The по умолчанию setting is true.
+  автоColumns?: логический;               // Whether к автоmatically generate column configuration, по умолчанию is true
+  delimiter?: строка;                  // CSV file delimiter, по умолчанию is the English comma
+  batchSize?: число;                  // Batch processing данные row count, по умолчанию значение is 1000
+  enableBatchProcessing?: логический;     // Whether к включить batch processing mode. The по умолчанию is true.
+  asyncDelay?: число;                 // Asynchronous processing delay time (в milliseconds), по умолчанию значение is 5
 }
 ```
 
-| name of parameter | type | default | explain |
+| имя из параметр | тип | по умолчанию | explain |
 |---------|------|--------|------|
-| `id` | string | excel-import-plugin-${Date.now()} | Plugin instance identifier, used to distinguish multiple plugin instances|
-| `headerRowCount` | number | - | Specify the number of header rows in the Excel file. This setting is only applicable to Excel files. |
-| `exportData` | boolean | false | Control whether to export the data in JavaScript object format |
-| `autoTable` | boolean | true | Control whether to automatically replace the existing data in the table |
-| `autoColumns` | boolean | true | Control whether columns are automatically configured based on the imported data |
-| `delimiter` | string | ',' | The field delimiter of a CSV file|
-| `batchSize` | number | 1000 | The number of data rows processed in each batch under batch processing mode |
-| `enableBatchProcessing` | boolean | true | Should the batch processing mode be enabled to optimize memory usage? |
-| `asyncDelay` | number | 5 | Delay time (in milliseconds) during the asynchronous processing process |
+| `id` | строка | excel-import-plugin-${Date.now()} | Plugin instance identifier, used к distinguish multiple plugin instances|
+| `headerRowCount` | число | - | Specify the число из header rows в the Excel file. This setting is only applicable к Excel files. |
+| `exportданные` | логический | false | Control whether к export the данные в JavaScript объект format |
+| `автотаблица` | логический | true | Control whether к автоmatically replace the existing данные в the таблица |
+| `автоColumns` | логический | true | Control whether columns are автоmatically configured based на the imported данные |
+| `delimiter` | строка | ',' | The поле delimiter из a CSV file|
+| `batchSize` | число | 1000 | The число из данные rows processed в каждый batch under batch processing mode |
+| `enableBatchProcessing` | логический | true | Should the batch processing mode be включен к optimize memory usвозраст? |
+| `asyncDelay` | число | 5 | Delay time (в milliseconds) during the asynchronous processing process |
 
-### import function
+### import функция
 
-The core method of the plugin is responsible for performing the data import operation.
+The core method из the plugin is responsible для performing the данные import operation.
 
 ```ts
 async import(
-  type: 'file' | 'csv' | 'json' | 'html',
-  source?: string | object,
+  тип: 'file' | 'csv' | 'json' | 'html',
+  source?: строка | объект,
   options?: Partial<ExcelImportOptions>
 ): Promise<ImportResult>
 ```
 
-**type（necessary）**
-- type：`'file' | 'csv' | 'json' | 'html'`
-- explain：Specify the type of imported data
+**тип（necessary）**
+- тип：`'file' | 'csv' | 'json' | 'html'`
+- explain：Specify the тип из imported данные
   - `'file'`：Import files through the file selector
-  - `'csv'`：Import string data in CSV format
-  - `'json'`：Import data objects in JSON format
-  - `'html'`：Import data in HTML table format
+  - `'csv'`：Import строка данные в CSV format
+  - `'json'`：Import данные objects в JSON format
+  - `'html'`：Import данные в HTML таблица format
 
-**source（optional）**
-- type：`string | object`
-- explain：Data source content
-  - When `type` is set to `'file'`, this parameter is invalid.
-  - When `type` is either `'csv'`, `'html'`, or `'json'`, a string or object in the corresponding format should be passed in.
+**source（необязательный）**
+- тип：`строка | объект`
+- explain：данные source content
+  - When `тип` is set к `'file'`, this параметр is invalid.
+  - When `тип` is either `'csv'`, `'html'`, или `'json'`, a строка или объект в the corresponding format should be passed в.
 
-**options（optional）**
-- type：`Partial<ExcelImportOptions>`
+**options（необязательный）**
+- тип：`Partial<ExcelImportOptions>`
 - explain：The runtime configuration parameters will temporarily override the configuration set during the plugin initialization.
 
 ## operating guide
 
 ### Plugin initialization
 
-First, a plugin instance needs to be created and added to the plugin configuration of the VTable:
+первый, a plugin instance needs к be created и added к the plugin configuration из the Vтаблица:
 
 ```ts
 //初始化插件
-const excelImportPlugin = new ExcelImportPlugin({
-  exportData: true
+const excelImportPlugin = новый ExcelImportPlugin({
+  exportданные: true
 });
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   container: document.getElementById(CONTAINER_ID),
   records,
   columns,
-  theme: VTable.themes.DEFAULT,
-  select: { disableSelect: false },
+  тема: Vтаблица.темаs.по умолчанию,
+  выбрать: { disableSelect: false },
   plugins: [excelImportPlugin]
 };
 ```
 
-### Usage example
+### Usвозраст пример
 
 #### File import
 
@@ -105,172 +105,172 @@ Import local files through the file selector:
 await excelImportPlugin.import('file');
 
 await excelImportPlugin.import('file', undefined, {
-  exportData: true,
+  exportданные: true,
   delimiter: ';' 
 });
 ```
 
-#### CSV data import
+#### CSV данные import
 
-Import string data in CSV format:
+Import строка данные в CSV format:
 
 ```ts
-const csvData1 = `姓名,年龄,部门
+const csvданные1 = `姓名,年龄,部门
 张三,25,技术部
 李四,30,销售部
 王五,28,市场部`;
 
-await excelImportPlugin.import('csv', csvData1);
+await excelImportPlugin.import('csv', csvданные1);
 
-const csvData2 = `姓名;年龄;部门
+const csvданные2 = `姓名;年龄;部门
 张三;25;技术部
 李四;30;销售部`;
 
-await excelImportPlugin.import('csv', csvData2, {
+await excelImportPlugin.import('csv', csvданные2, {
   delimiter: ';'
 });
 
 ```
 
-#### Disable automatic table updates
+#### отключить автоmatic таблица updates
 
-Only obtain data without automatically updating the table:
+Only obtain данные без автоmatically updating the таблица:
 
 ```javascript
-const result = await excelImportPlugin.import('json', jsonData, {
-  autoTable: false,
+const result = await excelImportPlugin.import('json', jsonданные, {
+  автотаблица: false,
 });
 ```
 
 ## 演示代码
 
-```javascript livedemo template=vtable
-function createTable() {
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+функция createтаблица() {
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
-    const excelImportPlugin = new VTablePlugins.ExcelImportPlugin({
-      exportData: true
+    const excelImportPlugin = новый VтаблицаPlugins.ExcelImportPlugin({
+      exportданные: true
     });
     const option = {
       container: document.getElementById(CONTAINER_ID),
-      records:data,
+      records:данные,
       columns,
-      theme: VTable.themes.DEFAULT,
-      select: { disableSelect: false },
+      тема: Vтаблица.темаs.по умолчанию,
+      выбрать: { disableSelect: false },
       plugins: [excelImportPlugin]
     };
-    const tableInstance = new VTable.ListTable(option);
-    addImportButton(excelImportPlugin, tableInstance);
-    window.tableInstance = tableInstance;
+    const таблицаInstance = новый Vтаблица.списоктаблица(option);
+    addImportКнопка(excelImportPlugin, таблицаInstance);
+    window.таблицаInstance = таблицаInstance;
   })
 }
 
-function addImportButton(importPlugin, tableInstance) {
+функция addImportКнопка(importPlugin, таблицаInstance) {
   const panelContainer = document.createElement('div');
-  const buttonContainer = document.createElement('div');
+  const КнопкаContainer = document.createElement('div');
   const textareaContainer = document.createElement('div');
   textareaContainer.style.marginTop = '8px';
-  const dataTextArea = document.createElement('textarea');
-  dataTextArea.rows = 5;
-  dataTextArea.cols = 50;
-  dataTextArea.placeholder = '在此粘贴JSON或CSV数据(格式需正确)';
-  dataTextArea.style.width = '100%';
-  dataTextArea.style.boxSizing = 'border-box';
-  dataTextArea.style.padding = '8px';
+  const данныеTextArea = document.createElement('textarea');
+  данныеTextArea.rows = 5;
+  данныеTextArea.cols = 50;
+  данныеTextArea.placeholder = '在此粘贴JSON或CSV数据(格式需正确)';
+  данныеTextArea.style.ширина = '100%';
+  данныеTextArea.style.boxSizing = 'граница-box';
+  данныеTextArea.style.заполнение = '8px';
 
-  panelContainer.style.position = 'absolute';
-  panelContainer.style.top = '10px';
-  panelContainer.style.opacity = '0.9';
-  panelContainer.style.right = '10px';
+  panelContainer.style.позиция = 'absolute';
+  panelContainer.style.верх = '10px';
+  panelContainer.style.opaГород = '0.9';
+  panelContainer.style.право = '10px';
   panelContainer.style.zIndex = '1000';
-  buttonContainer.style.display = 'flex';
-  buttonContainer.style.gap = '8px';
-  buttonContainer.style.flexWrap = 'wrap';
+  КнопкаContainer.style.display = 'flex';
+  КнопкаContainer.style.gap = '8px';
+  КнопкаContainer.style.flexWrap = 'wrap';
 
-  const importButton = document.createElement('button');
-  importButton.textContent = '导入文件';
-  importButton.addEventListener('click', async () => {
+  const importКнопка = document.createElement('Кнопка');
+  importКнопка.textContent = '导入文件';
+  importКнопка.addсобытиесписокener('Нажать', async () => {
     try {
       //注意，如果用户需要使用文件传入csv并且文件中的分隔符需要自定义的话，我需要传入第二个参数为undefined
       const result = await importPlugin.import('file');
       console.log('导入成功:', result);
-    } catch (error) {
-      console.error('导入失败:', error);
-      alert('导入失败: ' + (error.message || error));
+    } catch (ошибка) {
+      console.ошибка('导入失败:', ошибка);
+      предупреждение('导入失败: ' + (ошибка.messвозраст || ошибка));
     }
   });
 
-  const jsonButton = document.createElement('button');
-  jsonButton.textContent = '导入JSON数据';
-  jsonButton.addEventListener('click', async () => {
-    let jsonData;
-    if (dataTextArea.value.trim()) {
+  const jsonКнопка = document.createElement('Кнопка');
+  jsonКнопка.textContent = '导入JSON数据';
+  jsonКнопка.addсобытиесписокener('Нажать', async () => {
+    let jsonданные;
+    if (данныеTextArea.значение.trim()) {
       try {
-        jsonData = JSON.parse(dataTextArea.value.trim());
-      } catch (error) {
-        console.error('JSON格式错误');
-        return;
+        jsonданные = JSON.parse(данныеTextArea.значение.trim());
+      } catch (ошибка) {
+        console.ошибка('JSON格式错误');
+        возврат;
       }
     } else {
-      jsonData = [
+      jsonданные = [
         {
           "col0": "赵六",
           "col1": "32",
@@ -292,52 +292,52 @@ function addImportButton(importPlugin, tableInstance) {
       ];
     }
     try {
-      const result = await importPlugin.import('json', jsonData);
+      const result = await importPlugin.import('json', jsonданные);
       console.log('JSON导入成功:', result);
-    } catch (error) {
-      console.error('JSON导入失败:', error);
-      alert('JSON导入失败: ' + (error.message || error));
+    } catch (ошибка) {
+      console.ошибка('JSON导入失败:', ошибка);
+      предупреждение('JSON导入失败: ' + (ошибка.messвозраст || ошибка));
     }
   });
 
-  const delimiterButton = document.createElement('button');
-  delimiterButton.textContent = '分号分隔CSV';
-  delimiterButton.addEventListener('click', async () => {
-    const csvData =
-      dataTextArea.value.trim() ||
+  const delimiterКнопка = document.createElement('Кнопка');
+  delimiterКнопка.textContent = '分号分隔CSV';
+  delimiterКнопка.addсобытиесписокener('Нажать', async () => {
+    const csvданные =
+      данныеTextArea.значение.trim() ||
       `姓名;年龄;部门;工资
 张三;25;技术部;8000
 李四;30;销售部;6000
 王五;28;技术部;9000`;
     try {
-      const result = await importPlugin.import('csv', csvData, {
+      const result = await importPlugin.import('csv', csvданные, {
         delimiter: ';'
       });
       console.log('分号分隔CSV导入成功:', result);
-    } catch (error) {
-      console.error('分号分隔CSV导入失败:', error);
-      alert('分号分隔CSV导入失败: ' + (error.message || error));
+    } catch (ошибка) {
+      console.ошибка('分号分隔CSV导入失败:', ошибка);
+      предупреждение('分号分隔CSV导入失败: ' + (ошибка.messвозраст || ошибка));
     }
   });
 
-  panelContainer.appendChild(buttonContainer);
-  buttonContainer.appendChild(importButton);
-  buttonContainer.appendChild(jsonButton);
-  buttonContainer.appendChild(delimiterButton);
-  textareaContainer.appendChild(dataTextArea);
+  panelContainer.appendChild(КнопкаContainer);
+  КнопкаContainer.appendChild(importКнопка);
+  КнопкаContainer.appendChild(jsonКнопка);
+  КнопкаContainer.appendChild(delimiterКнопка);
+  textareaContainer.appendChild(данныеTextArea);
   panelContainer.appendChild(textareaContainer);
   
-  const tableContainer = document.getElementById(CONTAINER_ID);
-  if (tableContainer) {
-    tableContainer.appendChild(panelContainer);
+  const таблицаContainer = document.getElementById(CONTAINER_ID);
+  if (таблицаContainer) {
+    таблицаContainer.appendChild(panelContainer);
   }
 
 }
 
-createTable();
+createтаблица();
 
 ```
 
-# This document was contributed by:
+# This document was contributed по:
 
 [Abstract chips](https://github.com/Violet2314)

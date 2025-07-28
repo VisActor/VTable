@@ -1,90 +1,90 @@
-# Basic table data analysis
+# базовый таблица данные analysis
 
-Currently supported capabilities include sorting, filtering, and data aggregation calculations.
+Currently supported capabilities include сортировкаing, filtering, и данные aggregation calculations.
 
-# Data sorting
+# данные сортировкаing
 
-For details, please refer to the tutorial: https://visactor.io/vtable/guide/basic_function/sort/list_sort
+для details, please refer к the tutorial: https://visactor.io/vтаблица/guide/базовый_function/сортировка/список_сортировка
 
-# Data filtering
+# данные filtering
 
-The basic table component sets data filtering rules through the interface `updateFilterRules`, supporting value filtering and function filtering. Here is a usage example of filtering data:
+The базовый таблица компонент sets данные filtering rules through the интерфейс `updateFilterRules`, supporting значение filtering и функция filtering. Here is a usвозраст пример из filtering данные:
 
 ```javascript
-tableInstance.updateFilterRules([
+таблицаInstance.updateFilterRules([
   {
     filterKey: 'sex',
     filteredValues: ['boy']
   },
   {
-    filterFunc: (record: Record<string, any>) => {
-      return record.age > 30;
+    filterFunc: (record: Record<строка, любой>) => {
+      возврат record.возраст > 30;
     }
   }
 ]);
 ```
 
-In the above example, we set up value filtering through `filterKey` and `filteredValues` to only display data with a gender of "boy"; at the same time, we used function filtering to customize the filtering logic through `filterFunc` and only displayed `age The `field is the data whose age is greater than 30.
+в the above пример, we set up значение filtering through `filterKey` и `filteredValues` к only display данные с a пол из "boy"; в the same time, we used функция filtering к пользовательскийize the filtering logic through `filterFunc` и only displayed `возраст The `поле is the данные whose возраст is greater than 30.
 
-Specific example: https://visactor.io/vtable/demo/list-table-data-analysis/list-table-data-filter
+Specific пример: https://visactor.io/vтаблица/демонстрация/список-таблица-данные-analysis/список-таблица-данные-filter
 
-To clear the data filtering rules, pass the function arguments blank`tableInstance.updateFilterRules()`.
+к clear the данные filtering rules, pass the функция arguments blank`таблицаInstance.updateFilterRules()`.
 
-# Data aggregation
+# данные aggregation
 
-The basic table supports aggregation calculation of data, and different aggregation methods can be set for each column, including sum, average, maximum value, minimum value, and custom function summary logic. Multiple aggregation methods can be set for the same column, and the aggregation results will be displayed in multiple rows.
+The базовый таблица supports aggregation calculation из данные, и different aggregation методы can be set для каждый column, including sum, averвозраст, maximum значение, minimum значение, и пользовательский функция summary logic. Multiple aggregation методы can be set для the same column, и the aggregation results will be displayed в multiple rows.
 
-## Aggregation calculation type
+## Aggregation calculation тип
 
-- To sum, set `aggregationType` to `AggregationType.SUM`
-- Average, set `aggregationType` to `AggregationType.AVG`
-- Maximum value, set `aggregationType` to `AggregationType.MAX`
-- Minimum value, set `aggregationType` to `AggregationType.MIN`
-- Count, set `aggregationType` to `AggregationType.COUNT`
-- Custom function, set `aggregationType` to `AggregationType.CUSTOM`, and set custom aggregation logic through `aggregationFun`
+- к sum, set `aggregationType` к `AggregationType.SUM`
+- Averвозраст, set `aggregationType` к `AggregationType.AVG`
+- Maximum значение, set `aggregationType` к `AggregationType.MAX`
+- Minimum значение, set `aggregationType` к `AggregationType.MIN`
+- Count, set `aggregationType` к `AggregationType.COUNT`
+- пользовательский функция, set `aggregationType` к `AggregationType.пользовательский`, и set пользовательский aggregation logic through `aggregationFun`
 
-## Aggregate value formatting function
+## Aggregate значение formatting функция
 
-Use `formatFun` to set the formatting function of the aggregate value, and you can customize the display format of the aggregate value.
+Use `formatFun` к set the formatting функция из the aggregate значение, и Вы можете пользовательскийize the display format из the aggregate значение.
 
 ## Aggregated result placement
 
-Use `showOnTop` to control the display position of the aggregation results. The default is `false`, that is, the aggregation results are displayed at the bottom of the body. If set to `true`, the aggregation results are displayed at the top of the body.
+Use `showOnTop` к control the display позиция из the aggregation results. The по умолчанию is `false`, that is, the aggregation results are displayed в the низ из the body. If set к `true`, the aggregation results are displayed в the верх из the body.
 
-Note: Currently, the aggregate value does not have the ability to customize freezing. It needs to be combined with bottomFrozonRowCount to achieve fixed display. In addition, the embarrassing thing is that topFrozonRowCount has not been added yet, so it is recommended to display the aggregation result at the bottom of the body first. Comprehensive freezing capabilities will be supported in the future.
+Note: Currently, the aggregate значение does не have the ability к пользовательскийize freezing. It needs к be combined с bottomFrozonRowCount к achieve fixed display. в addition, the embarrassing thing is that topFrozonRowCount has не been added yet, so it is recommended к display the aggregation result в the низ из the body первый. Comprehensive freezing capabilities will be supported в the future.
 
 ## Aggregation configuration
 
-Aggregation configuration can be set in the `columns` column definition or configured in the table global `option`.
+Aggregation configuration can be set в the `columns` column definition или configured в the таблица global `option`.
 
-### Configure aggregation method in column definition
+### Configure aggregation method в column definition
 
-In the column definition, the aggregation method can be configured through the `aggregation` attribute. Here is an example of an aggregation configuration:
+в the column definition, the aggregation method can be configured through the `aggregation` attribute. Here is an пример из an aggregation configuration:
 
 ```javascript
 columns: [
   {
-    field: 'salary',
-    title: 'salary',
-    width: 100,
+    поле: 'salary',
+    заголовок: 'salary',
+    ширина: 100,
     aggregation: [
       {
         aggregationType: AggregationType.MAX,
-        formatFun(value) {
-          return 'Maximum salary:' + Math.round(value) + 'yuan';
+        formatFun(значение) {
+          возврат 'Maximum salary:' + Math.round(значение) + 'yuan';
         }
       },
       {
         aggregationType: AggregationType.MIN,
-        formatFun(value) {
-          return 'Minimum salary:' + Math.round(value) + 'yuan';
+        formatFun(значение) {
+          возврат 'Minimum salary:' + Math.round(значение) + 'yuan';
         }
       },
       {
         aggregationType: AggregationType.AVG,
         showOnTop: false,
-        formatFun(value, col, row, table) {
-          return 'Average:' + Math.round(value) + 'Yuan (total' + table.recordsCount + 'data)';
+        formatFun(значение, col, row, таблица) {
+          возврат 'Averвозраст:' + Math.round(значение) + 'Yuan (total' + таблица.recordsCount + 'данные)';
         }
       }
     ]
@@ -92,54 +92,54 @@ columns: [
 ];
 ```
 
-In the above example, we set three aggregation methods for the `salary` column: maximum value, minimum value and average value. Use `aggregationType` to specify the aggregation method, and then use `formatFun` to customize the display format of the aggregation results, and use `showOnTop` to control whether the aggregation results are displayed at the top or bottom of the body.
+в the above пример, we set three aggregation методы для the `salary` column: maximum значение, minimum значение и averвозраст значение. Use `aggregationType` к specify the aggregation method, и then use `formatFun` к пользовательскийize the display format из the aggregation results, и use `showOnTop` к control whether the aggregation results are displayed в the верх или низ из the body.
 
-### Table global configuration aggregation method
+### таблица global configuration aggregation method
 
-In addition to configuring the aggregation method in the column definition, you can also set it in the table global configuration. Here is an example of global configuration:
+в addition к configuring the aggregation method в the column definition, Вы можете also set it в the таблица global configuration. Here is an пример из global configuration:
 
 ```javascript
 aggregation(args) {
   if (args.col === 1) {
-    return [
+    возврат [
       {
         aggregationType: AggregationType.MAX,
-        formatFun(value) {
-          return 'Maximum ID:' + Math.round(value) + 'number';
+        formatFun(значение) {
+          возврат 'Maximum ID:' + Math.round(значение) + 'число';
         }
       },
       {
         aggregationType: AggregationType.MIN,
         showOnTop: false,
-        formatFun(value, col, row, table) {
-          return 'Minimum ID:' + Math.round(value) + 'number';
+        formatFun(значение, col, row, таблица) {
+          возврат 'Minimum ID:' + Math.round(значение) + 'число';
         }
       }
     ];
   }
-  if (args.field === 'salary') {
-    return [
+  if (args.поле === 'salary') {
+    возврат [
       {
         aggregationType: AggregationType.MIN,
-        formatFun(value) {
-          return 'Minimum salary:' + Math.round(value) + 'yuan';
+        formatFun(значение) {
+          возврат 'Minimum salary:' + Math.round(значение) + 'yuan';
         }
       },
       {
         aggregationType: AggregationType.AVG,
         showOnTop: false,
-        formatFun(value, col, row, table) {
-          return 'Average salary:' + Math.round(value) + 'Yuan (total' + table.recordsCount + 'data)';
+        formatFun(значение, col, row, таблица) {
+          возврат 'Averвозраст salary:' + Math.round(значение) + 'Yuan (total' + таблица.recordsCount + 'данные)';
         }
       }
     ];
   }
-  return null;
+  возврат null;
 }
 ```
 
-In the above example, we set the aggregation method through the `aggregation` function of global configuration, and return different aggregation configurations according to different conditions. For example, when `args.col === 1`, we set the aggregation method of the maximum and minimum values; when `args.field === 'salary'`, we set the aggregation of the minimum and average values Way.
+в the above пример, we set the aggregation method through the `aggregation` функция из global configuration, и возврат different aggregation configurations according к different conditions. для пример, when `args.col === 1`, we set the aggregation method из the maximum и minimum values; when `args.поле === 'salary'`, we set the aggregation из the minimum и averвозраст values Way.
 
-For specific examples, please refer to: https://visactor.io/vtable/demo/list-table-data-analysis/list-table-aggregation-multiple
+для specific примеры, please refer к: https://visactor.io/vтаблица/демонстрация/список-таблица-данные-analysis/список-таблица-aggregation-multiple
 
-The above is the tutorial document for basic table data analysis capabilities, covering the configuration and usage of data filtering and data aggregation. Hope this document can be helpful to you! If you have any questions, please feel free to ask.
+The above is the tutorial document для базовый таблица данные analysis capabilities, covering the configuration и usвозраст из данные filtering и данные aggregation. Hope this document can be helpful к you! If you have любой questions, please feel free к ask.

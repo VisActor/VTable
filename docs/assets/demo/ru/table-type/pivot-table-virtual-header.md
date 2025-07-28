@@ -1,68 +1,68 @@
 ---
-category: examples
-group: table-type
-title: pivot table with virtual header node
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-virtual-header.png
-link: table_type/Pivot_table/custom_header
-option: PivotTable#columnTree
+категория: примеры
+группа: таблица-тип
+заголовок: сводный таблица с virtual header node
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-таблица-virtual-header.png
+ссылка: таблица_type/сводный_таблица/пользовательский_header
+опция: сводныйтаблица#columnTree
 ---
 
-# pivot table with virtual header node
+# сводный таблица с virtual header node
 
-Pivot table. This example passes in the custom header tree structure rowTree and columnTree. In columnTree, two virtual header nodes are configured. The node's `virtual` is `true`, indicating a virtual node.
+сводный таблица. This пример passes в the пользовательский header tree structure rowTree и columnTree. в columnTree, two virtual header nodes are configured. The node's `virtual` is `true`, indicating a virtual node.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable` table type
-- `columnTree` custom header tree structure
-- `rowTree`custom header tree structure
-- `columns` Optional Configure, dimension styles, etc.
-- `rows`Optional Configure, dimension styles, etc.
+- `сводныйтаблица` таблица тип
+- `columnTree` пользовательский header tree structure
+- `rowTree`пользовательский header tree structure
+- `columns` необязательный Configure, dimension styles, etc.
+- `rows`необязательный Configure, dimension styles, etc.
 - `indicators`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Row Totals') {
-                return '#a5b7fc';
+              if (arg.данныеValue === 'Row Totals') {
+                возврат '#a5b7fc';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Sub Totals') {
-                return '#d2dcff';
+              if (arg.данныеValue === 'Sub Totals') {
+                возврат '#d2dcff';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           }
@@ -71,42 +71,42 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       columnTree: [
         {
           dimensionKey: 'Segment-1',
-          value: 'Segment-1 (virtual-node)',
+          значение: 'Segment-1 (virtual-node)',
           virtual: true,
           children: [
             {
               dimensionKey: 'Segment',
-              value: 'Consumer',
+              значение: 'Consumer',
               children: [
                 {
-                  indicatorKey: 'Quantity',
-                  value: 'Quantity'
+                  indicatorKey: 'Количество',
+                  значение: 'Количество'
                 },
                 {
-                  indicatorKey: 'Sales',
-                  value: 'Sales'
+                  indicatorKey: 'Продажи',
+                  значение: 'Продажи'
                 },
                 {
-                  indicatorKey: 'Profit',
-                  value: 'Profit'
+                  indicatorKey: 'Прибыль',
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: 'Segment',
-              value: 'Corporate',
+              значение: 'Corporate',
               children: [
                 {
-                  indicatorKey: 'Quantity',
-                  value: 'Quantity'
+                  indicatorKey: 'Количество',
+                  значение: 'Количество'
                 },
                 {
-                  indicatorKey: 'Sales',
-                  value: 'Sales'
+                  indicatorKey: 'Продажи',
+                  значение: 'Продажи'
                 },
                 {
-                  indicatorKey: 'Profit',
-                  value: 'Profit'
+                  indicatorKey: 'Прибыль',
+                  значение: 'Прибыль'
                 }
               ]
             }
@@ -114,24 +114,24 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         },
         {
           dimensionKey: 'Segment',
-          value: 'Home Office',
+          значение: 'Home Office',
           children: [
             {
               dimensionKey: 'Segment-2',
-              value: 'Segment-2 (virtual-node)',
+              значение: 'Segment-2 (virtual-node)',
               virtual: true,
               children: [
                 {
-                  indicatorKey: 'Quantity',
-                  value: 'Quantity'
+                  indicatorKey: 'Количество',
+                  значение: 'Количество'
                 },
                 {
-                  indicatorKey: 'Sales',
-                  value: 'Sales'
+                  indicatorKey: 'Продажи',
+                  значение: 'Продажи'
                 },
                 {
-                  indicatorKey: 'Profit',
-                  value: 'Profit'
+                  indicatorKey: 'Прибыль',
+                  значение: 'Прибыль'
                 }
               ]
             }
@@ -139,108 +139,108 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         },
         {
           dimensionKey: 'Segment',
-          value: 'Column Totals',
+          значение: 'Column Totals',
           children: [
             {
-              indicatorKey: 'Quantity',
-              value: 'Quantity'
+              indicatorKey: 'Количество',
+              значение: 'Количество'
             },
             {
-              indicatorKey: 'Sales',
-              value: 'Sales'
+              indicatorKey: 'Продажи',
+              значение: 'Продажи'
             },
             {
-              indicatorKey: 'Profit',
-              value: 'Profit'
+              indicatorKey: 'Прибыль',
+              значение: 'Прибыль'
             }
           ]
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#d2dcff';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#a5b7fc';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#d2dcff';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#a5b7fc';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#d2dcff';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#a5b7fc';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#d2dcff';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#a5b7fc';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#d2dcff';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#a5b7fc';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#d2dcff';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#a5b7fc';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         }
@@ -248,14 +248,14 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       corner: {
         titleOnDimension: 'row'
       },
-      dataConfig: {
+      данныеConfig: {
         totals: {
           row: {
             showGrandTotals: true,
             showSubTotals: true,
             showSubTotalsOnTop: true,
             showGrandTotalsOnTop: true,
-            subTotalsDimensions: ['Category'],
+            subTotalsDimensions: ['Категория'],
             grandTotalLabel: 'Row Totals',
             subTotalLabel: 'Sub Totals'
           },
@@ -266,28 +266,28 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         }
       },
-      theme: VTable.themes.DEFAULT.extends({
+      тема: Vтаблица.темаs.по умолчанию.extends({
         headerStyle: {
           bgColor: '#5071f9',
-          color(args) {
+          цвет(args) {
             if (
               (args.cellHeaderPaths.colHeaderPaths?.length === 1 && args.cellHeaderPaths.colHeaderPaths[0].virtual) ||
               (args.cellHeaderPaths.colHeaderPaths?.length === 2 && args.cellHeaderPaths.colHeaderPaths[1].virtual)
             ) {
-              return 'red';
+              возврат 'red';
             }
-            return '#fff';
+            возврат '#fff';
           }
         },
         cornerHeaderStyle: {
           bgColor: '#5071f9',
-          color: '#fff'
+          цвет: '#fff'
         }
       }),
 
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = таблицаInstance;
   });
 ```

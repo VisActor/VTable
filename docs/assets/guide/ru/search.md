@@ -1,47 +1,47 @@
-# Search component
+# Search компонент
 
-The `@visactor/vtable-search` package is a component that encapsulates the VTable table search function. It supports searching the contents of cells and highlighting and jumping related search results.
+The `@visactor/vтаблица-search` packвозраст is a компонент that encapsulates the Vтаблица таблица search функция. It supports searching the contents из cells и highlighting и jumping related search results.
 
-## Usage
+## Usвозраст
 
-For demo, please refer to [demo](/vtable/demo/search/search-component)
+для демонстрация, please refer к [демонстрация](/vтаблица/демонстрация/search/search-компонент)
 
 ### Initialization
-First, you need to install the `@visactor/vtable` and `@visactor/vtable-search` packages in your application, and then introduce them in your code to generate a table instance and a search component instance:
+первый, you need к install the `@visactor/vтаблица` и `@visactor/vтаблица-search` packвозрастs в your application, и then introduce them в your код к generate a таблица instance и a search компонент instance:
 
 ```ts
-import * as VTable from '@visactor/vtable';
-import { SearchComponent } from '@visactor/vtable-search';
+import * as Vтаблица от '@visactor/vтаблица';
+import { Searchкомпонент } от '@visactor/vтаблица-search';
 
 //config option
 //......
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
-// search component
-const search = new SearchComponent({
-   table: tableInstance,
-   autoJump: true // Whether to automatically jump to the first search result after the search is completed
+// search компонент
+const search = новый Searchкомпонент({
+   таблица: таблицаInstance,
+   автоJump: true // Whether к автоmatically jump к the первый search result after the search is completed
 });
 ```
 
-### Start Search
-The search component provides the `search` method, which is used to search the contents of cells, highlight and return search results:
+### начало Search
+The search компонент provides the `search` method, which is used к search the contents из cells, highlight и возврат search results:
 
 ```ts
 const searchResult = search.search('search content');
-// searchResult: { index: number, results: { row: number, column: number }[] }
+// searchResult: { index: число, results: { row: число, column: число }[] }
 ```
 
-### Jump to search results
-The search component provides `next` and `prev` methods for jumping to search results:
+### Jump к search results
+The search компонент provides `следующий` и `prev` методы для jumping к search results:
 
 ```ts
-const searchResult = search.next(); // Jump to the next search result
-const searchResult = search.prev(); // Jump to the previous search result
+const searchResult = search.следующий(); // Jump к the следующий search result
+const searchResult = search.prev(); // Jump к the предыдущий search result
 ```
 
-### End search
-The search component provides the `clear` method to end the search:
+### конец search
+The search компонент provides the `clear` method к конец the search:
 
 ```ts
 search.clear();
@@ -49,54 +49,54 @@ search.clear();
 
 ## Configuration
 Initial configuration
-| Parameters | Type | Description |
+| Parameters | тип | Description |
 | --- | --- | --- |
-| table | IVTable | Table instance |
-| autoJump | boolean | Whether to automatically jump to the search after the search is completed |
-| skipHeader | boolean | Search whether to skip the header |
-| highlightCellStyle | ICellStyle | Highlight style for all search results |
-| focuseHighlightCellStyle | ICellStyle | The highlight style of the current target search result |
-| queryMethod | (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean | Search matching method, the `includes` method is used by default |
-| callback | (queryResult: QueryResult, table: IVTable) => void | callback after the search is completed |
+| таблица | IVтаблица | таблица instance |
+| автоJump | логический | Whether к автоmatically jump к the search after the search is completed |
+| skipHeader | логический | Search whether к skip the header |
+| highlightCellStyle | ICellStyle | Highlight style для все search results |
+| focuseHighlightCellStyle | ICellStyle | The highlight style из the текущий target search result |
+| queryMethod | (queryStr: строка, значение: строка, option?: { col: число; row: число; таблица: IVтаблица }) => логический | Search matching method, the `includes` method is used по по умолчанию |
+| обратный вызов | (queryResult: QueryResult, таблица: IVтаблица) => void | обратный вызов after the search is completed |
 
 Notice
 
-* `highlightCellStyle` and `focuseHighlightCellStyle` are two different styles. The former is used to highlight all search results, and the latter is used to highlight the current target search results. Both styles take effect on the entire target cell of the search results. , currently does not support highlighting part of the text in the cell.
+* `highlightCellStyle` и `focuseHighlightCellStyle` are two different styles. The former is used к highlight все search results, и the latter is used к highlight the текущий target search results. Both styles take effect на the entire target cell из the search results. , currently does не support highlighting part из the текст в the cell.
 
-## Component methods
+## компонент методы
 
-* search starts a search, receives a string, and returns an object containing the index of the current search result and a search result array. Each item of the search result array contains the column and row of the current search result, and the content of the current cell.
+* search starts a search, receives a строка, и returns an объект containing the index из the текущий search result и a search result массив. каждый item из the search result массив contains the column и row из the текущий search result, и the content из the текущий cell.
 ```js
 {
    //......
-   search(str: string): {
-       index: number;
+   search(str: строка): {
+       index: число;
        results: {
-           col: number;
-           row: number;
-           value: string;
+           col: число;
+           row: число;
+           значение: строка;
        }[];
    }
 }
 ```
 
-* next & prev jumps to the search results and returns an object containing the index of the current search result and the search result array. Each item of the search result array contains the column and row of the current search result, as well as the content of the current cell.
+* следующий & prev jumps к the search results и returns an объект containing the index из the текущий search result и the search result массив. каждый item из the search result массив contains the column и row из the текущий search result, as well as the content из the текущий cell.
 ```js
 {
-   next(): {
-     index: number;
+   следующий(): {
+     index: число;
      results: {
-         col: number;
-         row: number;
-         value: string;
+         col: число;
+         row: число;
+         значение: строка;
      }[];
    }
    prev(): {
-     index: number;
+     index: число;
      results: {
-         col: number;
-         row: number;
-         value: string;
+         col: число;
+         row: число;
+         значение: строка;
      }[];
    }
 }

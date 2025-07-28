@@ -1,30 +1,30 @@
 ---
-category: examples
-group: data-analysis
-title: Custom Aggregator Types for Pivot Tables
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-customAggregator.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.aggregationRules
+категория: примеры
+группа: данные-analysis
+заголовок: пользовательский Aggregator Types для сводный таблицаs
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-пользовательскийAggregator.png
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.aggregationRules
 ---
 
-# Pivot Analysis - Custom Aggregator Type
+# сводный Analysis - пользовательский Aggregator тип
 
-Pivot analysis tables can perform aggregation calculations on pivot table metrics through the aggregationRules configuration item in the dataConfig. In addition to the built-in aggregation types such as SUM, COUNT, AVERAGE, MAX, and MIN, custom aggregation types are also supported. To use custom aggregation types, you need to first define a custom aggregation class that inherits from the built-in Aggregator class, register it to VTable, and then implement the aggregation logic in the custom aggregation class.
+сводный analysis таблицаs can perform aggregation calculations на сводный таблица metrics through the aggregationRules configuration item в the данныеConfig. в addition к the built-в aggregation types such as SUM, COUNT, AVERвозраст, MAX, и MIN, пользовательский aggregation types are also supported. к use пользовательский aggregation types, you need к первый define a пользовательский aggregation class that inherits от the built-в Aggregator class, регистрация it к Vтаблица, и then implement the aggregation logic в the пользовательский aggregation class.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig.aggregationRules` configures the aggregation fields
+- `данныеConfig.aggregationRules` configures the aggregation полеs
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable
-let tableInstance;
-class AvgPriceAggregator extends VTable.TYPES.Aggregator {
-  sales_sum = 0;
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+class AvgPriceAggregator extends Vтаблица.TYPES.Aggregator {
+  Продажи_sum = 0;
   number_sum = 0;
   constructor(config) {
     super(config);
@@ -40,11 +40,11 @@ class AvgPriceAggregator extends VTable.TYPES.Aggregator {
       }
 
       if (record.isAggregator) {
-        this.sales_sum += record.sales_sum;
+        this.Продажи_sum += record.Продажи_sum;
         this.number_sum += record.number_sum;
       } else {
-        record.Sales && (this.sales_sum += parseFloat(record.Sales));
-        record.Quantity && (this.number_sum += parseFloat(record.Quantity));
+        record.Продажи && (this.Продажи_sum += parseFloat(record.Продажи));
+        record.Количество && (this.number_sum += parseFloat(record.Количество));
       }
     }
     this.clearCacheValue();
@@ -53,79 +53,79 @@ class AvgPriceAggregator extends VTable.TYPES.Aggregator {
   clearCacheValue() {
     this._formatedValue = undefined;
   }
-  value() {
-    return this.records?.length >= 1 ? this.sales_sum / this.number_sum : undefined;
+  значение() {
+    возврат this.records?.length >= 1 ? this.Продажи_sum / this.number_sum : undefined;
   }
   reset() {
     super.reset();
-    this.sales_sum = 0;
+    this.Продажи_sum = 0;
     this.number_sum = 0;
   }
 }
-VTable.register.aggregator('avgPrice', AvgPriceAggregator);
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+Vтаблица.регистрация.aggregator('avgPrice', AvgPriceAggregator);
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Row Totals') {
-                return '#ff9900';
+              if (arg.данныеValue === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Sub Totals') {
-                return '#ba54ba';
+              if (arg.данныеValue === 'Sub Totals') {
+                возврат '#ba54ba';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'AvgPrice(CalculatedField)',
-          title: 'AvgPrice',
-          width: 'auto',
+          indicatorKey: 'AvgPrice(Calculatedполе)',
+          заголовок: 'AvgPrice',
+          ширина: 'авто',
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           }
         },
-        { indicatorKey: 'AvgPrice(CustomAggregator)', title: 'AvgPrice CustomAggregator', width: 'auto' }
+        { indicatorKey: 'AvgPrice(пользовательскийAggregator)', заголовок: 'AvgPrice пользовательскийAggregator', ширина: 'авто' }
       ],
       corner: {
         titleOnDimension: 'row',
@@ -133,20 +133,20 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
+      данныеConfig: {
         aggregationRules: [
           {
-            indicatorKey: 'AvgPrice(CustomAggregator)',
+            indicatorKey: 'AvgPrice(пользовательскийAggregator)',
             aggregationType: 'avgPrice',
-            field: ['Sales', 'Quantity'] // Fields used for aggregation calculation logic
+            поле: ['Продажи', 'Количество'] // полеs used для aggregation calculation logic
           }
         ],
-        calculatedFieldRules: [
+        calculatedполеRules: [
           {
-            key: 'AvgPrice(CalculatedField)',
-            dependIndicatorKeys: ['Quantity', 'Sales'],
+            key: 'AvgPrice(Calculatedполе)',
+            dependIndicatorKeys: ['Количество', 'Продажи'],
             calculateFun: dependValue => {
-              return dependValue.Sales / dependValue.Quantity;
+              возврат dependValue.Продажи / dependValue.Количество;
             }
           }
         ],
@@ -154,22 +154,22 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           row: {
             showGrandTotals: true,
             showSubTotals: true,
-            subTotalsDimensions: ['Category'],
+            subTotalsDimensions: ['Категория'],
             grandTotalLabel: 'Row Totals',
             subTotalLabel: 'Sub Totals'
           },
           column: {
             showGrandTotals: true,
             showSubTotals: true,
-            subTotalsDimensions: ['Region'],
+            subTotalsDimensions: ['Регион'],
             grandTotalLabel: 'Column Totals',
             subTotalLabel: 'Sub Totals'
           }
         }
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

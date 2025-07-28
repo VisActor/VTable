@@ -1,26 +1,26 @@
 ---
-title: How to automatically calculate and display the aggregate values of the VTable's pivot table?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: How к автоmatically calculate и display the aggregate values из the Vтаблица's сводный таблица?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Title
 
-How to automatically calculate and display the aggregate values of the VTable's pivot table?</br>
+How к автоmatically calculate и display the aggregate values из the Vтаблица's сводный таблица?</br>
 ## Description
 
-Why is the aggregate node data not displayed after the pivot table is set to display in tree structure?</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DhKzbArAKohl8lx6QwicFeRWnvb.gif' alt='' width='701' height='639'>
+Why is the aggregate node данные не displayed after the сводный таблица is set к display в tree structure?</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DhKzbArAKohl8lx6QwicFeRWnvb.gif' alt='' ширина='701' высота='639'>
 
 ## Solution 
 
-Aggregation rules need to be configured so that data can be automatically aggregated during data analysis and the aggregated value can be used as the display value of the parent cell.</br>
-## Code Example
+Aggregation rules need к be configured so that данные can be автоmatically aggregated during данные analysis и the aggregated значение can be used as the display значение из the parent cell.</br>
+## код пример
 
 ```
-  dataConfig: {
+  данныеConfig: {
     totals: {
         row: {
           showSubTotals: true,
-          subTotalsDimensions: ['Category'],
+          subTotalsDimensions: ['Категория'],
           subTotalLabel: 'subtotal'
         }
       }
@@ -28,13 +28,13 @@ Aggregation rules need to be configured so that data can be automatically aggreg
 ```
 ## Results
 
-Online effect reference:https://visactor.io/vtable/demo/table-type/pivot-analysis-table-tree</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/TfUKbUwmVoaKt4xhLw3c4aONnxx.gif' alt='' width='1338' height='416'>
+Online effect reference:https://visactor.io/vтаблица/демонстрация/таблица-тип/сводный-analysis-таблица-tree</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/TfUKbUwmVoaKt4xhLw3c4aONnxx.gif' alt='' ширина='1338' высота='416'>
 
 ## Related Documents
 
-Tree Table Demo：https://visactor.io/vtable/demo/table-type/pivot-analysis-table-tree</br>
-Tutorial on pivot table data analysis：https://visactor.io/vtable/guide/data_analysis/pivot_table_dataAnalysis</br>
-Related api：https://visactor.io/vtable/option/PivotTable#dataConfig.totals</br>
-github：https://github.com/VisActor/VTable</br>
+Tree таблица демонстрация：https://visactor.io/vтаблица/демонстрация/таблица-тип/сводный-analysis-таблица-tree</br>
+Tutorial на сводный таблица данные analysis：https://visactor.io/vтаблица/guide/данные_analysis/сводный_таблица_данныеAnalysis</br>
+Related апи：https://visactor.io/vтаблица/option/сводныйтаблица#данныеConfig.totals</br>
+github：https://github.com/VisActor/Vтаблица</br>
 

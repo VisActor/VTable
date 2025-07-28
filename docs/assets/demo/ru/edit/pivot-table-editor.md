@@ -1,125 +1,125 @@
 ---
-category: examples
-group: edit
-title: pivot table edit data
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-editor.gif
-link: edit/edit_cell
-option: PivotTable#editor
+категория: примеры
+группа: edit
+заголовок: сводный таблица edit данные
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-таблица-editor.gif
+ссылка: edit/edit_cell
+опция: сводныйтаблица#editor
 ---
 
-# pivot table edit data
+# сводный таблица edit данные
 
-Pivot table editing data, this example enters editing mode when the mouse is clicked.
+сводный таблица editing данные, this пример enters editing mode when the mouse is Нажатьed.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `VTable.register.editor` registration editor
-- `editor` sets the editor registration name
-- `editCellTrigger` sets the time to enter editing interaction
+- `Vтаблица.регистрация.editor` registration editor
+- `editor` sets the editor registration имя
+- `editCellTrigger` sets the time к enter editing interaction
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// Need to introduce the plug-in package @visactor/vtable-editors when using it
-// import * as VTable_editors from '@visactor/vtable-editors';
-//Normal usage const input_editor = new VTable.editors.InputEditor();
-//VTable.editors is renamed to VTable_editors in the official website editor
-let tableInstance;
-const input_editor = new VTable_editors.InputEditor();
-VTable.register.editor('input-editor', input_editor);
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+// Need к introduce the plug-в packвозраст @visactor/vтаблица-editors when using it
+// import * as Vтаблица_editors от '@visactor/vтаблица-editors';
+//Normal usвозраст const input_editor = новый Vтаблица.editors.InputEditor();
+//Vтаблица.editors is reимяd к Vтаблица_editors в the official website editor
+let таблицаInstance;
+const input_editor = новый Vтаблица_editors.InputEditor();
+Vтаблица.регистрация.editor('ввод-editor', input_editor);
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
@@ -130,29 +130,29 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        sortRules: [
+      данныеConfig: {
+        сортировкаRules: [
           {
-            sortField: 'Category',
-            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+            сортировкаполе: 'Категория',
+            сортировкаBy: ['Office Supplies', 'Technology', 'Furniture']
           }
         ],
         totals: {
           row: {
             showSubTotals: true,
-            subTotalsDimensions: ['Category'],
+            subTotalsDimensions: ['Категория'],
             subTotalLabel: 'subtotal'
           }
         }
       },
-      editor: 'input-editor',
-      editCellTrigger: 'click',
-      widthMode: 'standard'
+      editor: 'ввод-editor',
+      editCellTrigger: 'Нажать',
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    tableInstance.on('change_cell_value', arg => {
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    таблицаInstance.на('change_cell_value', arg => {
       console.log(arg);
     });
-    window['tableInstance'] = tableInstance;
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

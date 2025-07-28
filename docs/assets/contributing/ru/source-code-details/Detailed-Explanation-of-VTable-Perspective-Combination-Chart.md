@@ -1,226 +1,226 @@
 ---
-title: Detailed Explanation of VTable Perspective Combination Chart    
+заголовок: Detailed Explanation из Vтаблица Perspective Combination график    
 
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
-This article will interpret the source code of the VTable perspective, helping developers better understand its internal implementation mechanism.
+This article will interpret the source код из the Vтаблица perspective, helping developers better understand its internal implementation mechanism.
 
-## Definition of Perspective Combination Chart
-
-
-A PivotChart is an advanced table type in VTable that allows users to analyze and visualize data in a multidimensional way. It arranges and combines the same type of charts according to certain rules to form a large chart, with each small chart presenting a portion of the data. This type of chart is usually used to group large amounts of data for better observation and comparison of relationships between different data.    \r
-
-### Features
+## Definition из Perspective Combination график
 
 
-*  **Multidimensional Display**: The pivot combination chart can simultaneously present multiple data dimensions, allowing users to gain a more comprehensive understanding of the relationships between the data.    
+A сводныйграфик is an advanced таблица тип в Vтаблица that allows users к analyze и visualize данные в a multidimensional way. It arranges и combines the same тип из графикs according к certain rules к form a large график, с каждый small график presenting a portion из the данные. This тип из график is usually used к group large amounts из данные для better observation и comparison из relationships between different данные.    \r
 
-*  **Flexible Layout**: Different dimensions can be placed in different positions to observe different data results.    \r
-
-*  **Data Grouping**: It is often used to group data according to certain rules, with each subplot displaying the data of a group, making it easier for users to understand and analyze.    
+### возможности
 
 
+*  **Multidimensional Display**: The сводный combination график can simultaneously present multiple данные dimensions, allowing users к gain a more comprehensive understanding из the relationships between the данные.    
 
-<div style="display: flex;"><div style="flex: 47; margin:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/SDnZbUwpIo967sxRiRRcHGgenmc.gif' alt='' width='1000' height='auto'>
-</div><div style="flex: 52; margin:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/IRayb0VSyoZrUixATv5chmNCnjb.gif' alt='' width='1000' height='auto'>
+*  **Flexible макет**: Different dimensions can be placed в different positions к observe different данные results.    \r
+
+*  **данные Grouping**: It is often used к group данные according к certain rules, с каждый subplot displaying the данные из a group, making it easier для users к understand и analyze.    
+
+
+
+<div style="display: flex;"><div style="flex: 47; отступ:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/SDnZbUwpIo967sxRiRRcHGgenmc.gif' alt='' ширина='1000' высота='авто'>
+</div><div style="flex: 52; отступ:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/IRayb0VSyoZrUixATv5chmNCnjb.gif' alt='' ширина='1000' высота='авто'>
 </div></div>
 ### Application Scenarios
 
 
-*  **Visualization of Big Data Sets**: Pivot combination charts can be used to visualize big data sets by displaying grouped data, helping users better understand the relationships between data.    \r
+*  **Visualization из Big данные Sets**: сводный combination графикs can be used к visualize big данные sets по displaying grouped данные, helping users better understand the relationships between данные.    \r
 
-*  **Visualization of Multidimensional Data**: It can be used to display multidimensional data by grouping the data according to different attributes and presenting it in the form of charts, allowing users to observe multiple dimensions of data simultaneously.    \r
+*  **Visualization из Multidimensional данные**: It can be used к display multidimensional данные по grouping the данные according к different attributes и presenting it в the form из графикs, allowing users к observe multiple dimensions из данные simultaneously.    \r
 
-*  **Data Comparison and Analysis**: Pivot combination charts can be used to compare and analyze data. By displaying grouped data, users can more easily compare differences and relationships between different data.    \r
+*  **данные Comparison и Analysis**: сводный combination графикs can be used к compare и analyze данные. по displaying grouped данные, users can more easily compare differences и relationships between different данные.    \r
 
-*  **Data Reporting and Presentation**: Using pivot combination charts in data reports can make the reports easier to understand and present.    
-
-
-
-### Comparison Pivot Table
-
-
-![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/YCKcwu5clhcH0gbaXz4cZxP6nfe.gif)
-
-**Compared to pivot tables, where each cell displays an aggregated value of a certain metric under a dimension set group, pivot charts present the original data corresponding to this aggregated group in a separate chart.**    \r
+*  **данные Reporting и Presentation**: Using сводный combination графикs в данные reports can make the reports easier к understand и present.    
 
 
 
-**Reuse Pivot Table Logic:**    
+### Comparison сводный таблица
 
-1. Data Organization: The main logic is consistent with PivotTable, with additional logic for analysis axis range. File path: packages/vtable/src/dataset/dataset.ts;    \r
 
-1. Layout Logic: The dimension values of the table header are mapped to the cell logic, file path: packages/vtable/src/layout/pivot-header-layout.ts;    \r
+![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/YCKcwu5clhcH0gbaXz4cZxP6nfe.gif)
 
-These contents are specifically introduced in the source code interpretation document of the pivot table, and will not be repeated here.    
+**Compared к сводный таблицаs, where каждый cell displays an aggregated значение из a certain metric under a dimension set group, сводный графикs present the original данные corresponding к this aggregated group в a separate график.**    \r
+
+
+
+**Reuse сводный таблица Logic:**    
+
+1. данные Organization: The main logic is consistent с сводныйтаблица, с additional logic для analysis axis range. File path: packвозрастs/vтаблица/src/данныеset/данныеset.ts;    \r
+
+1. макет Logic: The dimension values из the таблица header are mapped к the cell logic, file path: packвозрастs/vтаблица/src/макет/сводный-header-макет.ts;    \r
+
+These contents are specifically introduced в the source код interpretation document из the сводный таблица, и will не be repeated here.    
 
 ## Core Logic
 
 
-### Register chart module
+### регистрация график module
 
 
-1. First, register the chart module through VTable.register.chartModule():    \r
+1. первый, регистрация the график module through Vтаблица.регистрация.графикModule():    \r
 
 ```plaintext
-VTable.register.chartModule('vchart', VChart);    
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);    
 
 ```
-1. The module will be stored in the chartTypePlugins object during registration:
+1. The module will be stored в the графикTypePlugins объект during registration:
 
 ```Typescript
-export function **chartModule**(*name*: string, *chartModule*?: any): any {
-  if (*chartModule* !== null && *chartModule* !== undefined) {
-    return register(chartTypePlugins, *name*, *chartModule*);
+export функция **графикModule**(*имя*: строка, *графикModule*?: любой): любой {
+  if (*графикModule* !== null && *графикModule* !== undefined) {
+    возврат регистрация(графикTypePlugins, *имя*, *графикModule*);
   }
-  return chartTypePlugins[*name*];
+  возврат графикTypePlugins[*имя*];
 }    
 
 ```
-1. In the table configuration, reference the registered module through the chartModule attribute:    
+1. в the таблица configuration, reference the регистрацияed module through the графикModule attribute:    
 
 ```Typescript
 {
-  cellType: 'chart',          // 指定单元格类型为chart
-  chartModule: 'vchart',      // 使用注册的vchart模块
-  chartSpec: {                // chart的具体配置
-    type: 'bar',             // 图表类型
+  cellType: 'график',          // 指定单元格类型为график
+  графикModule: 'vграфик',      // 使用注册的vграфик模块
+  графикSpec: {                // график的具体配置
+    тип: 'bar',             // 图表类型
     stack: true,             // 是否堆叠
-    data: {
-      id: 'data'
+    данные: {
+      id: 'данные'
     },
-    xField: [...],           // x轴字段
-    yField: '...',          // y轴字段
+    xполе: [...],           // x轴字段
+    yполе: '...',          // y轴字段
     // 其他图表配置...
   }
 }    
 
 ```
-1. VTable will use the corresponding chart module to render the chart according to the configuration    
+1. Vтаблица will use the corresponding график module к render the график according к the configuration    
 
-This registration mechanism mainly has the following characteristics:    \r
+This registration mechanism mainly has Следующий characteristics:    \r
 
-* Support dynamic registration and retrieval of chart module    
+* Support dynamic registration и retrieval из график module    
 
-* Multiple different chart modules can be registered (but currently there is no compatibility handling for other chart libraries.)    
+* Multiple different график modules can be регистрацияed (but currently there is no compatibility handling для other график libraries.)    
 
-* Achieve chart functionality extensibility through modular design    
+* Achieve график функциональность extensibility through modular design    
 
-* Supports complex chart configuration options    
-
-
-
-### Declare Primitive Node Chart
+* Supports complex график configuration options    
 
 
-Chart primitives inherit from Group, and are composite primitives mainly used for rendering charts in table cells.    \r
+
+### Declare Primitive Node график
+
+
+график primitives inherit от Group, и are composite primitives mainly used для rendering графикs в таблица cells.    \r
 
 ```Typescript
-export class Chart extends Group {
-  type: GraphicType = 'chart' as any;
-  declare attribute: IChartGraphicAttribute;
-  chartInstance: any;         // 主图表实例
-  activeChartInstance: any;   // 激活状态的图表实例
-  active: boolean;            // 是否处于激活状态
-  cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; 
-  isShareChartSpec: boolean;  // 是否共享图表配置
+export class график extends Group {
+  тип: GraphicType = 'график' as любой;
+  declare attribute: IграфикGraphicAttribute;
+  графикInstance: любой;         // 主图表实例
+  activeграфикInstance: любой;   // 激活状态的图表实例
+  активный: логический;            // 是否处于激活状态
+  cacheCanvas: HTMLCanvasElement | { x: число; y: число; ширина: число; высота: число; canvas: HTMLCanvasElement }[]; 
+  isShareграфикSpec: логический;  // 是否共享图表配置
 }    
 
 ```
 Important Attributes:    
 
-1. type and attribute: Indicates the type of element and element configuration, all elements have this attribute;    \r
+1. тип и attribute: Indicates the тип из element и element configuration, все elements have this attribute;    \r
 
-1. chartInstance: The chart object instantiated using the registered chart module vchart;    \r
+1. графикInstance: The график объект instantiated using the регистрацияed график module vграфик;    \r
 
-1. activeChartInstance: If the cell is activated, an activeChartInstance will be created on the chart element to respond to the interactions of the chart itself;    \r
+1. activeграфикInstance: If the cell is activated, an activeграфикInstance will be created на the график element к respond к the interactions из the график itself;    \r
 
-1. cacheCanvas: Cache the rendered image of the chart for use in the next render to improve rendering performance;    \r
+1. cacheCanvas: Cache the rendered imвозраст из the график для use в the следующий render к improve rendering Производительность;    \r
 
-### Create chart process
-
-
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/R7i4blZbuoztoPx1psHcuEi3nfe.gif' alt='' width='588' height='auto'>
+### Create график process
 
 
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/R7i4blZbuoztoPx1psHcuEi3nfe.gif' alt='' ширина='588' высота='авто'>
 
-When creating a chart element, the entry point is `createCell`, where it determines the type of cell to be created. If it is a chart type, it further decides to use the chart element and calls the function `**createChartCellGroup**`**.**    
 
-**One parameter that needs special attention when calling this function is** `***chartInstance***`, because the vtable uses a mechanism where the same chart instance is shared for performance reasons. Therefore, you can obtain the chart instance already created on the metric object based on the cell by calling the interface ***`***getChartInstance***`***.***
+
+When creating a график element, the entry point is `createCell`, where it determines the тип из cell к be created. If it is a график тип, it further decides к use the график element и calls the функция `**createграфикCellGroup**`**.**    
+
+**One параметр that needs special attention when calling this функция is** `***графикInstance***`, because the vтаблица uses a mechanism where the same график instance is shared для Производительность reasons. Therefore, Вы можете obtain the график instance already created на the metric объект based на the cell по calling the интерфейс ***`***getграфикInstance***`***.***
 
 ```Typescript
-if (*type* === 'chart') {
-    const chartInstance = *table*.internalProps.layoutMap.getChartInstance(*col*, *row*);
-    const **createChartCellGroup** = Factory.getFunction('createChartCellGroup') as CreateChartCellGroup;
-    cellGroup = createChartCellGroup(
+if (*тип* === 'график') {
+    const графикInstance = *таблица*.internalProps.макетMap.getграфикInstance(*col*, *row*);
+    const **createграфикCellGroup** = Factory.getFunction('createграфикCellGroup') as CreateграфикCellGroup;
+    cellGroup = createграфикCellGroup(
       null,
       *columnGroup*,
       0,
       *y*,
       *col*,
       *row*,
-      *cellWidth*,
-      *cellHeight*,
-      *padding*,
-      *value*,
-      (*define* as ChartColumnDefine).chartModule,
-      *table*.internalProps.layoutMap.getChartSpec(*col*, *row*),
-      chartInstance,
-      *table*.internalProps.layoutMap.getChartDataId(*col*, *row*) ?? 'data',
-      *table*,
-      *cellTheme*,
-      *table*.internalProps.layoutMap.isShareChartSpec(*col*, *row*),
+      *cellширина*,
+      *cellвысота*,
+      *заполнение*,
+      *значение*,
+      (*define* as графикColumnDefine).графикModule,
+      *таблица*.internalProps.макетMap.getграфикSpec(*col*, *row*),
+      графикInstance,
+      *таблица*.internalProps.макетMap.getграфикданныеId(*col*, *row*) ?? 'данные',
+      *таблица*,
+      *cellтема*,
+      *таблица*.internalProps.макетMap.isShareграфикSpec(*col*, *row*),
       isAsync,
-      *table*.internalProps.layoutMap.isNoChartDataRenderNothing(*col*, *row*)
+      *таблица*.internalProps.макетMap.isNoграфикданныеRenderNothing(*col*, *row*)
     );    
 
 ```
-If an instance has not been created initially, create it in the chart element and later store it in the indicator information through the setChartInstance interface.    
+If an instance has не been created initially, create it в the график element и later store it в the indicator information through the setграфикInstance интерфейс.    
 
-`*table*``.internalProps.layoutMap.setChartInstance(``*col*``, ``*row*``, chartGroup.chartInstance);`    
+`*таблица*``.internalProps.макетMap.setграфикInstance(``*col*``, ``*row*``, графикGroup.графикInstance);`    
 
-### Draw chart
+### Draw график
 
 
-The process of creating a chart mentioned above, when a new chart is created, you can see that apart from configuring the spec, no data is passed. Data is passed during the actual rendering. Specific file path: packages/vtable/src/scenegraph/graphic/contributions/chart-render.ts    \r
+The process из creating a график mentioned above, when a новый график is created, Вы можете see that apart от configuring the spec, no данные is passed. данные is passed during the actual rendering. Specific file path: packвозрастs/vтаблица/src/scenegraph/graphic/contributions/график-render.ts    \r
 
 ```Typescript
-function drawShape(chart, context, x, y) {
+функция drawShape(график, context, x, y) {
   // 获取图表基础属性
-  const { active, cacheCanvas, activeChartInstance } = chart;
-  const { dataId, data, spec } = chart.attribute;
+  const { активный, cacheCanvas, activeграфикInstance } = график;
+  const { данныеId, данные, spec } = график.attribute;
   
   // 1. 非激活且有缓存时,直接绘制缓存
-  if (!active && cacheCanvas) {
+  if (!активный && cacheCanvas) {
     drawCacheCanvas(context, cacheCanvas, x, y);
-    return;
+    возврат;
   }
   
   // 2. 有激活实例时,更新并渲染激活态图表
-  if (activeChartInstance) {
+  if (activeграфикInstance) {
     // 更新视口
-    updateChartViewBox(activeChartInstance, chart);
+    updateграфикViewBox(activeграфикInstance, график);
     
     // 更新变换矩阵
-    updateChartTransform(activeChartInstance, chart);
+    updateграфикTransform(activeграфикInstance, график);
     
     // 更新数据
-    if (typeof dataId === 'string') {
-      activeChartInstance.updateDataSync(dataId, data);
+    if (typeof данныеId === 'строка') {
+      activeграфикInstance.updateданныеSync(данныеId, данные);
     } else {
-      updateSeriesData(activeChartInstance, dataId, data, spec);
+      updateSeriesданные(activeграфикInstance, данныеId, данные, spec);
     }
-    return;
+    возврат;
   }
 
   // 3. 无实例时,创建新图表
-  if (table.internalProps.renderChartAsync) {
+  if (таблица.internalProps.renderграфикAsync) {
     // 异步渲染队列
-    addToRenderQueue(chart);
-    startRenderQueueIfNeeded(table);
+    addToRenderQueue(график);
+    startRenderQueueIfNeeded(таблица);
   } else {
     // 同步渲染
-    renderChart(chart);
+    renderграфик(график);
   }
 }    
 
@@ -228,30 +228,30 @@ function drawShape(chart, context, x, y) {
 #### Drawing Process
 
 
-The core drawing logic is in renderChart, the main logic of renderChart:    \r
+The core drawing logic is в renderграфик, the main logic из renderграфик:    \r
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/ISQ9b06dYoumW2xYmi6cWXKLnTd.gif' alt='' width='578' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/ISQ9b06dYoumW2xYmi6cWXKLnTd.gif' alt='' ширина='578' высота='авто'>
 
-The cell chart will cache the chart image after the first drawing for subsequent use.    
+The cell график will cache the график imвозраст after the первый drawing для subsequent use.    
 
 #### Asynchronous Rendering
 
 
-In order to further improve the rendering performance of the first screen, there is an asynchronous rendering configuration `renderChartAsync`. If it is enabled, the chart drawing process of the cells to be rendered will be inserted into the rendering queue. This is particularly suitable for situations where there are a large number of charts displayed on the first screen.
+в order к further improve the rendering Производительность из the первый screen, there is an asynchronous rendering configuration `renderграфикAsync`. If it is включен, the график drawing process из the cells к be rendered will be inserted into the rendering queue. This is particularly suiтаблица для situations where there are a large число из графикs displayed на the первый screen.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/S3eobYCiIoXWJhxRZQlcbVLln9b.gif' alt='' width='1000' height='auto'>
-
-
-
-### Primitive Chart Activation
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/S3eobYCiIoXWJhxRZQlcbVLln9b.gif' alt='' ширина='1000' высота='авто'>
 
 
-As mentioned in the drawing process, the chart drawn in the cell is a cached image, which loses the ability to interact with the chart. To solve this problem, vtable uses the hover state to recreate the chart of the hovered cell and give it interactive capabilities.
+
+### Primitive график Activation
+
+
+As mentioned в the drawing process, the график drawn в the cell is a cached imвозраст, which loses the ability к interact с the график. к solve this problem, vтаблица uses the навести state к recreate the график из the hovered cell и give it interactive capabilities.
 
 ```Typescript
- this.activeChartInstance = new this.attribute.ClassType(
+ this.activeграфикInstance = новый this.attribute.ClassType(
       this.attribute.spec,
-      merge({}, this.attribute.tableChartOption, {
+      merge({}, this.attribute.таблицаграфикOption, {
         *// disableDirtyBounds: true,*
         renderCanvas: this.attribute.canvas,
         mode: 'desktop-browser',
@@ -262,165 +262,165 @@ As mentioned in the drawing process, the chart drawn in the cell is a cached ima
           y1: 0,
           y2: y2 - y1
         },
-        dpr: *table*.internalProps.pixelRatio,
+        dpr: *таблица*.internalProps.pixelRatio,
         animation: false,
         interactive: true,
-        autoFit: false, *//控制当容器变化大小时vchart实例不应响应事件进行内部处理*
-        **beforeRender**: (*chartStage*: Stage) => {
-          const stage = this.stage;
-          const ctx = *chartStage*.window.getContext();
-          const stageMatrix = stage.window.getViewBoxTransform();
-          const viewBox = stage.window.getViewBox();
+        автоFit: false, *//控制当容器变化大小时vграфик实例不应响应事件进行内部处理*
+        **beforeRender**: (*графикStвозраст*: Stвозраст) => {
+          const stвозраст = this.stвозраст;
+          const ctx = *графикStвозраст*.window.getContext();
+          const stвозрастMatrix = stвозраст.window.getViewBoxTransform();
+          const viewBox = stвозраст.window.getViewBox();
           ctx.inuse = true;
           *// ctx.save();*
-          *// console.log(ctx.getImageData(0, 0, 100, 100));*
+          *// console.log(ctx.getImвозрастданные(0, 0, 100, 100));*
           ctx.clearMatrix();
           ctx.setTransform(
-            stageMatrix.a,
-            stageMatrix.b,
-            stageMatrix.c,
-            stageMatrix.d,
-            stageMatrix.e,
-            stageMatrix.f,
+            stвозрастMatrix.a,
+            stвозрастMatrix.b,
+            stвозрастMatrix.c,
+            stвозрастMatrix.d,
+            stвозрастMatrix.e,
+            stвозрастMatrix.f,
             true
           );
           ctx.translate(viewBox.x1, viewBox.y1);
-          ctx.setTransformForCurrent(true); *// 替代原有的chart viewBox*
+          ctx.setTransformForCurrent(true); *// 替代原有的график viewBox*
           ctx.beginPath();
           ctx.rect(clipBound.x1, clipBound.y1, clipBound.x2 - clipBound.x1, clipBound.y2 - clipBound.y1);
           ctx.clip();
           ctx.clearMatrix();
 
-          if (*table*.options.canvas && !(*chartStage* as any).needRender) {
-            *// 在使用viewbox局部渲染时，activate单独渲染chart stage，可能导致外部stage场景层级错乱*
-            *// 此时触发整个表格的重绘，外部stage场景可以通过table的beforeRender配置触发更上一级的重绘*
-            *chartStage*.pauseRender();
-            *table*.scenegraph.stage.dirtyBounds.union(this.globalAABBBounds);
-            *table*.scenegraph.updateNextFrame();
+          if (*таблица*.options.canvas && !(*графикStвозраст* as любой).needRender) {
+            *// 在使用viewbox局部渲染时，activate单独渲染график stвозраст，可能导致外部stвозраст场景层级错乱*
+            *// 此时触发整个表格的重绘，外部stвозраст场景可以通过таблица的beforeRender配置触发更上一级的重绘*
+            *графикStвозраст*.pauseRender();
+            *таблица*.scenegraph.stвозраст.dirtyBounds.union(this.globalAABBBounds);
+            *таблица*.scenegraph.updateNextFrame();
           }
         },
-        **afterRender**(*stage*: any) {
-          const ctx = *stage*.window.getContext();
+        **afterRender**(*stвозраст*: любой) {
+          const ctx = *stвозраст*.window.getContext();
           ctx.inuse = false;
 
-          *stage*.needRender = false;
-          chartStage.resumeRender();
+          *stвозраст*.needRender = false;
+          графикStвозраст.resumeRender();
         }
       })
     );    
 
 ```
-The configuration of `activeChartInstance` does seem a bit more complex compared to the configuration of `chartInstance`. First, interactive is set to true, and beforeRender and afterRender hook functions are added to control the specific rendering area on the canvas.
+The configuration из `activeграфикInstance` does seem a bit more complex compared к the configuration из `графикInstance`. первый, interactive is set к true, и beforeRender и afterRender hoхорошо functions are added к control the specific rendering area на the canvas.
 
 ### Axis Creation
 
 
-In a perspective view, besides the chart part in the cell, another important component is the axis. Unlike the axis of a simple single chart that belongs to one chart, the axis in a perspective view is responsible for the axis range capability of the entire row or column of charts.    \r
+в a perspective view, besides the график part в the cell, another important компонент is the axis. Unlike the axis из a simple single график that belongs к one график, the axis в a perspective view is responsible для the axis range capability из the entire row или column из графикs.    \r
 
-In the logic of creatCell, when there is a configuration related to the perspective chart axis, the Axis component will be created and appended to the cellGroup.
+в the logic из creatCell, when there is a configuration related к the perspective график axis, the Axis компонент will be created и appended к the cellGroup.
 
 ```Typescript
-    const axisConfig = *table*.internalProps.layoutMap.getAxisConfigInPivotChart(*col*, *row*);
+    const axisConfig = *таблица*.internalProps.макетMap.getAxisConfigInсводныйграфик(*col*, *row*);
     if (axisConfig) {
-      const CartesianAxis: ICartesianAxis = Factory.getComponent('axis');
-      const axis = new CartesianAxis(
+      const CartesianAxis: ICartesianAxis = Factory.getкомпонент('axis');
+      const axis = новый CartesianAxis(
         axisConfig,
-        cellGroup.attribute.width,
-        cellGroup.attribute.height,
-        axisConfig.__vtablePadding ?? *padding*,
-        *table*
+        cellGroup.attribute.ширина,
+        cellGroup.attribute.высота,
+        axisConfig.__vтаблицаPadding ?? *заполнение*,
+        *таблица*
       );
       cellGroup.clear();
-      cellGroup.appendChild(axis.component);
+      cellGroup.appendChild(axis.компонент);
       axis.overlap();
     }     
 
 ```
-The specific axis logic is in the file packages/vtable/src/components/axis/axis.ts    \r
+The specific axis logic is в the file packвозрастs/vтаблица/src/компонентs/axis/axis.ts    \r
 
 The CartesianAxis class mainly includes:    
 
-* Creation and initialization of the axis    
+* Creation и initialization из the axis    
 
-*  Scale calculation and layout    
+*  Scale calculation и макет    
 
-* Axis scaling and positioning    
+* Axis scaling и positioning    
 
 * Tag overlap handling    
 
 ```Typescript
 class CartesianAxis {
   *// 属性*
-  width: number;                 *// 轴宽度*
-  height: number;               *// 轴高度*
-  orient: IOrientType;         *// 轴方向(left/right/top/bottom)*
-  type: 'linear' | 'band' | 'point' | 'time' | 'log' | 'symlog'; *// 轴类型*
+  ширина: число;                 *// 轴宽度*
+  высота: число;               *// 轴高度*
+  orient: IOrientType;         *// 轴方向(лево/право/верх/низ)*
+  тип: 'linear' | 'band' | 'point' | 'time' | 'log' | 'symlog'; *// 轴类型*
   scale: BandAxisScale | LinearAxisScale;  *// 比例尺*
-  component: LineAxis;         *// 轴组件*
+  компонент: LineAxis;         *// 轴组件*
   
   *// 核心方法*
   initScale()                  *// 初始化比例尺*
-  initData()                   *// 初始化数据*
-  computeData()               *// 计算轴数据*
-  createComponent()           *// 创建轴组件*
-  resize()                    *// 调整大小*
+  initданные()                   *// 初始化数据*
+  computeданные()               *// 计算轴数据*
+  createкомпонент()           *// 创建轴组件*
+  изменение размера()                    *// 调整大小*
 }    
 
 ```
-Initialization process: This implementation provides full axis support for charts in the table, which is an important foundational component for chart rendering.    
+Initialization process: This implementation provides full axis support для графикs в the таблица, which is an important foundational компонент для график rendering.    
 
-<div style="display: flex;"><div style="flex: 32; margin:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/VatNbnwyAoCuWxxQn8Pcvb1Snsf.gif' alt='' width='444' height='auto'>
-</div><div style="flex: 67; margin:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/OEM6bg6B8oz6tSxPIpdcJ508n3g.gif' alt='' width='846' height='auto'>
+<div style="display: flex;"><div style="flex: 32; отступ:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/VatNbnwyAoCuWxxQn8Pcvb1Snsf.gif' alt='' ширина='444' высота='авто'>
+</div><div style="flex: 67; отступ:5px;"><img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/OEM6bg6B8oz6tSxPIpdcJ508n3g.gif' alt='' ширина='846' высота='авто'>
 </div></div>
 
 
-### Legend Interaction Linking
+### легенда Interaction Linking
 
 
-VTable also provides a legend component, which can be used to control the display data of the chart by manipulating the legend:
+Vтаблица also provides a легенда компонент, which can be used к control the display данные из the график по manipulating the легенда:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/P8wcbL1KmowzFqxnMCIcCjMvngf.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/P8wcbL1KmowzFqxnMCIcCjMvngf.gif' alt='' ширина='1000' высота='авто'>
 
-Here is a summary of the creation process. It is important to note that adding a legend will occupy the position of the table, so it is necessary to reset the position of the tableGroup in the scene tree:
+Here is a summary из the creation process. It is important к note that adding a легенда will occupy the позиция из the таблица, so it is necessary к reset the позиция из the таблицаGroup в the scene tree:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/JxlabSk0eoRQ6ExCj7acUCAZnPe.gif' alt='' width='712' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/JxlabSk0eoRQ6ExCj7acUCAZnPe.gif' alt='' ширина='712' высота='авто'>
 
 
 
-Legend click to control the data display logic of the chart:    
+легенда Нажать к control the данные display logic из the график:    
 
-This logic is not directly integrated into the Vtable code, and users need to call the relevant interfaces themselves, as follows:    \r
+This logic is не directly integrated into the Vтаблица код, и users need к call the relevant interfaces themselves, as follows:    \r
 
 ```Typescript
-`  tableInstance.on(LEGEND_ITEM_CLICK, *args* => {
-    console.log('LEGEND_ITEM_CLICK', *args*);
-    tableInstance.updateFilterRules([
+`  таблицаInstance.на(легенда_ITEM_Нажать, *args* => {
+    console.log('легенда_ITEM_Нажать', *args*);
+    таблицаInstance.updateFilterRules([
       {
         filterKey: '20001',
-        filteredValues: *args*.value
+        filteredValues: *args*.значение
       }
     ]);
   });    
 
 ```
-The logic of updateFilterRules is:    
+The logic из updateFilterRules is:    
 
 ```Typescript
   */** 更新数据过滤规则，适用场景：点击图例项后 更新过滤规则 来更新图表 */*
   **updateFilterRules**(*filterRules*: FilterRules) {
-    this.internalProps.dataConfig.filterRules = *filterRules*;
-    this.dataset.updateFilterRules(*filterRules*);
-    clearChartCacheImage(this.scenegraph);
-    updateChartData(this.scenegraph);
+    this.internalProps.данныеConfig.filterRules = *filterRules*;
+    this.данныеset.updateFilterRules(*filterRules*);
+    clearграфикCacheImвозраст(this.scenegraph);
+    updateграфикданные(this.scenegraph);
     this.render();
   }    
 
 ```
-In addition to updating data through the dataset, all chart caches were cleared and re-rendered.    \r
+в addition к updating данные through the данныеset, все график caches were cleared и re-rendered.    \r
 
 ## **Conclusion:**
 
-The VTable pivot table implements rich data analysis functions, providing users with powerful data visualization tools through flexible configuration and efficient data processing mechanisms. Its core lies in the close integration of data processing, layout system, and interactive functions, making complex data analysis simple and intuitive.
+The Vтаблица сводный таблица implements rich данные analysis functions, providing users с powerful данные visualization tools through flexible configuration и efficient данные processing mechanisms. Its core lies в the закрыть integration из данные processing, макет system, и interactive functions, making complex данные analysis simple и intuitive.
 
-# This document was revised and organized by the following personnel 
+# This document was revised и organized по Следующий personnel 
  [玄魂](https://github.com/xuanhun)

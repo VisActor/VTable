@@ -1,38 +1,38 @@
 ---
-category: examples
-group: compilation
-title: Basic Table Integrated with Charts
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart.png
-order: 1-1
-link: cell_type/chart
-option: ListTable-columns-chart#cellType
+категория: примеры
+группа: compilation
+заголовок: базовый таблица Integrated с графикs
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-график.png
+порядок: 1-1
+ссылка: cell_type/график
+опция: списоктаблица-columns-график#cellType
 ---
 
-# Basic Table Integrated with Charts
+# базовый таблица Integrated с графикs
 
-Integrate the vchart library into the table to enrich visualization forms and enhance multi-chart rendering performance. This example references the bar progress chart from vchart.
+Integrate the vграфик library into the таблица к enrich visualization forms и enhance multi-график rendering Производительность. This пример references the bar progress график от vграфик.
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-      <ListTable :options="tableOptions" ref="pivotChartRef"/>
+      <списоктаблица :options="таблицаOptions" ref="сводныйграфикRef"/>
    `,
   setup() {
-    const pivotChartRef = ref(null);
-    const tableOptions = ref({});
+    const сводныйграфикRef = ref(null);
+    const таблицаOptions = ref({});
 
     const records = [
       {
-        projectName: 'Project No.1',
+        projectимя: 'Project No.1',
         startTime: '2023/5/1',
         endTime: '2023/5/10',
         estimateDays: 10,
         goal: 0.6,
         progress: [
           {
-            value: 0.5,
+            значение: 0.5,
             label: '50%',
             goal: 0.6
           }
@@ -40,14 +40,14 @@ const app = createApp({
         master: 'Julin'
       },
       {
-        projectName: 'Project No.2',
+        projectимя: 'Project No.2',
         startTime: '2023/5/1',
         endTime: '2023/5/5',
         estimateDays: 5,
         goal: 0.5,
         progress: [
           {
-            value: 0.5,
+            значение: 0.5,
             label: '50%',
             goal: 0.5
           }
@@ -55,14 +55,14 @@ const app = createApp({
         master: 'Jack'
       },
       {
-        projectName: 'Project No.3',
+        projectимя: 'Project No.3',
         startTime: '2023/5/7',
         endTime: '2023/5/8',
         estimateDays: 3,
         goal: 0.2,
         progress: [
           {
-            value: 0.3,
+            значение: 0.3,
             label: '30%',
             goal: 0.2
           }
@@ -70,14 +70,14 @@ const app = createApp({
         master: 'Mary'
       },
       {
-        projectName: 'Project No.4',
+        projectимя: 'Project No.4',
         startTime: '2023/5/11',
         endTime: '2023/5/12',
         estimateDays: 2,
         goal: 0.8,
         progress: [
           {
-            value: 0.9,
+            значение: 0.9,
             label: '90%',
             goal: 0.8
           }
@@ -85,14 +85,14 @@ const app = createApp({
         master: 'Porry'
       },
       {
-        projectName: 'Project No.5',
+        projectимя: 'Project No.5',
         startTime: '2023/5/0',
         endTime: '2023/5/10',
         estimateDays: 2,
         goal: 1,
         progress: [
           {
-            value: 0.8,
+            значение: 0.8,
             label: '80%',
             goal: 1
           }
@@ -103,47 +103,47 @@ const app = createApp({
 
     const columns = [
       {
-        field: 'projectName',
-        title: 'Project Name',
-        width: 'auto',
+        поле: 'projectимя',
+        заголовок: 'Project имя',
+        ширина: 'авто',
         style: {
-          color: '#ff689d',
+          цвет: '#ff689d',
           fontWeight: 'bold'
         }
       },
       {
-        field: 'progress',
-        title: 'Schedule',
-        width: 300,
-        cellType: 'chart',
-        chartModule: 'vchart',
+        поле: 'progress',
+        заголовок: 'Schedule',
+        ширина: 300,
+        cellType: 'график',
+        графикModule: 'vграфик',
         style: {
-          padding: 1
+          заполнение: 1
         },
-        chartSpec: {
-          type: 'linearProgress',
+        графикSpec: {
+          тип: 'linearProgress',
           progress: {
             style: {
               fill: '#32a645',
               lineCap: ''
             }
           },
-          data: {
+          данные: {
             id: 'id0'
           },
           direction: 'horizontal',
-          xField: 'value',
-          yField: 'label',
-          seriesField: 'type',
+          xполе: 'значение',
+          yполе: 'label',
+          seriesполе: 'тип',
           cornerRadius: 20,
-          bandWidth: 12,
-          padding: 10,
+          bandширина: 12,
+          заполнение: 10,
           axes: [
             {
-              orient: 'right',
-              type: 'band',
-              domainLine: { visible: false },
-              tick: { visible: false },
+              orient: 'право',
+              тип: 'band',
+              domainLine: { видимый: false },
+              tick: { видимый: false },
               label: {
                 formatMethod: val => val,
                 style: {
@@ -152,53 +152,53 @@ const app = createApp({
                   fill: '#32a645'
                 }
               },
-              maxWidth: '60%' // Configure the maximum space for the axis
+              maxширина: '60%' // Configure the maximum space для the axis
             },
             {
-              orient: 'bottom',
-              label: { visible: true, inside: true },
-              type: 'linear',
-              visible: false,
+              orient: 'низ',
+              label: { видимый: true, inside: true },
+              тип: 'linear',
+              видимый: false,
               grid: {
-                visible: false
+                видимый: false
               }
             }
           ],
           extensionMark: [
             {
-              type: 'rule',
-              dataId: 'id0',
-              visible: true,
+              тип: 'rule',
+              данныеId: 'id0',
+              видимый: true,
               style: {
-                x: (datum, ctx, elements, dataView) => {
-                  return ctx.valueToX([datum.goal]);
+                x: (datum, ctx, elements, данныеView) => {
+                  возврат ctx.valueToX([datum.goal]);
                 },
-                y: (datum, ctx, elements, dataView) => {
-                  return ctx.valueToY([datum.label]) - 5;
+                y: (datum, ctx, elements, данныеView) => {
+                  возврат ctx.valueToY([datum.label]) - 5;
                 },
-                x1: (datum, ctx, elements, dataView) => {
-                  return ctx.valueToX([datum.goal]);
+                x1: (datum, ctx, elements, данныеView) => {
+                  возврат ctx.valueToX([datum.goal]);
                 },
-                y1: (datum, ctx, elements, dataView) => {
-                  return ctx.valueToY([datum.label]) + 5;
+                y1: (datum, ctx, elements, данныеView) => {
+                  возврат ctx.valueToY([datum.label]) + 5;
                 },
-                stroke: 'red',
-                lineWidth: 2
+                strхорошоe: 'red',
+                lineширина: 2
               }
             },
             {
-              type: 'symbol',
-              dataId: 'id0',
-              visible: true,
+              тип: 'symbol',
+              данныеId: 'id0',
+              видимый: true,
               style: {
                 symbolType: 'triangleDown',
-                x: (datum, ctx, elements, dataView) => {
-                  return ctx.valueToX([datum.goal]);
+                x: (datum, ctx, elements, данныеView) => {
+                  возврат ctx.valueToX([datum.goal]);
                 },
-                y: (datum, ctx, elements, dataView) => {
-                  return ctx.valueToY([datum.label]) - 10;
+                y: (datum, ctx, elements, данныеView) => {
+                  возврат ctx.valueToY([datum.label]) - 10;
                 },
-                size: 15,
+                размер: 15,
                 scaleY: 0.5,
                 fill: 'red'
               }
@@ -207,58 +207,58 @@ const app = createApp({
         }
       },
       {
-        field: 'goal',
-        title: 'Target',
-        width: 'auto',
-        fieldFormat(rec) {
-          return rec.goal * 100 + '%';
+        поле: 'goal',
+        заголовок: 'Target',
+        ширина: 'авто',
+        полеFormat(rec) {
+          возврат rec.goal * 100 + '%';
         },
         style: {
-          color: 'red',
+          цвет: 'red',
           fontWeight: 'bold'
         }
       },
       {
-        field: 'startTime',
-        title: 'Start Time',
-        width: 'auto'
+        поле: 'startTime',
+        заголовок: 'начало Time',
+        ширина: 'авто'
       },
       {
-        field: 'endTime',
-        title: 'End Time',
-        width: 'auto'
+        поле: 'endTime',
+        заголовок: 'конец Time',
+        ширина: 'авто'
       },
       {
-        field: 'master',
-        title: 'Master',
-        width: 'auto',
+        поле: 'master',
+        заголовок: 'Master',
+        ширина: 'авто',
         style: {
-          color: 'purple',
+          цвет: 'purple',
           fontWeight: 'bold'
         }
       }
     ];
 
-    tableOptions.value = {
+    таблицаOptions.значение = {
       records,
       columns
     };
 
-    return {
-      pivotChartRef,
-      tableOptions
+    возврат {
+      сводныйграфикRef,
+      таблицаOptions
     };
   }
 });
 
-VueVTable.registerChartModule('vchart', VChart);
+VueVтаблица.регистрацияграфикModule('vграфик', Vграфик);
 
-app.component('ListTable', VueVTable.ListTable);
+app.компонент('списоктаблица', VueVтаблица.списоктаблица);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

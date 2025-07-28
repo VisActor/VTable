@@ -1,111 +1,111 @@
 ---
-category: examples
-group: data-analysis
-title: Indicator Aggregation Type
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-aggregation.png
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.aggregationRules
+категория: примеры
+группа: данные-analysis
+заголовок: Indicator Aggregation тип
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-aggregation.png
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.aggregationRules
 ---
 
-# Indicator Aggregation Type
+# Indicator Aggregation тип
 
-To pivot analysis table data data filtering rules, configure aggregationRules in dataConfig.
+к сводный analysis таблица данные данные filtering rules, configure aggregationRules в данныеConfig.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig` configures data rules，set aggregationRules
+- `данныеConfig` configures данные rules，set aggregationRules
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-const sumNumberFormat = VTable.DataStatistics.numberFormat({
+```javascript liveдемонстрация template=vтаблица
+const sumNumberFormat = Vтаблица.данныеStatistics.numberFormat({
   prefix: '$'
 });
-const countNumberFormat = VTable.DataStatistics.numberFormat({
+const countNumberFormat = Vтаблица.данныеStatistics.numberFormat({
   digitsAfterDecimal: 0,
   thousandsSep: '',
   suffix: ' orders'
 });
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
-      indicators: ['TotalSales', 'OrderCount', 'AverageOrderSales'],
+      indicators: ['TotalПродажи', 'OrderCount', 'AverвозрастOrderПродажи'],
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
           textStick: true
         }
       },
-      dataConfig: {
+      данныеConfig: {
         aggregationRules: [
-          //As the basis for aggregate calculations, if the sales amount is not configured,
-          //the cell content will be displayed by default according to the aggregate sum calculation.
+          //As the basis для aggregate calculations, if the Продажи amount is не configured,
+          //the cell content will be displayed по по умолчанию according к the aggregate sum calculation.
           {
-            indicatorKey: 'TotalSales', //Indicator name
-            field: 'Sales', //The field  which the indicator is based
-            aggregationType: VTable.TYPES.AggregationType.SUM, //Calculation type
+            indicatorKey: 'TotalПродажи', //Indicator имя
+            поле: 'Продажи', //The поле  which the indicator is based
+            aggregationType: Vтаблица.TYPES.AggregationType.SUM, //Calculation тип
             formatFun: sumNumberFormat
           },
           {
-            indicatorKey: 'OrderCount', //Indicator name
-            field: 'Sales', //The field  which the indicator is based
-            aggregationType: VTable.TYPES.AggregationType.COUNT, //Calculation type
+            indicatorKey: 'OrderCount', //Indicator имя
+            поле: 'Продажи', //The поле  which the indicator is based
+            aggregationType: Vтаблица.TYPES.AggregationType.COUNT, //Calculation тип
             formatFun: countNumberFormat
           },
           {
-            indicatorKey: 'AverageOrderSales', //Indicator name
-            field: 'Sales', //The field  which the indicator is based
-            aggregationType: VTable.TYPES.AggregationType.AVG, //Calculation type
+            indicatorKey: 'AverвозрастOrderПродажи', //Indicator имя
+            поле: 'Продажи', //The поле  which the indicator is based
+            aggregationType: Vтаблица.TYPES.AggregationType.AVG, //Calculation тип
             formatFun: sumNumberFormat
           }
         ]
       },
-      widthMode: 'autoWidth'
+      ширинаMode: 'автоширина'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

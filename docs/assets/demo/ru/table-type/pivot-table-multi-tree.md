@@ -1,352 +1,352 @@
 ---
-category: examples
-group: table-type
-title: Pivot Table Multiple Tree
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-multi-tree.png
-link: table_type/Pivot_table/pivot_table_multi_tree
-option: PivotTable#extensionRows(IExtensionRowDefine%5B%5D)
+категория: примеры
+группа: таблица-тип
+заголовок: сводный таблица Multiple Tree
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-multi-tree.png
+ссылка: таблица_type/сводный_таблица/сводный_таблица_multi_tree
+опция: сводныйтаблица#extensionRows(IExtensionRowDefine%5B%5D)
 ---
 
-# Pivot Table Multiple Tree
+# сводный таблица Multiple Tree
 
-Pivot table multi-column tree display. Multiple columns belong to a special tree display structure and require the business party to pass in rowTree, columnTree and extensionRows.
+сводный таблица multi-column tree display. Multiple columns belong к a special tree display structure и require the business party к pass в rowTree, columnTree и extensionRows.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
+- `rowHierarchyType` Set the hierarchical presentation к`tree`, defaults к tiling mode`grid`.
 - `extensionRows` sets the extension row header, which takes effect when the option `rowHierarchyType` is `tree`.
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_pivot_extension_rows.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_extension_rows.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rowTree: [
         {
-          dimensionKey: 'Category',
-          value: 'Furniture',
-          hierarchyState: 'expand',
+          dimensionKey: 'Категория',
+          значение: 'Furniture',
+          hierarchyState: 'развернуть',
           children: [
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Bookcases',
-              hierarchyState: 'collapse'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Boхорошоcases',
+              hierarchyState: 'свернуть'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Chairs',
-              hierarchyState: 'collapse'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Chairs',
+              hierarchyState: 'свернуть'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Furnishings'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Furnishings'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Tables'
+              dimensionKey: 'Sub-Категория',
+              значение: 'таблицаs'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Office Supplies',
+          dimensionKey: 'Категория',
+          значение: 'Office Supplies',
           children: [
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Appliances'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Appliances'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Art'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Art'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Binders'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Binders'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Envelopes'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Envelopes'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Fasteners'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Fasteners'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Labels'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Labels'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Paper'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Paper'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Storage'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Storвозраст'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Supplies'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Supplies'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Technology',
+          dimensionKey: 'Категория',
+          значение: 'Technology',
           children: [
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Accessories'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Accessories'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Copiers'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Copiers'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Machines'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Machines'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Phones'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Phones'
             }
           ]
         }
       ],
       columnTree: [
         {
-          value: 'Sales',
-          indicatorKey: 'Sales'
+          значение: 'Продажи',
+          indicatorKey: 'Продажи'
         },
         {
-          value: 'Profit',
-          indicatorKey: 'Profit'
+          значение: 'Прибыль',
+          indicatorKey: 'Прибыль'
         }
       ],
       extensionRows: [
         {
-          rows: [{ dimensionKey: 'Region', title: 'Region', width: 'auto' }, 'State'],
+          rows: [{ dimensionKey: 'Регион', заголовок: 'Регион', ширина: 'авто' }, 'State'],
           rowTree: [
             {
-              dimensionKey: 'Region',
-              value: 'East',
+              dimensionKey: 'Регион',
+              значение: 'East',
               children: [
                 {
                   dimensionKey: 'State',
-                  value: 'Connecticut'
+                  значение: 'Connecticut'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Delaware'
+                  значение: 'Delaware'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'District of Columbia'
+                  значение: 'District из Columbia'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Maine'
+                  значение: 'Maine'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Maryland'
+                  значение: 'Maryland'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Massachusetts'
+                  значение: 'Massachusetts'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'New Hampshire'
+                  значение: 'новый Hampshire'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'New Jersey'
+                  значение: 'новый Jersey'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'New York'
+                  значение: 'новый York'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Ohio'
+                  значение: 'Ohio'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Pennsylvania'
+                  значение: 'Pennsylvania'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Rhode Island'
+                  значение: 'Rhode Island'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Vermont'
+                  значение: 'Vermont'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'West Virginia'
+                  значение: 'West Virginia'
                 }
               ]
             },
             {
-              dimensionKey: 'Region',
-              value: 'Central',
+              dimensionKey: 'Регион',
+              значение: 'Central',
               children: [
                 {
                   dimensionKey: 'State',
-                  value: 'Illinois'
+                  значение: 'Illinois'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Indiana'
+                  значение: 'Indiana'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Iowa'
+                  значение: 'Iowa'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Kansas'
+                  значение: 'Kansas'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Michigan'
+                  значение: 'Michigan'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Minnesota'
+                  значение: 'Minnesota'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Missouri'
+                  значение: 'Missouri'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Nebraska'
+                  значение: 'Nebraska'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'North Dakota'
+                  значение: 'North Dakota'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Oklahoma'
+                  значение: 'хорошоlahoma'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'South Dakota'
+                  значение: 'South Dakota'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Texas'
+                  значение: 'Texas'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Wisconsin'
+                  значение: 'Wisconsin'
                 }
               ]
             },
             {
-              dimensionKey: 'Region',
-              value: 'West',
+              dimensionKey: 'Регион',
+              значение: 'West',
               children: [
                 {
                   dimensionKey: 'State',
-                  value: 'Arizona'
+                  значение: 'Arizona'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'California'
+                  значение: 'California'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Colorado'
+                  значение: 'Colorado'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Idaho'
+                  значение: 'Idaho'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Montana'
+                  значение: 'Montana'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Nevada'
+                  значение: 'Nevada'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'New Mexico'
+                  значение: 'новый Mexico'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Oregon'
+                  значение: 'Oregon'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Utah'
+                  значение: 'Utah'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Washington'
+                  значение: 'Washington'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Wyoming'
+                  значение: 'Wyoming'
                 }
               ]
             },
             {
-              dimensionKey: 'Region',
-              value: 'South',
+              dimensionKey: 'Регион',
+              значение: 'South',
               children: [
                 {
                   dimensionKey: 'State',
-                  value: 'Alabama'
+                  значение: 'Alabama'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Arkansas'
+                  значение: 'Arkansas'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Florida'
+                  значение: 'Florida'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Georgia'
+                  значение: 'Georgia'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Kentucky'
+                  значение: 'Kentucky'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Louisiana'
+                  значение: 'Louisiana'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Mississippi'
+                  значение: 'Mississippi'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'North Carolina'
+                  значение: 'North Carolina'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'South Carolina'
+                  значение: 'South Carolina'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Tennessee'
+                  значение: 'Tennessee'
                 },
                 {
                   dimensionKey: 'State',
-                  value: 'Virginia'
+                  значение: 'Virginia'
                 }
               ]
             }
@@ -355,72 +355,72 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       ],
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Catogery',
-          width: 'auto'
+          dimensionKey: 'Категория',
+          заголовок: 'Catogery',
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
-          width: 'auto'
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            if (value) {
-              return '$' + Number(value).toFixed(2);
+          format: значение => {
+            if (значение) {
+              возврат '$' + число(значение).toFixed(2);
             }
-            return '';
+            возврат '';
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            if (value) {
-              return '$' + Number(value).toFixed(2);
+          format: значение => {
+            if (значение) {
+              возврат '$' + число(значение).toFixed(2);
             }
-            return '';
+            возврат '';
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             }
           }
         }
@@ -432,15 +432,15 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         }
       },
       rowHierarchyType: 'tree',
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       rowHierarchyIndent: 20,
       rowExpandLevel: 1,
       rowHierarchyTextStartAlignment: true,
-      dragOrder: {
-        dragHeaderMode: 'all'
+      dragпорядок: {
+        dragHeaderMode: 'все'
       }
     };
-    const instance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = instance;
+    const instance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = instance;
   });
 ```

@@ -1,29 +1,29 @@
-{{ target: chart-indicator-type }}
+{{ target: график-indicator-тип }}
 
-#${prefix} indicators.chart(string)
+#${prefix} indicators.график(строка)
 
-Specify the column type as 'chart', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'график', cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'chart'
+##${prefix} cellType(строка) = 'график'
 
-Specify the column type as 'chart', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'график', cellType can be omitted и defaults к 'текст'
 
-##${prefix} chartModule(string)
+##${prefix} графикModule(строка)
 
-**Exclusive configuration options for chart type**
+**Exclusive configuration options для график тип**
 
-Corresponding to the name of the injected chart library component, the injection method can refer to [tutorial](../../guide/cell_type/chart). Currently only supports injecting VChart charting library!
+Corresponding к the имя из the injected график library компонент, the injection method can refer к [tutorial](../../guide/cell_type/график). Currently only supports injecting Vграфик графикing library!
 
-##${prefix} chartSpec(any|Function)
+##${prefix} графикSpec(любой|функция)
 
-**Exclusive configuration options for chart type**
+**Exclusive configuration options для график тип**
 
-Set the spec of the chart, or set it to a function that returns a different spec. The data displayed in the chart is provided by records.
+Set the spec из the график, или set it к a функция that returns a different spec. The данные displayed в the график is provided по records.
 
-{{ use: base-indicator-type(
+{{ use: base-indicator-тип(
     prefix = '##'+${prefix}
 ) }}
 
-##${prefix} noDataRenderNothing(boolean) = false
+##${prefix} noданныеRenderNothing(логический) = false
 
-Do not render the chart when there is no data. Defaults to false
+Do не render the график when there is no данные. Defaults к false

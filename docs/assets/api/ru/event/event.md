@@ -6,13 +6,13 @@
 
 Конкретные способы использования:
 ``
-const tableInstance =new VTable.ListTable(options);
+const tableInstance =новый VTable.ListTable(options);
 
 const {
 CLICK_CELL
 } = VTable.ListTable.EVENT_TYPE;
 
-tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
+tableInstance.на(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
 ``
 
 Поддерживаемые типы событий:
@@ -46,7 +46,7 @@ tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
   PIVOT_SORT_CLICK: 'pivot_sort_click',
   AFTER_SORT: 'after_sort',
   FREEZE_CLICK: 'freeze_click',
-  SCROLL: 'scroll',
+  прокрутка: 'прокрутка',
   SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
   SCROLL_VERTICAL_END: 'scroll_vertical_end',
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
@@ -69,44 +69,44 @@ Triggered after successful initialization is completed
 
 ## AFTER_RENDER
 
-Triggered after each rendering is completed
+Triggered after каждый rendering is completed
 
 ## onVChartEvent
 
-Listen to vchart events, specific event types can refer to [VChart Events](https://visactor.io/vchart/api/API/event)
+Listen к vchart events, specific event types can refer к [VChart Events](https://visactor.io/vchart/api/API/event)
 
 ```
   /**
-   * Listen to vchart events
-   * @param type vchart event type
+   * Listen к vchart events
+   * @param тип vchart event тип
    * @param listener vchart event listener
    */
-  onVChartEvent(type: string, listener: AnyFunction): void
+  onVChartEvent(тип: строка, listener: AnyFunction): void
 ```
 
 ## CLICK_CELL
 
-Mouse click on cell event.
+Mouse нажать на cell event.
 
 {{ use: MousePointerCellEvent() }}
 
 ## DBLCLICK_CELL
 
-Mouse double-click cell event.
+Mouse double-нажать cell event.
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types introduced в the CLICK_CELL event для the параметр types из the event обратный вызов функция.
 
 ## MOUSEDOWN_CELL
 
-Mouse press event on cell
+Mouse press event на cell
 
-Refer to the parameter types described in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types described в the CLICK_CELL event для the параметр types из the event обратный вызов функция.
 
 ## MOUSEUP_CELL
 
 Cell mouse release event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types introduced в the CLICK_CELL event для the параметр types из the event обратный вызов функция.
 
 ## SELECTED_CELL
 
@@ -116,7 +116,7 @@ Cell selected state change event
 
 ## SELECTED_CLEAR
 
-Cell selected state all be cleard, when click table's blank region, this event will be triggered.
+Cell selected state все be cleard, when нажать table's blank region, this event will be triggered.
 
 ## KEYDOWN
 
@@ -128,23 +128,23 @@ keystroke event
 
 Mouse over a cell event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function (some parameters may be omitted and can be obtained through the corresponding interfaces).
+Refer к the параметр types introduced в the CLICK_CELL event для the параметр types из the event обратный вызов функция (некоторые parameters may be omitted и can be obtained through the corresponding interfaces).
 
 ## MOUSEENTER_CELL
 
 Mouse into cell event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function. (some parameters may be omitted and can be obtained through the corresponding interfaces).
+Refer к the параметр types introduced в the CLICK_CELL event для the параметр types из the event обратный вызов функция. (некоторые parameters may be omitted и can be obtained through the corresponding interfaces).
 
 ## MOUSELEAVE_CELL
 
-Mouse-out-of-cell event
+Mouse-out-из-cell event
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function. (some parameters may be omitted and can be obtained through the corresponding interfaces).
+Refer к the параметр types introduced в the CLICK_CELL event для the параметр types из the event обратный вызов функция. (некоторые parameters may be omitted и can be obtained through the corresponding interfaces).
 
 ## CONTEXTMENU_CELL
 
-Cell right-click events
+Cell право-нажать events
 
 {{ use: MousePointerMultiCellEvent() }}
 
@@ -158,69 +158,69 @@ This event is triggered when the mouse leaves the table area.
 
 ## MOUSEDOWN_TABLE
 
-This event is triggered when the mouse is pressed in the table area.
+This event is triggered when the mouse is pressed в the table area.
 
 ## RESIZE_COLUMN
 
-Column width adjustment events.
+Column ширина adjustment events.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 ``
 
 {
-col: number.
-colWidth: number
+col: число.
+colWidth: число
 }
 
 ``
 
 ## RESIZE_COLUMN_END
 
-Column width adjustment end event.
+Column ширина adjustment конец event.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 ``
 
 {
-col: number.
-colWidths: number[]
+col: число.
+colWidths: число[]
 }
 
 ``
 
 ## RESIZE_ROW
 
-Row height adjustment events.
+Row высота adjustment events.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 ``
 
 {
-row: number;
-rowHeight: number
+row: число;
+rowHeight: число
 }
 
 ``
 
 ## RESIZE_ROW_END
 
-Row height adjustment end event.
+Row высота adjustment конец event.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 ``
 
 {
-row: number;
-rowHeight: number
+row: число;
+rowHeight: число
 }
 
 ``
 
 ## CHANGE_HEADER_POSITION
 
-Events for dragging table headers or rows to move positions
+Events для dragging table headers или rows к move positions
 
-Parameter type of event callback function:
+параметр тип из event обратный вызов функция:
 
 ```
 {
@@ -232,9 +232,9 @@ Parameter type of event callback function:
 
 ## CHANGE_HEADER_POSITION_FAIL
 
-Events for dragging table headers or rows to move positions when failed
+Events для dragging table headers или rows к move positions when failed
 
-Parameter type of event callback function:
+параметр тип из event обратный вызов функция:
 
 ```
 {
@@ -246,20 +246,20 @@ Parameter type of event callback function:
 
 ## CHANGE_HEADER_POSITION_START
 
-Drag the header or row to move the position to start the event
+перетаскивание the header или row к move the позиция к начало the event
 
-Parameter type of event callback function:
+параметр тип из event обратный вызов функция:
 
 ```
 {
-  col: number;
-  row: number;
-  x: number;
-  y: number;
-  backX: number;
-  lineX: number;
-  backY: number;
-  lineY: number;
+  col: число;
+  row: число;
+  x: число;
+  y: число;
+  backX: число;
+  lineX: число;
+  backY: число;
+  lineY: число;
   event: Event;
 };
 
@@ -267,20 +267,20 @@ Parameter type of event callback function:
 
 ## CHANGING_HEADER_POSITION
 
-Drag the header or drag the row to move the process event
+перетаскивание the header или перетаскивание the row к move the process event
 
-Parameter type of event callback function:
+параметр тип из event обратный вызов функция:
 
 ```
 {
-  col: number;
-  row: number;
-  x: number;
-  y: number;
-  backX: number;
-  lineX: number;
-  backY: number;
-  lineY: number;
+  col: число;
+  row: число;
+  x: число;
+  y: число;
+  backX: число;
+  lineX: число;
+  backY: число;
+  lineY: число;
   event: Event;
 };
 
@@ -288,13 +288,13 @@ Parameter type of event callback function:
 
 ## SORT_CLICK
 
-Click on the sort icon event. **ListTable proprietary event**
+нажать на the sort icon event. **ListTable proprietary event**
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
   {
-    field: string;
+    field: строка;
     order: 'asc' | 'desc' | 'normal';
      event: Event;
   }
@@ -302,14 +302,14 @@ Event callback function parameter types.
 
 ## PIVOT_SORT_CLICK
 
-Sort icon click event in the pivot table. **PivotTable proprietary events！**
+Sort icon нажать event в the pivot table. **PivotTable proprietary events！**
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
     {
-      col: number.
-      row: number.
+      col: число.
+      row: число.
       order: 'asc' | 'desc' | 'normal'.
       dimensionInfo: IDimensionInfo[];
       cellLocation: CellLocation.
@@ -324,11 +324,11 @@ Among them:
 
 after execute sort logic. **ListTable proprietary event**
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
   {
-    field: string;
+    field: строка;
     order: 'asc' | 'desc' | 'normal';
      event: Event;
   }
@@ -336,67 +336,67 @@ Event callback function parameter types.
 
 ## FREEZE_CLICK
 
-Click on the fixed column icon to freeze or unfreeze the event.
+нажать на the fixed column icon к freeze или unfreeze the event.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
 {
-  col: number;
-  row: number
-  fields: string[];
-  colCount: number;
+  col: число;
+  row: число
+  fields: строка[];
+  colCount: число;
 }
 ```
 
-## SCROLL
+## прокрутка
 
-Scroll form events.
+прокрутка form events.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
     {
-      scrollLeft: number;
-      scrollTop: number;
-      scrollWidth: number;
-      scrollHeight: number;
-      viewWidth: number;
-      viewHeight: number;
+      scrollLeft: число;
+      scrollTop: число;
+      scrollWidth: число;
+      scrollHeight: число;
+      viewWidth: число;
+      viewHeight: число;
     }
 ```
 
 ## SCROLL_HORIZONTAL_END
 
-Scroll horizontally to the right to end the event
+прокрутка horizontally к the право к конец the event
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
     {
-    scrollLeft: number;
-    scrollTop: number;
-    scrollWidth: number;
-    scrollHeight: number;
-    viewWidth: number;
-    viewHeight: number;
+    scrollLeft: число;
+    scrollTop: число;
+    scrollWidth: число;
+    scrollHeight: число;
+    viewWidth: число;
+    viewHeight: число;
 }
 ```
 
 ## SCROLL_VERTICAL_END
 
-Vertical scroll bar scrolls to the end position
+Vertical прокрутка bar scrolls к the конец позиция
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
     {
-    scrollLeft: number;
-    scrollTop: number;
-    scrollWidth: number;
-    scrollHeight: number;
-    viewWidth: number;
-    viewHeight: number;
+    scrollLeft: число;
+    scrollTop: число;
+    scrollWidth: число;
+    scrollHeight: число;
+    viewWidth: число;
+    viewHeight: число;
 }
 ```
 
@@ -408,124 +408,124 @@ Mouse over mini-graph marker event
 
 ## DRAG_SELECT_END
 
-Drag-and-drop boxed cell mouse release event
+перетаскивание-и-отпускание boxed cell mouse release event
 
 {{ use: MousePointerMultiCellEvent() }}
 
 ## DRILLMENU_CLICK
 
-Drill-down button click event. **Pivot table proprietary event**
+Drill-down кнопка нажать event. **Pivot table proprietary event**
 
 {{ use: DrillMenuEventInfo() }}
 
 ## DROPDOWN_ICON_CLICK
 
-Click on the drop-down menu button
+нажать на the отпускание-down menu кнопка
 
 {{ use: CellAddress() }}
 
 ## DROPDOWN_MENU_CLICK
 
-The drop-down menu options click on the event
+The отпускание-down menu options нажать на the event
 
 {{ use: DropDownMenuEventArgs() }}
 
 ## DROPDOWN_MENU_CLEAR
 
-Clear drop-down menu event (clicking on other areas while the menu is displayed)
+Clear отпускание-down menu event (clicking на other areas while the menu is displayed)
 
 {{ use: CellAddress() }}
 
 ## TREE_HIERARCHY_STATE_CHANGE
 
-Tree structure expand and collapse click events
+Tree structure развернуть и свернуть нажать events
 
 ## SHOW_MENU
 
 Displays menu events.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
    {
-      x: number.
-      y: number.
-      col: number.
-      row: number.
-      type: 'dropDown' | 'contextmenu' | 'custom';
+      x: число.
+      y: число.
+      col: число.
+      row: число.
+      тип: 'выпадающий список' | 'contextmenu' | 'custom';
     }
 ```
 
 ## HIDE_MENU
 
-Hide menu events
+скрыть menu events
 
 ## ICON_CLICK
 
-icon icon click event.
+icon icon нажать event.
 
-Event callback function parameter types.
+Event обратный вызов функция параметр types.
 
 ```
     {
-      name: string;
-      col: number.
-      row: number.
-      x: number.
-      y: number.
-      funcType?: IconFuncTypeEnum | string;
+      name: строка;
+      col: число.
+      row: число.
+      x: число.
+      y: число.
+      funcType?: IconFuncTypeEnum | строка;
       icon: Icon.
     }
 ```
 
 ## LEGEND_ITEM_CLICK
 
-Legend item click event. **Legend exclusive event**
+Legend item нажать event. **Legend exclusive event**
 
-The parameter type of the event callback function:
+The параметр тип из the event обратный вызов функция:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+   { model: любой; значение: любой; event: PointerEvent };
 ```
 
 ## LEGEND_ITEM_HOVER
 
-Legend item hover event. **Legend exclusive event**
+Legend item навести event. **Legend exclusive event**
 
-The parameter type of the event callback function:
+The параметр тип из the event обратный вызов функция:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+   { model: любой; значение: любой; event: PointerEvent };
 ```
 
 ## LEGEND_ITEM_UNHOVER
 
-Legend item hover to unhover events. **Legend exclusive event**
+Legend item навести к unhover events. **Legend exclusive event**
 
-The parameter type of the event callback function:
+The параметр тип из the event обратный вызов функция:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+   { model: любой; значение: любой; event: PointerEvent };
 ```
 
 ## LEGEND_CHANGE
 
-Color legend, size legend, this event is triggered after the user operates the legend range. **Legend exclusive event**
+цвет legend, размер legend, this event is triggered after the user operates the legend range. **Legend exclusive event**
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
-   { model: any; value: any; event: PointerEvent };
+   { model: любой; значение: любой; event: PointerEvent };
 ```
 
 ## MOUSEENTER_AXIS
 
 The mouse enters the coordinate axis event. **Axis-specific events**
 
-The parameter type of the event callback function:
+The параметр тип из the event обратный вызов функция:
 
 ```
- MousePointerCellEvent & { axisPosition: 'left' | 'right' | 'top' | 'bottom' };
+ MousePointerCellEvent & { axisPosition: 'лево' | 'право' | 'верх' | 'низ' };
 ```
 
 {{ use: MousePointerCellEvent() }}
@@ -534,98 +534,98 @@ The parameter type of the event callback function:
 
 The mouse leaves the axis event. **Axis-specific events**
 
-The parameter type of the event callback function:
+The параметр тип из the event обратный вызов функция:
 Same as **MOUSEENTER_AXIS**
 
 ## COPY_DATA
 
 Cell content copy event.
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
- { cellRange: CellRange[]; copyData: string };
+ { cellRange: CellRange[]; copyData: строка };
 ```
 
 ## CHANGE_CELL_VALUE
 
-Event that changes the cell value.
+Event that changes the cell значение.
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
-{ col: number; row: number; rawValue: string | number; currentValue: string | number; changedValue: string | number };
+{ col: число; row: число; rawValue: строка | число; currentValue: строка | число; changedValue: строка | число };
 ```
 
 ## CHECKBOX_STATE_CHANGE
 
-Change the checkbox state. **ListTable table exclusive event**
+Change the флажок state. **ListTable table exclusive event**
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
 {
-  col: number;
-  row: number;
-  alue: string | number;
-  dataValue: string | number;
-  checked: boolean;
+  col: число;
+  row: число;
+  alue: строка | число;
+  dataValue: строка | число;
+  checked: логический;
 };
 ```
 
 ## RADIO_STATE_CHANGE
 
-Change the radio state. **ListTable table exclusive event**
+Change the переключатель state. **ListTable table exclusive event**
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
 {
-  col: number;
-  row: number;
-  alue: string | number;
-  dataValue: string | number;
-  radioIndexInCell: boolean | number;
+  col: число;
+  row: число;
+  alue: строка | число;
+  dataValue: строка | число;
+  radioIndexInCell: логический | число;
 };
 ```
 
-If there is only one radio button in the cell, radioIndexInCell is of type boolean, indicating whether it is selected; if there are multiple radio buttons in the cell, radioIndexInCell is of type number, indicating the index of the selected radio button.
+If there is only one переключатель кнопка в the cell, radioIndexInCell is из тип логический, indicating whether it is selected; if there are multiple переключатель buttons в the cell, radioIndexInCell is из тип число, indicating the index из the selected переключатель кнопка.
 
 ## SWITCH_STATE_CHANGE
 
 Switch state change event. **ListTable table exclusive event**
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
 {
-col: number;
-row: number;
-value: string | number;
-dataValue: string | number;
-checked: boolean;
+col: число;
+row: число;
+значение: строка | число;
+dataValue: строка | число;
+checked: логический;
 };
 
 ```
 
 ## BUTTON_CLICK
 
-Button click event. **ListTable table exclusive event**
+кнопка нажать event. **ListTable table exclusive event**
 
-Parameter types of event callback function:
+параметр types из event обратный вызов функция:
 
 ```
 {
-col: number;
-row: number;
+col: число;
+row: число;
 event: Event;
 };
 ```
 
 ## EMPTY_TIP_CLICK
 
-Empty data prompt click event.
+Empty data prompt нажать event.
 
 ## EMPTY_TIP_DBLCLICK
 
-Empty data prompt double-click event.
+Empty data prompt double-нажать event.

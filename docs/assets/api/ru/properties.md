@@ -1,66 +1,66 @@
-{{ target: table-properties }}
+{{ target: таблица-свойства }}
 
-# Properties
+# свойства
 
-List of attributes of the table instance. The ones listed below all have getters and setters in the part.
+список из attributes из the таблица instance. The ones списокed below все have getters и setters в the part.
 
 ## records
 
-data
+данные
 
 ## rowCount
 
-Total number of rows
+Total число из rows
 
 ## colCount
 
-total number of columns
+total число из columns
 
 ## rowHeaderLevelCount
 
-Number of row header levels
+число из row header levels
 
 ## columnHeaderLevelCount
 
-The number of levels in the list header
+The число из levels в the список header
 
 ## frozenColCount
 
-Number of frozen columns
+число из frozen columns
 
 ## frozenRowCount
 
-Number of frozen rows
+число из frozen rows
 
 ## rightFrozenColCount
 
-Number of frozen columns on the right
+число из frozen columns на the право
 
 ## bottomFrozenRowCount
 
-Number of frozen rows at the bottom
+число из frozen rows в the низ
 
-## theme
+## тема
 
-theme.
-
-**Supported as modifier**
-
-## widthMode
-
-width mode
+тема.
 
 **Supported as modifier**
 
-## heightMode
+## ширинаMode
+
+ширина mode
+
+**Supported as modifier**
+
+## высотаMode
 
 altitude mode
 
 **Supported as modifier**
 
-## autoWrapText
+## автоWrapText
 
-Automatically wrap text
+автоmatically wrap текст
 
 **Supported as modifier**
 
@@ -70,21 +70,21 @@ column configuration
 
 ## transpose
 
-Whether to transpose
+Whether к transpose
 
 ## rowHierarchyType
 
-Tile or tree
+Tile или tree
 
-** Pivot table exclusive **
+** сводный таблица exclusive **
 
 ## scrollLeft
 
-Horizontal scroll bar position
+Horizontal прокрутка bar позиция
 
 ## scrollTop
 
-Vertical scroll bar position
+Vertical прокрутка bar позиция
 
 ## pixelRatio
 

@@ -3,32 +3,32 @@
 
 ```
 {
-  col: number;
-  row: number;
+  col: число;
+  row: число;
   rect?: RectProps;
-  x?: number;
-  y?: number;
+  x?: число;
+  y?: число;
   ranges: CellRange[];
-  title?: string;
+  title?: строка;
   /** Имя измерения */
-  field?: string;
+  field?: строка;
   /** Пути заголовков строк ячеек */
   cellHeaderPaths?: ICellHeaderPaths;
   /** Позиция ячейки */
   cellRange?: RectProps;
   /** Полные данные - исходные данные */
-  originData?: any;
+  originData?: любой;
   /** Отформатированное значение */
-  value?: string|number;
+  значение?: строка|число;
   /** Исходное значение */
-  dataValue?: string|number;
+  dataValue?: строка|число;
   cellLocation?: CellLocation;
-  cellType?: string;
+  cellType?: строка;
   related?: CellAddress;
-  scaleRatio?: number;
-  targetIcon?: { name: string; position: RectProps; funcType: string };
+  scaleRatio?: число;
+  targetIcon?: { name: строка; позиция: RectProps; funcType: строка };
   sparkline: {
-    pointData: any;
+    pointData: любой;
   };
   event?: MouseEvent | PointerEvent | TouchEvent;
 }

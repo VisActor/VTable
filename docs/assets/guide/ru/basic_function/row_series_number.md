@@ -1,63 +1,63 @@
-# Table row number
+# таблица row число
 
-The row numbering capability provides users with an easy way to identify and manipulate specific rows in a table.
+The row numbering capability provides users с an easy way к identify и manipulate specific rows в a таблица.
 
-VTable provides the ability to row serial numbers. Users can easily enable, customize formats and styles on demand, drag and drop row numbers to change positions, and have the ability to select multiple rows in an entire row.
+Vтаблица provides the ability к row serial numbers. Users can easily включить, пользовательскийize formats и styles на demand, перетаскивание и отпускание row numbers к change positions, и have the ability к выбрать multiple rows в an entire row.
 
-## Row serial number configuration item
+## Row serial число configuration item
 
-Currently the following configurations are supported:
+Currently Следующий configurations are supported:
 
 ```javascript
-export interface IRowSeriesNumber {
-  width?: number | 'auto';
-  // align?: 'left' | 'right';
-  // span?: number | 'dependOnNear';
-  title?: string;
-  // field?: FieldDef;
-  format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
-  cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
+export интерфейс IRowSeriesNumber {
+  ширина?: число | 'авто';
+  // align?: 'лево' | 'право';
+  // span?: число | 'dependOnNear';
+  title?: строка;
+  // поле?: полеDef;
+  format?: (col?: число, row?: число, таблица?: Baseтаблицаапи) => любой;
+  cellType?: 'текст' | 'link' | 'imвозраст' | 'video' | 'флажок';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
-  headerIcon?: string | ColumnIconOption | (string | ColumnIconOption)[];
-  icon?:
-    | string
-    | ColumnIconOption
-    | (string | ColumnIconOption)[]
-    | ((args: CellInfo) => string | ColumnIconOption | (string | ColumnIconOption)[]);
-  // /** Whether to include the serial number part when selecting the entire row or all selections */
-  // selectRangeInclude?: boolean;
+  headerиконка?: строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[];
+  иконка?:
+    | строка
+    | ColumnиконкаOption
+    | (строка | ColumnиконкаOption)[]
+    | ((args: CellInfo) => строка | ColumnиконкаOption | (строка | ColumnиконкаOption)[]);
+  // /** Whether к include the serial число part when selecting the entire row или все selections */
+  // selectRangeInclude?: логический;
   /** Whether the order can be dragged */
-  dragOrder?: boolean;
-  /** Whether to disable row serial number width adjustment. */
-  disableColumnResize?: boolean;
+  dragOrder?: логический;
+  /** Whether к отключить row serial число ширина adjustment. */
+  disableColumnResize?: логический;
 }
 ```
 
 The specific configuration items are described as follows:
 
-- width: The line number width can be configured with number or 'auto'. (Default uses defaultColWidth, which defaults to 80)
-- title: row number title, empty by default
-- format: row serial number formatting function, empty by default. Through this configuration, numerical serial numbers can be converted into custom serial numbers, such as using a, b, c...
-- cellType: row number cell type, default is text
-- style: row number body cell style
-- headerStyle: row number header cell style
-- headerIcon: row number header cell icon
-- icon: row number body cell icon
-- dragOrder: Whether the row serial number order can be dragged, the default is false. If set to true, the icon at the dragging position will be displayed, and you can drag and drop on the icon to change its position. If you need to replace the icon, you can configure it yourself. Please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_icon for the chapter on resetting function icons.
-- disableColumnResize: Whether to disable row serial number width adjustment, the default is false
+- ширина: The line число ширина can be configured с число или 'авто'. (по умолчанию uses defaultColширина, which defaults к 80)
+- заголовок: row число title, empty по по умолчанию
+- format: row serial число formatting функция, empty по по умолчанию. Through this configuration, numerical serial numbers can be converted into пользовательский serial numbers, such as using a, b, c...
+- cellType: row число cell тип, по умолчанию is текст
+- style: row число body cell style
+- headerStyle: row число header cell style
+- headerиконка: row число header cell иконка
+- иконка: row число body cell иконка
+- dragпорядок: Whether the row serial число order can be dragged, the по умолчанию is false. If set к true, the иконка в the dragging позиция will be displayed, и Вы можете перетаскивание и отпускание на the иконка к change its позиция. If you need к replace the иконка, Вы можете configure it yourself. Please refer к the tutorial: https://visactor.io/vтаблица/guide/пользовательский_define/пользовательский_иконка для the chapter на resetting функция иконкаs.
+- disableColumnResize: Whether к отключить row serial число ширина adjustment, the по умолчанию is false
 
-Other annotated configuration items will be gradually improved in the future, and anxious comrades can participate in joint construction and development.
+Other annotated configuration items will be gradually improved в the future, и anxious comrades can participate в joint construction и development.
 
 **Note:**
 
-- Sorted tables do not support dragging row numbers to change the order of data;
-- Tree-structured tables are currently restricted to move between nodes of the same parent level when dragged and dropped in order;How to move between different parent levels, you can see another [tutorial](../interaction/drag_header)。
+- сортировкаed таблицаs do не support dragging row numbers к change the order из данные;
+- Tree-structured таблицаs are currently restricted к move between nodes из the same parent level when dragged и dropped в order;How к move between different parent levels, Вы можете see another [tutorial](../interaction/drag_header)。
 
-[Demo Example](../../demo/basic-functionality/row-series-number)
+[демонстрация пример](../../демонстрация/базовый-функциональность/row-series-число)
 
 ## Interactive Capabilities Achieved Through Row Numbers
 
-- Drag and drop row numbers to change positions: Set `dragOrder` to `true`. If you need to listen to the drag-and-drop event, you can listen to the [`VTable.EVENT_TYPE.CHANGE_HEADER_POSITION` event](../../api/events#CHANGE_HEADER_POSITION).
+- перетаскивание и отпускание row numbers к change positions: Set `dragOrder` к `true`. If you need к списокen к the перетаскивание-и-отпускание событие, Вы можете списокen к the [`Vтаблица.событие_TYPE.CHANGE_HEADER_POSITION` событие](../../апи/событиеs#CHANGE_HEADER_POSITION).
 
-- Select entire rows: Click on the row number to select the entire row.
+- выбрать entire rows: Нажать на the row число к выбрать the entire row.

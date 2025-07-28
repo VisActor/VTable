@@ -1,70 +1,70 @@
-# VTable Usage Issue: How to sort table contents by data records?
+# Vтаблица Usвозраст Issue: How к сортировка таблица contents по данные records?
 
 ## Question Description
 
-The table is sorted according to certain column data. How to implement this requirement using VTable?
+The таблица is сортировкаed according к certain column данные. How к implement this requirement using Vтаблица?
 
 ## Solution
 
-In VTable, sorting function can be realized in three ways:
+в Vтаблица, сортировкаing функция can be realized в three ways:
 
-1. Implemented through UI in the table
-   Configure the `sort` attribute in `columns`. It supports configuring `true` to use the default sorting rules. You can also configure a function to customize the sorting rules:
+1. Implemented through UI в the таблица
+   Configure the `сортировка` attribute в `columns`. It supports configuring `true` к use the по умолчанию сортировкаing rules. Вы можете also configure a функция к пользовательскийize the сортировкаing rules:
 
 ```javascript
 // ......
 columns: [
   {
-    field: 'id',
-    title: 'ID',
-    width: 120,
-    sort: true
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 120,
+    сортировка: true
   },
   {
-    field: 'name',
-    title: 'Name',
-    width: 120,
-    sort: (a, b) => {
-      return a - b;
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 120,
+    сортировка: (a, b) => {
+      возврат a - b;
     }
   }
 ];
 ```
 
-At this time, the sort button will be displayed on the header of the corresponding column:
-![](/vtable/faq/6-0.png)
-Click the sort button to switch among three states: no sorting, ascending sort and descending sort.
+в this time, the сортировка Кнопка will be displayed на the header из the corresponding column:
+![](/vтаблица/Часто Задаваемые Вопросы/6-0.png)
+Нажать the сортировка Кнопка к switch among three states: no сортировкаing, ascending сортировка и descending сортировка.
 
-2. By configuring `sortState` in the initialization `option`
-   After configuring the `sort` attribute in `columns`, you can configure the `sortState` attribute in `option`:
+2. по configuring `сортировкаState` в the initialization `option`
+   After configuring the `сортировка` attribute в `columns`, Вы можете configure the `сортировкаState` attribute в `option`:
 
 ```javascript
-sortState:{
-    field: 'Category',
-    order: 'asc'
+сортировкаState:{
+    поле: 'Категория',
+    порядок: 'asc'
 }
 ```
 
-field is the data source corresponding to sorting; order is the sorting rule, which supports asc ascending order, desc descending order and normal non-sorting.
+поле is the данные source corresponding к сортировкаing; order is the сортировкаing rule, which supports asc ascending order, desc descending order и normal non-сортировкаing.
 
-3. Configure `sortState` through `updateSortState` api
-   After configuring the `sort` attribute in `columns`, you can configure `sortState` at any time through the `updateSortState` api of the table instance to update the sorting effect:
+3. Configure `сортировкаState` through `updateсортировкаState` апи
+   After configuring the `сортировка` attribute в `columns`, Вы можете configure `сортировкаState` в любой time through the `updateсортировкаState` апи из the таблица instance к update the сортировкаing effect:
 
 ```javascript
-instance.updateSortState({
-  field: 'id',
-  order: 'desc'
+instance.updateсортировкаState({
+  поле: 'id',
+  порядок: 'desc'
 });
 ```
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-sort-w869fk)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-сортировка-w869fk)
 
-![result](/vtable/faq/6-1.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/6-1.png)
 
 ## Quote
 
-- [Table Sort demo](https://visactor.io/vtable/demo/basic-functionality/sort)
-- [Sort Tutorial](https://visactor.io/vtable/guide/basic_function/sort/list_sort)
-- [github](https://github.com/VisActor/VTable)
+- [таблица сортировка демонстрация](https://visactor.io/vтаблица/демонстрация/базовый-функциональность/сортировка)
+- [сортировка Tutorial](https://visactor.io/vтаблица/guide/базовый_function/сортировка/список_сортировка)
+- [github](https://github.com/VisActor/Vтаблица)

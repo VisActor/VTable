@@ -1,11 +1,11 @@
-{{ target: common-gantt-frame-style }}
+{{ target: common-гантт-frame-style }}
 
-The definition of IFrameStyle is:
+The definition из IFrameStyle is:
 ```
-export type IFrameStyle = {
-  borderColor?: string;
-  borderLineWidth?: number | number[];
-  borderLineDash?: number[];
-  cornerRadius?: number;
+export тип IFrameStyle = {
+  borderColor?: строка;
+  borderLineширина?: число | число[];
+  borderLineDash?: число[];
+  cornerRadius?: число;
 };
 ```

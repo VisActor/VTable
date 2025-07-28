@@ -1,58 +1,58 @@
 ---
-title: 15. What should I do if the bottom and right borders of VTable are not displayed when it is scrolled?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 15. What should I do if the низ и право borders из Vтаблица are не displayed when it is scrolled?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-What should I do if the bottom and right borders of VTable are not displayed when it is scrolled?</br>
+What should I do if the низ и право borders из Vтаблица are не displayed when it is scrolled?</br>
 ## Problem description
 
-As shown in the screenshot, the table contents in VTable are not fully displayed (when there is a scroll bar). How can I display the right and bottom borders of the table?</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WqiUbPv03owU2Px1UVNciy8Anif.gif' alt='' width='432' height='628'>
+As shown в the screenshot, the таблица contents в Vтаблица are не fully displayed (when there is a прокрутка bar). How can I display the право и низ borders из the таблица?</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/WqiUbPv03owU2Px1UVNciy8Anif.gif' alt='' ширина='432' высота='628'>
 
 ## Solution
 
-You can add borderLineWidth and borderColor configurations in the frameStyle in the theme. However, after adding the above configurations, the borders on the top and left sides of the table and the borders of the cells will have two layers of borders, and the effect is not good.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/B9OwbT4N3oX3ZExrtcQcccOwndc.gif' alt='' width='437' height='131'>
+Вы можете add borderLineширина и borderColor configurations в the frameStyle в the тема. However, after adding the above configurations, the borders на the верх и лево sides из the таблица и the borders из the cells will have two layers из borders, и the effect is не good.</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/B9OwbT4N3oX3ZExrtcQcccOwndc.gif' alt='' ширина='437' высота='131'>
 
-After further research on the configuration, I found the cellInnerBorder configuration item, which is specifically designed to handle this situation. If you set it to false, the border lines of the cells on the edge will no longer be drawn.</br>
+After further research на the configuration, I found the cellInnerBorder configuration item, which is specifically designed к handle this situation. If you set it к false, the граница lines из the cells на the edge will no longer be drawn.</br>
 The configuration items used are defined as follows:</br>
 ```
 /** frameStyle 是配置表格整体的样式 */
 frameStyle ?:FrameStyle;
 /** 单元格是否绘制内边框,如果为true，边界单元格靠近边界的边框会被隐藏 */
-cellInnerBoder?:boolean;  // true | false</br>
+cellInnerBoder?:логический;  // true | false</br>
 ```
 
 
-## Code example
+## код пример
 
 ```
   const option = {
     records,
     columns,
-    autoWrapText: true,
-    limitMaxAutoWidth: 600,
-    heightMode: 'autoHeight',
-    theme:{
+    автоWrapText: true,
+    limitMaxавтоширина: 600,
+    высотаMode: 'автовысота',
+    тема:{
       frameStyle:{ // 配置的表格整体的边框
-         borderLineWidth: 1, //  设置边框宽度
+         borderLineширина: 1, //  设置边框宽度
          borderColor: "#CBCBCB" //  设置边框颜色
       },
-      cellInnerBorder:true  // 单元格是否绘制内边框，可结合情况设置true或false
+      cellInnerBпорядок:true  // 单元格是否绘制内边框，可结合情况设置true或false
     }
   };
-  const tableInstance = new VTable.ListTable(container, option);</br>
+  const таблицаInstance = новый Vтаблица.списоктаблица(container, option);</br>
 ```
-## Results show
+## Results показать
 
-Complete example：https://codesandbox.io/p/sandbox/vtable-frame-border-demo-forked-zn4n9j</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/LYrkbUrwFoyKLrxJy5AcJnRHnge.gif' alt='' width='421' height='615'>
+Complete пример：https://кодsandbox.io/p/sandbox/vтаблица-frame-граница-демонстрация-forked-zn4n9j</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/LYrkbUrwFoyKLrxJy5AcJnRHnge.gif' alt='' ширина='421' высота='615'>
 
 ## Related Documents
 
-Set table frame demo：https://codesandbox.io/p/sandbox/vtable-frame-border-demo-forked-zn4n9j</br>
-Related api：https://www.visactor.io/vtable/option/ListTable#theme.cellInnerBorder </br>
-https://www.visactor.io/vtable/option/ListTable#theme.frameStyle.borderLineWidth</br>
-https://www.visactor.io/vtable/option/ListTable#theme.frameStyle.borderColor</br>
-github：https://github.com/VisActor/VTable</br>
+Set таблица frame демонстрация：https://кодsandbox.io/p/sandbox/vтаблица-frame-граница-демонстрация-forked-zn4n9j</br>
+Related апи：https://www.visactor.io/vтаблица/option/списоктаблица#тема.cellInnerBorder </br>
+https://www.visactor.io/vтаблица/option/списоктаблица#тема.frameStyle.borderLineширина</br>
+https://www.visactor.io/vтаблица/option/списоктаблица#тема.frameStyle.borderColor</br>
+github：https://github.com/VisActor/Vтаблица</br>

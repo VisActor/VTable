@@ -15,11 +15,11 @@ key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Визу�
 
 Сначала вам нужно создать форк этого проекта. Перейдите на [страницу проекта VTable](https://github.com/VisActor/VTable) и нажмите кнопку Fork в правом верхнем углу.
 
-<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-fork.png' alt='' width='1000' height='auto'>
+<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-fork.png' alt='' ширина='1000' высота='auto'>
 
-Проект появится как xxxx (ваше имя пользователя GitHub)/vtable в вашем аккаунте GitHub.
+Проект появится как xxxx (ваше имя пользователя GitHub)/VTable в вашем аккаунте GitHub.
 
-<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-fork-self.png' alt='' width='849' height='auto'>
+<img src='https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/contributing/github-fork-self.png' alt='' ширина='849' высота='auto'>
 
 # Локальная Среда Разработки
 
@@ -56,11 +56,11 @@ VisActor преимущественно использует стек техно
 
 Помощник Программирования Doubao MarsCode - это ИИ помощник программирования от Doubao, который предоставляет функции ИИ, представленные интеллектуальным завершением кода. Он поддерживает основные языки программирования и IDE, предлагая предложения для написания одной строки кода или целой функции во время разработки. Кроме того, он предлагает такие функции, как объяснение кода, генерация модульных тестов и исправление проблем, повышая эффективность и качество разработки. Для получения дополнительной информации, пожалуйста, обратитесь к [документации Помощника Программирования Doubao MarsCode](https://www.marscode.cn/home?utm_source=developer&utm_medium=oss&utm_campaign=visactor_a).
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DLaKb4PysoADAZx0x1RcYjXbnBe.gif' alt='' width='760' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/DLaKb4PysoADAZx0x1RcYjXbnBe.gif' alt='' ширина='760' высота='auto'>
 
 С Marscode разработчики VisActor могут легче понимать код, писать документацию, разрабатывать функции и выполнять модульное тестирование. Подробные примеры будут предоставлены в конкретных руководствах по вкладу в задачи.
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BQeib7E2gonoOaxLPqjcRtAYngh.gif' alt='' width='1000' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BQeib7E2gonoOaxLPqjcRtAYngh.gif' alt='' ширина='1000' высота='auto'>
 
 ## 2.4 Клонирование Кода Локально
 
@@ -89,10 +89,10 @@ $ npm i --global @microsoft/rush
 ```
 # Установка зависимостей
 $ rush update
-# Запуск демо-страницы для vtable
-$ cd ./packages/vtable && rushx demo
-# Запуск демо-страницы для react-vtable
-$ cd ./packages/react-vtable && rushx start
+# Запуск демо-страницы для VTable
+$ cd ./packages/VTable && rushx demo
+# Запуск демо-страницы для react-VTable
+$ cd ./packages/react-VTable && rushx начало
 # Запуск локального сайта документации
 $ rush docs
 ```
@@ -105,13 +105,13 @@ github: [github.com/VisActor](https://link.juejin.cn/?target=https%3A%2F%2Fgithu
 
 Подписка на WeChat VisActor (вы можете присоединиться к группе WeChat через меню подписки):
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/KLjmbz9TtoGzPIxarv7cmhpgnSY.gif' alt='' width='258' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/KLjmbz9TtoGzPIxarv7cmhpgnSY.gif' alt='' ширина='258' высота='auto'>
 
 Официальный сайт VisActor: [www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%2Fwww.visactor.io%2Fvtable)
 
 Группа Feishu:
 
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Cv9xb0zzLoUWyaxMVgccWuGPn7d.gif' alt='' width='264' height='auto'>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/Cv9xb0zzLoUWyaxMVgccWuGPn7d.gif' alt='' ширина='264' высота='auto'>
 
 discord: https://discord.com/invite/3wPyxVyH6m
 

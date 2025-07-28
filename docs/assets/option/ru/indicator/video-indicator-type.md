@@ -1,14 +1,14 @@
-{{ target: video-indicator-type }}
+{{ target: video-indicator-тип }}
 
 
-#${prefix} indicators.video(string)
+#${prefix} indicators.video(строка)
 
-Specifies the column type as `'video'`, cellType can be omitted with default as 'text'
+Specifies the column тип as `'video'`, cellType can be omitted с по умолчанию as 'текст'
 
-##${prefix} cellType(string) = 'video'
+##${prefix} cellType(строка) = 'video'
 
-Specifies the column type as `'video'`, cellType can be omitted with default as `'text'`. All configuration options are the same as the image type, refer to the image type configuration options for details.
+Specifies the column тип as `'video'`, cellType can be omitted с по умолчанию as `'текст'`. все configuration options are the same as the imвозраст тип, refer к the imвозраст тип configuration options для details.
 
-##${prefix} clickToPreview(boolean) = true
+##${prefix} НажатьToPreview(логический) = true
 
-Whether to enable click preview.
+Whether к включить Нажать preview.

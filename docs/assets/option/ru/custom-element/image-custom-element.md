@@ -1,61 +1,61 @@
-{{ target: image-custom-element }}
+{{ target: imвозраст-пользовательский-element }}
 
-${prefix} type (string) ='image'
+${prefix} тип (строка) ='imвозраст'
 
-**Required**
+**обязательный**
 
-The element type, which is an image in this case.
+The element тип, which is an imвозраст в this case.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} src (string | ((value: string) => string))
+${prefix} src (строка | ((значение: строка) => строка))
 
-**Required**
+**обязательный**
 
-The URL of the image, which can be a string or a function that returns a string.
+The URL из the imвозраст, which can be a строка или a функция that returns a строка.
 
-${prefix} width (number | string | ((value: string) => number | string))
+${prefix} ширина (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-The width of the image, which can be a number, a string, or a function that returns a number or a string.
+The ширина из the imвозраст, which can be a число, a строка, или a функция that returns a число или a строка.
 
-${prefix} height (number | string | ((value: string) => number | string))
+${prefix} высота (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-The height of the image, which can be a number, a string, or a function that returns a number or a string.
+The высота из the imвозраст, which can be a число, a строка, или a функция that returns a число или a строка.
 
-${prefix} hover (Object)
+${prefix} навести (объект)
 
-The effect when the mouse hovers over the image.
+The effect when the mouse hovers over the imвозраст.
 
-#${prefix} x (number | string)
+#${prefix} x (число | строка)
 
-The x-coordinate of the hover effect.
+The x-coordinate из the навести effect.
 
-#${prefix} y (number | string)
+#${prefix} y (число | строка)
 
-The y-coordinate of the hover effect.
+The y-coordinate из the навести effect.
 
-#${prefix} width (number | string | ((value: string) => number | string))
+#${prefix} ширина (число | строка | ((значение: строка) => число | строка))
 
-The width of the hover effect, which can be a number, a string, or a function that returns a number or a string.
+The ширина из the навести effect, which can be a число, a строка, или a функция that returns a число или a строка.
 
-#${prefix} height (number | string | ((value: string) => number | string))
+#${prefix} высота (число | строка | ((значение: строка) => число | строка))
 
-The height of the hover effect, which can be a number, a string, or a function that returns a number or a string.
+The высота из the навести effect, which can be a число, a строка, или a функция that returns a число или a строка.
 
-#${prefix} bgColor (string)
+#${prefix} bgColor (строка)
 
-The background color of the hover effect.
+The фон цвет из the навести effect.
 
-#${prefix} radius (number)
+#${prefix} radius (число)
 
-The border radius of the hover effect.
+The граница radius из the навести effect.
 
 ${prefix} shape ('circle' | 'square')
 
-The shape of the image, which can be a circle or a square. If not specified, the default shape is a square.
+The shape из the imвозраст, which can be a circle или a square. If не specified, the по умолчанию shape is a square.

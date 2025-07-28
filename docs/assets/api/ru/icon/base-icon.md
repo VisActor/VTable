@@ -1,12 +1,12 @@
 {{ target: base-icon }}
 
-${prefix} type ('text' | 'svg' | 'path' | 'image')
+${prefix} тип ('текст' | 'svg' | 'path' | 'image')
 Тип содержимого иконки, такой как svg-текст. Может использоваться для ограничения определений различных типов свойств.
 
-${prefix} width (number)
+${prefix} ширина (число)
 Ширина иконки.
 
-${prefix} height (number)
+${prefix} высота (число)
 Высота иконки.
 
 ${prefix} positionType (IconPosition)
@@ -21,10 +21,10 @@ ${prefix} positionType (IconPosition)
 */
 export enum IconPosition {
   /**Кнопка слева от ячейки, на которую влияет отступ */
-  left = 'left',
+  лево = 'лево',
   /**Кнопка справа от ячейки, на которую влияет отступ, например график закрепления */
-  right = 'right',
-  /**Иконка зафиксирована справа, не занимает место, не зависит от отступа и может покрывать содержимое, например dropDown */
+  право = 'право',
+  /**Иконка зафиксирована справа, не занимает место, не зависит от отступа и может покрывать содержимое, например выпадающий список */
   absoluteRight = 'absoluteRight',
   /**Иконка слева от блока содержимого ячейки следует позиционированию текста и не переносится с текстом */
   contentLeft = 'contentLeft',
@@ -40,13 +40,13 @@ export enum IconPosition {
 }
 ```
 
-${prefix} marginRight (number)
+${prefix} marginRight (число)
 Расстояние между иконкой и элементом справа, или расстояние между иконкой и границей ячейки.
 
-${prefix} marginLeft (number)
+${prefix} marginLeft (число)
 Расстояние между иконкой и элементом слева, или расстояние между иконкой и границей ячейки.
 
-${prefix} name (string)
+${prefix} name (строка)
 Имя иконки, которое будет использоваться в качестве ключа для внутреннего кэша.
 
 ${prefix} funcType (IconFuncTypeEnum)
@@ -61,75 +61,75 @@ ${prefix} funcType (IconFuncTypeEnum)
 enum IconFuncTypeEnum {
   pin = 'pin',
   sort = 'sort',
-  dropDown = 'dropDown',
+  выпадающий список = 'выпадающий список',
   dropDownState = 'dropDownState',
   play = 'play',
   damagePic = 'damagePic',
-  expand = 'expand',
-  collapse = 'collapse',
+  развернуть = 'развернуть',
+  свернуть = 'свернуть',
   drillDown = 'drillDown',
   drillUp = 'drillUp'
 }
 ```
 
-${prefix} hover (Object)
+${prefix} навести (объект)
 
 Отвечает за размер горячей зоны наведения и цвет фона эффекта наведения.
 
-#${prefix} width (number)
+#${prefix} ширина (число)
 Ширина горячей зоны наведения.
 
-#${prefix} height (number)
+#${prefix} высота (число)
 Высота горячей зоны наведения.
 
-#${prefix} bgColor (string)
+#${prefix} bgColor (строка)
 Цвет фона для эффекта наведения.
 
-#${prefix} image (string)
+#${prefix} image (строка)
 Изображение для эффекта наведения.
 
-${prefix} cursor (string)
+${prefix} cursor (строка)
 Конкретный стиль курсора, который появляется при наведении мыши на иконку.
 
 ${prefix} visibleTime ('always' | 'mouseenter_cell' | 'click_cell')
 Видимость, по умолчанию 'always'. Дополнительные значения - 'always', 'mouseenter_cell' или 'click_cell' и т.д. Предложение: Если вам нужно использовать 'mouseenter_cell' или 'click_cell', рекомендуется установить positionTyle в absoluteRight (т.е. не занимать место), иначе занимаемый тип повлияет на визуальное отображение.
 
-${prefix} tooltip (Object)
+${prefix} подсказка (объект)
 Всплывающая подсказка, описание кнопки. В настоящее время поддерживается только поведение наведения.
 
-#${prefix} title (string)
+#${prefix} title (строка)
 Заголовок всплывающей подсказки.
 
 #${prefix} placement (Placement)
-Положение всплывающей подсказки, дополнительные значения: top, left, right или bottom.
+Положение всплывающей подсказки, дополнительные значения: верх, лево, право или низ.
 Определение типа перечисления Placement:
 
 ```
  enum Placement {
-  top = 'top',
-  bottom = 'bottom',
-  left = 'left',
-  right = 'right'
+  верх = 'верх',
+  низ = 'низ',
+  лево = 'лево',
+  право = 'право'
 }
 ```
 
-#${prefix} style (Object)
+#${prefix} style (объект)
 Стиль всплывающей подсказки. Если не настроен, будет использоваться стиль темы.
 
-##${prefix} font (string)
+##${prefix} шрифт (строка)
 Шрифт всплывающей подсказки.
 
-##${prefix} color (string)
+##${prefix} цвет (строка)
 Цвет текста всплывающей подсказки.
 
-##${prefix} padding (number[])
-Отступ всплывающей подсказки. Формат: [top, right, bottom, left].
+##${prefix} заполнение (число[])
+Отступ всплывающей подсказки. Формат: [верх, право, низ, лево].
 
-##${prefix} bgColor (string)
+##${prefix} bgColor (строка)
 Цвет фона всплывающей подсказки.
 
-##${prefix} arrowMark (boolean)
+##${prefix} arrowMark (логический)
 Показывать ли стрелку в всплывающей подсказке.
 
-${prefix} interactive (boolean)
-Интерактивна ли, по умолчанию true. В настоящее время известные неинтерактивные кнопки - это меню состоянияий dropdown.
+${prefix} interactive (логический)
+Интерактивна ли, по умолчанию true. В настоящее время известные неинтерактивные кнопки - это меню состоянияий выпадающий список.

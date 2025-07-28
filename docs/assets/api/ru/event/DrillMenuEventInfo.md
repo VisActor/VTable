@@ -2,11 +2,11 @@
 Определение типа для DrillMenuEventInfo:
 ```
  {
-  dimensionKey: string | number;
-  title: string;
-  drillDown: boolean;
-  drillUp: boolean;
-  col: number;
-  row: number;
+  dimensionKey: строка | число;
+  title: строка;
+  drillDown: логический;
+  drillUp: логический;
+  col: число;
+  row: число;
 }
 ```

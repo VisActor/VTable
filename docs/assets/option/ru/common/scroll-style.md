@@ -1,36 +1,36 @@
-{{ target: common-scroll-style }}
+{{ target: common-прокрутка-style }}
 
-#${prefix} scrollStyle(Object)
+#${prefix} scrollStyle(объект)
 
-Scroll bar style configuration
+прокрутка bar style configuration
 
-##${prefix} scrollRailColor(string)
+##${prefix} scrollRailColor(строка)
 
-Color of the scroll bar rail
+цвет из the прокрутка bar rail
 
-##${prefix} scrollSliderColor(string)
-Color of the scroll bar slider
+##${prefix} scrollSliderColor(строка)
+цвет из the прокрутка bar ползунок
 
-##${prefix} scrollSliderCornerRadius(number)
-The corner radius of the scroll bar slider
+##${prefix} scrollSliderCornerRadius(число)
+The corner radius из the прокрутка bar ползунок
 
-##${prefix} width(number)
-Width of the scroll bar
+##${prefix} ширина(число)
+ширина из the прокрутка bar
 
-##${prefix} visible(string)
-Visibility of the scroll bar, available values: `'always' | 'scrolling' | 'none' | 'focus'`, which correspond to: always visible | visible when scrolling | not visible | visible when the canvas is focused. Default 'scrolling'
+##${prefix} видимый(строка)
+Visibility из the прокрутка bar, доступный values: `'always' | 'scrolling' | 'никто' | 'фокус'`, which correspond к: always видимый | видимый when scrolling | не видимый | видимый when the canvas is focused. по умолчанию 'scrolling'
 
-##${prefix} hoverOn(boolean)
-Specifies whether the scroll bar is suspended over the container or is independent of the container. Defaults to true to hover over the container.
+##${prefix} hoverOn(логический)
+Specifies whether the прокрутка bar is suspended over the container или is independent из the container. Defaults к true к навести over the container.
 
-##${prefix} barToSide(boolean)
-Whether to display to the edge of the container even though the contents are not full. Default false
+##${prefix} barToSide(логический)
+Whether к display к the edge из the container even though the contents are не full. по умолчанию false
 
 
-##${prefix} horizontalPadding(number | [number, number, number, number])
+##${prefix} horizontalPadding(число | [число, число, число, число])
 
-Horizontal padding of the scroll bar.
+Horizontal заполнение из the прокрутка bar.
 
-##${prefix} verticalPadding(number | [number, number, number, number])
+##${prefix} verticalPadding(число | [число, число, число, число])
 
-Vertical padding of the scroll bar.
+Vertical заполнение из the прокрутка bar.

@@ -1,85 +1,85 @@
 ---
-category: examples
-group: Basic Features
-title: Column Width Mode - Adapt to Content
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png
-order: 3-6
-link: basic_function/row_height_column_width
-option: ListTable#widthMode
+категория: примеры
+группа: базовый возможности
+заголовок: Column ширина Mode - Adapt к Content
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/ширина-mode-автоширина.png
+порядок: 3-6
+ссылка: базовый_function/row_высота_column_ширина
+опция: списоктаблица#ширинаMode
 ---
 
-# Column Width Mode - Adapt to Content
+# Column ширина Mode - Adapt к Content
 
-Specifies the width size of all columns by content width.
+Specifies the ширина размер из все columns по content ширина.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `widthMode: 'autoWidth'`
+- `ширинаMode: 'автоширина'`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 100
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 100
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name'
+        поле: 'Product имя',
+        заголовок: 'Product имя'
       },
       {
-        field: 'Category',
-        title: 'Category'
+        поле: 'Категория',
+        заголовок: 'Категория'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория'
       },
       {
-        field: 'Region',
-        title: 'Region'
+        поле: 'Регион',
+        заголовок: 'Регион'
       },
       {
-        field: 'City',
-        title: 'City'
+        поле: 'Город',
+        заголовок: 'Город'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'autoWidth'
+      ширинаMode: 'автоширина'
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

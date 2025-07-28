@@ -1,188 +1,188 @@
 ---
-category: examples
-group: data-analysis
-title: Pivot analysis table drill down and drill up
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-drill.gif
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable-columns-text#drillDown
+категория: примеры
+группа: данные-analysis
+заголовок: сводный analysis таблица drill down и drill up
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-analysis-таблица-drill.gif
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица-columns-текст#drillDown
 ---
 
-# Pivot analysis table drill down and drill up
+# сводный analysis таблица drill down и drill up
 
-Add the drillDown configuration item to the dimension configuration rows or columns to display the download button, listen to the icon button click event `drillmenu_click`, determine whether to drill down or roll up the dimension according to the event parameter `drillDown` or `drillUp`, determine the dimension to drill down or drill up according to the parameter `dimensionKey`, add or delete it to rows or columns, obtain the data source corresponding to the new dimension level, and call the interface `updateOption` to update the new option to the table.
+Add the drillDown configuration item к the dimension configuration rows или columns к display the download Кнопка, списокen к the иконка Кнопка Нажать событие `drillменю_Нажать`, determine whether к drill down или roll up the dimension according к the событие параметр `drillDown` или `drillUp`, determine the dimension к drill down или drill up according к the параметр `dimensionKey`, add или delete it к rows или columns, obtain the данные source corresponding к the новый dimension level, и call the интерфейс `updateOption` к update the новый option к the таблица.
 
-In the demo example below, if you hover the mouse over the row dimension, a drill-down button will appear. Clicking it will add `Sub-Category` to the row dimension.
+в the демонстрация пример below, if you навести the mouse over the row dimension, a drill-down Кнопка will appear. Нажатьing it will add `Sub-Категория` к the row dimension.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable` table type
+- `сводныйтаблица` таблица тип
 - `columns` column dimension configuration
 - `columns.drillDown` dimension drill-down configuration
 - `columns.drillUp` dimension drill-up configuration
 - `rows` row dimension configuration
 - `indicators` indicator configuration
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-const data = [
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+const данные = [
   {
-    Region: 'Central',
-    Category: 'Furniture',
-    Quantity: '16'
+    Регион: 'Central',
+    категория: 'Furniture',
+    Количество: '16'
   },
   {
-    Region: 'Central',
-    Category: 'Furniture',
-    Quantity: '4'
+    Регион: 'Central',
+    категория: 'Furniture',
+    Количество: '4'
   },
   {
-    Region: 'Central',
-    Category: 'Office Supplies',
-    Sales: '37.90399980545044'
+    Регион: 'Central',
+    категория: 'Office Supplies',
+    Продажи: '37.90399980545044'
   },
   {
-    Region: 'Central',
-    Category: 'Office Supplies',
-    Sales: '62.22999954223633'
+    Регион: 'Central',
+    категория: 'Office Supplies',
+    Продажи: '62.22999954223633'
   },
   {
-    Region: 'Central',
-    Category: 'Technology',
-    Quantity: '10'
+    Регион: 'Central',
+    категория: 'Technology',
+    Количество: '10'
   },
   {
-    Region: 'Central',
-    Category: 'Technology',
-    Quantity: '4'
+    Регион: 'Central',
+    категория: 'Technology',
+    Количество: '4'
   },
   {
-    Region: 'East',
-    Category: 'Furniture',
-    Quantity: '7'
+    Регион: 'East',
+    категория: 'Furniture',
+    Количество: '7'
   },
   {
-    Region: 'East',
-    Category: 'Furniture',
-    Quantity: '18'
+    Регион: 'East',
+    категория: 'Furniture',
+    Количество: '18'
   },
   {
-    Region: 'East',
-    Category: 'Office Supplies',
-    Quantity: '7'
+    Регион: 'East',
+    категория: 'Office Supplies',
+    Количество: '7'
   },
   {
-    Region: 'East',
-    Category: 'Office Supplies',
-    Quantity: '17'
+    Регион: 'East',
+    категория: 'Office Supplies',
+    Количество: '17'
   },
   {
-    Region: 'East',
-    Category: 'Office Supplies',
-    Quantity: '7'
+    Регион: 'East',
+    категория: 'Office Supplies',
+    Количество: '7'
   },
   {
-    Region: 'East',
-    Category: 'Office Supplies',
-    Quantity: '17'
+    Регион: 'East',
+    категория: 'Office Supplies',
+    Количество: '17'
   },
   {
-    Region: 'South',
-    Category: 'Furniture',
-    Quantity: '4'
+    Регион: 'South',
+    категория: 'Furniture',
+    Количество: '4'
   },
   {
-    Region: 'South',
-    Category: 'Furniture',
-    Quantity: '6'
+    Регион: 'South',
+    категория: 'Furniture',
+    Количество: '6'
   },
   {
-    Region: 'South',
-    Category: 'Technology',
-    Profit: '4.361999988555908'
+    Регион: 'South',
+    категория: 'Technology',
+    Прибыль: '4.361999988555908'
   },
   {
-    Region: 'South',
-    Category: 'Technology',
-    Profit: '280.58800506591797'
+    Регион: 'South',
+    категория: 'Technology',
+    Прибыль: '280.58800506591797'
   }
 ];
 const option = {
-  records: data,
+  records: данные,
   rows: [
     {
-      dimensionKey: 'Category',
-      title: 'Category',
+      dimensionKey: 'Категория',
+      заголовок: 'Категория',
       drillDown: true,
       headerStyle: {
         textStick: true
       },
-      width: 'auto'
+      ширина: 'авто'
     }
   ],
   columns: [
     {
-      dimensionKey: 'Region',
-      title: 'Region',
+      dimensionKey: 'Регион',
+      заголовок: 'Регион',
       headerStyle: {
         textStick: true
       },
-      width: 'auto'
+      ширина: 'авто'
     }
   ],
   indicators: [
     {
-      indicatorKey: 'Quantity',
-      title: 'Quantity',
-      width: 'auto',
-      showSort: false,
+      indicatorKey: 'Количество',
+      заголовок: 'Количество',
+      ширина: 'авто',
+      showсортировка: false,
       headerStyle: {
         fontWeight: 'normal'
       },
       style: {
-        padding: [16, 28, 16, 28],
-        color(args) {
-          if (args.dataValue >= 0) return 'black';
-          return 'red';
+        заполнение: [16, 28, 16, 28],
+        цвет(args) {
+          if (args.данныеValue >= 0) возврат 'black';
+          возврат 'red';
         }
       }
     },
     {
-      indicatorKey: 'Sales',
-      title: 'Sales',
-      width: 'auto',
-      showSort: false,
+      indicatorKey: 'Продажи',
+      заголовок: 'Продажи',
+      ширина: 'авто',
+      showсортировка: false,
       headerStyle: {
         fontWeight: 'normal'
       },
       format: rec => {
-        return '$' + Number(rec).toFixed(2);
+        возврат '$' + число(rec).toFixed(2);
       },
       style: {
-        padding: [16, 28, 16, 28],
-        color(args) {
-          if (args.dataValue >= 0) return 'black';
-          return 'red';
+        заполнение: [16, 28, 16, 28],
+        цвет(args) {
+          if (args.данныеValue >= 0) возврат 'black';
+          возврат 'red';
         }
       }
     },
     {
-      indicatorKey: 'Profit',
-      title: 'Profit',
-      width: 'auto',
-      showSort: false,
+      indicatorKey: 'Прибыль',
+      заголовок: 'Прибыль',
+      ширина: 'авто',
+      showсортировка: false,
       headerStyle: {
         fontWeight: 'normal'
       },
       format: rec => {
-        return '$' + Number(rec).toFixed(2);
+        возврат '$' + число(rec).toFixed(2);
       },
       style: {
-        padding: [16, 28, 16, 28],
-        color(args) {
-          if (args.dataValue >= 0) return 'black';
-          return 'red';
+        заполнение: [16, 28, 16, 28],
+        цвет(args) {
+          if (args.данныеValue >= 0) возврат 'black';
+          возврат 'red';
         }
       }
     }
@@ -193,182 +193,182 @@ const option = {
       textStick: true
     }
   },
-  widthMode: 'standard'
+  ширинаMode: 'standard'
 };
-tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
-const newData = [
+таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
+const newданные = [
   {
-    Region: 'Central',
-    Category: 'Furniture',
-    Quantity: '16',
-    'Sub-Category': 'Chairs'
+    Регион: 'Central',
+    категория: 'Furniture',
+    Количество: '16',
+    'Sub-Категория': 'Chairs'
   },
   {
-    Region: 'Central',
-    Category: 'Furniture',
-    Quantity: '4',
-    'Sub-Category': 'Tables'
+    Регион: 'Central',
+    категория: 'Furniture',
+    Количество: '4',
+    'Sub-Категория': 'таблицаs'
   },
   {
-    Region: 'Central',
-    Category: 'Office Supplies',
-    Sales: '37.90399980545044',
-    'Sub-Category': 'Paper'
+    Регион: 'Central',
+    категория: 'Office Supplies',
+    Продажи: '37.90399980545044',
+    'Sub-Категория': 'Paper'
   },
   {
-    Region: 'Central',
-    Category: 'Office Supplies',
-    Sales: '62.22999954223633',
-    'Sub-Category': 'Appliances'
+    Регион: 'Central',
+    категория: 'Office Supplies',
+    Продажи: '62.22999954223633',
+    'Sub-Категория': 'Appliances'
   },
   {
-    Region: 'Central',
-    Category: 'Technology',
-    Quantity: '10',
-    'Sub-Category': 'Phones'
+    Регион: 'Central',
+    категория: 'Technology',
+    Количество: '10',
+    'Sub-Категория': 'Phones'
   },
   {
-    Region: 'Central',
-    Category: 'Technology',
-    Quantity: '4',
-    'Sub-Category': 'Accessories'
+    Регион: 'Central',
+    категория: 'Technology',
+    Количество: '4',
+    'Sub-Категория': 'Accessories'
   },
   {
-    Region: 'East',
-    Category: 'Furniture',
-    Quantity: '7',
-    'Sub-Category': 'Bookcases'
+    Регион: 'East',
+    категория: 'Furniture',
+    Количество: '7',
+    'Sub-Категория': 'Boхорошоcases'
   },
   {
-    Region: 'East',
-    Category: 'Furniture',
-    Quantity: '18',
-    'Sub-Category': 'Furnishings'
+    Регион: 'East',
+    категория: 'Furniture',
+    Количество: '18',
+    'Sub-Категория': 'Furnishings'
   },
   {
-    Region: 'East',
-    Category: 'Office Supplies',
-    Quantity: '7',
-    'Sub-Category': 'Paper'
+    Регион: 'East',
+    категория: 'Office Supplies',
+    Количество: '7',
+    'Sub-Категория': 'Paper'
   },
   {
-    Region: 'East',
-    Category: 'Office Supplies',
-    Quantity: '17',
-    'Sub-Category': 'Binders'
+    Регион: 'East',
+    категория: 'Office Supplies',
+    Количество: '17',
+    'Sub-Категория': 'Binders'
   },
   {
-    Region: 'South',
-    Category: 'Furniture',
-    Quantity: '4',
-    'Sub-Category': 'Furnishings'
+    Регион: 'South',
+    категория: 'Furniture',
+    Количество: '4',
+    'Sub-Категория': 'Furnishings'
   },
   {
-    Region: 'South',
-    Category: 'Furniture',
-    Quantity: '6',
-    'Sub-Category': 'Tables'
+    Регион: 'South',
+    категория: 'Furniture',
+    Количество: '6',
+    'Sub-Категория': 'таблицаs'
   },
   {
-    Region: 'South',
-    Category: 'Technology',
-    Profit: '4.361999988555908',
-    'Sub-Category': 'Accessories'
+    Регион: 'South',
+    категория: 'Technology',
+    Прибыль: '4.361999988555908',
+    'Sub-Категория': 'Accessories'
   },
   {
-    Region: 'South',
-    Category: 'Technology',
-    Profit: '280.58800506591797',
-    'Sub-Category': 'Phones'
+    Регион: 'South',
+    категория: 'Technology',
+    Прибыль: '280.58800506591797',
+    'Sub-Категория': 'Phones'
   }
 ];
-tableInstance.on('drillmenu_click', args => {
+таблицаInstance.на('drillменю_Нажать', args => {
   if (args.drillDown) {
-    if (args.dimensionKey === 'Category') {
-      tableInstance.updateOption({
-        records: newData,
+    if (args.dimensionKey === 'Категория') {
+      таблицаInstance.updateOption({
+        records: newданные,
         rows: [
           {
-            dimensionKey: 'Category',
-            title: 'Category',
+            dimensionKey: 'Категория',
+            заголовок: 'Категория',
             drillUp: true,
             headerStyle: {
               textStick: true
             },
-            width: 'auto'
+            ширина: 'авто'
           },
           {
-            dimensionKey: 'Sub-Category',
-            title: 'Sub-Catogery',
+            dimensionKey: 'Sub-Категория',
+            заголовок: 'Sub-Catogery',
             headerStyle: {
               textStick: true
             },
-            width: 'auto'
+            ширина: 'авто'
           }
         ],
         columns: [
           {
-            dimensionKey: 'Region',
-            title: 'Region',
+            dimensionKey: 'Регион',
+            заголовок: 'Регион',
             headerStyle: {
               textStick: true
             },
-            width: 'auto'
+            ширина: 'авто'
           }
         ],
         indicators: [
           {
-            indicatorKey: 'Quantity',
-            title: 'Quantity',
-            width: 'auto',
-            showSort: false,
+            indicatorKey: 'Количество',
+            заголовок: 'Количество',
+            ширина: 'авто',
+            showсортировка: false,
             headerStyle: {
               fontWeight: 'normal'
             },
             style: {
-              padding: [16, 28, 16, 28],
-              color(args) {
-                if (args.dataValue >= 0) return 'black';
-                return 'red';
+              заполнение: [16, 28, 16, 28],
+              цвет(args) {
+                if (args.данныеValue >= 0) возврат 'black';
+                возврат 'red';
               }
             }
           },
           {
-            indicatorKey: 'Sales',
-            title: 'Sales',
-            width: 'auto',
-            showSort: false,
+            indicatorKey: 'Продажи',
+            заголовок: 'Продажи',
+            ширина: 'авто',
+            showсортировка: false,
             headerStyle: {
               fontWeight: 'normal'
             },
             format: rec => {
-              return '$' + Number(rec).toFixed(2);
+              возврат '$' + число(rec).toFixed(2);
             },
             style: {
-              padding: [16, 28, 16, 28],
-              color(args) {
-                if (args.dataValue >= 0) return 'black';
-                return 'red';
+              заполнение: [16, 28, 16, 28],
+              цвет(args) {
+                if (args.данныеValue >= 0) возврат 'black';
+                возврат 'red';
               }
             }
           },
           {
-            indicatorKey: 'Profit',
-            title: 'Profit',
-            width: 'auto',
-            showSort: false,
+            indicatorKey: 'Прибыль',
+            заголовок: 'Прибыль',
+            ширина: 'авто',
+            showсортировка: false,
             headerStyle: {
               fontWeight: 'normal'
             },
             format: rec => {
-              return '$' + Number(rec).toFixed(2);
+              возврат '$' + число(rec).toFixed(2);
             },
             style: {
-              padding: [16, 28, 16, 28],
-              color(args) {
-                if (args.dataValue >= 0) return 'black';
-                return 'red';
+              заполнение: [16, 28, 16, 28],
+              цвет(args) {
+                if (args.данныеValue >= 0) возврат 'black';
+                возврат 'red';
               }
             }
           }
@@ -379,32 +379,32 @@ tableInstance.on('drillmenu_click', args => {
             textStick: true
           }
         },
-        widthMode: 'standard'
+        ширинаMode: 'standard'
       });
     }
   } else if (args.drillUp) {
-    if (args.dimensionKey === 'Category') {
-      tableInstance.updateOption({
-        records: data,
+    if (args.dimensionKey === 'Категория') {
+      таблицаInstance.updateOption({
+        records: данные,
         rows: [
           {
-            dimensionKey: 'Category',
-            title: 'Category',
+            dimensionKey: 'Категория',
+            заголовок: 'Категория',
             drillDown: true,
             headerStyle: {
               textStick: true
             },
-            width: 'auto'
+            ширина: 'авто'
           }
         ],
         columns: [
           {
-            dimensionKey: 'Region',
-            title: 'Region',
+            dimensionKey: 'Регион',
+            заголовок: 'Регион',
             headerStyle: {
               textStick: true
             },
-            width: 'auto'
+            ширина: 'авто'
           }
           //  {
           //    "dimensionKey": "Order Year",
@@ -412,61 +412,61 @@ tableInstance.on('drillmenu_click', args => {
           //     "headerStyle": {
           //         "textStick": true
           //     },
-          //     "width": "auto",
+          //     "ширина": "авто",
           // },
         ],
         indicators: [
           {
-            indicatorKey: 'Quantity',
-            title: 'Quantity',
-            width: 'auto',
-            showSort: false,
+            indicatorKey: 'Количество',
+            заголовок: 'Количество',
+            ширина: 'авто',
+            showсортировка: false,
             headerStyle: {
               fontWeight: 'normal'
             },
             style: {
-              padding: [16, 28, 16, 28],
-              color(args) {
-                if (args.dataValue >= 0) return 'black';
-                return 'red';
+              заполнение: [16, 28, 16, 28],
+              цвет(args) {
+                if (args.данныеValue >= 0) возврат 'black';
+                возврат 'red';
               }
             }
           },
           {
-            indicatorKey: 'Sales',
-            title: 'Sales',
-            width: 'auto',
-            showSort: false,
+            indicatorKey: 'Продажи',
+            заголовок: 'Продажи',
+            ширина: 'авто',
+            showсортировка: false,
             headerStyle: {
               fontWeight: 'normal'
             },
             format: rec => {
-              return '$' + Number(rec).toFixed(2);
+              возврат '$' + число(rec).toFixed(2);
             },
             style: {
-              padding: [16, 28, 16, 28],
-              color(args) {
-                if (args.dataValue >= 0) return 'black';
-                return 'red';
+              заполнение: [16, 28, 16, 28],
+              цвет(args) {
+                if (args.данныеValue >= 0) возврат 'black';
+                возврат 'red';
               }
             }
           },
           {
-            indicatorKey: 'Profit',
-            title: 'Profit',
-            width: 'auto',
-            showSort: false,
+            indicatorKey: 'Прибыль',
+            заголовок: 'Прибыль',
+            ширина: 'авто',
+            showсортировка: false,
             headerStyle: {
               fontWeight: 'normal'
             },
             format: rec => {
-              return '$' + Number(rec).toFixed(2);
+              возврат '$' + число(rec).toFixed(2);
             },
             style: {
-              padding: [16, 28, 16, 28],
-              color(args) {
-                if (args.dataValue >= 0) return 'black';
-                return 'red';
+              заполнение: [16, 28, 16, 28],
+              цвет(args) {
+                if (args.данныеValue >= 0) возврат 'black';
+                возврат 'red';
               }
             }
           }
@@ -477,7 +477,7 @@ tableInstance.on('drillmenu_click', args => {
             textStick: true
           }
         },
-        widthMode: 'standard'
+        ширинаMode: 'standard'
       });
     }
   }

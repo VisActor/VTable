@@ -1,49 +1,49 @@
-# Multimedia Type
+# Multimedia тип
 
-Tables can display various types of data, such as text, numbers, charts, etc. Among them, the display of multimedia types (such as images and videos) in some scenes is particularly important, they can visually display information and help users quickly obtain key data. For example, e-commerce websites can display product pictures in tables, which is convenient for store owners to quickly view product information; video websites can display video preview diagrams in tables, which is convenient for users to quickly understand video content. By displaying multimedia types in tables, the effect of data display and user experience can be effectively improved.
+таблицаs can display various types из данные, such as текст, numbers, графикs, etc. Among them, the display из multimedia types (such as imвозрастs и videos) в некоторые scenes is particularly important, they can visually display information и help users quickly obtain key данные. для пример, e-commerce websites can display product pictures в таблицаs, which is convenient для store owners к quickly view product information; video websites can display video preview diagrams в таблицаs, which is convenient для users к quickly understand video content. по displaying multimedia types в таблицаs, the effect из данные display и user experience can be effectively improved.
 
-Note: The following descriptions are based on image types, and video types are also applicable.
+Note: Следующий descriptions are based на imвозраст types, и video types are also applicable.
 
-## Introduction to unique configuration items
+## Introduction к unique configuration items
 
-First, we introduce how to display pictures in VTable. The following are the specific configuration items for the image type:
+первый, we introduce how к display pictures в Vтаблица. Следующий are the specific configuration items для the imвозраст тип:
 
-*   `keepAspectRatio`: keepAspectRatio property is used to configure whether to maintain the aspect ratio of the image. The default value is false, that is, the aspect ratio is not maintained; when set to true, it will be displayed according to the original size ratio of the image
-*   `imageAutoSizing`: The imageAutoSizing property is used to configure whether the cell size is automatically adjusted according to the image size. The default value is false, that is, the cell size is not automatically adjusted; when set to true, the width and height of the cell will be adjusted according to the image size
+*   `keepAspectRatio`: keepAspectRatio property is used к configure whether к maintain the aspect ratio из the imвозраст. The по умолчанию значение is false, that is, the aspect ratio is не maintained; when set к true, it will be displayed according к the original размер ratio из the imвозраст
+*   `imвозраставтоSizing`: The imвозраставтоSizing property is used к configure whether the cell размер is автоmatically adjusted according к the imвозраст размер. The по умолчанию значение is false, that is, the cell размер is не автоmatically adjusted; when set к true, the ширина и высота из the cell will be adjusted according к the imвозраст размер
 
-Example:
+пример:
 
 ```javascript
 {
-  cellType: 'image',
-  field: 'avatar',
-  title: '头像',
+  cellType: 'imвозраст',
+  поле: 'avatar',
+  заголовок: '头像',
   keepAspectRatio: true,
-  imageAutoSizing: true,
+  imвозраставтоSizing: true,
 }
 ```
 
-## Introduction to unique styles
+## Introduction к unique styles
 
-Image type specific configuration items in terms of style style:
+Imвозраст тип specific configuration items в terms из style style:
 
-*   `style.margin`: the margin of the picture in the cell;
-    Example:
+*   `style.отступ`: the отступ из the picture в the cell;
+    пример:
 
 ```javascript
 {
-  cellType: 'image',
-  field: 'avatar',
-  title: '头像',
+  cellType: 'imвозраст',
+  поле: 'avatar',
+  заголовок: '头像',
   keepAspectRatio: true,
-  imageAutoSizing: true,
+  imвозраставтоSizing: true,
   style:{
-    margin: 20
+    отступ: 20
   }
 }
 ```
 
-## Click preview of image
+## Нажать preview из imвозраст
 
-In some scenes, we want to click on the image to preview the larger image. VTable defaults to clicking on the multimedia (including videos and pictures) cell to pop up the preview window.
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/03421afda76ced0240204bf01.gif)
+в некоторые scenes, we want к Нажать на the imвозраст к preview the larger imвозраст. Vтаблица defaults к Нажатьing на the multimedia (including videos и pictures) cell к pop up the preview window.
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/03421afda76ced0240204bf01.gif)

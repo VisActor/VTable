@@ -1,37 +1,37 @@
-# How to specify the width of a column and enable automatic line wrapping in a table component?
+# How к specify the ширина из a column и включить автоmatic line wrapping в a таблица компонент?
 
 ## Question Description
 
-Specify the width of a column in a table, and enable automatic line wrapping based on the width limit, while allowing the height of the cells to be determined by the actual number of content lines.How can I achieve this effect?
+Specify the ширина из a column в a таблица, и включить автоmatic line wrapping based на the ширина limit, while allowing the высота из the cells к be determined по the actual число из content lines.How can I achieve this effect?
 
-![](/vtable/faq/2-0.png)
+![](/vтаблица/Часто Задаваемые Вопросы/2-0.png)
 
 ## Solution
 
-Add the following configuration to the table options.
+Add Следующий configuration к the таблица options.
 
 ```javascript
-heightMode: 'autoHeight', // the height of each row is determined by the content and will expand accordingly.
-autoWrapText: true, // Enable automatic line wrapping.
+высотаMode: 'автовысота', // the высота из каждый row is determined по the content и will развернуть accordingly.
+автоWrapText: true, // включить автоmatic line wrapping.
 ```
 
-## Code Example
+## код пример
 
 ```javascript
-const option: TYPES.ListTableConstructorOptions = {
+const опция: TYPES.списоктаблицаConstructorOptions = {
   records,
   columns,
-  heightMode: 'autoHeight',
-  autoWrapText: true
+  высотаMode: 'автовысота',
+  автоWrapText: true
 };
 ```
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-autoheight-dktrk4)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-автовысота-dktrk4)
 
-![result](/vtable/faq/2-1.gif)
+![result](/vтаблица/Часто Задаваемые Вопросы/2-1.gif)
 
 ## Quote
 
-- [github](https://github.com/VisActor/VTable)
+- [github](https://github.com/VisActor/Vтаблица)

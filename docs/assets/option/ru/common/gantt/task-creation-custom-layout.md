@@ -1,15 +1,15 @@
-{{ target: common-gantt-task-creation-custom-layout }}
-Taskbar custom rendering, the corresponding type of ITaskCreationCustomLayout, specific configuration items as follows:
+{{ target: common-гантт-task-creation-пользовательский-макет }}
+Taskbar пользовательский rendering, the corresponding тип из ITaskCreationпользовательскиймакет, specific configuration items as follows:
 
 ```
-export type TaskCreationCustomLayoutArgumentType = {
-  width: number;
-  height: number;
-  index: number;
-  ganttInstance: Gantt;
+export тип TaskCreationпользовательскиймакетArgumentType = {
+  ширина: число;
+  высота: число;
+  index: число;
+  ганттInstance: гантт;
 };
-export type ITaskCreationCustomLayoutObj = {
+export тип ITaskCreationпользовательскиймакетObj = {
   rootContainer: Group;
 };
-export type ITaskCreationCustomLayout = (args: TaskCreationCustomLayoutArgumentType) => ITaskCreationCustomLayoutObj;
+export тип ITaskCreationпользовательскиймакет = (args: TaskCreationпользовательскиймакетArgumentType) => ITaskCreationпользовательскиймакетObj;
 ```

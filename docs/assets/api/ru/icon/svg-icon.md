@@ -1,9 +1,9 @@
 {{ target: svg-icon }}
 
-${prefix} type ('svg')
+${prefix} тип ('svg')
 Тип содержимого иконки - 'svg'.
 
-${prefix} svg (string)
+${prefix} svg (строка)
 Содержимое svg. Поддерживает svg path или url.
 
 {{ use: base-icon(

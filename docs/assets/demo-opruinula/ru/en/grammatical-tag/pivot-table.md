@@ -1,108 +1,108 @@
 ---
-category: examples
-group: grammatical-tag
-title: pivot table
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
-order: 1-1
-link: Developer_Ecology/openinula
+категория: примеры
+группа: grammatical-tag
+заголовок: сводный таблица
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-таблица.png
+порядок: 1-1
+ссылка: Developer_Ecology/openinula
 ---
 
-# pivot table
+# сводный таблица
 
-The props attributes accepted by PivotTable&PivotChart are consistent with options. The semantic sub-components are as follows:
+The props attributes accepted по сводныйтаблица&сводныйграфик are consistent с options. The semantic sub-компонентs are as follows:
 
-- PivotColumnDimension: The dimension configuration on the column is consistent with the definition of columns in option [api](../../option/PivotTable-columns-text#headerType)
-- PivotRowDimension: The dimension configuration on the row is consistent with the definition of rows in option [api](../../option/PivotTable-rows-text#headerType)
-- PivotIndicator: indicator configuration, consistent with the definition of indicators in option [api](../../option/PivotTable-indicators-text#cellType)
-- PivotColumnHeaderTitle: column header title configuration, consistent with the definition of columnHeaderTitle in option [api](../../option/PivotTable#rowHeaderTitle)
-- PivotRowHeaderTitle: row header title configuration, consistent with the definition of rowHeaderTitle in option [api](../../option/PivotTable#columnHeaderTitle)
-- PivotCorner: Corner configuration, consistent with the definition of corner in option [api](../../option/PivotTable#corner)
+- сводныйColumnDimension: The dimension configuration на the column is consistent с the definition из columns в option [апи](../../option/сводныйтаблица-columns-текст#headerType)
+- сводныйRowDimension: The dimension configuration на the row is consistent с the definition из rows в option [апи](../../option/сводныйтаблица-rows-текст#headerType)
+- сводныйIndicator: indicator configuration, consistent с the definition из indicators в option [апи](../../option/сводныйтаблица-indicators-текст#cellType)
+- сводныйColumnHeaderзаголовок: column header title configuration, consistent с the definition из columnHeaderTitle в option [апи](../../option/сводныйтаблица#rowHeaderTitle)
+- сводныйRowHeaderзаголовок: row header title configuration, consistent с the definition из rowHeaderTitle в option [апи](../../option/сводныйтаблица#columnHeaderTitle)
+- сводныйCorner: Corner configuration, consistent с the definition из corner в option [апи](../../option/сводныйтаблица#corner)
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-openinula
-// import * as InulaVTable from '@visactor/openinula-vtable';
+```javascript liveдемонстрация template=vтаблица-openinula
+// import * as InulaVтаблица от '@visactor/openinula-vтаблица';
 
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const root = document.getElementById(CONTAINER_ID);
     Inula.render(
-      <InulaVTable.PivotTable records={data}>
-        <InulaVTable.PivotColumnHeaderTitle
+      <InulaVтаблица.сводныйтаблица records={данные}>
+        <InulaVтаблица.сводныйColumnHeaderTitle
           title={true}
           headerStyle={{
             textStick: true
           }}
         />
-        <InulaVTable.PivotColumnDimension dimensionKey={'Category'} title={'Category'} width={'auto'} />
-        <InulaVTable.PivotRowDimension
-          dimensionKey={'City'}
-          title={'City'}
+        <InulaVтаблица.сводныйColumnDimension dimensionKey={'Категория'} title={'Категория'} ширина={'авто'} />
+        <InulaVтаблица.сводныйRowDimension
+          dimensionKey={'Город'}
+          title={'Город'}
           drillUp={true}
-          width={'auto'}
+          ширина={'авто'}
           headerStyle={{
             textStick: true
           }}
         />
-        <InulaVTable.PivotIndicator
-          indicatorKey={'Quantity'}
-          title={'Quantity'}
-          width={'auto'}
+        <InulaVтаблица.сводныйIndicator
+          indicatorKey={'Количество'}
+          title={'Количество'}
+          ширина={'авто'}
           headerStyle={{
             fontWeight: 'normal'
           }}
           style={{
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }}
         />
-        <InulaVTable.PivotIndicator
-          indicatorKey={'Sales'}
-          title={'Sales'}
-          width={'auto'}
+        <InulaVтаблица.сводныйIndicator
+          indicatorKey={'Продажи'}
+          title={'Продажи'}
+          ширина={'авто'}
           headerStyle={{
             fontWeight: 'normal'
           }}
           style={{
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }}
         />
-        <InulaVTable.PivotIndicator
-          indicatorKey={'Profit'}
-          title={'Profit'}
-          width={'auto'}
+        <InulaVтаблица.сводныйIndicator
+          indicatorKey={'Прибыль'}
+          title={'Прибыль'}
+          ширина={'авто'}
           headerStyle={{
             fontWeight: 'normal'
           }}
           style={{
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }}
         />
-        <InulaVTable.PivotCorner
+        <InulaVтаблица.сводныйCorner
           titleOnDimension={'row'}
           headerStyle={{
             fontWeight: 'bold'
           }}
         />
-      </InulaVTable.PivotTable>,
+      </InulaVтаблица.сводныйтаблица>,
       root
     );
   });
 
-// release openinula instance, do not copy
-window.customRelease = () => {
-  Inula.unmountComponentAtNode(root);
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
+  Inula.unmountкомпонентAtNode(root);
 };
 ```

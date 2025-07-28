@@ -1,199 +1,199 @@
 ---
-category: examples
-group: Business
-title: Information system
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/information.png
-link: custom_define/custom_icon
+категория: примеры
+группа: Business
+заголовок: Information system
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/information.png
+ссылка: пользовательский_define/пользовательский_иконка
 ---
 
 # Information system
 
 Query product order information.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `headerType` and `cellType` checkbox checkbox type
-- `getCheckboxState` Gets the checked state of the checkbox under a certain field
-- `VTable.register.icon` registers a custom icon and can be used with columns[x].icon or columns[x].headerIcon. Or reset the internal icon
+- `headerType` и `cellType` флажок флажок тип
+- `getCheckboxState` Gets the checked state из the флажок under a certain поле
+- `Vтаблица.регистрация.иконка` регистрацияs a пользовательский иконка и can be used с columns[x].иконка или columns[x].headerиконка. или reset the internal иконка
 
-The specific names of built-in function icons are:
-`'sort_upward',
-'sort_downward',
-'sort_normal',
+The specific имяs из built-в функция иконкаs are:
+`'сортировка_upward',
+'сортировка_downward',
+'сортировка_normal',
 'frozen',
 'frozen',
 'frozenCurrent',
-'dropdownIcon',
-'dropdownIcon_hover',
-'expand',
-'collapse',`
+'dropdownиконка',
+'dropdownиконка_hover',
+'развернуть',
+'свернуть',`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-VTable.register.icon('freeze', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/freeze.svg',
-  width: 22,
-  height: 22,
-  name: 'freeze',
-  funcType: VTable.TYPES.IconFuncTypeEnum.freeze,
-  positionType: VTable.TYPES.IconPosition.right,
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.иконка('freeze', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/freeze.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'freeze',
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.freeze,
+  positionType: Vтаблица.TYPES.иконкаPosition.право,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
-VTable.register.icon('frozenCurrent', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozenCurrent.svg',
-  width: 22,
-  height: 22,
-  name: 'frozenCurrent',
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  positionType: VTable.TYPES.IconPosition.right,
+Vтаблица.регистрация.иконка('frozenCurrent', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/frozenCurrent.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'frozenCurrent',
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  positionType: Vтаблица.TYPES.иконкаPosition.право,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
-    bgColor: 'rgba(101, 117, 168, 0.1)'
-  },
-  cursor: 'pointer'
-});
-
-VTable.register.icon('frozen', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/frozen.svg',
-  width: 22,
-  height: 22,
-  name: 'frozen',
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  positionType: VTable.TYPES.IconPosition.right,
-  marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
 
-VTable.register.icon('order', {
-  type: 'svg',
-  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg',
-  width: 22,
-  height: 22,
-  name: 'order',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('frozen', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/frozen.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'frozen',
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  positionType: Vтаблица.TYPES.иконкаPosition.право,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
+    bgColor: 'rgba(101, 117, 168, 0.1)'
+  },
+  cursor: 'pointer'
+});
+
+Vтаблица.регистрация.иконка('order', {
+  тип: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/order.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'order',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
+  marginRight: 0,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer',
-  tooltip: {
+  Подсказка: {
     style: {
       bgColor: 'gray',
       fontSize: 16
     },
     // 气泡框，按钮的的解释信息
-    title: '点击可复制',
-    placement: VTable.TYPES.Placement.top
+    заголовок: '点击可复制',
+    placement: Vтаблица.TYPES.Placement.верх
   }
 });
 
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: '',
-        title: '',
-        width: 50,
-        cellType: 'checkbox',
-        headerType: 'checkbox'
+        поле: '',
+        заголовок: '',
+        ширина: 50,
+        cellType: 'флажок',
+        headerType: 'флажок'
       },
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto',
-        icon: 'order'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто',
+        иконка: 'order'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: '2234',
-        title: 'single line',
-        width: 120,
-        icon: [
+        поле: '2234',
+        заголовок: 'single line',
+        ширина: 120,
+        иконка: [
           {
-            name: 'edit',
-            type: 'svg',
+            имя: 'edit',
+            тип: 'svg',
             marginLeft: 10,
-            color: 'blue',
-            positionType: VTable.TYPES.IconPosition.left,
-            width: 20,
-            height: 20,
-            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/edit.svg',
-            tooltip: {
+            цвет: 'blue',
+            positionType: Vтаблица.TYPES.иконкаPosition.лево,
+            ширина: 20,
+            высота: 20,
+            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/edit.svg',
+            Подсказка: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
-              title: '编辑',
-              placement: VTable.TYPES.Placement.right
+              заголовок: '编辑',
+              placement: Vтаблица.TYPES.Placement.право
             }
           },
           {
-            name: 'delete',
-            type: 'svg',
+            имя: 'delete',
+            тип: 'svg',
             marginLeft: 20,
-            color: 'blue',
-            positionType: VTable.TYPES.IconPosition.left,
-            width: 20,
-            height: 20,
-            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/delete.svg',
-            tooltip: {
+            цвет: 'blue',
+            positionType: Vтаблица.TYPES.иконкаPosition.лево,
+            ширина: 20,
+            высота: 20,
+            svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/delete.svg',
+            Подсказка: {
               style: { arrowMark: true },
               // 气泡框，按钮的的解释信息
-              title: '删除',
-              placement: VTable.TYPES.Placement.right
+              заголовок: '删除',
+              placement: Vтаблица.TYPES.Placement.право
             }
           }
         ]
@@ -201,27 +201,27 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       frozenColCount: 2,
       rightFrozenColCount: 1
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
 
-    tableInstance.on('click_cell', args => {
-      console.log('click_cell', args);
-      const { col, row, targetIcon } = args;
-      if (targetIcon) {
-        if (targetIcon.name === 'edit') {
-          window?.alert?.('编辑第 ' + (row - tableInstance.columnHeaderLevelCount + 1) + ' 条数据');
-        } else if (targetIcon.name === 'delete') {
-          data.splice(row - tableInstance.columnHeaderLevelCount, 1);
-          tableInstance.setRecords(data);
-        } else if (targetIcon.name === 'order') {
-          const value = tableInstance.getCellValue(col, row);
-          window?.alert?.('已复制订单号： ' + value);
+    таблицаInstance.на('Нажать_cell', args => {
+      console.log('Нажать_cell', args);
+      const { col, row, targetиконка } = args;
+      if (targetиконка) {
+        if (targetиконка.имя === 'edit') {
+          window?.предупреждение?.('编辑第 ' + (row - таблицаInstance.columnHeaderLevelCount + 1) + ' 条数据');
+        } else if (targetиконка.имя === 'delete') {
+          данные.splice(row - таблицаInstance.columnHeaderLevelCount, 1);
+          таблицаInstance.setRecords(данные);
+        } else if (targetиконка.имя === 'order') {
+          const значение = таблицаInstance.getCellValue(col, row);
+          window?.предупреждение?.('已复制订单号： ' + значение);
         }
       }
     });

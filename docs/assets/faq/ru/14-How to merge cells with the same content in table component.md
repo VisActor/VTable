@@ -1,13 +1,13 @@
-# How to merge cells with the same content in table component?
+# How к merge cells с the same content в таблица компонент?
 
 ## Question Description
 
-If there are multiple consecutive cells of the same data in a certain column of the table, these cells will be automatically merged and the content will be displayed in the center. How to achieve this effect on VTable?
-![image](/vtable/faq/14-0.png)
+If there are multiple consecutive cells из the same данные в a certain column из the таблица, these cells will be автоmatically merged и the content will be displayed в the центр. How к achieve this effect на Vтаблица?
+![imвозраст](/vтаблица/Часто Задаваемые Вопросы/14-0.png)
 
 ## Solution
 
-You can set `mergeCell` to true in columns, and cells with the same content before and after in the column will be automatically merged:
+Вы можете set `mergeCell` к true в columns, и cells с the same content before и after в the column will be автоmatically merged:
 
 ```javascript
 const columns = [
@@ -18,37 +18,37 @@ const columns = [
 ];
 ```
 
-## Code Example
+## код пример
 
 ```javascript
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 80
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 80
   },
   {
-    field: 'value',
-    title: 'number',
-    width: 100,
+    поле: 'значение',
+    заголовок: 'число',
+    ширина: 100,
     mergeCell: true
   }
 ];
-const option: TYPES.ListTableConstructorOptions = {
+const опция: TYPES.списоктаблицаConstructorOptions = {
   records,
   columns
 };
-new ListTable(document.getElementById('container'), option);
+новый списоктаблица(document.getElementById('container'), option);
 ```
 
 ## Results
 
-[Online demo](https://codesandbox.io/s/vtable-merge-cell-23wwmk)
+[Online демонстрация](https://кодsandbox.io/s/vтаблица-merge-cell-23wwmk)
 
-![result](/vtable/faq/14-1.png)
+![result](/vтаблица/Часто Задаваемые Вопросы/14-1.png)
 
 ## Quote
 
-- [Merge Cell Demo](https://visactor.io/vtable/demo/basic-functionality/merge)
-- [mergeCell api](https://visactor.io/vtable/option/ListTable-columns-text#mergeCell)
-- [github](https://github.com/VisActor/VTable)
+- [Merge Cell демонстрация](https://visactor.io/vтаблица/демонстрация/базовый-функциональность/merge)
+- [mergeCell апи](https://visactor.io/vтаблица/option/списоктаблица-columns-текст#mergeCell)
+- [github](https://github.com/VisActor/Vтаблица)

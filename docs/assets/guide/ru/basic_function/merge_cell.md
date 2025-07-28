@@ -1,191 +1,191 @@
 # Cell merge
 
-Cell merging refers to merging multiple cells into one cell, which is commonly used for functions such as merging and displaying duplicate content.
+Cell merging refers к merging multiple cells into one cell, which is commonly used для functions such as merging и displaying duplicate content.
 
-## Automatic cell merge
+## автоmatic cell merge
 
-In VTable, you can configure `mergeCell` on a column to merge adjacent cells with the same content in the same column.
+в Vтаблица, Вы можете configure `mergeCell` на a column к merge adjacent cells с the same content в the same column.
 
-### Example
+### пример
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные100.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
   {
-        "field": "Category",
-        "title": "Category",
-        "width": "auto",
-        sort:true,
+        "поле": "Категория",
+        "title": "Категория",
+        "ширина": "авто",
+        сортировка:true,
         "mergeCell": true,
         style:{
           "textStick":true,
-          textAlign:'right'
-          // textBaseline:"bottom"
+          textAlign:'право'
+          // textBaseline:"низ"
         }
     },
     {
-        "field": "Sub-Category",
-        "title": "Sub-Category",
-        "width": "auto",
-        sort:true,
+        "поле": "Sub-Категория",
+        "title": "Sub-Категория",
+        "ширина": "авто",
+        сортировка:true,
         "mergeCell": true,
     },
     {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto"
+        "поле": "ID Заказа",
+        "title": "ID Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Customer ID",
-        "title": "Customer ID",
-        "width": "auto"
+        "поле": "пользовательскийer ID",
+        "title": "пользовательскийer ID",
+        "ширина": "авто"
     },
     {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto",
+        "поле": "Product имя",
+        "title": "Product имя",
+        "ширина": "авто",
         headerStyle:{
           "textStick":true,
         }
     },
     {
-        "field": "Region",
-        "title": "Region",
-        "width": "auto"
+        "поле": "Регион",
+        "title": "Регион",
+        "ширина": "авто"
     },
     {
-        "field": "City",
-        "title": "City",
-        "width": "auto"
+        "поле": "Город",
+        "title": "Город",
+        "ширина": "авто"
     },
     {
-        "field": "Order Date",
-        "title": "Order Date",
-        "width": "auto"
+        "поле": "Дата Заказа",
+        "title": "Дата Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Quantity",
-        "title": "Quantity",
-        "width": "auto"
+        "поле": "Количество",
+        "title": "Количество",
+        "ширина": "авто"
     },
     {
-        "field": "Sales",
-        "title": "Sales",
-        "width": "auto"
+        "поле": "Продажи",
+        "title": "Продажи",
+        "ширина": "авто"
     },
     {
-        "field": "Profit",
-        "title": "Profit",
-        "width": "auto"
+        "поле": "Прибыль",
+        "title": "Прибыль",
+        "ширина": "авто"
     }
 ];
 
 const option = {
-  records:data,
+  records:данные,
   columns,
-  widthMode:'standard',
-  hover:{
+  ширинаMode:'standard',
+  навести:{
     highlightMode:'row'
   },
-  sortState:{
-    field:'Category',
-    order:'asc'
+  сортировкаState:{
+    поле:'Категория',
+    порядок:'asc'
   }
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
     })
 ```
 
-If `mergeCell` is configured, adjacent cells with the same content in the same column will be merged and displayed.
+If `mergeCell` is configured, adjacent cells с the same content в the same column will be merged и displayed.
 
-## Custom cell merge
+## пользовательский cell merge
 
-In VTable, you can configure `customMergeCell` to customize the merging method of cells. This method is often used to display some label information. The `customMergeCell` callback function will pass in the column number and table instance, determine the cells that need to be merged in the function, and return the corresponding merging rules:
-* text: Merge text in cells
+в Vтаблица, Вы можете configure `пользовательскийMergeCell` к пользовательскийize the merging method из cells. This method is often used к display некоторые label information. The `пользовательскийMergeCell` обратный вызов функция will pass в the column число и таблица instance, determine the cells that need к be merged в the функция, и возврат the corresponding merging rules:
+* текст: Merge текст в cells
 * range: merged range
-* style: style of merged cells
+* style: style из merged cells
 
-`customMergeCell` can also be configured as an array of merge rules. Each item in the array is a merge rule. The configuration of the rule is the same as the return value of the `customMergeCell` callback function.
+`пользовательскийMergeCell` can also be configured as an массив из merge rules. каждый item в the массив is a merge rule. The configuration из the rule is the same as the возврат значение из the `пользовательскийMergeCell` обратный вызов функция.
 
-### Example
+### пример
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 
-let  tableInstance;
+let  таблицаInstance;
 
 const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
+  возврат массив.от(новый массив(count)).map((_, i) => ({
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `name${i + 1}`,
+    имя: `имя${i + 1}`,
     date1: '2022-9-1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-    city: 'beijing'
+    work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer',
+    Город: 'beijing'
   }));
 };
 const records = generatePersons(10);
 
 const columns = [
     {
-      field: 'id',
-      title: 'ID ff',
-      width: '1%',
-      minWidth: 200,
-      sort: true
+      поле: 'id',
+      заголовок: 'ID ff',
+      ширина: '1%',
+      minширина: 200,
+      сортировка: true
     },
     {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true
+      поле: 'email1',
+      заголовок: 'email',
+      ширина: 200,
+      сортировка: true
     },
     {
-      title: 'full name',
+      заголовок: 'full имя',
       columns: [
         {
-          field: 'name',
-          title: 'First Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'первый имя',
+          ширина: 200
         },
         {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'последний имя',
+          ширина: 200
         }
       ]
     },
     {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
+      поле: 'date1',
+      заголовок: 'birthday',
+      ширина: 200
     },
     {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+      поле: 'sex',
+      заголовок: 'sex',
+      ширина: 100
     },
     {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
+      поле: 'tel',
+      заголовок: 'telephone',
+      ширина: 150
     },
     {
-      field: 'work',
-      title: 'job',
-      width: 200
+      поле: 'work',
+      заголовок: 'job',
+      ширина: 200
     },
     {
-      field: 'city',
-      title: 'city',
-      width: 150
+      поле: 'Город',
+      заголовок: 'Город',
+      ширина: 150
     }
   ];
 
@@ -193,17 +193,17 @@ const columns = [
 const option = {
   records,
   columns,
-  widthMode:'standard',
-  customMergeCell: (col, row, table) => {
+  ширинаMode:'standard',
+  пользовательскийMergeCell: (col, row, таблица) => {
     if (col > 0 && col < 8 && row > 7 && row < 11) {
-      return {
-        text: 'long long long long long long long long long long long long long long long long long long text!',
+      возврат {
+        текст: 'long long long long long long long long long long long long long long long long long long текст!',
         range: {
-          start: {
+          начало: {
             col: 1,
             row: 8
           },
-          end: {
+          конец: {
             col: 7,
             row: 10
           }
@@ -215,6 +215,6 @@ const option = {
     }
   }
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
 ```

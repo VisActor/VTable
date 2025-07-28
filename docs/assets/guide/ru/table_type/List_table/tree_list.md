@@ -1,22 +1,22 @@
-## Basic table tree structure
+## базовый таблица tree structure
 
-In this tutorial, we will learn how to use the basic table tree presentation feature in VTable.
+в this tutorial, we will learn how к use the базовый таблица tree presentation feature в Vтаблица.
 
-## usage scenario
+## usвозраст scenario
 
-The basic table tree display function is suitable for a variety of scenarios, such as:
+The базовый таблица tree display функция is suiтаблица для a variety из scenarios, such as:
 
-- Organizational structure management: Enterprise organizational structure is usually a multi-level tree structure.
-- Commodity classification management: E-commerce platforms usually need to manage a large number of commodity classifications, which are usually also a multi-level tree structure.
-- Project Management: In a large project, there may be multiple sub-projects and tasks.
-- File management: In a large file library, there may be multiple folders and subfolders.
-- Data analytics: In a data analytics application, it may be necessary to demonstrate multiple Dimensions and Metirc.
+- Organizational structure manвозрастment: Enterprise organizational structure is usually a multi-level tree structure.
+- Commodity classification manвозрастment: E-commerce platforms usually need к manвозраст a large число из commodity classifications, which are usually also a multi-level tree structure.
+- Project Manвозрастment: в a large project, there may be multiple sub-projects и tasks.
+- File manвозрастment: в a large file library, there may be multiple folders и subfolders.
+- данные analytics: в a данные analytics application, it may be necessary к демонстрацияnstrate multiple Dimensions и Metirc.
 
-## How to use
+## How к use
 
-**1.** Specify tree to be true in the column configuration where colums are embodied as a tree structure.
+**1.** Specify tree к be true в the column configuration where colums are embodied as a tree structure.
 
-**2.** Add children data nested structure to the data to express and display as a tree hierarchy. The following data:
+**2.** Add children данные nested structure к the данные к express и display as a tree hierarchy. Следующий данные:
 
     {
         "group": "Human Resources Department",
@@ -28,19 +28,19 @@ The basic table tree display function is suitable for a variety of scenarios, su
             "children": [
               {
                 "group": "John Smith",
-                "position": "Recruiting Manager",
+                "позиция": "Recruiting Manвозрастr",
                 "salary": "$8000"
               },
           }
         ]
     }
 
-## example
+## пример
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
-    group: 'Human Resources Department',
+    группа: 'Human Resources Department',
     total_children: 30,
     monthly_expense: '$45000',
     new_hires_this_month: 6,
@@ -48,21 +48,21 @@ const records = [
     complaints_and_suggestions: 2,
     children: [
       {
-        group: 'Recruiting Group',
+        группа: 'Recruiting Group',
         children: [
           {
-            group: 'John Smith',
-            position: 'Recruiting Manager',
+            группа: 'John Smith',
+            позиция: 'Recruiting Manвозрастr',
             salary: '$8000'
           },
           {
-            group: 'Emily Johnson',
-            position: 'Recruiting Supervisor',
+            группа: 'Emily Johnson',
+            позиция: 'Recruiting Supervisor',
             salary: '$6000'
           },
           {
-            group: 'Michael Davis',
-            position: 'Recruiting Specialist',
+            группа: 'Michael Davis',
+            позиция: 'Recruiting Speciaсписок',
             salary: '$4000'
           }
         ],
@@ -73,16 +73,16 @@ const records = [
         complaints_and_suggestions: 1
       },
       {
-        group: 'Training Group',
+        группа: 'Training Group',
         children: [
           {
-            group: 'Jessica Brown',
-            position: 'Training Manager',
+            группа: 'Jessica Brown',
+            позиция: 'Training Manвозрастr',
             salary: '$8000'
           },
           {
-            group: 'Andrew Wilson',
-            position: 'Training Supervisor',
+            группа: 'Andrew Wilson',
+            позиция: 'Training Supervisor',
             salary: '$6000'
           }
         ],
@@ -97,45 +97,45 @@ const records = [
 ];
 const columns = [
   {
-    field: 'group',
-    title: 'department',
-    width: 'auto',
+    поле: 'group',
+    заголовок: 'department',
+    ширина: 'авто',
     tree: true
   },
   {
-    field: 'total_children',
-    title: 'memebers count',
-    width: 'auto',
-    fieldFormat(rec) {
-      if (rec?.['position']) {
-        return `position:  ${rec['position']}`;
-      } else return rec?.['total_children'];
+    поле: 'total_children',
+    заголовок: 'memebers count',
+    ширина: 'авто',
+    полеFormat(rec) {
+      if (rec?.['позиция']) {
+        возврат `позиция:  ${rec['позиция']}`;
+      } else возврат rec?.['total_children'];
     }
   },
   {
-    field: 'monthly_expense',
-    title: 'monthly expense',
-    width: 'auto',
-    fieldFormat(rec) {
+    поле: 'monthly_expense',
+    заголовок: 'monthly expense',
+    ширина: 'авто',
+    полеFormat(rec) {
       if (rec?.['salary']) {
-        return `salary:  ${rec['salary']}`;
-      } else return rec?.['monthly_expense'];
+        возврат `salary:  ${rec['salary']}`;
+      } else возврат rec?.['monthly_expense'];
     }
   },
   {
-    field: 'new_hires_this_month',
-    title: 'new hires this month',
-    width: 'auto'
+    поле: 'new_hires_this_month',
+    заголовок: 'новый hires this month',
+    ширина: 'авто'
   },
   {
-    field: 'resignations_this_month',
-    title: 'resignations this month',
-    width: 'auto'
+    поле: 'resignations_this_month',
+    заголовок: 'resignations this month',
+    ширина: 'авто'
   },
   {
-    field: 'complaints_and_suggestions',
-    title: 'recived complaints counts',
-    width: 'auto'
+    поле: 'complaints_and_suggestions',
+    заголовок: 'recived complaints counts',
+    ширина: 'авто'
   }
 ];
 
@@ -143,28 +143,28 @@ const option = {
   container: document.getElementById(CONTAINER_ID),
   records,
   columns,
-  widthMode: 'standard'
+  ширинаMode: 'standard'
 };
-const tableInstance = new ListTable(option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый списоктаблица(option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
-## Specify the collapsed or expanded state of a node
+## Specify the collapsed или expanded state из a node
 
-In the above example, you can set the `hierarchyState` of the data node to specify the collapsed or expanded state of the node, and its value is `expand` or `collapse`.
+в the above пример, Вы можете set the `hierarchyState` из the данные node к specify the collapsed или expanded state из the node, и its значение is `развернуть` или `свернуть`.
 
-For example, specify the first node as expanded: `hierarchyState: 'expand'`.
+для пример, specify the первый node as expanded: `hierarchyState: 'развернуть'`.
 
 ```javascript
 const records = [
   {
-    group: 'Human Resources Department',
+    группа: 'Human Resources Department',
     total_children: 30,
     monthly_expense: '$45000',
     new_hires_this_month: 6,
     resignations_this_month: 3,
     complaints_and_suggestions: 2,
-    hierarchyState: 'expand',
+    hierarchyState: 'развернуть',
     children: [
       // ...
     ]
@@ -172,90 +172,90 @@ const records = [
 ];
 ```
 
-## Default expansion level of tree structure
+## по умолчанию expansion level из tree structure
 
-In a tree structure, the default expansion level can be specified through the `hierarchyExpandLevel` configuration item.
+в a tree structure, the по умолчанию expansion level can be specified through the `hierarchyExpandLevel` configuration item.
 
-For example, to specify the default expansion to the third level: `hierarchyExpandLevel: 3`。
+для пример, к specify the по умолчанию expansion к the third level: `hierarchyExpandLevel: 3`。
 
 ```javascript
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   hierarchyExpandLevel: 3
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 ```
 
-## Lazy loading of child node data scenarios
+## Lazy загрузка из child node данные scenarios
 
-In some scenarios, the child node data may be relatively large. In view of the excessive performance pressure on the backend database, and you do not want to obtain all the data at once, you need to call the interface to load the data when you click to expand. Then you can use the following method to achieve:
+в некоторые scenarios, the child node данные may be relatively large. в view из the excessive Производительность pressure на the backend данныеbase, и you do не want к obtain все the данные в once, you need к call the интерфейс к load the данные when you Нажать к развернуть. Then Вы можете use Следующий method к achieve:
 
-0. (Optional) Register the loading icon
+0. (необязательный) регистрация the загрузка иконка
 
 ```javascript
-VTable.register.icon('loading', {
-  type: 'image',
-  width: 16,
-  height: 16,
-  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
-  name: 'loading', // Define the name of the icon, which will be used as the key value for caching in the internal cache
-  positionType: VTable.TYPES.IconPosition.absoluteRight, // Specify the position, which can be before or after the text, or left or right of the cell
-  marginLeft: 0, // The left content interval in the specific position
-  marginRight: 4, // The right content interval in the specific position
-  visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'click_cell'
-  hover: {
-    // The size of the hot area
-    width: 22,
-    height: 22,
+Vтаблица.регистрация.иконка('загрузка', {
+  тип: 'imвозраст',
+  ширина: 16,
+  высота: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media/загрузка-circle.gif',
+  имя: 'загрузка', // Define the имя из the иконка, which will be used as the key значение для caching в the internal cache
+  positionType: Vтаблица.TYPES.иконкаPosition.absoluteRight, // Specify the позиция, which can be before или after the текст, или лево или право из the cell
+  marginLeft: 0, // The лево content interval в the specific позиция
+  marginRight: 4, // The право content interval в the specific позиция
+  visibleTime: 'always', // The display time, 'always' | 'mouseover_cell' | 'Нажать_cell'
+  навести: {
+    // The размер из the hot area
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101,117,168,0.1)'
   },
   isGif: true
 });
 ```
 
-1. Set the children of the corresponding data to true instead of a specific data collection so that the cell can display the folded icon;
-2. When the user clicks the status icon, the event `VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE` will be triggered. The front-end code needs to listen to this event to request children data.
-3. (Optional) Before loading the data, call the `instance.setLoadingHierarchyState(col, row)` method to display the loading icon;
-4. Pass the obtained data back to the table component, you can call the interface `instance.setRecordChildren(childrenData, col, row)`;
+1. Set the children из the corresponding данные к true instead из a specific данные collection so that the cell can display the folded иконка;
+2. When the user Нажатьs the status иконка, the событие `Vтаблица.списоктаблица.событие_TYPE.TREE_HIERARCHY_STATE_CHANGE` will be triggered. The front-конец код needs к списокen к this событие к request children данные.
+3. (необязательный) Before загрузка the данные, call the `instance.setLoadingHierarchyState(col, row)` method к display the загрузка иконка;
+4. Pass the obtained данные back к the таблица компонент, Вы можете call the интерфейс `instance.setRecordChildren(childrenданные, col, row)`;
 
-For specific examples, please see: https://visactor.io/vtable/demo/table-type/list-table-tree-lazy-load
+для specific примеры, please see: https://visactor.io/vтаблица/демонстрация/таблица-тип/список-таблица-tree-lazy-load
 
-## Merge cells in the tree structure
+## Merge cells в the tree structure
 
-In some scenarios, you want to display the parent node as a merged cell in the entire row, you can configure `vtableMerge` and `vtableMergeName` in the data, where `vtableMerge` is true, indicating that the parent node is a merged cell, and `vtableMergeName` is the name displayed in the merged cell. At the same time, you need to add the `enableTreeNodeMerge` configuration to true in the option.
+в некоторые scenarios, you want к display the parent node as a merged cell в the entire row, Вы можете configure `vтаблицаMerge` и `vтаблицаMergeимя` в the данные, where `vтаблицаMerge` is true, indicating that the parent node is a merged cell, и `vтаблицаMergeимя` is the имя displayed в the merged cell. в the same time, you need к add the `enableTreeNodeMerge` configuration к true в the option.
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
-    group: 'Human Resources Department',
+    группа: 'Human Resources Department',
     total_children: 30,
     monthly_expense: '$45000',
     new_hires_this_month: 6,
     resignations_this_month: 3,
     complaints_and_suggestions: 2,
-    vtableMerge: true,
-    vtableMergeName: 'Human Resources Department(merge)',
+    vтаблицаMerge: true,
+    vтаблицаMergeимя: 'Human Resources Department(merge)',
     children: [
       {
-        group: 'Recruiting Group',
-        vtableMerge: true,
-        vtableMergeName: 'Recruiting Group(merge)',
+        группа: 'Recruiting Group',
+        vтаблицаMerge: true,
+        vтаблицаMergeимя: 'Recruiting Group(merge)',
         children: [
           {
-            group: 'John Smith',
-            position: 'Recruiting Manager',
+            группа: 'John Smith',
+            позиция: 'Recruiting Manвозрастr',
             salary: '$8000'
           },
           {
-            group: 'Emily Johnson',
-            position: 'Recruiting Supervisor',
+            группа: 'Emily Johnson',
+            позиция: 'Recruiting Supervisor',
             salary: '$6000'
           },
           {
-            group: 'Michael Davis',
-            position: 'Recruiting Specialist',
+            группа: 'Michael Davis',
+            позиция: 'Recruiting Speciaсписок',
             salary: '$4000'
           }
         ],
@@ -266,18 +266,18 @@ const records = [
         complaints_and_suggestions: 1
       },
       {
-        group: 'Training Group',
-        vtableMerge: true,
-        vtableMergeName: 'Training Group(merge)',
+        группа: 'Training Group',
+        vтаблицаMerge: true,
+        vтаблицаMergeимя: 'Training Group(merge)',
         children: [
           {
-            group: 'Jessica Brown',
-            position: 'Training Manager',
+            группа: 'Jessica Brown',
+            позиция: 'Training Manвозрастr',
             salary: '$8000'
           },
           {
-            group: 'Andrew Wilson',
-            position: 'Training Supervisor',
+            группа: 'Andrew Wilson',
+            позиция: 'Training Supervisor',
             salary: '$6000'
           }
         ],
@@ -292,55 +292,55 @@ const records = [
 ];
 const columns = [
   {
-    field: 'group',
-    title: 'department',
-    width: 'auto',
+    поле: 'group',
+    заголовок: 'department',
+    ширина: 'авто',
     tree: true
   },
   {
-    field: 'total_children',
-    title: 'memebers count',
-    width: 'auto',
-    fieldFormat(rec) {
-      if (rec?.['position']) {
-        return `position:  ${rec['position']}`;
-      } else return rec?.['total_children'];
+    поле: 'total_children',
+    заголовок: 'memebers count',
+    ширина: 'авто',
+    полеFormat(rec) {
+      if (rec?.['позиция']) {
+        возврат `позиция:  ${rec['позиция']}`;
+      } else возврат rec?.['total_children'];
     }
   },
   {
-    field: 'monthly_expense',
-    title: 'monthly expense',
-    width: 'auto',
-    fieldFormat(rec) {
+    поле: 'monthly_expense',
+    заголовок: 'monthly expense',
+    ширина: 'авто',
+    полеFormat(rec) {
       if (rec?.['salary']) {
-        return `salary:  ${rec['salary']}`;
-      } else return rec?.['monthly_expense'];
+        возврат `salary:  ${rec['salary']}`;
+      } else возврат rec?.['monthly_expense'];
     }
   },
   {
-    field: 'new_hires_this_month',
-    title: 'new hires this month',
-    width: 'auto'
+    поле: 'new_hires_this_month',
+    заголовок: 'новый hires this month',
+    ширина: 'авто'
   },
   {
-    field: 'resignations_this_month',
-    title: 'resignations this month',
-    width: 'auto'
+    поле: 'resignations_this_month',
+    заголовок: 'resignations this month',
+    ширина: 'авто'
   },
   {
-    field: 'complaints_and_suggestions',
-    title: 'recived complaints counts',
-    width: 'auto'
+    поле: 'complaints_and_suggestions',
+    заголовок: 'recived complaints counts',
+    ширина: 'авто'
   }
 ];
 
 const option = {
   records,
   columns,
-  widthMode: 'standard',
+  ширинаMode: 'standard',
   enableTreeNodeMerge: true,
   hierarchyExpandLevel: Infinity
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```

@@ -1,22 +1,22 @@
-# Introduction to Perspective Combination Charts
+# Introduction к Perspective Combination графикs
 
-Perspective combination chart is a data lake visualization technology, which arranges and combines charts of the same type according to certain rules to form a large chart, and each small chart presents a part of the data. Perspective combination charts are often used to group and display large amounts of data in order to better observe and compare the relationship between different data.
-The advantage of the perspective combination chart is that it can present multiple data Dimensions at the same time, so that users can understand the relationship between the data more comprehensively. In addition, the perspective combination chart can also make it easier for users to compare the differences between different data by adjusting the arrangement and size of the subcharts.
+Perspective combination график is a данные lake visualization technology, which arranges и combines графикs из the same тип according к certain rules к form a large график, и каждый small график presents a part из the данные. Perspective combination графикs are often used к group и display large amounts из данные в order к better observe и compare the relationship between different данные.
+The advantвозраст из the perspective combination график is that it can present multiple данные Dimensions в the same time, so that users can understand the relationship between the данные more comprehensively. в addition, the perspective combination график can also make it easier для users к compare the differences between different данные по adjusting the arrangement и размер из the subграфикs.
 
 # Application Scenario
 
-There are many application scenarios for perspective composite graphs in data lake visualization. Here are some examples of them:
+There are many application scenarios для perspective composite graphs в данные lake visualization. Here are некоторые примеры из them:
 
-1.  Visualization of big data collections: Perspective combination diagrams can be used to visualize big data collections. By arranging and combining data according to certain rules, data groups are displayed, so that users can better understand the relationship between data.
-2.  Visualization of multidimensional data: Perspective combination charts can be used to visualize multidimensional data. By grouping data according to different attributes and presenting each grouped data in a certain form, users can observe data in multiple Dimensions at the same time.
-3.  Comparison and analysis of data: Perspective combination charts can be used to compare and analyze data. By grouping data according to different attributes, and presenting the data of each grouping in a certain form, users can more easily compare and analyze the differences and relationships between different data.
-4.  Data Exploration and Discovery: Perspective composite diagrams can be used to explore and discover patterns and trends in data. By grouping data according to different attributes and presenting each grouped data in a certain form, users can gain a more comprehensive understanding of the relationship between data, thereby discovering patterns and trends in data.
-5.  Data reporting and presentation: Perspective composite diagrams can be used to present data reports. Data reports can be made easier to understand and present by grouping data according to different attributes and presenting each grouped data in a certain form.
+1.  Visualization из big данные collections: Perspective combination diagrams can be used к visualize big данные collections. по arranging и combining данные according к certain rules, данные groups are displayed, so that users can better understand the relationship between данные.
+2.  Visualization из multidimensional данные: Perspective combination графикs can be used к visualize multidimensional данные. по grouping данные according к different attributes и presenting каждый grouped данные в a certain form, users can observe данные в multiple Dimensions в the same time.
+3.  Comparison и analysis из данные: Perspective combination графикs can be used к compare и analyze данные. по grouping данные according к different attributes, и presenting the данные из каждый grouping в a certain form, users can more easily compare и analyze the differences и relationships between different данные.
+4.  данные Exploration и Discovery: Perspective composite diagrams can be used к explore и discover patterns и trends в данные. по grouping данные according к different attributes и presenting каждый grouped данные в a certain form, users can gain a more comprehensive understanding из the relationship between данные, thereby discovering patterns и trends в данные.
+5.  данные reporting и presentation: Perspective composite diagrams can be used к present данные reports. данные reports can be made easier к understand и present по grouping данные according к different attributes и presenting каждый grouped данные в a certain form.
 
-# The structure of the perspective combination chart
+# The structure из the perspective combination график
 
-The structure can be compared to [**pivot table**](../table_type/Pivot_table/pivot_table_overview). Compared with the pivot table, in addition to the column header, row header, corner header, and body, the perspective combination chart can also be configured with [**axis components**](../components/axes) in the four directions. Corresponds to the upper axis, next week, left axis, and right axis, and can also be configured separately [**Legend component**](../components/legend).
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170f.png)
+The structure can be compared к [**сводный таблица**](../таблица_type/сводный_таблица/сводный_таблица_overview). Compared с the сводный таблица, в addition к the column header, row header, corner header, и body, the perspective combination график can also be configured с [**axis компонентs**](../компонентs/axes) в the four directions. Corresponds к the upper axis, следующий week, лево axis, и право axis, и can also be configured separately [**легенда компонент**](../компонентs/легенда).
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170f.png)
 
 The specific relevant configurations are as follows:
 
@@ -24,9 +24,9 @@ The specific relevant configurations are as follows:
         rows: [
            {
               dimensionKey: 'Order Year',
-              title: 'Order Year',
+              заголовок: 'Order Year',
               headerStyle: {
-                textBaseline:'top',
+                textBaseline:'верх',
                 textStick: true
               }
             },
@@ -34,50 +34,50 @@ The specific relevant configurations are as follows:
         ],
         columns: [
             {
-              dimensionKey: 'Region',
-              title: '',
+              dimensionKey: 'Регион',
+              заголовок: '',
               headerStyle: {
                 textStick: true
               }
             },
-            'Category'
+            'Категория'
         ],
         indicators: [
           {
-            indicatorKey: 'Quantity',
-            title: 'Quantity',
-            cellType:'chart',
-            chartModule:'vchart',
-            chartSpec:{} //对应vchart的spec，具体可参考vchart官网
+            indicatorKey: 'Количество',
+            заголовок: 'Количество',
+            cellType:'график',
+            графикModule:'vграфик',
+            графикSpec:{} //对应vграфик的spec，具体可参考vграфик官网
           },
           {
-            indicatorKey: 'Sales',
-            title: 'Sales & Profit',
-            cellType:'chart',
-            chartModule:'vchart',
-            chartSpec:{} //对应vchart的spec，具体可参考vchart官网
+            indicatorKey: 'Продажи',
+            заголовок: 'Продажи & Прибыль',
+            cellType:'график',
+            графикModule:'vграфик',
+            графикSpec:{} //对应vграфик的spec，具体可参考vграфик官网
           }
         ],
         axes: [
           {
-            orient: 'bottom'
+            orient: 'низ'
           },
           {
-            orient: 'left',
-            title: {
-              visible: true
+            orient: 'лево',
+            заголовок: {
+              видимый: true
             }
           },
           {
-            orient: 'right',
-            visible: true,
+            orient: 'право',
+            видимый: true,
             grid: {
-              visible: false
+              видимый: false
             }
           }
         ],
-        legends: {
-          data: [
+        легендаs: {
+          данные: [
             {
               label: '公司-数量',
               shape: {
@@ -94,161 +94,161 @@ The specific relevant configurations are as follows:
             },
             ...
           ],
-          orient: 'bottom',
-          position: 'start',
+          orient: 'низ',
+          позиция: 'начало',
           maxRow: 1,
-          padding: [50, 0, 0, 0]
+          заполнение: [50, 0, 0, 0]
         },
         records:[
           {
-            "Segment-Indicator": "Consumer-Quantity",
-            "Region": "Central",
-            "Category": "Furniture",
-            "Quantity": "16",
-            "Sub-Category": "Chairs",
+            "Segment-Indicator": "Consumer-Количество",
+            "Регион": "Central",
+            "Категория": "Furniture",
+            "Количество": "16",
+            "Sub-Категория": "Chairs",
             "Order Year": "2015",
             "Segment": "Consumer",
-            "Ship Mode": "First Class"
+            "Ship Mode": "первый Class"
           },
           {
-            "Segment-Indicator": "Consumer-Quantity",
-            "Region": "Central",
-            "Category": "Furniture",
-            "Quantity": "4",
-            "Sub-Category": "Tables",
+            "Segment-Indicator": "Consumer-Количество",
+            "Регион": "Central",
+            "Категория": "Furniture",
+            "Количество": "4",
+            "Sub-Категория": "таблицаs",
             "Order Year": "2015",
             "Segment": "Consumer",
-            "Ship Mode": "First Class"
+            "Ship Mode": "первый Class"
           },
           {
-            "Segment-Indicator": "Corporate-Quantity",
-            "Region": "Central",
-            "Category": "Furniture",
-            "Quantity": "2",
-            "Sub-Category": "Bookcases",
+            "Segment-Indicator": "Corporate-Количество",
+            "Регион": "Central",
+            "Категория": "Furniture",
+            "Количество": "2",
+            "Sub-Категория": "Boхорошоcases",
             "Order Year": "2015",
             "Segment": "Corporate",
-            "Ship Mode": "First Class"
+            "Ship Mode": "первый Class"
           },
           ...
        ]
     }
 
-Corresponding to the schematic structure of the perspective combination diagram above:
+Corresponding к the schematic structure из the perspective combination diagram above:
 
-- rows configures the Dimension'Order Year 'and'Ship Mode' corresponding to the row header;
-- columns configures the Dimension'Region 'and'Category' corresponding to the list header;
+- rows configures the Dimension'Order Year 'и'Ship Mode' corresponding к the row header;
+- columns configures the Dimension'Регион 'и'Категория' corresponding к the список header;
 
-- indicators configures the indicator data to be analyzed: `Quantity`, `Sales`, `Profit`;
-  - `Quantity` corresponds to indicator 1 in the figure above, using a bar chart to show the trend;
-  - `Sales` and `Profit` correspond to indicators 2 and 3 in the above figure, and the data of the two indicators are displayed using a combined dual-axis chart.
-  - You need to set `cellType:'chart', chartModule:'vchart'` in the specific configuration of `indicator` to indicate that you want to configure the chart rendering type and specify that the registered chart library name is `vchart`.
-  - For specific chartSpec configuration, please refer to [VChart official website](https://visactor.io/vchart/option/barChart)
-- indicatorAsCol configures the indicator at the row or column header. Note that:
+- indicators configures the indicator данные к be analyzed: `Количество`, `Продажи`, `Прибыль`;
+  - `Количество` corresponds к indicator 1 в the figure above, using a bar график к показать the trend;
+  - `Продажи` и `Прибыль` correspond к indicators 2 и 3 в the above figure, и the данные из the two indicators are displayed using a combined dual-axis график.
+  - You need к set `cellType:'график', графикModule:'vграфик'` в the specific configuration из `indicator` к indicate that you want к configure the график rendering тип и specify that the регистрацияed график library имя is `vграфик`.
+  - для specific графикSpec configuration, please refer к [Vграфик official website](https://visactor.io/vграфик/option/barграфик)
+- indicatorAsCol configures the indicator в the row или column header. Note that:
 
-  - If true, that is, the indicator is in the column header, the corresponding chart display direction is horizontal;
-  - If it is false, that is, the indicator is at the head of the row, the display direction of the corresponding chart is vertical;
+  - If true, that is, the indicator is в the column header, the corresponding график display direction is horizontal;
+  - If it is false, that is, the indicator is в the head из the row, the display direction из the corresponding график is vertical;
 
-- legends configuration legend style;
-  ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
-- axes configures the global style of the axis. If axes have been configured in chartSpec in the Metirc configuration, the configuration in chartSpec will be used first.
+- легендаs configuration легенда style;
+  ![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff07.png)
+- axes configures the global style из the axis. If axes have been configured в графикSpec в the Metirc configuration, the configuration в графикSpec will be used первый.
 
-# Chart Module Register
+# график Module регистрация
 
-The chart library component needs to be injected before use:
-
-```
-import VChart from '@visactor/vchart';
-VTable.register.chartModule('vchart', VChart);
-```
-
-# Chart Events
-
-If you want to monitor chart events, you can use onVChartEvent. vtable has made a simple event proxy. The supported event types and callbacks are still consistent with vchart. For details, please refer to [VChart Event](https://visactor.io/ vchart/api/API/event)
+The график library компонент needs к be injected before use:
 
 ```
-     tableInstance.onVChartEvent('click', args => {
-        console.log('onVChartEvent click', args);
+import Vграфик от '@visactor/vграфик';
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);
+```
+
+# график событиеs
+
+If you want к monitor график событиеs, Вы можете use onVграфиксобытие. vтаблица has made a simple событие proxy. The supported событие types и callbacks are still consistent с vграфик. для details, please refer к [Vграфик событие](https://visactor.io/ vграфик/апи/апи/событие)
+
+```
+     таблицаInstance.onVграфиксобытие('Нажать', args => {
+        console.log('onVграфиксобытие Нажать', args);
       });
-      tableInstance.onVChartEvent('mouseover', args => {
-        console.log('onVChartEvent mouseover', args);
+      таблицаInstance.onVграфиксобытие('mouseover', args => {
+        console.log('onVграфиксобытие mouseover', args);
       });
 ```
 
-# Legend configuration and legend linkage
+# легенда configuration и легенда linkвозраст
 
-How to achieve the linkage effect between table legend and chart?
+How к achieve the linkвозраст effect between таблица легенда и график?
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/legend-chart.gif)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/легенда-график.gif)
 
-## Legend configuration
+## легенда configuration
 
-You can refer to the table [Legend Tutorial] (../components/legend) to configure the legend displayed outside the table.
-The configuration in the above picture is as follows:
+Вы можете refer к the таблица [легенда Tutorial] (../компонентs/легенда) к configure the легенда displayed outside the таблица.
+The configuration в the above picture is as follows:
 
 ```
-     legends: {
-      orient: 'bottom',
-      type: 'discrete',
-      data: [
+     легендаs: {
+      orient: 'низ',
+      тип: 'discrete',
+      данные: [
         {
-          label: 'Consumer-Quantity',
+          label: 'Consumer-Количество',
           shape: {
             fill: '#2E62F1',
             symbolType: 'circle'
           }
         },
         {
-          label: 'Consumer-Quantity',
+          label: 'Consumer-Количество',
           shape: {
             fill: '#4DC36A',
             symbolType: 'square'
           }
         },
          {
-          label: 'Home Office-Quantity',
+          label: 'Home Office-Количество',
           shape: {
             fill: '#FF8406',
             symbolType: 'square'
           }
         },
         {
-          label: 'Consumer-Sales',
+          label: 'Consumer-Продажи',
           shape: {
             fill: '#FFCC00',
             symbolType: 'square'
           }
         },
         {
-          label: 'Consumer-Sales',
+          label: 'Consumer-Продажи',
           shape: {
             fill: '#4F44CF',
             symbolType: 'square'
           }
         },
          {
-          label: 'Home Office-Sales',
+          label: 'Home Office-Продажи',
           shape: {
             fill: '#5AC8FA',
             symbolType: 'square'
           }
         },
         {
-          label: 'Consumer-Profit',
+          label: 'Consumer-Прибыль',
           shape: {
             fill: '#003A8C',
             symbolType: 'square'
           }
         },
         {
-          label: 'Consumer-Profit',
+          label: 'Consumer-Прибыль',
           shape: {
             fill: '#B08AE2',
             symbolType: 'square'
           }
         },
          {
-          label: 'Home Office-Profit',
+          label: 'Home Office-Прибыль',
           shape: {
             fill: '#FF6341',
             symbolType: 'square'
@@ -258,27 +258,27 @@ The configuration in the above picture is as follows:
     }
 ```
 
-This configuration configures the color and shape of each item of the legend, as well as the label value.
+This configuration configures the цвет и shape из каждый item из the легенда, as well as the label значение.
 
-Because the color values need to be explicitly set in this configuration, the color mapping rules also need to be specified in the spec of the configuration chart. Please refer to [color configuration method](https://visactor.io/vchart/option/barChart#color).
+Because the цвет values need к be explicitly set в this configuration, the цвет mapping rules also need к be specified в the spec из the configuration график. Please refer к [цвет configuration method](https://visactor.io/vграфик/option/barграфик#цвет).
 
-In the example above, we added the following configuration to the chartSpec to ensure that the colors in the chart and the legend are consistent:
+в the пример above, we added Следующий configuration к the графикSpec к ensure that the colors в the график и the легенда are consistent:
 
 ```
 scales: [
               {
-                id: 'color',
-                type: 'ordinal',
+                id: 'цвет',
+                тип: 'ordinal',
                 domain: [
-                  'Consumer-Quantity',
-                  'Corporate-Quantity',
-                  'Home Office-Quantity',
-                  'Consumer-Sales',
-                  'Corporate-Sales',
-                  'Home Office-Sales',
-                  'Consumer-Profit',
-                  'Corporate-Profit',
-                  'Home Office-Profit'
+                  'Consumer-Количество',
+                  'Corporate-Количество',
+                  'Home Office-Количество',
+                  'Consumer-Продажи',
+                  'Corporate-Продажи',
+                  'Home Office-Продажи',
+                  'Consumer-Прибыль',
+                  'Corporate-Прибыль',
+                  'Home Office-Прибыль'
                 ],
                 range: [
                   '#2E62F1',
@@ -298,18 +298,18 @@ scales: [
             ]
 ```
 
-## Legend linkage
+## легенда linkвозраст
 
-Use the event `LEGEND_ITEM_CLICK` to monitor legend item clicks, and call the VTable interface `updateFilterRules` to process the data display filtered chart.
+Use the событие `легенда_ITEM_Нажать` к monitor легенда item Нажатьs, и call the Vтаблица интерфейс `updateFilterRules` к process the данные display filtered график.
 
 ```
-      const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
-      tableInstance.on(LEGEND_ITEM_CLICK, args => {
-        console.log('LEGEND_ITEM_CLICK', args);
-        tableInstance.updateFilterRules([
+      const { легенда_ITEM_Нажать } = Vтаблица.списоктаблица.событие_TYPE;
+      таблицаInstance.на(легенда_ITEM_Нажать, args => {
+        console.log('легенда_ITEM_Нажать', args);
+        таблицаInstance.updateFilterRules([
           {
             filterKey: 'Segment-Indicator',
-            filteredValues: args.value
+            filteredValues: args.значение
           }
         ]);
       });

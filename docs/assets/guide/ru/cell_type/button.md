@@ -1,35 +1,35 @@
-# Button Cell Type
+# Кнопка Cell тип
 
-Button cell type is suitable for providing button interactions in tables, allowing users to click buttons for specific operations. The interactive capability provided by button cell type is widely used in many applications.
+Кнопка cell тип is suiтаблица для providing Кнопка interactions в таблицаs, allowing users к Нажать Кнопкаs для specific operations. The interactive capability provided по Кнопка cell тип is widely used в many applications.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/button.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/Кнопка.png)
 
-## Button-specific Configuration Options
+## Кнопка-specific Configuration Options
 
-The button cell type has the following specific configuration options:
+The Кнопка cell тип has Следующий specific configuration options:
 
-1. `disable`: Whether the button can be disabled for clicking, default value is false. Supports function configuration, can be different for different cells.
-2. `text`: Button text, supports function configuration. If not configured, the button text will be the value corresponding to the `field`.
+1. `отключить`: Whether the Кнопка can be отключен для Нажатьing, по умолчанию значение is false. Supports функция configuration, can be different для different cells.
+2. `текст`: Кнопка текст, supports функция configuration. If не configured, the Кнопка текст will be the значение corresponding к the `поле`.
 
-Example:
+пример:
 
 ```javascript
 {
-  field: 'button',
-  cellType: 'button',
-  text: 'Select'
+  поле: 'Кнопка',
+  cellType: 'Кнопка',
+  текст: 'выбрать'
 }
 ```
 
-## Button Click Event
+## Кнопка Нажать событие
 
-When the button is clicked, it triggers the `VTable.ListTable.EVENT_TYPE.BUTTON_CLICK` event.
+When the Кнопка is Нажатьed, it triggers the `Vтаблица.списоктаблица.событие_TYPE.Кнопка_Нажать` событие.
 
 ```javascript
-instance.on(VTable.ListTable.EVENT_TYPE.BUTTON_CLICK, e => {
-  console.log(VTable.ListTable.EVENT_TYPE.BUTTON_CLICK, e.col, e.row);
+instance.на(Vтаблица.списоктаблица.событие_TYPE.Кнопка_Нажать, e => {
+  console.log(Vтаблица.списоктаблица.событие_TYPE.Кнопка_Нажать, e.col, e.row);
 });
 ```
 
-[Click to view complete example](../../demo/cell-type/button)
-Through the above introduction, you have learned how to use button cell type for data display in VTable. We hope this helps.
+[Нажать к view complete пример](../../демонстрация/cell-тип/Кнопка)
+Through the above introduction, you have learned how к use Кнопка cell тип для данные display в Vтаблица. We hope this helps.

@@ -1,26 +1,26 @@
-{{ target: image-dimension-type }}
+{{ target: imвозраст-dimension-тип }}
 
-#${prefix} ${dimensionHeaderType}.image(string)
+#${prefix} ${dimensionHeaderType}.imвозраст(строка)
 
-Specify the column type as `'image'`, headerType can be omitted and defaults to 'text
+Specify the column тип as `'imвозраст'`, headerType can be omitted и defaults к 'текст
 
-##${prefix} headerType(string) = 'image'
+##${prefix} headerType(строка) = 'imвозраст'
 
-Specify the column type as `'image'`, headerType can be omitted and defaults to `'text'`. Other configuration items are as follows (also applicable to type 'video'):
+Specify the column тип as `'imвозраст'`, headerType can be omitted и defaults к `'текст'`. Other configuration items are as follows (also applicable к тип 'video'):
 
-{{ use: base-dimension-type(
+{{ use: base-dimension-тип(
     prefix = '##'+${prefix},
-    isImage = true,
+    isImвозраст = true,
 ) }}
 
-##${prefix} keepAspectRatio(boolean) = false
+##${prefix} keepAspectRatio(логический) = false
 
-**Configuration item exclusive to image type** Whether to keep the aspect ratio, default is false
+**Configuration item exclusive к imвозраст тип** Whether к keep the aspect ratio, по умолчанию is false
 
-##${prefix} imageAutoSizing(boolean) = false
+##${prefix} imвозраставтоSizing(логический) = false
 
-**Configuration item exclusive to image type** Whether to automatically expand the cell size according to the image size, default is false
+**Configuration item exclusive к imвозраст тип** Whether к автоmatically развернуть the cell размер according к the imвозраст размер, по умолчанию is false
 
-##${prefix} clickToPreview(boolean) = true
+##${prefix} НажатьToPreview(логический) = true
 
-**Configuration specific to image type** Whether to enable click preview.
+**Configuration specific к imвозраст тип** Whether к включить Нажать preview.

@@ -1,42 +1,42 @@
 # CSV export
 
-The `@visactor/vtable-export` package is a tool packaged for VTable table export. It supports export in both CSV and Excel formats.
+The `@visactor/vтаблица-export` packвозраст is a tool packвозрастd для Vтаблица таблица export. It supports export в both CSV и Excel formats.
 
-## Usage
+## Usвозраст
 
 ### import
 
-First, you need to install the `@visactor/vtable` and `@visactor/vtable-export` packages in your application, then introduce them in your code to generate a table instance and export it:
+первый, you need к install the `@visactor/vтаблица` и `@visactor/vтаблица-export` packвозрастs в your application, then introduce them в your код к generate a таблица instance и export it:
 
 ```js
-import * as VTable from '@visactor/vtable';
-import { downloadCsv, exportVTableToCsv } from '@visactor/vtable-export';
+import * as Vтаблица от '@visactor/vтаблица';
+import { downloadCsv, exportVтаблицаToCsv } от '@visactor/vтаблица-export';
 
 //config option
 //......
-const tableInstance = new VTable.ListTable(option);
+const таблицаInstance = новый Vтаблица.списоктаблица(option);
 
 // download csv file
-downloadCsv(exportVTableToCsv(tableInstance), 'export-csv');
+downloadCsv(exportVтаблицаToCsv(таблицаInstance), 'export-csv');
 ```
 
-- `exportVTableToCsv`: Table output tool, outputs table instances as a string in CSV format
-- `downloadCsv`: Download tool to download CSV format strings as files in a browser environment
-- If it is a server environment, you can process the CSV format string converted by `exportVTableToCsv` yourself.
+- `exportVтаблицаToCsv`: таблица output tool, outputs таблица instances as a строка в CSV format
+- `downloadCsv`: Download tool к download CSV format strings as files в a browser environment
+- If it is a server environment, Вы можете process the CSV format строка converted по `exportVтаблицаToCsv` yourself.
 
-Reference[demo](../../demo/export/table-export)
+Reference[демонстрация](../../демонстрация/export/таблица-export)
 
 ### umd
 
-You can also directly introduce the umd product of the `@visactor/vtable-export` package in HTML:
+Вы можете also directly introduce the umd product из the `@visactor/vтаблица-export` packвозраст в HTML:
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable-export@latest/dist/vtable-export.js"></script>
+<script src="https://unpkg.com/@visactor/vтаблица-export@latest/dist/vтаблица-export.js"></script>
 ```
 
-Find the corresponding tool in the global variable `VTable.export` and use the same method as above:
+Find the corresponding tool в the global variable `Vтаблица.export` и use the same method as above:
 
 ```js
-const { downloadCsv, exportVTableToCsv } = VTable.export;
+const { downloadCsv, exportVтаблицаToCsv } = Vтаблица.export;
 // ......
 ```

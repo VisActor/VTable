@@ -1,92 +1,92 @@
 ---
-category: examples
-group: table-type
-title: Pivot table tree lazy load
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-tree-lazy-load.gif
-link: table_type/Pivot_table/pivot_table_tree
-option: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
+категория: примеры
+группа: таблица-тип
+заголовок: сводный таблица tree lazy load
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-таблица-tree-lazy-load.gif
+ссылка: таблица_type/сводный_таблица/сводный_таблица_tree
+опция: сводныйтаблица#rowHierarchyType('grid'%20%7C%20'tree')
 ---
 
-# Pivot table tree lazy load
+# сводный таблица tree lazy load
 
-The pivot table tree display supports lazy loading of child node data when expanding a node. If the children in the corresponding `rowTree` is set to true instead of a specific data set, you can listen to the `TREE_HIERARCHY_STATE_CHANGE` event to request the `children` data when clicking. The data must include the corresponding indicator data records of the child node and the tree structure tree of the row header, which are set to the table component through the interfaces `setTreeNodeChildren`.
+The сводный таблица tree display supports lazy загрузка из child node данные when expanding a node. If the children в the corresponding `rowTree` is set к true instead из a specific данные set, Вы можете списокen к the `TREE_HIERARCHY_STATE_CHANGE` событие к request the `children` данные when Нажатьing. The данные must include the corresponding indicator данные records из the child node и the tree structure tree из the row header, which are set к the таблица компонент through the interfaces `setTreeNodeChildren`.
 
 ## Key Configuration
 
-- `PivotTable` table type
-- `rowHierarchyType` sets the hierarchy display to `tree`, the default is tile mode `grid`.
-- `columnTree` customizes the table header tree structure
-- `rowTree` customizes the table header tree structure
-- `columns` optional, configure the style of the dimension, etc.
-- `rows` is optional, configures the style of the dimension, etc.
+- `сводныйтаблица` таблица тип
+- `rowHierarchyType` sets the hierarchy display к `tree`, the по умолчанию is tile mode `grid`.
+- `columnTree` пользовательскийizes the таблица header tree structure
+- `rowTree` пользовательскийizes the таблица header tree structure
+- `columns` необязательный, configure the style из the dimension, etc.
+- `rows` is необязательный, configures the style из the dimension, etc.
 - `indicators` indicator configuration
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-en.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/демонстрация/сводный-tree-lazy-load-en.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rowTree: [
         {
           dimensionKey: '220524114340021',
-          value: 'office supplies',
+          значение: 'office supplies',
           children: true
         },
         {
           dimensionKey: '220524114340021',
-          value: 'Furniture',
+          значение: 'Furniture',
           children: [
             {
               dimensionKey: '220524114340022',
-              value: 'Company'
+              значение: 'Company'
             },
             {
               dimensionKey: '220524114340022',
-              value: 'Consumer'
+              значение: 'Consumer'
             },
             {
               dimensionKey: '220524114340022',
-              value: 'Small business'
+              значение: 'Small business'
             }
           ]
         },
         {
           dimensionKey: '220524114340021',
-          value: 'Catering',
+          значение: 'Catering',
           children: [
             {
               dimensionKey: '220524114340022',
-              value: 'Company'
+              значение: 'Company'
             },
             {
               dimensionKey: '220524114340022',
-              value: 'Consumer'
+              значение: 'Consumer'
             },
             {
               dimensionKey: '220524114340022',
-              value: 'Small business'
+              значение: 'Small business'
             }
           ]
         },
         {
           dimensionKey: '220524114340021',
-          value: 'technology',
+          значение: 'technology',
           children: [
             {
               dimensionKey: '220524114340022',
-              value: 'Company'
+              значение: 'Company'
             },
             {
               dimensionKey: '220524114340022',
-              value: 'Consumer'
+              значение: 'Consumer'
             },
             {
               dimensionKey: '220524114340022',
-              value: 'Small business'
+              значение: 'Small business'
             }
           ]
         }
@@ -94,47 +94,47 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
       columnTree: [
         {
           dimensionKey: '220524114340020',
-          value: 'northeast',
+          значение: 'northeast',
           children: [
             {
               dimensionKey: '220524114340031',
-              value: 'heilongjiang',
+              значение: 'heilongjiang',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: '220524114340031',
-              value: 'jilin',
+              значение: 'jilin',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: '220524114340031',
-              value: 'liaoning',
+              значение: 'liaoning',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             }
@@ -142,47 +142,47 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
         },
         {
           dimensionKey: '220524114340020',
-          value: 'North China',
+          значение: 'North China',
           children: [
             {
               dimensionKey: '220524114340031',
-              value: 'Inner Mongolia',
+              значение: 'Inner Mongolia',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: '220524114340031',
-              value: 'Beijing',
+              значение: 'Beijing',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: '220524114340031',
-              value: 'tianjin',
+              значение: 'tianjin',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             }
@@ -190,47 +190,47 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
         },
         {
           dimensionKey: '220524114340020',
-          value: 'Middle-of-south',
+          значение: 'середина-из-south',
           children: [
             {
               dimensionKey: '220524114340031',
-              value: 'Guangdong',
+              значение: 'Guangdong',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: '220524114340031',
-              value: 'Guangxi',
+              значение: 'Guangxi',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             },
             {
               dimensionKey: '220524114340031',
-              value: 'Hunan',
+              значение: 'Hunan',
               children: [
                 {
                   indicatorKey: '220524114340013',
-                  value: 'Sales'
+                  значение: 'Продажи'
                 },
                 {
                   indicatorKey: '220524114340014',
-                  value: 'Profit'
+                  значение: 'Прибыль'
                 }
               ]
             }
@@ -240,135 +240,135 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
       rows: [
         {
           dimensionKey: '220524114340021',
-          title: 'Category / Subdivision / Mailing method',
-          headerFormat(value) {
-            return `${value}`;
+          заголовок: 'Категория / Subdivision / Mailing method',
+          headerFormat(значение) {
+            возврат `${значение}`;
           },
-          width: 200,
+          ширина: 200,
           headerStyle: {
             cursor: 'help',
-            textAlign: 'center',
+            textAlign: 'центр',
             borderColor: 'blue',
-            color: 'purple',
+            цвет: 'purple',
             textStick: true,
             bgColor: '#6cd26f'
           }
         },
         {
           dimensionKey: '220524114340022',
-          title: 'Sub-Category',
+          заголовок: 'Sub-Категория',
           headerStyle: {
-            textAlign: 'left',
-            color: 'blue',
+            textAlign: 'лево',
+            цвет: 'blue',
             bgColor: '#45b89f'
           }
         },
         {
           dimensionKey: '220524114340023',
-          title: 'Mailing method',
+          заголовок: 'Mailing method',
           headerStyle: {
-            textAlign: 'left',
-            color: 'white',
+            textAlign: 'лево',
+            цвет: 'white',
             bgColor: '#6699ff'
           }
         },
         {
           dimensionKey: '2205241143400232',
-          title: 'Mailing method-1'
+          заголовок: 'Mailing method-1'
         }
       ],
       columns: [
         {
           dimensionKey: '220524114340020',
-          title: 'Region',
+          заголовок: 'Регион',
           headerStyle: {
-            textAlign: 'right',
+            textAlign: 'право',
             borderColor: 'blue',
-            color: 'yellow',
+            цвет: 'yellow',
             textStick: true,
             bgColor(arg) {
               if (
                 arg.cellHeaderPaths.colHeaderPaths &&
-                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
-                arg.cellHeaderPaths.colHeaderPaths[0].value === 'northeast'
+                'значение' в arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].значение === 'northeast'
               ) {
-                return '#bd422a';
+                возврат '#bd422a';
               }
               if (
                 arg.cellHeaderPaths.colHeaderPaths &&
-                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
-                arg.cellHeaderPaths.colHeaderPaths[0].value === 'North China'
+                'значение' в arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].значение === 'North China'
               ) {
-                return '#ff9900';
+                возврат '#ff9900';
               }
-              return 'gray';
+              возврат 'gray';
             }
           }
         },
         {
           dimensionKey: '220524114340031',
-          title: 'Province'
+          заголовок: 'Province'
         }
       ],
       indicators: [
         {
           indicatorKey: '220524114340013',
-          title: 'Sales',
-          width: 'auto',
-          format(value, col, row, table) {
-            if (!value) {
-              return '--';
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          format(значение, col, row, таблица) {
+            if (!значение) {
+              возврат '--';
             }
-            return Math.floor(parseFloat(value));
+            возврат Math.floor(parseFloat(значение));
           },
           headerStyle: {
-            color: 'red',
+            цвет: 'red',
             bgColor(arg) {
               if (
                 arg.cellHeaderPaths.colHeaderPaths &&
-                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
-                arg.cellHeaderPaths.colHeaderPaths[0].value === 'northeast'
+                'значение' в arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].значение === 'northeast'
               ) {
-                return '#bd422a';
+                возврат '#bd422a';
               }
               if (
                 arg.cellHeaderPaths.colHeaderPaths &&
-                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
-                arg.cellHeaderPaths.colHeaderPaths[0].value === 'North China'
+                'значение' в arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].значение === 'North China'
               ) {
-                return '#ff9900';
+                возврат '#ff9900';
               }
-              return 'gray';
+              возврат 'gray';
             }
           }
         },
         {
           indicatorKey: '220524114340014',
-          title: 'Profit',
-          format(value) {
-            if (!value) {
-              return '--';
+          заголовок: 'Прибыль',
+          format(значение) {
+            if (!значение) {
+              возврат '--';
             }
-            return Math.floor(parseFloat(value));
+            возврат Math.floor(parseFloat(значение));
           },
-          width: 'auto',
+          ширина: 'авто',
           headerStyle: {
             bgColor(arg) {
               if (
                 arg.cellHeaderPaths.colHeaderPaths &&
-                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
-                arg.cellHeaderPaths.colHeaderPaths[0].value === 'northeast'
+                'значение' в arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].значение === 'northeast'
               ) {
-                return '#bd422a';
+                возврат '#bd422a';
               }
               if (
                 arg.cellHeaderPaths.colHeaderPaths &&
-                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
-                arg.cellHeaderPaths.colHeaderPaths[0].value === 'North China'
+                'значение' в arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].значение === 'North China'
               ) {
-                return '#ff9900';
+                возврат '#ff9900';
               }
-              return 'gray';
+              возврат 'gray';
             }
           }
         }
@@ -376,118 +376,118 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tre
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
-          textAlign: 'center',
+          textAlign: 'центр',
           borderColor: 'red',
-          color: 'red',
+          цвет: 'red',
           fontSize: 16,
           fontWeight: 'bold',
-          lineHeight: 20,
+          lineвысота: 20,
           fontFamily: 'Arial'
         }
       },
-      heightMode: 'autoHeight',
-      autoWrapText: true,
-      widthMode: 'standard',
+      высотаMode: 'автовысота',
+      автоWrapText: true,
+      ширинаMode: 'standard',
       rowHierarchyType: 'tree',
       rowHierarchyIndent: 20,
-      theme: VTable.themes.ARCO,
-      dragOrder: {
-        dragHeaderMode: 'all'
+      тема: Vтаблица.темаs.ARCO,
+      dragпорядок: {
+        dragHeaderMode: 'все'
       }
     };
 
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-    tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    const { TREE_HIERARCHY_STATE_CHANGE } = Vтаблица.списоктаблица.событие_TYPE;
+    таблицаInstance.на(TREE_HIERARCHY_STATE_CHANGE, args => {
       // TODO 调用接口插入设置子节点的数据
-      if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
-        console.log(args.originData);
+      if (args.hierarchyState === Vтаблица.TYPES.HierarchyState.развернуть && args.originданные.children === true) {
+        console.log(args.originданные);
         setTimeout(() => {
           let children;
-          let newData;
-          if (args.originData.dimensionKey === '220524114340021' && args.originData.value === 'office supplies') {
-            fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-add-1-en.json')
+          let newданные;
+          if (args.originданные.dimensionKey === '220524114340021' && args.originданные.значение === 'office supplies') {
+            fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/демонстрация/сводный-tree-lazy-load-add-1-en.json')
               .then(res => res.json())
-              .then(newData => {
+              .then(newданные => {
                 children = [
                   {
                     dimensionKey: '220524114340022',
-                    value: 'Company',
+                    значение: 'Company',
                     children: [
                       {
                         dimensionKey: '220524114340023',
-                        value: 'Level 1',
+                        значение: 'Level 1',
                         children: [
                           {
                             dimensionKey: '2205241143400232',
-                            value: 'Level 1'
+                            значение: 'Level 1'
                           },
                           {
                             dimensionKey: '2205241143400232',
-                            value: 'Level 2'
+                            значение: 'Level 2'
                           },
                           {
                             dimensionKey: '2205241143400232',
-                            value: 'Level 3'
+                            значение: 'Level 3'
                           }
                         ]
                       },
                       {
                         dimensionKey: '220524114340023',
-                        value: 'Level 2',
+                        значение: 'Level 2',
                         children: [
                           {
                             dimensionKey: '2205241143400232',
-                            value: 'Level 1'
+                            значение: 'Level 1'
                           },
                           {
                             dimensionKey: '2205241143400232',
-                            value: 'Level 2'
+                            значение: 'Level 2'
                           },
                           {
                             dimensionKey: '2205241143400232',
-                            value: 'Level 3'
+                            значение: 'Level 3'
                           }
                         ]
                       },
                       {
                         dimensionKey: '220524114340023',
-                        value: 'Level 3'
+                        значение: 'Level 3'
                       }
                     ]
                   },
                   {
                     dimensionKey: '220524114340022',
-                    value: 'Consumer',
+                    значение: 'Consumer',
                     children: true
                   },
                   {
                     dimensionKey: '220524114340022',
-                    value: 'Small business'
+                    значение: 'Small business'
                   }
                 ];
 
-                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
+                таблицаInstance.setTreeNodeChildren(children, newданные, args.col, args.row);
               });
-          } else if (args.originData.dimensionKey === '220524114340022' && args.originData.value === 'Consumer') {
-            fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-add-2-en.json')
+          } else if (args.originданные.dimensionKey === '220524114340022' && args.originданные.значение === 'Consumer') {
+            fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/демонстрация/сводный-tree-lazy-load-add-2-en.json')
               .then(res => res.json())
-              .then(newData => {
+              .then(newданные => {
                 children = [
                   {
                     dimensionKey: '220524114340023',
-                    value: 'Level 1'
+                    значение: 'Level 1'
                   },
                   {
                     dimensionKey: '220524114340023',
-                    value: 'Level 1'
+                    значение: 'Level 1'
                   },
                   {
                     dimensionKey: '220524114340023',
-                    value: 'Level 3'
+                    значение: 'Level 3'
                   }
                 ];
-                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
+                таблицаInstance.setTreeNodeChildren(children, newданные, args.col, args.row);
               });
           }
         }, 10);

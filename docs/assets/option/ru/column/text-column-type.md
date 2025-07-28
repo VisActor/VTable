@@ -1,32 +1,32 @@
-{{ target: text-cell-type }}
+{{ target: текст-cell-тип }}
 
-#${prefix} columns.text(string)
+#${prefix} columns.текст(строка)
 
-Specify the column type as 'text', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'текст', cellType can be omitted и defaults к 'текст'
 
-##${prefix} cellType(string) = 'text'
+##${prefix} cellType(строка) = 'текст'
 
-Specify the column type as 'text', cellType can be omitted and defaults to 'text'
+Specify the column тип as 'текст', cellType can be omitted и defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##' + ${prefix}
 ) }}
 
-##${prefix} mergeCell(Boolean|Function)
+##${prefix} mergeCell(логический|функция)
 
 ```
-type MergeCellOption = Boolean | ((v1: unknown, v2: unknown, {
+тип MergeCellOption = логический | ((v1: unknown, v2: unknown, {
     source: {
-      col: number;
-      row: number;
+      col: число;
+      row: число;
     };
     target: {
-      col: number;
-      row: number;
+      col: число;
+      row: число;
     };
-    table: Table;
-  }) => boolean);
+    таблица: таблица;
+  }) => логический);
 ```
-**Exclusive configuration item for text type** Merge cells with the same content
+**Exclusive configuration item для текст тип** Merge cells с the same content
 
-You can refer to the example: [mergeCell](../demo/basic-functionality/merge)
+Вы можете refer к the пример: [mergeCell](../демонстрация/базовый-функциональность/merge)

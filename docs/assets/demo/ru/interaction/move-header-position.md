@@ -1,355 +1,355 @@
 ---
-category: examples
-group: Interaction
-title: Move header position
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/move-header-position.gif
-order: 4-5
-link: interaction/drag_header
-option: ListTable#dragOrder.dragHeaderMode
+категория: примеры
+группа: Interaction
+заголовок: Move header позиция
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/move-header-позиция.gif
+порядок: 4-5
+ссылка: interaction/drag_header
+опция: списоктаблица#dragOrder.dragHeaderMode
 ---
 
-# Move header position
+# Move header позиция
 
-Click the header to select a row or column, and drag and drop to move.
+Нажать the header к выбрать a row или column, и перетаскивание и отпускание к move.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `dragHeaderMode` Drag and drop the entire row or column of the header to change the position, and optional configuration items:`'all' | 'none' | 'header' | 'body'`, the default is`none`
+- `dragHeaderMode` перетаскивание и отпускание the entire row или column из the header к change the позиция, и необязательный configuration items:`'все' | 'никто' | 'header' | 'body'`, the по умолчанию is`никто`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rowTree: [
         {
-          dimensionKey: 'City',
-          value: 'Aberdeen'
+          dimensionKey: 'Город',
+          значение: 'Aberdeen'
         },
         {
-          dimensionKey: 'City',
-          value: 'Abilene'
+          dimensionKey: 'Город',
+          значение: 'Abilene'
         },
         {
-          dimensionKey: 'City',
-          value: 'Akron'
+          dimensionKey: 'Город',
+          значение: 'Akron'
         },
         {
-          dimensionKey: 'City',
-          value: 'Albuquerque'
+          dimensionKey: 'Город',
+          значение: 'Albuquerque'
         },
         {
-          dimensionKey: 'City',
-          value: 'Alexandria'
+          dimensionKey: 'Город',
+          значение: 'Alexandria'
         },
         {
-          dimensionKey: 'City',
-          value: 'Allen'
+          dimensionKey: 'Город',
+          значение: 'Allen'
         },
         {
-          dimensionKey: 'City',
-          value: 'Allentown'
+          dimensionKey: 'Город',
+          значение: 'Allentown'
         },
         {
-          dimensionKey: 'City',
-          value: 'Altoona'
+          dimensionKey: 'Город',
+          значение: 'Altoona'
         },
         {
-          dimensionKey: 'City',
-          value: 'Amarillo'
+          dimensionKey: 'Город',
+          значение: 'Amarillo'
         },
         {
-          dimensionKey: 'City',
-          value: 'Anaheim'
+          dimensionKey: 'Город',
+          значение: 'Anaheim'
         },
         {
-          dimensionKey: 'City',
-          value: 'Andover'
+          dimensionKey: 'Город',
+          значение: 'Andover'
         },
         {
-          dimensionKey: 'City',
-          value: 'Ann Arbor'
+          dimensionKey: 'Город',
+          значение: 'Ann Arbor'
         },
         {
-          dimensionKey: 'City',
-          value: 'Antioch'
+          dimensionKey: 'Город',
+          значение: 'Antioch'
         },
         {
-          dimensionKey: 'City',
-          value: 'Apopka'
+          dimensionKey: 'Город',
+          значение: 'Apopka'
         },
         {
-          dimensionKey: 'City',
-          value: 'Apple Valley'
+          dimensionKey: 'Город',
+          значение: 'Apple Valley'
         },
         {
-          dimensionKey: 'City',
-          value: 'Appleton'
+          dimensionKey: 'Город',
+          значение: 'Appleton'
         },
         {
-          dimensionKey: 'City',
-          value: 'Arlington'
+          dimensionKey: 'Город',
+          значение: 'Arlington'
         },
         {
-          dimensionKey: 'City',
-          value: 'Arlington Heights'
+          dimensionKey: 'Город',
+          значение: 'Arlington высотаs'
         },
         {
-          dimensionKey: 'City',
-          value: 'Arvada'
+          dimensionKey: 'Город',
+          значение: 'Arvada'
         },
         {
-          dimensionKey: 'City',
-          value: 'Asheville'
+          dimensionKey: 'Город',
+          значение: 'Asheville'
         },
         {
-          dimensionKey: 'City',
-          value: 'Athens'
+          dimensionKey: 'Город',
+          значение: 'Athens'
         },
         {
-          dimensionKey: 'City',
-          value: 'Atlanta'
+          dimensionKey: 'Город',
+          значение: 'Atlanta'
         },
         {
-          dimensionKey: 'City',
-          value: 'Atlantic City'
+          dimensionKey: 'Город',
+          значение: 'Atlantic Город'
         },
         {
-          dimensionKey: 'City',
-          value: 'Auburn'
+          dimensionKey: 'Город',
+          значение: 'Auburn'
         },
         {
-          dimensionKey: 'City',
-          value: 'Aurora'
+          dimensionKey: 'Город',
+          значение: 'Aurora'
         },
         {
-          dimensionKey: 'City',
-          value: 'Austin'
+          dimensionKey: 'Город',
+          значение: 'Austin'
         },
         {
-          dimensionKey: 'City',
-          value: 'Avondale'
+          dimensionKey: 'Город',
+          значение: 'Avondale'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bakersfield'
+          dimensionKey: 'Город',
+          значение: 'Bakersполе'
         },
         {
-          dimensionKey: 'City',
-          value: 'Baltimore'
+          dimensionKey: 'Город',
+          значение: 'Baltimore'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bangor'
+          dimensionKey: 'Город',
+          значение: 'Bangor'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bartlett'
+          dimensionKey: 'Город',
+          значение: 'Bartlett'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bayonne'
+          dimensionKey: 'Город',
+          значение: 'Bayonne'
         },
         {
-          dimensionKey: 'City',
-          value: 'Baytown'
+          dimensionKey: 'Город',
+          значение: 'Baytown'
         },
         {
-          dimensionKey: 'City',
-          value: 'Beaumont'
+          dimensionKey: 'Город',
+          значение: 'Beaumont'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bedford'
+          dimensionKey: 'Город',
+          значение: 'Bedford'
         },
         {
-          dimensionKey: 'City',
-          value: 'Belleville'
+          dimensionKey: 'Город',
+          значение: 'Belleville'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bellevue'
+          dimensionKey: 'Город',
+          значение: 'Bellevue'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bellingham'
+          dimensionKey: 'Город',
+          значение: 'Bellingham'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bethlehem'
+          dimensionKey: 'Город',
+          значение: 'Bethlehem'
         },
         {
-          dimensionKey: 'City',
-          value: 'Beverly'
+          dimensionKey: 'Город',
+          значение: 'Beverly'
         },
         {
-          dimensionKey: 'City',
-          value: 'Billings'
+          dimensionKey: 'Город',
+          значение: 'Billings'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bloomington'
+          dimensionKey: 'Город',
+          значение: 'Bloomington'
         },
         {
-          dimensionKey: 'City',
-          value: 'Boca Raton'
+          dimensionKey: 'Город',
+          значение: 'Boca Raton'
         },
         {
-          dimensionKey: 'City',
-          value: 'Boise'
+          dimensionKey: 'Город',
+          значение: 'Boise'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bolingbrook'
+          dimensionKey: 'Город',
+          значение: 'Bolingbroхорошо'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bossier City'
+          dimensionKey: 'Город',
+          значение: 'Bossier Город'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bowling Green'
+          dimensionKey: 'Город',
+          значение: 'Bowling Green'
         },
         {
-          dimensionKey: 'City',
-          value: 'Boynton Beach'
+          dimensionKey: 'Город',
+          значение: 'Boynton Beach'
         },
         {
-          dimensionKey: 'City',
-          value: 'Bozeman'
+          dimensionKey: 'Город',
+          значение: 'Bozeman'
         },
         {
-          dimensionKey: 'City',
-          value: 'Brentwood'
+          dimensionKey: 'Город',
+          значение: 'Brentwood'
         }
       ],
       columnTree: [
         {
-          dimensionKey: 'Category',
-          value: 'Office Supplies',
+          dimensionKey: 'Категория',
+          значение: 'Office Supplies',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Technology',
+          dimensionKey: 'Категория',
+          значение: 'Technology',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Furniture',
+          dimensionKey: 'Категория',
+          значение: 'Furniture',
           children: [
             {
-              indicatorKey: 'Quantity'
+              indicatorKey: 'Количество'
             },
             {
-              indicatorKey: 'Sales'
+              indicatorKey: 'Продажи'
             },
             {
-              indicatorKey: 'Profit'
+              indicatorKey: 'Прибыль'
             }
           ]
         }
       ],
       rows: [
         {
-          dimensionKey: 'City',
-          title: 'City',
+          dimensionKey: 'Город',
+          заголовок: 'Город',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            return '$' + Number(value).toFixed(2);
+          format: значение => {
+            возврат '$' + число(значение).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            if (value) return '$' + Number(value).toFixed(2);
-            else return '--';
+          format: значение => {
+            if (значение) возврат '$' + число(значение).toFixed(2);
+            else возврат '--';
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            return '$' + Number(value).toFixed(2);
+          format: значение => {
+            возврат '$' + число(значение).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             }
           }
         }
@@ -360,12 +360,12 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      widthMode: 'standard',
-      dragOrder: {
+      ширинаMode: 'standard',
+      dragпорядок: {
         dragHeaderMode: 'column'
       }
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

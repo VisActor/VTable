@@ -1,154 +1,154 @@
 ---
-category: examples
-group: data-analysis
-title: Pivot Table - Calculated Field
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calculatedField.jpeg
-link: data_analysis/pivot_table_dataAnalysis
-option: PivotTable#dataConfig.calculatedFieldRules
+категория: примеры
+группа: данные-analysis
+заголовок: сводный таблица - Calculated поле
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/calculatedполе.jpeg
+ссылка: данные_analysis/сводный_таблица_данныеAnalysis
+опция: сводныйтаблица#данныеConfig.calculatedполеRules
 ---
 
-# Pivot Table - Calculated Field
+# сводный таблица - Calculated поле
 
-The pivot table configures the calculated fields through the calculatedFieldRules in the dataConfig.
+The сводный таблица configures the calculated полеs through the calculatedполеRules в the данныеConfig.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotTable`
+- `сводныйтаблица`
 - `columns`
 - `rows`
 - `indicators`
-- `dataConfig.calculatedFieldRules`
+- `данныеConfig.calculatedполеRules`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Category',
+          dimensionKey: 'Категория',
+          заголовок: 'Категория',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Row Totals') {
-                return '#ff9900';
+              if (arg.данныеValue === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
           headerStyle: {
             textStick: true,
             bgColor(arg) {
-              if (arg.dataValue === 'Sub Totals') {
-                return '#ba54ba';
+              if (arg.данныеValue === 'Sub Totals') {
+                возврат '#ba54ba';
               }
-              return '#ECF1F5';
+              возврат '#ECF1F5';
             }
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         },
         {
           dimensionKey: 'Segment',
-          title: 'Segment',
+          заголовок: 'Segment',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Количество',
+          заголовок: 'Количество',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         },
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) return 'black';
-              return 'red';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) возврат 'black';
+              возврат 'red';
             },
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         },
         {
           indicatorKey: 'AvgPrice',
-          title: 'AvgPrice',
-          width: 'auto',
+          заголовок: 'AvgPrice',
+          ширина: 'авто',
           format: rec => {
-            return '$' + Number(rec).toFixed(2);
+            возврат '$' + число(rec).toFixed(2);
           },
           headerStyle: {
-            color: 'blue'
+            цвет: 'blue'
           },
           style: {
             bgColor(arg) {
               const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
-              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
-                return '#ba54ba';
-              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
-                return '#ff9900';
+              if (rowHeaderPaths?.[1]?.значение === 'Sub Totals') {
+                возврат '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.значение === 'Row Totals') {
+                возврат '#ff9900';
               }
-              return undefined;
+              возврат undefined;
             }
           }
         }
@@ -159,13 +159,13 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      dataConfig: {
-        calculatedFieldRules: [
+      данныеConfig: {
+        calculatedполеRules: [
           {
             key: 'AvgPrice',
-            dependIndicatorKeys: ['Quantity', 'Sales'],
+            dependIndicatorKeys: ['Количество', 'Продажи'],
             calculateFun: dependValue => {
-              return dependValue.Sales / dependValue.Quantity;
+              возврат dependValue.Продажи / dependValue.Количество;
             }
           }
         ],
@@ -173,22 +173,22 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           row: {
             showGrandTotals: true,
             showSubTotals: true,
-            subTotalsDimensions: ['Category'],
+            subTotalsDimensions: ['Категория'],
             grandTotalLabel: 'Row Totals',
             subTotalLabel: 'Sub Totals'
           },
           column: {
             showGrandTotals: true,
             showSubTotals: true,
-            subTotalsDimensions: ['Region'],
+            subTotalsDimensions: ['Регион'],
             grandTotalLabel: 'Column Totals',
             subTotalLabel: 'Sub Totals'
           }
         }
       },
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

@@ -1,6 +1,6 @@
-# Pivot Table Tree Structure
+# сводный таблица Tree Structure
 
-Pivot tables support tree structures in both row and column headers, offering multiple display modes to meet different data presentation needs.
+сводный таблицаs support tree structures в both row и column headers, offering multiple display modes к meet different данные presentation needs.
 
 ## Tree Display Modes
 
@@ -8,90 +8,90 @@ Pivot tables support tree structures in both row and column headers, offering mu
 
 Row headers support three display modes:
 
-1. `grid` - Default mode, displays all levels in grid format
-2. `tree` - Traditional tree structure, showing parent-child hierarchy relationships through indentation in a single column
-3. `grid-tree` - Grid tree structure, combining grid and tree features, with each dimension occupying a column and supporting expand/collapse operations
+1. `grid` - по умолчанию mode, displays все levels в grid format
+2. `tree` - Traditional tree structure, showing parent-child hierarchy relationships through indentation в a single column
+3. `grid-tree` - Grid tree structure, combining grid и tree возможности, с каждый dimension occupying a column и supporting развернуть/свернуть operations
 
 Specific configuration options:
 
-- indicatorsAsCol: Whether to display indicators as column headers, defaults to true; Note: When rowHierarchyType is `tree`, indicators must be displayed in column headers
-- rowHierarchyType: Sets the display format for row header hierarchical dimension structure, set to 'tree' for tree display
-- rowExpandLevel: Sets the default number of expanded levels
-- rowHierarchyIndent: Sets the indentation distance of child-level dimension values relative to parent-level values in cells
-- rowHierarchyTextStartAlignment: Whether to align text for nodes at the same level, such as aligning text for nodes with and without expand/collapse icons, defaults to false
-- hierarchyState: Sets node collapse state, configured in rowTree or columnTree nodes
-- extensionRows: Special tree structure display for cases requiring multiple column tree structures. Note:
-  - rowExpandLevel only affects the outer main rowTree, not trees in extensionRows
-  - Drag-and-drop header movement is not supported for this type of multi-column tree structure
-  - After calling updateOption, state maintenance for expanded/collapsed non-rowTree nodes is not supported
+- indicatorsAsCol: Whether к display indicators as column headers, defaults к true; Note: When rowHierarchyType is `tree`, indicators must be displayed в column headers
+- rowHierarchyType: Sets the display format для row header hierarchical dimension structure, set к 'tree' для tree display
+- rowExpandLevel: Sets the по умолчанию число из expanded levels
+- rowHierarchyIndent: Sets the indentation distance из child-level dimension values relative к parent-level values в cells
+- rowHierarchyTextStartAlignment: Whether к align текст для nodes в the same level, such as aligning текст для nodes с и без развернуть/свернуть иконкаs, defaults к false
+- hierarchyState: Sets node свернуть state, configured в rowTree или columnTree nodes
+- extensionRows: Special tree structure display для cases requiring multiple column tree structures. Note:
+  - rowExpandLevel only affects the outer main rowTree, не trees в extensionRows
+  - перетаскивание-и-отпускание header movement is не supported для this тип из multi-column tree structure
+  - After calling updateOption, state maintenance для expanded/collapsed non-rowTree nodes is не supported
 
 ### Column Header Tree Display Mode (columnHierarchyType)
 
 Column headers support two display modes:
 
-1. `grid` - Default mode, displays all levels in grid format
-2. `grid-tree` - Grid tree structure, with each dimension occupying a row and supporting expand/collapse operations
+1. `grid` - по умолчанию mode, displays все levels в grid format
+2. `grid-tree` - Grid tree structure, с каждый dimension occupying a row и supporting развернуть/свернуть operations
 
 Specific configuration options:
 
-- indicatorsAsCol: Whether to display indicators as column headers, defaults to true
-- columnHierarchyType: Sets the display format for column header hierarchical dimension structure, set to 'tree' for tree display
-- columnExpandLevel: Sets the default number of expanded levels
+- indicatorsAsCol: Whether к display indicators as column headers, defaults к true
+- columnHierarchyType: Sets the display format для column header hierarchical dimension structure, set к 'tree' для tree display
+- columnExpandLevel: Sets the по умолчанию число из expanded levels
 
-## Usage Example
+## Usвозраст пример
 
-Here's a complete configuration example code and its effect:
+Here's a complete configuration пример код и its effect:
 
 
-```javascript livedemo   template=vtable
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация   template=vтаблица
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 const option = {
-    rows: ['Order Year','Region', 'Segment','Ship Mode'],
-    columns: ['Category', 'Sub-Category'],
-    indicators: ['Sales', 'Profit'],
-    enableDataAnalysis: true,
-    indicatorTitle: 'Indicators',
+    rows: ['Order Year','Регион', 'Segment','Ship Mode'],
+    columns: ['Категория', 'Sub-Категория'],
+    indicators: ['Продажи', 'Прибыль'],
+    enableданныеAnalysis: true,
+    indicatorзаголовок: 'Indicators',
     //indicatorsAsCol: false,
     rowHierarchyType:'tree',
     columnHierarchyType:'grid-tree',
     corner: { titleOnDimension: 'row' },
-    dataConfig: {
+    данныеConfig: {
       totals: {
         row: {
           showGrandTotals: true,
           showSubTotals: true,
-          subTotalsDimensions: ['Order Year','Region', 'Segment'],
+          subTotalsDimensions: ['Order Year','Регион', 'Segment'],
           grandTotalLabel: 'Total',
           subTotalLabel: 'Subtotal'
         },
         column: {
           showGrandTotals: true,
           showSubTotals: true,
-          subTotalsDimensions: ['Category'],
+          subTotalsDimensions: ['Категория'],
           grandTotalLabel: 'Total',
           subTotalLabel: 'Subtotal'
         }
       }
     },
-    records:data,
-    widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
+    records:данные,
+    ширинаMode: 'автоширина' // 宽度模式：standard 标准模式； adaptive 自动填满容器
   };
 
 
-const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+const таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
 
     })
 ```
 
-As shown in the example, the row header tree display mode is set to `tree` and the column header tree display mode is set to `grid-tree`.
+As shown в the пример, the row header tree display mode is set к `tree` и the column header tree display mode is set к `grid-tree`.
 
-## Specifying Collapse/Expand State for Header Nodes
+## Specifying свернуть/развернуть State для Header Nodes
 
-In the above example, you can set the `hierarchyState` of data nodes to specify whether they are collapsed or expanded, with values of either `expand` or `collapse`.
+в the above пример, Вы можете set the `hierarchyState` из данные nodes к specify whether they are collapsed или expanded, с values из either `развернуть` или `свернуть`.
 
-For example, to specify a rowTree node as expanded: `hierarchyState: 'expand'`.
+для пример, к specify a rowTree node as expanded: `hierarchyState: 'развернуть'`.
 
 ```
     extensionRows: [
@@ -99,54 +99,54 @@ For example, to specify a rowTree node as expanded: `hierarchyState: 'expand'`.
       {
         rows: [
           {
-            dimensionKey: 'region',
-            title: 'region',
-            headerStyle: { color: 'red', textStick: true },
-            width: '200'
+            dimensionKey: 'Регион',
+            заголовок: 'Регион',
+            headerStyle: { цвет: 'red', textStick: true },
+            ширина: '200'
           },
-          { dimensionKey: 'province', title: 'province', headerStyle: { color: 'purple' }, width: 300 }
+          { dimensionKey: 'province', заголовок: 'province', headerStyle: { цвет: 'purple' }, ширина: 300 }
         ],
         rowTree: [
           {
-            dimensionKey: 'region',
-            value: '东北',
+            dimensionKey: 'Регион',
+            значение: '东北',
             children: [
-              { dimensionKey: 'province', value: '黑龙江' },
-              { dimensionKey: 'province', value: '吉林' }
+              { dimensionKey: 'province', значение: '黑龙江' },
+              { dimensionKey: 'province', значение: '吉林' }
             ]
           },
           {
-            dimensionKey: 'region',
-            value: '华北',
-            children: [{ dimensionKey: 'province', value: '河北' }]
+            dimensionKey: 'Регион',
+            значение: '华北',
+            children: [{ dimensionKey: 'province', значение: '河北' }]
           }
         ]
       },
       {
         rows: [
-          { dimensionKey: 'year', title: 'year', headerStyle: { color: 'pink' }, width: 'auto' },
+          { dimensionKey: 'year', заголовок: 'year', headerStyle: { цвет: 'pink' }, ширина: 'авто' },
           'quarter'
         ],
         rowTree(args) {
-          if (args[1]?.value === '黑龙江') {
-            return [
+          if (args[1]?.значение === '黑龙江') {
+            возврат [
               {
                 dimensionKey: 'year',
-                value: '2019',
+                значение: '2019',
                 children: [
-                  { dimensionKey: 'quarter', value: '2019Q2' },
-                  { dimensionKey: 'quarter', value: '2019Q3' }
+                  { dimensionKey: 'quarter', значение: '2019Q2' },
+                  { dimensionKey: 'quarter', значение: '2019Q3' }
                 ]
               }
             ];
           }
-          return [
+          возврат [
             {
               dimensionKey: 'year',
-              value: '2018',
+              значение: '2018',
               children: [
-                { dimensionKey: 'quarter', value: '2018Q1' },
-                { dimensionKey: 'quarter', value: '2018Q2' }
+                { dimensionKey: 'quarter', значение: '2018Q1' },
+                { dimensionKey: 'quarter', значение: '2018Q2' }
               ]
             }
           ];
@@ -155,8 +155,8 @@ For example, to specify a rowTree node as expanded: `hierarchyState: 'expand'`.
     ],
 ```
 
-The result is shown in the following image:
+The result is shown в Следующий imвозраст:
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/multi-tree.jpeg)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/multi-tree.jpeg)
 
-This concludes the tutorial. We hope it helps you better understand how to use the tree structure features in pivot tables!
+This concludes the tutorial. We hope it helps you better understand how к use the tree structure возможности в сводный таблицаs!

@@ -1,30 +1,30 @@
 ---
 category: examples
 group: Basic Features
-title: Sort
+title: Сортировка
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/sort.gif
 order: 3-2
 link: basic_function/sort/list_sort
-option: ListTable-columns-text#sort
+option: ListTable-columns-текст#sort
 ---
 
-# sort
+# сортировка
 
-In this example, the columns \["Order ID", "Customer ID", "Quantity", "Sales", "Profit"] are all sorted, click the sorting button to switch the sorting rules, and the sorting results are cached internally. In the case of a large number, the sorting results can be quickly presented.
+В этом примере столбцы ["ID Заказа", "ID Клиента", "Количество", "Продажи", "Прибыль"] все отсортированы, нажмите кнопку сортировки, чтобы переключить правила сортировки, и результаты сортировки кэшируются внутренне. В случае большого количества данных результаты сортировки могут быть быстро представлены.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `columns[x].sort` Set to true to sort by default rules, or set the function form to specify the sorting rules
-  sort: (v1: any, v2: any, order: 'desc'|'asc'|'normal') => {
+- `columns[x].sort` Установите в true для сортировки по правилам по умолчанию, или установите в форме функции для указания правил сортировки
+  sort: (v1: любой, v2: любой, order: 'desc'|'asc'|'normal') => {
   if (order === 'desc') {
-  return v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
+  возврат v1 === v2 ? 0 : v1 > v2 ? -1 : 1;
   }
-  return v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
+  возврат v1 === v2 ? 0 : v1 > v2 ? 1 : -1;
   }
 
-## Code demo
+## Демонстрация кода
 
-```javascript livedemo template=vtable
+```javascript livedemo template=VTable
 let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
   .then(res => res.json())
@@ -32,67 +32,67 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     const columns = [
       {
         field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto',
+        title: 'ID Заказа',
+        ширина: 'auto',
         sort: true
       },
       {
         field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto',
+        title: 'ID Клиента',
+        ширина: 'auto',
         sort: true
       },
       {
         field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        title: 'Название Товара',
+        ширина: 'auto'
       },
       {
         field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        title: 'Категория',
+        ширина: 'auto'
       },
       {
         field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        title: 'Подкатегория',
+        ширина: 'auto'
       },
       {
         field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        title: 'Регион',
+        ширина: 'auto'
       },
       {
         field: 'City',
-        title: 'City',
-        width: 'auto'
+        title: 'Город',
+        ширина: 'auto'
       },
       {
         field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        title: 'Дата Заказа',
+        ширина: 'auto'
       },
       {
         field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto',
+        title: 'Количество',
+        ширина: 'auto',
         sort: true
       },
       {
         field: 'Sales',
-        title: 'Sales',
-        width: 'auto',
+        title: 'Продажи',
+        ширина: 'auto',
         sort: (v1, v2, order) => {
           if (order === 'desc') {
-            return Number(v1) === Number(v2) ? 0 : Number(v1) > Number(v2) ? -1 : 1;
+            возврат число(v1) === число(v2) ? 0 : число(v1) > число(v2) ? -1 : 1;
           }
-          return Number(v1) === Number(v2) ? 0 : Number(v1) > Number(v2) ? 1 : -1;
+          возврат число(v1) === число(v2) ? 0 : число(v1) > число(v2) ? 1 : -1;
         }
       },
       {
         field: 'Profit',
-        title: 'Profit',
-        width: 'auto',
+        title: 'Прибыль',
+        ширина: 'auto',
         sort: true
       }
     ];
@@ -106,7 +106,7 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       },
       widthMode: 'standard'
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    tableInstance = новый VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;
   });
 ```

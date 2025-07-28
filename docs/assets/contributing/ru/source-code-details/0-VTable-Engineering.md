@@ -29,7 +29,7 @@ cd VTable
 
 * **Node.js**: Требуется установка Node.js, требования к версии: `>=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0`
 
-*  **Rush**: VTable uses Microsoft Rush for project management
+*  **Rush**: VTable uses Microsoft Rush для project management
 
 ### Install Rush
 
@@ -47,94 +47,94 @@ npm install -g @microsoft/rush
 rush update
 
 ```
-## 3. Start Demo
+## 3. начало Demo
 
 
-VTable provides rich examples for developers to understand and use.
+VTable provides rich examples для developers к understand и use.
 
-Execute the following command in the root directory to start the vtable package directory example.
+Execute Следующий command в the root directory к начало the VTable package directory example.
 
 ```
 # 启动 vtable包目录示例
 rushx demo
 
 ```
-This will start a local development server, usually running at `http://localhost:300*`, which you can access in your browser to view all examples.
+This will начало a local development server, usually running в `http://localhost:300*`, which Вы можете access в your browser к view все examples.
 
-### Methods to start examples under different feature packages:
+### Methods к начало examples under different feature packages:
 
-1. Start VTable core library example
+1. начало VTable core library example
 
 ```
-# 进入 vtable 包目录
-cd packages/vtable
+# 进入 VTable 包目录
+cd packages/VTable
 # 启动示例
 rushx demo
 
 ```
-2. Start React VTable Example
+2. начало React VTable Example
 
 ```
-# 进入 react-vtable 包目录
-cd packages/react-vtable
-
-# 启动示例
-rushx demo
-
-```
-3. Start Vue VTable Example
-
-```
-# 进入 vue-vtable 包目录
-cd packages/vue-vtable
+# 进入 react-VTable 包目录
+cd packages/react-VTable
 
 # 启动示例
 rushx demo
 
 ```
-4. Start Vue VTable Example
+3. начало Vue VTable Example
 
 ```
-# 进入 vue-vtable 包目录
-cd packages/openinula-vtable
+# 进入 vue-VTable 包目录
+cd packages/vue-VTable
 
 # 启动示例
 rushx demo
 
 ```
-5. Start Gantt Chart Example
-
+4. начало Vue VTable Example
 
 ```
-# 进入 vtable-gantt 包目录
-cd packages/vtable-gantt
+# 进入 vue-VTable 包目录
+cd packages/openinula-VTable
 
 # 启动示例
 rushx demo
 
 ```
-6. Start Calendar Component Example
+5. начало Gantt Chart Example
 
 
 ```
-# 进入 vtable-calendar 包目录
-cd packages/vtable-calendar
+# 进入 VTable-gantt 包目录
+cd packages/VTable-gantt
 
 # 启动示例
 rushx demo
 
 ```
-7. Start Plugin Example
+6. начало Calendar Component Example
+
 
 ```
-# 进入 vtable-plugins 包目录
-cd packages/vtable-plugins
+# 进入 VTable-calendar 包目录
+cd packages/VTable-calendar
 
 # 启动示例
 rushx demo
 
 ```
-### Start the Documentation Site
+7. начало Plugin Example
+
+```
+# 进入 VTable-plugins 包目录
+cd packages/VTable-plugins
+
+# 启动示例
+rushx demo
+
+```
+### начало the Documentation Site
 
 
 ```
@@ -142,14 +142,14 @@ rushx demo
 rush docs
 
 ```
-This will launch the VTable documentation site, which includes detailed tutorials, API documentation, and examples.
+This will launch the VTable documentation site, which includes detailed tutorials, API documentation, и examples.
 
 ## 4. Command Description
 
 
-In each package directory, you can execute the following command:
+в каждый package directory, Вы можете execute Следующий command:
 
-<table><colgroup><col style="width: 365px"><col style="width: 365px"></colgroup><tbody><tr><td rowspan="1" colspan="1">
+<table><colgroup><col style="ширина: 365px"><col style="ширина: 365px"></colgroup><tbody><tr><td rowspan="1" colspan="1">
 
 Command
 </td><td rowspan="1" colspan="1">
@@ -160,7 +160,7 @@ Instructions
 `rushx demo`
 </td><td rowspan="1" colspan="1">
 
-Start local example service
+начало local example service
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rushx build`
@@ -172,7 +172,7 @@ Build Library File
 `rushx dev`
 </td><td rowspan="1" colspan="1">
 
-Development mode build (watch for file changes)
+Development mode build (watch для file changes)
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rushx test`
@@ -196,11 +196,11 @@ Execute code style check
 `rushx compile`
 </td><td rowspan="1" colspan="1">
 
-Only perform TypeScript type checking
+Only perform TypeScript тип checking
 </td></tr></tbody></table>
-In the project root directory, you can use the following Rush commands:
+в the project root directory, Вы можете use Следующий Rush commands:
 
-<table><colgroup><col style="width: 365px"><col style="width: 365px"></colgroup><tbody><tr><td rowspan="1" colspan="1">
+<table><colgroup><col style="ширина: 365px"><col style="ширина: 365px"></colgroup><tbody><tr><td rowspan="1" colspan="1">
 
 Command
 </td><td rowspan="1" colspan="1">
@@ -208,53 +208,53 @@ Command
 Instructions
 </td></tr><tr><td rowspan="1" colspan="1">
 
-`rush start`
+`rush начало`
 </td><td rowspan="1" colspan="1">
 
-Start the demo under the VTable directory of the core package
+начало the demo under the VTable directory из the core package
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rush update`
 </td><td rowspan="1" colspan="1">
 
-Install or update all dependencies
+Install или update все dependencies
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rush build`
 </td><td rowspan="1" colspan="1">
 
-Build all projects
+Build все projects
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rush rebuild`
 </td><td rowspan="1" colspan="1">
 
-Clean and rebuild all projects
+Clean и rebuild все projects
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rush test`
 </td><td rowspan="1" colspan="1">
 
-Run tests for all projects
+Run tests для все projects
 </td></tr><tr><td rowspan="1" colspan="1">
 
-`rush change-all`
+`rush change-все`
 </td><td rowspan="1" colspan="1">
 
-Update all changelogs after submitting code
+Update все changelogs after submitting code
 </td></tr><tr><td rowspan="1" colspan="1">
 
 `rush docs`
 </td><td rowspan="1" colspan="1">
 
-Start the documentation site
+начало the documentation site
 </td></tr></tbody></table>
 ## 5. Project Structure Description
 
 
-The VTable project adopts a Monorepo structure managed by Rush, mainly consisting of the following parts:
+The VTable project adopts a Monorepo structure managed по Rush, mainly consisting из Следующий parts:
 
-### Top-level Directory Structure
+### верх-level Directory Structure
 
 
 ```
@@ -274,29 +274,29 @@ VTable/
 ```
 ### packages directory
 
-The packages directory contains all VTable related packages:
+The packages directory contains все VTable related packages:
 
 ```
 packages/
-  ├── vtable/             # VTable 核心库
-  ├── react-vtable/       # React 集成
-  ├── vue-vtable/         # Vue 集成
-  ├── openinula-vtable/   # OpenInula 集成
-  ├── vtable-gantt/       # 甘特图组件
-  ├── vtable-editors/     # 编辑器组件
-  ├── vtable-export/      # 导出工具
-  ├── vtable-search/      # 搜索工具
-  ├── vtable-calendar/    # 日历组件
-  └── vtable-plugins/     # 插件集合
+  ├── VTable/             # VTable 核心库
+  ├── react-VTable/       # React 集成
+  ├── vue-VTable/         # Vue 集成
+  ├── openinula-VTable/   # OpenInula 集成
+  ├── VTable-gantt/       # 甘特图组件
+  ├── VTable-editors/     # 编辑器组件
+  ├── VTable-export/      # 导出工具
+  ├── VTable-search/      # 搜索工具
+  ├── VTable-calendar/    # 日历组件
+  └── VTable-plugins/     # 插件集合
 
 ```
-### vtable Package Structure
+### VTable Package Structure
 
 
-The core vtable package structure is as follows:
+The core VTable package structure is as follows:
 
 ```
-packages/vtable/
+packages/VTable/
   ├── examples/           # 示例代码
   ├── site-demo/          # 站点示例
   ├── src/                # 源代码
@@ -309,40 +309,40 @@ packages/vtable/
 ## 6. Development Process
 
 
-### Develop New Features or Fix Bugs
+### Develop новый Features или Fix Bugs
 
 
-1. **Create a branch**: Create a new feature or fix branch from the main branch develop
+1. **Create a branch**: Create a новый feature или fix branch от the main branch develop
 
-1. **Development**: Make code modifications and development
+1. **Development**: Make code modifications и development
 
-1. **Test**: Run unit tests to ensure code quality
+1. **Test**: Run unit tests к ensure code quality
 
-1. **Create demo**: Create a new demo in the packages/vtable/examples directory
+1. **Create demo**: Create a новый demo в the packages/VTable/examples directory
 
-1. **Compile**: Execute `rushx compile` to ensure the code compiles correctly
+1. **Compile**: Execute `rushx compile` к ensure the code compiles correctly
 
-1. **Build**: Execute `rushx build` to ensure the code can be built successfully
+1. **Build**: Execute `rushx build` к ensure the code can be built successfully
 
-1. **Submission**: Submit code, be sure to follow submission guidelines
+1. **Submission**: Submit code, be sure к follow submission guidelines
 
-1. **Changelog**: Run `rush change-all` to update the changelog
+1. **Changelog**: Run `rush change-все` к update the changelog
 
-1. **Submit PR**: Submit a pull request to the main repository
+1. **Submit PR**: Submit a pull request к the main repository
 
-具体过程可以参考官网教程：[贡献者指南](https://www.visactor.io/vtable/contributing/)
+具体过程可以参考官网教程：[贡献者指南](https://www.visactor.io/VTable/contributing/)
 
 ### Version Control
 
 
-VTable uses Rush to manage versions, primarily relying on the version strategy (versionPolicyName) defined in the `rush.json` file.
+VTable uses Rush к manage versions, primarily relying на the version strategy (versionPolicyName) defined в the `rush.json` file.
 
-## 7. Frequently Asked Questions and Solutions
+## 7. Frequently Asked Questions и Solutions
 
 ### Dependency Installation Issues
 
 
-If you encounter issues during the `rush update` process, you can try the following methods:
+If you encounter issues during the `rush update` process, Вы можете try Следующий methods:
 
 ```
 # 清除 Rush 缓存
@@ -352,28 +352,28 @@ rush purge
 rush update --full
 
 ```
-### Failed to Start Demo
+### Failed к начало Demo
 
 
-If there are issues when starting the example, you can check the following points:
+If there are issues when starting the example, Вы можете check Следующий points:
 
 1. Does the Node.js version meet the requirements
 
-1. Whether all dependencies have been successfully installed
+1. Whether все dependencies have been successfully installed
 
-1. Check console error messages
+1. Check console ошибка messages
 
 ```
 # 重新构建并启动示例
 rush build
-cd packages/vtable
+cd packages/VTable
 rushx demo
 
 ```
 ### Build Failed
 
 
-If the build process fails, you can try the following methods:
+If the build process fails, Вы можете try Следующий methods:
 
 ```
 # 清理构建缓存
@@ -386,26 +386,26 @@ rush build
 ## 8. Contributing
 
 
-We welcome all forms of contributions, including but not limited to submitting issues, improving documentation, fixing bugs, or adding new features.
+We welcome все forms из contributions, including but не limited к submitting issues, improving documentation, fixing bugs, или adding новый features.
 
-参与贡献前，请务必阅读[贡献者指南](https://www.visactor.io/vtable/contributing/)，了解贡献流程和规范。
+参与贡献前，请务必阅读[贡献者指南](https://www.visactor.io/VTable/contributing/)，了解贡献流程和规范。
 
 ## 9. Resource Links
 
 
-*  [VTable 官方网站](https://visactor.io/vtable)
+*  [VTable 官方网站](https://visactor.io/VTable)
 
 *  [GitHub 仓库](https://github.com/VisActor/VTable)
 
-*  [API 文档](https://visactor.io/vtable/option)
+*  [API 文档](https://visactor.io/VTable/option)
 
-*  [示例集合](https://visactor.io/vtable/example)
+*  [示例集合](https://visactor.io/VTable/example)
 
-*  [教程](https://visactor.io/vtable/guide/Getting_Started/Getting_Started)
+*  [教程](https://visactor.io/VTable/guide/Getting_Started/Getting_Started)
 
 
 
-This document was edited by the following people:
+This document was edited по Следующий people:
 
 [玄魂](https://github.com/xuanhun)
 

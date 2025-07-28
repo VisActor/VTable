@@ -1,46 +1,46 @@
 ---
-category: examples
-group: table-type
-title: Pivot Chart
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
-link: table_type/pivot_chart
-option: PivotChart-indicators-chart#cellType
+категория: примеры
+группа: таблица-тип
+заголовок: сводный график
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/сводный-график.png
+ссылка: таблица_type/сводный_график
+опция: сводныйграфик-indicators-график#cellType
 ---
 
 # Perspective combination diagram
 
-The perspective combination diagram combines the vchart chart library to render into the table, enriching the visual display form and improving the rendering performance.
+The perspective combination diagram combines the vграфик график library к render into the таблица, enriching the visual display form и improving the rendering Производительность.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `PivotChart` Initialize the table type using PivotChart.
-- `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
-- `cellType: 'chart'` Specify the type chart
-- `chartModule: 'vchart'` Specify the registered chart library name
-- `chartSpec: {}` Chart specs
+- `сводныйграфик` Initialize the таблица тип using сводныйграфик.
+- `Vтаблица.регистрация.графикModule('vграфик', Vграфик)` регистрация a графикing library для графикing, currently supports Vграфик
+- `cellType: 'график'` Specify the тип график
+- `графикModule: 'vграфик'` Specify the регистрацияed график library имя
+- `графикSpec: {}` график specs
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-VTable.register.chartModule('vchart', VChart);
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+```javascript liveдемонстрация template=vтаблица
+Vтаблица.регистрация.графикModule('vграфик', Vграфик);
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный_график_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        dimensionKey: 'Region',
-        title: 'Region',
+        dimensionKey: 'Регион',
+        заголовок: 'Регион',
         headerStyle: {
           textStick: true
         }
       },
-      'Category'
+      'Категория'
     ];
     const rows = [
       {
         dimensionKey: 'Order Year',
-        title: 'Order Year',
+        заголовок: 'Order Year',
         headerStyle: {
           textStick: true
         }
@@ -49,30 +49,30 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
     ];
     const indicators = [
       {
-        indicatorKey: 'Quantity',
-        title: 'Quantity',
-        width: 'auto',
-        cellType: 'chart',
-        chartModule: 'vchart',
-        chartSpec: {
-          // type: 'common',
+        indicatorKey: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто',
+        cellType: 'график',
+        графикModule: 'vграфик',
+        графикSpec: {
+          // тип: 'common',
           stack: true,
-          type: 'bar',
-          data: {
-            id: 'data',
-            fields: {
-              //设置xField数据的顺序
-              'Sub-Category': {
-                sortIndex: 0,
+          тип: 'bar',
+          данные: {
+            id: 'данные',
+            полеs: {
+              //设置xполе数据的顺序
+              'Sub-Категория': {
+                сортировкаIndex: 0,
                 domain: [
                   'Chairs',
-                  'Tables',
-                  'Bookcases',
+                  'таблицаs',
+                  'Boхорошоcases',
                   'Furnishings',
 
                   'Binders',
                   'Art',
-                  'Storage',
+                  'Storвозраст',
                   'Appliances',
                   'Envelopes',
                   'Fasteners',
@@ -86,29 +86,29 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                 ]
               },
               'Segment-Indicator': {
-                //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                sortIndex: 1,
+                //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                сортировкаIndex: 1,
                 domain: [
-                  'Consumer-Quantity',
-                  'Corporate-Quantity',
-                  'Home Office-Quantity',
-                  'Consumer-Sales',
-                  'Corporate-Sales',
-                  'Home Office-Sales',
-                  'Consumer-Profit',
-                  'Corporate-Profit',
-                  'Home Office-Profit'
+                  'Consumer-Количество',
+                  'Corporate-Количество',
+                  'Home Office-Количество',
+                  'Consumer-Продажи',
+                  'Corporate-Продажи',
+                  'Home Office-Продажи',
+                  'Consumer-Прибыль',
+                  'Corporate-Прибыль',
+                  'Home Office-Прибыль'
                 ]
                 // lockStatisticsByDomain:  true
               }
             }
           },
-          xField: ['Sub-Category'],
-          yField: 'Quantity',
-          seriesField: 'Segment-Indicator',
+          xполе: ['Sub-Категория'],
+          yполе: 'Количество',
+          seriesполе: 'Segment-Indicator',
           axes: [
-            { orient: 'left', visible: true, label: { visible: true } },
-            { orient: 'bottom', visible: true }
+            { orient: 'лево', видимый: true, label: { видимый: true } },
+            { orient: 'низ', видимый: true }
           ],
           bar: {
             state: {
@@ -117,24 +117,24 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
               },
               selected_reverse: {
                 // fill: '#ddd'
-                opacity: 0.2
+                opaГород: 0.2
               }
             }
           },
           scales: [
             {
-              id: 'color',
-              type: 'ordinal',
+              id: 'цвет',
+              тип: 'ordinal',
               domain: [
-                'Consumer-Quantity',
-                'Corporate-Quantity',
-                'Home Office-Quantity',
-                'Consumer-Sales',
-                'Corporate-Sales',
-                'Home Office-Sales',
-                'Consumer-Profit',
-                'Corporate-Profit',
-                'Home Office-Profit'
+                'Consumer-Количество',
+                'Corporate-Количество',
+                'Home Office-Количество',
+                'Consumer-Продажи',
+                'Corporate-Продажи',
+                'Home Office-Продажи',
+                'Consumer-Прибыль',
+                'Corporate-Прибыль',
+                'Home Office-Прибыль'
               ],
               range: [
                 '#2E62F1',
@@ -154,34 +154,34 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           ]
         },
         style: {
-          padding: 1
+          заполнение: 1
         }
       },
       {
-        indicatorKey: 'Sales',
-        title: 'Sales & Profit',
-        cellType: 'chart',
-        chartModule: 'vchart',
-        chartSpec: {
-          type: 'common',
+        indicatorKey: 'Продажи',
+        заголовок: 'Продажи & Прибыль',
+        cellType: 'график',
+        графикModule: 'vграфик',
+        графикSpec: {
+          тип: 'common',
           series: [
             {
-              type: 'bar',
-              data: {
-                id: 'data1',
-                fields: {
-                  //设置xField数据的顺序
-                  'Sub-Category': {
-                    sortIndex: 0,
+              тип: 'bar',
+              данные: {
+                id: 'данные1',
+                полеs: {
+                  //设置xполе数据的顺序
+                  'Sub-Категория': {
+                    сортировкаIndex: 0,
                     domain: [
                       'Chairs',
-                      'Tables',
-                      'Bookcases',
+                      'таблицаs',
+                      'Boхорошоcases',
                       'Furnishings',
 
                       'Binders',
                       'Art',
-                      'Storage',
+                      'Storвозраст',
                       'Appliances',
                       'Envelopes',
                       'Fasteners',
@@ -195,27 +195,27 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                     ]
                   },
                   'Segment-Indicator': {
-                    //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                    sortIndex: 1,
+                    //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                    сортировкаIndex: 1,
                     domain: [
-                      'Consumer-Quantity',
-                      'Corporate-Quantity',
-                      'Home Office-Quantity',
-                      'Consumer-Sales',
-                      'Corporate-Sales',
-                      'Home Office-Sales',
-                      'Consumer-Profit',
-                      'Corporate-Profit',
-                      'Home Office-Profit'
+                      'Consumer-Количество',
+                      'Corporate-Количество',
+                      'Home Office-Количество',
+                      'Consumer-Продажи',
+                      'Corporate-Продажи',
+                      'Home Office-Продажи',
+                      'Consumer-Прибыль',
+                      'Corporate-Прибыль',
+                      'Home Office-Прибыль'
                     ]
                     // lockStatisticsByDomain:  true
                   }
                 }
               },
               stack: true,
-              xField: ['Sub-Category'],
-              yField: 'Sales',
-              seriesField: 'Segment-Indicator',
+              xполе: ['Sub-Категория'],
+              yполе: 'Продажи',
+              seriesполе: 'Segment-Indicator',
               bar: {
                 state: {
                   selected: {
@@ -223,28 +223,28 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                   },
                   selected_reverse: {
                     // fill: '#ddd'
-                    opacity: 0.2
+                    opaГород: 0.2
                   }
                 }
               }
             },
             {
-              type: 'line',
-              data: {
-                id: 'data2',
-                fields: {
-                  //设置xField数据的顺序
-                  'Sub-Category': {
-                    sortIndex: 0,
+              тип: 'line',
+              данные: {
+                id: 'данные2',
+                полеs: {
+                  //设置xполе数据的顺序
+                  'Sub-Категория': {
+                    сортировкаIndex: 0,
                     domain: [
                       'Chairs',
-                      'Tables',
-                      'Bookcases',
+                      'таблицаs',
+                      'Boхорошоcases',
                       'Furnishings',
 
                       'Binders',
                       'Art',
-                      'Storage',
+                      'Storвозраст',
                       'Appliances',
                       'Envelopes',
                       'Fasteners',
@@ -259,34 +259,34 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
                     ]
                   },
                   'Segment-Indicator': {
-                    //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                    sortIndex: 1,
+                    //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                    сортировкаIndex: 1,
                     domain: [
-                      'Consumer-Quantity',
-                      'Corporate-Quantity',
-                      'Home Office-Quantity',
-                      'Consumer-Sales',
-                      'Corporate-Sales',
-                      'Home Office-Sales',
-                      'Consumer-Profit',
-                      'Corporate-Profit',
-                      'Home Office-Profit'
+                      'Consumer-Количество',
+                      'Corporate-Количество',
+                      'Home Office-Количество',
+                      'Consumer-Продажи',
+                      'Corporate-Продажи',
+                      'Home Office-Продажи',
+                      'Consumer-Прибыль',
+                      'Corporate-Прибыль',
+                      'Home Office-Прибыль'
                     ]
                     // lockStatisticsByDomain:  true
                   }
                 }
               },
               stack: false,
-              xField: ['Sub-Category'],
-              yField: 'Profit',
-              seriesField: 'Segment-Indicator',
+              xполе: ['Sub-Категория'],
+              yполе: 'Прибыль',
+              seriesполе: 'Segment-Indicator',
               line: {
                 state: {
                   selected: {
-                    lineWidth: 3
+                    lineширина: 3
                   },
                   selected_reverse: {
-                    lineWidth: 1
+                    lineширина: 1
                   }
                 }
               },
@@ -304,18 +304,18 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           ],
           scales: [
             {
-              id: 'color',
-              type: 'ordinal',
+              id: 'цвет',
+              тип: 'ordinal',
               domain: [
-                'Consumer-Quantity',
-                'Corporate-Quantity',
-                'Home Office-Quantity',
-                'Consumer-Sales',
-                'Corporate-Sales',
-                'Home Office-Sales',
-                'Consumer-Profit',
-                'Corporate-Profit',
-                'Home Office-Profit'
+                'Consumer-Количество',
+                'Corporate-Количество',
+                'Home Office-Количество',
+                'Consumer-Продажи',
+                'Corporate-Продажи',
+                'Home Office-Продажи',
+                'Consumer-Прибыль',
+                'Corporate-Прибыль',
+                'Home Office-Прибыль'
               ],
               range: [
                 '#2E62F1',
@@ -334,12 +334,12 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             }
           ]
           // axes: [
-          //   { orient: 'left', visible: true, label: { visible: true } },
-          //   { orient: 'bottom', visible: true }
+          //   { orient: 'лево', видимый: true, label: { видимый: true } },
+          //   { orient: 'низ', видимый: true }
           // ]
         },
         style: {
-          padding: 1
+          заполнение: 1
         }
       }
     ];
@@ -348,83 +348,83 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       columns,
       indicators,
       indicatorsAsCol: false,
-      records: data,
-      defaultRowHeight: 200,
-      defaultHeaderRowHeight: 50,
-      defaultColWidth: 280,
-      defaultHeaderColWidth: 100,
-      indicatorTitle: '指标',
-      autoWrapText: true,
-      // widthMode:'adaptive',
-      // heightMode:'adaptive',
+      records: данные,
+      defaultRowвысота: 200,
+      defaultHeaderRowвысота: 50,
+      defaultColширина: 280,
+      defaultHeaderColширина: 100,
+      indicatorзаголовок: '指标',
+      автоWrapText: true,
+      // ширинаMode:'adaptive',
+      // высотаMode:'adaptive',
       corner: {
         titleOnDimension: 'row',
         headerStyle: {
-          autoWrapText: true
+          автоWrapText: true
         }
       },
-      legends: {
-        orient: 'bottom',
-        type: 'discrete',
-        data: [
+      легендаs: {
+        orient: 'низ',
+        тип: 'discrete',
+        данные: [
           {
-            label: 'Consumer-Quantity',
+            label: 'Consumer-Количество',
             shape: {
               fill: '#2E62F1',
               symbolType: 'circle'
             }
           },
           {
-            label: 'Consumer-Quantity',
+            label: 'Consumer-Количество',
             shape: {
               fill: '#4DC36A',
               symbolType: 'square'
             }
           },
           {
-            label: 'Home Office-Quantity',
+            label: 'Home Office-Количество',
             shape: {
               fill: '#FF8406',
               symbolType: 'square'
             }
           },
           {
-            label: 'Consumer-Sales',
+            label: 'Consumer-Продажи',
             shape: {
               fill: '#FFCC00',
               symbolType: 'square'
             }
           },
           {
-            label: 'Consumer-Sales',
+            label: 'Consumer-Продажи',
             shape: {
               fill: '#4F44CF',
               symbolType: 'square'
             }
           },
           {
-            label: 'Home Office-Sales',
+            label: 'Home Office-Продажи',
             shape: {
               fill: '#5AC8FA',
               symbolType: 'square'
             }
           },
           {
-            label: 'Consumer-Profit',
+            label: 'Consumer-Прибыль',
             shape: {
               fill: '#003A8C',
               symbolType: 'square'
             }
           },
           {
-            label: 'Consumer-Profit',
+            label: 'Consumer-Прибыль',
             shape: {
               fill: '#B08AE2',
               symbolType: 'square'
             }
           },
           {
-            label: 'Home Office-Profit',
+            label: 'Home Office-Прибыль',
             shape: {
               fill: '#FF6341',
               symbolType: 'square'
@@ -432,64 +432,64 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         ]
       },
-      theme: {
+      тема: {
         bodyStyle: {
           borderColor: 'gray',
-          borderLineWidth: [1, 0, 0, 1]
+          borderLineширина: [1, 0, 0, 1]
         },
         headerStyle: {
           borderColor: 'gray',
-          borderLineWidth: [0, 0, 1, 1],
-          hover: {
+          borderLineширина: [0, 0, 1, 1],
+          навести: {
             cellBgColor: '#CCE0FF'
           }
         },
         rowHeaderStyle: {
           borderColor: 'gray',
-          borderLineWidth: [1, 1, 0, 0],
-          hover: {
+          borderLineширина: [1, 1, 0, 0],
+          навести: {
             cellBgColor: '#CCE0FF'
           }
         },
         cornerHeaderStyle: {
           borderColor: 'gray',
-          borderLineWidth: [0, 1, 1, 0],
-          hover: {
+          borderLineширина: [0, 1, 1, 0],
+          навести: {
             cellBgColor: ''
           }
         },
         cornerRightTopCellStyle: {
           borderColor: 'gray',
-          borderLineWidth: [0, 0, 1, 1],
-          hover: {
+          borderLineширина: [0, 0, 1, 1],
+          навести: {
             cellBgColor: ''
           }
         },
         cornerLeftBottomCellStyle: {
           borderColor: 'gray',
-          borderLineWidth: [1, 1, 0, 0],
-          hover: {
+          borderLineширина: [1, 1, 0, 0],
+          навести: {
             cellBgColor: ''
           }
         },
         cornerRightBottomCellStyle: {
           borderColor: 'gray',
-          borderLineWidth: [1, 0, 0, 1],
-          hover: {
+          borderLineширина: [1, 0, 0, 1],
+          навести: {
             cellBgColor: ''
           }
         },
         rightFrozenStyle: {
           borderColor: 'gray',
-          borderLineWidth: [1, 0, 1, 1],
-          hover: {
+          borderLineширина: [1, 0, 1, 1],
+          навести: {
             cellBgColor: ''
           }
         },
         bottomFrozenStyle: {
           borderColor: 'gray',
-          borderLineWidth: [1, 1, 0, 1],
-          hover: {
+          borderLineширина: [1, 1, 0, 1],
+          навести: {
             cellBgColor: ''
           }
         },
@@ -498,28 +498,28 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           cellBorderColor: ''
         },
         frameStyle: {
-          borderLineWidth: 0
+          borderLineширина: 0
         }
       }
     };
 
-    tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
-    tableInstance.on(LEGEND_ITEM_CLICK, args => {
-      console.log('LEGEND_ITEM_CLICK', args);
-      tableInstance.updateFilterRules([
+    таблицаInstance = новый Vтаблица.сводныйграфик(document.getElementById(CONTAINER_ID), option);
+    const { легенда_ITEM_Нажать } = Vтаблица.списоктаблица.событие_TYPE;
+    таблицаInstance.на(легенда_ITEM_Нажать, args => {
+      console.log('легенда_ITEM_Нажать', args);
+      таблицаInstance.updateFilterRules([
         {
           filterKey: 'Segment-Indicator',
-          filteredValues: args.value
+          filteredValues: args.значение
         }
       ]);
     });
-    tableInstance.onVChartEvent('click', args => {
-      console.log('onVChartEvent click', args);
+    таблицаInstance.onVграфиксобытие('Нажать', args => {
+      console.log('onVграфиксобытие Нажать', args);
     });
-    tableInstance.onVChartEvent('mouseover', args => {
-      console.log('onVChartEvent mouseover', args);
+    таблицаInstance.onVграфиксобытие('mouseover', args => {
+      console.log('onVграфиксобытие mouseover', args);
     });
-    window.tableInstance = tableInstance;
+    window.таблицаInstance = таблицаInstance;
   });
 ```

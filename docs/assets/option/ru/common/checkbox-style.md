@@ -1,49 +1,49 @@
-{{ target: common-checkbox-style }}
+{{ target: common-флажок-style }}
 
-#${prefix} checkboxStyle(Object)
+#${prefix} checkboxStyle(объект)
 
-Select box style settings
+выбрать box style settings
 
-##${prefix} size(number)
+##${prefix} размер(число)
 
-Select box size
+выбрать box размер
 
-##${prefix} spaceBetweenTextAndIcon(number)
+##${prefix} spaceBetweenTextAndиконка(число)
 
-Selection box and text spacing
+Selection box и текст spacing
 
-##${prefix} defaultFill(string)
+##${prefix} defaultFill(строка)
 
-Unselected state fill color
+Unselected state fill цвет
 
-##${prefix} defaultStroke(string)
+##${prefix} defaultStrхорошоe(строка)
 
-Unselected state stroke color
+Unselected state strхорошоe цвет
 
-##${prefix} disableFill(string)
+##${prefix} disableFill(строка)
 
-disable state fill color
+отключить state fill цвет
 
-##${prefix} checkedFill(string)
+##${prefix} checkedFill(строка)
 
-checked status fill color
+checked status fill цвет
 
-##${prefix} checkedStroke(string)
+##${prefix} checkedStrхорошоe(строка)
 
-checked status stroke color
+checked status strхорошоe цвет
 
-##${prefix} disableCheckedFill(string)
+##${prefix} disableCheckedFill(строка)
 
-checked status fill color
+checked status fill цвет
 
-##${prefix} disableCheckedStroke(string)
+##${prefix} disableCheckedStrхорошоe(строка)
 
-checked status stroke color
+checked status strхорошоe цвет
 
-##${prefix} checkIconImage(string)
+##${prefix} checkиконкаImвозраст(строка)
 
-checked status icon url
+checked status иконка url
 
-##${prefix} indeterminateIconImage(string)
+##${prefix} indeterminateиконкаImвозраст(строка)
 
-indeterminate status icon url
+indeterminate status иконка url

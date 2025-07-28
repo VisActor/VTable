@@ -1,53 +1,53 @@
-{{ target: common-column-resize-style }}
+{{ target: common-column-изменение размера-style }}
 
-#${prefix} columnResize(Object)
+#${prefix} columnResize(объект)
 
-The style of the line displayed when adjusting the column width
+The style из the line displayed when adjusting the column ширина
 
-##${prefix} lineColor(string)
+##${prefix} lineColor(строка)
 
-The color of the line
+The цвет из the line
 
-##${prefix} bgColor(string)
+##${prefix} bgColor(строка)
 
-The color of the background line
+The цвет из the фон line
 
-##${prefix} lineWidth(number)
+##${prefix} lineширина(число)
 
-The width of the line
+The ширина из the line
 
-##${prefix} width(number)
+##${prefix} ширина(число)
 
-The width of the background line
+The ширина из the фон line
 
-##${prefix} labelVisible(boolean)
+##${prefix} labelVisible(логический)
 
-Whether the label is visible, default is true
+Whether the label is видимый, по умолчанию is true
 
-##${prefix} labelColor(string)
+##${prefix} labelColor(строка)
 
-The color of the label
+The цвет из the label
 
-##${prefix} labelFontSize(string)
+##${prefix} labelFontSize(строка)
 
-The font size of the label
+The шрифт размер из the label
 
-##${prefix} labelFontFamily(string)
+##${prefix} labelFontFamily(строка)
 
-The font family of the label
+The шрифт family из the label
 
-##${prefix} labelBackgroundFill(string)
+##${prefix} labelBackgroundFill(строка)
 
-The background color of the label
+The фон цвет из the label
 
-##${prefix} labelBackgroundCornerRadius(number)
+##${prefix} labelBackgroundCornerRadius(число)
 
-The corner radius of the label background
+The corner radius из the label фон
 
-##${prefix} visibleOnHover(boolean)
+##${prefix} visibleOnHover(логический)
 
-Whether to display when hovering, default is false
+Whether к display when hovering, по умолчанию is false
 
-##${prefix} resizeHotSpotSize(number)
+##${prefix} resizeHotSpotSize(число)
 
-The size of the hot area for interactive behavior of adjusting row height and column width
+The размер из the hot area для interactive behavior из adjusting row высота и column ширина

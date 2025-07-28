@@ -1,2 +1,2 @@
 # Carousel Animation
-Please jump to the link: [Table Carousel Animation](../plugin/table-carousel-animation)
+Please jump к the ссылка: [таблица Carousel Animation](../plugin/таблица-carousel-animation)

@@ -1,48 +1,48 @@
-# Icon use
+# иконка use
 
-In VTable, we can use the custom icon function to improve the readability and visual effect of the table. This tutorial will mainly introduce how to use the icon, how to register it, and how to reset the function icon.
+в Vтаблица, we can use the пользовательский иконка функция к improve the readability и visual effect из the таблица. This tutorial will mainly introduce how к use the иконка, how к регистрация it, и how к reset the функция иконка.
 
-## Define icon
+## Define иконка
 
-We can configure the cell icons displayed in the header and body through icon and headerIcon respectively:
+We can configure the cell иконкаs displayed в the header и body through иконка и headerиконка respectively:
 
-- `headerIcon` Header cell icon configuration, which can help us set the icon style of the header. Configuration items are based on `ColumnIconOption` The type is defined, and you can refer to the given configuration for details.
+- `headerиконка` Header cell иконка configuration, which can help us set the иконка style из the header. Configuration items are based на `ColumnиконкаOption` The тип is defined, и Вы можете refer к the given configuration для details.
 
-- `icon` The icon used to configure the body cell.
+- `иконка` The иконка used к configure the body cell.
 
-The specific configuration content is an object of type `ColumnIconOption`. You can also pass a custom function to dynamically set the icon style of the cell. For the specific definition of ColumnIconOption, please refer to: https://visactor.io/vtable/option/ListTable-columns-text#icon
+The specific configuration content is an объект из тип `ColumnиконкаOption`. Вы можете also pass a пользовательский функция к dynamically set the иконка style из the cell. для the specific definition из ColumnиконкаOption, please refer к: https://visactor.io/vтаблица/option/списоктаблица-columns-текст#иконка
 
-### Header icon configuration example
+### Header иконка configuration пример
 
-First, let's look at a use `headerIcon` Simple example of.
+первый, let's loхорошо в a use `headerиконка` Simple пример из.
 
 ```javascript
-const tableInstance = new VTable.ListTable({
+const таблицаInstance = новый Vтаблица.списоктаблица({
   columns: [
     {
-      field: 'orderID',
-      title: '订单编号',
-      headerIcon: {
-        type: 'svg', //指定svg格式图标，其他还支持path，image
-        svg: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path d="M1.29609 1C0.745635 1 0.444871 1.64195 0.797169 2.06491L4.64953 6.68988V9.81861C4.64953 9.89573 4.69727 9.9648 4.76942 9.99205L7.11236 10.877C7.27164 10.9372 7.4419 10.8195 7.4419 10.6492V6.68988L11.2239 2.06012C11.5703 1.63606 11.2685 1 10.721 1H1.29609Z" stroke="#141414" stroke-opacity="0.65" stroke-width="1.18463" stroke-linejoin="round"/>
+      поле: 'orderID',
+      заголовок: '订单编号',
+      headerиконка: {
+        тип: 'svg', //指定svg格式图标，其他还支持path，imвозраст
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" ширина="12" высота="12" viewBox="0 0 12 12" fill="никто">
+        <path d="M1.29609 1C0.745635 1 0.444871 1.64195 0.797169 2.06491L4.64953 6.68988V9.81861C4.64953 9.89573 4.69727 9.9648 4.76942 9.99205L7.11236 10.877C7.27164 10.9372 7.4419 10.8195 7.4419 10.6492V6.68988L11.2239 2.06012C11.5703 1.63606 11.2685 1 10.721 1H1.29609Z" strхорошоe="#141414" strхорошоe-opaГород="0.65" strхорошоe-ширина="1.18463" strхорошоe-linejoin="round"/>
         </svg>`,
-        width: 20,
-        height: 20,
-        name: 'filter', //定义图标的名称，在内部会作为缓存的key值
-        positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
-        visibleTime: 'mouseenter_cell', // 显示时机， 'always' | 'mouseenter_cell' | 'click_cell'
-        hover: {
+        ширина: 20,
+        высота: 20,
+        имя: 'filter', //定义图标的名称，在内部会作为缓存的key值
+        positionType: Vтаблица.TYPES.иконкаPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+        visibleTime: 'mouseenter_cell', // 显示时机， 'always' | 'mouseenter_cell' | 'Нажать_cell'
+        навести: {
           // 热区大小
-          width: 26,
-          height: 26,
+          ширина: 26,
+          высота: 26,
           bgColor: 'rgba(22,44,66,0.5)'
         },
-        tooltip: {
+        Подсказка: {
           style: { arrowMark: false },
           // 气泡框，按钮的的解释信息
-          title: '过滤',
-          placement: VTable.TYPES.Placement.right
+          заголовок: '过滤',
+          placement: Vтаблица.TYPES.Placement.право
         }
       }
     }
@@ -50,29 +50,29 @@ const tableInstance = new VTable.ListTable({
 });
 ```
 
-In this example, we create a field called "Order Number" for the list header and configure it with a field called `filter` Icon.
+в this пример, we create a поле called "Order число" для the список header и configure it с a поле called `filter` иконка.
 
-The same configuration method can be used to use icons in the row and column headers of pivot tables.
+The same configuration method can be used к use иконкаs в the row и column headers из сводный таблицаs.
 
-### Cell icon configuration example
+### Cell иконка configuration пример
 
-Next, let's look at a use `icon` Simple example of.
+следующий, let's loхорошо в a use `иконка` Simple пример из.
 
 ```javascript
-const tableInstance = new VTable.ListTable({
+const таблицаInstance = новый Vтаблица.списоктаблица({
   columns: [
     {
-      field: 'orderID',
-      title: '订单编号',
-      icon: {
-        type: 'image',
-        src: 'avatar', // src从records中field位avator的字段中取值
-        name: 'Avatar',
+      поле: 'orderID',
+      заголовок: '订单编号',
+      иконка: {
+        тип: 'imвозраст',
+        src: 'avatar', // src从records中поле位avator的字段中取值
+        имя: 'Avatar',
         shape: 'circle',
         //定义文本内容行内图标，第一个字符展示
-        width: 30, // Optional
-        height: 30,
-        positionType: VTable.TYPES.IconPosition.contentLeft,
+        ширина: 30, // необязательный
+        высота: 30,
+        positionType: Vтаблица.TYPES.иконкаPosition.contentLeft,
         marginRight: 20,
         marginLeft: 0,
         cursor: 'pointer'
@@ -82,156 +82,156 @@ const tableInstance = new VTable.ListTable({
 });
 ```
 
-In this example, we configure a cell named `Avatar` Icon. The role of this icon is to display the avatar picture, and the value of the picture src is obtained from the field of the avator of records.
+в this пример, we configure a cell имяd `Avatar` иконка. The role из this иконка is к display the avatar picture, и the значение из the picture src is obtained от the поле из the avator из records.
 
-[online demo](../../demo/custom-render/custom-icon)
+[online демонстрация](../../демонстрация/пользовательский-render/пользовательский-иконка)
 
-## How to register the icon and use it after registration
+## How к регистрация the иконка и use it after registration
 
-In VTable, through `register.icon` Method, we can register custom icons and use them in the table. If you want to replace the built-in function icons, you can also do so by registering.
+в Vтаблица, through `регистрация.иконка` Method, we can регистрация пользовательский иконкаs и use them в the таблица. If you want к replace the built-в функция иконкаs, Вы можете also do so по регистрацияing.
 
-[Registration Interface Method Usage Introduction](../../api/register#icon)
+[Registration интерфейс Method Usвозраст Introduction](../../апи/регистрация#иконка)
 
-### Example: Register an icon named order
+### пример: регистрация an иконка имяd order
 
-Suppose we need to register a `order` Icon, the code is as follows:
+Suppose we need к регистрация a `order` иконка, the код is as follows:
 
 ```javascript
-VTable.register.icon('order', {
-  type: 'svg',
-  svg: 'http://' + window.location.host + '/mock-data/order.svg',
-  width: 22,
-  height: 22,
-  name: 'order',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('order', {
+  тип: 'svg',
+  svg: 'http://' + window.location.host + '/mock-данные/order.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'order',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   marginRight: 0,
-  hover: {
-    width: 22,
-    height: 22,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
 ```
 
-### How to use it after registration
+### How к use it after registration
 
-After registration is complete, we can, in the column definition of the table, pass `headerIcon` and `icon` Property references this icon.
+After registration is complete, we can, в the column definition из the таблица, pass `headerиконка` и `иконка` Property references this иконка.
 
 ```javascript
-const tableInstance = new VTable.PivotTable({
+const таблицаInstance = новый Vтаблица.сводныйтаблица({
   columns: [
     {
-      field: 'orderID',
-      title: '订单编号',
-      headerIcon: 'order',
-      icon: 'order'
+      поле: 'orderID',
+      заголовок: '订单编号',
+      headerиконка: 'order',
+      иконка: 'order'
     }
   ]
 });
 ```
 
-In addition, the registered icon can also be found in `customLayout` Used in.
+в addition, the регистрацияed иконка can also be found в `пользовательскиймакет` Used в.
 
-## Reset function icon
+## Reset функция иконка
 
-For built-in functional icons, such as pin, sort, etc., we can replace them by re-registering the icon of the same name. It should be noted that when re-registering the icon, be sure to configure `funcType` Properties to ensure that icons can be replaced correctly.
+для built-в functional иконкаs, such as pin, сортировка, etc., we can replace them по re-регистрацияing the иконка из the same имя. It should be noted that when re-регистрацияing the иконка, be sure к configure `funcType` свойства к ensure that иконкаs can be replaced correctly.
 
-### Example: Replacing the frozen freeze icon
+### пример: Replacing the frozen freeze иконка
 
-Suppose we need to replace the relevant icon of the built-in frozen function, the code is as follows:
+Suppose we need к replace the relevant иконка из the built-в frozen функция, the код is as follows:
 
 ```javascript
-VTable.register.icon('freeze', {
-  type: 'svg',
-  svg: 'http://' + window.location.host + '/mock-data/freeze.svg',
-  width: 22,
-  height: 22,
-  name: 'freeze',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('freeze', {
+  тип: 'svg',
+  svg: 'http://' + window.location.host + '/mock-данные/freeze.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'freeze',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   marginRight: 0,
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  hover: {
-    width: 22,
-    height: 22,
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
 
-VTable.register.icon('frozen', {
-  type: 'svg',
-  svg: 'http://' + window.location.host + '/mock-data/frozen.svg',
-  width: 22,
-  height: 22,
-  name: 'frozen',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('frozen', {
+  тип: 'svg',
+  svg: 'http://' + window.location.host + '/mock-данные/frozen.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'frozen',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   marginRight: 0,
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  hover: {
-    width: 22,
-    height: 22,
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
 
-VTable.register.icon('frozenCurrent', {
-  type: 'svg',
-  svg: 'http://' + window.location.host + '/mock-data/frozenCurrent.svg',
-  width: 22,
-  height: 22,
-  name: 'frozenCurrent',
-  positionType: VTable.TYPES.IconPosition.left,
+Vтаблица.регистрация.иконка('frozenCurrent', {
+  тип: 'svg',
+  svg: 'http://' + window.location.host + '/mock-данные/frozenCurrent.svg',
+  ширина: 22,
+  высота: 22,
+  имя: 'frozenCurrent',
+  positionType: Vтаблица.TYPES.иконкаPosition.лево,
   marginRight: 0,
-  funcType: VTable.TYPES.IconFuncTypeEnum.frozen,
-  hover: {
-    width: 22,
-    height: 22,
+  funcType: Vтаблица.TYPES.иконкаFuncTypeEnum.frozen,
+  навести: {
+    ширина: 22,
+    высота: 22,
     bgColor: 'rgba(101, 117, 168, 0.1)'
   },
   cursor: 'pointer'
 });
 ```
 
-The effect after replacement is as follows: https://visactor.io/vtable/demo/custom-render/custom-icon
+The effect after replacement is as follows: https://visactor.io/vтаблица/демонстрация/пользовательский-render/пользовательский-иконка
 
-In the same way, we can replace other functional icons. Several icons related to internal functions are built into VTable, such as sorting, fixed columns, drop-down menu icons, Expand folding icons, etc.
+в the same way, we can replace other functional иконкаs. Several иконкаs related к internal functions are built into Vтаблица, such as сортировкаing, fixed columns, отпускание-down меню иконкаs, развернуть folding иконкаs, etc.
 
-The built-in icon file address: https://github.com/VisActor/VTable/blob/39eaa851d6a5415b9c7bba746d23ca173ccf675f/packages/vtable/src/icons.ts.
+The built-в иконка file address: https://github.com/VisActor/Vтаблица/blob/39eaa851d6a5415b9c7bba746d23ca173ccf675f/packвозрастs/vтаблица/src/иконкаs.ts.
 
-The list of resettable internal icons is as follows:
+The список из resetтаблица internal иконкаs is as follows:
 
-| Functions                      | Configure funcType                        | Configure name   | Icon description                                                    |
+| Functions                      | Configure funcType                        | Configure имя   | иконка description                                                    |
 | :----------------------------- | :---------------------------------------- | :--------------- | :------------------------------------------------------------------ |
-| Sort                           | VTable. TYPES. IconFuncTypeEnum.sort      | "sort_normal"    | Sort function icon, normal unsorted status                          |
-| Sort                           | VTable. TYPES. IconFuncTypeEnum.sort      | "sort_upward"    | Sort function icons, ascending status                               |
-| Sort                           | VTable. TYPES. IconFuncTypeEnum.sort      | "sort_downward"  | Sort function icons, descending status                              |
-| Fixed Column                   | VTable. TYPES. IconFuncTypeEnum.frozen    | "freeze"         | Fixed Column Function Icon, Fixed State                             |
-| Fixed Columns                  | VTable. TYPES. IconFuncTypeEnum.frozen    | "frozen"         | Fixed Columns Function Icon, Fixed Status                           |
-| Fixed Columns                  | VTable. TYPES. IconFuncTypeEnum.frozen    | "frozenCurrent"  | Fixed Columns Function Icon, Frozen When Columns                    |
-| Image or video address invalid | VTable. TYPES. IconFuncTypeEnum.damagePic | "damage_pic"     | Multimedia resource parsing failed                                  |
-| Tree Structure Folding         | VTable. TYPES. IconFuncTypeEnum.collapse  | "collapse"       | Tree Structure Folded State                                         |
-| Tree Structure Expand          | VTable. TYPES. IconFuncTypeEnum.expand    | "expand"         | Tree Structure Expand State                                         |
-| Tree Structure Folding         | VTable. TYPES. IconFuncTypeEnum.collapse  | "collapse"       | Tree Structure Folded State                                         |
-| Drop-down menu                 | VTable. TYPES. IconFuncTypeEnum.dropDown  | "downward"       | Drop-down icon normal status                                        |
-| dropdown menu                  | VTable. TYPES. IconFuncTypeEnum.dropDown  | "downward_hover" | dropdown icon hover status                                          |
-| Row drag and drop              | VTable.TYPES.IconFuncTypeEnum.dragReorder | "dragReorder"    | Drag and drop row order, visible when rowSeriesNumber is configured |
+| сортировка                           | Vтаблица. TYPES. иконкаFuncTypeEnum.сортировка      | "сортировка_normal"    | сортировка функция иконка, normal unсортировкаed status                          |
+| сортировка                           | Vтаблица. TYPES. иконкаFuncTypeEnum.сортировка      | "сортировка_upward"    | сортировка функция иконкаs, ascending status                               |
+| сортировка                           | Vтаблица. TYPES. иконкаFuncTypeEnum.сортировка      | "сортировка_downward"  | сортировка функция иконкаs, descending status                              |
+| Fixed Column                   | Vтаблица. TYPES. иконкаFuncTypeEnum.frozen    | "freeze"         | Fixed Column функция иконка, Fixed State                             |
+| Fixed Columns                  | Vтаблица. TYPES. иконкаFuncTypeEnum.frozen    | "frozen"         | Fixed Columns функция иконка, Fixed Status                           |
+| Fixed Columns                  | Vтаблица. TYPES. иконкаFuncTypeEnum.frozen    | "frozenCurrent"  | Fixed Columns функция иконка, Frozen When Columns                    |
+| Imвозраст или video address invalid | Vтаблица. TYPES. иконкаFuncTypeEnum.damвозрастPic | "damвозраст_pic"     | Multimedia resource parsing failed                                  |
+| Tree Structure Folding         | Vтаблица. TYPES. иконкаFuncTypeEnum.свернуть  | "свернуть"       | Tree Structure Folded State                                         |
+| Tree Structure развернуть          | Vтаблица. TYPES. иконкаFuncTypeEnum.развернуть    | "развернуть"         | Tree Structure развернуть State                                         |
+| Tree Structure Folding         | Vтаблица. TYPES. иконкаFuncTypeEnum.свернуть  | "свернуть"       | Tree Structure Folded State                                         |
+| отпускание-down меню                 | Vтаблица. TYPES. иконкаFuncTypeEnum.выпадающий список  | "downward"       | отпускание-down иконка normal status                                        |
+| выпадающий список меню                  | Vтаблица. TYPES. иконкаFuncTypeEnum.выпадающий список  | "downward_hover" | выпадающий список иконка навести status                                          |
+| Row перетаскивание и отпускание              | Vтаблица.TYPES.иконкаFuncTypeEnum.dragReorder | "dragReorder"    | перетаскивание и отпускание row order, видимый when rowSeriesNumber is configured |
 
-**It should be noted**: The built-in charts in the list have their own special functions and can be reset, but they cannot be configured in the definition of headerIcon or icon! The following incorrect usage:
+**It should be noted**: The built-в графикs в the список have their own special functions и can be reset, but they cannot be configured в the definition из headerиконка или иконка! Следующий incorrect usвозраст:
 
 ```
   columns: [
     {
-      field: 'Sales',
-      title: 'Sales',
-      width: 'auto',
-      sort: true,
-      headerIcon: 'expand' // expand is an internal keyword. If you need to use it, please register other names to replace headerIcon.
+      поле: 'Продажи',
+      заголовок: 'Продажи',
+      ширина: 'авто',
+      сортировка: true,
+      headerиконка: 'развернуть' // развернуть is an internal keyword. If you need к use it, please регистрация other имяs к replace headerиконка.
     },
   ]
 ```
 
-**At the same time, the icons registered in your own business do not need to configure `funcType`.**
+**в the same time, the иконкаs регистрацияed в your own business do не need к configure `funcType`.**
 
-At this point, the tutorial on how to use icons in VTable, register and replace function icons is all introduced. I hope this tutorial can help you better understand and use VTable, and create a more beautiful and practical data lake visualization table
+в this point, the tutorial на how к use иконкаs в Vтаблица, регистрация и replace функция иконкаs is все introduced. I hope this tutorial can help you better understand и use Vтаблица, и create a more beautiful и practical данные lake visualization таблица

@@ -1,64 +1,64 @@
-{{ target: common-gantt-timeline-scale }}
-Date scale configuration, corresponding type is ITimelineScale, specific configuration items are as follows:
+{{ target: common-гантт-timeline-scale }}
+Date scale configuration, corresponding тип is ITimelineScale, specific configuration items are as follows:
 
-${prefix} rowHeight(number)
+${prefix} rowвысота(число)
 
-Row height
+Row высота
 
-Optional
+необязательный
 
 ${prefix} unit('day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second')
 
 Time unit
 
-If the configured smallest time unit is `'day' | 'week' | 'month' | 'quarter' | 'year'`, the more standard date format in the record is `YYYY-MM-DD`, and if it is `'hour' |'minute' |'second'`, the standard date format is `YYYY-MM-DD HH:mm:ss`.
+If the configured smallest time unit is `'day' | 'week' | 'month' | 'quarter' | 'year'`, the more standard date format в the record is `YYYY-MM-DD`, и if it is `'hour' |'minute' |'second'`, the standard date format is `YYYY-MM-DD HH:mm:ss`.
 
-For example:
+для пример:
 
-If the smallest time unit is `'hour'`, the task start time in the record is configured as: `'2024-11-09 05:00:00'`, and the end time is: `'2024-11-09 06:59:59'`, then the execution time of this task should be between 5 o'clock and 6 o'clock on `'2024-11-09'`.
+If the smallest time unit is `'hour'`, the task начало time в the record is configured as: `'2024-11-09 05:00:00'`, и the конец time is: `'2024-11-09 06:59:59'`, then the execution time из this task should be between 5 o'clock и 6 o'clock на `'2024-11-09'`.
 
-If the smallest time unit is `'minute'`, then the task start time in the record is configured as: `'2024-11-09 05:10:00'`, and the end time is: `'2024-11-09 05:09:59'`, then the execution time of this task is 10 minutes.
+If the smallest time unit is `'minute'`, then the task начало time в the record is configured as: `'2024-11-09 05:10:00'`, и the конец time is: `'2024-11-09 05:09:59'`, then the execution time из this task is 10 minutes.
 
-It should be noted that: if the smallest time unit is `'hour' |'minute' |'second'`, the standard end time in the record is 59 minutes or 59 seconds.
+It should be noted that: if the smallest time unit is `'hour' |'minute' |'second'`, the standard конец time в the record is 59 minutes или 59 seconds.
 
-${prefix} step(number)
+${prefix} step(число)
 
-Step size
+Step размер
 
 ${prefix} startOfWeek('sunday' | 'monday')
 
-Specify whether the week starts on Sunday or Monday
+Specify whether the week starts на Sunday или Monday
 
-Optional
+необязательный
 
-${prefix} customLayout(IDateCustomLayout)
+${prefix} пользовательскиймакет(IDateпользовательскиймакет)
 
-Custom layout rendering
+пользовательский макет rendering
 
-Optional
+необязательный
 
-{{ use: common-gantt-date-header-custom-layout }}
+{{ use: common-гантт-date-header-пользовательский-макет }}
 
 ${prefix} style(ITimelineHeaderStyle)
 
-Specify header text style
+Specify header текст style
 
-Optional
+необязательный
 
-{{ use: common-gantt-timeline-header-style }}
+{{ use: common-гантт-timeline-header-style }}
 
-${prefix} format((date: DateFormatArgumentType) => string)
+${prefix} format((date: DateFormatArgumentType) => строка)
 
-Date formatting function.
+Date formatting функция.
 
-Optional
+необязательный
 
-Function parameters:
+функция parameters:
 
 ```
-export type DateFormatArgumentType = {
-  /** The index of the current date within the date scale. For example, in a quarterly date, the fourth quarter returns 4. */
-  dateIndex: number;
+export тип DateFormatArgumentType = {
+  /** The index из the текущий date within the date scale. для пример, в a quarterly date, the fourth quarter returns 4. */
+  dateIndex: число;
   startDate: Date;
   endDate: Date;
 
@@ -66,8 +66,8 @@ export type DateFormatArgumentType = {
 };
 ```
 
-${prefix} visible(boolean)
+${prefix} видимый(логический)
 
-Whether to display the date scale, the default is displayed
+Whether к display the date scale, the по умолчанию is displayed
 
-Optional
+необязательный

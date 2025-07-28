@@ -1,61 +1,61 @@
-# Plugin Usage
+# Plugin Usвозраст
 
-Get the plugin package
+Get the plugin packвозраст
 
 ```bash
-npm install @visactor/vtable-plugins
+npm install @visactor/vтаблица-plugins
 ```
 Import plugins
 
 ```ts
-import { TableCarouselAnimationPlugin } from '@visactor/vtable-plugins';
+import { таблицаCarouselAnimationPlugin } от '@visactor/vтаблица-plugins';
 ```
 
 Use the plugin  
 
 ```ts
-const tableCarouselAnimationPlugin = new TableCarouselAnimationPlugin({
+const таблицаCarouselAnimationPlugin = новый таблицаCarouselAnimationPlugin({
   ...
 });
 ```
 
-Add the plugin to the plugin list
+Add the plugin к the plugin список
 
 ```ts
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   ...
-  plugins: [tableCarouselAnimationPlugin]
+  plugins: [таблицаCarouselAnimationPlugin]
 };
 ```
 
 Combining multiple plugins
 
 ```ts
-const option: VTable.ListTableConstructorOptions = {
+const опция: Vтаблица.списоктаблицаConstructorOptions = {
   ...
-  plugins: [tableCarouselAnimationPlugin, ...]
+  plugins: [таблицаCarouselAnimationPlugin, ...]
 };
 ```
 
-The order of plugin usage generally has no special requirements. Please carefully read the documentation for each plugin to understand its execution timing, and if necessary, refer to the plugin's source code.
+The order из plugin usвозраст generally has no special requirements. Please carefully read the Документация для каждый plugin к understand its execution timing, и if necessary, refer к the plugin's source код.
 
-If you encounter issues with plugin usage, please provide feedback promptly.
+If you encounter issues с plugin usвозраст, please provide feedback promptly.
 
-## Plugin List
-| Plugin Name | Plugin Description | Applicable Object |
+## Plugin список
+| Plugin имя | Plugin Description | Applicable объект |
 | --- | --- | --- |
-| `AddRowColumnPlugin` | Add rows and columns | `ListTable` |
-| `ColumnSeriesPlugin` | Column series plugin, can specify the number of columns in the table and define the function to generate the column serial number | `ListTable` |
-| `RowSeriesPlugin` | Row series plugin, can specify the number of rows in the table and define the function to generate the data corresponding to the empty number | `ListTable` |
-| `HighlightHeaderWhenSelectCellPlugin` | Highlight the selected cell | `ListTable`,`PivotTable` |
-| `ExcelEditCellKeyboardPlugin` | Excel edit cell keyboard plugin | `ListTable`,`PivotTable` |
-| `TableCarouselAnimationPlugin` | Table carousel animation plugin | `ListTable`,`PivotTable` |
-| `RotateTablePlugin` | Table rotation plugin | `ListTable`,`PivotTable` |
+| `AddRowColumnPlugin` | Add rows и columns | `списоктаблица` |
+| `ColumnSeriesPlugin` | Column series plugin, can specify the число из columns в the таблица и define the функция к generate the column serial число | `списоктаблица` |
+| `RowSeriesPlugin` | Row series plugin, can specify the число из rows в the таблица и define the функция к generate the данные corresponding к the empty число | `списоктаблица` |
+| `HighlightHeaderWhenSelectCellPlugin` | Highlight the selected cell | `списоктаблица`,`сводныйтаблица` |
+| `ExcelEditCellKeyboardPlugin` | Excel edit cell keyboard plugin | `списоктаблица`,`сводныйтаблица` |
+| `таблицаCarouselAnimationPlugin` | таблица carousel animation plugin | `списоктаблица`,`сводныйтаблица` |
+| `RotateтаблицаPlugin` | таблица rotation plugin | `списоктаблица`,`сводныйтаблица` |
 
 <br>
 
-Gantt chart VTable-Gantt component currently supports the following plugins:
-| Plugin Name | Plugin Description | Applicable Object |
+гантт график Vтаблица-гантт компонент currently supports Следующий plugins:
+| Plugin имя | Plugin Description | Applicable объект |
 | --- | --- | --- |
-| `ExportGanttPlugin` | Realize the full export of Gantt charts and be able to adapt to the size of the Gantt chart | `Gantt` |
-| `ExcelImportPlugin` | Imports excel, csv, json, and html files into the table | `ListTable` |
+| `ExportганттPlugin` | Realize the full export из гантт графикs и be able к adapt к the размер из the гантт график | `гантт` |
+| `ExcelImportPlugin` | Imports excel, csv, json, и html files into the таблица | `списоктаблица` |

@@ -1,83 +1,83 @@
 ---
-category: examples
-group: Basic Features
-title: Container Fit - Adapt Table Frame to Container
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png
-order: 3-6
-link: basic_function/container_fit
-option: ListTable#containerFit
+категория: примеры
+группа: базовый возможности
+заголовок: Container Fit - Adapt таблица Frame к Container
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/ширина-mode-adaptive.png
+порядок: 3-6
+ссылка: базовый_function/container_fit
+опция: списоктаблица#containerFit
 ---
 
-# Container Fit - Adapt Table Frame to Container
+# Container Fit - Adapt таблица Frame к Container
 
-The containerFit configuration allows the table frame to adapt to the container size while preserving the original dimensions of row heights and column widths. This is different from adaptive mode which stretches content to fill the container.
+The containerFit configuration allows the таблица frame к adapt к the container размер while preserving the original dimensions из row высотаs и column ширинаs. This is different от adaptive mode which stretches content к fill the container.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `containerFit: { width: true, height: true }`
+- `containerFit: { ширина: true, высота: true }`
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
 
 const records = [
-  { id: 1, name: 'Alice', age: 25, city: 'New York' },
-  { id: 2, name: 'Bob', age: 30, city: 'London' },
-  { id: 3, name: 'Charlie', age: 35, city: 'Tokyo' },
-  { id: 4, name: 'David', age: 40, city: 'Beijing' },
-  { id: 5, name: 'Eve', age: 45, city: 'Shanghai' },
-  { id: 6, name: 'Frank', age: 50, city: 'Guangzhou' },
-  { id: 7, name: 'Grace', age: 55, city: 'Shenzhen' },
-  { id: 8, name: 'Henry', age: 60, city: 'Chengdu' },
-  { id: 9, name: 'Ivy', age: 65, city: 'Chongqing' },
-  { id: 10, name: 'Jack', age: 70, city: "Xi'an" },
-  { id: 11, name: 'Kate', age: 75, city: 'Wuhan' },
-  { id: 12, name: 'Liam', age: 80, city: 'Zhengzhou' },
-  { id: 13, name: 'Mia', age: 85, city: 'Qingdao' }
+  { id: 1, имя: 'Alice', возраст: 25, Город: 'новый York' },
+  { id: 2, имя: 'Bob', возраст: 30, Город: 'London' },
+  { id: 3, имя: 'Charlie', возраст: 35, Город: 'Tхорошоyo' },
+  { id: 4, имя: 'David', возраст: 40, Город: 'Beijing' },
+  { id: 5, имя: 'Eve', возраст: 45, Город: 'Shanghai' },
+  { id: 6, имя: 'Frank', возраст: 50, Город: 'Guangzhou' },
+  { id: 7, имя: 'Grace', возраст: 55, Город: 'Shenzhen' },
+  { id: 8, имя: 'Henry', возраст: 60, Город: 'Chengdu' },
+  { id: 9, имя: 'Ivy', возраст: 65, Город: 'Chongqing' },
+  { id: 10, имя: 'Jack', возраст: 70, Город: "Xi'an" },
+  { id: 11, имя: 'Kate', возраст: 75, Город: 'Wuhan' },
+  { id: 12, имя: 'Liam', возраст: 80, Город: 'Zhengzhou' },
+  { id: 13, имя: 'Mia', возраст: 85, Город: 'Qingdao' }
 ];
 
 const columns = [
   {
-    field: 'id',
-    title: 'ID',
-    width: 60
+    поле: 'id',
+    заголовок: 'ID',
+    ширина: 60
   },
   {
-    field: 'name',
-    title: 'Name',
-    width: 100
+    поле: 'имя',
+    заголовок: 'имя',
+    ширина: 100
   },
   {
-    field: 'age',
-    title: 'Age',
-    width: 80
+    поле: 'возраст',
+    заголовок: 'возраст',
+    ширина: 80
   },
   {
-    field: 'city',
-    title: 'City',
-    width: 120
+    поле: 'Город',
+    заголовок: 'Город',
+    ширина: 120
   }
 ];
 
 const container = document.getElementById(CONTAINER_ID);
-container.style.width = '800px';
-container.style.height = '500px';
-container.style.border = '2px solid #333';
+container.style.ширина = '800px';
+container.style.высота = '500px';
+container.style.граница = '2px solid #333';
 
 const option = {
   records,
   columns,
   containerFit: {
-    width: true,
-    height: true
+    ширина: true,
+    высота: true
   },
-  theme: {
-    frameStyle: { borderLineWidth: 2, borderColor: 'red' },
+  тема: {
+    frameStyle: { borderLineширина: 2, borderColor: 'red' },
     scrollStyle: { barToSide: true }
   }
 };
 
-tableInstance = new VTable.ListTable(container, option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(container, option);
+window['таблицаInstance'] = таблицаInstance;
 ```

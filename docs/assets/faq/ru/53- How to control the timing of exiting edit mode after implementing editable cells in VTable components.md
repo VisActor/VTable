@@ -1,72 +1,72 @@
 ---
-title: 31. How to control the timing of exiting edit mode after implementing editable cells in VTable components?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 31. How к control the timing из exiting edit mode after implementing ediтаблица cells в Vтаблица компонентs?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question Title
 
-How to control the timing of exiting edit mode after implementing editable cells in VTable components?</br>
+How к control the timing из exiting edit mode after implementing ediтаблица cells в Vтаблица компонентs?</br>
 ## Question Description
 
-Referring to the flowchart provided on the official website, if a user clicks another cell or presses the Enter key while in edit mode, will VTable definitely trigger the onEnd event to exit edit mode? In my project, there is a scenario where I do not want the edit mode to be exited when these interactions are triggered. Is there a way to achieve this currently?</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PIhobUXZwocx7Ax1u73cFjIun8d.gif' alt='' width='1302' height='913'>
+Referring к the flowграфик provided на the official website, if a user Нажатьs another cell или presses the Enter key while в edit mode, will Vтаблица definitely trigger the onEnd событие к exit edit mode? в my project, there is a scenario where I do не want the edit mode к be exited when these interactions are triggered. Is there a way к achieve this currently?</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/PIhobUXZwocx7Ax1u73cFjIun8d.gif' alt='' ширина='1302' высота='913'>
 
 ## Solution
 
-### Click without exit edit
+### Нажать без exit edit
 
-You can use a custom editor to control when to exit the edit state. Because the VTable logic calls the editor's `isEditorElement` method, if it returns false, the VTable will follow the exit edit logic; if it returns true, it will not exit the edit mode. Therefore, we can use this method to meet the requirement of not exiting the edit mode. The specific tutorial address is: [https://visactor.io/vtable/guide/edit/edit_cell](https%3A%2F%2Fvisactor.io%2Fvtable%2Fguide%2Fedit%2Fedit_cell)</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/NFmkbzUyFoRNiBxUbd5cxIqanHe.gif' alt='' width='1948' height='1730'>
+Вы можете use a пользовательский editor к control when к exit the edit state. Because the Vтаблица logic calls the editor's `isEditorElement` method, if it returns false, the Vтаблица will follow the exit edit logic; if it returns true, it will не exit the edit mode. Therefore, we can use this method к meet the requirement из не exiting the edit mode. The specific tutorial address is: [https://visactor.io/vтаблица/guide/edit/edit_cell](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fguide%2Fedit%2Fedit_cell)</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/NFmkbzUyFoRNiBxUbd5cxIqanHe.gif' alt='' ширина='1948' высота='1730'>
 
-### Type enter without exiting edit
+### тип enter без exiting edit
 
-This can listen to the keydown event of editing `dom`, directly organize bubbling, and prevent `VTable` from listening, so it will not exit editing.</br>
-## Example code
+This can списокen к the keydown событие из editing `dom`, directly organize bubbling, и prсобытие `Vтаблица` от списокening, so it will не exit editing.</br>
+## пример код
 
 ```
-let  tableInstance;
+let  таблицаInstance;
  class MyInputEditor {
   createElement() {
-     const input = document.createElement('input');
-    input.setAttribute('type', 'text');
-    input.style.position = 'absolute';
-    input.style.padding = '4px';
-    input.style.width = '100%';
-    input.style.boxSizing = 'border-box';
-    this.element = input;
-    this.container.appendChild(input);
+     const ввод = document.createElement('ввод');
+    ввод.setAttribute('тип', 'текст');
+    ввод.style.позиция = 'absolute';
+    ввод.style.заполнение = '4px';
+    ввод.style.ширина = '100%';
+    ввод.style.boxSizing = 'граница-box';
+    this.element = ввод;
+    this.container.appendChild(ввод);
     // 监听键盘事件
-    input.addEventListener('keydown', (e) => {
+    ввод.addсобытиесписокener('keydown', (e) => {
         // 阻止冒泡
         e.stopPropagation();
     });
   }
-  setValue(value) {
-    this.element.value = typeof value !== 'undefined' ? value : '';
+  setValue(значение) {
+    this.element.значение = typeof значение !== 'undefined' ? значение : '';
   }
   getValue() {
-    return this.element.value;
+    возврат this.element.значение;
   }
-  onStart({ value, referencePosition, container, endEdit }){
+  onStart({ значение, referencePosition, container, endEdit }){
     this.container = container;
     this.successCallback = endEdit;
     if (!this.element) {
       this.createElement();
 
-      if (value !== undefined && value !== null) {
-        this.setValue(value);
+      if (значение !== undefined && значение !== null) {
+        this.setValue(значение);
       }
       if (referencePosition?.rect) {
         this.adjustPosition(referencePosition.rect);
       }
     }
-    this.element.focus();
+    this.element.фокус();
   }
 
   adjustPosition(rect) {
-    this.element.style.top = rect.top + 'px';
-    this.element.style.left = rect.left + 'px';
-    this.element.style.width = rect.width + 'px';
-    this.element.style.height = rect.height + 'px';
+    this.element.style.верх = rect.верх + 'px';
+    this.element.style.лево = rect.лево + 'px';
+    this.element.style.ширина = rect.ширина + 'px';
+    this.element.style.высота = rect.высота + 'px';
   }
   onEnd() {
     this.container.removeChild(this.element);
@@ -75,27 +75,27 @@ let  tableInstance;
 
   isEditorElement(target) {
     // 仅允许点击到表格外部才会结束编辑
-    if(target.tagName === 'CANVAS')
-      return true;
-    return target === this.element;
+    if(target.tagимя === 'CANVAS')
+      возврат true;
+    возврат target === this.element;
   }
 }
 
-const my_editor = new MyInputEditor();
-VTable.register.editor('my_editor', my_editor);
+const my_editor = новый MyInputEditor();
+Vтаблица.регистрация.editor('my_editor', my_editor);
 
 const option = {
   container: document.getElementById(CONTAINER_ID),
   columns: [
     {
-      field: 'bloggerName',
-      title: 'bloggerName'
+      поле: 'bloggerимя',
+      заголовок: 'bloggerимя'
     },
     {
-      field: 'fansCount',
-      title: 'fansCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'fansCount',
+      заголовок: 'fansCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -104,8 +104,8 @@ const option = {
       }
     },
     {
-      field: 'worksCount',
-      title: 'worksCount',
+      поле: 'worksCount',
+      заголовок: 'worksCount',
       style: {
         fontFamily: 'Arial',
         fontSize: 12,
@@ -113,10 +113,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -125,10 +125,10 @@ const option = {
       }
     },
     {
-      field: 'viewCount',
-      title: 'viewCount',
-      fieldFormat(rec) {
-        return rec.fansCount + 'w';
+      поле: 'viewCount',
+      заголовок: 'viewCount',
+      полеFormat(rec) {
+        возврат rec.fansCount + 'w';
       },
       style: {
         fontFamily: 'Arial',
@@ -140,66 +140,66 @@ const option = {
   records: [
     {
       bloggerId: 1,
-      bloggerName: 'Virtual Anchor Xiaohua',
+      bloggerимя: 'Virtual Anchor Xiaohua',
      fansCount: 400,
       worksCount: 10,
       viewCount: 5,
-      city: 'Dream City',
+      Город: 'Dream Город',
       tags: ['game', 'anime', 'food']
     },
     {
       bloggerId: 2,
-      bloggerName: 'Virtual anchor little wolf',
+      bloggerимя: 'Virtual anchor little wolf',
       fansCount: 800,
       worksCount: 20,
       viewCount: 15,
-      city: 'City of Music',
+      Город: 'Город из Music',
       tags: ['music', 'travel', 'photography']
     },
     {
       bloggerId: 3,
-      bloggerName: 'Virtual anchor bunny',
+      bloggerимя: 'Virtual anchor bunny',
       fansCount: 600,
       worksCount: 15,
       viewCount: 10,
-      city: 'City of Art',
+      Город: 'Город из Art',
       tags: ['painting', 'handmade', 'beauty makeup']
     },
     {
       bloggerId: 4,
-      bloggerName: 'Virtual anchor kitten',
+      bloggerимя: 'Virtual anchor kitten',
       fansCount: 1000,
       worksCount: 30,
       viewCount: 20,
-      city: 'Health City',
-      tags: ['dance', 'fitness', 'cooking']
+      Город: 'Health Город',
+      tags: ['dance', 'fitness', 'coхорошоing']
     },
     {
       bloggerId: 5,
-      bloggerName: 'Virtual anchor Bear',
+      bloggerимя: 'Virtual anchor Bear',
       fansCount: 1200,
       worksCount: 25,
       viewCount: 18,
-      city: 'City of Wisdom',
+      Город: 'Город из Wisdom',
       tags: ['Movie', 'Literature']
     },
     {
       bloggerId: 6,
-      bloggerName: 'Virtual anchor bird',
+      bloggerимя: 'Virtual anchor bird',
       fansCount: 900,
       worksCount: 12,
       viewCount: 8,
-      city: 'Happy City',
-      tags: ['music', 'performance', 'variety']
+      Город: 'Happy Город',
+      tags: ['music', 'Производительность', 'variety']
     }
   ],
   enableLineBreak: true,
 
-  editCellTrigger: 'click',
+  editCellTrigger: 'Нажать',
   editor:'my_editor'
 };
-tableInstance = new VTable.ListTable(option);
-tableInstance.on('change_cell_value', arg => {
+таблицаInstance = новый Vтаблица.списоктаблица(option);
+таблицаInstance.на('change_cell_value', arg => {
   console.log(arg);
 });</br>
 ```
@@ -207,12 +207,12 @@ tableInstance.on('change_cell_value', arg => {
 
 ## Related documents
 
-*  Editing form demo: [https://visactor.io/vtable/demo/edit/edit-cell](https%3A%2F%2Fvisactor.io%2Fvtable%2Fdemo%2Fedit%2Fedit-cell)</br>
-*  Editing form tutorial: [https://visactor.io/vtable/guide/edit/edit_cell](https%3A%2F%2Fvisactor.io%2Fvtable%2Fguide%2Fedit%2Fedit_cell)</br>
-*  Related API: </br>
-https://visactor.io/vtable/option/ListTable#editor</br>
-https://visactor.io/vtable/option/ListTable-columns-text#editor</br>
-github：https://github.com/VisActor/VTable</br>
+*  Editing form демонстрация: [https://visactor.io/vтаблица/демонстрация/edit/edit-cell](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fдемонстрация%2Fedit%2Fedit-cell)</br>
+*  Editing form tutorial: [https://visactor.io/vтаблица/guide/edit/edit_cell](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fguide%2Fedit%2Fedit_cell)</br>
+*  Related апи: </br>
+https://visactor.io/vтаблица/option/списоктаблица#editor</br>
+https://visactor.io/vтаблица/option/списоктаблица-columns-текст#editor</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

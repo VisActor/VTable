@@ -17,45 +17,45 @@ option: Calendar#startDate
 
 ## Code demo
 
-```javascript livedemo template=vtable
+```javascript livedemo template=VTable
 const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'gray'];
 
 const customEvents = [];
 // add 20 list event
-for (let i = 0; i < 20; i++) {
+для (let i = 0; i < 20; i++) {
   customEvents.push({
-    date: new Date(Date.now() + Math.floor((Math.random() - 0.5) * 2629800000)),
-    text: `List Event ${i}`,
+    date: новый Date(Date.now() + Math.floor((Math.random() - 0.5) * 2629800000)),
+    текст: `List Event ${i}`,
     id: `list-event-${i}`,
-    type: 'list',
-    color: unicColorPool[i % unicColorPool.length]
+    тип: 'list',
+    цвет: unicColorPool[i % unicColorPool.length]
   });
 }
 
 // add 10 bar event
-for (let i = 0; i < 10; i++) {
+для (let i = 0; i < 10; i++) {
   const randomDate = Date.now() + Math.floor((Math.random() - 0.5) * 2629800000);
   const randomDays = 86400000 * Math.floor((Math.random() - 0.5) * 5);
   customEvents.push({
-    startDate: new Date(randomDate - randomDays),
-    endDate: new Date(randomDate + randomDays),
-    type: 'bar',
-    text: `Bar Event ${i}`,
+    startDate: новый Date(randomDate - randomDays),
+    endDate: новый Date(randomDate + randomDays),
+    тип: 'bar',
+    текст: `Bar Event ${i}`,
     id: `bar-event-${i}`,
-    color: '#FFF',
+    цвет: '#FFF',
     bgColor: unicColorPool[i % unicColorPool.length]
   });
 }
 
-const calendar = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
+const calendar = новый VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
   tableOptions: {
     theme: {
       headerStyle: {
-        color: args => {
+        цвет: args => {
           if (args.col === 0) {
-            return 'red';
+            возврат 'red';
           }
-          return '#000';
+          возврат '#000';
         }
       }
     }

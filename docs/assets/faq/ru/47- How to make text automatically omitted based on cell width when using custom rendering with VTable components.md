@@ -1,116 +1,116 @@
 ---
-title: 25. How to make text automatically omitted based on cell width when using custom rendering with VTable components?</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: 25. How к make текст автоmatically omitted based на cell ширина when using пользовательский rendering с Vтаблица компонентs?</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question Title
 
-How to make text automatically omitted based on cell width when using custom rendering with VTable components?</br>
+How к make текст автоmatically omitted based на cell ширина when using пользовательский rendering с Vтаблица компонентs?</br>
 ## Question Description
 
-When using custom rendering with VTable in the product, the cell contains icon and text elements. It is expected that the column width can be automatically calculated based on the content at initial, and when manually dragging to resize the column width, the text can automatically be omitted instead of having the button float over the text. I am not sure how to write the code to achieve this effect of shrinking the column width and making the text turn into an sign '...'</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BV6ObuIlso57Khx9BbrcIeJnnJg.gif' alt='' width='934' height='764'>
+When using пользовательский rendering с Vтаблица в the product, the cell contains иконка и текст elements. It is expected that the column ширина can be автоmatically calculated based на the content в initial, и when manually dragging к изменение размера the column ширина, the текст can автоmatically be omitted instead из having the Кнопка float over the текст. I am не sure how к write the код к achieve this effect из shrinking the column ширина и making the текст turn into an sign '...'</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/BV6ObuIlso57Khx9BbrcIeJnnJg.gif' alt='' ширина='934' высота='764'>
 
 ## Solution
 
-We use the customLayout provided by VTable, which can automatically layout and automatically measure the width to adapt to the cell width. The specific writing method is as follows:</br>
+We use the пользовательскиймакет provided по Vтаблица, which can автоmatically макет и автоmatically measure the ширина к adapt к the cell ширина. The specific writing method is as follows:</br>
 ```
-import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+import {createGroup, createText, createImвозраст} от '@visactor/vтаблица/es/vrender';
 
-  customLayout: (args) => {
-        const { table,row,col,rect } = args;
-        const record = table.getRecordByCell(col,row);
-        const  {height, width } = rect ?? table.getCellRect(col,row);
+  пользовательскиймакет: (args) => {
+        const { таблица,row,col,rect } = args;
+        const record = таблица.getRecordByCell(col,row);
+        const  {высота, ширина } = rect ?? таблица.getCellRect(col,row);
         const container = createGroup({
-          height,
-          width,
+          высота,
+          ширина,
           display: 'flex',
           flexWrap:'no-wrap',
-          alignItems: 'center',
+          alignItems: 'центр',
           justifyContent: 'flex-front'
        });
-        const bloggerAvatar = createImage({
-          id: 'icon0',
-          width: 20,
-          height: 20,
-          image:record.bloggerAvatar,
+        const bloggerAvatar = createImвозраст({
+          id: 'иконка0',
+          ширина: 20,
+          высота: 20,
+          imвозраст:record.bloggerAvatar,
           cornerRadius: 10,
         });
         container.add(bloggerAvatar);
-        const bloggerName = createText({
-          text:record.bloggerName,
+        const bloggerимя = createText({
+          текст:record.bloggerимя,
           fontSize: 13,
           x:20,
           fontFamily: 'sans-serif',
           fill: 'black',
-          maxLineWidth:width===null?undefined:width-20+1
+          maxLineширина:ширина===null?undefined:ширина-20+1
         });
-        container.add(bloggerName);
-        return {
+        container.add(bloggerимя);
+        возврат {
           rootContainer: container,
           renderDefault: false,
         };
       }</br>
 ```
-CustomLayout needs to return a rootContainer, usually a Group object, to serve as a container for other content. Here, `flexWrap` is set so that internal elements (icon and text) do not wrap, and `alignItems` and `justifyContent` are used for horizontal and vertical alignment. The Group contains an Image and Text. If you want the text to automatically truncate with... when the space is compressed, you need to configure `maxLineWidth`. A special point here is that when `column` is set to `'auto'`, the value of `width` received by the `customLayout` function is `null`, so you need to check if it is `null`. If it is `null`, set `maxLineWidth` to `undefined` to automatically expand the width of the cell. If it is not `null`, set `maxLineWidth` according to the value of `width`. Subtracting 20 here avoids the width of the image, and the additional +1 is a buffer value that can be ignored.</br>
-## Code Examples
+пользовательскиймакет needs к возврат a rootContainer, usually a Group объект, к serve as a container для other content. Here, `flexWrap` is set so that internal elements (иконка и текст) do не wrap, и `alignItems` и `justifyContent` are used для horizontal и vertical alignment. The Group contains an Imвозраст и текст. If you want the текст к автоmatically truncate с... when the space is compressed, you need к configure `maxLineширина`. A special point here is that when `column` is set к `'авто'`, the значение из `ширина` received по the `пользовательскиймакет` функция is `null`, so you need к check if it is `null`. If it is `null`, set `maxLineширина` к `undefined` к автоmatically развернуть the ширина из the cell. If it is не `null`, set `maxLineширина` according к the значение из `ширина`. Subtracting 20 here avoids the ширина из the imвозраст, и the additional +1 is a buffer значение that can be ignored.</br>
+## код примеры
 
 ```
-import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender';
+import {createGroup, createText, createImвозраст} от '@visactor/vтаблица/es/vrender';
 
   const option = {
     columns:[
       {
-        field: 'bloggerId',
-        title:'order number'
+        поле: 'bloggerId',
+        заголовок:'order число'
       }, 
       {
-        field: 'bloggerName',
-        title:'anchor nickname',
-        width:'auto',
+        поле: 'bloggerимя',
+        заголовок:'anchor nickимя',
+        ширина:'авто',
         style:{
           fontFamily:'Arial',
           fontWeight:500
         },
-      customLayout: (args) => {
-        const { table,row,col,rect } = args;
-        const record = table.getRecordByCell(col,row);
-        const  {height, width } = rect ?? table.getCellRect(col,row);
+      пользовательскиймакет: (args) => {
+        const { таблица,row,col,rect } = args;
+        const record = таблица.getRecordByCell(col,row);
+        const  {высота, ширина } = rect ?? таблица.getCellRect(col,row);
         const container = createGroup({
-          height,
-          width,
+          высота,
+          ширина,
           display: 'flex',
           flexWrap:'no-wrap',
-          alignItems: 'center',
+          alignItems: 'центр',
           justifyContent: 'flex-front'
        });
-        const bloggerAvatar = createImage({
-          id: 'icon0',
-          width: 20,
-          height: 20,
-          image:record.bloggerAvatar,
+        const bloggerAvatar = createImвозраст({
+          id: 'иконка0',
+          ширина: 20,
+          высота: 20,
+          imвозраст:record.bloggerAvatar,
           cornerRadius: 10,
         });
         container.add(bloggerAvatar);
-        const bloggerName = createText({
-          text:record.bloggerName,
+        const bloggerимя = createText({
+          текст:record.bloggerимя,
           fontSize: 13,
           x:20,
           fontFamily: 'sans-serif',
           fill: 'black',
-          maxLineWidth:width===null?undefined:width-20+1
+          maxLineширина:ширина===null?undefined:ширина-20+1
         });
-        container.add(bloggerName);
-        return {
+        container.add(bloggerимя);
+        возврат {
           rootContainer: container,
           renderDefault: false,
         };
       }
     },
     {
-      field: 'fansCount',
-      title:'fansCount',
-      fieldFormat(rec){
-        return rec.fansCount + 'w'
+      поле: 'fansCount',
+      заголовок:'fansCount',
+      полеFormat(rec){
+        возврат rec.fansCount + 'w'
       },
       style:{
         fontFamily:'Arial',
@@ -122,42 +122,42 @@ import {createGroup, createText, createImage} from '@visactor/vtable/es/vrender'
    records:[
    {
       'bloggerId': 1,
-      "bloggerName": "Virtual Anchor Xiaohua duoduo",
-      "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg",
-      "introduction": "Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation and food. I hope to share happy moments with you through live broadcast.",
+      "bloggerимя": "Virtual Anchor Xiaohua duoduo",
+      "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/flower.jpg",
+      "introduction": "Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation и food. I hope к share happy moments с you through live broadcast.",
       "fansCount": 400,
       "worksCount": 10,
       "viewCount": 5,
-      "city": "Dream City",
+      "Город": "Dream Город",
       "tags": ["game", "anime", "food"]
     },
     {
       'bloggerId': 2,
-      "bloggerName": "Virtual anchor little wolf",
-      "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg",
-      "introduction": "Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.",
+      "bloggerимя": "Virtual anchor little wolf",
+      "bloggerAvatar": "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/пользовательский-render/wolf.jpg",
+      "introduction": "Hello everyone, I am the virtual anchor Little Wolf. I like music, travel и photography, и I hope к explore the beauty из the world с you through live broadcast.",
       "fansCount": 800,
       "worksCount": 20,
       "viewCount": 15,
-      "city": "City of Music",
+      "Город": "Город из Music",
       "tags": ["music", "travel", "photography"]
       }
     ],
-    defaultRowHeight:30
+    defaultRowвысота:30
   };
   
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;</br>
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;</br>
 ```
 ## Result Display
 
-Just paste the code in the example code directly into the official editor to present it.</br>
-<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/CP0QbZnjIoNnwyxMvjlc17hdnKf.gif' alt='' width='388' height='142'>
+Just paste the код в the пример код directly into the official editor к present it.</br>
+<img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/CP0QbZnjIoNnwyxMvjlc17hdnKf.gif' alt='' ширина='388' высота='142'>
 
 ## Related documents
 
-Tutorial on customLayout usage: [https://visactor.io/vtable/guide/custom_define/custom_layout](https%3A%2F%2Fvisactor.io%2Fvtable%2Fguide%2Fcustom_define%2Fcustom_layout)</br>
-Demo of customLayout usage: [https://visactor.io/vtable/demo/custom-render/custom-cell-layout](https%3A%2F%2Fvisactor.io%2Fvtable%2Fdemo%2Fcustom-render%2Fcustom-cell-layout)</br>
-Related API: [https://visactor.io/vtable/option/ListTable-columns-text#customLayout](https%3A%2F%2Fvisactor.io%2Fvtable%2Foption%2FListTable-columns-text%23customLayout)</br>
-github：https://github.com/VisActor/VTable</br>
+Tutorial на пользовательскиймакет usвозраст: [https://visactor.io/vтаблица/guide/пользовательский_define/пользовательский_макет](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fguide%2Fпользовательский_define%2Fпользовательский_макет)</br>
+демонстрация из пользовательскиймакет usвозраст: [https://visactor.io/vтаблица/демонстрация/пользовательский-render/пользовательский-cell-макет](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Fдемонстрация%2Fпользовательский-render%2Fпользовательский-cell-макет)</br>
+Related апи: [https://visactor.io/vтаблица/option/списоктаблица-columns-текст#пользовательскиймакет](https%3A%2F%2Fvisactor.io%2Fvтаблица%2Foption%2Fсписоктаблица-columns-текст%23пользовательскиймакет)</br>
+github：https://github.com/VisActor/Vтаблица</br>
 

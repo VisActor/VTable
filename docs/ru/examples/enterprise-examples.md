@@ -11,26 +11,26 @@
 <html>
 <head>
     <title>Financial Trading Dashboard</title>
-    <script src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"></script>
+    <script src="https://unpkg.com/@visactor/VTable@latest/build/index.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f5f6fa; }
-        .dashboard { display: flex; height: 100vh; }
-        .sidebar { width: 300px; background: #2c3e50; color: white; padding: 20px; }
-        .main-content { flex: 1; padding: 20px; }
-        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px; }
-        .metric-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .metric-value { font-size: 2em; font-weight: bold; color: #27ae60; }
-        .metric-label { color: #7f8c8d; font-size: 0.9em; }
-        .table-container { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-        .btn-primary { background: #3498db; color: white; }
-        .btn-success { background: #27ae60; color: white; }
-        .btn-danger { background: #e74c3c; color: white; }
-        .status-indicator { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; }
-        .status-up { background: #27ae60; }
-        .status-down { background: #e74c3c; }
-        .status-neutral { background: #f39c12; }
+        body { шрифт-family: 'Segoe UI', sans-serif; отступ: 0; фон: #f5f6fa; }
+        .dashboard { display: flex; высота: 100vh; }
+        .sidebar { ширина: 300px; фон: #2c3e50; цвет: white; заполнение: 20px; }
+        .main-content { flex: 1; заполнение: 20px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; отступ-низ: 20px; }
+        .metric-card { фон: white; заполнение: 20px; граница-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .metric-значение { шрифт-размер: 2em; шрифт-weight: bold; цвет: #27ae60; }
+        .metric-label { цвет: #7f8c8d; шрифт-размер: 0.9em; }
+        .table-container { фон: white; граница-radius: 8px; заполнение: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .toolbar { display: flex; justify-content: space-between; align-items: центр; отступ-низ: 20px; }
+        .btn { заполнение: 8px 16px; граница: никто; граница-radius: 4px; cursor: pointer; шрифт-размер: 14px; }
+        .btn-primary { фон: #3498db; цвет: white; }
+        .btn-успех { фон: #27ae60; цвет: white; }
+        .btn-danger { фон: #e74c3c; цвет: white; }
+        .status-indicator { display: inline-block; ширина: 8px; высота: 8px; граница-radius: 50%; отступ-право: 8px; }
+        .status-up { фон: #27ae60; }
+        .status-down { фон: #e74c3c; }
+        .status-neutral { фон: #f39c12; }
     </style>
 </head>
 <body>
@@ -41,26 +41,26 @@
                 <h3>Filters</h3>
                 <div>
                     <label>Market:</label>
-                    <select id="marketFilter">
-                        <option value="">All Markets</option>
-                        <option value="NYSE">NYSE</option>
-                        <option value="NASDAQ">NASDAQ</option>
-                        <option value="LSE">LSE</option>
-                    </select>
+                    <выбрать id="marketFilter">
+                        <option значение="">все Markets</option>
+                        <option значение="NYSE">NYSE</option>
+                        <option значение="NASDAQ">NASDAQ</option>
+                        <option значение="LSE">LSE</option>
+                    </выбрать>
                 </div>
                 <div>
                     <label>Sector:</label>
-                    <select id="sectorFilter">
-                        <option value="">All Sectors</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Finance">Finance</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Energy">Energy</option>
-                    </select>
+                    <выбрать id="sectorFilter">
+                        <option значение="">все Sectors</option>
+                        <option значение="Technology">Technology</option>
+                        <option значение="Finance">Finance</option>
+                        <option значение="Healthcare">Healthcare</option>
+                        <option значение="Energy">Energy</option>
+                    </выбрать>
                 </div>
                 <div>
                     <label>Min Volume:</label>
-                    <input type="number" id="volumeFilter" placeholder="0">
+                    <ввод тип="число" id="volumeFilter" placeholder="0">
                 </div>
             </div>
             
@@ -73,19 +73,19 @@
         <div class="main-content">
             <div class="metrics-grid">
                 <div class="metric-card">
-                    <div class="metric-value" id="totalValue">$2.4M</div>
-                    <div class="metric-label">Portfolio Value</div>
+                    <div class="metric-значение" id="totalValue">$2.4M</div>
+                    <div class="metric-label">Portfolio значение</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value" id="dayChange">+$12.5K</div>
+                    <div class="metric-значение" id="dayChange">+$12.5K</div>
                     <div class="metric-label">Day Change</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value" id="activePositions">47</div>
-                    <div class="metric-label">Active Positions</div>
+                    <div class="metric-значение" id="activePositions">47</div>
+                    <div class="metric-label">активный Positions</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-value" id="volumeTraded">1.2M</div>
+                    <div class="metric-значение" id="volumeTraded">1.2M</div>
                     <div class="metric-label">Volume Traded</div>
                 </div>
             </div>
@@ -94,12 +94,12 @@
                 <div class="toolbar">
                     <h3>Live Market Data</h3>
                     <div>
-                        <button class="btn btn-primary" onclick="refreshData()">Refresh</button>
-                        <button class="btn btn-success" onclick="exportData()">Export</button>
-                        <button class="btn btn-danger" onclick="clearAlerts()">Clear Alerts</button>
+                        <кнопка class="btn btn-primary" onclick="refreshData()">Refresh</кнопка>
+                        <кнопка class="btn btn-успех" onclick="exportData()">Export</кнопка>
+                        <кнопка class="btn btn-danger" onclick="clearAlerts()">Clear Alerts</кнопка>
                     </div>
                 </div>
-                <div id="tradingTable" style="height: 500px;"></div>
+                <div id="tradingTable" style="высота: 500px;"></div>
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
                     { symbol: 'MSFT', name: 'Microsoft Corp.', market: 'NASDAQ', sector: 'Technology', price: 305.80, volume: 28450000 },
                     { symbol: 'TSLA', name: 'Tesla Inc.', market: 'NASDAQ', sector: 'Technology', price: 695.50, volume: 18750000 },
                     { symbol: 'JPM', name: 'JPMorgan Chase', market: 'NYSE', sector: 'Finance', price: 145.75, volume: 12340000 },
-                    { symbol: 'BAC', name: 'Bank of America', market: 'NYSE', sector: 'Finance', price: 42.80, volume: 38920000 },
+                    { symbol: 'BAC', name: 'Bank из America', market: 'NYSE', sector: 'Finance', price: 42.80, volume: 38920000 },
                     { symbol: 'JNJ', name: 'Johnson & Johnson', market: 'NYSE', sector: 'Healthcare', price: 165.30, volume: 8760000 },
                     { symbol: 'PFE', name: 'Pfizer Inc.', market: 'NYSE', sector: 'Healthcare', price: 45.90, volume: 24680000 },
                 ];
@@ -123,7 +123,7 @@
             }
             
             generateRealTimeData() {
-                return this.stocks.map(stock => {
+                возврат this.stocks.map(stock => {
                     const change = (Math.random() - 0.5) * 10;
                     const changePercent = (change / stock.price) * 100;
                     const newPrice = Math.max(0.01, stock.price + change);
@@ -131,14 +131,14 @@
                     stock.price = newPrice;
                     stock.volume += Math.floor(Math.random() * 100000);
                     
-                    return {
+                    возврат {
                         ...stock,
                         price: parseFloat(newPrice.toFixed(2)),
                         change: parseFloat(change.toFixed(2)),
                         changePercent: parseFloat(changePercent.toFixed(2)),
                         volume: stock.volume,
                         marketCap: parseFloat((newPrice * 1000000000).toFixed(0)),
-                        lastUpdate: new Date().toLocaleTimeString(),
+                        lastUpdate: новый Date().toLocaleTimeString(),
                         trend: change > 0 ? 'up' : change < 0 ? 'down' : 'neutral',
                         high52w: parseFloat((newPrice * (1 + Math.random() * 0.5)).toFixed(2)),
                         low52w: parseFloat((newPrice * (1 - Math.random() * 0.3)).toFixed(2)),
@@ -148,9 +148,9 @@
                 });
             }
             
-            startRealTimeUpdates(callback) {
+            startRealTimeUpdates(обратный вызов) {
                 this.updateInterval = setInterval(() => {
-                    callback(this.generateRealTimeData());
+                    обратный вызов(this.generateRealTimeData());
                 }, 2000);
             }
             
@@ -163,7 +163,7 @@
         }
         
         // Initialize market data
-        const marketSim = new MarketDataSimulator();
+        const marketSim = новый MarketDataSimulator();
         let tradingTable;
         
         // Table configuration
@@ -171,138 +171,138 @@
             {
                 field: 'symbol',
                 caption: 'Symbol',
-                width: 100,
+                ширина: 100,
                 style: {
                     fontWeight: 'bold',
-                    color: '#2c3e50'
+                    цвет: '#2c3e50'
                 },
                 customRender: (args) => {
-                    const { value, record } = args;
-                    return `<div style="display: flex; align-items: center;">
+                    const { значение, record } = args;
+                    возврат `<div style="display: flex; align-items: центр;">
                         <span class="status-indicator status-${record.trend}"></span>
-                        <strong>${value}</strong>
+                        <strong>${значение}</strong>
                     </div>`;
                 }
             },
             {
                 field: 'name',
                 caption: 'Company Name',
-                width: 200,
+                ширина: 200,
                 style: {
-                    textAlign: 'left'
+                    textAlign: 'лево'
                 }
             },
             {
                 field: 'price',
                 caption: 'Price',
-                width: 120,
-                formatter: (value) => `$${value.toFixed(2)}`,
+                ширина: 120,
+                formatter: (значение) => `$${значение.toFixed(2)}`,
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold'
                 }
             },
             {
                 field: 'change',
                 caption: 'Change',
-                width: 100,
-                formatter: (value) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}`,
+                ширина: 100,
+                formatter: (значение) => `${значение >= 0 ? '+' : ''}${значение.toFixed(2)}`,
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold',
-                    color: (args) => {
-                        const value = args.value;
-                        return value > 0 ? '#27ae60' : value < 0 ? '#e74c3c' : '#7f8c8d';
+                    цвет: (args) => {
+                        const значение = args.значение;
+                        возврат значение > 0 ? '#27ae60' : значение < 0 ? '#e74c3c' : '#7f8c8d';
                     }
                 }
             },
             {
                 field: 'changePercent',
                 caption: 'Change %',
-                width: 100,
-                formatter: (value) => `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`,
+                ширина: 100,
+                formatter: (значение) => `${значение >= 0 ? '+' : ''}${значение.toFixed(2)}%`,
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold',
-                    color: (args) => {
-                        const value = args.value;
-                        return value > 0 ? '#27ae60' : value < 0 ? '#e74c3c' : '#7f8c8d';
+                    цвет: (args) => {
+                        const значение = args.значение;
+                        возврат значение > 0 ? '#27ae60' : значение < 0 ? '#e74c3c' : '#7f8c8d';
                     },
                     bgColor: (args) => {
-                        const value = args.value;
-                        return value > 2 ? '#d5f4e6' : value < -2 ? '#fdf2f2' : '#ffffff';
+                        const значение = args.значение;
+                        возврат значение > 2 ? '#d5f4e6' : значение < -2 ? '#fdf2f2' : '#ffffff';
                     }
                 }
             },
             {
                 field: 'volume',
                 caption: 'Volume',
-                width: 120,
-                formatter: (value) => {
-                    if (value >= 1000000) {
-                        return `${(value / 1000000).toFixed(1)}M`;
+                ширина: 120,
+                formatter: (значение) => {
+                    if (значение >= 1000000) {
+                        возврат `${(значение / 1000000).toFixed(1)}M`;
                     }
-                    return `${(value / 1000).toFixed(0)}K`;
+                    возврат `${(значение / 1000).toFixed(0)}K`;
                 },
                 style: {
-                    textAlign: 'right'
+                    textAlign: 'право'
                 }
             },
             {
                 field: 'marketCap',
                 caption: 'Market Cap',
-                width: 130,
-                formatter: (value) => {
-                    if (value >= 1000000000000) {
-                        return `$${(value / 1000000000000).toFixed(2)}T`;
-                    } else if (value >= 1000000000) {
-                        return `$${(value / 1000000000).toFixed(2)}B`;
+                ширина: 130,
+                formatter: (значение) => {
+                    if (значение >= 1000000000000) {
+                        возврат `$${(значение / 1000000000000).toFixed(2)}T`;
+                    } else if (значение >= 1000000000) {
+                        возврат `$${(значение / 1000000000).toFixed(2)}B`;
                     }
-                    return `$${(value / 1000000).toFixed(2)}M`;
+                    возврат `$${(значение / 1000000).toFixed(2)}M`;
                 },
                 style: {
-                    textAlign: 'right'
+                    textAlign: 'право'
                 }
             },
             {
                 field: 'pe',
                 caption: 'P/E Ratio',
-                width: 100,
-                formatter: (value) => value.toFixed(2),
+                ширина: 100,
+                formatter: (значение) => значение.toFixed(2),
                 style: {
-                    textAlign: 'right'
+                    textAlign: 'право'
                 }
             },
             {
                 field: 'dividend',
                 caption: 'Dividend',
-                width: 100,
-                formatter: (value) => `${value.toFixed(2)}%`,
+                ширина: 100,
+                formatter: (значение) => `${значение.toFixed(2)}%`,
                 style: {
-                    textAlign: 'right'
+                    textAlign: 'право'
                 }
             },
             {
                 field: 'lastUpdate',
-                caption: 'Last Update',
-                width: 120,
+                caption: 'последний Update',
+                ширина: 120,
                 style: {
-                    textAlign: 'center',
+                    textAlign: 'центр',
                     fontSize: '12px',
-                    color: '#7f8c8d'
+                    цвет: '#7f8c8d'
                 }
             },
             {
                 field: 'actions',
                 caption: 'Actions',
-                width: 150,
+                ширина: 150,
                 customRender: (args) => {
                     const { record } = args;
-                    return `
+                    возврат `
                         <div style="display: flex; gap: 4px;">
-                            <button onclick="buyStock('${record.symbol}')" style="padding: 2px 8px; background: #27ae60; color: white; border: none; border-radius: 3px; cursor: pointer;">Buy</button>
-                            <button onclick="sellStock('${record.symbol}')" style="padding: 2px 8px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer;">Sell</button>
-                            <button onclick="addToWatchlist('${record.symbol}')" style="padding: 2px 8px; background: #3498db; color: white; border: none; border-radius: 3px; cursor: pointer;">Watch</button>
+                            <кнопка onclick="buyStock('${record.symbol}')" style="заполнение: 2px 8px; фон: #27ae60; цвет: white; граница: никто; граница-radius: 3px; cursor: pointer;">Buy</кнопка>
+                            <кнопка onclick="sellStock('${record.symbol}')" style="заполнение: 2px 8px; фон: #e74c3c; цвет: white; граница: никто; граница-radius: 3px; cursor: pointer;">Sell</кнопка>
+                            <кнопка onclick="addToWatchlist('${record.symbol}')" style="заполнение: 2px 8px; фон: #3498db; цвет: white; граница: никто; граница-radius: 3px; cursor: pointer;">Watch</кнопка>
                         </div>
                     `;
                 }
@@ -310,10 +310,10 @@
         ];
         
         // Initialize table
-        function initializeTable() {
+        функция initializeTable() {
             const initialData = marketSim.generateRealTimeData();
             
-            tradingTable = new VTable.ListTable({
+            tradingTable = новый VTable.ListTable({
                 container: document.getElementById('tradingTable'),
                 columns: columns,
                 records: initialData,
@@ -325,7 +325,7 @@
                         borderColor: '#e1e8ed',
                         borderWidth: 1,
                         bgColor: '#ffffff',
-                        color: '#14171a',
+                        цвет: '#14171a',
                         fontSize: 13,
                         fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif'
                     },
@@ -333,7 +333,7 @@
                         borderColor: '#e1e8ed',
                         borderWidth: 1,
                         bgColor: '#f7f9fa',
-                        color: '#536471',
+                        цвет: '#536471',
                         fontSize: 13,
                         fontWeight: '600'
                     },
@@ -344,7 +344,7 @@
                     }
                 },
                 
-                select: {
+                выбрать: {
                     enableRowSelect: true,
                     enableMultiSelect: true,
                     highlightMode: 'row'
@@ -355,7 +355,7 @@
                     sortMode: 'multiple'
                 },
                 
-                scroll: {
+                прокрутка: {
                     enableHorizontalScroll: true,
                     enableVerticalScroll: true
                 },
@@ -367,17 +367,17 @@
             });
             
             // Add event listeners
-            tradingTable.on('click_cell', (event) => {
+            tradingTable.на('click_cell', (event) => {
                 if (event.field === 'symbol') {
                     showStockDetails(event.record);
                 }
             });
             
-            tradingTable.on('selection_changed', (event) => {
+            tradingTable.на('selection_changed', (event) => {
                 updateMetrics(event.selectedRows);
             });
             
-            // Start real-time updates
+            // начало real-time updates
             marketSim.startRealTimeUpdates((newData) => {
                 updateTableData(newData);
                 updateDashboardMetrics(newData);
@@ -385,12 +385,12 @@
         }
         
         // Update table data
-        function updateTableData(newData) {
+        функция updateTableData(newData) {
             tradingTable.updateOption({ records: newData });
         }
         
         // Update dashboard metrics
-        function updateDashboardMetrics(data) {
+        функция updateDashboardMetrics(data) {
             const totalValue = data.reduce((sum, stock) => sum + (stock.price * 1000), 0);
             const totalChange = data.reduce((sum, stock) => sum + (stock.change * 1000), 0);
             const totalVolume = data.reduce((sum, stock) => sum + stock.volume, 0);
@@ -400,34 +400,34 @@
             document.getElementById('activePositions').textContent = data.length;
             document.getElementById('volumeTraded').textContent = `${(totalVolume / 1000000).toFixed(1)}M`;
             
-            // Update change color
+            // Update change цвет
             const changeElement = document.getElementById('dayChange');
-            changeElement.style.color = totalChange >= 0 ? '#27ae60' : '#e74c3c';
+            changeElement.style.цвет = totalChange >= 0 ? '#27ae60' : '#e74c3c';
         }
         
         // Stock actions
-        function buyStock(symbol) {
-            console.log(`Buy order placed for ${symbol}`);
-            alert(`Buy order placed for ${symbol}`);
+        функция buyStock(symbol) {
+            console.log(`Buy order placed для ${symbol}`);
+            предупреждение(`Buy order placed для ${symbol}`);
         }
         
-        function sellStock(symbol) {
-            console.log(`Sell order placed for ${symbol}`);
-            alert(`Sell order placed for ${symbol}`);
+        функция sellStock(symbol) {
+            console.log(`Sell order placed для ${symbol}`);
+            предупреждение(`Sell order placed для ${symbol}`);
         }
         
-        function addToWatchlist(symbol) {
-            console.log(`${symbol} added to watchlist`);
+        функция addToWatchlist(symbol) {
+            console.log(`${symbol} added к watchlist`);
             const watchlistItems = document.getElementById('watchlistItems');
             const item = document.createElement('div');
-            item.innerHTML = `<div style="padding: 4px 0; border-bottom: 1px solid #34495e;">${symbol}</div>`;
+            item.innerHTML = `<div style="заполнение: 4px 0; граница-низ: 1px solid #34495e;">${symbol}</div>`;
             watchlistItems.appendChild(item);
         }
         
-        function showStockDetails(stock) {
+        функция showStockDetails(stock) {
             const details = `
                 Stock: ${stock.name} (${stock.symbol})
-                Current Price: $${stock.price}
+                текущий Price: $${stock.price}
                 Change: ${stock.change >= 0 ? '+' : ''}${stock.change} (${stock.changePercent}%)
                 Volume: ${stock.volume.toLocaleString()}
                 Market Cap: ${stock.marketCap}
@@ -435,52 +435,52 @@
                 52W High: $${stock.high52w}
                 52W Low: $${stock.low52w}
             `;
-            alert(details);
+            предупреждение(details);
         }
         
         // Toolbar functions
-        function refreshData() {
+        функция refreshData() {
             const newData = marketSim.generateRealTimeData();
             updateTableData(newData);
             updateDashboardMetrics(newData);
         }
         
-        function exportData() {
+        функция exportData() {
             const data = tradingTable.getAllRecords();
             const csv = convertToCSV(data);
-            downloadFile(csv, 'trading-data.csv', 'text/csv');
+            downloadFile(csv, 'trading-data.csv', 'текст/csv');
         }
         
-        function clearAlerts() {
+        функция clearAlerts() {
             console.log('Alerts cleared');
         }
         
         // Utility functions
-        function convertToCSV(data) {
-            const headers = Object.keys(data[0]).filter(key => key !== 'actions');
+        функция convertToCSV(data) {
+            const headers = объект.keys(data[0]).filter(key => key !== 'actions');
             const csvRows = [
                 headers.join(','),
                 ...data.map(row => 
                     headers.map(header => {
-                        let value = row[header];
-                        if (typeof value === 'string' && value.includes(',')) {
-                            value = `"${value.replace(/"/g, '""')}"`;
+                        let значение = row[header];
+                        if (typeof значение === 'строка' && значение.includes(',')) {
+                            значение = `"${значение.replace(/"/g, '""')}"`;
                         }
-                        return value;
+                        возврат значение;
                     }).join(',')
                 )
             ];
-            return csvRows.join('\n');
+            возврат csvRows.join('\n');
         }
         
-        function downloadFile(content, filename, contentType) {
-            const blob = new Blob([content], { type: contentType });
+        функция downloadFile(content, filename, contentType) {
+            const blob = новый Blob([content], { тип: contentType });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
             link.download = filename;
             document.body.appendChild(link);
-            link.click();
+            link.нажать();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
         }
@@ -488,7 +488,7 @@
         // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', initializeTable);
         
-        // Cleanup on page unload
+        // Cleanup на page unload
         window.addEventListener('beforeunload', () => {
             if (marketSim) {
                 marketSim.stopRealTimeUpdates();
@@ -504,7 +504,7 @@
 
 ## E-commerce Product Management System
 
-Advanced product catalog management with inventory tracking, bulk operations, and real-time updates.
+Advanced product catalog management с inventory tracking, bulk operations, и real-time updates.
 
 ```javascript
 // E-commerce Product Management Implementation
@@ -523,19 +523,19 @@ class EcommerceProductManager {
     initializeTable() {
         const columns = [
             {
-                field: 'select',
+                field: 'выбрать',
                 caption: '',
-                width: 50,
-                cellType: 'checkbox',
-                headerType: 'checkbox',
+                ширина: 50,
+                cellType: 'флажок',
+                headerType: 'флажок',
                 style: {
-                    textAlign: 'center'
+                    textAlign: 'центр'
                 }
             },
             {
                 field: 'image',
                 caption: 'Image',
-                width: 80,
+                ширина: 80,
                 cellType: 'image',
                 style: {
                     imageWidth: 60,
@@ -547,7 +547,7 @@ class EcommerceProductManager {
             {
                 field: 'sku',
                 caption: 'SKU',
-                width: 120,
+                ширина: 120,
                 sort: true,
                 style: {
                     fontFamily: 'monospace',
@@ -557,20 +557,20 @@ class EcommerceProductManager {
             {
                 field: 'name',
                 caption: 'Product Name',
-                width: 250,
+                ширина: 250,
                 sort: true,
-                editor: 'input',
+                editor: 'ввод',
                 validation: {
-                    required: true,
+                    обязательный: true,
                     minLength: 3,
                     maxLength: 100
                 },
                 customRender: (args) => {
-                    const { value, record } = args;
-                    return `
-                        <div style="line-height: 1.4;">
-                            <div style="font-weight: bold; color: #2c3e50;">${value}</div>
-                            <div style="font-size: 12px; color: #7f8c8d;">${record.description || 'No description'}</div>
+                    const { значение, record } = args;
+                    возврат `
+                        <div style="line-высота: 1.4;">
+                            <div style="шрифт-weight: bold; цвет: #2c3e50;">${значение}</div>
+                            <div style="шрифт-размер: 12px; цвет: #7f8c8d;">${record.description || 'No description'}</div>
                         </div>
                     `;
                 }
@@ -578,9 +578,9 @@ class EcommerceProductManager {
             {
                 field: 'category',
                 caption: 'Category',
-                width: 130,
+                ширина: 130,
                 sort: true,
-                editor: 'select',
+                editor: 'выбрать',
                 editorOptions: {
                     values: this.categories
                 },
@@ -594,121 +594,121 @@ class EcommerceProductManager {
                             'Sports': '#fce4ec',
                             'Beauty': '#f1f8e9'
                         };
-                        return categoryColors[args.value] || '#ffffff';
+                        возврат categoryColors[args.значение] || '#ffffff';
                     }
                 }
             },
             {
                 field: 'price',
                 caption: 'Price',
-                width: 100,
+                ширина: 100,
                 sort: true,
-                editor: 'input',
+                editor: 'ввод',
                 editorOptions: {
-                    type: 'number',
+                    тип: 'число',
                     min: 0,
                     step: 0.01
                 },
-                formatter: (value) => `$${parseFloat(value).toFixed(2)}`,
+                formatter: (значение) => `$${parseFloat(значение).toFixed(2)}`,
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold',
-                    color: '#27ae60'
+                    цвет: '#27ae60'
                 }
             },
             {
                 field: 'cost',
                 caption: 'Cost',
-                width: 100,
+                ширина: 100,
                 sort: true,
-                editor: 'input',
+                editor: 'ввод',
                 editorOptions: {
-                    type: 'number',
+                    тип: 'число',
                     min: 0,
                     step: 0.01
                 },
-                formatter: (value) => `$${parseFloat(value).toFixed(2)}`,
+                formatter: (значение) => `$${parseFloat(значение).toFixed(2)}`,
                 style: {
-                    textAlign: 'right',
-                    color: '#e74c3c'
+                    textAlign: 'право',
+                    цвет: '#e74c3c'
                 }
             },
             {
-                field: 'margin',
-                caption: 'Margin',
-                width: 80,
-                formatter: (value, record) => {
-                    const margin = ((record.price - record.cost) / record.price * 100);
-                    return `${margin.toFixed(1)}%`;
+                field: 'отступ',
+                caption: 'отступ',
+                ширина: 80,
+                formatter: (значение, record) => {
+                    const отступ = ((record.price - record.cost) / record.price * 100);
+                    возврат `${отступ.toFixed(1)}%`;
                 },
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold',
-                    color: (args) => {
+                    цвет: (args) => {
                         const record = args.record;
-                        const margin = ((record.price - record.cost) / record.price * 100);
-                        return margin > 30 ? '#27ae60' : margin > 15 ? '#f39c12' : '#e74c3c';
+                        const отступ = ((record.price - record.cost) / record.price * 100);
+                        возврат отступ > 30 ? '#27ae60' : отступ > 15 ? '#f39c12' : '#e74c3c';
                     }
                 }
             },
             {
                 field: 'stock',
                 caption: 'Stock',
-                width: 80,
+                ширина: 80,
                 sort: true,
-                editor: 'input',
+                editor: 'ввод',
                 editorOptions: {
-                    type: 'number',
+                    тип: 'число',
                     min: 0
                 },
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold',
-                    color: (args) => {
-                        const stock = args.value;
-                        return stock > 50 ? '#27ae60' : stock > 10 ? '#f39c12' : '#e74c3c';
+                    цвет: (args) => {
+                        const stock = args.значение;
+                        возврат stock > 50 ? '#27ae60' : stock > 10 ? '#f39c12' : '#e74c3c';
                     },
                     bgColor: (args) => {
-                        const stock = args.value;
-                        return stock <= 5 ? '#fdf2f2' : stock <= 20 ? '#fff8e1' : '#ffffff';
+                        const stock = args.значение;
+                        возврат stock <= 5 ? '#fdf2f2' : stock <= 20 ? '#fff8e1' : '#ffffff';
                     }
                 }
             },
             {
                 field: 'stockStatus',
                 caption: 'Stock Status',
-                width: 120,
+                ширина: 120,
                 customRender: (args) => {
                     const stock = args.record.stock;
-                    let status, color, icon;
+                    let status, цвет, icon;
                     
                     if (stock > 50) {
-                        status = 'In Stock';
-                        color = '#27ae60';
+                        status = 'в Stock';
+                        цвет = '#27ae60';
                         icon = '✓';
                     } else if (stock > 10) {
                         status = 'Low Stock';
-                        color = '#f39c12';
+                        цвет = '#f39c12';
                         icon = '⚠';
                     } else if (stock > 0) {
                         status = 'Very Low';
-                        color = '#e67e22';
+                        цвет = '#e67e22';
                         icon = '!';
                     } else {
-                        status = 'Out of Stock';
-                        color = '#e74c3c';
+                        status = 'Out из Stock';
+                        цвет = '#e74c3c';
                         icon = '✗';
                     }
                     
-                    return `<span style="color: ${color}; font-weight: bold;">${icon} ${status}</span>`;
+                    возврат `<span style="цвет: ${цвет}; шрифт-weight: bold;">${icon} ${status}</span>`;
                 }
             },
             {
                 field: 'supplier',
                 caption: 'Supplier',
-                width: 120,
+                ширина: 120,
                 sort: true,
-                editor: 'select',
+                editor: 'выбрать',
                 editorOptions: {
                     values: this.suppliers
                 }
@@ -716,69 +716,69 @@ class EcommerceProductManager {
             {
                 field: 'rating',
                 caption: 'Rating',
-                width: 100,
+                ширина: 100,
                 customRender: (args) => {
-                    const rating = args.value || 0;
+                    const rating = args.значение || 0;
                     const stars = '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
-                    return `<span style="color: #f39c12;">${stars}</span> (${rating.toFixed(1)})`;
+                    возврат `<span style="цвет: #f39c12;">${stars}</span> (${rating.toFixed(1)})`;
                 }
             },
             {
                 field: 'sales',
                 caption: 'Units Sold',
-                width: 100,
+                ширина: 100,
                 sort: true,
-                formatter: (value) => value.toLocaleString(),
+                formatter: (значение) => значение.toLocaleString(),
                 style: {
-                    textAlign: 'right'
+                    textAlign: 'право'
                 }
             },
             {
                 field: 'revenue',
                 caption: 'Revenue',
-                width: 120,
-                formatter: (value, record) => {
+                ширина: 120,
+                formatter: (значение, record) => {
                     const revenue = record.price * record.sales;
-                    return `$${revenue.toLocaleString()}`;
+                    возврат `$${revenue.toLocaleString()}`;
                 },
                 style: {
-                    textAlign: 'right',
+                    textAlign: 'право',
                     fontWeight: 'bold',
-                    color: '#27ae60'
+                    цвет: '#27ae60'
                 }
             },
             {
                 field: 'lastUpdated',
-                caption: 'Last Updated',
-                width: 130,
-                formatter: (value) => {
-                    return new Date(value).toLocaleDateString();
+                caption: 'последний Updated',
+                ширина: 130,
+                formatter: (значение) => {
+                    возврат новый Date(значение).toLocaleDateString();
                 },
                 style: {
-                    textAlign: 'center',
+                    textAlign: 'центр',
                     fontSize: '12px',
-                    color: '#7f8c8d'
+                    цвет: '#7f8c8d'
                 }
             },
             {
                 field: 'actions',
                 caption: 'Actions',
-                width: 200,
+                ширина: 200,
                 customRender: (args) => {
                     const { record, row } = args;
-                    return `
+                    возврат `
                         <div class="action-buttons" style="display: flex; gap: 4px;">
-                            <button onclick="productManager.editProduct(${row})" class="btn-edit" title="Edit">✏️</button>
-                            <button onclick="productManager.duplicateProduct(${row})" class="btn-duplicate" title="Duplicate">📋</button>
-                            <button onclick="productManager.viewAnalytics(${row})" class="btn-analytics" title="Analytics">📊</button>
-                            <button onclick="productManager.deleteProduct(${row})" class="btn-delete" title="Delete">🗑️</button>
+                            <кнопка onclick="productManager.editProduct(${row})" class="btn-edit" title="Edit">✏️</кнопка>
+                            <кнопка onclick="productManager.duplicateProduct(${row})" class="btn-duplicate" title="Duplicate">📋</кнопка>
+                            <кнопка onclick="productManager.viewAnalytics(${row})" class="btn-analytics" title="Analytics">📊</кнопка>
+                            <кнопка onclick="productManager.deleteProduct(${row})" class="btn-delete" title="Delete">🗑️</кнопка>
                         </div>
                     `;
                 }
             }
         ];
         
-        this.table = new VTable.ListTable({
+        this.table = новый VTable.ListTable({
             container: this.container,
             columns: columns,
             records: this.products,
@@ -790,7 +790,7 @@ class EcommerceProductManager {
                     borderColor: '#e1e8ed',
                     borderWidth: 1,
                     bgColor: '#ffffff',
-                    color: '#14171a',
+                    цвет: '#14171a',
                     fontSize: 13,
                     fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif'
                 },
@@ -798,13 +798,13 @@ class EcommerceProductManager {
                     borderColor: '#e1e8ed',
                     borderWidth: 1,
                     bgColor: '#f7f9fa',
-                    color: '#536471',
+                    цвет: '#536471',
                     fontSize: 13,
                     fontWeight: '600'
                 }
             },
             
-            select: {
+            выбрать: {
                 enableRowSelect: true,
                 enableMultiSelect: true,
                 highlightMode: 'row'
@@ -822,11 +822,11 @@ class EcommerceProductManager {
             
             menu: {
                 contextMenuItems: [
-                    { text: 'Edit Product', menuKey: 'edit', icon: 'edit' },
-                    { text: 'Duplicate Product', menuKey: 'duplicate', icon: 'copy' },
-                    { text: 'Delete Product', menuKey: 'delete', icon: 'delete' },
-                    { text: 'View Analytics', menuKey: 'analytics', icon: 'chart' },
-                    { text: 'Export Selection', menuKey: 'export', icon: 'download' }
+                    { текст: 'Edit Product', menuKey: 'edit', icon: 'edit' },
+                    { текст: 'Duplicate Product', menuKey: 'duplicate', icon: 'copy' },
+                    { текст: 'Delete Product', menuKey: 'delete', icon: 'delete' },
+                    { текст: 'View Analytics', menuKey: 'analytics', icon: 'chart' },
+                    { текст: 'Export Selection', menuKey: 'export', icon: 'download' }
                 ]
             }
         });
@@ -835,15 +835,15 @@ class EcommerceProductManager {
     }
     
     setupEventHandlers() {
-        this.table.on('after_cell_edit', (event) => {
+        this.table.на('after_cell_edit', (event) => {
             this.handleCellEdit(event);
         });
         
-        this.table.on('selection_changed', (event) => {
+        this.table.на('selection_changed', (event) => {
             this.updateBulkActionButtons(event.selectedRows);
         });
         
-        this.table.on('dropdown_menu_click', (event) => {
+        this.table.на('dropdown_menu_click', (event) => {
             this.handleContextMenu(event);
         });
     }
@@ -863,7 +863,7 @@ class EcommerceProductManager {
                 rating: 4.5,
                 sales: 1250,
                 image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop',
-                lastUpdated: new Date().toISOString()
+                lastUpdated: новый Date().toISOString()
             },
             {
                 id: 2,
@@ -878,13 +878,13 @@ class EcommerceProductManager {
                 rating: 4.2,
                 sales: 2350,
                 image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&h=100&fit=crop',
-                lastUpdated: new Date().toISOString()
+                lastUpdated: новый Date().toISOString()
             },
             {
                 id: 3,
                 sku: 'BK003',
                 name: 'Programming Book',
-                description: 'Complete guide to modern web development',
+                description: 'Complete guide к modern web development',
                 category: 'Books',
                 price: 49.99,
                 cost: 19.99,
@@ -893,7 +893,7 @@ class EcommerceProductManager {
                 rating: 4.8,
                 sales: 567,
                 image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=100&h=100&fit=crop',
-                lastUpdated: new Date().toISOString()
+                lastUpdated: новый Date().toISOString()
             }
         ];
         
@@ -906,18 +906,18 @@ class EcommerceProductManager {
         // Validate the edit
         if (field === 'price' && newValue <= 0) {
             this.table.updateCellValue(row, event.col, event.oldValue);
-            alert('Price must be greater than 0');
-            return;
+            предупреждение('Price must be greater than 0');
+            возврат;
         }
         
         if (field === 'stock' && newValue < 0) {
             this.table.updateCellValue(row, event.col, event.oldValue);
-            alert('Stock cannot be negative');
-            return;
+            предупреждение('Stock cannot be negative');
+            возврат;
         }
         
         // Update the record
-        this.products[row] = { ...record, [field]: newValue, lastUpdated: new Date().toISOString() };
+        this.products[row] = { ...record, [field]: newValue, lastUpdated: новый Date().toISOString() };
         
         // Auto-save
         this.saveProduct(this.products[row]);
@@ -926,8 +926,8 @@ class EcommerceProductManager {
     addProduct() {
         const newProduct = {
             id: Date.now(),
-            sku: `NEW${Date.now()}`,
-            name: 'New Product',
+            sku: `новый${Date.now()}`,
+            name: 'новый Product',
             description: '',
             category: this.categories[0],
             price: 0,
@@ -937,7 +937,7 @@ class EcommerceProductManager {
             rating: 0,
             sales: 0,
             image: 'https://via.placeholder.com/100x100',
-            lastUpdated: new Date().toISOString()
+            lastUpdated: новый Date().toISOString()
         };
         
         this.products.push(newProduct);
@@ -964,7 +964,7 @@ class EcommerceProductManager {
     }
     
     deleteProduct(rowIndex) {
-        if (confirm('Are you sure you want to delete this product?')) {
+        if (confirm('Are you sure you want к delete this product?')) {
             this.products.splice(rowIndex, 1);
             this.table.deleteRecord(rowIndex);
         }
@@ -977,7 +977,7 @@ class EcommerceProductManager {
     
     bulkDelete(selectedRows) {
         if (confirm(`Delete ${selectedRows.length} selected products?`)) {
-            // Sort in descending order to delete from end
+            // Sort в descending order к delete от конец
             selectedRows.sort((a, b) => b - a);
             
             selectedRows.forEach(rowIndex => {
@@ -1002,7 +1002,7 @@ class EcommerceProductManager {
             this.products;
             
         const csv = this.convertToCSV(dataToExport);
-        this.downloadFile(csv, 'products.csv', 'text/csv');
+        this.downloadFile(csv, 'products.csv', 'текст/csv');
     }
     
     convertToCSV(data) {
@@ -1011,25 +1011,25 @@ class EcommerceProductManager {
             headers.join(','),
             ...data.map(product => 
                 headers.map(header => {
-                    let value = product[header];
-                    if (typeof value === 'string' && value.includes(',')) {
-                        value = `"${value.replace(/"/g, '""')}"`;
+                    let значение = product[header];
+                    if (typeof значение === 'строка' && значение.includes(',')) {
+                        значение = `"${значение.replace(/"/g, '""')}"`;
                     }
-                    return value;
+                    возврат значение;
                 }).join(',')
             )
         ];
-        return csvRows.join('\n');
+        возврат csvRows.join('\n');
     }
     
     downloadFile(content, filename, contentType) {
-        const blob = new Blob([content], { type: contentType });
+        const blob = новый Blob([content], { тип: contentType });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = filename;
         document.body.appendChild(link);
-        link.click();
+        link.нажать();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
@@ -1037,7 +1037,7 @@ class EcommerceProductManager {
     saveProduct(product) {
         // Simulate API call
         console.log('Saving product:', product);
-        // In real app: fetch('/api/products/' + product.id, { method: 'PUT', body: JSON.stringify(product) })
+        // в real app: fetch('/api/products/' + product.id, { method: 'PUT', body: JSON.stringify(product) })
     }
     
     updateBulkActionButtons(selectedRows) {
@@ -1048,9 +1048,9 @@ class EcommerceProductManager {
         const exportBtn = document.getElementById('bulk-export');
         const priceBtn = document.getElementById('bulk-price');
         
-        if (deleteBtn) deleteBtn.disabled = !hasSelection;
-        if (exportBtn) exportBtn.disabled = !hasSelection;
-        if (priceBtn) priceBtn.disabled = !hasSelection;
+        if (deleteBtn) deleteBtn.отключен = !hasSelection;
+        if (exportBtn) exportBtn.отключен = !hasSelection;
+        if (priceBtn) priceBtn.отключен = !hasSelection;
     }
     
     handleContextMenu(event) {
@@ -1075,7 +1075,7 @@ class EcommerceProductManager {
 }
 
 // Initialize the product manager
-const productManager = new EcommerceProductManager('productTable');
+const productManager = новый EcommerceProductManager('productTable');
 ```
 
-This comprehensive guide demonstrates enterprise-level VTable implementations with advanced features, real-time updates, professional styling, and complex business logic suitable for production applications.
+This comprehensive guide demonstrates enterprise-level VTable implementations с advanced features, real-time updates, professional styling, и complex business logic suitable для production applications.

@@ -1,81 +1,81 @@
 ---
-category: examples
-group: table-type
-title: List Table Tree
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
-order: 1-2
-link: table_type/List_table/tree_list
-option: ListTable-columns-text#tree
+категория: примеры
+группа: таблица-тип
+заголовок: список таблица Tree
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-tree.png
+порядок: 1-2
+ссылка: таблица_type/список_таблица/tree_список
+опция: списоктаблица-columns-текст#tree
 ---
 
-# Basic table tree display
+# базовый таблица tree display
 
-Basic table tree display, open the tree mode of a certain column, and cooperate with the tree structure children of the data source.
+базовый таблица tree display, открыть the tree mode из a certain column, и cooperate с the tree structure children из the данные source.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- Tree: true Set on a column to turn on tree display
+- Tree: true Set на a column к turn на tree display
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/company_struct.json')
+```javascript liveдемонстрация template=vтаблица
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/company_struct.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'group',
-        title: 'department',
-        width: 'auto',
+        поле: 'group',
+        заголовок: 'department',
+        ширина: 'авто',
         tree: true,
-        fieldFormat(rec) {
-          return rec['department'] ?? rec['group'] ?? rec['name'];
+        полеFormat(rec) {
+          возврат rec['department'] ?? rec['group'] ?? rec['имя'];
         }
       },
       {
-        field: 'total_children',
-        title: 'memebers count',
-        width: 'auto',
-        fieldFormat(rec) {
-          if (rec?.['position']) {
-            return `position:  ${rec['position']}`;
-          } else return rec?.['total_children'];
+        поле: 'total_children',
+        заголовок: 'memebers count',
+        ширина: 'авто',
+        полеFormat(rec) {
+          if (rec?.['позиция']) {
+            возврат `позиция:  ${rec['позиция']}`;
+          } else возврат rec?.['total_children'];
         }
       },
       {
-        field: 'monthly_expense',
-        title: 'monthly expense',
-        width: 'auto',
-        fieldFormat(rec) {
+        поле: 'monthly_expense',
+        заголовок: 'monthly expense',
+        ширина: 'авто',
+        полеFormat(rec) {
           if (rec?.['salary']) {
-            return `salary:  ${rec['salary']}`;
-          } else return rec?.['monthly_expense'];
+            возврат `salary:  ${rec['salary']}`;
+          } else возврат rec?.['monthly_expense'];
         }
       },
       {
-        field: 'new_hires_this_month',
-        title: 'new hires this month',
-        width: 'auto'
+        поле: 'new_hires_this_month',
+        заголовок: 'новый hires this month',
+        ширина: 'авто'
       },
       {
-        field: 'resignations_this_month',
-        title: 'resignations this month',
-        width: 'auto'
+        поле: 'resignations_this_month',
+        заголовок: 'resignations this month',
+        ширина: 'авто'
       },
       {
-        field: 'complaints_and_suggestions',
-        title: 'recived complaints counts',
-        width: 'auto'
+        поле: 'complaints_and_suggestions',
+        заголовок: 'recived complaints counts',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard'
+      ширинаMode: 'standard'
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

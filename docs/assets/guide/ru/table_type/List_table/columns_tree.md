@@ -1,17 +1,17 @@
-## Basic Table Header Grouping and Collapsing
+## базовый таблица Header Grouping и Collapsing
 
-In this tutorial, we will learn how to implement multi-level header grouping and collapsing in VTable using a tree structure to visualize complex header hierarchies.
+в this tutorial, we will learn how к implement multi-level header grouping и collapsing в Vтаблица using a tree structure к visualize complex header hierarchies.
 
 ---
 
 ## Use Cases
 
-Header grouping and collapsing are suitable for the following scenarios:
+Header grouping и collapsing are suiтаблица для Следующий scenarios:
 
-- **Multidimensional Data Analysis**: Combine related fields into logical groups (e.g., "Sales Data" includes sub-columns like "Revenue" and "Profit").
-- **Complex Data Structures**: Tables with explicit hierarchical relationships (e.g., "Region-Province-City" three-level structure).
-- **Space Optimization**: Improve readability by collapsing non-critical columns.
-- **Dynamic Interaction**: Allow users to expand/collapse specific groups on demand for flexible data exploration.
+- **Multidimensional данные Analysis**: Combine related полеs into logical groups (e.g., "Продажи данные" includes sub-columns like "Revenue" и "Прибыль").
+- **Complex данные Structures**: таблицаs с explicit hierarchical relationships (e.g., "Регион-Province-Город" three-level structure).
+- **Space Optimization**: Improve readability по collapsing non-critical columns.
+- **Dynamic Interaction**: Allow users к развернуть/свернуть specific groups на demand для flexible данные exploration.
 
 ---
 
@@ -19,54 +19,54 @@ Header grouping and collapsing are suitable for the following scenarios:
 
 ### 1. Configure Multi-Level Header Structure
 
-Define header hierarchies using nested structures in the `columns` configuration. Each group adds sub-columns via the `columns` field to form a tree relationship.
+Define header hierarchies using nested structures в the `columns` configuration. каждый group adds sub-columns via the `columns` поле к form a tree relationship.
 
-### 2. Enable Tree-Style Collapsing
+### 2. включить Tree-Style Collapsing
 
-Set `headerHierarchyType: 'grid-tree'` to enable interactive tree-style collapsing for headers.
+Set `headerHierarchyType: 'grid-tree'` к включить interactive tree-style collapsing для headers.
 
-### 3. Set Default Expansion Level
+### 3. Set по умолчанию Expansion Level
 
-Specify the initial expansion level using `headerExpandLevel` (default: `1`, showing only the first-level groups).
+Specify the initial expansion level using `headerExpandLevel` (по умолчанию: `1`, showing only the первый-level groups).
 
 ---
 
-## Example
+## пример
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
-  { region: 'North', province: 'Province A', city: 'City 1', revenue: 1000, cost: 600 },
-  { region: 'North', province: 'Province A', city: 'City 2', revenue: 1500, cost: 800 },
-  { region: 'South', province: 'Province B', city: 'City 3', revenue: 2000, cost: 1100 }
+  { Регион: 'North', province: 'Province A', Город: 'Город 1', revenue: 1000, cost: 600 },
+  { Регион: 'North', province: 'Province A', Город: 'Город 2', revenue: 1500, cost: 800 },
+  { Регион: 'South', province: 'Province B', Город: 'Город 3', revenue: 2000, cost: 1100 }
 ];
 
 const columns = [
   {
-    title: 'Region',
-    field: 'region',
-    width: 150,
+    заголовок: 'Регион',
+    поле: 'Регион',
+    ширина: 150,
     columns: [
       {
-        title: 'Province',
-        field: 'province',
-        width: 150,
+        заголовок: 'Province',
+        поле: 'province',
+        ширина: 150,
         columns: [
           {
-            title: 'City',
-            field: 'city',
-            width: 150
+            заголовок: 'Город',
+            поле: 'Город',
+            ширина: 150
           }
         ]
       }
     ]
   },
   {
-    title: 'Financial Metrics',
-    field: 'metrics',
-    width: 180,
+    заголовок: 'Financial Metrics',
+    поле: 'metrics',
+    ширина: 180,
     columns: [
-      { title: 'Revenue', field: 'revenue', width: 150 },
-      { title: 'Cost', field: 'cost', width: 150 }
+      { заголовок: 'Revenue', поле: 'revenue', ширина: 150 },
+      { заголовок: 'Cost', поле: 'cost', ширина: 150 }
     ]
   }
 ];
@@ -74,26 +74,26 @@ const columns = [
 const option = {
   records,
   columns,
-  headerHierarchyType: 'grid-tree', // Enable tree-style collapsing
-  headerExpandLevel: 2, // Expand to the second level by default
-  widthMode: 'standard',
-  defaultRowHeight: 40
+  headerHierarchyType: 'grid-tree', // включить tree-style collapsing
+  headerExpandLevel: 2, // развернуть к the second level по по умолчанию
+  ширинаMode: 'standard',
+  defaultRowвысота: 40
 };
 
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window.tableInstance = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window.таблицаInstance = таблицаInstance;
 ```
 
 ---
 
 ## Advanced Configuration
 
-### Listen to Collapse Events
+### списокen к свернуть событиеs
 
-Capture user interactions and execute custom logic:
+Capture user interactions и execute пользовательский logic:
 
 ```javascript
-tableInstance.on(VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, args => {
+таблицаInstance.на(Vтаблица.списоктаблица.событие_TYPE.TREE_HIERARCHY_STATE_CHANGE, args => {
   if (args.cellLocation === 'columnHeader') {
     console.log('Header state changed:', args);
   }
@@ -102,13 +102,13 @@ tableInstance.on(VTable.ListTable.EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, args =
 
 ### Dynamically Update Header States
 
-Programmatically control header expansion/collapse:
+Programmatically control header expansion/свернуть:
 
 ```javascript
-// Toggle the expansion state of a specific column
-tableInstance.toggleHierarchyState(col, row);
+// переключить the expansion state из a specific column
+таблицаInstance.toggleHierarchyState(col, row);
 ```
 
 ---
 
-With these configurations, you can quickly implement structured multi-level headers with dynamic interactions, ideal for complex data analysis scenarios.
+с these configurations, Вы можете quickly implement structured multi-level headers с dynamic interactions, ideal для complex данные analysis scenarios.

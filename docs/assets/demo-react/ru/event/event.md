@@ -1,57 +1,57 @@
 ---
-category: examples
-group: event
-title: event listerner
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
-order: 1-1
-link: table_type/List_table/list_table_define_and_generate
-option: ListTable-columns-text#cellType
+категория: примеры
+группа: событие
+заголовок: событие списокerner
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию.png
+порядок: 1-1
+ссылка: таблица_type/список_таблица/список_таблица_define_and_generate
+опция: списоктаблица-columns-текст#cellType
 ---
 
-# event listerner
+# событие списокerner
 
-The events supported by VTable can be monitored through react props. For details, please refer to [Event List]([../api/event](https://www.visactor.io/vtable/guide/Developer_Ecology/react# %E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A)).
+The событиеs supported по Vтаблица can be monitored through react props. для details, please refer к [событие список]([../апи/событие](https://www.visactor.io/vтаблица/guide/Developer_Ecology/react# %E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A)).
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-react
-// import * as ReactVTable from '@visactor/react-vtable';
+```javascript liveдемонстрация template=vтаблица-react
+// import * as ReactVтаблица от '@visactor/react-vтаблица';
 
 const option = {
   columns: [
     {
-      field: '0',
-      title: 'name'
+      поле: '0',
+      заголовок: 'имя'
     },
     {
-      field: '1',
-      title: 'age'
+      поле: '1',
+      заголовок: 'возраст'
     },
     {
-      field: '2',
-      title: 'gender'
+      поле: '2',
+      заголовок: 'пол'
     },
     {
-      field: '3',
-      title: 'hobby'
+      поле: '3',
+      заголовок: 'хобби'
     }
   ],
-  records: new Array(1000).fill(['John', 18, 'male', '🏀'])
+  records: новый массив(1000).fill(['John', 18, 'male', '🏀'])
 };
 
 const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
 root.render(
-  <ReactVTable.ListTable
+  <ReactVтаблица.списоктаблица
     option={option}
-    height={'500px'}
+    высота={'500px'}
     onMouseMoveCell={args => {
       console.log('onMouseMoveCell', args);
     }}
   />
 );
 
-// release openinula instance, do not copy
-window.customRelease = () => {
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
   root.unmount();
 };
 ```

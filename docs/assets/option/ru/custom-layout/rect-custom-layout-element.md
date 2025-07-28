@@ -1,33 +1,33 @@
-{{ target: rect-custom-layout-element }}
+{{ target: rect-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} width (number) 
+${prefix} ширина (число) 
 
-** Required **
+** обязательный **
 
-The width of the rectangle.
+The ширина из the rectangle.
 
-${prefix} height (number)
+${prefix} высота (число)
 
-** Required **
+** обязательный **
 
-The height of the rectangle.
+The высота из the rectangle.
 
-${prefix} lineWidth (number)
+${prefix} lineширина (число)
 
-Border width.
+граница ширина.
 
-${prefix} cornerRadius (number)
+${prefix} cornerRadius (число)
 
-Border corner radius.
+граница corner radius.
 
-${prefix} fill (string)
+${prefix} fill (строка)
 
-Fill color.
+Fill цвет.
 
-${prefix} stroke (string)
+${prefix} strхорошоe (строка)
 
-Stroke color.
+Strхорошоe цвет.

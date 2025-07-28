@@ -1,27 +1,27 @@
 ---
-category: examples
-group: Business
-title: Annual temperature trends by region
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/temperature-trend.png
-order: 9-5
+категория: примеры
+группа: Business
+заголовок: Annual temperature trends по Регион
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/temperature-trend.png
+порядок: 9-5
 ---
 
-# Annual temperature trends by region
+# Annual temperature trends по Регион
 
-Show the temperature trends of different regions in the day, month and year.
+показать the temperature trends из different Регионs в the day, month и year.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-*   `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
-*   `cellType: 'chart'` Specify the type chart
-*   `chartModule: 'vchart'` Specify the registered chart library name
-*   `chartSpec: {}` Chart specs
+*   `Vтаблица.регистрация.графикModule('vграфик', Vграфик)` регистрация a графикing library для графикing, currently supports Vграфик
+*   `cellType: 'график'` Specify the тип график
+*   `графикModule: 'vграфик'` Specify the регистрацияed график library имя
+*   `графикSpec: {}` график specs
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-  VTable.register.chartModule('vchart', VChart);
-  const temperatureList = {
+```javascript liveдемонстрация template=vтаблица
+  Vтаблица.регистрация.графикModule('vграфик', Vграфик);
+  const temperatureсписок = {
     "North East": {
       year: {
         '2013': 4.7,
@@ -404,120 +404,120 @@ Show the temperature trends of different regions in the day, month and year.
   };
   const rowTree = [
     {
-      dimensionKey: 'region',
-      value: 'North East'
+      dimensionKey: 'Регион',
+      значение: 'North East'
     },
     {
-      dimensionKey: 'region',
-      value: 'North China'
+      dimensionKey: 'Регион',
+      значение: 'North China'
     },
     {
-      dimensionKey: 'region',
-      value: 'East China'
+      dimensionKey: 'Регион',
+      значение: 'East China'
     },
     {
-      dimensionKey: 'region',
-      value: 'South China'
+      dimensionKey: 'Регион',
+      значение: 'South China'
     },
     {
-      dimensionKey: 'region',
-      value: 'Central South'
+      dimensionKey: 'Регион',
+      значение: 'Central South'
     },
     {
-      dimensionKey: 'region',
-      value: 'South West'
+      dimensionKey: 'Регион',
+      значение: 'South West'
     },
     {
-      dimensionKey: 'region',
-      value: 'North West'
+      dimensionKey: 'Регион',
+      значение: 'North West'
     }
   ];
 
   const records = [];
-  for (let i = 0; i <= 6; i++) {
+  для (let i = 0; i <= 6; i++) {
     const record = {
-      region: rowTree[i].value
+      Регион: rowTree[i].значение
     };
-    record.dayTrendChart = [temperatureList[rowTree[i].value].day];
+    record.dayTrendграфик = [temperatureсписок[rowTree[i].значение].day];
 
-    record.monthTrendChart = [temperatureList[rowTree[i].value].month];
+    record.monthTrendграфик = [temperatureсписок[rowTree[i].значение].month];
 
-    record.yearTrendChart = [temperatureList[rowTree[i].value].year];
+    record.yearTrendграфик = [temperatureсписок[rowTree[i].значение].year];
 
     records.push(record);
   }
   const option = {
     records,
-    defaultRowHeight: 150,
-    defaultHeaderRowHeight: 50,
+    defaultRowвысота: 150,
+    defaultHeaderRowвысота: 50,
     indicators: [
       {
-        indicatorKey: 'dayTrendChart',
-        cellType: 'chart',
-        chartModule: 'vchart',
-        width: 400,
-        chartSpec: {
-          type: 'common',
+        indicatorKey: 'dayTrendграфик',
+        cellType: 'график',
+        графикModule: 'vграфик',
+        ширина: 400,
+        графикSpec: {
+          тип: 'common',
           series: [
             {
-              type: 'line',
-              data: {
-                id: 'data',
+              тип: 'line',
+              данные: {
+                id: 'данные',
                 transforms: [
                   {
-                    type: 'fold',
+                    тип: 'fold',
                     options: {
                       key: 'x', // 转化后，原始数据的 key 放入这个配置对应的字段中作为值
-                      value: 'y', // 转化后，原始数据的 value 放入这个配置对应的字段中作为值
-                      fields: Object.keys(temperatureList[rowTree[0].value].day) // 需要转化的维度
+                      значение: 'y', // 转化后，原始数据的 значение 放入这个配置对应的字段中作为值
+                      полеs: объект.keys(temperatureсписок[rowTree[0].значение].day) // 需要转化的维度
                     }
                   }
                 ]
               },
-              xField: 'x',
-              yField: 'y',
-              seriesField: 'type'
+              xполе: 'x',
+              yполе: 'y',
+              seriesполе: 'тип'
             }
           ],
-          axes: [{ orient: 'left' }, { orient: 'bottom', label: { visible: true } }]
+          axes: [{ orient: 'лево' }, { orient: 'низ', label: { видимый: true } }]
         }
       },
       {
-        indicatorKey: 'monthTrendChart',
-        cellType: 'chart',
-        chartModule: 'vchart',
-        width: 500,
-        chartSpec: {
-          type: 'common',
+        indicatorKey: 'monthTrendграфик',
+        cellType: 'график',
+        графикModule: 'vграфик',
+        ширина: 500,
+        графикSpec: {
+          тип: 'common',
           series: [
             {
-              type: 'area',
-              data: {
-                id: 'data',
+              тип: 'area',
+              данные: {
+                id: 'данные',
                 transforms: [
                   {
-                    type: 'fold',
+                    тип: 'fold',
                     options: {
                       key: 'x', // 转化后，原始数据的 key 放入这个配置对应的字段中作为值
-                      value: 'y', // 转化后，原始数据的 value 放入这个配置对应的字段中作为值
-                      fields: Object.keys(temperatureList[rowTree[0].value].month) // 需要转化的维度
+                      значение: 'y', // 转化后，原始数据的 значение 放入这个配置对应的字段中作为值
+                      полеs: объект.keys(temperatureсписок[rowTree[0].значение].month) // 需要转化的维度
                     }
                   }
                 ]
               },
-              xField: 'x',
-              yField: 'y',
-              seriesField: 'type',
+              xполе: 'x',
+              yполе: 'y',
+              seriesполе: 'тип',
               point: {
                 style: {
-                  fillOpacity: 1,
-                  strokeWidth: 0
+                  fillOpaГород: 1,
+                  strхорошоeширина: 0
                 },
                 state: {
-                  hover: {
-                    fillOpacity: 0.5,
-                    stroke: 'blue',
-                    strokeWidth: 2
+                  навести: {
+                    fillOpaГород: 0.5,
+                    strхорошоe: 'blue',
+                    strхорошоeширина: 2
                   },
                   selected: {
                     fill: 'red'
@@ -526,33 +526,33 @@ Show the temperature trends of different regions in the day, month and year.
               },
               area: {
                 style: {
-                  fillOpacity: 0.3,
-                  stroke: '#000',
-                  strokeWidth: 4
+                  fillOpaГород: 0.3,
+                  strхорошоe: '#000',
+                  strхорошоeширина: 4
                 },
                 state: {
-                  hover: {
-                    fillOpacity: 1
+                  навести: {
+                    fillOpaГород: 1
                   },
                   selected: {
                     fill: 'red',
-                    fillOpacity: 1
+                    fillOpaГород: 1
                   }
                 }
               },
               line: {
                 state: {
-                  hover: {
-                    stroke: 'red'
+                  навести: {
+                    strхорошоe: 'red'
                   },
                   selected: {
-                    stroke: 'yellow'
+                    strхорошоe: 'yellow'
                   }
                 }
               }
             }
           ],
-          axes: [{ orient: 'left' }, { orient: 'bottom', label: { visible: true } }],
+          axes: [{ orient: 'лево' }, { orient: 'низ', label: { видимый: true } }],
 
           markLine: [
             {
@@ -560,14 +560,14 @@ Show the temperature trends of different regions in the day, month and year.
               line: {
                 // 配置线样式
                 style: {
-                  lineWidth: 1,
-                  stroke: 'black',
+                  lineширина: 1,
+                  strхорошоe: 'black',
                   lineDash: [5, 5]
                 }
               },
               endSymbol: {
                 style: {
-                  visible: false
+                  видимый: false
                 }
               }
             }
@@ -575,122 +575,122 @@ Show the temperature trends of different regions in the day, month and year.
         }
       },
       {
-        indicatorKey: 'yearTrendChart',
-        cellType: 'chart',
-        chartModule: 'vchart',
-        width: 350,
-        chartSpec: {
-          type: 'common',
-          data: {
-            id: 'data',
+        indicatorKey: 'yearTrendграфик',
+        cellType: 'график',
+        графикModule: 'vграфик',
+        ширина: 350,
+        графикSpec: {
+          тип: 'common',
+          данные: {
+            id: 'данные',
             transforms: [
               {
-                type: 'fold',
+                тип: 'fold',
                 options: {
                   key: 'x', // 转化后，原始数据的 key 放入这个配置对应的字段中作为值
-                  value: 'y', // 转化后，原始数据的 value 放入这个配置对应的字段中作为值
-                  fields: Object.keys(temperatureList[rowTree[0].value].year) // 需要转化的维度
+                  значение: 'y', // 转化后，原始数据的 значение 放入这个配置对应的字段中作为值
+                  полеs: объект.keys(temperatureсписок[rowTree[0].значение].year) // 需要转化的维度
                 }
               }
             ]
           },
           series: [
             {
-              type: 'bar',
-              xField: 'x',
-              yField: 'y'
+              тип: 'bar',
+              xполе: 'x',
+              yполе: 'y'
             },
             {
-              type: 'line',
-              xField: 'x',
-              yField: 'y',
+              тип: 'line',
+              xполе: 'x',
+              yполе: 'y',
               point: {
                 style: {
                   fill: 'purple',
-                  fillOpacity: 1,
-                  strokeWidth: 0
+                  fillOpaГород: 1,
+                  strхорошоeширина: 0
                 }
               },
               line: {
-                style: { stroke: 'red' }
+                style: { strхорошоe: 'red' }
               }
             }
           ],
           axes: [
-            { orient: 'left', range: { min: 0, max: 20 } },
-            { orient: 'bottom', label: { visible: true } }
+            { orient: 'лево', range: { min: 0, max: 20 } },
+            { orient: 'низ', label: { видимый: true } }
           ]
         }
       }
     ],
     columnTree: [
       {
-        value: 'Daily Temperature Trend',
-        indicatorKey: 'dayTrendChart'
+        значение: 'Daily Temperature Trend',
+        indicatorKey: 'dayTrendграфик'
       },
       {
-        value: 'Monthly Temperature Trend',
-        indicatorKey: 'monthTrendChart'
+        значение: 'Monthly Temperature Trend',
+        indicatorKey: 'monthTrendграфик'
       },
       {
-        value: 'Annual Temperature Trend',
-        indicatorKey: 'yearTrendChart'
+        значение: 'Annual Temperature Trend',
+        indicatorKey: 'yearTrendграфик'
       }
     ],
     rowTree: [
       {
-        dimensionKey: 'region',
-        value: 'North East'
+        dimensionKey: 'Регион',
+        значение: 'North East'
       },
       {
-        dimensionKey: 'region',
-        value: 'North China'
+        dimensionKey: 'Регион',
+        значение: 'North China'
       },
       {
-        dimensionKey: 'region',
-        value: 'East China'
+        dimensionKey: 'Регион',
+        значение: 'East China'
       },
       {
-        dimensionKey: 'region',
-        value: 'South China'
+        dimensionKey: 'Регион',
+        значение: 'South China'
       },
       {
-        dimensionKey: 'region',
-        value: 'Central South'
+        dimensionKey: 'Регион',
+        значение: 'Central South'
       },
       {
-        dimensionKey: 'region',
-        value: 'South West'
+        dimensionKey: 'Регион',
+        значение: 'South West'
       },
       {
-        dimensionKey: 'region',
-        value: 'North West'
+        dimensionKey: 'Регион',
+        значение: 'North West'
       }
     ],
     corner: {
       titleOnDimension: 'row'
     },
-    // hover: {
+    // навести: {
     //   disableHover: true
     // },
-    select: {
+    выбрать: {
       disableSelect: true
     },
-    theme: VTable.themes.DEFAULT.extends({
+    тема: Vтаблица.темаs.по умолчанию.extends({
       bodyStyle: {
         borderColor: '',
-        hover: {
+        навести: {
           cellBgColor: ''
         },
         bgColor: ''
       },
       headerStyle: {
-        textAlign: 'center',
+        textAlign: 'центр',
         borderColor: '',
         bgColor: ''
       },
       rowHeaderStyle: {
-        textAlign: 'center',
+        textAlign: 'центр',
         borderColor: '',
         bgColor: ''
       },
@@ -700,10 +700,10 @@ Show the temperature trends of different regions in the day, month and year.
       }
     })
   };
-  const tableInstance =  new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-  window.tableInstance = tableInstance;
+  const таблицаInstance =  новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+  window.таблицаInstance = таблицаInstance;
 ```
 
 ## Related Tutorials
 
-[performance optimization](link)
+[Производительность optimization](link)

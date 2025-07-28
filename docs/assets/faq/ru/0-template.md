@@ -2,7 +2,7 @@
 
 ## Описание вопроса
 
-![image](/vtable/faq/xxx.png)
+![image](/VTable/faq/xxx.png)
 
 ## Решение
 
@@ -16,7 +16,7 @@
 
 [Онлайн демо]()
 
-![result](/vtable/faq/xxx.png)
+![result](/VTable/faq/xxx.png)
 
 ## Ссылки
 

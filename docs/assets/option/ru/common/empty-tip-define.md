@@ -1,28 +1,28 @@
 {{ target: common-emptyTip }}
 
-#${prefix} text(string)
-Empty data describes the content.
+#${prefix} текст(строка)
+Empty данные describes the content.
 
-#${prefix} textStyle(object)
-Describes the text style.
+#${prefix} textStyle(объект)
+Describes the текст style.
 
-- color: string configurable font color;
-- fontSize:number configurable font size;
-- fontFamily: string configurable font;
-  -fontWeight: string | number;
-- fontVariant?: string; font weight
-- lineHeight?: number line height
-- underline?: number; underline
-- lineThrough?: number; dash
+- цвет: строка configurable шрифт цвет;
+- fontSize:число configurable шрифт размер;
+- fontFamily: строка configurable шрифт;
+  -fontWeight: строка | число;
+- fontVariant?: строка; шрифт weight
+- lineвысота?: число line высота
+- underline?: число; underline
+- lineThrough?: число; dash
 
-#${prefix} icon(object)
-Empty data icon.
+#${prefix} иконка(объект)
+Empty данные иконка.
 
-- width?: number; icon height
-- height?: number; the height of the icon
-- image?: string; image URL or inline SVG content
+- ширина?: число; иконка высота
+- высота?: число; the высота из the иконка
+- imвозраст?: строка; imвозраст URL или inline SVG content
 
-#${prefix} displayMode('basedOnTable' | 'basedOnContainer')
+#${prefix} displayMode('basedOnтаблица' | 'basedOnContainer')
 
-- basedOnTable: show empty data description content based on table range;
-- basedOnContainer: show empty data description content based on container range;
+- basedOnтаблица: показать empty данные description content based на таблица range;
+- basedOnContainer: показать empty данные description content based на container range;

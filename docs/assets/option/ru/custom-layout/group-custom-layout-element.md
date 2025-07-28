@@ -1,13 +1,13 @@
-{{ target: group-custom-layout-element }}
+{{ target: group-пользовательский-макет-element }}
 
-{{ use: base-custom-layout-element(
+{{ use: base-пользовательский-макет-element(
     prefix = ${prefix},
 ) }}
 
 ##${prefix} direction ('row' | 'column')
 
-The layout direction of child elements, can be 'row' (horizontal) or 'column' (vertical).
+The макет direction из child elements, can be 'row' (horizontal) или 'column' (vertical).
 
 ##${prefix} alignItems (AlignItems)
 
-The alignment of child elements on the cross-axis.
+The alignment из child elements на the cross-axis.

@@ -1,103 +1,103 @@
 ---
-category: examples
-group: Interaction
-title: use keyboard to move select cell
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arrowkeys-move-select.gif
-link: interaction/keyboard
-option: ListTable#keyboardOptions.selectAllOnCtrlA
+категория: примеры
+группа: Interaction
+заголовок: use keyboard к move выбрать cell
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/arrowkeys-move-выбрать.gif
+ссылка: interaction/keyboard
+опция: списоктаблица#keyboardOptions.selectAllOnCtrlA
 ---
 
-# use keyboard to move select cell
+# use keyboard к move выбрать cell
 
-This example has shortcut key capabilities. Use the arrow keys to switch selected cells and press enter to enter editing. Of course, in addition to the direction keys, there are other shortcut keys, please refer to [Tutorial](../../guide/shortcut)
+This пример has shortcut key capabilities. Use the arrow keys к switch selected cells и press enter к enter editing. из course, в addition к the direction keys, there are other shortcut keys, please refer к [Tutorial](../../guide/shortcut)
 
-## Key Configurations
+## Ключевые Конфигурации
 
 - keyboardOptions
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// 使用时需要引入插件包@visactor/vtable-editors
-// import * as VTable_editors from '@visactor/vtable-editors';
-// 正常使用方式 const input_editor = new VTable.editors.InputEditor();
-// 官网编辑器中将 VTable.editors重命名成了VTable_editors
-const input_editor = new VTable_editors.InputEditor();
-VTable.register.editor('input-editor', input_editor);
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+```javascript liveдемонстрация template=vтаблица
+// 使用时需要引入插件包@visactor/vтаблица-editors
+// import * as Vтаблица_editors от '@visactor/vтаблица-editors';
+// 正常使用方式 const input_editor = новый Vтаблица.editors.InputEditor();
+// 官网编辑器中将 Vтаблица.editors重命名成了Vтаблица_editors
+const input_editor = новый Vтаблица_editors.InputEditor();
+Vтаблица.регистрация.editor('ввод-editor', input_editor);
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data,
+      records: данные,
       columns,
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       frozenColCount: 1,
-      overscrollBehavior: 'none',
+      overscrollBehavior: 'никто',
       keyboardOptions: {
         moveEditCellOnArrowKeys: true
       },
-      editor: 'input-editor'
+      editor: 'ввод-editor'
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window['tableInstance'] = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window['таблицаInstance'] = таблицаInstance;
   });
 ```

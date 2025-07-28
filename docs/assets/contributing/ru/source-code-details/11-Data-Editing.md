@@ -1,16 +1,16 @@
 ---
-title: 11 Data Editing    
+заголовок: 11 данные Editing    
 
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 # Introduction
 
 
-## 1.1 **Background Introduction**
+## 1.1 **фон Introduction**
 
 
 
-In modern data visualization and table applications, the demand for editing table data is increasing. VTable, as a powerful table component library, provides comprehensive data editing features to meet this demand. `vtable` is an open-source table project aimed at providing users with flexible and efficient data management and editing capabilities. Data editing is one of the core functions of table applications, allowing users to modify, validate, and save data in tables. To achieve this functionality, `vtable` adopts an object-oriented design approach, defining a base editor class and various specific editors to meet the editing needs of different types of data.
+в modern данные visualization и таблица applications, the demand для editing таблица данные is increasing. Vтаблица, as a powerful таблица компонент library, provides comprehensive данные editing возможности к meet this demand. `vтаблица` is an открыть-source таблица project aimed в providing users с flexible и efficient данные manвозрастment и editing capabilities. данные editing is one из the core functions из таблица applications, allowing users к modify, validate, и save данные в таблицаs. к achieve this функциональность, `vтаблица` adopts an объект-oriented design approach, defining a base editor class и various specific editors к meet the editing needs из different types из данные.
 
 
 
@@ -19,17 +19,17 @@ In modern data visualization and table applications, the demand for editing tabl
 
 
 
-This source code interpretation document aims to deeply analyze the implementation principles of the VTable data editing function, helping developers better understand its design concepts, module division, and core processes, so as to use and extend this function more efficiently in actual projects. We will start from three aspects: concept introduction, code design, and core processes, to help readers understand the design philosophy and implementation method of the editor.
+This source код interpretation document aims к deeply analyze the implementation principles из the Vтаблица данные editing функция, helping developers better understand its design concepts, module division, и core processes, so as к use и extend this функция more efficiently в actual projects. We will начало от three aspects: concept introduction, код design, и core processes, к help readers understand the design philosophy и implementation method из the editor.
 
-# Introduction to Concepts
-
-
-## 2.1 The Role of the Editor Base Class
+# Introduction к Concepts
 
 
+## 2.1 The Role из the Editor Base Class
 
 
-The editor base class is the core framework of the entire editing functionality. It defines the interfaces that all specific editors must implement, including general functions such as initialization, validation, and saving. In this way, the base class provides a unified interface for specific editors, ensuring code reusability and extensibility. At the same time, the base class is also responsible for handling some common logic, such as error handling and state management.    
+
+
+The editor base class is the core framework из the entire editing функциональность. It defines the interfaces that все specific editors must implement, including general functions such as initialization, validation, и saving. в this way, the base class provides a unified интерфейс для specific editors, ensuring код reusability и extensibility. в the same time, the base class is also responsible для handling некоторые common logic, such as ошибка handling и state manвозрастment.    
 
 
 
@@ -38,11 +38,11 @@ The editor base class is the core framework of the entire editing functionality.
 
 
 
-Specific editors are customized implementations for specific data types (such as text, numbers, dates, etc.). Each specific editor inherits from a base class and implements specific logic based on the data type it handles. For example, a text editor may not require complex validation logic, while number and date editors need to strictly format check the input data. Through this design, `vtable` can flexibly support the editing needs of various data types.
+Specific editors are пользовательскийized implementations для specific данные types (such as текст, numbers, dates, etc.). каждый specific editor inherits от a base class и implements specific logic based на the данные тип it handles. для пример, a текст editor may не require complex validation logic, while число и date editors need к strictly format check the ввод данные. Through this design, `vтаблица` can flexibly support the editing needs из various данные types.
 
 
 
-# Code Design
+# код Design
 
 
 
@@ -50,87 +50,87 @@ Specific editors are customized implementations for specific data types (such as
 ## 3.1 Overall Approach
 
 
-The overall design of the data editing functionality of VTable follows the principles of modularity and extensibility. By breaking down the editing functionality into multiple independent modules, each responsible for specific functions such as edit management, editor implementation, type definition, etc., the code structure is clear and easy to maintain and extend. At the same time, interfaces and base classes are used to standardize the behavior of editors, ensuring that different types of editors can seamlessly collaborate with the edit management module.    \r
+The overall design из the данные editing функциональность из Vтаблица follows the principles из modularity и extensibility. по breaking down the editing функциональность into multiple independent modules, каждый responsible для specific functions such as edit manвозрастment, editor implementation, тип definition, etc., the код structure is clear и easy к maintain и extend. в the same time, interfaces и base classes are used к standardize the behavior из editors, ensuring that different types из editors can seamlessly collaborate с the edit manвозрастment module.    \r
 
 
 
-## 3.2 Code Structure
+## 3.2 код Structure
 
-### 3.2.1 Editor Manager
+### 3.2.1 Editor Manвозрастr
 
-<div style="padding:5px;background-color: rgb(255, 245, 235);border-color: rgb(255, 245, 235);">packages/vtable/src/edit/edit-manager.ts    
-*  **Function**: Responsible for managing the editing process of table cells, including event binding, starting editing, completing editing, and canceling editing.    
-*  **Dependencies**: The `IEditor` interface defines the behavior specifications of the editor, `TABLE_EVENT_TYPE` defines the table event types, `getCellEventArgsSet` retrieves the event argument set, `isPromise` determines whether it is a Promise, and `isValid` verifies the validity of the value.    
-packages/vtable/src/edit/editors.ts    
-*  **Function**: Defines an editor management module. It exports an editor registry `editors` and a function `get` to retrieve editors. The `get` function looks up an editor by name from the registry, and if not found, it issues a warning and returns `undefined`.    
+<div style="заполнение:5px;фон-цвет: rgb(255, 245, 235);граница-цвет: rgb(255, 245, 235);">packвозрастs/vтаблица/src/edit/edit-manвозрастr.ts    
+*  **функция**: Responsible для managing the editing process из таблица cells, including событие binding, starting editing, completing editing, и отменаing editing.    
+*  **Dependencies**: The `IEditor` интерфейс defines the behavior specifications из the editor, `таблица_событие_TYPE` defines the таблица событие types, `getCellсобытиеArgsSet` retrieves the событие argument set, `isPromise` determines whether it is a Promise, и `isValid` verifies the validity из the значение.    
+packвозрастs/vтаблица/src/edit/editors.ts    
+*  **функция**: Defines an editor manвозрастment module. It exports an editor registry `editors` и a функция `get` к retrieve editors. The `get` функция loхорошоs up an editor по имя от the registry, и if не found, it issues a предупреждение и returns `undefined`.    
 </div>
-editors.ts defines an editor management module for managing and retrieving editor instances with different names.
+editors.ts defines an editor manвозрастment module для managing и retrieving editor instances с different имяs.
 
 ```Typescript
-import type { IEditor } from '@visactor/vtable-editors';
-export const editors: { [key: string]: IEditor } = {};
-export function get(editorName: string): IEditor {
-  const editor = editors[editorName];
+import тип { IEditor } от '@visactor/vтаблица-editors';
+export const editors: { [key: строка]: IEditor } = {};
+export функция get(editorимя: строка): IEditor {
+  const editor = editors[editorимя];
   if (!editor) {
-    console.warn('editor should register before init table!');
-    return undefined;
+    console.warn('editor should регистрация before init таблица!');
+    возврат undefined;
   }
-  return editors[editorName];
+  возврат editors[editorимя];
 }
     
 
 ```
-*  `editors` is an exported constant object used to store all registered editor instances. Its type is a map type with keys as strings (`key: string`) and values as instances of type `IEditor`. Initially, this object is empty.    
+*  `editors` is an exported constant объект used к store все регистрацияed editor instances. Its тип is a map тип с keys as strings (`key: строка`) и values as instances из тип `IEditor`. Initially, this объект is empty.    
 
-*  `get` is an exported function used to obtain the corresponding editor instance from the `editors` object based on the editor name `editorName`.    
+*  `get` is an exported функция used к obtain the corresponding editor instance от the `editors` объект based на the editor имя `editorимя`.    
 
-* First, try to get the editor instance with the specified name through `editors[editorName]` and assign it to the variable `editor`.    
+* первый, try к get the editor instance с the specified имя through `editors[editorимя]` и assign it к the variable `editor`.    
 
-*  Then, check if `editor` exists. If it does not exist, it means the editor has not been registered, a warning message `'editor should register before init table!'` will be output to the console, and `undefined` will be returned.    
+*  Then, check if `editor` exists. If it does не exist, it means the editor has не been регистрацияed, a предупреждение messвозраст `'editor should регистрация before init таблица!'` will be output к the console, и `undefined` will be returned.    
 
-* If `editor` exists, directly return `editors[editorName]`, which is the editor instance with the specified name.    
+* If `editor` exists, directly возврат `editors[editorимя]`, which is the editor instance с the specified имя.    
 
-Therefore, the editor needs to be instantiated with new before use and registered in register.ts:
+Therefore, the editor needs к be instantiated с новый before use и регистрацияed в регистрация.ts:
 
 ```Typescript
-export function editor(name: string, editor?: IEditor): IEditor {
+export функция editor(имя: строка, editor?: IEditor): IEditor {
   if (editor !== null && editor !== undefined) {
-    return register(editors, name, editor);
+    возврат регистрация(editors, имя, editor);
   }
-  return editors[name];
+  возврат editors[имя];
 }    
 
 ```
-The function accepts two parameters:    
+The функция accepts two parameters:    
 
-*  name: Represents the name of the editor to register    
+*  имя: Represents the имя из the editor к регистрация    
 
-*  editor: Optional parameter, represents the editor instance    
+*  editor: необязательный параметр, represents the editor instance    
 
-The return type of the function is IEditor    
+The возврат тип из the функция is IEditor    
 
-Function logic:    
+функция logic:    
 
-* When the `editor` parameter passed in is not `null` and not `undefined`, the `register` function is called to register this editor instance with `name` as the key into the `editors` object, and returns the old editor instance originally under that key.    
+* When the `editor` параметр passed в is не `null` и не `undefined`, the `регистрация` функция is called к регистрация this editor instance с `имя` as the key into the `editors` объект, и returns the старый editor instance originally under that key.    
 
-* If the `editor` parameter is not passed, the function will attempt to retrieve the editor instance with the `name` key from the `editors` object and return it. If the key does not exist, it returns `undefined`.    
-
-
+* If the `editor` параметр is не passed, the функция will attempt к retrieve the editor instance с the `имя` key от the `editors` объект и возврат it. If the key does не exist, it returns `undefined`.    
 
 
 
-`EditManager` is a class used for managing table cell editing. It is responsible for handling user-triggered editing events (such as double-click or click), initiating the editor, validating the edited values, and updating the table data after editing is completed.
+
+
+`EditManвозрастr` is a class used для managing таблица cell editing. It is responsible для handling user-triggered editing событиеs (such as double-Нажать или Нажать), initiating the editor, validating the edited values, и updating the таблица данные after editing is completed.
 
 #### Main Attributes
 
 
-*  **table**: Table instance, type is `ListTableAPI`.    
+*  **таблица**: таблица instance, тип is `списоктаблицаапи`.    
 
-*  **editingEditor**: The editor instance currently in use, type is `IEditor`.    
+*  **editingEditor**: The editor instance currently в use, тип is `IEditor`.    
 
-*  **isValidatingValue**: Indicates whether value validation is in progress, type is `boolean`.    
+*  **isValidatingValue**: Indicates whether значение validation is в progress, тип is `логический`.    
 
-*  **editCell**: The position of the cell being edited, containing the `col` and `row` attributes.    
+*  **editCell**: The позиция из the cell being edited, containing the `col` и `row` attributes.    
 
 
 
@@ -139,14 +139,14 @@ Function logic:
 
 
 
-##### bindEvent
+##### bindсобытие
 
-Bind event listeners on the table to handle double-click and click events to start editing.    
+Bind событие списокeners на the таблица к handle double-Нажать и Нажать событиеs к начало editing.    
 
 ```xml
-bindEvent() {
+bindсобытие() {
   // 绑定双击事件
-  this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
+  this.таблица.на(таблица_событие_TYPE.DBLНажать_CELL, e => {
     if (满足编辑条件) {
       const { col, row } = e;
       this.startEditCell(col, row);
@@ -154,7 +154,7 @@ bindEvent() {
   });
 
   // 绑定点击事件
-  this.table.on(TABLE_EVENT_TYPE.CLICK_CELL, e => {
+  this.таблица.на(таблица_событие_TYPE.Нажать_CELL, e => {
     if (满足编辑条件) {
       const { col, row } = e;
       this.startEditCell(col, row);
@@ -165,20 +165,20 @@ bindEvent() {
 ```
 ##### startEditCell
 
-Start cell editing.    
+начало cell editing.    
 
 ```xml
-startEditCell(col: number, row: number, value?: string | number) {
+startEditCell(col: число, row: число, значение?: строка | число) {
     // ...
     // 启动编辑器
     editor.onStart?.({
-      value: dataValue,
+      значение: данныеValue,
       endEdit: () => {
         this.completeEdit();
       },
       referencePosition,
-      container: this.table.getElement(),
-      table: this.table,
+      container: this.таблица.getElement(),
+      таблица: this.таблица,
       col,
       row
     });
@@ -188,67 +188,67 @@ startEditCell(col: number, row: number, value?: string | number) {
 ```
 ##### completeEdit
 
-Complete the edit operation, verify the edited values, and update the table data.    
+Complete the edit operation, verify the edited values, и update the таблица данные.    
 
 ```xml
-completeEdit(e?: Event): boolean | Promise<boolean> {
+completeEdit(e?: событие): логический | Promise<логический> {
   // ...
   // 获取新旧值并进行验证
   if (this.editingEditor.validateValue) {
     this.isValidatingValue = true;
     const newValue = this.editingEditor.getValue();
-    const oldValue = this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
+    const oldValue = this.таблица.getCellOriginValue(this.editCell.col, this.editCell.row);
 
-    const maybePromiseOrValue = this.editingEditor.validateValue(newValue, oldValue, this.editCell, this.table);
+    const maybePromiseOrValue = this.editingEditor.validateValue(newValue, oldValue, this.editCell, this.таблица);
 
     if (isPromise(maybePromiseOrValue)) {
-      return new Promise((resolve, reject) => {
+      возврат новый Promise((resolve, reject) => {
         maybePromiseOrValue
           .then(result => dealWithValidateValue(result, this, oldValue, resolve))
           .catch(err => {
             this.isValidatingValue = false;
-            console.error('VTable Error:', err);
+            console.ошибка('Vтаблица ошибка:', err);
             reject(err);
           });
       });
     }
 
-    return dealWithValidateValue(maybePromiseOrValue, this, oldValue);
+    возврат dealWithValidateValue(maybePromiseOrValue, this, oldValue);
   }
 
   this.doExit();
-  return true;
+  возврат true;
 }    
 
 ```
 ##### doExit
 
-Exit edit mode and update table data.    
+Exit edit mode и update таблица данные.    
 
 ```xml
 doExit() {
   // ...
-  for (let row = range.start.row; row <= range.end.row; row++) {
+  для (let row = range.начало.row; row <= range.конец.row; row++) {
     const rowChangedValues = [];
-    for (let col = range.start.col; col <= range.end.col; col++) {
+    для (let col = range.начало.col; col <= range.конец.col; col++) {
       rowChangedValues.push(changedValue);
     }
     changedValues.push(rowChangedValues);
   }
 
-  (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+  (this.таблица as списоктаблицаапи).changeCellValues(range.начало.col, range.начало.row, changedValues);
   this.editingEditor.onEnd?.();
   this.editingEditor = null;
   this.isValidatingValue = false;
 }    
 
 ```
-##### cancelEdit
+##### отменаEdit
 
-Cancel the edit operation.    
+отмена the edit operation.    
 
 ```xml
-cancelEdit() {
+отменаEdit() {
   if (this.editingEditor) {
     this.editingEditor.onEnd?.();
     this.editingEditor = null;
@@ -258,32 +258,32 @@ cancelEdit() {
 ```
 ##### dealWithValidateValue
 
-Process the validation results and decide whether to exit editing based on the validation results.    
+Process the validation results и decide whether к exit editing based на the validation results.    
 
 ```xml
-function dealWithValidateValue(
+функция dealWithValidateValue(
   // ...
   switch (validateValue) {
     case 'validate-exit':
     case true:
-      editManager.doExit();
+      editManвозрастr.doExit();
       resolve?.(true);
-      return true;
+      возврат true;
 
     case 'invalidate-exit':
-      (editManager.editingEditor as any).setValue(oldValue);
-      editManager.doExit();
+      (editManвозрастr.editingEditor as любой).setValue(oldValue);
+      editManвозрастr.doExit();
       resolve?.(true);
-      return true;
+      возврат true;
 
-    case 'validate-not-exit':
-    case 'invalidate-not-exit':
+    case 'validate-не-exit':
+    case 'invalidate-не-exit':
       resolve?.(false);
-      return false;
+      возврат false;
 
-    default:
+    по умолчанию:
       resolve?.(false);
-      return false;
+      возврат false;
   }
 }    
 
@@ -291,7 +291,7 @@ function dealWithValidateValue(
 #### Summary
 
 
-`EditManager` class initiates and manages the cell editing process by listening to table events, ensuring the editor is correctly launched, validating the edited values, and updating the table data upon completion. The class also provides the ability to cancel editing and handles the lifecycle methods of the editor (such as start and end).
+`EditManвозрастr` class initiates и manвозрастs the cell editing process по списокening к таблица событиеs, ensuring the editor is correctly launched, validating the edited values, и updating the таблица данные upon completion. The class also provides the ability к отмена editing и handles the lifecycle методы из the editor (such as начало и конец).
 
 
 
@@ -300,17 +300,17 @@ function dealWithValidateValue(
 
 
 
-#### Code Structure
+#### код Structure
 
 
-<div style="padding:5px;background-color: rgb(255, 245, 235);border-color: rgb(255, 245, 235);">packages/vtable-editors: Various editor components    
-*  **base-editor.ts**: Base editor class, implements basic methods of the `IEditor` interface.    
-*  **input-editor.ts**: Editor for text input, inherits from `BaseEditor`.    
-*  **list-editor.ts**: Editor for selecting list items, inherits from `BaseEditor`.    
-*  **textArea-editor.ts**: Editor for multi-line text input, inherits from `BaseEditor`.    
-*  **date-input-editor.ts**: Editor for date input, inherits from `InputEditor`.    
-*  **types.ts**: Defines related interfaces for custom editor types.    
-*  **index.ts**: Exports all editor classes.    
+<div style="заполнение:5px;фон-цвет: rgb(255, 245, 235);граница-цвет: rgb(255, 245, 235);">packвозрастs/vтаблица-editors: Various editor компонентs    
+*  **base-editor.ts**: Base editor class, implements базовый методы из the `IEditor` интерфейс.    
+*  **ввод-editor.ts**: Editor для текст ввод, inherits от `BaseEditor`.    
+*  **список-editor.ts**: Editor для selecting список items, inherits от `BaseEditor`.    
+*  **textArea-editor.ts**: Editor для multi-line текст ввод, inherits от `BaseEditor`.    
+*  **date-ввод-editor.ts**: Editor для date ввод, inherits от `InputEditor`.    
+*  **types.ts**: Defines related interfaces для пользовательский editor types.    
+*  **index.ts**: Exports все editor classes.    
 
 </div>
 
@@ -320,116 +320,116 @@ function dealWithValidateValue(
 
 ##### types.ts
 
-*  **Functionality**: Defines the custom editor `IEditor` and related types.    
+*  **функциональность**: Defines the пользовательский editor `IEditor` и related types.    
 
-*  **Main Interfaces and Types**:    
+*  **Main Interfaces и Types**:    
 
-###### 1. `IEditor` Interface
+###### 1. `IEditor` интерфейс
 
 ```xml
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface IEditor<V = any, T = any> {
+// eslint-отключить-следующий-line @typescript-eslint/no-explicit-любой
+export интерфейс IEditor<V = любой, T = любой> {
   // ...
 }    
 
 ```
-*  `IEditor` is a generic interface, `V` represents the value type of the cell, and `T` represents the type of the table instance, both default to `any`.    
+*  `IEditor` is a generic интерфейс, `V` represents the значение тип из the cell, и `T` represents the тип из the таблица instance, both по умолчанию к `любой`.    
 
 *  `onStart` method:    
 
 * Called when the cell enters edit mode.    \r
 
-* Receives an `EditContext` object as a parameter, which contains contextual information during editing. \r
+* Receives an `EditContext` объект as a параметр, which contains contextual information during editing. \r
 
-* If this method is not provided, a warning will be thrown after removing `beginEditing`.    
+* If this method is не provided, a предупреждение will be thrown after removing `beginEditing`.    
 
 * `onEnd` method:    
 
 * Called when the cell exits edit mode.    \r
 
-* If this method is not provided, a warning will be thrown after removing `exit`.    
+* If this method is не provided, a предупреждение will be thrown after removing `exit`.    
 
 * `isEditorElement` method:    
 
-* Called when the editor is in edit mode and the user clicks somewhere.    \r
+* Called when the editor is в edit mode и the user Нажатьs somewhere.    \r
 
-*  Receive a `HTMLElement` type parameter `target`, representing the element clicked by the user.    \r
+*  Receive a `HTMLElement` тип параметр `target`, representing the element Нажатьed по the user.    \r
 
-* If it returns `false`, the VTable will exit edit mode; if it returns `true` or this method is undefined, no action will be taken, and you need to manually call `endEdit` to end edit mode.    
+* If it returns `false`, the Vтаблица will exit edit mode; if it returns `true` или this method is undefined, no action will be taken, и you need к manually call `endEdit` к конец edit mode.    
 
 * `validateValue` method:    
 
-* Before setting new values into the table, used to validate the validity of the values.    \r
+* Before setting новый values into the таблица, used к validate the validity из the values.    \r
 
-* Receives new value `newValue`, old value `oldValue`, cell position `position`, and table instance `table` as parameters.    
+* Receives новый значение `newValue`, старый значение `oldValue`, cell позиция `позиция`, и таблица instance `таблица` as parameters.    
 
-* Can return a `boolean` type, `ValidateEnum` enum value, or `Promise<boolean | ValidateEnum>` type.    
+* Can возврат a `логический` тип, `ValidateEnum` enum значение, или `Promise<логический | ValidateEnum>` тип.    
 
 * `getValue` method:    
 
-* Called when the editor exits edit mode in any way. \r
+* Called when the editor exits edit mode в любой way. \r
 
-*  Expected to return the current value of the cell.    \r
+*  Expected к возврат the текущий значение из the cell.    \r
 
 * `beginEditing` method:    
 
 * Called when the cell enters edit mode.    \r
 
-* Deprecated, it is recommended to use `onStart` instead.    
+* Deprecated, it is recommended к use `onStart` instead.    
 
 * `exit` method:    
 
-* Deprecated, it is recommended to use `onEnd` instead.    
+* Deprecated, it is recommended к use `onEnd` instead.    
 
 * `targetIsOnEditor` method:    
 
-* Deprecated, it is recommended to use `isEditorElement` instead.    
+* Deprecated, it is recommended к use `isEditorElement` instead.    
 
 *  `bindSuccessCallback` method:    
 
-* Called when the cell enters edit mode, receiving a callback function to end the edit mode.    \r
+* Called when the cell enters edit mode, receiving a обратный вызов функция к конец the edit mode.    \r
 
-* Deprecated, the callback function is provided as `endEdit` in `EditContext`, it is recommended to use `onStart` instead.    
+* Deprecated, the обратный вызов функция is provided as `endEdit` в `EditContext`, it is recommended к use `onStart` instead.    
 
-###### `EditContext` Interface
+###### `EditContext` интерфейс
 
 ```xml
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface EditContext<V = any, T = any> {
+// eslint-отключить-следующий-line @typescript-eslint/no-explicit-любой
+export интерфейс EditContext<V = любой, T = любой> {
   // ...
 }    
 
 ```
-*  `EditContext` is a generic interface used to provide context information during editing.    
+*  `EditContext` is a generic интерфейс used к provide context information during editing.    
 
-*  `container` property: The container element of the VTable instance.    
+*  `container` property: The container element из the Vтаблица instance.    
 
-* `referencePosition` attribute: The position information of the cell being edited.    
+* `referencePosition` attribute: The позиция information из the cell being edited.    
 
-*  `value` attribute: The value of the cell before editing.    
+*  `значение` attribute: The значение из the cell before editing.    
 
-* `endEdit` method: A callback function used to end edit mode.    
+* `endEdit` method: A обратный вызов функция used к конец edit mode.    
 
-*  `table` attribute: table instance.    
+*  `таблица` attribute: таблица instance.    
 
-*  `col` attribute: The column index of the cell.    
+*  `col` attribute: The column index из the cell.    
 
-*  `row` attribute: The index of the row where the cell is located.    
+*  `row` attribute: The index из the row where the cell is located.    
 
 
 
-###### `RectProps` Interface
+###### `RectProps` интерфейс
 
 ```xml
-export interface RectProps {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
+export интерфейс RectProps {
+  лево: число;
+  верх: число;
+  ширина: число;
+  высота: число;
 }    
 
 ```
-* The `RectProps` interface defines the properties of a rectangle, including the coordinates of the top-left corner `left` and `top`, as well as the `width` and `height`.
+* The `RectProps` интерфейс defines the свойства из a rectangle, including the coordinates из the верх-лево corner `лево` и `верх`, as well as the `ширина` и `высота`.
 
 
 
@@ -437,27 +437,27 @@ export interface RectProps {
 
 ```xml
 export enum Placement {
-  top = 'top',
-  bottom = 'bottom',
-  left = 'left',
-  right = 'right'
+  верх = 'верх',
+  низ = 'низ',
+  лево = 'лево',
+  право = 'право'
 }    
 
 ```
-*  `Placement` enum defines four possible positions: top, bottom, left, and right.    
+*  `Placement` enum defines four possible positions: верх, низ, лево, и право.    
 
 
 
-###### 5. `ReferencePosition` Interface
+###### 5. `ReferencePosition` интерфейс
 
 ```xml
-export interface ReferencePosition {
+export интерфейс ReferencePosition {
   rect: RectProps;
   placement?: Placement;
 }    
 
 ```
-*  `ReferencePosition` interface defines a reference position, containing a rectangle of type `RectProps` and an optional `Placement` enum value.    
+*  `ReferencePosition` интерфейс defines a reference позиция, containing a rectangle из тип `RectProps` и an необязательный `Placement` enum значение.    
 
 
 
@@ -467,144 +467,144 @@ export interface ReferencePosition {
 export enum ValidateEnum {
   validateExit = 'validate-exit',
   invalidateExit = 'invalidate-exit',
-  validateNotExit = 'validate-not-exit',
-  invalidateNotExit = 'invalidate-not-exit'
+  validateNotExit = 'validate-не-exit',
+  invalidateNotExit = 'invalidate-не-exit'
 }    
 
 ```
-*  `ValidateEnum` enum defines four validation results: validation passed and exit edit mode, validation failed and exit edit mode, validation passed but do not exit edit mode, validation failed but do not exit edit mode.    
+*  `ValidateEnum` enum defines four validation results: validation passed и exit edit mode, validation failed и exit edit mode, validation passed but do не exit edit mode, validation failed but do не exit edit mode.    
 
 
 
-###### 7. `CellAddress` Type
+###### 7. `CellAddress` тип
 
 ```xml
-export type CellAddress = {
-  col: number;
-  row: number;
+export тип CellAddress = {
+  col: число;
+  row: число;
 };    
 
 ```
-*  `CellAddress` type defines the address of a cell, containing the column index `col` and the row index `row`.    
+*  `CellAddress` тип defines the address из a cell, containing the column index `col` и the row index `row`.    
 
 
 
 ##### base-editor.ts
 
-*  **Functionality**: Defines a basic editor class `BaseEditor`, serving as a base class for other editors (mentioned in the comments that it might not be needed).    
+*  **функциональность**: Defines a базовый editor class `BaseEditor`, serving as a base class для other editors (mentioned в the comments that it might не be needed).    
 
 
 
-##### input-editor.ts
+##### ввод-editor.ts
 
-*  **Function**: Implements a regular input editor `InputEditor`, inheriting from the `IEditor` interface.    
+*  **функция**: Implements a regular ввод editor `InputEditor`, inheriting от the `IEditor` интерфейс.    
 
-*  **Main Methods**:    
+*  **Main методы**:    
 
-*  `createElement()`: Create and configure input elements.    
+*  `createElement()`: Create и configure ввод elements.    
 
-*  `setValue(value: string)`: Set the value of the input box.    
+*  `setValue(значение: строка)`: Set the значение из the ввод box.    
 
-*  `getValue()`: Get the value of the input box.    
+*  `getValue()`: Get the значение из the ввод box.    
 
-* `onStart(context: EditContext<string>)`: Initialize the editor, including creating elements, setting values, and adjusting positions.    
+* `onStart(context: EditContext<строка>)`: Initialize the editor, including creating elements, setting values, и adjusting positions.    
 
-*  `adjustPosition(rect: RectProps)`: Adjust the position of the input box according to the given rectangle information.    
+*  `adjustPosition(rect: RectProps)`: Adjust the позиция из the ввод box according к the given rectangle information.    
 
-* `endEditing()` and `onEnd()`: Clean up editor resources.    
+* `endEditing()` и `onEnd()`: Clean up editor resources.    
 
-*  `isEditorElement(target: HTMLElement)`: Determine whether the target element is an element of the current editor.    
+*  `isEditorElement(target: HTMLElement)`: Determine whether the target element is an element из the текущий editor.    
 
-*  `validateValue(newValue?: any, oldValue?: any, position?: CellAddress, table?: any)`: Validate the new value.    
+*  `validateValue(newValue?: любой, oldValue?: любой, позиция?: CellAddress, таблица?: любой)`: Validate the новый значение.    
 
 
 
-##### list-editor.ts
+##### список-editor.ts
 
-*  **Functionality**: Implements a dropdown list editor `ListEditor`, inheriting from the `IEditor` interface.    \r
+*  **функциональность**: Implements a выпадающий список список editor `списокEditor`, inheriting от the `IEditor` интерфейс.    \r
 
-*  **Main Methods**:    
+*  **Main методы**:    
 
-*  `createElement(value: string)`: Create and configure the dropdown list element.    
+*  `createElement(значение: строка)`: Create и configure the выпадающий список список element.    
 
-*  `setValue(value: string)`: Set the value of the dropdown list.    
+*  `setValue(значение: строка)`: Set the значение из the выпадающий список список.    
 
-*  `getValue()`: Get the value of the dropdown list.    
+*  `getValue()`: Get the значение из the выпадающий список список.    
 
-*  `onStart(context: EditContext)`: Initialize the editor, including creating elements, setting values, and adjusting positions.    
+*  `onStart(context: EditContext)`: Initialize the editor, including creating elements, setting values, и adjusting positions.    
 
-*  `adjustPosition(rect: RectProps)`: Adjust the position of the dropdown list based on the given rectangle information.    
+*  `adjustPosition(rect: RectProps)`: Adjust the позиция из the выпадающий список список based на the given rectangle information.    
 
-* `endEditing()` and `onEnd()`: Clean up editor resources.    
+* `endEditing()` и `onEnd()`: Clean up editor resources.    
 
-*  `isEditorElement(target: HTMLElement)`: Determine whether the target element is an element of the current editor.    
+*  `isEditorElement(target: HTMLElement)`: Determine whether the target element is an element из the текущий editor.    
 
 
 
 ##### textArea-editor.ts
 
-*  **Functionality**: Implements a text area editor `TextAreaEditor`, inheriting from the `IEditor` interface.    
+*  **функциональность**: Implements a текст area editor `TextAreaEditor`, inheriting от the `IEditor` интерфейс.    
 
-*  **Main Methods**:    
+*  **Main методы**:    
 
-*  `createElement()`: Create and configure a text area element.    
+*  `createElement()`: Create и configure a текст area element.    
 
-*  `setValue(value: string)`: Set the value of the text area.    
+*  `setValue(значение: строка)`: Set the значение из the текст area.    
 
-*  `getValue()`: Get the value of the text area.    
+*  `getValue()`: Get the значение из the текст area.    
 
-*  `onStart(context: EditContext<string>)`: Initialize the editor, including creating elements, setting values, and adjusting positions.    
+*  `onStart(context: EditContext<строка>)`: Initialize the editor, including creating elements, setting values, и adjusting positions.    
 
-*  `adjustPosition(rect: RectProps)`: Adjust the position of the text area based on the given rectangle information.    
+*  `adjustPosition(rect: RectProps)`: Adjust the позиция из the текст area based на the given rectangle information.    
 
-* `endEditing()` and `onEnd()`: Clean up editor resources.    
+* `endEditing()` и `onEnd()`: Clean up editor resources.    
 
-*  `isEditorElement(target: HTMLElement)`: Determine whether the target element is an element of the current editor.    
+*  `isEditorElement(target: HTMLElement)`: Determine whether the target element is an element из the текущий editor.    
 
 
 
-##### date-input-editor.ts
+##### date-ввод-editor.ts
 
-*  **Functionality**: Implements the date input editor `DateInputEditor`, inheriting from the `InputEditor` class.    
+*  **функциональность**: Implements the date ввод editor `DateInputEditor`, inheriting от the `InputEditor` class.    
 
-*  **Main Methods**:    
+*  **Main методы**:    
 
-*  `createElement()`: Create and configure a date input element.    
+*  `createElement()`: Create и configure a date ввод element.    
 
-* Other methods are inherited from `InputEditor`.    
+* Other методы are inherited от `InputEditor`.    
 
 
 
 ##### index.ts
 
-*  **Functionality**: Export all editor classes and type definitions.    
+*  **функциональность**: Export все editor classes и тип definitions.    
 
-*  **Content**: Imported and exported `InputEditor`, `DateInputEditor`, `ListEditor`, and `TextAreaEditor`, as well as all type definitions imported from `types.ts`.    
+*  **Content**: Imported и exported `InputEditor`, `DateInputEditor`, `списокEditor`, и `TextAreaEditor`, as well as все тип definitions imported от `types.ts`.    
 
 
 
 #### Relationships between Files
 
 
-1. **Interface and Implementation**:    
+1. **интерфейс и Implementation**:    
 
-* All specific editor classes (such as `TextAreaEditor`, `ListEditor`, `InputEditor`, `DateInputEditor`) implement the `IEditor` interface.    
+* все specific editor classes (such as `TextAreaEditor`, `списокEditor`, `InputEditor`, `DateInputEditor`) implement the `IEditor` интерфейс.    
 
 1. **Inheritance Relationship**:    
 
-* `DateInputEditor` inherits from `InputEditor`, reusing some of its logic.    
+* `DateInputEditor` inherits от `InputEditor`, reusing некоторые из its logic.    
 
-* `BaseEditor` is commented out, possibly to simplify the design by directly using the `IEditor` interface.    
+* `BaseEditor` is commented out, possibly к simplify the design по directly using the `IEditor` интерфейс.    
 
 1. **Dependencies**:    
 
-*  Each editor class depends on the interfaces and types defined in `types.ts`.    
+*  каждый editor class depends на the interfaces и types defined в `types.ts`.    
 
-* `index.ts` is responsible for exporting all editor classes and type definitions for use by external modules.    
+* `index.ts` is responsible для exporting все editor classes и тип definitions для use по external modules.    
 
 1. **Common Logic**:    
 
-* Multiple editor classes (such as `TextAreaEditor`, `ListEditor`, `InputEditor`) share similar method structures, such as `createElement()`, `setValue()`, `getValue()`, etc., indicating that they follow the same editor lifecycle management.    
+* Multiple editor classes (such as `TextAreaEditor`, `списокEditor`, `InputEditor`) share similar method structures, such as `createElement()`, `setValue()`, `getValue()`, etc., indicating that they follow the same editor lifecycle manвозрастment.    
 
 
 
@@ -614,41 +614,41 @@ export type CellAddress = {
 ## Initialization
 
 
-When creating an `EditManager` instance, the constructor `constructor` is called, which takes a `table` object as a parameter and calls the `bindEvent` method to bind events.
+When creating an `EditManвозрастr` instance, the constructor `constructor` is called, which takes a `таблица` объект as a параметр и calls the `bindсобытие` method к bind событиеs.
 
 ```xml
-constructor(table: T) {
-  this.table = table;
-  this.bindEvent();
+constructor(таблица: T) {
+  this.таблица = таблица;
+  this.bindсобытие();
 }    
 
 ```
-## Event Binding
+## событие Binding
 
 
-`bindEvent` method is responsible for binding double-click and single-click events on the table, and determines the way to trigger editing based on the `editCellTrigger` configuration.
+`bindсобытие` method is responsible для binding double-Нажать и single-Нажать событиеs на the таблица, и determines the way к trigger editing based на the `editCellTrigger` configuration.
 
 ```xml
-bindEvent() {
-  const editCellTrigger = this.table.options.editCellTrigger;
-  this.table.on(TABLE_EVENT_TYPE.DBLCLICK_CELL, e => {
+bindсобытие() {
+  const editCellTrigger = this.таблица.options.editCellTrigger;
+  this.таблица.на(таблица_событие_TYPE.DBLНажать_CELL, e => {
     if (
       !editCellTrigger || //默认为双击
-      editCellTrigger === 'doubleclick' ||
-      (Array.isArray(editCellTrigger) && editCellTrigger.includes('doubleclick'))
+      editCellTrigger === 'doubleНажать' ||
+      (массив.isArray(editCellTrigger) && editCellTrigger.includes('doubleНажать'))
     ) {
       const { col, row } = e;
       // 取双击自动列宽逻辑
-      const eventArgsSet = getCellEventArgsSet(e.federatedEvent);
-      const resizeCol = this.table.scenegraph.getResizeColAt(
-        eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y,
-        eventArgsSet.eventArgs?.targetCell
+      const событиеArgsSet = getCellсобытиеArgsSet(e.federatedсобытие);
+      const resizeCol = this.таблица.scenegraph.getResizeColAt(
+        событиеArgsSet.abstractPos.x,
+        событиеArgsSet.abstractPos.y,
+        событиеArgsSet.событиеArgs?.targetCell
       );
-      if (this.table._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
-        // 判断同双击自动列宽的时间监听的DBLCLICK_CELL
+      if (this.таблица._canResizeColumn(resizeCol.col, resizeCol.row) && resizeCol.col >= 0) {
+        // 判断同双击自动列宽的时间监听的DBLНажать_CELL
         // 如果是双击自动列宽 则编辑不开启
-        return;
+        возврат;
       }
       this.startEditCell(col, row);
     }
@@ -657,21 +657,21 @@ bindEvent() {
 }    
 
 ```
-## Start Editing
+## начало Editing
 
-When the user triggers a double-click or single-click event, the `startEditCell` method is called to start editing the cell.    
+When the user triggers a double-Нажать или single-Нажать событие, the `startEditCell` method is called к начало editing the cell.    
 
 ```xml
-startEditCell(col: number, row: number, value?: string | number) {
+startEditCell(col: число, row: число, значение?: строка | число) {
 // ...
     editor.onStart?.({
-      value: dataValue,
+      значение: данныеValue,
       endEdit: () => {
         this.completeEdit();
       },
       referencePosition,
-      container: this.table.getElement(),
-      table: this.table,
+      container: this.таблица.getElement(),
+      таблица: this.таблица,
       col,
       row
     });
@@ -679,71 +679,71 @@ startEditCell(col: number, row: number, value?: string | number) {
 }    
 
 ```
-The method checks if it is currently being edited, and if so, it returns immediately. Then it obtains the editor of the cell and checks if the cell is editable. If it is editable, it sets the currently edited cell and editor, and calls the `editor.onStart` method to start editing.
+The method checks if it is currently being edited, и if so, it returns immediately. Then it obtains the editor из the cell и checks if the cell is ediтаблица. If it is ediтаблица, it sets the currently edited cell и editor, и calls the `editor.onStart` method к начало editing.
 
-## End Editing
+## конец Editing
 
 
-`completeEdit` method is used to end the editing process. It checks whether the value is being validated and whether the event target is within the editor. If value validation is needed, it calls the `editor.validateValue` method for validation.    
+`completeEdit` method is used к конец the editing process. It checks whether the значение is being validated и whether the событие target is within the editor. If значение validation is needed, it calls the `editor.validateValue` method для validation.    
 
 ```xml
-completeEdit(e?: Event): boolean | Promise<boolean> {
+completeEdit(e?: событие): логический | Promise<логический> {
 // ...
   if (this.editingEditor.validateValue) {
     this.isValidatingValue = true;
     const newValue = this.editingEditor.getValue();
-    const oldValue = this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
+    const oldValue = this.таблица.getCellOriginValue(this.editCell.col, this.editCell.row);
 
-    const maybePromiseOrValue = this.editingEditor.validateValue?.(newValue, oldValue, this.editCell, this.table);
+    const maybePromiseOrValue = this.editingEditor.validateValue?.(newValue, oldValue, this.editCell, this.таблица);
 
     if (isPromise(maybePromiseOrValue)) {
       this.isValidatingValue = true;
-      return new Promise((resolve, reject) => {
+      возврат новый Promise((resolve, reject) => {
         maybePromiseOrValue
           .then(result => {
             dealWithValidateValue(result, this, oldValue, resolve);
           })
-          .catch((err: Error) => {
+          .catch((err: ошибка) => {
             this.isValidatingValue = false;
-            console.error('VTable Error:', err);
+            console.ошибка('Vтаблица ошибка:', err);
             reject(err);
           });
       });
     }
-    return dealWithValidateValue(maybePromiseOrValue, this, oldValue);
+    возврат dealWithValidateValue(maybePromiseOrValue, this, oldValue);
   }
   this.doExit();
-  return true;
+  возврат true;
 }    
 
 ```
 ## Processing Validation Results
 
 
-`dealWithValidateValue` function decides whether to exit the edit state based on the validation result.    
+`dealWithValidateValue` функция decides whether к exit the edit state based на the validation result.    
 
 ```xml
-function dealWithValidateValue(
+функция dealWithValidateValue(
 // ...
   if (validateValue === 'validate-exit') {
-    editManager.doExit();
+    editManвозрастr.doExit();
     resolve?.(true);
-    return true;
+    возврат true;
   } else if (validateValue === 'invalidate-exit') {
-    (editManager.editingEditor as any).setValue(oldValue);
-    editManager.doExit();
+    (editManвозрастr.editingEditor as любой).setValue(oldValue);
+    editManвозрастr.doExit();
     resolve?.(true);
-    return true;
-  } else if (validateValue === 'validate-not-exit') {
+    возврат true;
+  } else if (validateValue === 'validate-не-exit') {
     resolve?.(false);
-    return false;
-  } else if (validateValue === 'invalidate-not-exit') {
+    возврат false;
+  } else if (validateValue === 'invalidate-не-exit') {
     resolve?.(false);
-    return false;
+    возврат false;
   } else if (validateValue === true) {
-    editManager.doExit();
+    editManвозрастr.doExit();
     resolve?.(true);
-    return true;
+    возврат true;
   }
 // ...
 }    
@@ -752,86 +752,86 @@ function dealWithValidateValue(
 ## Exit Editing
 
 
-`doExit` method is used to exit the editing state, update the value of the table cell, and call the `editor.onEnd` method.    
+`doExit` method is used к exit the editing state, update the значение из the таблица cell, и call the `editor.onEnd` method.    
 
 ```xml
 doExit() {
 // ...
-  for (let row = range.start.row; row <= range.end.row; row++) {
+  для (let row = range.начало.row; row <= range.конец.row; row++) {
     const rowChangedValues = [];
-    for (let col = range.start.col; col <= range.end.col; col++) {
+    для (let col = range.начало.col; col <= range.конец.col; col++) {
       rowChangedValues.push(changedValue);
     }
     changedValues.push(rowChangedValues);
   }
-  (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
+  (this.таблица as списоктаблицаапи).changeCellValues(range.начало.col, range.начало.row, changedValues);
   this.editingEditor.onEnd?.();
   this.editingEditor = null;
   this.isValidatingValue = false;
 }    
 
 ```
-## Cancel Editing
+## отмена Editing
 
 
-`cancelEdit` method is used to cancel the edit state, call `editor.onEnd` method and clear the editor.    
+`отменаEdit` method is used к отмена the edit state, call `editor.onEnd` method и clear the editor.    
 
-## Flowchart
+## Flowграфик
 
 
-![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourcecode/img/Jl6HwHXC3h2z6EbQzEUchmAOnWc.gif)
+![](https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/sourceкод/img/Jl6HwHXC3h2z6EbQzEUchmAOnWc.gif)
 
 
 
 # Practical Application
 
 
-In the current project, the `EditManager` class in `edit-manager.ts` provides support for table editing functionality, while `PivotTable.ts` and `ListTable.ts` use this class to implement their respective table editing features. Below is a detailed introduction to the use of `EditManager` in these two files:
+в the текущий project, the `EditManвозрастr` class в `edit-manвозрастr.ts` provides support для таблица editing функциональность, while `сводныйтаблица.ts` и `списоктаблица.ts` use this class к implement their respective таблица editing возможности. Below is a detailed introduction к the use из `EditManвозрастr` в these two files:
 
-### Usage in `PivotTable.ts`
+### Usвозраст в `сводныйтаблица.ts`
 
-1. Import `EditManager`    
+1. Import `EditManвозрастr`    
 
-At the beginning of the `PivotTable.ts` file, import the `EditManager` class:    
+в the beginning из the `сводныйтаблица.ts` file, import the `EditManвозрастr` class:    
 
 ```xml
-import { EditManager } from './edit/edit-manager';    
+import { EditManвозрастr } от './edit/edit-manвозрастr';    
 
 ```
-1. Create an `EditManager` instance    
+1. Create an `EditManвозрастr` instance    
 
-In the `PivotTable` class constructor, create an `EditManager` instance:    
+в the `сводныйтаблица` class constructor, create an `EditManвозрастr` instance:    
 
 ```xml
-this.editManager = new EditManager(this);    
+this.editManвозрастr = новый EditManвозрастr(this);    
 
 ```
-Here, the `PivotTable` instance `this` is passed as a parameter to the constructor of `EditManager`.    
+Here, the `сводныйтаблица` instance `this` is passed as a параметр к the constructor из `EditManвозрастr`.    
 
-1. Call `EditManager` method    
+1. Call `EditManвозрастr` method    
 
-In the `PivotTable` class, the `startEditCell` and `completeEditCell` methods are defined to call the corresponding methods of the `EditManager` instance:    
+в the `сводныйтаблица` class, the `startEditCell` и `completeEditCell` методы are defined к call the corresponding методы из the `EditManвозрастr` instance:    
 
 ```xml
-startEditCell(col?: number, row?: number, value?: string | number) {
-  this.editManager.startEditCell(col, row, value);
+startEditCell(col?: число, row?: число, значение?: строка | число) {
+  this.editManвозрастr.startEditCell(col, row, значение);
 }
 
 completeEditCell() {
-  this.editManager.completeEdit();
+  this.editManвозрастr.completeEdit();
 }    
 
 ```
-`startEditCell` method calls the `EditManager` instance's `startEditCell` method to start cell editing; `completeEditCell` method calls the `EditManager` instance's `completeEdit` method to end cell editing.
+`startEditCell` method calls the `EditManвозрастr` instance's `startEditCell` method к начало cell editing; `completeEditCell` method calls the `EditManвозрастr` instance's `completeEdit` method к конец cell editing.
 
-`EditManager` class provides support for cell editing functionality for `PivotTable` and `ListTable`. In the constructors of these two classes, an instance of `EditManager` is created, and the instance itself is passed as a parameter to the constructor of `EditManager`. In the subsequent implementation of editing functionality, methods of the `EditManager` instance are called to handle cell editing operations.
+`EditManвозрастr` class provides support для cell editing функциональность для `сводныйтаблица` и `списоктаблица`. в the constructors из these two classes, an instance из `EditManвозрастr` is created, и the instance itself is passed as a параметр к the constructor из `EditManвозрастr`. в the subsequent implementation из editing функциональность, методы из the `EditManвозрастr` instance are called к handle cell editing operations.
 
 # Summary
 
 
-Through the design of base classes and specific editors, the data editing functionality of `vtable` achieves high reusability and extensibility. This design not only simplifies the code structure but also makes it easier to support new data types. At the same time, with the unified definition of interfaces, the interaction between different editors becomes more flexible.
+Through the design из base classes и specific editors, the данные editing функциональность из `vтаблица` achieves high reusability и extensibility. This design не only simplifies the код structure but also makes it easier к support новый данные types. в the same time, с the unified definition из interfaces, the interaction between different editors becomes more flexible.
 
 
 
-# This document was revised and organized by the following personnel 
+# This document was revised и organized по Следующий personnel 
  [玄魂](https://github.com/xuanhun)

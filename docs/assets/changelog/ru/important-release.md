@@ -3,9 +3,9 @@
 
 2024-08-30
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: add gantt chart
+- **@visactor/vтаблица-гантт**: add гантт график
 
 # v1.0.0
 
@@ -13,34 +13,34 @@
 
 **💥 Breaking change**
 
-- **@visactor/vtable**: If the user has previously passed in rowTree and columnTree for the pivot table, under this usage, the result returned by the getCellOriginRecord interface changes from the previous object to an array structure, and if no default aggregation was previously performed, the SUM aggregation rule will be used for data calculation. If you want to cancel the numerical calculation rule, you can specify the aggregation rule as NONE for the indicator.
+- **@visactor/vтаблица**: If the user has previously passed в rowTree и columnTree для the сводный таблица, under this usвозраст, the result returned по the getCellOriginRecord интерфейс changes от the предыдущий объект к an массив structure, и if no по умолчанию aggregation was previously performed, the SUM aggregation rule will be used для данные calculation. If you want к отмена the numerical calculation rule, Вы можете specify the aggregation rule as никто для the indicator.
 
-Configuration examples, you can also refer to [Tutorial](https://visactor.io/vtable/guide/data_analysis/pivot_table_dataAnalysis)：
+Configuration примеры, Вы можете also refer к [Tutorial](https://visactor.io/vтаблица/guide/данные_analysis/сводный_таблица_данныеAnalysis)：
 ```
 records:[{
-  region: '中南',
+  Регион: '中南',
   province: '广西',
   year: '2016',
   quarter: '2016-Q1',
-  sales: 'NULL',
-  profit: 1546
+  Продажи: 'null',
+  Прибыль: 1546
 }],
-dataConfig:{
+данныеConfig:{
     aggregationRules: [
         {
-          indicatorKey: 'sales', 
-          field: 'sales', 
-          aggregationType: VTable.TYPES.AggregationType.NONE, 
+          indicatorKey: 'Продажи', 
+          поле: 'Продажи', 
+          aggregationType: Vтаблица.TYPES.AggregationType.никто, 
         }
       ]
 }
 
 ```
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: rows and tree can  combined use  [#1644](https://github.com/VisActor/VTable/issues/1644)
-- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vтаблица**: rows и tree can  combined use  [#1644](https://github.com/VisActor/Vтаблица/issues/1644)
+- **@visactor/vтаблица**: add virtual option для rowTree и columnTree [#1644](https://github.com/VisActor/Vтаблица/issues/1644)
 
 
 
-[more detail about v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+[more detail about v1.0.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.0.0)

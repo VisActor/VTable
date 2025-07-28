@@ -1,17 +1,17 @@
 {{ target: common-frame-style }}
 
 #${prefix} borderColor(ColorsDef)
-Border Color
+граница цвет
 {{ use: common-colorsDef(
   prefix = ${prefix}
   ) }}
-#${prefix} borderLineWidth(LineWidthsDef)
-Border Thickness
-{{ use: common-lineWidthsDef(
+#${prefix} borderLineширина(LineширинаsDef)
+граница Thickness
+{{ use: common-lineширинаsDef(
   prefix = ${prefix}
   ) }}
 #${prefix} borderLineDash(LineDashsDef)
-Border Line Style
+граница Line Style
 {{ use: common-lineDashsDef(
   prefix = ${prefix}
   ) }}

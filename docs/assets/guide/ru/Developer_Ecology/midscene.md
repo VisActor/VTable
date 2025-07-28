@@ -1,283 +1,283 @@
-# Using Midscene.js to Simplify Testing with AI
+# Using Midscene.js к Simplify Testing с AI
 
-[Midscene.js](https://midscenejs.com/) is an automation tool powered by multimodal AI that makes UI automation test scripts easier to write and maintain.
+[Midscene.js](https://midscenejs.com/) is an автоmation tool powered по multimodal AI that makes UI автоmation test scripts easier к write и maintain.
 
-<div style="width: 40%; text-align: center;">
-  <video src="https://midscenejs.com/introduction/Midscene.mp4" controls style="width: 100%"></video>
+<div style="ширина: 40%; текст-align: центр;">
+  <video src="https://midscenejs.com/introduction/Midscene.mp4" controls style="ширина: 100%"></video>
 </div>
 
-When using VisActor products, you can quickly complete UI test cases using the action capabilities provided by Midscene.js. The query and assert functionalities provided by Midscene.js also make it more convenient to write test cases.
+When using VisActor products, Вы можете quickly complete UI test cases using the action capabilities provided по Midscene.js. The query и assert functionalities provided по Midscene.js also make it more convenient к write test cases.
 
-## Try it with Chrome Extension
+## Try it с Chrome Extension
 
-1. Follow the Midscene.js site tutorial to complete plugin installation: [https://midscenejs.com/en/quick-experience.html](https://midscenejs.com/en/quick-experience.html)
+1. Follow the Midscene.js site tutorial к complete plugin installation: [https://midscenejs.com/en/quick-experience.html](https://midscenejs.com/en/quick-experience.html)
 
-2. Refer to the documentation to configure model parameters: [https://midscenejs.com/en/model-provider.html](https://midscenejs.com/en/model-provider.html) (UI-TARS or Qwen-2.5-VL models are recommended since VisActor components are implemented based on canvas, so the gpt-4o model cannot be used)
+2. Refer к the Документация к configure model parameters: [https://midscenejs.com/en/model-provider.html](https://midscenejs.com/en/model-provider.html) (UI-TARS или Qwen-2.5-VL models are recommended since VisActor компонентs are implemented based на canvas, so the gpt-4o model cannot be used)
 
-3. Open the playground: [https://www.visactor.com/vchart/playground](https://www.visactor.com/vchart/playground), fill in the corresponding test cases. Here's a simple example:
+3. открыть the playground: [https://www.visactor.com/vграфик/playground](https://www.visactor.com/vграфик/playground), fill в the corresponding test cases. Here's a simple пример:
 
-Example code:
+пример код:
 
 ```ts
 const option = {
   records: [
     {
-      'Order ID': 'CA-2015-103800',
-      'Customer ID': 'DP-13000',
-      Category: 'Office Supplies',
-      'Product Name': 'Message Book, Wirebound, Four 5 1/2" X 4" Forms/Pg., 200 Dupl. Sets/Book'
+      'ID Заказа': 'CA-2015-103800',
+      'пользовательскийer ID': 'DP-13000',
+      категория: 'Office Supplies',
+      'Product имя': 'Messвозраст Boхорошо, Wirebound, Four 5 1/2" X 4" Forms/Pg., 200 Dupl. Sets/Boхорошо'
     },
     {
-      'Order ID': 'CA-2015-112326',
-      'Customer ID': 'PO-19195',
-      Category: 'Office Supplies',
-      'Product Name': 'Avery 508'
+      'ID Заказа': 'CA-2015-112326',
+      'пользовательскийer ID': 'PO-19195',
+      категория: 'Office Supplies',
+      'Product имя': 'Avery 508'
     },
     {
-      'Order ID': 'CA-2015-112326',
-      'Customer ID': 'PO-19195',
-      Category: 'Office Supplies',
-      'Product Name': 'SAFCO Boltless Steel Shelving'
+      'ID Заказа': 'CA-2015-112326',
+      'пользовательскийer ID': 'PO-19195',
+      категория: 'Office Supplies',
+      'Product имя': 'SAFCO Boltless Steel Shelving'
     },
     {
-      'Order ID': 'CA-2015-112326',
-      'Customer ID': 'PO-19195',
-      Category: 'Office Supplies',
-      'Product Name': 'GBC Standard Plastic Binding Systems Combs'
+      'ID Заказа': 'CA-2015-112326',
+      'пользовательскийer ID': 'PO-19195',
+      категория: 'Office Supplies',
+      'Product имя': 'GBC Standard Plastic Binding Systems Combs'
     },
     {
-      'Order ID': 'CA-2015-141817',
-      'Customer ID': 'MB-18085',
-      Category: 'Office Supplies',
-      'Product Name': 'Avery Hi-Liter EverBold Pen Style Fluorescent Highlighters, 4/Pack'
+      'ID Заказа': 'CA-2015-141817',
+      'пользовательскийer ID': 'MB-18085',
+      категория: 'Office Supplies',
+      'Product имя': 'Avery Hi-Liter EverBold Pen Style Fluorescent Highlighters, 4/Pack'
     },
     {
-      'Order ID': 'CA-2015-130813',
-      'Customer ID': 'LS-17230',
-      Category: 'Office Supplies',
-      'Product Name': 'Xerox 225'
+      'ID Заказа': 'CA-2015-130813',
+      'пользовательскийer ID': 'LS-17230',
+      категория: 'Office Supplies',
+      'Product имя': 'Xerox 225'
     },
     {
-      'Order ID': 'CA-2015-106054',
-      'Customer ID': 'JO-15145',
-      Category: 'Office Supplies',
-      'Product Name': 'Dixon Prang Watercolor Pencils, 10-Color Set with Brush'
+      'ID Заказа': 'CA-2015-106054',
+      'пользовательскийer ID': 'JO-15145',
+      категория: 'Office Supplies',
+      'Product имя': 'Dixon Prang Watercolor Pencils, 10-цвет Set с Brush'
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Furniture',
-      'Product Name': "Global Deluxe High-Back Manager's Chair"
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Furniture',
+      'Product имя': "Global Deluxe High-Back Manвозрастr's Chair"
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Office Supplies',
-      'Product Name': 'Ibico Hi-Tech Manual Binding System'
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Office Supplies',
+      'Product имя': 'Ibico Hi-Tech Manual Binding System'
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Office Supplies',
-      'Product Name': 'Rogers Handheld Barrel Pencil Sharpener'
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Office Supplies',
+      'Product имя': 'Rogers Handheld Barrel Pencil Sharpener'
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Technology',
-      'Product Name': 'GE 30524EE4'
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Technology',
+      'Product имя': 'GE 30524EE4'
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Technology',
-      'Product Name': 'Wireless Extenders zBoost YX545 SOHO Signal Booster'
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Technology',
+      'Product имя': 'Wireless Extenders zBoost YX545 SOHO Signal Booster'
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Office Supplies',
-      'Product Name': 'Alliance Super-Size Bands, Assorted Sizes'
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Office Supplies',
+      'Product имя': 'Alliance Super-размер Bands, Asсортировкаed Sizes'
     },
     {
-      'Order ID': 'CA-2015-167199',
-      'Customer ID': 'ME-17320',
-      Category: 'Office Supplies',
-      'Product Name': 'Southworth 25% Cotton Granite Paper & Envelopes'
+      'ID Заказа': 'CA-2015-167199',
+      'пользовательскийer ID': 'ME-17320',
+      категория: 'Office Supplies',
+      'Product имя': 'Southworth 25% Cotton Granite Paper & Envelopes'
     },
     {
-      'Order ID': 'CA-2015-105417',
-      'Customer ID': 'VS-21820',
-      Category: 'Furniture',
-      'Product Name': 'Howard Miller 14-1/2" Diameter Chrome Round Wall Clock'
+      'ID Заказа': 'CA-2015-105417',
+      'пользовательскийer ID': 'VS-21820',
+      категория: 'Furniture',
+      'Product имя': 'Howard Miller 14-1/2" Diameter Chrome Round Wall Clock'
     },
     {
-      'Order ID': 'CA-2015-105417',
-      'Customer ID': 'VS-21820',
-      Category: 'Office Supplies',
-      'Product Name': 'Acco Four Pocket Poly Ring Binder with Label Holder, Smoke, 1"'
+      'ID Заказа': 'CA-2015-105417',
+      'пользовательскийer ID': 'VS-21820',
+      категория: 'Office Supplies',
+      'Product имя': 'Acco Four Pocket Poly Ring Binder с Label Holder, Smхорошоe, 1"'
     },
     {
-      'Order ID': 'CA-2015-135405',
-      'Customer ID': 'MS-17830',
-      Category: 'Office Supplies',
-      'Product Name': 'Newell 312'
+      'ID Заказа': 'CA-2015-135405',
+      'пользовательскийer ID': 'MS-17830',
+      категория: 'Office Supplies',
+      'Product имя': 'Newell 312'
     },
     {
-      'Order ID': 'CA-2015-135405',
-      'Customer ID': 'MS-17830',
-      Category: 'Technology',
-      'Product Name': 'Memorex Micro Travel Drive 8 GB'
+      'ID Заказа': 'CA-2015-135405',
+      'пользовательскийer ID': 'MS-17830',
+      категория: 'Technology',
+      'Product имя': 'Memorex Micro Travel Drive 8 GB'
     },
     {
-      'Order ID': 'CA-2015-149020',
-      'Customer ID': 'AJ-10780',
-      Category: 'Office Supplies',
-      'Product Name': 'Avery 482'
+      'ID Заказа': 'CA-2015-149020',
+      'пользовательскийer ID': 'AJ-10780',
+      категория: 'Office Supplies',
+      'Product имя': 'Avery 482'
     },
     {
-      'Order ID': 'CA-2015-149020',
-      'Customer ID': 'AJ-10780',
-      Category: 'Furniture',
-      'Product Name': 'Howard Miller 11-1/2" Diameter Ridgewood Wall Clock'
+      'ID Заказа': 'CA-2015-149020',
+      'пользовательскийer ID': 'AJ-10780',
+      категория: 'Furniture',
+      'Product имя': 'Howard Miller 11-1/2" Diameter Ridgewood Wall Clock'
     }
   ],
   columns: [
     {
-      field: 'Order ID',
-      title: 'Order ID',
-      width: 'auto',
-      sort: true
+      поле: 'ID Заказа',
+      заголовок: 'ID Заказа',
+      ширина: 'авто',
+      сортировка: true
     },
     {
-      field: 'Customer ID',
-      title: 'Customer ID',
-      width: 'auto'
+      поле: 'пользовательскийer ID',
+      заголовок: 'пользовательскийer ID',
+      ширина: 'авто'
     },
     {
-      field: 'Product Name',
-      title: 'Product Name',
-      width: 'auto'
+      поле: 'Product имя',
+      заголовок: 'Product имя',
+      ширина: 'авто'
     },
     {
-      field: 'Category',
-      title: 'Category',
-      width: 'auto'
+      поле: 'Категория',
+      заголовок: 'Категория',
+      ширина: 'авто'
     }
   ],
-  widthMode: 'standard'
+  ширинаMode: 'standard'
 };
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-window['tableInstance'] = tableInstance;
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+window['таблицаInstance'] = таблицаInstance;
 ```
 
-5. Enter commands and click the Run button to execute test cases
+5. Enter commands и Нажать the Run Кнопка к execute test cases
 
-- Execute interaction command: Click the sort button on the right side of Order ID in the first column
+- Execute interaction command: Нажать the сортировка Кнопка на the право side из ID Заказа в the первый column
 
-<div style="width: 40%; text-align: center;">
-  <video src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/midscene-vtable-action.mp4" controls style="width: 100%"></video>
+<div style="ширина: 40%; текст-align: центр;">
+  <video src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/midscene-vтаблица-action.mp4" controls style="ширина: 100%"></video>
 </div>
 
-- Execute query command: Get the content of the first row in the first column currently displayed in the table
+- Execute query command: Get the content из the первый row в the первый column currently displayed в the таблица
 
-<div style="width: 40%; text-align: center;">
-  <video src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/midscene-vtable-query.mp4" controls style="width: 100%"></video>
+<div style="ширина: 40%; текст-align: центр;">
+  <video src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/midscene-vтаблица-query.mp4" controls style="ширина: 100%"></video>
 </div>
 
-- Execute assertion command: Assert that the content of the first row in the second column is DP-13000
+- Execute assertion command: Assert that the content из the первый row в the second column is DP-13000
 
-<div style="width: 40%; text-align: center;">
-  <video src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/midscene-vtable-assert.mp4" controls style="width: 100%"></video>
+<div style="ширина: 40%; текст-align: центр;">
+  <video src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/midscene-vтаблица-assert.mp4" controls style="ширина: 100%"></video>
 </div>
 
-## Writing Automated Test Scripts with Puppeteer
+## Writing автоmated Test Scripts с Puppeteer
 
-Example repository: [https://github.com/VisActor/midscene-test-demo](https://github.com/VisActor/midscene-test-demo)
+пример repository: [https://github.com/VisActor/midscene-test-демонстрация](https://github.com/VisActor/midscene-test-демонстрация)
 
-### Running the Example Code
+### Running the пример код
 
-1. Clone the repository and run `pnpm install` to install dependencies
-2. Create a `.env` file and configure the large language model
+1. Clone the repository и run `pnpm install` к install dependencies
+2. Create a `.env` file и configure the large languвозраст model
 
 ```
-# replace by your own, example(qwen):
+# replace по your own, пример(qwen):
 OPENAI_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1"
-OPENAI_API_KEY="YOUR_TOKEN"
-MIDSCENE_MODEL_NAME="qwen-vl-max-latest"
+OPENAI_апи_KEY="YOUR_TхорошоEN"
+MIDSCENE_MODEL_имя="qwen-vl-max-latest"
 MIDSCENE_USE_QWEN_VL=1
 ```
 
 3. Run the tests
 
 ```
-# run vchart demo
-pnpm run start-test-vchart
+# run vграфик демонстрация
+pnpm run начало-test-vграфик
 
-# run vtable demo
-pnpm run start-test-vtable
+# run vтаблица демонстрация
+pnpm run начало-test-vтаблица
 ```
 
-### Example Code Explanation
+### пример код Explanation
 
-Test code is in `test/vtable-test.ts`
+Test код is в `test/vтаблица-test.ts`
 
-1. Create browser & page, open test URL
+1. Create browser & pвозраст, открыть test URL
 
 ```ts
 const browser = await puppeteer.launch({
   headless: false, // 'true' means we can't see the browser window
-  args: ['--no-sandbox', '--disable-setuid-sandbox']
+  args: ['--no-sandbox', '--отключить-setuid-sandbox']
 });
 
-const page = await browser.newPage();
-await page.setViewport({
-  width: 1280,
-  height: 768,
-  deviceScaleFactor: os.platform() === 'darwin' ? 2 : 1 // this is used to avoid flashing on UI Mode when doing screenshot on Mac
+const pвозраст = await browser.newPвозраст();
+await pвозраст.setViewport({
+  ширина: 1280,
+  высота: 768,
+  deviceScaleFactor: os.platform() === 'darwin' ? 2 : 1 // this is used к avoid flashing на UI Mode when doing screenshot на Mac
 });
 
-await page.goto(URL);
+await pвозраст.goto(URL);
 ```
 
-2. Insert VTable code to create table
+2. Insert Vтаблица код к create таблица
 
 ```ts
-await page.evaluate(spec => {
+await pвозраст.evaluate(spec => {
   const CONTAINER_ID = 'visactor-container';
 
   // @ts-ignore
-  const vtable = new window.VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+  const vтаблица = новый window.Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
   // @ts-ignore
-  window.vtableInstance = vtable;
+  window.vтаблицаInstance = vтаблица;
 }, spec);
 
-// Wait for canvas creation and table rendering completion
-await page.waitForSelector('canvas');
+// Wait для canvas creation и таблица rendering completion
+await pвозраст.waitForSelector('canvas');
 ```
 
-3. Create Midscene agent and execute test commands
+3. Create Midscene возрастnt и execute test commands
 
 ```ts
-// init Midscene agent
-const agent = new PuppeteerAgent(page);
+// init Midscene возрастnt
+const возрастnt = новый Puppeteerвозрастnt(pвозраст);
 
-// Get the content of the first row in the first column
-const items = await agent.aiQuery('Get the content of the first row in the first column');
-console.log('Content of first row in first column:', items);
+// Get the content из the первый row в the первый column
+const items = await возрастnt.aiQuery('Get the content из the первый row в the первый column');
+console.log('Content из первый row в первый column:', items);
 
-// Click the sort button on the right side of Order ID in the first column
-await agent.aiAction('Click the sort button on the right side of Order ID in the first column');
+// Нажать the сортировка Кнопка на the право side из ID Заказа в the первый column
+await возрастnt.aiAction('Нажать the сортировка Кнопка на the право side из ID Заказа в the первый column');
 
-// Assert that the content of the second row in the first column is CA-2015-105417. Returns a Promise that resolves to void when assertion succeeds; throws an error with errorMsg and AI-generated reason if assertion fails
-await agent.aiAssert('The content of the second row in the first column is CA-2015-105417');
+// Assert that the content из the second row в the первый column is CA-2015-105417. Returns a Promise that resolves к void when assertion succeeds; throws an ошибка с errorMsg и AI-generated reason if assertion fails
+await возрастnt.aiAssert('The content из the second row в the первый column is CA-2015-105417');
 ```
 
-4. Take screenshot and compare with standard image
+4. Take screenshot и compare с standard imвозраст
 
 ```ts
-const screenshot = await page.screenshot();
+const screenshot = await pвозраст.screenshot();
 
-// Compare with standard image
-await diffImage('./test/images/vtable-test.png', screenshot, 'vtable-diff');
+// Compare с standard imвозраст
+await diffImвозраст('./test/imвозрастs/vтаблица-test.png', screenshot, 'vтаблица-diff');
 ```

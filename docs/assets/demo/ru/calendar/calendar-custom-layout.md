@@ -1,76 +1,76 @@
 ---
-category: examples
-group: Calendar
-title: Calendar
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calendar-weather.gif
-link: calendar/introduction
-option: Calendar#startDate
+категория: примеры
+группа: календарь
+заголовок: календарь
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/календарь-weather.gif
+ссылка: календарь/introduction
+опция: календарь#startDate
 ---
 
-# Weather Calendar
+# Weather календарь
 
-Cell custom content, implement weather calendar.
+Cell пользовательский content, implement weather календарь.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `tableOptions` calendar table configuration (this configuration will be passed to the corresponding VTable instance for deep customization)
+- `таблицаOptions` календарь таблица configuration (this configuration will be passed к the corresponding Vтаблица instance для deep пользовательскийization)
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// import * as VRender from '@visactor/vtable/es/vrender';
+```javascript liveдемонстрация template=vтаблица
+// import * as VRender от '@visactor/vтаблица/es/vrender';
 
 const {
   createGroup,
-  GifImage,
+  GifImвозраст,
   container,
-  gifImageModule,
-  gifImageCanvasPickModule
+  gifImвозрастModule,
+  gifImвозрастCanvasPickModule
 } = VRender;
 
 const gifs = [
-  '/icons8-雨.gif',
-  '/icons8-夏季.gif',
-  '/icons8-多云兼雨.gif',
-  '/icons8-有风的天气.gif',
-  '/icons8-冬季.gif',
-  '/icons8-小雨2.gif',
-  '/icons8-瓢泼大雨.gif',
-  '/icons8-白天晴间多云.gif'
+  '/иконкаs8-雨.gif',
+  '/иконкаs8-夏季.gif',
+  '/иконкаs8-多云兼雨.gif',
+  '/иконкаs8-有风的天气.gif',
+  '/иконкаs8-冬季.gif',
+  '/иконкаs8-小雨2.gif',
+  '/иконкаs8-瓢泼大雨.gif',
+  '/иконкаs8-白天晴间多云.gif'
 ];
 
-container.load(gifImageModule);
-container.load(gifImageCanvasPickModule);
+container.load(gifImвозрастModule);
+container.load(gifImвозрастCanvasPickModule);
 
-const calendar = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
+const календарь = новый Vтаблицакалендарь.календарь(document.getElementById(CONTAINER_ID), {
   rangeDays: 20,
-  tableOptions: {
-    customLayout: args => {
-      const { table, row, col, rect } = args;
-      const record = table.getCellOriginRecord(col, row);
-      const { height, width } = rect ?? table.getCellRect(col, row);
+  таблицаOptions: {
+    пользовательскиймакет: args => {
+      const { таблица, row, col, rect } = args;
+      const record = таблица.getCellOriginRecord(col, row);
+      const { высота, ширина } = rect ?? таблица.getCellRect(col, row);
 
       const container = createGroup({
-        height,
-        width,
+        высота,
+        ширина,
         // fill: 'yellow',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'центр',
+        alignItems: 'центр',
         flexWrap: 'nowrap'
       });
 
       const gif = gifs[Math.floor(Math.random() * gifs.length)];
-      const image = new GifImage({
-        width: 50,
-        height: 50,
-        gifImage: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media' + gif
+      const imвозраст = новый GifImвозраст({
+        ширина: 50,
+        высота: 50,
+        gifImвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/media' + gif
       });
 
-      container.add(image);
+      container.add(imвозраст);
 
-      return {
+      возврат {
         rootContainer: container,
         renderDefault: true
       };
@@ -78,5 +78,5 @@ const calendar = new VTableCalendar.Calendar(document.getElementById(CONTAINER_I
   }
 });
 
-window['calendar'] = calendar;
+window['календарь'] = календарь;
 ```

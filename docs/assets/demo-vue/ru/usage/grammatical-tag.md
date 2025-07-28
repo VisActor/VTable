@@ -1,47 +1,47 @@
 ---
-category: examples
-group: usage
-title: Using Grammatical Tags
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-list-table.png
-order: 1-1
-link: Developer_Ecology/vue
+категория: примеры
+группа: usвозраст
+заголовок: Using Grammatical Tags
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/vue-список-таблица.png
+порядок: 1-1
+ссылка: Developer_Ecology/vue
 ---
 
 # Using Grammatical Tags
 
-Utilize grammatical tags to compose a complete table configuration, generating the table as a subcomponent.
+Utilize grammatical tags к compose a complete таблица configuration, generating the таблица as a subкомпонент.
 
-- ListColumn: List column, consistent with the definition in option's columns [api](../../option/ListTable-columns-text#cellType)
-- Can be combined with syntactic sugar to simplify code and improve readability
+- списокColumn: список column, consistent с the definition в option's columns [апи](../../option/списоктаблица-columns-текст#cellType)
+- Can be combined с syntactic sugar к simplify код и improve readability
 
-## Code Demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable-vue
+```javascript liveдемонстрация template=vтаблица-vue
 const app = createApp({
   template: `
-    <ListTable :options="tableOptions" >
-      <ListColumn v-for="(column, index) in columns" :key="index" :field="column.field" :title="column.title" />
-      <ListColumn field="4" title="Email" maxWidth="300"/>
-      <ListColumn field="5" title="Address" dragHeader="true"/>
-      <ListColumn field="6" title="Phone" dragHeader="true"/>
-      <ListColumn field="7" title="Status" dragHeader="true"/>
-    </ListTable>
+    <списоктаблица :options="таблицаOptions" >
+      <списокColumn v-для="(column, index) в columns" :key="index" :поле="column.поле" :title="column.title" />
+      <списокColumn поле="4" title="Email" maxширина="300"/>
+      <списокColumn поле="5" title="Address" dragHeader="true"/>
+      <списокColumn поле="6" title="Phone" dragHeader="true"/>
+      <списокColumn поле="7" title="Status" dragHeader="true"/>
+    </списоктаблица>
   `,
-  data() {
-    return {
+  данные() {
+    возврат {
       columns: [
-        { field: '0', title: 'Name' },
-        { field: '1', title: 'Age' },
-        { field: '2', title: 'Gender' },
-        { field: '3', title: 'Hobby' }
+        { поле: '0', заголовок: 'имя' },
+        { поле: '1', заголовок: 'возраст' },
+        { поле: '2', заголовок: 'пол' },
+        { поле: '3', заголовок: 'хобби' }
       ],
-      tableOptions: {
-        records: new Array(1000).fill([
+      таблицаOptions: {
+        records: новый массив(1000).fill([
           'Zhang San',
           18,
           'Male',
           '🏀',
-          '@example',
+          '@пример',
           'xxx.xxx.xxx.xxx',
           '12345678901',
           'Normal'
@@ -51,13 +51,13 @@ const app = createApp({
   }
 });
 
-app.component('ListTable', VueVTable.ListTable);
-app.component('ListColumn', VueVTable.ListColumn);
+app.компонент('списоктаблица', VueVтаблица.списоктаблица);
+app.компонент('списокColumn', VueVтаблица.списокColumn);
 
 app.mount(`#${CONTAINER_ID}`);
 
-// release Vue instance, do not copy
-window.customRelease = () => {
+// Релиз Vue instance, do не copy
+window.пользовательскийРелиз = () => {
   app.unmount();
 };
 ```

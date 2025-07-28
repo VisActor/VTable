@@ -1,350 +1,350 @@
-# VTable Troubleshooting and Debugging Guide
+# Vтаблица Troubleshooting и Debugging Guide
 
-This comprehensive guide helps you diagnose and resolve common issues when working with VTable, providing solutions for performance problems, rendering issues, data handling, and integration challenges.
+This comprehensive guide helps you diagnose и resolve common issues when working с Vтаблица, providing solutions для Производительность problems, rendering issues, данные handling, и integration challenges.
 
-## Common Issues and Solutions
+## Common Issues и Solutions
 
-### 1. Rendering and Display Issues
+### 1. Rendering и Display Issues
 
-#### Table Not Rendering
+#### таблица не Rendering
 
-**Problem**: Table container is empty or shows no content.
+**Problem**: таблица container is empty или shows no content.
 
-**Causes and Solutions**:
+**Causes и Solutions**:
 
 ```javascript
-// ❌ Problem: Missing container height
-const table = new ListTable({
-  container: document.getElementById('container'), // Container has height: 0
+// ❌ Problem: Missing container высота
+const таблица = новый списоктаблица({
+  container: document.getElementById('container'), // Container has высота: 0
   columns: columns,
-  records: data
+  records: данные
 });
 
-// ✅ Solution: Ensure container has explicit height
+// ✅ Solution: Ensure container has explicit высота
 const container = document.getElementById('container');
-container.style.height = '600px'; // Or use CSS
+container.style.высота = '600px'; // или use CSS
 
-const table = new ListTable({
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data
+  records: данные
 });
 ```
 
 ```css
 /* ✅ CSS Solution */
 #container {
-  width: 100%;
-  height: 600px; /* Explicit height required */
+  ширина: 100%;
+  высота: 600px; /* Explicit высота обязательный */
 }
 ```
 
-#### Columns Not Displaying Correctly
+#### Columns не Displaying Correctly
 
-**Problem**: Columns are missing, overlapping, or have incorrect widths.
+**Problem**: Columns are missing, overlapping, или have incorrect ширинаs.
 
 ```javascript
-// ❌ Problem: Missing required column properties
+// ❌ Problem: Missing обязательный column свойства
 const columns = [
-  { field: 'name' }, // Missing caption and width
-  { caption: 'Email' }, // Missing field
+  { поле: 'имя' }, // Missing caption и ширина
+  { caption: 'Email' }, // Missing поле
 ];
 
-// ✅ Solution: Provide all required properties
+// ✅ Solution: Provide все обязательный свойства
 const columns = [
-  { field: 'name', caption: 'Name', width: 150 },
-  { field: 'email', caption: 'Email', width: 200 },
+  { поле: 'имя', caption: 'имя', ширина: 150 },
+  { поле: 'email', caption: 'Email', ширина: 200 },
 ];
 
-// ✅ Auto-width solution
+// ✅ авто-ширина solution
 const columns = [
-  { field: 'name', caption: 'Name', minWidth: 100 },
-  { field: 'email', caption: 'Email', minWidth: 150 },
+  { поле: 'имя', caption: 'имя', minширина: 100 },
+  { поле: 'email', caption: 'Email', minширина: 150 },
 ];
 ```
 
 #### Canvas Rendering Issues
 
-**Problem**: Blurry text or pixelated rendering on high-DPI screens.
+**Problem**: Blurry текст или pixelated rendering на high-DPI screens.
 
 ```javascript
-// ❌ Problem: Not accounting for device pixel ratio
-const table = new ListTable({
+// ❌ Problem: не accounting для device pixel ratio
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data,
+  records: данные,
   renderMode: 'canvas'
 });
 
 // ✅ Solution: Set proper pixel ratio
-const table = new ListTable({
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data,
+  records: данные,
   renderMode: 'canvas',
   pixelRatio: window.devicePixelRatio || 1
 });
 ```
 
-### 2. Data Handling Issues
+### 2. данные Handling Issues
 
-#### Data Not Updating
+#### данные не Updating
 
-**Problem**: Table doesn't reflect data changes after modifying the records array.
+**Problem**: таблица doesn't reflect данные changes after modifying the records массив.
 
 ```javascript
-// ❌ Problem: Modifying data without notifying table
-data.push(newRecord);
-data[0].name = 'Updated Name';
+// ❌ Problem: Modifying данные без notifying таблица
+данные.push(newRecord);
+данные[0].имя = 'Updated имя';
 
-// ✅ Solution 1: Use table methods
-table.addRecord(newRecord);
-table.updateRecord(0, { name: 'Updated Name' });
+// ✅ Solution 1: Use таблица методы
+таблица.addRecord(newRecord);
+таблица.updateRecord(0, { имя: 'Updated имя' });
 
-// ✅ Solution 2: Replace entire dataset
-const newData = [...data, newRecord];
-table.updateOption({ records: newData });
+// ✅ Solution 2: Replace entire данныеset
+const newданные = [...данные, newRecord];
+таблица.updateOption({ records: newданные });
 ```
 
-#### Sorting and Filtering Not Working
+#### сортировкаing и Filtering не Working
 
-**Problem**: Built-in sorting/filtering doesn't work as expected.
+**Problem**: Built-в сортировкаing/filtering doesn't work as expected.
 
 ```javascript
-// ❌ Problem: Data format incompatible with sorting
-const data = [
-  { id: '10', value: '100' }, // Strings instead of numbers
-  { id: '2', value: '20' }
+// ❌ Problem: данные format incompatible с сортировкаing
+const данные = [
+  { id: '10', значение: '100' }, // Strings instead из numbers
+  { id: '2', значение: '20' }
 ];
 
-// ✅ Solution: Ensure correct data types
-const data = [
-  { id: 10, value: 100 },
-  { id: 2, value: 20 }
+// ✅ Solution: Ensure correct данные types
+const данные = [
+  { id: 10, значение: 100 },
+  { id: 2, значение: 20 }
 ];
 
-// ✅ Custom sort function for mixed types
+// ✅ пользовательский сортировка функция для mixed types
 const columns = [
   {
-    field: 'id',
+    поле: 'id',
     caption: 'ID',
-    sort: (a, b) => {
+    сортировка: (a, b) => {
       const numA = parseInt(a);
       const numB = parseInt(b);
-      return numA - numB;
+      возврат numA - numB;
     }
   }
 ];
 ```
 
-#### Large Dataset Performance Issues
+#### Large данныеset Производительность Issues
 
-**Problem**: Table becomes slow or unresponsive with large datasets.
+**Problem**: таблица becomes slow или unresponsive с large данныеsets.
 
 ```javascript
-// ❌ Problem: Loading all data at once
-const table = new ListTable({
+// ❌ Problem: загрузка все данные в once
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: millionRecords // Too much data
+  records: millionRecords // Too much данные
 });
 
 // ✅ Solution: Implement pagination
-const ITEMS_PER_PAGE = 1000;
-let currentPage = 0;
+const ITEMS_PER_Pвозраст = 1000;
+let currentPвозраст = 0;
 
-const table = new ListTable({
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: millionRecords.slice(0, ITEMS_PER_PAGE),
+  records: millionRecords.slice(0, ITEMS_PER_Pвозраст),
   
-  // Enable virtual scrolling
+  // включить virtual scrolling
   scrollMode: 'virtual',
-  estimatedRowHeight: 40
+  estimatedRowвысота: 40
 });
 
-// Load more data on scroll
-table.on('scroll', (e) => {
-  const { scrollTop, scrollHeight, clientHeight } = e;
-  const scrollPercentage = (scrollTop + clientHeight) / scrollHeight;
+// Load more данные на прокрутка
+таблица.на('прокрутка', (e) => {
+  const { scrollTop, scrollвысота, clientвысота } = e;
+  const scrollPercentвозраст = (scrollTop + clientвысота) / scrollвысота;
   
-  if (scrollPercentage > 0.9) {
-    const nextPage = currentPage + 1;
-    const start = nextPage * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    const nextData = millionRecords.slice(start, end);
+  if (scrollPercentвозраст > 0.9) {
+    const nextPвозраст = currentPвозраст + 1;
+    const начало = nextPвозраст * ITEMS_PER_Pвозраст;
+    const конец = начало + ITEMS_PER_Pвозраст;
+    const nextданные = millionRecords.slice(начало, конец);
     
-    if (nextData.length > 0) {
-      table.addRecords(nextData);
-      currentPage = nextPage;
+    if (nextданные.length > 0) {
+      таблица.addRecords(nextданные);
+      currentPвозраст = nextPвозраст;
     }
   }
 });
 ```
 
-### 3. Event Handling Issues
+### 3. событие Handling Issues
 
-#### Events Not Firing
+#### событиеs не Firing
 
-**Problem**: Event listeners don't trigger or receive unexpected data.
+**Problem**: событие списокeners don't trigger или receive unexpected данные.
 
 ```javascript
-// ❌ Problem: Incorrect event names or timing
-const table = new ListTable({
+// ❌ Problem: Incorrect событие имяs или timing
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data
+  records: данные
 });
 
-// Event listener added before table is ready
-table.on('click_cell', (event) => {
-  console.log(event); // May not fire
+// событие списокener added before таблица is ready
+таблица.на('Нажать_cell', (событие) => {
+  console.log(событие); // May не fire
 });
 
-// ✅ Solution: Use correct event names and timing
-table.on('ready', () => {
-  table.on('click_cell', (event) => {
-    console.log('Cell clicked:', event);
+// ✅ Solution: Use correct событие имяs и timing
+таблица.на('ready', () => {
+  таблица.на('Нажать_cell', (событие) => {
+    console.log('Cell Нажатьed:', событие);
   });
   
-  table.on('after_cell_edit', (event) => {
-    console.log('Cell edited:', event);
+  таблица.на('after_cell_edit', (событие) => {
+    console.log('Cell edited:', событие);
   });
 });
 ```
 
-#### Memory Leaks from Event Listeners
+#### Memory Leaks от событие списокeners
 
-**Problem**: Event listeners not properly cleaned up.
+**Problem**: событие списокeners не properly cleaned up.
 
 ```javascript
 // ❌ Problem: No cleanup
-function createTable() {
-  const table = new ListTable(config);
+функция createтаблица() {
+  const таблица = новый списоктаблица(config);
   
-  table.on('click_cell', handler);
-  // No cleanup when table is destroyed
+  таблица.на('Нажать_cell', handler);
+  // No cleanup when таблица is destroyed
 }
 
 // ✅ Solution: Proper cleanup
-class TableManager {
+class таблицаManвозрастr {
   constructor(config) {
-    this.table = new ListTable(config);
-    this.handlers = new Map();
-    this.setupEventListeners();
+    this.таблица = новый списоктаблица(config);
+    this.handlers = новый Map();
+    this.setupсобытиесписокeners();
   }
   
-  setupEventListeners() {
-    const clickHandler = (event) => console.log('Click:', event);
-    const editHandler = (event) => console.log('Edit:', event);
+  setupсобытиесписокeners() {
+    const НажатьHandler = (событие) => console.log('Нажать:', событие);
+    const editHandler = (событие) => console.log('Edit:', событие);
     
-    this.table.on('click_cell', clickHandler);
-    this.table.on('after_cell_edit', editHandler);
+    this.таблица.на('Нажать_cell', НажатьHandler);
+    this.таблица.на('after_cell_edit', editHandler);
     
-    // Store handlers for cleanup
-    this.handlers.set('click_cell', clickHandler);
+    // Store handlers для cleanup
+    this.handlers.set('Нажать_cell', НажатьHandler);
     this.handlers.set('after_cell_edit', editHandler);
   }
   
   destroy() {
-    // Remove all event listeners
-    this.handlers.forEach((handler, event) => {
-      this.table.off(event, handler);
+    // Remove все событие списокeners
+    this.handlers.forEach((handler, событие) => {
+      this.таблица.off(событие, handler);
     });
     
-    // Release table resources
-    this.table.release();
+    // Релиз таблица resources
+    this.таблица.Релиз();
     
     // Clear references
     this.handlers.clear();
-    this.table = null;
+    this.таблица = null;
   }
 }
 ```
 
-### 4. Styling and Theme Issues
+### 4. Styling и тема Issues
 
-#### Custom Styles Not Applied
+#### пользовательский Styles не Applied
 
-**Problem**: CSS styles don't affect table appearance.
+**Problem**: CSS styles don't affect таблица appearance.
 
 ```css
-/* ❌ Problem: Styles not specific enough */
-.table-cell {
-  background-color: red; /* Won't work */
+/* ❌ Problem: Styles не specific enough */
+.таблица-cell {
+  фон-цвет: red; /* Won't work */
 }
 
 /* ✅ Solution: Use proper selectors */
-.vtable .vtable-cell {
-  background-color: red;
+.vтаблица .vтаблица-cell {
+  фон-цвет: red;
 }
 
-/* ✅ Or use !important (last resort) */
-.custom-table .vtable-cell {
-  background-color: red !important;
+/* ✅ или use !important (последний reсортировка) */
+.пользовательский-таблица .vтаблица-cell {
+  фон-цвет: red !important;
 }
 ```
 
 ```javascript
-// ✅ Solution: Use table's built-in styling options
-const table = new ListTable({
+// ✅ Solution: Use таблица's built-в styling options
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data,
+  records: данные,
   
-  theme: {
+  тема: {
     defaultStyle: {
       bgColor: '#ffffff',
-      color: '#333333'
+      цвет: '#333333'
     },
     headerStyle: {
       bgColor: '#f5f5f5',
-      color: '#333333',
+      цвет: '#333333',
       fontWeight: 'bold'
     }
   }
 });
 ```
 
-#### Theme Not Loading
+#### тема не загрузка
 
-**Problem**: Custom theme configuration doesn't take effect.
+**Problem**: пользовательский тема configuration doesn't take effect.
 
 ```javascript
-// ❌ Problem: Incorrect theme structure
-const theme = {
+// ❌ Problem: Incorrect тема structure
+const тема = {
   colors: {
     primary: '#007bff' // Wrong structure
   }
 };
 
-// ✅ Solution: Use correct theme structure
-const theme = {
+// ✅ Solution: Use correct тема structure
+const тема = {
   defaultStyle: {
     bgColor: '#ffffff',
-    color: '#333333',
+    цвет: '#333333',
     borderColor: '#e0e0e0'
   },
   headerStyle: {
     bgColor: '#f8f9fa',
-    color: '#495057',
+    цвет: '#495057',
     fontWeight: 'bold'
   },
   bodyStyle: {
     bgColor: '#ffffff',
-    color: '#495057'
+    цвет: '#495057'
   },
   frameStyle: {
     borderColor: '#dee2e6',
-    borderWidth: 1
+    borderширина: 1
   }
 };
 
-const table = new ListTable({
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data,
-  theme: theme
+  records: данные,
+  тема: тема
 });
 ```
 
@@ -352,88 +352,88 @@ const table = new ListTable({
 
 #### React Integration Problems
 
-**Problem**: Table not updating when React state changes.
+**Problem**: таблица не updating when React state changes.
 
 ```jsx
-// ❌ Problem: Props not properly watched
-function MyTable({ data, columns }) {
-  const tableRef = useRef();
+// ❌ Problem: Props не properly watched
+функция Myтаблица({ данные, columns }) {
+  const таблицаRef = useRef();
   
-  // Table doesn't update when data changes
+  // таблица doesn't update when данные changes
   useEffect(() => {
-    const table = new ListTable({
-      container: tableRef.current,
+    const таблица = новый списоктаблица({
+      container: таблицаRef.текущий,
       columns: columns,
-      records: data
+      records: данные
     });
-  }, []); // Empty dependency array
+  }, []); // Empty dependency массив
   
-  return <div ref={tableRef} />;
+  возврат <div ref={таблицаRef} />;
 }
 
-// ✅ Solution: Watch props and update table
-function MyTable({ data, columns }) {
-  const tableRef = useRef();
-  const tableInstanceRef = useRef();
+// ✅ Solution: Watch props и update таблица
+функция Myтаблица({ данные, columns }) {
+  const таблицаRef = useRef();
+  const таблицаInstanceRef = useRef();
   
-  // Create table once
+  // Create таблица once
   useEffect(() => {
-    tableInstanceRef.current = new ListTable({
-      container: tableRef.current,
+    таблицаInstanceRef.текущий = новый списоктаблица({
+      container: таблицаRef.текущий,
       columns: columns,
-      records: data
+      records: данные
     });
     
-    return () => {
-      if (tableInstanceRef.current) {
-        tableInstanceRef.current.release();
+    возврат () => {
+      if (таблицаInstanceRef.текущий) {
+        таблицаInstanceRef.текущий.Релиз();
       }
     };
   }, []);
   
-  // Update data when props change
+  // Update данные when props change
   useEffect(() => {
-    if (tableInstanceRef.current) {
-      tableInstanceRef.current.updateOption({ records: data });
+    if (таблицаInstanceRef.текущий) {
+      таблицаInstanceRef.текущий.updateOption({ records: данные });
     }
-  }, [data]);
+  }, [данные]);
   
   // Update columns when they change
   useEffect(() => {
-    if (tableInstanceRef.current) {
-      tableInstanceRef.current.updateOption({ columns: columns });
+    if (таблицаInstanceRef.текущий) {
+      таблицаInstanceRef.текущий.updateOption({ columns: columns });
     }
   }, [columns]);
   
-  return <div ref={tableRef} style={{ height: '600px' }} />;
+  возврат <div ref={таблицаRef} style={{ высота: '600px' }} />;
 }
 ```
 
 #### Vue Integration Problems
 
-**Problem**: Reactivity not working with VTable.
+**Problem**: Reactivity не working с Vтаблица.
 
 ```vue
-<!-- ❌ Problem: Direct mutation not detected -->
+<!-- ❌ Problem: Direct mutation не detected -->
 <template>
   <div>
-    <button @click="updateData">Update</button>
-    <VTable :records="data" :columns="columns" />
+    <Кнопка @Нажать="updateданные">Update</Кнопка>
+    <Vтаблица :records="данные" :columns="columns" />
   </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      data: [{ id: 1, name: 'John' }],
-      columns: [{ field: 'id' }, { field: 'name' }]
+export по умолчанию {
+  данные() {
+    возврат {
+      данные: [{ id: 1, имя: 'John' }],
+      columns: [{ поле: 'id' }, { поле: 'имя' }]
     };
   },
-  methods: {
-    updateData() {
+  методы: {
+    updateданные() {
       // This won't trigger reactivity
-      this.data[0].name = 'Jane';
+      this.данные[0].имя = 'Jane';
     }
   }
 };
@@ -444,29 +444,29 @@ export default {
 <!-- ✅ Solution: Use Vue's reactivity correctly -->
 <template>
   <div>
-    <button @click="updateData">Update</button>
-    <VTable :records="data" :columns="columns" />
+    <Кнопка @Нажать="updateданные">Update</Кнопка>
+    <Vтаблица :records="данные" :columns="columns" />
   </div>
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue от 'vue';
 
-export default {
-  data() {
-    return {
-      data: [{ id: 1, name: 'John' }],
-      columns: [{ field: 'id' }, { field: 'name' }]
+export по умолчанию {
+  данные() {
+    возврат {
+      данные: [{ id: 1, имя: 'John' }],
+      columns: [{ поле: 'id' }, { поле: 'имя' }]
     };
   },
-  methods: {
-    updateData() {
-      // Vue 2: Use Vue.set or replace array
-      Vue.set(this.data[0], 'name', 'Jane');
-      // Or: this.data = [...this.data];
+  методы: {
+    updateданные() {
+      // Vue 2: Use Vue.set или replace массив
+      Vue.set(this.данные[0], 'имя', 'Jane');
+      // или: this.данные = [...this.данные];
       
       // Vue 3: Direct mutation works
-      // this.data[0].name = 'Jane';
+      // this.данные[0].имя = 'Jane';
     }
   }
 };
@@ -475,189 +475,189 @@ export default {
 
 ## Debugging Techniques
 
-### 1. Enable Debug Mode
+### 1. включить Debug Mode
 
 ```javascript
-// Enable debug logging
-const table = new ListTable({
+// включить debug logging
+const таблица = новый списоктаблица({
   container: container,
   columns: columns,
-  records: data,
+  records: данные,
   
-  // Enable debug mode
+  // включить debug mode
   debug: true,
   
-  // Custom logging
-  logLevel: 'debug' // 'error', 'warn', 'info', 'debug'
+  // пользовательский logging
+  logLevel: 'debug' // 'ошибка', 'warn', 'информация', 'debug'
 });
 
 // Access debug information
-console.log('Table state:', table.getTableState());
-console.log('Render info:', table.getRenderInfo());
+console.log('таблица state:', таблица.getтаблицаState());
+console.log('Render информация:', таблица.getRenderInfo());
 ```
 
-### 2. Performance Monitoring
+### 2. Производительность Monitoring
 
 ```javascript
-class PerformanceDebugger {
-  constructor(table) {
-    this.table = table;
+class ПроизводительностьDebugger {
+  constructor(таблица) {
+    this.таблица = таблица;
     this.metrics = {
       renderTimes: [],
-      eventTimes: [],
-      dataUpdateTimes: []
+      событиеTimes: [],
+      данныеUpdateTimes: []
     };
     
     this.setupMonitoring();
   }
   
   setupMonitoring() {
-    // Monitor render performance
-    const originalRender = this.table.render;
-    this.table.render = (...args) => {
-      const start = performance.now();
-      const result = originalRender.apply(this.table, args);
-      const duration = performance.now() - start;
+    // Monitor render Производительность
+    const originalRender = this.таблица.render;
+    this.таблица.render = (...args) => {
+      const начало = Производительность.now();
+      const result = originalRender.apply(this.таблица, args);
+      const duration = Производительность.now() - начало;
       
       this.metrics.renderTimes.push(duration);
       if (duration > 16) { // > 60fps
         console.warn(`Slow render: ${duration}ms`);
       }
       
-      return result;
+      возврат result;
     };
     
-    // Monitor event handling
-    const originalOn = this.table.on;
-    this.table.on = (event, handler) => {
+    // Monitor событие handling
+    const originalOn = this.таблица.на;
+    this.таблица.на = (событие, handler) => {
       const wrappedHandler = (...args) => {
-        const start = performance.now();
+        const начало = Производительность.now();
         const result = handler.apply(this, args);
-        const duration = performance.now() - start;
+        const duration = Производительность.now() - начало;
         
-        this.metrics.eventTimes.push({ event, duration });
+        this.metrics.событиеTimes.push({ событие, duration });
         if (duration > 10) {
-          console.warn(`Slow event handler for ${event}: ${duration}ms`);
+          console.warn(`Slow событие handler для ${событие}: ${duration}ms`);
         }
         
-        return result;
+        возврат result;
       };
       
-      return originalOn.call(this.table, event, wrappedHandler);
+      возврат originalOn.call(this.таблица, событие, wrappedHandler);
     };
   }
   
   getReport() {
-    const avgRenderTime = this.getAverage(this.metrics.renderTimes);
-    const slowEvents = this.metrics.eventTimes.filter(e => e.duration > 10);
+    const avgRenderTime = this.getAverвозраст(this.metrics.renderTimes);
+    const slowсобытиеs = this.metrics.событиеTimes.filter(e => e.duration > 10);
     
-    return {
-      averageRenderTime: avgRenderTime,
+    возврат {
+      averвозрастRenderTime: avgRenderTime,
       slowRenders: this.metrics.renderTimes.filter(t => t > 16).length,
-      slowEvents: slowEvents,
-      recommendations: this.getRecommendations(avgRenderTime, slowEvents)
+      slowсобытиеs: slowсобытиеs,
+      recommendations: this.getRecommendations(avgRenderTime, slowсобытиеs)
     };
   }
   
-  getAverage(array) {
-    return array.length > 0 ? array.reduce((a, b) => a + b) / array.length : 0;
+  getAverвозраст(массив) {
+    возврат массив.length > 0 ? массив.reduce((a, b) => a + b) / массив.length : 0;
   }
   
-  getRecommendations(avgRenderTime, slowEvents) {
+  getRecommendations(avgRenderTime, slowсобытиеs) {
     const recommendations = [];
     
     if (avgRenderTime > 16) {
       recommendations.push('Consider using canvas rendering mode');
-      recommendations.push('Reduce column complexity or use virtual scrolling');
+      recommendations.push('Reduce column complexity или use virtual scrolling');
     }
     
-    if (slowEvents.length > 0) {
-      recommendations.push('Optimize event handlers - consider debouncing');
+    if (slowсобытиеs.length > 0) {
+      recommendations.push('Optimize событие handlers - consider debouncing');
     }
     
-    return recommendations;
+    возврат recommendations;
   }
 }
 
-// Usage
-const debugger = new PerformanceDebugger(table);
+// Usвозраст
+const debugger = новый ПроизводительностьDebugger(таблица);
 
-// Get performance report
+// Get Производительность report
 setTimeout(() => {
-  console.log('Performance Report:', debugger.getReport());
+  console.log('Производительность Report:', debugger.getReport());
 }, 10000);
 ```
 
-### 3. Data Validation
+### 3. данные Validation
 
 ```javascript
-class DataValidator {
+class данныеValidator {
   static validateColumns(columns) {
     const errors = [];
-    const fields = new Set();
+    const полеs = новый Set();
     
     columns.forEach((column, index) => {
-      // Check required properties
-      if (!column.field) {
-        errors.push(`Column ${index}: Missing 'field' property`);
+      // Check обязательный свойства
+      if (!column.поле) {
+        errors.push(`Column ${index}: Missing 'поле' property`);
       }
       
       if (!column.caption) {
         errors.push(`Column ${index}: Missing 'caption' property`);
       }
       
-      // Check for duplicate fields
-      if (column.field && fields.has(column.field)) {
-        errors.push(`Column ${index}: Duplicate field '${column.field}'`);
+      // Check для duplicate полеs
+      if (column.поле && полеs.has(column.поле)) {
+        errors.push(`Column ${index}: Duplicate поле '${column.поле}'`);
       }
-      fields.add(column.field);
+      полеs.add(column.поле);
       
-      // Check width
-      if (column.width && (column.width < 0 || column.width > 2000)) {
-        errors.push(`Column ${index}: Invalid width ${column.width}`);
+      // Check ширина
+      if (column.ширина && (column.ширина < 0 || column.ширина > 2000)) {
+        errors.push(`Column ${index}: Invalid ширина ${column.ширина}`);
       }
     });
     
-    return errors;
+    возврат errors;
   }
   
-  static validateData(data, columns) {
+  static validateданные(данные, columns) {
     const errors = [];
-    const columnFields = columns.map(col => col.field);
+    const columnполеs = columns.map(col => col.поле);
     
-    data.forEach((record, index) => {
-      // Check if record is object
-      if (typeof record !== 'object' || record === null) {
-        errors.push(`Record ${index}: Must be an object`);
-        return;
+    данные.forEach((record, index) => {
+      // Check if record is объект
+      if (typeof record !== 'объект' || record === null) {
+        errors.push(`Record ${index}: Must be an объект`);
+        возврат;
       }
       
-      // Check for missing fields
-      columnFields.forEach(field => {
-        if (!(field in record)) {
-          errors.push(`Record ${index}: Missing field '${field}'`);
+      // Check для missing полеs
+      columnполеs.forEach(поле => {
+        if (!(поле в record)) {
+          errors.push(`Record ${index}: Missing поле '${поле}'`);
         }
       });
       
-      // Check data types (if specified in columns)
+      // Check данные types (if specified в columns)
       columns.forEach(column => {
-        if (column.dataType && record[column.field] !== undefined) {
-          const value = record[column.field];
+        if (column.данныеType && record[column.поле] !== undefined) {
+          const значение = record[column.поле];
           
-          switch (column.dataType) {
-            case 'number':
-              if (typeof value !== 'number') {
-                errors.push(`Record ${index}: Field '${column.field}' should be number, got ${typeof value}`);
+          switch (column.данныеType) {
+            case 'число':
+              if (typeof значение !== 'число') {
+                errors.push(`Record ${index}: поле '${column.поле}' should be число, got ${typeof значение}`);
               }
               break;
-            case 'string':
-              if (typeof value !== 'string') {
-                errors.push(`Record ${index}: Field '${column.field}' should be string, got ${typeof value}`);
+            case 'строка':
+              if (typeof значение !== 'строка') {
+                errors.push(`Record ${index}: поле '${column.поле}' should be строка, got ${typeof значение}`);
               }
               break;
             case 'date':
-              if (!(value instanceof Date) && !Date.parse(value)) {
-                errors.push(`Record ${index}: Field '${column.field}' should be valid date`);
+              if (!(значение instanceof Date) && !Date.parse(значение)) {
+                errors.push(`Record ${index}: поле '${column.поле}' should be valid date`);
               }
               break;
           }
@@ -665,26 +665,26 @@ class DataValidator {
       });
     });
     
-    return errors;
+    возврат errors;
   }
   
-  static validate(columns, data) {
+  static validate(columns, данные) {
     const columnErrors = this.validateColumns(columns);
-    const dataErrors = this.validateData(data, columns);
+    const данныеErrors = this.validateданные(данные, columns);
     
-    return {
-      isValid: columnErrors.length === 0 && dataErrors.length === 0,
+    возврат {
+      isValid: columnErrors.length === 0 && данныеErrors.length === 0,
       columnErrors,
-      dataErrors,
-      allErrors: [...columnErrors, ...dataErrors]
+      данныеErrors,
+      allErrors: [...columnErrors, ...данныеErrors]
     };
   }
 }
 
-// Usage
-const validation = DataValidator.validate(columns, data);
+// Usвозраст
+const validation = данныеValidator.validate(columns, данные);
 if (!validation.isValid) {
-  console.error('Data validation failed:', validation.allErrors);
+  console.ошибка('данные validation failed:', validation.allErrors);
 }
 ```
 
@@ -699,16 +699,16 @@ class CompatibilityChecker {
       requestAnimationFrame: typeof requestAnimationFrame !== 'undefined',
       devicePixelRatio: typeof window.devicePixelRatio !== 'undefined',
       flexbox: this.supportsFlexbox(),
-      intersectionObserver: 'IntersectionObserver' in window
+      intersectionObserver: 'IntersectionObserver' в window
     };
     
-    const unsupported = Object.keys(support).filter(key => !support[key]);
+    const unsupported = объект.keys(support).filter(key => !support[key]);
     
     if (unsupported.length > 0) {
-      console.warn('Browser lacks support for:', unsupported);
+      console.warn('Browser lacks support для:', unsupported);
     }
     
-    return {
+    возврат {
       supported: unsupported.length === 0,
       missing: unsupported,
       details: support
@@ -718,7 +718,7 @@ class CompatibilityChecker {
   static supportsFlexbox() {
     const div = document.createElement('div');
     div.style.display = 'flex';
-    return div.style.display === 'flex';
+    возврат div.style.display === 'flex';
   }
   
   static getPolyfillRecommendations(missing) {
@@ -729,34 +729,34 @@ class CompatibilityChecker {
     }
     
     if (missing.includes('intersectionObserver')) {
-      recommendations.push('Include IntersectionObserver polyfill for virtual scrolling');
+      recommendations.push('Include IntersectionObserver polyfill для virtual scrolling');
     }
     
     if (missing.includes('es6')) {
-      recommendations.push('Use Babel to transpile ES6 features');
+      recommendations.push('Use Babel к transpile ES6 возможности');
     }
     
-    return recommendations;
+    возврат recommendations;
   }
 }
 
-// Check compatibility on initialization
+// Check compatibility на initialization
 const compatibility = CompatibilityChecker.checkBrowserSupport();
 if (!compatibility.supported) {
   console.warn('Compatibility issues detected:', compatibility.missing);
   const recommendations = CompatibilityChecker.getPolyfillRecommendations(compatibility.missing);
-  console.info('Recommendations:', recommendations);
+  console.информация('Recommendations:', recommendations);
 }
 ```
 
-## Error Recovery Strategies
+## ошибка Recovery Strategies
 
-### 1. Graceful Error Handling
+### 1. Graceful ошибка Handling
 
 ```javascript
-class ErrorRecoveryManager {
-  constructor(table) {
-    this.table = table;
+class ErrorRecoveryManвозрастr {
+  constructor(таблица) {
+    this.таблица = таблица;
     this.errorCount = 0;
     this.maxErrors = 5;
     this.lastError = null;
@@ -765,80 +765,80 @@ class ErrorRecoveryManager {
   }
   
   setupErrorHandling() {
-    // Wrap table methods with error handling
+    // Wrap таблица методы с ошибка handling
     this.wrapMethod('render');
-    this.wrapMethod('updateData');
+    this.wrapMethod('updateданные');
     this.wrapMethod('addRecord');
     
     // Handle unhandled errors
-    window.addEventListener('error', (event) => {
-      if (this.isTableRelatedError(event.error)) {
-        this.handleError(event.error);
+    window.addсобытиесписокener('ошибка', (событие) => {
+      if (this.isтаблицаRelatedError(событие.ошибка)) {
+        this.handleError(событие.ошибка);
       }
     });
   }
   
-  wrapMethod(methodName) {
-    const originalMethod = this.table[methodName];
-    if (!originalMethod) return;
+  wrapMethod(methodимя) {
+    const originalMethod = this.таблица[methodимя];
+    if (!originalMethod) возврат;
     
-    this.table[methodName] = (...args) => {
+    this.таблица[methodимя] = (...args) => {
       try {
-        return originalMethod.apply(this.table, args);
-      } catch (error) {
-        this.handleError(error, methodName);
-        return this.getRecoveryValue(methodName);
+        возврат originalMethod.apply(this.таблица, args);
+      } catch (ошибка) {
+        this.handleError(ошибка, methodимя);
+        возврат this.getRecoveryValue(methodимя);
       }
     };
   }
   
-  handleError(error, context = 'unknown') {
+  handleError(ошибка, context = 'unknown') {
     this.errorCount++;
-    this.lastError = { error, context, timestamp: Date.now() };
+    this.lastError = { ошибка, context, timestamp: Date.now() };
     
-    console.error(`VTable error in ${context}:`, error);
+    console.ошибка(`Vтаблица ошибка в ${context}:`, ошибка);
     
     // Attempt recovery
     if (this.errorCount < this.maxErrors) {
-      this.attemptRecovery(error, context);
+      this.attemptRecovery(ошибка, context);
     } else {
       this.performFullRecovery();
     }
   }
   
-  attemptRecovery(error, context) {
+  attemptRecovery(ошибка, context) {
     switch (context) {
       case 'render':
-        // Try to re-render with simplified options
-        setTimeout(() => this.table.render(), 100);
+        // Try к re-render с simplified options
+        setTimeout(() => this.таблица.render(), 100);
         break;
         
-      case 'updateData':
-        // Reset to last known good state
-        console.warn('Reverting to previous data state');
+      case 'updateданные':
+        // Reset к последний known good state
+        console.warn('Reverting к предыдущий данные state');
         break;
         
-      default:
-        // Generic recovery - refresh table
-        setTimeout(() => this.refreshTable(), 100);
+      по умолчанию:
+        // Generic recovery - refresh таблица
+        setTimeout(() => this.refreshтаблица(), 100);
     }
   }
   
   performFullRecovery() {
-    console.warn('Too many errors, performing full table recovery');
+    console.warn('Too many errors, performing full таблица recovery');
     
-    // Save current state
-    const currentData = this.table.getAllRecords();
-    const currentColumns = this.table.getAllColumns();
+    // Save текущий state
+    const currentданные = this.таблица.getAllRecords();
+    const currentColumns = this.таблица.getAllColumns();
     
-    // Recreate table
-    const container = this.table.container;
-    this.table.release();
+    // Recreate таблица
+    const container = this.таблица.container;
+    this.таблица.Релиз();
     
-    this.table = new ListTable({
+    this.таблица = новый списоктаблица({
       container: container,
       columns: currentColumns,
-      records: currentData,
+      records: currentданные,
       // Use safe defaults
       renderMode: 'html',
       debug: true
@@ -847,35 +847,35 @@ class ErrorRecoveryManager {
     this.errorCount = 0;
   }
   
-  refreshTable() {
+  refreshтаблица() {
     try {
-      this.table.updateSize();
-      this.table.render();
-    } catch (error) {
-      console.error('Recovery failed:', error);
+      this.таблица.updateSize();
+      this.таблица.render();
+    } catch (ошибка) {
+      console.ошибка('Recovery failed:', ошибка);
       this.performFullRecovery();
     }
   }
   
-  isTableRelatedError(error) {
-    const message = error.message || '';
-    return message.includes('vtable') || 
-           message.includes('canvas') || 
-           message.includes('render');
+  isтаблицаRelatedError(ошибка) {
+    const messвозраст = ошибка.messвозраст || '';
+    возврат messвозраст.includes('vтаблица') || 
+           messвозраст.includes('canvas') || 
+           messвозраст.includes('render');
   }
   
-  getRecoveryValue(methodName) {
-    // Return safe default values for failed methods
-    switch (methodName) {
-      case 'render': return null;
-      case 'updateData': return false;
-      case 'addRecord': return false;
-      default: return undefined;
+  getRecoveryValue(methodимя) {
+    // возврат safe по умолчанию values для failed методы
+    switch (methodимя) {
+      case 'render': возврат null;
+      case 'updateданные': возврат false;
+      case 'addRecord': возврат false;
+      по умолчанию: возврат undefined;
     }
   }
   
   getErrorReport() {
-    return {
+    возврат {
       errorCount: this.errorCount,
       lastError: this.lastError,
       isHealthy: this.errorCount < this.maxErrors
@@ -883,14 +883,14 @@ class ErrorRecoveryManager {
   }
 }
 
-// Usage
-const errorManager = new ErrorRecoveryManager(table);
+// Usвозраст
+const errorManвозрастr = новый ErrorRecoveryManвозрастr(таблица);
 
 // Check health periodically
 setInterval(() => {
-  const report = errorManager.getErrorReport();
+  const report = errorManвозрастr.getErrorReport();
   if (!report.isHealthy) {
-    console.warn('Table health issues detected:', report);
+    console.warn('таблица health issues detected:', report);
   }
 }, 30000);
 ```
@@ -904,18 +904,18 @@ class FallbackRenderer {
     this.fallbackMode = false;
   }
   
-  createTable() {
+  createтаблица() {
     try {
-      // Try advanced rendering first
-      return this.createAdvancedTable();
-    } catch (error) {
-      console.warn('Advanced rendering failed, using fallback:', error);
-      return this.createFallbackTable();
+      // Try advanced rendering первый
+      возврат this.createAdvancedтаблица();
+    } catch (ошибка) {
+      console.warn('Advanced rendering failed, using fallback:', ошибка);
+      возврат this.createFallbackтаблица();
     }
   }
   
-  createAdvancedTable() {
-    return new ListTable({
+  createAdvancedтаблица() {
+    возврат новый списоктаблица({
       ...this.config,
       renderMode: 'canvas',
       virtualized: true,
@@ -923,46 +923,46 @@ class FallbackRenderer {
     });
   }
   
-  createFallbackTable() {
+  createFallbackтаблица() {
     this.fallbackMode = true;
     
-    return new ListTable({
+    возврат новый списоктаблица({
       ...this.config,
       renderMode: 'html',
       virtualized: false,
       enableAnimations: false,
-      // Simplified columns for compatibility
+      // Simplified columns для compatibility
       columns: this.simplifyColumns(this.config.columns)
     });
   }
   
   simplifyColumns(columns) {
-    return columns.map(column => ({
-      field: column.field,
+    возврат columns.map(column => ({
+      поле: column.поле,
       caption: column.caption,
-      width: column.width || 150,
+      ширина: column.ширина || 150,
       // Remove complex renderers that might fail
-      cellType: 'text'
+      cellType: 'текст'
     }));
   }
   
   isFallbackMode() {
-    return this.fallbackMode;
+    возврат this.fallbackMode;
   }
 }
 
-// Usage
-const renderer = new FallbackRenderer({
+// Usвозраст
+const renderer = новый FallbackRenderer({
   container: document.getElementById('container'),
   columns: columns,
-  records: data
+  records: данные
 });
 
-const table = renderer.createTable();
+const таблица = renderer.createтаблица();
 
 if (renderer.isFallbackMode()) {
-  console.warn('Running in fallback mode - some features may be limited');
+  console.warn('Running в fallback mode - некоторые возможности may be limited');
 }
 ```
 
-This comprehensive troubleshooting guide provides solutions for the most common VTable issues and debugging techniques to help developers quickly identify and resolve problems.
+This comprehensive troubleshooting guide provides solutions для the most common Vтаблица issues и debugging techniques к help developers quickly identify и resolve problems.

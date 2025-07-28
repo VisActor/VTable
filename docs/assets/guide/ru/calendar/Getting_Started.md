@@ -1,73 +1,73 @@
-# Quick Start
+# Quick начало
 
-In this tutorial, we will introduce how to use @visactor/vtable-calendar to draw a simple calendar.
+в this tutorial, we will introduce how к use @visactor/vтаблица-календарь к draw a simple календарь.
 
-## Get @visactor/vtable-calendar
+## Get @visactor/vтаблица-календарь
 
-You can get it in the following ways
+Вы можете get it в Следующий ways
 
-### Use NPM package
+### Use NPM packвозраст
 
-First, you need to install it using the following command in the project root directory:
+первый, you need к install it using Следующий command в the project root directory:
 
 ```sh
 
 # Install using npm
-npm install @visactor/vtable-calendar
+npm install @visactor/vтаблица-календарь
 
 # Install using yarn
-yarn add @visactor/vtable-calendar
+yarn add @visactor/vтаблица-календарь
 ```
 
 ### Use CDN
 
-You can also get the built vtable-calendar file through CDN.
+Вы можете also get the built vтаблица-календарь file through CDN.
 
 ```html
-<script src="https://unpkg.com/@visactor/vtable-calendar/dist/vtable-calendar.min.js"></script>
+<script src="https://unpkg.com/@visactor/vтаблица-календарь/dist/vтаблица-календарь.min.js"></script>
 <script>
-const calendarInstance = new VTableCalendar.Calendar(domContainer, option);
+const календарьInstance = новый Vтаблицакалендарь.календарь(domContainer, option);
 </script>
 
-## Import Calendar
+## Import календарь
 
-### Import via NPM package
+### Import via NPM packвозраст
 
-Use `import` at the top of the JavaScript file to import vtable-calendar:
+Use `import` в the верх из the JavaScript file к import vтаблица-календарь:
 
 ```js
-import {Calendar} from '@visactor/vtable-calendar';
+import {календарь} от '@visactor/vтаблица-календарь';
 
-const calendarInstance = new Calendar(domContainer, option);
+const календарьInstance = новый календарь(domContainer, option);
 ```
 
 ### Import using script tag
 
-Introduce the built vtable-calendar file by adding `<script>` tag directly in the HTML file:
+Introduce the built vтаблица-календарь file по adding `<script>` tag directly в the HTML file:
 
 ```html
-<script> src="https://unpkg.com/@visactor/vtable-calendar/dist/vtable-calendar.min.js"></script>
+<script> src="https://unpkg.com/@visactor/vтаблица-календарь/dist/vтаблица-календарь.min.js"></script>
 <script>
-const calendarInstance = new VTableCalendar.Calendar(domContainer, option);
+const календарьInstance = новый Vтаблицакалендарь.календарь(domContainer, option);
 </script>
 ```
 
-## Draw a simple calendar
+## Draw a simple календарь
 
-Before drawing, we need to prepare a DOM container with height and width for Calendar, and this container can be relatively positioned, that is, position needs to be set to 'absolute' or 'relative'.
+Before drawing, we need к prepare a DOM container с высота и ширина для календарь, и this container can be relatively positioned, that is, позиция needs к be set к 'absolute' или 'relative'.
 
-**Please make sure that the width and height of the container are integers. The offsetWidth, offsetHeight, clientWidth, and clientHeight properties of the container will be used in the internal logic of VTable. If the width and height of the container are decimals, it will cause errors in the value, which may cause table jitter problems. **
+**Please make sure that the ширина и высота из the container are integers. The offsetширина, offsetвысота, clientширина, и clientвысота свойства из the container will be used в the internal logic из Vтаблица. If the ширина и высота из the container are decimals, it will cause errors в the значение, which may cause таблица jitter problems. **
 ```html
 <body>
-<div id="tableContainer" style="position: absolute; width: 600px;height:400px;"></div>
+<div id="таблицаContainer" style="позиция: absolute; ширина: 600px;высота:400px;"></div>
 </body>
 ```
 
-Next, we create a `Calendar` instance and pass in the calendar configuration items:
+следующий, we create a `календарь` instance и pass в the календарь configuration items:
 
-```javascript livedemo template=vtable
-const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID));
-window['calendarInstance'] = calendarInstance;
+```javascript liveдемонстрация template=vтаблица
+const календарьInstance = новый Vтаблицакалендарь.календарь(document.getElementById(CONTAINER_ID));
+window['календарьInstance'] = календарьInstance;
 ```
 
-So far, you have successfully drawn a simple calendar!
+So far, you have successfully drawn a simple календарь!

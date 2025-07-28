@@ -2,12 +2,12 @@
 Определение типа KeydownEvent:
 ```
 {
-  keyCode: number;
-  code: string;
+  keyCode: число;
+  code: строка;
   event: KeyboardEvent;
   cells?: CellInfo[][];
   stopCellMoving?: () => void;
-  scaleRatio?: number;
+  scaleRatio?: число;
 };
 ```
 {{ use: CellInfo() }}

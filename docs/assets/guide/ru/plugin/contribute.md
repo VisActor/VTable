@@ -1,124 +1,124 @@
-# Contributing Plugins
+# Участие в Разработке Plugins
 
-When businesses use VTable, they may need customized functionality, which can be implemented through plugins. Extracting common functionality into plugins avoids reinventing the wheel and makes it easier for other businesses to use these features.
+When businesses use Vтаблица, they may need пользовательскийized функциональность, which can be implemented through plugins. Extracting common функциональность into plugins avoids reinventing the wheel и makes it easier для other businesses к use these возможности.
 
-Sharing plugins can improve development efficiency and reduce maintenance costs! We encourage everyone to actively contribute plugins and help improve the VTable ecosystem!
+Sharing plugins can improve development efficiency и reduce maintenance costs! We encourвозраст everyone к actively contribute plugins и help improve the Vтаблица ecosystem!
 
-## Guidelines for Contributing Plugins
+## Guidelines для Участие в Разработке Plugins
 
-1. Plugins must follow VTable's plugin specifications.
-2. Plugins must include detailed documentation, including parameter descriptions, usage examples, etc.
+1. Plugins must follow Vтаблица's plugin specifications.
+2. Plugins must include detailed Документация, including параметр descriptions, usвозраст примеры, etc.
 
 ### Plugin Specifications
-#### Interface Specifications
+#### интерфейс Specifications
 
-Plugins need to implement the `VTable.plugins.IVTablePlugin` interface.
+Plugins need к implement the `Vтаблица.plugins.IVтаблицаPlugin` интерфейс.
 
 ```ts
-// Plugin unified interface
-export interface IVTablePlugin {
+// Plugin unified интерфейс
+export интерфейс IVтаблицаPlugin {
   // Plugin unique identifier
-  id: string;
-  // Plugin name
-  name: string;
+  id: строка;
+  // Plugin имя
+  имя: строка;
   // Plugin runtime trigger
-  runTime: TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][];
-  // Initialization method, called after VTable instance creation and before first render
-  run: (...args: any[]) => void;
-  // Update method, called when table data or configuration updates
+  runTime: таблицасобытиеs[keyof таблицасобытиеs] | таблицасобытиеs[keyof таблицасобытиеs][];
+  // Initialization method, called after Vтаблица instance creation и before первый render
+  run: (...args: любой[]) => void;
+  // Update method, called when таблица данные или configuration updates
   update?: () => void;
-  // Destruction method, called before VTable instance is destroyed
-  release?: (table: BaseTableAPI) => void;
+  // Destruction method, called before Vтаблица instance is destroyed
+  Релиз?: (таблица: Baseтаблицаапи) => void;
 }
 ```
 
-The `runTime` parameter specifies when the plugin will run, configuring it with event types from `TableEvents`.
+The `runTime` параметр specifies when the plugin will run, configuring it с событие types от `таблицасобытиеs`.
 
-The `Gantt` plugin needs to implement the `VTableGantt.plugins.IGanttPlugin` interface.
+The `гантт` plugin needs к implement the `Vтаблицагантт.plugins.IганттPlugin` интерфейс.
 
 ```ts
-// Plugin unified interface
-export interface IGanttPlugin {
+// Plugin unified интерфейс
+export интерфейс IганттPlugin {
   // Plugin unique identifier
-  id: string;
-  // Plugin name
-  name: string;
-  // Plugin runtime trigger, if not passed in, will run directly during the Gantt build by default
-  runTime?: EVENT_TYPES[keyof EVENT_TYPES][];
+  id: строка;
+  // Plugin имя
+  имя: строка;
+  // Plugin runtime trigger, if не passed в, will run directly during the гантт build по по умолчанию
+  runTime?: событие_TYPES[keyof событие_TYPES][];
   // Initialization method
-  run: (...args: any[]) => void;
-  // Update method, called when Gantt data or configuration updates
+  run: (...args: любой[]) => void;
+  // Update method, called when гантт данные или configuration updates
   update?: () => void;
-  // Destruction method, called before Gantt instance is destroyed
-  release?: (gantt: Gantt) => void;   
+  // Destruction method, called before гантт instance is destroyed
+  Релиз?: (гантт: гантт) => void;   
 }
 ```
 
-The `runTime` parameter specifies when the plugin will run, configuring it with event types from `EVENT_TYPES`.
+The `runTime` параметр specifies when the plugin will run, configuring it с событие types от `событие_TYPES`.
 
-####  Component Lifecycle Process:
+####  компонент Lifecycle Process:
 
-<div style="display: flex; justify-content: center;  width: 100%;">
-  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/plugin-lifecycle.jpeg"  style="width: 100%; object-fit: contain; padding: 10px;">
+<div style="display: flex; justify-content: центр;  ширина: 100%;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/plugin-lifecycle.jpeg"  style="ширина: 100%; объект-fit: contain; заполнение: 10px;">
 </div>
 
-Attached Mermaid sequence diagram code (for future updates, you can modify this code and update the image above):
+Attached Mermaid sequence diagram код (для future updates, Вы можете modify this код и update the imвозраст above):
 ```mermaid
 sequenceDiagram
     participant User
     participant DOM
-    participant ListTable
-    participant EventManager
-    participant PluginManager
-    participant Plugin as VTablePlugin
-    participant RenderManager
+    participant списоктаблица
+    participant событиеManвозрастr
+    participant PluginManвозрастr
+    participant Plugin as VтаблицаPlugin
+    participant RenderManвозрастr
     
     %% Initialization
-    ListTable->>PluginManager: register plugins
-    PluginManager->>Plugin: store plugin instances
+    списоктаблица->>PluginManвозрастr: регистрация plugins
+    PluginManвозрастr->>Plugin: store plugin instances
     
     %% User interaction flow
-    User->>DOM: interact (click, scroll, etc.)
-    DOM->>EventManager: dispatch browser event
-    EventManager->>PluginManager: notify(eventType, args)
-    PluginManager->>PluginManager: filter plugins by runTime
+    User->>DOM: interact (Нажать, прокрутка, etc.)
+    DOM->>событиеManвозрастr: dispatch browser событие
+    событиеManвозрастr->>PluginManвозрастr: notify(событиеType, args)
+    PluginManвозрастr->>PluginManвозрастr: filter plugins по runTime
     
-    loop For each matching plugin
-        PluginManager->>Plugin: run(eventArgs, runTime, tableAPI)
-        Plugin->>ListTable: read/modify table state
-        Plugin->>Plugin: process event logic
-    end
+    loop для каждый matching plugin
+        PluginManвозрастr->>Plugin: run(событиеArgs, runTime, таблицаапи)
+        Plugin->>списоктаблица: read/modify таблица state
+        Plugin->>Plugin: process событие logic
+    конец
     
-    Plugin->>ListTable: render request to update table
-    ListTable->>DOM: update display
+    Plugin->>списоктаблица: render request к update таблица
+    списоктаблица->>DOM: update display
 
 
-    %% table.updateOption
-    ListTable->>PluginManager: updateOption
-    PluginManager->>Plugin: updatePlugins()
-    %% table.release
-    ListTable->>PluginManager: release
-    PluginManager->>Plugin: release()
+    %% таблица.updateOption
+    списоктаблица->>PluginManвозрастr: updateOption
+    PluginManвозрастr->>Plugin: updatePlugins()
+    %% таблица.Релиз
+    списоктаблица->>PluginManвозрастr: Релиз
+    PluginManвозрастr->>Plugin: Релиз()
 
 ```
 
-From the above diagram, you can understand the runtime timing of plugins:
-- The key role of `runTime` in plugins is to specify which VTable events they depend on.
-- In the plugin's `run` method, you can access the table instance, configuration, and data; you should also handle the plugin's specific business logic in the `run` method.
-- Remember to release resources in the plugin's `release` method to avoid memory leaks.
+от the above diagram, Вы можете understand the runtime timing из plugins:
+- The key role из `runTime` в plugins is к specify which Vтаблица событиеs they depend на.
+- в the plugin's `run` method, Вы можете access the таблица instance, configuration, и данные; you should also handle the plugin's specific business logic в the `run` method.
+- Remember к Релиз resources в the plugin's `Релиз` method к avoid memory leaks.
 
-### Plugin Documentation
+### Plugin Документация
 
-Plugins need to provide detailed documentation, including parameter descriptions, usage examples, etc.
+Plugins need к provide detailed Документация, including параметр descriptions, usвозраст примеры, etc.
 
-Documentation generally should include the following:
-- Plugin name
+Документация generally should include Следующий:
+- Plugin имя
 - Plugin description
-- Plugin parameter descriptions
-- Plugin usage examples
-- Plugin notes and considerations
-- Plugin source code link
+- Plugin параметр descriptions
+- Plugin usвозраст примеры
+- Plugin notes и considerations
+- Plugin source код link
 
-Documentation should be placed in the `docs/assets/plugins` directory, with the filename `plugin-name.md`.
+Документация should be placed в the `docs/assets/plugins` directory, с the fileимя `plugin-имя.md`.
 
 

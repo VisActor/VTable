@@ -1,253 +1,253 @@
-# Gantt Chart Introduction and Usage Guide
+# гантт график Introduction и Usвозраст Guide
 
-A Gantt chart is a project management tool used to display project plans, task progress, and schedules. It visually represents the start and end times of tasks using bar charts, helping project managers effectively track and manage project progress. Each task is displayed as a bar in the chart, with the length of the bar representing the duration of the task and the position representing the start and end times of the task.
+A гантт график is a project manвозрастment tool used к display project plans, task progress, и schedules. It visually represents the начало и конец times из tasks using bar графикs, helping project manвозрастrs effectively track и manвозраст project progress. каждый task is displayed as a bar в the график, с the length из the bar representing the duration из the task и the позиция representing the начало и конец times из the task.
 
-VTable-Gantt is a powerful Gantt chart drawing tool built on the VTable table component and the canvas renderer VRender, enabling developers to easily create and manage Gantt charts.
+Vтаблица-гантт is a powerful гантт график drawing tool built на the Vтаблица таблица компонент и the canvas renderer VRender, enabling developers к easily create и manвозраст гантт графикs.
 
-## Components of a Gantt Chart
+## компонентs из a гантт график
 
-Task List on the Left: Displays the list of project tasks, usually on the left side of the chart.
+Task список на the лево: Displays the список из project tasks, usually на the лево side из the график.
 
-Top Timeline: Displays the project's time range, usually at the top or bottom of the chart.
+верх Timeline: Displays the project's time range, usually в the верх или низ из the график.
 
-Task Bars: Represent the start and end times of each task.
+Task Bars: Represent the начало и конец times из каждый task.
 
-Grid Lines: Separate the timeline and task bars, making the chart clearer.
+Grid Lines: Separate the timeline и task bars, making the график clearer.
 
 Marker Lines: Mark important time points.
 
-Divider Lines: Separate the task list and timeline, making the chart clearer.
+Divider Lines: Separate the task список и timeline, making the график clearer.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-structure.png)
 
-**Note: The task information table on the left corresponds to a complete ListTable in the implementation. It is attached to ganttInstable.taskListTableInstance, so the interfaces and events corresponding to ListTable can be directly used through taskListTableInstance. If you want to troubleshoot issues with the table on the left, you can also directly extract taskListTableInstance.options to check if they meet expectations.**
+**Note: The task information таблица на the лево corresponds к a complete списоктаблица в the implementation. It is attached к ганттInsтаблица.taskсписоктаблицаInstance, so the interfaces и событиеs corresponding к списоктаблица can be directly used through taskсписоктаблицаInstance. If you want к troubleshoot issues с the таблица на the лево, Вы можете also directly extract taskсписоктаблицаInstance.options к check if they meet expectations.**
 
- <div style="width: 40%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-guide-leftListTable-en.png" />
-    <p>left table</p>
+ <div style="ширина: 40%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-guide-leftсписоктаблица-en.png" />
+    <p>лево таблица</p>
   </div>
 
-## Main Capabilities of Gantt Chart
+## Main Capabilities из гантт график
 
 ### Multi-column Information Display
 
-The left side of the entire structure of the Gantt chart is a complete table container, so it supports rich column information display. For specific configuration, please refer to [Configuration](../../option/Gantt#taskListTable).
+The лево side из the entire structure из the гантт график is a complete таблица container, so it supports rich column information display. для specific configuration, please refer к [Configuration](../../option/гантт#taskсписоктаблица).
 
-### Custom Rendering
+### пользовательский Rendering
 
-Custom rendering requires understanding the graphic element properties of VRender. For details, please refer to [Custom Rendering Tutorial](../../guide/gantt/gantt_customLayout).
+пользовательский rendering requires understanding the graphic element свойства из VRender. для details, please refer к [пользовательский Rendering Tutorial](../../guide/гантт/гантт_пользовательскиймакет).
 
-#### Custom Rendering of Task Bars
+#### пользовательский Rendering из Task Bars
 
-You can customize the rendering of task bars through the `taskBar.customLayout` configuration item.
+Вы можете пользовательскийize the rendering из task bars through the `taskBar.пользовательскиймакет` configuration item.
 
-#### Custom Rendering of Date Headers
+#### пользовательский Rendering из Date Headers
 
-You can customize the rendering of date headers through the `timelineHeader.scales.customLayout` configuration item.
+Вы можете пользовательскийize the rendering из date headers through the `timelineHeader.scales.пользовательскиймакет` configuration item.
 
-#### Custom Rendering of Task Information Table on the Left
+#### пользовательский Rendering из Task Information таблица на the лево
 
-You can define the custom rendering of each cell in each column through `taskListTable.columns.customLayout` or globally define the custom rendering of each cell through `taskListTable.customLayout`.
+Вы можете define the пользовательский rendering из каждый cell в каждый column through `taskсписоктаблица.columns.пользовательскиймакет` или globally define the пользовательский rendering из каждый cell through `taskсписоктаблица.пользовательскиймакет`.
 
-### Support for Different Date Scale Granularity
+### Support для Different Date Scale Granularity
 
-In common business scenarios, multi-level time scale display may be required. VTable-Gantt supports five time granularities: `'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second'`.
+в common business scenarios, multi-level time scale display may be обязательный. Vтаблица-гантт supports five time granularities: `'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second'`.
 
-You can set the row height and time unit (such as day, week, month, etc.) of the date scale through the `timelineHeader.scale` configuration item.
+Вы можете set the row высота и time unit (such as day, week, month, etc.) из the date scale through the `timelineHeader.scale` configuration item.
 
 ### Date Header Style
 
-You can customize the style of the date header through the `timelineHeader.scales.style` configuration item.
+Вы можете пользовательскийize the style из the date header through the `timelineHeader.scales.style` configuration item.
 
-You can set the row height of the date scale through the `timelineHeader.scales.rowHeight` configuration item.
+Вы можете set the row высота из the date scale through the `timelineHeader.scales.rowвысота` configuration item.
 
 ### Outer Frame
 
-The border of the table may have a different style from the internal grid lines. You can customize the outer frame of the Gantt chart through the `frame.outerFrameStyle` configuration item.
+The граница из the таблица may have a different style от the internal grid lines. Вы можете пользовательскийize the outer frame из the гантт график through the `frame.outerFrameStyle` configuration item.
 
-### Horizontal and Vertical Divider Lines
+### Horizontal и Vertical Divider Lines
 
-Supports horizontal divider lines for both the header and body, as well as divider lines between the left information table and the right task list. You can customize the style of horizontal divider lines through the `frame.horizontalSplitLine` configuration item. You can customize the style of vertical divider lines through the `frame.verticalSplitLine` configuration item.
+Supports horizontal divider lines для both the header и body, as well as divider lines between the лево information таблица и the право task список. Вы можете пользовательскийize the style из horizontal divider lines through the `frame.horizontalSplitLine` configuration item. Вы можете пользовательскийize the style из vertical divider lines through the `frame.verticalSplitLine` configuration item.
 
 ### Marker Lines
 
-In the Gantt chart, it is often necessary to mark some important dates. We configure this effect through the `markLine` configuration item. You can specify key dates through `markLine.date` and customize the style of marker lines through the `markLine.style` configuration item. If you need to ensure that the date is displayed at initialization, you can set `markLine.scrollToMarkLine` to `true`. Marker lines support dynamic creation. For details, please refer to the [example](../../demo/gantt/gantt-interaction-create-mark-line).
+в the гантт график, it is often necessary к mark некоторые important dates. We configure this effect through the `markLine` configuration item. Вы можете specify key dates through `markLine.date` и пользовательскийize the style из marker lines through the `markLine.style` configuration item. If you need к ensure that the date is displayed в initialization, Вы можете set `markLine.scrollToMarkLine` к `true`. Marker lines support dynamic creation. для details, please refer к the [пример](../../демонстрация/гантт/гантт-interaction-create-mark-line).
 
 ### Container Grid Lines
 
-You can customize the style of the background grid lines of the right task bars through the `grid` configuration item, including background color, line width, line type, etc.
+Вы можете пользовательскийize the style из the фон grid lines из the право task bars through the `grid` configuration item, including фон цвет, line ширина, line тип, etc.
 
 ### Dependencies between tasks
 
-Through the `dependency.links` configuration item, you can set the dependencies between tasks. Note that the configuration data format of the dependency is:
+Through the `dependency.links` configuration item, Вы можете set the dependencies between tasks. Note that the configuration данные format из the dependency is:
 
 ```
-  export type ITaskLink = {
-    /** Dependency type */
-    type: DependencyType;
-    linkedFromTaskKey?: string | number;
-    linkedToTaskKey?: string | number;
+  export тип ITaskLink = {
+    /** Dependency тип */
+    тип: DependencyType;
+    linkedFromTaskKey?: строка | число;
+    linkedToTaskKey?: строка | число;
   };
 ```
 
-For example, the following configuration data:
+для пример, Следующий configuration данные:
 
 ```
 links:[
   {
-    type: VTableGantt.TYPES.DependencyType.FinishToStart,
+    тип: Vтаблицагантт.TYPES.DependencyType.FinishToStart,
     linkedFromTaskKey: 1,
     linkedToTaskKey: 2
   },
   {
-    type: VTableGantt.TYPES.DependencyType.StartToFinish,
+    тип: Vтаблицагантт.TYPES.DependencyType.StartToFinish,
     linkedFromTaskKey: 2,
     linkedToTaskKey: 3
   },
   {
-    type: VTableGantt.TYPES.DependencyType.StartToStart,
+    тип: Vтаблицагантт.TYPES.DependencyType.StartToStart,
     linkedFromTaskKey: 3,
     linkedToTaskKey: 4
   },
   {
-    type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+    тип: Vтаблицагантт.TYPES.DependencyType.FinishToFinish,
     linkedFromTaskKey: 4,
     linkedToTaskKey: 5
   }
 ]
 ```
 
-The values of `linkedFromTaskKey` and `linkedToTaskKey` need to correspond to the unique identifier field in the `records`, with the default field name being `id`. If you need to modify it, you can do so through the `taskKeyField` configuration item.
+The values из `linkedFromTaskKey` и `linkedToTaskKey` need к correspond к the unique identifier поле в the `records`, с the по умолчанию поле имя being `id`. If you need к modify it, Вы можете do so through the `taskKeyполе` configuration item.
 
 ### Interaction
 
 #### Dragging Task Bars
 
-You can set whether task bars are draggable through the `taskBar.moveable` configuration item.
+Вы можете set whether task bars are draggable through the `taskBar.moveable` configuration item.
 
 #### Resizing Task Bars
 
-You can set whether task bars are resizable through the `taskBar.resizable` configuration item.
+Вы можете set whether task bars are resizable through the `taskBar.resizable` configuration item.
 
-#### Adjusting the Width of the Left Table
+#### Adjusting the ширина из the лево таблица
 
-You can set the divider line to be draggable by configuring `frame.verticalSplitLineMoveable` to true.
+Вы можете set the divider line к be draggable по configuring `frame.verticalSplitLineMoveable` к true.
 
 #### Editing Task Information
 
-You can synchronize data updates to the task bars through the editing capabilities of `ListTable`.
+Вы можете synchronize данные updates к the task bars through the editing capabilities из `списоктаблица`.
 
-To enable editing capabilities, you need to register the editor to VTable in advance, as the editing capabilities here actually rely on the editing capabilities of `ListTable`.
+к включить editing capabilities, you need к регистрация the editor к Vтаблица в advance, as the editing capabilities here actually rely на the editing capabilities из `списоктаблица`.
 
-#### Adjusting Data Order
+#### Adjusting данные Order
 
-To enable drag-and-drop reordering capabilities, you need to add `rowSeriesNumber` to the configuration of `ListTable`, which provides a row number. You can configure the style of this column using `rowSeriesNumber.style` and `headerStyle`. To enable reordering, set `rowSeriesNumber.dragOrder` to true. `VTable-Gantt` will synchronize the order to the task bar area display when a reordering event is detected.
+к включить перетаскивание-и-отпускание reordering capabilities, you need к add `rowSeriesNumber` к the configuration из `списоктаблица`, which provides a row число. Вы можете configure the style из this column using `rowSeriesNumber.style` и `headerStyle`. к включить reordering, set `rowSeriesNumber.dragOrder` к true. `Vтаблица-гантт` will synchronize the order к the task bar area display when a reordering событие is detected.
 
 #### Create association lines
 
-Through the `dependency.linkCreatable` configuration item, you can set whether the association line can be created.
+Through the `dependency.linkCreaтаблица` configuration item, Вы можете set whether the association line can be created.
 
 #### Creation Schedule
 
-Configuration taskBar. ScheduleCreatable.
+Configuration taskBar. ScheduleCreaтаблица.
 
-If there is no field data for the task date in the original data, you can create a schedule to specify a start time and end time for the task. By default, when you hover over a grid without date data, a button to add a schedule will appear.
+If there is no поле данные для the task date в the original данные, Вы можете create a schedule к specify a начало time и конец time для the task. по по умолчанию, when you навести over a grid без date данные, a Кнопка к add a schedule will appear.
 
-The button style can be configured via `taskBar.scheduleCreation.buttonStyle`.
+The Кнопка style can be configured via `taskBar.scheduleCreation.КнопкаStyle`.
 
-If the current configuration does not meet your needs, you can also customize the display effect of the creation schedule through the `taskBar.scheduleCreation.customLayout` configuration item.
+If the текущий configuration does не meet your needs, Вы можете also пользовательскийize the display effect из the creation schedule through the `taskBar.scheduleCreation.пользовательскиймакет` configuration item.
 
-**Note: Different Gantt chart instances have different capabilities to create schedules.**
+**Note: Different гантт график instances have different capabilities к create schedules.**
 
-When `tasksShowMode` is `TasksShowMode.Tasks_Separate` or `TasksShowMode.Sub_Tasks_Separate`, that is, each piece of data has a corresponding row position display, but the data does not set the `startDate` and `endDate` fields, a create button will appear when the mouse hovers over the row, and clicking the button will create a schedule and display the task bar.
+When `tasksShowMode` is `TasksShowMode.Tasks_Separate` или `TasksShowMode.Sub_Tasks_Separate`, that is, каждый piece из данные has a corresponding row позиция display, but the данные does не set the `startDate` и `endDate` полеs, a create Кнопка will appear when the mouse hovers over the row, и Нажатьing the Кнопка will create a schedule и display the task bar.
 
-When `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, or `TasksShowMode.Sub_Tasks_Compact`, it is necessary to explicitly set `scheduleCreatable` to `true` for the create button to appear. When the mouse hovers over the blank area, the create button will be displayed, and clicking the button will trigger the event `GANTT_EVENT_TYPE.CREATE_TASK_SCHEDULE`, but it will not actually create the task schedule. The user needs to listen to this event and create the schedule update data according to business requirements.
+When `tasksShowMode` is `TasksShowMode.Sub_Tasks_Inline`, `TasksShowMode.Sub_Tasks_Arrange`, или `TasksShowMode.Sub_Tasks_Compact`, it is necessary к explicitly set `scheduleCreaтаблица` к `true` для the create Кнопка к appear. When the mouse hovers over the blank area, the create Кнопка will be displayed, и Нажатьing the Кнопка will trigger the событие `гантт_событие_TYPE.CREATE_TASK_SCHEDULE`, but it will не actually create the task schedule. The user needs к списокen к this событие и create the schedule update данные according к business requirements.
 
-## Leveraging the Capabilities of the Table
+## Leveraging the Capabilities из the таблица
 
-The Gantt chart is implemented based on the ListTable of VTable. It looks like a spliced form, with the task information table on the left and the task bar list on the right.
+The гантт график is implemented based на the списоктаблица из Vтаблица. It loхорошоs like a spliced form, с the task information таблица на the лево и the task bar список на the право.
 
-The taskListTable is one of the most important configuration items in the vtable-gantt component. It is used to configure the layout and style of the task list table on the left, corresponding to a complete ListTable configuration. In the Gantt chart instance, there is also such a ListTable instance, which can be directly obtained for operations.
+The taskсписоктаблица is one из the most important configuration items в the vтаблица-гантт компонент. It is used к configure the макет и style из the task список таблица на the лево, corresponding к a complete списоктаблица configuration. в the гантт график instance, there is also such a списоктаблица instance, which can be directly obtained для operations.
 
-The way to get the table instance is as follows:
+The way к get the таблица instance is as follows:
 
 ```javascript
-const ganttInstance = new Gantt(containerDom, options);
-// Get the table instance on the left
-const tableInstance = ganttInstance.taskListTableInstance;
+const ганттInstance = новый гантт(containerDom, options);
+// Get the таблица instance на the лево
+const таблицаInstance = ганттInstance.taskсписоктаблицаInstance;
 ```
 
-The capabilities implemented by VTableGantt using this table instance tableInstance include:
+The capabilities implemented по Vтаблицагантт using this таблица instance таблицаInstance include:
 
-1. Using this indirectly obtained tableInstance, you can listen to events or call the interfaces supported by ListTable. For details, refer to the ListTable [documentation](../../api).
-2. Using the editing capabilities of ListTable, the data editing capabilities of the Gantt chart are implemented.
-3. Using the sorting capabilities of ListTable, the data sorting capabilities of the Gantt chart are implemented. Refer to the ListTable [tutorial](../../guide/basic_function/sort/list_sort).
-4. Using the tree structure capabilities of ListTable, the parent-child relationship data of the Gantt chart is implemented. Refer to the ListTable [tutorial](../../guide/table_type/List_table/tree_list).
+1. Using this indirectly obtained таблицаInstance, Вы можете списокen к событиеs или call the interfaces supported по списоктаблица. для details, refer к the списоктаблица [Документация](../../апи).
+2. Using the editing capabilities из списоктаблица, the данные editing capabilities из the гантт график are implemented.
+3. Using the сортировкаing capabilities из списоктаблица, the данные сортировкаing capabilities из the гантт график are implemented. Refer к the списоктаблица [tutorial](../../guide/базовый_function/сортировка/список_сортировка).
+4. Using the tree structure capabilities из списоктаблица, the parent-child relationship данные из the гантт график is implemented. Refer к the списоктаблица [tutorial](../../guide/таблица_type/список_таблица/tree_список).
 
-## Main Configuration of vtable-gantt
+## Main Configuration из vтаблица-гантт
 
-In the vtable-gantt component, the main supported configurations include:
+в the vтаблица-гантт компонент, the main supported configurations include:
 
-1. Data Configuration `records`
+1. данные Configuration `records`
 
 2. Task Bar Configuration `taskBar`
 
-   1. Custom Rendering: You can customize the rendering of task bars through the `customLayout` configuration item.
-   2. Style Configuration: You can set the style of task bars, including color, width, border radius, border, etc., through configuration items `barStyle`.
-   3. Text Style: You can configure the displayed text content information through `labelText` and configure the text style through `labelTextStyle`, including font, color, alignment, etc.
-   4. Interaction Configuration: You can set whether task bars are resizable and movable through the `resizable` and `moveable` configuration items.
-   5. Interaction Style: You can set the style of task bars when hovering and when selected through the `hoverBarStyle` and `selectedBarStyle` configuration item.
+   1. пользовательский Rendering: Вы можете пользовательскийize the rendering из task bars through the `пользовательскиймакет` configuration item.
+   2. Style Configuration: Вы можете set the style из task bars, including цвет, ширина, граница radius, граница, etc., through configuration items `barStyle`.
+   3. текст Style: Вы можете configure the displayed текст content information through `labelText` и configure the текст style through `labelTextStyle`, including шрифт, цвет, alignment, etc.
+   4. Interaction Configuration: Вы можете set whether task bars are resizable и movable through the `resizable` и `moveable` configuration items.
+   5. Interaction Style: Вы можете set the style из task bars when hovering и when selected through the `hoverBarStyle` и `selectedBarStyle` configuration item.
 
 3. Dependency Line `dependency`
 
-   Introduction to related configuration items for task dependencies:
+   Introduction к related configuration items для task dependencies:
 
-   - `dependency.links`：You can set the dependencies between tasks through the `dependency.links` configuration item.
+   - `dependency.links`：Вы можете set the dependencies between tasks through the `dependency.links` configuration item.
 
-   - `taskKeyField`：You can set the field name of the unique identifier field for dependencies through the `taskKeyField` configuration item.
+   - `taskKeyполе`：Вы можете set the поле имя из the unique identifier поле для dependencies through the `taskKeyполе` configuration item.
 
-   - `dependency.linkLineStyle`：You can configure the style of dependency lines, including color, width, dashed style, etc., through `dependency.linkLineStyle`.
+   - `dependency.linkLineStyle`：Вы можете configure the style из dependency lines, including цвет, ширина, dashed style, etc., through `dependency.linkLineStyle`.
 
-   - `dependency.linkLineSelectedStyle`：You can customize the style of dependencies when selected between tasks.
+   - `dependency.linkLineSelectedStyle`：Вы можете пользовательскийize the style из dependencies when selected between tasks.
 
-   - `dependency.linkCreatable`：You can set whether association lines can be created through the `dependency.linkCreatable` configuration item.
+   - `dependency.linkCreaтаблица`：Вы можете set whether association lines can be created through the `dependency.linkCreaтаблица` configuration item.
 
-   - `dependency.linkSelectable`：You can set whether association lines can be selected through the `dependency.linkSelectable` configuration item.
+   - `dependency.linkSelecтаблица`：Вы можете set whether association lines can be selected through the `dependency.linkSelecтаблица` configuration item.
 
-   - `dependency.linkDeletable`：You can set whether association lines can be deleted through the `dependency.linkDeletable` configuration item. If you want to delete association lines through the right-click menu, you can listen to the `CONTEXTMENU_DEPENDENCY_LINK` event to actively call the deleteLink interface to delete. If you configure shortcut keys `keyboardOptions.deleteLinkOnDel` or `keyboardOptions.deleteLinkOnBack` to delete association lines by pressing the 'del' or 'back' key on the keyboard.
+   - `dependency.linkDeleтаблица`：Вы можете set whether association lines can be deleted through the `dependency.linkDeleтаблица` configuration item. If you want к delete association lines through the право-Нажать меню, Вы можете списокen к the `CONTEXTменю_DEPENDENCY_LINK` событие к actively call the deleteLink интерфейс к delete. If you configure shortcut keys `keyboardOptions.deleteLinkOnDel` или `keyboardOptions.deleteLinkOnBack` к delete association lines по pressing the 'del' или 'back' key на the keyboard.
 
-   - Operation style during the creation of association lines: You can set the style of the association line selection process, including color, width, dashed style, etc., through the `linkSelectedLineStyle` `linkCreatePointStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` configuration items.
+   - Operation style during the creation из association lines: Вы можете set the style из the association line selection process, including цвет, ширина, dashed style, etc., through the `linkSelectedLineStyle` `linkCreatePointStyle` `linkCreatingPointStyle` `linkCreatingLineStyle` configuration items.
 
 4. Date Header Configuration `timelineHeader`
-   1. Custom Rendering: You can customize the rendering of date headers through the `customLayout` configuration item.
-   2. Style Configuration: You can set the text style of the header, including font size, color, alignment, etc., through the `style` configuration item.
+   1. пользовательский Rendering: Вы можете пользовательскийize the rendering из date headers through the `пользовательскиймакет` configuration item.
+   2. Style Configuration: Вы можете set the текст style из the header, including шрифт размер, цвет, alignment, etc., through the `style` configuration item.
 5. Time Scale Configuration `timelineHeader.scales`
-   1. Row Height and Time Unit: You can set the row height and time unit (such as day, week, month, etc.) of the time scale through the `rowHeight` and `unit` configuration items.
-   2. Step Length and Week Start Day: You can set the step length of the time scale and the start day of the week through the `step` and `startOfWeek` configuration items.
-   3. Date Formatting: You can customize the display format of dates through the `format` configuration item.
-   4. Whether to display the corresponding date grid in the header part: You can set whether to display the date grid in the header part through the `visible` configuration item, the default is displayed.
+   1. Row высота и Time Unit: Вы можете set the row высота и time unit (such as day, week, month, etc.) из the time scale through the `rowвысота` и `unit` configuration items.
+   2. Step Length и Week начало Day: Вы можете set the step length из the time scale и the начало day из the week through the `step` и `startOfWeek` configuration items.
+   3. Date Formatting: Вы можете пользовательскийize the display format из dates through the `format` configuration item.
+   4. Whether к display the corresponding date grid в the header part: Вы можете set whether к display the date grid в the header part through the `видимый` configuration item, the по умолчанию is displayed.
 6. Grid Line Configuration `grid`
-   1. Style Configuration: You can set the color, width, dashed style, etc., of grid lines through the `verticalLine` and `horizontalLine` configuration items.
-   2. Background Color: You can set the background color of grid lines through the `backgroundColor` configuration item.
-7. Task List Table Configuration `taskListTable` (Configuration of the task information list ListTable on the left, refer to [Configuration](../../option/Gantt#taskListTable))
-   1. Overall Width of the Table on the Left: You can set the overall width of the task list table through the `tableWidth` configuration item.
-   2. Column Information: You can define the column information and width of each column of the task information table through `columns`.
-   3. Style Configuration: You can set the style of the header and body through the `theme.headerStyle` and `theme.bodyStyle` configuration items.
-   4. Width Limit: You can set the minimum and maximum width of the task list through the `minTableWidth` and `maxTableWidth` configuration items.
+   1. Style Configuration: Вы можете set the цвет, ширина, dashed style, etc., из grid lines through the `verticalLine` и `horizontalLine` configuration items.
+   2. фон цвет: Вы можете set the фон цвет из grid lines through the `backgroundColor` configuration item.
+7. Task список таблица Configuration `taskсписоктаблица` (Configuration из the task information список списоктаблица на the лево, refer к [Configuration](../../option/гантт#taskсписоктаблица))
+   1. Overall ширина из the таблица на the лево: Вы можете set the overall ширина из the task список таблица through the `таблицаширина` configuration item.
+   2. Column Information: Вы можете define the column information и ширина из каждый column из the task information таблица through `columns`.
+   3. Style Configuration: Вы можете set the style из the header и body through the `тема.headerStyle` и `тема.bodyStyle` configuration items.
+   4. ширина Limit: Вы можете set the minimum и maximum ширина из the task список through the `minтаблицаширина` и `maxтаблицаширина` configuration items.
 8. Divider Line Configuration `frame`
-   1. Outer Frame Configuration: You can set the color, width, etc., of the outer frame through the `outerFrameStyle` configuration item.
-   2. Divider Line Style Configuration: You can set the color, width, dashed style, etc., of divider lines through the `verticalSplitLine` and `horizontalSplitLine` configuration items.
-   3. Dragging the Width of the Table on the Left: You can set whether the divider line is draggable through the `verticalSplitLineMoveable` configuration item. You can set the highlight line style when adjusting the column width through the `verticalSplitLineHighlight` configuration item.
+   1. Outer Frame Configuration: Вы можете set the цвет, ширина, etc., из the outer frame through the `outerFrameStyle` configuration item.
+   2. Divider Line Style Configuration: Вы можете set the цвет, ширина, dashed style, etc., из divider lines through the `verticalSplitLine` и `horizontalSplitLine` configuration items.
+   3. Dragging the ширина из the таблица на the лево: Вы можете set whether the divider line is draggable through the `verticalSplitLineMoveable` configuration item. Вы можете set the highlight line style when adjusting the column ширина through the `verticalSplitLineHighlight` configuration item.
 9. Marker Line Configuration `markLine`
-   1. Date Configuration: You can set the date of the marker line through the `date` configuration item.
-   2. Style Configuration: You can set the color, width, dashed style, etc., of the marker line through the `style` configuration item.
-   3. Marker Line Position: You can set the position of the marker line through the `position` configuration item.
-   4. Default Display of Marker Line in the Middle: You can set whether the marker line is displayed in the middle by default through the `scrollToMarkLine` configuration item.
+   1. Date Configuration: Вы можете set the date из the marker line through the `date` configuration item.
+   2. Style Configuration: Вы можете set the цвет, ширина, dashed style, etc., из the marker line through the `style` configuration item.
+   3. Marker Line позиция: Вы можете set the позиция из the marker line through the `позиция` configuration item.
+   4. по умолчанию Display из Marker Line в the середина: Вы можете set whether the marker line is displayed в the середина по по умолчанию through the `scrollToMarkLine` configuration item.
 
-These capabilities make the vtable-gantt component highly customizable and flexible in task management and project planning, meeting the needs of different scenarios.
+These capabilities make the vтаблица-гантт компонент highly пользовательскийizable и flexible в task manвозрастment и project planning, meeting the needs из different scenarios.
 
 ## Summary
 
-The Gantt chart is a very important tool in project management. By visually displaying the progress and schedule of the project, it helps project managers better plan and control the project. By reasonably configuring the various parameters of the Gantt chart, it can meet the needs of different projects and improve the efficiency of project management.
+The гантт график is a very important tool в project manвозрастment. по visually displaying the progress и schedule из the project, it helps project manвозрастrs better plan и control the project. по reasonably configuring the various parameters из the гантт график, it can meet the needs из different projects и improve the efficiency из project manвозрастment.
 
-I hope this tutorial can help you better understand and use the Gantt chart. If you have any questions or suggestions, feel free to discuss and exchange ideas.
+I hope this tutorial can help you better understand и use the гантт график. If you have любой questions или suggestions, feel free к discuss и exchange ideas.

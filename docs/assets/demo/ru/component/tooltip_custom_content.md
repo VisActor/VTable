@@ -1,281 +1,281 @@
 ---
-category: examples
-group: Component
-title: tooltip custom content
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/tooltip-custom-content.png
-link: components/tooltip
+категория: примеры
+группа: компонент
+заголовок: Подсказка пользовательский content
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/Подсказка-пользовательский-content.png
+ссылка: компонентs/Подсказка
 ---
 
-# Tooltip
+# Подсказка
 
-By listening`mouseenter_cell`Event, move the mouse into the cell to prompt the Dimension and Metirc information of the cell. By listening`mouseleave_cell`Event, the mouse leaves the cell to make the prompt box disappear.
+по списокening`mouseenter_cell`событие, move the mouse into the cell к prompt the Dimension и Metirc information из the cell. по списокening`mouseleave_cell`событие, the mouse leaves the cell к make the prompt box disappear.
 
-## Key Configurations
+## Ключевые Конфигурации
 
-- `mouseenter_cell` event
-- `mouseleave_cell` event
-- `mouseleave_table` event
+- `mouseenter_cell` событие
+- `mouseleave_cell` событие
+- `mouseleave_таблица` событие
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const container = document.getElementById(CONTAINER_ID);
-const popup = document.createElement('div');
-Object.assign(popup.style, {
-  position: 'fixed',
-  width: '300px',
+const всплывающее окно = document.createElement('div');
+объект.assign(всплывающее окно.style, {
+  позиция: 'fixed',
+  ширина: '300px',
   backgroundColor: '#f1f1f1',
-  border: '1px solid #ccc',
-  padding: '20px',
-  textAlign: 'left'
+  bпорядок: '1px solid #ccc',
+  заполнение: '20px',
+  textAlign: 'лево'
 });
-function showTooltip(infoList, x, y) {
-  popup.innerHTML = '';
-  popup.id = 'popup';
-  popup.style.left = x + 'px';
-  popup.style.top = y + 'px';
+функция showПодсказка(infoсписок, x, y) {
+  всплывающее окно.innerHTML = '';
+  всплывающее окно.id = 'всплывающее окно';
+  всплывающее окно.style.лево = x + 'px';
+  всплывающее окно.style.верх = y + 'px';
   const heading = document.createElement('h4');
   heading.textContent = '数据信息';
-  heading.style.margin = '0px';
-  popup.appendChild(heading);
-  for (let i = 0; i < infoList.length; i++) {
-    const info = infoList[i];
+  heading.style.отступ = '0px';
+  всплывающее окно.appendChild(heading);
+  для (let i = 0; i < infoсписок.length; i++) {
+    const информация = infoсписок[i];
     const info1 = document.createElement('p');
-    info1.textContent = info;
-    popup.appendChild(info1);
+    info1.textContent = информация;
+    всплывающее окно.appendChild(info1);
   }
   // 将弹出框添加到文档主体中
-  document.body.appendChild(popup);
+  document.body.appendChild(всплывающее окно);
 }
 
-function hideTooltip() {
-  if (document.body.contains(popup)) {
-    document.body.removeChild(popup);
+функция hideПодсказка() {
+  if (document.body.contains(всплывающее окно)) {
+    document.body.removeChild(всплывающее окно);
   }
 }
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_сводный2_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const option = {
-      records: data,
+      records: данные,
       rowTree: [
         {
-          dimensionKey: 'Category',
-          value: 'Furniture',
-          hierarchyState: 'expand',
+          dimensionKey: 'Категория',
+          значение: 'Furniture',
+          hierarchyState: 'развернуть',
           children: [
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Bookcases',
-              hierarchyState: 'collapse'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Boхорошоcases',
+              hierarchyState: 'свернуть'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Chairs',
-              hierarchyState: 'collapse'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Chairs',
+              hierarchyState: 'свернуть'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Furnishings'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Furnishings'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Tables'
+              dimensionKey: 'Sub-Категория',
+              значение: 'таблицаs'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Office Supplies',
+          dimensionKey: 'Категория',
+          значение: 'Office Supplies',
           children: [
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Appliances'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Appliances'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Art'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Art'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Binders'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Binders'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Envelopes'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Envelopes'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Fasteners'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Fasteners'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Labels'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Labels'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Paper'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Paper'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Storage'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Storвозраст'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Supplies'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Supplies'
             }
           ]
         },
         {
-          dimensionKey: 'Category',
-          value: 'Technology',
+          dimensionKey: 'Категория',
+          значение: 'Technology',
           children: [
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Accessories'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Accessories'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Copiers'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Copiers'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Machines'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Machines'
             },
             {
-              dimensionKey: 'Sub-Category',
-              value: 'Phones'
+              dimensionKey: 'Sub-Категория',
+              значение: 'Phones'
             }
           ]
         }
       ],
       columnTree: [
         {
-          dimensionKey: 'Region',
-          value: 'West',
+          dimensionKey: 'Регион',
+          значение: 'West',
           children: [
             {
-              value: 'Sales',
-              indicatorKey: 'Sales'
+              значение: 'Продажи',
+              indicatorKey: 'Продажи'
             },
             {
-              value: 'Profit',
-              indicatorKey: 'Profit'
+              значение: 'Прибыль',
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Region',
-          value: 'South',
+          dimensionKey: 'Регион',
+          значение: 'South',
           children: [
             {
-              value: 'Sales',
-              indicatorKey: 'Sales'
+              значение: 'Продажи',
+              indicatorKey: 'Продажи'
             },
             {
-              value: 'Profit',
-              indicatorKey: 'Profit'
+              значение: 'Прибыль',
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Region',
-          value: 'Central',
+          dimensionKey: 'Регион',
+          значение: 'Central',
           children: [
             {
-              value: 'Sales',
-              indicatorKey: 'Sales'
+              значение: 'Продажи',
+              indicatorKey: 'Продажи'
             },
             {
-              value: 'Profit',
-              indicatorKey: 'Profit'
+              значение: 'Прибыль',
+              indicatorKey: 'Прибыль'
             }
           ]
         },
         {
-          dimensionKey: 'Region',
-          value: 'East',
+          dimensionKey: 'Регион',
+          значение: 'East',
           children: [
             {
-              value: 'Sales',
-              indicatorKey: 'Sales'
+              значение: 'Продажи',
+              indicatorKey: 'Продажи'
             },
             {
-              value: 'Profit',
-              indicatorKey: 'Profit'
+              значение: 'Прибыль',
+              indicatorKey: 'Прибыль'
             }
           ]
         }
       ],
       rows: [
         {
-          dimensionKey: 'Category',
-          title: 'Catogery',
-          width: 'auto'
+          dimensionKey: 'Категория',
+          заголовок: 'Catogery',
+          ширина: 'авто'
         },
         {
-          dimensionKey: 'Sub-Category',
-          title: 'Sub-Catogery',
-          width: 'auto'
+          dimensionKey: 'Sub-Категория',
+          заголовок: 'Sub-Catogery',
+          ширина: 'авто'
         }
       ],
       columns: [
         {
-          dimensionKey: 'Region',
-          title: 'Region',
+          dimensionKey: 'Регион',
+          заголовок: 'Регион',
           headerStyle: {
             textStick: true
           },
-          width: 'auto'
+          ширина: 'авто'
         }
       ],
       indicators: [
         {
-          indicatorKey: 'Sales',
-          title: 'Sales',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Продажи',
+          заголовок: 'Продажи',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            if (value) {
-              return '$' + Number(value).toFixed(2);
+          format: значение => {
+            if (значение) {
+              возврат '$' + число(значение).toFixed(2);
             }
-            return '';
+            возврат '';
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             }
           }
         },
         {
-          indicatorKey: 'Profit',
-          title: 'Profit',
-          width: 'auto',
-          showSort: false,
+          indicatorKey: 'Прибыль',
+          заголовок: 'Прибыль',
+          ширина: 'авто',
+          showсортировка: false,
           headerStyle: {
             fontWeight: 'normal'
           },
-          format: value => {
-            if (value) {
-              return '$' + Number(value).toFixed(2);
+          format: значение => {
+            if (значение) {
+              возврат '$' + число(значение).toFixed(2);
             }
-            return '';
+            возврат '';
           },
           style: {
-            padding: [16, 28, 16, 28],
-            color(args) {
-              if (args.dataValue >= 0) {
-                return 'black';
+            заполнение: [16, 28, 16, 28],
+            цвет(args) {
+              if (args.данныеValue >= 0) {
+                возврат 'black';
               }
-              return 'red';
+              возврат 'red';
             }
           }
         }
@@ -286,52 +286,52 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           textStick: true
         }
       },
-      widthMode: 'standard',
+      ширинаMode: 'standard',
       rowHierarchyIndent: 20,
       rowExpandLevel: 1,
       rowHierarchyTextStartAlignment: true,
-      dragOrder: {
-        dragHeaderMode: 'all'
+      dragпорядок: {
+        dragHeaderMode: 'все'
       }
     };
-    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = tableInstance;
-    tableInstance.on('mouseenter_cell', args => {
+    таблицаInstance = новый Vтаблица.сводныйтаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = таблицаInstance;
+    таблицаInstance.на('mouseenter_cell', args => {
       const { cellRange, col, row } = args;
       debugger;
-      const value = tableInstance.getCellValue(col, row);
-      const cellHeaderPaths = tableInstance.getCellHeaderPaths(col, row);
-      const infoList = [];
+      const значение = таблицаInstance.getCellValue(col, row);
+      const cellHeaderPaths = таблицаInstance.getCellHeaderPaths(col, row);
+      const infoсписок = [];
       cellHeaderPaths.rowHeaderPaths?.forEach(headerDimension => {
-        infoList.push(
+        infoсписок.push(
           headerDimension.indicatorKey
-            ? headerDimension.indicatorKey + ': ' + value
-            : headerDimension.dimensionKey + ': ' + headerDimension.value
+            ? headerDimension.indicatorKey + ': ' + значение
+            : headerDimension.dimensionKey + ': ' + headerDimension.значение
         );
       });
       cellHeaderPaths.colHeaderPaths?.forEach(headerDimension => {
-        infoList.push(
+        infoсписок.push(
           headerDimension.indicatorKey
-            ? headerDimension.indicatorKey + ': ' + value
-            : headerDimension.dimensionKey + ': ' + headerDimension.value
+            ? headerDimension.indicatorKey + ': ' + значение
+            : headerDimension.dimensionKey + ': ' + headerDimension.значение
         );
       });
       const container = document.getElementById(CONTAINER_ID);
       const containerRect = container.getBoundingClientRect();
 
-      if (!tableInstance.isHeader(col, row)) {
-        showTooltip(infoList, cellRange?.left + containerRect.left, cellRange?.bottom + containerRect.top);
+      if (!таблицаInstance.isHeader(col, row)) {
+        showПодсказка(infoсписок, cellRange?.лево + containerRect.лево, cellRange?.низ + containerRect.верх);
       } else {
-        hideTooltip();
+        hideПодсказка();
       }
     });
-    tableInstance.on('mouseleave_cell', args => {
+    таблицаInstance.на('mouseleave_cell', args => {
       const { cellRange, col, row } = args;
-      hideTooltip();
+      hideПодсказка();
     });
-    tableInstance.on('mouseleave_table', args => {
+    таблицаInstance.на('mouseleave_таблица', args => {
       const { cellRange, col, row } = args;
-      hideTooltip();
+      hideПодсказка();
     });
   });
 ```

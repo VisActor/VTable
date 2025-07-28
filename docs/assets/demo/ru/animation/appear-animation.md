@@ -1,102 +1,102 @@
 ---
-category: examples
-group: Animation
-title: Appear Animation
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/appear-animation.gif
-option: ListTable-columns-text#animationAppear
+категория: примеры
+группа: Animation
+заголовок: Appear Animation
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/appear-animation.gif
+опция: списоктаблица-columns-текст#animationAppear
 ---
 
 # Entry animation
 
-Initialize the table with an entrance animation.
+Initialize the таблица с an entrance animation.
 
 ## Key configuration
 
 - `animationAppear` Entry animation configuration
-  - `type` Entry animation type, currently supports `all` and `one-by-one`
-  - `direction` Entry animation direction, currently supports `row` and `column`
-  - `duration` The duration of a single animation, in milliseconds, `one-by-one`, the duration of one animation
-  - `delay` Animation delay, in milliseconds; `one-by-one` is the time difference between two animations, `all` is the delay of all animations
+  - `тип` Entry animation тип, currently supports `все` и `one-по-one`
+  - `direction` Entry animation direction, currently supports `row` и `column`
+  - `duration` The duration из a single animation, в milliseconds, `one-по-one`, the duration из one animation
+  - `delay` Animation delay, в milliseconds; `one-по-one` is the time difference between two animations, `все` is the delay из все animations
 
-## Code demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные100.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
   {
-        "field": "Category",
-        "title": "Category",
-        "width": "auto",
+        "поле": "Категория",
+        "title": "Категория",
+        "ширина": "авто",
     },
     {
-        "field": "Sub-Category",
-        "title": "Sub-Category",
-        "width": "auto",
+        "поле": "Sub-Категория",
+        "title": "Sub-Категория",
+        "ширина": "авто",
     },
     {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto"
+        "поле": "ID Заказа",
+        "title": "ID Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Customer ID",
-        "title": "Customer ID",
-        "width": "auto"
+        "поле": "пользовательскийer ID",
+        "title": "пользовательскийer ID",
+        "ширина": "авто"
     },
     {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto",
+        "поле": "Product имя",
+        "title": "Product имя",
+        "ширина": "авто",
     },
     {
-        "field": "Region",
-        "title": "Region",
-        "width": "auto"
+        "поле": "Регион",
+        "title": "Регион",
+        "ширина": "авто"
     },
     {
-        "field": "City",
-        "title": "City",
-        "width": "auto"
+        "поле": "Город",
+        "title": "Город",
+        "ширина": "авто"
     },
     {
-        "field": "Order Date",
-        "title": "Order Date",
-        "width": "auto"
+        "поле": "Дата Заказа",
+        "title": "Дата Заказа",
+        "ширина": "авто"
     },
     {
-        "field": "Quantity",
-        "title": "Quantity",
-        "width": "auto"
+        "поле": "Количество",
+        "title": "Количество",
+        "ширина": "авто"
     },
     {
-        "field": "Sales",
-        "title": "Sales",
-        "width": "auto"
+        "поле": "Продажи",
+        "title": "Продажи",
+        "ширина": "авто"
     },
     {
-        "field": "Profit",
-        "title": "Profit",
-        "width": "auto"
+        "поле": "Прибыль",
+        "title": "Прибыль",
+        "ширина": "авто"
     }
 ];
 
 const option = {
-  records:data.slice(0,20),
+  records:данные.slice(0,20),
   columns,
-  widthMode:'standard',
+  ширинаMode:'standard',
   animationAppear: {
       duration: 300,
       delay: 100,
-      type: 'one-by-one', // all
+      тип: 'one-по-one', // все
       direction: 'row' // colunm
     }
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
     })
 ```

@@ -3,163 +3,163 @@
 2025-07-09
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add eventOptions contextmenuReturnAllSelectedCells [#4064](https://github.com/VisActor/VTable/issues/4064)
--  **@visactor/vtable**: add batch expand or collapse all tree nodes
+- **@visactor/vтаблица**: add событиеOptions contextменюReturnAllSelectedCells [#4064](https://github.com/VisActor/Vтаблица/issues/4064)
+-  **@visactor/vтаблица**: add batch развернуть или свернуть все tree nodes
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: click to edit cell not work with groupBy [#4172](https://github.com/VisActor/VTable/issues/4172)
-- **@visactor/vtable**: fix validateCellVaule when paste cell [#4174](https://github.com/VisActor/VTable/issues/4174) [#1797](https://github.com/VisActor/VTable/issues/1797)
-- **@visactor/vtable**: handle frozen column calculation when container is invisible
--  **@visactor/vtable**: fix: paste validateValue missing position table params [#4164](https://github.com/VisActor/VTable/issues/4164)
--  **@visactor/vtable**: fix animation register progress
--  **@visactor/vtable**: fix: fix after resize container then frozen column invisible [#3836](https://github.com/VisActor/VTable/issues/3836)
+- **@visactor/vтаблица**: Нажать к edit cell не work с groupBy [#4172](https://github.com/VisActor/Vтаблица/issues/4172)
+- **@visactor/vтаблица**: fix validateCellVaule when paste cell [#4174](https://github.com/VisActor/Vтаблица/issues/4174) [#1797](https://github.com/VisActor/Vтаблица/issues/1797)
+- **@visactor/vтаблица**: handle frozen column calculation when container is invisible
+-  **@visactor/vтаблица**: fix: paste validateValue missing позиция таблица params [#4164](https://github.com/VisActor/Vтаблица/issues/4164)
+-  **@visactor/vтаблица**: fix animation регистрация progress
+-  **@visactor/vтаблица**: fix: fix after изменение размера container then frozen column invisible [#3836](https://github.com/VisActor/Vтаблица/issues/3836)
 
 
 
 
-[more detail about v1.19.3](https://github.com/VisActor/VTable/releases/tag/v1.19.3)
+[more detail about v1.19.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.19.3)
 
 # v1.19.2
 
 2025-07-01
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: ListTable support levelSpan for header
-- **@visactor/vtable-plugins**: add import excel file plugin
-- **@visactor/vtable-gantt**: gantt chart's frame border support set array
+- **@visactor/vтаблица**: списоктаблица support levelSpan для header
+- **@visactor/vтаблица-plugins**: add import excel file plugin
+- **@visactor/vтаблица-гантт**: гантт график's frame граница support set массив
 
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix templateLink in export excel [#4106](https://github.com/VisActor/VTable/issues/4106)
-- **@visactor/vtable**: list-tree delete root level error when using deleteRecords
-- **@visactor/vtable**: fix minWidth & maxWidth in autoFillWidth status [#4100](https://github.com/VisActor/VTable/issues/4100)
-- **@visactor/vtable**: when updateColumns occor error with aggregation
-- **@visactor/vtable**: when edit pivot indicator value the total value should update synchronously
-- **@visactor/vtable**: merge render error when has custom aggregation
-- **@visactor/vtable**: list tree delete records bug [#3991](https://github.com/VisActor/VTable/issues/3991)
-- **@visactor/vtable**: group by boolean cannot render false [#4059](https://github.com/VisActor/VTable/issues/4059)
+- **@visactor/vтаблица**: fix templateLink в export excel [#4106](https://github.com/VisActor/Vтаблица/issues/4106)
+- **@visactor/vтаблица**: список-tree delete root level ошибка when using deleteRecords
+- **@visactor/vтаблица**: fix minширина & maxширина в автоFillширина status [#4100](https://github.com/VisActor/Vтаблица/issues/4100)
+- **@visactor/vтаблица**: when updateColumns occor ошибка с aggregation
+- **@visactor/vтаблица**: when edit сводный indicator значение the total значение should update synchronously
+- **@visactor/vтаблица**: merge render ошибка when has пользовательский aggregation
+- **@visactor/vтаблица**: список tree delete records bug [#3991](https://github.com/VisActor/Vтаблица/issues/3991)
+- **@visactor/vтаблица**: group по логический cannot render false [#4059](https://github.com/VisActor/Vтаблица/issues/4059)
 
 
 
-[more detail about v1.19.2](https://github.com/VisActor/VTable/releases/tag/v1.19.2)
+[more detail about v1.19.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.19.2)
 
 # v1.19.1
 
 2025-06-20
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: fix when use containerFit scroll and bottom border error [#3337](https://github.com/VisActor/VTable/issues/3337)
+- **@visactor/vтаблица**: fix when use containerFit прокрутка и низ граница ошибка [#3337](https://github.com/VisActor/Vтаблица/issues/3337)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: copy not work when after copy tooltip text [#3968](https://github.com/VisActor/VTable/issues/3968)
-- **@visactor/vtable**: fix the issue where the icon configuration is not effective when cellType is progressBar [#4047](https://github.com/VisActor/VTable/issues/4047)
+- **@visactor/vтаблица**: copy не work when after copy Подсказка текст [#3968](https://github.com/VisActor/Vтаблица/issues/3968)
+- **@visactor/vтаблица**: fix the issue where the иконка configuration is не effective when cellType is progressBar [#4047](https://github.com/VisActor/Vтаблица/issues/4047)
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender 1.0.5 fix animation bug
+- **@visactor/vтаблица**: update vrender 1.0.5 fix animation bug
 
 
 
-[more detail about v1.19.1](https://github.com/VisActor/VTable/releases/tag/v1.19.1)
+[more detail about v1.19.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.19.1)
 
 # v1.19.0
 
 2025-06-16
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: add task-bar minSize config [#4016](https://github.com/VisActor/VTable/issues/4016)
-- **@visactor/vtable-gantt**: support different dependency link line has differrent style [#4016](https://github.com/VisActor/VTable/issues/4016)
-- **@visactor/vtable**: add containerFit config to support table size
-- **@visactor/vtable**: add wps fill-handle plugin
-- **@visactor/vtable**: add clearColWidthCache for updateColumns api
+- **@visactor/vтаблица-гантт**: add task-bar minSize config [#4016](https://github.com/VisActor/Vтаблица/issues/4016)
+- **@visactor/vтаблица-гантт**: support different dependency link line has differrent style [#4016](https://github.com/VisActor/Vтаблица/issues/4016)
+- **@visactor/vтаблица**: add containerFit config к support таблица размер
+- **@visactor/vтаблица**: add wps fill-handle plugin
+- **@visactor/vтаблица**: add clearColширинаCache для updateColumns апи
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: some taskShowMode should compute all row height on vtable [#4011](https://github.com/VisActor/VTable/issues/4011)
-- **@visactor/vtable**: group release so gif can stop animation [#4029](https://github.com/VisActor/VTable/issues/4029)
+- **@visactor/vтаблица**: некоторые taskShowMode should compute все row высота на vтаблица [#4011](https://github.com/VisActor/Vтаблица/issues/4011)
+- **@visactor/vтаблица**: group Релиз so gif can stop animation [#4029](https://github.com/VisActor/Vтаблица/issues/4029)
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender 1.0.0
+- **@visactor/vтаблица**: update vrender 1.0.0
 
 
 
-[more detail about v1.19.0](https://github.com/VisActor/VTable/releases/tag/v1.19.0)
+[more detail about v1.19.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.19.0)
 
 # v1.18.5
 
 2025-06-09
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-vue**: add vue-table export type /es/*.d.ts
+- **@visactor/vтаблица-vue**: add vue-таблица export тип /es/*.d.ts
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix node-canvas range in PivotChart [#3997](https://github.com/VisActor/VTable/issues/3997)
-- **@visactor/vtable**: when pointer up set isDown false
-- **@visactor/vtable**: fix drag select not stop problem [#3895](https://github.com/VisActor/VTable/issues/3895)
-- **@visactor/vtable**: fix scrollbar not show when set visible 'focus' [#3914](https://github.com/VisActor/VTable/issues/3914)
-- **@visactor/vtable**: contextmenu submenu show postion should adjust by bottom [#3867](https://github.com/VisActor/VTable/issues/3867)
-- **@visactor/vtable**: filter data occor error with sort state and groupby [#3961](https://github.com/VisActor/VTable/issues/3961) 
+- **@visactor/vтаблица**: fix node-canvas range в сводныйграфик [#3997](https://github.com/VisActor/Vтаблица/issues/3997)
+- **@visactor/vтаблица**: when pointer up set isDown false
+- **@visactor/vтаблица**: fix перетаскивание выбрать не stop problem [#3895](https://github.com/VisActor/Vтаблица/issues/3895)
+- **@visactor/vтаблица**: fix scrollbar не показать when set видимый 'фокус' [#3914](https://github.com/VisActor/Vтаблица/issues/3914)
+- **@visactor/vтаблица**: contextменю subменю показать postion should adjust по низ [#3867](https://github.com/VisActor/Vтаблица/issues/3867)
+- **@visactor/vтаблица**: filter данные occor ошибка с сортировка state и groupby [#3961](https://github.com/VisActor/Vтаблица/issues/3961) 
 
 
-[more detail about v1.18.5](https://github.com/VisActor/VTable/releases/tag/v1.18.5)
+[more detail about v1.18.5](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.18.5)
 
 # v1.18.4
 
 2025-05-27
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add pasted_data event [#3908](https://github.com/VisActor/VTable/issues/3908)
-- **@visactor/vtable-gantt**: add date position to markline
-- **@visactor/vtable-gantt**: add milestone text
-- **@visactor/vtable-gantt**: support record type 'project'
-- **@visactor/vtable-gantt**:  add tasksShowMode 'Project_Sub_Tasks_Inline'
+- **@visactor/vтаблица**: add pasted_данные событие [#3908](https://github.com/VisActor/Vтаблица/issues/3908)
+- **@visactor/vтаблица-гантт**: add date позиция к markline
+- **@visactor/vтаблица-гантт**: add milestone текст
+- **@visactor/vтаблица-гантт**: support record тип 'project'
+- **@visactor/vтаблица-гантт**:  add tasksShowMode 'Project_Sub_Tasks_Inline'
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix bug of chart matrix when has scale
+- **@visactor/vтаблица**: fix bug из график matrix when has scale
 
 
 
-[more detail about v1.18.4](https://github.com/VisActor/VTable/releases/tag/v1.18.4)
+[more detail about v1.18.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.18.4)
 
 # v1.18.3
 
 2025-05-13
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add frozenColumnLine visible on theme [#3828](https://github.com/VisActor/VTable/issues/3828)
-- **@visactor/vtable**: add touch event for gantt chart [#3864](https://github.com/VisActor/VTable/issues/3864)
-- **@visactor/vtable**: add support for text not to be hidden [#3802](https://github.com/VisActor/VTable/issues/3802)
-- **@visactor/vtable**: add exportAllData to export table plugin [#3726](https://github.com/VisActor/VTable/issues/3726)
+- **@visactor/vтаблица**: add frozenColumnLine видимый на тема [#3828](https://github.com/VisActor/Vтаблица/issues/3828)
+- **@visactor/vтаблица**: add touch событие для гантт график [#3864](https://github.com/VisActor/Vтаблица/issues/3864)
+- **@visactor/vтаблица**: add support для текст не к be скрытый [#3802](https://github.com/VisActor/Vтаблица/issues/3802)
+- **@visactor/vтаблица**: add exportAllданные к export таблица plugin [#3726](https://github.com/VisActor/Vтаблица/issues/3726)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when no rowTree treeMode occor error [#3830](https://github.com/VisActor/VTable/issues/3830)
-- **@visactor/vtable**: unintended edit state activation on functional button clicks
-- **@visactor/vtable**: resolve taskBar width problem when click linkPonitNode [#3829](https://github.com/VisActor/VTable/issues/3829)
+- **@visactor/vтаблица**: when no rowTree treeMode occor ошибка [#3830](https://github.com/VisActor/Vтаблица/issues/3830)
+- **@visactor/vтаблица**: unintended edit state activation на functional Кнопка Нажатьs
+- **@visactor/vтаблица**: resolve taskBar ширина problem when Нажать linkPonitNode [#3829](https://github.com/VisActor/Vтаблица/issues/3829)
 
 
 
-[more detail about v1.18.3](https://github.com/VisActor/VTable/releases/tag/v1.18.3)
+[more detail about v1.18.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.18.3)
 
 # v1.18.2
 
@@ -168,23 +168,23 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when records is blank updateColumns api occor error [#3766](https://github.com/VisActor/VTable/issues/3766)
-- **@visactor/vtable**: updateOption with dataSource object occor error [#3768](https://github.com/VisActor/VTable/issues/3768)
-- **@visactor/vtable**: when hide pivot header find headerPath error [#3791](https://github.com/VisActor/VTable/issues/3791)
-- **@visactor/vtable**: supplement adaptive widthAdaptiveMode logic [#3796](https://github.com/VisActor/VTable/issues/3796)
-- **@visactor/vtable**: transform rotate api
-- **@visactor/vtable**: after rotate resize column interaction error
-- **@visactor/vtable**: skip serial number calculation for aggregation rows when groupBy is enabled
-- **@visactor/vtable**: hide rowSeriesNumber and checkbox in aggregation [#2173](https://github.com/VisActor/VTable/issues/2173)
+- **@visactor/vтаблица**: when records is blank updateColumns апи occor ошибка [#3766](https://github.com/VisActor/Vтаблица/issues/3766)
+- **@visactor/vтаблица**: updateOption с данныеSource объект occor ошибка [#3768](https://github.com/VisActor/Vтаблица/issues/3768)
+- **@visactor/vтаблица**: when скрыть сводный header find headerPath ошибка [#3791](https://github.com/VisActor/Vтаблица/issues/3791)
+- **@visactor/vтаблица**: supplement adaptive ширинаAdaptiveMode logic [#3796](https://github.com/VisActor/Vтаблица/issues/3796)
+- **@visactor/vтаблица**: transform rotate апи
+- **@visactor/vтаблица**: after rotate изменение размера column interaction ошибка
+- **@visactor/vтаблица**: skip serial число calculation для aggregation rows when groupBy is включен
+- **@visactor/vтаблица**: скрыть rowSeriesNumber и флажок в aggregation [#2173](https://github.com/VisActor/Vтаблица/issues/2173)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: change event listener with vglobal [#3734](https://github.com/VisActor/VTable/issues/3734)
-- **@visactor/vtable**: plugins update progress [#3788](https://github.com/VisActor/VTable/issues/3788)
+- **@visactor/vтаблица**: change событие списокener с vglobal [#3734](https://github.com/VisActor/Vтаблица/issues/3734)
+- **@visactor/vтаблица**: plugins update progress [#3788](https://github.com/VisActor/Vтаблица/issues/3788)
 
 
 
-[more detail about v1.18.2](https://github.com/VisActor/VTable/releases/tag/v1.18.2)
+[more detail about v1.18.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.18.2)
 
 # v1.18.0
   v1.17.7 same content
@@ -193,121 +193,121 @@
 
 **💥 Breaking change**
 
-- **@visactor/vtable**: fix switch default direction [#3667](https://github.com/VisActor/VTable/issues/3667)
-- **@visactor/vtable-editors**: fix input editor default style
+- **@visactor/vтаблица**: fix switch по умолчанию direction [#3667](https://github.com/VisActor/Vтаблица/issues/3667)
+- **@visactor/vтаблица-editors**: fix ввод editor по умолчанию style
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add onBeforeCacheChartImage event
-- **@visactor/vtable**: support customConfig disableBuildInChartActive
-- **@visactor/vtable**: add dynamicUpdateSelectionSize config in theme.selectionStyle
+- **@visactor/vтаблица**: add onBeforeCacheграфикImвозраст событие
+- **@visactor/vтаблица**: support пользовательскийConfig disableBuildInграфикActive
+- **@visactor/vтаблица**: add dynamicUpdateSelectionSize config в тема.selectionStyle
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix table size in getCellsRect() [#3681](https://github.com/VisActor/VTable/issues/3681)
-- **@visactor/vtable**: correct column index calculation when rowSeriesNumber is configured
-- **@visactor/vtable**: fix image flash problem [#3588](https://github.com/VisActor/VTable/issues/3588)
-- **@visactor/vtable**: fix row/column update problem in text-stick [#3744](https://github.com/VisActor/VTable/issues/3744)
-- **@visactor/vtable**: fix switch default direction [#3667](https://github.com/VisActor/VTable/issues/3667)
+- **@visactor/vтаблица**: fix таблица размер в getCellsRect() [#3681](https://github.com/VisActor/Vтаблица/issues/3681)
+- **@visactor/vтаблица**: correct column index calculation when rowSeriesNumber is configured
+- **@visactor/vтаблица**: fix imвозраст flash problem [#3588](https://github.com/VisActor/Vтаблица/issues/3588)
+- **@visactor/vтаблица**: fix row/column update problem в текст-stick [#3744](https://github.com/VisActor/Vтаблица/issues/3744)
+- **@visactor/vтаблица**: fix switch по умолчанию direction [#3667](https://github.com/VisActor/Vтаблица/issues/3667)
 
 
 
-[more detail about v1.17.7](https://github.com/VisActor/VTable/releases/tag/v1.17.7)
+[more detail about v1.17.7](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.7)
 
 # v1.17.6
 
 2025-04-10
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: listTable added tiggerEvent parameter to changeCellValue
-- **@visactor/vtable**: list table header support hierarchy
+- **@visactor/vтаблица**: списоктаблица added tiggerсобытие параметр к changeCellValue
+- **@visactor/vтаблица**: список таблица header support hierarchy
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when move tree node position code occor error [#3645](https://github.com/VisActor/VTable/issues/3645) [#3706](https://github.com/VisActor/VTable/issues/3706)
-- **@visactor/vtable**: frame border set array render bottom line position error [#3684](https://github.com/VisActor/VTable/issues/3684)
-- **@visactor/vtable**: mobile touch event resize column width [#3693](https://github.com/VisActor/VTable/issues/3693)
-- **@visactor/vtable**: when set frozen disableDragSelect not work [#3702](https://github.com/VisActor/VTable/issues/3702)
-- **@visactor/vtable**: fix flex layout update in react-custom-layout component [#3696](https://github.com/VisActor/VTable/issues/3696)
-- **@visactor/vtable**: updateTaskRecord api [#3639](https://github.com/VisActor/VTable/issues/3639)
-- **@visactor/vtable**: repeat call computeColsWidth adaptive mode result error
+- **@visactor/vтаблица**: when move tree node позиция код occor ошибка [#3645](https://github.com/VisActor/Vтаблица/issues/3645) [#3706](https://github.com/VisActor/Vтаблица/issues/3706)
+- **@visactor/vтаблица**: frame граница set массив render низ line позиция ошибка [#3684](https://github.com/VisActor/Vтаблица/issues/3684)
+- **@visactor/vтаблица**: mobile touch событие изменение размера column ширина [#3693](https://github.com/VisActor/Vтаблица/issues/3693)
+- **@visactor/vтаблица**: when set frozen disableDragSelect не work [#3702](https://github.com/VisActor/Vтаблица/issues/3702)
+- **@visactor/vтаблица**: fix flex макет update в react-пользовательский-макет компонент [#3696](https://github.com/VisActor/Vтаблица/issues/3696)
+- **@visactor/vтаблица**: updateTaskRecord апи [#3639](https://github.com/VisActor/Vтаблица/issues/3639)
+- **@visactor/vтаблица**: repeat call computeColsширина adaptive mode result ошибка
 
 
 
-[more detail about v1.17.6](https://github.com/VisActor/VTable/releases/tag/v1.17.6)
+[more detail about v1.17.6](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.6)
 
 # v1.17.5
 
 2025-04-02
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: cell support marked function [#3583](https://github.com/VisActor/VTable/issues/3583)
-- **@visactor/vtable**: refactor pivotTable corner with no columns or rows case [#3653](https://github.com/VisActor/VTable/issues/3653)
+- **@visactor/vтаблица**: cell support marked функция [#3583](https://github.com/VisActor/Vтаблица/issues/3583)
+- **@visactor/vтаблица**: refactor сводныйтаблица corner с no columns или rows case [#3653](https://github.com/VisActor/Vтаблица/issues/3653)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: gantt scale set quarter parser problem [#3612](https://github.com/VisActor/VTable/issues/3612)
-- **@visactor/vtable**: gantt overscrollBehavior none work [#3638](https://github.com/VisActor/VTable/issues/3638)
-- **@visactor/vtable**: gantt chart updateRecords error when table is tree mode [#3639](https://github.com/VisActor/VTable/issues/3639)
-- **@visactor/vtable**: rowHeight error when set adaptive heightMode [#3640](https://github.com/VisActor/VTable/issues/3640)
-- **@visactor/vtable**: when set renderChartAsync setRecords api render error [#3661](https://github.com/VisActor/VTable/issues/3661)
-- **@visactor/vtable**: fix merge cell checkbox state update [#3668](https://github.com/VisActor/VTable/issues/3668)
+- **@visactor/vтаблица**: гантт scale set quarter parser problem [#3612](https://github.com/VisActor/Vтаблица/issues/3612)
+- **@visactor/vтаблица**: гантт overscrollBehavior никто work [#3638](https://github.com/VisActor/Vтаблица/issues/3638)
+- **@visactor/vтаблица**: гантт график updateRecords ошибка when таблица is tree mode [#3639](https://github.com/VisActor/Vтаблица/issues/3639)
+- **@visactor/vтаблица**: rowвысота ошибка when set adaptive высотаMode [#3640](https://github.com/VisActor/Vтаблица/issues/3640)
+- **@visactor/vтаблица**: when set renderграфикAsync setRecords апи render ошибка [#3661](https://github.com/VisActor/Vтаблица/issues/3661)
+- **@visactor/vтаблица**: fix merge cell флажок state update [#3668](https://github.com/VisActor/Vтаблица/issues/3668)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: fillHandle function [#3582](https://github.com/VisActor/VTable/issues/3582)
+- **@visactor/vтаблица**: fillHandle функция [#3582](https://github.com/VisActor/Vтаблица/issues/3582)
 
 
 
-[more detail about v1.17.5](https://github.com/VisActor/VTable/releases/tag/v1.17.5)
+[more detail about v1.17.5](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.5)
 
 # v1.17.4
 
 2025-03-31
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add barMarkInBar style config in progressbar [#3616](https://github.com/VisActor/VTable/issues/3616)
+- **@visactor/vтаблица**: add barMarkInBar style config в progressbar [#3616](https://github.com/VisActor/Vтаблица/issues/3616)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix button style problem [#3614](https://github.com/VisActor/VTable/issues/3614)
-- **@visactor/vtable**: fix checkbox state order update [#3606](https://github.com/VisActor/VTable/issues/3606)
-- **@visactor/vtable**: add isCustom tag for merge cell range [#3504](https://github.com/VisActor/VTable/issues/3504)
-- **@visactor/vtable**: fix tree checkbox state update problem
-- **@visactor/vtable**: disable group title editor
+- **@visactor/vтаблица**: fix Кнопка style problem [#3614](https://github.com/VisActor/Vтаблица/issues/3614)
+- **@visactor/vтаблица**: fix флажок state order update [#3606](https://github.com/VisActor/Vтаблица/issues/3606)
+- **@visactor/vтаблица**: add isпользовательский tag для merge cell range [#3504](https://github.com/VisActor/Vтаблица/issues/3504)
+- **@visactor/vтаблица**: fix tree флажок state update problem
+- **@visactor/vтаблица**: отключить group title editor
 
-[more detail about v1.17.4](https://github.com/VisActor/VTable/releases/tag/v1.17.4)
+[more detail about v1.17.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.4)
 
 # v1.17.3
 
 2025-03-24
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: rowSeriesNumber support cell type radio [#3558](https://github.com/VisActor/VTable/issues/3558)
-- **@visactor/vtable**: add custom reactAttributePlugin in react-vtable
-- **@visactor/vtable**: add maintainedColumnCount config
+- **@visactor/vтаблица**: rowSeriesNumber support cell тип переключатель [#3558](https://github.com/VisActor/Vтаблица/issues/3558)
+- **@visactor/vтаблица**: add пользовательский reactAttributePlugin в react-vтаблица
+- **@visactor/vтаблица**: add maintainedColumnCount config
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: selection mergeCell extend range [#3529](https://github.com/VisActor/VTable/issues/3529)
-- **@visactor/vtable**: set cellInnerBorder false frame border render error [#3574](https://github.com/VisActor/VTable/issues/3574)
-- **@visactor/vtable**: fix cell border in cell with corner-radius
-- **@visactor/vtable**: fix axis label autosize computation
-- **@visactor/vtable**: fix small window size frozen column count
-- **@visactor/vtable**: columnWidthConfig match dimension error
-- **@visactor/vtable**: fix react component update [#3474](https://github.com/VisActor/VTable/issues/3474)
-- **@visactor/vtable**: fix right button select problem
-- **@visactor/vtable**: fix row update range [#3468](https://github.com/VisActor/VTable/issues/3468)
+- **@visactor/vтаблица**: selection mergeCell extend range [#3529](https://github.com/VisActor/Vтаблица/issues/3529)
+- **@visactor/vтаблица**: set cellInnerBorder false frame граница render ошибка [#3574](https://github.com/VisActor/Vтаблица/issues/3574)
+- **@visactor/vтаблица**: fix cell граница в cell с corner-radius
+- **@visactor/vтаблица**: fix axis label автоsize computation
+- **@visactor/vтаблица**: fix small window размер frozen column count
+- **@visactor/vтаблица**: columnширинаConfig match dimension ошибка
+- **@visactor/vтаблица**: fix react компонент update [#3474](https://github.com/VisActor/Vтаблица/issues/3474)
+- **@visactor/vтаблица**: fix право Кнопка выбрать problem
+- **@visactor/vтаблица**: fix row update range [#3468](https://github.com/VisActor/Vтаблица/issues/3468)
 
-[more detail about v1.17.3](https://github.com/VisActor/VTable/releases/tag/v1.17.3)
+[more detail about v1.17.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.3)
 
 # v1.17.2
 
@@ -316,36 +316,36 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vue-vtable**: custom container value error
+- **@visactor/vue-vтаблица**: пользовательский container значение ошибка
 
 
-[more detail about v1.17.2](https://github.com/VisActor/VTable/releases/tag/v1.17.2)
+[more detail about v1.17.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.2)
 
 # v1.17.1
 
 2025-03-10
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: pivot table add api setLoadingHierarchyState [#3469](https://github.com/VisActor/VTable/issues/3469)
-- **@visactor/vtable**: add validateDragOrderOnEnd on dragOrder option [#3493](https://github.com/VisActor/VTable/issues/3493)
-- **@visactor/vtable**: sortByIndicatorRule support sortFunc [#3508](https://github.com/VisActor/VTable/issues/3508)
-- **@visactor/vtable-gantt**: gantt chart support create markline
-- **@visactor/vtable**: customCellStyle supports functional config [#3483](https://github.com/VisActor/VTable/issues/3483)
+- **@visactor/vтаблица**: сводный таблица add апи setLoadingHierarchyState [#3469](https://github.com/VisActor/Vтаблица/issues/3469)
+- **@visactor/vтаблица**: add validateDragOrderOnEnd на dragOrder option [#3493](https://github.com/VisActor/Vтаблица/issues/3493)
+- **@visactor/vтаблица**: сортировкаByIndicatorRule support сортировкаFunc [#3508](https://github.com/VisActor/Vтаблица/issues/3508)
+- **@visactor/vтаблица-гантт**: гантт график support create markline
+- **@visactor/vтаблица**: пользовательскийCellStyle supports functional config [#3483](https://github.com/VisActor/Vтаблица/issues/3483)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: mobile drill icon state update [#3485](https://github.com/VisActor/VTable/issues/3485)
-- **@visactor/vtable**: active right button interactive [#3482](https://github.com/VisActor/VTable/issues/3482)
+- **@visactor/vтаблица**: mobile drill иконка state update [#3485](https://github.com/VisActor/Vтаблица/issues/3485)
+- **@visactor/vтаблица**: активный право Кнопка interactive [#3482](https://github.com/VisActor/Vтаблица/issues/3482)
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender version
+- **@visactor/vтаблица**: update vrender version
 
 
 
-[more detail about v1.17.1](https://github.com/VisActor/VTable/releases/tag/v1.17.1)
+[more detail about v1.17.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.1)
 
 # v1.17.0
 
@@ -353,33 +353,33 @@
 
 **💥 Breaking change**
 
-- **@visactor/vtable**: delete loading icon auto register, need to register manually, please refer to the tutorial: /guide/table_type/List_table/tree_list
+- **@visactor/vтаблица**: delete загрузка иконка авто регистрация, need к регистрация manually, please refer к the tutorial: /guide/таблица_type/список_таблица/tree_список
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: gantt time scale support visible [#3098](https://github.com/VisActor/VTable/issues/3098)
-- **@visactor/vtable**: dropdownmenu support function [#3443](https://github.com/VisActor/VTable/issues/3443)
-- **@visactor/vtable-gantt**: add verticalLineDependenceOnTimeScale [#3467](https://github.com/VisActor/VTable/issues/3467)
-- **@visactor/vtable**: add api activateChartInstance replaceChartCacheImage
-- **@visactor/vtable**: add `specTransformInCell` for support modifying vchart spec of each cell in PivotChart
-- **@visactor/vtable**: add switch & button cell type
+- **@visactor/vтаблица-гантт**: гантт time scale support видимый [#3098](https://github.com/VisActor/Vтаблица/issues/3098)
+- **@visactor/vтаблица**: dropdownменю support функция [#3443](https://github.com/VisActor/Vтаблица/issues/3443)
+- **@visactor/vтаблица-гантт**: add verticalLineDependenceOnTimeScale [#3467](https://github.com/VisActor/Vтаблица/issues/3467)
+- **@visactor/vтаблица**: add апи activateграфикInstance replaceграфикCacheImвозраст
+- **@visactor/vтаблица**: add `specTransformInCell` для support modifying vграфик spec из каждый cell в сводныйграфик
+- **@visactor/vтаблица**: add switch & Кнопка cell тип
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: after release instance, resize event occor error [#3459](https://github.com/VisActor/VTable/issues/3459)
-- **@visactor/vtable**: when set autoFillWidth the rowSeriesNumber column not change his width [#3459](https://github.com/VisActor/VTable/issues/3459)
-- **@visactor/vtable-gantt**: when resize taskbar start or end time tree node update error [#3460](https://github.com/VisActor/VTable/issues/3460)
-- **@visactor/vtable**: fix node env config
-- **@visactor/vtable**: fix row/col is decimal in animation [#3455](https://github.com/VisActor/VTable/issues/3455)
-- **@visactor/vtable**: fix height is decimal in carousel [#3458](https://github.com/VisActor/VTable/issues/3458)
+- **@visactor/vтаблица**: after Релиз instance, изменение размера событие occor ошибка [#3459](https://github.com/VisActor/Vтаблица/issues/3459)
+- **@visactor/vтаблица**: when set автоFillширина the rowSeriesNumber column не change his ширина [#3459](https://github.com/VisActor/Vтаблица/issues/3459)
+- **@visactor/vтаблица-гантт**: when изменение размера taskbar начало или конец time tree node update ошибка [#3460](https://github.com/VisActor/Vтаблица/issues/3460)
+- **@visactor/vтаблица**: fix node env config
+- **@visactor/vтаблица**: fix row/col is decimal в animation [#3455](https://github.com/VisActor/Vтаблица/issues/3455)
+- **@visactor/vтаблица**: fix высота is decimal в carousel [#3458](https://github.com/VisActor/Vтаблица/issues/3458)
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: update changlog of rush
+- **@visactor/vтаблица**: update changlog из rush
 
 
 
-[more detail about v1.17.0](https://github.com/VisActor/VTable/releases/tag/v1.17.0)
+[more detail about v1.17.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.17.0)
 
 # v1.16.2
 
@@ -388,307 +388,307 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: field with dot occor error # 3409
-- **@visactor/vtable**: getChartInstance log vchart updateViewBox method [#3442](https://github.com/VisActor/VTable/issues/3442)
-- **@visactor/vtable**: computeAxisComponentWidth value ceil [#3444](https://github.com/VisActor/VTable/issues/3444)
-- **@visactor/vtable**: fix sort function in getCheckboxState() [#3394](https://github.com/VisActor/VTable/issues/3394)
+- **@visactor/vтаблица**: поле с dot occor ошибка # 3409
+- **@visactor/vтаблица**: getграфикInstance log vграфик updateViewBox method [#3442](https://github.com/VisActor/Vтаблица/issues/3442)
+- **@visactor/vтаблица**: computeAxisкомпонентширина значение ceil [#3444](https://github.com/VisActor/Vтаблица/issues/3444)
+- **@visactor/vтаблица**: fix сортировка функция в getCheckboxState() [#3394](https://github.com/VisActor/Vтаблица/issues/3394)
 
 
 
-[more detail about v1.16.2](https://github.com/VisActor/VTable/releases/tag/v1.16.2)
+[more detail about v1.16.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.16.2)
 
 # v1.16.1
 
 2025-02-14
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add visibleOnHover setting for columnResize [#3349](https://github.com/VisActor/VTable/issues/3349)
-- **@visactor/vtable**: gantt barStyle support function [#3364](https://github.com/VisActor/VTable/issues/3364)
+- **@visactor/vтаблица**: add visibleOnHover setting для columnResize [#3349](https://github.com/VisActor/Vтаблица/issues/3349)
+- **@visactor/vтаблица**: гантт barStyle support функция [#3364](https://github.com/VisActor/Vтаблица/issues/3364)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when rowHierarchyType is tree total value show on top no work [#3322](https://github.com/VisActor/VTable/issues/3322)
-- **@visactor/vtable**: when column has custom aggregation edit cell update [#3333](https://github.com/VisActor/VTable/issues/3333)
-- **@visactor/vtable**: progress will only support number not decimals [#3401](https://github.com/VisActor/VTable/issues/3401)
-- **@visactor/vtable**: disable auto resize column width when double clicking the column border line
-- **@visactor/vtable**: fix bodyGroup frame update [#3404](https://github.com/VisActor/VTable/issues/3404)
-- **@visactor/vtable**: fix dom position in react-vtable [#3314](https://github.com/VisActor/VTable/issues/3314)
-- **@visactor/vtable**: fix groupBy judgement in getHierarchyState() [#3406](https://github.com/VisActor/VTable/issues/3406)
-- **@visactor/vtable**: fix sorted checkbox state [#3394](https://github.com/VisActor/VTable/issues/3394)
+- **@visactor/vтаблица**: when rowHierarchyType is tree total значение показать на верх no work [#3322](https://github.com/VisActor/Vтаблица/issues/3322)
+- **@visactor/vтаблица**: when column has пользовательский aggregation edit cell update [#3333](https://github.com/VisActor/Vтаблица/issues/3333)
+- **@visactor/vтаблица**: progress will only support число не decimals [#3401](https://github.com/VisActor/Vтаблица/issues/3401)
+- **@visactor/vтаблица**: отключить авто изменение размера column ширина when double Нажатьing the column граница line
+- **@visactor/vтаблица**: fix bodyGroup frame update [#3404](https://github.com/VisActor/Vтаблица/issues/3404)
+- **@visactor/vтаблица**: fix dom позиция в react-vтаблица [#3314](https://github.com/VisActor/Vтаблица/issues/3314)
+- **@visactor/vтаблица**: fix groupBy judgement в getHierarchyState() [#3406](https://github.com/VisActor/Vтаблица/issues/3406)
+- **@visactor/vтаблица**: fix сортировкаed флажок state [#3394](https://github.com/VisActor/Vтаблица/issues/3394)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: progressbar type cell support customLayou [#3295](https://github.com/VisActor/VTable/issues/3295)
-- **@visactor/vtable**: supplement theme frozen frameStyle border create [#3400](https://github.com/VisActor/VTable/issues/3400)
+- **@visactor/vтаблица**: progressbar тип cell support пользовательскийLayou [#3295](https://github.com/VisActor/Vтаблица/issues/3295)
+- **@visactor/vтаблица**: supplement тема frozen frameStyle граница create [#3400](https://github.com/VisActor/Vтаблица/issues/3400)
 
-[more detail about v1.16.1](https://github.com/VisActor/VTable/releases/tag/v1.16.1)
+[more detail about v1.16.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.16.1)
 
 # v1.16.0
 
 2025-02-08
 
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support async in downloadCsv&downloadExcel
-- **@visactor/vtable**: linkJump & linkDetect support function
-- **@visactor/vtable**: support react17 in customLayout function
-- **@visactor/vtable**: add keepColumnWidthChange in vue-vtable [#3346](https://github.com/VisActor/VTable/issues/3346)
-- **@visactor/vtable**: add grid-tree mode for pivot table
+- **@visactor/vтаблица**: support async в downloadCsv&downloadExcel
+- **@visactor/vтаблица**: linkJump & linkDetect support функция
+- **@visactor/vтаблица**: support react17 в пользовательскиймакет функция
+- **@visactor/vтаблица**: add keepColumnширинаChange в vue-vтаблица [#3346](https://github.com/VisActor/Vтаблица/issues/3346)
+- **@visactor/vтаблица**: add grid-tree mode для сводный таблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: when resize gantt view size should update dependency node size [#3287](https://github.com/VisActor/VTable/issues/3287)
-- **@visactor/vtable-gantt**: resize or move taskbar update record problem [#3321](https://github.com/VisActor/VTable/issues/3321)
-- **@visactor/vtable-gantt**: updateScales to quarter taskbar size error [#3348](https://github.com/VisActor/VTable/issues/3348)
-- **@visactor/vtable-gantt**: mouseover last date border occor error for gantt [#3373](https://github.com/VisActor/VTable/issues/3373)
-- **@visactor/vtable**: fix clipped judgement in getCellOverflowText()
-- **@visactor/vtable**: fix rowData error in media-click [#3342](https://github.com/VisActor/VTable/issues/3342)
-- **@visactor/vtable**: fix header checkbox state in functional cellType [#3334](https://github.com/VisActor/VTable/issues/3334)
-- **@visactor/vtable**: fix text vertical layout [#3353](https://github.com/VisActor/VTable/issues/3353)
-- **@visactor/vtable**: fix merge cell style update in vtable-search [#3327](https://github.com/VisActor/VTable/issues/3327)
+- **@visactor/vтаблица-гантт**: when изменение размера гантт view размер should update dependency node размер [#3287](https://github.com/VisActor/Vтаблица/issues/3287)
+- **@visactor/vтаблица-гантт**: изменение размера или move taskbar update record problem [#3321](https://github.com/VisActor/Vтаблица/issues/3321)
+- **@visactor/vтаблица-гантт**: updateScales к quarter taskbar размер ошибка [#3348](https://github.com/VisActor/Vтаблица/issues/3348)
+- **@visactor/vтаблица-гантт**: mouseover последний date граница occor ошибка для гантт [#3373](https://github.com/VisActor/Vтаблица/issues/3373)
+- **@visactor/vтаблица**: fix clipped judgement в getCellOverflowText()
+- **@visactor/vтаблица**: fix rowданные ошибка в media-Нажать [#3342](https://github.com/VisActor/Vтаблица/issues/3342)
+- **@visactor/vтаблица**: fix header флажок state в functional cellType [#3334](https://github.com/VisActor/Vтаблица/issues/3334)
+- **@visactor/vтаблица**: fix текст vertical макет [#3353](https://github.com/VisActor/Vтаблица/issues/3353)
+- **@visactor/vтаблица**: fix merge cell style update в vтаблица-search [#3327](https://github.com/VisActor/Vтаблица/issues/3327)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: rowSeriesNumber cell can use theme headerStyle [#3362](https://github.com/VisActor/VTable/issues/3362)
+- **@visactor/vтаблица**: rowSeriesNumber cell can use тема headerStyle [#3362](https://github.com/VisActor/Vтаблица/issues/3362)
 
 
 
-[more detail about v1.16.0](https://github.com/VisActor/VTable/releases/tag/v1.16.0)
+[more detail about v1.16.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.16.0)
 
 # v1.15.2
 
 2025-01-26
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: dependField&batType support function in progress-bar
+- **@visactor/vтаблица**: dependполе&batType support функция в progress-bar
 
-[more detail about v1.15.2](https://github.com/VisActor/VTable/releases/tag/v1.15.2)
+[more detail about v1.15.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.15.2)
 
 # v1.15.1
 
 2025-01-17
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add emptyTip click event
-- **@visactor/vtable**: canvasWidth canvasHeight support auto setting [#3089](https://github.com/VisActor/VTable/issues/3089)
-- **@visactor/vtable**: add data update in list-table tree(group) mode
-- **@visactor/vtable**: add groupTitleFieldFormat API [#3092](https://github.com/VisActor/VTable/issues/3092)
+- **@visactor/vтаблица**: add emptyTip Нажать событие
+- **@visactor/vтаблица**: canvasширина canvasвысота support авто setting [#3089](https://github.com/VisActor/Vтаблица/issues/3089)
+- **@visactor/vтаблица**: add данные update в список-таблица tree(group) mode
+- **@visactor/vтаблица**: add groupTitleполеFormat апи [#3092](https://github.com/VisActor/Vтаблица/issues/3092)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: when mouse leave gantt should trigger mouseleave_taskbar [#3294](https://github.com/VisActor/VTable/issues/3294)
-- **@visactor/vtable**: fix empty-tip layout problem when resize window [#3312](https://github.com/VisActor/VTable/issues/3312)
-- **@visactor/vtable**: remove tree limit in handleTextStick() [#3274](https://github.com/VisActor/VTable/issues/3274)
+- **@visactor/vтаблица-гантт**: when mouse leave гантт should trigger mouseleave_taskbar [#3294](https://github.com/VisActor/Vтаблица/issues/3294)
+- **@visactor/vтаблица**: fix empty-tip макет problem when изменение размера window [#3312](https://github.com/VisActor/Vтаблица/issues/3312)
+- **@visactor/vтаблица**: remove tree limit в handleTextStick() [#3274](https://github.com/VisActor/Vтаблица/issues/3274)
 
-[more detail about v1.15.1](https://github.com/VisActor/VTable/releases/tag/v1.15.1)
+[more detail about v1.15.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.15.1)
 
 # v1.15.0
 
 2025-01-09
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support register aggregator [#1508](https://github.com/VisActor/VTable/issues/1508)
-- **@visactor/vtable**: frozenColCount work in pivot table [#3201](https://github.com/VisActor/VTable/issues/3201)
-- **@visactor/vtable-gantt**: add moveToExtendDateRange option [#3221](https://github.com/VisActor/VTable/issues/3221)
-- **@visactor/vtable-gantt**: add keyboardOptions and add delete_dependency_link contextmenu_dependency_link event [#3268](https://github.com/VisActor/VTable/issues/3268)
-- **@visactor/vtable**: customMergeCell support array config [#3202](https://github.com/VisActor/VTable/issues/3202)
-- **@visactor/vtable**: add displayMode in emptyTip
-- **@visactor/vtable**: groupby support array config
-- **@visactor/vtable**: add penetrateEventList config in react-component
-- **@visactor/vtable**: add keepColumnWidthChange props in react-vtable
-- **@visactor/vtable**: add imageAnonymous in customConfig
-- **@visactor/vtable**: aggregationType custom work in pivot table [#1508](https://github.com/VisActor/VTable/issues/1508)
+- **@visactor/vтаблица**: support регистрация aggregator [#1508](https://github.com/VisActor/Vтаблица/issues/1508)
+- **@visactor/vтаблица**: frozenColCount work в сводный таблица [#3201](https://github.com/VisActor/Vтаблица/issues/3201)
+- **@visactor/vтаблица-гантт**: add moveToExtendDateRange option [#3221](https://github.com/VisActor/Vтаблица/issues/3221)
+- **@visactor/vтаблица-гантт**: add keyboardOptions и add delete_dependency_link contextменю_dependency_link событие [#3268](https://github.com/VisActor/Vтаблица/issues/3268)
+- **@visactor/vтаблица**: пользовательскийMergeCell support массив config [#3202](https://github.com/VisActor/Vтаблица/issues/3202)
+- **@visactor/vтаблица**: add displayMode в emptyTip
+- **@visactor/vтаблица**: groupby support массив config
+- **@visactor/vтаблица**: add penetrateсобытиесписок config в react-компонент
+- **@visactor/vтаблица**: add keepColumnширинаChange props в react-vтаблица
+- **@visactor/vтаблица**: add imвозрастAnonymous в пользовательскийConfig
+- **@visactor/vтаблица**: aggregationType пользовательский work в сводный таблица [#1508](https://github.com/VisActor/Vтаблица/issues/1508)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when columns is all hide then should not generate cell ids [#3199](https://github.com/VisActor/VTable/issues/3199)
-- **@visactor/vtable**: when header tree indicator node has different value, columnWidthConfig not work [#3258](https://github.com/VisActor/VTable/issues/3258)
-- **@visactor/vtable-gantt**: when resize taskBar width the text label should update [#3263](https://github.com/VisActor/VTable/issues/3263)
-- **@visactor/vtable-gantt**: when left table set autoWidth gantt chart render error [#3266](https://github.com/VisActor/VTable/issues/3266)
-- **@visactor/vtable-gantt**: change taskRecord type from string to any
-- **@visactor/vtable**: fix aggregation display issue in tree-structured table headers
-- **@visactor/vtable**: fix collapse checkbox state update [#3171](https://github.com/VisActor/VTable/issues/3171)
-- **@visactor/vtable**: clear sort target when setRecords in dataset
-- **@visactor/vtable**: fix frozen update problem in react-dom-component
-- **@visactor/vtable**: fix iterator map in getCheckboxState() [#3177](https://github.com/VisActor/VTable/issues/3177) [#3239](https://github.com/VisActor/VTable/issues/3239)
+- **@visactor/vтаблица**: when columns is все скрыть then should не generate cell ids [#3199](https://github.com/VisActor/Vтаблица/issues/3199)
+- **@visactor/vтаблица**: when header tree indicator node has different значение, columnширинаConfig не work [#3258](https://github.com/VisActor/Vтаблица/issues/3258)
+- **@visactor/vтаблица-гантт**: when изменение размера taskBar ширина the текст label should update [#3263](https://github.com/VisActor/Vтаблица/issues/3263)
+- **@visactor/vтаблица-гантт**: when лево таблица set автоширина гантт график render ошибка [#3266](https://github.com/VisActor/Vтаблица/issues/3266)
+- **@visactor/vтаблица-гантт**: change taskRecord тип от строка к любой
+- **@visactor/vтаблица**: fix aggregation display issue в tree-structured таблица headers
+- **@visactor/vтаблица**: fix свернуть флажок state update [#3171](https://github.com/VisActor/Vтаблица/issues/3171)
+- **@visactor/vтаблица**: clear сортировка target when setRecords в данныеset
+- **@visactor/vтаблица**: fix frozen update problem в react-dom-компонент
+- **@visactor/vтаблица**: fix iterator map в getCheckboxState() [#3177](https://github.com/VisActor/Vтаблица/issues/3177) [#3239](https://github.com/VisActor/Vтаблица/issues/3239)
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: add weather calendar demo
-- **@visactor/vtable**: add scheduleCreatable doc
+- **@visactor/vтаблица**: add weather календарь демонстрация
+- **@visactor/vтаблица**: add scheduleCreaтаблица doc
 
-[more detail about v1.15.0](https://github.com/VisActor/VTable/releases/tag/v1.15.0)
+[more detail about v1.15.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.15.0)
 
 # v1.14.3
 
 2024-12-27
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: showSort support function type [#2630](https://github.com/VisActor/VTable/issues/2630)
-- **@visactor/vtable**: add hide for indicator setting [#2257](https://github.com/VisActor/VTable/issues/2257) [#2451](https://github.com/VisActor/VTable/issues/2451)
-- **@visactor/vtable**: add enableTreeCheckbox config
+- **@visactor/vтаблица**: showсортировка support функция тип [#2630](https://github.com/VisActor/Vтаблица/issues/2630)
+- **@visactor/vтаблица**: add скрыть для indicator setting [#2257](https://github.com/VisActor/Vтаблица/issues/2257) [#2451](https://github.com/VisActor/Vтаблица/issues/2451)
+- **@visactor/vтаблица**: add enableTreeCheckbox config
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix borderLineWidth array config [#3183](https://github.com/VisActor/VTable/issues/3183)
-- **@visactor/vtable**: when set resizable false hover taskbar occor error [#3189](https://github.com/VisActor/VTable/issues/3189)
+- **@visactor/vтаблица**: fix borderLineширина массив config [#3183](https://github.com/VisActor/Vтаблица/issues/3183)
+- **@visactor/vтаблица**: when set resizable false навести taskbar occor ошибка [#3189](https://github.com/VisActor/Vтаблица/issues/3189)
 
-[more detail about v1.14.3](https://github.com/VisActor/VTable/releases/tag/v1.14.3)
+[more detail about v1.14.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.14.3)
 
 # v1.14.1
 
 2024-12-23
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: add grid rowBackgroundColor and columnBackgroundColor weekendBackgroundColor [#3155](https://github.com/VisActor/VTable/issues/3155)
+- **@visactor/vтаблица-гантт**: add grid rowBackgroundColor и columnBackgroundColor weekendBackgroundColor [#3155](https://github.com/VisActor/Vтаблица/issues/3155)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: gantt taskbar resize width interaction can not limit one time unit [#3161](https://github.com/VisActor/VTable/issues/3161)
-- **@visactor/vtable**: fix axes count error in seriesIds config
+- **@visactor/vтаблица-гантт**: гантт taskbar изменение размера ширина interaction can не limit one time unit [#3161](https://github.com/VisActor/Vтаблица/issues/3161)
+- **@visactor/vтаблица**: fix axes count ошибка в seriesIds config
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: add option tableSizeAntiJitter [#3160](https://github.com/VisActor/VTable/issues/3160)
+- **@visactor/vтаблица**: add option таблицаSizeAntiJitter [#3160](https://github.com/VisActor/Vтаблица/issues/3160)
 
-[more detail about v1.14.1](https://github.com/VisActor/VTable/releases/tag/v1.14.1)
+[more detail about v1.14.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.14.1)
 
 # v1.14.0
 
 2024-12-20
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: add contextmenu_task_bar event [#3013](https://github.com/VisActor/VTable/issues/3013)
-- **@visactor/vtable-gantt**: add milestone type [#3097](https://github.com/VisActor/VTable/issues/3097)
-- **@visactor/vtable**: add mergeCell function to support more detailed conditions
-- **@visactor/vtable**: support tickAlign in PivotChart
-- **@visactor/vtable-gantt**: add updateMarkLine
-- **@visactor/vtable**: add enums in validateValue of vtable-editor [#3039](https://github.com/VisActor/VTable/issues/3039)
+- **@visactor/vтаблица-гантт**: add contextменю_task_bar событие [#3013](https://github.com/VisActor/Vтаблица/issues/3013)
+- **@visactor/vтаблица-гантт**: add milestone тип [#3097](https://github.com/VisActor/Vтаблица/issues/3097)
+- **@visactor/vтаблица**: add mergeCell функция к support more detailed conditions
+- **@visactor/vтаблица**: support tickAlign в сводныйграфик
+- **@visactor/vтаблица-гантт**: add updateMarkLine
+- **@visactor/vтаблица**: add enums в validateValue из vтаблица-editor [#3039](https://github.com/VisActor/Vтаблица/issues/3039)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: validateValue not promise case can not be recalled [#3144](https://github.com/VisActor/VTable/issues/3144)
-- **@visactor/vtable**: adjust scroll hot area limited on table group [#3152](https://github.com/VisActor/VTable/issues/3152)
-- **@visactor/vtable**: fix react-component update in tree table
-- **@visactor/vtable**: fix customStyle update not work [#3068](https://github.com/VisActor/VTable/issues/3068)
-- **@visactor/vtable**: fix font-weight in vtable-export [#3005](https://github.com/VisActor/VTable/issues/3005)
-- **@visactor/vtable**: fix graphic html attribute error
-- **@visactor/vtable**: application define in react-vtable umd file [#3093](https://github.com/VisActor/VTable/issues/3093)
-- **@visactor/vtable**: fix customRender error in react-vtable [#3142](https://github.com/VisActor/VTable/issues/3142)
-- **@visactor/vtable**: fix group title link click [#3022](https://github.com/VisActor/VTable/issues/3022)
-- **@visactor/vtable**: fix cell group judgement when scroll [#3149](https://github.com/VisActor/VTable/issues/3149)
-- **@visactor/vtable**: fix undeline height in text measurement [#3112](https://github.com/VisActor/VTable/issues/3112)
-- **@visactor/vtable**: change checkboxState into Map
+- **@visactor/vтаблица**: validateValue не promise case can не be recalled [#3144](https://github.com/VisActor/Vтаблица/issues/3144)
+- **@visactor/vтаблица**: adjust прокрутка hot area limited на таблица group [#3152](https://github.com/VisActor/Vтаблица/issues/3152)
+- **@visactor/vтаблица**: fix react-компонент update в tree таблица
+- **@visactor/vтаблица**: fix пользовательскийStyle update не work [#3068](https://github.com/VisActor/Vтаблица/issues/3068)
+- **@visactor/vтаблица**: fix шрифт-weight в vтаблица-export [#3005](https://github.com/VisActor/Vтаблица/issues/3005)
+- **@visactor/vтаблица**: fix graphic html attribute ошибка
+- **@visactor/vтаблица**: application define в react-vтаблица umd file [#3093](https://github.com/VisActor/Vтаблица/issues/3093)
+- **@visactor/vтаблица**: fix пользовательскийRender ошибка в react-vтаблица [#3142](https://github.com/VisActor/Vтаблица/issues/3142)
+- **@visactor/vтаблица**: fix group title link Нажать [#3022](https://github.com/VisActor/Vтаблица/issues/3022)
+- **@visactor/vтаблица**: fix cell group judgement when прокрутка [#3149](https://github.com/VisActor/Vтаблица/issues/3149)
+- **@visactor/vтаблица**: fix undeline высота в текст measurement [#3112](https://github.com/VisActor/Vтаблица/issues/3112)
+- **@visactor/vтаблица**: change checkboxState into Map
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: customComputeRowHeight logic
+- **@visactor/vтаблица**: пользовательскийComputeRowвысота logic
 
-[more detail about v1.14.0](https://github.com/VisActor/VTable/releases/tag/v1.14.0)
+[more detail about v1.14.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.14.0)
 
 # v1.13.2
 
 2024-12-16
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: resizable and moveable support function [#3074](https://github.com/VisActor/VTable/issues/3074)
-- **@visactor/vtable-gantt**: add updateOption and updateScales api
+- **@visactor/vтаблица-гантт**: resizable и moveable support функция [#3074](https://github.com/VisActor/Vтаблица/issues/3074)
+- **@visactor/vтаблица-гантт**: add updateOption и updateScales апи
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: copy permission check when in iframe [#3077](https://github.com/VisActor/VTable/issues/3077)
-- **@visactor/vtable**: when has select cells to resize col width or row height error [#3085](https://github.com/VisActor/VTable/issues/3085)
-- **@visactor/vtable-gantt**: consider not set mindate maxdate call setRecords api
+- **@visactor/vтаблица**: copy permission check when в iframe [#3077](https://github.com/VisActor/Vтаблица/issues/3077)
+- **@visactor/vтаблица**: when has выбрать cells к изменение размера col ширина или row высота ошибка [#3085](https://github.com/VisActor/Vтаблица/issues/3085)
+- **@visactor/vтаблица-гантт**: consider не set mindate maxdate call setRecords апи
 
-[more detail about v1.13.2](https://github.com/VisActor/VTable/releases/tag/v1.13.2)
+[more detail about v1.13.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.13.2)
 
 # v1.13.1
 
 2024-12-13
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: add time scale unit hour [#2976](https://github.com/VisActor/VTable/issues/2976)
+- **@visactor/vтаблица-гантт**: add time scale unit hour [#2976](https://github.com/VisActor/Vтаблица/issues/2976)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: left table width handle with tableWidth set auto [#3033](https://github.com/VisActor/VTable/issues/3033)
+- **@visactor/vтаблица-гантт**: лево таблица ширина handle с таблицаширина set авто [#3033](https://github.com/VisActor/Vтаблица/issues/3033)
 
-[more detail about v1.13.1](https://github.com/VisActor/VTable/releases/tag/v1.13.1)
+[more detail about v1.13.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.13.1)
 
 # v1.13.0
 
 2024-12-09
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add keybord ctrlMultiSelect config [#2995](https://github.com/VisActor/VTable/issues/2995)
-- **@visactor/vtable**: add panelStyle&arrowStyle config in Popover [#2988](https://github.com/VisActor/VTable/issues/2988)
+- **@visactor/vтаблица**: add keybord ctrlMultiSelect config [#2995](https://github.com/VisActor/Vтаблица/issues/2995)
+- **@visactor/vтаблица**: add panelStyle&arrowStyle config в Popover [#2988](https://github.com/VisActor/Vтаблица/issues/2988)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: select not work when select set disableSelect [#2981](https://github.com/VisActor/VTable/issues/2981)
-- **@visactor/vtable**: fix textAlign in checkbox/radio [#2908](https://github.com/VisActor/VTable/issues/2908)
-- **@visactor/vtable**: outsideClickDeselect event in menu element
-- **@visactor/vtable**: fix col&row range in getCellMergeRange() [#2906](https://github.com/VisActor/VTable/issues/2906)
-- **@visactor/vtable**: fix merge cell select range update [#2944](https://github.com/VisActor/VTable/issues/2944)
-- **@visactor/vtable**: fix ListTreeStickCellPlugin update in tree_hierarchy_state_change event [#2914](https://github.com/VisActor/VTable/issues/2914)
-- **@visactor/vtable**: fix row update range in \_refreshHierarchyState() [#2987](https://github.com/VisActor/VTable/issues/2987)
-- **@visactor/vtable**: fix text baseline align problem
+- **@visactor/vтаблица**: выбрать не work when выбрать set disableSelect [#2981](https://github.com/VisActor/Vтаблица/issues/2981)
+- **@visactor/vтаблица**: fix textAlign в флажок/переключатель [#2908](https://github.com/VisActor/Vтаблица/issues/2908)
+- **@visactor/vтаблица**: outsideНажатьDeselect событие в меню element
+- **@visactor/vтаблица**: fix col&row range в getCellMergeRange() [#2906](https://github.com/VisActor/Vтаблица/issues/2906)
+- **@visactor/vтаблица**: fix merge cell выбрать range update [#2944](https://github.com/VisActor/Vтаблица/issues/2944)
+- **@visactor/vтаблица**: fix списокTreeStickCellPlugin update в tree_hierarchy_state_change событие [#2914](https://github.com/VisActor/Vтаблица/issues/2914)
+- **@visactor/vтаблица**: fix row update range в \_refreshHierarchyState() [#2987](https://github.com/VisActor/Vтаблица/issues/2987)
+- **@visactor/vтаблица**: fix текст baseline align problem
 
-[more detail about v1.13.0](https://github.com/VisActor/VTable/releases/tag/v1.13.0)
+[more detail about v1.13.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.13.0)
 
 # v1.12.0
 
 2024-12-03
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add option customComputeRowHeight and defaultRowHeight can set "auto"
-- **@visactor/vtable-gantt**: add taskShowMode for gantt chart [#2849](https://github.com/VisActor/VTable/issues/2849)
+- **@visactor/vтаблица**: add option пользовательскийComputeRowвысота и defaultRowвысота can set "авто"
+- **@visactor/vтаблица-гантт**: add taskShowMode для гантт график [#2849](https://github.com/VisActor/Vтаблица/issues/2849)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: when edit record task date update taskbar occor error [#2938](https://github.com/VisActor/VTable/issues/2938)
-- **@visactor/vtable**: fix last col&row editor size [#2926](https://github.com/VisActor/VTable/issues/2926)
-- **@visactor/vtable**: fix cell update event problem in CustomCellStylePlugin [#2927](https://github.com/VisActor/VTable/issues/2927)
-- **@visactor/vtable**: fix react-component in tree mode update
-- **@visactor/vtable**: fix default row height in computeRowHeight() [#2903](https://github.com/VisActor/VTable/issues/2903)
-- **@visactor/vtable**: fix legend visible problem when reize table
-- **@visactor/vtable**: fix cache problem in Icon.loadGif() [#2905](https://github.com/VisActor/VTable/issues/2905)
-- **@visactor/vtable**: fix merge radio cell check update [#2881](https://github.com/VisActor/VTable/issues/2881)
-- **@visactor/vtable**: fix strokeArrayWidth update in updateCell() [#2811](https://github.com/VisActor/VTable/issues/2811)
+- **@visactor/vтаблица-гантт**: when edit record task date update taskbar occor ошибка [#2938](https://github.com/VisActor/Vтаблица/issues/2938)
+- **@visactor/vтаблица**: fix последний col&row editor размер [#2926](https://github.com/VisActor/Vтаблица/issues/2926)
+- **@visactor/vтаблица**: fix cell update событие problem в пользовательскийCellStylePlugin [#2927](https://github.com/VisActor/Vтаблица/issues/2927)
+- **@visactor/vтаблица**: fix react-компонент в tree mode update
+- **@visactor/vтаблица**: fix по умолчанию row высота в computeRowвысота() [#2903](https://github.com/VisActor/Vтаблица/issues/2903)
+- **@visactor/vтаблица**: fix легенда видимый problem when reize таблица
+- **@visactor/vтаблица**: fix cache problem в иконка.loadGif() [#2905](https://github.com/VisActor/Vтаблица/issues/2905)
+- **@visactor/vтаблица**: fix merge переключатель cell check update [#2881](https://github.com/VisActor/Vтаблица/issues/2881)
+- **@visactor/vтаблица**: fix strхорошоeArrayширина update в updateCell() [#2811](https://github.com/VisActor/Vтаблица/issues/2811)
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable-gantt**: add getTaskBarRelativeRect api [#2920](https://github.com/VisActor/VTable/issues/2920)
+- **@visactor/vтаблица-гантт**: add getTaskBarRelativeRect апи [#2920](https://github.com/VisActor/Vтаблица/issues/2920)
 
-[more detail about v1.12.0](https://github.com/VisActor/VTable/releases/tag/v1.12.0)
+[more detail about v1.12.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.12.0)
 
 # v1.11.5
 
 2024-11-29
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add @visactor/vtable-plugins package
+- **@visactor/vтаблица**: add @visactor/vтаблица-plugins packвозраст
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: 更新进入或离开节点时的事件文档
-- **@visactor/vtable**: 更新甘特图事件文档，暴露整个 e 的信息
+- **@visactor/vтаблица**: 更新进入或离开节点时的事件文档
+- **@visactor/vтаблица**: 更新甘特图事件文档，暴露整个 e 的信息
 
-[more detail about v1.11.5](https://github.com/VisActor/VTable/releases/tag/v1.11.5)
+[more detail about v1.11.5](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.11.5)
 
 # v1.11.3
 
@@ -696,95 +696,95 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: frozen chart not update when resize row or column width [#2876](https://github.com/VisActor/VTable/issues/2876)
-- **@visactor/vtable**: fix custom-component update in deleteRecords api
+- **@visactor/vтаблица**: frozen график не update when изменение размера row или column ширина [#2876](https://github.com/VisActor/Vтаблица/issues/2876)
+- **@visactor/vтаблица**: fix пользовательский-компонент update в deleteRecords апи
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: when columnWidthConfig set wrong dimensions should judge this case [#2948](https://github.com/VisActor/VTable/issues/2948)
+- **@visactor/vтаблица**: when columnширинаConfig set wrong dimensions should judge this case [#2948](https://github.com/VisActor/Vтаблица/issues/2948)
 
-[more detail about v1.11.3](https://github.com/VisActor/VTable/releases/tag/v1.11.3)
+[more detail about v1.11.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.11.3)
 
 # v1.11.2
 
 2024-11-26
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add select makeSelectCellVisible [#2840](https://github.com/VisActor/VTable/issues/2840)
-- **@visactor/vtable**: add setCustomSelectRanges in stateManager [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
-- **@visactor/vtable**: optimize range select in HeaderHighlightPlugin
-- **@visactor/vtable**: isShowOverflowTextTooltip support function
-- **@visactor/vtable**: cell support multi-custom-style [#2841](https://github.com/VisActor/VTable/issues/2841)
-- **@visactor/vtable**: templateLink support function [#2847](https://github.com/VisActor/VTable/issues/2847)
-- **@visactor/vtable**: add position in tooltip config [#2869](https://github.com/VisActor/VTable/issues/2869)
-- **@visactor/vtable**: add parentElement in menu option
+- **@visactor/vтаблица**: add выбрать makeSelectCellVisible [#2840](https://github.com/VisActor/Vтаблица/issues/2840)
+- **@visactor/vтаблица**: add setпользовательскийSelectRanges в stateManвозрастr [#2750](https://github.com/VisActor/Vтаблица/issues/2750) [#2845](https://github.com/VisActor/Vтаблица/issues/2845)
+- **@visactor/vтаблица**: optimize range выбрать в HeaderHighlightPlugin
+- **@visactor/vтаблица**: isShowOverflowTextПодсказка support функция
+- **@visactor/vтаблица**: cell support multi-пользовательский-style [#2841](https://github.com/VisActor/Vтаблица/issues/2841)
+- **@visactor/vтаблица**: templateLink support функция [#2847](https://github.com/VisActor/Vтаблица/issues/2847)
+- **@visactor/vтаблица**: add позиция в Подсказка config [#2869](https://github.com/VisActor/Vтаблица/issues/2869)
+- **@visactor/vтаблица**: add parentElement в меню option
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: add isValidatingValue state to fix call validateValue api repeatedly [#2830](https://github.com/VisActor/VTable/issues/2830)
-- **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
-- **@visactor/vtable**: when resize column width the select state be cleared [#2861](https://github.com/VisActor/VTable/issues/2861)
-- **@visactor/vtable**: when container resize trigger mark line resize [#2883](https://github.com/VisActor/VTable/issues/2883)
-- **@visactor/vtable**: when not set minDate maxDate call setRecords render error [#2892](https://github.com/VisActor/VTable/issues/2892)
-- **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
-- **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
-- **@visactor/vtable**: fix functional padding update [#2774](https://github.com/VisActor/VTable/issues/2774)
-- **@visactor/vtable**: fix select all in row-series-number checkbox [#2880](https://github.com/VisActor/VTable/issues/2880)
+- **@visactor/vтаблица**: add isValidatingValue state к fix call validateValue апи repeatedly [#2830](https://github.com/VisActor/Vтаблица/issues/2830)
+- **@visactor/vтаблица**: when up на canvas blank area не перетаскивание позиция rightly [#2831](https://github.com/VisActor/Vтаблица/issues/2831)
+- **@visactor/vтаблица**: when изменение размера column ширина the выбрать state be cleared [#2861](https://github.com/VisActor/Vтаблица/issues/2861)
+- **@visactor/vтаблица**: when container изменение размера trigger mark line изменение размера [#2883](https://github.com/VisActor/Vтаблица/issues/2883)
+- **@visactor/vтаблица**: when не set minDate maxDate call setRecords render ошибка [#2892](https://github.com/VisActor/Vтаблица/issues/2892)
+- **@visactor/vтаблица**: fix cell граница dash update [#2818](https://github.com/VisActor/Vтаблица/issues/2818)
+- **@visactor/vтаблица**: fix merge cell текст позиция [#2858](https://github.com/VisActor/Vтаблица/issues/2858)
+- **@visactor/vтаблица**: fix functional заполнение update [#2774](https://github.com/VisActor/Vтаблица/issues/2774)
+- **@visactor/vтаблица**: fix выбрать все в row-series-число флажок [#2880](https://github.com/VisActor/Vтаблица/issues/2880)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: when set headerSelectMode body drag column order should work [#2860](https://github.com/VisActor/VTable/issues/2860)
+- **@visactor/vтаблица**: when set headerSelectMode body перетаскивание column order should work [#2860](https://github.com/VisActor/Vтаблица/issues/2860)
 
-[more detail about v1.11.2](https://github.com/VisActor/VTable/releases/tag/v1.11.2)
+[more detail about v1.11.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.11.2)
 
 # v1.11.1
 
 2024-11-21
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add setCustomSelectRanges in stateManager [#2750](https://github.com/VisActor/VTable/issues/2750) [#2845](https://github.com/VisActor/VTable/issues/2845)
-- **@visactor/vtable**: optimize range select in HeaderHighlightPlugin
-- **@visactor/vtable**: isShowOverflowTextTooltip support function
+- **@visactor/vтаблица**: add setпользовательскийSelectRanges в stateManвозрастr [#2750](https://github.com/VisActor/Vтаблица/issues/2750) [#2845](https://github.com/VisActor/Vтаблица/issues/2845)
+- **@visactor/vтаблица**: optimize range выбрать в HeaderHighlightPlugin
+- **@visactor/vтаблица**: isShowOverflowTextПодсказка support функция
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: add isValidatingValue state to fix call validateValue api repeatedly [#2830](https://github.com/VisActor/VTable/issues/2830)
-- **@visactor/vtable**: when up on canvas blank area not drag position rightly [#2831](https://github.com/VisActor/VTable/issues/2831)
-- **@visactor/vtable**: fix cell border dash update [#2818](https://github.com/VisActor/VTable/issues/2818)
-- **@visactor/vtable**: fix merge cell text position [#2858](https://github.com/VisActor/VTable/issues/2858)
+- **@visactor/vтаблица**: add isValidatingValue state к fix call validateValue апи repeatedly [#2830](https://github.com/VisActor/Vтаблица/issues/2830)
+- **@visactor/vтаблица**: when up на canvas blank area не перетаскивание позиция rightly [#2831](https://github.com/VisActor/Vтаблица/issues/2831)
+- **@visactor/vтаблица**: fix cell граница dash update [#2818](https://github.com/VisActor/Vтаблица/issues/2818)
+- **@visactor/vтаблица**: fix merge cell текст позиция [#2858](https://github.com/VisActor/Vтаблица/issues/2858)
 
-[more detail about v1.11.1](https://github.com/VisActor/VTable/releases/tag/v1.11.1)
+[more detail about v1.11.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.11.1)
 
 # v1.11.0
 
 2024-11-15
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add event changing_header_position
-- **@visactor/vtable-gantt**: drag order highlight line render
-- **@visactor/vtable**: add change_header_position_fail event
-- **@visactor/vtable**: add argument recalculateColWidths for api toggleHierarchyState [#2817](https://github.com/VisActor/VTable/issues/2817)
-- **@visactor/vtable**: add InvertHighlightPlugin
-- **@visactor/vtable**: add vtable-calendar
+- **@visactor/vтаблица**: add событие changing_header_position
+- **@visactor/vтаблица-гантт**: перетаскивание order highlight line render
+- **@visactor/vтаблица**: add change_header_position_fail событие
+- **@visactor/vтаблица**: add argument recalculateColширинаs для апи toggleHierarchyState [#2817](https://github.com/VisActor/Vтаблица/issues/2817)
+- **@visactor/vтаблица**: add InvertHighlightPlugin
+- **@visactor/vтаблица**: add vтаблица-календарь
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: pivot chart pie type selected state not work [#2178](https://github.com/VisActor/VTable/issues/2178)
-- **@visactor/vtable**: rose pivotchart click legend then hover chart render error [#2209](https://github.com/VisActor/VTable/issues/2209)
-- **@visactor/vtable**: when chart row is frozen render error [#2800](https://github.com/VisActor/VTable/issues/2800)
-- **@visactor/vtable**: when after select range not exist [#2804](https://github.com/VisActor/VTable/issues/2804)
-- **@visactor/vtable**: call renderWithRecreateCells should not effect colWidth when widthMode is adaptive [#2835](https://github.com/VisActor/VTable/issues/2835)
-- **@visactor/vtable**: add CarouselAnimationPlugin
-- **@visactor/vtable**: add HeaderHighlightPlugin
+- **@visactor/vтаблица**: сводный график pie тип selected state не work [#2178](https://github.com/VisActor/Vтаблица/issues/2178)
+- **@visactor/vтаблица**: rose сводныйграфик Нажать легенда then навести график render ошибка [#2209](https://github.com/VisActor/Vтаблица/issues/2209)
+- **@visactor/vтаблица**: when график row is frozen render ошибка [#2800](https://github.com/VisActor/Vтаблица/issues/2800)
+- **@visactor/vтаблица**: when after выбрать range не exist [#2804](https://github.com/VisActor/Vтаблица/issues/2804)
+- **@visactor/vтаблица**: call renderWithRecreateCells should не effect colширина when ширинаMode is adaptive [#2835](https://github.com/VisActor/Vтаблица/issues/2835)
+- **@visactor/vтаблица**: add CarouselAnimationPlugin
+- **@visactor/vтаблица**: add HeaderHighlightPlugin
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: when set disableSelect but api selectCell can work [#2799](https://github.com/VisActor/VTable/issues/2799)
+- **@visactor/vтаблица**: when set disableSelect but апи selectCell can work [#2799](https://github.com/VisActor/Vтаблица/issues/2799)
 
-[more detail about v1.11.0](https://github.com/VisActor/VTable/releases/tag/v1.11.0)
+[more detail about v1.11.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.11.0)
 
 # v1.10.5
 
@@ -792,34 +792,34 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: pivot chart spec enable select not work [#2210](https://github.com/VisActor/VTable/issues/2210)
-- **@visactor/vtable**: sortState field undefined occor error
+- **@visactor/vтаблица**: сводный график spec включить выбрать не work [#2210](https://github.com/VisActor/Vтаблица/issues/2210)
+- **@visactor/vтаблица**: сортировкаState поле undefined occor ошибка
 
-[more detail about v1.10.5](https://github.com/VisActor/VTable/releases/tag/v1.10.5)
+[more detail about v1.10.5](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.10.5)
 
 # v1.10.4
 
 2024-11-07
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: gantt dependency line support tree node [#2701](https://github.com/VisActor/VTable/issues/2701)
-- **@visactor/vtable**: when drag on header can select cells continuous [#2751](https://github.com/VisActor/VTable/issues/2751)
+- **@visactor/vтаблица-гантт**: гантт dependency line support tree node [#2701](https://github.com/VisActor/Vтаблица/issues/2701)
+- **@visactor/vтаблица**: when перетаскивание на header can выбрать cells continuous [#2751](https://github.com/VisActor/Vтаблица/issues/2751)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: when markline date less then minDate should not show [#2689](https://github.com/VisActor/VTable/issues/2689)
-- **@visactor/vtable**: pivot table header icon display incorrect [#2735](https://github.com/VisActor/VTable/issues/2735)
-- **@visactor/vtable**: parse axes config error when user set axes [#2749](https://github.com/VisActor/VTable/issues/2749)
-- **@visactor/vtable**: cellType set funciton occor error [#2754](https://github.com/VisActor/VTable/issues/2754)
-- **@visactor/vtable**: when pivot cell type set chart not data cell render error [#2758](https://github.com/VisActor/VTable/issues/2758)
-- **@visactor/vtable**: legend problems [#2764](https://github.com/VisActor/VTable/issues/2764) [#2755](https://github.com/VisActor/VTable/issues/2755)
-- **@visactor/vtable-gantt**: create task shedule date error [#2771](https://github.com/VisActor/VTable/issues/2771)
-- **@visactor/vtable**: fix cellLocation in pivot-table [#2694](https://github.com/VisActor/VTable/issues/2694)
-- **@visactor/vtable**: fix menu scale pos problem [#2734](https://github.com/VisActor/VTable/issues/2734)
-- **@visactor/vtable**: fix tree frozen row problem [#2619](https://github.com/VisActor/VTable/issues/2619)
+- **@visactor/vтаблица-гантт**: when markline date less then minDate should не показать [#2689](https://github.com/VisActor/Vтаблица/issues/2689)
+- **@visactor/vтаблица**: сводный таблица header иконка display incorrect [#2735](https://github.com/VisActor/Vтаблица/issues/2735)
+- **@visactor/vтаблица**: parse axes config ошибка when user set axes [#2749](https://github.com/VisActor/Vтаблица/issues/2749)
+- **@visactor/vтаблица**: cellType set funciton occor ошибка [#2754](https://github.com/VisActor/Vтаблица/issues/2754)
+- **@visactor/vтаблица**: when сводный cell тип set график не данные cell render ошибка [#2758](https://github.com/VisActor/Vтаблица/issues/2758)
+- **@visactor/vтаблица**: легенда problems [#2764](https://github.com/VisActor/Vтаблица/issues/2764) [#2755](https://github.com/VisActor/Vтаблица/issues/2755)
+- **@visactor/vтаблица-гантт**: create task shedule date ошибка [#2771](https://github.com/VisActor/Vтаблица/issues/2771)
+- **@visactor/vтаблица**: fix cellLocation в сводный-таблица [#2694](https://github.com/VisActor/Vтаблица/issues/2694)
+- **@visactor/vтаблица**: fix меню scale pos problem [#2734](https://github.com/VisActor/Vтаблица/issues/2734)
+- **@visactor/vтаблица**: fix tree frozen row problem [#2619](https://github.com/VisActor/Vтаблица/issues/2619)
 
-[more detail about v1.10.4](https://github.com/VisActor/VTable/releases/tag/v1.10.4)
+[more detail about v1.10.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.10.4)
 
 # v1.10.3
 
@@ -827,45 +827,45 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: type define columnWidthConfig
+- **@visactor/vтаблица**: тип define columnширинаConfig
 
-[more detail about v1.10.3](https://github.com/VisActor/VTable/releases/tag/v1.10.3)
+[more detail about v1.10.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.10.3)
 
 # v1.10.2
 
 2024-11-01
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: headerSelectMode option add body setting [#2491](https://github.com/VisActor/VTable/issues/2491)
-- **@visactor/vtable**: add freeze_click event [#2641](https://github.com/VisActor/VTable/issues/2641)
-- **@visactor/vtable**: add columnWidthConfig to set width by dimensions [#2696](https://github.com/VisActor/VTable/issues/2696)
+- **@visactor/vтаблица**: headerSelectMode option add body setting [#2491](https://github.com/VisActor/Vтаблица/issues/2491)
+- **@visactor/vтаблица**: add freeze_Нажать событие [#2641](https://github.com/VisActor/Vтаблица/issues/2641)
+- **@visactor/vтаблица**: add columnширинаConfig к set ширина по dimensions [#2696](https://github.com/VisActor/Vтаблица/issues/2696)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: isColumnHeader api judement logic [#2491](https://github.com/VisActor/VTable/issues/2491)
-- **@visactor/vtable**: when collapse last group occor error [#2600](https://github.com/VisActor/VTable/issues/2600)
-- **@visactor/vtable**: when collapse tree node occor error [#2600](https://github.com/VisActor/VTable/issues/2600)
-- **@visactor/vtable**: min aggregator type handle with NaN value [#2627](https://github.com/VisActor/VTable/issues/2627)
-- **@visactor/vtable**: when drag row series number cells not scroll [#2647](https://github.com/VisActor/VTable/issues/2647)
-- **@visactor/vtable**: rowSeriesNumber when be frozen can render customlayout [#2653](https://github.com/VisActor/VTable/issues/2653)
-- **@visactor/vtable**: when has empty tip scrollbar can not be clicked [#2690](https://github.com/VisActor/VTable/issues/2690)
-- **@visactor/vtable**: when field set array，record no corresponding field，occur error [#2702](https://github.com/VisActor/VTable/issues/2702)
-- **@visactor/vtable**: when has gantt and table same time internal theme should not be changed [#2708](https://github.com/VisActor/VTable/issues/2708)
-- **@visactor/vtable**: fix check state update [#2667](https://github.com/VisActor/VTable/issues/2667)
-- **@visactor/vtable**: fix list-editor space problem
-- **@visactor/vtable**: change pointerupoutside event callback [#2674](https://github.com/VisActor/VTable/issues/2674) [#2659](https://github.com/VisActor/VTable/issues/2659)
-- **@visactor/vtable**: add event in react-vtable
-- **@visactor/vtable**: add selected_cell event in select-all [#2664](https://github.com/VisActor/VTable/issues/2664)
-- **@visactor/vtable**: fix disableRowSeriesNumberSelect in select-all [#2665](https://github.com/VisActor/VTable/issues/2665)
-- **@visactor/vtable**: fix title resize in adaptive mode [#2704](https://github.com/VisActor/VTable/issues/2704)
+- **@visactor/vтаблица**: isColumnHeader апи judement logic [#2491](https://github.com/VisActor/Vтаблица/issues/2491)
+- **@visactor/vтаблица**: when свернуть последний group occor ошибка [#2600](https://github.com/VisActor/Vтаблица/issues/2600)
+- **@visactor/vтаблица**: when свернуть tree node occor ошибка [#2600](https://github.com/VisActor/Vтаблица/issues/2600)
+- **@visactor/vтаблица**: min aggregator тип handle с NaN значение [#2627](https://github.com/VisActor/Vтаблица/issues/2627)
+- **@visactor/vтаблица**: when перетаскивание row series число cells не прокрутка [#2647](https://github.com/VisActor/Vтаблица/issues/2647)
+- **@visactor/vтаблица**: rowSeriesNumber when be frozen can render пользовательскиймакет [#2653](https://github.com/VisActor/Vтаблица/issues/2653)
+- **@visactor/vтаблица**: when has empty tip scrollbar can не be Нажатьed [#2690](https://github.com/VisActor/Vтаблица/issues/2690)
+- **@visactor/vтаблица**: when поле set массив，record no corresponding поле，occur ошибка [#2702](https://github.com/VisActor/Vтаблица/issues/2702)
+- **@visactor/vтаблица**: when has гантт и таблица same time internal тема should не be changed [#2708](https://github.com/VisActor/Vтаблица/issues/2708)
+- **@visactor/vтаблица**: fix check state update [#2667](https://github.com/VisActor/Vтаблица/issues/2667)
+- **@visactor/vтаблица**: fix список-editor space problem
+- **@visactor/vтаблица**: change pointerupoutside событие обратный вызов [#2674](https://github.com/VisActor/Vтаблица/issues/2674) [#2659](https://github.com/VisActor/Vтаблица/issues/2659)
+- **@visactor/vтаблица**: add событие в react-vтаблица
+- **@visactor/vтаблица**: add selected_cell событие в выбрать-все [#2664](https://github.com/VisActor/Vтаблица/issues/2664)
+- **@visactor/vтаблица**: fix disableRowSeriesNumberSelect в выбрать-все [#2665](https://github.com/VisActor/Vтаблица/issues/2665)
+- **@visactor/vтаблица**: fix title изменение размера в adaptive mode [#2704](https://github.com/VisActor/Vтаблица/issues/2704)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: custom merge cell ignore check state jude [#2683](https://github.com/VisActor/VTable/issues/2683)
-- **@visactor/vtable**: paste cell value should use editor validateValidate api [#2691](https://github.com/VisActor/VTable/issues/2691)
+- **@visactor/vтаблица**: пользовательский merge cell ignore check state jude [#2683](https://github.com/VisActor/Vтаблица/issues/2683)
+- **@visactor/vтаблица**: paste cell значение should use editor validateValidate апи [#2691](https://github.com/VisActor/Vтаблица/issues/2691)
 
-[more detail about v1.10.2](https://github.com/VisActor/VTable/releases/tag/v1.10.2)
+[more detail about v1.10.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.10.2)
 
 # v1.10.1
 
@@ -873,38 +873,38 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when set rowSeriesNumber then sort icon not update [#2643](https://github.com/VisActor/VTable/issues/2643)
-- **@visactor/vtable**: disable cellInnerBorder when no frame border
+- **@visactor/vтаблица**: when set rowSeriesNumber then сортировка иконка не update [#2643](https://github.com/VisActor/Vтаблица/issues/2643)
+- **@visactor/vтаблица**: отключить cellInnerBorder when no frame граница
 
-[more detail about v1.10.1](https://github.com/VisActor/VTable/releases/tag/v1.10.1)
+[more detail about v1.10.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.10.1)
 
 # v1.10.0
 
 2024-10-18
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add maxHeight in menu container [#2602](https://github.com/VisActor/VTable/issues/2602)
-- **@visactor/vtable**: add after_sort event
-- **@visactor/vtable-gantt**: add creation buttom for not schedualed task record
-- **@visactor/vtable-gantt**: add dependency line for gantt chart
-- **@visactor/vtable-gantt**: add task bar selected style
-- **@visactor/vtable-gantt**: add dependency line selected style
-- **@visactor/vtable-gantt**: add underlayBackgroundColor for gantt chart [#2607](https://github.com/VisActor/VTable/issues/2607)
+- **@visactor/vтаблица**: add maxвысота в меню container [#2602](https://github.com/VisActor/Vтаблица/issues/2602)
+- **@visactor/vтаблица**: add after_сортировка событие
+- **@visactor/vтаблица-гантт**: add creation buttom для не schedualed task record
+- **@visactor/vтаблица-гантт**: add dependency line для гантт график
+- **@visactor/vтаблица-гантт**: add task bar selected style
+- **@visactor/vтаблица-гантт**: add dependency line selected style
+- **@visactor/vтаблица-гантт**: add underlayBackgroundColor для гантт график [#2607](https://github.com/VisActor/Vтаблица/issues/2607)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when dimension paths has virtual not identify problem [#2510](https://github.com/VisActor/VTable/issues/2510)
-- **@visactor/vtable**: toggleHierarchyState api can not update customlayout cell [#2609](https://github.com/VisActor/VTable/issues/2609)
-- **@visactor/vtable**: fix legend layout problem
-- **@visactor/vtable**: fix border rect missing when borderLineWidth is 0
-- **@visactor/vtable**: fix multi-sort icon update in updateSortState() [#2614](https://github.com/VisActor/VTable/issues/2614)
-- **@visactor/vtable**: fix col/row end in createGroupForFirstScreen() [#2585](https://github.com/VisActor/VTable/issues/2585)
-- **@visactor/vtable**: fix customConfig in react-vtable
-- **@visactor/vtable**: fix row resize mark position when scrolled vertically [#2606](https://github.com/VisActor/VTable/issues/2606)
-- **@visactor/vtable**: fix sort icon update in transpose list-table
+- **@visactor/vтаблица**: when dimension paths has virtual не identify problem [#2510](https://github.com/VisActor/Vтаблица/issues/2510)
+- **@visactor/vтаблица**: toggleHierarchyState апи can не update пользовательскиймакет cell [#2609](https://github.com/VisActor/Vтаблица/issues/2609)
+- **@visactor/vтаблица**: fix легенда макет problem
+- **@visactor/vтаблица**: fix граница rect missing when borderLineширина is 0
+- **@visactor/vтаблица**: fix multi-сортировка иконка update в updateсортировкаState() [#2614](https://github.com/VisActor/Vтаблица/issues/2614)
+- **@visactor/vтаблица**: fix col/row конец в createGroupForFirstScreen() [#2585](https://github.com/VisActor/Vтаблица/issues/2585)
+- **@visactor/vтаблица**: fix пользовательскийConfig в react-vтаблица
+- **@visactor/vтаблица**: fix row изменение размера mark позиция when scrolled vertically [#2606](https://github.com/VisActor/Vтаблица/issues/2606)
+- **@visactor/vтаблица**: fix сортировка иконка update в transpose список-таблица
 
-[more detail about v1.10.0](https://github.com/VisActor/VTable/releases/tag/v1.10.0)
+[more detail about v1.10.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.10.0)
 
 # v1.9.1
 
@@ -912,37 +912,37 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix sort icon update in merge cell
+- **@visactor/vтаблица**: fix сортировка иконка update в merge cell
 
-[more detail about v1.9.1](https://github.com/VisActor/VTable/releases/tag/v1.9.1)
+[more detail about v1.9.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.9.1)
 
 # v1.9.0
 
 2024-10-11
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add scrollTo animation function
+- **@visactor/vтаблица**: add scrollTo animation функция
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when dimension set width auto but no records, the col width not compute [#2515](https://github.com/VisActor/VTable/issues/2515)
-- **@visactor/vtable**: when call updateColumns should update aggregation [#2519](https://github.com/VisActor/VTable/issues/2519)
-- **@visactor/vtable**: change outsideClickDeselect trigger time when pointerdown [#2553](https://github.com/VisActor/VTable/issues/2553)
-- **@visactor/vtable**: when sort with row series number occor error [#2558](https://github.com/VisActor/VTable/issues/2558)
-- **@visactor/vtable**: fix select auto-scroll in bottom [#2546](https://github.com/VisActor/VTable/issues/2546)
-- **@visactor/vtable**: fix auto size in react custom component
-- **@visactor/vtable**: fix custom component flash when cell resizes [#2516](https://github.com/VisActor/VTable/issues/2516)
-- **@visactor/vtable**: fix custom component in forzen cell [#2568](https://github.com/VisActor/VTable/issues/2568)
-- **@visactor/vtable**: fix legend with padding layout size
-- **@visactor/vtable**: fix cellLocation in createComplexColumn [#2517](https://github.com/VisActor/VTable/issues/2517)
-- **@visactor/vtable**: fix merge cell select range [#2521](https://github.com/VisActor/VTable/issues/2521)
+- **@visactor/vтаблица**: when dimension set ширина авто but no records, the col ширина не compute [#2515](https://github.com/VisActor/Vтаблица/issues/2515)
+- **@visactor/vтаблица**: when call updateColumns should update aggregation [#2519](https://github.com/VisActor/Vтаблица/issues/2519)
+- **@visactor/vтаблица**: change outsideНажатьDeselect trigger time when pointerdown [#2553](https://github.com/VisActor/Vтаблица/issues/2553)
+- **@visactor/vтаблица**: when сортировка с row series число occor ошибка [#2558](https://github.com/VisActor/Vтаблица/issues/2558)
+- **@visactor/vтаблица**: fix выбрать авто-прокрутка в низ [#2546](https://github.com/VisActor/Vтаблица/issues/2546)
+- **@visactor/vтаблица**: fix авто размер в react пользовательский компонент
+- **@visactor/vтаблица**: fix пользовательский компонент flash when cell resizes [#2516](https://github.com/VisActor/Vтаблица/issues/2516)
+- **@visactor/vтаблица**: fix пользовательский компонент в forzen cell [#2568](https://github.com/VisActor/Vтаблица/issues/2568)
+- **@visactor/vтаблица**: fix легенда с заполнение макет размер
+- **@visactor/vтаблица**: fix cellLocation в createComplexColumn [#2517](https://github.com/VisActor/Vтаблица/issues/2517)
+- **@visactor/vтаблица**: fix merge cell выбрать range [#2521](https://github.com/VisActor/Vтаблица/issues/2521)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: when value is promise cell style function should await [#2549](https://github.com/VisActor/VTable/issues/2549)
+- **@visactor/vтаблица**: when значение is promise cell style функция should await [#2549](https://github.com/VisActor/Vтаблица/issues/2549)
 
-[more detail about v1.9.0](https://github.com/VisActor/VTable/releases/tag/v1.9.0)
+[more detail about v1.9.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.9.0)
 
 # v1.8.2
 
@@ -950,9 +950,9 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix richtext icon update [#2281](https://github.com/VisActor/VTable/issues/2281)
+- **@visactor/vтаблица**: fix richtext иконка update [#2281](https://github.com/VisActor/Vтаблица/issues/2281)
 
-[more detail about v1.8.2](https://github.com/VisActor/VTable/releases/tag/v1.8.2)
+[more detail about v1.8.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.8.2)
 
 # v1.8.1
 
@@ -960,58 +960,58 @@
 
 **🔨 Refactor**
 
-- **@visactor/vue-vtable**: rename vue component name
+- **@visactor/vue-vтаблица**: reимя vue компонент имя
 
-[more detail about v1.8.1](https://github.com/VisActor/VTable/releases/tag/v1.8.1)
+[more detail about v1.8.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.8.1)
 
 # v1.8.0
 
 2024-09-29
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vue-vtable**: add vue-vtable
+- **@visactor/vue-vтаблица**: add vue-vтаблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix estimate position in updateAutoRow() [#2494](https://github.com/VisActor/VTable/issues/2494)
-- **@visactor/vtable**: fix drag check state update [#2518](https://github.com/VisActor/VTable/issues/2518)
-- **@visactor/vtable**: fix group cell in vtable-export [#2487](https://github.com/VisActor/VTable/issues/2487)
-- **@visactor/vtable**: fix react component update problem when resize column
-- **@visactor/vtable**: add functionalIconsStyle on theme [#1308](https://github.com/VisActor/VTable/issues/1308)
+- **@visactor/vтаблица**: fix estimate позиция в updateавтоRow() [#2494](https://github.com/VisActor/Vтаблица/issues/2494)
+- **@visactor/vтаблица**: fix перетаскивание check state update [#2518](https://github.com/VisActor/Vтаблица/issues/2518)
+- **@visactor/vтаблица**: fix group cell в vтаблица-export [#2487](https://github.com/VisActor/Vтаблица/issues/2487)
+- **@visactor/vтаблица**: fix react компонент update problem when изменение размера column
+- **@visactor/vтаблица**: add functionalиконкаsStyle на тема [#1308](https://github.com/VisActor/Vтаблица/issues/1308)
 
-[more detail about v1.8.0](https://github.com/VisActor/VTable/releases/tag/v1.8.0)
+[more detail about v1.8.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.8.0)
 
-[more detail about v1.7.9](https://github.com/VisActor/VTable/releases/tag/v1.7.9)
+[more detail about v1.7.9](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.9)
 
 # v1.7.8
 
 2024-09-24
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: handle with customTree in dataset file to refactor processRecord function [#2279](https://github.com/VisActor/VTable/issues/2279)
-- **@visactor/vtable**: add async support in vtable-export [#2460](https://github.com/VisActor/VTable/issues/2460)
+- **@visactor/vтаблица**: handle с пользовательскийTree в данныеset file к refactor processRecord функция [#2279](https://github.com/VisActor/Vтаблица/issues/2279)
+- **@visactor/vтаблица**: add async support в vтаблица-export [#2460](https://github.com/VisActor/Vтаблица/issues/2460)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: custom total value not work [#2455](https://github.com/VisActor/VTable/issues/2455)
-- **@visactor/vtable**: adjust sort icon up and down [#2465](https://github.com/VisActor/VTable/issues/2465)
-- **@visactor/vtable**: when current edit not exit, could not trigger new edit cell [#2469](https://github.com/VisActor/VTable/issues/2469)
-- **@visactor/vtable**: when no records edit cell value occor error [#2474](https://github.com/VisActor/VTable/issues/2474)
-- **@visactor/vtable**: set aggregation on option not work [#2459](https://github.com/VisActor/VTable/issues/2459)
-- **@visactor/vtable**: fix cell border clip in 'bottom-right' borde mode [#2442](https://github.com/VisActor/VTable/issues/2442)
-- **@visactor/vtable**: add children === true hierarchyState in initChildrenNodeHierarchy()
-- **@visactor/vtable**: fix custom component frozen update [#2432](https://github.com/VisActor/VTable/issues/2432)
-- **@visactor/vtable**: when resize trigger click_cell event
-- **@visactor/vtable**: fix proxy.colStart update in resetFrozen() [#2464](https://github.com/VisActor/VTable/issues/2464)
-- **@visactor/vtable**: add '——' in specialCharSet [#2470](https://github.com/VisActor/VTable/issues/2470)
+- **@visactor/vтаблица**: пользовательский total значение не work [#2455](https://github.com/VisActor/Vтаблица/issues/2455)
+- **@visactor/vтаблица**: adjust сортировка иконка up и down [#2465](https://github.com/VisActor/Vтаблица/issues/2465)
+- **@visactor/vтаблица**: when текущий edit не exit, could не trigger новый edit cell [#2469](https://github.com/VisActor/Vтаблица/issues/2469)
+- **@visactor/vтаблица**: when no records edit cell значение occor ошибка [#2474](https://github.com/VisActor/Vтаблица/issues/2474)
+- **@visactor/vтаблица**: set aggregation на option не work [#2459](https://github.com/VisActor/Vтаблица/issues/2459)
+- **@visactor/vтаблица**: fix cell граница clip в 'низ-право' borde mode [#2442](https://github.com/VisActor/Vтаблица/issues/2442)
+- **@visactor/vтаблица**: add children === true hierarchyState в initChildrenNodeHierarchy()
+- **@visactor/vтаблица**: fix пользовательский компонент frozen update [#2432](https://github.com/VisActor/Vтаблица/issues/2432)
+- **@visactor/vтаблица**: when изменение размера trigger Нажать_cell событие
+- **@visactor/vтаблица**: fix proxy.colStart update в resetFrozen() [#2464](https://github.com/VisActor/Vтаблица/issues/2464)
+- **@visactor/vтаблица**: add '——' в specialCharSet [#2470](https://github.com/VisActor/Vтаблица/issues/2470)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: update aggregator when update records [#2459](https://github.com/VisActor/VTable/issues/2459)
+- **@visactor/vтаблица**: update aggregator when update records [#2459](https://github.com/VisActor/Vтаблица/issues/2459)
 
-[more detail about v1.7.8](https://github.com/VisActor/VTable/releases/tag/v1.7.8)
+[more detail about v1.7.8](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.8)
 
 # v1.7.7
 
@@ -1019,9 +1019,9 @@
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: gantt project export vtable and vrender
+- **@visactor/vтаблица**: гантт project export vтаблица и vrender
 
-[更多详情请查看 v1.7.7](https://github.com/VisActor/VTable/releases/tag/v1.7.7)
+[更多详情请查看 v1.7.7](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.7)
 
 # v1.7.6
 
@@ -1029,47 +1029,47 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable-gantt**: fix: set table theme error in gantt chart [#2439](https://github.com/VisActor/VTable/pull/2439)
+- **@visactor/vтаблица-гантт**: fix: set таблица тема ошибка в гантт график [#2439](https://github.com/VisActor/Vтаблица/pull/2439)
 
-[more detail about v1.7.6](https://github.com/VisActor/VTable/releases/tag/v1.7.6)
+[more detail about v1.7.6](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.6)
 
 # v1.7.5
 
 2024-09-12
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add getFilteredRecords api [#2255](https://github.com/VisActor/VTable/issues/2255)
+- **@visactor/vтаблица**: add getFilteredRecords апи [#2255](https://github.com/VisActor/Vтаблица/issues/2255)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: select range click outside not cancel select [#2355](https://github.com/VisActor/VTable/issues/2355)
-- **@visactor/vtable**: split line position fix [#2392](https://github.com/VisActor/VTable/issues/2392)
-- **@visactor/vtable**: levelSpan case front columnNode merge range error [#2359](https://github.com/VisActor/VTable/issues/2359)
-- **@visactor/vtable**: judge value is valid [#2402](https://github.com/VisActor/VTable/issues/2402)
-- **@visactor/vtable**: mousedown chart go dealSelectCell and rerender it [#2419](https://github.com/VisActor/VTable/issues/2419)
-- **@visactor/vtable**: fix axis size and layout [#2256](https://github.com/VisActor/VTable/issues/2256)
-- **@visactor/vtable**: fix series number in list-group [#2425](https://github.com/VisActor/VTable/issues/2425)
-- **@visactor/vtable**: fix recordIndex config of addRecord in list-group [#2426](https://github.com/VisActor/VTable/issues/2426)
+- **@visactor/vтаблица**: выбрать range Нажать outside не отмена выбрать [#2355](https://github.com/VisActor/Vтаблица/issues/2355)
+- **@visactor/vтаблица**: split line позиция fix [#2392](https://github.com/VisActor/Vтаблица/issues/2392)
+- **@visactor/vтаблица**: levelSpan case front columnNode merge range ошибка [#2359](https://github.com/VisActor/Vтаблица/issues/2359)
+- **@visactor/vтаблица**: judge значение is valid [#2402](https://github.com/VisActor/Vтаблица/issues/2402)
+- **@visactor/vтаблица**: mousedown график go dealSelectCell и rerender it [#2419](https://github.com/VisActor/Vтаблица/issues/2419)
+- **@visactor/vтаблица**: fix axis размер и макет [#2256](https://github.com/VisActor/Vтаблица/issues/2256)
+- **@visactor/vтаблица**: fix series число в список-group [#2425](https://github.com/VisActor/Vтаблица/issues/2425)
+- **@visactor/vтаблица**: fix recordIndex config из addRecord в список-group [#2426](https://github.com/VisActor/Vтаблица/issues/2426)
 
-[more detail about v1.7.5](https://github.com/VisActor/VTable/releases/tag/v1.7.5)
+[more detail about v1.7.5](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.5)
 
 # v1.7.4
 
 2024-09-09
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add updateFilterRules api [#2245](https://github.com/VisActor/VTable/issues/2245)
+- **@visactor/vтаблица**: add updateFilterRules апи [#2245](https://github.com/VisActor/Vтаблица/issues/2245)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when tree pivot table sort then expand tree node render error [#2261](https://github.com/VisActor/VTable/issues/2261)
-- **@visactor/vtable**: fix interactive layer dom clear problem
-- **@visactor/vtable**: when no records corner header show dimention title [#2247](https://github.com/VisActor/VTable/issues/2247)
-- **@visactor/vtable**: fix sparkline range when data has null
+- **@visactor/vтаблица**: when tree сводный таблица сортировка then развернуть tree node render ошибка [#2261](https://github.com/VisActor/Vтаблица/issues/2261)
+- **@visactor/vтаблица**: fix interactive layer dom clear problem
+- **@visactor/vтаблица**: when no records corner header показать dimention title [#2247](https://github.com/VisActor/Vтаблица/issues/2247)
+- **@visactor/vтаблица**: fix sparkline range when данные has null
 
-[more detail about v1.7.4](https://github.com/VisActor/VTable/releases/tag/v1.7.4)
+[more detail about v1.7.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.4)
 
 # v1.7.3
 
@@ -1077,14 +1077,14 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when keydown with ctrl meta and shift not trigger edit mode # 2372
-- **@visactor/vtable**: fix custom style arrangement duplicate [#2370](https://github.com/VisActor/VTable/issues/2370)
-- **@visactor/vtable**: fix no-text cell custom merge [#2343](https://github.com/VisActor/VTable/issues/2343)
-- **@visactor/vtable**: fix event bind problem in react-vtable
-- **@visactor/vtable**: fix right frozen mark position [#2344](https://github.com/VisActor/VTable/issues/2344)
-- **@visactor/vtable**: fix select range judgement in cellBgColor [#2368](https://github.com/VisActor/VTable/issues/2368)
+- **@visactor/vтаблица**: when keydown с ctrl meta и shift не trigger edit mode # 2372
+- **@visactor/vтаблица**: fix пользовательский style arrangement duplicate [#2370](https://github.com/VisActor/Vтаблица/issues/2370)
+- **@visactor/vтаблица**: fix no-текст cell пользовательский merge [#2343](https://github.com/VisActor/Vтаблица/issues/2343)
+- **@visactor/vтаблица**: fix событие bind problem в react-vтаблица
+- **@visactor/vтаблица**: fix право frozen mark позиция [#2344](https://github.com/VisActor/Vтаблица/issues/2344)
+- **@visactor/vтаблица**: fix выбрать range judgement в cellBgColor [#2368](https://github.com/VisActor/Vтаблица/issues/2368)
 
-[more detail about v1.7.3](https://github.com/VisActor/VTable/releases/tag/v1.7.3)
+[more detail about v1.7.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.3)
 
 # v1.7.2
 
@@ -1092,9 +1092,9 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when use groupBy then all merged cells set cellType text [#2331](https://github.com/VisActor/VTable/issues/2331)
+- **@visactor/vтаблица**: when use groupBy then все merged cells set cellType текст [#2331](https://github.com/VisActor/Vтаблица/issues/2331)
 
-[more detail about v1.7.2](https://github.com/VisActor/VTable/releases/tag/v1.7.2)
+[more detail about v1.7.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.2)
 
 # v1.7.1
 
@@ -1102,50 +1102,50 @@
 
 **🐛 Bug fix**
 
-- **@visactor/react-vtable**: fix envs type in react-vtable
+- **@visactor/react-vтаблица**: fix envs тип в react-vтаблица
 
-[more detail about v1.7.1](https://github.com/VisActor/VTable/releases/tag/v1.7.1)
+[more detail about v1.7.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.7.1)
 
 # v1.7.0
 
 2024-08-30
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable-gantt**: add gantt chart
+- **@visactor/vтаблица-гантт**: add гантт график
 
 # v1.6.3
 
 2024-08-29
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add formatCopyValue config
-- **@visactor/vtable**: add parentElement config in tooltip [#2290](https://github.com/VisActor/VTable/issues/2290)
+- **@visactor/vтаблица**: add formatCopyValue config
+- **@visactor/vтаблица**: add parentElement config в Подсказка [#2290](https://github.com/VisActor/Vтаблица/issues/2290)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: handle with change header postion event [#2299](https://github.com/VisActor/VTable/issues/2299)
-- **@visactor/vtable**: pivot tree can not show value and expand tree occor error [#2306](https://github.com/VisActor/VTable/issues/2306)
-- **@visactor/vtable**: set titleOnDimension all sort can not run [#2278](https://github.com/VisActor/VTable/issues/2278)
-- **@visactor/vtable**: add judgement in array find function [#2289](https://github.com/VisActor/VTable/issues/2289)
-- **@visactor/vtable**: fix frozen column custom component clip
-- **@visactor/vtable**: fix cellLocation in top frozen row [#2267](https://github.com/VisActor/VTable/issues/2267)
-- **@visactor/vtable**: fix list-table group mode style update problem
-- **@visactor/vtable**: fix menu auto hide when page crolled [#2241](https://github.com/VisActor/VTable/issues/2241)
-- **@visactor/vtable**: fix progress bar cell textAlign update [#2225](https://github.com/VisActor/VTable/issues/2225)
-- **@visactor/vtable**: fix umd package problem in react-vtable [#2244](https://github.com/VisActor/VTable/issues/2244)
-- **@visactor/vtable**: fix right frozen size in updateContainerAttrWidthAndX() [#2243](https://github.com/VisActor/VTable/issues/2243)
-- **@visactor/vtable**: fix leftRowSeriesNumberColumnCount error in getBodyLayoutRangeById() [#2234](https://github.com/VisActor/VTable/issues/2234)
-- **@visactor/vtable**: fix frozen column custom component clip
-- **@visactor/vtable**: fix menu auto hide when page crolled [#2241](https://github.com/VisActor/VTable/issues/2241)
+- **@visactor/vтаблица**: handle с change header postion событие [#2299](https://github.com/VisActor/Vтаблица/issues/2299)
+- **@visactor/vтаблица**: сводный tree can не показать значение и развернуть tree occor ошибка [#2306](https://github.com/VisActor/Vтаблица/issues/2306)
+- **@visactor/vтаблица**: set titleOnDimension все сортировка can не run [#2278](https://github.com/VisActor/Vтаблица/issues/2278)
+- **@visactor/vтаблица**: add judgement в массив find функция [#2289](https://github.com/VisActor/Vтаблица/issues/2289)
+- **@visactor/vтаблица**: fix frozen column пользовательский компонент clip
+- **@visactor/vтаблица**: fix cellLocation в верх frozen row [#2267](https://github.com/VisActor/Vтаблица/issues/2267)
+- **@visactor/vтаблица**: fix список-таблица group mode style update problem
+- **@visactor/vтаблица**: fix меню авто скрыть when pвозраст crolled [#2241](https://github.com/VisActor/Vтаблица/issues/2241)
+- **@visactor/vтаблица**: fix progress bar cell textAlign update [#2225](https://github.com/VisActor/Vтаблица/issues/2225)
+- **@visactor/vтаблица**: fix umd packвозраст problem в react-vтаблица [#2244](https://github.com/VisActor/Vтаблица/issues/2244)
+- **@visactor/vтаблица**: fix право frozen размер в updateContainerAttrширинаAndX() [#2243](https://github.com/VisActor/Vтаблица/issues/2243)
+- **@visactor/vтаблица**: fix leftRowSeriesNumberColumnCount ошибка в getBodyмакетRangeById() [#2234](https://github.com/VisActor/Vтаблица/issues/2234)
+- **@visactor/vтаблица**: fix frozen column пользовательский компонент clip
+- **@visactor/vтаблица**: fix меню авто скрыть when pвозраст crolled [#2241](https://github.com/VisActor/Vтаблица/issues/2241)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: scroll event add argument [#2249](https://github.com/VisActor/VTable/issues/2249)
-- **@visactor/vtable**: changeCellValue can modify raw record [#2305](https://github.com/VisActor/VTable/issues/2305)
+- **@visactor/vтаблица**: прокрутка событие add argument [#2249](https://github.com/VisActor/Vтаблица/issues/2249)
+- **@visactor/vтаблица**: changeCellValue can modify raw record [#2305](https://github.com/VisActor/Vтаблица/issues/2305)
 
-[more detail about v1.6.3](https://github.com/VisActor/VTable/releases/tag/v1.6.3)
+[more detail about v1.6.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.6.3)
 
 # v1.6.1
 
@@ -1153,111 +1153,111 @@
 
 **💥 Breaking change**
 
-- **@visactor/react-vtable**: remove `VTable` export in `react-vtable`, if you want to use `VTable`, please add and import it from `@visactor/vtable` in the same version.
-- **@visactor/react-vtable**: remove `VRender` export in `vtable`, if you want to use `VRender`, import it from `@visactor/vtable/es/vrender`.
+- **@visactor/react-vтаблица**: remove `Vтаблица` export в `react-vтаблица`, if you want к use `Vтаблица`, please add и import it от `@visactor/vтаблица` в the same version.
+- **@visactor/react-vтаблица**: remove `VRender` export в `vтаблица`, if you want к use `VRender`, import it от `@visactor/vтаблица/es/vrender`.
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add option forceShowHeader
-- **@visactor/vtable**: frameStyle cornerRadius support array type [#2207](https://github.com/VisActor/VTable/issues/2207)
-- **@visactor/vtable**: add table releated components in react-vtable
-- **@visactor/vtable**: add enum in textStick config
-- **@visactor/vtable**: add frozenRowCount in transpose table [#2182](https://github.com/VisActor/VTable/issues/2182)
-- **@visactor/vtable**: add excelJSWorksheetCallback config in vtable-export
-- **@visactor/vtable**: add group function
+- **@visactor/vтаблица**: add option forceShowHeader
+- **@visactor/vтаблица**: frameStyle cornerRadius support массив тип [#2207](https://github.com/VisActor/Vтаблица/issues/2207)
+- **@visactor/vтаблица**: add таблица releated компонентs в react-vтаблица
+- **@visactor/vтаблица**: add enum в textStick config
+- **@visactor/vтаблица**: add frozenRowCount в transpose таблица [#2182](https://github.com/VisActor/Vтаблица/issues/2182)
+- **@visactor/vтаблица**: add excelJSWorksheetCallback config в vтаблица-export
+- **@visactor/vтаблица**: add group функция
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: corner header display dimension name in some case [#2180](https://github.com/VisActor/VTable/issues/2180)
-- **@visactor/vtable**: frameStyle borrerLineWidth set array, table render positon error [#2200](https://github.com/VisActor/VTable/issues/2200)
-- **@visactor/vtable**: fix icon margin error in update size [#2206](https://github.com/VisActor/VTable/issues/2206)
-- **@visactor/vtable**: fix react custom layout component container height
-- **@visactor/vtable**: fix jsx customLayout size compute mode [#2192](https://github.com/VisActor/VTable/issues/2192)
-- **@visactor/vtable**: add default color in vtable-export
-- **@visactor/vtable**: fix row-series cell type [#2188](https://github.com/VisActor/VTable/issues/2188)
+- **@visactor/vтаблица**: corner header display dimension имя в некоторые case [#2180](https://github.com/VisActor/Vтаблица/issues/2180)
+- **@visactor/vтаблица**: frameStyle borrerLineширина set массив, таблица render positon ошибка [#2200](https://github.com/VisActor/Vтаблица/issues/2200)
+- **@visactor/vтаблица**: fix иконка отступ ошибка в update размер [#2206](https://github.com/VisActor/Vтаблица/issues/2206)
+- **@visactor/vтаблица**: fix react пользовательский макет компонент container высота
+- **@visactor/vтаблица**: fix jsx пользовательскиймакет размер compute mode [#2192](https://github.com/VisActor/Vтаблица/issues/2192)
+- **@visactor/vтаблица**: add по умолчанию цвет в vтаблица-export
+- **@visactor/vтаблица**: fix row-series cell тип [#2188](https://github.com/VisActor/Vтаблица/issues/2188)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: supplement backgroundColor for editor [#1518](https://github.com/VisActor/VTable/issues/1518)
+- **@visactor/vтаблица**: supplement backgroundColor для editor [#1518](https://github.com/VisActor/Vтаблица/issues/1518)
 
-[more detail about v1.6.1](https://github.com/VisActor/VTable/releases/tag/v1.6.1)
+[more detail about v1.6.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.6.1)
 
 # v1.5.6
 
 2024-08-08
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add canvas & viewbox config
+- **@visactor/vтаблица**: add canvas & viewbox config
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
+- **@visactor/vтаблица**: fix Релизd async problem [#2145](https://github.com/VisActor/Vтаблица/issues/2145)
 
-[more detail about v1.5.6](https://github.com/VisActor/VTable/releases/tag/v1.5.6)
+[more detail about v1.5.6](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.5.6)
 
 # v1.5.4
 
 2024-08-02
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: pivot table corner cell support icon [#2120](https://github.com/VisActor/VTable/issues/2120)
-- **@visactor/vtable**: support editCellTrigger set keydown [#2136](https://github.com/VisActor/VTable/issues/2136)
-- **@visactor/vtable**: add react-component for option-emptyTip
-- **@visactor/vtable**: add react-component for option-emptyTip - demo
-- **@visactor/vtable**: add escape config in csv-exporter
-- **@visactor/vtable**: add selectionFillMode config in theme.selectionStyle [#2132](https://github.com/VisActor/VTable/issues/2132) [#2027](https://github.com/VisActor/VTable/issues/2027)
+- **@visactor/vтаблица**: сводный таблица corner cell support иконка [#2120](https://github.com/VisActor/Vтаблица/issues/2120)
+- **@visactor/vтаблица**: support editCellTrigger set keydown [#2136](https://github.com/VisActor/Vтаблица/issues/2136)
+- **@visactor/vтаблица**: add react-компонент для option-emptyTip
+- **@visactor/vтаблица**: add react-компонент для option-emptyTip - демонстрация
+- **@visactor/vтаблица**: add escape config в csv-exporter
+- **@visactor/vтаблица**: add selectionFillMode config в тема.selectionStyle [#2132](https://github.com/VisActor/Vтаблица/issues/2132) [#2027](https://github.com/VisActor/Vтаблица/issues/2027)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: set sort rule occor error [#2106](https://github.com/VisActor/VTable/issues/2106)
-- **@visactor/vtable**: clearSelected api clear ctrl+a border [#2115](https://github.com/VisActor/VTable/issues/2115)
-- **@visactor/vtable**: move header position not work not trigger change_header_position event [#2129](https://github.com/VisActor/VTable/issues/2129)
-- **@visactor/vtable**: set cellType is function, resize col width chart size render error [#2160](https://github.com/VisActor/VTable/issues/2160)
-- **@visactor/vtable**: when call setRowHeight should update chart size [#2155](https://github.com/VisActor/VTable/issues/2155)
-- **@visactor/vtable**: fix cell range clear in update record
-- **@visactor/vtable**: fix custom-element update problem [#2126](https://github.com/VisActor/VTable/issues/2126)
-- **@visactor/vtable**: fix customMege cell update
-- **@visactor/vtable**: fix CellContent pickable config [#2134](https://github.com/VisActor/VTable/issues/2134)
-- **@visactor/vtable**: fix legend visible config [#2137](https://github.com/VisActor/VTable/issues/2137)
-- **@visactor/vtable**: fix released async problem [#2145](https://github.com/VisActor/VTable/issues/2145)
-- **@visactor/vtable**: remove resizing update in endResizeCol() [#2101](https://github.com/VisActor/VTable/issues/2101)
+- **@visactor/vтаблица**: set сортировка rule occor ошибка [#2106](https://github.com/VisActor/Vтаблица/issues/2106)
+- **@visactor/vтаблица**: clearSelected апи clear ctrl+a граница [#2115](https://github.com/VisActor/Vтаблица/issues/2115)
+- **@visactor/vтаблица**: move header позиция не work не trigger change_header_position событие [#2129](https://github.com/VisActor/Vтаблица/issues/2129)
+- **@visactor/vтаблица**: set cellType is функция, изменение размера col ширина график размер render ошибка [#2160](https://github.com/VisActor/Vтаблица/issues/2160)
+- **@visactor/vтаблица**: when call setRowвысота should update график размер [#2155](https://github.com/VisActor/Vтаблица/issues/2155)
+- **@visactor/vтаблица**: fix cell range clear в update record
+- **@visactor/vтаблица**: fix пользовательский-element update problem [#2126](https://github.com/VisActor/Vтаблица/issues/2126)
+- **@visactor/vтаблица**: fix пользовательскийMege cell update
+- **@visactor/vтаблица**: fix CellContent pickable config [#2134](https://github.com/VisActor/Vтаблица/issues/2134)
+- **@visactor/vтаблица**: fix легенда видимый config [#2137](https://github.com/VisActor/Vтаблица/issues/2137)
+- **@visactor/vтаблица**: fix Релизd async problem [#2145](https://github.com/VisActor/Vтаблица/issues/2145)
+- **@visactor/vтаблица**: remove resizing update в endResizeCol() [#2101](https://github.com/VisActor/Vтаблица/issues/2101)
 
-[more detail about v1.5.4](https://github.com/VisActor/VTable/releases/tag/v1.5.4)
+[more detail about v1.5.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.5.4)
 
 # v1.5.3
 
 2024-07-19
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add param value for startEditCell api [#2089](https://github.com/VisActor/VTable/issues/2089)
+- **@visactor/vтаблица**: add param значение для startEditCell апи [#2089](https://github.com/VisActor/Vтаблица/issues/2089)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix option config in vtable-export
+- **@visactor/vтаблица**: fix option config в vтаблица-export
 
-[more detail about v1.5.3](https://github.com/VisActor/VTable/releases/tag/v1.5.3)
+[more detail about v1.5.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.5.3)
 
 # v1.5.2
 
 2024-07-15
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add api disableScroll and enableScroll [#2073](https://github.com/VisActor/VTable/issues/2073)
-- **@visactor/vtable**: add renderDefault prop in react customLayout component
-- **@visactor/vtable**: support multiple columns tag in react-vtable
+- **@visactor/vтаблица**: add апи disableScroll и enableScroll [#2073](https://github.com/VisActor/Vтаблица/issues/2073)
+- **@visactor/vтаблица**: add renderDefault prop в react пользовательскиймакет компонент
+- **@visactor/vтаблица**: support multiple columns tag в react-vтаблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: edit api validateValue support async
-- **@visactor/vtable**: api changeFieldValue occor errow when records has null [#2067](https://github.com/VisActor/VTable/issues/2067)
-- **@visactor/vtable**: fix react component error in updateCell() [#2038](https://github.com/VisActor/VTable/issues/2038)
-- **@visactor/vtable**: fix axes default config in scatter chart [#2071](https://github.com/VisActor/VTable/issues/2071)
+- **@visactor/vтаблица**: edit апи validateValue support async
+- **@visactor/vтаблица**: апи changeполеValue occor errow when records has null [#2067](https://github.com/VisActor/Vтаблица/issues/2067)
+- **@visactor/vтаблица**: fix react компонент ошибка в updateCell() [#2038](https://github.com/VisActor/Vтаблица/issues/2038)
+- **@visactor/vтаблица**: fix axes по умолчанию config в scatter график [#2071](https://github.com/VisActor/Vтаблица/issues/2071)
 
-[more detail about v1.5.2](https://github.com/VisActor/VTable/releases/tag/v1.5.2)
+[more detail about v1.5.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.5.2)
 
 # v1.5.1
 
@@ -1265,108 +1265,108 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: getCellAtRelativePosition api return value [#2054](https://github.com/VisActor/VTable/issues/2054)
-- **@visactor/vtable**: add tolerance for scroll in \_disableColumnAndRowSizeRound mode
+- **@visactor/vтаблица**: getCellAtRelativePosition апи возврат значение [#2054](https://github.com/VisActor/Vтаблица/issues/2054)
+- **@visactor/vтаблица**: add tolerance для прокрутка в \_disableColumnAndRowSizeRound mode
 
-[more detail about v1.5.1](https://github.com/VisActor/VTable/releases/tag/v1.5.1)
+[more detail about v1.5.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.5.1)
 
 # v1.5.0
 
 2024-07-05
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add showMoverLine and hideMoverLine api [#2009](https://github.com/VisActor/VTable/issues/2009)
-- **@visactor/vtable**: add formatExcelJSCell config in vtable-export [#1989](https://github.com/VisActor/VTable/issues/1989)
-- **@visactor/vtable**: optimize package size & add load on demand feature
+- **@visactor/vтаблица**: add showMoverLine и hiдемонстрацияverLine апи [#2009](https://github.com/VisActor/Vтаблица/issues/2009)
+- **@visactor/vтаблица**: add formatExcelJSCell config в vтаблица-export [#1989](https://github.com/VisActor/Vтаблица/issues/1989)
+- **@visactor/vтаблица**: optimize packвозраст размер & add load на demand feature
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: pivot chart select state [#2017](https://github.com/VisActor/VTable/issues/2017)
-- **@visactor/vtable**: disable select and edit input should move when input is outside of table [#2039](https://github.com/VisActor/VTable/issues/2039)
-- **@visactor/vtable**: last column resize width error [#2040](https://github.com/VisActor/VTable/issues/2040)
-- **@visactor/vtable**: fix test judgement in customMergeCell [#2031](https://github.com/VisActor/VTable/issues/2031)
-- **@visactor/vtable**: fix selected highlight update when scrolling [#2028](https://github.com/VisActor/VTable/issues/2028)
-- **@visactor/vtable**: fix select-rect update when scroll [#2015](https://github.com/VisActor/VTable/issues/2015)
-- **@visactor/vtable**: fix frozen cell update problem in sort [#1997](https://github.com/VisActor/VTable/issues/1997)
+- **@visactor/vтаблица**: сводный график выбрать state [#2017](https://github.com/VisActor/Vтаблица/issues/2017)
+- **@visactor/vтаблица**: отключить выбрать и edit ввод should move when ввод is outside из таблица [#2039](https://github.com/VisActor/Vтаблица/issues/2039)
+- **@visactor/vтаблица**: последний column изменение размера ширина ошибка [#2040](https://github.com/VisActor/Vтаблица/issues/2040)
+- **@visactor/vтаблица**: fix test judgement в пользовательскийMergeCell [#2031](https://github.com/VisActor/Vтаблица/issues/2031)
+- **@visactor/vтаблица**: fix selected highlight update when scrolling [#2028](https://github.com/VisActor/Vтаблица/issues/2028)
+- **@visactor/vтаблица**: fix выбрать-rect update when прокрутка [#2015](https://github.com/VisActor/Vтаблица/issues/2015)
+- **@visactor/vтаблица**: fix frozen cell update problem в сортировка [#1997](https://github.com/VisActor/Vтаблица/issues/1997)
 
-[more detail about v1.5.0](https://github.com/VisActor/VTable/releases/tag/v1.5.0)
+[more detail about v1.5.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.5.0)
 
 # v1.4.2
 
 2024-07-05
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: corner title can display row and column diemensionTitle [#1926](https://github.com/VisActor/VTable/issues/1926)
-- **@visactor/vtable**: add column hide config [#1991](https://github.com/VisActor/VTable/issues/1991)
-- **@visactor/vtable**: add getCellAtRelativePosition api
+- **@visactor/vтаблица**: corner title can display row и column diemensionTitle [#1926](https://github.com/VisActor/Vтаблица/issues/1926)
+- **@visactor/vтаблица**: add column скрыть config [#1991](https://github.com/VisActor/Vтаблица/issues/1991)
+- **@visactor/vтаблица**: add getCellAtRelativePosition апи
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when not exit edit state then can not select other cells [#1974](https://github.com/VisActor/VTable/issues/1974)
-- **@visactor/vtable**: selected_clear event trigger [#1981](https://github.com/VisActor/VTable/issues/1981)
-- **@visactor/vtable**: pivotTable virtual node edit value not work [#2002](https://github.com/VisActor/VTable/issues/2002)
-- **@visactor/vtable**: tooltip content can not be selected [#2003](https://github.com/VisActor/VTable/issues/2003)
-- **@visactor/vtable**: fix vrender export module
-- **@visactor/vtable**: fix merge cell update performance problem [#1972](https://github.com/VisActor/VTable/issues/1972)
-- **@visactor/vtable**: fix regexp format for webpack 3 [#2005](https://github.com/VisActor/VTable/issues/2005)
-- **@visactor/vtable**: fix width computation in shrinkSparklineFirst mode
+- **@visactor/vтаблица**: when не exit edit state then can не выбрать other cells [#1974](https://github.com/VisActor/Vтаблица/issues/1974)
+- **@visactor/vтаблица**: selected_clear событие trigger [#1981](https://github.com/VisActor/Vтаблица/issues/1981)
+- **@visactor/vтаблица**: сводныйтаблица virtual node edit значение не work [#2002](https://github.com/VisActor/Vтаблица/issues/2002)
+- **@visactor/vтаблица**: Подсказка content can не be selected [#2003](https://github.com/VisActor/Vтаблица/issues/2003)
+- **@visactor/vтаблица**: fix vrender export module
+- **@visactor/vтаблица**: fix merge cell update Производительность problem [#1972](https://github.com/VisActor/Vтаблица/issues/1972)
+- **@visactor/vтаблица**: fix regexp format для webpack 3 [#2005](https://github.com/VisActor/Vтаблица/issues/2005)
+- **@visactor/vтаблица**: fix ширина computation в shrinkSparklineFirst mode
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: sparkline cellType set aggregationType None automatically [#1999](https://github.com/VisActor/VTable/issues/1999)
+- **@visactor/vтаблица**: sparkline cellType set aggregationType никто автоmatically [#1999](https://github.com/VisActor/Vтаблица/issues/1999)
 
-[more detail about v1.4.2](https://github.com/VisActor/VTable/releases/tag/v1.4.2)
+[more detail about v1.4.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.4.2)
 
 # v1.4.0
 
 2024-06-21
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support corner header cell edit value [#1945](https://github.com/VisActor/VTable/issues/1945)
-- **@visactor/vtable**: add indent in vtable-export
-- **@visactor/vtable**: add CustomComponent in react-vtable
-- **@visactor/vtable**: add CustomLayout component in react-vtable
-- **@visactor/vtable**: support calculate field for PivotTable [#1941](https://github.com/VisActor/VTable/issues/1941)
+- **@visactor/vтаблица**: support corner header cell edit значение [#1945](https://github.com/VisActor/Vтаблица/issues/1945)
+- **@visactor/vтаблица**: add indent в vтаблица-export
+- **@visactor/vтаблица**: add пользовательскийкомпонент в react-vтаблица
+- **@visactor/vтаблица**: add пользовательскиймакет компонент в react-vтаблица
+- **@visactor/vтаблица**: support calculate поле для сводныйтаблица [#1941](https://github.com/VisActor/Vтаблица/issues/1941)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: updateSortState api occor error [#1939](https://github.com/VisActor/VTable/issues/1939)
-- **@visactor/vtable**: when setRecords should update emptyTip [#1953](https://github.com/VisActor/VTable/issues/1953)
-- **@visactor/vtable**: getCellRect api when cell is frozen get bounds error [#1955](https://github.com/VisActor/VTable/issues/1955)
-- **@visactor/vtable**: when drag cell and enter edit state but can not exit edit rightly [#1956](https://github.com/VisActor/VTable/issues/1956)
-- **@visactor/vtable**: fix custom width problem [#1905](https://github.com/VisActor/VTable/issues/1905)
-- **@visactor/vtable**: fix content judgement in getCellRange() [#1911](https://github.com/VisActor/VTable/issues/1911)
-- **@visactor/vtable**: fix size update problem in pivot table sort [#1958](https://github.com/VisActor/VTable/issues/1958)
+- **@visactor/vтаблица**: updateсортировкаState апи occor ошибка [#1939](https://github.com/VisActor/Vтаблица/issues/1939)
+- **@visactor/vтаблица**: when setRecords should update emptyTip [#1953](https://github.com/VisActor/Vтаблица/issues/1953)
+- **@visactor/vтаблица**: getCellRect апи when cell is frozen get bounds ошибка [#1955](https://github.com/VisActor/Vтаблица/issues/1955)
+- **@visactor/vтаблица**: when перетаскивание cell и enter edit state but can не exit edit rightly [#1956](https://github.com/VisActor/Vтаблица/issues/1956)
+- **@visactor/vтаблица**: fix пользовательский ширина problem [#1905](https://github.com/VisActor/Vтаблица/issues/1905)
+- **@visactor/vтаблица**: fix content judgement в getCellRange() [#1911](https://github.com/VisActor/Vтаблица/issues/1911)
+- **@visactor/vтаблица**: fix размер update problem в сводный таблица сортировка [#1958](https://github.com/VisActor/Vтаблица/issues/1958)
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender version
+- **@visactor/vтаблица**: update vrender version
 
-[more detail about v1.4.0](https://github.com/VisActor/VTable/releases/tag/v1.4.0)
+[more detail about v1.4.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.4.0)
 
 # v1.3.2
 
 2024-06-17
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add blankAreaClickDeselect and outsideClickDeselect config
+- **@visactor/vтаблица**: add blankAreaНажатьDeselect и outsideНажатьDeselect config
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: cellIsInVisualView api error [#1864](https://github.com/VisActor/VTable/issues/1864)
-- **@visactor/vtable**: if set style autoWrapText, this config not wort when resize column width [#1892](https://github.com/VisActor/VTable/issues/1892)
+- **@visactor/vтаблица**: cellIsInVisualView апи ошибка [#1864](https://github.com/VisActor/Vтаблица/issues/1864)
+- **@visactor/vтаблица**: if set style автоWrapText, this config не wort when изменение размера column ширина [#1892](https://github.com/VisActor/Vтаблица/issues/1892)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: tooltip support scroll [#1887](https://github.com/VisActor/VTable/issues/1887)
-- **@visactor/vtable**: when not records pivot table can show corner header [#1895](https://github.com/VisActor/VTable/issues/1895)
-- **@visactor/vtable**: when rowTree children not set value can supplement indicators [#1924](https://github.com/VisActor/VTable/issues/1924)
+- **@visactor/vтаблица**: Подсказка support прокрутка [#1887](https://github.com/VisActor/Vтаблица/issues/1887)
+- **@visactor/vтаблица**: when не records сводный таблица can показать corner header [#1895](https://github.com/VisActor/Vтаблица/issues/1895)
+- **@visactor/vтаблица**: when rowTree children не set значение can supplement indicators [#1924](https://github.com/VisActor/Vтаблица/issues/1924)
 
-[more detail about v1.3.2](https://github.com/VisActor/VTable/releases/tag/v1.3.2)
+[more detail about v1.3.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.3.2)
 
 # v1.3.1
 
@@ -1374,71 +1374,71 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
-- **@visactor/vtable**: fix merge cell size update [#1869](https://github.com/VisActor/VTable/issues/1869)
-- **@visactor/vtable**: optimize row height update when useOneRowHeightFillAll
+- **@visactor/vтаблица**: fix frozenColCount large than colCount ошибка [#1872](https://github.com/VisActor/Vтаблица/issues/1872)
+- **@visactor/vтаблица**: fix merge cell размер update [#1869](https://github.com/VisActor/Vтаблица/issues/1869)
+- **@visactor/vтаблица**: optimize row высота update when useOneRowвысотаFillAll
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: update changlog of rush
+- **@visactor/vтаблица**: update changlog из rush
 
-[more detail about v1.3.1](https://github.com/VisActor/VTable/releases/tag/v1.3.1)
+[more detail about v1.3.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.3.1)
 
 # v1.3.0
 
 2024-06-12
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add ignoreIcon&formatExportOutput config in vtable-export [#1813](https://github.com/VisActor/VTable/issues/1813)
-- **@visactor/vtable**: add textArea editor
-- **@visactor/vtable**: add strokeColor style [#1847](https://github.com/VisActor/VTable/issues/1847)
-- **@visactor/vtable**: add dx&dy in title component [#1874](https://github.com/VisActor/VTable/issues/1874)
-- **@visactor/vtable**: add shrinkSparklineFirst config [#1862](https://github.com/VisActor/VTable/issues/1862)
-- **@visactor/vtable**: tooltip disappear delay time [#1848](https://github.com/VisActor/VTable/issues/1848)
-- **@visactor/vtable**: add sort config for pivotTable [#1865](https://github.com/VisActor/VTable/issues/1865)
+- **@visactor/vтаблица**: add ignoreиконка&formatExportOutput config в vтаблица-export [#1813](https://github.com/VisActor/Vтаблица/issues/1813)
+- **@visactor/vтаблица**: add textArea editor
+- **@visactor/vтаблица**: add strхорошоeColor style [#1847](https://github.com/VisActor/Vтаблица/issues/1847)
+- **@visactor/vтаблица**: add dx&dy в title компонент [#1874](https://github.com/VisActor/Vтаблица/issues/1874)
+- **@visactor/vтаблица**: add shrinkSparklineFirst config [#1862](https://github.com/VisActor/Vтаблица/issues/1862)
+- **@visactor/vтаблица**: Подсказка disappear delay time [#1848](https://github.com/VisActor/Vтаблица/issues/1848)
+- **@visactor/vтаблица**: add сортировка config для сводныйтаблица [#1865](https://github.com/VisActor/Vтаблица/issues/1865)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: icon inlineEnd inlineFront x position compute error [#1882](https://github.com/VisActor/VTable/issues/1882)
-- **@visactor/vtable**: drill down icon can not be click [#1899](https://github.com/VisActor/VTable/issues/1899)
-- **@visactor/vtable**: fix frozenColCount large than colCount error [#1872](https://github.com/VisActor/VTable/issues/1872)
-- **@visactor/vtable**: fix ellipsis error in \_disableColumnAndRowSizeRound mode [#1884](https://github.com/VisActor/VTable/issues/1884)
+- **@visactor/vтаблица**: иконка inlineEnd inlineFront x позиция compute ошибка [#1882](https://github.com/VisActor/Vтаблица/issues/1882)
+- **@visactor/vтаблица**: drill down иконка can не be Нажать [#1899](https://github.com/VisActor/Vтаблица/issues/1899)
+- **@visactor/vтаблица**: fix frozenColCount large than colCount ошибка [#1872](https://github.com/VisActor/Vтаблица/issues/1872)
+- **@visactor/vтаблица**: fix ellipsis ошибка в \_disableColumnAndRowSizeRound mode [#1884](https://github.com/VisActor/Vтаблица/issues/1884)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: memory release logic optimization [#1856](https://github.com/VisActor/VTable/issues/1856)
-- **@visactor/vtable**: arrow key with shift ctrl key to select cells [#1873](https://github.com/VisActor/VTable/issues/1873)
+- **@visactor/vтаблица**: memory Релиз logic optimization [#1856](https://github.com/VisActor/Vтаблица/issues/1856)
+- **@visactor/vтаблица**: arrow key с shift ctrl key к выбрать cells [#1873](https://github.com/VisActor/Vтаблица/issues/1873)
 
-[more detail about v1.3.0](https://github.com/VisActor/VTable/releases/tag/v1.3.0)
+[more detail about v1.3.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.3.0)
 
 # v1.2.0
 
 2024-06-06
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support select highlightMode effect [#1167](https://github.com/VisActor/VTable/issues/1167)
-- **@visactor/vtable**: add isAggregation api [#1803](https://github.com/VisActor/VTable/issues/1803)
-- **@visactor/vtable**: optimize large column performance [#1840](https://github.com/VisActor/VTable/issues/1840) [#1824](https://github.com/VisActor/VTable/issues/1824)
-- **@visactor/vtable**: add merge cell custom graphic attribute sync [#1718](https://github.com/VisActor/VTable/issues/1718)
+- **@visactor/vтаблица**: support выбрать highlightMode effect [#1167](https://github.com/VisActor/Vтаблица/issues/1167)
+- **@visactor/vтаблица**: add isAggregation апи [#1803](https://github.com/VisActor/Vтаблица/issues/1803)
+- **@visactor/vтаблица**: optimize large column Производительность [#1840](https://github.com/VisActor/Vтаблица/issues/1840) [#1824](https://github.com/VisActor/Vтаблица/issues/1824)
+- **@visactor/vтаблица**: add merge cell пользовательский graphic attribute sync [#1718](https://github.com/VisActor/Vтаблица/issues/1718)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when has no records should not has aggregation row [#1804](https://github.com/VisActor/VTable/issues/1804)
-- **@visactor/vtable**: updateColumns set editor error [#1828](https://github.com/VisActor/VTable/issues/1828)
-- **@visactor/vtable**: fix maxCharactersNumber effect [#1830](https://github.com/VisActor/VTable/issues/1830)
+- **@visactor/vтаблица**: when has no records should не has aggregation row [#1804](https://github.com/VisActor/Vтаблица/issues/1804)
+- **@visactor/vтаблица**: updateColumns set editor ошибка [#1828](https://github.com/VisActor/Vтаблица/issues/1828)
+- **@visactor/vтаблица**: fix maxCharactersNumber effect [#1830](https://github.com/VisActor/Vтаблица/issues/1830)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: update pixelRatio when resize [#1823](https://github.com/VisActor/VTable/issues/1823)
-- **@visactor/vtable**: selectAllOnCtrlA option
+- **@visactor/vтаблица**: update pixelRatio when изменение размера [#1823](https://github.com/VisActor/Vтаблица/issues/1823)
+- **@visactor/vтаблица**: selectAllOnCtrlA option
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender version
+- **@visactor/vтаблица**: update vrender version
 
-[more detail about v1.2.0](https://github.com/VisActor/VTable/releases/tag/v1.2.0)
+[more detail about v1.2.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.2.0)
 
 # v1.1.2
 
@@ -1446,9 +1446,9 @@
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender version
+- **@visactor/vтаблица**: update vrender version
 
-[more detail about v1.1.2](https://github.com/VisActor/VTable/releases/tag/v1.1.2)
+[more detail about v1.1.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.1.2)
 
 # v1.1.1
 
@@ -1456,31 +1456,31 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when set emptyTip interaction not work well with has records [#1818](https://github.com/VisActor/VTable/issues/1818)
-- **@visactor/vtable**: fix table frame corner radius display problem [#1783](https://github.com/VisActor/VTable/issues/1783)
+- **@visactor/vтаблица**: when set emptyTip interaction не work well с has records [#1818](https://github.com/VisActor/Vтаблица/issues/1818)
+- **@visactor/vтаблица**: fix таблица frame corner radius display problem [#1783](https://github.com/VisActor/Vтаблица/issues/1783)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: dimension value same with indicator key cell value error [#1817](https://github.com/VisActor/VTable/issues/1817)
+- **@visactor/vтаблица**: dimension значение same с indicator key cell значение ошибка [#1817](https://github.com/VisActor/Vтаблица/issues/1817)
 
-[more detail about v1.1.1](https://github.com/VisActor/VTable/releases/tag/v1.1.1)
+[more detail about v1.1.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.1.1)
 
 # v1.1.0
 
 2024-05-28
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add empty tip [#1782](https://github.com/VisActor/VTable/issues/1782)
+- **@visactor/vтаблица**: add empty tip [#1782](https://github.com/VisActor/Vтаблица/issues/1782)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: add update delete record api should maintain beforeChangedRecordsMap [#1780](https://github.com/VisActor/VTable/issues/1780)
-- **@visactor/vtable**: when set disableSelect table should support drag header [#1800](https://github.com/VisActor/VTable/issues/1800)
-- **@visactor/vtable**: fix tree create problem in getDataCellPath()
-- **@visactor/vtable**: fix left axis index in horizontal pivot chart
+- **@visactor/vтаблица**: add update delete record апи should maintain beforeChangedRecordsMap [#1780](https://github.com/VisActor/Vтаблица/issues/1780)
+- **@visactor/vтаблица**: when set disableSelect таблица should support перетаскивание header [#1800](https://github.com/VisActor/Vтаблица/issues/1800)
+- **@visactor/vтаблица**: fix tree create problem в getданныеCellPath()
+- **@visactor/vтаблица**: fix лево axis index в horizontal сводный график
 
-[more detail about v1.1.0](https://github.com/VisActor/VTable/releases/tag/v1.1.0)
+[more detail about v1.1.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.1.0)
 
 # v1.0.3
 
@@ -1488,46 +1488,46 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: first col tree mode compute col width error [#1778](https://github.com/VisActor/VTable/issues/1778)
+- **@visactor/vтаблица**: первый col tree mode compute col ширина ошибка [#1778](https://github.com/VisActor/Vтаблица/issues/1778)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: legends support ser array form [#1740](https://github.com/VisActor/VTable/issues/1740)
+- **@visactor/vтаблица**: легендаs support ser массив form [#1740](https://github.com/VisActor/Vтаблица/issues/1740)
 
-[more detail about v1.0.3](https://github.com/VisActor/VTable/releases/tag/v1.0.3)
+[more detail about v1.0.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.0.3)
 
 # v1.0.2
 
 2024-05-24
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add setRowHeight&setColWidth api
+- **@visactor/vтаблица**: add setRowвысота&setColширина апи
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: use table option in hasAutoImageColumn()
-- **@visactor/vtable**: axis size align with vrender-component [#1784](https://github.com/VisActor/VTable/issues/1784)
-- **@visactor/vtable**: fix lineClamp config in computeRowsHeight() [#1772](https://github.com/VisActor/VTable/issues/1772)
-- **@visactor/vtable**: fix progress cell create problem in vtable-export [#1787](https://github.com/VisActor/VTable/issues/1787)
-- **@visactor/vtable**: ignore cell merge in selectCells()
+- **@visactor/vтаблица**: use таблица option в hasавтоImвозрастColumn()
+- **@visactor/vтаблица**: axis размер align с vrender-компонент [#1784](https://github.com/VisActor/Vтаблица/issues/1784)
+- **@visactor/vтаблица**: fix lineClamp config в computeRowsвысота() [#1772](https://github.com/VisActor/Vтаблица/issues/1772)
+- **@visactor/vтаблица**: fix progress cell create problem в vтаблица-export [#1787](https://github.com/VisActor/Vтаблица/issues/1787)
+- **@visactor/vтаблица**: ignore cell merge в selectCells()
 
-[more detail about v1.0.2](https://github.com/VisActor/VTable/releases/tag/v1.0.2)
+[more detail about v1.0.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.0.2)
 
 # v1.0.1
 
 2024-05-23
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: tree mode can set icon [#1697](https://github.com/VisActor/VTable/issues/1697)
-- **@visactor/vtable**: add setRowHeight&setColWidth api
+- **@visactor/vтаблица**: tree mode can set иконка [#1697](https://github.com/VisActor/Vтаблица/issues/1697)
+- **@visactor/vтаблица**: add setRowвысота&setColширина апи
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: ignore cell merge in selectCells()
+- **@visactor/vтаблица**: ignore cell merge в selectCells()
 
-[more detail about v1.0.1](https://github.com/VisActor/VTable/releases/tag/v1.0.1)
+[more detail about v1.0.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.0.1)
 
 # v1.0.0
 
@@ -1535,14 +1535,14 @@
 
 **💥 Breaking change**
 
-- **@visactor/vtable**: The result returned by the pivot table getCellOriginRecord interface becomes an array structure.
+- **@visactor/vтаблица**: The result returned по the сводный таблица getCellOriginRecord интерфейс becomes an массив structure.
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: rows and tree can combined use [#1644](https://github.com/VisActor/VTable/issues/1644)
-- **@visactor/vtable**: add virtual option for rowTree and columnTree [#1644](https://github.com/VisActor/VTable/issues/1644)
+- **@visactor/vтаблица**: rows и tree can combined use [#1644](https://github.com/VisActor/Vтаблица/issues/1644)
+- **@visactor/vтаблица**: add virtual option для rowTree и columnTree [#1644](https://github.com/VisActor/Vтаблица/issues/1644)
 
-[more detail about v1.0.0](https://github.com/VisActor/VTable/releases/tag/v1.0.0)
+[more detail about v1.0.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v1.0.0)
 
 # v0.25.9
 
@@ -1550,255 +1550,255 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when body cell is blank string,compute row height error [#1752](https://github.com/VisActor/VTable/issues/1752)
-- **@visactor/vtable**: fix custom merge cell display problem when select header
+- **@visactor/vтаблица**: when body cell is blank строка,compute row высота ошибка [#1752](https://github.com/VisActor/Vтаблица/issues/1752)
+- **@visactor/vтаблица**: fix пользовательский merge cell display problem when выбрать header
 
-[more detail about v0.25.9](https://github.com/VisActor/VTable/releases/tag/v0.25.9)
+[more detail about v0.25.9](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.25.9)
 
 # v0.25.8
 
 2024-05-21
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add scrollSliderCornerRadius config [#1369](https://github.com/VisActor/VTable/issues/1369)
-- **@visactor/vtable**: add disableBackground & disableBorder in exportCellImg() [#1733](https://github.com/VisActor/VTable/issues/1733)
-- **@visactor/vtable**: add disableColumnResize for rowSeriesNumber
+- **@visactor/vтаблица**: add scrollSliderCornerRadius config [#1369](https://github.com/VisActor/Vтаблица/issues/1369)
+- **@visactor/vтаблица**: add disableBackground & disableBorder в exportCellImg() [#1733](https://github.com/VisActor/Vтаблица/issues/1733)
+- **@visactor/vтаблица**: add disableColumnResize для rowSeriesNumber
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when set hideRowHeader, body cell value is blank [#1732](https://github.com/VisActor/VTable/issues/1732)
-- **@visactor/vtable**: setTableColumnsEditor occor error when not set columns [#1747](https://github.com/VisActor/VTable/issues/1747)
-- **@visactor/vtable**: fix col & row order in cellInRanges()
-- **@visactor/vtable**: add string mark in csv-export [#1730](https://github.com/VisActor/VTable/issues/1730)
+- **@visactor/vтаблица**: when set hideRowHeader, body cell значение is blank [#1732](https://github.com/VisActor/Vтаблица/issues/1732)
+- **@visactor/vтаблица**: setтаблицаColumnsEditor occor ошибка when не set columns [#1747](https://github.com/VisActor/Vтаблица/issues/1747)
+- **@visactor/vтаблица**: fix col & row order в cellInRanges()
+- **@visactor/vтаблица**: add строка mark в csv-export [#1730](https://github.com/VisActor/Vтаблица/issues/1730)
 
-[more detail about v0.25.8](https://github.com/VisActor/VTable/releases/tag/v0.25.8)
+[more detail about v0.25.8](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.25.8)
 
 # v0.25.6
 
 2024-05-17
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add selected_clear event [#1705](https://github.com/VisActor/VTable/issues/1705)
-- **@visactor/vtable**: add mergeCellInfo arg in event [#1667](https://github.com/VisActor/VTable/issues/1667)
+- **@visactor/vтаблица**: add selected_clear событие [#1705](https://github.com/VisActor/Vтаблица/issues/1705)
+- **@visactor/vтаблица**: add mergeCellInfo arg в событие [#1667](https://github.com/VisActor/Vтаблица/issues/1667)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: mouse down on scroll rail trigger mousedown_table [#1706](https://github.com/VisActor/VTable/issues/1706)
-- **@visactor/vtable**: merge cell value can be edited [#1711](https://github.com/VisActor/VTable/issues/1711)
-- **@visactor/vtable**: sub colunms can not be edit when set editor instance [#1711](https://github.com/VisActor/VTable/issues/1711)
-- **@visactor/vtable**: fix checkbox and radio state update when change row index [#1712](https://github.com/VisActor/VTable/issues/1712)
-- **@visactor/vtable**: fix veritial offset in text stick
-- **@visactor/vtable**: fix column width may be zero [#1708](https://github.com/VisActor/VTable/issues/1708)
-- **@visactor/vtable**: fix getCell performance
-- **@visactor/vtable**: fix header hide func in pivot table
-- **@visactor/vtable**: lineDash judgement in group-contribution-render [#1696](https://github.com/VisActor/VTable/issues/1696)
-- **@visactor/vtable**: trigger mousedown_table event region need extend [#1668](https://github.com/VisActor/VTable/issues/1668)
+- **@visactor/vтаблица**: mouse down на прокрутка rail trigger mousedown_таблица [#1706](https://github.com/VisActor/Vтаблица/issues/1706)
+- **@visactor/vтаблица**: merge cell значение can be edited [#1711](https://github.com/VisActor/Vтаблица/issues/1711)
+- **@visactor/vтаблица**: sub colunms can не be edit when set editor instance [#1711](https://github.com/VisActor/Vтаблица/issues/1711)
+- **@visactor/vтаблица**: fix флажок и переключатель state update when change row index [#1712](https://github.com/VisActor/Vтаблица/issues/1712)
+- **@visactor/vтаблица**: fix veritial offset в текст stick
+- **@visactor/vтаблица**: fix column ширина may be zero [#1708](https://github.com/VisActor/Vтаблица/issues/1708)
+- **@visactor/vтаблица**: fix getCell Производительность
+- **@visactor/vтаблица**: fix header скрыть func в сводный таблица
+- **@visactor/vтаблица**: lineDash judgement в group-contribution-render [#1696](https://github.com/VisActor/Vтаблица/issues/1696)
+- **@visactor/vтаблица**: trigger mousedown_таблица событие Регион need extend [#1668](https://github.com/VisActor/Vтаблица/issues/1668)
 
-[more detail about v0.25.6](https://github.com/VisActor/VTable/releases/tag/v0.25.6)
+[more detail about v0.25.6](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.25.6)
 
 # v0.25.1
 
 2024-05-08
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: pivot chart support wordCloud rose radar gauge [#1614](https://github.com/VisActor/VTable/issues/1614)
-- **@visactor/vtable**: pivot chart support scatter chart type [#1618](https://github.com/VisActor/VTable/issues/1618)
-- **@visactor/vtable**: add CustomComponent in react-vtable
+- **@visactor/vтаблица**: сводный график support wordCloud rose radar gauge [#1614](https://github.com/VisActor/Vтаблица/issues/1614)
+- **@visactor/vтаблица**: сводный график support scatter график тип [#1618](https://github.com/VisActor/Vтаблица/issues/1618)
+- **@visactor/vтаблица**: add пользовательскийкомпонент в react-vтаблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when copy blank cell paste not work [#1646](https://github.com/VisActor/VTable/issues/1646)
-- **@visactor/vtable**: fix custom merge cell size update [#1636](https://github.com/VisActor/VTable/issues/1636)
-- **@visactor/vtable**: add selecting cell range deduplication [#1628](https://github.com/VisActor/VTable/issues/1628)
-- **@visactor/vtable**: update @visactor/vutils-extension version
+- **@visactor/vтаблица**: when copy blank cell paste не work [#1646](https://github.com/VisActor/Vтаблица/issues/1646)
+- **@visactor/vтаблица**: fix пользовательский merge cell размер update [#1636](https://github.com/VisActor/Vтаблица/issues/1636)
+- **@visactor/vтаблица**: add selecting cell range deduplication [#1628](https://github.com/VisActor/Vтаблица/issues/1628)
+- **@visactor/vтаблица**: update @visactor/vutils-extension version
 
-[more detail about v0.25.1](https://github.com/VisActor/VTable/releases/tag/v0.25.1)
+[more detail about v0.25.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.25.1)
 
 # v0.25.0
 
 2024-04-28
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: pivot table header cell support edit [#1583](https://github.com/VisActor/VTable/issues/1583)
-- **@visactor/vtable**: customrender or customlayout support edit [#1596](https://github.com/VisActor/VTable/issues/1596)
-- **@visactor/vtable**: add row resize function
+- **@visactor/vтаблица**: сводный таблица header cell support edit [#1583](https://github.com/VisActor/Vтаблица/issues/1583)
+- **@visactor/vтаблица**: пользовательскийrender или пользовательскиймакет support edit [#1596](https://github.com/VisActor/Vтаблица/issues/1596)
+- **@visactor/vтаблица**: add row изменение размера функция
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: editor input value handle with 0value [#1590](https://github.com/VisActor/VTable/issues/1590)
-- **@visactor/vtable**: when set textStick init and updateOption text jump [#1592](https://github.com/VisActor/VTable/issues/1592)
-- **@visactor/vtable**: clear async contain resize task before render [#1593](https://github.com/VisActor/VTable/issues/1593)
-- **@visactor/vtable**: hierarchy state icon can not show when only one level
+- **@visactor/vтаблица**: editor ввод значение handle с 0value [#1590](https://github.com/VisActor/Vтаблица/issues/1590)
+- **@visactor/vтаблица**: when set textStick init и updateOption текст jump [#1592](https://github.com/VisActor/Vтаблица/issues/1592)
+- **@visactor/vтаблица**: clear async contain изменение размера task before render [#1593](https://github.com/VisActor/Vтаблица/issues/1593)
+- **@visactor/vтаблица**: hierarchy state иконка can не показать when only one level
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: resize last column width can be more flexibly [#1567](https://github.com/VisActor/VTable/issues/1567)
+- **@visactor/vтаблица**: изменение размера последний column ширина can be more flexibly [#1567](https://github.com/VisActor/Vтаблица/issues/1567)
 
-[more detail about v0.25.0](https://github.com/VisActor/VTable/releases/tag/v0.25.0)
+[more detail about v0.25.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.25.0)
 
 # v0.24.1
 
 2024-04-23
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add startEditCell api [#1573](https://github.com/VisActor/VTable/issues/1573)
+- **@visactor/vтаблица**: add startEditCell апи [#1573](https://github.com/VisActor/Vтаблица/issues/1573)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when has rowSeriesNumber minWidth maxWidth error [#1572](https://github.com/VisActor/VTable/issues/1572)
+- **@visactor/vтаблица**: when has rowSeriesNumber minширина maxширина ошибка [#1572](https://github.com/VisActor/Vтаблица/issues/1572)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: pivot lazy load modify setTreeNodeChildren api [#1580](https://github.com/VisActor/VTable/issues/1580)
+- **@visactor/vтаблица**: сводный lazy load modify setTreeNodeChildren апи [#1580](https://github.com/VisActor/Vтаблица/issues/1580)
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: add drill down drill up demo [#1556](https://github.com/VisActor/VTable/issues/1556)
+- **@visactor/vтаблица**: add drill down drill up демонстрация [#1556](https://github.com/VisActor/Vтаблица/issues/1556)
 
-[more detail about v0.24.1](https://github.com/VisActor/VTable/releases/tag/v0.24.1)
+[more detail about v0.24.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.24.1)
 
 # v0.24.0
 
 2024-04-22
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add `radio` cell type, and add setCellCheckboxState & setCellRadioState api [#1504](https://github.com/VisActor/VTable/issues/1504)
-- **@visactor/vtable**: add lazy load for pivot table tree [#1521](https://github.com/VisActor/VTable/issues/1521)
+- **@visactor/vтаблица**: add `переключатель` cell тип, и add setCellCheckboxState & setCellRadioState апи [#1504](https://github.com/VisActor/Vтаблица/issues/1504)
+- **@visactor/vтаблица**: add lazy load для сводный таблица tree [#1521](https://github.com/VisActor/Vтаблица/issues/1521)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: handle with editor input ctrl+a event [#1552](https://github.com/VisActor/VTable/issues/1552)
-- **@visactor/vtable**: when resize window size the editor input size not match cell size [#1559](https://github.com/VisActor/VTable/issues/1559)
-- **@visactor/vtable**: fix multilines new line style [#1531](https://github.com/VisActor/VTable/issues/1531)
-- **@visactor/vtable**: fix cell group order in async data [#1517](https://github.com/VisActor/VTable/issues/1517)
-- **@visactor/vtable**: add skipCustomMerge in getCellValue() [#1543](https://github.com/VisActor/VTable/issues/1543)
+- **@visactor/vтаблица**: handle с editor ввод ctrl+a событие [#1552](https://github.com/VisActor/Vтаблица/issues/1552)
+- **@visactor/vтаблица**: when изменение размера window размер the editor ввод размер не match cell размер [#1559](https://github.com/VisActor/Vтаблица/issues/1559)
+- **@visactor/vтаблица**: fix multilines новый line style [#1531](https://github.com/VisActor/Vтаблица/issues/1531)
+- **@visactor/vтаблица**: fix cell group order в async данные [#1517](https://github.com/VisActor/Vтаблица/issues/1517)
+- **@visactor/vтаблица**: add skipпользовательскийMerge в getCellValue() [#1543](https://github.com/VisActor/Vтаблица/issues/1543)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: optimize performance when row tree node exceed 8000 nodes [#1557](https://github.com/VisActor/VTable/issues/1557)
+- **@visactor/vтаблица**: optimize Производительность when row tree node exceed 8000 nodes [#1557](https://github.com/VisActor/Vтаблица/issues/1557)
 
-[more detail about v0.24.0](https://github.com/VisActor/VTable/releases/tag/v0.24.0)
+[more detail about v0.24.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.24.0)
 
 # v0.23.3
 
 2024-04-16
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add widthAdaptiveMode & heightAdaptiveMode config [#1499](https://github.com/VisActor/VTable/issues/1499)
-- **@visactor/vtable**: add measureTextBounds api
+- **@visactor/vтаблица**: add ширинаAdaptiveMode & высотаAdaptiveMode config [#1499](https://github.com/VisActor/Vтаблица/issues/1499)
+- **@visactor/vтаблица**: add measureTextBounds апи
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: release editor when release tableInstance [#1495](https://github.com/VisActor/VTable/issues/1495)
-- **@visactor/vtable**: short table drag to out table occor error [#1502](https://github.com/VisActor/VTable/issues/1502)
-- **@visactor/vtable**: row move funciton not work on mobile [#1503](https://github.com/VisActor/VTable/issues/1503)
-- **@visactor/vtable**: defaultHeaderRowHeight not work with rowSeriesNumber [#1520](https://github.com/VisActor/VTable/issues/1520)
-- **@visactor/vtable**: tree hierarchy state icon use rowHierarchyTextStartAlignment children node render error [#1525](https://github.com/VisActor/VTable/issues/1525)
-- **@visactor/vtable**: resize col width trigger text stick change [#1529](https://github.com/VisActor/VTable/issues/1529)
-- **@visactor/vtable**: fix theme textStick config in checkHaveTextStick() [#1490](https://github.com/VisActor/VTable/issues/1490)
-- **@visactor/vtable**: add button jedgement in click_cell event [#1484](https://github.com/VisActor/VTable/issues/1484)
-- **@visactor/vtable**: fix defalultQueryMethod in vtable-search [#1448](https://github.com/VisActor/VTable/issues/1448)
-- **@visactor/vtable**: update customMergeCell in updateOption [#1493](https://github.com/VisActor/VTable/issues/1493)
+- **@visactor/vтаблица**: Релиз editor when Релиз таблицаInstance [#1495](https://github.com/VisActor/Vтаблица/issues/1495)
+- **@visactor/vтаблица**: short таблица перетаскивание к out таблица occor ошибка [#1502](https://github.com/VisActor/Vтаблица/issues/1502)
+- **@visactor/vтаблица**: row move funciton не work на mobile [#1503](https://github.com/VisActor/Vтаблица/issues/1503)
+- **@visactor/vтаблица**: defaultHeaderRowвысота не work с rowSeriesNumber [#1520](https://github.com/VisActor/Vтаблица/issues/1520)
+- **@visactor/vтаблица**: tree hierarchy state иконка use rowHierarchyTextStartAlignment children node render ошибка [#1525](https://github.com/VisActor/Vтаблица/issues/1525)
+- **@visactor/vтаблица**: изменение размера col ширина trigger текст stick change [#1529](https://github.com/VisActor/Vтаблица/issues/1529)
+- **@visactor/vтаблица**: fix тема textStick config в checkHaveTextStick() [#1490](https://github.com/VisActor/Vтаблица/issues/1490)
+- **@visactor/vтаблица**: add Кнопка jedgement в Нажать_cell событие [#1484](https://github.com/VisActor/Vтаблица/issues/1484)
+- **@visactor/vтаблица**: fix defalultQueryMethod в vтаблица-search [#1448](https://github.com/VisActor/Vтаблица/issues/1448)
+- **@visactor/vтаблица**: update пользовательскийMergeCell в updateOption [#1493](https://github.com/VisActor/Vтаблица/issues/1493)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: add mousedown_table event [#1470](https://github.com/VisActor/VTable/issues/1470)
-- **@visactor/vtable**: setRecords handle with tooltip overflow [#1494](https://github.com/VisActor/VTable/issues/1494)
+- **@visactor/vтаблица**: add mousedown_таблица событие [#1470](https://github.com/VisActor/Vтаблица/issues/1470)
+- **@visactor/vтаблица**: setRecords handle с Подсказка overflow [#1494](https://github.com/VisActor/Vтаблица/issues/1494)
 
-[more detail about v0.23.3](https://github.com/VisActor/VTable/releases/tag/v0.23.3)
+[more detail about v0.23.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.23.3)
 
 # v0.23.2
 
 2024-04-11
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: scrollbar visible focus [#1360](https://github.com/VisActor/VTable/issues/1360)
-- **@visactor/vtable**: add rowHierarchyTextStartAlignment for tree mode [#1417](https://github.com/VisActor/VTable/issues/1417)
+- **@visactor/vтаблица**: scrollbar видимый фокус [#1360](https://github.com/VisActor/Vтаблица/issues/1360)
+- **@visactor/vтаблица**: add rowHierarchyTextStartAlignment для tree mode [#1417](https://github.com/VisActor/Vтаблица/issues/1417)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: records api when has merge cell render error [#1286](https://github.com/VisActor/VTable/issues/1286)
-- **@visactor/vtable**: add isAutoRowHeight to handle width row height compute [#1379](https://github.com/VisActor/VTable/issues/1379)
-- **@visactor/vtable**: chart spec clone filtered dom problem [#1422](https://github.com/VisActor/VTable/issues/1422)
-- **@visactor/vtable**: borderlinedash effect error handle with lineCap [#1436](https://github.com/VisActor/VTable/issues/1436)
-- **@visactor/vtable**: trigger event selectedCell [#1444](https://github.com/VisActor/VTable/issues/1444)
-- **@visactor/vtable**: set disableSelect drag cells occor error [#1461](https://github.com/VisActor/VTable/issues/1461)
-- **@visactor/vtable**: left content width error when tree hierarchy state icon back rect showing [#1466](https://github.com/VisActor/VTable/issues/1466)
-- **@visactor/vtable**: fix domain order in horizontal [#1453](https://github.com/VisActor/VTable/issues/1453)
-- **@visactor/vtable**: add columnWidthComputeMode update in opdateOption [#1465](https://github.com/VisActor/VTable/issues/1465)
-- **@visactor/vtable**: fix inline icon tooltip config [#1456](https://github.com/VisActor/VTable/issues/1456)
-- **@visactor/vtable**: 修复进度图部分情况遮挡表格边缘单元格
-- **@visactor/vtable**: fix transpose border theme [#1463](https://github.com/VisActor/VTable/issues/1463)
+- **@visactor/vтаблица**: records апи when has merge cell render ошибка [#1286](https://github.com/VisActor/Vтаблица/issues/1286)
+- **@visactor/vтаблица**: add isавтоRowвысота к handle ширина row высота compute [#1379](https://github.com/VisActor/Vтаблица/issues/1379)
+- **@visactor/vтаблица**: график spec clone filtered dom problem [#1422](https://github.com/VisActor/Vтаблица/issues/1422)
+- **@visactor/vтаблица**: borderlinedash effect ошибка handle с lineCap [#1436](https://github.com/VisActor/Vтаблица/issues/1436)
+- **@visactor/vтаблица**: trigger событие selectedCell [#1444](https://github.com/VisActor/Vтаблица/issues/1444)
+- **@visactor/vтаблица**: set disableSelect перетаскивание cells occor ошибка [#1461](https://github.com/VisActor/Vтаблица/issues/1461)
+- **@visactor/vтаблица**: лево content ширина ошибка when tree hierarchy state иконка back rect showing [#1466](https://github.com/VisActor/Vтаблица/issues/1466)
+- **@visactor/vтаблица**: fix domain order в horizontal [#1453](https://github.com/VisActor/Vтаблица/issues/1453)
+- **@visactor/vтаблица**: add columnширинаComputeMode update в opdateOption [#1465](https://github.com/VisActor/Vтаблица/issues/1465)
+- **@visactor/vтаблица**: fix inline иконка Подсказка config [#1456](https://github.com/VisActor/Vтаблица/issues/1456)
+- **@visactor/vтаблица**: 修复进度图部分情况遮挡表格边缘单元格
+- **@visactor/vтаблица**: fix transpose граница тема [#1463](https://github.com/VisActor/Vтаблица/issues/1463)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: update drilldown drillup svg
-- **@visactor/vtable**: handle width chartSpce with markLine [#1420](https://github.com/VisActor/VTable/issues/1420)
-- **@visactor/vtable**: supplement event type for react table [#1434](https://github.com/VisActor/VTable/issues/1434)
+- **@visactor/vтаблица**: update drilldown drillup svg
+- **@visactor/vтаблица**: handle ширина графикSpce с markLine [#1420](https://github.com/VisActor/Vтаблица/issues/1420)
+- **@visactor/vтаблица**: supplement событие тип для react таблица [#1434](https://github.com/VisActor/Vтаблица/issues/1434)
 
-[more detail about v0.23.2](https://github.com/VisActor/VTable/releases/tag/v0.23.2)
+[more detail about v0.23.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.23.2)
 
 # v0.23.1
 
 2024-04-07
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: select range can extends during scroll [#1400](https://github.com/VisActor/VTable/issues/1400)
+- **@visactor/vтаблица**: выбрать range can extends during прокрутка [#1400](https://github.com/VisActor/Vтаблица/issues/1400)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: maxLineWidth value should consider hierarchyOffset [#1224](https://github.com/VisActor/VTable/issues/1224)
-- **@visactor/vtable**: tree leaf node textAlign right render error [#1393](https://github.com/VisActor/VTable/issues/1393)
-- **@visactor/vtable**: when copy or paste navigator.clipboard?.write occor undefined error in not https [#1421](https://github.com/VisActor/VTable/issues/1421)
-- **@visactor/vtable**: fix header cell imageAutoSizing [#1339](https://github.com/VisActor/VTable/issues/1339)
-- **@visactor/vtable**: hide icon background when hide icon
-- **@visactor/vtable**: fix nan verticalBarPos [#1232](https://github.com/VisActor/VTable/issues/1232)
-- **@visactor/vtable**: fix progressbar cover cell border [#1425](https://github.com/VisActor/VTable/issues/1425)
-- **@visactor/vtable**: remove container in table option
-- **@visactor/vtable**: add sync render in exportCellImg [#1398](https://github.com/VisActor/VTable/issues/1398)
+- **@visactor/vтаблица**: maxLineширина значение should consider hierarchyOffset [#1224](https://github.com/VisActor/Vтаблица/issues/1224)
+- **@visactor/vтаблица**: tree leaf node textAlign право render ошибка [#1393](https://github.com/VisActor/Vтаблица/issues/1393)
+- **@visactor/vтаблица**: when copy или paste navigator.clipboard?.write occor undefined ошибка в не https [#1421](https://github.com/VisActor/Vтаблица/issues/1421)
+- **@visactor/vтаблица**: fix header cell imвозраставтоSizing [#1339](https://github.com/VisActor/Vтаблица/issues/1339)
+- **@visactor/vтаблица**: скрыть иконка фон when скрыть иконка
+- **@visactor/vтаблица**: fix nan verticalBarPos [#1232](https://github.com/VisActor/Vтаблица/issues/1232)
+- **@visactor/vтаблица**: fix progressbar cover cell граница [#1425](https://github.com/VisActor/Vтаблица/issues/1425)
+- **@visactor/vтаблица**: remove container в таблица option
+- **@visactor/vтаблица**: add sync render в exportCellImg [#1398](https://github.com/VisActor/Vтаблица/issues/1398)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: optimize performance when change tree hierarchy state [#1406](https://github.com/VisActor/VTable/issues/1406)
+- **@visactor/vтаблица**: optimize Производительность when change tree hierarchy state [#1406](https://github.com/VisActor/Vтаблица/issues/1406)
 
-[more detail about v0.23.1](https://github.com/VisActor/VTable/releases/tag/v0.23.1)
+[more detail about v0.23.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.23.1)
 
 # v0.23.0
 
 2024-03-29
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: list tree mode support filter [#1376](https://github.com/VisActor/VTable/issues/1376)
-- **@visactor/vtable**: add scroll end event and barToSide option [#1304](https://github.com/VisActor/VTable/issues/1304)
-- **@visactor/vtable**: add excel options to support fill handle
+- **@visactor/vтаблица**: список tree mode support filter [#1376](https://github.com/VisActor/Vтаблица/issues/1376)
+- **@visactor/vтаблица**: add прокрутка конец событие и barToSide option [#1304](https://github.com/VisActor/Vтаблица/issues/1304)
+- **@visactor/vтаблица**: add excel options к support fill handle
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: transpose with frozenColCount shadowline render [#1366](https://github.com/VisActor/VTable/issues/1366)
-- **@visactor/vtable**: datasource support promise mode call addRecords and deleteRecords
-- **@visactor/vtable**: when click cell should not trigger drag_select_end event [#1410](https://github.com/VisActor/VTable/issues/1410)
+- **@visactor/vтаблица**: transpose с frozenColCount shadowline render [#1366](https://github.com/VisActor/Vтаблица/issues/1366)
+- **@visactor/vтаблица**: данныеsource support promise mode call addRecords и deleteRecords
+- **@visactor/vтаблица**: when Нажать cell should не trigger drag_select_end событие [#1410](https://github.com/VisActor/Vтаблица/issues/1410)
 
-[more detail about v0.23.0](https://github.com/VisActor/VTable/releases/tag/v0.23.0)
+[more detail about v0.23.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.23.0)
 
 # v0.22.0
 
 2024-03-22
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support row series number
+- **@visactor/vтаблица**: support row series число
 
-[more detail about v0.22.0](https://github.com/VisActor/VTable/releases/tag/v0.22.0)
+[more detail about v0.22.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.22.0)
 
 # v0.21.3
 
@@ -1806,35 +1806,35 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: mapping colorMap not work [#1295](https://github.com/VisActor/VTable/issues/1295)
-- **@visactor/vtable**: when copy blank cell and paste to cell change to undefined [#1298](https://github.com/VisActor/VTable/issues/1298)
-- **@visactor/vtable**: bug datasource lazy load edit cell value invalid [#1302](https://github.com/VisActor/VTable/issues/1302)
-- **@visactor/vtable**: fix cell progress create content size
-- **@visactor/vtable**: fix row level in getCellAdressByHeaderPath()
-- **@visactor/vtable**: use default style in exportCellImg()
-- **@visactor/vtable**: fix typeError in getCellMergeRange()
+- **@visactor/vтаблица**: mapping colorMap не work [#1295](https://github.com/VisActor/Vтаблица/issues/1295)
+- **@visactor/vтаблица**: when copy blank cell и paste к cell change к undefined [#1298](https://github.com/VisActor/Vтаблица/issues/1298)
+- **@visactor/vтаблица**: bug данныеsource lazy load edit cell значение invalid [#1302](https://github.com/VisActor/Vтаблица/issues/1302)
+- **@visactor/vтаблица**: fix cell progress create content размер
+- **@visactor/vтаблица**: fix row level в getCellAdressByHeaderPath()
+- **@visactor/vтаблица**: use по умолчанию style в exportCellImg()
+- **@visactor/vтаблица**: fix typeError в getCellMergeRange()
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: add list table tree mode guide
+- **@visactor/vтаблица**: add список таблица tree mode guide
 
-[more detail about v0.21.3](https://github.com/VisActor/VTable/releases/tag/v0.21.3)
+[more detail about v0.21.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.21.3)
 
 # v0.21.2
 
 2024-03-14
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add textStickBaseOnAlign config
+- **@visactor/vтаблица**: add textStickBaseOnAlign config
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: after change transpose resize line render error [#1239](https://github.com/VisActor/VTable/issues/1239)
-- **@visactor/vtable**: pivot tree mode when use headerIcon the indent value invalid [#1269](https://github.com/VisActor/VTable/issues/1269)
-- **@visactor/vtable**: fix progress bar rect height
+- **@visactor/vтаблица**: after change transpose изменение размера line render ошибка [#1239](https://github.com/VisActor/Vтаблица/issues/1239)
+- **@visactor/vтаблица**: сводный tree mode when use headerиконка the indent значение invalid [#1269](https://github.com/VisActor/Vтаблица/issues/1269)
+- **@visactor/vтаблица**: fix progress bar rect высота
 
-[more detail about v0.21.2](https://github.com/VisActor/VTable/releases/tag/v0.21.2)
+[more detail about v0.21.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.21.2)
 
 # v0.21.1
 
@@ -1842,164 +1842,164 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: merge cell render error with summary and pagination [#1223](https://github.com/VisActor/VTable/issues/1223)
+- **@visactor/vтаблица**: merge cell render ошибка с summary и pagination [#1223](https://github.com/VisActor/Vтаблица/issues/1223)
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: indicatorsAsCol support indicators display in rows [#1238](https://github.com/VisActor/VTable/issues/1238)
+- **@visactor/vтаблица**: indicatorsAsCol support indicators display в rows [#1238](https://github.com/VisActor/Vтаблица/issues/1238)
 
-[more detail about v0.21.1](https://github.com/VisActor/VTable/releases/tag/v0.21.1)
+[more detail about v0.21.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.21.1)
 
 # v0.21.0
 
 2024-03-11
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add text measure ment config
-- **@visactor/vtable**: add custom cell style function
-- **@visactor/vtable**: add cellInnerBorder&cellBorderClipDirection&\_contentOffset in theme comfig
-- **@visactor/vtable**: add search component
+- **@visactor/vтаблица**: add текст measure ment config
+- **@visactor/vтаблица**: add пользовательский cell style функция
+- **@visactor/vтаблица**: add cellInnerBorder&cellBorderClipDirection&\_contentOffset в тема comfig
+- **@visactor/vтаблица**: add search компонент
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: records change restoreHierarchyState occor error [#1203](https://github.com/VisActor/VTable/issues/1203)
-- **@visactor/vtable**: call updatePagination mergeCell render error [#1207](https://github.com/VisActor/VTable/issues/1207)
-- **@visactor/vtable**: drag header position cell error [#1220](https://github.com/VisActor/VTable/issues/1220)
-- **@visactor/vtable**: fix checkbox text space problem
-- **@visactor/vtable**: fix scroll position delta
+- **@visactor/vтаблица**: records change restoreHierarchyState occor ошибка [#1203](https://github.com/VisActor/Vтаблица/issues/1203)
+- **@visactor/vтаблица**: call updatePagination mergeCell render ошибка [#1207](https://github.com/VisActor/Vтаблица/issues/1207)
+- **@visactor/vтаблица**: перетаскивание header позиция cell ошибка [#1220](https://github.com/VisActor/Vтаблица/issues/1220)
+- **@visactor/vтаблица**: fix флажок текст space problem
+- **@visactor/vтаблица**: fix прокрутка позиция delta
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: pasteValueToCell can only work on editable cell [#1063](https://github.com/VisActor/VTable/issues/1063)
-- **@visactor/vtable**: support underlineDash and underlineOffset [#1132](https://github.com/VisActor/VTable/issues/1132) [#1135](https://github.com/VisActor/VTable/issues/1135)
-- **@visactor/vtable**: onStart funciton add col row arguments [#1214](https://github.com/VisActor/VTable/issues/1214)
+- **@visactor/vтаблица**: pasteValueToCell can only work на ediтаблица cell [#1063](https://github.com/VisActor/Vтаблица/issues/1063)
+- **@visactor/vтаблица**: support underlineDash и underlineOffset [#1132](https://github.com/VisActor/Vтаблица/issues/1132) [#1135](https://github.com/VisActor/Vтаблица/issues/1135)
+- **@visactor/vтаблица**: onStart funciton add col row arguments [#1214](https://github.com/VisActor/Vтаблица/issues/1214)
 
 **✅ Test Case**
 
-- **@visactor/vtable**: add unit test getCellAddressByHeaderPaths
+- **@visactor/vтаблица**: add unit test getCellAddressByHeaderPaths
 
-[more detail about v0.21.0](https://github.com/VisActor/VTable/releases/tag/v0.21.0)
+[more detail about v0.21.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.21.0)
 
 # v0.20.2
 
 2024-03-04
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add checkbox style theme
+- **@visactor/vтаблица**: add флажок style тема
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/VTable/issues/1162)
-- **@visactor/vtable**: header description tooltip flicker [#1173](https://github.com/VisActor/VTable/issues/1173)
-- **@visactor/vtable**: add fontStyle & fontVariant
+- **@visactor/vтаблица**: rightFrozenCol is bigger then colCount [#1162](https://github.com/VisActor/Vтаблица/issues/1162)
+- **@visactor/vтаблица**: header description Подсказка flicker [#1173](https://github.com/VisActor/Vтаблица/issues/1173)
+- **@visactor/vтаблица**: add fontStyle & fontVariant
 
-[more detail about v0.20.2](https://github.com/VisActor/VTable/releases/tag/v0.20.2)
+[more detail about v0.20.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.20.2)
 
 # v0.20.1
 
 2024-02-29
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add api getRecordIndexByCell [#1121](https://github.com/VisActor/VTable/issues/1121)
+- **@visactor/vтаблица**: add апи getRecordIndexByCell [#1121](https://github.com/VisActor/Vтаблица/issues/1121)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: hideColumnsSubheader with three levels show error [#1105](https://github.com/VisActor/VTable/issues/1105)
-- **@visactor/vtable**: customlayout flex render error [#1163](https://github.com/VisActor/VTable/issues/1163)
-- **@visactor/vtable**: when scroll tooltip hide [#905](https://github.com/VisActor/VTable/issues/905)
-- **@visactor/vtable**: fix axis innerOffset
-- **@visactor/vtable**: add skipFunctionDiff in react-vtable
+- **@visactor/vтаблица**: hideColumnsSubheader с three levels показать ошибка [#1105](https://github.com/VisActor/Vтаблица/issues/1105)
+- **@visactor/vтаблица**: пользовательскиймакет flex render ошибка [#1163](https://github.com/VisActor/Vтаблица/issues/1163)
+- **@visactor/vтаблица**: when прокрутка Подсказка скрыть [#905](https://github.com/VisActor/Vтаблица/issues/905)
+- **@visactor/vтаблица**: fix axis innerOffset
+- **@visactor/vтаблица**: add skipFunctionDiff в react-vтаблица
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: rename resize_column_end event arguments [#1129](https://github.com/VisActor/VTable/issues/1129)
-- **@visactor/vtable**: api return value type
-- **@visactor/vtable**: setRecords support restoreHierarchyState [#1148](https://github.com/VisActor/VTable/issues/1148)
-- **@visactor/vtable**: vtable not stop event bubble [#892](https://github.com/VisActor/VTable/issues/892)
-- **@visactor/vtable**: remove Circular dependency
+- **@visactor/vтаблица**: reимя resize_column_end событие arguments [#1129](https://github.com/VisActor/Vтаблица/issues/1129)
+- **@visactor/vтаблица**: апи возврат значение тип
+- **@visactor/vтаблица**: setRecords support restoreHierarchyState [#1148](https://github.com/VisActor/Vтаблица/issues/1148)
+- **@visactor/vтаблица**: vтаблица не stop событие bubble [#892](https://github.com/VisActor/Vтаблица/issues/892)
+- **@visactor/vтаблица**: remove Circular dependency
 
 **🔖 other**
 
-- **@visactor/vtable**: fix-contextMenuItems-add-col-param
+- **@visactor/vтаблица**: fix-contextменюItems-add-col-param
 
-[more detail about v0.20.1](https://github.com/VisActor/VTable/releases/tag/v0.20.1)
+[more detail about v0.20.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.20.1)
 
 # v0.20.0
 
 2024-02-23
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add aggregation for list table column
-- **@visactor/vtable**: add api getAggregateValuesByField
-- **@visactor/vtable**: add custom aggregation
-- **@visactor/vtable**: chartSpec support function [#1115](https://github.com/VisActor/VTable/issues/1115)
-- **@visactor/vtable**: add filter data config [#607](https://github.com/VisActor/VTable/issues/607)
+- **@visactor/vтаблица**: add aggregation для список таблица column
+- **@visactor/vтаблица**: add апи getAggregateValuesByполе
+- **@visactor/vтаблица**: add пользовательский aggregation
+- **@visactor/vтаблица**: графикSpec support функция [#1115](https://github.com/VisActor/Vтаблица/issues/1115)
+- **@visactor/vтаблица**: add filter данные config [#607](https://github.com/VisActor/Vтаблица/issues/607)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: edit right frozen cell input position error
-- **@visactor/vtable**: mouseleave_cell event trigger [#1112](https://github.com/VisActor/VTable/issues/1112)
-- **@visactor/vtable**: fix cellBgColor judgement in isCellHover()
-- **@visactor/vtable**: fix custom merge cell computed height&width
-- **@visactor/vtable**: fix content position update problem
-- **@visactor/vtable**: merge cell update in setDropDownMenuHighlight()
-- **@visactor/vtable**: fix react-vtable display error in react strict mode [#990](https://github.com/VisActor/VTable/issues/990)
+- **@visactor/vтаблица**: edit право frozen cell ввод позиция ошибка
+- **@visactor/vтаблица**: mouseleave_cell событие trigger [#1112](https://github.com/VisActor/Vтаблица/issues/1112)
+- **@visactor/vтаблица**: fix cellBgColor judgement в isCellHover()
+- **@visactor/vтаблица**: fix пользовательский merge cell computed высота&ширина
+- **@visactor/vтаблица**: fix content позиция update problem
+- **@visactor/vтаблица**: merge cell update в setDropDownменюHighlight()
+- **@visactor/vтаблица**: fix react-vтаблица display ошибка в react strict mode [#990](https://github.com/VisActor/Vтаблица/issues/990)
 
-[more detail about v0.20.0](https://github.com/VisActor/VTable/releases/tag/v0.20.0)
+[more detail about v0.20.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.20.0)
 
 # v0.19.1
 
 2024-02-06
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add update sort rule api
-- **@visactor/vtable**: add axis innerOffset config
-- **@visactor/vtable**: add name config in customRender
+- **@visactor/vтаблица**: add update сортировка rule апи
+- **@visactor/vтаблица**: add axis innerOffset config
+- **@visactor/vтаблица**: add имя config в пользовательскийRender
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: when table has scroll then click header to edit position error [#1069](https://github.com/VisActor/VTable/issues/1069)
-- **@visactor/vtable**: fix column cell order problem in sync mode
-- **@visactor/vtable**: fix border lineDash in cell group [#1051](https://github.com/VisActor/VTable/issues/1051)
-- **@visactor/vtable**: fix textAlign value in width update[#1065](https://github.com/VisActor/VTable/issues/1065)
-- **@visactor/vtable**: fix merge cell content position
-- **@visactor/vtable**: fix merge cell update problem
+- **@visactor/vтаблица**: when таблица has прокрутка then Нажать header к edit позиция ошибка [#1069](https://github.com/VisActor/Vтаблица/issues/1069)
+- **@visactor/vтаблица**: fix column cell order problem в sync mode
+- **@visactor/vтаблица**: fix граница lineDash в cell group [#1051](https://github.com/VisActor/Vтаблица/issues/1051)
+- **@visactor/vтаблица**: fix textAlign значение в ширина update[#1065](https://github.com/VisActor/Vтаблица/issues/1065)
+- **@visactor/vтаблица**: fix merge cell content позиция
+- **@visactor/vтаблица**: fix merge cell update problem
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: pivot table sort logic [#1033](https://github.com/VisActor/VTable/issues/1033)
-- **@visactor/vtable**: showsort option work well [#1077](https://github.com/VisActor/VTable/issues/1077)
+- **@visactor/vтаблица**: сводный таблица сортировка logic [#1033](https://github.com/VisActor/Vтаблица/issues/1033)
+- **@visactor/vтаблица**: showсортировка option work well [#1077](https://github.com/VisActor/Vтаблица/issues/1077)
 
-[more detail about v0.19.1](https://github.com/VisActor/VTable/releases/tag/v0.19.1)
+[more detail about v0.19.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.19.1)
 
 # v0.19.0
 
 2024-02-02
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support get sorted columns [#986](https://github.com/VisActor/VTable/issues/986)
-- **@visactor/vtable**: add option frozenColDragHeaderMode
+- **@visactor/vтаблица**: support get сортировкаed columns [#986](https://github.com/VisActor/Vтаблица/issues/986)
+- **@visactor/vтаблица**: add option frozenColDragHeaderMode
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: select region saved problem [#1018](https://github.com/VisActor/VTable/issues/1018)
-- **@visactor/vtable**: when call updateColumns and discount col occor error [#1015](https://github.com/VisActor/VTable/issues/1015)
-- **@visactor/vtable**: rightFrozenColCount drag header move more time the column width is error [#1019](https://github.com/VisActor/VTable/issues/1019)
-- **@visactor/vtable**: empty string compute row height error [#1031](https://github.com/VisActor/VTable/issues/1031)
-- **@visactor/vtable**: fix merge image cell update problem
+- **@visactor/vтаблица**: выбрать Регион saved problem [#1018](https://github.com/VisActor/Vтаблица/issues/1018)
+- **@visactor/vтаблица**: when call updateColumns и discount col occor ошибка [#1015](https://github.com/VisActor/Vтаблица/issues/1015)
+- **@visactor/vтаблица**: rightFrozenColCount перетаскивание header move more time the column ширина is ошибка [#1019](https://github.com/VisActor/Vтаблица/issues/1019)
+- **@visactor/vтаблица**: empty строка compute row высота ошибка [#1031](https://github.com/VisActor/Vтаблица/issues/1031)
+- **@visactor/vтаблица**: fix merge imвозраст cell update problem
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: when drag header move to frozen region then markLine show positon
-- **@visactor/vtable**: optimize updateRow api performance & resize bottom frozen row not right
+- **@visactor/vтаблица**: when перетаскивание header move к frozen Регион then markLine показать positon
+- **@visactor/vтаблица**: optimize updateRow апи Производительность & изменение размера низ frozen row не право
 
-[more detail about v0.19.0](https://github.com/VisActor/VTable/releases/tag/v0.19.0)
+[more detail about v0.19.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.19.0)
 
 # v0.18.3
 
@@ -2007,83 +2007,83 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: click outside of cells click cancel select state
+- **@visactor/vтаблица**: Нажать outside из cells Нажать отмена выбрать state
 
-[more detail about v0.18.3](https://github.com/VisActor/VTable/releases/tag/v0.18.3)
+[more detail about v0.18.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.18.3)
 
 # v0.18.2
 
 2024-01-24
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add component update
+- **@visactor/vтаблица**: add компонент update
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix rowHeaderGroup attribute y when has no colHeaderGroup [#971](https://github.com/VisActor/VTable/issues/971)
-- **@visactor/vtable**: transpose bottomFrozenRow cell layout error [#978](https://github.com/VisActor/VTable/issues/978)
-- **@visactor/vtable**: passte value to last row occur error [#979](https://github.com/VisActor/VTable/issues/979)
-- **@visactor/vtable**: use updateColumns api click state not right [#975](https://github.com/VisActor/VTable/issues/975)
-- **@visactor/vtable**: record has nan string value pivotchart cell value parse handle this case [#993](https://github.com/VisActor/VTable/issues/993)
-- **@visactor/vtable**: row Height compute for axis
-- **@visactor/vtable**: fix deltaY col number in moveCell()
+- **@visactor/vтаблица**: fix rowHeaderGroup attribute y when has no colHeaderGroup [#971](https://github.com/VisActor/Vтаблица/issues/971)
+- **@visactor/vтаблица**: transpose bottomFrozenRow cell макет ошибка [#978](https://github.com/VisActor/Vтаблица/issues/978)
+- **@visactor/vтаблица**: passte значение к последний row occur ошибка [#979](https://github.com/VisActor/Vтаблица/issues/979)
+- **@visactor/vтаблица**: use updateColumns апи Нажать state не право [#975](https://github.com/VisActor/Vтаблица/issues/975)
+- **@visactor/vтаблица**: record has nan строка значение сводныйграфик cell значение parse handle this case [#993](https://github.com/VisActor/Vтаблица/issues/993)
+- **@visactor/vтаблица**: row высота compute для axis
+- **@visactor/vтаблица**: fix deltaY col число в moveCell()
 
-[more detail about v0.18.2](https://github.com/VisActor/VTable/releases/tag/v0.18.2)
+[more detail about v0.18.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.18.2)
 
 # v0.18.0
 
 2024-01-19
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: pivotchart support pie
-- **@visactor/vtable**: add customLayout & customRander in customMergeCell
-- **@visactor/vtable**: add eventOptions [#914](https://github.com/VisActor/VTable/issues/914)
+- **@visactor/vтаблица**: сводныйграфик support pie
+- **@visactor/vтаблица**: add пользовательскиймакет & пользовательскийRander в пользовательскийMergeCell
+- **@visactor/vтаблица**: add событиеOptions [#914](https://github.com/VisActor/Vтаблица/issues/914)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: handle with chartSpec barWidth set string type
-- **@visactor/vtable**: addRecords api call when body no data [#953](https://github.com/VisActor/VTable/issues/953)
-- **@visactor/vtable**: mouse drag to move Header position has error when column has multi-levels [#957](https://github.com/VisActor/VTable/issues/957)
-- **@visactor/vtable**: when resize column width bottomFrozenRow height should update [#954](https://github.com/VisActor/VTable/issues/954)
+- **@visactor/vтаблица**: handle с графикSpec barширина set строка тип
+- **@visactor/vтаблица**: addRecords апи call when body no данные [#953](https://github.com/VisActor/Vтаблица/issues/953)
+- **@visactor/vтаблица**: mouse перетаскивание к move Header позиция has ошибка when column has multi-levels [#957](https://github.com/VisActor/Vтаблица/issues/957)
+- **@visactor/vтаблица**: when изменение размера column ширина bottomFrozenRow высота should update [#954](https://github.com/VisActor/Vтаблица/issues/954)
 
-[more detail about v0.18.0](https://github.com/VisActor/VTable/releases/tag/v0.18.0)
+[more detail about v0.18.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.18.0)
 
 # v0.17.10
 
 2024-01-18
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: use vrender-core
+- **@visactor/vтаблица**: use vrender-core
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: select border range error [#911](https://github.com/VisActor/VTable/issues/911)
-- **@visactor/vtable**: when enable pasteValueToCell and event change_cell_value arguments is error [#919](https://github.com/VisActor/VTable/issues/919)
-- **@visactor/vtable**: fix tree structure auto merge update problem
-- **@visactor/vtable**: toggele tree node updateChartSize
+- **@visactor/vтаблица**: выбрать граница range ошибка [#911](https://github.com/VisActor/Vтаблица/issues/911)
+- **@visactor/vтаблица**: when включить pasteValueToCell и событие change_cell_value arguments is ошибка [#919](https://github.com/VisActor/Vтаблица/issues/919)
+- **@visactor/vтаблица**: fix tree structure авто merge update problem
+- **@visactor/vтаблица**: toggele tree node updateграфикSize
 
-[more detail about v0.17.10](https://github.com/VisActor/VTable/releases/tag/v0.17.10)
+[more detail about v0.17.10](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.10)
 
 # v0.17.9
 
 2024-01-18
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support excel data paste to cells [#857](https://github.com/VisActor/VTable/issues/857)
-- **@visactor/vtable**: add api getCellAddressByRecord
-- **@visactor/vtable**: optimize getCellHeaderPath function
+- **@visactor/vтаблица**: support excel данные paste к cells [#857](https://github.com/VisActor/Vтаблица/issues/857)
+- **@visactor/vтаблица**: add апи getCellAddressByRecord
+- **@visactor/vтаблица**: optimize getCellHeaderPath функция
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: showSubTotals can not work [#893](https://github.com/VisActor/VTable/issues/893)
-- **@visactor/vtable**: set display:none trigger resize logic
-- **@visactor/vtable**: fix right frozen cell location
+- **@visactor/vтаблица**: showSubTotals can не work [#893](https://github.com/VisActor/Vтаблица/issues/893)
+- **@visactor/vтаблица**: set display:никто trigger изменение размера logic
+- **@visactor/vтаблица**: fix право frozen cell location
 
-[more detail about v0.17.9](https://github.com/VisActor/VTable/releases/tag/v0.17.9)
+[more detail about v0.17.9](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.9)
 
 # v0.17.8
 
@@ -2091,28 +2091,28 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: selectRange error when near frozencol or frozenrow [#854](https://github.com/VisActor/VTable/issues/854)
-- **@visactor/vtable**: frozen shadowline should move position [#859](https://github.com/VisActor/VTable/issues/859)
-- **@visactor/vtable**: fix chart cell dblclick size update
-- **@visactor/vtable**: fix bottom frozen row height compute in createGroupForFirstScreen()
-- **@visactor/vtable**: fix cellGroup merge range
-- **@visactor/vtable**: fix react custom jsx parse
+- **@visactor/vтаблица**: selectRange ошибка when near frozencol или frozenrow [#854](https://github.com/VisActor/Vтаблица/issues/854)
+- **@visactor/vтаблица**: frozen shadowline should move позиция [#859](https://github.com/VisActor/Vтаблица/issues/859)
+- **@visactor/vтаблица**: fix график cell dblНажать размер update
+- **@visactor/vтаблица**: fix низ frozen row высота compute в createGroupForFirstScreen()
+- **@visactor/vтаблица**: fix cellGroup merge range
+- **@visactor/vтаблица**: fix react пользовательский jsx parse
 
-[more detail about v0.17.8](https://github.com/VisActor/VTable/releases/tag/v0.17.8)
+[more detail about v0.17.8](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.8)
 
 # v0.17.7
 
 2024-01-05
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add cell image table export
+- **@visactor/vтаблица**: add cell imвозраст таблица export
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix jsx parse error in react-vtable
+- **@visactor/vтаблица**: fix jsx parse ошибка в react-vтаблица
 
-[more detail about v0.17.7](https://github.com/VisActor/VTable/releases/tag/v0.17.7)
+[more detail about v0.17.7](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.7)
 
 # v0.17.6
 
@@ -2120,64 +2120,64 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix resize line position
+- **@visactor/vтаблица**: fix изменение размера line позиция
 
-[more detail about v0.17.6](https://github.com/VisActor/VTable/releases/tag/v0.17.6)
+[more detail about v0.17.6](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.6)
 
 # v0.17.5
 
 2024-01-04
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: support edit header title [#819](https://github.com/VisActor/VTable/issues/819)
-- **@visactor/vtable**: add api getCellHeaderTreeNodes for pivotTable [#839](https://github.com/VisActor/VTable/issues/839)
+- **@visactor/vтаблица**: support edit header title [#819](https://github.com/VisActor/Vтаблица/issues/819)
+- **@visactor/vтаблица**: add апи getCellHeaderTreeNodes для сводныйтаблица [#839](https://github.com/VisActor/Vтаблица/issues/839)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: setRecords process scrollTop update scenegraph [#831](https://github.com/VisActor/VTable/issues/831)
-- **@visactor/vtable**: add group clip in body
+- **@visactor/vтаблица**: setRecords process scrollTop update scenegraph [#831](https://github.com/VisActor/Vтаблица/issues/831)
+- **@visactor/vтаблица**: add group clip в body
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: list table bottom row can not use bottomFrozenStyle [#836](https://github.com/VisActor/VTable/issues/836)
-- **@visactor/vtable**: add onVChartEvent for BaseTable [#843](https://github.com/VisActor/VTable/issues/843)
+- **@visactor/vтаблица**: список таблица низ row can не use bottomFrozenStyle [#836](https://github.com/VisActor/Vтаблица/issues/836)
+- **@visactor/vтаблица**: add onVграфиксобытие для Baseтаблица [#843](https://github.com/VisActor/Vтаблица/issues/843)
 
-[more detail about v0.17.5](https://github.com/VisActor/VTable/releases/tag/v0.17.5)
+[more detail about v0.17.5](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.5)
 
 # v0.17.3
 
 2024-01-01
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add body index convert with table index [#789](https://github.com/VisActor/VTable/issues/789)
-- **@visactor/vtable**: mergeCell support custom compare function [#804](https://github.com/VisActor/VTable/issues/804)
-- **@visactor/vtable**: add column resize label theme
+- **@visactor/vтаблица**: add body index convert с таблица index [#789](https://github.com/VisActor/Vтаблица/issues/789)
+- **@visactor/vтаблица**: mergeCell support пользовательский compare функция [#804](https://github.com/VisActor/Vтаблица/issues/804)
+- **@visactor/vтаблица**: add column изменение размера label тема
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: setRecords lose hover state [#783](https://github.com/VisActor/VTable/issues/783)
-- **@visactor/vtable**: transpose list demo when records has 10000 performance problem [#790](https://github.com/VisActor/VTable/issues/790)
-- **@visactor/vtable**: setRecords recomputeColWidth problems [#796](https://github.com/VisActor/VTable/issues/796)
-- **@visactor/vtable**: set disableSelect drag interaction occor error [#799](https://github.com/VisActor/VTable/issues/799)
-- **@visactor/vtable**: tooltip style not work [#805](https://github.com/VisActor/VTable/issues/805)
-- **@visactor/vtable**: pivot table pagination.perPageCount modify [#807](https://github.com/VisActor/VTable/issues/807)
-- **@visactor/vtable**: [Bug] adaptive mode compute problem when has frozencol and rightFrozenCol [#820](https://github.com/VisActor/VTable/issues/820)
-- **@visactor/vtable**: fix axis render update problem
-- **@visactor/vtable**: fix select update when change frozen
-- **@visactor/vtable**: pivot table use icon bug
-- **@visactor/vtable**: fix sort icon update
+- **@visactor/vтаблица**: setRecords lose навести state [#783](https://github.com/VisActor/Vтаблица/issues/783)
+- **@visactor/vтаблица**: transpose список демонстрация when records has 10000 Производительность problem [#790](https://github.com/VisActor/Vтаблица/issues/790)
+- **@visactor/vтаблица**: setRecords recomputeColширина problems [#796](https://github.com/VisActor/Vтаблица/issues/796)
+- **@visactor/vтаблица**: set disableSelect перетаскивание interaction occor ошибка [#799](https://github.com/VisActor/Vтаблица/issues/799)
+- **@visactor/vтаблица**: Подсказка style не work [#805](https://github.com/VisActor/Vтаблица/issues/805)
+- **@visactor/vтаблица**: сводный таблица pagination.perPвозрастCount modify [#807](https://github.com/VisActor/Vтаблица/issues/807)
+- **@visactor/vтаблица**: [Bug] adaptive mode compute problem when has frozencol и rightFrozenCol [#820](https://github.com/VisActor/Vтаблица/issues/820)
+- **@visactor/vтаблица**: fix axis render update problem
+- **@visactor/vтаблица**: fix выбрать update when change frozen
+- **@visactor/vтаблица**: сводный таблица use иконка bug
+- **@visactor/vтаблица**: fix сортировка иконка update
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: update vrender event verison use scrollDrag
+- **@visactor/vтаблица**: update vrender событие verison use scrollDrag
 
 **🔧 Configuration releated**
 
-- **@visactor/vtable**: update vrender version [#785](https://github.com/VisActor/VTable/issues/785)
+- **@visactor/vтаблица**: update vrender version [#785](https://github.com/VisActor/Vтаблица/issues/785)
 
-[more detail about v0.17.3](https://github.com/VisActor/VTable/releases/tag/v0.17.3)
+[more detail about v0.17.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.3)
 
 # v0.17.2
 
@@ -2185,80 +2185,80 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: edit bug [#771](https://github.com/VisActor/VTable/issues/771)
-- **@visactor/vtable**: add row height round in resetRowHeight
+- **@visactor/vтаблица**: edit bug [#771](https://github.com/VisActor/Vтаблица/issues/771)
+- **@visactor/vтаблица**: add row высота round в resetRowвысота
 
-[more detail about v0.17.2](https://github.com/VisActor/VTable/releases/tag/v0.17.2)
+[more detail about v0.17.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.2)
 
 # v0.17.1
 
 2023-12-21
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add arrowkeys interaction [#646](https://github.com/VisActor/VTable/issues/646)
+- **@visactor/vтаблица**: add arrowkeys interaction [#646](https://github.com/VisActor/Vтаблица/issues/646)
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: stopPropagation effect doubletap
-- **@visactor/vtable**: dropdown_menu_click trigger [#760](https://github.com/VisActor/VTable/issues/760)
-- **@visactor/vtable**: dblclick occur error [#758](https://github.com/VisActor/VTable/issues/758)
-- **@visactor/vtable**: fix richtext error in getCellOverflowText()
-- **@visactor/vtable**: add scrollBar event to call completeEdit [#710](https://github.com/VisActor/VTable/issues/710)
-- **@visactor/vtable**: support tree mode adaptive
-- **@visactor/vtable**: fix dropdown icon display error
-- **@visactor/vtable**: fix right frozen columns width update problem
+- **@visactor/vтаблица**: stopPropagation effect doubletap
+- **@visactor/vтаблица**: dropdown_меню_Нажать trigger [#760](https://github.com/VisActor/Vтаблица/issues/760)
+- **@visactor/vтаблица**: dblНажать occur ошибка [#758](https://github.com/VisActor/Vтаблица/issues/758)
+- **@visactor/vтаблица**: fix richtext ошибка в getCellOverflowText()
+- **@visactor/vтаблица**: add scrollBar событие к call completeEdit [#710](https://github.com/VisActor/Vтаблица/issues/710)
+- **@visactor/vтаблица**: support tree mode adaptive
+- **@visactor/vтаблица**: fix выпадающий список иконка display ошибка
+- **@visactor/vтаблица**: fix право frozen columns ширина update problem
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: 100W records scroll performance optimize when has select Cell [#681](https://github.com/VisActor/VTable/issues/681)
-- **@visactor/vtable**: remove default sort rule for pivot table [#759](https://github.com/VisActor/VTable/issues/759)
+- **@visactor/vтаблица**: 100W records прокрутка Производительность optimize when has выбрать Cell [#681](https://github.com/VisActor/Vтаблица/issues/681)
+- **@visactor/vтаблица**: remove по умолчанию сортировка rule для сводный таблица [#759](https://github.com/VisActor/Vтаблица/issues/759)
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: update changlog of rush
+- **@visactor/vтаблица**: update changlog из rush
 
-[more detail about v0.17.1](https://github.com/VisActor/VTable/releases/tag/v0.17.1)
+[more detail about v0.17.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.1)
 
 # v0.17.0
 
 2023-12-15
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add option showGrandTotalsOnTop [#650](https://github.com/VisActor/VTable/issues/650)
-- **@visactor/vtable**: optimize diffCellIndices in toggleHierarchyState()
-- **@visactor/vtable**: add disableAxisHover config
-- **@visactor/vtable**: optimize computeTextWidth() in pivot table
+- **@visactor/vтаблица**: add option showGrandTotalsOnTop [#650](https://github.com/VisActor/Vтаблица/issues/650)
+- **@visactor/vтаблица**: optimize diffCellIndices в toggleHierarchyState()
+- **@visactor/vтаблица**: add disableAxisHover config
+- **@visactor/vтаблица**: optimize computeTextширина() в сводный таблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix right frozen adaptive problem
-- **@visactor/vtable**: fix disableHover bottom frozen hover error
-- **@visactor/vtable**: fix rowUpdatePos update in updateRow()
+- **@visactor/vтаблица**: fix право frozen adaptive problem
+- **@visactor/vтаблица**: fix disableHover низ frozen навести ошибка
+- **@visactor/vтаблица**: fix rowUpdatePos update в updateRow()
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: dropdownMenu hide [#727](https://github.com/VisActor/VTable/issues/727)
+- **@visactor/vтаблица**: dropdownменю скрыть [#727](https://github.com/VisActor/Vтаблица/issues/727)
 
-[more detail about v0.17.0](https://github.com/VisActor/VTable/releases/tag/v0.17.0)
+[more detail about v0.17.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.17.0)
 
 # v0.16.3
 
 2023-12-14
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add enableCellPadding config in custom layout
-- **@visactor/vtable**: add column disableHover&disableSelect config
+- **@visactor/vтаблица**: add enableCellPadding config в пользовательский макет
+- **@visactor/vтаблица**: add column disableHover&disableSelect config
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix axis theme get function
-- **@visactor/vtable**: pivot table support not number type [#718](https://github.com/VisActor/VTable/issues/718)
-- **@visactor/vtable**: edge cell selection border clip [#716](https://github.com/VisActor/VTable/issues/716)
+- **@visactor/vтаблица**: fix axis тема get функция
+- **@visactor/vтаблица**: сводный таблица support не число тип [#718](https://github.com/VisActor/Vтаблица/issues/718)
+- **@visactor/vтаблица**: edge cell selection граница clip [#716](https://github.com/VisActor/Vтаблица/issues/716)
 
-[more detail about v0.16.3](https://github.com/VisActor/VTable/releases/tag/v0.16.3)
+[more detail about v0.16.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.16.3)
 
 # v0.16.2
 
@@ -2266,46 +2266,46 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: blank cell edit invalid on pivottbale [#712](https://github.com/VisActor/VTable/issues/712)
-- **@visactor/vtable**: data lazy load when drag header position [#705](https://github.com/VisActor/VTable/issues/705)
+- **@visactor/vтаблица**: blank cell edit invalid на сводныйtbale [#712](https://github.com/VisActor/Vтаблица/issues/712)
+- **@visactor/vтаблица**: данные lazy load when перетаскивание header позиция [#705](https://github.com/VisActor/Vтаблица/issues/705)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: pivot table format arguments
+- **@visactor/vтаблица**: сводный таблица format arguments
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: pivot table format usage update
+- **@visactor/vтаблица**: сводный таблица format usвозраст update
 
-[more detail about v0.16.2](https://github.com/VisActor/VTable/releases/tag/v0.16.2)
+[more detail about v0.16.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.16.2)
 
 # v0.16.0
 
 2023-12-08
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: axis support chart padding config
-- **@visactor/vtable**: optimize pivot header performance
-- **@visactor/vtable**: add axis theme
-- **@visactor/vtable**: overlay default and hover colors
-- **@visactor/vtable**: add api addRecords
+- **@visactor/vтаблица**: axis support график заполнение config
+- **@visactor/vтаблица**: optimize сводный header Производительность
+- **@visactor/vтаблица**: add axis тема
+- **@visactor/vтаблица**: overlay по умолчанию и навести colors
+- **@visactor/vтаблица**: add апи addRecords
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: updateOption to update updateEventBinder
-- **@visactor/vtable**: columnResizeType: all invalid
-- **@visactor/vtable**: fix tree structure bottom frozen update
-- **@visactor/vtable**: fix limit column width adaptive update
-- **@visactor/vtable**: fix table range when container resize
-- **@visactor/vtable**: fix table frame shadow color
-- **@visactor/vtable**: fix scroll position update problem
+- **@visactor/vтаблица**: updateOption к update updateсобытиеBinder
+- **@visactor/vтаблица**: columnResizeType: все invalid
+- **@visactor/vтаблица**: fix tree structure низ frozen update
+- **@visactor/vтаблица**: fix limit column ширина adaptive update
+- **@visactor/vтаблица**: fix таблица range when container изменение размера
+- **@visactor/vтаблица**: fix таблица frame shadow цвет
+- **@visactor/vтаблица**: fix прокрутка позиция update problem
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: refix lineheight description
+- **@visactor/vтаблица**: refix lineвысота description
 
-[more detail about v0.16.0](https://github.com/VisActor/VTable/releases/tag/v0.16.0)
+[more detail about v0.16.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.16.0)
 
 # v0.15.4
 
@@ -2313,38 +2313,38 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: editor object set in column be cloned
-- **@visactor/vtable**: fix theme style get problem
-- **@visactor/vtable**: fix list table frozen hover color
-- **@visactor/vtable**: fix right bottom frozen cell in getCellRect()
-- **@visactor/vtable**: fix table resize problem when column width limit
-- **@visactor/vtable**: fix custom render renderDefault auto size problem
-- **@visactor/vtable**: fix columnWidthComputeMode config problem
-- **@visactor/vtable**: release tableInstance after resize event trigger
-- **@visactor/vtable**: columnWidthComputeMode only-header
+- **@visactor/vтаблица**: editor объект set в column be cloned
+- **@visactor/vтаблица**: fix тема style get problem
+- **@visactor/vтаблица**: fix список таблица frozen навести цвет
+- **@visactor/vтаблица**: fix право низ frozen cell в getCellRect()
+- **@visactor/vтаблица**: fix таблица изменение размера problem when column ширина limit
+- **@visactor/vтаблица**: fix пользовательский render renderDefault авто размер problem
+- **@visactor/vтаблица**: fix columnширинаComputeMode config problem
+- **@visactor/vтаблица**: Релиз таблицаInstance after изменение размера событие trigger
+- **@visactor/vтаблица**: columnширинаComputeMode only-header
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: ts define optimize
+- **@visactor/vтаблица**: ts define optimize
 
-[more detail about v0.15.4](https://github.com/VisActor/VTable/releases/tag/v0.15.4)
+[more detail about v0.15.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.15.4)
 
 # v0.15.3
 
 2023-12-01
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add setRecordChildren to lazy load tree node
-- **@visactor/vtable**: pivot table support editable
+- **@visactor/vтаблица**: add setRecordChildren к lazy load tree node
+- **@visactor/vтаблица**: сводный таблица support ediтаблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix cornerCellStyle update
-- **@visactor/vtable**: fix chart item select problem
-- **@visactor/vtable**: fix bottom left frozen cell style
+- **@visactor/vтаблица**: fix cornerCellStyle update
+- **@visactor/vтаблица**: fix график item выбрать problem
+- **@visactor/vтаблица**: fix низ лево frozen cell style
 
-[more detail about v0.15.3](https://github.com/VisActor/VTable/releases/tag/v0.15.3)
+[more detail about v0.15.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.15.3)
 
 # v0.15.1
 
@@ -2352,44 +2352,44 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: drag select first cell seleted repeatly [#611](https://github.com/VisActor/VTable/issues/611)
-- **@visactor/vtable**: no indicators pivotchart render
-- **@visactor/vtable**: compute chart column width use Math.ceil bandSpace
+- **@visactor/vтаблица**: перетаскивание выбрать первый cell seleted repeatly [#611](https://github.com/VisActor/Vтаблица/issues/611)
+- **@visactor/vтаблица**: no indicators сводныйграфик render
+- **@visactor/vтаблица**: compute график column ширина use Math.ceil bandSpace
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: sortState can not work when column has no sort setting [#622](https://github.com/VisActor/VTable/issues/622)
-- **@visactor/vtable**: remove keydown event arguments cells
-- **@visactor/vtable**: rename maneger to manager
+- **@visactor/vтаблица**: сортировкаState can не work when column has no сортировка setting [#622](https://github.com/VisActor/Vтаблица/issues/622)
+- **@visactor/vтаблица**: remove keydown событие arguments cells
+- **@visactor/vтаблица**: reимя maneger к manвозрастr
 
-**📖 Site / documentation update**
+**📖 Site / Документация update**
 
-- **@visactor/vtable**: add api getCellCheckboxState
+- **@visactor/vтаблица**: add апи getCellCheckboxState
 
-[more detail about v0.15.1](https://github.com/VisActor/VTable/releases/tag/v0.15.1)
+[more detail about v0.15.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.15.1)
 
 # v0.15.0
 
 2023-11-24
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add event copy_data [#551](https://github.com/VisActor/VTable/issues/551)
-- **@visactor/vtable**: add column with min limit [#590](https://github.com/VisActor/VTable/issues/590)
-- **@visactor/vtable**: edit text value with inputEditor
-- **@visactor/vtable**: add react-vtable
+- **@visactor/vтаблица**: add событие copy_данные [#551](https://github.com/VisActor/Vтаблица/issues/551)
+- **@visactor/vтаблица**: add column с min limit [#590](https://github.com/VisActor/Vтаблица/issues/590)
+- **@visactor/vтаблица**: edit текст значение с inputEditor
+- **@visactor/vтаблица**: add react-vтаблица
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: compute col width when large count col with sampling the frozen bottom rows is not computed
-- **@visactor/vtable**: fix cell position mismatch problems when bodyRowCount is 0 [#596](https://github.com/VisActor/VTable/issues/596)
-- **@visactor/vtable**: fix text mark x in updateCell()
+- **@visactor/vтаблица**: compute col ширина when large count col с sampling the frozen низ rows is не computed
+- **@visactor/vтаблица**: fix cell позиция mismatch problems when bodyRowCount is 0 [#596](https://github.com/VisActor/Vтаблица/issues/596)
+- **@visactor/vтаблица**: fix текст mark x в updateCell()
 
 **🔖 other**
 
-- **@visactor/vtable**: fix/fix cell role judgement in updateCellGroupContent()
+- **@visactor/vтаблица**: fix/fix cell role judgement в updateCellGroupContent()
 
-[more detail about v0.15.0](https://github.com/VisActor/VTable/releases/tag/v0.15.0)
+[more detail about v0.15.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.15.0)
 
 # v0.14.2
 
@@ -2397,10 +2397,10 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: row header select bound wrong [#572](https://github.com/VisActor/VTable/issues/572)
-- **@visactor/vtable**: selectHeader copy data
+- **@visactor/vтаблица**: row header выбрать bound wrong [#572](https://github.com/VisActor/Vтаблица/issues/572)
+- **@visactor/vтаблица**: selectHeader copy данные
 
-[more detail about v0.14.2](https://github.com/VisActor/VTable/releases/tag/v0.14.2)
+[more detail about v0.14.2](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.14.2)
 
 # v0.14.1
 
@@ -2408,41 +2408,41 @@
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: when drag to canvas blank area to end select [#556](https://github.com/VisActor/VTable/issues/556)
+- **@visactor/vтаблица**: when перетаскивание к canvas blank area к конец выбрать [#556](https://github.com/VisActor/Vтаблица/issues/556)
 
-[more detail about v0.14.1](https://github.com/VisActor/VTable/releases/tag/v0.14.1)
+[more detail about v0.14.1](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.14.1)
 
 # v0.14.0
 
 2023-11-10
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add jsx support in custom layout
-- **@visactor/vtable**: refactor merge cell strategy
-- **@visactor/vtable**: add functionial tickCount config in axis
-- **@visactor/vtable**: update customLayout api
+- **@visactor/vтаблица**: add jsx support в пользовательский макет
+- **@visactor/vтаблица**: refactor merge cell strategy
+- **@visactor/vтаблица**: add functionial tickCount config в axis
+- **@visactor/vтаблица**: update пользовательскиймакет апи
 
-[more detail about v0.14.0](https://github.com/VisActor/VTable/releases/tag/v0.14.0)
+[more detail about v0.14.0](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.14.0)
 
 # v0.13.4
 
 2023-11-08
 
-**🆕 New feature**
+**🆕 новый feature**
 
-- **@visactor/vtable**: add option overscrollBehavior
+- **@visactor/vтаблица**: add option overscrollBehavior
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: drag select out tablecell getSelectCellInfos null
-- **@visactor/vtable**: select border render error when frozen bottom row [#508](https://github.com/VisActor/VTable/issues/508)
+- **@visactor/vтаблица**: перетаскивание выбрать out таблицаcell getSelectCellInfos null
+- **@visactor/vтаблица**: выбрать граница render ошибка when frozen низ row [#508](https://github.com/VisActor/Vтаблица/issues/508)
 
 **🔨 Refactor**
 
-- **@visactor/vtable**: change styleElement add targetDom
+- **@visactor/vтаблица**: change styleElement add targetDom
 
-[more detail about v0.13.4](https://github.com/VisActor/VTable/releases/tag/v0.13.4)
+[more detail about v0.13.4](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.13.4)
 
 # v0.13.3
 
@@ -2450,6 +2450,6 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: fix frozen shadow update in tree mode [#525](https://github.com/VisActor/VTable/issues/525)
+- **@visactor/vтаблица**: fix frozen shadow update в tree mode [#525](https://github.com/VisActor/Vтаблица/issues/525)
 
-[more detail about v0.13.3](https://github.com/VisActor/VTable/releases/tag/v0.13.3)
+[more detail about v0.13.3](https://github.com/VisActor/Vтаблица/Релизs/tag/v0.13.3)

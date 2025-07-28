@@ -14,19 +14,19 @@ VTable имеет специальный элемент конфигурации
    keyboardOptions:
    {
       /** Включить горячую клавишу выбрать все по умолчанию: false */
-      selectAllOnCtrlA?: boolean |SelectAllOnCtrlAOption;
+      selectAllOnCtrlA?: логический |SelectAllOnCtrlAOption;
       /** Горячая клавиша копирования по умолчанию не включена*/
-      copySelected?: boolean; //эта горячая клавиша копирования согласуется с горячей клавишей браузера
+      copySelected?: логический; //эта горячая клавиша копирования согласуется с горячей клавишей браузера
    }
 }
 ```
 
 ## Результаты
 
-[Онлайн демо](https://codesandbox.io/s/vtable-copy-sdwjhd)
+[Онлайн демо](https://codesandbox.io/s/VTable-copy-sdwjhd)
 
 ## Ссылки
 
-- [Руководство по взаимодействию выбора](https://visactor.io/vtable/guide/interaction/select)
-- [Связанное API](https://visactor.io/vtable/option/ListTable#keyboardOptions.copySelected)
+- [Руководство по взаимодействию выбора](https://visactor.io/VTable/guide/interaction/выбрать)
+- [Связанное API](https://visactor.io/VTable/option/ListTable#keyboardOptions.copySelected)
 - [github](https://github.com/VisActor/VTable)

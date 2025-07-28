@@ -1,22 +1,22 @@
-{{ target: button-cell-type }}
+{{ target: Кнопка-cell-тип }}
 
-#${prefix} columns.button(string)
+#${prefix} columns.Кнопка(строка)
 
-Specifies the cell type of this column or row as 'button'. If cellType is not specified, it defaults to 'text'
+Specifies the cell тип из this column или row as 'Кнопка'. If cellType is не specified, it defaults к 'текст'
 
-##${prefix} cellType(string) = 'button'
+##${prefix} cellType(строка) = 'Кнопка'
 
-Specifies the cell type of this column or row as 'button'. If cellType is not specified, it defaults to 'text'
+Specifies the cell тип из this column или row as 'Кнопка'. If cellType is не specified, it defaults к 'текст'
 
-{{ use: base-cell-type(
+{{ use: base-cell-тип(
     prefix = '##'+${prefix},
-    isButton = true
+    isКнопка = true
 ) }}
 
-##${prefix} text(string)
+##${prefix} текст(строка)
 
-The button text content
+The Кнопка текст content
 
-##${prefix} disable(boolean|Function) = false
+##${prefix} отключить(логический|функция) = false
 
-Determines whether the button is in a disabled state (preventing interaction)
+Determines whether the Кнопка is в a отключен state (prсобытиеing interaction)

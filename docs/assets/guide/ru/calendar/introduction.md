@@ -1,98 +1,98 @@
-# Calendar
+# календарь
 
-A calendar is a common table used to display dates and corresponding schedules. VTable-Calendar is a calendar component developed based on the VTable component. Users can quickly implement a calendar tool or customize related business functions based on the powerful capabilities of VTable. Compared with traditional calendars, VTable-Calendar has the following advantages:
+A календарь is a common таблица used к display dates и corresponding schedules. Vтаблица-календарь is a календарь компонент developed based на the Vтаблица компонент. Users can quickly implement a календарь tool или пользовательскийize related business functions based на the powerful capabilities из Vтаблица. Compared с traditional календарьs, Vтаблица-календарь has Следующий advantвозрастs:
 
-- Stepless scrolling function, supports scrolling across months and years
+- Stepless scrolling функция, supports scrolling across months и years
 
-- Users familiar with VTable api can quickly get started with custom functions
+- Users familiar с Vтаблица апи can quickly get started с пользовательский functions
 
-## Basic configuration of calendar
+## базовый configuration из календарь
 
-When creating a calendar, you can pass in the configuration corresponding to the calendar day:
+When creating a календарь, Вы можете pass в the configuration corresponding к the календарь day:
 
 ```js
-import { Calendar } from '@visactor/vtable-calendar';
+import { календарь } от '@visactor/vтаблица-календарь';
 
-const calendar = new VTableCalendar.Calendar(domContainer, options);
+const календарь = новый Vтаблицакалендарь.календарь(domContainer, options);
 ```
 
-Among them, option supports the following attributes
+Among them, option supports Следующий attributes
 
-| Attribute | Type | Description |
+| Attribute | тип | Description |
 | --- | --- | --- |
-| startDate | Date | Calendar start date |
-| endDate | Date | Calendar end date |
-| currentDate | Date | Calendar day displayed |
-| rangeDays | number | The range of days displayed in the calendar (if startDate&endDate is not configured, the dates of rangeDays before and after currentDate will be taken as startDate&endDate, the default is 90 days) |
-| dayTitles | string[] | Calendar title (can be replaced with different languages) |
-| customEventOptions | ICustomEventOptions | Custom schedule configuration |
-| customEvents | ICustomEvent[] | Array of custom schedules |
-| tableOptions | ListTableConstructorOptions | Calendar table configuration (the configuration here will be passed to the corresponding VTable instance for deep customization) |
+| startDate | Date | календарь начало date |
+| endDate | Date | календарь конец date |
+| currentDate | Date | календарь day displayed |
+| rangeDays | число | The range из days displayed в the календарь (if startDate&endDate is не configured, the dates из rangeDays before и after currentDate will be taken as startDate&endDate, the по умолчанию is 90 days) |
+| dayTitles | строка[] | календарь title (can be replaced с different languвозрастs) |
+| пользовательскийсобытиеOptions | IпользовательскийсобытиеOptions | пользовательский schedule configuration |
+| пользовательскийсобытиеs | Iпользовательскийсобытие[] | массив из пользовательский schedules |
+| таблицаOptions | списоктаблицаConstructorOptions | календарь таблица configuration (the configuration here will be passed к the corresponding Vтаблица instance для deep пользовательскийization) |
 
-The properties configured in `tableOptions` can be referred to [VTable configuration](../../option/ListTable) for further configuration of the table. For example, if you want Saturday to be displayed in blue and Sunday in red in the calendar title, you can use the following configuration:
+The свойства configured в `таблицаOptions` can be referred к [Vтаблица configuration](../../option/списоктаблица) для further configuration из the таблица. для пример, if you want Saturday к be displayed в blue и Sunday в red в the календарь title, Вы можете use Следующий configuration:
 
-```javascript livedemo template=vtable
-const calendarInstance = new VTableCalendar.Calendar(document.getElementById(CONTAINER_ID), {
-  tableOptions: {
-    theme: {
+```javascript liveдемонстрация template=vтаблица
+const календарьInstance = новый Vтаблицакалендарь.календарь(document.getElementById(CONTAINER_ID), {
+  таблицаOptions: {
+    тема: {
       headerStyle: {
-        color: args => {
+        цвет: args => {
           if (args.col === 0) {
-            return 'red'; 
+            возврат 'red'; 
           } else if (args.col === 6) {
-            return 'blue';
+            возврат 'blue';
           }
-          return '#000';
+          возврат '#000';
         }
       }
     }
   },
 });
-window['calendarInstance'] = calendarInstance;
+window['календарьInstance'] = календарьInstance;
 ```
 
-## Customized calendar
+## пользовательскийized календарь
 
-Calendar supports two ways to customize the calendar, one for a single day and one for a multi-day schedule. The configuration of custom schedule is as follows:
+календарь supports two ways к пользовательскийize the календарь, one для a single day и one для a multi-day schedule. The configuration из пользовательский schedule is as follows:
 
 ```ts
-export interface ICustomEvent {
-  type: 'list' | 'bar'; // Schedule type, list is a schedule within a single day, bar is a schedule across multiple days
-  id: string; // Schedule id, used to distinguish different schedules
+export интерфейс Iпользовательскийсобытие {
+  тип: 'список' | 'bar'; // Schedule тип, список is a schedule within a single day, bar is a schedule across multiple days
+  id: строка; // Schedule id, used к distinguish different schedules
 
-  startDate?: Date; // Schedule start date (for schedules across multiple days)
-  endDate?: Date; // Schedule end date (for schedules across multiple days)
-  date?: Date; // Schedule date (for schedules within a single day)
+  startDate?: Date; // Schedule начало date (для schedules across multiple days)
+  endDate?: Date; // Schedule конец date (для schedules across multiple days)
+  date?: Date; // Schedule date (для schedules within a single day)
 
-  text: string;
-  color?: string; // text color
-  bgColor?: string; // bar background color
+  текст: строка;
+  цвет?: строка; // текст цвет
+  bgColor?: строка; // bar фон цвет
 
-  customInfo?: any; // user custom data
+  пользовательскийInfo?: любой; // user пользовательский данные
 }
 ```
 
-Custom schedules can be configured during initialization, or dynamically added, deleted, and updated through the API.
+пользовательский schedules can be configured during initialization, или dynamically added, deleted, и updated through the апи.
 
 Initialization configuration:
 ```ts
-const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
-  customEvents: [
+const календарь = новый календарь(document.getElementById(CONTAINER_ID), {
+  пользовательскийсобытиеs: [
     {
-      date: new Date(2024, 9, 23),
-      text: 'Event A',
-      id: 'Event A',
-      type: 'list',
-      color: '#f99'
+      date: новый Date(2024, 9, 23),
+      текст: 'событие A',
+      id: 'событие A',
+      тип: 'список',
+      цвет: '#f99'
     },
     {
-      id: 'Event B',
-      startDate: new Date(2024, 9, 21),
-      endDate: new Date(2024, 9, 23),
-      text: 'Event B',
-      type: 'bar',
+      id: 'событие B',
+      startDate: новый Date(2024, 9, 21),
+      endDate: новый Date(2024, 9, 23),
+      текст: 'событие B',
+      тип: 'bar',
       bgColor: '#f99',
-      color: '#fff'
+      цвет: '#fff'
     }
   ]
 });
@@ -101,47 +101,47 @@ const calendar = new Calendar(document.getElementById(CONTAINER_ID), {
 Dynamic addition, deletion, update:
 ```ts
 // Add
-calendar.addCustomEvent({
-  id: 'Event C',
-  startDate: new Date(2024, 9, 22),
-  endDate: new Date(2024, 10, 4),
-  text: 'Event C',
-  type: 'bar',
+календарь.addпользовательскийсобытие({
+  id: 'событие C',
+  startDate: новый Date(2024, 9, 22),
+  endDate: новый Date(2024, 10, 4),
+  текст: 'событие C',
+  тип: 'bar',
   bgColor: '#9f9',
-  color: '#fff'
+  цвет: '#fff'
   });
 
 // Delete
-calendar.removeCustomEvent('Event C');
+календарь.removeпользовательскийсобытие('событие C');
 
 // Update
-calendar.updateCustomEvent({
-  id: 'Event C', // Update by id
-  startDate: new Date(2024, 9, 22),
-  endDate: new Date(2024, 9, 30),
+календарь.updateпользовательскийсобытие({
+  id: 'событие C', // Update по id
+  startDate: новый Date(2024, 9, 22),
+  endDate: новый Date(2024, 9, 30),
 });
 ```
 
-Customized schedule APIs
-| Methods | Parameters | Description |
+пользовательскийized schedule апиs
+| методы | Parameters | Description |
 | --- | --- | --- |
-| addCustomEvent | ICustomEvent | Add a custom schedule |
-| addCustomEvents | ICustomEvent[] | Add custom schedules in batches |
-| removeCustomEvent | string | Delete custom schedules |
-| removeCustomEvents | string[] | Delete custom schedules in batches |
-| updateCustomEvent | ICustomEvent | Update custom schedules |
-| updateCustomEvents | ICustomEvent[] | Update custom schedules in batches |
+| addпользовательскийсобытие | Iпользовательскийсобытие | Add a пользовательский schedule |
+| addпользовательскийсобытиеs | Iпользовательскийсобытие[] | Add пользовательский schedules в batches |
+| removeпользовательскийсобытие | строка | Delete пользовательский schedules |
+| removeпользовательскийсобытиеs | строка[] | Delete пользовательский schedules в batches |
+| updateпользовательскийсобытие | Iпользовательскийсобытие | Update пользовательский schedules |
+| updateпользовательскийсобытиеs | Iпользовательскийсобытие[] | Update пользовательский schedules в batches |
 
-## Calendar events
+## календарь событиеs
 
-Calendar supports the following events:
+календарь supports Следующий событиеs:
 
-| Event name | Description |
+| событие имя | Description |
 | --- | --- |
-| calendar_date_click | Triggered when clicking on a calendar date |
+| календарь_date_Нажать | Triggered when Нажатьing на a календарь date |
 | selected_date | Triggered when a date is selected |
 | selected_date_clear | Triggered when a date is unselected |
-| drag_select_date_end | Triggered when dragging to select a date ends |
-| calendar_custom_event_click | Triggered when clicking on a custom schedule |
+| drag_select_date_end | Triggered when dragging к выбрать a date ends |
+| календарь_пользовательский_событие_Нажать | Triggered when Нажатьing на a пользовательский schedule |
 
-If further event processing is required, all events of VTable can be monitored through `calendarInstance.table.on()`.
+If further событие processing is обязательный, все событиеs из Vтаблица can be monitored through `календарьInstance.таблица.на()`.

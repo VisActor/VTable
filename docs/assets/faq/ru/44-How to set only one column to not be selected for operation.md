@@ -1,32 +1,32 @@
 ---
-title: VTable usage issue: How to set only one column to not be selected for operation</br>
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+заголовок: Vтаблица usвозраст issue: How к set only one column к не be selected для operation</br>
+key words: VisActor,Vграфик,Vтаблица,VStrory,VMind,VGrammar,VRender,Visualization,график,данные,таблица,Graph,Gis,LLM
 ---
 ## Question title
 
-How to set only one column that cannot be selected for operation</br>
+How к set only one column that cannot be selected для operation</br>
 
 
 ## Problem description
 
-How to click a cell in a column of a table without selecting it?</br>
+How к Нажать a cell в a column из a таблица без selecting it?</br>
 
 
 ## Solution
 
-VTable provides `disableSelect `and `disableHeaderSelect `configurations in the `column `:</br>
-*  DisableSelect: The content of this column is partially disabled</br>
-*  disableHeaderSelect: Disable the selection of the header section of the list</br>
+Vтаблица provides `disableSelect `и `disableHeaderSelect `configurations в the `column `:</br>
+*  DisableSelect: The content из this column is partially отключен</br>
+*  disableHeaderSelect: отключить the selection из the header section из the список</br>
 
 
-## Code example
+## код пример
 
 ```
 const options = {
     columns: [
         {
-            field: 'name',
-            title: 'name',
+            поле: 'имя',
+            заголовок: 'имя',
             disableSelect: true,
             disableHeaderSelect: true
         },
@@ -37,47 +37,47 @@ const options = {
 ```
 
 
-Full sample code (you can try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvtable%2Fdemo%2Ftable-type%2Flist-table-tree)):</br>
+Full sample код (Вы можете try pasting it into the [editor ](https%3A%2F%2Fwww.visactor.io%2Fvтаблица%2Fдемонстрация%2Fтаблица-тип%2Fсписок-таблица-tree)):</br>
 ```
-let  tableInstance;
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let  таблицаInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
     .then((res) => res.json())
-    .then((data) => {
+    .then((данные) => {
 
 const columns =[
     {
-        "field": "Order ID",
-        "title": "Order ID",
-        "width": "auto",
+        "поле": "ID Заказа",
+        "title": "ID Заказа",
+        "ширина": "авто",
         disableSelect: true,
         disableHeaderSelect: true
     },
     {
-        "field": "Customer ID",
-        "title": "Customer ID",
-        "width": "auto"
+        "поле": "пользовательскийer ID",
+        "title": "пользовательскийer ID",
+        "ширина": "авто"
     },
     {
-        "field": "Product Name",
-        "title": "Product Name",
-        "width": "auto"
+        "поле": "Product имя",
+        "title": "Product имя",
+        "ширина": "авто"
     }
 ];
 
 const option = {
-  records:data,
+  records:данные,
   columns,
-  widthMode:'standard',
-  columnWidthComputeMode: 'only-header'
+  ширинаMode:'standard',
+  columnширинаComputeMode: 'only-header'
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
     })</br>
 ```
 ## Related Documents
 
-Related api: https://www.visactor.io/vtable/option/ListTable-columns-text#disableSelect</br>
-github：https://github.com/VisActor/VTable</br>
+Related апи: https://www.visactor.io/vтаблица/option/списоктаблица-columns-текст#disableSelect</br>
+github：https://github.com/VisActor/Vтаблица</br>
 
 
 

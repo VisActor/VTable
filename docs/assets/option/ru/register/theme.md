@@ -1,193 +1,193 @@
-{{ target: register-theme }}
+{{ target: регистрация-тема }}
 
-# theme.register
+# тема.регистрация
 
-Form event list, you can listen to the required events according to the actual needs, to achieve customized business.
+Form событие список, Вы можете списокen к the обязательный событиеs according к the actual needs, к achieve пользовательскийized business.
 
-Specific ways to use it:
+Specific ways к use it:
 ``
-const tableInstance =new VTable.ListTable(options);
+const таблицаInstance =новый Vтаблица.списоктаблица(options);
 
 const {
-CLICK_CELL
-} = VTable.ListTable.EVENT_TYPE;
+Нажать_CELL
+} = Vтаблица.списоктаблица.событие_TYPE;
 
-tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
+таблицаInstance.на(Нажать_CELL, (args) => console.log(Нажать_CELL, args));
 ``
 
-Supported event types（not all）:
+Supported событие types（не все）:
 
-`TABLE_EVENT_TYPE = {
-  CLICK_CELL: 'click_cell',
-  DBLCLICK_CELL: 'dblclick_cell',
+`таблица_событие_TYPE = {
+  Нажать_CELL: 'Нажать_cell',
+  DBLНажать_CELL: 'dblНажать_cell',
   MOUSEDOWN_CELL: 'mousedown_cell',
   MOUSEUP_CELL: 'mouseup_cell',
   SELECTED_CELL: 'selected_cell',
   KEYDOWN: 'keydown',
-  MOUSEENTER_TABLE: 'mouseenter_table',
-  MOUSELEAVE_TABLE: 'mouseleave_table',
+  MOUSEENTER_таблица: 'mouseenter_таблица',
+  MOUSELEAVE_таблица: 'mouseleave_таблица',
   MOUSEMOVE_CELL: 'mousemove_cell',
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
-  CONTEXTMENU_CELL: 'contextmenu_cell',
+  CONTEXTменю_CELL: 'contextменю_cell',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
   RESIZE_ROW_END: 'resize_row_end',
   CHANGE_HEADER_POSITION: 'change_header_position',
-  SORT_CLICK: 'sort_click',
-  AFTER_SORT: 'after_sort',
-  FREEZE_CLICK: 'freeze_click',
-  SCROLL: 'scroll',
+  сортировка_Нажать: 'сортировка_Нажать',
+  AFTER_сортировка: 'after_сортировка',
+  FREEZE_Нажать: 'freeze_Нажать',
+  прокрутка: 'прокрутка',
   SCROLL_HORIZONTAL_END: 'scroll_horizontal_end',
   SCROLL_VERTICAL_END: 'scroll_vertical_end',
-  DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
-  MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
+  DROPDOWN_меню_Нажать: 'dropdown_меню_Нажать',
+  MOUSEOVER_график_SYMBOL: 'mouseover_график_symbol',
   DRAG_SELECT_END: 'drag_select_end',
-  DROPDOWN_ICON_CLICK: 'dropdown_icon_click',
-  DROPDOWN_MENU_CLEAR: 'dropdown_menu_clear',
+  DROPDOWN_иконка_Нажать: 'dropdown_иконка_Нажать',
+  DROPDOWN_меню_CLEAR: 'dropdown_меню_clear',
   TREE_HIERARCHY_STATE_CHANGE: 'tree_hierarchy_state_change',
-  SHOW_MENU: 'show_menu',
-  HIDE_MENU: 'hide_menu',
-  ICON_CLICK: 'icon_click',
-  // Pivot table-specific events
-   DRILLMENU_CLICK: 'drillmenu_click',
-  PIVOT_SORT_CLICK: 'pivot_sort_click'
+  SHOW_меню: 'show_меню',
+  HIDE_меню: 'hide_меню',
+  иконка_Нажать: 'иконка_Нажать',
+  // сводный таблица-specific событиеs
+   DRILLменю_Нажать: 'drillменю_Нажать',
+  сводный_сортировка_Нажать: 'сводный_сортировка_Нажать'
 }`
 
-## CLICK_CELL
+## Нажать_CELL
 
-Mouse click on cell event.
+Mouse Нажать на cell событие.
 
-{{ use: MousePointerCellEvent() }}
+{{ use: MousePointerCellсобытие() }}
 
-## DBLCLICK_CELL
+## DBLНажать_CELL
 
-Mouse double-click cell event.
+Mouse double-Нажать cell событие.
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types introduced в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
 ## MOUSEDOWN_CELL
 
-Mouse press event on cell
+Mouse press событие на cell
 
-Refer to the parameter types described in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types described в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
 ## MOUSEUP_CELL
 
-Cell mouse release event
+Cell mouse Релиз событие
 
-Refer to the parameter types described in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types described в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
 ## SELECTED_CELL
 
-Cell selected state change event
+Cell selected state change событие
 
-{{ use: SelectedCellEvent() }}
+{{ use: SelectedCellсобытие() }}
 
 ## KEYDOWN
 
-keystroke event
+keystrхорошоe событие
 
-{{ use: KeydownEvent() }}
+{{ use: Keydownсобытие() }}
 
-## MOUSEENTER_TABLE
+## MOUSEENTER_таблица
 
-Mouse over form event
+Mouse over form событие
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types introduced в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
-## MOUSELEAVE_TABLE
+## MOUSELEAVE_таблица
 
-Mouse off form event
+Mouse off form событие
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types introduced в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
 ## MOUSEMOVE_CELL
 
-Mouse over a cell event
+Mouse over a cell событие
 
-Refer to the parameter types introduced in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types introduced в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
 ## MOUSEENTER_CELL
 
-Mouse into cell event
+Mouse into cell событие
 
-Refer to the parameter types described in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types described в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
 ## MOUSELEAVE_CELL
 
-Mouse-out-of-cell event
+Mouse-out-из-cell событие
 
-Refer to the parameter types described in the CLICK_CELL event for the parameter types of the event callback function.
+Refer к the параметр types described в the Нажать_CELL событие для the параметр types из the событие обратный вызов функция.
 
-## CONTEXTMENU_CELL
+## CONTEXTменю_CELL
 
-Cell right-click events
+Cell право-Нажать событиеs
 
-{{ use: MousePointerMultiCellEvent() }}
+{{ use: MousePointerMultiCellсобытие() }}
 
 ## RESIZE_COLUMN
 
-Column width adjustment events.
+Column ширина adjustment событиеs.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 ``
 
 {
-col: number;
-colWidth: number
+col: число;
+colширина: число
 }
 
 ``
 
 ## RESIZE_COLUMN_END
 
-Column width adjustment end event.
+Column ширина adjustment конец событие.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 ``
 
 {
-col: number;
-colWidths: number[]
+col: число;
+colширинаs: число[]
 }
 
 ``
 
 ## RESIZE_ROW
 
-Row height adjustment events.
+Row высота adjustment событиеs.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 ``
 
 {
-row: number;
-rowHeight: number
+row: число;
+rowвысота: число
 }
 
 ``
 
 ## RESIZE_ROW_END
 
-Row height adjustment end event.
+Row высота adjustment конец событие.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 ``
 
 {
-row: number;
-rowHeight: number
+row: число;
+rowвысота: число
 }
 
 ``
 
 ## CHANGE_HEADER_POSITION
 
-Drag and drop the table header to move the position of the event
+перетаскивание и отпускание the таблица header к move the позиция из the событие
 
-Parameter types for event callback functions.
+параметр types для событие обратный вызов functions.
 ``
 {
 source: CellAddress.
@@ -196,162 +196,162 @@ target: CellAddress
 
 ``
 
-## SORT_CLICK
+## сортировка_Нажать
 
-Click on the sort icon event.
+Нажать на the сортировка иконка событие.
 
-Parameter types for event callback functions.
+параметр types для событие обратный вызов functions.
 `  {
-    field: string;
-    order: 'asc' | 'desc' | 'normal';
-    event: Event;
+    поле: строка;
+    порядок: 'asc' | 'desc' | 'normal';
+    событие: событие;
   }`
 
-## AFTER_SORT
+## AFTER_сортировка
 
-After sorting event.
-Parameter types for event callback functions.
+After сортировкаing событие.
+параметр types для событие обратный вызов functions.
 `{
-  order: 'asc' | 'desc' | 'normal';
-  field: string;
-  event: Event;
+  порядок: 'asc' | 'desc' | 'normal';
+  поле: строка;
+  событие: событие;
 }`
 
-## FREEZE_CLICK
+## FREEZE_Нажать
 
-Click on the fixed column icon to freeze or unfreeze the event.
+Нажать на the fixed column иконка к freeze или unfreeze the событие.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 `{
-  col: number;
-  row: number;
-  fields: string[];
-  colCount: number;
+  col: число;
+  row: число;
+  полеs: строка[];
+  colCount: число;
 }`
 
-## SCROLL
+## прокрутка
 
-Scroll form events.
+прокрутка form событиеs.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 `    {
-      scrollLeft: number;
-      scrollTop: number;
-      scrollWidth: number;
-      scrollHeight: number;
-      viewWidth: number;
-      viewHeight: number;
+      scrollLeft: число;
+      scrollTop: число;
+      scrollширина: число;
+      scrollвысота: число;
+      viewширина: число;
+      viewвысота: число;
     }`
 
 ## SCROLL_HORIZONTAL_END
 
-Scroll horizontally to the right to end the event
+прокрутка horizontally к the право к конец the событие
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 `    {
-    scrollLeft: number;
-    scrollTop: number;
-    scrollWidth: number;
-    scrollHeight: number;
-    viewWidth: number;
-    viewHeight: number;
+    scrollLeft: число;
+    scrollTop: число;
+    scrollширина: число;
+    scrollвысота: число;
+    viewширина: число;
+    viewвысота: число;
 }`
 
 ## SCROLL_VERTICAL_END
 
-Vertical scroll bar scrolls to the end position
+Vertical прокрутка bar scrolls к the конец позиция
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 `    {
-    scrollLeft: number;
-    scrollTop: number;
-    scrollWidth: number;
-    scrollHeight: number;
-    viewWidth: number;
-    viewHeight: number;
+    scrollLeft: число;
+    scrollTop: число;
+    scrollширина: число;
+    scrollвысота: число;
+    viewширина: число;
+    viewвысота: число;
 }`
 
-## DROPDOWN_MENU_CLICK
+## DROPDOWN_меню_Нажать
 
-Click the drop-down menu icon event.
+Нажать the отпускание-down меню иконка событие.
 
-{{ use: DropDownMenuEventArgs() }}
+{{ use: DropDownменюсобытиеArgs() }}
 
-## MOUSEOVER_CHART_SYMBOL
+## MOUSEOVER_график_SYMBOL
 
-Mouse over mini-graph marker event
+Mouse over mini-graph marker событие
 
-{{ use: MousePointerSparklineEvent() }}
+{{ use: MousePointerSparklineсобытие() }}
 
 ## DRAG_SELECT_END
 
-Drag-and-drop boxed cell mouse release event
+перетаскивание-и-отпускание boxed cell mouse Релиз событие
 
-{{ use: MousePointerMultiCellEvent() }}
+{{ use: MousePointerMultiCellсобытие() }}
 
-## DRILLMENU_CLICK
+## DRILLменю_Нажать
 
-Drill-down button click event. **Pivot table proprietary event**
+Drill-down Кнопка Нажать событие. **сводный таблица proprietary событие**
 
-{{ use: DrillMenuEventInfo() }}
+{{ use: DrillменюсобытиеInfo() }}
 
-## DROPDOWN_ICON_CLICK
+## DROPDOWN_иконка_Нажать
 
-Click on the drop-down menu button
+Нажать на the отпускание-down меню Кнопка
 
 {{ use: CellAddress() }}
 
-## DROPDOWN_MENU_CLEAR
+## DROPDOWN_меню_CLEAR
 
-Clear drop-down menu event (clicking on other areas while the menu is displayed)
+Clear отпускание-down меню событие (Нажатьing на other areas while the меню is displayed)
 
 {{ use: CellAddress() }}
 
 ## TREE_HIERARCHY_STATE_CHANGE
 
-Tree structure expand and collapse click events
+Tree structure развернуть и свернуть Нажать событиеs
 
-## SHOW_MENU
+## SHOW_меню
 
-Displays menu events.
+Displays меню событиеs.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 `    {
-      x: number.
-      y: number.
-      col: number.
-      row: number.
-      type: 'dropDown' | 'contextmenu' | 'custom';
+      x: число.
+      y: число.
+      col: число.
+      row: число.
+      тип: 'выпадающий список' | 'contextменю' | 'пользовательский';
     }`
 
-## HIDE_MENU
+## HIDE_меню
 
-Hide menu events
+скрыть меню событиеs
 
-## ICON_CLICK
+## иконка_Нажать
 
-icon icon click event.
+иконка иконка Нажать событие.
 
-Event callback function parameter types.
+событие обратный вызов функция параметр types.
 `    {
-      name: string;
-      col: number.
-      row: number.
-      x: number.
-      y: number.
-      funcType?: IconFuncTypeEnum | string;
-      icon: Icon.
+      имя: строка;
+      col: число.
+      row: число.
+      x: число.
+      y: число.
+      funcType?: иконкаFuncTypeEnum | строка;
+      иконка: иконка.
     }`
 
-## PIVOT_SORT_CLICK
+## сводный_сортировка_Нажать
 
-Sort icon click event in the pivot table.
+сортировка иконка Нажать событие в the сводный таблица.
 
-Parameter types for event callback functions.
+параметр types для событие обратный вызов functions.
 `    {
-      col: number.
-      row: number.
-      order: 'asc' | 'desc' | 'normal'.
+      col: число.
+      row: число.
+      порядок: 'asc' | 'desc' | 'normal'.
       dimensionInfo: IDimensionInfo[];
       cellLocation: CellLocation.
     }`

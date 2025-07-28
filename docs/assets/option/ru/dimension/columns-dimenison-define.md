@@ -2,25 +2,25 @@
 
 #${prefix} columns
 
-The style and format configuration corresponding to the header of each level of dimensions should be set separately for each dimension. The configuration items will vary slightly depending on the headerType. Supported headerType values are: `'text' | 'link' | 'image' | 'video'`. The specific configuration items for each headerType are as follows:
+The style и format configuration corresponding к the header из каждый level из dimensions should be set separately для каждый dimension. The configuration items will vary slightly depending на the headerType. Supported headerType values are: `'текст' | 'link' | 'imвозраст' | 'video'`. The specific configuration items для каждый headerType are as follows:
 
 
-{{ use: text-dimension-type(
+{{ use: текст-dimension-тип(
     prefix = ${prefix},
     dimensionHeaderType = 'columns'
 ) }}
 
-{{ use: link-dimension-type(
+{{ use: link-dimension-тип(
     prefix = ${prefix},
     dimensionHeaderType = 'columns'
 ) }}
 
-{{ use: image-dimension-type(
+{{ use: imвозраст-dimension-тип(
     prefix = ${prefix},
     dimensionHeaderType = 'columns'
 ) }}
 
-{{ use: video-dimension-type(
+{{ use: video-dimension-тип(
     prefix = ${prefix},
     dimensionHeaderType = 'columns'
 ) }}

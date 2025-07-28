@@ -1,23 +1,23 @@
-{{ target: common-gantt-create-mark-line }}
+{{ target: common-гантт-create-mark-line }}
 
 markLineCreateOptions specific definition:
 
 ```
-export interface IMarkLineCreateOptions {
-  markLineCreatable?: boolean; // enable create mark line
-  markLineCreationHoverToolTip?: {
-    position?: 'top' | 'bottom'; // tooltip position
-    tipContent?: string; // tooltip content
+export интерфейс IMarkLineCreateOptions {
+  markLineCreaтаблица?: логический; // включить create mark line
+  markLineCreationHoverПодсказка?: {
+    позиция?: 'верх' | 'низ'; // Подсказка позиция
+    tipContent?: строка; // Подсказка content
     style?: {
-      contentStyle?: any; // tooltip content style
-      panelStyle?: any; // tooltip style
+      contentStyle?: любой; // Подсказка content style
+      panelStyle?: любой; // Подсказка style
     };
   };
   markLineCreationStyle?: {
-    fill?: string; //   fill color
-    size?: number; // create area size
-    iconSize?: number; //  icon size
-    svg?: string; // custom create icon
+    fill?: строка; //   fill цвет
+    размер?: число; // create area размер
+    иконкаSize?: число; //  иконка размер
+    svg?: строка; // пользовательский create иконка
   };
 }
 ```

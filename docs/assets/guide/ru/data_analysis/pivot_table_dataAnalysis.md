@@ -1,82 +1,82 @@
-# Pivot data analysis
+# сводный данные analysis
 
-In the figure below, there are four business dimensions: region, province, year, quarter, and indicators: sales, profit.
+в the figure below, there are four business dimensions: Регион, province, year, quarter, и indicators: Продажи, Прибыль.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/pivot-analysis.png" />
-    <p>Pivot table structure description</p>
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/сводный-analysis.png" />
+    <p>сводный таблица structure description</p>
   </div>
-Regarding the sales data in the figure, the location is in cell [5, 5], that is, the data in column 5 and row 5: represents the sales profit value of Heilongjiang Province in the Northeast region in the Q2 quarter of 2016. That is to say, it corresponds to the row dimension value: ['Northeast', 'Heilongjiang'], the column dimension: ['2016', '2016-Q2'], and the indicator: 'Profit'. Next, we will introduce how to use VTable to implement this multi-dimensional table.
+Regarding the Продажи данные в the figure, the location is в cell [5, 5], that is, the данные в column 5 и row 5: represents the Продажи Прибыль значение из Heilongjiang Province в the Northeast Регион в the Q2 quarter из 2016. That is к say, it corresponds к the row dimension значение: ['Northeast', 'Heilongjiang'], the column dimension: ['2016', '2016-Q2'], и the indicator: 'Прибыль'. следующий, we will introduce how к use Vтаблица к implement this multi-dimensional таблица.
 
-# VTable implements multi-dimensional tables
+# Vтаблица implements multi-dimensional таблицаs
 
-## Concept mapping to configuration items
+## Concept mapping к configuration items
 
-The configuration of the pivot table above is as follows:
+The configuration из the сводный таблица above is as follows:
 
 ```
 const option={
-  rows:['region','province'], //row dimensions
+  rows:['Регион','province'], //row dimensions
   columns:['year','quarter'], //column dimensions
-  indicators:['sales','profit'], //Indicators //Whether to enable data analysis function
-  records:[ //Data source。 If summary data is passed in, use user incoming data
+  indicators:['Продажи','Прибыль'], //Indicators //Whether к включить данные analysis функция
+  records:[ //данные source。 If summary данные is passed в, use user incoming данные
     {
-      region:'东北',
+      Регион:'东北',
       province:'黑龙江',
       year:'2016',
       quarter:'2016-Q1',
-      sales:1243,
-      profit:546
+      Продажи:1243,
+      Прибыль:546
     },
     ...
   ]
 }
 ```
 
-This configuration is the simplest configuration for multidimensional tables. As the functional requirements become more complex, various configurations can be added for each function point to meet the needs.
+This configuration is the simplest configuration для multidimensional таблицаs. As the functional requirements become more complex, various configurations can be added для каждый функция point к meet the needs.
 
-## Data analysis related configuration:
+## данные analysis related configuration:
 
-| Configuration item              | Type                           | Description                                                                         |
+| Configuration item              | тип                           | Description                                                                         |
 | :------------------------------ | :----------------------------- | :---------------------------------------------------------------------------------- |
-| rows                            | (IRowDimension \| string)[]    | Row dimension field array, used to parse out the corresponding dimension members    |
-| columns                         | (IColumnDimension \| string)[] | Column dimension field array, used to parse out the corresponding dimension members |
-| indicators                      | (IIndicator \| string)[]       | Specific display indicators                                                         |
-| dataConfig.aggregationRules     | aggregationRule[]              | Aggregation value calculation rules according to row and column dimensions          |
-| dataConfig.derivedFieldRules    | DerivedFieldRule[]             | Derived fields                                                                      |
-| dataConfig.sortRules            | sortRule[]                     | Sort rules                                                                          |
-| dataConfig.filterRules          | filterRule[]                   | Filter Rules                                                                        |
-| dataConfig.totals               | totalRule[]                    | Subtotal or total                                                                   |
-| dataConfig.calculatedFieldRules | CalculateddFieldRule[]         | calculated fields                                                                   |
+| rows                            | (IRowDimension \| строка)[]    | Row dimension поле массив, used к parse out the corresponding dimension members    |
+| columns                         | (IColumnDimension \| строка)[] | Column dimension поле массив, used к parse out the corresponding dimension members |
+| indicators                      | (IIndicator \| строка)[]       | Specific display indicators                                                         |
+| данныеConfig.aggregationRules     | aggregationRule[]              | Aggregation значение calculation rules according к row и column dimensions          |
+| данныеConfig.derivedполеRules    | DerivedполеRule[]             | Derived полеs                                                                      |
+| данныеConfig.сортировкаRules            | сортировкаRule[]                     | сортировка rules                                                                          |
+| данныеConfig.filterRules          | filterRule[]                   | Filter Rules                                                                        |
+| данныеConfig.totals               | totalRule[]                    | Subtotal или total                                                                   |
+| данныеConfig.calculatedполеRules | CalculateddполеRule[]         | calculated полеs                                                                   |
 
-dataConfig configuration definition:
+данныеConfig configuration definition:
 
 ```
 /**
- * Data processing configuration
+ * данные processing configuration
  */
-export interface IDataConfig {
-  aggregationRules?: AggregationRules; //Calculate the aggregated values according to row and column dimensions; by default, all indicator values will be calculated by summing them up.
-  sortRules?: SortRules; //排序规则；
+export интерфейс IданныеConfig {
+  aggregationRules?: AggregationRules; //Calculate the aggregated values according к row и column dimensions; по по умолчанию, все indicator values will be calculated по summing them up.
+  сортировкаRules?: сортировкаRules; //排序规则；
   filterRules?: FilterRules; //过滤规则；
   totals?: Totals; //小计或总计；
-  derivedFieldRules?: DerivedFieldRules; //派生字段定义
+  derivedполеRules?: DerivedполеRules; //派生字段定义
   ...
 }
 ```
 
-dataConfig application example:
+данныеConfig application пример:
 
 ### 1. Totals
 
-#### VTable to calculate subtotals configuration:
+#### Vтаблица к calculate subtotals configuration:
 
-[option description](../../option/PivotTable#dataConfig.totals)
+[option description](../../option/сводныйтаблица#данныеConfig.totals)
 
-Configuration example:
+Configuration пример:
 
 ```
-dataConfig: {
+данныеConfig: {
       totals: {
         row: {
           showGrandTotals: true,
@@ -84,7 +84,7 @@ dataConfig: {
           subTotalsDimensions: ['province'],
           grandTotalLabel: 'row total',
           subTotalLabel: 'Subtotal',
-          showGrandTotalsOnTop: true //totals show on top
+          showGrandTotalsOnTop: true //totals показать на верх
         },
         column: {
           showGrandTotals: true,
@@ -97,180 +97,180 @@ dataConfig: {
     },
 ```
 
-Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-total
+Online демонстрация：https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-total
 
-#### Custom summary data
+#### пользовательский summary данные
 
-If you need to customize summary data, you do not want VTable to calculate the subtotals. In addition to the above configuration, you also need to include the corresponding summary data in the data passed to VTable. In this way, VTable will analyze it internally and display it as summary data instead of using VTable's summary value.
+If you need к пользовательскийize summary данные, you do не want Vтаблица к calculate the subtotals. в addition к the above configuration, you also need к include the corresponding summary данные в the данные passed к Vтаблица. в this way, Vтаблица will analyze it internally и display it as summary данные instead из using Vтаблица's summary значение.
 
-<div style="width: 50%; text-align: center;">
-<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-total-demo.png" />
-<p>Custom subtotal total sample code</p>
+<div style="ширина: 50%; текст-align: центр;">
+<img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/пользовательский-total-демонстрация.png" />
+<p>пользовательский subtotal total sample код</p>
 </div>
 
-Specific example: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-custom-total
+Specific пример: https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-пользовательский-total
 
-### 2. Sorting rules
+### 2. сортировкаing rules
 
-VTable's pivot table supports four sorting methods: natural sorting of dimension values, specified dimension value order, indicator value sorting, and custom sorting.
+Vтаблица's сводный таблица supports four сортировкаing методы: natural сортировкаing из dimension values, specified dimension значение order, indicator значение сортировкаing, и пользовательский сортировкаing.
 
-For definitions, please refer to:
+для definitions, please refer к:
 
-[option description](../../option/PivotTable#dataConfig.sortRules) [Usage tutorial](../../guide/basic_function/sort/pivot_sort)
+[option description](../../option/сводныйтаблица#данныеConfig.сортировкаRules) [Usвозраст tutorial](../../guide/базовый_function/сортировка/сводный_сортировка)
 
-The following is an example of the indicator value sorting configuration:
+Следующий is an пример из the indicator значение сортировкаing configuration:
 
 ```
-dataConfig: {
-    sortRules: [
+данныеConfig: {
+    сортировкаRules: [
         {
-          sortField: 'city',
-          sortByIndicator: 'sales',
-          sortType: VTable.TYPES.SortType.DESC,
+          сортировкаполе: 'Город',
+          сортировкаByIndicator: 'Продажи',
+          сортировкаType: Vтаблица.TYPES.сортировкаType.DESC,
           query: ['office supplies', 'pen']
-        } as VTable.TYPES.SortByIndicatorRule
+        } as Vтаблица.TYPES.сортировкаByIndicatorRule
       ]
 }
 ```
 
-If you need to modify the sorting rules of the pivot table, you can use the interface `updateSortRules`.
+If you need к modify the сортировкаing rules из the сводный таблица, Вы можете use the интерфейс `updateсортировкаRules`.
 
-Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-sort-dimension
+Online демонстрация：https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-сортировка-dimension
 
 ### 3. Filter rules
 
-[option description](../../option/PivotTable#dataConfig.filterRules)
+[option description](../../option/сводныйтаблица#данныеConfig.filterRules)
 
-Configuration example:
+Configuration пример:
 
 ```
-dataConfig: {
+данныеConfig: {
   filterRules: [
         {
-          filterFunc: (record: Record<string, any>) => {
-            return record.province !== 'Sichuan Province' || record.category !== 'Furniture';
+          filterFunc: (record: Record<строка, любой>) => {
+            возврат record.province !== 'Sichuan Province' || record.Категория !== 'Furniture';
           }
         }
       ]
 }
 ```
 
-Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-filter
+Online демонстрация：https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-filter
 
 ### 4. Aggregation method
 
-By default, all indicator values are calculated in the `SUM` way. If you don't want this default calculation method, you can modify it by configuring `aggregationRules`.
+по по умолчанию, все indicator values are calculated в the `SUM` way. If you don't want this по умолчанию calculation method, Вы можете modify it по configuring `aggregationRules`.
 
-In general, indicators should be of type `number` so that internal calculations can be performed.
+в general, indicators should be из тип `число` so that internal calculations can be performed.
 
-If the indicator is a string type or `null`, and needs to be displayed in the cell, you can configure `aggregationType` as `VTable.TYPES.AggregationType.NONE` to display the original value of the data source field; or you can use the `getCellOriginRecord` interface in the indicator format function to obtain the data source entry corresponding to the cell, and then perform special processing.
+If the indicator is a строка тип или `null`, и needs к be displayed в the cell, Вы можете configure `aggregationType` as `Vтаблица.TYPES.AggregationType.никто` к display the original значение из the данные source поле; или Вы можете use the `getCellOriginRecord` интерфейс в the indicator format функция к obtain the данные source entry corresponding к the cell, и then perform special processing.
 
-If you use custom rendering `customLayout` and want to get all the data `records` corresponding to the cell in the `customLayout` function, you can configure `aggregationType` as `VTable.TYPES.AggregationType.RECORD`.
+If you use пользовательский rendering `пользовательскиймакет` и want к get все the данные `records` corresponding к the cell в the `пользовательскиймакет` функция, Вы можете configure `aggregationType` as `Vтаблица.TYPES.AggregationType.RECORD`.
 
-[option description](../../option/PivotTable#dataConfig.aggregationRules)
+[option description](../../option/сводныйтаблица#данныеConfig.aggregationRules)
 
-#### Configuration example:
+#### Configuration пример:
 
 ```
-dataConfig: {
+данныеConfig: {
     aggregationRules: [
-        //The basis for doing aggregate calculations, such as sales. If there is no configuration, the cell content will be displayed by default based on the aggregate sum calculation result.
+        //The basis для doing aggregate calculations, such as Продажи. If there is no configuration, the cell content will be displayed по по умолчанию based на the aggregate sum calculation result.
         {
-          indicatorKey: 'TotalSales', //Indicator name
-          field: 'Sales', //Indicator based on field
-          aggregationType: VTable.TYPES.AggregationType.SUM, //Calculation type
+          indicatorKey: 'TotalПродажи', //Indicator имя
+          поле: 'Продажи', //Indicator based на поле
+          aggregationType: Vтаблица.TYPES.AggregationType.SUM, //Calculation тип
           formatFun: sumNumberFormat
         },
         {
-          indicatorKey: 'OrderCount', //Indicator name
-          field: 'Sales', //Indicator based on field
-          aggregationType: VTable.TYPES.AggregationType.COUNT, //Computation type
+          indicatorKey: 'OrderCount', //Indicator имя
+          поле: 'Продажи', //Indicator based на поле
+          aggregationType: Vтаблица.TYPES.AggregationType.COUNT, //Computation тип
           formatFun: countNumberFormat
         },
         {
-          indicatorKey: 'AverageOrderSales', //Indicator name
-          field: 'Sales', //Indicator based on field
-          aggregationType: VTable.TYPES.AggregationType.AVG, //Computation type
+          indicatorKey: 'AverвозрастOrderПродажи', //Indicator имя
+          поле: 'Продажи', //Indicator based на поле
+          aggregationType: Vтаблица.TYPES.AggregationType.AVG, //Computation тип
         },
         {
-          indicatorKey: 'MaxOrderSales', //Indicator name
-          field: 'Sales', //Indicator based on field
-          aggregationType: VTable.TYPES.AggregationType.MAX, //Computation type , caculate max value
+          indicatorKey: 'MaxOrderПродажи', //Indicator имя
+          поле: 'Продажи', //Indicator based на поле
+          aggregationType: Vтаблица.TYPES.AggregationType.MAX, //Computation тип , caculate max значение
         },
         {
-          indicatorKey: 'OrderSalesValue', //Indicator name
-          field: 'Sales', //Indicator based on field
-          aggregationType: VTable.TYPES.AggregationType.NONE, //don't aggregate
+          indicatorKey: 'OrderПродажиValue', //Indicator имя
+          поле: 'Продажи', //Indicator based на поле
+          aggregationType: Vтаблица.TYPES.AggregationType.никто, //don't aggregate
         },
         {
-          indicatorKey: 'orderRecords', //Indicator name
-          field: 'Sales', //Indicator based on field
-          aggregationType: VTable.TYPES.AggregationType.RECORD, //don't aggregate. Match all the corresponding data as the value of the cell
+          indicatorKey: 'orderRecords', //Indicator имя
+          поле: 'Продажи', //Indicator based на поле
+          aggregationType: Vтаблица.TYPES.AggregationType.RECORD, //don't aggregate. Match все the corresponding данные as the значение из the cell
         },
         {
-          indicatorKey: 'Custom Aggregation Function', //Indicator name
-          field: 'sales', //Indicator based field
-          aggregationType: VTable.TYPES.AggregationType.CUSTOM, //Custom aggregation type requires configuration of custom function aggregationFun
+          indicatorKey: 'пользовательский Aggregation функция', //Indicator имя
+          поле: 'Продажи', //Indicator based поле
+          aggregationType: Vтаблица.TYPES.AggregationType.пользовательский, //пользовательский aggregation тип requires configuration из пользовательский функция aggregationFun
           aggregationFun(values, records) {
-            return values.reduce((pre, cur) => pre + cur, 0) / values.length;
+            возврат values.reduce((pre, cur) => pre + cur, 0) / values.length;
           }
         },
         {
-          indicatorKey: 'Average Product Price (Registered Aggregation Class)', //Indicator name
-          field: 'sales', //Indicator based field
-          aggregationType: 'avgPrice', //Registered aggregation type
+          indicatorKey: 'Averвозраст Product Price (регистрацияed Aggregation Class)', //Indicator имя
+          поле: 'Продажи', //Indicator based поле
+          aggregationType: 'avgPrice', //регистрацияed aggregation тип
         }
       ]
 }
 ```
 
-Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-aggregation
+Online демонстрация：https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-aggregation
 
 #### 特殊聚合类型使用说明
 
 **Special Note:**
 
-1. AggregationType.NONE The usage scenario of the indicator without aggregation is mainly used to display the original data obtained according to the data record input by the user, such as:
+1. AggregationType.никто The usвозраст scenario из the indicator без aggregation is mainly used к display the original данные obtained according к the данные record ввод по the user, such as:
 
 ```
 records:[{
-  region: 'Central South',
+  Регион: 'Central South',
   province: 'Guangxi',
   year: '2016',
   quarter: '2016-Q1',
-  sales: 'NULL',
-  profit: 1546
+  Продажи: 'null',
+  Прибыль: 1546
 }],
-dataConfig:{
+данныеConfig:{
   aggregationRules:[
   {
-    indicatorKey: 'sales', //Indicator name
-    field: 'sales', //Indicator based field
-    aggregationType: VTable.TYPES.AggregationType.NONE, //Do not perform aggregation. Match the corresponding data to obtain the value of the corresponding field.
+    indicatorKey: 'Продажи', //Indicator имя
+    поле: 'Продажи', //Indicator based поле
+    aggregationType: Vтаблица.TYPES.AggregationType.никто, //Do не perform aggregation. Match the corresponding данные к obtain the значение из the corresponding поле.
   }]
 }
 ```
-  In this data record, the sales indicator is a non-numeric value. If the product requirement is to directly display `"NULL"` in the table cell, then the aggregation rule can be set to `VTable.TYPES.AggregationType.NONE`, so that VTable's internal will not perform aggregation calculations, but directly take the `sales` field value as the display value of the cell.
+  в this данные record, the Продажи indicator is a non-numeric значение. If the product requirement is к directly display `"null"` в the таблица cell, then the aggregation rule can be set к `Vтаблица.TYPES.AggregationType.никто`, so that Vтаблица's internal will не perform aggregation calculations, but directly take the `Продажи` поле значение as the display значение из the cell.
 
-  2. AggregationType.RECORD usage scenario is mainly used to match all data based on the user's input data record and use it as the display data of the cell. Usage scenarios include: needing to collect data sets for mini-chart displays, specific demo see: https://visactor.io/vtable/demo/cell-type/pivot-sparkline
+  2. AggregationType.RECORD usвозраст scenario is mainly used к match все данные based на the user's ввод данные record и use it as the display данные из the cell. Usвозраст scenarios include: needing к collect данные sets для mini-график displays, specific демонстрация see: https://visactor.io/vтаблица/демонстрация/cell-тип/сводный-sparkline
 
-#### Custom Aggregation Type Introduction
+#### пользовательский Aggregation тип Introduction
 
-To declare a custom aggregation class, you need to inherit the internal type `VTable.TYPES.Aggregator`, and then register it to VTable through `VTable.register.aggregator`.
+к declare a пользовательский aggregation class, you need к inherit the internal тип `Vтаблица.TYPES.Aggregator`, и then регистрация it к Vтаблица through `Vтаблица.регистрация.aggregator`.
 
-Here is an example of a custom aggregation class:
+Here is an пример из a пользовательский aggregation class:
 
 ```
-// Implement a custom aggregation type to calculate the average product price
-class AvgPriceAggregator extends VTable.TYPES.Aggregator {
-  sales_sum: number = 0;
-  number_sum: number = 0;
-  constructor(config: { key: string; field: string; formatFun?: any }) {
+// Implement a пользовательский aggregation тип к calculate the averвозраст product price
+class AvgPriceAggregator extends Vтаблица.TYPES.Aggregator {
+  Продажи_sum: число = 0;
+  number_sum: число = 0;
+  constructor(config: { key: строка; поле: строка; formatFun?: любой }) {
     super(config);
     this.key = config.key;
     this.formatFun = config.formatFun;
   }
-  push(record: any): void {
+  push(record: любой): void {
     if (record) {
       if (record.isAggregator) {
         this.records.push(...record.records);
@@ -279,97 +279,97 @@ class AvgPriceAggregator extends VTable.TYPES.Aggregator {
       }
 
       if (record.isAggregator) {
-        this.sales_sum += record.sales_sum;
+        this.Продажи_sum += record.Продажи_sum;
         this.number_sum += record.number_sum;
       } else {
-        record.sales && (this.sales_sum += parseFloat(record.sales));
-        record.number && (this.number_sum += parseFloat(record.number));
+        record.Продажи && (this.Продажи_sum += parseFloat(record.Продажи));
+        record.число && (this.number_sum += parseFloat(record.число));
       }
     }
     this.clearCacheValue();
   }
-  deleteRecord: (record: any) => void;
-  updateRecord: (oldRecord: any, newRecord: any) => void;
-  recalculate: () => any;
+  deleteRecord: (record: любой) => void;
+  updateRecord: (oldRecord: любой, newRecord: любой) => void;
+  recalculate: () => любой;
   clearCacheValue() {
     this._formatedValue = undefined;
   }
-  value() {
-    return this.records?.length >= 1 ? this.sales_sum / this.number_sum : undefined;
+  значение() {
+    возврат this.records?.length >= 1 ? this.Продажи_sum / this.number_sum : undefined;
   }
   reset() {
     super.reset();
-    this.sales_sum = 0;
+    this.Продажи_sum = 0;
     this.number_sum = 0;
   }
 }
-// Register the aggregation type to VTable
-VTable.register.aggregator('avgPrice', AvgPriceAggregator);
-// Usage after registration, in dataConfig.aggregationRules, configure aggregationType as `avgPrice`.
+// регистрация the aggregation тип к Vтаблица
+Vтаблица.регистрация.aggregator('avgPrice', AvgPriceAggregator);
+// Usвозраст after registration, в данныеConfig.aggregationRules, configure aggregationType as `avgPrice`.
 const option={
   ...
-  dataConfig: {
+  данныеConfig: {
     aggregationRules: [
         {
-          indicatorKey: 'Average Product Price (Registered Aggregation Class)', //Indicator name
-          field: 'sales', //Indicator based field
-          aggregationType: 'avgPrice', //Registered aggregation type 
+          indicatorKey: 'Averвозраст Product Price (регистрацияed Aggregation Class)', //Indicator имя
+          поле: 'Продажи', //Indicator based поле
+          aggregationType: 'avgPrice', //регистрацияed aggregation тип 
         }
       ]
   }
 }
 ```
 
-VTable's internal aggregation rules code address: https://github.com/VisActor/VTable/blob/develop/packages/vtable/src/ts-types/dataset/aggregation.ts, can be referred to!
+Vтаблица's internal aggregation rules код address: https://github.com/VisActor/Vтаблица/blob/develop/packвозрастs/vтаблица/src/ts-types/данныеset/aggregation.ts, can be referred к!
 
-The methods that need to be implemented for the aggregation type are:
-- constructor: The constructor function, used to initialize the aggregator.
-- push: Add data records to the aggregator, used to calculate the aggregated value.
-- deleteRecord: Delete records from the aggregator and update the aggregated value, called by VTable's delete interface deleteRecords.
-- updateRecord: Update data records and update the aggregated value, called by the updateRecords interface.
-- recalculate: Recalculate the aggregated value, currently called by the method of copying and pasting cell values.
-- value: Get the aggregated value.
+The методы that need к be implemented для the aggregation тип are:
+- constructor: The constructor функция, used к initialize the aggregator.
+- push: Add данные records к the aggregator, used к calculate the aggregated значение.
+- deleteRecord: Delete records от the aggregator и update the aggregated значение, called по Vтаблица's delete интерфейс deleteRecords.
+- updateRecord: Update данные records и update the aggregated значение, called по the updateRecords интерфейс.
+- recalculate: Recalculate the aggregated значение, currently called по the method из copying и pasting cell values.
+- значение: Get the aggregated значение.
 - reset: Reset the aggregator.
 
-If you feel that methods that do not need to be implemented can be written as empty functions.
+If you feel that методы that do не need к be implemented can be written as empty functions.
 
-### 5. Derive Field
+### 5. Derive поле
 
-[option description](../../option/PivotTable#dataConfig.derivedFieldRules)
+[option description](../../option/сводныйтаблица#данныеConfig.derivedполеRules)
 
-Configuration example:
+Configuration пример:
 
 ```
-dataConfig: {
-    derivedFieldRules: [
+данныеConfig: {
+    derivedполеRules: [
       {
-        fieldName: 'Year',
-        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%y', true),
+        полеимя: 'Year',
+        derivedFunc: Vтаблица.данныеStatistics.dateFormat('Дата Заказа', '%y', true),
       },
       {
-        fieldName: 'Month',
-        derivedFunc: VTable.DataStatistics.dateFormat('Order Date', '%n', true),
+        полеимя: 'Month',
+        derivedFunc: Vтаблица.данныеStatistics.dateFormat('Дата Заказа', '%n', true),
       }
     ]
 }
 ```
 
-Online demo：https://visactor.io/vtable/demo/data-analysis/pivot-analysis-derivedField
+Online демонстрация：https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-derivedполе
 
-### 6. Pivot table calculated fields
+### 6. сводный таблица calculated полеs
 
-[option description](../../option/PivotTable#dataConfig.calculatedFieldRules)
+[option description](../../option/сводныйтаблица#данныеConfig.calculatedполеRules)
 
-Configuration example:
+Configuration пример:
 
 ```
-dataConfig: {
-  calculatedFieldRules:[
+данныеConfig: {
+  calculatedполеRules:[
     {
       key: 'AvgPrice',
-      dependIndicatorKeys: ['Quantity', 'Sales'],
+      dependIndicatorKeys: ['Количество', 'Продажи'],
       calculateFun: dependValue => {
-        return dependValue.Sales / dependValue.Quantity;
+        возврат dependValue.Продажи / dependValue.Количество;
       }
     }
   ],
@@ -378,202 +378,202 @@ dataConfig: {
 
 Configuration explanation:
 
-- key: The key unique identifier of the calculated field, which can be used as a new indicator and configured in indicators for display in the pivot table.
-- dependIndicatorKeys: The indicators that the calculated field depends on, which can be the corresponding indicator fields in records. If the dependent indicator is not in records, it needs to be configured in aggregationRules, specifying the aggregation rules and indicatorKey to be used in dependIndicatorKeys.
-- calculateFun: the calculation function of the calculated field, the function parameter is the value of the dependent indicator.
+- key: The key unique identifier из the calculated поле, which can be used as a новый indicator и configured в indicators для display в the сводный таблица.
+- dependIndicatorKeys: The indicators that the calculated поле depends на, which can be the corresponding indicator полеs в records. If the dependent indicator is не в records, it needs к be configured в aggregationRules, specifying the aggregation rules и indicatorKey к be used в dependIndicatorKeys.
+- calculateFun: the calculation функция из the calculated поле, the функция параметр is the значение из the dependent indicator.
 
-Specific example: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-calculatedField
+Specific пример: https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-calculatedполе
 
-## Data analysis process
+## данные analysis process
 
-Dependent configuration: dimensions, indicators and dataConfig.
+Dependent configuration: dimensions, indicators и данныеConfig.
 
-### The process of traversing data:
+### The process из traversing данные:
 
-Traverse the records once, parse the row header dimension value to display the header cell, distribute all data in the records to the corresponding row and column path set, and calculate the aggregate value of the body part indicator cell.
+Traverse the records once, parse the row header dimension значение к display the header cell, distribute все данные в the records к the corresponding row и column path set, и calculate the aggregate значение из the body part indicator cell.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/data-analysis-process.png" />
-    <p>Data analysis process</p>
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/данные-analysis-process.png" />
+    <p>данные analysis process</p>
   </div>
 
-### Data dimension tree
+### данные dimension tree
 
-According to the above traversed structure, a dimension tree will be generated, from which the value of the cell and the original data entry of the value can be found.
+According к the above traversed structure, a dimension tree will be generated, от which the значение из the cell и the original данные entry из the значение can be found.
 
- <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/dimension-tree.png" />
-    <p>Organize dimension tree to aggregate data</p>
+ <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/dimension-tree.png" />
+    <p>Organize dimension tree к aggregate данные</p>
   </div>
-  After analysis and calculation of record grouping and aggregation, the corresponding relationship between the cell data in the table and the records data source is finally presented:
-   <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/recordsToCell.png" />
-    <p>Correspondence between data source entries and cells</p>
-  </div>
-
-### Custom header structure width dimension tree
-
-Although multi-dimensional tables with analytical capabilities can automatically analyze the dimension values of each dimension to form a tree structure of row and column headers, and can be sorted according to `dataConfig.sortRules`, scenarios with complex business logic still expect to be able to **customize Row column header dimension value ** and order. Then these business requirement scenarios can be realized through rowTree and columnTree.
-
-   <div style="width: 80%; text-align: center;">
-     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/custom-tree.png" />
-    <p>custom rowTree columnTree</p>
+  After analysis и calculation из record grouping и aggregation, the corresponding relationship between the cell данные в the таблица и the records данные source is finally presented:
+   <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/recordsToCell.png" />
+    <p>Correspondence between данные source entries и cells</p>
   </div>
 
-Custom tree configuration:
+### пользовательский header structure ширина dimension tree
+
+Although multi-dimensional таблицаs с analytical capabilities can автоmatically analyze the dimension values из каждый dimension к form a tree structure из row и column headers, и can be сортировкаed according к `данныеConfig.сортировкаRules`, scenarios с complex business logic still expect к be able к **пользовательскийize Row column header dimension значение ** и order. Then these business requirement scenarios can be realized through rowTree и columnTree.
+
+   <div style="ширина: 80%; текст-align: центр;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/guide/пользовательский-tree.png" />
+    <p>пользовательский rowTree columnTree</p>
+  </div>
+
+пользовательский tree configuration:
 
 ```
 const option = {
     rowTree: [{
-        dimensionKey: 'region',
-        value: '中南',
+        dimensionKey: 'Регион',
+        значение: '中南',
         children: [
             {
                 dimensionKey: 'province',
-                value: '广东',
+                значение: '广东',
             },
             {
                 dimensionKey: 'province',
-                value: '广西',
+                значение: '广西',
             }
         ]
     },
     {
-        dimensionKey: 'region',
-        value: '华东',
+        dimensionKey: 'Регион',
+        значение: '华东',
         children: [
             {
                 dimensionKey: 'province',
-                value: '上海',
+                значение: '上海',
             },
             {
                 dimensionKey: 'province',
-                value: '山东',
+                значение: '山东',
             }
         ]
     }],
     columnTree: [{
         dimensionKey: 'year',
-        value: '2016',
+        значение: '2016',
         children: [
             {
                 dimensionKey: 'quarter',
-                value: '2016-Q1',
+                значение: '2016-Q1',
                 children: [
                     {
-                        indicatorKey: 'sales',
-                        value: 'sales'
+                        indicatorKey: 'Продажи',
+                        значение: 'Продажи'
                     },
                     {
-                        indicatorKey: 'profit',
-                        value: 'profit'
+                        indicatorKey: 'Прибыль',
+                        значение: 'Прибыль'
                     }
                 ]
             },
             {
                 dimensionKey: 'quarter',
-                value: '2016-Q2',
+                значение: '2016-Q2',
                 children: [
                     {
-                        indicatorKey: 'sales',
-                        value: 'sales'
+                        indicatorKey: 'Продажи',
+                        значение: 'Продажи'
                     },
                     {
-                        indicatorKey: 'profit',
-                        value: 'profit'
+                        indicatorKey: 'Прибыль',
+                        значение: 'Прибыль'
                     }
                 ]
             }
         ]
     }],
-    indicators: ['sales', 'profit'],
+    indicators: ['Продажи', 'Прибыль'],
 
     corner: {
-        titleOnDimension: 'none'
+        titleOnDimension: 'никто'
     },
     records: [
         {
-            region: '中南',
+            Регион: '中南',
             province: '广东',
             year: '2016',
             quarter: '2016-Q1',
-            sales: 1243,
-            profit: 546
+            Продажи: 1243,
+            Прибыль: 546
         },
         {
-            region: '中南',
+            Регион: '中南',
             province: '广东',
             year: '2016',
             quarter: '2016-Q2',
-            sales: 2243,
-            profit: 169
+            Продажи: 2243,
+            Прибыль: 169
         }, {
-            region: '中南',
+            Регион: '中南',
             province: '广西',
             year: '2016',
             quarter: '2016-Q1',
-            sales: 3043,
-            profit: 1546
+            Продажи: 3043,
+            Прибыль: 1546
         },
         {
-            region: '中南',
+            Регион: '中南',
             province: '广西',
             year: '2016',
             quarter: '2016-Q2',
-            sales: 1463,
-            profit: 609
+            Продажи: 1463,
+            Прибыль: 609
         },
         {
-            region: '华东',
+            Регион: '华东',
             province: '上海',
             year: '2016',
             quarter: '2016-Q1',
-            sales: 4003,
-            profit: 1045
+            Продажи: 4003,
+            Прибыль: 1045
         },
         {
-            region: '华东',
+            Регион: '华东',
             province: '上海',
             year: '2016',
             quarter: '2016-Q2',
-            sales: 5243,
-            profit: 3169
+            Продажи: 5243,
+            Прибыль: 3169
         }, {
-            region: '华东',
+            Регион: '华东',
             province: '山东',
             year: '2016',
             quarter: '2016-Q1',
-            sales: 4543,
-            profit: 3456
+            Продажи: 4543,
+            Прибыль: 3456
         },
         {
-            region: '华东',
+            Регион: '华东',
             province: '山东',
             year: '2016',
             quarter: '2016-Q2',
-            sales: 6563,
-            profit: 3409
+            Продажи: 6563,
+            Прибыль: 3409
         }
     ]
 };
 ```
 
-VTable official website example: https://visactor.io/vtable/demo/table-type/pivot-table.
+Vтаблица official website пример: https://visactor.io/vтаблица/демонстрация/таблица-тип/сводный-таблица.
 
-The complexity of the custom tree lies in the formation of the row, column and dimension trees. You can choose to use it according to the business scenario. If you have complex sorting, aggregation or paging rules, you can choose to use a custom method.
+The complexity из the пользовательский tree lies в the formation из the row, column и dimension trees. Вы можете choose к use it according к the business scenario. If you have complex сортировкаing, aggregation или paging rules, Вы можете choose к use a пользовательский method.
 
 ## Other related configurations
 
-### Drilling up and down
+### Drilling up и down
 
-We only provide the display of the drill-down download button. If you need this capability, you need to combine events and interfaces to implement the relevant logic yourself.
+We only provide the display из the drill-down download Кнопка. If you need this capability, you need к combine событиеs и interfaces к implement the relevant logic yourself.
 
-Add the drillDown configuration item to the dimension configuration rows or columns to display the download button, listen to the icon button click event `drillmenu_click`, determine whether to drill down or roll up the dimension according to the event parameter `drillDown` or `drillUp`, determine the dimension to drill down or drill up according to the parameter `dimensionKey`, add or delete it to rows or columns, obtain the data source corresponding to the new dimension level, and call the interface `updateOption` to update the new option to the table.
+Add the drillDown configuration item к the dimension configuration rows или columns к display the download Кнопка, списокen к the иконка Кнопка Нажать событие `drillменю_Нажать`, determine whether к drill down или roll up the dimension according к the событие параметр `drillDown` или `drillUp`, determine the dimension к drill down или drill up according к the параметр `dimensionKey`, add или delete it к rows или columns, obtain the данные source corresponding к the новый dimension level, и call the интерфейс `updateOption` к update the новый option к the таблица.
 
-Specific demo: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-table-drill
+Specific демонстрация: https://visactor.io/vтаблица/демонстрация/данные-analysis/сводный-analysis-таблица-drill
 
 ## Related interfaces
 
 ### getCellOriginRecord
 
-It can help to obtain the original data entry corresponding to the cell aggregate value.
+It can help к obtain the original данные entry corresponding к the cell aggregate значение.

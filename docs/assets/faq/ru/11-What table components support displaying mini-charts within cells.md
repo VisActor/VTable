@@ -4,7 +4,7 @@
 
 Я хотел бы иметь отдельный столбец в таблице статистики продаж для отображения мини-линейных диаграмм, которые отражают отображаемые тенденции роста, аналогично ежедневному списку свечей в биржевых диаграммах.
 
-![](/vtable/faq/11-0.png)
+![](/VTable/faq/11-0.png)
 
 ## Решение
 
@@ -18,13 +18,13 @@ VTable может настроить columnType как "sparkline" для ото
 
 ## Результаты
 
-[Онлайн демо](https://codesandbox.io/s/vtable-list-table-jw8yr8?file=/src/index.ts)
+[Онлайн демо](https://codesandbox.io/s/VTable-list-table-jw8yr8?file=/src/index.ts)
 
-![result](/vtable/faq/11-1.png)
+![result](/VTable/faq/11-1.png)
 
 ## Ссылки
 
-- [Руководство по Sparkline](https://visactor.io/vtable/guide/cell_type/sparkline)
-- [Демо пользовательского макета ячеек](https://visactor.io/vtable/demo/cell-type/multi-type)
-- [Связанное API](https://visactor.io/vtable/option/ListTable-columns-sparkline#cellType)
+- [Руководство по Sparkline](https://visactor.io/VTable/guide/cell_type/sparkline)
+- [Демо пользовательского макета ячеек](https://visactor.io/VTable/demo/cell-тип/multi-тип)
+- [Связанное API](https://visactor.io/VTable/option/ListTable-columns-sparkline#cellType)
 - [github](https://github.com/VisActor/VTable)

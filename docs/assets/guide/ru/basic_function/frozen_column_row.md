@@ -1,73 +1,73 @@
-# Freeze Columns and Rows
+# Freeze Columns и Rows
 
-In data analysis applications, the amount of data in a table is usually very large, which means that there are many columns in the table horizontally. When users horizontally scroll the table, it may cause the columns of key information to be "scrolled out" of the visible range. In order to keep these key information columns visible during horizontal scrolling, we need to "freeze" these columns or rows. The freeze column and row function can make data analysis easier and clearer.
+в данные analysis applications, the amount из данные в a таблица is usually very large, which means that there are many columns в the таблица horizontally. When users horizontally прокрутка the таблица, it may cause the columns из key information к be "scrolled out" из the видимый range. в order к keep these key information columns видимый during horizontal scrolling, we need к "freeze" these columns или rows. The freeze column и row функция can make данные analysis easier и clearer.
 
-Note: This function is only supported in the basic table ListTable.
+Note: This функция is only supported в the базовый таблица списоктаблица.
 
-## Set Left Frozen Columns
+## Set лево Frozen Columns
 
-Freezing the left column is the most common freezing requirement. Compared with the freezing in other directions, this is also the most comprehensive freezing ability supported by VTable.
+Freezing the лево column is the most common freezing requirement. Compared с the freezing в other directions, Этоlso the most comprehensive freezing ability supported по Vтаблица.
 f
 The relevant configuration items are as follows:
 
-- `frozenColCount`: Number of frozen columns, default is 0.
-- `allowFrozenColCount`: Number of columns allowed to be operated, that is, the number of columns before which the freeze operation button will appear, default is 0.
-- `showFrozenIcon`: Whether to display the fixed column icon, default is `true`.
-- `maxFrozenWidth`: Maximum freeze width, default is '80%'.
-- `unfreezeAllOnExceedsMaxWidth`: When the column width exceeds the maximum freeze width, whether to automatically unfreeze all, default is `true`.
+- `frozenColCount`: число из frozen columns, по умолчанию is 0.
+- `allowFrozenColCount`: число из columns allowed к be operated, that is, the число из columns before which the freeze operation Кнопка will appear, по умолчанию is 0.
+- `showFrozenиконка`: Whether к display the fixed column иконка, по умолчанию is `true`.
+- `maxFrozenширина`: Maximum freeze ширина, по умолчанию is '80%'.
+- `unfreezeAllOnExceedsMaxширина`: When the column ширина exceeds the maximum freeze ширина, whether к автоmatically unfreeze все, по умолчанию is `true`.
 
-Here is a configuration example:
+Here is a configuration пример:
 
 ```javascript
-const listTable = new ListTable({
+const списоктаблица = новый списоктаблица({
   // ...other configuration items
   frozenColCount: 2,
   allowFrozenColCount: 4,
-  showFrozenIcon: true
+  showFrozenиконка: true
 });
 ```
 
-In this example, we set the number of frozen columns to 2, which means that the first two columns will be frozen. At the same time, the number of columns allowed to be frozen is set to 4, which means that the freeze operation button will appear before the first four columns, and users can manually freeze them as needed. Finally, set `showFrozenIcon` to `true` to display the fixed column icon in the basic table.
+в this пример, we set the число из frozen columns к 2, which means that the первый two columns will be frozen. в the same time, the число из columns allowed к be frozen is set к 4, which means that the freeze operation Кнопка will appear before the первый four columns, и users can manually freeze them as needed. Finally, set `showFrozenиконка` к `true` к display the fixed column иконка в the базовый таблица.
 
-## Set Right Frozen Columns
+## Set право Frozen Columns
 
-A common scenario for freezing the right column in a table is to place operation buttons or menus, so that users can easily operate on each row in the table.
-
-The configuration items are as follows:
-
-- `rightFrozenColCount`: Number of right frozen columns, default is 0.
-
-## Set Top Frozen Rows
-
-The header part is automatically frozen, if you want the body part to be frozen, just set `frozenRowCount`. The main setting number value must be greater than the number of header rows to freeze the body part rows.
-
-## Set Bottom Frozen Rows
-
-The scenario of freezing the bottom row can be used to fix the total row or a table with multiple header levels. Users can keep the visibility of the total row when scrolling the table, which is convenient for viewing summary data.
+A common scenario для freezing the право column в a таблица is к place operation Кнопкаs или менюs, so that users can easily operate на каждый row в the таблица.
 
 The configuration items are as follows:
 
-- `bottomFrozenRowCount`: Number of bottom frozen rows, default is 0.
+- `rightFrozenColCount`: число из право frozen columns, по умолчанию is 0.
 
-## Use the Freeze Column Interface
+## Set верх Frozen Rows
 
-In addition to setting the frozen columns through the configuration items, VTable also provides the corresponding interface method `setFrozenColCount` to dynamically set the number of frozen columns, so that you can adjust it at any time according to your needs during the program running.
+The header part is автоmatically frozen, if you want the body part к be frozen, just set `frozenRowCount`. The main setting число значение must be greater than the число из header rows к freeze the body part rows.
 
-You can use the `setFrozenColCount` interface method of the `ListTable` class to set the current number of frozen columns, as shown below:
+## Set низ Frozen Rows
+
+The scenario из freezing the низ row can be used к fix the total row или a таблица с multiple header levels. Users can keep the visibility из the total row when scrolling the таблица, which is convenient для viewing summary данные.
+
+The configuration items are as follows:
+
+- `bottomFrozenRowCount`: число из низ frozen rows, по умолчанию is 0.
+
+## Use the Freeze Column интерфейс
+
+в addition к setting the frozen columns through the configuration items, Vтаблица also provides the corresponding интерфейс method `setFrozenColCount` к dynamically set the число из frozen columns, so that Вы можете adjust it в любой time according к your needs during the program running.
+
+Вы можете use the `setFrozenColCount` интерфейс method из the `списоктаблица` class к set the текущий число из frozen columns, as shown below:
 
 ```javascript
-listTable.setFrozenColCount(3);
-or;
-listTable.frozenColCount = 3;
+списоктаблица.setFrozenColCount(3);
+или;
+списоктаблица.frozenColCount = 3;
 ```
 
-In this example, we adjust the number of frozen columns of the current list to 3. At this time, the first three columns will be frozen.
+в this пример, we adjust the число из frozen columns из the текущий список к 3. в this time, the первый three columns will be frozen.
 
-## Example
+## пример
 
-Example:
+пример:
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const records = [
   {
     230517143221027: 'CA-2018-156720',
@@ -89,7 +89,7 @@ const records = [
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'West',
-    230517143221024: 'Fairfield',
+    230517143221024: 'Fairполе',
     230517143221029: '2018-12-30',
     230517143221042: '2',
     230517143221040: '20.72',
@@ -102,7 +102,7 @@ const records = [
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'West',
-    230517143221024: 'Fairfield',
+    230517143221024: 'Fairполе',
     230517143221029: '2018-12-30',
     230517143221042: '2',
     230517143221040: '13.904',
@@ -111,11 +111,11 @@ const records = [
   {
     230517143221027: 'CA-2018-143259',
     230517143221030: 'PO-18865',
-    230517143221032: 'Wilson Jones Legal Size Ring Binders',
+    230517143221032: 'Wilson Jones Legal размер Ring Binders',
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York Город',
     230517143221029: '2018-12-30',
     230517143221042: '3',
     230517143221040: '52.776',
@@ -128,7 +128,7 @@ const records = [
     230517143221023: 'Technology',
     230517143221034: 'Phones',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York Город',
     230517143221029: '2018-12-30',
     230517143221042: '7',
     230517143221040: '90.93',
@@ -137,11 +137,11 @@ const records = [
   {
     230517143221027: 'CA-2018-143259',
     230517143221030: 'PO-18865',
-    230517143221032: 'Bush Westfield Collection Bookcases, Fully Assembled',
+    230517143221032: 'Bush Westполе Collection Boхорошоcases, Fully Assembled',
     230517143221023: 'Furniture',
-    230517143221034: 'Bookcases',
+    230517143221034: 'Boхорошоcases',
     230517143221037: 'East',
-    230517143221024: 'New York City',
+    230517143221024: 'новый York Город',
     230517143221029: '2018-12-30',
     230517143221042: '4',
     230517143221040: '323.136',
@@ -176,7 +176,7 @@ const records = [
   {
     230517143221027: 'US-2018-158526',
     230517143221030: 'KH-16360',
-    230517143221032: 'Global Leather and Oak Executive Chair, Black',
+    230517143221032: 'Global Leather и Oak Executive Chair, Black',
     230517143221023: 'Furniture',
     230517143221034: 'Chairs',
     230517143221037: 'South',
@@ -189,7 +189,7 @@ const records = [
   {
     230517143221027: 'US-2018-158526',
     230517143221030: 'KH-16360',
-    230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener with Auto Stop',
+    230517143221032: 'Panasonic KP-350BK Electric Pencil Sharpener с авто Stop',
     230517143221023: 'Office Supplies',
     230517143221034: 'Art',
     230517143221037: 'South',
@@ -202,7 +202,7 @@ const records = [
   {
     230517143221027: 'US-2018-158526',
     230517143221030: 'KH-16360',
-    230517143221032: 'GBC ProClick Spines for 32-Hole Punch',
+    230517143221032: 'GBC ProНажать Spines для 32-Hole Punch',
     230517143221023: 'Office Supplies',
     230517143221034: 'Binders',
     230517143221037: 'South',
@@ -242,61 +242,61 @@ const records = [
 
 const columns = [
   {
-    field: '230517143221027',
-    title: 'Order ID',
-    width: 'auto',
-    sort: true
+    поле: '230517143221027',
+    заголовок: 'ID Заказа',
+    ширина: 'авто',
+    сортировка: true
   },
   {
-    field: '230517143221030',
-    title: 'Customer ID',
-    width: 'auto',
-    sort: true
+    поле: '230517143221030',
+    заголовок: 'пользовательскийer ID',
+    ширина: 'авто',
+    сортировка: true
   },
   {
-    field: '230517143221032',
-    title: 'Product Name',
-    width: 'auto'
+    поле: '230517143221032',
+    заголовок: 'Product имя',
+    ширина: 'авто'
   },
   {
-    field: '230517143221023',
-    title: 'Category',
-    width: 'auto'
+    поле: '230517143221023',
+    заголовок: 'Категория',
+    ширина: 'авто'
   },
   {
-    field: '230517143221034',
-    title: 'Sub-Category',
-    width: 'auto'
+    поле: '230517143221034',
+    заголовок: 'Sub-Категория',
+    ширина: 'авто'
   },
   {
-    field: '230517143221037',
-    title: 'Region',
-    width: 'auto'
+    поле: '230517143221037',
+    заголовок: 'Регион',
+    ширина: 'авто'
   },
   {
-    field: '230517143221024',
-    title: 'City',
-    width: 'auto'
+    поле: '230517143221024',
+    заголовок: 'Город',
+    ширина: 'авто'
   },
   {
-    field: '230517143221029',
-    title: 'Order Date',
-    width: 'auto'
+    поле: '230517143221029',
+    заголовок: 'Дата Заказа',
+    ширина: 'авто'
   },
   {
-    field: '230517143221042',
-    title: 'Quantity',
-    width: 'auto'
+    поле: '230517143221042',
+    заголовок: 'Количество',
+    ширина: 'авто'
   },
   {
-    field: '230517143221040',
-    title: 'Sales',
-    width: 'auto'
+    поле: '230517143221040',
+    заголовок: 'Продажи',
+    ширина: 'авто'
   },
   {
-    field: '230517143221041',
-    title: 'Profit',
-    width: 'auto'
+    поле: '230517143221041',
+    заголовок: 'Прибыль',
+    ширина: 'авто'
   }
 ];
 
@@ -307,9 +307,9 @@ const option = {
   rightFrozenColCount: 1,
   frozenRowCount: 2,
   bottomFrozenRowCount: 1,
-  widthMode: 'standard'
+  ширинаMode: 'standard'
 };
 
-// 创建 VTable 实例
-const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+// 创建 Vтаблица 实例
+const таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
 ```

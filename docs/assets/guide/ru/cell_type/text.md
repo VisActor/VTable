@@ -1,47 +1,47 @@
-# Table Display Text Type (Text) Introduction
+# таблица Display текст тип (текст) Introduction
 
-In table applications, text-type data is the most common and basic form of data display. From simple table content to complex style adjustments, it all revolves around text data display. As the basic display form of data analytics, a good text type setting can provide users with a better reading experience. This tutorial will introduce the application of text types in VTable and its related configuration items in detail.
+в таблица applications, текст-тип данные is the most common и базовый form из данные display. от simple таблица content к complex style adjustments, it все revolves around текст данные display. As the базовый display form из данные analytics, a good текст тип setting can provide users с a better reading experience. This tutorial will introduce the application из текст types в Vтаблица и its related configuration items в detail.
 
-In VTable, you can customize fields and styles according to actual needs, so as to achieve flexible and diverse text type display effects.
+в Vтаблица, Вы можете пользовательскийize полеs и styles according к actual needs, so as к achieve flexible и diverse текст тип display effects.
 
-## Introduction to style configuration
+## Introduction к style configuration
 
-VTable supports setting various styles for text type data. The following are the style configuration items for text type:
+Vтаблица supports setting various styles для текст тип данные. Следующий are the style configuration items для текст тип:
 
-- `textAlign`: Defines the horizontal alignment of text within cells, which can be set to`left`,`center`,`right`.
-- `textBaseline`: Defines the vertical alignment of text within cells, which can be set to`top`,`middle`,`bottom`.
-- `textOverflow`: Set the omitted form of the text, which can be configured as:`'clip' | 'ellipsis' | string`, representing truncated text, using`...`Represents omitted text, other strings instead of omitted text. If `autoWrapText` Line wrapping is set, the configuration has no effect.
-- `color`: Defines the color of the text.
-- `fontSize`: Defines the size of the text.
-- `fontFamily`: Defines the font of the text.
-- `fontWeight`: Defines the font weight of the text.
-- `fontVariant`: Defines the font weight of the text.
-- `fontStyle`: Defines the font style of the text.
-- `textOverflow`: Set the omitted form of the text, it should be noted that if autoWrapText is set with line wrapping, the configuration is invalid.
-- `lineHeight`: Set the text font height for the cell text content.
-- `underline`: Set the underscore for the text content of the cell.
-- `underlineDash`: Dashed style of underline.
-- `underlineOffset`: The distance between underline and text.
-- `lineThrough`: Set the dash for the cell text content.
-- `textStick`: Set whether the text of the cell has an adsorption effect \[The text can dynamically adjust the position when scrolling].Can be set to true to enable, or set to 'horizontal' or 'vertical' to specify in which direction to snap only.
-- `textStickBaseOnAlign`: When the cell text has an adsorption effect [the text can dynamically adjust its position when scrolling], the basis for adsorption is the horizontal alignment of the cell. For example, when `textStickBaseOnAlign` is `true` and `textAlign` is `'center'`, the text will be adsorbed to the horizontal center of the cell; otherwise, it will be adsorbed to the left or right edge of the cell (depending on the scroll position)
-- `autoWrapText`: Sets whether cells wrap themselves.
-- `lineClamp`: Set the maximum number of rows in a cell, you can set number or'auto ', if set to'auto', it will be automatically calculated
+- `textAlign`: Defines the horizontal alignment из текст within cells, which can be set к`лево`,`центр`,`право`.
+- `textBaseline`: Defines the vertical alignment из текст within cells, which can be set к`верх`,`середина`,`низ`.
+- `textOverflow`: Set the omitted form из the текст, which can be configured as:`'clip' | 'ellipsis' | строка`, representing truncated текст, using`...`Represents omitted текст, other strings instead из omitted текст. If `автоWrapText` Line wrapping is set, the configuration has no effect.
+- `цвет`: Defines the цвет из the текст.
+- `fontSize`: Defines the размер из the текст.
+- `fontFamily`: Defines the шрифт из the текст.
+- `fontWeight`: Defines the шрифт weight из the текст.
+- `fontVariant`: Defines the шрифт weight из the текст.
+- `fontStyle`: Defines the шрифт style из the текст.
+- `textOverflow`: Set the omitted form из the текст, it should be noted that if автоWrapText is set с line wrapping, the configuration is invalid.
+- `lineвысота`: Set the текст шрифт высота для the cell текст content.
+- `underline`: Set the underscore для the текст content из the cell.
+- `underlineDash`: Dashed style из underline.
+- `underlineOffset`: The distance between underline и текст.
+- `lineThrough`: Set the dash для the cell текст content.
+- `textStick`: Set whether the текст из the cell has an adsorption effect \[The текст can dynamically adjust the позиция when scrolling].Can be set к true к включить, или set к 'horizontal' или 'vertical' к specify в which direction к snap only.
+- `textStickBaseOnAlign`: When the cell текст has an adsorption effect [the текст can dynamically adjust its позиция when scrolling], the basis для adsorption is the horizontal alignment из the cell. для пример, when `textStickBaseOnAlign` is `true` и `textAlign` is `'центр'`, the текст will be adsorbed к the horizontal центр из the cell; otherwise, it will be adsorbed к the лево или право edge из the cell (depending на the прокрутка позиция)
+- `автоWrapText`: Sets whether cells wrap themselves.
+- `lineClamp`: Set the maximum число из rows в a cell, Вы можете set число или'авто ', if set к'авто', it will be автоmatically calculated
 
-Note: The above styles also apply to the hyperlinke data format content.
+Note: The above styles also apply к the hyperlinke данные format content.
 
-## Example:
+## пример:
 
-```javascript livedemo
+```javascript liveдемонстрация
 {
-  cellType: 'text',
-  field: 'productName',
-  title: '商品名称',
+  cellType: 'текст',
+  поле: 'productимя',
+  заголовок: '商品名称',
   style: {
-    textAlign: 'left',
-    textBaseline: 'middle',
+    textAlign: 'лево',
+    textBaseline: 'середина',
     textOverflow: 'ellipsis',
-    color: '#333',
+    цвет: '#333',
     fontSize: 14,
     fontFamily: 'Arial',
     fontWeight: 'bold',
@@ -51,4 +51,4 @@ Note: The above styles also apply to the hyperlinke data format content.
 }
 ```
 
-Combined with the above examples, you can configure the display effect of text types in VTable according to actual needs. By reasonably adjusting the style of the text and related configuration items, it can provide users with a clear and easy-to-understand table display effect.
+Combined с the above примеры, Вы можете configure the display effect из текст types в Vтаблица according к actual needs. по reasonably adjusting the style из the текст и related configuration items, it can provide users с a clear и easy-к-understand таблица display effect.

@@ -1,11 +1,11 @@
-{{ target: svg-icon }}
+{{ target: svg-иконка }}
 
-${prefix} type ('svg')
-The icon content type is 'svg'.
+${prefix} тип ('svg')
+The иконка content тип is 'svg'.
 
-${prefix} svg (string)
-The content of svg. Supports svg path or url.
+${prefix} svg (строка)
+The content из svg. Supports svg path или url.
 
-{{ use: base-icon(
+{{ use: base-иконка(
     prefix = ${prefix}
 ) }}

@@ -1,17 +1,17 @@
-{{ target: common-gantt-timeline-header-style }}
+{{ target: common-гантт-timeline-header-style }}
 
-The definition of ITimelineHeaderStyle is:
+The definition из ITimelineHeaderStyle is:
 
 ```
-export interface ITimelineHeaderStyle {
-  padding?: number | number[];
-  fontSize?: number;
-  fontWeight?: string;
-  color?: string;
-  strokeColor?: string;
-  textAlign?: 'center' | 'end' | 'left' | 'right' | 'start'; // Sets the horizontal alignment of the text within the cell
-  textOverflow?: string;
-  textBaseline?: 'alphabetic' | 'bottom' | 'middle' | 'top'; // Sets the vertical alignment of the text within the cell
-  textStick?: boolean;
+export интерфейс ITimelineHeaderStyle {
+  заполнение?: число | число[];
+  fontSize?: число;
+  fontWeight?: строка;
+  цвет?: строка;
+  strхорошоeColor?: строка;
+  textAlign?: 'центр' | 'конец' | 'лево' | 'право' | 'начало'; // Sets the horizontal alignment из the текст within the cell
+  textOverflow?: строка;
+  textBaseline?: 'alphabetic' | 'низ' | 'середина' | 'верх'; // Sets the vertical alignment из the текст within the cell
+  textStick?: логический;
 }
 ```

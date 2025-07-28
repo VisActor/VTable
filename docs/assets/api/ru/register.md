@@ -4,7 +4,7 @@
 
 Функции, которые могут быть глобально зарегистрированы в библиотеке таблиц: theme, icon и chartModule, что соответствует регистрации темы, иконки и диаграммы соответственно.
 
-## theme(Function)
+## theme(функция)
 
 [Пример использования](../demo/theme/register):
 
@@ -22,7 +22,7 @@ VTable.register.theme('themeRegisterOne',{
 - Объяснение параметров функции register.theme:
 
 ```
-function theme(name: string, theme?: ITableThemeDefine){}
+функция theme(name: строка, theme?: ITableThemeDefine){}
 ```
 
 Структуру ITableThemeDefine можно найти в [theme](../option/ListTable#theme)
@@ -32,14 +32,14 @@ function theme(name: string, theme?: ITableThemeDefine){}
 После регистрации вы можете использовать зарегистрированное имя в опции для применения темы:
 
 ```
-const tableInstance = new VTable.PivotTable({
+const tableInstance = новый VTable.PivotTable({
   ···
   theme:'themeRegisterOne'
   ···
 });
 ```
 
-## icon(Function)
+## icon(функция)
 
 Регистрируя иконки, вы можете отображать иконки в таблице или заменять встроенные функциональные иконки, такие как иконка закрепления pin freeze.
 
@@ -49,17 +49,17 @@ const tableInstance = new VTable.PivotTable({
 
 ```
 VTable.register.icon('order',{
-      type: 'svg',
+      тип: 'svg',
       svg:
         'http://' + window.location.host + "/mock-data/order.svg",
-      width: 22,
-      height: 22,
+      ширина: 22,
+      высота: 22,
       name: 'order',
-      positionType: VTable.TYPES.IconPosition.left,
+      positionType: VTable.TYPES.IconPosition.лево,
       marginRight: 0,
-      hover: {
-        width: 22,
-        height: 22,
+      навести: {
+        ширина: 22,
+        высота: 22,
         bgColor: 'rgba(101, 117, 168, 0.1)',
       },
       cursor: 'pointer',
@@ -70,7 +70,7 @@ VTable.register.icon('order',{
 - Объяснение параметров функции register.icon:
 
 ```
-function icon(name: string, icon?: ColumnIconOption){}
+функция icon(name: строка, icon?: ColumnIconOption){}
 ```
 
 - Использование:
@@ -78,7 +78,7 @@ function icon(name: string, icon?: ColumnIconOption){}
 1. После регистрации иконки отображать иконку в заголовке или содержимом ячейки тела:
 
 ```
-const tableInstance = new VTable.PivotTable({
+const tableInstance = новый VTable.PivotTable({
   ···
   columns:[
     {
@@ -95,30 +95,30 @@ const tableInstance = new VTable.PivotTable({
 - Определение ColumnIconOption:
 
 ```
-type ColumnIconOption = ImageIcon | SvgIcon;
+тип ColumnIconOption = ImageIcon | SvgIcon;
 ```
 
-###ImageIcon(Object)
+###ImageIcon(объект)
 
 зарегистрировать ресурс изображения.
 
 {{ use: image-icon(  prefix = '####') }}
 
-###SvgIcon(Object)
+###SvgIcon(объект)
 
 зарегистрировать ресурс svg.
 
 {{ use: svg-icon(  prefix = '####') }}
 
-###TextIcon(Object)
+###TextIcon(объект)
 
 зарегистрировать текстовый ресурс.
 
-{{ use: text-icon(  prefix = '####') }}
+{{ use: текст-icon(  prefix = '####') }}
 
-## chartModule(Function)
+## chartModule(функция)
 
-[Пример использования](../demo/cell-type/chart):
+[Пример использования](../demo/cell-тип/chart):
 
 - Код регистрации chartModule следующий:
 
@@ -129,7 +129,7 @@ VTable.register.chartModule('chartspace', ChartSpace);
 - Определение функции register.chartTyle:
 
 ```
-function chartModule(name: string, chartModule?: any){}
+функция chartModule(name: строка, chartModule?: любой){}
 ```
 
 В этом случае chartModule является компонентом диаграммы. Например, [VChart](https://visactor.io/vchart).

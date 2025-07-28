@@ -1,115 +1,115 @@
 ---
-category: examples
-group: table-type
-title: Basic table grouping display
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group.jpeg
-order: 1-2
-link: table_type/List_table/group_list
-option: ListTable#groupBy
+категория: примеры
+группа: таблица-тип
+заголовок: базовый таблица grouping display
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/список-group.jpeg
+порядок: 1-2
+ссылка: таблица_type/список_таблица/group_список
+опция: списоктаблица#groupBy
 ---
 
-# Basic table grouping display
+# базовый таблица grouping display
 
-Basic table grouping display, used to display the hierarchical structure of grouping fields in data
+базовый таблица grouping display, used к display the hierarchical structure из grouping полеs в данные
 
 ## Key configuration
 
-- groupBy: Specify the grouping field name
-- enableTreeStickCell: enable group title sticky function
+- groupBy: Specify the grouping поле имя
+- enableTreeStickCell: включить group title sticky функция
 
-## Code demonstration
+## код демонстрацияnstration
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
-let tableInstance;
-fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+let таблицаInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/North_American_Superstore_данные.json')
   .then(res => res.json())
-  .then(data => {
+  .then(данные => {
     const columns = [
       {
-        field: 'Order ID',
-        title: 'Order ID',
-        width: 'auto'
+        поле: 'ID Заказа',
+        заголовок: 'ID Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Customer ID',
-        title: 'Customer ID',
-        width: 'auto'
+        поле: 'пользовательскийer ID',
+        заголовок: 'пользовательскийer ID',
+        ширина: 'авто'
       },
       {
-        field: 'Product Name',
-        title: 'Product Name',
-        width: 'auto'
+        поле: 'Product имя',
+        заголовок: 'Product имя',
+        ширина: 'авто'
       },
       {
-        field: 'Category',
-        title: 'Category',
-        width: 'auto'
+        поле: 'Категория',
+        заголовок: 'Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Sub-Category',
-        title: 'Sub-Category',
-        width: 'auto'
+        поле: 'Sub-Категория',
+        заголовок: 'Sub-Категория',
+        ширина: 'авто'
       },
       {
-        field: 'Region',
-        title: 'Region',
-        width: 'auto'
+        поле: 'Регион',
+        заголовок: 'Регион',
+        ширина: 'авто'
       },
       {
-        field: 'City',
-        title: 'City',
-        width: 'auto'
+        поле: 'Город',
+        заголовок: 'Город',
+        ширина: 'авто'
       },
       {
-        field: 'Order Date',
-        title: 'Order Date',
-        width: 'auto'
+        поле: 'Дата Заказа',
+        заголовок: 'Дата Заказа',
+        ширина: 'авто'
       },
       {
-        field: 'Quantity',
-        title: 'Quantity',
-        width: 'auto'
+        поле: 'Количество',
+        заголовок: 'Количество',
+        ширина: 'авто'
       },
       {
-        field: 'Sales',
-        title: 'Sales',
-        width: 'auto'
+        поле: 'Продажи',
+        заголовок: 'Продажи',
+        ширина: 'авто'
       },
       {
-        field: 'Profit',
-        title: 'Profit',
-        width: 'auto'
+        поле: 'Прибыль',
+        заголовок: 'Прибыль',
+        ширина: 'авто'
       }
     ];
 
     const option = {
-      records: data.slice(0, 100),
+      records: данные.slice(0, 100),
       columns,
-      widthMode: 'standard',
-      groupBy: ['Category', 'Sub-Category'],
-      groupTitleFieldFormat: (record, col, row, table) => {
-        return record.vtableMergeName + '(' + record.children.length + ')';
+      ширинаMode: 'standard',
+      groupBy: ['Категория', 'Sub-Категория'],
+      groupTitleполеFormat: (record, col, row, таблица) => {
+        возврат record.vтаблицаMergeимя + '(' + record.children.length + ')';
       },
-      theme: VTable.themes.DEFAULT.extends({
+      тема: Vтаблица.темаs.по умолчанию.extends({
         groupTitleStyle: {
           fontWeight: 'bold',
           // bgColor: '#3370ff'
           bgColor: args => {
-            const { col, row, table } = args;
-            const index = table.getGroupTitleLevel(col, row);
+            const { col, row, таблица } = args;
+            const index = таблица.getGroupTitleLevel(col, row);
             if (index !== undefined) {
-              return titleColorPool[index % titleColorPool.length];
+              возврат titleColorPool[index % titleColorPool.length];
             }
           }
         }
       }),
       enableTreeStickCell: true
     };
-    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
-    window.tableInstance = tableInstance;
+    таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID), option);
+    window.таблицаInstance = таблицаInstance;
   })
   .catch(e => {
-    console.error(e);
+    console.ошибка(e);
   });
 ```

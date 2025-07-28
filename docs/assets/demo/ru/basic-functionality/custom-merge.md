@@ -1,92 +1,92 @@
 ---
-category: examples
-group: Basic Features
-title: Custom Merge Cells
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge.png
-option: ListTable-columns-text#mergeCell
+категория: примеры
+группа: базовый возможности
+заголовок: пользовательский Merge Cells
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/пользовательский-merge.png
+опция: списоктаблица-columns-текст#mergeCell
 ---
 
-# Custom Merge cells
+# пользовательский Merge cells
 
-Customize the range, content, and style of merged cells through configuration
+пользовательскийize the range, content, и style из merged cells through configuration
 
-## Key Configurations
+## Ключевые Конфигурации
 
- - `customMergeCell`  Define rules for cell merging
+ - `пользовательскийMergeCell`  Define rules для cell merging
 
-## Code demo
+## код демонстрация
 
-```javascript livedemo template=vtable
+```javascript liveдемонстрация template=vтаблица
 
-let  tableInstance;
+let  таблицаInstance;
 
 const generatePersons = count => {
-  return Array.from(new Array(count)).map((_, i) => ({
+  возврат массив.от(новый массив(count)).map((_, i) => ({
     id: i + 1,
     email1: `${i + 1}@xxx.com`,
-    name: `name${i + 1}`,
+    имя: `имя${i + 1}`,
     date1: '2022-9-1日',
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
-    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
-    city: 'beijing'
+    work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer',
+    Город: 'beijing'
   }));
 };
 const records = generatePersons(10);
 
 const columns = [
     {
-      field: 'id',
-      title: 'ID ff',
-      width: '1%',
-      minWidth: 200,
-      sort: true
+      поле: 'id',
+      заголовок: 'ID ff',
+      ширина: '1%',
+      minширина: 200,
+      сортировка: true
     },
     {
-      field: 'email1',
-      title: 'email',
-      width: 200,
-      sort: true
+      поле: 'email1',
+      заголовок: 'email',
+      ширина: 200,
+      сортировка: true
     },
     {
-      title: 'full name',
+      заголовок: 'full имя',
       columns: [
         {
-          field: 'name',
-          title: 'First Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'первый имя',
+          ширина: 200
         },
         {
-          field: 'name',
-          title: 'Last Name',
-          width: 200
+          поле: 'имя',
+          заголовок: 'последний имя',
+          ширина: 200
         }
       ]
     },
     {
-      field: 'date1',
-      title: 'birthday',
-      width: 200
+      поле: 'date1',
+      заголовок: 'birthday',
+      ширина: 200
     },
     {
-      field: 'sex',
-      title: 'sex',
-      width: 100
+      поле: 'sex',
+      заголовок: 'sex',
+      ширина: 100
     },
     {
-      field: 'tel',
-      title: 'telephone',
-      width: 150
+      поле: 'tel',
+      заголовок: 'telephone',
+      ширина: 150
     },
     {
-      field: 'work',
-      title: 'job',
-      width: 200
+      поле: 'work',
+      заголовок: 'job',
+      ширина: 200
     },
     {
-      field: 'city',
-      title: 'city',
-      width: 150
+      поле: 'Город',
+      заголовок: 'Город',
+      ширина: 150
     }
   ];
 
@@ -94,29 +94,29 @@ const columns = [
 const option = {
   records,
   columns,
-  widthMode:'standard',
-  customMergeCell: (col, row, table) => {
-    if (col >=0 && col < table.colCount && row === table.rowCount-1) {
-      return {
-        text: 'Summary column: This data is a basic information of personnel',
+  ширинаMode:'standard',
+  пользовательскийMergeCell: (col, row, таблица) => {
+    if (col >=0 && col < таблица.colCount && row === таблица.rowCount-1) {
+      возврат {
+        текст: 'Summary column: This данные is a базовый information из personnel',
         range: {
-          start: {
+          начало: {
             col: 0,
-            row: table.rowCount-1
+            row: таблица.rowCount-1
           },
-          end: {
-            col: table.colCount-1,
-            row: table.rowCount-1
+          конец: {
+            col: таблица.colCount-1,
+            row: таблица.rowCount-1
           }
         },
         style:{
-          borderLineWidth:[6,1,1,1],
+          borderLineширина:[6,1,1,1],
           borderColor:['gray']
         }
       };
     }
   }
 };
-tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
-window['tableInstance'] = tableInstance;
+таблицаInstance = новый Vтаблица.списоктаблица(document.getElementById(CONTAINER_ID),option);
+window['таблицаInstance'] = таблицаInstance;
 ```

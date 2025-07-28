@@ -1,25 +1,25 @@
-{{ target: circle-custom-element }}
+{{ target: circle-пользовательский-element }}
 
-${prefix} type (string) ='circle'
+${prefix} тип (строка) ='circle'
 
-**Required**
+**обязательный**
 
-Element type, in this case, a circle.
+Element тип, в this case, a circle.
 
-{{ use: base-custom-element(
+{{ use: base-пользовательский-element(
     prefix = ${prefix},
 ) }}
 
-${prefix} radius (number | string | ((value: string) => number | string))
+${prefix} radius (число | строка | ((значение: строка) => число | строка))
 
-**Required**
+**обязательный**
 
-Circle radius, can be a number, string, or a function that returns a number or string.
+Circle radius, can be a число, строка, или a функция that returns a число или строка.
 
-${prefix} stroke (string | ((value: string) => string))
+${prefix} strхорошоe (строка | ((значение: строка) => строка))
 
-Circle stroke color, can be a string or a function that returns a string.
+Circle strхорошоe цвет, can be a строка или a функция that returns a строка.
 
-${prefix} fill (string | ((value: string) => string))
+${prefix} fill (строка | ((значение: строка) => строка))
 
-Circle fill color, can be a string or a function that returns a string.
+Circle fill цвет, can be a строка или a функция that returns a строка.

@@ -1,96 +1,96 @@
 ---
-category: examples
-group: gantt
-title: Gantt Style — Text Not Hidden
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/gantt-label-text.gif
-link: gantt/introduction
-option: Gantt#taskBar
+категория: примеры
+группа: гантт
+заголовок: гантт Style — текст не скрытый
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/гантт-label-текст.gif
+ссылка: гантт/introduction
+опция: гантт#taskBar
 ---
 
-# Gantt Style - Text Not Hidden
+# гантт Style - текст не скрытый
 
-This example demonstrates the style configuration of not hiding taskbar text.
+This пример демонстрацияnstrates the style configuration из не hiding taskbar текст.
 
 ## Key Configuration
 
-- `orient` Text orientation relative to the taskbar. Optional values: `left`, `top`, `right`, `bottom`, representing the four directions respectively.
-- `orientHandleWithOverflow` Specifies the taskbar text orientation when the label cannot fit within the taskbar. Ignored if `orient` is explicitly set.
+- `orient` текст orientation relative к the taskbar. необязательный values: `лево`, `верх`, `право`, `низ`, representing the four directions respectively.
+- `orientHandleWithOverflow` Specifies the taskbar текст orientation when the label cannot fit within the taskbar. Ignored if `orient` is explicitly set.
 
-## Code Demo
+## код демонстрация
 
-```javascript livedemo template=vtable
-// import * as VTableGantt from '@visactor/vtable-gantt';
-let ganttInstance;
+```javascript liveдемонстрация template=vтаблица
+// import * as Vтаблицагантт от '@visactor/vтаблица-гантт';
+let ганттInstance;
 const records = [
   {
     id: 1,
-    title: 'Software Development',
+    заголовок: 'Software Development',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-24',
-    end: '2024-07-28',
+    начало: '2024-07-24',
+    конец: '2024-07-28',
     progress: 100,
     priority: 'P0'
   },
   {
     id: 2,
-    title: 'Project Feature Review',
+    заголовок: 'Project Feature Review',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-25',
-    end: '2024-07-27',
+    начало: '2024-07-25',
+    конец: '2024-07-27',
     progress: 90,
     priority: 'P0'
   },
   {
     id: 3,
-    title: 'Project Create',
+    заголовок: 'Project Create',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-29',
-    end: '2024-07-31',
+    начало: '2024-07-29',
+    конец: '2024-07-31',
     progress: 40,
     priority: 'P1'
   },
   {
     id: 4,
-    title: 'Develop feature 1',
+    заголовок: 'Develop feature 1',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-07-30',
-    end: '2024-08-10',
+    начало: '2024-07-30',
+    конец: '2024-08-10',
     progress: 30,
     priority: 'P1'
   },
   {
     id: 5,
-    title: 'Determine project scope',
+    заголовок: 'Determine project scope',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-08-01',
-    end: '2024-08-05',
+    начало: '2024-08-01',
+    конец: '2024-08-05',
     progress: 60,
     priority: 'P0'
   },
   {
     id: 6,
-    title: 'Project Status Review',
+    заголовок: 'Project Status Review',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-08-06',
-    end: '2024-08-08',
+    начало: '2024-08-06',
+    конец: '2024-08-08',
     progress: 10,
     priority: 'P0'
   },
   {
     id: 7,
-    title: 'Feature Testing',
+    заголовок: 'Feature Testing',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-08-09',
-    end: '2024-08-15',
+    начало: '2024-08-09',
+    конец: '2024-08-15',
     progress: 70,
     priority: 'P1'
   },
   {
     id: 8,
-    title: 'Project Complete',
+    заголовок: 'Project Complete',
     developer: 'liufangfang.jane@bytedance.com',
-    start: '2024-08-01',
-    end: '2024-08-10',
+    начало: '2024-08-01',
+    конец: '2024-08-10',
     progress: 70,
     priority: 'P0'
   }
@@ -98,71 +98,71 @@ const records = [
 
 const columns = [
   {
-    field: 'title',
-    title: 'title',
-    width: 'auto',
-    sort: true,
+    поле: 'title',
+    заголовок: 'title',
+    ширина: 'авто',
+    сортировка: true,
     tree: true,
-    editor: 'input'
+    editor: 'ввод'
   },
   {
-    field: 'start',
-    title: 'start',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'начало',
+    заголовок: 'начало',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   },
   {
-    field: 'end',
-    title: 'end',
-    width: 'auto',
-    sort: true,
-    editor: 'date-input'
+    поле: 'конец',
+    заголовок: 'конец',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'date-ввод'
   },
   {
-    field: 'priority',
-    title: 'priority',
-    width: 'auto',
-    sort: true,
-    editor: 'input'
+    поле: 'priority',
+    заголовок: 'priority',
+    ширина: 'авто',
+    сортировка: true,
+    editor: 'ввод'
   },
   {
-    field: 'progress',
-    title: 'progress',
-    width: 'auto',
-    sort: true,
+    поле: 'progress',
+    заголовок: 'progress',
+    ширина: 'авто',
+    сортировка: true,
     headerStyle: {
       borderColor: '#e1e4e8'
     },
     style: {
       borderColor: '#e1e4e8',
-      color: 'green'
+      цвет: 'green'
     },
-    editor: 'input'
+    editor: 'ввод'
   }
 ];
 const option = {
-  overscrollBehavior: 'none',
+  overscrollBehavior: 'никто',
   records,
-  taskListTable: {
+  taskсписоктаблица: {
     columns,
-    tableWidth: 250,
-    minTableWidth: 100,
-    maxTableWidth: 600,
-    theme: {
+    таблицаширина: 250,
+    minтаблицаширина: 100,
+    maxтаблицаширина: 600,
+    тема: {
       headerStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: 1,
+        borderLineширина: 1,
         fontSize: 18,
         fontWeight: 'bold',
-        color: 'red',
+        цвет: 'red',
         bgColor: '#EEF1F5'
       },
       bodyStyle: {
         borderColor: '#e1e4e8',
-        borderLineWidth: [1, 0, 1, 0],
+        borderLineширина: [1, 0, 1, 0],
         fontSize: 16,
-        color: '#4D4D4D',
+        цвет: '#4D4D4D',
         bgColor: '#FFF'
       }
     }
@@ -170,37 +170,37 @@ const option = {
   },
   frame: {
     outerFrameStyle: {
-      borderLineWidth: 2,
+      borderLineширина: 2,
       borderColor: '#e1e4e8',
       cornerRadius: 8
     },
     verticalSplitLineMoveable: true,
     verticalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     },
     horizontalSplitLine: {
       lineColor: '#e1e4e8',
-      lineWidth: 3
+      lineширина: 3
     }
   },
   grid: {
     weekendBackgroundColor: '#f8f8f8',
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     }
   },
-  headerRowHeight: 40,
-  rowHeight: 40,
+  headerRowвысота: 40,
+  rowвысота: 40,
   taskBar: {
-    startDateField: 'start',
-    endDateField: 'end',
-    progressField: 'progress',
+    startDateполе: 'начало',
+    endDateполе: 'конец',
+    progressполе: 'progress',
     // resizable: false,
     moveable: true,
     hoverBarStyle: {
@@ -210,13 +210,13 @@ const option = {
     labelTextStyle: {
       fontFamily: 'Arial',
       fontSize: 16,
-      textAlign: 'left',
-      textOverflow: 'visible',
-      orientHandleWithOverflow: 'right',
+      textAlign: 'лево',
+      textOverflow: 'видимый',
+      orientHandleWithOverflow: 'право',
       outsideColor: '#333333'
     },
     barStyle: {
-      width: 20,
+      ширина: 20,
       /** 任务条的颜色 */
       barColor: '#ee8800',
       /** 已完成部分任务条的颜色 */
@@ -224,26 +224,26 @@ const option = {
       /** 任务条的圆角 */
       cornerRadius: 8,
       /** 任务条的边框 */
-      borderLineWidth: 1,
+      borderLineширина: 1,
       /** 边框颜色 */
       borderColor: 'black'
     },
     milestoneStyle: {
       borderColor: 'red',
-      borderLineWidth: 1,
+      borderLineширина: 1,
       fillColor: 'green',
-      width: 15
+      ширина: 15
     }
   },
   timelineHeader: {
-    colWidth: 50,
+    colширина: 50,
     backgroundColor: '#EEF1F5',
     horizontalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     verticalLine: {
-      lineWidth: 1,
+      lineширина: 1,
       lineColor: '#e1e4e8'
     },
     scales: [
@@ -252,41 +252,41 @@ const option = {
         step: 1,
         startOfWeek: 'sunday',
         format(date) {
-          return `Week ${date.dateIndex}`;
+          возврат `Week ${date.dateIndex}`;
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5',
           textStick: true
-          // padding: [0, 30, 0, 20]
+          // заполнение: [0, 30, 0, 20]
         }
       },
       {
         unit: 'day',
         step: 1,
         format(date) {
-          return date.dateIndex.toString();
+          возврат date.dateIndex.toString();
         },
         style: {
           fontSize: 20,
           fontWeight: 'bold',
-          color: 'white',
-          strokeColor: 'black',
-          textAlign: 'right',
-          textBaseline: 'bottom',
+          цвет: 'white',
+          strхорошоeColor: 'black',
+          textAlign: 'право',
+          textBaseline: 'низ',
           backgroundColor: '#EEF1F5'
         }
       }
     ]
   },
   rowSeriesNumber: {
-    title: '行号',
-    dragOrder: true,
+    заголовок: '行号',
+    dragпорядок: true,
     headerStyle: {
       bgColor: '#EEF1F5',
       borderColor: '#e1e4e8'
@@ -297,12 +297,12 @@ const option = {
   },
   scrollStyle: {
     scrollRailColor: 'RGBA(246,246,246,0.5)',
-    visible: 'scrolling',
-    width: 6,
+    видимый: 'scrolling',
+    ширина: 6,
     scrollSliderCornerRadius: 2,
     scrollSliderColor: '#5cb85c'
   }
 };
-ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
-window['ganttInstance'] = ganttInstance;
+ганттInstance = новый Vтаблицагантт.гантт(document.getElementById(CONTAINER_ID), option);
+window['ганттInstance'] = ганттInstance;
 ```

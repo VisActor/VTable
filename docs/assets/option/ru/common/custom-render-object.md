@@ -1,99 +1,99 @@
-{{ target: common-custom-render-object }}
+{{ target: common-пользовательский-render-объект }}
 
-The definition of ICustomRenderObj is as follows:
+The definition из IпользовательскийRenderObj is as follows:
 
 ```
-export type ICustomRenderObj = {
-  /** Configured type collection */
-  elements: ICustomRenderElements;
-  /** Desired cell height */
-  expectedHeight: number;
-  /** Expected cell width */
-  expectedWidth: number;
+export тип IпользовательскийRenderObj = {
+  /** Configured тип collection */
+  elements: IпользовательскийRenderElements;
+  /** Desired cell высота */
+  expectedвысота: число;
+  /** Expected cell ширина */
+  expectedширина: число;
   /**
-   * Do you still need to render content by default? Only if the configuration is true, it will be drawn. By default, it will not be drawn.
+   * Do you still need к render content по по умолчанию? Only if the configuration is true, it will be drawn. по по умолчанию, it will не be drawn.
    */
-  renderDefault?: boolean;
+  renderDefault?: логический;
 };
 ```
 
 Detailed configuration instructions are as follows:
 
-${prefix} elements (Array)
+${prefix} elements (массив)
 
-The configured type collection. The type is declared as: ICustomRenderElement[].
+The configured тип collection. The тип is declared as: IпользовательскийRenderElement[].
 
-The definition of ICustomRenderElement is as follows:
+The definition из IпользовательскийRenderElement is as follows:
 
 ```
-type ICustomRenderElement = TextElement | RectElement | CircleElement | IconElement | ImageElement | ArcElement | LineElement;
+тип IпользовательскийRenderElement = TextElement | RectElement | CircleElement | иконкаElement | ImвозрастElement | ArcElement | LineElement;
 ```
-Based on the type attribute, this section introduces the specific configuration information for each type.
+Based на the тип attribute, this section introduces the specific configuration information для каждый тип.
 
-${prefix} elements.text(string)
-
-Placeholder TODO level 4 headings
-
-{{ use: text-custom-element(
-  prefix = '#' + ${prefix},
-) }}
-
-${prefix} elements.rect(string)
+${prefix} elements.текст(строка)
 
 Placeholder TODO level 4 headings
 
-{{ use: rect-custom-element(
+{{ use: текст-пользовательский-element(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} elements.circle(string)
+${prefix} elements.rect(строка)
 
 Placeholder TODO level 4 headings
 
-{{ use: circle-custom-element(
+{{ use: rect-пользовательский-element(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} elements.arc(string)
+${prefix} elements.circle(строка)
 
 Placeholder TODO level 4 headings
 
-{{ use: arc-custom-element(
+{{ use: circle-пользовательский-element(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} elements.image(string)
+${prefix} elements.arc(строка)
 
 Placeholder TODO level 4 headings
 
-{{ use: image-custom-element(
+{{ use: arc-пользовательский-element(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} elements.line(string)
+${prefix} elements.imвозраст(строка)
 
 Placeholder TODO level 4 headings
 
-{{ use: line-custom-element(
+{{ use: imвозраст-пользовательский-element(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} elements.icon(string)
+${prefix} elements.line(строка)
 
 Placeholder TODO level 4 headings
 
-{{ use: icon-custom-element(
+{{ use: line-пользовательский-element(
   prefix = '#' + ${prefix},
 ) }}
 
-${prefix} expectedHeight (number)
+${prefix} elements.иконка(строка)
 
-The expected height of the cell.
+Placeholder TODO level 4 headings
 
-${prefix} expectedWidth (number)
+{{ use: иконка-пользовательский-element(
+  prefix = '#' + ${prefix},
+) }}
 
-The expected width of the cell.
+${prefix} expectedвысота (число)
 
-${prefix} renderDefault (boolean) = false
+The expected высота из the cell.
 
-Whether to render default content, only when configured to true will it be drawn, otherwise not drawn by default.
+${prefix} expectedширина (число)
+
+The expected ширина из the cell.
+
+${prefix} renderDefault (логический) = false
+
+Whether к render по умолчанию content, only when configured к true will it be drawn, otherwise не drawn по по умолчанию.

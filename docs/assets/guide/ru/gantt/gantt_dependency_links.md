@@ -1,56 +1,56 @@
 ## Task Dependency Relationships
 
-VTable Gantt supports task dependency relationships, which can be displayed as lines connecting tasks.
+Vтаблица гантт supports task dependency relationships, which can be displayed as lines connecting tasks.
 
 ### Dependency Types
 
-Four dependency types are supported, defined in the `DependencyType` enumeration:
+Four dependency types are supported, defined в the `DependencyType` enumeration:
 
-1. **FinishToStart**：The previous task must finish before the next task can start.
-2. **StartToStart**：Both tasks must start at the same time.
-3. **FinishToFinish**：Both tasks must finish at the same time.
-4. **StartToFinish**：The previous task must start before the next task can finish.
+1. **FinishToStart**：The предыдущий task must finish before the следующий task can начало.
+2. **StartToStart**：Both tasks must начало в the same time.
+3. **FinishToFinish**：Both tasks must finish в the same time.
+4. **StartToFinish**：The предыдущий task must начало before the следующий task can finish.
 
 Configure a dependency relationship as follows:
 
 ```javascript
-// Use dependency type
-import { DependencyType } from '@visactor/vtable-gantt';
+// Use dependency тип
+import { DependencyType } от '@visactor/vтаблица-гантт';
 
 const dependencyLinks = [
   {
-    type: DependencyType.FinishToStart,
+    тип: DependencyType.FinishToStart,
     linkedFromTaskKey: 1,
     linkedToTaskKey: 2
   }
 ];
 
-const ganttOptions = {
+const ганттOptions = {
   dependency: {
     links: dependencyLinks
   }
 };
 ```
 
-The values of `linkedFromTaskKey` and `linkedToTaskKey` need to correspond to the unique identifier field in the task data. The default unique identifier field name is `id`, which can be modified using the `taskKeyField` configuration option. Each dependency relationship can have its own style set through the `linkLineStyle` property, such as line color, width, etc., which helps better distinguish between different types of dependency relationships.
+The values из `linkedFromTaskKey` и `linkedToTaskKey` need к correspond к the unique identifier поле в the task данные. The по умолчанию unique identifier поле имя is `id`, which can be modified using the `taskKeyполе` configuration option. каждый dependency relationship can have its own style set through the `linkLineStyle` property, such as line цвет, ширина, etc., which helps better distinguish between different types из dependency relationships.
 
 ### Create Dependencies
 
-Dependencies can be created through API or interaction:
+Dependencies can be created through апи или interaction:
 
-1. **API**：
+1. **апи**：
 
 ```javascript
 // Add dependency
-gantt.addLink({
-  type: 'finish_to_start',
+гантт.addLink({
+  тип: 'finish_to_start',
   linkedFromTaskKey: 3,
   linkedToTaskKey: 4
 });
 
 // Delete dependency
-gantt.deleteLink({
-  type: 'finish_to_start',
+гантт.deleteLink({
+  тип: 'finish_to_start',
   linkedFromTaskKey: 1,
   linkedToTaskKey: 2
 });
@@ -58,21 +58,21 @@ gantt.deleteLink({
 
 2. **Interactive**：
 
-After enabling the `dependency.linkCreatable` configuration option, dependencies can be created through interaction.
+After enabling the `dependency.linkCreaтаблица` configuration option, dependencies can be created through interaction.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-link-line-create.gif)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/гантт/гантт-dependency-link-line-create.gif)
 
 ### Delete Dependencies
 
-After enabling the `dependency.linkDeletable` configuration option, dependencies can be deleted through interaction.
+After enabling the `dependency.linkDeleтаблица` configuration option, dependencies can be deleted through interaction.
 
-Example 1:
+пример 1:
 
-To delete a dependency link through a right-click, you can listen for the `CONTEXTMENU_DEPENDENCY_LINK` event and call the `deleteLink` interface to delete it.
+к delete a dependency link through a право-Нажать, Вы можете списокen для the `CONTEXTменю_DEPENDENCY_LINK` событие и call the `deleteLink` интерфейс к delete it.
 
-Example 2:
+пример 2:
 
-Configure the shortcut key `keyboardOptions.deleteLinkOnDel` or `keyboardOptions.deleteLinkOnBack` to delete the dependency link by pressing the 'del' or 'back' key on the keyboard.
+Configure the shortcut key `keyboardOptions.deleteLinkOnDel` или `keyboardOptions.deleteLinkOnBack` к delete the dependency link по pressing the 'del' или 'back' key на the keyboard.
 
 ### Dependency Style Configuration
 
@@ -80,7 +80,7 @@ Style configuration entry:
 
 ```
 {
-  /** Basic dependency line style */
+  /** базовый dependency line style */
   linkLineStyle?: ILineStyle;
   /** Selected line style */
   linkSelectedLineStyle?: ITaskLinkSelectedStyle;
@@ -93,66 +93,66 @@ Style configuration entry:
 }
 ```
 
-Example:
+пример:
 
 ```javascript
-const ganttOptions = {
+const ганттOptions = {
   dependency: {
-    // Basic dependency line style
+    // базовый dependency line style
     linkLineStyle: {
       lineColor: '#8c8c8c',
-      lineWidth: 1,
+      lineширина: 1,
       lineDash: [4, 2]
     },
     // Selected line style
     linkSelectedLineStyle: {
       lineColor: '#1890ff',
-      lineWidth: 2,
+      lineширина: 2,
       shadowBlur: 4,
       shadowColor: 'rgba(24, 144, 255, 0.5)'
     },
     // Create point style
     linkCreatePointStyle: {
-      strokeColor: '#8c8c8c',
-      strokeWidth: 1,
+      strхорошоeColor: '#8c8c8c',
+      strхорошоeширина: 1,
       fillColor: '#fff',
       radius: 5
     },
     // Creating point style
     linkCreatingPointStyle: {
-      strokeColor: '#1890ff',
-      strokeWidth: 2,
+      strхорошоeColor: '#1890ff',
+      strхорошоeширина: 2,
       fillColor: '#fff',
       radius: 6
     },
     // Creating line style
     linkCreatingLineStyle: {
       lineColor: '#1890ff',
-      lineWidth: 2,
+      lineширина: 2,
       lineDash: [4, 2]
     }
   }
 };
 ```
 
-In addition to setting unified dependency line styles, you can also configure styles for each dependency line individually. In the links array, each link object can set the style of that dependency line through the `linkLineStyle` property. The interface type of `linkLineStyle` is also `ILineStyle`.
+в addition к setting unified dependency line styles, Вы можете also configure styles для каждый dependency line individually. в the links массив, каждый link объект can set the style из that dependency line through the `linkLineStyle` property. The интерфейс тип из `linkLineStyle` is also `ILineStyle`.
 
 ```javascript
 const dependencyLinks = [
   {
-    type: DependencyType.FinishToStart,
+    тип: DependencyType.FinishToStart,
     linkedFromTaskKey: 1,
     linkedToTaskKey: 2,
     // style
     linkLineStyle: {
       lineColor: 'skyblue',
-      lineWidth: 2,
+      lineширина: 2,
       lineDash: [4, 2]
     }
   }
 ];
 
-const ganttOptions = {
+const ганттOptions = {
   dependency: {
     links: dependencyLinks
   }
@@ -161,6 +161,6 @@ const ganttOptions = {
 
 ### Notes
 
-If the Gantt chart is tree-structured, when the start or end of the dependency line is a collapsed subtask, the dependency line will be automatically hidden.
+If the гантт график is tree-structured, when the начало или конец из the dependency line is a collapsed subtask, the dependency line will be автоmatically скрытый.
 
-In different task display modes, dependency links may have exceptions, if you find any issues, please report them or contribute to our code!
+в different task display modes, dependency links may have exceptions, if you find любой issues, please report them или contribute к our код!

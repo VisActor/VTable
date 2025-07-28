@@ -1,47 +1,47 @@
 ---
-category: examples
-group: usage
-title: use option and record
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
-order: 1-1
-link: Developer_Ecology/openinula
+категория: примеры
+группа: usвозраст
+заголовок: use option и record
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/Vтаблица/preview/react-по умолчанию-новый.png
+порядок: 1-1
+ссылка: Developer_Ecology/openinula
 ---
 
-# use option and record
+# use option и record
 
-Records can be separated from options and passed into the table component as a separate prop.
+Records can be separated от options и passed into the таблица компонент as a separate prop.
 
-## code demo
+## код демонстрация
 
-```javascript livedemo template=vtable-openinula
-// import * as InulaVTable from '@visactor/openinula-vtable';
+```javascript liveдемонстрация template=vтаблица-openinula
+// import * as InulaVтаблица от '@visactor/openinula-vтаблица';
 const option = {
   columns: [
     {
-      field: '0',
-      title: 'name'
+      поле: '0',
+      заголовок: 'имя'
     },
     {
-      field: '1',
-      title: 'age'
+      поле: '1',
+      заголовок: 'возраст'
     },
     {
-      field: '2',
-      title: 'gender'
+      поле: '2',
+      заголовок: 'пол'
     },
     {
-      field: '3',
-      title: 'hobby'
+      поле: '3',
+      заголовок: 'хобби'
     }
   ]
 };
-const records = new Array(1000).fill(['John', 18, 'male', '🏀']);
+const records = новый массив(1000).fill(['John', 18, 'male', '🏀']);
 
 const root = document.getElementById(CONTAINER_ID);
-Inula.render(<InulaVTable.ListTable option={option} records={records} height={'500px'} />, root);
+Inula.render(<InulaVтаблица.списоктаблица option={option} records={records} высота={'500px'} />, root);
 
-// release openinula instance, do not copy
-window.customRelease = () => {
-  Inula.unmountComponentAtNode(root);
+// Релиз openinula instance, do не copy
+window.пользовательскийРелиз = () => {
+  Inula.unmountкомпонентAtNode(root);
 };
 ```

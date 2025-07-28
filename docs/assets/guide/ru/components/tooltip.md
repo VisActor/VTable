@@ -1,85 +1,85 @@
-# Tooltip Introduction
+# Подсказка Introduction
 
-In table components, a tooltip is a common user interface element used to provide additional information about a specific table cell or data. It appears as a small pop-up window or floating box that displays relevant prompt text when the user hovers over a specific cell or interacts with a specific element.
+в таблица компонентs, a Подсказка is a common user интерфейс element used к provide additional information about a specific таблица cell или данные. It appears as a small pop-up window или floating box that displays relevant prompt текст when the user hovers over a specific cell или interacts с a specific element.
 
-## Tooltip usage scenarios
+## Подсказка usвозраст scenarios
 
-- Data interpretation and description: Data in some tables may require additional interpretation or description. Tooltip can be used to display these interpretations to help users understand the meaning, units, calculation methods or other relevant information of the data.
+- данные interpretation и description: данные в некоторые таблицаs may require additional interpretation или description. Подсказка can be used к display these interpretations к help users understand the meaning, units, calculation методы или other relevant information из the данные.
 
-- Overflow content: When the text or data in the table exceeds the width of the cell, you can use tooltip to display the full content to prevent truncation or hide important information.
+- Overflow content: When the текст или данные в the таблица exceeds the ширина из the cell, Вы можете use Подсказка к display the full content к prсобытие truncation или скрыть important information.
 
-- Description of Interactive Elements: If the table contains interactive elements (such as links, buttons, or icons), Tooltip can be used to provide functional descriptions or action hints for those elements.
+- Description из Interactive Elements: If the таблица contains interactive elements (such as links, Кнопкаs, или иконкаs), Подсказка can be used к provide functional descriptions или action hints для those elements.
 
-## Introduction to configuration items
+## Introduction к configuration items
 
 The configuration items are:
 
     {
       /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
-      tooltip: {
+      Подсказка: {
         /** 渲染方式：如使用html具有较好灵活行，上层可以覆盖样式；canvas具有较好的跨平台展示稳定性 */
         renderMode: 'html' | 'canvas';
-        /** 代替原来hover:isShowTooltip配置 */
-        isShowOverflowTextTooltip: boolean;
+        /** 代替原来hover:isShowПодсказка配置 */
+        isShowOverflowTextПодсказка: логический;
         /** 弹框是否需要限定在表格区域内 */
-        confine: boolean;
+        confine: логический;
       };
     }
 
-## Tooltip prompt box style settings
+## Подсказка prompt box style settings
 
-The style configuration of tooltip can be set through theme.tooltipStyle. The specific configuration is as follows:
+The style configuration из Подсказка can be set through тема.ПодсказкаStyle. The specific configuration is as follows:
 
 ```
-export type TooltipStyle = {
-  fontFamily?: string;
-  fontSize?: number;
-  color?: string;
-  padding?: number[];
-  bgColor?: string;
-  maxWidth?: number;
-  maxHeight?: number;
+export тип ПодсказкаStyle = {
+  fontFamily?: строка;
+  fontSize?: число;
+  цвет?: строка;
+  заполнение?: число[];
+  bgColor?: строка;
+  maxширина?: число;
+  maxвысота?: число;
 };
 
 ```
 
-## Enable overflow content prompt
+## включить overflow content prompt
 
-By default, VTable enables the tooltip of overflow content: isShowOverflowTextTooltip defaults to true. If you need to delay disappearance so that the mouse can move to the tooltip content, you can configure overflowTextTooltipDisappearDelay.
+по по умолчанию, Vтаблица enables the Подсказка из overflow content: isShowOverflowTextПодсказка defaults к true. If you need к delay disappearance so that the mouse can move к the Подсказка content, Вы можете configure overflowTextПодсказкаDisappearDelay.
 
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170e.gif)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/c0de7ff0a101bd4cb25c8170e.gif)
 
-## Custom icon hover prompt
+## пользовательский иконка навести prompt
 
-For example, the configuration of the table header icon is as follows:
+для пример, the configuration из the таблица header иконка is as follows:
 
 ```
-const tableInstance = new VTable.ListTable({
+const таблицаInstance = новый Vтаблица.списоктаблица({
   columns: [
     {
-      field: 'orderID',
-      title: '订单编号',
-      headerIcon: {
-        type: 'svg', //指定svg格式图标，其他还支持path，image
-        svg: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path d="M1.29609 1C0.745635 1 0.444871 1.64195 0.797169 2.06491L4.64953 6.68988V9.81861C4.64953 9.89573 4.69727 9.9648 4.76942 9.99205L7.11236 10.877C7.27164 10.9372 7.4419 10.8195 7.4419 10.6492V6.68988L11.2239 2.06012C11.5703 1.63606 11.2685 1 10.721 1H1.29609Z" stroke="#141414" stroke-opacity="0.65" stroke-width="1.18463" stroke-linejoin="round"/>
+      поле: 'orderID',
+      заголовок: '订单编号',
+      headerиконка: {
+        тип: 'svg', //指定svg格式图标，其他还支持path，imвозраст
+        svg: `<svg xmlns="http://www.w3.org/2000/svg" ширина="12" высота="12" viewBox="0 0 12 12" fill="никто">
+        <path d="M1.29609 1C0.745635 1 0.444871 1.64195 0.797169 2.06491L4.64953 6.68988V9.81861C4.64953 9.89573 4.69727 9.9648 4.76942 9.99205L7.11236 10.877C7.27164 10.9372 7.4419 10.8195 7.4419 10.6492V6.68988L11.2239 2.06012C11.5703 1.63606 11.2685 1 10.721 1H1.29609Z" strхорошоe="#141414" strхорошоe-opaГород="0.65" strхорошоe-ширина="1.18463" strхорошоe-linejoin="round"/>
         </svg>`,
-        width: 20,
-        height: 20,
-        name: 'filter', //定义图标的名称，在内部会作为缓存的key值
-        positionType: VTable.TYPES.IconPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
-        visibleTime: 'mouseenter_cell', // 显示时机， 'always' | 'mouseenter_cell' | 'click_cell'
-        hover: {
+        ширина: 20,
+        высота: 20,
+        имя: 'filter', //定义图标的名称，在内部会作为缓存的key值
+        positionType: Vтаблица.TYPES.иконкаPosition.absoluteRight, // 指定位置，可以在文本的前后，或者在绝对定位在单元格的左侧右侧
+        visibleTime: 'mouseenter_cell', // 显示时机， 'always' | 'mouseenter_cell' | 'Нажать_cell'
+        навести: {
           // 热区大小
-          width: 26,
-          height: 26,
+          ширина: 26,
+          высота: 26,
           bgColor: 'rgba(22,44,66,0.5)'
         },
-        tooltip: {
+        Подсказка: {
           style: { arrowMark: false },
           // 气泡框，按钮的的解释信息
-          title: '过滤',
-          placement: VTable.TYPES.Placement.right,
+          заголовок: '过滤',
+          placement: Vтаблица.TYPES.Placement.право,
           disappearDelay: 1000,
         }
       }
@@ -88,27 +88,27 @@ const tableInstance = new VTable.ListTable({
 });
 ```
 
-The tooltip in headerIcon is the prompt box when the mouse hovers over the icon. At the same time, disappearDelay is configured to delay the disappearance of the pop-up box so that the mouse can move to the tooltip content.
+The Подсказка в headerиконка is the prompt box when the mouse hovers over the иконка. в the same time, disappearDelay is configured к delay the disappearance из the pop-up box so that the mouse can move к the Подсказка content.
 
-For detailed information about icon configuration, please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_icon.
+для detailed information about иконка configuration, please refer к the tutorial: https://visactor.io/vтаблица/guide/пользовательский_define/пользовательский_иконка.
 
-## Display tooltip custom information through the interface
+## Display Подсказка пользовательский information through the интерфейс
 
-The interface showTooltip can actively display tooltip information, which is used as follows: (listen for cell hover events, call the interface)
-[Reference interface description](https://visactor.io/vtable/option/Methods#showTooltip)
+The интерфейс showПодсказка can actively display Подсказка information, which is used as follows: (списокen для cell навести событиеs, call the интерфейс)
+[Reference интерфейс description](https://visactor.io/vтаблица/option/методы#showПодсказка)
 
-      tableInstance.on('mouseenter_cell', (args) => {
-            const { col, row, targetIcon } = args;
+      таблицаInstance.на('mouseenter_cell', (args) => {
+            const { col, row, targetиконка } = args;
             if(col===0&&row>=1){
-              const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
-              tableInstance.showTooltip(col, row, {
-                content: 'Order ID：'+tableInstance.getCellValue(col,row),
-                referencePosition: { rect, placement: VTable.TYPES.Placement.right }, //TODO
-                className: 'defineTooltip',
+              const rect = таблицаInstance.getVisibleCellRangeRelativeRect({ col, row });
+              таблицаInstance.showПодсказка(col, row, {
+                content: 'ID Заказа：'+таблицаInstance.getCellValue(col,row),
+                referencePosition: { rect, placement: Vтаблица.TYPES.Placement.право }, //TODO
+                classимя: 'defineПодсказка',
                 style: {
                   bgColor: 'black',
-                  color: 'white',
-                  font: 'normal bold normal 14px/1 STKaiti',
+                  цвет: 'white',
+                  шрифт: 'normal bold normal 14px/1 STKaiti',
                   arrowMark: true,
                 },
                 disappearDelay: 100,
@@ -117,27 +117,27 @@ The interface showTooltip can actively display tooltip information, which is use
         });
 
 Effect:
-![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff05.gif)
+![imвозраст](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ffc3a9b5518762d274121ff05.gif)
 
-## Icon tooltip configuration
+## иконка Подсказка configuration
 
-When customizing the icon, you can display the prompt information by configuring the tooltip as follows:
+When пользовательскийizing the иконка, Вы можете display the prompt information по configuring the Подсказка as follows:
 
 ```
-VTable.register.icon('order', {
+Vтаблица.регистрация.иконка('order', {
   ... //其他配置
-  tooltip: {
+  Подсказка: {
     // 气泡框，按钮的的解释信息
-    title:'Order ID is the unique identifier for each order',
+    заголовок:'ID Заказа is the unique identifier для каждый order',
     style: {
       fontSize: 14,
       fontFamily: 'Arial',
-      padding: [10,10,10,10],
+      заполнение: [10,10,10,10],
       bgColor: 'black',
       arrowMark: true,
-      color: 'white',
-      maxHeight: 100,
-      maxWidth: 200
+      цвет: 'white',
+      maxвысота: 100,
+      maxширина: 200
     },
     disappearDelay: 1000
   }
