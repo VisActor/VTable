@@ -152,7 +152,7 @@ defaultHeaderColWidth?: (number | 'auto') | (number | 'auto')[];
 
 Shortcut key function settings, specific configuration items:
 
-##${prefix} selectAllOnCtrlA(boolean) = false
+##${prefix} selectAllOnCtrlA(boolean) = false|SelectAllOnCtrlAOption
 Enable the shortcut key Select All.
 Supports `boolean` or specific configuration type `SelectAllOnCtrlAOption`.
 
@@ -162,6 +162,11 @@ disableHeaderSelect?: boolean; //Whether to disable header selection when the sh
 disableRowSeriesNumberSelect?: boolean; //Whether to disable the selection of row sequence numbers when the shortcut key is used to select all.
 }
 ```
+###${prefix} disableHeaderSelect(boolean) = false
+Whether to disable header selection when the shortcut key is used to select all.
+
+###${prefix} disableRowSeriesNumberSelect(boolean) = false
+Whether to disable the selection of row sequence numbers when the shortcut key is used to select all.
 
 ##${prefix} copySelected(boolean) = false
 

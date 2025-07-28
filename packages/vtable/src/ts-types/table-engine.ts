@@ -123,8 +123,9 @@ export interface IRowSeriesNumber {
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
   title?: string;
-  field?: FieldDef;
+  field?: string | number;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  headerType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -285,10 +286,24 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
       }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
   /** 数据为空时显示聚合结果 */
   showAggregationWhenEmpty?: boolean;
+  /** 针对column中配置了tree: true的列，开启这个配置后，可以合并分组标题。需要配合在数据中配置vtableMerge和vtableMergeName。默认为false */
   enableTreeNodeMerge?: boolean;
+  groupConfig: {
+    groupBy: GroupByOption;
+    titleCustomLayout?: ICustomLayout;
+    titleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+    /** 开启分组标题吸附功能。 */
+    enableTreeStickCell?: boolean;
+    /** 这个配置对应当在rowSeriesNumber中配置cellType: 'checkbox'时，如想在group分组名中显示checkbox，则需要开启这个配置 。默认为false*/
+    titleCheckbox?: boolean;
+  };
+  /** @deprecated 请使用groupConfig */
   groupBy?: GroupByOption;
+  /** @deprecated 请使用groupConfig */
   groupTitleCustomLayout?: ICustomLayout;
+  /** @deprecated 请使用groupConfig */
   groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  /** @deprecated 请使用groupConfig */
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];

@@ -336,9 +336,13 @@ function createCheckbox(
   if (table.internalProps.layoutMap.isSeriesNumber(col, row)) {
     const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
     if (checkboxSeriesNumberStyle) {
-      isChecked = checkboxSeriesNumberStyle.checked;
-      isDisabled = checkboxSeriesNumberStyle.disable;
-      text = checkboxSeriesNumberStyle.text ?? '';
+      if (typeof checkboxSeriesNumberStyle === 'string') {
+      } else if (typeof checkboxSeriesNumberStyle === 'object') {
+        isChecked = checkboxSeriesNumberStyle.checked;
+        isDisabled = checkboxSeriesNumberStyle.disable;
+      } else if (typeof checkboxSeriesNumberStyle === 'boolean') {
+        isChecked = checkboxSeriesNumberStyle;
+      }
     }
   }
   isChecked = table.stateManager.syncCheckedState(col, row, define.field as string | number, isChecked);
