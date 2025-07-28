@@ -1,1 +1,241 @@
---- категория: примеры группа: ячейка тип заголовок: график тип использовать в сводныйтаблица обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/график.png ссылка: cell_type/график опция: сводныйтаблица-indicators-график#типЯчейки --- # график тип использовать в сводныйтаблица Combine the vграфик график library с rendering into таблицаs к enrich visual display forms и improve multi-график rendering Производительность. ## Ключевые Конфигурации - `втаблица.регистрация.графикModule('vграфик', Vграфик)` регистрация the графикing library для графикing, currently supports Vграфик - `типЯчейки: 'график'` Specify the тип график - `типЯчейки: 'vграфик'` Specify the регистрацияed график library имя - `графикSpec: {}` график specs ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица втаблица.регистрация.графикModule('vграфик', Vграфик); const records = []; для (let i = 1; i <= 10; i++) { для (let j = 1; j <= 10; j++) { const запись = { Регион: 'Регион' + i }; запись['Категория'] = 'Категория' + j; запись.areaграфик = [ { x: '0', тип: 'A', y: 900 + i + j }, { x: '1', тип: 'A', y: '707' }, { x: '2', тип: 'A', y: '832' }, { x: '3', тип: 'A', y: '726' }, { x: '4', тип: 'A', y: '756' }, { x: '5', тип: 'A', y: '777' }, { x: '6', тип: 'A', y: '689' }, { x: '7', тип: 'A', y: '795' }, { x: '8', тип: 'A', y: '889' }, { x: '9', тип: 'A', y: '757' }, { x: '0', тип: 'B', y: '773' }, { x: '1', тип: 'B', y: '785' }, { x: '2', тип: 'B', y: '635' }, { x: '3', тип: 'B', y: '813' }, { x: '4', тип: 'B', y: '678' }, { x: '5', тип: 'B', y: '796' }, { x: '6', тип: 'B', y: '652' }, { x: '7', тип: 'B', y: '623' }, { x: '8', тип: 'B', y: '649' }, { x: '9', тип: 'B', y: '630' } ]; запись.lineграфик = [ { x: '0', тип: 'A', y: 900 + i + j }, { x: '1', тип: 'A', y: '707' }, { x: '2', тип: 'A', y: '832' }, { x: '3', тип: 'A', y: '726' }, { x: '4', тип: 'A', y: '756' }, { x: '5', тип: 'A', y: '777' }, { x: '6', тип: 'A', y: '689' }, { x: '7', тип: 'A', y: '795' }, { x: '8', тип: 'A', y: '889' }, { x: '9', тип: 'A', y: '757' }, { x: '0', тип: 'B', y: 500 }, { x: '1', тип: 'B', y: '785' }, { x: '2', тип: 'B', y: '635' }, { x: '3', тип: 'B', y: '813' }, { x: '4', тип: 'B', y: '678' }, { x: '5', тип: 'B', y: '796' }, { x: '6', тип: 'B', y: '652' }, { x: '7', тип: 'B', y: '623' }, { x: '8', тип: 'B', y: '649' }, { x: '9', тип: 'B', y: '630' } ]; records.push(запись); } } const опция = { records, defaultRowвысота: 200, defaultHeaderRowвысота: 50, indicators: [ { indicatorKey: 'lineграфик', заголовок: 'Продажи trend график', headerStyle: { цвет: 'blue' // bgColor: 'yellow', }, типЯчейки: 'график', графикModule: 'vграфик', ширина: 300, графикSpec: { тип: 'common', серия: [ { тип: 'line', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип' } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ] } }, { indicatorKey: 'areaграфик', заголовок: 'Прибыль trend график', headerStyle: { цвет: 'green' }, типЯчейки: 'график', графикModule: 'vграфик', ширина: 300, графикSpec: { тип: 'common', серия: [ { тип: 'area', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип', point: { стиль: { fillOpaГород: 1, strхорошоeширина: 0 }, state: { навести: { fillOpaГород: 0.5, strхорошоe: 'blue', strхорошоeширина: 2 }, selected: { заполнить: 'red' } } }, area: { стиль: { fillOpaГород: 0.3, strхорошоe: '#000', strхорошоeширина: 4 }, state: { навести: { fillOpaГород: 1 }, selected: { заполнить: 'red', fillOpaГород: 1 } } } } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ] } } ], columnTree: [ { dimensionKey: 'Регион', значение: 'Регион1', children: [ { indicatorKey: 'areaграфик' }, { indicatorKey: 'lineграфик' } ] }, { dimensionKey: 'Регион', значение: 'Регион2', children: [ { indicatorKey: 'areaграфик' }, { indicatorKey: 'lineграфик' } ] }, { dimensionKey: 'Регион', значение: 'Регион3', children: [ { indicatorKey: 'areaграфик' }, { indicatorKey: 'lineграфик' } ] } ], rowTree: [ { dimensionKey: 'Категория', значение: 'Категория1' }, { dimensionKey: 'Категория', значение: 'Категория2' }, { dimensionKey: 'Категория', значение: 'Категория3' }, { dimensionKey: 'Категория', значение: 'Категория4' } ], угол: { titleOnDimension: 'строка' }, dragпорядок: { dragHeaderMode: 'все' } }; const таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Cell Type
+заголовок: Chart Type Use in PivotTable
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/chart.png
+ссылка: cell_type/chart
+опция: PivotTable-indicators-chart#cellType
+---
+
+# Chart Type Use in PivotTable
+
+Combine the vchart chart library with rendering into tables to enrich visual display forms and improve multi-chart rendering performance.
+
+## Ключевые Конфигурации
+
+- `VTable.register.chartModule('vchart', VChart)` Register the charting library for charting, currently supports VChart
+- `cellType: 'chart'` Specify the type chart
+- `cellType: 'vchart'` Specify the registered chart library name
+- `chartSpec: {}` Chart specs
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+VTable.register.chartModule('vchart', VChart);
+const records = [];
+for (let i = 1; i <= 10; i++) {
+  for (let j = 1; j <= 10; j++) {
+    const record = {
+      region: 'region' + i
+    };
+    record['category'] = 'category' + j;
+    record.areaChart = [
+      { x: '0', type: 'A', y: 900 + i + j },
+      { x: '1', type: 'A', y: '707' },
+      { x: '2', type: 'A', y: '832' },
+      { x: '3', type: 'A', y: '726' },
+      { x: '4', type: 'A', y: '756' },
+      { x: '5', type: 'A', y: '777' },
+      { x: '6', type: 'A', y: '689' },
+      { x: '7', type: 'A', y: '795' },
+      { x: '8', type: 'A', y: '889' },
+      { x: '9', type: 'A', y: '757' },
+      { x: '0', type: 'B', y: '773' },
+      { x: '1', type: 'B', y: '785' },
+      { x: '2', type: 'B', y: '635' },
+      { x: '3', type: 'B', y: '813' },
+      { x: '4', type: 'B', y: '678' },
+      { x: '5', type: 'B', y: '796' },
+      { x: '6', type: 'B', y: '652' },
+      { x: '7', type: 'B', y: '623' },
+      { x: '8', type: 'B', y: '649' },
+      { x: '9', type: 'B', y: '630' }
+    ];
+
+    record.lineChart = [
+      { x: '0', type: 'A', y: 900 + i + j },
+      { x: '1', type: 'A', y: '707' },
+      { x: '2', type: 'A', y: '832' },
+      { x: '3', type: 'A', y: '726' },
+      { x: '4', type: 'A', y: '756' },
+      { x: '5', type: 'A', y: '777' },
+      { x: '6', type: 'A', y: '689' },
+      { x: '7', type: 'A', y: '795' },
+      { x: '8', type: 'A', y: '889' },
+      { x: '9', type: 'A', y: '757' },
+      { x: '0', type: 'B', y: 500 },
+      { x: '1', type: 'B', y: '785' },
+      { x: '2', type: 'B', y: '635' },
+      { x: '3', type: 'B', y: '813' },
+      { x: '4', type: 'B', y: '678' },
+      { x: '5', type: 'B', y: '796' },
+      { x: '6', type: 'B', y: '652' },
+      { x: '7', type: 'B', y: '623' },
+      { x: '8', type: 'B', y: '649' },
+      { x: '9', type: 'B', y: '630' }
+    ];
+    records.push(record);
+  }
+}
+
+const option = {
+  records,
+  defaultRowHeight: 200,
+  defaultHeaderRowHeight: 50,
+  indicators: [
+    {
+      indicatorKey: 'lineChart',
+      title: 'Продажи trend chart',
+      headerStyle: {
+        color: 'blue'
+        // bgColor: 'yellow',
+      },
+      cellType: 'chart',
+      chartModule: 'vchart',
+      width: 300,
+      chartSpec: {
+        type: 'common',
+        series: [
+          {
+            type: 'line',
+            data: {
+              id: 'data'
+            },
+            xField: 'x',
+            yField: 'y',
+            seriesField: 'type'
+          }
+        ],
+        axes: [
+          { orient: 'left', range: { min: 0 } },
+          { orient: 'bottom', label: { visible: true }, type: 'band' }
+        ]
+      }
+    },
+    {
+      indicatorKey: 'areaChart',
+      title: 'Прибыль trend chart',
+      headerStyle: {
+        color: 'green'
+      },
+      cellType: 'chart',
+      chartModule: 'vchart',
+      width: 300,
+      chartSpec: {
+        type: 'common',
+        series: [
+          {
+            type: 'area',
+            data: {
+              id: 'data'
+            },
+            xField: 'x',
+            yField: 'y',
+            seriesField: 'type',
+            point: {
+              style: {
+                fillOpacity: 1,
+                strokeWidth: 0
+              },
+              state: {
+                hover: {
+                  fillOpacity: 0.5,
+                  stroke: 'blue',
+                  strokeWidth: 2
+                },
+                selected: {
+                  fill: 'red'
+                }
+              }
+            },
+            area: {
+              style: {
+                fillOpacity: 0.3,
+                stroke: '#000',
+                strokeWidth: 4
+              },
+              state: {
+                hover: {
+                  fillOpacity: 1
+                },
+                selected: {
+                  fill: 'red',
+                  fillOpacity: 1
+                }
+              }
+            }
+          }
+        ],
+        axes: [
+          { orient: 'left', range: { min: 0 } },
+          { orient: 'bottom', label: { visible: true }, type: 'band' }
+        ]
+      }
+    }
+  ],
+  columnTree: [
+    {
+      dimensionKey: 'region',
+      value: 'region1',
+      children: [
+        {
+          indicatorKey: 'areaChart'
+        },
+        {
+          indicatorKey: 'lineChart'
+        }
+      ]
+    },
+    {
+      dimensionKey: 'region',
+      value: 'region2',
+      children: [
+        {
+          indicatorKey: 'areaChart'
+        },
+        {
+          indicatorKey: 'lineChart'
+        }
+      ]
+    },
+    {
+      dimensionKey: 'region',
+      value: 'region3',
+      children: [
+        {
+          indicatorKey: 'areaChart'
+        },
+        {
+          indicatorKey: 'lineChart'
+        }
+      ]
+    }
+  ],
+  rowTree: [
+    {
+      dimensionKey: 'category',
+      value: 'category1'
+    },
+    {
+      dimensionKey: 'category',
+      value: 'category2'
+    },
+    {
+      dimensionKey: 'category',
+      value: 'category3'
+    },
+    {
+      dimensionKey: 'category',
+      value: 'category4'
+    }
+  ],
+  corner: {
+    titleOnDimension: 'row'
+  },
+  dragOrder: {
+     dragHeaderMode: 'all'
+  }
+};
+const tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

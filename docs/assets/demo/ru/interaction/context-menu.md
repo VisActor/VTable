@@ -1,1 +1,149 @@
---- категория: примеры группа: взаимодействие заголовок: право Нажать меню обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/context-меню.gif порядок: 4-6 ссылка: компонентs/выпадающий список опция: списоктаблица#меню.contextменюItems --- # право Нажать меню право-Нажать pop-up меню, if you need к Нажать на the отпускание-down меню к continue the operation, Вы можете списокen к the событие dropdown_меню_Нажать. в this пример, after Нажатьing the право mouse Кнопка, a copy, paste, delete и other functions will appear в the отпускание-down меню. After Нажатьing the copy, the selected ячейка content will be copied к the clipboard, after Нажатьing paste, the content в the clipboard will be pasted к the selected ячейка, и after Нажатьing delete, the content из the selected ячейка will be set к empty. ## Ключевые Конфигурации - `меню.contextменюItems` Configure the relevant функция отпускание-down меню that appears after право-Нажатьing ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', меню: { contextменюItems: ['copy', 'paste', 'delete', '...'] } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; let copyданные; таблицаInstance.на('dropdown_меню_Нажать', args => { console.log('dropdown_меню_Нажать', args); if (args.менюKey === 'copy') { copyданные = таблицаInstance.getCopyValue(); } else if (args.менюKey === 'paste') { const rows = copyданные.split('\n'); // 将数据拆分为行 const values = []; rows.forEach(функция (rowCells, rowIndex) { const cells = rowCells.split('\t'); // 将行数据拆分为单元格 const rowValues = []; values.push(rowValues); cells.forEach(функция (ячейка, cellIndex) { // 去掉单元格数据末尾的 '\r' if (cellIndex === cells.length - 1) { ячейка = ячейка.trim(); } rowValues.push(ячейка); }); }); таблицаInstance.changeCellValues(args.колонка, args.строка, values); } else if (args.менюKey === 'delete') { let selectCells = таблицаInstance.getSelectedCellInfos(); if (selectCells?.length > 0 && cellIsSelectRange(args.колонка, args.строка, selectCells)) { // 如果选中的是范围，则删除范围内的所有单元格 deleteSelectRange(selectCells); } else { // 否则只删除单个单元格 таблицаInstance.changeCellValue(args.колонка, args.строка, ''); } } }); //将选中单元格的值设置为空 функция deleteSelectRange(selectCells) { для (let i = 0; i < selectCells.length; i++) { для (let j = 0; j < selectCells[i].length; j++) { таблицаInstance.changeCellValue(selectCells[i][j].колонка, selectCells[i][j].строка, ''); } } } // 判断单元格col,row是否在选中范围中 функция cellIsSelectRange(колонка, строка, selectCells) { для (let i = 0; i < selectCells.length; i++) { для (let j = 0; j < selectCells[i].length; j++) { if (selectCells[i][j].колонка === колонка && selectCells[i][j].строка === строка) { возврат true; } } } возврат false; } }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Right click menu
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/context-menu.gif
+порядок: 4-6
+ссылка: компонентs/dropdown
+опция: ListTable#menu.contextMenuItems
+---
+
+# Right click menu
+
+Right-click pop-up menu, if you need to click on the drop-down menu to continue the operation, you can listen to the событие dropdown_menu_click.
+
+In this example, after clicking the right mouse button, a copy, paste, delete and other functions will appear in the drop-down menu. After clicking the copy, the selected cell content will be copied to the clipboard, after clicking paste, the content in the clipboard will be pasted to the selected cell, and after clicking delete, the content of the selected cell will be set to empty.
+
+## Ключевые Конфигурации
+
+- `menu.contextMenuItems` Configure the relevant function drop-down menu that appears after right-clicking
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      menu: {
+        contextMenuItems: ['copy', 'paste', 'delete', '...']
+      }
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+
+    let copyData;
+    tableInstance.on('dropdown_menu_click', args => {
+      console.log('dropdown_menu_click', args);
+      if (args.menuKey === 'copy') {
+        copyData = tableInstance.getCopyValue();
+      } else if (args.menuKey === 'paste') {
+        const rows = copyData.split('\n'); // 将数据拆分为行
+        const values = [];
+        rows.forEach(function (rowCells, rowIndex) {
+          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+          const rowValues = [];
+          values.push(rowValues);
+          cells.forEach(function (cell, cellIndex) {
+            // 去掉单元格数据末尾的 '\r'
+            if (cellIndex === cells.length - 1) {
+              cell = cell.trim();
+            }
+            rowValues.push(cell);
+          });
+        });
+        tableInstance.changeCellValues(args.col, args.row, values);
+      } else if (args.menuKey === 'delete') {
+        let selectCells = tableInstance.getSelectedCellInfos();
+        if (selectCells?.length > 0 && cellIsSelectRange(args.col, args.row, selectCells)) {
+          // 如果选中的是范围，则删除范围内的所有单元格
+          deleteSelectRange(selectCells);
+        } else {
+          // 否则只删除单个单元格
+          tableInstance.changeCellValue(args.col, args.row, '');
+        }
+      }
+    });
+    //将选中单元格的值设置为空
+    function deleteSelectRange(selectCells) {
+      for (let i = 0; i < selectCells.length; i++) {
+        for (let j = 0; j < selectCells[i].length; j++) {
+          tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');
+        }
+      }
+    }
+    // 判断单元格col,row是否在选中范围中
+    function cellIsSelectRange(col, row, selectCells) {
+      for (let i = 0; i < selectCells.length; i++) {
+        for (let j = 0; j < selectCells[i].length; j++) {
+          if (selectCells[i][j].col === col && selectCells[i][j].row === row) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+  });
+```

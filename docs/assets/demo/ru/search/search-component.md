@@ -1,1 +1,129 @@
---- категория: примеры группа: поиск заголовок: поиск компонент обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-таблица.png ссылка: поиск --- # поиск компонент поиск компонент ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard' }; const дом = документ.getElementById(CONTAINER_ID); таблицаInstance = новый втаблица.списоктаблица(дом, опция); window['таблицаInstance'] = таблицаInstance; const поиск = новый Searchкомпонент({ таблица: таблицаInstance, автоJump: true }); window.поиск = поиск; const searchContainer = документ.createElement('div'); searchContainer.стиль.позиция = 'absolute'; searchContainer.стиль.верх = '0'; searchContainer.стиль.право = '0'; searchContainer.стиль.backgroundColor = '#FFF'; const ввод = документ.createElement('ввод'); searchContainer.appendChild(ввод); const result = документ.createElement('span'); result.innerText = '0/0'; searchContainer.appendChild(result); const searchBtn = документ.createElement('Кнопка'); searchBtn.innerText = 'поиск'; searchContainer.appendChild(searchBtn); const nextBtn = документ.createElement('Кнопка'); nextBtn.innerText = 'следующий'; searchContainer.appendChild(nextBtn); const prevBtn = документ.createElement('Кнопка'); prevBtn.innerText = 'prev'; searchContainer.appendChild(prevBtn); searchBtn.addсобытиесписокener('Нажать', () => { const searchResult = поиск.поиск(ввод.значение); result.innerText = searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`; }); prevBtn.addсобытиесписокener('Нажать', () => { const searchResult = поиск.prev(); result.innerText = searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`; }); nextBtn.addсобытиесписокener('Нажать', () => { const searchResult = поиск.следующий(); result.innerText = searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`; }); дом.appendChild(searchContainer); }); ``` 
+---
+категория: примеры
+группа: search
+заголовок: Search Component
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table.png
+ссылка: search
+---
+
+# Search Component
+
+Search Component
+
+## Code Demo
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard'
+    };
+    const dom = document.getElementById(CONTAINER_ID);
+    tableInstance = new VTable.ListTable(dom, option);
+    window['tableInstance'] = tableInstance;
+
+    const search = new SearchComponent({
+      table: tableInstance,
+      autoJump: true
+    });
+    window.search = search;
+
+    const searchContainer = document.createElement('div');
+    searchContainer.style.position = 'absolute';
+    searchContainer.style.top = '0';
+    searchContainer.style.right = '0';
+    searchContainer.style.backgroundColor = '#FFF';
+    const input = document.createElement('input');
+    searchContainer.appendChild(input);
+    const result = document.createElement('span');
+    result.innerText = '0/0';
+    searchContainer.appendChild(result);
+    const searchBtn = document.createElement('button');
+    searchBtn.innerText = 'search';
+    searchContainer.appendChild(searchBtn);
+    const nextBtn = document.createElement('button');
+    nextBtn.innerText = 'next';
+    searchContainer.appendChild(nextBtn);
+    const prevBtn = document.createElement('button');
+    prevBtn.innerText = 'prev';
+    searchContainer.appendChild(prevBtn);
+    searchBtn.addEventListener('click', () => {
+      const searchResult = search.search(input.value);
+      result.innerText =
+        searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
+    });
+    prevBtn.addEventListener('click', () => {
+      const searchResult = search.prev();
+      result.innerText =
+        searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
+    });
+    nextBtn.addEventListener('click', () => {
+      const searchResult = search.next();
+      result.innerText =
+        searchResult.results.length === 0 ? '0/0' : `${searchResult.index + 1}/${searchResult.results.length}`;
+    });
+    dom.appendChild(searchContainer);
+  });
+```

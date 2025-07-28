@@ -1,1 +1,116 @@
---- категория: примеры группа: календарь заголовок: календарь пользовательский событие обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/календарь-пользовательский-событие.gif ссылка: календарь/introduction опция: календарь#startDate --- # календарь пользовательский событие пользовательский событие в календарь. ## Ключевые Конфигурации - `addпользовательскийсобытие` Add пользовательский событие - `removeпользовательскийсобытие` Remove пользовательский событие ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'gray']; const пользовательскийсобытиеs = []; const контейнер = документ.getElementById(CONTAINER_ID); const календарь = новый втаблицакалендарь.календарь(контейнер, { таблицаOptions: { тема: { headerStyle: { цвет: args => { if (args.колонка === 0) { возврат 'red'; } возврат '#000'; } } } } }); const информация = документ.createElement('div'); информация.innerText = 'выбрать Date и Нажать Кнопка'; информация.стиль.позиция = 'absolute'; информация.стиль.верх = '10px'; информация.стиль.право = '210px'; информация.стиль.zIndex = '100'; информация.стиль.цвет = '#999'; контейнер?.appendChild(информация); const bottomAddКнопка = документ.createElement('Кнопка'); bottomAddКнопка.innerText = 'Add событие'; bottomAddКнопка.стиль.позиция = 'absolute'; bottomAddКнопка.стиль.верх = '10px'; bottomAddКнопка.стиль.право = '110px'; bottomAddКнопка.стиль.zIndex = '100'; контейнер?.appendChild(bottomAddКнопка); let списоксобытиеIndex = 0; let barсобытиеIndex = 0; bottomAddКнопка.addсобытиесписокener('Нажать', () => { const selectedDates = календарь.selectedDate; if (selectedDates.length === 0) { возврат; } if (selectedDates.length > 1) { const startDate = selectedDates[0].date; const endDate = selectedDates[selectedDates.length - 1].date; календарь.addпользовательскийсобытие({ ид: `bar-событие-${barсобытиеIndex}`, startDate, endDate, текст: `Bar событие ${barсобытиеIndex}`, тип: 'bar', bgColor: unicColorPool[barсобытиеIndex % unicColorPool.length], цвет: '#fff' }); barсобытиеIndex++; } else { const date = selectedDates[0].date; календарь.addпользовательскийсобытие({ ид: `список-событие-${списоксобытиеIndex}`, date, текст: `список событие ${списоксобытиеIndex}`, тип: 'список', цвет: unicColorPool[списоксобытиеIndex % unicColorPool.length] }); списоксобытиеIndex++; } }); const bottomDeleteКнопка = документ.createElement('Кнопка'); bottomDeleteКнопка.innerText = 'Delete событие'; bottomDeleteКнопка.стиль.позиция = 'absolute'; bottomDeleteКнопка.стиль.верх = '10px'; bottomDeleteКнопка.стиль.право = '10px'; bottomDeleteКнопка.стиль.zIndex = '100'; контейнер?.appendChild(bottomDeleteКнопка); bottomDeleteКнопка.addсобытиесписокener('Нажать', () => { const selectedDates = календарь.selectedDate; if (selectedDates.length === 0) { возврат; } const idSet = новый Set(); selectedDates.map(данные => { календарь.getCellпользовательскийсобытиеByLocation(данные.колонка, данные.строка).map(событие => { событие.ид && idSet.add(событие.ид); }); }); календарь.removeпользовательскийсобытиеs(массив.от(idSet)); }); window['календарь'] = календарь; ``` 
+---
+категория: примеры
+группа: Calendar
+заголовок: Calendar custom событие
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/calendar-custom-событие.gif
+ссылка: calendar/introduction
+опция: Calendar#startDate
+---
+
+# Calendar Custom Event
+
+Custom событие in Calendar.
+
+## Ключевые Конфигурации
+
+- `addCustomEvent` Add custom событие
+- `removeCustomEvent` Remove custom событие
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+const unicColorPool = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'brown', 'gray'];
+
+const customEvents = [];
+const container = document.getElementById(CONTAINER_ID);
+const calendar = new VTableCalendar.Calendar(container, {
+  tableOptions: {
+    theme: {
+      headerStyle: {
+        color: args => {
+          if (args.col === 0) {
+            return 'red';
+          }
+          return '#000';
+        }
+      }
+    }
+  }
+});
+
+const info = document.createElement('div');
+info.innerText = 'Select Date and Click Button';
+info.style.position = 'absolute';
+info.style.top = '10px';
+info.style.right = '210px';
+info.style.zIndex = '100';
+info.style.color = '#999';
+container?.appendChild(info);
+
+const bottomAddButton = document.createElement('button');
+bottomAddButton.innerText = 'Add Event';
+bottomAddButton.style.position = 'absolute';
+bottomAddButton.style.top = '10px';
+bottomAddButton.style.right = '110px';
+bottomAddButton.style.zIndex = '100';
+container?.appendChild(bottomAddButton);
+
+let listEventIndex = 0;
+let barEventIndex = 0;
+bottomAddButton.addEventListener('click', () => {
+  const selectedDates = calendar.selectedDate;
+  if (selectedDates.length === 0) {
+    return;
+  }
+
+  if (selectedDates.length > 1) {
+    const startDate = selectedDates[0].date;
+    const endDate = selectedDates[selectedDates.length - 1].date;
+    calendar.addCustomEvent({
+      id: `bar-event-${barEventIndex}`,
+      startDate,
+      endDate,
+      text: `Bar Event ${barEventIndex}`,
+      type: 'bar',
+      bgColor: unicColorPool[barEventIndex % unicColorPool.length],
+      color: '#fff'
+    });
+    barEventIndex++;
+  } else {
+    const date = selectedDates[0].date;
+    calendar.addCustomEvent({
+      id: `list-event-${listEventIndex}`,
+      date,
+      text: `List Event ${listEventIndex}`,
+      type: 'list',
+      color: unicColorPool[listEventIndex % unicColorPool.length]
+    });
+    listEventIndex++;
+  }
+});
+
+const bottomDeleteButton = document.createElement('button');
+bottomDeleteButton.innerText = 'Delete Event';
+bottomDeleteButton.style.position = 'absolute';
+bottomDeleteButton.style.top = '10px';
+bottomDeleteButton.style.right = '10px';
+bottomDeleteButton.style.zIndex = '100';
+container?.appendChild(bottomDeleteButton);
+bottomDeleteButton.addEventListener('click', () => {
+  const selectedDates = calendar.selectedDate;
+  if (selectedDates.length === 0) {
+    return;
+  }
+
+  const idSet = new Set();
+  selectedDates.map(data => {
+    calendar.getCellCustomEventByLocation(data.col, data.row).map(event => {
+      event.id && idSet.add(event.id);
+    });
+  });
+
+  calendar.removeCustomEvents(Array.from(idSet));
+});
+
+window['calendar'] = calendar;
+```

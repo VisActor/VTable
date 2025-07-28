@@ -1,1 +1,166 @@
---- категория: примеры группа: таблица-тип заголовок: сводный график обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-график-radar.png ссылка: таблица_type/сводный_график опция: сводныйграфик-indicators-график#типЯчейки --- # сводный график The perspective combination diagram combines the vграфик график library к рендер into the таблица, enriching the visual display форма и improving the rendering Производительность. ## Ключевые Конфигурации - `сводныйграфик` Initialize the таблица тип using сводныйграфик. - `втаблица.регистрация.графикModule('vграфик', Vграфик)` регистрация a графикing library для графикing, currently supports Vграфик - `типЯчейки: 'график'` Specify the тип график - `графикModule: 'vграфик'` Specify the регистрацияed график library имя - `графикSpec: {}` график specs ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица втаблица.регистрация.графикModule('vграфик', Vграфик); let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_график_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { dimensionKey: 'Регион', заголовок: 'Регион', headerStyle: { textStick: true } } ]; const rows = [ { dimensionKey: 'порядок Year', заголовок: 'порядок Year', headerStyle: { textStick: true } }, 'Ship режим' ]; const indicators = [ { indicatorKey: 'Количество', заголовок: 'Количество', типЯчейки: 'график', графикModule: 'vграфик', графикSpec: { тип: 'radar', Категорияполе: 'Segment', seriesполе: 'Категория', valueполе: 'Количество', данные: { ид: 'baseданные' }, scales: [ { ид: 'цвет', тип: 'ordinal', domain: ['Furniture', 'Office Supplies', 'Technology'], range: ['#2E62F1', '#4DC36A', '#FF8406'] } ] }, стиль: { заполнение: 1 } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', типЯчейки: 'график', графикModule: 'vграфик', графикSpec: { тип: 'radar', Категорияполе: 'Segment', seriesполе: 'Категория', valueполе: 'Прибыль', данные: { ид: 'baseданные' }, scales: [ { ид: 'цвет', тип: 'ordinal', domain: ['Furniture', 'Office Supplies', 'Technology'], range: ['#2E62F1', '#4DC36A', '#FF8406'] } ] }, стиль: { заполнение: 1 } } ]; const опция = { hideIndicatorимя: false, rows, колонки, indicators, records: данные, defaultRowвысота: 200, defaultHeaderRowвысота: 50, defaultColширина: 280, defaultHeaderColширина: 100, indicatorзаголовок: '指标', автоWrapText: true, угол: { titleOnDimension: 'строка', headerStyle: { автоWrapText: true } }, легендаs: { orient: 'низ', тип: 'discrete', данные: [ { label: 'Furniture', shape: { заполнить: '#2E62F1', symbolType: 'circle' } }, { label: 'Office Supplies', shape: { заполнить: '#4DC36A', symbolType: 'square' } }, { label: 'Technology', shape: { заполнить: '#FF8406', symbolType: 'square' } } ] }, пагинация: { currentPвозраст: 0, perPвозрастCount: 8 } }; таблицаInstance = новый втаблица.сводныйграфик(документ.getElementById(CONTAINER_ID), опция); const { легенда_ITEM_Нажать } = втаблица.списоктаблица.событие_TYPE; таблицаInstance.на(легенда_ITEM_Нажать, args => { console.log('легенда_ITEM_Нажать', args); таблицаInstance.updateFilterRules([ { filterKey: 'Категория', filteredValues: args.значение } ]); }); window.таблицаInstance = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: Pivot Chart
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart-radar.png
+ссылка: table_type/pivot_chart
+опция: PivotChart-indicators-chart#cellType
+---
+
+# Pivot Chart
+
+The perspective combination diagram combines the vchart chart library to render into the table, enriching the visual display form and improving the rendering performance.
+
+## Ключевые Конфигурации
+
+- `PivotChart` Initialize the table type using PivotChart.
+- `VTable.register.chartModule('vchart', VChart)` Register a charting library for charting, currently supports VChart
+- `cellType: 'chart'` Specify the type chart
+- `chartModule: 'vchart'` Specify the registered chart library name
+- `chartSpec: {}` Chart specs
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+VTable.register.chartModule('vchart', VChart);
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        dimensionKey: 'Регион',
+        title: 'Регион',
+        headerStyle: {
+          textStick: true
+        }
+      }
+    ];
+    const rows = [
+      {
+        dimensionKey: 'Order Year',
+        title: 'Order Year',
+        headerStyle: {
+          textStick: true
+        }
+      },
+      'Ship Mode'
+    ];
+    const indicators = [
+      {
+        indicatorKey: 'Количество',
+        title: 'Количество',
+        cellType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          type: 'radar',
+          categoryField: 'Segment',
+          seriesField: 'Категория',
+          valueField: 'Количество',
+          data: {
+            id: 'baseData'
+          },
+          scales: [
+            {
+              id: 'color',
+              type: 'ordinal',
+              domain: ['Furniture', 'Office Supplies', 'Technology'],
+              range: ['#2E62F1', '#4DC36A', '#FF8406']
+            }
+          ]
+        },
+        style: {
+          padding: 1
+        }
+      },
+      {
+        indicatorKey: 'Прибыль',
+        title: 'Прибыль',
+        cellType: 'chart',
+        chartModule: 'vchart',
+        chartSpec: {
+          type: 'radar',
+          categoryField: 'Segment',
+          seriesField: 'Категория',
+          valueField: 'Прибыль',
+          data: {
+            id: 'baseData'
+          },
+          scales: [
+            {
+              id: 'color',
+              type: 'ordinal',
+              domain: ['Furniture', 'Office Supplies', 'Technology'],
+              range: ['#2E62F1', '#4DC36A', '#FF8406']
+            }
+          ]
+        },
+        style: {
+          padding: 1
+        }
+      }
+    ];
+    const option = {
+      hideIndicatorName: false,
+      rows,
+      columns,
+      indicators,
+      records: data,
+      defaultRowHeight: 200,
+      defaultHeaderRowHeight: 50,
+      defaultColWidth: 280,
+      defaultHeaderColWidth: 100,
+      indicatorTitle: '指标',
+      autoWrapText: true,
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          autoWrapText: true
+        }
+      },
+      legends: {
+        orient: 'bottom',
+        type: 'discrete',
+        data: [
+          {
+            label: 'Furniture',
+            shape: {
+              fill: '#2E62F1',
+              symbolType: 'circle'
+            }
+          },
+          {
+            label: 'Office Supplies',
+            shape: {
+              fill: '#4DC36A',
+              symbolType: 'square'
+            }
+          },
+          {
+            label: 'Technology',
+            shape: {
+              fill: '#FF8406',
+              symbolType: 'square'
+            }
+          }
+        ]
+      },
+      pagination: {
+        currentPage: 0,
+        perPageCount: 8
+      }
+    };
+    tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
+    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+    tableInstance.on(LEGEND_ITEM_CLICK, args => {
+      console.log('LEGEND_ITEM_CLICK', args);
+      tableInstance.updateFilterRules([
+        {
+          filterKey: 'Категория',
+          filteredValues: args.value
+        }
+      ]);
+    });
+    window.tableInstance = tableInstance;
+  });
+```

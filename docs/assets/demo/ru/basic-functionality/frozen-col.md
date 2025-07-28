@@ -1,1 +1,96 @@
---- категория: примеры группа: базовый возможности заголовок: замороженный колонка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/замороженный-колонка.gif ссылка: базовый_function/frozen_column_row опция: списоктаблица#frozenColCount --- # Freeze колонка в порядок к keep these key information колонки видимый throughout the horizontal прокрутка, we need к "freeze" these колонки. ## Ключевые Конфигурации - `allowFrozenColCount` необязательный к freeze the первый few колонки, the по умолчанию is 0 - `frozenColCount` Initial число из замороженный колонки, по умолчанию 0 - `showFrozenиконка` Whether к display the freeze иконка, the по умолчанию is true ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', allowFrozenColCount: 3, frozenColCount: 1, showFrozenиконка: true }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: frozen column
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/frozen-col.gif
+ссылка: basic_function/frozen_column_row
+опция: ListTable#frozenColCount
+---
+
+# Freeze column
+
+In порядок to keep these key information columns visible throughout the horizontal scroll, we need to "freeze" these columns.
+
+## Ключевые Конфигурации
+
+- `allowFrozenColCount` Optional to freeze the first few columns, the default is 0
+- `frozenColCount` Initial number of frozen columns, default 0
+- `showFrozenIcon` Whether to display the freeze icon, the default is true
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      allowFrozenColCount: 3,
+      frozenColCount: 1,
+      showFrozenIcon: true
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

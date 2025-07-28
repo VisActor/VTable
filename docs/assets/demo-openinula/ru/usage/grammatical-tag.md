@@ -1,1 +1,37 @@
---- категория: примеры группа: использование заголовок: грамматический тег обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/react-по умолчанию-новый.png порядок: 1-1 ссылка: Developer_Ecology/openinula --- # грамматический тег использовать синтаксис теги к собрать a полный таблица конфигурация и генерировать таблицаs в the форма из subкомпонентs. - СписокКолонка: список колонка, согласующийся с the определение из колонки в опция [апи](../../опция/списоктаблица-колонки-текст#типЯчейки) ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица-openinula // импорт * as InulaВТаблица от '@visactor/openinula-втаблица'; const records = новый массив(1000).заполнить(['John', 18, 'мужской', '🏀']); const корень = документ.getElementById(CONTAINER_ID); Inula.рендер( <InulaВТаблица.списоктаблица records={records} высота={'500px'}> <InulaВТаблица.СписокКолонка поле={'0'} заголовок={'имя'} /> <InulaВТаблица.СписокКолонка поле={'1'} заголовок={'возраст'} /> <InulaВТаблица.СписокКолонка поле={'2'} заголовок={'пол'} /> <InulaВТаблица.СписокКолонка поле={'3'} заголовок={'хобби'} /> </InulaВТаблица.списоктаблица>, корень ); // Релиз openinula instance, do не copy window.пользовательскийРелиз = () => { Inula.unmountкомпонентAtNode(корень); }; ``` 
+---
+категория: примеры
+группа: использование
+заголовок: грамматический тег
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
+порядок: 1-1
+ссылка: Developer_Ecology/openinula
+---
+
+# грамматический тег
+
+Use syntax tags to assemble a complete table configuration and generate tables in the form of subкомпонентs.
+
+- ListColumn: List column, consistent with the definition of columns in опция [api](../../опция/ListTable-columns-text#cellType)
+
+## демонстрация кода
+
+```javascript livedemo template=vtable-openinula
+// import * as InulaVTable from '@visactor/openinula-vtable';
+const records = new Array(1000).fill(['John', 18, 'мужской', '🏀']);
+
+const root = document.getElementById(CONTAINER_ID);
+Inula.render(
+  <InulaVTable.ListTable records={records} height={'500px'}>
+    <InulaVTable.ListColumn field={'0'} title={'имя'} />
+    <InulaVTable.ListColumn field={'1'} title={'возраст'} />
+    <InulaVTable.ListColumn field={'2'} title={'пол'} />
+    <InulaVTable.ListColumn field={'3'} title={'хобби'} />
+  </InulaVTable.ListTable>,
+  root
+);
+
+// release openinula instance, do not copy
+window.customRelease = () => {
+  Inula.unmountComponentAtNode(root);
+};
+```

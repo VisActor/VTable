@@ -1,1 +1,371 @@
---- категория: примеры группа: таблица-тип заголовок: сводный таблица обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-таблица.png ссылка: таблица_type/сводный_таблица/сводный_таблица_useвозраст опция: сводныйтаблица#columnTree --- # сводный таблица(пользовательский заголовок tree) сводный таблица, this пример passes в the пользовательский заголовок tree structure rowTree и columnTree. ## Ключевые Конфигурации - `сводныйтаблица` - `columnTree` - `rowTree` - `колонки` необязательный Configure, dimension styles, etc. - `rows`необязательный Configure, dimension styles, etc. - `indicators` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_данные.json') .then(res => res.json()) .then(данные => { const опция = { records: данные, rowTree: [ { dimensionKey: 'Город', значение: 'Aberdeen' }, { dimensionKey: 'Город', значение: 'Abilene' }, { dimensionKey: 'Город', значение: 'Akron' }, { dimensionKey: 'Город', значение: 'Albuquerque' }, { dimensionKey: 'Город', значение: 'Alexandria' }, { dimensionKey: 'Город', значение: 'Allen' }, { dimensionKey: 'Город', значение: 'Allentown' }, { dimensionKey: 'Город', значение: 'Altoona' }, { dimensionKey: 'Город', значение: 'Amarillo' }, { dimensionKey: 'Город', значение: 'Anaheim' }, { dimensionKey: 'Город', значение: 'Andover' }, { dimensionKey: 'Город', значение: 'Ann Arbor' }, { dimensionKey: 'Город', значение: 'Antioch' }, { dimensionKey: 'Город', значение: 'Apopka' }, { dimensionKey: 'Город', значение: 'Apple Valley' }, { dimensionKey: 'Город', значение: 'Appleton' }, { dimensionKey: 'Город', значение: 'Arlington' }, { dimensionKey: 'Город', значение: 'Arlington высотаs' }, { dimensionKey: 'Город', значение: 'Arvada' }, { dimensionKey: 'Город', значение: 'Asheville' }, { dimensionKey: 'Город', значение: 'Athens' }, { dimensionKey: 'Город', значение: 'Atlanta' }, { dimensionKey: 'Город', значение: 'Atlantic Город' }, { dimensionKey: 'Город', значение: 'Auburn' }, { dimensionKey: 'Город', значение: 'Aurora' }, { dimensionKey: 'Город', значение: 'Austin' }, { dimensionKey: 'Город', значение: 'Avondale' }, { dimensionKey: 'Город', значение: 'Bakersполе' }, { dimensionKey: 'Город', значение: 'Baltimore' }, { dimensionKey: 'Город', значение: 'Bangor' }, { dimensionKey: 'Город', значение: 'Bartlett' }, { dimensionKey: 'Город', значение: 'Bayonne' }, { dimensionKey: 'Город', значение: 'Baytown' }, { dimensionKey: 'Город', значение: 'Beaumont' }, { dimensionKey: 'Город', значение: 'Bedford' }, { dimensionKey: 'Город', значение: 'Belleville' }, { dimensionKey: 'Город', значение: 'Bellevue' }, { dimensionKey: 'Город', значение: 'Bellingham' }, { dimensionKey: 'Город', значение: 'Bethlehem' }, { dimensionKey: 'Город', значение: 'Beverly' }, { dimensionKey: 'Город', значение: 'Billings' }, { dimensionKey: 'Город', значение: 'Bloomington' }, { dimensionKey: 'Город', значение: 'Boca Raton' }, { dimensionKey: 'Город', значение: 'Boise' }, { dimensionKey: 'Город', значение: 'Bolingbroхорошо' }, { dimensionKey: 'Город', значение: 'Bossier Город' }, { dimensionKey: 'Город', значение: 'Bowling Green' }, { dimensionKey: 'Город', значение: 'Boynton Beach' }, { dimensionKey: 'Город', значение: 'Bozeman' }, { dimensionKey: 'Город', значение: 'Brentwood' } ], columnTree: [ { dimensionKey: 'Категория', значение: 'Office Supplies', children: [ { indicatorKey: 'Количество' }, { indicatorKey: 'Продажи' }, { indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Категория', значение: 'Technology', children: [ { indicatorKey: 'Количество' }, { indicatorKey: 'Продажи' }, { indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Категория', значение: 'Furniture', children: [ { indicatorKey: 'Количество' }, { indicatorKey: 'Продажи' }, { indicatorKey: 'Прибыль' } ] } ], rows: [ { dimensionKey: 'Город', заголовок: 'Город', headerStyle: { textStick: true }, ширина: 'авто' } ], колонки: [ { dimensionKey: 'Категория', заголовок: 'Категория', headerStyle: { textStick: true }, ширина: 'авто' } ], indicators: [ { indicatorKey: 'Количество', заголовок: 'Количество', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { возврат '$' + число(значение).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { возврат '$' + число(значение).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { возврат '$' + число(значение).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } } ], угол: { titleOnDimension: 'строка', headerStyle: { textStick: true } }, ширинаMode: 'standard' }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: Pivot Table
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table.png
+ссылка: table_type/Pivot_table/pivot_table_useage
+опция: PivotTable#columnTree
+---
+
+# Pivot Table(custom header tree)
+
+Pivot Table, this example passes in the custom header tree structure rowTree and columnTree.
+
+## Ключевые Конфигурации
+
+- `PivotTable`
+- `columnTree`
+- `rowTree`
+- `columns` Optional Configure, dimension styles, etc.
+- `rows`Optional Configure, dimension styles, etc.
+- `indicators`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const option = {
+      records: data,
+      rowTree: [
+        {
+          dimensionKey: 'Город',
+          value: 'Aberdeen'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Abilene'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Akron'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Albuquerque'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Alexandria'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Allen'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Allentown'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Altoona'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Amarillo'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Anaheim'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Andover'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Ann Arbor'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Antioch'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Apopka'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Apple Valley'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Appleton'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Arlington'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Arlington Heights'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Arvada'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Asheville'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Athens'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Atlanta'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Atlantic Город'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Auburn'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Aurora'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Austin'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Avondale'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bakersfield'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Baltimore'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bangor'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bartlett'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bayonne'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Baytown'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Beaumont'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bedford'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Belleville'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bellevue'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bellingham'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bethlehem'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Beverly'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Billings'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bloomington'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Boca Raton'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Boise'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bolingbrook'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bossier Город'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bowling Green'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Boynton Beach'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Bozeman'
+        },
+        {
+          dimensionKey: 'Город',
+          value: 'Brentwood'
+        }
+      ],
+      columnTree: [
+        {
+          dimensionKey: 'Категория',
+          value: 'Office Supplies',
+          children: [
+            {
+              indicatorKey: 'Количество'
+            },
+            {
+              indicatorKey: 'Продажи'
+            },
+            {
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Категория',
+          value: 'Technology',
+          children: [
+            {
+              indicatorKey: 'Количество'
+            },
+            {
+              indicatorKey: 'Продажи'
+            },
+            {
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Категория',
+          value: 'Furniture',
+          children: [
+            {
+              indicatorKey: 'Количество'
+            },
+            {
+              indicatorKey: 'Продажи'
+            },
+            {
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        }
+      ],
+      rows: [
+        {
+          dimensionKey: 'Город',
+          title: 'Город',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: 'Категория',
+          title: 'Категория',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: 'Количество',
+          title: 'Количество',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            return '$' + Number(value).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Продажи',
+          title: 'Продажи',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            return '$' + Number(value).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Прибыль',
+          title: 'Прибыль',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            return '$' + Number(value).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        }
+      ],
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textStick: true
+        }
+      },
+      widthMode: 'standard'
+    };
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

@@ -1,1 +1,133 @@
---- категория: примеры группа: таблица-тип заголовок: сводный анализ таблица (indicators are displayed в rows) обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-анализ-таблица-indicator-строка.png ссылка: данные_analysis/сводный_таблица_данныеAnalysis опция: сводныйтаблица#indicatorsAsCol --- # сводный анализ таблица indicators are displayed в rows сводный анализ таблица indicators are displayed в rows, configure indicatorsAsCol к false ## Ключевые Конфигурации - `сводныйтаблица` таблица тип - `колонки` колонка dimension конфигурация - `rows` строка dimension конфигурация - `indicators` indicator конфигурация - `indicatorsAsCol` sets whether indicators are displayed в колонки или rows. The по умолчанию is к display them в колонки. - `indicatorTitle` is the indicator имя displayed в the заголовок - `данныеConfig` configures данные rules, необязательный конфигурация items ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_данные.json') .then(res => res.json()) .then(данные => { const опция = { records: данные, rows: [ { dimensionKey: 'Город', заголовок: 'Город', headerStyle: { textStick: true } } ], колонки: [ { dimensionKey: 'Категория', заголовок: 'Категория', headerStyle: { textStick: true }, ширина: 'авто' } ], indicators: [ { indicatorKey: 'Количество', заголовок: 'Количество', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal', цвет: 'purple' }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal', цвет: 'red' }, format: rec => { возврат '$' + число(rec).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal', цвет: 'green' }, format: rec => { возврат '$' + число(rec).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } } ], угол: { titleOnDimension: 'строка', headerStyle: { textStick: true } }, indicatorзаголовок: 'indicators заголовок', indicatorsAsCol: false, данныеConfig: { сортировкаRules: [ { сортировкаполе: 'Категория', сортировкаBy: ['Office Supplies', 'Technology', 'Furniture'] } ] }, defaultHeaderColширина: [120, 'авто'], ширинаMode: 'standard' }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: Pivot analysis table (indicators are displayed in rows)
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-table-indicator-row.png
+ссылка: data_analysis/pivot_table_dataAnalysis
+опция: PivotTable#indicatorsAsCol
+---
+
+# Pivot analysis table indicators are displayed in rows
+
+Pivot analysis table indicators are displayed in rows, configure indicatorsAsCol to false
+
+## Ключевые Конфигурации
+
+- `PivotTable` table type
+- `columns` column dimension configuration
+- `rows` row dimension configuration
+- `indicators` indicator configuration
+- `indicatorsAsCol` sets whether indicators are displayed in columns or rows. The default is to display them in columns.
+- `indicatorTitle` is the indicator name displayed in the header
+- `dataConfig` configures data rules, опцияal configuration items
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const option = {
+      records: data,
+      rows: [
+        {
+          dimensionKey: 'Город',
+          title: 'Город',
+          headerStyle: {
+            textStick: true
+          }
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: 'Категория',
+          title: 'Категория',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: 'Количество',
+          title: 'Количество',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal',
+            color: 'purple'
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Продажи',
+          title: 'Продажи',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal',
+            color: 'red'
+          },
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Прибыль',
+          title: 'Прибыль',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal',
+            color: 'green'
+          },
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        }
+      ],
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textStick: true
+        }
+      },
+      indicatorTitle: 'indicators title',
+      indicatorsAsCol: false,
+      dataConfig: {
+        sortRules: [
+          {
+            sortField: 'Категория',
+            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+          }
+        ]
+      },
+      defaultHeaderColWidth: [120, 'auto'],
+      widthMode: 'standard'
+    };
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

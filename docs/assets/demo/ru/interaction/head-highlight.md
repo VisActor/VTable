@@ -1,1 +1,104 @@
---- категория: примеры группа: взаимодействие заголовок: Highlight заголовок обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/head-highlight.png ссылка: плагин/заголовок-highlight --- # Highlight заголовок Highlight the заголовок when selecting the ячейка. ## Ключевые Конфигурации - `HighlightHeaderWhenSelectCellPlugin` highlight плагин - `columnHighlight` whether highlight the колонка - `rowHighlight` whether highlight the строка - `colHighlightBGColor` the фон цвет из the колонка highlight - `rowHighlightBGColor` the фон цвет из the строка highlight - `colHighlightColor` the цвет из the колонка highlight - `rowHighlightColor` the цвет из the строка highlight ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // использовать this для project // импорт * as втаблица от '@visactor/втаблица'; // импорт * as втаблицаPlugins от '@visactor/втаблица-plugins'; const generatePersons = count => { возврат массив.от(новый массив(count)).map((_, i) => ({ ид: i + 1, email1: `${i + 1}@xxx.com`, имя: `小明${i + 1}`, lastимя: '王', date1: '2022年9月1日', tel: '000-0000-0000', sex: i % 2 === 0 ? 'boy' : 'girl', work: i % 2 === 0 ? 'back-конец engineer' + (i + 1) : 'front-конец engineer' + (i + 1), Город: 'beijing', imвозраст: '<svg ширина="16" высота="16" viewBox="0 0 48 48" заполнить="никто" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" strхорошоe="#f5a623" strхорошоe-ширина="1" strхорошоe-linecap="round" strхорошоe-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" заполнить="#f5a623" strхорошоe="#f5a623" strхорошоe-ширина="1" strхорошоe-linejoin="round"/></svg>' })); }; const records = generatePersons(20); const колонки = [ { поле: 'ид', заголовок: 'ид', ширина: 'авто', minширина: 50, сортировка: true }, { поле: 'email1', заголовок: 'email', ширина: 200, сортировка: true, стиль: { underline: true, underlineDash: [2, 0], underlineOffset: 3 } }, { заголовок: 'full имя', колонки: [ { поле: 'имя', заголовок: 'первый имя', ширина: 200 }, { поле: 'имя', заголовок: 'последний имя', ширина: 200 } ] }, { поле: 'date1', заголовок: 'birthday', ширина: 200 }, { поле: 'sex', заголовок: 'sex', ширина: 100 } ]; const highlightPlugin = новый втаблицаPlugins.HighlightHeaderWhenSelectCellPlugin(); const опция = { records, колонки, rowSeriesNumber: {}, plugins: [highlightPlugin] }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Highlight Header
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/head-highlight.png
+ссылка: plugin/header-highlight
+---
+
+# Highlight Header
+
+Highlight the header when selecting the cell.
+
+## Ключевые Конфигурации
+
+- `HighlightHeaderWhenSelectCellPlugin` highlight plugin
+  - `columnHighlight` whether highlight the column
+  - `rowHighlight` whether highlight the row
+  - `colHighlightBGColor` the background color of the column highlight
+  - `rowHighlightBGColor` the background color of the row highlight
+  - `colHighlightColor` the color of the column highlight
+  - `rowHighlightColor` the color of the row highlight
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+// use this for project
+// import * as VTable from '@visactor/vtable';
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+
+const generatePersons = count => {
+  return Array.from(new Array(count)).map((_, i) => ({
+    id: i + 1,
+    email1: `${i + 1}@xxx.com`,
+    name: `小明${i + 1}`,
+    lastName: '王',
+    date1: '2022年9月1日',
+    tel: '000-0000-0000',
+    sex: i % 2 === 0 ? 'boy' : 'girl',
+    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
+    city: 'beijing',
+    image:
+      '<svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M34 10V4H8V38L14 35" stroke="#f5a623" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 44V10H40V44L27 37.7273L14 44Z" fill="#f5a623" stroke="#f5a623" stroke-width="1" stroke-linejoin="round"/></svg>'
+  }));
+};
+
+const records = generatePersons(20);
+
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 'auto',
+    minWidth: 50,
+    sort: true
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 200,
+    sort: true,
+    style: {
+      underline: true,
+      underlineDash: [2, 0],
+      underlineOffset: 3
+    }
+  },
+  {
+    title: 'full name',
+    columns: [
+      {
+        field: 'имя',
+        title: 'First Name',
+        width: 200
+      },
+      {
+        field: 'имя',
+        title: 'Last Name',
+        width: 200
+      }
+    ]
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100
+  }
+];
+const highlightPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin();
+const option = {
+  records,
+  columns,
+  rowSeriesNumber: {},
+  plugins: [highlightPlugin]
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+
+
+```

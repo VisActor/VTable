@@ -1,1 +1,85 @@
---- категория: примеры группа: базовый возможности заголовок: колонка ширина режим - Adapt к Content обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/ширина-режим-автоширина.png порядок: 3-6 ссылка: базовый_function/row_высота_column_ширина опция: списоктаблица#ширинаMode --- # колонка ширина режим - Adapt к Content Specifies the ширина размер из все колонки по content ширина. ## Ключевые Конфигурации - `ширинаMode: 'автоширина'` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 100 }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид' }, { поле: 'Product имя', заголовок: 'Product имя' }, { поле: 'Категория', заголовок: 'Категория' }, { поле: 'под-Категория', заголовок: 'под-Категория' }, { поле: 'Регион', заголовок: 'Регион' }, { поле: 'Город', заголовок: 'Город' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'автоширина' }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Column Width Mode - Adapt to Content
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-autoWidth.png
+порядок: 3-6
+ссылка: basic_function/row_height_column_width
+опция: ListTable#widthMode
+---
+
+# Column Width Mode - Adapt to Content
+
+Specifies the width size of all columns by content width.
+
+## Ключевые Конфигурации
+
+- `widthMode: 'autoWidth'`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 100
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион'
+      },
+      {
+        field: 'Город',
+        title: 'Город'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'autoWidth'
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

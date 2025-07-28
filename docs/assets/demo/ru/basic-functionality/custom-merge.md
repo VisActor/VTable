@@ -1,1 +1,122 @@
---- категория: примеры группа: базовый возможности заголовок: пользовательский объединение Cells обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/пользовательский-объединение.png опция: списоктаблица-колонки-текст#mergeCell --- # пользовательский объединение cells пользовательскийize the range, content, и стиль из merged cells through конфигурация ## Ключевые Конфигурации - `пользовательскийMergeCell` Define rules для ячейка merging ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; const generatePersons = count => { возврат массив.от(новый массив(count)).map((_, i) => ({ ид: i + 1, email1: `${i + 1}@xxx.com`, имя: `имя${i + 1}`, date1: '2022-9-1日', tel: '000-0000-0000', sex: i % 2 === 0 ? 'boy' : 'girl', work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer', Город: 'beijing' })); }; const records = generatePersons(10); const колонки = [ { поле: 'ид', заголовок: 'ид ff', ширина: '1%', minширина: 200, сортировка: true }, { поле: 'email1', заголовок: 'email', ширина: 200, сортировка: true }, { заголовок: 'full имя', колонки: [ { поле: 'имя', заголовок: 'первый имя', ширина: 200 }, { поле: 'имя', заголовок: 'последний имя', ширина: 200 } ] }, { поле: 'date1', заголовок: 'birthday', ширина: 200 }, { поле: 'sex', заголовок: 'sex', ширина: 100 }, { поле: 'tel', заголовок: 'telephone', ширина: 150 }, { поле: 'work', заголовок: 'job', ширина: 200 }, { поле: 'Город', заголовок: 'Город', ширина: 150 } ]; const опция = { records, колонки, ширинаMode:'standard', пользовательскийMergeCell: (колонка, строка, таблица) => { if (колонка >=0 && колонка < таблица.colCount && строка === таблица.rowCount-1) { возврат { текст: 'Summary колонка: This данные is a базовый information из personnel', range: { начало: { колонка: 0, строка: таблица.rowCount-1 }, конец: { колонка: таблица.colCount-1, строка: таблица.rowCount-1 } }, стиль:{ borderLineширина:[6,1,1,1], borderColor:['gray'] } }; } } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID),опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Custom Merge Cells
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-merge.png
+опция: ListTable-columns-text#mergeCell
+---
+
+# Custom Merge cells
+
+Customize the range, content, and style of merged cells through configuration
+
+## Ключевые Конфигурации
+
+ - `customMergeCell`  Define rules for cell merging
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+
+let  tableInstance;
+
+const generatePersons = count => {
+  return Array.from(new Array(count)).map((_, i) => ({
+    id: i + 1,
+    email1: `${i + 1}@xxx.com`,
+    name: `name${i + 1}`,
+    date1: '2022-9-1日',
+    tel: '000-0000-0000',
+    sex: i % 2 === 0 ? 'boy' : 'girl',
+    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
+    city: 'beijing'
+  }));
+};
+const records = generatePersons(10);
+
+const columns = [
+    {
+      field: 'id',
+      title: 'ID ff',
+      width: '1%',
+      minWidth: 200,
+      sort: true
+    },
+    {
+      field: 'email1',
+      title: 'email',
+      width: 200,
+      sort: true
+    },
+    {
+      title: 'full name',
+      columns: [
+        {
+          field: 'имя',
+          title: 'First Name',
+          width: 200
+        },
+        {
+          field: 'имя',
+          title: 'Last Name',
+          width: 200
+        }
+      ]
+    },
+    {
+      field: 'date1',
+      title: 'birthday',
+      width: 200
+    },
+    {
+      field: 'sex',
+      title: 'sex',
+      width: 100
+    },
+    {
+      field: 'tel',
+      title: 'telephone',
+      width: 150
+    },
+    {
+      field: 'work',
+      title: 'job',
+      width: 200
+    },
+    {
+      field: 'city',
+      title: 'city',
+      width: 150
+    }
+  ];
+
+
+const option = {
+  records,
+  columns,
+  widthMode:'standard',
+  customMergeCell: (col, row, table) => {
+    if (col >=0 && col < table.colCount && row === table.rowCount-1) {
+      return {
+        text: 'Summary column: This data is a basic information of personnel',
+        range: {
+          start: {
+            col: 0,
+            row: table.rowCount-1
+          },
+          end: {
+            col: table.colCount-1,
+            row: table.rowCount-1
+          }
+        },
+        style:{
+          borderLineWidth:[6,1,1,1],
+          borderColor:['gray']
+        }
+      };
+    }
+  }
+};
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+```

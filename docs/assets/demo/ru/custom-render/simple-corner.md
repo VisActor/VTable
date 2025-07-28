@@ -1,1 +1,196 @@
---- категория: примеры группа: пользовательский заголовок: пользовательский simple угол обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/simple-угол.jpeg опция: списоктаблица-колонки-текст#пользовательскийRender.elements --- в a сводный таблица, sometimes it is necessary к implement a slanted заголовок. This can be achieved по пользовательскийizing `пользовательскийRender` или `пользовательскиймакет` в the `угол` area. ```js опция = { // ...other config... угол: { titleOnDimension: 'строка', headerStyle: { textStick: true }, пользовательскиймакет: (args) => { const {таблица, строка, колонка, rect} = args; const {высота, ширина} = rect ?? таблица.getCellRect(колонка, строка); const контейнер = createGroup({ высота, ширина, }); // .... other fun call возврат { rootContainer: контейнер, renderDefault: false, enableCellPadding: false, }; } } } ``` ## код Sample ```javascript живаядемонстрация шаблон=втаблица // only использовать для website const {createGroup, createText, createLine} = VRender; // использовать this для project // импорт {createGroup, createText, createLine} от '@visactor/втаблица/es/vrender'; let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_данные.json') .then(res => res.json()) .then(данные => { const опция = { records: данные, угол: { titleOnDimension: 'строка', headerStyle: { textStick: true }, пользовательскиймакет: (args) => { const {таблица, строка, колонка, rect} = args; const {высота, ширина} = rect ?? таблица.getCellRect(колонка, строка); const контейнер = createGroup({ высота, ширина, }); // 定义文本内容的数组 const texts = [ {текст: 'тип', fontSize: 18, x: 40, y: rect.высота - 30}, {текст: 'данные', fontSize: 18, x: rect.ширина - 60, y: 20}, ]; // add угол текст texts.forEach(({текст, fontSize, x, y}) => { контейнер.addChild( createText({ текст, fontSize, fontFamily: 'sans-serif', заполнить: 'black', x, y, }) ); }); // define the point const linePoints = [ {x: 0, y: 0}, {x: rect.ширина, y: rect.высота} ]; // add line контейнер.addChild( createLine({ points: linePoints, lineширина: 1, strхорошоe: '#ccc', }) ); возврат { rootContainer: контейнер, renderDefault: false, enableCellPadding: false, }; } }, rows: [ { dimensionKey: 'Город', заголовок: 'Город', headerStyle: { textStick: true }, ширина: 'авто' } ], колонки: [ { dimensionKey: 'Категория', заголовок: 'Категория', headerStyle: { textStick: true }, ширина: 'авто' } ], indicators: [ { indicatorKey: 'Количество', заголовок: 'Количество', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: rec => { возврат '$' + число(rec).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: rec => { возврат '$' + число(rec).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } } ], данныеConfig: { сортировкаRules: [ { сортировкаполе: 'Категория', сортировкаBy: ['Office Supplies', 'Technology', 'Furniture'] } ] }, ширинаMode: 'standard' }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Custom
+заголовок: Custom simple corner
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/simple-corner.jpeg
+опция: ListTable-columns-text#customRender.elements
+---
+
+In a сводная таблица, sometimes it is necessary to implement a slanted header. This can be achieved by customizing `customRender` or `customLayout` in the `corner` area.
+
+```js
+option = {
+  // ...other config...
+  corner: {
+    titleOnDimension: 'row',
+      headerStyle: {
+      textStick: true
+    },
+    customLayout: (args) => {
+      const {table, row, col, rect} = args;
+      const {height, width} = rect ?? table.getCellRect(col, row);
+      const container = createGroup({
+        height,
+        width,
+      });
+      // .... other fun call
+
+      return {
+        rootContainer: container,
+        renderDefault: false,
+        enableCellPadding: false,
+      };
+    }
+  }
+}
+```
+
+## Code Sample
+
+```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createLine} = VRender;
+// use this for project
+// import {createGroup, createText, createLine} from '@visactor/vtable/es/vrender';
+
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const option = {
+      records: data,
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textStick: true
+        },
+        customLayout: (args) => {
+          const {table, row, col, rect} = args;
+          const {height, width} = rect ?? table.getCellRect(col, row);
+          const container = createGroup({
+            height,
+            width,
+          });
+
+          // 定义文本内容的数组
+          const texts = [
+            {text: 'Type', fontSize: 18, x: 40, y: rect.height - 30},
+            {text: 'Data', fontSize: 18, x: rect.width - 60, y: 20},
+          ];
+
+          // add corner text
+          texts.forEach(({text, fontSize, x, y}) => {
+            container.addChild(
+              createText({
+                text,
+                fontSize,
+                fontFamily: 'sans-serif',
+                fill: 'black',
+                x,
+                y,
+              })
+            );
+          });
+
+          // define the point
+          const linePoints = [
+            {x: 0, y: 0},
+            {x: rect.width, y: rect.height}
+          ];
+
+          // add line
+          container.addChild(
+            createLine({
+              points: linePoints,
+              lineWidth: 1,
+              stroke: '#ccc',
+            })
+          );
+
+          return {
+            rootContainer: container,
+            renderDefault: false,
+            enableCellPadding: false,
+          };
+        }
+      },
+      rows: [
+        {
+          dimensionKey: 'Город',
+          title: 'Город',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: 'Категория',
+          title: 'Категория',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: 'Количество',
+          title: 'Количество',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Продажи',
+          title: 'Продажи',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Прибыль',
+          title: 'Прибыль',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        }
+      ],
+      dataConfig: {
+        sortRules: [
+          {
+            sortField: 'Категория',
+            sortBy: ['Office Supplies', 'Technology', 'Furniture']
+          }
+        ]
+      },
+      widthMode: 'standard'
+    };
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

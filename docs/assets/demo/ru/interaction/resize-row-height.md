@@ -1,1 +1,131 @@
---- категория: примеры группа: взаимодействие заголовок: Adjust строка высота обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/строка-высота-изменение размера.gif порядок: 4-4 ссылка: '/взаимодействие/resize_row_высота' опция: списоктаблица#rowResizeMode --- # Adjust строка высота The mouse стиль для adjusting the строка высота appears when the mouse is placed на the строка spacer, и the строка высота can be adjusted по dragging. ## Ключевые Конфигурации * `rowResizeMode: 'все' | 'никто' | 'заголовок' | 'body'` Specify the Регион where the строка высота can be adjusted * `rowResizeType: 'строка' | 'indicator' | 'все' | 'indicatorGroup'` Adjust the effective range из the строка высота, configurable items: * строка: adjust the строка высота к adjust only the текущий строка * Indicator: rows corresponding к the same Metirc will be adjusted when adjusting the строка высота * indicatorгруппа: Adjust the высота из все Metirc rows under the same parent Dimension * все: все строка высотаs are adjusted ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_данные.json') .then((res) => res.json()) .then((данные) => { const опция = { columnResizeMode:'заголовок', records:данные, "rows": [ { "dimensionKey": "Город", "заголовок": "Город", "headerStyle": { "textStick": true }, "ширина": "авто", }, ], "колонки": [ { "dimensionKey": "Категория", "заголовок": "Категория", "headerStyle": { "textStick": true }, "ширина": "авто", }, ], "indicators": [ { "indicatorKey": "Количество", "заголовок": "Количество", "ширина": "авто", "showсортировка": false, "headerStyle":{ fontWeight: "normal", }, "format":(значение)=>{возврат '$'+число(значение).toFixed(2)}, стиль:{ заполнение:[16,28,16,28], цвет(args){ if(args.данныеValue>=0) возврат 'black'; возврат 'red' } } }, { "indicatorKey": "Продажи", "заголовок": "Продажи", "ширина": "авто", "showсортировка": false, "headerStyle":{ fontWeight: "normal", }, "format":(значение)=>{ if(значение) возврат '$'+число(значение).toFixed(2); else возврат '--';}, стиль:{ заполнение:[16,28,16,28], цвет(args){ if(args.данныеValue>=0) возврат 'black'; возврат 'red' } } }, { "indicatorKey": "Прибыль", "заголовок": "Прибыль", "ширина": "авто", "showсортировка": false, "headerStyle":{ fontWeight: "normal", }, "format":(значение)=>{возврат '$'+число(значение).toFixed(2)}, стиль:{ заполнение:[16,28,16,28], цвет(args){ if(args.данныеValue>=0) возврат 'black'; возврат 'red' } } } ], "угол": { "titleOnDimension": "колонка", "headerStyle": { "textStick": true } }, indicatorsAsCol: false, ширинаMode:'standard', rowResizeType: 'строка', rowResizeMode: 'все', defaultHeaderColширина: 100 }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID),опция); window['таблицаInstance'] = таблицаInstance; }) ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Adjust row height
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-height-resize.gif
+порядок: 4-4
+ссылка: '/interaction/resize_row_height'
+опция: ListTable#rowResizeMode
+---
+
+# Adjust row height
+
+The mouse style for adjusting the row height appears when the mouse is placed on the row spacer, and the row height can be adjusted by dragging.
+
+## Ключевые Конфигурации
+
+*   `rowResizeMode: 'all' | 'none' | 'header' | 'body'` Specify the Region where the row height can be adjusted
+*   `rowResizeType: 'row' | 'indicator' | 'all' | 'indicatorGroup'` Adjust the effective range of the row height, configurable items:
+
+    *   row: adjust the row height to adjust only the current row
+    *   Indicator: rows corresponding to the same Metirc will be adjusted when adjusting the row height
+    *   indicatorGroup: Adjust the height of all Metirc rows under the same parent Dimension
+    *   All: All row heights are adjusted
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+
+let  tableInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
+    .then((res) => res.json())
+    .then((data) => {
+
+const option = {
+  columnResizeMode:'header',
+  records:data,
+    "rows": [
+        {
+            "dimensionKey": "Город",
+            "title": "Город",
+            "headerStyle": {
+                "textStick": true
+            },
+            "width": "auto",
+        },
+    ],
+    "columns": [
+        {
+           "dimensionKey": "Категория",
+            "title": "Категория",
+            "headerStyle": {
+                "textStick": true
+            },
+            "width": "auto",
+        },
+    ],
+    "indicators": [
+                {
+                    "indicatorKey": "Количество",
+                    "title": "Количество",
+                    "width": "auto",
+                    "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(value)=>{return '$'+Number(value).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
+                },
+                {
+                    "indicatorKey": "Продажи",
+                    "title": "Продажи",
+                    "width": "auto",
+                    "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(value)=>{ 
+                      if(value)
+                      return '$'+Number(value).toFixed(2);
+                      else return '--';},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
+                },
+                {
+                    "indicatorKey": "Прибыль",
+                    "title": "Прибыль",
+                    "width": "auto",
+                    "showSort": false,
+                    "headerStyle":{
+                      fontWeight: "normal",
+                    },
+                    "format":(value)=>{return '$'+Number(value).toFixed(2)},
+                    style:{
+                      padding:[16,28,16,28],
+                      color(args){
+                        if(args.dataValue>=0)
+                        return 'black';
+                        return 'red'
+                      }
+                    }
+                }
+            ],
+    "corner": {
+        "titleOnDimension": "column",
+        "headerStyle": {
+            "textStick": true
+        }
+    },
+  indicatorsAsCol: false,
+  widthMode:'standard',
+  rowResizeType: 'row',
+  rowResizeMode: 'all',
+  defaultHeaderColWidth: 100
+};
+tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+    })
+```

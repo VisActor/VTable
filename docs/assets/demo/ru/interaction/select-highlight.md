@@ -1,1 +1,116 @@
---- категория: примеры группа: взаимодействие заголовок: выбрать Highlight Effect обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/выбрать-highlight.png ссылка: взаимодействие/выбрать опция: списоктаблица#выбрать --- # выбрать the ячейка строка к highlight the effect Нажать на the ячейка, the entire строка или колонка will be highlighted when the ячейка is selected. If more than one ячейка is selected, the highlight effect will disappear. The highlighted стиль can be configured в the стиль. Global конфигурация: `тема.selectionStyle`, или it can be configured separately для the заголовок и body. для specific конфигурация методы, please refer к the tutorial. ## Ключевые Конфигурации - `выбрать: { highlightMode: 'cross' }` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', keyboardOptions: { selectAllOnCtrlA: true, copySelected: true }, выбрать: { highlightMode: 'cross' }, тема: втаблица.темаs.арко.extends({ selectionStyle: { cellBgColor: 'rgba(130, 178, 245, 0.2)', cellBorderLineширина: 2, inlineRowBgColor: 'rgb(160,207,245)', inlineColumnBgColor: 'rgb(160,207,245)' }, headerStyle: { выбрать: { inlineRowBgColor: 'rgb(0,207,245)', inlineColumnBgColor: 'rgb(0,207,245)' } } }) }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Select Highlight Effect
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select-highlight.png
+ссылка: interaction/select
+опция: ListTable#select
+---
+
+# Select the cell row to highlight the effect
+
+Click on the cell, the entire row or column will be highlighted when the cell is selected. If more than one cell is selected, the highlight effect will disappear.
+
+The highlighted style can be configured in the style. Global configuration: `theme.selectionStyle`, or it can be configured separately for the header and body. For specific configuration methods, please refer to the tutorial.
+
+## Ключевые Конфигурации
+
+- `select: {
+  highlightMode: 'cross'
+}`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      keyboardOptions: {
+        selectAllOnCtrlA: true,
+        copySelected: true
+      },
+      select: {
+        highlightMode: 'cross'
+      },
+      theme: VTable.themes.ARCO.extends({
+        selectionStyle: {
+          cellBgColor: 'rgba(130, 178, 245, 0.2)',
+          cellBorderLineWidth: 2,
+          inlineRowBgColor: 'rgb(160,207,245)',
+          inlineColumnBgColor: 'rgb(160,207,245)'
+        },
+        headerStyle: {
+          select: {
+            inlineRowBgColor: 'rgb(0,207,245)',
+            inlineColumnBgColor: 'rgb(0,207,245)'
+          }
+        }
+      })
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

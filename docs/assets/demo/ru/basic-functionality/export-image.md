@@ -1,1 +1,167 @@
---- категория: примеры группа: базовый возможности заголовок: экспорт imвозраст обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/экспорт-imвозраст.png --- #экспорт Imвозраст экспорт imвозраст из the видимый area из the таблица, или экспорт a picture из a certain area или cells ## Ключевые Конфигурации - `exportImg` - `exportCellImg` - `exportCellRangeImg` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const графикDiv=документ.getElementById(CONTAINER_ID); // Create a контейнер div для the Кнопкаs const КнопкаContainer = документ.createElement("div"); КнопкаContainer.стиль.позиция = "absolute"; КнопкаContainer.стиль.верх = "0"; КнопкаContainer.стиль.zIndex=88888; //Create the первый Кнопка const screenshotBtn = документ.createElement("Кнопка"); screenshotBtn.textContent = "exportImg"; //Create the second Кнопка const export1ImgBtn = документ.createElement("Кнопка"); export1ImgBtn.textContent = "exportImg[2,2]"; //Create the third Кнопка const export2ImgBtn = документ.createElement("Кнопка"); export2ImgBtn.textContent = "exportImg[2,2] к [4,3]"; const clearImgBtn = документ.createElement("Кнопка"); clearImgBtn.textContent = "clear экспорт imвозраст"; //Append the Кнопкаs к the контейнер div КнопкаContainer.appendChild(screenshotBtn); КнопкаContainer.appendChild(export1ImgBtn); КнопкаContainer.appendChild(export2ImgBtn); КнопкаContainer.appendChild(clearImgBtn); screenshotBtn.onНажать=export1ImgBtn.onНажать=export2ImgBtn.onНажать=(e)=>{ const imвозрастDom=документ.createElement('img'); let base64String; if(e.target.textContent==='exportImg'){ imвозрастDom.стиль.ширина='140px'; imвозрастDom.стиль.высота='100px'; base64String=таблицаInstance.exportImg(); }else if(e.target.textContent==='exportImg[2,2]') base64String=таблицаInstance.exportCellImg(2,2); else base64String=таблицаInstance.exportCellRangeImg({начало:{колонка:2,строка:2},конец:{колонка:4,строка:3}}); imвозрастDom.стиль.display='block'; imвозрастDom.src=base64String; КнопкаContainer.appendChild(imвозрастDom); } clearImgBtn.onНажать=(e)=>{ // получить все img теги under the target div const imgElements = КнопкаContainer.getElementsByTagимя("img"); // Iterate through все img теги и remove them while (imgElements. length > 0) { const imgElement = imgElements[0]; // получить the первый img тег imgElement.parentNode.removeChild(imgElement); // Remove img тег от parent node } } // Insert the контейнер div into the график div графикDiv.parentElement.appendChild(КнопкаContainer); let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные100.json') .then((res) => res.json()) .then((данные) => { const колонки =[ { "поле": "Категория", "заголовок": "Категория", "ширина": "авто", сортировка:true, "mergeCell": true, стиль:{ "textStick":true, textAlign:'право' } }, { "поле": "под-Категория", "заголовок": "под-Категория", "ширина": "авто", сортировка:true, "mergeCell": true, }, { "поле": "ид Заказа", "заголовок": "ид Заказа", "ширина": "авто" }, { "поле": "пользовательскийer ид", "заголовок": "пользовательскийer ид", "ширина": "авто" }, { "поле": "Product имя", "заголовок": "Product имя", "ширина": "авто", headerStyle:{ "textStick":true, } }, { "поле": "Регион", "заголовок": "Регион", "ширина": "авто" }, { "поле": "Город", "заголовок": "Город", "ширина": "авто" }, { "поле": "Дата Заказа", "заголовок": "Дата Заказа", "ширина": "авто" }, { "поле": "Количество", "заголовок": "Количество", "ширина": "авто" }, { "поле": "Продажи", "заголовок": "Продажи", "ширина": "авто" }, { "поле": "Прибыль", "заголовок": "Прибыль", "ширина": "авто" } ]; const опция = { records:данные, колонки, ширинаMode:'standard', навести:{ highlightMode:'строка' }, сортировкаState:{ поле:'Категория', порядок:'asc' } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID),опция); window['таблицаInstance'] = таблицаInstance; }) ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Export image
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/export-image.png
+---
+
+#Export Image
+
+Export image of the visible area of the table, or export a picture of a certain area or cells
+
+## Ключевые Конфигурации
+
+ - `exportImg`
+ - `exportCellImg`
+ - `exportCellRangeImg`
+ 
+## Code Demo
+
+```javascript livedemo template=vtable
+const chartDiv=document.getElementById(CONTAINER_ID);
+// Create a container div for the buttons
+const buttonContainer = document.createElement("div");
+buttonContainer.style.position = "absolute";
+buttonContainer.style.top = "0";
+buttonContainer.style.zIndex=88888;
+
+//Create the first button
+const screenshotBtn = document.createElement("button");
+screenshotBtn.textContent = "exportImg";
+
+//Create the second button
+const export1ImgBtn = document.createElement("button");
+export1ImgBtn.textContent = "exportImg[2,2]";
+
+//Create the third button
+const export2ImgBtn = document.createElement("button");
+export2ImgBtn.textContent = "exportImg[2,2] to [4,3]";
+
+const clearImgBtn = document.createElement("button");
+clearImgBtn.textContent = "clear export image";
+
+//Append the buttons to the container div
+buttonContainer.appendChild(screenshotBtn);
+buttonContainer.appendChild(export1ImgBtn);
+buttonContainer.appendChild(export2ImgBtn);
+buttonContainer.appendChild(clearImgBtn);
+screenshotBtn.onclick=export1ImgBtn.onclick=export2ImgBtn.onclick=(e)=>{
+  const imageDom=document.createElement('img');
+  let base64String;
+  if(e.target.textContent==='exportImg'){
+    imageDom.style.width='140px';
+    imageDom.style.height='100px';
+    base64String=tableInstance.exportImg();
+  }else if(e.target.textContent==='exportImg[2,2]')
+    base64String=tableInstance.exportCellImg(2,2);
+  else
+    base64String=tableInstance.exportCellRangeImg({start:{col:2,row:2},end:{col:4,row:3}});
+
+  imageDom.style.display='block';
+  imageDom.src=base64String;
+  buttonContainer.appendChild(imageDom);
+}
+clearImgBtn.onclick=(e)=>{
+  // Get all img tags under the target div
+  const imgElements = buttonContainer.getElementsByTagName("img");
+
+  // Iterate through all img tags and remove them
+  while (imgElements. length > 0) {
+    const imgElement = imgElements[0]; // Get the first img tag
+    imgElement.parentNode.removeChild(imgElement); // Remove img tag from parent node
+  }
+}
+
+// Insert the container div into the chart div
+chartDiv.parentElement.appendChild(buttonContainer);
+
+let  tableInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
+    .then((res) => res.json())
+    .then((data) => {
+
+const columns =[
+  {
+        "field": "Категория",
+        "title": "Категория",
+        "width": "auto",
+        sort:true,
+        "mergeCell": true,
+        style:{
+          "textStick":true,
+          textAlign:'right'
+        }
+    },
+    {
+        "field": "Sub-Категория",
+        "title": "Sub-Категория",
+        "width": "auto",
+        sort:true,
+        "mergeCell": true,
+    },
+    {
+        "field": "ИД Заказа",
+        "title": "ИД Заказа",
+        "width": "auto"
+    },
+    {
+        "field": "ИД Клиента",
+        "title": "ИД Клиента",
+        "width": "auto"
+    },
+    {
+        "field": "Название Товара",
+        "title": "Название Товара",
+        "width": "auto",
+        headerStyle:{
+          "textStick":true,
+        }
+    },
+    {
+        "field": "Регион",
+        "title": "Регион",
+        "width": "auto"
+    },
+    {
+        "field": "Город",
+        "title": "Город",
+        "width": "auto"
+    },
+    {
+        "field": "Дата Заказа",
+        "title": "Дата Заказа",
+        "width": "auto"
+    },
+    {
+        "field": "Количество",
+        "title": "Количество",
+        "width": "auto"
+    },
+    {
+        "field": "Продажи",
+        "title": "Продажи",
+        "width": "auto"
+    },
+    {
+        "field": "Прибыль",
+        "title": "Прибыль",
+        "width": "auto"
+    }
+];
+
+const option = {
+  records:data,
+  columns,
+  widthMode:'standard',
+  hover:{
+    highlightMode:'row'
+  },
+  sortState:{
+    field:'Категория',
+    order:'asc'
+  }
+};
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+    })
+```

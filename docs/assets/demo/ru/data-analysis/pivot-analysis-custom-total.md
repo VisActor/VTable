@@ -1,1 +1,216 @@
---- категория: примеры группа: данные-анализ заголовок: пользовательский Total обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-анализ-пользовательский-total.png ссылка: данные_analysis/сводный_таблица_данныеAnalysis опция: сводныйтаблица#данныеConfig.totals --- # сводный анализ таблица—пользовательскийized summary данные сводный анализ таблица данные summary, if summary данные is passed в the данные source запись, the таблица will give priority к using the user-ввод значение as the summary значение. ## Ключевые Конфигурации - `сводныйтаблица` - `колонки` - `rows` - `indicators` - `данныеConfig` configures данные rules, необязательный конфигурация items ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_график_данные.json') .then(res => res.json()) .then(данные => { debugger; данные = данные.concat([ // 追加汇总数据 { Регион: 'Central', Segment: 'Consumer', категория: 'Office Supplies', Количество: '1111', Продажи: '3333', Прибыль: '2222' }, { Регион: 'Central', категория: 'Office Supplies', 'под-Категория': 'Appliances', Количество: '1111', Продажи: '3333', Прибыль: '2222' }, { Регион: 'Central', Количество: '4444', Продажи: '6666', Прибыль: '5555' }, { категория: 'Office Supplies', Количество: '7777', Продажи: '9999', Прибыль: '8888' }, { Количество: '9999', Продажи: '9999', Прибыль: '9999' } ]); const опция = { records: данные, rows: [ { dimensionKey: 'Категория', заголовок: 'Категория', headerStyle: { textStick: true }, ширина: 'авто' }, { dimensionKey: 'под-Категория', заголовок: 'под-Catogery', headerStyle: { textStick: true }, ширина: 'авто' } ], колонки: [ { dimensionKey: 'Регион', заголовок: 'Регион', headerStyle: { textStick: true }, ширина: 'авто' }, { dimensionKey: 'Segment', заголовок: 'Segment', headerStyle: { textStick: true }, ширина: 'авто' } ], indicators: [ { indicatorKey: 'Количество', заголовок: 'Количество', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; }, bgColor(arg) { const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths; if (rowHeaderPaths?.[1]?.значение === 'под Totals') { возврат '#ba54ba'; } else if (rowHeaderPaths?.[0]?.значение === 'строка Totals') { возврат '#ff9900'; } возврат undefined; } } }, { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: rec => { возврат '$' + число(rec).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; }, bgColor(arg) { const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths; if (rowHeaderPaths?.[1]?.значение === 'под Totals') { возврат '#ba54ba'; } else if (rowHeaderPaths?.[0]?.значение === 'строка Totals') { возврат '#ff9900'; } возврат undefined; } } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: rec => { возврат '$' + число(rec).toFixed(2); }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; }, bgColor(arg) { const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths; if (rowHeaderPaths?.[1]?.значение === 'под Totals') { возврат '#ba54ba'; } else if (rowHeaderPaths?.[0]?.значение === 'строка Totals') { возврат '#ff9900'; } возврат undefined; } } } ], угол: { titleOnDimension: 'строка', headerStyle: { textStick: true } }, данныеConfig: { totals: { строка: { showGrandTotals: true, showSubTotals: true, subTotalsDimensions: ['Категория'], grandTotalLabel: 'строка Totals', subTotalLabel: 'под Totals' }, колонка: { showGrandTotals: true, showSubTotals: true, subTotalsDimensions: ['Регион'], grandTotalLabel: 'колонка Totals', subTotalLabel: 'под Totals' } } }, ширинаMode: 'standard' }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: data-analysis
+заголовок: Custom Total
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-analysis-custom-total.png
+ссылка: data_analysis/pivot_table_dataAnalysis
+опция: PivotTable#dataConfig.totals
+---
+
+# Pivot analysis table—customized summary data
+
+Pivot analysis table data summary, if summary data is passed in the data source record, the table will give priority to using the user-input value as the summary value.
+
+## Ключевые Конфигурации
+
+- `PivotTable`
+- `columns`
+- `rows`
+- `indicators`
+- `dataConfig` configures data rules, опцияal configuration items
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+  .then(res => res.json())
+  .then(data => {
+    debugger;
+    data = data.concat([
+      // 追加汇总数据
+      {
+        Регион: 'Central',
+        Segment: 'Consumer',
+        Категория: 'Office Supplies',
+        Количество: '1111',
+        Продажи: '3333',
+        Прибыль: '2222'
+      },
+      {
+        Регион: 'Central',
+        Категория: 'Office Supplies',
+        'Подкатегория': 'Appliances',
+        Количество: '1111',
+        Продажи: '3333',
+        Прибыль: '2222'
+      },
+      {
+        Регион: 'Central',
+        Количество: '4444',
+        Продажи: '6666',
+        Прибыль: '5555'
+      },
+      {
+        Категория: 'Office Supplies',
+        Количество: '7777',
+        Продажи: '9999',
+        Прибыль: '8888'
+      },
+      {
+        Количество: '9999',
+        Продажи: '9999',
+        Прибыль: '9999'
+      }
+    ]);
+    const option = {
+      records: data,
+      rows: [
+        {
+          dimensionKey: 'Категория',
+          title: 'Категория',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        },
+        {
+          dimensionKey: 'Подкатегория',
+          title: 'Sub-Catogery',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: 'Регион',
+          title: 'Регион',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        },
+        {
+          dimensionKey: 'Segment',
+          title: 'Segment',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: 'Количество',
+          title: 'Количество',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            },
+            bgColor(arg) {
+              const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                return '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                return '#ff9900';
+              }
+              return undefined;
+            }
+          }
+        },
+        {
+          indicatorKey: 'Продажи',
+          title: 'Продажи',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            },
+            bgColor(arg) {
+              const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                return '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                return '#ff9900';
+              }
+              return undefined;
+            }
+          }
+        },
+        {
+          indicatorKey: 'Прибыль',
+          title: 'Прибыль',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: rec => {
+            return '$' + Number(rec).toFixed(2);
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            },
+            bgColor(arg) {
+              const rowHeaderPaths = arg.cellHeaderPaths.rowHeaderPaths;
+              if (rowHeaderPaths?.[1]?.value === 'Sub Totals') {
+                return '#ba54ba';
+              } else if (rowHeaderPaths?.[0]?.value === 'Row Totals') {
+                return '#ff9900';
+              }
+              return undefined;
+            }
+          }
+        }
+      ],
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textStick: true
+        }
+      },
+      dataConfig: {
+        totals: {
+          row: {
+            showGrandTotals: true,
+            showSubTotals: true,
+            subTotalsDimensions: ['Категория'],
+            grandTotalLabel: 'Row Totals',
+            subTotalLabel: 'Sub Totals'
+          },
+          column: {
+            showGrandTotals: true,
+            showSubTotals: true,
+            subTotalsDimensions: ['Регион'],
+            grandTotalLabel: 'Column Totals',
+            subTotalLabel: 'Sub Totals'
+          }
+        }
+      },
+      widthMode: 'standard'
+    };
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

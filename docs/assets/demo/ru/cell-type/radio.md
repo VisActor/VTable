@@ -1,1 +1,197 @@
---- категория: примеры группа: ячейка тип заголовок: переключатель тип обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/переключатель.png ссылка: cell_type/переключатель опция: списоктаблица-колонки-флажок#типЯчейки --- # переключатель тип демонстрацияnstrate multiple ways к использовать переключатель ## Critical конфигурация типЯчейки: 'переключатель'; ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const records = [ { productимя: 'aaaa', price: 20, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель a', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: true, отключить: false }, { текст: 'ячейка переключатель 2', checked: false, отключить: false } ] }, { productимя: 'bbbb', price: 18, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель b', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: false, отключить: false }, { текст: 'ячейка переключатель 2', checked: true, отключить: false } ] }, { productимя: 'cccc', price: 16, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель c', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: true, отключить: false }, { текст: 'ячейка переключатель 2', checked: false, отключить: false } ] }, { productимя: 'dddd', price: 14, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель d', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: false, отключить: true }, { текст: 'ячейка переключатель 2', checked: true, отключить: false } ] }, { productимя: 'eeee', price: 12, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель e', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: true, отключить: false }, { текст: 'ячейка переключатель 2', checked: false, отключить: false } ] }, { productимя: 'ffff', price: 10, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель f', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: false, отключить: false }, { текст: 'ячейка переключатель 2', checked: true, отключить: false } ] }, { productимя: 'gggg', price: 10, radio1: 'переключатель информация', radio2: true, radio3: { текст: 'колонка переключатель g', checked: false, отключить: false }, radio4: ['ячейка переключатель 1', 'ячейка переключатель 2'], radio5: [ { текст: 'ячейка переключатель 1', checked: true, отключить: false }, { текст: 'ячейка переключатель 2', checked: false, отключить: false } ] } ]; const колонки = [ { поле: 'isCheck', заголовок: '', ширина: 50, типЯчейки: 'переключатель' }, { поле: 'productимя', заголовок: 'product имя', ширина: 160 }, { поле: 'price', заголовок: 'price', ширина: 120 }, { поле: 'radio1', заголовок: 'колонка переключатель отключить', ширина: 200, типЯчейки: 'переключатель', отключить: true, checked: args => { if (args.строка === 3) возврат true; } }, { поле: 'radio3', заголовок: 'колонка переключатель данные config', ширина: 230, типЯчейки: 'переключатель' }, { поле: 'radio4', заголовок: 'ячейка переключатель', ширина: 140, типЯчейки: 'переключатель', стиль: { spaceBetweenRadio: 4 } }, { поле: 'radio5', заголовок: 'ячейка переключатель данные config', ширина: 240, radioDirectionInCell: 'horizontal', radioCheckType: 'ячейка', типЯчейки: 'переключатель', стиль: { spaceBetweenRadio: 8 } } ]; const опция = { records, колонки, высотаMode: 'автовысота' }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Cell Type
+заголовок: Radio Type
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/radio.png
+ссылка: cell_type/radio
+опция: ListTable-columns-checkbox#cellType
+---
+
+# Radio Type
+
+Demonstrate multiple ways to use radio
+
+## Critical Configuration
+
+cellType: 'radio';
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+const records = [
+  {
+    productName: 'aaaa',
+    price: 20,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio a',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: true, disable: false },
+      { text: 'cell radio 2', checked: false, disable: false }
+    ]
+  },
+  {
+    productName: 'bbbb',
+    price: 18,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio b',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: false, disable: false },
+      { text: 'cell radio 2', checked: true, disable: false }
+    ]
+  },
+  {
+    productName: 'cccc',
+    price: 16,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio c',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: true, disable: false },
+      { text: 'cell radio 2', checked: false, disable: false }
+    ]
+  },
+  {
+    productName: 'dddd',
+    price: 14,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio d',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: false, disable: true },
+      { text: 'cell radio 2', checked: true, disable: false }
+    ]
+  },
+  {
+    productName: 'eeee',
+    price: 12,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio e',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: true, disable: false },
+      { text: 'cell radio 2', checked: false, disable: false }
+    ]
+  },
+  {
+    productName: 'ffff',
+    price: 10,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio f',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: false, disable: false },
+      { text: 'cell radio 2', checked: true, disable: false }
+    ]
+  },
+  {
+    productName: 'gggg',
+    price: 10,
+    radio1: 'radio info',
+    radio2: true,
+    radio3: {
+      text: 'column radio g',
+      checked: false,
+      disable: false
+    },
+    radio4: ['cell radio 1', 'cell radio 2'],
+    radio5: [
+      { text: 'cell radio 1', checked: true, disable: false },
+      { text: 'cell radio 2', checked: false, disable: false }
+    ]
+  }
+];
+
+const columns = [
+  {
+    field: 'isCheck',
+    title: '',
+    width: 50,
+    cellType: 'radio'
+  },
+  {
+    field: 'productName',
+    title: 'product name',
+    width: 160
+  },
+  {
+    field: 'price',
+    title: 'price',
+    width: 120
+  },
+  {
+    field: 'radio1',
+    title: 'column radio disable',
+    width: 200,
+    cellType: 'radio',
+    disable: true,
+    checked: args => {
+      if (args.row === 3) return true;
+    }
+  },
+  {
+    field: 'radio3',
+    title: 'column radio data config',
+    width: 230,
+    cellType: 'radio'
+  },
+  {
+    field: 'radio4',
+    title: 'cell radio',
+    width: 140,
+    cellType: 'radio',
+    style: {
+      spaceBetweenRadio: 4
+    }
+  },
+  {
+    field: 'radio5',
+    title: 'cell radio data config',
+    width: 240,
+    radioDirectionInCell: 'horizontal',
+    radioCheckType: 'cell',
+    cellType: 'radio',
+    style: {
+      spaceBetweenRadio: 8
+    }
+  }
+];
+const option = {
+  records,
+  columns,
+  heightMode: 'autoHeight'
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

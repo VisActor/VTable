@@ -1,1 +1,125 @@
---- категория: примеры группа: компонент заголовок: заголовок обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/заголовок.png ссылка: компонентs/заголовок опция: списоктаблица#заголовок.видимый --- # заголовок в this пример, the main subheadings из the таблица are configured и styled separately. ## Ключевые Конфигурации - `заголовок` Configure the таблица заголовок, please refer к: https://www.visactor.io/втаблица/опция/списоктаблица#заголовок ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: '200' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', Подсказка: { isShowOverflowTextПодсказка: true }, заголовок: { текст: 'North American supermarket Продажи анализ', subtext: `The данные includes 15 к 18 years из retail transaction данные для North American supermarket`, orient: 'верх', заполнение: 20, textStyle: { fontSize: 30, заполнить: 'black' }, subtextStyle: { fontSize: 20, заполнить: 'blue' } } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; таблицаInstance.на('mouseenter_cell', args => { const { колонка, строка, targetиконка } = args; if (колонка === 0 && строка >= 1) { const rect = таблицаInstance.getVisibleCellRangeRelativeRect({ колонка, строка }); таблицаInstance.showПодсказка(колонка, строка, { content: 'ид Заказа：' + таблицаInstance.getCellValue(колонка, строка), referencePosition: { rect, placement: втаблица.TYPES.Placement.право }, //TODO classимя: 'defineПодсказка', стиль: { bgColor: 'black', цвет: 'white', шрифт: 'normal bold normal 14px/1 STKaiti', arrowMark: true } }); } }); }); ``` 
+---
+категория: примеры
+группа: Component
+заголовок: заголовок
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/заголовок.png
+ссылка: компонентs/заголовок
+опция: ListTable#заголовок.visible
+---
+
+# Title
+
+In this example, the main subheadings of the table are configured and styled separately.
+
+## Ключевые Конфигурации
+
+- `заголовок` Configure the table заголовок, please refer to: https://www.visactor.io/vtable/опция/ListTable#заголовок
+
+## Code Demo
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: '200'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      tooltip: {
+        isShowOverflowTextTooltip: true
+      },
+      title: {
+        text: 'North American supermarket sales analysis',
+        subtext: `The data includes 15 to 18 years of retail transaction data for North American supermarket`,
+        orient: 'top',
+        padding: 20,
+        textStyle: {
+          fontSize: 30,
+          fill: 'black'
+        },
+        subtextStyle: {
+          fontSize: 20,
+          fill: 'blue'
+        }
+      }
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+    tableInstance.on('mouseenter_cell', args => {
+      const { col, row, targetIcon } = args;
+      if (col === 0 && row >= 1) {
+        const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
+        tableInstance.showTooltip(col, row, {
+          content: 'ИД Заказа：' + tableInstance.getCellValue(col, row),
+          referencePosition: { rect, placement: VTable.TYPES.Placement.right }, //TODO
+          className: 'defineTooltip',
+          style: {
+            bgColor: 'black',
+            color: 'white',
+            font: 'normal bold normal 14px/1 STKaiti',
+            arrowMark: true
+          }
+        });
+      }
+    });
+  });
+```

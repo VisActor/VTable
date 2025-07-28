@@ -1,1 +1,117 @@
---- категория: примеры группа: экспорт заголовок: таблица экспорт (пользовательский экспорт) обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/флажок-демонстрация.png порядок: 4-6 ссылка: '../../guide/экспорт/excel' # опция: списоктаблица --- # таблица экспорт(пользовательский экспорт) по по умолчанию, when exporting, the текст или imвозраст inside the exported ячейка will be output к Excel. If you need к пользовательскийize the экспорт content, Вы можете set `formatExportOutput` к a функция, и the возврат значение из the функция is the exported строка. If the возврат значение is `undefined`, the по умолчанию экспорт logic will be processed. ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // You need к introduce the plug-в packвозраст when using it `@visactor/втаблица-экспорт` // импорт { // downloadCsv, // exportвтаблицаToCsv, // downloadExcel, // exportвтаблицаToExcel, // } от "@visactor/втаблица-экспорт"; // When umd is introduced, the экспорт tool will be mounted к втаблица.экспорт const records = [ { productимя: 'aaaa', price: 20, check: { текст: 'unchecked', checked: false, отключить: false } }, { productимя: 'bbbb', price: 18, check: { текст: 'checked', checked: true, отключить: false } }, { productимя: 'cccc', price: 16, check: { текст: 'отключить', checked: true, отключить: true } }, { productимя: 'cccc', price: 14, check: { текст: 'отключить', checked: false, отключить: true } }, { productимя: 'eeee', price: 12, check: { текст: 'checked', checked: false, отключить: false } }, { productимя: 'ffff', price: 10, check: { текст: 'checked', checked: false, отключить: false } }, { productимя: 'gggg', price: 10, check: { текст: 'checked', checked: false, отключить: false } } ]; const колонки = [ { поле: 'isCheck', заголовок: '', ширина: 60, headerType: 'флажок', типЯчейки: 'флажок' }, { поле: 'productимя', заголовок: 'productимя', ширина: 120 }, { поле: 'price', заголовок: 'флажок', ширина: 120, типЯчейки: 'флажок', отключить: true, checked: true }, { поле: 'check', заголовок: 'флажок', ширина: 120, типЯчейки: 'флажок' // отключить: true } ]; const опция = { records, колонки }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window.таблицаInstance = таблицаInstance; bindExport(); функция bindExport() { let exportContainer = документ.getElementById('экспорт-buttom'); if (exportContainer) { exportContainer.parentElement.removeChild(exportContainer); } exportContainer = документ.createElement('div'); exportContainer.ид = 'экспорт-buttom'; exportContainer.стиль.позиция = 'absolute'; exportContainer.стиль.низ = '0'; exportContainer.стиль.право = '0'; window['таблицаInstance'].getContainer().appendChild(exportContainer); const exportCsvКнопка = документ.createElement('Кнопка'); exportCsvКнопка.innerHTML = 'CSV-экспорт'; const exportExcelКнопка = документ.createElement('Кнопка'); exportExcelКнопка.innerHTML = 'Excel-экспорт'; exportContainer.appendChild(exportCsvКнопка); exportContainer.appendChild(exportExcelКнопка); exportCsvКнопка.addсобытиесписокener('Нажать', асинхронный () => { if (window.таблицаInstance) { await downloadCsv(exportвтаблицаToCsv(window.таблицаInstance), 'экспорт'); } }); exportExcelКнопка.addсобытиесписокener('Нажать', асинхронный () => { if (window.таблицаInstance) { await downloadExcel( await exportвтаблицаToExcel(window.таблицаInstance, { formatExportOutput: ({ типЯчейки, cellValue, таблица, колонка, строка }) => { if (типЯчейки === 'флажок') { возврат таблица.getCellCheckboxState(колонка, строка) ? 'true' : 'false'; } } }), 'экспорт' ); } }); } ``` 
+---
+категория: примеры
+группа: export
+заголовок: Table export (custom export)
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox-demo.png
+порядок: 4-6
+ссылка: '../../guide/export/excel'
+# опция: ListTable
+---
+
+# Table export(custom export)
+
+By default, when exporting, the text or image inside the exported cell will be output to Excel. If you need to customize the export content, you can set `formatExportOutput` to a function, and the return value of the function is the exported string. If the return value is `undefined`, the default export logic will be processed.
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+// You need to introduce the plug-in package when using it `@visactor/vtable-export`
+// import {
+//   downloadCsv,
+//   exportVTableToCsv,
+//   downloadExcel,
+//   exportVTableToExcel,
+// } from "@visactor/vtable-export";
+// When umd is introduced, the export tool will be mounted to VTable.export
+
+const records = [
+  { productName: 'aaaa', price: 20, check: { text: 'unchecked', checked: false, disable: false } },
+  { productName: 'bbbb', price: 18, check: { text: 'checked', checked: true, disable: false } },
+  { productName: 'cccc', price: 16, check: { text: 'disable', checked: true, disable: true } },
+  { productName: 'cccc', price: 14, check: { text: 'disable', checked: false, disable: true } },
+  { productName: 'eeee', price: 12, check: { text: 'checked', checked: false, disable: false } },
+  { productName: 'ffff', price: 10, check: { text: 'checked', checked: false, disable: false } },
+  { productName: 'gggg', price: 10, check: { text: 'checked', checked: false, disable: false } }
+];
+
+const columns = [
+  {
+    field: 'isCheck',
+    title: '',
+    width: 60,
+    headerType: 'checkbox',
+    cellType: 'checkbox'
+  },
+  {
+    field: 'productName',
+    title: 'productName',
+    width: 120
+  },
+  {
+    field: 'price',
+    title: 'checkbox',
+    width: 120,
+    cellType: 'checkbox',
+    disable: true,
+    checked: true
+  },
+  {
+    field: 'check',
+    title: 'checkbox',
+    width: 120,
+    cellType: 'checkbox'
+    // disable: true
+  }
+];
+const option = {
+  records,
+  columns
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window.tableInstance = tableInstance;
+
+bindExport();
+
+function bindExport() {
+  let exportContainer = document.getElementById('export-buttom');
+  if (exportContainer) {
+    exportContainer.parentElement.removeChild(exportContainer);
+  }
+
+  exportContainer = document.createElement('div');
+  exportContainer.id = 'export-buttom';
+  exportContainer.style.position = 'absolute';
+  exportContainer.style.bottom = '0';
+  exportContainer.style.right = '0';
+
+  window['tableInstance'].getContainer().appendChild(exportContainer);
+
+  const exportCsvButton = document.createElement('button');
+  exportCsvButton.innerHTML = 'CSV-export';
+  const exportExcelButton = document.createElement('button');
+  exportExcelButton.innerHTML = 'Excel-export';
+  exportContainer.appendChild(exportCsvButton);
+  exportContainer.appendChild(exportExcelButton);
+
+  exportCsvButton.addEventListener('click', async () => {
+    if (window.tableInstance) {
+      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+    }
+  });
+
+  exportExcelButton.addEventListener('click', async () => {
+    if (window.tableInstance) {
+      await downloadExcel(
+        await exportVTableToExcel(window.tableInstance, {
+          formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
+            if (cellType === 'checkbox') {
+              return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+            }
+          }
+        }),
+        'export'
+      );
+    }
+  });
+}
+```

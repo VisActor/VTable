@@ -1,1 +1,159 @@
---- категория: примеры группа: редактирование заголовок: заполнить handle обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/заполнить-handle.gif ссылка: редактирование/заполнить-handle опция: списоктаблица#excelOptions.fillHandle --- # заполнить Handle When a ячейка is selected, a заполнить handle will appear above the ячейка, и Вы можете перетаскивание the заполнить handle к редактирование the ячейка's значение. или double-Нажать the заполнить handle к change the значение из the ячейка you want к редактирование (This пример does не implement this logic). ## Ключевые Конфигурации -`списоктаблица.excelOptions.fillHandle` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', excelOptions: { fillHandle: true } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; // 记录 拖拽填充柄之前的选中范围 let beforeDragMaxCol; let beforeDragMinCol; let beforeDragMaxRow; let beforeDragMinRow; таблицаInstance.на('mousedown_fill_handle', arg => { const startSelectCellRange = таблицаInstance.getSelectedCellRanges()[0]; beforeDragMaxCol = Math.max(startSelectCellRange.начало.колонка, startSelectCellRange.конец.колонка); beforeDragMinCol = Math.min(startSelectCellRange.начало.колонка, startSelectCellRange.конец.колонка); beforeDragMaxRow = Math.max(startSelectCellRange.начало.строка, startSelectCellRange.конец.строка); beforeDragMinRow = Math.min(startSelectCellRange.начало.строка, startSelectCellRange.конец.строка); console.log('mousedown_fill_handle', beforeDragMinCol, beforeDragMinRow, beforeDragMaxCol, beforeDragMaxRow); }); таблицаInstance.на('drag_fill_handle_end', arg => { console.log('drag_fill_handle_end', arg); const direciton = arg.direction; let startChangeCellCol; let startChangeCellRow; let endChangeCellCol; let endChangeCellRow; const endSelectCellRange = таблицаInstance.getSelectedCellRanges()[0]; //根据填充方向 确定需要填充值的范围 if (direciton === 'низ') { startChangeCellCol = beforeDragMinCol; startChangeCellRow = beforeDragMaxRow + 1; endChangeCellCol = beforeDragMaxCol; endChangeCellRow = endSelectCellRange.конец.строка; } else if (direciton === 'право') { startChangeCellCol = beforeDragMaxCol + 1; startChangeCellRow = beforeDragMinRow; endChangeCellCol = endSelectCellRange.конец.колонка; endChangeCellRow = beforeDragMaxRow; } else if (direciton === 'верх') { startChangeCellCol = beforeDragMinCol; startChangeCellRow = beforeDragMinRow - 1; endChangeCellCol = beforeDragMaxCol; endChangeCellRow = endSelectCellRange.конец.строка; } else if (direciton === 'лево') { startChangeCellCol = beforeDragMinCol - 1; startChangeCellRow = beforeDragMinRow; endChangeCellCol = endSelectCellRange.конец.колонка; endChangeCellRow = beforeDragMaxRow; } changeтаблицаValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow); }); таблицаInstance.на('dblНажать_fill_handle', arg => { console.log('dblНажать_fill_handle'); }); функция changeтаблицаValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow) { const startCol = Math.min(startChangeCellCol, endChangeCellCol); const startRow = Math.min(startChangeCellRow, endChangeCellRow); const endCol = Math.max(startChangeCellCol, endChangeCellCol); const endRow = Math.max(startChangeCellRow, endChangeCellRow); const values = []; для (let строка = startRow; строка <= endRow; строка++) { const rowValues = []; для (let колонка = startCol; колонка <= endCol; колонка++) { rowValues.push(`колонка-строка:${колонка}-${строка}`); } values.push(rowValues); } таблицаInstance.changeCellValues(startCol, startRow, values); } }); ``` 
+---
+категория: примеры
+группа: edit
+заголовок: fill handle
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/fill-handle.gif
+ссылка: edit/fill-handle
+опция: ListTable#excelOptions.fillHandle
+---
+
+# Fill Handle
+
+When a cell is selected, a fill handle will appear above the cell, and you can drag the fill handle to edit the cell's value. Or double-click the fill handle to change the value of the cell you want to edit (This example does not implement this logic).
+
+## Ключевые Конфигурации
+
+-`ListTable.excelOptions.fillHandle`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      excelOptions: {
+        fillHandle: true
+      }
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+    // 记录 拖拽填充柄之前的选中范围
+    let beforeDragMaxCol;
+    let beforeDragMinCol;
+    let beforeDragMaxRow;
+    let beforeDragMinRow;
+    tableInstance.on('mousedown_fill_handle', arg => {
+      const startSelectCellRange = tableInstance.getSelectedCellRanges()[0];
+      beforeDragMaxCol = Math.max(startSelectCellRange.start.col, startSelectCellRange.end.col);
+      beforeDragMinCol = Math.min(startSelectCellRange.start.col, startSelectCellRange.end.col);
+      beforeDragMaxRow = Math.max(startSelectCellRange.start.row, startSelectCellRange.end.row);
+      beforeDragMinRow = Math.min(startSelectCellRange.start.row, startSelectCellRange.end.row);
+      console.log('mousedown_fill_handle', beforeDragMinCol, beforeDragMinRow, beforeDragMaxCol, beforeDragMaxRow);
+    });
+    tableInstance.on('drag_fill_handle_end', arg => {
+      console.log('drag_fill_handle_end', arg);
+
+      const direciton = arg.direction;
+      let startChangeCellCol;
+      let startChangeCellRow;
+      let endChangeCellCol;
+      let endChangeCellRow;
+      const endSelectCellRange = tableInstance.getSelectedCellRanges()[0];
+      //根据填充方向 确定需要填充值的范围
+      if (direciton === 'bottom') {
+        startChangeCellCol = beforeDragMinCol;
+        startChangeCellRow = beforeDragMaxRow + 1;
+        endChangeCellCol = beforeDragMaxCol;
+        endChangeCellRow = endSelectCellRange.end.row;
+      } else if (direciton === 'right') {
+        startChangeCellCol = beforeDragMaxCol + 1;
+        startChangeCellRow = beforeDragMinRow;
+        endChangeCellCol = endSelectCellRange.end.col;
+        endChangeCellRow = beforeDragMaxRow;
+      } else if (direciton === 'top') {
+        startChangeCellCol = beforeDragMinCol;
+        startChangeCellRow = beforeDragMinRow - 1;
+        endChangeCellCol = beforeDragMaxCol;
+        endChangeCellRow = endSelectCellRange.end.row;
+      } else if (direciton === 'left') {
+        startChangeCellCol = beforeDragMinCol - 1;
+        startChangeCellRow = beforeDragMinRow;
+        endChangeCellCol = endSelectCellRange.end.col;
+        endChangeCellRow = beforeDragMaxRow;
+      }
+      changeTableValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow);
+    });
+    tableInstance.on('dblclick_fill_handle', arg => {
+      console.log('dblclick_fill_handle');
+    });
+
+    function changeTableValues(startChangeCellCol, startChangeCellRow, endChangeCellCol, endChangeCellRow) {
+      const startCol = Math.min(startChangeCellCol, endChangeCellCol);
+      const startRow = Math.min(startChangeCellRow, endChangeCellRow);
+      const endCol = Math.max(startChangeCellCol, endChangeCellCol);
+      const endRow = Math.max(startChangeCellRow, endChangeCellRow);
+      const values = [];
+      for (let row = startRow; row <= endRow; row++) {
+        const rowValues = [];
+        for (let col = startCol; col <= endCol; col++) {
+          rowValues.push(`col-row:${col}-${row}`);
+        }
+        values.push(rowValues);
+      }
+      tableInstance.changeCellValues(startCol, startRow, values);
+    }
+  });
+```

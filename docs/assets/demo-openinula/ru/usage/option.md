@@ -1,1 +1,47 @@
---- категория: примеры группа: использование заголовок: full опция обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/react-по умолчанию-новый.png порядок: 1-1 ссылка: Developer_Ecology/openinula --- # full опция Вы можете использовать the полный опция из втаблица directly и pass the опция into the таблица компонент as a prop. ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица-openinula // импорт * as InulaВТаблица от '@visactor/openinula-втаблица'; const опция = { колонки: [ { поле: '0', заголовок: 'имя' }, { поле: '1', заголовок: 'возраст' }, { поле: '2', заголовок: 'пол' }, { поле: '3', заголовок: 'хобби' } ], records: новый массив(1000).заполнить(['John', 18, 'мужской', '🏀']) }; const корень = документ.getElementById(CONTAINER_ID); Inula.рендер(<InulaВТаблица.списоктаблица опция={опция} высота={'500px'} />, корень); // Релиз openinula instance, do не copy window.пользовательскийРелиз = () => { Inula.unmountкомпонентAtNode(корень); }; ``` 
+---
+категория: примеры
+группа: использование
+заголовок: full опция
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default-new.png
+порядок: 1-1
+ссылка: Developer_Ecology/openinula
+---
+
+# full опция
+
+You can use the complete опция of VTable directly and pass the опция into the table компонент as a prop.
+
+## демонстрация кода
+
+```javascript livedemo template=vtable-openinula
+// import * as InulaVTable from '@visactor/openinula-vtable';
+const option = {
+  columns: [
+    {
+      field: '0',
+      title: 'имя'
+    },
+    {
+      field: '1',
+      title: 'возраст'
+    },
+    {
+      field: '2',
+      title: 'пол'
+    },
+    {
+      field: '3',
+      title: 'хобби'
+    }
+  ],
+  records: new Array(1000).fill(['John', 18, 'мужской', '🏀'])
+};
+
+const root = document.getElementById(CONTAINER_ID);
+Inula.render(<InulaVTable.ListTable option={option} height={'500px'} />, root);
+
+// release openinula instance, do not copy
+window.customRelease = () => {
+  Inula.unmountComponentAtNode(root);
+};
+```

@@ -1,1 +1,93 @@
---- категория: примеры группа: компонент заголовок: empty tip обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/empty-tip.png ссылка: компонентs/empty-tip опция: списоктаблица#emptyTip --- # Empty Tip When `emptyTip` is configured, when the таблица данные is empty, an empty данные prompt will be displayed. Вы можете configure the prompt текст, prompt иконка, prompt стиль, etc. ## Ключевые Конфигурации - `emptyTip` Configure empty данные prompt. для details, please refer к: https://www.visactor.io/втаблица/опция/списоктаблица#emptyTip ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: '200' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { колонки, ширинаMode: 'standard', Подсказка: { isShowOverflowTextПодсказка: true }, emptyTip: { текст: 'no данные records' } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Component
+заголовок: empty tip
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/empty-tip.png
+ссылка: компонентs/empty-tip
+опция: ListTable#emptyTip
+---
+
+# Empty Tip
+
+When `emptyTip` is configured, when the table data is empty, an empty data prompt will be displayed. You can configure the prompt text, prompt icon, prompt style, etc.
+
+## Ключевые Конфигурации
+
+- `emptyTip` Configure empty data prompt. For details, please refer to: https://www.visactor.io/vtable/опция/ListTable#emptyTip
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+
+const columns = [
+  {
+    field: 'ИД Заказа',
+    title: 'ИД Заказа',
+    width: 'auto'
+  },
+  {
+    field: 'ИД Клиента',
+    title: 'ИД Клиента',
+    width: 'auto'
+  },
+  {
+    field: 'Название Товара',
+    title: 'Название Товара',
+    width: '200'
+  },
+  {
+    field: 'Категория',
+    title: 'Категория',
+    width: 'auto'
+  },
+  {
+    field: 'Подкатегория',
+    title: 'Подкатегория',
+    width: 'auto'
+  },
+  {
+    field: 'Регион',
+    title: 'Регион',
+    width: 'auto'
+  },
+  {
+    field: 'Город',
+    title: 'Город',
+    width: 'auto'
+  },
+  {
+    field: 'Дата Заказа',
+    title: 'Дата Заказа',
+    width: 'auto'
+  },
+  {
+    field: 'Количество',
+    title: 'Количество',
+    width: 'auto'
+  },
+  {
+    field: 'Продажи',
+    title: 'Продажи',
+    width: 'auto'
+  },
+  {
+    field: 'Прибыль',
+    title: 'Прибыль',
+    width: 'auto'
+  }
+];
+
+const option = {
+  columns,
+  widthMode: 'standard',
+  tooltip: {
+    isShowOverflowTextTooltip: true
+  },
+  emptyTip: {
+    text: 'no data records'
+  }
+};
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

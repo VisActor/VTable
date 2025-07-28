@@ -1,1 +1,115 @@
---- категория: примеры группа: базовый возможности заголовок: список таблица - заголовок группа свернуть обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-таблица-заголовок-hierarchy-tree.gif ссылка: таблица-тип/список-таблица опция: списоктаблица-колонки-текст#колонки --- # список таблица - заголовок группа свернуть Configure колонки as a nested multi-layer structure к achieve multi-layer заголовок grouping effects. включить tree-стиль expansion и свернуть функциональность through `headerHierarchyType: 'grid-tree'`, и set the по умолчанию expansion level с `headerExpandLevel`. ## Ключевые Конфигурации - колонки - `headerHierarchyType` Set hierarchy display к `grid-tree` к включить tree-стиль развернуть/свернуть - `headerExpandLevel` Configure по умолчанию expansion level (defaults к 1) ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; const records = [ { ид: 1, имя: 'имя.1', имя_1: 'имя_1.1', имя_2: 'имя_2.1', имя_2_1: 'имя_2_1.1', имя_2_2: 'имя_2_2.1' }, { ид: 2, имя: 'имя.2', имя_1: 'имя_1.2', имя_2: 'имя_2.2', имя_2_1: 'имя_2_1.2', имя_2_2: 'имя_2_2.2' }, { ид: 3, имя: 'имя.3', имя_1: 'имя_1.3', имя_2: 'имя_2.3', имя_2_1: 'имя_2_1.3', имя_2_2: 'имя_2_2.3' }, { ид: 4, имя: 'имя.4', имя_1: 'имя_1.4', имя_2: 'имя_2.4', имя_2_1: 'имя_2_1.4', имя_2_2: 'имя_2_2.4' }, { ид: 5, имя: 'имя.5', имя_1: 'имя_1.5', имя_2: 'имя_2.5', имя_2_1: 'имя_2_1.5', имя_2_2: 'имя_2_2.5' } ]; const колонки = [ { поле: 'ид', заголовок: 'ид', ширина: 100 }, { поле: 'имя', заголовок: 'имя', колонки: [ { поле: 'имя_1', заголовок: 'имя_1', ширина: 120 }, { поле: 'имя_2', заголовок: 'имя_2', ширина: 150, колонки: [ { поле: 'имя_2_1', заголовок: 'имя_2_1', ширина: 150 }, { поле: 'имя_2_2', заголовок: 'имя_2_2', ширина: 150 } ] } ] } ]; const опция = { records, колонки, headerHierarchyType: 'grid-tree', headerExpandLevel: 3, ширинаMode: 'standard', автоWrapText: true, автоRowвысота: true, defaultColширина: 150 }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: List Table - Header Group Collapse
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-header-hierarchy-tree.gif
+ссылка: table-type/list-table
+опция: ListTable-columns-text#columns
+---
+
+# List Table - Header Group Collapse
+
+Configure columns as a nested multi-layer structure to achieve multi-layer header группаing effects. Enable tree-style expansion and collapse functionality through `headerHierarchyType: 'grid-tree'`, and set the default expansion level with `headerExpandLevel`.
+
+## Ключевые Конфигурации
+
+- columns
+- `headerHierarchyType` Set hierarchy display to `grid-tree` to enable tree-style expand/collapse
+- `headerExpandLevel` Configure default expansion level (defaults to 1)
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+const records = [
+  {
+    id: 1,
+    name: 'name.1',
+    name_1: 'name_1.1',
+    name_2: 'name_2.1',
+    name_2_1: 'name_2_1.1',
+    name_2_2: 'name_2_2.1'
+  },
+  {
+    id: 2,
+    name: 'name.2',
+    name_1: 'name_1.2',
+    name_2: 'name_2.2',
+    name_2_1: 'name_2_1.2',
+    name_2_2: 'name_2_2.2'
+  },
+  {
+    id: 3,
+    name: 'name.3',
+    name_1: 'name_1.3',
+    name_2: 'name_2.3',
+    name_2_1: 'name_2_1.3',
+    name_2_2: 'name_2_2.3'
+  },
+  {
+    id: 4,
+    name: 'name.4',
+    name_1: 'name_1.4',
+    name_2: 'name_2.4',
+    name_2_1: 'name_2_1.4',
+    name_2_2: 'name_2_2.4'
+  },
+  {
+    id: 5,
+    name: 'name.5',
+    name_1: 'name_1.5',
+    name_2: 'name_2.5',
+    name_2_1: 'name_2_1.5',
+    name_2_2: 'name_2_2.5'
+  }
+];
+
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 100
+  },
+  {
+    field: 'имя',
+    title: 'Name',
+    columns: [
+      {
+        field: 'name_1',
+        title: 'Name_1',
+        width: 120
+      },
+      {
+        field: 'name_2',
+        title: 'Name_2',
+        width: 150,
+        columns: [
+          {
+            field: 'name_2_1',
+            title: 'Name_2_1',
+            width: 150
+          },
+          {
+            field: 'name_2_2',
+            title: 'Name_2_2',
+            width: 150
+          }
+        ]
+      }
+    ]
+  }
+];
+
+const option = {
+  records,
+  columns,
+  headerHierarchyType: 'grid-tree',
+  headerExpandLevel: 3,
+  widthMode: 'standard',
+  autoWrapText: true,
+  autoRowHeight: true,
+  defaultColWidth: 150
+};
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

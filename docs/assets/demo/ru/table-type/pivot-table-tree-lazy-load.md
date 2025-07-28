@@ -1,1 +1,497 @@
---- категория: примеры группа: таблица-тип заголовок: сводный таблица tree ленивая загрузка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-таблица-tree-lazy-load.gif ссылка: таблица_type/сводный_таблица/сводный_таблица_tree опция: сводныйтаблица#rowHierarchyType('grid'%20%7C%20'tree') --- # сводный таблица tree ленивая загрузка The сводный таблица tree display supports lazy загрузка из child node данные when expanding a node. If the children в the corresponding `rowTree` is set к true instead из a specific данные set, Вы можете списокen к the `TREE_HIERARCHY_STATE_CHANGE` событие к request the `children` данные when Нажатьing. The данные must include the corresponding indicator данные records из the child node и the tree structure tree из the строка заголовок, which are set к the таблица компонент through the interfaces `setTreeNodeChildren`. ## ключевая конфигурация - `сводныйтаблица` таблица тип - `rowHierarchyType` sets the hierarchy display к `tree`, the по умолчанию is tile режим `grid`. - `columnTree` пользовательскийizes the таблица заголовок tree structure - `rowTree` пользовательскийizes the таблица заголовок tree structure - `колонки` необязательный, configure the стиль из the dimension, etc. - `rows` is необязательный, configures the стиль из the dimension, etc. - `indicators` indicator конфигурация ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/демонстрация/сводный-tree-lazy-load-en.json') .then(res => res.json()) .then(данные => { const опция = { records: данные, rowTree: [ { dimensionKey: '220524114340021', значение: 'office supplies', children: true }, { dimensionKey: '220524114340021', значение: 'Furniture', children: [ { dimensionKey: '220524114340022', значение: 'Company' }, { dimensionKey: '220524114340022', значение: 'Consumer' }, { dimensionKey: '220524114340022', значение: 'Small бизнес' } ] }, { dimensionKey: '220524114340021', значение: 'Catering', children: [ { dimensionKey: '220524114340022', значение: 'Company' }, { dimensionKey: '220524114340022', значение: 'Consumer' }, { dimensionKey: '220524114340022', значение: 'Small бизнес' } ] }, { dimensionKey: '220524114340021', значение: 'technology', children: [ { dimensionKey: '220524114340022', значение: 'Company' }, { dimensionKey: '220524114340022', значение: 'Consumer' }, { dimensionKey: '220524114340022', значение: 'Small бизнес' } ] } ], columnTree: [ { dimensionKey: '220524114340020', значение: 'northeast', children: [ { dimensionKey: '220524114340031', значение: 'heilongjiang', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] }, { dimensionKey: '220524114340031', значение: 'jilin', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] }, { dimensionKey: '220524114340031', значение: 'liaoning', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] } ] }, { dimensionKey: '220524114340020', значение: 'North China', children: [ { dimensionKey: '220524114340031', значение: 'Inner Mongolia', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] }, { dimensionKey: '220524114340031', значение: 'Beijing', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] }, { dimensionKey: '220524114340031', значение: 'tianjin', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] } ] }, { dimensionKey: '220524114340020', значение: 'середина-из-south', children: [ { dimensionKey: '220524114340031', значение: 'Guangdong', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] }, { dimensionKey: '220524114340031', значение: 'Guangxi', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] }, { dimensionKey: '220524114340031', значение: 'Hunan', children: [ { indicatorKey: '220524114340013', значение: 'Продажи' }, { indicatorKey: '220524114340014', значение: 'Прибыль' } ] } ] } ], rows: [ { dimensionKey: '220524114340021', заголовок: 'Категория / Subdivision / Mailing method', headerFormat(значение) { возврат `${значение}`; }, ширина: 200, headerStyle: { cursor: 'help', textAlign: 'центр', borderColor: 'blue', цвет: 'purple', textStick: true, bgColor: '#6cd26f' } }, { dimensionKey: '220524114340022', заголовок: 'под-Категория', headerStyle: { textAlign: 'лево', цвет: 'blue', bgColor: '#45b89f' } }, { dimensionKey: '220524114340023', заголовок: 'Mailing method', headerStyle: { textAlign: 'лево', цвет: 'white', bgColor: '#6699ff' } }, { dimensionKey: '2205241143400232', заголовок: 'Mailing method-1' } ], колонки: [ { dimensionKey: '220524114340020', заголовок: 'Регион', headerStyle: { textAlign: 'право', borderColor: 'blue', цвет: 'yellow', textStick: true, bgColor(arg) { if ( arg.cellHeaderPaths.colHeaderPaths && 'значение' в arg.cellHeaderPaths.colHeaderPaths[0] && arg.cellHeaderPaths.colHeaderPaths[0].значение === 'northeast' ) { возврат '#bd422a'; } if ( arg.cellHeaderPaths.colHeaderPaths && 'значение' в arg.cellHeaderPaths.colHeaderPaths[0] && arg.cellHeaderPaths.colHeaderPaths[0].значение === 'North China' ) { возврат '#ff9900'; } возврат 'gray'; } } }, { dimensionKey: '220524114340031', заголовок: 'Province' } ], indicators: [ { indicatorKey: '220524114340013', заголовок: 'Продажи', ширина: 'авто', format(значение, колонка, строка, таблица) { if (!значение) { возврат '--'; } возврат Math.floor(parseFloat(значение)); }, headerStyle: { цвет: 'red', bgColor(arg) { if ( arg.cellHeaderPaths.colHeaderPaths && 'значение' в arg.cellHeaderPaths.colHeaderPaths[0] && arg.cellHeaderPaths.colHeaderPaths[0].значение === 'northeast' ) { возврат '#bd422a'; } if ( arg.cellHeaderPaths.colHeaderPaths && 'значение' в arg.cellHeaderPaths.colHeaderPaths[0] && arg.cellHeaderPaths.colHeaderPaths[0].значение === 'North China' ) { возврат '#ff9900'; } возврат 'gray'; } } }, { indicatorKey: '220524114340014', заголовок: 'Прибыль', format(значение) { if (!значение) { возврат '--'; } возврат Math.floor(parseFloat(значение)); }, ширина: 'авто', headerStyle: { bgColor(arg) { if ( arg.cellHeaderPaths.colHeaderPaths && 'значение' в arg.cellHeaderPaths.colHeaderPaths[0] && arg.cellHeaderPaths.colHeaderPaths[0].значение === 'northeast' ) { возврат '#bd422a'; } if ( arg.cellHeaderPaths.colHeaderPaths && 'значение' в arg.cellHeaderPaths.colHeaderPaths[0] && arg.cellHeaderPaths.colHeaderPaths[0].значение === 'North China' ) { возврат '#ff9900'; } возврат 'gray'; } } } ], угол: { titleOnDimension: 'строка', headerStyle: { textAlign: 'центр', borderColor: 'red', цвет: 'red', fontSize: 16, fontWeight: 'bold', lineвысота: 20, fontFamily: 'Arial' } }, высотаMode: 'автовысота', автоWrapText: true, ширинаMode: 'standard', rowHierarchyType: 'tree', rowHierarchyIndent: 20, тема: втаблица.темаs.арко, dragпорядок: { dragHeaderMode: 'все' } }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); const { TREE_HIERARCHY_STATE_CHANGE } = втаблица.списоктаблица.событие_TYPE; таблицаInstance.на(TREE_HIERARCHY_STATE_CHANGE, args => { // TODO 调用接口插入设置子节点的数据 if (args.hierarchyState === втаблица.TYPES.HierarchyState.развернуть && args.originданные.children === true) { console.log(args.originданные); setTimeout(() => { let children; let newданные; if (args.originданные.dimensionKey === '220524114340021' && args.originданные.значение === 'office supplies') { fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/демонстрация/сводный-tree-lazy-load-add-1-en.json') .then(res => res.json()) .then(newданные => { children = [ { dimensionKey: '220524114340022', значение: 'Company', children: [ { dimensionKey: '220524114340023', значение: 'Level 1', children: [ { dimensionKey: '2205241143400232', значение: 'Level 1' }, { dimensionKey: '2205241143400232', значение: 'Level 2' }, { dimensionKey: '2205241143400232', значение: 'Level 3' } ] }, { dimensionKey: '220524114340023', значение: 'Level 2', children: [ { dimensionKey: '2205241143400232', значение: 'Level 1' }, { dimensionKey: '2205241143400232', значение: 'Level 2' }, { dimensionKey: '2205241143400232', значение: 'Level 3' } ] }, { dimensionKey: '220524114340023', значение: 'Level 3' } ] }, { dimensionKey: '220524114340022', значение: 'Consumer', children: true }, { dimensionKey: '220524114340022', значение: 'Small бизнес' } ]; таблицаInstance.setTreeNodeChildren(children, newданные, args.колонка, args.строка); }); } else if (args.originданные.dimensionKey === '220524114340022' && args.originданные.значение === 'Consumer') { fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/демонстрация/сводный-tree-lazy-load-add-2-en.json') .then(res => res.json()) .then(newданные => { children = [ { dimensionKey: '220524114340023', значение: 'Level 1' }, { dimensionKey: '220524114340023', значение: 'Level 1' }, { dimensionKey: '220524114340023', значение: 'Level 3' } ]; таблицаInstance.setTreeNodeChildren(children, newданные, args.колонка, args.строка); }); } }, 10); } }); }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: Pivot table tree lazy load
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-table-tree-lazy-load.gif
+ссылка: table_type/Pivot_table/pivot_table_tree
+опция: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
+---
+
+# Pivot table tree lazy load
+
+The сводная таблица tree display supports lazy loading of child node data when expanding a node. If the children in the corresponding `rowTree` is set to true instead of a specific data set, you can listen to the `TREE_HIERARCHY_STATE_CHANGE` событие to request the `children` data when clicking. The data must include the corresponding indicator data records of the child node and the tree structure tree of the row header, which are set to the table компонент through the interfaces `setTreeNodeChildren`.
+
+## Key Configuration
+
+- `PivotTable` table type
+- `rowHierarchyType` sets the hierarchy display to `tree`, the default is tile mode `grid`.
+- `columnTree` customizes the table header tree structure
+- `rowTree` customizes the table header tree structure
+- `columns` опцияal, configure the style of the dimension, etc.
+- `rows` is опцияal, configures the style of the dimension, etc.
+- `indicators` indicator configuration
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-en.json')
+  .then(res => res.json())
+  .then(data => {
+    const option = {
+      records: data,
+      rowTree: [
+        {
+          dimensionKey: '220524114340021',
+          value: 'office supplies',
+          children: true
+        },
+        {
+          dimensionKey: '220524114340021',
+          value: 'Furniture',
+          children: [
+            {
+              dimensionKey: '220524114340022',
+              value: 'Company'
+            },
+            {
+              dimensionKey: '220524114340022',
+              value: 'Consumer'
+            },
+            {
+              dimensionKey: '220524114340022',
+              value: 'Small business'
+            }
+          ]
+        },
+        {
+          dimensionKey: '220524114340021',
+          value: 'Catering',
+          children: [
+            {
+              dimensionKey: '220524114340022',
+              value: 'Company'
+            },
+            {
+              dimensionKey: '220524114340022',
+              value: 'Consumer'
+            },
+            {
+              dimensionKey: '220524114340022',
+              value: 'Small business'
+            }
+          ]
+        },
+        {
+          dimensionKey: '220524114340021',
+          value: 'technology',
+          children: [
+            {
+              dimensionKey: '220524114340022',
+              value: 'Company'
+            },
+            {
+              dimensionKey: '220524114340022',
+              value: 'Consumer'
+            },
+            {
+              dimensionKey: '220524114340022',
+              value: 'Small business'
+            }
+          ]
+        }
+      ],
+      columnTree: [
+        {
+          dimensionKey: '220524114340020',
+          value: 'northeast',
+          children: [
+            {
+              dimensionKey: '220524114340031',
+              value: 'heilongjiang',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            },
+            {
+              dimensionKey: '220524114340031',
+              value: 'jilin',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            },
+            {
+              dimensionKey: '220524114340031',
+              value: 'liaoning',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          dimensionKey: '220524114340020',
+          value: 'North China',
+          children: [
+            {
+              dimensionKey: '220524114340031',
+              value: 'Inner Mongolia',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            },
+            {
+              dimensionKey: '220524114340031',
+              value: 'Beijing',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            },
+            {
+              dimensionKey: '220524114340031',
+              value: 'tianjin',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          dimensionKey: '220524114340020',
+          value: 'Middle-of-south',
+          children: [
+            {
+              dimensionKey: '220524114340031',
+              value: 'Guangdong',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            },
+            {
+              dimensionKey: '220524114340031',
+              value: 'Guangxi',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            },
+            {
+              dimensionKey: '220524114340031',
+              value: 'Hunan',
+              children: [
+                {
+                  indicatorKey: '220524114340013',
+                  value: 'Продажи'
+                },
+                {
+                  indicatorKey: '220524114340014',
+                  value: 'Прибыль'
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      rows: [
+        {
+          dimensionKey: '220524114340021',
+          title: 'Категория / Subdivision / Mailing method',
+          headerFormat(value) {
+            return `${value}`;
+          },
+          width: 200,
+          headerStyle: {
+            cursor: 'help',
+            textAlign: 'center',
+            borderColor: 'blue',
+            color: 'purple',
+            textStick: true,
+            bgColor: '#6cd26f'
+          }
+        },
+        {
+          dimensionKey: '220524114340022',
+          title: 'Подкатегория',
+          headerStyle: {
+            textAlign: 'left',
+            color: 'blue',
+            bgColor: '#45b89f'
+          }
+        },
+        {
+          dimensionKey: '220524114340023',
+          title: 'Mailing method',
+          headerStyle: {
+            textAlign: 'left',
+            color: 'white',
+            bgColor: '#6699ff'
+          }
+        },
+        {
+          dimensionKey: '2205241143400232',
+          title: 'Mailing method-1'
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: '220524114340020',
+          title: 'Регион',
+          headerStyle: {
+            textAlign: 'right',
+            borderColor: 'blue',
+            color: 'yellow',
+            textStick: true,
+            bgColor(arg) {
+              if (
+                arg.cellHeaderPaths.colHeaderPaths &&
+                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].value === 'northeast'
+              ) {
+                return '#bd422a';
+              }
+              if (
+                arg.cellHeaderPaths.colHeaderPaths &&
+                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].value === 'North China'
+              ) {
+                return '#ff9900';
+              }
+              return 'gray';
+            }
+          }
+        },
+        {
+          dimensionKey: '220524114340031',
+          title: 'Province'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: '220524114340013',
+          title: 'Продажи',
+          width: 'auto',
+          format(value, col, row, table) {
+            if (!value) {
+              return '--';
+            }
+            return Math.floor(parseFloat(value));
+          },
+          headerStyle: {
+            color: 'red',
+            bgColor(arg) {
+              if (
+                arg.cellHeaderPaths.colHeaderPaths &&
+                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].value === 'northeast'
+              ) {
+                return '#bd422a';
+              }
+              if (
+                arg.cellHeaderPaths.colHeaderPaths &&
+                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].value === 'North China'
+              ) {
+                return '#ff9900';
+              }
+              return 'gray';
+            }
+          }
+        },
+        {
+          indicatorKey: '220524114340014',
+          title: 'Прибыль',
+          format(value) {
+            if (!value) {
+              return '--';
+            }
+            return Math.floor(parseFloat(value));
+          },
+          width: 'auto',
+          headerStyle: {
+            bgColor(arg) {
+              if (
+                arg.cellHeaderPaths.colHeaderPaths &&
+                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].value === 'northeast'
+              ) {
+                return '#bd422a';
+              }
+              if (
+                arg.cellHeaderPaths.colHeaderPaths &&
+                'value' in arg.cellHeaderPaths.colHeaderPaths[0] &&
+                arg.cellHeaderPaths.colHeaderPaths[0].value === 'North China'
+              ) {
+                return '#ff9900';
+              }
+              return 'gray';
+            }
+          }
+        }
+      ],
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textAlign: 'center',
+          borderColor: 'red',
+          color: 'red',
+          fontSize: 16,
+          fontWeight: 'bold',
+          lineHeight: 20,
+          fontFamily: 'Arial'
+        }
+      },
+      heightMode: 'autoHeight',
+      autoWrapText: true,
+      widthMode: 'standard',
+      rowHierarchyType: 'tree',
+      rowHierarchyIndent: 20,
+      theme: VTable.themes.ARCO,
+      dragOrder: {
+        dragHeaderMode: 'all'
+      }
+    };
+
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+    tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, args => {
+      // TODO 调用接口插入设置子节点的数据
+      if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && args.originData.children === true) {
+        console.log(args.originData);
+        setTimeout(() => {
+          let children;
+          let newData;
+          if (args.originData.dimensionKey === '220524114340021' && args.originData.value === 'office supplies') {
+            fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-add-1-en.json')
+              .then(res => res.json())
+              .then(newData => {
+                children = [
+                  {
+                    dimensionKey: '220524114340022',
+                    value: 'Company',
+                    children: [
+                      {
+                        dimensionKey: '220524114340023',
+                        value: 'Level 1',
+                        children: [
+                          {
+                            dimensionKey: '2205241143400232',
+                            value: 'Level 1'
+                          },
+                          {
+                            dimensionKey: '2205241143400232',
+                            value: 'Level 2'
+                          },
+                          {
+                            dimensionKey: '2205241143400232',
+                            value: 'Level 3'
+                          }
+                        ]
+                      },
+                      {
+                        dimensionKey: '220524114340023',
+                        value: 'Level 2',
+                        children: [
+                          {
+                            dimensionKey: '2205241143400232',
+                            value: 'Level 1'
+                          },
+                          {
+                            dimensionKey: '2205241143400232',
+                            value: 'Level 2'
+                          },
+                          {
+                            dimensionKey: '2205241143400232',
+                            value: 'Level 3'
+                          }
+                        ]
+                      },
+                      {
+                        dimensionKey: '220524114340023',
+                        value: 'Level 3'
+                      }
+                    ]
+                  },
+                  {
+                    dimensionKey: '220524114340022',
+                    value: 'Consumer',
+                    children: true
+                  },
+                  {
+                    dimensionKey: '220524114340022',
+                    value: 'Small business'
+                  }
+                ];
+
+                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
+              });
+          } else if (args.originData.dimensionKey === '220524114340022' && args.originData.value === 'Consumer') {
+            fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/demo/pivot-tree-lazy-load-add-2-en.json')
+              .then(res => res.json())
+              .then(newData => {
+                children = [
+                  {
+                    dimensionKey: '220524114340023',
+                    value: 'Level 1'
+                  },
+                  {
+                    dimensionKey: '220524114340023',
+                    value: 'Level 1'
+                  },
+                  {
+                    dimensionKey: '220524114340023',
+                    value: 'Level 3'
+                  }
+                ];
+                tableInstance.setTreeNodeChildren(children, newData, args.col, args.row);
+              });
+          }
+        }, 10);
+      }
+    });
+  });
+```

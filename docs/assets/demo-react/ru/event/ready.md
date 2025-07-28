@@ -1,1 +1,57 @@
---- категория: примеры группа: событие заголовок: onReady обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/react-по умолчанию.png порядок: 1-1 ссылка: таблица_type/список_таблица/список_таблица_define_and_generate опция: списоктаблица-колонки-текст#типЯчейки --- # onReady The onReady обратный вызов is triggered after the таблица completes initialization или update. Вы можете obtain the таблица instance и whether it is the первый rendering. ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица-react // импорт * as ReactВТаблица от '@visactor/react-втаблица'; const опция = { колонки: [ { поле: '0', заголовок: 'имя' }, { поле: '1', заголовок: 'возраст' }, { поле: '2', заголовок: 'пол' }, { поле: '3', заголовок: 'хобби' } ], records: новый массив(1000).заполнить(['John', 18, 'мужской', '🏀']) }; const корень = ReactDom.createRoot(документ.getElementById(CONTAINER_ID)); корень.рендер( <ReactВТаблица.списоктаблица опция={опция} высота={'500px'} onReady={(таблицаInstance, isFirst) => { console.log(таблицаInstance, isFirst); }} /> ); // Релиз openinula instance, do не copy window.пользовательскийРелиз = () => { корень.unmount(); }; ``` 
+---
+категория: примеры
+группа: событие
+заголовок: onReady
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-default.png
+порядок: 1-1
+ссылка: table_type/List_table/list_table_define_and_generate
+опция: ListTable-columns-text#cellType
+---
+
+# onReady
+
+The onReady callback is triggered after the table completes initialization or update. You can obtain the table instance and whether it is the first rendering.
+
+## демонстрация кода
+
+```javascript livedemo template=vtable-react
+// import * as ReactVTable from '@visactor/react-vtable';
+
+const option = {
+  columns: [
+    {
+      field: '0',
+      title: 'имя'
+    },
+    {
+      field: '1',
+      title: 'возраст'
+    },
+    {
+      field: '2',
+      title: 'пол'
+    },
+    {
+      field: '3',
+      title: 'хобби'
+    }
+  ],
+  records: new Array(1000).fill(['John', 18, 'мужской', '🏀'])
+};
+
+const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
+root.render(
+  <ReactVTable.ListTable
+    option={option}
+    height={'500px'}
+    onReady={(tableInstance, isFirst) => {
+      console.log(tableInstance, isFirst);
+    }}
+  />
+);
+
+// release openinula instance, do not copy
+window.customRelease = () => {
+  root.unmount();
+};
+```

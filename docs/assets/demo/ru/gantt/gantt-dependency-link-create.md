@@ -1,1 +1,347 @@
---- категория: примеры группа: гантт заголовок: Create гантт Dependency ссылка Line обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/гантт/гантт-dependency-ссылка-line-create.gif ссылка: гантт/introduction опция: гантт#taskBar --- # Create dependency lines between tasks в the гантт график, arrows are usually used к represent the dependencies between tasks. During initialization, existing dependencies are displayed through `dependency.links`, и dependencies can be dynamically created through взаимодействие. обратите внимание, что you should set `dependency.linkCreaтаблица` к true к включить the creation из dependency lines. The styles из the operation points и operation lines that are dynamically created during creation can be configured through `dependency.linkCreatePointStyle` `dependency.linkCreatingPointStyle` `dependency.linkCreatingLineStyle`. ## ключевая конфигурация - `гантт` - `гантт#dependency.links` configures the данные из the dependencies between task bars - `гантт#dependency.linkLineStyle` configures the стиль из the dependency line - `гантт#dependency.linkSelectedLineStyle` configures the стиль из the dependency line when it is selected - `гантт#dependency.linkCreaтаблица` configures whether dependency lines can be created - `гантт#dependency.linkCreatePointStyle` configures the starting point стиль из the dependency line creation process - `гантт#dependency.linkCreatingPointStyle` configures the endpoint стиль из the dependency line creation process - `гантт#dependency.linkCreatingLineStyle` configures the line стиль из the dependency line creation process ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // импорт * as втаблицагантт от '@visactor/втаблица-гантт'; let ганттInstance; const records = [ { ид: 1, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-15', конец: '2024-07-16', progress: 31, priority: 'P0' }, { ид: 2, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-16', конец: '2024-07-17', progress: 60, priority: 'P0' }, { ид: 3, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-18', конец: '2024-07-19', progress: 90, priority: 'P0' }, { ид: 4, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024/07/17', конец: '2024/07/18', progress: 100, priority: 'P1' }, { ид: 5, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', начало: '07/19/2024', тип: 'milestone' }, { ид: 6, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-24', конец: '2024-08-04', progress: 100, priority: 'P1' }, { ид: 7, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-24', конец: '2024-08-04', progress: 31, priority: 'P0' }, { ид: 8, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024.07.06', конец: '2024.07.08', progress: 60, priority: 'P0' }, { ид: 9, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024/07/09', конец: '2024/07/11', progress: 100, priority: 'P1' }, { ид: 10, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '07.24.2024', конец: '08.04.2024', progress: 31, priority: 'P0' }, { ид: 11, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-24', конец: '2024-08-04', progress: 31, priority: 'P0' }, { ид: 12, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-06', конец: '2024-07-08', progress: 60, priority: 'P0' }, { ид: 13, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-09', конец: '2024-07-11', progress: 100, priority: 'P1' } ]; const колонки = [ { поле: 'заголовок', заголовок: 'заголовок', ширина: 'авто', tree: true }, { поле: 'начало', заголовок: 'начало', ширина: 'авто', редактор: 'date-ввод' }, { поле: 'конец', заголовок: 'конец', ширина: 'авто', редактор: 'date-ввод' }, { поле: 'priority', заголовок: 'priority', ширина: 'авто', редактор: 'ввод' }, { поле: 'progress', заголовок: 'progress', ширина: 'авто', headerStyle: { borderColor: '#e1e4e8' }, стиль: { borderColor: '#e1e4e8', цвет: 'green' }, редактор: 'ввод' } ]; const опция = { records, taskсписоктаблица: { колонки: колонки, таблицаширина: 'авто', minтаблицаширина: 100, maxтаблицаширина: 500 }, dependency: { links: [ { тип: втаблицагантт.TYPES.DependencyType.FinishToStart, linkedFromTaskKey: 1, linkedToTaskKey: 2 }, { тип: втаблицагантт.TYPES.DependencyType.StartToFinish, linkedFromTaskKey: 2, linkedToTaskKey: 3 }, { тип: втаблицагантт.TYPES.DependencyType.StartToStart, linkedFromTaskKey: 3, linkedToTaskKey: 4 }, { тип: втаблицагантт.TYPES.DependencyType.FinishToFinish, linkedFromTaskKey: 4, linkedToTaskKey: 5 } ], // linkSelecтаблица: false, linkSelectedLineStyle: { shadowBlur: 5, //阴影宽度 shadowColor: 'red', lineColor: 'red', lineширина: 1 }, linkCreaтаблица: true }, frame: { verticalSplitLineMoveable: true, outerFrameStyle: { borderLineширина: 2, borderColor: 'red', cornerRadius: 8 }, verticalSplitLine: { lineширина: 3, lineColor: '#e1e4e8' }, verticalSplitLineHighlight: { lineColor: 'green', lineширина: 3 } }, grid: { // backgroundColor: 'gray', verticalLine: { lineширина: 1, lineColor: '#e1e4e8' }, horizontalLine: { lineширина: 1, lineColor: '#e1e4e8' } }, headerRowвысота: 60, rowвысота: 40, taskBar: { startDateполе: 'начало', endDateполе: 'конец', progressполе: 'progress', labelText: '{заголовок} {progress}%', labelTextStyle: { fontFamily: 'Arial', fontSize: 16, textAlign: 'лево' }, barStyle: { ширина: 20, /** 任务条的颜色 */ barColor: '#ee8800', /** 已完成部分任务条的颜色 */ completedBarColor: '#91e8e0', /** 任务条的圆角 */ cornerRadius: 10 }, selectedBarStyle: { shadowBlur: 5, //阴影宽度 shadowOffsetX: 0, //x方向偏移 shadowOffsetY: 0, //Y方向偏移 shadowColor: 'black', //阴影颜色 borderColor: 'red', //边框颜色 borderLineширина: 1 //边框宽度 } }, timelineHeader: { verticalLine: { lineширина: 1, lineColor: '#e1e4e8' }, horizontalLine: { lineширина: 1, lineColor: '#e1e4e8' }, backgroundColor: '#EEF1F5', colширина: 60, scales: [ { unit: 'week', step: 1, startOfWeek: 'sunday', format(date) { возврат `Week ${date.dateIndex}`; }, стиль: { fontSize: 20, fontWeight: 'bold', цвет: 'red' } }, { unit: 'day', step: 1, format(date) { возврат date.dateIndex.toString(); }, стиль: { fontSize: 20, fontWeight: 'bold', цвет: 'red' } } ] }, minDate: '2024-07-14', maxDate: '2024-10-15', rowSeriesNumber: { заголовок: '行号', dragпорядок: true, headerStyle: { bgColor: '#EEF1F5', borderColor: '#e1e4e8' }, стиль: { цвет: '#000', fontSize: 14 } }, scrollStyle: { видимый: 'scrolling' }, overscrollBehavior: 'никто' }; ганттInstance = новый втаблицагантт.гантт(документ.getElementById(CONTAINER_ID), опция); window['ганттInstance'] = ганттInstance; ``` 
+---
+категория: примеры
+группа: gantt
+заголовок: Create Gantt Dependency Link Line
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-dependency-ссылка-line-create.gif
+ссылка: gantt/introduction
+опция: Gantt#taskBar
+---
+
+# Create dependency lines between tasks
+
+In the Gantt chart, arrows are usually used to represent the dependencies between tasks. During initialization, existing dependencies are displayed through `dependency.ссылкаs`, and dependencies can be dynamically created through interaction. Note that you should set `dependency.ссылкаCreatable` to true to enable the creation of dependency lines. The styles of the operation points and operation lines that are dynamically created during creation can be configured through `dependency.ссылкаCreatePointStyle` `dependency.ссылкаCreatingPointStyle` `dependency.ссылкаCreatingLineStyle`.
+
+## Key Configuration
+
+- `Gantt`
+- `Gantt#dependency.ссылкаs` configures the data of the dependencies between task bars
+- `Gantt#dependency.ссылкаLineStyle` configures the style of the dependency line
+- `Gantt#dependency.ссылкаSelectedLineStyle` configures the style of the dependency line when it is selected
+- `Gantt#dependency.ссылкаCreatable` configures whether dependency lines can be created
+- `Gantt#dependency.ссылкаCreatePointStyle` configures the starting point style of the dependency line creation process
+- `Gantt#dependency.ссылкаCreatingPointStyle` configures the endpoint style of the dependency line creation process
+- `Gantt#dependency.ссылкаCreatingLineStyle` configures the line style of the dependency line creation process
+
+## Code Demo
+
+```javascript livedemo template=vtable
+// import * as VTableGantt from '@visactor/vtable-gantt';
+let ganttInstance;
+const records = [
+  {
+    id: 1,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-15',
+    end: '2024-07-16',
+    progress: 31,
+    priority: 'P0'
+  },
+  {
+    id: 2,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-16',
+    end: '2024-07-17',
+    progress: 60,
+    priority: 'P0'
+  },
+  {
+    id: 3,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-18',
+    end: '2024-07-19',
+    progress: 90,
+    priority: 'P0'
+  },
+  {
+    id: 4,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024/07/17',
+    end: '2024/07/18',
+    progress: 100,
+    priority: 'P1'
+  },
+  {
+    id: 5,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '07/19/2024',
+    type: 'milestone'
+  },
+  {
+    id: 6,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-24',
+    end: '2024-08-04',
+    progress: 100,
+    priority: 'P1'
+  },
+  {
+    id: 7,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-24',
+    end: '2024-08-04',
+    progress: 31,
+    priority: 'P0'
+  },
+  {
+    id: 8,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024.07.06',
+    end: '2024.07.08',
+    progress: 60,
+    priority: 'P0'
+  },
+  {
+    id: 9,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024/07/09',
+    end: '2024/07/11',
+    progress: 100,
+    priority: 'P1'
+  },
+  {
+    id: 10,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '07.24.2024',
+    end: '08.04.2024',
+    progress: 31,
+    priority: 'P0'
+  },
+
+  {
+    id: 11,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-24',
+    end: '2024-08-04',
+    progress: 31,
+    priority: 'P0'
+  },
+  {
+    id: 12,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-06',
+    end: '2024-07-08',
+    progress: 60,
+    priority: 'P0'
+  },
+  {
+    id: 13,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-09',
+    end: '2024-07-11',
+    progress: 100,
+    priority: 'P1'
+  }
+];
+
+const columns = [
+  {
+    field: 'title',
+    title: 'title',
+    width: 'auto',
+    tree: true
+  },
+  {
+    field: 'start',
+    title: 'start',
+    width: 'auto',
+    editor: 'date-input'
+  },
+  {
+    field: 'end',
+    title: 'end',
+    width: 'auto',
+    editor: 'date-input'
+  },
+  {
+    field: 'priority',
+    title: 'priority',
+    width: 'auto',
+    editor: 'input'
+  },
+  {
+    field: 'progress',
+    title: 'progress',
+    width: 'auto',
+    headerStyle: {
+      borderColor: '#e1e4e8'
+    },
+    style: {
+      borderColor: '#e1e4e8',
+      color: 'green'
+    },
+    editor: 'input'
+  }
+];
+const option = {
+  records,
+  taskListTable: {
+    columns: columns,
+    tableWidth: 'auto',
+    minTableWidth: 100,
+    maxTableWidth: 500
+  },
+  dependency: {
+    links: [
+      {
+        type: VTableGantt.TYPES.DependencyType.FinishToStart,
+        linkedFromTaskKey: 1,
+        linkedToTaskKey: 2
+      },
+      {
+        type: VTableGantt.TYPES.DependencyType.StartToFinish,
+        linkedFromTaskKey: 2,
+        linkedToTaskKey: 3
+      },
+      {
+        type: VTableGantt.TYPES.DependencyType.StartToStart,
+        linkedFromTaskKey: 3,
+        linkedToTaskKey: 4
+      },
+      {
+        type: VTableGantt.TYPES.DependencyType.FinishToFinish,
+        linkedFromTaskKey: 4,
+        linkedToTaskKey: 5
+      }
+    ],
+    // linkSelectable: false,
+    linkSelectedLineStyle: {
+      shadowBlur: 5, //阴影宽度
+      shadowColor: 'red',
+      lineColor: 'red',
+      lineWidth: 1
+    },
+    linkCreatable: true
+  },
+  frame: {
+    verticalSplitLineMoveable: true,
+    outerFrameStyle: {
+      borderLineWidth: 2,
+      borderColor: 'red',
+      cornerRadius: 8
+    },
+    verticalSplitLine: {
+      lineWidth: 3,
+      lineColor: '#e1e4e8'
+    },
+    verticalSplitLineHighlight: {
+      lineColor: 'green',
+      lineWidth: 3
+    }
+  },
+  grid: {
+    // backgroundColor: 'gray',
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    }
+  },
+  headerRowHeight: 60,
+  rowHeight: 40,
+
+  taskBar: {
+    startDateField: 'start',
+    endDateField: 'end',
+    progressField: 'progress',
+    labelText: '{title} {progress}%',
+    labelTextStyle: {
+      fontFamily: 'Arial',
+      fontSize: 16,
+      textAlign: 'left'
+    },
+    barStyle: {
+      width: 20,
+      /** 任务条的颜色 */
+      barColor: '#ee8800',
+      /** 已完成部分任务条的颜色 */
+      completedBarColor: '#91e8e0',
+      /** 任务条的圆角 */
+      cornerRadius: 10
+    },
+    selectedBarStyle: {
+      shadowBlur: 5, //阴影宽度
+      shadowOffsetX: 0, //x方向偏移
+      shadowOffsetY: 0, //Y方向偏移
+      shadowColor: 'black', //阴影颜色
+      borderColor: 'red', //边框颜色
+      borderLineWidth: 1 //边框宽度
+    }
+  },
+  timelineHeader: {
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    backgroundColor: '#EEF1F5',
+    colWidth: 60,
+    scales: [
+      {
+        unit: 'week',
+        step: 1,
+        startOfWeek: 'sunday',
+        format(date) {
+          return `Week ${date.dateIndex}`;
+        },
+        style: {
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'red'
+        }
+      },
+      {
+        unit: 'day',
+        step: 1,
+        format(date) {
+          return date.dateIndex.toString();
+        },
+        style: {
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'red'
+        }
+      }
+    ]
+  },
+  minDate: '2024-07-14',
+  maxDate: '2024-10-15',
+
+  rowSeriesNumber: {
+    title: '行号',
+    dragOrder: true,
+    headerStyle: {
+      bgColor: '#EEF1F5',
+      borderColor: '#e1e4e8'
+    },
+    style: {
+      color: '#000',
+      fontSize: 14
+    }
+  },
+  scrollStyle: {
+    visible: 'scrolling'
+  },
+  overscrollBehavior: 'none'
+};
+ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window['ganttInstance'] = ganttInstance;
+```

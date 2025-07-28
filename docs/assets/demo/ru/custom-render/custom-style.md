@@ -1,1 +1,154 @@
---- категория: примеры группа: пользовательский заголовок: ячейка пользовательский стиль обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/пользовательский-стиль.png порядок: 7-4 ссылка: пользовательский_define/пользовательский_style опция: списоктаблица#пользовательскийCellStyle --- #ячейка пользовательский стиль пользовательскийize the display стиль из некоторые cells по defining и assigning styles. ## ключевая конфигурация - `пользовательскийCellStyle` пользовательский стиль определение конфигурация - `пользовательскийCellStyleArrangement` пользовательский стиль assignment конфигурация ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', пользовательскийCellStyle: [ { ид: 'пользовательский-1', стиль: { bgColor: 'red' } }, { ид: 'пользовательский-2', стиль: { цвет: 'green' } }, { ид: 'пользовательский-3', стиль: styleArg => { возврат { цвет: styleArg.строка % 2 === 0 ? 'red' : 'blue' }; } } ], пользовательскийCellStyleArrangement: [ { cellPosition: { колонка: 3, строка: 4 }, пользовательскийStyleId: 'пользовательский-1' }, { cellPosition: { range: { начало: { колонка: 3, строка: 5 }, конец: { колонка: 4, строка: 6 } } }, пользовательскийStyleId: 'пользовательский-2' }, { cellPosition: { range: { начало: { колонка: 1, строка: 3 }, конец: { колонка: 2, строка: 10 } } }, пользовательскийStyleId: 'пользовательский-3' } ] }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Custom
+заголовок: cell custom style
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/custom-style.png
+порядок: 7-4
+ссылка: custom_define/custom_style
+опция: ListTable#customCellStyle
+---
+
+#Cell custom style
+
+Customize the display style of some cells by defining and assigning styles.
+
+## Key configuration
+
+- `customCellStyle` Custom style definition configuration
+- `customCellStyleArrangement` Custom style assignment configuration
+
+## Code Demo
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      customCellStyle: [
+        {
+          id: 'custom-1',
+          style: {
+            bgColor: 'red'
+          }
+        },
+        {
+          id: 'custom-2',
+          style: {
+            color: 'green'
+          }
+        },
+        {
+          id: 'custom-3',
+          style: styleArg => {
+            return {
+              color: styleArg.row % 2 === 0 ? 'red' : 'blue'
+            };
+          }
+        }
+      ],
+      customCellStyleArrangement: [
+        {
+          cellPosition: {
+            col: 3,
+            row: 4
+          },
+          customStyleId: 'custom-1'
+        },
+        {
+          cellPosition: {
+            range: {
+              start: {
+                col: 3,
+                row: 5
+              },
+              end: {
+                col: 4,
+                row: 6
+              }
+            }
+          },
+          customStyleId: 'custom-2'
+        },
+        {
+          cellPosition: {
+            range: {
+              start: {
+                col: 1,
+                row: 3
+              },
+              end: {
+                col: 2,
+                row: 10
+              }
+            }
+          },
+          customStyleId: 'custom-3'
+        }
+      ]
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

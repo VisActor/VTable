@@ -1,1 +1,112 @@
---- категория: примеры группа: взаимодействие заголовок: навести the Line Cross Highlight обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/навести-cross.png порядок: 4-3 ссылка: взаимодействие/hover_cell опция: списоктаблица#навести.highlightMode('cross'%7C'колонка'%7C'строка'%7C'ячейка')%20=%20'cross' --- # навести the line cross highlight навести over a ячейка и highlight the entire строка и колонка из the ячейка. ## Ключевые Конфигурации - `навести` Configure highlighting режим ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', навести: { highlightMode: 'cross' // enableSingleHighlight: false, }, тема: втаблица.темаs.арко.extends({ defaultStyle: { навести: { cellBgColor: '#9cbef4', inlineRowBgColor: '#9cbef4', inlineColumnBgColor: '#9cbef4' } }, bodyStyle: { навести: { cellBgColor: '#c3dafd', inlineRowBgColor: '#c3dafd', inlineColumnBgColor: '#c3dafd' } } }) }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Hover the Line Cross Highlight
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/hover-cross.png
+порядок: 4-3
+ссылка: interaction/hover_cell
+опция: ListTable#hover.highlightMode('cross'%7C'column'%7C'row'%7C'cell')%20=%20'cross'
+---
+
+# Hover the line cross highlight
+
+Hover over a cell and highlight the entire row and column of the cell.
+
+## Ключевые Конфигурации
+
+- `hover` Configure highlighting mode
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      hover: {
+        highlightMode: 'cross'
+        // enableSingleHighlight: false,
+      },
+      theme: VTable.themes.ARCO.extends({
+        defaultStyle: {
+          hover: {
+            cellBgColor: '#9cbef4',
+            inlineRowBgColor: '#9cbef4',
+            inlineColumnBgColor: '#9cbef4'
+          }
+        },
+        bodyStyle: {
+          hover: {
+            cellBgColor: '#c3dafd',
+            inlineRowBgColor: '#c3dafd',
+            inlineColumnBgColor: '#c3dafd'
+          }
+        }
+      })
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

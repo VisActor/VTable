@@ -1,1 +1,273 @@
---- категория: примеры группа: ячейка тип заголовок: ячейка Content тип обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/multi-тип.png порядок: 2-1 ссылка: cell_type/типЯчейки опция: списоктаблица-колонки-текст#типЯчейки --- # ячейка Content тип Specify the ячейка content тип по типЯчейки. Imвозраст video source: https://birdsoftheworld.org/bow/home ## Ключевые Конфигурации headerType: 'текст' | 'ссылка' | 'imвозраст' | 'video'; типЯчейки: 'текст' | 'ссылка' | 'imвозраст' | 'video' | 'Sparkline' | 'progressbar' | 'график'; ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const records = [ { имя: 'pigeon', introduction: 'The pigeon is a common urban bird с gray plumвозраст и a short, stout beak', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/pigeon.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/pigeon.mp4', YoY: 50, QoQ: 10, trend: [ { x: 1, y: 1500 }, { x: 2, y: 1480 }, { x: 3, y: 1520 }, { x: 4, y: 1550 }, { x: 5, y: 1600 } ] // "trend":[1500,1480,1520,1550,1600], }, { имя: 'Swallow', introduction: 'Swallow is a kind из bird that is good в flying, usually perches near houses и buildings.', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/swallow.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/swallow.mp4', YoY: 10, QoQ: -10, trend: [ { x: 1, y: 800 }, { x: 2, y: 780 }, { x: 3, y: 700 }, { x: 4, y: 800 }, { x: 5, y: 900 } ] }, { имя: 'Magpie', introduction: 'The magpie is a common small bird mainly found в Asia. They are small в размер с a black head и throat, gray back и white belly. Magpies are social animals и often live в woods Breeding nests в China или в urban parks, feeding на insects, fruit и seeds. They are also highly intelligent и social, и are considered an intelligent, playful bird.', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/Magpie.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/Magpie.mp4', YoY: -10, QoQ: -10, trend: [ { x: 1, y: 500 }, { x: 2, y: 680 }, { x: 3, y: 400 }, { x: 4, y: 600 }, { x: 5, y: 800 } ] }, { имя: 'Peacock', introduction: 'The peacock is a large, beautiful bird с brilliant blue-green plumвозраст и a long tail. Native к South Asia, it feeds на insects, fruit, и seeds.', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/peacock.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/peacock.mp4', YoY: -10, QoQ: -10, trend: [ { x: 1, y: 500 }, { x: 2, y: 680 }, { x: 3, y: 400 }, { x: 4, y: 600 }, { x: 5, y: 800 } ] }, { имя: 'Peacock', introduction: 'The flamingo is a beautiful pink bird с long legs и neck, good в swimming, и is a common bird в tropical areas.', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/flamingo.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/flamingo.mp4', YoY: -1, QoQ: -6, trend: [ { x: 1, y: 980 }, { x: 2, y: 880 }, { x: 3, y: 900 }, { x: 4, y: 1600 }, { x: 5, y: 1800 } ] }, { имя: 'ostrich', introduction: 'The ostrich is a large bird that cannot fly и runs fast. It is one из the largest birds в the world', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/ostrich.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/ostrich.mp4', YoY: -3, QoQ: 10, trend: [ { x: 1, y: 560 }, { x: 2, y: 680 }, { x: 3, y: 5500 }, { x: 4, y: 600 }, { x: 5, y: 900 } ] }, { имя: 'Mandarin Duck', introduction: 'Mandarin duck is a kind из two-winged bird. The head из the мужской bird is blue и the head из the female bird is brown. It usually perches и mates в pairs. It is one из the symbols в Chinese culture.', imвозраст: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/Mandarin.jpeg', video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/media/Mandarin.mp4', YoY: 10, QoQ: 16, trend: [ { x: 1, y: 500 }, { x: 2, y: 480 }, { x: 3, y: 400 }, { x: 4, y: 500 }, { x: 5, y: 800 } ] } ]; const колонки = [ { поле: 'имя', заголовок: 'имя', типЯчейки: 'ссылка', templateссылка: 'https://www.google.com.hk/поиск?q={имя}', linkJump: true, ширина: 100 }, { поле: 'introduction', заголовок: 'introduction', типЯчейки: 'текст', ширина: 200 }, { поле: 'imвозраст', заголовок: 'bird imвозраст', типЯчейки: 'imвозраст', ширина: 150 // imвозрастSizing : 'keep-aspect-ratio', }, { поле: 'video', заголовок: 'bird video', типЯчейки: 'video', ширина: 150 // imвозрастSizing : 'keep-aspect-ratio', }, { поле: 'YoY', заголовок: 'count Year-over-Year', типЯчейки: 'progressbar', ширина: 200, полеFormat() { возврат ''; }, barType: 'negative', min: -20, max: 60, стиль: { barвысота: 20, barBottom: '30%' } }, { поле: 'QoQ', заголовок: 'count Quarter-over-Quarter', полеFormat(rec) { возврат rec['QoQ'] + '%'; }, стиль: { textAlign: 'центр' }, иконка(args) { const { данныеValue } = args; if (данныеValue > 0) { возврат { тип: 'svg', svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/up-arrow.svg', ширина: 12, высота: 12, имя: 'up-green', positionType: 'inlineEnd' }; } else if (данныеValue < 0) возврат { тип: 'svg', svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/down-arrow.svg', ширина: 14, высота: 14, имя: 'down-red', positionType: 'contentRight' }; возврат ''; }, ширина: 150 }, { поле: 'trend', заголовок: 'bird count', типЯчейки: 'sparkline', ширина: 300, sparklineSpec: { тип: 'line', xполе: 'x', yполе: 'y', pointShowRule: 'никто', smooth: true, line: { стиль: { strхорошоe: '#2E62F1', strхорошоeширина: 2 } }, point: { навести: { strхорошоe: 'blue', strхорошоeширина: 1, заполнить: 'red', shape: 'circle', размер: 4 }, стиль: { strхорошоe: 'red', strхорошоeширина: 1, заполнить: 'yellow', shape: 'circle', размер: 2 } }, crosshair: { стиль: { strхорошоe: 'gray', strхорошоeширина: 1 } } } } ]; const опция = { records, колонки, автоWrapText: true, defaultRowвысота: 120 }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Cell Type
+заголовок: Cell Content Type
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/multi-type.png
+порядок: 2-1
+ссылка: cell_type/cellType
+опция: ListTable-columns-text#cellType
+---
+
+# Cell Content Type
+
+Specify the cell content type by cellType. Image video source: https://birdsoftheworld.org/bow/home
+
+## Ключевые Конфигурации
+
+headerType: 'text' | 'ссылка' | 'image' | 'video';
+
+cellType:
+'Text'
+| 'ссылка'
+| 'image'
+| 'video'
+| 'Sparkline'
+| 'progressbar'
+| 'chart';
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+const records = [
+  {
+    name: 'pigeon',
+    introduction: 'The pigeon is a common urban bird with gray plumage and a short, stout beak',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/pigeon.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/pigeon.mp4',
+    YoY: 50,
+    QoQ: 10,
+    trend: [
+      { x: 1, y: 1500 },
+      { x: 2, y: 1480 },
+      { x: 3, y: 1520 },
+      { x: 4, y: 1550 },
+      { x: 5, y: 1600 }
+    ]
+    // "trend":[1500,1480,1520,1550,1600],
+  },
+  {
+    name: 'Swallow',
+    introduction: 'Swallow is a kind of bird that is good at flying, usually perches near houses and buildings.',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/swallow.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/swallow.mp4',
+    YoY: 10,
+    QoQ: -10,
+    trend: [
+      { x: 1, y: 800 },
+      { x: 2, y: 780 },
+      { x: 3, y: 700 },
+      { x: 4, y: 800 },
+      { x: 5, y: 900 }
+    ]
+  },
+  {
+    name: 'Magpie',
+    introduction:
+      'The magpie is a common small bird mainly found in Asia. They are small in size with a black head and throat, gray back and white belly. Magpies are social animals and often live in woods Breeding nests in China or in urban parks, feeding on insects, fruit and seeds. They are also highly intelligent and social, and are considered an intelligent, playful bird.',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Magpie.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Magpie.mp4',
+    YoY: -10,
+    QoQ: -10,
+    trend: [
+      { x: 1, y: 500 },
+      { x: 2, y: 680 },
+      { x: 3, y: 400 },
+      { x: 4, y: 600 },
+      { x: 5, y: 800 }
+    ]
+  },
+  {
+    name: 'Peacock',
+    introduction:
+      'The peacock is a large, beautiful bird with brilliant blue-green plumage and a long tail. Native to South Asia, it feeds on insects, fruit, and seeds.',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/peacock.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/peacock.mp4',
+    YoY: -10,
+    QoQ: -10,
+    trend: [
+      { x: 1, y: 500 },
+      { x: 2, y: 680 },
+      { x: 3, y: 400 },
+      { x: 4, y: 600 },
+      { x: 5, y: 800 }
+    ]
+  },
+  {
+    name: 'Peacock',
+    introduction:
+      'The flamingo is a beautiful pink bird with long legs and neck, good at swimming, and is a common bird in tropical areas.',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/flamingo.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/flamingo.mp4',
+    YoY: -1,
+    QoQ: -6,
+    trend: [
+      { x: 1, y: 980 },
+      { x: 2, y: 880 },
+      { x: 3, y: 900 },
+      { x: 4, y: 1600 },
+      { x: 5, y: 1800 }
+    ]
+  },
+  {
+    name: 'ostrich',
+    introduction:
+      'The ostrich is a large bird that cannot fly and runs fast. It is one of the largest birds in the world',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/ostrich.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/ostrich.mp4',
+    YoY: -3,
+    QoQ: 10,
+    trend: [
+      { x: 1, y: 560 },
+      { x: 2, y: 680 },
+      { x: 3, y: 5500 },
+      { x: 4, y: 600 },
+      { x: 5, y: 900 }
+    ]
+  },
+  {
+    name: 'Mandarin Duck',
+    introduction:
+      'Mandarin duck is a kind of two-winged bird. The head of the male bird is blue and the head of the female bird is brown. It usually perches and mates in pairs. It is one of the symbols in Chinese culture.',
+    image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Mandarin.jpeg',
+    video: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/Mandarin.mp4',
+    YoY: 10,
+    QoQ: 16,
+    trend: [
+      { x: 1, y: 500 },
+      { x: 2, y: 480 },
+      { x: 3, y: 400 },
+      { x: 4, y: 500 },
+      { x: 5, y: 800 }
+    ]
+  }
+];
+
+const columns = [
+  {
+    field: 'имя',
+    title: 'имя',
+    cellType: 'link',
+    templateLink: 'https://www.google.com.hk/search?q={name}',
+    linkJump: true,
+    width: 100
+  },
+  {
+    field: 'introduction',
+    title: 'introduction',
+    cellType: 'text',
+    width: 200
+  },
+  {
+    field: 'image',
+    title: 'bird image',
+    cellType: 'image',
+    width: 150
+    // imageSizing : 'keep-aspect-ratio',
+  },
+  {
+    field: 'video',
+    title: 'bird video',
+    cellType: 'video',
+    width: 150
+    // imageSizing : 'keep-aspect-ratio',
+  },
+  {
+    field: 'YoY',
+    title: 'count Year-over-Year',
+    cellType: 'progressbar',
+    width: 200,
+    fieldFormat() {
+      return '';
+    },
+    barType: 'negative',
+    min: -20,
+    max: 60,
+    style: {
+      barHeight: 20,
+      barBottom: '30%'
+    }
+  },
+  {
+    field: 'QoQ',
+    title: 'count Quarter-over-Quarter',
+    fieldFormat(rec) {
+      return rec['QoQ'] + '%';
+    },
+    style: {
+      textAlign: 'center'
+    },
+    icon(args) {
+      const { dataValue } = args;
+      if (dataValue > 0) {
+        return {
+          type: 'svg',
+          svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/up-arrow.svg',
+          width: 12,
+          height: 12,
+          name: 'up-green',
+          positionType: 'inlineEnd'
+        };
+      } else if (dataValue < 0)
+        return {
+          type: 'svg',
+          svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/down-arrow.svg',
+          width: 14,
+          height: 14,
+          name: 'down-red',
+          positionType: 'contentRight'
+        };
+      return '';
+    },
+    width: 150
+  },
+  {
+    field: 'trend',
+    title: 'bird count',
+    cellType: 'sparkline',
+    width: 300,
+    sparklineSpec: {
+      type: 'line',
+      xField: 'x',
+      yField: 'y',
+      pointShowRule: 'none',
+      smooth: true,
+      line: {
+        style: {
+          stroke: '#2E62F1',
+          strokeWidth: 2
+        }
+      },
+      point: {
+        hover: {
+          stroke: 'blue',
+          strokeWidth: 1,
+          fill: 'red',
+          shape: 'circle',
+          size: 4
+        },
+        style: {
+          stroke: 'red',
+          strokeWidth: 1,
+          fill: 'yellow',
+          shape: 'circle',
+          size: 2
+        }
+      },
+      crosshair: {
+        style: {
+          stroke: 'gray',
+          strokeWidth: 1
+        }
+      }
+    }
+  }
+];
+const option = {
+  records,
+  columns,
+  autoWrapText: true,
+  defaultRowHeight: 120
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

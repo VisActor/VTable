@@ -1,1 +1,81 @@
---- категория: примеры группа: таблица-тип заголовок: список таблица Tree обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-tree.png порядок: 1-2 ссылка: таблица_type/список_таблица/tree_список опция: списоктаблица-колонки-текст#tree --- # базовый таблица tree display базовый таблица tree display, открыть the tree режим из a certain колонка, и cooperate с the tree structure children из the данные source. ## Ключевые Конфигурации - Tree: true Set на a колонка к turn на tree display ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/company_struct.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'группа', заголовок: 'department', ширина: 'авто', tree: true, полеFormat(rec) { возврат rec['department'] ?? rec['группа'] ?? rec['имя']; } }, { поле: 'total_children', заголовок: 'memebers count', ширина: 'авто', полеFormat(rec) { if (rec?.['позиция']) { возврат `позиция: ${rec['позиция']}`; } else возврат rec?.['total_children']; } }, { поле: 'monthly_expense', заголовок: 'monthly expense', ширина: 'авто', полеFormat(rec) { if (rec?.['salary']) { возврат `salary: ${rec['salary']}`; } else возврат rec?.['monthly_expense']; } }, { поле: 'new_hires_this_month', заголовок: 'новый hires this month', ширина: 'авто' }, { поле: 'resignations_this_month', заголовок: 'resignations this month', ширина: 'авто' }, { поле: 'complaints_and_suggestions', заголовок: 'recived complaints counts', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard' }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: List Table Tree
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-tree.png
+порядок: 1-2
+ссылка: table_type/List_table/tree_list
+опция: ListTable-columns-text#tree
+---
+
+# Basic table tree display
+
+Basic table tree display, open the tree mode of a certain column, and cooperate with the tree structure children of the data source.
+
+## Ключевые Конфигурации
+
+- Tree: true Set on a column to turn on tree display
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/company_struct.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'group',
+        title: 'department',
+        width: 'auto',
+        tree: true,
+        fieldFormat(rec) {
+          return rec['department'] ?? rec['group'] ?? rec['имя'];
+        }
+      },
+      {
+        field: 'total_children',
+        title: 'memebers count',
+        width: 'auto',
+        fieldFormat(rec) {
+          if (rec?.['position']) {
+            return `position:  ${rec['position']}`;
+          } else return rec?.['total_children'];
+        }
+      },
+      {
+        field: 'monthly_expense',
+        title: 'monthly expense',
+        width: 'auto',
+        fieldFormat(rec) {
+          if (rec?.['salary']) {
+            return `salary:  ${rec['salary']}`;
+          } else return rec?.['monthly_expense'];
+        }
+      },
+      {
+        field: 'new_hires_this_month',
+        title: 'new hires this month',
+        width: 'auto'
+      },
+      {
+        field: 'resignations_this_month',
+        title: 'resignations this month',
+        width: 'auto'
+      },
+      {
+        field: 'complaints_and_suggestions',
+        title: 'recived complaints counts',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard'
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

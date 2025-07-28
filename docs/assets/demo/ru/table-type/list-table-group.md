@@ -1,1 +1,115 @@
---- категория: примеры группа: таблица-тип заголовок: базовый таблица grouping display обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-группа.jpeg порядок: 1-2 ссылка: таблица_type/список_таблица/group_список опция: списоктаблица#groupBy --- # базовый таблица grouping display базовый таблица grouping display, used к display the hierarchical structure из grouping полеs в данные ## ключевая конфигурация - groupBy: Specify the grouping поле имя - enableTreeStickCell: включить группа заголовок sticky функция ## код демонстрацияnstration ```javascript живаядемонстрация шаблон=втаблица const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329']; let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные.slice(0, 100), колонки, ширинаMode: 'standard', groupBy: ['Категория', 'под-Категория'], groupTitleполеFormat: (запись, колонка, строка, таблица) => { возврат запись.втаблицаMergeимя + '(' + запись.children.length + ')'; }, тема: втаблица.темаs.по умолчанию.extends({ groupTitleStyle: { fontWeight: 'bold', // bgColor: '#3370ff' bgColor: args => { const { колонка, строка, таблица } = args; const index = таблица.getGroupTitleLevel(колонка, строка); if (index !== undefined) { возврат titleColorPool[index % titleColorPool.length]; } } } }), enableTreeStickCell: true }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window.таблицаInstance = таблицаInstance; }) .catch(e => { console.ошибка(e); }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: Basic table группаing display
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-группа.jpeg
+порядок: 1-2
+ссылка: table_type/List_table/группа_list
+опция: ListTable#группаBy
+---
+
+# Basic table группаing display
+
+Basic table группаing display, used to display the hierarchical structure of группаing fields in data
+
+## Key configuration
+
+- группаBy: Specify the группаing field name
+- enableTreeStickCell: enable группа заголовок sticky function
+
+## Демонстрация кодаnstration
+
+```javascript livedemo template=vtable
+const titleColorPool = ['#3370ff', '#34c724', '#ff9f1a', '#ff4050', '#1f2329'];
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data.slice(0, 100),
+      columns,
+      widthMode: 'standard',
+      groupBy: ['Категория', 'Подкатегория'],
+      groupTitleFieldFormat: (record, col, row, table) => {
+        return record.vtableMergeName + '(' + record.children.length + ')';
+      },
+      theme: VTable.themes.DEFAULT.extends({
+        groupTitleStyle: {
+          fontWeight: 'bold',
+          // bgColor: '#3370ff'
+          bgColor: args => {
+            const { col, row, table } = args;
+            const index = table.getGroupTitleLevel(col, row);
+            if (index !== undefined) {
+              return titleColorPool[index % titleColorPool.length];
+            }
+          }
+        }
+      }),
+      enableTreeStickCell: true
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window.tableInstance = tableInstance;
+  })
+  .catch(e => {
+    console.error(e);
+  });
+```

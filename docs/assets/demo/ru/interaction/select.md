@@ -1,1 +1,112 @@
---- категория: примеры группа: взаимодействие заголовок: выбрать ячейка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/выбрать.png ссылка: взаимодействие/выбрать опция: списоктаблица#keyboardOptions --- # выбрать ячейка Нажать на a ячейка к make a single selection, и перетаскивание к make a brush selection. Hold down ctrl или shift к make multiple selections. Turn на the shortcut key selectAllOnCtrlA конфигурация к выбрать все. Нажатьing на the заголовок ячейка will выбрать the entire строка или колонка по по умолчанию. If you only want к выбрать the текущий ячейка, Вы можете set `выбрать.headerSelectMode` к `'ячейка'`, или if you only want к выбрать cells в the body, Вы можете set `выбрать.headerSelectMode` к `'body'`.. ## Ключевые Конфигурации - `keyboardOptions: { selectAllOnCtrlA: true, copySelected: true }` включить the ctrl + A необязательный функция и shortcut к copy the selected content. ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', keyboardOptions: { selectAllOnCtrlA: true, copySelected: true }, тема: втаблица.темаs.арко.extends({ selectionStyle: { cellBorderLineширина: 2, cellBorderColor: '#9900ff', cellBgColor: 'rgba(153,0,255,0.2)' } }) }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Select cell
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/select.png
+ссылка: interaction/select
+опция: ListTable#keyboardOptions
+---
+
+# Select cell
+
+Click on a cell to make a single selection, and drag to make a brush selection.
+
+Hold down ctrl or shift to make multiple selections.
+
+Turn on the shortcut key selectAllOnCtrlA configuration to select all.
+
+Clicking on the header cell will select the entire row or column by default. If you only want to select the current cell, you can set `select.headerSelectMode` to `'cell'`, Or if you only want to select cells in the body, you can set `select.headerSelectMode` to `'body'`..
+
+## Ключевые Конфигурации
+
+- `keyboardOptions: {
+    selectAllOnCtrlA: true,
+    copySelected: true
+}`
+  Enable the ctrl + A опцияal function and shortcut to copy the selected content.
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      keyboardOptions: {
+        selectAllOnCtrlA: true,
+        copySelected: true
+      },
+      theme: VTable.themes.ARCO.extends({
+        selectionStyle: {
+          cellBorderLineWidth: 2,
+          cellBorderColor: '#9900ff',
+          cellBgColor: 'rgba(153,0,255,0.2)'
+        }
+      })
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

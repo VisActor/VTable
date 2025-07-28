@@ -1,1 +1,103 @@
---- категория: примеры группа: взаимодействие заголовок: move строка позиция обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/строка-серия-число.gif ссылка: таблица_type/список_таблица/список_таблица_define_and_generate опция: списоктаблица#rowSeriesNumber.dragOrder --- # Move строка позиция The строка numbering capability refers к adding a unique serial число или identifier к каждый строка из the таблица к mark, сортировка или reference the rows в the таблица. This демонстрация will демонстрацияnstrate the втаблица строка numbering capabilities: строка selection, строка dragging позиция, и строка numbering стиль конфигурация. ## Ключевые Конфигурации -`списоктаблица.rowSeriesNumber` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', rowSeriesNumber: { заголовок: '序号', ширина: 'авто', dragпорядок: true, headerStyle: { цвет: 'black', bgColor: 'pink' }, стиль: { цвет: 'red' } } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: move row position
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/row-series-number.gif
+ссылка: table_type/List_table/list_table_define_and_generate
+опция: ListTable#rowSeriesNumber.dragOrder
+---
+
+# Move Row Position
+
+The row numbering capability refers to adding a unique serial number or identifier to each row of the table to mark, Сортировка or reference the rows in the table. This demo will demonstrate the VTable row numbering capabilities: row selection, row dragging position, and row numbering style configuration.
+
+## Ключевые Конфигурации
+
+-`ListTable.rowSeriesNumber`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      rowSeriesNumber: {
+        title: '序号',
+        width: 'auto',
+        dragOrder: true,
+        headerStyle: {
+          color: 'black',
+          bgColor: 'pink'
+        },
+        style: {
+          color: 'red'
+        }
+      }
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

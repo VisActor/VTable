@@ -1,1 +1,246 @@
---- категория: примеры группа: список-таблица-данные-анализ заголовок: Set multiple aggregation и aggregation summary методы для the same колонка из данные обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-таблица-multiple-aggregation.png ссылка: данные_analysis/список_таблица_данныеAnalysis опция: списоктаблица-колонки-текст#aggregation(Aggregation%20%7C%20пользовательскийAggregation%20%7C%20Array) --- # Set multiple aggregation и aggregation summary методы для the same колонка из данные базовый таблица aggregation calculation, каждый колонка can set the aggregation method, и supports summation, averвозраст, maximum и minimum, и пользовательский функция summary logic. The same колонка и multiple aggregation методы are set, и the results are displayed в multiple rows. и this sample данные supports editing, и the values that need к be aggregated are автоmatically calculated after editing. ## Ключевые Конфигурации - `списоктаблица` - `колонки.aggregation` Configure aggregation calculations ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const input_editor = новый втаблица_editors.InputEditor({}); втаблица.регистрация.редактор('ввод', input_editor); const generatePersons = count => { возврат массив.от(новый массив(count)).map((_, i) => ({ ид: i + 1, email1: `${i + 1}@xxx.com`, имя: `小明${i + 1}`, lastимя: '王', date1: '2022年9月1日', tel: '000-0000-0000', sex: i % 2 === 0 ? 'boy' : 'girl', work: i % 2 === 0 ? 'back-конец engineer' + (i + 1) : 'front-конец engineer' + (i + 1), Город: 'beijing', salary: Math.round(Math.random() * 10000) })); }; var таблицаInstance; const records = generatePersons(300); const колонки = [ { поле: '', заголовок: '行号', ширина: 80, полеFormat(данные, колонка, строка, таблица) { возврат строка - 1; }, aggregation: { aggregationType: втаблица.TYPES.AggregationType.никто, formatFun() { возврат '汇总：'; } } }, { поле: 'ид', заголовок: 'ид', ширина: '1%', minширина: 200, сортировка: true }, { поле: 'email1', заголовок: 'email', ширина: 200, сортировка: true }, { заголовок: 'full имя', колонки: [ { поле: 'имя', заголовок: 'первый имя', ширина: 200 }, { поле: 'имя', заголовок: 'последний имя', ширина: 200 } ] }, { поле: 'date1', заголовок: 'birthday', ширина: 200 }, { поле: 'sex', заголовок: 'sex', ширина: 100 }, { поле: 'tel', заголовок: 'telephone', ширина: 150 }, { поле: 'work', заголовок: 'job', ширина: 200 }, { поле: 'Город', заголовок: 'Город', ширина: 150 }, { поле: 'date1', заголовок: 'birthday', ширина: 200 }, { поле: 'salary', заголовок: 'salary', ширина: 100 }, { поле: 'salary', заголовок: 'salary', ширина: 100, aggregation: [ { aggregationType: втаблица.TYPES.AggregationType.MAX, // showOnTop: true, formatFun(значение) { возврат '最高薪资:' + Math.round(значение) + '元'; } }, { aggregationType: втаблица.TYPES.AggregationType.MIN, showOnTop: true, formatFun(значение) { возврат '最低薪资:' + Math.round(значение) + '元'; } }, { aggregationType: втаблица.TYPES.AggregationType.AVG, showOnTop: false, formatFun(значение, колонка, строка, таблица) { возврат '平均:' + Math.round(значение) + '元 (共计' + таблица.recordsCount + '条数据)'; } } ] } ]; const опция = { контейнер: документ.getElementById(CONTAINER_ID), records, // данныеConfig: { // filterRules: [ // { // filterFunc: (запись: запись<строка, любой>) => { // возврат запись.ид % 2 === 0; // } // } // ] // }, колонки, Подсказка: { isShowOverflowTextПодсказка: true }, frozenColCount: 1, bottomFrozenRowCount: 2, rightFrozenColCount: 1, overscrollBehavior: 'никто', автоWrapText: true, ширинаMode: 'автоширина', высотаMode: 'автовысота', dragпорядок: { dragHeaderMode: 'все' }, keyboardOptions: { pasteValueToCell: true }, событиеOptions: { prсобытиеDefaultContextменю: false }, пагинация: { perPвозрастCount: 100, currentPвозраст: 0 }, тема: втаблица.темаs.по умолчанию.extends({ bottomFrozenStyle: { bgColor: '#ECF1F5', borderLineширина: [6, 0, 1, 0], borderColor: ['gray'] } }), редактор: 'ввод', headerEditor: 'ввод', aggregation(args) { if (args.колонка === 1) { возврат [ { aggregationType: втаблица.TYPES.AggregationType.MAX, formatFun(значение) { возврат '最大ID:' + Math.round(значение) + '号'; } }, { aggregationType: втаблица.TYPES.AggregationType.MIN, showOnTop: false, formatFun(значение, колонка, строка, таблица) { возврат '最小ID:' + Math.round(значение) + '号'; } } ]; } if (args.поле === 'salary') { возврат [ { aggregationType: втаблица.TYPES.AggregationType.MIN, formatFun(значение) { возврат '最低低低薪资:' + Math.round(значение) + '元'; } }, { aggregationType: втаблица.TYPES.AggregationType.AVG, showOnTop: false, formatFun(значение, колонка, строка, таблица) { возврат '平均平均平均:' + Math.round(значение) + '元 (共计' + таблица.recordsCount + '条数据)'; } } ]; } возврат null; } // transpose: true // ширинаMode: 'адаптивный' }; таблицаInstance = новый втаблица.списоктаблица(опция); // таблицаInstance.updateFilterRules([ // { // filterKey: 'sex', // filteredValues: ['boy'] // } // ]); window.таблицаInstance = таблицаInstance; таблицаInstance.на('change_cell_value', arg => { console.log(arg); }); ``` 
+---
+категория: примеры
+группа: list-table-data-analysis
+заголовок: Set multiple aggregation and aggregation summary methods for the same column of data
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-multiple-aggregation.png
+ссылка: data_analysis/list_table_dataAnalysis
+опция: ListTable-columns-text#aggregation(Aggregation%20%7C%20CustomAggregation%20%7C%20Array)
+---
+
+# Set multiple aggregation and aggregation summary methods for the same column of data
+
+Basic table aggregation calculation, each column can set the aggregation method, and supports summation, average, maximum and minimum, and custom function summary logic. The same column and multiple aggregation methods are set, and the results are displayed in multiple rows.
+
+And this sample data supports editing, and the values that need to be aggregated are automatically calculated after editing.
+
+## Ключевые Конфигурации
+
+- `ListTable`
+- `columns.aggregation` Configure aggregation calculations
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+const input_editor = new VTable_editors.InputEditor({});
+VTable.register.editor('input', input_editor);
+const generatePersons = count => {
+  return Array.from(new Array(count)).map((_, i) => ({
+    id: i + 1,
+    email1: `${i + 1}@xxx.com`,
+    name: `小明${i + 1}`,
+    lastName: '王',
+    date1: '2022年9月1日',
+    tel: '000-0000-0000',
+    sex: i % 2 === 0 ? 'boy' : 'girl',
+    work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
+    city: 'beijing',
+    salary: Math.round(Math.random() * 10000)
+  }));
+};
+var tableInstance;
+
+const records = generatePersons(300);
+const columns = [
+  {
+    field: '',
+    title: '行号',
+    width: 80,
+    fieldFormat(data, col, row, table) {
+      return row - 1;
+    },
+    aggregation: {
+      aggregationType: VTable.TYPES.AggregationType.NONE,
+      formatFun() {
+        return '汇总：';
+      }
+    }
+  },
+  {
+    field: 'id',
+    title: 'ID',
+    width: '1%',
+    minWidth: 200,
+    sort: true
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 200,
+    sort: true
+  },
+  {
+    title: 'full name',
+    columns: [
+      {
+        field: 'имя',
+        title: 'First Name',
+        width: 200
+      },
+      {
+        field: 'имя',
+        title: 'Last Name',
+        width: 200
+      }
+    ]
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100
+  },
+  {
+    field: 'tel',
+    title: 'telephone',
+    width: 150
+  },
+  {
+    field: 'work',
+    title: 'job',
+    width: 200
+  },
+  {
+    field: 'city',
+    title: 'city',
+    width: 150
+  },
+  {
+    field: 'date1',
+    title: 'birthday',
+    width: 200
+  },
+  {
+    field: 'salary',
+    title: 'salary',
+    width: 100
+  },
+  {
+    field: 'salary',
+    title: 'salary',
+    width: 100,
+    aggregation: [
+      {
+        aggregationType: VTable.TYPES.AggregationType.MAX,
+        // showOnTop: true,
+        formatFun(value) {
+          return '最高薪资:' + Math.round(value) + '元';
+        }
+      },
+      {
+        aggregationType: VTable.TYPES.AggregationType.MIN,
+        showOnTop: true,
+        formatFun(value) {
+          return '最低薪资:' + Math.round(value) + '元';
+        }
+      },
+      {
+        aggregationType: VTable.TYPES.AggregationType.AVG,
+        showOnTop: false,
+        formatFun(value, col, row, table) {
+          return '平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+        }
+      }
+    ]
+  }
+];
+const option = {
+  container: document.getElementById(CONTAINER_ID),
+  records,
+  // dataConfig: {
+  //   filterRules: [
+  //     {
+  //       filterFunc: (record: Record<string, any>) => {
+  //         return record.id % 2 === 0;
+  //       }
+  //     }
+  //   ]
+  // },
+  columns,
+  tooltip: {
+    isShowOverflowTextTooltip: true
+  },
+  frozenColCount: 1,
+  bottomFrozenRowCount: 2,
+  rightFrozenColCount: 1,
+  overscrollBehavior: 'none',
+  autoWrapText: true,
+  widthMode: 'autoWidth',
+  heightMode: 'autoHeight',
+  dragOrder: {
+    dragHeaderMode: 'all'
+  },
+  keyboardOptions: {
+    pasteValueToCell: true
+  },
+  eventOptions: {
+    preventDefaultContextMenu: false
+  },
+  pagination: {
+    perPageCount: 100,
+    currentPage: 0
+  },
+  theme: VTable.themes.DEFAULT.extends({
+    bottomFrozenStyle: {
+      bgColor: '#ECF1F5',
+      borderLineWidth: [6, 0, 1, 0],
+      borderColor: ['gray']
+    }
+  }),
+  editor: 'input',
+  headerEditor: 'input',
+  aggregation(args) {
+    if (args.col === 1) {
+      return [
+        {
+          aggregationType: VTable.TYPES.AggregationType.MAX,
+          formatFun(value) {
+            return '最大ID:' + Math.round(value) + '号';
+          }
+        },
+        {
+          aggregationType: VTable.TYPES.AggregationType.MIN,
+          showOnTop: false,
+          formatFun(value, col, row, table) {
+            return '最小ID:' + Math.round(value) + '号';
+          }
+        }
+      ];
+    }
+    if (args.field === 'salary') {
+      return [
+        {
+          aggregationType: VTable.TYPES.AggregationType.MIN,
+          formatFun(value) {
+            return '最低低低薪资:' + Math.round(value) + '元';
+          }
+        },
+        {
+          aggregationType: VTable.TYPES.AggregationType.AVG,
+          showOnTop: false,
+          formatFun(value, col, row, table) {
+            return '平均平均平均:' + Math.round(value) + '元 (共计' + table.recordsCount + '条数据)';
+          }
+        }
+      ];
+    }
+    return null;
+  }
+  // transpose: true
+  // widthMode: 'adaptive'
+};
+tableInstance = new VTable.ListTable(option);
+// tableInstance.updateFilterRules([
+//   {
+//     filterKey: 'sex',
+//     filteredValues: ['boy']
+//   }
+// ]);
+window.tableInstance = tableInstance;
+tableInstance.on('change_cell_value', arg => {
+  console.log(arg);
+});
+```

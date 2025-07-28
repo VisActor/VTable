@@ -1,1 +1,161 @@
---- категория: примеры группа: компонент заголовок: Подсказка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/Подсказка.png ссылка: компонентs/Подсказка опция: списоктаблица#Подсказка.isShowOverflowTextПодсказка --- # Подсказка This пример shows Подсказкаs для four scenarios. 1. Set `Подсказка.isShowOverflowTextПодсказка` к `true` к включить overflow текст prompts. When hovering over the текст that is too long к be displayed, the текст will be displayed. в this пример, the текст в the cells из the `Product имя` колонка is omitted, и Вы можете навести over the ячейка к see the prompt information. 2. The description information из the таблица заголовок is displayed по configuring `description`. 3. This пример also shows how к actively display the Подсказка through the интерфейс. по списокening к the `mouseenter_cell` событие, when the mouse moves into the ячейка из the первый колонка из порядок numbers, the интерфейс `showПодсказка` is called к display the prompt information. 4. пользовательскийize the prompt information из the иконка, configure `headerиконка` в the `orderId` колонка к `порядок`, и configure `Подсказка` в the конфигурация из the иконка `порядок` к display the prompt information. The prompt information supports hovering к выбрать и copy. When there is too much content, the maximum ширина и высота can be configured для scrolling взаимодействие. ## Ключевые Конфигурации -`Подсказка.isShowOverflowTextПодсказка` включить the prompt для long omitted текст -`showПодсказка` показать the calling интерфейс из Подсказка ## код демонстрация ## 代码演示 ```javascript живаядемонстрация шаблон=втаблица втаблица.регистрация.иконка('порядок', { тип: 'svg', svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/порядок.svg', ширина: 22, высота: 22, имя: 'порядок', positionType: втаблица.TYPES.иконкаPosition.право, marginRight: 0, навести: { ширина: 22, высота: 22, bgColor: 'rgba(101, 117, 168, 0.1)' }, Подсказка: { // 气泡框，按钮的的解释信息 заголовок: 'ид Заказа is the unique identifier для каждый порядок.\n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique identifier для каждый порядок. \n It is a unique', стиль: { bgColor: 'black', arrowMark: true, цвет: 'white', maxвысота: 100, maxширина: 200 }, disappearDelay: 100 }, cursor: 'pointer' }); let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто', headerиконка: 'порядок', description: 'ид Заказа is the unique identifier для каждый порядок.\n It is a unique identifier для каждый порядок.' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто', description: 'пользовательскийer ид is the unique identifier для каждый пользовательскийer.\n It is a unique identifier для каждый пользовательскийer.' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: '200', description: 'Product имя is the имя из the product.' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто', description: 'Категория is the Категория из the product.' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто', description: 'под-Категория is the под-Категория из the product.' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто', description: 'Регион is the Регион из the порядок produced.' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто', description: 'Город is the Город из the порядок produced.' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто', description: 'Дата Заказа is the date из the порядок produced.' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто', description: 'Количество is the Количество из the порядок.' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто', description: 'Продажи is the Продажи из the порядок.' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', description: 'Прибыль is the Прибыль из the порядок.' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', Подсказка: { isShowOverflowTextПодсказка: true } }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; таблицаInstance.на('mouseenter_cell', args => { const { колонка, строка, targetиконка } = args; if (колонка === 0 && строка >= 1) { const rect = таблицаInstance.getVisibleCellRangeRelativeRect({ колонка, строка }); таблицаInstance.showПодсказка(колонка, строка, { content: 'ид Заказа：' + таблицаInstance.getCellValue(колонка, строка), referencePosition: { rect, placement: втаблица.TYPES.Placement.право }, //TODO classимя: 'defineПодсказка', disappearDelay: 100, стиль: { bgColor: 'black', цвет: 'white', шрифт: 'normal bold normal 14px/1 STKaiti', arrowMark: true } }); } }); }); ``` 
+---
+категория: примеры
+группа: Component
+заголовок: подсказка
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/подсказка.png
+ссылка: компонентs/подсказка
+опция: ListTable#подсказка.isShowOverflowTextTooltip
+---
+
+# Tooltip
+
+This example shows подсказкаs for four scenarios.
+
+1. Set `подсказка.isShowOverflowTextTooltip` to `true` to enable overflow text prompts. When hovering over the text that is too long to be displayed, the text will be displayed. In this example, the text in the cells of the `Product Name` column is omitted, and you can hover over the cell to see the prompt information.
+
+2. The description information of the table header is displayed by configuring `description`.
+
+3. This example also shows how to actively display the подсказка through the interface. By listening to the `mouseenter_cell` событие, when the mouse moves into the cell of the first column of порядок numbers, the interface `showTooltip` is called to display the prompt information.
+
+4. Customize the prompt information of the icon, configure `headerIcon` in the `порядокId` column to `порядок`, and configure `подсказка` in the configuration of the icon `порядок` to display the prompt information.
+
+The prompt information supports hovering to select and copy. When there is too much content, the maximum width and height can be configured for scrolling interaction.
+
+## Ключевые Конфигурации
+
+-`подсказка.isShowOverflowTextTooltip` Enable the prompt for long omitted text
+
+-`showTooltip` Show the calling interface of подсказка
+
+## Демонстрация кода
+
+## 代码演示
+
+```javascript livedemo template=vtable
+VTable.register.icon('order', {
+  type: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg',
+  width: 22,
+  height: 22,
+  name: 'order',
+  positionType: VTable.TYPES.IconPosition.right,
+  marginRight: 0,
+  hover: {
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101, 117, 168, 0.1)'
+  },
+  tooltip: {
+    // 气泡框，按钮的的解释信息
+    title:
+      'ИД Заказа is the unique identifier for each order.\n It is a unique identifier for each order. \n It is a unique identifier for each order. \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique identifier for each order.  \n It is a unique',
+    style: { bgColor: 'black', arrowMark: true, color: 'white', maxHeight: 100, maxWidth: 200 },
+    disappearDelay: 100
+  },
+  cursor: 'pointer'
+});
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto',
+        headerIcon: 'order',
+        description: 'ИД Заказа is the unique identifier for each order.\n It is a unique identifier for each order.'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto',
+        description:
+          'ИД Клиента is the unique identifier for each customer.\n It is a unique identifier for each customer.'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: '200',
+        description: 'Название Товара is the name of the product.'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto',
+        description: 'Категория is the category of the product.'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto',
+        description: 'Sub-Категория is the sub-category of the product.'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto',
+        description: 'Регион is the region of the order produced.'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto',
+        description: 'Город is the city of the order produced.'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto',
+        description: 'Дата Заказа is the date of the order produced.'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto',
+        description: 'Количество is the quantity of the order.'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto',
+        description: 'Продажи is the sales of the order.'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto',
+        description: 'Прибыль is the profit of the order.'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      tooltip: {
+        isShowOverflowTextTooltip: true
+      }
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+    tableInstance.on('mouseenter_cell', args => {
+      const { col, row, targetIcon } = args;
+      if (col === 0 && row >= 1) {
+        const rect = tableInstance.getVisibleCellRangeRelativeRect({ col, row });
+        tableInstance.showTooltip(col, row, {
+          content: 'ИД Заказа：' + tableInstance.getCellValue(col, row),
+          referencePosition: { rect, placement: VTable.TYPES.Placement.right }, //TODO
+          className: 'defineTooltip',
+          disappearDelay: 100,
+          style: {
+            bgColor: 'black',
+            color: 'white',
+            font: 'normal bold normal 14px/1 STKaiti',
+            arrowMark: true
+          }
+        });
+      }
+    });
+  });
+```

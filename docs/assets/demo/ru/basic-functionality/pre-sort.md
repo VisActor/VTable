@@ -1,1 +1,90 @@
---- категория: примеры группа: базовый возможности заголовок: пред сортировка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/пред-сортировка.png порядок: 3-2 ссылка: базовый_function/сортировка/список_сортировка --- # пред сортировка в the case из large amounts из данные, the первый сортировкаing may take a long time, и пред-сортировкаing can be used к improve the Производительность из the сортировкаing функция. ## Ключевые Конфигурации Set the пред-сортировкаed данные полеs и сортировка порядок through the `setсортировкаedIndexMap` method. ``` setсортировкаedIndexMap: (поле: полеDef, filedMap: IсортировкаedMапиtem) => void; интерфейс IсортировкаedMапиtem { asc?: (число | число[])[]; desc?: (число | число[])[]; normal?: (число | число[])[]; } ``` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/test-демонстрация-данные/пред-сортировка.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид', заголовок: 'ид', ширина: 80, сортировка: true }, { поле: 'email1', заголовок: 'email(пред-сортировкаed)', ширина: 250, сортировка: true }, { поле: 'hobbies', заголовок: 'hobbies(unсортировкаed)', ширина: 200, сортировка: true }, { поле: 'birthday', заголовок: 'birthday', ширина: 120 }, { поле: 'sex', заголовок: 'sex', ширина: 100 }, { поле: 'tel', заголовок: 'telephone', ширина: 150 }, { поле: 'work', заголовок: 'job', ширина: 200 }, { поле: 'Город', заголовок: 'Город', ширина: 150 } ]; const опция = { records: данные.данные, колонки }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; данные.сортировка.forEach(item => { таблицаInstance.setсортировкаedIndexMap(item.key, item.значение); }); }); ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Pre Сортировка
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pre-Сортировка.png
+порядок: 3-2
+ссылка: basic_function/Сортировка/list_Сортировка
+---
+
+# Pre Сортировка
+
+In the case of large amounts of data, the first Сортировкаing may take a long time, and pre-Сортировкаing can be used to improve the performance of the Сортировкаing function.
+
+## Ключевые Конфигурации
+
+Set the pre-Сортировкаed data fields and Сортировка порядок through the `setСортировкаedIndexMap` method.
+
+```
+setSortedIndexMap: (field: FieldDef, filedMap: ISortedMapItem) => void;
+
+interface ISortedMapItem {
+  asc?: (number | number[])[];
+  desc?: (number | number[])[];
+  normal?: (number | number[])[];
+}
+```
+
+## Code Demo
+
+```javascript livedemo template=vtable
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/test-demo-data/pre-sort.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'id',
+        title: 'ID',
+        width: 80,
+        sort: true
+      },
+      {
+        field: 'email1',
+        title: 'email(pre-sorted)',
+        width: 250,
+        sort: true
+      },
+      {
+        field: 'hobbies',
+        title: 'hobbies(unsorted)',
+        width: 200,
+        sort: true
+      },
+      {
+        field: 'birthday',
+        title: 'birthday',
+        width: 120
+      },
+      {
+        field: 'sex',
+        title: 'sex',
+        width: 100
+      },
+      {
+        field: 'tel',
+        title: 'telephone',
+        width: 150
+      },
+      {
+        field: 'work',
+        title: 'job',
+        width: 200
+      },
+      {
+        field: 'city',
+        title: 'city',
+        width: 150
+      }
+    ];
+    const option = {
+      records: data.data,
+      columns
+    };
+    const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+
+    data.sort.forEach(item => {
+      tableInstance.setSortedIndexMap(item.key, item.value);
+    });
+  });
+```

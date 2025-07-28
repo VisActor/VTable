@@ -1,1 +1,224 @@
---- категория: примеры группа: компонент заголовок: отпускание Down меню обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/выпадающий список.png порядок: 8-2 ссылка: компонентs/выпадающий список опция: списоктаблица-колонки-текст#dropDownменю --- # отпускание down меню в this пример, the dropDownменю is configured в the первый колонка из колонки, и when hovered к the заголовок ячейка, a отпускание-down меню is displayed для further operation. в the same time through monitoring`Нажать_cell`событие, when the mouse Нажатьs the порядок иконка в the первый колонка, the интерфейс showDropDownменю is called к display the отпускание-down меню. к continue the operation according к the item Нажатьed на the отпускание-down меню, Вы можете списокen к the событие dropdown_меню_Нажать. ## Ключевые Конфигурации - `dropDownменю` Configure the отпускание-down меню в the заголовок к display the content. After конфигурация, навести к the заголовок ячейка к display the content. Вы можете configure it separately или globally according к the заголовок. - `showDropDownменю` Display the call интерфейс для the отпускание-down меню ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица втаблица.регистрация.иконка('порядок', { тип: 'svg', svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/порядок.svg', ширина: 22, высота: 22, имя: 'порядок', positionType: втаблица.TYPES.иконкаPosition.лево, marginRight: 0, навести: { ширина: 22, высота: 22, bgColor: 'rgba(101, 117, 168, 0.1)' }, cursor: 'pointer' }); втаблица.регистрация.иконка('dropdownиконка', { имя: 'dropdownиконка', тип: 'svg', цвет: 'blue', positionType: втаблица.TYPES.иконкаPosition.право, funcType: втаблица.TYPES.иконкаFuncTypeEnum.выпадающий список, ширина: 20, высота: 20, svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/выпадающий список.svg', marginLeft: 10, Подсказка: { стиль: { arrowMark: true, шрифт: 10, bgColor: 'white', цвет: 'black' }, // 气泡框，按钮的的解释信息 заголовок: 'сортировка данные', placement: втаблица.TYPES.Placement.право } }); // втаблица.регистрация.иконка('dropdownиконка',{ // тип: 'svg', // svg: '<svg ширина="24" высота="24" viewBox="0 0 24 24" заполнить="никто" xmlns="http://www.w3.org/2000/svg"><g><rect x="2" y="1" ширина="20" высота="20" rx="10" заполнить="white"/><rect x="2.5" y="1.5" ширина="19" высота="19" rx="9.5" strхорошоe="#959DA5"/></g><path d="M14.9492 9.39531C15.0086 9.31911 15.0165 9.21887 14.9698 9.1356C14.923 9.05234 14.8294 9 14.7273 9L9.27273 9C9.17057 9 9.07697 9.05234 9.03023 9.1356C8.98348 9.21887 8.99142 9.31911 9.0508 9.39531L11.7781 12.8953C11.8293 12.961 11.9119 13 12 13C12.0881 13 12.1707 12.961 12.2219 12.8953L14.9492 9.39531Z" заполнить="#4F5965"/></svg>', // ширина: 24, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的 // высота: 24, // funcType: втаблица.TYPES.иконкаFuncTypeEnum.выпадающий список, // positionType: втаблица.TYPES.иконкаPosition.absoluteRight, // // positionType: иконкаPosition.inlineEnd, // имя: 'dropdownиконка', // marginRight: 0, //设计要求的是距离8px，这个些5是基于外面的box而言的 // навести: { // ширина: 24, // высота: 24, // bgColor: 'rgba(101, 117, 168, 0.1)', // imвозраст: // '<svg ширина="24" высота="24" viewBox="0 0 24 24" заполнить="никто" xmlns="http://www.w3.org/2000/svg"><g><rect x="2" y="1" ширина="20" высота="20" rx="10" заполнить="#1E54C9"/><rect x="2.5" y="1.5" ширина="19" высота="19" rx="9.5" strхорошоe="#141414" strхорошоe-opaГород="0.2"/></g><path d="M14.9492 9.39531C15.0086 9.31911 15.0165 9.21887 14.9698 9.1356C14.923 9.05234 14.8294 9 14.7273 9L9.27273 9C9.17057 9 9.07697 9.05234 9.03023 9.1356C8.98348 9.21887 8.99142 9.31911 9.0508 9.39531L11.7781 12.8953C11.8293 12.961 11.9119 13 12 13C12.0881 13 12.1707 12.961 12.2219 12.8953L14.9492 9.39531Z" заполнить="white"/></svg>', // }, // cursor: 'pointer', // visibleTime: 'mouseenter_cell', // } // ); let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто', иконка: 'порядок', dropDownменю: [ 'по умолчанию', { текст: 'по Прибыль', иконка: { svg: '<svg ширина="14" высота="14" viewBox="0 0 96 96" заполнить="никто" xmlns="http://www.w3.org/2000/svg"><path заполнить-rule="evenodd" clip-rule="evenodd" d="M71 89.0005L54 71.9719L54 60L67.004 73.025L67.0032 25L75.0032 25L75.004 73.017L88 60V71.9719L71 89.0005ZM48 81V89H8V81H48ZM48 45V53H8V45H48ZM88 9V17H8V9H88Z" заполнить="#2e2f32" заполнить-opaГород="0.9"></path></svg>' // svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/порядок.svg", // ширина: 15, // высота: 15, }, selectedиконка: { svg: '<svg ширина="14" высота="14" viewBox="0 0 96 96" заполнить="никто" xmlns="http://www.w3.org/2000/svg"><path заполнить-rule="evenodd" clip-rule="evenodd" d="M71 89.0005L54 71.9719L54 60L67.004 73.025L67.0032 25L75.0032 25L75.004 73.017L88 60V71.9719L71 89.0005ZM48 81V89H8V81H48ZM48 45V53H8V45H48ZM88 9V17H8V9H88Z" заполнить="rgb(55,145,255)" заполнить-opaГород="0.9"></path></svg>' }, stateиконка: { svg: '<svg ширина="12" высота="11" viewBox="0 0 64 64" заполнить="#161616" xmlns="http://www.w3.org/2000/svg" class="visactor-таблица-action-area-иконка"><path заполнить-rule="evenodd" clip-rule="evenodd" d="M45.0144 38.5314L34.9864 48.5634L34.9864 4.01538H28.9864L28.9864 48.4974L18.9864 38.5014V46.9854L27.776 55.7727H27.7732L32.0158 60.0154L45.0144 47.0174V38.5314Z" заполнить="#161616" заполнить-opaГород="0.9"></path></svg>' } } ] }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', allowFrozenColCount: 3, frozenColCount: 1 }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; таблицаInstance.на('Нажать_cell', args => { const { колонка, строка, targetиконка } = args; if (колонка === 0 && строка >= 1 && targetиконка?.имя === 'порядок') { const { лево, верх, ширина, высота, низ, право } = targetиконка.позиция; таблицаInstance.showDropDownменю(колонка, строка, { content: [ { тип: 'заголовок', текст: 'action' }, { текст: 'delete', менюKey: 'delete', // иконка: { // svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/порядок.svg", // }, иконка: { svg: '<svg t="1684643332116" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-ид="11284" ширина="200" высота="200"><path d="M912.526651 867.741144 555.540144 510.712681l356.986507-357.000833c11.171434-11.18576 11.171434-29.257348 0-40.443108-11.20111-11.18576-29.272697-11.18576-40.444131 0L515.096013 470.267527 158.096203 113.267716c-11.187807-11.159154-29.258371-11.159154-40.444131 0-11.186783 11.186783-11.186783 29.286 0 40.47176L474.623229 510.712681 117.623419 867.741144c-11.159154 11.172457-11.159154 29.216415 0 40.443108 11.18576 11.17348 29.284977 11.17348 40.47176 0l357.000833-357.027439 356.985484 357.027439c11.171434 11.17348 29.243021 11.17348 40.444131 0C923.698085 896.957559 923.725714 878.913601 912.526651 867.741144z" заполнить="#5D5D5D" p-ид="11285"></path></svg>', ширина: 15, высота: 15 } }, { текст: 'modify', менюKey: 'modify', иконка: { ширина: 15, высота: 15, svg: '<svg t="1684643607026" class="иконка" viewBox="0 0 1069 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-ид="13141" ширина="200" высота="200"><path d="M960.206979 1024H43.574468A43.620948 43.620948 0 0 1 0 980.425532V117.871841a43.620948 43.620948 0 0 1 43.574468-43.574468h516.421356a20.334752 20.334752 0 0 1 0 40.669504H43.574468a2.904965 2.904965 0 0 0-2.904964 2.904964v862.565311a2.904965 2.904965 0 0 0 2.904964 2.904964h916.644131a2.904965 2.904965 0 0 0 2.904964-2.904964V515.340709a20.334752 20.334752 0 0 1 40.669504 0v465.096443a43.620948 43.620948 0 0 1-43.586088 43.562848z" p-ид="13142"></path><path d="M518.687228 570.418837a20.334752 20.334752 0 0 1-14.362144-34.731756L1035.120204 5.949367a20.334752 20.334752 0 0 1 28.72429 28.782389l-530.795121 529.737714a20.276652 20.276652 0 0 1-14.362145 5.949367z" p-ид="13143"></path></svg>' } }, { текст: 'aggregation', менюKey: 'aggregation', иконка: { ширина: 15, высота: 15, svg: '<svg t="1684644028228" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-ид="15087" ширина="200" высота="200"><path d="M390.208 300.5696h95.573333a32 32 0 0 1 0 64h-123.690666l-46.203734 105.169067H412.330667a32 32 0 0 1 0 64H287.773867L241.088 640h78.062933a32 32 0 1 1 0 64H212.970667l-61.8368 140.753067A21.333333 21.333333 0 0 0 170.666667 874.666667h245.969066a34.133333 34.133333 0 0 0 31.249067-20.4032L744.4352 179.242667A21.333333 21.333333 0 0 0 724.9024 149.333333h-254.3232a21.333333 21.333333 0 0 0-19.5328 12.753067L390.208 300.5696zM508.821333 874.666667H906.666667a32 32 0 1 1 0 64H170.666667c-47.1296 0-85.333333-38.203733-85.333334-85.333334a85.333333 85.333333 0 0 1 7.210667-34.321066l299.908267-682.666667A85.333333 85.333333 0 0 1 470.574933 85.333333H724.906667c47.1296 0 85.333333 38.203733 85.333333 85.333334a85.333333 85.333333 0 0 1-7.2064 34.321066L508.8256 874.666667z" заполнить="#333333" p-ид="15088"></path></svg>' }, children: [ { текст: 'averвозраст', менюKey: 'averвозраст' }, { текст: 'sum', менюKey: 'sum' } ] } ], referencePosition: { rect: { лево, верх, ширина, высота, право, низ } } }); } }); таблицаInstance.на('dropdown_меню_Нажать', args => { console.log('dropdown_меню_Нажать', args); таблицаInstance.setDropDownменюHighlight([args]); }); }); ``` 
+---
+категория: примеры
+группа: Component
+заголовок: Drop Down Menu
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/dropdown.png
+порядок: 8-2
+ссылка: компонентs/dropdown
+опция: ListTable-columns-text#dropDownMenu
+---
+
+# drop down menu
+
+In this example, the dropDownMenu is configured in the first column of columns, and when hovered to the header cell, a drop-down menu is displayed for further operation.
+At the same time through monitoring`click_cell`Event, when the mouse clicks the порядок icon in the first column, the interface showDropDownMenu is called to display the drop-down menu. To continue the operation according to the item clicked on the drop-down menu, you can listen to the событие dropdown_menu_click.
+
+## Ключевые Конфигурации
+
+- `dropDownMenu` Configure the drop-down menu at the header to display the content. After configuration, hover to the header cell to display the content. You can configure it separately or globally according to the header.
+
+- `showDropDownMenu` Display the call interface for the drop-down menu
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+VTable.register.icon('order', {
+  type: 'svg',
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg',
+  width: 22,
+  height: 22,
+  name: 'order',
+  positionType: VTable.TYPES.IconPosition.left,
+  marginRight: 0,
+  hover: {
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101, 117, 168, 0.1)'
+  },
+  cursor: 'pointer'
+});
+VTable.register.icon('dropdownIcon', {
+  name: 'dropdownIcon',
+  type: 'svg',
+  color: 'blue',
+  positionType: VTable.TYPES.IconPosition.right,
+  funcType: VTable.TYPES.IconFuncTypeEnum.dropDown,
+  width: 20,
+  height: 20,
+  svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/dropdown.svg',
+  marginLeft: 10,
+  tooltip: {
+    style: { arrowMark: true, font: 10, bgColor: 'white', color: 'black' },
+    // 气泡框，按钮的的解释信息
+    title: 'sort data',
+    placement: VTable.TYPES.Placement.right
+  }
+});
+// VTable.register.icon('dropdownIcon',{
+//     type: 'svg',
+//     svg: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g><rect x="2" y="1" width="20" height="20" rx="10" fill="white"/><rect x="2.5" y="1.5" width="19" height="19" rx="9.5" stroke="#959DA5"/></g><path d="M14.9492 9.39531C15.0086 9.31911 15.0165 9.21887 14.9698 9.1356C14.923 9.05234 14.8294 9 14.7273 9L9.27273 9C9.17057 9 9.07697 9.05234 9.03023 9.1356C8.98348 9.21887 8.99142 9.31911 9.0508 9.39531L11.7781 12.8953C11.8293 12.961 11.9119 13 12 13C12.0881 13 12.1707 12.961 12.2219 12.8953L14.9492 9.39531Z" fill="#4F5965"/></svg>',
+//     width: 24, //其实指定的是svg图片绘制多大，实际下面的阴影是box，margin也是相对阴影范围指定的
+//     height: 24,
+//     funcType: VTable.TYPES.IconFuncTypeEnum.dropDown,
+//     positionType: VTable.TYPES.IconPosition.absoluteRight,
+//     // positionType: IconPosition.inlineEnd,
+//     name: 'dropdownIcon',
+//     marginRight: 0, //设计要求的是距离8px，这个些5是基于外面的box而言的
+//     hover: {
+//       width: 24,
+//       height: 24,
+//       bgColor: 'rgba(101, 117, 168, 0.1)',
+//       image:
+//         '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g><rect x="2" y="1" width="20" height="20" rx="10" fill="#1E54C9"/><rect x="2.5" y="1.5" width="19" height="19" rx="9.5" stroke="#141414" stroke-opacity="0.2"/></g><path d="M14.9492 9.39531C15.0086 9.31911 15.0165 9.21887 14.9698 9.1356C14.923 9.05234 14.8294 9 14.7273 9L9.27273 9C9.17057 9 9.07697 9.05234 9.03023 9.1356C8.98348 9.21887 8.99142 9.31911 9.0508 9.39531L11.7781 12.8953C11.8293 12.961 11.9119 13 12 13C12.0881 13 12.1707 12.961 12.2219 12.8953L14.9492 9.39531Z" fill="white"/></svg>',
+//     },
+//     cursor: 'pointer',
+//     visibleTime: 'mouseenter_cell',
+//   }
+// );
+
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto',
+        icon: 'order',
+        dropDownMenu: [
+          'default',
+          {
+            text: 'by Прибыль',
+            icon: {
+              svg: '<svg width="14" height="14" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M71 89.0005L54 71.9719L54 60L67.004 73.025L67.0032 25L75.0032 25L75.004 73.017L88 60V71.9719L71 89.0005ZM48 81V89H8V81H48ZM48 45V53H8V45H48ZM88 9V17H8V9H88Z" fill="#2e2f32" fill-opacity="0.9"></path></svg>'
+              // svg: "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
+              // width: 15,
+              // height: 15,
+            },
+            selectedIcon: {
+              svg: '<svg width="14" height="14" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M71 89.0005L54 71.9719L54 60L67.004 73.025L67.0032 25L75.0032 25L75.004 73.017L88 60V71.9719L71 89.0005ZM48 81V89H8V81H48ZM48 45V53H8V45H48ZM88 9V17H8V9H88Z" fill="rgb(55,145,255)" fill-opacity="0.9"></path></svg>'
+            },
+            stateIcon: {
+              svg: '<svg width="12" height="11" viewBox="0 0 64 64" fill="#161616" xmlns="http://www.w3.org/2000/svg" class="visactor-table-action-area-icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M45.0144 38.5314L34.9864 48.5634L34.9864 4.01538H28.9864L28.9864 48.4974L18.9864 38.5014V46.9854L27.776 55.7727H27.7732L32.0158 60.0154L45.0144 47.0174V38.5314Z" fill="#161616" fill-opacity="0.9"></path></svg>'
+            }
+          }
+        ]
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      allowFrozenColCount: 3,
+      frozenColCount: 1
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+
+    tableInstance.on('click_cell', args => {
+      const { col, row, targetIcon } = args;
+      if (col === 0 && row >= 1 && targetIcon?.name === 'order') {
+        const { left, top, width, height, bottom, right } = targetIcon.position;
+        tableInstance.showDropDownMenu(col, row, {
+          content: [
+            {
+              type: 'title',
+              text: 'action'
+            },
+            {
+              text: 'delete',
+              menuKey: 'delete',
+              // icon: {
+              //   svg:  "https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/order.svg",
+              // },
+              icon: {
+                svg: '<svg t="1684643332116" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11284" width="200" height="200"><path d="M912.526651 867.741144 555.540144 510.712681l356.986507-357.000833c11.171434-11.18576 11.171434-29.257348 0-40.443108-11.20111-11.18576-29.272697-11.18576-40.444131 0L515.096013 470.267527 158.096203 113.267716c-11.187807-11.159154-29.258371-11.159154-40.444131 0-11.186783 11.186783-11.186783 29.286 0 40.47176L474.623229 510.712681 117.623419 867.741144c-11.159154 11.172457-11.159154 29.216415 0 40.443108 11.18576 11.17348 29.284977 11.17348 40.47176 0l357.000833-357.027439 356.985484 357.027439c11.171434 11.17348 29.243021 11.17348 40.444131 0C923.698085 896.957559 923.725714 878.913601 912.526651 867.741144z" fill="#5D5D5D" p-id="11285"></path></svg>',
+                width: 15,
+                height: 15
+              }
+            },
+            {
+              text: 'modify',
+              menuKey: 'modify',
+              icon: {
+                width: 15,
+                height: 15,
+                svg: '<svg t="1684643607026" class="icon" viewBox="0 0 1069 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="13141" width="200" height="200"><path d="M960.206979 1024H43.574468A43.620948 43.620948 0 0 1 0 980.425532V117.871841a43.620948 43.620948 0 0 1 43.574468-43.574468h516.421356a20.334752 20.334752 0 0 1 0 40.669504H43.574468a2.904965 2.904965 0 0 0-2.904964 2.904964v862.565311a2.904965 2.904965 0 0 0 2.904964 2.904964h916.644131a2.904965 2.904965 0 0 0 2.904964-2.904964V515.340709a20.334752 20.334752 0 0 1 40.669504 0v465.096443a43.620948 43.620948 0 0 1-43.586088 43.562848z" p-id="13142"></path><path d="M518.687228 570.418837a20.334752 20.334752 0 0 1-14.362144-34.731756L1035.120204 5.949367a20.334752 20.334752 0 0 1 28.72429 28.782389l-530.795121 529.737714a20.276652 20.276652 0 0 1-14.362145 5.949367z" p-id="13143"></path></svg>'
+              }
+            },
+            {
+              text: 'aggregation',
+              menuKey: 'aggregation',
+              icon: {
+                width: 15,
+                height: 15,
+                svg: '<svg t="1684644028228" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="15087" width="200" height="200"><path d="M390.208 300.5696h95.573333a32 32 0 0 1 0 64h-123.690666l-46.203734 105.169067H412.330667a32 32 0 0 1 0 64H287.773867L241.088 640h78.062933a32 32 0 1 1 0 64H212.970667l-61.8368 140.753067A21.333333 21.333333 0 0 0 170.666667 874.666667h245.969066a34.133333 34.133333 0 0 0 31.249067-20.4032L744.4352 179.242667A21.333333 21.333333 0 0 0 724.9024 149.333333h-254.3232a21.333333 21.333333 0 0 0-19.5328 12.753067L390.208 300.5696zM508.821333 874.666667H906.666667a32 32 0 1 1 0 64H170.666667c-47.1296 0-85.333333-38.203733-85.333334-85.333334a85.333333 85.333333 0 0 1 7.210667-34.321066l299.908267-682.666667A85.333333 85.333333 0 0 1 470.574933 85.333333H724.906667c47.1296 0 85.333333 38.203733 85.333333 85.333334a85.333333 85.333333 0 0 1-7.2064 34.321066L508.8256 874.666667z" fill="#333333" p-id="15088"></path></svg>'
+              },
+              children: [
+                {
+                  text: 'average',
+                  menuKey: 'average'
+                },
+                {
+                  text: 'sum',
+                  menuKey: 'sum'
+                }
+              ]
+            }
+          ],
+          referencePosition: {
+            rect: {
+              left,
+              top,
+              width,
+              height,
+              right,
+              bottom
+            }
+          }
+        });
+      }
+    });
+    tableInstance.on('dropdown_menu_click', args => {
+      console.log('dropdown_menu_click', args);
+      tableInstance.setDropDownMenuHighlight([args]);
+    });
+  });
+```

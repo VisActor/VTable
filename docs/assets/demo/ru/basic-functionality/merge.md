@@ -1,1 +1,111 @@
---- категория: примеры группа: Основные функции заголовок: Объединение ячеек обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ВТаблица/preview/объединение.png опция: ListTable-колонки-текст#mergeCell --- # Объединение ячеек Автоматическое объединение ячеек с одинаковым содержимым через конфигурацию ## Ключевые конфигурации * `mergeCell` Объединить соседние ячейки с одинаковым содержимым в одном столбце ## Демонстрация кода ```javascript livedemo шаблон=ВТаблица let tableInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/ВТаблица/North_American_Superstore_data100.json') .then((res) => res.json()) .then((данные) => { const колонки =[ { "поле": "категория", "заголовок": "категория", "ширина": "авто", сортировка:true, "mergeCell": true, стиль:{ "textStick":true, textAlign:'право' // textBaseline:"низ" } }, { "поле": "под-категория", "заголовок": "под-категория", "ширина": "авто", сортировка:true, "mergeCell": true, }, { "поле": "порядок ид", "заголовок": "порядок ид", "ширина": "авто" }, { "поле": "Customer ид", "заголовок": "Customer ид", "ширина": "авто" }, { "поле": "Product имя", "заголовок": "Product имя", "ширина": "авто", headerStyle:{ "textStick":true, } }, { "поле": "Region", "заголовок": "Region", "ширина": "авто" }, { "поле": "City", "заголовок": "City", "ширина": "авто" }, { "поле": "порядок Date", "заголовок": "порядок Date", "ширина": "авто" }, { "поле": "Quantity", "заголовок": "Quantity", "ширина": "авто" }, { "поле": "Sales", "заголовок": "Sales", "ширина": "авто" }, { "поле": "Profit", "заголовок": "Profit", "ширина": "авто" } ]; const опция = { records:данные, колонки, widthMode:'standard', навести:{ highlightMode:'строка' }, sortState:{ поле:'категория', порядок:'asc' } }; tableInstance = новый ВТаблица.ListTable(документ.getElementById(CONTAINER_ID), опция); window['tableInstance'] = tableInstance; }) ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Merge Cells
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/merge.png
+опция: ListTable-columns-text#mergeCell
+---
+
+# Merge cells
+
+Automatically merge cells with the same content through configuration
+
+## Ключевые Конфигурации
+
+*   `mergeCell`  Merge adjacent cells with the same content in the same column
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+
+let  tableInstance;
+  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data100.json')
+    .then((res) => res.json())
+    .then((data) => {
+
+const columns =[
+  {
+        "field": "Категория",
+        "title": "Категория",
+        "width": "auto",
+        sort:true,
+        "mergeCell": true,
+        style:{
+          "textStick":true,
+          textAlign:'right'
+          // textBaseline:"bottom"
+        }
+    },
+    {
+        "field": "Sub-Категория",
+        "title": "Sub-Категория",
+        "width": "auto",
+        sort:true,
+        "mergeCell": true,
+    },
+    {
+        "field": "ИД Заказа",
+        "title": "ИД Заказа",
+        "width": "auto"
+    },
+    {
+        "field": "ИД Клиента",
+        "title": "ИД Клиента",
+        "width": "auto"
+    },
+    {
+        "field": "Название Товара",
+        "title": "Название Товара",
+        "width": "auto",
+        headerStyle:{
+          "textStick":true,
+        }
+    },
+    {
+        "field": "Регион",
+        "title": "Регион",
+        "width": "auto"
+    },
+    {
+        "field": "Город",
+        "title": "Город",
+        "width": "auto"
+    },
+    {
+        "field": "Дата Заказа",
+        "title": "Дата Заказа",
+        "width": "auto"
+    },
+    {
+        "field": "Количество",
+        "title": "Количество",
+        "width": "auto"
+    },
+    {
+        "field": "Продажи",
+        "title": "Продажи",
+        "width": "auto"
+    },
+    {
+        "field": "Прибыль",
+        "title": "Прибыль",
+        "width": "auto"
+    }
+];
+
+const option = {
+  records:data,
+  columns,
+  widthMode:'standard',
+  hover:{
+    highlightMode:'row'
+  },
+  sortState:{
+    field:'Категория',
+    order:'asc'
+  }
+};
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+    })
+```

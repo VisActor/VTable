@@ -1,1 +1,337 @@
---- категория: примеры группа: компонент заголовок: Подсказка пользовательский content обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/Подсказка-пользовательский-content.png ссылка: компонентs/Подсказка --- # Подсказка по списокening`mouseenter_cell`событие, move the mouse into the ячейка к prompt the Dimension и Metirc information из the ячейка. по списокening`mouseleave_cell`событие, the mouse leaves the ячейка к make the prompt box disappear. ## Ключевые Конфигурации - `mouseenter_cell` событие - `mouseleave_cell` событие - `mouseleave_таблица` событие ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const контейнер = документ.getElementById(CONTAINER_ID); const всплывающее окно = документ.createElement('div'); объект.assign(всплывающее окно.стиль, { позиция: 'fixed', ширина: '300px', backgroundColor: '#f1f1f1', bпорядок: '1px solid #ccc', заполнение: '20px', textAlign: 'лево' }); функция showПодсказка(infoсписок, x, y) { всплывающее окно.innerHTML = ''; всплывающее окно.ид = 'всплывающее окно'; всплывающее окно.стиль.лево = x + 'px'; всплывающее окно.стиль.верх = y + 'px'; const heading = документ.createElement('h4'); heading.textContent = '数据信息'; heading.стиль.отступ = '0px'; всплывающее окно.appendChild(heading); для (let i = 0; i < infoсписок.length; i++) { const информация = infoсписок[i]; const info1 = документ.createElement('p'); info1.textContent = информация; всплывающее окно.appendChild(info1); } // 将弹出框添加到文档主体中 документ.body.appendChild(всплывающее окно); } функция hideПодсказка() { if (документ.body.contains(всплывающее окно)) { документ.body.removeChild(всплывающее окно); } } let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный2_данные.json') .then(res => res.json()) .then(данные => { const опция = { records: данные, rowTree: [ { dimensionKey: 'Категория', значение: 'Furniture', hierarchyState: 'развернуть', children: [ { dimensionKey: 'под-Категория', значение: 'Boхорошоcases', hierarchyState: 'свернуть' }, { dimensionKey: 'под-Категория', значение: 'Chairs', hierarchyState: 'свернуть' }, { dimensionKey: 'под-Категория', значение: 'Furnishings' }, { dimensionKey: 'под-Категория', значение: 'таблицаs' } ] }, { dimensionKey: 'Категория', значение: 'Office Supplies', children: [ { dimensionKey: 'под-Категория', значение: 'Appliances' }, { dimensionKey: 'под-Категория', значение: 'Art' }, { dimensionKey: 'под-Категория', значение: 'Binders' }, { dimensionKey: 'под-Категория', значение: 'Envelopes' }, { dimensionKey: 'под-Категория', значение: 'Fasteners' }, { dimensionKey: 'под-Категория', значение: 'Labels' }, { dimensionKey: 'под-Категория', значение: 'Paper' }, { dimensionKey: 'под-Категория', значение: 'Storвозраст' }, { dimensionKey: 'под-Категория', значение: 'Supplies' } ] }, { dimensionKey: 'Категория', значение: 'Technology', children: [ { dimensionKey: 'под-Категория', значение: 'Accessories' }, { dimensionKey: 'под-Категория', значение: 'Copiers' }, { dimensionKey: 'под-Категория', значение: 'Machines' }, { dimensionKey: 'под-Категория', значение: 'Phones' } ] } ], columnTree: [ { dimensionKey: 'Регион', значение: 'West', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Регион', значение: 'South', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Регион', значение: 'Central', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Регион', значение: 'East', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] } ], rows: [ { dimensionKey: 'Категория', заголовок: 'Catogery', ширина: 'авто' }, { dimensionKey: 'под-Категория', заголовок: 'под-Catogery', ширина: 'авто' } ], колонки: [ { dimensionKey: 'Регион', заголовок: 'Регион', headerStyle: { textStick: true }, ширина: 'авто' } ], indicators: [ { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { if (значение) { возврат '$' + число(значение).toFixed(2); } возврат ''; }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) { возврат 'black'; } возврат 'red'; } } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { if (значение) { возврат '$' + число(значение).toFixed(2); } возврат ''; }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) { возврат 'black'; } возврат 'red'; } } } ], угол: { titleOnDimension: 'строка', headerStyle: { textStick: true } }, ширинаMode: 'standard', rowHierarchyIndent: 20, rowExpandLevel: 1, rowHierarchyTextStartAlignment: true, dragпорядок: { dragHeaderMode: 'все' } }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window.таблицаInstance = таблицаInstance; таблицаInstance.на('mouseenter_cell', args => { const { cellRange, колонка, строка } = args; debugger; const значение = таблицаInstance.getCellValue(колонка, строка); const cellHeaderPaths = таблицаInstance.getCellHeaderPaths(колонка, строка); const infoсписок = []; cellHeaderPaths.rowHeaderPaths?.forEach(headerDimension => { infoсписок.push( headerDimension.indicatorKey ? headerDimension.indicatorKey + ': ' + значение : headerDimension.dimensionKey + ': ' + headerDimension.значение ); }); cellHeaderPaths.colHeaderPaths?.forEach(headerDimension => { infoсписок.push( headerDimension.indicatorKey ? headerDimension.indicatorKey + ': ' + значение : headerDimension.dimensionKey + ': ' + headerDimension.значение ); }); const контейнер = документ.getElementById(CONTAINER_ID); const containerRect = контейнер.getBoundingClientRect(); if (!таблицаInstance.isHeader(колонка, строка)) { showПодсказка(infoсписок, cellRange?.лево + containerRect.лево, cellRange?.низ + containerRect.верх); } else { hideПодсказка(); } }); таблицаInstance.на('mouseleave_cell', args => { const { cellRange, колонка, строка } = args; hideПодсказка(); }); таблицаInstance.на('mouseleave_таблица', args => { const { cellRange, колонка, строка } = args; hideПодсказка(); }); }); ``` 
+---
+категория: примеры
+группа: Component
+заголовок: подсказка custom content
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/подсказка-custom-content.png
+ссылка: компонентs/подсказка
+---
+
+# Tooltip
+
+By listening`mouseenter_cell`Event, move the mouse into the cell to prompt the Dimension and Metirc information of the cell. By listening`mouseleave_cell`Event, the mouse leaves the cell to make the prompt box disappear.
+
+## Ключевые Конфигурации
+
+- `mouseenter_cell` событие
+- `mouseleave_cell` событие
+- `mouseleave_table` событие
+
+## Code Demo
+
+```javascript livedemo template=vtable
+const container = document.getElementById(CONTAINER_ID);
+const popup = document.createElement('div');
+Object.assign(popup.style, {
+  position: 'fixed',
+  width: '300px',
+  backgroundColor: '#f1f1f1',
+  border: '1px solid #ccc',
+  padding: '20px',
+  textAlign: 'left'
+});
+function showTooltip(infoList, x, y) {
+  popup.innerHTML = '';
+  popup.id = 'popup';
+  popup.style.left = x + 'px';
+  popup.style.top = y + 'px';
+  const heading = document.createElement('h4');
+  heading.textContent = '数据信息';
+  heading.style.margin = '0px';
+  popup.appendChild(heading);
+  for (let i = 0; i < infoList.length; i++) {
+    const info = infoList[i];
+    const info1 = document.createElement('p');
+    info1.textContent = info;
+    popup.appendChild(info1);
+  }
+  // 将弹出框添加到文档主体中
+  document.body.appendChild(popup);
+}
+
+function hideTooltip() {
+  if (document.body.contains(popup)) {
+    document.body.removeChild(popup);
+  }
+}
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const option = {
+      records: data,
+      rowTree: [
+        {
+          dimensionKey: 'Категория',
+          value: 'Furniture',
+          hierarchyState: 'expand',
+          children: [
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Bookcases',
+              hierarchyState: 'collapse'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Chairs',
+              hierarchyState: 'collapse'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Furnishings'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Tables'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Категория',
+          value: 'Office Supplies',
+          children: [
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Appliances'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Art'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Binders'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Envelopes'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Fasteners'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Labels'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Paper'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Storage'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Supplies'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Категория',
+          value: 'Technology',
+          children: [
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Accessories'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Copiers'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Machines'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Phones'
+            }
+          ]
+        }
+      ],
+      columnTree: [
+        {
+          dimensionKey: 'Регион',
+          value: 'West',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Регион',
+          value: 'South',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Регион',
+          value: 'Central',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Регион',
+          value: 'East',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        }
+      ],
+      rows: [
+        {
+          dimensionKey: 'Категория',
+          title: 'Catogery',
+          width: 'auto'
+        },
+        {
+          dimensionKey: 'Подкатегория',
+          title: 'Sub-Catogery',
+          width: 'auto'
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: 'Регион',
+          title: 'Регион',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: 'Продажи',
+          title: 'Продажи',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            if (value) {
+              return '$' + Number(value).toFixed(2);
+            }
+            return '';
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) {
+                return 'black';
+              }
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Прибыль',
+          title: 'Прибыль',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            if (value) {
+              return '$' + Number(value).toFixed(2);
+            }
+            return '';
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) {
+                return 'black';
+              }
+              return 'red';
+            }
+          }
+        }
+      ],
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textStick: true
+        }
+      },
+      widthMode: 'standard',
+      rowHierarchyIndent: 20,
+      rowExpandLevel: 1,
+      rowHierarchyTextStartAlignment: true,
+      dragOrder: {
+        dragHeaderMode: 'all'
+      }
+    };
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    window.tableInstance = tableInstance;
+    tableInstance.on('mouseenter_cell', args => {
+      const { cellRange, col, row } = args;
+      debugger;
+      const value = tableInstance.getCellValue(col, row);
+      const cellHeaderPaths = tableInstance.getCellHeaderPaths(col, row);
+      const infoList = [];
+      cellHeaderPaths.rowHeaderPaths?.forEach(headerDimension => {
+        infoList.push(
+          headerDimension.indicatorKey
+            ? headerDimension.indicatorKey + ': ' + value
+            : headerDimension.dimensionKey + ': ' + headerDimension.value
+        );
+      });
+      cellHeaderPaths.colHeaderPaths?.forEach(headerDimension => {
+        infoList.push(
+          headerDimension.indicatorKey
+            ? headerDimension.indicatorKey + ': ' + value
+            : headerDimension.dimensionKey + ': ' + headerDimension.value
+        );
+      });
+      const container = document.getElementById(CONTAINER_ID);
+      const containerRect = container.getBoundingClientRect();
+
+      if (!tableInstance.isHeader(col, row)) {
+        showTooltip(infoList, cellRange?.left + containerRect.left, cellRange?.bottom + containerRect.top);
+      } else {
+        hideTooltip();
+      }
+    });
+    tableInstance.on('mouseleave_cell', args => {
+      const { cellRange, col, row } = args;
+      hideTooltip();
+    });
+    tableInstance.on('mouseleave_table', args => {
+      const { cellRange, col, row } = args;
+      hideTooltip();
+    });
+  });
+```

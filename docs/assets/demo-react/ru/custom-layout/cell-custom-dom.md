@@ -1,1 +1,206 @@
---- категория: примеры группа: компонент заголовок: ячейка пользовательский дом компонент обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/react-втаблица-ячейка-дом-компонент.jpeg порядок: 1-1 ссылка: '../../guide/пользовательский_define/react-пользовательский-компонент' --- # ячейка пользовательский дом компонент использовать Arкодsign в cells. для details, please refer к [пользовательский компонентs](../../guide/пользовательский_define/react-пользовательский-компонент) ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица-react // импорт * as ReactВТаблица от '@visactor/react-втаблица'; const { useCallback, useRef, useState } = React; const { списоктаблица, СписокКолонка, группа } = ReactВТаблица; const { Avatar, Comment, Card, Popover, Space, Кнопка, Подтверждение, Messвозраст, уведомление } = Arкодsign; const { иконкаHeart, иконкаMessвозраст, иконкаStar, иконкаStarFill, иконкаHeartFill } = Arкодsignиконка; const Commentкомпонент = (props) => { const { таблица, строка, колонка, rect, данныеValue } = props; if (!таблица || строка === undefined || колонка === undefined) { возврат null; } const { высота, ширина } = rect || таблица.getCellRect(колонка, строка); const запись = таблица.getRecordByCell(колонка, строка); возврат ( <группа attribute={{ ширина, высота, react: { pointerсобытиеs: true, penetrateсобытиесписок: ['wheel'], контейнер: таблица.bodyDomContainer, // таблица.headerDomContainer // anchorType: 'низ-право', элемент: <CommentReactкомпонент имя={данныеValue} /> } }} ></группа> ); }; const CommentReactкомпонент = (props) => { const { имя } = props; const [like, setLike] = useState(); const [star, setStar] = useState(); const actions = [ <Кнопка classимя="пользовательский-comment-action" key="heart" onНажать={() => setLike(!like)}> {like ? <иконкаHeartFill стиль={{ цвет: '#f53f3f' }} /> : <иконкаHeart />} {83 + (like ? 1 : 0)} </Кнопка>, <Кнопка classимя="пользовательский-comment-action" key="star" onНажать={() => setStar(!star)}> {star ? <иконкаStarFill стиль={{ цвет: '#ffb400' }} /> : <иконкаStar />} {3 + (star ? 1 : 0)} </Кнопка>, <Кнопка classимя="пользовательский-comment-action" key="reply"> <иконкаMessвозраст /> Reply </Кнопка> ]; возврат ( <Comment actions={actions} author={имя} avatar={ <Popover заголовок={имя} content={ <span> <p>Here is the description из this user.</p> </span> } > <Avatar>{имя.slice(0, 1)}</Avatar> </Popover> } content={<div>Comment body content.</div>} datetime="1 hour" стиль={{ marginTop: 10, marginLeft: 10 }} /> ); }; const Operationкомпонент = (props) => { const { таблица, строка, колонка, rect, данныеValue } = props; if (!таблица || строка === undefined || колонка === undefined) { возврат null; } const { высота, ширина } = rect || таблица.getCellRect(колонка, строка); const запись = таблица.getRecordByCell(колонка, строка); возврат ( <группа attribute={{ ширина, высота, react: { pointerсобытиеs: true, penetrateсобытиесписок: ['wheel'], контейнер: таблица.bodyDomContainer, // таблица.headerDomContainer // anchorType: 'низ-право', элемент: <OperationReactкомпонент /> } }} ></группа> ); }; const OperationReactкомпонент = () => { возврат ( <Space размер="small" стиль={{ marginLeft: 10, marginTop: 40 }}> <Кнопка onНажать={() => уведомление.информация({ заголовок: 'Normal', content: 'Этоn ошибка уведомление!' }) } тип="primary" > информация </Кнопка> <Подтверждение focusLock заголовок="Confirm" content="Are you sure you want к delete?" onхорошо={() => { Messвозраст.информация({ content: 'хорошо' }); }} onотмена={() => { Messвозраст.ошибка({ content: 'отмена' }); }} > <Кнопка>Delete</Кнопка> </Подтверждение> </Space> ); }; функция generateRandomString(length) { let result = ''; const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; для (let i = 0; i < length; i++) { result += characters.charAt(Math.floor(Math.random() * characters.length)); } возврат result; } функция App() { const records = []; для (let i = 0; i < 50; i++) { records.push({ ид: i, имя: generateRandomString(8) }); } возврат ( <списоктаблица records={records} высота={900} defaultRowвысота={110} onReady={таблица => { // eslint-отключить-следующий-line no-undef // (window as любой).таблицаInstance = таблица; }} ReactDOM={ReactDom} > <СписокКолонка поле={'ид'} заголовок={'ид'} /> <СписокКолонка поле={'имя'} заголовок={'Comment'} ширина={300}> <Commentкомпонент role={'пользовательский-макет'} /> </СписокКолонка> <СписокКолонка поле={''} заголовок={'Operation'} ширина={160}> <Operationкомпонент role={'пользовательский-макет'} /> </СписокКолонка> </списоктаблица> ); } const корень = ReactDom.createRoot(документ.getElementById(CONTAINER_ID)); корень.рендер(<App />); // Релиз react instance, do не copy window.пользовательскийРелиз = () => { корень.unmount(); }; ``` 
+---
+категория: примеры
+группа: компонент
+заголовок: cell custom dom компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-cell-dom-компонент.jpeg
+порядок: 1-1
+ссылка: '../../guide/custom_define/react-custom-компонент'
+---
+
+# cell custom dom компонент
+
+Use ArcoDesign in cells. For details, please refer to [Пользовательский Компонентs](../../guide/custom_define/react-custom-компонент)
+
+## демонстрация кода
+
+```javascript livedemo template=vtable-react
+// import * as ReactVTable from '@visactor/react-vtable';
+
+const { useCallback, useRef, useState } = React;
+const { ListTable, ListColumn, Group } = ReactVTable;
+const { 
+  Avatar,
+  Comment,
+  Card,
+  Popover,
+  Space,
+  Button,
+  Popconfirm,
+  Message,
+  Notification
+ } = ArcoDesign;
+const { IconHeart, IconMessage, IconStar, IconStarFill, IconHeartFill } = ArcoDesignIcon;
+
+const CommentComponent = (props) => {
+  const { table, row, col, rect, dataValue } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const record = table.getRecordByCell(col, row);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        react: {
+          pointerEvents: true,
+          penetrateEventList: ['wheel'],
+          container: table.bodyDomContainer, // table.headerDomContainer
+          // anchorType: 'bottom-right',
+          element: <CommentReactComponent name={dataValue} />
+        }
+      }}
+    ></Group>
+  );
+};
+
+const CommentReactComponent = (props) => {
+  const { name } = props;
+  const [like, setLike] = useState();
+  const [star, setStar] = useState();
+  const actions = [
+    <button className="custom-comment-action" key="heart" onClick={() => setLike(!like)}>
+      {like ? <IconHeartFill style={{ color: '#f53f3f' }} /> : <IconHeart />}
+      {83 + (like ? 1 : 0)}
+    </button>,
+    <button className="custom-comment-action" key="star" onClick={() => setStar(!star)}>
+      {star ? <IconStarFill style={{ color: '#ffb400' }} /> : <IconStar />}
+      {3 + (star ? 1 : 0)}
+    </button>,
+    <button className="custom-comment-action" key="reply">
+      <IconMessage /> Reply
+    </button>
+  ];
+  return (
+    <Comment
+      actions={actions}
+      author={name}
+      avatar={
+        <Popover
+          title={name}
+          content={
+            <span>
+              <p>Here is the description of this user.</p>
+            </span>
+          }
+        >
+          <Avatar>{name.slice(0, 1)}</Avatar>
+        </Popover>
+      }
+      content={<div>Comment body content.</div>}
+      datetime="1 hour"
+      style={{ marginTop: 10, marginLeft: 10 }}
+    />
+  );
+};
+
+const OperationComponent = (props) => {
+  const { table, row, col, rect, dataValue } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const record = table.getRecordByCell(col, row);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        react: {
+          pointerEvents: true,
+          penetrateEventList: ['wheel'],
+          container: table.bodyDomContainer, // table.headerDomContainer
+          // anchorType: 'bottom-right',
+          element: <OperationReactComponent />
+        }
+      }}
+    ></Group>
+  );
+};
+
+const OperationReactComponent = () => {
+  return (
+    <Space size="small" style={{ marginLeft: 10, marginTop: 40 }}>
+      <Button
+        onClick={() =>
+          Notification.info({
+            title: 'Normal',
+            content: 'This is an error Notification!'
+          })
+        }
+        type="primary"
+      >
+        Info
+      </Button>
+      <Popconfirm
+        focusLock
+        title="Confirm"
+        content="Are you sure you want to delete?"
+        onOk={() => {
+          Message.info({
+            content: 'ok'
+          });
+        }}
+        onCancel={() => {
+          Message.error({
+            content: 'cancel'
+          });
+        }}
+      >
+        <Button>Delete</Button>
+      </Popconfirm>
+    </Space>
+  );
+};
+
+function generateRandomString(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+function App() {
+  const records = [];
+  for (let i = 0; i < 50; i++) {
+    records.push({
+      id: i,
+      name: generateRandomString(8)
+    });
+  }
+
+  return (
+    <ListTable
+      records={records}
+      height={900}
+      defaultRowHeight={110}
+      onReady={table => {
+        // eslint-disable-next-line no-undef
+        // (window as any).tableInstance = table;
+      }}
+      ReactDOM={ReactDom}
+    >
+      <ListColumn field={'id'} title={'ID'} />
+      <ListColumn field={'имя'} title={'Comment'} width={300}>
+        <CommentComponent role={'custom-layout'} />
+      </ListColumn>
+      <ListColumn field={''} title={'Operation'} width={160}>
+        <OperationComponent role={'custom-layout'} />
+      </ListColumn>
+    </ListTable>
+  );
+}
+
+const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
+root.render(<App />);
+
+// release react instance, do not copy
+window.customRelease = () => {
+  root.unmount();
+};
+```

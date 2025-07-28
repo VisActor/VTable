@@ -1,1 +1,133 @@
---- категория: примеры группа: ячейка тип заголовок: сводныйтаблица display sparkline обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-sparkline.png ссылка: cell_type/график опция: сводныйтаблица-indicators-график#типЯчейки --- # сводныйтаблица display sparkline Display the данные corresponding к the ячейка в the форма из a mini график. ## Ключевые Конфигурации - `типЯчейки: 'sparkline'` specifies the тип из график - `sparklineSpec: {}` Sparkline spec - `данныеConfig.aggregationRules` configures aggregation rules. The rule used here is из `запись` тип, which means that the source данные запись из a ячейка needs к be collected as the данные source из the mini график ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица втаблица.регистрация.графикModule('vграфик', Vграфик); let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { dimensionKey: 'Регион', заголовок: 'Регион', headerStyle: { textStick: true } } ]; const rows = ['Категория']; const indicators = [ { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 120, format: rec => { возврат '$' + число(rec).toFixed(2); } }, { indicatorKey: 'ПродажиRecords', заголовок: 'Продажи Trend', типЯчейки: 'sparkline', ширина: 500, sparklineSpec: { тип: 'line', xполе: 'Дата Заказа', yполе: 'Продажи', pointShowRule: 'никто', smooth: true, line: { стиль: { strхорошоe: '#2E62F1', strхорошоeширина: 2 // interpolate: 'monotone', } }, point: { навести: { strхорошоe: 'blue', strхорошоeширина: 1, заполнить: 'red', shape: 'circle', размер: 4 }, стиль: { strхорошоe: 'red', strхорошоeширина: 1, заполнить: 'yellow', shape: 'circle', размер: 2 } }, crosshair: { стиль: { strхорошоe: 'gray', strхорошоeширина: 1 } } } } ]; const опция = { данныеConfig: { aggregationRules: [ //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容 { indicatorKey: 'ПродажиRecords', //指标名称 поле: 'Продажи', //指标依据字段 aggregationType: втаблица.TYPES.AggregationType.запись //计算类型 } ] }, rows, колонки, indicators, indicatorsAsCol: true, records: данные, defaultRowвысота: 80, defaultHeaderRowвысота: 50, defaultColширина: 280, defaultHeaderColширина: 130, indicatorзаголовок: '指标', автоWrapText: true, // ширинаMode:'адаптивный', // высотаMode:'адаптивный', угол: { titleOnDimension: 'строка', headerStyle: { автоWrapText: true } } }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); const { легенда_ITEM_Нажать } = втаблица.списоктаблица.событие_TYPE; window.таблицаInstance = таблицаInstance; таблицаInstance.onVграфиксобытие('Нажать', args => { console.log('onVграфиксобытие Нажать', args); }); таблицаInstance.onVграфиксобытие('mouseover', args => { console.log('onVграфиксобытие mouseover', args); }); window.таблицаInstance = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Cell Type
+заголовок: PivotTable display sparkline
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-sparkline.png
+ссылка: cell_type/chart
+опция: PivotTable-indicators-chart#cellType
+---
+
+# PivotTable display sparkline
+
+Display the data corresponding to the cell in the form of a mini chart.
+
+## Ключевые Конфигурации
+
+- `cellType: 'sparkline'` specifies the type of chart
+- `sparklineSpec: {}` Sparkline spec
+- `dataConfig.aggregationRules` configures aggregation rules. The rule used here is of `RECORD` type, which means that the source data record of a cell needs to be collected as the data source of the mini chart
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+VTable.register.chartModule('vchart', VChart);
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        dimensionKey: 'Регион',
+        title: 'Регион',
+        headerStyle: {
+          textStick: true
+        }
+      }
+    ];
+    const rows = ['Категория'];
+    const indicators = [
+      {
+        indicatorKey: 'Продажи',
+        title: 'Продажи',
+        width: 120,
+        format: rec => {
+          return '$' + Number(rec).toFixed(2);
+        }
+      },
+      {
+        indicatorKey: 'ПродажиRecords',
+        title: 'Продажи Trend',
+        cellType: 'sparkline',
+        width: 500,
+        sparklineSpec: {
+          type: 'line',
+          xField: 'Дата Заказа',
+          yField: 'Продажи',
+          pointShowRule: 'none',
+          smooth: true,
+          line: {
+            style: {
+              stroke: '#2E62F1',
+              strokeWidth: 2
+              // interpolate: 'monotone',
+            }
+          },
+          point: {
+            hover: {
+              stroke: 'blue',
+              strokeWidth: 1,
+              fill: 'red',
+              shape: 'circle',
+              size: 4
+            },
+            style: {
+              stroke: 'red',
+              strokeWidth: 1,
+              fill: 'yellow',
+              shape: 'circle',
+              size: 2
+            }
+          },
+          crosshair: {
+            style: {
+              stroke: 'gray',
+              strokeWidth: 1
+            }
+          }
+        }
+      }
+    ];
+    const option = {
+      dataConfig: {
+        aggregationRules: [
+          //做聚合计算的依据，如销售额如果没有配置则默认按聚合sum计算结果显示单元格内容
+          {
+            indicatorKey: 'ПродажиRecords', //指标名称
+            field: 'Продажи', //指标依据字段
+            aggregationType: VTable.TYPES.AggregationType.RECORD //计算类型
+          }
+        ]
+      },
+      rows,
+      columns,
+      indicators,
+      indicatorsAsCol: true,
+      records: data,
+      defaultRowHeight: 80,
+      defaultHeaderRowHeight: 50,
+      defaultColWidth: 280,
+      defaultHeaderColWidth: 130,
+      indicatorTitle: '指标',
+      autoWrapText: true,
+      // widthMode:'adaptive',
+      // heightMode:'adaptive',
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          autoWrapText: true
+        }
+      }
+    };
+
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
+    window.tableInstance = tableInstance;
+    tableInstance.onVChartEvent('click', args => {
+      console.log('onVChartEvent click', args);
+    });
+    tableInstance.onVChartEvent('mouseover', args => {
+      console.log('onVChartEvent mouseover', args);
+    });
+    window.tableInstance = tableInstance;
+  });
+```

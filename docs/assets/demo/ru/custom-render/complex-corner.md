@@ -1,1 +1,405 @@
---- категория: примеры группа: пользовательский заголовок: пользовательский угол ячейка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/complex-угол.jpeg опция: сводныйтаблица#угол.пользовательскиймакет --- # пользовательский угол ячейка в сводный таблицаs, sometimes there are multiple dimensions из данные анализ, и you need к пользовательскийize the drawing из the upper лево угол area, Вы можете achieve this по defining `пользовательскийMergeCell` и `пользовательскиймакет`. If the requirements из the entire Angle head are не combined, do не configure `пользовательскийMergeCell`. ## Ключевые Конфигурации - `угол.пользовательскиймакет` Configure the апи к возврат what needs к be rendered ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // only использовать для website const {createGroup, createText, createLine} = VRender; // использовать this для project // импорт {createGroup, createText, createLine} от '@visactor/втаблица/es/vrender'; const опция = { автоFillвысота: true, rows: ['province', 'Город'], колонки: ['Категория', 'sub_Категория'], indicators: ['Продажи', 'число'], defaultHeaderColширина: ['авто', 'авто', 120], defaultHeaderRowвысота: ['авто', 90], indicatorзаголовок: '指标名称', indicatorsAsCol: false, пользовательскийMergeCell: (колонка, строка, таблица) => { if (колонка >= 0 && колонка < 3 && строка <= 1) { возврат { текст: 'объединение текст', range: { начало: { колонка: 0, строка: 0 }, конец: { колонка: 2, строка: 1 } }, стиль: { bgColor: '#ECF1F5' } }; } }, данныеConfig: { totals: { строка: { showGrandTotals: true, showSubTotals: true, subTotalsDimensions: ['province'], grandTotalLabel: '行总计', subTotalLabel: '小计' }, колонка: { showGrandTotals: true, showSubTotals: true, subTotalsDimensions: ['Категория'], grandTotalLabel: '列总计', subTotalLabel: '小计' } } }, угол: { titleOnDimension: 'строка', пользовательскиймакет: args => { const { таблица, строка, колонка, rect } = args; const { высота, ширина } = rect ?? таблица.getCellRect(колонка, строка); const контейнер = createGroup({ высота, ширина }); // 定义文本内容的数组 const texts = [ { текст: 'province', fontSize: 18, x: 10, y: rect.высота - 25 }, { текст: 'Город', fontSize: 18, x: 105, y: rect.высота - 25 }, { текст: 'данные', fontSize: 18, x: rect.ширина - 50, y: rect.высота - 35 }, { текст: 'subКатегория', fontSize: 18, x: rect.ширина - 100, y: rect.высота - 85 }, { текст: 'Категория', fontSize: 18, x: rect.ширина - 80, y: 18 }, { текст: 'indicator', fontSize: 16, x: 176, y: rect.высота - 20 } ]; // 循环添加文本 texts.forEach(({ текст, fontSize, x, y }) => { контейнер.addChild( createText({ текст, fontSize, fontFamily: 'sans-serif', заполнить: 'black', x, y }) ); }); // 定义线段的点 const linePoints = [ { x: rect.лево, y: rect.верх }, { x: 0, y: 0 }, { x: rect.ширина - 40, y: rect.высота }, { x: 0, y: 0 }, { x: 173, y: rect.высота }, { x: 0, y: 0 }, { x: 84, y: rect.высота }, { x: 0, y: 0 }, { x: rect.ширина, y: rect.высота - 90 }, { x: 0, y: 0 }, { x: rect.ширина, y: rect.высота - 38 }, { x: 0, y: 0 } ]; // 添加线段 контейнер.addChild( createLine({ points: linePoints, lineширина: 1, strхорошоe: '#ccc' }) ); возврат { rootContainer: контейнер, renderDefault: false, enableCellPadding: false }; } }, records: [ { Продажи: 891, число: 77899999, province: '浙江省', Город: '杭州市', категория: '家具', sub_категория: '桌子' }, { Продажи: 792, число: 2367, province: '浙江省', Город: '绍兴市', категория: '家具', sub_категория: '桌子' }, { Продажи: 893, число: 3877, province: '浙江省', Город: '宁波市', категория: '家具', sub_категория: '桌子' }, { Продажи: 1094, число: 4342, province: '浙江省', Город: '舟山市', категория: '家具', sub_категория: '桌子' }, { Продажи: 1295, число: 5343, province: '浙江省', Город: '杭州市', категория: '家具', sub_категория: '沙发' }, { Продажи: 496, число: 632, province: '浙江省', Город: '绍兴市', категория: '家具', sub_категория: '沙发' }, { Продажи: 1097, число: 7234, province: '浙江省', Город: '宁波市', категория: '家具', sub_категория: '沙发' }, { Продажи: 998, число: 834, province: '浙江省', Город: '舟山市', категория: '家具', sub_категория: '沙发' }, { Продажи: 766, число: 945, province: '浙江省', Город: '杭州市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 990, число: 1304, province: '浙江省', Город: '绍兴市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 891, число: 1145, province: '浙江省', Город: '宁波市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 792, число: 1432, province: '浙江省', Город: '舟山市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 745, число: 1343, province: '浙江省', Город: '杭州市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 843, число: 1354, province: '浙江省', Город: '绍兴市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 895, число: 1523, province: '浙江省', Город: '宁波市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 965, число: 1634, province: '浙江省', Город: '舟山市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 776, число: 1723, province: '四川省', Город: '成都市', категория: '家具', sub_категория: '桌子' }, { Продажи: 634, число: 1822, province: '四川省', Город: '绵阳市', категория: '家具', sub_категория: '桌子' }, { Продажи: 909, число: 1943, province: '四川省', Город: '南充市', категория: '家具', sub_категория: '桌子' }, { Продажи: 399, число: 2330, province: '四川省', Город: '乐山市', категория: '家具', sub_категория: '桌子' }, { Продажи: 700, число: 2451, province: '四川省', Город: '成都市', категория: '家具', sub_категория: '沙发' }, { Продажи: 689, число: 2244, province: '四川省', Город: '绵阳市', категория: '家具', sub_категория: '沙发' }, { Продажи: 500, число: 2333, province: '四川省', Город: '南充市', категория: '家具', sub_категория: '沙发' }, { Продажи: 800, число: 2445, province: '四川省', Город: '乐山市', категория: '家具', sub_категория: '沙发' }, { Продажи: 1044, число: 2335, province: '四川省', Город: '成都市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 689, число: 245, province: '四川省', Город: '绵阳市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 794, число: 2457, province: '四川省', Город: '南充市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 566, число: 2458, province: '四川省', Город: '乐山市', категория: '办公用品', sub_категория: '笔' }, { Продажи: 865, число: 4004, province: '四川省', Город: '成都市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 999, число: 3077, province: '四川省', Город: '绵阳市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 999, число: 3551, province: '四川省', Город: '南充市', категория: '办公用品', sub_категория: '纸张' }, { Продажи: 999, число: 352, province: '四川省', Город: '乐山市', категория: '办公用品', sub_категория: '纸张' } ], ширинаMode: 'standard', // 宽度模式：standard 标准模式； адаптивный 自动填满容器 bottomFrozenRowCount: 2, rightFrozenColCount: 1, dragпорядок:{ dragHeaderMode: 'все' } }; const instance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); ``` 
+---
+категория: примеры
+группа: Custom
+заголовок: Custom corner cell
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/complex-corner.jpeg
+опция: PivotTable#corner.customLayout
+---
+
+# Custom corner cell
+
+In сводная таблицаs, sometimes there are multiple dimensions of data analysis, and you need to customize the drawing of the upper left corner area, You can achieve this by defining `customMergeCell` and `customLayout`. If the requirements of the entire Angle head are not combined, do not configure `customMergeCell`.
+
+## Ключевые Конфигурации
+
+- `corner.customLayout` Configure the API to return what needs to be rendered
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+// only use for website
+const {createGroup, createText, createLine} = VRender;
+// use this for project
+// import {createGroup, createText, createLine} from '@visactor/vtable/es/vrender';
+
+const option = {
+  autoFillHeight: true,
+  rows: ['province', 'city'],
+  columns: ['category', 'sub_category'],
+  indicators: ['sales', 'number'],
+  defaultHeaderColWidth: ['auto', 'auto', 120],
+  defaultHeaderRowHeight: ['auto', 90],
+  indicatorTitle: '指标名称',
+  indicatorsAsCol: false,
+  customMergeCell: (col, row, table) => {
+    if (col >= 0 && col < 3 && row <= 1) {
+      return {
+        text: 'merge text',
+        range: {
+          start: {
+            col: 0,
+            row: 0
+          },
+          end: {
+            col: 2,
+            row: 1
+          }
+        },
+        style: {
+          bgColor: '#ECF1F5'
+        }
+      };
+    }
+  },
+  dataConfig: {
+    totals: {
+      row: {
+        showGrandTotals: true,
+        showSubTotals: true,
+        subTotalsDimensions: ['province'],
+        grandTotalLabel: '行总计',
+        subTotalLabel: '小计'
+      },
+      column: {
+        showGrandTotals: true,
+        showSubTotals: true,
+        subTotalsDimensions: ['category'],
+        grandTotalLabel: '列总计',
+        subTotalLabel: '小计'
+      }
+    }
+  },
+  corner: {
+    titleOnDimension: 'row',
+    customLayout: args => {
+      const { table, row, col, rect } = args;
+      const { height, width } = rect ?? table.getCellRect(col, row);
+      const container = createGroup({
+        height,
+        width
+      });
+
+      // 定义文本内容的数组
+      const texts = [
+        { text: 'province', fontSize: 18, x: 10, y: rect.height - 25 },
+        { text: 'city', fontSize: 18, x: 105, y: rect.height - 25 },
+        { text: 'data', fontSize: 18, x: rect.width - 50, y: rect.height - 35 },
+        { text: 'subКатегория', fontSize: 18, x: rect.width - 100, y: rect.height - 85 },
+        { text: 'category', fontSize: 18, x: rect.width - 80, y: 18 },
+        { text: 'indicator', fontSize: 16, x: 176, y: rect.height - 20 }
+      ];
+
+      // 循环添加文本
+      texts.forEach(({ text, fontSize, x, y }) => {
+        container.addChild(
+          createText({
+            text,
+            fontSize,
+            fontFamily: 'sans-serif',
+            fill: 'black',
+            x,
+            y
+          })
+        );
+      });
+
+      // 定义线段的点
+      const linePoints = [
+        { x: rect.left, y: rect.top },
+        { x: 0, y: 0 },
+        { x: rect.width - 40, y: rect.height },
+        { x: 0, y: 0 },
+        { x: 173, y: rect.height },
+        { x: 0, y: 0 },
+        { x: 84, y: rect.height },
+        { x: 0, y: 0 },
+        { x: rect.width, y: rect.height - 90 },
+        { x: 0, y: 0 },
+        { x: rect.width, y: rect.height - 38 },
+        { x: 0, y: 0 }
+      ];
+
+      // 添加线段
+      container.addChild(
+        createLine({
+          points: linePoints,
+          lineWidth: 1,
+          stroke: '#ccc'
+        })
+      );
+
+      return {
+        rootContainer: container,
+        renderDefault: false,
+        enableCellPadding: false
+      };
+    }
+  },
+  records: [
+    {
+      sales: 891,
+      number: 77899999,
+      province: '浙江省',
+      city: '杭州市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 792,
+      number: 2367,
+      province: '浙江省',
+      city: '绍兴市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 893,
+      number: 3877,
+      province: '浙江省',
+      city: '宁波市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 1094,
+      number: 4342,
+      province: '浙江省',
+      city: '舟山市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 1295,
+      number: 5343,
+      province: '浙江省',
+      city: '杭州市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 496,
+      number: 632,
+      province: '浙江省',
+      city: '绍兴市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 1097,
+      number: 7234,
+      province: '浙江省',
+      city: '宁波市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 998,
+      number: 834,
+      province: '浙江省',
+      city: '舟山市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 766,
+      number: 945,
+      province: '浙江省',
+      city: '杭州市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 990,
+      number: 1304,
+      province: '浙江省',
+      city: '绍兴市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 891,
+      number: 1145,
+      province: '浙江省',
+      city: '宁波市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 792,
+      number: 1432,
+      province: '浙江省',
+      city: '舟山市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 745,
+      number: 1343,
+      province: '浙江省',
+      city: '杭州市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 843,
+      number: 1354,
+      province: '浙江省',
+      city: '绍兴市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 895,
+      number: 1523,
+      province: '浙江省',
+      city: '宁波市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 965,
+      number: 1634,
+      province: '浙江省',
+      city: '舟山市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 776,
+      number: 1723,
+      province: '四川省',
+      city: '成都市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 634,
+      number: 1822,
+      province: '四川省',
+      city: '绵阳市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 909,
+      number: 1943,
+      province: '四川省',
+      city: '南充市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 399,
+      number: 2330,
+      province: '四川省',
+      city: '乐山市',
+      category: '家具',
+      sub_category: '桌子'
+    },
+    {
+      sales: 700,
+      number: 2451,
+      province: '四川省',
+      city: '成都市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 689,
+      number: 2244,
+      province: '四川省',
+      city: '绵阳市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 500,
+      number: 2333,
+      province: '四川省',
+      city: '南充市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 800,
+      number: 2445,
+      province: '四川省',
+      city: '乐山市',
+      category: '家具',
+      sub_category: '沙发'
+    },
+    {
+      sales: 1044,
+      number: 2335,
+      province: '四川省',
+      city: '成都市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 689,
+      number: 245,
+      province: '四川省',
+      city: '绵阳市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 794,
+      number: 2457,
+      province: '四川省',
+      city: '南充市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 566,
+      number: 2458,
+      province: '四川省',
+      city: '乐山市',
+      category: '办公用品',
+      sub_category: '笔'
+    },
+    {
+      sales: 865,
+      number: 4004,
+      province: '四川省',
+      city: '成都市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 999,
+      number: 3077,
+      province: '四川省',
+      city: '绵阳市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 999,
+      number: 3551,
+      province: '四川省',
+      city: '南充市',
+      category: '办公用品',
+      sub_category: '纸张'
+    },
+    {
+      sales: 999,
+      number: 352,
+      province: '四川省',
+      city: '乐山市',
+      category: '办公用品',
+      sub_category: '纸张'
+    }
+  ],
+  widthMode: 'standard', // 宽度模式：standard 标准模式； adaptive 自动填满容器
+  bottomFrozenRowCount: 2,
+  rightFrozenColCount: 1,
+  dragOrder:{ 
+    dragHeaderMode: 'all'
+  }
+};
+
+const instance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+```

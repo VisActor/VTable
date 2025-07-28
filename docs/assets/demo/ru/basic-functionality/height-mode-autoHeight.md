@@ -1,1 +1,92 @@
---- категория: примеры группа: базовый возможности заголовок: строка высота режим - Adapt к Content обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/ширина-режим-адаптивный.png ссылка: базовый_function/row_высота_column_ширина опция: списоктаблица#высотаMode --- # строка высота режим - Fits к контейнер высота таблица строка высота fits контейнер высота ## Ключевые Конфигурации - `высотаMode: 'адаптивный'` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_список100.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: '230517143221027', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: '230517143221030', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: '230517143221032', заголовок: 'Product имя', ширина: 250 }, { поле: '230517143221023', заголовок: 'Категория', ширина: 'авто' }, { поле: '230517143221034', заголовок: 'под-Категория', ширина: 'авто' }, { поле: '230517143221037', заголовок: 'Регион', ширина: 'авто' }, { поле: '230517143221024', заголовок: 'Город', ширина: 'авто' }, { поле: '230517143221029', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: '230517143221042', заголовок: 'Количество', ширина: 'авто' }, { поле: '230517143221040', заголовок: 'Продажи', ширина: 'авто' }, { поле: '230517143221041', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, автоWrapText: true, высотаMode: 'автовысота' }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Row Height Mode - Adapt to Content
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/width-mode-adaptive.png
+ссылка: basic_function/row_height_column_width
+опция: ListTable#heightMode
+---
+
+# Row Height Mode - Fits to Container Height
+
+Table row height fits container height
+
+## Ключевые Конфигурации
+
+- `heightMode: 'adaptive'`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_list100.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: '230517143221027',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: '230517143221030',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: '230517143221032',
+        title: 'Название Товара',
+        width: 250
+      },
+      {
+        field: '230517143221023',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: '230517143221034',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: '230517143221037',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: '230517143221024',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: '230517143221029',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: '230517143221042',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: '230517143221040',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: '230517143221041',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      autoWrapText: true,
+      heightMode: 'autoHeight'
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

@@ -1,1 +1,99 @@
---- категория: примеры группа: базовый возможности заголовок: список таблица - заголовок группа обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-таблица-заголовок-группа.png ссылка: таблица-тип/список-таблица опция: списоктаблица-колонки-текст#колонки --- # список таблица - заголовок группа Configure колонки as a nested multi-layer structure к achieve multi-layer заголовок grouping effects ## Ключевые Конфигурации - колонки ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; const records = [ { ид: 1, имя1: 'a1', имя2: 'a2', имя3: 'a3' }, { ид: 2, имя1: 'b1', имя2: 'b2', имя3: 'b3' }, { ид: 3, имя1: 'c1', имя2: 'c2', имя3: 'c3' }, { ид: 4, имя1: 'd1', имя2: 'd2', имя3: 'd3' }, { ид: 5, имя1: 'e1', имя2: 'e2', имя3: 'e3' } ]; const колонки = [ { поле: 'ид', заголовок: 'ид', ширина: 100 }, { заголовок: 'имя', колонки: [ { поле: 'имя1', заголовок: 'имя1', ширина: 100 }, { заголовок: 'имя-level-2', ширина: 150, колонки: [ { поле: 'имя2', заголовок: 'имя2', ширина: 100 }, { заголовок: 'имя3', поле: 'имя3', ширина: 150 } ] } ] } ]; const опция = { records, колонки, ширинаMode: 'standard', автоWrapText: true, автоRowвысота: true, defaultColширина: 150 }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: List Table - Header Group
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-table-header-группа.png
+ссылка: table-type/list-table
+опция: ListTable-columns-text#columns
+---
+
+# List Table - Header Group
+
+Configure columns as a nested multi-layer structure to achieve multi-layer header группаing effects
+
+## Ключевые Конфигурации
+
+- columns
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+const records = [
+  {
+    id: 1,
+    name1: 'a1',
+    name2: 'a2',
+    name3: 'a3'
+  },
+  {
+    id: 2,
+    name1: 'b1',
+    name2: 'b2',
+    name3: 'b3'
+  },
+  {
+    id: 3,
+    name1: 'c1',
+    name2: 'c2',
+    name3: 'c3'
+  },
+  {
+    id: 4,
+    name1: 'd1',
+    name2: 'd2',
+    name3: 'd3'
+  },
+  {
+    id: 5,
+    name1: 'e1',
+    name2: 'e2',
+    name3: 'e3'
+  }
+];
+
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 100
+  },
+  {
+    title: 'Name',
+    columns: [
+      {
+        field: 'name1',
+        title: 'name1',
+        width: 100
+      },
+      {
+        title: 'name-level-2',
+        width: 150,
+        columns: [
+          {
+            field: 'name2',
+            title: 'name2',
+            width: 100
+          },
+          {
+            title: 'name3',
+            field: 'name3',
+            width: 150
+          }
+        ]
+      }
+    ]
+  }
+];
+
+const option = {
+  records,
+  columns,
+  widthMode: 'standard',
+  autoWrapText: true,
+  autoRowHeight: true,
+  defaultColWidth: 150
+};
+tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

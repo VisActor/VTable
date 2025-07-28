@@ -1,1 +1,202 @@
---- категория: примеры группа: редактирование заголовок: add или delete records обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/add-delete-records.png --- # Add и delete данные dynamically Add и delete данные dynamically，право-Нажать и the Modify данные меню is displayed ## Ключевые Конфигурации - addRecords апи - addRecord апи - deleteRecords апи - updateRecords апи - changeCellValue апи ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // Need к introduce the plug-в packвозраст @visactor/втаблица-editors when using it // импорт * as втаблица_editors от '@visactor/втаблица-editors'; //Normal использование const input_editor = новый втаблица.editors.InputEditor(); //втаблица.editors is reимяd к втаблица_editors в the official website редактор const input_editor = новый втаблица_editors.InputEditor(); втаблица.регистрация.редактор('ввод-редактор', input_editor); функция generateRandomString(length) { let result = ''; const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'; для (let i = 0; i < length; i++) { result += characters.charAt(Math.floor(Math.random() * characters.length)); } возврат result; } функция generateRandomHobbies() { const hobbies = [ 'Reading boхорошоs', 'Playing video games', 'Watching movies', 'Coхорошоing', 'Hiking', 'Traveling', 'Photography', 'Playing musical instruments', 'Gardening', 'Painting', 'Writing', 'Swimming' ]; const numHobbies = Math.floor(Math.random() * 3) + 1; // 生成 1-3 之间的随机整数 const selectedHobbies = []; для (let i = 0; i < numHobbies; i++) { const randomIndex = Math.floor(Math.random() * hobbies.length); const хобби = hobbies[randomIndex]; selectedHobbies.push(хобби); hobbies.splice(randomIndex, 1); // 确保每个爱好只选一次 } возврат selectedHobbies.join(', '); } функция generateRandomBirthday() { const начало = новый Date('1970-01-01'); const конец = новый Date('2000-12-31'); const randomDate = новый Date(начало.getTime() + Math.random() * (конец.getTime() - начало.getTime())); const year = randomDate.getFullYear(); const month = randomDate.getMonth() + 1; const day = randomDate.getDate(); возврат `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`; } функция generateRandomPhoneNumber() { const areaкод = ['130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '150', '151', '152', '153', '155', '156', '157', '158', '159', '170', '176', '177', '178', '180', '181', '182', '183', '184', '185', '186', '187', '188', '189']; const prefix = areaкод[Math.floor(Math.random() * areaкод.length)]; const suffix = строка(Math.random()).substr(2, 8); возврат prefix + suffix; } const generatePersons = (count) => { возврат массив.от(новый массив(count)).map((_, i) => { const первый=generateRandomString(10); const последний=generateRandomString(4); возврат { ид: i+1, email1: `${первый}_${последний}@xxx.com`, имя: первый, lastимя: последний, hobbies: generateRandomHobbies(), birthday: generateRandomBirthday(), tel: generateRandomPhoneNumber(), sex: i % 2 === 0 ? 'boy' : 'girl', work: i % 2 === 0 ? 'back-конец engineer' : 'front-конец engineer', Город: 'beijing', }}); }; const records = generatePersons(1000); const колонки = [ { поле: 'ид', заголовок: 'ид', ширина: 80, сортировка: true, }, { поле: 'email1', заголовок: 'email', ширина: 250, сортировка: true, }, { поле: 'full имя', заголовок: 'Full имя', колонки: [ { поле: 'имя', заголовок: 'первый имя', ширина: 120, }, { поле: 'lastимя', заголовок: 'последний имя', ширина: 100, }, ], }, { поле: 'hobbies', заголовок: 'hobbies', ширина: 200, }, { поле: 'birthday', заголовок: 'birthday', ширина: 120, }, { поле: 'sex', заголовок: 'sex', ширина: 100, }, { поле: 'tel', заголовок: 'telephone', ширина: 150, }, { поле: 'work', заголовок: 'job', ширина: 200, }, { поле: 'Город', заголовок: 'Город', ширина: 150, }, ]; const опция = { records, колонки, меню:{ contextменюItems:["insert records bellow","insert blank строка bellow",'update строка данные','modify ячейка значение','delete records'] }, редактор: 'ввод-редактор' }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID),опция); window['таблицаInstance'] = таблицаInstance; таблицаInstance.на('dropdown_меню_Нажать', (args) => { console.log('dropdown_меню_Нажать',args); if(args.менюKey==="insert records bellow"){ const recordIndex=таблицаInstance.getRecordShowIndexByCell(args.колонка,args.строка); таблицаInstance.addRecords(generatePersons(1),recordIndex+1); }else if(args.менюKey==="insert blank строка bellow"){ const recordIndex=таблицаInstance.getRecordShowIndexByCell(args.колонка,args.строка); таблицаInstance.addRecord({},recordIndex+1); }else if(args.менюKey==="delete records"){ const recordIndex=таблицаInstance.getRecordShowIndexByCell(args.колонка,args.строка); таблицаInstance.deleteRecords([recordIndex]); }else if(args.менюKey==="update строка данные"){ const recordIndex=таблицаInstance.getRecordShowIndexByCell(args.колонка,args.строка); таблицаInstance.updateRecords([{ "ид": 1111, "email1": "changed значение", "имя": "changed значение", "lastимя": "changed значение", "hobbies": "changed значение", "birthday": "1974-09-25", "tel": "13237599651", "sex": "boy", "work": "back-конец engineer", "Город": "beijing" }],[recordIndex]); }else if(args.менюKey==="modify ячейка значение"){ таблицаInstance.startEditCell(args.колонка,args.строка); } }) ``` 
+---
+категория: примеры
+группа: edit
+заголовок: add or delete records
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/add-delete-records.png
+---
+
+# Add and delete data dynamically
+
+Add and delete data dynamically，Right-click and the Modify Data menu is displayed
+
+## Ключевые Конфигурации
+
+- addRecords api
+- addRecord api
+- deleteRecords api
+- updateRecords api
+- changeCellValue api
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+// Need to introduce the plug-in package @visactor/vtable-editors when using it
+// import * as VTable_editors from '@visactor/vtable-editors';
+//Normal usage const input_editor = new VTable.editors.InputEditor();
+//VTable.editors is renamed to VTable_editors in the official website editor
+const input_editor = new VTable_editors.InputEditor();
+VTable.register.editor('input-editor', input_editor);
+function generateRandomString(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+function generateRandomHobbies() {
+  const hobbies = [
+    'Reading books',
+    'Playing video games',
+    'Watching movies',
+    'Cooking',
+    'Hiking',
+    'Traveling',
+    'Photography',
+    'Playing musical instruments',
+    'Gardening',
+    'Painting',
+    'Writing',
+    'Swimming'
+  ];
+
+  const numHobbies = Math.floor(Math.random() * 3) + 1; // 生成 1-3 之间的随机整数
+  const selectedHobbies = [];
+
+  for (let i = 0; i < numHobbies; i++) {
+    const randomIndex = Math.floor(Math.random() * hobbies.length);
+    const hobby = hobbies[randomIndex];
+    selectedHobbies.push(hobby);
+    hobbies.splice(randomIndex, 1); // 确保每个爱好只选一次
+  }
+
+  return selectedHobbies.join(', ');
+}
+function generateRandomBirthday() {
+  const start = new Date('1970-01-01');
+  const end = new Date('2000-12-31');
+  const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  const year = randomDate.getFullYear();
+  const month = randomDate.getMonth() + 1;
+  const day = randomDate.getDate();
+  return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+}
+
+function generateRandomPhoneNumber() {
+  const areaCode = ['130', '131', '132', '133', '134', '135', '136', '137', '138', '139', '150', '151', '152', '153', '155', '156', '157', '158', '159', '170', '176', '177', '178', '180', '181', '182', '183', '184', '185', '186', '187', '188', '189'];
+  const prefix = areaCode[Math.floor(Math.random() * areaCode.length)];
+  const suffix = String(Math.random()).substr(2, 8);
+  return prefix + suffix;
+}
+
+const generatePersons = (count) => {
+  return Array.from(new Array(count)).map((_, i) => {
+    const first=generateRandomString(10);
+    const last=generateRandomString(4);
+    return {
+    id: i+1,
+    email1: `${first}_${last}@xxx.com`,
+    name: first,
+    lastName: last,
+    hobbies: generateRandomHobbies(),
+    birthday: generateRandomBirthday(),
+    tel: generateRandomPhoneNumber(),
+    sex: i % 2 === 0 ? 'boy' : 'girl',
+    work: i % 2 === 0 ? 'back-end engineer' : 'front-end engineer',
+    city: 'beijing',
+  }});
+};
+
+
+const records = generatePersons(1000);
+const columns = [
+  {
+    field: 'id',
+    title: 'ID',
+    width: 80,
+    sort: true,
+  },
+  {
+    field: 'email1',
+    title: 'email',
+    width: 250,
+    sort: true,
+  },
+  {
+    field: 'full name',
+    title: 'Full name',
+    columns: [
+      {
+        field: 'имя',
+        title: 'First Name',
+        width: 120,
+      },
+      {
+        field: 'lastName',
+        title: 'Last Name',
+        width: 100,
+      },
+    ],
+  },
+  {
+    field: 'hobbies',
+    title: 'hobbies',
+    width: 200,
+  },
+  {
+    field: 'birthday',
+    title: 'birthday',
+    width: 120,
+  },
+  {
+    field: 'sex',
+    title: 'sex',
+    width: 100,
+  },
+  {
+    field: 'tel',
+    title: 'telephone',
+    width: 150,
+  },
+  {
+    field: 'work',
+    title: 'job',
+    width: 200,
+  },
+  {
+    field: 'city',
+    title: 'city',
+    width: 150,
+  },
+];
+const option = {
+  records,
+  columns,
+  menu:{
+    contextMenuItems:["insert records bellow","insert blank row bellow",'update row data','modify cell value','delete records']
+  },
+  editor: 'input-editor'
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID),option);
+window['tableInstance'] = tableInstance;
+
+tableInstance.on('dropdown_menu_click', (args) => {
+  console.log('dropdown_menu_click',args);
+  if(args.menuKey==="insert records bellow"){
+    const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
+    tableInstance.addRecords(generatePersons(1),recordIndex+1);
+  }else if(args.menuKey==="insert blank row bellow"){
+    const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
+    tableInstance.addRecord({},recordIndex+1);
+  }else if(args.menuKey==="delete records"){
+    const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
+    tableInstance.deleteRecords([recordIndex]);
+  }else if(args.menuKey==="update row data"){
+    const recordIndex=tableInstance.getRecordShowIndexByCell(args.col,args.row);
+    tableInstance.updateRecords([{
+      "id": 1111,
+      "email1": "changed Value",
+      "имя": "changed Value",
+      "lastName": "changed Value",
+      "hobbies": "changed Value",
+      "birthday": "1974-09-25",
+      "tel": "13237599651",
+      "sex": "boy",
+      "work": "back-end engineer",
+      "city": "beijing"
+    }],[recordIndex]);
+  }else if(args.menuKey==="modify cell value"){
+    tableInstance.startEditCell(args.col,args.row);
+  }
+})
+```

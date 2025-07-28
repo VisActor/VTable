@@ -1,1 +1,251 @@
---- категория: примеры группа: компонент заголовок: ячейка пользовательский компонент + дом компонент обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/react-втаблица-дом-компонент.gif порядок: 1-1 ссылка: пользовательский_define/react-пользовательский-компонент --- # ячейка пользовательский компонент + дом компонент использовать Arкодsign в the ячейка pop-up window. для details, please refer к [пользовательский компонентs](../../guide/пользовательский_define/react-пользовательский-компонент) ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица-react // импорт * as ReactВТаблица от '@visactor/react-втаблица'; const { useCallback, useRef, useState } = React; const { списоктаблица, СписокКолонка, группа, текст, Imвозраст } = ReactВТаблица; const { Avatar, Card, Space, Typography } = Arкодsign; const { иконкаThumbUp, иконкаShareInternal, иконкаMore } = Arкодsignиконка; const { Meta } = Card; const UserProfileкомпонент = props => { const { таблица, строка, колонка, rect, данныеValue } = props; if (!таблица || строка === undefined || колонка === undefined) { возврат null; } const { высота, ширина } = rect || таблица.getCellRect(колонка, строка); const запись = таблица.getRecordByCell(колонка, строка); const [навести, setHover] = useState(false); возврат ( <группа attribute={{ ширина, высота, display: 'flex', flexDirection: 'строка', flexWrap: 'nowrap', alignItems: 'центр', alignContent: 'центр' }} > <группа attribute={{ ширина: 190, высота: 25, заполнить: '#e6fffb', lineширина: 1, cornerRadius: 10, display: 'flex', flexDirection: 'строка', flexWrap: 'nowrap', alignItems: 'центр', alignContent: 'центр', cursor: 'pointer', boundsPadding: [0, 0, 0, 10], react: { pointerсобытиеs: true, контейнер: таблица.bodyDomContainer, // таблица.headerDomContainer anchorType: 'низ-право', элемент: <CardInfo запись={запись} навести={навести} строка={строка} /> } }} onMouseEnter={событие => { setHover(true); событие.currentTarget.stвозраст.renderNextFrame(); // к do: авто execute в react-втаблица }} onMouseLeave={событие => { setHover(false); событие.currentTarget.stвозраст.renderNextFrame(); }} > <Imвозраст attribute={{ ширина: 20, высота: 20, imвозраст: запись.bloggerAvatar, cornerRadius: 10, boundsPadding: [0, 0, 0, 10], cursor: 'pointer' }} /> <текст attribute={{ текст: данныеValue, fontSize: 14, fontFamily: 'sans-serif', заполнить: 'rgb(51, 101, 238)', boundsPadding: [0, 0, 0, 10], cursor: 'pointer' }} /> </группа> </группа> ); }; const CardInfo = props => { const { bloggerимя, bloggerAvatar, introduction, Город } = props.запись; возврат props.навести ? ( <Card classимя="card-с-иконка-навести" стиль={{ ширина: 360 }} обложка={ <div стиль={{ высота: '100px', overflow: 'скрытый' }}> <img стиль={{ ширина: '100%', transform: 'translateY(-20px)' }} alt="dessert" // eslint-отключить-следующий-line max-len src={bloggerAvatar} /> </div> } // actions={[ // <span classимя="иконка-навести" key={0}> // <иконкаThumbUp /> // </span>, // <span classимя="иконка-навести" key={1}> // <иконкаShareInternal /> // </span>, // <span classимя="иконка-навести" key={2}> // <иконкаMore /> // </span> // ]} > <Meta avatar={ <Space> <Avatar размер={24}>{Город.slice(0, 1)}</Avatar> <Typography.текст>{Город}</Typography.текст> </Space> } заголовок={bloggerимя} description={introduction} /> </Card> ) : ( <></> ); }; функция App() { const records = [ { bloggerId: 1, bloggerимя: 'Virtual Anchor Xiaohua', bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/пользовательский-рендер/flower.jpg', introduction: 'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, анимация и food. I hope к share happy moments с you through live broadcast.', fansCount: 400, worksCount: 10, viewCount: 5, Город: 'Dream Город', теги: ['game', 'anime', 'food'] }, { bloggerId: 2, bloggerимя: 'Virtual anchor little wolf', bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/пользовательский-рендер/wolf.jpg', introduction: 'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel и photography, и I hope к explore the beauty из the world с you through live broadcast.', fansCount: 800, worksCount: 20, viewCount: 15, Город: 'Город из Music', теги: ['music', 'travel', 'photography'] }, { bloggerId: 3, bloggerимя: 'Virtual anchor bunny', bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/пользовательский-рендер/rabbit.jpg', introduction: 'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts и beauty makeup. I hope к share creativity и fashion с you through live broadcast.', fansCount: 600, worksCount: 15, viewCount: 10, Город: 'Город из Art', теги: ['painting', 'handmade', 'beauty makeup'] }, { bloggerId: 4, bloggerимя: 'Virtual anchor kitten', bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/пользовательский-рендер/cat.jpg', introduction: 'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness и coхорошоing. I hope к live a healthy и happy life с everyone through the live broadcast.', fansCount: 1000, worksCount: 30, viewCount: 20, Город: 'Health Город', теги: ['dance', 'fitness', 'coхорошоing'] }, { bloggerId: 5, bloggerимя: 'Virtual anchor Bear', bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/пользовательский-рендер/bear.jpg', introduction: 'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading и philosophy, I hope к explore the meaning из life с you through live broadcast.', fansCount: 1200, worksCount: 25, viewCount: 18, Город: 'Город из Wisdom', теги: ['Movie', 'Literature'] }, { bloggerId: 6, bloggerимя: 'Virtual anchor bird', bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/пользовательский-рендер/bird.jpeg', introduction: 'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting и variety shows. I hope к be happy с everyone through the live broadcast.', fansCount: 900, worksCount: 12, viewCount: 8, Город: 'Happy Город', теги: ['music', 'Производительность', 'variety'] } ]; возврат ( <списоктаблица records={records} высота={900} // defaultRowвысота={80} onReady={таблица => { // eslint-отключить-следующий-line no-undef // (window as любой).таблицаInstance = таблица; }} ReactDOM={ReactDom} > <СписокКолонка поле={'bloggerId'} заголовок={'ид'} /> <СписокКолонка поле={'bloggerимя'} заголовок={'имя'} ширина={220}> <UserProfileкомпонент role={'пользовательский-макет'} /> </СписокКолонка> <СписокКолонка поле={'fansCount'} заголовок={'Fan'} /> <СписокКолонка поле={'worksCount'} заголовок={'Work'} /> <СписокКолонка поле={'viewCount'} заголовок={'View'} /> </списоктаблица> ); } const корень = ReactDom.createRoot(документ.getElementById(CONTAINER_ID)); корень.рендер(<App />); // Релиз react instance, do не copy window.пользовательскийРелиз = () => { корень.unmount(); }; ``` 
+---
+категория: примеры
+группа: компонент
+заголовок: cell custom компонент + dom компонент
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/react-vtable-dom-компонент.gif
+порядок: 1-1
+ссылка: custom_define/react-custom-компонент
+---
+
+# cell custom компонент + dom компонент
+
+Use ArcoDesign in the cell pop-up window. For details, please refer to [Пользовательский Компонентs](../../guide/custom_define/react-custom-компонент)
+
+## демонстрация кода
+
+```javascript livedemo template=vtable-react
+// import * as ReactVTable from '@visactor/react-vtable';
+
+const { useCallback, useRef, useState } = React;
+const { ListTable, ListColumn, Group, Text, Image } = ReactVTable;
+const { Avatar, Card, Space, Typography } = ArcoDesign;
+const { IconThumbUp, IconShareInternal, IconMore } = ArcoDesignIcon;
+const { Meta } = Card;
+
+const UserProfileComponent = props => {
+  const { table, row, col, rect, dataValue } = props;
+  if (!table || row === undefined || col === undefined) {
+    return null;
+  }
+  const { height, width } = rect || table.getCellRect(col, row);
+  const record = table.getRecordByCell(col, row);
+
+  const [hover, setHover] = useState(false);
+
+  return (
+    <Group
+      attribute={{
+        width,
+        height,
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        alignItems: 'center',
+        alignContent: 'center'
+      }}
+    >
+      <Group
+        attribute={{
+          width: 190,
+          height: 25,
+          fill: '#e6fffb',
+          lineWidth: 1,
+          cornerRadius: 10,
+          display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'nowrap',
+          alignItems: 'center',
+          alignContent: 'center',
+          cursor: 'pointer',
+          boundsPadding: [0, 0, 0, 10],
+          react: {
+            pointerEvents: true,
+            container: table.bodyDomContainer, // table.headerDomContainer
+            anchorType: 'bottom-right',
+            element: <CardInfo record={record} hover={hover} row={row} />
+          }
+        }}
+        onMouseEnter={event => {
+          setHover(true);
+          event.currentTarget.stage.renderNextFrame(); // to do: auto execute in react-vtable
+        }}
+        onMouseLeave={event => {
+          setHover(false);
+          event.currentTarget.stage.renderNextFrame();
+        }}
+      >
+        <Image
+          attribute={{
+            width: 20,
+            height: 20,
+            image: record.bloggerAvatar,
+            cornerRadius: 10,
+            boundsPadding: [0, 0, 0, 10],
+            cursor: 'pointer'
+          }}
+        />
+        <Text
+          attribute={{
+            text: dataValue,
+            fontSize: 14,
+            fontFamily: 'sans-serif',
+            fill: 'rgb(51, 101, 238)',
+            boundsPadding: [0, 0, 0, 10],
+            cursor: 'pointer'
+          }}
+        />
+      </Group>
+    </Group>
+  );
+};
+
+const CardInfo = props => {
+  const { bloggerName, bloggerAvatar, introduction, city } = props.record;
+  return props.hover ? (
+    <Card
+      className="card-with-icon-hover"
+      style={{ width: 360 }}
+      cover={
+        <div style={{ height: '100px', overflow: 'hidden' }}>
+          <img
+            style={{ width: '100%', transform: 'translateY(-20px)' }}
+            alt="dessert"
+            // eslint-disable-next-line max-len
+            src={bloggerAvatar}
+          />
+        </div>
+      }
+      // actions={[
+      //   <span className="icon-hover" key={0}>
+      //     <IconThumbUp />
+      //   </span>,
+      //   <span className="icon-hover" key={1}>
+      //     <IconShareInternal />
+      //   </span>,
+      //   <span className="icon-hover" key={2}>
+      //     <IconMore />
+      //   </span>
+      // ]}
+    >
+      <Meta
+        avatar={
+          <Space>
+            <Avatar size={24}>{city.slice(0, 1)}</Avatar>
+            <Typography.Text>{city}</Typography.Text>
+          </Space>
+        }
+        title={bloggerName}
+        description={introduction}
+      />
+    </Card>
+  ) : (
+    <></>
+  );
+};
+
+function App() {
+  const records = [
+    {
+      bloggerId: 1,
+      bloggerName: 'Virtual Anchor Xiaohua',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+      introduction:
+        'Hi everyone, I am Xiaohua, the virtual host. I am a little fairy who likes games, animation and food. I hope to share happy moments with you through live broadcast.',
+      fansCount: 400,
+      worksCount: 10,
+      viewCount: 5,
+      city: 'Dream Город',
+      tags: ['game', 'anime', 'food']
+    },
+    {
+      bloggerId: 2,
+      bloggerName: 'Virtual anchor little wolf',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/wolf.jpg',
+      introduction:
+        'Hello everyone, I am the virtual anchor Little Wolf. I like music, travel and photography, and I hope to explore the beauty of the world with you through live broadcast.',
+      fansCount: 800,
+      worksCount: 20,
+      viewCount: 15,
+      city: 'Город of Music',
+      tags: ['music', 'travel', 'photography']
+    },
+    {
+      bloggerId: 3,
+      bloggerName: 'Virtual anchor bunny',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/rabbit.jpg',
+      introduction:
+        'Hello everyone, I am the virtual anchor Xiaotu. I like painting, handicrafts and beauty makeup. I hope to share creativity and fashion with you through live broadcast.',
+      fansCount: 600,
+      worksCount: 15,
+      viewCount: 10,
+      city: 'Город of Art',
+      tags: ['painting', 'handmade', 'beauty makeup']
+    },
+    {
+      bloggerId: 4,
+      bloggerName: 'Virtual anchor kitten',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/cat.jpg',
+      introduction:
+        'Hello everyone, I am the virtual host Kitty. I am a lazy cat who likes dancing, fitness and cooking. I hope to live a healthy and happy life with everyone through the live broadcast.',
+      fansCount: 1000,
+      worksCount: 30,
+      viewCount: 20,
+      city: 'Health Город',
+      tags: ['dance', 'fitness', 'cooking']
+    },
+    {
+      bloggerId: 5,
+      bloggerName: 'Virtual anchor Bear',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bear.jpg',
+      introduction:
+        'Hello everyone, I am the virtual host Xiaoxiong. A little wise man who likes movies, reading and philosophy, I hope to explore the meaning of life with you through live broadcast.',
+      fansCount: 1200,
+      worksCount: 25,
+      viewCount: 18,
+      city: 'Город of Wisdom',
+      tags: ['Movie', 'Literature']
+    },
+    {
+      bloggerId: 6,
+      bloggerName: 'Virtual anchor bird',
+      bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/bird.jpeg',
+      introduction:
+        'Hello everyone, I am the virtual anchor Xiaoniao. I like singing, acting and variety shows. I hope to be happy with everyone through the live broadcast.',
+      fansCount: 900,
+      worksCount: 12,
+      viewCount: 8,
+      city: 'Happy Город',
+      tags: ['music', 'performance', 'variety']
+    }
+  ];
+
+  return (
+    <ListTable
+      records={records}
+      height={900}
+      // defaultRowHeight={80}
+      onReady={table => {
+        // eslint-disable-next-line no-undef
+        // (window as any).tableInstance = table;
+      }}
+      ReactDOM={ReactDom}
+    >
+      <ListColumn field={'bloggerId'} title={'ID'} />
+      <ListColumn field={'bloggerName'} title={'Name'} width={220}>
+        <UserProfileComponent role={'custom-layout'} />
+      </ListColumn>
+      <ListColumn field={'fansCount'} title={'Fan'} />
+      <ListColumn field={'worksCount'} title={'Work'} />
+      <ListColumn field={'viewCount'} title={'View'} />
+    </ListTable>
+  );
+}
+
+const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
+root.render(<App />);
+
+// release react instance, do not copy
+window.customRelease = () => {
+  root.unmount();
+};
+```

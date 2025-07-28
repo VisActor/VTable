@@ -1,1 +1,543 @@
---- категория: примеры группа: ячейка тип заголовок: список таблица integrated график обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/список-график-multiple.png ссылка: cell_type/график опция: списоктаблица-колонки-график#типЯчейки --- # базовый таблица integrated график Combine vграфик график library и рендер it into таблицаs к enrich visual display forms и improve multi-график rendering Производительность. This пример refers к vграфик’s bar line pie график. для details, please refer к: https://visactor.io/vграфик/демонстрация/progress/linear-progress-с-target-значение ## Ключевые Конфигурации - `втаблица.регистрация.графикModule('vграфик', Vграфик)` регистрацияs the график library для drawing графикs. Currently supports Vграфик - `типЯчейки: 'график'` specifies the тип график - `графикModule: 'vграфик'` specifies the регистрацияed график library имя - `графикSpec: {}` график spec ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица втаблица.регистрация.графикModule('vграфик', Vграфик); const колонки = [ { поле: 'ид', заголовок: 'ид', сортировка: true, ширина: 80, стиль: { textAlign: 'лево', bgColor: '#ea9999' } }, { поле: 'areaграфик', заголовок: 'multiple vграфик тип', ширина: '320', типЯчейки: 'график', графикModule: 'vграфик', графикSpec(args) { if (args.строка % 3 == 2) возврат { тип: 'area', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип', point: { стиль: { fillOpaГород: 1, strхорошоe: '#000', strхорошоeширина: 4 }, state: { навести: { fillOpaГород: 0.5, strхорошоe: 'blue', strхорошоeширина: 2 }, selected: { заполнить: 'red' } } }, area: { стиль: { fillOpaГород: 0.3, strхорошоe: '#000', strхорошоeширина: 4 }, state: { навести: { fillOpaГород: 1 }, selected: { заполнить: 'red', fillOpaГород: 1 } } }, line: { state: { навести: { strхорошоe: 'red' }, selected: { strхорошоe: 'yellow' } } }, axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ], легендаs: [ { видимый: true, orient: 'низ' } ] }; else if (args.строка % 3 == 1) возврат { тип: 'common', серия: [ { тип: 'line', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип', line: { state: { навести: { strхорошоeширина: 4 }, selected: { strхорошоe: 'red' }, hover_reverse: { strхорошоe: '#ddd' } } }, point: { state: { навести: { заполнить: 'red' }, selected: { заполнить: 'yellow' }, hover_reverse: { заполнить: '#ddd' } } }, легендаs: [ { видимый: true, orient: 'низ' } ] } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ], легендаs: [ { видимый: true, orient: 'низ' } ] }; возврат { тип: 'pie', данные: { ид: 'данные1' }, Категорияполе: 'y', valueполе: 'x' }; } }, { поле: 'lineграфик', заголовок: 'vграфик line', ширина: '320', типЯчейки: 'график', графикModule: 'vграфик', графикSpec: { тип: 'common', серия: [ { тип: 'line', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип', line: { state: { навести: { strхорошоeширина: 4 }, selected: { strхорошоe: 'red' }, hover_reverse: { strхорошоe: '#ddd' } } }, point: { state: { навести: { заполнить: 'red' }, selected: { заполнить: 'yellow' }, hover_reverse: { заполнить: '#ddd' } } }, легендаs: [ { видимый: true, orient: 'низ' } ] } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ], легендаs: [ { видимый: true, orient: 'низ' } ] } }, { поле: 'barграфик', заголовок: 'vграфик bar', ширина: '320', типЯчейки: 'график', графикModule: 'vграфик', графикSpec: { тип: 'common', серия: [ { тип: 'bar', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип', bar: { state: { навести: { заполнить: 'green' }, selected: { заполнить: 'orange' }, hover_reverse: { заполнить: '#ccc' } } } } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ] } }, { поле: 'scatterграфик', заголовок: 'vграфик scatter', ширина: '320', типЯчейки: 'график', графикModule: 'vграфик', графикSpec: { тип: 'common', серия: [ { тип: 'scatter', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип' } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ] } }, { поле: 'areaграфик', заголовок: 'vграфик area', ширина: '320', типЯчейки: 'график', графикModule: 'vграфик', графикSpec: { тип: 'common', серия: [ { тип: 'area', данные: { ид: 'данные' }, xполе: 'x', yполе: 'y', seriesполе: 'тип', point: { стиль: { fillOpaГород: 1, strхорошоe: '#000', strхорошоeширина: 4 }, state: { навести: { fillOpaГород: 0.5, strхорошоe: 'blue', strхорошоeширина: 2 }, selected: { заполнить: 'red' } } }, area: { стиль: { fillOpaГород: 0.3, strхорошоe: '#000', strхорошоeширина: 4 }, state: { навести: { fillOpaГород: 1 }, selected: { заполнить: 'red', fillOpaГород: 1 } } }, line: { state: { навести: { strхорошоe: 'red' }, selected: { strхорошоe: 'yellow' } } } } ], axes: [ { orient: 'лево', range: { min: 0 } }, { orient: 'низ', label: { видимый: true }, тип: 'band' } ], легендаs: [ { видимый: true, orient: 'низ' } ] } } ]; const records = []; для (let i = 1; i <= 10; i++) records.push({ ид: i, areaграфик: [ { x: '0', тип: 'A', y: 100 * i }, { x: '1', тип: 'A', y: '707' }, { x: '2', тип: 'A', y: '832' }, { x: '3', тип: 'A', y: '726' }, { x: '4', тип: 'A', y: '756' }, { x: '5', тип: 'A', y: '777' }, { x: '6', тип: 'A', y: '689' }, { x: '7', тип: 'A', y: '795' }, { x: '8', тип: 'A', y: '889' }, { x: '9', тип: 'A', y: '757' }, { x: '0', тип: 'B', y: '773' }, { x: '1', тип: 'B', y: '785' }, { x: '2', тип: 'B', y: '635' }, { x: '3', тип: 'B', y: '813' }, { x: '4', тип: 'B', y: '678' }, { x: '5', тип: 'B', y: 796 + 100 * i }, { x: '6', тип: 'B', y: '652' }, { x: '7', тип: 'B', y: '623' }, { x: '8', тип: 'B', y: '649' }, { x: '9', тип: 'B', y: '630' } ], lineграфик: [ { x: '0', тип: 'A', y: 100 * i }, { x: '1', тип: 'A', y: '707' }, { x: '2', тип: 'A', y: '832' }, { x: '3', тип: 'A', y: '726' }, { x: '4', тип: 'A', y: '756' }, { x: '5', тип: 'A', y: '777' }, { x: '6', тип: 'A', y: '689' }, { x: '7', тип: 'A', y: '795' }, { x: '8', тип: 'A', y: '889' }, { x: '9', тип: 'A', y: '757' }, { x: '0', тип: 'B', y: 500 }, { x: '1', тип: 'B', y: '785' }, { x: '2', тип: 'B', y: '635' }, { x: '3', тип: 'B', y: '813' }, { x: '4', тип: 'B', y: '678' }, { x: '5', тип: 'B', y: '796' }, { x: '6', тип: 'B', y: '652' }, { x: '7', тип: 'B', y: '623' }, { x: '8', тип: 'B', y: '649' }, { x: '9', тип: 'B', y: '630' } ], barграфик: [ { x: '0', тип: 'A', y: 100 * i }, { x: '1', тип: 'A', y: '707' }, { x: '2', тип: 'A', y: '832' }, { x: '3', тип: 'A', y: '726' }, { x: '4', тип: 'A', y: '756' }, { x: '5', тип: 'A', y: '777' }, { x: '6', тип: 'A', y: '689' }, { x: '7', тип: 'A', y: '795' }, { x: '8', тип: 'A', y: '889' }, { x: '9', тип: 'A', y: '757' }, { x: '0', тип: 'B', y: 500 }, { x: '1', тип: 'B', y: '785' }, { x: '2', тип: 'B', y: '635' }, { x: '3', тип: 'B', y: '813' }, { x: '4', тип: 'B', y: '678' }, { x: '5', тип: 'B', y: '796' }, { x: '6', тип: 'B', y: '652' }, { x: '7', тип: 'B', y: '623' }, { x: '8', тип: 'B', y: '649' }, { x: '9', тип: 'B', y: '630' } ], scatterграфик: [ { x: '0', тип: 'A', y: 100 * i }, { x: '1', тип: 'A', y: '707' }, { x: '2', тип: 'A', y: '832' }, { x: '3', тип: 'A', y: '726' }, { x: '4', тип: 'A', y: '756' }, { x: '5', тип: 'A', y: '777' }, { x: '6', тип: 'A', y: '689' }, { x: '7', тип: 'A', y: '795' }, { x: '8', тип: 'A', y: '889' }, { x: '9', тип: 'A', y: '757' }, { x: '0', тип: 'B', y: 500 }, { x: '1', тип: 'B', y: '785' }, { x: '2', тип: 'B', y: '635' }, { x: '3', тип: 'B', y: '813' }, { x: '4', тип: 'B', y: '678' }, { x: '5', тип: 'B', y: '796' }, { x: '6', тип: 'B', y: '652' }, { x: '7', тип: 'B', y: '623' }, { x: '8', тип: 'B', y: '649' }, { x: '9', тип: 'B', y: '630' } ] }); const опция = { records, колонки, transpose: false, defaultColширина: 200, defaultRowвысота: 200, defaultHeaderRowвысота: 50 }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Cell Type
+заголовок: List table integrated chart
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-chart-multiple.png
+ссылка: cell_type/chart
+опция: ListTable-columns-chart#cellType
+---
+
+# Basic table integrated chart
+
+Combine vchart chart library and render it into tables to enrich visual display forms and improve multi-chart rendering performance. This example refers to vchart’s bar line pie chart. For details, please refer to: https://visactor.io/vchart/demo/progress/linear-progress-with-target-value
+
+## Ключевые Конфигурации
+
+- `VTable.register.chartModule('vchart', VChart)` registers the chart library for drawing charts. Currently supports VChart
+- `cellType: 'chart'` specifies the type chart
+- `chartModule: 'vchart'` specifies the registered chart library name
+- `chartSpec: {}` chart spec
+
+## Code Demo
+
+```javascript livedemo template=vtable
+VTable.register.chartModule('vchart', VChart);
+const columns = [
+  {
+    field: 'id',
+    title: 'id',
+    sort: true,
+    width: 80,
+    style: {
+      textAlign: 'left',
+      bgColor: '#ea9999'
+    }
+  },
+  {
+    field: 'areaChart',
+    title: 'multiple vchart type',
+    width: '320',
+    cellType: 'chart',
+    chartModule: 'vchart',
+    chartSpec(args) {
+      if (args.row % 3 == 2)
+        return {
+          type: 'area',
+          data: {
+            id: 'data'
+          },
+          xField: 'x',
+          yField: 'y',
+          seriesField: 'type',
+          point: {
+            style: {
+              fillOpacity: 1,
+              stroke: '#000',
+              strokeWidth: 4
+            },
+            state: {
+              hover: {
+                fillOpacity: 0.5,
+                stroke: 'blue',
+                strokeWidth: 2
+              },
+              selected: {
+                fill: 'red'
+              }
+            }
+          },
+          area: {
+            style: {
+              fillOpacity: 0.3,
+              stroke: '#000',
+              strokeWidth: 4
+            },
+            state: {
+              hover: {
+                fillOpacity: 1
+              },
+              selected: {
+                fill: 'red',
+                fillOpacity: 1
+              }
+            }
+          },
+          line: {
+            state: {
+              hover: {
+                stroke: 'red'
+              },
+              selected: {
+                stroke: 'yellow'
+              }
+            }
+          },
+
+          axes: [
+            {
+              orient: 'left',
+              range: {
+                min: 0
+              }
+            },
+            {
+              orient: 'bottom',
+              label: {
+                visible: true
+              },
+              type: 'band'
+            }
+          ],
+          legends: [
+            {
+              visible: true,
+              orient: 'bottom'
+            }
+          ]
+        };
+      else if (args.row % 3 == 1)
+        return {
+          type: 'common',
+          series: [
+            {
+              type: 'line',
+              data: {
+                id: 'data'
+              },
+              xField: 'x',
+              yField: 'y',
+              seriesField: 'type',
+              line: {
+                state: {
+                  hover: {
+                    strokeWidth: 4
+                  },
+                  selected: {
+                    stroke: 'red'
+                  },
+                  hover_reverse: {
+                    stroke: '#ddd'
+                  }
+                }
+              },
+              point: {
+                state: {
+                  hover: {
+                    fill: 'red'
+                  },
+                  selected: {
+                    fill: 'yellow'
+                  },
+                  hover_reverse: {
+                    fill: '#ddd'
+                  }
+                }
+              },
+              legends: [
+                {
+                  visible: true,
+                  orient: 'bottom'
+                }
+              ]
+            }
+          ],
+          axes: [
+            {
+              orient: 'left',
+              range: {
+                min: 0
+              }
+            },
+            {
+              orient: 'bottom',
+              label: {
+                visible: true
+              },
+              type: 'band'
+            }
+          ],
+          legends: [
+            {
+              visible: true,
+              orient: 'bottom'
+            }
+          ]
+        };
+      return {
+        type: 'pie',
+        data: { id: 'data1' },
+        categoryField: 'y',
+        valueField: 'x'
+      };
+    }
+  },
+  {
+    field: 'lineChart',
+    title: 'vchart line',
+    width: '320',
+    cellType: 'chart',
+    chartModule: 'vchart',
+    chartSpec: {
+      type: 'common',
+      series: [
+        {
+          type: 'line',
+          data: {
+            id: 'data'
+          },
+          xField: 'x',
+          yField: 'y',
+          seriesField: 'type',
+          line: {
+            state: {
+              hover: {
+                strokeWidth: 4
+              },
+              selected: {
+                stroke: 'red'
+              },
+              hover_reverse: {
+                stroke: '#ddd'
+              }
+            }
+          },
+          point: {
+            state: {
+              hover: {
+                fill: 'red'
+              },
+              selected: {
+                fill: 'yellow'
+              },
+              hover_reverse: {
+                fill: '#ddd'
+              }
+            }
+          },
+          legends: [
+            {
+              visible: true,
+              orient: 'bottom'
+            }
+          ]
+        }
+      ],
+      axes: [
+        {
+          orient: 'left',
+          range: {
+            min: 0
+          }
+        },
+        {
+          orient: 'bottom',
+          label: {
+            visible: true
+          },
+          type: 'band'
+        }
+      ],
+      legends: [
+        {
+          visible: true,
+          orient: 'bottom'
+        }
+      ]
+    }
+  },
+  {
+    field: 'barChart',
+    title: 'vchart bar',
+    width: '320',
+    cellType: 'chart',
+    chartModule: 'vchart',
+    chartSpec: {
+      type: 'common',
+      series: [
+        {
+          type: 'bar',
+          data: {
+            id: 'data'
+          },
+          xField: 'x',
+          yField: 'y',
+          seriesField: 'type',
+          bar: {
+            state: {
+              hover: {
+                fill: 'green'
+              },
+              selected: {
+                fill: 'orange'
+              },
+              hover_reverse: {
+                fill: '#ccc'
+              }
+            }
+          }
+        }
+      ],
+      axes: [
+        {
+          orient: 'left',
+          range: {
+            min: 0
+          }
+        },
+        {
+          orient: 'bottom',
+          label: {
+            visible: true
+          },
+          type: 'band'
+        }
+      ]
+    }
+  },
+  {
+    field: 'scatterChart',
+    title: 'vchart scatter',
+    width: '320',
+    cellType: 'chart',
+    chartModule: 'vchart',
+    chartSpec: {
+      type: 'common',
+      series: [
+        {
+          type: 'scatter',
+          data: {
+            id: 'data'
+          },
+          xField: 'x',
+          yField: 'y',
+          seriesField: 'type'
+        }
+      ],
+      axes: [
+        {
+          orient: 'left',
+          range: {
+            min: 0
+          }
+        },
+        {
+          orient: 'bottom',
+          label: {
+            visible: true
+          },
+          type: 'band'
+        }
+      ]
+    }
+  },
+  {
+    field: 'areaChart',
+    title: 'vchart area',
+    width: '320',
+    cellType: 'chart',
+    chartModule: 'vchart',
+    chartSpec: {
+      type: 'common',
+      series: [
+        {
+          type: 'area',
+          data: {
+            id: 'data'
+          },
+          xField: 'x',
+          yField: 'y',
+          seriesField: 'type',
+          point: {
+            style: {
+              fillOpacity: 1,
+              stroke: '#000',
+              strokeWidth: 4
+            },
+            state: {
+              hover: {
+                fillOpacity: 0.5,
+                stroke: 'blue',
+                strokeWidth: 2
+              },
+              selected: {
+                fill: 'red'
+              }
+            }
+          },
+          area: {
+            style: {
+              fillOpacity: 0.3,
+              stroke: '#000',
+              strokeWidth: 4
+            },
+            state: {
+              hover: {
+                fillOpacity: 1
+              },
+              selected: {
+                fill: 'red',
+                fillOpacity: 1
+              }
+            }
+          },
+          line: {
+            state: {
+              hover: {
+                stroke: 'red'
+              },
+              selected: {
+                stroke: 'yellow'
+              }
+            }
+          }
+        }
+      ],
+      axes: [
+        {
+          orient: 'left',
+          range: {
+            min: 0
+          }
+        },
+        {
+          orient: 'bottom',
+          label: {
+            visible: true
+          },
+          type: 'band'
+        }
+      ],
+      legends: [
+        {
+          visible: true,
+          orient: 'bottom'
+        }
+      ]
+    }
+  }
+];
+const records = [];
+for (let i = 1; i <= 10; i++)
+  records.push({
+    id: i,
+    areaChart: [
+      { x: '0', type: 'A', y: 100 * i },
+      { x: '1', type: 'A', y: '707' },
+      { x: '2', type: 'A', y: '832' },
+      { x: '3', type: 'A', y: '726' },
+      { x: '4', type: 'A', y: '756' },
+      { x: '5', type: 'A', y: '777' },
+      { x: '6', type: 'A', y: '689' },
+      { x: '7', type: 'A', y: '795' },
+      { x: '8', type: 'A', y: '889' },
+      { x: '9', type: 'A', y: '757' },
+      { x: '0', type: 'B', y: '773' },
+      { x: '1', type: 'B', y: '785' },
+      { x: '2', type: 'B', y: '635' },
+      { x: '3', type: 'B', y: '813' },
+      { x: '4', type: 'B', y: '678' },
+      { x: '5', type: 'B', y: 796 + 100 * i },
+      { x: '6', type: 'B', y: '652' },
+      { x: '7', type: 'B', y: '623' },
+      { x: '8', type: 'B', y: '649' },
+      { x: '9', type: 'B', y: '630' }
+    ],
+    lineChart: [
+      { x: '0', type: 'A', y: 100 * i },
+      { x: '1', type: 'A', y: '707' },
+      { x: '2', type: 'A', y: '832' },
+      { x: '3', type: 'A', y: '726' },
+      { x: '4', type: 'A', y: '756' },
+      { x: '5', type: 'A', y: '777' },
+      { x: '6', type: 'A', y: '689' },
+      { x: '7', type: 'A', y: '795' },
+      { x: '8', type: 'A', y: '889' },
+      { x: '9', type: 'A', y: '757' },
+      { x: '0', type: 'B', y: 500 },
+      { x: '1', type: 'B', y: '785' },
+      { x: '2', type: 'B', y: '635' },
+      { x: '3', type: 'B', y: '813' },
+      { x: '4', type: 'B', y: '678' },
+      { x: '5', type: 'B', y: '796' },
+      { x: '6', type: 'B', y: '652' },
+      { x: '7', type: 'B', y: '623' },
+      { x: '8', type: 'B', y: '649' },
+      { x: '9', type: 'B', y: '630' }
+    ],
+    barChart: [
+      { x: '0', type: 'A', y: 100 * i },
+      { x: '1', type: 'A', y: '707' },
+      { x: '2', type: 'A', y: '832' },
+      { x: '3', type: 'A', y: '726' },
+      { x: '4', type: 'A', y: '756' },
+      { x: '5', type: 'A', y: '777' },
+      { x: '6', type: 'A', y: '689' },
+      { x: '7', type: 'A', y: '795' },
+      { x: '8', type: 'A', y: '889' },
+      { x: '9', type: 'A', y: '757' },
+      { x: '0', type: 'B', y: 500 },
+      { x: '1', type: 'B', y: '785' },
+      { x: '2', type: 'B', y: '635' },
+      { x: '3', type: 'B', y: '813' },
+      { x: '4', type: 'B', y: '678' },
+      { x: '5', type: 'B', y: '796' },
+      { x: '6', type: 'B', y: '652' },
+      { x: '7', type: 'B', y: '623' },
+      { x: '8', type: 'B', y: '649' },
+      { x: '9', type: 'B', y: '630' }
+    ],
+    scatterChart: [
+      { x: '0', type: 'A', y: 100 * i },
+      { x: '1', type: 'A', y: '707' },
+      { x: '2', type: 'A', y: '832' },
+      { x: '3', type: 'A', y: '726' },
+      { x: '4', type: 'A', y: '756' },
+      { x: '5', type: 'A', y: '777' },
+      { x: '6', type: 'A', y: '689' },
+      { x: '7', type: 'A', y: '795' },
+      { x: '8', type: 'A', y: '889' },
+      { x: '9', type: 'A', y: '757' },
+      { x: '0', type: 'B', y: 500 },
+      { x: '1', type: 'B', y: '785' },
+      { x: '2', type: 'B', y: '635' },
+      { x: '3', type: 'B', y: '813' },
+      { x: '4', type: 'B', y: '678' },
+      { x: '5', type: 'B', y: '796' },
+      { x: '6', type: 'B', y: '652' },
+      { x: '7', type: 'B', y: '623' },
+      { x: '8', type: 'B', y: '649' },
+      { x: '9', type: 'B', y: '630' }
+    ]
+  });
+const option = {
+  records,
+  columns,
+  transpose: false,
+  defaultColWidth: 200,
+  defaultRowHeight: 200,
+  defaultHeaderRowHeight: 50
+};
+
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

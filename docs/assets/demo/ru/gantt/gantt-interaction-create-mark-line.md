@@ -1,1 +1,358 @@
---- категория: примеры группа: гантт заголовок: гантт график взаимодействие - create markLine обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/гантт/гантт-markline-create.gif ссылка: гантт/introduction опция: гантт#IMarkLineCreateOptions --- # гантт график взаимодействие - create markLine гантт create markLine。 `IMarkLineCreateOptions`и`IMarkLine`。 демонстрация shows the pop-up window для creating markline needs к be implemented по yourself, и the код only provides the Нажать обратный вызов для creating markline. ## ключевая конфигурация - `гантт` - `гантт#IMarkLineCreateOptions` create markLine конфигурация - `гантт#IMarkLine` markLine конфигурация ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // импорт * as втаблицагантт от '@visactor/втаблица-гантт'; функция formatDate(date) { const year = date.getFullYear(); const month = ('0' + (date.getMonth() + 1)).slice(-2); const day = ('0' + date.getDate()).slice(-2); возврат year + '-' + month + '-' + day; } функция createPopup({ date, content }, позиция, обратный вызов) { const контейнер = документ.getElementById('live-демонстрация-additional-контейнер'); // 创建弹窗元素 const всплывающее окно = документ.createElement('div'); всплывающее окно.classимя = 'всплывающее окно'; // 设置定位参数 всплывающее окно.стиль.верх = `${позиция.верх}px`; всплывающее окно.стиль.лево = `${позиция.лево}px`; всплывающее окно.стиль.позиция = 'absolute'; всплывающее окно.стиль.фон = '#ccc'; всплывающее окно.стиль.заполнение = '10px'; всплывающее окно.стиль.zIndex = '10000'; // 日期显示格式化 const dateString = typeof date === 'строка' ? date : formatDate(date); // 弹窗内容 всплывающее окно.innerHTML = ` <span class="закрыть-btn" onНажать="this.parentElement.remove()">×</span> <div>日期：${dateString}</div> <ввод тип="текст" placeholder="输入内容" class="всплывающее окно-ввод" значение="${content}" /> <Кнопка class="confirm-btn">确定</Кнопка> `; const confirmBtn = всплывающее окно.querySelector('.confirm-btn'); confirmBtn.addсобытиесписокener('Нажать', () => { const inputValue = всплывающее окно.querySelector('.всплывающее окно-ввод').значение; всплывающее окно.remove(); if (typeof обратный вызов === 'функция') { обратный вызов(inputValue); } }); // 添加弹窗到容器 контейнер.appendChild(всплывающее окно); } const records = [ { ид: 1, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', progress: 31, priority: 'P0' }, { ид: 2, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', progress: 60, priority: 'P0' }, { ид: 3, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', progress: 100, priority: 'P1' }, { ид: 1, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', progress: 90, priority: 'P0' }, { ид: 2, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', начало: '07/14/2024', конец: '07/24/2024', progress: 60, priority: 'P0' }, { ид: 3, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-10', конец: '2024-07-14', progress: 100, priority: 'P1' }, { ид: 1, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '2024-07-24', конец: '2024-08-04', progress: 31, priority: 'P0' }, { ид: 2, заголовок: 'Scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024.07.06', конец: '2024.07.08', progress: 60, priority: 'P0' }, { ид: 3, заголовок: 'Determine project scope', developer: 'liufangfang.jane@bytedance.com', начало: '2024/07/09', конец: '2024/07/11', progress: 100, priority: 'P1' }, { ид: 1, заголовок: 'Software Development', developer: 'liufangfang.jane@bytedance.com', начало: '07.24.2024', конец: '08.04.2024', progress: 31, priority: 'P0' } ]; const колонки = [ // { // поле: 'ид', // заголовок: 'ид', // ширина: 80, // сортировка: true // }, { поле: 'заголовок', заголовок: 'заголовок', ширина: 200, сортировка: true }, { поле: 'начало', заголовок: 'начало', ширина: 150, сортировка: true }, { поле: 'конец', заголовок: 'конец', ширина: 150, сортировка: true }, { поле: 'priority', заголовок: 'priority', ширина: 100, сортировка: true }, { поле: 'progress', заголовок: 'progress', ширина: 200, сортировка: true } ]; const опция = { records, taskсписоктаблица: { колонки: колонки, таблицаширина: 400, minтаблицаширина: 100, maxтаблицаширина: 600 }, resizeLineStyle: { lineColor: 'green', lineширина: 3 }, frame: { verticalSplitLineMoveable: true, outerFrameStyle: { borderLineширина: 2, borderColor: 'red', cornerRadius: 8 }, verticalSplitLine: { lineширина: 3, lineColor: '#e1e4e8' }, verticalSplitLineHighlight: { lineColor: 'green', lineширина: 3 } }, grid: { // backgroundColor: 'gray', verticalLine: { lineширина: 1, lineColor: '#e1e4e8' }, horizontalLine: { lineширина: 1, lineColor: '#e1e4e8' } }, defaultHeaderRowвысота: 60, defaultRowвысота: 40, timelineHeader: { verticalLine: { lineширина: 1, lineColor: '#e1e4e8' }, horizontalLine: { lineширина: 1, lineColor: '#e1e4e8' }, backgroundColor: '#EEF1F5', colширина: 60, scales: [ { unit: 'week', step: 1, startOfWeek: 'sunday', format(date) { возврат `Week ${date.dateIndex}`; }, стиль: { fontSize: 20, fontWeight: 'bold', цвет: 'red', backgroundColor: '#EEF1F5' } }, { unit: 'day', step: 1, format(date) { возврат date.dateIndex.toString(); }, стиль: { fontSize: 20, fontWeight: 'bold', цвет: 'red', backgroundColor: '#EEF1F5' } } ] }, minDate: '2024-10-01', maxDate: '2024-10-15', markLine: [ { date: '2024-10-06', content: '我的啊啊得的', contentStyle: { цвет: '#fff' // fontSize: 40 }, стиль: { lineширина: 1, lineColor: 'red' } }, { date: '2024-10-08 8:00:00', content: 'mrkLine(date)', позиция: 'date', contentStyle: { цвет: '#fff' // fontSize: 40 }, стиль: { lineширина: 1, lineColor: 'blue' } } ], scrollStyle: { видимый: 'scrolling' }, overscrollBehavior: 'никто', markLineCreateOptions: { markLineCreaтаблица: true, markLineCreationHoverПодсказка: { позиция: 'верх', tipContent: '创建里程碑', стиль: { contentStyle: { заполнить: '#fff' }, panelStyle: { фон: '#14161c', cornerRadius: 4 } } }, markLineCreationStyle: { заполнить: '#ccc', размер: 30, иконкаSize: 12, svg: '<svg t="1741145302032" class="иконка" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-ид="2861" ширина="200" высота="200"><path d="M967.68 558.08v-89.6H542.72V43.52h-87.04v424.96H30.72v89.6h424.96v422.4h87.04V558.08z" заполнить="" p-ид="2862"></path></svg>' } } }; const ганттInstance = новый втаблицагантт.гантт(документ.getElementById(CONTAINER_ID), опция); window.ганттInstance = ганттInstance; ганттInstance.на('Нажать_markline_create', ({ данные, позиция }) => { createPopup({ date: данные.startDate, content: '' }, позиция, значение => { ганттInstance.addMarkLine({ date: formatDate(данные.startDate), content: значение, contentStyle: { цвет: '#fff' }, стиль: { lineширина: 1, lineColor: 'red' } }); }); }); ганттInstance.на('Нажать_markline_content', ({ данные, позиция }) => { createPopup({ date: данные.date, content: данные.content }, позиция, значение => { ганттInstance.updateCurrentMarkLine({ date: данные.date, content: значение }); }); }); ``` 
+---
+категория: примеры
+группа: gantt
+заголовок: Gantt chart interaction - create markLine
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-markline-create.gif
+ссылка: gantt/introduction
+опция: Gantt#IMarkLineCreateOptions
+---
+
+# Gantt chart interaction - create markLine
+
+Gantt create markLine。
+`IMarkLineCreateOptions`and`IMarkLine`。
+demo shows the pop-up window for creating markline needs to be implemented by yourself, and the code only provides the click callback for creating markline.
+
+## Key Configuration
+
+- `Gantt`
+- `Gantt#IMarkLineCreateOptions` create markLine configuration
+- `Gantt#IMarkLine` markLine configuration
+
+## Code Demo
+
+```javascript livedemo template=vtable
+// import * as VTableGantt from '@visactor/vtable-gantt';
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return year + '-' + month + '-' + day;
+}
+
+function createPopup({ date, content }, position, callback) {
+  const container = document.getElementById('live-demo-additional-container');
+
+  // 创建弹窗元素
+  const popup = document.createElement('div');
+  popup.className = 'popup';
+
+  // 设置定位参数
+  popup.style.top = `${position.top}px`;
+  popup.style.left = `${position.left}px`;
+  popup.style.position = 'absolute';
+  popup.style.background = '#ccc';
+  popup.style.padding = '10px';
+  popup.style.zIndex = '10000';
+
+  // 日期显示格式化
+  const dateString = typeof date === 'string' ? date : formatDate(date);
+
+  // 弹窗内容
+  popup.innerHTML = `
+      <span class="close-btn" onclick="this.parentElement.remove()">×</span>
+      <div>日期：${dateString}</div>
+      <input type="text" placeholder="输入内容"  class="popup-input" value="${content}" />
+      <button class="confirm-btn">确定</button>
+  `;
+
+  const confirmBtn = popup.querySelector('.confirm-btn');
+  confirmBtn.addEventListener('click', () => {
+    const inputValue = popup.querySelector('.popup-input').value;
+    popup.remove();
+    if (typeof callback === 'function') {
+      callback(inputValue);
+    }
+  });
+
+  // 添加弹窗到容器
+  container.appendChild(popup);
+}
+
+const records = [
+  {
+    id: 1,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    progress: 31,
+    priority: 'P0'
+  },
+  {
+    id: 2,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    progress: 60,
+    priority: 'P0'
+  },
+  {
+    id: 3,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    progress: 100,
+    priority: 'P1'
+  },
+  {
+    id: 1,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    progress: 90,
+    priority: 'P0'
+  },
+  {
+    id: 2,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '07/14/2024',
+    end: '07/24/2024',
+    progress: 60,
+    priority: 'P0'
+  },
+  {
+    id: 3,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-10',
+    end: '2024-07-14',
+    progress: 100,
+    priority: 'P1'
+  },
+  {
+    id: 1,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024-07-24',
+    end: '2024-08-04',
+    progress: 31,
+    priority: 'P0'
+  },
+  {
+    id: 2,
+    title: 'Scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024.07.06',
+    end: '2024.07.08',
+    progress: 60,
+    priority: 'P0'
+  },
+  {
+    id: 3,
+    title: 'Determine project scope',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '2024/07/09',
+    end: '2024/07/11',
+    progress: 100,
+    priority: 'P1'
+  },
+  {
+    id: 1,
+    title: 'Software Development',
+    developer: 'liufangfang.jane@bytedance.com',
+    start: '07.24.2024',
+    end: '08.04.2024',
+    progress: 31,
+    priority: 'P0'
+  }
+];
+
+const columns = [
+  // {
+  //   field: 'id',
+  //   title: 'ID',
+  //   width: 80,
+  //   sort: true
+  // },
+  {
+    field: 'title',
+    title: 'title',
+    width: 200,
+    sort: true
+  },
+  {
+    field: 'start',
+    title: 'start',
+    width: 150,
+    sort: true
+  },
+  {
+    field: 'end',
+    title: 'end',
+    width: 150,
+    sort: true
+  },
+  {
+    field: 'priority',
+    title: 'priority',
+    width: 100,
+    sort: true
+  },
+
+  {
+    field: 'progress',
+    title: 'progress',
+    width: 200,
+    sort: true
+  }
+];
+const option = {
+  records,
+  taskListTable: {
+    columns: columns,
+    tableWidth: 400,
+    minTableWidth: 100,
+    maxTableWidth: 600
+  },
+  resizeLineStyle: {
+    lineColor: 'green',
+    lineWidth: 3
+  },
+
+  frame: {
+    verticalSplitLineMoveable: true,
+    outerFrameStyle: {
+      borderLineWidth: 2,
+      borderColor: 'red',
+      cornerRadius: 8
+    },
+    verticalSplitLine: {
+      lineWidth: 3,
+      lineColor: '#e1e4e8'
+    },
+    verticalSplitLineHighlight: {
+      lineColor: 'green',
+      lineWidth: 3
+    }
+  },
+  grid: {
+    // backgroundColor: 'gray',
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    }
+  },
+  defaultHeaderRowHeight: 60,
+  defaultRowHeight: 40,
+  timelineHeader: {
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e1e4e8'
+    },
+    backgroundColor: '#EEF1F5',
+    colWidth: 60,
+    scales: [
+      {
+        unit: 'week',
+        step: 1,
+        startOfWeek: 'sunday',
+        format(date) {
+          return `Week ${date.dateIndex}`;
+        },
+        style: {
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'red',
+          backgroundColor: '#EEF1F5'
+        }
+      },
+      {
+        unit: 'day',
+        step: 1,
+        format(date) {
+          return date.dateIndex.toString();
+        },
+        style: {
+          fontSize: 20,
+          fontWeight: 'bold',
+          color: 'red',
+          backgroundColor: '#EEF1F5'
+        }
+      }
+    ]
+  },
+  minDate: '2024-10-01',
+  maxDate: '2024-10-15',
+  markLine: [
+    {
+      date: '2024-10-06',
+      content: '我的啊啊得的',
+      contentStyle: {
+        color: '#fff'
+        // fontSize: 40
+      },
+      style: {
+        lineWidth: 1,
+        lineColor: 'red'
+      }
+    },
+    {
+      date: '2024-10-08 8:00:00',
+      content: 'mrkLine(date)',
+      position: 'date',
+      contentStyle: {
+        color: '#fff'
+        // fontSize: 40
+      },
+      style: {
+        lineWidth: 1,
+        lineColor: 'blue'
+      }
+    }
+  ],
+  scrollStyle: {
+    visible: 'scrolling'
+  },
+  overscrollBehavior: 'none',
+  markLineCreateOptions: {
+    markLineCreatable: true,
+    markLineCreationHoverToolTip: {
+      position: 'top',
+      tipContent: '创建里程碑',
+      style: {
+        contentStyle: {
+          fill: '#fff'
+        },
+        panelStyle: {
+          background: '#14161c',
+          cornerRadius: 4
+        }
+      }
+    },
+    markLineCreationStyle: {
+      fill: '#ccc',
+      size: 30,
+      iconSize: 12,
+      svg: '<svg t="1741145302032" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2861" width="200" height="200"><path d="M967.68 558.08v-89.6H542.72V43.52h-87.04v424.96H30.72v89.6h424.96v422.4h87.04V558.08z" fill="" p-id="2862"></path></svg>'
+    }
+  }
+};
+
+const ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
+window.ganttInstance = ganttInstance;
+ganttInstance.on('click_markline_create', ({ data, position }) => {
+  createPopup({ date: data.startDate, content: '' }, position, value => {
+    ganttInstance.addMarkLine({
+      date: formatDate(data.startDate),
+      content: value,
+      contentStyle: {
+        color: '#fff'
+      },
+      style: {
+        lineWidth: 1,
+        lineColor: 'red'
+      }
+    });
+  });
+});
+ganttInstance.on('click_markline_content', ({ data, position }) => {
+  createPopup({ date: data.date, content: data.content }, position, value => {
+    ganttInstance.updateCurrentMarkLine({ date: data.date, content: value });
+  });
+});
+```

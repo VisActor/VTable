@@ -1,1 +1,266 @@
---- категория: примеры группа: таблица-тип заголовок: сводный таблица Tree обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-tree.png ссылка: таблица_type/сводный_таблица/сводный_таблица_tree опция: сводныйтаблица#rowHierarchyType('grid'%20%7C%20'tree') --- # сводный таблица Tree Hierarchy(пользовательский заголовок tree) сводный таблица tree display, this пример passes в the пользовательский заголовок tree structure rowTree и columnTree, и sets rowHierarchyType к tree. It should be noted that indicatorsAsCol cannot be set к false, because it is currently не supported that indicators are placed на the строка заголовок when displayed as the заголовок из a tree structure. ## Ключевые Конфигурации - `сводныйтаблица` - `rowHierarchyType` Set the hierarchical presentation к`tree`, defaults к tiling режим`grid`. - `columnTree` - `rowTree` - `колонки` необязательный Configure, dimension styles, etc. - `rows`необязательный Configure, dimension styles, etc. - `indicators` ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный2_данные.json') .then(res => res.json()) .then(данные => { const опция = { records: данные, rowTree: [ { dimensionKey: 'Категория', значение: 'Furniture', hierarchyState: 'развернуть', children: [ { dimensionKey: 'под-Категория', значение: 'Boхорошоcases', hierarchyState: 'свернуть' }, { dimensionKey: 'под-Категория', значение: 'Chairs', hierarchyState: 'свернуть' }, { dimensionKey: 'под-Категория', значение: 'Furnishings' }, { dimensionKey: 'под-Категория', значение: 'таблицаs' } ] }, { dimensionKey: 'Категория', значение: 'Office Supplies', children: [ { dimensionKey: 'под-Категория', значение: 'Appliances' }, { dimensionKey: 'под-Категория', значение: 'Art' }, { dimensionKey: 'под-Категория', значение: 'Binders' }, { dimensionKey: 'под-Категория', значение: 'Envelopes' }, { dimensionKey: 'под-Категория', значение: 'Fasteners' }, { dimensionKey: 'под-Категория', значение: 'Labels' }, { dimensionKey: 'под-Категория', значение: 'Paper' }, { dimensionKey: 'под-Категория', значение: 'Storвозраст' }, { dimensionKey: 'под-Категория', значение: 'Supplies' } ] }, { dimensionKey: 'Категория', значение: 'Technology', children: [ { dimensionKey: 'под-Категория', значение: 'Accessories' }, { dimensionKey: 'под-Категория', значение: 'Copiers' }, { dimensionKey: 'под-Категория', значение: 'Machines' }, { dimensionKey: 'под-Категория', значение: 'Phones' } ] } ], columnTree: [ { dimensionKey: 'Регион', значение: 'West', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Регион', значение: 'South', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Регион', значение: 'Central', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] }, { dimensionKey: 'Регион', значение: 'East', children: [ { значение: 'Продажи', indicatorKey: 'Продажи' }, { значение: 'Прибыль', indicatorKey: 'Прибыль' } ] } ], rows: [ { dimensionKey: 'Категория', заголовок: 'Catogery', ширина: 'авто' }, { dimensionKey: 'под-Категория', заголовок: 'под-Catogery', ширина: 'авто' } ], колонки: [ { dimensionKey: 'Регион', заголовок: 'Регион', headerStyle: { textStick: true }, ширина: 'авто' } ], indicators: [ { indicatorKey: 'Продажи', заголовок: 'Продажи', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { if (значение) возврат '$' + число(значение).toFixed(2); возврат ''; }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } }, { indicatorKey: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто', showсортировка: false, headerStyle: { fontWeight: 'normal' }, format: значение => { if (значение) возврат '$' + число(значение).toFixed(2); возврат ''; }, стиль: { заполнение: [16, 28, 16, 28], цвет(args) { if (args.данныеValue >= 0) возврат 'black'; возврат 'red'; } } } ], угол: { titleOnDimension: 'строка', headerStyle: { textStick: true } }, rowHierarchyType: 'tree', ширинаMode: 'standard', rowHierarchyIndent: 20, rowExpandLevel: 1, rowHierarchyTextStartAlignment: true, dragпорядок: { dragHeaderMode: 'все' } }; таблицаInstance = новый втаблица.сводныйтаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: table-type
+заголовок: Pivot Table Tree
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-tree.png
+ссылка: table_type/Pivot_table/pivot_table_tree
+опция: PivotTable#rowHierarchyType('grid'%20%7C%20'tree')
+---
+
+# Pivot Table Tree Hierarchy(custom header tree)
+
+Pivot table tree display, this example passes in the custom header tree structure rowTree and columnTree, and sets rowHierarchyType to tree.
+
+It should be noted that indicatorsAsCol cannot be set to false, because it is currently not supported that indicators are placed on the row header when displayed as the header of a tree structure.
+
+## Ключевые Конфигурации
+
+- `PivotTable`
+- `rowHierarchyType` Set the hierarchical presentation to`tree`, defaults to tiling mode`grid`.
+- `columnTree`
+- `rowTree`
+- `columns` Optional Configure, dimension styles, etc.
+- `rows`Optional Configure, dimension styles, etc.
+- `indicators`
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot2_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const option = {
+      records: data,
+      rowTree: [
+        {
+          dimensionKey: 'Категория',
+          value: 'Furniture',
+          hierarchyState: 'expand',
+          children: [
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Bookcases',
+              hierarchyState: 'collapse'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Chairs',
+              hierarchyState: 'collapse'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Furnishings'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Tables'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Категория',
+          value: 'Office Supplies',
+          children: [
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Appliances'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Art'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Binders'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Envelopes'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Fasteners'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Labels'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Paper'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Storage'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Supplies'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Категория',
+          value: 'Technology',
+          children: [
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Accessories'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Copiers'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Machines'
+            },
+            {
+              dimensionKey: 'Подкатегория',
+              value: 'Phones'
+            }
+          ]
+        }
+      ],
+      columnTree: [
+        {
+          dimensionKey: 'Регион',
+          value: 'West',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Регион',
+          value: 'South',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Регион',
+          value: 'Central',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        },
+        {
+          dimensionKey: 'Регион',
+          value: 'East',
+          children: [
+            {
+              value: 'Продажи',
+              indicatorKey: 'Продажи'
+            },
+            {
+              value: 'Прибыль',
+              indicatorKey: 'Прибыль'
+            }
+          ]
+        }
+      ],
+      rows: [
+        {
+          dimensionKey: 'Категория',
+          title: 'Catogery',
+          width: 'auto'
+        },
+        {
+          dimensionKey: 'Подкатегория',
+          title: 'Sub-Catogery',
+          width: 'auto'
+        }
+      ],
+      columns: [
+        {
+          dimensionKey: 'Регион',
+          title: 'Регион',
+          headerStyle: {
+            textStick: true
+          },
+          width: 'auto'
+        }
+      ],
+      indicators: [
+        {
+          indicatorKey: 'Продажи',
+          title: 'Продажи',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            if (value) return '$' + Number(value).toFixed(2);
+            return '';
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        },
+        {
+          indicatorKey: 'Прибыль',
+          title: 'Прибыль',
+          width: 'auto',
+          showSort: false,
+          headerStyle: {
+            fontWeight: 'normal'
+          },
+          format: value => {
+            if (value) return '$' + Number(value).toFixed(2);
+            return '';
+          },
+          style: {
+            padding: [16, 28, 16, 28],
+            color(args) {
+              if (args.dataValue >= 0) return 'black';
+              return 'red';
+            }
+          }
+        }
+      ],
+      corner: {
+        titleOnDimension: 'row',
+        headerStyle: {
+          textStick: true
+        }
+      },
+      rowHierarchyType: 'tree',
+      widthMode: 'standard',
+      rowHierarchyIndent: 20,
+      rowExpandLevel: 1,
+      rowHierarchyTextStartAlignment: true,
+      dragOrder: {
+        dragHeaderMode: 'all'
+      }
+    };
+    tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

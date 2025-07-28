@@ -1,1 +1,103 @@
---- категория: примеры группа: взаимодействие заголовок: использовать keyboard к move выбрать ячейка обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/arrowkeys-move-выбрать.gif ссылка: взаимодействие/keyboard опция: списоктаблица#keyboardOptions.selectAllOnCtrlA --- # использовать keyboard к move выбрать ячейка This пример has shortcut key capabilities. использовать the arrow keys к switch selected cells и press enter к enter editing. из course, в addition к the direction keys, there are other shortcut keys, please refer к [Tutorial](../../guide/shortcut) ## Ключевые Конфигурации - keyboardOptions ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица // 使用时需要引入插件包@visactor/втаблица-editors // импорт * as втаблица_editors от '@visactor/втаблица-editors'; // 正常使用方式 const input_editor = новый втаблица.editors.InputEditor(); // 官网编辑器中将 втаблица.editors重命名成了втаблица_editors const input_editor = новый втаблица_editors.InputEditor(); втаблица.регистрация.редактор('ввод-редактор', input_editor); let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', frozenColCount: 1, overscrollBehavior: 'никто', keyboardOptions: { moveEditCellOnArrowKeys: true }, редактор: 'ввод-редактор' }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: use keyboard to move select cell
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/arrowkeys-move-select.gif
+ссылка: interaction/keyboard
+опция: ListTable#keyboardOptions.selectAllOnCtrlA
+---
+
+# use keyboard to move select cell
+
+This example has shortcut key capabilities. Use the arrow keys to switch selected cells and press enter to enter editing. Of course, in addition to the direction keys, there are other shortcut keys, please refer to [Tutorial](../../guide/shortcut)
+
+## Ключевые Конфигурации
+
+- keyboardOptions
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+// 使用时需要引入插件包@visactor/vtable-editors
+// import * as VTable_editors from '@visactor/vtable-editors';
+// 正常使用方式 const input_editor = new VTable.editors.InputEditor();
+// 官网编辑器中将 VTable.editors重命名成了VTable_editors
+const input_editor = new VTable_editors.InputEditor();
+VTable.register.editor('input-editor', input_editor);
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      frozenColCount: 1,
+      overscrollBehavior: 'none',
+      keyboardOptions: {
+        moveEditCellOnArrowKeys: true
+      },
+      editor: 'input-editor'
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

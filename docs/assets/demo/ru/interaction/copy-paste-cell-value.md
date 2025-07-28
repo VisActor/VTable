@@ -1,1 +1,108 @@
---- категория: примеры группа: взаимодействие заголовок: Copy и paste ячейка значение обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/copy-paste-ячейка-значение.gif ссылка: взаимодействие/keyboard опция: списоктаблица#keyboardOptions.pasteValueToCell --- # Copy и paste ячейка значение использовать shortcut keys к copy the contents из the selected ячейка и paste the contents из the clipboard into the ячейка. Please configure Следующий two конфигурация items к be true! - keyboardOptions.pasteValueToCell - keyboardOptions.copySelected Note: втаблица has been verified internally, и only ediтаблица cells are allowed к be pasted. Therefore, в the бизнес scenario where pasting is обязательный, please ensure that an редактор is configured. The редактор supports configuring empty strings (that is, non-existent editors). Other shortcut keys refer к [Tutorial](../../guide/shortcut). ## Ключевые Конфигурации - keyboardOptions.pasteValueToCell - keyboardOptions.copySelected ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа', ширина: 'авто' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид', ширина: 'авто' }, { поле: 'Product имя', заголовок: 'Product имя', ширина: 'авто' }, { поле: 'Категория', заголовок: 'Категория', ширина: 'авто' }, { поле: 'под-Категория', заголовок: 'под-Категория', ширина: 'авто' }, { поле: 'Регион', заголовок: 'Регион', ширина: 'авто' }, { поле: 'Город', заголовок: 'Город', ширина: 'авто' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа', ширина: 'авто' }, { поле: 'Количество', заголовок: 'Количество', ширина: 'авто' }, { поле: 'Продажи', заголовок: 'Продажи', ширина: 'авто' }, { поле: 'Прибыль', заголовок: 'Прибыль', ширина: 'авто' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', frozenColCount: 1, overscrollBehavior: 'никто', keyboardOptions: { moveEditCellOnArrowKeys: true, copySelected: true, pasteValueToCell: true }, редактор: '' // Configure an empty редактор that can be pasted into cells everywhere }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Interaction
+заголовок: Copy and paste cell value
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/copy-paste-cell-value.gif
+ссылка: interaction/keyboard
+опция: ListTable#keyboardOptions.pasteValueToCell
+---
+
+# Copy and paste cell value
+
+Use shortcut keys to copy the contents of the selected cell and paste the contents of the clipboard into the cell.
+
+Please configure the following two configuration items to be true!
+- keyboardOptions.pasteValueToCell
+- keyboardOptions.copySelected
+
+Note: VTable has been verified internally, and only editable cells are allowed to be pasted. Therefore, in the business scenario where pasting is required, please ensure that an editor is configured. The editor supports configuring empty strings (that is, non-existent editors).
+
+Other shortcut keys refer to [Tutorial](../../guide/shortcut).
+
+## Ключевые Конфигурации
+
+- keyboardOptions.pasteValueToCell
+- keyboardOptions.copySelected
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента',
+        width: 'auto'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара',
+        width: 'auto'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория',
+        width: 'auto'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория',
+        width: 'auto'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион',
+        width: 'auto'
+      },
+      {
+        field: 'Город',
+        title: 'Город',
+        width: 'auto'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа',
+        width: 'auto'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество',
+        width: 'auto'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи',
+        width: 'auto'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль',
+        width: 'auto'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      frozenColCount: 1,
+      overscrollBehavior: 'none',
+      keyboardOptions: {
+        moveEditCellOnArrowKeys: true,
+        copySelected: true,
+        pasteValueToCell: true
+      },
+      editor: '' // Configure an empty editor that can be pasted into cells everywhere
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```

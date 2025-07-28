@@ -1,1 +1,347 @@
---- категория: примеры группа: грамматический-тег заголовок: сводный график обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/сводный-график.png порядок: 1-1 ссылка: Developer_Ecology/react --- # сводный график The props attributes accepted по сводныйтаблица&сводныйграфик are согласующийся с options. The semantic под-компонентs are as follows: - сводныйColumnDimension: The dimension конфигурация на the колонка is согласующийся с the определение из колонки в опция [апи](../../опция/сводныйтаблица-колонки-текст#headerType) - сводныйRowDimension: The dimension конфигурация на the строка is согласующийся с the определение из rows в опция [апи](../../опция/сводныйтаблица-rows-текст#headerType) - сводныйIndicator: indicator конфигурация, согласующийся с the определение из indicators в опция [апи](../../опция/сводныйтаблица-indicators-текст#типЯчейки) - сводныйColumnHeaderзаголовок: колонка заголовок заголовок конфигурация, согласующийся с the определение из columnHeaderTitle в опция [апи](../../опция/сводныйтаблица#rowHeaderTitle) - сводныйRowHeaderзаголовок: строка заголовок заголовок конфигурация, согласующийся с the определение из rowHeaderTitle в опция [апи](../../опция/сводныйтаблица#columnHeaderTitle) - сводныйCorner: угол конфигурация, согласующийся с the определение из угол в опция [апи](../../опция/сводныйтаблица#угол) ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица-react // импорт * as ReactВТаблица от '@visactor/react-втаблица'; // импорт Vграфик от '@visactor/vграфик'; ReactВТаблица.регистрация.графикModule('vграфик', Vграфик); fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_сводный_график_данные.json') .then(res => res.json()) .then(данные => { const корень = ReactDom.createRoot(документ.getElementById(CONTAINER_ID)); корень.рендер( <ReactВТаблица.сводныйграфик records={данные} indicatorsAsCol={false} defaultRowвысота={200} defaultHeaderRowвысота={50} defaultColширина={280} defaultHeaderColширина={100} > <ReactВТаблица.сводныйColumnDimension dimensionKey={'Регион'} заголовок={'Регион'} /> <ReactВТаблица.сводныйRowDimension dimensionKey={'порядок Year'} заголовок={'порядок Year'} /> <ReactВТаблица.сводныйRowDimension dimensionKey={'Ship режим'} заголовок={'Ship режим'} /> <ReactВТаблица.сводныйIndicator indicatorKey={'Количество'} заголовок={'Количество'} ширина={'авто'} типЯчейки={'график'} графикModule={'vграфик'} графикSpec={{ // тип: 'common', stack: true, тип: 'bar', данные: { ид: 'данные', полеs: { //设置xполе数据的顺序 'под-Категория': { сортировкаIndex: 0, domain: [ 'Chairs', 'таблицаs', 'Boхорошоcases', 'Furnishings', 'Binders', 'Art', 'Storвозраст', 'Appliances', 'Envelopes', 'Fasteners', 'Paper', 'Labels', 'Supplies', 'Accessories', 'Phones', 'Copiers', 'Machines' ] }, 'Segment-Indicator': { //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致 сортировкаIndex: 1, domain: [ 'Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество', 'Consumer-Продажи', 'Corporate-Продажи', 'Home Office-Продажи', 'Consumer-Прибыль', 'Corporate-Прибыль', 'Home Office-Прибыль' ] // lockStatisticsByDomain: true } } }, xполе: ['под-Категория'], yполе: 'Количество', seriesполе: 'Segment-Indicator', axes: [ { orient: 'лево', видимый: true, label: { видимый: true } }, { orient: 'низ', видимый: true } ], bar: { state: { selected: { заполнить: 'yellow' }, selected_reverse: { // заполнить: '#ddd' opaГород: 0.2 } } }, scales: [ { ид: 'цвет', тип: 'ordinal', domain: [ 'Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество', 'Consumer-Продажи', 'Corporate-Продажи', 'Home Office-Продажи', 'Consumer-Прибыль', 'Corporate-Прибыль', 'Home Office-Прибыль' ], range: [ '#2E62F1', '#4DC36A', '#FF8406', '#FFCC00', '#4F44CF', '#5AC8FA', '#003A8C', '#B08AE2', '#FF6341', '#98DD62', '#07A199', '#87DBDD' ] } ] }} стиль={{ заполнение: 1 }} /> <ReactВТаблица.сводныйIndicator indicatorKey={'Продажи'} заголовок={'Продажи'} ширина={'авто'} типЯчейки={'график'} графикModule={'vграфик'} графикSpec={{ тип: 'common', серия: [ { тип: 'bar', данные: { ид: 'данные1', полеs: { //设置xполе数据的顺序 'под-Категория': { сортировкаIndex: 0, domain: [ 'Chairs', 'таблицаs', 'Boхорошоcases', 'Furnishings', 'Binders', 'Art', 'Storвозраст', 'Appliances', 'Envelopes', 'Fasteners', 'Paper', 'Labels', 'Supplies', 'Accessories', 'Phones', 'Copiers', 'Machines' ] }, 'Segment-Indicator': { //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致 сортировкаIndex: 1, domain: [ 'Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество', 'Consumer-Продажи', 'Corporate-Продажи', 'Home Office-Продажи', 'Consumer-Прибыль', 'Corporate-Прибыль', 'Home Office-Прибыль' ] // lockStatisticsByDomain: true } } }, stack: true, xполе: ['под-Категория'], yполе: 'Продажи', seriesполе: 'Segment-Indicator', bar: { state: { selected: { заполнить: 'yellow' }, selected_reverse: { // заполнить: '#ddd' opaГород: 0.2 } } } }, { тип: 'line', данные: { ид: 'данные2', полеs: { //设置xполе数据的顺序 'под-Категория': { сортировкаIndex: 0, domain: [ 'Chairs', 'таблицаs', 'Boхорошоcases', 'Furnishings', 'Binders', 'Art', 'Storвозраст', 'Appliances', 'Envelopes', 'Fasteners', 'Paper', 'Labels', 'Supplies', 'Phones', 'Accessories', 'Machines', 'Copiers' ] }, 'Segment-Indicator': { //设置seriesполе数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致 сортировкаIndex: 1, domain: [ 'Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество', 'Consumer-Продажи', 'Corporate-Продажи', 'Home Office-Продажи', 'Consumer-Прибыль', 'Corporate-Прибыль', 'Home Office-Прибыль' ] // lockStatisticsByDomain: true } } }, stack: false, xполе: ['под-Категория'], yполе: 'Прибыль', seriesполе: 'Segment-Indicator', line: { state: { selected: { lineширина: 3 }, selected_reverse: { lineширина: 1 } } }, point: { state: { selected: { заполнить: 'yellow' }, selected_reverse: { заполнить: '#ddd' } } } } ], scales: [ { ид: 'цвет', тип: 'ordinal', domain: [ 'Consumer-Количество', 'Corporate-Количество', 'Home Office-Количество', 'Consumer-Продажи', 'Corporate-Продажи', 'Home Office-Продажи', 'Consumer-Прибыль', 'Corporate-Прибыль', 'Home Office-Прибыль' ], range: [ '#2E62F1', '#4DC36A', '#FF8406', '#FFCC00', '#4F44CF', '#5AC8FA', '#003A8C', '#B08AE2', '#FF6341', '#98DD62', '#07A199', '#87DBDD' ] } ] // axes: [ // { orient: 'лево', видимый: true, label: { видимый: true } }, // { orient: 'низ', видимый: true } // ] }} стиль={{ заполнение: 1 }} /> </ReactВТаблица.сводныйграфик> ); }); // Релиз openinula instance, do не copy window.пользовательскийРелиз = () => { корень.unmount(); }; ``` 
+---
+категория: примеры
+группа: грамматический-тег
+заголовок: сводная диаграмма
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/pivot-chart.png
+порядок: 1-1
+ссылка: Developer_Ecology/react
+---
+
+# сводная диаграмма
+
+The props attributes accepted by PivotTable&PivotChart are consistent with опцияs. The semantic sub-компонентs are as follows:
+
+- PivotColumnDimension: The dimension configuration on the column is consistent with the definition of columns in опция [api](../../опция/PivotTable-columns-text#headerType)
+- PivotRowDimension: The dimension configuration on the row is consistent with the definition of rows in опция [api](../../опция/PivotTable-rows-text#headerType)
+- PivotIndicator: indicator configuration, consistent with the definition of indicators in опция [api](../../опция/PivotTable-indicators-text#cellType)
+- PivotColumnHeaderTitle: column header заголовок configuration, consistent with the definition of columnHeaderTitle in опция [api](../../опция/PivotTable#rowHeaderTitle)
+- PivotRowHeaderTitle: row header заголовок configuration, consistent with the definition of rowHeaderTitle in опция [api](../../опция/PivotTable#columnHeaderTitle)
+- PivotCorner: Corner configuration, consistent with the definition of corner in опция [api](../../опция/PivotTable#corner)
+
+## демонстрация кода
+
+```javascript livedemo template=vtable-react
+// import * as ReactVTable from '@visactor/react-vtable';
+// import VChart from '@visactor/vchart';
+
+ReactVTable.register.chartModule('vchart', VChart);
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const root = ReactDom.createRoot(document.getElementById(CONTAINER_ID));
+    root.render(
+      <ReactVTable.PivotChart
+        records={data}
+        indicatorsAsCol={false}
+        defaultRowHeight={200}
+        defaultHeaderRowHeight={50}
+        defaultColWidth={280}
+        defaultHeaderColWidth={100}
+      >
+        <ReactVTable.PivotColumnDimension dimensionKey={'Регион'} title={'Регион'} />
+        <ReactVTable.PivotRowDimension dimensionKey={'Order Year'} title={'Order Year'} />
+        <ReactVTable.PivotRowDimension dimensionKey={'Ship Mode'} title={'Ship Mode'} />
+        <ReactVTable.PivotIndicator
+          indicatorKey={'Количество'}
+          title={'Количество'}
+          width={'auto'}
+          cellType={'chart'}
+          chartModule={'vchart'}
+          chartSpec={{
+            // type: 'common',
+            stack: true,
+            type: 'bar',
+            data: {
+              id: 'data',
+              fields: {
+                //设置xField数据的顺序
+                'Подкатегория': {
+                  sortIndex: 0,
+                  domain: [
+                    'Chairs',
+                    'Tables',
+                    'Bookcases',
+                    'Furnishings',
+
+                    'Binders',
+                    'Art',
+                    'Storage',
+                    'Appliances',
+                    'Envelopes',
+                    'Fasteners',
+                    'Paper',
+                    'Labels',
+                    'Supplies',
+                    'Accessories',
+                    'Phones',
+                    'Copiers',
+                    'Machines'
+                  ]
+                },
+                'Segment-Indicator': {
+                  //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                  sortIndex: 1,
+                  domain: [
+                    'Consumer-Количество',
+                    'Corporate-Количество',
+                    'Home Office-Количество',
+                    'Consumer-Продажи',
+                    'Corporate-Продажи',
+                    'Home Office-Продажи',
+                    'Consumer-Прибыль',
+                    'Corporate-Прибыль',
+                    'Home Office-Прибыль'
+                  ]
+                  // lockStatisticsByDomain:  true
+                }
+              }
+            },
+            xField: ['Подкатегория'],
+            yField: 'Количество',
+            seriesField: 'Segment-Indicator',
+            axes: [
+              { orient: 'left', visible: true, label: { visible: true } },
+              { orient: 'bottom', visible: true }
+            ],
+            bar: {
+              state: {
+                selected: {
+                  fill: 'yellow'
+                },
+                selected_reverse: {
+                  // fill: '#ddd'
+                  opacity: 0.2
+                }
+              }
+            },
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Количество',
+                  'Corporate-Количество',
+                  'Home Office-Количество',
+                  'Consumer-Продажи',
+                  'Corporate-Продажи',
+                  'Home Office-Продажи',
+                  'Consumer-Прибыль',
+                  'Corporate-Прибыль',
+                  'Home Office-Прибыль'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
+          }}
+          style={{
+            padding: 1
+          }}
+        />
+        <ReactVTable.PivotIndicator
+          indicatorKey={'Продажи'}
+          title={'Продажи'}
+          width={'auto'}
+          cellType={'chart'}
+          chartModule={'vchart'}
+          chartSpec={{
+            type: 'common',
+            series: [
+              {
+                type: 'bar',
+                data: {
+                  id: 'data1',
+                  fields: {
+                    //设置xField数据的顺序
+                    'Подкатегория': {
+                      sortIndex: 0,
+                      domain: [
+                        'Chairs',
+                        'Tables',
+                        'Bookcases',
+                        'Furnishings',
+
+                        'Binders',
+                        'Art',
+                        'Storage',
+                        'Appliances',
+                        'Envelopes',
+                        'Fasteners',
+                        'Paper',
+                        'Labels',
+                        'Supplies',
+                        'Accessories',
+                        'Phones',
+                        'Copiers',
+                        'Machines'
+                      ]
+                    },
+                    'Segment-Indicator': {
+                      //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                      sortIndex: 1,
+                      domain: [
+                        'Consumer-Количество',
+                        'Corporate-Количество',
+                        'Home Office-Количество',
+                        'Consumer-Продажи',
+                        'Corporate-Продажи',
+                        'Home Office-Продажи',
+                        'Consumer-Прибыль',
+                        'Corporate-Прибыль',
+                        'Home Office-Прибыль'
+                      ]
+                      // lockStatisticsByDomain:  true
+                    }
+                  }
+                },
+                stack: true,
+                xField: ['Подкатегория'],
+                yField: 'Продажи',
+                seriesField: 'Segment-Indicator',
+                bar: {
+                  state: {
+                    selected: {
+                      fill: 'yellow'
+                    },
+                    selected_reverse: {
+                      // fill: '#ddd'
+                      opacity: 0.2
+                    }
+                  }
+                }
+              },
+              {
+                type: 'line',
+                data: {
+                  id: 'data2',
+                  fields: {
+                    //设置xField数据的顺序
+                    'Подкатегория': {
+                      sortIndex: 0,
+                      domain: [
+                        'Chairs',
+                        'Tables',
+                        'Bookcases',
+                        'Furnishings',
+
+                        'Binders',
+                        'Art',
+                        'Storage',
+                        'Appliances',
+                        'Envelopes',
+                        'Fasteners',
+                        'Paper',
+                        'Labels',
+                        'Supplies',
+
+                        'Phones',
+                        'Accessories',
+                        'Machines',
+                        'Copiers'
+                      ]
+                    },
+                    'Segment-Indicator': {
+                      //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
+                      sortIndex: 1,
+                      domain: [
+                        'Consumer-Количество',
+                        'Corporate-Количество',
+                        'Home Office-Количество',
+                        'Consumer-Продажи',
+                        'Corporate-Продажи',
+                        'Home Office-Продажи',
+                        'Consumer-Прибыль',
+                        'Corporate-Прибыль',
+                        'Home Office-Прибыль'
+                      ]
+                      // lockStatisticsByDomain:  true
+                    }
+                  }
+                },
+                stack: false,
+                xField: ['Подкатегория'],
+                yField: 'Прибыль',
+                seriesField: 'Segment-Indicator',
+                line: {
+                  state: {
+                    selected: {
+                      lineWidth: 3
+                    },
+                    selected_reverse: {
+                      lineWidth: 1
+                    }
+                  }
+                },
+                point: {
+                  state: {
+                    selected: {
+                      fill: 'yellow'
+                    },
+                    selected_reverse: {
+                      fill: '#ddd'
+                    }
+                  }
+                }
+              }
+            ],
+            scales: [
+              {
+                id: 'color',
+                type: 'ordinal',
+                domain: [
+                  'Consumer-Количество',
+                  'Corporate-Количество',
+                  'Home Office-Количество',
+                  'Consumer-Продажи',
+                  'Corporate-Продажи',
+                  'Home Office-Продажи',
+                  'Consumer-Прибыль',
+                  'Corporate-Прибыль',
+                  'Home Office-Прибыль'
+                ],
+                range: [
+                  '#2E62F1',
+                  '#4DC36A',
+                  '#FF8406',
+                  '#FFCC00',
+                  '#4F44CF',
+                  '#5AC8FA',
+                  '#003A8C',
+                  '#B08AE2',
+                  '#FF6341',
+                  '#98DD62',
+                  '#07A199',
+                  '#87DBDD'
+                ]
+              }
+            ]
+            // axes: [
+            //   { orient: 'left', visible: true, label: { visible: true } },
+            //   { orient: 'bottom', visible: true }
+            // ]
+          }}
+          style={{
+            padding: 1
+          }}
+        />
+      </ReactVTable.PivotChart>
+    );
+  });
+
+// release openinula instance, do not copy
+window.customRelease = () => {
+  root.unmount();
+};
+```

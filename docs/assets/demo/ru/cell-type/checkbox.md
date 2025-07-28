@@ -1,1 +1,66 @@
---- категория: примеры группа: ячейка тип заголовок: флажок тип обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/флажок-демонстрация.png ссылка: cell_type/флажок опция: списоктаблица-колонки-флажок#типЯчейки --- # Checbox тип демонстрацияnstrate multiple ways к использовать флажок ## Critical конфигурация типЯчейки: 'флажок'; ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица const records = [ { productимя: 'aaaa', price: 20, check: { текст: 'unchecked', checked: false, отключить: false } }, { productимя: 'bbbb', price: 18, check: { текст: 'checked', checked: true, отключить: false } }, { productимя: 'cccc', price: 16, check: { текст: 'отключить', checked: true, отключить: true } }, { productимя: 'cccc', price: 14, check: { текст: 'отключить', checked: false, отключить: true } }, { productимя: 'eeee', price: 12, check: { текст: 'checked', checked: false, отключить: false } }, { productимя: 'ffff', price: 10, check: { текст: 'checked', checked: false, отключить: false } }, { productимя: 'gggg', price: 10, check: { текст: 'checked', checked: false, отключить: false } } ]; const колонки = [ { поле: 'isCheck', заголовок: '', ширина: 60, headerType: 'флажок', типЯчейки: 'флажок' }, { поле: 'productимя', заголовок: 'productимя', ширина: 120 }, { поле: 'price', заголовок: 'флажок', ширина: 120, типЯчейки: 'флажок', отключить: true, checked: true }, { поле: 'check', заголовок: 'флажок', ширина: 120, типЯчейки: 'флажок' // отключить: true } ]; const опция = { records, колонки }; const таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; ``` 
+---
+категория: примеры
+группа: Cell Type
+заголовок: Checkbox Type
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/checkbox-demo.png
+ссылка: cell_type/checkbox
+опция: ListTable-columns-checkbox#cellType
+---
+
+# Checbox Type
+
+Demonstrate multiple ways to use checkbox
+
+## Critical Configuration
+
+cellType: 'checkbox';
+
+## Code Demo
+
+```javascript livedemo template=vtable
+const records = [
+  { productName: 'aaaa', price: 20, check: { text: 'unchecked', checked: false, disable: false } },
+  { productName: 'bbbb', price: 18, check: { text: 'checked', checked: true, disable: false } },
+  { productName: 'cccc', price: 16, check: { text: 'disable', checked: true, disable: true } },
+  { productName: 'cccc', price: 14, check: { text: 'disable', checked: false, disable: true } },
+  { productName: 'eeee', price: 12, check: { text: 'checked', checked: false, disable: false } },
+  { productName: 'ffff', price: 10, check: { text: 'checked', checked: false, disable: false } },
+  { productName: 'gggg', price: 10, check: { text: 'checked', checked: false, disable: false } }
+];
+
+const columns = [
+  {
+    field: 'isCheck',
+    title: '',
+    width: 60,
+    headerType: 'checkbox',
+    cellType: 'checkbox'
+  },
+  {
+    field: 'productName',
+    title: 'productName',
+    width: 120
+  },
+  {
+    field: 'price',
+    title: 'checkbox',
+    width: 120,
+    cellType: 'checkbox',
+    disable: true,
+    checked: true
+  },
+  {
+    field: 'check',
+    title: 'checkbox',
+    width: 120,
+    cellType: 'checkbox'
+    // disable: true
+  }
+];
+const option = {
+  records,
+  columns
+};
+const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+window['tableInstance'] = tableInstance;
+```

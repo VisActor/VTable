@@ -1,1 +1,84 @@
---- категория: примеры группа: базовый возможности заголовок: Line Wrapping обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/preview/авто-перенос-текст.gif порядок: 3-1 ссылка: базовый_function/авто_wrap_text опция: списоктаблица#автоWrapText --- # line wrapping авто-перенос is turned на. When the колонка ширина changes, the текст will автоmatically calculate the display content according к the ширина. When using this функция, you need к set `высотаMode: 'автовысота'` к display the wrapped текст. ## Ключевые Конфигурации - 'автоWrapText: true 'включить line wrapping ## код демонстрация ```javascript живаядемонстрация шаблон=втаблица let таблицаInstance; fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/втаблица/North_American_Superstore_данные.json') .then(res => res.json()) .then(данные => { const колонки = [ { поле: 'ид Заказа', заголовок: 'ид Заказа' }, { поле: 'пользовательскийer ид', заголовок: 'пользовательскийer ид' }, { поле: 'Product имя', заголовок: 'Product имя' }, { поле: 'Категория', заголовок: 'Категория' }, { поле: 'под-Категория', заголовок: 'под-Категория' }, { поле: 'Регион', заголовок: 'Регион' }, { поле: 'Город', заголовок: 'Город' }, { поле: 'Дата Заказа', заголовок: 'Дата Заказа' }, { поле: 'Количество', заголовок: 'Количество' }, { поле: 'Продажи', заголовок: 'Продажи' }, { поле: 'Прибыль', заголовок: 'Прибыль' } ]; const опция = { records: данные, колонки, ширинаMode: 'standard', автоWrapText: true, высотаMode: 'автовысота', defaultColширина: 150 }; таблицаInstance = новый втаблица.списоктаблица(документ.getElementById(CONTAINER_ID), опция); window['таблицаInstance'] = таблицаInstance; }); ``` 
+---
+категория: примеры
+группа: Основные Функции
+заголовок: Line Wrapping
+обложка: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/auto-wrap-text.gif
+порядок: 3-1
+ссылка: basic_function/auto_wrap_text
+опция: ListTable#autoWrapText
+---
+
+# line wrapping
+
+Auto-wrap is turned on. When the column width changes, the text will automatically calculate the display content according to the width. When using this function, you need to set `heightMode: 'autoHeight'` to display the wrapped text.
+
+## Ключевые Конфигурации
+
+- 'AutoWrapText: true 'Enable line wrapping
+
+## Демонстрация кода
+
+```javascript livedemo template=vtable
+let tableInstance;
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_data.json')
+  .then(res => res.json())
+  .then(data => {
+    const columns = [
+      {
+        field: 'ИД Заказа',
+        title: 'ИД Заказа'
+      },
+      {
+        field: 'ИД Клиента',
+        title: 'ИД Клиента'
+      },
+      {
+        field: 'Название Товара',
+        title: 'Название Товара'
+      },
+      {
+        field: 'Категория',
+        title: 'Категория'
+      },
+      {
+        field: 'Подкатегория',
+        title: 'Подкатегория'
+      },
+      {
+        field: 'Регион',
+        title: 'Регион'
+      },
+      {
+        field: 'Город',
+        title: 'Город'
+      },
+      {
+        field: 'Дата Заказа',
+        title: 'Дата Заказа'
+      },
+      {
+        field: 'Количество',
+        title: 'Количество'
+      },
+      {
+        field: 'Продажи',
+        title: 'Продажи'
+      },
+      {
+        field: 'Прибыль',
+        title: 'Прибыль'
+      }
+    ];
+
+    const option = {
+      records: data,
+      columns,
+      widthMode: 'standard',
+      autoWrapText: true,
+      heightMode: 'autoHeight',
+      defaultColWidth: 150
+    };
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
+    window['tableInstance'] = tableInstance;
+  });
+```
