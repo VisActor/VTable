@@ -356,7 +356,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
         // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
         // value = indexs[indexs.length - 1] + 1;
       } else {
-        value = row - this.columnHeaderLevelCount + 1;
+        const define = table.getBodyColumnDefine(col, row);
+        const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
+        if (typeof checkboxSeriesNumberStyle === 'string') {
+          value = checkboxSeriesNumberStyle;
+        } else if (checkboxSeriesNumberStyle?.text) {
+          value = checkboxSeriesNumberStyle.text ?? '';
+        } else {
+          value = row - this.columnHeaderLevelCount + 1;
+        }
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this, value) : value;
