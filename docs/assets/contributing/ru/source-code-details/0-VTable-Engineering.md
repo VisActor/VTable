@@ -1,33 +1,33 @@
 ---
-title: 0 VTable Engineering
+title: 0 Инженерия VTable
 
 
-key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Visualization,Chart,Data,Table,Graph,Gis,LLM
+key words: VisActor,VChart,VTable,VStrory,VMind,VGrammar,VRender,Визуализация,Диаграмма,Данные,Таблица,График,ГИС,LLM
 ---
-# VTable Engineering Guide Document
+# Руководство по Инженерии VTable
 
 
-This document provides an engineering guide for the VTable project, including how to obtain the source code, install dependencies, run examples, and an overview of the project structure.
+Этот документ предоставляет инженерное руководство для проекта VTable, включая то, как получить исходный код, установить зависимости, запустить примеры и обзор структуры проекта.
 
-## 1. Obtain the Source Code
+## 1. Получение Исходного Кода
 
-### Clone the repository from GitHub
+### Клонирование репозитория с GitHub
 
 
 ```
-# 克隆 VTable 仓库
+# клонировать репозиторий VTable
 git clone https://github.com/VisActor/VTable.git
 
-# 进入项目目录
+# войти в каталог проекта
 cd VTable
 
 ```
-## 2. Environment Preparation
+## 2. Подготовка Среды
 
-### Prerequisites
+### Предварительные Требования
 
 
-* **Node.js**: Requires Node.js installation, version requirements: `>=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0`
+* **Node.js**: Требуется установка Node.js, требования к версии: `>=14.15.0 <15.0.0 || >=16.13.0 <17.0.0 || >=18.15.0 <19.0.0`
 
 *  **Rush**: VTable uses Microsoft Rush for project management
 

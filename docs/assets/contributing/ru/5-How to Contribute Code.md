@@ -1,32 +1,32 @@
 ---
-title: 5. How to Contribute Code
+title: 5. Как Вносить Вклад в Код
 
-key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Visualization, Chart, Data, Table, Graph, GIS, LLM
+key words: VisActor, VChart, VTable, VStory, VMind, VGrammar, VRender, Визуализация, Диаграмма, Данные, Таблица, График, ГИС, LLM
 ---
 
-# Creating a Branch
+# Создание Ветки
 
-The default branch for VTable is the develop branch. For any feature development, bug fixes, or documentation writing, please create a new branch and then merge it into the develop branch. Use the following code to create a branch:
+Ветка по умолчанию для VTable - это ветка develop. Для любой разработки функций, исправления ошибок или написания документации, пожалуйста, создайте новую ветку, а затем объедините ее с веткой develop. Используйте следующий код для создания ветки:
 
 ```
-// Create a documentation, demo branch
+// Создание ветки документации, демо
 git checkout -b docs/add-funnel-demo
 
 ```
 
-# Finding or Creating an Issue
+# Поиск или Создание Issue
 
-In principle, we require every PR to have a corresponding issue. Before starting development, please confirm whether there is a corresponding issue, and the issue has not been claimed.
+В принципе, мы требуем, чтобы каждый PR имел соответствующий issue. Перед началом разработки, пожалуйста, подтвердите, есть ли соответствующий issue, и что issue не был заявлен.
 
-## Search for Issues
+## Поиск Issues
 
-You can search for bug or feature-related issues in the following way:
+Вы можете искать issues, связанные с ошибками или функциями, следующим образом:
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/TPy4bTm01o9MSgxiwZvcTz66nug.gif' alt='' width='487' height='auto'>
 
-## Create Code-Related Issues
+## Создание Issues, Связанных с Кодом
 
-Click "NEW ISSUE" to open the issue selection page, and choose "**Bug Report" or "Feature Request".**
+Нажмите "NEW ISSUE", чтобы открыть страницу выбора issue, и выберите "**Bug Report" или "Feature Request".**
 
 <img src='https://cdn.jsdelivr.net/gh/xuanhun/articles/visactor/img/AhNvbxd1uoZZMHxuKxscjErrnDe.gif' alt='' width='611' height='auto'>
 
