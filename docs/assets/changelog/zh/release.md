@@ -1,3 +1,30 @@
+# v1.19.4
+
+2025-07-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: rowSeriesNumber support config record's field [#3902](https://github.com/VisActor/VTable/issues/3902)
+- **@visactor/vtable**: add enableCheckboxCascade option [#4130](https://github.com/VisActor/VTable/issues/4130)
+- **@visactor/vtable**: add groupConfig replace groupBy and group** & add titleCheckbox [#4130](https://github.com/VisActor/VTable/issues/4130)
+- **@visactor/vtable**: add getRecordHierarchyState api and fix change header position arguments [#4226](https://github.com/VisActor/VTable/issues/4226)
+- **@visactor/vtable**: add paste-add-row plugin to support extend row count or column count
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: vchart trasnparent bgColor replace cell hover color [#4245](https://github.com/VisActor/VTable/issues/4245)
+- **@visactor/vtable**: fix loading icon update in pivot-table [#4236](https://github.com/VisActor/VTable/issues/4236)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: update merge cell performance [#3293](https://github.com/VisActor/VTable/issues/3293)
+- **@visactor/vtable**: hide menu list when scroll [#4214](https://github.com/VisActor/VTable/issues/4214)
+
+
+
+[更多详情请查看 v1.19.4](https://github.com/VisActor/VTable/releases/tag/v1.19.4)
+
 # v1.19.3
 
 2025-07-09
