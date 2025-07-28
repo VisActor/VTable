@@ -111,11 +111,23 @@ export class ConditionFilter {
     });
   }
 
+  private handleCategoryChange(): void {
+    if (!this.categorySelect) {
+      return;
+    }
+
+    this.currentCategory = this.categorySelect.value as FilterOperatorCategory;
+    this.updateOperatorOptions();
+
+    // 分类切换后也需要同步UI状态
+    this.syncUIState();
+  }
+
   /**
    * 加载当前的筛选状态
    */
   private loadCurrentFilterState(): void {
-    const filter = this.filterStateManager.getState().filters.get(this.selectedField);
+    const filter = this.filterStateManager.getFilterState(this.selectedField);
 
     if (filter && filter.type === 'byCondition') {
       // 设置操作符
@@ -127,32 +139,87 @@ export class ConditionFilter {
       if (filter.condition !== undefined && this.valueInput) {
         if (Array.isArray(filter.condition)) {
           this.valueInput.value = String(filter.condition[0]);
-          this.valueInputMax.value = String(filter.condition[1]);
+          if (this.valueInputMax) {
+            this.valueInputMax.value = String(filter.condition[1]);
+          }
         } else {
           this.valueInput.value = String(filter.condition);
+          if (this.valueInputMax) {
+            this.valueInputMax.value = '';
+          }
         }
       }
+
+      // 同步UI状态：根据当前操作符显示/隐藏范围输入框
+      this.syncUIState();
     } else {
       // 重置为默认值
-      if (this.operatorSelect) {
-        this.operatorSelect.selectedIndex = 0;
-      }
-      if (this.valueInput) {
-        this.valueInput.value = '';
-      }
+      this.reset();
     }
   }
 
   /**
-   * 处理分类切换
+   * 重置筛选条件到默认状态
    */
-  private handleCategoryChange(): void {
-    if (!this.categorySelect) {
+  reset(): void {
+    // 重置操作符选择
+    if (this.operatorSelect) {
+      this.operatorSelect.selectedIndex = 0;
+    }
+
+    // 重置所有输入框
+    if (this.valueInput) {
+      this.valueInput.value = '';
+      this.valueInput.placeholder = '请输入筛选值';
+    }
+
+    if (this.valueInputMax) {
+      this.valueInputMax.value = '';
+    }
+
+    // 重置分类选择
+    this.currentCategory = FilterOperatorCategory.ALL;
+    if (this.categorySelect) {
+      this.categorySelect.value = FilterOperatorCategory.ALL;
+    }
+
+    // 更新操作符选项
+    this.updateOperatorOptions();
+
+    // 同步UI状态
+    this.syncUIState();
+  }
+
+  /**
+   * 同步UI状态：根据当前选择的操作符调整UI显示
+   */
+  private syncUIState(): void {
+    if (!this.operatorSelect || !this.valueInput) {
       return;
     }
 
-    this.currentCategory = this.categorySelect.value as FilterOperatorCategory;
-    this.updateOperatorOptions();
+    const selectedOperator = this.operatorSelect.value as FilterOperator;
+    const andLabel = this.valueInput.nextElementSibling as HTMLElement;
+
+    if (this.isRangeOperator(selectedOperator)) {
+      // 显示范围输入相关UI
+      this.valueInput.placeholder = '最小值';
+      if (this.valueInputMax) {
+        this.valueInputMax.style.display = 'inline-block';
+      }
+      if (andLabel) {
+        andLabel.style.display = 'inline-block';
+      }
+    } else {
+      // 隐藏范围输入相关UI
+      this.valueInput.placeholder = '请输入筛选值';
+      if (this.valueInputMax) {
+        this.valueInputMax.style.display = 'none';
+      }
+      if (andLabel) {
+        andLabel.style.display = 'none';
+      }
+    }
   }
 
   private isBooleanOperator(operator: FilterOperator): boolean {
@@ -189,9 +256,6 @@ export class ConditionFilter {
       const minValue = conditionValue;
       let maxValue: string | number = this.valueInputMax.value.trim();
 
-      console.log('minValue', minValue);
-      console.log('maxValue', maxValue);
-
       // 尝试将最大值也转换为数字
       if (this.currentCategory === FilterOperatorCategory.NUMBER) {
         const numMaxValue = parseFloat(maxValue);
@@ -205,7 +269,6 @@ export class ConditionFilter {
 
       // 使用数组形式传递范围值
       conditionValue = [minValue, maxValue];
-      console.log('conditionValue', conditionValue);
     }
 
     if (!conditionValue && conditionValue !== false && conditionValue !== 0 && !this.isBooleanOperator(operator)) {

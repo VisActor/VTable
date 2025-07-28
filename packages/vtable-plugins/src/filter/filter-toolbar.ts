@@ -183,7 +183,7 @@ export class FilterToolbar {
     this.updateSelectedField(field);
 
     // 根据当前筛选配置自动选择正确的筛选标签页
-    const currentFilter = this.filterStateManager.getState().filters.get(field);
+    const currentFilter = this.filterStateManager.getFilterState(field);
     if (currentFilter && currentFilter.type === 'byCondition') {
       this.onTabSwitch('byCondition');
     } else {

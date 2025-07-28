@@ -37,7 +37,7 @@ export class ValueFilter {
 
   setSelectedField(fieldId: string): void {
     this.selectedField = fieldId;
-    const state: FilterConfig = this.filterStateManager.getState().filters.get(fieldId);
+    const state: FilterConfig = this.filterStateManager.getFilterState(fieldId);
     if (!state || !state.enable) {
       // 除了已经筛选的列，其他情况都重新收集
       this.collectUniqueColumnValues(fieldId);
@@ -68,8 +68,7 @@ export class ValueFilter {
   }
 
   private onValueSelect(fieldId: string, value: any, selected: boolean): void {
-    const state = this.filterStateManager.getState();
-    const filter = state.filters.get(fieldId);
+    const filter = this.filterStateManager.getFilterState(fieldId);
     if (!filter) {
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
@@ -95,8 +94,7 @@ export class ValueFilter {
   }
 
   private toggleSelectAll(fieldId: string, selected: boolean): void {
-    const state = this.filterStateManager.getState();
-    const filter = state.filters.get(fieldId);
+    const filter = this.filterStateManager.getFilterState(fieldId);
     const valuesToUpdate = selected ? this.uniqueKeys.get(fieldId)?.map(item => item.value) || [] : [];
     if (!filter) {
       this.filterStateManager.dispatch({
@@ -139,7 +137,7 @@ export class ValueFilter {
    * 根据当前表格中的数据，更新 filter 的被选状态 selectedKeys
    */
   private initFilterStateFromTableData(fieldId: string): void {
-    const filter = this.filterStateManager.getState().filters.get(fieldId);
+    const filter = this.filterStateManager.getFilterState(fieldId);
     const records = this.table.internalProps.dataSource.source as any[]; // TODO: 需要进一步调查
     const selectedKeys = new Set();
     records.forEach(record => {
@@ -223,7 +221,7 @@ export class ValueFilter {
   }
 
   applyFilter(fieldId: string = this.selectedField): void {
-    const selectedKeys = this.filterStateManager.getState().filters.get(fieldId)?.values || [];
+    const selectedKeys = this.filterStateManager.getFilterState(fieldId)?.values || [];
     if (selectedKeys.length > 0 && selectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
@@ -305,7 +303,7 @@ export class ValueFilter {
     this.valueFilterOptionList.delete(field);
     this.valueFilterOptionList.set(field, []);
 
-    const selectedValues = this.filterStateManager.getState().filters.get(field)?.values || [];
+    const selectedValues = this.filterStateManager.getFilterState(field)?.values || [];
     const itemDomList: ValueFilterOptionDom[] = [];
     this.uniqueKeys.get(field)?.forEach(({ value, count }) => {
       const itemDiv = document.createElement('div');

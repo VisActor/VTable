@@ -1,5 +1,5 @@
 import type * as VTable from '@visactor/vtable';
-import type { FilterState, FilterAction } from './types';
+import type { FilterState, FilterAction, FilterConfig } from './types';
 import { FilterActionType } from './types';
 import type { FilterEngine } from './filter-engine';
 import type { FilterPlugin } from '../filter';
@@ -22,8 +22,8 @@ export class FilterStateManager {
     this.table = table;
   }
 
-  getState() {
-    return { ...this.state };
+  getFilterState(fieldId?: string): FilterConfig {
+    return this.state.filters.get(fieldId);
   }
 
   dispatch(action: FilterAction) {
