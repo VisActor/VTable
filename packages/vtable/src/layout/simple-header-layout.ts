@@ -140,7 +140,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             title: rowSeriesNumber.title,
             define: merge({ field: '_vtable_rowSeries_number' }, rowSeriesNumber),
             cellType: rowSeriesNumber.cellType ?? 'text',
-            headerType: rowSeriesNumber.cellType === 'checkbox' ? 'checkbox' : 'text',
+            headerType: rowSeriesNumber.headerType ?? (rowSeriesNumber.cellType === 'checkbox' ? 'checkbox' : 'text'),
             style: rowSeriesNumber.style,
             width: rowSeriesNumber.width,
             format: rowSeriesNumber.format,

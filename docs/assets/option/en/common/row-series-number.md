@@ -47,6 +47,12 @@ ${prefix} cellType('text')
 
 Row number cell type, default is `text`. Other formats to be determined
 
+${prefix} headerType('text')
+
+Table header cell type, default is `text`. Other formats to be determined.
+
+if cellType is checkbox, headerType is not configed, then the checkbox will be displayed in the group title.
+
 ${prefix} dragOrder(boolean)
 
 Whether the row serial number sequence can be dragged. The default is false. If set to true, the icon at the dragging position will be displayed, and you can drag and drop on the icon to change its position. If you need to replace the icon, you can configure it yourself. Please refer to the tutorial: https://visactor.io/vtable/guide/custom_define/custom_icon for the chapter on resetting function icons.

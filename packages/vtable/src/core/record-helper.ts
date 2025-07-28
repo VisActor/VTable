@@ -5,7 +5,7 @@ import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
-import type { SortState } from '../ts-types';
+import type { ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 
 /**
@@ -323,11 +323,11 @@ function getCellUpdateType(
   if (oldCellUpdateType === 'group') {
     return oldCellUpdateType;
   }
-  if (oldCellUpdateType === 'sort' && !table.options.groupBy) {
+  if (oldCellUpdateType === 'sort' && !(table.internalProps as ListTableProtected).groupBy) {
     return oldCellUpdateType;
   }
   let cellUpdateType: CellUpdateType = 'normal';
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     cellUpdateType = 'group';
   } else if (!table.isHeader(col, row) && (table.dataSource as any).lastOrderField) {
     const field = table.getBodyField(col, row);
@@ -361,7 +361,7 @@ export function sortRecords(table: ListTable) {
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
 export function listTableAddRecord(record: any, recordIndex: number | number[], table: ListTable) {
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
@@ -485,7 +485,7 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
 export function listTableAddRecords(records: any[], recordIndex: number | number[], table: ListTable) {
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
@@ -620,7 +620,7 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
  */
 export function listTableDeleteRecords(recordIndexs: number[] | number[][], table: ListTable) {
   if (recordIndexs?.length > 0) {
-    if (table.options.groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).deleteRecordsForGroup?.(recordIndexs);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
@@ -761,7 +761,7 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
  */
 export function listTableUpdateRecords(records: any[], recordIndexs: (number | number[])[], table: ListTable) {
   if (recordIndexs?.length > 0) {
-    if (table.options.groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();

@@ -47,6 +47,12 @@ ${prefix} cellType('text')
 
 行序号单元格类型，默认为`text`。其他格式待定
 
+${prefix} headerType('text')
+
+表头单元格类型，默认为`text`。其他格式待定.
+
+如果cellType为checkbox，headerType没有配置的情况下，默认显示类型将同cellType，则会在分组标题中显示checkbox。
+
 ${prefix} dragOrder(boolean)
 
 是否可拖拽行序号顺序，默认为 false。如果设置为 true，会显示拖拽位置的图标，交互在该图标上可以拖拽来换位。如果需要替换该图标可以自行配置。可参考教程：https://visactor.io/vtable/guide/custom_define/custom_icon 中重置功能图标的章节。
