@@ -364,6 +364,7 @@ const option = {
     taskGroup.add(leftGroup);
     const info = createText({
       text: `${record.children.length} 条记录`,
+      stroke: 'red',
       fontSize: 12
     });
     taskGroup.add(info);
