@@ -1,5 +1,5 @@
 {{ target: SelectedCellEvent }}
-Definition of the event callback function corresponding parameter type SelectedCellEvent:
+Определение типа параметра функции обратного вызова события SelectedCellEvent:
 
 ```
 {
@@ -11,5 +11,5 @@ Definition of the event callback function corresponding parameter type SelectedC
   ranges: CellRange[];
 }
 ```
-Where:
+Где:
 {{ use: CellRange() }}

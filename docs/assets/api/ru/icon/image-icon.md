@@ -1,16 +1,16 @@
 {{ target: image-icon }}
 
 ${prefix} type ('image')
-The content type of the icon is 'image'.
+Тип содержимого иконки - 'image'.
 
 ${prefix} src (string)
-Image URL
+URL изображения
 
 ${prefix} shape ('circle' | 'square')
-Image cropping shape
+Форма обрезки изображения
 
 ${prefix} isGif (boolean)
-whether it is a gif image
+является ли gif-изображением
 
 {{ use: base-icon(
     prefix = ${prefix}

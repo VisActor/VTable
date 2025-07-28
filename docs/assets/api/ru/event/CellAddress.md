@@ -1,5 +1,5 @@
 {{ target: CellAddress }}
-The type definition for CellAddress is:
+Определение типа для CellAddress:
 ```
 interface CellAddress {
   col: number;
@@ -8,7 +8,7 @@ interface CellAddress {
 ```
 
 {{ target: CellAddressWithBound }}
-The type definition for CellAddressWithBound is:
+Определение типа для CellAddressWithBound:
 ```
 interface CellAddressWithBound {
   col: number;

@@ -1,21 +1,21 @@
 {{ target: CellInfo }}
-CellInfo type is defined as:
+Тип CellInfo определен как:
 ```
 {
   col: number;
   row: number;
   title?: string;
-  /**Dimension name */
+  /**Имя измерения */
   field?: string;
-  /**Cell row header paths */
+  /**Пути заголовков ячеек строк */
   cellHeaderPaths?: ICellHeaderPaths;
-  /**Cell position */
+  /**Позиция ячейки */
   cellRange?: RectProps;
-  /**Entire data - original data */
+  /**Полные данные - исходные данные */
   originData?: any;
-  /**Value after format */
+  /**Значение после форматирования */
   value?: string|number;
-  /**Original value */
+  /**Исходное значение */
   dataValue?: string|number;
   cellLocation?: CellLocation;
   cellType?: string;

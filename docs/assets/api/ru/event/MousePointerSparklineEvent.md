@@ -1,5 +1,5 @@
 {{ target: MousePointerSparklineEvent }}
-Definition of the event callback function's corresponding argument type MousePointerSparklineEvent:
+Определение типа аргумента функции обратного вызова события MousePointerSparklineEvent:
 
 ```
 {
@@ -10,17 +10,17 @@ Definition of the event callback function's corresponding argument type MousePoi
   y?: number;
   ranges: CellRange[];
   title?: string;
-  /** Dimension name */
+  /** Имя измерения */
   field?: string;
-  /** Cell row header paths */
+  /** Пути заголовков строк ячеек */
   cellHeaderPaths?: ICellHeaderPaths;
-  /** Position of the cell */
+  /** Позиция ячейки */
   cellRange?: RectProps;
-  /** Entire data - Raw data */
+  /** Полные данные - исходные данные */
   originData?: any;
-  /** Formatted value */
+  /** Отформатированное значение */
   value?: string|number;
-  /** Original value */
+  /** Исходное значение */
   dataValue?: string|number;
   cellLocation?: CellLocation;
   cellType?: string;
@@ -35,7 +35,7 @@ Definition of the event callback function's corresponding argument type MousePoi
 
 ```
 
-Among them:
+Среди них:
 {{ use: CellRange() }}
 {{ use: ICellHeaderPaths() }}
 {{ use: CellLocation() }}

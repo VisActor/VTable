@@ -1,5 +1,5 @@
 {{ target: RectProps }}
-The type definition of RectProps is:
+Определение типа RectProps:
 ```
 interface RectProps {
   left: number;

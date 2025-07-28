@@ -1,14 +1,14 @@
 {{ target: text-icon }}
 
 ${prefix} type ('text')
-The icon content type is 'text'.
+Тип содержимого иконки - 'text'.
 
 ${prefix} content (string)
-The content of text.
+Содержимое текста.
 
 {{ use: base-icon(
     prefix = ${prefix}
 ) }}
 
 ${prefix} style (ITextAttribute)
-The style of text. [ITextAttribute](https://www.visactor.com/vrender/option/Text#attribute)
+Стиль текста. [ITextAttribute](https://www.visactor.com/vrender/option/Text#attribute)

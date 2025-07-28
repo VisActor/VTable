@@ -1,10 +1,10 @@
 {{ target: table-events }}
 
-# events
+# События
 
-Form event list, you can listen to the required events according to the actual needs, to achieve customized business.
+Список событий формы. Вы можете прослушивать необходимые события в соответствии с фактическими потребностями для реализации настраиваемой бизнес-логики.
 
-Specific ways to use it:
+Конкретные способы использования:
 ``
 const tableInstance =new VTable.ListTable(options);
 
@@ -15,7 +15,7 @@ CLICK_CELL
 tableInstance.on(CLICK_CELL, (args) => console.log(CLICK_CELL, args));
 ``
 
-Supported event types:
+Поддерживаемые типы событий:
 
 `TABLE_EVENT_TYPE = {
   CLICK_CELL: 'click_cell',
@@ -58,7 +58,7 @@ Supported event types:
   SHOW_MENU: 'show_menu',
   HIDE_MENU: 'hide_menu',
   ICON_CLICK: 'icon_click',
-  // Pivot table-specific events
+  // События, специфичные для сводной таблицы
    DRILLMENU_CLICK: 'drillmenu_click',
   ......
 }`

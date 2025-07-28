@@ -1,6 +1,6 @@
 {{ target: CellRange }}
 
-The CellRange type is defined as:
+Тип CellRange определен как:
 ```
 interface CellRange {
   start: CellAddress;

@@ -1,61 +1,61 @@
 {{ target: base-icon }}
 
 ${prefix} type ('text' | 'svg' | 'path' | 'image')
-The content type of the icon, such as svg text. Can be used to restrict different types of property definitions.
+Тип содержимого иконки, такой как svg-текст. Может использоваться для ограничения определений различных типов свойств.
 
 ${prefix} width (number)
-The width of the icon.
+Ширина иконки.
 
 ${prefix} height (number)
-The height of the icon.
+Высота иконки.
 
 ${prefix} positionType (IconPosition)
-IconPosition enumeration type.
+Тип перечисления IconPosition.
 
 ```
 /**
-* Icon location
-* inlineFront: the front of the text content,
-* inlineEnd: after the text content
+* Расположение иконки
+* inlineFront: перед текстовым содержимым,
+* inlineEnd: после текстового содержимого
 *
 */
 export enum IconPosition {
-  /**Button on the left side of the cell and affected by padding */
+  /**Кнопка слева от ячейки, на которую влияет отступ */
   left = 'left',
-  /**The button on the right side of the cell is affected by padding, such as the pin chart */
+  /**Кнопка справа от ячейки, на которую влияет отступ, например график закрепления */
   right = 'right',
-  /**The icon fixed on the right side does not occupy space, is not affected by padding, and may cover the content, such as dropDown */
+  /**Иконка зафиксирована справа, не занимает место, не зависит от отступа и может покрывать содержимое, например dropDown */
   absoluteRight = 'absoluteRight',
-  /**The icon on the left side of the cell content block follows the text positioning and does not wrap with the text */
+  /**Иконка слева от блока содержимого ячейки следует позиционированию текста и не переносится с текстом */
   contentLeft = 'contentLeft',
-  /**The icon on the right side of the cell content block follows the text positioning and does not wrap with the text */
+  /**Иконка справа от блока содержимого ячейки следует позиционированию текста и не переносится с текстом */
   contentRight = 'contentRight',
-  /**Free positioning in the cell */
+  /**Свободное позиционирование в ячейке */
   absolute = 'absolute',
 
-  /**The icon in front of the text line content follows the text positioning and wraps with the text */
+  /**Иконка перед содержимым строки текста следует позиционированию текста и переносится с текстом */
   inlineFront = 'inlineFront',
-  /**The icon after the text line content, positioned with the text, and wrapped with the text. For example, the sort chart is placed in the first line of the text content */
+  /**Иконка после содержимого строки текста, позиционируется с текстом и переносится с текстом. Например, график сортировки размещается в первой строке текстового содержимого */
   inlineEnd = 'inlineEnd',
 }
 ```
 
 ${prefix} marginRight (number)
-The distance between the icon and the element on the right, or the distance between the icon and the cell boundary.
+Расстояние между иконкой и элементом справа, или расстояние между иконкой и границей ячейки.
 
 ${prefix} marginLeft (number)
-The distance between the icon and the element on the left, or the distance between the icon and the cell boundary.
+Расстояние между иконкой и элементом слева, или расстояние между иконкой и границей ячейки.
 
 ${prefix} name (string)
-The name of the icon, which will be used as the key for the internal cache.
+Имя иконки, которое будет использоваться в качестве ключа для внутреннего кэша.
 
 ${prefix} funcType (IconFuncTypeEnum)
 
-When resetting the icon inside VTable, you need to specify the functional type of the icon.
+При сбросе иконки внутри VTable необходимо указать функциональный тип иконки.
 
-Especially for functional icons with switchable states, please be sure to configure funcType, such as sorting function with funcType configured as sort, and name configured as sort_normal, sort_downward, or sort_upward. In this way, the corresponding icon inside can be accurately replaced.
+Особенно для функциональных иконок с переключаемыми состояниями обязательно настройте funcType, например для функции сортировки с funcType, настроенным как sort, и name, настроенным как sort_normal, sort_downward или sort_upward. Таким образом, соответствующая иконка внутри может быть точно заменена.
 
-IconFuncTypeEnum enumeration type definition:
+Определение типа перечисления IconFuncTypeEnum:
 
 ```
 enum IconFuncTypeEnum {
@@ -74,35 +74,35 @@ enum IconFuncTypeEnum {
 
 ${prefix} hover (Object)
 
-Responds to hover hotzone size and hover effect background color.
+Отвечает за размер горячей зоны наведения и цвет фона эффекта наведения.
 
 #${prefix} width (number)
-The width of the hover hotzone.
+Ширина горячей зоны наведения.
 
 #${prefix} height (number)
-The height of the hover hotzone.
+Высота горячей зоны наведения.
 
 #${prefix} bgColor (string)
-The background color for the hover effect.
+Цвет фона для эффекта наведения.
 
 #${prefix} image (string)
-The image for the hover effect.
+Изображение для эффекта наведения.
 
 ${prefix} cursor (string)
-The specific cursor style that appears when the mouse hovers over the icon.
+Конкретный стиль курсора, который появляется при наведении мыши на иконку.
 
 ${prefix} visibleTime ('always' | 'mouseenter_cell' | 'click_cell')
-Visibility, default is 'always'. Optional values are 'always', 'mouseenter_cell', or 'click_cell', etc. Suggestion: If you need to use 'mouseenter_cell' or 'click_cell', it is recommended to set positionTyle to absoluteRight (i.e., not occupying space), otherwise the occupied type will affect the visual display.
+Видимость, по умолчанию 'always'. Дополнительные значения - 'always', 'mouseenter_cell' или 'click_cell' и т.д. Предложение: Если вам нужно использовать 'mouseenter_cell' или 'click_cell', рекомендуется установить positionTyle в absoluteRight (т.е. не занимать место), иначе занимаемый тип повлияет на визуальное отображение.
 
 ${prefix} tooltip (Object)
-The tooltip, a description of the button. Currently only supports hover behavior.
+Всплывающая подсказка, описание кнопки. В настоящее время поддерживается только поведение наведения.
 
 #${prefix} title (string)
-The title of the tooltip.
+Заголовок всплывающей подсказки.
 
 #${prefix} placement (Placement)
-The position of the tooltip, optional values are top, left, right, or bottom.
-Placement enumeration type definition:
+Положение всплывающей подсказки, дополнительные значения: top, left, right или bottom.
+Определение типа перечисления Placement:
 
 ```
  enum Placement {
@@ -114,22 +114,22 @@ Placement enumeration type definition:
 ```
 
 #${prefix} style (Object)
-The style of the tooltip. If not configured, the theme style will be used.
+Стиль всплывающей подсказки. Если не настроен, будет использоваться стиль темы.
 
 ##${prefix} font (string)
-The font of the tooltip.
+Шрифт всплывающей подсказки.
 
 ##${prefix} color (string)
-The text color of the tooltip.
+Цвет текста всплывающей подсказки.
 
 ##${prefix} padding (number[])
-The padding of the tooltip. The format is [top, right, bottom, left].
+Отступ всплывающей подсказки. Формат: [top, right, bottom, left].
 
 ##${prefix} bgColor (string)
-The background color of the tooltip.
+Цвет фона всплывающей подсказки.
 
 ##${prefix} arrowMark (boolean)
-Whether to show the arrow in the tooltip.
+Показывать ли стрелку в всплывающей подсказке.
 
 ${prefix} interactive (boolean)
-Whether it is interactive, default is true. Currently, the known non-interactive buttons are dropdown state menus.
+Интерактивна ли, по умолчанию true. В настоящее время известные неинтерактивные кнопки - это меню состоянияий dropdown.

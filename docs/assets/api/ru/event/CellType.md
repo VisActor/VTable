@@ -1,5 +1,5 @@
 {{ target: CellLocation }}
-CellLocation is defined as:
+CellLocation определен как:
 ```
 type CellLocation = 'body' | 'rowHeader' | 'columnHeader' | 'cornerHeader';
 ```

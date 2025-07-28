@@ -1,5 +1,5 @@
 {{ target: DrillMenuEventInfo }}
-The type definition for DrillMenuEventInfo is:
+Определение типа для DrillMenuEventInfo:
 ```
  {
   dimensionKey: string | number;

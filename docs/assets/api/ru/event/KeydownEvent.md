@@ -1,5 +1,5 @@
 {{ target: KeydownEvent }}
-The definition of KeydownEvent type is:
+Определение типа KeydownEvent:
 ```
 {
   keyCode: number;

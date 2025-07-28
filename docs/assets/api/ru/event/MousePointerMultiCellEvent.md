@@ -1,5 +1,5 @@
 {{ target: MousePointerMultiCellEvent }}
-Event callback function corresponding parameter type MousePointerMultiCellEvent definition:
+Определение типа параметра функции обратного вызова события MousePointerMultiCellEvent:
 
 ```
 {
@@ -10,17 +10,17 @@ Event callback function corresponding parameter type MousePointerMultiCellEvent 
   y?: number;
   ranges: CellRange[];
   title?: string;
-  /**Dimension name */
+  /**Имя измерения */
   field?: string;
-  /**Cell row header paths */
+  /**Пути заголовков строк ячеек */
   cellHeaderPaths?: ICellHeaderPaths;
-  /**Cell position */
+  /**Позиция ячейки */
   cellRange?: RectProps;
-  /**Entire data - original data */
+  /**Полные данные - исходные данные */
   originData?: any;
-  /**Formatted value */
+  /**Отформатированное значение */
   value?: string|number;
-  /**Original value */
+  /**Исходное значение */
   dataValue?: string|number;
   cellLocation?: CellLocation;
   cellType?: string;
@@ -33,7 +33,7 @@ Event callback function corresponding parameter type MousePointerMultiCellEvent 
 
 ```
 
-Among them:
+Среди них:
 {{ use: CellRange() }}
 {{ use: ICellHeaderPaths() }}
 {{ use: CellLocation() }}

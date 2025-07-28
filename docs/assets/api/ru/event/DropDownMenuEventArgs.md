@@ -1,5 +1,5 @@
 {{ target: DropDownMenuEventArgs }}
-Definition of event callback function parameter type DropDownMenuEventArgs:
+Определение типа параметра функции обратного вызова события DropDownMenuEventArgs:
 
 ```
   {
@@ -9,9 +9,9 @@ Definition of event callback function parameter type DropDownMenuEventArgs:
     text: string;
     highlight: boolean;
     field?: string;
-    /**formatted value */
+    /**отформатированное значение */
     value?: string;
-    /**original value */
+    /**исходное значение */
     dataValue?: string;
     subIndex?: number;
 
@@ -24,6 +24,6 @@ Definition of event callback function parameter type DropDownMenuEventArgs:
   }
 ```
 
-In which:
+В котором:
 {{ use: ICellHeaderPaths() }}
 {{ use: CellLocation() }}
