@@ -1053,7 +1053,7 @@ export interface ListTableProtected extends IBaseTableProtected {
   groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
   groupTitleCustomLayout?: ICustomLayout;
   enableTreeStickCell?: boolean;
-  titleCheckbox?: boolean;
+  groupTitleCheckbox?: boolean;
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {

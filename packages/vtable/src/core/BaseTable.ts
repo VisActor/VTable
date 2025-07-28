@@ -423,7 +423,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
 
     (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
-    (internalProps as ListTableProtected).titleCheckbox = groupConfig?.titleCheckbox;
+    (internalProps as ListTableProtected).groupTitleCheckbox =
+      groupConfig?.titleCheckbox ?? !!rowSeriesNumber?.enableTreeCheckbox;
     (internalProps as ListTableProtected).groupTitleFieldFormat =
       groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
     (internalProps as ListTableProtected).groupTitleCustomLayout =
@@ -2618,7 +2619,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.cellTextOverflows = {};
 
     (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
-    (internalProps as ListTableProtected).titleCheckbox = groupConfig?.titleCheckbox;
+    (internalProps as ListTableProtected).groupTitleCheckbox = groupConfig?.titleCheckbox;
     (internalProps as ListTableProtected).groupTitleFieldFormat =
       groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
     (internalProps as ListTableProtected).groupTitleCustomLayout =
