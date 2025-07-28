@@ -168,13 +168,15 @@ export class Chart extends Rect {
           stage.needRender = false;
           chartStage.resumeRender();
         },
-        afterClearScreen(drawParams: any) {
-          const { context, layer, viewBox } = drawParams;
-          if (layer.main) {
-            context.beginPath();
-            context.fillStyle = hoverColor;
-            context.rect(viewBox.x1, viewBox.y1, viewBox.x2 - viewBox.x1, viewBox.y2 - viewBox.y1);
-            context.fill();
+        renderHooks: {
+          afterClearRect(drawParams: any) {
+            const { context, layer, viewBox } = drawParams;
+            if (layer.main && drawParams.clear) {
+              context.beginPath();
+              context.fillStyle = hoverColor;
+              context.rect(viewBox.x1, viewBox.y1, viewBox.x2 - viewBox.x1, viewBox.y2 - viewBox.y1);
+              context.fill();
+            }
           }
         }
       })

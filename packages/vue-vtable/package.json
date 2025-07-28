@@ -62,7 +62,7 @@
   "devDependencies": {
     "@arco-design/web-vue": "^2.11.0",
     "cross-env": "^7.0.3",
-    "@visactor/vchart": "2.0.0-alpha.1",
+    "@visactor/vchart": "2.0.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
