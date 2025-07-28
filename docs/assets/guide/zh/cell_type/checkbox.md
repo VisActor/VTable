@@ -24,7 +24,7 @@ checkbox 复选框类型在配置中的特有配置项如下：
   cellType: 'checkbox',//指定body单元格显示为复选框
   field: 'check',
   checked: true,
-  disbaled: false
+  disable: false
 }
 ```
 
