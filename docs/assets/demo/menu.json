@@ -12,7 +12,8 @@
           "path": "100W",
           "title": {
             "zh": "100W条数据性能展示",
-            "en": "100W data performance display"
+            "en": "100W data performance display",
+            "ru": "Отображение производительности 100W данных"
           },
           "meta": {
             "title": "100W data performance display",
@@ -28,7 +29,8 @@
           "path": "async-data",
           "title": {
             "zh": "异步懒加载数据源",
-            "en": "async lazy load data"
+            "en": "async lazy load data",
+            "ru": "асинхронная ленивая загрузка данных"
           }
         }
       ]
@@ -37,14 +39,16 @@
       "path": "table-type",
       "title": {
         "zh": "表格类型",
-        "en": "table-type"
+        "en": "table-type",
+        "ru": "тип таблицы"
       },
       "children": [
         {
           "path": "list-table",
           "title": {
             "zh": "基本表格",
-            "en": "List Table"
+            "en": "List Table",
+            "ru": "Список таблиц"
           },
           "meta": {
             "title": "List Table",
