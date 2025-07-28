@@ -1,12 +1,12 @@
-# VTable Types and Table Classes
+# Типы VTable и классы таблиц
 
-VTable provides three main table types, each designed for different use cases and data visualization needs.
+VTable предоставляет три основных типа таблиц, каждый из которых предназначен для различных случаев использования и потребностей визуализации данных.
 
 ## ListTable
 
-The `ListTable` is the most common table type, designed for displaying flat, tabular data in rows and columns.
+`ListTable` является наиболее распространенным типом таблицы, предназначенным для отображения плоских табличных данных в строках и столбцах.
 
-### Basic Usage
+### Базовое использование
 
 ```javascript
 import { ListTable } from '@visactor/vtable';
@@ -15,41 +15,41 @@ const listTable = new ListTable({
   container: document.getElementById('container'),
   columns: [
     { field: 'id', caption: 'ID', width: 100 },
-    { field: 'name', caption: 'Name', width: 200 },
-    { field: 'value', caption: 'Value', width: 150 }
+    { field: 'name', caption: 'Имя', width: 200 },
+    { field: 'value', caption: 'Значение', width: 150 }
   ],
   records: [
-    { id: 1, name: 'Item 1', value: 100 },
-    { id: 2, name: 'Item 2', value: 200 }
+    { id: 1, name: 'Элемент 1', value: 100 },
+    { id: 2, name: 'Элемент 2', value: 200 }
   ]
 });
 ```
 
-### Key Features
+### Ключевые функции
 
-**Data Binding**
-- Supports flat data structures
-- Direct field mapping to columns
-- Automatic data type detection
+**Привязка данных**
+- Поддерживает плоские структуры данных
+- Прямое сопоставление полей со столбцами
+- Автоматическое определение типа данных
 
-**Column Types**
-- Text columns with formatting
-- Number columns with alignment
-- Date columns with custom formats
-- Link columns for navigation
-- Image columns for visual content
-- Progress bar columns for metrics
-- Chart columns for embedded visualizations
+**Типы столбцов**
+- Текстовые столбцы с форматированием
+- Числовые столбцы с выравниванием
+- Столбцы дат с пользовательскими форматами
+- Столбцы ссылок для навигации
+- Столбцы изображений для визуального контента
+- Столбцы индикаторов прогресса для метрик
+- Столбцы диаграмм для встроенных визуализаций
 
-**Interactive Features**
-- Row and cell selection
-- Column sorting (single and multi-column)
-- Row filtering
-- Inline editing
-- Resizable columns
-- Frozen columns
+**Интерактивные функции**
+- Выбор строк и ячеек
+- Сортировка столбцов (одиночная и многостолбцовая)
+- Фильтрация строк
+- Встроенное редактирование
+- Изменяемый размер столбцов
+- Закрепленные столбцы
 
-### Advanced ListTable Configuration
+### Продвинутая конфигурация ListTable
 
 ```javascript
 const advancedListTable = new ListTable({
@@ -57,7 +57,7 @@ const advancedListTable = new ListTable({
   columns: [
     {
       field: 'employee',
-      caption: 'Employee',
+      caption: 'Сотрудник',
       width: 200,
       style: {
         fontWeight: 'bold',
@@ -66,7 +66,7 @@ const advancedListTable = new ListTable({
     },
     {
       field: 'progress',
-      caption: 'Project Progress',
+      caption: 'Прогресс проекта',
       width: 150,
       cellType: 'progressbar',
       style: {
@@ -76,7 +76,7 @@ const advancedListTable = new ListTable({
     },
     {
       field: 'chart',
-      caption: 'Performance',
+      caption: 'Производительность',
       width: 200,
       cellType: 'chart',
       chartSpec: {
@@ -102,9 +102,9 @@ const advancedListTable = new ListTable({
 
 ## PivotTable
 
-The `PivotTable` is designed for multidimensional data analysis, allowing you to summarize and aggregate data across different dimensions.
+`PivotTable` предназначена для многомерного анализа данных, позволяя суммировать и агрегировать данные по различным измерениям.
 
-### Basic Usage
+### Базовое использование
 
 ```javascript
 import { PivotTable } from '@visactor/vtable';
@@ -117,13 +117,13 @@ const pivotTable = new PivotTable({
   indicators: [
     {
       indicatorKey: 'sales',
-      caption: 'Total Sales',
+      caption: 'Общие продажи',
       width: 'auto',
       format: (rec) => '$' + Number(rec.sales).toLocaleString()
     },
     {
       indicatorKey: 'profit',
-      caption: 'Profit',
+      caption: 'Прибыль',
       width: 'auto',
       style: {
         color: (args) => args.value > 0 ? 'green' : 'red'
@@ -133,22 +133,22 @@ const pivotTable = new PivotTable({
 });
 ```
 
-### Key Concepts
+### Основные понятия
 
-**Dimensions**
-- **Rows**: Fields that create row headers (categories for grouping data vertically)
-- **Columns**: Fields that create column headers (categories for grouping data horizontally)
-- **Indicators**: Numeric fields that are aggregated and displayed in cells
+**Измерения**
+- **Строки**: Поля, которые создают заголовки строк (категории для группировки данных по вертикали)
+- **Столбцы**: Поля, которые создают заголовки столбцов (категории для группировки данных по горизонтали)
+- **Индикаторы**: Числовые поля, которые агрегируются и отображаются в ячейках
 
-**Aggregation Functions**
-- `SUM`: Total of all values
-- `AVG`: Average of all values
-- `COUNT`: Count of records
-- `MAX`: Maximum value
-- `MIN`: Minimum value
-- Custom aggregation functions
+**Функции агрегации**
+- `SUM`: Сумма всех значений
+- `AVG`: Среднее значение всех значений
+- `COUNT`: Количество записей
+- `MAX`: Максимальное значение
+- `MIN`: Минимальное значение
+- Пользовательские функции агрегации
 
-### Advanced PivotTable Features
+### Продвинутые функции PivotTable
 
 ```javascript
 const advancedPivotTable = new PivotTable({
@@ -157,7 +157,7 @@ const advancedPivotTable = new PivotTable({
   rows: [
     {
       dimensionKey: 'region',
-      caption: 'Sales Region',
+      caption: 'Регион продаж',
       width: 'auto',
       headerStyle: {
         bgColor: '#4472c4',
@@ -167,21 +167,21 @@ const advancedPivotTable = new PivotTable({
     },
     {
       dimensionKey: 'category',
-      caption: 'Product Category',
+      caption: 'Категория продукта',
       width: 'auto'
     }
   ],
   columns: [
     {
       dimensionKey: 'quarter',
-      caption: 'Quarter',
+      caption: 'Квартал',
       width: 'auto'
     }
   ],
   indicators: [
     {
       indicatorKey: 'sales',
-      caption: 'Revenue',
+      caption: 'Выручка',
       width: 120,
       format: (rec) => '$' + Number(rec.sales).toLocaleString(),
       aggregation: 'SUM',
@@ -214,18 +214,18 @@ const advancedPivotTable = new PivotTable({
 });
 ```
 
-**Interactive Features**
-- Drill-down/drill-up functionality
-- Dynamic dimension reordering
-- Filter and sort by dimensions
-- Expand/collapse hierarchies
-- Export to various formats
+**Интерактивные функции**
+- Функциональность детализации/свертывания
+- Динамическое изменение порядка измерений
+- Фильтрация и сортировка по измерениям
+- Развертывание/свертывание иерархий
+- Экспорт в различные форматы
 
 ## PivotChart
 
-The `PivotChart` combines the analytical power of pivot tables with rich chart visualizations.
+`PivotChart` сочетает аналитическую мощь сводных таблиц с богатой визуализацией диаграмм.
 
-### Basic Usage
+### Базовое использование
 
 ```javascript
 import { PivotChart } from '@visactor/vtable';
@@ -238,7 +238,7 @@ const pivotChart = new PivotChart({
   indicators: [
     {
       indicatorKey: 'sales',
-      caption: 'Sales Amount',
+      caption: 'Сумма продаж',
       width: 'auto'
     }
   ],
@@ -249,26 +249,26 @@ const pivotChart = new PivotChart({
 });
 ```
 
-### Chart Integration
+### Интеграция диаграмм
 
-**Built-in Chart Types**
-- Bar charts
-- Line charts
-- Area charts
-- Pie charts
-- Scatter plots
-- Custom chart types
+**Встроенные типы диаграмм**
+- Столбчатые диаграммы
+- Линейные диаграммы
+- Диаграммы с областями
+- Круговые диаграммы
+- Точечные диаграммы
+- Пользовательские типы диаграмм
 
-**Chart Configuration**
+**Конфигурация диаграмм**
 ```javascript
 const pivotChart = new PivotChart({
-  // ... other options
+  // ... другие опции
   defaultHeaderRowHeight: 50,
-  defaultRowHeight: 200, // Accommodate chart height
+  defaultRowHeight: 200, // Размещение высоты диаграммы
   indicators: [
     {
       indicatorKey: 'sales',
-      caption: 'Monthly Sales',
+      caption: 'Месячные продажи',
       width: 300,
       chartSpec: {
         type: 'bar',
@@ -298,78 +298,78 @@ const pivotChart = new PivotChart({
 });
 ```
 
-### Advanced Chart Features
+### Продвинутые функции диаграмм
 
-**Interactive Charts**
-- Hover tooltips
-- Click events
-- Zoom and pan
-- Brush selection
-- Animation effects
+**Интерактивные диаграммы**
+- Всплывающие подсказки при наведении
+- События клика
+- Масштабирование и панорамирование
+- Выбор области
+- Эффекты анимации
 
-**Dynamic Data Binding**
+**Динамическая привязка данных**
 ```javascript
-// Chart data updates automatically with pivot data
+// Данные диаграммы обновляются автоматически с данными сводной таблицы
 pivotChart.on('pivot_sort_click', (args) => {
-  console.log('Pivot sorted, charts will update automatically');
+  console.log('Сводка отсортирована, диаграммы обновятся автоматически');
 });
 
 pivotChart.on('drill_menu_click', (args) => {
-  console.log('Drill down performed, chart data refreshed');
+  console.log('Выполнена детализация, данные диаграммы обновлены');
 });
 ```
 
-## Choosing the Right Table Type
+## Выбор правильного типа таблицы
 
-### Use ListTable When:
-- Displaying flat, tabular data
-- Need simple sorting and filtering
-- Working with records that don't require aggregation
-- Building dashboards with detailed views
-- Creating data entry forms
+### Используйте ListTable когда:
+- Отображаете плоские табличные данные
+- Нужна простая сортировка и фильтрация
+- Работаете с записями, которые не требуют агрегации
+- Создаете панели управления с детальными представлениями
+- Создаете формы ввода данных
 
-### Use PivotTable When:
-- Analyzing multidimensional data
-- Need to aggregate and summarize information
-- Creating business intelligence reports
-- Comparing data across different categories
-- Building analytical dashboards
+### Используйте PivotTable когда:
+- Анализируете многомерные данные
+- Нужно агрегировать и суммировать информацию
+- Создаете отчеты бизнес-аналитики
+- Сравниваете данные по различным категориям
+- Создаете аналитические панели управления
 
-### Use PivotChart When:
-- Combining tabular analysis with visual representation
-- Need both detailed data and trend visualization
-- Creating executive dashboards
-- Presenting data to non-technical stakeholders
-- Building interactive data exploration tools
+### Используйте PivotChart когда:
+- Сочетаете табличный анализ с визуальным представлением
+- Нужны как детальные данные, так и визуализация трендов
+- Создаете исполнительные панели управления
+- Представляете данные нетехническим заинтересованным сторонам
+- Создаете интерактивные инструменты исследования данных
 
-## Migration Between Table Types
+## Миграция между типами таблиц
 
-### Converting ListTable to PivotTable
+### Преобразование ListTable в PivotTable
 
 ```javascript
-// From ListTable
+// Из ListTable
 const listTable = new ListTable({
   records: salesData,
   columns: [
-    { field: 'region', caption: 'Region' },
-    { field: 'sales', caption: 'Sales' }
+    { field: 'region', caption: 'Регион' },
+    { field: 'sales', caption: 'Продажи' }
   ]
 });
 
-// To PivotTable
+// В PivotTable
 const pivotTable = new PivotTable({
   records: salesData,
   rows: ['region'],
   indicators: [
-    { indicatorKey: 'sales', caption: 'Total Sales' }
+    { indicatorKey: 'sales', caption: 'Общие продажи' }
   ]
 });
 ```
 
-### Sharing Configuration Between Types
+### Общая конфигурация между типами
 
 ```javascript
-// Common configuration
+// Общая конфигурация
 const commonConfig = {
   container: document.getElementById('container'),
   records: data,
@@ -378,7 +378,7 @@ const commonConfig = {
   select: { mode: 'cell' }
 };
 
-// Apply to different table types
+// Применение к разным типам таблиц
 const listTable = new ListTable({
   ...commonConfig,
   columns: listColumns
@@ -391,21 +391,21 @@ const pivotTable = new PivotTable({
 });
 ```
 
-## Performance Considerations
+## Соображения производительности
 
-### ListTable Performance
-- Virtual scrolling for large datasets
-- Lazy loading for remote data
-- Column virtualization for wide tables
+### Производительность ListTable
+- Виртуальная прокрутка для больших наборов данных
+- Ленивая загрузка для удаленных данных
+- Виртуализация столбцов для широких таблиц
 
-### PivotTable Performance
-- Data aggregation optimization
-- Hierarchical data caching
-- Progressive loading for large dimensions
+### Производительность PivotTable
+- Оптимизация агрегации данных
+- Кэширование иерархических данных
+- Постепенная загрузка для больших измерений
 
-### PivotChart Performance
-- Chart rendering optimization
-- Data sampling for large datasets
-- Efficient chart updates during interaction
+### Производительность PivotChart
+- Оптимизация рендеринга диаграмм
+- Выборка данных для больших наборов данных
+- Эффективные обновления диаграмм при взаимодействии
 
-Each table type is optimized for its specific use case, ensuring optimal performance across different scenarios.
+Каждый тип таблицы оптимизирован для своего конкретного случая использования, обеспечивая оптимальную производительность в различных сценариях.
