@@ -117,7 +117,8 @@
           "path": "pivot-analysis-table",
           "title": {
             "zh": "透视分析表格",
-            "en": "Pivot Analysis Table"
+            "en": "Pivot Analysis Table",
+            "ru": "Таблица сводного анализа"
           },
           "meta": {
             "title": "Pivot Analysis Table",
@@ -133,7 +134,8 @@
           "path": "pivot-analysis-table-tree",
           "title": {
             "zh": "透视表行头树形展示",
-            "en": "Pivot Table Row Header Tree Mode"
+            "en": "Pivot Table Row Header Tree Mode",
+            "ru": "Режим дерева заголовков строк сводной таблицы"
           }
         },
         {

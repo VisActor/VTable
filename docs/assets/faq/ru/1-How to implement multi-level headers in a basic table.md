@@ -1,21 +1,21 @@
-# How to implement multi-level headers in a basic table (ListTable)?
+# Как реализовать многоуровневые заголовки в базовой таблице (ListTable)?
 
-## Question Description
+## Описание вопроса
 
-How to construct such hierarchical structure to display in table header cells like: Department (Finance, Technology), Name (First Name, Last Name)?
+Как создать такую иерархическую структуру для отображения в ячейках заголовка таблицы, например: Отдел (Финансы, Технологии), Имя (Имя, Фамилия)?
 
 ![image](/vtable/faq/1-0.png)
 
-## Solution
+## Решение
 
-In VTable, the configuration option "columns" can be used to configure sub-items under "columns".
+В VTable можно использовать опцию конфигурации "columns" для настройки подэлементов в "columns".
 
-## Code Example
+## Пример кода
 
 ```javascript
 {
   field: 'full name',
-  title: 'Full name',
+  title: 'Полное имя',
   columns: [
     {
       field: 'name',

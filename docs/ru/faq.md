@@ -1,43 +1,43 @@
-# FAQ - Frequently Asked Questions
+# ЧаВо - Часто задаваемые вопросы
 
-## Installation and Setup
+## Установка и настройка
 
-### Q: How do I install VTable?
-**A:** You can install VTable using npm, yarn, or pnpm:
+### В: Как установить VTable?
+**О:** Вы можете установить VTable используя npm, yarn или pnpm:
 ```bash
 npm install @visactor/vtable
 yarn add @visactor/vtable
 pnpm add @visactor/vtable
 ```
 
-### Q: Can I use VTable with CDN?
-**A:** Yes, you can include VTable via CDN:
+### В: Могу ли я использовать VTable с CDN?
+**О:** Да, вы можете подключить VTable через CDN:
 ```html
 <script src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"></script>
 ```
 
-### Q: What browsers does VTable support?
-**A:** VTable supports all modern browsers including Chrome, Firefox, Safari, and Edge. IE11 is not supported.
+### В: Какие браузеры поддерживает VTable?
+**О:** VTable поддерживает все современные браузеры, включая Chrome, Firefox, Safari и Edge. IE11 не поддерживается.
 
-### Q: Do I need to include any CSS files?
-**A:** No, VTable is canvas-based and doesn't require separate CSS files. All styling is handled through the JavaScript API.
+### В: Нужно ли подключать CSS файлы?
+**О:** Нет, VTable основан на canvas и не требует отдельных CSS файлов. Вся стилизация обрабатывается через JavaScript API.
 
-## Basic Usage
+## Базовое использование
 
-### Q: How do I create a simple table?
-**A:** Here's a basic example:
+### В: Как создать простую таблицу?
+**О:** Вот базовый пример:
 ```javascript
 import { ListTable } from '@visactor/vtable';
 
 const table = new ListTable({
   container: document.getElementById('container'),
   columns: [
-    { field: 'name', caption: 'Name', width: 150 },
-    { field: 'age', caption: 'Age', width: 80 }
+    { field: 'name', caption: 'Имя', width: 150 },
+    { field: 'age', caption: 'Возраст', width: 80 }
   ],
   records: [
-    { name: 'John', age: 30 },
-    { name: 'Jane', age: 25 }
+    { name: 'Иван', age: 30 },
+    { name: 'Мария', age: 25 }
   ]
 });
 ```

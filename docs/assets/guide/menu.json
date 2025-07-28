@@ -5,28 +5,32 @@
       "path": "introduction",
       "title": {
         "zh": "VTable介绍",
-        "en": "VTable introduction"
+        "en": "VTable introduction",
+        "ru": "Введение в VTable"
       }
     },
     {
       "path": "Getting_Started",
       "title": {
         "zh": "快速上手",
-        "en": "Getting Started"
+        "en": "Getting Started",
+        "ru": "Быстрый старт"
       },
       "children": [
         {
           "path": "The_structure_of_the_table",
           "title": {
             "zh": "表格的构成",
-            "en": "The structure of the table"
+            "en": "The structure of the table",
+            "ru": "Структура таблицы"
           }
         },
         {
           "path": "Getting_Started",
           "title": {
             "zh": "快速上手",
-            "en": "Getting_Started"
+            "en": "Getting_Started",
+            "ru": "Быстрый_старт"
           }
         },
         {

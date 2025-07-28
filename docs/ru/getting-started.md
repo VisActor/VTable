@@ -1,16 +1,16 @@
-# Getting Started with VTable
+# Начало работы с VTable
 
-This guide will help you get started with VTable, from installation to creating your first interactive table.
+Это руководство поможет вам начать работу с VTable, от установки до создания вашей первой интерактивной таблицы.
 
-## Prerequisites
+## Предварительные требования
 
-- Node.js 14+ or modern browser
-- Basic knowledge of JavaScript/TypeScript
-- HTML container element for the table
+- Node.js 14+ или современный браузер
+- Базовые знания JavaScript/TypeScript
+- HTML-элемент контейнера для таблицы
 
-## Installation
+## Установка
 
-### Package Manager Installation
+### Установка через пакетный менеджер
 
 ```bash
 # npm
@@ -23,19 +23,19 @@ yarn add @visactor/vtable
 pnpm add @visactor/vtable
 ```
 
-### CDN Installation
+### Установка через CDN
 
 ```html
-<!-- For production -->
+<!-- Для продакшена -->
 <script src="https://unpkg.com/@visactor/vtable@latest/build/index.min.js"></script>
 
-<!-- For development -->
+<!-- Для разработки -->
 <script src="https://unpkg.com/@visactor/vtable@latest/build/index.js"></script>
 ```
 
-## Your First Table
+## Ваша первая таблица
 
-### HTML Setup
+### Настройка HTML
 
 ```html
 <!DOCTYPE html>
