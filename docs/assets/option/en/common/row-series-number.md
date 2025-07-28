@@ -4,6 +4,37 @@ ${prefix} title(string)
 
 Row serial number title, empty by default
 
+${prefix} field(string|number)
+
+The field corresponding to the row number, if not configured, the row number starts from 1.
+You can also use this field to configure the checkbox selection state.
+
+For example, configure the field to checkState:
+```
+{
+  rowSeriesNumber: {
+    field: 'checkState',
+    cellType: 'checkbox',
+    title:'序号列'
+  },
+  records: [
+    {
+      checkState: true,
+    },
+    {
+      checkState: {
+        text: '对错',
+        checked: true,
+        disable: false,
+      },
+    },
+    {
+      checkState: '无用',
+    },
+  ],
+}
+```
+
 ${prefix} width(number|number)
 
 The row number width can be configured with number or 'auto'. (Default uses defaultColWidth, which defaults to 80)
