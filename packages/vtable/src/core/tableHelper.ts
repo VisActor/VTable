@@ -14,7 +14,7 @@ import type {
   ListTableConstructorOptions,
   SortState
 } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
@@ -78,7 +78,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
 function getHierarchyExpandLevel(table: ListTableAPI) {
   if ((table.options as ListTableConstructorOptions).hierarchyExpandLevel) {
     return (table.options as ListTableConstructorOptions).hierarchyExpandLevel;
-  } else if (table.options.groupBy) {
+  } else if ((table.internalProps as ListTableProtected).groupBy) {
     return Infinity;
   }
   return table._hasHierarchyTreeHeader?.() ? 1 : undefined;

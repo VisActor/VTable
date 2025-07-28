@@ -272,7 +272,6 @@ const option = {
       }
     }
   },
-  groupBy: true,
   tasksShowMode: VTableGantt.TYPES.TasksShowMode.Tasks_Separate,
   frame: {
     outerFrameStyle: {

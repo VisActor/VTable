@@ -113,7 +113,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     internalProps.multipleSort = !!options.multipleSort;
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = this.internalProps.groupBy ? getGroupByDataConfig(this.internalProps.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
@@ -127,7 +127,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //   }
     // });
 
-    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+    internalProps.enableTreeNodeMerge =
+      options.enableTreeNodeMerge ?? isValid((this.internalProps as ListTableProtected).groupBy) ?? false;
 
     this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
@@ -164,7 +165,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
 
-    if (options.enableTreeStickCell) {
+    if ((this.internalProps as ListTableProtected).enableTreeStickCell) {
       const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
       this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
     }
@@ -345,7 +346,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return title;
       }
       let value;
-      if ((this.options as ListTableConstructorOptions).groupBy) {
+      if ((this.internalProps as ListTableProtected).groupBy) {
         const record = table.getCellRawRecord(col, row);
         if (record?.vtableMerge) {
           return '';
@@ -356,7 +357,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
         // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
         // value = indexs[indexs.length - 1] + 1;
       } else {
-        value = row - this.columnHeaderLevelCount + 1;
+        const define = table.getBodyColumnDefine(col, row);
+        const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
+        if (typeof checkboxSeriesNumberStyle === 'string') {
+          value = checkboxSeriesNumberStyle;
+        } else if (checkboxSeriesNumberStyle?.text) {
+          value = checkboxSeriesNumberStyle.text ?? '';
+        } else {
+          value = row - this.columnHeaderLevelCount + 1;
+        }
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this, value) : value;
@@ -518,7 +527,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     // internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = (this.internalProps as ListTableProtected).groupBy
+      ? getGroupByDataConfig((this.internalProps as ListTableProtected).groupBy)
+      : {}; //cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
@@ -532,7 +543,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
-    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+    internalProps.enableTreeNodeMerge =
+      options.enableTreeNodeMerge ?? isValid((this.internalProps as ListTableProtected).groupBy) ?? false;
 
     this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
@@ -887,7 +899,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.isHeader(col, row)) {
       return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
     }
-    if (!this.options.groupBy || (isArray(this.options.groupBy) && this.options.groupBy.length === 0)) {
+    if (
+      !(this.internalProps as ListTableProtected).groupBy ||
+      (isArray((this.internalProps as ListTableProtected).groupBy) &&
+        ((this.internalProps as ListTableProtected).groupBy as string[]).length === 0)
+    ) {
       const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
       if (!define.tree) {
         return HierarchyState.none;
@@ -1559,7 +1575,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   getGroupTitleLevel(col: number, row: number): number | undefined {
-    if (!(this.options as ListTableConstructorOptions).groupBy) {
+    if (!(this.internalProps as ListTableProtected).groupBy) {
       return undefined;
     }
     const indexArr = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));

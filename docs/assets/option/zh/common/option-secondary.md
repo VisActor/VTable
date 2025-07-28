@@ -153,7 +153,7 @@ containerFit: {
 
 快捷键功能设置，具体配置项：
 
-##${prefix} selectAllOnCtrlA(boolean) = false
+##${prefix} selectAllOnCtrlA(boolean) = false|SelectAllOnCtrlAOption
 开启快捷键全选。
 支持 `boolean` 或者具体配置类型`SelectAllOnCtrlAOption`。
 
@@ -163,6 +163,11 @@ export interface SelectAllOnCtrlAOption {
   disableRowSeriesNumberSelect?: boolean;  //快捷键全选时，是否禁止选中行序列号。
 }
 ```
+###${prefix} disableHeaderSelect(boolean) = false
+快捷键全选时，是否禁止选中表头。
+
+###${prefix} disableRowSeriesNumberSelect(boolean) = false
+快捷键全选时，是否禁止选中行序列号。
 
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
