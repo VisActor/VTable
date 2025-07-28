@@ -24,7 +24,7 @@ Example:
   cellType: 'checkbox', // Specify body cell to display as checkbox
   field: 'check',
   checked: true,
-  disbaled: false
+  disable: false
 }
 ```
 
