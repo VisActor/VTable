@@ -167,6 +167,9 @@ disableRowSeriesNumberSelect?: boolean; //Whether to disable the selection of ro
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
 
+##${prefix} cutSelected(boolean) = false
+Enable shortcut key to cut, consistent with the browser's shortcut key.
+
 ##${prefix} pasteValueToCell(boolean) = false
 
 Enable shortcut key to paste, consistent with the browser's shortcut key.Paste takes effect only for cells with an editor configured

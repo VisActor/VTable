@@ -11,6 +11,7 @@
 | top        | 同上                                                                                                                                                                                                                                                  |
 | bottom     | 同上                                                                                                                                                                                                                                                  |
 | ctrl+c     | 键位不准，这个 copy 是和浏览器的快捷键一致的。<br> 复制选中单元格内容，需要开启 keyboardOptions.copySelected                                                                                                                                          |
+| ctrl+x     | 键位不准，这个 cut 是和浏览器的快捷键一致的。<br> 剪切选中单元格内容，需要开启 keyboardOptions.cutSelected                                                                                                                                          |
 | ctrl+v     | 键位不准，粘贴快捷键和浏览器的快捷键一致的。<br> 粘贴内容到单元格，需要开启 keyboardOptions.pasteValueToCell，粘贴生效仅针对配置了编辑 editor 的单元格                                                                                                |
 | ctrl+a     | 全选，需要开启 keyboardOptions.selectAllOnCtrlA                                                                                                                                                                                                       |
 | shift      | 按住 shift 和鼠标左键，连续区域选中单元格                                                                                                                                                                                                             |
@@ -31,6 +32,8 @@ keyboardOptions: {
   selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
   /** 快捷键复制  默认false 不开启*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 快捷键剪切  默认false 不开启*/
+  cutSelected?: boolean; //这个cut是和浏览器的快捷键一致的
   /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
   pasteValueToCell?: boolean; //粘贴生效仅针对配置了编辑editor的单元格
 }

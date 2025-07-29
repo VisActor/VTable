@@ -1,7 +1,7 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText, vglobal } from '@src/vrender';
-import type { ColumnDefine, ListTableAPI, ListTableConstructorOptions, MousePointerCellEvent } from '../ts-types';
+import type { CellInfo, ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -37,7 +37,7 @@ import { bindDropdownMenuClickEvent } from './self-event-listener/base-table/dro
 import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
 import { rightButtonClickEvent } from './self-event-listener/base-table/right-button-click';
 import { browser } from '../tools/helper';
-import { setActiveCellRangeState as showCopyCellBorder } from '../tools/style';
+import { clearActiveCellRangeState, setActiveCellRangeState } from '../tools/style';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -78,6 +78,12 @@ export class EventManager {
   bindSparklineHoverEvent: boolean;
 
   _enableTableScroll: boolean = true;
+  /** 剪切后等待粘贴 */
+  cutWaitPaste: boolean = false;
+  private clipboardCheckTimer: number | null = null; // 剪贴板检测定时器
+  private cutOperationTime: number = 0; // 记录剪切操作的时间
+  lastClipboardContent: string = ''; // 最后一次复制/剪切的内容
+  cutCellRange: CellInfo[][] | null = null;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.handleTextStickBindId = [];
@@ -734,88 +740,152 @@ export class EventManager {
     this._enableTableScroll = false;
   }
 
-  async handleCopy(e: KeyboardEvent) {
+  async handleCopy(e: KeyboardEvent, isCut: boolean = false) {
     const table = this.table;
-    if (this.table.keyboardOptions?.copySelected) {
-      const data = this.table.getCopyValue();
-      if (isValid(data)) {
-        e.preventDefault();
-        //检查是否有权限
-        const permissionState = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName });
-        if (navigator.clipboard?.write && permissionState.state === 'granted') {
-          // 将复制的数据转为html格式
-          const setDataToHTML = (data: string) => {
-            const result = ['<table>'];
-            const META_HEAD = [
-              '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
-              //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
-              //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
-              '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
-            ].join('');
-            const rows = data.split('\r\n'); // 将数据拆分为行
-            rows.forEach(function (rowCells: any, rowIndex: number) {
-              const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-              const rowValues: string[] = [];
-              if (rowIndex === 0) {
-                result.push('<tbody>');
-              }
-              cells.forEach(function (cell: string, cellIndex: number) {
-                // 单元格数据处理
-                const parsedCellData = !cell
-                  ? ' '
-                  : cell
-                      .toString()
-                      .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
-                      .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
-                      .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
-                      .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
-                      .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
-                      .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
-                      .replace(/\x20{2,}/gi, (substring: string | any[]) => {
-                        //  excel连续空格序列化
-                        return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
-                      }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
-                      .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
+    !isCut && (this.cutWaitPaste = false);
+    const data = this.table.getCopyValue();
+    if (isValid(data)) {
+      e.preventDefault();
+      //检查是否有权限
+      const permissionState = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName });
+      if (navigator.clipboard?.write && permissionState.state === 'granted') {
+        // 将复制的数据转为html格式
+        const setDataToHTML = (data: string) => {
+          const result = ['<table>'];
+          const META_HEAD = [
+            '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
+            //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
+            //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
+            '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
+          ].join('');
+          const rows = data.split('\r\n'); // 将数据拆分为行
+          rows.forEach(function (rowCells: any, rowIndex: number) {
+            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+            const rowValues: string[] = [];
+            if (rowIndex === 0) {
+              result.push('<tbody>');
+            }
+            cells.forEach(function (cell: string, cellIndex: number) {
+              // 单元格数据处理
+              const parsedCellData = !cell
+                ? ' '
+                : cell
+                    .toString()
+                    .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
+                    .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
+                    .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
+                    .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
+                    .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
+                    .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
+                    .replace(/\x20{2,}/gi, (substring: string | any[]) => {
+                      //  excel连续空格序列化
+                      return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
+                    }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
+                    .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
 
-                rowValues.push(`<td>${parsedCellData}</td>`);
-              });
-              result.push('<tr>', ...rowValues, '</tr>');
-
-              if (rowIndex === rows.length - 1) {
-                result.push('</tbody>');
-              }
+              rowValues.push(`<td>${parsedCellData}</td>`);
             });
-            result.push('</table>');
-            return [META_HEAD, result.join('')].join('');
-          };
-          const dataHTML = setDataToHTML(data);
-          navigator.clipboard.write([
-            new ClipboardItem({
-              'text/html': new Blob([dataHTML], { type: 'text/html' }),
-              'text/plain': new Blob([data], { type: 'text/plain' })
-            })
-          ]);
+            result.push('<tr>', ...rowValues, '</tr>');
+
+            if (rowIndex === rows.length - 1) {
+              result.push('</tbody>');
+            }
+          });
+          result.push('</table>');
+          return [META_HEAD, result.join('')].join('');
+        };
+        const dataHTML = setDataToHTML(data);
+        navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob([dataHTML], { type: 'text/html' }),
+            'text/plain': new Blob([data], { type: 'text/plain' })
+          })
+        ]);
+      } else {
+        if (browser.IE) {
+          (window as any).clipboardData.setData('Text', data); // IE
         } else {
-          if (browser.IE) {
-            (window as any).clipboardData.setData('Text', data); // IE
-          } else {
-            (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
-          }
+          (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
         }
-        table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
-          cellRange: table.stateManager.select.ranges,
-          copyData: data
-        });
       }
-      if (table.keyboardOptions?.showCopyCellBorder) {
-        showCopyCellBorder(table);
-        table.clearSelected();
-      }
+      table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
+        cellRange: table.stateManager.select.ranges,
+        copyData: data,
+        isCut
+      });
+    }
+    if (table.keyboardOptions?.showCopyCellBorder) {
+      setActiveCellRangeState(table);
+      table.clearSelected();
     }
   }
-  async handlePaste(e: any) {
+  async handleCut(e: KeyboardEvent) {
+    this.handleCopy(e, true);
+    this.cutWaitPaste = true;
+    this.cutCellRange = this.table.getSelectedCellInfos();
+    // 设置自动超时，防止剪切状态无限期保持
+    if (this.clipboardCheckTimer) {
+      clearTimeout(this.clipboardCheckTimer);
+    }
+
+    // 30秒后自动取消剪切状态
+    this.clipboardCheckTimer = window.setTimeout(() => {
+      if (this.cutWaitPaste) {
+        // 剪切操作超时，重置剪切状态
+        this.cutWaitPaste = false;
+        this.cutCellRange = null;
+        this.clipboardCheckTimer = null;
+      }
+    }, 30000); // 30秒超时
+
+    // 保存剪贴板内容以便后续检测变化
+    this.saveClipboardContent();
+  }
+
+  // 执行实际的粘贴操作
+  handlePaste(e: KeyboardEvent): void {
+    if (!this.cutWaitPaste) {
+      // 非剪切状态，直接粘贴
+      this.executePaste(e);
+      return;
+    }
+
+    this.checkClipboardChanged()
+      .then(changed => {
+        // 执行粘贴操作，并根据剪贴板是否变化决定是否清空选中区域
+        this.executePaste(e);
+        if (!changed) {
+          this.clearCutArea(this.table as ListTableAPI);
+        }
+        // 执行完粘贴操作后，重置剪切状态
+        if (this.cutWaitPaste) {
+          this.cutWaitPaste = false;
+          this.cutCellRange = null;
+          // 清除定时器
+          if (this.clipboardCheckTimer) {
+            clearTimeout(this.clipboardCheckTimer);
+            this.clipboardCheckTimer = null;
+          }
+        }
+      })
+      .catch(() => {
+        // 如果无法检测剪贴板变化（例如权限问题），则保守地执行粘贴但不清空选中区域
+        this.executePaste(e);
+        // 执行完粘贴操作后，重置剪切状态
+        if (this.cutWaitPaste) {
+          this.cutWaitPaste = false;
+          this.cutCellRange = null;
+          // 清除定时器
+          if (this.clipboardCheckTimer) {
+            clearTimeout(this.clipboardCheckTimer);
+            this.clipboardCheckTimer = null;
+          }
+        }
+      });
+  }
+  private async executePaste(e: any) {
     const table = this.table;
-    if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
+    if ((table as ListTableAPI).changeCellValues) {
       if ((table as ListTableAPI).editorManager?.editingEditor) {
         return;
       }
@@ -868,10 +938,68 @@ export class EventManager {
       }
     }
     if (table.keyboardOptions?.showCopyCellBorder) {
-      showCopyCellBorder(table);
+      clearActiveCellRangeState(table);
+    }
+  }
+  // 清空选中区域的内容
+  private clearCutArea(table: ListTableAPI): void {
+    try {
+      const selectCells = this.cutCellRange;
+      if (!selectCells || selectCells.length === 0) {
+        return;
+      }
+
+      for (let i = 0; i < selectCells.length; i++) {
+        for (let j = 0; j < selectCells[i].length; j++) {
+          if (selectCells[i][j]) {
+            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, undefined);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('清空单元格内容失败', error);
     }
   }
 
+  // 检查剪贴板内容是否被其他应用更改
+  private async checkClipboardChanged(): Promise<boolean> {
+    // 如果不支持读取剪贴板，则无法检测变化
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      return false;
+    }
+
+    try {
+      const currentContent = await navigator.clipboard.readText();
+      // console.log('当前剪贴板内容:', currentContent);
+      // console.log('上次保存的剪贴板内容:', this.lastClipboardContent);
+
+      // 比较当前剪贴板内容与剪切时保存的内容
+      return currentContent !== this.lastClipboardContent;
+    } catch (err) {
+      console.warn('检查剪贴板状态失败:', err);
+      // 出错时假设剪贴板未变化
+      return false;
+    }
+  }
+
+  // 保存剪贴板内容
+  private saveClipboardContent(): void {
+    // 尝试获取剪贴板内容
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      // 延迟一点以确保剪贴板内容已更新
+      setTimeout(() => {
+        navigator.clipboard
+          .readText()
+          .then(text => {
+            this.lastClipboardContent = text;
+            console.log('已保存剪贴板状态');
+          })
+          .catch(err => {
+            console.warn('无法读取剪贴板内容:', err);
+          });
+      }, 50);
+    }
+  }
   private pasteHtmlToTable(item: ClipboardItem) {
     // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
     const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3

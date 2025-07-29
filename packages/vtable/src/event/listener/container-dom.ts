@@ -246,10 +246,19 @@ export function bindContainerDomListener(eventManager: EventManager) {
   }
 
   handler.on(table.getElement(), 'copy', async (e: KeyboardEvent) => {
-    eventManager.handleCopy(e);
+    if (table.keyboardOptions?.copySelected) {
+      eventManager.handleCopy(e);
+    }
+  });
+  handler.on(table.getElement(), 'cut', async (e: KeyboardEvent) => {
+    if (table.keyboardOptions?.cutSelected) {
+      eventManager.handleCut(e);
+    }
   });
   handler.on(table.getElement(), 'paste', async (e: any) => {
-    eventManager.handlePaste(e);
+    if (table.keyboardOptions?.pasteValueToCell) {
+      eventManager.handlePaste(e);
+    }
   });
 
   handler.on(table.getElement(), 'contextmenu', (e: any) => {
