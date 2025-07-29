@@ -65,7 +65,7 @@ export class SearchComponent {
     this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
   }
 
-  search(str: string) {
+   search(str: string) {
     this.clear();
     this.queryStr = str;
 
@@ -75,6 +75,46 @@ export class SearchComponent {
         results: this.queryResult
       };
     }
+
+    // 递归搜索并展开匹配节点的父级路径
+    function findAndExpandMatches(records, path = []) {
+      let hasMatch = false;
+
+      records.forEach(record => {
+        const currentPath = [...path, record];
+        let shouldExpand = false;
+
+        // 检查当前节点是否匹配
+        if (this.queryMethod(this.queryStr, record.value || record, {})) {
+          shouldExpand = true;
+          hasMatch = true;
+        }
+
+        // 递归检查子节点
+        if (record.children && record.children.length > 0) {
+          const childHasMatch = findAndExpandMatches(record.children, currentPath);
+          if (childHasMatch) {
+            shouldExpand = true;
+            hasMatch = true;
+          }
+        }
+
+        // 如果当前节点或其子节点有匹配，展开整个路径
+        if (shouldExpand) {
+          currentPath.forEach(node => {
+            node.hierarchyState = 'expand';
+          });
+        }
+      });
+
+      return hasMatch;
+    }
+
+    const records = this.table.records;
+    const hasMatches = findAndExpandMatches.call(this, records);
+    this.table.setRecords(records);
+
+    
 
     for (let row = 0; row < this.table.rowCount; row++) {
       for (let col = 0; col < this.table.colCount; col++) {
