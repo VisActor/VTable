@@ -14,6 +14,7 @@ import { checkTabTitle } from '../tools';
 import { FormulaAutocomplete } from './formula-autocomplete';
 import { formulaEditor } from './formula-editor';
 import { CellHighlightManager } from '../managers/cell-highlight-manager';
+import type { TYPES } from '@visactor/vtable';
 
 // const input_editor = new VTable_editors.InputEditor();
 // VTable.register.editor('input', input_editor);
@@ -787,7 +788,8 @@ export default class VTableSheet {
         borderLineDash: [null, null, null, null],
         padding: [8, 8, 8, 8]
       },
-      editCellTrigger: ['api', 'keydown']
+      editCellTrigger: ['api', 'keydown'],
+      customMergeCell: sheetDefine.cellMerge
     } as any);
 
     // 注册事件
@@ -831,9 +833,7 @@ export default class VTableSheet {
       sheetTitle: title,
       columnCount: 20,
       rowCount: 100,
-      data: Array(100)
-        .fill(0)
-        .map(() => Array(20).fill(''))
+      data: []
     };
 
     // 添加到管理器
@@ -1146,6 +1146,7 @@ export default class VTableSheet {
           ...sheetDefine,
           data,
           columns,
+          cellMerge: instance.tableInstance.options.customMergeCell as TYPES.CustomMergeCellArray,
           showHeader: instance.tableInstance.options.showHeader,
           active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey
         });
