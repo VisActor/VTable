@@ -11,7 +11,7 @@ import { checkCellInSelect } from '../state/common/check-in-select';
 import { bindMediaClick } from './media-click';
 import { bindDrillEvent, checkHaveDrill, drillClick } from './drill';
 import { bindSparklineHoverEvent } from './sparkline-event';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import { checkHaveTextStick, handleTextStick } from '../scenegraph/stick-text';
 import { bindGesture, bindTableGroupListener } from './listener/table-group';
 import { bindScrollBarListener } from './listener/scroll-bar';
@@ -33,7 +33,7 @@ import {
 } from './self-event-listener/list-table/checkbox';
 import { bindButtonClickEvent } from './component/button';
 import { bindIconClickEvent } from './self-event-listener/base-table/icon';
-import { bindDropdownMenuClickEvent } from './self-event-listener/base-table/dropdown-menu';
+import { bindDropdownMenuEvent } from './self-event-listener/base-table/dropdown-menu';
 import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
 import { rightButtonClickEvent } from './self-event-listener/base-table/right-button-click';
 import { browser } from '../tools/helper';
@@ -149,7 +149,7 @@ export class EventManager {
     bindIconClickEvent(this.table);
 
     // 下拉菜单内容点击
-    bindDropdownMenuClickEvent(this.table);
+    bindDropdownMenuEvent(this.table);
 
     // 处理textStick
     // if (checkHaveTextStick(this.table)) {
@@ -483,7 +483,7 @@ export class EventManager {
     // return false;
     const { eventArgs } = eventArgsSet;
 
-    if ((this.table.options as ListTableConstructorOptions).enableTreeStickCell && !eventArgs) {
+    if ((this.table.internalProps as ListTableProtected).enableTreeStickCell && !eventArgs) {
       return false;
     }
     // if (eventArgs) { // 如果是鼠标处理表格外部如最后一列的后面 也期望可以拖拽列宽

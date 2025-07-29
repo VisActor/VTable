@@ -450,6 +450,13 @@
             "zh": "行序号",
             "en": "row series number"
           }
+        },
+        {
+          "path": "render_on_current_canvas",
+          "title": {
+            "zh": "在已有的 canvas 中渲染表格",
+            "en": "render on current canvas"
+          }
         }
       ]
     },

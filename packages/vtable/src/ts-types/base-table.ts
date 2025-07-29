@@ -29,7 +29,7 @@ import type {
 export type { HeaderData } from './list-table/layout-map/api';
 import type { TableTheme } from '../themes/theme-define';
 import type { ICustomRender } from './customElement';
-import type { LayoutObjectId } from './table-engine';
+import type { GroupByOption, LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { StateManager } from '../state/state';
@@ -1056,6 +1056,12 @@ export interface ListTableProtected extends IBaseTableProtected {
     key: string;
     width: number;
   }[];
+
+  groupBy: GroupByOption;
+  groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  groupTitleCustomLayout?: ICustomLayout;
+  enableTreeStickCell?: boolean;
+  groupTitleCheckbox?: boolean;
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {
