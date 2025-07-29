@@ -5,12 +5,6 @@ import type * as VTable from '@visactor/vtable';
  * 处理右键菜单的各种操作逻辑
  */
 export class MenuHandler {
-  isCut = false;
-  cutCellRange: VTable.TYPES.CellInfo[][] | null = null;
-  private clipboardCheckTimer: number | null = null; // 剪贴板检测定时器
-  private cutOperationTime: number = 0; // 记录剪切操作的时间
-  private lastClipboardContent: string = ''; // 最后一次复制/剪切的内容
-
   constructor() {
     // // 监听全局复制事件，用于重置剪切状态
     // document.addEventListener('copy', this.handleGlobalCopy);
@@ -20,33 +14,10 @@ export class MenuHandler {
   /**
    * 处理复制操作
    */
-  handleCopy(table: VTable.ListTable, resetCut: boolean = true): void {
+  handleCopy(table: VTable.ListTable): void {
     console.log('执行复制操作');
-    try {
-      if (resetCut) {
-        // 重置
-        this.isCut = false;
-        this.cutCellRange = null;
-      }
 
-      // 直接调用表格内部的复制处理逻辑
-      if (table.eventManager) {
-        // 创建一个键盘事件
-        const fakeEvent = new KeyboardEvent('copy', {
-          key: 'c',
-          keyCode: 67,
-          ctrlKey: true
-        });
-
-        table.eventManager.handleCopy(fakeEvent);
-        // this.setActiveCellRangeState(table);
-        // table.clearSelected();
-        // 保存复制的内容，用于后续检测剪贴板是否被更改
-        this.saveClipboardContent();
-      }
-    } catch (error) {
-      console.error('复制失败', error);
-    }
+    table.eventManager.handleCopy(new KeyboardEvent('copy'));
   }
 
   /**
@@ -54,138 +25,15 @@ export class MenuHandler {
    */
   handleCut(table: VTable.ListTable): void {
     console.log('执行剪切操作');
-    // 记录下是剪切操作，等粘贴的时候清空选中区域的内容
-    this.isCut = true;
-    this.cutOperationTime = Date.now();
-    this.cutCellRange = table.getSelectedCellInfos();
-    // 先执行复制
-    this.handleCopy(table, false);
 
-    // 设置自动超时，防止剪切状态无限期保持
-    if (this.clipboardCheckTimer) {
-      clearTimeout(this.clipboardCheckTimer);
-    }
-
-    // 30秒后自动取消剪切状态
-    this.clipboardCheckTimer = window.setTimeout(() => {
-      if (this.isCut) {
-        console.log('剪切操作超时，重置剪切状态');
-        this.isCut = false;
-        this.cutCellRange = null;
-        this.clipboardCheckTimer = null;
-      }
-    }, 30000); // 30秒超时
-
-    // 保存剪贴板内容以便后续检测变化
-    this.saveClipboardContent();
+    table.eventManager.handleCut(new KeyboardEvent('cut'));
   }
 
   /**
    * 处理粘贴操作
    */
   handlePaste(table: VTable.ListTable): void {
-    console.log('执行粘贴操作');
-    if (table.eventManager) {
-      // 如果是剪切状态，先检查剪贴板内容是否被修改
-      if (this.isCut) {
-        this.checkClipboardChanged()
-          .then(changed => {
-            // 执行粘贴操作，并根据剪贴板是否变化决定是否清空选中区域
-            this.executePaste(table, !changed);
-          })
-          .catch(() => {
-            // 如果无法检测剪贴板变化（例如权限问题），则保守地执行粘贴但不清空选中区域
-            this.executePaste(table, false);
-          });
-      } else {
-        // 非剪切状态，直接粘贴
-        this.executePaste(table, false);
-      }
-    }
-  }
-
-  // 执行实际的粘贴操作
-  private executePaste(table: VTable.ListTable, shouldClearSelectedArea: boolean): void {
-    if (typeof (table.eventManager as any).handlePaste === 'function') {
-      (table.eventManager as any).handlePaste(new MouseEvent('paste'));
-      // this.setActiveCellRangeState(table);
-      // 如果是剪切模式且需要清空选中区域
-      if (this.isCut && shouldClearSelectedArea && this.cutCellRange) {
-        this.clearCutArea(table);
-      }
-
-      // 执行完粘贴操作后，重置剪切状态
-      if (this.isCut) {
-        this.isCut = false;
-        this.cutCellRange = null;
-
-        // 清除定时器
-        if (this.clipboardCheckTimer) {
-          clearTimeout(this.clipboardCheckTimer);
-          this.clipboardCheckTimer = null;
-        }
-      }
-    }
-  }
-
-  // 清空选中区域的内容
-  private clearCutArea(table: VTable.ListTable): void {
-    try {
-      const selectCells = this.cutCellRange;
-      if (!selectCells || selectCells.length === 0) {
-        return;
-      }
-
-      for (let i = 0; i < selectCells.length; i++) {
-        for (let j = 0; j < selectCells[i].length; j++) {
-          if (selectCells[i][j]) {
-            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, undefined);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('清空单元格内容失败', error);
-    }
-  }
-
-  // 保存剪贴板内容
-  private saveClipboardContent(): void {
-    // 尝试获取剪贴板内容
-    if (navigator.clipboard && navigator.clipboard.readText) {
-      // 延迟一点以确保剪贴板内容已更新
-      setTimeout(() => {
-        navigator.clipboard
-          .readText()
-          .then(text => {
-            this.lastClipboardContent = text;
-            console.log('已保存剪贴板状态');
-          })
-          .catch(err => {
-            console.warn('无法读取剪贴板内容:', err);
-          });
-      }, 50);
-    }
-  }
-
-  // 检查剪贴板内容是否被其他应用更改
-  private async checkClipboardChanged(): Promise<boolean> {
-    // 如果不支持读取剪贴板，则无法检测变化
-    if (!navigator.clipboard || !navigator.clipboard.readText) {
-      return false;
-    }
-
-    try {
-      const currentContent = await navigator.clipboard.readText();
-      console.log('当前剪贴板内容:', currentContent);
-      console.log('上次保存的剪贴板内容:', this.lastClipboardContent);
-
-      // 比较当前剪贴板内容与剪切时保存的内容
-      return currentContent !== this.lastClipboardContent;
-    } catch (err) {
-      console.warn('检查剪贴板状态失败:', err);
-      // 出错时假设剪贴板未变化
-      return false;
-    }
+    table.eventManager.handlePaste(new KeyboardEvent('paste'));
   }
 
   /**

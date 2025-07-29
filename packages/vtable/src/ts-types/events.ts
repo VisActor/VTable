@@ -178,7 +178,7 @@ export interface TableEventHandlersEventArgumentMap {
     row: number;
     ranges: CellRange[];
   };
-  copy_data: { cellRange: CellRange[]; copyData: string };
+  copy_data: { cellRange: CellRange[]; copyData: string; isCut: boolean };
   drillmenu_click: DrillMenuEventInfo;
 
   dropdown_icon_click: CellAddress & { event: Event };

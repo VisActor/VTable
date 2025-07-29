@@ -167,6 +167,9 @@ export interface SelectAllOnCtrlAOption {
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
 
+##${prefix} cutSelected(boolean) = false
+开启快捷键剪切，与浏览器的快捷键一致。
+
 ##${prefix} pasteValueToCell(boolean) = false
 开启快捷键粘贴，与浏览器的快捷键一致。粘贴生效仅针对配置了编辑 editor 的单元格
 

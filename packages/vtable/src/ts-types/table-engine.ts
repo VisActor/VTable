@@ -102,6 +102,8 @@ export interface TableKeyboardOptions {
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
   selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
+  /** 快捷键剪切  默认：false*/
+  cutSelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 被复制单元格是否显示虚线框，默认：false */

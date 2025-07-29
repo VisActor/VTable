@@ -55,3 +55,6 @@ export function setActiveCellRangeState(table: BaseTableAPI) {
   }
   table.stateManager.setCustomSelectRanges(setRanges);
 }
+export function clearActiveCellRangeState(table: BaseTableAPI) {
+  table.stateManager.setCustomSelectRanges([]);
+}

@@ -164,7 +164,8 @@ export class Sheet extends EventTarget implements ISheetAPI {
       ...this.options.keyboardOptions,
       copySelected: true,
       pasteValueToCell: true,
-      showCopyCellBorder: true
+      showCopyCellBorder: true,
+      cutSelected: true
     };
 
     return {
