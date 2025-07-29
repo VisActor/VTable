@@ -4,7 +4,7 @@ export * from './formula';
 export * from './filter';
 export * from './sheet';
 
-import type { ColumnDefine } from '@visactor/vtable';
+import type { ColumnDefine, TYPES } from '@visactor/vtable';
 import type { CellValue, IStyle } from './base';
 
 /** Sheet定义 */
@@ -21,8 +21,9 @@ export interface ISheetDefine {
   columns?: Omit<ColumnDefine, 'field'>[];
   /** 数据 */
   data?: (CellValue[] | null)[];
-  /** 是否是当前活动sheet */
+  /** 是否是当前活动sheet TODO 是不是放到外层更好*/
   active?: boolean;
+  cellMerge?: TYPES.CustomMergeCellArray;
   /** 单元格样式 */
   cellStyles?: Record<string, IStyle>;
   /** 行样式 */
