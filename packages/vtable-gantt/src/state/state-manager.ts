@@ -519,10 +519,6 @@ export class StateManager {
           }
         }
       }
-
-      if (Math.abs(deltaY) >= 1) {
-      }
-
       this._gantt.scenegraph.updateNextFrame();
     }
     this.moveTaskBar.moving = false;

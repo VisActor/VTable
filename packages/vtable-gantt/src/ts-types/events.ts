@@ -141,7 +141,6 @@ export interface TableEventHandlersReturnMap {
   click_task_bar: void;
   contextmenu_task_bar: void;
   change_date_range: void;
-  task_bar_move: void;
   create_task_schedule: void;
   create_dependency_link: void;
   delete_dependency_link: void;
