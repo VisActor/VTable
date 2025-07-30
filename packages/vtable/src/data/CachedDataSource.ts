@@ -321,7 +321,7 @@ export class CachedDataSource extends DataSource {
     }
 
     this.initTreeHierarchyState();
-    this.updatePagerData();
+    this.updatePagination();
   }
 
   deleteRecordsForTree(recordIndexs: (number | number[])[]) {
@@ -329,6 +329,7 @@ export class CachedDataSource extends DataSource {
       return;
     }
     const recordIndexsMaxToMin = sortRecordIndexs(recordIndexs, -1);
+    const deletedRecordIndexs = [];
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
       const recordIndex = recordIndexsMaxToMin[index];
       if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
@@ -347,10 +348,12 @@ export class CachedDataSource extends DataSource {
       }
 
       this.adjustBeforeChangedRecordsMap(recordIndex, 1, 'delete');
+      deletedRecordIndexs.push(recordIndex);
     }
 
     this.initTreeHierarchyState();
-    this.updatePagerData();
+    this.updatePagination();
+    return deletedRecordIndexs;
   }
 
   updateRecordsForTree(records: any[], recordIndexs: (number | number[])[]) {
