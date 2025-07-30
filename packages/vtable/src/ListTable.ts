@@ -3,6 +3,7 @@ import type {
   CellAddress,
   CellRange,
   ColumnsDefine,
+  DetailGridOptions,
   DropDownMenuEventInfo,
   FieldData,
   FieldDef,
@@ -14,9 +15,10 @@ import type {
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,
   SortOrder,
-  SortState
+  SortState,
+  TableEventHandlersEventArgumentMap
 } from './ts-types';
-import { HierarchyState } from './ts-types';
+import { HierarchyState, IconFuncTypeEnum } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isArray, isValid } from '@visactor/vutils';
 import {
@@ -37,6 +39,7 @@ import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
+import type { IBasicColumnBodyDefine } from './ts-types/list-table/define/basic-define';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
@@ -56,6 +59,7 @@ import {
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import { updateRowHeightForExpand } from './scenegraph/layout/update-height';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -168,6 +172,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
       this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
     }
+    
+    // 主从表格功能初始化
+    if (options.masterDetail) {
+      this.initMasterDetailFeatures(options);
+    }
+    
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
@@ -856,18 +866,63 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    * @returns
    */
-  getHierarchyState(col: number, row: number) {
+  getHierarchyState(col: number, row: number): HierarchyState {
     if (this.isHeader(col, row)) {
       return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
     }
+
+    // 先检查原有的树形结构逻辑
     if (!this.options.groupBy || (isArray(this.options.groupBy) && this.options.groupBy.length === 0)) {
       const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
-      if (!define.tree) {
-        return HierarchyState.none;
+      if (define.tree) {
+        const index = this.getRecordShowIndexByCell(col, row);
+        const treeState = this.dataSource.getHierarchyState(index);
+        if (treeState !== HierarchyState.none) {
+          return treeState; // 如果有树形结构，优先返回树形状态
+        }
+      }
+      
+      // master 系统 - 类似 tree 的逻辑，但使用主从表的展开状态
+      if (define.master) {
+        const index = this.getRecordShowIndexByCell(col, row);
+        const record = this.records?.[index];
+        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+          // 基于主从表的展开状态
+          if (this.internalProps.expandedRowsSet && this.internalProps.expandedRowsSet.has(index)) {
+            return HierarchyState.expand;
+          } else {
+            return HierarchyState.collapse;
+          }
+        }
+      }
+    } else {
+      // 有groupBy的情况
+      const index = this.getRecordShowIndexByCell(col, row);
+      const treeState = this.dataSource.getHierarchyState(index);
+      if (treeState !== HierarchyState.none) {
+        return treeState; // 如果有分组结构，优先返回分组状态
       }
     }
-    const index = this.getRecordShowIndexByCell(col, row);
-    return this.dataSource.getHierarchyState(index);
+
+    // 如果没有树形结构或树形结构返回none，再检查主从表格
+    if (this.options.masterDetail) {
+      // 主从表格模式下，检查第一列是否显示展开/收起图标
+      if (col === 0) {
+        // 获取记录索引
+        const recordIndex = this.getRecordShowIndexByCell(col, row);
+        if (recordIndex >= 0) {
+          const record = this.getCellRawRecord(col, row);
+          // 只有当记录有children数据时才显示图标
+          if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+            return this.internalProps.expandedRowsSet && this.internalProps.expandedRowsSet.has(recordIndex)
+              ? HierarchyState.expand
+              : HierarchyState.collapse;
+          }
+        }
+      }
+    }
+
+    return HierarchyState.none;
   }
   /**
    * 表头切换层级状态
@@ -907,6 +962,30 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
 
     if (hierarchyState === HierarchyState.expand) {
+      // 检查是否是 master 系统的展开状态
+      const columnDefine = this.getBodyColumnDefine(col, row);
+      if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
+        const recordIndex = this.getRecordShowIndexByCell(col, row);
+        const record = this.getCellRawRecord(col, row);
+        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+          // 使用现有的主从表收起操作
+          this.collapseRow(recordIndex);
+          return;
+        }
+      }
+      
+      // 检查是否是传统主从表格的展开状态
+      if (this.options.masterDetail && col === 0) {
+        const recordIndex = this.getRecordShowIndexByCell(col, row);
+        const record = this.getCellRawRecord(col, row);
+        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+          // 这是主从表格的收起操作
+          this.collapseRow(recordIndex);
+          return;
+        }
+      }
+      
+      // 原有的树形结构逻辑
       this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col: col,
@@ -914,6 +993,30 @@ export class ListTable extends BaseTable implements ListTableAPI {
         hierarchyState: HierarchyState.collapse
       });
     } else if (hierarchyState === HierarchyState.collapse) {
+      // 检查是否是 master 系统的收起状态
+      const columnDefine = this.getBodyColumnDefine(col, row);
+      if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
+        const recordIndex = this.getRecordShowIndexByCell(col, row);
+        const record = this.getCellRawRecord(col, row);
+        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+          // 使用现有的主从表展开操作
+          this.expandRow(recordIndex);
+          return;
+        }
+      }
+      
+      // 检查是否是传统主从表格的收起状态
+      if (this.options.masterDetail && col === 0) {
+        const recordIndex = this.getRecordShowIndexByCell(col, row);
+        const record = this.getCellRawRecord(col, row);
+        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+          // 这是主从表格的展开操作
+          this.expandRow(recordIndex);
+          return;
+        }
+      }
+      
+      // 原有的树形结构逻辑
       const record = this.getCellOriginRecord(col, row);
       if (Array.isArray(record.children)) {
         //children 是数组 表示已经有子树节点信息
@@ -1556,7 +1659,613 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
+  // ==================== 主从表格功能 ====================
+  
+  /**
+   * 初始化主从表格功能
+   */
+  private initMasterDetailFeatures(options: ListTableConstructorOptions): void {
+    const internalProps = this.internalProps;
+    
+    // 初始化主从表格特有属性
+    internalProps.expandedRowsSet = new Set(options.expandedRows || []);
+    internalProps.subTableInstances = new Map();
+    internalProps.originalRowHeights = new Map();
+    internalProps.subTableInitialViewBox = new Map();
+    
+    // 同步数据中的 hierarchyState 到 expandedRowsSet
+    this.syncHierarchyStateWithExpandedRows();
+    
+    // 注册图标点击事件处理器
+    this.on(TABLE_EVENT_TYPE.ICON_CLICK, this.handleIconClick.bind(this));
+    
+    // 注册滚动事件处理器
+    this.on(TABLE_EVENT_TYPE.SCROLL, this.handleScrollForSubTables.bind(this));
+    
+    // 确保hierarchyTextStartAlignment默认开启
+    if (options.hierarchyTextStartAlignment === undefined) {
+      options.hierarchyTextStartAlignment = true;
+    }
+  }
+
+  /**
+   * 处理图标点击事件
+   */
+  private handleIconClick(iconInfo: { col: number; row: number; funcType: IconFuncTypeEnum }): void {
+    if (!this.options.masterDetail) {
+      return;
+    }
+    
+    const { col, row, funcType } = iconInfo;
+    
+    if (funcType === IconFuncTypeEnum.expand || funcType === IconFuncTypeEnum.collapse) {
+      const dataRowIndex = this.getRecordShowIndexByCell(col, row);
+      if (dataRowIndex >= 0) {
+        this.toggleRowExpand(dataRowIndex);
+      }
+    }
+  }
+
+  /**
+   * 处理滚动事件，更新子表位置
+   */
+  private handleScrollForSubTables(scrollInfo: TableEventHandlersEventArgumentMap['scroll']): void {
+    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
+      return;
+    }
+    
+    const deltaX = scrollInfo.scrollLeft || 0;
+    const deltaY = scrollInfo.scrollTop || 0;
+    this.updateAllSubTablePositions(-deltaX, -deltaY);
+  }
+
+  /**
+   * 展开指定行的详情
+   */
+  expandRow(recordIndex: number, height?: number): void {
+    if (!this.options.masterDetail || !this.internalProps.expandedRowsSet) {
+      return;
+    }
+    
+    // 确保有展开状态集合
+    if (!this.internalProps.expandedRowsSet) {
+      this.internalProps.expandedRowsSet = new Set();
+    }
+    
+    // 检查是否已经展开
+    if (this.internalProps.expandedRowsSet.has(recordIndex)) {
+      return;
+    }
+
+    // 标记为已展开
+    this.internalProps.expandedRowsSet.add(recordIndex);
+
+    // 以下是原有的主从表逻辑
+    // 在展开之前，先记录原始行高度
+    const tableRowIndex = recordIndex + 1;
+    if (tableRowIndex >= 0) {
+      const originalHeight = this.getRowHeight(tableRowIndex);
+      if (this.internalProps.originalRowHeights) {
+        this.internalProps.originalRowHeights.set(recordIndex, originalHeight);
+      }
+    }
+
+    // 如果没有传递height，从动态配置中获取
+    if (!height) {
+      const record = this.getRecordByRowIndex(recordIndex);
+      const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
+      height = detailConfig?.style?.height || 200; // 默认200
+    }
+
+    // 标记为已展开
+    this.internalProps.expandedRowsSet.add(recordIndex);
+
+    // 计算插入位置：记录行的下一行
+    const insertRowIndex = recordIndex + 1;
+    // 获取详情行高度 - 优先使用传入的高度，否则使用默认值
+    const targetTotalHeight = height || 200;
+    // 获取原始行高度
+    const originalHeight = this.getRowHeight(insertRowIndex);
+    // 计算实际需要增加的高度：目标总高度 - 原始高度
+    const deltaHeight = targetTotalHeight - originalHeight;
+    updateRowHeightForExpand(this.scenegraph, insertRowIndex, deltaHeight);
+    this.scenegraph.updateContainerHeight(insertRowIndex, deltaHeight);
+
+    // 标记该行为已调整高度
+    this.internalProps._heightResizedRowMap.add(insertRowIndex);
+
+    // 更新图标状态
+    if (tableRowIndex >= 0) {
+      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
+      this.scenegraph.updateNextFrame();
+    }
+
+    // 触发展开事件
+    this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+      col: 0,
+      row: insertRowIndex,
+      hierarchyState: HierarchyState.expand
+    });
+
+    this.renderSubTable(recordIndex);
+    // 重新计算所有子表位置（因为展开操作会影响其他子表的相对位置）
+    this.recalculateAllSubTablePositions();
+  }
+
+  /**
+   * 收起指定行的详情
+   */
+  collapseRow(recordIndex: number): void {
+    if (!this.options.masterDetail || !this.internalProps.expandedRowsSet) {
+      return;
+    }
+    
+    // 检查是否已经展开
+    if (!this.internalProps.expandedRowsSet.has(recordIndex)) {
+      return;
+    }
+
+    // 先移除子表
+    this.removeSubTable(recordIndex);
+
+    const removeRowIndex = recordIndex + 1;
+    // 标记为已收起
+    this.internalProps.expandedRowsSet.delete(recordIndex);
+    // 获取当前详情行的高度
+    const currentHeight = this.getRowHeight(removeRowIndex);
+    // 获取原始高度
+    const originalHeight = this.getOriginalRowHeight(recordIndex);
+    // 计算需要减少的高度：当前高度 - 原始高度
+    const deltaHeight = currentHeight - originalHeight;
+    updateRowHeightForExpand(this.scenegraph, removeRowIndex, -deltaHeight);
+    this.internalProps._heightResizedRowMap.delete(removeRowIndex);
+    this.scenegraph.updateContainerHeight(removeRowIndex, -deltaHeight);
+
+    // 清理原始高度记录
+    if (this.internalProps.originalRowHeights) {
+      this.internalProps.originalRowHeights.delete(recordIndex);
+    }
+    // 更新图标状态
+    const tableRowIndex = recordIndex + 1;
+    if (tableRowIndex >= 0) {
+      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
+      this.scenegraph.updateNextFrame();
+    }
+
+    // 触发收起事件
+    this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+      col: 0,
+      row: removeRowIndex,
+      hierarchyState: HierarchyState.collapse
+    });
+
+    // 重新计算所有子表位置（因为收起操作会影响其他子表的相对位置）
+    this.recalculateAllSubTablePositions();
+  }
+
+  /**
+   * 切换行的展开状态
+   */
+  toggleRowExpand(rowIndex: number): void {
+    if (!this.options.masterDetail || !this.internalProps.expandedRowsSet) {
+      return;
+    }
+    
+    if (this.internalProps.expandedRowsSet.has(rowIndex)) {
+      this.collapseRow(rowIndex);
+    } else {
+      this.expandRow(rowIndex);
+    }
+  }
+
+  /**
+   * 更新子表位置
+   */
+  updateSubTableTranslation(deltaX: number = 0, deltaY: number = 0): void {
+    if (!this.options.masterDetail) {
+      return;
+    }
+    this.updateAllSubTablePositions(deltaX, deltaY);
+  }
+
+  // ==================== 主从表格私有方法 ====================
+
+  /**
+   * 同步数据中的 hierarchyState 到 expandedRowsSet
+   */
+  private syncHierarchyStateWithExpandedRows(): void {
+    if (!this.records || !this.internalProps.expandedRowsSet) {
+      return;
+    }
+    
+    // 遍历所有记录，检查 hierarchyState
+    for (let i = 0; i < this.records.length; i++) {
+      const record = this.records[i];
+      if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
+        // 如果记录有 hierarchyState 且为 expand，则添加到 expandedRowsSet
+        if (record.hierarchyState === HierarchyState.expand) {
+          this.internalProps.expandedRowsSet.add(i);
+        }
+        // 如果没有明确设置 hierarchyState，默认为折叠状态（不添加到 expandedRowsSet）
+      }
+    }
+  }
+
+  /**
+   * 根据记录数据获取详情配置
+   */
+  private getDetailConfigForRecord(record: unknown, rowIndex: number): DetailGridOptions | null {
+    if (!this.options.masterDetail) {
+      return null;
+    }
+    
+    // 1. 优先使用 getDetailGridOptions 函数
+    if (this.options.getDetailGridOptions) {
+      return this.options.getDetailGridOptions({ data: record, rowIndex });
+    }
+    // 2. 使用默认的 detailGridOptions
+    if (this.options.detailGridOptions) {
+      return this.options.detailGridOptions;
+    }
+    // 3. 没有配置则返回 null
+    return null;
+  }
+
+  /**
+   * 获取指定行索引的记录数据
+   */
+  private getRecordByRowIndex(rowIndex: number): Record<string, unknown> {
+    return this.records[rowIndex];
+  }
+
+  /**
+   * 获取记录的原始行高度
+   */
+  private getOriginalRowHeight(recordIndex: number): number {
+    return this.internalProps.originalRowHeights?.get(recordIndex) || 0;
+  }
+
+  /**
+   * 渲染子表
+   */
+  private renderSubTable(recordIndex: number): void {
+    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
+      return;
+    }
+    
+    // 获取记录数据
+    const record = this.getRecordByRowIndex(recordIndex);
+    if (!record || !record.children) {
+      return;
+    }
+
+    // 获取子表配置
+    const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
+    if (!detailConfig) {
+      console.warn('No detail config found for record at index:', recordIndex);
+      return;
+    }
+
+    // 动态计算子表的viewBox区域
+    const childViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
+    if (!childViewBox) {
+      return; // 如果无法计算viewBox，则不渲染子表
+    }
+
+    // 保存初始ViewBox位置
+    if (this.internalProps.subTableInitialViewBox) {
+      this.internalProps.subTableInitialViewBox.set(recordIndex, {
+        x1: childViewBox.x1,
+        y1: childViewBox.y1,
+        x2: childViewBox.x2,
+        y2: childViewBox.y2
+      });
+    }
+
+    // 准备子表数据
+    const childrenData = Array.isArray(record.children) ? record.children : [];
+
+    // 创建子表配置
+    const subTableOptions = {
+      viewBox: childViewBox,
+      canvas: this.canvas,
+      records: childrenData,
+      columns: detailConfig?.columnDefs || [],
+      widthMode: 'adaptive' as const,
+      showHeader: true,
+      masterDetail: true, // 子表也支持主从表格功能
+      // 继承一些父表的配置
+      theme: this.options.theme,
+      ...(detailConfig || {})
+    };
+    const subTable = new ListTable(this.container, subTableOptions);
+    this.internalProps.subTableInstances.set(recordIndex, subTable);
+
+    // 确保子表内容在父表重绘后保持在上层
+    const afterRenderHandler = () => {
+      if (this.internalProps.subTableInstances && this.internalProps.subTableInstances.has(recordIndex)) {
+        subTable.render();
+      }
+    };
+    this.on('after_render', afterRenderHandler);
+    // 存储处理器引用以便清理
+    (subTable as unknown as { __afterRenderHandler: () => void }).__afterRenderHandler = afterRenderHandler;
+
+    // 设置滚动事件隔离
+    this.setupScrollEventIsolation(recordIndex, subTable, childViewBox);
+
+    // 初始渲染
+    subTable.render();
+    // 延迟设置第一个数据单元格为选中状态
+    setTimeout(() => {
+      this.selectSubTableFirstCell(subTable);
+    }, 200);
+  }
+
+  /**
+   * 计算子表的viewBox区域
+   */
+  private calculateSubTableViewBox(
+    recordIndex: number,
+    detailConfig?: DetailGridOptions | null
+  ): { x1: number; y1: number; x2: number; y2: number } | null {
+    // 获取展开行的详情行索引（数据行的下一行）
+    const detailRowIndex = recordIndex + 1;
+    // 获取详情行的位置和大小
+    const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
+    if (!detailRowRect) {
+      return null;
+    }
+
+    // 获取原始行高度
+    const originalHeight = this.internalProps.originalRowHeights?.get(recordIndex) || 0;
+    // 获取表格的完整宽度范围 - 从第一列到最后一列
+    const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
+    const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: detailRowIndex });
+    if (!firstColRect || !lastColRect) {
+      return null;
+    }
+    // 从配置中获取边距和高度，提供默认值
+    const margin = detailConfig?.style?.margin || 10;
+    const configHeight = detailConfig?.style?.height || 300;
+    // 计算子表的viewBox
+    const viewBox = {
+      x1: firstColRect.left + margin,
+      y1: detailRowRect.top + originalHeight + margin, // 从原始高度之后开始
+      x2: lastColRect.right - margin, // 使用最后一列的右边界
+      y2: detailRowRect.top - margin + configHeight // 使用配置的高度
+    };
+
+    // 确保viewBox有效
+    if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
+      return null;
+    }
+
+    return viewBox;
+  }
+
+  /**
+   * 设置滚动事件隔离
+   */
+  private setupScrollEventIsolation(
+    recordIndex: number,
+    subTable: ListTable,
+    childViewBox: { x1: number; y1: number; x2: number; y2: number }
+  ): void {
+    // 检测鼠标是否在子表区域内
+    const isMouseInChildTableArea = (event: MouseEvent) => {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      // 获取子表的当前 ViewBox 位置（实时更新）
+      const currentViewBox = subTable.options.viewBox;
+      if (!currentViewBox) {
+        return false;
+      }
+      // 检查是否在子表的当前viewBox区域内
+      const isInArea =
+        x >= currentViewBox.x1 && x <= currentViewBox.x2 && y >= currentViewBox.y1 && y <= currentViewBox.y2;
+      return isInArea;
+    };
+
+    // 父表滚动控制函数
+    const handleParentScroll = (parentArgs: { event?: MouseEvent }) => {
+      // 检查鼠标是否在子表区域内
+      if (parentArgs.event && isMouseInChildTableArea(parentArgs.event)) {
+        return false; // 阻止父表滚动
+      }
+      return true; // 允许父表滚动
+    };
+    // 监听父表滚动事件
+    this.on('can_scroll', handleParentScroll);
+    // 监听子表滚动事件
+    subTable.on('scroll', (args: unknown) => {
+      // console.log('子表滚动事件:', args);
+    });
+
+    // 存储处理器引用以便清理
+    (subTable as unknown as { __scrollHandler: (args: { event?: MouseEvent }) => boolean }).__scrollHandler =
+      handleParentScroll;
+  }
+
+  /**
+   * 设置子表第一个数据单元格为选中状态
+   */
+  private selectSubTableFirstCell(subTable: ListTable): void {
+    // 如果子表没有数据，直接返回
+    if (!subTable.records || subTable.records.length === 0) {
+      return;
+    }
+
+    // 计算第一个数据单元格的位置
+    // 行：跳过表头行，选择第一个数据行
+    const firstDataRow = subTable.columnHeaderLevelCount; // 表头行数
+    // 列：选择第一个数据列（通常是第0列）
+    const firstDataCol = 0;
+
+    // 使用VTable的selectCell方法直接设置选中状态
+    if (firstDataRow < subTable.rowCount && firstDataCol < subTable.colCount) {
+      subTable.selectCell(firstDataCol, firstDataRow);
+    }
+  }
+
+  /**
+   * 移除子表
+   */
+  private removeSubTable(recordIndex: number): void {
+    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
+      return;
+    }
+    
+    const subTable = this.internalProps.subTableInstances.get(recordIndex);
+    if (subTable) {
+      // 移除after_render监听器
+      const afterRenderHandler = (subTable as unknown as { __afterRenderHandler?: () => void }).__afterRenderHandler;
+      if (afterRenderHandler) {
+        this.off('after_render', afterRenderHandler);
+      }
+
+      // 移除滚动事件监听器
+      const scrollHandler = (subTable as unknown as { __scrollHandler?: (args: { event?: MouseEvent }) => boolean })
+        .__scrollHandler;
+      if (scrollHandler) {
+        this.off('can_scroll', scrollHandler);
+      }
+
+      // 销毁子表实例
+      if (typeof subTable.release === 'function') {
+        subTable.release();
+      }
+
+      // 清理映射
+      this.internalProps.subTableInstances.delete(recordIndex);
+      this.internalProps.subTableInitialViewBox?.delete(recordIndex);
+    }
+  }
+
+  /**
+   * 更新所有子表位置
+   */
+  private updateAllSubTablePositions(deltaX: number, deltaY: number): void {
+    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
+      return;
+    }
+    
+    this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
+      this.updateSubTablePosition(recordIndex, deltaX, deltaY);
+    });
+  }
+
+  /**
+   * 更新子表位置
+   */
+  private updateSubTablePosition(recordIndex: number, deltaX: number, deltaY: number): void {
+    if (
+      !this.options.masterDetail ||
+      !this.internalProps.subTableInstances ||
+      !this.internalProps.subTableInitialViewBox
+    ) {
+      return;
+    }
+    
+    const subTable = this.internalProps.subTableInstances.get(recordIndex);
+    if (!subTable) {
+      return;
+    }
+
+    // 获取初始ViewBox位置
+    const initialViewBox = this.internalProps.subTableInitialViewBox.get(recordIndex);
+    if (!initialViewBox) {
+      return;
+    }
+
+    // 计算新的ViewBox位置
+    const newViewBox = {
+      x1: initialViewBox.x1 + deltaX,
+      y1: initialViewBox.y1 + deltaY,
+      x2: initialViewBox.x2 + deltaX,
+      y2: initialViewBox.y2 + deltaY
+    };
+
+    // 更新子表的ViewBox
+    subTable.options.viewBox = newViewBox;
+    // 通知VRender Stage更新ViewBox
+    if (subTable.scenegraph?.stage) {
+      (subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
+        newViewBox,
+        false
+      );
+    }
+
+    // 重新渲染子表
+    subTable.render();
+  }
+
+  /**
+   * 重新计算所有子表位置
+   */
+  private recalculateAllSubTablePositions(): void {
+    if (
+      !this.options.masterDetail ||
+      !this.internalProps.subTableInstances ||
+      !this.internalProps.subTableInitialViewBox
+    ) {
+      return;
+    }
+    
+    this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
+      // 获取记录数据和配置
+      const record = this.getRecordByRowIndex(recordIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
+      // 重新计算子表的ViewBox区域
+      const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
+      if (newViewBox && this.internalProps.subTableInitialViewBox) {
+        // 更新初始ViewBox位置
+        this.internalProps.subTableInitialViewBox.set(recordIndex, {
+          x1: newViewBox.x1,
+          y1: newViewBox.y1,
+          x2: newViewBox.x2,
+          y2: newViewBox.y2
+        });
+        // 更新子表的ViewBox
+        subTable.options.viewBox = newViewBox;
+        // 通知VRender Stage更新ViewBox
+        if (subTable.scenegraph?.stage) {
+          (
+            subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }
+          ).setViewBox(newViewBox, false);
+        }
+        // 重新渲染子表
+        subTable.render();
+      }
+    });
+  }
+
+  /**
+   * 清理主从表格功能
+   */
+  private cleanupMasterDetailFeatures(): void {
+    if (!this.options.masterDetail) {
+      return;
+    }
+    
+    // 清理子表实例
+    this.internalProps.subTableInstances?.forEach(subTable => {
+      if (typeof subTable.release === 'function') {
+        subTable.release();
+      }
+    });
+    
+    // 清理状态
+    this.internalProps.expandedRowsSet?.clear();
+    this.internalProps.subTableInstances?.clear();
+    this.internalProps.originalRowHeights?.clear();
+    this.internalProps.subTableInitialViewBox?.clear();
+  }
+
   release() {
+    // 在释放资源前先清理主从表格功能
+    this.cleanupMasterDetailFeatures();
     this.editorManager.release();
     super.release();
   }

@@ -2,6 +2,7 @@ import { isArray, isValid } from '@visactor/vutils';
 import type { SimpleHeaderLayoutMap } from '../../layout';
 import type { PivotHeaderLayoutMap } from '../../layout/pivot-header-layout';
 import type { ColumnDefine, ListTableConstructorOptions } from '../../ts-types';
+import type { IBasicColumnBodyDefine } from '../../ts-types/list-table/define/basic-define';
 import { HierarchyState } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 
@@ -30,7 +31,8 @@ export function getHierarchyOffset(col: number, row: number, table: BaseTableAPI
     // const cellHierarchyState = table.getHierarchyState(col, row);
     if (
       (table.options as ListTableConstructorOptions).groupBy ||
-      (table.getBodyColumnDefine(col, row) as ColumnDefine)?.tree
+      (table.getBodyColumnDefine(col, row) as ColumnDefine)?.tree ||
+      (table.getBodyColumnDefine(col, row) as IBasicColumnBodyDefine)?.master
     ) {
       const indexArr = table.dataSource.getIndexKey(table.getRecordShowIndexByCell(col, row));
       const groupLength = table.dataSource.getGroupLength() ?? 0;

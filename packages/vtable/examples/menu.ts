@@ -40,6 +40,10 @@ export const menus = [
         name: 'test'
       },
       {
+        path: 'master',
+        name: 'list-master-detail'
+      },
+      {
         path: 'list',
         name: 'list-highlightInRange'
       },

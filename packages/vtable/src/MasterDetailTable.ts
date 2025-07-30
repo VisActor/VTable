@@ -862,6 +862,9 @@ export class MasterDetailTable extends BaseTable implements MasterDetailTableAPI
     updateRowHeightForExpand(this.scenegraph, insertRowIndex, deltaHeight);
     this.scenegraph.updateContainerHeight(insertRowIndex, deltaHeight);
 
+    // 标记该行为已调整高度
+    this.internalProps._heightResizedRowMap.add(insertRowIndex);
+
     // 更新图标状态
     if (tableRowIndex >= 0) {
       this.scenegraph.updateHierarchyIcon(0, tableRowIndex);

@@ -191,7 +191,10 @@ async function addCell(
   const mayHaveIcon =
     cellLocation !== 'body'
       ? true
-      : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
+      : (define as IRowSeriesNumber)?.dragOrder ||
+        !!define?.icon ||
+        !!(define as ColumnDefine)?.tree ||
+        !!(define as any)?.master;
   let icons;
   if (mayHaveIcon) {
     icons = tableInstance.getCellIcons(col, row);

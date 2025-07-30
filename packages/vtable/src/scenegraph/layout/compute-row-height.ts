@@ -9,6 +9,7 @@ import type {
   ListTableAPI,
   ListTableConstructorOptions
 } from '../../ts-types';
+import type { IBasicColumnBodyDefine } from '../../ts-types/list-table/define/basic-define';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
@@ -673,7 +674,11 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
+    mayHaveIcon =
+      !!define?.icon ||
+      !!(define as ColumnDefine)?.tree ||
+      !!(define as IBasicColumnBodyDefine)?.master ||
+      (define as IRowSeriesNumber)?.dragOrder;
   }
 
   if (mayHaveIcon) {

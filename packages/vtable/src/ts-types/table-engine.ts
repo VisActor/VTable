@@ -305,6 +305,15 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];
+  
+  /** 启用主从表格功能 */
+  masterDetail?: boolean;
+  /** 初始展开的行索引数组 */
+  expandedRows?: number[];
+  /** 子表配置选项（静态配置） */
+  detailGridOptions?: DetailGridOptions;
+  /** 根据数据动态获取子表配置的函数 */
+  getDetailGridOptions?: (params: { data: any; rowIndex: number }) => DetailGridOptions;
 }
 
 export interface MasterDetailTableConstructorOptions extends BaseTableConstructorOptions {
@@ -412,6 +421,16 @@ export interface ListTableAPI extends BaseTableAPI {
 
   _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
   _hasHierarchyTreeHeader: () => boolean;
+  
+  // 主从表格功能方法
+  /** 展开指定行的详情 */
+  expandRow?: (rowIndex: number, height?: number) => void;
+  /** 收起指定行的详情 */
+  collapseRow?: (rowIndex: number) => void;
+  /** 切换行的展开状态 */
+  toggleRowExpand?: (rowIndex: number) => void;
+  /** 更新子表位置 */
+  updateSubTableTranslation?: (deltaX?: number, deltaY?: number) => void;
 }
 export interface MasterDetailTableAPI extends BaseTableAPI {
   transpose: boolean;

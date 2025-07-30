@@ -64,6 +64,8 @@ export interface IBasicColumnBodyDefine {
   maxWidth?: number | string;
   //是否展示为树形结构
   tree?: boolean;
+  //是否展示为主从表格结构，使用 children 字段作为子数据
+  master?: boolean;
   icon?:
     | string
     | ColumnIconOption
