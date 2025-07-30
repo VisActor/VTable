@@ -164,10 +164,12 @@ export function createTable() {
     rowSeriesNumber: {
       dragOrder: true,
       cellType: 'checkbox',
-      headerType: 'text',
+
+      headerType: 'checkbox',
       title: '生'
     },
     enableCheckboxCascade: false,
+    enableHeaderCheckboxCascade: false,
     columns: [
       {
         field: '类别',

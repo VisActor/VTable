@@ -141,6 +141,10 @@ Display aggregation result when data is empty.
 
 Enable group checkbox cascade function. The default is true.
 
+## enableHeaderCheckboxCascade(boolean)
+
+Enable header checkbox cascade function. The default is true.
+
 
 ## groupConfig(GroupConfig)
 
