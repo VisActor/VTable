@@ -352,6 +352,8 @@ export class StateManager {
     const deltaY = this.moveTaskBar.deltaY;
     const target = this.moveTaskBar.target;
     if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
+      // 计算原始行号
+      const oldRowIndex = target.task_index;
       const taskIndex = target.task_index;
       const sub_task_index = target.sub_task_index;
       const { startDate: oldStartDate, endDate: oldEndDate } = this._gantt.getTaskInfoByTaskListIndex(
@@ -402,6 +404,43 @@ export class StateManager {
             oldStartDate,
             oldEndDate,
             index: taskIndex,
+            record: newRecord
+          });
+        }
+
+        const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+        const newRowIndex = indexs.task_index;
+        // 触发通用拖拽事件
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR, {
+            startDate: newRecord[this._gantt.parsedOptions.startDateField],
+            endDate: newRecord[this._gantt.parsedOptions.endDateField],
+            oldStartDate,
+            oldEndDate,
+            oldRowIndex,
+            newRowIndex,
+            index: taskIndex,
+            record: newRecord
+            // dateChanged: !!dateChanged,
+            // positionChanged: oldRowIndex !== newRowIndex
+          });
+        }
+      }
+
+      if (createDateAtMidnight(oldStartDate).getTime() === newStartDate.getTime()) {
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
+        const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+        const newRowIndex = indexs.task_index;
+        // 触发通用拖拽事件
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR, {
+            startDate: newRecord[this._gantt.parsedOptions.startDateField],
+            endDate: newRecord[this._gantt.parsedOptions.endDateField],
+            oldStartDate,
+            oldEndDate,
+            oldRowIndex,
+            newRowIndex,
+            index: newRowIndex,
             record: newRecord
           });
         }
@@ -480,6 +519,10 @@ export class StateManager {
           }
         }
       }
+
+      if (Math.abs(deltaY) >= 1) {
+      }
+
       this._gantt.scenegraph.updateNextFrame();
     }
     this.moveTaskBar.moving = false;
