@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add  move_end_task_bar event for vtable-gantt.#4266\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "alonemall@163.com"
+}
