@@ -20,7 +20,7 @@ export class FilterEngine {
 
       if (filter.type === 'byValue') {
         this.filterValueRule.push({
-          filterKey: filter.id,
+          filterKey: String(filter.field),
           filteredValues: filter.values
         });
       } else if (filter.type === 'byCondition') {
@@ -28,7 +28,7 @@ export class FilterEngine {
         const filterFunc = this.createFilterFunction(filter);
         this.filterFuncRule.push({
           filterFunc,
-          fieldId: filter.id
+          fieldId: String(filter.field)
         });
       }
     });
@@ -126,7 +126,7 @@ export class FilterEngine {
     table.updateFilterRules([]);
   }
 
-  clearFilter(table: VTable.ListTable | VTable.PivotTable, fieldId: string) {
+  clearFilter(table: VTable.ListTable | VTable.PivotTable, fieldId: string | number) {
     this.filterValueRule = this.filterValueRule.filter(rule => rule.filterKey !== fieldId);
     this.filterFuncRule = this.filterFuncRule.filter(rule => rule.fieldId !== fieldId);
 

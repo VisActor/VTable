@@ -14,7 +14,7 @@ export class FilterToolbar {
   conditionFilter: ConditionFilter | null = null;
   activeTab: 'byValue' | 'byCondition' = 'byValue';
   isVisible: boolean = false;
-  selectedField: string | null = null;
+  selectedField: string | number | null = null;
 
   private filterMenu: HTMLElement;
   private filterMenuWidth: number;
@@ -48,7 +48,7 @@ export class FilterToolbar {
     applyStyles(this.filterTabByCondition, filterStyles.tabStyle(!isValueTab));
   }
 
-  private updateSelectedField(field: string): void {
+  private updateSelectedField(field: string | number): void {
     this.selectedField = field;
     // 通知筛选组件更新选中字段
     if (this.valueFilter) {
@@ -59,7 +59,7 @@ export class FilterToolbar {
     }
   }
 
-  private applyFilter(field: string): void {
+  private applyFilter(field: string | number): void {
     if (this.activeTab === 'byValue') {
       this.valueFilter.applyFilter(field);
     } else if (this.activeTab === 'byCondition') {
@@ -68,7 +68,7 @@ export class FilterToolbar {
     this.hide();
   }
 
-  private clearFilter(field: string): void {
+  private clearFilter(field: string | number): void {
     if (this.valueFilter) {
       this.valueFilter.clearFilter(field);
     }
@@ -179,7 +179,8 @@ export class FilterToolbar {
     this.filterMenu.style.top = `${top}px`;
     this.isVisible = true;
 
-    const field = this.table.internalProps.layoutMap.getHeaderField(col, row) as string;
+    const field = this.table.internalProps.layoutMap.getHeaderField(col, row) as string | number;
+    console.log('selected field: ', field);
     this.updateSelectedField(field);
 
     // 根据当前筛选配置自动选择正确的筛选标签页

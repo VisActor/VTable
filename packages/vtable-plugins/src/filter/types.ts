@@ -1,20 +1,26 @@
 import type * as VTable from '@visactor/vtable';
 
 export interface FilterOptions {
+  /** 筛选器 ID，用于唯一标识筛选器 */
   id?: string;
+  /** 筛选器图标 */
   filterIcon?: VTable.TYPES.ColumnIconOption;
+  /** 筛选器激活图标 */
   filteringIcon?: VTable.TYPES.ColumnIconOption;
+  /** 筛选功能启用钩子函数，返回指定列是否启用筛选功能 */
+  enableFilter?: (columnIndex: number, column: VTable.TYPES.ColumnDefine) => boolean;
+  /** 默认是否启用筛选（当 enableFilter 未定义时使用） */
+  defaultEnabled?: boolean;
 }
 
 export interface FilterState {
-  filters: Map<string, FilterConfig>;
+  filters: Map<string | number, FilterConfig>;
   // activeFilters: string[];  // 激活的筛选器的 ID 列表
 }
 
 export interface FilterConfig {
-  id: string; // 列筛选设置的唯一标识，用来区分不同的列筛选设置
-  enable: boolean;
-  field: string; // 对应表格列
+  enable: boolean; // 是否启用筛选
+  field: string | number; // 对应表格列，同时作为筛选配置的唯一标识
   type: 'byValue' | 'byCondition'; // 筛选类型
   values?: any[]; // 按值筛选时的值列表
   operator?: FilterOperator; // 按条件筛选时的操作符

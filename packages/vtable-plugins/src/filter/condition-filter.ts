@@ -11,7 +11,7 @@ export class ConditionFilter {
   private table: VTable.ListTable | VTable.PivotTable;
   private filterStateManager: FilterStateManager;
   private filterByConditionPanel: HTMLElement;
-  private selectedField: string;
+  private selectedField: string | number;
   private operatorSelect: HTMLSelectElement;
   private valueInput: HTMLInputElement;
   private valueInputMax: HTMLInputElement;
@@ -72,7 +72,7 @@ export class ConditionFilter {
     this.filterStateManager = filterStateManager;
   }
 
-  setSelectedField(fieldId: string): void {
+  setSelectedField(fieldId: string | number): void {
     this.selectedField = fieldId;
     this.updateOperatorOptions();
     this.loadCurrentFilterState();
@@ -234,7 +234,7 @@ export class ConditionFilter {
   /**
    * 应用筛选条件
    */
-  applyFilter(fieldId: string = this.selectedField): void {
+  applyFilter(fieldId: string | number = this.selectedField): void {
     if (!this.operatorSelect || !this.valueInput) {
       return;
     }
@@ -281,7 +281,6 @@ export class ConditionFilter {
     this.filterStateManager.dispatch({
       type: FilterActionType.APPLY_FILTERS,
       payload: {
-        id: fieldId,
         field: fieldId,
         type: 'byCondition',
         operator,
@@ -296,11 +295,11 @@ export class ConditionFilter {
   /**
    * 清除筛选
    */
-  clearFilter(fieldId: string): void {
+  clearFilter(fieldId: string | number): void {
     this.filterStateManager.dispatch({
       type: FilterActionType.REMOVE_FILTER,
       payload: {
-        id: fieldId
+        field: fieldId
       }
     });
 

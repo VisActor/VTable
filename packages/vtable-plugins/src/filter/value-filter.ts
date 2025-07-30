@@ -8,11 +8,11 @@ import { applyStyles, filterStyles } from './styles';
 export class ValueFilter {
   private table: VTable.ListTable | VTable.PivotTable;
   private filterStateManager: FilterStateManager;
-  private uniqueKeys: Map<string, { value: any; count: number }[]> = new Map();
-  private selectedField: string;
+  private uniqueKeys: Map<string | number, { value: any; count: number }[]> = new Map();
+  private selectedField: string | number;
   private isVisible: boolean = false; // TODO，待处理状态与 UI 更新逻辑耦合的问题
 
-  private valueFilterOptionList: Map<string, ValueFilterOptionDom[]> = new Map();
+  private valueFilterOptionList: Map<string | number, ValueFilterOptionDom[]> = new Map();
   private filterByValuePanel: HTMLElement;
   private filterByValueSearchInput: HTMLInputElement;
   private selectAllCheckbox: HTMLInputElement;
@@ -35,7 +35,7 @@ export class ValueFilter {
     this.syncSelectAllWithFilterState(filterState);
   }
 
-  setSelectedField(fieldId: string): void {
+  setSelectedField(fieldId: string | number): void {
     this.selectedField = fieldId;
     const state: FilterConfig = this.filterStateManager.getFilterState(fieldId);
     if (!state || !state.enable) {
@@ -44,11 +44,11 @@ export class ValueFilter {
     }
   }
 
-  collectUniqueColumnValues(fieldId: string): void {
+  collectUniqueColumnValues(fieldId: string | number): void {
     const records = this.table.internalProps.dataSource.source;
     const aggregator = new VTable.TYPES.CustomAggregator({
-      key: fieldId,
-      field: fieldId,
+      key: String(fieldId),
+      field: String(fieldId),
       aggregationFun: (values: any[]) => {
         const map = new Map<string | number, number>();
         values.forEach(v => {
@@ -62,18 +62,21 @@ export class ValueFilter {
     });
 
     const recordsArray = Array.isArray(records) ? records : []; // TODO: 待优化，需要进一步考察
-    recordsArray.forEach(record => aggregator.push(record));
+    recordsArray.forEach(record => {
+      // 手动提取字段值，支持数字和字符串类型的fieldId
+      const fieldValue = record[fieldId];
+      aggregator.push({ [String(fieldId)]: fieldValue });
+    });
 
     this.uniqueKeys.set(fieldId, aggregator.value());
   }
 
-  private onValueSelect(fieldId: string, value: any, selected: boolean): void {
+  private onValueSelect(fieldId: string | number, value: any, selected: boolean): void {
     const filter = this.filterStateManager.getFilterState(fieldId);
     if (!filter) {
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
         payload: {
-          id: fieldId,
           field: fieldId,
           type: 'byValue',
           values: [value]
@@ -86,21 +89,20 @@ export class ValueFilter {
       this.filterStateManager.dispatch({
         type: FilterActionType.UPDATE_FILTER,
         payload: {
-          id: fieldId,
+          field: fieldId,
           values: updatedValues
         }
       });
     }
   }
 
-  private toggleSelectAll(fieldId: string, selected: boolean): void {
+  private toggleSelectAll(fieldId: string | number, selected: boolean): void {
     const filter = this.filterStateManager.getFilterState(fieldId);
     const valuesToUpdate = selected ? this.uniqueKeys.get(fieldId)?.map(item => item.value) || [] : [];
     if (!filter) {
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
         payload: {
-          id: fieldId,
           field: fieldId,
           type: 'byValue',
           values: valuesToUpdate,
@@ -112,14 +114,14 @@ export class ValueFilter {
       this.filterStateManager.dispatch({
         type: FilterActionType.UPDATE_FILTER,
         payload: {
-          id: fieldId,
+          field: fieldId,
           values: updatedValues
         }
       });
     }
   }
 
-  private onSearch(fieldId: string, value: string): void {
+  private onSearch(fieldId: string | number, value: string): void {
     const filterKeywords = value
       .toUpperCase()
       .split(' ')
@@ -136,7 +138,7 @@ export class ValueFilter {
   /**
    * 根据当前表格中的数据，更新 filter 的被选状态 selectedKeys
    */
-  private initFilterStateFromTableData(fieldId: string): void {
+  private initFilterStateFromTableData(fieldId: string | number): void {
     const filter = this.filterStateManager.getFilterState(fieldId);
     const records = this.table.internalProps.dataSource.source as any[]; // TODO: 需要进一步调查
     const selectedKeys = new Set();
@@ -154,7 +156,6 @@ export class ValueFilter {
       this.filterStateManager.dispatch({
         type: FilterActionType.UPDATE_FILTER,
         payload: {
-          id: fieldId,
           field: fieldId,
           type: 'byValue',
           values: Array.from(selectedKeys)
@@ -164,7 +165,6 @@ export class ValueFilter {
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
         payload: {
-          id: fieldId,
           field: fieldId,
           type: 'byValue',
           values: Array.from(selectedKeys)
@@ -182,7 +182,7 @@ export class ValueFilter {
     }
     const selectedValues = filter.values || [];
     const stringSelectedValues = new Set(selectedValues.map(v => String(v)));
-    const optionDomList = this.valueFilterOptionList.get(filter.id);
+    const optionDomList = this.valueFilterOptionList.get(filter.field);
     optionDomList?.forEach(optionDom => {
       optionDom.checkbox.checked = stringSelectedValues.has(optionDom.id);
       const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
@@ -220,13 +220,12 @@ export class ValueFilter {
     }
   }
 
-  applyFilter(fieldId: string = this.selectedField): void {
+  applyFilter(fieldId: string | number = this.selectedField): void {
     const selectedKeys = this.filterStateManager.getFilterState(fieldId)?.values || [];
     if (selectedKeys.length > 0 && selectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
-          id: fieldId,
           field: fieldId,
           type: 'byValue',
           values: selectedKeys,
@@ -237,17 +236,17 @@ export class ValueFilter {
       this.filterStateManager.dispatch({
         type: FilterActionType.REMOVE_FILTER,
         payload: {
-          id: fieldId
+          field: fieldId
         }
       });
     }
   }
 
-  clearFilter(fieldId: string): void {
+  clearFilter(fieldId: string | number): void {
     this.filterStateManager.dispatch({
       type: FilterActionType.REMOVE_FILTER,
       payload: {
-        id: fieldId
+        field: fieldId
       }
     });
 
@@ -298,7 +297,7 @@ export class ValueFilter {
     this.bindEventForFilterByValue();
   }
 
-  private renderFilterOptions(field: string): void {
+  private renderFilterOptions(field: string | number): void {
     this.filterItemsContainer.innerHTML = '';
     this.valueFilterOptionList.delete(field);
     this.valueFilterOptionList.set(field, []);

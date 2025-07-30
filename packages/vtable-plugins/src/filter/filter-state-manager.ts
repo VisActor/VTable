@@ -22,7 +22,7 @@ export class FilterStateManager {
     this.table = table;
   }
 
-  getFilterState(fieldId?: string): FilterConfig {
+  getFilterState(fieldId?: string | number): FilterConfig {
     return this.state.filters.get(fieldId);
   }
 
@@ -50,25 +50,25 @@ export class FilterStateManager {
     const newFilter = new Map(state.filters);
     switch (type) {
       case FilterActionType.ADD_FILTER:
-        newFilter.set(payload.id, payload);
+        newFilter.set(payload.field, payload);
         break;
       case FilterActionType.REMOVE_FILTER:
-        newFilter.delete(payload.id);
+        newFilter.delete(payload.field);
         break;
       case FilterActionType.UPDATE_FILTER:
-        newFilter.set(payload.id, { ...newFilter.get(payload.id), ...payload });
+        newFilter.set(payload.field, { ...newFilter.get(payload.field), ...payload });
         break;
       case FilterActionType.ENABLE_FILTER:
-        newFilter.set(payload.id, { ...newFilter.get(payload.id), enable: true });
+        newFilter.set(payload.field, { ...newFilter.get(payload.field), enable: true });
         break;
       case FilterActionType.DISABLE_FILTER:
-        newFilter.set(payload.id, { ...newFilter.get(payload.id), enable: false });
+        newFilter.set(payload.field, { ...newFilter.get(payload.field), enable: false });
         break;
       case FilterActionType.CLEAR_ALL_FILTERS:
         newFilter.clear();
         break;
       case FilterActionType.APPLY_FILTERS:
-        newFilter.set(payload.id, { ...newFilter.get(payload.id), ...payload, enable: true });
+        newFilter.set(payload.field, { ...newFilter.get(payload.field), ...payload, enable: true });
         break;
     }
 
@@ -77,15 +77,13 @@ export class FilterStateManager {
 
   private applyFilters() {
     this.engine.applyFilter(this.state, this.table);
-    this.updateFilterIcons();
+    this.updateColumnIcons();
   }
 
   /**
-   * 根据筛选状态更新列头图标
-   * 当列应用了筛选条件时，将图标切换为filteringIcon
+   * 更新列图标状态
    */
-  private updateFilterIcons() {
-    // 获取表格列定义
+  private updateColumnIcons() {
     const columns = (this.table as VTable.ListTable).columns;
     if (!columns) {
       return;
@@ -100,15 +98,28 @@ export class FilterStateManager {
     const filteringIcon = plugin.pluginOptions.filteringIcon;
 
     // 遍历所有列，更新图标
-    columns.forEach((col: VTable.ColumnDefine) => {
+    columns.forEach((col: VTable.ColumnDefine, index: number) => {
       const field = col.field as string;
       const filterConfig = this.state.filters.get(field);
 
-      // 如果该列有激活的筛选，则使用filteringIcon
-      if (filterConfig && filterConfig.enable) {
-        col.headerIcon = filteringIcon;
+      // 首先检查这一列是否应该启用筛选功能
+      const shouldEnableFilter = plugin.shouldEnableFilterForColumn
+        ? plugin.shouldEnableFilterForColumn(index, col)
+        : true;
+
+      if (shouldEnableFilter) {
+        // 如果该列有激活的筛选，则使用filteringIcon
+        if (filterConfig && filterConfig.enable) {
+          col.headerIcon = filteringIcon;
+        } else {
+          col.headerIcon = filterIcon;
+        }
       } else {
-        col.headerIcon = filterIcon;
+        // 如果不应该启用筛选，则移除筛选图标（恢复原始图标或无图标）
+        // 这里我们需要小心，不要覆盖其他插件设置的图标
+        if (col.headerIcon === filterIcon || col.headerIcon === filteringIcon) {
+          col.headerIcon = undefined;
+        }
       }
     });
 
