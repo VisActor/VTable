@@ -326,7 +326,7 @@ export class CachedDataSource extends DataSource {
 
   deleteRecordsForTree(recordIndexs: (number | number[])[]) {
     if (!isArray(recordIndexs) || recordIndexs.length === 0) {
-      return;
+      return [];
     }
     const recordIndexsMaxToMin = sortRecordIndexs(recordIndexs, -1);
     const deletedRecordIndexs = [];
