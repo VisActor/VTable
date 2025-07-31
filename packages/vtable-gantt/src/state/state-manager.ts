@@ -425,9 +425,7 @@ export class StateManager {
             // positionChanged: oldRowIndex !== newRowIndex
           });
         }
-      }
-
-      if (createDateAtMidnight(oldStartDate).getTime() === newStartDate.getTime()) {
+      } else {
         const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
         const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
         const newRowIndex = indexs.task_index;
