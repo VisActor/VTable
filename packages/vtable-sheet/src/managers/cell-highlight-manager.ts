@@ -29,13 +29,15 @@ export class CellHighlightManager {
   }
 
   /**
-   * 解析公式中的单元格引用
+   * 解析公式中的单元格引用（包括范围引用）
    */
-  parseCellReferences(formula: string): Array<{ address: string; coord: CellCoord; color: string }> {
-    const references: Array<{ address: string; coord: CellCoord; color: string }> = [];
+  parseCellReferences(
+    formula: string
+  ): Array<{ address: string; coords: CellCoord[]; color: string; isRange: boolean }> {
+    const references: Array<{ address: string; coords: CellCoord[]; color: string; isRange: boolean }> = [];
 
-    // 匹配单元格引用的正则表达式
-    const cellRefRegex = /(\$?[A-Z]+\$?\d+)/gi;
+    // 匹配单元格引用的正则表达式（包括范围引用）
+    const cellRefRegex = /(\$?[A-Z]+\$?\d+(?::\$?[A-Z]+\$?\d+)?)/gi;
 
     const matches = formula.match(cellRefRegex);
     if (!matches) {
@@ -57,22 +59,66 @@ export class CellHighlightManager {
         uniqueRefs.add(normalizedRef);
 
         try {
-          const coord = activeSheet.coordFromAddress(normalizedRef);
-          const color = this.colors[this.colorIndex % this.colors.length];
-          this.colorIndex++;
+          const isRange = normalizedRef.includes(':');
+          let coords: CellCoord[] = [];
 
-          references.push({
-            address: normalizedRef,
-            coord: coord,
-            color: color
-          });
+          if (isRange) {
+            // 解析范围引用，如 A1:A4
+            coords = this.parseRangeReference(normalizedRef, activeSheet);
+          } else {
+            // 解析单个单元格引用，如 A1
+            const coord = activeSheet.coordFromAddress(normalizedRef);
+            coords = [coord];
+          }
+
+          if (coords.length > 0) {
+            const color = this.colors[this.colorIndex % this.colors.length];
+            this.colorIndex++;
+
+            references.push({
+              address: normalizedRef,
+              coords: coords,
+              color: color,
+              isRange: isRange
+            });
+          }
         } catch (e) {
           // 忽略无效的单元格引用
+          console.warn(`Invalid cell reference: ${normalizedRef}`, e);
         }
       }
     });
 
     return references;
+  }
+
+  /**
+   * 解析范围引用，如 A1:A4
+   */
+  private parseRangeReference(rangeRef: string, activeSheet: Sheet): CellCoord[] {
+    const parts = rangeRef.split(':');
+    if (parts.length !== 2) {
+      throw new Error(`Invalid range reference: ${rangeRef}`);
+    }
+
+    const startCoord = activeSheet.coordFromAddress(parts[0]);
+    const endCoord = activeSheet.coordFromAddress(parts[1]);
+
+    const coords: CellCoord[] = [];
+
+    // 生成范围内的所有单元格坐标
+    const startRow = Math.min(startCoord.row, endCoord.row);
+    const endRow = Math.max(startCoord.row, endCoord.row);
+    const startCol = Math.min(startCoord.col, endCoord.col);
+    const endCol = Math.max(startCoord.col, endCoord.col);
+
+    for (let row = startRow; row <= endRow; row++) {
+      for (let col = startCol; col <= endCol; col++) {
+        coords.push({ row, col });
+      }
+    }
+
+    return coords;
   }
 
   /**
@@ -95,19 +141,22 @@ export class CellHighlightManager {
 
     // 应用高亮
     references.forEach(ref => {
-      const key = `${ref.coord.row}-${ref.coord.col}`;
+      ref.coords.forEach(coord => {
+        const key = `${coord.row}-${coord.col}`;
 
-      // 保存高亮信息
-      this.highlightedCells.set(key, {
-        row: ref.coord.row,
-        col: ref.coord.col,
-        color: ref.color
+        // 保存高亮信息
+        this.highlightedCells.set(key, {
+          row: coord.row,
+          col: coord.col,
+          color: ref.color
+        });
+
+        // 应用高亮样式
+        this.applyCellHighlight(activeSheet, coord, ref.color);
       });
-
-      // 应用高亮样式
-      this.applyCellHighlight(activeSheet, ref.coord, ref.color);
     });
   }
+
   /**
    * 应用单元格高亮
    * 通过修改单元格的边框样式实现
