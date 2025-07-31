@@ -73,10 +73,37 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
 
   addFilterIcon(): void {
     const columns = (this.table as VTable.ListTable).columns; // TODO: 待处理多行的情况，待扩展透视表类型
-    columns.forEach((col: VTable.ColumnDefine) => {
-      col.headerIcon = this.pluginOptions.filterIcon;
+    columns.forEach((col: VTable.ColumnDefine, index: number) => {
+      // 检查是否应该为这一列启用筛选功能
+      if (this.shouldEnableFilterForColumn(index, col)) {
+        col.headerIcon = this.pluginOptions.filterIcon;
+      }
+      // 如果不应该启用筛选，则不设置 headerIcon（保持原有图标或无图标）
     });
     (this.table as VTable.ListTable).updateColumns(columns);
+  }
+
+  /**
+   * 判断指定列是否应该启用筛选功能
+   */
+  shouldEnableFilterForColumn(columnIndex: number, column: VTable.ColumnDefine): boolean {
+    // 如果是空白列，不适用筛选
+    if (!column.title) {
+      return false;
+    }
+
+    // 如果有自定义的启用钩子函数，使用钩子函数的结果
+    if (this.pluginOptions.enableFilter) {
+      return this.pluginOptions.enableFilter(columnIndex, column);
+    }
+
+    // 如果没有钩子函数，使用默认启用配置
+    if (this.pluginOptions.defaultEnabled !== undefined) {
+      return this.pluginOptions.defaultEnabled;
+    }
+
+    // 默认情况，所有列都启用筛选
+    return true;
   }
 
   release() {

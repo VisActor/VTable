@@ -7,6 +7,20 @@ export * from './sheet';
 import type { ColumnDefine, TYPES } from '@visactor/vtable';
 import type { CellValue, IStyle } from './base';
 
+/** 筛选配置 */
+export interface IFilterConfig {
+  /** 筛选图标配置 */
+  filterIcon?: ColumnDefine['headerIcon'];
+  /** 筛选激活状态图标配置 */
+  filteringIcon?: ColumnDefine['headerIcon'];
+}
+
+/** 扩展的列定义，添加筛选相关配置 */
+export interface IColumnDefine extends Omit<ColumnDefine, 'field'> {
+  /** 是否启用筛选功能 */
+  filter?: boolean;
+}
+
 /** Sheet定义 */
 export interface ISheetDefine {
   /** 标题 */
@@ -18,7 +32,7 @@ export interface ISheetDefine {
   /** 行数 */
   rowCount?: number;
   /** 表头定义 */
-  columns?: Omit<ColumnDefine, 'field'>[];
+  columns?: IColumnDefine[];
   /** 数据 */
   data?: (CellValue[] | null)[];
   /** 是否是当前活动sheet TODO 是不是放到外层更好*/
@@ -38,6 +52,8 @@ export interface ISheetDefine {
   showHeader?: boolean;
   /** 公式定义 */
   formulas?: Record<string, string>;
+  /** 筛选配置 - 支持简单布尔值或详细配置对象 */
+  filter?: boolean | IFilterConfig;
 }
 
 /** 数据管理器接口 */

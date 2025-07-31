@@ -391,6 +391,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (isHasFilterRule || isHasAggregation) {
       for (let i = 0, len = records.length; i < len; i++) {
         const record = records[i];
+        // 跳过空白行
+        if (record === undefined || record === null) {
+          continue;
+        }
         if (this.dataConfig?.filterRules?.length >= 1) {
           if (this.filterRecord(record)) {
             filteredRecords.push(record);

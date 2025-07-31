@@ -776,7 +776,7 @@ export default class VTableSheet {
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
       parent: this,
-      plugins: getTablePlugins(),
+      plugins: getTablePlugins(sheetDefine),
       headerEditor: 'formula',
       editor: 'formula',
       select: {
