@@ -1,7 +1,7 @@
 import type { SimpleCellAddress } from 'hyperformula';
 import { HyperFormula, CellError } from 'hyperformula';
 import type VTableSheet from '../components/vtable-sheet';
-import type { FormulaCell, FormulaResult } from '../ts-types';
+import type { FormulaCell, FormulaResult } from '../ts-types/formula';
 
 /**
  * 标准HyperFormula配置
@@ -24,19 +24,22 @@ const DEFAULT_HYPERFORMULA_CONFIG = {
   timeFormats: ['hh:mm', 'hh:mm:ss.s']
 };
 
-/**
- * 增强的公式管理器 - 使用HyperFormula实现Excel兼容的公式计算
- */
 export class FormulaManager {
-  private vtableSheet: VTableSheet;
+  /** Sheet实例 */
+  private sheet: VTableSheet;
+  /** HyperFormula实例 */
   private hyperFormula: HyperFormula;
+  /** 工作表映射 */
   private sheetMapping: Map<string, number> = new Map();
+  /** 反向工作表映射 */
   private reverseSheetMapping: Map<number, string> = new Map();
+  /** 是否已初始化 */
   private isInitialized = false;
+  /** 下一个工作表ID */
   private nextSheetId = 0;
 
-  constructor(vtableSheet: VTableSheet) {
-    this.vtableSheet = vtableSheet;
+  constructor(sheet: VTableSheet) {
+    this.sheet = sheet;
     this.initializeHyperFormula();
   }
 
@@ -55,6 +58,9 @@ export class FormulaManager {
 
   /**
    * 添加新工作表 - 正确的多表格支持
+   * @param sheetKey 工作表键
+   * @param data 工作表数据
+   * @returns 工作表ID
    */
   addSheet(sheetKey: string, data?: any[][]): number {
     this.ensureInitialized();
@@ -67,19 +73,49 @@ export class FormulaManager {
     try {
       let sheetId: number;
 
+      // 创建第一个sheet
       if (this.sheetMapping.size === 0) {
-        // 第一个sheet - 使用buildFromArray重建
-        const initialData = this.normalizeSheetData(data);
-        this.hyperFormula = HyperFormula.buildFromArray(initialData, DEFAULT_HYPERFORMULA_CONFIG);
+        this.hyperFormula = HyperFormula.buildFromArray([['']], DEFAULT_HYPERFORMULA_CONFIG);
         sheetId = 0;
-      } else {
-        // 后续sheet - 使用addSheet API
-        const sheetName = this.hyperFormula.addSheet(sheetKey);
-        sheetId = this.hyperFormula.getSheetId(sheetName);
 
-        // 如果有数据，设置内容
-        if (data && data.length > 0) {
-          (this.hyperFormula as any).setSheetContent(sheetId, this.normalizeSheetData(data));
+        // 获取 HyperFormula 自动创建的 sheet 名称并重命名为我们需要的名称
+        const defaultSheetName = this.hyperFormula.getSheetName(0);
+        if (defaultSheetName !== sheetKey) {
+          try {
+            // 重命名默认 sheet 为我们需要的名称
+            (this.hyperFormula as any).renameSheet(0, sheetKey);
+          } catch (e) {
+            console.warn(`Could not rename default sheet from ${defaultSheetName} to ${sheetKey}:`, e);
+          }
+        }
+      } else {
+        // 后续sheet - 先检查这个名称是否已经存在于 HyperFormula 中
+        try {
+          // 尝试获取已存在的 sheet ID
+          const existingSheetId = this.hyperFormula.getSheetId(sheetKey);
+          if (existingSheetId !== undefined) {
+            // 如果 HyperFormula 中已经有这个名称的 sheet，直接使用它
+            sheetId = existingSheetId;
+          } else {
+            // 否则创建新的 sheet
+            const sheetName = this.hyperFormula.addSheet(sheetKey);
+            sheetId = this.hyperFormula.getSheetId(sheetName);
+          }
+        } catch (error) {
+          // 如果获取 sheet ID 失败，说明不存在，创建新的
+          const sheetName = this.hyperFormula.addSheet(sheetKey);
+          sheetId = this.hyperFormula.getSheetId(sheetName);
+        }
+      }
+
+      // 如果有有效数据，设置内容
+      if (Array.isArray(data) && data.length > 0) {
+        const hasHeader = this.getHasHeader(sheetKey);
+        const normalizedData = hasHeader
+          ? [Array(data[0].length).fill('')].concat(this.normalizeSheetData(data))
+          : this.normalizeSheetData(data);
+        if (normalizedData.length > 0) {
+          this.hyperFormula.setSheetContent(sheetId, normalizedData);
         }
       }
 
@@ -96,25 +132,51 @@ export class FormulaManager {
 
   /**
    * 标准化工作表数据
+   * @param data 工作表数据
+   * @returns 标准化后的工作表数据
    */
-  private normalizeSheetData(data?: any[][]): any[][] {
-    if (!data || data.length === 0) {
-      return [[]];
-    }
-
-    // 确保所有行都有相同的列数
-    const maxCols = Math.max(...data.map(row => row.length));
-    return data.map(row => {
-      const normalizedRow = [...row];
-      while (normalizedRow.length < maxCols) {
-        normalizedRow.push('');
+  private normalizeSheetData(data: any[][]): any[][] {
+    try {
+      if (!Array.isArray(data) || data.length === 0) {
+        return [['']];
       }
-      return normalizedRow;
-    });
+
+      // 确保所有行都是数组，并转换数据类型
+      const validData = data.filter(row => Array.isArray(row));
+      if (validData.length === 0) {
+        return [['']];
+      }
+
+      // 确保所有行都有相同的列数，并正确处理数据类型
+      const maxCols = Math.max(...validData.map(row => row.length));
+      return validData.map(row => {
+        const normalizedRow = Array.isArray(row)
+          ? row.map(cell => {
+              if (typeof cell === 'string') {
+                if (cell.startsWith('=')) {
+                  return cell; // 保持公式不变
+                }
+                const num = Number(cell);
+                return !isNaN(num) ? num : cell;
+              }
+              return cell ?? '';
+            })
+          : [''];
+
+        while (normalizedRow.length < maxCols) {
+          normalizedRow.push('');
+        }
+        return normalizedRow;
+      });
+    } catch (error) {
+      console.error('Failed to normalize sheet data:', error);
+      return [['']];
+    }
   }
 
   /**
    * 移除工作表
+   * @param sheetKey 工作表键
    */
   removeSheet(sheetKey: string): void {
     const sheetId = this.sheetMapping.get(sheetKey);
@@ -139,6 +201,8 @@ export class FormulaManager {
 
   /**
    * 重命名工作表
+   * @param oldKey 旧工作表键
+   * @param newKey 新工作表键
    */
   renameSheet(oldKey: string, newKey: string): void {
     const sheetId = this.sheetMapping.get(oldKey);
@@ -162,6 +226,8 @@ export class FormulaManager {
 
   /**
    * 获取工作表ID
+   * @param sheetKey 工作表键
+   * @returns 工作表ID
    */
   private getSheetId(sheetKey: string): number {
     const sheetId = this.sheetMapping.get(sheetKey);
@@ -173,13 +239,27 @@ export class FormulaManager {
   }
 
   /**
+   * 获取是否有表头
+   * @param sheetKey 工作表键
+   * @returns 是否有表头
+   */
+  private getHasHeader(sheetKey: string): boolean {
+    const sheetDefine = this.sheet.getSheetManager().getSheet(sheetKey);
+
+    return sheetDefine?.showHeader ?? sheetDefine?.columns?.length > 0 ?? false;
+  }
+
+  /**
    * 设置单元格内容
+   * @param cell 单元格
+   * @param value 值
    */
   setCellContent(cell: FormulaCell, value: any): void {
     this.ensureInitialized();
 
     try {
       const sheetId = this.getSheetId(cell.sheet);
+
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
@@ -195,12 +275,15 @@ export class FormulaManager {
 
   /**
    * 获取单元格值
+   * @param cell 单元格
+   * @returns 单元格值
    */
   getCellValue(cell: FormulaCell): FormulaResult {
     this.ensureInitialized();
 
     try {
       const sheetId = this.getSheetId(cell.sheet);
+
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
@@ -208,7 +291,6 @@ export class FormulaManager {
       };
 
       const value = this.hyperFormula.getCellValue(address);
-
       return {
         value,
         error: value instanceof CellError ? value : undefined
@@ -224,12 +306,15 @@ export class FormulaManager {
 
   /**
    * 获取单元格公式
+   * @param cell 单元格
+   * @returns 单元格公式
    */
   getCellFormula(cell: FormulaCell): string | undefined {
     this.ensureInitialized();
 
     try {
       const sheetId = this.getSheetId(cell.sheet);
+
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
@@ -245,6 +330,8 @@ export class FormulaManager {
 
   /**
    * 检查是否为公式单元格
+   * @param cell 单元格
+   * @returns 是否为公式单元格
    */
   isCellFormula(cell: FormulaCell): boolean {
     this.ensureInitialized();
@@ -266,6 +353,8 @@ export class FormulaManager {
 
   /**
    * 获取依赖此单元格的所有单元格
+   * @param cell 单元格
+   * @returns 依赖此单元格的所有单元格
    */
   getCellDependents(cell: FormulaCell): FormulaCell[] {
     this.ensureInitialized();
@@ -295,6 +384,8 @@ export class FormulaManager {
 
   /**
    * 获取此单元格依赖的所有单元格
+   * @param cell 单元格
+   * @returns 此单元格依赖的所有单元格
    */
   getCellPrecedents(cell: FormulaCell): FormulaCell[] {
     this.ensureInitialized();
@@ -324,6 +415,7 @@ export class FormulaManager {
 
   /**
    * 批量更新单元格
+   * @param changes 更新内容
    */
   batchUpdate(changes: Array<{ cell: FormulaCell; value: any }>): void {
     this.ensureInitialized();
@@ -348,6 +440,9 @@ export class FormulaManager {
 
   /**
    * 添加行
+   * @param sheetKey 工作表键
+   * @param rowIndex 行索引
+   * @param numberOfRows 添加的行数
    */
   addRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
     this.ensureInitialized();
@@ -363,6 +458,9 @@ export class FormulaManager {
 
   /**
    * 删除行
+   * @param sheetKey 工作表键
+   * @param rowIndex 行索引
+   * @param numberOfRows 删除的行数
    */
   removeRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
     this.ensureInitialized();
@@ -378,6 +476,9 @@ export class FormulaManager {
 
   /**
    * 添加列
+   * @param sheetKey 工作表键
+   * @param columnIndex 列索引
+   * @param numberOfColumns 添加的列数
    */
   addColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
@@ -393,6 +494,9 @@ export class FormulaManager {
 
   /**
    * 删除列
+   * @param sheetKey 工作表键
+   * @param columnIndex 列索引
+   * @param numberOfColumns 删除的列数
    */
   removeColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
@@ -408,6 +512,8 @@ export class FormulaManager {
 
   /**
    * 获取工作表序列化数据
+   * @param sheetKey 工作表键
+   * @returns 工作表序列化数据
    */
   getSheetSerialized(sheetKey: string): any[][] {
     this.ensureInitialized();
@@ -423,6 +529,8 @@ export class FormulaManager {
 
   /**
    * 设置工作表内容
+   * @param sheetKey 工作表键
+   * @param data 工作表数据
    */
   setSheetContent(sheetKey: string, data: any[][]): void {
     this.ensureInitialized();
@@ -439,6 +547,7 @@ export class FormulaManager {
 
   /**
    * 检查循环引用
+   * @returns 是否存在循环引用
    */
   hasCircularReference(): boolean {
     try {
@@ -452,6 +561,7 @@ export class FormulaManager {
 
   /**
    * 获取可用函数列表 - 静态列表
+   * @returns 可用函数列表
    */
   getAvailableFunctions(): string[] {
     // 返回常用的Excel函数列表
@@ -504,6 +614,8 @@ export class FormulaManager {
 
   /**
    * 验证公式语法
+   * @param formula 公式
+   * @returns 验证结果
    */
   validateFormula(formula: string): { isValid: boolean; error?: string } {
     try {
@@ -520,6 +632,8 @@ export class FormulaManager {
 
   /**
    * 计算单个公式而不影响工作表
+   * @param formula 公式
+   * @returns 计算结果
    */
   calculateFormula(formula: string): { value: any; error?: string } {
     try {
@@ -538,6 +652,7 @@ export class FormulaManager {
 
   /**
    * 暂停自动计算
+   * @returns 是否成功
    */
   suspendEvaluation(): void {
     try {
@@ -641,6 +756,11 @@ export class FormulaManager {
 
   /**
    * 复制/移动单元格范围 - 简化版本
+   * @param sourceSheet 源工作表
+   * @param sourceRange 源范围
+   * @param targetSheet 目标工作表
+   * @param targetRow 目标行
+   * @param targetCol 目标列
    */
   copyRange(
     sourceSheet: string,

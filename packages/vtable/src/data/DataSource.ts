@@ -17,7 +17,7 @@ import type {
 import { AggregationType, HierarchyState } from '../ts-types';
 import { applyChainSafe, getOrApply, obj, isPromise, emptyFn } from '../tools/helper';
 import { EventTarget } from '../event/EventTarget';
-import { getValueByPath, isAllDigits } from '../tools/util';
+import { computeChildrenNodeLength, getValueByPath, isAllDigits } from '../tools/util';
 import { calculateArrayDiff } from '../tools/diff-cell';
 import { arrayEqual, cloneDeep, isArray, isNumber, isObject, isValid } from '@visactor/vutils';
 import type { BaseTableAPI } from '../ts-types/base-table';
@@ -151,6 +151,7 @@ export interface ISortedMapItem {
 }
 
 export class DataSource extends EventTarget implements DataSourceAPI {
+  addRecordRule: 'Array' | 'Object' = 'Object';
   dataConfig: IListTableDataConfig;
   dataSourceObj: DataSourceParam | DataSource;
   private _get: (index: number | number[]) => any;
@@ -214,6 +215,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     hierarchyExpandLevel?: number
   ) {
     super();
+    this.addRecordRule = dataConfig?.addRecordRule || 'Object';
     this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
@@ -622,40 +624,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       this.pushChildrenNode(indexed, HierarchyState.expand, data);
       this.hasHierarchyStateExpand = true;
     } else if (state === HierarchyState.expand) {
-      // 记录状态变化影响的子节点行数
-      let childrenLength = 0;
-      /**
-       * 当某个节点由展开变为折叠，需要计算出影响的节点数量 使用childrenLength来标记。同样需递归
-       * @param indexKey
-       * @param hierarchyState
-       * @param nodeData
-       * @returns
-       */
-      const computeChildrenNodeLength = (
-        indexKey: number | number[],
-        hierarchyState: HierarchyState,
-        nodeData: any
-      ) => {
-        if (!hierarchyState || hierarchyState === HierarchyState.collapse || hierarchyState === HierarchyState.none) {
-          return;
-        }
-        const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
-        if (children) {
-          for (let i = 0; i < children.length; i++) {
-            childrenLength += 1;
-            const childIndex = Array.isArray(indexKey) ? indexKey.concat([i]) : [indexKey, i];
-
-            computeChildrenNodeLength(
-              childIndex,
-              // this.treeDataHierarchyState.get(childIndex.join(',')),
-              children[i].hierarchyState,
-              children[i]
-            );
-          }
-        }
-      };
-      computeChildrenNodeLength(indexed, state, data);
-
+      const childrenLength = computeChildrenNodeLength(indexed, state, data);
       this.currentIndexedData.splice(this.currentIndexedData.indexOf(indexed) + 1, childrenLength);
       // this.treeDataHierarchyState.set(Array.isArray(indexed) ? indexed.join(',') : indexed, HierarchyState.collapse);
       data.hierarchyState = HierarchyState.collapse;
@@ -789,7 +758,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           if (record) {
             record[field] = formatValue;
           } else {
-            this.records[dataIndex as number] = {};
+            this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
             this.records[dataIndex as number][field] = formatValue;
           }
         }
@@ -1124,9 +1093,39 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     // Perform sorting on each state
     sortedIndexArray.sort((indexA, indexB) => {
+      // 获取两个索引对应的记录
+      const recordA = this.getOriginalRecord(indexA);
+      const recordB = this.getOriginalRecord(indexB);
+
+      // 检查记录是否为空（null、undefined 或空对象）
+      const isEmptyA =
+        recordA === null || recordA === undefined || (typeof recordA === 'object' && Object.keys(recordA).length === 0);
+      const isEmptyB =
+        recordB === null || recordB === undefined || (typeof recordB === 'object' && Object.keys(recordB).length === 0);
+
       return states.reduce((result: number, state: SortState) => {
         if (result !== 0) {
           return result;
+        }
+
+        // 如果有排序状态（非normal状态），则空数据排在后面
+        if (state.order === 'asc' || state.order === 'desc') {
+          // 如果一个是空记录而另一个不是，则空记录排在后面
+          if (isEmptyA && !isEmptyB) {
+            return 1; // A是空的，B不是，A排后面
+          }
+          if (!isEmptyA && isEmptyB) {
+            return -1; // A不是空的，B是，B排后面
+          }
+          // 如果两者都是空记录，保持原有顺序
+          if (isEmptyA && isEmptyB) {
+            return indexA - indexB; // 保持原有顺序
+          }
+        } else {
+          // normal状态，保持原始顺序
+          if (isEmptyA || isEmptyB) {
+            return indexA - indexB;
+          }
         }
 
         const orderFn =
@@ -1611,6 +1610,62 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       );
     }
     return childTotalLength;
+  }
+
+  private _setNodeStateRecursive(node: any, targetState: HierarchyState): void {
+    if (!node) {
+      return;
+    }
+    const children = (node as any).filteredChildren ?? (node as any).children;
+    // 仅为具有子节点（即可以展开/折叠）的节点设置状态
+    if (children && (Array.isArray(children) ? children.length > 0 : children === true)) {
+      (node as any).hierarchyState = targetState;
+    }
+
+    // 如果子节点作为数组存在，则递归应用于子节点
+    if (children && Array.isArray(children)) {
+      for (const child of children) {
+        this._setNodeStateRecursive(child, targetState);
+      }
+    }
+  }
+
+  expandAllNodes(): void {
+    if (Array.isArray(this._source)) {
+      for (const rootNode of this._source) {
+        this._setNodeStateRecursive(rootNode, HierarchyState.expand);
+      }
+      this.hasHierarchyStateExpand = true;
+      this.clearSortedIndexMap();
+      this.restoreTreeHierarchyState();
+
+      if (this.lastSortStates && this.lastSortStates.length > 0) {
+        this.sort(this.lastSortStates); // sort 方法内部会调用 updatePagerData
+      } else {
+        this.updatePagerData();
+      }
+    } else {
+      console.warn('DataSource._source is not an array, cannot expand all nodes.');
+    }
+  }
+
+  collapseAllNodes(): void {
+    if (Array.isArray(this._source)) {
+      for (const rootNode of this._source) {
+        this._setNodeStateRecursive(rootNode, HierarchyState.collapse);
+      }
+      // hasHierarchyStateExpand 将由 restoreTreeHierarchyState 正确更新
+      this.clearSortedIndexMap();
+      this.restoreTreeHierarchyState();
+
+      if (this.lastSortStates && this.lastSortStates.length > 0) {
+        this.sort(this.lastSortStates); // sort 方法内部会调用 updatePagerData
+      } else {
+        this.updatePagerData();
+      }
+    } else {
+      console.warn('DataSource._source is not an array, cannot collapse all nodes.');
+    }
   }
 }
 

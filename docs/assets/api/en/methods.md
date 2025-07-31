@@ -248,6 +248,14 @@ Select one or more cell ranges
   selectCells(cellRanges: CellRange[]): void
 ```
 
+## selectRow(Function)
+
+Select a row
+
+## selectCol(Function)
+
+Select a column
+
 ## getSelectedCellInfos(Function)
 
 Get the selected cell information, and the returned result is a two-dimensional array. The first-level array item represents a row, and each item of the second-level array represents a cell information of the row.
@@ -1653,6 +1661,44 @@ The pixelRatio can be obtained directly from the instance's pixelRatio property.
 /\*_ Set the canvas pixel ratio _/
 setPixelRatio: (pixelRatio: number) => void;
 
+````
+
+## expandAllTreeNode(Function)
+
+Expand all tree nodes (including headers and data rows).
+
+**ListTable Proprietary**
+
+```ts
+  /**
+   * Expand all tree nodes (including headers and data rows).
+   */
+  expandAllTreeNode(): void
+````
+
+Usage:
+
+```ts
+// Expand all nodes
+tableInstance.expandAllTreeNode();
 ```
 
+## collapseAllTreeNode(Function)
+
+Collapse all tree nodes (including headers and data rows).
+
+**ListTable Proprietary**
+
+```ts
+  /**
+   * Collapse all tree nodes (including headers and data rows).
+   */
+  collapseAllTreeNode(): void
+```
+
+Usage:
+
+```ts
+// Collapse all nodes
+tableInstance.collapseAllTreeNode();
 ```

@@ -161,6 +161,13 @@ export function createTable() {
   ];
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
+    rowSeriesNumber: {
+      dragOrder: true,
+      cellType: 'checkbox',
+      headerType: 'text',
+      title: '生'
+    },
+    enableCheckboxCascade: false,
     columns: [
       {
         field: '类别',

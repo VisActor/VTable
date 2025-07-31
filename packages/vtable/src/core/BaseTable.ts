@@ -112,7 +112,7 @@ import type {
   BaseTableAPI,
   BaseTableConstructorOptions,
   IBaseTableProtected,
-  PivotTableProtected
+  ListTableProtected
 } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
@@ -186,6 +186,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   canvasWidth?: number;
   canvasHeight?: number;
+  translateX?: number;
+  translateY?: number;
 
   _vDataSet?: DataSet;
   scenegraph: Scenegraph;
@@ -308,11 +310,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
+      translateX,
+      translateY,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight,
       clearDOM = true
     } = options;
+
+    const { groupConfig, groupBy, groupTitleFieldFormat, groupTitleCustomLayout, enableTreeStickCell } =
+      options as ListTableConstructorOptions;
     this.container = container;
     this.options = options;
     this._widthMode = widthMode;
@@ -354,6 +361,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
+    this.translateX = translateX ?? 0;
+    this.translateY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
 
@@ -409,7 +418,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.enableCheckboxCascade = enableCheckboxCascade;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -418,6 +427,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
+
+    (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
+    (internalProps as ListTableProtected).groupTitleCheckbox =
+      groupConfig?.titleCheckbox ?? !!rowSeriesNumber?.enableTreeCheckbox;
+    (internalProps as ListTableProtected).groupTitleFieldFormat =
+      groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
+    (internalProps as ListTableProtected).groupTitleCustomLayout =
+      groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
+    (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
+
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -643,6 +662,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.canvasWidth = canvasWidth;
     this.resize();
   }
+  setTranslate(translateX: number, translateY: number) {
+    this.translateX = translateX;
+    this.translateY = translateY;
+    this.options.translateX = translateX;
+    this.options.translateY = translateY;
+    this.resize();
+  }
   resize() {
     this._updateSize();
     this.internalProps.legends?.forEach(legend => {
@@ -690,6 +716,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * Set the number of frozen columns.
+   * 设置冻结列数 会自动刷新渲染节点
    */
   set frozenColCount(frozenColCount: number) {
     // 此情况将frozenColCount设为0（显示效果一致）
@@ -766,9 +793,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * Set the number of frozen rows.
+   * 设置冻结行数 会自动刷新渲染节点
    */
   set frozenRowCount(frozenRowCount: number) {
     this.internalProps.frozenRowCount = frozenRowCount;
+    this.options.frozenRowCount = frozenRowCount;
     this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
   }
 
@@ -1093,8 +1122,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
-    this.tableX = 0;
-    this.tableY = 0;
+    this.tableX = this.translateX;
+    this.tableY = this.translateY;
 
     if (this.options.canvas && this.options.viewBox) {
       widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
@@ -1189,17 +1218,23 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
       if (this.theme.frameStyle?.innerBorder) {
-        this.tableX = 0;
-        this.tableY = 0;
-        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0);
-        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0);
+        this.tableX += this.translateX;
+        this.tableY += this.translateY;
+        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.translateX;
+        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.translateY;
       } else {
-        this.tableX = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
-        this.tableY = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+        this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
+        this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
         this.tableNoFrameWidth =
-          width - ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) - ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+          width -
+          ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) -
+          ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0)) -
+          this.translateX;
         this.tableNoFrameHeight =
-          height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+          height -
+          ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) -
+          ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0)) -
+          this.translateY;
       }
     }
 
@@ -2480,6 +2515,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * @param options
    */
   updateOption(options: BaseTableConstructorOptions) {
+    this.fireListeners(TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, { options, container: this.container });
     this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
     this._hasAutoImageColumn = undefined;
@@ -2524,10 +2560,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       renderChartAsyncBatchCount,
       canvasWidth,
       canvasHeight,
+      translateX = 0,
+      translateY = 0,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight
     } = options;
+    const { groupConfig, groupBy, groupTitleFieldFormat, groupTitleCustomLayout, enableTreeStickCell } =
+      options as ListTableConstructorOptions;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
     }
@@ -2570,6 +2610,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     this.customRender = customRender;
+    this.translateX = translateX ?? 0;
+    this.translateY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
     // 更新protectedSpace
@@ -2592,7 +2634,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.enableCheckboxCascade = enableCheckboxCascade;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -2602,6 +2644,15 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
+
+    (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
+    (internalProps as ListTableProtected).groupTitleCheckbox = groupConfig?.titleCheckbox;
+    (internalProps as ListTableProtected).groupTitleFieldFormat =
+      groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
+    (internalProps as ListTableProtected).groupTitleCustomLayout =
+      groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
+    (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
+
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -2958,10 +3009,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   selectCells(cellRanges: CellRange[]) {
     const { scrollLeft, scrollTop } = this;
     cellRanges.forEach((cellRange: CellRange, index: number) => {
-      if (cellRange.start.col === cellRange.end.col && cellRange.start.row === cellRange.end.row) {
+      const startRow = cellRange.start.row;
+      const startCol = cellRange.start.col;
+      const endRow = cellRange.end.row;
+      const endCol = cellRange.end.col;
+      if (startCol === endCol && startRow === endRow) {
         this.stateManager.updateSelectPos(
-          cellRange.start.col,
-          cellRange.start.row,
+          startCol,
+          startRow,
           false,
           index >= 1,
           false,
@@ -2970,8 +3025,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
       } else {
         this.stateManager.updateSelectPos(
-          cellRange.start.col,
-          cellRange.start.row,
+          startCol,
+          startRow,
           false,
           index >= 1,
           false,
@@ -2980,8 +3035,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         );
         this.stateManager.updateInteractionState(InteractionState.grabing);
         this.stateManager.updateSelectPos(
-          cellRange.end.col,
-          cellRange.end.row,
+          endCol,
+          endRow,
           false,
           index >= 1,
           false,
@@ -2996,6 +3051,167 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.setScrollTop(scrollTop);
     this.setScrollLeft(scrollLeft);
   }
+  selectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    if (isCtrl) {
+      currentSelectRanges.push({
+        start: { col: 0, row: rowIndex },
+        end: { col: this.colCount - 1, row: rowIndex }
+      });
+      this.selectCells(currentSelectRanges);
+    } else if (isShift) {
+      const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+      if (lastSelectRange) {
+        lastSelectRange.end.row = rowIndex;
+      }
+      this.selectCells(currentSelectRanges);
+    } else {
+      this.selectCells([
+        {
+          start: { col: 0, row: rowIndex },
+          end: { col: this.colCount - 1, row: rowIndex }
+        }
+      ]);
+    }
+  }
+  selectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    if (isCtrl) {
+      currentSelectRanges.push({
+        start: { col: colIndex, row: 0 },
+        end: { col: colIndex, row: this.rowCount - 1 }
+      });
+      this.selectCells(currentSelectRanges);
+    } else if (isShift) {
+      const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+      if (lastSelectRange) {
+        lastSelectRange.end.col = colIndex;
+      }
+      this.selectCells(currentSelectRanges);
+    } else {
+      this.selectCells([
+        {
+          start: { col: colIndex, row: 0 },
+          end: { col: colIndex, row: this.rowCount - 1 }
+        }
+      ]);
+    }
+  }
+  /**
+   * 开始拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整列
+   * @param colIndex 列索引
+   * @param isCtrl 是否按住 ctrl 键
+   * @param isShift 是否按住 shift 键
+   */
+  startDragSelectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
+    const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
+    const startCol = isShift && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
+    const startRow = 0;
+    const endCol = colIndex;
+    const endRow = this.rowCount - 1;
+    this.stateManager.updateSelectPos(
+      startCol,
+      startRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+    this.stateManager.updateInteractionState(InteractionState.grabing);
+    this.stateManager.updateSelectPos(
+      endCol,
+      endRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+  /**
+   * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
+   * @param colIndex 列索引
+   * @param isCtrl 是否按住 ctrl 键
+   */
+  dragSelectCol(colIndex: number, isCtrl?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+    if (lastSelectRange) {
+      lastSelectRange.end.col = colIndex;
+    }
+    this.stateManager.updateSelectPos(
+      colIndex,
+      this.rowCount - 1,
+      false,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+  /**
+   * 结束拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来结束拖拽选择整列或者整行
+   */
+  endDragSelect() {
+    this.stateManager.updateInteractionState(InteractionState.default);
+    this.stateManager.endSelectCells(false, false);
+  }
+
+  /**
+   * 开始拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整行
+   * @param rowIndex 行索引
+   * @param isCtrl 是否按住 ctrl 键
+   * @param isShift 是否按住 shift 键
+   */
+  startDragSelectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
+    const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
+    const startCol = 0;
+    const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
+    const endCol = this.colCount - 1;
+    const endRow = rowIndex;
+    this.stateManager.updateSelectPos(
+      startCol,
+      startRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+    this.stateManager.updateInteractionState(InteractionState.grabing);
+    this.stateManager.updateSelectPos(
+      endCol,
+      endRow,
+      isShift,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+  /**
+   * 拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整行
+   * @param rowIndex 行索引
+   * @param isCtrl 是否按住 ctrl 键
+   */
+  dragSelectRow(rowIndex: number, isCtrl?: boolean) {
+    const currentSelectRanges = this.stateManager.select.ranges;
+    const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
+    if (lastSelectRange) {
+      lastSelectRange.end.row = rowIndex;
+    }
+    this.stateManager.updateSelectPos(
+      this.colCount - 1,
+      rowIndex,
+      false,
+      isCtrl,
+      false,
+      this.options.select?.makeSelectCellVisible ?? true,
+      true
+    );
+  }
+
   abstract isListTable(): boolean;
   abstract isPivotTable(): boolean;
   abstract isPivotChart(): boolean;
@@ -3705,7 +3921,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
     } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
-      if (!(this.options as ListTableConstructorOptions).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
+      if (!(this.internalProps as ListTableProtected).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
         const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
           ?.dragOrder;
         if (dragOrder) {
@@ -4651,5 +4867,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       this._containerFit = { width: false, height: false };
     }
+  }
+  set customConfig(customConfig: any) {
+    this.options.customConfig = customConfig;
   }
 }

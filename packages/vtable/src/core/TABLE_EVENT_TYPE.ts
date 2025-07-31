@@ -125,6 +125,10 @@ export interface TableEvents {
    * 拖拽框选单元格鼠标松开事件
    */
   DRAG_SELECT_END: 'drag_select_end';
+  /**
+   * 拖拽框选单元格鼠标移动事件
+   */
+  SELECTED_CHANGED: 'selected_changed';
   /** 复制完成 */
   COPY_DATA: 'copy_data';
   /**
@@ -163,12 +167,16 @@ export interface TableEvents {
   //#region lifecircle
   /** 表格实例初始化前触发 */
   BEFORE_INIT: 'before_init';
+  /** 更新表格选项前触发 */
+  BEFORE_UPDATE_OPTION: 'before_update_option';
   /** 设置表格大小前触发 */
   BEFORE_SET_SIZE: 'before_set_size';
   /** 每次渲染完成触发 */
   AFTER_RENDER: 'after_render';
   /** 表格实例初始化完成 */
   INITIALIZED: 'initialized';
+  /** 表格更新完成 */
+  UPDATED: 'updated';
   //#endregion
 
   /** 编辑单元格 */
@@ -208,6 +216,7 @@ export interface TableEvents {
    * 粘贴数据事件
    */
   PASTED_DATA: 'pasted_data';
+  PLUGIN_EVENT: 'plugin_event';
 }
 /**
  * Table event types
@@ -250,6 +259,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   DROPDOWN_MENU_CLICK: 'dropdown_menu_click',
   MOUSEOVER_CHART_SYMBOL: 'mouseover_chart_symbol',
   DRAG_SELECT_END: 'drag_select_end',
+  SELECTED_CHANGED: 'selected_changed',
   COPY_DATA: 'copy_data',
   DROPDOWN_ICON_CLICK: 'dropdown_icon_click', // 点击下拉菜单按钮
   DROPDOWN_MENU_CLEAR: 'dropdown_menu_clear', // 清空下拉菜单事件（菜单显示时点击其他区域）
@@ -274,8 +284,10 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   SWITCH_STATE_CHANGE: 'switch_state_change',
   BEFORE_SET_SIZE: 'before_set_size',
   BEFORE_INIT: 'before_init',
+  BEFORE_UPDATE_OPTION: 'before_update_option',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
+  UPDATED: 'updated',
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
@@ -286,5 +298,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   BUTTON_CLICK: 'button_click',
   BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image',
-  PASTED_DATA: 'pasted_data'
+  PASTED_DATA: 'pasted_data',
+  PLUGIN_EVENT: 'plugin_event'
 } as TableEvents;

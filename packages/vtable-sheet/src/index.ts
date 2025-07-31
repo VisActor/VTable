@@ -3,7 +3,7 @@ import SheetManager from './managers/sheet-manager';
 import { FormulaManager } from './managers/formula-manager';
 import { FilterManager } from './managers/filter-manager';
 import * as tools from './tools';
-import type { SheetDefine, VTableSheetOptions } from './ts-types';
+import type { ISheetDefine, IVTableSheetOptions } from './ts-types';
 
 export const version = '1.0.0';
 
@@ -12,6 +12,6 @@ export const version = '1.0.0';
  */
 export { tools, VTableSheet, SheetManager, FormulaManager, FilterManager };
 
-export type { SheetDefine, VTableSheetOptions };
+export type { ISheetDefine, IVTableSheetOptions };
 
 export default VTableSheet;

@@ -29,7 +29,7 @@ import type {
 export type { HeaderData } from './list-table/layout-map/api';
 import type { TableTheme } from '../themes/theme-define';
 import type { ICustomRender } from './customElement';
-import type { LayoutObjectId } from './table-engine';
+import type { GroupByOption, LayoutObjectId } from './table-engine';
 import type { Rect } from '../tools/Rect';
 import type { Scenegraph } from '../scenegraph/scenegraph';
 import type { StateManager } from '../state/state';
@@ -105,6 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -516,6 +517,10 @@ export interface BaseTableConstructorOptions {
   canvasHeight?: number | 'auto';
   maxCanvasWidth?: number;
   maxCanvasHeight?: number;
+  /** 表格的x偏移量, 内部适配的表格边框或者title等组件的占位不算在内 */
+  translateX?: number;
+  /** 表格的y偏移量, 内部适配的表格边框或者title等组件的占位不算在内 */
+  translateY?: number;
 
   // #endregion
   /**
@@ -584,6 +589,9 @@ export interface BaseTableConstructorOptions {
     disableBuildInChartActive?: boolean;
     /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
     forceComputeAllRowHeight?: boolean;
+
+    /** 是否取消当前单元格选中状态的判断钩子，用在table-group文件的pointertap事件中，当点击空白区域时，取消选中状态 */
+    cancelSelectCellHook?: (e: FederatedPointerEvent) => boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -809,6 +817,7 @@ export interface BaseTableAPI {
     makeSelectCellVisible?: boolean,
     skipBodyMerge?: boolean
   ) => void;
+  clearSelected: () => void;
   selectCells: (cellRanges: CellRange[]) => void;
   getAllRowsHeight: () => number;
   getAllColsWidth: () => number;
@@ -1047,6 +1056,12 @@ export interface ListTableProtected extends IBaseTableProtected {
     key: string;
     width: number;
   }[];
+
+  groupBy: GroupByOption;
+  groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  groupTitleCustomLayout?: ICustomLayout;
+  enableTreeStickCell?: boolean;
+  groupTitleCheckbox?: boolean;
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {

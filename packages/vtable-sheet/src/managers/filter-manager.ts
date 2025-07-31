@@ -1,10 +1,8 @@
-import type { ColumnFilter, Filter, IFilterManager } from '../ts-types';
+// 导入重构后的类型定义
 import { FilterOperator, FilterType } from '../ts-types';
-import type { VTableSheet } from '../components/vtable-sheet';
+import type { IFilterManager, Filter, IColumnFilter } from '../ts-types';
+import type VTableSheet from '../components/vtable-sheet';
 
-/**
- * 过滤管理器 - 管理数据过滤
- */
 export class FilterManager implements IFilterManager {
   /** 过滤器集合 */
   _filters: Map<string, Filter> = new Map();
@@ -25,6 +23,8 @@ export class FilterManager implements IFilterManager {
 
   /**
    * 设置列过滤器
+   * @param columnKey 列键
+   * @param filter 过滤器
    */
   setFilter(columnKey: string, filter: Filter): void {
     // 保存过滤器
@@ -36,6 +36,8 @@ export class FilterManager implements IFilterManager {
 
   /**
    * 获取列过滤器
+   * @param columnKey 列键
+   * @returns 过滤器
    */
   getFilter(columnKey: string): Filter | null {
     return this._filters.get(columnKey) || null;
@@ -43,6 +45,7 @@ export class FilterManager implements IFilterManager {
 
   /**
    * 移除列过滤器
+   * @param columnKey 列键
    */
   removeFilter(columnKey: string): void {
     // 移除过滤器
@@ -95,6 +98,9 @@ export class FilterManager implements IFilterManager {
 
   /**
    * 判断值是否满足过滤条件
+   * @param value 值
+   * @param filter 过滤器
+   * @returns 是否满足过滤条件
    */
   matchesFilter(value: any, filter: Filter): boolean {
     // 处理空值
@@ -163,9 +169,10 @@ export class FilterManager implements IFilterManager {
 
   /**
    * 获取所有过滤器
+   * @returns 所有过滤器
    */
-  getAllFilters(): ColumnFilter[] {
-    const result: ColumnFilter[] = [];
+  getAllFilters(): IColumnFilter[] {
+    const result: IColumnFilter[] = [];
 
     for (const [columnKey, filter] of this._filters.entries()) {
       result.push({
@@ -175,5 +182,37 @@ export class FilterManager implements IFilterManager {
     }
 
     return result;
+  }
+
+  /**
+   * 获取过滤状态
+   * @returns 过滤状态
+   */
+  getFilterState(): { [columnKey: string]: boolean } {
+    const state: { [columnKey: string]: boolean } = {};
+
+    for (const columnKey of this._filters.keys()) {
+      state[columnKey] = true;
+    }
+
+    return state;
+  }
+
+  /**
+   * 监听过滤变化
+   * @param callback 过滤变化回调函数
+   */
+  onFilterChange(callback: (filters: IColumnFilter[]) => void): void {
+    // TODO: 实现事件监听机制
+    console.log('Filter change listener added:', callback);
+  }
+
+  /**
+   * 移除过滤变化监听
+   * @param callback 过滤变化回调函数
+   */
+  offFilterChange(callback: (filters: IColumnFilter[]) => void): void {
+    // TODO: 实现事件监听移除机制
+    console.log('Filter change listener removed:', callback);
   }
 }

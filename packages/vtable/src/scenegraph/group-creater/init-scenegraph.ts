@@ -1,4 +1,5 @@
-import type { ListTableConstructorOptions } from '../..';
+import type { ListTableConstructorOptions } from '../../ts-types/table-engine';
+import type { ListTableProtected } from '../../ts-types/base-table';
 import { Group } from '../graphic/group';
 import type { Scenegraph } from '../scenegraph';
 
@@ -12,7 +13,7 @@ export function initSceneGraph(scene: Scenegraph) {
   const colHeaderGroup = createContainerGroup(
     0,
     0,
-    !(scene.table.options as ListTableConstructorOptions).enableTreeStickCell
+    !(scene.table.internalProps as ListTableProtected).enableTreeStickCell
   );
   colHeaderGroup.role = 'col-header';
   scene.colHeaderGroup = colHeaderGroup;

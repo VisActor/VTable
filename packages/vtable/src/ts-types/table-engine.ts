@@ -102,8 +102,12 @@ export interface TableKeyboardOptions {
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
   selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
+  /** 快捷键剪切  默认：false*/
+  cutSelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 被复制单元格是否显示虚线框，默认：false */
+  showCopyCellBorder?: boolean;
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
   /** 方向键是否可以更改选中单元格位置，默认：true */
@@ -114,6 +118,8 @@ export interface TableKeyboardOptions {
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
   preventDefaultContextMenu?: boolean;
+  /** contextmenu事件回传给用户参数中是否组织所有选中cells信息，默认true */
+  contextmenuReturnAllSelectedCells?: boolean;
 }
 
 export interface IRowSeriesNumber {
@@ -121,8 +127,9 @@ export interface IRowSeriesNumber {
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
   title?: string;
-  field?: FieldDef;
+  field?: string | number;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
+  headerType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox' | 'radio';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
   headerStyle?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -214,6 +221,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 数据集合
    */
   records?: any[];
+  addRecordRule?: 'Array' | 'Object';
   /**
    * 传入用户实例化的数据对象
    */
@@ -283,10 +291,24 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
       }) => Aggregation | CustomAggregation | (Aggregation | CustomAggregation)[] | null);
   /** 数据为空时显示聚合结果 */
   showAggregationWhenEmpty?: boolean;
+  /** 针对column中配置了tree: true的列，开启这个配置后，可以合并分组标题。需要配合在数据中配置vtableMerge和vtableMergeName。默认为false */
   enableTreeNodeMerge?: boolean;
+  groupConfig: {
+    groupBy: GroupByOption;
+    titleCustomLayout?: ICustomLayout;
+    titleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+    /** 开启分组标题吸附功能。 */
+    enableTreeStickCell?: boolean;
+    /** 这个配置对应当在rowSeriesNumber中配置cellType: 'checkbox'时，如想在group分组名中显示checkbox，则需要开启这个配置 。默认为false*/
+    titleCheckbox?: boolean;
+  };
+  /** @deprecated 请使用groupConfig */
   groupBy?: GroupByOption;
+  /** @deprecated 请使用groupConfig */
   groupTitleCustomLayout?: ICustomLayout;
+  /** @deprecated 请使用groupConfig */
   groupTitleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  /** @deprecated 请使用groupConfig */
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];
@@ -323,7 +345,7 @@ export interface ListTableAPI extends BaseTableAPI {
     row: number,
     values: (string | number)[][],
     workOnEditableCell?: boolean
-  ) => boolean[][];
+  ) => Promise<boolean[][]> | boolean[][];
   getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
   //#region 编辑器相关demo
   /** 获取单元格配置的编辑器 */

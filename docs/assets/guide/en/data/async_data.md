@@ -26,5 +26,9 @@ const dataSource = new VTable.data.CachedDataSource({
 
 - If automatic column width widthMode:'autoWidth' is turned on or width:'auto' is set in columns, VTable also needs to obtain the value of each cell in the column to obtain the maximum content width, so it will also cause asynchronous failure.
 
+- Currently, if you double-click the column interval line, there is a logic to calculate the column width, which will cause all data to be requested, you can configure resize.disableDblclickAutoResizeColWidth to true.
+
+- If you right-click on the header, the entire column will be selected, and the right-click event will organize all selected cells information, which will also cause all data to be requested, so you need to configure eventOptions.contextmenuReturnAllSelectedCells to false.
+
 ## demo
 Please refer to [demo](../../demo/performance/async-data)

@@ -1,6 +1,58 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 01 Jul 2025 10:26:51 GMT and should not be manually modified.
+This log was last generated on Mon, 28 Jul 2025 09:57:02 GMT and should not be manually modified.
+
+## 1.19.4
+Mon, 28 Jul 2025 09:57:02 GMT
+
+### Updates
+
+- refactor: update merge cell performance #3293
+
+
+- feat: rowSeriesNumber support set field #3902
+
+
+- feat: add enableCheckboxCascade option #4130
+
+
+- feat: add groupConfig replace groupBy and group** & add titleCheckbox #4130
+
+
+- refactor: hide menu list when scroll #4214
+
+
+- feat: add getRecordHierarchyState api and fix change header position arguments #4226
+
+
+- fix: vchart trasnparent bgColor replace cell hover color #4245
+
+
+- fix: fix loading icon update in pivot-table #4236
+- feat: add paste-add-row plugin
+
+
+- Merge branch feat/paste-add-row-plugin into feat-pasted-add-row-col-plugin
+
+
+
+## 1.19.3
+Wed, 09 Jul 2025 09:24:55 GMT
+
+### Updates
+
+- feat: add contextmenuReturnAllSelectedCells api #4064
+
+
+- fix: click to edit cell not work with groupBy #4172
+
+
+- fix: 修复自定义编辑器复制粘贴时无法触发异步校验的问题
+
+
+- fix: handle frozen column calculation when container is invisible
+
+
 
 ## 1.19.2
 Tue, 01 Jul 2025 10:26:51 GMT

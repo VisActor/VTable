@@ -56,6 +56,7 @@ import {
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import { getCustomMergeCellFunc } from './core/utils/get-custom-merge-cell-func';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -113,7 +114,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     internalProps.multipleSort = !!options.multipleSort;
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = this.internalProps.groupBy
+      ? getGroupByDataConfig(this.internalProps.groupBy, options.addRecordRule)
+      : { addRecordRule: options.addRecordRule }; //cloneDeep(options.dataConfig ?? {});
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
@@ -127,7 +130,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //   }
     // });
 
-    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+    internalProps.enableTreeNodeMerge =
+      options.enableTreeNodeMerge ?? isValid((this.internalProps as ListTableProtected).groupBy) ?? false;
 
     this.internalProps.headerHelper.setTableColumnsEditor();
     this.showHeader = options.showHeader ?? true;
@@ -164,7 +168,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
 
-    if (options.enableTreeStickCell) {
+    if ((this.internalProps as ListTableProtected).enableTreeStickCell) {
       const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
       this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
     }
@@ -244,13 +248,58 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.renderAsync();
     this.eventManager.updateEventBinder();
   }
+
+  /**
+   * 作为 `updateColumns` 的轻量级替代方案，用于仅需重新创建场景图而无需重新定义列的场景，
+   * 例如展开/折叠树形节点。此方法避免了 `updateColumns` 中开销较大的 `cloneDeepSpec` 深拷贝操作。
+   *
+   * 注意：此方法与 `updateColumns` 共享部分逻辑。如果将来修改了 `updateColumns`，
+   * 请务必检查此方法，以确保逻辑一致性，防止出现“逻辑漂移”。
+   */
+  private _recreateSceneForStateChange(): void {
+    this.scenegraph.clearCells();
+    const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
+
+    this._hasAutoImageColumn = undefined;
+    this.refreshHeader();
+    if (this.records && checkHasAggregationOnColumnDefine(this.internalProps.columns)) {
+      this.dataSource.processRecords(this.dataSource.dataSourceObj?.records ?? this.dataSource.dataSourceObj);
+    }
+    this.internalProps.useOneRowHeightFillAll = false;
+
+    this.headerStyleCache = new Map();
+    this.bodyStyleCache = new Map();
+    this.bodyBottomStyleCache = new Map();
+    this.scenegraph.createSceneGraph();
+    this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
+    this.renderAsync();
+    this.eventManager.updateEventBinder();
+  }
   /**
    * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param column
    */
-  addColumn(column: ColumnDefine) {
+  addColumn(column: ColumnDefine, colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
-    columns.push(column);
+    if (colIndex === undefined) {
+      columns.push(column);
+    } else {
+      columns.splice(colIndex, 0, column);
+    }
+    //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
+    if (isMaintainArrayData) {
+      for (let i = 0; i < this.records.length; i++) {
+        const record = this.records[i];
+        if (Array.isArray(record)) {
+          record.splice(colIndex, 0, undefined);
+        }
+      }
+    }
+    this.updateColumns(columns);
+  }
+  deleteColumn(colIndex: number) {
+    const columns = this.options.columns;
+    columns.splice(colIndex, 1);
     this.updateColumns(columns);
   }
   get columns(): ColumnsDefine {
@@ -318,7 +367,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return title;
       }
       let value;
-      if ((this.options as ListTableConstructorOptions).groupBy) {
+      if ((this.internalProps as ListTableProtected).groupBy) {
         const record = table.getCellRawRecord(col, row);
         if (record?.vtableMerge) {
           return '';
@@ -329,7 +378,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
         // const indexs = this.dataSource.currentIndexedData[row - this.columnHeaderLevelCount] as number[];
         // value = indexs[indexs.length - 1] + 1;
       } else {
-        value = row - this.columnHeaderLevelCount + 1;
+        const define = table.getBodyColumnDefine(col, row);
+        const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
+        if (typeof checkboxSeriesNumberStyle === 'string') {
+          value = checkboxSeriesNumberStyle;
+        } else if (checkboxSeriesNumberStyle?.text) {
+          value = checkboxSeriesNumberStyle.text ?? '';
+        } else {
+          value = row - this.columnHeaderLevelCount + 1;
+        }
       }
       const { format } = table.internalProps.layoutMap.getSeriesNumberBody(col, row);
       return typeof format === 'function' ? format(col, row, this, value) : value;
@@ -491,7 +548,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.pagination = options.pagination;
     internalProps.sortState = options.sortState;
     // internalProps.dataConfig = {}; // cloneDeep(options.dataConfig ?? {});
-    internalProps.dataConfig = options.groupBy ? getGroupByDataConfig(options.groupBy) : {}; //cloneDeep(options.dataConfig ?? {});
+    internalProps.dataConfig = (this.internalProps as ListTableProtected).groupBy
+      ? getGroupByDataConfig((this.internalProps as ListTableProtected).groupBy, options.addRecordRule)
+      : { addRecordRule: options.addRecordRule }; //cloneDeep(options.dataConfig ?? {});
     //更新protectedSpace
     this.showHeader = options.showHeader ?? true;
     internalProps.columns = options.columns
@@ -505,7 +564,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     //     internalProps.columns[index].editor = colDefine.editor;
     //   }
     // });
-    internalProps.enableTreeNodeMerge = options.enableTreeNodeMerge ?? isValid(options.groupBy) ?? false;
+    internalProps.enableTreeNodeMerge =
+      options.enableTreeNodeMerge ?? isValid((this.internalProps as ListTableProtected).groupBy) ?? false;
 
     this.internalProps.headerHelper.setTableColumnsEditor();
     // 处理转置
@@ -562,6 +622,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
     this.pluginManager.updatePlugins(options.plugins);
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
@@ -860,7 +923,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.isHeader(col, row)) {
       return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
     }
-    if (!this.options.groupBy || (isArray(this.options.groupBy) && this.options.groupBy.length === 0)) {
+    if (
+      !(this.internalProps as ListTableProtected).groupBy ||
+      (isArray((this.internalProps as ListTableProtected).groupBy) &&
+        ((this.internalProps as ListTableProtected).groupBy as string[]).length === 0)
+    ) {
       const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
       if (!define.tree) {
         return HierarchyState.none;
@@ -868,6 +935,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     const index = this.getRecordShowIndexByCell(col, row);
     return this.dataSource.getHierarchyState(index);
+  }
+  /**
+   * 获取单元格所在数据源的层级节点收起展开的状态
+   * @param col
+   * @param row
+   * @returns
+   */
+  getRecordHierarchyState(col: number, row: number) {
+    let recordIndex;
+    if (this.transpose) {
+      this.getRecordShowIndexByCell(col, 0);
+    } else {
+      recordIndex = this.getRecordShowIndexByCell(0, row);
+    }
+    return this.dataSource.getHierarchyState(recordIndex);
   }
   /**
    * 表头切换层级状态
@@ -1517,7 +1599,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   getGroupTitleLevel(col: number, row: number): number | undefined {
-    if (!(this.options as ListTableConstructorOptions).groupBy) {
+    if (!(this.internalProps as ListTableProtected).groupBy) {
       return undefined;
     }
     const indexArr = this.dataSource.getIndexKey(this.getRecordShowIndexByCell(col, row));
@@ -1559,5 +1641,127 @@ export class ListTable extends BaseTable implements ListTableAPI {
   release() {
     this.editorManager.release();
     super.release();
+  }
+
+  /**
+   * 展开所有树形节点
+   */
+  expandAllTreeNode(): void {
+    if (!this._hasHierarchyTreeHeader()) {
+      return;
+    }
+
+    let stateChanged = false;
+
+    // 展开所有数据行节点
+    if (this.dataSource && typeof (this.dataSource as any).expandAllNodes === 'function') {
+      (this.dataSource as any).expandAllNodes();
+      stateChanged = true;
+    }
+
+    // 刷新视图
+    if (stateChanged) {
+      // 使用轻量级的更新管道，而非重量级的 `updateColumns`。
+      // 这个新方法会处理表头刷新、场景创建和渲染。
+      this._recreateSceneForStateChange();
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1, // 表示非特定单元格操作
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        originData: { children: this.records }
+      });
+    }
+  }
+
+  /**
+   * 折叠所有树形节点
+   */
+  collapseAllTreeNode(): void {
+    if (!this._hasHierarchyTreeHeader()) {
+      return;
+    }
+
+    let stateChanged = false;
+
+    // 折叠所有数据行节点
+    if (this.dataSource && typeof (this.dataSource as any).collapseAllNodes === 'function') {
+      (this.dataSource as any).collapseAllNodes();
+      stateChanged = true;
+    }
+
+    // 刷新视图
+    if (stateChanged) {
+      // 使用轻量级的更新管道，而非重量级的 `updateColumns`。
+      // 这个新方法会处理表头刷新、场景创建和渲染。
+      this._recreateSceneForStateChange();
+
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        originData: { children: this.records }
+      });
+    }
+  }
+  /** 合并单元格 对外接口 。会自动刷新渲染节点
+   * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
+   */
+  mergeCells(startCol: number, startRow: number, endCol: number, endRow: number) {
+    // 先检查一遍这个区域是否有合并情况 有的话 不能再次合并
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        const cellRange = this.getCellRange(i, j);
+        if (cellRange.start.col !== cellRange.end.col || cellRange.start.row !== cellRange.end.row) {
+          return;
+        }
+      }
+    }
+    if (!this.options.customMergeCell) {
+      this.options.customMergeCell = [];
+    } else if (typeof this.options.customMergeCell === 'function') {
+      this.options.customMergeCell = [];
+    }
+    this.options.customMergeCell.push({
+      text: this.getCellValue(startCol, startRow),
+      range: {
+        start: {
+          col: startCol,
+          row: startRow
+        },
+        end: {
+          col: endCol,
+          row: endRow
+        }
+      }
+    });
+    this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        this.scenegraph.updateCellContent(i, j);
+      }
+    }
+    this.scenegraph.updateNextFrame();
+  }
+  /** 取消合并单元格 对外接口 。会自动刷新渲染节点
+   * 注意：如果之前options有customMergeCell的函数配置，将失效重置为空数组
+   */
+  unmergeCells(startCol: number, startRow: number, endCol: number, endRow: number) {
+    if (!this.options.customMergeCell) {
+      this.options.customMergeCell = [];
+    } else if (typeof this.options.customMergeCell === 'function') {
+      this.options.customMergeCell = [];
+    }
+    this.options.customMergeCell = this.options.customMergeCell.filter(item => {
+      const { start, end } = item.range;
+      return !(start.col === startCol && start.row === startRow && end.col === endCol && end.row === endRow);
+    });
+    this.internalProps.customMergeCell = getCustomMergeCellFunc(this.options.customMergeCell);
+    for (let i = startCol; i <= endCol; i++) {
+      for (let j = startRow; j <= endRow; j++) {
+        this.scenegraph.updateCellContent(i, j);
+      }
+    }
+    this.scenegraph.updateNextFrame();
   }
 }

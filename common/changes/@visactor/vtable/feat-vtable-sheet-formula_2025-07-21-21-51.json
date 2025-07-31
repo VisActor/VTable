@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "chore: fix the problem with formula calculations\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "ucccth@gmail.com"
+}

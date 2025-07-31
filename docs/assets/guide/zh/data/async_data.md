@@ -26,5 +26,9 @@ const dataSource = new VTable.data.CachedDataSource({
 
 - 如果开启自动列宽widthMode:'autoWidth'或者columns中设置了width:'auto', VTable也需要获取到列每个单元格的值才能取到最大内容宽度，所以也会导致异步失效。
 
+- 目前如果双击列间隔线，会有计算列宽的逻辑，会导致请求所有数据，可以配置resize.disableDblclickAutoResizeColWidth为true。
+
+- 如果右键到表头，会选中整列，同时右键事件会组织所有选中cells信息，也会导致请求所有数据，所以需要配置eventOptions.contextmenuReturnAllSelectedCells为false。
+
 ## demo
 可参考[demo](../../demo/performance/async-data)

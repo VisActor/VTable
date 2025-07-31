@@ -5,7 +5,7 @@ import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
-import type { SortState } from '../ts-types';
+import type { ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
 
 /**
@@ -113,14 +113,14 @@ export function listTableChangeCellValue(
  * @param workOnEditableCell 是否仅更改可编辑单元格
  * @param triggerEvent 是否在值发生改变的时候触发change_cell_value事件
  */
-export function listTableChangeCellValues(
+export async function listTableChangeCellValues(
   startCol: number,
   startRow: number,
   values: (string | number)[][],
   workOnEditableCell: boolean,
   triggerEvent: boolean,
   table: ListTable
-): boolean[][] {
+): Promise<boolean[][]> {
   const changedCellResults: boolean[][] = [];
   let pasteColEnd = startCol;
   let pasteRowEnd = startRow;
@@ -172,15 +172,17 @@ export function listTableChangeCellValues(
           const editor = table.getEditor(startCol + j, startRow + i);
           const oldValue = oldValues[i][j];
           const value = rowValues[j];
-          const maybePromiseOrValue = editor?.validateValue?.(value, oldValue) ?? true;
+          const maybePromiseOrValue =
+            editor?.validateValue?.(value, oldValue, { col: startCol + j, row: startRow + i }, table) ?? true;
           if (isPromise(maybePromiseOrValue)) {
-            //TODO 处理promise的情况
-            isCanChange = true;
+            const validateResult = await maybePromiseOrValue;
+            isCanChange =
+              validateResult === true || validateResult === 'validate-exit' || validateResult === 'validate-not-exit';
           } else {
             isCanChange =
               maybePromiseOrValue === true ||
               maybePromiseOrValue === 'validate-exit' ||
-              maybePromiseOrValue === 'invalidate-exit';
+              maybePromiseOrValue === 'validate-not-exit';
           }
         }
       }
@@ -321,11 +323,11 @@ function getCellUpdateType(
   if (oldCellUpdateType === 'group') {
     return oldCellUpdateType;
   }
-  if (oldCellUpdateType === 'sort' && !table.options.groupBy) {
+  if (oldCellUpdateType === 'sort' && !(table.internalProps as ListTableProtected).groupBy) {
     return oldCellUpdateType;
   }
   let cellUpdateType: CellUpdateType = 'normal';
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     cellUpdateType = 'group';
   } else if (!table.isHeader(col, row) && (table.dataSource as any).lastOrderField) {
     const field = table.getBodyField(col, row);
@@ -359,7 +361,7 @@ export function sortRecords(table: ListTable) {
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
 export function listTableAddRecord(record: any, recordIndex: number | number[], table: ListTable) {
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
@@ -483,7 +485,7 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
 export function listTableAddRecords(records: any[], recordIndex: number | number[], table: ListTable) {
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
@@ -618,7 +620,7 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
  */
 export function listTableDeleteRecords(recordIndexs: number[] | number[][], table: ListTable) {
   if (recordIndexs?.length > 0) {
-    if (table.options.groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).deleteRecordsForGroup?.(recordIndexs);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
@@ -759,7 +761,7 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
  */
 export function listTableUpdateRecords(records: any[], recordIndexs: (number | number[])[], table: ListTable) {
   if (recordIndexs?.length > 0) {
-    if (table.options.groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
