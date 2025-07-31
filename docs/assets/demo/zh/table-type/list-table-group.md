@@ -17,6 +17,7 @@ option: ListTable#groupConfig
 - groupBy: 指定分组字段名称
 - enableTreeStickCell: 开启分组标题吸附功能
 - enableCheckboxCascade: 开启分组复选框级联功能
+- enableHeaderCheckboxCascade: 开启表头复选框级联功能
 
 ## 代码演示
 
@@ -95,7 +96,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         },
          enableTreeStickCell: true,
       },
-      enableCheckboxCascade: true,
+      enableCheckboxCascade: true,// default is true
+      enableHeaderCheckboxCascade: true,// default is true  
       theme: VTable.themes.DEFAULT.extends({
         groupTitleStyle: {
           fontWeight: 'bold',

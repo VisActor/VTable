@@ -473,3 +473,8 @@ window['tableInstance'] = tableInstance;
 
 如不想关联父子节点的选中状态，可以配置`enableCheckboxCascade`属性，用于开启或者关闭分组复选框级联功能。同样适用于column中配置的checkbox的情况。
 
+如果不想关联表头和body单元格的选中状态，可以配置`enableHeaderCheckboxCascade`属性为false，用于开启或者关闭表头复选框级联功能。
+
+enableCheckboxCascade为true时则enableHeaderCheckboxCascade必定为true。
+
+

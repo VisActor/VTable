@@ -138,6 +138,10 @@ type CustomAggregation = {
 
 开启分组复选框级联功能。默认是true。
 
+## enableHeaderCheckboxCascade(boolean)
+
+开启表头与body单元格的复选框级联功能。默认是true。
+
 
 ## groupConfig(GroupConfig)
 

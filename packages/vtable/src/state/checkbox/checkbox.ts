@@ -253,7 +253,9 @@ export function setCellCheckboxState(
   table: BaseTableAPI
 ) {
   const cellGroup = table.scenegraph.getCell(col, row);
-  const checkbox = cellGroup?.getChildByName('checkbox') as any;
+  const checkbox =
+    (cellGroup?.getChildByName('checkbox') as any) ||
+    (cellGroup?.getChildByName('checkbox-content')?._checkboxGroup?.getChildByName('checkbox') as any);
   if (!checkbox) {
     // update state
     const field = table.getHeaderField(col, row);

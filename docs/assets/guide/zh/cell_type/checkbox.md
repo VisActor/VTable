@@ -160,4 +160,11 @@ rowSeriesNumber: {
 ```
 如果不想关联父子节点的选中状态，可以配置`enableCheckboxCascade`属性为false，用于开启或者关闭分组复选框级联功能。
 
+如果不想关联表头和body单元格的选中状态，可以配置`enableHeaderCheckboxCascade`属性为false，用于开启或者关闭表头复选框级联功能。
+
+enableCheckboxCascade为true时则enableHeaderCheckboxCascade必定为true。
+
+
+
+
 通过以上介绍，您已学会了如何在 VTable 表格中使用 checkbox 复选框类型进行数据展示，希望对您有所帮助。

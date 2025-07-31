@@ -15,6 +15,7 @@ option: ListTable#groupConfig
 ## 关键配置
 
 - enableCheckboxCascade: 开启分组复选框级联功能
+- enableHeaderCheckboxCascade: 开启表头复选框级联功能
 
 ## 代码演示
 
@@ -90,7 +91,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         titleCheckbox: true,
         groupBy: ['Category', 'Sub-Category', 'Region'],
       },
-      enableCheckboxCascade: true,
+      enableCheckboxCascade: true,// default is true
+      enableHeaderCheckboxCascade: true,// default is true
       rowSeriesNumber: {
         width: 50,
         format: () => {

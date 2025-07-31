@@ -15,6 +15,7 @@ Basic table grouping checkbox. If enabled, checkbox will be displayed in the lef
 ## Key configuration
 
 - enableCheckboxCascade: enable group checkbox cascade
+- enableHeaderCheckboxCascade: enable header checkbox cascade
 
 ## Code demonstration
 
