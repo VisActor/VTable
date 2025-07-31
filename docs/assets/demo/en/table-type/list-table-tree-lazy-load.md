@@ -18,7 +18,8 @@ Basic table tree display, turn on the tree mode of a certain column, if the chil
 - setRecordChildren(children: any[], col: number, row: number) Call this method after lazily loading child node data in a row of data and return it to the table component
 - TREE_HIERARCHY_STATE_CHANGE tree display state change events
 - cellType: 'checkbox' Turns on the checkbox. Use it with tree:true to display the checkbox in a tree format.
-- enableCheckboxCascade: true It is used globally to turn on the checkbox cascade. It must be used with cellType: 'checkbox' and tree:true to synchronize the parent and child element selections.
+- enableCheckboxCascade: default is true. It is used globally to turn on the checkbox cascade. It must be used with cellType: 'checkbox' and tree:true to synchronize the parent and child element selections.
+- enableHeaderCheckboxCascade: default is true. It is used globally to turn on the header checkbox cascade. It must be used with cellType: 'checkbox' and tree:true to synchronize the header state and child element selections.
 
 ## Code Demo
 

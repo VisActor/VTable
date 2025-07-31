@@ -294,7 +294,7 @@ function updateChildrenCheckboxState(
 }
 
 export function bindHeaderCheckboxChange(table: BaseTableAPI) {
-  if (table.internalProps.enableCheckboxCascade !== true) {
+  if (table.internalProps.enableHeaderCheckboxCascade !== true) {
     return;
   }
   table.on('checkbox_state_change', args => {
