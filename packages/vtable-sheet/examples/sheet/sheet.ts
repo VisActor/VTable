@@ -16,6 +16,7 @@ export function createTable() {
       {
         sheetKey: 'sheet1',
         sheetTitle: 'sheet1',
+        filter: true,
         columns: [
           {
             title: '名称',
@@ -36,6 +37,18 @@ export function createTable() {
           {
             key: 'name',
             title: '名称',
+            width: 100,
+            filter: false
+          },
+          {
+            key: 'name1',
+            title: '名称1',
+            width: 100
+          },
+          {
+            key: 'name2',
+            filter: true,
+            title: '名称2',
             width: 100
           }
         ],
@@ -43,6 +56,7 @@ export function createTable() {
           [3, 4, 6],
           ['s', 'd', 'f']
         ],
+        filter: false,
         active: false
       },
       {

@@ -3,6 +3,7 @@ import { FilterEngine } from './filter/filter-engine';
 import { FilterStateManager } from './filter/filter-state-manager';
 import { FilterToolbar } from './filter/filter-toolbar';
 import type { FilterOptions } from './filter/types';
+import type { ListTableConstructorOptions } from '@visactor/vtable';
 
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
@@ -10,7 +11,11 @@ import type { FilterOptions } from './filter/types';
 export class FilterPlugin implements VTable.plugins.IVTablePlugin {
   id = `filter-${Date.now()}`;
   name = 'Filter';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.ICON_CLICK];
+  runTime = [
+    VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
+    VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
+    VTable.TABLE_EVENT_TYPE.ICON_CLICK
+  ];
 
   pluginOptions: FilterOptions;
 
@@ -50,13 +55,13 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     const table: VTable.BaseTableAPI = args[2];
     this.table = table as VTable.ListTable | VTable.PivotTable;
 
-    if (runtime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
+    if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT || runtime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
       this.filterEngine = new FilterEngine();
       this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
       this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
 
       this.filterToolbar.render(document.body);
-      this.addFilterIcon();
+      this.addFilterIcon(eventArgs.options);
     } else if (
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
       eventArgs.name === 'filtering-icon'
@@ -71,8 +76,8 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     }
   }
 
-  addFilterIcon(): void {
-    const columns = (this.table as VTable.ListTable).columns; // TODO: 待处理多行的情况，待扩展透视表类型
+  addFilterIcon(options: ListTableConstructorOptions): void {
+    const columns = options.columns; // TODO: 待处理多行的情况，待扩展透视表类型
     columns.forEach((col: VTable.ColumnDefine, index: number) => {
       // 检查是否应该为这一列启用筛选功能
       if (this.shouldEnableFilterForColumn(index, col)) {
@@ -80,7 +85,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       }
       // 如果不应该启用筛选，则不设置 headerIcon（保持原有图标或无图标）
     });
-    (this.table as VTable.ListTable).updateColumns(columns);
+    // (this.table as VTable.ListTable).updateColumns(columns);
   }
 
   /**

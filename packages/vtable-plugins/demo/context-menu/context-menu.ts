@@ -1,8 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { ContextMenuPlugin } from '../../src/context-menu';
 import { TableSeriesNumber } from '../../src/table-series-number';
-import type { MenuClickEventArgs } from '../../src/contextmenu/menu-manager';
-import { MenuKey } from '../../src/contextmenu/menu-manager';
+import { DEFAULT_HEADER_MENU_ITEMS, MenuKey } from '../../src';
 
 const CONTAINER_ID = 'vTable';
 
@@ -69,6 +68,14 @@ export function createTableInstance() {
 
   // 创建右键菜单插件
   const contextMenuPlugin = new ContextMenuPlugin({
+    headerCellMenuItems: [
+      ...DEFAULT_HEADER_MENU_ITEMS,
+      {
+        text: '设置筛选器',
+
+        menuKey: 'set_filter'
+      }
+    ],
     // columnSeriesNumberMenuItems: [
     //   { text: '向左插入', menuKey: 'insert_column_left', iconName: 'insert' },
     //   { text: '向右插入', menuKey: 'insert_column_right', iconName: 'insert' },
@@ -149,9 +156,9 @@ export function createTableInstance() {
     //   { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
     // ],
     menuClickCallback: {
-      [MenuKey.COPY]: (args: MenuClickEventArgs, table: VTable.ListTable) => {
-        console.log('复制', args, table);
-      }
+      // [MenuKey.COPY]: (args: MenuClickEventArgs, table: VTable.ListTable) => {
+      //   console.log('复制', args, table);
+      // }
     }
   });
   const tableSeriesNumberPlugin = new TableSeriesNumber({

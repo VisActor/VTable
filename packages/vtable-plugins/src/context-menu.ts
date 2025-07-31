@@ -1,7 +1,15 @@
 import * as VTable from '@visactor/vtable';
-import type { MenuClickEventArgs, MenuItemOrSeparator } from './contextmenu/menu-manager';
-import { MenuKey, MenuManager } from './contextmenu/menu-manager';
+import { MenuManager } from './contextmenu/menu-manager';
 import { MenuHandler } from './contextmenu/handle-menu-helper';
+import type { MenuItemOrSeparator, MenuClickEventArgs } from './contextmenu/types';
+import {
+  DEFAULT_BODY_MENU_ITEMS,
+  DEFAULT_COLUMN_SERIES_MENU_ITEMS,
+  DEFAULT_CORNER_SERIES_MENU_ITEMS,
+  DEFAULT_HEADER_MENU_ITEMS,
+  DEFAULT_ROW_SERIES_MENU_ITEMS,
+  MenuKey
+} from './contextmenu/types';
 
 /**
  * 右键菜单插件选项
@@ -55,146 +63,26 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   private initDefaultMenuItems(): void {
     // 表头序号列菜单项
     if (!this.pluginOptions.columnSeriesNumberMenuItems) {
-      this.pluginOptions.columnSeriesNumberMenuItems = [
-        { text: '复制', menuKey: MenuKey.COPY, iconName: 'copy', shortcut: 'Ctrl+C' },
-        { text: '剪切', menuKey: MenuKey.CUT, iconName: 'cut', shortcut: 'Ctrl+X' },
-        { text: '粘贴', menuKey: MenuKey.PASTE, iconName: 'paste', shortcut: 'Ctrl+V' },
-        '---',
-
-        {
-          text: '向左插入列数：',
-          menuKey: MenuKey.INSERT_COLUMN_LEFT,
-          iconName: 'left-arrow',
-          inputDefaultValue: 1
-        },
-        {
-          text: '向右插入列数：',
-          menuKey: MenuKey.INSERT_COLUMN_RIGHT,
-          iconName: 'right-arrow',
-          inputDefaultValue: 1
-        },
-        { text: '删除列', menuKey: MenuKey.DELETE_COLUMN }
-      ];
+      this.pluginOptions.columnSeriesNumberMenuItems = DEFAULT_COLUMN_SERIES_MENU_ITEMS;
     }
 
     // 表头序号列菜单项
     if (!this.pluginOptions.rowSeriesNumberMenuItems) {
-      this.pluginOptions.rowSeriesNumberMenuItems = [
-        { text: '复制', menuKey: MenuKey.COPY, iconName: 'copy', shortcut: 'Ctrl+C' },
-        { text: '剪切', menuKey: MenuKey.CUT, iconName: 'cut', shortcut: 'Ctrl+X' },
-        { text: '粘贴', menuKey: MenuKey.PASTE, iconName: 'paste', shortcut: 'Ctrl+V' },
-        '---',
-        {
-          text: '向上插入行数：',
-          menuKey: MenuKey.INSERT_ROW_ABOVE,
-          iconName: 'up-arrow',
-          inputDefaultValue: 1
-        },
-        {
-          text: '向下插入行数：',
-          menuKey: MenuKey.INSERT_ROW_BELOW,
-          iconName: 'down-arrow',
-          inputDefaultValue: 1
-        },
-        { text: '删除行', menuKey: MenuKey.DELETE_ROW }
-      ];
+      this.pluginOptions.rowSeriesNumberMenuItems = DEFAULT_ROW_SERIES_MENU_ITEMS;
     }
 
     // 表头序号列菜单项
     if (!this.pluginOptions.cornerSeriesNumberMenuItems) {
-      this.pluginOptions.cornerSeriesNumberMenuItems = [
-        { text: '复制', menuKey: MenuKey.COPY, iconName: 'copy', shortcut: 'Ctrl+C' },
-        { text: '剪切', menuKey: MenuKey.CUT, iconName: 'cut', shortcut: 'Ctrl+X' },
-        { text: '粘贴', menuKey: MenuKey.PASTE, iconName: 'paste', shortcut: 'Ctrl+V' }
-      ];
+      this.pluginOptions.cornerSeriesNumberMenuItems = DEFAULT_CORNER_SERIES_MENU_ITEMS;
     }
     // 表头菜单项
     if (!this.pluginOptions.headerCellMenuItems) {
-      this.pluginOptions.headerCellMenuItems = [
-        { text: '复制', menuKey: MenuKey.COPY, iconName: 'copy', shortcut: 'Ctrl+C' },
-        { text: '剪切', menuKey: MenuKey.CUT, iconName: 'cut', shortcut: 'Ctrl+X' },
-        { text: '粘贴', menuKey: MenuKey.PASTE, iconName: 'paste', shortcut: 'Ctrl+V' },
-        '---',
-
-        {
-          text: '向左插入列数：',
-          menuKey: MenuKey.INSERT_COLUMN_LEFT,
-          iconName: 'left-arrow',
-          inputDefaultValue: 1
-        },
-        {
-          text: '向右插入列数：',
-          menuKey: MenuKey.INSERT_COLUMN_RIGHT,
-          iconName: 'right-arrow',
-          inputDefaultValue: 1
-        },
-        { text: '删除列', menuKey: MenuKey.DELETE_COLUMN }
-      ];
+      this.pluginOptions.headerCellMenuItems = DEFAULT_HEADER_MENU_ITEMS;
     }
 
     // 表体菜单项
     if (!this.pluginOptions.bodyCellMenuItems) {
-      this.pluginOptions.bodyCellMenuItems = [
-        { text: '复制', menuKey: MenuKey.COPY, iconName: 'copy', shortcut: 'Ctrl+C' },
-        { text: '剪切', menuKey: MenuKey.CUT, iconName: 'cut', shortcut: 'Ctrl+X' },
-        { text: '粘贴', menuKey: MenuKey.PASTE, iconName: 'paste', shortcut: 'Ctrl+V' },
-        '---',
-        {
-          text: '插入',
-          menuKey: MenuKey.EMPTY,
-          iconName: 'insert',
-          children: [
-            {
-              text: '向上插入行数：',
-              menuKey: MenuKey.INSERT_ROW_ABOVE,
-              iconName: 'up-arrow',
-              inputDefaultValue: 1
-            },
-            {
-              text: '向下插入行数：',
-              menuKey: MenuKey.INSERT_ROW_BELOW,
-              iconName: 'down-arrow',
-              inputDefaultValue: 1
-            },
-            {
-              text: '向左插入列数：',
-              menuKey: MenuKey.INSERT_COLUMN_LEFT,
-              iconName: 'left-arrow',
-              inputDefaultValue: 1
-            },
-            {
-              text: '向右插入列数：',
-              menuKey: MenuKey.INSERT_COLUMN_RIGHT,
-              iconName: 'right-arrow',
-              inputDefaultValue: 1
-            }
-          ]
-        },
-        {
-          text: '删除',
-          menuKey: MenuKey.EMPTY,
-          iconName: 'delete',
-          children: [
-            { text: '删除行', menuKey: MenuKey.DELETE_ROW },
-            { text: '删除列', menuKey: MenuKey.DELETE_COLUMN }
-          ]
-        },
-        {
-          text: '冻结',
-          menuKey: MenuKey.EMPTY,
-          iconName: 'freeze',
-          children: [
-            { text: '冻结到本行', menuKey: MenuKey.FREEZE_TO_THIS_ROW },
-            { text: '冻结到本列', menuKey: MenuKey.FREEZE_TO_THIS_COLUMN },
-            { text: '冻结到本行本列', menuKey: MenuKey.FREEZE_TO_THIS_ROW_AND_COLUMN },
-            { text: '取消冻结', menuKey: MenuKey.UNFREEZE }
-          ]
-        },
-        '---',
-        { text: '合并单元格', menuKey: MenuKey.MERGE_CELLS }, //鼠标右键所在单元格如果未被合并，则显示合并单元格
-        { text: '取消合并单元格', menuKey: MenuKey.UNMERGE_CELLS } //鼠标右键所在单元格如果被合并了，则显示取消合并单元格
-        // { text: '设置保护范围', menuKey: 'set_protection', iconName: 'protect' }
-      ];
+      this.pluginOptions.bodyCellMenuItems = DEFAULT_BODY_MENU_ITEMS;
     }
   }
 

@@ -155,7 +155,7 @@ export class MenuHandler {
       }
       deleteColIndexs.sort((a, b) => b - a);
       for (let i = 0; i < deleteColIndexs.length; i++) {
-        (table as any).deleteColumn(deleteColIndexs[i]);
+        (table as any).deleteColumn(deleteColIndexs[i]); //TODO 性能考虑的话 这样做不好
       }
     }
   }
@@ -300,11 +300,5 @@ export class MenuHandler {
     // // 移除全局事件监听
     // document.removeEventListener('copy', this.handleGlobalCopy);
     // document.removeEventListener('cut', this.handleGlobalCut);
-
-    // 清除定时器
-    if (this.clipboardCheckTimer) {
-      clearTimeout(this.clipboardCheckTimer);
-      this.clipboardCheckTimer = null;
-    }
   }
 }

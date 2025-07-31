@@ -297,6 +297,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     this.updateColumns(columns);
   }
+  /**
+   * 删除列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
+   * @param colIndex
+   */
   deleteColumn(colIndex: number) {
     const columns = this.options.columns;
     columns.splice(colIndex, 1);
