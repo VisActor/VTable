@@ -1,3 +1,25 @@
+# v1.19.5
+
+2025-07-31
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add enableHeaderCheckboxCascade option
+- **@visactor/vtable**: add  move_end_task_bar event for vtable-gantt.[#4266](https://github.com/VisActor/VTable/issues/4266)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: setCellCheckboxState not work when tree column set checkbox cell type
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: when delete and add records update checkstate [#4240](https://github.com/VisActor/VTable/issues/4240)
+
+
+
+[更多详情请查看 v1.19.5](https://github.com/VisActor/VTable/releases/tag/v1.19.5)
+
 # v1.19.4
 
 2025-07-28
