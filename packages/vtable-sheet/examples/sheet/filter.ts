@@ -21,12 +21,12 @@ export function createTable() {
           enableFilter: (columnIndex, column) => columnIndex !== 0
         },
         columns: [
-          { field: 0, title: '姓名', sort: true, width: 100, filter: false },
-          { field: 1, title: '年龄', sort: true, width: 80, filter: false },
-          { field: 2, title: '部门', sort: true, width: 100 },
-          { field: 3, title: '薪资', sort: true, width: 100 },
-          { field: 4, title: '入职日期', sort: true, width: 120 },
-          { field: 5, title: '状态', sort: true, width: 80 }
+          { title: '姓名', sort: true, width: 100, filter: false },
+          { title: '年龄', sort: true, width: 80, filter: false },
+          { title: '部门', sort: true, width: 100 },
+          { title: '薪资', sort: true, width: 100 },
+          { title: '入职日期', sort: true, width: 120 },
+          { title: '状态', sort: true, width: 80 }
         ],
         data: [
           ['张三', 25, '技术部', 8000, '2023-01-15', '在职'],
@@ -53,10 +53,10 @@ export function createTable() {
         sheetTitle: '数值筛选',
         filter: true,
         columns: [
-          { field: 0, title: '产品名称', sort: true, width: 120 },
-          { field: 1, title: '价格', sort: true, width: 80 },
-          { field: 2, title: '库存', sort: true, width: 80 },
-          { field: 3, title: '评分', sort: true, width: 80 }
+          { title: '产品名称', sort: true, width: 120 },
+          { title: '价格', sort: true, width: 80 },
+          { title: '库存', sort: true, width: 80 },
+          { title: '评分', sort: true, width: 80 }
         ],
         data: [
           ['iPhone 15', 5999, 50, 4.8],
@@ -75,9 +75,9 @@ export function createTable() {
         sheetTitle: '文本筛选',
         filter: false,
         columns: [
-          { field: 0, title: '城市', sort: true, width: 100 },
-          { field: 1, title: '区域', sort: true, width: 100 },
-          { field: 2, title: '邮编', sort: true, width: 100 }
+          { title: '城市', sort: true, width: 100 },
+          { title: '区域', sort: true, width: 100 },
+          { title: '邮编', sort: true, width: 100 }
         ],
         data: [
           ['北京', '朝阳区', '100000'],
