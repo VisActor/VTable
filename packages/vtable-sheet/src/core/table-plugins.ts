@@ -24,22 +24,7 @@ export function getTablePlugins(sheetDefine?: ISheetDefine): VTable.plugins.IVTa
     colHighlight: true,
     rowHighlight: true
   });
-  const contextMenuPlugin = new VTablePlugins.ContextMenuPlugin({
-    headerCellMenuItems: [
-      ...VTablePlugins.DEFAULT_HEADER_MENU_ITEMS,
-      {
-        text: '设置筛选器',
-        menuKey: 'set_filter'
-      }
-    ],
-    menuClickCallback: {
-      set_filter: (args, table) => {
-        console.log('set_filter', args, table);
-        sheetDefine.columns[args.colIndex].filter = true;
-        table.updateOption(table.options);
-      }
-    }
-  });
+  const contextMenuPlugin = createContextMenuItems(sheetDefine);
   const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
   const plugins: VTable.plugins.IVTablePlugin[] = [
     addRowColumnPlugin,
@@ -89,4 +74,51 @@ function createColumnFilterChecker(sheetDefine: ISheetDefine) {
     // 明确禁用检查
     return filter;
   };
+}
+
+function createContextMenuItems(sheetDefine: ISheetDefine) {
+  return new VTablePlugins.ContextMenuPlugin({
+    headerCellMenuItems: [
+      ...VTablePlugins.DEFAULT_HEADER_MENU_ITEMS,
+      {
+        text: '设置筛选器',
+        menuKey: 'set_filter'
+      },
+      {
+        text: '取消筛选器',
+        menuKey: 'cancel_filter'
+      }
+    ],
+    beforeShowAdjustMenuItems: (
+      menuItems: VTablePlugins.MenuItemOrSeparator[],
+      table: VTable.ListTable,
+      col: number,
+      row: number
+    ) => {
+      console.log('beforeShowAdjustMenuItems', menuItems, table, col, row);
+      const cellType = table.isHeader(col, row) ? 'headerCell' : 'bodyCell';
+      if (cellType === 'bodyCell') {
+        return menuItems;
+      }
+      const column = table.options.columns[col] as IColumnDefine;
+      if (column.filter ?? sheetDefine?.filter) {
+        menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'set_filter');
+      } else {
+        menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'cancel_filter');
+      }
+      return menuItems;
+    },
+    menuClickCallback: {
+      set_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+        console.log('set_filter', args, table);
+        sheetDefine.columns[args.colIndex].filter = true;
+        table.updateOption(table.options);
+      },
+      cancel_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+        console.log('cancel_filter', args, table);
+        sheetDefine.columns[args.colIndex].filter = false;
+        table.updateOption(table.options);
+      }
+    }
+  });
 }

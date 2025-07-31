@@ -32,6 +32,13 @@ export interface ContextMenuOptions {
     | {
         [key in MenuKey]?: MenuClickCallback;
       };
+
+  beforeShowAdjustMenuItems?: (
+    menuItems: MenuItemOrSeparator[],
+    table: VTable.ListTable,
+    col: number,
+    row: number
+  ) => MenuItemOrSeparator[];
 }
 
 export type MenuClickCallback = (args: MenuClickEventArgs, table: VTable.ListTable) => void;
@@ -135,6 +142,9 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
         } else {
           // 如果鼠标右键所在单元格未被合并，则显示合并单元格。将取消合并单元格item从menuItems中删除
           menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'unmerge_cells');
+        }
+        if (this.pluginOptions.beforeShowAdjustMenuItems) {
+          menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as VTable.ListTable, col, row);
         }
         // 显示右键菜单
         this.showContextMenu(menuItems, mouseX, mouseY, col, row, cellType, value);
