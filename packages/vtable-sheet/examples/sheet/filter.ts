@@ -17,9 +17,7 @@ export function createTable() {
       {
         sheetKey: 'filter-demo',
         sheetTitle: '筛选测试',
-        filter: {
-          enableFilter: (columnIndex, column) => columnIndex !== 0
-        },
+        filter: true,
         columns: [
           { title: '姓名', sort: true, width: 100, filter: false },
           { title: '年龄', sort: true, width: 80, filter: false },

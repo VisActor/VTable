@@ -180,7 +180,6 @@ export class FilterToolbar {
     this.isVisible = true;
 
     const field = this.table.internalProps.layoutMap.getHeaderField(col, row) as string | number;
-    console.log('selected field: ', field);
     this.updateSelectedField(field);
 
     // 根据当前筛选配置自动选择正确的筛选标签页

@@ -58,7 +58,7 @@ function createFilterPlugin(sheetDefine?: ISheetDefine): VTablePlugins.FilterPlu
     return new VTablePlugins.FilterPlugin({
       filterIcon: sheetDefine.filter.filterIcon,
       filteringIcon: sheetDefine.filter.filteringIcon,
-      enableFilter: sheetDefine.filter.enableFilter || createColumnFilterChecker(sheetDefine)
+      enableFilter: createColumnFilterChecker(sheetDefine)
     });
   }
 

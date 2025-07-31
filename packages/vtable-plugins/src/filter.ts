@@ -102,7 +102,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       return this.pluginOptions.defaultEnabled;
     }
 
-    // 默认情况：所有列都启用筛选（保持原有行为）
+    // 默认情况，所有列都启用筛选
     return true;
   }
 

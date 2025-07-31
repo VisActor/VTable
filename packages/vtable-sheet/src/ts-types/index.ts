@@ -13,8 +13,6 @@ export interface IFilterConfig {
   filterIcon?: ColumnDefine['headerIcon'];
   /** 筛选激活状态图标配置 */
   filteringIcon?: ColumnDefine['headerIcon'];
-  /** 自定义筛选启用检查函数 */
-  enableFilter?: (columnIndex: number, column: IColumnDefine) => boolean;
 }
 
 /** 扩展的列定义，添加筛选相关配置 */
