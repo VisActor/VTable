@@ -171,7 +171,7 @@ export class Chart extends Rect {
         renderHooks: {
           afterClearRect(drawParams: any) {
             const { context, layer, viewBox } = drawParams;
-            if (layer.main && drawParams.clear) {
+            if (layer.main && drawParams.clear && hoverColor) {
               context.beginPath();
               context.fillStyle = hoverColor;
               context.rect(viewBox.x1, viewBox.y1, viewBox.x2 - viewBox.x1, viewBox.y2 - viewBox.y1);
