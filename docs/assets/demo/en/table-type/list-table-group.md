@@ -17,6 +17,7 @@ Basic table grouping display, used to display the hierarchical structure of grou
 - groupBy: Specify the grouping field name
 - enableTreeStickCell: enable group title sticky function
 - enableCheckboxCascade: enable group checkbox cascade
+- enableHeaderCheckboxCascade: enable header checkbox cascade
 
 ## Code demonstration
 
@@ -95,7 +96,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
         },
         enableTreeStickCell: true,
       },
-      enableCheckboxCascade: true,
+      enableCheckboxCascade: true,// default is true
+      enableHeaderCheckboxCascade: true,// default is true
       theme: VTable.themes.DEFAULT.extends({
         groupTitleStyle: {
           fontWeight: 'bold',

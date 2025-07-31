@@ -469,3 +469,7 @@ window['tableInstance'] = tableInstance;
 If you want to display the checkbox in the group title, you can configure the `groupConfig.titleCheckbox` property to enable or disable the group title checkbox function. The default is false.
 
 If you don't want to associate the selected status of parent and child nodes, you can configure the `enableCheckboxCascade` property to enable or disable the group checkbox cascade function. The same applies to the checkbox configured in the column.
+
+If you don't want to associate the selected status of the header and body cells, you can configure the `enableHeaderCheckboxCascade` property to enable or disable the header checkbox cascade function.
+
+When enableCheckboxCascade is true, enableHeaderCheckboxCascade is true. When enableCheckboxCascade is false, enableHeaderCheckboxCascade is false.

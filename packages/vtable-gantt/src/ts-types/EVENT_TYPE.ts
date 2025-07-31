@@ -47,6 +47,9 @@ export interface EVENT_TYPES {
   CLICK_MARKLINE_CREATE: 'click_markline_create';
   /** 点击里程碑内容 */
   CLICK_MARKLINE_CONTENT: 'click_markline_content';
+
+  /** 移动任务条结束事件 */
+  MOVE_END_TASK_BAR: 'move_end_task_bar';
 }
 /**
  * GanttChart event types
@@ -64,5 +67,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   CLICK_DEPENDENCY_LINK_POINT: 'click_dependency_link_point',
   CONTEXTMENU_DEPENDENCY_LINK: 'contextmenu_dependency_link',
   CLICK_MARKLINE_CREATE: 'click_markline_create',
-  CLICK_MARKLINE_CONTENT: 'click_markline_content'
+  CLICK_MARKLINE_CONTENT: 'click_markline_content',
+  MOVE_END_TASK_BAR: 'move_end_task_bar'
 } as EVENT_TYPES;
