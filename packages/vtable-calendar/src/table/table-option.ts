@@ -3,8 +3,8 @@ import { themes } from '@visactor/vtable';
 import type { DateRecord, DateRecordKeys } from '../date-util';
 import { defaultDayTitles, getMonthString, getWeekdayString } from '../date-util';
 import { calendarCustomLayout } from '../custom/custom-layout';
-import { merge } from '@visactor/vutils';
-import { addDays, isSameDay } from 'date-fns';
+import { isValid, merge } from '@visactor/vutils';
+import { addDays, isSameDay, lastDayOfMonth } from 'date-fns';
 
 export function createTableOption(
   week: DateRecordKeys[],
@@ -17,7 +17,7 @@ export function createTableOption(
       title: item,
       // width: columnWidth ?? 140,
       fieldFormat: (record: DateRecord) => {
-        if (isSameDay(addDays(new Date(record.year, record.month, record.Sun), index), currentDate)) {
+        if (isSameDay(addDays(getSundayDate(record), index), currentDate)) {
           return `${record[item]}\nToday`;
         } else if (record[item] === 1) {
           const monthIndex = item === 'Sun' ? record.month : record.month + 1;
@@ -63,7 +63,7 @@ export function createTableOption(
                 // year === currentDate.getFullYear() &&
                 // month === currentDate.getMonth() &&
                 // date === currentDate.getDate()
-                isSameDay(addDays(new Date(record.year, record.month, record.Sun), col), currentDate)
+                isSameDay(addDays(getSundayDate(record), col), currentDate)
               ) {
                 return '#f0f0f0';
               }
@@ -99,4 +99,37 @@ export function createTableOption(
   };
 
   return option;
+}
+
+function getSundayDate(record: DateRecord) {
+  if (isValid(record.Sun)) {
+    return new Date(record.year, record.month, record.Sun);
+  }
+
+  // last day of month
+  const lastDay = lastDayOfMonth(new Date(record.year, record.month, 1));
+  if (isValid(record.Mon)) {
+    // delete 1 day
+    return addDays(lastDay, -0);
+  }
+  if (isValid(record.Tue)) {
+    // delete 2 day
+    return addDays(lastDay, -1);
+  }
+  if (isValid(record.Wed)) {
+    // delete 3 day
+    return addDays(lastDay, -2);
+  }
+  if (isValid(record.Thu)) {
+    // delete 4 day
+    return addDays(lastDay, -3);
+  }
+  if (isValid(record.Fri)) {
+    // delete 5 day
+    return addDays(lastDay, -4);
+  }
+  if (isValid(record.Sat)) {
+    // delete 6 day
+    return addDays(lastDay, -5);
+  }
 }

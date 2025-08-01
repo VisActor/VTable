@@ -29,7 +29,7 @@ export function getRecords(startDate: Date, endDate: Date) {
 
   let year = startYear;
   let month = startMonth;
-  while (year !== endYear || month <= endMonth) {
+  while (year < endYear || (year === endYear && month <= endMonth)) {
     const monthStartDate = new Date(year, month, 1);
     const daysInMonth = getDaysInMonth(monthStartDate);
     let week = monthStartDate.getDay();
