@@ -470,6 +470,9 @@ export class MenuElement {
     // const element = table.getElement();
     const element = table.internalProps.menu.parentElement ?? table.getElement();
     const { top, bottom, left, right } = rect;
+    if (col === -1 && row === -1) {
+      return true;
+    } // 空数据或者少数据画布区域右键显示menu：row/col 为-1时 表示选择的不是表格中的单元格
     if (table.isFrozenCell(col, row)) {
       return true;
     } else if (
