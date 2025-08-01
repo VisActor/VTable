@@ -26,6 +26,30 @@ export class FilterStateManager {
     return this.state.filters.get(fieldId);
   }
 
+  /**
+   * 获取所有激活的筛选字段
+   */
+  getActiveFilterFields(): (string | number)[] {
+    const activeFields: (string | number)[] = [];
+    this.state.filters.forEach((config, field) => {
+      if (config.enable) {
+        activeFields.push(field);
+      }
+    });
+    return activeFields;
+  }
+
+  /**
+   * 公共方法：重新应用当前所有激活的筛选状态
+   * 用于在表格配置更新后恢复筛选显示
+   */
+  reapplyCurrentFilters(): void {
+    const activeFields = this.getActiveFilterFields();
+    if (activeFields.length > 0) {
+      this.applyFilters();
+    }
+  }
+
   dispatch(action: FilterAction) {
     this.state = this.reduce(this.state, action);
     if (this.shouldApplyFilter(action)) {
