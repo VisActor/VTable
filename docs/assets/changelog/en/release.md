@@ -6,7 +6,7 @@
 **🆕 New feature**
 
 - **@visactor/vtable**: add enableHeaderCheckboxCascade option
-- **@visactor/vtable**: add  move_end_task_bar event for vtable-gantt.[#4266](https://github.com/VisActor/VTable/issues/4266)
+- **@visactor/vtable-gantt**: add  move_end_task_bar event for vtable-gantt.[#4266](https://github.com/VisActor/VTable/issues/4266)
 
 **🐛 Bug fix**
 
