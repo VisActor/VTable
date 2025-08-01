@@ -1,10 +1,10 @@
 import { isArray, isString } from '@visactor/vutils';
 import type { GroupByOption } from '../ts-types';
 
-export function getGroupByDataConfig(groupByOption: GroupByOption) {
+export function getGroupByDataConfig(groupByOption: GroupByOption, addRecordRule: 'Array' | 'Object') {
   // no sort temply
   if (isString(groupByOption)) {
-    return { groupByRules: [groupByOption] };
+    return { groupByRules: [groupByOption], addRecordRule };
   }
   if (isArray(groupByOption)) {
     const groupByRules = groupByOption.map(item => {
@@ -13,8 +13,8 @@ export function getGroupByDataConfig(groupByOption: GroupByOption) {
       }
       return item.key;
     });
-    return { groupByRules };
+    return { groupByRules, addRecordRule };
   }
 
-  return {};
+  return { addRecordRule };
 }

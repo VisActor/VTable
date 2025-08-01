@@ -1,9 +1,10 @@
-import type { CustomSelectionStyle, StateManager } from '../state';
-import type { CellRange } from '../../ts-types';
+import type { StateManager } from '../state';
+import type { CustomSelectionStyle, CellRange } from '../../ts-types';
 import type { IRect, IRectGraphicAttribute } from '@src/vrender';
 import { createRect } from '@src/vrender';
 import { updateAllSelectComponent } from '../../scenegraph/select/update-select-border';
 import type { Scenegraph } from '../../scenegraph/scenegraph';
+import { updateCustomSelectBorder } from '../../scenegraph/select/update-custom-select-border';
 
 export function deletaCustomSelectRanges(state: StateManager) {
   const { customSelectedRangeComponents } = state.table.scenegraph;
@@ -22,20 +23,8 @@ export function addCustomSelectRanges(
   }[],
   state: StateManager
 ) {
-  const { customSelectedRangeComponents } = state.table.scenegraph;
   customSelectRanges.forEach((customRange: { range: CellRange; style: CustomSelectionStyle }) => {
-    const { range, style } = customRange;
-    const rect = createRect({
-      fill: style.cellBgColor ?? false,
-      stroke: style.cellBorderColor ?? false,
-      lineWidth: style.cellBorderLineWidth ?? 0,
-      lineDash: style.cellBorderLineDash ?? [],
-      pickable: false
-    });
-    customSelectedRangeComponents.set(`${range.start.col}-${range.start.row}-${range.end.col}-${range.end.row}`, {
-      rect,
-      role: 'body'
-    });
+    updateCustomSelectBorder(state.table.scenegraph, customRange.range, customRange.style);
   });
   state.select.customSelectRanges = customSelectRanges;
   updateAllSelectComponent(state.table.scenegraph);

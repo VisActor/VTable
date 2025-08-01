@@ -141,7 +141,7 @@ export function createCellSelectBorder(
 }
 
 // set corner radius in select rect which covers the corner of the table
-function getCornerRadius(
+export function getCornerRadius(
   selectRangeType: CellSubLocation,
   cornerRadius: undefined | number | [number, number, number, number],
   start_Col: number,

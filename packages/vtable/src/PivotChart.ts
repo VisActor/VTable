@@ -510,6 +510,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });
