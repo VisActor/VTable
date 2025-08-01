@@ -237,6 +237,18 @@ export function createTable() {
         { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
         { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
         { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
         { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
       ]
     },
@@ -340,7 +352,7 @@ export function createTable() {
       title: 'ID',
       width: 80,
       master: true,
-      sort: true, // 启用ID列排序
+      sort: true, // 禁用ID列排序
     },
     {
       field: 'name',
@@ -421,17 +433,8 @@ export function createTable() {
     records,
     masterDetail: true, // 启用主从表基础设施，master 系统依赖这个
     getDetailGridOptions, // 提供子表配置函数
-    // expandedRows: [0, 2], // 初始展开的行索引（可选）
     autoFillWidth: true,
     hierarchyTextStartAlignment: true, // 启用层级文本对齐
-    
-    // 排序配置
-    sortState: [
-      {
-        field: 'id',
-        order: 'asc' // 初始按ID正序排序
-      }
-    ]
   };
 
   // 创建 ListTable 实例，启用主从表格功能

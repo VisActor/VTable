@@ -2067,6 +2067,46 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return isInArea;
     };
 
+    // 检查子表是否滚动到底部
+    const isSubTableAtBottom = () => {
+      // 获取子表的总内容高度
+      const totalContentHeight = subTable.getAllRowsHeight();
+      // 获取子表的可视区域高度
+      const viewportHeight = subTable.scenegraph.height;
+      // 获取当前滚动位置
+      const scrollTop = subTable.scrollTop;
+      
+      // 如果内容高度不超过视口高度，说明没有滚动条，认为已经在底部
+      if (totalContentHeight <= viewportHeight) {
+        return true;
+      }
+      
+      // 计算最大可滚动距离
+      const maxScrollTop = totalContentHeight - viewportHeight;
+      // 检查是否已经滚动到底部（允许2px的误差）
+      const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 2;
+      
+      // 临时调试日志
+      if (recordIndex === 10) {
+        // 只对ID为11的记录（索引10）输出日志
+        // eslint-disable-next-line no-console
+        console.log('子表滚动状态检查(ID:11):', {
+          totalContentHeight,
+          viewportHeight,
+          scrollTop,
+          maxScrollTop,
+          isAtBottom
+        });
+      }
+      
+      return isAtBottom;
+    };
+
+    // 检查子表是否滚动到顶部
+    const isSubTableAtTop = () => {
+      return subTable.scrollTop <= 2; // 允许2px的误差
+    };
+
     // 父表滚动控制函数
     const handleParentScroll = (parentArgs: { event?: MouseEvent }) => {
       // 检查鼠标是否在子表区域内
@@ -2075,16 +2115,78 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
       return true; // 允许父表滚动
     };
+
     // 监听父表滚动事件
     this.on('can_scroll', handleParentScroll);
+
+    // 子表的自定义wheel事件处理器，实现智能滚动联动
+    const handleSubTableWheel = (e: WheelEvent) => {
+      if (!isMouseInChildTableArea(e)) {
+        return; // 鼠标不在子表区域内，不处理
+      }
+
+      const deltaY = e.deltaY;
+      const isScrollingDown = deltaY > 0;
+      const isScrollingUp = deltaY < 0;
+
+      // 向下滚动：如果子表已经到底部，则让父表滚动
+      if (isScrollingDown && isSubTableAtBottom()) {
+        e.preventDefault(); // 阻止子表滚动
+        
+        // 临时调试日志
+        if (recordIndex === 10) {
+          // eslint-disable-next-line no-console
+          console.log('触发父表滚动(向下), ID:11');
+        }
+        
+        // 使用正确的父表滚动方法
+        const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
+        const newParentScrollTop = currentParentScrollTop + deltaY;
+        const maxParentScrollTop = this.getAllRowsHeight() - this.scenegraph.height;
+        if (newParentScrollTop <= maxParentScrollTop) {
+          this.stateManager.setScrollTop(newParentScrollTop);
+        }
+        return;
+      }
+
+      // 向上滚动：如果子表已经到顶部，则让父表滚动
+      if (isScrollingUp && isSubTableAtTop()) {
+        e.preventDefault(); // 阻止子表滚动
+        
+        // 临时调试日志
+        if (recordIndex === 10) {
+          // eslint-disable-next-line no-console
+          console.log('触发父表滚动(向上), ID:11');
+        }
+        
+        // 使用正确的父表滚动方法
+        const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
+        const newParentScrollTop = currentParentScrollTop + deltaY;
+        if (newParentScrollTop >= 0) {
+          this.stateManager.setScrollTop(newParentScrollTop);
+        }
+        return;
+      }
+
+      // 其他情况，让子表正常处理滚动事件
+      // 不做任何操作，让事件继续传播到子表
+    };
+
+    // 为子表添加wheel事件监听器
+    subTable.canvas.addEventListener('wheel', handleSubTableWheel, { passive: false });
+
     // 监听子表滚动事件
     subTable.on('scroll', (args: unknown) => {
       // console.log('子表滚动事件:', args);
     });
 
     // 存储处理器引用以便清理
-    (subTable as unknown as { __scrollHandler: (args: { event?: MouseEvent }) => boolean }).__scrollHandler =
-      handleParentScroll;
+    const extendedSubTable = subTable as ListTable & {
+      __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
+      __wheelHandler?: (e: WheelEvent) => void;
+    };
+    extendedSubTable.__scrollHandler = handleParentScroll;
+    extendedSubTable.__wheelHandler = handleSubTableWheel;
   }
 
   /**
@@ -2125,10 +2227,19 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
 
       // 移除滚动事件监听器
-      const scrollHandler = (subTable as unknown as { __scrollHandler?: (args: { event?: MouseEvent }) => boolean })
-        .__scrollHandler;
+      const extendedSubTable = subTable as ListTable & {
+        __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
+        __wheelHandler?: (e: WheelEvent) => void;
+      };
+      const scrollHandler = extendedSubTable.__scrollHandler;
       if (scrollHandler) {
         this.off('can_scroll', scrollHandler);
+      }
+
+      // 移除wheel事件监听器
+      const wheelHandler = extendedSubTable.__wheelHandler;
+      if (wheelHandler) {
+        subTable.canvas.removeEventListener('wheel', wheelHandler);
       }
 
       // 销毁子表实例
