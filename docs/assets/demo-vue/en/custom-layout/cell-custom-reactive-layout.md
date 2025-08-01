@@ -12,7 +12,7 @@ In this example, we use custom responsive layout to dynamically adjust the width
 
 Note: The example adjusts the parameter DEFAULT_ROW_HEIGHT, which can adjust the height of rows, thereby adjusting the amount of content displayed in cells.
 
-Thanks to the example contributor: [自信的阿政]()
+Thanks to the example contributor: [自信的阿政](../../)
 
 ## Code Demo
 

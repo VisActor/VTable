@@ -12,7 +12,7 @@ link: custom_define/vue-custom-component
 
 注：示例中有调整参数DEFAULT_ROW_HEIGHT，可以调整行高，从而调整单元格显示内容的多少。
 
-感谢示例贡献者：[自信的阿政]()
+感谢示例贡献者：[自信的阿政](../../)
 
 ## 代码演示
 
