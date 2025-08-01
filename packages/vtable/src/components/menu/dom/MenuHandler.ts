@@ -27,6 +27,19 @@ function getMenuInstanceInfo(
   type: MenuInstanceType,
   dropDownMenuOptions?: DropDownMenuOptions
 ): MenuInstanceInfo | null {
+  if (col === -1 && row === -1 && type === 'context-menu') {
+    if (dropDownMenuOptions?.content) {
+      return {
+        type,
+        position: dropDownMenuOptions.position,
+        referencePosition: dropDownMenuOptions.referencePosition ?? {
+          rect: { left: 0, right: 0, top: 0, bottom: 0, width: 0, height: 0 }
+        },
+        content: dropDownMenuOptions.content
+      };
+    }
+    return null;
+  } // 空数据或者少数据画布区域右键显示menu：row/col 为-1时 表示选择的不是表格中的单元格
   const { lineHeight, textBaseline, textStick } = table._getCellStyle(col, row);
   // table.internalProps.layoutMap.getHeader(col, row).style ?? {};
   // const lineHeight = getFontSize(table.getContext(), font).height;
@@ -154,7 +167,10 @@ export class MenuHandler {
     const { instance, info: menuInstanceInfo } = instanceInfo;
     const attach = instance && instance.bindMenuElement(col, row, menuInstanceInfo);
     if (attach) {
-      const range = this._table.getCellRange(col, row);
+      const range =
+        col === -1 && row === -1
+          ? { start: { col: -1, row: -1 }, end: { col: -1, row: -1 } }
+          : this._table.getCellRange(col, row);
       this._attachInfo = { range, instance };
     }
   }
@@ -223,6 +239,28 @@ export class MenuHandler {
         }
 
         this._bindToCell(e.col, e.row, 'context-menu', {
+          content: menu,
+          position: { x: abstractPos.x, y: abstractPos.y }
+        });
+      }
+    });
+    // 监听画布右键事件(空数据或者少数据时候显示右键菜单) row/col 为 -1 时表示点击不是单元格，画布区域右键菜单
+    table.on(TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS, e => {
+      if (table.internalProps.menu?.renderMode === 'html') {
+        // 获取右键菜单信息及位置
+        const abstractPos = table._getMouseAbstractPoint(e.event);
+        let menu = null;
+        if (abstractPos.inTable && typeof table.internalProps.menu?.contextMenuItems === 'function') {
+          menu = table.internalProps.menu.contextMenuItems(
+            table.getHeaderField(e.col, e.row) as string,
+            e.row,
+            e.col,
+            table
+          );
+        } else if (abstractPos.inTable && Array.isArray(table.internalProps.menu?.contextMenuItems)) {
+          menu = table.internalProps.menu?.contextMenuItems;
+        }
+        this._bindToCell(-1, -1, 'context-menu', {
           content: menu,
           position: { x: abstractPos.x, y: abstractPos.y }
         });

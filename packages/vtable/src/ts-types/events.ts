@@ -83,6 +83,7 @@ export interface TableEventHandlersEventArgumentMap {
   mousedown_cell: MousePointerCellEvent;
   mouseup_cell: MousePointerCellEvent;
   contextmenu_cell: MousePointerMultiCellEvent;
+  contextmenu_canvas: MousePointerCellEvent;
   before_keydown: KeydownEvent;
   keydown: KeydownEvent;
   scroll: {
@@ -296,6 +297,7 @@ export interface TableEventHandlersReturnMap {
   mousedown_cell: boolean;
   mouseup_cell: void;
   contextmenu_cell: void;
+  contextmenu_canvas: void;
   before_keydown: void;
   keydown: void;
   scroll: void;
