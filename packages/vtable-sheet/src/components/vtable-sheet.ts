@@ -1148,6 +1148,8 @@ export default class VTableSheet {
           columns,
           cellMerge: instance.tableInstance.options.customMergeCell as TYPES.CustomMergeCellArray,
           showHeader: instance.tableInstance.options.showHeader,
+          frozenRowCount: instance.tableInstance.frozenRowCount,
+          frozenColCount: instance.tableInstance.frozenColCount,
           active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey
         });
       } else {

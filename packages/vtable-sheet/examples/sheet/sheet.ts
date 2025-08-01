@@ -123,6 +123,8 @@ export function createTable() {
         sheetTitle: 'Sheet 5',
         columnCount: 20,
         rowCount: 100,
+        frozenRowCount: 10,
+        frozenColCount: 1,
         data: [
           ['类别', '细分', '邮寄方式', '客户名称', '产品名称', '子类别', '订单 ID', '数量', '利润', '折扣'],
           [

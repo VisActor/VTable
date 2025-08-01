@@ -548,6 +548,9 @@ function moveRowFromBodyToColHeader(scene: Scenegraph) {
       continue;
     }
     const rowCell = child.firstChild as Group;
+    if (!scene.colHeaderGroup.children[i]) {
+      createColGroup(scene.colHeaderGroup, 0, 0, rowCell.col, rowCell.col, 0, 0, 'columnHeader', scene.table);
+    }
     scene.colHeaderGroup.children[i]?.appendChild(rowCell);
     // update container width
     if (!hasSetedHeight) {
@@ -567,6 +570,19 @@ function moveRowFromRowHeaderToCornerHeader(scene: Scenegraph) {
       continue;
     }
     const rowCell = child.firstChild as Group;
+    if (!scene.cornerHeaderGroup.children[i]) {
+      createColGroup(
+        scene.cornerHeaderGroup,
+        0,
+        0,
+        rowCell.col,
+        rowCell.col,
+        0,
+        0,
+        scene.table.isListTable() ? 'columnHeader' : 'cornerHeader',
+        scene.table
+      );
+    }
     scene.cornerHeaderGroup.children[i]?.appendChild(rowCell);
     // update container width
     if (!hasSetedHeight) {
@@ -589,7 +605,10 @@ function moveRowFromRightToTopRightCorner(scene: Scenegraph) {
       continue;
     }
     const rowCell = child.firstChild as Group;
-    scene.rightTopCornerGroup.children[i]?.appendChild(rowCell);
+    if (!scene.rightTopCornerGroup.children[i]) {
+      createColGroup(scene.rightTopCornerGroup, 0, 0, rowCell.col, rowCell.col, 0, 0, 'columnHeader', scene.table);
+    }
+    scene.rightTopCornerGroup.children[i].appendChild(rowCell);
     // update container width
     if (!hasSetedHeight) {
       scene.rightTopCornerGroup.setAttribute(
