@@ -1,4 +1,5 @@
 import * as VTable from '../../src';
+import { sort } from '../../src/tools/sort';
 
 const CONTAINER_ID = 'vTable';
 
@@ -99,6 +100,236 @@ export function createTable() {
         { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
         { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
       ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 11,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
+    },
+    {
+      id: 12,
+      name: 'Emma White',
+      department: 'Design',
+      position: 'UX Designer',
+      salary: 75000,
+      status: 'Active',
+      hierarchyState: VTable.TYPES.HierarchyState.collapse, // 初始为折叠状态
+      children: [
+        { project: '设计系统', role: 'UI设计师', startDate: '2024-01-05', endDate: '2024-09-30', progress: 88 },
+        { project: '用户研究', role: 'UX研究员', startDate: '2024-02-20', endDate: '2024-11-15', progress: 71 }
+      ]
     }
   ];
 
@@ -109,26 +340,31 @@ export function createTable() {
       title: 'ID',
       width: 80,
       master: true,
+      sort: true, // 启用ID列排序
     },
     {
       field: 'name',
       title: 'Employee Name',
-      width: 150
+      width: 150,
+      sort: true, // 启用姓名排序
     },
     {
       field: 'department',
-      title: 'Department',
-      width: 120
+      title: 'Department', 
+      width: 120,
+      sort: true, // 启用部门排序
     },
     {
       field: 'position',
       title: 'Position',
-      width: 160
+      width: 160,
+      sort: true, // 启用职位排序
     },
     {
       field: 'salary',
       title: 'Salary',
       width: 100,
+      sort: true, // 启用薪资排序
       fieldFormat(value) {
         return `$${value.toLocaleString()}`;
       }
@@ -136,7 +372,8 @@ export function createTable() {
     {
       field: 'status',
       title: 'Status',
-      width: 80
+      width: 80,
+      sort: true, // 启用状态排序
     }
   ];
 
@@ -173,7 +410,7 @@ export function createTable() {
       ],
       style: {
         margin: 20,
-        height: 200
+        height: 300
       }
     };
   };
@@ -186,7 +423,15 @@ export function createTable() {
     getDetailGridOptions, // 提供子表配置函数
     // expandedRows: [0, 2], // 初始展开的行索引（可选）
     autoFillWidth: true,
-    hierarchyTextStartAlignment: true // 启用层级文本对齐
+    hierarchyTextStartAlignment: true, // 启用层级文本对齐
+    
+    // 排序配置
+    sortState: [
+      {
+        field: 'id',
+        order: 'asc' // 初始按ID正序排序
+      }
+    ]
   };
 
   // 创建 ListTable 实例，启用主从表格功能

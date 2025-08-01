@@ -101,7 +101,7 @@ export function updateRowHeightForExpand(scene: Scenegraph, row: number, detaY: 
       }
     }
   }
-  }
+}
 
 /**
  * @description: 更新单个单元格高度

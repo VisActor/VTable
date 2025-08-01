@@ -59,7 +59,7 @@ import {
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
-import { updateRowHeightForExpand } from './scenegraph/layout/update-height';
+import { updateRowHeightForExpand, updateRowHeight } from './scenegraph/layout/update-height';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -1714,9 +1714,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
     
-    const deltaX = scrollInfo.scrollLeft || 0;
-    const deltaY = scrollInfo.scrollTop || 0;
-    this.updateAllSubTablePositions(-deltaX, -deltaY);
+    // 滚动时只重新计算ViewBox位置，不重新计算高度
+    this.updateSubTablePositionsForScroll();
   }
 
   /**
@@ -1769,7 +1768,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 计算实际需要增加的高度：目标总高度 - 原始高度
     const deltaHeight = targetTotalHeight - originalHeight;
     updateRowHeightForExpand(this.scenegraph, insertRowIndex, deltaHeight);
-    this.scenegraph.updateContainerHeight(insertRowIndex, deltaHeight);
+    // this.scenegraph.updateContainerHeight(insertRowIndex, deltaHeight);
 
     // 标记该行为已调整高度
     this.internalProps._heightResizedRowMap.add(insertRowIndex);
@@ -1819,7 +1818,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const deltaHeight = currentHeight - originalHeight;
     updateRowHeightForExpand(this.scenegraph, removeRowIndex, -deltaHeight);
     this.internalProps._heightResizedRowMap.delete(removeRowIndex);
-    this.scenegraph.updateContainerHeight(removeRowIndex, -deltaHeight);
+    // this.scenegraph.updateContainerHeight(removeRowIndex, -deltaHeight);
 
     // 清理原始高度记录
     if (this.internalProps.originalRowHeights) {
@@ -1921,7 +1920,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 获取记录的原始行高度
    */
-  private getOriginalRowHeight(recordIndex: number): number {
+  getOriginalRowHeight(recordIndex: number): number {
     return this.internalProps.originalRowHeights?.get(recordIndex) || 0;
   }
 
@@ -2153,6 +2152,40 @@ export class ListTable extends BaseTable implements ListTableAPI {
     
     this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
       this.updateSubTablePosition(recordIndex, deltaX, deltaY);
+    });
+  }
+
+  /**
+   * 更新所有子表位置（仅用于滚动）
+   */
+  private updateSubTablePositionsForScroll(): void {
+    if (
+      !this.options.masterDetail ||
+      !this.internalProps.subTableInstances ||
+      !this.internalProps.subTableInitialViewBox
+    ) {
+      return;
+    }
+    
+    this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
+      // 获取记录数据和配置
+      const record = this.getRecordByRowIndex(recordIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
+      
+      // 重新计算子表的ViewBox区域（基于当前滚动位置）
+      const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
+      if (newViewBox) {
+        // 更新子表的ViewBox
+        subTable.options.viewBox = newViewBox;
+        // 通知VRender Stage更新ViewBox
+        if (subTable.scenegraph?.stage) {
+          (
+            subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }
+          ).setViewBox(newViewBox, false);
+        }
+        // 重新渲染子表
+        subTable.render();
+      }
     });
   }
 
