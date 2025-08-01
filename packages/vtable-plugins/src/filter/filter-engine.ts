@@ -13,7 +13,7 @@ export class FilterEngine {
     this.filterFuncRule = [];
     this.filterValueRule = [];
 
-    filters.forEach(filter => {
+    filters.forEach((filter, field) => {
       if (!filter.enable) {
         return;
       }

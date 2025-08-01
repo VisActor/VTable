@@ -111,13 +111,41 @@ function createContextMenuItems(sheetDefine: ISheetDefine) {
     menuClickCallback: {
       set_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
         console.log('set_filter', args, table);
+        // 更新 sheetDefine 配置
         sheetDefine.columns[args.colIndex].filter = true;
-        table.updateOption(table.options);
+
+        // 创建新的 options 对象，确保配置变化被正确传递
+        const newOptions = {
+          ...table.options,
+          columns: table.options.columns.map((col: VTable.ColumnDefine, index: number) => {
+            if (index === args.colIndex) {
+              return { ...col, filter: true };
+            }
+            return col;
+          })
+        };
+
+        // 更新表格配置
+        table.updateOption(newOptions);
       },
       cancel_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
         console.log('cancel_filter', args, table);
+        // 更新 sheetDefine 配置
         sheetDefine.columns[args.colIndex].filter = false;
-        table.updateOption(table.options);
+
+        // 创建新的 options 对象，确保配置变化被正确传递
+        const newOptions = {
+          ...table.options,
+          columns: table.options.columns.map((col: VTable.ColumnDefine, index: number) => {
+            if (index === args.colIndex) {
+              return { ...col, filter: false };
+            }
+            return col;
+          })
+        };
+
+        // 更新表格配置
+        table.updateOption(newOptions);
       }
     }
   });

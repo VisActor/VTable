@@ -3,6 +3,7 @@ import { FilterEngine } from './filter/filter-engine';
 import { FilterStateManager } from './filter/filter-state-manager';
 import { FilterToolbar } from './filter/filter-toolbar';
 import type { FilterOptions } from './filter/types';
+import { FilterActionType } from './filter/types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
 /**
@@ -55,13 +56,16 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     const table: VTable.BaseTableAPI = args[2];
     this.table = table as VTable.ListTable | VTable.PivotTable;
 
-    if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT || runtime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
+    if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
       this.filterEngine = new FilterEngine();
       this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
       this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
 
       this.filterToolbar.render(document.body);
-      this.addFilterIcon(eventArgs.options);
+      this.updateFilterIcons(eventArgs.options);
+    } else if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
+      this.pluginOptions = {...this.pluginOptions, ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions};
+      this.handleOptionUpdate(eventArgs.options);
     } else if (
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
       eventArgs.name === 'filtering-icon'
@@ -76,14 +80,75 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     }
   }
 
-  addFilterIcon(options: ListTableConstructorOptions): void {
+  update() {
+    if (this.filterStateManager) {
+      this.reapplyActiveFilters();
+    }
+  }
+
+  /**
+   * 处理选项更新事件
+   */
+  private handleOptionUpdate(options: ListTableConstructorOptions): void {
+    const currentActiveFields = this.filterStateManager ? this.filterStateManager.getActiveFilterFields() : [];
+
+    // 验证筛选状态一致性
+    if (this.filterStateManager && currentActiveFields.length > 0) {
+      this.validateFilterStatesAfterUpdate(options, currentActiveFields);
+    }
+
+    // 更新筛选图标
+    this.updateFilterIcons(options);
+  }
+
+  /**
+   * 重新应用所有激活的筛选状态
+   * 在 updateOption 后调用，因为 updateOption 会全量更新表格
+   */
+  private reapplyActiveFilters(): void {
+    this.filterStateManager.reapplyCurrentFilters();
+  }
+
+  /**
+   * 验证更新后的筛选状态一致性
+   */
+  private validateFilterStatesAfterUpdate(options: ListTableConstructorOptions, activeFields: (string | number)[]): void {
+    const columns = options.columns;
+    const fieldsToRemove: (string | number)[] = [];
+
+    activeFields.forEach(field => {
+      const columnIndex = typeof field === 'number' ? field : parseInt(field.toString());
+      const column = columns[columnIndex];
+
+      // 检查该列是否仍然应该启用筛选
+      if (!column || !this.shouldEnableFilterForColumn(columnIndex, column)) {
+        fieldsToRemove.push(field);
+      }
+    });
+
+    // 清除不再有效的筛选状态
+    fieldsToRemove.forEach(field => {
+      this.filterStateManager.dispatch({
+        type: FilterActionType.REMOVE_FILTER,
+        payload: { field }
+      });
+    });
+  }
+
+  /**
+   * 更新所有列的筛选图标状态
+   * 根据列的筛选启用状态，添加或移除筛选图标
+   */
+  private updateFilterIcons(options: ListTableConstructorOptions): void {
     const columns = options.columns; // TODO: 待处理多行的情况，待扩展透视表类型
     columns.forEach((col: VTable.ColumnDefine, index: number) => {
       // 检查是否应该为这一列启用筛选功能
       if (this.shouldEnableFilterForColumn(index, col)) {
         col.headerIcon = this.pluginOptions.filterIcon;
+      } else {
+        // 如果不应该启用筛选，则移除 headerIcon
+        col.headerIcon = null;
       }
-      // 如果不应该启用筛选，则不设置 headerIcon（保持原有图标或无图标）
     });
     // (this.table as VTable.ListTable).updateColumns(columns);
   }
@@ -95,6 +160,12 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     // 如果是空白列，不适用筛选
     if (!column.title) {
       return false;
+    }
+
+    // 首先检查列级别的 filter 属性（最高优先级）
+    const columnWithFilter = column as any;
+    if (columnWithFilter.filter !== undefined) {
+      return !!columnWithFilter.filter;
     }
 
     // 如果有自定义的启用钩子函数，使用钩子函数的结果
