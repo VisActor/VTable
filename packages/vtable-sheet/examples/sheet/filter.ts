@@ -90,5 +90,7 @@ export function createTable() {
     ]
   });
 
+  window.sheetInstance = sheetInstance;
+
   return sheetInstance;
 }
