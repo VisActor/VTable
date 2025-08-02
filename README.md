@@ -132,6 +132,24 @@ const option = {
 const tableInstance = new VTable.ListTable(option);
 ```
 
+## 📚 English Documentation & Examples
+
+For comprehensive English documentation with live examples, check out our new dedicated English demo section:
+
+**🎯 [English Demo & Examples](./english-demo/index.html)** - Complete interactive examples covering:
+- Basic table setup and configuration
+- Color themes and custom styling
+- Interactive behavior (sorting, filtering, selection)
+- Advanced features (progress bars, pivot tables, charts)
+- Performance optimization for large datasets
+- Event handling and customization guides
+
+### Quick Links:
+- **[Main Demo Page](./english-demo/index.html)** - All examples in one comprehensive page
+- **[Color Themes Example](./english-demo/examples/color-themes.html)** - Advanced styling and theming
+- **[Interactive Behavior](./english-demo/examples/interactive-behavior.html)** - User interaction features
+- **[Performance & Advanced Features](./english-demo/examples/performance-advanced.html)** - Large datasets and complex features
+
 ##
 
 [More demos and detailed tutorials](https://visactor.io/vtable)
