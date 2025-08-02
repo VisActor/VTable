@@ -487,6 +487,9 @@ export function dealWithIcon(
     addedHierarchyOffset: number;
   }
 ): Icon | TextIcon {
+  if (!icon) {
+    return undefined;
+  }
   // positionType在外部处理
   const iconAttribute = {} as any;
 
