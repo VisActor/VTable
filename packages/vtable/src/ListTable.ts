@@ -2063,6 +2063,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 准备子表数据
     const childrenData = Array.isArray(record.children) ? record.children : [];
 
+    // 计算子表的容器尺寸
+    const containerWidth = childViewBox.x2 - childViewBox.x1;
+    const containerHeight = childViewBox.y2 - childViewBox.y1;
+    
+    console.log('📦 Creating sub-table with container size:', { width: containerWidth, height: containerHeight });
+
     // 创建子表配置
     const subTableOptions = {
       viewBox: childViewBox,
@@ -2072,6 +2078,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       widthMode: 'adaptive' as const,
       showHeader: true,
       masterDetail: true, // 子表也支持主从表格功能
+      // 设置容器尺寸，确保子表知道自己的实际可用空间
+      canvasWidth: containerWidth,
+      canvasHeight: containerHeight,
       // 继承一些父表的配置
       theme: this.options.theme,
       ...(detailConfig || {})
@@ -2107,11 +2116,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     recordIndex: number,
     detailConfig?: DetailGridOptions | null
   ): { x1: number; y1: number; x2: number; y2: number } | null {
+    console.log('🧮 calculateSubTableViewBox called for recordIndex:', recordIndex);
+    
     // 获取展开行的详情行索引（数据行的下一行）
     const detailRowIndex = recordIndex + 1;
     // 获取详情行的位置和大小
     const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
     if (!detailRowRect) {
+      console.log('❌ detailRowRect is null');
       return null;
     }
 
@@ -2121,8 +2133,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
     const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: detailRowIndex });
     if (!firstColRect || !lastColRect) {
+      console.log('❌ firstColRect or lastColRect is null');
       return null;
     }
+    
+    console.log('📏 Column rects:', {
+      firstCol: { left: firstColRect.left, right: firstColRect.right },
+      lastCol: { left: lastColRect.left, right: lastColRect.right },
+      tableWidth: lastColRect.right - firstColRect.left
+    });
+    
     // 从配置中获取边距和高度，提供默认值
     const margin = detailConfig?.style?.margin || 10;
     const configHeight = detailConfig?.style?.height || 300;
@@ -2134,8 +2154,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       y2: detailRowRect.top - margin + configHeight // 使用配置的高度
     };
 
+    console.log('📐 Calculated viewBox:', viewBox, 'width:', viewBox.x2 - viewBox.x1);
+
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
+      console.log('❌ Invalid viewBox dimensions');
       return null;
     }
 
@@ -2448,21 +2471,36 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 重新计算所有子表位置
    */
   private recalculateAllSubTablePositions(): void {
+    console.log('🔄 recalculateAllSubTablePositions called');
+    
     if (
       !this.options.masterDetail ||
       !this.internalProps.subTableInstances ||
       !this.internalProps.subTableInitialViewBox
     ) {
+      console.log('❌ Missing masterDetail config or instances');
       return;
     }
     
+    console.log('📊 Found', this.internalProps.subTableInstances.size, 'sub-tables to recalculate');
+    
     this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
+      console.log('🔧 Processing sub-table for recordIndex:', recordIndex);
+      
       // 获取记录数据和配置
       const record = this.getRecordByRowIndex(recordIndex);
       const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
+      
+      // 获取当前的ViewBox作为对比
+      const oldViewBox = subTable.options.viewBox;
+      console.log('📏 Old viewBox:', oldViewBox);
+      
       // 重新计算子表的ViewBox区域
       const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
       if (newViewBox && this.internalProps.subTableInitialViewBox) {
+        console.log('✅ New viewBox calculated:', newViewBox);
+        console.log('📐 Width changed from', oldViewBox ? (oldViewBox.x2 - oldViewBox.x1) : 'unknown', 'to', (newViewBox.x2 - newViewBox.x1));
+        
         // 更新初始ViewBox位置
         this.internalProps.subTableInitialViewBox.set(recordIndex, {
           x1: newViewBox.x1,
@@ -2470,8 +2508,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
           x2: newViewBox.x2,
           y2: newViewBox.y2
         });
+        
+        // 计算新的子表容器宽度和高度
+        const newContainerWidth = newViewBox.x2 - newViewBox.x1;
+        const newContainerHeight = newViewBox.y2 - newViewBox.y1;
+        
+        console.log('📏 Updating sub-table container size:', { width: newContainerWidth, height: newContainerHeight });
+        
         // 更新子表的ViewBox
         subTable.options.viewBox = newViewBox;
+        
+        // 更新子表的容器尺寸，触发内部布局重计算
+        if (subTable.options.canvasWidth !== newContainerWidth || subTable.options.canvasHeight !== newContainerHeight) {
+          subTable.options.canvasWidth = newContainerWidth;
+          subTable.options.canvasHeight = newContainerHeight;
+          
+          // 通知子表尺寸已变化，需要重新布局
+          subTable.resize();
+          
+          console.log('🔄 Sub-table resize called with new dimensions');
+        }
+        
         // 通知VRender Stage更新ViewBox
         if (subTable.scenegraph?.stage) {
           (
@@ -2505,6 +2562,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.subTableInstances?.clear();
     this.internalProps.originalRowHeights?.clear();
     this.internalProps.subTableInitialViewBox?.clear();
+  }
+
+  /**
+   * 重写父类的 resize 方法，在表格尺寸变化时重新计算子表位置和宽度
+   */
+  resize(): void {
+    // 调用父类的 resize 方法
+    super.resize();
+    if (this.options.masterDetail) {
+      this.recalculateAllSubTablePositions();
+    }
+  }
+
+  /**
+   * 重写父类的 setPixelRatio 方法，在缩放比例变化时重新计算子表位置和宽度
+   */
+  setPixelRatio(pixelRatio: number): void {
+    super.setPixelRatio(pixelRatio);
+    if (this.options.masterDetail) {
+      this.recalculateAllSubTablePositions();
+    }
   }
 
   release() {
