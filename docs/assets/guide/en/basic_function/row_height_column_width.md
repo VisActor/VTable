@@ -151,6 +151,10 @@ The effect is as follows:
 <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/columnWidthConfig.jpeg" />
 </div>
 
+Basic table ListTable, pivot table PivotTable, pivot chart PivotChart all support this configuration item.
+
+In addition, pivot table and pivot chart also support the `columnWidthConfigForRowHeader` configuration item, which is used to set the column width of the row header.
+
 ## Default column width
 
 In a VTable, you can set a uniform default column width value. The default column width can be set through the `defaultColWidth` configuration item. The following code example shows how to set the column width to 100:

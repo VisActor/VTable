@@ -152,6 +152,10 @@ const table = new VTable.PivotTable({
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/columnWidthConfig.jpeg" />
   </div>
 
+基本表格ListTable，透视表PivotTable，透视图PivotChart都支持这个配置项。
+
+另外，透视表和透视图还支持`columnWidthConfigForRowHeader`配置项，用于设置行表头列宽。
+
 ## 默认列宽
 
 在 VTable 中，您可以设置一个统一的默认列宽值。默认列宽可以通过 `defaultColWidth` 配置项进行设置。以下代码示例展示了如何设置列宽为 100：
