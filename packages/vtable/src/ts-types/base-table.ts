@@ -1049,6 +1049,8 @@ export interface ListTableProtected extends IBaseTableProtected {
   }[];
   /** 主从表格模式下的展开行集合 */
   expandedRowsSet?: Set<number>;
+  /** 存储展开的数据索引 */
+  expandedDataIndices?: Set<number>;
   /** 子表实例映射 */
   subTableInstances?: Map<number, any>;
   /** 存储每行展开前的原始高度 */

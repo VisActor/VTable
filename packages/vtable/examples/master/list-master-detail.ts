@@ -435,27 +435,14 @@ export function createTable() {
     getDetailGridOptions, // 提供子表配置函数
     autoFillWidth: true,
     hierarchyTextStartAlignment: true, // 启用层级文本对齐
+    // 添加初始排序状态 - 按 name 字段升序排序
+    sortState: {
+      field: 'id',
+      order: 'asc'
+    }
   };
 
   // 创建 ListTable 实例，启用主从表格功能
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID) as HTMLElement, option);
-
-  // 监听展开/收起事件
-  tableInstance.on('tree_hierarchy_state_change', args => {
-    // 可以在这里处理展开/收起事件
-  });
-
-  // 添加一些工具方法到全局，方便调试
-  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
-  (window as unknown as Record<string, unknown>).expandRow = (rowIndex: number) => {
-    tableInstance.expandRow?.(rowIndex);
-  };
-  (window as unknown as Record<string, unknown>).collapseRow = (rowIndex: number) => {
-    tableInstance.collapseRow?.(rowIndex);
-  };
-  (window as unknown as Record<string, unknown>).toggleRowExpand = (rowIndex: number) => {
-    tableInstance.toggleRowExpand?.(rowIndex);
-  };
-
   return tableInstance;
 }
