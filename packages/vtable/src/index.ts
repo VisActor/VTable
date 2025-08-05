@@ -34,8 +34,6 @@ import type {
 } from './ts-types';
 import { ListTableAll as ListTable } from './ListTable-all';
 import { ListTableSimple } from './ListTable-simple';
-import { MasterDetailTableAll as MasterDetailTable } from './MasterDetailTable-all';
-import { MasterDetailTableSimple } from './MasterDetailTable-simple';
 import { PivotTableAll as PivotTable } from './PivotTable-all';
 import { PivotTableSimple } from './PivotTable-simple';
 import { PivotChart } from './PivotChart';

@@ -1047,8 +1047,6 @@ export interface ListTableProtected extends IBaseTableProtected {
     key: string;
     width: number;
   }[];
-  /** 主从表格模式下的展开行集合 */
-  expandedRowsSet?: Set<number>;
   /** 存储展开的数据索引 */
   expandedDataIndices?: Set<number>;
   /** 子表实例映射 */
@@ -1100,16 +1098,4 @@ export interface PivotChartProtected extends IBaseTableProtected {
   columns?: (IColumnDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
-}
-export interface MasterDetailTableProtected extends IBaseTableProtected {
-  /** 表格数据 */
-  records: unknown[] | null;
-  dataConfig?: IListTableDataConfig;
-  columns: ColumnsDefine;
-  layoutMap: SimpleHeaderLayoutMap;
-  columnWidthConfig?: {
-    key: string;
-    width: number;
-  }[];
-  expandedRowsSet: Set<number>;
 }

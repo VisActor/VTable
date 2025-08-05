@@ -1687,29 +1687,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   // ==================== 主从表格功能 ====================
-  
   /**
    * 初始化主从表格功能
    */
   private initMasterDetailFeatures(options: ListTableConstructorOptions): void {
     const internalProps = this.internalProps;
-    
-    // 初始化主从表格特有属性
-    internalProps.expandedRowsSet = new Set(options.expandedRows || []);
     internalProps.expandedDataIndices = new Set(options.expandedRows || []); // 同步初始化展开的数据索引
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
     internalProps.subTableInitialViewBox = new Map();
-    
-    // 同步数据中的 hierarchyState 到 expandedRowsSet
+    // 同步数据中的 hierarchyState 到 _heightResizedRowMap
     this.syncHierarchyStateWithExpandedRows();
-    
     // 注册图标点击事件处理器
     this.on(TABLE_EVENT_TYPE.ICON_CLICK, this.handleIconClick.bind(this));
-    
     // 注册滚动事件处理器
     this.on(TABLE_EVENT_TYPE.SCROLL, this.handleScrollForSubTables.bind(this));
-    
     // 确保hierarchyTextStartAlignment默认开启
     if (options.hierarchyTextStartAlignment === undefined) {
       options.hierarchyTextStartAlignment = true;
@@ -1750,38 +1742,33 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 展开指定行的详情
    */
   expandRow(recordIndex: number, height?: number): void {
-    if (!this.options.masterDetail || !this.internalProps.expandedRowsSet) {
+    if (!this.options.masterDetail) {
       return;
     }
 
-    // 确保有展开状态集合
-    if (!this.internalProps.expandedRowsSet) {
-      this.internalProps.expandedRowsSet = new Set();
-    }
+    // 确保有展开数据索引集合
     if (!this.internalProps.expandedDataIndices) {
       this.internalProps.expandedDataIndices = new Set();
     }
     
-    // 检查是否已经展开
-    if (this.internalProps.expandedRowsSet.has(recordIndex)) {
+    // 检查是否已经展开（通过检查表格行是否已调整高度）
+    const tableRowIndex = recordIndex + 1;
+    if (this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
       return;
     }
-    
     // 获取真正的数据索引
     // 注意：传入的recordIndex可能是行号或数据索引，需要确保获取到正确的数据索引
     const currentTableRowIndex = recordIndex + 1; // 假设recordIndex是数据索引，对应的表格行号
     const realDataIndex = this.getRecordIndexByCell(0, currentTableRowIndex); // 通过行号获取真正的数据源索引
 
-    // 标记为已展开
-    this.internalProps.expandedRowsSet.add(recordIndex);
     // 存储真正的数据索引
     const dataIndexToAdd = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
     this.internalProps.expandedDataIndices.add(dataIndexToAdd);
-    // 以下是原有的主从表逻辑
+    
     // 在展开之前，先记录原始行高度
-    const tableRowIndex = recordIndex + 1;
-    if (tableRowIndex >= 0) {
-      const originalHeight = this.getRowHeight(tableRowIndex);
+    const insertRowIndex = recordIndex + 1;
+    if (insertRowIndex >= 0) {
+      const originalHeight = this.getRowHeight(insertRowIndex);
       if (this.internalProps.originalRowHeights) {
         this.internalProps.originalRowHeights.set(recordIndex, originalHeight);
       }
@@ -1794,17 +1781,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       height = detailConfig?.style?.height || 200; // 默认200
     }
 
-    // 标记为已展开
-    this.internalProps.expandedRowsSet.add(recordIndex);
-
     // 同步更新记录的 hierarchyState 属性
     const record = this.getRecordByRowIndex(recordIndex);
     if (record) {
       record.hierarchyState = HierarchyState.expand;
     }
 
-    // 计算插入位置：记录行的下一行
-    const insertRowIndex = recordIndex + 1;
     // 获取详情行高度 - 优先使用传入的高度，否则使用默认值
     const targetTotalHeight = height || 200;
     // 获取原始行高度
@@ -1818,14 +1800,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps._heightResizedRowMap.add(insertRowIndex);
 
     // 更新图标状态 - 同时更新 masterDetail 系统和 master 列系统的图标
-    if (tableRowIndex >= 0) {
+    if (insertRowIndex >= 0) {
       // 更新 masterDetail 系统的图标（第0列）
-      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
+      this.scenegraph.updateHierarchyIcon(0, insertRowIndex);
       // 更新所有 master 列的图标
       for (let col = 0; col < this.colCount; col++) {
-        const columnDefine = this.getBodyColumnDefine(col, tableRowIndex);
+        const columnDefine = this.getBodyColumnDefine(col, insertRowIndex);
         if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
-          this.scenegraph.updateHierarchyIcon(col, tableRowIndex);
+          this.scenegraph.updateHierarchyIcon(col, insertRowIndex);
         }
       }
       this.scenegraph.updateNextFrame();
@@ -1847,11 +1829,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 收起指定行的详情
    */
   collapseRow(recordIndex: number): void {
-    if (!this.options.masterDetail || !this.internalProps.expandedRowsSet) {
+    if (!this.options.masterDetail) {
       return;
     }
-    // 检查是否已经展开
-    if (!this.internalProps.expandedRowsSet.has(recordIndex)) {
+    // 检查是否已经展开（通过检查表格行是否已调整高度）
+    const checkTableRowIndex = recordIndex + 1;
+    if (!this.internalProps._heightResizedRowMap.has(checkTableRowIndex)) {
       return;
     }
 
@@ -1863,8 +1846,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.removeSubTable(recordIndex);
 
     const removeRowIndex = recordIndex + 1;
-    // 标记为已收起
-    this.internalProps.expandedRowsSet.delete(recordIndex);
     // 从数据索引集合中移除真正的数据索引
     const dataIndexToDelete = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
     this.internalProps.expandedDataIndices?.delete(dataIndexToDelete);
@@ -1873,7 +1854,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (record) {
       record.hierarchyState = HierarchyState.collapse;
     }
-    
     // 获取当前详情行的高度
     const currentHeight = this.getRowHeight(removeRowIndex);
     // 获取原始高度
@@ -1888,13 +1868,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (this.internalProps.originalRowHeights) {
       this.internalProps.originalRowHeights.delete(recordIndex);
     }
-    
     // 更新图标状态 - 同时更新 masterDetail 系统和 master 列系统的图标
     const tableRowIndex = recordIndex + 1;
     if (tableRowIndex >= 0) {
       // 更新 masterDetail 系统的图标（第0列）
       this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
-      
       // 更新所有 master 列的图标
       for (let col = 0; col < this.colCount; col++) {
         const columnDefine = this.getBodyColumnDefine(col, tableRowIndex);
@@ -1902,7 +1880,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
           this.scenegraph.updateHierarchyIcon(col, tableRowIndex);
         }
       }
-      
       this.scenegraph.updateNextFrame();
     }
 
@@ -1921,11 +1898,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 切换行的展开状态
    */
   toggleRowExpand(rowIndex: number): void {
-    if (!this.options.masterDetail || !this.internalProps.expandedRowsSet) {
+    if (!this.options.masterDetail) {
       return;
     }
-    
-    if (this.internalProps.expandedRowsSet.has(rowIndex)) {
+    // 通过检查表格行是否已调整高度来判断是否已展开
+    const checkTableRowIndex = rowIndex + 1;
+    if (this.internalProps._heightResizedRowMap.has(checkTableRowIndex)) {
       this.collapseRow(rowIndex);
     } else {
       this.expandRow(rowIndex);
@@ -1945,22 +1923,22 @@ export class ListTable extends BaseTable implements ListTableAPI {
   // ==================== 主从表格私有方法 ====================
 
   /**
-   * 同步数据中的 hierarchyState 到 expandedRowsSet
+   * 同步数据中的 hierarchyState 到 _heightResizedRowMap
    */
   private syncHierarchyStateWithExpandedRows(): void {
-    if (!this.records || !this.internalProps.expandedRowsSet) {
+    if (!this.records) {
       return;
     }
-    
     // 遍历所有记录，检查 hierarchyState
     for (let i = 0; i < this.records.length; i++) {
       const record = this.records[i];
       if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-        // 如果记录有 hierarchyState 且为 expand，则添加到 expandedRowsSet
+        // 如果记录有 hierarchyState 且为 expand，则添加到 _heightResizedRowMap
         if (record.hierarchyState === HierarchyState.expand) {
-          this.internalProps.expandedRowsSet.add(i);
+          const tableRowIndex = i + 1;
+          this.internalProps._heightResizedRowMap.add(tableRowIndex);
         }
-        // 如果没有明确设置 hierarchyState，默认为折叠状态（不添加到 expandedRowsSet）
+        // 如果没有明确设置 hierarchyState，默认为折叠状态（不添加到 _heightResizedRowMap）
       }
     }
   }
@@ -2026,7 +2004,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
-    
     // 获取记录数据
     const record = this.getRecordByRowIndex(recordIndex);
     if (!record || !record.children) {
@@ -2035,10 +2012,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     // 获取子表配置
     const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
-    if (!detailConfig) {
-      console.warn('No detail config found for record at index:', recordIndex);
-      return;
-    }
 
     // 动态计算子表的viewBox区域
     const childViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
@@ -2077,7 +2050,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       canvasHeight: containerHeight,
       // 继承父表的重要属性
       theme: this.options.theme,
-      pixelRatio: this.internalProps.pixelRatio, // 继承父表的pixelRatio
       ...(detailConfig || {})
     };
     const subTable = new ListTable(this.container, subTableOptions);
@@ -2175,30 +2147,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const viewportHeight = subTable.scenegraph.height;
       // 获取当前滚动位置
       const scrollTop = subTable.scrollTop;
-      
       // 如果内容高度不超过视口高度，说明没有滚动条，认为已经在底部
       if (totalContentHeight <= viewportHeight) {
         return true;
       }
-      
       // 计算最大可滚动距离
       const maxScrollTop = totalContentHeight - viewportHeight;
       // 检查是否已经滚动到底部（允许2px的误差）
       const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 2;
-      
-      // 临时调试日志
-      if (recordIndex === 10) {
-        // 只对ID为11的记录（索引10）输出日志
-        // eslint-disable-next-line no-console
-        console.log('子表滚动状态检查(ID:11):', {
-          totalContentHeight,
-          viewportHeight,
-          scrollTop,
-          maxScrollTop,
-          isAtBottom
-        });
-      }
-      
       return isAtBottom;
     };
 
@@ -2232,13 +2188,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 向下滚动：如果子表已经到底部，则让父表滚动
       if (isScrollingDown && isSubTableAtBottom()) {
         e.preventDefault(); // 阻止子表滚动
-        
         // 临时调试日志
         if (recordIndex === 10) {
           // eslint-disable-next-line no-console
           console.log('触发父表滚动(向下), ID:11');
         }
-        
         // 使用正确的父表滚动方法
         const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
         const newParentScrollTop = currentParentScrollTop + deltaY;
@@ -2252,14 +2206,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 向上滚动：如果子表已经到顶部，则让父表滚动
       if (isScrollingUp && isSubTableAtTop()) {
         e.preventDefault(); // 阻止子表滚动
-        
-        // 临时调试日志
-        if (recordIndex === 10) {
-          // eslint-disable-next-line no-console
-          console.log('触发父表滚动(向上), ID:11');
-        }
-        
-        // 使用正确的父表滚动方法
         const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
         const newParentScrollTop = currentParentScrollTop + deltaY;
         if (newParentScrollTop >= 0) {
@@ -2546,8 +2492,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     });
     
-    // 清理状态
-    this.internalProps.expandedRowsSet?.clear();
     this.internalProps.expandedDataIndices?.clear(); // 同时清理数据索引集合
     this.internalProps.subTableInstances?.clear();
     this.internalProps.originalRowHeights?.clear();
