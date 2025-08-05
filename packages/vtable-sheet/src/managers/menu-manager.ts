@@ -1,0 +1,107 @@
+import type { ExcelImportPlugin } from '@visactor/vtable-plugins';
+import type VTableSheet from '../components/vtable-sheet';
+import type { MainMenuItem } from '../ts-types/base';
+import { MenuKey } from '../ts-types/base';
+
+export class MenuManager {
+  private vtableSheet: VTableSheet;
+  constructor(vtableSheet: VTableSheet) {
+    this.vtableSheet = vtableSheet;
+  }
+
+  createMainMenu(): HTMLElement {
+    const menuIcon = `<svg t="1754379519717" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1496" width="24" height="24"><path d="M510.435876 67.959811c-245.428735 0-444.382996 198.954261-444.382996 444.373787 0 245.420549 198.954261 444.373787 444.382996 444.373787 245.410316 0 444.372763-198.953238 444.372763-444.373787C954.807616 266.914072 755.846192 67.959811 510.435876 67.959811zM510.435876 901.156184c-214.743876 0-388.831796-174.08792-388.831796-388.822586 0-214.743876 174.088944-388.831796 388.831796-388.831796 214.732619 0 388.822586 174.08792 388.822586 388.831796C899.257439 727.068264 725.167472 901.156184 510.435876 901.156184zM666.028561 329.355193 337.411171 329.355193c-15.117302 0-27.384697 15.60235-27.384697 34.844599 0 19.259646 12.267395 34.861996 27.384697 34.861996l328.618413 0c15.124466 0 27.375487-15.60235 27.375487-34.861996C693.404048 344.957543 681.15405 329.355193 666.028561 329.355193zM666.028561 486.191194 337.411171 486.191194c-15.117302 0-27.384697 15.601326-27.384697 34.852786 0 19.25146 12.267395 34.853809 27.384697 34.853809l328.618413 0c15.124466 0 27.375487-15.601326 27.375487-34.853809C693.404048 501.792521 681.15405 486.191194 666.028561 486.191194zM666.028561 625.604384 337.411171 625.604384c-15.117302 0-27.384697 15.60235-27.384697 34.845623 0 19.25146 12.267395 34.861996 27.384697 34.861996l328.618413 0c15.124466 0 27.375487-15.611559 27.375487-34.861996C693.404048 641.206734 681.15405 625.604384 666.028561 625.604384z" fill="#8a8a8a" p-id="1497"></path></svg>`;
+    // const menuIcon = `<svg t="1754379884941" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M41.79704403125004 158.46048700694445l588.8681891302084 0 0 117.0003645451389-588.8681891302084 0 0-117.0003645451389Z" p-id="5684" fill="#8a8a8a"></path><path d="M41.79704403124998 394.9996354548611l588.8681891302086 0 0 117.0003645451389-588.8681891302086 0 0-117.0003645451389Z" p-id="5685" fill="#8a8a8a"></path><path d="M41.79704403124998 629.4749666302083l588.8681891302084 0 0 117.0003645451389-588.8681891302084 0 0-117.0003645451389Z" p-id="5686" fill="#8a8a8a"></path><path d="M831.596434 638.445854 642.224412 384.604518 1023.977999 384.604518Z" p-id="5687" fill="#8a8a8a"></path></svg>`;
+    const menu = document.createElement('div');
+    menu.className = 'vtable-sheet-menu';
+    menu.style.position = 'relative'; // 关键：为子菜单提供定位基准
+
+    // 菜单按钮
+    const menuButton = document.createElement('span');
+    menuButton.className = 'vtable-sheet-menu-button';
+    menuButton.innerHTML = menuIcon;
+    menu.appendChild(menuButton);
+
+    // 菜单项容器（直接作为 menu 的子元素）
+    const menuContainer = document.createElement('div');
+    menuContainer.className = 'vtable-sheet-menu-container';
+    menu.appendChild(menuContainer); // 挂载到 menu 内部
+
+    // 菜单项列表
+    const menuItems = document.createElement('ul');
+    menuItems.className = 'vtable-sheet-menu-items';
+    menuContainer.appendChild(menuItems);
+
+    // 动态生成菜单项
+    this.vtableSheet.getOptions().mainMenu?.items?.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'vtable-sheet-menu-item';
+      li.textContent = item.name;
+      li.title = item.description || ''; //title提示
+      if (item.items) {
+        li.classList.add('vtable-sheet-menu-item-has-children');
+        li.onmouseenter = () => {
+          this.createSubMenu(item.items);
+        };
+        li.onmouseleave = () => {
+          li.classList.remove('vtable-sheet-menu-item-has-children-hover');
+        };
+      }
+      li.addEventListener('click', () => {
+        if (item.menuKey) {
+          this.handleMenuClick(item.menuKey);
+        } else {
+          item.onClick?.();
+        }
+      });
+      menuItems.appendChild(li);
+    });
+
+    // 点击事件逻辑
+    menuButton.addEventListener('click', e => {
+      e.stopPropagation();
+      menuContainer.classList.toggle('active');
+    });
+
+    // 点击外部关闭菜单
+    document.addEventListener('click', e => {
+      if (!menu.contains(e.target as Node)) {
+        menuContainer.classList.remove('active');
+      }
+    });
+
+    return menu;
+  }
+  //TODO 需要重新逻辑，需要支持多级菜单
+  createSubMenu(items: MainMenuItem[]): HTMLElement {
+    const subMenu = document.createElement('ul');
+    subMenu.className = 'vtable-sheet-menu-sub-menu';
+    items.forEach(item => {
+      const li = document.createElement('li');
+      li.className = 'vtable-sheet-menu-item';
+      li.textContent = item.name;
+      li.title = item.description || ''; //title提示
+      li.addEventListener('click', () => {
+        if (item.menuKey) {
+          this.handleMenuClick(item.menuKey);
+        } else {
+          item.onClick?.();
+        }
+      });
+      subMenu.appendChild(li);
+    });
+    return subMenu;
+  }
+  handleMenuClick(menuKey: MenuKey) {
+    console.log('menuKey click', menuKey);
+    switch (menuKey) {
+      case MenuKey.IMPORT:
+        (
+          this.vtableSheet
+            .getActiveSheet()
+            .tableInstance?.pluginManager.getPluginByName('ExcelImportPlugin') as ExcelImportPlugin
+        )?.import('file');
+        break;
+    }
+  }
+}

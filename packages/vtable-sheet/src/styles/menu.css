@@ -1,0 +1,106 @@
+.vtable-sheet-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 30px;
+  padding: 0;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  width: 50px;
+  /* 内容居中 */
+  justify-content: center;
+  flex-shrink: 0; /* 防止菜单被压缩 */
+}
+.vtable-sheet-menu:hover {
+  background-color: #f0f0f0;
+}
+
+.vtable-sheet-menu-button {
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  cursor: pointer;
+  height: 30px;
+}
+
+/* 菜单项容器 */
+.vtable-sheet-menu-container {
+  position: absolute;
+  top: 100%; /* 显示在按钮下方 */
+  left: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  display: none;
+}
+
+.vtable-sheet-menu-container.active {
+  display: block;
+}
+
+/* 菜单项列表（ul） */
+.vtable-sheet-menu-items {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  min-width: 60px;
+  /* 删除以下两行 */
+  /* max-height: 300px; */
+  /* overflow-y: hidden; */
+}
+
+/* 当内容超出时显示滚动条 */
+.vtable-sheet-menu-items.scrollable {
+  overflow-y: auto;
+}
+
+/* 单个菜单项（li） */
+.vtable-sheet-menu-item {
+  padding: 6px 12px;
+  margin: 0; /* 清除默认外边距 */
+  line-height: 1.5; /* 统一行高 */
+  cursor: pointer;
+  white-space: nowrap;
+  color: #333;                 /* 文字颜色 */
+  font-size: 12px;             /* 字体大小 */
+  transition: background 0.2s; /* 悬停动画 */
+  
+  /* 禁用文本选中 */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 悬停和激活状态 */
+.vtable-sheet-menu-item:hover,
+.vtable-sheet-menu-item:focus {
+  background-color: #f5f5f5;   /* 浅灰色背景 */
+}
+
+.vtable-sheet-menu-item:active {
+  background-color: #e0e0e0;   /* 点击时深灰色 */
+}
+
+/* 分隔线（可选） */
+.vtable-sheet-menu-item.divider {
+  border-top: 1px solid #e0e0e0;
+  margin: 4px 0;
+  padding: 0;
+  height: 1px;
+  cursor: default;
+}
+
+.vtable-sheet-menu-item-has-children {
+  position: relative;
+}
+
+.vtable-sheet-menu-item-has-children::after {
+  content: '>';
+  position: absolute;
+  right: 0px;
+  top: 50%;
+  transform: translateY(-50%);
+}

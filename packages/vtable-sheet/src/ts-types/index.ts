@@ -5,7 +5,7 @@ export * from './filter';
 export * from './sheet';
 
 import type { ColumnDefine, TYPES } from '@visactor/vtable';
-import type { CellValue, IStyle } from './base';
+import type { CellValue, IStyle, MainMenuItem, MenuKey } from './base';
 
 /** 筛选配置 */
 export interface IFilterConfig {
@@ -88,6 +88,19 @@ export interface IVTableSheetOptions {
   showFormulaBar?: boolean;
   /** 是否显示sheet切换栏 */
   showSheetTab?: boolean;
+  /** 插件 */
+  pluginModules?: {
+    module: any;
+    moduleOptions?: any;
+  }[];
+
+  /** 主菜单 */
+  mainMenu?: {
+    /** 是否显示 */
+    show?: boolean;
+    /** 菜单项 */
+    items?: MainMenuItem[];
+  };
   /** 主题 */
   theme?: string | Record<string, any>;
   /** 默认行高 */
