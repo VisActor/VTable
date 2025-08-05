@@ -75,7 +75,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   constructor(table: ListTable, columns: ColumnsDefine, showHeader: boolean, hierarchyIndent: number) {
     this._cellRangeMap = new Map();
     this._showHeader = showHeader;
-    this._table = table as ListTable; // 临时转换，因为内部逻辑兼容
+    this._table = table;
     this._columns = [];
     this._columnsIncludeHided = [];
     this._headerCellIds = [];
