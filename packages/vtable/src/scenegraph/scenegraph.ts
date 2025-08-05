@@ -2247,7 +2247,8 @@ export class Scenegraph {
       // }
       for (let i = 0; i < updateRows.length; i++) {
         const row = updateRows[i];
-        const oldHeight = this.table.getRowHeight(row);
+        // const oldHeight = this.table.getRowHeight(row);
+        const oldHeight = this.table.rowHeightsMap.get(row); // 避免在小数情况下的自动取整
         const newHeight = computeRowHeight(row, 0, this.table.colCount - 1, this.table);
         if (
           (row >= this.proxy.rowStart && row <= this.proxy.rowEnd) ||

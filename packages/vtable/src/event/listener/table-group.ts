@@ -972,7 +972,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      if (table.internalProps.enableCheckboxCascade) {
+      if (table.internalProps.enableHeaderCheckboxCascade) {
         const cellType = table.getCellType(col, row);
         if (cellType === 'checkbox') {
           table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);

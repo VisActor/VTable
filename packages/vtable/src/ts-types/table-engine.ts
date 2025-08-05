@@ -293,7 +293,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   showAggregationWhenEmpty?: boolean;
   /** 针对column中配置了tree: true的列，开启这个配置后，可以合并分组标题。需要配合在数据中配置vtableMerge和vtableMergeName。默认为false */
   enableTreeNodeMerge?: boolean;
-  groupConfig: {
+  groupConfig?: {
     groupBy: GroupByOption;
     titleCustomLayout?: ICustomLayout;
     titleFieldFormat?: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
