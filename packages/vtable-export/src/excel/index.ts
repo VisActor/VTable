@@ -194,7 +194,7 @@ async function addCell(
       : (define as IRowSeriesNumber)?.dragOrder ||
         !!define?.icon ||
         !!(define as ColumnDefine)?.tree ||
-        !!(define as any)?.master;
+        !!(define as ColumnDefine)?.master;
   let icons;
   if (mayHaveIcon) {
     icons = tableInstance.getCellIcons(col, row);
