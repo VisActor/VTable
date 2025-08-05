@@ -62,7 +62,7 @@ export interface FieldAssessor {
 /** 子表配置接口 */
 export interface DetailGridOptions {
   /** 子表类型 */
-  type: 'ListTable' | 'MasterDetailTable' | 'PivotTable';
+  type: 'ListTable' | 'PivotTable';
   /** 子表列定义 */
   columnDefs: ColumnsDefine;
   /** 子表样式配置 */
@@ -316,47 +316,6 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   getDetailGridOptions?: (params: { data: any; rowIndex: number }) => DetailGridOptions;
 }
 
-export interface MasterDetailTableConstructorOptions extends BaseTableConstructorOptions {
-  /**
-   * 数据集合
-   */
-  records?: Record<string, unknown>[];
-  /**
-   * 传入用户实例化的数据对象
-   */
-  dataSource?: CachedDataSource | DataSource;
-
-  showHeader?: boolean;
-
-  columns?: ColumnsDefine;
-
-  transpose?: boolean;
-  /**
-   * 展示为tree的列 层级缩进值
-   */
-  hierarchyIndent?: number;
-  /** 同层级的结点是否按文字对齐 如没有收起展开图标的节点和有图标的节点文字对齐 默认false */
-  hierarchyTextStartAlignment?: boolean;
-
-  /** 全局设置表头编辑器 */
-  headerEditor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-  /** 全局设置编辑器 */
-  editor?: string | IEditor | ((args: BaseCellInfo & { table: BaseTableAPI }) => string | IEditor);
-
-  /** 主从表格特有配置 */
-  expandedRows?: number[];
-
-  /** 子表配置选项 */
-  detailGridOptions?: DetailGridOptions;
-  /** 根据数据动态获取子表配置的函数 */
-  getDetailGridOptions?: (params: { data: any; rowIndex: number }) => DetailGridOptions;
-
-  enableTreeNodeMerge?: boolean;
-  groupBy?: GroupByOption;
-
-  columnWidthConfig?: { key: string; width: number }[];
-}
-
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
 
 export type GroupConfig = {
@@ -431,42 +390,6 @@ export interface ListTableAPI extends BaseTableAPI {
   toggleRowExpand?: (rowIndex: number) => void;
   /** 更新子表位置 */
   updateSubTableTranslation?: (deltaX?: number, deltaY?: number) => void;
-}
-export interface MasterDetailTableAPI extends BaseTableAPI {
-  transpose: boolean;
-  options: MasterDetailTableConstructorOptions;
-  editorManager: EditManager;
-  isMasterDetailTable: () => true;
-  isListTable: () => false;
-  isPivotTable: () => false;
-
-  /** 设置单元格的value值，注意对应的是源数据的原始值，vtable实例records会做对应修改 */
-  changeCellValue: (col: number, row: number, value: string | number | null, workOnEditableCell?: boolean) => void;
-  getFieldData: (field: FieldDef | FieldFormat | undefined, col: number, row: number) => FieldData;
-
-  /** 获取单元格配置的编辑器 */
-  getEditor: (col: number, row: number) => IEditor;
-  /**
-   * 开启单元格编辑
-   * @param col
-   * @param row
-   * @param value 如果想要改变显示到编辑框中的值 可以value来设置改变
-   * @returns
-   */
-  startEditCell: (col?: number, row?: number, value?: string | number) => void;
-  /** 结束编辑 */
-  completeEditCell: () => void;
-
-  _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
-  _hasHierarchyTreeHeader: () => boolean;
-
-  // 主从表格特有方法
-  /** 展开指定行的详情 */
-  expandRow: (rowIndex: number) => void;
-  /** 收起指定行的详情 */
-  collapseRow: (rowIndex: number) => void;
-  /** 切换行的展开状态 */
-  toggleRowExpand: (rowIndex: number) => void;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

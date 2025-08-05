@@ -37,10 +37,6 @@ export const menus = [
       },
       {
         path: 'master',
-        name: 'test'
-      },
-      {
-        path: 'master',
         name: 'list-master-detail'
       },
       {

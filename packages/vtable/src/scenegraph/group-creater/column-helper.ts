@@ -8,7 +8,6 @@ import type {
   ListTableConstructorOptions,
   TextColumnDefine
 } from '../../ts-types';
-import type { IBasicColumnBodyDefine } from '../../ts-types/list-table/define/basic-define';
 import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
@@ -152,7 +151,7 @@ export function createComplexColumn(
         : ((define as IRowSeriesNumber)?.dragOrder ||
             !!define?.icon ||
             !!(define as ColumnDefine)?.tree ||
-            !!(define as IBasicColumnBodyDefine)?.master) &&
+            !!(define as ColumnDefine)?.master) &&
           !(isAggregation && isSeriesNumber);
     if (
       !range &&

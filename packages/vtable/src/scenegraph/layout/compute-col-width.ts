@@ -9,7 +9,6 @@ import type {
   RadioStyleOption,
   TextColumnDefine
 } from '../../ts-types';
-import type { IBasicColumnBodyDefine } from '../../ts-types/list-table/define/basic-define';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
 import { validToString } from '../../tools/util';
@@ -594,7 +593,7 @@ function computeTextWidth(col: number, row: number, cellType: ColumnTypeOption, 
     mayHaveIcon =
       !!define?.icon ||
       !!(define as ColumnDefine)?.tree ||
-      !!(define as IBasicColumnBodyDefine)?.master ||
+      !!(define as ColumnDefine)?.master ||
       (define as IRowSeriesNumber)?.dragOrder;
   }
   if (mayHaveIcon) {

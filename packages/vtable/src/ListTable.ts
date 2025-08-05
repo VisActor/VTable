@@ -871,56 +871,29 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
     }
 
-    // 先检查原有的树形结构逻辑
     if (!this.options.groupBy || (isArray(this.options.groupBy) && this.options.groupBy.length === 0)) {
       const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
       if (define.tree) {
         const index = this.getRecordShowIndexByCell(col, row);
         const treeState = this.dataSource.getHierarchyState(index);
         if (treeState !== HierarchyState.none) {
-          return treeState; // 如果有树形结构，优先返回树形状态
+          return treeState; 
         }
       }
-      
-      // master 系统 - 像 tree 系统一样使用数据绑定的状态存储
       if (define.master) {
         const record = this.getCellRawRecord(col, row);
         if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-          // 使用记录本身的 hierarchyState 属性，与 tree 系统保持一致
           if (record.hierarchyState === HierarchyState.expand) {
             return HierarchyState.expand;
           }
-          // 如果没有设置 hierarchyState，默认为折叠状态
           return HierarchyState.collapse;
         }
       }
     } else {
-      // 有groupBy的情况
       const index = this.getRecordShowIndexByCell(col, row);
       const treeState = this.dataSource.getHierarchyState(index);
       if (treeState !== HierarchyState.none) {
-        return treeState; // 如果有分组结构，优先返回分组状态
-      }
-    }
-
-    // 如果没有树形结构或树形结构返回none，再检查主从表格
-    if (this.options.masterDetail) {
-      // 主从表格模式下，检查第一列是否显示展开/收起图标
-      if (col === 0) {
-        // 获取记录索引
-        const recordIndex = this.getRecordShowIndexByCell(col, row);
-        if (recordIndex >= 0) {
-          const record = this.getCellRawRecord(col, row);
-          // 只有当记录有children数据时才显示图标
-          if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-            // 使用记录本身的 hierarchyState 属性，与 tree 系统保持一致
-            if (record.hierarchyState === HierarchyState.expand) {
-              return HierarchyState.expand;
-            }
-            // 如果没有设置 hierarchyState，默认为折叠状态
-            return HierarchyState.collapse;
-          }
-        }
+        return treeState;
       }
     }
 
@@ -935,24 +908,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
+
     if (this.isHeader(col, row)) {
-      // 表头的展开和收起
       const headerTreeNode = this.internalProps.layoutMap.getHeader(col, row) as any;
       const { hierarchyState: rawHierarchyState, define: columnDefine } = headerTreeNode;
       if (![HierarchyState.collapse, HierarchyState.expand].includes(rawHierarchyState) || !columnDefine) {
         return;
       }
       const children = columnDefine.columns;
-      // 有子节点才需要自动展开和折叠
       if (!!Array.isArray(children) && children.length > 0) {
-        const hierarchyState =
+        const newHierarchyState =
           rawHierarchyState === HierarchyState.expand ? HierarchyState.collapse : HierarchyState.expand;
-        headerTreeNode.hierarchyState = hierarchyState;
-        headerTreeNode.define.hierarchyState = hierarchyState;
-        // 全量更新
+        headerTreeNode.hierarchyState = newHierarchyState;
+        headerTreeNode.define.hierarchyState = newHierarchyState;
         this.updateColumns(this.internalProps.columns);
       }
-
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col,
         row,
@@ -963,88 +933,51 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
 
+    const columnDefine = this.getBodyColumnDefine(col, row);
+    const record = this.getCellRawRecord(col, row);
+    const hasChildren = record && record.children && Array.isArray(record.children) && record.children.length > 0;
+
+    if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master && hasChildren) {
+      const newState = hierarchyState === HierarchyState.expand ? HierarchyState.collapse : HierarchyState.expand;
+      record.hierarchyState = newState;
+      this.scenegraph.updateHierarchyIcon(col, row);
+      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col,
+        row,
+        hierarchyState: newState,
+        originData: record
+      });
+      return;
+    }
+
+    if (this.options.masterDetail && col === 0 && hasChildren) {
+      const recordIndex = this.getRecordShowIndexByCell(col, row);
+      if (hierarchyState === HierarchyState.expand) {
+        this.collapseRow(recordIndex);
+      } else {
+        this.expandRow(recordIndex);
+      }
+      return;
+    }
+
+    // 处理普通树形展开收起
     if (hierarchyState === HierarchyState.expand) {
-      // 检查是否是 master 系统的展开状态
-      const columnDefine = this.getBodyColumnDefine(col, row);
-      if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
-        const record = this.getCellRawRecord(col, row);
-        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-          // 直接修改记录的 hierarchyState 属性，与 tree 系统保持一致
-          record.hierarchyState = HierarchyState.collapse;
-          // 更新场景图
-          this.scenegraph.updateHierarchyIcon(col, row);
-          // 触发事件
-          this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-            col: col,
-            row: row,
-            hierarchyState: HierarchyState.collapse,
-            originData: record
-          });
-          return;
-        }
-      }
-      
-      // 检查是否是传统主从表格的展开状态
-      if (this.options.masterDetail && col === 0) {
-        const recordIndex = this.getRecordShowIndexByCell(col, row);
-        const record = this.getCellRawRecord(col, row);
-        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-          // 这是主从表格的收起操作
-          this.collapseRow(recordIndex);
-          return;
-        }
-      }
-      
-      // 原有的树形结构逻辑
       this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col: col,
-        row: row,
+        col,
+        row,
         hierarchyState: HierarchyState.collapse
       });
     } else if (hierarchyState === HierarchyState.collapse) {
-      // 检查是否是 master 系统的收起状态
-      const columnDefine = this.getBodyColumnDefine(col, row);
-      if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
-        const record = this.getCellRawRecord(col, row);
-        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-          // 直接修改记录的 hierarchyState 属性，与 tree 系统保持一致
-          record.hierarchyState = HierarchyState.expand;
-          // 更新场景图
-          this.scenegraph.updateHierarchyIcon(col, row);
-          // 触发事件
-          this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-            col: col,
-            row: row,
-            hierarchyState: HierarchyState.expand,
-            originData: record
-          });
-          return;
-        }
-      }
-      
-      // 检查是否是传统主从表格的收起状态
-      if (this.options.masterDetail && col === 0) {
-        const recordIndex = this.getRecordShowIndexByCell(col, row);
-        const record = this.getCellRawRecord(col, row);
-        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-          // 这是主从表格的展开操作
-          this.expandRow(recordIndex);
-          return;
-        }
-      }
-      
-      // 原有的树形结构逻辑
-      const record = this.getCellOriginRecord(col, row);
-      if (Array.isArray(record.children)) {
-        //children 是数组 表示已经有子树节点信息
+      const originRecord = this.getCellOriginRecord(col, row);
+      if (Array.isArray(originRecord.children)) {
         this._refreshHierarchyState(col, row, recalculateColWidths);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col: col,
-        row: row,
+        col,
+        row,
         hierarchyState: HierarchyState.expand,
-        originData: record
+        originData: originRecord
       });
     }
   }
@@ -1227,9 +1160,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.layoutMap.clearCellRangeMap();
         this.internalProps.useOneRowHeightFillAll = false;
         this.scenegraph.sortCell();
-        
-        // 排序后重新初始化 master 图标状态，确保图标正确显示
-        this.initMasterHierarchyState();
       }
     }
     if (sortState.length) {
@@ -1362,9 +1292,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     if (records) {
       _setRecords(this, records);
-      // 初始化 master 系统的 hierarchyState
-      this.initMasterHierarchyState();
-      
       if ((this as any).sortState) {
         const sortState = Array.isArray((this as any).sortState) ? (this as any).sortState : [(this as any).sortState];
 
@@ -1392,16 +1319,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.refreshRowColCount();
     } else {
       _setRecords(this, records);
-      // 初始化 master 系统的 hierarchyState
-      this.initMasterHierarchyState();
     }
 
     this.stateManager.initCheckedState(records);
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.clearCellStyleCache();
-    // 确保在创建场景图之前，所有 master 图标状态都正确设置
-    this.initMasterHierarchyState();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
@@ -1686,38 +1609,29 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
-  // ==================== 主从表格功能 ====================
+  // ==================== 这里开始就是主从表格的功能了 ====================
   /**
    * 初始化主从表格功能
    */
   private initMasterDetailFeatures(options: ListTableConstructorOptions): void {
     const internalProps = this.internalProps;
-    internalProps.expandedDataIndices = new Set(options.expandedRows || []); // 同步初始化展开的数据索引
+    internalProps.expandedDataIndices = new Set(options.expandedRows || []); 
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
     internalProps.subTableInitialViewBox = new Map();
-    // 同步数据中的 hierarchyState 到 _heightResizedRowMap
     this.syncHierarchyStateWithExpandedRows();
-    // 注册图标点击事件处理器
     this.on(TABLE_EVENT_TYPE.ICON_CLICK, this.handleIconClick.bind(this));
-    // 注册滚动事件处理器
-    this.on(TABLE_EVENT_TYPE.SCROLL, this.handleScrollForSubTables.bind(this));
-    // 确保hierarchyTextStartAlignment默认开启
+    this.on(TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
     if (options.hierarchyTextStartAlignment === undefined) {
       options.hierarchyTextStartAlignment = true;
     }
   }
 
-  /**
-   * 处理图标点击事件
-   */
   private handleIconClick(iconInfo: { col: number; row: number; funcType: IconFuncTypeEnum }): void {
     if (!this.options.masterDetail) {
       return;
     }
-    
     const { col, row, funcType } = iconInfo;
-    
     if (funcType === IconFuncTypeEnum.expand || funcType === IconFuncTypeEnum.collapse) {
       const dataRowIndex = this.getRecordShowIndexByCell(col, row);
       if (dataRowIndex >= 0) {
@@ -1726,273 +1640,136 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   }
 
-  /**
-   * 处理滚动事件，更新子表位置
-   */
-  private handleScrollForSubTables(scrollInfo: TableEventHandlersEventArgumentMap['scroll']): void {
-    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
-      return;
-    }
-    
-    // 滚动时只重新计算ViewBox位置，不重新计算高度
-    this.updateSubTablePositionsForScroll();
-  }
-
-  /**
-   * 展开指定行的详情
-   */
   expandRow(recordIndex: number, height?: number): void {
-    if (!this.options.masterDetail) {
+    if (!this.options.masterDetail || !this.internalProps.expandedDataIndices) {
       return;
     }
-
-    // 确保有展开数据索引集合
-    if (!this.internalProps.expandedDataIndices) {
-      this.internalProps.expandedDataIndices = new Set();
-    }
-    
-    // 检查是否已经展开（通过检查表格行是否已调整高度）
     const tableRowIndex = recordIndex + 1;
     if (this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
       return;
     }
-    // 获取真正的数据索引
-    // 注意：传入的recordIndex可能是行号或数据索引，需要确保获取到正确的数据索引
-    const currentTableRowIndex = recordIndex + 1; // 假设recordIndex是数据索引，对应的表格行号
-    const realDataIndex = this.getRecordIndexByCell(0, currentTableRowIndex); // 通过行号获取真正的数据源索引
 
-    // 存储真正的数据索引
-    const dataIndexToAdd = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
-    this.internalProps.expandedDataIndices.add(dataIndexToAdd);
-    
-    // 在展开之前，先记录原始行高度
-    const insertRowIndex = recordIndex + 1;
-    if (insertRowIndex >= 0) {
-      const originalHeight = this.getRowHeight(insertRowIndex);
-      if (this.internalProps.originalRowHeights) {
-        this.internalProps.originalRowHeights.set(recordIndex, originalHeight);
-      }
-    }
+    const realDataIndex = this.getRecordIndexByCell(0, tableRowIndex);
+    const dataIndex = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
+    this.internalProps.expandedDataIndices.add(dataIndex);
+    const originalHeight = this.getRowHeight(tableRowIndex);
+    this.internalProps.originalRowHeights?.set(recordIndex, originalHeight);
 
-    // 如果没有传递height，从动态配置中获取
     if (!height) {
       const record = this.getRecordByRowIndex(recordIndex);
       const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
-      height = detailConfig?.style?.height || 200; // 默认200
+      height = detailConfig?.style?.height || 200;
     }
 
-    // 同步更新记录的 hierarchyState 属性
     const record = this.getRecordByRowIndex(recordIndex);
     if (record) {
       record.hierarchyState = HierarchyState.expand;
     }
 
-    // 获取详情行高度 - 优先使用传入的高度，否则使用默认值
-    const targetTotalHeight = height || 200;
-    // 获取原始行高度
-    const originalHeight = this.getRowHeight(insertRowIndex);
-    // 计算实际需要增加的高度：目标总高度 - 原始高度
-    const deltaHeight = targetTotalHeight - originalHeight;
-    updateRowHeightForExpand(this.scenegraph, insertRowIndex, deltaHeight);
-    this.scenegraph.updateContainerHeight(insertRowIndex, deltaHeight);
+    const deltaHeight = (height || 200) - originalHeight;
+    updateRowHeightForExpand(this.scenegraph, tableRowIndex, deltaHeight);
+    this.scenegraph.updateContainerHeight(tableRowIndex, deltaHeight);
+    this.internalProps._heightResizedRowMap.add(tableRowIndex);
 
-    // 标记该行为已调整高度
-    this.internalProps._heightResizedRowMap.add(insertRowIndex);
-
-    // 更新图标状态 - 同时更新 masterDetail 系统和 master 列系统的图标
-    if (insertRowIndex >= 0) {
-      // 更新 masterDetail 系统的图标（第0列）
-      this.scenegraph.updateHierarchyIcon(0, insertRowIndex);
-      // 更新所有 master 列的图标
-      for (let col = 0; col < this.colCount; col++) {
-        const columnDefine = this.getBodyColumnDefine(col, insertRowIndex);
-        if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
-          this.scenegraph.updateHierarchyIcon(col, insertRowIndex);
-        }
-      }
-      this.scenegraph.updateNextFrame();
-    }
-
-    // 触发展开事件
+    this.updateIconsForRow(tableRowIndex);
     this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
       col: 0,
-      row: insertRowIndex,
+      row: tableRowIndex,
       hierarchyState: HierarchyState.expand
     });
 
     this.renderSubTable(recordIndex);
-    // 重新计算所有子表位置（因为展开操作会影响其他子表的相对位置）
     this.recalculateAllSubTablePositions();
   }
 
-  /**
-   * 收起指定行的详情
-   */
   collapseRow(recordIndex: number): void {
     if (!this.options.masterDetail) {
       return;
     }
-    // 检查是否已经展开（通过检查表格行是否已调整高度）
-    const checkTableRowIndex = recordIndex + 1;
-    if (!this.internalProps._heightResizedRowMap.has(checkTableRowIndex)) {
+    const tableRowIndex = recordIndex + 1;
+    if (!this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
       return;
     }
 
-    // 获取真正的数据索引
-    const currentTableRowIndex = recordIndex + 1; // 假设recordIndex是数据索引，对应的表格行号
-    const realDataIndex = this.getRecordIndexByCell(0, currentTableRowIndex); // 通过行号获取真正的数据源索引
-
-    // 先移除子表
+    const realDataIndex = this.getRecordIndexByCell(0, tableRowIndex);
+    const dataIndex = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
     this.removeSubTable(recordIndex);
-
-    const removeRowIndex = recordIndex + 1;
-    // 从数据索引集合中移除真正的数据索引
-    const dataIndexToDelete = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
-    this.internalProps.expandedDataIndices?.delete(dataIndexToDelete);
-    // 同步更新记录的 hierarchyState 属性
+    this.internalProps.expandedDataIndices?.delete(dataIndex);
     const record = this.getRecordByRowIndex(recordIndex);
     if (record) {
       record.hierarchyState = HierarchyState.collapse;
     }
-    // 获取当前详情行的高度
-    const currentHeight = this.getRowHeight(removeRowIndex);
-    // 获取原始高度
+
+    const currentHeight = this.getRowHeight(tableRowIndex);
     const originalHeight = this.getOriginalRowHeight(recordIndex);
-    // 计算需要减少的高度：当前高度 - 原始高度
     const deltaHeight = currentHeight - originalHeight;
-    updateRowHeightForExpand(this.scenegraph, removeRowIndex, -deltaHeight);
-    this.internalProps._heightResizedRowMap.delete(removeRowIndex);
-    this.scenegraph.updateContainerHeight(removeRowIndex, -deltaHeight);
+    updateRowHeightForExpand(this.scenegraph, tableRowIndex, -deltaHeight);
+    this.internalProps._heightResizedRowMap.delete(tableRowIndex);
+    this.scenegraph.updateContainerHeight(tableRowIndex, -deltaHeight);
+    this.internalProps.originalRowHeights?.delete(recordIndex);
 
-    // 清理原始高度记录
-    if (this.internalProps.originalRowHeights) {
-      this.internalProps.originalRowHeights.delete(recordIndex);
-    }
-    // 更新图标状态 - 同时更新 masterDetail 系统和 master 列系统的图标
-    const tableRowIndex = recordIndex + 1;
-    if (tableRowIndex >= 0) {
-      // 更新 masterDetail 系统的图标（第0列）
-      this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
-      // 更新所有 master 列的图标
-      for (let col = 0; col < this.colCount; col++) {
-        const columnDefine = this.getBodyColumnDefine(col, tableRowIndex);
-        if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
-          this.scenegraph.updateHierarchyIcon(col, tableRowIndex);
-        }
-      }
-      this.scenegraph.updateNextFrame();
-    }
-
-    // 触发收起事件
+    this.updateIconsForRow(tableRowIndex);
     this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
       col: 0,
-      row: removeRowIndex,
+      row: tableRowIndex,
       hierarchyState: HierarchyState.collapse
     });
 
-    // 重新计算所有子表位置（因为收起操作会影响其他子表的相对位置）
     this.recalculateAllSubTablePositions();
   }
 
-  /**
-   * 切换行的展开状态
-   */
   toggleRowExpand(rowIndex: number): void {
     if (!this.options.masterDetail) {
       return;
     }
-    // 通过检查表格行是否已调整高度来判断是否已展开
-    const checkTableRowIndex = rowIndex + 1;
-    if (this.internalProps._heightResizedRowMap.has(checkTableRowIndex)) {
+    const tableRowIndex = rowIndex + 1;
+    if (this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
       this.collapseRow(rowIndex);
     } else {
       this.expandRow(rowIndex);
     }
   }
 
-  /**
-   * 更新子表位置
-   */
   updateSubTableTranslation(deltaX: number = 0, deltaY: number = 0): void {
-    if (!this.options.masterDetail) {
-      return;
+    if (this.options.masterDetail) {
+      this.updateAllSubTablePositions(deltaX, deltaY);
     }
-    this.updateAllSubTablePositions(deltaX, deltaY);
   }
 
-  // ==================== 主从表格私有方法 ====================
+  private updateIconsForRow(rowIndex: number): void {
+    this.scenegraph.updateHierarchyIcon(0, rowIndex);
+    for (let col = 0; col < this.colCount; col++) {
+      const columnDefine = this.getBodyColumnDefine(col, rowIndex);
+      if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
+        this.scenegraph.updateHierarchyIcon(col, rowIndex);
+      }
+    }
+    this.scenegraph.updateNextFrame();
+  }
 
-  /**
-   * 同步数据中的 hierarchyState 到 _heightResizedRowMap
-   */
   private syncHierarchyStateWithExpandedRows(): void {
     if (!this.records) {
       return;
     }
-    // 遍历所有记录，检查 hierarchyState
     for (let i = 0; i < this.records.length; i++) {
       const record = this.records[i];
-      if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-        // 如果记录有 hierarchyState 且为 expand，则添加到 _heightResizedRowMap
-        if (record.hierarchyState === HierarchyState.expand) {
-          const tableRowIndex = i + 1;
-          this.internalProps._heightResizedRowMap.add(tableRowIndex);
-        }
-        // 如果没有明确设置 hierarchyState，默认为折叠状态（不添加到 _heightResizedRowMap）
+      if (record?.children?.length > 0 && record.hierarchyState === HierarchyState.expand) {
+        this.internalProps._heightResizedRowMap.add(i + 1);
       }
     }
   }
 
-  /**
-   * 初始化 master 系统的 hierarchyState
-   */
-  private initMasterHierarchyState(): void {
-    if (!this.records) {
-      return;
-    }
-    
-    // 遍历所有记录，为有 children 的记录初始化 hierarchyState
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-        // 如果没有设置 hierarchyState，默认为折叠状态
-        if (!record.hierarchyState) {
-          record.hierarchyState = HierarchyState.collapse;
-        }
-      }
-    }
-  }
-
-  /**
-   * 根据记录数据获取详情配置
-   */
   private getDetailConfigForRecord(record: unknown, rowIndex: number): DetailGridOptions | null {
     if (!this.options.masterDetail) {
       return null;
     }
-    
-    // 1. 优先使用 getDetailGridOptions 函数
-    if (this.options.getDetailGridOptions) {
-      return this.options.getDetailGridOptions({ data: record, rowIndex });
-    }
-    // 2. 使用默认的 detailGridOptions
-    if (this.options.detailGridOptions) {
-      return this.options.detailGridOptions;
-    }
-    // 3. 没有配置则返回 null
-    return null;
+    return this.options.getDetailGridOptions?.({ data: record, rowIndex }) || this.options.detailGridOptions || null;
   }
 
-  /**
-   * 获取指定行索引的记录数据
-   */
   private getRecordByRowIndex(rowIndex: number): Record<string, unknown> {
     return this.dataSource.getRaw(rowIndex) as Record<string, unknown>;
   }
 
-  /**
-   * 获取指定记录的原始行高
-   */
   private getOriginalRowHeight(recordIndex: number): number {
     return this.internalProps.originalRowHeights?.get(recordIndex) || 0;
   }
@@ -2004,22 +1781,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
-    // 获取记录数据
     const record = this.getRecordByRowIndex(recordIndex);
     if (!record || !record.children) {
       return;
     }
-
-    // 获取子表配置
     const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
-
-    // 动态计算子表的viewBox区域
     const childViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
     if (!childViewBox) {
-      return; // 如果无法计算viewBox，则不渲染子表
+      return;
     }
-
-    // 保存初始ViewBox位置
     if (this.internalProps.subTableInitialViewBox) {
       this.internalProps.subTableInitialViewBox.set(recordIndex, {
         x1: childViewBox.x1,
@@ -2028,15 +1798,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         y2: childViewBox.y2
       });
     }
-
-    // 准备子表数据
     const childrenData = Array.isArray(record.children) ? record.children : [];
-
-    // 计算子表的容器尺寸
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
-
-    // 创建子表配置
     const subTableOptions = {
       viewBox: childViewBox,
       canvas: this.canvas,
@@ -2044,8 +1808,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       columns: detailConfig?.columnDefs || [],
       widthMode: 'adaptive' as const,
       showHeader: true,
-      masterDetail: true, // 子表也支持主从表格功能
-      // 设置容器尺寸，确保子表知道自己的实际可用空间
       canvasWidth: containerWidth,
       canvasHeight: containerHeight,
       // 继承父表的重要属性
@@ -2062,15 +1824,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     };
     this.on('after_render', afterRenderHandler);
-    // 存储处理器引用以便清理
     (subTable as unknown as { __afterRenderHandler: () => void }).__afterRenderHandler = afterRenderHandler;
 
     // 设置滚动事件隔离
     this.setupScrollEventIsolation(recordIndex, subTable, childViewBox);
-
     // 设置统一选中状态管理
     this.setupUnifiedSelectionManagement(recordIndex, subTable);
-
     // 初始渲染
     subTable.render();
   }
@@ -2082,31 +1841,26 @@ export class ListTable extends BaseTable implements ListTableAPI {
     recordIndex: number,
     detailConfig?: DetailGridOptions | null
   ): { x1: number; y1: number; x2: number; y2: number } | null {
-    // 获取展开行的详情行索引（数据行的下一行）
     const detailRowIndex = recordIndex + 1;
-    // 获取详情行的位置和大小
     const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
     if (!detailRowRect) {
       return null;
     }
 
-    // 获取原始行高度
     const originalHeight = this.internalProps.originalRowHeights?.get(recordIndex) || 0;
-    // 获取表格的完整宽度范围 - 从第一列到最后一列
     const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
     const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: detailRowIndex });
     if (!firstColRect || !lastColRect) {
       return null;
     }
-    // 从配置中获取边距和高度，提供默认值
+
     const margin = detailConfig?.style?.margin || 10;
     const configHeight = detailConfig?.style?.height || 300;
-    // 计算子表的viewBox
     const viewBox = {
       x1: firstColRect.left + margin,
-      y1: detailRowRect.top + originalHeight + margin, // 从原始高度之后开始
-      x2: lastColRect.right - margin, // 使用最后一列的右边界
-      y2: detailRowRect.top - margin + configHeight // 使用配置的高度
+      y1: detailRowRect.top + originalHeight + margin,
+      x2: lastColRect.right - margin,
+      y2: detailRowRect.top - margin + configHeight
     };
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
@@ -2123,77 +1877,51 @@ export class ListTable extends BaseTable implements ListTableAPI {
     subTable: ListTable,
     childViewBox: { x1: number; y1: number; x2: number; y2: number }
   ): void {
-    // 检测鼠标是否在子表区域内
     const isMouseInChildTableArea = (event: MouseEvent) => {
       const rect = this.canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-      // 获取子表的当前 ViewBox 位置（实时更新）
       const currentViewBox = subTable.options.viewBox;
       if (!currentViewBox) {
         return false;
       }
-      // 检查是否在子表的当前viewBox区域内
       const isInArea =
         x >= currentViewBox.x1 && x <= currentViewBox.x2 && y >= currentViewBox.y1 && y <= currentViewBox.y2;
       return isInArea;
     };
 
-    // 检查子表是否滚动到底部
     const isSubTableAtBottom = () => {
-      // 获取子表的总内容高度
       const totalContentHeight = subTable.getAllRowsHeight();
-      // 获取子表的可视区域高度
       const viewportHeight = subTable.scenegraph.height;
-      // 获取当前滚动位置
       const scrollTop = subTable.scrollTop;
-      // 如果内容高度不超过视口高度，说明没有滚动条，认为已经在底部
       if (totalContentHeight <= viewportHeight) {
         return true;
       }
-      // 计算最大可滚动距离
       const maxScrollTop = totalContentHeight - viewportHeight;
-      // 检查是否已经滚动到底部（允许2px的误差）
       const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 2;
       return isAtBottom;
     };
 
-    // 检查子表是否滚动到顶部
-    const isSubTableAtTop = () => {
-      return subTable.scrollTop <= 2; // 允许2px的误差
-    };
-
-    // 父表滚动控制函数
     const handleParentScroll = (parentArgs: { event?: MouseEvent }) => {
-      // 检查鼠标是否在子表区域内
       if (parentArgs.event && isMouseInChildTableArea(parentArgs.event)) {
-        return false; // 阻止父表滚动
+        return false;
       }
-      return true; // 允许父表滚动
+      return true;
     };
 
-    // 监听父表滚动事件
     this.on('can_scroll', handleParentScroll);
 
-    // 子表的自定义wheel事件处理器，实现智能滚动联动
     const handleSubTableWheel = (e: WheelEvent) => {
       if (!isMouseInChildTableArea(e)) {
-        return; // 鼠标不在子表区域内，不处理
+        return;
       }
 
       const deltaY = e.deltaY;
       const isScrollingDown = deltaY > 0;
       const isScrollingUp = deltaY < 0;
 
-      // 向下滚动：如果子表已经到底部，则让父表滚动
       if (isScrollingDown && isSubTableAtBottom()) {
-        e.preventDefault(); // 阻止子表滚动
-        // 临时调试日志
-        if (recordIndex === 10) {
-          // eslint-disable-next-line no-console
-          console.log('触发父表滚动(向下), ID:11');
-        }
-        // 使用正确的父表滚动方法
+        e.preventDefault();
         const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
         const newParentScrollTop = currentParentScrollTop + deltaY;
         const maxParentScrollTop = this.getAllRowsHeight() - this.scenegraph.height;
@@ -2203,9 +1931,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return;
       }
 
-      // 向上滚动：如果子表已经到顶部，则让父表滚动
-      if (isScrollingUp && isSubTableAtTop()) {
-        e.preventDefault(); // 阻止子表滚动
+      if (isScrollingUp && subTable.scrollTop <= 0) {
+        e.preventDefault();
         const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
         const newParentScrollTop = currentParentScrollTop + deltaY;
         if (newParentScrollTop >= 0) {
@@ -2213,20 +1940,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
         return;
       }
-
-      // 其他情况，让子表正常处理滚动事件
-      // 不做任何操作，让事件继续传播到子表
     };
 
-    // 为子表添加wheel事件监听器
     subTable.canvas.addEventListener('wheel', handleSubTableWheel, { passive: false });
 
-    // 监听子表滚动事件
-    subTable.on('scroll', (args: unknown) => {
-      // console.log('子表滚动事件:', args);
-    });
-
-    // 存储处理器引用以便清理
     const extendedSubTable = subTable as ListTable & {
       __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
       __wheelHandler?: (e: WheelEvent) => void;
@@ -2234,28 +1951,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     extendedSubTable.__scrollHandler = handleParentScroll;
     extendedSubTable.__wheelHandler = handleSubTableWheel;
   }
-
-  /**
-   * 设置子表第一个数据单元格为选中状态
-   */
-  private selectSubTableFirstCell(subTable: ListTable): void {
-    // 如果子表没有数据，直接返回
-    if (!subTable.records || subTable.records.length === 0) {
-      return;
-    }
-
-    // 计算第一个数据单元格的位置
-    // 行：跳过表头行，选择第一个数据行
-    const firstDataRow = subTable.columnHeaderLevelCount; // 表头行数
-    // 列：选择第一个数据列（通常是第0列）
-    const firstDataCol = 0;
-
-    // 使用VTable的selectCell方法直接设置选中状态
-    if (firstDataRow < subTable.rowCount && firstDataCol < subTable.colCount) {
-      subTable.selectCell(firstDataCol, firstDataRow);
-    }
-  }
-
   /**
    * 移除子表
    */
@@ -2266,19 +1961,14 @@ export class ListTable extends BaseTable implements ListTableAPI {
     
     const subTable = this.internalProps.subTableInstances.get(recordIndex);
     if (subTable) {
-      // 移除after_render监听器
       const afterRenderHandler = (subTable as unknown as { __afterRenderHandler?: () => void }).__afterRenderHandler;
       if (afterRenderHandler) {
         this.off('after_render', afterRenderHandler);
       }
-
-      // 移除选中状态管理的事件监听器
       const selectionHandler = (subTable as unknown as { __selectionHandler?: () => void }).__selectionHandler;
       if (selectionHandler) {
         subTable.off('click_cell', selectionHandler);
       }
-
-      // 移除滚动事件监听器
       const extendedSubTable = subTable as ListTable & {
         __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
         __wheelHandler?: (e: WheelEvent) => void;
@@ -2287,39 +1977,28 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (scrollHandler) {
         this.off('can_scroll', scrollHandler);
       }
-
-      // 移除wheel事件监听器
       const wheelHandler = extendedSubTable.__wheelHandler;
       if (wheelHandler) {
         subTable.canvas.removeEventListener('wheel', wheelHandler);
       }
-
-      // 销毁子表实例
       if (typeof subTable.release === 'function') {
         subTable.release();
       }
-
-      // 清理映射
       this.internalProps.subTableInstances.delete(recordIndex);
       this.internalProps.subTableInitialViewBox?.delete(recordIndex);
     }
   }
   /**
    * 设置统一选中状态管理
-   * 确保主从表只有一个可见的选中状态，但保持隐藏选中状态防止子表消失
+   * 确保主从表只有一个可见的选中状态
    */
   private setupUnifiedSelectionManagement(recordIndex: number, subTable: ListTable): void {
-    // 当父表被点击时，清除所有子表的可见选中状态，但保持隐藏选中状态
     this.on('click_cell', () => {
       this.clearAllSubTableVisibleSelections();
     });
-
-    // 当子表被点击时，清除父表和其他子表的选中状态
     subTable.on('click_cell', () => {
       this.clearAllSelectionsExcept(recordIndex);
     });
-
-    // 存储事件处理器引用以便清理
     (subTable as unknown as { __selectionHandler: () => void }).__selectionHandler = () => {
       this.clearAllSelectionsExcept(recordIndex);
     };
@@ -2367,14 +2046,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
-    
     this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
       this.updateSubTablePosition(recordIndex, deltaX, deltaY);
     });
   }
 
   /**
-   * 更新所有子表位置（仅用于滚动）
+   * 滚动的时候更新所有子表位置
    */
   private updateSubTablePositionsForScroll(): void {
     if (
@@ -2384,24 +2062,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
     ) {
       return;
     }
-    
     this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
-      // 获取记录数据和配置
       const record = this.getRecordByRowIndex(recordIndex);
       const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
-      
-      // 重新计算子表的ViewBox区域（基于当前滚动位置）
       const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
       if (newViewBox) {
-        // 更新子表的ViewBox
         subTable.options.viewBox = newViewBox;
-        // 通知VRender Stage更新ViewBox
         if (subTable.scenegraph?.stage) {
           (
             subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }
           ).setViewBox(newViewBox, false);
         }
-        // 重新渲染子表
         subTable.render();
       }
     });
@@ -2418,37 +2089,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
     ) {
       return;
     }
-    
     const subTable = this.internalProps.subTableInstances.get(recordIndex);
     if (!subTable) {
       return;
     }
-
-    // 获取初始ViewBox位置
     const initialViewBox = this.internalProps.subTableInitialViewBox.get(recordIndex);
     if (!initialViewBox) {
       return;
     }
-
-    // 计算新的ViewBox位置
     const newViewBox = {
       x1: initialViewBox.x1 + deltaX,
       y1: initialViewBox.y1 + deltaY,
       x2: initialViewBox.x2 + deltaX,
       y2: initialViewBox.y2 + deltaY
     };
-
-    // 更新子表的ViewBox
     subTable.options.viewBox = newViewBox;
-    // 通知VRender Stage更新ViewBox
     if (subTable.scenegraph?.stage) {
       (subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
         newViewBox,
         false
       );
     }
-
-    // 重新渲染子表
     subTable.render();
   }
 
@@ -2463,16 +2124,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
     ) {
       return;
     }
-    // 获取所有需要重新创建的子表记录
     const recordsToRecreate: number[] = [];
     this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
       recordsToRecreate.push(recordIndex);
     });
 
     recordsToRecreate.forEach(recordIndex => {
-      // 先移除旧的子表
       this.removeSubTable(recordIndex);
-      // 重新渲染子表（这会创建全新的实例，基于当前正确的DOM状态）
       this.renderSubTable(recordIndex);
     });
   }
@@ -2484,15 +2142,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!this.options.masterDetail) {
       return;
     }
-    
-    // 清理子表实例
     this.internalProps.subTableInstances?.forEach(subTable => {
       if (typeof subTable.release === 'function') {
         subTable.release();
       }
     });
-    
-    this.internalProps.expandedDataIndices?.clear(); // 同时清理数据索引集合
+    this.internalProps.expandedDataIndices?.clear();
     this.internalProps.subTableInstances?.clear();
     this.internalProps.originalRowHeights?.clear();
     this.internalProps.subTableInitialViewBox?.clear();
@@ -2502,25 +2157,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 重写父类的 resize 方法，在表格尺寸变化时重新计算子表位置和宽度
    */
   resize(): void {
-    // 调用父类的 resize 方法
     super.resize();
     if (this.options.masterDetail) {
       this.recalculateAllSubTablePositions();
     }
   }
 
-  /**
-   * 重写父类的 setPixelRatio 方法，在缩放比例变化时重新计算子表位置和宽度
-   */
-  setPixelRatio(pixelRatio: number): void {
-    super.setPixelRatio(pixelRatio);
-    if (this.options.masterDetail) {
-      this.recalculateAllSubTablePositions();
-    }
-  }
-
   release() {
-    // 在释放资源前先清理主从表格功能
     this.cleanupMasterDetailFeatures();
     this.editorManager.release();
     super.release();

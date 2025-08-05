@@ -9,7 +9,6 @@ import type {
   ListTableAPI,
   ListTableConstructorOptions
 } from '../../ts-types';
-import type { IBasicColumnBodyDefine } from '../../ts-types/list-table/define/basic-define';
 import { IconPosition } from '../../ts-types';
 import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
 import type { ColumnData, ColumnDefine, TextColumnDefine } from '../../ts-types/list-table/layout-map/api';
@@ -677,7 +676,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     mayHaveIcon =
       !!define?.icon ||
       !!(define as ColumnDefine)?.tree ||
-      !!(define as IBasicColumnBodyDefine)?.master ||
+      !!(define as ColumnDefine)?.master ||
       (define as IRowSeriesNumber)?.dragOrder;
   }
 

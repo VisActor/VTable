@@ -1,7 +1,6 @@
 /* eslint-disable sort-imports */
 import { isValid, merge } from '@visactor/vutils';
 import type { ListTable } from '../ListTable';
-import type { MasterDetailTable } from '../MasterDetailTable';
 import { DefaultSparklineSpec } from '../tools/global';
 import {
   type CellAddress,
@@ -73,12 +72,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   columnExpandLevel?: number;
   // 缓存行号列号对应的cellRange 需要注意当表头位置拖拽后 这个缓存的行列号已不准确 进行重置
   _cellRangeMap: Map<string, CellRange>; //存储单元格的行列号范围 针对解决是否为合并单元格情况
-  constructor(
-    table: ListTable | MasterDetailTable,
-    columns: ColumnsDefine,
-    showHeader: boolean,
-    hierarchyIndent: number
-  ) {
+  constructor(table: ListTable, columns: ColumnsDefine, showHeader: boolean, hierarchyIndent: number) {
     this._cellRangeMap = new Map();
     this._showHeader = showHeader;
     this._table = table as ListTable; // 临时转换，因为内部逻辑兼容

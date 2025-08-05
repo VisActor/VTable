@@ -23,7 +23,6 @@ import type {
   ListTableConstructorOptions,
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
-  MasterDetailTableConstructorOptions,
   IHeaderTreeDefine,
   IDimension,
   IIndicator,
@@ -39,7 +38,6 @@ import { PivotTableSimple } from './PivotTable-simple';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
-
 import { updateCell } from './scenegraph/group-creater/cell-helper';
 import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
 import { restoreMeasureText, setCustomAlphabetCharSet, textMeasure } from './scenegraph/utils/text-measure';
@@ -76,10 +74,7 @@ export {
   PivotTableSimple,
   PivotTableConstructorOptions,
   PivotChartConstructorOptions,
-  MasterDetailTableConstructorOptions,
   PivotChart,
-  MasterDetailTable,
-  MasterDetailTableSimple,
   IHeaderTreeDefine,
   IDimension,
   IIndicator,

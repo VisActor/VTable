@@ -79,11 +79,9 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
   table.internalProps.sortState = sortState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
   table.stateManager.setSortState(sortState);
   if (headerC?.sort) {
-    // 排序前操作 - 针对masterDetail模式的特殊处理
     if ((table as ListTableAPI).options?.masterDetail) {
       executeMasterDetailBeforeSort(table as ListTableAPI);
     }
-    
     executeSort(sortState, table, headerC);
   }
 
@@ -92,8 +90,7 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
   table.internalProps.layoutMap.clearCellRangeMap();
 
   table.scenegraph.sortCell();
-  
-  // 排序后操作 - 在scenegraph.sortCell()完成后执行，避免CellGroup高度被重新同步
+
   if (headerC?.sort && (table as ListTableAPI).options?.masterDetail) {
     executeMasterDetailAfterSort(table as ListTableAPI);
   }
@@ -125,19 +122,15 @@ function isTarget(col: number, row: number, range1Col: number, range1Row: number
  * masterDetail模式下排序前的操作
  */
 function executeMasterDetailBeforeSort(table: ListTableAPI): void {
-  // 保存当前的expandedDataIndices到临时变量
   if (table.internalProps.expandedDataIndices && table.internalProps.expandedDataIndices.size > 0) {
     (table.internalProps as any)._tempExpandedDataIndices = new Set(table.internalProps.expandedDataIndices);
   }
-  
-  // 先对所有已调整高度的行执行收起操作
   if (table.internalProps._heightResizedRowMap) {
     table.internalProps._heightResizedRowMap.forEach(rowIndex => {
-      // 执行收起操作，恢复原始行高
       try {
         (table as any).collapseRow(rowIndex - 1);
       } catch (e) {
-        // 如果收起失败，忽略错误
+        // 收起失败
       }
     });
   }
@@ -147,31 +140,22 @@ function executeMasterDetailBeforeSort(table: ListTableAPI): void {
  * masterDetail模式下排序后的操作
  */
 function executeMasterDetailAfterSort(table: ListTableAPI): void {
-  // 从临时变量恢复expandedDataIndices
   const tempExpandedDataIndices = (table.internalProps as any)._tempExpandedDataIndices;
-  
   if (tempExpandedDataIndices && tempExpandedDataIndices.size > 0) {
-    
-    // 根据恢复的expandedDataIndices，找到排序后的新位置并重新展开
     const dataIndicesArray = Array.from(tempExpandedDataIndices);
-    
-    // 遍历需要展开的数据索引
     dataIndicesArray.forEach(dataIndex => {
-      // 通过dataSource的_currentPagerIndexedData找到数据索引对应的新行位置
       const currentPagerData = (table.dataSource as any)._currentPagerIndexedData;
       if (currentPagerData) {
         const rowIndex = currentPagerData.indexOf(dataIndex);
         if (rowIndex >= 0) {
           try {
-            // 找到对应行，执行展开操作
             (table as any).expandRow(rowIndex);
           } catch (e) {
-            // 如果展开失败，忽略错误
+            // 展开失败
           }
         }
       }
     });
-    
     // 清理临时变量
     delete (table.internalProps as any)._tempExpandedDataIndices;
   }
