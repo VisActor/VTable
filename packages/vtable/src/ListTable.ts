@@ -1777,7 +1777,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 存储真正的数据索引
     const dataIndexToAdd = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
     this.internalProps.expandedDataIndices.add(dataIndexToAdd);
-    console.log(this.internalProps.expandedDataIndices)
     // 以下是原有的主从表逻辑
     // 在展开之前，先记录原始行高度
     const tableRowIndex = recordIndex + 1;
@@ -1822,7 +1821,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (tableRowIndex >= 0) {
       // 更新 masterDetail 系统的图标（第0列）
       this.scenegraph.updateHierarchyIcon(0, tableRowIndex);
-      
       // 更新所有 master 列的图标
       for (let col = 0; col < this.colCount; col++) {
         const columnDefine = this.getBodyColumnDefine(col, tableRowIndex);
@@ -1830,7 +1828,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
           this.scenegraph.updateHierarchyIcon(col, tableRowIndex);
         }
       }
-      
       this.scenegraph.updateNextFrame();
     }
 
@@ -1871,7 +1868,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 从数据索引集合中移除真正的数据索引
     const dataIndexToDelete = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
     this.internalProps.expandedDataIndices?.delete(dataIndexToDelete);
-    
     // 同步更新记录的 hierarchyState 属性
     const record = this.getRecordByRowIndex(recordIndex);
     if (record) {
@@ -2066,8 +2062,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 计算子表的容器尺寸
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
-    
-    console.log('📦 Creating sub-table with container size:', { width: containerWidth, height: containerHeight });
 
     // 创建子表配置
     const subTableOptions = {
@@ -2081,8 +2075,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 设置容器尺寸，确保子表知道自己的实际可用空间
       canvasWidth: containerWidth,
       canvasHeight: containerHeight,
-      // 继承一些父表的配置
+      // 继承父表的重要属性
       theme: this.options.theme,
+      pixelRatio: this.internalProps.pixelRatio, // 继承父表的pixelRatio
       ...(detailConfig || {})
     };
     const subTable = new ListTable(this.container, subTableOptions);
@@ -2101,12 +2096,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     // 设置滚动事件隔离
     this.setupScrollEventIsolation(recordIndex, subTable, childViewBox);
 
+    // 设置统一选中状态管理
+    this.setupUnifiedSelectionManagement(recordIndex, subTable);
+
     // 初始渲染
     subTable.render();
-    // 延迟设置第一个数据单元格为选中状态
-    setTimeout(() => {
-      this.selectSubTableFirstCell(subTable);
-    }, 200);
   }
 
   /**
@@ -2116,14 +2110,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
     recordIndex: number,
     detailConfig?: DetailGridOptions | null
   ): { x1: number; y1: number; x2: number; y2: number } | null {
-    console.log('🧮 calculateSubTableViewBox called for recordIndex:', recordIndex);
-    
     // 获取展开行的详情行索引（数据行的下一行）
     const detailRowIndex = recordIndex + 1;
     // 获取详情行的位置和大小
     const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
     if (!detailRowRect) {
-      console.log('❌ detailRowRect is null');
       return null;
     }
 
@@ -2133,16 +2124,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
     const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: detailRowIndex });
     if (!firstColRect || !lastColRect) {
-      console.log('❌ firstColRect or lastColRect is null');
       return null;
     }
-    
-    console.log('📏 Column rects:', {
-      firstCol: { left: firstColRect.left, right: firstColRect.right },
-      lastCol: { left: lastColRect.left, right: lastColRect.right },
-      tableWidth: lastColRect.right - firstColRect.left
-    });
-    
     // 从配置中获取边距和高度，提供默认值
     const margin = detailConfig?.style?.margin || 10;
     const configHeight = detailConfig?.style?.height || 300;
@@ -2153,15 +2136,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       x2: lastColRect.right - margin, // 使用最后一列的右边界
       y2: detailRowRect.top - margin + configHeight // 使用配置的高度
     };
-
-    console.log('📐 Calculated viewBox:', viewBox, 'width:', viewBox.x2 - viewBox.x1);
-
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
-      console.log('❌ Invalid viewBox dimensions');
       return null;
     }
-
     return viewBox;
   }
 
@@ -2348,6 +2326,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.off('after_render', afterRenderHandler);
       }
 
+      // 移除选中状态管理的事件监听器
+      const selectionHandler = (subTable as unknown as { __selectionHandler?: () => void }).__selectionHandler;
+      if (selectionHandler) {
+        subTable.off('click_cell', selectionHandler);
+      }
+
       // 移除滚动事件监听器
       const extendedSubTable = subTable as ListTable & {
         __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
@@ -2372,6 +2356,61 @@ export class ListTable extends BaseTable implements ListTableAPI {
       // 清理映射
       this.internalProps.subTableInstances.delete(recordIndex);
       this.internalProps.subTableInitialViewBox?.delete(recordIndex);
+    }
+  }
+  /**
+   * 设置统一选中状态管理
+   * 确保主从表只有一个可见的选中状态，但保持隐藏选中状态防止子表消失
+   */
+  private setupUnifiedSelectionManagement(recordIndex: number, subTable: ListTable): void {
+    // 当父表被点击时，清除所有子表的可见选中状态，但保持隐藏选中状态
+    this.on('click_cell', () => {
+      this.clearAllSubTableVisibleSelections();
+    });
+
+    // 当子表被点击时，清除父表和其他子表的选中状态
+    subTable.on('click_cell', () => {
+      this.clearAllSelectionsExcept(recordIndex);
+    });
+
+    // 存储事件处理器引用以便清理
+    (subTable as unknown as { __selectionHandler: () => void }).__selectionHandler = () => {
+      this.clearAllSelectionsExcept(recordIndex);
+    };
+  }
+
+  /**
+   * 清除所有子表的可见选中状态，但保持隐藏选中状态
+   */
+  private clearAllSubTableVisibleSelections(): void {
+    if (!this.internalProps.subTableInstances) {
+      return;
+    }
+
+    this.internalProps.subTableInstances.forEach(subTable => {
+      if (subTable && typeof subTable.clearSelected === 'function') {
+        // 清除可见的选中状态
+        subTable.clearSelected();
+      }
+    });
+  }
+
+  /**
+   * 清除除指定子表外的所有选中状态（包括父表）
+   */
+  private clearAllSelectionsExcept(exceptRecordIndex: number): void {
+    // 清除父表选中状态
+    if (typeof this.clearSelected === 'function') {
+      this.clearSelected();
+    }
+
+    // 清除其他子表的选中状态，但保持隐藏选中状态
+    if (this.internalProps.subTableInstances) {
+      this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
+        if (recordIndex !== exceptRecordIndex && subTable && typeof subTable.clearSelected === 'function') {
+          subTable.clearSelected();
+        }
+      });
     }
   }
 
@@ -2471,73 +2510,24 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 重新计算所有子表位置
    */
   private recalculateAllSubTablePositions(): void {
-    console.log('🔄 recalculateAllSubTablePositions called');
-    
     if (
       !this.options.masterDetail ||
       !this.internalProps.subTableInstances ||
       !this.internalProps.subTableInitialViewBox
     ) {
-      console.log('❌ Missing masterDetail config or instances');
       return;
     }
-    
-    console.log('📊 Found', this.internalProps.subTableInstances.size, 'sub-tables to recalculate');
-    
+    // 获取所有需要重新创建的子表记录
+    const recordsToRecreate: number[] = [];
     this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
-      console.log('🔧 Processing sub-table for recordIndex:', recordIndex);
-      
-      // 获取记录数据和配置
-      const record = this.getRecordByRowIndex(recordIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
-      
-      // 获取当前的ViewBox作为对比
-      const oldViewBox = subTable.options.viewBox;
-      console.log('📏 Old viewBox:', oldViewBox);
-      
-      // 重新计算子表的ViewBox区域
-      const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
-      if (newViewBox && this.internalProps.subTableInitialViewBox) {
-        console.log('✅ New viewBox calculated:', newViewBox);
-        console.log('📐 Width changed from', oldViewBox ? (oldViewBox.x2 - oldViewBox.x1) : 'unknown', 'to', (newViewBox.x2 - newViewBox.x1));
-        
-        // 更新初始ViewBox位置
-        this.internalProps.subTableInitialViewBox.set(recordIndex, {
-          x1: newViewBox.x1,
-          y1: newViewBox.y1,
-          x2: newViewBox.x2,
-          y2: newViewBox.y2
-        });
-        
-        // 计算新的子表容器宽度和高度
-        const newContainerWidth = newViewBox.x2 - newViewBox.x1;
-        const newContainerHeight = newViewBox.y2 - newViewBox.y1;
-        
-        console.log('📏 Updating sub-table container size:', { width: newContainerWidth, height: newContainerHeight });
-        
-        // 更新子表的ViewBox
-        subTable.options.viewBox = newViewBox;
-        
-        // 更新子表的容器尺寸，触发内部布局重计算
-        if (subTable.options.canvasWidth !== newContainerWidth || subTable.options.canvasHeight !== newContainerHeight) {
-          subTable.options.canvasWidth = newContainerWidth;
-          subTable.options.canvasHeight = newContainerHeight;
-          
-          // 通知子表尺寸已变化，需要重新布局
-          subTable.resize();
-          
-          console.log('🔄 Sub-table resize called with new dimensions');
-        }
-        
-        // 通知VRender Stage更新ViewBox
-        if (subTable.scenegraph?.stage) {
-          (
-            subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }
-          ).setViewBox(newViewBox, false);
-        }
-        // 重新渲染子表
-        subTable.render();
-      }
+      recordsToRecreate.push(recordIndex);
+    });
+
+    recordsToRecreate.forEach(recordIndex => {
+      // 先移除旧的子表
+      this.removeSubTable(recordIndex);
+      // 重新渲染子表（这会创建全新的实例，基于当前正确的DOM状态）
+      this.renderSubTable(recordIndex);
     });
   }
 
