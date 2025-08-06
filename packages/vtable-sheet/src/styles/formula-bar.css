@@ -60,6 +60,7 @@
 
 /* 公式操作按钮容器 */
 .vtable-sheet-formula-actions {
+  flex: 0;
   display: flex;
   align-items: right;
   height: 100%;

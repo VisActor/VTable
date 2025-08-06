@@ -652,7 +652,7 @@ export default class VTableSheet {
     this.activeSheetMenuItem();
     // 确保激活的标签可见
     setTimeout(() => {
-      const activeItem = menuContainer.querySelector('.vtable-sheet-menu-item.active');
+      const activeItem = menuContainer.querySelector('.vtable-sheet-main-menu-item.active');
       if (activeItem) {
         activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -663,7 +663,7 @@ export default class VTableSheet {
    * 激活sheet菜单项并滚动到可见区域
    */
   private activeSheetMenuItem(): void {
-    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-menu-item') as NodeListOf<HTMLElement>;
+    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-main-menu-item') as NodeListOf<HTMLElement>;
     let activeItem: HTMLElement | null = null;
     menuItems.forEach(item => {
       item.classList.remove('active');
