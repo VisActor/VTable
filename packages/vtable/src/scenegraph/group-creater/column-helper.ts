@@ -148,7 +148,10 @@ export function createComplexColumn(
     let mayHaveIcon =
       cellLocation !== 'body'
         ? true
-        : ((define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree) &&
+        : ((define as IRowSeriesNumber)?.dragOrder ||
+            !!define?.icon ||
+            !!(define as ColumnDefine)?.tree ||
+            !!(define as ColumnDefine)?.master) &&
           !(isAggregation && isSeriesNumber);
     if (
       !range &&

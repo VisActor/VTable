@@ -18,10 +18,14 @@ export function bindIconClickEvent(table: BaseTableAPI) {
     } else if (funcType === IconFuncTypeEnum.drillDown) {
       drillClick(table);
     } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
-      const isHasSelected = !!stateManager.select.ranges?.length;
-      stateManager.updateSelectPos(-1, -1);
-      stateManager.endSelectCells(true, isHasSelected);
-      table.toggleHierarchyState(col, row);
+      const bodyColumnDefine = table.getBodyColumnDefine?.(col, row);
+      const isMasterSystem = bodyColumnDefine && (bodyColumnDefine as any).master;
+      if (!isMasterSystem) {
+        const isHasSelected = !!stateManager.select.ranges?.length;
+        stateManager.updateSelectPos(-1, -1);
+        stateManager.endSelectCells(true, isHasSelected);
+        table.toggleHierarchyState(col, row);
+      }
     }
   });
 }

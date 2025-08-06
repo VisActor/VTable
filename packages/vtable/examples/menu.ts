@@ -36,6 +36,10 @@ export const menus = [
         name: 'list'
       },
       {
+        path: 'master',
+        name: 'list-master-detail'
+      },
+      {
         path: 'list',
         name: 'list-highlightInRange'
       },
