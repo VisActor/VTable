@@ -30,6 +30,7 @@ Supported event types（not all）:
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  CONTEXTMENU_CANVAS: 'contextmenu_canvas',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
@@ -126,6 +127,10 @@ Refer to the parameter types described in the CLICK_CELL event for the parameter
 Cell right-click events
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## CONTEXTMENU_CANVAS
+
+Canvas right-click event
 
 ## RESIZE_COLUMN
 
