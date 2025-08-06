@@ -122,13 +122,13 @@ function isTarget(col: number, row: number, range1Col: number, range1Row: number
  * masterDetail模式下排序前的操作
  */
 function executeMasterDetailBeforeSort(table: ListTableAPI): void {
-  if (table.internalProps.expandedDataIndices && table.internalProps.expandedDataIndices.size > 0) {
-    (table.internalProps as any)._tempExpandedDataIndices = new Set(table.internalProps.expandedDataIndices);
+  if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.size > 0) {
+    (table.internalProps as any)._tempExpandedRecordIndices = new Set(table.internalProps.expandedRecordIndices);
   }
   if (table.internalProps._heightResizedRowMap) {
     table.internalProps._heightResizedRowMap.forEach(rowIndex => {
       try {
-        (table as any).collapseRow(rowIndex - 1);
+        (table as any).collapseRow(rowIndex);
       } catch (e) {
         // 收起失败
       }
@@ -140,16 +140,16 @@ function executeMasterDetailBeforeSort(table: ListTableAPI): void {
  * masterDetail模式下排序后的操作
  */
 function executeMasterDetailAfterSort(table: ListTableAPI): void {
-  const tempExpandedDataIndices = (table.internalProps as any)._tempExpandedDataIndices;
-  if (tempExpandedDataIndices && tempExpandedDataIndices.size > 0) {
-    const dataIndicesArray = Array.from(tempExpandedDataIndices);
-    dataIndicesArray.forEach(dataIndex => {
+  const tempExpandedRecordIndices = (table.internalProps as any)._tempExpandedRecordIndices;
+  if (tempExpandedRecordIndices && tempExpandedRecordIndices.size > 0) {
+    const recordIndicesArray = Array.from(tempExpandedRecordIndices);
+    recordIndicesArray.forEach(recordIndex => {
       const currentPagerData = (table.dataSource as any)._currentPagerIndexedData;
       if (currentPagerData) {
-        const rowIndex = currentPagerData.indexOf(dataIndex);
+        const rowIndex = currentPagerData.indexOf(recordIndex);
         if (rowIndex >= 0) {
           try {
-            (table as any).expandRow(rowIndex);
+            (table as any).expandRow(rowIndex + table.columnHeaderLevelCount);
           } catch (e) {
             // 展开失败
           }
@@ -157,6 +157,6 @@ function executeMasterDetailAfterSort(table: ListTableAPI): void {
       }
     });
     // 清理临时变量
-    delete (table.internalProps as any)._tempExpandedDataIndices;
+    delete (table.internalProps as any)._tempExpandedRecordIndices;
   }
 }

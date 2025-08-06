@@ -313,7 +313,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   /** 子表配置选项（静态配置） */
   detailGridOptions?: DetailGridOptions;
   /** 根据数据动态获取子表配置的函数 */
-  getDetailGridOptions?: (params: { data: any; rowIndex: number }) => DetailGridOptions;
+  getDetailGridOptions?: (params: { data: any; tableRowIndex: number }) => DetailGridOptions;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
@@ -380,7 +380,6 @@ export interface ListTableAPI extends BaseTableAPI {
 
   _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
   _hasHierarchyTreeHeader: () => boolean;
-  
   // 主从表格功能方法
   /** 展开指定行的详情 */
   expandRow?: (rowIndex: number, height?: number) => void;
@@ -388,8 +387,6 @@ export interface ListTableAPI extends BaseTableAPI {
   collapseRow?: (rowIndex: number) => void;
   /** 切换行的展开状态 */
   toggleRowExpand?: (rowIndex: number) => void;
-  /** 更新子表位置 */
-  updateSubTableTranslation?: (deltaX?: number, deltaY?: number) => void;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

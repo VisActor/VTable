@@ -172,12 +172,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
       this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
     }
-    
     // 主从表格功能初始化
     if (options.masterDetail) {
       this.initMasterDetailFeatures(options);
     }
-    
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
@@ -950,16 +948,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
 
-    if (this.options.masterDetail && col === 0 && hasChildren) {
-      const recordIndex = this.getRecordShowIndexByCell(col, row);
-      if (hierarchyState === HierarchyState.expand) {
-        this.collapseRow(recordIndex);
-      } else {
-        this.expandRow(recordIndex);
-      }
-      return;
-    }
-
     // 处理普通树形展开收起
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row, recalculateColWidths);
@@ -1615,11 +1603,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   private initMasterDetailFeatures(options: ListTableConstructorOptions): void {
     const internalProps = this.internalProps;
-    internalProps.expandedDataIndices = new Set(options.expandedRows || []); 
+    internalProps.expandedRecordIndices = new Set(options.expandedRows || []);
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
-    internalProps.subTableInitialViewBox = new Map();
-    this.syncHierarchyStateWithExpandedRows();
     this.on(TABLE_EVENT_TYPE.ICON_CLICK, this.handleIconClick.bind(this));
     this.on(TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
     if (options.hierarchyTextStartAlignment === undefined) {
@@ -1631,90 +1617,70 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!this.options.masterDetail) {
       return;
     }
-    const { col, row, funcType } = iconInfo;
+    const { row, funcType } = iconInfo;
     if (funcType === IconFuncTypeEnum.expand || funcType === IconFuncTypeEnum.collapse) {
-      const dataRowIndex = this.getRecordShowIndexByCell(col, row);
-      if (dataRowIndex >= 0) {
-        this.toggleRowExpand(dataRowIndex);
-      }
+      this.toggleRowExpand(row);
     }
   }
 
-  expandRow(recordIndex: number, height?: number): void {
-    if (!this.options.masterDetail || !this.internalProps.expandedDataIndices) {
+  expandRow(rowIndex: number): void {
+    if (!this.options.masterDetail) {
       return;
     }
-    const tableRowIndex = recordIndex + 1;
-    if (this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
+    const tableRowIndex = rowIndex - this.columnHeaderLevelCount;
+    if (this.internalProps._heightResizedRowMap.has(rowIndex)) {
       return;
     }
 
-    const realDataIndex = this.getRecordIndexByCell(0, tableRowIndex);
-    const dataIndex = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
-    this.internalProps.expandedDataIndices.add(dataIndex);
-    const originalHeight = this.getRowHeight(tableRowIndex);
-    this.internalProps.originalRowHeights?.set(recordIndex, originalHeight);
-
-    if (!height) {
-      const record = this.getRecordByRowIndex(recordIndex);
-      const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
-      height = detailConfig?.style?.height || 200;
-    }
-
-    const record = this.getRecordByRowIndex(recordIndex);
+    const realRecordIndex = this.getRecordIndexByCell(0, rowIndex);
+    const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+    this.internalProps.expandedRecordIndices.add(recordIndex);
+    const originalHeight = this.getRowHeight(rowIndex);
+    this.internalProps.originalRowHeights?.set(tableRowIndex, originalHeight);
+    const record = this.getRecordByRowIndex(tableRowIndex);
+    const detailConfig = this.getDetailConfigForRecord(record, tableRowIndex);
+    const height = detailConfig?.style?.height || 200;
     if (record) {
       record.hierarchyState = HierarchyState.expand;
     }
 
-    const deltaHeight = (height || 200) - originalHeight;
-    updateRowHeightForExpand(this.scenegraph, tableRowIndex, deltaHeight);
-    this.scenegraph.updateContainerHeight(tableRowIndex, deltaHeight);
-    this.internalProps._heightResizedRowMap.add(tableRowIndex);
+    const deltaHeight = height - originalHeight;
+    updateRowHeightForExpand(this.scenegraph, rowIndex, deltaHeight);
+    this.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
+    this.internalProps._heightResizedRowMap.add(rowIndex);
 
-    this.updateIconsForRow(tableRowIndex);
-    this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-      col: 0,
-      row: tableRowIndex,
-      hierarchyState: HierarchyState.expand
-    });
-
-    this.renderSubTable(recordIndex);
+    this.updateIconsForRow(rowIndex);
+    this.renderSubTable(tableRowIndex);
     this.recalculateAllSubTablePositions();
   }
 
-  collapseRow(recordIndex: number): void {
+  collapseRow(rowIndex: number): void {
     if (!this.options.masterDetail) {
       return;
     }
-    const tableRowIndex = recordIndex + 1;
-    if (!this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
+    const tableRowIndex = rowIndex - this.columnHeaderLevelCount;
+    if (!this.internalProps._heightResizedRowMap.has(rowIndex)) {
       return;
     }
 
-    const realDataIndex = this.getRecordIndexByCell(0, tableRowIndex);
-    const dataIndex = typeof realDataIndex === 'number' ? realDataIndex : realDataIndex[0];
-    this.removeSubTable(recordIndex);
-    this.internalProps.expandedDataIndices?.delete(dataIndex);
-    const record = this.getRecordByRowIndex(recordIndex);
+    const realRecordIndex = this.getRecordIndexByCell(0, rowIndex);
+    const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+    this.removeSubTable(tableRowIndex);
+    this.internalProps.expandedRecordIndices?.delete(recordIndex);
+    const record = this.getRecordByRowIndex(tableRowIndex);
     if (record) {
       record.hierarchyState = HierarchyState.collapse;
     }
 
-    const currentHeight = this.getRowHeight(tableRowIndex);
-    const originalHeight = this.getOriginalRowHeight(recordIndex);
+    const currentHeight = this.getRowHeight(rowIndex);
+    const originalHeight = this.getOriginalRowHeight(tableRowIndex);
     const deltaHeight = currentHeight - originalHeight;
-    updateRowHeightForExpand(this.scenegraph, tableRowIndex, -deltaHeight);
-    this.internalProps._heightResizedRowMap.delete(tableRowIndex);
-    this.scenegraph.updateContainerHeight(tableRowIndex, -deltaHeight);
-    this.internalProps.originalRowHeights?.delete(recordIndex);
+    updateRowHeightForExpand(this.scenegraph, rowIndex, -deltaHeight);
+    this.internalProps._heightResizedRowMap.delete(rowIndex);
+    this.scenegraph.updateContainerHeight(rowIndex, -deltaHeight);
+    this.internalProps.originalRowHeights?.delete(tableRowIndex);
 
-    this.updateIconsForRow(tableRowIndex);
-    this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-      col: 0,
-      row: tableRowIndex,
-      hierarchyState: HierarchyState.collapse
-    });
-
+    this.updateIconsForRow(rowIndex);
     this.recalculateAllSubTablePositions();
   }
 
@@ -1722,17 +1688,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (!this.options.masterDetail) {
       return;
     }
-    const tableRowIndex = rowIndex + 1;
-    if (this.internalProps._heightResizedRowMap.has(tableRowIndex)) {
+    if (this.internalProps._heightResizedRowMap.has(rowIndex)) {
       this.collapseRow(rowIndex);
     } else {
       this.expandRow(rowIndex);
-    }
-  }
-
-  updateSubTableTranslation(deltaX: number = 0, deltaY: number = 0): void {
-    if (this.options.masterDetail) {
-      this.updateAllSubTablePositions(deltaX, deltaY);
     }
   }
 
@@ -1747,56 +1706,38 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.scenegraph.updateNextFrame();
   }
 
-  private syncHierarchyStateWithExpandedRows(): void {
-    if (!this.records) {
-      return;
-    }
-    for (let i = 0; i < this.records.length; i++) {
-      const record = this.records[i];
-      if (record?.children?.length > 0 && record.hierarchyState === HierarchyState.expand) {
-        this.internalProps._heightResizedRowMap.add(i + 1);
-      }
-    }
-  }
-
-  private getDetailConfigForRecord(record: unknown, rowIndex: number): DetailGridOptions | null {
+  private getDetailConfigForRecord(record: unknown, tableRowIndex: number): DetailGridOptions | null {
     if (!this.options.masterDetail) {
       return null;
     }
-    return this.options.getDetailGridOptions?.({ data: record, rowIndex }) || this.options.detailGridOptions || null;
+    return (
+      this.options.getDetailGridOptions?.({ data: record, tableRowIndex }) || this.options.detailGridOptions || null
+    );
   }
 
-  private getRecordByRowIndex(rowIndex: number): Record<string, unknown> {
-    return this.dataSource.getRaw(rowIndex) as Record<string, unknown>;
+  private getRecordByRowIndex(tableRowIndex: number): Record<string, unknown> {
+    return this.dataSource.getRaw(tableRowIndex) as Record<string, unknown>;
   }
 
-  private getOriginalRowHeight(recordIndex: number): number {
-    return this.internalProps.originalRowHeights?.get(recordIndex) || 0;
+  private getOriginalRowHeight(tableRowIndex: number): number {
+    return this.internalProps.originalRowHeights?.get(tableRowIndex) || 0;
   }
 
   /**
    * 渲染子表
    */
-  private renderSubTable(recordIndex: number): void {
+  private renderSubTable(tableRowIndex: number): void {
     if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
-    const record = this.getRecordByRowIndex(recordIndex);
+    const record = this.getRecordByRowIndex(tableRowIndex);
     if (!record || !record.children) {
       return;
     }
-    const detailConfig = this.getDetailConfigForRecord(record, recordIndex);
-    const childViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
+    const detailConfig = this.getDetailConfigForRecord(record, tableRowIndex);
+    const childViewBox = this.calculateSubTableViewBox(tableRowIndex, detailConfig);
     if (!childViewBox) {
       return;
-    }
-    if (this.internalProps.subTableInitialViewBox) {
-      this.internalProps.subTableInitialViewBox.set(recordIndex, {
-        x1: childViewBox.x1,
-        y1: childViewBox.y1,
-        x2: childViewBox.x2,
-        y2: childViewBox.y2
-      });
     }
     const childrenData = Array.isArray(record.children) ? record.children : [];
     const containerWidth = childViewBox.x2 - childViewBox.x1;
@@ -1815,11 +1756,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
       ...(detailConfig || {})
     };
     const subTable = new ListTable(this.container, subTableOptions);
-    this.internalProps.subTableInstances.set(recordIndex, subTable);
+    this.internalProps.subTableInstances.set(tableRowIndex, subTable);
 
     // 确保子表内容在父表重绘后保持在上层
     const afterRenderHandler = () => {
-      if (this.internalProps.subTableInstances && this.internalProps.subTableInstances.has(recordIndex)) {
+      if (this.internalProps.subTableInstances && this.internalProps.subTableInstances.has(tableRowIndex)) {
         subTable.render();
       }
     };
@@ -1827,9 +1768,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
     (subTable as unknown as { __afterRenderHandler: () => void }).__afterRenderHandler = afterRenderHandler;
 
     // 设置滚动事件隔离
-    this.setupScrollEventIsolation(recordIndex, subTable, childViewBox);
+    this.setupScrollEventIsolation(subTable);
     // 设置统一选中状态管理
-    this.setupUnifiedSelectionManagement(recordIndex, subTable);
+    this.setupUnifiedSelectionManagement(tableRowIndex, subTable);
     // 初始渲染
     subTable.render();
   }
@@ -1838,18 +1779,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 计算子表的viewBox区域
    */
   private calculateSubTableViewBox(
-    recordIndex: number,
+    tableRowIndex: number,
     detailConfig?: DetailGridOptions | null
   ): { x1: number; y1: number; x2: number; y2: number } | null {
-    const detailRowIndex = recordIndex + 1;
-    const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
+    const rowIndex = tableRowIndex + this.columnHeaderLevelCount;
+    const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: rowIndex });
     if (!detailRowRect) {
       return null;
     }
 
-    const originalHeight = this.internalProps.originalRowHeights?.get(recordIndex) || 0;
-    const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: detailRowIndex });
-    const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: detailRowIndex });
+    const originalHeight = this.internalProps.originalRowHeights?.get(tableRowIndex) || 0;
+    const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: rowIndex });
+    const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: rowIndex });
     if (!firstColRect || !lastColRect) {
       return null;
     }
@@ -1872,11 +1813,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 设置滚动事件隔离
    */
-  private setupScrollEventIsolation(
-    recordIndex: number,
-    subTable: ListTable,
-    childViewBox: { x1: number; y1: number; x2: number; y2: number }
-  ): void {
+  private setupScrollEventIsolation(subTable: ListTable): void {
+    // 判断鼠标是否在子表区域内
     const isMouseInChildTableArea = (event: MouseEvent) => {
       const rect = this.canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
@@ -1890,6 +1828,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return isInArea;
     };
 
+    // 判断是否滚动到底部或者顶部
     const isSubTableAtBottom = () => {
       const totalContentHeight = subTable.getAllRowsHeight();
       const viewportHeight = subTable.scenegraph.height;
@@ -1898,7 +1837,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return true;
       }
       const maxScrollTop = totalContentHeight - viewportHeight;
-      const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 2;
+      const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 0;
       return isAtBottom;
     };
 
@@ -1954,12 +1893,11 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * 移除子表
    */
-  private removeSubTable(recordIndex: number): void {
+  private removeSubTable(tableRowIndex: number): void {
     if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
-    
-    const subTable = this.internalProps.subTableInstances.get(recordIndex);
+    const subTable = this.internalProps.subTableInstances.get(tableRowIndex);
     if (subTable) {
       const afterRenderHandler = (subTable as unknown as { __afterRenderHandler?: () => void }).__afterRenderHandler;
       if (afterRenderHandler) {
@@ -1984,28 +1922,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (typeof subTable.release === 'function') {
         subTable.release();
       }
-      this.internalProps.subTableInstances.delete(recordIndex);
-      this.internalProps.subTableInitialViewBox?.delete(recordIndex);
+      this.internalProps.subTableInstances.delete(tableRowIndex);
     }
   }
   /**
    * 设置统一选中状态管理
    * 确保主从表只有一个可见的选中状态
    */
-  private setupUnifiedSelectionManagement(recordIndex: number, subTable: ListTable): void {
+  private setupUnifiedSelectionManagement(tableRowIndex: number, subTable: ListTable): void {
     this.on('click_cell', () => {
       this.clearAllSubTableVisibleSelections();
     });
     subTable.on('click_cell', () => {
-      this.clearAllSelectionsExcept(recordIndex);
+      this.clearAllSelectionsExcept(tableRowIndex);
     });
     (subTable as unknown as { __selectionHandler: () => void }).__selectionHandler = () => {
-      this.clearAllSelectionsExcept(recordIndex);
+      this.clearAllSelectionsExcept(tableRowIndex);
     };
   }
 
   /**
-   * 清除所有子表的可见选中状态，但保持隐藏选中状态
+   * 清除所有子表的可见选中状态
    */
   private clearAllSubTableVisibleSelections(): void {
     if (!this.internalProps.subTableInstances) {
@@ -2029,10 +1966,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.clearSelected();
     }
 
-    // 清除其他子表的选中状态，但保持隐藏选中状态
+    // 清除其他子表的选中状态
     if (this.internalProps.subTableInstances) {
-      this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
-        if (recordIndex !== exceptRecordIndex && subTable && typeof subTable.clearSelected === 'function') {
+      this.internalProps.subTableInstances.forEach((subTable, tableRowIndex) => {
+        if (tableRowIndex !== exceptRecordIndex && subTable && typeof subTable.clearSelected === 'function') {
           subTable.clearSelected();
         }
       });
@@ -2040,32 +1977,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   /**
-   * 更新所有子表位置
-   */
-  private updateAllSubTablePositions(deltaX: number, deltaY: number): void {
-    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
-      return;
-    }
-    this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
-      this.updateSubTablePosition(recordIndex, deltaX, deltaY);
-    });
-  }
-
-  /**
    * 滚动的时候更新所有子表位置
    */
   private updateSubTablePositionsForScroll(): void {
-    if (
-      !this.options.masterDetail ||
-      !this.internalProps.subTableInstances ||
-      !this.internalProps.subTableInitialViewBox
-    ) {
+    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
-    this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
-      const record = this.getRecordByRowIndex(recordIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord(record, recordIndex) : null;
-      const newViewBox = this.calculateSubTableViewBox(recordIndex, detailConfig);
+    this.internalProps.subTableInstances.forEach((subTable, tableRowIndex) => {
+      const record = this.getRecordByRowIndex(tableRowIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord(record, tableRowIndex) : null;
+      const newViewBox = this.calculateSubTableViewBox(tableRowIndex, detailConfig);
       if (newViewBox) {
         subTable.options.viewBox = newViewBox;
         if (subTable.scenegraph?.stage) {
@@ -2079,59 +2000,20 @@ export class ListTable extends BaseTable implements ListTableAPI {
   }
 
   /**
-   * 更新子表位置
-   */
-  private updateSubTablePosition(recordIndex: number, deltaX: number, deltaY: number): void {
-    if (
-      !this.options.masterDetail ||
-      !this.internalProps.subTableInstances ||
-      !this.internalProps.subTableInitialViewBox
-    ) {
-      return;
-    }
-    const subTable = this.internalProps.subTableInstances.get(recordIndex);
-    if (!subTable) {
-      return;
-    }
-    const initialViewBox = this.internalProps.subTableInitialViewBox.get(recordIndex);
-    if (!initialViewBox) {
-      return;
-    }
-    const newViewBox = {
-      x1: initialViewBox.x1 + deltaX,
-      y1: initialViewBox.y1 + deltaY,
-      x2: initialViewBox.x2 + deltaX,
-      y2: initialViewBox.y2 + deltaY
-    };
-    subTable.options.viewBox = newViewBox;
-    if (subTable.scenegraph?.stage) {
-      (subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
-        newViewBox,
-        false
-      );
-    }
-    subTable.render();
-  }
-
-  /**
    * 重新计算所有子表位置
    */
   private recalculateAllSubTablePositions(): void {
-    if (
-      !this.options.masterDetail ||
-      !this.internalProps.subTableInstances ||
-      !this.internalProps.subTableInitialViewBox
-    ) {
+    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
       return;
     }
     const recordsToRecreate: number[] = [];
-    this.internalProps.subTableInstances.forEach((subTable, recordIndex) => {
-      recordsToRecreate.push(recordIndex);
+    this.internalProps.subTableInstances.forEach((subTable, tableRowIndex) => {
+      recordsToRecreate.push(tableRowIndex);
     });
 
-    recordsToRecreate.forEach(recordIndex => {
-      this.removeSubTable(recordIndex);
-      this.renderSubTable(recordIndex);
+    recordsToRecreate.forEach(tableRowIndex => {
+      this.removeSubTable(tableRowIndex);
+      this.renderSubTable(tableRowIndex);
     });
   }
 
@@ -2147,10 +2029,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         subTable.release();
       }
     });
-    this.internalProps.expandedDataIndices?.clear();
+    this.internalProps.expandedRecordIndices?.clear();
     this.internalProps.subTableInstances?.clear();
     this.internalProps.originalRowHeights?.clear();
-    this.internalProps.subTableInitialViewBox?.clear();
   }
 
   /**
