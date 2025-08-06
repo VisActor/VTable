@@ -37,15 +37,11 @@ export class ValueFilter {
 
   setSelectedField(fieldId: string | number): void {
     this.selectedField = fieldId;
-    const state: FilterConfig = this.filterStateManager.getFilterState(fieldId);
-    if (!state || !state.enable) {
-      // 除了已经筛选的列，其他情况都重新收集
-      this.collectUniqueColumnValues(fieldId);
-    }
+    this.collectUniqueColumnValues(fieldId);
   }
 
   collectUniqueColumnValues(fieldId: string | number): void {
-    const records = this.table.internalProps.dataSource.source;
+    const records = this.table.internalProps.records;
     const aggregator = new VTable.TYPES.CustomAggregator({
       key: String(fieldId),
       field: String(fieldId),

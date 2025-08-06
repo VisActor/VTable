@@ -6,6 +6,7 @@ export * from './sheet';
 
 import type { ColumnDefine, TYPES } from '@visactor/vtable';
 import type { CellValue, IStyle } from './base';
+import { IFilterState } from './filter';
 
 /** 筛选配置 */
 export interface IFilterConfig {
@@ -54,6 +55,8 @@ export interface ISheetDefine {
   formulas?: Record<string, string>;
   /** 筛选配置 - 支持简单布尔值或详细配置对象 */
   filter?: boolean | IFilterConfig;
+  /** 筛选状态 - 保存当前的筛选条件和状态 */
+  filterState?: IFilterState;
 }
 
 /** 数据管理器接口 */
