@@ -86,7 +86,6 @@ export function createTable() {
           { title: '负责人', width: 100 }
         ],
         data: [
-          ['项目', '状态', '优先级', '负责人'],
           ['网站重构', '进行中', '高', '张三'],
           ['移动端开发', '已完成', '中', '李四'],
           ['数据分析', '待开始', '低', '王五'],
@@ -109,6 +108,13 @@ export function createTable() {
 
   // 创建简单的控制按钮
   const createControls = () => {
+    // 清理已存在的控制面板，避免重复创建
+    const existingControls = document.getElementById('simple-controls');
+    if (existingControls) {
+      existingControls.remove();
+      console.log('清理已存在的控制面板');
+    }
+    
     const controlsHtml = `
       <div id="simple-controls" style="
         position: fixed;
@@ -198,6 +204,36 @@ export function createTable() {
 
   // 创建控制面板
   createControls();
+  
+  // 监听 demo 切换，自动销毁控制面板
+  const setupAutoDestroy = () => {
+    // 监听侧边栏点击事件
+    const sidebar = document.querySelector('#sidebar');
+    if (sidebar) {
+      const handleSidebarClick = (event: Event) => {
+        const target = event.target as HTMLElement;
+        if (target && target.classList.contains('menu-item') && !target.classList.contains('menu-title')) {
+          const demoName = target.dataset.name;
+          // 如果切换到其他 demo，销毁控制面板
+          if (demoName && demoName !== 'persistence') {
+            setTimeout(() => {
+              const controlsToRemove = document.getElementById('simple-controls');
+              if (controlsToRemove) {
+                controlsToRemove.remove();
+                console.log('切换到', demoName, '，已自动销毁 persistence 控制面板');
+              }
+            }, 100); // 延迟一点确保切换完成
+          }
+        }
+      };
+      
+      sidebar.addEventListener('click', handleSidebarClick);
+      console.log('已设置 persistence 控制面板自动销毁监听');
+    }
+  };
+  
+  // 延迟设置监听，确保 DOM 完全加载
+  setTimeout(setupAutoDestroy, 100);
 
   window.sheetInstance = sheetInstance;
 
