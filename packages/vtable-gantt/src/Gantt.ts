@@ -166,10 +166,10 @@ export class Gantt extends EventTarget {
     startDateField: string;
     endDateField: string;
     progressField: string;
-    minDate: Date;
-    maxDate: Date;
-    _minDateTime: number;
-    _maxDateTime: number;
+    minDate?: Date;
+    maxDate?: Date;
+    _minDateTime?: number;
+    _maxDateTime?: number;
     markLine: IMarkLine[];
     scrollToMarkLineDate: Date;
     horizontalSplitLine: ILineStyle;
@@ -205,74 +205,128 @@ export class Gantt extends EventTarget {
     zoom?: {
       // 是否启用鼠标滚轮缩放
       enableMouseWheel?: boolean;
-      // 最小列宽
-      minColWidth?: number;
-      // 最大列宽
-      maxColWidth?: number;
+      // 最小时间每像素值（最大放大）
+      minTimePerPixel?: number;
+      // 最大时间每像素值（最大缩小）
+      maxTimePerPixel?: number;
       // 缩放步长
       step?: number;
     };
   } = {} as any;
+
+  //  时间缩放基准 - 每像素代表多少毫秒
+  private timePerPixel: number;
+
   /**
-   * 设置时间轴列宽
-   * @param width 新的列宽
-   * @param keepCenter 是否保持视图中心不变
-   * @param centerX 缩放中心点X坐标，如果不提供则使用视图中心
+   * 重新计算时间相关的尺寸参数
    */
-  setTimelineColWidth(width: number, keepCenter: boolean = false, centerX?: number): void {
-    // 获取缩放限制
-    const minWidth = this.parsedOptions.zoom?.minColWidth ?? 10;
-    const maxWidth = this.parsedOptions.zoom?.maxColWidth ?? 200;
+  recalculateTimeScale(): void {
+    // 1. 计算每天的像素数
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const pixelsPerDay = msPerDay / this.timePerPixel;
 
-    // 限制列宽范围
-    const newWidth = Math.max(minWidth, Math.min(maxWidth, width));
-
-    // 如果列宽没有变化，则不执行后续操作
-    if (newWidth === this.parsedOptions.timelineColWidth) {
-      return;
+    // 2. 根据像素数自动切换 step
+    let step = 1;
+    if (pixelsPerDay > 140) {
+      step = 1;
+    } else if (pixelsPerDay > 120) {
+      step = 2;
+    } else if (pixelsPerDay > 100) {
+      step = 4;
+    } else {
+      step = 8;
     }
 
-    // 记录旧的列宽，用于事件触发
+    // 3. 更新 scale 配置
+    const scale = this.parsedOptions.reverseSortedTimelineScales[0];
+    if (scale && scale.step !== step) {
+      scale.step = step;
+    }
+
+    // 4. 计算当前step对应的毫秒数
+    let msPerStep: number;
+    const currentUnit = scale?.unit || 'day';
+    switch (currentUnit) {
+      case 'day':
+        msPerStep = step * msPerDay;
+        break;
+      case 'hour':
+        msPerStep = step * 60 * 60 * 1000;
+        break;
+      case 'minute':
+        msPerStep = step * 60 * 1000;
+        break;
+      case 'second':
+        msPerStep = step * 1000;
+        break;
+      default:
+        msPerStep = step * msPerDay;
+    }
+
+    // 5. 计算新的列宽
+    const newTimelineColWidth = msPerStep / this.timePerPixel;
+    this.parsedOptions.timelineColWidth = newTimelineColWidth;
+
+    // 6. 刷新视图
+    this._generateTimeLineDateMap();
+    if (this.scenegraph) {
+      this._updateSize();
+      this.scenegraph.refreshAll();
+    }
+
+    // 7. 调试输出
+    console.log('step自动切换:', { timePerPixel: this.timePerPixel, pixelsPerDay, step, newTimelineColWidth });
+  }
+
+  /**
+   * 缩放方法
+   * @param factor 缩放因子，大于1表示放大
+   * @param keepCenter 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
+    // 应用 timePerPixel 限制
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000; // 最小值，对应最大放大
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000; // 最大值，对应最大缩小
+
+    // 记录旧值用于视图中心保持和事件触发
+    const oldTimePerPixel = this.timePerPixel;
     const oldWidth = this.parsedOptions.timelineColWidth;
 
-    // 如果需要保持视图中心不变
+    // factor > 1 = 放大 → timePerPixel 变小
+    const newTimePerPixel = this.timePerPixel / factor;
+
+    // 应用限制
+    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
+
+    // 处理视图中心保持
     if (keepCenter) {
-      // 如果没有提供中心点，则使用视图中心
       if (centerX === undefined) {
         centerX = this.scenegraph.width / 2;
       }
 
       // 计算中心点对应的时间位置
-      const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) / oldWidth;
+      const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
 
-      // 更新列宽
-      this.parsedOptions.timelineColWidth = newWidth;
-
-      // 更新视图
-      this._updateSize();
-      this._generateTimeLineDateMap();
+      // 重新计算尺寸
+      this.recalculateTimeScale();
 
       // 调整滚动位置以保持中心点
-      const newScrollLeft = centerTimePosition * newWidth - centerX;
+      const newScrollLeft = centerTimePosition / this.timePerPixel - centerX;
       this.stateManager.setScrollLeft(newScrollLeft);
     } else {
-      // 直接更新列宽
-      this.parsedOptions.timelineColWidth = newWidth;
-
-      // 更新视图
-      this._updateSize();
-      this._generateTimeLineDateMap();
+      // 重新计算尺寸
+      this.recalculateTimeScale();
     }
-
-    // 刷新场景图
-    this.scenegraph.refreshAll();
 
     // 触发缩放事件
     if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
       this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
         oldWidth,
-        newWidth,
-        scale: newWidth / oldWidth
+        newWidth: this.parsedOptions.timelineColWidth,
+        scale: oldTimePerPixel / this.timePerPixel,
+        oldTimePerPixel,
+        newTimePerPixel: this.timePerPixel
       });
     }
   }
@@ -284,7 +338,7 @@ export class Gantt extends EventTarget {
    * @param centerX 缩放中心点X坐标
    */
   zoomIn(factor: number = 1.1, center: boolean = true, centerX?: number): void {
-    this.setTimelineColWidth(this.parsedOptions.timelineColWidth * factor, center, centerX);
+    this.zoomByFactor(factor, center, centerX);
   }
 
   /**
@@ -294,7 +348,29 @@ export class Gantt extends EventTarget {
    * @param centerX 缩放中心点X坐标
    */
   zoomOut(factor: number = 0.9, center: boolean = true, centerX?: number): void {
-    this.setTimelineColWidth(this.parsedOptions.timelineColWidth * factor, center, centerX);
+    this.zoomByFactor(factor, center, centerX);
+  }
+
+  /**
+   * 🎯 调试方法：显示当前的timePerPixel状态
+   */
+  debugTimePerPixel(): void {
+    const currentStep = this.parsedOptions.reverseSortedTimelineScales[0]?.step || 1;
+    const currentUnit = this.parsedOptions.reverseSortedTimelineScales[0]?.unit || 'day';
+    const currentWidth = this.parsedOptions.timelineColWidth;
+
+    // 计算每天的像素数
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const pixelsPerDay = msPerDay / this.timePerPixel;
+
+    console.log('📊 当前缩放状态:', {
+      timePerPixel: this.timePerPixel,
+      pixelsPerDay: pixelsPerDay.toFixed(2),
+      currentWidth: currentWidth.toFixed(2),
+      currentStep: currentStep,
+      currentUnit: currentUnit,
+      说明: `每像素代表 ${(this.timePerPixel / 1000 / 60).toFixed(2)} 分钟`
+    });
   }
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
@@ -314,6 +390,10 @@ export class Gantt extends EventTarget {
 
     this._sortScales();
     initOptions(this);
+
+    // 初始化timePerPixel - 默认60px = 1天
+    this.timePerPixel = (24 * 60 * 60 * 1000) / 60; // 1440000ms/px
+
     // 初始化项目任务时间
     initProjectTaskTimes(this);
     this.data = new DataSource(this);
@@ -345,6 +425,9 @@ export class Gantt extends EventTarget {
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
     this.pluginManager = new PluginManager(this, options);
+
+    // 🎯 在所有组件初始化完成后，根据timePerPixel重新计算列宽
+    this.recalculateTimeScale();
   }
 
   renderTaskBarsTable() {
