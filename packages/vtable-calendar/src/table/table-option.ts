@@ -8,7 +8,7 @@ import { addDays, isSameDay, lastDayOfMonth } from 'date-fns';
 
 export function createTableOption(
   week: DateRecordKeys[],
-  currentDate: Date,
+  currentDate: Date | undefined,
   config: { tableOptions?: ListTableConstructorOptions; containerWidth: number; containerHeight: number }
 ) {
   const columns = week.map((item: DateRecordKeys, index: number) => {
@@ -17,7 +17,7 @@ export function createTableOption(
       title: item,
       // width: columnWidth ?? 140,
       fieldFormat: (record: DateRecord) => {
-        if (isSameDay(addDays(getSundayDate(record), index), currentDate)) {
+        if (currentDate && isSameDay(addDays(getSundayDate(record), index), currentDate)) {
           return `${record[item]}\nToday`;
         } else if (record[item] === 1) {
           const monthIndex = item === 'Sun' ? record.month : record.month + 1;
@@ -26,7 +26,7 @@ export function createTableOption(
         }
         return record[item];
       },
-      customLayout: config.tableOptions?.customLayout ?? calendarCustomLayout
+      customLayout: (config.tableOptions as any)?.customLayout ?? calendarCustomLayout
     };
   });
 
@@ -53,7 +53,7 @@ export function createTableOption(
             textAlign: 'center'
           },
           bodyStyle: {
-            bgColor: args => {
+            bgColor: (args: any) => {
               const { col, row, dataValue, table } = args;
               const record = table.getCellRawRecord(col, row);
               const date = dataValue;
@@ -63,6 +63,7 @@ export function createTableOption(
                 // year === currentDate.getFullYear() &&
                 // month === currentDate.getMonth() &&
                 // date === currentDate.getDate()
+                currentDate &&
                 isSameDay(addDays(getSundayDate(record), col), currentDate)
               ) {
                 return '#f0f0f0';
@@ -77,16 +78,18 @@ export function createTableOption(
         config.tableOptions?.theme
       )
     ),
-    title: {
-      ...(config.tableOptions?.title ?? {}),
+    title: currentDate
+      ? {
+          ...(config.tableOptions?.title ?? {}),
 
-      orient: 'top',
-      // text: 'Thu, Aug 22',
-      text: `${getWeekdayString(currentDate.getDay())}, ${getMonthString(
-        currentDate.getMonth()
-      )} ${currentDate.getDate()}`,
-      subtext: currentDate.getFullYear()
-    },
+          orient: 'top',
+          // text: 'Thu, Aug 22',
+          text: `${getWeekdayString(currentDate.getDay())}, ${getMonthString(
+            currentDate.getMonth()
+          )} ${currentDate.getDate()}`,
+          subtext: currentDate.getFullYear()
+        }
+      : undefined,
     enableLineBreak: true,
     customCellStyle: [
       {
