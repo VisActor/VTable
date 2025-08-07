@@ -21,6 +21,7 @@ importers:
       '@visactor/vchart': 2.0.2
       '@visactor/vtable': workspace:*
       '@visactor/vtable-editors': workspace:*
+      '@visactor/vtable-export': workspace:*
       '@visactor/vtable-gantt': workspace:*
       '@visactor/vtable-search': workspace:*
       '@visactor/vue-vtable': workspace:*
@@ -54,6 +55,7 @@ importers:
       '@visactor/vchart': 2.0.2
       '@visactor/vtable': link:../packages/vtable
       '@visactor/vtable-editors': link:../packages/vtable-editors
+      '@visactor/vtable-export': link:../packages/vtable-export
       '@visactor/vtable-gantt': link:../packages/vtable-gantt
       '@visactor/vtable-search': link:../packages/vtable-search
       '@visactor/vue-vtable': link:../packages/vue-vtable
@@ -4297,7 +4299,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.27.1_@babel+core@7.20.12
       magic-string: 0.27.0
       react-refresh: 0.14.2
-      vite: 3.2.6
+      vite: 3.2.6_omv4gucs24zfjncrwblihdm3my
     transitivePeerDependencies:
       - supports-color
     dev: true
