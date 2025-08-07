@@ -759,6 +759,9 @@ export default class VTableSheet {
       // sheet标签和菜单项激活样式
       this.activeSheetTab();
       this.activeSheetMenuItem();
+
+      // 恢复筛选状态
+      this.restoreFilterState(instance, sheetDefine);
     } else {
       // 创建新的sheet实例
       const instance = this.createSheetInstance(sheetDefine);
@@ -767,6 +770,9 @@ export default class VTableSheet {
       // 刷新sheet标签和菜单
       this.updateSheetTabs();
       this.updateSheetMenu();
+
+      // 恢复筛选状态
+      this.restoreFilterState(instance, sheetDefine);
     }
 
     this.updateFormulaBar();
@@ -820,6 +826,33 @@ export default class VTableSheet {
     }
 
     return sheet;
+  }
+
+  /**
+   * 恢复筛选状态
+   */
+  private restoreFilterState(sheet: Sheet, sheetDefine: ISheetDefine): void {
+    // 如果没有保存的筛选状态，直接返回
+    if (!sheetDefine.filterState) {
+      return;
+    }
+
+    console.log(`恢复 Sheet ${sheetDefine.sheetKey} 的筛选状态:`, sheetDefine.filterState);
+
+    // 等待表格初始化完成
+    setTimeout(() => {
+      if (sheet.tableInstance && sheet.tableInstance.pluginManager) {
+        const filterPlugin = sheet.tableInstance.pluginManager.getPluginByName('Filter') as any;
+        if (filterPlugin) {
+          filterPlugin.setFilterState(sheetDefine.filterState);
+          console.log(`Sheet ${sheetDefine.sheetKey} 筛选状态恢复完成`);
+        } else {
+          console.warn(`Sheet ${sheetDefine.sheetKey} 未找到筛选插件或插件不支持 setFilterState 方法`);
+        }
+      } else {
+        console.warn(`Sheet ${sheetDefine.sheetKey} 表格实例或插件管理器未初始化`);
+      }
+    }, 0);
   }
 
   /**
@@ -1157,6 +1190,14 @@ export default class VTableSheet {
         } else {
           data.splice(lastDataIndex + 1);
         }
+
+        // 获取筛选状态
+        let filterState = null;
+        const filterPlugin = instance.tableInstance.pluginManager.getPluginByName('Filter') as any;
+        if (filterPlugin) {
+          filterState = filterPlugin.getFilterState();
+        }
+
         sheets.push({
           ...sheetDefine,
           data,
@@ -1165,7 +1206,8 @@ export default class VTableSheet {
           showHeader: instance.tableInstance.options.showHeader,
           frozenRowCount: instance.tableInstance.frozenRowCount,
           frozenColCount: instance.tableInstance.frozenColCount,
-          active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey
+          active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey,
+          filterState: filterState
         });
       } else {
         sheets.push(sheetDefine);

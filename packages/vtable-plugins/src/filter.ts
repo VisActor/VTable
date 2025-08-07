@@ -2,7 +2,7 @@ import * as VTable from '@visactor/vtable';
 import { FilterEngine } from './filter/filter-engine';
 import { FilterStateManager } from './filter/filter-state-manager';
 import { FilterToolbar } from './filter/filter-toolbar';
-import type { FilterOptions } from './filter/types';
+import type { FilterOptions, FilterConfig, FilterState } from './filter/types';
 import { FilterActionType } from './filter/types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
@@ -64,7 +64,10 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       this.filterToolbar.render(document.body);
       this.updateFilterIcons(eventArgs.options);
     } else if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
-      this.pluginOptions = {...this.pluginOptions, ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions};
+      this.pluginOptions = {
+        ...this.pluginOptions,
+        ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
+      };
       this.handleOptionUpdate(eventArgs.options);
     } else if (
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
@@ -112,12 +115,15 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 验证更新后的筛选状态一致性
    */
-  private validateFilterStatesAfterUpdate(options: ListTableConstructorOptions, activeFields: (string | number)[]): void {
+  private validateFilterStatesAfterUpdate(
+    options: ListTableConstructorOptions,
+    activeFields: (string | number)[]
+  ): void {
     const columns = options.columns;
     const fieldsToRemove: (string | number)[] = [];
 
     activeFields.forEach(field => {
-      const columnIndex = typeof field === 'number' ? field : parseInt(field.toString());
+      const columnIndex = typeof field === 'number' ? field : parseInt(field.toString(), 10);
       const column = columns[columnIndex];
 
       // 检查该列是否仍然应该启用筛选
@@ -180,6 +186,71 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
 
     // 默认情况，所有列都启用筛选
     return true;
+  }
+
+  /**
+   * 获取当前的筛选状态
+   * 用于保存配置时获取筛选状态
+   */
+  getFilterState(): any {
+    if (!this.filterStateManager) {
+      return null;
+    }
+
+    const state = this.filterStateManager.getAllFilterStates();
+    const serializedState: Record<string | number, any> = {};
+
+    // 将 Map 转换为普通对象以便序列化
+    state.filters.forEach((config: FilterConfig, field: string | number) => {
+      serializedState[field] = {
+        enable: config.enable,
+        field: config.field,
+        type: config.type,
+        values: config.values,
+        operator: config.operator,
+        condition: config.condition
+      };
+    });
+
+    return {
+      filters: serializedState
+    };
+  }
+
+  /**
+   * 设置筛选状态
+   * 用于从保存的配置中恢复筛选状态
+   */
+  setFilterState(filterState: FilterState): void {
+    if (!this.filterStateManager || !filterState || !filterState.filters) {
+      console.warn('setFilterState: 无效的筛选状态或状态管理器未初始化');
+      return;
+    }
+
+    // 清除当前所有筛选
+    this.filterStateManager.dispatch({
+      type: FilterActionType.CLEAR_ALL_FILTERS,
+      payload: {}
+    });
+
+    const columns = (this.table as VTable.ListTable).columns;
+
+    // 恢复每个筛选配置
+    Object.entries(filterState.filters).forEach(([, config]: [string, any]) => {
+      if (config.enable) {
+        this.filterStateManager.dispatch({
+          type: FilterActionType.ADD_FILTER,
+          payload: {
+            field: config.field,
+            type: config.type,
+            values: config.values,
+            operator: config.operator,
+            condition: config.condition,
+            enable: true
+          }
+        });
+      }
+    });
   }
 
   release() {

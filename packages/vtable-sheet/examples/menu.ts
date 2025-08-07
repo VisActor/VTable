@@ -9,6 +9,10 @@ export const menus = [
   {
     path: 'sheet',
     name: 'filter'
+  },
+  {
+    path: 'sheet',
+    name: 'persistence'
   }
 
   //   ]
