@@ -34,8 +34,8 @@ export function getTablePlugins(
     tableSeriesNumberPlugin,
     highlightHeaderWhenSelectCellPlugin,
     contextMenuPlugin,
-    excelEditCellKeyboardPlugin
-    // filterPlugin
+    excelEditCellKeyboardPlugin,
+    filterPlugin
   ];
   if (options?.pluginModules) {
     options.pluginModules.forEach(
