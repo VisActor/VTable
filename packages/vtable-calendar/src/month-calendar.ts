@@ -50,6 +50,7 @@ export class Calendar extends EventTarget {
   maxCol: number;
   minCol: number = 0;
   customHandler: CustomEventHandler;
+  showToday: boolean = true;
 
   constructor(container: HTMLElement, options?: CalendarConstructorOptions) {
     super();
@@ -62,6 +63,11 @@ export class Calendar extends EventTarget {
     if (startDate && endDate) {
       this.startDate = startDate;
       this.endDate = endDate;
+      // if currentDate is not in the range, set it to the startDate
+      if (this.currentDate < this.startDate || this.currentDate > this.endDate) {
+        this.currentDate = this.startDate;
+        this.showToday = false;
+      }
     } else {
       const { startDate: computedStartDate, endDate: computedEndDate } = getStartAndEndDate(
         this.currentDate,
@@ -91,7 +97,7 @@ export class Calendar extends EventTarget {
 
     const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
     this.maxCol = week.length - 1;
-    const option = createTableOption(week, this.currentDate, {
+    const option = createTableOption(week, this.showToday ? this.currentDate : undefined, {
       tableOptions: this.options.tableOptions,
       containerWidth: this.container.clientWidth,
       containerHeight: this.container.clientHeight
@@ -198,19 +204,21 @@ export class Calendar extends EventTarget {
   }
 
   _bindEvent() {
-    // click title jump to current month
-    const titleComponent = this.table.internalProps.title.getComponentGraphic();
-    titleComponent.setAttributes({
-      cursor: 'pointer',
-      // hack for cursor
-      childrenPickable: false
-    });
-    this.titleClickHandler = (() => {
-      this.jumpToCurrentMonth({
-        duration: 500
+    if (this.table.internalProps.title) {
+      // click title jump to current month
+      const titleComponent = this.table.internalProps.title.getComponentGraphic();
+      titleComponent.setAttributes({
+        cursor: 'pointer',
+        // hack for cursor
+        childrenPickable: false
       });
-    }).bind(this);
-    titleComponent.addEventListener('click', this.titleClickHandler);
+      this.titleClickHandler = (() => {
+        this.jumpToCurrentMonth({
+          duration: 500
+        });
+      }).bind(this);
+      titleComponent.addEventListener('click', this.titleClickHandler);
+    }
 
     this.table.on('click_cell', e => {
       const { target } = e;
