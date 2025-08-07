@@ -2,7 +2,7 @@ import * as VTable from '@visactor/vtable';
 import { FilterEngine } from './filter/filter-engine';
 import { FilterStateManager } from './filter/filter-state-manager';
 import { FilterToolbar } from './filter/filter-toolbar';
-import type { FilterOptions } from './filter/types';
+import type { FilterOptions, FilterConfig, FilterState } from './filter/types';
 import { FilterActionType } from './filter/types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
@@ -180,6 +180,71 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
 
     // 默认情况，所有列都启用筛选
     return true;
+  }
+
+  /**
+   * 获取当前的筛选状态
+   * 用于保存配置时获取筛选状态
+   */
+  getFilterState(): any {
+    if (!this.filterStateManager) {
+      return null;
+    }
+
+    const state = this.filterStateManager.getAllFilterStates();
+    const serializedState: Record<string | number, any> = {};
+
+    // 将 Map 转换为普通对象以便序列化
+    state.filters.forEach((config: FilterConfig, field: string | number) => {
+      serializedState[field] = {
+        enable: config.enable,
+        field: config.field,
+        type: config.type,
+        values: config.values,
+        operator: config.operator,
+        condition: config.condition
+      };
+    });
+
+    return {
+      filters: serializedState
+    };
+  }
+
+  /**
+   * 设置筛选状态
+   * 用于从保存的配置中恢复筛选状态
+   */
+  setFilterState(filterState: FilterState): void {
+    if (!this.filterStateManager || !filterState || !filterState.filters) {
+      console.warn('setFilterState: 无效的筛选状态或状态管理器未初始化');
+      return;
+    }
+
+    // 清除当前所有筛选
+    this.filterStateManager.dispatch({
+      type: FilterActionType.CLEAR_ALL_FILTERS,
+      payload: {}
+    });
+
+    const columns = (this.table as VTable.ListTable).columns;
+
+    // 恢复每个筛选配置
+    Object.entries(filterState.filters).forEach(([, config]: [string, any]) => {
+      if (config.enable) {
+        this.filterStateManager.dispatch({
+          type: FilterActionType.ADD_FILTER,
+          payload: {
+            field: config.field,
+            type: config.type,
+            values: config.values,
+            operator: config.operator,
+            condition: config.condition,
+            enable: true
+          }
+        });
+      }
+    });
   }
 
   release() {

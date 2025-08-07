@@ -40,6 +40,13 @@ export class FilterStateManager {
   }
 
   /**
+   * 获取所有筛选状态
+   */
+  getAllFilterStates(): FilterState {
+    return this.state;
+  }
+
+  /**
    * 公共方法：重新应用当前所有激活的筛选状态
    * 用于在表格配置更新后恢复筛选显示
    */
@@ -139,8 +146,7 @@ export class FilterStateManager {
           col.headerIcon = filterIcon;
         }
       } else {
-        // 如果不应该启用筛选，则移除筛选图标（恢复原始图标或无图标）
-        // 这里我们需要小心，不要覆盖其他插件设置的图标
+        // 如果不应该启用筛选，则移除筛选图标
         if (col.headerIcon === filterIcon || col.headerIcon === filteringIcon) {
           col.headerIcon = undefined;
         }
@@ -159,6 +165,6 @@ export class FilterStateManager {
       FilterActionType.CLEAR_ALL_FILTERS,
       FilterActionType.APPLY_FILTERS
     ];
-    return shouldApplyActions.includes(action.type);
+    return shouldApplyActions.includes(action.type) || action.payload.enable;
   }
 }

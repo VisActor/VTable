@@ -48,6 +48,22 @@ export interface IColumnFilter {
   filter: Filter;
 }
 
+/** 筛选状态配置 */
+export interface IFilterStateConfig {
+  enable: boolean; // 是否启用筛选
+  field: string | number; // 对应表格列，同时作为筛选配置的唯一标识
+  type: 'byValue' | 'byCondition'; // 筛选类型
+  values?: any[]; // 按值筛选时的值列表
+  operator?: string; // 按条件筛选时的操作符
+  condition?: any; // 按条件筛选时的具体条件
+}
+
+/** 筛选状态 */
+export interface IFilterState {
+  /** 筛选配置映射，键为列索引或字段名，值为筛选配置 */
+  filters: Record<string | number, IFilterStateConfig>;
+}
+
 /** 过滤管理器接口 */
 export interface IFilterManager {
   /** 设置列过滤器 */

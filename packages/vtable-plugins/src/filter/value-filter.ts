@@ -37,15 +37,20 @@ export class ValueFilter {
 
   setSelectedField(fieldId: string | number): void {
     this.selectedField = fieldId;
-    const state: FilterConfig = this.filterStateManager.getFilterState(fieldId);
-    if (!state || !state.enable) {
-      // 除了已经筛选的列，其他情况都重新收集
-      this.collectUniqueColumnValues(fieldId);
-    }
+    this.collectUniqueColumnValues(fieldId);
   }
 
   collectUniqueColumnValues(fieldId: string | number): void {
-    const records = this.table.internalProps.dataSource.source;
+    const isEnable = this.filterStateManager.getFilterState(fieldId)?.enable;
+    // 如果已经应用筛选且已经有相应的值列表，则不需要重新收集
+    if(isEnable && this.uniqueKeys.has(fieldId)) {
+      return;
+    }
+    let records = this.table.internalProps.dataSource.source;
+    if(isEnable) {
+      // 如果已应用筛选，则从原始数据收集；否则从当前表格的数据收集
+      records = this.table.internalProps.records;
+    }
     const aggregator = new VTable.TYPES.CustomAggregator({
       key: String(fieldId),
       field: String(fieldId),
