@@ -16,15 +16,6 @@ export interface CellRange {
   endCol: number;
 }
 
-/** 单元格数据类型 */
-export enum CellDataType {
-  TEXT = 'text',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  DATE = 'date',
-  FORMULA = 'formula'
-}
-
 /** 选择模式 */
 export enum SelectionMode {
   CELL = 'cell',
@@ -55,4 +46,18 @@ export interface IToolbarItem {
   disabled?: boolean;
   visible?: boolean;
   onClick?: () => void;
+}
+
+export enum MenuKey {
+  EXPORT = 'export',
+  IMPORT = 'import',
+  EXPORT_CURRENT_SHEET_CSV = 'export-current-sheet-csv',
+  EXPORT_CURRENT_SHEET_XLSX = 'export-current-sheet-xlsx'
+}
+export interface MainMenuItem {
+  name: string;
+  menuKey?: MenuKey;
+  description?: string;
+  onClick?: () => void;
+  items?: MainMenuItem[];
 }

@@ -1,11 +1,8 @@
-import { register } from '@visactor/vtable';
-import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import { VTableSheet } from '../../src/index';
+import { VTableSheet, TYPES } from '../../src/index';
+
+import * as VTablePlugins from '@visactor/vtable-plugins';
 const CONTAINER_ID = 'vTable';
-const date_input_editor = new DateInputEditor({});
-const input_editor = new InputEditor({});
-register.editor('input', input_editor);
-register.editor('date-input', date_input_editor);
+
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
     showFormulaBar: true,
@@ -681,7 +678,41 @@ export function createTable() {
         columns: [],
         showHeader: false
       }
-    ]
+    ],
+    pluginModules: [
+      {
+        module: VTablePlugins.ExcelImportPlugin,
+        moduleOptions: {
+          // exportData:false
+        }
+      }
+    ],
+    mainMenu: {
+      show: true,
+      items: [
+        {
+          name: '导入',
+          menuKey: TYPES.MenuKey.IMPORT,
+          description: '导入数据替换到当前sheet'
+        },
+        {
+          name: '导出',
+          items: [
+            {
+              name: '导出csv',
+              menuKey: TYPES.MenuKey.EXPORT_CURRENT_SHEET_CSV,
+              description: '导出当前sheet数据到csv'
+            },
+            {
+              name: '导出xlsx',
+              menuKey: TYPES.MenuKey.EXPORT_CURRENT_SHEET_XLSX,
+              description: '导出当前sheet数据到xlsx'
+            }
+          ],
+          description: '导出当前sheet数据'
+        }
+      ]
+    }
   });
   window.sheetInstance = sheetInstance;
 

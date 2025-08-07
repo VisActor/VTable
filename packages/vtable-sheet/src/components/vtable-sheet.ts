@@ -15,6 +15,7 @@ import { FormulaAutocomplete } from './formula-autocomplete';
 import { formulaEditor } from './formula-editor';
 import { CellHighlightManager } from '../managers/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
+import { MenuManager } from '../managers/menu-manager';
 
 // const input_editor = new VTable_editors.InputEditor();
 // VTable.register.editor('input', input_editor);
@@ -32,6 +33,9 @@ export default class VTableSheet {
   private filterManager: FilterManager;
   /** 事件管理器 */
   private eventManager: EventManager;
+
+  /** 菜单管理 */
+  private menuManager: MenuManager;
   /** 当前活动sheet实例 */
   private activeSheet: Sheet | null = null;
   /** 所有sheet实例 */
@@ -45,6 +49,7 @@ export default class VTableSheet {
   private rootElement: HTMLElement;
   private formulaBarElement: HTMLElement | null = null;
   private sheetTabElement: HTMLElement | null = null;
+  private mainMenuElement: HTMLElement | null = null;
   private contentElement: HTMLElement;
 
   /** 防止递归调用的标志 */
@@ -70,6 +75,7 @@ export default class VTableSheet {
     this.eventManager = new EventManager(this);
     this.dragManager = new SheetTabDragManager(this);
     this.cellHighlightManager = new CellHighlightManager(this);
+    this.menuManager = new MenuManager(this);
     // 初始化UI
     this.initUI();
 
@@ -120,11 +126,20 @@ export default class VTableSheet {
     this.rootElement.style.width = `${this.options.width}px`;
     this.rootElement.style.height = `${this.options.height}px`;
     this.container.appendChild(this.rootElement);
+    //创建顶部菜单和公式的容器
+    const topContainer = document.createElement('div');
+    topContainer.className = 'vtable-sheet-top-container';
+    this.rootElement.appendChild(topContainer);
 
+    // 创建主菜单
+    if (this.options.mainMenu?.show) {
+      this.mainMenuElement = this.menuManager.createMainMenu();
+      topContainer.appendChild(this.mainMenuElement);
+    }
     // 创建公式栏
     if (this.options.showFormulaBar) {
       this.formulaBarElement = this.createFormulaBar();
-      this.rootElement.appendChild(this.formulaBarElement);
+      topContainer.appendChild(this.formulaBarElement);
 
       this.initFormulaAutocomplete();
     }
@@ -637,7 +652,7 @@ export default class VTableSheet {
     this.activeSheetMenuItem();
     // 确保激活的标签可见
     setTimeout(() => {
-      const activeItem = menuContainer.querySelector('.vtable-sheet-menu-item.active');
+      const activeItem = menuContainer.querySelector('.vtable-sheet-main-menu-item.active');
       if (activeItem) {
         activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
@@ -648,7 +663,7 @@ export default class VTableSheet {
    * 激活sheet菜单项并滚动到可见区域
    */
   private activeSheetMenuItem(): void {
-    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-menu-item') as NodeListOf<HTMLElement>;
+    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-main-menu-item') as NodeListOf<HTMLElement>;
     let activeItem: HTMLElement | null = null;
     menuItems.forEach(item => {
       item.classList.remove('active');
@@ -782,7 +797,7 @@ export default class VTableSheet {
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
       parent: this,
-      plugins: getTablePlugins(sheetDefine),
+      plugins: getTablePlugins(sheetDefine, this.options),
       headerEditor: 'formula',
       editor: 'formula',
       select: {

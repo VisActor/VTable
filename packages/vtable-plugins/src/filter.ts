@@ -64,7 +64,10 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       this.filterToolbar.render(document.body);
       this.updateFilterIcons(eventArgs.options);
     } else if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
-      this.pluginOptions = {...this.pluginOptions, ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions};
+      this.pluginOptions = {
+        ...this.pluginOptions,
+        ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
+      };
       this.handleOptionUpdate(eventArgs.options);
     } else if (
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
@@ -112,12 +115,15 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 验证更新后的筛选状态一致性
    */
-  private validateFilterStatesAfterUpdate(options: ListTableConstructorOptions, activeFields: (string | number)[]): void {
+  private validateFilterStatesAfterUpdate(
+    options: ListTableConstructorOptions,
+    activeFields: (string | number)[]
+  ): void {
     const columns = options.columns;
     const fieldsToRemove: (string | number)[] = [];
 
     activeFields.forEach(field => {
-      const columnIndex = typeof field === 'number' ? field : parseInt(field.toString());
+      const columnIndex = typeof field === 'number' ? field : parseInt(field.toString(), 10);
       const column = columns[columnIndex];
 
       // 检查该列是否仍然应该启用筛选

@@ -1,6 +1,7 @@
 import { register } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
-import { IVTableSheetOptions, VTableSheet } from '../../src/index';
+import type { IVTableSheetOptions } from '../../src/index';
+import { VTableSheet } from '../../src/index';
 
 const CONTAINER_ID = 'vTable';
 const date_input_editor = new DateInputEditor({});
@@ -114,7 +115,7 @@ export function createTable() {
       existingControls.remove();
       console.log('清理已存在的控制面板');
     }
-    
+
     const controlsHtml = `
       <div id="simple-controls" style="
         position: fixed;
@@ -193,7 +194,7 @@ export function createTable() {
     });
 
     document.getElementById('reload-btn')?.addEventListener('click', () => {
-      location.reload();
+      window.location.reload();
     });
 
     document.getElementById('clear-btn')?.addEventListener('click', () => {
@@ -204,7 +205,7 @@ export function createTable() {
 
   // 创建控制面板
   createControls();
-  
+
   // 监听 demo 切换，自动销毁控制面板
   const setupAutoDestroy = () => {
     // 监听侧边栏点击事件
@@ -226,12 +227,12 @@ export function createTable() {
           }
         }
       };
-      
+
       sidebar.addEventListener('click', handleSidebarClick);
       console.log('已设置 persistence 控制面板自动销毁监听');
     }
   };
-  
+
   // 延迟设置监听，确保 DOM 完全加载
   setTimeout(setupAutoDestroy, 100);
 

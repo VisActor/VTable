@@ -43,11 +43,11 @@ export class ValueFilter {
   collectUniqueColumnValues(fieldId: string | number): void {
     const isEnable = this.filterStateManager.getFilterState(fieldId)?.enable;
     // 如果已经应用筛选且已经有相应的值列表，则不需要重新收集
-    if(isEnable && this.uniqueKeys.has(fieldId)) {
+    if (isEnable && this.uniqueKeys.has(fieldId)) {
       return;
     }
     let records = this.table.internalProps.dataSource.source;
-    if(isEnable) {
+    if (isEnable) {
       // 如果已应用筛选，则从原始数据收集；否则从当前表格的数据收集
       records = this.table.internalProps.records;
     }

@@ -1,11 +1,6 @@
-import * as VTable from '@visactor/vtable';
-import { InputEditor, DateInputEditor } from '@visactor/vtable-editors';
 import { VTableSheet } from '../../src/index';
 
 const CONTAINER_ID = 'vTable';
-
-VTable.register.editor('input', InputEditor);
-VTable.register.editor('date-input', DateInputEditor);
 
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {

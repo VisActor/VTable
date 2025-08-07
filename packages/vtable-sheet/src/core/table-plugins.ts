@@ -1,13 +1,16 @@
 import type * as VTable from '@visactor/vtable';
 import * as VTablePlugins from '@visactor/vtable-plugins';
-import type { ISheetDefine, IColumnDefine } from '../ts-types';
+import type { ISheetDefine, IColumnDefine, IVTableSheetOptions } from '../ts-types';
 
 /**
  * 获取表格插件列表
  * @param sheetDefine Sheet配置定义
  * @returns 插件数组
  */
-export function getTablePlugins(sheetDefine?: ISheetDefine): VTable.plugins.IVTablePlugin[] {
+export function getTablePlugins(
+  sheetDefine?: ISheetDefine,
+  options?: IVTableSheetOptions
+): VTable.plugins.IVTablePlugin[] {
   const filterPlugin = createFilterPlugin(sheetDefine);
   const addRowColumnPlugin = new VTablePlugins.AddRowColumnPlugin({
     addRowCallback: (row: number, tableInstance: VTable.ListTable) => {
@@ -31,9 +34,21 @@ export function getTablePlugins(sheetDefine?: ISheetDefine): VTable.plugins.IVTa
     tableSeriesNumberPlugin,
     highlightHeaderWhenSelectCellPlugin,
     contextMenuPlugin,
-    excelEditCellKeyboardPlugin,
-    filterPlugin
+    excelEditCellKeyboardPlugin
+    // filterPlugin
   ];
+  if (options?.pluginModules) {
+    options.pluginModules.forEach(
+      (module: { module: new (options: any) => VTable.plugins.IVTablePlugin; moduleOptions: any }) => {
+        if (typeof module.module === 'function') {
+          // 检查是否为构造函数
+          plugins.push(new module.module(module.moduleOptions));
+        } else {
+          throw new Error(`Invalid plugin: ${module.module}`);
+        }
+      }
+    );
+  }
   return plugins;
 }
 
