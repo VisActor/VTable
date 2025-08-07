@@ -39,6 +39,8 @@ export type ExportVTableToExcelOptions = {
   formatExcelJSCell?: (cellInfo: CellInfo, cellInExcelJS: ExcelJS.Cell) => ExcelJS.Cell;
   excelJSWorksheetCallback?: (worksheet: ExcelJS.Worksheet) => void;
   skipImageExportCellType?: SkipImageExportCellType[];
+  downloadFile?: boolean;
+  fileName?: string;
 };
 
 function requestIdleCallbackPromise(options?: IdleRequestOptions) {
@@ -49,9 +51,6 @@ function requestIdleCallbackPromise(options?: IdleRequestOptions) {
   });
 }
 
-/**
- * @deprecated 请使用@visactor/vtable-plugins中的`TableExportPlugin` 插件
- */
 export async function exportVTableToExcel(
   tableInstance: IVTable,
   options?: ExportVTableToExcelOptions,
