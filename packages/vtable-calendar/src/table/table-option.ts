@@ -7,24 +7,25 @@ import { isValid, merge } from '@visactor/vutils';
 import { addDays, isSameDay, lastDayOfMonth } from 'date-fns';
 
 export function createTableOption(
+  dayTitles: string[],
   week: DateRecordKeys[],
   currentDate: Date | undefined,
   config: { tableOptions?: ListTableConstructorOptions; containerWidth: number; containerHeight: number }
 ) {
-  const columns = week.map((item: DateRecordKeys, index: number) => {
+  const columns = dayTitles.map((item: string, index: number) => {
     return {
-      field: defaultDayTitles[index],
+      field: week[index],
       title: item,
       // width: columnWidth ?? 140,
       fieldFormat: (record: DateRecord) => {
         if (currentDate && isSameDay(addDays(getSundayDate(record), index), currentDate)) {
-          return `${record[item]}\nToday`;
-        } else if (record[item] === 1) {
-          const monthIndex = item === 'Sun' ? record.month : record.month + 1;
+          return `${record[week[index]]}\nToday`;
+        } else if (record[week[index]] === 1) {
+          const monthIndex = week[index] === 'Sun' ? record.month : record.month + 1;
           const mouthStr = getMonthString(monthIndex);
-          return `${record[item]}\n${mouthStr}`;
+          return `${record[week[index]]}\n${mouthStr}`;
         }
-        return record[item];
+        return record[week[index]];
       },
       customLayout: (config.tableOptions as any)?.customLayout ?? calendarCustomLayout
     };

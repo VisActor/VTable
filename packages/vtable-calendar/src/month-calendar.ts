@@ -29,6 +29,7 @@ export interface CalendarConstructorOptions {
 
   customEvents?: ICustomEvent[];
   customEventOptions?: ICustomEventOptions;
+  showTitle?: boolean;
 }
 
 export class Calendar extends EventTarget {
@@ -60,6 +61,7 @@ export class Calendar extends EventTarget {
 
     this.currentDate = currentDate ?? new Date();
     this.rangeDays = rangeDays ?? 90;
+    this.showToday = this.options.showTitle ?? true;
     if (startDate && endDate) {
       this.startDate = startDate;
       this.endDate = endDate;
@@ -97,11 +99,16 @@ export class Calendar extends EventTarget {
 
     const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
     this.maxCol = week.length - 1;
-    const option = createTableOption(week, this.showToday ? this.currentDate : undefined, {
-      tableOptions: this.options.tableOptions,
-      containerWidth: this.container.clientWidth,
-      containerHeight: this.container.clientHeight
-    });
+    const option = createTableOption(
+      week,
+      defaultDayTitles as DateRecordKeys[],
+      this.showToday ? this.currentDate : undefined,
+      {
+        tableOptions: this.options.tableOptions,
+        containerWidth: this.container.clientWidth,
+        containerHeight: this.container.clientHeight
+      }
+    );
     option.records = records;
     option.container = this.container;
     (option as any)._calendar = this;
