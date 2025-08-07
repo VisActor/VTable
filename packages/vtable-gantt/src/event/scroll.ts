@@ -18,6 +18,32 @@ export function handleWhell(
   isWheelEvent: boolean = true
 ) {
   let { deltaX, deltaY } = event;
+  // 如果按住Ctrl键，执行缩放操作
+  if (event.ctrlKey) {
+    event.preventDefault(); // 阻止默认滚动行为
+
+    // 如果禁用了鼠标滚轮缩放，则不执行缩放
+    if (gantt.parsedOptions.zoom?.enableMouseWheel === false) {
+      return;
+    }
+
+    // 获取鼠标在甘特图中的位置
+    const rect = gantt.element.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+
+    // 判断缩放方向
+    const zoomIn = event.deltaY < 0;
+
+    // 计算新的列宽
+    const currentColWidth = gantt.parsedOptions.timelineColWidth;
+    const zoomStep = gantt.parsedOptions.zoom?.step ?? 0.1;
+    const factor = zoomIn ? 1 + zoomStep : 1 - zoomStep;
+
+    // 使用Gantt API进行缩放
+    gantt.setTimelineColWidth(currentColWidth * factor, true, mouseX);
+
+    return; // 执行缩放后不再执行滚动
+  }
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
     //mac电脑按住shift 鼠标滚动deltaX和deltaY是自动互换的，所以此逻辑只针对windows电脑有效及mac触摸板有效
