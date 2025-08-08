@@ -32,6 +32,7 @@ TABLE_EVENT_TYPE = {
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  CONTEXTMENU_CANVAS: 'contextmenu_canvas',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
@@ -129,6 +130,10 @@ TABLE_EVENT_TYPE = {
 单元格右键事件
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## CONTEXTMENU_CANVAS
+
+画布右键事件
 
 ## RESIZE_COLUMN
 

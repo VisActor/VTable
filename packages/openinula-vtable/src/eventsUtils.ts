@@ -25,6 +25,7 @@ export interface EventsProps {
   onMouseEnterCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_cell']>;
   onMouseLeaveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_cell']>;
   onContextMenuCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_cell']>;
+  onContextMenuCanvas?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_canvas']>;
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
@@ -90,6 +91,7 @@ export const TABLE_EVENTS = {
   onMouseEnterCell: EVENT_TYPE.MOUSEENTER_CELL,
   onMouseLeaveCell: EVENT_TYPE.MOUSELEAVE_CELL,
   onContextMenuCell: EVENT_TYPE.CONTEXTMENU_CELL,
+  onContextMenuCanvas: EVENT_TYPE.CONTEXTMENU_CANVAS,
   onResizeColumn: EVENT_TYPE.RESIZE_COLUMN,
   onResizeColumnEnd: EVENT_TYPE.RESIZE_COLUMN_END,
   onChangeHeaderPosition: EVENT_TYPE.CHANGE_HEADER_POSITION,
