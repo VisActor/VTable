@@ -12,7 +12,7 @@ import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
-import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
+import type { FederatedPointerEvent, Group, IEventTarget } from '@src/vrender';
 import type { BaseTableConstructorOptions } from './base-table';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
@@ -248,7 +248,7 @@ export interface TableEventHandlersEventArgumentMap {
     detaX: number;
     autoRowHeight: boolean;
     needUpdateRowHeight: boolean;
-    cellGroup: any; // Group类型，但为了避免循环依赖使用any
+    cellGroup: Group; // Group类型，但为了避免循环依赖使用any
     padding: [number, number, number, number];
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
