@@ -52,10 +52,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   // 展开状态管理
   private expandedRowsMap: Map<number, boolean> = new Map();
-  
   // 容器大小监听器
   private resizeObserver?: ResizeObserver;
-  
   // 上次容器宽度
   private lastContainerWidth: number = 0;
 
@@ -118,10 +116,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     textBaseline: CanvasTextBaseline;
   }): void {
     const { cellGroup, cellHeight, padding, textAlign, textBaseline, autoRowHeight } = eventData;
-    
     // 在masterDetail模式下，使用原始高度而不是逻辑行高来重新定位单元格内容
     let effectiveCellHeight = cellHeight;
-    
     if (cellGroup.col !== undefined && cellGroup.row !== undefined) {
       try {
         const recordIndex = this.table.getRecordShowIndexByCell(cellGroup.col, cellGroup.row);
@@ -131,10 +127,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           ).getOriginalRowHeight(recordIndex);
           if (originalHeight > 0) {
             effectiveCellHeight = originalHeight; // 使用原始视觉高度
-            
             // 重新调整单元格内容的纵向位置，使用原始高度
             const newHeight = effectiveCellHeight - (padding[0] + padding[2]);
-            
             cellGroup.forEachChildren((child: any) => {
               if (child.type === 'rect' || child.type === 'chart' || child.name === 'custom-container') {
                 return;
@@ -159,11 +153,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         );
       }
     }
-    
     // 如果是展开的行，可能需要重新调整子表位置
     const internalProps = this.getInternalProps();
     const tableRowIndex = eventData.row - this.table.columnHeaderLevelCount;
-    
     if (internalProps.subTableInstances?.has(tableRowIndex)) {
       // 延迟执行，确保单元格更新完成
       setTimeout(() => {
@@ -180,13 +172,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   release() {
     this.cleanupMasterDetailFeatures();
-    
     // 清理容器大小监听器
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = undefined;
     }
-    
     // 清理状态
     this.expandedRowsMap.clear();
   }
@@ -232,13 +222,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 替换ListTable的handleIconClick方法
    */
   private replaceHandleIconClick(): void {
-    // 保存原始的handleIconClick方法（如果存在）
     const originalHandleIconClick = (this.table as any).handleIconClick;
     if (originalHandleIconClick) {
       (this.table as any)._originalHandleIconClick = originalHandleIconClick;
     }
-    
-    // 替换为我们的handleIconClick方法
     (this.table as any).handleIconClick = this.handleIconClick.bind(this);
   }
 
@@ -315,12 +302,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private bindEventHandlers(): void {
     // handleIconClick已经在BEFORE_INIT阶段替换了，这里只需要绑定滚动事件
     this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
-    // 监听列宽变化事件
-    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN, () => {
-      this.handleTableWidthChange();
-    });
-    // 设置容器大小变化监听
-    this.setupContainerResizeObserver();
   }
 
   /**
@@ -469,56 +450,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   // ==================== 辅助方法 ====================
-
-  /**
-   * 设置容器大小变化监听
-   */
-  private setupContainerResizeObserver(): void {
-    if (typeof ResizeObserver !== 'undefined' && this.table.container) {
-      this.lastContainerWidth = this.table.container.getBoundingClientRect().width;
-      
-      this.resizeObserver = new ResizeObserver(entries => {
-        for (const entry of entries) {
-          const currentWidth = entry.contentRect.width;
-          if (Math.abs(currentWidth - this.lastContainerWidth) > 1) {
-            this.lastContainerWidth = currentWidth;
-            this.handleTableWidthChange();
-          }
-        }
-      });
-      
-      this.resizeObserver.observe(this.table.container);
-    }
-  }
-
-  /**
-   * 处理表格宽度变化
-   */
-  private handleTableWidthChange(): void {
-    // 延迟执行，确保表格布局已经更新完成
-    setTimeout(() => {
-      this.adjustExpandedRowsContent();
-    }, 0);
-  }
-
-  /**
-   * 调整展开行内容
-   */
-  private adjustExpandedRowsContent(): void {
-    // 这里可以添加其他的展开行内容调整逻辑
-    // 目前暂时留空，等待需要时再实现
-  }
-
   /**
    * masterDetail模式下排序前的操作
    */
   private executeMasterDetailBeforeSort(): void {
     const table = this.table as any;
-    
     if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.size > 0) {
       table.internalProps._tempExpandedRecordIndices = new Set(table.internalProps.expandedRecordIndices);
     }
-    
     if (table.internalProps._heightResizedRowMap) {
       table.internalProps._heightResizedRowMap.forEach((value: any, rowIndex: number) => {
         try {
@@ -536,7 +475,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private executeMasterDetailAfterSort(): void {
     const table = this.table as any;
     const tempExpandedRecordIndices = table.internalProps._tempExpandedRecordIndices;
-    
     if (tempExpandedRecordIndices && tempExpandedRecordIndices.size > 0) {
       const recordIndicesArray = Array.from(tempExpandedRecordIndices) as number[];
       recordIndicesArray.forEach(recordIndex => {
@@ -552,7 +490,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           }
         }
       });
-      
       // 清理临时变量
       delete table.internalProps._tempExpandedRecordIndices;
     }
