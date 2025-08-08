@@ -248,7 +248,7 @@ export interface TableEventHandlersEventArgumentMap {
     detaX: number;
     autoRowHeight: boolean;
     needUpdateRowHeight: boolean;
-    cellGroup: Group; // Group类型，但为了避免循环依赖使用any
+    cellGroup: Group;
     padding: [number, number, number, number];
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
