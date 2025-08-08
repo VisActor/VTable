@@ -2,17 +2,20 @@ const CONTAINER_ID = 'vTable';
 import { Calendar } from '../../src';
 
 export function createTable() {
-  const calendar = new Calendar(document.getElementById(CONTAINER_ID));
+  const calendar = new Calendar(document.getElementById(CONTAINER_ID) as HTMLElement, {
+    startDate: new Date('2025-07-01'),
+    endDate: new Date('2025-08-31')
+  });
 
-  // calendar.addCustomEvent({
-  //   id: 'Event B',
-  //   startDate: new Date(2024, 9, 21),
-  //   endDate: new Date(2024, 9, 23),
-  //   text: 'Event B',
-  //   type: 'bar',
-  //   bgColor: '#f99',
-  //   color: '#fff'
-  // });
+  calendar.addCustomEvent({
+    id: 'Event B',
+    startDate: new Date('2025-7-30'),
+    endDate: new Date('2025-8-9'),
+    text: 'Event B',
+    type: 'bar',
+    bgColor: '#f99',
+    color: '#fff'
+  });
 
   // calendar.addCustomEvent({
   //   id: 'Event C',

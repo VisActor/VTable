@@ -3,7 +3,13 @@ import type { ColumnIconOption, SvgIcon } from './icon';
 export type { HeaderData } from './list-table/layout-map/api';
 export type LayoutObjectId = number | string;
 import type { Rect } from '../tools/Rect';
-import type { BaseTableAPI, BaseTableConstructorOptions, ListTableProtected, PivotTableProtected } from './base-table';
+import type {
+  BaseTableAPI,
+  BaseTableConstructorOptions,
+  ListTableProtected,
+  PivotChartProtected,
+  PivotTableProtected
+} from './base-table';
 import type {
   Aggregation,
   AggregationType,
@@ -376,7 +382,6 @@ export interface ListTableAPI extends BaseTableAPI {
    */
   getBodyRowIndexByRecordIndex: (index: number | number[]) => number;
 
-  _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
   _hasHierarchyTreeHeader: () => boolean;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
@@ -548,6 +553,15 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
     columnResizeType?: 'column' | 'indicator' | 'all' | 'indicatorGroup';
     rowResizeType?: 'row' | 'indicator' | 'all' | 'indicatorGroup';
   } & BaseTableConstructorOptions['resize'];
+
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+  columnWidthConfigForRowHeader?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
 }
 export interface PivotTableAPI extends BaseTableAPI {
   internalProps: PivotTableProtected;
@@ -572,17 +586,34 @@ export interface PivotTableAPI extends BaseTableAPI {
    * @param values 多个单元格的数据数组
    */
   changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
-  _parseColumnWidthConfig: (columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]) => void;
-  _parseColumnWidthConfigForRowHeader: (
-    columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]
-  ) => void;
+
+  getCellAddressByHeaderPaths: (
+    dimensionPaths:
+      | {
+          colHeaderPaths: IDimensionInfo[];
+          rowHeaderPaths: IDimensionInfo[];
+          cellLocation: CellLocation;
+        }
+      | IDimensionInfo[]
+  ) => CellAddress;
 }
 export interface PivotChartAPI extends BaseTableAPI {
+  internalProps: PivotChartProtected;
   records?: any | Record<string, any[]>;
   options: PivotChartConstructorOptions;
   // internalProps: PivotTableProtected;
   isListTable: () => false;
   isPivotTable: () => true;
+
+  getCellAddressByHeaderPaths: (
+    dimensionPaths:
+      | {
+          colHeaderPaths: IDimensionInfo[];
+          rowHeaderPaths: IDimensionInfo[];
+          cellLocation: CellLocation;
+        }
+      | IDimensionInfo[]
+  ) => CellAddress;
 }
 export type SetPasteValueTestData = CellAddress & {
   table: BaseTableAPI;
