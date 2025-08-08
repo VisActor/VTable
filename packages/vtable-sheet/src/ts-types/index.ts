@@ -11,9 +11,9 @@ import type { IFilterState } from './filter';
 /** 筛选配置 */
 export interface IFilterConfig {
   /** 筛选图标配置 */
-  filterIcon?: ColumnDefine['headerIcon'];
+  filterIcon?: TYPES.ColumnIconOption;
   /** 筛选激活状态图标配置 */
-  filteringIcon?: ColumnDefine['headerIcon'];
+  filteringIcon?: TYPES.ColumnIconOption;
 }
 
 /** 扩展的列定义，添加筛选相关配置 */
