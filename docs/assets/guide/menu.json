@@ -894,6 +894,13 @@
           }
         },
         {
+          "path": "table-export",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
+        },
+        {
           "path": "table-series-number",
           "title": {
             "zh": "表格专用序号插件",

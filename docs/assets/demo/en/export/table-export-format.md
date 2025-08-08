@@ -15,14 +15,25 @@ By default, when exporting, the text or image inside the exported cell will be o
 ## Code demo
 
 ```javascript livedemo template=vtable
-// You need to introduce the plug-in package when using it `@visactor/vtable-export`
-// import {
-//   downloadCsv,
-//   exportVTableToCsv,
-//   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// When umd is introduced, the export tool will be mounted to VTable.export
+// You need to introduce the plug-in package when using it `@visactor/vtable-plugins`
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const tableExportPlugin = new VTablePlugins.TableExportPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+const tableExportPlugin = new VTablePlugins.TableExportPlugin({
+  exportExcelOptions: {
+    downloadFile: true,
+    fileName: 'fff-excel',
+    formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
+      if (cellType === 'checkbox') {
+        return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+      }
+    }
+  },
+  exportCsvOptions: {
+    downloadFile: true,
+    fileName: 'fff'
+  }
+});
 
 const records = [
   { productName: 'aaaa', price: 20, check: { text: 'unchecked', checked: false, disable: false } },
@@ -65,7 +76,8 @@ const columns = [
 ];
 const option = {
   records,
-  columns
+  columns,
+  plugins: [tableExportPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
@@ -95,22 +107,13 @@ function bindExport() {
 
   exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      window.tableInstance.exportToCsv();
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadExcel(
-        await exportVTableToExcel(window.tableInstance, {
-          formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
-            if (cellType === 'checkbox') {
-              return table.getCellCheckboxState(col, row) ? 'true' : 'false';
-            }
-          }
-        }),
-        'export'
-      );
+      window.tableInstance.exportToExcel();
     }
   });
 }

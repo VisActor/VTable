@@ -12,11 +12,10 @@ export type ExportVTableToCsvOptions = {
   formatExportOutput?: (cellInfo: CellInfo) => string | undefined;
   escape?: boolean;
   exportAllData?: boolean;
+  downloadFile?: boolean;
+  fileName?: string;
 };
 
-/**
- * @deprecated 请使用@visactor/vtable-plugins中的`TableExportPlugin` 插件
- */
 export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
   const exportAllData = !!option?.exportAllData;
   const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);

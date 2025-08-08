@@ -17,3 +17,4 @@ export * from './excel-import';
 export * from './table-series-number';
 export * from './context-menu';
 export * from './filter';
+export * from './table-export';

@@ -1,3 +1,7 @@
+# @visactor/vtable-export is no longer maintained
+
+Please use the `TableExportPlugin` plugin in `@visactor/vtable-plugins`. For tutorial documents, please refer to [table export](../plugin/table-export)
+
 # CSV export
 
 The `@visactor/vtable-export` package is a tool packaged for VTable table export. It supports export in both CSV and Excel formats.

@@ -79,5 +79,9 @@ export const menus = [
   {
     path: 'context-menu',
     name: 'context-menu'
+  },
+  {
+    path: 'table-export',
+    name: 'table-export'
   }
 ];
