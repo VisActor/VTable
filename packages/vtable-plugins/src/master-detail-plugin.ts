@@ -672,6 +672,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.setupScrollEventIsolation(subTable);
     // 设置统一选中状态管理
     this.setupUnifiedSelectionManagement(tableRowIndex, subTable);
+    // 设置子表canvas裁剪，实现真正的clip效果
+    this.setupSubTableCanvasClipping(subTable);
     // 初始渲染
     subTable.render();
   }
@@ -936,5 +938,64 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps.expandedRecordIndices?.clear();
     internalProps.subTableInstances?.clear();
     internalProps.originalRowHeights?.clear();
+  }
+
+  /**
+   * 设置子表canvas裁剪，实现真正的clip截断效果
+   * 让子表看起来被冻结区域"截断"
+   */
+  private setupSubTableCanvasClipping(subTable: VTable.ListTable): void {
+    // 获取子表的stage
+    if (!subTable.scenegraph?.stage) {
+      return;
+    }
+
+    const stage = subTable.scenegraph.stage;
+    
+    // 拦截stage的渲染方法，在渲染前应用裁剪
+    const originalRender = stage.render;
+    if (typeof originalRender === 'function') {
+      stage.render = () => {
+        const window = stage.window;
+        if (window && typeof window.getContext === 'function') {
+          const context = window.getContext();
+          if (context) {
+            // 保存canvas状态
+            context.save();
+            try {
+              // 计算裁剪区域 - 避开父表的冻结区域
+              const frozenRowsHeight = this.table.getFrozenRowsHeight();
+              const frozenColsWidth = this.table.getFrozenColsWidth();
+              const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
+              const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
+              // 获取父表的可视区域
+              const tableWidth = this.table.tableNoFrameWidth;
+              const tableHeight = this.table.tableNoFrameHeight;
+              // 设置裁剪区域：从冻结区域后开始，到右侧和底部冻结区域前结束
+              const clipX = frozenColsWidth;
+              const clipY = frozenRowsHeight;
+              const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+              const clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
+              // 确保裁剪区域有效
+              if (clipWidth > 0 && clipHeight > 0) {
+                // 应用裁剪 - 需要根据设备像素比转换坐标系统
+                const dpr = this.table.internalProps.pixelRatio || 1;
+                context.beginPath();
+                // 转换为VRender内部坐标系统（dpr倍数）
+                context.rect(clipX * dpr, clipY * dpr, clipWidth * dpr, clipHeight * dpr);
+                context.clip();
+              }
+              originalRender.call(stage);
+            } finally {
+              context.restore();
+            }
+          } else {
+            originalRender.call(stage);
+          }
+        } else {
+          originalRender.call(stage);
+        }
+      };
+    }
   }
 }
