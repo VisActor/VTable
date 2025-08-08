@@ -1,4 +1,4 @@
-import type { ExcelImportPlugin } from '@visactor/vtable-plugins';
+import type { ExcelImportPlugin, TableExportPlugin } from '@visactor/vtable-plugins';
 import type VTableSheet from '../components/vtable-sheet';
 import type { MainMenuItem } from '../ts-types/base';
 import { MenuKey } from '../ts-types/base';
@@ -163,11 +163,10 @@ export class MenuManager {
         break;
 
       case MenuKey.EXPORT_CURRENT_SHEET_CSV:
-        // (
-        //   this.vtableSheet
-        //     .getActiveSheet()
-        //     .tableInstance?.pluginManager.getPluginByName('ExcelExportPlugin') as ExcelExportPlugin
-        // )?.export('csv');
+        (this.vtableSheet.getActiveSheet().tableInstance as any)?.exportToCsv();
+        break;
+      case MenuKey.EXPORT_CURRENT_SHEET_XLSX:
+        (this.vtableSheet.getActiveSheet().tableInstance as any)?.exportToExcel();
         break;
       default:
         break;

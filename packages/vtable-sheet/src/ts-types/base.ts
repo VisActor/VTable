@@ -50,8 +50,11 @@ export interface IToolbarItem {
 
 export enum MenuKey {
   EXPORT = 'export',
+  /** 需要插件支持，请在plugins中配置 ExcelImportPlugin */
   IMPORT = 'import',
+  /** 需要插件支持，请在plugins中配置 TableExportPlugin */
   EXPORT_CURRENT_SHEET_CSV = 'export-current-sheet-csv',
+  /** 需要插件支持，请在plugins中配置 TableExportPlugin */
   EXPORT_CURRENT_SHEET_XLSX = 'export-current-sheet-xlsx'
 }
 export interface MainMenuItem {
