@@ -151,7 +151,9 @@ function bindExport() {
   window['tableInstance'].getContainer().appendChild(exportContainer);
 
   const exportCsvButton = document.createElement('button');
+  exportCsvButton.innerHTML = 'CSV-export';
   const exportExcelButton = document.createElement('button');
+  exportExcelButton.innerHTML = 'Excel-export';
   exportContainer.appendChild(exportCsvButton);
   exportContainer.appendChild(exportExcelButton);
 

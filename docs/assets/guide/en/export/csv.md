@@ -1,4 +1,6 @@
-# `@visactor/vtable-export` is no longer maintained. Please use the `TableExportPlugin` plugin in `@visactor/vtable-plugins`. For tutorial documents, please refer to [table export](../plugin/table-export)
+# @visactor/vtable-export is no longer maintained
+
+Please use the `TableExportPlugin` plugin in `@visactor/vtable-plugins`. For tutorial documents, please refer to [table export](../plugin/table-export)
 
 # CSV export
 
