@@ -394,6 +394,12 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
+  gantt.parsedOptions.zoom = {
+    enableMouseWheel: gantt.options.zoom?.enableMouseWheel ?? true,
+    minTimePerPixel: gantt.options.zoom?.minTimePerPixel ?? 200000,
+    maxTimePerPixel: gantt.options.zoom?.maxTimePerPixel ?? 3000000,
+    step: gantt.options.zoom?.step ?? 0.15
+  };
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
   const options = gantt.options;

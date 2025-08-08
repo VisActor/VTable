@@ -226,6 +226,17 @@ export interface GanttConstructorOptions {
   keyboardOptions?: IKeyboardOptions;
   markLineCreateOptions?: IMarkLineCreateOptions;
   plugins?: IGanttPlugin[];
+  // 添加缩放相关配置
+  zoom?: {
+    // 是否启用鼠标滚轮缩放
+    enableMouseWheel?: boolean;
+    // 最小时间每像素值（最大放大）
+    minTimePerPixel?: number;
+    // 最大时间每像素值（最大缩小）
+    maxTimePerPixel?: number;
+    // 缩放步长
+    step?: number;
+  };
 }
 /**
  * IBarLabelText
