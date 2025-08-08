@@ -685,6 +685,9 @@ export function createTable() {
         moduleOptions: {
           // exportData:false
         }
+      },
+      {
+        module: VTablePlugins.TableExportPlugin
       }
     ],
     mainMenu: {
