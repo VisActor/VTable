@@ -8,3 +8,10 @@ export function updateContainerChildrenX(containerGroup: Group, x: number): numb
   });
   return x;
 }
+export function updateContainerChildrenY(containerGroup: Group, y: number): number {
+  containerGroup.forEachChildrenSkipChild((row: Group, index) => {
+    row.setAttribute('y', y);
+    y += row.attribute.height;
+  });
+  return y;
+}

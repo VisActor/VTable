@@ -12,6 +12,10 @@ export const menus = [
     name: 'excel-import'
   },
   {
+    path: 'filter',
+    name: 'filter'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
@@ -56,6 +60,14 @@ export const menus = [
     name: 'rotate-table'
   },
   {
+    path: 'table-series-number',
+    name: 'table-series-number'
+  },
+  {
+    path: 'table-series-number',
+    name: 'pivot-table-series-number'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {
@@ -63,6 +75,10 @@ export const menus = [
         name: 'pivot-plugin'
       }
     ]
+  },
+  {
+    path: 'context-menu',
+    name: 'context-menu'
   },
   {
     path: 'table-export',

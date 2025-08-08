@@ -31,7 +31,7 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
       if (typeof Promise !== 'undefined' && copyCellValue instanceof Promise) {
         // not support async
       } else {
-        const strCellValue = `${copyCellValue}`;
+        const strCellValue = `${copyCellValue === undefined ? '' : copyCellValue}`;
         if (/^\[object .*\]$/.exec(strCellValue)) {
           // ignore object
         } else {
