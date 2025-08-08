@@ -651,30 +651,6 @@ export function updateCellContentWidth(
   textBaseline: CanvasTextBaseline,
   scene: Scenegraph
 ): boolean {
-  // 在masterDetail模式下，使用原始高度而不是逻辑行高
-  let effectiveCellHeight = cellHeight;
-  
-  if (
-    (scene.table.options as { masterDetail?: boolean }).masterDetail &&
-    cellGroup.col !== undefined &&
-    cellGroup.row !== undefined
-  ) {
-    try {
-      const recordIndex = scene.table.getRecordShowIndexByCell(cellGroup.col, cellGroup.row);
-      if (recordIndex !== undefined && 'getOriginalRowHeight' in scene.table) {
-        const originalHeight = (
-          scene.table as unknown as { getOriginalRowHeight: (index: number) => number }
-        ).getOriginalRowHeight(recordIndex);
-        if (originalHeight > 0) {
-          effectiveCellHeight = originalHeight; // 使用原始视觉高度
-        }
-      }
-    } catch (error) {
-      // 如果获取失败，继续使用逻辑高度
-      console.warn('Failed to get original row height in masterDetail mode (updateCellContentWidth):', error);
-    }
-  }
-
   if (isValidNumber(cellGroup.contentWidth)) {
     detaX = distWidth - (cellGroup.contentWidth ?? cellGroup.attribute.width);
   }
@@ -758,10 +734,24 @@ export function updateCellContentWidth(
 
     if (isCellHeightUpdate(scene, cellGroup, Math.round(newHeight + padding[0] + padding[2]), oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
+      // 触发事件钩子 - 需要更新行高的情况
+      scene.table.fireListeners('after_update_cell_content_width', {
+        col: cellGroup.col,
+        row: cellGroup.row,
+        distWidth,
+        cellHeight,
+        detaX,
+        autoRowHeight,
+        needUpdateRowHeight: true,
+        cellGroup,
+        padding,
+        textAlign,
+        textBaseline
+      });
       return true;
     }
 
-    newHeight = (cellGroup.contentHeight ?? effectiveCellHeight) - (padding[0] + padding[2]);
+    newHeight = (cellGroup.contentHeight ?? cellHeight) - (padding[0] + padding[2]);
 
     cellGroup.forEachChildren((child: any) => {
       if (child.type === 'rect' || child.type === 'chart' || child.name === CUSTOM_CONTAINER_NAME) {
@@ -785,14 +775,30 @@ export function updateCellContentWidth(
       if (child.name === 'mark') {
         child.setAttribute('y', 0);
       } else if (textBaseline === 'middle') {
-        child.setAttribute('y', (effectiveCellHeight - padding[2] + padding[0] - child.AABBBounds.height()) / 2);
+        child.setAttribute('y', (cellHeight - padding[2] + padding[0] - child.AABBBounds.height()) / 2);
       } else if (textBaseline === 'bottom') {
-        child.setAttribute('y', effectiveCellHeight - child.AABBBounds.height() - padding[2]);
+        child.setAttribute('y', cellHeight - child.AABBBounds.height() - padding[2]);
       } else {
         child.setAttribute('y', padding[0]);
       }
     });
   }
+  
+  // 触发事件钩子 - 正常完成的情况
+  scene.table.fireListeners('after_update_cell_content_width', {
+    col: cellGroup.col,
+    row: cellGroup.row,
+    distWidth,
+    cellHeight,
+    detaX,
+    autoRowHeight,
+    needUpdateRowHeight: false,
+    cellGroup,
+    padding,
+    textAlign,
+    textBaseline
+  });
+  
   return false;
 }
 
@@ -809,31 +815,7 @@ export function updateCellContentHeight(
   textBaseline: CanvasTextBaseline,
   table: BaseTableAPI
 ) {
-  // 在masterDetail模式下，使用原始高度而不是逻辑行高
-  let effectiveHeight = distHeight;
-  
-  if (
-    (table.options as { masterDetail?: boolean }).masterDetail &&
-    cellGroup.col !== undefined &&
-    cellGroup.row !== undefined
-  ) {
-    try {
-      const recordIndex = table.getRecordShowIndexByCell(cellGroup.col, cellGroup.row);
-      if (recordIndex !== undefined && 'getOriginalRowHeight' in table) {
-        const originalHeight = (
-          table as unknown as { getOriginalRowHeight: (index: number) => number }
-        ).getOriginalRowHeight(recordIndex);
-        if (originalHeight > 0) {
-          effectiveHeight = originalHeight; // 使用原始视觉高度
-        }
-      }
-    } catch (error) {
-      // 如果获取失败，继续使用逻辑高度
-      console.warn('Failed to get original row height in masterDetail mode:', error);
-    }
-  }
-
-  const newHeight = effectiveHeight - Math.floor(padding[0] + padding[2]);
+  const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
 
   const textMark = cellGroup.getChildByName('text');
 

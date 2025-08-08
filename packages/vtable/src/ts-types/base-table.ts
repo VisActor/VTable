@@ -1047,12 +1047,6 @@ export interface ListTableProtected extends IBaseTableProtected {
     key: string;
     width: number;
   }[];
-  /** 存储展开的记录索引 */
-  expandedRecordIndices?: Set<number>;
-  /** 子表实例映射 */
-  subTableInstances?: Map<number, any>;
-  /** 存储每行展开前的原始高度 */
-  originalRowHeights?: Map<number, number>;
 }
 
 export interface PivotTableProtected extends IBaseTableProtected {

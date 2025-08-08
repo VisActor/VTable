@@ -240,6 +240,19 @@ export interface TableEventHandlersEventArgumentMap {
   before_set_size: { width: number; height: number };
   after_render: null;
   initialized: null;
+  after_update_cell_content_width: {
+    col: number;
+    row: number;
+    distWidth: number;
+    cellHeight: number;
+    detaX: number;
+    autoRowHeight: boolean;
+    needUpdateRowHeight: boolean;
+    cellGroup: any; // Group类型，但为了避免循环依赖使用any
+    padding: [number, number, number, number];
+    textAlign: CanvasTextAlign;
+    textBaseline: CanvasTextBaseline;
+  };
 
   change_cell_value: {
     col: number;
@@ -349,6 +362,7 @@ export interface TableEventHandlersReturnMap {
   before_set_size: void;
   after_render: void;
   initialized: void;
+  after_update_cell_content_width: void;
 
   change_cell_value: void;
   mousedown_fill_handle: void;

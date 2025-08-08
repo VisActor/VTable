@@ -59,21 +59,6 @@ export interface FieldAssessor {
   set: FieldSetter;
 }
 
-/** 子表配置接口 */
-export interface DetailGridOptions {
-  /** 子表类型 */
-  type: 'ListTable' | 'PivotTable';
-  /** 子表列定义 */
-  columnDefs: ColumnsDefine;
-  /** 子表样式配置 */
-  style?: {
-    margin?: number;
-    height?: number;
-  };
-  /** 子表其他配置项 */
-  [key: string]: unknown;
-}
-
 export type FieldDef = string | number | string[];
 export type FieldKeyDef = string | number;
 export type FieldFormat = FieldGetter | FieldAssessor;
@@ -305,15 +290,6 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   enableTreeStickCell?: boolean;
 
   columnWidthConfig?: { key: string; width: number }[];
-  
-  /** 启用主从表格功能 */
-  masterDetail?: boolean;
-  /** 初始展开的行索引数组 */
-  expandedRows?: number[];
-  /** 子表配置选项（静态配置） */
-  detailGridOptions?: DetailGridOptions;
-  /** 根据数据动态获取子表配置的函数 */
-  getDetailGridOptions?: (params: { data: any; tableRowIndex: number }) => DetailGridOptions;
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
@@ -380,13 +356,6 @@ export interface ListTableAPI extends BaseTableAPI {
 
   _parseColumnWidthConfig: (columnWidthConfig: { key: string; width: number }[]) => void;
   _hasHierarchyTreeHeader: () => boolean;
-  // 主从表格功能方法
-  /** 展开指定行的详情 */
-  expandRow?: (rowIndex: number, height?: number) => void;
-  /** 收起指定行的详情 */
-  collapseRow?: (rowIndex: number) => void;
-  /** 切换行的展开状态 */
-  toggleRowExpand?: (rowIndex: number) => void;
 }
 export interface PivotTableConstructorOptions extends BaseTableConstructorOptions {
   /**

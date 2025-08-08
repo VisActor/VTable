@@ -48,6 +48,10 @@ export const menus = [
     name: 'rotate-table'
   },
   {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {

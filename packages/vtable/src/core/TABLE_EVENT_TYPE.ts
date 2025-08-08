@@ -169,6 +169,8 @@ export interface TableEvents {
   AFTER_RENDER: 'after_render';
   /** 表格实例初始化完成 */
   INITIALIZED: 'initialized';
+  /** 单元格内容宽度更新后触发 */
+  AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width';
   //#endregion
 
   /** 编辑单元格 */
@@ -276,6 +278,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   BEFORE_INIT: 'before_init',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
+  AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width',
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',

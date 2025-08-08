@@ -3,7 +3,6 @@ import type {
   CellAddress,
   CellRange,
   ColumnsDefine,
-  DetailGridOptions,
   DropDownMenuEventInfo,
   FieldData,
   FieldDef,
@@ -14,11 +13,9 @@ import type {
   ListTableAPI,
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,
-  SortOrder,
   SortState,
-  TableEventHandlersEventArgumentMap
 } from './ts-types';
-import { HierarchyState, IconFuncTypeEnum } from './ts-types';
+import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
 import { isArray, isValid } from '@visactor/vutils';
 import {
@@ -34,7 +31,6 @@ import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import * as editors from './edit/editors';
 import { EditManager } from './edit/edit-manager';
-import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
@@ -59,7 +55,6 @@ import {
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
-import { updateRowHeightForExpand, updateRowHeight } from './scenegraph/layout/update-height';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -171,10 +166,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.enableTreeStickCell) {
       const ListTreeStickCellPlugin = Factory.getComponent('listTreeStickCellPlugin') as IListTreeStickCellPlugin;
       this.listTreeStickCellPlugin = new ListTreeStickCellPlugin(this);
-    }
-    // 主从表格功能初始化
-    if (options.masterDetail) {
-      this.initMasterDetailFeatures(options);
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
@@ -931,23 +922,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
 
-    const columnDefine = this.getBodyColumnDefine(col, row);
-    const record = this.getCellRawRecord(col, row);
-    const hasChildren = record && record.children && Array.isArray(record.children) && record.children.length > 0;
-
-    if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master && hasChildren) {
-      const newState = hierarchyState === HierarchyState.expand ? HierarchyState.collapse : HierarchyState.expand;
-      record.hierarchyState = newState;
-      this.scenegraph.updateHierarchyIcon(col, row);
-      this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col,
-        row,
-        hierarchyState: newState,
-        originData: record
-      });
-      return;
-    }
-
     // 处理普通树形展开收起
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row, recalculateColWidths);
@@ -959,6 +933,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else if (hierarchyState === HierarchyState.collapse) {
       const originRecord = this.getCellOriginRecord(col, row);
       if (Array.isArray(originRecord.children)) {
+        //children 是数组 表示已经有子树节点信息
         this._refreshHierarchyState(col, row, recalculateColWidths);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -1595,458 +1570,5 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
     }
-  }
-
-  // ==================== 这里开始就是主从表格的功能了 ====================
-  /**
-   * 初始化主从表格功能
-   */
-  private initMasterDetailFeatures(options: ListTableConstructorOptions): void {
-    const internalProps = this.internalProps;
-    internalProps.expandedRecordIndices = new Set(options.expandedRows || []);
-    internalProps.subTableInstances = new Map();
-    internalProps.originalRowHeights = new Map();
-    this.on(TABLE_EVENT_TYPE.ICON_CLICK, this.handleIconClick.bind(this));
-    this.on(TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
-    if (options.hierarchyTextStartAlignment === undefined) {
-      options.hierarchyTextStartAlignment = true;
-    }
-  }
-
-  private handleIconClick(iconInfo: { col: number; row: number; funcType: IconFuncTypeEnum }): void {
-    if (!this.options.masterDetail) {
-      return;
-    }
-    const { row, funcType } = iconInfo;
-    if (funcType === IconFuncTypeEnum.expand || funcType === IconFuncTypeEnum.collapse) {
-      this.toggleRowExpand(row);
-    }
-  }
-
-  expandRow(rowIndex: number): void {
-    if (!this.options.masterDetail) {
-      return;
-    }
-    const tableRowIndex = rowIndex - this.columnHeaderLevelCount;
-    if (this.internalProps._heightResizedRowMap.has(rowIndex)) {
-      return;
-    }
-
-    const realRecordIndex = this.getRecordIndexByCell(0, rowIndex);
-    const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-    this.internalProps.expandedRecordIndices.add(recordIndex);
-    const originalHeight = this.getRowHeight(rowIndex);
-    this.internalProps.originalRowHeights?.set(tableRowIndex, originalHeight);
-    const record = this.getRecordByRowIndex(tableRowIndex);
-    const detailConfig = this.getDetailConfigForRecord(record, tableRowIndex);
-    const height = detailConfig?.style?.height || 200;
-    if (record) {
-      record.hierarchyState = HierarchyState.expand;
-    }
-
-    const deltaHeight = height - originalHeight;
-    updateRowHeightForExpand(this.scenegraph, rowIndex, deltaHeight);
-    this.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
-    this.internalProps._heightResizedRowMap.add(rowIndex);
-
-    this.updateIconsForRow(rowIndex);
-    this.renderSubTable(tableRowIndex);
-    this.recalculateAllSubTablePositions();
-  }
-
-  collapseRow(rowIndex: number): void {
-    if (!this.options.masterDetail) {
-      return;
-    }
-    const tableRowIndex = rowIndex - this.columnHeaderLevelCount;
-    if (!this.internalProps._heightResizedRowMap.has(rowIndex)) {
-      return;
-    }
-
-    const realRecordIndex = this.getRecordIndexByCell(0, rowIndex);
-    const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-    this.removeSubTable(tableRowIndex);
-    this.internalProps.expandedRecordIndices?.delete(recordIndex);
-    const record = this.getRecordByRowIndex(tableRowIndex);
-    if (record) {
-      record.hierarchyState = HierarchyState.collapse;
-    }
-
-    const currentHeight = this.getRowHeight(rowIndex);
-    const originalHeight = this.getOriginalRowHeight(tableRowIndex);
-    const deltaHeight = currentHeight - originalHeight;
-    updateRowHeightForExpand(this.scenegraph, rowIndex, -deltaHeight);
-    this.internalProps._heightResizedRowMap.delete(rowIndex);
-    this.scenegraph.updateContainerHeight(rowIndex, -deltaHeight);
-    this.internalProps.originalRowHeights?.delete(tableRowIndex);
-
-    this.updateIconsForRow(rowIndex);
-    this.recalculateAllSubTablePositions();
-  }
-
-  toggleRowExpand(rowIndex: number): void {
-    if (!this.options.masterDetail) {
-      return;
-    }
-    if (this.internalProps._heightResizedRowMap.has(rowIndex)) {
-      this.collapseRow(rowIndex);
-    } else {
-      this.expandRow(rowIndex);
-    }
-  }
-
-  private updateIconsForRow(rowIndex: number): void {
-    this.scenegraph.updateHierarchyIcon(0, rowIndex);
-    for (let col = 0; col < this.colCount; col++) {
-      const columnDefine = this.getBodyColumnDefine(col, rowIndex);
-      if (columnDefine && (columnDefine as IBasicColumnBodyDefine).master) {
-        this.scenegraph.updateHierarchyIcon(col, rowIndex);
-      }
-    }
-    this.scenegraph.updateNextFrame();
-  }
-
-  private getDetailConfigForRecord(record: unknown, tableRowIndex: number): DetailGridOptions | null {
-    if (!this.options.masterDetail) {
-      return null;
-    }
-    return (
-      this.options.getDetailGridOptions?.({ data: record, tableRowIndex }) || this.options.detailGridOptions || null
-    );
-  }
-
-  private getRecordByRowIndex(tableRowIndex: number): Record<string, unknown> {
-    return this.dataSource.getRaw(tableRowIndex) as Record<string, unknown>;
-  }
-
-  private getOriginalRowHeight(tableRowIndex: number): number {
-    return this.internalProps.originalRowHeights?.get(tableRowIndex) || 0;
-  }
-
-  /**
-   * 渲染子表
-   */
-  private renderSubTable(tableRowIndex: number): void {
-    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
-      return;
-    }
-    const record = this.getRecordByRowIndex(tableRowIndex);
-    if (!record || !record.children) {
-      return;
-    }
-    const detailConfig = this.getDetailConfigForRecord(record, tableRowIndex);
-    const childViewBox = this.calculateSubTableViewBox(tableRowIndex, detailConfig);
-    if (!childViewBox) {
-      return;
-    }
-    const childrenData = Array.isArray(record.children) ? record.children : [];
-    const containerWidth = childViewBox.x2 - childViewBox.x1;
-    const containerHeight = childViewBox.y2 - childViewBox.y1;
-    const subTableOptions = {
-      viewBox: childViewBox,
-      canvas: this.canvas,
-      records: childrenData,
-      columns: detailConfig?.columnDefs || [],
-      widthMode: 'adaptive' as const,
-      showHeader: true,
-      canvasWidth: containerWidth,
-      canvasHeight: containerHeight,
-      // 继承父表的重要属性
-      theme: this.options.theme,
-      ...(detailConfig || {})
-    };
-    const subTable = new ListTable(this.container, subTableOptions);
-    this.internalProps.subTableInstances.set(tableRowIndex, subTable);
-
-    // 确保子表内容在父表重绘后保持在上层
-    const afterRenderHandler = () => {
-      if (this.internalProps.subTableInstances && this.internalProps.subTableInstances.has(tableRowIndex)) {
-        subTable.render();
-      }
-    };
-    this.on('after_render', afterRenderHandler);
-    (subTable as unknown as { __afterRenderHandler: () => void }).__afterRenderHandler = afterRenderHandler;
-
-    // 设置滚动事件隔离
-    this.setupScrollEventIsolation(subTable);
-    // 设置统一选中状态管理
-    this.setupUnifiedSelectionManagement(tableRowIndex, subTable);
-    // 初始渲染
-    subTable.render();
-  }
-
-  /**
-   * 计算子表的viewBox区域
-   */
-  private calculateSubTableViewBox(
-    tableRowIndex: number,
-    detailConfig?: DetailGridOptions | null
-  ): { x1: number; y1: number; x2: number; y2: number } | null {
-    const rowIndex = tableRowIndex + this.columnHeaderLevelCount;
-    const detailRowRect = this.getCellRangeRelativeRect({ col: 0, row: rowIndex });
-    if (!detailRowRect) {
-      return null;
-    }
-
-    const originalHeight = this.internalProps.originalRowHeights?.get(tableRowIndex) || 0;
-    const firstColRect = this.getCellRangeRelativeRect({ col: 0, row: rowIndex });
-    const lastColRect = this.getCellRangeRelativeRect({ col: this.colCount - 1, row: rowIndex });
-    if (!firstColRect || !lastColRect) {
-      return null;
-    }
-
-    const margin = detailConfig?.style?.margin || 10;
-    const configHeight = detailConfig?.style?.height || 300;
-    const viewBox = {
-      x1: firstColRect.left + margin,
-      y1: detailRowRect.top + originalHeight + margin,
-      x2: lastColRect.right - margin,
-      y2: detailRowRect.top - margin + configHeight
-    };
-    // 确保viewBox有效
-    if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
-      return null;
-    }
-    return viewBox;
-  }
-
-  /**
-   * 设置滚动事件隔离
-   */
-  private setupScrollEventIsolation(subTable: ListTable): void {
-    // 判断鼠标是否在子表区域内
-    const isMouseInChildTableArea = (event: MouseEvent) => {
-      const rect = this.canvas.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const currentViewBox = subTable.options.viewBox;
-      if (!currentViewBox) {
-        return false;
-      }
-      const isInArea =
-        x >= currentViewBox.x1 && x <= currentViewBox.x2 && y >= currentViewBox.y1 && y <= currentViewBox.y2;
-      return isInArea;
-    };
-
-    // 判断是否滚动到底部或者顶部
-    const isSubTableAtBottom = () => {
-      const totalContentHeight = subTable.getAllRowsHeight();
-      const viewportHeight = subTable.scenegraph.height;
-      const scrollTop = subTable.scrollTop;
-      if (totalContentHeight <= viewportHeight) {
-        return true;
-      }
-      const maxScrollTop = totalContentHeight - viewportHeight;
-      const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 0;
-      return isAtBottom;
-    };
-
-    const handleParentScroll = (parentArgs: { event?: MouseEvent }) => {
-      if (parentArgs.event && isMouseInChildTableArea(parentArgs.event)) {
-        return false;
-      }
-      return true;
-    };
-
-    this.on('can_scroll', handleParentScroll);
-
-    const handleSubTableWheel = (e: WheelEvent) => {
-      if (!isMouseInChildTableArea(e)) {
-        return;
-      }
-
-      const deltaY = e.deltaY;
-      const isScrollingDown = deltaY > 0;
-      const isScrollingUp = deltaY < 0;
-
-      if (isScrollingDown && isSubTableAtBottom()) {
-        e.preventDefault();
-        const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
-        const newParentScrollTop = currentParentScrollTop + deltaY;
-        const maxParentScrollTop = this.getAllRowsHeight() - this.scenegraph.height;
-        if (newParentScrollTop <= maxParentScrollTop) {
-          this.stateManager.setScrollTop(newParentScrollTop);
-        }
-        return;
-      }
-
-      if (isScrollingUp && subTable.scrollTop <= 0) {
-        e.preventDefault();
-        const currentParentScrollTop = this.stateManager.scroll.verticalBarPos;
-        const newParentScrollTop = currentParentScrollTop + deltaY;
-        if (newParentScrollTop >= 0) {
-          this.stateManager.setScrollTop(newParentScrollTop);
-        }
-        return;
-      }
-    };
-
-    subTable.canvas.addEventListener('wheel', handleSubTableWheel, { passive: false });
-
-    const extendedSubTable = subTable as ListTable & {
-      __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
-      __wheelHandler?: (e: WheelEvent) => void;
-    };
-    extendedSubTable.__scrollHandler = handleParentScroll;
-    extendedSubTable.__wheelHandler = handleSubTableWheel;
-  }
-  /**
-   * 移除子表
-   */
-  private removeSubTable(tableRowIndex: number): void {
-    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
-      return;
-    }
-    const subTable = this.internalProps.subTableInstances.get(tableRowIndex);
-    if (subTable) {
-      const afterRenderHandler = (subTable as unknown as { __afterRenderHandler?: () => void }).__afterRenderHandler;
-      if (afterRenderHandler) {
-        this.off('after_render', afterRenderHandler);
-      }
-      const selectionHandler = (subTable as unknown as { __selectionHandler?: () => void }).__selectionHandler;
-      if (selectionHandler) {
-        subTable.off('click_cell', selectionHandler);
-      }
-      const extendedSubTable = subTable as ListTable & {
-        __scrollHandler?: (args: { event?: MouseEvent }) => boolean;
-        __wheelHandler?: (e: WheelEvent) => void;
-      };
-      const scrollHandler = extendedSubTable.__scrollHandler;
-      if (scrollHandler) {
-        this.off('can_scroll', scrollHandler);
-      }
-      const wheelHandler = extendedSubTable.__wheelHandler;
-      if (wheelHandler) {
-        subTable.canvas.removeEventListener('wheel', wheelHandler);
-      }
-      if (typeof subTable.release === 'function') {
-        subTable.release();
-      }
-      this.internalProps.subTableInstances.delete(tableRowIndex);
-    }
-  }
-  /**
-   * 设置统一选中状态管理
-   * 确保主从表只有一个可见的选中状态
-   */
-  private setupUnifiedSelectionManagement(tableRowIndex: number, subTable: ListTable): void {
-    this.on('click_cell', () => {
-      this.clearAllSubTableVisibleSelections();
-    });
-    subTable.on('click_cell', () => {
-      this.clearAllSelectionsExcept(tableRowIndex);
-    });
-    (subTable as unknown as { __selectionHandler: () => void }).__selectionHandler = () => {
-      this.clearAllSelectionsExcept(tableRowIndex);
-    };
-  }
-
-  /**
-   * 清除所有子表的可见选中状态
-   */
-  private clearAllSubTableVisibleSelections(): void {
-    if (!this.internalProps.subTableInstances) {
-      return;
-    }
-
-    this.internalProps.subTableInstances.forEach(subTable => {
-      if (subTable && typeof subTable.clearSelected === 'function') {
-        // 清除可见的选中状态
-        subTable.clearSelected();
-      }
-    });
-  }
-
-  /**
-   * 清除除指定子表外的所有选中状态（包括父表）
-   */
-  private clearAllSelectionsExcept(exceptRecordIndex: number): void {
-    // 清除父表选中状态
-    if (typeof this.clearSelected === 'function') {
-      this.clearSelected();
-    }
-
-    // 清除其他子表的选中状态
-    if (this.internalProps.subTableInstances) {
-      this.internalProps.subTableInstances.forEach((subTable, tableRowIndex) => {
-        if (tableRowIndex !== exceptRecordIndex && subTable && typeof subTable.clearSelected === 'function') {
-          subTable.clearSelected();
-        }
-      });
-    }
-  }
-
-  /**
-   * 滚动的时候更新所有子表位置
-   */
-  private updateSubTablePositionsForScroll(): void {
-    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
-      return;
-    }
-    this.internalProps.subTableInstances.forEach((subTable, tableRowIndex) => {
-      const record = this.getRecordByRowIndex(tableRowIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord(record, tableRowIndex) : null;
-      const newViewBox = this.calculateSubTableViewBox(tableRowIndex, detailConfig);
-      if (newViewBox) {
-        subTable.options.viewBox = newViewBox;
-        if (subTable.scenegraph?.stage) {
-          (
-            subTable.scenegraph.stage as unknown as { setViewBox: (viewBox: unknown, flag: boolean) => void }
-          ).setViewBox(newViewBox, false);
-        }
-        subTable.render();
-      }
-    });
-  }
-
-  /**
-   * 重新计算所有子表位置
-   */
-  private recalculateAllSubTablePositions(): void {
-    if (!this.options.masterDetail || !this.internalProps.subTableInstances) {
-      return;
-    }
-    const recordsToRecreate: number[] = [];
-    this.internalProps.subTableInstances.forEach((subTable, tableRowIndex) => {
-      recordsToRecreate.push(tableRowIndex);
-    });
-
-    recordsToRecreate.forEach(tableRowIndex => {
-      this.removeSubTable(tableRowIndex);
-      this.renderSubTable(tableRowIndex);
-    });
-  }
-
-  /**
-   * 清理主从表格功能
-   */
-  private cleanupMasterDetailFeatures(): void {
-    if (!this.options.masterDetail) {
-      return;
-    }
-    this.internalProps.subTableInstances?.forEach(subTable => {
-      if (typeof subTable.release === 'function') {
-        subTable.release();
-      }
-    });
-    this.internalProps.expandedRecordIndices?.clear();
-    this.internalProps.subTableInstances?.clear();
-    this.internalProps.originalRowHeights?.clear();
-  }
-
-  /**
-   * 重写父类的 resize 方法，在表格尺寸变化时重新计算子表位置和宽度
-   */
-  resize(): void {
-    super.resize();
-    if (this.options.masterDetail) {
-      this.recalculateAllSubTablePositions();
-    }
-  }
-
-  release() {
-    this.cleanupMasterDetailFeatures();
-    this.editorManager.release();
-    super.release();
   }
 }

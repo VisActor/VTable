@@ -79,9 +79,6 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
   table.internalProps.sortState = sortState; // 目前不支持多级排序 所以这里 直接赋值为单个sortState TODO优化（如果支持多级排序的话）
   table.stateManager.setSortState(sortState);
   if (headerC?.sort) {
-    if ((table as ListTableAPI).options?.masterDetail) {
-      executeMasterDetailBeforeSort(table as ListTableAPI);
-    }
     executeSort(sortState, table, headerC);
   }
 
@@ -91,9 +88,6 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
 
   table.scenegraph.sortCell();
 
-  if (headerC?.sort && (table as ListTableAPI).options?.masterDetail) {
-    executeMasterDetailAfterSort(table as ListTableAPI);
-  }
   // 排序后，清除选中效果
   const isHasSelected = !!table.stateManager.select.ranges?.length;
   table.stateManager.updateSelectPos(-1, -1);
@@ -116,47 +110,4 @@ function executeSort(newState: SortState | SortState[], table: BaseTableAPI, hea
 
 function isTarget(col: number, row: number, range1Col: number, range1Row: number, table: BaseTableAPI): boolean {
   return table._getLayoutCellId(col, row) === table._getLayoutCellId(range1Col, range1Row);
-}
-
-/**
- * masterDetail模式下排序前的操作
- */
-function executeMasterDetailBeforeSort(table: ListTableAPI): void {
-  if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.size > 0) {
-    (table.internalProps as any)._tempExpandedRecordIndices = new Set(table.internalProps.expandedRecordIndices);
-  }
-  if (table.internalProps._heightResizedRowMap) {
-    table.internalProps._heightResizedRowMap.forEach(rowIndex => {
-      try {
-        (table as any).collapseRow(rowIndex);
-      } catch (e) {
-        // 收起失败
-      }
-    });
-  }
-}
-
-/**
- * masterDetail模式下排序后的操作
- */
-function executeMasterDetailAfterSort(table: ListTableAPI): void {
-  const tempExpandedRecordIndices = (table.internalProps as any)._tempExpandedRecordIndices;
-  if (tempExpandedRecordIndices && tempExpandedRecordIndices.size > 0) {
-    const recordIndicesArray = Array.from(tempExpandedRecordIndices);
-    recordIndicesArray.forEach(recordIndex => {
-      const currentPagerData = (table.dataSource as any)._currentPagerIndexedData;
-      if (currentPagerData) {
-        const rowIndex = currentPagerData.indexOf(recordIndex);
-        if (rowIndex >= 0) {
-          try {
-            (table as any).expandRow(rowIndex + table.columnHeaderLevelCount);
-          } catch (e) {
-            // 展开失败
-          }
-        }
-      }
-    });
-    // 清理临时变量
-    delete (table.internalProps as any)._tempExpandedRecordIndices;
-  }
 }

@@ -25,6 +25,13 @@ export function bindIconClickEvent(table: BaseTableAPI) {
         stateManager.updateSelectPos(-1, -1);
         stateManager.endSelectCells(true, isHasSelected);
         table.toggleHierarchyState(col, row);
+      } else {
+        // 主从表系统：尝试调用插件的方法或表格实例的方法
+        if (typeof (table as any).toggleRowExpand === 'function') {
+          (table as any).toggleRowExpand(row);
+        } else if (typeof (table as any).handleIconClick === 'function') {
+          (table as any).handleIconClick({ col, row, funcType });
+        }
       }
     }
   });

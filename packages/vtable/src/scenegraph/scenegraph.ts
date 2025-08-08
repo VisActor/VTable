@@ -1360,24 +1360,15 @@ export class Scenegraph {
       lastBodyCell &&
       this.table.tableNoFrameHeight < this.table.getAllRowsHeight() &&
       lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
-      lastBodyCell.attribute.y +
-        ((this.table.options as { masterDetail?: boolean }).masterDetail
-          ? this.table.getRowHeight(lastBodyCell.row)
-          : lastBodyCell.attribute.height) +
-        y <
+      lastBodyCell.attribute.y + this.table.getRowHeight(lastBodyCell.row) + y <
         this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
     ) {
-      // 在masterDetail模式下，使用逻辑行高而不是cellGroup的视觉高度
-      const effectiveHeight = (this.table.options as { masterDetail?: boolean }).masterDetail
-        ? this.table.getRowHeight(lastBodyCell.row)
-        : lastBodyCell.attribute.height;
-
       y =
         this.table.tableNoFrameHeight -
         this.table.getFrozenRowsHeight() -
         this.table.getBottomFrozenRowsHeight() -
         lastBodyCell.attribute.y -
-        effectiveHeight;
+        this.table.getRowHeight(lastBodyCell.row);
     }
     if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
       return;
