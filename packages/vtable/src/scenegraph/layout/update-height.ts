@@ -72,37 +72,6 @@ export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, s
   }
 }
 
-export function updateRowHeightForExpand(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
-  // 更新table行高存储
-  if (!skipTableHeightMap) {
-    scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
-  }
-  let rowStart = 0;
-  let rowEnd = 0;
-  // 更新header 高度
-  if (row < scene.table.frozenRowCount) {
-    rowStart = row + 1;
-    rowEnd = scene.table.frozenRowCount - 1;
-  } else if (row >= scene.table.rowCount - scene.table.bottomFrozenRowCount) {
-    rowStart = row + 1;
-    rowEnd = scene.table.rowCount - 1;
-  } else {
-    rowStart = row + 1;
-    // rowEnd = scene.table.rowCount - 1;
-    rowEnd = Math.min(scene.proxy.rowEnd, scene.table.rowCount - scene.table.bottomFrozenRowCount - 1); //- scene.table.bottomFrozenRowCount;
-  }
-
-  // 更新以下行位置
-  for (let colIndex = 0; colIndex < scene.table.colCount; colIndex++) {
-    for (let rowIndex = rowStart; rowIndex <= rowEnd; rowIndex++) {
-      const cellGroup = scene.highPerformanceGetCell(colIndex, rowIndex);
-      if (cellGroup.role === 'cell') {
-        cellGroup.setAttribute('y', cellGroup.attribute.y + detaY);
-      }
-    }
-  }
-}
-
 /**
  * @description: 更新单个单元格高度
  * @return {*}

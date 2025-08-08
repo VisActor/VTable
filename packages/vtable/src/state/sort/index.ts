@@ -87,7 +87,6 @@ export function dealSort(col: number, row: number, table: ListTableAPI, event: E
   table.internalProps.layoutMap.clearCellRangeMap();
 
   table.scenegraph.sortCell();
-
   // 排序后，清除选中效果
   const isHasSelected = !!table.stateManager.select.ranges?.length;
   table.stateManager.updateSelectPos(-1, -1);

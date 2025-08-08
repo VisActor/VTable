@@ -905,11 +905,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return;
       }
       const children = columnDefine.columns;
+      // 有子节点才需要自动展开和折叠
       if (!!Array.isArray(children) && children.length > 0) {
-        const newHierarchyState =
+        const hierarchyState =
           rawHierarchyState === HierarchyState.expand ? HierarchyState.collapse : HierarchyState.expand;
-        headerTreeNode.hierarchyState = newHierarchyState;
-        headerTreeNode.define.hierarchyState = newHierarchyState;
+        headerTreeNode.hierarchyState = hierarchyState;
+        headerTreeNode.define.hierarchyState = hierarchyState;
+        // 全量更新
         this.updateColumns(this.internalProps.columns);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
@@ -922,25 +924,24 @@ export class ListTable extends BaseTable implements ListTableAPI {
       return;
     }
 
-    // 处理普通树形展开收起
     if (hierarchyState === HierarchyState.expand) {
       this._refreshHierarchyState(col, row, recalculateColWidths);
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col,
-        row,
+        col: col,
+        row: row,
         hierarchyState: HierarchyState.collapse
       });
     } else if (hierarchyState === HierarchyState.collapse) {
-      const originRecord = this.getCellOriginRecord(col, row);
-      if (Array.isArray(originRecord.children)) {
+      const record = this.getCellOriginRecord(col, row);
+      if (Array.isArray(record.children)) {
         //children 是数组 表示已经有子树节点信息
         this._refreshHierarchyState(col, row, recalculateColWidths);
       }
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
-        col,
-        row,
+        col: col,
+        row: row,
         hierarchyState: HierarchyState.expand,
-        originData: originRecord
+        originData: record
       });
     }
   }
@@ -1311,6 +1312,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps?.tooltipHandler.showTooltip(oldHoverState.col, oldHoverState.row);
       }, 0);
     }
+    console.log('setRecords cost time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
   }
   /**
    * 基本表格树形展示场景下，如果需要动态插入子节点的数据可以配合使用该接口，其他情况不适用
@@ -1570,5 +1572,9 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
     }
+  }
+  release() {
+    this.editorManager.release();
+    super.release();
   }
 }
