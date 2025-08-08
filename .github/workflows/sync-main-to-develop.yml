@@ -1,0 +1,61 @@
+name: Sync main to develop after release
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+
+    runs-on: macOS-13
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
+
+        # Install rush
+      - name: Install rush
+        run: node common/scripts/install-run-rush.js install --bypass-policy
+
+      - name: Get version
+        id: package-version
+        uses: xile611/read-package-version-action@main
+        with:
+          path: packages/vtable
+
+      - name: Create a new branch
+        run: |
+          git status
+          git checkout -b sync/main-${{ steps.package-version.outputs.current_version }}
+          git push origin sync/main-${{ steps.package-version.outputs.current_version }}
+
+      - name: Create Pull Request
+        uses: dustinirving/create-pr@v1.0.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: '[Auto Sync] Sync the code from branch main to branch develop after release ${{ steps.package-version.outputs.current_version }}'
+          base: develop
+          head: sync/main-${{ steps.package-version.outputs.current_version }}
+          reviewers: fangsmile
+          body: 'Sync the code from branch main to branch develop after release ${{ steps.package-version.outputs.current_version }}'
