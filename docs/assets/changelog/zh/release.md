@@ -1,3 +1,25 @@
+# v1.19.6
+
+2025-08-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: pivot chart add columnWidthConfig option
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix error when pivot table set columnHierarchyType gird with expand tree [#4254](https://github.com/VisActor/VTable/issues/4254)
+- **@visactor/vtable-gantt**: fix when no records markline render error [#4305](https://github.com/VisActor/VTable/issues/4305)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: add table export plugin
+
+
+
+[更多详情请查看 v1.19.6](https://github.com/VisActor/VTable/releases/tag/v1.19.6)
+
 # v1.19.5
 
 2025-07-31
