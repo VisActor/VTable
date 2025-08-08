@@ -49,13 +49,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   pluginOptions: MasterDetailPluginOptions;
   table: VTable.ListTable;
-
+  // 保护展开行的CellGroup高度
+  private protectedCellHeights: Map<string, number> = new Map();
+  // 原始updateCellContent方法的引用
+  private originalUpdateCellContent?: Function;
   // 展开状态管理
   private expandedRowsMap: Map<number, boolean> = new Map();
   // 容器大小监听器
   private resizeObserver?: ResizeObserver;
-  // 上次容器宽度
-  private lastContainerWidth: number = 0;
 
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
     this.id = pluginOptions.id ?? this.id;
@@ -309,7 +310,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private extendTableAPI(): void {
     const table = this.table as any;
-
+    this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
+    table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
     // 添加主从表 API 方法
     table.expandRow = this.expandRow.bind(this);
     table.collapseRow = this.collapseRow.bind(this);
@@ -319,7 +321,49 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     table.getOriginalRowHeight = this.getOriginalRowHeight.bind(this);
   }
 
+  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): any {
+    const cellKey = `${col}-${row}`;
+    const isExpandedRow = this.expandedRowsMap.get(row);
+    // 如果是展开行，先保存CellGroup的原始高度
+    if (isExpandedRow) {
+      const cellGroup = this.table.scenegraph.getCell(col, row);
+      if (cellGroup && cellGroup.attribute && cellGroup.attribute.height) {
+        this.protectedCellHeights.set(cellKey, cellGroup.attribute.height);
+      }
+    }
+    // 调用原始的updateCellContent方法
+    const result = this.originalUpdateCellContent!(col, row, forceFastUpdate);
+    // 如果是展开行，恢复CellGroup的正确高度
+    if (isExpandedRow && this.protectedCellHeights.has(cellKey)) {
+      const cellGroup = this.table.scenegraph.getCell(col, row);
+      if (cellGroup) {
+        const protectedHeight = this.protectedCellHeights.get(cellKey)!;
+        cellGroup.setAttributes({
+          height: protectedHeight
+        });
+      }
+    }
 
+    // 手动调用handleAfterUpdateCellContentWidth来调整内容高度
+    const cellGroup = this.table.scenegraph.getCell(col, row);
+    if (cellGroup) {
+      this.handleAfterUpdateCellContentWidth({
+        col,
+        row,
+        distWidth: 0,
+        cellHeight: cellGroup.attribute?.height || 0,
+        detaX: 0,
+        autoRowHeight: false,
+        needUpdateRowHeight: false,
+        cellGroup,
+        padding: [0, 0, 0, 0],
+        textAlign: 'left' as CanvasTextAlign,
+        textBaseline: 'middle' as CanvasTextBaseline
+      });
+    }
+    
+    return result;
+  }
 
   // ==================== 事件处理 ====================
 
