@@ -1,3 +1,5 @@
+# `@visactor/vtable-export`不再维护，请使用`@visactor/vtable-plugins`中的`TableExportPlugin`插件. 教程文档请参考[表格导出](../plugin/table-export)
+
 # CSV 导出
 
 `@visactor/vtable-export`包是为了 VTable 表格导出所封装的工具，它支持 CSV 和 Excel 两种格式的导出。

@@ -15,14 +15,21 @@ Using the `@visactor/table-export` tool, the table export function can be implem
 ## Code demo
 
 ```javascript livedemo template=vtable
-// You need to introduce the plug-in package when using it `@visactor/vtable-export`
-// import {
-//   downloadCsv,
-//   exportVTableToCsv,
-//   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// When umd is introduced, the export tool will be mounted to VTable.export
+// You need to introduce the plug-in package when using it `@visactor/vtable-plugins`
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const tableExportPlugin = new VTablePlugins.TableExportPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+
+const tableExportPlugin = new VTablePlugins.TableExportPlugin({
+  exportExcelOptions: {
+    downloadFile: true,
+    fileName: 'fff-excel'
+  },
+  exportCsvOptions: {
+    downloadFile: true,
+    fileName: 'fff'
+  }
+});
 
 let tableInstance;
 fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_data.json')
@@ -120,7 +127,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         ]
       },
-      widthMode: 'standard'
+      widthMode: 'standard',
+      plugins: [tableExportPlugin]
     };
     tableInstance = new VTable.PivotTable(document.getElementById(CONTAINER_ID), option);
     window['tableInstance'] = tableInstance;
@@ -149,13 +157,13 @@ function bindExport() {
 
   exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      window.tableInstance.exportToCsv();
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadExcel(await exportVTableToExcel(window.tableInstance), 'export');
+      window.tableInstance.exportToExcel();
     }
   });
 }

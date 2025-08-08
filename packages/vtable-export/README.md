@@ -10,7 +10,7 @@
 
 <div align="center">
 
-VTable is not just a high-performance multidimensional data analysis table, but also a grid artist that creates art between rows and columns.React-VTable is a React wrapper of VTable.
+This package is no longer maintained, please use the `TableExportPlugin` plugin in `@visactor/vtable-plugins`
 
 [![npm Version](https://img.shields.io/npm/v/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/react-vtable)
 [![npm Download](https://img.shields.io/npm/dm/@visactor/vtable.svg)](https://www.npmjs.com/package/@visactor/react-vvtable)
