@@ -5,16 +5,16 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: pivot chart add columnWidthConfig option
+- **@visactor/vtable**: 透视图pivot chart 添加 columnWidthConfig 配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix error when pivot table set columnHierarchyType gird with expand tree [#4254](https://github.com/VisActor/VTable/issues/4254)
-- **@visactor/vtable-gantt**: fix when no records markline render error [#4305](https://github.com/VisActor/VTable/issues/4305)
+- **@visactor/vtable**: 修复透视图设置 columnHierarchyType 为 gird 时展开树时报错 [#4254](https://github.com/VisActor/VTable/issues/4254)
+- **@visactor/vtable-gantt**: 修复当没有数据records时markline渲染错误 [#4305](https://github.com/VisActor/VTable/issues/4305)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: add table export plugin
+- **@visactor/vtable**: 添加表格导出插件
 
 
 
