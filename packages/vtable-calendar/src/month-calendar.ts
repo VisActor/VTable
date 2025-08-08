@@ -29,6 +29,7 @@ export interface CalendarConstructorOptions {
 
   customEvents?: ICustomEvent[];
   customEventOptions?: ICustomEventOptions;
+  showTitle?: boolean;
 }
 
 export class Calendar extends EventTarget {
@@ -50,6 +51,7 @@ export class Calendar extends EventTarget {
   maxCol: number;
   minCol: number = 0;
   customHandler: CustomEventHandler;
+  showToday: boolean = true;
 
   constructor(container: HTMLElement, options?: CalendarConstructorOptions) {
     super();
@@ -59,9 +61,15 @@ export class Calendar extends EventTarget {
 
     this.currentDate = currentDate ?? new Date();
     this.rangeDays = rangeDays ?? 90;
+    this.showToday = this.options.showTitle ?? true;
     if (startDate && endDate) {
       this.startDate = startDate;
       this.endDate = endDate;
+      // if currentDate is not in the range, set it to the startDate
+      if (this.currentDate < this.startDate || this.currentDate > this.endDate) {
+        this.currentDate = this.startDate;
+        this.showToday = false;
+      }
     } else {
       const { startDate: computedStartDate, endDate: computedEndDate } = getStartAndEndDate(
         this.currentDate,
@@ -91,11 +99,16 @@ export class Calendar extends EventTarget {
 
     const week = (dayTitles ?? defaultDayTitles) as DateRecordKeys[];
     this.maxCol = week.length - 1;
-    const option = createTableOption(week, this.currentDate, {
-      tableOptions: this.options.tableOptions,
-      containerWidth: this.container.clientWidth,
-      containerHeight: this.container.clientHeight
-    });
+    const option = createTableOption(
+      week,
+      defaultDayTitles as DateRecordKeys[],
+      this.showToday ? this.currentDate : undefined,
+      {
+        tableOptions: this.options.tableOptions,
+        containerWidth: this.container.clientWidth,
+        containerHeight: this.container.clientHeight
+      }
+    );
     option.records = records;
     option.container = this.container;
     (option as any)._calendar = this;
@@ -198,19 +211,21 @@ export class Calendar extends EventTarget {
   }
 
   _bindEvent() {
-    // click title jump to current month
-    const titleComponent = this.table.internalProps.title.getComponentGraphic();
-    titleComponent.setAttributes({
-      cursor: 'pointer',
-      // hack for cursor
-      childrenPickable: false
-    });
-    this.titleClickHandler = (() => {
-      this.jumpToCurrentMonth({
-        duration: 500
+    if (this.table.internalProps.title) {
+      // click title jump to current month
+      const titleComponent = this.table.internalProps.title.getComponentGraphic();
+      titleComponent.setAttributes({
+        cursor: 'pointer',
+        // hack for cursor
+        childrenPickable: false
       });
-    }).bind(this);
-    titleComponent.addEventListener('click', this.titleClickHandler);
+      this.titleClickHandler = (() => {
+        this.jumpToCurrentMonth({
+          duration: 500
+        });
+      }).bind(this);
+      titleComponent.addEventListener('click', this.titleClickHandler);
+    }
 
     this.table.on('click_cell', e => {
       const { target } = e;

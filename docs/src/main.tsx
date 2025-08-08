@@ -11,6 +11,7 @@ import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } fr
 import { SearchComponent } from '@visactor/vtable-search';
 import * as ReactVTable from '@visactor/react-vtable';
 import * as VueVTable from '@visactor/vue-vtable';
+import * as VUtils from '@visactor/vutils';
 import * as InulaVTable from '@visactor/openinula-vtable';
 import * as VTablePlugins from '@visactor/vtable-plugins';
 import { App } from './app';
@@ -51,7 +52,7 @@ import { createApp, ref, onMounted, h } from 'vue';
 
 (window as any).Inula = Inula;
 (window as any).InulaVTable = InulaVTable;
-
+(window as any).VUtils = VUtils;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>

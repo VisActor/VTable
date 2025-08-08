@@ -381,7 +381,7 @@ export function updateHierarchyIcon(col: number, row: number, scene: Scenegraph)
     // dealer
     (icon: Icon) => {
       dealWithIcon(iconConfig, icon);
-      icon.name = iconConfig.name;
+      icon.name = iconConfig?.name;
     },
     scene
   );
