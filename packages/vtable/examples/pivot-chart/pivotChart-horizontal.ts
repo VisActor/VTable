@@ -2,6 +2,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import { IChartIndicator } from '../../src/ts-types/pivot-table';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
@@ -16,7 +17,7 @@ export function createTable() {
       }
     }
   ];
-  const rows = [
+  const rows: (VTable.TYPES.IRowDimension | string)[] = [
     {
       dimensionKey: '230417171050031',
       title: '国家',
@@ -35,7 +36,7 @@ export function createTable() {
     }
     // '230417170554008'
   ];
-  const indicators: VTable.TYPES.IIndicator[] = [
+  const indicators: (IChartIndicator | string)[] = [
     {
       indicatorKey: '230417171050011',
       title: '数量',
@@ -9191,6 +9192,36 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotChartConstructorOptions = {
+    columnWidthConfigForRowHeader: [
+      {
+        dimensions: [
+          {
+            dimensionKey: '230417171050031',
+            value: '中国',
+            isPivotCorner: false,
+            indicatorKey: undefined
+          }
+        ],
+        width: 300
+      }
+    ],
+    columnWidthConfig: [
+      {
+        dimensions: [
+          {
+            dimensionKey: '230417170554012',
+            value: '一级',
+            isPivotCorner: false,
+            indicatorKey: undefined
+          },
+          {
+            value: '数量',
+            indicatorKey: '230417171050011'
+          }
+        ],
+        width: 100
+      }
+    ],
     rows,
     columns,
     indicators,
@@ -9201,7 +9232,7 @@ export function createTable() {
     heightMode: 'adaptive',
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
-    defaultColWidth: 280,
+    defaultColWidth: 80,
     defaultHeaderColWidth: [80],
 
     corner: {

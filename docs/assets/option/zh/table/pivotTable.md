@@ -446,3 +446,8 @@ export interface IIndicatorHeaderNode {
   {{ use: common-IDimensionInfo()}}
 
 - width 指定列宽。
+
+## columnWidthConfigForRowHeader(Array)
+
+依据维度信息设置行表头列宽
+

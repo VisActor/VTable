@@ -442,3 +442,8 @@ Set column width based on dimension information
   {{ use: common-IDimensionInfo()}}
 
 -width specifies the column width.
+
+## columnWidthConfigForRowHeader(Array)
+
+Set column width based on dimension information for row header
+

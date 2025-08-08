@@ -2,7 +2,7 @@
 
 ## Gantt Time Axis Date Range
 
-The Gantt time axis date range determines the display range of the time axis. It can be set using the `minDate` and `maxDate` options.
+The Gantt time axis date range determines the display range of the time axis. It can be set using the `minDate` and `maxDate` options. If not set, the default value is the maximum and minimum values of the `[startDateField]` and `[endDateField]` fields in the records.
 
 ## Gantt Task Bar Date Range
 

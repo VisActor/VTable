@@ -294,6 +294,8 @@ export interface IBaseTableProtected {
 
   _oldRowCount?: number;
   _oldColCount?: number;
+
+  columnWidthConfig?: any;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -1101,4 +1103,12 @@ export interface PivotChartProtected extends IBaseTableProtected {
   columns?: (IColumnDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+  columnWidthConfigForRowHeader?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
 }
