@@ -123,11 +123,10 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
     const fieldsToRemove: (string | number)[] = [];
 
     activeFields.forEach(field => {
-      const columnIndex = typeof field === 'number' ? field : parseInt(field.toString(), 10);
-      const column = columns[columnIndex];
+      const column = columns.find(col => col.field === field);
 
       // 检查该列是否仍然应该启用筛选
-      if (!column || !this.shouldEnableFilterForColumn(columnIndex, column)) {
+      if (!column || !this.shouldEnableFilterForColumn(field, column)) {
         fieldsToRemove.push(field);
       }
     });
@@ -147,9 +146,9 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
    */
   private updateFilterIcons(options: ListTableConstructorOptions): void {
     const columns = options.columns; // TODO: 待处理多行的情况，待扩展透视表类型
-    columns.forEach((col: VTable.ColumnDefine, index: number) => {
+    columns.forEach((col: VTable.ColumnDefine) => {
       // 检查是否应该为这一列启用筛选功能
-      if (this.shouldEnableFilterForColumn(index, col)) {
+      if (this.shouldEnableFilterForColumn(col.field as string | number, col)) {
         col.headerIcon = this.pluginOptions.filterIcon;
       } else {
         // 如果不应该启用筛选，则移除 headerIcon
@@ -162,7 +161,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 判断指定列是否应该启用筛选功能
    */
-  shouldEnableFilterForColumn(columnIndex: number, column: VTable.ColumnDefine): boolean {
+  shouldEnableFilterForColumn(field: number | string, column: VTable.ColumnDefine): boolean {
     // 如果是空白列，不适用筛选
     if (!column.title) {
       return false;
@@ -176,7 +175,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
 
     // 如果有自定义的启用钩子函数，使用钩子函数的结果
     if (this.pluginOptions.enableFilter) {
-      return this.pluginOptions.enableFilter(columnIndex, column);
+      return this.pluginOptions.enableFilter(field, column);
     }
 
     // 如果没有钩子函数，使用默认启用配置

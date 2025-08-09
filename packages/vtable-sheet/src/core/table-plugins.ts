@@ -78,7 +78,7 @@ function createFilterPlugin(sheetDefine?: ISheetDefine): VTablePlugins.FilterPlu
  */
 function createColumnFilterChecker(sheetDefine: ISheetDefine) {
   return (columnIndex: number, column: VTable.TYPES.ColumnDefine): boolean => {
-    // 确保列索引有效
+    // 由于在 vtable-sheet，把列索引作为列的唯一标识 field，因此这里直接使用列索引
     if (columnIndex < 0 || !sheetDefine.columns || columnIndex >= sheetDefine.columns.length) {
       return false; // 默认启用，保持向后兼容
     }

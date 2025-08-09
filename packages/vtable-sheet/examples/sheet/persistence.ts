@@ -49,10 +49,10 @@ export function createTable() {
 
   // 默认配置
   const defaultConfig: IVTableSheetOptions = {
-    showFormulaBar: false,
+    showFormulaBar: true,
     showSheetTab: true,
-    defaultRowHeight: 35,
-    defaultColWidth: 120,
+    defaultRowHeight: 25,
+    defaultColWidth: 100,
     sheets: [
       {
         sheetKey: 'demo1',
