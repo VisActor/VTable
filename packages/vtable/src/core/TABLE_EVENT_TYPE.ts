@@ -171,6 +171,8 @@ export interface TableEvents {
   INITIALIZED: 'initialized';
   /** 单元格内容宽度更新后触发 */
   AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width';
+  /** 选择边框高度更新后触发 */
+  AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height';
   //#endregion
 
   /** 编辑单元格 */
@@ -279,6 +281,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width',
+  AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height',
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',

@@ -44,7 +44,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     VTable.TABLE_EVENT_TYPE.INITIALIZED,
     VTable.TABLE_EVENT_TYPE.SORT_CLICK,
     VTable.TABLE_EVENT_TYPE.AFTER_SORT,
-    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH
+    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH,
+    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT
   ];
 
   pluginOptions: MasterDetailPluginOptions;
@@ -75,6 +76,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const runTime = args[1];
     const table = args[2] as VTable.ListTable;
 
+
     if (!this.pluginOptions.enabled) {
       return;
     }
@@ -97,6 +99,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH) {
       // 单元格内容宽度更新后处理
       this.handleAfterUpdateCellContentWidth(eventArgs as any);
+    } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT) {
+      this.handleAfterUpdateSelectBorderHeight(eventArgs as any);
     }
   }
 
@@ -163,6 +167,39 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         this.recalculateAllSubTablePositions();
       }, 0);
     }
+  }
+
+  /**
+   * 处理选择边框高度更新后的事件
+   */
+  private handleAfterUpdateSelectBorderHeight(eventData: {
+    startRow: number;
+    endRow: number;
+    currentHeight: number;
+    selectComp: { rect: any; fillhandle?: any; role: string };
+  }): void {
+    const { startRow, endRow, selectComp } = eventData;
+    // 判断是否为单选一个单元格或者为一行的（只有这种情况才使用原始高度）
+    const isSingleCellSelection = startRow === endRow;
+    if (isSingleCellSelection) {
+      // 单选一个CellGroup，使用原始高度
+      const headerCount = this.table.columnHeaderLevelCount || 0;
+      const tableRowIndex = startRow - headerCount;
+      const originalHeight = this.getOriginalRowHeight(tableRowIndex);
+      if (originalHeight > 0 && originalHeight !== eventData.currentHeight) {
+        selectComp.rect.setAttributes({
+          height: originalHeight
+        });
+        // 如果有填充柄，也需要调整位置 ? 这是什么？？
+        if (selectComp.fillhandle) {
+          const currentY = selectComp.rect.attribute.y;
+          selectComp.fillhandle.setAttributes({
+            y: currentY + originalHeight - 6 // 6是填充柄的一半高度
+          });
+        }
+      }
+    }
+    // 其他情况（拖拽选择多行、表头选择等）使用默认的currentHeight，不做任何修改
   }
 
   update() {
