@@ -27,7 +27,7 @@ export interface MasterDetailPluginOptions {
   /** 静态子表配置 */
   detailGridOptions?: DetailGridOptions;
   /** 动态子表配置函数 */
-  getDetailGridOptions?: (params: { data: unknown; tableRowIndex: number }) => DetailGridOptions;
+  getDetailGridOptions?: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
   /** 是否启用层级文本对齐 */
   hierarchyTextStartAlignment?: boolean;
 }
@@ -54,8 +54,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private protectedCellHeights: Map<string, number> = new Map();
   // 原始updateCellContent方法的引用
   private originalUpdateCellContent?: Function;
-  // 展开状态管理
-  private expandedRowsMap: Map<number, boolean> = new Map();
+  // 展开状态管理 - 存储展开的行索引
+  private expandedRows: number[] = [];
   // 容器大小监听器
   private resizeObserver?: ResizeObserver;
 
@@ -160,8 +160,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     // 如果是展开的行，可能需要重新调整子表位置
     const internalProps = this.getInternalProps();
-    const tableRowIndex = eventData.row - this.table.columnHeaderLevelCount;
-    if (internalProps.subTableInstances?.has(tableRowIndex)) {
+    const bodyRowIndex = eventData.row - this.table.columnHeaderLevelCount;
+    if (internalProps.subTableInstances?.has(bodyRowIndex)) {
       // 延迟执行，确保单元格更新完成
       setTimeout(() => {
         this.recalculateAllSubTablePositions();
@@ -184,8 +184,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (isSingleCellSelection) {
       // 单选一个CellGroup，使用原始高度
       const headerCount = this.table.columnHeaderLevelCount || 0;
-      const tableRowIndex = startRow - headerCount;
-      const originalHeight = this.getOriginalRowHeight(tableRowIndex);
+      const bodyRowIndex = startRow - headerCount;
+      const originalHeight = this.getOriginalRowHeight(bodyRowIndex);
       if (originalHeight > 0 && originalHeight !== eventData.currentHeight) {
         selectComp.rect.setAttributes({
           height: originalHeight
@@ -216,7 +216,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       this.resizeObserver = undefined;
     }
     // 清理状态
-    this.expandedRowsMap.clear();
+    this.expandedRows.length = 0;
   }
 
   // ==================== 调试辅助方法 ====================
@@ -285,7 +285,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const getDetailOptions = this.pluginOptions.getDetailGridOptions;
       (
         options as VTable.ListTableConstructorOptions & {
-          getDetailGridOptions: (params: { data: unknown; tableRowIndex: number }) => DetailGridOptions;
+          getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
         }
       ).getDetailGridOptions = getDetailOptions;
     }
@@ -324,12 +324,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private initInternalProps(): void {
     const internalProps = this.table.internalProps as VTable.ListTable['internalProps'] & {
-      expandedRecordIndices?: Set<number>;
+      expandedRecordIndices?: number[];
       subTableInstances?: Map<number, VTable.ListTable>;
       originalRowHeights?: Map<number, number>;
     };
 
-    internalProps.expandedRecordIndices = new Set(this.pluginOptions.expandedRows || []);
+    internalProps.expandedRecordIndices = [...(this.pluginOptions.expandedRows || [])];
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
   }
@@ -360,7 +360,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): any {
     const cellKey = `${col}-${row}`;
-    const isExpandedRow = this.expandedRowsMap.get(row);
+    const isExpandedRow = this.expandedRows.includes(row);
     // 如果是展开行，先保存CellGroup的原始高度
     if (isExpandedRow) {
       const cellGroup = this.table.scenegraph.getCell(col, row);
@@ -439,7 +439,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 展开行 - 从 ListTable.expandRow 抽取
    */
   expandRow(rowIndex: number): void {
-    const tableRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = this.getInternalProps();
 
     if (internalProps._heightResizedRowMap.has(rowIndex)) {
@@ -449,18 +449,22 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
     const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
     if (internalProps.expandedRecordIndices) {
-      internalProps.expandedRecordIndices.add(recordIndex);
+      if (!internalProps.expandedRecordIndices.includes(recordIndex)) {
+        internalProps.expandedRecordIndices.push(recordIndex);
+      }
     }
 
-    // 更新展开状态映射
-    this.expandedRowsMap.set(rowIndex, true);
+    // 更新展开状态数组
+    if (!this.expandedRows.includes(rowIndex)) {
+      this.expandedRows.push(rowIndex);
+    }
 
     const originalHeight = this.table.getRowHeight(rowIndex);
     if (internalProps.originalRowHeights) {
-      internalProps.originalRowHeights.set(tableRowIndex, originalHeight);
+      internalProps.originalRowHeights.set(bodyRowIndex, originalHeight);
     }
-    const record = this.getRecordByRowIndex(tableRowIndex);
-    const detailConfig = this.getDetailConfigForRecord(record, tableRowIndex);
+    const record = this.getRecordByRowIndex(bodyRowIndex);
+    const detailConfig = this.getDetailConfigForRecord(record, bodyRowIndex);
     const height = detailConfig?.style?.height || 200;
 
     if (record) {
@@ -473,7 +477,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps._heightResizedRowMap.add(rowIndex);
 
     this.updateIconsForRow(rowIndex);
-    this.renderSubTable(tableRowIndex);
+    this.renderSubTable(bodyRowIndex);
     this.recalculateAllSubTablePositions();
   }
 
@@ -481,7 +485,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 收起行 - 从 ListTable.collapseRow 抽取
    */
   collapseRow(rowIndex: number): void {
-    const tableRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = this.getInternalProps();
 
     if (!internalProps._heightResizedRowMap.has(rowIndex)) {
@@ -490,28 +494,34 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
     const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-    this.removeSubTable(tableRowIndex);
+    this.removeSubTable(bodyRowIndex);
     if (internalProps.expandedRecordIndices) {
-      internalProps.expandedRecordIndices.delete(recordIndex);
+      const index = internalProps.expandedRecordIndices.indexOf(recordIndex);
+      if (index > -1) {
+        internalProps.expandedRecordIndices.splice(index, 1);
+      }
     }
 
-    // 更新展开状态映射
-    this.expandedRowsMap.delete(rowIndex);
+    // 更新展开状态数组
+    const expandedIndex = this.expandedRows.indexOf(rowIndex);
+    if (expandedIndex > -1) {
+      this.expandedRows.splice(expandedIndex, 1);
+    }
 
-    const record = this.getRecordByRowIndex(tableRowIndex);
+    const record = this.getRecordByRowIndex(bodyRowIndex);
     if (record) {
       (record as { hierarchyState?: VTable.TYPES.HierarchyState }).hierarchyState =
         VTable.TYPES.HierarchyState.collapse;
     }
 
     const currentHeight = this.table.getRowHeight(rowIndex);
-    const originalHeight = this.getOriginalRowHeight(tableRowIndex);
+    const originalHeight = this.getOriginalRowHeight(bodyRowIndex);
     const deltaHeight = currentHeight - originalHeight;
     this.updateRowHeightForExpand(rowIndex, -deltaHeight);
     internalProps._heightResizedRowMap.delete(rowIndex);
     this.table.scenegraph.updateContainerHeight(rowIndex, -deltaHeight);
     if (internalProps.originalRowHeights) {
-      internalProps.originalRowHeights.delete(tableRowIndex);
+      internalProps.originalRowHeights.delete(bodyRowIndex);
     }
 
     this.updateIconsForRow(rowIndex);
@@ -536,15 +546,19 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private executeMasterDetailBeforeSort(): void {
     const table = this.table as any;
-    if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.size > 0) {
-      table.internalProps._tempExpandedRecordIndices = new Set(table.internalProps.expandedRecordIndices);
+    if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.length > 0) {
+      table.internalProps._tempExpandedRecordIndices = [...table.internalProps.expandedRecordIndices];
     }
-    if (table.internalProps._heightResizedRowMap) {
-      table.internalProps._heightResizedRowMap.forEach((value: any, rowIndex: number) => {
+    // 改为使用expandedRows来处理排序前的收起操作
+    if (this.expandedRows.length > 0) {
+      // 保存当前展开的行索引
+      const expandedRowIndices = [...this.expandedRows];
+      expandedRowIndices.forEach(rowIndex => {
         try {
           table.collapseRow(rowIndex);
         } catch (e) {
           // 收起失败
+          console.warn(`Failed to collapse row ${rowIndex} before sort:`, e);
         }
       });
     }
@@ -556,15 +570,15 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private executeMasterDetailAfterSort(): void {
     const table = this.table as any;
     const tempExpandedRecordIndices = table.internalProps._tempExpandedRecordIndices;
-    if (tempExpandedRecordIndices && tempExpandedRecordIndices.size > 0) {
-      const recordIndicesArray = Array.from(tempExpandedRecordIndices) as number[];
+    if (tempExpandedRecordIndices && tempExpandedRecordIndices.length > 0) {
+      const recordIndicesArray = [...tempExpandedRecordIndices];
       recordIndicesArray.forEach(recordIndex => {
         const currentPagerData = table.dataSource._currentPagerIndexedData;
         if (currentPagerData) {
-          const tableRowIndex = currentPagerData.indexOf(recordIndex);
-          if (tableRowIndex >= 0) {
+          const bodyRowIndex = currentPagerData.indexOf(recordIndex);
+          if (bodyRowIndex >= 0) {
             try {
-              table.expandRow(tableRowIndex + table.columnHeaderLevelCount);
+              table.expandRow(bodyRowIndex + table.columnHeaderLevelCount);
             } catch (e) {
               // 展开失败
             }
@@ -581,7 +595,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private getInternalProps() {
     return this.table.internalProps as VTable.ListTable['internalProps'] & {
-      expandedRecordIndices: Set<number>;
+      expandedRecordIndices: number[];
       subTableInstances: Map<number, VTable.ListTable>;
       originalRowHeights: Map<number, number>;
       _heightResizedRowMap: Set<number>;
@@ -638,9 +652,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 获取详情配置 - 从 ListTable.getDetailConfigForRecord 抽取
    */
-  private getDetailConfigForRecord(record: unknown, tableRowIndex: number): DetailGridOptions | null {
+  private getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {
     return (
-      this.pluginOptions.getDetailGridOptions?.({ data: record, tableRowIndex }) ||
+      this.pluginOptions.getDetailGridOptions?.({ data: record, bodyRowIndex: bodyRowIndex }) ||
       this.pluginOptions.detailGridOptions ||
       null
     );
@@ -649,16 +663,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 根据行索引获取记录 - 从 ListTable.getRecordByRowIndex 抽取
    */
-  private getRecordByRowIndex(tableRowIndex: number): Record<string, unknown> {
-    return this.table.dataSource.getRaw(tableRowIndex) as Record<string, unknown>;
+  private getRecordByRowIndex(bodyRowIndex: number): Record<string, unknown> {
+    return this.table.dataSource.getRaw(bodyRowIndex) as Record<string, unknown>;
   }
 
   /**
    * 获取原始行高 - 从 ListTable.getOriginalRowHeight 抽取
    */
-  private getOriginalRowHeight(tableRowIndex: number): number {
+  private getOriginalRowHeight(bodyRowIndex: number): number {
     const internalProps = this.getInternalProps();
-    return internalProps.originalRowHeights?.get(tableRowIndex) || 0;
+    return internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
   }
 
   // ==================== 子表管理 ====================
@@ -666,14 +680,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 渲染子表 - 从 ListTable.renderSubTable 抽取
    */
-  private renderSubTable(tableRowIndex: number): void {
+  private renderSubTable(bodyRowIndex: number): void {
     const internalProps = this.getInternalProps();
-    const record = this.getRecordByRowIndex(tableRowIndex);
+    const record = this.getRecordByRowIndex(bodyRowIndex);
     if (!record || !record.children) {
       return;
     }
-    const detailConfig = this.getDetailConfigForRecord(record, tableRowIndex);
-    const childViewBox = this.calculateSubTableViewBox(tableRowIndex, detailConfig);
+    const detailConfig = this.getDetailConfigForRecord(record, bodyRowIndex);
+    const childViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
     if (!childViewBox) {
       return;
     }
@@ -694,11 +708,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       ...(detailConfig || {})
     };
     const subTable = new VTable.ListTable(this.table.container, subTableOptions);
-    internalProps.subTableInstances.set(tableRowIndex, subTable);
+    internalProps.subTableInstances.set(bodyRowIndex, subTable);
 
     // 确保子表内容在父表重绘后保持在上层
     const afterRenderHandler = () => {
-      if (internalProps.subTableInstances && internalProps.subTableInstances.has(tableRowIndex)) {
+      if (internalProps.subTableInstances && internalProps.subTableInstances.has(bodyRowIndex)) {
         subTable.render();
       }
     };
@@ -708,7 +722,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 设置滚动事件隔离
     this.setupScrollEventIsolation(subTable);
     // 设置统一选中状态管理
-    this.setupUnifiedSelectionManagement(tableRowIndex, subTable);
+    this.setupUnifiedSelectionManagement(bodyRowIndex, subTable);
     // 设置子表canvas裁剪，实现真正的clip效果
     this.setupSubTableCanvasClipping(subTable);
     // 初始渲染
@@ -719,17 +733,17 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 计算子表的viewBox区域 - 从 ListTable.calculateSubTableViewBox 抽取
    */
   private calculateSubTableViewBox(
-    tableRowIndex: number,
+    bodyRowIndex: number,
     detailConfig?: DetailGridOptions | null
   ): { x1: number; y1: number; x2: number; y2: number } | null {
-    const rowIndex = tableRowIndex + this.table.columnHeaderLevelCount;
+    const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
     const detailRowRect = this.table.getCellRangeRelativeRect({ col: 0, row: rowIndex });
     if (!detailRowRect) {
       return null;
     }
 
     const internalProps = this.getInternalProps();
-    const originalHeight = internalProps.originalRowHeights?.get(tableRowIndex) || 0;
+    const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
     const firstColRect = this.table.getCellRangeRelativeRect({ col: 0, row: rowIndex });
     const lastColRect = this.table.getCellRangeRelativeRect({ col: this.table.colCount - 1, row: rowIndex });
     if (!firstColRect || !lastColRect) {
@@ -754,9 +768,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 移除子表 - 从 ListTable.removeSubTable 抽取
    */
-  private removeSubTable(tableRowIndex: number): void {
+  private removeSubTable(bodyRowIndex: number): void {
     const internalProps = this.getInternalProps();
-    const subTable = internalProps.subTableInstances?.get(tableRowIndex);
+    const subTable = internalProps.subTableInstances?.get(bodyRowIndex);
     if (subTable) {
       const afterRenderHandler = (subTable as VTable.ListTable & { __afterRenderHandler?: () => void })
         .__afterRenderHandler;
@@ -782,7 +796,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       if (typeof subTable.release === 'function') {
         subTable.release();
       }
-      internalProps.subTableInstances?.delete(tableRowIndex);
+      internalProps.subTableInstances?.delete(bodyRowIndex);
     }
   }
 
@@ -874,15 +888,15 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 设置统一选中状态管理 - 从 ListTable.setupUnifiedSelectionManagement 抽取
    */
-  private setupUnifiedSelectionManagement(tableRowIndex: number, subTable: VTable.ListTable): void {
+  private setupUnifiedSelectionManagement(bodyRowIndex: number, subTable: VTable.ListTable): void {
     this.table.on('click_cell', () => {
       this.clearAllSubTableVisibleSelections();
     });
     subTable.on('click_cell', () => {
-      this.clearAllSelectionsExcept(tableRowIndex);
+      this.clearAllSelectionsExcept(bodyRowIndex);
     });
     (subTable as VTable.ListTable & { __selectionHandler: () => void }).__selectionHandler = () => {
-      this.clearAllSelectionsExcept(tableRowIndex);
+      this.clearAllSelectionsExcept(bodyRowIndex);
     };
   }
 
@@ -925,10 +939,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private updateSubTablePositionsForScroll(): void {
     const internalProps = this.getInternalProps();
-    internalProps.subTableInstances?.forEach((subTable, tableRowIndex) => {
-      const record = this.getRecordByRowIndex(tableRowIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord(record, tableRowIndex) : null;
-      const newViewBox = this.calculateSubTableViewBox(tableRowIndex, detailConfig);
+    internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
+      const record = this.getRecordByRowIndex(bodyRowIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord(record, bodyRowIndex) : null;
+      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
       if (newViewBox) {
         (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
           newViewBox;
@@ -949,14 +963,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private recalculateAllSubTablePositions(): void {
     const internalProps = this.getInternalProps();
     const recordsToRecreate: number[] = [];
-    internalProps.subTableInstances?.forEach((subTable, tableRowIndex) => {
-      recordsToRecreate.push(tableRowIndex);
+    internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
+      recordsToRecreate.push(bodyRowIndex);
     });
     // 需要recordsToRecreate，因为我这个removeSubTable和renderSubTable这个都会修改subTableInstances如果直接用的话会导致混乱
     // 基于索引快照进行操作
-    recordsToRecreate.forEach(tableRowIndex => {
-      this.removeSubTable(tableRowIndex);
-      this.renderSubTable(tableRowIndex);
+    recordsToRecreate.forEach(bodyRowIndex => {
+      this.removeSubTable(bodyRowIndex);
+      this.renderSubTable(bodyRowIndex);
     });
   }
   // ==================== 清理 ====================
@@ -972,7 +986,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         subTable.release();
       }
     });
-    internalProps.expandedRecordIndices?.clear();
+    internalProps.expandedRecordIndices.length = 0;
     internalProps.subTableInstances?.clear();
     internalProps.originalRowHeights?.clear();
   }

@@ -48,7 +48,63 @@ const generateEmployeeData = (count: number) => {
               startDate: '2024-02-10',
               endDate: '2024-11-20',
               progress: 78
-            }
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
+            {
+              project: `项目B-${i + 1}`,
+              role: '参与者',
+              startDate: '2024-03-01',
+              endDate: '2024-08-30',
+              progress: 92
+            },
           ]
         : undefined
   }));
