@@ -73,6 +73,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
       eventArgs.name === 'filtering-icon'
     ) {
+      console.log("icon clicked")
       const isRightClick = eventArgs.event?.which === 3 || eventArgs.event?.button === 2 || (eventArgs.event?.buttons & 2) === 2;
       // 如果是右键点击，直接返回不处理
       if (isRightClick) {
