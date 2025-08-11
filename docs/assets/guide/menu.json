@@ -892,6 +892,13 @@
             "zh": "excel导入",
             "en": "excel Import"
           }
+        },
+        {
+          "path": "table-export",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
         }
       ]
     },

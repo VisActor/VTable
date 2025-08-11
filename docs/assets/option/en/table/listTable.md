@@ -141,6 +141,10 @@ Display aggregation result when data is empty.
 
 Enable group checkbox cascade function. The default is true.
 
+## enableHeaderCheckboxCascade(boolean)
+
+Enable header checkbox cascade function. The default is true.
+
 
 ## groupConfig(GroupConfig)
 
@@ -201,3 +205,13 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
 ## tableSizeAntiJitter(boolean) = false
 
 If the table jitter occurs, check whether the width and height of the upper dom container are caused by decimal numbers. If it is not guaranteed to be an integer, set this configuration item to true
+
+## columnWidthConfig(Array)
+
+Set column width based on key
+
+```
+  columnWidthConfig?: { key: string; width: number }[];
+```
+
+The key corresponds to the key defined in the specific configuration of each column in columns.

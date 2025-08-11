@@ -153,3 +153,24 @@ export interface IIndicatorHeaderNode {
       prefix = '#',
       tableType = 'pivotChart'
   ) }}
+
+## columnWidthConfig(Array)
+
+依据维度信息设置列宽
+
+```
+ {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+```
+
+- dimensions 维度各层级的维度信息，是一个 IDimensionInfo 类型的数组，vtable 会根据这个路径来定位到具体的列。
+  {{ use: common-IDimensionInfo()}}
+
+- width 指定列宽。
+
+## columnWidthConfigForRowHeader(Array)
+
+依据维度信息设置行表头列宽
+

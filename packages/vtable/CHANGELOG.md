@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 28 Jul 2025 09:57:02 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Jul 2025 11:30:27 GMT and should not be manually modified.
+
+## 1.19.5
+Thu, 31 Jul 2025 11:30:27 GMT
+
+### Updates
+
+- feat: add enableHeaderCheckboxCascade option
+
+
+- refactor: when delete and add records update checkstate #4240
+
+
+- fix: setCellCheckboxState not work when tree column set checkbox cell type
+
+
+- feat: add  move_end_task_bar event for vtable-gantt.#4266
+
+
 
 ## 1.19.4
 Mon, 28 Jul 2025 09:57:02 GMT

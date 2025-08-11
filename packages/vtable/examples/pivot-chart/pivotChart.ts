@@ -9448,6 +9448,36 @@ export function createTable() {
     // }
   };
   const option: VTable.PivotChartConstructorOptions = {
+    columnWidthConfig: [
+      {
+        dimensions: [
+          {
+            dimensionKey: '230417171050031',
+            value: '中国',
+            isPivotCorner: false,
+            indicatorKey: undefined
+          },
+          {
+            dimensionKey: '230417171050028',
+            value: '办公用品',
+            isPivotCorner: false,
+            indicatorKey: undefined
+          }
+        ],
+        width: 200
+      }
+    ],
+    columnWidthConfigForRowHeader: [
+      {
+        dimensions: [
+          {
+            dimensionKey: '230417170554012',
+            value: '一级'
+          }
+        ],
+        width: 200
+      }
+    ],
     // columnTree,
     emptyTip: true,
     // rowTree,

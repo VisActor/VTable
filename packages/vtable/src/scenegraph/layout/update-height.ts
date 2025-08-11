@@ -21,7 +21,7 @@ import { Factory } from '../../core/factory';
 
 export function updateRowHeight(scene: Scenegraph, row: number, detaY: number, skipTableHeightMap?: boolean) {
   // 更新table行高存储
-  if (!skipTableHeightMap) {
+  if (!skipTableHeightMap && detaY) {
     scene.table._setRowHeight(row, scene.table.getRowHeight(row) + detaY, true);
   }
 
