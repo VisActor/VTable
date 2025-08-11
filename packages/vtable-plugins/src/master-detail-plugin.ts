@@ -1,5 +1,4 @@
 import * as VTable from '@visactor/vtable';
-import { createLine, createRect } from '@visactor/vtable/es/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
 export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOptions> {
@@ -194,14 +193,20 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   release() {
+    // 安全清理主从表功能
     this.cleanupMasterDetailFeatures();
+    
     // 清理容器大小监听器
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = undefined;
     }
+    
     // 清理状态
     this.expandedRows.length = 0;
+    
+    // 清理表格引用，避免内存泄漏
+    this.table = null as any;
   }
 
   // ==================== 调试辅助方法 ====================
@@ -1239,16 +1244,38 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 清理主从表格功能 - 从 ListTable.cleanupMasterDetailFeatures 抽取
    */
   private cleanupMasterDetailFeatures(): void {
-    const internalProps = this.getInternalProps();
+    // 安全检查：确保table和internalProps存在
+    if (!this.table || !this.table.internalProps) {
+      return;
+    }
 
-    internalProps.subTableInstances?.forEach(subTable => {
-      if (typeof subTable.release === 'function') {
-        subTable.release();
+    try {
+      const internalProps = this.getInternalProps();
+
+      // 安全检查：确保subTableInstances存在
+      if (internalProps.subTableInstances) {
+        internalProps.subTableInstances.forEach(subTable => {
+          if (subTable && typeof subTable.release === 'function') {
+            try {
+              subTable.release();
+            } catch (error) {
+              console.warn('Failed to release sub table:', error);
+            }
+          }
+        });
+        internalProps.subTableInstances.clear();
       }
-    });
-    internalProps.expandedRecordIndices.length = 0;
-    internalProps.subTableInstances?.clear();
-    internalProps.originalRowHeights?.clear();
+
+      // 安全清理其他属性
+      if (internalProps.expandedRecordIndices) {
+        internalProps.expandedRecordIndices.length = 0;
+      }
+      if (internalProps.originalRowHeights) {
+        internalProps.originalRowHeights.clear();
+      }
+    } catch (error) {
+      console.warn('Failed to cleanup master detail features:', error);
+    }
   }
 
   /**
@@ -1393,7 +1420,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 为cell添加下划线 - 使用CellGroup原本的边线样式
+   * 为cell添加下划线 - 使用VTable原生的strokeArray机制（完全遵循VTable样式）
    */
   private addUnderlineToCell(cellGroup: any, originalHeight: number): void {
     // 检查是否已经添加了下划线标记
@@ -1402,130 +1429,46 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     // 标记这个cell已添加下划线
     cellGroup._hasUnderline = true;
-    // 获取CellGroup的边线样式
-    const borderStyle = this.getCellBorderStyle(cellGroup);
-    // 临时解决方案：如果获取到的lineWidth是1，尝试使用更粗的线条
-    const adjustedWidth = borderStyle.width * 2;
-    // 创建下划线Line元素 - 使用原本的边线样式
-    const underline = createLine({
-      x: 0,
-      y: originalHeight, // Line元素的起始Y位置
-      points: [
-        { x: 0, y: 0 }, // 相对于Line元素的起始点
-        { x: cellGroup.attribute.width, y: 0 } // 相对于Line元素的结束点
-      ],
-      stroke: borderStyle.color,
-      lineWidth: adjustedWidth,
-      lineDash: borderStyle.lineDash,
-      visible: true,
-      opacity: borderStyle.opacity
-    });
-
-    underline.name = 'detail-underline';
-    // 将下划线添加到cell中
-    cellGroup.appendChild(underline);
-  }
-
-  /**
-   * 获取CellGroup的边线样式
-   */
-  private getCellBorderStyle(cellGroup: any): {
-    color: string;
-    width: number;
-    lineDash?: number[];
-    opacity: number;
-  } {
-    // 默认样式
-    const defaultStyle = {
-      color: '#e1e4e8',
-      width: 1,
-      opacity: 1
-    };
-
-    try {
-      // 优先从cellGroup的strokeArrayWidth获取底部边框宽度
-      if (cellGroup.attribute?.strokeArrayWidth) {
-        const strokeArrayWidth = cellGroup.attribute.strokeArrayWidth;
-        // strokeArrayWidth是[top, right, bottom, left]格式
-        const bottomBorderWidth = strokeArrayWidth[2] || strokeArrayWidth[0] || 1;
-        const style = {
-          color: cellGroup.attribute.stroke || cellGroup.attribute.strokeArrayColor?.[2] || '#e1e4e8',
-          width: bottomBorderWidth,
-          lineDash: cellGroup.attribute.lineDash,
-          opacity: cellGroup.attribute.opacity || 1
-        };
-        return style;
-      }
-      // 尝试从cellGroup的属性中获取边线样式
-      const cellAttribute = cellGroup.attribute;
-      // 检查是否有边框样式定义
-      if (cellAttribute?.stroke) {
-        const style = {
-          color: cellAttribute.stroke,
-          width: cellAttribute.lineWidth || 1,
-          lineDash: cellAttribute.lineDash,
-          opacity: cellAttribute.opacity || 1
-        };
-        return style;
-      }
-
-      // 尝试从表格主题获取边线样式
-      const table = this.table as any;
-      if (table.theme?.bodyStyle?.borderColor) {
-        // 检查是否有borderLineWidth数组
-        let borderWidth = 1;
-        if (table.theme.bodyStyle.borderLineWidth) {
-          if (Array.isArray(table.theme.bodyStyle.borderLineWidth)) {
-            // borderLineWidth是[top, right, bottom, left]格式，取底部边框
-            borderWidth = table.theme.bodyStyle.borderLineWidth[2] || table.theme.bodyStyle.borderLineWidth[0] || 1;
-          } else {
-            borderWidth = table.theme.bodyStyle.borderLineWidth;
-          }
-        }
-        const style = {
-          color: table.theme.bodyStyle.borderColor,
-          width: borderWidth,
-          lineDash: table.theme.bodyStyle.borderLineDash,
-          opacity: 1
-        };
-        return style;
-      }
-
-      // 尝试从scenegraph中查找边框元素的样式
-      if (cellGroup.children) {
-        for (let i = 0; i < cellGroup.children.length; i++) {
-          const child = cellGroup.children[i];
-          // 查找边框相关的元素
-          if (child.name && (child.name.includes('border') || child.name.includes('frame'))) {
-            if (child.attribute?.stroke) {
-              const style = {
-                color: child.attribute.stroke,
-                width: child.attribute.lineWidth || 1,
-                lineDash: child.attribute.lineDash,
-                opacity: child.attribute.opacity || 1
-              };
-              return style;
-            }
-          }
-          // 查找具有stroke属性的子元素
-          if (child.attribute?.stroke && child.attribute.stroke !== 'transparent') {
-            const style = {
-              color: child.attribute.stroke,
-              width: child.attribute.lineWidth || 1,
-              lineDash: child.attribute.lineDash,
-              opacity: child.attribute.opacity || 1
-            };
-            return style;
-          }
-        }
-      }
-      return defaultStyle;
-    } catch (error) {
-      console.warn('Failed to get cell border style, using default:', error);
-      return defaultStyle;
+    // 获取当前的边框样式 - 直接从VTable的渲染属性中获取
+    const currentAttr = cellGroup.attribute;
+    // 获取或创建strokeArray - 完全遵循VTable的边线格式
+    const currentStrokeArrayWidth = currentAttr.strokeArrayWidth || 
+      (currentAttr.lineWidth
+        ? [currentAttr.lineWidth, currentAttr.lineWidth, currentAttr.lineWidth, currentAttr.lineWidth]
+        : [1, 1, 1, 1]);
+    const currentStrokeArrayColor = currentAttr.strokeArrayColor || 
+      (currentAttr.stroke
+        ? [currentAttr.stroke, currentAttr.stroke, currentAttr.stroke, currentAttr.stroke]
+        : ['transparent', 'transparent', 'transparent', 'transparent']);
+    // 存储原始样式，用于后续恢复
+    cellGroup._originalStrokeArrayWidth = [...currentStrokeArrayWidth];
+    cellGroup._originalStrokeArrayColor = [...currentStrokeArrayColor];
+    // 创建增强的strokeArray - 只增强底边（索引2）
+    const enhancedStrokeArrayWidth = [...currentStrokeArrayWidth];
+    const enhancedStrokeArrayColor = [...currentStrokeArrayColor];
+    // 底边增强：使用原始底边宽度的2倍 * 设备像素比，保持视觉一致性
+    const originalBottomWidth = currentStrokeArrayWidth[2] || 1;
+    // 获取设备像素比 - 从VTable内部属性或浏览器获取
+    const dpr = (this.table as any).internalProps?.pixelRatio || window.devicePixelRatio || 1;
+    // 计算增强宽度：原宽度 * 2 * DPR，确保在高分辨率屏幕上也有正确的视觉效果
+    const enhancedWidth = originalBottomWidth * 2 * dpr;
+    enhancedStrokeArrayWidth[2] = Math.max(enhancedWidth, 2 * dpr);
+    // 底边颜色：如果原来是透明的，使用表格主题色；否则保持原色
+    if (currentStrokeArrayColor[2] === 'transparent' || !currentStrokeArrayColor[2]) {
+      // 获取表格主题的边框颜色
+      const theme = (this.table as any).theme;
+      enhancedStrokeArrayColor[2] = theme?.bodyStyle?.borderColor || '#e1e4e8';
+    } else {
+      enhancedStrokeArrayColor[2] = currentStrokeArrayColor[2]; // 保持原有颜色
     }
+    // 应用增强的strokeArray样式 - 这会触发VTable的原生边线渲染机制
+    cellGroup.setAttributes({
+      strokeArrayWidth: enhancedStrokeArrayWidth,
+      strokeArrayColor: enhancedStrokeArrayColor,
+      // 确保启用分段绘制
+      stroke: true
+    });
   }
-
   /**
    * 删除展开行的下划线
    */
@@ -1542,19 +1485,23 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 从cell中删除下划线
+   * 从cell中删除下划线 - 恢复原始strokeArray样式
    */
   private removeUnderlineFromCell(cellGroup: any): void {
-    // 查找并删除下划线元素
-    if (cellGroup.children) {
-      const underlineIndex = cellGroup.children.findIndex((child: any) => child.name === 'detail-underline');
-      if (underlineIndex !== -1) {
-        const underline = cellGroup.children[underlineIndex];
-        cellGroup.removeChild(underline);
+    if (cellGroup._hasUnderline) {
+      // 恢复原始的strokeArray样式
+      if (cellGroup._originalStrokeArrayWidth && cellGroup._originalStrokeArrayColor) {
+        cellGroup.setAttributes({
+          strokeArrayWidth: cellGroup._originalStrokeArrayWidth,
+          strokeArrayColor: cellGroup._originalStrokeArrayColor
+        });
+        // 清理存储的原始样式
+        delete cellGroup._originalStrokeArrayWidth;
+        delete cellGroup._originalStrokeArrayColor;
       }
+      // 清除下划线标记
+      cellGroup._hasUnderline = false;
     }
-    // 清除下划线标记
-    cellGroup._hasUnderline = false;
   }
 
   /**
