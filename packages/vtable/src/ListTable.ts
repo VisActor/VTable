@@ -13,7 +13,8 @@ import type {
   ListTableAPI,
   ListTableConstructorOptions,
   MaybePromiseOrUndefined,
-  SortState,
+  SortOrder,
+  SortState
 } from './ts-types';
 import { HierarchyState } from './ts-types';
 import { SimpleHeaderLayoutMap } from './layout';
@@ -31,11 +32,11 @@ import type { ITitleComponent } from './components/title/title';
 import { Env } from './tools/env';
 import * as editors from './edit/editors';
 import { EditManager } from './edit/edit-manager';
+import { computeColWidth } from './scenegraph/layout/compute-col-width';
 import { computeRowHeight } from './scenegraph/layout/compute-row-height';
 import { defaultOrderFn } from './tools/util';
 import type { IEditor } from '@visactor/vtable-editors';
 import type { ColumnData, ColumnDefine, HeaderData } from './ts-types/list-table/layout-map/api';
-import type { IBasicColumnBodyDefine } from './ts-types/list-table/define/basic-define';
 import { getCellRadioState, setCellRadioState } from './state/radio/radio';
 import { cloneDeepSpec } from '@visactor/vutils-extension';
 import { getGroupCheckboxState, setCellCheckboxState } from './state/checkbox/checkbox';
@@ -879,6 +880,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     const hierarchyState = this.getHierarchyState(col, row);
 
     if (this.isHeader(col, row)) {
+      // 表头的展开和收起
       const headerTreeNode = this.internalProps.layoutMap.getHeader(col, row) as any;
       const { hierarchyState: rawHierarchyState, define: columnDefine } = headerTreeNode;
       if (![HierarchyState.collapse, HierarchyState.expand].includes(rawHierarchyState) || !columnDefine) {
