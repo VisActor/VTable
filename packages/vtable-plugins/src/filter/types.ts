@@ -8,7 +8,7 @@ export interface FilterOptions {
   /** 筛选器激活图标 */
   filteringIcon?: VTable.TYPES.ColumnIconOption;
   /** 筛选功能启用钩子函数，返回指定列是否启用筛选功能 */
-  enableFilter?: (columnIndex: number, column: VTable.TYPES.ColumnDefine) => boolean;
+  enableFilter?: (field: number | string, column: VTable.TYPES.ColumnDefine) => boolean;
   /** 默认是否启用筛选（当 enableFilter 未定义时使用） */
   defaultEnabled?: boolean;
 }

@@ -154,9 +154,16 @@ export class FilterToolbar {
       this.applyFilter(this.selectedField);
     });
 
-    // 点击空白处整个筛选菜单可消失（存在未解决的问题）
-    // this.filterMenu.addEventListener('click', e => e.stopPropagation());
-    // document.addEventListener('click', () => {this.hideFilterMenu(); console.log("document clicked")});
+    // 点击空白处整个筛选菜单可消失
+    document.addEventListener('click', () => {
+      if (this.isVisible) {
+        this.hide();
+      }
+    });
+
+    this.filterMenu.addEventListener('click', e => {
+      e.stopPropagation();
+    });
   }
 
   show(col: number, row: number): void {
@@ -177,7 +184,6 @@ export class FilterToolbar {
     this.filterMenu.style.display = 'block';
     this.filterMenu.style.left = `${left}px`;
     this.filterMenu.style.top = `${top}px`;
-    this.isVisible = true;
 
     const field = this.table.internalProps.layoutMap.getHeaderField(col, row) as string | number;
     this.updateSelectedField(field);
@@ -189,6 +195,11 @@ export class FilterToolbar {
     } else {
       this.onTabSwitch('byValue');
     }
+
+    // 确保在事件冒泡完成后才设置 isVisible 为 true
+    setTimeout(() => {
+      this.isVisible = true;
+    }, 0);
   }
 
   hide(): void {
