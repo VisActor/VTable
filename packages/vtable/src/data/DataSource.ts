@@ -731,7 +731,6 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     }
     if (index >= 0) {
       const dataIndex = this.getIndexKey(index);
-
       this.cacheBeforeChangedRecord(dataIndex, table);
       // 如果field为undefined或'' 按照colIndex取数组值
       if (field === undefined || field === '') {

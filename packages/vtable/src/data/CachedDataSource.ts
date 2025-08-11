@@ -212,7 +212,6 @@ export class CachedDataSource extends DataSource {
 
   updateGroup() {
     this.clearCache();
-
     const oldSource = this.source;
     (this as any)._source = this.processRecords(this.dataSourceObj?.records ?? this.dataSourceObj);
     if (oldSource) {
@@ -459,6 +458,7 @@ function dealWithGroup(record: any, children: any[], map: Map<number, any>, grou
     children.push({
       vtableMerge: true,
       vtableMergeName: value,
+      vtableMergeId: `${level}-${children.length}`, // 添加稳定的ID
       children: [] as any,
       map: new Map()
     });
@@ -483,7 +483,7 @@ function syncGroupCollapseState(
     for (let i = 0; i < oldSource.length; i++) {
       const record = oldSource[i];
       if (record.vtableMerge) {
-        oldGroupMap.set(record.vtableMergeName, i);
+        oldGroupMap.set(record.vtableMergeId || record.vtableMergeName, i);
       }
     }
   }
@@ -493,14 +493,14 @@ function syncGroupCollapseState(
     for (let i = 0; i < newSource.length; i++) {
       const record = newSource[i];
       if (record.vtableMerge) {
-        newGroupMap.set(record.vtableMergeName, i);
+        newGroupMap.set(record.vtableMergeId || record.vtableMergeName, i);
       }
     }
   }
-
   for (let i = 0; i < oldSource.length; i++) {
     const oldRecord = oldSource[i];
-    const newRecord = newSource[newGroupMap.get(oldRecord.vtableMergeName)];
+    const oldKey = oldRecord.vtableMergeId || oldRecord.vtableMergeName;
+    const newRecord = newSource[newGroupMap.get(oldKey)];
     if (isValid(newRecord)) {
       newRecord.hierarchyState = oldSource[i].hierarchyState;
     }

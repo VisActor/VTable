@@ -709,6 +709,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (frozenColCount >= this.colCount) {
       frozenColCount = 0;
     }
+
     // const oldFrozenColCount = this.internalProps.frozenColCount;
     this.internalProps.frozenColCount = frozenColCount;
     this.options.frozenColCount = frozenColCount;
