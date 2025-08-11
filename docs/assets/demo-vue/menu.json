@@ -111,6 +111,13 @@
             "zh": "单元格内dom组件",
             "en": "cell dom component"
           }
+        },
+        {
+          "path": "cell-custom-reactive-layout",
+          "title": {
+            "zh": "单元格自定义响应式布局",
+            "en": "cell custom reactive layout"
+          }
         }
       ]
     },

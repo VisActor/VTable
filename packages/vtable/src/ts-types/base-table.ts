@@ -134,6 +134,8 @@ export interface IBaseTableProtected {
   rowSeriesNumber?: IRowSeriesNumber;
   /** 启动复选框级联 */
   enableCheckboxCascade?: boolean;
+  /** 表头复选框是否级联整列状态 */
+  enableHeaderCheckboxCascade?: boolean;
   columnSeriesNumber?: ColumnSeriesNumber[];
   // disableRowHeaderColumnResize?: boolean;
 
@@ -292,6 +294,8 @@ export interface IBaseTableProtected {
 
   _oldRowCount?: number;
   _oldColCount?: number;
+
+  columnWidthConfig?: any;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -546,6 +550,8 @@ export interface BaseTableConstructorOptions {
   rowSeriesNumber?: IRowSeriesNumber;
   /** 启用复选框级联 */
   enableCheckboxCascade?: boolean;
+  /** 表头复选框是否级联整列状态 */
+  enableHeaderCheckboxCascade?: boolean;
   // columnSeriesNumber?: ColumnSeriesNumber[];
   customCellStyle?: CustomCellStyle[];
   customCellStyleArrangement?: CustomCellStyleArrangement[];
@@ -1097,4 +1103,12 @@ export interface PivotChartProtected extends IBaseTableProtected {
   columns?: (IColumnDimension | string)[]; // (string | IDimension)[];
   /** 定义指标具体配置项和样式定义 包含表头和body的定义*/
   indicators?: (IIndicator | string)[]; // (string | IIndicator)[];
+  columnWidthConfig?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+  columnWidthConfigForRowHeader?: {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
 }

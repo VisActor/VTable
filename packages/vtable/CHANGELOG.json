@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.5",
+      "tag": "@visactor/vtable_v1.19.5",
+      "date": "Thu, 31 Jul 2025 11:30:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add enableHeaderCheckboxCascade option\n\n"
+          },
+          {
+            "comment": "refactor: when delete and add records update checkstate #4240\n\n"
+          },
+          {
+            "comment": "fix: setCellCheckboxState not work when tree column set checkbox cell type\n\n"
+          },
+          {
+            "comment": "feat: add  move_end_task_bar event for vtable-gantt.#4266\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.4",
       "tag": "@visactor/vtable_v1.19.4",
       "date": "Mon, 28 Jul 2025 09:57:02 GMT",

@@ -187,6 +187,10 @@ export interface EVENT_TYPES {
    * 创建任务依赖关系
    */
   CREATE_DEPENDENCY_LINK: 'create_dependency_link';
+  /**
+   * 任务条移动结束事件
+   */
+  MOVE_END_TASK_BAR: 'move_end_task_bar';
 }
 ```
 
@@ -376,5 +380,32 @@ export interface EVENT_TYPES {
     event: Event;
     data: IMarkLine; // markLine信息
     position: IPosition; // 位置信息
+  };
+```
+
+### MOVE_END_TASK_BAR
+
+任务条移动结束事件
+
+事件回传参数：
+
+```
+ {
+    /** 第几条数据 */
+    index: number;
+    /** 改变后的起始日期 */
+    startDate: Date;
+    /** 改变后的结束日期 */
+    endDate: Date;
+    /** 改变前的起始日期 */
+    oldStartDate: Date;
+    /** 改变前的结束日期 */
+    oldEndDate: Date;
+    /** 改变后的数据条目 */
+    record: any;
+    /** 改变前所在行号 */
+    oldRowIndex: number;
+    /** 改变后所在行号 */
+    newRowIndex: number;
   };
 ```

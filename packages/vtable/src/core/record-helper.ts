@@ -7,6 +7,7 @@ import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
+import { isNumber } from '@visactor/vutils';
 
 /**
  * 更改单元格数据 会触发change_cell_value事件
@@ -372,6 +373,9 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
     table.scenegraph.createSceneGraph();
   } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
     (table.dataSource as CachedDataSource).addRecordsForTree?.([record], recordIndex);
+
+    adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
+
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     table.sortState && sortRecords(table);
@@ -381,6 +385,8 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
     table.scenegraph.createSceneGraph();
   } else if (table.sortState) {
     table.dataSource.addRecordForSorted(record);
+    // 清理checkedState
+    table.stateManager.checkedState.clear();
     sortRecords(table);
     table.refreshRowColCount();
     // 更新整个场景树
@@ -393,6 +399,7 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
     }
     const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
     table.dataSource.addRecord(record, recordIndex);
+    adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
     const oldRowCount = table.rowCount;
     table.refreshRowColCount();
     if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
@@ -496,6 +503,7 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
     table.scenegraph.createSceneGraph();
   } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
     (table.dataSource as CachedDataSource).addRecordsForTree?.(records, recordIndex);
+    adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
     table.refreshRowColCount();
     table.internalProps.layoutMap.clearCellRangeMap();
     table.sortState && sortRecords(table);
@@ -519,6 +527,7 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
     }
     const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
     table.dataSource.addRecords(records, recordIndex);
+    adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
     const oldRowCount = table.transpose ? table.colCount : table.rowCount;
     table.refreshRowColCount();
     if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
@@ -629,7 +638,13 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
-      (table.dataSource as CachedDataSource).deleteRecordsForTree?.(recordIndexs);
+      const deletedRecordIndexs = (table.dataSource as CachedDataSource).deleteRecordsForTree?.(recordIndexs);
+      if (deletedRecordIndexs.length === 0) {
+        return;
+      }
+      for (let index = 0; index < deletedRecordIndexs.length; index++) {
+        adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
+      }
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
       table.sortState && sortRecords(table);
@@ -868,5 +883,160 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       }
     }
     // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
+  }
+}
+function adjustCheckBoxStateMapWithDeleteRecordIndex(table: ListTable, recordIndex: number | number[], count: number) {
+  const { checkedState } = table.stateManager;
+  if (!checkedState) {
+    return;
+  }
+  if (table.dataSource.rowHierarchyType === 'tree') {
+    let toOperateIndexArr: number[];
+    if (isNumber(recordIndex)) {
+      toOperateIndexArr = [recordIndex];
+    } else {
+      toOperateIndexArr = recordIndex;
+    }
+    const toOperateIndexArrLength = toOperateIndexArr.length;
+    const targetResult: { originKey: string; targetKey?: string; value: any }[] = [];
+    checkedState.forEach((value, key: string) => {
+      const keyArray = key.split(',');
+      if (keyArray.length >= toOperateIndexArr.length) {
+        //toOperateIndexArr 的增删只会影响checkedState中keyArray.length大于等于toOperateIndexArr.length的key
+        // const length = Math.max(keyArray.length, toOperateIndexArr.length);
+
+        for (let i = 0; i < keyArray.length; i++) {
+          const toOperateIndex = toOperateIndexArr[i] ?? -1;
+          const keyIndex = Number(keyArray[i]);
+          if (toOperateIndex === keyIndex && i < keyArray.length - 1) {
+          } else if ((toOperateIndex === keyIndex && i === keyArray.length - 1) || toOperateIndex === -1) {
+            //这个条件符合则表示和toOperateIndexArr一模一样则要删除
+            targetResult.push({
+              originKey: key,
+              value
+            });
+            break;
+          } else if (toOperateIndex < keyIndex && i === toOperateIndexArrLength - 1) {
+            keyArray[i] = (keyIndex - count).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            break;
+          } else {
+            break;
+          }
+        }
+      }
+    });
+    //需要将targetResult按originKey排序进行升序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'后面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'后面
+    targetResult.sort((a, b) => {
+      const aArray = a.originKey.split(',');
+      const bArray = b.originKey.split(',');
+      const aLength = aArray.length;
+      const bLength = bArray.length;
+      const minLength = Math.min(aLength, bLength);
+      for (let i = 0; i < minLength; i++) {
+        const aIndex = Number(aArray[i]);
+        const bIndex = Number(bArray[i]);
+        if (aIndex !== bIndex) {
+          return aIndex - bIndex;
+        }
+      }
+      return aLength - bLength;
+    });
+    targetResult.forEach(({ originKey, targetKey, value }) => {
+      checkedState.delete(originKey);
+      if (targetKey) {
+        checkedState.set(targetKey, value);
+      }
+    });
+  } else {
+    // super.adjustBeforeChangedRecordsMap(insertIndex as number, insertCount, type);
+    const length = checkedState.size;
+    for (let key = length - 1; key >= (recordIndex as number); key--) {
+      const record = checkedState.get(key.toString());
+      checkedState.delete(key.toString());
+      checkedState.set((key - count).toString(), record);
+    }
+  }
+}
+
+function adjustCheckBoxStateMapWithAddRecordIndex(table: ListTable, recordIndex: number | number[], count: number) {
+  const { checkedState } = table.stateManager;
+  if (!checkedState) {
+    return;
+  }
+  if (table.dataSource.rowHierarchyType === 'tree') {
+    let toOperateIndexArr: number[];
+    if (isNumber(recordIndex)) {
+      toOperateIndexArr = [recordIndex];
+    } else {
+      toOperateIndexArr = recordIndex;
+    }
+    const toOperateIndexArrLength = toOperateIndexArr.length;
+    const targetResult: { originKey: string; targetKey?: string; value: any }[] = [];
+    checkedState.forEach((value, key: string) => {
+      const keyArray = key.split(',');
+      if (keyArray.length >= toOperateIndexArr.length) {
+        //toOperateIndexArr 的增删只会影响checkedState中keyArray.length大于等于toOperateIndexArr.length的key
+        // const length = Math.max(keyArray.length, toOperateIndexArr.length);
+        for (let i = 0; i < keyArray.length; i++) {
+          const toOperateIndex = toOperateIndexArr[i] ?? -1;
+          const keyIndex = Number(keyArray[i]);
+          if (toOperateIndex === keyIndex && (i === keyArray.length - 1 || i === toOperateIndexArrLength - 1)) {
+            //这个条件符合则表示和toOperateIndexArr一模一样
+            keyArray[i] = (keyIndex + count).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            break;
+          } else if (toOperateIndex === keyIndex && i < keyArray.length - 1) {
+          } else if (toOperateIndex < keyIndex && i === toOperateIndexArrLength - 1) {
+            keyArray[i] = (keyIndex + count).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            break;
+          } else {
+            break;
+          }
+        }
+      }
+    });
+    //需要将targetResult按originKey排序进行降序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'前面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'前面
+    targetResult.sort((a, b) => {
+      const aArray = a.originKey.split(',');
+      const bArray = b.originKey.split(',');
+      const aLength = aArray.length;
+      const bLength = bArray.length;
+      const minLength = Math.min(aLength, bLength);
+      for (let i = 0; i < minLength; i++) {
+        const aIndex = Number(aArray[i]);
+        const bIndex = Number(bArray[i]);
+        if (aIndex !== bIndex) {
+          return -aIndex + bIndex;
+        }
+      }
+      return -aLength + bLength;
+    });
+    targetResult.forEach(({ originKey, targetKey, value }) => {
+      checkedState.delete(originKey);
+      if (targetKey) {
+        checkedState.set(targetKey, value);
+      }
+    });
+  } else {
+    const length = checkedState.size;
+    for (let key = length - 1; key >= (recordIndex as number); key--) {
+      const record = checkedState.get(key.toString());
+      checkedState.delete(key.toString());
+      checkedState.set((key + count).toString(), record);
+    }
   }
 }

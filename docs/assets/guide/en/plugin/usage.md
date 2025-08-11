@@ -51,6 +51,8 @@ If you encounter issues with plugin usage, please provide feedback promptly.
 | `ExcelEditCellKeyboardPlugin` | Excel edit cell keyboard plugin | `ListTable`,`PivotTable` |
 | `TableCarouselAnimationPlugin` | Table carousel animation plugin | `ListTable`,`PivotTable` |
 | `RotateTablePlugin` | Table rotation plugin | `ListTable`,`PivotTable` |
+| `TableExportPlugin` | Table export plugin | `ListTable`,`PivotTable` |
+| `ExcelImportPlugin` | Import excel, csv, json, and html files into the table | `ListTable` |
 
 <br>
 

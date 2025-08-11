@@ -15,16 +15,23 @@ link: '../../guide/export/excel'
 ## 代码演示
 
 ```javascript livedemo template=vtable
-// 使用时需要引入插件包@visactor/vtable-export
-// import {
-//   downloadCsv,
-//   exportVTableToCsv,
-//   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// umd引入时导出工具会挂载到VTable.export
+// 使用时需要引入插件包@visactor/vtable-plugins
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const tableExportPlugin = new VTablePlugins.TableExportPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
 
-const data = [
+const tableExportPlugin = new VTablePlugins.TableExportPlugin({
+  exportExcelOptions: {
+    downloadFile: true,
+    fileName: 'fff-excel',
+    ignoreIcon: true
+  },
+  exportCsvOptions: {
+    downloadFile: true,
+    fileName: 'fff'
+  }
+});
+  const data = [
   {
     类别: '办公用品',
     销售额: 129.696,
@@ -197,7 +204,8 @@ const option = {
     order: 'asc'
   },
   theme: VTable.themes.BRIGHT,
-  defaultRowHeight: 32
+  defaultRowHeight: 32,
+  plugins: [tableExportPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
@@ -227,18 +235,13 @@ function bindExport() {
 
   exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      window.tableInstance.exportToCsv();
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadExcel(
-        await exportVTableToExcel(window.tableInstance, {
-          ignoreIcon: true
-        }),
-        'export'
-      );
+      window.tableInstance.exportToExcel();
     }
   });
 }

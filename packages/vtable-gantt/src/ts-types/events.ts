@@ -62,6 +62,25 @@ export interface TableEventHandlersEventArgumentMap {
     /** 改变后的数据条目 */
     record: any;
   };
+  move_end_task_bar: {
+    /** 第几条数据 */
+    index: number;
+    sub_task_index?: number;
+    /** 改变后的起始日期 */
+    startDate: Date;
+    /** 改变后的结束日期 */
+    endDate: Date;
+    /** 改变前的起始日期 */
+    oldStartDate: Date;
+    /** 改变前的结束日期 */
+    oldEndDate: Date;
+    /** 改变后的数据条目 */
+    record: any;
+    /** 改变前所在行号 */
+    oldRowIndex: number;
+    /** 改变后所在行号 */
+    newRowIndex: number;
+  };
   create_task_schedule: {
     federatedEvent: FederatedPointerEvent;
     event: Event;
@@ -128,4 +147,5 @@ export interface TableEventHandlersReturnMap {
   contextmenu_dependency_link: void;
   click_markline_create: void;
   click_markline_content: void;
+  move_end_task_bar: void;
 }

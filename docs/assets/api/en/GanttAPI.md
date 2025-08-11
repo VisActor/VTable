@@ -390,5 +390,31 @@ Event return parameters:
     event: Event;
     data: IMarkLine; // markLine information
     position: IPosition; // position information
-  };
+};
+```
+
+### MOVE_END_TASK_BAR
+
+Event triggered when the task bar movement ends.
+The event returns the following parameters:
+
+```
+{
+    /** Which data entry */
+    index: number;
+    /** The new start date after change */
+    startDate: Date;
+    /** The new end date after change */
+    endDate: Date;
+    /** The old start date before change */
+    oldStartDate: Date;
+    /** The old end date before change */
+    oldEndDate: Date;
+    /** The data entry after change */
+    record: any;
+    /** The old row number before change */
+    oldRowIndex: number;
+    /** The new row number after change */
+    newRowIndex: number;
+}
 ```

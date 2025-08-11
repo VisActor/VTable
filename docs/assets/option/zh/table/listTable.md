@@ -138,6 +138,10 @@ type CustomAggregation = {
 
 开启分组复选框级联功能。默认是true。
 
+## enableHeaderCheckboxCascade(boolean)
+
+开启表头与body单元格的复选框级联功能。默认是true。
+
 
 ## groupConfig(GroupConfig)
 
@@ -199,3 +203,13 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
 ## tableSizeAntiJitter(boolean) = false
 
 当表格出现抖动情况，请排查是否上层 dom 容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为 true
+
+
+## columnWidthConfig(Array)
+
+根据key设置列宽
+
+```
+  columnWidthConfig?: { key: string; width: number }[];
+```
+其中key对应到columns中定义的每列具体配置中的key。

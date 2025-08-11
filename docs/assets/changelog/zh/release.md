@@ -1,3 +1,47 @@
+# v1.19.6
+
+2025-08-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视图pivot chart 添加 columnWidthConfig 配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复透视图设置 columnHierarchyType 为 gird 时展开树时报错 [#4254](https://github.com/VisActor/VTable/issues/4254)
+- **@visactor/vtable-gantt**: 修复当没有数据records时markline渲染错误 [#4305](https://github.com/VisActor/VTable/issues/4305)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 添加表格导出插件
+
+
+
+[更多详情请查看 v1.19.6](https://github.com/VisActor/VTable/releases/tag/v1.19.6)
+
+# v1.19.5
+
+2025-07-31
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增 enableHeaderCheckboxCascade option
+- **@visactor/vtable-gantt**:  甘特图组件新增 move_end_task_bar 事件.[#4266](https://github.com/VisActor/VTable/issues/4266)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复setCellCheckboxState 在tree列设置无效的问题
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 删除和添加数据时同步更新复选框状态checkstate [#4240](https://github.com/VisActor/VTable/issues/4240)
+
+
+
+[更多详情请查看 v1.19.5](https://github.com/VisActor/VTable/releases/tag/v1.19.5)
+
 # v1.19.4
 
 2025-07-28

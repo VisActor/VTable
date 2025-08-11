@@ -284,6 +284,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       eventOptions,
       rowSeriesNumber,
       enableCheckboxCascade,
+      enableHeaderCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -413,6 +414,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
     internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
+    internalProps.enableHeaderCheckboxCascade = enableCheckboxCascade || (enableHeaderCheckboxCascade ?? true);
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -2511,6 +2513,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       eventOptions,
       rowSeriesNumber,
       enableCheckboxCascade,
+      enableHeaderCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -2609,6 +2612,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
     internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
+    internalProps.enableHeaderCheckboxCascade = enableCheckboxCascade || (enableHeaderCheckboxCascade ?? true);
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;

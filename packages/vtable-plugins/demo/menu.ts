@@ -63,5 +63,9 @@ export const menus = [
         name: 'pivot-plugin'
       }
     ]
+  },
+  {
+    path: 'table-export',
+    name: 'table-export'
   }
 ];
