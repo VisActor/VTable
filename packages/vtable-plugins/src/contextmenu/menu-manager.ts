@@ -60,7 +60,6 @@ export class MenuManager {
     // 添加全局点击事件，用于关闭菜单
     setTimeout(() => {
       vglobal.addEventListener('click', this.handleDocumentClick);
-      vglobal.addEventListener('contextmenu', this.handleDocumentClick);
     }, 0);
   }
 
@@ -394,6 +393,5 @@ export class MenuManager {
 
     // 移除全局事件监听
     vglobal.removeEventListener('click', this.handleDocumentClick);
-    vglobal.removeEventListener('contextmenu', this.handleDocumentClick);
   }
 }

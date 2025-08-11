@@ -2516,7 +2516,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 更新options 目前只支持全量更新
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions) {
+  updateOption(
+    options: BaseTableConstructorOptions,
+    updateConfig: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: true,
+      clearRowHeightCache: true
+    }
+  ) {
     this.fireListeners(TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, { options, container: this.container });
     this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
@@ -2657,16 +2663,19 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
     (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
 
-    internalProps._rowHeightsMap = new NumberRangeMap(this);
-    internalProps._rowRangeHeightsMap = new Map();
-    internalProps._colRangeWidthsMap = new Map();
+    if (updateConfig?.clearColWidthCache) {
+      internalProps._widthResizedColMap.clear();
+      this.colWidthsMap = new NumberMap();
+      this.colContentWidthsMap = new NumberMap();
+      this.colWidthsLimit = {};
+    }
 
-    internalProps._widthResizedColMap = new Set();
-    internalProps._heightResizedRowMap = new Set();
-
-    this.colWidthsMap = new NumberMap();
-    this.colContentWidthsMap = new NumberMap();
-    this.colWidthsLimit = {};
+    if (updateConfig?.clearRowHeightCache) {
+      internalProps._heightResizedRowMap.clear();
+      internalProps._rowHeightsMap = new NumberRangeMap(this);
+      internalProps._rowRangeHeightsMap = new Map();
+      internalProps._colRangeWidthsMap = new Map();
+    }
 
     internalProps.stick.changedCells.clear();
 
@@ -2778,8 +2787,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.menuHandler = new MenuHandler(this);
     }
     this.clearCellStyleCache();
-    this.clearColWidthCache();
-    this.clearRowHeightCache();
+    if (updateConfig?.clearColWidthCache) {
+      this.clearColWidthCache();
+    }
+    if (updateConfig?.clearRowHeightCache) {
+      this.clearRowHeightCache();
+    }
 
     internalProps.customMergeCell = getCustomMergeCellFunc(options.customMergeCell);
 

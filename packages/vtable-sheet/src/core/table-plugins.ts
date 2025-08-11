@@ -1,6 +1,7 @@
 import type * as VTable from '@visactor/vtable';
 import * as VTablePlugins from '@visactor/vtable-plugins';
 import type { ISheetDefine, IColumnDefine, IVTableSheetOptions } from '../ts-types';
+import { isValid } from '@visactor/vutils';
 
 /**
  * 获取表格插件列表
@@ -102,6 +103,32 @@ function createContextMenuItems(sheetDefine: ISheetDefine) {
       {
         text: '取消筛选器',
         menuKey: 'cancel_filter'
+      },
+      {
+        text: '首行表头',
+        menuKey: 'enable_first_row_as_header'
+      },
+      {
+        text: '取消表头',
+        menuKey: 'disable_first_row_as_header'
+      }
+    ],
+    bodyCellMenuItems: [
+      ...VTablePlugins.DEFAULT_BODY_MENU_ITEMS,
+      {
+        text: '启用首行表头',
+        menuKey: 'enable_first_row_as_header'
+      }
+    ],
+    columnSeriesNumberMenuItems: [
+      ...VTablePlugins.DEFAULT_COLUMN_SERIES_MENU_ITEMS,
+      {
+        text: '首行表头',
+        menuKey: 'enable_first_row_as_header'
+      },
+      {
+        text: '取消表头',
+        menuKey: 'disable_first_row_as_header'
       }
     ],
     beforeShowAdjustMenuItems: (
@@ -111,15 +138,51 @@ function createContextMenuItems(sheetDefine: ISheetDefine) {
       row: number
     ) => {
       console.log('beforeShowAdjustMenuItems', menuItems, table, col, row);
-      const cellType = table.isHeader(col, row) ? 'headerCell' : 'bodyCell';
-      if (cellType === 'bodyCell') {
-        return menuItems;
+      let isColumnSeriesNumber = false;
+      let isHeaderCell = false;
+      let isBodyCell = false;
+
+      if (!isValid(row)) {
+        isColumnSeriesNumber = true;
       }
-      const column = table.options.columns[col] as IColumnDefine;
-      if (column.filter ?? sheetDefine?.filter) {
-        menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'set_filter');
-      } else {
-        menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'cancel_filter');
+      if (isValid(col) && isValid(row)) {
+        if (table.isHeader(col, row)) {
+          isHeaderCell = true;
+        } else {
+          isBodyCell = true;
+        }
+      }
+      if (isHeaderCell) {
+        const column = table.options.columns[col] as IColumnDefine;
+        if (column.filter ?? sheetDefine?.filter) {
+          menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'set_filter');
+        } else {
+          menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'cancel_filter');
+        }
+      }
+
+      if (isHeaderCell) {
+        menuItems = menuItems.filter(item => typeof item === 'string' || item.menuKey !== 'enable_first_row_as_header');
+      } else if (isBodyCell) {
+        if (row === 0) {
+          menuItems = menuItems.filter(
+            item => typeof item === 'string' || item.menuKey !== 'disable_first_row_as_header'
+          );
+        } else {
+          menuItems = menuItems.filter(
+            item => typeof item === 'string' || item.menuKey !== 'enable_first_row_as_header'
+          );
+        }
+      } else if (isColumnSeriesNumber) {
+        if (table.isHeader(col, 0)) {
+          menuItems = menuItems.filter(
+            item => typeof item === 'string' || item.menuKey !== 'enable_first_row_as_header'
+          );
+        } else {
+          menuItems = menuItems.filter(
+            item => typeof item === 'string' || item.menuKey !== 'disable_first_row_as_header'
+          );
+        }
       }
       return menuItems;
     },
@@ -139,9 +202,8 @@ function createContextMenuItems(sheetDefine: ISheetDefine) {
             return col;
           })
         };
-
         // 更新表格配置
-        table.updateOption(newOptions);
+        table.updateOption(newOptions, { clearColWidthCache: false, clearRowHeightCache: false });
       },
       cancel_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
         console.log('cancel_filter', args, table);
@@ -160,8 +222,54 @@ function createContextMenuItems(sheetDefine: ISheetDefine) {
         };
 
         // 更新表格配置
-        table.updateOption(newOptions);
+        table.updateOption(newOptions, { clearColWidthCache: false, clearRowHeightCache: false });
+      },
+      enable_first_row_as_header: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+        handleEnableFirstRowAsHeader(table);
+      },
+      disable_first_row_as_header: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+        handleDisableFirstRowAsHeader(table);
       }
     }
   });
+}
+
+/**
+ * 处理启用第一行作为表头
+ */
+function handleEnableFirstRowAsHeader(table: VTable.ListTable): void {
+  // 获取第一行数据
+  const firstRecord = table.records[0] as string[];
+  // 获取剩余数据
+  const new_records = table.records.slice(1);
+  //获取当前column
+  const columns = table.columns;
+  // 设置第一行为表头
+  firstRecord.forEach((item, index) => {
+    columns[index].title = item;
+  });
+  table.updateOption(Object.assign({}, table.options, { records: new_records, columns, showHeader: true }), {
+    clearColWidthCache: false,
+    clearRowHeightCache: false
+  });
+  // 更新渲染
+  table.scenegraph.updateNextFrame();
+}
+
+/**
+ * 处理禁用第一行作为表头
+ */
+function handleDisableFirstRowAsHeader(table: VTable.ListTable): void {
+  const columns = table.columns;
+  const firstRecord: (string | number)[] = [];
+  columns.forEach((col, index) => {
+    firstRecord.push(col.title as string);
+  });
+  //像records中添加第一行
+  const new_records = [firstRecord, ...table.records];
+  table.updateOption(Object.assign({}, table.options, { records: new_records, columns, showHeader: false }), {
+    clearColWidthCache: false,
+    clearRowHeightCache: false
+  });
+  table.scenegraph.updateNextFrame();
 }

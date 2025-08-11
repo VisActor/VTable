@@ -543,9 +543,15 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: ListTableConstructorOptions) {
+  updateOption(
+    options: ListTableConstructorOptions,
+    updateConfig: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: true,
+      clearRowHeightCache: true
+    }
+  ) {
     const internalProps = this.internalProps;
-    super.updateOption(options);
+    super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
     //分页配置

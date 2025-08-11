@@ -110,8 +110,6 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
     if (runTime === VTable.TABLE_EVENT_TYPE.CONTEXTMENU_CELL) {
       // 获取单元格信息
       const { col, row } = eventArgs;
-      const cellType = table.isHeader(col, row) ? 'headerCell' : 'bodyCell';
-      const value = table.getCellValue(col, row);
 
       // 判断是否为序号列
       const isSeriesNumberCol = table.isSeriesNumber(col, row);
@@ -119,7 +117,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
       // 根据不同位置显示不同的右键菜单
       let menuItems: MenuItemOrSeparator[] = [];
 
-      if (cellType === 'headerCell') {
+      if (table.isHeader(col, row)) {
         if (isSeriesNumberCol) {
           menuItems = this.pluginOptions.columnSeriesNumberMenuItems || [];
         } else {
@@ -147,41 +145,44 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
           menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as VTable.ListTable, col, row);
         }
         // 显示右键菜单
-        this.showContextMenu(menuItems, mouseX, mouseY, col, row, cellType, value);
+        this.showContextMenu(menuItems, mouseX, mouseY, col, row);
       }
     } else if (runTime === VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT) {
       const { eventType, rowIndex, colIndex, isCorner } = eventArgs.pluginEventInfo;
       if (eventType === 'rightclick') {
         if (isCorner) {
-          this.showContextMenu(
-            this.pluginOptions.cornerSeriesNumberMenuItems || [],
-            mouseX,
-            mouseY,
-            colIndex,
-            rowIndex,
-            '',
-            ''
-          );
+          let menuItems = this.pluginOptions.cornerSeriesNumberMenuItems || [];
+          if (this.pluginOptions.beforeShowAdjustMenuItems) {
+            menuItems = this.pluginOptions.beforeShowAdjustMenuItems(
+              menuItems,
+              table as VTable.ListTable,
+              colIndex,
+              rowIndex
+            );
+          }
+          this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
         } else if (rowIndex !== undefined) {
-          this.showContextMenu(
-            this.pluginOptions.rowSeriesNumberMenuItems || [],
-            mouseX,
-            mouseY,
-            colIndex,
-            rowIndex,
-            'bodyCell',
-            ''
-          );
+          let menuItems = this.pluginOptions.rowSeriesNumberMenuItems || [];
+          if (this.pluginOptions.beforeShowAdjustMenuItems) {
+            menuItems = this.pluginOptions.beforeShowAdjustMenuItems(
+              menuItems,
+              table as VTable.ListTable,
+              colIndex,
+              rowIndex
+            );
+          }
+          this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
         } else if (colIndex !== undefined) {
-          this.showContextMenu(
-            this.pluginOptions.columnSeriesNumberMenuItems || [],
-            mouseX,
-            mouseY,
-            colIndex,
-            rowIndex,
-            'bodyCell',
-            ''
-          );
+          let menuItems = this.pluginOptions.columnSeriesNumberMenuItems || [];
+          if (this.pluginOptions.beforeShowAdjustMenuItems) {
+            menuItems = this.pluginOptions.beforeShowAdjustMenuItems(
+              menuItems,
+              table as VTable.ListTable,
+              colIndex,
+              rowIndex
+            );
+          }
+          this.showContextMenu(menuItems, mouseX, mouseY, colIndex, rowIndex);
         }
       }
     }
@@ -190,15 +191,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 显示右键菜单
    */
-  private showContextMenu(
-    menuItems: MenuItemOrSeparator[],
-    x: number,
-    y: number,
-    col: number,
-    row: number,
-    cellType: string,
-    cellValue: any
-  ): void {
+  private showContextMenu(menuItems: MenuItemOrSeparator[], x: number, y: number, col: number, row: number): void {
     // 显示菜单
     this.menuManager.showMenu(
       menuItems,
