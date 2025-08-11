@@ -45,6 +45,9 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: [unknown, unknown, ListTable]) {
     const tableInstance = args[2];
     this._tableInstance = tableInstance;
+    (this._tableInstance as any).importFile = () => {
+      this.import('file');
+    };
   }
 
   release() {

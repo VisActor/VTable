@@ -155,11 +155,7 @@ export class MenuManager {
     console.log('menuKey click', menuKey);
     switch (menuKey) {
       case MenuKey.IMPORT:
-        (
-          this.vtableSheet
-            .getActiveSheet()
-            .tableInstance?.pluginManager.getPluginByName('ExcelImportPlugin') as ExcelImportPlugin
-        )?.import('file');
+        (this.vtableSheet.getActiveSheet().tableInstance as any)?.importFile();
         break;
 
       case MenuKey.EXPORT_CURRENT_SHEET_CSV:

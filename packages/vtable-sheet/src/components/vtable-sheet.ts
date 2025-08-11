@@ -1219,7 +1219,26 @@ export default class VTableSheet {
       sheets
     };
   }
-
+  /** 导出当前sheet到文件 */
+  exportSheetToFile(fileType: 'csv' | 'xlsx'): void {
+    const sheet = this.getActiveSheet();
+    if (!sheet) {
+      return;
+    }
+    if (fileType === 'csv') {
+      (sheet.tableInstance as any)?.exportToCsv();
+    } else {
+      (sheet.tableInstance as any)?.exportToExcel();
+    }
+  }
+  /** 导入文件到当前sheet */
+  importFileToSheet(): void {
+    const sheet = this.getActiveSheet();
+    if (!sheet) {
+      return;
+    }
+    (sheet.tableInstance as any)?.importFile();
+  }
   /**
    * 获取容器元素
    */
