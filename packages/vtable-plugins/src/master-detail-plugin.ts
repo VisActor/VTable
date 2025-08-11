@@ -195,16 +195,13 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   release() {
     // 安全清理主从表功能
     this.cleanupMasterDetailFeatures();
-    
     // 清理容器大小监听器
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = undefined;
     }
-    
     // 清理状态
     this.expandedRows.length = 0;
-    
     // 清理表格引用，避免内存泄漏
     this.table = null as any;
   }
@@ -432,6 +429,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 插入虚拟记录来处理视口限制问题
     this.injectVirtualRecords(options);
 
+    // 给第一列添加层级图标
+    this.injectHierarchyIcons(options);
+
     // 注入子表配置
     if (this.pluginOptions.detailGridOptions) {
       const detailOptions = this.pluginOptions.detailGridOptions;
@@ -452,6 +452,137 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.pluginOptions.hierarchyTextStartAlignment !== undefined) {
       options.hierarchyTextStartAlignment = this.pluginOptions.hierarchyTextStartAlignment;
     }
+  }
+
+  /**
+   * 给第一列添加层级图标 - 模仿 master 图标系统
+   */
+  private injectHierarchyIcons(options: VTable.ListTableConstructorOptions): void {
+    if (!options.columns || options.columns.length === 0) {
+      return;
+    }
+
+    // 获取第一列
+    const firstColumn = options.columns[0] as any;
+
+    // 直接监听 ICON_CLICK 事件
+    this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
+      const { col, row, funcType, name } = iconInfo;
+      
+      // 检查是否是我们的层级图标
+      if ((name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
+          (funcType === VTable.TYPES.IconFuncTypeEnum.expand || 
+           funcType === VTable.TYPES.IconFuncTypeEnum.collapse)) {
+        // 直接使用行索引，而不是记录索引
+        console.log('图标点击事件 - 行索引:', row, '列索引:', col);
+        this.toggleRowExpand(row);
+      }
+    });
+
+    // 屏蔽 VTable 的 updateHierarchyIcon 函数，防止干扰我们的图标系统
+    const scene = (this.table as any).scenegraph;
+    if (scene && scene.updateHierarchyIcon) {
+      scene._originalUpdateHierarchyIcon = scene.updateHierarchyIcon;
+      scene.updateHierarchyIcon = () => {
+        // 空函数，阻止 VTable 内部的层次图标更新
+      };
+    }
+
+    // 创建图标函数
+    const iconFunction = (params: {
+      col: number;
+      row: number;
+      dataValue: unknown;
+      cellValue: unknown;
+    }): VTable.TYPES.SvgIcon[] => {
+      const { col, row } = params;
+
+      // 获取记录
+      let record: unknown;
+      try {
+        const recordIndex = this.table.getRecordShowIndexByCell(col, row);
+        if (recordIndex !== undefined) {
+          record = this.table.getRecordByCell(col, row);
+        }
+      } catch (error) {
+        return [];
+      }
+
+      // 检查是否有children
+      if (!record || !Array.isArray((record as any).children) || (record as any).children.length === 0) {
+        // 没有子元素时，返回一个透明的占位图标来保持对齐
+        return [
+          {
+            type: 'svg',
+            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <!-- 透明占位图标，用于保持对齐 -->
+            </svg>`,
+            width: 16,
+            height: 16,
+            name: 'hierarchy-placeholder',
+            positionType: VTable.TYPES.IconPosition.contentLeft,
+            marginLeft: 0,
+            marginRight: 4,
+            cursor: 'default'
+          } as VTable.TYPES.SvgIcon
+        ];
+      }
+
+      // 检查展开状态 - 直接使用行索引
+      const isExpanded = this.expandedRows.includes(row);
+
+      // 返回对应的图标配置
+      if (isExpanded) {
+        // 展开状态，显示 collapse 图标（向下箭头），点击后收起
+        return [
+          {
+            type: 'svg',
+            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="1"/>
+          </svg>`,
+            width: 16,
+            height: 16,
+            name: 'hierarchy-collapse',
+            positionType: VTable.TYPES.IconPosition.contentLeft,
+            marginLeft: 0,
+            marginRight: 4,
+            funcType: VTable.TYPES.IconFuncTypeEnum.collapse,
+            cursor: 'pointer',
+            hover: {
+              width: 20,
+              height: 20,
+              bgColor: 'rgba(101, 117, 168, 0.1)'
+            }
+          } as VTable.TYPES.SvgIcon
+        ];
+      } else {
+        // 折叠状态，显示 expand 图标（向右箭头），点击后展开
+        return [
+          {
+            type: 'svg',
+            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="1"/>
+          </svg>`,
+            width: 16,
+            height: 16,
+            name: 'hierarchy-expand',
+            positionType: VTable.TYPES.IconPosition.contentLeft,
+            marginLeft: 0,
+            marginRight: 4,
+            funcType: VTable.TYPES.IconFuncTypeEnum.expand,
+            cursor: 'pointer',
+            hover: {
+              width: 20,
+              height: 20,
+              bgColor: 'rgba(101, 117, 168, 0.1)'
+            }
+          } as VTable.TYPES.SvgIcon
+        ];
+      }
+    };
+
+    // 设置第一列的图标
+    firstColumn.icon = iconFunction;
   }
 
   // ==================== 主从表功能设置 ====================
@@ -490,7 +621,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private bindEventHandlers(): void {
     // handleIconClick已经在BEFORE_INIT阶段替换了，这里只需要绑定滚动事件
     this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
-    
     // 重写父表的resize方法，在表格尺寸变化时重新计算子表位置和宽度
     this.wrapTableResizeMethod();
   }
@@ -577,6 +707,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     row: number;
     funcType: VTable.TYPES.IconFuncTypeEnum | string;
   }): void {
+    console.log('图标点击处理被调用:', iconInfo);
+    
     // 检查是否是主从表功能相关的图标点击
     const { row, funcType } = iconInfo;
 
@@ -586,6 +718,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       funcType === 'expand' ||
       funcType === 'collapse'
     ) {
+      console.log('处理展开/收起图标点击, 行:', row, 'funcType:', funcType);
       this.toggleRowExpand(row);
       return;
     }
@@ -639,11 +772,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
 
-    this.updateIconsForRow(rowIndex);
     this.renderSubTable(bodyRowIndex);
     // 只重新计算当前行之后的子表位置，提高性能
     this.recalculateAllSubTablePositions(bodyRowIndex + 1);
     this.addUnderlineToExpandedRow(rowIndex, originalHeight);
+    // 触发图标重新渲染
+    this.refreshRowIcon(rowIndex);
   }
 
   /**
@@ -689,11 +823,13 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       internalProps.originalRowHeights.delete(bodyRowIndex);
     }
 
-    this.updateIconsForRow(rowIndex);
     // 删除展开行的下划线
     this.removeUnderlineFromRow(rowIndex);
     // 只重新计算当前行之后的子表位置，提高性能
     this.recalculateAllSubTablePositions(bodyRowIndex + 1);
+    
+    // 触发图标重新渲染
+    this.refreshRowIcon(rowIndex);
   }
 
   /**
@@ -1432,11 +1568,13 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 获取当前的边框样式 - 直接从VTable的渲染属性中获取
     const currentAttr = cellGroup.attribute;
     // 获取或创建strokeArray - 完全遵循VTable的边线格式
-    const currentStrokeArrayWidth = currentAttr.strokeArrayWidth || 
+    const currentStrokeArrayWidth =
+      currentAttr.strokeArrayWidth ||
       (currentAttr.lineWidth
         ? [currentAttr.lineWidth, currentAttr.lineWidth, currentAttr.lineWidth, currentAttr.lineWidth]
         : [1, 1, 1, 1]);
-    const currentStrokeArrayColor = currentAttr.strokeArrayColor || 
+    const currentStrokeArrayColor =
+      currentAttr.strokeArrayColor ||
       (currentAttr.stroke
         ? [currentAttr.stroke, currentAttr.stroke, currentAttr.stroke, currentAttr.stroke]
         : ['transparent', 'transparent', 'transparent', 'transparent']);
@@ -1451,8 +1589,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 获取设备像素比 - 从VTable内部属性或浏览器获取
     const dpr = (this.table as any).internalProps?.pixelRatio || window.devicePixelRatio || 1;
     // 计算增强宽度：原宽度 * 2 * DPR，确保在高分辨率屏幕上也有正确的视觉效果
-    const enhancedWidth = originalBottomWidth * 2 * dpr;
-    enhancedStrokeArrayWidth[2] = Math.max(enhancedWidth, 2 * dpr);
+    const enhancedWidth = originalBottomWidth * 1.5 * dpr;
+    enhancedStrokeArrayWidth[2] = Math.max(enhancedWidth, 1.5 * dpr);
     // 底边颜色：如果原来是透明的，使用表格主题色；否则保持原色
     if (currentStrokeArrayColor[2] === 'transparent' || !currentStrokeArrayColor[2]) {
       // 获取表格主题的边框颜色
@@ -1518,5 +1656,26 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         this.addUnderlineToExpandedRow(rowIndex, originalHeight);
       }
     });
+  }
+
+  /**
+   * 刷新指定行的图标状态
+   */
+  private refreshRowIcon(rowIndex: number): void {
+    try {
+      // 方法1：触发第一列的重新渲染
+      const firstColumnIndex = 0;
+      
+      // 获取场景图
+      const sceneGraph = (this.table as any).scenegraph;
+      if (sceneGraph && sceneGraph.updateCellContent) {
+        // 强制更新第一列的内容，这会重新调用图标函数
+        sceneGraph.updateCellContent(firstColumnIndex, rowIndex);
+        // 更新场景图
+        sceneGraph.updateNextFrame();
+      }
+    } catch (error) {
+      console.warn('刷新图标状态失败:', error);
+    }
   }
 }

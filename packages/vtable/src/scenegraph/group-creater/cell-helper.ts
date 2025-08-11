@@ -631,12 +631,6 @@ export function updateCell(
     cellLocation !== 'body'
       ? true
       : (define as IRowSeriesNumber)?.dragOrder || !!define?.icon || !!(define as ColumnDefine)?.tree;
-  if (cellLocation === 'body' && !mayHaveIcon && (define as ColumnDefine)?.master) {
-    const record = table.getCellRawRecord(colForDefine, rowForDefine);
-    if (record && Array.isArray(record.children) && record.children.length > 0) {
-      mayHaveIcon = true;
-    }
-  }
 
   if (
     !range &&

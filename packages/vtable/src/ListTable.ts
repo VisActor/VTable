@@ -855,38 +855,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * @param row
    * @returns
    */
-  getHierarchyState(col: number, row: number): HierarchyState {
+  getHierarchyState(col: number, row: number) {
     if (this.isHeader(col, row)) {
       return (this._getHeaderLayoutMap(col, row) as HeaderData)?.hierarchyState;
     }
-
     if (!this.options.groupBy || (isArray(this.options.groupBy) && this.options.groupBy.length === 0)) {
       const define = this.getBodyColumnDefine(col, row) as ColumnDefine;
-      if (define.tree) {
-        const index = this.getRecordShowIndexByCell(col, row);
-        const treeState = this.dataSource.getHierarchyState(index);
-        if (treeState !== HierarchyState.none) {
-          return treeState; 
-        }
-      }
-      if (define.master) {
-        const record = this.getCellRawRecord(col, row);
-        if (record && record.children && Array.isArray(record.children) && record.children.length > 0) {
-          if (record.hierarchyState === HierarchyState.expand) {
-            return HierarchyState.expand;
-          }
-          return HierarchyState.collapse;
-        }
-      }
-    } else {
-      const index = this.getRecordShowIndexByCell(col, row);
-      const treeState = this.dataSource.getHierarchyState(index);
-      if (treeState !== HierarchyState.none) {
-        return treeState;
+      if (!define.tree) {
+        return HierarchyState.none;
       }
     }
-
-    return HierarchyState.none;
+    const index = this.getRecordShowIndexByCell(col, row);
+    return this.dataSource.getHierarchyState(index);
   }
   /**
    * 表头切换层级状态

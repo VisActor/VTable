@@ -673,11 +673,7 @@ function computeTextHeight(col: number, row: number, cellType: ColumnTypeOption,
     mayHaveIcon = true;
   } else {
     const define = table.getBodyColumnDefine(col, row);
-    mayHaveIcon =
-      !!define?.icon ||
-      !!(define as ColumnDefine)?.tree ||
-      !!(define as ColumnDefine)?.master ||
-      (define as IRowSeriesNumber)?.dragOrder;
+    mayHaveIcon = !!define?.icon || !!(define as ColumnDefine)?.tree || (define as IRowSeriesNumber)?.dragOrder;
   }
 
   if (mayHaveIcon) {

@@ -160,7 +160,6 @@ export function createTable() {
       field: 'id',
       title: 'ID',
       width: 80,
-      master: true, // 标记为主从表的主控列
       sort: true
     },
     {

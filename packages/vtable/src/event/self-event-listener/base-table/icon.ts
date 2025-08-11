@@ -18,21 +18,10 @@ export function bindIconClickEvent(table: BaseTableAPI) {
     } else if (funcType === IconFuncTypeEnum.drillDown) {
       drillClick(table);
     } else if (funcType === IconFuncTypeEnum.collapse || funcType === IconFuncTypeEnum.expand) {
-      const bodyColumnDefine = table.getBodyColumnDefine?.(col, row);
-      const isMasterSystem = bodyColumnDefine && (bodyColumnDefine as any).master;
-      if (!isMasterSystem) {
-        const isHasSelected = !!stateManager.select.ranges?.length;
-        stateManager.updateSelectPos(-1, -1);
-        stateManager.endSelectCells(true, isHasSelected);
-        table.toggleHierarchyState(col, row);
-      } else {
-        // 主从表系统：尝试调用插件的方法或表格实例的方法
-        if (typeof (table as any).toggleRowExpand === 'function') {
-          (table as any).toggleRowExpand(row);
-        } else if (typeof (table as any).handleIconClick === 'function') {
-          (table as any).handleIconClick({ col, row, funcType });
-        }
-      }
+      const isHasSelected = !!stateManager.select.ranges?.length;
+      stateManager.updateSelectPos(-1, -1);
+      stateManager.endSelectCells(true, isHasSelected);
+      table.toggleHierarchyState(col, row);
     }
   });
 }
