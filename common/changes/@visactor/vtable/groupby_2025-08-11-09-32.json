@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Merge branch develop of github.com:VisActor/VTable into groupby\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "alonemall@163.com"
+}
