@@ -1,4 +1,5 @@
 import * as VTable from '@visactor/vtable';
+import { createLine, createRect } from '@visactor/vtable/es/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
 export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOptions> {
@@ -484,6 +485,21 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private bindEventHandlers(): void {
     // handleIconClick已经在BEFORE_INIT阶段替换了，这里只需要绑定滚动事件
     this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
+    
+    // 重写父表的resize方法，在表格尺寸变化时重新计算子表位置和宽度
+    this.wrapTableResizeMethod();
+  }
+
+  /**
+   * 重写父表的resize方法 - 基于您的ListTable实现
+   */
+  private wrapTableResizeMethod(): void {
+    const originalResize = this.table.resize.bind(this.table);
+    this.table.resize = () => {
+      // 调用原始的resize方法
+      originalResize();
+      this.updateSubTablePositionsForResize();
+    };
   }
 
   /**
@@ -622,6 +638,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.renderSubTable(bodyRowIndex);
     // 只重新计算当前行之后的子表位置，提高性能
     this.recalculateAllSubTablePositions(bodyRowIndex + 1);
+    this.addUnderlineToExpandedRow(rowIndex, originalHeight);
   }
 
   /**
@@ -668,6 +685,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     this.updateIconsForRow(rowIndex);
+    // 删除展开行的下划线
+    this.removeUnderlineFromRow(rowIndex);
     // 只重新计算当前行之后的子表位置，提高性能
     this.recalculateAllSubTablePositions(bodyRowIndex + 1);
   }
@@ -748,9 +767,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           const bodyRowIndex = currentPagerData.indexOf(recordIndex);
           if (bodyRowIndex >= 0) {
             try {
-              table.expandRow(bodyRowIndex + table.columnHeaderLevelCount);
+              // 使用插件的expandRow方法，而不是table的原生方法
+              const targetRowIndex = bodyRowIndex + table.columnHeaderLevelCount;
+              this.expandRow(targetRowIndex);
             } catch (e) {
               // 展开失败
+              console.warn(`Failed to expand row ${bodyRowIndex + table.columnHeaderLevelCount} after sort:`, e);
             }
           }
         }
@@ -1144,6 +1166,49 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
+   * 父表尺寸变化时更新所有子表位置和宽度 - 基于您的 recalculateAllSubTablePositions 实现
+   */
+  private updateSubTablePositionsForResize(): void {
+    const internalProps = this.getInternalProps();
+    if (!internalProps.subTableInstances) {
+      return;
+    }
+    internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
+      // 获取记录数据和配置
+      const record = this.getRecordByRowIndex(bodyRowIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord(record, bodyRowIndex) : null;
+      // 重新计算子表的ViewBox区域
+      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
+      if (newViewBox) {
+        const newContainerWidth = newViewBox.x2 - newViewBox.x1;
+        const newContainerHeight = newViewBox.y2 - newViewBox.y1;
+        // 更新子表的ViewBox
+        (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
+          newViewBox;
+        // 更新子表的容器尺寸，触发内部布局重计算
+        const subTableOptions = subTable.options as any;
+        if (subTableOptions.canvasWidth !== newContainerWidth || subTableOptions.canvasHeight !== newContainerHeight) {
+          subTableOptions.canvasWidth = newContainerWidth;
+          subTableOptions.canvasHeight = newContainerHeight;
+          // 通知子表尺寸已变化，需要重新布局
+          subTable.resize();
+        }
+        // 通知VRender Stage更新ViewBox
+        if (subTable.scenegraph?.stage) {
+          (subTable.scenegraph.stage as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
+            newViewBox,
+            false
+          );
+        }
+        // 重新渲染子表
+        subTable.render();
+      }
+    });
+    // resize后重绘所有展开行的下划线，因为cell位置和尺寸可能已改变
+    this.redrawAllUnderlines();
+  }
+
+  /**
    * 重新计算子表位置 - 从 ListTable.recalculateAllSubTablePositions 抽取
    * @param start 开始的bodyRowIndex，默认为最小值
    * @param end 结束的bodyRowIndex，默认为最大值
@@ -1242,5 +1307,269 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         }
       };
     }
+  }
+
+  /**
+   * 添加展开行的下划线 - 使用VTable内部的渲染机制
+   */
+  private addUnderlineToExpandedRow(rowIndex: number, originalHeight: number): void {
+    // 检查行是否在当前渲染范围内
+    const sceneGraph = (this.table as any).scenegraph;
+    const proxy = sceneGraph?.proxy;
+    if (proxy && (rowIndex < proxy.rowStart || rowIndex > proxy.rowEnd)) {
+      // 行不在当前渲染范围内，延迟处理
+      this.scheduleUnderlineDrawing(rowIndex, originalHeight);
+      return;
+    }
+    // 等待下一个渲染帧，确保DOM已更新
+    setTimeout(() => {
+      this.drawUnderlineForRow(rowIndex, originalHeight);
+    }, 0);
+  }
+
+  /**
+   * 调度下划线绘制任务 - 当行进入视口时执行
+   */
+  private scheduleUnderlineDrawing(rowIndex: number, originalHeight: number): void {
+    // 监听滚动事件，当目标行进入视口时绘制下划线
+    const handleScroll = () => {
+      const sceneGraph = (this.table as any).scenegraph;
+      const proxy = sceneGraph?.proxy;
+      if (proxy && rowIndex >= proxy.rowStart && rowIndex <= proxy.rowEnd) {
+        // 行现在在视口内，可以绘制下划线
+        this.table.off(VTable.TABLE_EVENT_TYPE.SCROLL, handleScroll);
+        setTimeout(() => {
+          this.drawUnderlineForRow(rowIndex, originalHeight);
+        }, 50);
+      }
+    };
+    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, handleScroll);
+  }
+
+  /**
+   * 为指定行绘制下划线
+   */
+  private drawUnderlineForRow(rowIndex: number, originalHeight: number): void {
+    const sceneGraph = (this.table as any).scenegraph;
+    if (!sceneGraph) {
+      return;
+    }
+    // 获取指定行的所有cell
+    const rowCells = this.getRowCells(rowIndex);
+    if (rowCells.length === 0) {
+      return;
+    }
+    rowCells.forEach((cellGroup: any, index: number) => {
+      if (cellGroup && cellGroup.attribute) {
+        // 为这个cell添加下划线渲染逻辑
+        this.addUnderlineToCell(cellGroup, originalHeight);
+      }
+    });
+    // 触发重新渲染
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  /**
+   * 获取指定行的所有cell元素
+   */
+  private getRowCells(rowIndex: number): any[] {
+    const sceneGraph = (this.table as any).scenegraph;
+    const cells: any[] = [];
+    // 遍历所有组找到指定行的cell
+    const traverse = (group: any) => {
+      if (group.role === 'cell' && group.row === rowIndex) {
+        cells.push(group);
+      }
+      if (group.children) {
+        group.children.forEach((child: any) => traverse(child));
+      }
+    };
+
+    if (sceneGraph.stage) {
+      traverse(sceneGraph.stage);
+    }
+
+    return cells;
+  }
+
+  /**
+   * 为cell添加下划线 - 使用CellGroup原本的边线样式
+   */
+  private addUnderlineToCell(cellGroup: any, originalHeight: number): void {
+    // 检查是否已经添加了下划线标记
+    if (cellGroup._hasUnderline) {
+      return;
+    }
+    // 标记这个cell已添加下划线
+    cellGroup._hasUnderline = true;
+    // 获取CellGroup的边线样式
+    const borderStyle = this.getCellBorderStyle(cellGroup);
+    // 临时解决方案：如果获取到的lineWidth是1，尝试使用更粗的线条
+    const adjustedWidth = borderStyle.width * 2;
+    // 创建下划线Line元素 - 使用原本的边线样式
+    const underline = createLine({
+      x: 0,
+      y: originalHeight, // Line元素的起始Y位置
+      points: [
+        { x: 0, y: 0 }, // 相对于Line元素的起始点
+        { x: cellGroup.attribute.width, y: 0 } // 相对于Line元素的结束点
+      ],
+      stroke: borderStyle.color,
+      lineWidth: adjustedWidth,
+      lineDash: borderStyle.lineDash,
+      visible: true,
+      opacity: borderStyle.opacity
+    });
+
+    underline.name = 'detail-underline';
+    // 将下划线添加到cell中
+    cellGroup.appendChild(underline);
+  }
+
+  /**
+   * 获取CellGroup的边线样式
+   */
+  private getCellBorderStyle(cellGroup: any): {
+    color: string;
+    width: number;
+    lineDash?: number[];
+    opacity: number;
+  } {
+    // 默认样式
+    const defaultStyle = {
+      color: '#e1e4e8',
+      width: 1,
+      opacity: 1
+    };
+
+    try {
+      // 优先从cellGroup的strokeArrayWidth获取底部边框宽度
+      if (cellGroup.attribute?.strokeArrayWidth) {
+        const strokeArrayWidth = cellGroup.attribute.strokeArrayWidth;
+        // strokeArrayWidth是[top, right, bottom, left]格式
+        const bottomBorderWidth = strokeArrayWidth[2] || strokeArrayWidth[0] || 1;
+        const style = {
+          color: cellGroup.attribute.stroke || cellGroup.attribute.strokeArrayColor?.[2] || '#e1e4e8',
+          width: bottomBorderWidth,
+          lineDash: cellGroup.attribute.lineDash,
+          opacity: cellGroup.attribute.opacity || 1
+        };
+        return style;
+      }
+      // 尝试从cellGroup的属性中获取边线样式
+      const cellAttribute = cellGroup.attribute;
+      // 检查是否有边框样式定义
+      if (cellAttribute?.stroke) {
+        const style = {
+          color: cellAttribute.stroke,
+          width: cellAttribute.lineWidth || 1,
+          lineDash: cellAttribute.lineDash,
+          opacity: cellAttribute.opacity || 1
+        };
+        return style;
+      }
+
+      // 尝试从表格主题获取边线样式
+      const table = this.table as any;
+      if (table.theme?.bodyStyle?.borderColor) {
+        // 检查是否有borderLineWidth数组
+        let borderWidth = 1;
+        if (table.theme.bodyStyle.borderLineWidth) {
+          if (Array.isArray(table.theme.bodyStyle.borderLineWidth)) {
+            // borderLineWidth是[top, right, bottom, left]格式，取底部边框
+            borderWidth = table.theme.bodyStyle.borderLineWidth[2] || table.theme.bodyStyle.borderLineWidth[0] || 1;
+          } else {
+            borderWidth = table.theme.bodyStyle.borderLineWidth;
+          }
+        }
+        const style = {
+          color: table.theme.bodyStyle.borderColor,
+          width: borderWidth,
+          lineDash: table.theme.bodyStyle.borderLineDash,
+          opacity: 1
+        };
+        return style;
+      }
+
+      // 尝试从scenegraph中查找边框元素的样式
+      if (cellGroup.children) {
+        for (let i = 0; i < cellGroup.children.length; i++) {
+          const child = cellGroup.children[i];
+          // 查找边框相关的元素
+          if (child.name && (child.name.includes('border') || child.name.includes('frame'))) {
+            if (child.attribute?.stroke) {
+              const style = {
+                color: child.attribute.stroke,
+                width: child.attribute.lineWidth || 1,
+                lineDash: child.attribute.lineDash,
+                opacity: child.attribute.opacity || 1
+              };
+              return style;
+            }
+          }
+          // 查找具有stroke属性的子元素
+          if (child.attribute?.stroke && child.attribute.stroke !== 'transparent') {
+            const style = {
+              color: child.attribute.stroke,
+              width: child.attribute.lineWidth || 1,
+              lineDash: child.attribute.lineDash,
+              opacity: child.attribute.opacity || 1
+            };
+            return style;
+          }
+        }
+      }
+      return defaultStyle;
+    } catch (error) {
+      console.warn('Failed to get cell border style, using default:', error);
+      return defaultStyle;
+    }
+  }
+
+  /**
+   * 删除展开行的下划线
+   */
+  private removeUnderlineFromRow(rowIndex: number): void {
+    // 获取指定行的所有cell
+    const rowCells = this.getRowCells(rowIndex);
+    rowCells.forEach((cellGroup: any, index: number) => {
+      if (cellGroup && cellGroup._hasUnderline) {
+        this.removeUnderlineFromCell(cellGroup);
+      }
+    });
+    // 触发重新渲染
+    this.table.scenegraph.updateNextFrame();
+  }
+
+  /**
+   * 从cell中删除下划线
+   */
+  private removeUnderlineFromCell(cellGroup: any): void {
+    // 查找并删除下划线元素
+    if (cellGroup.children) {
+      const underlineIndex = cellGroup.children.findIndex((child: any) => child.name === 'detail-underline');
+      if (underlineIndex !== -1) {
+        const underline = cellGroup.children[underlineIndex];
+        cellGroup.removeChild(underline);
+      }
+    }
+    // 清除下划线标记
+    cellGroup._hasUnderline = false;
+  }
+
+  /**
+   * 重绘所有展开行的下划线 - 用于resize后重新定位
+   */
+  private redrawAllUnderlines(): void {
+    this.expandedRows.forEach(rowIndex => {
+      const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+      const originalHeight = this.getOriginalRowHeight(bodyRowIndex);
+      if (originalHeight > 0) {
+        // 先删除旧的下划线
+        this.removeUnderlineFromRow(rowIndex);
+        // 重新绘制下划线
+        this.addUnderlineToExpandedRow(rowIndex, originalHeight);
+      }
+    });
   }
 }
