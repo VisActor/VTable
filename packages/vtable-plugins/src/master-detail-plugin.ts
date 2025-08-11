@@ -1,18 +1,11 @@
 import * as VTable from '@visactor/vtable';
 
-/** 子表配置接口 */
-export interface DetailGridOptions {
-  /** 子表类型 */
-  type: 'ListTable' | 'PivotTable';
-  /** 子表列定义 */
-  columnDefs: VTable.TYPES.ColumnsDefine;
-  /** 子表样式配置 */
+/** 子表配置接口 - 继承 ListTableConstructorOptions */
+export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOptions> {
   style?: {
-    margin?: number;
+    margin?: number | [number, number] | [number, number, number, number];
     height?: number;
   };
-  /** 子表其他配置项 */
-  [key: string]: unknown;
 }
 
 /**
@@ -22,8 +15,6 @@ export interface MasterDetailPluginOptions {
   id?: string;
   /** 是否启用主从表功能 */
   enabled?: boolean;
-  /** 默认展开的行索引 */
-  expandedRows?: number[];
   /** 静态子表配置 */
   detailGridOptions?: DetailGridOptions;
   /** 动态子表配置函数 */
@@ -40,7 +31,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   id = `master-detail-${Date.now()}`;
   name = 'Master Detail Plugin';
   runTime = [
-    VTable.TABLE_EVENT_TYPE.BEFORE_INIT, 
+    VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
     VTable.TABLE_EVENT_TYPE.INITIALIZED,
     VTable.TABLE_EVENT_TYPE.SORT_CLICK,
     VTable.TABLE_EVENT_TYPE.AFTER_SORT,
@@ -58,7 +49,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private expandedRows: number[] = [];
   // 容器大小监听器
   private resizeObserver?: ResizeObserver;
-
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
     this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = Object.assign(
@@ -75,8 +65,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const eventArgs = args[0];
     const runTime = args[1];
     const table = args[2] as VTable.ListTable;
-
-
     if (!this.pluginOptions.enabled) {
       return;
     }
@@ -84,6 +72,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
       this.table = table;
       this.injectMasterDetailOptions((eventArgs as { options: VTable.ListTableConstructorOptions }).options);
+      // 使用 queueMicrotask 确保在当前执行栈完成后立即执行
+      // 这样可以在表格构造完成但还没开始渲染时设置虚拟记录高度
+      queueMicrotask(() => {
+        this.setupVirtualRecordRowHeight();
+      });
     } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
       // 在INITIALIZED阶段替换handleIconClick方法，确保表格已经完全初始化
       this.replaceHandleIconClick();
@@ -120,7 +113,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
   }): void {
-    const { cellGroup, cellHeight, padding, textAlign, textBaseline, autoRowHeight } = eventData;
+    const { cellGroup, cellHeight, padding, textBaseline } = eventData;
     // 在masterDetail模式下，使用原始高度而不是逻辑行高来重新定位单元格内容
     let effectiveCellHeight = cellHeight;
     if (cellGroup.col !== undefined && cellGroup.row !== undefined) {
@@ -157,15 +150,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           error
         );
       }
-    }
-    // 如果是展开的行，可能需要重新调整子表位置
-    const internalProps = this.getInternalProps();
-    const bodyRowIndex = eventData.row - this.table.columnHeaderLevelCount;
-    if (internalProps.subTableInstances?.has(bodyRowIndex)) {
-      // 延迟执行，确保单元格更新完成
-      setTimeout(() => {
-        this.recalculateAllSubTablePositions();
-      }, 0);
     }
   }
 
@@ -249,11 +233,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const cell = this.table.scenegraph.highPerformanceGetCell(col, row);
       return cell?.attribute?.height || null;
     } catch (e) {
-      console.error(`获取单元格 (${col}, ${row}) 高度失败:`, e);
       return null;
     }
   }
-
   // ==================== 配置注入 ====================
 
   /**
@@ -268,11 +250,181 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
+   * 插入虚拟记录来解决视口限制问题
+   */
+  private injectVirtualRecords(options: VTable.ListTableConstructorOptions): void {
+    if (!options.records || !Array.isArray(options.records)) {
+      return;
+    }
+
+    const originalRecords = options.records;
+    if (originalRecords.length === 0) {
+      return;
+    }
+
+    // 创建最小虚拟记录（所有字段为空或最小值）
+    const minRecord = this.createVirtualRecord(originalRecords, 'min');
+
+    // 创建最大虚拟记录（所有字段为空或最大值）
+    const maxRecord = this.createVirtualRecord(originalRecords, 'max');
+
+    // 插入虚拟记录：最小记录在开头，最大记录在末尾
+    options.records = [minRecord, ...originalRecords, maxRecord];
+  }
+
+  /**
+   * 创建虚拟记录
+   */
+  private createVirtualRecord(
+    originalRecords: Record<string, unknown>[],
+    type: 'min' | 'max'
+  ): Record<string, unknown> {
+    const record: Record<string, unknown> = {};
+    // 分析原始记录的字段类型
+    const fieldAnalysis = this.analyzeRecordFields(originalRecords);
+    // 根据字段类型填充虚拟值
+    for (const [fieldName, fieldInfo] of Object.entries(fieldAnalysis)) {
+      if (type === 'min') {
+        record[fieldName] = this.getMinValueForField(fieldInfo);
+      } else {
+        record[fieldName] = this.getMaxValueForField(fieldInfo);
+      }
+    }
+
+    // 确保虚拟记录不会显示展开图标
+    record.hierarchyState = VTable.TYPES.HierarchyState.none;
+    record.children = undefined;
+    return record;
+  }
+
+  /**
+   * 分析记录字段的类型和范围
+   */
+  private analyzeRecordFields(records: Record<string, unknown>[]): Record<
+    string,
+    {
+      type: 'string' | 'number' | 'boolean' | 'date' | 'unknown';
+      minValue?: number;
+      maxValue?: number;
+      hasNull: boolean;
+    }
+  > {
+    const analysis: Record<
+      string,
+      {
+        type: 'string' | 'number' | 'boolean' | 'date' | 'unknown';
+        minValue?: number;
+        maxValue?: number;
+        hasNull: boolean;
+      }
+    > = {};
+
+    // 收集所有字段名
+    const allFields = new Set<string>();
+    records.forEach(record => {
+      Object.keys(record).forEach(key => allFields.add(key));
+    });
+
+    // 分析每个字段
+    allFields.forEach(fieldName => {
+      const values = records.map(record => record[fieldName]).filter(value => value !== null && value !== undefined);
+      if (values.length === 0) {
+        analysis[fieldName] = { type: 'unknown', hasNull: true };
+        return;
+      }
+
+      const firstValue = values[0];
+      let type: 'string' | 'number' | 'boolean' | 'date' | 'unknown' = 'unknown';
+      let minValue: number | undefined;
+      let maxValue: number | undefined;
+      if (typeof firstValue === 'string') {
+        type = 'string';
+      } else if (typeof firstValue === 'number') {
+        type = 'number';
+        const numberValues = values.filter(v => typeof v === 'number') as number[];
+        minValue = Math.min(...numberValues);
+        maxValue = Math.max(...numberValues);
+      } else if (typeof firstValue === 'boolean') {
+        type = 'boolean';
+      } else if (firstValue instanceof Date) {
+        type = 'date';
+      }
+
+      analysis[fieldName] = {
+        type,
+        minValue,
+        maxValue,
+        hasNull: records.some(record => record[fieldName] === null || record[fieldName] === undefined)
+      };
+    });
+
+    return analysis;
+  }
+
+  /**
+   * 获取字段的最小值
+   */
+  private getMinValueForField(fieldInfo: { type: string; minValue?: number }): unknown {
+    switch (fieldInfo.type) {
+      case 'string':
+        return '';
+      case 'number':
+        return fieldInfo.minValue !== undefined ? fieldInfo.minValue - 1 : Number.MIN_SAFE_INTEGER;
+      case 'boolean':
+        return false;
+      case 'date':
+        return new Date(0);
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * 获取字段的最大值
+   */
+  private getMaxValueForField(fieldInfo: { type: string; maxValue?: number }): unknown {
+    switch (fieldInfo.type) {
+      case 'string':
+        return '\uFFFF'; // Unicode 最大字符
+      case 'number':
+        return fieldInfo.maxValue !== undefined ? fieldInfo.maxValue + 1 : Number.MAX_SAFE_INTEGER;
+      case 'boolean':
+        return true;
+      case 'date':
+        return new Date(2099, 11, 31);
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * 设置虚拟记录的零高度（在表格初始化完成后调用）
+   */
+  private setupVirtualRecordRowHeight(): void {
+    // 计算正确的行索引
+    const headerRowCount = this.table.columnHeaderLevelCount;
+    const firstDataRowIndex = headerRowCount;
+    const lastDataRowIndex = this.table.rowCount - this.table.bottomFrozenRowCount - 1; // 最后一个数据行（虚拟最大记录）
+    try {
+      // 尝试多种方法设置最后一行高度为 0
+      if (typeof this.table.setRowHeight === 'function') {
+        this.table.setRowHeight(firstDataRowIndex, 0);
+        this.table._setRowHeight(lastDataRowIndex, 0, true);
+      }
+    } catch (error) {
+      // 设置失败时静默处理
+      console.warn('Failed to set virtual record row height:', error);
+    }
+  }
+  /**
    * 注入主从表配置到表格选项中
    */
   private injectMasterDetailOptions(options: VTable.ListTableConstructorOptions): void {
     // 启用主从表基础设施
     (options as VTable.ListTableConstructorOptions & { masterDetail: boolean }).masterDetail = true;
+
+    // 插入虚拟记录来处理视口限制问题
+    this.injectVirtualRecords(options);
 
     // 注入子表配置
     if (this.pluginOptions.detailGridOptions) {
@@ -294,12 +446,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.pluginOptions.hierarchyTextStartAlignment !== undefined) {
       options.hierarchyTextStartAlignment = this.pluginOptions.hierarchyTextStartAlignment;
     }
-
-    // 设置默认展开行
-    if (this.pluginOptions.expandedRows && this.pluginOptions.expandedRows.length > 0) {
-      (options as VTable.ListTableConstructorOptions & { expandedRows: number[] }).expandedRows =
-        this.pluginOptions.expandedRows;
-    }
   }
 
   // ==================== 主从表功能设置 ====================
@@ -316,7 +462,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 扩展表格 API
     this.extendTableAPI();
-
   }
 
   /**
@@ -328,8 +473,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       subTableInstances?: Map<number, VTable.ListTable>;
       originalRowHeights?: Map<number, number>;
     };
-
-    internalProps.expandedRecordIndices = [...(this.pluginOptions.expandedRows || [])];
+    internalProps.expandedRecordIndices = []; // 初始化为空数组
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
   }
@@ -398,7 +542,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         textBaseline: 'middle' as CanvasTextBaseline
       });
     }
-    
     return result;
   }
 
@@ -441,7 +584,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   expandRow(rowIndex: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = this.getInternalProps();
-
     if (internalProps._heightResizedRowMap.has(rowIndex)) {
       return;
     }
@@ -478,7 +620,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     this.updateIconsForRow(rowIndex);
     this.renderSubTable(bodyRowIndex);
-    this.recalculateAllSubTablePositions();
+    // 只重新计算当前行之后的子表位置，提高性能
+    this.recalculateAllSubTablePositions(bodyRowIndex + 1);
   }
 
   /**
@@ -525,7 +668,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     this.updateIconsForRow(rowIndex);
-    this.recalculateAllSubTablePositions();
+    // 只重新计算当前行之后的子表位置，提高性能
+    this.recalculateAllSubTablePositions(bodyRowIndex + 1);
   }
 
   /**
@@ -541,6 +685,32 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   // ==================== 辅助方法 ====================
+
+  /**
+   * 解析 margin 配置，返回 [上, 右, 下, 左] 格式
+   */
+  private parseMargin(
+    margin?: number | [number, number] | [number, number, number, number]
+  ): [number, number, number, number] {
+    if (margin === undefined || margin === null) {
+      return [10, 10, 10, 10]; // 默认值
+    }
+    if (typeof margin === 'number') {
+      return [margin, margin, margin, margin];
+    }
+    if (Array.isArray(margin)) {
+      if (margin.length === 2) {
+        // [上下, 左右]
+        const [vertical, horizontal] = margin;
+        return [vertical, horizontal, vertical, horizontal];
+      } else if (margin.length === 4) {
+        // [上, 右, 下, 左]
+        return margin;
+      }
+    }
+    return [10, 10, 10, 10];
+  }
+
   /**
    * masterDetail模式下排序前的操作
    */
@@ -619,6 +789,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       rowEnd = this.table.rowCount - 1;
     } else {
       rowEnd = Math.min(
+        // 情况就是如果他的一开始的this.table.scenegraph.proxy.rowEnd不是和这个this.table.rowCount相同的情况下
+        // 如果这个this.table.scenegraph.proxy.rowEnd和this.table.rowCount这个相同的话就会有问题，这是为什么？是分开渲染的结果？
         (this.table.scenegraph as { proxy: { rowEnd: number } }).proxy.rowEnd,
         this.table.rowCount - this.table.bottomFrozenRowCount - 1
       );
@@ -694,18 +866,31 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const childrenData = Array.isArray(record.children) ? record.children : [];
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
-    const subTableOptions = {
+    // 创建子表配置，首先使用父表的重要属性作为基础
+    const parentOptions = (this.table as { options: VTable.ListTableConstructorOptions }).options;
+    const baseSubTableOptions: VTable.ListTableConstructorOptions = {
       viewBox: childViewBox,
       canvas: this.table.canvas,
       records: childrenData,
-      columns: detailConfig?.columnDefs || [],
+      columns: detailConfig?.columns || [],
       widthMode: 'adaptive' as const,
       showHeader: true,
       canvasWidth: containerWidth,
       canvasHeight: containerHeight,
       // 继承父表的重要属性
-      theme: (this.table as { options: VTable.ListTableConstructorOptions }).options.theme,
-      ...(detailConfig || {})
+      theme: parentOptions.theme,
+      // 可以继承更多父表属性
+      defaultRowHeight: parentOptions.defaultRowHeight,
+      defaultHeaderRowHeight: parentOptions.defaultHeaderRowHeight,
+      defaultColWidth: parentOptions.defaultColWidth,
+      keyboardOptions: parentOptions.keyboardOptions
+    };
+    // 用户自定义配置覆盖默认配置（排除 style 属性，因为它不是 ListTableConstructorOptions 的一部分）
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { style: _style, ...userDetailConfig } = detailConfig || {};
+    const subTableOptions = {
+      ...baseSubTableOptions,
+      ...userDetailConfig
     };
     const subTable = new VTable.ListTable(this.table.container, subTableOptions);
     internalProps.subTableInstances.set(bodyRowIndex, subTable);
@@ -750,13 +935,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       return null;
     }
 
-    const margin = detailConfig?.style?.margin || 10;
+    // 解析margin配置 [上, 右, 下, 左]
+    const [marginTop, marginRight, marginBottom, marginLeft] = this.parseMargin(detailConfig?.style?.margin);
     const configHeight = detailConfig?.style?.height || 300;
     const viewBox = {
-      x1: firstColRect.left + margin,
-      y1: detailRowRect.top + originalHeight + margin,
-      x2: lastColRect.right - margin,
-      y2: detailRowRect.top - margin + configHeight
+      x1: firstColRect.left + marginLeft,
+      y1: detailRowRect.top + originalHeight + marginTop,
+      x2: lastColRect.right - marginRight,
+      y2: detailRowRect.top - marginBottom + configHeight
     };
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
@@ -958,12 +1144,21 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 重新计算所有子表位置 - 从 ListTable.recalculateAllSubTablePositions 抽取
+   * 重新计算子表位置 - 从 ListTable.recalculateAllSubTablePositions 抽取
+   * @param start 开始的bodyRowIndex，默认为最小值
+   * @param end 结束的bodyRowIndex，默认为最大值
    */
-  private recalculateAllSubTablePositions(): void {
+  private recalculateAllSubTablePositions(start?: number, end?: number): void {
     const internalProps = this.getInternalProps();
     const recordsToRecreate: number[] = [];
     internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
+      // 如果指定了范围，只处理范围内的子表
+      if (start !== undefined && bodyRowIndex < start) {
+        return;
+      }
+      if (end !== undefined && bodyRowIndex > end) {
+        return;
+      }
       recordsToRecreate.push(bodyRowIndex);
     });
     // 需要recordsToRecreate，因为我这个removeSubTable和renderSubTable这个都会修改subTableInstances如果直接用的话会导致混乱
@@ -1002,7 +1197,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     const stage = subTable.scenegraph.stage;
-    
     // 拦截stage的渲染方法，在渲染前应用裁剪
     const originalRender = stage.render;
     if (typeof originalRender === 'function') {
