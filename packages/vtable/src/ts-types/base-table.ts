@@ -632,6 +632,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 插件配置 */
   plugins?: IVTablePlugin[];
+  /** 默认的鼠标样式 */
+  defaultCursor?: string;
 }
 export interface BaseTableAPI {
   id: string;

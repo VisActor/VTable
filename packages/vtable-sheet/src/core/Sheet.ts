@@ -171,6 +171,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
     return {
       ...this.options,
       addRecordRule: 'Array',
+      defaultCursor: 'cell',
       records: this.options.data,
       container: this.element,
       showHeader: isShowTableHeader,

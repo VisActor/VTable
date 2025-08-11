@@ -719,3 +719,11 @@ The position and size of the table in the canvas. Only need to configure this pr
 #${prefix} disableInteraction(boolean) = false
 
 Whether to disable all interactions of the table.
+
+#${prefix} defaultCursor(string) = 'default'
+
+Default cursor style.
+
+```
+defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
+```

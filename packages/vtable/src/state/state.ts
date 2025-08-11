@@ -1704,7 +1704,10 @@ export class StateManager {
     this.frozen.icon = iconMark;
   }
 
-  updateCursor(mode: string = 'default') {
+  updateCursor(mode?: string) {
+    if (!mode) {
+      mode = this.table.options.defaultCursor ?? 'default';
+    }
     this.table.getElement().style.cursor = mode;
   }
 
