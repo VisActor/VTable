@@ -33,11 +33,13 @@ import type {
 } from './ts-types';
 import { ListTableAll as ListTable } from './ListTable-all';
 import { ListTableSimple } from './ListTable-simple';
+// import { PivotTable } from './PivotTable';
 import { PivotTableAll as PivotTable } from './PivotTable-all';
 import { PivotTableSimple } from './PivotTable-simple';
 import { PivotChart } from './PivotChart';
 import type { MousePointerCellEvent } from './ts-types/events';
 import * as CustomLayout from './render/layout';
+
 import { updateCell } from './scenegraph/group-creater/cell-helper';
 import { renderChart } from './scenegraph/graphic/contributions/chart-render-helper';
 import { restoreMeasureText, setCustomAlphabetCharSet, textMeasure } from './scenegraph/utils/text-measure';
