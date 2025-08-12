@@ -942,6 +942,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const extendedSubTable = subTable as VTable.ListTable & {
         __scrollHandler?: (args: unknown) => boolean;
         __wheelHandler?: (e: WheelEvent) => void;
+        __clipInterval?: number;
       };
       const scrollHandler = extendedSubTable.__scrollHandler;
       if (scrollHandler) {
@@ -950,6 +951,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const wheelHandler = extendedSubTable.__wheelHandler;
       if (wheelHandler) {
         subTable.canvas.removeEventListener('wheel', wheelHandler);
+      }
+      // 清理clip interval
+      const clipInterval = extendedSubTable.__clipInterval;
+      if (clipInterval) {
+        clearInterval(clipInterval);
       }
       if (typeof subTable.release === 'function') {
         subTable.release();
@@ -1221,49 +1227,63 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     const stage = subTable.scenegraph.stage;
-    // 拦截stage的渲染方法，在渲染前应用裁剪
-    const originalRender = stage.render;
-    if (typeof originalRender === 'function') {
-      stage.render = () => {
-        const window = stage.window;
-        if (window && typeof window.getContext === 'function') {
-          const context = window.getContext();
-          if (context) {
-            // 保存canvas状态
-            context.save();
-            try {
-              // 计算裁剪区域 - 避开父表的冻结区域
-              const frozenRowsHeight = this.table.getFrozenRowsHeight();
-              const frozenColsWidth = this.table.getFrozenColsWidth();
-              const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
-              const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
-              // 获取父表的可视区域
-              const tableWidth = this.table.tableNoFrameWidth;
-              const tableHeight = this.table.tableNoFrameHeight;
-              const clipX = frozenColsWidth;
-              const clipY = frozenRowsHeight;
-              const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
-              const clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
-              // 确保裁剪区域有效
-              if (clipWidth > 0 && clipHeight > 0) {
-                // 应用裁剪 - 需要根据设备像素比转换坐标系统
-                const dpr = this.table.internalProps.pixelRatio || 1;
-                context.beginPath();
-                // 转换为VRender内部坐标系统（dpr倍数）
-                context.rect(clipX * dpr, clipY * dpr, clipWidth * dpr, clipHeight * dpr);
-                context.clip();
-              }
-              originalRender.call(stage);
-            } finally {
-              context.restore();
+    // 计算裁剪区域的函数
+    const calculateClipRegion = () => {
+      try {
+        const frozenRowsHeight = this.table.getFrozenRowsHeight();
+        const frozenColsWidth = this.table.getFrozenColsWidth();
+        const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
+        const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
+        const tableWidth = this.table.tableNoFrameWidth;
+        const tableHeight = this.table.tableNoFrameHeight;
+        const clipX = frozenColsWidth;
+        const clipY = frozenRowsHeight;
+        const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+        const clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
+        return { clipX, clipY, clipWidth, clipHeight };
+      } catch (error) {
+        return null;
+      }
+    };
+
+    // 获取canvas context
+    const window = stage.window;
+    if (!window || typeof window.getContext !== 'function') {
+      return;
+    }
+    const context = window.getContext();
+    if (!context) {
+      return;
+    }
+
+    const wrapRenderMethod = (obj: any, methodName: string) => {
+      const originalMethod = obj[methodName];
+      if (typeof originalMethod === 'function') {
+        obj[methodName] = function(...args: any[]) {
+          context.save();
+          try {
+            const clipRegion = calculateClipRegion();
+            if (clipRegion && clipRegion.clipWidth > 0 && clipRegion.clipHeight > 0) {
+              const dpr = (window as any).dpr || (window as any).devicePixelRatio || 1;
+              context.beginPath();
+              context.rect(
+                clipRegion.clipX * dpr,
+                clipRegion.clipY * dpr,
+                clipRegion.clipWidth * dpr,
+                clipRegion.clipHeight * dpr
+              );
+              context.clip();
             }
-          } else {
-            originalRender.call(stage);
+            return originalMethod.apply(this, args);
+          } finally {
+            context.restore();
           }
-        } else {
-          originalRender.call(stage);
-        }
-      };
+        };
+      }
+    };
+    if (stage.defaultLayer) {
+      wrapRenderMethod(stage.defaultLayer, 'render');
+      wrapRenderMethod(stage.defaultLayer, 'draw');
     }
   }
 
