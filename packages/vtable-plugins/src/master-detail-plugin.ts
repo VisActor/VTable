@@ -39,6 +39,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private expandedRows: number[] = [];
   // 容器大小监听器
   private resizeObserver?: ResizeObserver;
+  // 虚拟记录的唯一标识
+  private virtualRecordIds: { topId: string; maxId: string } | null = null;
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
     this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = Object.assign(
@@ -62,6 +64,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       });
     } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
       this.setupMasterDetailFeatures();
+      // 设置数据源排序保护
+      this.setupDataSourceSortProtection();
     } else if (runTime === VTable.TABLE_EVENT_TYPE.SORT_CLICK) {
       // 排序前处理：保存展开状态并收起所有行
       this.executeMasterDetailBeforeSort();
@@ -189,138 +193,45 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (originalRecords.length === 0) {
       return;
     }
-    // 创建最小虚拟记录（所有字段为空或最小值）
-    const minRecord = this.createVirtualRecord(originalRecords, 'min');
-    // 创建最大虚拟记录（所有字段为空或最大值）
-    const maxRecord = this.createVirtualRecord(originalRecords, 'max');
-    // 插入虚拟记录：最小记录在开头，最大记录在末尾
+    // 生成唯一的虚拟记录ID
+    const topId = `__vtable_virtual_top_${Date.now()}_${Math.random()}`;
+    const maxId = `__vtable_virtual_bottom_${Date.now()}_${Math.random()}`;
+    this.virtualRecordIds = { topId, maxId };
+    // 创建顶部和底部虚拟记录（都是空行）
+    const minRecord = this.createVirtualRecord(originalRecords, 'top', topId);
+    const maxRecord = this.createVirtualRecord(originalRecords, 'bottom', maxId);
+    // 插入虚拟记录：顶部记录在开头，底部记录在末尾
     options.records = [minRecord, ...originalRecords, maxRecord];
   }
 
   /**
-   * 创建虚拟记录
+   * 创建虚拟记录 - 简化版本，只创建空行
    */
   private createVirtualRecord(
     originalRecords: Record<string, unknown>[],
-    type: 'min' | 'max'
+    type: 'top' | 'bottom',
+    virtualId: string
   ): Record<string, unknown> {
     const record: Record<string, unknown> = {};
-    // 分析原始记录的字段类型
-    const fieldAnalysis = this.analyzeRecordFields(originalRecords);
-    // 根据字段类型填充虚拟值
-    for (const [fieldName, fieldInfo] of Object.entries(fieldAnalysis)) {
-      if (type === 'min') {
-        record[fieldName] = this.getMinValueForField(fieldInfo);
-      } else {
-        record[fieldName] = this.getMaxValueForField(fieldInfo);
-      }
+    // 获取第一个记录的所有字段，为每个字段设置空值
+    if (originalRecords.length > 0) {
+      const firstRecord = originalRecords[0];
+      Object.keys(firstRecord).forEach(fieldName => {
+        if (type === 'top') {
+           record[fieldName] = '1'; // 所有字段都设为空字符串
+        }else {
+           record[fieldName] = '2'; // 所有字段都设为空字符串
+        }
+      });
     }
     record.children = undefined;
+    // 标记为虚拟记录并设置唯一ID
+    record.__vtable_virtual_record__ = true;
+    record.__vtable_virtual_id__ = virtualId;
     return record;
   }
 
-  /**
-   * 分析记录字段的类型和范围
-   */
-  private analyzeRecordFields(records: Record<string, unknown>[]): Record<
-    string,
-    {
-      type: 'string' | 'number' | 'boolean' | 'date' | 'unknown';
-      minValue?: number;
-      maxValue?: number;
-      hasNull: boolean;
-    }
-  > {
-    const analysis: Record<
-      string,
-      {
-        type: 'string' | 'number' | 'boolean' | 'date' | 'unknown';
-        minValue?: number;
-        maxValue?: number;
-        hasNull: boolean;
-      }
-    > = {};
-
-    // 收集所有字段名
-    const allFields = new Set<string>();
-    records.forEach(record => {
-      Object.keys(record).forEach(key => allFields.add(key));
-    });
-
-    // 分析每个字段
-    allFields.forEach(fieldName => {
-      const values = records.map(record => record[fieldName]).filter(value => value !== null && value !== undefined);
-      if (values.length === 0) {
-        analysis[fieldName] = { type: 'unknown', hasNull: true };
-        return;
-      }
-
-      const firstValue = values[0];
-      let type: 'string' | 'number' | 'boolean' | 'date' | 'unknown' = 'unknown';
-      let minValue: number | undefined;
-      let maxValue: number | undefined;
-      if (typeof firstValue === 'string') {
-        type = 'string';
-      } else if (typeof firstValue === 'number') {
-        type = 'number';
-        const numberValues = values.filter(v => typeof v === 'number') as number[];
-        minValue = Math.min(...numberValues);
-        maxValue = Math.max(...numberValues);
-      } else if (typeof firstValue === 'boolean') {
-        type = 'boolean';
-      } else if (firstValue instanceof Date) {
-        type = 'date';
-      }
-
-      analysis[fieldName] = {
-        type,
-        minValue,
-        maxValue,
-        hasNull: records.some(record => record[fieldName] === null || record[fieldName] === undefined)
-      };
-    });
-
-    return analysis;
-  }
-
-  /**
-   * 获取字段的最小值
-   */
-  private getMinValueForField(fieldInfo: { type: string; minValue?: number }): unknown {
-    switch (fieldInfo.type) {
-      case 'string':
-        return '';
-      case 'number':
-        return fieldInfo.minValue !== undefined ? fieldInfo.minValue - 1 : Number.MIN_SAFE_INTEGER;
-      case 'boolean':
-        return false;
-      case 'date':
-        return new Date(0);
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * 获取字段的最大值
-   */
-  private getMaxValueForField(fieldInfo: { type: string; maxValue?: number }): unknown {
-    switch (fieldInfo.type) {
-      case 'string':
-        return '\uFFFF'; // Unicode 最大字符
-      case 'number':
-        return fieldInfo.maxValue !== undefined ? fieldInfo.maxValue + 1 : Number.MAX_SAFE_INTEGER;
-      case 'boolean':
-        return true;
-      case 'date':
-        return new Date(2099, 11, 31);
-      default:
-        return null;
-    }
-  }
-
   private setupVirtualRecordRowHeight(): void {
-    // 计算正确的行索引
     const firstDataRowIndex = this.table.columnHeaderLevelCount;
     const lastDataRowIndex = this.table.rowCount - this.table.bottomFrozenRowCount - 1;
     try {
@@ -721,9 +632,86 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 排序后的操作
+   * 调整虚拟记录在currentIndexedData中的位置
    */
+  private adjustVirtualRecordsPosition(): void {
+    const dataSource = this.table.dataSource;
+    if (!dataSource || !Array.isArray(dataSource.currentIndexedData)) {
+      return;
+    }
+    const currentIndexedData = dataSource.currentIndexedData;
+    const records = dataSource.records;
+    if (!this.virtualRecordIds) {
+      return;
+    }
+    // 找到虚拟记录在currentIndexedData中的索引
+    const virtualRecordIndices: { index: number; recordIndex: number; virtualId: string }[] = [];
+    for (let i = 0; i < currentIndexedData.length; i++) {
+      const recordIndex = currentIndexedData[i];
+      // 确保recordIndex是数字类型
+      if (typeof recordIndex !== 'number') {
+        continue;
+      }
+      const record = records[recordIndex];
+      if (record && record.__vtable_virtual_record__ && record.__vtable_virtual_id__) {
+        const virtualId = record.__vtable_virtual_id__;
+        if (virtualId === this.virtualRecordIds.topId || virtualId === this.virtualRecordIds.maxId) {
+          virtualRecordIndices.push({ index: i, recordIndex, virtualId });
+        }
+      }
+    }
+    if (virtualRecordIndices.length === 0) {
+      return;
+    }
+
+    // 从currentIndexedData中移除虚拟记录
+    // 从后往前删除，避免索引变化
+    virtualRecordIndices.sort((a, b) => b.index - a.index);
+    virtualRecordIndices.forEach(({ index }) => {
+      currentIndexedData.splice(index, 1);
+    });
+
+    // 重新添加虚拟记录到正确位置
+    virtualRecordIndices.forEach(({ recordIndex, virtualId }) => {
+      if (virtualId === this.virtualRecordIds.topId) {
+        currentIndexedData.unshift(recordIndex);
+      } else if (virtualId === this.virtualRecordIds.maxId) {
+        currentIndexedData.push(recordIndex);
+      }
+    });
+  }
+
+  /**
+   * 设置数据源排序保护 - 在排序方法级别进行干预
+   */
+  private setupDataSourceSortProtection(): void {
+    const dataSource = this.table.dataSource;
+    if (!dataSource) {
+      return;
+    }
+
+    // 包装排序方法
+    const originalSort = (dataSource as any).sort;
+    if (typeof originalSort === 'function') {
+      (dataSource as any).sort = (...args: any[]) => {
+        const result = originalSort.apply(dataSource, args);
+        this.adjustVirtualRecordsPosition();
+        return result;
+      };
+    }
+
+    // 包装 updatePagerData 方法，确保在分页数据更新前调整虚拟记录
+    const originalUpdatePagerData = (dataSource as any).updatePagerData;
+    if (typeof originalUpdatePagerData === 'function') {
+      (dataSource as any).updatePagerData = (...args: any[]) => {
+        this.adjustVirtualRecordsPosition();
+        const result = originalUpdatePagerData.apply(dataSource, args);
+        return result;
+      };
+    }
+  }
   private executeMasterDetailAfterSort(): void {
+    this.adjustVirtualRecordsPosition();
     const table = this.table as any;
     const tempExpandedRecordIndices = table.internalProps._tempExpandedRecordIndices;
     if (tempExpandedRecordIndices && tempExpandedRecordIndices.length > 0) {
