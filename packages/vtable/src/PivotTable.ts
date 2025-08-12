@@ -54,6 +54,7 @@ import type { IEmptyTipComponent } from './components/empty-tip/empty-tip';
 import { Factory } from './core/factory';
 import { callUpdateColOnScenegraph, callUpdateRowOnScenegraph } from './tools/diff-cell';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import type { CreateLegend } from './components/legend/create-legend';
 
 export class PivotTable extends BaseTable implements PivotTableAPI {
   layoutNodeId: { seqId: number } = { seqId: 0 };
@@ -235,11 +236,30 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.internalProps.useOneRowHeightFillAll = false;
       this.stateManager.initCheckedState(records);
       // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
-
+      this._updateSize();
       // 生成单元格场景树
       this.scenegraph.createSceneGraph();
       // this.render();
+      if (options.legends) {
+        this.internalProps.legends = [];
+        const createLegend = Factory.getFunction('createLegend') as CreateLegend;
+        if (Array.isArray(options.legends)) {
+          for (let i = 0; i < options.legends.length; i++) {
+            this.internalProps.legends.push(createLegend(options.legends[i], this));
+          }
 
+          this.scenegraph.tableGroup.setAttributes({
+            x: this.tableX,
+            y: this.tableY
+          });
+        } else {
+          this.internalProps.legends.push(createLegend(options.legends, this));
+          this.scenegraph.tableGroup.setAttributes({
+            x: this.tableX,
+            y: this.tableY
+          });
+        }
+      }
       if (options.title) {
         const Title = Factory.getComponent('title') as ITitleComponent;
         this.internalProps.title = new Title(options.title, this);

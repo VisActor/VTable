@@ -509,26 +509,6 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.eventManager = new EventManager(this);
     this.animationManager = new TableAnimationManager(this);
 
-    if (options.legends) {
-      internalProps.legends = [];
-      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
-      if (Array.isArray(options.legends)) {
-        for (let i = 0; i < options.legends.length; i++) {
-          internalProps.legends.push(createLegend(options.legends[i], this));
-        }
-        this.scenegraph.tableGroup.setAttributes({
-          x: this.tableX,
-          y: this.tableY
-        });
-      } else {
-        internalProps.legends.push(createLegend(options.legends, this));
-        this.scenegraph.tableGroup.setAttributes({
-          x: this.tableX,
-          y: this.tableY
-        });
-      }
-    }
-
     //原有的toolTip提示框处理，主要在文字绘制不全的时候 出来全文本提示信息 需要加个字段设置是否有效
     internalProps.tooltip = Object.assign(
       {

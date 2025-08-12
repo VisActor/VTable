@@ -75,6 +75,7 @@ import {
 } from './scenegraph/group-creater/cell-type';
 import { hasLinearAxis } from './layout/chart-helper/get-axis-config';
 import { cacheStageCanvas, clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
+import type { CreateLegend } from './components/legend/create-legend';
 
 registerAxis();
 registerEmptyTip();
@@ -263,6 +264,26 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
     // 生成单元格场景树
     this.scenegraph.createSceneGraph();
+    if (options.legends) {
+      this.internalProps.legends = [];
+      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
+      if (Array.isArray(options.legends)) {
+        for (let i = 0; i < options.legends.length; i++) {
+          this.internalProps.legends.push(createLegend(options.legends[i], this));
+        }
+
+        this.scenegraph.tableGroup.setAttributes({
+          x: this.tableX,
+          y: this.tableY
+        });
+      } else {
+        this.internalProps.legends.push(createLegend(options.legends, this));
+        this.scenegraph.tableGroup.setAttributes({
+          x: this.tableX,
+          y: this.tableY
+        });
+      }
+    }
     if (options.title) {
       const Title = Factory.getComponent('title') as ITitleComponent;
       this.internalProps.title = new Title(options.title, this);
