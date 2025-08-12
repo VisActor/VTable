@@ -34,3 +34,12 @@ Horizontal padding of the scroll bar.
 ##${prefix} verticalPadding(number | [number, number, number, number])
 
 Vertical padding of the scroll bar.
+
+##${prefix} ignoreLeftFrozen(boolean)
+Ignore the width of the left frozen column
+
+##${prefix} ignoreRightFrozen(boolean)
+Ignore the width of the right frozen column
+
+##${prefix} ignoreAllFrozen(boolean)
+Ignore the width of all frozen columns, default false

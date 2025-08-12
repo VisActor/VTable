@@ -136,12 +136,11 @@ type CustomAggregation = {
 
 ## enableCheckboxCascade(boolean)
 
-开启分组复选框级联功能。默认是true。
+开启分组复选框级联功能。默认是 true。
 
 ## enableHeaderCheckboxCascade(boolean)
 
-开启表头与body单元格的复选框级联功能。默认是true。
-
+开启表头与 body 单元格的复选框级联功能。默认是 true。
 
 ## groupConfig(GroupConfig)
 
@@ -181,7 +180,7 @@ type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
 
 ### titleCheckbox
 
-开启分组标题复选框功能。 这个配置对应当在rowSeriesNumber中配置cellType: 'checkbox'时，如想在group分组名中显示checkbox，则需要开启这个配置 。默认为false
+开启分组标题复选框功能。 这个配置对应当在 rowSeriesNumber 中配置 cellType: 'checkbox'时，如想在 group 分组名中显示 checkbox，则需要开启这个配置 。默认为 false
 
 ### titleFieldFormat
 
@@ -190,7 +189,6 @@ type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
 ### titleCustomLayout
 
 分组标题自定义布局。
-
 
 ## customComputeRowHeight(Function)
 
@@ -204,31 +202,12 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
 
 当表格出现抖动情况，请排查是否上层 dom 容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为 true
 
-
 ## columnWidthConfig(Array)
 
-根据key设置列宽
+根据 key 设置列宽
 
 ```
   columnWidthConfig?: { key: string; width: number }[];
 ```
-其中key对应到columns中定义的每列具体配置中的key。
 
-
-## scrollConfig(IScrollConfig)
-
-滚动条配置。
-
-scrollConfig 的具体类型如下：
-
-### hScrollSkipLeftFrozenColsWidth (boolean)
-
-是否在水平滚动条上跳过左侧冻结列的宽度，默认为 false
-
-### hScrollSkipRightFrozenColsWidth (boolean)
-
-是否在水平滚动条上跳过右侧冻结列的宽度，默认为 false
-
-### hScrollSkipAllFrozenColsWidth (boolean)
-
-是否在水平滚动条上跳过所有冻结列的宽度，默认为 false
+其中 key 对应到 columns 中定义的每列具体配置中的 key。

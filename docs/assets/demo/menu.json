@@ -715,6 +715,13 @@
             "zh": "透视表角头显示维度名",
             "en": "Pivot Table corner title"
           }
+        },
+        {
+          "path": "list-table-scrollStyle-ignore-frozen",
+          "title": {
+            "zh": "滚动条忽略冻结列宽度",
+            "en": "List Table - Scroll Style Ignore Frozen"
+          }
         }
       ]
     },

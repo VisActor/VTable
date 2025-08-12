@@ -382,13 +382,13 @@ export class TableComponent {
       let hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
 
       // 忽略左侧冻结列宽度
-      const skipLeftFrozen = this.table.options?.scrollConfig?.hScrollSkipLeftFrozenColsWidth ?? false;
+      const skipLeftFrozen = this.table.theme.scrollStyle?.ignoreLeftFrozen ?? false;
 
       // 忽略右侧冻结列宽度
-      const skipRightFrozen = this.table.options?.scrollConfig?.hScrollSkipRightFrozenColsWidth ?? false;
+      const skipRightFrozen = this.table.theme.scrollStyle?.ignoreRightFrozen ?? false;
 
       // 忽略所有冻结列宽度
-      const skipAllFrozen = this.table.options?.scrollConfig?.hScrollSkipAllFrozenColsWidth ?? false;
+      const skipAllFrozen = this.table.theme.scrollStyle?.ignoreAllFrozen ?? false;
 
       const skipAllFrozenColsWidth = skipAllFrozen || (skipLeftFrozen && skipRightFrozen);
 

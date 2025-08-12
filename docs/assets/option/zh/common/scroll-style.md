@@ -31,3 +31,12 @@
 
 ##${prefix} verticalPadding(number | [number, number, number, number])
 竖向滚动条内边距，可配值：`number` | `[number, number, number, number]`
+
+##${prefix} ignoreLeftFrozen(boolean)
+忽略左侧冻结列宽度，默认false
+
+##${prefix} ignoreRightFrozen(boolean)
+忽略右侧冻结列宽度，默认false
+
+##${prefix} ignoreAllFrozen(boolean)
+忽略所有冻结列宽度，默认false

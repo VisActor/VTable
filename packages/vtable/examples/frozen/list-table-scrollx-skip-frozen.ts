@@ -77,10 +77,10 @@ export function createTable() {
     columns,
     transpose: true,
     rightFrozenColCount: 2,
-    scrollConfig: {
-      hScrollSkipAllFrozenColsWidth: true
-      // hScrollSkipLeftFrozenColsWidth: true,
-      // hScrollSkipRightFrozenColsWidth: true,
+    theme: {
+      scrollStyle: {
+        ignoreAllFrozen: true
+      }
     }
   };
   const tableInstance = new VTable.ListTable(option);
