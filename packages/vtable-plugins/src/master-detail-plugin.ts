@@ -612,7 +612,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     this.renderSubTable(bodyRowIndex);
     this.recalculateAllSubTablePositions(bodyRowIndex + 1);
-    this.addUnderlineToExpandedRow(rowIndex, originalHeight);
+    this.drawUnderlineForRow(rowIndex, originalHeight);
     this.refreshRowIcon(rowIndex);
   }
 
@@ -1285,16 +1285,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 添加展开行的下划线
-   */
-  private addUnderlineToExpandedRow(rowIndex: number, originalHeight: number): void {
-    // 直接获取行的所有cell并绘制下划线
-    setTimeout(() => {
-      this.drawUnderlineForRow(rowIndex, originalHeight);
-    }, 0);
-  }
-
-  /**
    * 为指定行绘制下划线
    */
   private drawUnderlineForRow(rowIndex: number, originalHeight: number): void {
@@ -1431,7 +1421,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         // 先删除旧的下划线
         this.removeUnderlineFromRow(rowIndex);
         // 重新绘制下划线
-        this.addUnderlineToExpandedRow(rowIndex, originalHeight);
+        this.drawUnderlineForRow(rowIndex, originalHeight);
       }
     });
   }
