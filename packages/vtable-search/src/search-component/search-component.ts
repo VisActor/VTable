@@ -498,11 +498,11 @@ export class SearchComponent {
 
       let tmp = [...indexNumbers]
       let tmpNumber = 0
+        let i = 0;
 
       while (tmpNumber < tmp.length - 1) {
         tmpNumber++
         let indexNumber = indexNumbers.slice(0, tmpNumber)
-        let i = 0;
 
         // 如果是表头就往下偏移
         while (this.table.isHeader(0, i)) {
@@ -523,7 +523,7 @@ export class SearchComponent {
           );
         }
       }
-      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + 2, { duration: 900, easing: 'quartIn' })
+      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, { duration: 900, easing: 'quartIn' })
 
 
     } else {
