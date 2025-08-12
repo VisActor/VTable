@@ -213,3 +213,22 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
   columnWidthConfig?: { key: string; width: number }[];
 ```
 其中key对应到columns中定义的每列具体配置中的key。
+
+
+## scrollConfig(IScrollConfig)
+
+滚动条配置。
+
+scrollConfig 的具体类型如下：
+
+### hScrollSkipLeftFrozenColsWidth (boolean)
+
+是否在水平滚动条上跳过左侧冻结列的宽度，默认为 false
+
+### hScrollSkipRightFrozenColsWidth (boolean)
+
+是否在水平滚动条上跳过右侧冻结列的宽度，默认为 false
+
+### hScrollSkipAllFrozenColsWidth (boolean)
+
+是否在水平滚动条上跳过所有冻结列的宽度，默认为 false

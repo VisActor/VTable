@@ -985,6 +985,10 @@ export const menus = [
       },
       {
         path: 'frozen',
+        name: 'list-table-scrollx-skip-frozen'
+      },
+      {
+        path: 'frozen',
         name: 'pivot-table-right-frozen'
       },
       {

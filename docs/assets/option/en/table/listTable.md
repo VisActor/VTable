@@ -215,3 +215,23 @@ Set column width based on key
 ```
 
 The key corresponds to the key defined in the specific configuration of each column in columns.
+
+
+
+## scrollConfig(IScrollConfig)
+
+Scrollbar configuration.
+
+The specific type of scrollConfig is as follows:
+
+### hScrollSkipLeftFrozenColsWidth (boolean)
+
+Whether to skip the width of the left frozen columns on the horizontal scrollbar. Default is false.
+
+### hScrollSkipRightFrozenColsWidth (boolean)
+
+Whether to skip the width of the right frozen columns on the horizontal scrollbar. Default is false.
+
+### hScrollSkipAllFrozenColsWidth (boolean)
+
+Whether to skip the width of all frozen columns on the horizontal scrollbar. Default is false
