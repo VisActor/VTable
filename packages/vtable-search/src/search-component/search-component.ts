@@ -1,4 +1,6 @@
 import type * as VTable from '@visactor/vtable';
+import { ITableAnimationOption } from '@visactor/vtable/src/ts-types';
+import { EasingType } from '@visactor/vtable/src/vrender';
 import { isValid } from '@visactor/vutils';
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 
@@ -22,6 +24,7 @@ export type SearchComponentOption = {
   queryMethod?: (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean;
   treeQueryMethod?: (queryStr: string, node: any, fieldsToSearch?: string[], option?: { table: IVTable }) => boolean;
   fieldsToSearch?: string[];
+  scrollOption: ITableAnimationOption;
 
 
   callback?: (queryResult: QueryResult, table: IVTable) => void;
@@ -76,6 +79,7 @@ export class SearchComponent {
   currentIndex: number;
   isTree: boolean;
   treeIndex: number;
+  scrollOption: ITableAnimationOption;
 
   constructor(option: SearchComponentOption) {
     this.table = option.table;
@@ -89,7 +93,7 @@ export class SearchComponent {
     this.isTree = false
     this.treeIndex = 0
     this.callback = option.callback;
-
+    this.scrollOption = option.scrollOption || { duration: 900, easing: 'quartIn' as EasingType } as ITableAnimationOption
     this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
     this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
   }
@@ -236,24 +240,24 @@ export class SearchComponent {
     }
     if (this.isTree) {
       const { range, indexNumber } = this.queryResult[0];
-    
-        let i = 0;
 
-        // 如果是表头就往下偏移
-        while (this.table.isHeader(0, i)) {
-          i++;
-        }
-        let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-        range.start.row = row
-        range.end.row = row
+      let i = 0;
 
-        this.table.arrangeCustomCellStyle(
-          {
-            range
-          },
-          highlight ? '__search_component_focuse' : null
-        );
-      
+      // 如果是表头就往下偏移
+      while (this.table.isHeader(0, i)) {
+        i++;
+      }
+      let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+      range.start.row = row
+      range.end.row = row
+
+      this.table.arrangeCustomCellStyle(
+        {
+          range
+        },
+        highlight ? '__search_component_focuse' : null
+      );
+
     } else {
       for (let i = 0; i < this.queryResult.length; i++) {
 
@@ -286,41 +290,41 @@ export class SearchComponent {
         results: this.queryResult
       };
     }
-       if (this.isTree) {
+    if (this.isTree) {
 
-    if (this.currentIndex !== -1) {
-          const {  range,indexNumber } = this.queryResult[this.currentIndex];
+      if (this.currentIndex !== -1) {
+        const { range, indexNumber } = this.queryResult[this.currentIndex];
 
 
-      if (range) {
-            let i = 0;
-
-        // 如果是表头就往下偏移
-        while (this.table.isHeader(0, i)) {
-          i++;
-        }
-        let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-        range.start.row = row
-        range.end.row = row
-        this.table.arrangeCustomCellStyle(
-          {
-            range
-          },
-          '__search_component_highlight'
-        );
-      } 
-    }
-
-    this.currentIndex++;
-    if (this.currentIndex >= this.queryResult.length) {
-      this.currentIndex = 0;
-    }
-              const {  range,indexNumber } = this.queryResult[this.currentIndex];
-              this.jumpToCell({ IndexNumber:indexNumber });
-
-    if (range) {
+        if (range) {
           let i = 0;
 
+          // 如果是表头就往下偏移
+          while (this.table.isHeader(0, i)) {
+            i++;
+          }
+          let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+          range.start.row = row
+          range.end.row = row
+          this.table.arrangeCustomCellStyle(
+            {
+              range
+            },
+            '__search_component_highlight'
+          );
+        }
+      }
+
+      this.currentIndex++;
+      if (this.currentIndex >= this.queryResult.length) {
+        this.currentIndex = 0;
+      }
+      const { range, indexNumber } = this.queryResult[this.currentIndex];
+      this.jumpToCell({ IndexNumber: indexNumber });
+
+      if (range) {
+        let i = 0;
+
         // 如果是表头就往下偏移
         while (this.table.isHeader(0, i)) {
           i++;
@@ -328,26 +332,50 @@ export class SearchComponent {
         let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row
         range.end.row = row
-      this.table.arrangeCustomCellStyle(
-        {
-          range
-        },
-        '__search_component_focuse'
-      );
-    } 
+        this.table.arrangeCustomCellStyle(
+          {
+            range
+          },
+          '__search_component_focuse'
+        );
+      }
 
-       }else{
+    } else {
 
-    if (this.currentIndex !== -1) {
-       const { col, row, range } = this.queryResult[this.currentIndex];
+      if (this.currentIndex !== -1) {
+        const { col, row, range } = this.queryResult[this.currentIndex];
 
-      // reset last focus
+        // reset last focus
+        if (range) {
+          this.table.arrangeCustomCellStyle(
+            {
+              range
+            },
+            '__search_component_highlight'
+          );
+        } else {
+          this.table.arrangeCustomCellStyle(
+            {
+              col,
+              row
+            },
+            '__search_component_highlight'
+          );
+        }
+      }
+      this.currentIndex++;
+      if (this.currentIndex >= this.queryResult.length) {
+        this.currentIndex = 0;
+      }
+      const { col, row, range } = this.queryResult[this.currentIndex];
+
+      // this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
       if (range) {
         this.table.arrangeCustomCellStyle(
           {
             range
           },
-          '__search_component_highlight'
+          '__search_component_focuse'
         );
       } else {
         this.table.arrangeCustomCellStyle(
@@ -355,37 +383,13 @@ export class SearchComponent {
             col,
             row
           },
-          '__search_component_highlight'
+          '__search_component_focuse'
         );
       }
-    }
-    this.currentIndex++;
-    if (this.currentIndex >= this.queryResult.length) {
-      this.currentIndex = 0;
-    }
-     const { col, row, range } = this.queryResult[this.currentIndex];
 
-    // this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
-    if (range) {
-      this.table.arrangeCustomCellStyle(
-        {
-          range
-        },
-        '__search_component_focuse'
-      );
-    } else {
-      this.table.arrangeCustomCellStyle(
-        {
-          col,
-          row
-        },
-        '__search_component_focuse'
-      );
+      this.jumpToCell({ col, row });
     }
 
-    this.jumpToCell({ col, row });
-       }
-   
 
 
     return {
@@ -395,17 +399,42 @@ export class SearchComponent {
   }
 
   prev() {
-  if (!this.queryResult.length) {
-    return {
-      index: 0,
-      results: this.queryResult
-    };
-  }
+    if (!this.queryResult.length) {
+      return {
+        index: 0,
+        results: this.queryResult
+      };
+    }
 
-  if (this.isTree) {
-    // 先取消当前高亮
-    if (this.currentIndex !== -1) {
+    if (this.isTree) {
+      // 先取消当前高亮
+      if (this.currentIndex !== -1) {
+        const { range, indexNumber } = this.queryResult[this.currentIndex];
+        if (range) {
+          let i = 0;
+          while (this.table.isHeader(0, i)) {
+            i++;
+          }
+          let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+          range.start.row = row;
+          range.end.row = row;
+          this.table.arrangeCustomCellStyle(
+            { range },
+            '__search_component_highlight'
+          );
+        }
+      }
+
+      // 索引向前
+      this.currentIndex--;
+      if (this.currentIndex < 0) {
+        this.currentIndex = this.queryResult.length - 1;
+      }
+
+      // 焦点样式
       const { range, indexNumber } = this.queryResult[this.currentIndex];
+      this.jumpToCell({ IndexNumber: indexNumber });
+
       if (range) {
         let i = 0;
         while (this.table.isHeader(0, i)) {
@@ -416,78 +445,53 @@ export class SearchComponent {
         range.end.row = row;
         this.table.arrangeCustomCellStyle(
           { range },
-          '__search_component_highlight'
+          '__search_component_focuse'
         );
       }
-    }
 
-    // 索引向前
-    this.currentIndex--;
-    if (this.currentIndex < 0) {
-      this.currentIndex = this.queryResult.length - 1;
-    }
-
-    // 焦点样式
-    const { range, indexNumber } = this.queryResult[this.currentIndex];
-    this.jumpToCell({ IndexNumber: indexNumber });
-
-    if (range) {
-      let i = 0;
-      while (this.table.isHeader(0, i)) {
-        i++;
+    } else {
+      // 普通表格处理
+      if (this.currentIndex !== -1) {
+        const { col, row, range } = this.queryResult[this.currentIndex];
+        if (range) {
+          this.table.arrangeCustomCellStyle(
+            { range },
+            '__search_component_highlight'
+          );
+        } else {
+          this.table.arrangeCustomCellStyle(
+            { col, row },
+            '__search_component_highlight'
+          );
+        }
       }
-      let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-      range.start.row = row;
-      range.end.row = row;
-      this.table.arrangeCustomCellStyle(
-        { range },
-        '__search_component_focuse'
-      );
-    }
 
-  } else {
-    // 普通表格处理
-    if (this.currentIndex !== -1) {
+      this.currentIndex--;
+      if (this.currentIndex < 0) {
+        this.currentIndex = this.queryResult.length - 1;
+      }
+
       const { col, row, range } = this.queryResult[this.currentIndex];
       if (range) {
         this.table.arrangeCustomCellStyle(
           { range },
-          '__search_component_highlight'
+          '__search_component_focuse'
         );
       } else {
         this.table.arrangeCustomCellStyle(
           { col, row },
-          '__search_component_highlight'
+          '__search_component_focuse'
         );
       }
+
+      this.jumpToCell({ col, row });
     }
 
-    this.currentIndex--;
-    if (this.currentIndex < 0) {
-      this.currentIndex = this.queryResult.length - 1;
-    }
-
-    const { col, row, range } = this.queryResult[this.currentIndex];
-    if (range) {
-      this.table.arrangeCustomCellStyle(
-        { range },
-        '__search_component_focuse'
-      );
-    } else {
-      this.table.arrangeCustomCellStyle(
-        { col, row },
-        '__search_component_focuse'
-      );
-    }
-
-    this.jumpToCell({ col, row });
+    return {
+      index: this.currentIndex,
+      results: this.queryResult
+    };
   }
-
-  return {
-    index: this.currentIndex,
-    results: this.queryResult
-  };
-}
 
 
   jumpToCell(params: { col?: number; row?: number, IndexNumber?: number[] }) {
@@ -498,7 +502,7 @@ export class SearchComponent {
 
       let tmp = [...indexNumbers]
       let tmpNumber = 0
-        let i = 0;
+      let i = 0;
 
       while (tmpNumber < tmp.length - 1) {
         tmpNumber++
@@ -523,7 +527,7 @@ export class SearchComponent {
           );
         }
       }
-      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, { duration: 900, easing: 'quartIn' })
+      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, this.scrollOption)
 
 
     } else {
