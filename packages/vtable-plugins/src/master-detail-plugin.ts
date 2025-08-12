@@ -33,8 +33,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   pluginOptions: MasterDetailPluginOptions;
   table: VTable.ListTable;
-  // 保护展开行的CellGroup高度
-  private protectedCellHeights: Map<string, number> = new Map();
   // 原始updateCellContent方法的引用
   private originalUpdateCellContent?: Function;
   // 展开状态管理 - 存储展开的行索引
@@ -153,11 +151,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         selectComp.rect.setAttributes({
           height: originalHeight
         });
-        // 如果有填充柄，也需要调整位置 ? 这是什么？？
         if (selectComp.fillhandle) {
           const currentY = selectComp.rect.attribute.y;
           selectComp.fillhandle.setAttributes({
-            y: currentY + originalHeight - 6 // 6是填充柄的一半高度
+            y: currentY + originalHeight
           });
         }
       }
@@ -351,7 +348,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 插入虚拟记录来处理视口限制问题
     this.injectVirtualRecords(options);
 
-    // 给第一列添加层级图标
+    // 给第一列添加图标
     this.injectHierarchyIcons(options);
 
     // 注入子表配置
@@ -386,7 +383,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
       const { col, row, funcType, name } = iconInfo;
       // 检查是否是我们的层级图标
-      if ((name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
+      if (
+        (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
         (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)
       ) {
         this.toggleRowExpand(row);
@@ -535,26 +533,26 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): any {
-    const cellKey = `${col}-${row}`;
+    // 调用原始的updateCellContent方法
+    const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
+    // 检查是否是展开行，如果是则恢复原始高度并绘制下划线
     const isExpandedRow = this.expandedRows.includes(row);
     if (isExpandedRow) {
-      const cellGroup = this.table.scenegraph.getCell(col, row);
-      if (cellGroup && cellGroup.attribute && cellGroup.attribute.height) {
-        this.protectedCellHeights.set(cellKey, cellGroup.attribute.height);
+      const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+      const originalHeight = this.getOriginalRowHeight(bodyRowIndex);
+      if (originalHeight > 0) {
+        const cellGroup = this.table.scenegraph.getCell(col, row);
+        if (cellGroup) {
+          // 直接设置为原始高度
+          cellGroup.setAttributes({
+            height: originalHeight
+          });
+          // 在CellGroup重绘时自动绘制下划线
+          this.addUnderlineToCell(cellGroup, originalHeight);
+        }
       }
     }
-    // 调用原始的updateCellContent方法
-    const result = this.originalUpdateCellContent!(col, row, forceFastUpdate);
-    // 如果是展开行，恢复CellGroup的正确高度
-    if (isExpandedRow && this.protectedCellHeights.has(cellKey)) {
-      const cellGroup = this.table.scenegraph.getCell(col, row);
-      if (cellGroup) {
-        const protectedHeight = this.protectedCellHeights.get(cellKey)!;
-        cellGroup.setAttributes({
-          height: protectedHeight
-        });
-      }
-    }
+    // 处理单元格内容的垂直对齐
     const cellGroup = this.table.scenegraph.getCell(col, row);
     if (cellGroup) {
       this.handleAfterUpdateCellContentWidth({
@@ -1258,7 +1256,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const wrapRenderMethod = (obj: any, methodName: string) => {
       const originalMethod = obj[methodName];
       if (typeof originalMethod === 'function') {
-        obj[methodName] = function(...args: any[]) {
+        obj[methodName] = function (...args: any[]) {
           context.save();
           try {
             const clipRegion = calculateClipRegion();
@@ -1290,34 +1288,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 添加展开行的下划线
    */
   private addUnderlineToExpandedRow(rowIndex: number, originalHeight: number): void {
-    const sceneGraph = (this.table as any).scenegraph;
-    const proxy = sceneGraph?.proxy;
-    if (proxy && (rowIndex < proxy.rowStart || rowIndex > proxy.rowEnd)) {
-      // 行不在当前渲染范围内，延迟处理
-      this.scheduleUnderlineDrawing(rowIndex, originalHeight);
-      return;
-    }
+    // 直接获取行的所有cell并绘制下划线
     setTimeout(() => {
       this.drawUnderlineForRow(rowIndex, originalHeight);
     }, 0);
-  }
-
-  /**
-   * 调度下划线绘制任务，当行进入视口时执行
-   */
-  private scheduleUnderlineDrawing(rowIndex: number, originalHeight: number): void {
-    // 监听滚动事件，当目标行进入视口时绘制下划线
-    const handleScroll = () => {
-      const sceneGraph = (this.table as any).scenegraph;
-      const proxy = sceneGraph?.proxy;
-      if (proxy && rowIndex >= proxy.rowStart && rowIndex <= proxy.rowEnd) {
-        this.table.off(VTable.TABLE_EVENT_TYPE.SCROLL, handleScroll);
-        setTimeout(() => {
-          this.drawUnderlineForRow(rowIndex, originalHeight);
-        }, 50);
-      }
-    };
-    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, handleScroll);
   }
 
   /**
@@ -1370,11 +1344,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 为cell添加下划线
    */
   private addUnderlineToCell(cellGroup: any, originalHeight: number): void {
-    if (cellGroup._hasUnderline) {
-      return;
-    }
-    // 标记这个cell已添加下划线
-    cellGroup._hasUnderline = true;
+    // 每次都重新计算和应用下划线样式，不依赖标记
+    // 这样在CellGroup重绘时也能正确绘制下划线
     const currentAttr = cellGroup.attribute;
     const currentStrokeArrayWidth =
       currentAttr.strokeArrayWidth ||
@@ -1386,26 +1357,34 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       (currentAttr.stroke
         ? [currentAttr.stroke, currentAttr.stroke, currentAttr.stroke, currentAttr.stroke]
         : ['transparent', 'transparent', 'transparent', 'transparent']);
-    // 存储原始样式，用于后续恢复
-    cellGroup._originalStrokeArrayWidth = [...currentStrokeArrayWidth];
-    cellGroup._originalStrokeArrayColor = [...currentStrokeArrayColor];
-    const enhancedStrokeArrayWidth = [...currentStrokeArrayWidth];
-    const enhancedStrokeArrayColor = [...currentStrokeArrayColor];
-    const originalBottomWidth = currentStrokeArrayWidth[2] || 1;
+    // 检查是否已经是增强的下划线（避免重复增强）
+    const isAlreadyEnhanced = cellGroup._hasUnderline;
+    if (!isAlreadyEnhanced) {
+      // 第一次添加下划线，存储原始样式
+      cellGroup._originalStrokeArrayWidth = [...currentStrokeArrayWidth];
+      cellGroup._originalStrokeArrayColor = [...currentStrokeArrayColor];
+      cellGroup._hasUnderline = true;
+    }
+    // 使用原始样式计算增强的下划线
+    const originalStrokeArrayWidth = cellGroup._originalStrokeArrayWidth || currentStrokeArrayWidth;
+    const originalStrokeArrayColor = cellGroup._originalStrokeArrayColor || currentStrokeArrayColor;
+    const enhancedStrokeArrayWidth = [...originalStrokeArrayWidth];
+    const enhancedStrokeArrayColor = [...originalStrokeArrayColor];
+    const originalBottomWidth = originalStrokeArrayWidth[2] || 1;
     const dpr = (this.table as any).internalProps?.pixelRatio || window.devicePixelRatio || 1;
     // 要还原本来的下划线的效果，那么我们应该要 * 1.5因为我记得原本的线是叠层的
     const enhancedWidth = originalBottomWidth * 1.5 * dpr;
     enhancedStrokeArrayWidth[2] = Math.max(enhancedWidth, 1.5 * dpr);
-    if (currentStrokeArrayColor[2] === 'transparent' || !currentStrokeArrayColor[2]) {
+    if (originalStrokeArrayColor[2] === 'transparent' || !originalStrokeArrayColor[2]) {
       const theme = (this.table as any).theme;
       enhancedStrokeArrayColor[2] = theme?.bodyStyle?.borderColor || '#e1e4e8';
     } else {
-      enhancedStrokeArrayColor[2] = currentStrokeArrayColor[2];
+      enhancedStrokeArrayColor[2] = originalStrokeArrayColor[2];
     }
+    // 应用增强的下划线样式
     cellGroup.setAttributes({
       strokeArrayWidth: enhancedStrokeArrayWidth,
       strokeArrayColor: enhancedStrokeArrayColor,
-      // 确保启用分段绘制
       stroke: true
     });
   }
