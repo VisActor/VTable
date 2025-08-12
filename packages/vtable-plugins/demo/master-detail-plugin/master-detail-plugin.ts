@@ -116,8 +116,6 @@ export function createTable() {
   // 创建主从表插件实例
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'employee-detail-plugin',
-    enabled: true,
-    hierarchyTextStartAlignment: true,
     detailGridOptions: {
       columns: [
         {
@@ -147,6 +145,7 @@ export function createTable() {
           fieldFormat: (value: number) => `${value}%`
         }
       ],
+      theme: VTable.themes.BRIGHT,
       style: {
         margin: 20,
         height: 300
@@ -202,6 +201,7 @@ export function createTable() {
     records,
     autoFillWidth: true,
     defaultRowHeight: 40,
+    // theme: VTable.themes.BRIGHT,
     // 关键：将插件添加到 plugins 数组中
     plugins: [masterDetailPlugin]
   };

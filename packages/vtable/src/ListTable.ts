@@ -878,7 +878,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
   toggleHierarchyState(col: number, row: number, recalculateColWidths: boolean = true) {
     this.stateManager.updateHoverIcon(col, row, undefined, undefined);
     const hierarchyState = this.getHierarchyState(col, row);
-
     if (this.isHeader(col, row)) {
       // 表头的展开和收起
       const headerTreeNode = this.internalProps.layoutMap.getHeader(col, row) as any;

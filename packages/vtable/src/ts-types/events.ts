@@ -253,7 +253,6 @@ export interface TableEventHandlersEventArgumentMap {
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
   };
-  
   after_update_select_border_height: {
     startRow: number;
     endRow: number;
