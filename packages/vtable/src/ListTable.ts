@@ -56,7 +56,6 @@ import {
 import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugins/list-tree-stick-cell';
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
-import type { CreateLegend } from './components/legend/create-legend';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -150,26 +149,6 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.setRecords(options.records as any, { sortState: internalProps.sortState });
     } else {
       this.setRecords([]);
-    }
-    if (options.legends) {
-      this.internalProps.legends = [];
-      const createLegend = Factory.getFunction('createLegend') as CreateLegend;
-      if (Array.isArray(options.legends)) {
-        for (let i = 0; i < options.legends.length; i++) {
-          this.internalProps.legends.push(createLegend(options.legends[i], this));
-        }
-
-        this.scenegraph.tableGroup.setAttributes({
-          x: this.tableX,
-          y: this.tableY
-        });
-      } else {
-        this.internalProps.legends.push(createLegend(options.legends, this));
-        this.scenegraph.tableGroup.setAttributes({
-          x: this.tableX,
-          y: this.tableY
-        });
-      }
     }
     if (options.title) {
       const Title = Factory.getComponent('title') as ITitleComponent;
