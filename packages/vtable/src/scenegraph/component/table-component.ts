@@ -377,10 +377,38 @@ export class TableComponent {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       }
 
+      let hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+
+      let hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+
+      // 忽略左侧冻结列宽度
+      const skipLeftFrozen = this.table.options?.scrollConfig?.hScrollSkipLeftFrozenColsWidth ?? false;
+
+      // 忽略右侧冻结列宽度
+      const skipRightFrozen = this.table.options?.scrollConfig?.hScrollSkipRightFrozenColsWidth ?? false;
+
+      // 忽略所有冻结列宽度
+      const skipAllFrozen = this.table.options?.scrollConfig?.hScrollSkipAllFrozenColsWidth ?? false;
+
+      const skipAllFrozenColsWidth = skipAllFrozen || (skipLeftFrozen && skipRightFrozen);
+
+      if (skipAllFrozenColsWidth) {
+        hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
+        hScrollBarWidth = tableWidth;
+      } else if (skipLeftFrozen) {
+        hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
+        hScrollBarWidth = tableWidth - rightFrozenColsWidth;
+      } else if (skipRightFrozen) {
+        hScrollBarWidth = tableWidth - frozenColsWidth;
+      } else {
+        hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+        hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+      }
+
       this.hScrollBar.setAttributes({
-        x: frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
+        x: hScrollBarx,
         y: attrY,
-        width: tableWidth - frozenColsWidth - rightFrozenColsWidth,
+        width: hScrollBarWidth,
         range: [0, rangeEnd],
         visible: horizontalVisible === 'always'
       });
