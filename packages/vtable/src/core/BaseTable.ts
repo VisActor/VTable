@@ -35,6 +35,7 @@ import {
   type LayoutObjectId,
   type HeightModeDef,
   type ITableThemeDefine,
+  type ScrollStyle,
   InteractionState,
   Placement
 } from '../ts-types';
@@ -1196,8 +1197,24 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightP = this.canvasHeight - 1;
     }
 
-    const width = Math.floor(widthP - style.getVerticalScrollBarSize(this.getTheme().scrollStyle));
-    const height = Math.floor(heightP - style.getHorizontalScrollBarSize(this.getTheme().scrollStyle));
+    const scrollStyle = this.getTheme().scrollStyle;
+
+    let vScrollBarWidth = 0;
+    let hScrollBarWidth = 0;
+
+    if (scrollStyle.visible === 'focus') {
+      vScrollBarWidth = style.getVerticalScrollBarSize(scrollStyle);
+      hScrollBarWidth = style.getHorizontalScrollBarSize(scrollStyle);
+    } else {
+      vScrollBarWidth = this.shouldVScrollBarWidthShow(scrollStyle) ? scrollStyle.width : 0;
+      hScrollBarWidth = this.shouldHScrollBarWidthShow(scrollStyle) ? scrollStyle.width : 0;
+    }
+
+    const width = Math.floor(widthP - vScrollBarWidth);
+    const height = Math.floor(heightP - hScrollBarWidth);
+
+    // const width = Math.floor(widthP - style.getVerticalScrollBarSize(scrollStyle));
+    // const height = Math.floor(heightP - style.getHorizontalScrollBarSize(scrollStyle));
 
     if (this.internalProps.theme?.frameStyle) {
       //考虑表格整体边框的问题
@@ -1220,6 +1237,36 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     this._clearColRangeWidthsMap();
     this._clearRowRangeHeightsMap();
+  }
+
+  shouldVScrollBarWidthShow(scrollStyle: ScrollStyle): boolean {
+    if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
+      return false;
+    }
+    // 这个visible在focus或者动态的情况下可能不准确
+    const hScrollBarVisible = this.scenegraph ? this.scenegraph.component.hScrollBar.attribute.visible : false;
+    const tableHeight = this.container.clientHeight + 2 || 0;
+    const totalHeight = this.getAllRowsHeight();
+    let sizeTolerance = this.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+    if (hScrollBarVisible) {
+      sizeTolerance -= style.getHorizontalScrollBarSize(scrollStyle);
+    }
+    return totalHeight > tableHeight + sizeTolerance;
+  }
+
+  shouldHScrollBarWidthShow(scrollStyle: ScrollStyle): boolean {
+    if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
+      return false;
+    }
+    // 这个visible在focus或者动态的情况下可能不准确
+    const vScrollBarVisible = this.scenegraph ? this.scenegraph.component.vScrollBar.attribute.visible : false;
+    const tableWidth = this.container.clientWidth + 2 || 0;
+    const totalWidth = this.getAllColsWidth();
+    let sizeTolerance = this.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+    if (vScrollBarVisible) {
+      sizeTolerance -= style.getVerticalScrollBarSize(scrollStyle);
+    }
+    return totalWidth > tableWidth + sizeTolerance;
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
@@ -2686,7 +2733,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.updateComponent();
     this.stateManager.updateOptionSetState();
 
-    this._updateSize();
+    this.resize();
     // this.stateManager = new StateManager(this);
     // this.eventManager = new EventManager(this);
     this.eventManager.updateEventBinder();
