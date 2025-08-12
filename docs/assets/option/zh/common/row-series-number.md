@@ -3,6 +3,37 @@
 ${prefix} title(string)
 
 行序号标题，默认为空
+${prefix} field(string|number)
+
+行序号对应显示record中字段，如果没有配置会显示行序列号从1开始。
+
+也可以利用这个字段配置checkbox的勾选状态。
+
+例如，配置了field为checkState：
+```
+{
+  rowSeriesNumber: {
+    field: 'checkState',
+    cellType: 'checkbox',
+    title:'序号列'
+  },
+  records: [
+    {
+      checkState: true,
+    },
+    {
+      checkState: {
+        text: '对错',
+        checked: true,
+        disable: false,
+      },
+    },
+    {
+      checkState: '无用',
+    },
+  ],
+}
+```
 
 ${prefix} width(number|number)
 
@@ -15,6 +46,12 @@ ${prefix} format(Function)
 ${prefix} cellType('text')
 
 行序号单元格类型，默认为`text`。其他格式待定
+
+${prefix} headerType('text')
+
+表头单元格类型，默认为`text`。其他格式待定.
+
+如果cellType为checkbox，headerType没有配置的情况下，默认显示类型将同cellType，则会在分组标题中显示checkbox。
 
 ${prefix} dragOrder(boolean)
 

@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "fix: when updateColumns occor error with aggregation\n\n",
+      "comment": "refactor: add table export plugin\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }

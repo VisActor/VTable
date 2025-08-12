@@ -5,7 +5,7 @@ title: Basic table grouping display
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group.jpeg
 order: 1-2
 link: table_type/List_table/group_list
-option: ListTable#groupBy
+option: ListTable#groupConfig
 ---
 
 # Basic table grouping display
@@ -16,6 +16,8 @@ Basic table grouping display, used to display the hierarchical structure of grou
 
 - groupBy: Specify the grouping field name
 - enableTreeStickCell: enable group title sticky function
+- enableCheckboxCascade: enable group checkbox cascade
+- enableHeaderCheckboxCascade: enable header checkbox cascade
 
 ## Code demonstration
 
@@ -87,10 +89,15 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       records: data.slice(0, 100),
       columns,
       widthMode: 'standard',
-      groupBy: ['Category', 'Sub-Category'],
-      groupTitleFieldFormat: (record, col, row, table) => {
-        return record.vtableMergeName + '(' + record.children.length + ')';
+      groupConfig: {
+        groupBy: ['Category', 'Sub-Category'],
+        titleFieldFormat: (record, col, row, table) => {
+          return record.vtableMergeName + '(' + record.children.length + ')';
+        },
+        enableTreeStickCell: true,
       },
+      enableCheckboxCascade: true,// default is true
+      enableHeaderCheckboxCascade: true,// default is true
       theme: VTable.themes.DEFAULT.extends({
         groupTitleStyle: {
           fontWeight: 'bold',
@@ -104,7 +111,6 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         }
       }),
-      enableTreeStickCell: true
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window.tableInstance = tableInstance;

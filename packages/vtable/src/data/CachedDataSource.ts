@@ -10,7 +10,7 @@ import {
   type MaybePromise,
   type MaybePromiseOrUndefined
 } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
 import type { DataSourceParam } from './DataSource';
 import { DataSource, getValue, getValueFromDeepArray, sortRecordIndexs } from './DataSource';
@@ -321,14 +321,15 @@ export class CachedDataSource extends DataSource {
     }
 
     this.initTreeHierarchyState();
-    this.updatePagerData();
+    this.updatePagination();
   }
 
   deleteRecordsForTree(recordIndexs: (number | number[])[]) {
     if (!isArray(recordIndexs) || recordIndexs.length === 0) {
-      return;
+      return [];
     }
     const recordIndexsMaxToMin = sortRecordIndexs(recordIndexs, -1);
+    const deletedRecordIndexs = [];
     for (let index = 0; index < recordIndexsMaxToMin.length; index++) {
       const recordIndex = recordIndexsMaxToMin[index];
       if (isNumber(recordIndex) && (recordIndex >= this.sourceLength || recordIndex < 0)) {
@@ -347,10 +348,12 @@ export class CachedDataSource extends DataSource {
       }
 
       this.adjustBeforeChangedRecordsMap(recordIndex, 1, 'delete');
+      deletedRecordIndexs.push(recordIndex);
     }
 
     this.initTreeHierarchyState();
-    this.updatePagerData();
+    this.updatePagination();
+    return deletedRecordIndexs;
   }
 
   updateRecordsForTree(records: any[], recordIndexs: (number | number[])[]) {
@@ -417,7 +420,7 @@ export class CachedDataSource extends DataSource {
 
   cacheBeforeChangedRecord(dataIndex: number | number[], table?: BaseTableAPI) {
     const originRecord = this.getOriginalRecord(dataIndex);
-    if ((table.options as ListTableConstructorOptions).groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       dataIndex = this.getOriginRecordIndexForGroup(dataIndex);
     }
     if (!this.beforeChangedRecordsMap.has(dataIndex.toString())) {

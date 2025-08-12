@@ -8,6 +8,10 @@ export const menus = [
     name: 'gantt-export-image'
   },
   {
+    path: 'excel-import',
+    name: 'excel-import'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
@@ -36,6 +40,10 @@ export const menus = [
     name: 'add-row-column'
   },
   {
+    path: 'paste-add-row-column',
+    name: 'paste-add-row-column'
+  },
+  {
     path: 'column-series',
     name: 'column-series'
   },
@@ -59,5 +67,9 @@ export const menus = [
         name: 'pivot-plugin'
       }
     ]
+  },
+  {
+    path: 'table-export',
+    name: 'table-export'
   }
 ];

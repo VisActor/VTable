@@ -67,6 +67,11 @@ export interface IDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+    /**
+   * 是否在编辑单元格后更新总计小计
+   * @default false
+   */
+  updateAggregationOnEditCell?: boolean;
 }
 ```
 
@@ -267,6 +272,11 @@ export interface CalculateddFieldRule {
   calculateFun?: (dependFieldsValue: any) => any;
 }
 ```
+### updateAggregationOnEditCell (boolean)
+
+是否在修改单元格后更新小计和总计。默认值为false.
+
+具体情况请参考[demo](../demo/data-analysis/pivot-analysis-updateTotalData)
 
 ## columnTree(Array)
 
@@ -436,3 +446,8 @@ export interface IIndicatorHeaderNode {
   {{ use: common-IDimensionInfo()}}
 
 - width 指定列宽。
+
+## columnWidthConfigForRowHeader(Array)
+
+依据维度信息设置行表头列宽
+

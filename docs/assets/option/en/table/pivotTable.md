@@ -67,6 +67,11 @@ export interface IDataConfig {
    */
   mappingRules?: MappingRules;
   derivedFieldRules?: DerivedFieldRules;
+  /**
+   * Whether to update total and subtotal after editing.
+   * @default false
+   */
+  updateAggregationOnEditCell?: boolean;
 }
 ```
 
@@ -263,6 +268,11 @@ export interface CalculatedFieldRule {
   calculateFun?: (dependFieldsValue: any) => any;
 }
 ```
+### updateAggregationOnEditCell (boolean)
+
+Whether to update total and subtotal after editing cell value. Default value is false.
+
+For details, please refer to the [demo](../demo/data-analysis/pivot-analysis-updateTotalData)
 
 ## columnTree(Array)
 
@@ -432,3 +442,8 @@ Set column width based on dimension information
   {{ use: common-IDimensionInfo()}}
 
 -width specifies the column width.
+
+## columnWidthConfigForRowHeader(Array)
+
+Set column width based on dimension information for row header
+

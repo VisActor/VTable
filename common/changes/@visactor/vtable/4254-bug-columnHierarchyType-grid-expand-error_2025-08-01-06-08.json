@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "fix: list-tree delete root level error when using deleteRecords\n\n",
+      "comment": "fix: pivot table set columnHierarchyType gird expand tree error #4254\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "longzhu.xlj@raycloud.com"
+  "email": "892739385@qq.com"
 }

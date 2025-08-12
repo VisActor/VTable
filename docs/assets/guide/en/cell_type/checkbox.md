@@ -24,7 +24,7 @@ Example:
   cellType: 'checkbox', // Specify body cell to display as checkbox
   field: 'check',
   checked: true,
-  disbaled: false
+  disable: false
 }
 ```
 
@@ -137,5 +137,31 @@ Set the checked state of a specific cell's checkbox.
 ```javascript
 setCellCheckboxState(col: number, row: number, checked: boolean | 'indeterminate')
 ```
+
+## Checkbox configuration in tree structure
+
+In tree structure, you can configure the `cellType: 'checkbox'` property in `rowSeriesNumber` to display checkboxes in the tree structure. After enabling, checkboxes will appear in the tree structure and synchronize with the selected status of child elements.
+
+We also support configuring the `cellType: 'checkbox'` property in the columnDefine where `tree` is true to display checkboxes in the tree structure. After enabling, checkboxes will appear in the tree structure and synchronize with the selected status of child elements.
+
+```
+columns: [{
+  tree: true,
+  cellType: 'checkbox'
+}]
+```
+
+or
+
+```
+rowSeriesNumber: {
+  cellType: 'checkbox'
+}
+```
+If you don't want to associate the selected status of parent and child nodes, you can configure the `enableCheckboxCascade` property to enable or disable the group checkbox cascade function. The same applies to the checkbox configured in the column.
+
+If you don't want to associate the selected status of the header and body cells, you can configure the `enableHeaderCheckboxCascade` property to enable or disable the header checkbox cascade function.
+
+When enableCheckboxCascade is true, enableHeaderCheckboxCascade is true. When enableCheckboxCascade is false, enableHeaderCheckboxCascade is false.
 
 With the above introduction, you've learned how to use checkbox cell types for data display in VTable. We hope this helps!

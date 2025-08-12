@@ -60,7 +60,8 @@ import {
   registerLegend,
   registerMenu,
   registerTitle,
-  registerTooltip
+  registerTooltip,
+  registerAnimation
 } from './components';
 import {
   registerChartCell,
@@ -81,7 +82,7 @@ registerLegend();
 registerMenu();
 registerTitle();
 registerTooltip();
-
+registerAnimation();
 registerChartCell();
 registerCheckboxCell();
 registerImageCell();
@@ -126,6 +127,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     this.internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
     this.internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
     this.internalProps.dataConfig = { isPivotChart: true };
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
+    this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
     this._axes = isArray(options.axes) ? options.axes : [];
 
     let columnDimensionTree;
@@ -331,7 +334,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     internalProps.columnResizeType = options.resize?.columnResizeType ?? options.columnResizeType ?? 'column';
     internalProps.rowResizeType = options.resize?.rowResizeType ?? options.rowResizeType ?? 'row';
     internalProps.dataConfig = { isPivotChart: true };
-
+    this.internalProps.columnWidthConfig = options.columnWidthConfig;
+    this.internalProps.columnWidthConfigForRowHeader = options.columnWidthConfigForRowHeader;
     this._axes = isArray(options.axes) ? options.axes : [];
 
     //TODO 这里需要加上判断 dataConfig是否有配置变化

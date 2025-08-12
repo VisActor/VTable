@@ -65,6 +65,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-tree-expandAndCollapseAll'
+      },
+      {
+        path: 'list',
         name: 'list-checkbox-tree'
       },
       {
@@ -139,6 +143,10 @@ export const menus = [
       {
         path: 'list',
         name: 'list-merge-cell'
+      },
+      {
+        path: 'list',
+        name: 'list-header-levelSpan'
       },
       {
         path: 'list',
@@ -653,6 +661,10 @@ export const menus = [
       {
         path: 'pivot-analysis',
         name: 'pivot-analysis-updateSortRule'
+      },
+      {
+        path: 'pivot-analysis',
+        name: 'pivot-analysis-updateTotalData'
       },
       {
         path: 'pivot-analysis',

@@ -2,6 +2,108 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.5",
+      "tag": "@visactor/vtable_v1.19.5",
+      "date": "Thu, 31 Jul 2025 11:30:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add enableHeaderCheckboxCascade option\n\n"
+          },
+          {
+            "comment": "refactor: when delete and add records update checkstate #4240\n\n"
+          },
+          {
+            "comment": "fix: setCellCheckboxState not work when tree column set checkbox cell type\n\n"
+          },
+          {
+            "comment": "feat: add  move_end_task_bar event for vtable-gantt.#4266\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.19.4",
+      "tag": "@visactor/vtable_v1.19.4",
+      "date": "Mon, 28 Jul 2025 09:57:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: update merge cell performance #3293\n\n"
+          },
+          {
+            "comment": "feat: rowSeriesNumber support set field #3902\n\n"
+          },
+          {
+            "comment": "feat: add enableCheckboxCascade option #4130\n\n"
+          },
+          {
+            "comment": "feat: add groupConfig replace groupBy and group** & add titleCheckbox #4130\n\n"
+          },
+          {
+            "comment": "refactor: hide menu list when scroll #4214\n\n"
+          },
+          {
+            "comment": "feat: add getRecordHierarchyState api and fix change header position arguments #4226\n\n"
+          },
+          {
+            "comment": "fix: vchart trasnparent bgColor replace cell hover color #4245\n\n"
+          },
+          {
+            "comment": "fix: fix loading icon update in pivot-table #4236"
+          },
+          {
+            "comment": "feat: add paste-add-row plugin\n\n"
+          },
+          {
+            "comment": "Merge branch feat/paste-add-row-plugin into feat-pasted-add-row-col-plugin\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.19.3",
+      "tag": "@visactor/vtable_v1.19.3",
+      "date": "Wed, 09 Jul 2025 09:24:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add contextmenuReturnAllSelectedCells api #4064\n\n"
+          },
+          {
+            "comment": "fix: click to edit cell not work with groupBy #4172\n\n"
+          },
+          {
+            "comment": "fix: 修复自定义编辑器复制粘贴时无法触发异步校验的问题\n\n"
+          },
+          {
+            "comment": "fix: handle frozen column calculation when container is invisible\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.19.2",
+      "tag": "@visactor/vtable_v1.19.2",
+      "date": "Tue, 01 Jul 2025 10:26:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix templateLink in export excel #4106"
+          },
+          {
+            "comment": "fix: list-tree delete root level error when using deleteRecords\n\n"
+          },
+          {
+            "comment": "fix: fix minWidth & maxWidth in autoFillWidth status #4100"
+          },
+          {
+            "comment": "fix: when updateColumns occor error with aggregation\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.1",
       "tag": "@visactor/vtable_v1.19.1",
       "date": "Fri, 20 Jun 2025 12:11:39 GMT",

@@ -13,5 +13,4 @@ export interface ICheckboxColumnBodyDefine extends IBasicColumnBodyDefine {
   cellType: 'checkbox';
   checked?: boolean | ((args: StylePropertyFunctionArg) => boolean);
   disable?: boolean | ((args: StylePropertyFunctionArg) => boolean);
-  enableTreeCheckbox?: boolean | ((args: StylePropertyFunctionArg) => boolean);
 }

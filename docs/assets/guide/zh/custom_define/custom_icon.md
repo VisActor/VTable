@@ -198,6 +198,8 @@ VTable.register.icon('frozenCurrent', {
 
 同样的方法，我们可以替换其他功能性图标。在 VTable 中内置了几种关联内部功能的图标，如排序，固定列，下拉菜单图标，展开折叠图标等。
 
+内置图标文件地址:https://github.com/VisActor/VTable/blob/39eaa851d6a5415b9c7bba746d23ca173ccf675f/packages/vtable/src/icons.ts。
+
 可重置内部图标列表如下：
 
 | 功能                 | 配置 funcType                             | 配置 name        | 图标描述                                  |

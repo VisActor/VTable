@@ -5,7 +5,7 @@ title: 基本表格分组展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group.jpeg
 order: 1-2
 link: table_type/List_table/group_list
-option: ListTable#groupBy
+option: ListTable#groupConfig
 ---
 
 # 基本表格分组展示
@@ -16,6 +16,8 @@ option: ListTable#groupBy
 
 - groupBy: 指定分组字段名称
 - enableTreeStickCell: 开启分组标题吸附功能
+- enableCheckboxCascade: 开启分组复选框级联功能
+- enableHeaderCheckboxCascade: 开启表头复选框级联功能
 
 ## 代码演示
 
@@ -87,10 +89,15 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       records: data.slice(0, 100),
       columns,
       widthMode: 'standard',
-      groupBy: ['Category', 'Sub-Category'],
-      groupTitleFieldFormat: (record, col, row, table) => {
-        return record.vtableMergeName + '(' + record.children.length + ')';
+      groupConfig: {
+        groupBy: ['Category', 'Sub-Category'],
+        titleFieldFormat: (record, col, row, table) => {
+          return record.vtableMergeName + '(' + record.children.length + ')';
+        },
+         enableTreeStickCell: true,
       },
+      enableCheckboxCascade: true,// default is true
+      enableHeaderCheckboxCascade: true,// default is true  
       theme: VTable.themes.DEFAULT.extends({
         groupTitleStyle: {
           fontWeight: 'bold',
@@ -104,7 +111,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
           }
         }
       }),
-      enableTreeStickCell: true
+      
+      
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
     window.tableInstance = tableInstance;

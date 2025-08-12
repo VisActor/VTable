@@ -1173,62 +1173,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       // }
     }
   }
-  /** 解析配置columnWidthConfig传入的列宽配置 */
-  _parseColumnWidthConfig(columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]) {
-    for (let i = 0; i < columnWidthConfig?.length; i++) {
-      const item = columnWidthConfig[i];
-      const dimensions = item.dimensions;
-      const width = item.width;
-      const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell && cell.col >= this.rowHeaderLevelCount) {
-        const cellPath = this.getCellHeaderPaths(cell.col, this.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
-        if (cellPath.colHeaderPaths.length === dimensions.length) {
-          let match = true;
-          for (let i = 0; i < dimensions.length; i++) {
-            const dimension = dimensions[i];
-            const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
-              if (colPath.indicatorKey === dimension.indicatorKey) {
-                return true;
-              }
-              if (colPath.dimensionKey === dimension.dimensionKey && colPath.value === dimension.value) {
-                return true;
-              }
-              return false;
-            });
-            if (finded < 0) {
-              match = false;
-              break;
-            }
-          }
-          if (match && !this.internalProps._widthResizedColMap.has(cell.col)) {
-            this._setColWidth(cell.col, width);
-            this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
-          }
-        }
-      } else if (cell && cell.col < this.rowHeaderLevelCount) {
-        if (!this.internalProps._widthResizedColMap.has(cell.col)) {
-          this._setColWidth(cell.col, width);
-          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
-        }
-      }
-    }
-  }
-
-  // particularly for row header in react-vtable keepColumnWidthChange config
-  _parseColumnWidthConfigForRowHeader(columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]) {
-    for (let i = 0; i < columnWidthConfig?.length; i++) {
-      const item = columnWidthConfig[i];
-      const dimensions = item.dimensions;
-      const width = item.width;
-      const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell && cell.col < this.rowHeaderLevelCount) {
-        if (!this.internalProps._widthResizedColMap.has(cell.col)) {
-          this._setColWidth(cell.col, width);
-          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
-        }
-      }
-    }
-  }
 
   /**
    * 更新排序状态
@@ -1858,6 +1802,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.scenegraph.updateCellContent(sCol, sRow);
         }
       }
+      // 更新所有的统计单元格
+      if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
+        for (let col = 0; col < this.colCount; col++) {
+          for (let row = 0; row < this.rowCount; row++) {
+            if (this.internalProps.layoutMap.isAggregation(col, row)) {
+              this.scenegraph.updateCellContent(col, row);
+            }
+          }
+        }
+      }
       if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
         if (this.internalProps._widthResizedColMap.size === 0) {
           //如果没有手动调整过行高列宽 则重新计算一遍并重新分配
@@ -1974,6 +1928,16 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     for (let sCol = startRange.start.col; sCol <= range.end.col; sCol++) {
       for (let sRow = startRange.start.row; sRow <= range.end.row; sRow++) {
         this.scenegraph.updateCellContent(sCol, sRow);
+      }
+    }
+    // 更新所有的统计单元格
+    if (this.options.dataConfig?.updateAggregationOnEditCell ?? false) {
+      for (let col = 0; col < this.colCount; col++) {
+        for (let row = 0; row < this.rowCount; row++) {
+          if (this.internalProps.layoutMap.isAggregation(col, row)) {
+            this.scenegraph.updateCellContent(col, row);
+          }
+        }
       }
     }
     if (this.widthMode === 'adaptive' || (this.autoFillWidth && this.getAllColsWidth() <= this.tableNoFrameWidth)) {
@@ -2219,6 +2183,91 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   setLoadingHierarchyState(col: number, row: number) {
     this.scenegraph.setLoadingHierarchyState(col, row);
   }
+
+  /**
+   * 展开行表头树的所有节点
+   */
+  expandAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForRowDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 折叠行表头树的所有节点
+   */
+  collapseAllForRowTree() {
+    if (this.rowHierarchyType !== 'tree' && this.rowHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.rowDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForRowDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 展开列表头树的所有节点
+   */
+  expandAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.expandAllForColumnDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.expand,
+        changeAll: true
+      });
+    }
+  }
+
+  /**
+   * 折叠列表头树的所有节点
+   */
+  collapseAllForColumnTree() {
+    if (this.columnHierarchyType !== 'grid-tree') {
+      return;
+    }
+
+    if (this.internalProps.layoutMap.columnDimensionTree) {
+      this.internalProps.layoutMap.clearHeaderPathCache();
+      this.internalProps.layoutMap.collapseAllForColumnDimensionTree();
+      this.renderWithRecreateCells();
+      this.fireListeners(PIVOT_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
+        col: -1,
+        row: -1,
+        hierarchyState: HierarchyState.collapse,
+        changeAll: true
+      });
+    }
+  }
+
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
     this.editorManager.release();

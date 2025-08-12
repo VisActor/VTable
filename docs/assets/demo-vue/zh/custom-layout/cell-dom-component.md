@@ -4,7 +4,7 @@ group: custom-layout
 title: 单元格渲染 DOM 组件
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-custom-dom-component.jpeg
 order: 1-2
-link: custom_define/vue-dom-component
+link: custom_define/vue-custom-component
 ---
 
 # 单元格渲染 DOM 组件

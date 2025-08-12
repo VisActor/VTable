@@ -450,6 +450,13 @@
             "zh": "行序号",
             "en": "row series number"
           }
+        },
+        {
+          "path": "render_on_current_canvas",
+          "title": {
+            "zh": "在已有的 canvas 中渲染表格",
+            "en": "render on current canvas"
+          }
         }
       ]
     },
@@ -852,6 +859,13 @@
           }
         },
         {
+          "path": "paste-add-row-column",
+          "title": {
+            "zh": "粘贴新增行和列插件",
+            "en": "paste add row and column plugin"
+          }
+        },
+        {
           "path": "table-carousel-animation",
           "title": {
             "zh": "表格轮播动画",
@@ -870,6 +884,20 @@
           "title": {
             "zh": "全量导出甘特图",
             "en": "gantt export image"
+          }
+        },
+        {
+          "path": "excel-import",
+          "title": {
+            "zh": "excel导入",
+            "en": "excel Import"
+          }
+        },
+        {
+          "path": "table-export",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
           }
         }
       ]

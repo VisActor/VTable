@@ -2,7 +2,7 @@
 
 ## 时间轴日期范围
 
-时间轴日期范围决定了时间轴的显示范围，可以通过`minDate`和`maxDate`来设置。
+时间轴日期范围决定了时间轴的显示范围，可以通过`minDate`和`maxDate`来设置。如果没有设置，则默认使用records数据项中`[startDateField]`, `[endDateField]`字段值的最大值和最小值。
 
 ## 任务条日期范围
 
