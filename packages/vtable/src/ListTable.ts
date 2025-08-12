@@ -895,6 +895,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         // 全量更新
         this.updateColumns(this.internalProps.columns);
       }
+
       this.fireListeners(TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, {
         col,
         row,
@@ -1554,6 +1555,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       }
     }
   }
+  
   release() {
     this.editorManager.release();
     super.release();
