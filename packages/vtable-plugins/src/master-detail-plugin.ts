@@ -485,7 +485,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   // ==================== 主从表功能设置 ====================
 
   /**
-   * 设置主从表功能 - 从 ListTable.initMasterDetailFeatures 抽取
+   * 设置主从表功能
    */
   private setupMasterDetailFeatures(): void {
     // 初始化内部属性
@@ -1344,8 +1344,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 为cell添加下划线
    */
   private addUnderlineToCell(cellGroup: any, originalHeight: number): void {
-    // 每次都重新计算和应用下划线样式，不依赖标记
-    // 这样在CellGroup重绘时也能正确绘制下划线
+    // 在CellGroup重绘时正确绘制下划线
     const currentAttr = cellGroup.attribute;
     const currentStrokeArrayWidth =
       currentAttr.strokeArrayWidth ||
@@ -1357,7 +1356,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       (currentAttr.stroke
         ? [currentAttr.stroke, currentAttr.stroke, currentAttr.stroke, currentAttr.stroke]
         : ['transparent', 'transparent', 'transparent', 'transparent']);
-    // 检查是否已经是增强的下划线（避免重复增强）
     const isAlreadyEnhanced = cellGroup._hasUnderline;
     if (!isAlreadyEnhanced) {
       // 第一次添加下划线，存储原始样式
@@ -1381,7 +1379,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     } else {
       enhancedStrokeArrayColor[2] = originalStrokeArrayColor[2];
     }
-    // 应用增强的下划线样式
     cellGroup.setAttributes({
       strokeArrayWidth: enhancedStrokeArrayWidth,
       strokeArrayColor: enhancedStrokeArrayColor,
