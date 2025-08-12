@@ -96,7 +96,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     textBaseline: CanvasTextBaseline;
   }): void {
     const { cellGroup, cellHeight, padding, textBaseline } = eventData;
-    // 在masterDetail模式下，使用原始高度而不是逻辑行高来重新定位单元格内容
     let effectiveCellHeight = cellHeight;
     if (cellGroup.col !== undefined && cellGroup.row !== undefined) {
       try {
@@ -500,7 +499,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 初始化内部属性 - 从 ListTable.initMasterDetailFeatures 抽取
+   * 初始化内部属性
    */
   private initInternalProps(): void {
     const internalProps = this.table.internalProps as VTable.ListTable['internalProps'] & {
@@ -527,7 +526,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 扩展表格 API - 添加主从表方法
+   * 扩展表格 API
    */
   private extendTableAPI(): void {
     const table = this.table as any;
@@ -620,7 +619,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 收起行 - 从 ListTable.collapseRow 抽取
+   * 收起行
    */
   collapseRow(rowIndex: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
@@ -662,7 +661,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 切换行展开状态 - 从 ListTable.toggleRowExpand 抽取
+   * 切换行展开状态
    */
   toggleRowExpand(rowIndex: number): void {
     const internalProps = this.getInternalProps();
@@ -701,7 +700,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * masterDetail模式下排序前的操作
+   * 排序前的操作
    */
   private executeMasterDetailBeforeSort(): void {
     const table = this.table as any;
@@ -724,7 +723,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * masterDetail模式下排序后的操作
+   * 排序后的操作
    */
   private executeMasterDetailAfterSort(): void {
     const table = this.table as any;
@@ -765,7 +764,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 更新行高用于展开 - 从 updateRowHeightForExpand 抽取
+   * 更新行高用于展开
    */
   private updateRowHeightForExpand(rowIndex: number, deltaHeight: number): void {
     // 使用 VTable 的内部方法更新行高
@@ -800,7 +799,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 获取详情配置 - 从 ListTable.getDetailConfigForRecord 抽取
+   * 获取详情配置
    */
   private getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {
     return (
@@ -828,7 +827,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   // ==================== 子表管理 ====================
 
   /**
-   * 渲染子表 - 从 ListTable.renderSubTable 抽取
+   * 渲染子表
    */
   private renderSubTable(bodyRowIndex: number): void {
     const internalProps = this.getInternalProps();
@@ -887,7 +886,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 计算子表的viewBox区域 - 从 ListTable.calculateSubTableViewBox 抽取
+   * 计算子表的viewBox区域
    */
   private calculateSubTableViewBox(
     bodyRowIndex: number,
@@ -924,7 +923,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 移除子表 - 从 ListTable.removeSubTable 抽取
+   * 移除子表
    */
   private removeSubTable(bodyRowIndex: number): void {
     const internalProps = this.getInternalProps();
@@ -1157,7 +1156,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 重新计算子表位置 - 从 ListTable.recalculateAllSubTablePositions 抽取
+   * 重新计算子表位置
    * @param start 开始的bodyRowIndex，默认为最小值
    * @param end 结束的bodyRowIndex，默认为最大值
    */
@@ -1288,7 +1287,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 添加展开行的下划线 - 使用VTable内部的渲染机制
+   * 添加展开行的下划线
    */
   private addUnderlineToExpandedRow(rowIndex: number, originalHeight: number): void {
     const sceneGraph = (this.table as any).scenegraph;
@@ -1304,7 +1303,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 调度下划线绘制任务 - 当行进入视口时执行
+   * 调度下划线绘制任务，当行进入视口时执行
    */
   private scheduleUnderlineDrawing(rowIndex: number, originalHeight: number): void {
     // 监听滚动事件，当目标行进入视口时绘制下划线
@@ -1393,7 +1392,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const enhancedStrokeArrayWidth = [...currentStrokeArrayWidth];
     const enhancedStrokeArrayColor = [...currentStrokeArrayColor];
     const originalBottomWidth = currentStrokeArrayWidth[2] || 1;
-    // 获取设备像素比 - 从VTable内部属性或浏览器获取
     const dpr = (this.table as any).internalProps?.pixelRatio || window.devicePixelRatio || 1;
     // 要还原本来的下划线的效果，那么我们应该要 * 1.5因为我记得原本的线是叠层的
     const enhancedWidth = originalBottomWidth * 1.5 * dpr;
@@ -1427,7 +1425,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 从cell中删除下划线 - 恢复原始strokeArray样式
+   * 从cell中删除下划线，恢复原始strokeArray样式
    */
   private removeUnderlineFromCell(cellGroup: any): void {
     if (cellGroup._hasUnderline) {
@@ -1447,7 +1445,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 重绘所有展开行的下划线 - 用于resize后重新定位
+   * 重绘所有展开行的下划线
    */
   private redrawAllUnderlines(): void {
     this.expandedRows.forEach(rowIndex => {
