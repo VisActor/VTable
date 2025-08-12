@@ -237,8 +237,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       this.stateManager.initCheckedState(records);
       // this.internalProps.frozenColCount = this.options.frozenColCount || this.rowHeaderLevelCount;
       this._updateSize();
-      // 生成单元格场景树
-      this.scenegraph.createSceneGraph();
+
       // this.render();
       if (options.legends) {
         this.internalProps.legends = [];
@@ -247,7 +246,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           for (let i = 0; i < options.legends.length; i++) {
             this.internalProps.legends.push(createLegend(options.legends[i], this));
           }
-
           this.scenegraph.tableGroup.setAttributes({
             x: this.tableX,
             y: this.tableY
@@ -263,7 +261,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.title) {
         const Title = Factory.getComponent('title') as ITitleComponent;
         this.internalProps.title = new Title(options.title, this);
-        this.scenegraph.resize();
+        // this.scenegraph.resize();
       }
       if (this.options.emptyTip) {
         if (this.internalProps.emptyTip) {
@@ -274,6 +272,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
           this.internalProps.emptyTip?.resetVisible();
         }
       }
+      // 生成单元格场景树
+      this.scenegraph.createSceneGraph();
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
       setTimeout(() => {
         this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
