@@ -687,6 +687,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.rowCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
+      // 当冻结列数大于等于列数时，则冻结列数置为0，可以查看demo中的list-groupBy.ts来调试这个问题
+      if (this.options.frozenColCount >= this.colCount) {
+        this.internalProps.frozenColCount = 0;
+      }
       table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
 
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
