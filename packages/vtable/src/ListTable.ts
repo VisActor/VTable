@@ -1336,9 +1336,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
 
     this._updateSize();
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
-      //   this._updateSize();
       this.internalProps.title.resize();
-      //   this.scenegraph.resize();
     }
     this.scenegraph.resize();
 

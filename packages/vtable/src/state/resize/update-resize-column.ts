@@ -94,9 +94,8 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
 
   // update resize column component
   state.table.scenegraph.component.updateResizeCol(state.columnResize.col, yInTable, state.columnResize.isRightFrozen);
-  if (state.table.isListTable()) {
-    state.table._updateSize();
-  }
+  state.table._updateSize();
+
   if (
     state.columnResize.col < state.table.frozenColCount &&
     !state.table.isPivotTable() &&

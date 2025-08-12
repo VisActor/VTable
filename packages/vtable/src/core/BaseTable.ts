@@ -1202,10 +1202,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     let vScrollBarWidth = 0;
     let hScrollBarWidth = 0;
 
-    vScrollBarWidth = this.shouldVScrollBarWidthShow(heightP, scrollStyle)
+    vScrollBarWidth = this.shouldVScrollBarWidthShow(widthP, heightP, scrollStyle)
       ? style.getVerticalScrollBarSize(scrollStyle)
       : 0;
-    hScrollBarWidth = this.shouldHScrollBarWidthShow(widthP, scrollStyle)
+    hScrollBarWidth = this.shouldHScrollBarWidthShow(widthP, heightP, scrollStyle)
       ? style.getHorizontalScrollBarSize(scrollStyle)
       : 0;
 
@@ -1238,34 +1238,62 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this._clearRowRangeHeightsMap();
   }
 
-  shouldVScrollBarWidthShow(containerHeight: number, scrollStyle: ScrollStyle): boolean {
+  shouldVScrollBarWidthShow(tableWidth: number, tableHeight: number, scrollStyle: ScrollStyle): boolean {
     if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
       return false;
     }
-    // 这个visible在focus或者动态的情况下可能不准确
-    const hScrollBarVisible = this.scenegraph ? this.scenegraph.component.hScrollBar.attribute.visible : false;
-    const tableHeight = containerHeight;
     const totalHeight = this.getAllRowsHeight();
-    let sizeTolerance = this.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
-    if (hScrollBarVisible) {
-      sizeTolerance -= style.getHorizontalScrollBarSize(scrollStyle);
+    //判断横向滚动条的存在是否影响纵向滚动条的显示
+    const sizeTolerance = scrollStyle.visible ? style.getHorizontalScrollBarSize(scrollStyle) : 0;
+    const isHScrollBarDecideVScrollBar = totalHeight > tableHeight - sizeTolerance && totalHeight <= tableHeight;
+    //如果横向滚动条的存在决定了纵向滚动条是否显示，这里再对纵向滚动条判断，因为有相互依赖的问题
+    if (isHScrollBarDecideVScrollBar) {
+      const totalWidth = this.getAllColsWidth();
+      const sizeTolerance = scrollStyle.visible ? style.getVerticalScrollBarSize(scrollStyle) : 0;
+      const isVScrollBarDecideHScrollBar = totalWidth > tableWidth - sizeTolerance && totalWidth <= tableWidth;
+      //出现了相互依赖的情况，则不显示纵向滚动条（横向也不显示）
+      if (isVScrollBarDecideHScrollBar) {
+        return false;
+      }
+      // 一定显示横向滚动条，则也一定显示纵向滚动条
+      if (totalWidth > tableWidth) {
+        return true;
+      }
+      // 横向滚动条不存在，则纵向滚动条也不存在
+      if (totalWidth <= tableWidth - sizeTolerance) {
+        return false;
+      }
     }
-    return totalHeight > tableHeight + sizeTolerance;
+    return !(totalHeight <= tableHeight - sizeTolerance);
   }
 
-  shouldHScrollBarWidthShow(containerWidth: number, scrollStyle: ScrollStyle): boolean {
+  shouldHScrollBarWidthShow(tableWidth: number, tableHeight: number, scrollStyle: ScrollStyle): boolean {
     if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
       return false;
     }
-    // 这个visible在focus或者动态的情况下可能不准确
-    const vScrollBarVisible = scrollStyle.visible;
-    const tableWidth = this.container.clientWidth + 2 || 0;
     const totalWidth = this.getAllColsWidth();
-    let sizeTolerance = this.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
-    if (vScrollBarVisible) {
-      sizeTolerance -= style.getVerticalScrollBarSize(scrollStyle);
+    //判断纵向滚动条的存在是否影响横向滚动条的显示
+    const sizeTolerance = scrollStyle.visible ? style.getVerticalScrollBarSize(scrollStyle) : 0;
+    const isVScrollBarDecideHScrollBar = totalWidth > tableWidth - sizeTolerance && totalWidth <= tableWidth;
+    //如果纵向滚动条的存在决定了横向滚动条是否显示，这里再对横向滚动条判断，因为有相互依赖的问题
+    if (isVScrollBarDecideHScrollBar) {
+      const totalHeight = this.getAllRowsHeight();
+      const sizeTolerance = scrollStyle.visible ? style.getHorizontalScrollBarSize(scrollStyle) : 0;
+      const isHScrollBarDecideVScrollBar = totalHeight > tableHeight - sizeTolerance && totalHeight <= tableHeight;
+      //出现了相互依赖的情况，则不显示横向滚动条（纵向也不显示）
+      if (isHScrollBarDecideVScrollBar) {
+        return false;
+      }
+      // 一定显示纵向滚动条，则也一定显示横向滚动条
+      if (totalHeight > tableHeight) {
+        return true;
+      }
+      // 纵向滚动条不存在，则横向滚动条也不存在
+      if (totalHeight <= tableHeight - sizeTolerance) {
+        return false;
+      }
     }
-    return totalWidth > tableWidth + sizeTolerance;
+    return !(totalWidth <= tableWidth - sizeTolerance);
   }
 
   updateViewBox(newViewBox: IBoundsLike) {

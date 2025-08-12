@@ -118,6 +118,9 @@ export function createTable() {
       disableHover: false,
       disableHeaderHover: true
     },
+    resize: {
+      rowResizeMode: 'all'
+    },
     theme: VTable.themes.ARCO.extends({
       defaultStyle: {
         padding: 0
@@ -145,7 +148,7 @@ export function createTable() {
       // frameStyle: undefined,
       scrollStyle: {
         width: 30,
-        visible: 'none',
+        visible: 'always',
         hoverOn: false,
         barToSide: true,
         scrollSliderCornerRadius: 0,
