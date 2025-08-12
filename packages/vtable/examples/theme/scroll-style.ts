@@ -144,8 +144,8 @@ export function createTable() {
       },
       // frameStyle: undefined,
       scrollStyle: {
-        width: 16,
-        visible: 'always',
+        width: 30,
+        visible: 'none',
         hoverOn: false,
         barToSide: true,
         scrollSliderCornerRadius: 0,

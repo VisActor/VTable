@@ -362,7 +362,7 @@ export class TableComponent {
     // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
     // （由于小数在取数时被省略）
     // 这里加入tolerance，避免出现无用滚动
-    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound || !hoverOn ? 1 : 0;
+    const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
 
     if (totalWidth > tableWidth + sizeTolerance) {
       const y = Math.min(tableHeight, totalHeight);
