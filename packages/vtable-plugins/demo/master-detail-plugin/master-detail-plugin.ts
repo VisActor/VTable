@@ -116,40 +116,79 @@ export function createTable() {
   // 创建主从表插件实例
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'employee-detail-plugin',
-    detailGridOptions: {
-      columns: [
-        {
-          field: 'project',
-          title: '项目名称',
-          width: 180
-        },
-        {
-          field: 'role',
-          title: '项目角色',
-          width: 120
-        },
-        {
-          field: 'startDate',
-          title: '开始日期',
-          width: 100
-        },
-        {
-          field: 'endDate',
-          title: '结束日期',
-          width: 100
-        },
-        {
-          field: 'progress',
-          title: '项目进度',
-          width: 100,
-          fieldFormat: (value: number) => `${value}%`
-        }
-      ],
-      theme: VTable.themes.BRIGHT,
-      style: {
-        margin: 20,
-        height: 300
+    getDetailGridOptions: ({ data, bodyRowIndex }) => {
+      if (bodyRowIndex === 1) {
+        return {
+          columns: [
+            {
+              field: 'project',
+              title: '项目名称',
+              width: 180
+            },
+            {
+              field: 'role',
+              title: '项目角色',
+              width: 120
+            },
+            {
+              field: 'startDate',
+              title: '开始日期',
+              width: 100
+            },
+            {
+              field: 'endDate',
+              title: '结束日期',
+              width: 100
+            },
+            {
+              field: 'progress',
+              title: '项目进度',
+              width: 100,
+              fieldFormat: (value: number) => `${value}%`
+            }
+          ],
+          theme: VTable.themes.BRIGHT,
+          style: {
+            margin: 20,
+            height: 300
+          }
+        };
       }
+      return {
+        columns: [
+          {
+            field: 'project',
+            title: '项目名称',
+            width: 180
+          },
+          {
+            field: 'role',
+            title: '项目角色',
+            width: 120
+          },
+          {
+            field: 'startDate',
+            title: '开始日期',
+            width: 100
+          },
+          {
+            field: 'endDate',
+            title: '结束日期',
+            width: 100
+          },
+          {
+            field: 'progress',
+            title: '项目进度',
+            width: 100,
+            fieldFormat: (value: number) => `${value}%`
+          }
+        ],
+        theme: VTable.themes.DARK,
+        style: {
+          margin: 20,
+          height: 300
+        }
+      };
     }
   });
 
