@@ -174,6 +174,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-groupBy'
+      },
+      {
+        path: 'list',
         name: 'list-group-manyChild'
       },
       {
