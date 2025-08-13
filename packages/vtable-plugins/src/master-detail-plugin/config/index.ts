@@ -52,11 +52,11 @@ export class ConfigManager {
     }
     // 生成唯一的虚拟记录ID
     const topId = `__vtable_virtual_top_${Date.now()}_${Math.random()}`;
-    const maxId = `__vtable_virtual_bottom_${Date.now()}_${Math.random()}`;
-    this.virtualRecordIds = { topId, maxId };
+    const bottomId = `__vtable_virtual_bottom_${Date.now()}_${Math.random()}`;
+    this.virtualRecordIds = { topId, bottomId };
     // 创建顶部和底部虚拟记录（都是空行）
     const minRecord = this.createVirtualRecord(originalRecords, 'top', topId);
-    const maxRecord = this.createVirtualRecord(originalRecords, 'bottom', maxId);
+    const maxRecord = this.createVirtualRecord(originalRecords, 'bottom', bottomId);
     // 插入虚拟记录：顶部记录在开头，底部记录在末尾
     options.records = [minRecord, ...originalRecords, maxRecord];
   }
@@ -74,11 +74,7 @@ export class ConfigManager {
     if (originalRecords.length > 0) {
       const firstRecord = originalRecords[0];
       Object.keys(firstRecord).forEach(fieldName => {
-        if (type === 'top') {
-          record[fieldName] = '1'; // 所有字段都设为空字符串
-        } else {
-          record[fieldName] = '2'; // 所有字段都设为空字符串
-        }
+        record[fieldName] = ' ';
       });
     }
     record.children = undefined;

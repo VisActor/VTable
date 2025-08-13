@@ -209,7 +209,7 @@ export class EventManager {
       const record = records[recordIndex];
       if (record && record.__vtable_virtual_record__ && record.__vtable_virtual_id__) {
         const virtualId = record.__vtable_virtual_id__;
-        if (virtualId === virtualRecordIds.topId || virtualId === virtualRecordIds.maxId) {
+        if (virtualId === virtualRecordIds.topId || virtualId === virtualRecordIds.bottomId) {
           virtualRecordIndices.push({ index: i, recordIndex, virtualId });
         }
       }
@@ -229,7 +229,7 @@ export class EventManager {
     virtualRecordIndices.forEach(({ recordIndex, virtualId }) => {
       if (virtualId === virtualRecordIds.topId) {
         currentIndexedData.unshift(recordIndex);
-      } else if (virtualId === virtualRecordIds.maxId) {
+      } else if (virtualId === virtualRecordIds.bottomId) {
         currentIndexedData.push(recordIndex);
       }
     });

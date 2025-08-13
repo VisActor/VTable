@@ -48,26 +48,3 @@ export function getOriginalRowHeight(table: VTable.ListTable, bodyRowIndex: numb
   const internalProps = getInternalProps(table);
   return internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
 }
-
-/**
- * 获取指定行的所有cell元素
- */
-export function getRowCells(table: VTable.ListTable, rowIndex: number): any[] {
-  const sceneGraph = (table as any).scenegraph;
-  const cells: Group[] = [];
-  // 遍历所有组找到指定行的cell
-  const traverse = (group: any) => {
-    if (group.role === 'cell' && group.row === rowIndex) {
-      cells.push(group);
-    }
-    if (group.children) {
-      group.children.forEach((child: any) => traverse(child));
-    }
-  };
-
-  if (sceneGraph.stage) {
-    traverse(sceneGraph.stage);
-  }
-
-  return cells;
-}

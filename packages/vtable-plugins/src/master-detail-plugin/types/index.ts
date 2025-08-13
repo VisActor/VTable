@@ -35,7 +35,7 @@ export interface InternalProps {
  */
 export interface VirtualRecordIds {
   topId: string;
-  maxId: string;
+  bottomId: string;
 }
 
 /**

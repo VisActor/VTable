@@ -33,12 +33,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
     this.id = pluginOptions.id ?? this.id;
-    this.pluginOptions = Object.assign(
-      {
-        expandedRows: []
-      },
-      pluginOptions
-    );
+    this.pluginOptions = pluginOptions;
   }
 
   run(...args: unknown[]): boolean | void {
@@ -120,7 +115,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private initInternalProps(): void {
     const internalProps = getInternalProps(this.table);
-    internalProps.expandedRecordIndices = []; // 初始化为空数组
+    internalProps.expandedRecordIndices = [];
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
   }
@@ -231,8 +226,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.subTableManager.renderSubTable(bodyRowIndex, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
-    this.subTableManager.recalculateAllSubTablePositions(bodyRowIndex + 1, (record: unknown, bodyRowIndex: number) =>
-      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
     this.drawUnderlineForRow(rowIndex, originalHeight);
     this.refreshRowIcon(rowIndex);
@@ -273,8 +270,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     this.removeUnderlineFromRow(rowIndex);
-    this.subTableManager.recalculateAllSubTablePositions(bodyRowIndex + 1, (record: unknown, bodyRowIndex: number) =>
-      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
     this.refreshRowIcon(rowIndex);
   }
@@ -391,7 +390,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       cellGroup._originalStrokeArrayColor = [...currentStrokeArrayColor];
       cellGroup._hasUnderline = true;
     }
-    // 使用原始样式计算增强的下划线
     const originalStrokeArrayWidth = cellGroup._originalStrokeArrayWidth || currentStrokeArrayWidth;
     const originalStrokeArrayColor = cellGroup._originalStrokeArrayColor || currentStrokeArrayColor;
     const enhancedStrokeArrayWidth = [...originalStrokeArrayWidth];
@@ -478,7 +476,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   update(): void {
     if (this.table) {
-      this.subTableManager.recalculateAllSubTablePositions(0, (record: unknown, bodyRowIndex: number) =>
+      this.subTableManager.recalculateAllSubTablePositions(0, undefined, (record: unknown, bodyRowIndex: number) =>
         this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
       );
     }
