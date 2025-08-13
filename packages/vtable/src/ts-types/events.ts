@@ -12,7 +12,7 @@ import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
-import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
+import type { FederatedPointerEvent, Group, IEventTarget } from '@src/vrender';
 import type { BaseTableConstructorOptions } from './base-table';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
@@ -241,6 +241,25 @@ export interface TableEventHandlersEventArgumentMap {
   before_set_size: { width: number; height: number };
   after_render: null;
   initialized: null;
+  after_update_cell_content_width: {
+    col: number;
+    row: number;
+    distWidth: number;
+    cellHeight: number;
+    detaX: number;
+    autoRowHeight: boolean;
+    needUpdateRowHeight: boolean;
+    cellGroup: Group;
+    padding: [number, number, number, number];
+    textAlign: CanvasTextAlign;
+    textBaseline: CanvasTextBaseline;
+  };
+  after_update_select_border_height: {
+    startRow: number;
+    endRow: number;
+    currentHeight: number;
+    selectComp: { rect: any; fillhandle?: any; role: string };
+  };
 
   change_cell_value: {
     col: number;
@@ -350,6 +369,7 @@ export interface TableEventHandlersReturnMap {
   before_set_size: void;
   after_render: void;
   initialized: void;
+  after_update_cell_content_width: void;
 
   change_cell_value: void;
   mousedown_fill_handle: void;

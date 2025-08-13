@@ -90,6 +90,7 @@ function updateComponent(
   // const rowsHeight = table.getRowsHeight(cellRange.start.row, endRow);
   const colsWidth = table.getColsWidth(computeRectCellRangeStartCol, computeRectCellRangeEndCol);
   const rowsHeight = table.getRowsHeight(computeRectCellRangeStartRow, computeRectCellRangeEndRow);
+  
   const firstCellBound = scene.highPerformanceGetCell(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
@@ -101,6 +102,13 @@ function updateComponent(
     width: colsWidth,
     height: rowsHeight,
     visible: true
+  });
+
+  table.fireListeners('after_update_select_border_height', {
+    startRow: computeRectCellRangeStartRow,
+    endRow: computeRectCellRangeEndRow,
+    currentHeight: rowsHeight,
+    selectComp
   });
   if (selectComp.fillhandle) {
     const fillHandle = scene.table.options.excelOptions?.fillHandle;
