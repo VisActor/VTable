@@ -624,14 +624,6 @@ export interface BaseTableConstructorOptions {
   };
   /** 插件配置 */
   plugins?: IVTablePlugin[];
-  scrollConfig?: {
-    /** 是否在水平滚动条上跳过左侧冻结列的宽度，默认为false */
-    hScrollSkipLeftFrozenColsWidth?: boolean;
-    /** 是否在水平滚动条上跳过右侧冻结列的宽度，默认为false */
-    hScrollSkipRightFrozenColsWidth?: boolean;
-    /** 是否在水平滚动条上跳过所有冻结列的宽度，默认为false */
-    hScrollSkipAllFrozenColsWidth?: boolean;
-  };
 }
 export interface BaseTableAPI {
   id: string;

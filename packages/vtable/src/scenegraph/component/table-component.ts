@@ -381,25 +381,12 @@ export class TableComponent {
 
       let hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
 
-      // 忽略左侧冻结列宽度
-      const skipLeftFrozen = this.table.theme.scrollStyle?.ignoreLeftFrozen ?? false;
-
-      // 忽略右侧冻结列宽度
-      const skipRightFrozen = this.table.theme.scrollStyle?.ignoreRightFrozen ?? false;
-
       // 忽略所有冻结列宽度
-      const skipAllFrozen = this.table.theme.scrollStyle?.ignoreAllFrozen ?? false;
+      const ignoreFrozenCols = this.table.theme.scrollStyle?.ignoreFrozenCols ?? false;
 
-      const skipAllFrozenColsWidth = skipAllFrozen || (skipLeftFrozen && skipRightFrozen);
-
-      if (skipAllFrozenColsWidth) {
+      if (ignoreFrozenCols) {
         hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
         hScrollBarWidth = tableWidth;
-      } else if (skipLeftFrozen) {
-        hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
-        hScrollBarWidth = tableWidth - rightFrozenColsWidth;
-      } else if (skipRightFrozen) {
-        hScrollBarWidth = tableWidth - frozenColsWidth;
       } else {
         hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
         hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;

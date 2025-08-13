@@ -511,14 +511,8 @@ export class TableTheme implements ITableThemeDefine {
         get verticalPadding(): number | [number, number, number, number] {
           return scroll.verticalPadding ?? 0;
         },
-        get ignoreLeftFrozen(): boolean | undefined {
-          return scroll.ignoreLeftFrozen ?? false;
-        },
-        get ignoreRightFrozen(): boolean | undefined {
-          return scroll.ignoreRightFrozen ?? false;
-        },
-        get ignoreAllFrozen(): boolean | undefined {
-          return scroll.ignoreAllFrozen ?? false;
+        get ignoreFrozenCols(): boolean | undefined {
+          return scroll.ignoreFrozenCols ?? false;
         }
       };
     }

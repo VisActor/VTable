@@ -79,7 +79,7 @@ export function createTable() {
     rightFrozenColCount: 2,
     theme: {
       scrollStyle: {
-        ignoreAllFrozen: true
+        ignoreFrozenCols: true
       }
     }
   };
