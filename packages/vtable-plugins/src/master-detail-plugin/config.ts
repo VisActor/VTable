@@ -1,5 +1,5 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailGridOptions, MasterDetailPluginOptions, VirtualRecordIds } from '../types';
+import type { DetailGridOptions, MasterDetailPluginOptions, VirtualRecordIds } from './types';
 
 /**
  * 配置注入相关功能

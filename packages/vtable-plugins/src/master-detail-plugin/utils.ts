@@ -1,5 +1,5 @@
 import * as VTable from '@visactor/vtable';
-import type { InternalProps } from '../types';
+import type { InternalProps } from './types';
 import { Group } from '@visactor/vtable/src/vrender';
 
 /**

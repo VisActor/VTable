@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
-import type { VirtualRecordIds } from '../types';
-import { getInternalProps } from '../utils';
+import type { VirtualRecordIds } from './types';
+import { getInternalProps } from './utils';
 import { Group } from '@visactor/vtable/src/vrender';
 
 /**

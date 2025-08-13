@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailGridOptions } from '../types';
-import { getInternalProps, getRecordByRowIndex, parseMargin } from '../utils';
+import type { DetailGridOptions } from './types';
+import { getInternalProps, getRecordByRowIndex, parseMargin } from './utils';
 
 /**
  * 子表管理相关功能

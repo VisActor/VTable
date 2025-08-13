@@ -1,9 +1,9 @@
 import * as VTable from '@visactor/vtable';
-import type { MasterDetailPluginOptions, DetailGridOptions } from '../types';
-import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from '../utils';
-import { ConfigManager } from '../config';
-import { EventManager } from '../events';
-import { SubTableManager } from '../subtable';
+import type { MasterDetailPluginOptions, DetailGridOptions } from './types';
+import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
+import { ConfigManager } from './config';
+import { EventManager } from './events';
+import { SubTableManager } from './subtable';
 
 /**
  * 主从表插件核心类
