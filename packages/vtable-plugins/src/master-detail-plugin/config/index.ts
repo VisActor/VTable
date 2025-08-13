@@ -50,19 +50,16 @@ export class ConfigManager {
     if (originalRecords.length === 0) {
       return;
     }
-    // 生成唯一的虚拟记录ID
     const topId = `__vtable_virtual_top_${Date.now()}_${Math.random()}`;
     const bottomId = `__vtable_virtual_bottom_${Date.now()}_${Math.random()}`;
     this.virtualRecordIds = { topId, bottomId };
-    // 创建顶部和底部虚拟记录（都是空行）
     const minRecord = this.createVirtualRecord(originalRecords, 'top', topId);
     const maxRecord = this.createVirtualRecord(originalRecords, 'bottom', bottomId);
-    // 插入虚拟记录：顶部记录在开头，底部记录在末尾
     options.records = [minRecord, ...originalRecords, maxRecord];
   }
 
   /**
-   * 创建虚拟记录 - 简化版本，只创建空行
+   * 创建虚拟记录
    */
   private createVirtualRecord(
     originalRecords: Record<string, unknown>[],
@@ -132,8 +129,6 @@ export class ConfigManager {
         ];
       }
 
-      // 检查展开状态 - 需要从外部获取展开状态
-      // 这里需要通过回调或其他方式获取展开状态
       const isExpanded = this.isRowExpanded(row);
 
       // 返回对应的图标配置
@@ -204,7 +199,6 @@ export class ConfigManager {
         }
       }
     } catch (error) {
-      // 设置失败时静默处理
       console.warn('Failed to set virtual record row height:', error);
     }
   }
@@ -227,7 +221,6 @@ export class ConfigManager {
     return this.virtualRecordIds;
   }
 
-  // 这个方法需要从外部注入，用于检查行是否展开
   private isRowExpanded: (row: number) => boolean = () => false;
 
   /**

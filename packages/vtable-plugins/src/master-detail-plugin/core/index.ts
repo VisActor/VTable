@@ -60,11 +60,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       return true;
     } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_SORT) {
       // 排序后处理：恢复展开状态
-      this.eventManager.executeMasterDetailAfterSort(this.configManager.getVirtualRecordIds());
+      this.eventManager.executeMasterDetailAfterSort();
     } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH) {
-      // 单元格内容宽度更新后处理
+      // 单元格内容处理
       this.eventManager.handleAfterUpdateCellContentWidth(eventArgs as any);
     } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT) {
+      // 高亮处理
       this.eventManager.handleAfterUpdateSelectBorderHeight(eventArgs as any);
     }
   }
@@ -127,7 +128,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 直接监听 ICON_CLICK 事件
     this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
       const { col, row, funcType, name } = iconInfo;
-      // 检查是否是我们的层级图标
       if (
         (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
         (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)

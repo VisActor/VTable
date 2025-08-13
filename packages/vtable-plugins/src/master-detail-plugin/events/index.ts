@@ -158,8 +158,7 @@ export class EventManager {
   /**
    * 排序后的操作
    */
-  executeMasterDetailAfterSort(virtualRecordIds: VirtualRecordIds | null): void {
-    this.adjustVirtualRecordsPosition(virtualRecordIds);
+  executeMasterDetailAfterSort(): void {
     const table = this.table as any;
     const tempExpandedRecordIndices = table.internalProps._tempExpandedRecordIndices;
     if (tempExpandedRecordIndices && tempExpandedRecordIndices.length > 0) {

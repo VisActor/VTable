@@ -1,4 +1,5 @@
 import * as VTable from '@visactor/vtable';
+import { Group } from '@visactor/vtable/src/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
 export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOptions> {
@@ -49,7 +50,7 @@ export interface CellContentWidthEventData {
   detaX: number;
   autoRowHeight: boolean;
   needUpdateRowHeight: boolean;
-  cellGroup: any;
+  cellGroup: Group;
   padding: [number, number, number, number];
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
