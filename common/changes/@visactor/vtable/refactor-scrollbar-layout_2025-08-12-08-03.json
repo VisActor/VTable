@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: scrollbar not show when less records no need show scrollbar\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
