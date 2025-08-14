@@ -16,6 +16,12 @@ export class ConfigManager {
     // 启用主从表基础设施
     (options as VTable.ListTableConstructorOptions & { masterDetail: boolean }).masterDetail = true;
 
+    // 确保滚动事件始终触发，以便can_scroll事件能在边界情况下正常工作
+    if (!options.customConfig) {
+      options.customConfig = {};
+    }
+    options.customConfig.scrollEventAlwaysTrigger = true;
+
     // 插入虚拟记录来处理视口限制问题
     this.injectVirtualRecords(options);
 

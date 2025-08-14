@@ -44,8 +44,7 @@ export class SubTableManager {
       // 可以继承更多父表属性
       defaultRowHeight: parentOptions.defaultRowHeight,
       defaultHeaderRowHeight: parentOptions.defaultHeaderRowHeight,
-      defaultColWidth: parentOptions.defaultColWidth,
-      keyboardOptions: parentOptions.keyboardOptions
+      defaultColWidth: parentOptions.defaultColWidth
     };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { style: _style, ...userDetailConfig } = detailConfig || {};
@@ -225,6 +224,7 @@ export class SubTableManager {
     const handleSubTableScroll = () => {
       return subTableCanScroll;
     };
+
     subTable.on('can_scroll', handleSubTableScroll);
 
     const extendedSubTable = subTable as VTable.ListTable & {
