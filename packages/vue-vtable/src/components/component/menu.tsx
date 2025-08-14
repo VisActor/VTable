@@ -6,6 +6,7 @@ export type MenuProps = {
   defaultHeaderMenuItems?: TYPES.MenuListItem[];
   contextMenuItems?: TYPES.MenuListItem[] | ((field: string, row: number, col: number) => TYPES.MenuListItem[]);
   dropDownMenuHighlight?: TYPES.DropDownMenuHighlightInfo[];
+  contextMenuWorkOnlyCell?: boolean;
 };
 
 export default function Menu(props: MenuProps): VNode {
