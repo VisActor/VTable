@@ -14,7 +14,7 @@ f
 - `allowFrozenColCount`: 允许可操作冻结列数，即前多少列会出现冻结操作按钮，默认为 0。
 - `showFrozenIcon`: 是否显示固定列图标，默认为 `true`。
 - `maxFrozenWidth`: 最大冻结宽度，默认为'80%'。
-- `unfreezeAllOnExceedsMaxWidth`: 当列宽超过最大冻结宽度时，是否全部自动解冻，默认为 `true`。
+- `unfreezeAllOnExceedsMaxWidth`: 当列宽超过最大冻结宽度时，是否全部自动解冻，默认为 `true`。如果设置为false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
 
 以下是一个配置示例：
 

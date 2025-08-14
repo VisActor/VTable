@@ -110,7 +110,7 @@ containerFit: {
 
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
-超过最大冻结宽度后是否全部解冻，默认 true
+超过最大冻结宽度后是否全部解冻，默认 true。如果设置为 false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
 
 #${prefix} showFrozenIcon(boolean) = true
 

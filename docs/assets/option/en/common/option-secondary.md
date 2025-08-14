@@ -106,7 +106,7 @@ Maximum freezing width, fixed value or percentage. Default is '80%'
 
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
-Whether to defrost after the maximum freezing width is exceeded. The default value is true
+Whether to defrost after the maximum freezing width is exceeded. The default value is true. If set to false, it will not unfreeze all columns, but will determine the number of columns to be unfrozen according to the value of maxFrozenWidth.
 
 #${prefix} allowFrozenColCount(number) = 0
 
