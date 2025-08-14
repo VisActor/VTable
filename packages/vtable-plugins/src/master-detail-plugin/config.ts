@@ -25,17 +25,17 @@ export class ConfigManager {
     // 注入子表配置
     if (this.pluginOptions.detailGridOptions) {
       const detailOptions = this.pluginOptions.detailGridOptions;
-      (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
-        detailOptions;
-    }
-
-    if (this.pluginOptions.getDetailGridOptions) {
-      const getDetailOptions = this.pluginOptions.getDetailGridOptions;
-      (
-        options as VTable.ListTableConstructorOptions & {
-          getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
-        }
-      ).getDetailGridOptions = getDetailOptions;
+      // 判断是静态配置还是动态函数
+      if (typeof detailOptions === 'function') {
+        (
+          options as VTable.ListTableConstructorOptions & {
+            getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
+          }
+        ).getDetailGridOptions = detailOptions;
+      } else {
+        (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
+          detailOptions;
+      }
     }
   }
 
@@ -207,11 +207,17 @@ export class ConfigManager {
    * 获取详情配置
    */
   getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {
-    return (
-      this.pluginOptions.getDetailGridOptions?.({ data: record, bodyRowIndex: bodyRowIndex }) ||
-      this.pluginOptions.detailGridOptions ||
-      null
-    );
+    const detailOptions = this.pluginOptions.detailGridOptions;
+    if (!detailOptions) {
+      return null;
+    }
+    
+    // 判断是函数还是静态配置
+    if (typeof detailOptions === 'function') {
+      return detailOptions({ data: record, bodyRowIndex: bodyRowIndex });
+    }
+    
+    return detailOptions;
   }
 
   /**

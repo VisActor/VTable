@@ -83,7 +83,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 设置事件管理器的回调函数
     this.eventManager.setCallbacks({
-      onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForScroll(),
+      onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
       onExpandRow: (rowIndex: number) => this.expandRow(rowIndex),
       onCollapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)

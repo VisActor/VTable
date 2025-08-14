@@ -47,6 +47,7 @@ export class SubTableManager {
       defaultColWidth: parentOptions.defaultColWidth,
       keyboardOptions: parentOptions.keyboardOptions
     };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { style: _style, ...userDetailConfig } = detailConfig || {};
     const subTableOptions = {
       ...baseSubTableOptions,
@@ -66,6 +67,7 @@ export class SubTableManager {
     this.setupScrollEventIsolation(subTable);
     this.setupUnifiedSelectionManagement(bodyRowIndex, subTable);
     this.setupSubTableCanvasClipping(subTable);
+    this.setupAntiFlickerMechanism(subTable);
     subTable.render();
   }
 
@@ -122,21 +124,27 @@ export class SubTableManager {
       }
       const extendedSubTable = subTable as VTable.ListTable & {
         __scrollHandler?: (args: unknown) => boolean;
-        __wheelHandler?: (e: WheelEvent) => void;
+        __subTableScrollHandler?: () => boolean;
         __clipInterval?: number;
+        __antiFlickerHandler?: () => void;
       };
       const scrollHandler = extendedSubTable.__scrollHandler;
       if (scrollHandler) {
         this.table.off('can_scroll', scrollHandler);
       }
-      const wheelHandler = extendedSubTable.__wheelHandler;
-      if (wheelHandler) {
-        subTable.canvas.removeEventListener('wheel', wheelHandler);
+      const subTableScrollHandler = extendedSubTable.__subTableScrollHandler;
+      if (subTableScrollHandler) {
+        subTable.off('can_scroll', subTableScrollHandler);
       }
       // 清理clip interval
       const clipInterval = extendedSubTable.__clipInterval;
       if (clipInterval) {
         clearInterval(clipInterval);
+      }
+      // 清理防闪烁机制
+      const antiFlickerHandler = extendedSubTable.__antiFlickerHandler;
+      if (antiFlickerHandler) {
+        this.table.off('after_render', antiFlickerHandler);
       }
       if (typeof subTable.release === 'function') {
         subTable.release();
@@ -164,7 +172,6 @@ export class SubTableManager {
       return isInArea;
     };
 
-    // 判断是否滚动到底部或者顶部
     const isSubTableAtBottom = () => {
       const totalContentHeight = subTable.getAllRowsHeight();
       const viewportHeight = subTable.scenegraph.height;
@@ -176,51 +183,56 @@ export class SubTableManager {
       const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 0;
       return isAtBottom;
     };
+    // 判断子表在滚动边界时是否应该继续滚动
+    const shouldSubTableScroll = (event: MouseEvent) => {
+      if (!event || !(event instanceof WheelEvent)) {
+        return true;
+      }
+      const deltaY = event.deltaY;
+      const isScrollingDown = deltaY > 0;
+      const isScrollingUp = deltaY < 0;
+      const currentScrollTop = subTable.scrollTop;
+      // 如果滚动条在最上面且向上滚动，返回false
+      if (currentScrollTop <= 0 && isScrollingUp) {
+        return false;
+      }
+      // 如果滚动条在最下面且向下滚动，返回false
+      if (isSubTableAtBottom() && isScrollingDown) {
+        return false;
+      }
+      // 其他情况允许滚动
+      return true;
+    };
+    let subTableCanScroll = false;
 
     const handleParentScroll = (parentArgs: unknown) => {
       const args = parentArgs as { event?: MouseEvent };
+
       if (args.event && isMouseInChildTableArea(args.event)) {
-        return false;
+        // 使用边界检查函数判断子表是否应该滚动
+        if (shouldSubTableScroll(args.event)) {
+          subTableCanScroll = true;
+          return false;
+        }
+        subTableCanScroll = false;
+        return true;
       }
+      subTableCanScroll = false;
       return true;
     };
     this.table.on('can_scroll', handleParentScroll);
 
-    const handleSubTableWheel = (e: WheelEvent) => {
-      if (!isMouseInChildTableArea(e)) {
-        return;
-      }
-      const deltaY = e.deltaY;
-      const isScrollingDown = deltaY > 0;
-      const isScrollingUp = deltaY < 0;
-      if (isScrollingDown && isSubTableAtBottom()) {
-        e.preventDefault();
-        const currentParentScrollTop = this.table.stateManager.scroll.verticalBarPos;
-        const newParentScrollTop = currentParentScrollTop + deltaY;
-        const maxParentScrollTop = this.table.getAllRowsHeight() - this.table.scenegraph.height;
-        if (newParentScrollTop <= maxParentScrollTop) {
-          this.table.stateManager.setScrollTop(newParentScrollTop);
-        }
-        return;
-      }
-      if (isScrollingUp && subTable.scrollTop <= 0) {
-        e.preventDefault();
-        const currentParentScrollTop = this.table.stateManager.scroll.verticalBarPos;
-        const newParentScrollTop = currentParentScrollTop + deltaY;
-        if (newParentScrollTop >= 0) {
-          this.table.stateManager.setScrollTop(newParentScrollTop);
-        }
-        return;
-      }
+    const handleSubTableScroll = () => {
+      return subTableCanScroll;
     };
-    subTable.canvas.addEventListener('wheel', handleSubTableWheel, { passive: false });
+    subTable.on('can_scroll', handleSubTableScroll);
 
     const extendedSubTable = subTable as VTable.ListTable & {
       __scrollHandler?: (args: unknown) => boolean;
-      __wheelHandler?: (e: WheelEvent) => void;
+      __subTableScrollHandler?: () => boolean;
     };
     extendedSubTable.__scrollHandler = handleParentScroll;
-    extendedSubTable.__wheelHandler = handleSubTableWheel;
+    extendedSubTable.__subTableScrollHandler = handleSubTableScroll;
   }
 
   /**
@@ -308,15 +320,18 @@ export class SubTableManager {
     if (!context) {
       return;
     }
-    const wrapRenderMethod = (obj: any, methodName: string) => {
-      const originalMethod = obj[methodName];
+    const wrapRenderMethod = (obj: Record<string, unknown>, methodName: string) => {
+      const originalMethod = obj[methodName] as (...args: unknown[]) => unknown;
       if (typeof originalMethod === 'function') {
-        obj[methodName] = function (...args: any[]) {
+        obj[methodName] = function (...args: unknown[]) {
           context.save();
           try {
             const clipRegion = calculateClipRegion();
             if (clipRegion && clipRegion.clipWidth > 0 && clipRegion.clipHeight > 0) {
-              const dpr = (window as any).dpr || (window as any).devicePixelRatio || 1;
+              const dpr =
+                (window as { dpr?: number; devicePixelRatio?: number }).dpr ||
+                (window as { dpr?: number; devicePixelRatio?: number }).devicePixelRatio ||
+                1;
               context.beginPath();
               context.rect(
                 clipRegion.clipX * dpr,
@@ -339,6 +354,29 @@ export class SubTableManager {
     }
   }
 
+  private setupAntiFlickerMechanism(subTable: VTable.ListTable): void {
+    try {
+      const originalUpdateNextFrame = (subTable as unknown as { scenegraph?: { updateNextFrame?: () => void } })
+        .scenegraph?.updateNextFrame;
+      if (!originalUpdateNextFrame) {
+        return;
+      }
+      const parentTable = this.table;
+      const syncRender = () => {
+        if (subTable && originalUpdateNextFrame) {
+          originalUpdateNextFrame.call((subTable as unknown as { scenegraph: unknown }).scenegraph);
+        }
+      };
+      parentTable.on('after_render', syncRender);
+      const extendedSubTable = subTable as VTable.ListTable & {
+        __antiFlickerHandler?: () => void;
+      };
+      extendedSubTable.__antiFlickerHandler = syncRender;
+    } catch (error) {
+      console.warn('Failed to setup anti-flicker mechanism:', error);
+    }
+  }
+
   /**
    * 滚动时更新所有子表位置
    */
@@ -358,7 +396,6 @@ export class SubTableManager {
           );
         }
       }
-      subTable.render();
     });
   }
 
@@ -379,7 +416,7 @@ export class SubTableManager {
         const newContainerHeight = newViewBox.y2 - newViewBox.y1;
         (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
           newViewBox;
-        const subTableOptions = subTable.options as any;
+        const subTableOptions = subTable.options as VTable.ListTableConstructorOptions;
         if (subTableOptions.canvasWidth !== newContainerWidth || subTableOptions.canvasHeight !== newContainerHeight) {
           subTableOptions.canvasWidth = newContainerWidth;
           subTableOptions.canvasHeight = newContainerHeight;
@@ -391,10 +428,8 @@ export class SubTableManager {
             false
           );
         }
-        subTable.render();
       }
     });
-    this.redrawAllUnderlines?.();
   }
 
   /**

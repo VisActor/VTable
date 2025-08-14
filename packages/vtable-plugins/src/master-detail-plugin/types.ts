@@ -14,10 +14,8 @@ export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOp
  */
 export interface MasterDetailPluginOptions {
   id?: string;
-  /** 静态子表配置 */
-  detailGridOptions?: DetailGridOptions;
-  /** 动态子表配置函数 */
-  getDetailGridOptions?: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
+  /** 子表配置 - 可以是静态配置对象或动态配置函数 */
+  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
 }
 
 /**

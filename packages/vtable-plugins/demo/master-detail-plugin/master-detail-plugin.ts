@@ -104,7 +104,7 @@ const generateEmployeeData = (count: number) => {
               startDate: '2024-03-01',
               endDate: '2024-08-30',
               progress: 92
-            },
+            }
           ]
         : undefined
   }));
@@ -116,7 +116,7 @@ export function createTable() {
   // 创建主从表插件实例
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'employee-detail-plugin',
-    getDetailGridOptions: ({ data, bodyRowIndex }) => {
+    detailGridOptions: ({ data, bodyRowIndex }) => {
       if (bodyRowIndex === 1) {
         return {
           columns: [
