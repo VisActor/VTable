@@ -1227,10 +1227,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       } else {
         this.tableX = (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
         this.tableY = (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+        const rightBorder = (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0);
         this.tableNoFrameWidth =
-          width - ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) - ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+          width -
+          (rightBorder > vScrollBarWidth ? rightBorder - vScrollBarWidth : 0) -
+          ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0));
+        const bottomBorder = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
         this.tableNoFrameHeight =
-          height - ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) - ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0));
+          height -
+          (bottomBorder > hScrollBarWidth ? bottomBorder - hScrollBarWidth : 0) -
+          ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0));
       }
     }
 
