@@ -60,6 +60,14 @@ export const menus = [
     name: 'master-detail-plugin'
   },
   {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin2'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin3'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {

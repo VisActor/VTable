@@ -466,8 +466,9 @@ export class SubTableManager {
    * 清理所有子表
    */
   cleanup(): void {
+    if (!this.table) return;
     const internalProps = getInternalProps(this.table);
-    if (internalProps.subTableInstances) {
+    if (internalProps && internalProps.subTableInstances) {
       internalProps.subTableInstances.forEach(subTable => {
         if (subTable && typeof subTable.release === 'function') {
           try {

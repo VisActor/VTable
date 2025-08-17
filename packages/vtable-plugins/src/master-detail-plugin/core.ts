@@ -47,13 +47,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       this.configManager.injectMasterDetailOptions(
         (eventArgs as { options: VTable.ListTableConstructorOptions }).options
       );
-      queueMicrotask(() => {
-        this.configManager.setupVirtualRecordRowHeight();
-      });
     } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
       this.setupMasterDetailFeatures();
-      // 设置数据源排序保护
-      this.eventManager.setupDataSourceSortProtection(this.configManager.getVirtualRecordIds());
     } else if (runTime === VTable.TABLE_EVENT_TYPE.SORT_CLICK) {
       // 排序前处理：保存展开状态并收起所有行
       this.eventManager.executeMasterDetailBeforeSort();
@@ -144,6 +139,60 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const table = this.table as any;
     this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
     table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
+
+    // 拦截 updatePagination 方法，在分页切换时收起所有展开的行
+    const originalUpdatePagination = table.updatePagination.bind(table);
+    table.updatePagination = (pagination: VTable.TYPES.IPagination) => {
+      const internalProps = getInternalProps(this.table);
+      // 保存当前展开的记录索引
+      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
+      currentExpandedRows.forEach(rowIndex => {
+        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+        const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+        if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
+          internalProps.expandedRecordIndices.push(recordIndex);
+        }
+      });
+
+      // 在分页切换前，仅在视觉上收起所有当前展开的行
+      currentExpandedRows.forEach(rowIndex => {
+        this.collapseRowToPage(rowIndex);
+      });
+
+      // 调用原始的 updatePagination 方法
+      const result = originalUpdatePagination(pagination);
+
+      // 分页后，恢复应该展开的行
+      setTimeout(() => {
+        this.restoreExpandedStatesAfterPagination();
+      }, 0);
+
+      return result;
+    };
+  }
+
+  /**
+   * 分页后恢复展开状态
+   */
+  private restoreExpandedStatesAfterPagination(): void {
+    const internalProps = getInternalProps(this.table);
+    if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
+      return;
+    }
+
+    // 遍历当前页面的所有行，检查是否需要恢复展开状态
+    for (
+      let rowIndex = this.table.columnHeaderLevelCount;
+      rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
+      rowIndex++
+    ) {
+      const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+      const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+      
+      if (internalProps.expandedRecordIndices.includes(recordIndex)) {
+        this.expandRowToPage(rowIndex);
+      }
+    }
   }
 
   /**
@@ -195,7 +244,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   expandRow(rowIndex: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
-    if (internalProps._heightResizedRowMap.has(rowIndex)) {
+    if (this.eventManager.isRowExpanded(rowIndex)) {
       return;
     }
 
@@ -242,7 +291,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
 
-    if (!internalProps._heightResizedRowMap.has(rowIndex)) {
+    if (!this.eventManager.isRowExpanded(rowIndex)) {
       return;
     }
 
@@ -279,11 +328,83 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
+   * 展开行（仅用于分页时恢复状态，不修改expandedRecordIndices）
+   */
+  private expandRowToPage(rowIndex: number): void {
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    const internalProps = getInternalProps(this.table);
+    if (this.eventManager.isRowExpanded(rowIndex)) {
+      return;
+    }
+
+    // 更新展开状态数组（仅视觉状态）
+    this.eventManager.addExpandedRow(rowIndex);
+
+    const originalHeight = this.table.getRowHeight(rowIndex);
+    if (internalProps.originalRowHeights) {
+      internalProps.originalRowHeights.set(bodyRowIndex, originalHeight);
+    }
+    const record = getRecordByRowIndex(this.table, bodyRowIndex);
+    const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
+    const height = detailConfig?.style?.height || 200;
+
+    const deltaHeight = height - originalHeight;
+    this.updateRowHeightForExpand(rowIndex, deltaHeight);
+    this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
+    internalProps._heightResizedRowMap.add(rowIndex);
+
+    this.subTableManager.renderSubTable(bodyRowIndex, (record, bodyRowIndex) =>
+      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+    this.drawUnderlineForRow(rowIndex, originalHeight);
+    this.refreshRowIcon(rowIndex);
+  }
+
+  /**
+   * 收起行（仅用于分页时收起状态，不修改expandedRecordIndices）
+   */
+  private collapseRowToPage(rowIndex: number): void {
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    const internalProps = getInternalProps(this.table);
+
+    if (!this.eventManager.isRowExpanded(rowIndex)) {
+      return;
+    }
+
+    this.subTableManager.removeSubTable(bodyRowIndex);
+
+    // 更新展开状态数组（仅视觉状态）
+    this.eventManager.removeExpandedRow(rowIndex);
+
+    const currentHeight = this.table.getRowHeight(rowIndex);
+    const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+    const deltaHeight = currentHeight - originalHeight;
+    this.updateRowHeightForExpand(rowIndex, -deltaHeight);
+    internalProps._heightResizedRowMap.delete(rowIndex);
+    this.table.scenegraph.updateContainerHeight(rowIndex, -deltaHeight);
+    if (internalProps.originalRowHeights) {
+      internalProps.originalRowHeights.delete(bodyRowIndex);
+    }
+
+    this.removeUnderlineFromRow(rowIndex);
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+    this.refreshRowIcon(rowIndex);
+  }
+
+  /**
    * 切换行展开状态
    */
   toggleRowExpand(rowIndex: number): void {
-    const internalProps = getInternalProps(this.table);
-    if (internalProps._heightResizedRowMap.has(rowIndex)) {
+    if (this.eventManager.isRowExpanded(rowIndex)) {
       this.collapseRow(rowIndex);
     } else {
       this.expandRow(rowIndex);
@@ -499,7 +620,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 恢复原始的updateCellContent方法
     if (this.originalUpdateCellContent && this.table) {
       const table = this.table as any;
-      table.scenegraph.updateCellContent = this.originalUpdateCellContent;
+      // 检查 scenegraph 是否存在，避免在表格已经销毁时出错
+      if (table.scenegraph) {
+        table.scenegraph.updateCellContent = this.originalUpdateCellContent;
+      }
       this.originalUpdateCellContent = undefined;
     }
   }

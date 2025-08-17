@@ -25,7 +25,6 @@ export interface InternalProps {
   expandedRecordIndices: number[];
   subTableInstances: Map<number, VTable.ListTable>;
   originalRowHeights: Map<number, number>;
-  _heightResizedRowMap: Set<number>;
   _tempExpandedRecordIndices?: number[];
 }
 
