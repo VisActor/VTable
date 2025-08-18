@@ -1,6 +1,36 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 31 Jul 2025 11:30:27 GMT and should not be manually modified.
+This log was last generated on Mon, 18 Aug 2025 09:47:12 GMT and should not be manually modified.
+
+## 1.19.6
+Mon, 18 Aug 2025 09:47:12 GMT
+
+### Updates
+
+- fix: when set hide for column with children occor error #4223
+
+
+- fix: pivot table set columnHierarchyType gird expand tree error #4254
+
+
+- fix: when no records markline render error #4305
+
+
+- fix: markline refresh container size #4319
+
+
+- feat: pivot chart add columnWidthConfig option
+
+
+- fix: fix error in syncGroupCollapseState when use InputEditor update groupBy config key.#4216
+
+
+- refactor: add table export plugin
+
+
+- refactor: scrollbar not show when less records no need show scrollbar
+
+
 
 ## 1.19.5
 Thu, 31 Jul 2025 11:30:27 GMT

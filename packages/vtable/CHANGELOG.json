@@ -2,6 +2,39 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.6",
+      "tag": "@visactor/vtable_v1.19.6",
+      "date": "Mon, 18 Aug 2025 09:47:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when set hide for column with children occor error #4223\n\n"
+          },
+          {
+            "comment": "fix: pivot table set columnHierarchyType gird expand tree error #4254\n\n"
+          },
+          {
+            "comment": "fix: when no records markline render error #4305\n\n"
+          },
+          {
+            "comment": "fix: markline refresh container size #4319\n\n"
+          },
+          {
+            "comment": "feat: pivot chart add columnWidthConfig option\n\n"
+          },
+          {
+            "comment": "fix: fix error in syncGroupCollapseState when use InputEditor update groupBy config key.#4216\n\n"
+          },
+          {
+            "comment": "refactor: add table export plugin\n\n"
+          },
+          {
+            "comment": "refactor: scrollbar not show when less records no need show scrollbar\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.5",
       "tag": "@visactor/vtable_v1.19.5",
       "date": "Thu, 31 Jul 2025 11:30:27 GMT",
