@@ -1002,7 +1002,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
   ): HeaderData[] {
     const results: HeaderData[] = [];
     const rowCells = this._newRow(row, hideColumnsSubHeader); // !hideColumnsSubHeader ? this._headerCellIds[row] || this._newRow(row) : [];
-    column.forEach((hd: ColumnDefine & { levelSpan: number }) => {
+    column.forEach((hd: ColumnDefine) => {
       const col = this._columns.length;
       const id = this.seqId++;
       const cell: HeaderData = {
@@ -1072,7 +1072,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             hd.columns,
             [...roots, id],
             hd.hideColumnsSubHeader || hideColumnsSubHeader,
-            hd.levelSpan
+            (hd as any).levelSpan
           ).forEach(c => results.push(c));
       } else {
         const colDef = {
