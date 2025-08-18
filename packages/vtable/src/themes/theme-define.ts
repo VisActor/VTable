@@ -510,6 +510,9 @@ export class TableTheme implements ITableThemeDefine {
         },
         get verticalPadding(): number | [number, number, number, number] {
           return scroll.verticalPadding ?? 0;
+        },
+        get ignoreFrozenCols(): boolean | undefined {
+          return scroll.ignoreFrozenCols ?? false;
         }
       };
     }

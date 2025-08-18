@@ -378,10 +378,25 @@ export class TableComponent {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       }
 
+      let hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+
+      let hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+
+      // 忽略所有冻结列宽度
+      const ignoreFrozenCols = this.table.theme.scrollStyle?.ignoreFrozenCols ?? false;
+
+      if (ignoreFrozenCols) {
+        hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
+        hScrollBarWidth = tableWidth;
+      } else {
+        hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+        hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+      }
+
       this.hScrollBar.setAttributes({
-        x: frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
+        x: hScrollBarx,
         y: attrY,
-        width: tableWidth - frozenColsWidth - rightFrozenColsWidth,
+        width: hScrollBarWidth,
         range: [0, rangeEnd],
         visible: horizontalVisible === 'always'
       });
