@@ -1496,9 +1496,9 @@ export class Scenegraph {
     if (this.table.options.animationAppear) {
       dealWithAnimationAppear(this.table);
     }
-
-    this.canvasShowMenu();
-
+    if (this.table.options.menu?.contextMenuWorkOnlyCell === false) {
+      this.canvasShowMenu();
+    }
     this.updateNextFrame();
   }
 

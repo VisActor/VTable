@@ -14,6 +14,8 @@ export type MenuProps = {
     | ((field: string, row: number, col: number, table?: BaseTable) => TYPES.MenuListItem[]);
   /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
   dropDownMenuHighlight?: TYPES.DropDownMenuHighlightInfo[];
+  /** 右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单  */
+  contextMenuWorkOnlyCell?: boolean;
 } & BaseComponentProps;
 
 export const Menu = createComponent<MenuProps>('Menu', 'menu', undefined, true);
