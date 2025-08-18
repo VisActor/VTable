@@ -37,6 +37,18 @@ export class MarkLine {
     this.initMarkLines();
   }
   initMarkLines() {
+    //#region 重置markLine容器大小
+    const height =
+      Math.min(this._scene._gantt.tableNoFrameHeight, this._scene._gantt.drawHeight) -
+      this._scene._gantt.getAllHeaderRowsHeight();
+    this.group.setAttributes({
+      y: this._scene._gantt.getAllHeaderRowsHeight(),
+      width: this._scene._gantt.tableNoFrameWidth,
+      height: height
+    });
+    this.markLIneContainer.setAttribute('width', this._scene._gantt.getAllDateColsWidth());
+    this.markLIneContainer.setAttribute('height', height);
+    //#endregion
     const markLine = this._scene._gantt.parsedOptions.markLine;
     const minDate = this._scene._gantt.parsedOptions.minDate;
     minDate &&
