@@ -21,19 +21,23 @@ export class ConfigManager {
       options.customConfig = {};
     }
     options.customConfig.scrollEventAlwaysTrigger = true;
-
+    const originalCustomComputeRowHeight = options.customComputeRowHeight;
     // 配置自定义行高计算，让虚拟行高度为0，同时保持展开行的高度
     options.customComputeRowHeight = params => {
       const { row, table } = params;
-      // 检查是否为虚拟行
       if (this.isVirtualRow(row)) {
-        return 0; // 虚拟行高度为0，不可见
+        return 0;
       }
       if (this.isRowExpanded(row)) {
-        console.log(row)
         return table.getRowHeight(row);
       }
-      return 'auto'; // 其他行使用默认计算
+      if (originalCustomComputeRowHeight) {
+        const userResult = originalCustomComputeRowHeight(params);
+        if (userResult !== undefined && userResult !== null) {
+          return userResult;
+        }
+      }
+      return 'auto';
     };
 
     // 给第一列添加图标
@@ -70,6 +74,11 @@ export class ConfigManager {
     this.table.getCellValue = (col: number, row: number, skipCustomMerge?: boolean) => {
       // 检查是否为虚拟行
       if (this.isVirtualRow(row)) {
+        // 如果虚拟行同时是聚合行，优先使用聚合逻辑
+        const layoutMap = this.table.internalProps?.layoutMap;
+        if (layoutMap && typeof layoutMap.isAggregation === 'function' && layoutMap.isAggregation(col, row)) {
+          return originalGetCellValue(col, row, skipCustomMerge);
+        }
         return this.getVirtualRowCellValue(col, row);
       }
       // 如果不是虚拟行，调用原始方法
@@ -124,12 +133,22 @@ export class ConfigManager {
     
     // 只有有数据时才添加虚拟行
     if (dataCount > 0) {
+      // 检查是否有底部聚合行
+      const hasBottomAggregation = layoutMap.hasAggregationOnBottomCount > 0;
+      
       // 只添加1个底部虚拟行
       const virtualRowsCount = 1;
       
       // 不修改 layoutMap.recordsCount，只修改 table.rowCount
       const originalRowCount = this.table.rowCount;
-      this.table.rowCount = originalRowCount + virtualRowsCount;
+      
+      if (hasBottomAggregation) {
+        // 如果有聚合行，虚拟行应该添加在聚合行之后，避免冲突
+        this.table.rowCount = originalRowCount + virtualRowsCount;
+      } else {
+        // 如果没有聚合行，正常添加虚拟行
+        this.table.rowCount = originalRowCount + virtualRowsCount;
+      }
       
       // 注意：现在通过 customComputeRowHeight 自动设置虚拟行高度为0
     }
@@ -156,9 +175,18 @@ export class ConfigManager {
       return false;
     }
 
-    // 只有一个底部虚拟行，位置在所有真实数据之后
+    // 检查是否有底部聚合行
+    const hasBottomAggregation = layoutMap.hasAggregationOnBottomCount > 0;
+    
+    if (hasBottomAggregation) {
+      // 如果有聚合行，虚拟行位置在聚合行之后
+      const aggregationRowIndex = headerLevelCount + dataCount;
+      const virtualRowIndex = aggregationRowIndex + layoutMap.hasAggregationOnBottomCount;
+      return row === virtualRowIndex;
+    }
+    
+    // 如果没有聚合行，虚拟行位置在数据行之后
     const virtualRowIndex = headerLevelCount + dataCount;
-
     return row === virtualRowIndex;
   }
 

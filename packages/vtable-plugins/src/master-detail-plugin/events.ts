@@ -15,7 +15,8 @@ export class EventManager {
    * 绑定事件处理器
    */
   bindEventHandlers(): void {
-    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.updateSubTablePositionsForScroll());
+    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.onUpdateSubTablePositions());
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW, () => this.onUpdateSubTablePositions());
     this.wrapTableResizeMethod();
   }
 
@@ -27,24 +28,8 @@ export class EventManager {
     this.table.resize = () => {
       // 调用原始的resize方法
       originalResize();
-      this.updateSubTablePositionsForResize();
+      this.onUpdateSubTablePositions();
     };
-  }
-
-  /**
-   * 滚动时更新子表位置
-   */
-  private updateSubTablePositionsForScroll(): void {
-    // 这个方法需要从外部注入具体实现
-    this.onUpdateSubTablePositions?.();
-  }
-
-  /**
-   * 调整大小时更新子表位置
-   */
-  private updateSubTablePositionsForResize(): void {
-    // 这个方法需要从外部注入具体实现
-    this.onUpdateSubTablePositions?.();
   }
 
   /**

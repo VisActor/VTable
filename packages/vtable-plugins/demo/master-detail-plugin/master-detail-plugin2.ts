@@ -563,7 +563,16 @@ const records = [
         "Sales": "9.94",
         "Quantity": "2",
         "Discount": "0",
-        "Profit": "3.0814"
+        "Profit": "3.0814",
+                children: [
+          {
+            project: `项目A-${1}`,
+            role: '负责人',
+            startDate: '2024-01-15',
+            endDate: '2024-12-31',
+            progress: 85
+          },
+        ]
     },
     {
         "Row ID": "764",
@@ -629,7 +638,6 @@ const columns = [
     title: 'Category',
     width: 'auto',
     sort: true,
-    mergeCell: true,
     style: {
       textStick: true,
       textAlign: 'right'
@@ -640,7 +648,7 @@ const columns = [
     title: 'Sub-Category',
     width: 'auto',
     sort: true,
-    mergeCell: true
+
   },
   {
     field: 'Order ID',
@@ -694,16 +702,33 @@ const columns = [
 const option = {
   records: records,
   columns,
+  heightMode: 'autoHeight',
   widthMode: 'standard',
+  frozenColCount: 2,
   hover: {
     highlightMode: 'row'
+  },
+    resize: {
+    columnResizeType: 'all',
+    rowResizeMode: 'all'
   },
   sortState: {
     field: 'Category',
     order: 'asc'
   },
+  dragOrder: {
+    dragHeaderMode: 'column'
+  },
+  rowSeriesNumber: {
+    title: '序号',
+    dragOrder: true,
+    width: 'auto',
+    headerStyle: { color: 'black', bgColor: 'pink' },
+    style: { color: 'red' }
+  },
   plugins: [masterDetailPlugin]
 };
 tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 (window as any).tableInstance = tableInstance;
+
   ;

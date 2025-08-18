@@ -65,7 +65,7 @@ export class SubTableManager {
     (subTable as VTable.ListTable & { __afterRenderHandler: () => void }).__afterRenderHandler = afterRenderHandler;
     this.setupScrollEventIsolation(subTable);
     this.setupUnifiedSelectionManagement(bodyRowIndex, subTable);
-    this.setupSubTableCanvasClipping(subTable);
+    this.setupSubTableCanvasClipping(subTable, bodyRowIndex);
     this.setupAntiFlickerMechanism(subTable);
     subTable.render();
   }
@@ -84,20 +84,44 @@ export class SubTableManager {
     }
     const internalProps = getInternalProps(this.table);
     const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
-    const firstColRect = this.table.getCellRangeRelativeRect({ col: 0, row: rowIndex });
-    const lastColRect = this.table.getCellRangeRelativeRect({ col: this.table.colCount - 1, row: rowIndex });
+    
+    // 处理冻结列的情况
+    const frozenColCount = this.table.frozenColCount || 0;
+    const rightFrozenColCount = this.table.rightFrozenColCount || 0;
+    const totalColCount = this.table.colCount;
+    
+    // 计算子表的起始和结束列
+    let startCol = frozenColCount; // 默认从第一个非冻结列开始
+    let endCol = totalColCount - rightFrozenColCount - 1; // 默认到最后一个非右冻结列结束
+    
+    // 如果没有冻结列，则使用全部列
+    if (frozenColCount === 0 && rightFrozenColCount === 0) {
+      startCol = 0;
+      endCol = totalColCount - 1;
+    }
+    
+    // 确保列索引有效
+    if (startCol >= totalColCount || endCol < startCol) {
+      return null;
+    }
+    
+    const firstColRect = this.table.getCellRangeRelativeRect({ col: startCol, row: rowIndex });
+    const lastColRect = this.table.getCellRangeRelativeRect({ col: endCol, row: rowIndex });
     if (!firstColRect || !lastColRect) {
       return null;
     }
+    
     // 解析margin配置 [上, 右, 下, 左]
     const [marginTop, marginRight, marginBottom, marginLeft] = parseMargin(detailConfig?.style?.margin);
     const configHeight = detailConfig?.style?.height || 300;
+    
     const viewBox = {
       x1: firstColRect.left + marginLeft,
       y1: detailRowRect.top + originalHeight + marginTop,
       x2: lastColRect.right - marginRight,
-      y2: detailRowRect.top - marginBottom + configHeight
+      y2: detailRowRect.top + originalHeight - marginBottom + configHeight
     };
+    
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
       return null;
@@ -287,25 +311,46 @@ export class SubTableManager {
    * 设置子表canvas裁剪，实现真正的clip截断效果
    * 让子表看起来被冻结区域"截断"
    */
-  private setupSubTableCanvasClipping(subTable: VTable.ListTable): void {
+  private setupSubTableCanvasClipping(subTable: VTable.ListTable, bodyRowIndex: number): void {
     // 获取子表的stage
     if (!subTable.scenegraph?.stage) {
       return;
     }
     const stage = subTable.scenegraph.stage;
+    
     // 计算裁剪区域的函数
     const calculateClipRegion = () => {
       try {
+        const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
         const frozenRowsHeight = this.table.getFrozenRowsHeight();
         const frozenColsWidth = this.table.getFrozenColsWidth();
         const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
         const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
         const tableWidth = this.table.tableNoFrameWidth;
         const tableHeight = this.table.tableNoFrameHeight;
+        
+        // 检查是否是冻结行
+        const isFrozenDataRow = rowIndex < this.table.frozenRowCount && rowIndex >= this.table.columnHeaderLevelCount;
+        const isBottomFrozenDataRow = rowIndex >= this.table.rowCount - this.table.bottomFrozenRowCount;
+        
         const clipX = frozenColsWidth;
-        const clipY = frozenRowsHeight;
+        let clipY = 0;
         const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
-        const clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
+        let clipHeight = tableHeight;
+        
+        if (isFrozenDataRow) {
+          // 冻结数据行的子表：可以在整个冻结区域显示
+          clipY = 0;
+          clipHeight = tableHeight - bottomFrozenRowsHeight;
+        } else if (isBottomFrozenDataRow) {
+          // 底部冻结数据行的子表：可以在底部冻结区域显示
+          clipY = 0;
+          clipHeight = tableHeight;
+        } else {
+          // 普通数据行的子表：避开冻结区域
+          clipY = frozenRowsHeight;
+          clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
+        }
         return { clipX, clipY, clipWidth, clipHeight };
       } catch (error) {
         return null;
@@ -378,28 +423,6 @@ export class SubTableManager {
   }
 
   /**
-   * 滚动时更新所有子表位置
-   */
-  updateSubTablePositionsForScroll(): void {
-    const internalProps = getInternalProps(this.table);
-    internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
-      const record = getRecordByRowIndex(this.table, bodyRowIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
-      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
-      if (newViewBox) {
-        (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
-          newViewBox;
-        if (subTable.scenegraph?.stage) {
-          (subTable.scenegraph.stage as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
-            newViewBox,
-            false
-          );
-        }
-      }
-    });
-  }
-
-  /**
    * 父表尺寸变化时更新所有子表位置和宽度
    */
   updateSubTablePositionsForResize(): void {
@@ -410,6 +433,29 @@ export class SubTableManager {
     internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
       const record = getRecordByRowIndex(this.table, bodyRowIndex);
       const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
+      // 先同步 internalProps.originalRowHeights 中对应的 bodyRowIndex 的高度为 CellGroup.attribute.height（如果可用）
+      try {
+        const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+        const scenegraph = (this.table as any).scenegraph;
+        let cellGroup: any;
+        if (scenegraph && typeof scenegraph.highPerformanceGetCell === 'function') {
+          cellGroup = scenegraph.highPerformanceGetCell(0, rowIndex);
+        } else if (scenegraph && typeof scenegraph.getCell === 'function') {
+          cellGroup = scenegraph.getCell(0, rowIndex);
+        }
+        const cellHeight: number =
+          cellGroup && cellGroup.attribute && typeof cellGroup.attribute.height === 'number'
+            ? cellGroup.attribute.height
+            : typeof this.table.getRowHeight === 'function'
+            ? this.table.getRowHeight(rowIndex)
+            : 0;
+        if (internalProps.originalRowHeights && typeof cellHeight === 'number') {
+          internalProps.originalRowHeights.set(bodyRowIndex, cellHeight);
+        }
+      } catch (e) {
+        // ignore sync error, 保持原有逻辑继续执行
+      }
+
       const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
       if (newViewBox) {
         const newContainerWidth = newViewBox.x2 - newViewBox.x1;
