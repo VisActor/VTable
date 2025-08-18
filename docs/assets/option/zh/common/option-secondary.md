@@ -345,6 +345,10 @@ DropDownMenuHighlightInfo 的定义如下：
 
 {{ use: common-IDimensionInfo()}}
 
+##${prefix} contextMenuWorkOnlyCell(boolean)
+
+右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单
+
 #${prefix} title(Object)
 
 {{ use: common-title(

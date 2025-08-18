@@ -19,6 +19,8 @@ Use cases such as:
         contextMenuItems?: MenuListItem[] | ((field: string, row: number, col: number, table: BaseTableAPI) => MenuListItem[]);
         /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
         dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+        /** 右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单  */
+        contextMenuWorkOnlyCell?: boolean;
       };
     };
 
@@ -26,6 +28,7 @@ Use cases such as:
 - defaultHeaderMenuItems: Specify the header default configuration item content
 - contextMenuItems: specify the right-click menu list
 - dropDownMenuHighlight: If the menu has a corresponding selected state, configure it here
+- contextMenuWorkOnlyCell: Whether the right-click menu works only on cells. 
 
 ## example
 
@@ -177,7 +180,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             field: 'Order ID',
             menuKey: '升序规则1'
           }
-        ]
+        ],
+        contextMenuWorkOnlyCell: true
       }
     };
     tableInstance = new VTable.ListTable(option);

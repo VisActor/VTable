@@ -349,6 +349,10 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 
 {{ use: common-IDimensionInfo()}}
 
+##${prefix} contextMenuWorkOnlyCell(boolean)
+
+Right-click menu works only on cells. Default is true, only on cells display right-click menu, configure false, also pop up right-click menu on blank area.
+
 #${prefix} title(Object)
 
 {{ use: common-title(
