@@ -1,6 +1,5 @@
 import * as VTable from '@visactor/vtable';
 import type { InternalProps } from './types';
-import { Group } from '@visactor/vtable/src/vrender';
 
 /**
  * 解析 margin 配置，返回 [上, 右, 下, 左] 格式

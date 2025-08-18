@@ -81,6 +81,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
       onExpandRow: (rowIndex: number) => this.expandRow(rowIndex),
       onCollapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
+      onToggleRowExpand: (rowIndex: number) => this.toggleRowExpand(rowIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)
     });
 
@@ -102,10 +103,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.eventManager.bindEventHandlers();
     // 扩展表格 API
     this.extendTableAPI();
-    // 绑定图标点击事件
-    this.bindIconClickEvent();
-    // 绑定行移动事件处理
-    this.bindRowMoveEvents();
   }
 
   /**
@@ -116,149 +113,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps.expandedRecordIndices = [];
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
-  }
-
-  /**
-   * 绑定图标点击事件
-   */
-  private bindIconClickEvent(): void {
-    // 直接监听 ICON_CLICK 事件
-    this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
-      const { col, row, funcType, name } = iconInfo;
-      if (
-        (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
-        (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)
-      ) {
-        this.toggleRowExpand(row);
-      }
-    });
-  }
-
-  /**
-   * 绑定行移动事件处理
-   */
-  private bindRowMoveEvents(): void {
-    // 用于存储移动前的所有展开状态
-    const allExpandedRowsBeforeMove: Set<number> = new Set();
-
-    // 监听行移动开始事件
-    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, (args: any) => {
-      const { col, row } = args;
-      
-      // 检查是否是行移动（序号列或行头移动）
-      const cellLocation = this.table.getCellLocation(col, row);
-      const isRowMove =
-        cellLocation === 'rowHeader' ||
-        (this.table.internalProps.layoutMap as any).isSeriesNumberInBody?.(col, row);
-      
-      if (!isRowMove) {
-        return;
-      }
-
-      // 清空之前的状态记录
-      allExpandedRowsBeforeMove.clear();
-      
-      // 记录当前所有展开的行
-      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-      currentExpandedRows.forEach(rowIndex => {
-        allExpandedRowsBeforeMove.add(rowIndex);
-      });
-      
-      // 收起所有展开的行
-      currentExpandedRows.forEach(rowIndex => {
-        this.collapseRow(rowIndex);
-      });
-      
-      console.log('行移动开始，已收起所有展开的行:', Array.from(allExpandedRowsBeforeMove));
-    });
-
-    // 监听行移动成功事件
-    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, (args: any) => {
-      const { source, target } = args;
-      
-      // 检查是否是行移动
-      const cellLocation = this.table.getCellLocation(source.col, source.row);
-      const isRowMove =
-        cellLocation === 'rowHeader' ||
-        (this.table.internalProps.layoutMap as any).isSeriesNumberInBody?.(source.col, source.row);
-      
-      if (!isRowMove || allExpandedRowsBeforeMove.size === 0) {
-        return;
-      }
-
-      // 移动成功后，恢复所有之前展开的行
-      setTimeout(() => {
-        const sourceRowIndex = source.row;
-        const targetRowIndex = target.row;
-        const moveDirection = targetRowIndex > sourceRowIndex ? 'down' : 'up';
-        const sourceSize = this.table.stateManager?.columnMove?.rowSourceSize || 1;
-        
-        console.log('行移动成功，开始恢复展开状态:', {
-          source: sourceRowIndex,
-          target: targetRowIndex,
-          direction: moveDirection,
-          sourceSize: sourceSize,
-          expandedRows: Array.from(allExpandedRowsBeforeMove)
-        });
-        
-        // 计算移动后各行的新位置并重新展开
-        allExpandedRowsBeforeMove.forEach(originalRowIndex => {
-          let newRowIndex = originalRowIndex;
-          
-          // 计算移动后的新行索引
-          if (originalRowIndex >= sourceRowIndex && originalRowIndex < sourceRowIndex + sourceSize) {
-            // 这是被移动的行，移动到目标位置
-            const relativeIndex = originalRowIndex - sourceRowIndex;
-            newRowIndex = targetRowIndex + relativeIndex;
-          } else if (moveDirection === 'down') {
-            // 向下移动
-            if (originalRowIndex > sourceRowIndex + sourceSize - 1 && originalRowIndex <= targetRowIndex) {
-              // 这些行向上移动了 sourceSize 个位置
-              newRowIndex = originalRowIndex - sourceSize;
-            }
-          } else {
-            // 向上移动
-            if (originalRowIndex >= targetRowIndex && originalRowIndex < sourceRowIndex) {
-              // 这些行向下移动了 sourceSize 个位置
-              newRowIndex = originalRowIndex + sourceSize;
-            }
-          }
-          
-          console.log(`恢复展开: 原位置 ${originalRowIndex} -> 新位置 ${newRowIndex}`);
-          this.expandRow(newRowIndex);
-        });
-        
-        // 清空状态记录
-        allExpandedRowsBeforeMove.clear();
-      }, 100); // 稍微增加延迟确保DOM更新完成
-    });
-
-    // 监听行移动失败事件
-    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, (args: any) => {
-      const { source } = args;
-      
-      // 检查是否是行移动
-      const cellLocation = this.table.getCellLocation(source.col, source.row);
-      const isRowMove =
-        cellLocation === 'rowHeader' ||
-        (this.table.internalProps.layoutMap as any).isSeriesNumberInBody?.(source.col, source.row);
-      
-      if (!isRowMove || allExpandedRowsBeforeMove.size === 0) {
-        return;
-      }
-
-      // 移动失败时，在原位置恢复所有展开的行
-      setTimeout(() => {
-        console.log('行移动失败，在原位置恢复展开状态:', Array.from(allExpandedRowsBeforeMove));
-        
-        allExpandedRowsBeforeMove.forEach(originalRowIndex => {
-          this.expandRow(originalRowIndex);
-        });
-        
-        // 清空状态记录
-        allExpandedRowsBeforeMove.clear();
-      }, 100);
-    });
   }
 
   /**
@@ -273,7 +127,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const originalUpdatePagination = table.updatePagination.bind(table);
     table.updatePagination = (pagination: VTable.TYPES.IPagination) => {
       const internalProps = getInternalProps(this.table);
-      // 保存当前展开的记录索引
       const currentExpandedRows = [...this.eventManager.getExpandedRows()];
       currentExpandedRows.forEach(rowIndex => {
         const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
@@ -282,18 +135,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           internalProps.expandedRecordIndices.push(recordIndex);
         }
       });
-
-      // 在分页切换前，仅在视觉上收起所有当前展开的行
       currentExpandedRows.forEach(rowIndex => {
-        this.collapseRowToPage(rowIndex);
+        this.collapseRowToNoRealRecordIndex(rowIndex);
       });
-
-      // 调用原始的 updatePagination 方法
       const result = originalUpdatePagination(pagination);
-
-      // 分页后，恢复应该展开的行
       setTimeout(() => {
-        this.restoreExpandedStatesAfterPagination();
+        this.restoreExpandedStatesAfter();
       }, 0);
 
       return result;
@@ -305,7 +152,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       // 只有当操作的是表头时，才进行状态保存和恢复
       if (this.table.isHeader(col, row)) {
         const internalProps = getInternalProps(this.table);
-        // 保存当前展开的记录索引
         const currentExpandedRows = [...this.eventManager.getExpandedRows()];
         currentExpandedRows.forEach(rowIndex => {
           const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
@@ -317,24 +163,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
             internalProps.expandedRecordIndices.push(recordIndex);
           }
         });
-
-        // 在表头状态切换前，仅在视觉上收起所有当前展开的行
         currentExpandedRows.forEach(rowIndex => {
-          this.collapseRowToPage(rowIndex);
+          this.collapseRowToNoRealRecordIndex(rowIndex);
         });
-
-        // 调用原始的 toggleHierarchyState 方法
         const result = originalToggleHierarchyState(col, row, recalculateColWidths);
-
-        // 表头状态切换后，恢复应该展开的行
         setTimeout(() => {
-          this.restoreExpandedStatesAfterPagination();
+          this.restoreExpandedStatesAfter();
         }, 0);
 
         return result;
       }
-      
-      // 对于数据行的展开/收起，直接调用原始方法，不做拦截
       return originalToggleHierarchyState(col, row, recalculateColWidths);
     };
 
@@ -354,18 +192,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           internalProps.expandedRecordIndices.push(recordIndex);
         }
       });
-
-      // 在过滤前，仅在视觉上收起所有当前展开的行
       currentExpandedRows.forEach(rowIndex => {
-        this.collapseRowToPage(rowIndex);
+        this.collapseRowToNoRealRecordIndex(rowIndex);
       });
-
-      // 调用原始的 updateFilterRules 方法
       const result = originalUpdateFilterRules(filterRules);
-
-      // 过滤后，恢复应该展开的行
       setTimeout(() => {
-        this.restoreExpandedStatesAfterPagination();
+        this.restoreExpandedStatesAfterFilter();
       }, 0);
 
       return result;
@@ -375,30 +207,62 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 分页后恢复展开状态
    */
-  private restoreExpandedStatesAfterPagination(): void {
+  private restoreExpandedStatesAfter(): void {
     const internalProps = getInternalProps(this.table);
     if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
       return;
     }
-
-    // 遍历当前页面的所有行，检查是否需要恢复展开状态
-    for (
-      let rowIndex = this.table.columnHeaderLevelCount;
-      rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
-      rowIndex++
-    ) {
-      const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-      // 添加空值检查，避免undefined错误
-      if (realRecordIndex === undefined || realRecordIndex === null) {
-        continue;
-      }
-      const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-      if (internalProps.expandedRecordIndices.includes(recordIndex)) {
-        this.expandRowToPage(rowIndex);
-      }
+    // 获取当前分页的索引数据
+    const currentPagerData = (this.table.dataSource as any)._currentPagerIndexedData;
+    if (!currentPagerData) {
+      return;
     }
+    internalProps.expandedRecordIndices.forEach(recordIndex => {
+      try {
+        const bodyRowIndex = currentPagerData.indexOf(recordIndex);
+        if (bodyRowIndex >= 0) {
+          const targetRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+          this.expandRowToNoRealRecordIndex(targetRowIndex);
+        }
+      } catch (error) {
+        console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
+      }
+    });
   }
 
+  private restoreExpandedStatesAfterFilter(): void {
+    const internalProps = getInternalProps(this.table);
+    if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
+      return;
+    }
+    const originalDataSource = this.table.dataSource.dataSourceObj?.records || this.table.dataSource.records;
+    if (!originalDataSource) {
+      return;
+    }
+    internalProps.expandedRecordIndices.forEach(recordIndex => {
+      try {
+        // 获取需要展开的记录对象
+        const targetRecord = originalDataSource[recordIndex];
+        if (!targetRecord) {
+          return;
+        }
+        for (
+          let rowIndex = this.table.columnHeaderLevelCount;
+          rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
+          rowIndex++
+        ) {
+          const record = this.table.getCellRawRecord(0, rowIndex);
+          if (record === targetRecord) {
+            // 找到了对应的行，展开它
+            this.expandRowToNoRealRecordIndex(rowIndex);
+            break; // 找到就跳出内层循环
+          }
+        }
+      } catch (error) {
+        console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
+      }
+    });
+  }
   /**
    * 保护的updateCellContent方法
    */
@@ -538,18 +402,15 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 展开行（仅用于分页时恢复状态，不修改expandedRecordIndices）
+   * 展开行（不修改expandedRecordIndices）
    */
-  private expandRowToPage(rowIndex: number): void {
+  private expandRowToNoRealRecordIndex(rowIndex: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
     if (this.eventManager.isRowExpanded(rowIndex)) {
       return;
     }
-
-    // 更新展开状态数组（仅视觉状态）
     this.eventManager.addExpandedRow(rowIndex);
-
     const originalHeight = this.table.getRowHeight(rowIndex);
     if (internalProps.originalRowHeights) {
       internalProps.originalRowHeights.set(bodyRowIndex, originalHeight);
@@ -576,21 +437,17 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 收起行（仅用于分页时收起状态，不修改expandedRecordIndices）
+   * 收起行（不修改expandedRecordIndices）
    */
-  private collapseRowToPage(rowIndex: number): void {
+  private collapseRowToNoRealRecordIndex(rowIndex: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
 
     if (!this.eventManager.isRowExpanded(rowIndex)) {
       return;
     }
-
     this.subTableManager.removeSubTable(bodyRowIndex);
-
-    // 更新展开状态数组（仅视觉状态）
     this.eventManager.removeExpandedRow(rowIndex);
-
     const currentHeight = this.table.getRowHeight(rowIndex);
     const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
     const deltaHeight = currentHeight - originalHeight;
@@ -800,7 +657,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 检测是否有序号列，如果有则使用第二列，否则使用第一列
     const hasRowSeriesNumber = !!(this.table.options as any).rowSeriesNumber;
     const targetColumnIndex = hasRowSeriesNumber ? 1 : 0;
-    
     // 触发目标列的重绘以更新图标状态
     const cellGroup = this.table.scenegraph.getCell(targetColumnIndex, rowIndex);
     if (cellGroup) {

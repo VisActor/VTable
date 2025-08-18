@@ -1,7 +1,4 @@
 import * as VTable from '@visactor/vtable';
-import type { VirtualRecordIds } from './types';
-import { getInternalProps } from './utils';
-import { Group } from '@visactor/vtable/src/vrender';
 
 /**
  * 事件处理相关功能
@@ -18,6 +15,8 @@ export class EventManager {
     this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.onUpdateSubTablePositions());
     this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW, () => this.onUpdateSubTablePositions());
     this.wrapTableResizeMethod();
+    this.bindIconClickEvent();
+    this.bindRowMoveEvents();
   }
 
   /**
@@ -209,6 +208,107 @@ export class EventManager {
   }
 
   /**
+   * 绑定图标点击事件
+   */
+  private bindIconClickEvent(): void {
+    // 直接监听 ICON_CLICK 事件
+    this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
+      const { col, row, funcType, name } = iconInfo;
+      if (
+        (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
+        (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)
+      ) {
+        this.onToggleRowExpand?.(row);
+      }
+    });
+  }
+
+  /**
+   * 绑定行移动事件处理
+   */
+  private bindRowMoveEvents(): void {
+    // 用于存储移动前的所有展开状态
+    const allExpandedRowsBeforeMove: Set<number> = new Set();
+
+    // 监听行移动开始事件
+    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, (args: any) => {
+      if (!args || typeof args.col !== 'number' || typeof args.row !== 'number') {
+        return;
+      }
+      const { col, row } = args;
+      // 判断是否是行移动
+      const cellLocation = this.table.getCellLocation(col, row);
+      const isRowMove =
+        cellLocation === 'rowHeader' || (this.table.internalProps.layoutMap as any).isSeriesNumberInBody?.(col, row);
+      if (!isRowMove) {
+        return;
+      }
+      allExpandedRowsBeforeMove.clear();
+      const currentExpandedRows = [...this.expandedRows];
+      currentExpandedRows.forEach(rowIndex => {
+        allExpandedRowsBeforeMove.add(rowIndex);
+      });
+      currentExpandedRows.forEach(rowIndex => {
+        this.onCollapseRow?.(rowIndex);
+      });
+    });
+
+    // 监听行移动成功事件
+    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, (args: any) => {
+      // 如果没有记录的展开状态，说明不是行移动或没有展开的行
+      if (allExpandedRowsBeforeMove.size === 0) {
+        return;
+      }
+
+      const { source, target } = args;
+      // 移动成功后，恢复所有之前展开的行
+      setTimeout(() => {
+        const sourceRowIndex = source.row;
+        const targetRowIndex = target.row;
+        const moveDirection = targetRowIndex > sourceRowIndex ? 'down' : 'up';
+        const sourceSize = this.table.stateManager?.columnMove?.rowSourceSize || 1;
+        // 计算移动后各行的新位置并重新展开
+        allExpandedRowsBeforeMove.forEach(originalRowIndex => {
+          let newRowIndex = originalRowIndex;
+          // 计算移动后的新行索引
+          if (originalRowIndex >= sourceRowIndex && originalRowIndex < sourceRowIndex + sourceSize) {
+            // 这是被移动的行，移动到目标位置
+            const relativeIndex = originalRowIndex - sourceRowIndex;
+            newRowIndex = targetRowIndex + relativeIndex;
+          } else if (moveDirection === 'down') {
+            if (originalRowIndex > sourceRowIndex + sourceSize - 1 && originalRowIndex <= targetRowIndex) {
+              newRowIndex = originalRowIndex - sourceSize;
+            }
+          } else {
+            if (originalRowIndex >= targetRowIndex && originalRowIndex < sourceRowIndex) {
+              newRowIndex = originalRowIndex + sourceSize;
+            }
+          }
+          this.onExpandRow?.(newRowIndex);
+        });
+        // 清空状态记录
+        allExpandedRowsBeforeMove.clear();
+      }, 0);
+    });
+
+    // 监听行移动失败事件
+    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, (args: any) => {
+      // 如果没有记录的展开状态，说明不是行移动或没有展开的行
+      if (allExpandedRowsBeforeMove.size === 0) {
+        return;
+      }
+
+      // 移动失败时，在原位置恢复所有展开的行
+      setTimeout(() => {
+        allExpandedRowsBeforeMove.forEach(originalRowIndex => {
+          this.onExpandRow?.(originalRowIndex);
+        });
+        allExpandedRowsBeforeMove.clear();
+      }, 0);
+    });
+  }
+
+  /**
    * 清理事件处理器
    */
   cleanup(): void {
@@ -219,6 +319,7 @@ export class EventManager {
   private onUpdateSubTablePositions?: () => void;
   private onExpandRow?: (rowIndex: number) => void;
   private onCollapseRow?: (rowIndex: number) => void;
+  private onToggleRowExpand?: (rowIndex: number) => void;
   private getOriginalRowHeight?: (bodyRowIndex: number) => number;
 
   /**
@@ -228,11 +329,13 @@ export class EventManager {
     onUpdateSubTablePositions?: () => void;
     onExpandRow?: (rowIndex: number) => void;
     onCollapseRow?: (rowIndex: number) => void;
+    onToggleRowExpand?: (rowIndex: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
   }): void {
     this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;
     this.onExpandRow = callbacks.onExpandRow;
     this.onCollapseRow = callbacks.onCollapseRow;
+    this.onToggleRowExpand = callbacks.onToggleRowExpand;
     this.getOriginalRowHeight = callbacks.getOriginalRowHeight;
   }
 }

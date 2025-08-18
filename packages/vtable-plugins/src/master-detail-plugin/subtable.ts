@@ -84,44 +84,34 @@ export class SubTableManager {
     }
     const internalProps = getInternalProps(this.table);
     const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
-    
-    // 处理冻结列的情况
     const frozenColCount = this.table.frozenColCount || 0;
     const rightFrozenColCount = this.table.rightFrozenColCount || 0;
     const totalColCount = this.table.colCount;
-    
-    // 计算子表的起始和结束列
-    let startCol = frozenColCount; // 默认从第一个非冻结列开始
-    let endCol = totalColCount - rightFrozenColCount - 1; // 默认到最后一个非右冻结列结束
-    
+    let startCol = frozenColCount;
+    let endCol = totalColCount - rightFrozenColCount - 1;
     // 如果没有冻结列，则使用全部列
     if (frozenColCount === 0 && rightFrozenColCount === 0) {
       startCol = 0;
       endCol = totalColCount - 1;
     }
-    
     // 确保列索引有效
     if (startCol >= totalColCount || endCol < startCol) {
       return null;
     }
-    
     const firstColRect = this.table.getCellRangeRelativeRect({ col: startCol, row: rowIndex });
     const lastColRect = this.table.getCellRangeRelativeRect({ col: endCol, row: rowIndex });
     if (!firstColRect || !lastColRect) {
       return null;
     }
-    
     // 解析margin配置 [上, 右, 下, 左]
     const [marginTop, marginRight, marginBottom, marginLeft] = parseMargin(detailConfig?.style?.margin);
     const configHeight = detailConfig?.style?.height || 300;
-    
     const viewBox = {
       x1: firstColRect.left + marginLeft,
       y1: detailRowRect.top + originalHeight + marginTop,
       x2: lastColRect.right - marginRight,
       y2: detailRowRect.top + originalHeight - marginBottom + configHeight
     };
-    
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
       return null;
@@ -309,7 +299,6 @@ export class SubTableManager {
 
   /**
    * 设置子表canvas裁剪，实现真正的clip截断效果
-   * 让子表看起来被冻结区域"截断"
    */
   private setupSubTableCanvasClipping(subTable: VTable.ListTable, bodyRowIndex: number): void {
     // 获取子表的stage
@@ -317,7 +306,6 @@ export class SubTableManager {
       return;
     }
     const stage = subTable.scenegraph.stage;
-    
     // 计算裁剪区域的函数
     const calculateClipRegion = () => {
       try {
@@ -328,26 +316,19 @@ export class SubTableManager {
         const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
         const tableWidth = this.table.tableNoFrameWidth;
         const tableHeight = this.table.tableNoFrameHeight;
-        
-        // 检查是否是冻结行
         const isFrozenDataRow = rowIndex < this.table.frozenRowCount && rowIndex >= this.table.columnHeaderLevelCount;
         const isBottomFrozenDataRow = rowIndex >= this.table.rowCount - this.table.bottomFrozenRowCount;
-        
         const clipX = frozenColsWidth;
         let clipY = 0;
         const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
         let clipHeight = tableHeight;
-        
         if (isFrozenDataRow) {
-          // 冻结数据行的子表：可以在整个冻结区域显示
           clipY = 0;
           clipHeight = tableHeight - bottomFrozenRowsHeight;
         } else if (isBottomFrozenDataRow) {
-          // 底部冻结数据行的子表：可以在底部冻结区域显示
           clipY = 0;
           clipHeight = tableHeight;
         } else {
-          // 普通数据行的子表：避开冻结区域
           clipY = frozenRowsHeight;
           clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
         }
@@ -433,7 +414,6 @@ export class SubTableManager {
     internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
       const record = getRecordByRowIndex(this.table, bodyRowIndex);
       const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
-      // 先同步 internalProps.originalRowHeights 中对应的 bodyRowIndex 的高度为 CellGroup.attribute.height（如果可用）
       try {
         const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
         const scenegraph = (this.table as any).scenegraph;
@@ -453,7 +433,7 @@ export class SubTableManager {
           internalProps.originalRowHeights.set(bodyRowIndex, cellHeight);
         }
       } catch (e) {
-        // ignore sync error, 保持原有逻辑继续执行
+        // 保持原有逻辑继续执行
       }
 
       const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
@@ -512,7 +492,9 @@ export class SubTableManager {
    * 清理所有子表
    */
   cleanup(): void {
-    if (!this.table) return;
+    if (!this.table) {
+      return;
+    }
     const internalProps = getInternalProps(this.table);
     if (internalProps && internalProps.subTableInstances) {
       internalProps.subTableInstances.forEach(subTable => {
@@ -530,7 +512,6 @@ export class SubTableManager {
 
   // 回调函数，需要从外部注入
   private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null;
-  private redrawAllUnderlines?: () => void;
 
   /**
    * 设置回调函数
@@ -540,6 +521,5 @@ export class SubTableManager {
     redrawAllUnderlines?: () => void;
   }): void {
     this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
-    this.redrawAllUnderlines = callbacks.redrawAllUnderlines;
   }
 }

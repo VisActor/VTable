@@ -15,14 +15,11 @@ export class ConfigManager {
   injectMasterDetailOptions(options: VTable.ListTableConstructorOptions): void {
     // 启用主从表基础设施
     (options as VTable.ListTableConstructorOptions & { masterDetail: boolean }).masterDetail = true;
-
-    // 确保滚动事件始终触发，以便can_scroll事件能在边界情况下正常工作
     if (!options.customConfig) {
       options.customConfig = {};
     }
     options.customConfig.scrollEventAlwaysTrigger = true;
     const originalCustomComputeRowHeight = options.customComputeRowHeight;
-    // 配置自定义行高计算，让虚拟行高度为0，同时保持展开行的高度
     options.customComputeRowHeight = params => {
       const { row, table } = params;
       if (this.isVirtualRow(row)) {
@@ -61,44 +58,6 @@ export class ConfigManager {
 
     // 拦截表格的refreshRowColCount方法来添加虚拟行
     this.interceptRefreshRowColCount();
-
-    // 拦截表格的getCellValue方法来处理虚拟行显示
-    this.interceptGetCellValue();
-  }
-
-  /**
-   * 拦截表格的getCellValue方法来处理虚拟行显示
-   */
-  private interceptGetCellValue(): void {
-    const originalGetCellValue = this.table.getCellValue.bind(this.table);
-    this.table.getCellValue = (col: number, row: number, skipCustomMerge?: boolean) => {
-      // 检查是否为虚拟行
-      if (this.isVirtualRow(row)) {
-        // 如果虚拟行同时是聚合行，优先使用聚合逻辑
-        const layoutMap = this.table.internalProps?.layoutMap;
-        if (layoutMap && typeof layoutMap.isAggregation === 'function' && layoutMap.isAggregation(col, row)) {
-          return originalGetCellValue(col, row, skipCustomMerge);
-        }
-        return this.getVirtualRowCellValue(col, row);
-      }
-      // 如果不是虚拟行，调用原始方法
-      return originalGetCellValue(col, row, skipCustomMerge);
-    };
-  }
-
-  /**
-   * 获取虚拟行的单元格值
-   */
-  private getVirtualRowCellValue(col: number, row: number): string {
-    const virtualRowType = this.getVirtualRowType(row);
-    if (virtualRowType === 'bottom') {
-      // 根据是否有分页显示不同的消息
-      if (this.table.pagination) {
-        return col === 0 ? '当前页结束' : '';
-      }
-      return col === 0 ? '数据结束' : '';
-    }
-    return '';
   }
 
   /**
@@ -107,15 +66,14 @@ export class ConfigManager {
   private interceptRefreshRowColCount(): void {
     const originalRefreshRowColCount = this.table.refreshRowColCount.bind(this.table);
     this.table.refreshRowColCount = () => {
-      // 先执行原始的refreshRowColCount
       originalRefreshRowColCount();
-      // 总是添加虚拟行，不管是否有分页
+      // 添加虚拟行
       this.addVirtualRows();
     };
   }
 
   /**
-   * 添加虚拟行（在有分页和无分页情况下都添加）
+   * 添加虚拟行
    */
   private addVirtualRows(): void {
     const { layoutMap } = this.table.internalProps;
@@ -123,34 +81,17 @@ export class ConfigManager {
       return;
     }
 
-    // 获取数据数量（分页情况下取当前页数据，非分页情况下取全部数据）
+    // 获取数据数量
     let dataCount = 0;
     if (this.table.pagination) {
       dataCount = this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
     } else {
       dataCount = this.table.dataSource?.sourceLength ?? 0;
     }
-    
-    // 只有有数据时才添加虚拟行
     if (dataCount > 0) {
-      // 检查是否有底部聚合行
-      const hasBottomAggregation = layoutMap.hasAggregationOnBottomCount > 0;
-      
-      // 只添加1个底部虚拟行
       const virtualRowsCount = 1;
-      
-      // 不修改 layoutMap.recordsCount，只修改 table.rowCount
       const originalRowCount = this.table.rowCount;
-      
-      if (hasBottomAggregation) {
-        // 如果有聚合行，虚拟行应该添加在聚合行之后，避免冲突
-        this.table.rowCount = originalRowCount + virtualRowsCount;
-      } else {
-        // 如果没有聚合行，正常添加虚拟行
-        this.table.rowCount = originalRowCount + virtualRowsCount;
-      }
-      
-      // 注意：现在通过 customComputeRowHeight 自动设置虚拟行高度为0
+      this.table.rowCount = originalRowCount + virtualRowsCount;
     }
   }
 
@@ -174,19 +115,9 @@ export class ConfigManager {
     if (dataCount === 0) {
       return false;
     }
-
-    // 检查是否有底部聚合行
-    const hasBottomAggregation = layoutMap.hasAggregationOnBottomCount > 0;
-    
-    if (hasBottomAggregation) {
-      // 如果有聚合行，虚拟行位置在聚合行之后
-      const aggregationRowIndex = headerLevelCount + dataCount;
-      const virtualRowIndex = aggregationRowIndex + layoutMap.hasAggregationOnBottomCount;
-      return row === virtualRowIndex;
-    }
-    
     // 如果没有聚合行，虚拟行位置在数据行之后
-    const virtualRowIndex = headerLevelCount + dataCount;
+    const virtualRowIndex =
+      headerLevelCount + dataCount + layoutMap.hasAggregationOnBottomCount + layoutMap.hasAggregationOnTopCount;
     return row === virtualRowIndex;
   }
 
