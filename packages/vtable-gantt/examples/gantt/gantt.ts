@@ -1067,11 +1067,22 @@ export function createTable() {
   //   ...
   // ]
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
-  window.ganttInstance = ganttInstance;
+  (window as any).ganttInstance = ganttInstance;
   ganttInstance.setRecords(records);
 
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
+  });
+  ganttInstance.on('zoom', args => {
+    console.log('🔍 缩放事件:', args);
+
+    // 获取当前时间单位信息
+    const scale = ganttInstance.parsedOptions.reverseSortedTimelineScales[0];
+    console.log('📅 当前时间单位:', {
+      unit: scale?.unit,
+      step: scale?.step,
+      timelineColWidth: ganttInstance.parsedOptions.timelineColWidth.toFixed(1)
+    });
   });
   ganttInstance.on('change_date_range', e => {
     console.log('change_date_range', e);

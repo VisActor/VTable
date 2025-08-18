@@ -225,28 +225,103 @@ export class Gantt extends EventTarget {
     const msPerDay = 24 * 60 * 60 * 1000;
     const pixelsPerDay = msPerDay / this.timePerPixel;
 
-    // 2. 根据像素数自动切换 step
-    let step = 1;
-    if (pixelsPerDay > 140) {
+    // 2. 根据像素数智能选择 unit 和 step
+    let unit: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
+    let step: number;
+    const basePixel = 45;
+    // 根据 pixelsPerDay 智能选择合适的时间单位和步长 - 夸张版本
+    if (pixelsPerDay > basePixel * 256 * 3) {
+      // 超级放大：1分钟一格
+      unit = 'minute';
+      step = 5;
+    } else if (pixelsPerDay > basePixel * 256) {
+      // 极大放大：15分钟一格
+      unit = 'minute';
+      step = 15;
+    } else if (pixelsPerDay > basePixel * 128) {
+      // 很大放大：30分钟一格
+      unit = 'minute';
+      step = 30;
+    } else if (pixelsPerDay > basePixel * 64) {
+      // 大放大：1小时一格
+      unit = 'hour';
       step = 1;
-    } else if (pixelsPerDay > 120) {
+    } else if (pixelsPerDay > basePixel * 32) {
+      // 中大放大：2小时一格
+      unit = 'hour';
       step = 2;
-    } else if (pixelsPerDay > 100) {
+    } else if (pixelsPerDay > basePixel * 16) {
+      // 中放大：4小时一格
+      unit = 'hour';
+      step = 4;
+    } else if (pixelsPerDay > basePixel * 8) {
+      // 小放大：8小时一格
+      unit = 'hour';
+      step = 8;
+    } else if (pixelsPerDay > basePixel * 4) {
+      // 天级别开始：1天一格
+      unit = 'day';
+      step = 1;
+    } else if (pixelsPerDay > basePixel * 2) {
+      // 小缩放：2天一格
+      unit = 'day';
+      step = 2;
+    } else if (pixelsPerDay > basePixel) {
+      // 更小缩放：4天一格
+      unit = 'day';
       step = 4;
     } else {
+      // 最小缩放：8天一格
+      unit = 'day';
       step = 8;
     }
 
     // 3. 更新 scale 配置
     const scale = this.parsedOptions.reverseSortedTimelineScales[0];
-    if (scale && scale.step !== step) {
+    if (scale) {
+      const oldUnit = scale.unit;
+
+      scale.unit = unit;
       scale.step = step;
+
+      // 为小时和分钟单位设置自定义格式化函数
+      if (unit === 'hour') {
+        scale.format = ({ startDate, endDate }) => {
+          const startHour = startDate.getHours().toString().padStart(2, '0');
+          const startMinute = startDate.getMinutes().toString().padStart(2, '0');
+          const endHour = endDate.getHours().toString().padStart(2, '0');
+          const endMinute = endDate.getMinutes().toString().padStart(2, '0');
+          return `${startHour}:${startMinute}~${endHour}:${endMinute}`;
+        };
+      } else if (unit === 'minute') {
+        scale.format = ({ startDate, endDate }) => {
+          const startHour = startDate.getHours().toString().padStart(2, '0');
+          const startMinute = startDate.getMinutes().toString().padStart(2, '0');
+          const endHour = endDate.getHours().toString().padStart(2, '0');
+          const endMinute = endDate.getMinutes().toString().padStart(2, '0');
+          return `${startHour}:${startMinute}~${endHour}:${endMinute}`;
+        };
+      } else {
+        // 其他单位使用默认格式
+        scale.format = undefined;
+      }
     }
 
-    // 4. 计算当前step对应的毫秒数
+    // 4. 计算当前unit和step对应的毫秒数
     let msPerStep: number;
-    const currentUnit = scale?.unit || 'day';
-    switch (currentUnit) {
+    switch (unit as string) {
+      case 'year':
+        msPerStep = step * 365 * msPerDay; // 近似值
+        break;
+      case 'quarter':
+        msPerStep = step * 90 * msPerDay; // 近似值
+        break;
+      case 'month':
+        msPerStep = step * 30 * msPerDay; // 近似值
+        break;
+      case 'week':
+        msPerStep = step * 7 * msPerDay;
+        break;
       case 'day':
         msPerStep = step * msPerDay;
         break;
@@ -273,6 +348,15 @@ export class Gantt extends EventTarget {
       this._updateSize();
       this.scenegraph.refreshAll();
     }
+
+    console.log('📊 智能缩放:', {
+      timePerPixel: this.timePerPixel.toFixed(0),
+      pixelsPerDay: pixelsPerDay.toFixed(1),
+      unit,
+      step,
+      newTimelineColWidth: newTimelineColWidth.toFixed(1),
+      说明: `每天${pixelsPerDay.toFixed(1)}px，${step}${unit}一格`
+    });
   }
 
   /**
@@ -290,8 +374,29 @@ export class Gantt extends EventTarget {
     const oldTimePerPixel = this.timePerPixel;
     const oldWidth = this.parsedOptions.timelineColWidth;
 
+    // 🎯 动态调整缩放步长，让缩放在不同级别下都保持平滑
+    const currentTimePerPixel = this.timePerPixel;
+    let adjustedFactor = factor;
+
+    // 根据当前的 timePerPixel 级别动态调整缩放因子
+    // timePerPixel 越小（放大越多），需要更大的缩放因子来产生明显的视觉变化
+    const baseTimePerPixel = 1440000; // 基准值：60px/day
+    const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
+
+    // 缩放因子调整：timePerPixel 越小，调整幅度越大
+    // 关键：在高放大级别下，放大和缩小都需要增强效果
+    if (currentTimePerPixel < baseTimePerPixel) {
+      // 高放大状态：放大和缩小都需要增强缩放效果，但不要过于激进
+      const enhancement = Math.pow(1.2, -zoomRatio); // 从1.5改为1.2，减缓增强强度
+      adjustedFactor = Math.pow(factor, enhancement);
+    } else {
+      // 正常/缩小状态：适当减缓缩放效果，避免跳跃过快
+      const dampening = Math.pow(0.9, zoomRatio); // 从0.8改为0.9，减少减缓程度
+      adjustedFactor = Math.pow(factor, dampening);
+    }
+
     // factor > 1 = 放大 → timePerPixel 变小
-    const newTimePerPixel = this.timePerPixel / factor;
+    const newTimePerPixel = this.timePerPixel / adjustedFactor;
 
     // 应用限制
     this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
@@ -1487,6 +1592,7 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    return formatDate(date, format);
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return formatDate(dateObj, format);
   }
 }
