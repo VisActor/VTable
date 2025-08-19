@@ -4,9 +4,13 @@
 
 Tooltip style settings
 
-##${prefix} font(string)
+##${prefix} fontFamily(string)
 
-Tooltip text style
+Tooltip text font
+
+##${prefix} fontSize(number)
+
+Tooltip text size
 
 ##${prefix} color(string)
 
@@ -19,3 +23,11 @@ Tooltip padding, set separately for top, right, bottom, and left
 ##${prefix} bgColor(string)
 
 Tooltip background color
+
+##${prefix} maxWidth(number)
+
+Tooltip max width
+
+##${prefix} maxHeight(number)
+
+Tooltip max height

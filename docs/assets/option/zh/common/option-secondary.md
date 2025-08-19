@@ -386,6 +386,10 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 
 是否将 tooltip 框限制在画布区域内，默认开启。针对 renderMode:"html" 有效。
 
+##${prefix} position(string) = 'top'
+
+tooltip 框位置，可选 top left right bottom
+
 #${prefix} legends
 
 图例配置，目前提供了三种图例类型，分别是离散图例（`'discrete'`），连续型颜色图例（`'color'`），连续型尺寸图例（`'size'`）。

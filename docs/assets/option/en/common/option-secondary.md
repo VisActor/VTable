@@ -391,6 +391,11 @@ The overflow text tooltip delays disappearance time. If you need to delay disapp
 
 Whether to confine the tooltip box within the canvas area, default is enabled. It is valid for renderMode:"html".
 
+##${prefix} position(string) = 'top'
+
+Tooltip box position, optional top left right bottom
+
+
 #${prefix} legends
 
 Legend configuration, currently providing three types of legends, namely discrete legend (`'discrete'`), continuous color legend (`'color'`), and continuous size legend (`'size'`).
