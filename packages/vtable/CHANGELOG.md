@@ -1,6 +1,11 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 08 Aug 2025 06:24:08 GMT and should not be manually modified.
+This log was last generated on Mon, 18 Aug 2025 11:14:19 GMT and should not be manually modified.
+
+## 1.19.7
+Mon, 18 Aug 2025 11:14:19 GMT
+
+_Version update only_
 
 ## 1.19.6
 Fri, 08 Aug 2025 06:24:08 GMT

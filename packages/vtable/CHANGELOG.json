@@ -2,6 +2,12 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.7",
+      "tag": "@visactor/vtable_v1.19.7",
+      "date": "Mon, 18 Aug 2025 11:14:19 GMT",
+      "comments": {}
+    },
+    {
       "version": "1.19.6",
       "tag": "@visactor/vtable_v1.19.6",
       "date": "Fri, 08 Aug 2025 06:24:08 GMT",

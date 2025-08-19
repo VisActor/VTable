@@ -1203,6 +1203,13 @@
             "zh": "自定义角头单元格",
             "en": "Custom Corner Cell"
           }
+        },
+        {
+          "path": "cell-custom-reactive-layout",
+          "title": {
+            "zh": "单元格自定义响应式布局",
+            "en": "cell custom reactive layout"
+          }
         }
       ]
     },

@@ -1,4 +1,6 @@
-# `@visactor/vtable-export`不再维护，请使用`@visactor/vtable-plugins`中的`TableExportPlugin`插件. 教程文档请参考[表格导出](../plugin/table-export)
+# @visactor/vtable-export 不再维护
+
+请使用`@visactor/vtable-plugins`中的`TableExportPlugin`插件. 教程文档请参考[表格导出](../plugin/table-export)
 
 # CSV 导出
 

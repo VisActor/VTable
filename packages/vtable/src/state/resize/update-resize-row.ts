@@ -52,7 +52,7 @@ export function updateResizeRow(xInTable: number, yInTable: number, state: State
 
   // update resize row component
   state.table.scenegraph.component.updateResizeRow(state.rowResize.row, xInTable, state.rowResize.isBottomFrozen);
-
+  state.table._updateSize();
   // stage rerender
   state.table.scenegraph.updateNextFrame();
 }

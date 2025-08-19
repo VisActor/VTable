@@ -110,7 +110,7 @@ containerFit: {
 
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
-超过最大冻结宽度后是否全部解冻，默认 true
+超过最大冻结宽度后是否全部解冻，默认 true。如果设置为 false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
 
 #${prefix} showFrozenIcon(boolean) = true
 
@@ -344,6 +344,10 @@ DropDownMenuHighlightInfo 的定义如下：
 ```
 
 {{ use: common-IDimensionInfo()}}
+
+##${prefix} contextMenuWorkOnlyCell(boolean)
+
+右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单
 
 #${prefix} title(Object)
 

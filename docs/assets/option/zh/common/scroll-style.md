@@ -31,3 +31,6 @@
 
 ##${prefix} verticalPadding(number | [number, number, number, number])
 竖向滚动条内边距，可配值：`number` | `[number, number, number, number]`
+
+##${prefix} ignoreFrozenCols(boolean)
+横向滚动条是否忽略冻结列宽度，默认false
