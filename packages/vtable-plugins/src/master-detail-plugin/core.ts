@@ -47,13 +47,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       this.configManager.injectMasterDetailOptions(
         (eventArgs as { options: VTable.ListTableConstructorOptions }).options
       );
-      queueMicrotask(() => {
-        this.configManager.setupVirtualRecordRowHeight();
-      });
     } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
       this.setupMasterDetailFeatures();
-      // 设置数据源排序保护
-      this.eventManager.setupDataSourceSortProtection(this.configManager.getVirtualRecordIds());
     } else if (runTime === VTable.TABLE_EVENT_TYPE.SORT_CLICK) {
       // 排序前处理：保存展开状态并收起所有行
       this.eventManager.executeMasterDetailBeforeSort();
@@ -83,9 +78,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 设置事件管理器的回调函数
     this.eventManager.setCallbacks({
-      onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForScroll(),
+      onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
       onExpandRow: (rowIndex: number) => this.expandRow(rowIndex),
       onCollapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
+      onToggleRowExpand: (rowIndex: number) => this.toggleRowExpand(rowIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)
     });
 
@@ -107,8 +103,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.eventManager.bindEventHandlers();
     // 扩展表格 API
     this.extendTableAPI();
-    // 绑定图标点击事件
-    this.bindIconClickEvent();
   }
 
   /**
@@ -122,30 +116,153 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 绑定图标点击事件
-   */
-  private bindIconClickEvent(): void {
-    // 直接监听 ICON_CLICK 事件
-    this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
-      const { col, row, funcType, name } = iconInfo;
-      if (
-        (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
-        (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)
-      ) {
-        this.toggleRowExpand(row);
-      }
-    });
-  }
-
-  /**
    * 扩展表格 API
    */
   private extendTableAPI(): void {
     const table = this.table as any;
     this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
     table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
+
+    // 拦截 updatePagination 方法，在分页切换时收起所有展开的行
+    const originalUpdatePagination = table.updatePagination.bind(table);
+    table.updatePagination = (pagination: VTable.TYPES.IPagination) => {
+      const internalProps = getInternalProps(this.table);
+      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
+      currentExpandedRows.forEach(rowIndex => {
+        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+        const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+        if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
+          internalProps.expandedRecordIndices.push(recordIndex);
+        }
+      });
+      currentExpandedRows.forEach(rowIndex => {
+        this.collapseRowToNoRealRecordIndex(rowIndex);
+      });
+      const result = originalUpdatePagination(pagination);
+      setTimeout(() => {
+        this.restoreExpandedStatesAfter();
+      }, 0);
+
+      return result;
+    };
+
+    // 拦截 toggleHierarchyState 方法，仅在表头分组折叠/展开时保持展开状态
+    const originalToggleHierarchyState = table.toggleHierarchyState.bind(table);
+    table.toggleHierarchyState = (col: number, row: number, recalculateColWidths: boolean = true) => {
+      // 只有当操作的是表头时，才进行状态保存和恢复
+      if (this.table.isHeader(col, row)) {
+        const internalProps = getInternalProps(this.table);
+        const currentExpandedRows = [...this.eventManager.getExpandedRows()];
+        currentExpandedRows.forEach(rowIndex => {
+          const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+          if (realRecordIndex === undefined || realRecordIndex === null) {
+            return;
+          }
+          const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+          if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
+            internalProps.expandedRecordIndices.push(recordIndex);
+          }
+        });
+        currentExpandedRows.forEach(rowIndex => {
+          this.collapseRowToNoRealRecordIndex(rowIndex);
+        });
+        const result = originalToggleHierarchyState(col, row, recalculateColWidths);
+        setTimeout(() => {
+          this.restoreExpandedStatesAfter();
+        }, 0);
+
+        return result;
+      }
+      return originalToggleHierarchyState(col, row, recalculateColWidths);
+    };
+
+    // 拦截 updateFilterRules 方法，在过滤时保持展开状态
+    const originalUpdateFilterRules = table.updateFilterRules.bind(table);
+    table.updateFilterRules = (filterRules: VTable.TYPES.FilterRules) => {
+      const internalProps = getInternalProps(this.table);
+      // 保存当前展开的记录索引
+      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
+      currentExpandedRows.forEach(rowIndex => {
+        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+        if (realRecordIndex === undefined || realRecordIndex === null) {
+          return;
+        }
+        const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+        if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
+          internalProps.expandedRecordIndices.push(recordIndex);
+        }
+      });
+      currentExpandedRows.forEach(rowIndex => {
+        this.collapseRowToNoRealRecordIndex(rowIndex);
+      });
+      const result = originalUpdateFilterRules(filterRules);
+      setTimeout(() => {
+        this.restoreExpandedStatesAfterFilter();
+      }, 0);
+
+      return result;
+    };
   }
 
+  /**
+   * 分页后恢复展开状态
+   */
+  private restoreExpandedStatesAfter(): void {
+    const internalProps = getInternalProps(this.table);
+    if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
+      return;
+    }
+    // 获取当前分页的索引数据
+    const currentPagerData = (this.table.dataSource as any)._currentPagerIndexedData;
+    if (!currentPagerData) {
+      return;
+    }
+    internalProps.expandedRecordIndices.forEach(recordIndex => {
+      try {
+        const bodyRowIndex = currentPagerData.indexOf(recordIndex);
+        if (bodyRowIndex >= 0) {
+          const targetRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+          this.expandRowToNoRealRecordIndex(targetRowIndex);
+        }
+      } catch (error) {
+        console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
+      }
+    });
+  }
+
+  private restoreExpandedStatesAfterFilter(): void {
+    const internalProps = getInternalProps(this.table);
+    if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
+      return;
+    }
+    const originalDataSource = this.table.dataSource.dataSourceObj?.records || this.table.dataSource.records;
+    if (!originalDataSource) {
+      return;
+    }
+    internalProps.expandedRecordIndices.forEach(recordIndex => {
+      try {
+        // 获取需要展开的记录对象
+        const targetRecord = originalDataSource[recordIndex];
+        if (!targetRecord) {
+          return;
+        }
+        for (
+          let rowIndex = this.table.columnHeaderLevelCount;
+          rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
+          rowIndex++
+        ) {
+          const record = this.table.getCellRawRecord(0, rowIndex);
+          if (record === targetRecord) {
+            // 找到了对应的行，展开它
+            this.expandRowToNoRealRecordIndex(rowIndex);
+            break; // 找到就跳出内层循环
+          }
+        }
+      } catch (error) {
+        console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
+      }
+    });
+  }
   /**
    * 保护的updateCellContent方法
    */
@@ -195,11 +312,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   expandRow(rowIndex: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
-    if (internalProps._heightResizedRowMap.has(rowIndex)) {
+    if (this.eventManager.isRowExpanded(rowIndex)) {
       return;
     }
 
     const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+    if (realRecordIndex === undefined || realRecordIndex === null) {
+      return;
+    }
     const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
     if (internalProps.expandedRecordIndices) {
       if (!internalProps.expandedRecordIndices.includes(recordIndex)) {
@@ -218,7 +338,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
     const height = detailConfig?.style?.height || 200;
 
-    const deltaHeight = height - originalHeight;
+    const deltaHeight = height;
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
@@ -242,11 +362,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
 
-    if (!internalProps._heightResizedRowMap.has(rowIndex)) {
+    if (!this.eventManager.isRowExpanded(rowIndex)) {
       return;
     }
 
     const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+    if (realRecordIndex === undefined || realRecordIndex === null) {
+      return;
+    }
     const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
     this.subTableManager.removeSubTable(bodyRowIndex);
     if (internalProps.expandedRecordIndices) {
@@ -279,11 +402,76 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
+   * 展开行（不修改expandedRecordIndices）
+   */
+  private expandRowToNoRealRecordIndex(rowIndex: number): void {
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    const internalProps = getInternalProps(this.table);
+    if (this.eventManager.isRowExpanded(rowIndex)) {
+      return;
+    }
+    this.eventManager.addExpandedRow(rowIndex);
+    const originalHeight = this.table.getRowHeight(rowIndex);
+    if (internalProps.originalRowHeights) {
+      internalProps.originalRowHeights.set(bodyRowIndex, originalHeight);
+    }
+    const record = getRecordByRowIndex(this.table, bodyRowIndex);
+    const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
+    const height = detailConfig?.style?.height || 200;
+
+    const deltaHeight = height;
+    this.updateRowHeightForExpand(rowIndex, deltaHeight);
+    this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
+    internalProps._heightResizedRowMap.add(rowIndex);
+
+    this.subTableManager.renderSubTable(bodyRowIndex, (record, bodyRowIndex) =>
+      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+    this.drawUnderlineForRow(rowIndex, originalHeight);
+    this.refreshRowIcon(rowIndex);
+  }
+
+  /**
+   * 收起行（不修改expandedRecordIndices）
+   */
+  private collapseRowToNoRealRecordIndex(rowIndex: number): void {
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    const internalProps = getInternalProps(this.table);
+
+    if (!this.eventManager.isRowExpanded(rowIndex)) {
+      return;
+    }
+    this.subTableManager.removeSubTable(bodyRowIndex);
+    this.eventManager.removeExpandedRow(rowIndex);
+    const currentHeight = this.table.getRowHeight(rowIndex);
+    const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+    const deltaHeight = currentHeight - originalHeight;
+    this.updateRowHeightForExpand(rowIndex, -deltaHeight);
+    internalProps._heightResizedRowMap.delete(rowIndex);
+    this.table.scenegraph.updateContainerHeight(rowIndex, -deltaHeight);
+    if (internalProps.originalRowHeights) {
+      internalProps.originalRowHeights.delete(bodyRowIndex);
+    }
+
+    this.removeUnderlineFromRow(rowIndex);
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+    this.refreshRowIcon(rowIndex);
+  }
+
+  /**
    * 切换行展开状态
    */
   toggleRowExpand(rowIndex: number): void {
-    const internalProps = getInternalProps(this.table);
-    if (internalProps._heightResizedRowMap.has(rowIndex)) {
+    if (this.eventManager.isRowExpanded(rowIndex)) {
       this.collapseRow(rowIndex);
     } else {
       this.expandRow(rowIndex);
@@ -466,10 +654,13 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 刷新行图标
    */
   private refreshRowIcon(rowIndex: number): void {
-    // 触发第一列的重绘以更新图标状态
-    const cellGroup = this.table.scenegraph.getCell(0, rowIndex);
+    // 检测是否有序号列，如果有则使用第二列，否则使用第一列
+    const hasRowSeriesNumber = !!(this.table.options as any).rowSeriesNumber;
+    const targetColumnIndex = hasRowSeriesNumber ? 1 : 0;
+    // 触发目标列的重绘以更新图标状态
+    const cellGroup = this.table.scenegraph.getCell(targetColumnIndex, rowIndex);
     if (cellGroup) {
-      this.table.scenegraph.updateCellContent(0, rowIndex);
+      this.table.scenegraph.updateCellContent(targetColumnIndex, rowIndex);
     }
   }
 
@@ -499,7 +690,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 恢复原始的updateCellContent方法
     if (this.originalUpdateCellContent && this.table) {
       const table = this.table as any;
-      table.scenegraph.updateCellContent = this.originalUpdateCellContent;
+      // 检查 scenegraph 是否存在，避免在表格已经销毁时出错
+      if (table.scenegraph) {
+        table.scenegraph.updateCellContent = this.originalUpdateCellContent;
+      }
       this.originalUpdateCellContent = undefined;
     }
   }

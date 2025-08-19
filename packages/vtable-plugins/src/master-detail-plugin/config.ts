@@ -15,9 +15,27 @@ export class ConfigManager {
   injectMasterDetailOptions(options: VTable.ListTableConstructorOptions): void {
     // 启用主从表基础设施
     (options as VTable.ListTableConstructorOptions & { masterDetail: boolean }).masterDetail = true;
-
-    // 插入虚拟记录来处理视口限制问题
-    this.injectVirtualRecords(options);
+    if (!options.customConfig) {
+      options.customConfig = {};
+    }
+    options.customConfig.scrollEventAlwaysTrigger = true;
+    const originalCustomComputeRowHeight = options.customComputeRowHeight;
+    options.customComputeRowHeight = params => {
+      const { row, table } = params;
+      if (this.isVirtualRow(row)) {
+        return 0;
+      }
+      if (this.isRowExpanded(row)) {
+        return table.getRowHeight(row);
+      }
+      if (originalCustomComputeRowHeight) {
+        const userResult = originalCustomComputeRowHeight(params);
+        if (userResult !== undefined && userResult !== null) {
+          return userResult;
+        }
+      }
+      return 'auto';
+    };
 
     // 给第一列添加图标
     this.injectHierarchyIcons(options);
@@ -25,60 +43,94 @@ export class ConfigManager {
     // 注入子表配置
     if (this.pluginOptions.detailGridOptions) {
       const detailOptions = this.pluginOptions.detailGridOptions;
-      (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
-        detailOptions;
+      // 判断是静态配置还是动态函数
+      if (typeof detailOptions === 'function') {
+        (
+          options as VTable.ListTableConstructorOptions & {
+            getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
+          }
+        ).getDetailGridOptions = detailOptions;
+      } else {
+        (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
+          detailOptions;
+      }
     }
 
-    if (this.pluginOptions.getDetailGridOptions) {
-      const getDetailOptions = this.pluginOptions.getDetailGridOptions;
-      (
-        options as VTable.ListTableConstructorOptions & {
-          getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
-        }
-      ).getDetailGridOptions = getDetailOptions;
+    // 拦截表格的refreshRowColCount方法来添加虚拟行
+    this.interceptRefreshRowColCount();
+  }
+
+  /**
+   * 拦截表格的refreshRowColCount方法来添加虚拟行
+   */
+  private interceptRefreshRowColCount(): void {
+    const originalRefreshRowColCount = this.table.refreshRowColCount.bind(this.table);
+    this.table.refreshRowColCount = () => {
+      originalRefreshRowColCount();
+      // 添加虚拟行
+      this.addVirtualRows();
+    };
+  }
+
+  /**
+   * 添加虚拟行
+   */
+  private addVirtualRows(): void {
+    const { layoutMap } = this.table.internalProps;
+    if (!layoutMap) {
+      return;
+    }
+
+    // 获取数据数量
+    let dataCount = 0;
+    if (this.table.pagination) {
+      dataCount = this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
+    } else {
+      dataCount = this.table.dataSource?.sourceLength ?? 0;
+    }
+    if (dataCount > 0) {
+      const virtualRowsCount = 1;
+      const originalRowCount = this.table.rowCount;
+      this.table.rowCount = originalRowCount + virtualRowsCount;
     }
   }
 
   /**
-   * 插入虚拟记录来解决视口限制问题
+   * 检查指定行是否为虚拟行
    */
-  private injectVirtualRecords(options: VTable.ListTableConstructorOptions): void {
-    if (!options.records || !Array.isArray(options.records)) {
-      return;
+  isVirtualRow(row: number): boolean {
+    const { layoutMap } = this.table.internalProps;
+    if (!layoutMap) {
+      return false;
     }
-    const originalRecords = options.records;
-    if (originalRecords.length === 0) {
-      return;
+
+    const headerLevelCount = layoutMap.headerLevelCount;
+    // 获取数据数量（分页情况下取当前页数据，非分页情况下取全部数据）
+    let dataCount = 0;
+    if (this.table.pagination) {
+      dataCount = this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
+    } else {
+      dataCount = this.table.dataSource?.sourceLength ?? 0;
     }
-    const topId = `__vtable_virtual_top_${Date.now()}_${Math.random()}`;
-    const bottomId = `__vtable_virtual_bottom_${Date.now()}_${Math.random()}`;
-    this.virtualRecordIds = { topId, bottomId };
-    const minRecord = this.createVirtualRecord(originalRecords, 'top', topId);
-    const maxRecord = this.createVirtualRecord(originalRecords, 'bottom', bottomId);
-    options.records = [minRecord, ...originalRecords, maxRecord];
+    if (dataCount === 0) {
+      return false;
+    }
+    // 如果没有聚合行，虚拟行位置在数据行之后
+    const virtualRowIndex =
+      headerLevelCount + dataCount + layoutMap.hasAggregationOnBottomCount + layoutMap.hasAggregationOnTopCount;
+    return row === virtualRowIndex;
   }
 
   /**
-   * 创建虚拟记录
+   * 获取虚拟行的类型
    */
-  private createVirtualRecord(
-    originalRecords: Record<string, unknown>[],
-    type: 'top' | 'bottom',
-    virtualId: string
-  ): Record<string, unknown> {
-    const record: Record<string, unknown> = {};
-    // 获取第一个记录的所有字段，为每个字段设置空值
-    if (originalRecords.length > 0) {
-      const firstRecord = originalRecords[0];
-      Object.keys(firstRecord).forEach(fieldName => {
-        record[fieldName] = ' ';
-      });
+  getVirtualRowType(row: number): 'bottom' | null {
+    if (!this.isVirtualRow(row)) {
+      return null;
     }
-    record.children = undefined;
-    // 标记为虚拟记录并设置唯一ID
-    record.__vtable_virtual_record__ = true;
-    record.__vtable_virtual_id__ = virtualId;
-    return record;
+
+    // 现在只有一个底部虚拟行
+    return 'bottom';
   }
 
   /**
@@ -185,33 +237,21 @@ export class ConfigManager {
   /**
    * 设置虚拟记录行高
    */
-  setupVirtualRecordRowHeight(): void {
-    const firstDataRowIndex = this.table.columnHeaderLevelCount;
-    const lastDataRowIndex = this.table.rowCount - this.table.bottomFrozenRowCount - 1;
-    try {
-      if (typeof this.table.setRowHeight === 'function') {
-        const visibleRange = this.table.getBodyVisibleRowRange();
-        this.table.setRowHeight(firstDataRowIndex, 0);
-        if (visibleRange && lastDataRowIndex >= visibleRange.rowStart && lastDataRowIndex <= visibleRange.rowEnd) {
-          this.table.setRowHeight(lastDataRowIndex, 0);
-        } else {
-          this.table._setRowHeight(lastDataRowIndex, 0, true);
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to set virtual record row height:', error);
-    }
-  }
-
   /**
    * 获取详情配置
    */
   getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {
-    return (
-      this.pluginOptions.getDetailGridOptions?.({ data: record, bodyRowIndex: bodyRowIndex }) ||
-      this.pluginOptions.detailGridOptions ||
-      null
-    );
+    const detailOptions = this.pluginOptions.detailGridOptions;
+    if (!detailOptions) {
+      return null;
+    }
+    
+    // 判断是函数还是静态配置
+    if (typeof detailOptions === 'function') {
+      return detailOptions({ data: record, bodyRowIndex: bodyRowIndex });
+    }
+    
+    return detailOptions;
   }
 
   /**
