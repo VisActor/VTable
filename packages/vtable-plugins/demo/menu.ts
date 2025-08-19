@@ -24,6 +24,10 @@ export const menus = [
     name: '(deprecated)invert-highlight'
   },
   {
+    path: 'auto-fill',
+    name: 'auto-fill'
+  },
+  {
     path: 'wps-fill-handle',
     name: 'wps-fill-handle'
   },
