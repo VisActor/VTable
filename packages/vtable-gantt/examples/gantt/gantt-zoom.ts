@@ -913,8 +913,130 @@ export function createTable() {
     },
     headerRowHeight: 60,
     rowHeight: 40,
-    zoom: {
-      enableMouseWheel: true
+    // 🔑 ZoomScale 多级别缩放配置
+    zoomScale: {
+      enabled: true,
+      enableMouseWheel: true, // 启用鼠标滚轮缩放
+      maxZoomInColumnWidth: 120, // 🔍 最大放大限制：基础最小宽度40px（小时格式会自动调整更大）
+      maxZoomOutColumnWidth: 150, // 🔍 最大缩小限制：最粗糙级别（如月）最大150px
+      levels: [
+        // 级别0：月-周组合 (最粗糙)
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          }
+        ],
+        // 级别1：月-日组合
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 4,
+            format: date => date.startDate.getDate().toString()
+          }
+        ],
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => date.startDate.getDate().toString()
+          }
+        ],
+        // 级别2：日-小时组合 (12小时)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 12,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours();
+              return `${startHour.toString().padStart(2, '0')}:00~${endHour.toString().padStart(2, '0')}:00`;
+            }
+          }
+        ],
+        // 级别3：日-小时组合 (6小时)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 6,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours();
+              return `${startHour.toString().padStart(2, '0')}:00~${endHour.toString().padStart(2, '0')}:00`;
+            }
+          }
+        ],
+        // 级别4：日-小时组合 (1小时)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 1,
+            format: date => {
+              const hour = date.startDate.getHours();
+              return `${hour.toString().padStart(2, '0')}:00`;
+            }
+          }
+        ]
+      ]
     },
     taskBar: {
       startDateField: 'start',
@@ -1113,4 +1235,24 @@ export function createTable() {
   bindDebugTool(ganttInstance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
+
+  // 🔍 验证 minColumnWidth/maxColumnWidth 是否正确生效
+  setTimeout(() => {
+    const zoomConfig = ganttInstance.parsedOptions.zoom;
+    console.log('🔍 验证用户配置是否生效:', {
+      用户设置: {
+        maxZoomInColumnWidth: 40, // 最大放大限制（小时格式自动调整）
+        maxZoomOutColumnWidth: 150 // 最大缩小限制
+      },
+      系统计算: {
+        minTimePerPixel: zoomConfig?.minTimePerPixel,
+        maxTimePerPixel: zoomConfig?.maxTimePerPixel
+      },
+      验证结果:
+        zoomConfig?.minTimePerPixel !== 1000 && zoomConfig?.maxTimePerPixel !== 6000000
+          ? '✅ 用户配置生效'
+          : '❌ 使用了默认值',
+      说明: '如果显示❌，说明 maxZoomInColumnWidth/maxZoomOutColumnWidth 没有正确转换为 timePerPixel 限制'
+    });
+  }, 1000);
 }

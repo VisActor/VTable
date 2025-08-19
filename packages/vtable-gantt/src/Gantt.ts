@@ -68,7 +68,8 @@ import { isValid } from '@visactor/vutils';
 import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
-import { toBoxArray } from '@visactor/vtable';
+import { toBoxArray } from './tools/util';
+import { ZoomScaleManager } from './zoom-scale';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
@@ -216,147 +217,78 @@ export class Gantt extends EventTarget {
 
   //  时间缩放基准 - 每像素代表多少毫秒
   private timePerPixel: number;
+  zoomScaleManager?: ZoomScaleManager;
 
   /**
    * 重新计算时间相关的尺寸参数
+   * 注意：当启用 zoomScale 时，此方法不再用于动态调整 unit/step，
+   * 只用于根据当前 timePerPixel 重新计算 timelineColWidth
    */
   recalculateTimeScale(): void {
-    // 1. 计算每天的像素数
-    const msPerDay = 24 * 60 * 60 * 1000;
-    const pixelsPerDay = msPerDay / this.timePerPixel;
-
-    // 2. 根据像素数智能选择 unit 和 step
-    let unit: 'day' | 'week' | 'month' | 'quarter' | 'year' | 'hour' | 'minute' | 'second';
-    let step: number;
-    const basePixel = 45;
-    // 根据 pixelsPerDay 智能选择合适的时间单位和步长 - 夸张版本
-    if (pixelsPerDay > basePixel * 256 * 3) {
-      // 超级放大：1分钟一格
-      unit = 'minute';
-      step = 5;
-    } else if (pixelsPerDay > basePixel * 256) {
-      // 极大放大：15分钟一格
-      unit = 'minute';
-      step = 15;
-    } else if (pixelsPerDay > basePixel * 128) {
-      // 很大放大：30分钟一格
-      unit = 'minute';
-      step = 30;
-    } else if (pixelsPerDay > basePixel * 64) {
-      // 大放大：1小时一格
-      unit = 'hour';
-      step = 1;
-    } else if (pixelsPerDay > basePixel * 32) {
-      // 中大放大：2小时一格
-      unit = 'hour';
-      step = 2;
-    } else if (pixelsPerDay > basePixel * 16) {
-      // 中放大：4小时一格
-      unit = 'hour';
-      step = 4;
-    } else if (pixelsPerDay > basePixel * 8) {
-      // 小放大：8小时一格
-      unit = 'hour';
-      step = 8;
-    } else if (pixelsPerDay > basePixel * 4) {
-      // 天级别开始：1天一格
-      unit = 'day';
-      step = 1;
-    } else if (pixelsPerDay > basePixel * 2) {
-      // 小缩放：2天一格
-      unit = 'day';
-      step = 2;
-    } else if (pixelsPerDay > basePixel) {
-      // 更小缩放：4天一格
-      unit = 'day';
-      step = 4;
-    } else {
-      // 最小缩放：8天一格
-      unit = 'day';
-      step = 8;
+    // 获取当前的主时间刻度
+    const primaryScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    if (!primaryScale) {
+      return;
     }
 
-    // 3. 更新 scale 配置
-    const scale = this.parsedOptions.reverseSortedTimelineScales[0];
-    if (scale) {
-      const oldUnit = scale.unit;
-
-      scale.unit = unit;
-      scale.step = step;
-
-      // 为小时和分钟单位设置自定义格式化函数
-      if (unit === 'hour') {
-        scale.format = ({ startDate, endDate }) => {
-          const startHour = startDate.getHours().toString().padStart(2, '0');
-          const startMinute = startDate.getMinutes().toString().padStart(2, '0');
-          const endHour = endDate.getHours().toString().padStart(2, '0');
-          const endMinute = endDate.getMinutes().toString().padStart(2, '0');
-          return `${startHour}:${startMinute}~${endHour}:${endMinute}`;
-        };
-      } else if (unit === 'minute') {
-        scale.format = ({ startDate, endDate }) => {
-          const startHour = startDate.getHours().toString().padStart(2, '0');
-          const startMinute = startDate.getMinutes().toString().padStart(2, '0');
-          const endHour = endDate.getHours().toString().padStart(2, '0');
-          const endMinute = endDate.getMinutes().toString().padStart(2, '0');
-          return `${startHour}:${startMinute}~${endHour}:${endMinute}`;
-        };
-      } else {
-        // 其他单位使用默认格式
-        scale.format = undefined;
-      }
-    }
-
-    // 4. 计算当前unit和step对应的毫秒数
+    // 根据当前 scale 的 unit 和 step 计算每个单元格应该占用的毫秒数
     let msPerStep: number;
-    switch (unit as string) {
-      case 'year':
-        msPerStep = step * 365 * msPerDay; // 近似值
-        break;
-      case 'quarter':
-        msPerStep = step * 90 * msPerDay; // 近似值
-        break;
-      case 'month':
-        msPerStep = step * 30 * msPerDay; // 近似值
-        break;
-      case 'week':
-        msPerStep = step * 7 * msPerDay;
-        break;
-      case 'day':
-        msPerStep = step * msPerDay;
-        break;
-      case 'hour':
-        msPerStep = step * 60 * 60 * 1000;
+    switch (primaryScale.unit as string) {
+      case 'second':
+        msPerStep = 1000 * primaryScale.step;
         break;
       case 'minute':
-        msPerStep = step * 60 * 1000;
+        msPerStep = 60 * 1000 * primaryScale.step;
         break;
-      case 'second':
-        msPerStep = step * 1000;
+      case 'hour':
+        msPerStep = 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'day':
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'week':
+        msPerStep = 7 * 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'month':
+        msPerStep = 30 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似30天
+        break;
+      case 'quarter':
+        msPerStep = 90 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似90天
+        break;
+      case 'year':
+        msPerStep = 365 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似365天
         break;
       default:
-        msPerStep = step * msPerDay;
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step; // 默认为天
     }
 
-    // 5. 计算新的列宽
+    // 计算新的 timelineColWidth
     const newTimelineColWidth = msPerStep / this.timePerPixel;
+
+    // 更新 parsedOptions
     this.parsedOptions.timelineColWidth = newTimelineColWidth;
 
-    // 6. 刷新视图
+    // 重新生成时间线日期映射
     this._generateTimeLineDateMap();
+
+    // 更新尺寸和重新渲染
     if (this.scenegraph) {
       this._updateSize();
       this.scenegraph.refreshAll();
     }
 
-    console.log('📊 智能缩放:', {
-      timePerPixel: this.timePerPixel.toFixed(0),
-      pixelsPerDay: pixelsPerDay.toFixed(1),
-      unit,
-      step,
-      newTimelineColWidth: newTimelineColWidth.toFixed(1),
-      说明: `每天${pixelsPerDay.toFixed(1)}px，${step}${unit}一格`
-    });
+    // 调试信息（仅在非 zoomScale 模式下显示详细信息）
+    if (!this.zoomScaleManager) {
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const pixelsPerDay = msPerDay / this.timePerPixel;
+      console.log('📊 传统缩放模式:', {
+        timePerPixel: this.timePerPixel.toFixed(0),
+        pixelsPerDay: pixelsPerDay.toFixed(1),
+        unit: primaryScale.unit,
+        step: primaryScale.step,
+        newTimelineColWidth: newTimelineColWidth.toFixed(1)
+      });
+    }
   }
 
   /**
@@ -366,9 +298,9 @@ export class Gantt extends EventTarget {
    * @param centerX 缩放中心点X坐标
    */
   zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
-    // 应用 timePerPixel 限制（默认值已在 initOptions 中设置）
-    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel || 200000;
-    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel || 3000000;
+    // 应用 timePerPixel 限制（由 ZoomScaleManager 根据 minColumnWidth/maxColumnWidth 计算）
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
 
     // 记录旧值用于视图中心保持和事件触发
     const oldTimePerPixel = this.timePerPixel;
@@ -401,6 +333,23 @@ export class Gantt extends EventTarget {
     // 应用限制
     this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
 
+    // 🔑 新增：检查是否需要切换级别
+    if (this.zoomScaleManager) {
+      const targetLevel = this.zoomScaleManager.findOptimalLevel(this.timePerPixel);
+      const currentLevel = this.zoomScaleManager.getCurrentLevel();
+
+      if (targetLevel !== currentLevel) {
+        // 切换级别：zoomScaleManager会调用updateScales，自动处理所有更新
+        this.zoomScaleManager.switchToLevel(targetLevel);
+      } else {
+        // 级别未变：使用现有的时间刻度重计算逻辑
+        this.recalculateTimeScale();
+      }
+    } else {
+      // 未启用zoomScale：完全使用原有逻辑
+      this.recalculateTimeScale();
+    }
+
     // 处理视图中心保持
     if (keepCenter) {
       if (centerX === undefined) {
@@ -410,15 +359,9 @@ export class Gantt extends EventTarget {
       // 计算中心点对应的时间位置
       const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
 
-      // 重新计算尺寸
-      this.recalculateTimeScale();
-
       // 调整滚动位置以保持中心点
       const newScrollLeft = centerTimePosition / this.timePerPixel - centerX;
       this.stateManager.setScrollLeft(newScrollLeft);
-    } else {
-      // 重新计算尺寸
-      this.recalculateTimeScale();
     }
 
     // 触发缩放事件
@@ -468,7 +411,16 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    this._sortScales();
+    // 🔑 优先初始化 ZoomScaleManager，让它接管 scales 设置
+    if (options.zoomScale?.enabled) {
+      this.zoomScaleManager = new ZoomScaleManager(this, options.zoomScale);
+      // ZoomScaleManager 已经设置了初始 scales，现在需要排序
+      this._sortScales();
+    } else {
+      // 只有未启用 zoomScale 时才使用原有的 scales
+      this._sortScales();
+    }
+
     initOptions(this);
 
     // 初始化timePerPixel - 默认60px = 1天
@@ -1594,5 +1546,34 @@ export class Gantt extends EventTarget {
   formatDate(date: Date | string, format: string) {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return formatDate(dateObj, format);
+  }
+
+  // 🔑 新增：ZoomScale 公共 API
+  getCurrentZoomScaleLevel(): number {
+    return this.zoomScaleManager?.getCurrentLevel() ?? -1;
+  }
+
+  switchToZoomScaleLevel(levelIndex: number): boolean {
+    return this.zoomScaleManager?.switchToLevel(levelIndex) ?? false;
+  }
+
+  getZoomScaleLevelsCount(): number {
+    return this.zoomScaleManager?.getLevelCount() ?? 0;
+  }
+
+  isZoomScaleEnabled(): boolean {
+    return !!this.zoomScaleManager;
+  }
+
+  getZoomScaleConfig() {
+    return this.zoomScaleManager?.getConfig();
+  }
+
+  getZoomScaleLevelThresholds() {
+    return this.zoomScaleManager?.getLevelThresholds();
+  }
+
+  getCurrentTimePerPixel(): number {
+    return this.timePerPixel;
   }
 }
