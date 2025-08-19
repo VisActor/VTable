@@ -11,6 +11,9 @@ import type {
   CellValueChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
+import type { TYPES } from '..';
+import { isPropertyWritable } from '../tools';
+import { VTableThemes } from '../ts-types';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -168,6 +171,33 @@ export class Sheet extends EventTarget implements ISheetAPI {
       cutSelected: true
     };
 
+    //更改theme 的frameStyle
+    let changedTheme: TYPES.VTableThemes.ITableThemeDefine;
+    if (!this.options?.theme) {
+      this.options.theme = VTableThemes.DEFAULT;
+    }
+    this.options.theme = this.options.theme;
+    if (this.options.theme.bodyStyle && !isPropertyWritable(this.options.theme, 'bodyStyle')) {
+      //测试是否使用了主题 使用了主题配置项不可写。
+      changedTheme = (this.options.theme as TYPES.VTableThemes.TableTheme).extends(
+        (this.options.theme as TYPES.VTableThemes.TableTheme).getExtendTheme()
+      ); //防止将原主题如DARK ARCO的属性改掉
+      const extendThemeOption = (changedTheme as TYPES.VTableThemes.TableTheme).getExtendTheme();
+
+      extendThemeOption.frameStyle = Object.assign({}, extendThemeOption.frameStyle, {
+        shadowBlur: 0,
+        cornerRadius: 0,
+        borderLineWidth: 0
+      });
+    } else {
+      changedTheme = this.options.theme;
+      changedTheme.frameStyle = Object.assign({}, this.options.theme.frameStyle, {
+        shadowBlur: 0,
+        cornerRadius: 0,
+        borderLineWidth: 0
+      });
+    }
+
     return {
       ...this.options,
       addRecordRule: 'Array',
@@ -175,8 +205,8 @@ export class Sheet extends EventTarget implements ISheetAPI {
       records: this.options.data,
       container: this.element,
       showHeader: isShowTableHeader,
-      keyboardOptions
-
+      keyboardOptions,
+      theme: changedTheme
       // 其他特定配置
     };
   }

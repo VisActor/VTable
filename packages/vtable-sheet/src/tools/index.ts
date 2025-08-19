@@ -22,3 +22,15 @@ export function checkTabTitle(newTitle: string): string | null {
   // 其他规则待补充...
   return null;
 }
+
+/** 判断对象的属性是否可写 */
+export function isPropertyWritable(obj: any, prop: string | number) {
+  const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+  if (!descriptor) {
+    // 属性不存在
+    return false;
+  }
+
+  // 检查是否有 setter 方法或 writable 属性为 true
+  return !!descriptor.set || descriptor.writable === true;
+}

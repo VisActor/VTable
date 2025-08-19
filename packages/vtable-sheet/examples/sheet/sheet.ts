@@ -1,8 +1,6 @@
 import { VTableSheet, TYPES } from '../../src/index';
-
 import * as VTablePlugins from '@visactor/vtable-plugins';
 const CONTAINER_ID = 'vTable';
-
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
     showFormulaBar: true,
@@ -678,7 +676,12 @@ export function createTable() {
         columns: [],
         showHeader: false
       }
-    ],
+    ] as TYPES.ISheetDefine[],
+    theme: TYPES.VTableThemes.ARCO.extends({
+      bodyStyle: {
+        color: 'gray'
+      }
+    }),
     pluginModules: [
       {
         module: VTablePlugins.ExcelImportPlugin,
@@ -717,7 +720,7 @@ export function createTable() {
       ]
     }
   });
-  window.sheetInstance = sheetInstance;
+  (window as any).sheetInstance = sheetInstance;
 
   // bindDebugTool(ganttInstance.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']

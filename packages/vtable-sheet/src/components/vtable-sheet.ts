@@ -810,7 +810,8 @@ export default class VTableSheet {
         padding: [8, 8, 8, 8]
       },
       editCellTrigger: ['api', 'keydown'],
-      customMergeCell: sheetDefine.cellMerge
+      customMergeCell: sheetDefine.cellMerge,
+      theme: this.options.theme
     } as any);
 
     // 注册事件
