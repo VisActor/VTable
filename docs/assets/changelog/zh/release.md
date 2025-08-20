@@ -1,3 +1,25 @@
+# v1.19.7
+
+2025-08-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增 ignoreFrozenCols 配置，用于设置冻结列的样式
+- **@visactor/vtable**: 新增 CONTEXTMENU_CANVAS 事件类型
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当设置隐藏列时，带有子列的列报错的问题 [#4223](https://github.com/VisActor/VTable/issues/4223)
+- **@visactor/vtable**: 修复甘特图刷新容器大小的问题 [#4319](https://github.com/VisActor/VTable/issues/4319)
+- **@visactor/vtable**: 修复当使用 InputEditor 更新 groupBy 配置时，同步组折叠状态时报错的问题 [#4216](https://github.com/VisActor/VTable/issues/4216)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 当记录较少时，不需要显示滚动条时，滚动条不显示
+
+[更多详情请查看 v1.19.7](https://github.com/VisActor/VTable/releases/tag/v1.19.7)
+
 # v1.19.6
 
 2025-08-08

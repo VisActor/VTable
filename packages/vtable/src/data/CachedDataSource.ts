@@ -508,8 +508,8 @@ function syncGroupCollapseState(
       newRecord.hierarchyState = oldSource[i].hierarchyState;
     }
     if (
-      isArray(oldRecord.children) &&
-      isArray(newRecord.children) &&
+      isArray(oldRecord?.children) &&
+      isArray(newRecord?.children) &&
       oldRecord.map.size !== 0 &&
       newRecord.map.size !== 0
     ) {

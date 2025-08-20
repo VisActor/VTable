@@ -4,9 +4,13 @@
 
 信息弹出框样式设置
 
-##${prefix} font(string)
+##${prefix} fontFamily(string)
 
-弹出框文字样式
+弹出框文字字体
+
+##${prefix} fontSize(number)
+
+弹出框文字大小
 
 ##${prefix} color(string)
 
@@ -19,3 +23,11 @@
 ##${prefix} bgColor(string)
 
 弹出框背景色
+
+##${prefix} maxWidth(number)
+
+弹出框最大宽度
+
+##${prefix} maxHeight(number)
+
+弹出框最大高度

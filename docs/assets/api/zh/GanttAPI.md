@@ -141,11 +141,12 @@
 具体使用方式：
 
 ```
+  import * as VTableGantt from '@visactor/vtable-gantt';
   const tableInstance =new Gantt(containerDom, options);
 
   const {
       CLICK_TASK_BAR
-    } = EVENT_TYPES;
+    } = VTableGantt.TYPES.GANTT_EVENT_TYPE;
 
   tableInstance.on(CLICK_TASK_BAR, (args) => console.log(CLICK_CELL, args));
 ```
@@ -201,9 +202,17 @@ export interface EVENT_TYPES {
 如下为监听表格单元格选中事件的例子：
 
 ```
-  const tableInstance =new Gantt(containerDom, options);
-  tableInstance.taskListTableInstance.on('click_cell', (args)=>{});
+  const ganttInstance =new Gantt(containerDom, options);
+  ganttInstance.taskListTableInstance.on('click_cell', (args)=>{});
 ```
+其中 click_cell 事件也可以使用枚举类型如
+```
+  import * as VTableGantt from '@visactor/vtable-gantt';
+  ganttInstance.taskListTableInstance?.on(VTableGantt.VTable.TABLE_EVENT_TYPE.SCROLL, e => {
+    console.log('listTable scroll', e);
+  });
+```
+
 
 具体 ListTable 的事件参考：https://visactor.io/vtable/api/events
 
