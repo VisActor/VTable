@@ -1,6 +1,6 @@
 import type * as VTable from '@visactor/vtable';
-import { ITableAnimationOption } from '@visactor/vtable/src/ts-types';
-import { EasingType } from '@visactor/vtable/src/vrender';
+import type { ITableAnimationOption } from '@visactor/vtable/src/ts-types';
+import type { EasingType } from '@visactor/vtable/src/vrender';
 import { isValid } from '@visactor/vutils';
 type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
 
@@ -11,7 +11,6 @@ export type QueryResult = {
     row?: number;
     value?: string;
     indexNumber?: number[];
-
   }[];
 };
 
@@ -24,9 +23,7 @@ export type SearchComponentOption = {
   queryMethod?: (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean;
   treeQueryMethod?: (queryStr: string, node: any, fieldsToSearch?: string[], option?: { table: IVTable }) => boolean;
   fieldsToSearch?: string[];
-  scrollOption: ITableAnimationOption;
-
-
+  scrollOption?: ITableAnimationOption;
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 };
 
@@ -42,17 +39,14 @@ function defalultQueryMethod(queryStr: string, value: string) {
   return isValid(queryStr) && isValid(value) && value.toString().includes(queryStr);
 }
 function defalultTreeQueryMethod(queryStr: string, node: any, fieldsToSearch?: string[]) {
-  if (!isValid(queryStr)) return false;
+  if (!isValid(queryStr)) {
+    return false;
+  }
 
   // 如果没有传 fieldsToSearch，则用 node 的全部 key
-  const searchFields = (Array.isArray(fieldsToSearch) && fieldsToSearch.length > 0)
-    ? fieldsToSearch
-    : Object.keys(node);
+  const searchFields = Array.isArray(fieldsToSearch) && fieldsToSearch.length > 0 ? fieldsToSearch : Object.keys(node);
 
-  return searchFields.some(field =>
-    isValid(node?.[field]) &&
-    node[field].toString().includes(queryStr)
-  );
+  return searchFields.some(field => isValid(node?.[field]) && node[field].toString().includes(queryStr));
 }
 export class SearchComponent {
   table: IVTable;
@@ -63,7 +57,6 @@ export class SearchComponent {
   queryMethod: (queryStr: string, value: string, option: { col: number; row: number; table: IVTable }) => boolean;
   treeQueryMethod: (queryStr: string, node: any, fieldsToSearch?: string[], option?: { table: IVTable }) => boolean;
   fieldsToSearch: string[];
-
 
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 
@@ -90,10 +83,11 @@ export class SearchComponent {
     this.queryMethod = option.queryMethod || defalultQueryMethod;
     this.treeQueryMethod = option.treeQueryMethod || defalultTreeQueryMethod;
     this.fieldsToSearch = option.fieldsToSearch || [];
-    this.isTree = false
-    this.treeIndex = 0
+    this.isTree = false;
+    this.treeIndex = 0;
     this.callback = option.callback;
-    this.scrollOption = option.scrollOption || { duration: 900, easing: 'quartIn' as EasingType } as ITableAnimationOption
+    this.scrollOption =
+      option.scrollOption || ({ duration: 900, easing: 'quartIn' as EasingType } as ITableAnimationOption);
     this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
     this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
   }
@@ -108,10 +102,8 @@ export class SearchComponent {
         results: this.queryResult
       };
     }
-    this.isTree = this.table.options.columns.some((item: any) => item.tree)
-    this.treeIndex = this.isTree
-      ? this.table.options.columns.findIndex((item: any) => item.tree)
-      : 0;
+    this.isTree = this.table.options.columns.some((item: any) => item.tree);
+    this.treeIndex = this.isTree ? this.table.options.columns.findIndex((item: any) => item.tree) : 0;
     if (this.isTree) {
       // 如果传入单一节点也能处理
       const colEnd = this.table.colCount;
@@ -127,7 +119,6 @@ export class SearchComponent {
                 start: { row: null, col: 0 },
                 end: { row: null, col: colEnd }
               }
-
             });
           }
 
@@ -140,7 +131,6 @@ export class SearchComponent {
       walk(this.table.records, []);
 
       this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
-
 
       if (this.callback) {
         this.callback(
@@ -162,69 +152,62 @@ export class SearchComponent {
         index: 0,
         results: this.queryResult
       };
-    } else {
-      for (let row = 0; row < this.table.rowCount; row++) {
-        for (let col = 0; col < this.table.colCount; col++) {
-          if (this.skipHeader && this.table.isHeader(col, row)) {
-            continue;
-          }
-          const value = this.table.getCellValue(col, row);
-          if (this.queryMethod(this.queryStr, value, { col, row, table: this.table })) {
-            // deal merge cell
-            const mergeCell = this.table.getCellRange(col, row);
-            if (mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row) {
-              // find is cell already in queryResult
-              let isIn = false;
-              for (let i = this.queryResult.length - 1; i >= 0; i--) {
-                if (this.queryResult[i].col === mergeCell.start.col && this.queryResult[i].row === mergeCell.start.row) {
-                  isIn = true;
-                  break;
-                }
+    }
+    for (let row = 0; row < this.table.rowCount; row++) {
+      for (let col = 0; col < this.table.colCount; col++) {
+        if (this.skipHeader && this.table.isHeader(col, row)) {
+          continue;
+        }
+        const value = this.table.getCellValue(col, row);
+        if (this.queryMethod(this.queryStr, value, { col, row, table: this.table })) {
+          // deal merge cell
+          const mergeCell = this.table.getCellRange(col, row);
+          if (mergeCell.start.col !== mergeCell.end.col || mergeCell.start.row !== mergeCell.end.row) {
+            // find is cell already in queryResult
+            let isIn = false;
+            for (let i = this.queryResult.length - 1; i >= 0; i--) {
+              if (this.queryResult[i].col === mergeCell.start.col && this.queryResult[i].row === mergeCell.start.row) {
+                isIn = true;
+                break;
               }
-              if (!isIn) {
-                this.queryResult.push({
-                  col: mergeCell.start.col,
-                  row: mergeCell.start.row,
-                  range: mergeCell,
-                  value
-                });
-              }
-            } else {
+            }
+            if (!isIn) {
               this.queryResult.push({
-                col,
-                row,
+                col: mergeCell.start.col,
+                row: mergeCell.start.row,
+                range: mergeCell,
                 value
               });
             }
+          } else {
+            this.queryResult.push({
+              col,
+              row,
+              value
+            });
           }
         }
       }
-      this.updateCellStyle();
+    }
+    this.updateCellStyle();
 
-      if (this.callback) {
-        this.callback(
-          {
-            queryStr: this.queryStr,
-            results: this.queryResult
-          },
-          this.table
-        );
-      }
-
-      if (this.autoJump) {
-        return this.next();
-      }
-      return {
-        index: 0,
-        results: this.queryResult
-      };
+    if (this.callback) {
+      this.callback(
+        {
+          queryStr: this.queryStr,
+          results: this.queryResult
+        },
+        this.table
+      );
     }
 
-
-
-
-
-
+    if (this.autoJump) {
+      return this.next();
+    }
+    return {
+      index: 0,
+      results: this.queryResult
+    };
   }
 
   updateCellStyle(highlight: boolean = true) {
@@ -247,9 +230,9 @@ export class SearchComponent {
       while (this.table.isHeader(0, i)) {
         i++;
       }
-      let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-      range.start.row = row
-      range.end.row = row
+      const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+      range.start.row = row;
+      range.end.row = row;
 
       this.table.arrangeCustomCellStyle(
         {
@@ -257,10 +240,8 @@ export class SearchComponent {
         },
         highlight ? '__search_component_focuse' : null
       );
-
     } else {
       for (let i = 0; i < this.queryResult.length; i++) {
-
         const { col, row, range } = this.queryResult[i];
         if (range) {
           this.table.arrangeCustomCellStyle(
@@ -280,7 +261,6 @@ export class SearchComponent {
         }
       }
     }
-
   }
 
   next() {
@@ -291,10 +271,8 @@ export class SearchComponent {
       };
     }
     if (this.isTree) {
-
       if (this.currentIndex !== -1) {
         const { range, indexNumber } = this.queryResult[this.currentIndex];
-
 
         if (range) {
           let i = 0;
@@ -303,9 +281,9 @@ export class SearchComponent {
           while (this.table.isHeader(0, i)) {
             i++;
           }
-          let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-          range.start.row = row
-          range.end.row = row
+          const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+          range.start.row = row;
+          range.end.row = row;
           this.table.arrangeCustomCellStyle(
             {
               range
@@ -329,9 +307,9 @@ export class SearchComponent {
         while (this.table.isHeader(0, i)) {
           i++;
         }
-        let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
-        range.start.row = row
-        range.end.row = row
+        const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+        range.start.row = row;
+        range.end.row = row;
         this.table.arrangeCustomCellStyle(
           {
             range
@@ -339,9 +317,7 @@ export class SearchComponent {
           '__search_component_focuse'
         );
       }
-
     } else {
-
       if (this.currentIndex !== -1) {
         const { col, row, range } = this.queryResult[this.currentIndex];
 
@@ -390,8 +366,6 @@ export class SearchComponent {
       this.jumpToCell({ col, row });
     }
 
-
-
     return {
       index: this.currentIndex,
       results: this.queryResult
@@ -415,13 +389,10 @@ export class SearchComponent {
           while (this.table.isHeader(0, i)) {
             i++;
           }
-          let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+          const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
           range.start.row = row;
           range.end.row = row;
-          this.table.arrangeCustomCellStyle(
-            { range },
-            '__search_component_highlight'
-          );
+          this.table.arrangeCustomCellStyle({ range }, '__search_component_highlight');
         }
       }
 
@@ -440,29 +411,19 @@ export class SearchComponent {
         while (this.table.isHeader(0, i)) {
           i++;
         }
-        let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+        const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.table.arrangeCustomCellStyle(
-          { range },
-          '__search_component_focuse'
-        );
+        this.table.arrangeCustomCellStyle({ range }, '__search_component_focuse');
       }
-
     } else {
       // 普通表格处理
       if (this.currentIndex !== -1) {
         const { col, row, range } = this.queryResult[this.currentIndex];
         if (range) {
-          this.table.arrangeCustomCellStyle(
-            { range },
-            '__search_component_highlight'
-          );
+          this.table.arrangeCustomCellStyle({ range }, '__search_component_highlight');
         } else {
-          this.table.arrangeCustomCellStyle(
-            { col, row },
-            '__search_component_highlight'
-          );
+          this.table.arrangeCustomCellStyle({ col, row }, '__search_component_highlight');
         }
       }
 
@@ -473,15 +434,9 @@ export class SearchComponent {
 
       const { col, row, range } = this.queryResult[this.currentIndex];
       if (range) {
-        this.table.arrangeCustomCellStyle(
-          { range },
-          '__search_component_focuse'
-        );
+        this.table.arrangeCustomCellStyle({ range }, '__search_component_focuse');
       } else {
-        this.table.arrangeCustomCellStyle(
-          { col, row },
-          '__search_component_focuse'
-        );
+        this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
       }
 
       this.jumpToCell({ col, row });
@@ -493,43 +448,32 @@ export class SearchComponent {
     };
   }
 
-
-  jumpToCell(params: { col?: number; row?: number, IndexNumber?: number[] }) {
-
+  jumpToCell(params: { col?: number; row?: number; IndexNumber?: number[] }) {
     if (this.isTree) {
-      const { IndexNumber } = params
-      let indexNumbers = [...IndexNumber]
+      const { IndexNumber } = params;
+      const indexNumbers = [...IndexNumber];
 
-      let tmp = [...indexNumbers]
-      let tmpNumber = 0
+      const tmp = [...indexNumbers];
+      let tmpNumber = 0;
       let i = 0;
 
       while (tmpNumber < tmp.length - 1) {
-        tmpNumber++
-        let indexNumber = indexNumbers.slice(0, tmpNumber)
+        tmpNumber++;
+        const indexNumber = indexNumbers.slice(0, tmpNumber);
 
         // 如果是表头就往下偏移
         while (this.table.isHeader(0, i)) {
           i++;
         }
-        let row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
+        const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
 
-        const hierarchyState = this.table.getHierarchyState(
-          this.treeIndex,
-          row
-        );
+        const hierarchyState = this.table.getHierarchyState(this.treeIndex, row);
 
         if (hierarchyState !== 'expand') {
-
-          this.table.toggleHierarchyState(
-            this.treeIndex,
-            row
-          );
+          this.table.toggleHierarchyState(this.treeIndex, row);
         }
       }
-      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, this.scrollOption)
-
-
+      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, this.scrollOption);
     } else {
       const { col, row } = params;
       // if focus cell out of screen, jump to cell
@@ -539,8 +483,6 @@ export class SearchComponent {
         this.table.scrollToCell({ col, row });
       }
     }
-
-
   }
   getBodyRowIndexByRecordIndex(index: number | number[]): number {
     if (Array.isArray(index) && index.length === 1) {
