@@ -46,6 +46,9 @@
 }
 /* sheet列表项样式 */
 .vtable-sheet-menu-item {
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
   cursor: pointer;
   text-align: center;
   border-radius: 4px;
@@ -65,6 +68,13 @@
 }
 .vtable-sheet-menu-item.active {
   color: #1a73e8;
+}
+
+.vtable-sheet-menu-item-title {
+  flex: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Sheet标签容器 */
@@ -293,4 +303,23 @@
 .vtable-sheet-footer-right {
   display: flex;
   align-items: center;
+}
+
+/* 删除工作表按钮 */
+.vtable-sheet-menu-delete-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  color: #666;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  user-select: none;
+}
+.vtable-sheet-menu-delete-button:hover {
+  color: #000000;
+  background-color: #eaeaea;
 }

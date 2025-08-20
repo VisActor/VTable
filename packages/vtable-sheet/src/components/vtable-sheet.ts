@@ -57,7 +57,7 @@ export default class VTableSheet {
 
   private isEnterKeyPressed = false;
 
-  // 新增：拖拽管理器实例
+  // tab拖拽管理器
   private dragManager: SheetTabDragManager;
 
   /**
@@ -642,11 +642,29 @@ export default class VTableSheet {
     menuContainer.innerHTML = '';
     const sheets = this.sheetManager.getAllSheets();
     sheets.forEach(sheet => {
+      // li
       const li = document.createElement('li');
       li.className = 'vtable-sheet-menu-item';
       li.dataset.key = sheet.sheetKey;
-      li.textContent = sheet.sheetTitle;
+      // title
+      const title = document.createElement('span');
+      title.className = 'vtable-sheet-menu-item-title';
+      title.innerText = sheet.sheetTitle;
+      li.appendChild(title);
+      // delete button
+      const div = document.createElement('div');
+      div.className = 'vtable-sheet-menu-delete-button';
+      div.innerHTML =
+        '<svg class="x-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>';
+      div.addEventListener('click', e => {
+        e.stopPropagation();
+        this.removeSheet(sheet.sheetKey);
+      });
       li.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
+      li.appendChild(div);
       menuContainer.appendChild(li as any);
     });
     this.activeSheetMenuItem();
@@ -776,6 +794,30 @@ export default class VTableSheet {
     }
 
     this.updateFormulaBar();
+  }
+  /**
+   * 删除sheet
+   * @param sheetKey 工作表key
+   */
+  private removeSheet(sheetKey: string): void {
+    if (this.sheetManager.getSheetCount() <= 1) {
+      showSnackbar('至少保留一个工作表', 1300);
+      return;
+    }
+    // 删除实例对应的dom元素
+    const instance = this.sheetInstances.get(sheetKey);
+    if (instance) {
+      instance.getElement().remove();
+      this.sheetInstances.delete(sheetKey);
+    }
+    // 删除sheet定义
+    const newActiveSheetKey = this.sheetManager.removeSheet(sheetKey);
+    // 激活新的sheet(如果有)
+    if (newActiveSheetKey) {
+      this.activateSheet(newActiveSheetKey);
+    }
+    this.updateSheetTabs();
+    this.updateSheetMenu();
   }
 
   /**
