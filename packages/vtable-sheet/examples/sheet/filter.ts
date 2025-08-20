@@ -44,7 +44,7 @@ export function createTable() {
       {
         sheetKey: 'number-test',
         sheetTitle: '数值筛选',
-        filter: true,
+        filter: { filterModes: ['byCondition'] },
         columns: [
           { title: '产品名称', sort: true, width: 120 },
           { title: '价格', sort: true, width: 80 },

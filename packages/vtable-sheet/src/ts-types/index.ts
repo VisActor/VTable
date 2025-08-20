@@ -10,6 +10,8 @@ export interface IFilterConfig {
   filterIcon?: VTableTypes.ColumnIconOption;
   /** 筛选激活状态图标配置 */
   filteringIcon?: VTableTypes.ColumnIconOption;
+  /** 指定筛选器支持的筛选模式（按值、按条件、或两者） */
+  filterModes?: ('byValue' | 'byCondition')[];
 }
 
 /** 扩展的列定义，添加筛选相关配置 */
