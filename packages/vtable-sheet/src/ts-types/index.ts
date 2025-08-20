@@ -64,7 +64,7 @@ export interface IVTableSheetOptions {
   /** 是否显示sheet切换栏 */
   showSheetTab?: boolean;
   /** 插件 */
-  pluginModules?: {
+  VTablePluginModules?: {
     module: any;
     moduleOptions?: any;
   }[];

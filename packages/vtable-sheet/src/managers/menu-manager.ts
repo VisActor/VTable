@@ -52,10 +52,12 @@ export class MenuManager {
         };
       }
       li.addEventListener('click', () => {
+        if (item.onClick) {
+          item.onClick();
+          return;
+        }
         if (item.menuKey) {
           this.handleMenuClick(item.menuKey);
-        } else {
-          item.onClick?.();
         }
       });
       menuItems.appendChild(li);

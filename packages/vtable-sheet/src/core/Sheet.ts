@@ -555,22 +555,6 @@ export class Sheet extends EventTarget implements ISheetAPI {
   }
 
   /**
-   * 从CSV导入数据
-   * @param csv CSV数据
-   */
-  importFromCSV(csv: string): void {
-    // TODO: CSV导入实现
-  }
-
-  /**
-   * 导出数据到CSV
-   */
-  exportToCSV(): string {
-    // TODO: CSV导出实现
-    return '';
-  }
-
-  /**
    * 将第一行设置为表头
    */
   setFirstRowAsHeader(): void {

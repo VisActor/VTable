@@ -49,7 +49,6 @@ export interface IToolbarItem {
 }
 
 export enum MenuKey {
-  EXPORT = 'export',
   /** 需要插件支持，请在plugins中配置 ExcelImportPlugin */
   IMPORT = 'import',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */

@@ -40,8 +40,8 @@ export function getTablePlugins(
     excelEditCellKeyboardPlugin,
     filterPlugin
   ];
-  if (options?.pluginModules) {
-    options.pluginModules.forEach(
+  if (options?.VTablePluginModules) {
+    options.VTablePluginModules.forEach(
       (module: { module: new (options: any) => VTable.plugins.IVTablePlugin; moduleOptions: any }) => {
         if (typeof module.module === 'function') {
           // 检查是否为构造函数

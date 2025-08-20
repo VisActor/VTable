@@ -694,7 +694,7 @@ export function createTable() {
         }
       })
     },
-    pluginModules: [
+    VTablePluginModules: [
       {
         module: VTablePlugins.ExcelImportPlugin,
         moduleOptions: {
