@@ -805,12 +805,11 @@ export default class VTableSheet {
       return;
     }
     // 删除实例对应的dom元素
-    this.sheetInstances.forEach(instance => {
-      if (instance.getKey() === sheetKey) {
-        instance.getElement().remove();
-        this.sheetInstances.delete(sheetKey);
-      }
-    });
+    const instance = this.sheetInstances.get(sheetKey);
+    if (instance) {
+      instance.getElement().remove();
+      this.sheetInstances.delete(sheetKey);
+    }
     // 删除sheet定义
     const newActiveSheetKey = this.sheetManager.removeSheet(sheetKey);
     // 激活新的sheet(如果有)
