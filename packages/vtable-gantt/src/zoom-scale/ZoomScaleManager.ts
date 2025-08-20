@@ -255,25 +255,4 @@ export class ZoomScaleManager {
 
     return closestIndex;
   }
-
-  // 公共 API
-  getCurrentLevel(): number {
-    return this.currentLevelIndex;
-  }
-
-  getLevelCount(): number {
-    return this.config.levels.length;
-  }
-
-  getLevelScales(index: number): ITimelineScale[] | null {
-    return this.config.levels[index] ? [...this.config.levels[index]] : null;
-  }
-
-  getConfig(): IZoomScale {
-    return { ...this.config };
-  }
-
-  getLevelThresholds(): ILevelThreshold[] {
-    return [...this.levelThresholds];
-  }
 }
