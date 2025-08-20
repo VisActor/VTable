@@ -68,7 +68,7 @@ import { isValid } from '@visactor/vutils';
 import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
-import { toBoxArray } from './tools/util';
+import { toBoxArray } from '@visactor/vtable';
 import { ZoomScaleManager } from './zoom-scale';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
@@ -167,10 +167,10 @@ export class Gantt extends EventTarget {
     startDateField: string;
     endDateField: string;
     progressField: string;
-    minDate?: Date;
-    maxDate?: Date;
-    _minDateTime?: number;
-    _maxDateTime?: number;
+    minDate: Date;
+    maxDate: Date;
+    _minDateTime: number;
+    _maxDateTime: number;
     markLine: IMarkLine[];
     scrollToMarkLineDate: Date;
     horizontalSplitLine: ILineStyle;
@@ -221,8 +221,7 @@ export class Gantt extends EventTarget {
 
   /**
    * 重新计算时间相关的尺寸参数
-   * 注意：当启用 zoomScale 时，此方法不再用于动态调整 unit/step，
-   * 只用于根据当前 timePerPixel 重新计算 timelineColWidth
+   * 用于根据当前 timePerPixel 重新计算 timelineColWidth
    */
   recalculateTimeScale(): void {
     // 获取当前的主时间刻度
@@ -276,19 +275,6 @@ export class Gantt extends EventTarget {
       this._updateSize();
       this.scenegraph.refreshAll();
     }
-
-    // 调试信息（仅在非 zoomScale 模式下显示详细信息）
-    if (!this.zoomScaleManager) {
-      const msPerDay = 24 * 60 * 60 * 1000;
-      const pixelsPerDay = msPerDay / this.timePerPixel;
-      console.log('📊 传统缩放模式:', {
-        timePerPixel: this.timePerPixel.toFixed(0),
-        pixelsPerDay: pixelsPerDay.toFixed(1),
-        unit: primaryScale.unit,
-        step: primaryScale.step,
-        newTimelineColWidth: newTimelineColWidth.toFixed(1)
-      });
-    }
   }
 
   /**
@@ -306,7 +292,7 @@ export class Gantt extends EventTarget {
     const oldTimePerPixel = this.timePerPixel;
     const oldWidth = this.parsedOptions.timelineColWidth;
 
-    // 🎯 动态调整缩放步长，让缩放在不同级别下都保持平滑
+    // 动态调整缩放步长，让缩放在不同级别下都保持平滑
     const currentTimePerPixel = this.timePerPixel;
     let adjustedFactor = factor;
 
@@ -316,14 +302,13 @@ export class Gantt extends EventTarget {
     const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
 
     // 缩放因子调整：timePerPixel 越小，调整幅度越大
-    // 关键：在高放大级别下，放大和缩小都需要增强效果
     if (currentTimePerPixel < baseTimePerPixel) {
       // 高放大状态：放大和缩小都需要增强缩放效果，但不要过于激进
-      const enhancement = Math.pow(1.2, -zoomRatio); // 从1.5改为1.2，减缓增强强度
+      const enhancement = Math.pow(1.2, -zoomRatio);
       adjustedFactor = Math.pow(factor, enhancement);
     } else {
       // 正常/缩小状态：适当减缓缩放效果，避免跳跃过快
-      const dampening = Math.pow(0.9, zoomRatio); // 从0.8改为0.9，减少减缓程度
+      const dampening = Math.pow(0.9, zoomRatio);
       adjustedFactor = Math.pow(factor, dampening);
     }
 
@@ -333,7 +318,7 @@ export class Gantt extends EventTarget {
     // 应用限制
     this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
 
-    // 🔑 新增：检查是否需要切换级别
+    // 检查是否需要切换级别
     if (this.zoomScaleManager) {
       const targetLevel = this.zoomScaleManager.findOptimalLevel(this.timePerPixel);
       const currentLevel = this.zoomScaleManager.getCurrentLevel();
@@ -411,10 +396,9 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    // 🔑 优先初始化 ZoomScaleManager，让它接管 scales 设置
+    // 优先初始化 ZoomScaleManager，让它接管 scales 设置
     if (options.zoomScale?.enabled) {
       this.zoomScaleManager = new ZoomScaleManager(this, options.zoomScale);
-      // ZoomScaleManager 已经设置了初始 scales，现在需要排序
       this._sortScales();
     } else {
       // 只有未启用 zoomScale 时才使用原有的 scales
@@ -458,7 +442,6 @@ export class Gantt extends EventTarget {
     this._scrollToMarkLine();
     this.pluginManager = new PluginManager(this, options);
 
-    // 🎯 在所有组件初始化完成后，根据timePerPixel重新计算列宽
     this.recalculateTimeScale();
   }
 
@@ -1544,11 +1527,10 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    const dateObj = typeof date === 'string' ? new Date(date) : date;
-    return formatDate(dateObj, format);
+    return formatDate(date, format);
   }
 
-  // 🔑 新增：ZoomScale 公共 API
+  // ZoomScale API
   getCurrentZoomScaleLevel(): number {
     return this.zoomScaleManager?.getCurrentLevel() ?? -1;
   }

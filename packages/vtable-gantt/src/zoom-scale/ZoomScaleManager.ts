@@ -14,7 +14,7 @@ export class ZoomScaleManager {
 
   constructor(gantt: Gantt, config: IZoomScale) {
     this.gantt = gantt;
-    // 🔄 向后兼容处理
+    // 向后兼容处理
     const finalConfig = {
       enabled: true,
       enableMouseWheel: true,
@@ -23,22 +23,12 @@ export class ZoomScaleManager {
       ...config
     };
 
-    // 如果使用了旧的属性名，自动转换
-    if (config.minColumnWidth !== undefined && config.maxZoomInColumnWidth === undefined) {
-      finalConfig.maxZoomInColumnWidth = config.minColumnWidth;
-      console.warn('⚠️ minColumnWidth 已废弃，请使用 maxZoomInColumnWidth');
-    }
-    if (config.maxColumnWidth !== undefined && config.maxZoomOutColumnWidth === undefined) {
-      finalConfig.maxZoomOutColumnWidth = config.maxColumnWidth;
-      console.warn('⚠️ maxColumnWidth 已废弃，请使用 maxZoomOutColumnWidth');
-    }
-
     this.config = finalConfig;
 
     // 计算所有级别的阈值
     this.calculateLevelThresholds();
 
-    // 🔑 根据级别阈值自动设置 zoom 的 minTimePerPixel 和 maxTimePerPixel
+    // 根据级别阈值自动设置 zoom 的 minTimePerPixel 和 maxTimePerPixel
     this.updateZoomLimits();
 
     // 初始化：根据默认 timePerPixel 选择合适的初始级别
@@ -128,7 +118,7 @@ export class ZoomScaleManager {
   }
 
   /**
-   * 🔑 核心算法：根据当前 timePerPixel 找到最合适的级别
+   * 核心算法：根据当前 timePerPixel 找到最合适的级别
    */
   findOptimalLevel(timePerPixel: number): number {
     // 遍历所有级别，找到 timePerPixel 落在范围内的级别
@@ -162,10 +152,6 @@ export class ZoomScaleManager {
     }
 
     try {
-      const oldLevel = this.currentLevelIndex;
-
-      // 使用现有的 updateScales 方法进行切换
-      // 这会自动调用 _sortScales, updateOptionsWhenScaleChanged, _generateTimeLineDateMap 等
       this.gantt.updateScales([...levelScales]);
 
       this.currentLevelIndex = levelIndex;
