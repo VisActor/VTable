@@ -677,11 +677,23 @@ export function createTable() {
         showHeader: false
       }
     ] as TYPES.ISheetDefine[],
-    theme: TYPES.VTableThemes.ARCO.extends({
-      bodyStyle: {
-        color: 'gray'
-      }
-    }),
+    theme: {
+      rowSeriesNumberCellStyle: {
+        text: {
+          fill: 'blue'
+        }
+      },
+      colSeriesNumberCellStyle: {
+        text: {
+          fill: 'blue'
+        }
+      },
+      tableTheme: TYPES.VTableThemes.ARCO.extends({
+        bodyStyle: {
+          color: 'gray'
+        }
+      })
+    },
     pluginModules: [
       {
         module: VTablePlugins.ExcelImportPlugin,

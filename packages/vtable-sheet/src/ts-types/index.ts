@@ -2,6 +2,7 @@ import type { ColumnDefine } from '@visactor/vtable';
 import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
 import type { CellValue, IStyle, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
+import type { TableSeriesNumberOptions } from '@visactor/vtable-plugins';
 export { VTableThemes, VTableTypes };
 /** 筛选配置 */
 export interface IFilterConfig {
@@ -76,7 +77,19 @@ export interface IVTableSheetOptions {
     items?: MainMenuItem[];
   };
   /** 主题 */
-  theme?: VTableThemes.ITableThemeDefine;
+  theme?: {
+    rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
+    colSeriesNumberCellStyle?: TableSeriesNumberOptions['colSeriesNumberCellStyle'];
+    /** TODO 表格以外部分的主题 */
+    menuStyle?: {
+      fontFamily?: string;
+      fontSize?: number;
+      color?: string;
+      padding?: number[];
+      bgColor?: string;
+    };
+    tableTheme: VTableThemes.ITableThemeDefine;
+  };
   /** 默认行高 */
   defaultRowHeight?: number;
   /** 默认列宽 */

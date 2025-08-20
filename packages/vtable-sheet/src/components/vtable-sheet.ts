@@ -853,7 +853,7 @@ export default class VTableSheet {
       },
       editCellTrigger: ['api', 'keydown'],
       customMergeCell: sheetDefine.cellMerge,
-      theme: this.options.theme
+      theme: this.options.theme?.tableTheme
     } as any);
 
     // 注册事件

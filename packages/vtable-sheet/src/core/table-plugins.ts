@@ -22,7 +22,9 @@ export function getTablePlugins(
     rowCount: 100,
     colCount: 100,
     rowSeriesNumberWidth: 30,
-    colSeriesNumberHeight: 30
+    colSeriesNumberHeight: 30,
+    rowSeriesNumberCellStyle: options?.theme?.rowSeriesNumberCellStyle,
+    colSeriesNumberCellStyle: options?.theme?.colSeriesNumberCellStyle
   });
   const highlightHeaderWhenSelectCellPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin({
     colHighlight: true,
