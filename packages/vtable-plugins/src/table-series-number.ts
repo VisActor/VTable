@@ -87,7 +87,6 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       //   options.columns.length = this.pluginOptions.colCount;
       // }
     } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED || runTime === VTable.TABLE_EVENT_TYPE.UPDATED) {
-      console.log('TableSeriesNumber initialized');
       this.table = args[2];
       this.table.customConfig = {
         cancelSelectCellHook: (e: any) => {
@@ -109,7 +108,6 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       // });
 
       this.table.setTranslate(colSeriesNumberRowHeight, rowSeriesNumberColWidth);
-      const t0 = performance.now();
       this.seriesNumberComponent.setAttributes({
         rowCount: this.table.rowCount,
         colCount: this.table.colCount,
@@ -123,8 +121,6 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       newLayer.appendChild(this.seriesNumberComponent);
       newLayer.setAttributes({ pickable: false });
       this.componentLayoutLayer = newLayer;
-      const t1 = performance.now();
-      console.log('append component', t1 - t0);
 
       // if (this.pluginOptions.syncRowHeightFromTable) {
       this.syncRowHeightToComponent();
@@ -136,188 +132,242 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       this.listenTableEvents();
     }
   }
-  listenTableEvents() {
-    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => {
-      //节流处理，避免滚动时频繁触发 10ms一次
-      if (this.scrollTimer) {
-        clearTimeout(this.scrollTimer);
-        this.scrollTimer = null;
-      }
-      this.scrollTimer = setTimeout(() => {
-        console.log('syncScrollToComponent');
-        this.scrollTimer = null;
-        this.syncScrollToComponent();
-      }, 5);
-    });
-    this.table.on(VTable.TABLE_EVENT_TYPE.AFTER_SORT, () => {
+  private handleScroll = () => {
+    //节流处理，避免滚动时频繁触发
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+      this.scrollTimer = null;
+    }
+    this.scrollTimer = setTimeout(() => {
+      this.scrollTimer = null;
       this.syncScrollToComponent();
-    });
+    }, 10); // 优化: 由5ms改为10ms，减少频繁触发
+  };
 
-    this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, e => {
-      //todo 对应更新seriesNumberComponent的选中状态
-      // console.log('select_cell', e);
-      this.seriesNumberComponent.removeAllSelectedIndexs();
-      const selectRange = this.table.stateManager.select.ranges;
+  private handleAfterSort = () => {
+    this.syncScrollToComponent();
+  };
 
-      const rowSelectedIndexs = [];
-      const colSelectedIndexs = [];
-      for (const range of selectRange) {
-        const { row: rowStart, col: colStart } = range.start;
-        const { row: rowEnd, col: colEnd } = range.end;
-        rowSelectedIndexs.push({ startIndex: Math.min(rowStart, rowEnd), endIndex: Math.max(rowStart, rowEnd) });
-        colSelectedIndexs.push({ startIndex: Math.min(colStart, colEnd), endIndex: Math.max(colStart, colEnd) });
-      }
-      this.seriesNumberComponent.addRowSelectedRanges(rowSelectedIndexs);
-      this.seriesNumberComponent.addColSelectedRanges(colSelectedIndexs);
-      if (this.table.stateManager.select.isSelectAll) {
-        this.seriesNumberComponent.addCornderSelected();
-      }
+  private handleSelectedChanged = (e: any) => {
+    this.seriesNumberComponent.removeAllSelectedIndexs();
+    const selectRange = this.table.stateManager.select.ranges;
 
-      this.seriesNumberComponent.renderSelectedIndexsState();
-    });
-    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END, e => {
-      this.seriesNumberComponent.setAttribute('hover', true);
-    });
-    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, e => {
-      this.seriesNumberComponent.setAttribute('hover', true);
-    });
+    const rowSelectedIndexs = [];
+    const colSelectedIndexs = [];
+    for (const range of selectRange) {
+      const { row: rowStart, col: colStart } = range.start;
+      const { row: rowEnd, col: colEnd } = range.end;
+      rowSelectedIndexs.push({ startIndex: Math.min(rowStart, rowEnd), endIndex: Math.max(rowStart, rowEnd) });
+      colSelectedIndexs.push({ startIndex: Math.min(colStart, colEnd), endIndex: Math.max(colStart, colEnd) });
+    }
+    this.seriesNumberComponent.addRowSelectedRanges(rowSelectedIndexs);
+    this.seriesNumberComponent.addColSelectedRanges(colSelectedIndexs);
+    if (this.table.stateManager.select.isSelectAll) {
+      this.seriesNumberComponent.addCornderSelected();
+    }
+
+    this.seriesNumberComponent.renderSelectedIndexsState();
+  };
+
+  private handleResizeColumnEnd = (e: any) => {
+    this.seriesNumberComponent.setAttribute('hover', true);
+  };
+
+  private handleResizeRowEnd = (e: any) => {
+    this.seriesNumberComponent.setAttribute('hover', true);
+  };
+
+  listenTableEvents() {
+    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
+    this.table.on(VTable.TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
+    this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
   }
+
+  private handleSeriesNumberCellRightClick = (e: any) => {
+    const { seriesNumberCell, event, isDragSelect } = e.detail;
+    const isRow = seriesNumberCell.name.includes('row');
+    const isCol = seriesNumberCell.name.includes('col');
+    if (isRow) {
+      const rowIndex = seriesNumberCell.id;
+      //判断rowIndex整行是否被选中
+      const isRowSelected = this.table.stateManager.select.ranges.some(range => {
+        return (
+          range.start.row <= rowIndex &&
+          rowIndex <= range.end.row &&
+          range.start.col === 0 &&
+          range.end.col === this.table.colCount - 1
+        );
+      });
+      //当前右键的行号 没有整行被选中，则进行选中
+      if (!isRowSelected) {
+        this.table.selectCells([
+          { start: { row: rowIndex, col: 0 }, end: { row: rowIndex, col: this.table.colCount - 1 } }
+        ]);
+      }
+      this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+        plugin: this,
+        event: event,
+        pluginEventInfo: {
+          eventType: 'rightclick',
+          rowIndex: rowIndex
+        }
+      });
+    } else if (isCol) {
+      const colIndex = seriesNumberCell.id;
+      //判断colIndex整列是否被选中
+      const isColSelected = this.table.stateManager.select.ranges.some(range => {
+        return (
+          range.start.col <= colIndex &&
+          colIndex <= range.end.col &&
+          range.start.row === 0 &&
+          range.end.row === this.table.rowCount - 1
+        );
+      });
+      //当前右键的列号 没有整列被选中，则进行选中
+      if (!isColSelected) {
+        this.table.selectCells([
+          { start: { row: 0, col: colIndex }, end: { row: this.table.rowCount - 1, col: colIndex } }
+        ]);
+      }
+      this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+        plugin: this,
+        event: event,
+        pluginEventInfo: {
+          eventType: 'rightclick',
+          colIndex: colIndex
+        }
+      });
+    } else {
+      //直接全选
+      this.table.selectCells([
+        { start: { row: 0, col: 0 }, end: { row: this.table.rowCount - 1, col: this.table.colCount - 1 } }
+      ]);
+      this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+        plugin: this,
+        event: event,
+        pluginEventInfo: {
+          eventType: 'rightclick',
+          isCorner: true
+        }
+      });
+    }
+  };
+
+  private handleSeriesNumberCellHover = (e: any) => {
+    this.table.scenegraph.renderSceneGraph();
+  };
+
+  private handleSeriesNumberCellUnHover = (e: any) => {
+    this.table.scenegraph.renderSceneGraph();
+  };
+
+  private handleSeriesNumberCellClick = (e: any) => {
+    const { seriesNumberCell, event, isDragSelect } = e.detail;
+    const isCtrl = event.nativeEvent.ctrlKey || event.nativeEvent.metaKey;
+    const isShift = event.nativeEvent.shiftKey;
+    const isRow = seriesNumberCell.name.includes('row');
+    const isCol = seriesNumberCell.name.includes('col');
+    if (isRow) {
+      this.table.stateManager.setSelectInline('row');
+      const rowIndex = seriesNumberCell.id;
+
+      if (isDragSelect) {
+        this.table.dragSelectRow(rowIndex, isCtrl);
+      } else {
+        this.table.startDragSelectRow(rowIndex, isCtrl, isShift);
+      }
+    } else if (isCol) {
+      this.table.stateManager.setSelectInline('col');
+      const colIndex = seriesNumberCell.id;
+      if (isDragSelect) {
+        this.table.dragSelectCol(colIndex, isCtrl);
+      } else {
+        this.table.startDragSelectCol(colIndex, isCtrl, isShift);
+      }
+    } else {
+      this.table.eventManager.deelTableSelectAll();
+    }
+  };
+
+  private handleSeriesNumberCellClickUp = (e: any) => {
+    this.table.stateManager.setSelectInline(false);
+    this.table.endDragSelect();
+  };
+
+  private handleRowSeriesNumberWidthChange = (e: any) => {
+    const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
+    const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
+    this.table.setTranslate(rowSeriesNumberColWidth, colSeriesNumberRowHeight);
+  };
+
+  private handleResizeColWidthStart = (e: any) => {
+    this.seriesNumberComponent.setAttribute('hover', false);
+    const { colIndex, event } = e.detail;
+    this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
+    this.table.stateManager.startResizeCol(colIndex, event.viewport.x, event.viewport.y);
+  };
+
+  private handleResizeRowHeightStart = (e: any) => {
+    this.seriesNumberComponent.setAttribute('hover', false);
+    const { rowIndex, event } = e.detail;
+    this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
+    this.table.stateManager.startResizeRow(rowIndex, event.viewport.x, event.viewport.y);
+  };
 
   listenComponentEvents() {
-    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellRightClick, e => {
-      console.log(SeriesNumberEvent.seriesNumberCellRightClick, e);
-      const { seriesNumberCell, event, isDragSelect } = e.detail;
-      const isRow = seriesNumberCell.name.includes('row');
-      const isCol = seriesNumberCell.name.includes('col');
-      if (isRow) {
-        const rowIndex = seriesNumberCell.id;
-        //判断rowIndex整行是否被选中，遍历table.stateManager.select.ranges，如果存在一个range的start.row <= rowIndex <= range.end.row（行中有单元格被选中），且range.start.col ===0 &&range.end.col === table.colCount-1（整行单元格被选中）
-        const isRowSelected = this.table.stateManager.select.ranges.some(range => {
-          return (
-            range.start.row <= rowIndex &&
-            rowIndex <= range.end.row &&
-            range.start.col === 0 &&
-            range.end.col === this.table.colCount - 1
-          );
-        });
-        //当前右键的行号 没有整行被选中，则进行选中
-        if (!isRowSelected) {
-          this.table.selectCells([
-            { start: { row: rowIndex, col: 0 }, end: { row: rowIndex, col: this.table.colCount - 1 } }
-          ]);
-        }
-        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
-          plugin: this,
-          event: event,
-          pluginEventInfo: {
-            eventType: 'rightclick',
-            rowIndex: rowIndex
-          }
-        });
-      } else if (isCol) {
-        const colIndex = seriesNumberCell.id;
-        //判断colIndex整列是否被选中，遍历table.stateManager.select.ranges，如果存在一个range的start.col <= colIndex <= range.end.col（列中有单元格被选中），且range.start.row ===0 &&range.end.row === table.rowCount-1（整列单元格被选中）
-        const isColSelected = this.table.stateManager.select.ranges.some(range => {
-          return (
-            range.start.col <= colIndex &&
-            colIndex <= range.end.col &&
-            range.start.row === 0 &&
-            range.end.row === this.table.rowCount - 1
-          );
-        });
-        //当前右键的列号 没有整列被选中，则进行选中
-        if (!isColSelected) {
-          this.table.selectCells([
-            { start: { row: 0, col: colIndex }, end: { row: this.table.rowCount - 1, col: colIndex } }
-          ]);
-        }
-        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
-          plugin: this,
-          event: event,
-          pluginEventInfo: {
-            eventType: 'rightclick',
-            colIndex: colIndex
-          }
-        });
-      } else {
-        //直接全选
-        this.table.selectCells([
-          { start: { row: 0, col: 0 }, end: { row: this.table.rowCount - 1, col: this.table.colCount - 1 } }
-        ]);
-        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
-          plugin: this,
-          event: event,
-          pluginEventInfo: {
-            eventType: 'rightclick',
-            isCorner: true
-          }
-        });
-      }
-    });
-    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellHover, e => {
-      // console.log(SeriesNumberEvent.seriesNumberCellHover, e);
-      this.table.scenegraph.renderSceneGraph();
-    });
-    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellUnHover, e => {
-      // console.log(SeriesNumberEvent.seriesNumberCellUnHover, e);
-      this.table.scenegraph.renderSceneGraph();
-    });
-    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClick, e => {
-      const { seriesNumberCell, event, isDragSelect } = e.detail;
-      const isCtrl = event.nativeEvent.ctrlKey || event.nativeEvent.metaKey;
-      const isShift = event.nativeEvent.shiftKey;
-      // console.log(SeriesNumberEvent.seriesNumberCellClick, event, seriesNumberCell);
-      const isRow = seriesNumberCell.name.includes('row');
-      const isCol = seriesNumberCell.name.includes('col');
-      if (isRow) {
-        this.table.stateManager.setSelectInline('row');
-        const rowIndex = seriesNumberCell.id;
-
-        if (isDragSelect) {
-          this.table.dragSelectRow(rowIndex, isCtrl);
-        } else {
-          this.table.startDragSelectRow(rowIndex, isCtrl, isShift);
-        }
-      } else if (isCol) {
-        this.table.stateManager.setSelectInline('col');
-        const colIndex = seriesNumberCell.id;
-        if (isDragSelect) {
-          this.table.dragSelectCol(colIndex, isCtrl);
-        } else {
-          this.table.startDragSelectCol(colIndex, isCtrl, isShift);
-        }
-      } else {
-        this.table.eventManager.deelTableSelectAll();
-      }
-    });
-    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClickUp, e => {
-      this.table.stateManager.setSelectInline(false);
-      this.table.endDragSelect();
-    });
-    this.seriesNumberComponent.on(SeriesNumberEvent.rowSeriesNumberWidthChange, e => {
-      // console.log(SeriesNumberEvent.rowSeriesNumberWidthChange, e);
-      const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
-      const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
-      this.table.setTranslate(rowSeriesNumberColWidth, colSeriesNumberRowHeight);
-    });
-    this.seriesNumberComponent.on(SeriesNumberEvent.resizeColWidthStart, e => {
-      this.seriesNumberComponent.setAttribute('hover', false);
-      console.log('resizeColWidthStart', e);
-      const { colIndex, event } = e.detail;
-      this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
-      this.table.stateManager.startResizeCol(colIndex, event.viewport.x, event.viewport.y);
-    });
-
-    this.seriesNumberComponent.on(SeriesNumberEvent.resizeRowHeightStart, e => {
-      this.seriesNumberComponent.setAttribute('hover', false);
-      console.log('resizeRowHeightStart', e);
-      const { rowIndex, event } = e.detail;
-      this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
-      this.table.stateManager.startResizeRow(rowIndex, event.viewport.x, event.viewport.y);
-    });
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellRightClick, this.handleSeriesNumberCellRightClick);
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellHover, this.handleSeriesNumberCellHover);
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellUnHover, this.handleSeriesNumberCellUnHover);
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClick, this.handleSeriesNumberCellClick);
+    this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellClickUp, this.handleSeriesNumberCellClickUp);
+    this.seriesNumberComponent.on(SeriesNumberEvent.rowSeriesNumberWidthChange, this.handleRowSeriesNumberWidthChange);
+    this.seriesNumberComponent.on(SeriesNumberEvent.resizeColWidthStart, this.handleResizeColWidthStart);
+    this.seriesNumberComponent.on(SeriesNumberEvent.resizeRowHeightStart, this.handleResizeRowHeightStart);
   }
   release() {
-    console.log('TableSeriesNumber release');
+    // 清除组件资源
+    if (this.componentLayoutLayer) {
+      this.table.scenegraph.stage.removeLayer(this.componentLayoutLayer.id);
+      this.componentLayoutLayer = null;
+    }
+
+    // 清除定时器
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+      this.scrollTimer = null;
+    }
+
+    // 移除表格事件监听器
+    if (this.table) {
+      this.table.off(VTable.TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
+      this.table.off(VTable.TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
+      this.table.off(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
+      this.table.off(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
+      this.table.off(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
+    }
+    // 移除组件事件监听器
+    if (this.seriesNumberComponent) {
+      this.seriesNumberComponent.off(
+        SeriesNumberEvent.seriesNumberCellRightClick,
+        this.handleSeriesNumberCellRightClick
+      );
+      this.seriesNumberComponent.off(SeriesNumberEvent.seriesNumberCellHover, this.handleSeriesNumberCellHover);
+      this.seriesNumberComponent.off(SeriesNumberEvent.seriesNumberCellUnHover, this.handleSeriesNumberCellUnHover);
+      this.seriesNumberComponent.off(SeriesNumberEvent.seriesNumberCellClick, this.handleSeriesNumberCellClick);
+      this.seriesNumberComponent.off(SeriesNumberEvent.seriesNumberCellClickUp, this.handleSeriesNumberCellClickUp);
+      this.seriesNumberComponent.off(
+        SeriesNumberEvent.rowSeriesNumberWidthChange,
+        this.handleRowSeriesNumberWidthChange
+      );
+      this.seriesNumberComponent.off(SeriesNumberEvent.resizeColWidthStart, this.handleResizeColWidthStart);
+      this.seriesNumberComponent.off(SeriesNumberEvent.resizeRowHeightStart, this.handleResizeRowHeightStart);
+
+      // 释放组件资源
+      this.seriesNumberComponent.release?.();
+      this.seriesNumberComponent = null;
+    }
   }
 
   syncRowHeightToComponent() {
@@ -326,7 +376,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     const adjustStartRowIndex = Math.max(rowStart - 2, this.table.frozenRowCount);
     const adjustEndRowIndex = Math.min(rowEnd + 2, this.table.rowCount - 1);
     //判断seriesNumberComponent的冻结行数是否变化
-    if (this.table.frozenRowCount !== this.seriesNumberComponent.getAttributes.frozenRowCount) {
+    if (this.table.frozenRowCount !== this.seriesNumberComponent.getAttributes().frozenRowCount) {
       this.seriesNumberComponent.setAttributes({ frozenRowCount: this.table.frozenRowCount });
     }
     // 调用行序号重建接口
@@ -352,7 +402,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
     //  console.log('syncColWidthToComponent adjust', adjustStartColIndex, adjustEndColIndex);
 
     //判断seriesNumberComponent的冻结列数是否变化
-    if (this.table.frozenColCount !== this.seriesNumberComponent.getAttributes.frozenColCount) {
+    if (this.table.frozenColCount !== this.seriesNumberComponent.getAttributes().frozenColCount) {
       this.seriesNumberComponent.setAttributes({ frozenColCount: this.table.frozenColCount });
     }
     // 调用列序号重建接口
