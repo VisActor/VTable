@@ -906,6 +906,13 @@
             "zh": "表格专用序号插件",
             "en": "table series number plugin"
           }
+        },
+        {
+          "path": "context-menu",
+          "title": {
+            "zh": "右键菜单插件",
+            "en": "context menu plugin"
+          }
         }
       ]
     },

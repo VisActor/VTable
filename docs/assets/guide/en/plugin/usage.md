@@ -53,6 +53,8 @@ If you encounter issues with plugin usage, please provide feedback promptly.
 | `RotateTablePlugin` | Table rotation plugin | `ListTable`,`PivotTable` |
 | `TableExportPlugin` | Table export plugin | `ListTable`,`PivotTable` |
 | `ExcelImportPlugin` | Import excel, csv, json, and html files into the table | `ListTable` |
+| `ContextMenuPlugin` | Right-click menu plugin | `ListTable` |
+| `TableSeriesNumberPlugin` | Table series number plugin | `ListTable` |
 
 <br>
 

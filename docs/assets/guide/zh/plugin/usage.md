@@ -54,6 +54,8 @@ const option: VTable.ListTableConstructorOptions = {
 | `RotateTablePlugin` | 表格旋转插件 | `ListTable`,`PivotTable` |
 | `TableExportPlugin` | 表格导出插件 | `ListTable`,`PivotTable` |
 | `ExcelImportPlugin` | 导入execl，csv，json，html到表格中 | `ListTable` |
+| `ContextMenuPlugin` | 右键菜单插件 | `ListTable` |
+| `TableSeriesNumberPlugin` | 表格序号插件 | `ListTable` |
 
 <br>
 
