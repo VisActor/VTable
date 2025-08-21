@@ -100,6 +100,7 @@ export class SearchComponent {
 
   search(str: string) {
     this.clear();
+    console.log(2)
     this.queryStr = str;
 
     if (!str) {
@@ -118,7 +119,7 @@ export class SearchComponent {
       const walk = (nodes: any[], path: number[]) => {
         nodes.forEach((item: any, idx: number) => {
           const currentPath = [...path, idx]; // 当前节点的完整路径
-
+          console.log(currentPath)
           // 保持你的 treeQueryMethod 调用方式（this 上下文来自定义环境）
           if (this.treeQueryMethod(this.queryStr, item, this.fieldsToSearch, { table: this.table })) {
             this.queryResult.push({
@@ -138,8 +139,11 @@ export class SearchComponent {
       };
 
       walk(this.table.records, []);
+      console.log(this.queryResult)
+      if (this.queryResult.length > 0) {
+        this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
 
-      this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
+      }
 
 
       if (this.callback) {
@@ -151,7 +155,7 @@ export class SearchComponent {
           this.table
         );
       }
-      this.updateCellStyle();
+      this.updateCellStyle(true);
 
       // if (this.autoJump) {
       //   return this.next();
@@ -199,7 +203,7 @@ export class SearchComponent {
           }
         }
       }
-      this.updateCellStyle();
+      this.updateCellStyle(true);
 
       if (this.callback) {
         this.callback(
@@ -228,6 +232,20 @@ export class SearchComponent {
   }
 
   updateCellStyle(highlight: boolean = true) {
+    console.log(highlight)
+    if (highlight == null) {
+      if (this.queryResult?.length) {
+        this.queryResult.forEach(({ range }) => {
+          if (range) {
+            this.table.arrangeCustomCellStyle(
+              { range },
+              '' // 或者 null，看API是否允许
+            );
+          }
+        });
+      }
+      return
+    }
     if (!this.queryResult) {
       return;
     }
