@@ -57,57 +57,60 @@ export function createTable() {
       title: '性别',
       width: 100
     },
-    {
-      field: 'avatar',
-      title: '头像',
-      width: 100,
-      cellType: 'image',
-      keepAspectRatio: true
-    },
+    // {
+    //   field: 'avatar',
+    //   title: '头像',
+    //   width: 100,
+    //   cellType: 'image',
+    //   keepAspectRatio: true
+    // },
     {
       field: 'salary',
       title: '薪资',
       width: 120,
       sort: true,
-      format: value => `￥${value.toLocaleString()}`
+      fieldFormat(record) {
+        return '￥' + record.salary
+      }
     },
     {
       field: 'sales',
       title: '销售额',
       width: 150,
       sort: true,
-      format: value => `￥${value.toLocaleString()}`
+      fieldFormat(record) {
+        return '￥' + record.sales
+      }
     },
     {
       field: 'department',
       title: '部门',
       width: 100
     },
-    {
-      field: 'favoriteColor',
-      title: '喜好',
-      width: 120,
-      format: value => value,
-      style: {
-        bgColor: (args: any) => args.value
-      }
-    },
+    // {
+    //   field: 'favoriteColor',
+    //   title: '喜好',
+    //   width: 120,
+    //   style: {
+    //     bgColor: (args: any) => args.value
+    //   }
+    // },
     {
       field: 'status',
       title: '状态',
       width: 120,
       style: {
         textAlign: 'center',
-        color: (args: any) => {
-          const { value } = args;
-          if (value === '在职') {
-            return '#7ed321';
-          }
-          if (value === '请假') {
-            return '#f5a623';
-          }
-          return '#ff5a5f'; // 离职
-        }
+        // color: (args: any) => {
+        //   const { value } = args;
+        //   if (value === '在职') {
+        //     return '#7ed321';
+        //   }
+        //   if (value === '请假') {
+        //     return '#f5a623';
+        //   }
+        //   return '#ff5a5f'; // 离职
+        // }
       }
     },
     {
