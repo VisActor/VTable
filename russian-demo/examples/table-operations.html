@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTable - Comprehensive Table Operations Examples</title>
+    <script src="https://unpkg.com/@visactor/vtable/dist/vtable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .example {
+            background: white;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .example-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .example-title {
+            font-size: 1.5rem;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .example-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .example-content {
+            padding: 1.5rem;
+        }
+
+        .table-container {
+            height: 400px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .control-button:hover {
+            background: #5a6fd8;
+        }
+
+        .control-button.secondary {
+            background: #6c757d;
+        }
+
+        .control-button.secondary:hover {
+            background: #545b62;
+        }
+
+        .control-input {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .control-select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .toggle-code {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .toggle-code:hover {
+            background: #218838;
+        }
+
+        .feature-highlight {
+            background: linear-gradient(45deg, #ffeaa7, #fab1a0);
+            border-left: 4px solid #e17055;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .navigation {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: #667eea;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        .footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🚀 Comprehensive Table Operations</h1>
+            <p>Master VTable's powerful sorting, filtering, grouping, and frozen column capabilities</p>
+        </div>
+    </div>
+
+    <nav class="navigation">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#frozen-columns" class="nav-link">Frozen Columns</a></li>
+                <li><a href="#advanced-sorting" class="nav-link">Advanced Sorting</a></li>
+                <li><a href="#search-filter" class="nav-link">Search & Filter</a></li>
+                <li><a href="#group-operations" class="nav-link">Group Operations</a></li>
+                <li><a href="#multi-features" class="nav-link">Combined Features</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Frozen Columns Example -->
+        <div id="frozen-columns" class="example">
+            <div class="example-header">
+                <h2 class="example-title">🔒 Frozen Columns & Rows</h2>
+                <p class="example-description">
+                    Keep important columns and rows visible while scrolling through large datasets. Perfect for maintaining context in wide tables.
+                </p>
+            </div>
+            <div class="example-content">
+                <div class="feature-highlight">
+                    <strong>✨ Features:</strong> Left frozen columns, right frozen columns, frozen header rows, frozen footer rows, and smooth scrolling behavior.
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Left Frozen Columns:</label>
+                        <select id="left-frozen-count" class="control-select" onchange="updateFrozenColumns()">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2" selected>2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Right Frozen Columns:</label>
+                        <select id="right-frozen-count" class="control-select" onchange="updateFrozenColumns()">
+                            <option value="0" selected>0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Frozen Rows:</label>
+                        <select id="frozen-row-count" class="control-select" onchange="updateFrozenColumns()">
+                            <option value="0">0</option>
+                            <option value="1" selected>1</option>
+                            <option value="2">2</option>
+                        </select>
+                    </div>
+                    <button class="control-button" onclick="generateMoreData()">Add More Columns</button>
+                    <button class="control-button secondary" onclick="resetFrozenDemo()">Reset Demo</button>
+                </div>
+
+                <div id="frozen-table" class="table-container"></div>
+
+                <button class="toggle-code" onclick="toggleCode('frozen-code')">Show Code Example</button>
+                <div id="frozen-code" class="code-block" style="display: none;">
+                    <pre><code>const frozenTable = new VTable.ListTable({
+    container: document.getElementById('frozen-table'),
+    records: wideDataset,
+    columns: wideColumns,
+    
+    // Frozen column configuration
+    frozenColCount: 2,        // Freeze first 2 columns from left
+    rightFrozenColCount: 1,   // Freeze 1 column from right
+    frozenRowCount: 1,        // Freeze header row
+    bottomFrozenRowCount: 0,  // No frozen footer rows
+    
+    // Scrolling behavior
+    scrollSliderHover: true,
+    scrollSliderCornerRadius: 6,
+    
+    // Visual styling for frozen areas
+    theme: {
+        frozenColumnBackgroundColor: '#f8f9fa',
+        frozenRowBackgroundColor: '#e9ecef'
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Sorting Example -->
+        <div id="advanced-sorting" class="example">
+            <div class="example-header">
+                <h2 class="example-title">🔄 Advanced Multi-Column Sorting</h2>
+                <p class="example-description">
+                    Implement complex sorting scenarios with multiple columns, custom sort functions, and sorting indicators.
+                </p>
+            </div>
+            <div class="example-content">
+                <div class="controls">
+                    <button class="control-button" onclick="sortByName()">Sort by Name</button>
+                    <button class="control-button" onclick="sortByMultiple()">Multi-Sort (Dept + Salary)</button>
+                    <button class="control-button" onclick="sortByCustom()">Custom Sort Function</button>
+                    <button class="control-button" onclick="clearSort()">Clear All Sorting</button>
+                    <button class="control-button secondary" onclick="randomizeData()">Randomize Data</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="sort-columns">0</div>
+                        <div class="stat-label">Active Sort Columns</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-records">0</div>
+                        <div class="stat-label">Total Records</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="sort-time">0ms</div>
+                        <div class="stat-label">Last Sort Time</div>
+                    </div>
+                </div>
+
+                <div id="sorting-table" class="table-container"></div>
+
+                <div class="event-log" id="sort-log">Sort operations will be logged here...</div>
+
+                <button class="toggle-code" onclick="toggleCode('sorting-code')">Show Code Example</button>
+                <div id="sorting-code" class="code-block" style="display: none;">
+                    <pre><code>// Multi-column sorting
+const sortingTable = new VTable.ListTable({
+    container: document.getElementById('sorting-table'),
+    records: employeeData,
+    columns: [
+        { 
+            field: 'name', 
+            title: 'Name', 
+            width: 150, 
+            sort: true,
+            // Custom sort function
+            sortFunc: (a, b, order) => {
+                const nameA = a.toUpperCase();
+                const nameB = b.toUpperCase();
+                if (order === 'desc') {
+                    return nameB.localeCompare(nameA);
+                }
+                return nameA.localeCompare(nameB);
+            }
+        },
+        { 
+            field: 'department', 
+            title: 'Department', 
+            width: 120, 
+            sort: true 
+        },
+        { 
+            field: 'salary', 
+            title: 'Salary', 
+            width: 100, 
+            sort: true,
+            format: (rec) => '$' + Number(rec).toLocaleString()
+        }
+    ],
+    
+    // Enable multi-column sorting
+    sortState: [
+        { field: 'department', order: 'asc' },
+        { field: 'salary', order: 'desc' }
+    ]
+});
+
+// Programmatic sorting
+sortingTable.updateSortState([
+    { field: 'name', order: 'asc' },
+    { field: 'salary', order: 'desc' }
+]);</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Example -->
+        <div id="search-filter" class="example">
+            <div class="example-header">
+                <h2 class="example-title">🔍 Advanced Search & Filtering</h2>
+                <p class="example-description">
+                    Implement real-time search, advanced filtering with multiple criteria, and filter combination logic.
+                </p>
+            </div>
+            <div class="example-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <input type="text" id="global-search" class="control-input" 
+                               placeholder="Global search..." onkeyup="performGlobalSearch()">
+                    </div>
+                    <div class="control-group">
+                        <input type="text" id="name-filter" class="control-input" 
+                               placeholder="Filter by name..." onkeyup="performFiltering()">
+                    </div>
+                    <div class="control-group">
+                        <select id="department-filter" class="control-select" onchange="performFiltering()">
+                            <option value="">All Departments</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sales">Sales</option>
+                            <option value="HR">HR</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <input type="number" id="min-salary" class="control-input" 
+                               placeholder="Min salary" onchange="performFiltering()">
+                        <input type="number" id="max-salary" class="control-input" 
+                               placeholder="Max salary" onchange="performFiltering()">
+                    </div>
+                    <button class="control-button" onclick="clearAllFilters()">Clear Filters</button>
+                    <button class="control-button secondary" onclick="exportFilteredData()">Export Filtered</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="visible-records">0</div>
+                        <div class="stat-label">Visible Records</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="filtered-records">0</div>
+                        <div class="stat-label">Filtered Records</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="filter-time">0ms</div>
+                        <div class="stat-label">Filter Time</div>
+                    </div>
+                </div>
+
+                <div id="search-table" class="table-container"></div>
+
+                <div class="event-log" id="filter-log">Filter operations will be logged here...</div>
+
+                <button class="toggle-code" onclick="toggleCode('search-code')">Show Code Example</button>
+                <div id="search-code" class="code-block" style="display: none;">
+                    <pre><code>// Advanced filtering with custom functions
+let filteredData = originalData;
+
+function performFiltering() {
+    const startTime = performance.now();
+    let filtered = [...originalData];
+    
+    // Name filter
+    const nameFilter = document.getElementById('name-filter').value.toLowerCase();
+    if (nameFilter) {
+        filtered = filtered.filter(record => 
+            record.name.toLowerCase().includes(nameFilter)
+        );
+    }
+    
+    // Department filter
+    const deptFilter = document.getElementById('department-filter').value;
+    if (deptFilter) {
+        filtered = filtered.filter(record => 
+            record.department === deptFilter
+        );
+    }
+    
+    // Salary range filter
+    const minSalary = document.getElementById('min-salary').value;
+    const maxSalary = document.getElementById('max-salary').value;
+    
+    if (minSalary) {
+        filtered = filtered.filter(record => 
+            record.salary >= parseInt(minSalary)
+        );
+    }
+    
+    if (maxSalary) {
+        filtered = filtered.filter(record => 
+            record.salary <= parseInt(maxSalary)
+        );
+    }
+    
+    // Update table with filtered data
+    searchTable.updateRecords(filtered);
+    
+    const endTime = performance.now();
+    logFilter(`Applied filters, showing ${filtered.length} of ${originalData.length} records (${(endTime - startTime).toFixed(2)}ms)`);
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Operations Example -->
+        <div id="group-operations" class="example">
+            <div class="example-header">
+                <h2 class="example-title">📊 Group By Operations</h2>
+                <p class="example-description">
+                    Organize data with hierarchical grouping, expandable sections, and aggregate calculations.
+                </p>
+            </div>
+            <div class="example-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Group By:</label>
+                        <select id="group-field" class="control-select" onchange="performGrouping()">
+                            <option value="">No Grouping</option>
+                            <option value="department">Department</option>
+                            <option value="status">Status</option>
+                            <option value="location">Location</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Show Aggregates:</label>
+                        <input type="checkbox" id="show-aggregates" onchange="performGrouping()" checked>
+                    </div>
+                    <button class="control-button" onclick="expandAllGroups()">Expand All</button>
+                    <button class="control-button" onclick="collapseAllGroups()">Collapse All</button>
+                    <button class="control-button secondary" onclick="exportGroupedData()">Export Groups</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="group-count">0</div>
+                        <div class="stat-label">Groups</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avg-salary">$0</div>
+                        <div class="stat-label">Average Salary</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-employees">0</div>
+                        <div class="stat-label">Total Employees</div>
+                    </div>
+                </div>
+
+                <div id="group-table" class="table-container"></div>
+
+                <button class="toggle-code" onclick="toggleCode('group-code')">Show Code Example</button>
+                <div id="group-code" class="code-block" style="display: none;">
+                    <pre><code>// Group by implementation using hierarchical data
+function performGrouping() {
+    const groupField = document.getElementById('group-field').value;
+    const showAggregates = document.getElementById('show-aggregates').checked;
+    
+    if (!groupField) {
+        // Show flat data
+        groupTable.updateRecords(employeeData);
+        return;
+    }
+    
+    // Group data by selected field
+    const grouped = employeeData.reduce((acc, record) => {
+        const key = record[groupField];
+        if (!acc[key]) {
+            acc[key] = [];
+        }
+        acc[key].push(record);
+        return acc;
+    }, {});
+    
+    // Convert to hierarchical structure
+    const hierarchicalData = Object.keys(grouped).map(groupKey => {
+        const groupRecords = grouped[groupKey];
+        const avgSalary = groupRecords.reduce((sum, r) => sum + r.salary, 0) / groupRecords.length;
+        
+        return {
+            // Group header row
+            isGroupHeader: true,
+            groupKey: groupKey,
+            field: groupField,
+            count: groupRecords.length,
+            avgSalary: Math.round(avgSalary),
+            expanded: true,
+            children: groupRecords
+        };
+    });
+    
+    groupTable.updateRecords(hierarchicalData);
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combined Features Example -->
+        <div id="multi-features" class="example">
+            <div class="example-header">
+                <h2 class="example-title">⚡ Combined Features Demo</h2>
+                <p class="example-description">
+                    Experience the power of combining frozen columns, sorting, filtering, and grouping in a single advanced table.
+                </p>
+            </div>
+            <div class="example-content">
+                <div class="feature-highlight">
+                    <strong>🎯 This demo combines:</strong> Frozen columns for context, multi-column sorting, real-time filtering, hierarchical grouping, and performance monitoring.
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <input type="text" id="combined-search" class="control-input" 
+                               placeholder="Search all fields..." onkeyup="performCombinedSearch()">
+                    </div>
+                    <div class="control-group">
+                        <select id="combined-group" class="control-select" onchange="performCombinedGrouping()">
+                            <option value="">No Grouping</option>
+                            <option value="department">By Department</option>
+                            <option value="status">By Status</option>
+                        </select>
+                    </div>
+                    <button class="control-button" onclick="toggleFreezeCombined()">Toggle Frozen Columns</button>
+                    <button class="control-button" onclick="sortCombinedMultiple()">Multi-Sort</button>
+                    <button class="control-button secondary" onclick="resetCombinedDemo()">Reset All</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="combined-visible">0</div>
+                        <div class="stat-label">Visible Records</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="combined-groups">0</div>
+                        <div class="stat-label">Active Groups</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="combined-frozen">2</div>
+                        <div class="stat-label">Frozen Columns</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="combined-performance">0ms</div>
+                        <div class="stat-label">Operation Time</div>
+                    </div>
+                </div>
+
+                <div id="combined-table" class="table-container"></div>
+
+                <div class="event-log" id="combined-log">Combined operations will be logged here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables for all demos
+        let frozenTable, sortingTable, searchTable, groupTable, combinedTable;
+        let originalData, filteredData, groupedData;
+        
+        // Generate sample data
+        function generateEmployeeData(count = 100) {
+            const departments = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'];
+            const statuses = ['Active', 'Inactive', 'On Leave'];
+            const locations = ['New York', 'San Francisco', 'London', 'Tokyo', 'Berlin'];
+            const names = ['John Smith', 'Jane Doe', 'Mike Johnson', 'Sarah Wilson', 'David Brown', 'Lisa Garcia', 'Tom Davis', 'Anna Miller', 'Chris Wilson', 'Mary Taylor'];
+            
+            return Array.from({length: count}, (_, i) => ({
+                id: i + 1,
+                name: names[Math.floor(Math.random() * names.length)],
+                department: departments[Math.floor(Math.random() * departments.length)],
+                salary: Math.floor(Math.random() * 80000) + 40000,
+                status: statuses[Math.floor(Math.random() * statuses.length)],
+                location: locations[Math.floor(Math.random() * locations.length)],
+                email: `employee${i + 1}@company.com`,
+                hireDate: new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toLocaleDateString(),
+                performance: Math.floor(Math.random() * 40) + 60,
+                projects: Math.floor(Math.random() * 10) + 1
+            }));
+        }
+
+        function generateWideData(rows = 50, cols = 20) {
+            const data = [];
+            for (let i = 0; i < rows; i++) {
+                const row = {
+                    id: i + 1,
+                    name: `Employee ${i + 1}`,
+                    department: ['Engineering', 'Marketing', 'Sales'][i % 3]
+                };
+                
+                // Add many columns for horizontal scrolling
+                for (let j = 4; j <= cols; j++) {
+                    row[`col${j}`] = `Data ${i}-${j}`;
+                }
+                
+                data.push(row);
+            }
+            return data;
+        }
+
+        // Initialize data
+        originalData = generateEmployeeData(150);
+        filteredData = [...originalData];
+        
+        // Initialize all tables when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFrozenTable();
+            initializeSortingTable();
+            initializeSearchTable();
+            initializeGroupTable();
+            initializeCombinedTable();
+        });
+
+        // Frozen Columns Demo
+        function initializeFrozenTable() {
+            const wideData = generateWideData(50, 15);
+            const wideColumns = [
+                { field: 'id', title: 'ID', width: 60 },
+                { field: 'name', title: 'Employee Name', width: 150 },
+                { field: 'department', title: 'Department', width: 120 }
+            ];
+            
+            // Add many columns for demonstration
+            for (let i = 4; i <= 15; i++) {
+                wideColumns.push({
+                    field: `col${i}`,
+                    title: `Column ${i}`,
+                    width: 100
+                });
+            }
+
+            frozenTable = new VTable.ListTable({
+                container: document.getElementById('frozen-table'),
+                records: wideData,
+                columns: wideColumns,
+                frozenColCount: 2,
+                rightFrozenColCount: 1,
+                frozenRowCount: 1,
+                height: 400,
+                theme: {
+                    frozenColumnBackgroundColor: '#f8f9fa'
+                }
+            });
+        }
+
+        function updateFrozenColumns() {
+            const leftCount = parseInt(document.getElementById('left-frozen-count').value);
+            const rightCount = parseInt(document.getElementById('right-frozen-count').value);
+            const rowCount = parseInt(document.getElementById('frozen-row-count').value);
+            
+            frozenTable.updateOption({
+                frozenColCount: leftCount,
+                rightFrozenColCount: rightCount,
+                frozenRowCount: rowCount
+            });
+            
+            logFrozen(`Updated frozen columns: Left=${leftCount}, Right=${rightCount}, Rows=${rowCount}`);
+        }
+
+        function generateMoreData() {
+            const moreData = generateWideData(50, 25);
+            const moreColumns = frozenTable.getAllColumns().slice();
+            
+            // Add more columns
+            for (let i = 16; i <= 25; i++) {
+                moreColumns.push({
+                    field: `col${i}`,
+                    title: `Column ${i}`,
+                    width: 100
+                });
+            }
+            
+            frozenTable.updateOption({
+                records: moreData,
+                columns: moreColumns
+            });
+            
+            logFrozen(`Added more columns, now showing ${moreColumns.length} columns`);
+        }
+
+        function resetFrozenDemo() {
+            document.getElementById('left-frozen-count').value = '2';
+            document.getElementById('right-frozen-count').value = '0';
+            document.getElementById('frozen-row-count').value = '1';
+            initializeFrozenTable();
+        }
+
+        // Advanced Sorting Demo
+        function initializeSortingTable() {
+            sortingTable = new VTable.ListTable({
+                container: document.getElementById('sorting-table'),
+                records: originalData,
+                columns: [
+                    { 
+                        field: 'name', 
+                        title: 'Employee Name', 
+                        width: 150, 
+                        sort: true
+                    },
+                    { 
+                        field: 'department', 
+                        title: 'Department', 
+                        width: 120, 
+                        sort: true 
+                    },
+                    { 
+                        field: 'salary', 
+                        title: 'Salary', 
+                        width: 100, 
+                        sort: true,
+                        format: (rec) => '$' + Number(rec).toLocaleString()
+                    },
+                    { 
+                        field: 'performance', 
+                        title: 'Performance', 
+                        width: 100, 
+                        sort: true,
+                        format: (rec) => rec + '%'
+                    },
+                    { 
+                        field: 'hireDate', 
+                        title: 'Hire Date', 
+                        width: 120, 
+                        sort: true 
+                    }
+                ],
+                height: 400
+            });
+            
+            updateSortStats();
+        }
+
+        function sortByName() {
+            const startTime = performance.now();
+            sortingTable.updateSortState([{ field: 'name', order: 'asc' }]);
+            const endTime = performance.now();
+            
+            logSort(`Sorted by name ascending (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(1, endTime - startTime);
+        }
+
+        function sortByMultiple() {
+            const startTime = performance.now();
+            sortingTable.updateSortState([
+                { field: 'department', order: 'asc' },
+                { field: 'salary', order: 'desc' }
+            ]);
+            const endTime = performance.now();
+            
+            logSort(`Multi-column sort: Department (asc), Salary (desc) (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(2, endTime - startTime);
+        }
+
+        function sortByCustom() {
+            const startTime = performance.now();
+            // Custom sort by performance and hire date combination
+            sortingTable.updateSortState([
+                { field: 'performance', order: 'desc' },
+                { field: 'hireDate', order: 'asc' }
+            ]);
+            const endTime = performance.now();
+            
+            logSort(`Custom sort: Performance (desc), Hire Date (asc) (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(2, endTime - startTime);
+        }
+
+        function clearSort() {
+            const startTime = performance.now();
+            sortingTable.updateSortState([]);
+            const endTime = performance.now();
+            
+            logSort(`Cleared all sorting (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(0, endTime - startTime);
+        }
+
+        function randomizeData() {
+            const randomized = [...originalData].sort(() => Math.random() - 0.5);
+            sortingTable.updateRecords(randomized);
+            logSort('Data randomized');
+            updateSortStats(0, 0);
+        }
+
+        function updateSortStats(activeColumns = 0, sortTime = 0) {
+            document.getElementById('sort-columns').textContent = activeColumns;
+            document.getElementById('total-records').textContent = originalData.length;
+            document.getElementById('sort-time').textContent = sortTime.toFixed(0) + 'ms';
+        }
+
+        // Search and Filter Demo
+        function initializeSearchTable() {
+            searchTable = new VTable.ListTable({
+                container: document.getElementById('search-table'),
+                records: originalData,
+                columns: [
+                    { field: 'name', title: 'Name', width: 150 },
+                    { field: 'department', title: 'Department', width: 120 },
+                    { field: 'salary', title: 'Salary', width: 100, format: (rec) => '$' + Number(rec).toLocaleString() },
+                    { field: 'status', title: 'Status', width: 100 },
+                    { field: 'location', title: 'Location', width: 120 },
+                    { field: 'email', title: 'Email', width: 200 }
+                ],
+                height: 400
+            });
+            
+            updateFilterStats();
+        }
+
+        function performGlobalSearch() {
+            const searchTerm = document.getElementById('global-search').value.toLowerCase();
+            if (!searchTerm) {
+                searchTable.updateRecords(originalData);
+                updateFilterStats();
+                return;
+            }
+            
+            const startTime = performance.now();
+            const filtered = originalData.filter(record => 
+                Object.values(record).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                )
+            );
+            
+            searchTable.updateRecords(filtered);
+            const endTime = performance.now();
+            
+            logFilter(`Global search for "${searchTerm}": ${filtered.length} results (${(endTime - startTime).toFixed(2)}ms)`);
+            updateFilterStats(filtered.length, endTime - startTime);
+        }
+
+        function performFiltering() {
+            const startTime = performance.now();
+            let filtered = [...originalData];
+            
+            const nameFilter = document.getElementById('name-filter').value.toLowerCase();
+            const deptFilter = document.getElementById('department-filter').value;
+            const minSalary = document.getElementById('min-salary').value;
+            const maxSalary = document.getElementById('max-salary').value;
+            
+            if (nameFilter) {
+                filtered = filtered.filter(record => 
+                    record.name.toLowerCase().includes(nameFilter)
+                );
+            }
+            
+            if (deptFilter) {
+                filtered = filtered.filter(record => 
+                    record.department === deptFilter
+                );
+            }
+            
+            if (minSalary) {
+                filtered = filtered.filter(record => 
+                    record.salary >= parseInt(minSalary)
+                );
+            }
+            
+            if (maxSalary) {
+                filtered = filtered.filter(record => 
+                    record.salary <= parseInt(maxSalary)
+                );
+            }
+            
+            searchTable.updateRecords(filtered);
+            const endTime = performance.now();
+            
+            logFilter(`Applied filters: ${filtered.length} of ${originalData.length} records (${(endTime - startTime).toFixed(2)}ms)`);
+            updateFilterStats(filtered.length, endTime - startTime);
+            filteredData = filtered;
+        }
+
+        function clearAllFilters() {
+            document.getElementById('global-search').value = '';
+            document.getElementById('name-filter').value = '';
+            document.getElementById('department-filter').value = '';
+            document.getElementById('min-salary').value = '';
+            document.getElementById('max-salary').value = '';
+            
+            searchTable.updateRecords(originalData);
+            filteredData = [...originalData];
+            updateFilterStats();
+            logFilter('All filters cleared');
+        }
+
+        function exportFilteredData() {
+            const csvContent = "data:text/csv;charset=utf-8," + 
+                ["Name,Department,Salary,Status,Location,Email"].concat(
+                    filteredData.map(row => 
+                        `"${row.name}","${row.department}",${row.salary},"${row.status}","${row.location}","${row.email}"`
+                    )
+                ).join('\n');
+            
+            const link = document.createElement('a');
+            link.setAttribute('href', encodeURI(csvContent));
+            link.setAttribute('download', 'filtered_data.csv');
+            link.click();
+            
+            logFilter(`Exported ${filteredData.length} filtered records to CSV`);
+        }
+
+        function updateFilterStats(visibleCount = null, filterTime = 0) {
+            const visible = visibleCount !== null ? visibleCount : originalData.length;
+            const filtered = originalData.length - visible;
+            
+            document.getElementById('visible-records').textContent = visible;
+            document.getElementById('filtered-records').textContent = filtered;
+            document.getElementById('filter-time').textContent = filterTime.toFixed(0) + 'ms';
+        }
+
+        // Group Operations Demo
+        function initializeGroupTable() {
+            groupTable = new VTable.ListTable({
+                container: document.getElementById('group-table'),
+                records: originalData,
+                columns: [
+                    { field: 'name', title: 'Name', width: 150 },
+                    { field: 'department', title: 'Department', width: 120 },
+                    { field: 'salary', title: 'Salary', width: 100, format: (rec) => '$' + Number(rec).toLocaleString() },
+                    { field: 'status', title: 'Status', width: 100 },
+                    { field: 'performance', title: 'Performance', width: 100, format: (rec) => rec + '%' }
+                ],
+                height: 400
+            });
+            
+            updateGroupStats();
+        }
+
+        function performGrouping() {
+            const groupField = document.getElementById('group-field').value;
+            const showAggregates = document.getElementById('show-aggregates').checked;
+            
+            if (!groupField) {
+                groupTable.updateRecords(originalData);
+                updateGroupStats(0);
+                return;
+            }
+            
+            // Simple grouping by updating data structure
+            const grouped = originalData.reduce((acc, record) => {
+                const key = record[groupField];
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(record);
+                return acc;
+            }, {});
+            
+            // Create grouped display data
+            const groupedData = [];
+            Object.keys(grouped).forEach(groupKey => {
+                const groupRecords = grouped[groupKey];
+                const avgSalary = groupRecords.reduce((sum, r) => sum + r.salary, 0) / groupRecords.length;
+                const avgPerformance = groupRecords.reduce((sum, r) => sum + r.performance, 0) / groupRecords.length;
+                
+                // Add group header
+                if (showAggregates) {
+                    groupedData.push({
+                        name: `📁 ${groupKey} (${groupRecords.length} employees)`,
+                        department: `Avg Salary: $${Math.round(avgSalary).toLocaleString()}`,
+                        salary: '',
+                        status: `Avg Performance: ${Math.round(avgPerformance)}%`,
+                        performance: ''
+                    });
+                }
+                
+                // Add group members
+                groupRecords.forEach(record => {
+                    groupedData.push(record);
+                });
+            });
+            
+            groupTable.updateRecords(groupedData);
+            updateGroupStats(Object.keys(grouped).length);
+        }
+
+        function expandAllGroups() {
+            // This would be implemented with proper tree functionality
+            logGroup('All groups expanded');
+        }
+
+        function collapseAllGroups() {
+            // This would be implemented with proper tree functionality
+            logGroup('All groups collapsed');
+        }
+
+        function exportGroupedData() {
+            logGroup('Grouped data export functionality would be implemented here');
+        }
+
+        function updateGroupStats(groupCount = 0) {
+            const totalSalary = originalData.reduce((sum, emp) => sum + emp.salary, 0);
+            const avgSalary = totalSalary / originalData.length;
+            
+            document.getElementById('group-count').textContent = groupCount;
+            document.getElementById('avg-salary').textContent = '$' + Math.round(avgSalary).toLocaleString();
+            document.getElementById('total-employees').textContent = originalData.length;
+        }
+
+        // Combined Features Demo
+        function initializeCombinedTable() {
+            combinedTable = new VTable.ListTable({
+                container: document.getElementById('combined-table'),
+                records: originalData,
+                columns: [
+                    { field: 'id', title: 'ID', width: 60 },
+                    { field: 'name', title: 'Name', width: 150, sort: true },
+                    { field: 'department', title: 'Department', width: 120, sort: true },
+                    { field: 'salary', title: 'Salary', width: 100, sort: true, format: (rec) => '$' + Number(rec).toLocaleString() },
+                    { field: 'status', title: 'Status', width: 100, sort: true },
+                    { field: 'location', title: 'Location', width: 120, sort: true },
+                    { field: 'performance', title: 'Performance', width: 100, sort: true, format: (rec) => rec + '%' },
+                    { field: 'projects', title: 'Projects', width: 80, sort: true }
+                ],
+                frozenColCount: 2,
+                height: 400,
+                theme: {
+                    frozenColumnBackgroundColor: '#f8f9fa'
+                }
+            });
+            
+            updateCombinedStats();
+        }
+
+        function performCombinedSearch() {
+            const searchTerm = document.getElementById('combined-search').value.toLowerCase();
+            const startTime = performance.now();
+            
+            let filtered = originalData;
+            if (searchTerm) {
+                filtered = originalData.filter(record => 
+                    Object.values(record).some(value => 
+                        String(value).toLowerCase().includes(searchTerm)
+                    )
+                );
+            }
+            
+            combinedTable.updateRecords(filtered);
+            const endTime = performance.now();
+            
+            updateCombinedStats(filtered.length, 0, 2, endTime - startTime);
+            logCombined(`Search performed: ${filtered.length} results found`);
+        }
+
+        function performCombinedGrouping() {
+            const groupField = document.getElementById('combined-group').value;
+            logCombined(`Grouping by: ${groupField || 'None'}`);
+            // Implementation would combine with search results
+        }
+
+        function toggleFreezeCombined() {
+            const currentFrozen = combinedTable.getAllColumns().filter(col => col.frozen).length || 2;
+            const newFrozen = currentFrozen === 2 ? 0 : 2;
+            
+            combinedTable.updateOption({
+                frozenColCount: newFrozen
+            });
+            
+            updateCombinedStats(null, 0, newFrozen);
+            logCombined(`Frozen columns toggled: ${newFrozen} columns frozen`);
+        }
+
+        function sortCombinedMultiple() {
+            const startTime = performance.now();
+            combinedTable.updateSortState([
+                { field: 'department', order: 'asc' },
+                { field: 'performance', order: 'desc' },
+                { field: 'salary', order: 'desc' }
+            ]);
+            const endTime = performance.now();
+            
+            logCombined(`Multi-column sort applied (${(endTime - startTime).toFixed(2)}ms)`);
+            updateCombinedStats(null, 0, null, endTime - startTime);
+        }
+
+        function resetCombinedDemo() {
+            document.getElementById('combined-search').value = '';
+            document.getElementById('combined-group').value = '';
+            
+            combinedTable.updateRecords(originalData);
+            combinedTable.updateSortState([]);
+            combinedTable.updateOption({ frozenColCount: 2 });
+            
+            updateCombinedStats();
+            logCombined('Demo reset to initial state');
+        }
+
+        function updateCombinedStats(visible = null, groups = 0, frozen = null, time = 0) {
+            if (visible !== null) document.getElementById('combined-visible').textContent = visible;
+            if (frozen !== null) document.getElementById('combined-frozen').textContent = frozen;
+            document.getElementById('combined-groups').textContent = groups;
+            document.getElementById('combined-performance').textContent = time.toFixed(0) + 'ms';
+        }
+
+        // Utility functions for logging
+        function logFrozen(message) {
+            // Would log to frozen demo log if it existed
+            console.log('Frozen:', message);
+        }
+
+        function logSort(message) {
+            const logElement = document.getElementById('sort-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function logFilter(message) {
+            const logElement = document.getElementById('filter-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function logGroup(message) {
+            console.log('Group:', message);
+        }
+
+        function logCombined(message) {
+            const logElement = document.getElementById('combined-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // Code toggle functionality
+        function toggleCode(codeId) {
+            const codeBlock = document.getElementById(codeId);
+            const button = event.target;
+            
+            if (codeBlock.style.display === 'none') {
+                codeBlock.style.display = 'block';
+                button.textContent = 'Hide Code';
+            } else {
+                codeBlock.style.display = 'none';
+                button.textContent = 'Show Code Example';
+            }
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="container">
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                English translation and documentation prepared by <a href="https://osvm.ai">osvm.ai</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
