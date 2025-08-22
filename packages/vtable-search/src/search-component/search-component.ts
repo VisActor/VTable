@@ -100,7 +100,6 @@ export class SearchComponent {
 
   search(str: string) {
     this.clear();
-    console.log(2)
     this.queryStr = str;
 
     if (!str) {
@@ -139,7 +138,6 @@ export class SearchComponent {
       };
 
       walk(this.table.records, []);
-      console.log(this.queryResult)
       if (this.queryResult.length > 0) {
         this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
 
@@ -234,7 +232,6 @@ export class SearchComponent {
   }
 
   updateCellStyle(highlight: boolean = true) {
-    console.log(highlight)
     if (highlight == null) {
       if (this.queryResult?.length) {
         this.queryResult.forEach(({ range }) => {
