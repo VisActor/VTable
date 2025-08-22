@@ -243,7 +243,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.title) {
         const Title = Factory.getComponent('title') as ITitleComponent;
         this.internalProps.title = new Title(options.title, this);
-        this.scenegraph.resize();
+        // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
       }
       if (this.options.emptyTip) {
         if (this.internalProps.emptyTip) {
@@ -256,6 +256,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
       setTimeout(() => {
+        this.resize();
         this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
       }, 0);
     }

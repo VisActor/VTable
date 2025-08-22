@@ -141,11 +141,12 @@ The Gantt chart event list allows you to listen to the required events and imple
 Usage example:
 
 ```
+  import * as VTableGantt from '@visactor/vtable-gantt';
   const tableInstance = new Gantt(containerDom, options);
 
   const {
       CLICK_TASK_BAR
-    } = EVENT_TYPES;
+    } = VTableGantt.TYPES.GANTT_EVENT_TYPE;
 
   tableInstance.on(CLICK_TASK_BAR, (args) => console.log(CLICK_CELL, args));
 ```
@@ -199,6 +200,14 @@ The following is an example of listening to the table cell selection event:
 ```
   const tableInstance = new Gantt(containerDom, options);
   tableInstance.taskListTableInstance.on('click_cell', (args) => {});
+```
+
+The click_cell event can also be used with enumeration types, such as:
+```
+  import * as VTableGantt from '@visactor/vtable-gantt';
+  ganttInstance.taskListTableInstance?.on(VTableGantt.VTable.TABLE_EVENT_TYPE.SCROLL, e => {
+    console.log('listTable scroll', e);
+  });
 ```
 
 For specific ListTable events, refer to: https://visactor.io/vtable/api/events

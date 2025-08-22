@@ -119,7 +119,7 @@ export class SearchComponent {
       const walk = (nodes: any[], path: number[]) => {
         nodes.forEach((item: any, idx: number) => {
           const currentPath = [...path, idx]; // 当前节点的完整路径
-          console.log(currentPath)
+
           // 保持你的 treeQueryMethod 调用方式（this 上下文来自定义环境）
           if (this.treeQueryMethod(this.queryStr, item, this.fieldsToSearch, { table: this.table })) {
             this.queryResult.push({
@@ -185,6 +185,7 @@ export class SearchComponent {
                   break;
                 }
               }
+
               if (!isIn) {
                 this.queryResult.push({
                   col: mergeCell.start.col,
@@ -204,6 +205,7 @@ export class SearchComponent {
         }
       }
       this.updateCellStyle(true);
+
 
       if (this.callback) {
         this.callback(

@@ -19,6 +19,7 @@ VTable 提供了丰富的滚动样式配置项，用户可以按照自己的需�
 - visible：配置滚动条是否可见，可配值：'always' | 'scrolling' | 'none' | 'focus'，分别对应：常驻显示|滚动时显示|显示|聚焦在画布上时。默认为‘scrolling’。
 - hoverOn ：指定滚动条是悬浮在容器上，还是独立于容器。默认为 true 即悬浮于容器上。
 - barToSide ：是否显示到容器的边缘 尽管内容没有撑满的情况下. 默认 false
+- ignoreFrozenCols ：横向滚动条是否忽略冻结列宽度，默认false
 
 下面我们通过示例来展示这些配置的效果：
 

@@ -14,7 +14,7 @@ The relevant configuration items are as follows:
 - `allowFrozenColCount`: Number of columns allowed to be operated, that is, the number of columns before which the freeze operation button will appear, default is 0.
 - `showFrozenIcon`: Whether to display the fixed column icon, default is `true`.
 - `maxFrozenWidth`: Maximum freeze width, default is '80%'.
-- `unfreezeAllOnExceedsMaxWidth`: When the column width exceeds the maximum freeze width, whether to automatically unfreeze all, default is `true`.
+- `unfreezeAllOnExceedsMaxWidth`: When the column width exceeds the maximum freeze width, whether to automatically unfreeze all, default is `true`. If set to false, it will not unfreeze all columns, but will determine the number of columns to be unfrozen according to the value of maxFrozenWidth.
 
 Here is a configuration example:
 

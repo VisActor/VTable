@@ -1,3 +1,25 @@
+# v1.19.7
+
+2025-08-19
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add ignoreFrozenCols for theme's scrollStyle setting
+- **@visactor/vtable**: add event type CONTEXTMENU_CANVAS
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set hide for column with children occor error [#4223](https://github.com/VisActor/VTable/issues/4223)
+- **@visactor/vtable**: markline refresh container size [#4319](https://github.com/VisActor/VTable/issues/4319)
+- **@visactor/vtable**: fix error in syncGroupCollapseState when use InputEditor update groupBy config key.[#4216](https://github.com/VisActor/VTable/issues/4216)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: scrollbar not show when less records no need show scrollbar
+
+[more detail about v1.19.7](https://github.com/VisActor/VTable/releases/tag/v1.19.7)
+
 # v1.19.6
 
 2025-08-08
