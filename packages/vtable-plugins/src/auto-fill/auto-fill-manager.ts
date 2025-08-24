@@ -45,12 +45,21 @@ export class AutoFillManager {
   private targetRange: IDiscreteRange;
   // 填充方向
   private direction: Direction;
+  // 行列头
+  private headers: {
+    row: Set<number>;
+    col: Set<number>;
+  };
 
   constructor() {
     this.autoFillService = new AutoFillService();
   }
 
   setTable(table: ListTable) {
+    this.headers = {
+      row: new Set(),
+      col: new Set()
+    };
     this.tableInstance = table;
     table.on(VTable.TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, (args: any) => {
       if (args.text === '复制填充') {
@@ -59,11 +68,23 @@ export class AutoFillManager {
         this.fillData(APPLY_TYPE.SERIES);
       }
     });
+
+    //cal headers
+    const rowHeaderCells = this.tableInstance.getAllRowHeaderCells()[0];
+    rowHeaderCells.forEach(cell => {
+      this.headers.col.add(cell.col);
+    });
+    const colHeaderCells = this.tableInstance.getAllColumnHeaderCells()[0];
+    colHeaderCells.forEach(cell => {
+      this.headers.row.add(cell.row);
+    });
   }
 
   // 开始拖拽
   startDrag(selectedRange: CellRange) {
     this.sourceRange = getSelectedRangeArray(selectedRange);
+    this.sourceRange.cols = this.sourceRange.cols.filter(col => !this.headers.col.has(col));
+    this.sourceRange.rows = this.sourceRange.rows.filter(row => !this.headers.row.has(row));
   }
   // 结束拖拽
   endDrag(endSelectCellRange: CellRange, direction: string) {
@@ -72,6 +93,8 @@ export class AutoFillManager {
     // set target range
     const selectedRange = getSelectedRangeArray(endSelectCellRange);
     this.targetRange = getTargetRange(this.direction, this.sourceRange, selectedRange);
+    this.targetRange.cols = this.targetRange.cols.filter(col => !this.headers.col.has(col));
+    this.targetRange.rows = this.targetRange.rows.filter(row => !this.headers.row.has(row));
     // open auto fill menu
     openAutoFillMenu(this.tableInstance, Math.max(...selectedRange.cols), Math.max(...selectedRange.rows));
   }
