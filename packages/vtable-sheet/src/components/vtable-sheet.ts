@@ -621,6 +621,7 @@ export default class VTableSheet {
       return false;
     }
     this.sheetManager.renameSheet(sheetKey, newTitle);
+    this.sheetInstances.get(sheetKey)?.setTitle(newTitle);
     this.updateSheetTabs();
     this.updateSheetMenu();
     return true;
