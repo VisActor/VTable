@@ -3,7 +3,7 @@ import type { CellCoord, CellRange, CellValue } from './base';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
 /** Sheet构造选项 */
-export interface ISheetOptions extends Omit<ListTableConstructorOptions, 'records'> {
+export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 'records'> {
   /** Sheet的唯一标识 */
   sheetKey: string;
   /** Sheet的标题 */
@@ -19,7 +19,7 @@ export interface ISheetOptions extends Omit<ListTableConstructorOptions, 'record
 }
 
 /** Sheet API 接口 */
-export interface ISheetAPI {
+export interface IWorkSheetAPI {
   /** 获取单元格值 */
   getCellValue: (row: number, col: number) => CellValue;
 
@@ -80,7 +80,7 @@ export interface ISheetManager {
   getSheetCount: () => number;
 
   /** 获取sheet API */
-  getSheetAPI: (sheetKey: string) => ISheetAPI | null;
+  getSheetAPI: (sheetKey: string) => IWorkSheetAPI | null;
 
   /** 监听sheet变化 */
   onSheetChange: (callback: (sheets: ISheetDefine[]) => void) => void;

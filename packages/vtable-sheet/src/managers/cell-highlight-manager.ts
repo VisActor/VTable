@@ -1,4 +1,4 @@
-import type { Sheet } from '../core/Sheet';
+import type { WorkSheet } from '../core/WorkSheet';
 import type VTableSheet from '../components/vtable-sheet';
 import type { CellCoord } from '../ts-types';
 
@@ -95,7 +95,7 @@ export class CellHighlightManager {
   /**
    * 解析范围引用，如 A1:A4
    */
-  private parseRangeReference(rangeRef: string, activeSheet: Sheet): CellCoord[] {
+  private parseRangeReference(rangeRef: string, activeSheet: WorkSheet): CellCoord[] {
     const parts = rangeRef.split(':');
     if (parts.length !== 2) {
       throw new Error(`Invalid range reference: ${rangeRef}`);
@@ -161,7 +161,7 @@ export class CellHighlightManager {
    * 应用单元格高亮
    * 通过修改单元格的边框样式实现
    */
-  private applyCellHighlight(sheet: Sheet, coord: CellCoord, color: string): void {
+  private applyCellHighlight(sheet: WorkSheet, coord: CellCoord, color: string): void {
     const table = (sheet as any).tableInstance;
     if (!table || !table.scenegraph) {
       return;

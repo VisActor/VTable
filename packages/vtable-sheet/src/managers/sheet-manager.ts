@@ -1,4 +1,4 @@
-import type { ISheetManager, ISheetAPI } from '../ts-types/sheet';
+import type { ISheetManager, IWorkSheetAPI } from '../ts-types/sheet';
 import type { ISheetDefine } from '../ts-types';
 
 export default class SheetManager implements ISheetManager {
@@ -144,7 +144,7 @@ export default class SheetManager implements ISheetManager {
    * @param sheetKey 要获取的sheet的key
    * @returns sheet API
    */
-  getSheetAPI(sheetKey: string): ISheetAPI | null {
+  getSheetAPI(sheetKey: string): IWorkSheetAPI | null {
     // TODO: Implement sheet API
     return null;
   }

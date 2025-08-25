@@ -3,8 +3,8 @@ import { ListTable } from '@visactor/vtable';
 import { isValid, type EventEmitter } from '@visactor/vutils';
 import { EventTarget } from '../event/event-target';
 import type {
-  ISheetOptions,
-  ISheetAPI,
+  IWorkSheetOptions,
+  IWorkSheetAPI,
   CellCoord,
   CellRange,
   CellValue,
@@ -18,7 +18,7 @@ import { VTableThemes } from '../ts-types';
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
  */
-export type SheetConstructorOptions = {
+export type WorkSheetConstructorOptions = {
   /** 表格数据 */
   data?: any[][];
   /** 公式计算选项 */
@@ -29,9 +29,9 @@ export type SheetConstructorOptions = {
   sheetTitle: string;
 } & Omit<ListTableConstructorOptions, 'records'>;
 
-export class Sheet extends EventTarget implements ISheetAPI {
+export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   /** 选项 */
-  options: ISheetOptions;
+  options: IWorkSheetOptions;
   /** 容器 */
   container: HTMLElement;
   /** 表格实例 */
@@ -50,7 +50,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
 
   private parent: any;
 
-  constructor(options: ISheetOptions) {
+  constructor(options: IWorkSheetOptions) {
     super();
     this.options = options;
     this.container = options.container;
