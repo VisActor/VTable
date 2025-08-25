@@ -30,7 +30,14 @@ import type { APPLY_FUNCTIONS } from './types';
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
 import type { ListTable } from '@visactor/vtable';
 import * as VTable from '@visactor/vtable';
-import { getSelectedRangeArray, getTargetRange, openAutoFillMenu, getCellMatrix } from './auto-fill-helper';
+import {
+  getSelectedRangeArray,
+  getTargetRange,
+  openAutoFillMenu,
+  getCellMatrix,
+  isMergeCell
+} from './auto-fill-helper';
+import { MenuManager } from '../contextmenu';
 export class AutoFillManager {
   // 源数据
   private sourceData: ISourceDataPiece[] = [];
@@ -50,8 +57,11 @@ export class AutoFillManager {
     col: Set<number>;
   };
 
+  private menuManager: MenuManager;
+
   constructor() {
     this.autoFillService = new AutoFillService();
+    this.menuManager = new MenuManager();
   }
 
   setTable(table: ListTable) {
@@ -317,6 +327,12 @@ export class AutoFillManager {
     targetRows.forEach((row, rowIndex) => {
       const rowValues: string[] = [];
       targetCols.forEach((col, colIndex) => {
+        // 如果当前单元格是合并单元格，则先进行拆开单元格，再进行填充
+        const range = isMergeCell(this.tableInstance, col, row);
+        if (range) {
+          this.tableInstance.unmergeCells(range.start.col, range.start.row, range.end.col, range.end.row);
+        }
+        // 填充数据存入rowValues，再一次性填充到表格中
         if (applyDatas[rowIndex][colIndex]) {
           rowValues.push(applyDatas[rowIndex][colIndex]!.v + '');
         }
