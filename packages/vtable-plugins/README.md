@@ -42,9 +42,9 @@ yarn add @visactor/vtable-plugins
 
 # Ecosystem
 
-| Project                                                     | Description                                                                            |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [AI-generated Components](https://visactor.io/ai-vtable)    | AI-generated table component.                                                          |
+| Project                                                  | Description                   |
+| -------------------------------------------------------- | ----------------------------- |
+| [AI-generated Components](https://visactor.io/ai-vtable) | AI-generated table component. |
 
 # Contribution
 
@@ -56,4 +56,7 @@ Small streams converge to make great rivers and seas!
 
 # License
 
-[MIT License](../../LICENSE)
+- **MIT License** - [LICENSE](../../LICENSE)
+- **Apache 2.0 License** - [LICENSE-APACHE](../../LICENSE-APACHE)
+
+> **Note**: The auto-fill functionality references [Univer](https://github.com/dream-num/univer)'s implementation and is subject to Apache 2.0 license terms.

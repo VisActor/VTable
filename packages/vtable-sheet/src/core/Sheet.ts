@@ -399,6 +399,7 @@ export class Sheet extends EventTarget implements ISheetAPI {
    */
   setTitle(title: string): void {
     this.sheetTitle = title;
+    this.options.sheetTitle = title;
   }
 
   /**
