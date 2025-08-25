@@ -7,7 +7,11 @@ import { AutoFillManager } from './auto-fill-manager';
 export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
   id = `auto-fill-${Date.now()}`;
   name = 'Auto Fill';
-  runTime = [VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END];
+  runTime = [
+    VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
+    VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END,
+    VTable.TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE
+  ];
   table: VTable.ListTable;
   private autoFillManager: AutoFillManager;
   constructor() {
@@ -24,6 +28,7 @@ export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
     ]
   ) {
     // start drag
+    console.log('auto fill plugin run', args);
     if (args[1] === VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE) {
       const [_, __, table] = args;
       this.table = table as VTable.ListTable;
@@ -33,6 +38,8 @@ export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
       // end drag
       const [{ direction }] = args;
       this.autoFillManager.endDrag(this.table?.getSelectedCellRanges()[0], direction);
+    } else if (args[1] === VTable.TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE) {
+      this.autoFillManager.dbClick();
     }
   }
 }

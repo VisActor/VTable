@@ -30,8 +30,7 @@ import type { APPLY_FUNCTIONS } from './types';
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
 import type { ListTable } from '@visactor/vtable';
 import * as VTable from '@visactor/vtable';
-import { getSelectedRangeArray, getTargetRange, openAutoFillMenu } from './auto-fill-helper';
-
+import { getSelectedRangeArray, getTargetRange, openAutoFillMenu, getCellMatrix } from './auto-fill-helper';
 export class AutoFillManager {
   // 源数据
   private sourceData: ISourceDataPiece[] = [];
@@ -101,6 +100,18 @@ export class AutoFillManager {
     this.targetRange.rows = this.targetRange.rows.filter(row => !this.headers.row.has(row));
     // open auto fill menu
     openAutoFillMenu(this.tableInstance, Math.max(...selectedRange.cols), Math.max(...selectedRange.rows));
+  }
+
+  dbClick() {
+    if (!this.sourceRange) {
+      return;
+    }
+    // 双击填充时，自动检测填充范围
+    const detectFillRange = getSelectedRangeArray(this._detectFillRange());
+    this.targetRange = getTargetRange(this.direction, this.sourceRange, detectFillRange);
+    this.targetRange.cols = this.targetRange.cols.filter(col => !this.headers.col.has(col));
+    this.targetRange.rows = this.targetRange.rows.filter(row => !this.headers.row.has(row));
+    this.fillData(APPLY_TYPE.COPY);
   }
 
   /**
@@ -200,48 +211,41 @@ export class AutoFillManager {
     return sourceDataPiece;
   }
 
-
-  private _detectFillRange(source: IRange) {
-    const { startRow, endRow, startColumn, endColumn } = source;
-    const worksheet = this._univerInstanceService
-      .getCurrentUnitForType<Workbook>(UniverInstanceType.UNIVER_SHEET)
-      ?.getActiveSheet();
-    if (!worksheet) {
-      return source;
-    }
-    const matrix = worksheet.getCellMatrix();
-    const maxRow = worksheet.getMaxRows() - 1;
-    const maxColumn = worksheet.getMaxColumns() - 1;
-    let detectEndRow = endRow;
+  private _detectFillRange() {
+    // sourceRange
+    const start = { row: Math.min(...this.sourceRange.rows), col: Math.min(...this.sourceRange.cols) };
+    const end = { row: Math.max(...this.sourceRange.rows), col: Math.max(...this.sourceRange.cols) };
+    // matrix
+    const matrix = getCellMatrix(this.tableInstance);
+    const maxRow = matrix.getMaxRows();
+    const maxColumn = matrix.getMaxColumns();
+    let detectEndRow = end.row;
     // left column first, or consider right column.
-    if (startColumn > 0 && matrix.getValue(startRow, startColumn - 1)?.v != null) {
-      let cur = startRow;
-      while (matrix.getValue(cur, startColumn - 1)?.v != null && cur < maxRow) {
+    if (start.col > 0 && matrix.getValue(start.row, start.col - 1)?.v != null) {
+      let cur = start.row;
+      while (matrix.getValue(cur, start.col - 1)?.v != null && cur < maxRow) {
         cur += 1;
       }
       detectEndRow = cur - 1;
-    } else if (endColumn < maxColumn && matrix.getValue(endRow, endColumn + 1)?.v != null) {
-      let cur = startRow;
-      while (matrix.getValue(cur, endColumn + 1)?.v != null && cur < maxRow) {
+    } else if (end.col < maxColumn && matrix.getValue(end.row, end.col + 1)?.v != null) {
+      let cur = start.row;
+      while (matrix.getValue(cur, end.col + 1)?.v != null && cur < maxRow) {
         cur += 1;
       }
       detectEndRow = cur - 1;
     }
-
-    for (let i = endRow + 1; i <= detectEndRow; i++) {
-      for (let j = startColumn; j <= endColumn; j++) {
-        if (matrix.getValue(i, j)?.v != null) {
+    for (let i = end.row + 1; i <= detectEndRow; i++) {
+      for (let j = start.col; j <= end.col; j++) {
+        console.log('detectFillRange', i, j, matrix.getValue(i, j));
+        if (matrix.getValue(i, j)?.v) {
           detectEndRow = i - 1;
           break;
         }
       }
     }
-
     return {
-      startColumn,
-      endColumn,
-      startRow,
-      endRow: detectEndRow
+      start: { row: start.row, col: start.col },
+      end: { row: detectEndRow, col: end.col }
     };
   }
 

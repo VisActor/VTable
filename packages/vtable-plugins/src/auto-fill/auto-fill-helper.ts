@@ -1,5 +1,5 @@
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
-
+import { CellValueType } from './types';
 import type { ListTable } from '@visactor/vtable';
 import { Direction, IDiscreteRange } from './types';
 export interface ISelectedRangeArray {
@@ -71,4 +71,21 @@ export function openAutoFillMenu(tableInstance: ListTable, endCol: number, endRo
       }
     }
   });
+}
+
+export function getCellMatrix(table: ListTable) {
+  return {
+    getValue: (row: number, col: number) => {
+      return {
+        v: table.getCellValue(col, row),
+        t: CellValueType.STRING
+      };
+    },
+    getMaxRows: () => {
+      return table.colCount;
+    },
+    getMaxColumns: () => {
+      return table.rowCount;
+    }
+  };
 }
