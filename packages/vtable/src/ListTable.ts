@@ -156,7 +156,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (options.title) {
       const Title = Factory.getComponent('title') as ITitleComponent;
       internalProps.title = new Title(options.title, this);
-      this.scenegraph.resize();
+      // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
     }
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
@@ -174,6 +174,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
     setTimeout(() => {
+      this.resize();
       this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
     }, 0);
   }
@@ -270,6 +271,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.bodyBottomStyleCache = new Map();
+    this._updateSize();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
@@ -721,6 +723,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
       table.rowCount = layoutMap.recordsCount * layoutMap.bodyRowSpanCount + layoutMap.headerLevelCount;
       // table.frozenColCount = table.options.frozenColCount ?? 0; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
       this.internalProps.frozenColCount = this.options.frozenColCount ?? 0;
+      // 当冻结列数大于等于列数时，则冻结列数置为0，可以查看demo中的list-groupBy.ts来调试这个问题
+      if (this.options.frozenColCount >= this.colCount) {
+        this.internalProps.frozenColCount = 0;
+      }
       table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
 
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
@@ -1215,6 +1221,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
     this.scenegraph.createSceneGraph();
+    this.resize();
   }
   /** 获取某个字段下checkbox 全部数据的选中状态 顺序对应原始传入数据records 不是对应表格展示row的状态值 */
   getCheckboxState(field?: string | number) {
@@ -1365,11 +1372,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.clearCellStyleCache();
     this.scenegraph.createSceneGraph();
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
+
+    this._updateSize();
     if (this.internalProps.title && !this.internalProps.title.isReleased) {
-      this._updateSize();
       this.internalProps.title.resize();
-      this.scenegraph.resize();
     }
+    this.scenegraph.resize();
+
     if (this.options.emptyTip) {
       if (this.internalProps.emptyTip) {
         this.internalProps.emptyTip?.resetVisible();

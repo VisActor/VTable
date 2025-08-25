@@ -3,6 +3,7 @@ import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
 import { applyStyles, filterStyles } from './styles';
+import { FilterMode } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -15,6 +16,7 @@ export class FilterToolbar {
   activeTab: 'byValue' | 'byCondition' = 'byValue';
   isVisible: boolean = false;
   selectedField: string | number | null = null;
+  filterModes: FilterMode[] = [];
 
   private filterMenu: HTMLElement;
   private filterMenuWidth: number;
@@ -166,7 +168,16 @@ export class FilterToolbar {
     });
   }
 
-  show(col: number, row: number): void {
+  show(col: number, row: number, filterModes: FilterMode[]): void {
+    this.filterModes = filterModes;
+    if (!this.filterModes.includes('byValue')) {
+      this.filterTabByValue.style.display = 'none';
+      setTimeout(() => this.onTabSwitch('byCondition'), 0);
+    } else if (!this.filterModes.includes('byCondition')) {
+      this.filterTabByCondition.style.display = 'none';
+      setTimeout(() => this.onTabSwitch('byValue'), 0);
+    }
+
     let left: number = 0;
     let top: number = 0;
     const canvasBounds = this.table.canvas.getBoundingClientRect();

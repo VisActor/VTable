@@ -64,8 +64,9 @@ export default class SheetManager implements ISheetManager {
   /**
    * 移除sheet
    * @param sheetKey 要移除的sheet的key
+   * @returns 新的活动sheet的key
    */
-  removeSheet(sheetKey: string): void {
+  removeSheet(sheetKey: string): string {
     // 检查key是否存在
     if (!this._sheets.has(sheetKey)) {
       throw new Error(`Sheet with key '${sheetKey}' not found`);
@@ -94,6 +95,7 @@ export default class SheetManager implements ISheetManager {
 
     // 移除sheet
     this._sheets.delete(sheetKey);
+    return this._activeSheetKey;
   }
 
   /**

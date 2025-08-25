@@ -48,6 +48,9 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       positionType: VTable.TYPES.IconPosition.right,
       svg: '<svg t="1752821771292" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11926" width="200" height="200"><path d="M971.614323 53.05548L655.77935 412.054233C635.196622 435.434613 623.906096 465.509377 623.906096 496.583302v495.384307c0 28.975686-35.570152 43.063864-55.353551 21.781723l-159.865852-171.256294c-5.495389-5.895053-8.59279-13.688514-8.592789-21.781722V496.583302c0-31.073925-11.290526-61.148688-31.873254-84.429153L52.385677 53.05548C34.200936 32.472751 48.888611 0 76.365554 0h871.268892c27.476943 0 42.164618 32.472751 23.979877 53.05548z" p-id="11927"></path></svg>'
     };
+    if (!this.pluginOptions.filterModes || !this.pluginOptions.filterModes.length) {
+      this.pluginOptions.filterModes = ['byValue', 'byCondition'];
+    }
   }
 
   run(...args: any[]) {
@@ -73,7 +76,6 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
       eventArgs.name === 'filtering-icon'
     ) {
-      console.log("icon clicked")
       const isRightClick = eventArgs.event?.which === 3 || eventArgs.event?.button === 2 || (eventArgs.event?.buttons & 2) === 2;
       // 如果是右键点击，直接返回不处理
       if (isRightClick) {
@@ -85,7 +87,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       if (this.filterToolbar.isVisible) {
         this.filterToolbar.hide();
       } else {
-        this.filterToolbar.show(col, row);
+        this.filterToolbar.show(col, row, this.pluginOptions.filterModes);
       }
     }
   }

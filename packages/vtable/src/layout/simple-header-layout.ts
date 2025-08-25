@@ -1065,14 +1065,14 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
       // 当前节点是展开状态才需要添加子节点
       const expand = !(hd as HeaderData).hierarchyState || (hd as HeaderData).hierarchyState === HierarchyState.expand;
       if (!!hd.columns && !!expand) {
-        const isAllHided = hd.columns.every((c: any) => c.hide);
+        const isAllHided = hd.columns.every((c: any) => c.hide) || hd.hide;
         !isAllHided &&
           this._addHeaders(
             maxRow + 1,
             hd.columns,
             [...roots, id],
             hd.hideColumnsSubHeader || hideColumnsSubHeader,
-            hd.levelSpan
+            (hd as any).levelSpan
           ).forEach(c => results.push(c));
       } else {
         const colDef = {

@@ -11,6 +11,9 @@ import type {
   CellValueChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
+import type { TYPES } from '..';
+import { isPropertyWritable } from '../tools';
+import { VTableThemes } from '../ts-types';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -168,6 +171,33 @@ export class Sheet extends EventTarget implements ISheetAPI {
       cutSelected: true
     };
 
+    //更改theme 的frameStyle
+    let changedTheme: TYPES.VTableThemes.ITableThemeDefine;
+    if (!this.options?.theme) {
+      this.options.theme = VTableThemes.DEFAULT;
+    }
+    this.options.theme = this.options.theme;
+    if (this.options.theme.bodyStyle && !isPropertyWritable(this.options.theme, 'bodyStyle')) {
+      //测试是否使用了主题 使用了主题配置项不可写。
+      changedTheme = (this.options.theme as TYPES.VTableThemes.TableTheme).extends(
+        (this.options.theme as TYPES.VTableThemes.TableTheme).getExtendTheme()
+      ); //防止将原主题如DARK ARCO的属性改掉
+      const extendThemeOption = (changedTheme as TYPES.VTableThemes.TableTheme).getExtendTheme();
+
+      extendThemeOption.frameStyle = Object.assign({}, extendThemeOption.frameStyle, {
+        shadowBlur: 0,
+        cornerRadius: 0,
+        borderLineWidth: 0
+      });
+    } else {
+      changedTheme = this.options.theme;
+      changedTheme.frameStyle = Object.assign({}, this.options.theme.frameStyle, {
+        shadowBlur: 0,
+        cornerRadius: 0,
+        borderLineWidth: 0
+      });
+    }
+
     return {
       ...this.options,
       addRecordRule: 'Array',
@@ -176,10 +206,10 @@ export class Sheet extends EventTarget implements ISheetAPI {
       container: this.element,
       showHeader: isShowTableHeader,
       keyboardOptions,
+      theme: changedTheme,
       excelOptions: {
         fillHandle: true
       }
-
       // 其他特定配置
     };
   }
@@ -278,24 +308,64 @@ export class Sheet extends EventTarget implements ISheetAPI {
     return super.on(eventName, handler);
   }
 
+  // 用于防止短时间内多次调用resize的节流变量
+  private resizeTimer: number | null = null;
+  private isResizing = false;
+
   /**
    * 更新Sheet大小
+   * 使用节流方式避免频繁调用resize
    */
   resize(): void {
     if (!this.element) {
       return;
     }
 
-    const width = this.container.clientWidth || 800;
-    const height = this.container.clientHeight || 600;
+    // 如果正在进行调整，清除之前的定时器
+    if (this.resizeTimer !== null) {
+      window.clearTimeout(this.resizeTimer);
+      this.resizeTimer = null;
+    }
 
-    this.element.style.width = `${width}px`;
-    this.element.style.height = `${height}px`;
+    // 如果已经在执行resize，设置一个短期延迟
+    if (this.isResizing) {
+      this.resizeTimer = window.setTimeout(() => {
+        this.doResize();
+        this.resizeTimer = null;
+      }, 50);
+      return;
+    }
 
-    // 更新表格实例大小
-    if (this.tableInstance) {
-      // 触发VTable的resize
-      this.tableInstance.resize();
+    // 否则直接执行resize
+    this.doResize();
+  }
+
+  /**
+   * 实际执行调整大小的操作
+   * @private
+   */
+  private doResize(): void {
+    try {
+      this.isResizing = true;
+
+      const width = this.container.clientWidth || 800;
+      const height = this.container.clientHeight || 600;
+
+      // 只有尺寸确实变化时才更新样式和触发表格实例的resize
+      if (parseInt(this.element.style.width, 10) !== width || parseInt(this.element.style.height, 10) !== height) {
+        this.element.style.width = `${width}px`;
+        this.element.style.height = `${height}px`;
+
+        // 更新表格实例大小
+        if (this.tableInstance) {
+          // 触发VTable的resize
+          this.tableInstance.resize();
+        }
+      }
+    } catch (error) {
+      console.error('Error during resize:', error);
+    } finally {
+      this.isResizing = false;
     }
   }
 
@@ -358,7 +428,17 @@ export class Sheet extends EventTarget implements ISheetAPI {
     this.options.data = data;
     // 更新表格实例数据
     if (this.tableInstance) {
-      // TODO: 更新表格数据
+      this.tableInstance.updateOption({
+        records: data
+      });
+      // 更新公式引擎中的数据
+      if (this.parent?.formulaManager) {
+        try {
+          this.parent.formulaManager.setSheetContent(this.sheetKey, data);
+        } catch (e) {
+          console.warn('Failed to update formula data:', e);
+        }
+      }
     }
   }
   /**
@@ -495,56 +575,6 @@ export class Sheet extends EventTarget implements ISheetAPI {
   }
 
   /**
-   * 插入行
-   * @param index 行索引
-   * @param data 数据
-   */
-  insertRow(index: number, data?: any[]): void {
-    // TODO: 插入行实现
-  }
-
-  /**
-   * 插入列
-   * @param index 列索引
-   * @param data 数据
-   */
-  insertColumn(index: number, data?: any[]): void {
-    // TODO: 插入列实现
-  }
-
-  /**
-   * 删除行
-   * @param index 行索引
-   */
-  deleteRow(index: number): void {
-    // TODO: 删除行实现
-  }
-
-  /**
-   * 删除列
-   * @param index 列索引
-   */
-  deleteColumn(index: number): void {
-    // TODO: 删除列实现
-  }
-
-  /**
-   * 从CSV导入数据
-   * @param csv CSV数据
-   */
-  importFromCSV(csv: string): void {
-    // TODO: CSV导入实现
-  }
-
-  /**
-   * 导出数据到CSV
-   */
-  exportToCSV(): string {
-    // TODO: CSV导出实现
-    return '';
-  }
-
-  /**
    * 将第一行设置为表头
    */
   setFirstRowAsHeader(): void {
@@ -588,105 +618,6 @@ export class Sheet extends EventTarget implements ISheetAPI {
     }
 
     // 清除引用
-    this.tableInstance = undefined;
-  }
-
-  /**
-   * 撤销
-   */
-  undo(): void {
-    // TODO: 撤销实现
-  }
-
-  /**
-   * 重做
-   */
-  redo(): void {
-    // TODO: 重做实现
-  }
-
-  /**
-   * 清除数据
-   */
-  clearData(): void {
-    this.setData([]);
-  }
-
-  /**
-   * 获取可见行范围
-   * @returns 可见行范围
-   */
-  getVisibleRowRange(): { start: number; end: number } {
-    // TODO: 实现可见行范围获取
-    return { start: 0, end: this.getRowCount() };
-  }
-
-  /**
-   * 获取可见列范围
-   * @returns 可见列范围
-   */
-  getVisibleColumnRange(): { start: number; end: number } {
-    // TODO: 实现可见列范围获取
-    return { start: 0, end: this.getColumnCount() };
-  }
-
-  /**
-   * 滚动到指定单元格
-   * @param coord 坐标
-   */
-  scrollToCell(coord: CellCoord): void {
-    // TODO: 实现滚动到单元格功能
-    console.log('Scroll to cell:', coord);
-  }
-
-  /**
-   * 获取单元格DOM元素
-   * @param coord 坐标
-   * @returns 单元格DOM元素
-   */
-  getCellElement(coord: CellCoord): HTMLElement | null {
-    // TODO: 实现获取单元格DOM元素
-    return null;
-  }
-
-  /**
-   * 获取行高
-   * @param row 行索引
-   * @returns 行高
-   */
-  getRowHeight(row: number): number {
-    // TODO: 实现获取行高
-    const defaultHeight = this.options.defaultRowHeight;
-    return typeof defaultHeight === 'number' ? defaultHeight : 25;
-  }
-
-  /**
-   * 设置行高
-   * @param row 行索引
-   * @param height 行高
-   */
-  setRowHeight(row: number, height: number): void {
-    // TODO: 实现设置行高
-    console.log('Set row height:', row, height);
-  }
-
-  /**
-   * 获取列宽
-   * @param col 列索引
-   * @returns 列宽
-   */
-  getColumnWidth(col: number): number {
-    // TODO: 实现获取列宽
-    return this.options.defaultColWidth || 100;
-  }
-
-  /**
-   * 设置列宽
-   * @param col 列索引
-   * @param width 列宽
-   */
-  setColumnWidth(col: number, width: number): void {
-    // TODO: 实现设置列宽
-    console.log('Set column width:', col, width);
+    this.tableInstance.release();
   }
 }

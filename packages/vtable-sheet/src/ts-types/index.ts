@@ -1,19 +1,17 @@
-export * from './base';
-export * from './event';
-export * from './formula';
-export * from './filter';
-export * from './sheet';
-
-import type { ColumnDefine, TYPES } from '@visactor/vtable';
+import type { ColumnDefine } from '@visactor/vtable';
+import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
 import type { CellValue, IStyle, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
-
+import type { TableSeriesNumberOptions } from '@visactor/vtable-plugins';
+export { VTableThemes, VTableTypes };
 /** 筛选配置 */
 export interface IFilterConfig {
   /** 筛选图标配置 */
-  filterIcon?: TYPES.ColumnIconOption;
+  filterIcon?: VTableTypes.ColumnIconOption;
   /** 筛选激活状态图标配置 */
-  filteringIcon?: TYPES.ColumnIconOption;
+  filteringIcon?: VTableTypes.ColumnIconOption;
+  /** 指定筛选器支持的筛选模式（按值、按条件、或两者） */
+  filterModes?: ('byValue' | 'byCondition')[];
 }
 
 /** 扩展的列定义，添加筛选相关配置 */
@@ -38,13 +36,7 @@ export interface ISheetDefine {
   data?: (CellValue[] | null)[];
   /** 是否是当前活动sheet TODO 是不是放到外层更好*/
   active?: boolean;
-  cellMerge?: TYPES.CustomMergeCellArray;
-  /** 单元格样式 */
-  cellStyles?: Record<string, IStyle>;
-  /** 行样式 */
-  rowStyles?: Record<string, IStyle>;
-  /** 列样式 */
-  columnStyles?: Record<string, IStyle>;
+  cellMerge?: VTableTypes.CustomMergeCellArray;
   /** 冻结行数 */
   frozenRowCount?: number;
   /** 冻结列数 */
@@ -57,24 +49,6 @@ export interface ISheetDefine {
   filter?: boolean | IFilterConfig;
   /** 筛选状态 - 保存当前的筛选条件和状态 */
   filterState?: IFilterState;
-}
-
-/** 数据管理器接口 */
-export interface IDataManager {
-  /** 获取数据 */
-  getData: () => CellValue[][];
-  /** 设置数据 */
-  setData: (data: CellValue[][]) => void;
-  /** 获取列索引 */
-  getColumnIndex: (columnKey: string) => number;
-}
-
-/** 状态管理器接口 */
-export interface IStateManager {
-  /** 设置状态 */
-  setState: (state: { [key: string]: any }) => void;
-  /** 获取状态 */
-  getState: (key: string) => any;
 }
 
 /** VTableSheet配置 */
@@ -92,7 +66,7 @@ export interface IVTableSheetOptions {
   /** 是否显示sheet切换栏 */
   showSheetTab?: boolean;
   /** 插件 */
-  pluginModules?: {
+  VTablePluginModules?: {
     module: any;
     moduleOptions?: any;
   }[];
@@ -105,27 +79,26 @@ export interface IVTableSheetOptions {
     items?: MainMenuItem[];
   };
   /** 主题 */
-  theme?: string | Record<string, any>;
+  theme?: {
+    rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
+    colSeriesNumberCellStyle?: TableSeriesNumberOptions['colSeriesNumberCellStyle'];
+    /** TODO 表格以外部分的主题 */
+    menuStyle?: {
+      fontFamily?: string;
+      fontSize?: number;
+      color?: string;
+      padding?: number[];
+      bgColor?: string;
+    };
+    tableTheme: VTableThemes.ITableThemeDefine;
+  };
   /** 默认行高 */
   defaultRowHeight?: number;
   /** 默认列宽 */
   defaultColWidth?: number;
-  /** 是否允许编辑 */
-  editable?: boolean;
-  /** 是否显示网格线 */
-  showGridLines?: boolean;
-  /** 是否显示行号 */
-  showRowNumbers?: boolean;
-  /** 是否允许拖拽调整大小 */
-  allowResize?: boolean;
-  /** 是否允许排序 */
-  allowSort?: boolean;
-  /** 是否允许过滤 */
-  allowFilter?: boolean;
-  /** 是否允许选择 */
-  allowSelection?: boolean;
-  /** 是否允许复制粘贴 */
-  allowClipboard?: boolean;
-  /** 是否允许撤销重做 */
-  allowUndo?: boolean;
 }
+export * from './base';
+export * from './event';
+export * from './formula';
+export * from './filter';
+export * from './sheet';

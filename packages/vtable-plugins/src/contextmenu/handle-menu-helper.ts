@@ -15,8 +15,6 @@ export class MenuHandler {
    * 处理复制操作
    */
   handleCopy(table: VTable.ListTable): void {
-    console.log('执行复制操作');
-
     table.eventManager.handleCopy(new KeyboardEvent('copy'));
   }
 
@@ -24,8 +22,6 @@ export class MenuHandler {
    * 处理剪切操作
    */
   handleCut(table: VTable.ListTable): void {
-    console.log('执行剪切操作');
-
     table.eventManager.handleCut(new KeyboardEvent('cut'));
   }
 
@@ -44,7 +40,6 @@ export class MenuHandler {
       return;
     }
 
-    console.log('插入行（向上）', { rowIndex, count });
     if (typeof (table as any).addRecord === 'function') {
       // 使用表格API插入行
       for (let i = 0; i < count; i++) {
@@ -60,7 +55,6 @@ export class MenuHandler {
     if (rowIndex === undefined) {
       return;
     }
-    console.log('插入行（向下）', { rowIndex, count });
     if (typeof (table as any).addRecord === 'function') {
       // 使用表格API插入行
       for (let i = 0; i < count; i++) {
@@ -76,7 +70,6 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    console.log('插入列（向左）', { colIndex, count });
     if (typeof (table as any).addColumn === 'function') {
       // 使用表格API插入列
       for (let i = 0; i < count; i++) {
@@ -92,7 +85,6 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    console.log('插入列（向右）', { colIndex, count });
     if (typeof (table as any).addColumn === 'function') {
       for (let i = 0; i < count; i++) {
         table.addColumn({ field: colIndex + 1 }, colIndex + 1, true);
@@ -107,7 +99,6 @@ export class MenuHandler {
     if (rowIndex === undefined) {
       return;
     }
-    console.log('删除行', { rowIndex });
     if (typeof (table as any).deleteRecords === 'function') {
       const selectRanges = table.stateManager.select.ranges;
       //处理selectRanges中的每个选择区域，记录到deleteRowIndexs数组中，保证没给row值记录一次，且按倒序排序
@@ -140,7 +131,6 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    console.log('删除列', { colIndex });
     if (typeof (table as any).deleteColumn === 'function') {
       const selectRanges = table.stateManager.select.ranges;
       //处理selectRanges中的每个选择区域，记录到deleteColIndexs数组中，保证没给col值记录一次，且按倒序排序
@@ -168,7 +158,6 @@ export class MenuHandler {
       return;
     }
 
-    console.log('隐藏列', { colIndex });
     // 检查表格是否支持隐藏列的API
     if (typeof (table as any).hideColumns === 'function') {
       (table as any).hideColumns([colIndex]);
@@ -183,7 +172,6 @@ export class MenuHandler {
       return;
     }
 
-    console.log('排序', { colIndex });
     // 切换排序方向
     if (typeof (table as any).sort === 'function') {
       // 获取当前列的排序状态
@@ -202,7 +190,6 @@ export class MenuHandler {
    * 处理合并单元格
    */
   handleMergeCells(table: VTable.ListTable): void {
-    console.log('合并单元格');
     // 获取当前选中区域
     if ((table.stateManager.select.ranges?.length ?? 0) === 1 && typeof (table as any).mergeCells === 'function') {
       const { row: startRow, col: startCol } = table.stateManager.select.ranges[0].start;
@@ -222,7 +209,6 @@ export class MenuHandler {
    * 处理取消合并单元格
    */
   handleUnmergeCells(table: VTable.ListTable): void {
-    console.log('取消合并单元格');
     if ((table.stateManager.select.ranges?.length ?? 0) === 1 && typeof (table as any).unmergeCells === 'function') {
       const { row: startRow, col: startCol } = table.stateManager.select.ranges[0].start;
       const { row: endRow, col: endCol } = table.stateManager.select.ranges[0].end;
@@ -242,7 +228,6 @@ export class MenuHandler {
    * 处理设置保护范围
    */
   handleSetProtection(table: VTable.ListTable): void {
-    console.log('设置保护范围');
     // 需要表格API支持
   }
 
@@ -253,8 +238,6 @@ export class MenuHandler {
     if (rowIndex === undefined) {
       return;
     }
-
-    console.log('冻结到本行', { rowIndex });
 
     table.frozenRowCount = rowIndex + 1;
   }
@@ -267,7 +250,6 @@ export class MenuHandler {
       return;
     }
 
-    console.log('冻结到本列', { colIndex });
     table.frozenColCount = colIndex + 1;
   }
 
@@ -279,7 +261,6 @@ export class MenuHandler {
       return;
     }
 
-    console.log('冻结到本行本列', { rowIndex, colIndex });
     table.frozenRowCount = rowIndex + 1;
     table.frozenColCount = colIndex + 1;
   }
@@ -288,7 +269,6 @@ export class MenuHandler {
    * 处理取消冻结
    */
   handleUnfreeze(table: VTable.ListTable): void {
-    console.log('取消冻结');
     table.frozenRowCount = 0;
     table.frozenColCount = 0;
   }

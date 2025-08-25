@@ -11,7 +11,11 @@ export interface FilterOptions {
   enableFilter?: (field: number | string, column: VTable.TYPES.ColumnDefine) => boolean;
   /** 默认是否启用筛选（当 enableFilter 未定义时使用） */
   defaultEnabled?: boolean;
+  /** 是否展示按条件筛选，按值筛选 UI */
+  filterModes?: FilterMode[];
 }
+
+export type FilterMode = 'byValue' | 'byCondition';
 
 export interface FilterState {
   filters: Map<string | number, FilterConfig>;

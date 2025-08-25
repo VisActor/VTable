@@ -19,6 +19,7 @@ VTable provides rich scroll style configuration items, and users can customize t
 - visible: Configure whether the scroll bar is visible, and can be configured with values: 'always' | 'scrolling' | 'none' | 'focus', which correspond to: resident display | display when scrolling | display | focus on the canvas. Default is'scrolling '.
 - hoverOn: Specifies whether the scroll bar is suspended on the container or independent of the container. The default is true to float on the container.
 - barToSide: Whether to display to the edge of the container even though the contents are not full. Default false
+- ignoreFrozenCols: Ignore the width of frozen columns, default false
 
 Below we show the effect of these configurations with an example:
 

@@ -110,7 +110,7 @@ containerFit: {
 
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
-超过最大冻结宽度后是否全部解冻，默认 true
+超过最大冻结宽度后是否全部解冻，默认 true。如果设置为 false，则不会解冻全部列，而是根据 maxFrozenWidth 的值来决定最终解冻的列数。
 
 #${prefix} showFrozenIcon(boolean) = true
 
@@ -348,6 +348,10 @@ DropDownMenuHighlightInfo 的定义如下：
 
 {{ use: common-IDimensionInfo()}}
 
+##${prefix} contextMenuWorkOnlyCell(boolean)
+
+右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单
+
 #${prefix} title(Object)
 
 {{ use: common-title(
@@ -384,6 +388,10 @@ html 目前实现较完整，先默认使用 html 渲染方式。目前暂不支
 ##${prefix} confine (boolean) = true
 
 是否将 tooltip 框限制在画布区域内，默认开启。针对 renderMode:"html" 有效。
+
+##${prefix} position(string) = 'top'
+
+tooltip 框位置，可选 top left right bottom
 
 #${prefix} legends
 

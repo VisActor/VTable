@@ -1,6 +1,29 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 31 Jul 2025 11:30:27 GMT and should not be manually modified.
+This log was last generated on Mon, 18 Aug 2025 11:14:19 GMT and should not be manually modified.
+
+## 1.19.7
+Mon, 18 Aug 2025 11:14:19 GMT
+
+_Version update only_
+
+## 1.19.6
+Fri, 08 Aug 2025 06:24:08 GMT
+
+### Updates
+
+- fix: pivot table set columnHierarchyType gird expand tree error #4254
+
+
+- fix: when no records markline render error #4305
+
+
+- feat: pivot chart add columnWidthConfig option
+
+
+- refactor: add table export plugin
+
+
 
 ## 1.19.5
 Thu, 31 Jul 2025 11:30:27 GMT

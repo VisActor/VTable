@@ -34,36 +34,11 @@ export interface ISheetAPI {
 
   /** 根据地址获取坐标 */
   coordFromAddress: (address: string) => CellCoord;
-
   /** 获取当前选择 */
   getSelection: () => CellRange | null;
 
   /** 设置当前选择 */
   setSelection: (range: CellRange) => void;
-
-  /** 插入行 */
-  insertRow: (index: number, data?: CellValue[]) => void;
-
-  /** 插入列 */
-  insertColumn: (index: number, data?: CellValue[]) => void;
-
-  /** 删除行 */
-  deleteRow: (index: number) => void;
-
-  /** 删除列 */
-  deleteColumn: (index: number) => void;
-
-  /** 从CSV导入 */
-  importFromCSV: (csv: string) => void;
-
-  /** 导出到CSV */
-  exportToCSV: () => string;
-
-  /** 撤销 */
-  undo: () => void;
-
-  /** 重做 */
-  redo: () => void;
 
   /** 获取数据 */
   getData: () => CellValue[][];
@@ -71,38 +46,11 @@ export interface ISheetAPI {
   /** 设置数据 */
   setData: (data: CellValue[][]) => void;
 
-  /** 清除数据 */
-  clearData: () => void;
-
   /** 获取行数 */
   getRowCount: () => number;
 
   /** 获取列数 */
   getColumnCount: () => number;
-
-  /** 获取可见行范围 */
-  getVisibleRowRange: () => { start: number; end: number };
-
-  /** 获取可见列范围 */
-  getVisibleColumnRange: () => { start: number; end: number };
-
-  /** 滚动到指定单元格 */
-  scrollToCell: (coord: CellCoord) => void;
-
-  /** 获取单元格DOM元素 */
-  getCellElement: (coord: CellCoord) => HTMLElement | null;
-
-  /** 获取行高 */
-  getRowHeight: (row: number) => number;
-
-  /** 设置行高 */
-  setRowHeight: (row: number, height: number) => void;
-
-  /** 获取列宽 */
-  getColumnWidth: (col: number) => number;
-
-  /** 设置列宽 */
-  setColumnWidth: (col: number, width: number) => void;
 }
 
 /** Sheet管理器接口 */

@@ -69,6 +69,7 @@ export type ScrollStyle = {
   horizontalPadding?: number | [number, number, number, number];
   /** 竖向滚动条 padding */
   verticalPadding?: number | [number, number, number, number];
+  ignoreFrozenCols?: boolean; // 忽略所有冻结列宽度，默认false
 };
 /**
  * 气泡框，按钮的的解释信息
