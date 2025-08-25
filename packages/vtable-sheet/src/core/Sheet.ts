@@ -175,7 +175,10 @@ export class Sheet extends EventTarget implements ISheetAPI {
       records: this.options.data,
       container: this.element,
       showHeader: isShowTableHeader,
-      keyboardOptions
+      keyboardOptions,
+      excelOptions: {
+        fillHandle: true
+      }
 
       // 其他特定配置
     };
