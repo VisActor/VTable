@@ -1,7 +1,9 @@
 import * as VTable from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import { AutoFillManager } from './auto-fill-manager';
-
+/**
+ * 自动填充插件
+ */
 export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
   id = `auto-fill-${Date.now()}`;
   name = 'Auto Fill';
