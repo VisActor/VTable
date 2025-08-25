@@ -1,5 +1,6 @@
 import * as VTable from '@visactor/vtable';
-import type { MasterDetailPluginOptions, DetailGridOptions } from './types';
+import type { MasterDetailPluginOptions } from './types';
+import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import { ConfigManager } from './config';
 import { EventManager } from './events';
@@ -75,7 +76,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private initializeManagers(): void {
     this.configManager = new ConfigManager(this.pluginOptions, this.table);
     this.eventManager = new EventManager(this.table);
-    this.subTableManager = new SubTableManager(this.table);
+    this.subTableManager = new SubTableManager(this.table, this.configManager);
 
     // 设置配置管理器的行展开状态检查函数
     this.configManager.setRowExpandedChecker((row: number) => this.eventManager.isRowExpanded(row));
@@ -144,6 +145,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
         ) => this.updateOriginalHeightsAfterAdaptive(expandedRowsInfo),
         collapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
+        expandRow: (rowIndex: number) => this.expandRow(rowIndex),
         restoreExpandedStatesAfter: () => this.restoreExpandedStatesAfter(),
         collapseRow: (rowIndex: number) => this.collapseRow(rowIndex)
       }
@@ -167,12 +169,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }): void {
     const { row } = eventArgs;
     const isExpandedRow = this.eventManager.isRowExpanded(row);
-    
     if (isExpandedRow) {
       // 如果是展开行，使用原始高度
       const bodyRowIndex = row - this.table.columnHeaderLevelCount;
       const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
-      
       if (originalHeight > 0) {
         // 修改事件参数中的高度
         eventArgs.modifiedHeight = originalHeight;
@@ -188,24 +188,20 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     endRow: number,
     totalHeight: number,
     expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     scenegraph: any
   ): void {
-    // 计算非虚拟行中的普通行数量
     let normalRowCount = 0;
-    
     for (let row = startRow; row < endRow; row++) {
       if (!this.configManager.isVirtualRow(row) && !expandedRowsInfo.has(row)) {
         normalRowCount++;
       }
     }
-    
-    // 给普通行预留最小空间
-    const minNormalRowHeight = 20;
+    // 获取表格的最小行高限制，而不是写死的值
+    const tableInternalProps = this.table.internalProps;
+    const minNormalRowHeight = tableInternalProps?.limitMinHeight || 10;
     const minNormalRowsTotalHeight = normalRowCount * minNormalRowHeight;
-    
     // 剩余高度分配给展开行
-    const remainingHeight = Math.max(100, totalHeight - minNormalRowsTotalHeight);
+    const remainingHeight = totalHeight - minNormalRowsTotalHeight
     const avgExpandedRowHeight = expandedRowsInfo.size > 0 ? Math.floor(remainingHeight / expandedRowsInfo.size) : 0;
 
     for (let row = startRow; row < endRow; row++) {
@@ -216,20 +212,17 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       }
 
       if (expandedRowsInfo.has(row)) {
-        // 展开行：尽量保证子表可见，但可能需要压缩
-        const finalHeight = Math.max(avgExpandedRowHeight, 60);
+        const finalHeight = avgExpandedRowHeight
         scenegraph.setRowHeight(row, finalHeight);
-        
-        // 更新展开行信息，计算新的基础高度
         const info = expandedRowsInfo.get(row);
         if (info) {
           expandedRowsInfo.set(row, {
-            baseHeight: Math.max(finalHeight - info.detailHeight, 20),
+            baseHeight: Math.max(finalHeight - info.detailHeight, minNormalRowHeight),
             detailHeight: info.detailHeight
           });
         }
       } else {
-        // 普通行：使用最小高度
+        // 普通行：使用表格配置的最小高度
         scenegraph.setRowHeight(row, minNormalRowHeight);
       }
     }
@@ -242,7 +235,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
   ): void {
     const internalProps = getInternalProps(this.table);
-    
     // 更新展开行的原始高度缓存
     for (const [rowIndex, info] of expandedRowsInfo) {
       const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
@@ -268,50 +260,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     internalProps.expandedRecordIndices.forEach(recordIndex => {
       try {
-        const bodyRowIndex = currentPagerData.indexOf(recordIndex);
+        const bodyRowIndex = this.table.getBodyRowIndexByRecordIndex(recordIndex);
         if (bodyRowIndex >= 0) {
           const targetRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
-          this.expandRowToNoRealRecordIndex(targetRowIndex);
+          this.expandRow(targetRowIndex);
         }
       } catch (error) {
         console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
       }
     });
   }
-
-  // private restoreExpandedStatesAfterFilter(): void {
-  //   const internalProps = getInternalProps(this.table);
-  //   if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
-  //     return;
-  //   }
-  //   const originalDataSource = this.table.dataSource.dataSourceObj?.records || this.table.dataSource.records;
-  //   if (!originalDataSource) {
-  //     return;
-  //   }
-  //   internalProps.expandedRecordIndices.forEach(recordIndex => {
-  //     try {
-  //       // 获取需要展开的记录对象
-  //       const targetRecord = originalDataSource[recordIndex];
-  //       if (!targetRecord) {
-  //         return;
-  //       }
-  //       for (
-  //         let rowIndex = this.table.columnHeaderLevelCount;
-  //         rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
-  //         rowIndex++
-  //       ) {
-  //         const record = this.table.getCellRawRecord(0, rowIndex);
-  //         if (record === targetRecord) {
-  //           // 找到了对应的行，展开它
-  //           this.expandRowToNoRealRecordIndex(rowIndex);
-  //           break; // 找到就跳出内层循环
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
-  //     }
-  //   });
-  // }
 
   /**
    * 展开行
@@ -327,13 +285,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (realRecordIndex === undefined || realRecordIndex === null) {
       return;
     }
-    const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+    // 直接使用 realRecordIndex，无论是 number 还是 number[]
     if (internalProps.expandedRecordIndices) {
-      if (!internalProps.expandedRecordIndices.includes(recordIndex)) {
-        internalProps.expandedRecordIndices.push(recordIndex);
+      if (!includesRecordIndex(internalProps.expandedRecordIndices, realRecordIndex)) {
+        internalProps.expandedRecordIndices.push(realRecordIndex);
       }
     }
-
     // 更新展开状态数组
     this.eventManager.addExpandedRow(rowIndex);
 
@@ -379,10 +336,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (realRecordIndex === undefined || realRecordIndex === null) {
       return;
     }
-    const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
+    // 直接使用 realRecordIndex，无论是 number 还是 number[]
     this.subTableManager.removeSubTable(bodyRowIndex);
     if (internalProps.expandedRecordIndices) {
-      const index = internalProps.expandedRecordIndices.indexOf(recordIndex);
+      const index = findRecordIndexPosition(internalProps.expandedRecordIndices, realRecordIndex);
       if (index > -1) {
         internalProps.expandedRecordIndices.splice(index, 1);
       }
@@ -407,44 +364,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       undefined,
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
-    this.refreshRowIcon(rowIndex);
-    if (this.table.heightMode === 'adaptive') {
-      this.table.scenegraph.dealHeightMode();
-    }
-  }
-
-  /**
-   * 展开行（不修改expandedRecordIndices）
-   */
-  private expandRowToNoRealRecordIndex(rowIndex: number): void {
-    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
-    const internalProps = getInternalProps(this.table);
-    if (this.eventManager.isRowExpanded(rowIndex)) {
-      return;
-    }
-    this.eventManager.addExpandedRow(rowIndex);
-    const originalHeight = this.table.getRowHeight(rowIndex);
-    if (internalProps.originalRowHeights) {
-      internalProps.originalRowHeights.set(bodyRowIndex, originalHeight);
-    }
-    const record = getRecordByRowIndex(this.table, bodyRowIndex);
-    const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
-    const height = detailConfig?.style?.height || 200;
-
-    const deltaHeight = height;
-    this.updateRowHeightForExpand(rowIndex, deltaHeight);
-    this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
-    internalProps._heightResizedRowMap.add(rowIndex);
-
-    this.subTableManager.renderSubTable(bodyRowIndex, (record, bodyRowIndex) =>
-      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
-    this.subTableManager.recalculateAllSubTablePositions(
-      bodyRowIndex + 1,
-      undefined,
-      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
-    this.drawUnderlineForRow(rowIndex, originalHeight);
     this.refreshRowIcon(rowIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();

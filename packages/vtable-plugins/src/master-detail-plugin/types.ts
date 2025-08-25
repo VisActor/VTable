@@ -1,5 +1,5 @@
-import * as VTable from '@visactor/vtable';
-import { Group } from '@visactor/vtable/src/vrender';
+import type * as VTable from '@visactor/vtable';
+import type { Group } from '@visactor/vtable/src/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
 export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOptions> {
@@ -16,16 +16,20 @@ export interface MasterDetailPluginOptions {
   id?: string;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  /** 自定义获取详情数据的函数，默认使用record.children */
+  getDetailData?: (record: unknown) => unknown[];
+  /** 自定义检查是否有详情数据的函数，默认检查record.children */
+  hasDetailData?: (record: unknown) => boolean;
 }
 
 /**
  * 内部属性扩展接口
  */
 export interface InternalProps {
-  expandedRecordIndices: number[];
+  expandedRecordIndices: (number | number[])[];
   subTableInstances: Map<number, VTable.ListTable>;
   originalRowHeights: Map<number, number>;
-  _tempExpandedRecordIndices?: number[];
+  _tempExpandedRecordIndices?: (number | number[])[];
 }
 
 /**
@@ -58,4 +62,43 @@ export interface SelectBorderHeightEventData {
   endRow: number;
   currentHeight: number;
   selectComp: { rect: any; fillhandle?: any; role: string };
+}
+
+/**
+ * 记录索引类型 - 支持单个数字或数字数组
+ */
+export type RecordIndexType = number | number[];
+
+/**
+ * 工具函数：比较两个记录索引是否相等
+ */
+export function recordIndexEquals(a: RecordIndexType, b: RecordIndexType): boolean {
+  if (typeof a === 'number' && typeof b === 'number') {
+    return a === b;
+  }
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((val, index) => val === b[index]);
+  }
+  // 一个是数字，一个是数组的情况
+  if (typeof a === 'number' && Array.isArray(b)) {
+    return b.length === 1 && b[0] === a;
+  }
+  if (Array.isArray(a) && typeof b === 'number') {
+    return a.length === 1 && a[0] === b;
+  }
+  return false;
+}
+
+/**
+ * 工具函数：检查记录索引数组中是否包含指定索引
+ */
+export function includesRecordIndex(array: (number | number[])[], target: RecordIndexType): boolean {
+  return array.some(item => recordIndexEquals(item, target));
+}
+
+/**
+ * 工具函数：在记录索引数组中查找指定索引的位置
+ */
+export function findRecordIndexPosition(array: (number | number[])[], target: RecordIndexType): number {
+  return array.findIndex(item => recordIndexEquals(item, target));
 }

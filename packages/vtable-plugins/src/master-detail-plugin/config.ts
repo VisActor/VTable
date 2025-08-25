@@ -10,6 +10,32 @@ export class ConfigManager {
   constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
 
   /**
+   * 获取记录的详情数据
+   */
+  getDetailData(record: unknown): unknown[] {
+    if (this.pluginOptions.getDetailData) {
+      return this.pluginOptions.getDetailData(record);
+    }
+    // 默认使用children字段
+    if (record && typeof record === 'object' && 'children' in record) {
+      return Array.isArray((record as any).children) ? (record as any).children : [];
+    }
+    return [];
+  }
+
+  /**
+   * 检查记录是否有详情数据
+   */
+  hasDetailData(record: unknown): boolean {
+    if (this.pluginOptions.hasDetailData) {
+      return this.pluginOptions.hasDetailData(record);
+    }
+    // 默认检查children字段
+    const detailData = this.getDetailData(record);
+    return detailData.length > 0;
+  }
+
+  /**
    * 注入主从表配置到表格选项中
    */
   injectMasterDetailOptions(options: VTable.ListTableConstructorOptions): void {
@@ -46,7 +72,6 @@ export class ConfigManager {
       const userDefaultRow = opts.defaultRowHeight;
       const userDefaultHeaderRow = opts.defaultHeaderRowHeight;
       const headerLevelCount = typeof table.columnHeaderLevelCount === 'number' ? table.columnHeaderLevelCount : 0;
-      
       if (row < headerLevelCount) {
         // 表头行：优先使用 defaultHeaderRowHeight，然后 defaultRowHeight，最后 'auto'
         if (userDefaultHeaderRow !== undefined && userDefaultHeaderRow !== null) {
@@ -160,6 +185,22 @@ export class ConfigManager {
   }
 
   /**
+   * 检查是否为分组标题行
+   */
+  private isGroupTitleRow(col: number, row: number): boolean {
+    try {
+      const record = this.table.getRecordByCell(col, row);
+      // 分组标题行的特征：有vtableMergeName字段，且children是数组中包含实际数据对象
+      if (record && typeof record === 'object' && 'vtableMergeName' in record) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
    * 给第一列添加层级图标
    */
   private injectHierarchyIcons(options: VTable.ListTableConstructorOptions): void {
@@ -188,8 +229,8 @@ export class ConfigManager {
       } catch (error) {
         return [];
       }
-      // 检查是否有children
-      if (!record || !Array.isArray((record as any).children) || (record as any).children.length === 0) {
+      // 检查是否有主从表的详情数据（非分组children）
+      if (!record || !this.hasDetailData(record) || this.isGroupTitleRow(col, row)) {
         return [
           {
             type: 'svg',
@@ -215,7 +256,9 @@ export class ConfigManager {
           {
             type: 'svg',
             svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 6.81235Z" fill="#141414" fill-opacity="1"/>
+            <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 
+             11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 
+             6.81235Z" fill="#141414" fill-opacity="1"/>
           </svg>`,
             width: 16,
             height: 16,
@@ -237,7 +280,9 @@ export class ConfigManager {
         {
           type: 'svg',
           svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="1"/>
+          <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 
+           4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 
+           11.3501Z" fill="#141414" fill-opacity="1"/>
         </svg>`,
           width: 16,
           height: 16,
@@ -271,12 +316,10 @@ export class ConfigManager {
     if (!detailOptions) {
       return null;
     }
-    
     // 判断是函数还是静态配置
     if (typeof detailOptions === 'function') {
       return detailOptions({ data: record, bodyRowIndex: bodyRowIndex });
     }
-    
     return detailOptions;
   }
 

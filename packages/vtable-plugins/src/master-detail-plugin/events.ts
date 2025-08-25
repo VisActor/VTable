@@ -47,7 +47,12 @@ export class EventManager {
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
   }): void {
-    const { cellGroup, cellHeight, padding, textBaseline } = eventData;
+    const { col, row, cellGroup, cellHeight, padding, textBaseline } = eventData;
+    // 检查是否为 customMergeCell，如果是则修正文字位置
+    if (this.isCustomMergeCell(col, row)) {
+      this.fixCustomMergeCellTextPosition(cellGroup, padding);
+      return;
+    }
     let effectiveCellHeight = cellHeight;
     if (cellGroup.col !== undefined && cellGroup.row !== undefined) {
       try {
@@ -82,6 +87,67 @@ export class EventManager {
         );
       }
     }
+  }
+
+  /**
+   * 修正 customMergeCell 的文字位置
+   */
+  private fixCustomMergeCellTextPosition(cellGroup: any, padding: [number, number, number, number]): void {
+    const { col, row } = cellGroup;
+    // 获取 customMergeCell 的配置
+    const table = this.table as any;
+    const customMerge = table.getCustomMerge(col, row);
+    if (!customMerge || !customMerge.style || !customMerge.range) {
+      return;
+    }
+    // 获取配置的 textAlign，默认为 'left'
+    const configuredTextAlign = customMerge.style.textAlign || 'left';
+    const { start, end } = customMerge.range;
+    // 计算合并区域的总宽度和起始位置
+    let totalMergeWidth = 0;
+    let mergeStartX = 0;
+    // 计算从起始列到结束列的总宽度
+    for (let c = start.col; c <= end.col; c++) {
+      totalMergeWidth += table.getColWidth(c);
+    }
+    // 计算合并区域的起始X坐标（从第一列开始）
+    for (let c = 0; c < start.col; c++) {
+      mergeStartX += table.getColWidth(c);
+    }
+    // 根据配置的 textAlign 设置文字位置
+    cellGroup.forEachChildren((child: any) => {
+      if (child.name === 'text' || child.name === 'content') {
+        let xPosition: number;
+        if (configuredTextAlign === 'center') {
+          // 居中对齐：合并区域起始位置 + padding + 合并区域宽度的一半
+          xPosition = mergeStartX + padding[3] + (totalMergeWidth - padding[1] - padding[3]) / 2;
+        } else if (configuredTextAlign === 'right') {
+          // 右对齐：合并区域起始位置 + 合并区域总宽度 - 右padding
+          xPosition = mergeStartX + totalMergeWidth - padding[1];
+        } else {
+          // 左对齐：合并区域起始位置 + 左padding
+          xPosition = mergeStartX + padding[3];
+        }
+        child.setAttribute('x', xPosition);
+        child.setAttribute('textAlign', configuredTextAlign);
+      }
+    });
+  }
+
+  /**
+   * 检查是否为 customMergeCell
+   */
+  private isCustomMergeCell(col: number, row: number): boolean {
+    try {
+      const table = this.table as any;
+      if (table && table.getCustomMerge) {
+        const customMerge = table.getCustomMerge(col, row);
+        return !!customMerge;
+      }
+    } catch (error) {
+      console.warn('Error checking custom merge cell:', error);
+    }
+    return false;
   }
 
   /**
@@ -148,18 +214,13 @@ export class EventManager {
     if (tempExpandedRecordIndices && tempExpandedRecordIndices.length > 0) {
       const recordIndicesArray = [...tempExpandedRecordIndices];
       recordIndicesArray.forEach(recordIndex => {
-        const currentPagerData = table.dataSource._currentPagerIndexedData;
-        if (currentPagerData) {
-          const bodyRowIndex = currentPagerData.indexOf(recordIndex);
-          if (bodyRowIndex >= 0) {
-            try {
-              // 使用插件的expandRow方法，而不是table的原生方法
-              const targetRowIndex = bodyRowIndex + table.columnHeaderLevelCount;
-              this.onExpandRow?.(targetRowIndex);
-            } catch (e) {
-              // 展开失败
-              console.warn(`Failed to expand row ${bodyRowIndex + table.columnHeaderLevelCount} after sort:`, e);
-            }
+        const bodyRowIndex = table.getBodyRowIndexByRecordIndex(recordIndex);
+        if (bodyRowIndex >= 0) {
+          try {
+            const targetRowIndex = bodyRowIndex + table.columnHeaderLevelCount;
+            this.onExpandRow?.(targetRowIndex);
+          } catch (e) {
+            console.warn(`Failed to expand row ${bodyRowIndex + table.columnHeaderLevelCount} after sort:`, e);
           }
         }
       });
@@ -317,7 +378,7 @@ export class EventManager {
 
   // 回调函数，需要从外部注入
   private onUpdateSubTablePositions?: () => void;
-  private onUpdateSubTablePositionsForRow?: ()=> void;
+  private onUpdateSubTablePositionsForRow?: () => void;
   private onExpandRow?: (rowIndex: number) => void;
   private onCollapseRow?: (rowIndex: number) => void;
   private onToggleRowExpand?: (rowIndex: number) => void;
@@ -328,7 +389,7 @@ export class EventManager {
    */
   setCallbacks(callbacks: {
     onUpdateSubTablePositions?: () => void;
-    onUpdateSubTablePositionsForRow?: ()=> void;
+    onUpdateSubTablePositionsForRow?: () => void;
     onExpandRow?: (rowIndex: number) => void;
     onCollapseRow?: (rowIndex: number) => void;
     onToggleRowExpand?: (rowIndex: number) => void;

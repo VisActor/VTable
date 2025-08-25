@@ -1,5 +1,6 @@
 import type * as VTable from '@visactor/vtable';
 import type { MasterDetailPluginOptions } from './types';
+import { includesRecordIndex } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
@@ -46,6 +47,7 @@ export class TableAPIExtensions {
       expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
     ) => void;
     collapseRowToNoRealRecordIndex: (rowIndex: number) => void;
+    expandRow: (rowIndex: number) => void;
     restoreExpandedStatesAfter: () => void;
     collapseRow: (rowIndex: number) => void;
   };
@@ -56,20 +58,19 @@ export class TableAPIExtensions {
     eventManager: EventManager,
     pluginOptions: MasterDetailPluginOptions,
     callbacks: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addUnderlineToCell: (cellGroup: any, originalHeight: number) => void;
       applyMinimalHeightStrategy: (
         startRow: number,
         endRow: number,
         totalHeight: number,
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         scenegraph: any
       ) => void;
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
       ) => void;
       collapseRowToNoRealRecordIndex: (rowIndex: number) => void;
+      expandRow: (rowIndex: number) => void;
       restoreExpandedStatesAfter: () => void;
       collapseRow: (rowIndex: number) => void;
     }
@@ -146,7 +147,6 @@ export class TableAPIExtensions {
    */
   private extendDealHeightMode(): void {
     // 拦截并增强 dealHeightMode 方法，让它感知展开行的特殊需求
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scenegraph = this.table.scenegraph as any;
     this.originalDealHeightMode = scenegraph.dealHeightMode.bind(scenegraph);
 
@@ -169,7 +169,6 @@ export class TableAPIExtensions {
       const heightAdaptiveMode = tableAny.heightAdaptiveMode || 'only-body';
       let startRow: number;
       let totalDrawHeight: number;
-      
       if (heightAdaptiveMode === 'all') {
         // 'all' 模式：包含表头在内的所有行都参与高度适应计算
         startRow = 0;
@@ -252,7 +251,6 @@ export class TableAPIExtensions {
         if (this.configManager.isVirtualRow(row)) {
           continue;
         }
-        
         if (!expandedRowsInfo.has(row)) {
           normalRowsBaseHeight += table.getRowHeight(row);
         } else {
@@ -308,7 +306,6 @@ export class TableAPIExtensions {
 
         // 应用最小高度限制
         newHeight = Math.max(newHeight, 20);
-        
         // 设置行高
         scenegraph.setRowHeight(row, newHeight);
       }
@@ -327,7 +324,6 @@ export class TableAPIExtensions {
           const lastRowIndex = nonVirtualRows[nonVirtualRows.length - 1];
           const otherRowsHeight = nonVirtualRows.slice(0, -1).reduce((sum, row) => sum + table.getRowHeight(row), 0);
           const adjustment = totalDrawHeight - otherRowsHeight;
-          
           if (expandedRowsInfo.has(lastRowIndex)) {
             // 最后一行是展开行，调整时要保证子表高度
             const info = expandedRowsInfo.get(lastRowIndex);
@@ -387,10 +383,10 @@ export class TableAPIExtensions {
    */
   private extendToggleHierarchyState(): void {
     const table = this.table as any;
-    // 拦截 toggleHierarchyState 方法，仅在表头分组折叠/展开时保持展开状态
+    // 拦截 toggleHierarchyState 方法
     this.originalToggleHierarchyState = table.toggleHierarchyState.bind(table);
     table.toggleHierarchyState = (col: number, row: number, recalculateColWidths: boolean = true) => {
-      // 只有当操作的是表头时，才进行状态保存和恢复
+      // 处理表头分组的情况
       if (this.table.isHeader(col, row)) {
         const internalProps = getInternalProps(this.table);
         const currentExpandedRows = [...this.eventManager.getExpandedRows()];
@@ -414,15 +410,51 @@ export class TableAPIExtensions {
 
         return result;
       }
+      // 处理数据行分组的情况（分组标题行）
+      const record = this.table.getRecordByCell(col, row);
+      if (record && typeof record === 'object' && 'vtableMergeName' in record) {
+        this.updateDetailTablesInGroup();
+      }
       return this.originalToggleHierarchyState(col, row, recalculateColWidths);
     };
   }
 
   /**
+   * 收起指定分组内的所有主从表（使用 recordIndex 管理）
+   */
+  private updateDetailTablesInGroup(): void {
+    try {
+      const internalProps = getInternalProps(this.table);
+      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
+      // 保存当前展开行的 recordIndex 到 expandedRecordIndices
+      currentExpandedRows.forEach(rowIndex => {
+        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
+        if (realRecordIndex !== undefined && realRecordIndex !== null) {
+          if (
+            internalProps.expandedRecordIndices &&
+            !includesRecordIndex(internalProps.expandedRecordIndices, realRecordIndex)
+          ) {
+            internalProps.expandedRecordIndices.push(realRecordIndex);
+          }
+        }
+      });
+      currentExpandedRows.forEach(rowIndex => {
+        this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
+      });
+      setTimeout(() => {
+        this.callbacks.restoreExpandedStatesAfter();
+      }, 16);
+    } catch (error) {
+      console.error('收起分组时出错:', error);
+    }
+  }
+
+
+
+  /**
    * 扩展 updateFilterRules 方法
    */
   private extendUpdateFilterRules(): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const table = this.table as any;
     // 拦截 updateFilterRules 方法，在过滤时保持展开状态
     this.originalUpdateFilterRules = table.updateFilterRules.bind(table);
@@ -442,7 +474,6 @@ export class TableAPIExtensions {
    */
   private extendUpdateChartSizeForResizeColWidth(): void {
     const table = this.table as any;
-    // 拦截图表大小更新方法，确保展开行中的图表使用原始高度
     this.originalUpdateChartSizeForResizeColWidth = table.scenegraph.updateChartSizeForResizeColWidth.bind(
       table.scenegraph
     );
@@ -466,8 +497,6 @@ export class TableAPIExtensions {
       return result;
     };
   }
-
-
   /**
    * 保护的updateCellContent方法
    */

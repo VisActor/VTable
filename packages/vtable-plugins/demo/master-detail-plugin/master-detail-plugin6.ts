@@ -1,5 +1,4 @@
 // 该case测试autoFillWidth,autoFillHeight,maxCharactersNumber，maxOperatableRecordCount，limitMaxAutoWidth，showFrozenIcon， autoFillWidth
-// 展示容器适配、自动填充、字符限制、操作记录限制等功能
 
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
@@ -215,10 +214,3 @@ export function createTable() {
 
 // 自动初始化
 createTable();
-
-// Demo 6 功能说明：
-// - autoFillWidth/autoFillHeight: 自动填充容器尺寸
-// - limitMaxAutoWidth: 限制最大自动宽度
-// - maxOperatableRecordCount: 限制可操作记录数
-// - showFrozenIcon: 显示冻结图标
-// - 包含主从表插件展示项目详情

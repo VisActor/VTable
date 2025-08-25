@@ -563,7 +563,11 @@ export function createTable(): VTable.ListTable {
   const tableInstance = new VTable.ListTable(container, option);
   // 暴露到 window 方便调试
   (window as any).tableInstance = tableInstance;
-
+  setTimeout(() => {
+    if (masterDetailPlugin.expandRow) {
+      masterDetailPlugin.expandRow(1);
+    }
+  }, 100);
   return tableInstance;
 }
 

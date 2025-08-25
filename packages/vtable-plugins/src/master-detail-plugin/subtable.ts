@@ -1,12 +1,27 @@
 import * as VTable from '@visactor/vtable';
 import type { DetailGridOptions } from './types';
 import { getInternalProps, getRecordByRowIndex, parseMargin } from './utils';
+import type { ConfigManager } from './config';
 
 /**
  * 子表管理相关功能
  */
 export class SubTableManager {
-  constructor(private table: VTable.ListTable) {}
+  constructor(private table: VTable.ListTable, private configManager: ConfigManager) {}
+
+  /**
+   * 检查记录是否有主从表的详情数据
+   */
+  private hasDetailData(record: unknown): boolean {
+    return this.configManager.hasDetailData(record);
+  }
+
+  /**
+   * 获取记录的详情数据
+   */
+  private getDetailData(record: unknown): unknown[] {
+    return this.configManager.getDetailData(record);
+  }
 
   /**
    * 渲染子表
@@ -17,7 +32,7 @@ export class SubTableManager {
   ): void {
     const internalProps = getInternalProps(this.table);
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
-    if (!record || !record.children) {
+    if (!record || !this.hasDetailData(record)) {
       return;
     }
     const detailConfig = getDetailConfig(record, bodyRowIndex);
@@ -25,7 +40,7 @@ export class SubTableManager {
     if (!childViewBox) {
       return;
     }
-    const childrenData = Array.isArray(record.children) ? record.children : [];
+    const childrenData = this.getDetailData(record);
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
     // 创建子表配置，首先使用父表的重要属性作为基础
@@ -298,6 +313,67 @@ export class SubTableManager {
   }
 
   /**
+   * 计算当前行所在分组层级的偏移高度
+   * @param rowIndex 当前行索引
+   * @returns 需要偏移的高度（所有父级分组行的高度总和）
+   */
+  private calculateGroupLevelOffset(rowIndex: number): number {
+    try {
+      // 获取当前行的记录索引和indexKey
+      const recordIndex = this.table.getRecordShowIndexByCell(0, rowIndex);
+      const indexKey = this.table.dataSource.getIndexKey(recordIndex);
+      // 如果不是数组或者是顶级，则无需偏移
+      if (!Array.isArray(indexKey) || indexKey.length <= 1) {
+        return 0;
+      }
+
+      let totalOffset = 0;
+      // 遍历当前行之前的所有行，找到所有父级分组行
+      for (let r = this.table.columnHeaderLevelCount; r < rowIndex; r++) {
+        try {
+          const record = this.table.getRecordByCell(0, r);
+          // 检查是否是分组行
+          if (record && typeof record === 'object' && 'vtableMergeName' in record) {
+            const groupRecordIndex = this.table.getRecordShowIndexByCell(0, r);
+            const groupIndexKey = this.table.dataSource.getIndexKey(groupRecordIndex);
+            // 标准化groupIndexKey为数组
+            const normalizedGroupKey = Array.isArray(groupIndexKey) ? groupIndexKey : [groupIndexKey];
+            // 检查这个分组行是否是当前行的祖先
+            if (this.isAncestorGroup(normalizedGroupKey, indexKey)) {
+              totalOffset += this.table.getRowHeight(r);
+            }
+          }
+        } catch (e) {
+          // 忽略单行错误，继续处理
+        }
+      }
+      return totalOffset;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  /**
+   * 检查分组是否是目标行的祖先分组
+   * @param groupKey 分组的indexKey
+   * @param targetKey 目标行的indexKey
+   * @returns 是否是祖先关系
+   */
+  private isAncestorGroup(groupKey: number[], targetKey: number[]): boolean {
+    // 祖先分组的层级必须小于目标行的层级
+    if (groupKey.length >= targetKey.length) {
+      return false;
+    }
+    // 检查前缀是否匹配
+    for (let i = 0; i < groupKey.length; i++) {
+      if (groupKey[i] !== targetKey[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * 设置子表canvas裁剪，实现真正的clip截断效果
    */
   private setupSubTableCanvasClipping(subTable: VTable.ListTable, bodyRowIndex: number): void {
@@ -318,23 +394,27 @@ export class SubTableManager {
         const tableHeight = this.table.tableNoFrameHeight;
         const isFrozenDataRow = rowIndex < this.table.frozenRowCount && rowIndex >= this.table.columnHeaderLevelCount;
         const isBottomFrozenDataRow = rowIndex >= this.table.rowCount - this.table.bottomFrozenRowCount;
+
+        // 计算当前子表所在分组的层级偏移
+        const groupLevelOffset = this.calculateGroupLevelOffset(rowIndex);
+
         const record = getRecordByRowIndex(this.table, bodyRowIndex);
         const detailConfig =
           record && this.getDetailConfigForRecord ? this.getDetailConfigForRecord(record, bodyRowIndex) : null;
         const [, marginRight, , marginLeft] = parseMargin(detailConfig?.style?.margin);
         const clipX = frozenColsWidth + marginLeft;
         let clipY = 0;
-        const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth - marginRight - marginLeft;
+        const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth - marginLeft / 2 - marginRight / 2;
         let clipHeight = tableHeight;
         if (isFrozenDataRow) {
-          clipY = 0;
-          clipHeight = tableHeight - bottomFrozenRowsHeight;
+          clipY = groupLevelOffset;
+          clipHeight = tableHeight - bottomFrozenRowsHeight - groupLevelOffset;
         } else if (isBottomFrozenDataRow) {
-          clipY = 0;
-          clipHeight = tableHeight;
+          clipY = groupLevelOffset;
+          clipHeight = tableHeight - groupLevelOffset;
         } else {
-          clipY = frozenRowsHeight;
-          clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight;
+          clipY = frozenRowsHeight + groupLevelOffset;
+          clipHeight = tableHeight - frozenRowsHeight - bottomFrozenRowsHeight - groupLevelOffset;
         }
         return { clipX, clipY, clipWidth, clipHeight };
       } catch (error) {
