@@ -556,6 +556,22 @@ export class Sheet extends EventTarget implements ISheetAPI {
   }
 
   /**
+   * 获取当前选择
+   */
+  getSelection(): CellRange | null {
+    return this.selection;
+  }
+
+  /**
+   * 设置当前选择
+   * @param range 选择范围
+   */
+  setSelection(range: CellRange): void {
+    this.selection = range;
+    // 更新UI选择
+  }
+
+  /**
    * 将第一行设置为表头
    */
   setFirstRowAsHeader(): void {
@@ -599,105 +615,6 @@ export class Sheet extends EventTarget implements ISheetAPI {
     }
 
     // 清除引用
-    this.tableInstance = undefined;
-  }
-
-  /**
-   * 撤销
-   */
-  undo(): void {
-    // TODO: 撤销实现
-  }
-
-  /**
-   * 重做
-   */
-  redo(): void {
-    // TODO: 重做实现
-  }
-
-  /**
-   * 清除数据
-   */
-  clearData(): void {
-    this.setData([]);
-  }
-
-  /**
-   * 获取可见行范围
-   * @returns 可见行范围
-   */
-  getVisibleRowRange(): { start: number; end: number } {
-    // TODO: 实现可见行范围获取
-    return { start: 0, end: this.getRowCount() };
-  }
-
-  /**
-   * 获取可见列范围
-   * @returns 可见列范围
-   */
-  getVisibleColumnRange(): { start: number; end: number } {
-    // TODO: 实现可见列范围获取
-    return { start: 0, end: this.getColumnCount() };
-  }
-
-  /**
-   * 滚动到指定单元格
-   * @param coord 坐标
-   */
-  scrollToCell(coord: CellCoord): void {
-    // TODO: 实现滚动到单元格功能
-    console.log('Scroll to cell:', coord);
-  }
-
-  /**
-   * 获取单元格DOM元素
-   * @param coord 坐标
-   * @returns 单元格DOM元素
-   */
-  getCellElement(coord: CellCoord): HTMLElement | null {
-    // TODO: 实现获取单元格DOM元素
-    return null;
-  }
-
-  /**
-   * 获取行高
-   * @param row 行索引
-   * @returns 行高
-   */
-  getRowHeight(row: number): number {
-    // TODO: 实现获取行高
-    const defaultHeight = this.options.defaultRowHeight;
-    return typeof defaultHeight === 'number' ? defaultHeight : 25;
-  }
-
-  /**
-   * 设置行高
-   * @param row 行索引
-   * @param height 行高
-   */
-  setRowHeight(row: number, height: number): void {
-    // TODO: 实现设置行高
-    console.log('Set row height:', row, height);
-  }
-
-  /**
-   * 获取列宽
-   * @param col 列索引
-   * @returns 列宽
-   */
-  getColumnWidth(col: number): number {
-    // TODO: 实现获取列宽
-    return this.options.defaultColWidth || 100;
-  }
-
-  /**
-   * 设置列宽
-   * @param col 列索引
-   * @param width 列宽
-   */
-  setColumnWidth(col: number, width: number): void {
-    // TODO: 实现设置列宽
-    console.log('Set column width:', col, width);
+    this.tableInstance.release();
   }
 }
