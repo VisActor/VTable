@@ -206,7 +206,10 @@ export class Sheet extends EventTarget implements ISheetAPI {
       container: this.element,
       showHeader: isShowTableHeader,
       keyboardOptions,
-      theme: changedTheme
+      theme: changedTheme,
+      excelOptions: {
+        fillHandle: true
+      }
       // 其他特定配置
     };
   }

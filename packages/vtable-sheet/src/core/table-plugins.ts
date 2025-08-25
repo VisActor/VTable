@@ -32,13 +32,15 @@ export function getTablePlugins(
   });
   const contextMenuPlugin = createContextMenuItems(sheetDefine);
   const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
+  const autoFillPlugin = new VTablePlugins.AutoFillPlugin();
   const plugins: VTable.plugins.IVTablePlugin[] = [
     addRowColumnPlugin,
     tableSeriesNumberPlugin,
     highlightHeaderWhenSelectCellPlugin,
     contextMenuPlugin,
     excelEditCellKeyboardPlugin,
-    filterPlugin
+    filterPlugin,
+    autoFillPlugin
   ];
   if (options?.VTablePluginModules) {
     options.VTablePluginModules.forEach(

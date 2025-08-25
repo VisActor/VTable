@@ -71,13 +71,17 @@ export class AutoFillManager {
 
     //cal headers
     const rowHeaderCells = this.tableInstance.getAllRowHeaderCells()[0];
-    rowHeaderCells.forEach(cell => {
-      this.headers.col.add(cell.col);
-    });
+    if (rowHeaderCells) {
+      rowHeaderCells.forEach(cell => {
+        this.headers.col.add(cell.col);
+      });
+    }
     const colHeaderCells = this.tableInstance.getAllColumnHeaderCells()[0];
-    colHeaderCells.forEach(cell => {
-      this.headers.row.add(cell.row);
-    });
+    if (colHeaderCells) {
+      colHeaderCells.forEach(cell => {
+        this.headers.row.add(cell.row);
+      });
+    }
   }
 
   // 开始拖拽
