@@ -200,6 +200,51 @@ export class AutoFillManager {
     return sourceDataPiece;
   }
 
+
+  private _detectFillRange(source: IRange) {
+    const { startRow, endRow, startColumn, endColumn } = source;
+    const worksheet = this._univerInstanceService
+      .getCurrentUnitForType<Workbook>(UniverInstanceType.UNIVER_SHEET)
+      ?.getActiveSheet();
+    if (!worksheet) {
+      return source;
+    }
+    const matrix = worksheet.getCellMatrix();
+    const maxRow = worksheet.getMaxRows() - 1;
+    const maxColumn = worksheet.getMaxColumns() - 1;
+    let detectEndRow = endRow;
+    // left column first, or consider right column.
+    if (startColumn > 0 && matrix.getValue(startRow, startColumn - 1)?.v != null) {
+      let cur = startRow;
+      while (matrix.getValue(cur, startColumn - 1)?.v != null && cur < maxRow) {
+        cur += 1;
+      }
+      detectEndRow = cur - 1;
+    } else if (endColumn < maxColumn && matrix.getValue(endRow, endColumn + 1)?.v != null) {
+      let cur = startRow;
+      while (matrix.getValue(cur, endColumn + 1)?.v != null && cur < maxRow) {
+        cur += 1;
+      }
+      detectEndRow = cur - 1;
+    }
+
+    for (let i = endRow + 1; i <= detectEndRow; i++) {
+      for (let j = startColumn; j <= endColumn; j++) {
+        if (matrix.getValue(i, j)?.v != null) {
+          detectEndRow = i - 1;
+          break;
+        }
+      }
+    }
+
+    return {
+      startColumn,
+      endColumn,
+      startRow,
+      endRow: detectEndRow
+    };
+  }
+
   /**
    * 填充数据
    * @param location - 位置
