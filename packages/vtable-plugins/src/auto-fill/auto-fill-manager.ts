@@ -106,6 +106,7 @@ export class AutoFillManager {
     if (!this.sourceRange) {
       return;
     }
+    this.direction = Direction.DOWN;
     // 双击填充时，自动检测填充范围
     const detectFillRange = getSelectedRangeArray(this._detectFillRange());
     this.targetRange = getTargetRange(this.direction, this.sourceRange, detectFillRange);
@@ -210,7 +211,10 @@ export class AutoFillManager {
 
     return sourceDataPiece;
   }
-
+  /**
+   * 快速填充检测填充范围
+   * @returns 填充范围
+   */
   private _detectFillRange() {
     // sourceRange
     const start = { row: Math.min(...this.sourceRange.rows), col: Math.min(...this.sourceRange.cols) };
@@ -236,7 +240,6 @@ export class AutoFillManager {
     }
     for (let i = end.row + 1; i <= detectEndRow; i++) {
       for (let j = start.col; j <= end.col; j++) {
-        console.log('detectFillRange', i, j, matrix.getValue(i, j));
         if (matrix.getValue(i, j)?.v) {
           detectEndRow = i - 1;
           break;
