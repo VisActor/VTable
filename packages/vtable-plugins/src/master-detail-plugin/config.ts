@@ -306,9 +306,6 @@ export class ConfigManager {
   }
 
   /**
-   * 设置虚拟记录行高
-   */
-  /**
    * 获取详情配置
    */
   getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {

@@ -14,33 +14,23 @@ export class TableAPIExtensions {
   private configManager: ConfigManager;
   private eventManager: EventManager;
   // 原始方法的引用
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalUpdateCellContent?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalUpdateResizeRow?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalDealHeightMode?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalUpdatePagination?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalToggleHierarchyState?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalUpdateFilterRules?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalUpdateChartSizeForResizeColWidth?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private originalUpdateColWidth?: any;
 
   // 回调函数
   private callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addUnderlineToCell: (cellGroup: any, originalHeight: number) => void;
     applyMinimalHeightStrategy: (
       startRow: number,
       endRow: number,
       totalHeight: number,
       expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       scenegraph: any
     ) => void;
     updateOriginalHeightsAfterAdaptive: (
@@ -98,7 +88,6 @@ export class TableAPIExtensions {
    * 扩展 updateCellContent 方法
    */
   private extendUpdateCellContent(): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const table = this.table as any;
     this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
     table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
@@ -108,7 +97,6 @@ export class TableAPIExtensions {
    * 扩展 updateResizeRow 方法
    */
   private extendUpdateResizeRow(): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const table = this.table as any;
     // 拦截行高调整方法，应用展开行的动态最小高度限制
     this.originalUpdateResizeRow = table.stateManager.updateResizeRow.bind(table.stateManager);
@@ -161,7 +149,6 @@ export class TableAPIExtensions {
 
       // 清除行高缓存，准备重新计算
       const table = this.table;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const tableAny = table as any;
       table._clearRowRangeHeightsMap();
 
