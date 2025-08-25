@@ -819,7 +819,6 @@ export function updateCellContentHeight(
   table: BaseTableAPI
 ) {
   const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
-
   const textMark = cellGroup.getChildByName('text');
 
   if (textMark instanceof Text && !autoRowHeight) {

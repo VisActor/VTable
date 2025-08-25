@@ -13,7 +13,7 @@ export class EventManager {
    */
   bindEventHandlers(): void {
     this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, () => this.onUpdateSubTablePositions());
-    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW, () => this.onUpdateSubTablePositions());
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW, () => this.onUpdateSubTablePositionsForRow());
     this.wrapTableResizeMethod();
     this.bindIconClickEvent();
     this.bindRowMoveEvents();
@@ -317,6 +317,7 @@ export class EventManager {
 
   // 回调函数，需要从外部注入
   private onUpdateSubTablePositions?: () => void;
+  private onUpdateSubTablePositionsForRow?: ()=> void;
   private onExpandRow?: (rowIndex: number) => void;
   private onCollapseRow?: (rowIndex: number) => void;
   private onToggleRowExpand?: (rowIndex: number) => void;
@@ -327,12 +328,14 @@ export class EventManager {
    */
   setCallbacks(callbacks: {
     onUpdateSubTablePositions?: () => void;
+    onUpdateSubTablePositionsForRow?: ()=> void;
     onExpandRow?: (rowIndex: number) => void;
     onCollapseRow?: (rowIndex: number) => void;
     onToggleRowExpand?: (rowIndex: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
   }): void {
     this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;
+    this.onUpdateSubTablePositionsForRow = callbacks.onUpdateSubTablePositionsForRow;
     this.onExpandRow = callbacks.onExpandRow;
     this.onCollapseRow = callbacks.onCollapseRow;
     this.onToggleRowExpand = callbacks.onToggleRowExpand;

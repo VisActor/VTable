@@ -4,6 +4,7 @@ import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './u
 import { ConfigManager } from './config';
 import { EventManager } from './events';
 import { SubTableManager } from './subtable';
+import { TableAPIExtensions } from './table-api-extensions';
 
 /**
  * 主从表插件核心类
@@ -17,7 +18,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     VTable.TABLE_EVENT_TYPE.SORT_CLICK,
     VTable.TABLE_EVENT_TYPE.AFTER_SORT,
     VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH,
-    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT
+    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT,
+    VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR
   ];
 
   pluginOptions: MasterDetailPluginOptions;
@@ -26,8 +28,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private configManager: ConfigManager;
   private eventManager: EventManager;
   private subTableManager: SubTableManager;
-  // 原始updateCellContent方法的引用
-  private originalUpdateCellContent?: Function;
+  private tableAPIExtensions: TableAPIExtensions;
   // 容器大小监听器
   private resizeObserver?: ResizeObserver;
 
@@ -62,6 +63,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT) {
       // 高亮处理
       this.eventManager.handleAfterUpdateSelectBorderHeight(eventArgs as any);
+    } else if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR) {
+      // progressbar 创建前处理：如果是展开行，修改高度为原始高度
+      this.handleBeforeCreateProgressBar(eventArgs as any);
     }
   }
 
@@ -79,6 +83,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 设置事件管理器的回调函数
     this.eventManager.setCallbacks({
       onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
+      onUpdateSubTablePositionsForRow: () => this.subTableManager.updateSubTablePositionsForRowResize(),
       onExpandRow: (rowIndex: number) => this.expandRow(rowIndex),
       onCollapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
       onToggleRowExpand: (rowIndex: number) => this.toggleRowExpand(rowIndex),
@@ -119,89 +124,133 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 扩展表格 API
    */
   private extendTableAPI(): void {
-    const table = this.table as any;
-    this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
-    table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
-
-    // 拦截 updatePagination 方法，在分页切换时收起所有展开的行
-    const originalUpdatePagination = table.updatePagination.bind(table);
-    table.updatePagination = (pagination: VTable.TYPES.IPagination) => {
-      const internalProps = getInternalProps(this.table);
-      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-      currentExpandedRows.forEach(rowIndex => {
-        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-        const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-        if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
-          internalProps.expandedRecordIndices.push(recordIndex);
-        }
-      });
-      currentExpandedRows.forEach(rowIndex => {
-        this.collapseRowToNoRealRecordIndex(rowIndex);
-      });
-      const result = originalUpdatePagination(pagination);
-      setTimeout(() => {
-        this.restoreExpandedStatesAfter();
-      }, 0);
-
-      return result;
-    };
-
-    // 拦截 toggleHierarchyState 方法，仅在表头分组折叠/展开时保持展开状态
-    const originalToggleHierarchyState = table.toggleHierarchyState.bind(table);
-    table.toggleHierarchyState = (col: number, row: number, recalculateColWidths: boolean = true) => {
-      // 只有当操作的是表头时，才进行状态保存和恢复
-      if (this.table.isHeader(col, row)) {
-        const internalProps = getInternalProps(this.table);
-        const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-        currentExpandedRows.forEach(rowIndex => {
-          const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-          if (realRecordIndex === undefined || realRecordIndex === null) {
-            return;
-          }
-          const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-          if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
-            internalProps.expandedRecordIndices.push(recordIndex);
-          }
-        });
-        currentExpandedRows.forEach(rowIndex => {
-          this.collapseRowToNoRealRecordIndex(rowIndex);
-        });
-        const result = originalToggleHierarchyState(col, row, recalculateColWidths);
-        setTimeout(() => {
-          this.restoreExpandedStatesAfter();
-        }, 0);
-
-        return result;
+    // 创建 TableAPIExtensions 实例
+    this.tableAPIExtensions = new TableAPIExtensions(
+      this.table,
+      this.configManager,
+      this.eventManager,
+      this.pluginOptions,
+      {
+        addUnderlineToCell: (cellGroup: any, originalHeight: number) =>
+          this.addUnderlineToCell(cellGroup, originalHeight),
+        applyMinimalHeightStrategy: (
+          startRow: number,
+          endRow: number,
+          totalHeight: number,
+          expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
+          scenegraph: any
+        ) => this.applyMinimalHeightStrategy(startRow, endRow, totalHeight, expandedRowsInfo, scenegraph),
+        updateOriginalHeightsAfterAdaptive: (
+          expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
+        ) => this.updateOriginalHeightsAfterAdaptive(expandedRowsInfo),
+        collapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
+        restoreExpandedStatesAfter: () => this.restoreExpandedStatesAfter(),
+        collapseRow: (rowIndex: number) => this.collapseRow(rowIndex)
       }
-      return originalToggleHierarchyState(col, row, recalculateColWidths);
-    };
+    );
 
-    // 拦截 updateFilterRules 方法，在过滤时保持展开状态
-    const originalUpdateFilterRules = table.updateFilterRules.bind(table);
-    table.updateFilterRules = (filterRules: VTable.TYPES.FilterRules) => {
-      const internalProps = getInternalProps(this.table);
-      // 保存当前展开的记录索引
-      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-      currentExpandedRows.forEach(rowIndex => {
-        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-        if (realRecordIndex === undefined || realRecordIndex === null) {
-          return;
-        }
-        const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-        if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
-          internalProps.expandedRecordIndices.push(recordIndex);
-        }
-      });
-      currentExpandedRows.forEach(rowIndex => {
-        this.collapseRowToNoRealRecordIndex(rowIndex);
-      });
-      const result = originalUpdateFilterRules(filterRules);
-      setTimeout(() => {
-        this.restoreExpandedStatesAfterFilter();
-      }, 0);
+    // 执行API扩展
+    this.tableAPIExtensions.extendTableAPI();
+  }
 
-      return result;
-    };
+  /**
+   * 处理 progressbar 创建前的事件
+   */
+  private handleBeforeCreateProgressBar(eventArgs: {
+    col: number;
+    row: number;
+    width: number;
+    height: number;
+    table: any;
+    range?: any;
+    modifiedHeight: number;
+  }): void {
+    const { row } = eventArgs;
+    const isExpandedRow = this.eventManager.isRowExpanded(row);
+    
+    if (isExpandedRow) {
+      // 如果是展开行，使用原始高度
+      const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+      const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+      
+      if (originalHeight > 0) {
+        // 修改事件参数中的高度
+        eventArgs.modifiedHeight = originalHeight;
+      }
+    }
+  }
+
+  /**
+   * 空间不足时的最小高度分配策略
+   */
+  private applyMinimalHeightStrategy(
+    startRow: number,
+    endRow: number,
+    totalHeight: number,
+    expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    scenegraph: any
+  ): void {
+    // 计算非虚拟行中的普通行数量
+    let normalRowCount = 0;
+    
+    for (let row = startRow; row < endRow; row++) {
+      if (!this.configManager.isVirtualRow(row) && !expandedRowsInfo.has(row)) {
+        normalRowCount++;
+      }
+    }
+    
+    // 给普通行预留最小空间
+    const minNormalRowHeight = 20;
+    const minNormalRowsTotalHeight = normalRowCount * minNormalRowHeight;
+    
+    // 剩余高度分配给展开行
+    const remainingHeight = Math.max(100, totalHeight - minNormalRowsTotalHeight);
+    const avgExpandedRowHeight = expandedRowsInfo.size > 0 ? Math.floor(remainingHeight / expandedRowsInfo.size) : 0;
+
+    for (let row = startRow; row < endRow; row++) {
+      if (this.configManager.isVirtualRow(row)) {
+        // 虚拟行高度永远为 0
+        scenegraph.setRowHeight(row, 0);
+        continue;
+      }
+
+      if (expandedRowsInfo.has(row)) {
+        // 展开行：尽量保证子表可见，但可能需要压缩
+        const finalHeight = Math.max(avgExpandedRowHeight, 60);
+        scenegraph.setRowHeight(row, finalHeight);
+        
+        // 更新展开行信息，计算新的基础高度
+        const info = expandedRowsInfo.get(row);
+        if (info) {
+          expandedRowsInfo.set(row, {
+            baseHeight: Math.max(finalHeight - info.detailHeight, 20),
+            detailHeight: info.detailHeight
+          });
+        }
+      } else {
+        // 普通行：使用最小高度
+        scenegraph.setRowHeight(row, minNormalRowHeight);
+      }
+    }
+  }
+
+  /**
+   * 在 adaptive 处理后更新原始高度缓存
+   */
+  private updateOriginalHeightsAfterAdaptive(
+    expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
+  ): void {
+    const internalProps = getInternalProps(this.table);
+    
+    // 更新展开行的原始高度缓存
+    for (const [rowIndex, info] of expandedRowsInfo) {
+      const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+      if (internalProps.originalRowHeights) {
+        // 将新的基础高度设置为原始高度
+        internalProps.originalRowHeights.set(bodyRowIndex, info.baseHeight);
+      }
+    }
   }
 
   /**
@@ -213,7 +262,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       return;
     }
     // 获取当前分页的索引数据
-    const currentPagerData = (this.table.dataSource as any)._currentPagerIndexedData;
+    const currentPagerData = this.table.dataSource._currentPagerIndexedData;
     if (!currentPagerData) {
       return;
     }
@@ -230,81 +279,39 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     });
   }
 
-  private restoreExpandedStatesAfterFilter(): void {
-    const internalProps = getInternalProps(this.table);
-    if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
-      return;
-    }
-    const originalDataSource = this.table.dataSource.dataSourceObj?.records || this.table.dataSource.records;
-    if (!originalDataSource) {
-      return;
-    }
-    internalProps.expandedRecordIndices.forEach(recordIndex => {
-      try {
-        // 获取需要展开的记录对象
-        const targetRecord = originalDataSource[recordIndex];
-        if (!targetRecord) {
-          return;
-        }
-        for (
-          let rowIndex = this.table.columnHeaderLevelCount;
-          rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
-          rowIndex++
-        ) {
-          const record = this.table.getCellRawRecord(0, rowIndex);
-          if (record === targetRecord) {
-            // 找到了对应的行，展开它
-            this.expandRowToNoRealRecordIndex(rowIndex);
-            break; // 找到就跳出内层循环
-          }
-        }
-      } catch (error) {
-        console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
-      }
-    });
-  }
-  /**
-   * 保护的updateCellContent方法
-   */
-  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): any {
-    // 调用原始的updateCellContent方法
-    const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
-    // 检查是否是展开行，如果是则恢复原始高度并绘制下划线
-    const isExpandedRow = this.eventManager.isRowExpanded(row);
-    if (isExpandedRow) {
-      const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-      const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
-      if (originalHeight > 0) {
-        const cellGroup = this.table.scenegraph.getCell(col, row);
-        if (cellGroup) {
-          // 直接设置为原始高度
-          cellGroup.setAttributes({
-            height: originalHeight
-          });
-          // 在CellGroup重绘时自动绘制下划线
-          this.addUnderlineToCell(cellGroup, originalHeight);
-        }
-      }
-    }
-    // 处理单元格内容的垂直对齐
-    const cellGroup = this.table.scenegraph.getCell(col, row);
-    if (cellGroup) {
-      this.eventManager.handleAfterUpdateCellContentWidth({
-        col,
-        row,
-        distWidth: 0,
-        cellHeight: cellGroup.attribute?.height || 0,
-        detaX: 0,
-        autoRowHeight: false,
-        needUpdateRowHeight: false,
-        cellGroup,
-        padding: [0, 0, 0, 0],
-        textAlign: 'left' as CanvasTextAlign,
-        textBaseline: 'middle' as CanvasTextBaseline
-      });
-    }
-    return result;
-  }
+  // private restoreExpandedStatesAfterFilter(): void {
+  //   const internalProps = getInternalProps(this.table);
+  //   if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
+  //     return;
+  //   }
+  //   const originalDataSource = this.table.dataSource.dataSourceObj?.records || this.table.dataSource.records;
+  //   if (!originalDataSource) {
+  //     return;
+  //   }
+  //   internalProps.expandedRecordIndices.forEach(recordIndex => {
+  //     try {
+  //       // 获取需要展开的记录对象
+  //       const targetRecord = originalDataSource[recordIndex];
+  //       if (!targetRecord) {
+  //         return;
+  //       }
+  //       for (
+  //         let rowIndex = this.table.columnHeaderLevelCount;
+  //         rowIndex < this.table.rowCount - this.table.bottomFrozenRowCount;
+  //         rowIndex++
+  //       ) {
+  //         const record = this.table.getCellRawRecord(0, rowIndex);
+  //         if (record === targetRecord) {
+  //           // 找到了对应的行，展开它
+  //           this.expandRowToNoRealRecordIndex(rowIndex);
+  //           break; // 找到就跳出内层循环
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.warn(`处理记录索引 ${recordIndex} 时出错:`, error);
+  //     }
+  //   });
+  // }
 
   /**
    * 展开行
@@ -336,13 +343,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
     const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
-    const height = detailConfig?.style?.height || 200;
+    const height = detailConfig?.style?.height || 300;
 
     const deltaHeight = height;
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
-
     this.subTableManager.renderSubTable(bodyRowIndex, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
@@ -353,6 +359,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     );
     this.drawUnderlineForRow(rowIndex, originalHeight);
     this.refreshRowIcon(rowIndex);
+    if (this.table.heightMode === 'adaptive') {
+      this.table.scenegraph.dealHeightMode();
+    }
   }
 
   /**
@@ -399,6 +408,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
     this.refreshRowIcon(rowIndex);
+    if (this.table.heightMode === 'adaptive') {
+      this.table.scenegraph.dealHeightMode();
+    }
   }
 
   /**
@@ -434,6 +446,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     );
     this.drawUnderlineForRow(rowIndex, originalHeight);
     this.refreshRowIcon(rowIndex);
+    if (this.table.heightMode === 'adaptive') {
+      this.table.scenegraph.dealHeightMode();
+    }
   }
 
   /**
@@ -465,6 +480,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
     this.refreshRowIcon(rowIndex);
+    if (this.table.heightMode === 'adaptive') {
+      this.table.scenegraph.dealHeightMode();
+    }
   }
 
   /**
@@ -687,14 +705,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 清理主从表功能
    */
   private cleanupMasterDetailFeatures(): void {
-    // 恢复原始的updateCellContent方法
-    if (this.originalUpdateCellContent && this.table) {
-      const table = this.table as any;
-      // 检查 scenegraph 是否存在，避免在表格已经销毁时出错
-      if (table.scenegraph) {
-        table.scenegraph.updateCellContent = this.originalUpdateCellContent;
-      }
-      this.originalUpdateCellContent = undefined;
+    // 清理表格 API 扩展
+    if (this.tableAPIExtensions) {
+      this.tableAPIExtensions.cleanup();
     }
   }
 }

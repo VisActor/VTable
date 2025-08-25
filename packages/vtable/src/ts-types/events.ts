@@ -13,7 +13,7 @@ import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './comm
 import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, Group, IEventTarget } from '@src/vrender';
-import type { BaseTableConstructorOptions } from './base-table';
+import type { BaseTableConstructorOptions, BaseTableAPI } from './base-table';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -254,6 +254,15 @@ export interface TableEventHandlersEventArgumentMap {
     textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
   };
+  before_create_progress_bar: {
+    col: number;
+    row: number;
+    width: number;
+    height: number;
+    table: BaseTableAPI;
+    range?: CellRange;
+    modifiedHeight: number;
+  };
   after_update_select_border_height: {
     startRow: number;
     endRow: number;
@@ -370,6 +379,7 @@ export interface TableEventHandlersReturnMap {
   after_render: void;
   initialized: void;
   after_update_cell_content_width: void;
+  before_create_progress_bar: void;
 
   change_cell_value: void;
   mousedown_fill_handle: void;

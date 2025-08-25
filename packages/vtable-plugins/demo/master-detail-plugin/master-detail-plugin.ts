@@ -1,3 +1,6 @@
+// 该case测试的是分页，基本表格的分组与折叠，使用的是DetailGridOptions的动态配置函数
+// defaultColWidth,defaultHeaderColWidth,defaultRowHeight,defaultHeaderRowHeight
+// widthMode heightMode 为standard
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { MasterDetailPlugin } from '../../src';
@@ -7,7 +10,7 @@ const CONTAINER_ID = 'vTable';
 /**
  * 创建分页控制器
  */
-function createPaginationControls(tableInstance: VTable.ListTable, allRecords: any[]) {
+function createPaginationControls(tableInstance: VTable.ListTable, allRecords: unknown[]) {
   // 创建分页控制器容器
   const paginationContainer = document.createElement('div');
   paginationContainer.style.cssText = `
@@ -37,10 +40,11 @@ function createPaginationControls(tableInstance: VTable.ListTable, allRecords: a
   const pageInput = document.createElement('input');
   pageInput.type = 'number';
   pageInput.min = '1';
-  pageInput.style.cssText = 'width: 60px; padding: 4px; text-align: center; border: 1px solid #ddd; border-radius: 4px;';
-  pageInput.addEventListener('keypress', (e) => {
+  pageInput.style.cssText =
+    'width: 60px; padding: 4px; text-align: center; border: 1px solid #ddd; border-radius: 4px;';
+  pageInput.addEventListener('keypress', e => {
     if (e.key === 'Enter') {
-      const page = parseInt(pageInput.value) - 1; // 转换为0基索引
+      const page = parseInt(pageInput.value, 10) - 1; // 转换为0基索引
       if (page >= 0 && page < getTotalPages()) {
         goToPage(page);
       }
@@ -48,7 +52,7 @@ function createPaginationControls(tableInstance: VTable.ListTable, allRecords: a
   });
 
   const goBtn = createButton('跳转', () => {
-    const page = parseInt(pageInput.value) - 1; // 转换为0基索引
+    const page = parseInt(pageInput.value, 10) - 1; // 转换为0基索引
     if (page >= 0 && page < getTotalPages()) {
       goToPage(page);
     }
@@ -106,14 +110,17 @@ function createPaginationControls(tableInstance: VTable.ListTable, allRecords: a
 
   function getTotalPages(): number {
     const pagination = tableInstance.pagination;
-    if (!pagination) return 1;
+    if (!pagination || !pagination.totalCount || !pagination.perPageCount) {
+      return 1;
+    }
     return Math.ceil(pagination.totalCount / pagination.perPageCount);
   }
 
   function goToPage(page: number) {
-    if (!tableInstance.pagination) return;
-    
-    console.log(`跳转到第 ${page + 1} 页`);
+    if (!tableInstance.pagination) {
+      return;
+    }
+    // 跳转到指定页面
     tableInstance.updatePagination({
       currentPage: page,
       perPageCount: tableInstance.pagination.perPageCount,
@@ -124,20 +131,20 @@ function createPaginationControls(tableInstance: VTable.ListTable, allRecords: a
 
   function updatePageInfo() {
     const pagination = tableInstance.pagination;
-    if (!pagination) return;
-    
+    if (!pagination || pagination.currentPage === undefined || !pagination.perPageCount || !pagination.totalCount) {
+      return;
+    }
     const currentPage = pagination.currentPage + 1; // 显示时转换为1基索引
     const totalPages = getTotalPages();
     const startRecord = pagination.currentPage * pagination.perPageCount + 1;
     const endRecord = Math.min((pagination.currentPage + 1) * pagination.perPageCount, pagination.totalCount);
-    
-    pageInfo.textContent = `第 ${currentPage} 页，共 ${totalPages} 页，显示第 ${startRecord}-${endRecord} 条，共 ${pagination.totalCount} 条记录`;
+    pageInfo.textContent =
+      `第 ${currentPage} 页，共 ${totalPages} 页，` +
+      `显示第 ${startRecord}-${endRecord} 条，共 ${pagination.totalCount} 条记录`;
     pageInput.value = currentPage.toString();
-    
     // 更新按钮状态
     (firstBtn as HTMLButtonElement).disabled = (prevBtn as HTMLButtonElement).disabled = currentPage === 1;
     (nextBtn as HTMLButtonElement).disabled = (lastBtn as HTMLButtonElement).disabled = currentPage === totalPages;
-    
     // 更新按钮样式
     [firstBtn, prevBtn, nextBtn, lastBtn].forEach(btn => {
       const button = btn as HTMLButtonElement;
@@ -400,14 +407,12 @@ export function createTable() {
         {
           field: 'salary',
           title: '薪资',
-          width: 100,
           sort: true,
           fieldFormat: (value: number) => `$${value.toLocaleString()}`
         },
         {
           field: 'status',
           title: '状态',
-          width: 80,
           sort: true
         }
       ]
@@ -419,23 +424,39 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     columns,
     records,
-    autoFillWidth: true,
-    defaultRowHeight: 40,
-    frozenRowCount: 3,
+    // 默认尺寸配置（由 demo 提供，可在实例化插件或表格时覆盖）
+    defaultColWidth: 200,
+    defaultRowHeight: 30,
+    defaultHeaderRowHeight: 40,
+    autoWrapText: true,
     headerHierarchyType: 'grid-tree',
     headerExpandLevel: 2,
+    widthMode: 'standard',
+    heightMode: 'standard',
     // 分页配置
     pagination: {
       totalCount: records.length,
       currentPage: 0,
       perPageCount: 100
     },
+    rowResizeMode: 'all',
     // theme: VTable.themes.BRIGHT,
     plugins: [masterDetailPlugin]
   };
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(option);
+
+  setTimeout(() => {
+    // 展开第0行（表头后的第一行数据）
+    if (masterDetailPlugin.expandRow) {
+      masterDetailPlugin.expandRow(2);
+    }
+    // 展开第3行
+    if (masterDetailPlugin.expandRow) {
+      masterDetailPlugin.expandRow(5);
+    }
+  }, 100);
 
   // 创建分页控制器
   createPaginationControls(tableInstance, records);

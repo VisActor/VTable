@@ -1,0 +1,311 @@
+// 该case测试的是数据过滤，数据聚合分析
+// widthMode heightMode 为autoHeight
+
+import * as VTable from '@visactor/vtable';
+import { MasterDetailPlugin } from '../../src';
+
+const CONTAINER_ID = 'vTable';
+
+let tableInstance;
+VTable.register.icon('filter', {
+  name: 'filter',
+  type: 'svg',
+  width: 20,
+  height: 20,
+  marginRight: 6,
+  positionType: VTable.TYPES.IconPosition.right,
+  // interactive: true,
+  svg: '<svg t="1707378931406" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1587" width="200" height="200"><path d="M741.248 79.68l-234.112 350.08v551.488l55.296 24.704v-555.776l249.152-372.544c8.064-32.96-10.496-59.712-41.152-59.712h-709.248c-30.464 0-49.28 26.752-41.344 59.712l265.728 372.544v432.256l55.36 24.704v-478.592l-248.896-348.864h649.216z m-68.032 339.648c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-14.016-27.264-30.848z m0 185.216c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.256-27.264-14.016-27.264-30.848z m0 185.28c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-13.952-27.264-30.848z" p-id="1588"></path></svg>'
+});
+
+VTable.register.icon('filtered', {
+  name: 'filtered',
+  type: 'svg',
+  width: 20,
+  height: 20,
+  marginRight: 6,
+  positionType: VTable.TYPES.IconPosition.right,
+  // interactive: true,
+  svg: '<svg t="1707378931406" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1587" width="200" height="200"><path d="M741.248 79.68l-234.112 350.08v551.488l55.296 24.704v-555.776l249.152-372.544c8.064-32.96-10.496-59.712-41.152-59.712h-709.248c-30.464 0-49.28 26.752-41.344 59.712l265.728 372.544v432.256l55.36 24.704v-478.592l-248.896-348.864h649.216z m-68.032 339.648c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-14.016-27.264-30.848z m0 185.216c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.256-27.264-14.016-27.264-30.848z m0 185.28c0-16.832 12.096-30.592 27.264-30.848h277.888c15.232 0 27.712 13.824 27.712 30.848s-12.416 30.848-27.712 30.848h-277.888c-15.168-0.32-27.264-13.952-27.264-30.848z" p-id="1588" fill="#1296db"></path></svg>'
+});
+
+fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/olympic-winners.json')
+  .then(res => res.json())
+  .then(data => {
+    // 为每5行数据添加子表数据
+    const processedData = data.map((item, index) => {
+      const newItem = { ...item };
+      
+      // 每5行(i % 5 === 0)添加子表数据
+      if (index % 5 === 0) {
+        newItem.children = [
+          {
+            athlete: `Sub ${item.athlete} 1`,
+            age: item.age - 1,
+            country: item.country,
+            year: item.year,
+            sport: `Sub ${item.sport}`,
+            gold: Math.floor(item.gold / 2),
+            silver: Math.floor(item.silver / 2),
+            bronze: Math.floor(item.bronze / 2),
+            total: Math.floor(item.total / 2)
+          },
+          {
+            athlete: `Sub ${item.athlete} 2`,
+            age: item.age + 1,
+            country: item.country,
+            year: item.year,
+            sport: `Sub ${item.sport}`,
+            gold: Math.ceil(item.gold / 2),
+            silver: Math.ceil(item.silver / 2),
+            bronze: Math.ceil(item.bronze / 2),
+            total: Math.ceil(item.total / 2)
+          }
+        ];
+      }
+      
+      return newItem;
+    });
+
+    const columns: VTable.ColumnsDefine = [
+      {
+        field: 'athlete',
+        title: 'athlete',
+        width: 120,
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.NONE,
+          formatFun(value) {
+            return 'Total:';
+          }
+        }
+      },
+      {
+        field: 'age',
+        title: 'age',
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.AVG,
+          formatFun(value) {
+            return Math.round(value) + '(Avg)';
+          }
+        }
+      },
+      {
+        field: 'country',
+        title: 'country',
+        width: 240,
+        headerIcon: 'filter',
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.CUSTOM,
+          aggregationFun(values, records) {
+            // 统计金牌数最多的国家
+            const goldMedalCountByCountry = records.reduce(
+              (acc: Record<string, number>, d: { country: string; gold: number }) => {
+                const c = d.country;
+                const g = Number(d.gold) || 0;
+                acc[c] = (acc[c] || 0) + g;
+                return acc;
+              },
+              {} as Record<string, number>
+            );
+
+            let max = 0;
+            let best = '';
+            Object.keys(goldMedalCountByCountry).forEach(c => {
+              if (goldMedalCountByCountry[c] > max) {
+                max = goldMedalCountByCountry[c];
+                best = c;
+              }
+            });
+            return { country: best, gold: max };
+          },
+          formatFun(value: number | { country: string; gold: number }) {
+            if (typeof value === 'object' && value) {
+              return `Top country in gold medals: ${value.country},\nwith ${value.gold} gold medals`;
+            }
+            return String(value);
+          }
+        }
+      },
+      { field: 'year', title: 'year', headerIcon: 'filter' },
+      { field: 'sport', title: 'sport', headerIcon: 'filter' },
+      {
+        field: 'gold',
+        title: 'gold',
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.SUM,
+          formatFun(value) {
+            return Math.round(value) + '(Sum)';
+          }
+        }
+      },
+      {
+        field: 'silver',
+        title: 'silver',
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.SUM,
+          formatFun(value) {
+            return Math.round(value) + '(Sum)';
+          }
+        }
+      },
+      {
+        field: 'bronze',
+        title: 'bronze',
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.SUM,
+          formatFun(value) {
+            return Math.round(value) + '(Sum)';
+          }
+        }
+      },
+      {
+        field: 'total',
+        title: 'total',
+        aggregation: {
+          aggregationType: VTable.TYPES.AggregationType.SUM,
+          formatFun(value) {
+            return Math.round(value) + '(Sum)';
+          }
+        }
+      }
+    ];
+
+    // 创建主从表插件
+    const masterDetailPlugin = new MasterDetailPlugin({
+      id: 'master-detail-olympic',
+      detailGridOptions: {
+        columns: [
+          { field: 'athlete', title: 'Sub Athlete', width: 120 },
+          { field: 'age', title: 'Sub Age', width: 80 },
+          { field: 'sport', title: 'Sub Sport', width: 150 },
+          { field: 'gold', title: 'Sub Gold', width: 80 },
+          { field: 'silver', title: 'Sub Silver', width: 80 },
+          { field: 'bronze', title: 'Sub Bronze', width: 80 },
+          { field: 'total', title: 'Sub Total', width: 80 }
+        ],
+        theme: VTable.themes.ARCO
+      }
+    });
+
+    const option: VTable.ListTableConstructorOptions = {
+      columns,
+      records: processedData,
+      rowResizeMode: 'all',
+      autoWrapText: true,
+      heightMode: 'autoHeight',
+      widthMode: 'autoWidth',
+      bottomFrozenRowCount: 1,
+      theme: VTable.themes.ARCO.extends({
+        bottomFrozenStyle: {
+          fontFamily: 'PingFang SC',
+          fontWeight: 500
+        }
+      }),
+      plugins: [masterDetailPlugin]
+    };
+
+    tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID) as HTMLElement, option);
+    
+    // 展开一些行来演示效果
+    setTimeout(() => {
+      if (masterDetailPlugin.expandRow) {
+        masterDetailPlugin.expandRow(1); // 展开第一行
+        masterDetailPlugin.expandRow(6); // 展开第六行
+      }
+    }, 100);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).tableInstance = tableInstance;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).masterDetailPlugin = masterDetailPlugin;
+
+    const filterListValues: Record<string, string[]> = {
+      country: ['all', 'China', 'United States', 'Australia'],
+      year: ['all', '2004', '2008', '2012', '2016', '2020'],
+      sport: ['all', 'Swimming', 'Cycling', 'Biathlon', 'Short-Track Speed Skating', 'Nordic Combined']
+    };
+
+    let filterListSelectedValues = '';
+    let lastFilterField: string | number | null = null;
+    const filterContainer = tableInstance.getElement();
+    let select: HTMLSelectElement | null = null;
+
+    tableInstance.on('icon_click', args => {
+      const { col, row, name } = args;
+      if (name === 'filter') {
+        const field = tableInstance.getHeaderField(col, row);
+        if (select && lastFilterField === field) {
+          removeFilterElement();
+          lastFilterField = null;
+        } else if (!select || lastFilterField !== field) {
+          const rect = tableInstance.getCellRelativeRect(col, row);
+          createFilterElement(
+            filterListValues[String(field)],
+            filterListSelectedValues,
+            String(field),
+            rect as { top: number; left: number; width: number; height: number }
+          );
+          lastFilterField = field as string | number;
+        }
+      }
+    });
+
+    function createFilterElement(
+      values: string[],
+      curValue: string,
+      field: string,
+      positonRect: { top: number; left: number; width: number; height: number }
+    ) {
+      select = document.createElement('select');
+      select.setAttribute('type', 'text');
+      select.style.position = 'absolute';
+      select.style.padding = '4px';
+      select.style.width = '100%';
+      select.style.boxSizing = 'border-box';
+
+      let opsStr = '';
+      values.forEach(item => {
+        opsStr +=
+          item === curValue
+            ? `<option value="${item}" selected>${item}</option>`
+            : `<option value="${item}">${item}</option>`;
+      });
+      select.innerHTML = opsStr;
+
+      filterContainer.appendChild(select);
+
+      select.style.top = positonRect.top + positonRect.height + 'px';
+      select.style.left = positonRect.left + 'px';
+      select.style.width = positonRect.width + 'px';
+      select.style.height = positonRect.height + 'px';
+
+      select.addEventListener('change', () => {
+        if (!select) {
+          return;
+        }
+        const currentValue = select.value;
+        filterListSelectedValues = currentValue;
+        tableInstance.updateFilterRules([
+          {
+            filterKey: field,
+            filteredValues: currentValue === 'all' ? [] : [currentValue]
+          }
+        ]);
+        removeFilterElement();
+      });
+    }
+
+    function removeFilterElement() {
+      if (select && filterContainer.contains(select)) {
+        filterContainer.removeChild(select);
+        select = null;
+      }
+    }
+  })
+  .catch(err => {
+    // 简单兜底，避免未处理的 Promise 错误
+    // eslint-disable-next-line no-console
+    console.error('Fetch olympic data failed:', err);
+  });
+
+// 数据过滤功能结合主从表展示，每5行数据包含子表
+// 主从表插件已集成，支持展开子表查看详细数据

@@ -318,9 +318,13 @@ export class SubTableManager {
         const tableHeight = this.table.tableNoFrameHeight;
         const isFrozenDataRow = rowIndex < this.table.frozenRowCount && rowIndex >= this.table.columnHeaderLevelCount;
         const isBottomFrozenDataRow = rowIndex >= this.table.rowCount - this.table.bottomFrozenRowCount;
-        const clipX = frozenColsWidth;
+        const record = getRecordByRowIndex(this.table, bodyRowIndex);
+        const detailConfig =
+          record && this.getDetailConfigForRecord ? this.getDetailConfigForRecord(record, bodyRowIndex) : null;
+        const [, marginRight, , marginLeft] = parseMargin(detailConfig?.style?.margin);
+        const clipX = frozenColsWidth + marginLeft;
         let clipY = 0;
-        const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+        const clipWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth - marginRight - marginLeft;
         let clipHeight = tableHeight;
         if (isFrozenDataRow) {
           clipY = 0;
@@ -403,17 +407,12 @@ export class SubTableManager {
     }
   }
 
-  /**
-   * 父表尺寸变化时更新所有子表位置和宽度
-   */
-  updateSubTablePositionsForResize(): void {
+  updateSubTablePositionsForRowResize(): void {
     const internalProps = getInternalProps(this.table);
     if (!internalProps.subTableInstances) {
       return;
     }
     internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
-      const record = getRecordByRowIndex(this.table, bodyRowIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
       try {
         const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
         const scenegraph = (this.table as any).scenegraph;
@@ -426,16 +425,28 @@ export class SubTableManager {
         const cellHeight: number =
           cellGroup && cellGroup.attribute && typeof cellGroup.attribute.height === 'number'
             ? cellGroup.attribute.height
-            : typeof this.table.getRowHeight === 'function'
-            ? this.table.getRowHeight(rowIndex)
-            : 0;
-        if (internalProps.originalRowHeights && typeof cellHeight === 'number') {
+            : -1;
+        if (internalProps.originalRowHeights && typeof cellHeight === 'number' && cellHeight !== -1) {
           internalProps.originalRowHeights.set(bodyRowIndex, cellHeight);
         }
       } catch (e) {
         // 保持原有逻辑继续执行
       }
+    });
+    this.updateSubTablePositionsForResize();
+  }
 
+  /**
+   * 父表尺寸变化时更新所有子表位置和宽度
+   */
+  updateSubTablePositionsForResize(): void {
+    const internalProps = getInternalProps(this.table);
+    if (!internalProps.subTableInstances) {
+      return;
+    }
+    internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
+      const record = getRecordByRowIndex(this.table, bodyRowIndex);
+      const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
       const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
       if (newViewBox) {
         const newContainerWidth = newViewBox.x2 - newViewBox.x1;

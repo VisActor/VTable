@@ -26,13 +26,40 @@ export class ConfigManager {
         return 0;
       }
       if (this.isRowExpanded(row)) {
-        return table.getRowHeight(row);
+        const expandedHeight = table.getRowHeight(row);
+        // 确保返回值符合 customComputeRowHeight 的类型要求
+        if (Array.isArray(expandedHeight)) {
+          return expandedHeight[0] ?? 'auto';
+        }
+        return expandedHeight as number | 'auto';
       }
       if (originalCustomComputeRowHeight) {
         const userResult = originalCustomComputeRowHeight(params);
         if (userResult !== undefined && userResult !== null) {
           return userResult;
         }
+      }
+      // 优先使用表头/表体的用户配置的默认行高（如果存在）
+      // 如果当前是表头行，优先使用 defaultHeaderRowHeight，其次回退到 defaultRowHeight
+      // 否则使用 defaultRowHeight，最后回退到 'auto'
+      const opts = options as VTable.ListTableConstructorOptions & Record<string, unknown>;
+      const userDefaultRow = opts.defaultRowHeight;
+      const userDefaultHeaderRow = opts.defaultHeaderRowHeight;
+      const headerLevelCount = typeof table.columnHeaderLevelCount === 'number' ? table.columnHeaderLevelCount : 0;
+      
+      if (row < headerLevelCount) {
+        // 表头行：优先使用 defaultHeaderRowHeight，然后 defaultRowHeight，最后 'auto'
+        if (userDefaultHeaderRow !== undefined && userDefaultHeaderRow !== null) {
+          return userDefaultHeaderRow;
+        }
+        if (userDefaultRow !== undefined && userDefaultRow !== null) {
+          return userDefaultRow;
+        }
+        return 'auto';
+      }
+      // 表体行：使用 defaultRowHeight，最后 'auto'
+      if (userDefaultRow !== undefined && userDefaultRow !== null) {
+        return userDefaultRow;
       }
       return 'auto';
     };
@@ -115,7 +142,6 @@ export class ConfigManager {
     if (dataCount === 0) {
       return false;
     }
-    // 如果没有聚合行，虚拟行位置在数据行之后
     const virtualRowIndex =
       headerLevelCount + dataCount + layoutMap.hasAggregationOnBottomCount + layoutMap.hasAggregationOnTopCount;
     return row === virtualRowIndex;
