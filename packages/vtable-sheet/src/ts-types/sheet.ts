@@ -35,36 +35,6 @@ export interface ISheetAPI {
   /** 根据地址获取坐标 */
   coordFromAddress: (address: string) => CellCoord;
 
-  /** 获取当前选择 */
-  getSelection: () => CellRange | null;
-
-  /** 设置当前选择 */
-  setSelection: (range: CellRange) => void;
-
-  /** 插入行 */
-  insertRow: (index: number, data?: CellValue[]) => void;
-
-  /** 插入列 */
-  insertColumn: (index: number, data?: CellValue[]) => void;
-
-  /** 删除行 */
-  deleteRow: (index: number) => void;
-
-  /** 删除列 */
-  deleteColumn: (index: number) => void;
-
-  /** 从CSV导入 */
-  importFromCSV: (csv: string) => void;
-
-  /** 导出到CSV */
-  exportToCSV: () => string;
-
-  /** 撤销 */
-  undo: () => void;
-
-  /** 重做 */
-  redo: () => void;
-
   /** 获取数据 */
   getData: () => CellValue[][];
 

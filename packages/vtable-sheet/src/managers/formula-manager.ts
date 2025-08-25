@@ -257,19 +257,54 @@ export class FormulaManager {
   setCellContent(cell: FormulaCell, value: any): void {
     this.ensureInitialized();
 
+    // 检查单元格参数有效性
+    if (!cell || cell.sheet === undefined || cell.row === undefined || cell.col === undefined) {
+      console.error('Invalid cell parameter:', cell);
+      throw new Error('Invalid cell parameter for setCellContent');
+    }
+
+    // 检查单元格是否超出有效范围
+    if (cell.row < 0 || cell.col < 0) {
+      console.error('Cell coordinates out of bounds:', cell);
+      throw new Error(`Cell coordinates out of bounds: row=${cell.row}, col=${cell.col}`);
+    }
+
     try {
       const sheetId = this.getSheetId(cell.sheet);
 
+      // 创建单元格地址对象
       const address: SimpleCellAddress = {
         sheet: sheetId,
         row: cell.row,
         col: cell.col
       };
 
-      this.hyperFormula.setCellContents(address, [[value]]);
+      // 尝试处理特殊值
+      let processedValue = value;
+
+      // 处理空值
+      if (processedValue === undefined || processedValue === null) {
+        processedValue = '';
+      }
+
+      // 如果是字符串中的数字，尝试转换为数字类型
+      if (typeof processedValue === 'string' && !processedValue.startsWith('=')) {
+        const numericValue = Number(processedValue);
+        if (!isNaN(numericValue) && processedValue.trim() !== '') {
+          processedValue = numericValue;
+        }
+      }
+
+      // 设置单元格内容
+      this.hyperFormula.setCellContents(address, [[processedValue]]);
     } catch (error) {
       console.error('Failed to set cell content:', error);
-      throw new Error(`Failed to set cell content at ${cell.sheet}:${cell.row}:${cell.col}`);
+      // 提供更详细的错误信息
+      if (error instanceof Error) {
+        throw new Error(`Failed to set cell content at ${cell.sheet}:${cell.row}:${cell.col}. ${error.message}`);
+      } else {
+        throw new Error(`Failed to set cell content at ${cell.sheet}:${cell.row}:${cell.col}`);
+      }
     }
   }
 

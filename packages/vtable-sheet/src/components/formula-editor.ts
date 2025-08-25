@@ -80,27 +80,53 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
         return;
       }
 
+      // 获取编辑器元素和容器的位置信息
       const inputRect = this.element.getBoundingClientRect();
       const containerRect = tableContainer.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
 
       // 计算相对于表格容器的位置
       const relativeLeft = inputRect.left - containerRect.left;
+
+      // 计算下拉框的最大高度和理想宽度
+      const maxDropdownHeight = 250; // 最大高度限制
+      const idealWidth = Math.max(300, inputRect.width); // 理想宽度
+
+      // 计算下拉框在下方显示时的顶部位置
       let relativeTop = inputRect.bottom - containerRect.top + 2;
 
-      // 检查是否超出底部边界
-      const dropdownHeight = 300;
-      if (relativeTop + dropdownHeight > containerRect.height) {
-        relativeTop = inputRect.top - containerRect.top - dropdownHeight - 2;
+      // 检查是否有足够空间在下方显示下拉框
+      const spaceBelow = windowHeight - inputRect.bottom;
+      const spaceAbove = inputRect.top;
+
+      // 判断应该将下拉框放在输入框的上方还是下方
+      if (spaceBelow < maxDropdownHeight && spaceAbove > spaceBelow) {
+        // 空间不足且上方空间更大，则放在上方
+        relativeTop = inputRect.top - containerRect.top - maxDropdownHeight - 2;
       }
 
-      // 设置下拉框位置
+      // 确保下拉框不会超出容器底部
+      const bottomOverflow = relativeTop + maxDropdownHeight - containerRect.height;
+      if (bottomOverflow > 0) {
+        relativeTop = Math.max(0, relativeTop - bottomOverflow);
+      }
+
+      // 确保下拉框不会超出容器顶部
+      if (relativeTop < 0) {
+        relativeTop = 0;
+      }
+
+      // 设置下拉框位置和样式
       const dropdown = (this.formulaAutocomplete as any).dropdown;
       if (dropdown) {
         dropdown.style.position = 'absolute';
-        dropdown.style.left = `${relativeLeft}px`;
+        dropdown.style.left = `${Math.max(0, relativeLeft)}px`;
         dropdown.style.top = `${relativeTop}px`;
-        dropdown.style.width = `${Math.max(300, inputRect.width)}px`;
+        dropdown.style.width = `${idealWidth}px`;
+        dropdown.style.maxHeight = `${maxDropdownHeight}px`;
+        dropdown.style.overflowY = 'auto';
         dropdown.style.zIndex = '10000';
+        dropdown.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
       }
     };
 

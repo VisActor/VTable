@@ -305,24 +305,64 @@ export class Sheet extends EventTarget implements ISheetAPI {
     return super.on(eventName, handler);
   }
 
+  // 用于防止短时间内多次调用resize的节流变量
+  private resizeTimer: number | null = null;
+  private isResizing = false;
+
   /**
    * 更新Sheet大小
+   * 使用节流方式避免频繁调用resize
    */
   resize(): void {
     if (!this.element) {
       return;
     }
 
-    const width = this.container.clientWidth || 800;
-    const height = this.container.clientHeight || 600;
+    // 如果正在进行调整，清除之前的定时器
+    if (this.resizeTimer !== null) {
+      window.clearTimeout(this.resizeTimer);
+      this.resizeTimer = null;
+    }
 
-    this.element.style.width = `${width}px`;
-    this.element.style.height = `${height}px`;
+    // 如果已经在执行resize，设置一个短期延迟
+    if (this.isResizing) {
+      this.resizeTimer = window.setTimeout(() => {
+        this.doResize();
+        this.resizeTimer = null;
+      }, 50);
+      return;
+    }
 
-    // 更新表格实例大小
-    if (this.tableInstance) {
-      // 触发VTable的resize
-      this.tableInstance.resize();
+    // 否则直接执行resize
+    this.doResize();
+  }
+
+  /**
+   * 实际执行调整大小的操作
+   * @private
+   */
+  private doResize(): void {
+    try {
+      this.isResizing = true;
+
+      const width = this.container.clientWidth || 800;
+      const height = this.container.clientHeight || 600;
+
+      // 只有尺寸确实变化时才更新样式和触发表格实例的resize
+      if (parseInt(this.element.style.width, 10) !== width || parseInt(this.element.style.height, 10) !== height) {
+        this.element.style.width = `${width}px`;
+        this.element.style.height = `${height}px`;
+
+        // 更新表格实例大小
+        if (this.tableInstance) {
+          // 触发VTable的resize
+          this.tableInstance.resize();
+        }
+      }
+    } catch (error) {
+      console.error('Error during resize:', error);
+    } finally {
+      this.isResizing = false;
     }
   }
 
@@ -384,7 +424,17 @@ export class Sheet extends EventTarget implements ISheetAPI {
     this.options.data = data;
     // 更新表格实例数据
     if (this.tableInstance) {
-      // TODO: 更新表格数据
+      this.tableInstance.updateOption({
+        records: data
+      });
+      // 更新公式引擎中的数据
+      if (this.parent?.formulaManager) {
+        try {
+          this.parent.formulaManager.setSheetContent(this.sheetKey, data);
+        } catch (e) {
+          console.warn('Failed to update formula data:', e);
+        }
+      }
     }
   }
   /**
@@ -502,56 +552,6 @@ export class Sheet extends EventTarget implements ISheetAPI {
       row: parseInt(rowStr, 10) - 1,
       col: col - 1
     };
-  }
-
-  /**
-   * 获取当前选择
-   */
-  getSelection(): CellRange | null {
-    return this.selection;
-  }
-
-  /**
-   * 设置当前选择
-   * @param range 选择范围
-   */
-  setSelection(range: CellRange): void {
-    this.selection = range;
-    // 更新UI选择
-  }
-
-  /**
-   * 插入行
-   * @param index 行索引
-   * @param data 数据
-   */
-  insertRow(index: number, data?: any[]): void {
-    // TODO: 插入行实现
-  }
-
-  /**
-   * 插入列
-   * @param index 列索引
-   * @param data 数据
-   */
-  insertColumn(index: number, data?: any[]): void {
-    // TODO: 插入列实现
-  }
-
-  /**
-   * 删除行
-   * @param index 行索引
-   */
-  deleteRow(index: number): void {
-    // TODO: 删除行实现
-  }
-
-  /**
-   * 删除列
-   * @param index 列索引
-   */
-  deleteColumn(index: number): void {
-    // TODO: 删除列实现
   }
 
   /**
