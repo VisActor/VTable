@@ -4,6 +4,19 @@
 
 ExcelImportPlugin是一个导入插件，旨在为用户提供多格式外部数据文件的高效导入解决方案。该插件支持 Excel、CSV、JSON 和 HTML 格式的数据导入
 
+## 插件说明
+
+该插件会向table实例添加importFile方法。
+
+- importFile：导入文件，会弹出文件选择器，用户选择文件后，会自动导入文件数据。
+
+如：
+```ts
+await tableInstance.importFile();
+```
+
+也可以直接调用import方法，传入文件路径，或者文件对象，或者文件内容。下面有介绍到：
+
 ### 支持的数据格式
 - Excel 文件
 - CSV 文件（支持自定义分隔符）

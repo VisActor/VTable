@@ -1,16 +1,16 @@
 import * as VTable from '@visactor/vtable';
-import { FilterEngine } from './filter/filter-engine';
-import { FilterStateManager } from './filter/filter-state-manager';
-import { FilterToolbar } from './filter/filter-toolbar';
-import type { FilterOptions, FilterConfig, FilterState } from './filter/types';
-import { FilterActionType } from './filter/types';
+import { FilterEngine } from './filter-engine';
+import { FilterStateManager } from './filter-state-manager';
+import { FilterToolbar } from './filter-toolbar';
+import type { FilterOptions, FilterConfig, FilterState } from './types';
+import { FilterActionType } from './types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
  */
 export class FilterPlugin implements VTable.plugins.IVTablePlugin {
-  id = `filter-${Date.now()}`;
+  id = `filter`;
   name = 'Filter';
   runTime = [
     VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
@@ -76,7 +76,8 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
       eventArgs.name === 'filtering-icon'
     ) {
-      const isRightClick = eventArgs.event?.which === 3 || eventArgs.event?.button === 2 || (eventArgs.event?.buttons & 2) === 2;
+      const isRightClick =
+        eventArgs.event?.which === 3 || eventArgs.event?.button === 2 || (eventArgs.event?.buttons & 2) === 2;
       // 如果是右键点击，直接返回不处理
       if (isRightClick) {
         return;

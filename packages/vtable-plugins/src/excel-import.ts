@@ -21,7 +21,7 @@ export interface ExcelImportOptions {
 }
 
 export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
-  id: string = `excel-import-plugin-${Date.now()}`;
+  id: string = `excel-import-plugin`;
   name = 'ExcelImportPlugin';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   private options: ExcelImportOptions;

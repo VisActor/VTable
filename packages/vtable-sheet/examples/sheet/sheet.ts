@@ -3,12 +3,14 @@ import * as VTablePlugins from '@visactor/vtable-plugins';
 const CONTAINER_ID = 'vTable';
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
-    showFormulaBar: true,
+    // showFormulaBar: false,
     showSheetTab: true,
-    defaultRowHeight: 25,
-    defaultColWidth: 100,
+    // defaultRowHeight: 25,
+    // defaultColWidth: 100,
     sheets: [
       {
+        rowCount: 200,
+        columnCount: 10,
         sheetKey: 'sheet1',
         sheetTitle: 'sheet1',
         filter: true,

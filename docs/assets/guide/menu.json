@@ -294,6 +294,99 @@
       ]
     },
     {
+      "path": "sheet",
+      "title": {
+        "zh": "Sheet",
+        "en": "sheet"
+      },
+      "children": [
+        {
+          "path": "introduction",
+          "title": {
+            "zh": "VTable-Sheet介绍",
+            "en": "VTable-Sheet introduction"
+          }
+        },
+        {
+          "path": "usage",
+          "title": {
+            "zh": "使用",
+            "en": "sheet usage"
+          }
+        },
+        {
+          "path": "multi-sheet",
+          "title": {
+            "zh": "多表格页",
+            "en": "multi sheet"
+          }
+        },
+        {
+          "path": "formula",
+          "title": {
+            "zh": "公式计算",
+            "en": "formula"
+          }
+        },
+        {
+          "path": "filter",
+          "title": {
+            "zh": "数据过滤",
+            "en": "filter"
+          }
+        },
+        {
+          "path": "auto_fill",
+          "title": {
+            "zh": "自动填充",
+            "en": "auto fill"
+          }
+        },
+        {
+          "path": "table_series_number",
+          "title": {
+            "zh": "表格专用序号",
+            "en": "table series number"
+          }
+        },
+        {
+          "path": "menu",
+          "title": {
+            "zh": "菜单功能",
+            "en": "sheet menu"
+          }
+        },
+        {
+          "path": "plugins",
+          "title": {
+            "zh": "插件",
+            "en": "sheet plugins"
+          }
+        },
+        {
+          "path": "persistence",
+          "title": {
+            "zh": "数据持久化",
+            "en": "persistence"
+          }
+        },
+        {
+          "path": "import_export",
+          "title": {
+            "zh": "导入导出",
+            "en": "import and export"
+          }
+        },
+        {
+          "path": "editor",
+          "title": {
+            "zh": "单元格编辑",
+            "en": "cell editor"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell_type",
       "title": {
         "zh": "单元格类型",

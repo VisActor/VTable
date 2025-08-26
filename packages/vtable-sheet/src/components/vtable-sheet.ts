@@ -389,7 +389,7 @@ export default class VTableSheet {
     addButton.className = 'vtable-sheet-add-button';
     addButton.innerHTML = addIcon;
     addButton.title = '添加工作表';
-    addButton.addEventListener('click', () => this.addNewSheet());
+    addButton.addEventListener('click', () => this._addNewSheet());
     sheetTab.appendChild(addButton);
 
     // 创建导航按钮容器
@@ -490,7 +490,7 @@ export default class VTableSheet {
   /**
    * 激活sheet标签并滚动到可见区域
    */
-  private activeSheetTab(): void {
+  private _activeSheetTab(): void {
     const tabs = this.sheetTabElement?.querySelectorAll('.vtable-sheet-tab') as NodeListOf<HTMLElement>;
     let activeTab: HTMLElement | null = null;
     tabs.forEach(tab => {
@@ -528,7 +528,7 @@ export default class VTableSheet {
       tabsContainer.appendChild(this.createSheetTabItem(sheet, index));
     });
     // 激活sheet标签并滚动到可见区域
-    this.activeSheetTab();
+    this._activeSheetTab();
   }
   /**
    * 创建tab栏标签项
@@ -735,7 +735,7 @@ export default class VTableSheet {
       this.activateSheet(activeSheetKey);
     } else {
       // 如果没有提供sheets，创建一个默认的
-      this.addNewSheet();
+      this._addNewSheet();
     }
   }
 
@@ -743,7 +743,7 @@ export default class VTableSheet {
    * 激活指定sheet
    * @param sheetKey sheet的key
    */
-  private activateSheet(sheetKey: string): void {
+  activateSheet(sheetKey: string): void {
     // 设置活动sheet
     this.sheetManager.setActiveSheet(sheetKey);
 
@@ -764,7 +764,7 @@ export default class VTableSheet {
       instance.getElement().style.display = 'block';
       this.activeWorkSheet = instance;
       // sheet标签和菜单项激活样式
-      this.activeSheetTab();
+      this._activeSheetTab();
       this.activeSheetMenuItem();
 
       // 恢复筛选状态
@@ -784,11 +784,18 @@ export default class VTableSheet {
 
     this.updateFormulaBar();
   }
+
+  addSheet(sheet: ISheetDefine): void {
+    this.sheetManager.addSheet(sheet);
+    this.updateSheetTabs();
+    this.updateSheetMenu();
+  }
+
   /**
    * 删除sheet
    * @param sheetKey 工作表key
    */
-  private removeSheet(sheetKey: string): void {
+  removeSheet(sheetKey: string): void {
     if (this.sheetManager.getSheetCount() <= 1) {
       showSnackbar('至少保留一个工作表', 1300);
       return;
@@ -807,6 +814,15 @@ export default class VTableSheet {
     }
     this.updateSheetTabs();
     this.updateSheetMenu();
+  }
+  getSheetCount(): number {
+    return this.sheetManager.getSheetCount();
+  }
+  getSheet(sheetKey: string): ISheetDefine | null {
+    return this.sheetManager.getSheet(sheetKey);
+  }
+  getAllSheets(): ISheetDefine[] {
+    return this.sheetManager.getAllSheets();
   }
 
   /**
@@ -890,7 +906,7 @@ export default class VTableSheet {
   /**
    * 添加新sheet
    */
-  private addNewSheet(): void {
+  private _addNewSheet(): void {
     // 生成新sheet的key和title
     const sheetCount = this.sheetManager.getSheetCount();
     const baseKey = `sheet${sheetCount + 1}`;

@@ -12,36 +12,73 @@ export function getTablePlugins(
   sheetDefine?: ISheetDefine,
   options?: IVTableSheetOptions
 ): VTable.plugins.IVTablePlugin[] {
-  const filterPlugin = createFilterPlugin(sheetDefine);
-  const addRowColumnPlugin = new VTablePlugins.AddRowColumnPlugin({
-    addRowCallback: (row: number, tableInstance: VTable.ListTable) => {
-      tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
-    }
-  });
-  const tableSeriesNumberPlugin = new VTablePlugins.TableSeriesNumber({
-    rowCount: 100,
-    colCount: 100,
-    rowSeriesNumberWidth: 30,
-    colSeriesNumberHeight: 30,
-    rowSeriesNumberCellStyle: options?.theme?.rowSeriesNumberCellStyle,
-    colSeriesNumberCellStyle: options?.theme?.colSeriesNumberCellStyle
-  });
-  const highlightHeaderWhenSelectCellPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin({
-    colHighlight: true,
-    rowHighlight: true
-  });
-  const contextMenuPlugin = createContextMenuItems(sheetDefine);
-  const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
-  const autoFillPlugin = new VTablePlugins.AutoFillPlugin();
-  const plugins: VTable.plugins.IVTablePlugin[] = [
-    addRowColumnPlugin,
-    tableSeriesNumberPlugin,
-    highlightHeaderWhenSelectCellPlugin,
-    contextMenuPlugin,
-    excelEditCellKeyboardPlugin,
-    filterPlugin,
-    autoFillPlugin
-  ];
+  const plugins: VTable.plugins.IVTablePlugin[] = [];
+  // 结合options.VTablePluginModules，来判断是否禁用插件
+  const disabledPlugins = options?.VTablePluginModules?.filter(module => module.disabled);
+  const enabledPlugins = options?.VTablePluginModules?.filter(module => !module.disabled);
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.FilterPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === VTablePlugins.FilterPlugin)
+      ?.moduleOptions as VTablePlugins.FilterOptions;
+    const filterPlugin = createFilterPlugin(sheetDefine, userPluginOptions);
+    plugins.push(filterPlugin);
+  }
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.AddRowColumnPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === VTablePlugins.AddRowColumnPlugin)
+      ?.moduleOptions as VTablePlugins.AddRowColumnOptions;
+    const addRowColumnPlugin = new VTablePlugins.AddRowColumnPlugin({
+      addRowCallback: (row: number, tableInstance: VTable.ListTable) => {
+        tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
+      },
+      ...userPluginOptions
+    });
+    plugins.push(addRowColumnPlugin);
+  }
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.TableSeriesNumber)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === VTablePlugins.TableSeriesNumber)
+      ?.moduleOptions as VTablePlugins.TableSeriesNumberOptions;
+    const tableSeriesNumberPlugin = new VTablePlugins.TableSeriesNumber({
+      rowCount: sheetDefine?.rowCount || 100,
+      colCount: sheetDefine?.columnCount || 100,
+      rowSeriesNumberWidth: 30,
+      colSeriesNumberHeight: 30,
+      rowSeriesNumberCellStyle: options?.theme?.rowSeriesNumberCellStyle,
+      colSeriesNumberCellStyle: options?.theme?.colSeriesNumberCellStyle,
+      ...userPluginOptions
+    });
+    plugins.push(tableSeriesNumberPlugin);
+  }
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.HighlightHeaderWhenSelectCellPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(
+      module => module.module === VTablePlugins.HighlightHeaderWhenSelectCellPlugin
+    )?.moduleOptions as VTablePlugins.IHighlightHeaderWhenSelectCellPluginOptions;
+    const highlightHeaderWhenSelectCellPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin({
+      colHighlight: true,
+      rowHighlight: true,
+      ...userPluginOptions
+    });
+    plugins.push(highlightHeaderWhenSelectCellPlugin);
+  }
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.ContextMenuPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(
+      module => module.module === VTablePlugins.ContextMenuPlugin
+    )?.moduleOptions;
+    const contextMenuPlugin = createContextMenuItems(sheetDefine, userPluginOptions);
+    plugins.push(contextMenuPlugin);
+  }
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.ExcelEditCellKeyboardPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(
+      module => module.module === VTablePlugins.ExcelEditCellKeyboardPlugin
+    )?.moduleOptions;
+    const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin(userPluginOptions);
+    plugins.push(excelEditCellKeyboardPlugin);
+  }
+  if (!disabledPlugins?.some(module => module.module === VTablePlugins.AutoFillPlugin)) {
+    // const userPluginOptions = enabledPlugins?.find(
+    //   module => module.module === VTablePlugins.AutoFillPlugin
+    // )?.moduleOptions;
+    const autoFillPlugin = new VTablePlugins.AutoFillPlugin();
+    plugins.push(autoFillPlugin);
+  }
   if (options?.VTablePluginModules) {
     options.VTablePluginModules.forEach(
       (module: { module: new (options: any) => VTable.plugins.IVTablePlugin; moduleOptions: any }) => {
@@ -62,18 +99,22 @@ export function getTablePlugins(
  * @param sheetDefine Sheet配置
  * @returns 筛选插件实例或null
  */
-function createFilterPlugin(sheetDefine?: ISheetDefine): VTablePlugins.FilterPlugin | null {
-  // 对象配置
-  if (typeof sheetDefine.filter === 'object') {
-    return new VTablePlugins.FilterPlugin({
-      filterIcon: sheetDefine.filter.filterIcon,
-      filteringIcon: sheetDefine.filter.filteringIcon,
-      enableFilter: createColumnFilterChecker(sheetDefine),
-      filterModes: sheetDefine.filter.filterModes
-    });
-  }
+function createFilterPlugin(
+  sheetDefine?: ISheetDefine,
+  userPluginOptions?: VTablePlugins.FilterOptions
+): VTablePlugins.FilterPlugin | null {
+  // // 对象配置
+  // if (typeof sheetDefine.filter === 'object') {
+  //   return new VTablePlugins.FilterPlugin({
+  //     filterIcon: sheetDefine.filter.filterIcon,
+  //     filteringIcon: sheetDefine.filter.filteringIcon,
+  //     enableFilter: createColumnFilterChecker(sheetDefine),
+  //     filterModes: sheetDefine.filter.filterModes
+  //   });
+  // }
   return new VTablePlugins.FilterPlugin({
-    enableFilter: createColumnFilterChecker(sheetDefine)
+    enableFilter: createColumnFilterChecker(sheetDefine),
+    ...userPluginOptions
   });
 }
 
@@ -97,7 +138,7 @@ function createColumnFilterChecker(sheetDefine: ISheetDefine) {
   };
 }
 
-function createContextMenuItems(sheetDefine: ISheetDefine) {
+function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: VTablePlugins.ContextMenuOptions) {
   return new VTablePlugins.ContextMenuPlugin({
     headerCellMenuItems: [
       ...VTablePlugins.DEFAULT_HEADER_MENU_ITEMS,
@@ -235,7 +276,8 @@ function createContextMenuItems(sheetDefine: ISheetDefine) {
       disable_first_row_as_header: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
         handleDisableFirstRowAsHeader(table);
       }
-    }
+    },
+    ...userPluginOptions
   });
 }
 
