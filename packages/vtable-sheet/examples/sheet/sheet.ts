@@ -25,7 +25,22 @@ export function createTable() {
           [1, 2, 3],
           ['放到', '个', '哦']
         ],
-        active: false
+        active: false,
+        theme: {
+          rowSeriesNumberCellStyle: {
+            text: {
+              fill: 'green'
+            }
+          },
+          tableTheme: TYPES.VTableThemes.ARCO.extends({
+            bodyStyle: {
+              color: 'red'
+            },
+            headerStyle: {
+              color: 'pink'
+            }
+          })
+        }
       },
       {
         sheetKey: 'sheet2',

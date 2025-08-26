@@ -41,8 +41,10 @@ export function getTablePlugins(
       colCount: sheetDefine?.columnCount || 100,
       rowSeriesNumberWidth: 30,
       colSeriesNumberHeight: 30,
-      rowSeriesNumberCellStyle: options?.theme?.rowSeriesNumberCellStyle,
-      colSeriesNumberCellStyle: options?.theme?.colSeriesNumberCellStyle,
+      rowSeriesNumberCellStyle:
+        sheetDefine?.theme?.rowSeriesNumberCellStyle || options?.theme?.rowSeriesNumberCellStyle,
+      colSeriesNumberCellStyle:
+        sheetDefine?.theme?.colSeriesNumberCellStyle || options?.theme?.colSeriesNumberCellStyle,
       ...userPluginOptions
     });
     plugins.push(tableSeriesNumberPlugin);

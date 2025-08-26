@@ -7,7 +7,7 @@ VTable-Sheet 支持通过VTable的方式传入单元格的编辑器，通过 `ed
 如果有其他自定义编辑的需求，请参考完整的教程文档：[编辑教程](../edit/edit_cell)。
 
 # 示例
-该示例中，我们实例化了一个编辑器： `dateEditor`，并在表格列中使用。
+该示例中，我们实例化了一个编辑器： `dateEditor`，并在表格列`入职日期`中使用。
 
 ```javascript livedemo template=vtable
 let ganttInstance;
