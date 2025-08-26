@@ -46,48 +46,56 @@ export class ConfigManager {
     }
     options.customConfig.scrollEventAlwaysTrigger = true;
     const originalCustomComputeRowHeight = options.customComputeRowHeight;
-    options.customComputeRowHeight = params => {
-      const { row, table } = params;
-      if (this.isVirtualRow(row)) {
-        return 0;
-      }
-      if (this.isRowExpanded(row)) {
-        const expandedHeight = table.getRowHeight(row);
-        // 确保返回值符合 customComputeRowHeight 的类型要求
-        if (Array.isArray(expandedHeight)) {
-          return expandedHeight[0] ?? 'auto';
+    // 检查是否配置了自定义的数据获取函数
+    const hasCustomDataHandlers = this.pluginOptions.getDetailData && this.pluginOptions.hasDetailData;
+    if (!hasCustomDataHandlers) {
+      options.customComputeRowHeight = params => {
+        const { row, table } = params;
+        if (this.isVirtualRow(row)) {
+          return 0;
         }
-        return expandedHeight as number | 'auto';
-      }
-      if (originalCustomComputeRowHeight) {
-        const userResult = originalCustomComputeRowHeight(params);
-        if (userResult !== undefined && userResult !== null) {
-          return userResult;
+        if (this.isRowExpanded(row)) {
+          const expandedHeight = table.getRowHeight(row);
+          // 确保返回值符合 customComputeRowHeight 的类型要求
+          if (Array.isArray(expandedHeight)) {
+            return expandedHeight[0] ?? 'auto';
+          }
+          return expandedHeight as number | 'auto';
         }
-      }
-      // 优先使用表头/表体的用户配置的默认行高（如果存在）
-      // 如果当前是表头行，优先使用 defaultHeaderRowHeight，其次回退到 defaultRowHeight
-      // 否则使用 defaultRowHeight，最后回退到 'auto'
-      const opts = options as VTable.ListTableConstructorOptions & Record<string, unknown>;
-      const userDefaultRow = opts.defaultRowHeight;
-      const userDefaultHeaderRow = opts.defaultHeaderRowHeight;
-      const headerLevelCount = typeof table.columnHeaderLevelCount === 'number' ? table.columnHeaderLevelCount : 0;
-      if (row < headerLevelCount) {
-        // 表头行：优先使用 defaultHeaderRowHeight，然后 defaultRowHeight，最后 'auto'
-        if (userDefaultHeaderRow !== undefined && userDefaultHeaderRow !== null) {
-          return userDefaultHeaderRow;
+        if (originalCustomComputeRowHeight) {
+          const userResult = originalCustomComputeRowHeight(params);
+          if (userResult !== undefined && userResult !== null) {
+            return userResult;
+          }
         }
+
+        // 优先使用表头/表体的用户配置的默认行高（如果存在）
+        // 如果当前是表头行，优先使用 defaultHeaderRowHeight，其次回退到 defaultRowHeight
+        // 否则使用 defaultRowHeight，最后回退到 'auto'
+        const opts = options as VTable.ListTableConstructorOptions & Record<string, unknown>;
+        const userDefaultRow = opts.defaultRowHeight;
+        const userDefaultHeaderRow = opts.defaultHeaderRowHeight;
+        const headerLevelCount = typeof table.columnHeaderLevelCount === 'number' ? table.columnHeaderLevelCount : 0;
+        if (row < headerLevelCount) {
+          // 表头行：优先使用 defaultHeaderRowHeight，然后 defaultRowHeight，最后 'auto'
+          if (userDefaultHeaderRow !== undefined && userDefaultHeaderRow !== null) {
+            return userDefaultHeaderRow;
+          }
+          if (userDefaultRow !== undefined && userDefaultRow !== null) {
+            return userDefaultRow;
+          }
+          return 'auto';
+        }
+        // 表体行：使用 defaultRowHeight，最后 'auto'
         if (userDefaultRow !== undefined && userDefaultRow !== null) {
           return userDefaultRow;
         }
         return 'auto';
-      }
-      // 表体行：使用 defaultRowHeight，最后 'auto'
-      if (userDefaultRow !== undefined && userDefaultRow !== null) {
-        return userDefaultRow;
-      }
-      return 'auto';
-    };
+      };
+
+      // 拦截表格的refreshRowColCount方法来添加虚拟行
+      this.interceptRefreshRowColCount();
+    }
 
     // 给第一列添加图标
     this.injectHierarchyIcons(options);
@@ -107,9 +115,6 @@ export class ConfigManager {
           detailOptions;
       }
     }
-
-    // 拦截表格的refreshRowColCount方法来添加虚拟行
-    this.interceptRefreshRowColCount();
   }
 
   /**

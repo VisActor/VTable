@@ -2,7 +2,7 @@ import type * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/src/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
-export interface DetailGridOptions extends Partial<VTable.ListTableConstructorOptions> {
+export interface DetailGridOptions extends VTable.ListTableConstructorOptions {
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
