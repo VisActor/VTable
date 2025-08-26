@@ -29,7 +29,7 @@ import type {
   IKeyboardOptions,
   IMarkLineCreateOptions
 } from './ts-types';
-import { TasksShowMode, TaskType } from './ts-types';
+import { TasksShowMode, TaskType, GANTT_EVENT_TYPE } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -69,6 +69,7 @@ import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 import { toBoxArray } from '@visactor/vtable';
+import { ZoomScaleManager } from './zoom-scale';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
@@ -201,7 +202,184 @@ export class Gantt extends EventTarget {
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
     markLineCreateOptions: IMarkLineCreateOptions;
+
+    zoom?: {
+      // 是否启用鼠标滚轮缩放
+      enableMouseWheel?: boolean;
+      // 最小时间每像素值（最大放大）
+      minTimePerPixel?: number;
+      // 最大时间每像素值（最大缩小）
+      maxTimePerPixel?: number;
+      // 缩放步长
+      step?: number;
+    };
   } = {} as any;
+
+  //  时间缩放基准 - 每像素代表多少毫秒
+  private timePerPixel: number;
+  zoomScaleManager?: ZoomScaleManager;
+
+  /**
+   * 重新计算时间相关的尺寸参数
+   * 用于根据当前 timePerPixel 重新计算 timelineColWidth
+   */
+  recalculateTimeScale(): void {
+    // 获取当前的主时间刻度
+    const primaryScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    if (!primaryScale) {
+      return;
+    }
+
+    // 根据当前 scale 的 unit 和 step 计算每个单元格应该占用的毫秒数
+    let msPerStep: number;
+    switch (primaryScale.unit as string) {
+      case 'second':
+        msPerStep = 1000 * primaryScale.step;
+        break;
+      case 'minute':
+        msPerStep = 60 * 1000 * primaryScale.step;
+        break;
+      case 'hour':
+        msPerStep = 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'day':
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'week':
+        msPerStep = 7 * 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'month':
+        msPerStep = 30 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似30天
+        break;
+      case 'quarter':
+        msPerStep = 90 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似90天
+        break;
+      case 'year':
+        msPerStep = 365 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似365天
+        break;
+      default:
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step; // 默认为天
+    }
+
+    // 计算新的 timelineColWidth
+    const newTimelineColWidth = msPerStep / this.timePerPixel;
+
+    // 更新 parsedOptions
+    this.parsedOptions.timelineColWidth = newTimelineColWidth;
+
+    // 重新生成时间线日期映射
+    this._generateTimeLineDateMap();
+
+    // 更新尺寸和重新渲染
+    if (this.scenegraph) {
+      this._updateSize();
+      this.scenegraph.refreshAll();
+    }
+  }
+
+  /**
+   * 缩放方法
+   * @param factor 缩放因子，大于1表示放大
+   * @param keepCenter 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
+    // 应用 timePerPixel 限制（由 ZoomScaleManager 根据 minColumnWidth/maxColumnWidth 计算）
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
+
+    // 记录旧值用于视图中心保持和事件触发
+    const oldTimePerPixel = this.timePerPixel;
+    const oldWidth = this.parsedOptions.timelineColWidth;
+
+    // 动态调整缩放步长，让缩放在不同级别下都保持平滑
+    const currentTimePerPixel = this.timePerPixel;
+    let adjustedFactor = factor;
+
+    // 根据当前的 timePerPixel 级别动态调整缩放因子
+    // timePerPixel 越小（放大越多），需要更大的缩放因子来产生明显的视觉变化
+    const baseTimePerPixel = 1440000; // 基准值：60px/day
+    const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
+
+    // 缩放因子调整：timePerPixel 越小，调整幅度越大
+    if (currentTimePerPixel < baseTimePerPixel) {
+      // 高放大状态：放大和缩小都需要增强缩放效果，但不要过于激进
+      const enhancement = Math.pow(1.2, -zoomRatio);
+      adjustedFactor = Math.pow(factor, enhancement);
+    } else {
+      // 正常/缩小状态：适当减缓缩放效果，避免跳跃过快
+      const dampening = Math.pow(0.9, zoomRatio);
+      adjustedFactor = Math.pow(factor, dampening);
+    }
+
+    // factor > 1 = 放大 → timePerPixel 变小
+    const newTimePerPixel = this.timePerPixel / adjustedFactor;
+
+    // 应用限制
+    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
+
+    // 检查是否需要切换级别
+    if (this.zoomScaleManager) {
+      const targetLevel = this.zoomScaleManager.findOptimalLevel(this.timePerPixel);
+      const currentLevel = this.zoomScaleManager.getCurrentLevel();
+
+      if (targetLevel !== currentLevel) {
+        // 切换级别：zoomScaleManager会调用updateScales，自动处理所有更新
+        this.zoomScaleManager.switchToLevel(targetLevel);
+      } else {
+        // 级别未变：使用现有的时间刻度重计算逻辑
+        this.recalculateTimeScale();
+      }
+    } else {
+      // 未启用zoomScale：完全使用原有逻辑
+      this.recalculateTimeScale();
+    }
+
+    // 处理视图中心保持
+    if (keepCenter) {
+      if (centerX === undefined) {
+        centerX = this.scenegraph.width / 2;
+      }
+
+      // 计算中心点对应的时间位置
+      const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
+
+      // 调整滚动位置以保持中心点
+      const newScrollLeft = centerTimePosition / this.timePerPixel - centerX;
+      this.stateManager.setScrollLeft(newScrollLeft);
+    }
+
+    // 触发缩放事件
+    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
+        oldWidth,
+        newWidth: this.parsedOptions.timelineColWidth,
+        scale: oldTimePerPixel / this.timePerPixel,
+        oldTimePerPixel,
+        newTimePerPixel: this.timePerPixel
+      });
+    }
+  }
+
+  /**
+   * 放大时间轴
+   * @param factor 缩放因子，大于1表示放大
+   * @param center 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomIn(factor: number = 1.1, center: boolean = true, centerX?: number): void {
+    this.zoomByFactor(factor, center, centerX);
+  }
+
+  /**
+   * 缩小时间轴
+   * @param factor 缩放因子，小于1表示缩小
+   * @param center 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomOut(factor: number = 0.9, center: boolean = true, centerX?: number): void {
+    this.zoomByFactor(factor, center, centerX);
+  }
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
@@ -218,8 +396,24 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    this._sortScales();
+    // 优先初始化 ZoomScaleManager
+    if (options.zoomScale?.enabled) {
+      this.zoomScaleManager = new ZoomScaleManager(this, options.zoomScale);
+      this._sortScales();
+    } else {
+      this._sortScales();
+    }
+
     initOptions(this);
+
+    // 初始化 timePerPixel
+    if (this.zoomScaleManager) {
+      this.timePerPixel = this.zoomScaleManager.getInitialTimePerPixel();
+    } else {
+      // 默认值：60px = 1天
+      this.timePerPixel = (24 * 60 * 60 * 1000) / 60; // 1440000ms/px
+    }
+
     // 初始化项目任务时间
     initProjectTaskTimes(this);
     this.data = new DataSource(this);
@@ -251,6 +445,8 @@ export class Gantt extends EventTarget {
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
     this.pluginManager = new PluginManager(this, options);
+
+    this.recalculateTimeScale();
   }
 
   renderTaskBarsTable() {
@@ -1335,6 +1531,15 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    return formatDate(date, format);
+    return formatDate(new Date(date), format);
+  }
+
+  // 查询当前的 timePerPixel 值
+  getCurrentTimePerPixel(): number {
+    return this.timePerPixel;
+  }
+
+  getCurrentZoomScaleLevel(): number {
+    return this.zoomScaleManager?.getCurrentLevel() ?? -1;
   }
 }
