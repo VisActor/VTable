@@ -138,7 +138,7 @@ function createTable() {
 createTable();
 ```
 
-当你要和分组这样本身就依赖children的一同使用的话，就请使用hasDetailData和getDetailData来让主从表使用不同的数据源
+当你要和分组这样本身就依赖children的一同使用的话，就请使用hasDetailData和getDetailData来让主从表使用不同的数据源，因为我使用本插件的实现方式中包含了插入在最后面插入虚拟行的操作，所以你会在某些情况下看到最后一行有一行空白行，比如和分组兼容的时候
 
 ```javascript livedemo template=vtable
 function createGroupTable() {
@@ -254,7 +254,6 @@ function createGroupTable() {
       },
       enableTreeStickCell: true
     },
-    hierarchyExpandLevel: 1, // 自动展开第一层
     theme: VTable.themes.DEFAULT,
     plugins: [masterDetailPlugin]
   };
@@ -267,3 +266,6 @@ function createGroupTable() {
 
 createGroupTable();
 ```
+
+## 插件实现原理
+该插件实现主从表的逻辑中渲染子表的逻辑是基于Vtable中的ViewBox来定位，然后子表根据ViewBox的定位信息把子表渲染到和父亲同一个Canvas上，展开行的空白空间是通过改变行高但是不改变改行中CellGroup的height来实现的空出空行来实现的，并且该插件会把scrollEventAlwaysTrigger设置为true,也就是默认会在表滚动到边界继续触发滚动事件;为的是实现子表滚动的auto效果

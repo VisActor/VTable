@@ -92,9 +92,6 @@ export class ConfigManager {
         }
         return 'auto';
       };
-
-      // 拦截表格的refreshRowColCount方法来添加虚拟行
-      this.interceptRefreshRowColCount();
     }
 
     // 给第一列添加图标
@@ -115,6 +112,9 @@ export class ConfigManager {
           detailOptions;
       }
     }
+
+    // 拦截表格的refreshRowColCount方法来添加虚拟行
+    this.interceptRefreshRowColCount();
   }
 
   /**
