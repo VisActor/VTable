@@ -1,33 +1,33 @@
-# 主从表插件
+# Master Detail Plugin
 
-## 功能介绍
+## Function Introduction
 
-MasterDetailPlugin插件为ListTable提供了主从表功能，旨在实现不同数据更好的展示。该插件支持在表格行中嵌入子表格，提供层次化的数据展示体验。
+The MasterDetailPlugin provides master-detail functionality for ListTable, designed to achieve better display of different data. This plugin supports embedding sub-tables within table rows, providing a hierarchical data display experience.
 
-### 注意事项
-- 请不要使用转置功能
-- 请不要把tree和主从表一起用
-- 与分组功能结合使用时需要配置自定义数据获取函数
+### Notes
+- Please do not use transpose functionality
+- Please do not use tree and master-detail together
+- When used with grouping functionality, custom data retrieval functions need to be configured
 
-## 插件配置
+## Plugin Configuration
 
 ### MasterDetailPluginOptions
 
-插件构造函数接受一个配置对象，该对象需要实现 `MasterDetailPluginOptions` 接口。以下为完整的配置参数说明：
+The plugin constructor accepts a configuration object that needs to implement the `MasterDetailPluginOptions` interface. The following is a complete description of the configuration parameters:
 
 ```typescript
 interface MasterDetailPluginOptions {
   id?: string;
-  /** 子表配置 - 可以是静态配置对象或动态配置函数 */
+  /** Sub-table configuration - can be static configuration object or dynamic configuration function */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
-  /** 自定义获取详情数据的函数，默认使用record.children */
+  /** Custom function to get detail data, defaults to record.children */
   getDetailData?: (record: unknown) => unknown[];
-  /** 自定义检查是否有详情数据的函数，默认检查record.children */
+  /** Custom function to check if detail data exists, defaults to checking record.children */
   hasDetailData?: (record: unknown) => boolean;
 }
 
 interface DetailGridOptions extends VTable.ListTableConstructorOptions {
-  // 这个style配置的是展开的子表的宽度和margin
+  // This style configures the width and margin of the expanded sub-table
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
@@ -35,66 +35,66 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 }
 ```
 
-### 配置参数说明
+### Configuration Parameters
 
-| 参数名称 | 类型 | 默认值 | 说明 |
+| Parameter Name | Type | Default | Description |
 |---------|------|--------|------|
-| `id` | string | `master-detail-${timestamp}` | 插件实例的唯一标识符 |
-| `detailGridOptions` | DetailGridOptions \| Function | - | 子表配置选项，可以是静态对象或动态函数 |
-| `getDetailData` | Function | 使用 `record.children` | 自定义获取详情数据的函数 |
-| `hasDetailData` | Function | 检查 `record.children` | 自定义检查是否有详情数据的函数 |
+| `id` | string | `master-detail-${timestamp}` | Unique identifier for the plugin instance |
+| `detailGridOptions` | DetailGridOptions \| Function | - | Sub-table configuration options, can be static object or dynamic function |
+| `getDetailData` | Function | Uses `record.children` | Custom function to get detail data |
+| `hasDetailData` | Function | Checks `record.children` | Custom function to check if detail data exists |
 
-#### DetailGridOptions.style 配置
+#### DetailGridOptions.style Configuration
 
-| 参数名称 | 类型 | 默认值 | 说明 |
+| Parameter Name | Type | Default | Description |
 |---------|------|--------|------|
-| `margin` | number \| number[] | 0 | 子表的边距，支持单个数值或数组形式 |
-| `height` | number | 300 | 子表的固定高度 |
+| `margin` | number \| number[] | 0 | Sub-table margin, supports single value or array form |
+| `height` | number | 300 | Fixed height of the sub-table |
 
-## API 方法
+## API Methods
 
-插件提供以下主要API方法：
+The plugin provides the following main API methods:
 
 ### expandRow(rowIndex: number)
 
-展开指定行的子表。
+Expand the sub-table for the specified row.
 
-**参数：**
-- `rowIndex` - 要展开的行索引（包含表头的绝对行索引）
+**Parameters:**
+- `rowIndex` - Row index to expand (absolute row index including headers)
 
-**示例：**
+**Example:**
 ```javascript
-// 展开第3行
+// Expand row 3
 masterDetailPlugin.expandRow(3);
 ```
 
 ### collapseRow(rowIndex: number)
 
-收起指定行的子表。
+Collapse the sub-table for the specified row.
 
-**参数：**
-- `rowIndex` - 要收起的行索引（包含表头的绝对行索引）
+**Parameters:**
+- `rowIndex` - Row index to collapse (absolute row index including headers)
 
-**示例：**
+**Example:**
 ```javascript
-// 收起第3行
+// Collapse row 3
 masterDetailPlugin.collapseRow(3);
 ```
 
-## 使用方式
+## Usage
 
-### 插件初始化
+### Plugin Initialization
 
-首先需要创建插件实例并将其添加到 VTable 的插件配置中：
+First, create a plugin instance and add it to VTable's plugin configuration:
 
 ```typescript
-// 初始化插件
+// Initialize plugin
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-static-2',
   detailGridOptions: {
     columns: [
-      { field: 'task', title: '任务名', width: 220 },
-      { field: 'status', title: '状态', width: 120 }
+      { field: 'task', title: 'Task Name', width: 220 },
+      { field: 'status', title: 'Status', width: 120 }
     ],
     defaultRowHeight: 30,
     defaultHeaderRowHeight: 30,
@@ -104,9 +104,9 @@ const masterDetailPlugin = new MasterDetailPlugin({
 });
 ```
 
-### 基础用法示例
+### Basic Usage Example
 
-首先确保你使用了MasterDetailPlugin插件，然后他会去根据hasDetailData中配置的去检查用户配置的record中是否配置了相关子表，如果没有配置hasDetailData和getDetailData那么默认是children
+First ensure you use the MasterDetailPlugin, then it will check the user's configured record based on the configuration in hasDetailData to see if relevant sub-tables are configured. If hasDetailData and getDetailData are not configured, the default is children.
 
 ```javascript livedemo template=vtable
 function generateData(count) {
@@ -114,15 +114,15 @@ function generateData(count) {
   return Array.from({ length: count }).map((_, i) => ({
     id: i + 1,
     rowNo: i + 1,
-    name: `姓名 ${i + 1}`,
+    name: `Name ${i + 1}`,
     department: depts[i % depts.length],
     score: Math.floor(Math.random() * 100),
     amount: Math.floor(Math.random() * 10000) / 100,
     children:
       i % 4 === 0
         ? [
-            { task: `子任务 A-${i + 1}`, status: 'open' },
-            { task: `子任务 B-${i + 1}`, status: 'done' }
+            { task: `Sub-task A-${i + 1}`, status: 'open' },
+            { task: `Sub-task B-${i + 1}`, status: 'done' }
           ]
         : undefined
   }));
@@ -131,13 +131,13 @@ function generateData(count) {
 function createTable() {
   const records = generateData(11);
 
-  // 使用静态 DetailGridOptions
+  // Use static DetailGridOptions
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-static-3',
     detailGridOptions: {
       columns: [
-        { field: 'task', title: '任务名', width: 220 },
-        { field: 'status', title: '状态', width: 120 }
+        { field: 'task', title: 'Task Name', width: 220 },
+        { field: 'status', title: 'Status', width: 120 }
       ],
       defaultRowHeight: 30,
       defaultHeaderRowHeight: 30,
@@ -146,23 +146,23 @@ function createTable() {
     }
   });
 
-  // 主表列定义
+  // Main table column definition
   const columns = [
     { field: 'id', title: 'ID', width: 70, sort: true },
     { field: 'rowNo', title: '#', width: 60, headerType: 'text', cellType: 'text' },
-    { field: 'name', title: '姓名', width: 140, sort: true },
-    { field: 'department', title: '部门', width: 140, sort: true },
-    { field: 'score', title: '分数', width: 100, sort: true },
+    { field: 'name', title: 'Name', width: 140, sort: true },
+    { field: 'department', title: 'Department', width: 140, sort: true },
+    { field: 'score', title: 'Score', width: 100, sort: true },
     {
       field: 'amount',
-      title: '金额',
+      title: 'Amount',
       width: 120,
       sort: true,
       fieldFormat: (v) => {
         if (typeof v === 'number' && !isNaN(v)) {
           return `$${v.toFixed(2)}`;
         }
-        // 尽量返回可显示的字符串，避免抛错
+        // Try to return displayable string, avoid throwing errors
         return v === undefined || v === null ? '' : String(v);
       }
     }
@@ -184,13 +184,13 @@ function createTable() {
 createTable();
 ```
 
-### 与分组功能结合使用
+### Usage with Grouping Functionality
 
-当你要和分组这样本身就依赖children的一同使用的话，就请使用hasDetailData和getDetailData来让主从表使用不同的数据源，因为我使用本插件的实现方式中包含了插入在最后面插入虚拟行的操作，所以你会在某些情况下看到最后一行有一行空白行，比如和分组兼容的时候
+When you want to use it with grouping that itself relies on children, please use hasDetailData and getDetailData to let the master-detail use different data sources. Because the implementation of this plugin includes inserting virtual rows at the end, you will see a blank row at the end in some cases, such as when compatible with grouping.
 
 ```javascript livedemo template=vtable
 function createGroupTable() {
-  // 模拟数据 - 注意这里使用detailData而不是children，因为children被分组功能占用
+  // Mock data - note using detailData instead of children, because children is occupied by grouping function
   const mockData = [
     {
       'Order ID': 'CA-2015-103800',
@@ -201,8 +201,8 @@ function createGroupTable() {
       Sales: 21.78,
       Profit: 6.53,
       detailData: [
-        { task: '子任务 1-A', status: 'open', priority: 'high', assignee: '张三' },
-        { task: '子任务 1-B', status: 'done', priority: 'medium', assignee: '李四' }
+        { task: 'Sub-task 1-A', status: 'open', priority: 'high', assignee: 'Zhang San' },
+        { task: 'Sub-task 1-B', status: 'done', priority: 'medium', assignee: 'Li Si' }
       ]
     },
     {
@@ -223,8 +223,8 @@ function createGroupTable() {
       Sales: 47.98,
       Profit: 7.19,
       detailData: [
-        { task: '子任务 2-A', status: 'progress', priority: 'high', assignee: '王五' },
-        { task: '子任务 2-B', status: 'done', priority: 'low', assignee: '赵六' }
+        { task: 'Sub-task 2-A', status: 'progress', priority: 'high', assignee: 'Wang Wu' },
+        { task: 'Sub-task 2-B', status: 'done', priority: 'low', assignee: 'Zhao Liu' }
       ]
     },
     {
@@ -236,7 +236,7 @@ function createGroupTable() {
       Sales: 15.55,
       Profit: 5.44,
       detailData: [
-        { task: '子任务 3-A', status: 'open', priority: 'medium', assignee: '张三' }
+        { task: 'Sub-task 3-A', status: 'open', priority: 'medium', assignee: 'Zhang San' }
       ]
     },
     {
@@ -248,9 +248,9 @@ function createGroupTable() {
       Sales: 1374.37,
       Profit: 206.15,
       detailData: [
-        { task: '子任务 4-A', status: 'done', priority: 'high', assignee: '李四' },
-        { task: '子任务 4-B', status: 'progress', priority: 'medium', assignee: '王五' },
-        { task: '子任务 4-C', status: 'open', priority: 'low', assignee: '赵六' }
+        { task: 'Sub-task 4-A', status: 'done', priority: 'high', assignee: 'Li Si' },
+        { task: 'Sub-task 4-B', status: 'progress', priority: 'medium', assignee: 'Wang Wu' },
+        { task: 'Sub-task 4-C', status: 'open', priority: 'low', assignee: 'Zhao Liu' }
       ]
     }
   ];
@@ -265,22 +265,22 @@ function createGroupTable() {
     { field: 'Profit', title: 'Profit', width: 100 }
   ];
 
-  // 创建主从表插件 - 使用detailData字段而不是默认的children
+  // Create master-detail plugin - use detailData field instead of default children
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    // 自定义获取详情数据的函数
+    // Custom function to get detail data
     getDetailData: (record) => record.detailData || [],
-    // 自定义检查是否有详情数据的函数
+    // Custom function to check if detail data exists
     hasDetailData: (record) => {
       const data = record.detailData;
       return Boolean(data && data.length > 0);
     },
     detailGridOptions: {
       columns: [
-        { field: 'task', title: '任务名称', width: 200 },
-        { field: 'status', title: '状态', width: 100 },
-        { field: 'priority', title: '优先级', width: 100 },
-        { field: 'assignee', title: '负责人', width: 120 }
+        { field: 'task', title: 'Task Name', width: 200 },
+        { field: 'status', title: 'Status', width: 100 },
+        { field: 'priority', title: 'Priority', width: 100 },
+        { field: 'assignee', title: 'Assignee', width: 120 }
       ],
       defaultRowHeight: 32,
       defaultHeaderRowHeight: 36,
@@ -294,7 +294,7 @@ function createGroupTable() {
     records: mockData,
     columns,
     widthMode: 'standard',
-    // 分组配置 - children字段被分组功能占用
+    // Group configuration - children field is occupied by grouping function
     groupConfig: {
       groupBy: ['Category', 'Sub-Category'],
       titleFieldFormat: (record) => {
@@ -314,22 +314,22 @@ function createGroupTable() {
 createGroupTable();
 ```
 
-### 动态配置示例
+### Dynamic Configuration Example
 
-支持使用函数动态配置子表选项，可以根据行数据和行索引返回不同的配置：
+Support using functions to dynamically configure sub-table options, can return different configurations based on row data and row index:
 
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
   detailGridOptions: (params) => {
     const { data, bodyRowIndex } = params;
     
-    // 根据数据类型返回不同的子表配置
+    // Return different sub-table configurations based on data type
     if (data.type === 'order') {
       return {
         columns: [
-          { field: 'product', title: '产品', width: 200 },
-          { field: 'quantity', title: '数量', width: 100 },
-          { field: 'price', title: '价格', width: 120 }
+          { field: 'product', title: 'Product', width: 200 },
+          { field: 'quantity', title: 'Quantity', width: 100 },
+          { field: 'price', title: 'Price', width: 120 }
         ],
         style: { height: 200, margin: 16 },
         theme: VTable.themes.BRIGHT
@@ -337,8 +337,8 @@ const masterDetailPlugin = new MasterDetailPlugin({
     } else {
       return {
         columns: [
-          { field: 'task', title: '任务', width: 220 },
-          { field: 'status', title: '状态', width: 120 }
+          { field: 'task', title: 'Task', width: 220 },
+          { field: 'status', title: 'Status', width: 120 }
         ],
         style: { height: 150, margin: 12 },
         theme: VTable.themes.DEFAULT
@@ -348,40 +348,40 @@ const masterDetailPlugin = new MasterDetailPlugin({
 });
 ```
 
-## 高级配置
+## Advanced Configuration
 
-### 自定义数据获取
+### Custom Data Retrieval
 
-通过 `getDetailData` 和 `hasDetailData` 函数，可以自定义如何获取和检查详情数据：
+Through `getDetailData` and `hasDetailData` functions, you can customize how to retrieve and check detail data:
 
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
-  // 自定义获取详情数据
+  // Custom detail data retrieval
   getDetailData: (record) => {
-    // 可以从不同字段获取数据
+    // Can get data from different fields
     return record.details || record.subItems || [];
   },
   
-  // 自定义检查是否有详情数据
+  // Custom check for detail data existence
   hasDetailData: (record) => {
     return Boolean(record.details && record.details.length > 0);
   },
   
   detailGridOptions: {
-    // ... 子表配置
+    // ... sub-table configuration
   }
 });
 ```
 
-### 主题和样式定制
+### Theme and Style Customization
 
-子表支持完整的VTable主题配置：
+Sub-tables support full VTable theme configuration:
 
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
   detailGridOptions: {
     columns: [/*...*/],
-    // 应用自定义主题
+    // Apply custom theme
     theme: VTable.themes.DARK.extends({
       headerStyle: {
         bgColor: '#333',
@@ -392,15 +392,19 @@ const masterDetailPlugin = new MasterDetailPlugin({
         color: '#ccc'
       }
     }),
-    // 自定义样式
+    // Custom styles
     style: {
-      margin: [10, 20, 10, 20], // 上、右、下、左边距
+      margin: [10, 20, 10, 20], // top, right, bottom, left margins
       height: 250
     }
   }
 });
 ```
 
-## 插件实现原理
+## Best Practices
 
-该插件实现主从表的逻辑中渲染子表的逻辑是基于Vtable中的ViewBox来定位，然后子表根据ViewBox的定位信息把子表渲染到和父亲同一个Canvas上，展开行的空白空间是通过改变行高但是不改变改行中CellGroup的height来实现的空出空行来实现的，并且该插件会把scrollEventAlwaysTrigger设置为true,也就是默认会在表滚动到边界继续触发滚动事件;为的是实现子表滚动的auto效果
+### 1. Performance Optimization
+
+- For large amounts of data, it's recommended to use pagination with master-detail
+- Set appropriate sub-table height to avoid excessive height affecting scroll performance
+- When using dynamic configuration, avoid complex computation logic
