@@ -255,4 +255,7 @@ export class ZoomScaleManager {
 
     return closestIndex;
   }
+  getCurrentLevel(): number {
+    return this.currentLevelIndex;
+  }
 }
