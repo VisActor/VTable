@@ -913,12 +913,12 @@ export function createTable() {
     },
     headerRowHeight: 60,
     rowHeight: 40,
-    // 🔑 ZoomScale 多级别缩放配置
+    // ZoomScale 多级别缩放配置
     zoomScale: {
       enabled: true,
       enableMouseWheel: true, // 启用鼠标滚轮缩放
-      maxZoomInColumnWidth: 120, // 🔍 最大放大限制：基础最小宽度40px（小时格式会自动调整更大）
-      maxZoomOutColumnWidth: 150, // 🔍 最大缩小限制：最粗糙级别（如月）最大150px
+      maxZoomInColumnWidth: 120, // 最大放大限制：基础最小宽度40px（小时格式会自动调整更大）
+      maxZoomOutColumnWidth: 150, // 最大缩小限制：最粗糙级别（如月）最大150px
       levels: [
         // 级别0：月-周组合 (最粗糙)
         [
