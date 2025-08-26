@@ -173,18 +173,6 @@ export class ConfigManager {
   }
 
   /**
-   * 获取虚拟行的类型
-   */
-  getVirtualRowType(row: number): 'bottom' | null {
-    if (!this.isVirtualRow(row)) {
-      return null;
-    }
-
-    // 现在只有一个底部虚拟行
-    return 'bottom';
-  }
-
-  /**
    * 检查是否为分组标题行
    */
   private isGroupTitleRow(col: number, row: number): boolean {

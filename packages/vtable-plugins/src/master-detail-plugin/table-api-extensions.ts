@@ -220,7 +220,7 @@ export class TableAPIExtensions {
           const record = getRecordByRowIndex(table, bodyRowIndex);
           if (record) {
             const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
-            const detailHeight = detailConfig?.style?.height || 200;
+            const detailHeight = detailConfig?.style?.height;
             expandedRowsInfo.set(rowIndex, {
               baseHeight: originalHeight > 0 ? originalHeight : table.getRowHeight(rowIndex),
               detailHeight
@@ -292,7 +292,7 @@ export class TableAPIExtensions {
         }
 
         // 应用最小高度限制
-        newHeight = Math.max(newHeight, 20);
+        newHeight = newHeight;
         // 设置行高
         scenegraph.setRowHeight(row, newHeight);
       }
@@ -315,7 +315,7 @@ export class TableAPIExtensions {
             // 最后一行是展开行，调整时要保证子表高度
             const info = expandedRowsInfo.get(lastRowIndex);
             if (info) {
-              const minHeight = info.detailHeight + 20; // 至少保留20px给基础内容
+              const minHeight = info.detailHeight; // 至少保留20px给基础内容
               const finalHeight = Math.max(adjustment, minHeight);
               scenegraph.setRowHeight(lastRowIndex, finalHeight);
               // 更新展开行信息
@@ -326,7 +326,7 @@ export class TableAPIExtensions {
             }
           } else {
             // 最后一行是普通行
-            scenegraph.setRowHeight(lastRowIndex, Math.max(adjustment, 20));
+            scenegraph.setRowHeight(lastRowIndex, adjustment);
           }
         }
       }
@@ -435,9 +435,6 @@ export class TableAPIExtensions {
       console.error('收起分组时出错:', error);
     }
   }
-
-
-
   /**
    * 扩展 updateFilterRules 方法
    */
