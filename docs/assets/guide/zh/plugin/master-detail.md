@@ -422,3 +422,7 @@ const masterDetailPlugin = new MasterDetailPlugin({
 ## 插件实现原理
 
 该插件实现主从表的逻辑中渲染子表的逻辑是基于Vtable中的ViewBox来定位，然后子表根据ViewBox的定位信息把子表渲染到和父亲同一个Canvas上，展开行的空白空间是通过改变行高但是不改变改行中CellGroup的height来实现的空出空行来实现的，并且该插件会把scrollEventAlwaysTrigger设置为true,也就是默认会在表滚动到边界继续触发滚动事件;为的是实现子表滚动的auto效果
+
+# 本文档由由以下人员贡献
+
+[抽象薯片](https://github.com/Violet2314)

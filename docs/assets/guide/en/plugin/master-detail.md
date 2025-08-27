@@ -426,3 +426,7 @@ const masterDetailPlugin = new MasterDetailPlugin({
 - For large amounts of data, it's recommended to use pagination with master-detail
 - Set appropriate sub-table height to avoid excessive height affecting scroll performance
 - When using dynamic configuration, avoid complex computation logic
+
+# This document was contributed by:
+
+[Abstract chips](https://github.com/Violet2314)
