@@ -17,6 +17,7 @@
 import type { ICellData, Nullable } from './types';
 import { Direction, CellValueType } from './types';
 import deepClone from 'lodash/cloneDeep';
+import { IConverter } from './seriesConverters';
 
 export const chnNumChar = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
 export const chnNumChar2 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
@@ -365,9 +366,13 @@ export function getXArr(len: number) {
   return xArr;
 }
 
-export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direction: Direction) {
+export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direction: Direction, converter: IConverter) {
+  // 将数据转换为数字
+  data.forEach((item: any) => {
+    item.v = converter.toNumber(item.v);
+  });
   const applyData = [];
-
+  // 用于检查数列
   const dataNumArr = [];
   for (let j = 0; j < data.length; j++) {
     dataNumArr.push(Number(data[j]?.v));
@@ -383,7 +388,7 @@ export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direct
       const num = Number(data[data.length - 1]?.v) * (Number(data[1]?.v) / Number(data[0]?.v)) ** i;
 
       if (d) {
-        d.v = num;
+        d.v = converter.fromNumber(num, d.v);
         applyData.push(d);
       }
     }
@@ -399,7 +404,7 @@ export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direct
       const y = forecast(data.length + i, dataNumArr, xArr, forward);
 
       if (d) {
-        d.v = y;
+        d.v = converter.fromNumber(y, d.v);
         applyData.push(d);
       }
     }

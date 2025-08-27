@@ -33,15 +33,13 @@ import {
   matchExtendNumber
 } from './fill-tools';
 import { APPLY_TYPE, DATA_TYPE, Direction } from './types';
+import { converterManager } from './seriesConverters';
 
 export const dateRule: IAutoFillRule = {
   type: DATA_TYPE.DATE,
   priority: 1100,
   match: (cellData: any, accessor: any) => {
-    if (cellData?.f || cellData?.si) {
-      return false;
-    }
-    return false;
+    return true;
   },
   isContinue: (prev: any, cur: any) => {
     if (prev.type === DATA_TYPE.DATE) {
@@ -52,11 +50,13 @@ export const dateRule: IAutoFillRule = {
   applyFunctions: {
     [APPLY_TYPE.SERIES]: (dataWithIndex: any, len: any, direction: any) => {
       const { data } = dataWithIndex;
+      const converter = converterManager.getConverter(data[0]?.v);
+      console.log('converter', converter);
       if (direction === Direction.LEFT || direction === Direction.UP) {
         data.reverse();
-        return fillSeries(data, len, direction).reverse();
+        return fillSeries(data, len, direction, converter).reverse();
       }
-      return fillSeries(data, len, direction);
+      return fillSeries(data, len, direction, converter);
     }
   }
 };
