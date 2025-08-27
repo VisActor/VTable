@@ -1,9 +1,9 @@
-import type { ISheetDefine } from './index';
+import type { IColumnDefine, IFilterConfig, ISheetDefine } from './index';
 import type { CellCoord, CellRange, CellValue } from './base';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 
 /** Sheet构造选项 */
-export interface ISheetOptions extends Omit<ListTableConstructorOptions, 'records'> {
+export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 'records' | 'columns'> {
   /** Sheet的唯一标识 */
   sheetKey: string;
   /** Sheet的标题 */
@@ -16,10 +16,16 @@ export interface ISheetOptions extends Omit<ListTableConstructorOptions, 'record
   showHeader?: boolean;
   /** 父组件实例 */
   parent?: any;
+  /** 是否将第一行作为表头 */
+  firstRowAsHeader?: boolean;
+  /** 筛选配置 */
+  filter?: boolean;
+  /** 列定义 */
+  columns?: (IColumnDefine & { field: string | number })[];
 }
 
 /** Sheet API 接口 */
-export interface ISheetAPI {
+export interface IWorkSheetAPI {
   /** 获取单元格值 */
   getCellValue: (row: number, col: number) => CellValue;
 
@@ -80,7 +86,7 @@ export interface ISheetManager {
   getSheetCount: () => number;
 
   /** 获取sheet API */
-  getSheetAPI: (sheetKey: string) => ISheetAPI | null;
+  getSheetAPI: (sheetKey: string) => IWorkSheetAPI | null;
 
   /** 监听sheet变化 */
   onSheetChange: (callback: (sheets: ISheetDefine[]) => void) => void;

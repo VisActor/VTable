@@ -47,8 +47,9 @@ export interface IToolbarItem {
   visible?: boolean;
   onClick?: () => void;
 }
+export type MainMenuItemKey = _MenuKey | string;
 
-export enum MenuKey {
+export enum _MenuKey {
   /** 需要插件支持，请在plugins中配置 ExcelImportPlugin */
   IMPORT = 'import',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
@@ -57,9 +58,14 @@ export enum MenuKey {
   EXPORT_CURRENT_SHEET_XLSX = 'export-current-sheet-xlsx'
 }
 export interface MainMenuItem {
+  /** 菜单项名称 */
   name: string;
-  menuKey?: MenuKey;
+  /** 菜单项唯一标识，如果配置了menuKey，点击菜单项时，会匹配内置逻辑（如配置了onclick,仍然优先匹配onclick） */
+  menuKey?: MainMenuItemKey;
+  /** 菜单项描述 */
   description?: string;
+  /** 菜单项点击回调 */
   onClick?: () => void;
+  /** 子菜单项 */
   items?: MainMenuItem[];
 }

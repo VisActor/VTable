@@ -3,12 +3,14 @@ import * as VTablePlugins from '@visactor/vtable-plugins';
 const CONTAINER_ID = 'vTable';
 export function createTable() {
   const sheetInstance = new VTableSheet(document.getElementById(CONTAINER_ID)!, {
-    showFormulaBar: true,
+    // showFormulaBar: false,
     showSheetTab: true,
-    defaultRowHeight: 25,
-    defaultColWidth: 100,
+    // defaultRowHeight: 25,
+    // defaultColWidth: 100,
     sheets: [
       {
+        rowCount: 200,
+        columnCount: 10,
         sheetKey: 'sheet1',
         sheetTitle: 'sheet1',
         filter: true,
@@ -23,7 +25,22 @@ export function createTable() {
           [1, 2, 3],
           ['放到', '个', '哦']
         ],
-        active: false
+        active: false,
+        theme: {
+          rowSeriesNumberCellStyle: {
+            text: {
+              fill: 'green'
+            }
+          },
+          tableTheme: TYPES.VTableThemes.ARCO.extends({
+            bodyStyle: {
+              color: 'red'
+            },
+            headerStyle: {
+              color: 'pink'
+            }
+          })
+        }
       },
       {
         sheetKey: 'sheet2',
@@ -59,6 +76,7 @@ export function createTable() {
         sheetTitle: 'sheet3',
         data: [['s', 'd', 'f'], null, ['t', 'y', 'u'], null, null, null, null, ['3']],
         active: false,
+        filter: true,
         columns: [
           {
             title: '3'
@@ -81,7 +99,6 @@ export function createTable() {
           ['y', 'u', 'i'],
           ['j', 'k', 'h']
         ],
-        columns: [],
         cellMerge: [
           {
             text: 'r',
@@ -118,8 +135,10 @@ export function createTable() {
         sheetTitle: 'Sheet 5',
         columnCount: 20,
         rowCount: 100,
-        frozenRowCount: 10,
-        frozenColCount: 1,
+        firstRowAsHeader: true,
+        // filter: true,
+        // frozenRowCount: 10,
+        // frozenColCount: 1,
         data: [
           ['类别', '细分', '邮寄方式', '客户名称', '产品名称', '子类别', '订单 ID', '数量', '利润', '折扣'],
           [
@@ -672,11 +691,11 @@ export function createTable() {
             '0'
           ]
         ],
-        active: true,
-        columns: [],
-        showHeader: false
+        active: true
+        // showHeader: false,
       }
     ] as TYPES.ISheetDefine[],
+
     theme: {
       rowSeriesNumberCellStyle: {
         text: {
@@ -703,6 +722,26 @@ export function createTable() {
       },
       {
         module: VTablePlugins.TableExportPlugin
+      },
+      {
+        module: VTablePlugins.TableSeriesNumber,
+        moduleOptions: {
+          rowSeriesNumberCellStyle: {
+            text: {
+              fontSize: 14,
+              fill: 'yellow',
+              pickable: false,
+              textAlign: 'left',
+              textBaseline: 'middle',
+              padding: [2, 4, 2, 4]
+            },
+            borderLine: {
+              stroke: '#D9D9D9',
+              lineWidth: 1,
+              pickable: false
+            }
+          }
+        }
       }
     ],
     mainMenu: {

@@ -4,6 +4,7 @@ export { ValueFilter } from './value-filter';
 export { ConditionFilter } from './condition-filter';
 export { FilterToolbar } from './filter-toolbar';
 
-export { createElement, applyStyles } from './styles';
+// export { createElement, applyStyles } from './styles';
 
 export * from './types';
+export * from './filter';

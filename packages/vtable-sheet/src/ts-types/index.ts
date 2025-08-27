@@ -6,10 +6,6 @@ import type { TableSeriesNumberOptions } from '@visactor/vtable-plugins';
 export { VTableThemes, VTableTypes };
 /** 筛选配置 */
 export interface IFilterConfig {
-  /** 筛选图标配置 */
-  filterIcon?: VTableTypes.ColumnIconOption;
-  /** 筛选激活状态图标配置 */
-  filteringIcon?: VTableTypes.ColumnIconOption;
   /** 指定筛选器支持的筛选模式（按值、按条件、或两者） */
   filterModes?: ('byValue' | 'byCondition')[];
 }
@@ -43,14 +39,30 @@ export interface ISheetDefine {
   frozenColCount?: number;
   /** 是否显示表头 */
   showHeader?: boolean;
+  /** 是否将第一行作为表头 */
+  firstRowAsHeader?: boolean;
   /** 公式定义 */
   formulas?: Record<string, string>;
   /** 筛选配置 - 支持简单布尔值或详细配置对象 */
   filter?: boolean | IFilterConfig;
   /** 筛选状态 - 保存当前的筛选条件和状态 */
   filterState?: IFilterState;
+  /** 主题 */
+  theme?: IThemeDefine;
 }
-
+export interface IThemeDefine {
+  rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
+  colSeriesNumberCellStyle?: TableSeriesNumberOptions['colSeriesNumberCellStyle'];
+  /** TODO 表格以外部分的主题 */
+  menuStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    padding?: number[];
+    bgColor?: string;
+  };
+  tableTheme: VTableThemes.ITableThemeDefine;
+}
 /** VTableSheet配置 */
 export interface IVTableSheetOptions {
   /** 宽度 */
@@ -69,6 +81,8 @@ export interface IVTableSheetOptions {
   VTablePluginModules?: {
     module: any;
     moduleOptions?: any;
+    /** vtable-sheet逻辑中使用到的插件，可以通过这个配置来禁用掉 */
+    disabled?: boolean;
   }[];
 
   /** 主菜单 */
@@ -79,19 +93,7 @@ export interface IVTableSheetOptions {
     items?: MainMenuItem[];
   };
   /** 主题 */
-  theme?: {
-    rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
-    colSeriesNumberCellStyle?: TableSeriesNumberOptions['colSeriesNumberCellStyle'];
-    /** TODO 表格以外部分的主题 */
-    menuStyle?: {
-      fontFamily?: string;
-      fontSize?: number;
-      color?: string;
-      padding?: number[];
-      bgColor?: string;
-    };
-    tableTheme: VTableThemes.ITableThemeDefine;
-  };
+  theme?: IThemeDefine;
   /** 默认行高 */
   defaultRowHeight?: number;
   /** 默认列宽 */

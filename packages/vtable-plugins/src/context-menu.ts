@@ -45,11 +45,8 @@ export type MenuClickCallback = (args: MenuClickEventArgs, table: VTable.ListTab
 /**
  * 右键菜单插件
  */
-// 用于生成唯一ID的计数器
-let contextMenuCounter = 0;
-
 export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
-  id = `context-menu-${contextMenuCounter++}`;
+  id = `context-menu`;
   name = 'Context Menu';
   runTime = [VTable.TABLE_EVENT_TYPE.CONTEXTMENU_CELL, VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT];
   pluginOptions: ContextMenuOptions;

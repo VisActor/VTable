@@ -45,6 +45,8 @@ tableInstance.registerPlugin(
 
 ## 自定义菜单项
 
+目前支持的菜单项在`@visactor/vtable-plugins`中定义了一份默认的配置，具体可以参考[ContextMenuPlugin](https://github.com/VisActor/VTable/blob/develop/packages/vtable-plugins/src/contextmenu/types.ts)。
+
 ContextMenu插件允许您自定义不同区域的右键菜单项：
 
 ```typescript

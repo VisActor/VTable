@@ -24,6 +24,7 @@ importers:
       '@visactor/vtable-export': workspace:*
       '@visactor/vtable-gantt': workspace:*
       '@visactor/vtable-search': workspace:*
+      '@visactor/vtable-sheet': workspace:*
       '@visactor/vue-vtable': workspace:*
       '@visactor/vutils': ~0.19.1
       '@vitejs/plugin-react': 3.1.0
@@ -58,6 +59,7 @@ importers:
       '@visactor/vtable-export': link:../packages/vtable-export
       '@visactor/vtable-gantt': link:../packages/vtable-gantt
       '@visactor/vtable-search': link:../packages/vtable-search
+      '@visactor/vtable-sheet': link:../packages/vtable-sheet
       '@visactor/vue-vtable': link:../packages/vue-vtable
       '@visactor/vutils': 0.19.7
       '@vue/compiler-dom': 3.5.18
