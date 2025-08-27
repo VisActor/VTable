@@ -54,12 +54,8 @@ export class SubTableManager {
       showHeader: true,
       canvasWidth: containerWidth,
       canvasHeight: containerHeight,
-      // 继承父表的重要属性
-      theme: parentOptions.theme,
-      // 可以继承更多父表属性
-      defaultRowHeight: parentOptions.defaultRowHeight,
-      defaultHeaderRowHeight: parentOptions.defaultHeaderRowHeight,
-      defaultColWidth: parentOptions.defaultColWidth
+      // 继承父表的theme
+      theme: parentOptions.theme
     };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { style: _style, ...userDetailConfig } = detailConfig || {};
@@ -322,13 +318,11 @@ export class SubTableManager {
       // 获取当前行的记录索引和indexKey
       const recordIndex = this.table.getRecordShowIndexByCell(0, rowIndex);
       const indexKey = this.table.dataSource.getIndexKey(recordIndex);
-      // 如果不是数组或者是顶级，则无需偏移
       if (!Array.isArray(indexKey) || indexKey.length <= 1) {
         return 0;
       }
 
       let totalOffset = 0;
-      // 遍历当前行之前的所有行，找到所有父级分组行
       for (let r = this.table.columnHeaderLevelCount; r < rowIndex; r++) {
         try {
           const record = this.table.getRecordByCell(0, r);
@@ -336,7 +330,6 @@ export class SubTableManager {
           if (record && typeof record === 'object' && 'vtableMergeName' in record) {
             const groupRecordIndex = this.table.getRecordShowIndexByCell(0, r);
             const groupIndexKey = this.table.dataSource.getIndexKey(groupRecordIndex);
-            // 标准化groupIndexKey为数组
             const normalizedGroupKey = Array.isArray(groupIndexKey) ? groupIndexKey : [groupIndexKey];
             // 检查这个分组行是否是当前行的祖先
             if (this.isAncestorGroup(normalizedGroupKey, indexKey)) {

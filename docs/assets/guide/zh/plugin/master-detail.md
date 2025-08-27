@@ -46,40 +46,12 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 
 #### DetailGridOptions.style 配置
 
+这个继承了ListTableConstructorOptions，可以使用ListTableConstructorOptions的配置
+
 | 参数名称 | 类型 | 默认值 | 说明 |
 |---------|------|--------|------|
 | `margin` | number \| number[] | 0 | 子表的边距，支持单个数值或数组形式 |
 | `height` | number | 300 | 子表的固定高度 |
-
-## API 方法
-
-插件提供以下主要API方法：
-
-### expandRow(rowIndex: number)
-
-展开指定行的子表。
-
-**参数：**
-- `rowIndex` - 要展开的行索引（包含表头的绝对行索引）
-
-**示例：**
-```javascript
-// 展开第3行
-masterDetailPlugin.expandRow(3);
-```
-
-### collapseRow(rowIndex: number)
-
-收起指定行的子表。
-
-**参数：**
-- `rowIndex` - 要收起的行索引（包含表头的绝对行索引）
-
-**示例：**
-```javascript
-// 收起第3行
-masterDetailPlugin.collapseRow(3);
-```
 
 ## 使用方式
 
@@ -184,9 +156,114 @@ function createTable() {
 createTable();
 ```
 
-### 与分组功能结合使用
+### 动态配置示例
 
-当你要和分组这样本身就依赖children的一同使用的话，就请使用hasDetailData和getDetailData来让主从表使用不同的数据源，因为我使用本插件的实现方式中包含了插入在最后面插入虚拟行的操作，所以你会在某些情况下看到最后一行有一行空白行，比如和分组兼容的时候
+支持使用函数动态配置子表选项，可以根据行数据和行索引返回不同的配置：
+
+```typescript
+const masterDetailPlugin = new MasterDetailPlugin({
+  id: 'employee-detail-plugin',
+  detailGridOptions: ({ data, bodyRowIndex }) => {
+    if (bodyRowIndex === 0) {
+      return {
+        columns: [
+          {
+            field: 'project',
+            title: '项目名称',
+            width: 180
+          },
+          {
+            field: 'role',
+            title: '项目角色',
+            width: 120
+          },
+          {
+            field: 'startDate',
+            title: '开始日期',
+            width: 100
+          },
+          {
+            field: 'endDate',
+            title: '结束日期',
+            width: 100
+          },
+          {
+            field: 'progress',
+            title: '项目进度',
+            width: 100,
+          }
+        ],
+        theme: VTable.themes.BRIGHT,
+        style: {
+          margin: 20,
+          height: 300
+        }
+      };
+    }
+    return {
+      columns: [
+        {
+          field: 'project',
+          title: '项目名称',
+          width: 180
+        },
+        {
+          field: 'role',
+          title: '项目角色',
+          width: 120
+        },
+        {
+          field: 'startDate',
+          title: '开始日期',
+          width: 100
+        },
+        {
+          field: 'endDate',
+          title: '结束日期',
+          width: 100
+        },
+        {
+          field: 'progress',
+          title: '项目进度',
+          width: 100,
+        }
+      ],
+      theme: VTable.themes.DARK,
+      style: {
+        margin: 20,
+        height: 300
+      }
+    };
+  }
+});
+```
+
+## 高级配置
+
+### 自定义数据获取
+
+通过 `getDetailData` 和 `hasDetailData` 函数，可以自定义如何获取和检查详情数据：
+
+```typescript
+const masterDetailPlugin = new MasterDetailPlugin({
+  // 自定义获取详情数据
+  getDetailData: (record) => {
+    // 可以从不同字段获取数据
+    return record.details || record.subItems || [];
+  },
+  
+  // 自定义检查是否有详情数据
+  hasDetailData: (record) => {
+    return Boolean(record.details && record.details.length > 0);
+  },
+  
+  detailGridOptions: {
+    // ... 子表配置
+  }
+});
+```
+
+就比如当你要和分组这样本身就依赖children的一同使用的话，就请使用hasDetailData和getDetailData来让主从表使用不同的数据源，因为我使用本插件的实现方式中包含了插入在最后面插入虚拟行的操作，所以你会在某些情况下看到最后一行有一行空白行，比如和分组兼容的时候
 
 ```javascript livedemo template=vtable
 function createGroupTable() {
@@ -312,65 +389,6 @@ function createGroupTable() {
 }
 
 createGroupTable();
-```
-
-### 动态配置示例
-
-支持使用函数动态配置子表选项，可以根据行数据和行索引返回不同的配置：
-
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  detailGridOptions: (params) => {
-    const { data, bodyRowIndex } = params;
-    
-    // 根据数据类型返回不同的子表配置
-    if (data.type === 'order') {
-      return {
-        columns: [
-          { field: 'product', title: '产品', width: 200 },
-          { field: 'quantity', title: '数量', width: 100 },
-          { field: 'price', title: '价格', width: 120 }
-        ],
-        style: { height: 200, margin: 16 },
-        theme: VTable.themes.BRIGHT
-      };
-    } else {
-      return {
-        columns: [
-          { field: 'task', title: '任务', width: 220 },
-          { field: 'status', title: '状态', width: 120 }
-        ],
-        style: { height: 150, margin: 12 },
-        theme: VTable.themes.DEFAULT
-      };
-    }
-  }
-});
-```
-
-## 高级配置
-
-### 自定义数据获取
-
-通过 `getDetailData` 和 `hasDetailData` 函数，可以自定义如何获取和检查详情数据：
-
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  // 自定义获取详情数据
-  getDetailData: (record) => {
-    // 可以从不同字段获取数据
-    return record.details || record.subItems || [];
-  },
-  
-  // 自定义检查是否有详情数据
-  hasDetailData: (record) => {
-    return Boolean(record.details && record.details.length > 0);
-  },
-  
-  detailGridOptions: {
-    // ... 子表配置
-  }
-});
 ```
 
 ### 主题和样式定制

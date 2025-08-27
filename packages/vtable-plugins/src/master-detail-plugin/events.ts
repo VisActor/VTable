@@ -94,7 +94,6 @@ export class EventManager {
    */
   private fixCustomMergeCellTextPosition(cellGroup: any, padding: [number, number, number, number]): void {
     const { col, row } = cellGroup;
-    // 获取 customMergeCell 的配置
     const table = this.table as any;
     const customMerge = table.getCustomMerge(col, row);
     if (!customMerge || !customMerge.style || !customMerge.range) {
@@ -103,18 +102,15 @@ export class EventManager {
     // 获取配置的 textAlign，默认为 'left'
     const configuredTextAlign = customMerge.style.textAlign || 'left';
     const { start, end } = customMerge.range;
-    // 计算合并区域的总宽度和起始位置
     let totalMergeWidth = 0;
     let mergeStartX = 0;
     // 计算从起始列到结束列的总宽度
     for (let c = start.col; c <= end.col; c++) {
       totalMergeWidth += table.getColWidth(c);
     }
-    // 计算合并区域的起始X坐标（从第一列开始）
     for (let c = 0; c < start.col; c++) {
       mergeStartX += table.getColWidth(c);
     }
-    // 根据配置的 textAlign 设置文字位置
     cellGroup.forEachChildren((child: any) => {
       if (child.name === 'text' || child.name === 'content') {
         let xPosition: number;
@@ -179,7 +175,6 @@ export class EventManager {
         }
       }
     }
-    // 其他情况（拖拽选择多行、表头选择等）使用默认的currentHeight，不做任何修改
   }
 
   /**

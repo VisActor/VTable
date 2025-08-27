@@ -196,12 +196,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         normalRowCount++;
       }
     }
-    // 获取表格的最小行高限制，而不是写死的值
     const tableInternalProps = this.table.internalProps;
     const minNormalRowHeight = tableInternalProps?.limitMinHeight || 10;
     const minNormalRowsTotalHeight = normalRowCount * minNormalRowHeight;
     // 剩余高度分配给展开行
-    const remainingHeight = totalHeight - minNormalRowsTotalHeight
+    const remainingHeight = totalHeight - minNormalRowsTotalHeight;
     const avgExpandedRowHeight = expandedRowsInfo.size > 0 ? Math.floor(remainingHeight / expandedRowsInfo.size) : 0;
 
     for (let row = startRow; row < endRow; row++) {
@@ -212,7 +211,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       }
 
       if (expandedRowsInfo.has(row)) {
-        const finalHeight = avgExpandedRowHeight
+        const finalHeight = avgExpandedRowHeight;
         scenegraph.setRowHeight(row, finalHeight);
         const info = expandedRowsInfo.get(row);
         if (info) {
@@ -222,7 +221,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           });
         }
       } else {
-        // 普通行：使用表格配置的最小高度
         scenegraph.setRowHeight(row, minNormalRowHeight);
       }
     }
@@ -285,7 +283,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (realRecordIndex === undefined || realRecordIndex === null) {
       return;
     }
-    // 直接使用 realRecordIndex，无论是 number 还是 number[]
     if (internalProps.expandedRecordIndices) {
       if (!includesRecordIndex(internalProps.expandedRecordIndices, realRecordIndex)) {
         internalProps.expandedRecordIndices.push(realRecordIndex);
@@ -336,7 +333,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (realRecordIndex === undefined || realRecordIndex === null) {
       return;
     }
-    // 直接使用 realRecordIndex，无论是 number 还是 number[]
     this.subTableManager.removeSubTable(bodyRowIndex);
     if (internalProps.expandedRecordIndices) {
       const index = findRecordIndexPosition(internalProps.expandedRecordIndices, realRecordIndex);

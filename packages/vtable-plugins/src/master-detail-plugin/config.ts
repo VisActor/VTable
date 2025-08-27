@@ -222,7 +222,6 @@ export class ConfigManager {
       } catch (error) {
         return [];
       }
-      // 检查是否有主从表的详情数据（非分组children）
       if (!record || !this.hasDetailData(record) || this.isGroupTitleRow(col, row)) {
         return [
           {

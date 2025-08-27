@@ -46,40 +46,12 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 
 #### DetailGridOptions.style Configuration
 
+This extend from ListTableConstructorOptions and can utilize the configuration of ListTableConstructorOptions.
+
 | Parameter Name | Type | Default | Description |
 |---------|------|--------|------|
 | `margin` | number \| number[] | 0 | Sub-table margin, supports single value or array form |
 | `height` | number | 300 | Fixed height of the sub-table |
-
-## API Methods
-
-The plugin provides the following main API methods:
-
-### expandRow(rowIndex: number)
-
-Expand the sub-table for the specified row.
-
-**Parameters:**
-- `rowIndex` - Row index to expand (absolute row index including headers)
-
-**Example:**
-```javascript
-// Expand row 3
-masterDetailPlugin.expandRow(3);
-```
-
-### collapseRow(rowIndex: number)
-
-Collapse the sub-table for the specified row.
-
-**Parameters:**
-- `rowIndex` - Row index to collapse (absolute row index including headers)
-
-**Example:**
-```javascript
-// Collapse row 3
-masterDetailPlugin.collapseRow(3);
-```
 
 ## Usage
 
@@ -184,7 +156,112 @@ function createTable() {
 createTable();
 ```
 
-### Usage with Grouping Functionality
+### Dynamic Configuration Example
+
+Support using functions to dynamically configure sub-table options, can return different configurations based on row data and row index:
+
+```typescript
+const masterDetailPlugin = new MasterDetailPlugin({
+  id: 'employee-detail-plugin',
+  detailGridOptions: ({ data, bodyRowIndex }) => {
+    if (bodyRowIndex === 0) {
+      return {
+        columns: [
+          {
+            field: 'project',
+            title: '项目名称',
+            width: 180
+          },
+          {
+            field: 'role',
+            title: '项目角色',
+            width: 120
+          },
+          {
+            field: 'startDate',
+            title: '开始日期',
+            width: 100
+          },
+          {
+            field: 'endDate',
+            title: '结束日期',
+            width: 100
+          },
+          {
+            field: 'progress',
+            title: '项目进度',
+            width: 100,
+          }
+        ],
+        theme: VTable.themes.BRIGHT,
+        style: {
+          margin: 20,
+          height: 300
+        }
+      };
+    }
+    return {
+      columns: [
+        {
+          field: 'project',
+          title: '项目名称',
+          width: 180
+        },
+        {
+          field: 'role',
+          title: '项目角色',
+          width: 120
+        },
+        {
+          field: 'startDate',
+          title: '开始日期',
+          width: 100
+        },
+        {
+          field: 'endDate',
+          title: '结束日期',
+          width: 100
+        },
+        {
+          field: 'progress',
+          title: '项目进度',
+          width: 100,
+        }
+      ],
+      theme: VTable.themes.DARK,
+      style: {
+        margin: 20,
+        height: 300
+      }
+    };
+  }
+});
+```
+
+## Advanced Configuration
+
+### Custom Data Retrieval
+
+Through `getDetailData` and `hasDetailData` functions, you can customize how to retrieve and check detail data:
+
+```typescript
+const masterDetailPlugin = new MasterDetailPlugin({
+  // Custom detail data retrieval
+  getDetailData: (record) => {
+    // Can get data from different fields
+    return record.details || record.subItems || [];
+  },
+  
+  // Custom check for detail data existence
+  hasDetailData: (record) => {
+    return Boolean(record.details && record.details.length > 0);
+  },
+  
+  detailGridOptions: {
+    // ... sub-table configuration
+  }
+});
+```
 
 When you want to use it with grouping that itself relies on children, please use hasDetailData and getDetailData to let the master-detail use different data sources. Because the implementation of this plugin includes inserting virtual rows at the end, you will see a blank row at the end in some cases, such as when compatible with grouping.
 
@@ -312,65 +389,6 @@ function createGroupTable() {
 }
 
 createGroupTable();
-```
-
-### Dynamic Configuration Example
-
-Support using functions to dynamically configure sub-table options, can return different configurations based on row data and row index:
-
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  detailGridOptions: (params) => {
-    const { data, bodyRowIndex } = params;
-    
-    // Return different sub-table configurations based on data type
-    if (data.type === 'order') {
-      return {
-        columns: [
-          { field: 'product', title: 'Product', width: 200 },
-          { field: 'quantity', title: 'Quantity', width: 100 },
-          { field: 'price', title: 'Price', width: 120 }
-        ],
-        style: { height: 200, margin: 16 },
-        theme: VTable.themes.BRIGHT
-      };
-    } else {
-      return {
-        columns: [
-          { field: 'task', title: 'Task', width: 220 },
-          { field: 'status', title: 'Status', width: 120 }
-        ],
-        style: { height: 150, margin: 12 },
-        theme: VTable.themes.DEFAULT
-      };
-    }
-  }
-});
-```
-
-## Advanced Configuration
-
-### Custom Data Retrieval
-
-Through `getDetailData` and `hasDetailData` functions, you can customize how to retrieve and check detail data:
-
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  // Custom detail data retrieval
-  getDetailData: (record) => {
-    // Can get data from different fields
-    return record.details || record.subItems || [];
-  },
-  
-  // Custom check for detail data existence
-  hasDetailData: (record) => {
-    return Boolean(record.details && record.details.length > 0);
-  },
-  
-  detailGridOptions: {
-    // ... sub-table configuration
-  }
-});
 ```
 
 ### Theme and Style Customization
