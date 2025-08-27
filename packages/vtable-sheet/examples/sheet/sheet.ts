@@ -695,6 +695,7 @@ export function createTable() {
         // showHeader: false,
       }
     ] as TYPES.ISheetDefine[],
+
     theme: {
       rowSeriesNumberCellStyle: {
         text: {
@@ -721,6 +722,26 @@ export function createTable() {
       },
       {
         module: VTablePlugins.TableExportPlugin
+      },
+      {
+        module: VTablePlugins.TableSeriesNumber,
+        moduleOptions: {
+          rowSeriesNumberCellStyle: {
+            text: {
+              fontSize: 14,
+              fill: 'yellow',
+              pickable: false,
+              textAlign: 'left',
+              textBaseline: 'middle',
+              padding: [2, 4, 2, 4]
+            },
+            borderLine: {
+              stroke: '#D9D9D9',
+              lineWidth: 1,
+              pickable: false
+            }
+          }
+        }
       }
     ],
     mainMenu: {

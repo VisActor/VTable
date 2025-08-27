@@ -92,11 +92,13 @@ VTableSheet组件支持丰富的配置选项：
 | frozenColCount | number | 0 | 冻结的列数量 |
 | cellMerge | ICellMerge[] | [] | 单元格合并配置 |
 
-注意：
+**注意：**
 
-columns非必填字段，当设置了columns，表格会将其作为表头，具有VTable表头的所有特性。
+**columns非必填字段，当设置了columns，表格会将其作为表头，具有VTable表头的所有特性。**
 
-如果columns未设置或者是空数组，表格会有一行空表头，如果不想展示这行空表头可以设置showHeader为false，那么会只展示data作为表格body的数据。如果想直接将data的第一行作为表头，可以配合设置firstRowAsHeader来实现。也可以调用接口setFirstRowAsHeader来实现。
+**如果columns未设置或者是空数组，表格会有一行空表头，如果不想展示这行空表头可以设置showHeader为false，那么会只展示data作为表格body的数据。**
+
+**如果想直接将data的第一行作为表头，可以配合设置firstRowAsHeader来实现。也可以调用接口setFirstRowAsHeader来实现。**
 
 ## 实例方法
 

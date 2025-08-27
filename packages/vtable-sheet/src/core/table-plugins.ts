@@ -1,5 +1,25 @@
 import type * as VTable from '@visactor/vtable';
-import * as VTablePlugins from '@visactor/vtable-plugins';
+import {
+  FilterPlugin,
+  AddRowColumnPlugin,
+  TableSeriesNumber,
+  HighlightHeaderWhenSelectCellPlugin,
+  ContextMenuPlugin,
+  ExcelEditCellKeyboardPlugin,
+  AutoFillPlugin,
+  DEFAULT_HEADER_MENU_ITEMS,
+  DEFAULT_BODY_MENU_ITEMS,
+  DEFAULT_COLUMN_SERIES_MENU_ITEMS
+} from '@visactor/vtable-plugins';
+import type {
+  FilterOptions,
+  MenuItemOrSeparator,
+  MenuClickEventArgs,
+  AddRowColumnOptions,
+  TableSeriesNumberOptions,
+  IHighlightHeaderWhenSelectCellPluginOptions,
+  ContextMenuOptions
+} from '@visactor/vtable-plugins';
 import type { ISheetDefine, IColumnDefine, IVTableSheetOptions } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 
@@ -16,16 +36,16 @@ export function getTablePlugins(
   // 结合options.VTablePluginModules，来判断是否禁用插件
   const disabledPlugins = options?.VTablePluginModules?.filter(module => module.disabled);
   const enabledPlugins = options?.VTablePluginModules?.filter(module => !module.disabled);
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.FilterPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === VTablePlugins.FilterPlugin)
-      ?.moduleOptions as VTablePlugins.FilterOptions;
+  if (!disabledPlugins?.some(module => module.module === FilterPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === FilterPlugin)
+      ?.moduleOptions as FilterOptions;
     const filterPlugin = createFilterPlugin(sheetDefine, userPluginOptions);
     plugins.push(filterPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.AddRowColumnPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === VTablePlugins.AddRowColumnPlugin)
-      ?.moduleOptions as VTablePlugins.AddRowColumnOptions;
-    const addRowColumnPlugin = new VTablePlugins.AddRowColumnPlugin({
+  if (!disabledPlugins?.some(module => module.module === AddRowColumnPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === AddRowColumnPlugin)
+      ?.moduleOptions as AddRowColumnOptions;
+    const addRowColumnPlugin = new AddRowColumnPlugin({
       addRowCallback: (row: number, tableInstance: VTable.ListTable) => {
         tableInstance.addRecord([], row - tableInstance.columnHeaderLevelCount);
       },
@@ -33,10 +53,10 @@ export function getTablePlugins(
     });
     plugins.push(addRowColumnPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.TableSeriesNumber)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === VTablePlugins.TableSeriesNumber)
-      ?.moduleOptions as VTablePlugins.TableSeriesNumberOptions;
-    const tableSeriesNumberPlugin = new VTablePlugins.TableSeriesNumber({
+  if (!disabledPlugins?.some(module => module.module === TableSeriesNumber)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === TableSeriesNumber)
+      ?.moduleOptions as TableSeriesNumberOptions;
+    const tableSeriesNumberPlugin = new TableSeriesNumber({
       rowCount: sheetDefine?.rowCount || 100,
       colCount: sheetDefine?.columnCount || 100,
       rowSeriesNumberWidth: 30,
@@ -49,36 +69,33 @@ export function getTablePlugins(
     });
     plugins.push(tableSeriesNumberPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.HighlightHeaderWhenSelectCellPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(
-      module => module.module === VTablePlugins.HighlightHeaderWhenSelectCellPlugin
-    )?.moduleOptions as VTablePlugins.IHighlightHeaderWhenSelectCellPluginOptions;
-    const highlightHeaderWhenSelectCellPlugin = new VTablePlugins.HighlightHeaderWhenSelectCellPlugin({
+  if (!disabledPlugins?.some(module => module.module === HighlightHeaderWhenSelectCellPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === HighlightHeaderWhenSelectCellPlugin)
+      ?.moduleOptions as IHighlightHeaderWhenSelectCellPluginOptions;
+    const highlightHeaderWhenSelectCellPlugin = new HighlightHeaderWhenSelectCellPlugin({
       colHighlight: true,
       rowHighlight: true,
       ...userPluginOptions
     });
     plugins.push(highlightHeaderWhenSelectCellPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.ContextMenuPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(
-      module => module.module === VTablePlugins.ContextMenuPlugin
-    )?.moduleOptions;
+  if (!disabledPlugins?.some(module => module.module === ContextMenuPlugin)) {
+    const userPluginOptions = enabledPlugins?.find(module => module.module === ContextMenuPlugin)?.moduleOptions;
     const contextMenuPlugin = createContextMenuItems(sheetDefine, userPluginOptions);
     plugins.push(contextMenuPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.ExcelEditCellKeyboardPlugin)) {
+  if (!disabledPlugins?.some(module => module.module === ExcelEditCellKeyboardPlugin)) {
     const userPluginOptions = enabledPlugins?.find(
-      module => module.module === VTablePlugins.ExcelEditCellKeyboardPlugin
+      module => module.module === ExcelEditCellKeyboardPlugin
     )?.moduleOptions;
-    const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin(userPluginOptions);
+    const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin(userPluginOptions);
     plugins.push(excelEditCellKeyboardPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === VTablePlugins.AutoFillPlugin)) {
+  if (!disabledPlugins?.some(module => module.module === AutoFillPlugin)) {
     // const userPluginOptions = enabledPlugins?.find(
     //   module => module.module === VTablePlugins.AutoFillPlugin
     // )?.moduleOptions;
-    const autoFillPlugin = new VTablePlugins.AutoFillPlugin();
+    const autoFillPlugin = new AutoFillPlugin();
     plugins.push(autoFillPlugin);
   }
   if (options?.VTablePluginModules) {
@@ -101,10 +118,7 @@ export function getTablePlugins(
  * @param sheetDefine Sheet配置
  * @returns 筛选插件实例或null
  */
-function createFilterPlugin(
-  sheetDefine?: ISheetDefine,
-  userPluginOptions?: VTablePlugins.FilterOptions
-): VTablePlugins.FilterPlugin | null {
+function createFilterPlugin(sheetDefine?: ISheetDefine, userPluginOptions?: FilterOptions): FilterPlugin | null {
   // // 对象配置
   // if (typeof sheetDefine.filter === 'object') {
   //   return new VTablePlugins.FilterPlugin({
@@ -114,7 +128,7 @@ function createFilterPlugin(
   //     filterModes: sheetDefine.filter.filterModes
   //   });
   // }
-  return new VTablePlugins.FilterPlugin({
+  return new FilterPlugin({
     enableFilter: createColumnFilterChecker(sheetDefine),
     ...userPluginOptions
   });
@@ -140,10 +154,10 @@ function createColumnFilterChecker(sheetDefine: ISheetDefine) {
   };
 }
 
-function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: VTablePlugins.ContextMenuOptions) {
-  return new VTablePlugins.ContextMenuPlugin({
+function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: ContextMenuOptions) {
+  return new ContextMenuPlugin({
     headerCellMenuItems: [
-      ...VTablePlugins.DEFAULT_HEADER_MENU_ITEMS,
+      ...DEFAULT_HEADER_MENU_ITEMS,
       {
         text: '设置筛选器',
         menuKey: 'set_filter'
@@ -162,14 +176,14 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: V
       }
     ],
     bodyCellMenuItems: [
-      ...VTablePlugins.DEFAULT_BODY_MENU_ITEMS,
+      ...DEFAULT_BODY_MENU_ITEMS,
       {
         text: '启用首行表头',
         menuKey: 'enable_first_row_as_header'
       }
     ],
     columnSeriesNumberMenuItems: [
-      ...VTablePlugins.DEFAULT_COLUMN_SERIES_MENU_ITEMS,
+      ...DEFAULT_COLUMN_SERIES_MENU_ITEMS,
       {
         text: '首行表头',
         menuKey: 'enable_first_row_as_header'
@@ -180,7 +194,7 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: V
       }
     ],
     beforeShowAdjustMenuItems: (
-      menuItems: VTablePlugins.MenuItemOrSeparator[],
+      menuItems: MenuItemOrSeparator[],
       table: VTable.ListTable,
       col: number,
       row: number
@@ -235,7 +249,7 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: V
       return menuItems;
     },
     menuClickCallback: {
-      set_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+      set_filter: (args: MenuClickEventArgs, table: VTable.ListTable) => {
         console.log('set_filter', args, table);
         // 更新 sheetDefine 配置
         sheetDefine.columns[args.colIndex].filter = true;
@@ -253,7 +267,7 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: V
         // 更新表格配置
         table.updateOption(newOptions, { clearColWidthCache: false, clearRowHeightCache: false });
       },
-      cancel_filter: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+      cancel_filter: (args: MenuClickEventArgs, table: VTable.ListTable) => {
         console.log('cancel_filter', args, table);
         // 更新 sheetDefine 配置
         sheetDefine.columns[args.colIndex].filter = false;
@@ -272,10 +286,10 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: V
         // 更新表格配置
         table.updateOption(newOptions, { clearColWidthCache: false, clearRowHeightCache: false });
       },
-      enable_first_row_as_header: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+      enable_first_row_as_header: (args: MenuClickEventArgs, table: VTable.ListTable) => {
         handleEnableFirstRowAsHeader(table);
       },
-      disable_first_row_as_header: (args: VTablePlugins.MenuClickEventArgs, table: VTable.ListTable) => {
+      disable_first_row_as_header: (args: MenuClickEventArgs, table: VTable.ListTable) => {
         handleDisableFirstRowAsHeader(table);
       }
     },

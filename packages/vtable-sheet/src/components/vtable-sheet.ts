@@ -834,7 +834,6 @@ export default class VTableSheet {
     // 创建sheet实例
     const sheet = new WorkSheet({
       ...sheetDefine,
-      setFirstRowAsHeader: this.options.setFirstRowAsHeader,
       container: this.contentElement,
       width: contentWidth,
       height: contentHeight,
