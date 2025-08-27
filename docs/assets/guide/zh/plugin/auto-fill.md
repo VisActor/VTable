@@ -13,7 +13,7 @@
 
 ## 基本使用
 
-以下是 FillHandle 插件的基本使用方法：
+以下是 AutoFillPlugin 插件的基本使用方法：
 
 ```typescript
 import * as VTable from '@visactor/vtable';
