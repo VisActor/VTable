@@ -350,13 +350,6 @@
           }
         },
         {
-          "path": "table_series_number",
-          "title": {
-            "zh": "表格专用序号",
-            "en": "table series number"
-          }
-        },
-        {
           "path": "menu",
           "title": {
             "zh": "菜单功能",

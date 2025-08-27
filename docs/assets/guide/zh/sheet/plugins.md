@@ -1,12 +1,12 @@
 # 插件功能
 
 VTable-Sheet中目前使用到了VTable的几个插件，具体包括：
-- [filter-plugin](../plugin/filter)
-- [table-series-number-plugin](../plugin/table-series-number)
-- [highlight-header-when-select-cell-plugin](../plugin/header-highlight)
-- [context-menu-plugin](../plugin/context-menu)
-- [table-export-plugin](../plugin/table-export)
-- [table-import-plugin](../plugin/excel-import)
+- [filter-plugin](../plugin/filter) 筛选插件
+- [table-series-number-plugin](../plugin/table-series-number) 表格序号插件
+- [highlight-header-when-select-cell-plugin](../plugin/header-highlight) 选中高亮表头插件
+- [context-menu-plugin](../plugin/context-menu) 右键菜单插件
+- [table-export-plugin](../plugin/table-export) 表格导出插件
+- [table-import-plugin](../plugin/excel-import) 表格导入插件
 
 原理主要是因为每个sheet是个VTable实例，所以可以像VTable一样使用其插件。
 

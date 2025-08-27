@@ -43,7 +43,9 @@ tableInstance.registerPlugin(
 );
 ```
 
-## 自定义菜单项
+## Customize Menu Items
+
+The default menu items are defined in `@visactor/vtable-plugins`, you can refer to [ContextMenuPlugin](https://github.com/VisActor/VTable/blob/develop/packages/vtable-plugins/src/contextmenu/types.ts) for details.
 
 The ContextMenu plugin allows you to customize right-click menu items in different areas:
 
