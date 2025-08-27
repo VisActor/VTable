@@ -1,5 +1,24 @@
-import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
-import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
+import type {
+  IStage,
+  IRect,
+  ITextCache,
+  INode,
+  Text,
+  RichText,
+  Stage,
+  IRectGraphicAttribute,
+  CheckBox,
+  FederatedPointerEvent
+} from '@src/vrender';
+import {
+  createStage,
+  createRect,
+  IContainPointMode,
+  container,
+  vglobal,
+  registerForVrender,
+  setPoptipTheme
+} from '@src/vrender';
 import type { CellRange, CellSubLocation } from '../ts-types';
 import {
   type CellAddress,
@@ -49,8 +68,6 @@ import {
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
 import { updateContainerChildrenX } from './utils/update-container';
-import type { CheckBox } from '@src/vrender';
-import { loadPoptip, setPoptipTheme } from '@src/vrender';
 import textMeasureModule from './utils/text-measure';
 import {
   getIconByXY,
@@ -79,7 +96,6 @@ import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
 import type { CheckboxContent } from './component/checkbox-content';
 // import { contextModule } from './context/module';
 
-import { FederatedPointerEvent } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
@@ -187,6 +203,7 @@ export class Scenegraph {
       viewBox: table.options.viewBox,
       ...table.options.renderOption
     });
+    this.stage.textMeasureId = 'fastTextMeasureContribution';
 
     this.stage.defaultLayer.setTheme({
       group: {

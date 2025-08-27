@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: update vrender dependencies to alpha version and optimize text measure",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
