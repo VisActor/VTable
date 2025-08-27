@@ -308,10 +308,10 @@
           }
         },
         {
-          "path": "usage",
+          "path": "Getting_Started",
           "title": {
-            "zh": "使用",
-            "en": "sheet usage"
+            "zh": "快速上手",
+            "en": "sheet getting started"
           }
         },
         {
@@ -319,6 +319,13 @@
           "title": {
             "zh": "多表格页",
             "en": "multi sheet"
+          }
+        },
+        {
+          "path": "style",
+          "title": {
+            "zh": "样式",
+            "en": "style"
           }
         },
         {

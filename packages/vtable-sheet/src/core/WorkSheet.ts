@@ -162,6 +162,19 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     }
     if (!this.options.data) {
       this.options.data = [];
+    } else if (this.options.columns.length === 0 && this.options.firstRowAsHeader) {
+      const data = this.options.data;
+      if (data && data.length > 0) {
+        for (let i = 0; i < data[0].length; i++) {
+          this.options.columns[i] = {
+            field: i,
+            title: data[0][i],
+            filter: !!this.options.filter
+          };
+        }
+      }
+      data.shift();
+      isShowTableHeader = true;
     }
     const keyboardOptions = {
       ...this.options.keyboardOptions,

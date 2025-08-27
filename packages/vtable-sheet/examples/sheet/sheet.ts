@@ -76,6 +76,7 @@ export function createTable() {
         sheetTitle: 'sheet3',
         data: [['s', 'd', 'f'], null, ['t', 'y', 'u'], null, null, null, null, ['3']],
         active: false,
+        filter: true,
         columns: [
           {
             title: '3'
@@ -98,7 +99,6 @@ export function createTable() {
           ['y', 'u', 'i'],
           ['j', 'k', 'h']
         ],
-        columns: [],
         cellMerge: [
           {
             text: 'r',
@@ -135,8 +135,10 @@ export function createTable() {
         sheetTitle: 'Sheet 5',
         columnCount: 20,
         rowCount: 100,
-        frozenRowCount: 10,
-        frozenColCount: 1,
+        firstRowAsHeader: true,
+        // filter: true,
+        // frozenRowCount: 10,
+        // frozenColCount: 1,
         data: [
           ['类别', '细分', '邮寄方式', '客户名称', '产品名称', '子类别', '订单 ID', '数量', '利润', '折扣'],
           [
@@ -689,9 +691,8 @@ export function createTable() {
             '0'
           ]
         ],
-        active: true,
-        columns: [],
-        showHeader: false
+        active: true
+        // showHeader: false,
       }
     ] as TYPES.ISheetDefine[],
     theme: {

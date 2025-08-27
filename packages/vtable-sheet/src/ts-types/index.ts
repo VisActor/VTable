@@ -39,6 +39,8 @@ export interface ISheetDefine {
   frozenColCount?: number;
   /** 是否显示表头 */
   showHeader?: boolean;
+  /** 是否将第一行作为表头 */
+  firstRowAsHeader?: boolean;
   /** 公式定义 */
   formulas?: Record<string, string>;
   /** 筛选配置 - 支持简单布尔值或详细配置对象 */

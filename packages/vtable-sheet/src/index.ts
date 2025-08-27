@@ -1,7 +1,5 @@
 import VTableSheet from './components/vtable-sheet';
-import SheetManager from './managers/sheet-manager';
-import { FormulaManager } from './managers/formula-manager';
-import { FilterManager } from './managers/filter-manager';
+import type { FormulaManager } from './managers/formula-manager';
 import type { ISheetDefine, IVTableSheetOptions } from './ts-types';
 import * as TYPES from './ts-types';
 import * as VTable from './vtable';
@@ -87,14 +85,4 @@ class FormulaThrottle {
 /**
  * @namespace VTableSheet
  */
-export {
-  VTableSheet,
-  SheetManager,
-  FormulaManager,
-  FilterManager,
-  FormulaThrottle,
-  TYPES,
-  VTable,
-  ISheetDefine,
-  IVTableSheetOptions
-};
+export { VTableSheet, FormulaThrottle, TYPES, VTable, ISheetDefine, IVTableSheetOptions };

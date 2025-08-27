@@ -1,6 +1,6 @@
-# 基本使用
+# 快速上手
 
-本章节介绍VTable-Sheet组件的基本用法，包括安装、基本配置和创建第一个电子表格。
+本章节介绍VTable-Sheet组件的快速上手，包括安装、基本配置和创建第一个电子表格。
 
 ## 安装
 
@@ -80,16 +80,23 @@ VTableSheet组件支持丰富的配置选项：
 |-------|------|-------|------|
 | sheetKey | string | - | 工作表唯一标识 |
 | sheetTitle | string | - | 工作表显示名称 |
-| columns | IColumnDefine[] | [] | 列定义数组 |
-| data | any[][] | [] | 表格数据 |
+| columns | IColumnDefine[] | [] | 列定义数组。如果没有配置columns，实际的title在data中，可以配合设置firstRowAsHeader来实现第一行作为表头。如果不想要第一行作为表头，可以配置showHeader为false。|
+| data | any[][] | [] | 表格数据,目前仅支持二维数组不支持json格式数据 |
 | active | boolean | false | 是否为当前激活的工作表 |
 | showHeader | boolean | true | 是否显示表头 |
+| firstRowAsHeader | boolean | false | 是否将第一行作为表头 |
 | filter | boolean \| object | false | 是否启用过滤功能 |
 | columnCount | number | - | 列数量(当不指定columns时使用) |
 | rowCount | number | - | 行数量 |
 | frozenRowCount | number | 0 | 冻结的行数量 |
 | frozenColCount | number | 0 | 冻结的列数量 |
 | cellMerge | ICellMerge[] | [] | 单元格合并配置 |
+
+注意：
+
+columns非必填字段，当设置了columns，表格会将其作为表头，具有VTable表头的所有特性。
+
+如果columns未设置或者是空数组，表格会有一行空表头，如果不想展示这行空表头可以设置showHeader为false，那么会只展示data作为表格body的数据。如果想直接将data的第一行作为表头，可以配合设置firstRowAsHeader来实现。也可以调用接口setFirstRowAsHeader来实现。
 
 ## 实例方法
 

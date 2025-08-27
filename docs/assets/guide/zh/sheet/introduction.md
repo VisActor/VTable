@@ -30,9 +30,19 @@ VTable-Sheet基于VTable构建，采用模块化设计，主要包含以下核�
 
 - Sheet管理器：负责多表格页的创建和切换
 - 公式管理器：处理公式的解析和计算
-- 过滤管理器：提供数据过滤功能
 - 菜单管理器：处理自定义菜单操作
 - 事件管理器：统一处理用户交互事件
+
+内部核心功能依赖了VTable的插件，具体请参考：[VTable插件](../plugin/usge)。
+
+VTable-Sheet中使用的插件列表：
+- [filter-plugin](../plugin/filter)
+- [table-series-number-plugin](../plugin/table-series-number)
+- [highlight-header-when-select-cell-plugin](../plugin/header-highlight)
+- [context-menu-plugin](../plugin/context-menu)
+- [table-export-plugin](../plugin/table-export)
+- [table-import-plugin](../plugin/excel-import)
+
 
 接下来的章节将详细介绍VTable-Sheet的基本用法和各项高级功能。
 

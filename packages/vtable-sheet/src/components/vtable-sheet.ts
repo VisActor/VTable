@@ -1,5 +1,4 @@
 import { FormulaManager } from '../managers/formula-manager';
-import { FilterManager } from '../managers/filter-manager';
 import SheetManager from '../managers/sheet-manager';
 import { WorkSheet } from '../core/WorkSheet';
 import '../styles/index.css';
@@ -28,8 +27,6 @@ export default class VTableSheet {
   private sheetManager: SheetManager;
   /** 公式管理器 */
   private formulaManager: FormulaManager;
-  /** 过滤管理器 */
-  private filterManager: FilterManager;
   /** 事件管理器 */
   private eventManager: EventManager;
 
@@ -70,7 +67,6 @@ export default class VTableSheet {
     // 创建管理器
     this.sheetManager = new SheetManager();
     this.formulaManager = new FormulaManager(this);
-    this.filterManager = new FilterManager(this);
     this.eventManager = new EventManager(this);
     this.dragManager = new SheetTabDragManager(this);
     this.cellHighlightManager = new CellHighlightManager(this);
@@ -838,6 +834,7 @@ export default class VTableSheet {
     // 创建sheet实例
     const sheet = new WorkSheet({
       ...sheetDefine,
+      setFirstRowAsHeader: this.options.setFirstRowAsHeader,
       container: this.contentElement,
       width: contentWidth,
       height: contentHeight,
@@ -1269,14 +1266,6 @@ export default class VTableSheet {
   getFormulaManager(): FormulaManager {
     return this.formulaManager;
   }
-
-  /**
-   * 获取过滤管理器
-   */
-  getFilterManager(): FilterManager {
-    return this.filterManager;
-  }
-
   /**
    * 获取Sheet管理器
    */
