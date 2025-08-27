@@ -89,56 +89,42 @@ export function createTable() {
     {
       field: 'id',
       title: 'ID',
-      width: 80,
-      sort: true
+      width: 80
     },
     {
       field: 'name',
       title: '姓名',
-      width: 120,
-      sort: true
+      width: 120
     },
     {
       field: 'department',
       title: '部门',
-      width: 100,
-      sort: true
+      width: 100
     },
     {
       field: 'position',
       title: '职位',
-      width: 100,
-      sort: true
+      width: 100
     },
     {
       field: 'age',
       title: '年龄',
-      width: 80,
-      sort: true
+      width: 80
     },
     {
       field: 'salary',
       title: '薪资',
-      width: 120,
-      sort: true,
-      fieldFormat: (v: unknown) => {
-        if (typeof v === 'number' && !isNaN(v)) {
-          return `¥${v.toLocaleString()}`;
-        }
-        return v === undefined || v === null ? '' : String(v);
-      }
+      width: 120
     },
     {
       field: 'score',
       title: '评分',
-      width: 80,
-      sort: true
+      width: 80
     },
     {
       field: 'startDate',
       title: '入职日期',
-      width: 120,
-      sort: true
+      width: 120
     }
   ];
 
@@ -166,10 +152,6 @@ export function createTable() {
     rowResizeMode: 'all' as const, // 支持调整行高
     columnResizeMode: 'all' as const, // 支持调整列宽
     dragHeaderMode: 'all' as const, // 支持移动表头位置
-    sortState: {
-      field: 'id',
-      order: 'asc' as const
-    },
     // 其他配置
     defaultRowHeight: 40,
     defaultHeaderRowHeight: 45,
