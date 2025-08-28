@@ -15,6 +15,7 @@ import { CellHighlightManager } from '../managers/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
 import { FormulaThrottle } from '..';
+import { FormulaRangeSelector } from './formula-range-selector';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -56,6 +57,9 @@ export default class VTableSheet {
   // tab拖拽管理器
   private dragManager: SheetTabDragManager;
 
+  /** 公式范围选择器 */
+  private formulaRangeSelector: FormulaRangeSelector;
+
   /**
    * 构造函数
    * @param options 配置选项
@@ -71,6 +75,7 @@ export default class VTableSheet {
     this.dragManager = new SheetTabDragManager(this);
     this.cellHighlightManager = new CellHighlightManager(this);
     this.menuManager = new MenuManager(this);
+    this.formulaRangeSelector = new FormulaRangeSelector();
     // 初始化UI
     this.initUI();
 
@@ -860,6 +865,8 @@ export default class VTableSheet {
     // 注册事件
     sheet.on('cell-selected', this.handleCellSelected.bind(this));
     sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
+    sheet.on('selection-changed', this.handleSelectionChangedForRangeMode.bind(this));
+    sheet.on('selection-end', this.handleSelectionChangedForRangeMode.bind(this));
 
     // 在公式管理器中添加这个sheet
     try {
@@ -939,8 +946,70 @@ export default class VTableSheet {
    * 处理单元格选中事件
    */
   private handleCellSelected(): void {
-    // 更新公式栏
+    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    // 若处于函数参数模式，拖拽过程中会频繁触发 cell-selected，这里直接忽略，等待 selection-end 统一写入
+    if (formulaInput && this.ensureFunctionParamModeFromInput(formulaInput)) {
+      // 如果公式栏没有焦点，说明用户想要退出公式编辑，显示新单元格的值
+      if (document.activeElement !== formulaInput) {
+        this.formulaRangeSelector.reset();
+        this.updateFormulaBar();
+      }
+      return;
+    }
+
     this.updateFormulaBar();
+  }
+
+  /**
+   * 根据当前公式输入框内容，判定/进入函数参数模式
+   */
+  private ensureFunctionParamModeFromInput(formulaInput: HTMLInputElement): boolean {
+    const value = formulaInput.value || '';
+    const cursor =
+      typeof formulaInput.selectionStart === 'number' ? (formulaInput.selectionStart as number) : value.length;
+    return this.formulaRangeSelector?.detectFunctionParameterPosition(value, cursor) === true;
+  }
+
+  /**
+   * 处理范围选择模式下的单元格选中事件
+   */
+  private handleSelectionChangedForRangeMode(event: any): void {
+    if (!this.activeWorkSheet) {
+      return;
+    }
+
+    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    if (!formulaInput) {
+      return;
+    }
+
+    // 不依赖 event.type 字符串，selection-end 已在上层绑定，这里直接处理
+
+    const inParamMode = this.ensureFunctionParamModeFromInput(formulaInput);
+    if (!inParamMode) {
+      return;
+    }
+
+    if (document.activeElement !== formulaInput) {
+      formulaInput.focus();
+    }
+
+    const selection = this.activeWorkSheet.getSelection();
+    if (!selection) {
+      return;
+    }
+
+    // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
+    const editCell = this.activeWorkSheet.getSelection();
+    const safeRange = this.excludeEditCellFromSelection(selection, editCell.startRow, editCell.startCol);
+
+    const selections = [safeRange];
+
+    this.formulaRangeSelector.handleSelectionChanged(selections, formulaInput, (row: number, col: number) =>
+      this.activeWorkSheet!.addressFromCoord(row, col)
+    );
+
+    // 写入后不再刷新公式栏，以免覆盖刚插入的引用
   }
 
   /**
@@ -1042,6 +1111,9 @@ export default class VTableSheet {
 
     const value = input.value;
 
+    // 检测函数参数位置
+    this.formulaRangeSelector.detectFunctionParameterPosition(value, input.selectionStart || 0);
+
     // 如果是公式，高亮引用的单元格
     if (value.startsWith('=')) {
       this.cellHighlightManager.highlightFormulaCells(value);
@@ -1083,18 +1155,7 @@ export default class VTableSheet {
             value
           );
 
-          // 保持显示公式
-          this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, value);
-          this.isUpdatingFromFormula = false;
-
-          // 清空公式栏
-          input.value = '';
-
-          // 让输入框失焦
-          input.blur();
-
-          // 重要：在移动到下一行之前，先重置当前单元格的显示状态为计算结果
+          // 计算结果并仅写入结果展示（不写入公式文本到单元格显示）
           const result = this.formulaManager.getCellValue({
             sheet: this.activeWorkSheet.getKey(),
             row: selection.startRow,
@@ -1102,11 +1163,16 @@ export default class VTableSheet {
           });
 
           this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(selection.startCol, selection.startRow, result.value);
+          this.activeWorkSheet.tableInstance?.changeCellValue(
+            selection.startCol,
+            selection.startRow,
+            result.error ? '#ERROR!' : result.value
+          );
           this.isUpdatingFromFormula = false;
 
-          // 移动选择到下一行
-          this.activeWorkSheet.tableInstance?.selectCell(selection.startCol, selection.startRow + 1);
+          // 清空公式栏并退出编辑
+          input.value = '';
+          input.blur();
         } catch (error) {
           this.isUpdatingFromFormula = false;
           console.warn('Formula evaluation error:', error);
@@ -1124,14 +1190,8 @@ export default class VTableSheet {
         this.isUpdatingFromFormula = false;
       }
 
-      // 设置标志
+      // 不自动移动到下一行，保持当前位置
       this.isEnterKeyPressed = true;
-
-      // 让输入框失焦，回到表格
-      input.blur();
-
-      // 移动选择到下一行
-      this.activeWorkSheet.tableInstance?.selectCell(selection.startCol, selection.startRow + 1);
 
       // 阻止默认行为
       event.preventDefault();
@@ -1461,5 +1521,45 @@ export default class VTableSheet {
     this.rootElement.style.width = `${this.getOptions().width || containerWidth}px`;
     this.rootElement.style.height = `${this.getOptions().height || containerHeight}px`;
     this.getActiveSheet()?.resize();
+  }
+
+  /**
+   * 若所选范围包含当前正在编辑的单元格，自动排除该单元格以避免 #CYCLE!
+   */
+  private excludeEditCellFromSelection(
+    range: { startRow: number; startCol: number; endRow: number; endCol: number },
+    editRow: number,
+    editCol: number
+  ) {
+    const r = { ...range };
+    const withinRow = r.startRow <= editRow && editRow <= r.endRow;
+    const withinCol = r.startCol <= editCol && editCol <= r.endCol;
+    if (!withinRow || !withinCol) {
+      return r;
+    }
+
+    const rowSpan = r.endRow - r.startRow;
+    const colSpan = r.endCol - r.startCol;
+
+    if (rowSpan >= colSpan) {
+      // 优先在行方向上排除编辑单元格
+      if (editRow === r.startRow && r.startRow < r.endRow) {
+        r.startRow += 1;
+      } else if (editRow === r.endRow && r.startRow < r.endRow) {
+        r.endRow -= 1;
+      } else if (r.startRow < r.endRow) {
+        r.startRow += 1;
+      } // 中间，默认从起点缩一格
+    } else {
+      // 优先在列方向上排除编辑单元格
+      if (editCol === r.startCol && r.startCol < r.endCol) {
+        r.startCol += 1;
+      } else if (editCol === r.endCol && r.startCol < r.endCol) {
+        r.endCol -= 1;
+      } else if (r.startCol < r.endCol) {
+        r.startCol += 1;
+      }
+    }
+    return r;
   }
 }
