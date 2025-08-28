@@ -138,8 +138,10 @@ export class SearchComponent {
       };
 
       walk(this.table.records, []);
+      if (this.queryResult.length > 0) {
+        this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
 
-      this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
+      }
 
 
       if (this.callback) {
@@ -151,7 +153,7 @@ export class SearchComponent {
           this.table
         );
       }
-      this.updateCellStyle();
+      this.updateCellStyle(true);
 
       // if (this.autoJump) {
       //   return this.next();
@@ -181,6 +183,7 @@ export class SearchComponent {
                   break;
                 }
               }
+
               if (!isIn) {
                 this.queryResult.push({
                   col: mergeCell.start.col,
@@ -199,7 +202,8 @@ export class SearchComponent {
           }
         }
       }
-      this.updateCellStyle();
+      this.updateCellStyle(true);
+
 
       if (this.callback) {
         this.callback(
@@ -228,6 +232,19 @@ export class SearchComponent {
   }
 
   updateCellStyle(highlight: boolean = true) {
+    if (highlight == null) {
+      if (this.queryResult?.length) {
+        this.queryResult.forEach(({ range }) => {
+          if (range) {
+            this.table.arrangeCustomCellStyle(
+              { range },
+              '' // 或者 null，看API是否允许
+            );
+          }
+        });
+      }
+      return
+    }
     if (!this.queryResult) {
       return;
     }
