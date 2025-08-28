@@ -37,7 +37,7 @@ import {
   getCellMatrix,
   isMergeCell
 } from './auto-fill-helper';
-import { MenuManager } from '../contextmenu';
+import type { IAutoFillPluginOptions } from '.';
 export class AutoFillManager {
   // 源数据
   private sourceData: ISourceDataPiece[] = [];
@@ -57,11 +57,11 @@ export class AutoFillManager {
     col: Set<number>;
   };
 
-  private menuManager: MenuManager;
+  private options?: IAutoFillPluginOptions;
 
-  constructor() {
+  constructor(options?: IAutoFillPluginOptions) {
+    this.options = options;
     this.autoFillService = new AutoFillService();
-    this.menuManager = new MenuManager();
   }
 
   setTable(table: ListTable) {
@@ -109,7 +109,11 @@ export class AutoFillManager {
     this.targetRange.cols = this.targetRange.cols.filter(col => !this.headers.col.has(col));
     this.targetRange.rows = this.targetRange.rows.filter(row => !this.headers.row.has(row));
     // open auto fill menu
-    openAutoFillMenu(this.tableInstance, Math.max(...selectedRange.cols), Math.max(...selectedRange.rows));
+    if (!this.options?.fillMode) {
+      openAutoFillMenu(this.tableInstance, Math.max(...selectedRange.cols), Math.max(...selectedRange.rows));
+    } else {
+      this.fillData(this.options.fillMode);
+    }
   }
 
   dbClick() {
@@ -130,6 +134,7 @@ export class AutoFillManager {
    * @param applyType - 填充类型
    */
   fillData(applyType: APPLY_TYPE) {
+    console.log('fill data applyType', applyType);
     // 获取源数据
     this.sourceData = this.getSourceData(this.sourceRange, this.direction);
     const location = {

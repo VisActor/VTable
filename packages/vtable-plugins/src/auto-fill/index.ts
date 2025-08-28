@@ -4,6 +4,10 @@ import { AutoFillManager } from './auto-fill-manager';
 /**
  * 自动填充插件
  */
+export interface IAutoFillPluginOptions {
+  fillMode?: 'copy' | 'series';
+}
+
 export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
   id = `auto-fill-${Date.now()}`;
   name = 'Auto Fill';
@@ -14,11 +18,8 @@ export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
   ];
   table: VTable.ListTable;
   private autoFillManager: AutoFillManager;
-  constructor() {
-    this.init();
-  }
-  init() {
-    this.autoFillManager = new AutoFillManager();
+  constructor(options?: IAutoFillPluginOptions) {
+    this.autoFillManager = new AutoFillManager(options);
   }
   run(
     ...args: [
