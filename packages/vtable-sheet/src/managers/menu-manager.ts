@@ -1,7 +1,7 @@
 import type { ExcelImportPlugin, TableExportPlugin } from '@visactor/vtable-plugins';
 import type VTableSheet from '../components/vtable-sheet';
 import type { MainMenuItem } from '../ts-types/base';
-import { _MenuKey } from '../ts-types/base';
+import { MainMenuItemKey } from '../ts-types/base';
 
 export class MenuManager {
   private vtableSheet: VTableSheet;
@@ -153,17 +153,17 @@ export class MenuManager {
     });
     this.menuContainer.classList.remove('active');
   }
-  handleMenuClick(menuKey: _MenuKey) {
+  handleMenuClick(menuKey: MainMenuItemKey) {
     console.log('menuKey click', menuKey);
     switch (menuKey) {
-      case _MenuKey.IMPORT:
+      case MainMenuItemKey.IMPORT:
         (this.vtableSheet.getActiveSheet().tableInstance as any)?.importFile();
         break;
 
-      case _MenuKey.EXPORT_CURRENT_SHEET_CSV:
+      case MainMenuItemKey.EXPORT_CURRENT_SHEET_CSV:
         (this.vtableSheet.getActiveSheet().tableInstance as any)?.exportToCsv();
         break;
-      case _MenuKey.EXPORT_CURRENT_SHEET_XLSX:
+      case MainMenuItemKey.EXPORT_CURRENT_SHEET_XLSX:
         (this.vtableSheet.getActiveSheet().tableInstance as any)?.exportToExcel();
         break;
       default:

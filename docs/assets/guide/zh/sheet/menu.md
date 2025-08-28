@@ -12,7 +12,6 @@ const sheetInstance = new VTableSheet(document.getElementById('container'), {
   mainMenu: {
     show: true,  // 显示主菜单
     items: [
-
           {
             name: '导入',
             menuKey: MenuKey.IMPORT,  // 使用预定义的菜单键值
@@ -72,9 +71,7 @@ export interface MainMenuItem {
   items?: MainMenuItem[];
 }
 
-export type MainMenuItemKey = _MenuKey | string;
-
-export enum _MenuKey {
+export enum MainMenuItemKey {
   /** 需要插件支持，请在plugins中配置 ExcelImportPlugin */
   IMPORT = 'import',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
@@ -83,8 +80,9 @@ export enum _MenuKey {
   EXPORT_CURRENT_SHEET_XLSX = 'export-current-sheet-xlsx'
 }
 ```
+可以看到menuKey可选项类型定义`MainMenuItemKey`定义的值目前支持三种，点击菜单项时，会匹配内置逻辑。这些key值涉及导入导出逻辑，需要同时再配置VTablePluginModules，来明确配置所需的`ExcelImportPlugin`及`TableExportPlugin`插件，这样功能才能正常执行。
 
-_MenuKey中包含的值，点击菜单项时，会匹配内置逻辑，目前如代码示例中仅支持了三种key值。这些key值涉及导入导出逻辑，需要同时再配置VTablePluginModules，来明确配置所需的`ExcelImportPlugin`及`TableExportPlugin`插件。如果其他key值，则需要配置onclick来处理。
+menuKey是个选填参数，可以不配置。不配置的话请配合onClick属性来处理菜单项的点击事件。
 
 ## 上下文菜单（右键菜单）
 

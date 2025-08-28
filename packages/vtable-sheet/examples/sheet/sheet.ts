@@ -749,7 +749,7 @@ export function createTable() {
       items: [
         {
           name: '导入',
-          menuKey: TYPES.MenuKey.IMPORT,
+          menuKey: TYPES.MainMenuItemKey.IMPORT,
           description: '导入数据替换到当前sheet'
         },
         {
@@ -757,16 +757,23 @@ export function createTable() {
           items: [
             {
               name: '导出csv',
-              menuKey: TYPES.MenuKey.EXPORT_CURRENT_SHEET_CSV,
+              menuKey: TYPES.MainMenuItemKey.EXPORT_CURRENT_SHEET_CSV,
               description: '导出当前sheet数据到csv'
             },
             {
               name: '导出xlsx',
-              menuKey: TYPES.MenuKey.EXPORT_CURRENT_SHEET_XLSX,
+              menuKey: TYPES.MainMenuItemKey.EXPORT_CURRENT_SHEET_XLSX,
               description: '导出当前sheet数据到xlsx'
             }
           ],
           description: '导出当前sheet数据'
+        },
+        {
+          name: '测试',
+          description: '测试',
+          onClick: () => {
+            alert('测试');
+          }
         }
       ]
     }

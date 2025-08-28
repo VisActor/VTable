@@ -47,9 +47,8 @@ export interface IToolbarItem {
   visible?: boolean;
   onClick?: () => void;
 }
-export type MainMenuItemKey = _MenuKey | string;
 
-export enum _MenuKey {
+export enum MainMenuItemKey {
   /** 需要插件支持，请在plugins中配置 ExcelImportPlugin */
   IMPORT = 'import',
   /** 需要插件支持，请在plugins中配置 TableExportPlugin */
