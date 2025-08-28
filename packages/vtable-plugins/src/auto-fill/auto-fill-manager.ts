@@ -24,8 +24,8 @@ import type {
 } from './types';
 import { AutoFillService } from './auto-fill-services';
 import { otherRule } from './rules';
-import { fillCopy, getDataIndex, getLenS } from './fill-tools';
-import type { ICopyDataInType } from './fill-tools';
+import { fillCopy, getDataIndex, getLenS } from './utils/fill';
+import type { ICopyDataInType } from './utils/fill';
 import type { APPLY_FUNCTIONS } from './types';
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
 import type { ListTable } from '@visactor/vtable';

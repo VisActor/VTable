@@ -1,4 +1,4 @@
-import { parse, isValid, differenceInDays, addDays, format } from 'date-fns';
+import { parse, isValid, differenceInDays, addDays, format } from './utils/date';
 
 // 通用转换器接口
 export interface IConverter {

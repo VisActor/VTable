@@ -799,7 +799,6 @@ importers:
       axios: ^1.4.0
       big.js: 6.2.2
       chai: 4.3.4
-      date-fns: 3.6.0
       eslint: ~8.18.0
       exceljs: 4.4.0
       file-saver: 2.0.5
@@ -833,7 +832,6 @@ importers:
       '@types/file-saver': 2.0.7
       '@visactor/vutils': 0.19.7
       big.js: 6.2.2
-      date-fns: 3.6.0
       exceljs: 4.4.0
       file-saver: 2.0.5
       lodash: 4.17.21

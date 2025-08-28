@@ -31,7 +31,7 @@ import {
   isEqualDiff,
   isLoopSeries,
   matchExtendNumber
-} from './fill-tools';
+} from './utils/fill';
 import { APPLY_TYPE, DATA_TYPE, Direction } from './types';
 import { converterManager, DateConverter } from './series-converters';
 
