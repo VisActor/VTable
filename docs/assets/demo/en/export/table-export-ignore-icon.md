@@ -15,15 +15,21 @@ By default, when the cell has an icon, the icon and text will be treated as an i
 ## Code demo
 
 ```javascript livedemo template=vtable
-// You need to introduce the plug-in package when using it `@visactor/vtable-export`
-// import {
-//   downloadCsv,
-//   exportVTableToCsv,
-//   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// When umd is introduced, the export tool will be mounted to VTable.export
-
+// You need to introduce the plug-in package when using it `@visactor/vtable-plugins`
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const tableExportPlugin = new VTablePlugins.TableExportPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+const tableExportPlugin = new VTablePlugins.TableExportPlugin({
+  exportExcelOptions: {
+    downloadFile: true,
+    fileName: 'fff-excel',
+    ignoreIcon: true
+  },
+  exportCsvOptions: {
+    downloadFile: true,
+    fileName: 'fff'
+  }
+});
 const data = [
   {
     类别: '办公用品',
@@ -197,7 +203,8 @@ const option = {
     order: 'asc'
   },
   theme: VTable.themes.BRIGHT,
-  defaultRowHeight: 32
+  defaultRowHeight: 32,
+  plugins: [tableExportPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
@@ -227,18 +234,13 @@ function bindExport() {
 
   exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      window.tableInstance.exportToCsv();
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadExcel(
-        await exportVTableToExcel(window.tableInstance, {
-          ignoreIcon: true
-        }),
-        'export'
-      );
+      window.tableInstance.exportToExcel();
     }
   });
 }

@@ -1,6 +1,58 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 09 Jul 2025 09:24:55 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Jul 2025 11:30:27 GMT and should not be manually modified.
+
+## 1.19.5
+Thu, 31 Jul 2025 11:30:27 GMT
+
+### Updates
+
+- feat: add enableHeaderCheckboxCascade option
+
+
+- refactor: when delete and add records update checkstate #4240
+
+
+- fix: setCellCheckboxState not work when tree column set checkbox cell type
+
+
+- feat: add  move_end_task_bar event for vtable-gantt.#4266
+
+
+
+## 1.19.4
+Mon, 28 Jul 2025 09:57:02 GMT
+
+### Updates
+
+- refactor: update merge cell performance #3293
+
+
+- feat: rowSeriesNumber support set field #3902
+
+
+- feat: add enableCheckboxCascade option #4130
+
+
+- feat: add groupConfig replace groupBy and group** & add titleCheckbox #4130
+
+
+- refactor: hide menu list when scroll #4214
+
+
+- feat: add getRecordHierarchyState api and fix change header position arguments #4226
+
+
+- fix: vchart trasnparent bgColor replace cell hover color #4245
+
+
+- fix: fix loading icon update in pivot-table #4236
+- feat: add paste-add-row plugin
+
+
+- Merge branch feat/paste-add-row-plugin into feat-pasted-add-row-col-plugin
+
+
 
 ## 1.19.3
 Wed, 09 Jul 2025 09:24:55 GMT

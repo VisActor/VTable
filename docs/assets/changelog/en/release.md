@@ -1,3 +1,74 @@
+# v1.19.6
+
+2025-08-08
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: pivot chart add columnWidthConfig option
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix error when pivot table set columnHierarchyType gird with expand tree [#4254](https://github.com/VisActor/VTable/issues/4254)
+- **@visactor/vtable-gantt**: fix when no records markline render error [#4305](https://github.com/VisActor/VTable/issues/4305)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: add table export plugin
+
+
+
+[more detail about v1.19.6](https://github.com/VisActor/VTable/releases/tag/v1.19.6)
+
+# v1.19.5
+
+2025-07-31
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add enableHeaderCheckboxCascade option
+- **@visactor/vtable-gantt**: add  move_end_task_bar event for vtable-gantt.[#4266](https://github.com/VisActor/VTable/issues/4266)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: setCellCheckboxState not work when tree column set checkbox cell type
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: when delete and add records update checkstate [#4240](https://github.com/VisActor/VTable/issues/4240)
+
+
+
+[more detail about v1.19.5](https://github.com/VisActor/VTable/releases/tag/v1.19.5)
+
+# v1.19.4
+
+2025-07-28
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: rowSeriesNumber support config record's field [#3902](https://github.com/VisActor/VTable/issues/3902)
+- **@visactor/vtable**: add enableCheckboxCascade option [#4130](https://github.com/VisActor/VTable/issues/4130)
+- **@visactor/vtable**: add groupConfig replace groupBy and group** & add titleCheckbox [#4130](https://github.com/VisActor/VTable/issues/4130)
+- **@visactor/vtable**: add getRecordHierarchyState api and fix change header position arguments [#4226](https://github.com/VisActor/VTable/issues/4226)
+- **@visactor/vtable**: add paste-add-row plugin to support extend row count or column count
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: vchart trasnparent bgColor replace cell hover color [#4245](https://github.com/VisActor/VTable/issues/4245)
+- **@visactor/vtable**: fix loading icon update in pivot-table [#4236](https://github.com/VisActor/VTable/issues/4236)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: update merge cell performance [#3293](https://github.com/VisActor/VTable/issues/3293)
+- **@visactor/vtable**: hide menu list when scroll [#4214](https://github.com/VisActor/VTable/issues/4214)
+
+
+
+[more detail about v1.19.4](https://github.com/VisActor/VTable/releases/tag/v1.19.4)
+
 # v1.19.3
 
 2025-07-09

@@ -14,7 +14,7 @@ export interface IRowSeriesNumber {
   // align?: 'left' | 'right';
   // span?: number | 'dependOnNear';
   title?: string;
-  // field?: FieldDef;
+  field?: string | number;
   format?: (col?: number, row?: number, table?: BaseTableAPI) => any;
   cellType?: 'text' | 'link' | 'image' | 'video' | 'checkbox';
   style?: ITextStyleOption | ((styleArg: StylePropertyFunctionArg) => ITextStyleOption);
@@ -38,6 +38,7 @@ export interface IRowSeriesNumber {
 
 - width: 行序号宽度可配置 number 或者'auto'。（默认使用 defaultColWidth，该默认值为 80）
 - title: 行序号标题，默认为空
+- field: 行序号对应显示record中字段，如果没有配置会显示行序号从1开始。
 - format: 行序号格式化函数，默认为空，通过该配置可以将数值类型的序号转换为自定义序号，如使用 a,b,c...
 - cellType: 行序号单元格类型，默认为文本
 - style: 行序号 body 单元格样式

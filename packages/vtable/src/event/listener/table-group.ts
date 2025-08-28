@@ -967,9 +967,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const cellType = table.getCellType(col, row);
-      if (cellType === 'checkbox') {
-        table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
+      if (table.internalProps.enableHeaderCheckboxCascade) {
+        const cellType = table.getCellType(col, row);
+        if (cellType === 'checkbox') {
+          table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
+        }
       }
     } else {
       //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
@@ -979,16 +981,18 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const cellType = table.getCellType(col, row);
-      if (cellType === 'checkbox') {
-        const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
-        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(
-          cellInfo.field as string | number,
-          col,
-          row
-        );
-        if (oldHeaderCheckedState !== newHeaderCheckedState) {
-          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+      if (table.internalProps.enableCheckboxCascade) {
+        const cellType = table.getCellType(col, row); //获取
+        if (cellType === 'checkbox') {
+          const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
+          const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(
+            cellInfo.field as string | number,
+            col,
+            row
+          );
+          if (oldHeaderCheckedState !== newHeaderCheckedState) {
+            table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+          }
         }
       }
     }

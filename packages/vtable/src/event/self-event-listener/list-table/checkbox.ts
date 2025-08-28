@@ -9,10 +9,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
 
-    if (
-      !table.internalProps.layoutMap.isSeriesNumber(col, row) ||
-      table.internalProps.rowSeriesNumber?.enableTreeCheckbox !== true
-    ) {
+    if (!table.internalProps.layoutMap.isSeriesNumber(col, row) || table.internalProps.enableCheckboxCascade !== true) {
       return;
     }
 
@@ -66,6 +63,9 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
 
 // 在cellType: 'checkbox'与tree: true同时配置时，开启enableTreeCheckbox
 export function bindGroupCheckboxTreeChange(table: ListTableAPI) {
+  if (table.internalProps.enableCheckboxCascade !== true) {
+    return;
+  }
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
 
@@ -294,6 +294,9 @@ function updateChildrenCheckboxState(
 }
 
 export function bindHeaderCheckboxChange(table: BaseTableAPI) {
+  if (table.internalProps.enableHeaderCheckboxCascade !== true) {
+    return;
+  }
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
     if (table.isHeader(col, row)) {

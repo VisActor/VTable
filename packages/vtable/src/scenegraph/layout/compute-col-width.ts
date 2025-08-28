@@ -5,9 +5,11 @@ import type {
   IRowSeriesNumber,
   ListTableAPI,
   PivotTableAPI,
+  PivotChartAPI,
   RadioColumnDefine,
   RadioStyleOption,
-  TextColumnDefine
+  TextColumnDefine,
+  IDimensionInfo
 } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
@@ -34,15 +36,14 @@ import { getOrApply } from '../../tools/helper';
  */
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-  (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig &&
-    (table as PivotTableAPI | ListTableAPI)._parseColumnWidthConfig(
-      (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig as any
-    );
 
-  (table as PivotTableAPI).isPivotTable() &&
-    (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader &&
-    (table as PivotTableAPI)._parseColumnWidthConfigForRowHeader(
-      (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader
+  table.internalProps.columnWidthConfig && _parseColumnWidthConfig(table, table.internalProps.columnWidthConfig as any);
+
+  (table as PivotTableAPI | PivotChartAPI).isPivotTable() &&
+    (table as PivotTableAPI | PivotChartAPI).internalProps.columnWidthConfigForRowHeader &&
+    _parseColumnWidthConfigForPivotRowHeader(
+      table as PivotTableAPI | PivotChartAPI,
+      (table as PivotTableAPI | PivotChartAPI).internalProps.columnWidthConfigForRowHeader
     );
 
   colStart = colStart ?? 0;
@@ -855,6 +856,91 @@ export function getAdaptiveWidth(
       table.scenegraph.setColWidth(col, table._adjustColWidth(col, colWidth));
     } else {
       table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
+    }
+  }
+}
+
+function _parseColumnWidthConfig(table: BaseTableAPI, columnWidthConfig: any) {
+  if (table.isPivotTable()) {
+    // 透视表和透视图都会走这个逻辑
+    _parseColumnWidthConfigForPivotTable(table as PivotTableAPI, columnWidthConfig);
+  } else if (table.isListTable()) {
+    _parseColumnWidthConfigForListTable(table as ListTableAPI, columnWidthConfig);
+  }
+}
+function _parseColumnWidthConfigForListTable(table: ListTableAPI, columnWidthConfig: any) {
+  for (let i = 0; i < columnWidthConfig?.length; i++) {
+    const item = columnWidthConfig[i];
+    const key = item.key;
+    const width = item.width;
+    const columnData = table.internalProps.layoutMap.getColumnByKey(key);
+    if (columnData.columnDefine) {
+      const { col } = columnData;
+      if (!table.internalProps._widthResizedColMap.has(col)) {
+        table._setColWidth(col, width);
+        table.internalProps._widthResizedColMap.add(col); // add resize tag
+      }
+    }
+  }
+}
+function _parseColumnWidthConfigForPivotTable(
+  table: PivotTableAPI | PivotChartAPI,
+  columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]
+) {
+  for (let i = 0; i < columnWidthConfig?.length; i++) {
+    const item = columnWidthConfig[i];
+    const dimensions = item.dimensions;
+    const width = item.width;
+    const cell = table.getCellAddressByHeaderPaths(dimensions);
+    if (cell && cell.col >= table.rowHeaderLevelCount) {
+      const cellPath = table.getCellHeaderPaths(cell.col, table.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
+      if (cellPath.colHeaderPaths.length === dimensions.length) {
+        let match = true;
+        for (let i = 0; i < dimensions.length; i++) {
+          const dimension = dimensions[i];
+          const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
+            if (colPath.indicatorKey === dimension.indicatorKey) {
+              return true;
+            }
+            if (colPath.dimensionKey === dimension.dimensionKey && colPath.value === dimension.value) {
+              return true;
+            }
+            return false;
+          });
+          if (finded < 0) {
+            match = false;
+            break;
+          }
+        }
+        if (match && !table.internalProps._widthResizedColMap.has(cell.col)) {
+          table._setColWidth(cell.col, width);
+          table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+        }
+      }
+    } else if (cell && cell.col < table.rowHeaderLevelCount) {
+      if (!table.internalProps._widthResizedColMap.has(cell.col)) {
+        table._setColWidth(cell.col, width);
+        table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      }
+    }
+  }
+}
+
+// particularly for row header in react-vtable keepColumnWidthChange config
+function _parseColumnWidthConfigForPivotRowHeader(
+  table: PivotTableAPI | PivotChartAPI,
+  columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]
+) {
+  for (let i = 0; i < columnWidthConfig?.length; i++) {
+    const item = columnWidthConfig[i];
+    const dimensions = item.dimensions;
+    const width = item.width;
+    const cell = table.getCellAddressByHeaderPaths(dimensions);
+    if (cell && cell.col < table.rowHeaderLevelCount) {
+      if (!table.internalProps._widthResizedColMap.has(cell.col)) {
+        table._setColWidth(cell.col, width);
+        table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      }
     }
   }
 }

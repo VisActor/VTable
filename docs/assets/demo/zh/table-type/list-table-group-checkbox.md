@@ -5,7 +5,7 @@ title: 基本表格分组复选框
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/list-group-checkbox.gif
 order: 1-2
 link: table_type/List_table/group_list
-option: ListTable#groupBy
+option: ListTable#groupConfig
 ---
 
 # 基本表格分组复选框
@@ -14,7 +14,8 @@ option: ListTable#groupBy
 
 ## 关键配置
 
-- enableTreeCheckbox: 开启分组标题复选框功能
+- enableCheckboxCascade: 开启分组复选框级联功能
+- enableHeaderCheckboxCascade: 开启表头复选框级联功能
 
 ## 代码演示
 
@@ -86,14 +87,19 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
       records: data.slice(0, 100),
       columns,
       widthMode: 'standard',
-      groupBy: ['Category', 'Sub-Category', 'Region'],
+      groupConfig: {
+        titleCheckbox: true,
+        groupBy: ['Category', 'Sub-Category', 'Region'],
+      },
+      enableCheckboxCascade: true,// default is true
+      enableHeaderCheckboxCascade: true,// default is true
       rowSeriesNumber: {
         width: 50,
         format: () => {
           return '';
         },
         cellType: 'checkbox',
-        enableTreeCheckbox: true
+        headerType: 'checkbox'
       }
     };
     tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);

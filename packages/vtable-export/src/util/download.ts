@@ -1,5 +1,8 @@
 import { saveAs } from 'file-saver';
 
+/**
+ * @deprecated 请使用@visactor/vtable-plugins中的`TableExportPlugin` 插件
+ */
 export async function downloadCsv(str: string, name: string) {
   const blob = new Blob([`\ufeff${str}`], {
     type: 'text/csv;charset=utf-8'
@@ -8,6 +11,9 @@ export async function downloadCsv(str: string, name: string) {
   await saveAs(blob, `${name}.csv`);
 }
 
+/**
+ * @deprecated 请使用@visactor/vtable-plugins中的`TableExportPlugin` 插件
+ */
 export async function downloadExcel(arrayBuffer: ArrayBuffer, name: string) {
   // const arrayBuffer = workSheetStr2ArrayBuffer(workSheetStr);
   const blob = new Blob([arrayBuffer], {
