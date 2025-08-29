@@ -1469,24 +1469,23 @@ export default class VTableSheet {
   /**
    * 销毁实例
    */
-  destroy(): void {
+  release(): void {
     // 释放事件管理器
     this.eventManager.release();
     // 销毁所有sheet实例
     this.workSheetInstances.forEach(instance => {
       instance.release();
     });
-
     // 清空容器
     if (this.rootElement && this.rootElement.parentNode) {
       this.rootElement.parentNode.removeChild(this.rootElement);
     }
 
     if (this.formulaAutocomplete) {
-      this.formulaAutocomplete.destroy();
+      this.formulaAutocomplete.release();
     }
     if (this.cellHighlightManager) {
-      this.cellHighlightManager.destroy();
+      this.cellHighlightManager.release();
     }
   }
 

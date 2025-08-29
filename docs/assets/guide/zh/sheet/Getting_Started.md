@@ -115,7 +115,7 @@ VTableSheet实例提供了以下常用方法：
 | saveToConfig | - | IVTableSheetOptions | 将当前状态保存为配置对象 |
 | exportSheetToFile | fileType: 'csv' \| 'xlsx' | void | 导出当前工作表到文件 |
 | importFileToSheet | - | void | 导入文件到当前工作表 |
-| destroy | - | void | 销毁表格实例 |
+| release | - | void | 销毁表格实例 |
 
 ## 简单示例
 

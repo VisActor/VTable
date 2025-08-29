@@ -677,6 +677,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     }
 
     // 清除引用
-    this.tableInstance.release();
+    this.tableInstance?.release();
   }
 }

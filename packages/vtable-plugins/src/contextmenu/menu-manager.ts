@@ -44,7 +44,7 @@ export class MenuManager {
     this.table = table;
 
     // 清除之前的菜单
-    this.destroy();
+    this.release();
 
     // 创建菜单容器
     this.menuContainer = createElement('div', MENU_CONTAINER_CLASS);
@@ -342,7 +342,7 @@ export class MenuManager {
    */
   private handleMenuItemClick(args: MenuClickEventArgs): void {
     // 关闭菜单
-    this.destroy();
+    this.release();
     // 调用回调
     if (this.clickCallback && this.table) {
       this.clickCallback(args, this.table);
@@ -369,13 +369,13 @@ export class MenuManager {
     }
 
     // 关闭菜单
-    this.destroy();
+    this.release();
   };
 
   /**
    * 销毁菜单
    */
-  destroy(): void {
+  release(): void {
     // 关闭所有子菜单
     this.closeAllSubmenus();
 

@@ -66,7 +66,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
 
     // 清理之前的实例
     if (this.formulaAutocomplete) {
-      this.formulaAutocomplete.destroy();
+      this.formulaAutocomplete.release();
       this.formulaAutocomplete = null;
     }
 
@@ -166,7 +166,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
    */
   onEnd(): void {
     if (this.formulaAutocomplete) {
-      this.formulaAutocomplete.destroy();
+      this.formulaAutocomplete.release();
       this.formulaAutocomplete = null;
     }
     if (this.sheet) {

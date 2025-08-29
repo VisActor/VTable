@@ -329,7 +329,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   release() {
     // 清除组件资源
     if (this.componentLayoutLayer) {
-      this.table.scenegraph.stage.removeLayer(this.componentLayoutLayer.id);
+      this.table.scenegraph.stage.removeLayer(this.componentLayoutLayer._uid);
       this.componentLayoutLayer = null;
     }
 

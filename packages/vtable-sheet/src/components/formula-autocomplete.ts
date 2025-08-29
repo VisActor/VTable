@@ -494,7 +494,7 @@ export class FormulaAutocomplete {
   /**
    * 销毁组件
    */
-  destroy(): void {
+  release(): void {
     if (this.dropdown && this.dropdown.parentNode) {
       this.dropdown.parentNode.removeChild(this.dropdown);
     }

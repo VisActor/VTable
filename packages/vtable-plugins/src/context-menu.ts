@@ -310,7 +310,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
    */
   release(): void {
     if (this.menuManager) {
-      this.menuManager.destroy();
+      this.menuManager.release();
       this.menuManager = null;
     }
 

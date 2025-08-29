@@ -724,7 +724,7 @@ export class FormulaManager {
    */
   clearContent(): void {
     try {
-      this.destroy();
+      this.release();
       this.initializeHyperFormula();
     } catch (error) {
       console.error('Failed to clear content:', error);
@@ -734,7 +734,7 @@ export class FormulaManager {
   /**
    * 销毁FormulaManager
    */
-  destroy(): void {
+  release(): void {
     try {
       if (this.hyperFormula) {
         (this.hyperFormula as any).destroy();

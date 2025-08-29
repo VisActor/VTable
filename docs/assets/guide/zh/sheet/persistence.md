@@ -1,14 +1,15 @@
 # 数据持久化
 
-VTable-Sheet提供了强大的状态持久化功能，使用户可以轻松保存和恢复表格的各种状态，包括过滤条件、选择区域、活动表格页等。本章介绍如何实现表格状态的持久化。
+VTable-Sheet提供了状态持久化能力，使用户可以保存和恢复表格的各种状态，包括过滤条件、选择区域、活动表格页等。本章介绍如何实现表格状态的持久化。
 
 ## 基本概念
 
 数据持久化是指将表格的当前状态（包括数据和用户操作）保存起来，以便在后续使用时能够恢复到相同的状态。这在需要保留用户操作历史或实现自动保存功能时非常有用。
 
+
 ## 保存表格状态
 
-VTableSheet提供了`saveToConfig`方法，可以将当前的表格状态导出为配置对象：
+VTableSheet提供了`saveToConfig`方法，可以将当前的表格状态导出为配置对象（以保存到localStorage为例）：
 
 ```typescript
 // 获取当前表格的完整配置（包含所有状态）
@@ -17,16 +18,16 @@ const currentConfig = sheetInstance.saveToConfig();
 // 将配置对象转换为JSON字符串
 const configJson = JSON.stringify(currentConfig);
 
-// 保存到localStorage
+// 保存到localStorage 或者后端接口保存等
 localStorage.setItem('vtable-sheet-state', configJson);
 ```
 
 ## 恢复表格状态
 
-可以使用保存的配置重新创建表格，恢复之前的状态：
+可以使用保存的配置重新创建表格，恢复之前的状态（以从localStorage获取保存的配置为例）：
 
-```typescript
-// 从localStorage获取保存的配置
+```javascript
+// 从localStorage获取保存的配置 或者从后端接口获取
 const savedConfigJson = localStorage.getItem('vtable-sheet-state');
 
 if (savedConfigJson) {
@@ -35,63 +36,40 @@ if (savedConfigJson) {
     const savedConfig = JSON.parse(savedConfigJson);
     
     // 使用保存的配置创建新的表格实例
-    const sheetInstance = new VTableSheet(document.getElementById('container'), savedConfig);
+    const sheetInstance = new VTableSheet.VTableSheet(document.getElementById(CONTAINER_ID), savedConfig);
   } catch (error) {
     console.error('恢复表格状态失败:', error);
     // 使用默认配置
-    const sheetInstance = new VTableSheet(document.getElementById('container'), defaultConfig);
+    const sheetInstance = new VTableSheet.VTableSheet(document.getElementById(CONTAINER_ID), defaultConfig);
   }
 } else {
   // 没有保存的状态，使用默认配置
-  const sheetInstance = new VTableSheet(document.getElementById('container'), defaultConfig);
+  const sheetInstance = new VTableSheet.VTableSheet(document.getElementById(CONTAINER_ID), defaultConfig);
 }
 ```
 
 ## 保存的状态内容
 
-`saveToConfig`方法可以保存以下状态：
+`saveToConfig`方法可以保存的状态有：
 
-- 表格数据
-- 列配置
+- 各个工作表的数据
 - 过滤条件
-- 当前激活的表格页
-- 表格结构配置（行高、列宽等）
+- 当前激活的工作表
 - 公式设置
+- 合并单元格状态
+- 冻结行列
+
+待开发实现的保存状态有：
+
 - 单元格选择状态
-- 用户自定义配置
+- 表格结构配置（行高、列宽等）
 
-## 自动保存功能
 
-可以通过事件监听实现自动保存功能：
-
-```typescript
-// 创建表格实例
-const sheetInstance = new VTableSheet(document.getElementById('container'), initialConfig);
-
-// 设置自动保存
-const autoSave = () => {
-  const config = sheetInstance.saveToConfig();
-  localStorage.setItem('vtable-auto-save', JSON.stringify(config));
-  console.log('表格状态已自动保存:', new Date().toLocaleTimeString());
-};
-
-// 监听可能改变表格状态的事件
-const events = ['cellValueChange', 'filterChange', 'sheetChange', 'selectionChange'];
-
-events.forEach(eventName => {
-  sheetInstance.on(eventName, () => {
-    // 使用防抖函数避免频繁保存
-    clearTimeout(window.autoSaveTimer);
-    window.autoSaveTimer = setTimeout(autoSave, 1000);
-  });
-});
-```
-
-## 实用示例：简单的持久化功能
+## 使用示例：简单的持久化功能
 
 以下是一个简单的表格状态持久化示例：
 
-```typescript
+```javascript livedemo template=vtable
 // 创建持久化辅助函数
 const SheetPersistence = {
   // 保存表格状态
@@ -107,20 +85,20 @@ const SheetPersistence = {
   },
   
   // 加载表格状态
-  loadState: (containerId, key = 'vtable-sheet-state', defaultConfig = null) => {
+  loadState: (container, key = 'vtable-sheet-state', defaultConfig = null) => {
     try {
       const savedJson = localStorage.getItem(key);
       
       if (savedJson) {
         const config = JSON.parse(savedJson);
-        return new VTableSheet(document.getElementById(containerId), config);
+        return new VTableSheet.VTableSheet(container, config);  
       } else if (defaultConfig) {
-        return new VTableSheet(document.getElementById(containerId), defaultConfig);
+        return new VTableSheet.VTableSheet(container, defaultConfig);
       }
     } catch (error) {
       console.error('加载表格状态失败:', error);
       if (defaultConfig) {
-        return new VTableSheet(document.getElementById(containerId), defaultConfig);
+        return new VTableSheet.VTableSheet(container, defaultConfig);
       }
     }
     return null;
@@ -134,8 +112,6 @@ const SheetPersistence = {
 
 // 使用示例
 const defaultConfig = {
-  showFormulaBar: true,
-  showSheetTab: true,
   sheets: [
     {
       sheetKey: 'sheet1',
@@ -150,34 +126,118 @@ const defaultConfig = {
   ]
 };
 
+const container = document.getElementById(CONTAINER_ID);
 // 尝试加载保存的状态，如果没有则使用默认配置
-const sheetInstance = SheetPersistence.loadState('container', 'my-sheet', defaultConfig);
+const sheetInstance = SheetPersistence.loadState(container, 'my-sheet', defaultConfig);
+window.sheetInstance = sheetInstance;
 
-// 添加保存按钮
-document.getElementById('save-btn').addEventListener('click', () => {
-  if (SheetPersistence.saveState(sheetInstance, 'my-sheet')) {
-    alert('表格状态已保存');
-  } else {
-    alert('保存失败');
-  }
-});
+  // 创建简单的控制按钮
+  const createControls = () => {
+    // 清理已存在的控制面板，避免重复创建
+    const existingControls = document.getElementById('simple-controls');
+    if (existingControls) {
+      existingControls.remove();
+      console.log('清理已存在的控制面板');
+    }
 
-// 添加清除按钮
-document.getElementById('clear-btn').addEventListener('click', () => {
-  SheetPersistence.clearState('my-sheet');
-  alert('已清除保存的表格状态');
-});
+    const controlsHtml = `
+      <div id="simple-controls" style="
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        font-family: Arial, sans-serif;
+        z-index: 1000;
+        min-width: 200px;
+      ">
+        <h4 style="margin: 0 0 12px 0; color: #333;">控制面板</h4>
+
+        <button id="save-btn" style="
+          width: 100%;
+          margin: 4px 0;
+          padding: 8px 12px;
+          border: 1px solid #007bff;
+          background: #007bff;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+        ">手动保存</button>
+
+        <button id="reload-btn" style="
+          width: 100%;
+          margin: 4px 0;
+          padding: 8px 12px;
+          border: 1px solid #28a745;
+          background: #28a745;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+        ">重新加载</button>
+
+        <button id="clear-btn" style="
+          width: 100%;
+          margin: 4px 0;
+          padding: 8px 12px;
+          border: 1px solid #dc3545;
+          background: #dc3545;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+        ">清除数据</button>
+
+        <div id="status" style="
+          margin-top: 12px;
+          padding: 8px;
+          background: #f8f9fa;
+          border-radius: 4px;
+          font-size: 12px;
+          color: #666;
+        ">状态: 已加载</div>
+
+        <div style="
+          margin-top: 12px;
+          padding: 8px;
+          background: #e7f3ff;
+          border-radius: 4px;
+          font-size: 11px;
+          color: #0066cc;
+        ">
+          右键设置合并后点击手动保存，然后重新加载验证效果
+        </div>
+      </div>
+    `;
+
+   container.insertAdjacentHTML('beforeend', controlsHtml);
+
+    // 绑定事件
+    document.getElementById('save-btn')?.addEventListener('click', () => {
+      if (SheetPersistence.saveState(sheetInstance, 'my-sheet')) {
+        alert('表格状态已保存');
+      } else {
+        alert('保存失败');
+      }
+    });
+
+
+    document.getElementById('reload-btn')?.addEventListener('click', () => {
+      // window.location.reload();
+      debugger;
+       window.sheetInstance?.release?.();
+      const sheetInstance = SheetPersistence.loadState(container, 'my-sheet', defaultConfig);
+      window.sheetInstance = sheetInstance;
+    });
+    document.getElementById('clear-btn')?.addEventListener('click', () => {
+     SheetPersistence.clearState('my-sheet');
+      alert('已清除缓存中保存的表格状态，点击重新加载后恢复默认状态');
+    });
+  };
+
+  // 创建控制面板
+  createControls();
+
+
+
 ```
-
-## 持久化最佳实践
-
-1. **定期自动保存**：设置定时器或监听关键事件实现自动保存功能
-2. **提供手动保存选项**：让用户可以在关键时刻手动触发保存
-3. **保存历史版本**：保存多个历史状态，允许用户回退到之前的版本
-4. **优化存储内容**：只保存必要的状态信息，减少存储占用
-5. **提供导入导出功能**：允许用户下载配置文件或从文件中导入配置
-6. **处理错误情况**：添加适当的错误处理机制，确保在恢复失败时能够优雅降级
-
-通过这些持久化功能，VTable-Sheet可以提供更好的用户体验，保留用户的工作进度和操作历史。
-
-【注：此处需要添加持久化功能操作的截图，显示保存和恢复表格状态的过程】

@@ -303,7 +303,7 @@ export class CellHighlightManager {
   /**
    * 销毁管理器
    */
-  destroy(): void {
+  release(): void {
     this.clearHighlights();
     this.highlightedCells.clear();
     this.originalBorderStyles.clear();

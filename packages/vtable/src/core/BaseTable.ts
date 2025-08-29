@@ -2544,6 +2544,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.menuHandler?.release?.();
 
     super.release?.();
+    this.pluginManager.release();
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
     this.eventManager.release();
@@ -2575,7 +2576,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
-    this.pluginManager.release();
+
     clearChartRenderQueue();
   }
 
