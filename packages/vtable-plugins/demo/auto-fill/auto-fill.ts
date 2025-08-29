@@ -1,108 +1,101 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { AutoFillPlugin } from '../../src/auto-fill';
+import * as VTablePlugins from '../../src';
 import { InputEditor } from '@visactor/vtable-editors';
 import { register } from '@visactor/vtable';
-import { mockData } from './mockData';
+import { editor } from '@visactor/vtable/es/register';
 
 const CONTAINER_ID = 'vTable';
-const generatePersons = () => {
-  return [...mockData];
+// 生成示例数据
+const generateTestData = count => {
+  return Array.from(new Array(count)).map((_, i) => {
+    return i <= 2
+      ? {
+          id: i + 1,
+          name: `第${i + 1}章`,
+          arithmetic: i * 100 + 100,
+          geometric: Math.pow(2, i),
+          date: new Date(2024, 0, i + 27).toLocaleDateString(),
+          week: i < 1 ? `星期一` : null,
+          chineseNumber: i < 1 ? `一` : null,
+          otherDirection_1: null,
+          otherDirection_2: null
+        }
+      : {};
+  });
 };
 
 const inputEditor = new InputEditor();
 register.editor('input', inputEditor);
-
 export function createTable() {
-  const records = generatePersons();
-  const columns: VTable.ColumnsDefine = [
-    {
-      field: 'Order ID',
-      key: 'Order ID',
-      title: 'Order ID',
-      width: 'auto',
-      sort: true
-    },
-    {
-      field: 'Customer ID',
-      key: 'Customer ID',
-      title: 'Customer ID',
-      width: 'auto'
-    },
-    {
-      field: 'Order Date',
-      key: 'Order Date',
-      title: 'Order Date',
-      width: 'auto'
-    },
+  const records = generateTestData(20);
 
+  const columns = [
     {
-      field: 'Category',
-      key: 'Category',
-      title: 'Category',
-      width: 'auto'
+      field: 'id',
+      title: 'ID',
+      width: 80
     },
     {
-      field: 'Product Name',
-      key: 'Product Name',
-      title: 'Product Name',
-      width: 'auto'
+      field: 'name',
+      title: '章节',
+      width: 150
     },
     {
-      field: 'Sub-Category',
-      key: 'Sub-Category',
-      title: 'Sub-Category',
-      width: 'auto'
+      field: 'arithmetic',
+      title: '等差',
+      width: 120
     },
     {
-      field: 'Region',
-      key: 'Region',
-      title: 'Region',
-      width: 'auto'
+      field: 'geometric',
+      title: '等比',
+      width: 120
     },
     {
-      field: 'City',
-      key: 'City',
-      title: 'City',
-      width: 'auto'
-    },
-
-    {
-      field: 'Quantity',
-      key: 'Quantity',
-      title: 'Quantity',
-      width: 'auto'
+      field: 'date',
+      title: '日期',
+      width: 120
     },
     {
-      field: 'Sales',
-      key: 'Sales',
-      title: 'Sales(Number)',
-      width: 'auto'
+      field: 'week',
+      title: '星期',
+      width: 120
     },
     {
-      field: 'Profit',
-      key: 'Profit',
-      title: 'Profit',
-      width: 'auto'
+      field: 'chineseNumber',
+      title: '中文数字',
+      width: 120
+    },
+    {
+      field: 'otherDirection_1',
+      title: '向其他方向拖拽',
+      width: 150
+    },
+    {
+      field: 'otherDirection_2',
+      title: '',
+      width: 120
     }
   ];
-  const autoFill = new AutoFillPlugin();
-  const option: VTable.ListTableConstructorOptions = {
+
+  // 创建自动填充插件
+  const autoFillPlugin = new VTablePlugins.AutoFillPlugin({
+    fastFillMode: 'copy',
+    fillMode: 'series'
+  });
+
+  // 创建表格配置
+  const option = {
     container: document.getElementById(CONTAINER_ID),
-    records,
     columns,
-    padding: 30,
-    editor: 'input',
-    plugins: [autoFill],
+    records,
+    editor: inputEditor,
     excelOptions: {
-      fillHandle: true
-    }
+      fillHandle: true // 启用填充炳功能
+    },
+    plugins: [autoFillPlugin]
   };
+
+  // 创建表格实例
   const tableInstance = new VTable.ListTable(option);
-
-  window.tableInstance = tableInstance;
-
-  // bindDebugTool(tableInstance.scenegraph.stage, {
-  //   customGrapicKeys: ['col', 'row']
-  // });
 }

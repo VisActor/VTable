@@ -44,10 +44,8 @@ export type APPLY_FUNCTIONS = {
 };
 
 export enum APPLY_TYPE {
-  COPY = 'COPY',
-  SERIES = 'SERIES'
-  // ONLY_FORMAT = 'ONLY_FORMAT',
-  // NO_FORMAT = 'NO_FORMAT'
+  COPY = 'copy',
+  SERIES = 'series'
 }
 
 export interface IAutoFillLocation {

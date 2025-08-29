@@ -24,14 +24,21 @@ import type {
 } from './types';
 import { AutoFillService } from './auto-fill-services';
 import { otherRule } from './rules';
-import { fillCopy, getDataIndex, getLenS } from './fill-tools';
-import type { ICopyDataInType } from './fill-tools';
+import { fillCopy, getDataIndex, getLenS } from './utils/fill';
+import type { ICopyDataInType } from './utils/fill';
 import type { APPLY_FUNCTIONS } from './types';
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
 import type { ListTable } from '@visactor/vtable';
 import * as VTable from '@visactor/vtable';
-import { getSelectedRangeArray, getTargetRange, openAutoFillMenu } from './auto-fill-helper';
-
+import {
+  getSelectedRangeArray,
+  getTargetRange,
+  openAutoFillMenu,
+  getCellMatrix,
+  isMergeCell
+} from './auto-fill-helper';
+import type { IAutoFillPluginOptions } from '.';
+import { InteractionState } from '@visactor/vtable/es/ts-types';
 export class AutoFillManager {
   // 源数据
   private sourceData: ISourceDataPiece[] = [];
@@ -51,7 +58,10 @@ export class AutoFillManager {
     col: Set<number>;
   };
 
-  constructor() {
+  private options?: IAutoFillPluginOptions;
+
+  constructor(options?: IAutoFillPluginOptions) {
+    this.options = options;
     this.autoFillService = new AutoFillService();
   }
 
@@ -85,13 +95,13 @@ export class AutoFillManager {
   }
 
   // 开始拖拽
-  startDrag(selectedRange: CellRange) {
+  handleStartDrag(selectedRange: CellRange) {
     this.sourceRange = getSelectedRangeArray(selectedRange);
     this.sourceRange.cols = this.sourceRange.cols.filter(col => !this.headers.col.has(col));
     this.sourceRange.rows = this.sourceRange.rows.filter(row => !this.headers.row.has(row));
   }
   // 结束拖拽
-  endDrag(endSelectCellRange: CellRange, direction: string) {
+  handleEndDrag(endSelectCellRange: CellRange, direction: string) {
     // set direction
     this.direction = direction as Direction;
     // set target range
@@ -100,7 +110,44 @@ export class AutoFillManager {
     this.targetRange.cols = this.targetRange.cols.filter(col => !this.headers.col.has(col));
     this.targetRange.rows = this.targetRange.rows.filter(row => !this.headers.row.has(row));
     // open auto fill menu
-    openAutoFillMenu(this.tableInstance, Math.max(...selectedRange.cols), Math.max(...selectedRange.rows));
+    if (!this.options?.fillMode) {
+      openAutoFillMenu(this.tableInstance, Math.max(...selectedRange.cols), Math.max(...selectedRange.rows));
+    } else {
+      this.fillData(this.options.fillMode as APPLY_TYPE);
+    }
+  }
+
+  handleDbClick() {
+    if (!this.sourceRange) {
+      return;
+    }
+    this.direction = Direction.DOWN;
+    // 双击填充时，自动检测填充范围
+    const detectFillRange = getSelectedRangeArray(this._detectFillRange());
+    this.targetRange = getTargetRange(this.direction, this.sourceRange, detectFillRange);
+    this.targetRange.cols = this.targetRange.cols.filter(col => !this.headers.col.has(col));
+    this.targetRange.rows = this.targetRange.rows.filter(row => !this.headers.row.has(row));
+    if (this.targetRange.cols.length === 0 || this.targetRange.rows.length === 0) {
+      return;
+    }
+    const startCol = this.sourceRange.cols[0];
+    const startRow = this.sourceRange.rows[0];
+    const endCol = this.targetRange.cols[this.targetRange.cols.length - 1];
+    const endRow = this.targetRange.rows[this.targetRange.rows.length - 1];
+    // 更新选区
+    const stateManager = this.tableInstance.stateManager;
+    stateManager.updateSelectPos(startCol, startRow, false, false, false, true, true);
+    stateManager.updateInteractionState(InteractionState.grabing);
+    stateManager.updateSelectPos(endCol, endRow, false, false, false, true, true);
+    stateManager.endSelectCells(false, false);
+    stateManager.updateInteractionState(InteractionState.default);
+    // 快速填充
+    if (!this.options?.fastFillMode) {
+      // 打开自动填充菜单
+      openAutoFillMenu(this.tableInstance, endCol, endRow);
+    } else {
+      this.fillData(this.options.fastFillMode as APPLY_TYPE);
+    }
   }
 
   /**
@@ -108,6 +155,7 @@ export class AutoFillManager {
    * @param applyType - 填充类型
    */
   fillData(applyType: APPLY_TYPE) {
+    console.log('fill data applyType', applyType);
     // 获取源数据
     this.sourceData = this.getSourceData(this.sourceRange, this.direction);
     const location = {
@@ -199,6 +247,46 @@ export class AutoFillManager {
 
     return sourceDataPiece;
   }
+  /**
+   * 快速填充检测填充范围
+   * @returns 填充范围
+   */
+  private _detectFillRange() {
+    // sourceRange
+    const start = { row: Math.min(...this.sourceRange.rows), col: Math.min(...this.sourceRange.cols) };
+    const end = { row: Math.max(...this.sourceRange.rows), col: Math.max(...this.sourceRange.cols) };
+    // matrix
+    const matrix = getCellMatrix(this.tableInstance);
+    const maxRow = matrix.getMaxRows();
+    const maxColumn = matrix.getMaxColumns();
+    let detectEndRow = end.row;
+    // left column first, or consider right column.
+    if (start.col > 0 && matrix.getValue(start.row, start.col - 1)?.v) {
+      let cur = start.row;
+      while (matrix.getValue(cur, start.col - 1)?.v && cur < maxRow) {
+        cur += 1;
+      }
+      detectEndRow = cur - 1;
+    } else if (end.col < maxColumn && matrix.getValue(end.row, end.col + 1)?.v) {
+      let cur = start.row;
+      while (matrix.getValue(cur, end.col + 1)?.v && cur < maxRow) {
+        cur += 1;
+      }
+      detectEndRow = cur - 1;
+    }
+    for (let i = end.row + 1; i <= detectEndRow; i++) {
+      for (let j = start.col; j <= end.col; j++) {
+        if (matrix.getValue(i, j)?.v) {
+          detectEndRow = i - 1;
+          break;
+        }
+      }
+    }
+    return {
+      start: { row: start.row, col: start.col },
+      end: { row: detectEndRow, col: end.col }
+    };
+  }
 
   /**
    * 填充数据
@@ -265,6 +353,12 @@ export class AutoFillManager {
     targetRows.forEach((row, rowIndex) => {
       const rowValues: string[] = [];
       targetCols.forEach((col, colIndex) => {
+        // 如果当前单元格是合并单元格，则先进行拆开单元格，再进行填充
+        const range = isMergeCell(this.tableInstance, col, row);
+        if (range) {
+          this.tableInstance.unmergeCells(range.start.col, range.start.row, range.end.col, range.end.row);
+        }
+        // 填充数据存入rowValues，再一次性填充到表格中
         if (applyDatas[rowIndex][colIndex]) {
           rowValues.push(applyDatas[rowIndex][colIndex]!.v + '');
         }

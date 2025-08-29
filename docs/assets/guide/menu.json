@@ -1006,6 +1006,13 @@
             "zh": "右键菜单插件",
             "en": "context menu plugin"
           }
+        },
+        {
+          "path": "auto-fill",
+          "title": {
+            "zh": "自动填充插件",
+            "en": "auto fill plugin"
+          }
         }
       ]
     },

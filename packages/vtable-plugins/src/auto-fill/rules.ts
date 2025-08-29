@@ -31,17 +31,15 @@ import {
   isEqualDiff,
   isLoopSeries,
   matchExtendNumber
-} from './fill-tools';
+} from './utils/fill';
 import { APPLY_TYPE, DATA_TYPE, Direction } from './types';
+import { converterManager, DateConverter } from './series-converters';
 
 export const dateRule: IAutoFillRule = {
   type: DATA_TYPE.DATE,
   priority: 1100,
   match: (cellData: any, accessor: any) => {
-    if (cellData?.f || cellData?.si) {
-      return false;
-    }
-    return false;
+    return typeof cellData?.v === 'string' && converterManager.getConverter(cellData.v) instanceof DateConverter;
   },
   isContinue: (prev: any, cur: any) => {
     if (prev.type === DATA_TYPE.DATE) {
@@ -52,11 +50,12 @@ export const dateRule: IAutoFillRule = {
   applyFunctions: {
     [APPLY_TYPE.SERIES]: (dataWithIndex: any, len: any, direction: any) => {
       const { data } = dataWithIndex;
+      const converter = converterManager.getConverter(data[0]?.v);
       if (direction === Direction.LEFT || direction === Direction.UP) {
         data.reverse();
-        return fillSeries(data, len, direction).reverse();
+        return fillSeries(data, len, direction, converter).reverse();
       }
-      return fillSeries(data, len, direction);
+      return fillSeries(data, len, direction, converter);
     }
   }
 };
@@ -162,17 +161,12 @@ export const chnNumberRule: IAutoFillRule = {
 
       const isReverse = direction === Direction.LEFT || direction === Direction.UP;
       if (data.length === 1) {
-        const formattedValue = `${data[0]?.v}`;
         let step;
         if (!isReverse) {
           step = 1;
         } else {
           step = -1;
         }
-        if (formattedValue && (formattedValue === '日' || chineseToNumber(formattedValue) < 7)) {
-          return reverseIfNeed(fillChnWeek(data, len, step), isReverse);
-        }
-
         return reverseIfNeed(fillChnNumber(data, len, step), isReverse);
       }
       let hasWeek = false;
@@ -209,16 +203,7 @@ export const chnNumberRule: IAutoFillRule = {
       }
 
       if (isEqualDiff(dataNumArr)) {
-        if (
-          hasWeek ||
-          (dataNumArr[dataNumArr.length - 1] < 6 && dataNumArr[0] > 0) ||
-          (dataNumArr[0] < 6 && dataNumArr[dataNumArr.length - 1] > 0)
-        ) {
-          // Fill with sequence of Monday~Sunday
-          const step = dataNumArr[1] - dataNumArr[0];
-          return reverseIfNeed(fillChnWeek(data, len, step), isReverse);
-        }
-        // Fill with sequence of Chinese lowercase numbers
+        // Always fill with sequence of Chinese lowercase numbers
         const step = dataNumArr[1] - dataNumArr[0];
         return reverseIfNeed(fillChnNumber(data, len, step), isReverse);
       }

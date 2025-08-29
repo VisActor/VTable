@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import type { ICellData, Nullable } from './types';
-import { Direction, CellValueType } from './types';
+import type { ICellData, Nullable } from '../types';
+import { Direction, CellValueType } from '../types';
 import deepClone from 'lodash/cloneDeep';
+import { IConverter } from '../series-converters';
 
 export const chnNumChar = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
 export const chnNumChar2 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
@@ -365,9 +366,22 @@ export function getXArr(len: number) {
   return xArr;
 }
 
-export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direction: Direction) {
+export function fillSeries(
+  data: Array<Nullable<ICellData>>,
+  len: number,
+  direction: Direction,
+  converter?: IConverter
+) {
+  // 将数据转换为数字
+  if (converter) {
+    data.forEach((item: any) => {
+      const { v, meta } = converter.toNumber(item.v);
+      item.v = v;
+      item.f = meta;
+    });
+  }
   const applyData = [];
-
+  // 用于检查数列
   const dataNumArr = [];
   for (let j = 0; j < data.length; j++) {
     dataNumArr.push(Number(data[j]?.v));
@@ -377,13 +391,10 @@ export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direct
     for (let i = 1; i <= len; i++) {
       const index = (i - 1) % data.length;
       const d = deepClone(data[index]);
-
       removeCellCustom(d);
-
       const num = Number(data[data.length - 1]?.v) * (Number(data[1]?.v) / Number(data[0]?.v)) ** i;
-
       if (d) {
-        d.v = num;
+        d.v = converter ? converter.fromNumber(num, d.f) : num;
         applyData.push(d);
       }
     }
@@ -399,7 +410,7 @@ export function fillSeries(data: Array<Nullable<ICellData>>, len: number, direct
       const y = forecast(data.length + i, dataNumArr, xArr, forward);
 
       if (d) {
-        d.v = y;
+        d.v = converter ? converter.fromNumber(y, d.f) : y;
         applyData.push(d);
       }
     }
