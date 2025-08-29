@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 18 Aug 2025 11:14:19 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Aug 2025 06:50:15 GMT and should not be manually modified.
+
+## 1.19.8
+Fri, 29 Aug 2025 06:50:15 GMT
+
+### Updates
+
+- fix: getLayoutRowTree api error #4346
+
+
+- fix: when has many columns expand columnTree scenegraph node y error #4357
+
+
+- refactor: contextmenu-click event arguments #4364
+
+
+- fix: columnWidthConfig not work when just has indicator on pivot table #4388
+
+
 
 ## 1.19.7
 Mon, 18 Aug 2025 11:14:19 GMT

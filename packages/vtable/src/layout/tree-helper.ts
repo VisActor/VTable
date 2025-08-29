@@ -421,30 +421,32 @@ export type LayouTreeNode = {
 };
 
 export function generateLayoutTree(tree: LayouTreeNode[], children: ITreeLayoutHeadNode[]) {
-  children?.forEach((node: ITreeLayoutHeadNode) => {
-    const diemnsonNode: {
-      dimensionKey?: string;
-      indicatorKey?: string;
-      value: string;
-      virtual?: boolean;
-      hierarchyState: HierarchyState;
-      children: ITreeLayoutHeadNode[];
-      levelSpan: number;
-    } = {
-      dimensionKey: node.dimensionKey,
-      indicatorKey: node.indicatorKey,
-      value: node.value,
-      hierarchyState: node.hierarchyState,
-      children: undefined,
-      virtual: node.virtual ?? false,
-      levelSpan: node.levelSpan ?? 1
-    };
-    tree.push(diemnsonNode);
-    if (node.children) {
-      diemnsonNode.children = [];
-      generateLayoutTree(diemnsonNode.children, node.children);
-    }
-  });
+  if (Array.isArray(children)) {
+    children?.forEach((node: ITreeLayoutHeadNode) => {
+      const diemnsonNode: {
+        dimensionKey?: string;
+        indicatorKey?: string;
+        value: string;
+        virtual?: boolean;
+        hierarchyState: HierarchyState;
+        children: ITreeLayoutHeadNode[];
+        levelSpan: number;
+      } = {
+        dimensionKey: node.dimensionKey,
+        indicatorKey: node.indicatorKey,
+        value: node.value,
+        hierarchyState: node.hierarchyState,
+        children: undefined,
+        virtual: node.virtual ?? false,
+        levelSpan: node.levelSpan ?? 1
+      };
+      tree.push(diemnsonNode);
+      if (node.children) {
+        diemnsonNode.children = [];
+        generateLayoutTree(diemnsonNode.children, node.children);
+      }
+    });
+  }
 }
 //#endregion
 

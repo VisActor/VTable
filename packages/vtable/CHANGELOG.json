@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.8",
+      "tag": "@visactor/vtable_v1.19.8",
+      "date": "Fri, 29 Aug 2025 06:50:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: getLayoutRowTree api error #4346\n\n"
+          },
+          {
+            "comment": "fix: when has many columns expand columnTree scenegraph node y error #4357\n\n"
+          },
+          {
+            "comment": "refactor: contextmenu-click event arguments #4364\n\n"
+          },
+          {
+            "comment": "fix: columnWidthConfig not work when just has indicator on pivot table #4388\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.7",
       "tag": "@visactor/vtable_v1.19.7",
       "date": "Mon, 18 Aug 2025 11:14:19 GMT",

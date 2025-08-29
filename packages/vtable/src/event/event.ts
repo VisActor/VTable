@@ -35,7 +35,6 @@ import { bindButtonClickEvent } from './component/button';
 import { bindIconClickEvent } from './self-event-listener/base-table/icon';
 import { bindDropdownMenuEvent } from './self-event-listener/base-table/dropdown-menu';
 import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
-import { rightButtonClickEvent } from './self-event-listener/base-table/right-button-click';
 import { browser } from '../tools/helper';
 import { clearActiveCellRangeState, setActiveCellRangeState } from '../tools/style';
 
@@ -188,9 +187,6 @@ export class EventManager {
 
     // button click
     bindButtonClickEvent(this.table);
-
-    // right button click
-    rightButtonClickEvent(this.table);
   }
 
   dealTableHover(eventArgsSet?: SceneEvent) {
