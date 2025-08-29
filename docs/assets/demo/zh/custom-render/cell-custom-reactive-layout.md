@@ -1,6 +1,6 @@
 ---
 category: examples
-group: custom-layout
+group: Custom
 title: 单元格自定义响应式布局
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/cell-custom-reactive-layout.gif
 link: custom_define/vue-custom-component

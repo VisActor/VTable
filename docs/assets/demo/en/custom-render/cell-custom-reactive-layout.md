@@ -1,6 +1,6 @@
 ---
 category: examples
-group: custom-layout
+group: Custom
 title: cell custom reactive layout
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/cell-custom-reactive-layout.gif
 link: custom_define/vue-custom-component
