@@ -1487,8 +1487,9 @@ export class Scenegraph {
       for (let col = 0; col < table.colCount; col++) {
         const colWidth = table.getColWidth(col);
         if (
-          col < table.rowHeaderLevelCount ||
-          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+          table.widthAdaptiveMode === 'only-body' &&
+          (col < table.rowHeaderLevelCount ||
+            (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount))
         ) {
           actualHeaderWidth += colWidth;
         }
@@ -1496,8 +1497,12 @@ export class Scenegraph {
       }
       // 如果内容宽度小于canvas宽度，执行adaptive放大
       if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-        const startCol = table.rowHeaderLevelCount;
-        const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+        let startCol = 0;
+        let endCol = table.colCount;
+        if (table.widthAdaptiveMode === 'only-body') {
+          startCol = table.rowHeaderLevelCount;
+          endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+        }
         getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
       }
     }
