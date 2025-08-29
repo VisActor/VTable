@@ -425,6 +425,7 @@ export function createTable() {
         title: '文本',
         width: 'auto',
         maxWidth: 370
+        // minWidth: 120
       },
       {
         dimensionKey: 'fldJUQbtMj',
@@ -459,18 +460,19 @@ export function createTable() {
     widthMode: 'standard',
     rowHierarchyIndent: 20,
     rowHierarchyTextStartAlignment: true,
-    dataConfig: {
-      totals: {
-        row: {
-          showGrandTotals: true,
-          grandTotalLabel: 'Bitable_Dashboard_PivotTable_Total_Title'
-        },
-        column: {
-          showGrandTotals: true,
-          grandTotalLabel: 'Bitable_Dashboard_PivotTable_Total_Title'
-        }
-      }
-    },
+    autoFillWidth: true,
+    // dataConfig: {
+    //   totals: {
+    //     row: {
+    //       showGrandTotals: true,
+    //       grandTotalLabel: 'Bitable_Dashboard_PivotTable_Total_Title'
+    //     },
+    //     column: {
+    //       showGrandTotals: true,
+    //       grandTotalLabel: 'Bitable_Dashboard_PivotTable_Total_Title'
+    //     }
+    //   }
+    // },
 
     customConfig: {
       scrollEventAlwaysTrigger: true
@@ -518,13 +520,12 @@ class VTablePaddingOperator {
   tag: boolean;
   element: HTMLElement;
   observer: ResizeObserver;
-
-  constructor(padding: [number, number, number, number], vtable: VTable.PivotTable) {
+  tempX2?: number;
+  tempY2?: number;
+  constructor(padding: [number, number, number, number], vtable: VTable.PivotTable, dx?: number, dy?: number) {
     this.table = vtable;
     this.padding = padding;
-
     this.element = vtable.getElement().parentElement as HTMLElement;
-
     const width = this.element.offsetWidth;
     const height = this.element.offsetHeight;
 
@@ -534,69 +535,75 @@ class VTablePaddingOperator {
       x2: width - padding[1],
       y2: height - padding[2]
     });
-
-    this.x2 = width;
-    this.y2 = height;
+    this.x2 = width + (dx ?? 0);
+    this.y2 = height + (dy ?? 0);
     this.x2Target = width;
     this.y2Target = height;
     this.tag = false;
-
     const ResizeObserverWindow = window.ResizeObserver;
     this.observer = new ResizeObserverWindow(this.resizeCallback);
     this.observer?.observe(this.element);
-
-    this.table.on('scroll', e => {
-      // horizontal scroll
-      // console.log(e.dx, e.scrollRatioX);
-      if (e.scrollRatioX === 1 && (e.dx ?? 0) >= 0 && this.x2 > this.x2Target - this.padding[1]) {
-        // right
-        this.x2 = Math.max(this.x2Target - this.padding[1], this.x2 - (e.dx || 1));
-
-        // console.log('left', this.x2);
-        setTimeout(() => {
-          this.clearCanvas();
-          this.updateViewBox();
-          this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
-        }, 0);
-      } else if (this.x2 < this.x2Target && (e.dx ?? 0) < 0) {
-        // left
-        this.x2 = Math.min(this.x2Target, this.x2 - (e.dx ?? 0));
-
-        // console.log('right', this.x2);
-        setTimeout(() => {
-          this.clearCanvas();
-          this.updateViewBox();
-          this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
-        }, 0);
-      } else {
-        // console.log('normal', this.x2);
-      }
-
-      // vertical scroll
-      if (e.scrollRatioY === 1 && (e.dy ?? 0) >= 0 && this.y2 > this.y2Target - this.padding[2]) {
-        // bottom
-        this.y2 = Math.max(this.y2Target - this.padding[2], this.y2 - (e.dy || 1));
-        // console.log('top', this.y2);
-        setTimeout(() => {
-          this.clearCanvas();
-          this.updateViewBox();
-          this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
-        }, 0);
-      } else if (this.y2 < this.y2Target && (e.dy ?? 0) < 0) {
-        // top
-        this.y2 = Math.min(this.y2Target, this.y2 - (e.dy ?? 0));
-        // console.log('bottom', this.y2);
-        setTimeout(() => {
-          this.clearCanvas();
-          this.updateViewBox();
-          this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
-        }, 0);
-      } else {
-        // console.log('normal', this.y2);
-      }
-    });
+    this.table.on('scroll', this.scrollCallback);
   }
-
+  scrollCallback = (e: any) => {
+    // horizontal scroll
+    if (e.scrollRatioX === 1 && (e.dx ?? 0) >= 0 && this.x2 > this.x2Target - this.padding[1]) {
+      // right
+      this.x2 = Math.max(this.x2Target - this.padding[1], this.x2 - (e.dx || 1));
+      setTimeout(() => {
+        this.clearCanvas();
+        this.updateViewBox();
+        this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
+      }, 0);
+    } else if (this.x2 < this.x2Target && (e.dx ?? 0) < 0) {
+      // left
+      this.x2 = Math.min(this.x2Target, this.x2 - (e.dx ?? 0));
+      setTimeout(() => {
+        this.clearCanvas();
+        this.updateViewBox();
+        this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
+      }, 0);
+    } else if (this.table.options.autoFillWidth) {
+      const allColumnsWidth = this.table.getAllColsWidth();
+      const containerWidthMax = this.element.offsetWidth - this.padding[3];
+      const containerWidthMin = this.element.offsetWidth - this.padding[3] - this.padding[1];
+      if (allColumnsWidth > containerWidthMin) {
+        this.x2 = this.x2Target;
+      } else if (allColumnsWidth === containerWidthMax) {
+        this.x2 = containerWidthMax;
+      }
+      setTimeout(() => {
+        this.clearCanvas();
+        this.updateViewBox();
+        // this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
+      }, 0);
+      // } else if (allColumnsWidth > containerWidthMax) {
+      //   this.x2 = this.x2Target;
+      //         setTimeout(() => {
+      //     this.clearCanvas();
+      //     this.updateViewBox();
+      //     // this.table.scenegraph.setX(-this.table.stateManager.scroll.horizontalBarPos - 1, true);
+      //   }, 0);
+    }
+    // vertical scroll
+    if (e.scrollRatioY === 1 && (e.dy ?? 0) >= 0 && this.y2 > this.y2Target - this.padding[2]) {
+      // bottom
+      this.y2 = Math.max(this.y2Target - this.padding[2], this.y2 - (e.dy || 1));
+      setTimeout(() => {
+        this.clearCanvas();
+        this.updateViewBox();
+        this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
+      }, 0);
+    } else if (this.y2 < this.y2Target && (e.dy ?? 0) < 0) {
+      // top
+      this.y2 = Math.min(this.y2Target, this.y2 - (e.dy ?? 0));
+      setTimeout(() => {
+        this.clearCanvas();
+        this.updateViewBox();
+        this.table.scenegraph.setY(-this.table.stateManager.scroll.verticalBarPos - 1, true);
+      }, 0);
+    }
+  };
   resizeCallback = () => {
     const xOffset = this.element.offsetWidth - this.x2Target;
     const yOffset = this.element.offsetHeight - this.y2Target;
@@ -604,6 +611,15 @@ class VTablePaddingOperator {
     this.y2 = this.y2 + yOffset;
     this.x2Target = this.element.offsetWidth;
     this.y2Target = this.element.offsetHeight;
+
+    if (this.table.options.autoFillWidth) {
+      const allColumnsWidth = this.table.getAllColsWidth();
+      const containerWidthMax = this.element.offsetWidth - this.padding[3];
+      const containerWidthMin = this.element.offsetWidth - this.padding[3] - this.padding[1];
+      if (allColumnsWidth === containerWidthMin) {
+        this.x2 = containerWidthMax;
+      }
+    }
     this.updateViewBox();
   };
 
@@ -617,17 +633,16 @@ class VTablePaddingOperator {
     this.clearCanvas();
     this.table.render();
   }
-
   reset() {
     this.updateViewBox();
   }
-
   clearCanvas() {
     const context = this.table.canvas.getContext('2d');
-    context?.clearRect(0, 0, this.x2Target * 2, this.y2Target * 2);
+    const pixelRatio = this.table.pixelRatio ?? 2;
+    context?.clearRect(0, 0, this.x2Target * pixelRatio, this.y2Target * pixelRatio);
   }
-
   destroy() {
+    this.table.off('scroll', this.scrollCallback);
     this.observer.disconnect();
   }
 }
