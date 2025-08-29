@@ -737,6 +737,20 @@ export function updateCellContentWidth(
 
     if (isCellHeightUpdate(scene, cellGroup, Math.round(newHeight + padding[0] + padding[2]), oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
+      // 触发事件钩子 - 需要更新行高的情况
+      scene.table.fireListeners('after_update_cell_content_width', {
+        col: cellGroup.col,
+        row: cellGroup.row,
+        distWidth,
+        cellHeight,
+        detaX,
+        autoRowHeight,
+        needUpdateRowHeight: true,
+        cellGroup,
+        padding,
+        textAlign,
+        textBaseline
+      });
       return true;
     }
 
@@ -772,6 +786,22 @@ export function updateCellContentWidth(
       }
     });
   }
+  
+  // 触发事件钩子 - 正常完成的情况
+  scene.table.fireListeners('after_update_cell_content_width', {
+    col: cellGroup.col,
+    row: cellGroup.row,
+    distWidth,
+    cellHeight,
+    detaX,
+    autoRowHeight,
+    needUpdateRowHeight: false,
+    cellGroup,
+    padding,
+    textAlign,
+    textBaseline
+  });
+  
   return false;
 }
 
@@ -789,7 +819,6 @@ export function updateCellContentHeight(
   table: BaseTableAPI
 ) {
   const newHeight = distHeight - Math.floor(padding[0] + padding[2]);
-
   const textMark = cellGroup.getChildByName('text');
 
   if (textMark instanceof Text && !autoRowHeight) {
