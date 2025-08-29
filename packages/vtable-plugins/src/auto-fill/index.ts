@@ -5,7 +5,20 @@ import { AutoFillManager } from './auto-fill-manager';
  * 自动填充插件
  */
 export interface IAutoFillPluginOptions {
+  /**
+   * 填充模式
+   * 'copy': 复制填充
+   * 'series': 序列填充
+   * 不填写则开启自动填充菜单
+   */
   fillMode?: 'copy' | 'series';
+  /**
+   * 快速填充模式
+   * 'copy': 复制填充
+   * 'series': 序列填充
+   * 不填写则开启自动填充菜单
+   */
+  fastFillMode?: 'copy' | 'series';
 }
 
 export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
@@ -34,13 +47,13 @@ export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
       const [_, __, table] = args;
       this.table = table as VTable.ListTable;
       this.autoFillManager.setTable(this.table);
-      this.autoFillManager.startDrag(this.table?.getSelectedCellRanges()[0]);
+      this.autoFillManager.handleStartDrag(this.table?.getSelectedCellRanges()[0]);
     } else if (args[1] === VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END) {
       // end drag
       const [{ direction }] = args;
-      this.autoFillManager.endDrag(this.table?.getSelectedCellRanges()[0], direction);
+      this.autoFillManager.handleEndDrag(this.table?.getSelectedCellRanges()[0], direction);
     } else if (args[1] === VTable.TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE) {
-      this.autoFillManager.dbClick();
+      this.autoFillManager.handleDbClick();
     }
   }
 }

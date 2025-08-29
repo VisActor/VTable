@@ -79,7 +79,10 @@ export function createTable() {
   ];
 
   // 创建自动填充插件
-  const autoFillPlugin = new VTablePlugins.AutoFillPlugin();
+  const autoFillPlugin = new VTablePlugins.AutoFillPlugin({
+    fastFillMode: 'copy',
+    fillMode: 'series'
+  });
 
   // 创建表格配置
   const option = {
