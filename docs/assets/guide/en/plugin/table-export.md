@@ -1,7 +1,14 @@
 # Table Export Plugin
 
 We encapsulated the table export plugin in `@visactor/vtable-plugins`, which can be used to easily export VTable tables as Excel and CSV files.
-  
+
+## Plugin Description
+
+The plugin will add exportToCsv and exportToExcel methods to the table instance.
+
+- exportToCsv: export CSV file
+- exportToExcel: export Excel file
+
 ## Plugin Configuration Introduction
 
 The plugin initialization passes in the plugin configuration, and the configuration items are as follows:

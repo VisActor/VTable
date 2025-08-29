@@ -21,7 +21,7 @@ export interface ExcelImportOptions {
 }
 
 export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
-  id: string = `excel-import-plugin-${Date.now()}`;
+  id: string = `excel-import-plugin`;
   name = 'ExcelImportPlugin';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   private options: ExcelImportOptions;
@@ -45,6 +45,9 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: [unknown, unknown, ListTable]) {
     const tableInstance = args[2];
     this._tableInstance = tableInstance;
+    (this._tableInstance as any).importFile = () => {
+      this.import('file');
+    };
   }
 
   release() {
@@ -115,10 +118,11 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
           // 根据配置决定是否自动更新表格
           if (options.autoTable && this._tableInstance) {
             if (options.autoColumns) {
-              this._tableInstance.updateOption({
-                columns: result.columns,
-                plugins: [this]
-              });
+              this._tableInstance.updateOption(
+                Object.assign({}, this._tableInstance.options, {
+                  columns: result.columns
+                })
+              );
             }
             this._tableInstance.setRecords(result.records);
           }

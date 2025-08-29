@@ -15,7 +15,7 @@ export interface ExportOptions {
  * @description 提供完整的甘特图导出功能，支持高分辨率输出和精准布局保留
  */
 export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
-  id = 'gantt-export-helper';
+  id: string = `gantt-export-helper`;
   name = 'Gantt Export Helper';
   private _gantt: VTableGantt.Gantt | null = null;
 

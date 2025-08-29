@@ -1,5 +1,5 @@
 import type { EasingType, IRect } from '@src/vrender';
-import { DefaultTimeline, DefaultTicker, Animate, ACustomAnimate, createRect, Generator } from '@src/vrender';
+import { DefaultTimeline, DefaultTicker, ACustomAnimate, createRect, Generator, Animate } from '@src/vrender';
 import type { BaseTableAPI } from '../ts-types/base-table';
 import { isBoolean, isNumber } from '@visactor/vutils';
 import type { ITableAnimationOption } from '../ts-types/animation/appear';
