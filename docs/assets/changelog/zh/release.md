@@ -1,3 +1,22 @@
+# v1.19.8
+
+2025-08-29
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix getLayoutRowTree api error [#4346](https://github.com/VisActor/VTable/issues/4346)
+- **@visactor/vtable**: fix when has many columns expand columnTree scenegraph node y value error [#4357](https://github.com/VisActor/VTable/issues/4357)
+- **@visactor/vtable**: columnWidthConfig not work when just has indicator on pivot table [#4388](https://github.com/VisActor/VTable/issues/4388)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: supplement contextmenu-click event arguments [#4364](https://github.com/VisActor/VTable/issues/4364)
+
+
+
+[更多详情请查看 v1.19.8](https://github.com/VisActor/VTable/releases/tag/v1.19.8)
+
 # v1.19.7
 
 2025-08-19

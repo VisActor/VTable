@@ -8,6 +8,8 @@ A mini-line chart reflecting the dynamics of a set of data needs to be displayed
 
 In VTable, you can specify the column to be a sparkline type cell by setting `cellType` to `sparkline` in `columns`.
 
+If the chart is more complex, you can use the PivotChart module to configure the API of VChart.
+
 1. sparkLine data
    The data specified by the `sparkline` type cell can be an array of numbers (the number will default to y field in the sparkline, and x field will be automatically filled in order), or it can be an array of x, y objects:
 
