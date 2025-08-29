@@ -352,6 +352,6 @@ createTable();
 
 ```
 
-# 本文档由由以下人员贡献
+# 本文档由以下人员贡献
 
 [抽象薯片](https://github.com/Violet2314)

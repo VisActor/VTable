@@ -343,13 +343,6 @@
           }
         },
         {
-          "path": "auto_fill",
-          "title": {
-            "zh": "自动填充",
-            "en": "auto fill"
-          }
-        },
-        {
           "path": "menu",
           "title": {
             "zh": "菜单功能",
@@ -382,6 +375,13 @@
           "title": {
             "zh": "单元格编辑",
             "en": "cell editor"
+          }
+        },
+        {
+          "path": "other",
+          "title": {
+            "zh": "其他功能",
+            "en": "other"
           }
         }
       ]
