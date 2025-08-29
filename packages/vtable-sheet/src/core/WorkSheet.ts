@@ -237,6 +237,16 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         this.handleCellSelected(event);
       });
 
+      // 监听选择变化事件（多选时）
+      this.tableInstance.on('selected_changed' as any, (event: any) => {
+        this.handleSelectionChanged(event);
+      });
+
+      // 监听拖拽选择结束事件
+      this.tableInstance.on('drag_select_end' as any, (event: any) => {
+        this.handleDragSelectEnd(event);
+      });
+
       // 监听双击进入编辑状态
       this.tableInstance.on('dblclick_cell', (event: any) => {
         this.element.classList.remove('vtable-excel-cursor');
@@ -288,6 +298,42 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
     // 触发事件给父组件
     this.fire('cell-selected', event);
+  }
+
+  /**
+   * 处理选择变化事件
+   * @param event 选择变化事件
+   */
+  private handleSelectionChanged(event: any): void {
+    if (event?.ranges?.length) {
+      const r = event.ranges[event.ranges.length - 1];
+      this.selection = {
+        startRow: r.start.row,
+        startCol: r.start.col,
+        endRow: r.end.row,
+        endCol: r.end.col
+      };
+    }
+    this.fire('selection-changed', event);
+  }
+
+  /**
+   * 处理拖拽选择结束事件
+   * @param event 拖拽选择结束事件
+   */
+  private handleDragSelectEnd(event: any): void {
+    if (event?.cells?.length) {
+      const first = event.cells[0][0];
+      const lastRow = event.cells[event.cells.length - 1];
+      const last = lastRow[lastRow.length - 1];
+      this.selection = {
+        startRow: first.row,
+        startCol: first.col,
+        endRow: last.row,
+        endCol: last.col
+      };
+    }
+    this.fire('selection-end', event);
   }
 
   /**
