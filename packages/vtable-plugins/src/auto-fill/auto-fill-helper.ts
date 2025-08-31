@@ -100,10 +100,10 @@ export function getCellMatrix(table: ListTable) {
       };
     },
     getMaxRows: () => {
-      return table.colCount;
+      return table.records.length;
     },
     getMaxColumns: () => {
-      return table.rowCount;
+      return table.columns.length;
     }
   };
 }

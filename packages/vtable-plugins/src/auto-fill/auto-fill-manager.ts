@@ -259,13 +259,13 @@ export class AutoFillManager {
     // left column first, or consider right column.
     if (start.col > 0 && matrix.getValue(start.row, start.col - 1)?.v) {
       let cur = start.row;
-      while (matrix.getValue(cur, start.col - 1)?.v && cur < maxRow) {
+      while (matrix.getValue(cur, start.col - 1)?.v && cur <= maxRow) {
         cur += 1;
       }
       detectEndRow = cur - 1;
     } else if (end.col < maxColumn && matrix.getValue(end.row, end.col + 1)?.v) {
       let cur = start.row;
-      while (matrix.getValue(cur, end.col + 1)?.v && cur < maxRow) {
+      while (matrix.getValue(cur, end.col + 1)?.v && cur <= maxRow) {
         cur += 1;
       }
       detectEndRow = cur - 1;
