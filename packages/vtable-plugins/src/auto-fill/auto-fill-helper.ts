@@ -86,8 +86,16 @@ export function openAutoFillMenu(tableInstance: ListTable, endCol: number, endRo
 export function getCellMatrix(table: ListTable) {
   return {
     getValue: (row: number, col: number) => {
+      const value = table.getCellValue(col, row);
+      if (typeof value === 'number' || !isNaN(Number(value))) {
+        return {
+          v: value,
+          t: CellValueType.NUMBER
+        };
+      }
+
       return {
-        v: table.getCellValue(col, row),
+        v: value || '',
         t: CellValueType.STRING
       };
     },

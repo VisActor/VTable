@@ -185,6 +185,7 @@ export class AutoFillManager {
       aArray = source.rows;
       bArray = source.cols;
     }
+    const matrix = getCellMatrix(this.tableInstance);
     // 按照行或列将源数据分成多个片段，获取单元格数据
     aArray.forEach(a => {
       const sourceDataPiece = this.getEmptySourceDataPiece();
@@ -195,16 +196,11 @@ export class AutoFillManager {
       bArray.forEach(b => {
         let data: Nullable<ICellData>;
         if (isVertical) {
-          data = {
-            v: '' + this.tableInstance.getCellValue(a, b),
-            t: CellValueType.STRING
-          };
+          data = matrix.getValue(b, a);
         } else {
-          data = {
-            v: '' + this.tableInstance.getCellValue(b, a),
-            t: CellValueType.STRING
-          };
+          data = matrix.getValue(a, b);
         }
+        // find rules to match data
         const { type, isContinue } = rules.find(r => r.match(data, null)) || otherRule;
         if (isContinue(prevData, data)) {
           const typeInfo = sourceDataPiece[type];
