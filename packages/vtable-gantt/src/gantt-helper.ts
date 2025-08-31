@@ -272,6 +272,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
   gantt.parsedOptions.moveTaskBarToExtendDateRange = options?.taskBar?.moveToExtendDateRange ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
+  gantt.parsedOptions.taskBarProgressAdjustable = options?.taskBar?.progressAdjustable ?? true;
   gantt.parsedOptions.taskBarDragOrder = options?.taskBar?.dragOrder ?? true;
 
   // gantt.parsedOptions.taskBarHoverColor =
