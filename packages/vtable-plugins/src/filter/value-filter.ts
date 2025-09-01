@@ -286,7 +286,7 @@ export class ValueFilter {
 
     optionDomList?.forEach(optionDom => {
       // optionDom.id 是显示值，需要转换为原始值进行比较
-      const displayValue = optionDom.id;
+      const displayValue = optionDom.originalValue;
       const rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
 
       // 检查原始值是否在选中的原始值列表中
