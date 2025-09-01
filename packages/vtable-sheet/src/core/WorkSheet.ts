@@ -625,6 +625,30 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   }
 
   /**
+   * 获取多个选择范围（支持Ctrl/Cmd多选）
+   */
+  getMultipleSelections(): CellRange[] {
+    if (!this.tableInstance) {
+      return this.selection ? [this.selection] : [];
+    }
+
+    // 从底层VTable获取所有选择范围
+    const vtableRanges = this.tableInstance.getSelectedCellRanges();
+
+    if (vtableRanges.length === 0) {
+      return this.selection ? [this.selection] : [];
+    }
+
+    // 转换VTable的坐标格式到WorkSheet格式
+    return vtableRanges.map(range => ({
+      startRow: range.start.row,
+      startCol: range.start.col,
+      endRow: range.end.row,
+      endCol: range.end.col
+    }));
+  }
+
+  /**
    * 设置当前选择
    * @param range 选择范围
    */
