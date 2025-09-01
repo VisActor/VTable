@@ -454,7 +454,7 @@ export class ValueFilter {
     // 事件委托：搜索框的 keyup 事件
     this.filterByValuePanel.addEventListener('keyup', (event: KeyboardEvent) => {
       const target = event.target;
-      if (target instanceof HTMLInputElement) {
+      if (target instanceof HTMLInputElement && target.type === 'text') {
         const value = target.value;
         this.onSearch(this.selectedField, value);
       }
