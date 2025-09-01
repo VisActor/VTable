@@ -155,16 +155,30 @@ export class MenuManager {
   }
   handleMenuClick(menuKey: MainMenuItemKey) {
     console.log('menuKey click', menuKey);
+    const tableInstance = this.vtableSheet.getActiveSheet().tableInstance;
+
     switch (menuKey) {
       case MainMenuItemKey.IMPORT:
-        (this.vtableSheet.getActiveSheet().tableInstance as any)?.importFile();
+        if ((tableInstance as any)?.importFile) {
+          (tableInstance as any).importFile();
+        } else {
+          console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
+        }
         break;
 
       case MainMenuItemKey.EXPORT_CURRENT_SHEET_CSV:
-        (this.vtableSheet.getActiveSheet().tableInstance as any)?.exportToCsv();
+        if ((tableInstance as any)?.exportToCsv) {
+          (tableInstance as any).exportToCsv();
+        } else {
+          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        }
         break;
       case MainMenuItemKey.EXPORT_CURRENT_SHEET_XLSX:
-        (this.vtableSheet.getActiveSheet().tableInstance as any)?.exportToExcel();
+        if ((tableInstance as any)?.exportToExcel) {
+          (tableInstance as any).exportToExcel();
+        } else {
+          console.warn('Please configure TableExportPlugin in VTablePluginModules');
+        }
         break;
       default:
         break;

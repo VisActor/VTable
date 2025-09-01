@@ -162,7 +162,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
         col.headerIcon = this.pluginOptions.filterIcon;
       } else {
         // 如果不应该启用筛选，则移除 headerIcon
-        col.headerIcon = null;
+        delete col.headerIcon;
       }
     });
     // (this.table as VTable.ListTable).updateColumns(columns);

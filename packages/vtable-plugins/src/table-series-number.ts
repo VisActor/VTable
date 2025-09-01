@@ -75,14 +75,17 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       if (!options.columns) {
         options.columns = [];
       }
-      const columnCount = options.columns.length;
-      for (let i = options.columns.length; i < this.pluginOptions.colCount - columnCount; i++) {
+      for (let i = options.columns.length; i < this.pluginOptions.colCount; i++) {
         const columnFields = {
           field: i,
           title: ``
         };
         options.columns.push(columnFields);
       }
+      const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
+      const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
+      options.translateX = rowSeriesNumberColWidth;
+      options.translateY = colSeriesNumberRowHeight;
       // if (options.columns.length < this.pluginOptions.colCount) {
       //   options.columns.length = this.pluginOptions.colCount;
       // }
@@ -97,17 +100,16 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
         }
       };
 
-      const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
-      const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
-      // this.table.scenegraph.stage.defaultLayer.setAttributes({
-      //   x: rowSeriesNumberColWidth,
-      //   y: colSeriesNumberRowHeight,
-      //   width: 1700,
-      //   height: 500,
-      //   clip: true
-      // });
-
-      this.table.setTranslate(colSeriesNumberRowHeight, rowSeriesNumberColWidth);
+      // const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
+      // const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
+      // // this.table.scenegraph.stage.defaultLayer.setAttributes({
+      // //   x: rowSeriesNumberColWidth,
+      // //   y: colSeriesNumberRowHeight,
+      // //   width: 1700,
+      // //   height: 500,
+      // //   clip: true
+      // // });
+      // this.table.setTranslate(colSeriesNumberRowHeight, rowSeriesNumberColWidth);
       this.seriesNumberComponent.setAttributes({
         rowCount: this.table.rowCount,
         colCount: this.table.colCount,
@@ -398,7 +400,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   syncColWidthToComponent() {
     const { colStart, colEnd } = this.table.getBodyVisibleColRange();
     const adjustStartColIndex = colStart;
-    const adjustEndColIndex = colEnd;
+    const adjustEndColIndex = Math.min(colEnd, this.table.scenegraph.proxy.colEnd);
     //  console.log('syncColWidthToComponent adjust', adjustStartColIndex, adjustEndColIndex);
 
     //判断seriesNumberComponent的冻结列数是否变化

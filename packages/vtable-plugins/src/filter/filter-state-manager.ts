@@ -148,7 +148,7 @@ export class FilterStateManager {
       } else {
         // 如果不应该启用筛选，则移除筛选图标
         if (col.headerIcon === filterIcon || col.headerIcon === filteringIcon) {
-          col.headerIcon = undefined;
+          delete col.headerIcon;
         }
       }
     });

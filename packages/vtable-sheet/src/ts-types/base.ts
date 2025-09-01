@@ -59,7 +59,7 @@ export enum MainMenuItemKey {
 export interface MainMenuItem {
   /** 菜单项名称 */
   name: string;
-  /** 菜单项唯一标识，如果配置了menuKey，点击菜单项时，会匹配内置逻辑（如配置了onclick,仍然优先匹配onclick） */
+  /** 菜单项唯一标识，如果配置了menuKey，点击菜单项时，会匹配内置逻辑（目前仅支持导入导出相关功能，且需要配置VTablePluginModules来启用） */
   menuKey?: MainMenuItemKey;
   /** 菜单项描述 */
   description?: string;

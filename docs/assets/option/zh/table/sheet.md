@@ -130,13 +130,7 @@ type CustomMergeCellArray = Array<{
 
 主菜单配置。
 
-### show(boolean)
-
-是否显示主菜单。
-
-### items(Array<MainMenuItem>)
-
-菜单项数组。
+{{use:sheet-main-menu( prefix = '###', )}}
 
 ## theme(IThemeDefine)
 
@@ -171,3 +165,37 @@ ${prefix} colSeriesNumberCellStyle(Object)
 ${prefix} tableTheme(ITableThemeDefine)
 
 表格主题配置。与VTable的[ITableThemeDefine](./ListTable#theme.underlayBackgroundColor)配置相同。
+
+{{ target: sheet-main-menu }}
+
+${prefix} show(boolean)
+
+是否显示主菜单。
+
+${prefix} items(Array<MainMenuItem>)
+
+菜单项数组。
+
+{{ use:sheet-main-menu-item( prefix = '#'+${prefix}, )}}
+
+{{ target: sheet-main-menu-item }}
+
+${prefix} name(string)
+
+菜单项名称。
+
+${prefix} menuKey(string)
+
+菜单项唯一标识。菜单项唯一标识，如果配置了menuKey，点击菜单项时，会匹配内置逻辑（目前仅支持导入导出相关功能，且需要配置VTablePluginModules来启用）。
+
+${prefix} description(string)
+
+菜单项描述。
+
+${prefix} onClick(Function)
+
+菜单项点击回调。
+
+${prefix} items(Array<MainMenuItem>)
+
+子菜单项数组。

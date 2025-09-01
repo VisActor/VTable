@@ -1411,9 +1411,17 @@ export default class VTableSheet {
       return;
     }
     if (fileType === 'csv') {
-      (sheet.tableInstance as any)?.exportToCsv();
+      if ((sheet.tableInstance as any)?.exportToCsv) {
+        (sheet.tableInstance as any).exportToCsv();
+      } else {
+        console.warn('Please configure TableExportPlugin in VTablePluginModules');
+      }
     } else {
-      (sheet.tableInstance as any)?.exportToExcel();
+      if ((sheet.tableInstance as any)?.exportToExcel) {
+        (sheet.tableInstance as any).exportToExcel();
+      } else {
+        console.warn('Please configure TableExportPlugin in VTablePluginModules');
+      }
     }
   }
   /** 导入文件到当前sheet */
@@ -1422,7 +1430,11 @@ export default class VTableSheet {
     if (!sheet) {
       return;
     }
-    (sheet.tableInstance as any)?.importFile();
+    if ((sheet.tableInstance as any)?.importFile) {
+      (sheet.tableInstance as any).importFile();
+    } else {
+      console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
+    }
   }
   /**
    * 获取容器元素
