@@ -55,7 +55,7 @@ export class FormulaRangeSelector {
     }
 
     // 匹配函数调用模式：=FUNCTION_NAME(
-    const functionRegex = /^=([A-Z]+)\s*\(/i;
+    const functionRegex = /^=([A-Za-z]+)\s*\(/i;
     const match = formula.match(functionRegex);
 
     if (!match) {
@@ -84,6 +84,17 @@ export class FormulaRangeSelector {
       };
       return true;
     }
+
+    // 如果光标正好在括号后面，也认为是参数位置
+    if (cursorPosition === openParenIndex + 1) {
+      this.inRangeSelectionMode = true;
+      this.functionParamPosition = {
+        start: openParenIndex + 1,
+        end: cursorPosition
+      };
+      return true;
+    }
+
     this.inRangeSelectionMode = false;
     this.functionParamPosition = null;
     return false;
@@ -113,9 +124,11 @@ export class FormulaRangeSelector {
       const startAddr = addressFromCoord(range.startRow, range.startCol);
       const endAddr = addressFromCoord(range.endRow, range.endCol);
 
-      if (startAddr === endAddr) {
+      // 如果是单个单元格（start和end相同）
+      if (range.startRow === range.endRow && range.startCol === range.endCol) {
         ranges.push(startAddr);
       } else {
+        // 如果是范围，使用冒号分隔
         ranges.push(`${startAddr}:${endAddr}`);
       }
     }
@@ -162,8 +175,10 @@ export class FormulaRangeSelector {
       end: newCursorPos
     };
 
-    // 触发输入事件以更新高亮
-    formulaInput.dispatchEvent(new Event('input', { bubbles: true }));
+    // 触发输入事件以更新高亮，但不触发公式计算
+    const inputEvent = new Event('input', { bubbles: true });
+    Object.defineProperty(inputEvent, 'isFormulaInsertion', { value: true });
+    formulaInput.dispatchEvent(inputEvent);
   }
 
   /**
