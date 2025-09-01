@@ -185,6 +185,7 @@ export class AutoFillManager {
       aArray = source.rows;
       bArray = source.cols;
     }
+    const matrix = getCellMatrix(this.tableInstance);
     // 按照行或列将源数据分成多个片段，获取单元格数据
     aArray.forEach(a => {
       const sourceDataPiece = this.getEmptySourceDataPiece();
@@ -195,16 +196,11 @@ export class AutoFillManager {
       bArray.forEach(b => {
         let data: Nullable<ICellData>;
         if (isVertical) {
-          data = {
-            v: '' + this.tableInstance.getCellValue(a, b),
-            t: CellValueType.STRING
-          };
+          data = matrix.getValue(b, a);
         } else {
-          data = {
-            v: '' + this.tableInstance.getCellValue(b, a),
-            t: CellValueType.STRING
-          };
+          data = matrix.getValue(a, b);
         }
+        // find rules to match data
         const { type, isContinue } = rules.find(r => r.match(data, null)) || otherRule;
         if (isContinue(prevData, data)) {
           const typeInfo = sourceDataPiece[type];
@@ -263,13 +259,13 @@ export class AutoFillManager {
     // left column first, or consider right column.
     if (start.col > 0 && matrix.getValue(start.row, start.col - 1)?.v) {
       let cur = start.row;
-      while (matrix.getValue(cur, start.col - 1)?.v && cur < maxRow) {
+      while (matrix.getValue(cur, start.col - 1)?.v && cur <= maxRow) {
         cur += 1;
       }
       detectEndRow = cur - 1;
     } else if (end.col < maxColumn && matrix.getValue(end.row, end.col + 1)?.v) {
       let cur = start.row;
-      while (matrix.getValue(cur, end.col + 1)?.v && cur < maxRow) {
+      while (matrix.getValue(cur, end.col + 1)?.v && cur <= maxRow) {
         cur += 1;
       }
       detectEndRow = cur - 1;

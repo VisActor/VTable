@@ -48,6 +48,24 @@ const tableInstance = new VTable.ListTable({
 - **复制填充**：将源数据复制到目标范围
 - **序列填充**：根据源数据模式生成序列数据
 
+### 2. 快速填充，双击右下角方块，快速向下填充
+
+## 配置项
+
+### 可用配置项
+
+| 配置项         | 类型                 | 说明                                                                                |
+| -------------- | -------------------- | ----------------------------------------------------------------------------------- |
+| `fillMode`     | `'copy' \| 'series'` | 拖拽填充时的默认填充模式（`copy`为复制，`series`为序列 ），不填则会打开填充模式菜单 |
+| `fastFillMode` | `'copy' \| 'series'` | 双击快速填充时的默认填充模式，不填则会打开填充模式菜单                              |
+
+```typescript
+const autoFillPlugin = new VTablePlugins.AutoFillPlugin({
+  fastFillMode: 'copy',
+  fillMode: 'series'
+});
+```
+
 ## 填充规则
 
 ### 内置规则

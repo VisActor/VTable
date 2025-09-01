@@ -34,7 +34,7 @@ import {
 } from './utils/fill';
 import { APPLY_TYPE, DATA_TYPE, Direction } from './types';
 import { converterManager, DateConverter } from './series-converters';
-
+import { CellValueType } from './types';
 export const dateRule: IAutoFillRule = {
   type: DATA_TYPE.DATE,
   priority: 1100,
@@ -63,8 +63,7 @@ export const dateRule: IAutoFillRule = {
 export const numberRule: IAutoFillRule = {
   type: DATA_TYPE.NUMBER,
   priority: 1000,
-  //TODO: cell data type
-  match: (cellData: any) => typeof cellData?.v === 'number' || cellData?.t === 'number' || !isNaN(Number(cellData.v)),
+  match: (cellData: any) => typeof cellData?.v === 'number' || cellData?.t === CellValueType.NUMBER,
   isContinue: (prev: any, cur: any) => {
     if (prev.type === DATA_TYPE.NUMBER) {
       return true;
