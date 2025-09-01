@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: add isReleased check before resize in initialization",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
