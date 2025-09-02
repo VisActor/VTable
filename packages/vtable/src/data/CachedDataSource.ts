@@ -55,7 +55,8 @@ export class CachedDataSource extends DataSource {
     pagination?: IPagination,
     columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
-    hierarchyExpandLevel?: number
+    hierarchyExpandLevel?: number,
+    rowHierarchyTypeMust?: 'grid' | 'tree'
   ): CachedDataSource {
     return new CachedDataSource(
       {
@@ -72,7 +73,8 @@ export class CachedDataSource extends DataSource {
       pagination,
       columns,
       rowHierarchyType,
-      hierarchyExpandLevel
+      hierarchyExpandLevel,
+      rowHierarchyTypeMust
     );
   }
 
@@ -83,13 +85,15 @@ export class CachedDataSource extends DataSource {
     pagination?: IPagination,
     columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
-    hierarchyExpandLevel?: number
+    hierarchyExpandLevel?: number,
+    rowHierarchyTypeMust?: 'grid' | 'tree'
   ) {
     let _isGrouped;
     if (isArray(dataConfig?.groupByRules)) {
       rowHierarchyType = 'tree';
       _isGrouped = true;
     }
+    rowHierarchyType = rowHierarchyTypeMust ? rowHierarchyTypeMust : rowHierarchyType;
     super(opt, dataConfig, pagination, columns, rowHierarchyType, hierarchyExpandLevel);
     this._isGrouped = _isGrouped;
     this._recordCache = [];

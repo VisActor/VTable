@@ -25,7 +25,6 @@ export class EventManager {
   private wrapTableResizeMethod(): void {
     const originalResize = this.table.resize.bind(this.table);
     this.table.resize = () => {
-      // 调用原始的resize方法
       originalResize();
       this.onUpdateSubTablePositions();
     };
@@ -80,7 +79,6 @@ export class EventManager {
           }
         }
       } catch (error) {
-        // 如果获取失败，继续使用逻辑高度
         console.warn(
           'Failed to get original row height in masterDetail mode (handleAfterUpdateCellContentWidth):',
           error
@@ -104,7 +102,6 @@ export class EventManager {
     const { start, end } = customMerge.range;
     let totalMergeWidth = 0;
     let mergeStartX = 0;
-    // 计算从起始列到结束列的总宽度
     for (let c = start.col; c <= end.col; c++) {
       totalMergeWidth += table.getColWidth(c);
     }
@@ -156,8 +153,10 @@ export class EventManager {
     selectComp: { rect: any; fillhandle?: any; role: string };
   }): void {
     const { startRow, endRow, selectComp } = eventData;
-    // 判断是否为单选一个单元格或者为一行的（只有这种情况才使用原始高度）
+    // 判断是否为单选一个单元格
     const isSingleCellSelection = startRow === endRow;
+    // 判断选中区域的最后一行是否为展开行
+    const isLastRowExpanded = this.expandedRows.includes(endRow);
     if (isSingleCellSelection) {
       // 单选一个CellGroup，使用原始高度
       const headerCount = this.table.columnHeaderLevelCount || 0;
@@ -174,6 +173,26 @@ export class EventManager {
           });
         }
       }
+    } else if (isLastRowExpanded) {
+      // 多行选中且最后一行是展开行，需要调整总高度
+      const headerCount = this.table.columnHeaderLevelCount || 0;
+      const lastRowBodyIndex = endRow - headerCount;
+      const lastRowOriginalHeight = this.getOriginalRowHeight?.(lastRowBodyIndex) || 0;
+      if (lastRowOriginalHeight > 0) {
+        // 获取最后一行的当前逻辑高度
+        const lastRowCurrentHeight = this.table.getRowHeight(endRow);
+        // 计算调整后的总高度：当前总高度 - 最后一行当前高度 + 最后一行原始高度
+        const adjustedTotalHeight = eventData.currentHeight - lastRowCurrentHeight + lastRowOriginalHeight;
+        selectComp.rect.setAttributes({
+          height: adjustedTotalHeight
+        });
+        if (selectComp.fillhandle) {
+          const currentY = selectComp.rect.attribute.y;
+          selectComp.fillhandle.setAttributes({
+            y: currentY + adjustedTotalHeight
+          });
+        }
+      }
     }
   }
 
@@ -185,9 +204,7 @@ export class EventManager {
     if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.length > 0) {
       table.internalProps._tempExpandedRecordIndices = [...table.internalProps.expandedRecordIndices];
     }
-    // 改为使用expandedRows来处理排序前的收起操作
     if (this.expandedRows.length > 0) {
-      // 保存当前展开的行索引
       const expandedRowIndices = [...this.expandedRows];
       expandedRowIndices.forEach(rowIndex => {
         try {
@@ -267,14 +284,13 @@ export class EventManager {
    * 绑定图标点击事件
    */
   private bindIconClickEvent(): void {
-    // 直接监听 ICON_CLICK 事件
     this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, (iconInfo: any) => {
       const { col, row, funcType, name } = iconInfo;
       if (
         (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
         (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)
       ) {
-        this.onToggleRowExpand?.(row);
+        this.onToggleRowExpand?.(row, col);
       }
     });
   }
@@ -286,13 +302,11 @@ export class EventManager {
     // 用于存储移动前的所有展开状态
     const allExpandedRowsBeforeMove: Set<number> = new Set();
 
-    // 监听行移动开始事件
     this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, (args: any) => {
       if (!args || typeof args.col !== 'number' || typeof args.row !== 'number') {
         return;
       }
       const { col, row } = args;
-      // 判断是否是行移动
       const cellLocation = this.table.getCellLocation(col, row);
       const isRowMove =
         cellLocation === 'rowHeader' || (this.table.internalProps.layoutMap as any).isSeriesNumberInBody?.(col, row);
@@ -374,9 +388,9 @@ export class EventManager {
   // 回调函数，需要从外部注入
   private onUpdateSubTablePositions?: () => void;
   private onUpdateSubTablePositionsForRow?: () => void;
-  private onExpandRow?: (rowIndex: number) => void;
-  private onCollapseRow?: (rowIndex: number) => void;
-  private onToggleRowExpand?: (rowIndex: number) => void;
+  private onExpandRow?: (rowIndex: number, colIndex?: number) => void;
+  private onCollapseRow?: (rowIndex: number, colIndex?: number) => void;
+  private onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
   private getOriginalRowHeight?: (bodyRowIndex: number) => number;
 
   /**
@@ -385,9 +399,9 @@ export class EventManager {
   setCallbacks(callbacks: {
     onUpdateSubTablePositions?: () => void;
     onUpdateSubTablePositionsForRow?: () => void;
-    onExpandRow?: (rowIndex: number) => void;
-    onCollapseRow?: (rowIndex: number) => void;
-    onToggleRowExpand?: (rowIndex: number) => void;
+    onExpandRow?: (rowIndex: number, colIndex?: number) => void;
+    onCollapseRow?: (rowIndex: number, colIndex?: number) => void;
+    onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
   }): void {
     this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;

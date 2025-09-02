@@ -20,17 +20,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     VTable.TABLE_EVENT_TYPE.AFTER_SORT,
     VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH,
     VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT,
-    VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR
+    VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR,
+    VTable.TABLE_EVENT_TYPE.BEFORE_SET_RECORDS
   ];
 
   pluginOptions: MasterDetailPluginOptions;
   table: VTable.ListTable;
-  // 模块管理器
   private configManager: ConfigManager;
   private eventManager: EventManager;
   private subTableManager: SubTableManager;
   private tableAPIExtensions: TableAPIExtensions;
-  // 容器大小监听器
   private resizeObserver?: ResizeObserver;
 
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
@@ -67,6 +66,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     } else if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR) {
       // progressbar 创建前处理：如果是展开行，修改高度为原始高度
       this.handleBeforeCreateProgressBar(eventArgs as any);
+    } else if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_SET_RECORDS) {
+      // 设置数据源前处理：将 rowHierarchyType 设置为 'grid'
+      this.handleBeforeSetRecords(eventArgs as any);
     }
   }
 
@@ -85,9 +87,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.eventManager.setCallbacks({
       onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
       onUpdateSubTablePositionsForRow: () => this.subTableManager.updateSubTablePositionsForRowResize(),
-      onExpandRow: (rowIndex: number) => this.expandRow(rowIndex),
-      onCollapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
-      onToggleRowExpand: (rowIndex: number) => this.toggleRowExpand(rowIndex),
+      onExpandRow: (rowIndex: number, colIndex?: number) => this.expandRow(rowIndex, colIndex),
+      onCollapseRow: (rowIndex: number, colIndex?: number) => this.collapseRow(rowIndex, colIndex),
+      onToggleRowExpand: (rowIndex: number, colIndex?: number) => this.toggleRowExpand(rowIndex, colIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)
     });
 
@@ -126,30 +128,27 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    */
   private extendTableAPI(): void {
     // 创建 TableAPIExtensions 实例
-    this.tableAPIExtensions = new TableAPIExtensions(
-      this.table,
-      this.configManager,
-      this.eventManager,
-      this.pluginOptions,
-      {
-        addUnderlineToCell: (cellGroup: any, originalHeight: number) =>
-          this.addUnderlineToCell(cellGroup, originalHeight),
-        applyMinimalHeightStrategy: (
-          startRow: number,
-          endRow: number,
-          totalHeight: number,
-          expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-          scenegraph: any
-        ) => this.applyMinimalHeightStrategy(startRow, endRow, totalHeight, expandedRowsInfo, scenegraph),
-        updateOriginalHeightsAfterAdaptive: (
-          expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
-        ) => this.updateOriginalHeightsAfterAdaptive(expandedRowsInfo),
-        collapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
-        expandRow: (rowIndex: number) => this.expandRow(rowIndex),
-        restoreExpandedStatesAfter: () => this.restoreExpandedStatesAfter(),
-        collapseRow: (rowIndex: number) => this.collapseRow(rowIndex)
-      }
-    );
+    this.tableAPIExtensions = new TableAPIExtensions(this.table, this.configManager, this.eventManager, {
+      addUnderlineToCell: (cellGroup: any, originalHeight: number) =>
+        this.addUnderlineToCell(cellGroup, originalHeight),
+      applyMinimalHeightStrategy: (
+        startRow: number,
+        endRow: number,
+        totalHeight: number,
+        expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
+        scenegraph: any
+      ) => this.applyMinimalHeightStrategy(startRow, endRow, totalHeight, expandedRowsInfo, scenegraph),
+      updateOriginalHeightsAfterAdaptive: (
+        expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
+      ) => this.updateOriginalHeightsAfterAdaptive(expandedRowsInfo),
+      collapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
+      expandRow: (rowIndex: number) => this.expandRow(rowIndex),
+      restoreExpandedStatesAfter: () => this.restoreExpandedStatesAfter(),
+      collapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
+      updateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
+      updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) =>
+        this.updateRowHeightForExpand(rowIndex, deltaHeight)
+    });
 
     // 执行API扩展
     this.tableAPIExtensions.extendTableAPI();
@@ -178,6 +177,19 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         eventArgs.modifiedHeight = originalHeight;
       }
     }
+  }
+
+  /**
+   * 处理设置数据源前的事件
+   */
+  private handleBeforeSetRecords(eventArgs: {
+    records: unknown[];
+    table: VTable.ListTable;
+    rowHierarchyType?: 'grid' | 'tree';
+    rowHierarchyTypeMust?: 'grid' | 'tree';
+  }): void {
+    // 主从表插件需要将 rowHierarchyType 设置为 'grid'
+    eventArgs.rowHierarchyTypeMust = 'grid';
   }
 
   /**
@@ -251,7 +263,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (!internalProps.expandedRecordIndices || internalProps.expandedRecordIndices.length === 0) {
       return;
     }
-    // 获取当前分页的索引数据
     const currentPagerData = this.table.dataSource._currentPagerIndexedData;
     if (!currentPagerData) {
       return;
@@ -271,8 +282,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   /**
    * 展开行
+   * @param rowIndex 行索引
+   * @param colIndex 列索引
    */
-  expandRow(rowIndex: number): void {
+  expandRow(rowIndex: number, colIndex?: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
     if (this.eventManager.isRowExpanded(rowIndex)) {
@@ -312,7 +325,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
     this.drawUnderlineForRow(rowIndex, originalHeight);
-    this.refreshRowIcon(rowIndex);
+    this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
     }
@@ -320,8 +333,10 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   /**
    * 收起行
+   * @param rowIndex 行索引
+   * @param colIndex 列索引
    */
-  collapseRow(rowIndex: number): void {
+  collapseRow(rowIndex: number, colIndex?: number): void {
     const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
 
@@ -360,7 +375,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       undefined,
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
-    this.refreshRowIcon(rowIndex);
+    this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
     }
@@ -402,12 +417,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   /**
    * 切换行展开状态
+   * @param rowIndex 行索引
+   * @param colIndex 列索引
    */
-  toggleRowExpand(rowIndex: number): void {
+  toggleRowExpand(rowIndex: number, colIndex?: number): void {
     if (this.eventManager.isRowExpanded(rowIndex)) {
-      this.collapseRow(rowIndex);
+      this.collapseRow(rowIndex, colIndex);
     } else {
-      this.expandRow(rowIndex);
+      this.expandRow(rowIndex, colIndex);
     }
   }
 
@@ -415,7 +432,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 更新行高用于展开
    */
   private updateRowHeightForExpand(rowIndex: number, deltaHeight: number): void {
-    // 使用 VTable 的内部方法更新行高
     this.table._setRowHeight(rowIndex, this.table.getRowHeight(rowIndex) + deltaHeight, true);
 
     // 更新以下行的位置
@@ -433,7 +449,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       );
     }
 
-    // 更新以下行位置
     for (let colIndex = 0; colIndex < this.table.colCount; colIndex++) {
       for (let rowIdx = rowStart; rowIdx <= rowEnd; rowIdx++) {
         const cellGroup = this.table.scenegraph.highPerformanceGetCell(colIndex, rowIdx);
@@ -448,7 +463,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 为指定行绘制下划线
    */
   private drawUnderlineForRow(rowIndex: number, originalHeight: number): void {
-    const sceneGraph = (this.table as any).scenegraph;
+    const sceneGraph = this.table.scenegraph;
     if (!sceneGraph) {
       return;
     }
@@ -459,7 +474,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     rowCells.forEach((cellGroup: any, index: number) => {
       if (cellGroup && cellGroup.attribute) {
-        // 为这个cell添加下划线渲染逻辑
         this.addUnderlineToCell(cellGroup, originalHeight);
       }
     });
@@ -471,19 +485,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 获取指定行的所有cell元素
    */
   private getRowCells(rowIndex: number): any[] {
-    const sceneGraph = (this.table as any).scenegraph;
     const cells: any[] = [];
-    // 遍历所有组找到指定行的cell
-    const traverse = (group: any) => {
-      if (group.role === 'cell' && group.row === rowIndex) {
-        cells.push(group);
+    for (let col = 0; col < this.table.colCount; col++) {
+      const cellGroup = this.table.scenegraph.getCell(col, rowIndex);
+      if (cellGroup && cellGroup.role === 'cell') {
+        cells.push(cellGroup);
       }
-      if (group.children) {
-        group.children.forEach((child: any) => traverse(child));
-      }
-    };
-    if (sceneGraph.stage) {
-      traverse(sceneGraph.stage);
     }
     return cells;
   }
@@ -492,7 +499,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 为cell添加下划线
    */
   private addUnderlineToCell(cellGroup: any, originalHeight: number): void {
-    // 在CellGroup重绘时正确绘制下划线
     const currentAttr = cellGroup.attribute;
     const currentStrokeArrayWidth =
       currentAttr.strokeArrayWidth ||
@@ -506,7 +512,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         : ['transparent', 'transparent', 'transparent', 'transparent']);
     const isAlreadyEnhanced = cellGroup._hasUnderline;
     if (!isAlreadyEnhanced) {
-      // 第一次添加下划线，存储原始样式
       cellGroup._originalStrokeArrayWidth = [...currentStrokeArrayWidth];
       cellGroup._originalStrokeArrayColor = [...currentStrokeArrayColor];
       cellGroup._hasUnderline = true;
@@ -515,12 +520,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const originalStrokeArrayColor = cellGroup._originalStrokeArrayColor || currentStrokeArrayColor;
     const enhancedStrokeArrayWidth = [...originalStrokeArrayWidth];
     const enhancedStrokeArrayColor = [...originalStrokeArrayColor];
-    const dpr = (this.table as any).internalProps?.pixelRatio || window.devicePixelRatio || 1;
+    const dpr = this.table.internalProps?.pixelRatio || window.devicePixelRatio || 1;
     // 要还原本来的下划线的效果，那么我们应该要加上下一行的上划线的因为我记得原本的线是叠层的
     const enhancedWidth = ((originalStrokeArrayWidth[2] || 1) * 0.75 + (originalStrokeArrayWidth[0] || 1) * 0.75) * dpr;
     enhancedStrokeArrayWidth[2] = enhancedWidth;
     if (originalStrokeArrayColor[2] === 'transparent' || !originalStrokeArrayColor[2]) {
-      const theme = (this.table as any).theme;
+      const theme = this.table.theme;
       enhancedStrokeArrayColor[2] = theme?.bodyStyle?.borderColor || '#e1e4e8';
     } else {
       enhancedStrokeArrayColor[2] = originalStrokeArrayColor[2];
@@ -536,19 +541,17 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 删除展开行的下划线
    */
   private removeUnderlineFromRow(rowIndex: number): void {
-    // 获取指定行的所有cell
     const rowCells = this.getRowCells(rowIndex);
     rowCells.forEach((cellGroup: any, index: number) => {
       if (cellGroup && cellGroup._hasUnderline) {
         this.removeUnderlineFromCell(cellGroup);
       }
     });
-    // 触发重新渲染
     this.table.scenegraph.updateNextFrame();
   }
 
   /**
-   * 从cell中删除下划线，恢复原始strokeArray样式
+   * 从cell中删除下划线
    */
   private removeUnderlineFromCell(cellGroup: any): void {
     if (cellGroup._hasUnderline) {
@@ -558,7 +561,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
           strokeArrayWidth: cellGroup._originalStrokeArrayWidth,
           strokeArrayColor: cellGroup._originalStrokeArrayColor
         });
-        // 清理存储的原始样式
         delete cellGroup._originalStrokeArrayWidth;
         delete cellGroup._originalStrokeArrayColor;
       }
@@ -575,9 +577,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
       const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
       if (originalHeight > 0) {
-        // 先删除旧的下划线
         this.removeUnderlineFromRow(rowIndex);
-        // 重新绘制下划线
         this.drawUnderlineForRow(rowIndex, originalHeight);
       }
     });
@@ -585,11 +585,17 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   /**
    * 刷新行图标
+   * @param rowIndex 行索引
+   * @param colIndex 列索引
    */
-  private refreshRowIcon(rowIndex: number): void {
-    // 检测是否有序号列，如果有则使用第二列，否则使用第一列
-    const hasRowSeriesNumber = !!(this.table.options as any).rowSeriesNumber;
-    const targetColumnIndex = hasRowSeriesNumber ? 1 : 0;
+  private refreshRowIcon(rowIndex: number, colIndex?: number): void {
+    let targetColumnIndex: number;
+    if (typeof colIndex === 'number') {
+      targetColumnIndex = colIndex;
+    } else {
+      const hasRowSeriesNumber = !!this.table.options.rowSeriesNumber;
+      targetColumnIndex = hasRowSeriesNumber ? 1 : 0;
+    }
     // 触发目标列的重绘以更新图标状态
     const cellGroup = this.table.scenegraph.getCell(targetColumnIndex, rowIndex);
     if (cellGroup) {

@@ -733,6 +733,7 @@ export function bindContainerDomListener(eventManager: EventManager) {
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
     // }
+    // 这里实现的实时更新 dealRowResize
     if (stateManager.interactionState === InteractionState.grabing) {
       if (stateManager.isResizeCol()) {
         eventManager.dealColumnResize(x, y);

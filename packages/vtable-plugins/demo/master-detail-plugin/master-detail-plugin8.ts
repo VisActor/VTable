@@ -56,12 +56,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/1/7',
     Quantity: 3,
     Sales: 21.78,
-    Profit: 6.5343,
-    detailData: [
-      { task: '子任务 1-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 1-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 1-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 6.5343
   },
   {
     'Order ID': 'CA-2015-167199',
@@ -87,12 +82,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/1/7',
     Quantity: 5,
     Sales: 47.98,
-    Profit: 7.197,
-    detailData: [
-      { task: '子任务 2-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 2-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 2-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 7.197
   },
   {
     'Order ID': 'CA-2015-146591',
@@ -105,12 +95,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/1/7',
     Quantity: 2,
     Sales: 31.12,
-    Profit: 14.004,
-    detailData: [
-      { task: '子任务 3-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 3-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 3-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 14.004
   },
   {
     'Order ID': 'CA-2015-148614',
@@ -138,12 +123,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/6/10',
     Quantity: 3,
     Sales: 15.552,
-    Profit: 5.4432,
-    detailData: [
-      { task: '子任务 5-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 5-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 5-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 5.4432
   },
   {
     'Order ID': 'CA-2015-149020',
@@ -169,12 +149,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/6/10',
     Quantity: 2,
     Sales: 10.368,
-    Profit: 3.6288,
-    detailData: [
-      { task: '子任务 6-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 6-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 6-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 3.6288
   },
 
   // Office Supplies - Storage
@@ -189,12 +164,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/8/15',
     Quantity: 1,
     Sales: 665.88,
-    Profit: 132.588,
-    detailData: [
-      { task: '子任务 7-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 7-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 7-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 132.588
   },
   {
     'Order ID': 'CA-2015-168368',
@@ -222,12 +192,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/10/11',
     Quantity: 2,
     Sales: 1374.372,
-    Profit: 206.1558,
-    detailData: [
-      { task: '子任务 8-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 8-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 8-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 206.1558
   },
   {
     'Order ID': 'US-2015-156909',
@@ -253,12 +218,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/10/11',
     Quantity: 3,
     Sales: 2235.54,
-    Profit: 894.216,
-    detailData: [
-      { task: '子任务 9-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 9-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 9-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 894.216
   },
 
   // Furniture - Tables
@@ -273,12 +233,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/12/5',
     Quantity: 2,
     Sales: 957.5775,
-    Profit: 383.031,
-    detailData: [
-      { task: '子任务 10-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 10-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 10-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 383.031
   },
   {
     'Order ID': 'CA-2015-143336',
@@ -306,12 +261,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/11/20',
     Quantity: 4,
     Sales: 213.48,
-    Profit: 25.617,
-    detailData: [
-      { task: '子任务 11-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 11-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 11-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 25.617
   },
   {
     'Order ID': 'CA-2015-145317',
@@ -339,12 +289,7 @@ const mockData: DataRecord[] = [
     'Order Date': '2015/9/3',
     Quantity: 6,
     Sales: 159.984,
-    Profit: 63.9936,
-    detailData: [
-      { task: '子任务 12-A', status: 'open', priority: 'high', assignee: '张三' },
-      { task: '子任务 12-B', status: 'done', priority: 'medium', assignee: '李四' },
-      { task: '子任务 12-C', status: 'progress', priority: 'low', assignee: '王五' }
-    ]
+    Profit: 63.9936
   },
   {
     'Order ID': 'CA-2015-167164',
@@ -423,18 +368,12 @@ export function createTable(): VTable.ListTable {
   // 创建主从表插件
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    // 配置插件使用 detailData 字段而不是默认的 children
-    getDetailData: (record: unknown) => (record as DataRecord).detailData || [],
-    hasDetailData: (record: unknown) => {
-      const data = (record as DataRecord).detailData;
-      return Boolean(data && data.length > 0);
-    },
     detailGridOptions: {
       columns: [
-        { field: 'task', title: '任务名称', width: 200 },
-        { field: 'status', title: '状态', width: 100 },
-        { field: 'priority', title: '优先级', width: 100 },
-        { field: 'assignee', title: '负责人', width: 120 }
+        { field: 'Order ID', title: 'Order ID', width: 200 },
+        { field: 'Customer ID', title: 'Customer ID', width: 100 },
+        { field: 'Product Name', title: 'Product Name', width: 100 },
+        { field: 'Quantity', title: 'Quantity', width: 120 }
       ],
       defaultRowHeight: 32,
       defaultHeaderRowHeight: 36,
@@ -449,7 +388,7 @@ export function createTable(): VTable.ListTable {
     widthMode: 'standard' as const,
     // 分组配置
     groupConfig: {
-      groupBy: ['Category', 'Sub-Category'],
+      groupBy: ['Category'],
       titleFieldFormat: (record: unknown, col: number, row: number, table: VTable.ListTable) => {
         const groupRecord = record as { vtableMergeName: string; children: unknown[] };
         return groupRecord.vtableMergeName + '(' + groupRecord.children.length + ')';
@@ -483,11 +422,7 @@ export function createTable(): VTable.ListTable {
 
   const tableInstance = new VTable.ListTable(container, option);
   window.tableInstance = tableInstance;
-  setTimeout(() => {
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(3);
-    }
-  }, 100);
+
   return tableInstance;
 }
 

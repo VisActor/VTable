@@ -10,17 +10,25 @@ export class SubTableManager {
   constructor(private table: VTable.ListTable, private configManager: ConfigManager) {}
 
   /**
-   * 检查记录是否有主从表的详情数据
+   * 检查记录是否有子数据
    */
-  private hasDetailData(record: unknown): boolean {
-    return this.configManager.hasDetailData(record);
+  private hasChildren(record: unknown): boolean {
+    if (record && typeof record === 'object' && 'children' in record) {
+      const children = (record as any).children;
+      return Array.isArray(children) && children.length > 0;
+    }
+    return false;
   }
 
   /**
-   * 获取记录的详情数据
+   * 获取记录的子数据
    */
-  private getDetailData(record: unknown): unknown[] {
-    return this.configManager.getDetailData(record);
+  private getChildren(record: unknown): unknown[] {
+    if (record && typeof record === 'object' && 'children' in record) {
+      const children = (record as any).children;
+      return Array.isArray(children) ? children : [];
+    }
+    return [];
   }
 
   /**
@@ -32,7 +40,7 @@ export class SubTableManager {
   ): void {
     const internalProps = getInternalProps(this.table);
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
-    if (!record || !this.hasDetailData(record)) {
+    if (!record || !this.hasChildren(record)) {
       return;
     }
     const detailConfig = getDetailConfig(record, bodyRowIndex);
@@ -40,7 +48,7 @@ export class SubTableManager {
     if (!childViewBox) {
       return;
     }
-    const childrenData = this.getDetailData(record);
+    const childrenData = this.getChildren(record);
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
     // 创建子表配置，首先使用父表的重要属性作为基础
@@ -50,7 +58,7 @@ export class SubTableManager {
       canvas: this.table.canvas,
       records: childrenData,
       columns: detailConfig?.columns || [],
-      widthMode: 'adaptive' as const,
+      widthMode: 'adaptive',
       showHeader: true,
       canvasWidth: containerWidth,
       canvasHeight: containerHeight,
@@ -86,7 +94,8 @@ export class SubTableManager {
    */
   private calculateSubTableViewBox(
     bodyRowIndex: number,
-    detailConfig?: DetailGridOptions | null
+    detailConfig?: DetailGridOptions | null,
+    height?: number
   ): { x1: number; y1: number; x2: number; y2: number } | null {
     const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
     const detailRowRect = this.table.getCellRangeRelativeRect({ col: 0, row: rowIndex });
@@ -116,7 +125,7 @@ export class SubTableManager {
     }
     // 解析margin配置 [上, 右, 下, 左]
     const [marginTop, marginRight, marginBottom, marginLeft] = parseMargin(detailConfig?.style?.margin);
-    const configHeight = detailConfig?.style?.height || 300;
+    const configHeight = height ? height : detailConfig?.style?.height || 300;
     const viewBox = {
       x1: firstColRect.left + marginLeft,
       y1: detailRowRect.top + originalHeight + marginTop,
@@ -488,7 +497,7 @@ export class SubTableManager {
     internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
       try {
         const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
-        const scenegraph = (this.table as any).scenegraph;
+        const scenegraph = this.table.scenegraph;
         let cellGroup: any;
         if (scenegraph && typeof scenegraph.highPerformanceGetCell === 'function') {
           cellGroup = scenegraph.highPerformanceGetCell(0, rowIndex);
@@ -520,7 +529,11 @@ export class SubTableManager {
     internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
       const record = getRecordByRowIndex(this.table, bodyRowIndex);
       const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
-      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
+      const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+      const internalProps = getInternalProps(this.table);
+      const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
+      const rowHeight = this.table.getRowHeight(rowIndex) - originalHeight;
+      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig, rowHeight);
       if (newViewBox) {
         const newContainerWidth = newViewBox.x2 - newViewBox.x1;
         const newContainerHeight = newViewBox.y2 - newViewBox.y1;
@@ -565,7 +578,6 @@ export class SubTableManager {
       recordsToRecreate.push(bodyRowIndex);
     });
     // 需要recordsToRecreate，因为我这个removeSubTable和renderSubTable这个都会修改subTableInstances如果直接用的话会导致混乱
-    // 基于索引快照进行操作
     recordsToRecreate.forEach(bodyRowIndex => {
       this.removeSubTable(bodyRowIndex);
       this.renderSubTable(bodyRowIndex, getDetailConfig || (() => null));
@@ -594,7 +606,6 @@ export class SubTableManager {
     }
   }
 
-  // 回调函数，需要从外部注入
   private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null;
 
   /**
