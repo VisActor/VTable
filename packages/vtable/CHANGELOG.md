@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 21 Aug 2025 03:34:47 GMT and should not be manually modified.
+This log was last generated on Tue, 02 Sep 2025 03:55:22 GMT and should not be manually modified.
+
+## 1.18.9
+Tue, 02 Sep 2025 03:55:22 GMT
+
+### Updates
+
+- fix: columnWidthConfig not work when just has indicator on pivot table #4388
 
 ## 1.18.8
 Thu, 21 Aug 2025 03:34:47 GMT
