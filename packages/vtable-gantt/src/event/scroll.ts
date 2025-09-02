@@ -22,8 +22,8 @@ export function handleWhell(
   if (event.ctrlKey) {
     event.preventDefault(); // 阻止默认滚动行为
 
-    // 如果禁用了鼠标滚轮缩放，则不执行缩放
-    const mouseWheelEnabled = gantt.options.zoomScale?.enableMouseWheel ?? gantt.parsedOptions.zoom?.enableMouseWheel;
+    // 如果禁用了缩放功能，则不执行缩放
+    const mouseWheelEnabled = gantt.options.zoomScale?.enabled;
     if (mouseWheelEnabled === false) {
       return;
     }
