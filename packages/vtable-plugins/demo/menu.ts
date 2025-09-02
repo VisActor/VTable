@@ -88,10 +88,6 @@ export const menus = [
     name: 'master-detail-plugin8'
   },
   {
-    path: 'master-detail-plugin',
-    name: 'master-detail-plugin9'
-  },
-  {
     menu: 'pivot-plugin',
     children: [
       {
