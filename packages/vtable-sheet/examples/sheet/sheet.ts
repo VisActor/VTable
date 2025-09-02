@@ -729,7 +729,7 @@ export function createTable() {
           rowSeriesNumberCellStyle: {
             text: {
               fontSize: 14,
-              fill: 'yellow',
+              fill: 'black',
               pickable: false,
               textAlign: 'left',
               textBaseline: 'middle',

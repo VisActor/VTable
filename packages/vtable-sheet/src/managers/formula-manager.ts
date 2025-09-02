@@ -38,6 +38,9 @@ export class FormulaManager {
   /** 下一个工作表ID */
   private nextSheetId = 0;
 
+  /** 正在输入公式的单元格。为后面拖拽单元范围或者点击单元格选中计算范围逻辑做准备。 */
+  formulaWorkingOnCell: FormulaCell | null = null;
+
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.initializeHyperFormula();
@@ -255,6 +258,7 @@ export class FormulaManager {
    * @param value 值
    */
   setCellContent(cell: FormulaCell, value: any): void {
+    console.log('setCellContent', cell, value);
     this.ensureInitialized();
 
     // 检查单元格参数有效性
@@ -297,6 +301,7 @@ export class FormulaManager {
 
       // 设置单元格内容
       this.hyperFormula.setCellContents(address, [[processedValue]]);
+      // this.formulaWorkingOnCell = cell;
     } catch (error) {
       console.error('Failed to set cell content:', error);
       // 提供更详细的错误信息
@@ -662,6 +667,147 @@ export class FormulaManager {
         isValid: false,
         error: error instanceof Error ? error.message : 'Invalid formula syntax'
       };
+    }
+  }
+
+  // /**
+  //  * 检查公式是否完整
+  //  * @param formula 公式字符串
+  //  * @returns 是否完整
+  //  */
+  // isFormulaComplete(formula: string): boolean {
+  //   if (!formula || typeof formula !== 'string') {
+  //     return false;
+  //   }
+
+  //   // 如果不是公式，则认为是完整的
+  //   if (!formula.startsWith('=')) {
+  //     return true;
+  //   }
+
+  //   // 检查是否只有等号或等号加空格
+  //   if (formula.trim() === '=') {
+  //     return false;
+  //   }
+
+  //   try {
+  //     // 检查括号是否匹配
+  //     const openParenCount = (formula.match(/\(/g) || []).length;
+  //     const closeParenCount = (formula.match(/\)/g) || []).length;
+
+  //     // 检查引号是否匹配（简单检查）
+  //     const doubleQuoteCount = (formula.match(/"/g) || []).length;
+  //     const singleQuoteCount = (formula.match(/'/g) || []).length;
+
+  //     // 检查括号和引号是否匹配
+  //     if (openParenCount !== closeParenCount || doubleQuoteCount % 2 !== 0 || singleQuoteCount % 2 !== 0) {
+  //       return false;
+  //     }
+
+  //     // 检查是否有未完成的函数参数，如 "=SUM(A1,B2,)" 这种情况
+  //     if (
+  //       formula.match(/\([^)]*,\s*\)/) ||
+  //       formula.match(/,\s*\)/) ||
+  //       formula.match(/\(\s*\)/) ||
+  //       formula.endsWith(',')
+  //     ) {
+  //       return false;
+  //     }
+
+  //     // 检查是否有连续的逗号，如 "=SUM(A1,,B2)" 这种情况
+  //     if (formula.match(/,,/)) {
+  //       return false;
+  //     }
+
+  //     // 检查是否以操作符结尾，如 "=A1+" 这种情况
+  //     if (formula.match(/[+\-*/^&%<>=]$/)) {
+  //       return false;
+  //     }
+
+  //     // 尝试验证公式语法
+  //     const validationResult = this.validateFormula(formula);
+  //     return validationResult.isValid;
+  //   } catch (error) {
+  //     // 如果验证抛出异常，则公式不完整
+  //     return false;
+  //   }
+  // }
+
+  /**
+   * 检查公式是否完整
+   * @param formula 公式字符串
+   * @returns 是否完整
+   */
+  isFormulaComplete(formula: string): boolean {
+    if (!formula || typeof formula !== 'string') {
+      return false;
+    }
+
+    // 如果不是公式，则认为是完整的
+    if (!formula.startsWith('=')) {
+      return true;
+    }
+
+    // 检查是否只有等号或等号加空格
+    if (formula.trim() === '=') {
+      return false;
+    }
+
+    try {
+      // 检查括号是否匹配
+      const openParenCount = (formula.match(/\(/g) || []).length;
+      const closeParenCount = (formula.match(/\)/g) || []).length;
+
+      // 检查引号是否匹配（简单检查）
+      const doubleQuoteCount = (formula.match(/"/g) || []).length;
+      const singleQuoteCount = (formula.match(/'/g) || []).length;
+
+      // 检查括号和引号是否匹配
+      if (openParenCount !== closeParenCount || doubleQuoteCount % 2 !== 0 || singleQuoteCount % 2 !== 0) {
+        return false;
+      }
+
+      // 检查是否有未完成的函数参数，如 "=SUM(A1,B2,)" 这种情况
+      if (
+        formula.match(/\([^)]*,\s*\)/) ||
+        formula.match(/,\s*\)/) ||
+        formula.match(/\(\s*\)/) ||
+        formula.endsWith(',')
+      ) {
+        return false;
+      }
+
+      // 检查是否有连续的逗号，如 "=SUM(A1,,B2)" 这种情况
+      if (formula.match(/,,/)) {
+        return false;
+      }
+
+      // 检查是否以操作符结尾，如 "=A1+" 这种情况
+      if (formula.match(/[+\-*/^&%<>=]$/)) {
+        return false;
+      }
+
+      // 检查比较运算符后是否缺少操作数，如 "=IF(E1>," 或 "=IF(A1=)" 这种情况
+      if (formula.match(/[<>=][<>=]?(?=[\s,)])/)) {
+        return false;
+      }
+
+      // 检查逻辑运算符后是否缺少操作数，如 "=IF(AND(A1,)" 这种情况
+      if (formula.match(/\b(AND|OR|NOT)\((?=[\s,)])/i)) {
+        return false;
+      }
+
+      // 检查数学运算符后是否有操作数，如 "=A1+*B1" 这种情况
+      if (formula.match(/[+\-*/^&%][+\-*/^&%]/)) {
+        return false;
+      }
+
+      // 尝试验证公式语法
+      const validationResult = this.validateFormula(formula);
+      return validationResult.isValid;
+    } catch (error) {
+      // 如果验证抛出异常，则公式不完整
+      return false;
     }
   }
 

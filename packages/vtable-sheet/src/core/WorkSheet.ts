@@ -50,6 +50,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
   private parent: any;
 
+  editingCell: { sheet: string; row: number; col: number } | null = null;
+
   constructor(options: IWorkSheetOptions) {
     super();
     this.options = options;
@@ -91,14 +93,14 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * 获取行数
    */
   getRowCount(): number {
-    return this.rowCount;
+    return this.tableInstance.rowCount;
   }
 
   /**
    * 获取列数
    */
   getColumnCount(): number {
-    return this.colCount;
+    return this.tableInstance.colCount;
   }
 
   /**
@@ -223,6 +225,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       excelOptions: {
         fillHandle: true
       }
+      // maintainedColumnCount: 120
       // 其他特定配置
     };
   }
@@ -233,17 +236,33 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   private _setupEventListeners(): void {
     if (this.tableInstance) {
       // 监听单元格选择事件
-      this.tableInstance.on('selected_cell', (event: any) => {
+      // this.tableInstance.on('selected_cell', (event: any) => {
+      //   this.handleCellSelected(event);
+      // });
+      this.tableInstance.on('mousedown_cell', (event: any) => {
+        console.log('click_cell', event);
+        if (this.parent.formulaManager.formulaWorkingOnCell) {
+          return true;
+        }
+        this.editingCell = {
+          sheet: this.getKey(),
+          row: event.row,
+          col: event.col
+        };
         this.handleCellSelected(event);
+        return true;
       });
 
       // 监听选择变化事件（多选时）
       this.tableInstance.on('selected_changed' as any, (event: any) => {
+        console.log('selected_changed', event);
         this.handleSelectionChanged(event);
       });
 
       // 监听拖拽选择结束事件
       this.tableInstance.on('drag_select_end' as any, (event: any) => {
+        console.log('drag_select_end', event);
+        // debugger;
         this.handleDragSelectEnd(event);
       });
 
@@ -646,15 +665,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       endRow: range.end.row,
       endCol: range.end.col
     }));
-  }
-
-  /**
-   * 设置当前选择
-   * @param range 选择范围
-   */
-  setSelection(range: CellRange): void {
-    this.selection = range;
-    // 更新UI选择
   }
 
   /**

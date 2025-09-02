@@ -185,6 +185,103 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
   getValue(): string {
     return this.element?.value || '';
   }
+
+  validateValue(
+    newValue?: any,
+    oldValue?: any,
+    position?: VTable_editors.CellAddress,
+    table?: any,
+    isClickOnTable?: boolean
+  ): boolean | VTable_editors.ValidateEnum {
+    // 判断点击到表格其他单元格，且输入了公式，则检查公式是否完整
+    if (isClickOnTable && newValue && newValue.startsWith('=')) {
+      // 如果有sheet实例，使用FormulaManager检查公式完整性
+      if (this.sheet) {
+        const formulaManager = this.sheet.getFormulaManager();
+        if (formulaManager && typeof formulaManager.isFormulaComplete === 'function') {
+          // 如果公式不完整，不退出编辑状态
+          if (!formulaManager.isFormulaComplete(newValue)) {
+            // 获取当前选中的单元格范围
+            // 注意：需要确保VTableSheet类中有getSelectedRange方法
+            // 如果没有，可能需要通过其他方式获取选中范围
+            const selectedRange = (this.sheet as any).getSelectedRange?.();
+            if (selectedRange) {
+              // 如果有选中的单元格范围，将其转换为公式引用并附加到当前公式
+              const activeSheet = this.sheet.getActiveSheet()?.getKey() || '';
+              const rangeRef = `${activeSheet}!${this.getCellRangeString(selectedRange)}`;
+
+              // 检查公式中是否已经包含了这个引用，避免重复添加
+              if (!newValue.includes(rangeRef)) {
+                // 在光标位置插入单元格引用
+                // 这里简单处理，直接追加到公式末尾
+                const updatedValue =
+                  newValue.endsWith('(') || newValue.endsWith(',') || newValue.endsWith(' ')
+                    ? `${newValue}${rangeRef}`
+                    : `${newValue},${rangeRef}`;
+
+                // 更新输入框的值
+                if (this.element) {
+                  this.element.value = updatedValue;
+                }
+              }
+            }
+            return VTable_editors.ValidateEnum.validateNotExit;
+          }
+        } else {
+          // 如果没有isFormulaComplete方法，使用简单的括号匹配检查
+          const openParenCount = (newValue.match(/\(/g) || []).length;
+          const closeParenCount = (newValue.match(/\)/g) || []).length;
+          if (openParenCount !== closeParenCount) {
+            return VTable_editors.ValidateEnum.validateNotExit;
+          }
+        }
+      } else {
+        // 如果没有sheet实例，使用简单的括号匹配检查
+        const openParenCount = (newValue.match(/\(/g) || []).length;
+        const closeParenCount = (newValue.match(/\)/g) || []).length;
+        if (openParenCount !== closeParenCount) {
+          return VTable_editors.ValidateEnum.validateNotExit;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * 将选中的单元格范围转换为公式引用字符串
+   * 例如：A1:B3
+   */
+  private getCellRangeString(range: {
+    start: { col: number; row: number };
+    end: { col: number; row: number };
+  }): string {
+    if (!range || !range.start || !range.end) {
+      return '';
+    }
+
+    // 将列索引转换为字母表示（0->A, 1->B, 等）
+    const colToLetter = (col: number): string => {
+      let letter = '';
+      while (col >= 0) {
+        letter = String.fromCharCode(65 + (col % 26)) + letter;
+        col = Math.floor(col / 26) - 1;
+      }
+      return letter;
+    };
+
+    const startCol = colToLetter(range.start.col);
+    const startRow = range.start.row + 1; // 行索引从1开始
+    const endCol = colToLetter(range.end.col);
+    const endRow = range.end.row + 1;
+
+    // 如果是单个单元格
+    if (startCol === endCol && startRow === endRow) {
+      return `${startCol}${startRow}`;
+    }
+
+    // 如果是范围
+    return `${startCol}${startRow}:${endCol}${endRow}`;
+  }
 }
 
 export const formulaEditor = new FormulaInputEditor();

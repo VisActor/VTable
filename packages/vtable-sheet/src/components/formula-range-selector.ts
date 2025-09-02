@@ -149,24 +149,35 @@ export class FormulaRangeSelector {
     const currentValue = formulaInput.value;
     const cursorPos = formulaInput.selectionStart || 0;
 
-    // 在函数参数位置插入A1引用
-    const beforeParam = currentValue.slice(0, this.functionParamPosition.start);
-    const afterParam = currentValue.slice(this.functionParamPosition.end);
+    // 找到当前光标所处的参数位置
+    const argPosition = this.findCurrentArgumentPosition(currentValue, cursorPos);
 
-    // 是否需要在前后补逗号（避免首尾多余逗号）
-    const trimmedBefore = beforeParam.trimEnd();
-    const trimmedAfter = afterParam.trimStart();
+    // 在函数参数位置插入或替换A1引用
+    let newValue;
+    if (argPosition) {
+      // 替换模式：替换当前参数
+      newValue = currentValue.slice(0, argPosition.start) + a1Notation + currentValue.slice(argPosition.end);
+    } else {
+      // 插入模式：使用原来的逻辑
+      const beforeParam = currentValue.slice(0, this.functionParamPosition.start);
+      const afterParam = currentValue.slice(this.functionParamPosition.end);
 
-    const needsCommaBefore = trimmedBefore.length > 0 && !trimmedBefore.endsWith('(') && !trimmedBefore.endsWith(',');
+      const trimmedBefore = beforeParam.trimEnd();
+      const trimmedAfter = afterParam.trimStart();
 
-    const needsCommaAfter = trimmedAfter.length > 0 && !trimmedAfter.startsWith(',') && !trimmedAfter.startsWith(')');
+      const needsCommaBefore = trimmedBefore.length > 0 && !trimmedBefore.endsWith('(') && !trimmedBefore.endsWith(',');
+      const needsCommaAfter = trimmedAfter.length > 0 && !trimmedAfter.startsWith(',') && !trimmedAfter.startsWith(')');
 
-    const newValue =
-      beforeParam + (needsCommaBefore ? ',' : '') + a1Notation + (needsCommaAfter ? ',' : '') + afterParam;
+      newValue = beforeParam + (needsCommaBefore ? ',' : '') + a1Notation + (needsCommaAfter ? ',' : '') + afterParam;
+    }
+
     formulaInput.value = newValue;
 
     // 设置光标位置到插入内容之后
-    const newCursorPos = this.functionParamPosition.start + (needsCommaBefore ? 1 : 0) + a1Notation.length;
+    const newCursorPos = argPosition
+      ? argPosition.start + a1Notation.length
+      : this.functionParamPosition.start + a1Notation.length + (needsCommaBefore ? 1 : 0);
+
     formulaInput.setSelectionRange(newCursorPos, newCursorPos);
 
     // 更新函数参数位置
@@ -181,6 +192,80 @@ export class FormulaRangeSelector {
     formulaInput.dispatchEvent(inputEvent);
   }
 
+  /**
+   * 找到光标所在的参数位置
+   * @param formula 公式文本
+   * @param cursorPos 光标位置
+   * @returns 参数的起始和结束位置
+   */
+  private findCurrentArgumentPosition(formula: string, cursorPos: number): { start: number; end: number } | null {
+    let nestLevel = 0;
+    let inQuote = false;
+    let argumentStart = -1;
+    let argumentEnd = -1;
+
+    // 跳过公式开头的"="和函数名部分
+    let i = formula.indexOf('(');
+    if (i === -1) {
+      return null;
+    }
+
+    nestLevel = 1; // 已经找到第一个左括号
+    argumentStart = i + 1;
+
+    // 从左括号后开始遍历
+    for (i = argumentStart; i < formula.length; i++) {
+      const char = formula[i];
+
+      // 处理引号内的内容
+      if (char === '"' && formula[i - 1] !== '\\') {
+        inQuote = !inQuote;
+        continue;
+      }
+
+      // 如果在引号内，忽略所有特殊字符
+      if (inQuote) {
+        continue;
+      }
+
+      if (char === '(') {
+        nestLevel++;
+      } else if (char === ')') {
+        nestLevel--;
+        // 如果到达了最外层的右括号，并且光标在这个范围内
+        if (nestLevel === 0 && i >= cursorPos) {
+          // 光标在参数内，返回光标位置
+          argumentEnd = cursorPos;
+          break;
+        }
+      } else if (char === ',' && nestLevel === 1) {
+        // 如果是当前函数层级的参数分隔符
+        if (i < cursorPos) {
+          // 光标在这个逗号之后，更新参数开始位置
+          argumentStart = i + 1;
+        } else if (i >= cursorPos) {
+          // 光标在这个逗号之前，设置参数结束位置为光标位置
+          argumentEnd = cursorPos;
+          break;
+        }
+      }
+    }
+
+    // 如果没找到结束位置但光标在公式内
+    if (argumentEnd === -1 && cursorPos <= formula.length) {
+      argumentEnd = cursorPos;
+    }
+
+    // 确保光标位置正确
+    if (cursorPos >= argumentStart && cursorPos <= formula.length) {
+      return {
+        start: cursorPos, // 修正：始终返回光标位置作为开始位置
+        end: cursorPos // 修正：始终返回光标位置作为结束位置
+      };
+    }
+
+    return null;
+  }
   /**
    * 处理单元格选择变化
    * @param selections 当前选择范围

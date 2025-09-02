@@ -43,9 +43,6 @@ export interface IWorkSheetAPI {
   /** 获取当前选择 */
   getSelection: () => CellRange | null;
 
-  /** 设置当前选择 */
-  setSelection: (range: CellRange) => void;
-
   /** 获取数据 */
   getData: () => CellValue[][];
 
