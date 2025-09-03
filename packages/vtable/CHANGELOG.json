@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.10",
+      "tag": "@visactor/vtable_v1.18.10",
+      "date": "Wed, 03 Sep 2025 04:35:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: update @visactor/vrender dependencies to 0.22.17"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.9",
       "tag": "@visactor/vtable_v1.18.9",
       "date": "Tue, 02 Sep 2025 03:55:22 GMT",
