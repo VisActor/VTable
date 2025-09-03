@@ -1,6 +1,5 @@
 import type * as VTable from '@visactor/vtable';
 import type { MasterDetailPluginOptions } from './types';
-import { includesRecordIndex } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
@@ -21,7 +20,17 @@ export class TableAPIExtensions {
   private originalToggleHierarchyState?: any;
   private originalUpdateFilterRules?: any;
   private originalUpdateChartSizeForResizeColWidth?: any;
-  private originalUpdateColWidth?: any;
+  private originalGetRowY?: (row: number, table: VTable.BaseTableAPI, isBottomFrozen?: boolean) => number;
+  private originalUpdateRowHeight?: any;
+
+  // 鼠标位置跟踪
+  private currentMouseX: number = 0;
+  private currentMouseY: number = 0;
+  private mouseEventListener?: (event: MouseEvent) => void;
+
+  // 拖拽状态跟踪
+  private isDragging: boolean = false;
+  private dragStartIsPluginUnderline: boolean = false;
 
   // 回调函数
   private callbacks: {
@@ -40,13 +49,14 @@ export class TableAPIExtensions {
     expandRow: (rowIndex: number) => void;
     restoreExpandedStatesAfter: () => void;
     collapseRow: (rowIndex: number) => void;
+    updateSubTablePositions: () => void;
+    updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) => void;
   };
 
   constructor(
     table: VTable.ListTable,
     configManager: ConfigManager,
     eventManager: EventManager,
-    pluginOptions: MasterDetailPluginOptions,
     callbacks: {
       addUnderlineToCell: (cellGroup: any, originalHeight: number) => void;
       applyMinimalHeightStrategy: (
@@ -63,12 +73,53 @@ export class TableAPIExtensions {
       expandRow: (rowIndex: number) => void;
       restoreExpandedStatesAfter: () => void;
       collapseRow: (rowIndex: number) => void;
+      updateSubTablePositions: () => void;
+      updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) => void;
     }
   ) {
     this.table = table;
     this.configManager = configManager;
     this.eventManager = eventManager;
     this.callbacks = callbacks;
+
+    // 初始化鼠标位置跟踪
+    this.initMouseTracking();
+  }
+
+  /**
+   * 初始化鼠标位置跟踪
+   */
+  private initMouseTracking(): void {
+    this.mouseEventListener = (event: MouseEvent) => {
+      try {
+        const table = this.table;
+        if (table && table.internalProps && table.internalProps.canvas) {
+          const rect = table.internalProps.canvas.getBoundingClientRect();
+          this.currentMouseX = event.clientX - rect.left;
+          this.currentMouseY = event.clientY - rect.top;
+        }
+      } catch (error) {
+        // 忽略鼠标位置计算错误
+      }
+      // 在鼠标释放时重置拖拽状态
+      if (event.type === 'mouseup') {
+        this.isDragging = false;
+        this.dragStartIsPluginUnderline = false;
+      }
+    };
+
+    // 添加鼠标移动监听
+    try {
+      const table = this.table;
+      if (table && table.internalProps && table.internalProps.canvas) {
+        const canvas = table.internalProps.canvas;
+        canvas.addEventListener('mousemove', this.mouseEventListener);
+        canvas.addEventListener('mousedown', this.mouseEventListener);
+        canvas.addEventListener('mouseup', this.mouseEventListener);
+      }
+    } catch (error) {
+      console.warn('Error setting up mouse tracking:', error);
+    }
   }
 
   /**
@@ -82,6 +133,8 @@ export class TableAPIExtensions {
     this.extendToggleHierarchyState();
     this.extendUpdateFilterRules();
     this.extendUpdateChartSizeForResizeColWidth();
+    this.extendGetRowY();
+    this.extendUpdateRowHeight();
   }
 
   /**
@@ -107,12 +160,19 @@ export class TableAPIExtensions {
       if (isExpandedRow) {
         // 保存原始的 limitMinHeight
         const originalLimitMinHeight = table.internalProps.limitMinHeight;
-        // 计算展开行的最小高度：原始最小高度 + 子表高度
+        // 计算展开行的最小高度：根据拖拽状态决定策略
         const bodyRowIndex = resizeRowIndex - this.table.columnHeaderLevelCount;
-        const record = getRecordByRowIndex(this.table, bodyRowIndex);
-        const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
-        const detailHeight = detailConfig?.style?.height || 200;
-        const expandedMinHeight = originalLimitMinHeight + detailHeight;
+        const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+        const currentRowHeight = this.table.getRowHeight(resizeRowIndex);
+        const detailHeight = currentRowHeight - originalHeight;
+        let expandedMinHeight: number;
+        if (this.dragStartIsPluginUnderline) {
+          // 拖拽插件下划线时：原始最小高度 + 子表高度
+          expandedMinHeight = originalLimitMinHeight + detailHeight;
+        } else {
+          // 拖拽原始下划线时：2倍原始最小高度
+          expandedMinHeight = originalHeight + originalLimitMinHeight;
+        }
         // 临时设置展开行的最小高度
         table.internalProps.limitMinHeight = expandedMinHeight;
         // 调用原始方法
@@ -134,14 +194,14 @@ export class TableAPIExtensions {
    * 扩展 dealHeightMode 方法
    */
   private extendDealHeightMode(): void {
-    // 拦截并增强 dealHeightMode 方法，让它感知展开行的特殊需求
+    // 拦截并增强 dealHeightMode 方法
     const scenegraph = this.table.scenegraph as any;
     this.originalDealHeightMode = scenegraph.dealHeightMode.bind(scenegraph);
 
     scenegraph.dealHeightMode = () => {
       if (this.table.heightMode !== 'adaptive') {
         // 非 adaptive 模式，使用原始逻辑
-        return this.originalDealHeightMode();
+        return this.originalDealHeightMode()
       }
 
       // adaptive 模式下的智能处理
@@ -204,12 +264,10 @@ export class TableAPIExtensions {
       }
 
       // 有展开行时，需要特殊处理
-      // 收集展开行信息（展开行只会在 body 部分）
       const expandedRowsInfo = new Map<number, { baseHeight: number; detailHeight: number }>();
       let totalExpandedExtraHeight = 0;
 
       for (const rowIndex of expandedRowIndices) {
-        // 展开行必须在 body 范围内
         if (
           rowIndex >= table.columnHeaderLevelCount &&
           rowIndex < endRow &&
@@ -333,6 +391,7 @@ export class TableAPIExtensions {
 
       // 重要：更新原始高度缓存，确保后续操作使用新的基础高度
       this.callbacks.updateOriginalHeightsAfterAdaptive(expandedRowsInfo);
+      this.callbacks.updateSubTablePositions();
     };
   }
 
@@ -397,44 +456,11 @@ export class TableAPIExtensions {
 
         return result;
       }
-      // 处理数据行分组的情况（分组标题行）
-      const record = this.table.getRecordByCell(col, row);
-      if (record && typeof record === 'object' && 'vtableMergeName' in record) {
-        this.updateDetailTablesInGroup();
-      }
+
       return this.originalToggleHierarchyState(col, row, recalculateColWidths);
     };
   }
 
-  /**
-   * 收起指定分组内的所有主从表（使用 recordIndex 管理）
-   */
-  private updateDetailTablesInGroup(): void {
-    try {
-      const internalProps = getInternalProps(this.table);
-      const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-      // 保存当前展开行的 recordIndex 到 expandedRecordIndices
-      currentExpandedRows.forEach(rowIndex => {
-        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-        if (realRecordIndex !== undefined && realRecordIndex !== null) {
-          if (
-            internalProps.expandedRecordIndices &&
-            !includesRecordIndex(internalProps.expandedRecordIndices, realRecordIndex)
-          ) {
-            internalProps.expandedRecordIndices.push(realRecordIndex);
-          }
-        }
-      });
-      currentExpandedRows.forEach(rowIndex => {
-        this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
-      });
-      setTimeout(() => {
-        this.callbacks.restoreExpandedStatesAfter();
-      }, 16);
-    } catch (error) {
-      console.error('收起分组时出错:', error);
-    }
-  }
   /**
    * 扩展 updateFilterRules 方法
    */
@@ -481,10 +507,235 @@ export class TableAPIExtensions {
       return result;
     };
   }
+
+  /**
+   * 扩展 getRowY 方法
+   * 拦截 getRowY 函数，为展开行提供正确的Y坐标计算
+   */
+  private extendGetRowY(): void {
+    // 直接拦截 scenegraph.component 的方法
+    const scenegraph = this.table.scenegraph;
+    if (scenegraph.component) {
+      // 拦截 showResizeRow 方法
+      const originalShowResizeRow = scenegraph.component.showResizeRow?.bind(scenegraph.component);
+      if (originalShowResizeRow) {
+        scenegraph.component.showResizeRow = (row: number, x: number, isRightFrozen?: boolean) => {
+          return this.protectedShowResizeRow(originalShowResizeRow, row, x, isRightFrozen);
+        };
+      }
+
+      // 拦截 updateResizeRow 方法
+      const originalUpdateResizeRow = scenegraph.component.updateResizeRow?.bind(scenegraph.component);
+      if (originalUpdateResizeRow) {
+        scenegraph.component.updateResizeRow = (row: number, x: number, isBottomFrozen?: boolean) => {
+          return this.protectedUpdateResizeRow(originalUpdateResizeRow, row, x, isBottomFrozen);
+        };
+      }
+    }
+  }
+
+  /**
+   * 扩展 updateRowHeight 方法
+   * 在表格初始化时就替换整个 updateRowHeight 方法
+   */
+  private extendUpdateRowHeight(): void {
+    const scenegraph = this.table.scenegraph as any;
+    this.originalUpdateRowHeight = scenegraph.updateRowHeight.bind(scenegraph);
+    scenegraph.updateRowHeight = (row: number, detaY: number, skipTableHeightMap?: boolean) => {
+      const isExpandedRow = this.eventManager.isRowExpanded(row);
+      if (isExpandedRow && this.isDragging && !this.dragStartIsPluginUnderline) {
+        detaY = Math.round(detaY);
+        this.callbacks.updateRowHeightForExpand(row, detaY);
+        scenegraph.updateContainerHeight(row, detaY);
+      } else {
+        return this.originalUpdateRowHeight(row, detaY, skipTableHeightMap);
+      }
+    };
+  }
+
+  /**
+   * 检测鼠标是否在插件绘制的下划线区域
+   */
+  private isMouseInPluginUnderlineArea(row: number): boolean {
+    try {
+      // 获取表格的滚动偏移量
+      const tableAny = this.table as any;
+      const scrollTop = tableAny.stateManager?.scroll?.verticalBarPos || 0;
+      // 计算当前行在视口中的位置信息
+      const rowY = this.table.getRowsHeight(0, row - 1);
+      const rowHeight = this.table.getRowHeight(row);
+      const rowBottomY = rowY + rowHeight;
+      const viewportRowBottomY = rowBottomY - scrollTop;
+      const isNearRowBottom =
+        this.currentMouseY >= viewportRowBottomY - (this.table.internalProps.limitMinHeight - 1) &&
+        this.currentMouseY <= viewportRowBottomY + (this.table.internalProps.limitMinHeight - 1);
+      // 如果是展开行且鼠标在行底部，认为是插件绘制的下划线
+      const isExpandedRow = this.eventManager.isRowExpanded(row);
+      const isPluginUnderline = isNearRowBottom && isExpandedRow;
+      // console.log('Mouse underline detection:', {
+      //   row,
+      //   mouseX: this.currentMouseX,
+      //   mouseY: this.currentMouseY,
+      //   scrollTop,
+      //   rowY,
+      //   rowHeight,
+      //   rowBottomY,
+      //   viewportRowBottomY,
+      //   isNearRowBottom,
+      //   isExpandedRow,
+      //   isPluginUnderline,
+      //   'distance from bottom': Math.abs(this.currentMouseY - viewportRowBottomY)
+      // });
+
+      return !isPluginUnderline;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * 保护的 showResizeRow 方法
+   */
+  private protectedShowResizeRow(
+    originalMethod: (row: number, x: number, isRightFrozen?: boolean) => void,
+    row: number,
+    x: number,
+    isRightFrozen?: boolean
+  ): void {
+    if (!this.isDragging) {
+      this.isDragging = true;
+      this.dragStartIsPluginUnderline = this.isMouseInPluginUnderlineArea(row);
+    }
+    if (this.dragStartIsPluginUnderline) {
+      // 临时替换 getRowsHeight 方法
+      const originalGetRowsHeight = this.table.getRowsHeight.bind(this.table);
+      this.table.getRowsHeight = (startRow: number, endRow: number) => {
+        return this.getRowsHeightWithOriginalHeight(startRow, endRow);
+      };
+      // 临时替换 getRowHeight 方法
+      const originalGetRowHeight = this.table.getRowHeight.bind(this.table);
+      this.table.getRowHeight = (targetRow: number) => {
+        if (targetRow === row && this.eventManager.isRowExpanded(targetRow)) {
+          // 如果是当前操作的展开行，返回原始高度
+          const bodyRowIndex = targetRow - this.table.columnHeaderLevelCount;
+          const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+          return originalHeight > 0 ? originalHeight : originalGetRowHeight(targetRow);
+        }
+        // 其他行使用原始方法
+        return originalGetRowHeight(targetRow);
+      };
+      try {
+        const result = originalMethod(row, x, isRightFrozen);
+        return result;
+      } finally {
+        // 恢复原始的方法
+        this.table.getRowsHeight = originalGetRowsHeight;
+        this.table.getRowHeight = originalGetRowHeight;
+      }
+    } else {
+      // 原始下划线，临时替换 getRowHeight 方法处理展开行
+      const originalGetRowHeight = this.table.getRowHeight.bind(this.table);
+      this.table.getRowHeight = (targetRow: number) => {
+        if (targetRow === row && this.eventManager.isRowExpanded(targetRow)) {
+          // 如果是当前操作的展开行，返回减去原始高度的值
+          const bodyRowIndex = targetRow - this.table.columnHeaderLevelCount;
+          const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+          return originalGetRowHeight(targetRow) - originalHeight;
+        }
+        // 其他行使用原始方法
+        return originalGetRowHeight(targetRow);
+      };
+      try {
+        const result = originalMethod(row, x, isRightFrozen);
+        return result;
+      } finally {
+        // 恢复原始的 getRowHeight 方法
+        this.table.getRowHeight = originalGetRowHeight;
+      }
+    }
+  }
+
+  /**
+   * 保护的 updateResizeRow 方法
+   */
+  private protectedUpdateResizeRow(
+    originalMethod: (row: number, x: number, isBottomFrozen?: boolean) => void,
+    row: number,
+    x: number,
+    isBottomFrozen?: boolean
+  ): void {
+    if (this.dragStartIsPluginUnderline) {
+      // 临时替换 getRowsHeight 方法
+      const originalGetRowsHeight = this.table.getRowsHeight.bind(this.table);
+      this.table.getRowsHeight = (startRow: number, endRow: number) => {
+        return this.getRowsHeightWithOriginalHeight(startRow, endRow);
+      };
+      // 临时替换 getRowHeight 方法
+      const originalGetRowHeight = this.table.getRowHeight.bind(this.table);
+      this.table.getRowHeight = (targetRow: number) => {
+        if (targetRow === row && this.eventManager.isRowExpanded(targetRow)) {
+          // 如果是当前操作的展开行，返回原始高度
+          const bodyRowIndex = targetRow - this.table.columnHeaderLevelCount;
+          const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+          return originalHeight > 0 ? originalHeight : originalGetRowHeight(targetRow);
+        }
+        // 其他行使用原始方法
+        return originalGetRowHeight(targetRow);
+      };
+      try {
+        const result = originalMethod(row, x, isBottomFrozen);
+        return result;
+      } finally {
+        // 恢复原始的方法
+        this.table.getRowsHeight = originalGetRowsHeight;
+        this.table.getRowHeight = originalGetRowHeight;
+      }
+    } else {
+      // 原始下划线，临时替换 getRowHeight 方法处理展开行
+      const originalGetRowHeight = this.table.getRowHeight.bind(this.table);
+      this.table.getRowHeight = (targetRow: number) => {
+        if (targetRow === row && this.eventManager.isRowExpanded(targetRow)) {
+          // 如果是当前操作的展开行，返回减去原始高度的值
+          const bodyRowIndex = targetRow - this.table.columnHeaderLevelCount;
+          const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+          return originalGetRowHeight(targetRow) - originalHeight;
+        }
+        // 其他行使用原始方法
+        return originalGetRowHeight(targetRow);
+      };
+      try {
+        const result = originalMethod(row, x, isBottomFrozen);
+        return result;
+      } finally {
+        // 恢复原始的 getRowHeight 方法
+        this.table.getRowHeight = originalGetRowHeight;
+      }
+    }
+  }
+
+  /**
+   * 使用原始高度计算行高累积值的方法
+   */
+  private getRowsHeightWithOriginalHeight(startRow: number, endRow: number): number {
+    let totalHeight = 0;
+    for (let row = startRow; row <= endRow; row++) {
+      const isExpandedRow = this.eventManager.isRowExpanded(row);
+      if (isExpandedRow && row === endRow) {
+        // 展开行并且是最后一行使用原始高度
+        const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+        const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+        totalHeight += originalHeight > 0 ? originalHeight : this.table.getRowHeight(row);
+      } else {
+        // 普通行使用当前高度
+        totalHeight += this.table.getRowHeight(row);
+      }
+    }
+    return totalHeight;
+  }
   /**
    * 保护的updateCellContent方法
    */
-  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): any {
+  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): void {
     const isExpandedRow = this.eventManager.isRowExpanded(row);
     if (isExpandedRow) {
       // 对于展开行，我们需要临时恢复到原始高度来创建内容
@@ -532,22 +783,6 @@ export class TableAPIExtensions {
     }
     // 非展开行或其他情况，直接调用原始方法
     const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
-    const cellGroup = this.table.scenegraph.getCell(col, row);
-    if (cellGroup) {
-      this.eventManager.handleAfterUpdateCellContentWidth({
-        col,
-        row,
-        distWidth: 0,
-        cellHeight: cellGroup.attribute?.height || 0,
-        detaX: 0,
-        autoRowHeight: false,
-        needUpdateRowHeight: false,
-        cellGroup,
-        padding: [0, 0, 0, 0],
-        textAlign: 'left' as CanvasTextAlign,
-        textBaseline: 'middle' as CanvasTextBaseline
-      });
-    }
     return result;
   }
 
@@ -555,11 +790,26 @@ export class TableAPIExtensions {
    * 清理所有扩展的 API
    */
   cleanup(): void {
+    // 清理鼠标事件监听器
+    if (this.mouseEventListener) {
+      try {
+        const table = this.table as any;
+        if (table && table.internalProps && table.internalProps.canvas) {
+          const canvas = table.internalProps.canvas;
+          canvas.removeEventListener('mousemove', this.mouseEventListener);
+          canvas.removeEventListener('mousedown', this.mouseEventListener);
+          canvas.removeEventListener('mouseup', this.mouseEventListener);
+        }
+      } catch (error) {
+        console.warn('Error cleaning up mouse event listeners:', error);
+      }
+      this.mouseEventListener = undefined;
+    }
+
     // 恢复原始的updateCellContent方法
     if (this.originalUpdateCellContent && this.table) {
       const table = this.table as any;
-      // 检查 scenegraph 是否存在，避免在表格已经销毁时出错
-      if (table.scenegraph) {
+      if (table.scenegraph && table.scenegraph.updateCellContent) {
         table.scenegraph.updateCellContent = this.originalUpdateCellContent;
       }
       this.originalUpdateCellContent = undefined;
@@ -568,7 +818,7 @@ export class TableAPIExtensions {
     // 恢复原始的updateResizeRow方法
     if (this.originalUpdateResizeRow && this.table) {
       const table = this.table as any;
-      if (table.stateManager) {
+      if (table.stateManager && table.stateManager.updateResizeRow) {
         table.stateManager.updateResizeRow = this.originalUpdateResizeRow;
       }
       this.originalUpdateResizeRow = undefined;
@@ -577,7 +827,7 @@ export class TableAPIExtensions {
     // 恢复原始的dealHeightMode方法
     if (this.originalDealHeightMode && this.table) {
       const table = this.table as any;
-      if (table.scenegraph) {
+      if (table.scenegraph && table.scenegraph.dealHeightMode) {
         table.scenegraph.dealHeightMode = this.originalDealHeightMode;
       }
       this.originalDealHeightMode = undefined;
@@ -586,36 +836,52 @@ export class TableAPIExtensions {
     // 恢复其他原始方法
     if (this.originalUpdatePagination && this.table) {
       const table = this.table as any;
-      table.updatePagination = this.originalUpdatePagination;
+      if (table.updatePagination) {
+        table.updatePagination = this.originalUpdatePagination;
+      }
       this.originalUpdatePagination = undefined;
     }
 
     if (this.originalToggleHierarchyState && this.table) {
       const table = this.table as any;
-      table.toggleHierarchyState = this.originalToggleHierarchyState;
+      if (table.toggleHierarchyState) {
+        table.toggleHierarchyState = this.originalToggleHierarchyState;
+      }
       this.originalToggleHierarchyState = undefined;
     }
 
     if (this.originalUpdateFilterRules && this.table) {
       const table = this.table as any;
-      table.updateFilterRules = this.originalUpdateFilterRules;
+      if (table.updateFilterRules) {
+        table.updateFilterRules = this.originalUpdateFilterRules;
+      }
       this.originalUpdateFilterRules = undefined;
     }
 
     if (this.originalUpdateChartSizeForResizeColWidth && this.table) {
       const table = this.table as any;
-      if (table.scenegraph) {
+      if (table.scenegraph && table.scenegraph.updateChartSizeForResizeColWidth) {
         table.scenegraph.updateChartSizeForResizeColWidth = this.originalUpdateChartSizeForResizeColWidth;
       }
       this.originalUpdateChartSizeForResizeColWidth = undefined;
     }
 
-    if (this.originalUpdateColWidth && this.table) {
+    // 恢复原始的updateRowHeight方法
+    if (this.originalUpdateRowHeight && this.table) {
       const table = this.table as any;
-      if (table.scenegraph) {
-        table.scenegraph.updateColWidth = this.originalUpdateColWidth;
+      if (table.scenegraph && table.scenegraph.updateRowHeight) {
+        table.scenegraph.updateRowHeight = this.originalUpdateRowHeight;
       }
-      this.originalUpdateColWidth = undefined;
+      this.originalUpdateRowHeight = undefined;
     }
+
+    // 清理 getRowY 相关的拦截
+    if (this.table && this.table.scenegraph) {
+      const scenegraph = this.table.scenegraph as any;
+      if (scenegraph.tableGroup && scenegraph.tableGroup.tableComponent && this.originalGetRowY) {
+        this.originalGetRowY = undefined;
+      }
+    }
+    this.originalGetRowY = undefined;
   }
 }

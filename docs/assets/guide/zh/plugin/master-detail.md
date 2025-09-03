@@ -2,32 +2,23 @@
 
 ## 功能介绍
 
-MasterDetailPlugin插件为ListTable提供了主从表功能，旨在实现不同数据更好的展示。该插件支持在表格行中嵌入子表格，提供层次化的数据展示体验。
-
-### 注意事项
-- 请不要使用转置功能
-- 请不要把tree和主从表一起用
-- 与分组功能结合使用时需要配置自定义数据获取函数
+MasterDetailPlugin 插件为 VTable ListTable 提供强大的主从表功能，能够在主表的行中嵌入完整的子表格，实现层次化的数据展示效果。该插件特别适用于需要展示关联详细信息的业务场景，如订单详情、项目任务、产品规格等复杂数据结构的可视化展示。
 
 ## 插件配置
 
-### MasterDetailPluginOptions
+### 配置接口定义
 
-插件构造函数接受一个配置对象，该对象需要实现 `MasterDetailPluginOptions` 接口。以下为完整的配置参数说明：
+MasterDetailPlugin 采用 TypeScript 接口规范，确保类型安全和开发体验。插件构造函数接受 `MasterDetailPluginOptions` 配置对象，具体定义如下：
 
 ```typescript
 interface MasterDetailPluginOptions {
   id?: string;
-  /** 子表配置 - 可以是静态配置对象或动态配置函数 */
+  /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
-  /** 自定义获取详情数据的函数，默认使用record.children */
-  getDetailData?: (record: unknown) => unknown[];
-  /** 自定义检查是否有详情数据的函数，默认检查record.children */
-  hasDetailData?: (record: unknown) => boolean;
 }
 
 interface DetailGridOptions extends VTable.ListTableConstructorOptions {
-  // 这个style配置的是展开的子表的宽度和margin
+  /** 子表样式配置，包括布局边距和尺寸设置 */
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
@@ -35,37 +26,51 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 }
 ```
 
-### 配置参数说明
+### 核心参数详解
 
-| 参数名称 | 类型 | 默认值 | 说明 |
-|---------|------|--------|------|
-| `id` | string | `master-detail-${timestamp}` | 插件实例的唯一标识符 |
-| `detailGridOptions` | DetailGridOptions \| Function | - | 子表配置选项，可以是静态对象或动态函数 |
-| `getDetailData` | Function | 使用 `record.children` | 自定义获取详情数据的函数 |
-| `hasDetailData` | Function | 检查 `record.children` | 自定义检查是否有详情数据的函数 |
+| 参数名称 | 类型 | 默认值 | 功能说明 |
+|---------|------|--------|----------|
+| `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
+| `detailGridOptions` | DetailGridOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
 
-#### DetailGridOptions.style 配置
+#### DetailGridOptions 高级配置
 
-这个继承了ListTableConstructorOptions，可以使用ListTableConstructorOptions的配置
+`DetailGridOptions` 完全继承 `VTable.ListTableConstructorOptions` 的所有特性，这意味着子表享有与主表相同的功能和配置能力：
 
-| 参数名称 | 类型 | 默认值 | 说明 |
-|---------|------|--------|------|
-| `margin` | number \| number[] | 0 | 子表的边距，支持单个数值或数组形式 |
-| `height` | number | 300 | 子表的固定高度 |
+**核心配置项：**
+- **columns**：子表列定义，支持完整的列配置选项
+- **theme**：主题样式配置，可独立于主表设置
+- **defaultRowHeight**：子表行高设置
+- **sortState**：排序状态配置
+- **widthMode**：宽度模式（standard、adaptive、autoWidth 等）
+- **以及所有 ListTable 支持的高级配置选项**
 
-## 使用方式
+#### 样式配置选项
 
-### 插件初始化
+| 属性名称 | 数据类型 | 默认值 | 配置说明 |
+|---------|----------|--------|----------|
+| `margin` | number \| number[] | 0 | 子表边距设置，支持灵活的边距配置：<br/>• **单数值**：`12` - 四边统一边距<br/>• **双数值**：`[12, 16]` - 垂直和水平边距<br/>• **四数值**：`[12, 16, 12, 16]` - 上、右、下、左独立设置 |
+| `height` | number | 300 | 子表容器固定高度（单位：像素），建议根据业务数据量合理设置 |
 
-首先需要创建插件实例并将其添加到 VTable 的插件配置中：
+## 快速开始
 
+### 基础集成步骤
+
+集成 MasterDetailPlugin 到您的项目中只需三个简单步骤：
+
+**第一步：导入插件**
 ```typescript
-// 初始化插件
+import { MasterDetailPlugin } from '@visactor/vtable-plugins';
+```
+
+**第二步：创建插件实例**
+```typescript
+// 创建主从表插件实例
 const masterDetailPlugin = new MasterDetailPlugin({
-  id: 'master-detail-static-2',
+  id: 'master-detail-plugin',
   detailGridOptions: {
     columns: [
-      { field: 'task', title: '任务名', width: 220 },
+      { field: 'task', title: '任务名称', width: 220 },
       { field: 'status', title: '状态', width: 120 }
     ],
     defaultRowHeight: 30,
@@ -76,9 +81,419 @@ const masterDetailPlugin = new MasterDetailPlugin({
 });
 ```
 
-### 基础用法示例
+**第三步：配置到 VTable 实例**
+```typescript
+// 将插件集成到表格配置中
+const tableOptions = {
+  container: document.getElementById('tableContainer'),
+  columns: [/* 主表列配置 */],
+  records: [/* 主表数据 */],
+  plugins: [masterDetailPlugin]  // 注册插件
+};
 
-首先确保你使用了MasterDetailPlugin插件，然后他会去根据hasDetailData中配置的去检查用户配置的record中是否配置了相关子表，如果没有配置hasDetailData和getDetailData那么默认是children
+// 创建表格实例
+const tableInstance = new VTable.ListTable(tableOptions);
+```
+
+## 典型业务场景示例
+
+### 场景一：企业员工管理系统
+
+在企业人力资源管理中，需要在员工列表中展示每个员工的项目参与情况。主表显示员工的基本信息（姓名、部门、职位等），点击展开后显示该员工参与的所有项目详情和工作记录。
+
+```javascript livedemo template=vtable
+function createEmployeeTable() {
+  // 生成企业员工数据
+  function generateEmployeeData(count) {
+    const departments = ['技术部', '产品部', '设计部', '市场部', '销售部', '人事部', '财务部', '运营部'];
+    const positions = ['初级工程师', '中级工程师', '高级工程师', '技术专家', '产品经理', '设计师', '市场专员', '销售经理'];
+    const projects = [
+      { name: '电商平台重构', type: '技术项目', status: '进行中' },
+      { name: '移动端APP开发', type: '产品项目', status: '已完成' },
+      { name: '品牌推广活动', type: '市场项目', status: '计划中' },
+      { name: '用户体验优化', type: '设计项目', status: '进行中' },
+      { name: '数据中台建设', type: '技术项目', status: '已完成' },
+      { name: '客户关系管理', type: '销售项目', status: '进行中' }
+    ];
+    
+    const data = [];
+    for (let i = 1; i <= count; i++) {
+      const department = departments[Math.floor(Math.random() * departments.length)];
+      const position = positions[Math.floor(Math.random() * positions.length)];
+      const joinDate = new Date(2020 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+      const salary = Math.floor(Math.random() * 20000) + 8000; // 8000-28000
+      
+      // 为每个员工生成2-5个项目参与记录
+      const employeeProjects = [];
+      const projectCount = Math.floor(Math.random() * 4) + 2;
+      
+      for (let j = 0; j < projectCount; j++) {
+        const project = projects[Math.floor(Math.random() * projects.length)];
+        const startDate = new Date(2024, Math.floor(Math.random() * 8), Math.floor(Math.random() * 28) + 1);
+        const endDate = new Date(startDate.getTime() + (Math.random() * 180 + 30) * 24 * 60 * 60 * 1000);
+        const workload = Math.floor(Math.random() * 60) + 20; // 20%-80%工作量
+        
+        employeeProjects.push({
+          '项目名称': project.name,
+          '项目类型': project.type,
+          '项目状态': project.status,
+          '参与角色': j === 0 ? '项目负责人' : (j === 1 ? '核心成员' : '参与成员'),
+          '开始时间': startDate.toLocaleDateString('zh-CN'),
+          '结束时间': endDate.toLocaleDateString('zh-CN'),
+          '工作量': `${workload}%`
+        });
+      }
+      
+      data.push({
+        id: i,
+        '员工编号': `EMP-${String(i).padStart(4, '0')}`,
+        '姓名': `员工${i}`,
+        '部门': department,
+        '职位': position,
+        '入职时间': joinDate.toLocaleDateString('zh-CN'),
+        '月薪': `¥${salary.toLocaleString()}`,
+        '项目数量': projectCount,
+        children: employeeProjects
+      });
+    }
+    return data;
+  }
+
+  const employeeRecords = generateEmployeeData(50);
+
+  // 创建企业员工管理主从表插件
+  const employeeDetailPlugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'employee-management-plugin',
+    detailGridOptions: {
+      columns: [
+        { 
+          field: '项目名称', 
+          title: '项目名称', 
+          width: 180,
+          style: { fontWeight: 'bold' }
+        },
+        { 
+          field: '项目类型', 
+          title: '项目类型', 
+          width: 100,
+          style: {
+            bgColor: (args) => {
+              const colors = {
+                '技术项目': '#e6f7ff',
+                '产品项目': '#f6ffed',
+                '设计项目': '#fff1f0',
+                '市场项目': '#f9f0ff',
+                '销售项目': '#fff7e6'
+              };
+              return colors[args.value] || '#f8f9fa';
+            }
+          }
+        },
+        { 
+          field: '项目状态', 
+          title: '项目状态', 
+          width: 100,
+          style: {
+            bgColor: (args) => {
+              const colors = {
+                '进行中': '#dbeafe',
+                '已完成': '#d1fae5',
+                '计划中': '#fef3c7'
+              };
+              return colors[args.value] || '#f8f9fa';
+            },
+            textAlign: 'center'
+          }
+        },
+        { 
+          field: '参与角色', 
+          title: '参与角色', 
+          width: 120,
+          style: {
+            color: (args) => {
+              const colors = {
+                '项目负责人': '#dc2626',
+                '核心成员': '#059669',
+                '参与成员': '#7c3aed'
+              };
+              return colors[args.value] || '#374151';
+            },
+            fontWeight: 'bold'
+          }
+        },
+        { 
+          field: '开始时间', 
+          title: '开始时间', 
+          width: 120,
+          style: { textAlign: 'center' }
+        },
+        { 
+          field: '结束时间', 
+          title: '结束时间', 
+          width: 120,
+          style: { textAlign: 'center' }
+        },
+        { 
+          field: '工作量', 
+          title: '工作量占比', 
+          width: 100,
+          style: { textAlign: 'center', fontWeight: 'bold' }
+        }
+      ],
+      defaultRowHeight: 36,
+      defaultHeaderRowHeight: 42,
+      style: { 
+        margin: [16, 20], 
+        height: 220 
+      },
+      theme: VTable.themes.BRIGHT.extends({
+        headerStyle: {
+          bgColor: '#1e40af',
+          color: '#ffffff'
+        }
+      })
+    }
+  });
+
+  // 主表配置
+  const columns = [
+    { field: 'id', title: 'ID', width: 100, sort: true },
+    { field: '员工编号', title: '员工编号', width: 120 },
+    { field: '姓名', title: '姓名', width: 100, sort: true },
+    { field: '部门', title: '部门', width: 100, sort: true },
+    { field: '职位', title: '职位', width: 120, sort: true },
+    { field: '入职时间', title: '入职时间', width: 120, sort: true },
+    { 
+      field: '月薪', 
+      title: '月薪', 
+      width: 120,
+      style: { textAlign: 'right', fontWeight: 'bold', color: '#dc2626' }
+    },
+    { 
+      field: '项目数量', 
+      title: '参与项目', 
+      width: 100,
+      style: { textAlign: 'center', fontWeight: 'bold' }
+    }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: employeeRecords,
+    widthMode: 'standard',
+    theme: VTable.themes.BRIGHT,
+    plugins: [employeeDetailPlugin]
+  };
+
+  return new VTable.ListTable(option);
+}
+
+createEmployeeTable();
+```
+
+### 场景二：B2B客户订单跟踪系统
+
+**业务需求**：在 B2B 客户关系管理系统中，销售人员需要快速掌握客户概况，并能够详细查看每个客户的历史订单、交易金额和订单状态分布。
+
+**解决方案**：主表展示客户关键信息（客户名称、所属行业、地区分布、累计交易等），展开后显示该客户的完整订单历史，包括订单详情、产品信息、交易金额和订单状态跟踪。
+
+```javascript livedemo template=vtable
+function createCustomerTable() {
+  // 生成客户订单数据
+  function generateCustomerData(count) {
+    const industries = ['互联网', '制造业', '金融', '教育', '医疗', '零售', '物流', '房地产'];
+    const regions = ['华北', '华东', '华南', '华中', '东北', '西北', '西南'];
+    const orderStatuses = ['待确认', '生产中', '已发货', '已完成', '已取消'];
+    const products = [
+      { name: '企业级服务器', category: 'IT设备', unitPrice: 25000 },
+      { name: '办公软件许可证', category: '软件服务', unitPrice: 8000 },
+      { name: '网络安全设备', category: 'IT设备', unitPrice: 15000 },
+      { name: '云服务订阅', category: '云计算', unitPrice: 12000 },
+      { name: '数据分析平台', category: '软件服务', unitPrice: 30000 },
+      { name: '移动办公设备', category: 'IT设备', unitPrice: 5000 }
+    ];
+    
+    const data = [];
+    for (let i = 1; i <= count; i++) {
+      const industry = industries[Math.floor(Math.random() * industries.length)];
+      const region = regions[Math.floor(Math.random() * regions.length)];
+      const registerDate = new Date(2019 + Math.floor(Math.random() * 5), Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+      
+      // 为每个客户生成3-8个订单
+      const customerOrders = [];
+      const orderCount = Math.floor(Math.random() * 6) + 3;
+      let totalAmount = 0;
+      
+      for (let j = 0; j < orderCount; j++) {
+        const product = products[Math.floor(Math.random() * products.length)];
+        const quantity = Math.floor(Math.random() * 5) + 1;
+        const orderAmount = product.unitPrice * quantity;
+        const orderDate = new Date(2024, Math.floor(Math.random() * 9), Math.floor(Math.random() * 28) + 1);
+        const status = orderStatuses[Math.floor(Math.random() * orderStatuses.length)];
+        totalAmount += orderAmount;
+        
+        customerOrders.push({
+          '订单号': `ORD-${i}-${String(j + 1).padStart(3, '0')}`,
+          '产品名称': product.name,
+          '产品类别': product.category,
+          '数量': quantity,
+          '单价': `¥${product.unitPrice.toLocaleString()}`,
+          '订单金额': `¥${orderAmount.toLocaleString()}`,
+          '下单日期': orderDate.toLocaleDateString('zh-CN'),
+          '订单状态': status
+        });
+      }
+      
+      data.push({
+        id: i,
+        '客户编号': `CUS-${String(i).padStart(4, '0')}`,
+        '客户名称': `${industry === '互联网' ? '科技' : industry === '制造业' ? '制造' : industry}有限公司${i}`,
+        '所属行业': industry,
+        '所在地区': region,
+        '联系人': `联系人${i}`,
+        '注册时间': registerDate.toLocaleDateString('zh-CN'),
+        '订单总数': orderCount,
+        '累计金额': `¥${totalAmount.toLocaleString()}`,
+        children: customerOrders
+      });
+    }
+    return data;
+  }
+
+  const customerRecords = generateCustomerData(40);
+
+  // 创建客户订单管理主从表插件
+  const customerDetailPlugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'customer-management-plugin',
+    detailGridOptions: {
+      columns: [
+        { 
+          field: '订单号', 
+          title: '订单号', 
+          width: 150,
+          style: { fontFamily: 'monospace', fontWeight: 'bold' }
+        },
+        { 
+          field: '产品名称', 
+          title: '产品名称', 
+          width: 160,
+          style: { fontWeight: 'bold' }
+        },
+        { 
+          field: '产品类别', 
+          title: '产品类别', 
+          width: 100,
+          style: {
+            bgColor: (args) => {
+              const colors = {
+                'IT设备': '#e6f7ff',
+                '软件服务': '#f6ffed',
+                '云计算': '#fff1f0'
+              };
+              return colors[args.value] || '#f8f9fa';
+            }
+          }
+        },
+        { 
+          field: '数量', 
+          title: '数量', 
+          width: 80,
+          style: { textAlign: 'center' }
+        },
+        { 
+          field: '单价', 
+          title: '单价', 
+          width: 120,
+          style: { textAlign: 'right', color: '#059669' }
+        },
+        { 
+          field: '订单金额', 
+          title: '订单金额', 
+          width: 130,
+          style: { textAlign: 'right', fontWeight: 'bold', color: '#dc2626' }
+        },
+        { 
+          field: '下单日期', 
+          title: '下单日期', 
+          width: 120,
+          style: { textAlign: 'center' }
+        },
+        { 
+          field: '订单状态', 
+          title: '订单状态', 
+          width: 100,
+          style: {
+            bgColor: (args) => {
+              const colors = {
+                '已完成': '#d1fae5',
+                '已发货': '#dbeafe',
+                '生产中': '#fef3c7',
+                '待确认': '#f3e8ff',
+                '已取消': '#fee2e2'
+              };
+              return colors[args.value] || '#f8f9fa';
+            },
+            textAlign: 'center'
+          }
+        }
+      ],
+      defaultRowHeight: 38,
+      defaultHeaderRowHeight: 44,
+      style: { 
+        margin: [18, 24], 
+        height: 260 
+      },
+      theme: VTable.themes.BRIGHT.extends({
+        headerStyle: {
+          bgColor: '#7c2d12',
+          color: '#ffffff'
+        }
+      })
+    }
+  });
+
+  // 主表配置
+  const columns = [
+    { field: 'id', title: 'ID', width: 100, sort: true },
+    { field: '客户编号', title: '客户编号', width: 120, sort: true },
+    { field: '客户名称', title: '客户名称', width: 180, sort: true },
+    { field: '所属行业', title: '所属行业', width: 100, sort: true },
+    { field: '所在地区', title: '所在地区', width: 100, sort: true },
+    { field: '联系人', title: '联系人', width: 100 },
+    { field: '注册时间', title: '注册时间', width: 120, sort: true },
+    { 
+      field: '订单总数', 
+      title: '订单总数', 
+      width: 100,
+      style: { textAlign: 'center', fontWeight: 'bold' }
+    },
+    { 
+      field: '累计金额', 
+      title: '累计金额', 
+      width: 140,
+      style: { textAlign: 'right', fontWeight: 'bold', color: '#dc2626' }
+    }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: customerRecords,
+    widthMode: 'standard',
+    theme: VTable.themes.BRIGHT,
+    plugins: [customerDetailPlugin]
+  };
+
+  return new VTable.ListTable(option);
+}
+
+createCustomerTable();
+```
+
+### 基础功能演示
+
+以下是一个简化的主从表功能演示，展示插件的核心工作原理和基本配置方法：
 
 ```javascript livedemo template=vtable
 function generateData(count) {
@@ -156,9 +571,16 @@ function createTable() {
 createTable();
 ```
 
-### 动态配置示例
+### 高级功能：动态配置
 
-支持使用函数动态配置子表选项，可以根据行数据和行索引返回不同的配置：
+MasterDetailPlugin 支持基于数据内容和行位置的动态配置，实现更灵活的业务逻辑处理：
+
+**应用场景**：
+- 根据不同数据类型展示不同的子表结构
+- 为特定行设置个性化的样式主题
+- 基于业务规则动态调整子表高度和列配置
+
+**实现示例**：
 
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
@@ -240,30 +662,9 @@ const masterDetailPlugin = new MasterDetailPlugin({
 
 ## 高级配置
 
-### 自定义数据获取
+### 分组示例
 
-通过 `getDetailData` 和 `hasDetailData` 函数，可以自定义如何获取和检查详情数据：
-
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  // 自定义获取详情数据
-  getDetailData: (record) => {
-    // 可以从不同字段获取数据
-    return record.details || record.subItems || [];
-  },
-  
-  // 自定义检查是否有详情数据
-  hasDetailData: (record) => {
-    return Boolean(record.details && record.details.length > 0);
-  },
-  
-  detailGridOptions: {
-    // ... 子表配置
-  }
-});
-```
-
-就比如当你要和分组这样本身就依赖children的一同使用的话，就请使用hasDetailData和getDetailData来让主从表使用不同的数据源，因为我使用本插件的实现方式中包含了插入在最后面插入虚拟行的操作，所以你会在某些情况下看到最后一行有一行空白行，比如和分组兼容的时候
+如果在使用注册表插件的时候想要使用分组，那么配置groupBy的时候请只传入一个参数，不然插件将无法识别
 
 ```javascript livedemo template=vtable
 function createGroupTable() {
@@ -277,10 +678,6 @@ function createGroupTable() {
       Region: 'Central',
       Sales: 21.78,
       Profit: 6.53,
-      detailData: [
-        { task: '子任务 1-A', status: 'open', priority: 'high', assignee: '张三' },
-        { task: '子任务 1-B', status: 'done', priority: 'medium', assignee: '李四' }
-      ]
     },
     {
       'Order ID': 'CA-2015-167199',
@@ -299,10 +696,6 @@ function createGroupTable() {
       Region: 'Central',
       Sales: 47.98,
       Profit: 7.19,
-      detailData: [
-        { task: '子任务 2-A', status: 'progress', priority: 'high', assignee: '王五' },
-        { task: '子任务 2-B', status: 'done', priority: 'low', assignee: '赵六' }
-      ]
     },
     {
       'Order ID': 'CA-2015-112326',
@@ -312,9 +705,6 @@ function createGroupTable() {
       Region: 'West',
       Sales: 15.55,
       Profit: 5.44,
-      detailData: [
-        { task: '子任务 3-A', status: 'open', priority: 'medium', assignee: '张三' }
-      ]
     },
     {
       'Order ID': 'US-2015-108966',
@@ -324,11 +714,6 @@ function createGroupTable() {
       Region: 'West',
       Sales: 1374.37,
       Profit: 206.15,
-      detailData: [
-        { task: '子任务 4-A', status: 'done', priority: 'high', assignee: '李四' },
-        { task: '子任务 4-B', status: 'progress', priority: 'medium', assignee: '王五' },
-        { task: '子任务 4-C', status: 'open', priority: 'low', assignee: '赵六' }
-      ]
     }
   ];
 
@@ -345,19 +730,15 @@ function createGroupTable() {
   // 创建主从表插件 - 使用detailData字段而不是默认的children
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    // 自定义获取详情数据的函数
-    getDetailData: (record) => record.detailData || [],
-    // 自定义检查是否有详情数据的函数
-    hasDetailData: (record) => {
-      const data = record.detailData;
-      return Boolean(data && data.length > 0);
-    },
     detailGridOptions: {
       columns: [
-        { field: 'task', title: '任务名称', width: 200 },
-        { field: 'status', title: '状态', width: 100 },
-        { field: 'priority', title: '优先级', width: 100 },
-        { field: 'assignee', title: '负责人', width: 120 }
+        { field: 'Order ID', title: 'Order ID', width: 150 },
+        { field: 'Product Name', title: 'Product Name', width: 200 },
+        { field: 'Category', title: 'Category', width: 120 },
+        { field: 'Sub-Category', title: 'Sub-Category', width: 120 },
+        { field: 'Region', title: 'Region', width: 100 },
+        { field: 'Sales', title: 'Sales', width: 100 },
+        { field: 'Profit', title: 'Profit', width: 100 }
       ],
       defaultRowHeight: 32,
       defaultHeaderRowHeight: 36,
@@ -373,7 +754,7 @@ function createGroupTable() {
     widthMode: 'standard',
     // 分组配置 - children字段被分组功能占用
     groupConfig: {
-      groupBy: ['Category', 'Sub-Category'],
+      groupBy: ['Category'],
       titleFieldFormat: (record) => {
         return record.vtableMergeName + '(' + record.children.length + ')';
       },
@@ -391,38 +772,22 @@ function createGroupTable() {
 createGroupTable();
 ```
 
-### 主题和样式定制
+## 技术实现原理
 
-子表支持完整的VTable主题配置：
+MasterDetailPlugin 采用了高效的渲染策略来实现主从表功能：
 
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  detailGridOptions: {
-    columns: [/*...*/],
-    // 应用自定义主题
-    theme: VTable.themes.DARK.extends({
-      headerStyle: {
-        bgColor: '#333',
-        color: '#fff'
-      },
-      bodyStyle: {
-        bgColor: '#222',
-        color: '#ccc'
-      }
-    }),
-    // 自定义样式
-    style: {
-      margin: [10, 20, 10, 20], // 上、右、下、左边距
-      height: 250
-    }
-  }
-});
-```
+1. **ViewBox 定位系统**：插件基于 VTable 的 ViewBox 机制进行精确定位，确保子表能够准确渲染在展开行的指定位置。
 
-## 插件实现原理
+2. **Canvas 共享渲染**：子表与主表共享同一个 Canvas 画布，避免了多画布切换带来的性能开销，同时保证了视觉一致性。
 
-该插件实现主从表的逻辑中渲染子表的逻辑是基于Vtable中的ViewBox来定位，然后子表根据ViewBox的定位信息把子表渲染到和父亲同一个Canvas上，展开行的空白空间是通过改变行高但是不改变改行中CellGroup的height来实现的空出空行来实现的，并且该插件会把scrollEventAlwaysTrigger设置为true,也就是默认会在表滚动到边界继续触发滚动事件;为的是实现子表滚动的auto效果
+3. **动态行高调整**：通过智能调整展开行的行高，同时保持该行中 CellGroup 的原始高度不变，巧妙地创造出用于渲染子表的空白区域。
 
-# 本文档由由以下人员贡献
+4. **滚动事件优化**：插件自动将 `scrollEventAlwaysTrigger` 设置为 `true`，确保在表格滚动到边界时仍能触发滚动事件，实现子表的自动滚动效果。
+
+## 注意事项
+- 请不要使用转置功能
+- 请不要把tree和主从表一起用
+
+## 本文档贡献者
 
 [抽象薯片](https://github.com/Violet2314)

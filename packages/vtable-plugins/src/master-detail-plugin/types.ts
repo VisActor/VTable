@@ -16,10 +16,6 @@ export interface MasterDetailPluginOptions {
   id?: string;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
-  /** 自定义获取详情数据的函数，默认使用record.children */
-  getDetailData?: (record: unknown) => unknown[];
-  /** 自定义检查是否有详情数据的函数，默认检查record.children */
-  hasDetailData?: (record: unknown) => boolean;
 }
 
 /**
