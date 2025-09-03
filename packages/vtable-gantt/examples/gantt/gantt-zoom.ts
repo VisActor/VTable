@@ -916,8 +916,6 @@ export function createTable() {
     // ZoomScale 多级别缩放配置
     zoomScale: {
       enabled: true,
-      maxZoomInColumnWidth: 120, // 最大放大限制：最大等级的最小 unit 的最小宽度120px
-      maxZoomOutColumnWidth: 150, // 最大缩小限制：最小等级的最小 unit 的最大宽度150px
       levels: [
         // 级别0：月-周组合 (最粗糙)
         [
@@ -1436,7 +1434,6 @@ function createZoomControls(ganttInstance: Gantt) {
     // 获取级别配置
     const levels = ganttInstance.zoomScaleManager.config.levels;
 
-    // 创建单选按钮组
     const radioGroup = document.createElement('div');
     radioGroup.style.cssText = `
       display: grid;
@@ -1445,8 +1442,7 @@ function createZoomControls(ganttInstance: Gantt) {
     `;
 
     levels.forEach((level, index) => {
-      // 获取每个级别的最小时间单位信息
-      const minUnit = ganttInstance.zoomScaleManager!.findMinTimeUnit(level);
+      const minUnit = ganttInstance.zoomScaleManager?.findMinTimeUnit(level);
 
       const radioContainer = document.createElement('label');
       radioContainer.style.cssText = `
@@ -1475,14 +1471,14 @@ function createZoomControls(ganttInstance: Gantt) {
       `;
 
       // 检查当前级别
-      if (index === ganttInstance.zoomScaleManager!.getCurrentLevel()) {
+      if (index === ganttInstance.zoomScaleManager?.getCurrentLevel()) {
         radio.checked = true;
       }
 
       radio.onchange = () => {
         if (radio.checked) {
           // 切换到对应级别的中间状态
-          ganttInstance.zoomScaleManager!.setZoomPosition({
+          ganttInstance.zoomScaleManager?.setZoomPosition({
             levelNum: index
           });
           updateStatusDisplay();
@@ -1490,7 +1486,7 @@ function createZoomControls(ganttInstance: Gantt) {
       };
 
       const label = document.createElement('span');
-      label.textContent = `L${index}: ${minUnit.unit}×${minUnit.step}`;
+      label.textContent = `L${index}: ${minUnit?.unit}×${minUnit?.step}`;
       label.style.cssText = `
         color: #555;
         user-select: none;
@@ -1509,7 +1505,7 @@ function createZoomControls(ganttInstance: Gantt) {
 
     // 监听缩放事件，更新单选按钮状态
     ganttInstance.on('zoom', () => {
-      const currentLevel = ganttInstance.zoomScaleManager!.getCurrentLevel();
+      const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel();
       const radios = radioGroup.querySelectorAll('input[name="zoomLevel"]');
       radios.forEach((radio, index) => {
         (radio as HTMLInputElement).checked = index === currentLevel;
