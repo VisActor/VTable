@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: support detailPath when pick vchart\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "lixuef1313@163.com"
+}
