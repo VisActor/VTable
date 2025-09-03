@@ -23,6 +23,7 @@ const generateDemoData = (count: number) => {
       gender: i % 2 === 0 ? '男' : '女',
       salary,
       sales,
+      seniority: Math.floor(Math.random() * (10 - 5 + 1)) + 5,
       isFullTime: i % 5 !== 0,
       department: departments[i % departments.length],
       favoriteColor: colors[i % colors.length],
@@ -81,6 +82,12 @@ export function createTable() {
       fieldFormat(record) {
         return '￥' + record.sales
       }
+    },
+    {
+      field: 'seniority',
+      title: '工龄',
+      width: 100,
+      sort: true
     },
     {
       field: 'department',
