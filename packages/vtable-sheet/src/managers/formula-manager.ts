@@ -2,6 +2,8 @@ import type { SimpleCellAddress } from 'hyperformula';
 import { HyperFormula, CellError } from 'hyperformula';
 import type VTableSheet from '../components/vtable-sheet';
 import type { FormulaCell, FormulaResult } from '../ts-types/formula';
+import { FormulaRangeSelector } from '../components/formula-range-selector';
+import type { CellRange } from '../ts-types';
 
 /**
  * 标准HyperFormula配置
@@ -40,9 +42,15 @@ export class FormulaManager {
 
   /** 正在输入公式的单元格。为后面拖拽单元范围或者点击单元格选中计算范围逻辑做准备。 */
   formulaWorkingOnCell: FormulaCell | null = null;
+  lastKnownCursorPosInFormulaInput: number | null = null;
 
+  /** 公式范围选择器 */
+  formulaRangeSelector: FormulaRangeSelector;
+  /** 正在处理的单元格选区 */
+  lastSelectionRangesOfHandling: CellRange[] = [];
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
+    this.formulaRangeSelector = new FormulaRangeSelector(this);
     this.initializeHyperFormula();
   }
 

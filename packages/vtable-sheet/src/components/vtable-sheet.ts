@@ -15,7 +15,6 @@ import { CellHighlightManager } from '../managers/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
 import { FormulaThrottle } from '..';
-import { FormulaRangeSelector } from './formula-range-selector';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -60,9 +59,6 @@ export default class VTableSheet {
   // tab拖拽管理器
   private dragManager: SheetTabDragManager;
 
-  /** 公式范围选择器 */
-  private formulaRangeSelector: FormulaRangeSelector;
-
   /**
    * 构造函数
    * @param options 配置选项
@@ -78,7 +74,7 @@ export default class VTableSheet {
     this.dragManager = new SheetTabDragManager(this);
     this.cellHighlightManager = new CellHighlightManager(this);
     this.menuManager = new MenuManager(this);
-    this.formulaRangeSelector = new FormulaRangeSelector();
+
     // 初始化UI
     this.initUI();
 
@@ -224,6 +220,7 @@ export default class VTableSheet {
     });
 
     formulaInput.addEventListener('blur', () => {
+      console.log('blur', formulaInput.selectionStart);
       this.deactivateFormulaBar();
       this.cellHighlightManager.clearHighlights();
       // 当失去焦点时，如果没有确认修改，恢复显示计算值
@@ -244,6 +241,17 @@ export default class VTableSheet {
           this.isUpdatingFromFormula = false;
         }
       }
+    });
+
+    const events = ['click', 'mouseup', 'keyup', 'select', 'input', 'focus'];
+    events.forEach(eventType => {
+      formulaInput.addEventListener(eventType, e => {
+        const cursorPos = formulaInput.selectionStart;
+        if (cursorPos !== null && cursorPos !== undefined) {
+          console.log('event', e, 'old', this.formulaManager.lastKnownCursorPosInFormulaInput, 'new', cursorPos);
+          this.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
+        }
+      });
     });
     formulaBar.appendChild(formulaInput);
 
@@ -984,9 +992,16 @@ export default class VTableSheet {
    */
   private ensureFunctionParamModeFromInput(formulaInput: HTMLInputElement): boolean {
     const value = formulaInput.value || '';
-    const cursor =
-      typeof formulaInput.selectionStart === 'number' ? (formulaInput.selectionStart as number) : value.length;
-    return this.formulaRangeSelector?.detectFunctionParameterPosition(value, cursor) === true;
+    // const cursor =
+    //   typeof formulaInput.selectionStart === 'number' ? (formulaInput.selectionStart as number) : value.length;
+    // console.trace('cursor', cursor, document.activeElement);
+    console.log('lastKnownCursorPosInFormulaInput', this.formulaManager.lastKnownCursorPosInFormulaInput);
+    return (
+      this.formulaManager.formulaRangeSelector?.detectFunctionParameterPosition(
+        value,
+        this.formulaManager.lastKnownCursorPosInFormulaInput
+      ) === true
+    );
   }
 
   /**
@@ -1005,7 +1020,7 @@ export default class VTableSheet {
     // 不依赖 event.type 字符串，selection-end 已在上层绑定，这里直接处理
 
     const inParamMode = this.ensureFunctionParamModeFromInput(formulaInput);
-
+    console.log('inParamMode', inParamMode);
     if (!inParamMode) {
       return;
     }
@@ -1016,23 +1031,28 @@ export default class VTableSheet {
 
     // 获取所有选择范围（支持Ctrl/Cmd多选）
     const selections = this.activeWorkSheet.getMultipleSelections();
-
+    const todoSelection = selections[selections.length - 1];
+    let isCtrlAddSelection = false;
+    if (selections?.length > this.formulaManager.lastSelectionRangesOfHandling?.length) {
+      isCtrlAddSelection = true;
+    }
+    this.formulaManager.lastSelectionRangesOfHandling = selections;
     if (!selections || selections.length === 0) {
       return;
     }
 
     // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
     const editCell = this.activeWorkSheet.editingCell;
-    const safeSelections = selections
-      .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
-      .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择
+    // const safeSelections = selections
+    //   .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
+    //   .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择
+    const safeSelections = this.excludeEditCellFromSelection(todoSelection, editCell?.row || 0, editCell?.col || 0);
 
-    if (safeSelections.length === 0) {
-      return; // 如果没有有效的选择，直接返回
-    }
-
-    this.formulaRangeSelector.handleSelectionChanged(safeSelections, formulaInput, (row: number, col: number) =>
-      this.activeWorkSheet!.addressFromCoord(row, col)
+    this.formulaManager.formulaRangeSelector.handleSelectionChanged(
+      [safeSelections],
+      formulaInput,
+      isCtrlAddSelection,
+      (row: number, col: number) => this.activeWorkSheet!.addressFromCoord(row, col)
     );
 
     // 写入后不再刷新公式栏，以免覆盖刚插入的引用
@@ -1141,7 +1161,6 @@ export default class VTableSheet {
 
     // 如果是公式插入事件，不进行公式计算
     if ((event as any).isFormulaInsertion) {
-      this.formulaManager.formulaWorkingOnCell = null;
       return;
     }
 
@@ -1155,7 +1174,7 @@ export default class VTableSheet {
     const cursorPosition = input.selectionStart || 0;
 
     // 检测函数参数位置
-    this.formulaRangeSelector.detectFunctionParameterPosition(value, cursorPosition);
+    this.formulaManager.formulaRangeSelector.detectFunctionParameterPosition(value, cursorPosition);
 
     // 如果是公式，高亮引用的单元格
     if (value.startsWith('=')) {
