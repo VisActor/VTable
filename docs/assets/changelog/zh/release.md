@@ -5,13 +5,13 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix getLayoutRowTree api error [#4346](https://github.com/VisActor/VTable/issues/4346)
-- **@visactor/vtable**: fix when has many columns expand columnTree scenegraph node y value error [#4357](https://github.com/VisActor/VTable/issues/4357)
-- **@visactor/vtable**: columnWidthConfig not work when just has indicator on pivot table [#4388](https://github.com/VisActor/VTable/issues/4388)
+- **@visactor/vtable**: 修复 getLayoutRowTree api 错误 [#4346](https://github.com/VisActor/VTable/issues/4346)
+- **@visactor/vtable**: 修复当有多列展开时 columnTree 场景图节点 y 值错误 [#4357](https://github.com/VisActor/VTable/issues/4357)
+- **@visactor/vtable**: 当数据透视表仅有指标无维度时 columnWidthConfig 不生效 [#4388](https://github.com/VisActor/VTable/issues/4388)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: supplement contextmenu-click event arguments [#4364](https://github.com/VisActor/VTable/issues/4364)
+- **@visactor/vtable**: 补充 contextmenu-click 事件参数 [#4364](https://github.com/VisActor/VTable/issues/4364)
 
 
 
