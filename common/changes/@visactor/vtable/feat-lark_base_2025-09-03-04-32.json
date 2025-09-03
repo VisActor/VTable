@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: update @visactor/vrender dependencies to 0.22.17",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
