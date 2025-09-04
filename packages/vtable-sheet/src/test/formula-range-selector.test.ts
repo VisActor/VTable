@@ -1,4 +1,4 @@
-import { FormulaRangeSelector } from '../components/formula-range-selector';
+import { FormulaRangeSelector } from '../formula/formula-range-selector';
 
 describe('FormulaRangeSelector', () => {
   let rangeSelector: FormulaRangeSelector;

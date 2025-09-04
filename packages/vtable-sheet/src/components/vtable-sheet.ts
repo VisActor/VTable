@@ -6,15 +6,15 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent, FormulaCell } from '../ts-types';
+import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
-import { FormulaAutocomplete } from './formula-autocomplete';
-import { formulaEditor } from './formula-editor';
-import { CellHighlightManager } from '../managers/cell-highlight-manager';
+import { FormulaAutocomplete } from '../formula/formula-autocomplete';
+import { formulaEditor } from '../formula/formula-editor';
+import { CellHighlightManager } from '../formula/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
-import { FormulaThrottle } from '..';
+import { FormulaUIManager } from '../formula/formula-ui-manager';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -26,7 +26,7 @@ export default class VTableSheet {
   /** sheet管理器 */
   private sheetManager: SheetManager;
   /** 公式管理器 */
-  private formulaManager: FormulaManager;
+  formulaManager: FormulaManager;
   /** 事件管理器 */
   private eventManager: EventManager;
 
@@ -38,8 +38,9 @@ export default class VTableSheet {
   private workSheetInstances: Map<string, WorkSheet> = new Map();
   /** 公式自动补全 */
   private formulaAutocomplete: FormulaAutocomplete | null = null;
-  /** 单元格高亮管理器 */
-  private cellHighlightManager: CellHighlightManager;
+
+  /** 公式UI管理器 */
+  private formulaUIManager: FormulaUIManager;
 
   /** UI组件 */
   private rootElement: HTMLElement;
@@ -47,14 +48,6 @@ export default class VTableSheet {
   private sheetTabElement: HTMLElement | null = null;
   private mainMenuElement: HTMLElement | null = null;
   private contentElement: HTMLElement;
-
-  /** 防止递归调用的标志 */
-  private isUpdatingFromFormula = false;
-
-  private isEnterKeyPressed = false;
-
-  /** 公式栏是否正在显示计算结果 */
-  private isFormulaBarShowingResult = false;
 
   // tab拖拽管理器
   private dragManager: SheetTabDragManager;
@@ -72,8 +65,8 @@ export default class VTableSheet {
     this.formulaManager = new FormulaManager(this);
     this.eventManager = new EventManager(this);
     this.dragManager = new SheetTabDragManager(this);
-    this.cellHighlightManager = new CellHighlightManager(this);
     this.menuManager = new MenuManager(this);
+    this.formulaUIManager = new FormulaUIManager(this);
 
     // 初始化UI
     this.initUI();
@@ -134,7 +127,7 @@ export default class VTableSheet {
     }
     // 创建公式栏
     if (this.options.showFormulaBar) {
-      this.formulaBarElement = this.createFormulaBar();
+      this.formulaBarElement = this.formulaUIManager.createFormulaBar();
       topContainer.appendChild(this.formulaBarElement);
 
       this.initFormulaAutocomplete();
@@ -150,134 +143,6 @@ export default class VTableSheet {
       this.sheetTabElement = this.createSheetTab();
       this.rootElement.appendChild(this.sheetTabElement);
     }
-  }
-
-  /**
-   * 创建公式栏
-   */
-  private createFormulaBar(): HTMLElement {
-    // SVG图标常量
-    const cancelIcon =
-      '<svg viewBox="0 0 24 24" width="16" height="16">' +
-      '<path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 ' +
-      '6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>' +
-      '</svg>';
-    const confirmIcon =
-      '<svg viewBox="0 0 24 24" width="16" height="16">' +
-      '<path fill="currentColor" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>' +
-      '</svg>';
-
-    const formulaBar = document.createElement('div');
-    formulaBar.className = 'vtable-sheet-formula-bar';
-
-    // 创建单元格地址显示
-    const cellAddressBox = document.createElement('div');
-    cellAddressBox.className = 'vtable-sheet-cell-address';
-    cellAddressBox.textContent = '';
-    formulaBar.appendChild(cellAddressBox);
-
-    // 创建fx标志
-    const formulaIcon = document.createElement('div');
-    formulaIcon.className = 'vtable-sheet-formula-icon';
-    formulaIcon.textContent = 'fx';
-    formulaIcon.title = '插入函数';
-    formulaBar.appendChild(formulaIcon);
-
-    // 创建公式输入框
-    const formulaInput = document.createElement('input');
-    formulaInput.className = 'vtable-sheet-formula-input';
-    formulaInput.placeholder = '输入公式...';
-    formulaInput.addEventListener('input', e => this.handleFormulaInput(e));
-    formulaInput.addEventListener('keydown', e => this.handleFormulaKeydown(e));
-    formulaInput.addEventListener('focus', () => {
-      this.activateFormulaBar();
-      // 当获得焦点时，显示公式而不是计算值
-      if (this.activeWorkSheet) {
-        const editingCell = this.activeWorkSheet.editingCell;
-        if (editingCell && !this.formulaManager.formulaWorkingOnCell) {
-          const formula = this.formulaManager.getCellFormula({
-            sheet: editingCell.sheet,
-            row: editingCell.row,
-            col: editingCell.col
-          });
-          if (formula) {
-            // 显示公式
-            const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
-            formulaInput.value = displayFormula;
-            // 触发高亮
-            this.cellHighlightManager.highlightFormulaCells(displayFormula);
-
-            const formulaIfCorrect = this.formulaManager.isFormulaComplete(formulaInput.value);
-            if (formulaIfCorrect) {
-              this.formulaManager.formulaWorkingOnCell = null;
-            } else {
-              this.formulaManager.formulaWorkingOnCell = this.activeWorkSheet.editingCell;
-            }
-          }
-          // this.activeWorkSheet.tableInstance.startEditCell(editingCell.col, editingCell.row, formula);
-        }
-      }
-    });
-
-    formulaInput.addEventListener('blur', () => {
-      console.log('blur', formulaInput.selectionStart);
-      this.deactivateFormulaBar();
-      this.cellHighlightManager.clearHighlights();
-      // 当失去焦点时，如果没有确认修改，恢复显示计算值
-      if (this.activeWorkSheet) {
-        const selection = this.activeWorkSheet.getSelection();
-        if (selection) {
-          const result = this.formulaManager.getCellValue({
-            sheet: this.activeWorkSheet.getKey(),
-            row: selection.startRow,
-            col: selection.startCol
-          });
-          this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(
-            selection.startCol,
-            selection.startRow,
-            result.error ? '#ERROR!' : result.value
-          );
-          this.isUpdatingFromFormula = false;
-        }
-      }
-    });
-
-    const events = ['click', 'mouseup', 'keyup', 'select', 'input', 'focus'];
-    events.forEach(eventType => {
-      formulaInput.addEventListener(eventType, e => {
-        const cursorPos = formulaInput.selectionStart;
-        if (cursorPos !== null && cursorPos !== undefined) {
-          console.log('event', e, 'old', this.formulaManager.lastKnownCursorPosInFormulaInput, 'new', cursorPos);
-          this.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
-        }
-      });
-    });
-    formulaBar.appendChild(formulaInput);
-
-    // 创建操作按钮容器
-    const formulaActions = document.createElement('div');
-    formulaActions.className = 'vtable-sheet-formula-actions';
-
-    // 创建取消按钮
-    const cancelButton = document.createElement('button');
-    cancelButton.className = 'vtable-sheet-formula-button vtable-sheet-formula-cancel';
-    cancelButton.innerHTML = cancelIcon;
-    cancelButton.title = '取消';
-    cancelButton.addEventListener('click', () => this.cancelFormulaEdit());
-    formulaActions.appendChild(cancelButton);
-
-    // 创建确认按钮
-    const confirmButton = document.createElement('button');
-    confirmButton.className = 'vtable-sheet-formula-button vtable-sheet-formula-confirm';
-    confirmButton.innerHTML = confirmIcon;
-    confirmButton.title = '确认';
-    confirmButton.addEventListener('click', () => this.confirmFormulaEdit());
-    formulaActions.appendChild(confirmButton);
-
-    formulaBar.appendChild(formulaActions);
-
-    return formulaBar;
   }
 
   /**
@@ -298,7 +163,7 @@ export default class VTableSheet {
     if (formulaBar) {
       formulaBar.classList.remove('active');
     }
-    this.cellHighlightManager.clearHighlights();
+    this.formulaManager.cellHighlightManager.clearHighlights();
   }
 
   /**
@@ -882,12 +747,11 @@ export default class VTableSheet {
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     } as any);
 
-    // 注册事件
-    sheet.on('cell-selected', this.handleCellSelected.bind(this));
-    sheet.on('cell-value-changed', this.handleCellValueChanged.bind(this));
-    sheet.on('selection-changed', this.handleSelectionChangedForRangeMode.bind(this));
-    sheet.on('drag_select_end', this.handleSelectionChangedForRangeMode.bind(this));
-    sheet.on('selection-end', this.handleSelectionChangedForRangeMode.bind(this));
+    // 注册事件 - 优化：通过统一的EventManager处理事件
+    sheet.on('cell-selected', this.eventManager.handleCellSelected.bind(this.eventManager));
+    sheet.on('cell-value-changed', this.eventManager.handleCellValueChanged.bind(this.eventManager));
+    sheet.on('selection-changed', this.eventManager.handleSelectionChangedForRangeMode.bind(this.eventManager));
+    sheet.on('selection-end', this.eventManager.handleSelectionChangedForRangeMode.bind(this.eventManager));
 
     // 在公式管理器中添加这个sheet
     try {
@@ -964,457 +828,10 @@ export default class VTableSheet {
   }
 
   /**
-   * 处理单元格选中事件
-   */
-  private handleCellSelected(): void {
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-    // 若处于函数参数模式，拖拽过程中会频繁触发 cell-selected，这里直接忽略，等待 selection-end 统一写入
-    // if (formulaInput && this.ensureFunctionParamModeFromInput(formulaInput)) {
-    //   // 如果公式栏没有焦点，说明用户想要退出公式编辑，显示新单元格的值
-    //   if (document.activeElement !== formulaInput) {
-    //     this.formulaRangeSelector.reset();
-    //     this.updateFormulaBar();
-    //   }
-    //   return;
-    // }
-    if (this.formulaManager.formulaWorkingOnCell) {
-      return;
-    }
-    // 重置公式栏显示标志，让公式栏显示选中单元格的值
-    this.isFormulaBarShowingResult = false;
-
-    this.clearFormula();
-    this.updateFormulaBar();
-  }
-
-  /**
-   * 根据当前公式输入框内容，判定/进入函数参数模式
-   */
-  private ensureFunctionParamModeFromInput(formulaInput: HTMLInputElement): boolean {
-    const value = formulaInput.value || '';
-    // const cursor =
-    //   typeof formulaInput.selectionStart === 'number' ? (formulaInput.selectionStart as number) : value.length;
-    // console.trace('cursor', cursor, document.activeElement);
-    console.log('lastKnownCursorPosInFormulaInput', this.formulaManager.lastKnownCursorPosInFormulaInput);
-    return (
-      this.formulaManager.formulaRangeSelector?.detectFunctionParameterPosition(
-        value,
-        this.formulaManager.lastKnownCursorPosInFormulaInput
-      ) === true
-    );
-  }
-
-  /**
-   * 处理范围选择模式下的单元格选中事件
-   */
-  private handleSelectionChangedForRangeMode(event: any): void {
-    if (!this.activeWorkSheet) {
-      return;
-    }
-
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-    if (!formulaInput) {
-      return;
-    }
-
-    // 不依赖 event.type 字符串，selection-end 已在上层绑定，这里直接处理
-
-    const inParamMode = this.ensureFunctionParamModeFromInput(formulaInput);
-    console.log('inParamMode', inParamMode);
-    if (!inParamMode) {
-      return;
-    }
-
-    if (document.activeElement !== formulaInput) {
-      formulaInput.focus();
-    }
-
-    // 获取所有选择范围（支持Ctrl/Cmd多选）
-    const selections = this.activeWorkSheet.getMultipleSelections();
-    const todoSelection = selections[selections.length - 1];
-    let isCtrlAddSelection = false;
-    if (selections?.length > this.formulaManager.lastSelectionRangesOfHandling?.length) {
-      isCtrlAddSelection = true;
-    }
-    this.formulaManager.lastSelectionRangesOfHandling = selections;
-    if (!selections || selections.length === 0) {
-      return;
-    }
-
-    // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
-    const editCell = this.activeWorkSheet.editingCell;
-    // const safeSelections = selections
-    //   .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
-    //   .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择
-    const safeSelections = this.excludeEditCellFromSelection(todoSelection, editCell?.row || 0, editCell?.col || 0);
-
-    this.formulaManager.formulaRangeSelector.handleSelectionChanged(
-      [safeSelections],
-      formulaInput,
-      isCtrlAddSelection,
-      (row: number, col: number) => this.activeWorkSheet!.addressFromCoord(row, col)
-    );
-
-    // 写入后不再刷新公式栏，以免覆盖刚插入的引用
-  }
-
-  // 清除单元格地址和公式输入框
-  clearFormula = () => {
-    const cellAddressBox = this.formulaBarElement?.querySelector('.vtable-sheet-cell-address');
-    if (cellAddressBox) {
-      cellAddressBox.textContent = '';
-    }
-
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-    if (formulaInput) {
-      formulaInput.value = '';
-    }
-  };
-  /**
    * 更新公式栏
    */
   private updateFormulaBar(): void {
-    if (!this.formulaBarElement) {
-      return;
-    }
-
-    // 如果没有活动的sheet或者没有选中的单元格，则清空公式栏
-    if (!this.activeWorkSheet) {
-      this.clearFormula();
-      return;
-    }
-
-    const selection = this.activeWorkSheet.getSelection();
-    if (!selection) {
-      this.clearFormula();
-      return;
-    }
-
-    try {
-      // 边界检查
-      const rowCount = this.activeWorkSheet.getRowCount();
-      const colCount = this.activeWorkSheet.getColumnCount();
-
-      if (
-        selection.startRow < 0 ||
-        selection.startRow >= rowCount ||
-        selection.startCol < 0 ||
-        selection.startCol >= colCount
-      ) {
-        this.clearFormula();
-        return;
-      }
-
-      // 更新单元格地址
-      const cellAddressBox = this.formulaBarElement.querySelector('.vtable-sheet-cell-address');
-      if (cellAddressBox) {
-        cellAddressBox.textContent = this.activeWorkSheet.addressFromCoord(selection.startRow, selection.startCol);
-      }
-
-      // 更新公式输入框
-      const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-      if (formulaInput) {
-        // 检查是否在函数参数模式下，如果是则不覆盖公式输入框内容
-        const inParamMode = this.ensureFunctionParamModeFromInput(formulaInput);
-        if (inParamMode) {
-          return;
-        }
-
-        // 如果公式栏正在显示计算结果，不覆盖内容
-        if (this.isFormulaBarShowingResult) {
-          return;
-        }
-
-        try {
-          const formula = this.formulaManager.getCellFormula({
-            sheet: this.activeWorkSheet.getKey(),
-            row: selection.startRow,
-            col: selection.startCol
-          });
-
-          if (formula) {
-            const displayFormula = formula.startsWith('=') ? formula : '=' + formula;
-            formulaInput.value = displayFormula;
-          } else {
-            const cellValue = this.activeWorkSheet.getCellValue(selection.startRow, selection.startCol);
-            formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
-          }
-        } catch (e) {
-          console.warn('Error updating formula input:', e);
-          formulaInput.value = '';
-        }
-      }
-    } catch (e) {
-      console.error('Error in updateFormulaBar:', e);
-      this.clearFormula();
-    }
-  }
-
-  /**
-   * 处理公式输入
-   * @param event 事件
-   */
-  private handleFormulaInput(event: Event): void {
-    if (!this.activeWorkSheet) {
-      return;
-    }
-
-    // 如果是公式插入事件，不进行公式计算
-    if ((event as any).isFormulaInsertion) {
-      return;
-    }
-
-    const input = event.target as HTMLInputElement;
-    const selection = this.activeWorkSheet.getSelection();
-    if (!selection) {
-      return;
-    }
-
-    const value = input.value;
-    const cursorPosition = input.selectionStart || 0;
-
-    // 检测函数参数位置
-    this.formulaManager.formulaRangeSelector.detectFunctionParameterPosition(value, cursorPosition);
-
-    // 如果是公式，高亮引用的单元格
-    if (value.startsWith('=')) {
-      this.cellHighlightManager.highlightFormulaCells(value);
-      // 开始新的公式输入，重置标志
-      this.isFormulaBarShowingResult = false;
-    } else {
-      this.cellHighlightManager.clearHighlights();
-    }
-
-    this.isUpdatingFromFormula = false;
-
-    //当前input框内是否为公式，并且检查公式的完整性。如果不是完整的，那么不退出编辑状态，且等待用户输入其他内容，或者等待用户进行框选点选单元格设定计算选取
-    const formulaIfCorrect = this.formulaManager.isFormulaComplete(value);
-    if (formulaIfCorrect) {
-      this.formulaManager.formulaWorkingOnCell = null;
-    } else {
-      this.formulaManager.formulaWorkingOnCell = this.activeWorkSheet.editingCell;
-    }
-  }
-
-  /**
-   * 处理公式输入框键盘事件
-   * @param event 事件
-   */
-  private handleFormulaKeydown(event: KeyboardEvent): void {
-    console.log('handleFormulaKeydown');
-    if (!this.activeWorkSheet) {
-      return;
-    }
-
-    const input = event.target as HTMLInputElement;
-
-    if (event.key === 'Enter') {
-      const selection = this.activeWorkSheet.editingCell;
-      if (!selection) {
-        return;
-      }
-
-      const value = input.value;
-
-      if (value.startsWith('=') && value.length > 1) {
-        try {
-          // 检查是否包含循环引用
-          const currentCellAddress = this.activeWorkSheet.addressFromCoord(selection.row, selection.col);
-          if (value.includes(currentCellAddress)) {
-            console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
-            this.activeWorkSheet.setCellValue(selection.row, selection.col, '#CYCLE!');
-            this.isUpdatingFromFormula = true;
-            this.activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#CYCLE!');
-            this.isUpdatingFromFormula = false;
-            input.value = '';
-            input.blur();
-            return;
-          }
-
-          // 设置公式内容
-          this.formulaManager.setCellContent(
-            {
-              sheet: this.activeWorkSheet.getKey(),
-              row: selection.row,
-              col: selection.col
-            },
-            value
-          );
-
-          // 计算结果并仅写入结果展示（不写入公式文本到单元格显示）
-          const result = this.formulaManager.getCellValue({
-            sheet: this.activeWorkSheet.getKey(),
-            row: selection.row,
-            col: selection.col
-          });
-
-          this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(
-            selection.col,
-            selection.row,
-            result.error ? '#ERROR!' : result.value
-          );
-          this.isUpdatingFromFormula = false;
-
-          // 在公式栏中显示计算结果
-          input.value = result.error ? '#ERROR!' : String(result.value);
-          this.isFormulaBarShowingResult = true;
-          console.log('isFormulaBarShowingResult', true);
-          input.blur();
-        } catch (error) {
-          this.isUpdatingFromFormula = false;
-          console.warn('Formula evaluation error:', error);
-          // 显示错误状态
-          this.activeWorkSheet.setCellValue(selection.row, selection.col, '#ERROR!');
-          this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#ERROR!');
-          this.isUpdatingFromFormula = false;
-        }
-      } else {
-        // 普通值，直接设置
-        this.activeWorkSheet.setCellValue(selection.row, selection.col, value);
-        this.isUpdatingFromFormula = true;
-        this.activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, value);
-        this.isUpdatingFromFormula = false;
-      }
-
-      // 不自动移动到下一行，保持当前位置
-      this.isEnterKeyPressed = true;
-
-      // 阻止默认行为
-      event.preventDefault();
-      event.stopPropagation();
-    }
-  }
-
-  /**
-   * 处理单元格值变更事件
-   * @param event 事件
-   */
-  private handleCellValueChanged(event: CellValueChangedEvent): void {
-    if (!this.activeWorkSheet || this.isUpdatingFromFormula) {
-      return;
-    }
-
-    try {
-      // 检查新输入的值是否为公式
-      const newValue = event.newValue;
-      if (typeof newValue === 'string' && newValue.startsWith('=') && newValue.length > 1) {
-        try {
-          // 检查是否包含循环引用
-          const currentCellAddress = this.activeWorkSheet.addressFromCoord(event.row, event.col);
-          if (newValue.includes(currentCellAddress)) {
-            console.warn('Circular reference detected:', newValue, 'contains', currentCellAddress);
-            this.isUpdatingFromFormula = true;
-            this.activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#CYCLE!');
-            this.isUpdatingFromFormula = false;
-            return;
-          }
-
-          // 首先设置公式内容
-          this.formulaManager.setCellContent(
-            {
-              sheet: this.activeWorkSheet.getKey(),
-              row: event.row,
-              col: event.col
-            },
-            newValue
-          );
-
-          // 获取计算结果
-          const result = this.formulaManager.getCellValue({
-            sheet: this.activeWorkSheet.getKey(),
-            row: event.row,
-            col: event.col
-          });
-
-          // 检查当前单元格是否正在编辑（是否在公式栏中编辑）
-          const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-          const isEditing = document.activeElement === formulaInput;
-
-          // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
-          this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(
-            event.col,
-            event.row,
-            isEditing ? newValue : result.value
-          );
-          this.isUpdatingFromFormula = false;
-        } catch (error) {
-          this.isUpdatingFromFormula = false;
-          console.warn('Formula processing error:', error);
-          // 显示错误状态
-          this.isUpdatingFromFormula = true;
-          this.activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#ERROR!');
-          this.isUpdatingFromFormula = false;
-        }
-      } else {
-        // 非公式值，同步到HyperFormula
-        this.formulaManager.setCellContent(
-          {
-            sheet: this.activeWorkSheet.getKey(),
-            row: event.row,
-            col: event.col
-          },
-          newValue
-        );
-      }
-
-      // 使用FormulaThrottle来优化公式重新计算
-      const formulaThrottle = FormulaThrottle.getInstance();
-      // 判断是否需要立即更新
-      const needImmediateUpdate = this.hasFormulaDependents({
-        sheet: this.activeWorkSheet.getKey(),
-        row: event.row,
-        col: event.col
-      });
-      if (needImmediateUpdate) {
-        // 更新依赖的公式
-        const dependents = this.formulaManager.getCellDependents({
-          sheet: this.activeWorkSheet.getKey(),
-          row: event.row,
-          col: event.col
-        });
-
-        // 重新计算依赖该单元格的所有公式
-        dependents.forEach(dependent => {
-          const result = this.formulaManager.getCellValue(dependent);
-          this.isUpdatingFromFormula = true;
-          if (this.activeWorkSheet) {
-            this.activeWorkSheet.setCellValue(dependent.row, dependent.col, result.value);
-          }
-          this.isUpdatingFromFormula = false;
-        });
-        // 立即执行完整重新计算
-        formulaThrottle.immediateRebuildAndRecalculate(this.formulaManager);
-      } else {
-        // 使用节流方式进行公式计算
-        formulaThrottle.throttledRebuildAndRecalculate(this.formulaManager);
-      }
-
-      // // 如果当前编辑的单元格就是选中的单元格，更新 fx 输入框
-      // const selection = this.activeWorkSheet.getSelection();
-      // if (selection && selection.startRow === event.row && selection.startCol === event.col) {
-      //   this.updateFormulaBar();
-      // }
-    } catch (error) {
-      console.error('Error in handleCellValueChanged:', error);
-    }
-  }
-
-  /**
-   * 检查单元格是否有公式依赖
-   * @param cell 单元格
-   * @returns 是否有公式依赖
-   */
-  private hasFormulaDependents(cell: FormulaCell): boolean {
-    try {
-      const dependents = this.formulaManager.getCellDependents(cell);
-      return dependents.length > 0;
-    } catch (error) {
-      console.warn('Error checking formula dependents:', error);
-      return false;
-    }
+    this.formulaUIManager.updateFormulaBar();
   }
 
   /**
@@ -1594,8 +1011,8 @@ export default class VTableSheet {
     if (this.formulaAutocomplete) {
       this.formulaAutocomplete.release();
     }
-    if (this.cellHighlightManager) {
-      this.cellHighlightManager.release();
+    if (this.formulaManager.cellHighlightManager) {
+      this.formulaManager.cellHighlightManager.release();
     }
   }
 
@@ -1635,7 +1052,7 @@ export default class VTableSheet {
   /**
    * 若所选范围包含当前正在编辑的单元格，自动排除该单元格以避免 #CYCLE!
    */
-  private excludeEditCellFromSelection(
+  excludeEditCellFromSelection(
     range: { startRow: number; startCol: number; endRow: number; endCol: number },
     editRow: number,
     editCol: number

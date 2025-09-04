@@ -1,4 +1,4 @@
-import type VTableSheet from './vtable-sheet';
+import type VTableSheet from '../components/vtable-sheet';
 
 interface AutocompleteItem {
   type: 'function' | 'cell' | 'range';

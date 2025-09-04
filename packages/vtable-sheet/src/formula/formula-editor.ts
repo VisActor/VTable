@@ -1,6 +1,6 @@
 import * as VTable_editors from '@visactor/vtable-editors';
 import { FormulaAutocomplete } from './formula-autocomplete';
-import type VTableSheet from './vtable-sheet';
+import type VTableSheet from '../components/vtable-sheet';
 import type { EditContext } from '@visactor/vtable-editors';
 
 export class FormulaInputEditor extends VTable_editors.InputEditor {
@@ -45,7 +45,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     const value = this.element.value;
 
     // 获取高亮管理器
-    const highlightManager = (this.sheet as any).cellHighlightManager;
+    const highlightManager = this.sheet.formulaManager.cellHighlightManager;
 
     if (highlightManager) {
       if (value.startsWith('=')) {
@@ -152,7 +152,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
       if (formula) {
         this.setValue(formula);
         // 触发高亮
-        const highlightManager = (this.sheet as any).cellHighlightManager;
+        const highlightManager = this.sheet.formulaManager.cellHighlightManager;
         if (highlightManager) {
           highlightManager.highlightFormulaCells(formula);
         }
@@ -170,7 +170,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
       this.formulaAutocomplete = null;
     }
     if (this.sheet) {
-      const highlightManager = (this.sheet as any).cellHighlightManager;
+      const highlightManager = this.sheet.formulaManager.cellHighlightManager;
       if (highlightManager) {
         highlightManager.clearHighlights();
       }

@@ -235,12 +235,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    */
   private _setupEventListeners(): void {
     if (this.tableInstance) {
-      // 监听单元格选择事件
-      // this.tableInstance.on('selected_cell', (event: any) => {
-      //   this.handleCellSelected(event);
-      // });
+      // 监听单元格选择事件 - 优化：移除console.log调试代码
       this.tableInstance.on('mousedown_cell', (event: any) => {
-        console.log('click_cell', event);
         if (this.parent.formulaManager.formulaWorkingOnCell) {
           return true;
         }
@@ -253,16 +249,13 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         return true;
       });
 
-      // 监听选择变化事件（多选时）
+      // 监听选择变化事件（多选时）- 优化：移除console.log调试代码
       this.tableInstance.on('selected_changed' as any, (event: any) => {
-        console.log('selected_changed', event);
         this.handleSelectionChanged(event);
       });
 
-      // 监听拖拽选择结束事件
+      // 监听拖拽选择结束事件 - 优化：移除console.log和debugger调试代码
       this.tableInstance.on('drag_select_end' as any, (event: any) => {
-        console.log('drag_select_end', event);
-        // debugger;
         this.handleDragSelectEnd(event);
       });
 
@@ -280,7 +273,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         if (formula) {
           // 进入编辑状态前触发高亮
           const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
-          this.parent.cellHighlightManager.highlightFormulaCells(displayFormula);
+          // 确保cellHighlightManager存在
+          const highlightManager = this.parent.formulaManager.cellHighlightManager;
+          if (highlightManager) {
+            highlightManager.highlightFormulaCells(displayFormula);
+          }
 
           // 进入编辑状态
           this.tableInstance.startEditCell(event.col, event.row, formula);
