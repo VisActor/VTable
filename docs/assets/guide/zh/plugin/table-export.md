@@ -1,6 +1,13 @@
 # 表格导出插件
 我们在`@visactor/vtable-plugins`中封装了表格导出插件，使用该插件可以方便的导出VTable表格为Excel和CSV文件。
 
+## 插件说明
+
+该插件会向table实例添加exportToCsv和exportToExcel方法。
+
+- exportToCsv：导出CSV文件
+- exportToExcel：导出Excel文件
+
 
 ## 插件配置介绍
 

@@ -126,3 +126,9 @@ export type CellStyle = {
   _strokeArrayColor: string[];
   _linkColor: CanvasRenderingContext2D['fillStyle'];
 };
+export type CustomSelectionStyle = {
+  cellBorderColor?: string; //边框颜色
+  cellBorderLineWidth?: number; //边框线宽度
+  cellBorderLineDash?: number[]; //边框线虚线
+  cellBgColor?: string; //选择框背景颜色
+};

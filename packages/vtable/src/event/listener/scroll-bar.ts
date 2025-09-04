@@ -75,7 +75,7 @@ export function bindScrollBarListener(eventManager: EventManager) {
   });
 
   scenegraph.component.hScrollBar.addEventListener('pointermove', (e: FederatedPointerEvent) => {
-    scenegraph.table.stateManager.updateCursor('default');
+    scenegraph.table.stateManager.updateCursor();
     e.stopPropagation(); //防止冒泡到stage上 检测到挨着列间隔线判断成可拖拽
   });
   scenegraph.component.hScrollBar.addEventListener('pointerdown', (e: FederatedPointerEvent) => {

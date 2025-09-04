@@ -64,9 +64,25 @@ Supported event types:
   ......
 }`
 
+## BEFORE_INIT
+
+Triggered before initialization
+
+## BEFORE_UPDATE_OPTION
+
+Triggered before updating the table options
+
 ## INITIALIZED
 
 Triggered after successful initialization is completed
+
+## UPDATED
+
+Triggered after the table is updated
+
+## BEFORE_SET_SIZE
+
+Triggered before setting the size of the table
 
 ## AFTER_RENDER
 
@@ -84,6 +100,9 @@ Listen to vchart events, specific event types can refer to [VChart Events](https
    */
   onVChartEvent(type: string, listener: AnyFunction): void
 ```
+## UPDATED
+
+Triggered after the table is updated
 
 ## CLICK_CELL
 
@@ -118,6 +137,19 @@ Cell selected state change event
 ## SELECTED_CLEAR
 
 Cell selected state all be cleard, when click table's blank region, this event will be triggered.
+
+## SELECTED_CHANGED
+
+Cell selected range change event
+
+Callback parameter:
+```
+{
+    col: number;
+    row: number;
+    ranges: CellRange[];
+  };
+```
 
 ## KEYDOWN
 

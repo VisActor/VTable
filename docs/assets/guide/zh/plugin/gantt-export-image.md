@@ -471,6 +471,6 @@ getBase64Button.onclick = async () => {
   }
 };
 ```
-# 本文档由由以下人员贡献
+# 本插件开发及文档由以下人员贡献
 
 [抽象薯片](https://github.com/Violet2314)

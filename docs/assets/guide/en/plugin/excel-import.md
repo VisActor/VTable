@@ -4,6 +4,18 @@
 
 ExcelImportPlugin is an import plugin designed to provide users with an efficient solution for importing multiple formats of external data files. This plugin supports data import in Excel, CSV, JSON and HTML formats.
 
+## Plugin Description
+
+The plugin will add importFile method to the table instance.
+
+- importFile: import file, will pop up a file selector, and the user will select the file, and the file data will be automatically imported.
+
+```ts
+await tableInstance.importFile();
+```
+
+You can also directly call the import method, pass in the file path, or file object, or file content. The following has been introduced:
+
 ### Supported data formats
 - Excel File
 - CSV File (Supporting Custom Delimiters)

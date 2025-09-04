@@ -11,8 +11,10 @@ Update table configuration items, which will be automatically redrawn after bein
    *Update options currently only support full updates
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions) => void
+  updateOption(options: BaseTableConstructorOptions, updateConfig?: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean }) => void
 ```
+
+updateConfig can control the update configuration, by default, the column width cache and row height cache will be cleared, if you do not need to clear the cache, you can pass in { clearColWidthCache: false, clearRowHeightCache: false }.
 
 If you need to update a single configuration item, please refer to the other `update**` interfaces below
 
@@ -247,6 +249,14 @@ Select one or more cell ranges
    */
   selectCells(cellRanges: CellRange[]): void
 ```
+
+## selectRow(Function)
+
+Select a row
+
+## selectCol(Function)
+
+Select a column
 
 ## getSelectedCellInfos(Function)
 

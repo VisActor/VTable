@@ -198,6 +198,7 @@ const option = {
   editCellTrigger: 'click',
   keyboardOptions: {
     copySelected: true,
+    cutSelected: true,
     pasteValueToCell: true,
     selectAllOnCtrlA: true
   }

@@ -318,11 +318,17 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     return ifCan;
   }
-  updateOption(options: PivotChartConstructorOptions) {
+  updateOption(
+    options: PivotChartConstructorOptions,
+    updateConfig: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: true,
+      clearRowHeightCache: true
+    }
+  ) {
     const internalProps = this.internalProps;
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
-    super.updateOption(options);
+    super.updateOption(options, updateConfig);
     this.layoutNodeId = { seqId: 0 };
     this.internalProps.columns = cloneDeep(options.columns);
     this.internalProps.rows = cloneDeep(options.rows);
@@ -517,6 +523,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     return new Promise(resolve => {
       setTimeout(resolve, 0);
     });

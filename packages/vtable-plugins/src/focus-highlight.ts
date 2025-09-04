@@ -15,7 +15,7 @@ export interface FocusHighlightPluginOptions {
 }
 
 export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
-  id = `focus-highlight-${Date.now()}`;
+  id = `focus-highlight`;
   name = 'Focus Highlight';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.SELECTED_CELL, TABLE_EVENT_TYPE.SELECTED_CLEAR];
   table: BaseTableAPI;
