@@ -104,6 +104,8 @@ export interface GanttConstructorOptions {
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     /** 任务条是否可移动 */
     moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    /** 任务进度是否可调整 */
+    progressAdjustable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     /** 任务条拖拽超出当前日期范围时自动扩展日期范围 */
     moveToExtendDateRange?: boolean;
     /** 任务条是否可以被拖拽来改变顺序 */

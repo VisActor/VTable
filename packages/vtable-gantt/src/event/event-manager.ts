@@ -1,14 +1,13 @@
 import { vglobal } from '@visactor/vtable/es/vrender';
-import type { Circle, FederatedPointerEvent, FederatedWheelEvent } from '@visactor/vtable/es/vrender';
+import type { FederatedPointerEvent, FederatedWheelEvent } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 import { EventHandler } from '../event/EventHandler';
 import { handleWhell } from '../event/scroll';
-import { formatDate, parseDateFormat, throttle } from '../tools/util';
+import { formatDate } from '../tools/util';
 import { GANTT_EVENT_TYPE, InteractionState, TasksShowMode, TaskType } from '../ts-types';
 import { isValid } from '@visactor/vutils';
 import { getPixelRatio } from '../tools/pixel-ratio';
 import {
-  DayTimes,
   getDateIndexByX,
   getTaskIndexsByTaskY,
   _getTaskInfoByXYForCreateSchedule,
@@ -128,8 +127,8 @@ function bindTableGroupListener(event: EventManager) {
         if (e.target.name === 'task-bar-hover-shadow-left-icon') {
           stateManager.startResizeTaskBar(
             downBarNode,
-            (e.nativeEvent as any).x,
-            (e.nativeEvent as any).y,
+            (e.nativeEvent as PointerEvent).x,
+            (e.nativeEvent as PointerEvent).y,
             e.offset.y,
             'left'
           );
@@ -137,10 +136,17 @@ function bindTableGroupListener(event: EventManager) {
         } else if (e.target.name === 'task-bar-hover-shadow-right-icon') {
           stateManager.startResizeTaskBar(
             downBarNode,
-            (e.nativeEvent as any).x,
-            (e.nativeEvent as any).y,
+            (e.nativeEvent as PointerEvent).x,
+            (e.nativeEvent as PointerEvent).y,
             e.offset.y,
             'right'
+          );
+          stateManager.updateInteractionState(InteractionState.grabing);
+        } else if (e.target.name === 'task-bar-progress-handle') {
+          stateManager.startAdjustProgressBar(
+            downBarNode,
+            (e.nativeEvent as PointerEvent).x,
+            (e.nativeEvent as PointerEvent).y
           );
           stateManager.updateInteractionState(InteractionState.grabing);
         } else if (gantt.parsedOptions.taskBarMoveable) {
@@ -787,6 +793,8 @@ function bindContainerDomListener(eventManager: EventManager) {
           stateManager.hideDependencyLinkSelectedLine();
           stateManager.hideTaskBarSelectedBorder();
           stateManager.dealTaskBarResize(e);
+        } else if (stateManager.isAdjustingProgressBar()) {
+          stateManager.dealAdjustProgressBar(e);
         } else if (stateManager.isCreatingDependencyLine()) {
           // stateManager.hideDependencyLinkSelectedLine();
           stateManager.dealCreateDependencyLine(e);
@@ -810,6 +818,8 @@ function bindContainerDomListener(eventManager: EventManager) {
         stateManager.endMoveTaskBar();
       } else if (stateManager.isResizingTaskBar()) {
         stateManager.endResizeTaskBar(e.x);
+      } else if (stateManager.isAdjustingProgressBar()) {
+        stateManager.endAdjustProgressBar(e.x);
       }
     }
     setTimeout(() => {

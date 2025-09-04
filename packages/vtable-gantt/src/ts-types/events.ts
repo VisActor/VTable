@@ -132,6 +132,19 @@ export interface TableEventHandlersEventArgumentMap {
     data: IMarkLine;
     position: IPosition;
   };
+  progress_update: {
+    federatedEvent: FederatedPointerEvent;
+    event: Event;
+    /** 第几条数据 */
+    index: number;
+    sub_task_index?: number;
+    /** 新的进度值 */
+    progress: number;
+    /** 原来的进度值 */
+    oldProgress: number;
+    /** 改变后的数据条目 */
+    record: any;
+  };
 }
 
 export interface TableEventHandlersReturnMap {
@@ -148,4 +161,6 @@ export interface TableEventHandlersReturnMap {
   click_markline_create: void;
   click_markline_content: void;
   move_end_task_bar: void;
+  progress_update: void;
+  click_dependency_link_point: void;
 }
