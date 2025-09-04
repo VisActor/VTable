@@ -179,7 +179,7 @@ export class CellHighlightManager {
 
       // 创建高亮样式
       const highlightStyle = {
-        ...table._getCellStyle(coord.col, coord.row),
+        // ...table._getCellStyle(coord.col, coord.row),
         borderColor: [color, color, color, color],
         borderLineWidth: [4, 4, 4, 4],
         borderLineDash: [
@@ -196,7 +196,7 @@ export class CellHighlightManager {
       table.registerCustomCellStyle(styleId, highlightStyle);
 
       // 应用样式到单元格
-      table.arrangeCustomCellStyle({ col: coord.col, row: coord.row }, styleId, true);
+      table.arrangeCustomCellStyle({ col: coord.col, row: coord.row }, styleId, false);
     } catch (e) {
       console.error('applyCellHighlight: 错误', e);
     }
@@ -222,7 +222,7 @@ export class CellHighlightManager {
         const styleId = `highlight-${key}`;
 
         // 移除高亮样式
-        table.arrangeCustomCellStyle({ col: info.col, row: info.row }, null, true);
+        table.arrangeCustomCellStyle({ col: info.col, row: info.row }, null, false);
 
         // // 恢复原始样式
         // const originalStyle = this.originalBorderStyles.get(key);
