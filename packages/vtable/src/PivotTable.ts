@@ -612,7 +612,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (sourceNode.value === targetNode.value && sourceNode.dimensionKey === targetNode.dimensionKey) {
       targetNode.hierarchyState =
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
-      (targetNode?.children as IHeaderTreeDefine[])?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
+      (targetNode?.children as IHeaderTreeDefine[])?.forEach?.((targetChildNode: IHeaderTreeDefine, index: number) => {
         if (sourceNode?.children?.[index] && targetChildNode) {
           const beforeRowDimension = sourceNode.children.find(
             (item: any) => item.dimensionKey === targetChildNode.dimensionKey && item.value === targetChildNode.value
