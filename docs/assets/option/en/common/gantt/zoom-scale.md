@@ -15,11 +15,7 @@ ${prefix} levels(Array<Array<ITimelineScale>>)
 
 Multi-level time scale configuration, a two-dimensional array where each level is a complete time scale combination
 
-Each element in the array represents a zoom level, with level indices starting from 0:
-
-- Level 0: Coarsest time scale, suitable for viewing long-term projects (e.g., month-week combination)
-- Level 1: Medium granularity time scale, suitable for viewing medium-term plans (e.g., month-day combination)
-- Level 2: Finer time scale, suitable for viewing short-term tasks (e.g., day-hour combination)
+Each element in the array represents a zoom level, with level indices starting from 0
 
 The time scale array within each level is arranged from coarse to fine granularity. The system will automatically select the most appropriate level based on the current `timePerPixel` value.
 

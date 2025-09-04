@@ -674,89 +674,105 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
-// Create simple zoom control buttons
-function createZoomControls() {
-  // Clear any existing old buttons
-  const existingControls = document.getElementById('zoom-controls');
-  if (existingControls) {
-    existingControls.remove();
-  }
-
+/**
+ * Create zoom control buttons
+ */
+function createZoomControls(ganttInstance) {
+  // Create button container
   const controlsContainer = document.createElement('div');
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: relative;
     display: flex;
-    gap: 8px;
-    flex-direction: column;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 16px;
     font-family: Arial, sans-serif;
-    min-width: 180px;
   `;
 
-  // Title
+  // Create title
   const title = document.createElement('div');
   title.textContent = 'Zoom Controls';
   title.style.cssText = `
     font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 8px;
+    font-size: 14px;
     color: #333;
-    text-align: center;
+    margin-right: 16px;
+    align-self: center;
+    min-width: 100px;
   `;
   controlsContainer.appendChild(title);
 
-  // Button container
+  // Create button container
   const buttonsContainer = document.createElement('div');
   buttonsContainer.style.cssText = `
     display: flex;
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
+    align-items: center;
   `;
 
-  // Zoom in button
+  // Zoom in 10% button
   const zoomInBtn = document.createElement('button');
-  zoomInBtn.textContent = 'Zoom In';
+  zoomInBtn.textContent = 'Zoom In 10%';
   zoomInBtn.style.cssText = `
-    flex: 1;
-    padding: 6px 8px;
+    padding: 8px 12px;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    min-width: 100px;
   `;
+  zoomInBtn.onmouseover = () => {
+    zoomInBtn.style.background = '#45a049';
+  };
+  zoomInBtn.onmouseout = () => {
+    zoomInBtn.style.background = '#4CAF50';
+  };
   zoomInBtn.onclick = () => {
     if (ganttInstance.zoomScaleManager) {
       ganttInstance.zoomScaleManager.zoomByPercentage(10);
       updateStatusDisplay();
+    } else {
+      console.warn('ZoomScaleManager not enabled');
     }
   };
 
-  // Zoom out button
+  // Zoom out 10% button
   const zoomOutBtn = document.createElement('button');
-  zoomOutBtn.textContent = 'Zoom Out';
+  zoomOutBtn.textContent = 'Zoom Out 10%';
   zoomOutBtn.style.cssText = `
-    flex: 1;
-    padding: 6px 8px;
+    padding: 8px 12px;
     background: #f44336;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    min-width: 100px;
   `;
+  zoomOutBtn.onmouseover = () => {
+    zoomOutBtn.style.background = '#da190b';
+  };
+  zoomOutBtn.onmouseout = () => {
+    zoomOutBtn.style.background = '#f44336';
+  };
   zoomOutBtn.onclick = () => {
     if (ganttInstance.zoomScaleManager) {
       ganttInstance.zoomScaleManager.zoomByPercentage(-10);
       updateStatusDisplay();
+    } else {
+      console.warn('ZoomScaleManager not enabled');
     }
   };
 
@@ -764,51 +780,202 @@ function createZoomControls() {
   buttonsContainer.appendChild(zoomOutBtn);
   controlsContainer.appendChild(buttonsContainer);
 
-  // Status display
+  // Zoom level selector area
+  if (ganttInstance.zoomScaleManager) {
+    const levelSelectorContainer = document.createElement('div');
+    levelSelectorContainer.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    `;
+
+    const levelTitle = document.createElement('div');
+    levelTitle.textContent = 'Level:';
+    levelTitle.style.cssText = `
+      font-weight: 500;
+      font-size: 12px;
+      color: #333;
+      min-width: 50px;
+    `;
+    levelSelectorContainer.appendChild(levelTitle);
+
+    // Get level configuration
+    const levels = ganttInstance.zoomScaleManager.config.levels;
+
+    const radioGroup = document.createElement('div');
+    radioGroup.style.cssText = `
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    `;
+
+    levels.forEach((level, index) => {
+      const minUnit = ganttInstance.zoomScaleManager?.findMinTimeUnit(level);
+
+      const radioContainer = document.createElement('label');
+      radioContainer.style.cssText = `
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        background: white;
+        transition: all 0.2s;
+        white-space: nowrap;
+      `;
+      radioContainer.onmouseover = () => {
+        radioContainer.style.backgroundColor = '#f0f8ff';
+        radioContainer.style.borderColor = '#2196F3';
+      };
+      radioContainer.onmouseout = () => {
+        const radio = radioContainer.querySelector('input[type="radio"]');
+        if (radio.checked) {
+          radioContainer.style.backgroundColor = '#e3f2fd';
+          radioContainer.style.borderColor = '#2196F3';
+        } else {
+          radioContainer.style.backgroundColor = 'white';
+          radioContainer.style.borderColor = '#ddd';
+        }
+      };
+
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'zoomLevel';
+      radio.value = index.toString();
+      radio.style.cssText = `
+        margin-right: 6px;
+      `;
+
+      // Check current level
+      if (index === ganttInstance.zoomScaleManager?.getCurrentLevel()) {
+        radio.checked = true;
+        radioContainer.style.backgroundColor = '#e3f2fd';
+        radioContainer.style.borderColor = '#2196F3';
+      }
+
+      radio.onchange = () => {
+        if (radio.checked) {
+          // Update all container styles
+          const allContainers = radioGroup.querySelectorAll('label');
+          allContainers.forEach(container => {
+            container.style.backgroundColor = 'white';
+            container.style.borderColor = '#ddd';
+          });
+          radioContainer.style.backgroundColor = '#e3f2fd';
+          radioContainer.style.borderColor = '#2196F3';
+
+          // Switch to the middle state of the corresponding level
+          ganttInstance.zoomScaleManager?.setZoomPosition({
+            levelNum: index
+          });
+          updateStatusDisplay();
+        }
+      };
+
+      const label = document.createElement('span');
+      label.textContent = `L${index}: ${minUnit?.unit}×${minUnit?.step}`;
+      label.style.cssText = `
+        color: #333;
+        user-select: none;
+        font-weight: 500;
+      `;
+
+      radioContainer.appendChild(radio);
+      radioContainer.appendChild(label);
+      radioGroup.appendChild(radioContainer);
+    });
+
+    levelSelectorContainer.appendChild(radioGroup);
+    controlsContainer.appendChild(levelSelectorContainer);
+
+    // Listen to zoom events and update radio button status
+    ganttInstance.on('zoom', () => {
+      const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel();
+      const radios = radioGroup.querySelectorAll('input[name="zoomLevel"]');
+      const containers = radioGroup.querySelectorAll('label');
+
+      radios.forEach((radio, index) => {
+        radio.checked = index === currentLevel;
+        const container = containers[index];
+        if (index === currentLevel) {
+          container.style.backgroundColor = '#e3f2fd';
+          container.style.borderColor = '#2196F3';
+        } else {
+          container.style.backgroundColor = 'white';
+          container.style.borderColor = '#ddd';
+        }
+      });
+    });
+  }
+
+  // Status display area
   const statusDisplay = document.createElement('div');
   statusDisplay.id = 'zoom-status';
   statusDisplay.style.cssText = `
-    background: #f5f5f5;
-    padding: 8px;
-    border-radius: 3px;
-    font-size: 10px;
-    line-height: 1.3;
-    color: #666;
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #333;
     border: 1px solid #ddd;
+    margin-top: 12px;
+    font-family: monospace;
   `;
   controlsContainer.appendChild(statusDisplay);
 
-  // Update status display
+  // Update status display function
   function updateStatusDisplay() {
+    const currentTimePerPixel = ganttInstance.getCurrentTimePerPixel();
+    const scale = ganttInstance.parsedOptions.reverseSortedTimelineScales[0];
+    const zoomConfig = ganttInstance.parsedOptions.zoom;
+
+    let zoomScaleInfo = '';
     if (ganttInstance.zoomScaleManager) {
       const state = ganttInstance.zoomScaleManager.getCurrentZoomState();
       const currentLevel = ganttInstance.zoomScaleManager.getCurrentLevel();
-
-      statusDisplay.innerHTML = `
-        <strong>Zoom Status:</strong><br>
+      zoomScaleInfo = `
+        <strong>ZoomScale Status:</strong><br>
         • Current Level: ${currentLevel}<br>
         • Min Unit: ${state?.minUnit} × ${state?.step}<br>
         • Column Width: ${state?.currentColWidth}px<br>
-        <br>
-        <small>Tip: Hold Ctrl and scroll mouse wheel to zoom</small>
       `;
     }
+
+    const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel() ?? 'N/A';
+
+    statusDisplay.innerHTML = `
+      <strong>Status:</strong> 
+      Timeline Column Width: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px | 
+      Current Time Unit: ${scale?.unit} × ${scale?.step} | 
+      Current Level: ${currentLevel} | 
+      TimePerPixel: ${currentTimePerPixel.toFixed(0)} | 
+      Zoom Range: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
+    `;
   }
 
   // Initialize status display
   updateStatusDisplay();
 
-  // Listen to zoom events
+  // Listen to zoom events and auto-update status
   ganttInstance.on('zoom', () => {
     updateStatusDisplay();
   });
 
-  document.body.appendChild(controlsContainer);
+  // Add control panel before gantt container
+  const ganttContainer = document.getElementById(CONTAINER_ID);
+  ganttContainer.parentNode.insertBefore(controlsContainer, ganttContainer);
+
+  // Return control panel element for subsequent operations
   return controlsContainer;
 }
 
 // Create zoom control interface
-const zoomControlsContainer = createZoomControls();
+const zoomControlsContainer = createZoomControls(ganttInstance);
 
 // Cleanup when page unloads
 const cleanup = () => {

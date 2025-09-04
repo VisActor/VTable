@@ -20,28 +20,24 @@ export function handleWhell(
   let { deltaX, deltaY } = event;
   // 如果按住Ctrl键，执行缩放操作
   if (event.ctrlKey) {
-    event.preventDefault(); // 阻止默认滚动行为
+    event.preventDefault();
 
-    // 如果禁用了缩放功能或没有配置zoomScale，则不执行缩放
     const mouseWheelEnabled = gantt.options.zoomScale?.enabled;
     if (mouseWheelEnabled !== true) {
       return;
     }
 
-    // 获取鼠标在甘特图中的位置
     const rect = gantt.element.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
 
-    // 判断缩放方向
     const zoomIn = event.deltaY < 0;
 
     const zoomStep = gantt.parsedOptions.zoom?.step || 0.015;
     const factor = zoomIn ? 1 + zoomStep : 1 - zoomStep;
 
-    // 使用 timePerPixel 缩放
     gantt.zoomByFactor(factor, true, mouseX);
 
-    return; // 执行缩放后不再执行滚动
+    return;
   }
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {

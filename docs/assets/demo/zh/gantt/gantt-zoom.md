@@ -674,89 +674,105 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
-// 创建简单的缩放控制按钮
-function createZoomControls() {
-  // 清理可能存在的旧按钮
-  const existingControls = document.getElementById('zoom-controls');
-  if (existingControls) {
-    existingControls.remove();
-  }
-
+/**
+ * 创建缩放控制按钮
+ */
+function createZoomControls(ganttInstance) {
+  // 创建按钮容器
   const controlsContainer = document.createElement('div');
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: relative;
     display: flex;
-    gap: 8px;
-    flex-direction: column;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    margin-bottom: 16px;
     font-family: Arial, sans-serif;
-    min-width: 180px;
   `;
 
-  // 标题
+  // 创建标题
   const title = document.createElement('div');
   title.textContent = '缩放控制';
   title.style.cssText = `
     font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 8px;
+    font-size: 14px;
     color: #333;
-    text-align: center;
+    margin-right: 16px;
+    align-self: center;
+    min-width: 80px;
   `;
   controlsContainer.appendChild(title);
 
-  // 按钮容器
+  // 创建按钮容器
   const buttonsContainer = document.createElement('div');
   buttonsContainer.style.cssText = `
     display: flex;
-    gap: 6px;
-    margin-bottom: 8px;
+    gap: 8px;
+    align-items: center;
   `;
 
-  // 放大按钮
+  // 放大10%按钮
   const zoomInBtn = document.createElement('button');
-  zoomInBtn.textContent = '放大';
+  zoomInBtn.textContent = '放大10%';
   zoomInBtn.style.cssText = `
-    flex: 1;
-    padding: 6px 8px;
+    padding: 8px 12px;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    min-width: 80px;
   `;
+  zoomInBtn.onmouseover = () => {
+    zoomInBtn.style.background = '#45a049';
+  };
+  zoomInBtn.onmouseout = () => {
+    zoomInBtn.style.background = '#4CAF50';
+  };
   zoomInBtn.onclick = () => {
     if (ganttInstance.zoomScaleManager) {
       ganttInstance.zoomScaleManager.zoomByPercentage(10);
       updateStatusDisplay();
+    } else {
+      console.warn('ZoomScaleManager 未启用');
     }
   };
 
-  // 缩小按钮
+  // 缩小10%按钮
   const zoomOutBtn = document.createElement('button');
-  zoomOutBtn.textContent = '缩小';
+  zoomOutBtn.textContent = '缩小10%';
   zoomOutBtn.style.cssText = `
-    flex: 1;
-    padding: 6px 8px;
+    padding: 8px 12px;
     background: #f44336;
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    min-width: 80px;
   `;
+  zoomOutBtn.onmouseover = () => {
+    zoomOutBtn.style.background = '#da190b';
+  };
+  zoomOutBtn.onmouseout = () => {
+    zoomOutBtn.style.background = '#f44336';
+  };
   zoomOutBtn.onclick = () => {
     if (ganttInstance.zoomScaleManager) {
       ganttInstance.zoomScaleManager.zoomByPercentage(-10);
       updateStatusDisplay();
+    } else {
+      console.warn('ZoomScaleManager 未启用');
     }
   };
 
@@ -764,51 +780,202 @@ function createZoomControls() {
   buttonsContainer.appendChild(zoomOutBtn);
   controlsContainer.appendChild(buttonsContainer);
 
-  // 状态显示
+  // 缩放级别选择区域
+  if (ganttInstance.zoomScaleManager) {
+    const levelSelectorContainer = document.createElement('div');
+    levelSelectorContainer.style.cssText = `
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    `;
+
+    const levelTitle = document.createElement('div');
+    levelTitle.textContent = '级别:';
+    levelTitle.style.cssText = `
+      font-weight: 500;
+      font-size: 12px;
+      color: #333;
+      min-width: 40px;
+    `;
+    levelSelectorContainer.appendChild(levelTitle);
+
+    // 获取级别配置
+    const levels = ganttInstance.zoomScaleManager.config.levels;
+
+    const radioGroup = document.createElement('div');
+    radioGroup.style.cssText = `
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    `;
+
+    levels.forEach((level, index) => {
+      const minUnit = ganttInstance.zoomScaleManager?.findMinTimeUnit(level);
+
+      const radioContainer = document.createElement('label');
+      radioContainer.style.cssText = `
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        background: white;
+        transition: all 0.2s;
+        white-space: nowrap;
+      `;
+      radioContainer.onmouseover = () => {
+        radioContainer.style.backgroundColor = '#f0f8ff';
+        radioContainer.style.borderColor = '#2196F3';
+      };
+      radioContainer.onmouseout = () => {
+        const radio = radioContainer.querySelector('input[type="radio"]');
+        if (radio.checked) {
+          radioContainer.style.backgroundColor = '#e3f2fd';
+          radioContainer.style.borderColor = '#2196F3';
+        } else {
+          radioContainer.style.backgroundColor = 'white';
+          radioContainer.style.borderColor = '#ddd';
+        }
+      };
+
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'zoomLevel';
+      radio.value = index.toString();
+      radio.style.cssText = `
+        margin-right: 6px;
+      `;
+
+      // 检查当前级别
+      if (index === ganttInstance.zoomScaleManager?.getCurrentLevel()) {
+        radio.checked = true;
+        radioContainer.style.backgroundColor = '#e3f2fd';
+        radioContainer.style.borderColor = '#2196F3';
+      }
+
+      radio.onchange = () => {
+        if (radio.checked) {
+          // 更新所有容器样式
+          const allContainers = radioGroup.querySelectorAll('label');
+          allContainers.forEach(container => {
+            container.style.backgroundColor = 'white';
+            container.style.borderColor = '#ddd';
+          });
+          radioContainer.style.backgroundColor = '#e3f2fd';
+          radioContainer.style.borderColor = '#2196F3';
+
+          // 切换到对应级别的中间状态
+          ganttInstance.zoomScaleManager?.setZoomPosition({
+            levelNum: index
+          });
+          updateStatusDisplay();
+        }
+      };
+
+      const label = document.createElement('span');
+      label.textContent = `L${index}: ${minUnit?.unit}×${minUnit?.step}`;
+      label.style.cssText = `
+        color: #333;
+        user-select: none;
+        font-weight: 500;
+      `;
+
+      radioContainer.appendChild(radio);
+      radioContainer.appendChild(label);
+      radioGroup.appendChild(radioContainer);
+    });
+
+    levelSelectorContainer.appendChild(radioGroup);
+    controlsContainer.appendChild(levelSelectorContainer);
+
+    // 监听缩放事件，更新单选按钮状态
+    ganttInstance.on('zoom', () => {
+      const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel();
+      const radios = radioGroup.querySelectorAll('input[name="zoomLevel"]');
+      const containers = radioGroup.querySelectorAll('label');
+
+      radios.forEach((radio, index) => {
+        radio.checked = index === currentLevel;
+        const container = containers[index];
+        if (index === currentLevel) {
+          container.style.backgroundColor = '#e3f2fd';
+          container.style.borderColor = '#2196F3';
+        } else {
+          container.style.backgroundColor = 'white';
+          container.style.borderColor = '#ddd';
+        }
+      });
+    });
+  }
+
+  // 状态显示区域
   const statusDisplay = document.createElement('div');
   statusDisplay.id = 'zoom-status';
   statusDisplay.style.cssText = `
-    background: #f5f5f5;
-    padding: 8px;
-    border-radius: 3px;
-    font-size: 10px;
-    line-height: 1.3;
-    color: #666;
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #333;
     border: 1px solid #ddd;
+    margin-top: 12px;
+    font-family: monospace;
   `;
   controlsContainer.appendChild(statusDisplay);
 
-  // 更新状态显示
+  // 更新状态显示的函数
   function updateStatusDisplay() {
+    const currentTimePerPixel = ganttInstance.getCurrentTimePerPixel();
+    const scale = ganttInstance.parsedOptions.reverseSortedTimelineScales[0];
+    const zoomConfig = ganttInstance.parsedOptions.zoom;
+
+    let zoomScaleInfo = '';
     if (ganttInstance.zoomScaleManager) {
       const state = ganttInstance.zoomScaleManager.getCurrentZoomState();
       const currentLevel = ganttInstance.zoomScaleManager.getCurrentLevel();
-
-      statusDisplay.innerHTML = `
-        <strong>缩放状态:</strong><br>
+      zoomScaleInfo = `
+        <strong>ZoomScale状态:</strong><br>
         • 当前级别: ${currentLevel}<br>
         • 最小单位: ${state?.minUnit} × ${state?.step}<br>
         • 列宽: ${state?.currentColWidth}px<br>
-        <br>
-        <small>提示: 按住Ctrl键滚动鼠标滚轮可进行缩放</small>
       `;
     }
+
+    const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel() ?? 'N/A';
+
+    statusDisplay.innerHTML = `
+      <strong>状态:</strong> 
+      时间轴列宽: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px | 
+      当前时间单位: ${scale?.unit} × ${scale?.step} | 
+      当前级别: ${currentLevel} | 
+      TimePerPixel: ${currentTimePerPixel.toFixed(0)} | 
+      缩放范围: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
+    `;
   }
 
   // 初始化状态显示
   updateStatusDisplay();
 
-  // 监听缩放事件
+  // 监听缩放事件，自动更新状态
   ganttInstance.on('zoom', () => {
     updateStatusDisplay();
   });
 
-  document.body.appendChild(controlsContainer);
+  // 将控制面板添加到甘特图容器之前
+  const ganttContainer = document.getElementById(CONTAINER_ID);
+  ganttContainer.parentNode.insertBefore(controlsContainer, ganttContainer);
+
+  // 返回控制面板元素，便于后续操作
   return controlsContainer;
 }
 
 // 创建缩放控制界面
-const zoomControlsContainer = createZoomControls();
+const zoomControlsContainer = createZoomControls(ganttInstance);
 
 // 页面卸载时清理
 const cleanup = () => {
