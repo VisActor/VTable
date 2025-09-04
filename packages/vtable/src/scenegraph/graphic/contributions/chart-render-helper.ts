@@ -98,7 +98,7 @@ export function renderChart(chart: Chart) {
     const formatResult = table.options.specFormat(chart.attribute.spec, chartInstance, chart);
     if (formatResult.needFormatSpec && formatResult.spec) {
       const spec = formatResult.spec;
-      chartInstance.updateSpecSync(spec);
+      chartInstance.updateSpecSync(spec, false, { reuse: false, morph: false });
       updateSpec = formatResult.updateSpec ?? true;
     }
   }
