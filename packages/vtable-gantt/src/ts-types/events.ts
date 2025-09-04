@@ -132,6 +132,19 @@ export interface TableEventHandlersEventArgumentMap {
     data: IMarkLine;
     position: IPosition;
   };
+  // 添加缩放事件参数
+  zoom: {
+    /** 缩放前的列宽 */
+    oldWidth: number;
+    /** 缩放后的列宽 */
+    newWidth: number;
+    /** 缩放比例 (newWidth / oldWidth) */
+    scale: number;
+    /** 缩放前的timePerPixel */
+    oldTimePerPixel?: number;
+    /** 缩放后的timePerPixel */
+    newTimePerPixel?: number;
+  };
 }
 
 export interface TableEventHandlersReturnMap {
@@ -148,4 +161,5 @@ export interface TableEventHandlersReturnMap {
   click_markline_create: void;
   click_markline_content: void;
   move_end_task_bar: void;
+  zoom: void;
 }

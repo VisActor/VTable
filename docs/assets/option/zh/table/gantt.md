@@ -60,6 +60,14 @@
 
 {{ use: common-gantt-timeline-scale( prefix = '####') }}
 
+## zoomScale(Object)
+
+智能缩放配置。当启用时，会根据缩放级别自动切换不同的时间刻度组合，优先级高于 `timelineHeader.scales` 配置。
+
+非必填
+
+{{ use: common-gantt-zoom-scale(prefix = '###') }}
+
 ## taskBar(Object)
 
 设置任务条样式

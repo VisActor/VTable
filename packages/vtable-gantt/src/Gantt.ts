@@ -29,7 +29,7 @@ import type {
   IKeyboardOptions,
   IMarkLineCreateOptions
 } from './ts-types';
-import { TasksShowMode, TaskType } from './ts-types';
+import { TasksShowMode, TaskType, GANTT_EVENT_TYPE } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -69,6 +69,7 @@ import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 import { toBoxArray } from '@visactor/vtable';
+import { ZoomScaleManager } from './zoom-scale';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
@@ -201,7 +202,137 @@ export class Gantt extends EventTarget {
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
     markLineCreateOptions: IMarkLineCreateOptions;
+
+    zoom?: {
+      minTimePerPixel?: number;
+      maxTimePerPixel?: number;
+      step?: number;
+    };
   } = {} as any;
+
+  //  时间缩放基准 - 每像素代表多少毫秒
+  private timePerPixel: number;
+  zoomScaleManager?: ZoomScaleManager;
+
+  /**
+   * 重新计算时间相关的尺寸参数
+   * 用于根据当前 timePerPixel 重新计算 timelineColWidth
+   */
+  recalculateTimeScale(): void {
+    // 获取当前的主时间刻度
+    const primaryScale = this.parsedOptions.reverseSortedTimelineScales[0];
+    if (!primaryScale) {
+      return;
+    }
+
+    // 根据当前 scale 的 unit 和 step 计算每个单元格应该占用的毫秒数
+    let msPerStep: number;
+    switch (primaryScale.unit as string) {
+      case 'second':
+        msPerStep = 1000 * primaryScale.step;
+        break;
+      case 'minute':
+        msPerStep = 60 * 1000 * primaryScale.step;
+        break;
+      case 'hour':
+        msPerStep = 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'day':
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'week':
+        msPerStep = 7 * 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'month':
+        msPerStep = 30 * 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'quarter':
+        msPerStep = 90 * 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      case 'year':
+        msPerStep = 365 * 24 * 60 * 60 * 1000 * primaryScale.step;
+        break;
+      default:
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
+    }
+    const newTimelineColWidth = msPerStep / this.timePerPixel;
+
+    this.parsedOptions.timelineColWidth = newTimelineColWidth;
+
+    // 重新生成时间线日期映射
+    this._generateTimeLineDateMap();
+
+    // 更新尺寸和重新渲染
+    if (this.scenegraph) {
+      this._updateSize();
+      this.scenegraph.refreshAll();
+    }
+  }
+
+  /**
+   * 缩放方法，用于滚轮和双指缩放
+   * @param factor 缩放因子，大于1表示放大
+   * @param keepCenter 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
+
+    const oldTimePerPixel = this.timePerPixel;
+    const oldWidth = this.parsedOptions.timelineColWidth;
+
+    const currentTimePerPixel = this.timePerPixel;
+    let adjustedFactor = factor;
+
+    const baseTimePerPixel = 1440000;
+    const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
+
+    if (currentTimePerPixel < baseTimePerPixel) {
+      const enhancement = Math.pow(1.2, -zoomRatio);
+      adjustedFactor = Math.pow(factor, enhancement);
+    } else {
+      const dampening = Math.pow(0.9, zoomRatio);
+      adjustedFactor = Math.pow(factor, dampening);
+    }
+
+    const newTimePerPixel = this.timePerPixel / adjustedFactor;
+    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
+
+    if (this.zoomScaleManager) {
+      const targetLevel = this.zoomScaleManager.findOptimalLevel(this.timePerPixel);
+      const currentLevel = this.zoomScaleManager.getCurrentLevel();
+
+      if (targetLevel !== currentLevel) {
+        this.zoomScaleManager.switchToLevel(targetLevel);
+      } else {
+        this.recalculateTimeScale();
+      }
+    } else {
+      this.recalculateTimeScale();
+    }
+
+    if (keepCenter) {
+      if (centerX === undefined) {
+        centerX = this.scenegraph.width / 2;
+      }
+
+      const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
+      const newScrollLeft = centerTimePosition / this.timePerPixel - centerX;
+      this.stateManager.setScrollLeft(newScrollLeft);
+    }
+
+    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
+        oldWidth,
+        newWidth: this.parsedOptions.timelineColWidth,
+        scale: oldTimePerPixel / this.timePerPixel,
+        oldTimePerPixel,
+        newTimePerPixel: this.timePerPixel
+      });
+    }
+  }
+
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
@@ -218,8 +349,23 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    this._sortScales();
+    // 优先初始化 ZoomScaleManager
+    if (options.zoomScale?.enabled) {
+      this.zoomScaleManager = new ZoomScaleManager(this, options.zoomScale);
+      this._sortScales();
+    } else {
+      this._sortScales();
+    }
+
     initOptions(this);
+
+    // 初始化 timePerPixel
+    if (this.zoomScaleManager) {
+      this.timePerPixel = this.zoomScaleManager.getInitialTimePerPixel();
+    } else {
+      this.timePerPixel = (24 * 60 * 60 * 1000) / 60;
+    }
+
     // 初始化项目任务时间
     initProjectTaskTimes(this);
     this.data = new DataSource(this);
@@ -251,6 +397,8 @@ export class Gantt extends EventTarget {
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
     this.pluginManager = new PluginManager(this, options);
+
+    this.recalculateTimeScale();
   }
 
   renderTaskBarsTable() {
@@ -1336,5 +1484,46 @@ export class Gantt extends EventTarget {
    */
   formatDate(date: Date | string, format: string) {
     return formatDate(date, format);
+  }
+
+  // 查询当前的 timePerPixel 值
+  getCurrentTimePerPixel(): number {
+    return this.timePerPixel;
+  }
+
+  /**
+   * 直接设置 timePerPixel 并重新计算时间轴
+   */
+  setTimePerPixel(timePerPixel: number): void {
+    // 应用 timePerPixel 限制
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
+
+    const oldTimePerPixel = this.timePerPixel;
+    const oldWidth = this.parsedOptions.timelineColWidth;
+
+    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, timePerPixel));
+
+    this.recalculateTimeScale();
+    this._updateSize();
+    this.scenegraph.refreshAll();
+
+    // 触发缩放事件
+    const newWidth = this.parsedOptions.timelineColWidth;
+    const scale = newWidth / oldWidth;
+
+    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
+        oldWidth,
+        newWidth,
+        scale,
+        oldTimePerPixel,
+        newTimePerPixel: this.timePerPixel
+      });
+    }
+  }
+
+  getCurrentZoomScaleLevel(): number {
+    return this.zoomScaleManager?.getCurrentLevel() ?? -1;
   }
 }

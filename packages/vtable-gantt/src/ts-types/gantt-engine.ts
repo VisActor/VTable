@@ -3,6 +3,7 @@ import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
 import type { IGanttPlugin } from '../plugins/interface';
+import type { IZoomScale } from './zoom-scale';
 export interface ITimelineDateInfo {
   days: number;
   endDate: Date;
@@ -78,6 +79,12 @@ export interface GanttConstructorOptions {
     horizontalLine?: ILineStyle;
     scales: ITimelineScale[];
   };
+
+  /**
+   * ZoomScale 多级别缩放配置（优先级高于 timelineHeader.scales）
+   * 当启用时，会根据缩放级别自动切换不同的 scales 组合
+   */
+  zoomScale?: IZoomScale;
 
   /** 任务条相关配置及样式 */
   taskBar?: {
@@ -226,6 +233,15 @@ export interface GanttConstructorOptions {
   keyboardOptions?: IKeyboardOptions;
   markLineCreateOptions?: IMarkLineCreateOptions;
   plugins?: IGanttPlugin[];
+  // 添加缩放相关配置
+  zoom?: {
+    // 最小时间每像素值（最大放大）
+    minTimePerPixel?: number;
+    // 最大时间每像素值（最大缩小）
+    maxTimePerPixel?: number;
+    // 缩放步长
+    step?: number;
+  };
 }
 /**
  * IBarLabelText
