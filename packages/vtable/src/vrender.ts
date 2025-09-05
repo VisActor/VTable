@@ -1,6 +1,14 @@
 import { loadPoptip } from '@visactor/vrender-components';
 import '@visactor/vrender-core';
-import { container, isBrowserEnv, isNodeEnv, preLoadAllModule, registerFlexLayoutPlugin } from '@visactor/vrender-core';
+import type { IText, ITextGraphicAttribute } from '@visactor/vrender-core';
+import {
+  container,
+  isBrowserEnv,
+  isNodeEnv,
+  Text as VRenderText,
+  preLoadAllModule,
+  registerFlexLayoutPlugin
+} from '@visactor/vrender-core';
 import {
   loadBrowserEnv,
   loadNodeEnv,
@@ -73,3 +81,12 @@ export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
 export * from '@visactor/vrender-components';
 export * from '@visactor/vrender-animate';
+
+export class Text extends VRenderText {
+  textMeasureId: 'fastTextMeasureContribution' = 'fastTextMeasureContribution';
+}
+
+// import { createText } from '@visactor/vrender-core';
+export function createText(attributes: ITextGraphicAttribute): IText {
+  return new Text(attributes) as unknown as IText;
+}
