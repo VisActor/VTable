@@ -1056,16 +1056,16 @@ export class Gantt extends EventTarget {
 
   release(): void {
     super.release?.();
-    this.eventManager.release();
+    this.eventManager?.release();
     this.taskListTableInstance?.release();
-    const { parentElement } = this.element;
+    const parentElement = this.element?.parentElement;
     if (parentElement) {
       parentElement.removeChild(this.element);
       this.verticalSplitResizeLine && parentElement.removeChild(this.verticalSplitResizeLine);
       this.horizontalSplitLine && parentElement.removeChild(this.horizontalSplitLine);
     }
     this.scenegraph = null;
-    this.pluginManager.release();
+    this.pluginManager?.release();
   }
 
   updateOption(options: GanttConstructorOptions) {

@@ -2530,7 +2530,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     super.release?.();
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
-    this.eventManager.release();
+    this.eventManager?.release();
     internalProps.focusControl?.release?.();
     internalProps.legends?.forEach(legend => {
       legend?.release();
@@ -2539,17 +2539,17 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.title = null;
     internalProps.emptyTip?.release();
     internalProps.emptyTip = null;
-    internalProps.layoutMap.release();
+    internalProps.layoutMap?.release();
     if (internalProps.releaseList) {
       internalProps.releaseList.forEach(releaseObj => releaseObj?.release?.());
       internalProps.releaseList = null;
     }
 
-    this.scenegraph.stage.release();
-    this.scenegraph.proxy.release();
+    this.scenegraph.stage?.release();
+    this.scenegraph.proxy?.release();
 
-    internalProps.focusControl.release();
-    const { parentElement } = internalProps.element;
+    internalProps.focusControl?.release();
+    const parentElement = internalProps.element?.parentElement;
     if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }
@@ -2559,7 +2559,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
-    this.pluginManager.release();
+    this.pluginManager?.release();
     clearChartRenderQueue();
   }
 
