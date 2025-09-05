@@ -703,7 +703,7 @@ export class EventManager {
   }
   /** TODO 其他的事件并么有做remove */
   release() {
-    this.gesture.release();
+    this.gesture?.release();
 
     // remove global event listerner
     this.globalEventListeners.forEach(item => {
