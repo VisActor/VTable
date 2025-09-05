@@ -98,7 +98,7 @@ export default class VTableSheet {
       return;
     }
 
-    const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    const formulaInput = this.formulaUIManager.formulaInput;
     if (formulaInput) {
       this.formulaAutocomplete = new FormulaAutocomplete(this.rootElement, this);
       this.formulaAutocomplete.attachTo(formulaInput);
@@ -142,82 +142,6 @@ export default class VTableSheet {
     if (this.options.showSheetTab) {
       this.sheetTabElement = this.createSheetTab();
       this.rootElement.appendChild(this.sheetTabElement);
-    }
-  }
-
-  /**
-   * 激活公式栏
-   */
-  private activateFormulaBar(): void {
-    const formulaBar = this.formulaBarElement;
-    if (formulaBar) {
-      formulaBar.classList.add('active');
-    }
-  }
-
-  /**
-   * 取消激活公式栏
-   */
-  private deactivateFormulaBar(): void {
-    const formulaBar = this.formulaBarElement;
-    if (formulaBar) {
-      formulaBar.classList.remove('active');
-    }
-    this.formulaManager.cellHighlightManager.clearHighlights();
-  }
-
-  /**
-   * 取消公式编辑
-   */
-  private cancelFormulaEdit(): void {
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-    if (formulaInput) {
-      this.updateFormulaBar(); // 重置为原始值
-    }
-  }
-
-  /**
-   * 确认公式编辑
-   */
-  private confirmFormulaEdit(): void {
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
-    if (formulaInput && this.activeWorkSheet) {
-      const selection = this.activeWorkSheet.getSelection();
-      if (!selection) {
-        return;
-      }
-
-      const value = formulaInput.value;
-
-      // 应用与按Enter键相同的逻辑
-      if (value.startsWith('=') && value.length > 1) {
-        try {
-          // 设置公式单元格
-          this.formulaManager.setCellContent(
-            {
-              sheet: this.activeWorkSheet.getKey(),
-              row: selection.startRow,
-              col: selection.startCol
-            },
-            value
-          );
-
-          // 获取计算结果
-          const result = this.formulaManager.getCellValue({
-            sheet: this.activeWorkSheet.getKey(),
-            row: selection.startRow,
-            col: selection.startCol
-          });
-
-          this.activeWorkSheet.setCellValue(selection.startRow, selection.startCol, result.value);
-        } catch (error) {
-          console.warn('Formula confirmation error:', error);
-          // 显示错误状态
-          this.activeWorkSheet.setCellValue(selection.startRow, selection.startCol, '#ERROR!');
-        }
-      } else {
-        this.activeWorkSheet.setCellValue(selection.startRow, selection.startCol, value);
-      }
     }
   }
 
@@ -722,14 +646,13 @@ export default class VTableSheet {
     const contentHeight = this.contentElement.clientHeight;
 
     // 创建sheet实例
-    const sheet = new WorkSheet({
+    const sheet = new WorkSheet(this, {
       ...sheetDefine,
       container: this.contentElement,
       width: contentWidth,
       height: contentHeight,
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
-      parent: this,
       plugins: getTablePlugins(sheetDefine, this.options),
       headerEditor: 'formula',
       editor: 'formula',
@@ -747,11 +670,11 @@ export default class VTableSheet {
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     } as any);
 
-    // 注册事件 - 优化：通过统一的EventManager处理事件
-    sheet.on('cell-selected', this.eventManager.handleCellSelected.bind(this.eventManager));
-    sheet.on('cell-value-changed', this.eventManager.handleCellValueChanged.bind(this.eventManager));
-    sheet.on('selection-changed', this.eventManager.handleSelectionChangedForRangeMode.bind(this.eventManager));
-    sheet.on('selection-end', this.eventManager.handleSelectionChangedForRangeMode.bind(this.eventManager));
+    // 注册事件 - 使用预先绑定的事件处理方法
+    sheet.on('cell-selected', this.eventManager.handleCellSelectedBound);
+    sheet.on('cell-value-changed', this.eventManager.handleCellValueChangedBound);
+    sheet.on('selection-changed', this.eventManager.handleSelectionChangedForRangeModeBound);
+    sheet.on('selection-end', this.eventManager.handleSelectionChangedForRangeModeBound);
 
     // 在公式管理器中添加这个sheet
     try {

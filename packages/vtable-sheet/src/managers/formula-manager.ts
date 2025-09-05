@@ -42,14 +42,24 @@ export class FormulaManager {
   private nextSheetId = 0;
   /** 单元格高亮管理器 */
   cellHighlightManager: CellHighlightManager;
-  /** 正在输入公式的单元格。为后面拖拽单元范围或者点击单元格选中计算范围逻辑做准备。 */
+  /** 正在输入公式的单元格(如果是完整的公式 不做记录。没输入完整才记录)。为后面拖拽单元范围或者点击单元格选中计算范围逻辑做准备。 */
   formulaWorkingOnCell: FormulaCell | null = null;
+  /** 上一次被记录过的光标位置。 公式输入框中光标位置 */
   lastKnownCursorPosInFormulaInput: number | null = null;
 
   /** 公式范围选择器 */
   formulaRangeSelector: FormulaRangeSelector;
   /** 正在处理的单元格选区 */
   lastSelectionRangesOfHandling: CellRange[] = [];
+
+  inputIsParamMode: {
+    inParamMode: boolean;
+    functionParamPosition: {
+      start: number;
+      end: number;
+    } | null;
+  } | null = null;
+
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.cellHighlightManager = new CellHighlightManager(sheet);

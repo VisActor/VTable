@@ -143,7 +143,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
 
     // 如果是公式，显示公式而不是计算结果
     if (this.sheet && typeof context.value === 'string') {
-      const formula = this.sheet.getFormulaManager().getCellFormula({
+      const formula = this.sheet.formulaManager.getCellFormula({
         sheet: this.sheet.getActiveSheet()?.getKey() || '',
         row: context.row,
         col: context.col
@@ -197,7 +197,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     if (isClickOnTable && newValue && newValue.startsWith('=')) {
       // 如果有sheet实例，使用FormulaManager检查公式完整性
       if (this.sheet) {
-        const formulaManager = this.sheet.getFormulaManager();
+        const formulaManager = this.sheet.formulaManager;
         if (formulaManager && typeof formulaManager.isFormulaComplete === 'function') {
           // 如果公式不完整，不退出编辑状态
           if (!formulaManager.isFormulaComplete(newValue)) {

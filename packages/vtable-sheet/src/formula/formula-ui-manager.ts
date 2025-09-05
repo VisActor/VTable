@@ -1,6 +1,7 @@
 import type VTableSheet from '../components/vtable-sheet';
 import { FormulaThrottle } from '..';
 import type { CellValueChangedEvent, FormulaCell } from '../ts-types';
+import { detectFunctionParameterPosition } from './formula-helper';
 
 /**
  * 公式UI管理器
@@ -9,8 +10,23 @@ import type { CellValueChangedEvent, FormulaCell } from '../ts-types';
 export class FormulaUIManager {
   private sheet: VTableSheet;
   private formulaBarElement: HTMLElement | null = null;
+  formulaInput: HTMLInputElement | null = null;
   isFormulaBarShowingResult = false;
-  private isUpdatingFromFormula = false;
+  private _isUpdatingFromFormula = false;
+
+  /**
+   * 获取是否正在从公式更新
+   */
+  get isUpdatingFromFormula(): boolean {
+    return this._isUpdatingFromFormula;
+  }
+
+  /**
+   * 设置是否正在从公式更新
+   */
+  set isUpdatingFromFormula(value: boolean) {
+    this._isUpdatingFromFormula = value;
+  }
   private isEnterKeyPressed = false;
 
   constructor(sheet: VTableSheet) {
@@ -50,8 +66,20 @@ export class FormulaUIManager {
 
     // 创建公式输入框
     const formulaInput = document.createElement('input');
+    this.formulaInput = formulaInput;
     formulaInput.className = 'vtable-sheet-formula-input';
     formulaInput.placeholder = '输入公式...';
+    // 光标有可能被改变的事件监听。 用于记录光标位置。
+    const events = ['click', 'mouseup', 'keyup', 'select', 'input', 'focus'];
+    events.forEach(eventType => {
+      formulaInput.addEventListener(eventType, e => {
+        const cursorPos = formulaInput.selectionStart;
+        if (cursorPos !== null && cursorPos !== undefined) {
+          console.log('event', e, 'old', this.sheet.formulaManager.lastKnownCursorPosInFormulaInput, 'new', cursorPos);
+          this.sheet.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
+        }
+      });
+    });
     formulaInput.addEventListener('input', e => this.handleFormulaInput(e));
     formulaInput.addEventListener('keydown', e => this.handleFormulaKeydown(e));
     formulaInput.addEventListener('focus', () => {
@@ -60,8 +88,8 @@ export class FormulaUIManager {
       const activeWorkSheet = this.sheet.getActiveSheet();
       if (activeWorkSheet) {
         const editingCell = activeWorkSheet.editingCell;
-        if (editingCell && !this.sheet.getFormulaManager().formulaWorkingOnCell) {
-          const formula = this.sheet.getFormulaManager().getCellFormula({
+        if (editingCell && !this.sheet.formulaManager.formulaWorkingOnCell) {
+          const formula = this.sheet.formulaManager.getCellFormula({
             sheet: editingCell.sheet,
             row: editingCell.row,
             col: editingCell.col
@@ -73,11 +101,11 @@ export class FormulaUIManager {
             // 触发高亮
             this.sheet.formulaManager.cellHighlightManager.highlightFormulaCells(displayFormula);
 
-            const formulaIfCorrect = this.sheet.getFormulaManager().isFormulaComplete(formulaInput.value);
+            const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(formulaInput.value);
             if (formulaIfCorrect) {
-              this.sheet.getFormulaManager().formulaWorkingOnCell = null;
+              this.sheet.formulaManager.formulaWorkingOnCell = null;
             } else {
-              this.sheet.getFormulaManager().formulaWorkingOnCell = activeWorkSheet.editingCell;
+              this.sheet.formulaManager.formulaWorkingOnCell = activeWorkSheet.editingCell;
             }
           }
         }
@@ -86,6 +114,10 @@ export class FormulaUIManager {
 
     formulaInput.addEventListener('blur', () => {
       console.log('blur', formulaInput.selectionStart);
+      if (this.sheet.formulaManager.formulaWorkingOnCell) {
+        return;
+      }
+
       this.deactivateFormulaBar();
       this.sheet.formulaManager.cellHighlightManager.clearHighlights();
       // 当失去焦点时，如果没有确认修改，恢复显示计算值
@@ -93,7 +125,7 @@ export class FormulaUIManager {
       if (activeWorkSheet) {
         const selection = activeWorkSheet.getSelection();
         if (selection) {
-          const result = this.sheet.getFormulaManager().getCellValue({
+          const result = this.sheet.formulaManager.getCellValue({
             sheet: activeWorkSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
@@ -109,23 +141,6 @@ export class FormulaUIManager {
       }
     });
 
-    const events = ['click', 'mouseup', 'keyup', 'select', 'input', 'focus'];
-    events.forEach(eventType => {
-      formulaInput.addEventListener(eventType, e => {
-        const cursorPos = formulaInput.selectionStart;
-        if (cursorPos !== null && cursorPos !== undefined) {
-          console.log(
-            'event',
-            e,
-            'old',
-            this.sheet.getFormulaManager().lastKnownCursorPosInFormulaInput,
-            'new',
-            cursorPos
-          );
-          this.sheet.getFormulaManager().lastKnownCursorPosInFormulaInput = cursorPos;
-        }
-      });
-    });
     formulaBar.appendChild(formulaInput);
 
     // 创建操作按钮容器
@@ -179,7 +194,7 @@ export class FormulaUIManager {
    * 取消公式编辑
    */
   cancelFormulaEdit(): void {
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    const formulaInput = this.formulaInput;
     if (formulaInput) {
       this.updateFormulaBar(); // 重置为原始值
     }
@@ -189,7 +204,7 @@ export class FormulaUIManager {
    * 确认公式编辑
    */
   confirmFormulaEdit(): void {
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    const formulaInput = this.formulaInput;
     const activeWorkSheet = this.sheet.getActiveSheet();
     if (formulaInput && activeWorkSheet) {
       const selection = activeWorkSheet.editingCell;
@@ -216,7 +231,7 @@ export class FormulaUIManager {
           }
 
           // 设置公式内容
-          this.sheet.getFormulaManager().setCellContent(
+          this.sheet.formulaManager.setCellContent(
             {
               sheet: activeWorkSheet.getKey(),
               row: selection.row,
@@ -226,7 +241,7 @@ export class FormulaUIManager {
           );
 
           // 获取计算结果
-          const result = this.sheet.getFormulaManager().getCellValue({
+          const result = this.sheet.formulaManager.getCellValue({
             sheet: activeWorkSheet.getKey(),
             row: selection.row,
             col: selection.col
@@ -287,11 +302,14 @@ export class FormulaUIManager {
       }
 
       // 更新公式输入框
-      const formulaInput = this.formulaBarElement.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+      const formulaInput = this.formulaInput;
       if (formulaInput) {
         // 检查是否在函数参数模式下，如果是则不覆盖公式输入框内容
-        const inParamMode = this.ensureFunctionParamModeFromInput(formulaInput);
-        if (inParamMode) {
+        this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+          formulaInput.value,
+          this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
+        );
+        if (this.sheet.formulaManager.inputIsParamMode.inParamMode) {
           return;
         }
 
@@ -301,7 +319,7 @@ export class FormulaUIManager {
         }
 
         try {
-          const formula = this.sheet.getFormulaManager().getCellFormula({
+          const formula = this.sheet.formulaManager.getCellFormula({
             sheet: activeWorkSheet.getKey(),
             row: selection.startRow,
             col: selection.startCol
@@ -350,7 +368,10 @@ export class FormulaUIManager {
     const cursorPosition = input.selectionStart || 0;
 
     // 检测函数参数位置
-    this.sheet.getFormulaManager().formulaRangeSelector.detectFunctionParameterPosition(value, cursorPosition);
+    this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+      value,
+      this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
+    );
 
     // 如果是公式，高亮引用的单元格
     if (value.startsWith('=')) {
@@ -364,11 +385,11 @@ export class FormulaUIManager {
     this.isUpdatingFromFormula = false;
 
     //当前input框内是否为公式，并且检查公式的完整性。如果不是完整的，那么不退出编辑状态，且等待用户输入其他内容，或者等待用户进行框选点选单元格设定计算选取
-    const formulaIfCorrect = this.sheet.getFormulaManager().isFormulaComplete(value);
+    const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(value);
     if (formulaIfCorrect) {
-      this.sheet.getFormulaManager().formulaWorkingOnCell = null;
+      this.sheet.formulaManager.formulaWorkingOnCell = null;
     } else {
-      this.sheet.getFormulaManager().formulaWorkingOnCell = activeWorkSheet.editingCell;
+      this.sheet.formulaManager.formulaWorkingOnCell = activeWorkSheet.editingCell;
     }
   }
 
@@ -409,7 +430,7 @@ export class FormulaUIManager {
           }
 
           // 设置公式内容
-          this.sheet.getFormulaManager().setCellContent(
+          this.sheet.formulaManager.setCellContent(
             {
               sheet: activeWorkSheet.getKey(),
               row: selection.row,
@@ -419,7 +440,7 @@ export class FormulaUIManager {
           );
 
           // 计算结果并仅写入结果展示（不写入公式文本到单元格显示）
-          const result = this.sheet.getFormulaManager().getCellValue({
+          const result = this.sheet.formulaManager.getCellValue({
             sheet: activeWorkSheet.getKey(),
             row: selection.row,
             col: selection.col
@@ -470,7 +491,7 @@ export class FormulaUIManager {
    */
   handleCellValueChanged(event: CellValueChangedEvent): void {
     const activeWorkSheet = this.sheet.getActiveSheet();
-    const formulaManager = this.sheet.getFormulaManager();
+    const formulaManager = this.sheet.formulaManager;
 
     if (!activeWorkSheet || this.isUpdatingFromFormula) {
       return;
@@ -509,7 +530,7 @@ export class FormulaUIManager {
           });
 
           // 检查当前单元格是否正在编辑（是否在公式栏中编辑）
-          const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+          const formulaInput = this.formulaInput;
           const isEditing = document.activeElement === formulaInput;
 
           // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
@@ -583,21 +604,23 @@ export class FormulaUIManager {
    */
   handleSelectionChangedForRangeMode(event: any): void {
     const activeWorkSheet = this.sheet.getActiveSheet();
-    const formulaManager = this.sheet.getFormulaManager();
+    const formulaManager = this.sheet.formulaManager;
     if (!activeWorkSheet) {
       return;
     }
 
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    const formulaInput = this.formulaInput;
     if (!formulaInput) {
       return;
     }
 
     // 不依赖 event.type 字符串，selection-end 已在上层绑定，这里直接处理
 
-    const inParamMode = this.ensureFunctionParamModeFromInput(formulaInput);
-    console.log('inParamMode', inParamMode);
-    if (!inParamMode) {
+    this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+      formulaInput.value,
+      this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
+    );
+    if (!this.sheet.formulaManager.inputIsParamMode.inParamMode) {
       return;
     }
 
@@ -645,7 +668,7 @@ export class FormulaUIManager {
    */
   private hasFormulaDependents(cell: FormulaCell): boolean {
     try {
-      const dependents = this.sheet.getFormulaManager().getCellDependents(cell);
+      const dependents = this.sheet.formulaManager.getCellDependents(cell);
       return dependents.length > 0;
     } catch (error) {
       console.warn('Error checking formula dependents:', error);
@@ -662,24 +685,9 @@ export class FormulaUIManager {
       cellAddressBox.textContent = '';
     }
 
-    const formulaInput = this.formulaBarElement?.querySelector('.vtable-sheet-formula-input') as HTMLInputElement;
+    const formulaInput = this.formulaInput;
     if (formulaInput) {
       formulaInput.value = '';
     }
-  }
-
-  /**
-   * 根据当前公式输入框内容，判定/进入函数参数模式
-   */
-  ensureFunctionParamModeFromInput(formulaInput: HTMLInputElement): boolean {
-    const value = formulaInput.value || '';
-    return (
-      this.sheet
-        .getFormulaManager()
-        .formulaRangeSelector?.detectFunctionParameterPosition(
-          value,
-          this.sheet.getFormulaManager().lastKnownCursorPosInFormulaInput
-        ) === true
-    );
   }
 }

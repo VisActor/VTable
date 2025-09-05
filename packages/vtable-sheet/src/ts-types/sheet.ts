@@ -14,8 +14,6 @@ export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 're
   data?: any[][];
   /** 是否显示表头 */
   showHeader?: boolean;
-  /** 父组件实例 */
-  parent?: any;
   /** 是否将第一行作为表头 */
   firstRowAsHeader?: boolean;
   /** 筛选配置 */

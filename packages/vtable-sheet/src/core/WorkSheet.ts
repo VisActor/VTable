@@ -11,7 +11,7 @@ import type {
   CellValueChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
-import type { TYPES } from '..';
+import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
 
@@ -48,11 +48,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   /** 事件总线 */
   private eventBus: EventEmitter;
 
-  private parent: any;
+  private vtableSheet: VTableSheet;
 
   editingCell: { sheet: string; row: number; col: number } | null = null;
 
-  constructor(options: IWorkSheetOptions) {
+  constructor(sheet: VTableSheet, options: IWorkSheetOptions) {
     super();
     this.options = options;
     this.container = options.container;
@@ -60,7 +60,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     // 初始化基本属性
     this.sheetKey = options.sheetKey;
     this.sheetTitle = options.sheetTitle;
-    this.parent = options.parent;
+    this.vtableSheet = sheet;
 
     // 创建表格元素
     this.element = this._createRootElement();
@@ -237,7 +237,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     if (this.tableInstance) {
       // 监听单元格选择事件 - 优化：移除console.log调试代码
       this.tableInstance.on('mousedown_cell', (event: any) => {
-        if (this.parent.formulaManager.formulaWorkingOnCell) {
+        if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
           return true;
         }
         this.editingCell = {
@@ -264,7 +264,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         this.element.classList.remove('vtable-excel-cursor');
 
         // 获取公式
-        const formula = this.parent.formulaManager.getCellFormula({
+        const formula = this.vtableSheet.formulaManager.getCellFormula({
           sheet: this.getKey(),
           row: event.row,
           col: event.col
@@ -274,7 +274,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           // 进入编辑状态前触发高亮
           const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
           // 确保cellHighlightManager存在
-          const highlightManager = this.parent.formulaManager.cellHighlightManager;
+          const highlightManager = this.vtableSheet.formulaManager.cellHighlightManager;
           if (highlightManager) {
             highlightManager.highlightFormulaCells(displayFormula);
           }
@@ -507,9 +507,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         records: data
       });
       // 更新公式引擎中的数据
-      if (this.parent?.formulaManager) {
+      if (this.vtableSheet?.formulaManager) {
         try {
-          this.parent.formulaManager.setSheetContent(this.sheetKey, data);
+          this.vtableSheet.formulaManager.setSheetContent(this.sheetKey, data);
         } catch (e) {
           console.warn('Failed to update formula data:', e);
         }

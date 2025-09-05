@@ -125,7 +125,7 @@ export class FormulaAutocomplete {
 
     // 获取函数列表
     if (type === 'function' || type === 'all') {
-      const functions = this.sheet.getFormulaManager().getAvailableFunctions();
+      const functions = this.sheet.formulaManager.getAvailableFunctions();
       const functionItems = functions
         .filter(fn => fn.toUpperCase().startsWith(searchTerm.toUpperCase()))
         .slice(0, 10) // 限制数量

@@ -12,106 +12,9 @@ export interface FunctionParamPosition {
 }
 
 export class FormulaRangeSelector {
-  private inRangeSelectionMode = false;
-  private functionParamPosition: FunctionParamPosition | null = null;
-  private supportedFunctions = [
-    'SUM',
-    'AVERAGE',
-    'MAX',
-    'MIN',
-    'COUNT',
-    'COUNTA',
-    'IF',
-    'AND',
-    'OR',
-    'NOT',
-    'ROUND',
-    'FLOOR',
-    'CEILING',
-    'ABS',
-    'SQRT',
-    'POWER',
-    'MOD',
-    'INT',
-    'RAND',
-    'TODAY',
-    'NOW',
-    'YEAR',
-    'MONTH',
-    'DAY',
-    'HOUR',
-    'MINUTE',
-    'SECOND'
-  ];
   private formulaManager: FormulaManager;
   constructor(formulaManager: FormulaManager) {
     this.formulaManager = formulaManager;
-  }
-
-  /**
-   * 检测函数参数位置
-   * @param formula 公式内容
-   * @param cursorPosition 光标位置
-   * @returns 是否在函数参数位置
-   */
-  detectFunctionParameterPosition(formula: string, cursorPosition: number): boolean {
-    if (!formula.startsWith('=')) {
-      this.inRangeSelectionMode = false;
-      this.functionParamPosition = null;
-      return false;
-    }
-
-    // 匹配函数调用模式：=FUNCTION_NAME(
-    const functionRegex = /^=([A-Za-z]+)\s*\(/i;
-    const match = formula.match(functionRegex);
-
-    if (!match) {
-      this.inRangeSelectionMode = false;
-      this.functionParamPosition = null;
-      return false;
-    }
-
-    const functionName = match[1].toUpperCase();
-    const functionStart = match.index!;
-    const openParenIndex = formula.indexOf('(', functionStart);
-
-    // 检查是否是支持的函数
-    if (!this.supportedFunctions.includes(functionName)) {
-      this.inRangeSelectionMode = false;
-      this.functionParamPosition = null;
-      return false;
-    }
-
-    // 检查光标是否在函数参数位置
-    if (cursorPosition > openParenIndex) {
-      this.inRangeSelectionMode = true;
-      this.functionParamPosition = {
-        start: openParenIndex + 1,
-        end: cursorPosition
-      };
-      return true;
-    }
-
-    // 如果光标正好在括号后面，也认为是参数位置
-    if (cursorPosition === openParenIndex + 1) {
-      this.inRangeSelectionMode = true;
-      this.functionParamPosition = {
-        start: openParenIndex + 1,
-        end: cursorPosition
-      };
-      return true;
-    }
-
-    this.inRangeSelectionMode = false;
-    this.functionParamPosition = null;
-    return false;
-  }
-
-  /**
-   * 检查是否在范围选择模式
-   */
-  isInRangeSelectionMode(): boolean {
-    return this.inRangeSelectionMode;
   }
 
   /**
@@ -190,7 +93,7 @@ export class FormulaRangeSelector {
   //   formulaInput.dispatchEvent(inputEvent);
   // }
   insertA1ReferenceInFunction(formulaInput: HTMLInputElement, a1Notation: string, isCtrlAddSelection: boolean): void {
-    if (!this.functionParamPosition) {
+    if (!this.formulaManager.inputIsParamMode.inParamMode) {
       return;
     }
 
@@ -240,7 +143,7 @@ export class FormulaRangeSelector {
     formulaInput.setSelectionRange(newCursorPos, newCursorPos);
 
     // 更新函数参数位置
-    this.functionParamPosition = {
+    this.formulaManager.inputIsParamMode.functionParamPosition = {
       start: newCursorPos,
       end: newCursorPos
     };
@@ -485,7 +388,7 @@ export class FormulaRangeSelector {
     isCtrlAddSelection: boolean,
     addressFromCoord: (row: number, col: number) => string
   ): void {
-    if (!this.inRangeSelectionMode || !selections || selections.length === 0) {
+    if (!this.formulaManager.inputIsParamMode.inParamMode || !selections || selections.length === 0) {
       return;
     }
 
@@ -493,13 +396,5 @@ export class FormulaRangeSelector {
     if (a1Notation) {
       this.insertA1ReferenceInFunction(formulaInput, a1Notation, isCtrlAddSelection);
     }
-  }
-
-  /**
-   * 重置状态
-   */
-  reset(): void {
-    this.inRangeSelectionMode = false;
-    this.functionParamPosition = null;
   }
 }

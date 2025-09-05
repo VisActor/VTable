@@ -18,7 +18,7 @@ interface DragState {
 
 export default class SheetTabDragManager {
   // 依赖的VTableSheet实例
-  private vtableSheet: VTableSheet;
+  private sheet: VTableSheet;
   // 拖拽状态
   private dragState: DragState = {
     isDragging: false,
@@ -35,8 +35,8 @@ export default class SheetTabDragManager {
   private boundMouseMove: (e: MouseEvent) => void;
   private boundMouseUp: (e: MouseEvent) => void;
 
-  constructor(vtableSheet: VTableSheet) {
-    this.vtableSheet = vtableSheet;
+  constructor(sheet: VTableSheet) {
+    this.sheet = sheet;
     // 绑定this上下文并存储函数引用
     this.boundMouseMove = e => this.handleGlobalMouseMove(e);
     this.boundMouseUp = e => this.handleGlobalMouseUp(e);
@@ -47,9 +47,7 @@ export default class SheetTabDragManager {
    */
   handleTabMouseDown(e: MouseEvent, sheetKey: string): void {
     if (!this.insertIndicator) {
-      this.insertIndicator = this.vtableSheet
-        .getRootElement()
-        .querySelector('.vtable-sheet-insert-indicator') as HTMLElement;
+      this.insertIndicator = this.sheet.getRootElement().querySelector('.vtable-sheet-insert-indicator') as HTMLElement;
     }
     if (e.button !== 0) {
       return;
@@ -201,9 +199,7 @@ export default class SheetTabDragManager {
    */
   calculateDropZones(): void {
     this.dragState.dropZones = [];
-    const tabsContainer = this.vtableSheet
-      .getSheetTabElement()
-      ?.querySelector('.vtable-sheet-tabs-container') as HTMLElement;
+    const tabsContainer = this.sheet.getSheetTabElement()?.querySelector('.vtable-sheet-tabs-container') as HTMLElement;
     if (!tabsContainer) {
       return;
     }
@@ -259,7 +255,7 @@ export default class SheetTabDragManager {
       return;
     }
     const rect = dropZone.element.getBoundingClientRect();
-    const containerRect = this.vtableSheet
+    const containerRect = this.sheet
       .getRootElement()
       .querySelector('.vtable-sheet-tabs-container')
       ?.getBoundingClientRect();
@@ -293,10 +289,10 @@ export default class SheetTabDragManager {
    */
   performTabReorder(sourceKey: string, targetKey: string, position: 'left' | 'right'): void {
     try {
-      this.vtableSheet.getSheetManager().reorderSheet(sourceKey, targetKey, position);
+      this.sheet.getSheetManager().reorderSheet(sourceKey, targetKey, position);
       // 更新UI
-      this.vtableSheet.updateSheetTabs();
-      this.vtableSheet.updateSheetMenu();
+      this.sheet.updateSheetTabs();
+      this.sheet.updateSheetMenu();
     } catch (error) {
       console.error('Tab reorder failed:', error);
     }

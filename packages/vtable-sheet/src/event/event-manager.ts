@@ -6,12 +6,23 @@ export class EventManager {
   private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
 
+  // 预先绑定的事件处理方法
+  readonly handleCellSelectedBound: () => void;
+  readonly handleCellValueChangedBound: (event: any) => void;
+  readonly handleSelectionChangedForRangeModeBound: (event: any) => void;
+
   /**
    * Creates a new EventManager instance
    * @param sheet The Sheet instance
    */
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
+
+    // 预先绑定事件处理方法
+    this.handleCellSelectedBound = this.handleCellSelected.bind(this);
+    this.handleCellValueChangedBound = this.handleCellValueChanged.bind(this);
+    this.handleSelectionChangedForRangeModeBound = this.handleSelectionChangedForRangeMode.bind(this);
+
     this.setupEventListeners();
   }
 
@@ -62,7 +73,7 @@ export class EventManager {
    */
   handleCellSelected(): void {
     // 如果在公式编辑状态，不处理
-    if (this.sheet.getFormulaManager().formulaWorkingOnCell) {
+    if (this.sheet.formulaManager.formulaWorkingOnCell) {
       return;
     }
 
