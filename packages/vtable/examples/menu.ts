@@ -281,6 +281,10 @@ export const menus = [
       {
         path: 'pivot',
         name: 'virtual-node-2'
+      },
+      {
+        path: 'pivot',
+        name: 'pivot-autoFillWidth'
       }
     ]
   },
