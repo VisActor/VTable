@@ -11,7 +11,8 @@ interface HighlightedCell {
 export class CellHighlightManager {
   private sheet: VTableSheet;
   private highlightedCells: Map<string, HighlightedCell> = new Map();
-  private originalBorderStyles: Map<string, any> = new Map(); // 保存原始边框样式
+  // /** 目前还没有自定义样式的功能 这个逻辑不需要 */
+  // private originalBorderStyles: Map<string, any> = new Map(); // 保存原始边框样式
   private colors = [
     '#4A90E2', // 蓝色
     '#50C878', // 绿色
@@ -170,15 +171,15 @@ export class CellHighlightManager {
     try {
       const key = `${coord.row}-${coord.col}`;
 
-      // 保存原始样式
-      if (!this.originalBorderStyles.has(key)) {
-        const originalStyle = table._getCellStyle(coord.col, coord.row);
-        this.originalBorderStyles.set(key, originalStyle);
-      }
+      // // 保存原始样式
+      // if (!this.originalBorderStyles.has(key)) {
+      //   const originalStyle = table.getCellStyle(coord.col, coord.row);
+      //   this.originalBorderStyles.set(key, originalStyle);
+      // }
 
       // 创建高亮样式
       const highlightStyle = {
-        ...table._getCellStyle(coord.col, coord.row),
+        // ...table._getCellStyle(coord.col, coord.row),
         borderColor: [color, color, color, color],
         borderLineWidth: [4, 4, 4, 4],
         borderLineDash: [
@@ -195,7 +196,7 @@ export class CellHighlightManager {
       table.registerCustomCellStyle(styleId, highlightStyle);
 
       // 应用样式到单元格
-      table.arrangeCustomCellStyle({ col: coord.col, row: coord.row }, styleId, true);
+      table.arrangeCustomCellStyle({ col: coord.col, row: coord.row }, styleId, false);
     } catch (e) {
       console.error('applyCellHighlight: 错误', e);
     }
@@ -221,21 +222,21 @@ export class CellHighlightManager {
         const styleId = `highlight-${key}`;
 
         // 移除高亮样式
-        table.arrangeCustomCellStyle({ col: info.col, row: info.row }, null, true);
+        table.arrangeCustomCellStyle({ col: info.col, row: info.row }, null, false);
 
-        // 恢复原始样式
-        const originalStyle = this.originalBorderStyles.get(key);
-        if (originalStyle) {
-          table.registerCustomCellStyle(styleId, originalStyle);
-          table.arrangeCustomCellStyle({ col: info.col, row: info.row }, styleId, true);
-        }
+        // // 恢复原始样式
+        // const originalStyle = this.originalBorderStyles.get(key);
+        // if (originalStyle) {
+        //   table.registerCustomCellStyle(styleId, originalStyle);
+        //   table.arrangeCustomCellStyle({ col: info.col, row: info.row }, styleId, true);
+        // }
       } catch (e) {
         console.warn(`Failed to clear highlight at ${info.row},${info.col}:`, e);
       }
     });
 
     this.highlightedCells.clear();
-    this.originalBorderStyles.clear();
+    // this.originalBorderStyles.clear();
     this.colorIndex = 0;
   }
 
@@ -306,6 +307,6 @@ export class CellHighlightManager {
   release(): void {
     this.clearHighlights();
     this.highlightedCells.clear();
-    this.originalBorderStyles.clear();
+    // this.originalBorderStyles.clear();
   }
 }

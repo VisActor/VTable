@@ -35,7 +35,8 @@ export interface IEditor<V = any, T = any> {
     newValue?: any,
     oldValue?: any,
     position?: CellAddress,
-    table?: any
+    table?: any,
+    isClickOnTable?: boolean
   ) => boolean | ValidateEnum | Promise<boolean | ValidateEnum>;
   /**
    * Called when editor mode is exited by any means.

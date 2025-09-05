@@ -4,10 +4,10 @@ import type { MainMenuItem } from '../ts-types/base';
 import { MainMenuItemKey } from '../ts-types/base';
 
 export class MenuManager {
-  private vtableSheet: VTableSheet;
+  private sheet: VTableSheet;
   private menuContainer: HTMLElement;
-  constructor(vtableSheet: VTableSheet) {
-    this.vtableSheet = vtableSheet;
+  constructor(sheet: VTableSheet) {
+    this.sheet = sheet;
     this.createMainMenu();
   }
 
@@ -35,7 +35,7 @@ export class MenuManager {
     menuContainer.appendChild(menuItems);
 
     // 动态生成菜单项
-    this.vtableSheet.getOptions().mainMenu?.items?.forEach(item => {
+    this.sheet.getOptions().mainMenu?.items?.forEach(item => {
       const li = document.createElement('li');
       li.className = 'vtable-sheet-main-menu-item';
       li.textContent = item.name;
@@ -155,7 +155,7 @@ export class MenuManager {
   }
   handleMenuClick(menuKey: MainMenuItemKey) {
     console.log('menuKey click', menuKey);
-    const tableInstance = this.vtableSheet.getActiveSheet().tableInstance;
+    const tableInstance = this.sheet.getActiveSheet().tableInstance;
 
     switch (menuKey) {
       case MainMenuItemKey.IMPORT:

@@ -60,15 +60,6 @@ export class InputEditor implements IEditor {
     input.addEventListener('wheel', e => {
       e.preventDefault();
     });
-
-    // Add input event listener for real-time sync
-    input.addEventListener('input', e => {
-      const target = e.target as HTMLInputElement;
-      if (this.container && this.table) {
-        const value = target.value;
-        this.table.changeCellValue(this.col, this.row, value);
-      }
-    });
   }
 
   setValue(value: string) {

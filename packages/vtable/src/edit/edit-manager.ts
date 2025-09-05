@@ -191,8 +191,15 @@ export class EditManager {
       this.isValidatingValue = true;
       const newValue = this.editingEditor.getValue();
       const oldValue = this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
+      const target = e?.target as HTMLElement | undefined;
 
-      const maybePromiseOrValue = this.editingEditor.validateValue?.(newValue, oldValue, this.editCell, this.table);
+      const maybePromiseOrValue = this.editingEditor.validateValue?.(
+        newValue,
+        oldValue,
+        this.editCell,
+        this.table,
+        !!this.table.getElement().contains(target)
+      );
 
       if (isPromise(maybePromiseOrValue)) {
         this.isValidatingValue = true;
