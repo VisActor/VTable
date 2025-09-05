@@ -1,4 +1,4 @@
-import { Group, createText, createRect, Image, Circle, Line } from '@visactor/vtable/es/vrender';
+import { Group, createText, createRect, Image, Circle, Line, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
 import { computeCountToTimeScale, parseStringTemplate, toBoxArray } from '../tools/util';
@@ -494,55 +494,25 @@ export class TaskBar {
       x: 0,
       y: 0,
       width: 12,
-      height: 8,
+      height: 12,
       pickable: true,
       cursor: 'ew-resize',
       visible: false
     });
 
-    // 创建手柄背景
-    const handleBackground = createRect({
-      x: 2,
-      y: 2,
-      width: 8,
-      height: 4,
-      fill: '#ffffff',
-      stroke: '#007acc',
+    // 创建三角形手柄
+    const triangleHandle = new Polygon({
+      points: [
+        { x: 6, y: 0 }, // 顶部中心点
+        { x: 0, y: 6 }, // 左下角
+        { x: 12, y: 6 } // 右下角
+      ],
+      fill: '#0064ff',
+      stroke: '#ffffff',
       lineWidth: 1,
-      cornerRadius: 2,
       pickable: false
     });
-    progressHandle.appendChild(handleBackground);
-
-    // 创建手柄内部的拖拽指示线（两条竖线）
-    const line1 = createRect({
-      x: 4,
-      y: 3,
-      width: 1,
-      height: 2,
-      fill: '#007acc',
-      pickable: false
-    });
-    const line2 = createRect({
-      x: 7,
-      y: 3,
-      width: 1,
-      height: 2,
-      fill: '#007acc',
-      pickable: false
-    });
-    progressHandle.appendChild(line1);
-    progressHandle.appendChild(line2);
-
-    // 添加手柄hover效果
-    progressHandle.addEventListener('pointerenter', () => {
-      handleBackground.setAttribute('fill', '#e6f3ff');
-      handleBackground.setAttribute('stroke', '#0056b3');
-    });
-    progressHandle.addEventListener('pointerleave', () => {
-      handleBackground.setAttribute('fill', '#ffffff');
-      handleBackground.setAttribute('stroke', '#007acc');
-    });
+    progressHandle.appendChild(triangleHandle);
 
     progressHandle.name = 'task-bar-progress-handle';
     this.hoverBarProgressHandle = progressHandle;
@@ -676,7 +646,7 @@ export class TaskBar {
       const { progress } = this._scene._gantt.getTaskInfoByTaskListIndex(target.task_index, target.sub_task_index);
       const progressX = (width * progress) / 100 - 6;
       this.hoverBarProgressHandle.setAttribute('x', progressX);
-      this.hoverBarProgressHandle.setAttribute('y', height + 2); // 将手柄位置设置在进度条下方
+      this.hoverBarProgressHandle.setAttribute('y', height - 3); // 让三角形有一半在进度条内
     }
   }
   hideHoverBar() {

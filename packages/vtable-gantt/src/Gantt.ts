@@ -979,6 +979,9 @@ export class Gantt extends EventTarget {
     const progressField = this.parsedOptions.progressField;
     if (progressField) {
       taskRecord[progressField] = progress;
+      const indexs = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, indexs);
+      this._refreshTaskBar(index, sub_task_index);
     }
   }
 
