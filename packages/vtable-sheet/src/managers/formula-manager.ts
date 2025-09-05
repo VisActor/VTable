@@ -29,7 +29,7 @@ const DEFAULT_HYPERFORMULA_CONFIG = {
 
 export class FormulaManager {
   /** Sheet实例 */
-  private sheet: VTableSheet;
+  sheet: VTableSheet;
   /** HyperFormula实例 */
   private hyperFormula: HyperFormula;
   /** 工作表映射 */
@@ -60,6 +60,23 @@ export class FormulaManager {
     } | null;
   } | null = null;
 
+  inputingElement: HTMLInputElement | null = null;
+
+  private _isUpdatingFromFormula = false;
+
+  /**
+   * 获取是否正在从公式更新
+   */
+  get isUpdatingFromFormula(): boolean {
+    return this._isUpdatingFromFormula;
+  }
+
+  /**
+   * 设置是否正在从公式更新
+   */
+  set isUpdatingFromFormula(value: boolean) {
+    this._isUpdatingFromFormula = value;
+  }
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.cellHighlightManager = new CellHighlightManager(sheet);

@@ -78,28 +78,20 @@ export class EventManager {
     }
 
     // 重置公式栏显示标志，让公式栏显示选中单元格的值
-    const formulaUIManager = this.getFormulaUIManager();
-    if (formulaUIManager) {
-      formulaUIManager.isFormulaBarShowingResult = false;
-      formulaUIManager.clearFormula();
-      formulaUIManager.updateFormulaBar();
-    }
+    const formulaUIManager = this.sheet.formulaUIManager;
+    formulaUIManager.isFormulaBarShowingResult = false;
+    formulaUIManager.clearFormula();
+    formulaUIManager.updateFormulaBar();
   }
 
   /**
    * 处理单元格值变更事件
    */
   handleCellValueChanged(event: any): void {
-    const formulaUIManager = this.getFormulaUIManager();
-    if (formulaUIManager) {
-      formulaUIManager.handleCellValueChanged(event);
-    }
+    this.sheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
   }
   handleSelectionChangedForRangeMode(event: any): void {
-    const formulaUIManager = this.getFormulaUIManager();
-    if (formulaUIManager) {
-      formulaUIManager.handleSelectionChangedForRangeMode(event);
-    }
+    this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
   }
 
   // 原有方法保持不变

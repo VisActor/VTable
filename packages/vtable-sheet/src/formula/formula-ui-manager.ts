@@ -12,21 +12,7 @@ export class FormulaUIManager {
   private formulaBarElement: HTMLElement | null = null;
   formulaInput: HTMLInputElement | null = null;
   isFormulaBarShowingResult = false;
-  private _isUpdatingFromFormula = false;
 
-  /**
-   * 获取是否正在从公式更新
-   */
-  get isUpdatingFromFormula(): boolean {
-    return this._isUpdatingFromFormula;
-  }
-
-  /**
-   * 设置是否正在从公式更新
-   */
-  set isUpdatingFromFormula(value: boolean) {
-    this._isUpdatingFromFormula = value;
-  }
   private isEnterKeyPressed = false;
 
   constructor(sheet: VTableSheet) {
@@ -77,6 +63,7 @@ export class FormulaUIManager {
         if (cursorPos !== null && cursorPos !== undefined) {
           console.log('event', e, 'old', this.sheet.formulaManager.lastKnownCursorPosInFormulaInput, 'new', cursorPos);
           this.sheet.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
+          this.sheet.formulaManager.inputingElement = formulaInput;
         }
       });
     });
@@ -130,13 +117,13 @@ export class FormulaUIManager {
             row: selection.startRow,
             col: selection.startCol
           });
-          this.isUpdatingFromFormula = true;
+          this.sheet.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(
             selection.startCol,
             selection.startRow,
             result.error ? '#ERROR!' : result.value
           );
-          this.isUpdatingFromFormula = false;
+          this.sheet.formulaManager.isUpdatingFromFormula = false;
         }
       }
     });
@@ -222,9 +209,9 @@ export class FormulaUIManager {
           if (value.includes(currentCellAddress)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
             activeWorkSheet.setCellValue(selection.row, selection.col, '#CYCLE!');
-            this.isUpdatingFromFormula = true;
+            this.sheet.formulaManager.isUpdatingFromFormula = true;
             activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#CYCLE!');
-            this.isUpdatingFromFormula = false;
+            this.sheet.formulaManager.isUpdatingFromFormula = false;
             formulaInput.value = '';
             formulaInput.blur();
             return;
@@ -359,14 +346,12 @@ export class FormulaUIManager {
     }
 
     const input = event.target as HTMLInputElement;
-    const selection = activeWorkSheet.getSelection();
-    if (!selection) {
+    const editingCell = activeWorkSheet.editingCell;
+    if (!editingCell) {
       return;
     }
 
     const value = input.value;
-    const cursorPosition = input.selectionStart || 0;
-
     // 检测函数参数位置
     this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
       value,
@@ -378,19 +363,29 @@ export class FormulaUIManager {
       this.sheet.formulaManager.cellHighlightManager.highlightFormulaCells(value);
       // 开始新的公式输入，重置标志
       this.isFormulaBarShowingResult = false;
+
+      // 设置公式内容
+      this.sheet.formulaManager.setCellContent(
+        {
+          sheet: activeWorkSheet.getKey(),
+          row: editingCell.row,
+          col: editingCell.col
+        },
+        value
+      );
     } else {
       this.sheet.formulaManager.cellHighlightManager.clearHighlights();
     }
 
-    this.isUpdatingFromFormula = false;
+    this.sheet.formulaManager.isUpdatingFromFormula = false;
 
-    //当前input框内是否为公式，并且检查公式的完整性。如果不是完整的，那么不退出编辑状态，且等待用户输入其他内容，或者等待用户进行框选点选单元格设定计算选取
-    const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(value);
-    if (formulaIfCorrect) {
-      this.sheet.formulaManager.formulaWorkingOnCell = null;
-    } else {
-      this.sheet.formulaManager.formulaWorkingOnCell = activeWorkSheet.editingCell;
-    }
+    // //当前input框内是否为公式，并且检查公式的完整性。如果不是完整的，那么不退出编辑状态，且等待用户输入其他内容，或者等待用户进行框选点选单元格设定计算选取
+    // const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(value);
+    // if (formulaIfCorrect) {
+    //   this.sheet.formulaManager.formulaWorkingOnCell = null;
+    // } else {
+    this.sheet.formulaManager.formulaWorkingOnCell = activeWorkSheet.editingCell;
+    // }
   }
 
   /**
@@ -407,8 +402,8 @@ export class FormulaUIManager {
     const input = event.target as HTMLInputElement;
 
     if (event.key === 'Enter') {
-      const selection = activeWorkSheet.editingCell;
-      if (!selection) {
+      const editingCell = activeWorkSheet.editingCell;
+      if (!editingCell) {
         return;
       }
 
@@ -417,13 +412,13 @@ export class FormulaUIManager {
       if (value.startsWith('=') && value.length > 1) {
         try {
           // 检查是否包含循环引用
-          const currentCellAddress = activeWorkSheet.addressFromCoord(selection.row, selection.col);
+          const currentCellAddress = activeWorkSheet.addressFromCoord(editingCell.row, editingCell.col);
           if (value.includes(currentCellAddress)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
-            activeWorkSheet.setCellValue(selection.row, selection.col, '#CYCLE!');
-            this.isUpdatingFromFormula = true;
-            activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#CYCLE!');
-            this.isUpdatingFromFormula = false;
+            activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#CYCLE!');
+            this.sheet.formulaManager.isUpdatingFromFormula = true;
+            activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#CYCLE!');
+            this.sheet.formulaManager.isUpdatingFromFormula = false;
             input.value = '';
             input.blur();
             return;
@@ -433,8 +428,8 @@ export class FormulaUIManager {
           this.sheet.formulaManager.setCellContent(
             {
               sheet: activeWorkSheet.getKey(),
-              row: selection.row,
-              col: selection.col
+              row: editingCell.row,
+              col: editingCell.col
             },
             value
           );
@@ -442,38 +437,43 @@ export class FormulaUIManager {
           // 计算结果并仅写入结果展示（不写入公式文本到单元格显示）
           const result = this.sheet.formulaManager.getCellValue({
             sheet: activeWorkSheet.getKey(),
-            row: selection.row,
-            col: selection.col
+            row: editingCell.row,
+            col: editingCell.col
           });
 
-          this.isUpdatingFromFormula = true;
+          this.sheet.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(
-            selection.col,
-            selection.row,
+            editingCell.col,
+            editingCell.row,
             result.error ? '#ERROR!' : result.value
           );
-          this.isUpdatingFromFormula = false;
 
-          // 在公式栏中显示计算结果
-          input.value = result.error ? '#ERROR!' : String(result.value);
+          // // 在公式栏中显示计算结果
+          // input.value = result.error ? '#ERROR!' : String(result.value);
           this.isFormulaBarShowingResult = true;
           console.log('isFormulaBarShowingResult', true);
           input.blur();
+          setTimeout(() => {
+            activeWorkSheet.tableInstance.clearSelected();
+            this.sheet.formulaManager.cellHighlightManager.clearHighlights();
+            activeWorkSheet.tableInstance.selectCell(editingCell.col, editingCell.row);
+            this.sheet.formulaManager.isUpdatingFromFormula = false;
+          }, 0);
         } catch (error) {
-          this.isUpdatingFromFormula = false;
+          this.sheet.formulaManager.isUpdatingFromFormula = false;
           console.warn('Formula evaluation error:', error);
           // 显示错误状态
-          activeWorkSheet.setCellValue(selection.row, selection.col, '#ERROR!');
-          this.isUpdatingFromFormula = true;
-          activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#ERROR!');
-          this.isUpdatingFromFormula = false;
+          activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#ERROR!');
+          this.sheet.formulaManager.isUpdatingFromFormula = true;
+          activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#ERROR!');
+          this.sheet.formulaManager.isUpdatingFromFormula = false;
         }
       } else {
         // 普通值，直接设置
-        activeWorkSheet.setCellValue(selection.row, selection.col, value);
-        this.isUpdatingFromFormula = true;
-        activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, value);
-        this.isUpdatingFromFormula = false;
+        activeWorkSheet.setCellValue(editingCell.row, editingCell.col, value);
+        this.sheet.formulaManager.isUpdatingFromFormula = true;
+        activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, value);
+        this.sheet.formulaManager.isUpdatingFromFormula = false;
       }
 
       // 不自动移动到下一行，保持当前位置
@@ -482,197 +482,6 @@ export class FormulaUIManager {
       // 阻止默认行为
       event.preventDefault();
       event.stopPropagation();
-    }
-  }
-
-  /**
-   * 处理单元格值变更事件
-   * @param event 事件
-   */
-  handleCellValueChanged(event: CellValueChangedEvent): void {
-    const activeWorkSheet = this.sheet.getActiveSheet();
-    const formulaManager = this.sheet.formulaManager;
-
-    if (!activeWorkSheet || this.isUpdatingFromFormula) {
-      return;
-    }
-
-    try {
-      // 检查新输入的值是否为公式
-      const newValue = event.newValue;
-      if (typeof newValue === 'string' && newValue.startsWith('=') && newValue.length > 1) {
-        try {
-          // 检查是否包含循环引用
-          const currentCellAddress = activeWorkSheet.addressFromCoord(event.row, event.col);
-          if (newValue.includes(currentCellAddress)) {
-            console.warn('Circular reference detected:', newValue, 'contains', currentCellAddress);
-            this.isUpdatingFromFormula = true;
-            activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#CYCLE!');
-            this.isUpdatingFromFormula = false;
-            return;
-          }
-
-          // 首先设置公式内容
-          formulaManager.setCellContent(
-            {
-              sheet: activeWorkSheet.getKey(),
-              row: event.row,
-              col: event.col
-            },
-            newValue
-          );
-
-          // 获取计算结果
-          const result = formulaManager.getCellValue({
-            sheet: activeWorkSheet.getKey(),
-            row: event.row,
-            col: event.col
-          });
-
-          // 检查当前单元格是否正在编辑（是否在公式栏中编辑）
-          const formulaInput = this.formulaInput;
-          const isEditing = document.activeElement === formulaInput;
-
-          // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
-          this.isUpdatingFromFormula = true;
-          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, isEditing ? newValue : result.value);
-          this.isUpdatingFromFormula = false;
-        } catch (error) {
-          this.isUpdatingFromFormula = false;
-          console.warn('Formula processing error:', error);
-          // 显示错误状态
-          this.isUpdatingFromFormula = true;
-          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#ERROR!');
-          this.isUpdatingFromFormula = false;
-        }
-      } else {
-        // 非公式值，同步到HyperFormula
-        formulaManager.setCellContent(
-          {
-            sheet: activeWorkSheet.getKey(),
-            row: event.row,
-            col: event.col
-          },
-          newValue
-        );
-      }
-
-      // 使用FormulaThrottle来优化公式重新计算
-      const formulaThrottle = FormulaThrottle.getInstance();
-      // 判断是否需要立即更新
-      const needImmediateUpdate = this.hasFormulaDependents({
-        sheet: activeWorkSheet.getKey(),
-        row: event.row,
-        col: event.col
-      });
-      if (needImmediateUpdate) {
-        // 更新依赖的公式
-        const dependents = formulaManager.getCellDependents({
-          sheet: activeWorkSheet.getKey(),
-          row: event.row,
-          col: event.col
-        });
-
-        // 重新计算依赖该单元格的所有公式
-        dependents.forEach(dependent => {
-          const result = formulaManager.getCellValue(dependent);
-          this.isUpdatingFromFormula = true;
-          if (activeWorkSheet) {
-            activeWorkSheet.setCellValue(dependent.row, dependent.col, result.value);
-          }
-          this.isUpdatingFromFormula = false;
-        });
-        // 立即执行完整重新计算
-        formulaThrottle.immediateRebuildAndRecalculate(formulaManager);
-      } else {
-        // 使用节流方式进行公式计算
-        formulaThrottle.throttledRebuildAndRecalculate(formulaManager);
-      }
-
-      // // 如果当前编辑的单元格就是选中的单元格，更新 fx 输入框
-      // const selection = this.activeWorkSheet.getSelection();
-      // if (selection && selection.startRow === event.row && selection.startCol === event.col) {
-      //   this.updateFormulaBar();
-      // }
-    } catch (error) {
-      console.error('Error in handleCellValueChanged:', error);
-    }
-  }
-
-  /**
-   * 处理范围选择模式下的单元格选中事件
-   */
-  handleSelectionChangedForRangeMode(event: any): void {
-    const activeWorkSheet = this.sheet.getActiveSheet();
-    const formulaManager = this.sheet.formulaManager;
-    if (!activeWorkSheet) {
-      return;
-    }
-
-    const formulaInput = this.formulaInput;
-    if (!formulaInput) {
-      return;
-    }
-
-    // 不依赖 event.type 字符串，selection-end 已在上层绑定，这里直接处理
-
-    this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
-      formulaInput.value,
-      this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
-    );
-    if (!this.sheet.formulaManager.inputIsParamMode.inParamMode) {
-      return;
-    }
-
-    if (document.activeElement !== formulaInput) {
-      formulaInput.focus();
-    }
-
-    // 获取所有选择范围（支持Ctrl/Cmd多选）
-    const selections = activeWorkSheet.getMultipleSelections();
-    const todoSelection = selections[selections.length - 1];
-    let isCtrlAddSelection = false;
-    if (selections?.length > formulaManager.lastSelectionRangesOfHandling?.length) {
-      isCtrlAddSelection = true;
-    }
-    formulaManager.lastSelectionRangesOfHandling = selections;
-    if (!selections || selections.length === 0) {
-      return;
-    }
-
-    // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
-    const editCell = activeWorkSheet.editingCell;
-    // const safeSelections = selections
-    //   .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
-    //   .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择
-    const safeSelections = this.sheet.excludeEditCellFromSelection(
-      todoSelection,
-      editCell?.row || 0,
-      editCell?.col || 0
-    );
-
-    formulaManager.formulaRangeSelector.handleSelectionChanged(
-      [safeSelections],
-      formulaInput,
-      isCtrlAddSelection,
-      (row: number, col: number) => activeWorkSheet!.addressFromCoord(row, col)
-    );
-
-    // 写入后不再刷新公式栏，以免覆盖刚插入的引用
-  }
-
-  /**
-   * 检查单元格是否有公式依赖
-   * @param cell 单元格
-   * @returns 是否有公式依赖
-   */
-  private hasFormulaDependents(cell: FormulaCell): boolean {
-    try {
-      const dependents = this.sheet.formulaManager.getCellDependents(cell);
-      return dependents.length > 0;
-    } catch (error) {
-      console.warn('Error checking formula dependents:', error);
-      return false;
     }
   }
 

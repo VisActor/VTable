@@ -237,7 +237,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     if (this.tableInstance) {
       // 监听单元格选择事件 - 优化：移除console.log调试代码
       this.tableInstance.on('mousedown_cell', (event: any) => {
+        console.log('mousedown_cell', this.vtableSheet.formulaManager.formulaWorkingOnCell);
         if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+          //防止公式输入状态下，原本的input元素blur掉，导致公式输入框无法输入
+          event.event.preventDefault();
           return true;
         }
         this.editingCell = {

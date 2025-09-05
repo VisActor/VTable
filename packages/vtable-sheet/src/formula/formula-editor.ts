@@ -6,7 +6,8 @@ import type { EditContext } from '@visactor/vtable-editors';
 export class FormulaInputEditor extends VTable_editors.InputEditor {
   private formulaAutocomplete: FormulaAutocomplete | null = null;
   private sheet: VTableSheet | null = null;
-
+  // 定义存储事件处理函数的数组
+  private eventHandlers: Array<{ type: string; handler: EventListener }> = [];
   /**
    * 设置 Sheet 实例
    */
@@ -22,10 +23,34 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     super.createElement();
 
     if (this.element && this.sheet) {
-      // 添加输入事件监听
-      this.element.addEventListener('input', e => {
-        this.handleFormulaInput(e);
+      const events = ['click', 'mouseup', 'keyup', 'select', 'input', 'focus'];
+      events.forEach(eventType => {
+        const handler = (e: Event) => {
+          const cursorPos = this.element.selectionStart;
+          if (cursorPos !== null && cursorPos !== undefined) {
+            console.log(
+              'event',
+              e,
+              'old',
+              this.sheet.formulaManager.lastKnownCursorPosInFormulaInput,
+              'new',
+              cursorPos
+            );
+            this.sheet.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
+            this.sheet.formulaManager.inputingElement = this.element;
+          }
+        };
+
+        this.element.addEventListener(eventType, handler);
+        this.eventHandlers.push({ type: eventType, handler });
       });
+
+      // 添加输入事件监听
+      const inputHandler = (e: Event) => {
+        this.handleFormulaInput(e);
+      };
+      this.element.addEventListener('input', inputHandler);
+      this.eventHandlers.push({ type: 'input', handler: inputHandler });
 
       // 延迟初始化自动补全
       setTimeout(() => {
@@ -43,7 +68,12 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     }
 
     const value = this.element.value;
-
+    console.log('handleFormulaInput', value);
+    // 同步内容到顶部输入栏
+    this.sheet.formulaUIManager.formulaInput.value = value;
+    // const inputEvent = new Event('input', { bubbles: true });
+    // Object.defineProperty(inputEvent, 'isFormulaInsertion', { value: true });
+    // this.sheet.formulaUIManager.formulaInput.dispatchEvent(inputEvent);
     // 获取高亮管理器
     const highlightManager = this.sheet.formulaManager.cellHighlightManager;
 
@@ -140,7 +170,7 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
    */
   onStart(context: EditContext<string>): void {
     super.onStart(context);
-
+    this.sheet.formulaManager.inputingElement = this.element;
     // 如果是公式，显示公式而不是计算结果
     if (this.sheet && typeof context.value === 'string') {
       const formula = this.sheet.formulaManager.getCellFormula({
@@ -175,7 +205,11 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
         highlightManager.clearHighlights();
       }
     }
-
+    //解绑所有事件
+    // 解绑事件（在需要解绑的地方）
+    this.eventHandlers.forEach(({ type, handler }) => {
+      this.element.removeEventListener(type, handler);
+    });
     super.onEnd();
   }
 
@@ -199,32 +233,16 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
       if (this.sheet) {
         const formulaManager = this.sheet.formulaManager;
         if (formulaManager && typeof formulaManager.isFormulaComplete === 'function') {
+          console.log('test formula complete', newValue);
           // 如果公式不完整，不退出编辑状态
           if (!formulaManager.isFormulaComplete(newValue)) {
-            // 获取当前选中的单元格范围
-            // 注意：需要确保VTableSheet类中有getSelectedRange方法
-            // 如果没有，可能需要通过其他方式获取选中范围
-            const selectedRange = (this.sheet as any).getSelectedRange?.();
-            if (selectedRange) {
-              // 如果有选中的单元格范围，将其转换为公式引用并附加到当前公式
-              const activeSheet = this.sheet.getActiveSheet()?.getKey() || '';
-              const rangeRef = `${activeSheet}!${this.getCellRangeString(selectedRange)}`;
-
-              // 检查公式中是否已经包含了这个引用，避免重复添加
-              if (!newValue.includes(rangeRef)) {
-                // 在光标位置插入单元格引用
-                // 这里简单处理，直接追加到公式末尾
-                const updatedValue =
-                  newValue.endsWith('(') || newValue.endsWith(',') || newValue.endsWith(' ')
-                    ? `${newValue}${rangeRef}`
-                    : `${newValue},${rangeRef}`;
-
-                // 更新输入框的值
-                if (this.element) {
-                  this.element.value = updatedValue;
-                }
-              }
+            const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(newValue);
+            if (formulaIfCorrect) {
+              this.sheet.formulaManager.formulaWorkingOnCell = null;
+            } else {
+              this.sheet.formulaManager.formulaWorkingOnCell = this.sheet.getActiveSheet()?.editingCell;
             }
+
             return VTable_editors.ValidateEnum.validateNotExit;
           }
         } else {

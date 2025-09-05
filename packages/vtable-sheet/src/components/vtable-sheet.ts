@@ -40,7 +40,7 @@ export default class VTableSheet {
   private formulaAutocomplete: FormulaAutocomplete | null = null;
 
   /** 公式UI管理器 */
-  private formulaUIManager: FormulaUIManager;
+  formulaUIManager: FormulaUIManager;
 
   /** UI组件 */
   private rootElement: HTMLElement;
