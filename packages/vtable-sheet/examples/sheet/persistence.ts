@@ -59,10 +59,10 @@ export function createTable() {
         sheetTitle: '员工信息',
         filter: true, // 启用筛选
         columns: [
-          { title: '姓名', filter: true, width: 100 },
-          { title: '年龄', filter: true, width: 80 },
-          { title: '部门', filter: true, width: 100 },
-          { title: '薪资', filter: true, width: 100 }
+          { title: '姓名', filter: true, width: 100, sort: true },
+          { title: '年龄', filter: true, width: 80, sort: true },
+          { title: '部门', filter: true, width: 100, sort: true },
+          { title: '薪资', filter: true, width: 100, sort: true }
         ],
         data: [
           ['张三', 28, '技术部', 8000],

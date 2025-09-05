@@ -3,6 +3,7 @@ import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
 import type { CellValue, IStyle, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
 import type { TableSeriesNumberOptions } from '@visactor/vtable-plugins';
+import { SortState } from '@visactor/vtable/es/ts-types';
 export { VTableThemes, VTableTypes };
 /** 筛选配置 */
 export interface IFilterConfig {
@@ -47,6 +48,8 @@ export interface ISheetDefine {
   filter?: boolean | IFilterConfig;
   /** 筛选状态 - 保存当前的筛选条件和状态 */
   filterState?: IFilterState;
+  /** 排序状态 */
+  sortState?: SortState[] | SortState | null;
   /** 主题 */
   theme?: IThemeDefine;
 }

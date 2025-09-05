@@ -773,6 +773,7 @@ export default class VTableSheet {
 
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
+
     } else {
       // 创建新的sheet实例
       const instance = this.createWorkSheetInstance(sheetDefine);
@@ -784,6 +785,7 @@ export default class VTableSheet {
 
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
+
     }
 
     this.updateFormulaBar();
@@ -1438,6 +1440,15 @@ export default class VTableSheet {
           filterState = filterPlugin.getFilterState();
         }
 
+        // 获取排序状态
+        let sortState = instance.tableInstance.internalProps.sortState;
+        sortState = Array.isArray(sortState) ? sortState : [sortState];
+        const currentSortState = sortState.map(item => ({
+          field: item.field,
+          order: item.order,
+          ...(item.orderFn != null && { orderFn: item.orderFn })
+        }));
+
         sheets.push({
           ...sheetDefine,
           data,
@@ -1447,7 +1458,8 @@ export default class VTableSheet {
           frozenRowCount: instance.tableInstance.frozenRowCount,
           frozenColCount: instance.tableInstance.frozenColCount,
           active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey,
-          filterState: filterState
+          filterState: filterState,
+          sortState: currentSortState
         });
       } else {
         sheets.push(sheetDefine);
