@@ -216,6 +216,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       addRecordRule: 'Array',
       defaultCursor: 'cell',
       records: this.options.data,
+      sortState: this.options.sortState,
       container: this.element,
       showHeader: isShowTableHeader,
       keyboardOptions,

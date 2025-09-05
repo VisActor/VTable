@@ -774,8 +774,6 @@ export default class VTableSheet {
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
 
-      // 恢复排序状态
-      instance.tableInstance.updateSortState(sheetDefine.sortState);
     } else {
       // 创建新的sheet实例
       const instance = this.createWorkSheetInstance(sheetDefine);
@@ -788,8 +786,6 @@ export default class VTableSheet {
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
 
-      // 恢复排序状态
-      instance.tableInstance.updateSortState(sheetDefine.sortState);
     }
 
     this.updateFormulaBar();
