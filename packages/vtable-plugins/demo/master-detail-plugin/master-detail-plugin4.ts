@@ -176,6 +176,7 @@ export function createTable() {
     id: 'master-detail-celltype-demo',
     detailGridOptions: {
       columns: [
+        { field: 'isCheck', title: '', width: 60, headerType: 'checkbox', cellType: 'checkbox' },
         { field: 'taskName', title: '任务', width: 200, cellType: 'text' },
         { field: 'progress', title: '进度', width: 160, cellType: 'progressbar' }
       ],

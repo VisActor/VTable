@@ -95,6 +95,285 @@ const tableOptions = {
 const tableInstance = new VTable.ListTable(tableOptions);
 ```
 
+## 基础功能演示
+
+以下是一个简化的主从表功能演示，展示插件的核心工作原理和基本配置方法：
+
+```javascript livedemo template=vtable
+function generateData(count) {
+  const depts = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'];
+  return Array.from({ length: count }).map((_, i) => ({
+    id: i + 1,
+    rowNo: i + 1,
+    name: `姓名 ${i + 1}`,
+    department: depts[i % depts.length],
+    score: Math.floor(Math.random() * 100),
+    amount: Math.floor(Math.random() * 10000) / 100,
+    children:
+      i % 4 === 0
+        ? [
+            { task: `子任务 A-${i + 1}`, status: 'open' },
+            { task: `子任务 B-${i + 1}`, status: 'done' }
+          ]
+        : undefined
+  }));
+}
+
+function createTable() {
+  const records = generateData(11);
+
+  // 使用静态 DetailGridOptions
+  const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'master-detail-static-3',
+    detailGridOptions: {
+      columns: [
+        { field: 'task', title: '任务名', width: 220 },
+        { field: 'status', title: '状态', width: 120 }
+      ],
+      defaultRowHeight: 30,
+      defaultHeaderRowHeight: 30,
+      style: { margin: 12, height: 160 },
+      theme: VTable.themes.BRIGHT
+    }
+  });
+
+  // 主表列定义
+  const columns = [
+    { field: 'id', title: 'ID', width: 70, sort: true },
+    { field: 'rowNo', title: '#', width: 60, headerType: 'text', cellType: 'text' },
+    { field: 'name', title: '姓名', width: 140, sort: true },
+    { field: 'department', title: '部门', width: 140, sort: true },
+    { field: 'score', title: '分数', width: 100, sort: true },
+    {
+      field: 'amount',
+      title: '金额',
+      width: 120,
+      sort: true,
+      fieldFormat: (v) => {
+        if (typeof v === 'number' && !isNaN(v)) {
+          return `$${v.toFixed(2)}`;
+        }
+        // 尽量返回可显示的字符串，避免抛错
+        return v === undefined || v === null ? '' : String(v);
+      }
+    }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records,
+    autoFillWidth: true,
+    plugins: [masterDetailPlugin]
+  };
+
+  const tableInstance = new VTable.ListTable(option);
+
+  return tableInstance;
+}
+
+createTable();
+```
+
+### 动态配置
+
+MasterDetailPlugin 支持基于数据内容和行位置的动态配置，实现更灵活的业务逻辑处理：
+
+**应用场景**：
+- 根据不同数据类型展示不同的子表结构
+- 为特定行设置个性化的样式主题
+- 基于业务规则动态调整子表高度和列配置
+
+**实现示例**：
+
+```typescript
+const masterDetailPlugin = new MasterDetailPlugin({
+  id: 'employee-detail-plugin',
+  detailGridOptions: ({ data, bodyRowIndex }) => {
+    if (bodyRowIndex === 0) {
+      return {
+        columns: [
+          {
+            field: 'project',
+            title: '项目名称',
+            width: 180
+          },
+          {
+            field: 'role',
+            title: '项目角色',
+            width: 120
+          },
+          {
+            field: 'startDate',
+            title: '开始日期',
+            width: 100
+          },
+          {
+            field: 'endDate',
+            title: '结束日期',
+            width: 100
+          },
+          {
+            field: 'progress',
+            title: '项目进度',
+            width: 100,
+          }
+        ],
+        theme: VTable.themes.BRIGHT,
+        style: {
+          margin: 20,
+          height: 300
+        }
+      };
+    }
+    return {
+      columns: [
+        {
+          field: 'project',
+          title: '项目名称',
+          width: 180
+        },
+        {
+          field: 'role',
+          title: '项目角色',
+          width: 120
+        },
+        {
+          field: 'startDate',
+          title: '开始日期',
+          width: 100
+        },
+        {
+          field: 'endDate',
+          title: '结束日期',
+          width: 100
+        },
+        {
+          field: 'progress',
+          title: '项目进度',
+          width: 100,
+        }
+      ],
+      theme: VTable.themes.DARK,
+      style: {
+        margin: 20,
+        height: 300
+      }
+    };
+  }
+});
+```
+
+### 与groupBy分组搭配使用
+
+如果在使用注册表插件的时候想要使用分组，那么配置groupBy的时候请只传入一个参数，不然插件将无法识别
+
+```javascript livedemo template=vtable
+function createGroupTable() {
+  // 模拟数据 - 注意这里使用detailData而不是children，因为children被分组功能占用
+  const mockData = [
+    {
+      'Order ID': 'CA-2015-103800',
+      'Product Name': 'Message Book',
+      Category: 'Office Supplies',
+      'Sub-Category': 'Paper',
+      Region: 'Central',
+      Sales: 21.78,
+      Profit: 6.53,
+    },
+    {
+      'Order ID': 'CA-2015-167199',
+      'Product Name': 'Granite Paper',
+      Category: 'Office Supplies',
+      'Sub-Category': 'Paper',
+      Region: 'Central',
+      Sales: 15.98,
+      Profit: 3.19
+    },
+    {
+      'Order ID': 'CA-2015-118192',
+      'Product Name': 'Xerox 1923',
+      Category: 'Office Supplies',
+      'Sub-Category': 'Paper',
+      Region: 'Central',
+      Sales: 47.98,
+      Profit: 7.19,
+    },
+    {
+      'Order ID': 'CA-2015-112326',
+      'Product Name': 'Avery 508',
+      Category: 'Office Supplies',
+      'Sub-Category': 'Labels',
+      Region: 'West',
+      Sales: 15.55,
+      Profit: 5.44,
+    },
+    {
+      'Order ID': 'US-2015-108966',
+      'Product Name': 'Think Chair',
+      Category: 'Furniture',
+      'Sub-Category': 'Chairs',
+      Region: 'West',
+      Sales: 1374.37,
+      Profit: 206.15,
+    }
+  ];
+
+  const columns = [
+    { field: 'Order ID', title: 'Order ID', width: 150 },
+    { field: 'Product Name', title: 'Product Name', width: 200 },
+    { field: 'Category', title: 'Category', width: 120 },
+    { field: 'Sub-Category', title: 'Sub-Category', width: 120 },
+    { field: 'Region', title: 'Region', width: 100 },
+    { field: 'Sales', title: 'Sales', width: 100 },
+    { field: 'Profit', title: 'Profit', width: 100 }
+  ];
+
+  // 创建主从表插件 - 使用detailData字段而不是默认的children
+  const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'master-detail-grouping-demo',
+    detailGridOptions: {
+      columns: [
+        { field: 'Order ID', title: 'Order ID', width: 150 },
+        { field: 'Product Name', title: 'Product Name', width: 200 },
+        { field: 'Category', title: 'Category', width: 120 },
+        { field: 'Sub-Category', title: 'Sub-Category', width: 120 },
+        { field: 'Region', title: 'Region', width: 100 },
+        { field: 'Sales', title: 'Sales', width: 100 },
+        { field: 'Profit', title: 'Profit', width: 100 }
+      ],
+      defaultRowHeight: 32,
+      defaultHeaderRowHeight: 36,
+      style: { margin: 12, height: 150 },
+      theme: VTable.themes.BRIGHT
+    }
+  });
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    records: mockData,
+    columns,
+    widthMode: 'standard',
+    // 分组配置 - children字段被分组功能占用
+    groupConfig: {
+      groupBy: ['Category'],
+      titleFieldFormat: (record) => {
+        return record.vtableMergeName + '(' + record.children.length + ')';
+      },
+      enableTreeStickCell: true
+    },
+    theme: VTable.themes.DEFAULT,
+    plugins: [masterDetailPlugin]
+  };
+
+  const tableInstance = new VTable.ListTable(option);
+  
+  return tableInstance;
+}
+
+createGroupTable();
+```
+
 ## 典型业务场景示例
 
 ### 场景一：企业员工管理系统
@@ -489,287 +768,6 @@ function createCustomerTable() {
 }
 
 createCustomerTable();
-```
-
-### 基础功能演示
-
-以下是一个简化的主从表功能演示，展示插件的核心工作原理和基本配置方法：
-
-```javascript livedemo template=vtable
-function generateData(count) {
-  const depts = ['Engineering', 'Marketing', 'Sales', 'HR', 'Finance'];
-  return Array.from({ length: count }).map((_, i) => ({
-    id: i + 1,
-    rowNo: i + 1,
-    name: `姓名 ${i + 1}`,
-    department: depts[i % depts.length],
-    score: Math.floor(Math.random() * 100),
-    amount: Math.floor(Math.random() * 10000) / 100,
-    children:
-      i % 4 === 0
-        ? [
-            { task: `子任务 A-${i + 1}`, status: 'open' },
-            { task: `子任务 B-${i + 1}`, status: 'done' }
-          ]
-        : undefined
-  }));
-}
-
-function createTable() {
-  const records = generateData(11);
-
-  // 使用静态 DetailGridOptions
-  const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
-    id: 'master-detail-static-3',
-    detailGridOptions: {
-      columns: [
-        { field: 'task', title: '任务名', width: 220 },
-        { field: 'status', title: '状态', width: 120 }
-      ],
-      defaultRowHeight: 30,
-      defaultHeaderRowHeight: 30,
-      style: { margin: 12, height: 160 },
-      theme: VTable.themes.BRIGHT
-    }
-  });
-
-  // 主表列定义
-  const columns = [
-    { field: 'id', title: 'ID', width: 70, sort: true },
-    { field: 'rowNo', title: '#', width: 60, headerType: 'text', cellType: 'text' },
-    { field: 'name', title: '姓名', width: 140, sort: true },
-    { field: 'department', title: '部门', width: 140, sort: true },
-    { field: 'score', title: '分数', width: 100, sort: true },
-    {
-      field: 'amount',
-      title: '金额',
-      width: 120,
-      sort: true,
-      fieldFormat: (v) => {
-        if (typeof v === 'number' && !isNaN(v)) {
-          return `$${v.toFixed(2)}`;
-        }
-        // 尽量返回可显示的字符串，避免抛错
-        return v === undefined || v === null ? '' : String(v);
-      }
-    }
-  ];
-
-  const option = {
-    container: document.getElementById(CONTAINER_ID),
-    columns,
-    records,
-    autoFillWidth: true,
-    plugins: [masterDetailPlugin]
-  };
-
-  const tableInstance = new VTable.ListTable(option);
-
-  return tableInstance;
-}
-
-createTable();
-```
-
-### 高级功能：动态配置
-
-MasterDetailPlugin 支持基于数据内容和行位置的动态配置，实现更灵活的业务逻辑处理：
-
-**应用场景**：
-- 根据不同数据类型展示不同的子表结构
-- 为特定行设置个性化的样式主题
-- 基于业务规则动态调整子表高度和列配置
-
-**实现示例**：
-
-```typescript
-const masterDetailPlugin = new MasterDetailPlugin({
-  id: 'employee-detail-plugin',
-  detailGridOptions: ({ data, bodyRowIndex }) => {
-    if (bodyRowIndex === 0) {
-      return {
-        columns: [
-          {
-            field: 'project',
-            title: '项目名称',
-            width: 180
-          },
-          {
-            field: 'role',
-            title: '项目角色',
-            width: 120
-          },
-          {
-            field: 'startDate',
-            title: '开始日期',
-            width: 100
-          },
-          {
-            field: 'endDate',
-            title: '结束日期',
-            width: 100
-          },
-          {
-            field: 'progress',
-            title: '项目进度',
-            width: 100,
-          }
-        ],
-        theme: VTable.themes.BRIGHT,
-        style: {
-          margin: 20,
-          height: 300
-        }
-      };
-    }
-    return {
-      columns: [
-        {
-          field: 'project',
-          title: '项目名称',
-          width: 180
-        },
-        {
-          field: 'role',
-          title: '项目角色',
-          width: 120
-        },
-        {
-          field: 'startDate',
-          title: '开始日期',
-          width: 100
-        },
-        {
-          field: 'endDate',
-          title: '结束日期',
-          width: 100
-        },
-        {
-          field: 'progress',
-          title: '项目进度',
-          width: 100,
-        }
-      ],
-      theme: VTable.themes.DARK,
-      style: {
-        margin: 20,
-        height: 300
-      }
-    };
-  }
-});
-```
-
-## 高级配置
-
-### 分组示例
-
-如果在使用注册表插件的时候想要使用分组，那么配置groupBy的时候请只传入一个参数，不然插件将无法识别
-
-```javascript livedemo template=vtable
-function createGroupTable() {
-  // 模拟数据 - 注意这里使用detailData而不是children，因为children被分组功能占用
-  const mockData = [
-    {
-      'Order ID': 'CA-2015-103800',
-      'Product Name': 'Message Book',
-      Category: 'Office Supplies',
-      'Sub-Category': 'Paper',
-      Region: 'Central',
-      Sales: 21.78,
-      Profit: 6.53,
-    },
-    {
-      'Order ID': 'CA-2015-167199',
-      'Product Name': 'Granite Paper',
-      Category: 'Office Supplies',
-      'Sub-Category': 'Paper',
-      Region: 'Central',
-      Sales: 15.98,
-      Profit: 3.19
-    },
-    {
-      'Order ID': 'CA-2015-118192',
-      'Product Name': 'Xerox 1923',
-      Category: 'Office Supplies',
-      'Sub-Category': 'Paper',
-      Region: 'Central',
-      Sales: 47.98,
-      Profit: 7.19,
-    },
-    {
-      'Order ID': 'CA-2015-112326',
-      'Product Name': 'Avery 508',
-      Category: 'Office Supplies',
-      'Sub-Category': 'Labels',
-      Region: 'West',
-      Sales: 15.55,
-      Profit: 5.44,
-    },
-    {
-      'Order ID': 'US-2015-108966',
-      'Product Name': 'Think Chair',
-      Category: 'Furniture',
-      'Sub-Category': 'Chairs',
-      Region: 'West',
-      Sales: 1374.37,
-      Profit: 206.15,
-    }
-  ];
-
-  const columns = [
-    { field: 'Order ID', title: 'Order ID', width: 150 },
-    { field: 'Product Name', title: 'Product Name', width: 200 },
-    { field: 'Category', title: 'Category', width: 120 },
-    { field: 'Sub-Category', title: 'Sub-Category', width: 120 },
-    { field: 'Region', title: 'Region', width: 100 },
-    { field: 'Sales', title: 'Sales', width: 100 },
-    { field: 'Profit', title: 'Profit', width: 100 }
-  ];
-
-  // 创建主从表插件 - 使用detailData字段而不是默认的children
-  const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
-    id: 'master-detail-grouping-demo',
-    detailGridOptions: {
-      columns: [
-        { field: 'Order ID', title: 'Order ID', width: 150 },
-        { field: 'Product Name', title: 'Product Name', width: 200 },
-        { field: 'Category', title: 'Category', width: 120 },
-        { field: 'Sub-Category', title: 'Sub-Category', width: 120 },
-        { field: 'Region', title: 'Region', width: 100 },
-        { field: 'Sales', title: 'Sales', width: 100 },
-        { field: 'Profit', title: 'Profit', width: 100 }
-      ],
-      defaultRowHeight: 32,
-      defaultHeaderRowHeight: 36,
-      style: { margin: 12, height: 150 },
-      theme: VTable.themes.BRIGHT
-    }
-  });
-
-  const option = {
-    container: document.getElementById(CONTAINER_ID),
-    records: mockData,
-    columns,
-    widthMode: 'standard',
-    // 分组配置 - children字段被分组功能占用
-    groupConfig: {
-      groupBy: ['Category'],
-      titleFieldFormat: (record) => {
-        return record.vtableMergeName + '(' + record.children.length + ')';
-      },
-      enableTreeStickCell: true
-    },
-    theme: VTable.themes.DEFAULT,
-    plugins: [masterDetailPlugin]
-  };
-
-  const tableInstance = new VTable.ListTable(option);
-  
-  return tableInstance;
-}
-
-createGroupTable();
 ```
 
 ## 技术实现原理

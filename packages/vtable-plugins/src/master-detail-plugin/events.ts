@@ -208,7 +208,12 @@ export class EventManager {
       const expandedRowIndices = [...this.expandedRows];
       expandedRowIndices.forEach(rowIndex => {
         try {
-          this.onCollapseRow?.(rowIndex);
+          const tableOptions = (table as any).options;
+          if (tableOptions && tableOptions.pagination) {
+            this.onCollapseRowToNoRealRecordIndex?.(rowIndex);
+          } else {
+            this.onCollapseRow?.(rowIndex);
+          }
         } catch (e) {
           // 收起失败
           console.warn(`Failed to collapse row ${rowIndex} before sort:`, e);
@@ -390,6 +395,7 @@ export class EventManager {
   private onUpdateSubTablePositionsForRow?: () => void;
   private onExpandRow?: (rowIndex: number, colIndex?: number) => void;
   private onCollapseRow?: (rowIndex: number, colIndex?: number) => void;
+  private onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
   private onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
   private getOriginalRowHeight?: (bodyRowIndex: number) => number;
 
@@ -401,6 +407,7 @@ export class EventManager {
     onUpdateSubTablePositionsForRow?: () => void;
     onExpandRow?: (rowIndex: number, colIndex?: number) => void;
     onCollapseRow?: (rowIndex: number, colIndex?: number) => void;
+    onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
     onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
   }): void {
@@ -408,6 +415,7 @@ export class EventManager {
     this.onUpdateSubTablePositionsForRow = callbacks.onUpdateSubTablePositionsForRow;
     this.onExpandRow = callbacks.onExpandRow;
     this.onCollapseRow = callbacks.onCollapseRow;
+    this.onCollapseRowToNoRealRecordIndex = callbacks.onCollapseRowToNoRealRecordIndex;
     this.onToggleRowExpand = callbacks.onToggleRowExpand;
     this.getOriginalRowHeight = callbacks.getOriginalRowHeight;
   }

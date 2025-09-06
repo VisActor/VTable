@@ -433,6 +433,7 @@ export function createTable() {
     headerExpandLevel: 2,
     widthMode: 'standard',
     heightMode: 'standard',
+    autoFillWidth: true,
     theme: VTable.themes.SIMPLIFY,
     // 分页配置
     pagination: {

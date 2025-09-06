@@ -89,6 +89,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       onUpdateSubTablePositionsForRow: () => this.subTableManager.updateSubTablePositionsForRowResize(),
       onExpandRow: (rowIndex: number, colIndex?: number) => this.expandRow(rowIndex, colIndex),
       onCollapseRow: (rowIndex: number, colIndex?: number) => this.collapseRow(rowIndex, colIndex),
+      onCollapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
       onToggleRowExpand: (rowIndex: number, colIndex?: number) => this.toggleRowExpand(rowIndex, colIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)
     });
@@ -520,9 +521,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const originalStrokeArrayColor = cellGroup._originalStrokeArrayColor || currentStrokeArrayColor;
     const enhancedStrokeArrayWidth = [...originalStrokeArrayWidth];
     const enhancedStrokeArrayColor = [...originalStrokeArrayColor];
-    const dpr = this.table.internalProps?.pixelRatio || window.devicePixelRatio || 1;
     // 要还原本来的下划线的效果，那么我们应该要加上下一行的上划线的因为我记得原本的线是叠层的
-    const enhancedWidth = ((originalStrokeArrayWidth[2] || 1) * 0.75 + (originalStrokeArrayWidth[0] || 1) * 0.75) * dpr;
+    const enhancedWidth = ((originalStrokeArrayWidth[2] || 1) * 0.75 + (originalStrokeArrayWidth[0] || 1) * 0.75) * 2;
     enhancedStrokeArrayWidth[2] = enhancedWidth;
     if (originalStrokeArrayColor[2] === 'transparent' || !originalStrokeArrayColor[2]) {
       const theme = this.table.theme;
