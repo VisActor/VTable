@@ -74,7 +74,6 @@ export function createProgressBarCell(
   } else {
     height = table.getRowHeight(row);
   }
-  
   // 触发 before_create_progress_bar 事件，允许插件修改高度
   const beforeCreateProgressBarEvent = {
     col,
@@ -86,13 +85,11 @@ export function createProgressBarCell(
     // 允许插件修改高度
     modifiedHeight: height
   };
-  
   if (table.fireListeners) {
     table.fireListeners(TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR, beforeCreateProgressBarEvent);
     // 使用插件可能修改过的高度
     height = beforeCreateProgressBarEvent.modifiedHeight;
   }
-  
   // 这里，把如果这行是展开行的话，就去获取originHeight作为height
   let contentWidth = width;
   let contentHeight = height;

@@ -1,6 +1,5 @@
 import type * as VTable from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { MasterDetailPluginOptions } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
@@ -183,18 +182,18 @@ export class TableAPIExtensions {
           // 拖拽插件下划线时：原始最小高度 + 子表高度
           currentRowMinHeight = originalLimitMinHeight + detailHeight;
         } else {
-          // 拖拽原始下划线时：2倍原始最小高度
+          // 拖拽原始下划线时：CellGroup高度 + 原始最小高度
           currentRowMinHeight = originalHeight + originalLimitMinHeight;
         }
       }
 
-      // limitMinHeight限制 - 对当前行使用动态最小高度
+      // limitMinHeight限制
       let afterSize = state.table.getRowHeight(state.rowResize.row) + detaY;
       if (afterSize < currentRowMinHeight) {
         afterSize = currentRowMinHeight;
         detaY = afterSize - state.table.getRowHeight(state.rowResize.row);
       }
-      // adaptive 模式下检查下一行的最小高度 - 这里使用原始的 limitMinHeight
+      // adaptive 模式下检查下一行的最小高度
       if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
         const bottomRowHeightCache = state.table.getRowHeight(state.rowResize.row + 1);
         let bottomRowHeight = bottomRowHeightCache;
