@@ -82,18 +82,23 @@ export class FormulaUIManager {
             col: editingCell.col
           });
           if (formula) {
+            this.sheet.formulaManager.formulaWorkingOnCell = editingCell;
             // 显示公式
             const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
             formulaInput.value = displayFormula;
             // 触发高亮
             this.sheet.formulaManager.cellHighlightManager.highlightFormulaCells(displayFormula);
 
-            const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(formulaInput.value);
-            if (formulaIfCorrect) {
-              this.sheet.formulaManager.formulaWorkingOnCell = null;
-            } else {
-              this.sheet.formulaManager.formulaWorkingOnCell = activeWorkSheet.editingCell;
-            }
+            // const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(formulaInput.value);
+            // if (formulaIfCorrect) {
+            //   this.sheet.formulaManager.formulaWorkingOnCell = null;
+            // } else {
+            //   this.sheet.formulaManager.formulaWorkingOnCell = activeWorkSheet.editingCell;
+            // }
+            this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+              formulaInput.value,
+              this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
+            );
           }
         }
       }
@@ -339,19 +344,21 @@ export class FormulaUIManager {
     if (!activeWorkSheet) {
       return;
     }
-
-    // 如果是公式插入事件，不进行公式计算
-    if ((event as any).isFormulaInsertion) {
-      return;
-    }
-
-    const input = event.target as HTMLInputElement;
     const editingCell = activeWorkSheet.editingCell;
     if (!editingCell) {
       return;
     }
-
+    const input = event.target as HTMLInputElement;
     const value = input.value;
+
+    // 如果是公式，高亮引用的单元格
+    if (value.startsWith('=')) {
+      this.sheet.formulaManager.cellHighlightManager.highlightFormulaCells(value);
+    }
+    // 如果是公式插入事件，不进行公式计算
+    if ((event as any).isFormulaInsertion) {
+      return;
+    }
     // 检测函数参数位置
     this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
       value,
@@ -419,6 +426,7 @@ export class FormulaUIManager {
             this.sheet.formulaManager.isUpdatingFromFormula = true;
             activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#CYCLE!');
             this.sheet.formulaManager.isUpdatingFromFormula = false;
+            this.sheet.formulaManager.formulaWorkingOnCell = null;
             input.value = '';
             input.blur();
             return;
@@ -458,6 +466,7 @@ export class FormulaUIManager {
             this.sheet.formulaManager.cellHighlightManager.clearHighlights();
             activeWorkSheet.tableInstance.selectCell(editingCell.col, editingCell.row);
             this.sheet.formulaManager.isUpdatingFromFormula = false;
+            this.sheet.formulaManager.formulaWorkingOnCell = null;
           }, 0);
         } catch (error) {
           this.sheet.formulaManager.isUpdatingFromFormula = false;
@@ -467,6 +476,7 @@ export class FormulaUIManager {
           this.sheet.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#ERROR!');
           this.sheet.formulaManager.isUpdatingFromFormula = false;
+          this.sheet.formulaManager.formulaWorkingOnCell = null;
         }
       } else {
         // 普通值，直接设置
@@ -474,6 +484,7 @@ export class FormulaUIManager {
         this.sheet.formulaManager.isUpdatingFromFormula = true;
         activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, value);
         this.sheet.formulaManager.isUpdatingFromFormula = false;
+        this.sheet.formulaManager.formulaWorkingOnCell = null;
       }
 
       // 不自动移动到下一行，保持当前位置

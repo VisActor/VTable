@@ -105,10 +105,10 @@ export class FormulaRangeSelector {
       : cursorPos;
 
     formulaInput.setSelectionRange(newCursorPos, newCursorPos);
-
-    // 确保光标位置在可视区域内
-    this.ensureCursorVisible(formulaInput, newCursorPos);
-
+    setTimeout(() => {
+      // 确保光标位置在可视区域内
+      this.ensureCursorVisible(formulaInput, newCursorPos);
+    });
     // 更新函数参数位置
     this.formulaManager.inputIsParamMode.functionParamPosition = {
       start: newCursorPos,
@@ -299,7 +299,7 @@ export class FormulaRangeSelector {
     const activeWorkSheet = this.formulaManager.sheet.getActiveSheet();
     const formulaManager = this.formulaManager.sheet.formulaManager;
 
-    if (!activeWorkSheet || this.formulaManager.isUpdatingFromFormula) {
+    if (!activeWorkSheet || this.formulaManager.formulaWorkingOnCell) {
       return;
     }
 
@@ -313,8 +313,9 @@ export class FormulaRangeSelector {
           if (newValue.includes(currentCellAddress)) {
             console.warn('Circular reference detected:', newValue, 'contains', currentCellAddress);
             this.formulaManager.isUpdatingFromFormula = true;
-            activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#CYCLE!');
+            activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#CYCLE!', true, false);
             this.formulaManager.isUpdatingFromFormula = false;
+            this.formulaManager.formulaWorkingOnCell = null;
             return;
           }
 
@@ -341,15 +342,14 @@ export class FormulaRangeSelector {
           // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
           this.formulaManager.isUpdatingFromFormula = true;
           // activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, isEditing ? newValue : result.value);
-          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, result.value);
+          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, result.value, true, false);
           this.formulaManager.isUpdatingFromFormula = false;
           this.formulaManager.formulaWorkingOnCell = null;
         } catch (error) {
-          this.formulaManager.isUpdatingFromFormula = false;
           console.warn('Formula processing error:', error);
           // 显示错误状态
           this.formulaManager.isUpdatingFromFormula = true;
-          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#ERROR!');
+          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#ERROR!', true, false);
           this.formulaManager.isUpdatingFromFormula = false;
           this.formulaManager.formulaWorkingOnCell = null;
         }
@@ -452,7 +452,7 @@ export class FormulaRangeSelector {
     }
 
     // 排除当前编辑单元格，避免形成自引用导致 #CYCLE!
-    const editCell = activeWorkSheet.editingCell;
+    const editCell = formulaManager.formulaWorkingOnCell;
     // const safeSelections = selections
     //   .map(selection => this.excludeEditCellFromSelection(selection, editCell?.row || 0, editCell?.col || 0))
     //   .filter(selection => selection.startRow >= 0 && selection.startCol >= 0); // 过滤掉无效选择

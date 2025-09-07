@@ -239,6 +239,7 @@ export class EditManager {
       }
       changedValues.push(rowChangedValues);
     }
+    this.editingEditor.beforeEnd?.();
     (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
     this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
     this.editingEditor.exit?.();

@@ -7,6 +7,8 @@ export interface IEditor<V = any, T = any> {
    * after removal of `beginEditing`.
    */
   onStart: (context: EditContext<V, T>) => void;
+
+  beforeEnd?: () => void;
   /**
    * called when cell exits edit mode.
    *

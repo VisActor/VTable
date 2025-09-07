@@ -43,7 +43,7 @@ export class FormulaManager {
   /** 单元格高亮管理器 */
   cellHighlightManager: CellHighlightManager;
   /** 正在输入公式的单元格(如果是完整的公式 不做记录。没输入完整才记录)。为后面拖拽单元范围或者点击单元格选中计算范围逻辑做准备。 */
-  formulaWorkingOnCell: FormulaCell | null = null;
+  _formulaWorkingOnCell: FormulaCell | null = null;
   /** 上一次被记录过的光标位置。 公式输入框中光标位置 */
   lastKnownCursorPosInFormulaInput: number | null = null;
 
@@ -63,7 +63,13 @@ export class FormulaManager {
   inputingElement: HTMLInputElement | null = null;
 
   private _isUpdatingFromFormula = false;
-
+  get formulaWorkingOnCell(): FormulaCell | null {
+    return this._formulaWorkingOnCell;
+  }
+  set formulaWorkingOnCell(value: FormulaCell | null) {
+    console.trace('set formulaWorkingOnCell', value);
+    this._formulaWorkingOnCell = value;
+  }
   /**
    * 获取是否正在从公式更新
    */

@@ -665,16 +665,16 @@ export default class VTableSheet {
         borderLineDash: [null, null, null, null],
         padding: [8, 8, 8, 8]
       },
-      editCellTrigger: ['api', 'keydown'],
+      editCellTrigger: ['api', 'keydown', 'doubleclick'],
       customMergeCell: sheetDefine.cellMerge,
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     } as any);
 
     // 注册事件 - 使用预先绑定的事件处理方法
-    sheet.on('cell-selected', this.eventManager.handleCellSelectedBound);
-    sheet.on('cell-value-changed', this.eventManager.handleCellValueChangedBound);
-    sheet.on('selection-changed', this.eventManager.handleSelectionChangedForRangeModeBound);
-    sheet.on('selection-end', this.eventManager.handleSelectionChangedForRangeModeBound);
+    sheet.on('cell-selected', this.eventManager.handleCellSelectedBind);
+    sheet.on('cell-value-changed', this.eventManager.handleCellValueChangedBind);
+    sheet.on('selection-changed', this.eventManager.handleSelectionChangedForRangeModeBind);
+    sheet.on('selection-end', this.eventManager.handleSelectionChangedForRangeModeBind);
 
     // 在公式管理器中添加这个sheet
     try {

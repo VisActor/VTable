@@ -2,6 +2,7 @@ import * as VTable_editors from '@visactor/vtable-editors';
 import { FormulaAutocomplete } from './formula-autocomplete';
 import type VTableSheet from '../components/vtable-sheet';
 import type { EditContext } from '@visactor/vtable-editors';
+import { detectFunctionParameterPosition } from './formula-helper';
 
 export class FormulaInputEditor extends VTable_editors.InputEditor {
   private formulaAutocomplete: FormulaAutocomplete | null = null;
@@ -169,6 +170,15 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
    * 重写父类方法
    */
   onStart(context: EditContext<string>): void {
+    // 获取公式
+    const formula = this.sheet.formulaManager.getCellFormula({
+      sheet: this.sheet.getActiveSheet()?.getKey() || '',
+      row: context.row,
+      col: context.col
+    });
+    if (formula) {
+      context.value = formula;
+    }
     super.onStart(context);
     this.sheet.formulaManager.inputingElement = this.element;
     // 如果是公式，显示公式而不是计算结果
@@ -189,7 +199,9 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
       }
     }
   }
-
+  beforeEnd(): void {
+    this.sheet.formulaManager.formulaWorkingOnCell = null;
+  }
   /**
    * 结束编辑
    * 重写父类方法以清理自动补全
@@ -231,35 +243,27 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     if (isClickOnTable && newValue && newValue.startsWith('=')) {
       // 如果有sheet实例，使用FormulaManager检查公式完整性
       if (this.sheet) {
-        const formulaManager = this.sheet.formulaManager;
-        if (formulaManager && typeof formulaManager.isFormulaComplete === 'function') {
-          console.log('test formula complete', newValue);
-          // 如果公式不完整，不退出编辑状态
-          if (!formulaManager.isFormulaComplete(newValue)) {
-            const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(newValue);
-            if (formulaIfCorrect) {
-              this.sheet.formulaManager.formulaWorkingOnCell = null;
-            } else {
-              this.sheet.formulaManager.formulaWorkingOnCell = this.sheet.getActiveSheet()?.editingCell;
-            }
+        const formulaInput = this.element;
+        this.sheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+          formulaInput.value,
+          this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
+        );
+        console.log('test formula complete', newValue, this.sheet.formulaManager.inputIsParamMode);
+        if (this.sheet.formulaManager.inputIsParamMode.inParamMode) {
+          // // 如果公式不完整，不退出编辑状态  TODO 这里不应该只判断完整性，如这种情况下按住ctrl连续点选 =SUM(H5) 这种情况应该允许继续编辑输入点选单元格范围
+          // if (!formulaManager.isFormulaComplete(newValue)) {
 
-            return VTable_editors.ValidateEnum.validateNotExit;
-          }
-        } else {
-          // 如果没有isFormulaComplete方法，使用简单的括号匹配检查
-          const openParenCount = (newValue.match(/\(/g) || []).length;
-          const closeParenCount = (newValue.match(/\)/g) || []).length;
-          if (openParenCount !== closeParenCount) {
-            return VTable_editors.ValidateEnum.validateNotExit;
-          }
-        }
-      } else {
-        // 如果没有sheet实例，使用简单的括号匹配检查
-        const openParenCount = (newValue.match(/\(/g) || []).length;
-        const closeParenCount = (newValue.match(/\)/g) || []).length;
-        if (openParenCount !== closeParenCount) {
+          this.sheet.formulaManager.formulaWorkingOnCell = this.sheet.getActiveSheet()?.editingCell;
+
           return VTable_editors.ValidateEnum.validateNotExit;
         }
+        return VTable_editors.ValidateEnum.validateExit;
+      }
+      // 如果没有sheet实例，使用简单的括号匹配检查
+      const openParenCount = (newValue.match(/\(/g) || []).length;
+      const closeParenCount = (newValue.match(/\)/g) || []).length;
+      if (openParenCount !== closeParenCount) {
+        return VTable_editors.ValidateEnum.validateNotExit;
       }
     }
     return true;

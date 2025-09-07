@@ -7,9 +7,9 @@ export class EventManager {
   private boundHandlers: Map<string, EventListener> = new Map();
 
   // 预先绑定的事件处理方法
-  readonly handleCellSelectedBound: () => void;
-  readonly handleCellValueChangedBound: (event: any) => void;
-  readonly handleSelectionChangedForRangeModeBound: (event: any) => void;
+  readonly handleCellSelectedBind: () => void;
+  readonly handleCellValueChangedBind: (event: any) => void;
+  readonly handleSelectionChangedForRangeModeBind: (event: any) => void;
 
   /**
    * Creates a new EventManager instance
@@ -19,9 +19,9 @@ export class EventManager {
     this.sheet = sheet;
 
     // 预先绑定事件处理方法
-    this.handleCellSelectedBound = this.handleCellSelected.bind(this);
-    this.handleCellValueChangedBound = this.handleCellValueChanged.bind(this);
-    this.handleSelectionChangedForRangeModeBound = this.handleSelectionChangedForRangeMode.bind(this);
+    this.handleCellSelectedBind = this.handleCellSelected.bind(this);
+    this.handleCellValueChangedBind = this.handleCellValueChanged.bind(this);
+    this.handleSelectionChangedForRangeModeBind = this.handleSelectionChangedForRangeMode.bind(this);
 
     this.setupEventListeners();
   }

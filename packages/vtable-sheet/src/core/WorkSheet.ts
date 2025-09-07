@@ -14,6 +14,7 @@ import type {
 import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
+import { detectFunctionParameterPosition } from '../formula/formula-helper';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -236,24 +237,42 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   private _setupEventListeners(): void {
     if (this.tableInstance) {
       // 监听单元格选择事件 - 优化：移除console.log调试代码
-      this.tableInstance.on('mousedown_cell', (event: any) => {
-        console.log('mousedown_cell', this.vtableSheet.formulaManager.formulaWorkingOnCell);
-        if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
-          //防止公式输入状态下，原本的input元素blur掉，导致公式输入框无法输入
-          event.event.preventDefault();
-          return true;
-        }
-        this.editingCell = {
-          sheet: this.getKey(),
-          row: event.row,
-          col: event.col
-        };
-        this.handleCellSelected(event);
-        return true;
-      });
+      // this.tableInstance.on('mousedown_cell', (event: any) => {
+      //   console.log('mousedown_cell', this.vtableSheet.formulaManager.formulaWorkingOnCell);
+      //   // this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+      //   //   this.vtableSheet.formulaManager.formulaInput.value,
+      //   //   this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
+      //   // );
+      //   // if (this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
+      //   //   // // 如果公式不完整，不退出编辑状态  TODO 这里不应该只判断完整性，如这种情况下按住ctrl连续点选 =SUM(H5) 这种情况应该允许继续编辑输入点选单元格范围
+      //   //   // if (!formulaManager.isFormulaComplete(newValue)) {
+
+      //   //   this.vtableSheet.formulaManager.formulaWorkingOnCell = this.vtableSheet.getActiveSheet()?.editingCell;
+      //   if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+      //     //防止公式输入状态下，原本的input元素blur掉，导致公式输入框无法输入
+      //     event.event.preventDefault();
+      //     return true;
+      //   }
+
+      //   this.handleCellSelected(event);
+      //   return true;
+      // });
 
       // 监听选择变化事件（多选时）- 优化：移除console.log调试代码
       this.tableInstance.on('selected_changed' as any, (event: any) => {
+        console.log('selected_changed', this.tableInstance.eventManager.isDraging);
+        // 判断是drag过程中的选中单元格变化
+        if (!this.tableInstance.eventManager.isDraging) {
+          if (!this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+            this.editingCell = {
+              sheet: this.getKey(),
+              row: event.row,
+              col: event.col
+            };
+          }
+          this.handleCellSelected(event);
+        }
+
         this.handleSelectionChanged(event);
       });
 
@@ -262,33 +281,33 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         this.handleDragSelectEnd(event);
       });
 
-      // 监听双击进入编辑状态
-      this.tableInstance.on('dblclick_cell', (event: any) => {
-        this.element.classList.remove('vtable-excel-cursor');
+      // // 监听双击进入编辑状态
+      // this.tableInstance.on('dblclick_cell', (event: any) => {
+      //   this.element.classList.remove('vtable-excel-cursor');
 
-        // 获取公式
-        const formula = this.vtableSheet.formulaManager.getCellFormula({
-          sheet: this.getKey(),
-          row: event.row,
-          col: event.col
-        });
+      //   // 获取公式
+      //   const formula = this.vtableSheet.formulaManager.getCellFormula({
+      //     sheet: this.getKey(),
+      //     row: event.row,
+      //     col: event.col
+      //   });
 
-        if (formula) {
-          // 进入编辑状态前触发高亮
-          const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
-          // 确保cellHighlightManager存在
-          const highlightManager = this.vtableSheet.formulaManager.cellHighlightManager;
-          if (highlightManager) {
-            highlightManager.highlightFormulaCells(displayFormula);
-          }
+      //   if (formula) {
+      //     // 进入编辑状态前触发高亮
+      //     const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
+      //     // 确保cellHighlightManager存在
+      //     const highlightManager = this.vtableSheet.formulaManager.cellHighlightManager;
+      //     if (highlightManager) {
+      //       highlightManager.highlightFormulaCells(displayFormula);
+      //     }
 
-          // 进入编辑状态
-          this.tableInstance.startEditCell(event.col, event.row, formula);
-        } else {
-          // 不是公式单元格，直接进入编辑状态
-          this.tableInstance.startEditCell(event.col, event.row);
-        }
-      });
+      //     // 进入编辑状态
+      //     this.tableInstance.startEditCell(event.col, event.row, formula);
+      //   } else {
+      //     // 不是公式单元格，直接进入编辑状态
+      //     this.tableInstance.startEditCell(event.col, event.row);
+      //   }
+      // });
 
       // 监听单元格值变更事件
       this.tableInstance.on('change_cell_value', (event: any) => {
