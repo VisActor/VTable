@@ -82,7 +82,6 @@ export function createTable() {
     frozenRowCount: 3,
     bottomFrozenRowCount: 2,
     autoFillWidth: true,
-
     plugins: [masterDetailPlugin]
   };
 

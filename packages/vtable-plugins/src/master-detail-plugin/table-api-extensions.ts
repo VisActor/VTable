@@ -1,4 +1,5 @@
 import type * as VTable from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { MasterDetailPluginOptions } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
@@ -20,8 +21,9 @@ export class TableAPIExtensions {
   private originalToggleHierarchyState?: any;
   private originalUpdateFilterRules?: any;
   private originalUpdateChartSizeForResizeColWidth?: any;
-  private originalGetRowY?: (row: number, table: VTable.BaseTableAPI, isBottomFrozen?: boolean) => number;
+  private originalUpdateChartSizeForResizeRowHeight?: any;
   private originalUpdateRowHeight?: any;
+  private originalGetResizeColAt?: any;
 
   // 鼠标位置跟踪
   private currentMouseX: number = 0;
@@ -133,15 +135,17 @@ export class TableAPIExtensions {
     this.extendToggleHierarchyState();
     this.extendUpdateFilterRules();
     this.extendUpdateChartSizeForResizeColWidth();
+    this.extendUpdateChartSizeForResizeRowHeight();
     this.extendGetRowY();
     this.extendUpdateRowHeight();
+    this.extendGetResizeColAt();
   }
 
   /**
    * 扩展 updateCellContent 方法
    */
   private extendUpdateCellContent(): void {
-    const table = this.table as any;
+    const table = this.table;
     this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
     table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
   }
@@ -150,44 +154,116 @@ export class TableAPIExtensions {
    * 扩展 updateResizeRow 方法
    */
   private extendUpdateResizeRow(): void {
-    const table = this.table as any;
-    // 拦截行高调整方法，应用展开行的动态最小高度限制
+    const table = this.table;
+    // 完全重写 updateResizeRow 方法，解决 adaptive 模式下的 limitMinHeight 问题
     this.originalUpdateResizeRow = table.stateManager.updateResizeRow.bind(table.stateManager);
     table.stateManager.updateResizeRow = (xInTable: number, yInTable: number) => {
+      const state = table.stateManager;
+      xInTable = Math.ceil(xInTable);
+      yInTable = Math.ceil(yInTable);
+      let detaY = state.rowResize.isBottomFrozen ? state.rowResize.y - yInTable : yInTable - state.rowResize.y;
+      // table.getColWidth会使用Math.round，因此这里直接跳过小于1px的修改
+      if (Math.abs(detaY) < 1) {
+        return;
+      }
+
       // 获取当前调整的行索引
-      const resizeRowIndex = table.stateManager.rowResize.row;
+      const resizeRowIndex = state.rowResize.row;
       const isExpandedRow = this.eventManager.isRowExpanded(resizeRowIndex);
+      // 保存原始的 limitMinHeight
+      const originalLimitMinHeight = state.table.internalProps.limitMinHeight;
+      // 计算当前行的动态最小高度
+      let currentRowMinHeight = originalLimitMinHeight;
       if (isExpandedRow) {
-        // 保存原始的 limitMinHeight
-        const originalLimitMinHeight = table.internalProps.limitMinHeight;
-        // 计算展开行的最小高度：根据拖拽状态决定策略
         const bodyRowIndex = resizeRowIndex - this.table.columnHeaderLevelCount;
         const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
         const currentRowHeight = this.table.getRowHeight(resizeRowIndex);
         const detailHeight = currentRowHeight - originalHeight;
-        let expandedMinHeight: number;
         if (this.dragStartIsPluginUnderline) {
           // 拖拽插件下划线时：原始最小高度 + 子表高度
-          expandedMinHeight = originalLimitMinHeight + detailHeight;
+          currentRowMinHeight = originalLimitMinHeight + detailHeight;
         } else {
           // 拖拽原始下划线时：2倍原始最小高度
-          expandedMinHeight = originalHeight + originalLimitMinHeight;
-        }
-        // 临时设置展开行的最小高度
-        table.internalProps.limitMinHeight = expandedMinHeight;
-        // 调用原始方法
-        if (this.originalUpdateResizeRow) {
-          this.originalUpdateResizeRow(xInTable, yInTable);
-        }
-        // 恢复原始的 limitMinHeight
-        table.internalProps.limitMinHeight = originalLimitMinHeight;
-      } else {
-        // 非展开行，直接调用原始方法
-        if (this.originalUpdateResizeRow) {
-          this.originalUpdateResizeRow(xInTable, yInTable);
+          currentRowMinHeight = originalHeight + originalLimitMinHeight;
         }
       }
+
+      // limitMinHeight限制 - 对当前行使用动态最小高度
+      let afterSize = state.table.getRowHeight(state.rowResize.row) + detaY;
+      if (afterSize < currentRowMinHeight) {
+        afterSize = currentRowMinHeight;
+        detaY = afterSize - state.table.getRowHeight(state.rowResize.row);
+      }
+      // adaptive 模式下检查下一行的最小高度 - 这里使用原始的 limitMinHeight
+      if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
+        const bottomRowHeightCache = state.table.getRowHeight(state.rowResize.row + 1);
+        let bottomRowHeight = bottomRowHeightCache;
+        bottomRowHeight -= detaY;
+        // 计算下一行的最小高度
+        let nextRowMinHeight = originalLimitMinHeight; // 默认使用原始值
+        const nextRowIndex = state.rowResize.row + 1;
+        const isNextRowExpanded = this.eventManager.isRowExpanded(nextRowIndex);
+        if (isNextRowExpanded) {
+          // 如果下一行也是展开行，计算其动态最小高度
+          const nextBodyRowIndex = nextRowIndex - this.table.columnHeaderLevelCount;
+          const nextOriginalHeight = getOriginalRowHeight(this.table, nextBodyRowIndex);
+          const nextCurrentRowHeight = this.table.getRowHeight(nextRowIndex);
+          const nextDetailHeight = nextCurrentRowHeight - nextOriginalHeight;
+          // 对下一行，使用 originalLimitMinHeight + detailHeight 作为最小高度
+          nextRowMinHeight = originalLimitMinHeight + nextDetailHeight;
+        }
+        if (bottomRowHeight - detaY < nextRowMinHeight) {
+          detaY = bottomRowHeight - nextRowMinHeight;
+        }
+      }
+      detaY = Math.ceil(detaY);
+
+      // 调用对应的行高更新函数（这里需要实现这些函数或调用原始逻辑）
+      if (
+        state.rowResize.row < state.table.columnHeaderLevelCount ||
+        state.rowResize.row >= state.table.rowCount - state.table.bottomFrozenRowCount
+      ) {
+        this.updateResizeColForRow(detaY, state);
+      } else if (state.table.internalProps.rowResizeType === 'all') {
+        this.updateResizeColForAll(detaY, state);
+      } else {
+        this.updateResizeColForRow(detaY, state);
+      }
+
+      state.rowResize.y = yInTable;
+
+      // update resize row component
+      state.table.scenegraph.component.updateResizeRow(state.rowResize.row, xInTable, state.rowResize.isBottomFrozen);
+
+      // stage rerender
+      state.table.scenegraph.updateNextFrame();
     };
+  }
+
+  /**
+   * 简单的行高调整（用于 row 类型）
+   */
+  private updateResizeColForRow(detaY: number, state: VTable.ListTable['stateManager']): void {
+    if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
+      state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
+      state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY);
+
+      state.table.internalProps._heightResizedRowMap.add(state.rowResize.row);
+      state.table.internalProps._heightResizedRowMap.add(state.rowResize.row + 1);
+    } else {
+      state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
+      state.table.internalProps._heightResizedRowMap.add(state.rowResize.row);
+    }
+  }
+
+  /**
+   * 全部行高调整（用于 all 类型）
+   */
+  private updateResizeColForAll(detaY: number, state: VTable.ListTable['stateManager']): void {
+    for (let row = state.table.frozenRowCount; row < state.table.rowCount - state.table.bottomFrozenRowCount; row++) {
+      state.table.scenegraph.updateRowHeight(row, detaY);
+      state.table.internalProps._heightResizedRowMap.add(row);
+    }
   }
 
   /**
@@ -195,13 +271,13 @@ export class TableAPIExtensions {
    */
   private extendDealHeightMode(): void {
     // 拦截并增强 dealHeightMode 方法
-    const scenegraph = this.table.scenegraph as any;
+    const scenegraph = this.table.scenegraph;
     this.originalDealHeightMode = scenegraph.dealHeightMode.bind(scenegraph);
 
     scenegraph.dealHeightMode = () => {
       if (this.table.heightMode !== 'adaptive') {
         // 非 adaptive 模式，使用原始逻辑
-        return this.originalDealHeightMode()
+        return this.originalDealHeightMode();
       }
 
       // adaptive 模式下的智能处理
@@ -209,7 +285,7 @@ export class TableAPIExtensions {
 
       // 清除行高缓存，准备重新计算
       const table = this.table;
-      const tableAny = table as any;
+      const tableAny = table;
       table._clearRowRangeHeightsMap();
 
       // 根据 heightAdaptiveMode 配置决定处理范围
@@ -399,7 +475,7 @@ export class TableAPIExtensions {
    * 扩展 updatePagination 方法
    */
   private extendUpdatePagination(): void {
-    const table = this.table as any;
+    const table = this.table;
     // 拦截 updatePagination 方法，在分页切换时收起所有展开的行
     this.originalUpdatePagination = table.updatePagination.bind(table);
     table.updatePagination = (pagination: VTable.TYPES.IPagination) => {
@@ -416,9 +492,11 @@ export class TableAPIExtensions {
         this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
       });
       const result = this.originalUpdatePagination(pagination);
-      setTimeout(() => {
+      
+      // 使用事件钩子替代固定延时
+      this.waitForRenderComplete(() => {
         this.callbacks.restoreExpandedStatesAfter();
-      }, 16);
+      });
 
       return result;
     };
@@ -428,7 +506,7 @@ export class TableAPIExtensions {
    * 扩展 toggleHierarchyState 方法
    */
   private extendToggleHierarchyState(): void {
-    const table = this.table as any;
+    const table = this.table;
     // 拦截 toggleHierarchyState 方法
     this.originalToggleHierarchyState = table.toggleHierarchyState.bind(table);
     table.toggleHierarchyState = (col: number, row: number, recalculateColWidths: boolean = true) => {
@@ -450,9 +528,11 @@ export class TableAPIExtensions {
           this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
         });
         const result = this.originalToggleHierarchyState(col, row, recalculateColWidths);
-        setTimeout(() => {
+        
+        // 使用事件钩子替代固定延时
+        this.waitForRenderComplete(() => {
           this.callbacks.restoreExpandedStatesAfter();
-        }, 16);
+        });
 
         return result;
       }
@@ -465,7 +545,7 @@ export class TableAPIExtensions {
    * 扩展 updateFilterRules 方法
    */
   private extendUpdateFilterRules(): void {
-    const table = this.table as any;
+    const table = this.table;
     // 拦截 updateFilterRules 方法，在过滤时保持展开状态
     this.originalUpdateFilterRules = table.updateFilterRules.bind(table);
     table.updateFilterRules = (filterRules: VTable.TYPES.FilterRules) => {
@@ -483,7 +563,7 @@ export class TableAPIExtensions {
    * 扩展 updateChartSizeForResizeColWidth 方法
    */
   private extendUpdateChartSizeForResizeColWidth(): void {
-    const table = this.table as any;
+    const table = this.table;
     this.originalUpdateChartSizeForResizeColWidth = table.scenegraph.updateChartSizeForResizeColWidth.bind(
       table.scenegraph
     );
@@ -508,6 +588,28 @@ export class TableAPIExtensions {
     };
   }
 
+  private extendUpdateChartSizeForResizeRowHeight(): void{
+    const table = this.table;
+    this.originalUpdateChartSizeForResizeRowHeight = table.scenegraph.updateChartSizeForResizeRowHeight.bind(
+      table.scenegraph
+    );
+    table.scenegraph.updateChartSizeForResizeRowHeight = (col: number) => {
+      const originalGetRowHeight = table.getRowHeight.bind(table);
+      table.getRowHeight = (row: number) => {
+        const isExpandedRow = this.eventManager.isRowExpanded(row);
+        if (isExpandedRow) {
+          const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+          const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+          return originalHeight > 0 ? originalHeight : originalGetRowHeight(row);
+        }
+        return originalGetRowHeight(row);
+      };
+      const result = this.originalUpdateChartSizeForResizeRowHeight(col);
+      table.getRowHeight = originalGetRowHeight;
+      return result;
+    };
+  }
+
   /**
    * 扩展 getRowY 方法
    * 拦截 getRowY 函数，为展开行提供正确的Y坐标计算
@@ -517,7 +619,7 @@ export class TableAPIExtensions {
     const scenegraph = this.table.scenegraph;
     if (scenegraph.component) {
       // 拦截 showResizeRow 方法
-      const originalShowResizeRow = scenegraph.component.showResizeRow?.bind(scenegraph.component);
+      const originalShowResizeRow = scenegraph.component.showResizeRow.bind(scenegraph.component);
       if (originalShowResizeRow) {
         scenegraph.component.showResizeRow = (row: number, x: number, isRightFrozen?: boolean) => {
           return this.protectedShowResizeRow(originalShowResizeRow, row, x, isRightFrozen);
@@ -539,7 +641,7 @@ export class TableAPIExtensions {
    * 在表格初始化时就替换整个 updateRowHeight 方法
    */
   private extendUpdateRowHeight(): void {
-    const scenegraph = this.table.scenegraph as any;
+    const scenegraph = this.table.scenegraph;
     this.originalUpdateRowHeight = scenegraph.updateRowHeight.bind(scenegraph);
     scenegraph.updateRowHeight = (row: number, detaY: number, skipTableHeightMap?: boolean) => {
       const isExpandedRow = this.eventManager.isRowExpanded(row);
@@ -554,12 +656,52 @@ export class TableAPIExtensions {
   }
 
   /**
+   * 扩展 getResizeColAt 方法
+   * 在展开行情况下提供正确的列宽调整检测
+   */
+  private extendGetResizeColAt(): void {
+    const scenegraph = this.table.scenegraph;
+    this.originalGetResizeColAt = scenegraph.getResizeColAt.bind(scenegraph);
+    scenegraph.getResizeColAt = (abstractX: number, abstractY: number, cellGroup?: any) => {
+      return this.protectedGetResizeColAt(abstractX, abstractY, cellGroup);
+    };
+  }
+
+  /**
+   * 保护的 getResizeColAt 方法
+   * 处理展开行的特殊情况
+   */
+  private protectedGetResizeColAt(abstractX: number, abstractY: number, cellGroup?: any): any {
+    // 如果没有 cellGroup，先检查是否在展开行的右边冻结列区域
+    if (!cellGroup) {
+      // 检查当前位置是否在展开行中
+      const cell = this.table.getCellAtRelativePosition(abstractX, abstractY);
+      if (cell && cell.row >= 0) {
+        const isExpandedRow = this.eventManager.isRowExpanded(cell.row);
+        if (isExpandedRow && this.table.rightFrozenColCount > 0) {
+          // 检查是否在右边冻结列区域
+          const tableWidth = this.table.tableNoFrameWidth;
+          const rightFrozenWidth = this.table.getRightFrozenColsWidth();
+          const isInRightFrozenArea = abstractX > tableWidth - rightFrozenWidth;
+          if (isInRightFrozenArea) {
+            // 在展开行的右边冻结列区域，不允许调整列宽
+            return { col: -1, row: -1 };
+          }
+        }
+      }
+    }
+
+    // 调用原始的 getResizeColAt 方法
+    return this.originalGetResizeColAt(abstractX, abstractY, cellGroup);
+  }
+
+  /**
    * 检测鼠标是否在插件绘制的下划线区域
    */
   private isMouseInPluginUnderlineArea(row: number): boolean {
     try {
       // 获取表格的滚动偏移量
-      const tableAny = this.table as any;
+      const tableAny = this.table;
       const scrollTop = tableAny.stateManager?.scroll?.verticalBarPos || 0;
       // 计算当前行在视口中的位置信息
       const rowY = this.table.getRowsHeight(0, row - 1);
@@ -735,7 +877,7 @@ export class TableAPIExtensions {
   /**
    * 保护的updateCellContent方法
    */
-  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false): void {
+  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false) {
     const isExpandedRow = this.eventManager.isRowExpanded(row);
     if (isExpandedRow) {
       // 对于展开行，我们需要临时恢复到原始高度来创建内容
@@ -787,13 +929,24 @@ export class TableAPIExtensions {
   }
 
   /**
+   * 等待渲染完成后执行回调
+   */
+  private waitForRenderComplete(callback: () => void): void {
+    const onAfterRender = () => {
+      this.table.off(TABLE_EVENT_TYPE.AFTER_RENDER, onAfterRender);
+      callback();
+    };
+    this.table.on(TABLE_EVENT_TYPE.AFTER_RENDER, onAfterRender);
+  }
+
+  /**
    * 清理所有扩展的 API
    */
   cleanup(): void {
     // 清理鼠标事件监听器
     if (this.mouseEventListener) {
       try {
-        const table = this.table as any;
+        const table = this.table;
         if (table && table.internalProps && table.internalProps.canvas) {
           const canvas = table.internalProps.canvas;
           canvas.removeEventListener('mousemove', this.mouseEventListener);
@@ -808,7 +961,7 @@ export class TableAPIExtensions {
 
     // 恢复原始的updateCellContent方法
     if (this.originalUpdateCellContent && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.scenegraph && table.scenegraph.updateCellContent) {
         table.scenegraph.updateCellContent = this.originalUpdateCellContent;
       }
@@ -817,7 +970,7 @@ export class TableAPIExtensions {
 
     // 恢复原始的updateResizeRow方法
     if (this.originalUpdateResizeRow && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.stateManager && table.stateManager.updateResizeRow) {
         table.stateManager.updateResizeRow = this.originalUpdateResizeRow;
       }
@@ -826,7 +979,7 @@ export class TableAPIExtensions {
 
     // 恢复原始的dealHeightMode方法
     if (this.originalDealHeightMode && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.scenegraph && table.scenegraph.dealHeightMode) {
         table.scenegraph.dealHeightMode = this.originalDealHeightMode;
       }
@@ -835,7 +988,7 @@ export class TableAPIExtensions {
 
     // 恢复其他原始方法
     if (this.originalUpdatePagination && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.updatePagination) {
         table.updatePagination = this.originalUpdatePagination;
       }
@@ -843,7 +996,7 @@ export class TableAPIExtensions {
     }
 
     if (this.originalToggleHierarchyState && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.toggleHierarchyState) {
         table.toggleHierarchyState = this.originalToggleHierarchyState;
       }
@@ -851,7 +1004,7 @@ export class TableAPIExtensions {
     }
 
     if (this.originalUpdateFilterRules && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.updateFilterRules) {
         table.updateFilterRules = this.originalUpdateFilterRules;
       }
@@ -859,29 +1012,37 @@ export class TableAPIExtensions {
     }
 
     if (this.originalUpdateChartSizeForResizeColWidth && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.scenegraph && table.scenegraph.updateChartSizeForResizeColWidth) {
         table.scenegraph.updateChartSizeForResizeColWidth = this.originalUpdateChartSizeForResizeColWidth;
       }
       this.originalUpdateChartSizeForResizeColWidth = undefined;
     }
 
+    if (this.originalUpdateChartSizeForResizeRowHeight && this.table) {
+      const table = this.table;
+      if (table.scenegraph && table.scenegraph.updateChartSizeForResizeRowHeight) {
+        table.scenegraph.updateChartSizeForResizeRowHeight = this.originalUpdateChartSizeForResizeRowHeight;
+      }
+      this.originalUpdateChartSizeForResizeRowHeight = undefined;
+    }
+
     // 恢复原始的updateRowHeight方法
     if (this.originalUpdateRowHeight && this.table) {
-      const table = this.table as any;
+      const table = this.table;
       if (table.scenegraph && table.scenegraph.updateRowHeight) {
         table.scenegraph.updateRowHeight = this.originalUpdateRowHeight;
       }
       this.originalUpdateRowHeight = undefined;
     }
 
-    // 清理 getRowY 相关的拦截
-    if (this.table && this.table.scenegraph) {
-      const scenegraph = this.table.scenegraph as any;
-      if (scenegraph.tableGroup && scenegraph.tableGroup.tableComponent && this.originalGetRowY) {
-        this.originalGetRowY = undefined;
+    // 恢复原始的getResizeColAt方法
+    if (this.originalGetResizeColAt && this.table) {
+      const scenegraph = this.table.scenegraph;
+      if (scenegraph && scenegraph.getResizeColAt) {
+        scenegraph.getResizeColAt = this.originalGetResizeColAt;
       }
+      this.originalGetResizeColAt = undefined;
     }
-    this.originalGetRowY = undefined;
   }
 }

@@ -926,6 +926,7 @@ export function createTable() {
     records: recordsWithChildren,
     columns,
     defaultRowHeight: 120,
+    rowResizeMode: 'all',
     plugins: [masterDetailPlugin]
   };
 
