@@ -4962,7 +4962,4 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._containerFit = { width: false, height: false };
     }
   }
-  set customConfig(customConfig: any) {
-    this.options.customConfig = customConfig;
-  }
 }

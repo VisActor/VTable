@@ -435,10 +435,10 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      // if (isCompleteEdit === false) {
-      //   // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
-      //   return;
-      // }
+      if (!table.options.customConfig?.selectCellWhenCellEditorNotExists && isCompleteEdit === false) {
+        // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
+        return;
+      }
 
       const hitIcon = (eventArgsSet?.eventArgs?.target as any)?.role?.startsWith('icon')
         ? eventArgsSet.eventArgs.target

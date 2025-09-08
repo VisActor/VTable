@@ -353,6 +353,17 @@ export class FormulaUIManager {
     }
     const input = event.target as HTMLInputElement;
     const value = input.value;
+    //如果编辑器不存在，则开启编辑单元格
+    if (!this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor) {
+      this.sheet.getActiveSheet().tableInstance.startEditCell(editingCell.col, editingCell.row, value);
+    }
+    //将值同步到编辑器输入框
+    if (this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor?.getInputElement) {
+      (
+        this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor.getInputElement() as HTMLInputElement
+      ).value = value;
+      input.focus();
+    }
 
     // 如果是公式，高亮引用的单元格
     if (value.startsWith('=')) {

@@ -213,7 +213,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         borderLineWidth: 0
       });
     }
-
     return {
       ...this.options,
       addRecordRule: 'Array',
@@ -225,6 +224,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       theme: changedTheme,
       excelOptions: {
         fillHandle: true
+      },
+      customConfig: {
+        selectCellWhenCellEditorNotExists: true
       }
       // maintainedColumnCount: 120
       // 其他特定配置

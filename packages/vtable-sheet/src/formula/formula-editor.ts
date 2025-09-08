@@ -15,7 +15,12 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
   setSheet(sheet: VTableSheet): void {
     this.sheet = sheet;
   }
-
+  getInputElement(): HTMLElement {
+    return this.element;
+  }
+  targetIsOnEditor(target: HTMLElement): boolean {
+    return target === this.element || target === this.sheet.formulaUIManager.formulaInput;
+  }
   /**
    * 创建编辑器元素
    * 重写父类方法以添加自动补全功能
