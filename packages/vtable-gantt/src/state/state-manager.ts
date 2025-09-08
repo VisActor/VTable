@@ -840,9 +840,6 @@ export class StateManager {
       this._gantt._updateProgressToTaskRecord(Math.round(newProgress), taskIndex, subTaskIndex);
       const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
 
-      // 刷新任务条显示
-      this._gantt.scenegraph.taskBar.updateTaskBarNode(taskIndex, subTaskIndex);
-
       // 触发进度更新事件
       if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
         this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
