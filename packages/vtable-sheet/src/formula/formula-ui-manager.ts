@@ -211,7 +211,9 @@ export class FormulaUIManager {
         try {
           // 检查是否包含循环引用
           const currentCellAddress = activeWorkSheet.addressFromCoord(selection.row, selection.col);
-          if (value.includes(currentCellAddress)) {
+          // 使用正则表达式来精确匹配单元格引用
+          const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
+          if (cellRegex.test(value)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
             activeWorkSheet.setCellValue(selection.row, selection.col, '#CYCLE!');
             this.sheet.formulaManager.isUpdatingFromFormula = true;
@@ -324,6 +326,7 @@ export class FormulaUIManager {
             const cellValue = activeWorkSheet.getCellValue(selection.startRow, selection.startCol);
             formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
           }
+          console.log('222 formulaInput.value', formulaInput.value);
         } catch (e) {
           console.warn('Error updating formula input:', e);
           formulaInput.value = '';
@@ -420,7 +423,9 @@ export class FormulaUIManager {
         try {
           // 检查是否包含循环引用
           const currentCellAddress = activeWorkSheet.addressFromCoord(editingCell.row, editingCell.col);
-          if (value.includes(currentCellAddress)) {
+          // 使用正则表达式来精确匹配单元格引用
+          const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
+          if (cellRegex.test(value)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
             activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#CYCLE!');
             this.sheet.formulaManager.isUpdatingFromFormula = true;
@@ -462,11 +467,11 @@ export class FormulaUIManager {
           console.log('isFormulaBarShowingResult', true);
           input.blur();
           setTimeout(() => {
+            this.sheet.formulaManager.isUpdatingFromFormula = false;
+            this.sheet.formulaManager.formulaWorkingOnCell = null;
             activeWorkSheet.tableInstance.clearSelected();
             this.sheet.formulaManager.cellHighlightManager.clearHighlights();
             activeWorkSheet.tableInstance.selectCell(editingCell.col, editingCell.row);
-            this.sheet.formulaManager.isUpdatingFromFormula = false;
-            this.sheet.formulaManager.formulaWorkingOnCell = null;
           }, 0);
         } catch (error) {
           this.sheet.formulaManager.isUpdatingFromFormula = false;

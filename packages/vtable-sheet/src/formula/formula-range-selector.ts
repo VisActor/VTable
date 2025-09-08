@@ -310,7 +310,9 @@ export class FormulaRangeSelector {
         try {
           // 检查是否包含循环引用
           const currentCellAddress = activeWorkSheet.addressFromCoord(event.row, event.col);
-          if (newValue.includes(currentCellAddress)) {
+          // 使用正则表达式来精确匹配单元格引用
+          const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
+          if (cellRegex.test(newValue)) {
             console.warn('Circular reference detected:', newValue, 'contains', currentCellAddress);
             this.formulaManager.isUpdatingFromFormula = true;
             activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#CYCLE!', true, false);
@@ -421,7 +423,11 @@ export class FormulaRangeSelector {
 
     // const formulaInput = this.formulaInput;
     const formulaInput = this.formulaManager.inputingElement;
-    if (!formulaInput || this.formulaManager.isUpdatingFromFormula) {
+    // if (!formulaInput || this.formulaManager.isUpdatingFromFormula) {
+    //   return;
+    // }
+    // TODO 尝试全部去掉isUpdatingFromFormula的判断和赋值
+    if (!formulaInput) {
       return;
     }
 

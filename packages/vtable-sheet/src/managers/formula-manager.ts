@@ -302,7 +302,7 @@ export class FormulaManager {
    * @param value 值
    */
   setCellContent(cell: FormulaCell, value: any): void {
-    console.log('setCellContent', cell, value);
+    console.trace('setCellContent', cell, value);
     this.ensureInitialized();
 
     // 检查单元格参数有效性
