@@ -122,13 +122,11 @@ export class FormulaUIManager {
             row: selection.startRow,
             col: selection.startCol
           });
-          this.sheet.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(
             selection.startCol,
             selection.startRow,
             result.error ? '#ERROR!' : result.value
           );
-          this.sheet.formulaManager.isUpdatingFromFormula = false;
         }
       }
     });
@@ -216,9 +214,7 @@ export class FormulaUIManager {
           if (cellRegex.test(value)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
             activeWorkSheet.setCellValue(selection.row, selection.col, '#CYCLE!');
-            this.sheet.formulaManager.isUpdatingFromFormula = true;
             activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#CYCLE!');
-            this.sheet.formulaManager.isUpdatingFromFormula = false;
             formulaInput.value = '';
             formulaInput.blur();
             return;
@@ -398,8 +394,6 @@ export class FormulaUIManager {
       this.sheet.formulaManager.cellHighlightManager.clearHighlights();
     }
 
-    this.sheet.formulaManager.isUpdatingFromFormula = false;
-
     // //当前input框内是否为公式，并且检查公式的完整性。如果不是完整的，那么不退出编辑状态，且等待用户输入其他内容，或者等待用户进行框选点选单元格设定计算选取
     // const formulaIfCorrect = this.sheet.formulaManager.isFormulaComplete(value);
     // if (formulaIfCorrect) {
@@ -439,9 +433,7 @@ export class FormulaUIManager {
           if (cellRegex.test(value)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
             activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#CYCLE!');
-            this.sheet.formulaManager.isUpdatingFromFormula = true;
             activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#CYCLE!');
-            this.sheet.formulaManager.isUpdatingFromFormula = false;
             this.sheet.formulaManager.formulaWorkingOnCell = null;
             input.value = '';
             input.blur();
@@ -465,7 +457,6 @@ export class FormulaUIManager {
             col: editingCell.col
           });
 
-          this.sheet.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(
             editingCell.col,
             editingCell.row,
@@ -478,28 +469,22 @@ export class FormulaUIManager {
           console.log('isFormulaBarShowingResult', true);
           input.blur();
           setTimeout(() => {
-            this.sheet.formulaManager.isUpdatingFromFormula = false;
             this.sheet.formulaManager.formulaWorkingOnCell = null;
             activeWorkSheet.tableInstance.clearSelected();
             this.sheet.formulaManager.cellHighlightManager.clearHighlights();
             activeWorkSheet.tableInstance.selectCell(editingCell.col, editingCell.row);
           }, 0);
         } catch (error) {
-          this.sheet.formulaManager.isUpdatingFromFormula = false;
           console.warn('Formula evaluation error:', error);
           // 显示错误状态
           activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#ERROR!');
-          this.sheet.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#ERROR!');
-          this.sheet.formulaManager.isUpdatingFromFormula = false;
           this.sheet.formulaManager.formulaWorkingOnCell = null;
         }
       } else {
         // 普通值，直接设置
         activeWorkSheet.setCellValue(editingCell.row, editingCell.col, value);
-        this.sheet.formulaManager.isUpdatingFromFormula = true;
         activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, value);
-        this.sheet.formulaManager.isUpdatingFromFormula = false;
         this.sheet.formulaManager.formulaWorkingOnCell = null;
       }
 

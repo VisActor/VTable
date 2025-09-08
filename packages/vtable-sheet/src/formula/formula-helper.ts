@@ -67,6 +67,7 @@ export function detectFunctionParameterPosition(
     end: number;
   } | null;
 } {
+  // 基本检查
   if (!formula.startsWith('=')) {
     return {
       inParamMode: false,
@@ -74,54 +75,76 @@ export function detectFunctionParameterPosition(
     };
   }
 
-  // 匹配函数调用模式：=FUNCTION_NAME(
-  const functionRegex = /^=([A-Za-z]+)\s*\(/i;
-  const match = formula.match(functionRegex);
+  // 1. 先检查是否在函数参数位置
+  // 匹配所有函数调用模式：FUNCTION_NAME(
+  const functionRegex = /([A-Za-z]+)\s*\(/g;
+  let match;
+  let positionBeforeCursor = -1;
 
-  if (!match) {
-    return {
-      inParamMode: false,
-      functionParamPosition: null
-    };
+  // 查找距离光标最近的左括号
+  while ((match = functionRegex.exec(formula)) !== null) {
+    const functionName = match[1].toUpperCase();
+    const functionStart = match.index;
+    const openParenIndex = formula.indexOf('(', functionStart);
+
+    // 如果光标在函数名之后，且这个函数比之前找到的更接近光标
+    if (openParenIndex < cursorPosition && openParenIndex > positionBeforeCursor) {
+      // 查找对应的右括号位置
+      const closeParenIndex = findMatchingCloseParen(formula, openParenIndex);
+
+      // 检查光标是否在函数参数位置（在左括号之后且在右括号之前或没有找到右括号）
+      if (cursorPosition > openParenIndex && (closeParenIndex === -1 || cursorPosition <= closeParenIndex)) {
+        return {
+          inParamMode: true,
+          functionParamPosition: {
+            start: openParenIndex + 1,
+            end: cursorPosition
+          }
+        };
+      }
+
+      // 如果光标正好在括号后面，也认为是参数位置
+      if (cursorPosition === openParenIndex + 1) {
+        return {
+          inParamMode: true,
+          functionParamPosition: {
+            start: openParenIndex + 1,
+            end: cursorPosition
+          }
+        };
+      }
+
+      // 记录这个左括号位置，用于比较
+      positionBeforeCursor = openParenIndex;
+    }
   }
 
-  const functionName = match[1].toUpperCase();
-  const functionStart = match.index ? match.index : 0;
-  const openParenIndex = formula.indexOf('(', functionStart);
-
-  // 查找对应的右括号位置
-  const closeParenIndex = findMatchingCloseParen(formula, openParenIndex);
-
-  // 检查是否是支持的函数
-  if (!supportedFunctions.includes(functionName)) {
-    return {
-      inParamMode: false,
-      functionParamPosition: null
-    };
+  // 2. 检查是否在操作符后面 - 也将此视为函数参数模式
+  if (cursorPosition > 1 && cursorPosition <= formula.length) {
+    const prevChar = formula[cursorPosition - 1];
+    if (['+', '-', '*', '/', '=', '>', '<', '&', '|', '^', '(', ','].includes(prevChar)) {
+      return {
+        inParamMode: true,
+        functionParamPosition: {
+          start: cursorPosition,
+          end: cursorPosition
+        }
+      };
+    }
   }
 
-  // 检查光标是否在函数参数位置（在左括号之后且在右括号之前或没有找到右括号）
-  if (cursorPosition > openParenIndex && (closeParenIndex === -1 || cursorPosition <= closeParenIndex)) {
+  // 3. 检查是否在公式开始位置 - 公式开始后也视为可能需要函数输入
+  if (cursorPosition === 1 && formula[0] === '=') {
     return {
       inParamMode: true,
       functionParamPosition: {
-        start: openParenIndex + 1,
+        start: cursorPosition,
         end: cursorPosition
       }
     };
   }
 
-  // 如果光标正好在括号后面，也认为是参数位置
-  if (cursorPosition === openParenIndex + 1) {
-    return {
-      inParamMode: true,
-      functionParamPosition: {
-        start: openParenIndex + 1,
-        end: cursorPosition
-      }
-    };
-  }
-
+  // 默认情况，不在任何特殊位置
   return {
     inParamMode: false,
     functionParamPosition: null

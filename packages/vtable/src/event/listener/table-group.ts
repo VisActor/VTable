@@ -843,9 +843,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.hideMenu();
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    let isCompleteEdit: boolean | Promise<boolean> = false;
+    //需要判断是否点击到了tableGroup，如果点击到了tableGroup，已经在tableGroup的pointerdown中处理了编辑状态的退出
+    const target: any = e.target;
+    if (target !== table.scenegraph.tableGroup && !target.isDescendantsOf(table.scenegraph.tableGroup)) {
+      isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    }
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      if (isCompleteEdit === false) {
+      if (!table.options.customConfig?.selectCellWhenCellEditorNotExists && isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
       }

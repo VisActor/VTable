@@ -94,7 +94,7 @@ export class FormulaAutocomplete {
     // 查找最后一个函数或操作符
     const lastOperatorMatch = textBeforeCursor.match(/[\+\-\*\/\(\,\s]([A-Za-z0-9]*)$/);
 
-    if (lastOperatorMatch) {
+    if (lastOperatorMatch && lastOperatorMatch[1] !== '') {
       return {
         shouldShowAutocomplete: true,
         searchTerm: lastOperatorMatch[1],
@@ -144,7 +144,7 @@ export class FormulaAutocomplete {
       const cellSuggestions = this.generateCellSuggestions(searchTerm);
       this.items.push(...cellSuggestions);
     }
-
+    console.log('updateSuggestions', context, this.items);
     this.renderDropdown();
   }
 

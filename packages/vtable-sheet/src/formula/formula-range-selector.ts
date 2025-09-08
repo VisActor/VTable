@@ -127,43 +127,30 @@ export class FormulaRangeSelector {
    * @returns 参数的起始和结束位置
    */
   private findCurrentArgumentPosition(formula: string, cursorPos: number): { start: number; end: number } | null {
-    // 检查公式格式是否有效
-    let i = formula.indexOf('(');
-    if (i === -1) {
+    // 首先检查光标是否在操作符后面
+    if (cursorPos > 1 && cursorPos <= formula.length) {
+      const prevChar = formula[cursorPos - 1];
+      if (['+', '-', '*', '/', '=', '>', '<', '&', '|', '^'].includes(prevChar)) {
+        // 光标在操作符后面，将光标位置视为参数的起始和结束位置
+        return {
+          start: cursorPos,
+          end: cursorPos
+        };
+      }
+    }
+
+    // 检查公式是否包含括号
+    if (!formula.includes('(')) {
       return null;
     }
 
+    // 从后向前查找最接近光标的左括号
+    let lastOpenParenBeforeCursor = -1;
     let nestLevel = 0;
     let inQuote = false;
-    let argumentStart = -1;
-    let argumentEnd = -1;
 
-    // 特殊处理：光标在括号后面
-    if (cursorPos === i + 1) {
-      return {
-        start: i + 1,
-        end: i + 1
-      };
-    }
-
-    // 特殊处理：光标在逗号后面
-    if (cursorPos > 0 && formula[cursorPos - 1] === ',') {
-      return {
-        start: cursorPos,
-        end: cursorPos
-      };
-    }
-
-    // 检查光标是否在函数调用内部
-    if (cursorPos <= i || cursorPos > formula.length) {
-      return null;
-    }
-
-    // 第一步：找到当前参数的起始位置
-    nestLevel = 1; // 已经找到第一个左括号
-    argumentStart = i + 1;
-
-    for (i = argumentStart; i < cursorPos; i++) {
+    // 第一阶段：找到光标所在的函数调用
+    for (let i = 0; i < cursorPos; i++) {
       const char = formula[i];
 
       // 处理引号内的内容
@@ -179,10 +166,67 @@ export class FormulaRangeSelector {
 
       if (char === '(') {
         nestLevel++;
+        lastOpenParenBeforeCursor = i;
+      } else if (char === ')') {
+        nestLevel--;
+      }
+    }
+
+    // 如果没有找到左括号或者光标不在任何括号内
+    if (lastOpenParenBeforeCursor === -1 || nestLevel <= 0) {
+      // 检查是否在公式开始位置
+      if (formula.startsWith('=') && cursorPos === 1) {
+        return {
+          start: cursorPos,
+          end: cursorPos
+        };
+      }
+
+      return null;
+    }
+
+    // 特殊处理：光标恰好在左括号后面
+    if (cursorPos === lastOpenParenBeforeCursor + 1) {
+      return {
+        start: cursorPos,
+        end: cursorPos
+      };
+    }
+
+    // 特殊处理：光标在逗号后面
+    if (cursorPos > 0 && formula[cursorPos - 1] === ',') {
+      return {
+        start: cursorPos,
+        end: cursorPos
+      };
+    }
+
+    // 找到当前参数的起始位置
+    let argumentStart = lastOpenParenBeforeCursor + 1;
+    let argumentEnd = cursorPos;
+
+    // 重置状态
+    nestLevel = 1; // 从左括号开始，嵌套级别为1
+    inQuote = false;
+
+    // 从找到的左括号位置向光标方向扫描，找到当前参数的起始位置
+    for (let i = argumentStart; i < cursorPos; i++) {
+      const char = formula[i];
+
+      if (char === '"' && (i === 0 || formula[i - 1] !== '\\')) {
+        inQuote = !inQuote;
+        continue;
+      }
+      if (inQuote) {
+        continue;
+      }
+
+      if (char === '(') {
+        nestLevel++;
       } else if (char === ')') {
         nestLevel--;
         if (nestLevel === 0) {
-          // 如果已经回到最外层，则结束搜索
+          // 如果回到了函数最外层，则这个右括号后面的内容不再是当前函数的参数
           break;
         }
       } else if (char === ',' && nestLevel === 1) {
@@ -191,21 +235,12 @@ export class FormulaRangeSelector {
       }
     }
 
-    // 特殊处理：光标在空参数区域
-    const paramContentBefore = formula.substring(argumentStart, cursorPos).trim();
-    if (paramContentBefore === '') {
-      return {
-        start: argumentStart,
-        end: cursorPos
-      };
-    }
-
-    // 第二步：找到当前参数的结束位置
-    // 重置状态，重新计算光标所在位置的嵌套级别
+    // 重置状态，准备从光标位置向后扫描
     nestLevel = 0;
     inQuote = false;
 
-    for (i = 0; i < cursorPos; i++) {
+    // 重新计算光标位置的嵌套级别
+    for (let i = 0; i < cursorPos; i++) {
       if (formula[i] === '"' && (i === 0 || formula[i - 1] !== '\\')) {
         inQuote = !inQuote;
         continue;
@@ -224,7 +259,7 @@ export class FormulaRangeSelector {
 
     // 从光标位置向后查找参数结束位置
     argumentEnd = formula.length;
-    for (i = cursorPos; i < formula.length; i++) {
+    for (let i = cursorPos; i < formula.length; i++) {
       const char = formula[i];
 
       if (char === '"' && (i === 0 || formula[i - 1] !== '\\')) {
@@ -239,7 +274,7 @@ export class FormulaRangeSelector {
         nestLevel++;
       } else if (char === ')') {
         nestLevel--;
-        // 如果回到了函数最外层括号
+        // 如果回到了当前函数的右括号
         if (nestLevel === 0) {
           argumentEnd = i;
           break;
@@ -251,22 +286,27 @@ export class FormulaRangeSelector {
       }
     }
 
-    // 特殊处理：末尾空参数或右括号前的参数
+    // 处理空参数的情况
+    const paramContentBefore = formula.substring(argumentStart, cursorPos).trim();
     const paramContentAfter = formula.substring(cursorPos, argumentEnd).trim();
-    if (paramContentAfter === '' && cursorPos < argumentEnd) {
-      // 如果光标后面到结束位置都是空白，则将结束位置设置为光标位置
-      argumentEnd = cursorPos;
-    }
 
-    // 确保找到的区间有效
-    if (argumentStart > -1 && argumentEnd >= argumentStart) {
+    if (paramContentBefore === '' && cursorPos === argumentStart) {
+      // 光标在参数起始位置，且参数为空
       return {
         start: argumentStart,
-        end: argumentEnd
+        end: argumentStart
       };
     }
 
-    return null;
+    if (paramContentAfter === '' && cursorPos < argumentEnd) {
+      // 光标后面到结束位置都是空白
+      argumentEnd = cursorPos;
+    }
+
+    return {
+      start: argumentStart,
+      end: argumentEnd
+    };
   }
   /**
    * 处理单元格选择变化
@@ -314,9 +354,7 @@ export class FormulaRangeSelector {
           const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
           if (cellRegex.test(newValue)) {
             console.warn('Circular reference detected:', newValue, 'contains', currentCellAddress);
-            this.formulaManager.isUpdatingFromFormula = true;
             activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#CYCLE!', true, false);
-            this.formulaManager.isUpdatingFromFormula = false;
             this.formulaManager.formulaWorkingOnCell = null;
             return;
           }
@@ -342,17 +380,13 @@ export class FormulaRangeSelector {
           // const isEditing = document.activeElement === formulaInput;
 
           // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
-          this.formulaManager.isUpdatingFromFormula = true;
           // activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, isEditing ? newValue : result.value);
           activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, result.value, true, false);
-          this.formulaManager.isUpdatingFromFormula = false;
           this.formulaManager.formulaWorkingOnCell = null;
         } catch (error) {
           console.warn('Formula processing error:', error);
           // 显示错误状态
-          this.formulaManager.isUpdatingFromFormula = true;
           activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, '#ERROR!', true, false);
-          this.formulaManager.isUpdatingFromFormula = false;
           this.formulaManager.formulaWorkingOnCell = null;
         }
       } else {
@@ -386,11 +420,9 @@ export class FormulaRangeSelector {
         // 重新计算依赖该单元格的所有公式
         dependents.forEach(dependent => {
           const result = formulaManager.getCellValue(dependent);
-          this.formulaManager.isUpdatingFromFormula = true;
           if (activeWorkSheet) {
             activeWorkSheet.setCellValue(dependent.row, dependent.col, result.value);
           }
-          this.formulaManager.isUpdatingFromFormula = false;
         });
         // 立即执行完整重新计算
         formulaThrottle.immediateRebuildAndRecalculate(formulaManager);

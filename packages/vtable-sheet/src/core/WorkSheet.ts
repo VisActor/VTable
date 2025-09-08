@@ -242,15 +242,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       // 监听单元格选择事件 - 优化：移除console.log调试代码
       this.tableInstance.on('mousedown_cell', (event: any) => {
         if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
-          //在输入状态下
-          this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
-            this.vtableSheet.formulaManager.inputingElement.value,
-            this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
-          );
-          if (this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
-            //防止公式输入状态下，原本的input元素blur掉，导致公式输入框无法输入
-            event.event.preventDefault();
-          }
+          //防止公式输入状态下，原本的input元素blur掉，导致公式输入框无法输入
+          event.event.preventDefault();
         }
       });
 
@@ -269,15 +262,17 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           this.handleCellSelected(event);
         }
         this.handleSelectionChanged(event);
-        //#region 在完整公式状态下 计算完结果 可以退出编辑状态  并重新响应重新选中的单元格
-        this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
-          this.vtableSheet.formulaManager.inputingElement.value,
-          this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
-        );
-        if (!this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
-          this.vtableSheet.formulaManager.formulaWorkingOnCell = null;
-          this.handleCellSelected(event);
-        }
+        // if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+        //   //#region 在完整公式状态下 计算完结果 可以退出编辑状态  并重新响应重新选中的单元格
+        //   this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+        //     this.vtableSheet.formulaManager.inputingElement.value,
+        //     this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
+        //   );
+        //   if (!this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
+        //     this.vtableSheet.formulaManager.formulaWorkingOnCell = null;
+        //     this.handleCellSelected(event);
+        //   }
+        // }
         //#endregion
       });
 

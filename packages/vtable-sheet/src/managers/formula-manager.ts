@@ -70,19 +70,7 @@ export class FormulaManager {
     console.trace('set formulaWorkingOnCell', value);
     this._formulaWorkingOnCell = value;
   }
-  /**
-   * 获取是否正在从公式更新
-   */
-  get isUpdatingFromFormula(): boolean {
-    return this._isUpdatingFromFormula;
-  }
 
-  /**
-   * 设置是否正在从公式更新
-   */
-  set isUpdatingFromFormula(value: boolean) {
-    this._isUpdatingFromFormula = value;
-  }
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
     this.cellHighlightManager = new CellHighlightManager(sheet);
