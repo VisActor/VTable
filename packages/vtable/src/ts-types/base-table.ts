@@ -602,6 +602,9 @@ export interface BaseTableConstructorOptions {
 
     /** 是否取消当前单元格选中状态的判断钩子，用在table-group文件的pointertap事件中，当点击空白区域时，取消选中状态 */
     cancelSelectCellHook?: (e: FederatedPointerEvent) => boolean;
+
+    /** 当编辑器没有退出情况时，可继续选中其他单元格，比如在vtable-sheet中，当编辑器没有退出情况时，可继续选中其他单元格 */
+    selectCellWhenCellEditorNotExists?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;

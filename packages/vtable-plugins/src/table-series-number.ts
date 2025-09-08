@@ -91,12 +91,13 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       // }
     } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED || runTime === VTable.TABLE_EVENT_TYPE.UPDATED) {
       this.table = args[2];
-      this.table.customConfig = {
-        cancelSelectCellHook: (e: any) => {
-          const target = e.target;
-          if (target.isDescendantsOf(this.seriesNumberComponent)) {
-            return false;
-          }
+      if (!this.table.options.customConfig) {
+        this.table.options.customConfig = {};
+      }
+      this.table.options.customConfig.cancelSelectCellHook = (e: any) => {
+        const target = e.target;
+        if (target.isDescendantsOf(this.seriesNumberComponent)) {
+          return false;
         }
       };
 

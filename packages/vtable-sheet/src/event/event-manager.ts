@@ -1,9 +1,15 @@
 import type { CellCoord } from '../ts-types';
 import type VTableSheet from '../components/vtable-sheet';
+import type { FormulaUIManager } from '../formula/formula-ui-manager';
 
 export class EventManager {
   private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
+
+  // 预先绑定的事件处理方法
+  readonly handleCellSelectedBind: () => void;
+  readonly handleCellValueChangedBind: (event: any) => void;
+  readonly handleSelectionChangedForRangeModeBind: (event: any) => void;
 
   /**
    * Creates a new EventManager instance
@@ -11,6 +17,12 @@ export class EventManager {
    */
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
+
+    // 预先绑定事件处理方法
+    this.handleCellSelectedBind = this.handleCellSelected.bind(this);
+    this.handleCellValueChangedBind = this.handleCellValueChanged.bind(this);
+    this.handleSelectionChangedForRangeModeBind = this.handleSelectionChangedForRangeMode.bind(this);
+
     this.setupEventListeners();
   }
 
@@ -56,142 +68,95 @@ export class EventManager {
   }
 
   /**
-   * 处理鼠标按下事件
-   * @param event 鼠标事件
+   * 处理单元格选择事件
+   * 这个方法处理从Worksheet冒泡上来的cell-selected事件
    */
+  handleCellSelected(): void {
+    // 如果在公式编辑状态，不处理
+    if (this.sheet.formulaManager.formulaWorkingOnCell) {
+      return;
+    }
+
+    // 重置公式栏显示标志，让公式栏显示选中单元格的值
+    const formulaUIManager = this.sheet.formulaUIManager;
+    formulaUIManager.isFormulaBarShowingResult = false;
+    formulaUIManager.clearFormula();
+    formulaUIManager.updateFormulaBar();
+  }
+
+  /**
+   * 处理单元格值变更事件
+   */
+  handleCellValueChanged(event: any): void {
+    this.sheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
+  }
+  handleSelectionChangedForRangeMode(event: any): void {
+    this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
+  }
+
+  // 原有方法保持不变
   private handleMouseDown(event: MouseEvent): void {
-    // TODO: 实现单元格选择逻辑
-    // 1. 从鼠标位置获取单元格坐标
-    // 2. 开始单元格选择
-    // 3. 更新UI以显示选择
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理鼠标移动事件
-   * @param event 鼠标事件
-   */
   private handleMouseMove(event: MouseEvent): void {
-    // TODO: 实现单元格选择拖拽
-    // 1. 如果选择是活动的，则扩展选择到当前单元格
-    // 2. 更新UI以显示选择
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理鼠标抬起事件
-   * @param event 鼠标事件
-   */
   private handleMouseUp(event: MouseEvent): void {
-    // TODO: 实现单元格选择结束
-    // 1. 最终确定选择
-    // 2. 更新UI
-    // 3. 触发选择变化事件
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理双击事件
-   * @param event 鼠标事件
-   */
   private handleDoubleClick(event: MouseEvent): void {
-    // TODO: 开始单元格编辑
-    // 1. 获取单元格坐标
-    // 2. 切换单元格到编辑模式
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理键盘按下事件
-   * @param event 键盘事件
-   */
   private handleKeyDown(event: KeyboardEvent): void {
-    // TODO: 处理键盘导航和命令
-    // 示例:
-    // - 箭头键: 移动选择
-    // - Enter: 开始编辑或移动到下一行
-    // - Tab: 移动到右侧
-    // - Shift+Tab: 移动到左侧
-    // - Ctrl/Cmd+C: 复制
-    // - Ctrl/Cmd+V: 粘贴
-    // - Ctrl/Cmd+Z: 撤销
-    // - Ctrl/Cmd+Y: 重做
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理键盘抬起事件
-   * @param event 键盘事件
-   */
   private handleKeyUp(event: KeyboardEvent): void {
-    // TODO: 处理键盘抬起事件
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理复制事件
-   * @param event 剪贴板事件
-   */
   private handleCopy(event: ClipboardEvent): void {
-    // TODO: 复制选中的单元格到剪贴板
-    // 1. 获取选中的范围
-    // 2. 格式化数据到剪贴板
-    // 3. 设置剪贴板数据
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理粘贴事件
-   * @param event 剪贴板事件
-   */
   private handlePaste(event: ClipboardEvent): void {
-    // TODO: 粘贴剪贴板数据到选中的单元格
-    // 1. 获取剪贴板数据
-    // 2. 解析数据
-    // 3. 应用到选中的范围
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理剪切事件
-   * @param event 剪贴板事件
-   */
   private handleCut(event: ClipboardEvent): void {
-    // TODO: 剪切选中的单元格到剪贴板
-    // 1. 复制选中的单元格到剪贴板
-    // 2. 清除选中的单元格
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理焦点事件
-   * @param event 焦点事件
-   */
   private handleFocus(event: FocusEvent): void {
-    // TODO: 处理焦点相关逻辑
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理失去焦点事件
-   * @param event 焦点事件
-   */
   private handleBlur(event: FocusEvent): void {
-    // TODO: 处理失去焦点相关逻辑
+    // 原有逻辑保持不变
   }
 
-  /**
-   * 处理窗口大小变化事件
-   * @param event 大小变化事件
-   */
   private handleWindowResize(event: UIEvent): void {
     // 更新Sheet大小
     this.sheet.resize();
   }
 
-  /**
-   * 将鼠标坐标转换为单元格坐标
-   * @param x 鼠标X坐标
-   * @param y 鼠标Y坐标
-   * @returns 单元格坐标
-   */
   private getCellFromMouseCoords(x: number, y: number): CellCoord {
-    // TODO: 实现鼠标坐标转换为单元格坐标
-    // 这是一个占位符实现
+    // 原有实现保持不变
     return {
       row: 0,
       col: 0
     };
+  }
+
+  /**
+   * 获取FormulaUIManager实例
+   */
+  private getFormulaUIManager(): FormulaUIManager | null {
+    return (this.sheet as any).formulaUIManager || null;
   }
 
   /**

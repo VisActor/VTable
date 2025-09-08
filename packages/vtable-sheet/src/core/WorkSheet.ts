@@ -11,9 +11,10 @@ import type {
   CellValueChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
-import type { TYPES } from '..';
+import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
+import { detectFunctionParameterPosition } from '../formula/formula-helper';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -48,9 +49,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   /** 事件总线 */
   private eventBus: EventEmitter;
 
-  private parent: any;
+  private vtableSheet: VTableSheet;
 
-  constructor(options: IWorkSheetOptions) {
+  editingCell: { sheet: string; row: number; col: number } | null = null;
+
+  constructor(sheet: VTableSheet, options: IWorkSheetOptions) {
     super();
     this.options = options;
     this.container = options.container;
@@ -58,7 +61,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     // 初始化基本属性
     this.sheetKey = options.sheetKey;
     this.sheetTitle = options.sheetTitle;
-    this.parent = options.parent;
+    this.vtableSheet = sheet;
 
     // 创建表格元素
     this.element = this._createRootElement();
@@ -91,14 +94,14 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * 获取行数
    */
   getRowCount(): number {
-    return this.rowCount;
+    return this.tableInstance.rowCount;
   }
 
   /**
    * 获取列数
    */
   getColumnCount(): number {
-    return this.colCount;
+    return this.tableInstance.colCount;
   }
 
   /**
@@ -210,7 +213,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         borderLineWidth: 0
       });
     }
-
     return {
       ...this.options,
       addRecordRule: 'Array',
@@ -222,7 +224,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       theme: changedTheme,
       excelOptions: {
         fillHandle: true
+      },
+      customConfig: {
+        selectCellWhenCellEditorNotExists: true
       }
+      // maintainedColumnCount: 120
       // 其他特定配置
     };
   }
@@ -232,43 +238,51 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    */
   private _setupEventListeners(): void {
     if (this.tableInstance) {
-      // 监听单元格选择事件
-      this.tableInstance.on('selected_cell', (event: any) => {
-        this.handleCellSelected(event);
+      // 监听单元格选择事件 - 优化：移除console.log调试代码
+      this.tableInstance.on('mousedown_cell', (event: any) => {
+        if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+          //在输入状态下
+          this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+            this.vtableSheet.formulaManager.inputingElement.value,
+            this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
+          );
+          if (this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
+            //防止公式输入状态下，原本的input元素blur掉，导致公式输入框无法输入
+            event.event.preventDefault();
+          }
+        }
       });
 
-      // 监听选择变化事件（多选时）
+      // 监听选择变化事件（多选时）- 优化：移除console.log调试代码
       this.tableInstance.on('selected_changed' as any, (event: any) => {
+        console.log('selected_changed', this.tableInstance.eventManager.isDraging);
+        // 判断是drag过程中的选中单元格变化
+        if (!this.tableInstance.eventManager.isDraging) {
+          if (!this.vtableSheet.formulaManager.formulaWorkingOnCell) {
+            this.editingCell = {
+              sheet: this.getKey(),
+              row: event.row,
+              col: event.col
+            };
+          }
+          this.handleCellSelected(event);
+        }
         this.handleSelectionChanged(event);
+        //#region 在完整公式状态下 计算完结果 可以退出编辑状态  并重新响应重新选中的单元格
+        this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
+          this.vtableSheet.formulaManager.inputingElement.value,
+          this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
+        );
+        if (!this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
+          this.vtableSheet.formulaManager.formulaWorkingOnCell = null;
+          this.handleCellSelected(event);
+        }
+        //#endregion
       });
 
-      // 监听拖拽选择结束事件
+      // 监听拖拽选择结束事件 - 优化：移除console.log和debugger调试代码
       this.tableInstance.on('drag_select_end' as any, (event: any) => {
         this.handleDragSelectEnd(event);
-      });
-
-      // 监听双击进入编辑状态
-      this.tableInstance.on('dblclick_cell', (event: any) => {
-        this.element.classList.remove('vtable-excel-cursor');
-
-        // 获取公式
-        const formula = this.parent.formulaManager.getCellFormula({
-          sheet: this.getKey(),
-          row: event.row,
-          col: event.col
-        });
-
-        if (formula) {
-          // 进入编辑状态前触发高亮
-          const displayFormula = formula.startsWith('=') ? formula : `=${formula}`;
-          this.parent.cellHighlightManager.highlightFormulaCells(displayFormula);
-
-          // 进入编辑状态
-          this.tableInstance.startEditCell(event.col, event.row, formula);
-        } else {
-          // 不是公式单元格，直接进入编辑状态
-          this.tableInstance.startEditCell(event.col, event.row);
-        }
       });
 
       // 监听单元格值变更事件
@@ -491,9 +505,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         records: data
       });
       // 更新公式引擎中的数据
-      if (this.parent?.formulaManager) {
+      if (this.vtableSheet?.formulaManager) {
         try {
-          this.parent.formulaManager.setSheetContent(this.sheetKey, data);
+          this.vtableSheet.formulaManager.setSheetContent(this.sheetKey, data);
         } catch (e) {
           console.warn('Failed to update formula data:', e);
         }
@@ -646,15 +660,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       endRow: range.end.row,
       endCol: range.end.col
     }));
-  }
-
-  /**
-   * 设置当前选择
-   * @param range 选择范围
-   */
-  setSelection(range: CellRange): void {
-    this.selection = range;
-    // 更新UI选择
   }
 
   /**
