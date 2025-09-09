@@ -1,4 +1,6 @@
 import * as VTable from '@visactor/vtable';
+import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
+import type { Scenegraph } from '@visactor/vtable/es/scenegraph/scenegraph';
 import type { MasterDetailPluginOptions } from './types';
 import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
@@ -130,14 +132,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private extendTableAPI(): void {
     // 创建 TableAPIExtensions 实例
     this.tableAPIExtensions = new TableAPIExtensions(this.table, this.configManager, this.eventManager, {
-      addUnderlineToCell: (cellGroup: any, originalHeight: number) =>
+      addUnderlineToCell: (cellGroup: Group, originalHeight: number) =>
         this.addUnderlineToCell(cellGroup, originalHeight),
       applyMinimalHeightStrategy: (
         startRow: number,
         endRow: number,
         totalHeight: number,
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-        scenegraph: any
+        scenegraph: Scenegraph
       ) => this.applyMinimalHeightStrategy(startRow, endRow, totalHeight, expandedRowsInfo, scenegraph),
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
@@ -163,8 +165,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     row: number;
     width: number;
     height: number;
-    table: any;
-    range?: any;
+    table: VTable.ListTable;
+    range?: Range;
     modifiedHeight: number;
   }): void {
     const { row } = eventArgs;
@@ -201,7 +203,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     endRow: number,
     totalHeight: number,
     expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-    scenegraph: any
+    scenegraph: Scenegraph
   ): void {
     let normalRowCount = 0;
     for (let row = startRow; row < endRow; row++) {
@@ -473,7 +475,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowCells.length === 0) {
       return;
     }
-    rowCells.forEach((cellGroup: any, index: number) => {
+    rowCells.forEach((cellGroup: Group, index: number) => {
       if (cellGroup && cellGroup.attribute) {
         this.addUnderlineToCell(cellGroup, originalHeight);
       }
@@ -485,8 +487,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 获取指定行的所有cell元素
    */
-  private getRowCells(rowIndex: number): any[] {
-    const cells: any[] = [];
+  private getRowCells(rowIndex: number): Group[] {
+    const cells: Group[] = [];
     for (let col = 0; col < this.table.colCount; col++) {
       const cellGroup = this.table.scenegraph.getCell(col, rowIndex);
       if (cellGroup && cellGroup.role === 'cell') {
@@ -619,7 +621,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     this.eventManager?.cleanup();
     this.subTableManager?.cleanup();
-    this.table = null as any;
+    this.table = null;
   }
 
   /**

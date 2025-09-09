@@ -1,6 +1,8 @@
 import type * as VTable from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
+import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
+import type { Scenegraph } from '@visactor/vtable/es/scenegraph/scenegraph';
+import { getInternalProps, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
 
@@ -13,16 +15,20 @@ export class TableAPIExtensions {
   private configManager: ConfigManager;
   private eventManager: EventManager;
   // 原始方法的引用
-  private originalUpdateCellContent?: any;
-  private originalUpdateResizeRow?: any;
-  private originalDealHeightMode?: any;
-  private originalUpdatePagination?: any;
-  private originalToggleHierarchyState?: any;
-  private originalUpdateFilterRules?: any;
-  private originalUpdateChartSizeForResizeColWidth?: any;
-  private originalUpdateChartSizeForResizeRowHeight?: any;
-  private originalUpdateRowHeight?: any;
-  private originalGetResizeColAt?: any;
+  private originalUpdateCellContent?: (col: number, row: number, forceFastUpdate?: boolean) => Group;
+  private originalUpdateResizeRow?: (xInTable: number, yInTable: number) => void;
+  private originalDealHeightMode?: () => void;
+  private originalUpdatePagination?: (pagination: VTable.TYPES.IPagination) => void;
+  private originalToggleHierarchyState?: (col: number, row: number, recalculateColWidths?: boolean) => void;
+  private originalUpdateFilterRules?: (filterRules: VTable.TYPES.FilterRules) => void;
+  private originalUpdateChartSizeForResizeColWidth?: (col: number) => void;
+  private originalUpdateChartSizeForResizeRowHeight?: (row: number) => void;
+  private originalUpdateRowHeight?: (row: number, detaY: number, skipTableHeightMap?: boolean) => void;
+  private originalGetResizeColAt?: (
+    abstractX: number,
+    abstractY: number,
+    cellGroup?: Group
+  ) => { col: number; row: number; x?: number; rightFrozen?: boolean };
 
   // 鼠标位置跟踪
   private currentMouseX: number = 0;
@@ -35,13 +41,13 @@ export class TableAPIExtensions {
 
   // 回调函数
   private callbacks: {
-    addUnderlineToCell: (cellGroup: any, originalHeight: number) => void;
+    addUnderlineToCell: (cellGroup: Group, originalHeight: number) => void;
     applyMinimalHeightStrategy: (
       startRow: number,
       endRow: number,
       totalHeight: number,
       expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-      scenegraph: any
+      scenegraph: Scenegraph
     ) => void;
     updateOriginalHeightsAfterAdaptive: (
       expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
@@ -59,13 +65,13 @@ export class TableAPIExtensions {
     configManager: ConfigManager,
     eventManager: EventManager,
     callbacks: {
-      addUnderlineToCell: (cellGroup: any, originalHeight: number) => void;
+      addUnderlineToCell: (cellGroup: Group, originalHeight: number) => void;
       applyMinimalHeightStrategy: (
         startRow: number,
         endRow: number,
         totalHeight: number,
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-        scenegraph: any
+        scenegraph: Scenegraph
       ) => void;
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
@@ -193,8 +199,12 @@ export class TableAPIExtensions {
         afterSize = currentRowMinHeight;
         detaY = afterSize - state.table.getRowHeight(state.rowResize.row);
       }
-      // adaptive 模式下检查下一行的最小高度
-      if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
+      // adaptive 模式下检查下一行的最小高度（排除虚拟行）
+      if (
+        state.table.heightMode === 'adaptive' &&
+        state.rowResize.row < state.table.rowCount - 1 &&
+        !this.configManager.isVirtualRow(state.rowResize.row + 1)
+      ) {
         const bottomRowHeightCache = state.table.getRowHeight(state.rowResize.row + 1);
         let bottomRowHeight = bottomRowHeightCache;
         bottomRowHeight -= detaY;
@@ -243,7 +253,11 @@ export class TableAPIExtensions {
    * 简单的行高调整（用于 row 类型）
    */
   private updateResizeColForRow(detaY: number, state: VTable.ListTable['stateManager']): void {
-    if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
+    if (
+      state.table.heightMode === 'adaptive' &&
+      state.rowResize.row < state.table.rowCount - 1 &&
+      !this.configManager.isVirtualRow(state.rowResize.row + 1)
+    ) {
       state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
       state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY);
 
@@ -350,16 +364,13 @@ export class TableAPIExtensions {
         ) {
           const bodyRowIndex = rowIndex - table.columnHeaderLevelCount;
           const originalHeight = getOriginalRowHeight(table, bodyRowIndex);
-          const record = getRecordByRowIndex(table, bodyRowIndex);
-          if (record) {
-            const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
-            const detailHeight = detailConfig?.style?.height;
-            expandedRowsInfo.set(rowIndex, {
-              baseHeight: originalHeight > 0 ? originalHeight : table.getRowHeight(rowIndex),
-              detailHeight
-            });
-            totalExpandedExtraHeight += detailHeight;
-          }
+          const currentRowHeight = table.getRowHeight(rowIndex);
+          const detailHeight = currentRowHeight - originalHeight;
+          expandedRowsInfo.set(rowIndex, {
+            baseHeight: originalHeight > 0 ? originalHeight : currentRowHeight,
+            detailHeight
+          });
+          totalExpandedExtraHeight += detailHeight;
         }
       }
 
@@ -491,7 +502,7 @@ export class TableAPIExtensions {
         this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
       });
       const result = this.originalUpdatePagination(pagination);
-      
+      this.resetVirtualRowsHeight();
       // 使用事件钩子替代固定延时
       this.waitForRenderComplete(() => {
         this.callbacks.restoreExpandedStatesAfter();
@@ -527,7 +538,7 @@ export class TableAPIExtensions {
           this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
         });
         const result = this.originalToggleHierarchyState(col, row, recalculateColWidths);
-        
+        this.resetVirtualRowsHeight();
         // 使用事件钩子替代固定延时
         this.waitForRenderComplete(() => {
           this.callbacks.restoreExpandedStatesAfter();
@@ -538,6 +549,20 @@ export class TableAPIExtensions {
 
       return this.originalToggleHierarchyState(col, row, recalculateColWidths);
     };
+  }
+
+  private resetVirtualRowsHeight(): void {
+    try {
+      const bodyStartRow = this.table.columnHeaderLevelCount;
+      const bodyEndRow = this.table.rowCount;
+      for (let row = bodyStartRow; row < bodyEndRow; row++) {
+        if (this.configManager.isVirtualRow(row)) {
+          this.table.scenegraph.setRowHeight(row, 0);
+        }
+      }
+    } catch (error) {
+      console.warn('重置虚拟行高度时出错：', error);
+    }
   }
 
   /**
@@ -587,7 +612,7 @@ export class TableAPIExtensions {
     };
   }
 
-  private extendUpdateChartSizeForResizeRowHeight(): void{
+  private extendUpdateChartSizeForResizeRowHeight(): void {
     const table = this.table;
     this.originalUpdateChartSizeForResizeRowHeight = table.scenegraph.updateChartSizeForResizeRowHeight.bind(
       table.scenegraph
@@ -661,7 +686,7 @@ export class TableAPIExtensions {
   private extendGetResizeColAt(): void {
     const scenegraph = this.table.scenegraph;
     this.originalGetResizeColAt = scenegraph.getResizeColAt.bind(scenegraph);
-    scenegraph.getResizeColAt = (abstractX: number, abstractY: number, cellGroup?: any) => {
+    scenegraph.getResizeColAt = (abstractX: number, abstractY: number, cellGroup?: Group) => {
       return this.protectedGetResizeColAt(abstractX, abstractY, cellGroup);
     };
   }
@@ -670,7 +695,11 @@ export class TableAPIExtensions {
    * 保护的 getResizeColAt 方法
    * 处理展开行的特殊情况
    */
-  private protectedGetResizeColAt(abstractX: number, abstractY: number, cellGroup?: any): any {
+  private protectedGetResizeColAt(
+    abstractX: number,
+    abstractY: number,
+    cellGroup?: Group
+  ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
     // 如果没有 cellGroup，先检查是否在展开行的右边冻结列区域
     if (!cellGroup) {
       // 检查当前位置是否在展开行中

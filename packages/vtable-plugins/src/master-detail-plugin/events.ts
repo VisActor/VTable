@@ -132,7 +132,7 @@ export class EventManager {
    */
   private isCustomMergeCell(col: number, row: number): boolean {
     try {
-      const table = this.table as any;
+      const table = this.table;
       if (table && table.getCustomMerge) {
         const customMerge = table.getCustomMerge(col, row);
         return !!customMerge;

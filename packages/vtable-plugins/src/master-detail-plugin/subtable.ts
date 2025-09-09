@@ -14,7 +14,7 @@ export class SubTableManager {
    */
   private hasChildren(record: unknown): boolean {
     if (record && typeof record === 'object' && 'children' in record) {
-      const children = (record as any).children;
+      const children = record.children;
       return Array.isArray(children) && children.length > 0;
     }
     return false;
@@ -25,7 +25,7 @@ export class SubTableManager {
    */
   private getChildren(record: unknown): unknown[] {
     if (record && typeof record === 'object' && 'children' in record) {
-      const children = (record as any).children;
+      const children = record.children;
       return Array.isArray(children) ? children : [];
     }
     return [];
@@ -126,6 +126,15 @@ export class SubTableManager {
     // 解析margin配置 [上, 右, 下, 左]
     const [marginTop, marginRight, marginBottom, marginLeft] = parseMargin(detailConfig?.style?.margin);
     const configHeight = height ? height : detailConfig?.style?.height || 300;
+    // 如果配置的高度小于垂直margin总和，则不渲染子表
+    if (configHeight <= marginTop + marginBottom) {
+      return {
+        x1: firstColRect.left + marginLeft,
+        y1: detailRowRect.top + originalHeight,
+        x2: lastColRect.right - marginRight,
+        y2: detailRowRect.top + originalHeight
+      };
+    }
     const viewBox = {
       x1: firstColRect.left + marginLeft,
       y1: detailRowRect.top + originalHeight + marginTop,
@@ -169,12 +178,10 @@ export class SubTableManager {
       if (subTableScrollHandler) {
         subTable.off('can_scroll', subTableScrollHandler);
       }
-      // 清理clip interval
       const clipInterval = extendedSubTable.__clipInterval;
       if (clipInterval) {
         clearInterval(clipInterval);
       }
-      // 清理防闪烁机制
       const antiFlickerHandler = extendedSubTable.__antiFlickerHandler;
       if (antiFlickerHandler) {
         this.table.off('after_render', antiFlickerHandler);
@@ -182,7 +189,7 @@ export class SubTableManager {
       if (typeof subTable.release === 'function') {
         subTable.release();
       }
-      internalProps.subTableInstances?.delete(bodyRowIndex);
+      internalProps.subTableInstances.delete(bodyRowIndex);
     }
   }
 
@@ -566,7 +573,6 @@ export class SubTableManager {
     getDetailConfig?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null
   ): void {
     const internalProps = getInternalProps(this.table);
-    const recordsToRecreate: number[] = [];
     internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
       // 如果指定了范围，只处理范围内的子表
       if (start !== undefined && bodyRowIndex < start) {
@@ -575,12 +581,38 @@ export class SubTableManager {
       if (end !== undefined && bodyRowIndex > end) {
         return;
       }
-      recordsToRecreate.push(bodyRowIndex);
-    });
-    // 需要recordsToRecreate，因为我这个removeSubTable和renderSubTable这个都会修改subTableInstances如果直接用的话会导致混乱
-    recordsToRecreate.forEach(bodyRowIndex => {
-      this.removeSubTable(bodyRowIndex);
-      this.renderSubTable(bodyRowIndex, getDetailConfig || (() => null));
+      // 获取记录和配置
+      const record = getRecordByRowIndex(this.table, bodyRowIndex);
+      const detailConfig = getDetailConfig
+        ? getDetailConfig(record, bodyRowIndex)
+        : this.getDetailConfigForRecord
+        ? this.getDetailConfigForRecord(record, bodyRowIndex)
+        : null;
+
+      // 重新计算子表的 viewBox
+      const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+      const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
+      const currentRowHeight = this.table.getRowHeight(rowIndex);
+      const detailHeight = currentRowHeight - originalHeight;
+      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig, detailHeight);
+      if (newViewBox) {
+        const newContainerWidth = newViewBox.x2 - newViewBox.x1;
+        const newContainerHeight = newViewBox.y2 - newViewBox.y1;
+        (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
+          newViewBox;
+        const subTableOptions = subTable.options as VTable.ListTableConstructorOptions;
+        if (subTableOptions.canvasWidth !== newContainerWidth || subTableOptions.canvasHeight !== newContainerHeight) {
+          subTableOptions.canvasWidth = newContainerWidth;
+          subTableOptions.canvasHeight = newContainerHeight;
+          subTable.resize();
+        }
+        if (subTable.scenegraph?.stage) {
+          (subTable.scenegraph.stage as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
+            newViewBox,
+            false
+          );
+        }
+      }
     });
   }
 

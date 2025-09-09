@@ -1,4 +1,4 @@
-import * as VTable from '@visactor/vtable';
+import type * as VTable from '@visactor/vtable';
 import type { InternalProps } from './types';
 
 /**

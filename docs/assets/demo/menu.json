@@ -1541,7 +1541,7 @@
           }
         },
         {
-          "path": "master-detail-plugin",
+          "path": "master-detail",
           "title": {
             "zh": "主从表功能",
             "en": "Master Detail"
