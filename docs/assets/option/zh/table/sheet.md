@@ -4,14 +4,6 @@
 
 电子表格组件，配置对应的类型 IVTableSheetOptions，具体配置项如下：
 
-## width(number)
-
-表格宽度，单位为像素。
-
-## height(number)
-
-表格高度，单位为像素。
-
 ## sheets(Array<ISheetDefine>)
 
 工作表定义数组，每个工作表的配置如下：

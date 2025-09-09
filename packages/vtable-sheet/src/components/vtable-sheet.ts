@@ -112,8 +112,8 @@ export default class VTableSheet {
     // 创建根元素
     this.rootElement = document.createElement('div');
     this.rootElement.className = 'vtable-sheet-container';
-    this.rootElement.style.width = `${this.options.width}px`;
-    this.rootElement.style.height = `${this.options.height}px`;
+    // this.rootElement.style.width = `${this.options.width}px`;
+    // this.rootElement.style.height = `${this.options.height}px`;
     this.container.appendChild(this.rootElement);
     //创建顶部菜单和公式的容器
     const topContainer = document.createElement('div');
@@ -579,7 +579,6 @@ export default class VTableSheet {
 
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
-
     } else {
       // 创建新的sheet实例
       const instance = this.createWorkSheetInstance(sheetDefine);
@@ -591,7 +590,6 @@ export default class VTableSheet {
 
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
-
     }
 
     this.updateFormulaBar();
@@ -977,10 +975,10 @@ export default class VTableSheet {
    * resize
    */
   resize(): void {
-    const containerWidth = this.getContainer().clientWidth;
-    const containerHeight = this.getContainer().clientHeight;
-    this.rootElement.style.width = `${this.getOptions().width || containerWidth}px`;
-    this.rootElement.style.height = `${this.getOptions().height || containerHeight}px`;
+    // const containerWidth = this.getContainer().clientWidth;
+    // const containerHeight = this.getContainer().clientHeight;
+    // this.rootElement.style.width = `${this.getOptions().width || containerWidth}px`;
+    // this.rootElement.style.height = `${this.getOptions().height || containerHeight}px`;
     this.getActiveSheet()?.resize();
   }
 
