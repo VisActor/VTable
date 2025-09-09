@@ -266,3 +266,5 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 ## 许可证说明
 
 本插件的填充炳功能参考了 [Univer](https://github.com/dream-num/univer) 的实现，该部分代码遵循 Apache 2.0 许可证。详情请参考项目的 LICENSE-APACHE 文件。
+
+# 本插件贡献者及文档作者：[PoorShawn](https://github.com/hokkine)

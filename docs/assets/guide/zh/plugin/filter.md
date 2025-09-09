@@ -211,4 +211,4 @@ window.tableInstance = tableInstance;
 - 筛选状态会在表格配置更新时自动同步
 - 建议为大数据量表格启用筛选功能以提升用户体验
 
-[PoorShawn](https://github.com/PoorShawn)
+# 本插件贡献者及文档作者：[PoorShawn](https://github.com/PoorShawn)

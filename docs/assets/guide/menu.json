@@ -1013,6 +1013,13 @@
             "zh": "自动填充插件",
             "en": "auto fill plugin"
           }
+        },
+        {
+          "path": "filter",
+          "title": {
+            "zh": "筛选插件",
+            "en": "filter plugin"
+          }
         }
       ]
     },
