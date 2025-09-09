@@ -5,6 +5,7 @@ import type { FormulaCell, FormulaResult } from '../ts-types/formula';
 import { FormulaRangeSelector } from '../formula/formula-range-selector';
 import type { CellRange } from '../ts-types';
 import { CellHighlightManager } from '../formula';
+import type * as VTable from '@visactor/vtable';
 
 /**
  * 标准HyperFormula配置
@@ -62,7 +63,6 @@ export class FormulaManager {
 
   inputingElement: HTMLInputElement | null = null;
 
-  private _isUpdatingFromFormula = false;
   get formulaWorkingOnCell(): FormulaCell | null {
     return this._formulaWorkingOnCell;
   }
@@ -94,10 +94,10 @@ export class FormulaManager {
   /**
    * 添加新工作表 - 正确的多表格支持
    * @param sheetKey 工作表键
-   * @param data 工作表数据
+   * @param  normalizedData 工作表数据 需要规范处理过 且包含表头的数据 因为要输入给HyperFormula
    * @returns 工作表ID
    */
-  addSheet(sheetKey: string, data?: any[][]): number {
+  addSheet(sheetKey: string, normalizedData?: any[][]): number {
     this.ensureInitialized();
 
     // 检查是否已存在
@@ -142,16 +142,9 @@ export class FormulaManager {
           sheetId = this.hyperFormula.getSheetId(sheetName);
         }
       }
-
-      // 如果有有效数据，设置内容
-      if (Array.isArray(data) && data.length > 0) {
-        const hasHeader = this.getHasHeader(sheetKey);
-        const normalizedData = hasHeader
-          ? [Array(data[0].length).fill('')].concat(this.normalizeSheetData(data))
-          : this.normalizeSheetData(data);
-        if (normalizedData.length > 0) {
-          this.hyperFormula.setSheetContent(sheetId, normalizedData);
-        }
+      // 如果是有效数据，设置内容
+      if (Array.isArray(normalizedData) && normalizedData.length > 0) {
+        this.hyperFormula.setSheetContent(sheetId, normalizedData);
       }
 
       this.sheetMapping.set(sheetKey, sheetId);
@@ -170,14 +163,28 @@ export class FormulaManager {
    * @param data 工作表数据
    * @returns 标准化后的工作表数据
    */
-  private normalizeSheetData(data: any[][]): any[][] {
+  normalizeSheetData(data: any[][], tableInstance: VTable.ListTable): any[][] {
     try {
-      if (!Array.isArray(data) || data.length === 0) {
+      //将columns中的title追加到data中
+      const headerRows: any[][] = [];
+      for (let i = 0; i < tableInstance.columnHeaderLevelCount; i++) {
+        const headerRow: any[] = [];
+        for (let j = 0; j < tableInstance.colCount; j++) {
+          const cellValue = tableInstance.getCellValue(j, i);
+          headerRow.push(cellValue);
+        }
+        headerRows.push(headerRow);
+      }
+      const dataCopy = JSON.parse(JSON.stringify(data));
+
+      const toNormalizeData = tableInstance.columnHeaderLevelCount > 0 ? [...headerRows].concat(dataCopy) : dataCopy;
+
+      if (!Array.isArray(toNormalizeData) || toNormalizeData.length === 0) {
         return [['']];
       }
 
       // 确保所有行都是数组，并转换数据类型
-      const validData = data.filter(row => Array.isArray(row));
+      const validData = toNormalizeData.filter(row => Array.isArray(row));
       if (validData.length === 0) {
         return [['']];
       }
@@ -602,14 +609,14 @@ export class FormulaManager {
   /**
    * 设置工作表内容
    * @param sheetKey 工作表键
-   * @param data 工作表数据
+   * @param normalizedData 工作表数据 需要规范处理过 且包含表头的数据
    */
-  setSheetContent(sheetKey: string, data: any[][]): void {
+  setSheetContent(sheetKey: string, normalizedData: any[][]): void {
     this.ensureInitialized();
 
     try {
       const sheetId = this.getSheetId(sheetKey);
-      const normalizedData = this.normalizeSheetData(data);
+
       (this.hyperFormula as any).setSheetContent(sheetId, normalizedData);
     } catch (error) {
       console.error('Failed to set sheet content:', error);
@@ -913,6 +920,8 @@ export class FormulaManager {
    * 销毁FormulaManager
    */
   release(): void {
+    this.formulaRangeSelector?.release();
+    this.cellHighlightManager?.release();
     try {
       if (this.hyperFormula) {
         (this.hyperFormula as any).destroy();
@@ -924,6 +933,8 @@ export class FormulaManager {
       this.reverseSheetMapping.clear();
       this.isInitialized = false;
       this.nextSheetId = 0;
+      this.formulaRangeSelector = null;
+      this.cellHighlightManager = null;
     }
   }
 

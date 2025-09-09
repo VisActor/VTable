@@ -69,16 +69,17 @@ export function getTablePlugins(
     });
     plugins.push(tableSeriesNumberPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === HighlightHeaderWhenSelectCellPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === HighlightHeaderWhenSelectCellPlugin)
-      ?.moduleOptions as IHighlightHeaderWhenSelectCellPluginOptions;
-    const highlightHeaderWhenSelectCellPlugin = new HighlightHeaderWhenSelectCellPlugin({
-      colHighlight: true,
-      rowHighlight: true,
-      ...userPluginOptions
-    });
-    plugins.push(highlightHeaderWhenSelectCellPlugin);
-  }
+  // 这个插件有个bug 先不启用 #4447
+  // if (!disabledPlugins?.some(module => module.module === HighlightHeaderWhenSelectCellPlugin)) {
+  //   const userPluginOptions = enabledPlugins?.find(module => module.module === HighlightHeaderWhenSelectCellPlugin)
+  //     ?.moduleOptions as IHighlightHeaderWhenSelectCellPluginOptions;
+  //   const highlightHeaderWhenSelectCellPlugin = new HighlightHeaderWhenSelectCellPlugin({
+  //     colHighlight: true,
+  //     rowHighlight: true,
+  //     ...userPluginOptions
+  //   });
+  //   plugins.push(highlightHeaderWhenSelectCellPlugin); // 这个插件有个bug 先不启用 #4447
+  // }
   if (!disabledPlugins?.some(module => module.module === ContextMenuPlugin)) {
     const userPluginOptions = enabledPlugins?.find(module => module.module === ContextMenuPlugin)?.moduleOptions;
     const contextMenuPlugin = createContextMenuItems(sheetDefine, userPluginOptions);

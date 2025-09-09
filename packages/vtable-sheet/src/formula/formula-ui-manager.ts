@@ -511,4 +511,9 @@ export class FormulaUIManager {
       formulaInput.value = '';
     }
   }
+
+  release(): void {
+    this.formulaBarElement = null;
+    this.formulaInput = null;
+  }
 }

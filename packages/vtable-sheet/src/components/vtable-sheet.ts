@@ -35,7 +35,7 @@ export default class VTableSheet {
   /** 当前活动sheet实例 */
   private activeWorkSheet: WorkSheet | null = null;
   /** 所有sheet实例 */
-  private workSheetInstances: Map<string, WorkSheet> = new Map();
+  workSheetInstances: Map<string, WorkSheet> = new Map();
   /** 公式自动补全 */
   private formulaAutocomplete: FormulaAutocomplete | null = null;
 
@@ -678,7 +678,8 @@ export default class VTableSheet {
 
     // 在公式管理器中添加这个sheet
     try {
-      this.formulaManager.addSheet(sheetDefine.sheetKey, sheetDefine.data as any[][]);
+      const normalizedData = this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance);
+      this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData);
     } catch (error) {
       console.warn(`Sheet ${sheetDefine.sheetKey} may already exist in formula manager:`, error);
       // 如果添加失败（可能已存在），继续执行
@@ -932,6 +933,9 @@ export default class VTableSheet {
   release(): void {
     // 释放事件管理器
     this.eventManager.release();
+    this.formulaManager.release();
+    this.formulaUIManager.release();
+    this.formulaAutocomplete.release();
     // 销毁所有sheet实例
     this.workSheetInstances.forEach(instance => {
       instance.release();

@@ -503,7 +503,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       // 更新公式引擎中的数据
       if (this.vtableSheet?.formulaManager) {
         try {
-          this.vtableSheet.formulaManager.setSheetContent(this.sheetKey, data);
+          const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(data, this.tableInstance);
+          this.vtableSheet.formulaManager.setSheetContent(this.sheetKey, normalizedData);
         } catch (e) {
           console.warn('Failed to update formula data:', e);
         }

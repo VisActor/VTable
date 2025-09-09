@@ -563,4 +563,8 @@ export class FormulaRangeSelector {
       input.scrollLeft = cursorOffset - visibleWidth + paddingRight;
     }
   }
+
+  release(): void {
+    //do nothing
+  }
 }

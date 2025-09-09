@@ -136,6 +136,7 @@ export function createTable() {
         columnCount: 20,
         rowCount: 100,
         firstRowAsHeader: true,
+        widthMode: 'autoWidth',
         // filter: true,
         // frozenRowCount: 10,
         // frozenColCount: 1,
