@@ -1,8 +1,7 @@
-import * as VTable from '@visactor/vtable';
-import type { TableSeriesNumberAttributes } from '@visactor/vrender-components';
-import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vrender-components';
-import type { ILayer } from '@visactor/vrender-core';
-import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
+import type { BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
+import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vtable/es/vrender';
+import type { ILayer, TableSeriesNumberAttributes } from '@visactor/vtable/es/vrender';
 
 export type TableSeriesNumberOptions = {
   rowCount: number;
@@ -21,17 +20,17 @@ export type TableSeriesNumberOptions = {
     | 'rowSeriesNumberWidth'
   >
 >;
-export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
+export class TableSeriesNumber implements plugins.IVTablePlugin {
   id = `table-series-number`;
   name = 'Table Series Number';
   runTime = [
-    VTable.TABLE_EVENT_TYPE.INITIALIZED,
-    VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
-    VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
-    VTable.TABLE_EVENT_TYPE.UPDATED
+    TABLE_EVENT_TYPE.INITIALIZED,
+    TABLE_EVENT_TYPE.BEFORE_INIT,
+    TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
+    TABLE_EVENT_TYPE.UPDATED
   ];
   pluginOptions: TableSeriesNumberOptions;
-  table: VTable.ListTable;
+  table: ListTable;
   seriesNumberComponent: VRenderTableSeriesNumber;
   componentLayoutLayer: ILayer;
   lastCurrentRow: number = 0;
@@ -57,7 +56,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     // const eventArgs = args[0];
     const runTime = args[1];
-    if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT || runTime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
+    if (runTime === TABLE_EVENT_TYPE.BEFORE_INIT || runTime === TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
       const eventArgs = args[0];
       const table: BaseTableAPI = args[2];
       this.table = table as ListTable;
@@ -89,7 +88,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       // if (options.columns.length < this.pluginOptions.colCount) {
       //   options.columns.length = this.pluginOptions.colCount;
       // }
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED || runTime === VTable.TABLE_EVENT_TYPE.UPDATED) {
+    } else if (runTime === TABLE_EVENT_TYPE.INITIALIZED || runTime === TABLE_EVENT_TYPE.UPDATED) {
       this.table = args[2];
       if (!this.table.options.customConfig) {
         this.table.options.customConfig = {};
@@ -181,11 +180,11 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   };
 
   listenTableEvents() {
-    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
-    this.table.on(VTable.TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
-    this.table.on(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
-    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
-    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
+    this.table.on(TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
+    this.table.on(TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
+    this.table.on(TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
+    this.table.on(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
+    this.table.on(TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
   }
 
   private handleSeriesNumberCellRightClick = (e: any) => {
@@ -209,7 +208,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
           { start: { row: rowIndex, col: 0 }, end: { row: rowIndex, col: this.table.colCount - 1 } }
         ]);
       }
-      this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+      this.table.fireListeners(TABLE_EVENT_TYPE.PLUGIN_EVENT, {
         plugin: this,
         event: event,
         pluginEventInfo: {
@@ -234,7 +233,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
           { start: { row: 0, col: colIndex }, end: { row: this.table.rowCount - 1, col: colIndex } }
         ]);
       }
-      this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+      this.table.fireListeners(TABLE_EVENT_TYPE.PLUGIN_EVENT, {
         plugin: this,
         event: event,
         pluginEventInfo: {
@@ -247,7 +246,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       this.table.selectCells([
         { start: { row: 0, col: 0 }, end: { row: this.table.rowCount - 1, col: this.table.colCount - 1 } }
       ]);
-      this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+      this.table.fireListeners(TABLE_EVENT_TYPE.PLUGIN_EVENT, {
         plugin: this,
         event: event,
         pluginEventInfo: {
@@ -308,14 +307,14 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   private handleResizeColWidthStart = (e: any) => {
     this.seriesNumberComponent.setAttribute('hover', false);
     const { colIndex, event } = e.detail;
-    this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
+    this.table.stateManager.updateInteractionState(TYPES.InteractionState.grabing);
     this.table.stateManager.startResizeCol(colIndex, event.viewport.x, event.viewport.y);
   };
 
   private handleResizeRowHeightStart = (e: any) => {
     this.seriesNumberComponent.setAttribute('hover', false);
     const { rowIndex, event } = e.detail;
-    this.table.stateManager.updateInteractionState(VTable.TYPES.InteractionState.grabing);
+    this.table.stateManager.updateInteractionState(TYPES.InteractionState.grabing);
     this.table.stateManager.startResizeRow(rowIndex, event.viewport.x, event.viewport.y);
   };
 
@@ -344,11 +343,11 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
 
     // 移除表格事件监听器
     if (this.table) {
-      this.table.off(VTable.TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
-      this.table.off(VTable.TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
-      this.table.off(VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
-      this.table.off(VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
-      this.table.off(VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
+      this.table.off(TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
+      this.table.off(TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
+      this.table.off(TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
+      this.table.off(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
+      this.table.off(TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
     }
     // 移除组件事件监听器
     if (this.seriesNumberComponent) {
