@@ -11,6 +11,7 @@
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",
     "@visactor/vtable-sheet": "workspace:*",
+    "@visactor/vtable-plugins": "workspace:*",
     "@visactor/vtable-editors": "workspace:*"
   },
   "devDependencies": {
