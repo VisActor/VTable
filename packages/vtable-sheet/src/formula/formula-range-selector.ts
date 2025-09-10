@@ -3,7 +3,7 @@
  * 实现Excel风格的公式输入体验：用户输入"=sum("后，选择单元格范围自动插入A1引用
  */
 
-import { FormulaThrottle } from '..';
+import { FormulaThrottle } from './formula-throttle';
 import type { FormulaManager } from '../managers/formula-manager';
 import type { CellRange, CellValueChangedEvent, FormulaCell } from '../ts-types';
 import { detectFunctionParameterPosition } from './formula-helper';

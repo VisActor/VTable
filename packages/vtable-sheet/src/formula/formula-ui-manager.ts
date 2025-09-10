@@ -1,6 +1,4 @@
 import type VTableSheet from '../components/vtable-sheet';
-import { FormulaThrottle } from '..';
-import type { CellValueChangedEvent, FormulaCell } from '../ts-types';
 import { detectFunctionParameterPosition } from './formula-helper';
 
 /**
