@@ -2,6 +2,7 @@ import * as VTable from '@visactor/vtable';
 import * as VRender from '@visactor/vtable/es/vrender';
 import * as VTableEditors from '@visactor/vtable-editors';
 import * as VTableGantt from '@visactor/vtable-gantt';
+import * as VTableSheet from '@visactor/vtable-sheet';
 
 // @ts-ignore
 window.VTable = { ...VTable, editors: VTableEditors };
@@ -10,12 +11,15 @@ window.VTableEditors = VTableEditors;
 // @ts-ignore
 window.VTableGantt = VTableGantt;
 // @ts-ignore
+window.VTableSheet = VTableSheet;
+// @ts-ignore
 window.VRender = VRender;
 
 export default {
   VTable,
   VTableEditors,
   VTableGantt,
+  VTableSheet,
   VRender
 };
 

@@ -22,6 +22,13 @@
 ]
 ```
 
+## addRecordRule('Array' | 'Object') = 'Object'
+
+添加数据时，指定传入records的数据格式。默认是 Object 格式。这个会影响到addRecord和addRecords方法。
+```
+addRecordRule?: 'Array' | 'Object';
+```
+
 {{ use: column-define( prefix = '#',) }}
 
 ## transpose(boolean) = false

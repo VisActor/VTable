@@ -1,7 +1,4 @@
 export const menus = [
-  // {
-  //   menu: 'gantt',
-  //   children: [
   {
     path: 'sheet',
     name: 'sheet'
@@ -14,7 +11,4 @@ export const menus = [
     path: 'sheet',
     name: 'persistence'
   }
-
-  //   ]
-  // }
 ];

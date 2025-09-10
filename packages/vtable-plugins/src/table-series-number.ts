@@ -84,8 +84,8 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
       }
       const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
       const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
-      options.translateX = rowSeriesNumberColWidth;
-      options.translateY = colSeriesNumberRowHeight;
+      options.contentOffsetX = rowSeriesNumberColWidth;
+      options.contentOffsetY = colSeriesNumberRowHeight;
       // if (options.columns.length < this.pluginOptions.colCount) {
       //   options.columns.length = this.pluginOptions.colCount;
       // }
@@ -302,7 +302,7 @@ export class TableSeriesNumber implements VTable.plugins.IVTablePlugin {
   private handleRowSeriesNumberWidthChange = (e: any) => {
     const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
     const colSeriesNumberRowHeight = this.seriesNumberComponent.colSeriesNumberHeight;
-    this.table.setTranslate(rowSeriesNumberColWidth, colSeriesNumberRowHeight);
+    this.table.setContentInsetXY(rowSeriesNumberColWidth, colSeriesNumberRowHeight);
   };
 
   private handleResizeColWidthStart = (e: any) => {

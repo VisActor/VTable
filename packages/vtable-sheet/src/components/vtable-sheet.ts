@@ -935,7 +935,6 @@ export default class VTableSheet {
     this.eventManager.release();
     this.formulaManager.release();
     this.formulaUIManager.release();
-    this.formulaAutocomplete.release();
     // 销毁所有sheet实例
     this.workSheetInstances.forEach(instance => {
       instance.release();

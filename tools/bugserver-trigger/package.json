@@ -10,6 +10,7 @@
   "dependencies": {
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",
+    "@visactor/vtable-sheet": "workspace:*",
     "@visactor/vtable-editors": "workspace:*"
   },
   "devDependencies": {

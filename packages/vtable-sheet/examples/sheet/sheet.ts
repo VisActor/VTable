@@ -781,7 +781,7 @@ export function createTable() {
   });
   (window as any).sheetInstance = sheetInstance;
 
-  // bindDebugTool(ganttInstance.scenegraph.stage as any, {
+  // bindDebugTool(sheetInstance.activeWorkSheet.scenegraph.stage as any, {
   //   customGrapicKeys: ['role', '_updateTag']
   // });
 }

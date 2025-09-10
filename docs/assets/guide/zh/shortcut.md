@@ -36,5 +36,7 @@ keyboardOptions: {
   cutSelected?: boolean; //这个cut是和浏览器的快捷键一致的
   /** 快捷键粘贴。粘贴内容到指定位置（即需要有选中状态），支持批量粘贴。 默认：false */
   pasteValueToCell?: boolean; //粘贴生效仅针对配置了编辑editor的单元格
+  /** 是否显示复制单元格的边框，默认：false */
+  showCopyCellBorder?: boolean;
 }
 ```

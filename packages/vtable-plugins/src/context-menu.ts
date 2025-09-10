@@ -150,12 +150,13 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
    */
   private handlePluginEvent = (eventArgs: any, table: VTable.BaseTableAPI): void => {
     const { eventType, rowIndex, colIndex, isCorner } = eventArgs.pluginEventInfo;
+    const fireEventFromPlugin = eventArgs.plugin;
 
     // 获取鼠标位置
     const mouseX = eventArgs.event.clientX;
     const mouseY = eventArgs.event.clientY;
 
-    if (eventType === 'rightclick') {
+    if (fireEventFromPlugin.id === 'table-series-number' && eventType === 'rightclick') {
       let menuItems: MenuItemOrSeparator[] = [];
 
       if (isCorner) {

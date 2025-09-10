@@ -187,8 +187,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   canvasWidth?: number;
   canvasHeight?: number;
-  translateX?: number;
-  translateY?: number;
+  contentOffsetX?: number;
+  contentOffsetY?: number;
 
   _vDataSet?: DataSet;
   scenegraph: Scenegraph;
@@ -312,8 +312,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
-      translateX,
-      translateY,
+      contentOffsetX: translateX,
+      contentOffsetY: translateY,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight,
@@ -363,8 +363,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
-    this.translateX = translateX ?? 0;
-    this.translateY = translateY ?? 0;
+    this.contentOffsetX = translateX ?? 0;
+    this.contentOffsetY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
 
@@ -665,11 +665,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.canvasWidth = canvasWidth;
     this.resize();
   }
-  setTranslate(translateX: number, translateY: number) {
-    this.translateX = translateX;
-    this.translateY = translateY;
-    this.options.translateX = translateX;
-    this.options.translateY = translateY;
+  setContentInsetXY(contentOffsetX: number, contentOffsetY: number) {
+    this.contentOffsetX = contentOffsetX;
+    this.contentOffsetY = contentOffsetY;
+    this.options.contentOffsetX = contentOffsetX;
+    this.options.contentOffsetY = contentOffsetY;
     this.resize();
   }
   resize() {
@@ -1125,8 +1125,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
-    this.tableX = this.translateX;
-    this.tableY = this.translateY;
+    this.tableX = this.contentOffsetX;
+    this.tableY = this.contentOffsetY;
 
     if (this.options.canvas && this.options.viewBox) {
       widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
@@ -1236,10 +1236,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
       if (this.theme.frameStyle?.innerBorder) {
-        this.tableX += this.translateX;
-        this.tableY += this.translateY;
-        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.translateX;
-        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.translateY;
+        this.tableX += this.contentOffsetX;
+        this.tableY += this.contentOffsetY;
+        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.contentOffsetX;
+        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.contentOffsetY;
       } else {
         this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
         this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
@@ -1248,13 +1248,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           width -
           (rightBorder > vScrollBarWidth ? rightBorder - vScrollBarWidth : 0) -
           ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0)) -
-          this.translateX;
+          this.contentOffsetX;
         const bottomBorder = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
         this.tableNoFrameHeight =
           height -
           (bottomBorder > hScrollBarWidth ? bottomBorder - hScrollBarWidth : 0) -
           ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) -
-          this.translateY;
+          this.contentOffsetY;
       }
     }
 
@@ -2646,8 +2646,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       renderChartAsyncBatchCount,
       canvasWidth,
       canvasHeight,
-      translateX = 0,
-      translateY = 0,
+      contentOffsetX: translateX = 0,
+      contentOffsetY: translateY = 0,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight
@@ -2696,8 +2696,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     this.customRender = customRender;
-    this.translateX = translateX ?? 0;
-    this.translateY = translateY ?? 0;
+    this.contentOffsetX = translateX ?? 0;
+    this.contentOffsetY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
     // 更新protectedSpace

@@ -919,6 +919,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       const isHasSelected = !!stateManager.select.ranges?.length;
+      // 是否自定义了判断当前是否需要取消选中单元格的钩子，如在点击到表格序号插件的单元格上时，不需要取消选中单元格的逻辑是通过这个钩子实现的
       if (table.options.customConfig?.cancelSelectCellHook) {
         if (table.options.customConfig?.cancelSelectCellHook(e)) {
           eventManager.dealTableSelect();

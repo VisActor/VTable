@@ -36,5 +36,7 @@ keyboardOptions: {
   cutSelected?: boolean; //This cut is consistent with the browser’s shortcut keys
   /** Shortcut key to paste. Paste content to the specified location (that is, it needs to be selected). Batch paste is supported. Default: false */
   pasteValueToCell?: boolean;// Paste takes effect only for cells with an editor configured
+  /** Whether to show the border of the copied cell, default: false */
+  showCopyCellBorder?: boolean;
 }
 ```

@@ -22,7 +22,7 @@ export interface IAutoFillPluginOptions {
 }
 
 export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
-  id = `auto-fill-${Date.now()}`;
+  id = `auto-fill`;
   name = 'Auto Fill';
   runTime = [
     VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
