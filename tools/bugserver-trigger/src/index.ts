@@ -2,8 +2,8 @@ import * as VTable from '@visactor/vtable';
 import * as VRender from '@visactor/vtable/es/vrender';
 import * as VTableEditors from '@visactor/vtable-editors';
 import * as VTableGantt from '@visactor/vtable-gantt';
-import * as VTablePlugins from '@visactor/vtable-plugins';
-// import * as VTableSheet from '@visactor/vtable-sheet';
+import { TableSeriesNumber, AddRowColumnPlugin, ExcelEditCellKeyboardPlugin } from '@visactor/vtable-plugins';
+import * as VTableSheet from '@visactor/vtable-sheet';
 
 // @ts-ignore
 window.VTable = { ...VTable, editors: VTableEditors };
@@ -11,8 +11,11 @@ window.VTable = { ...VTable, editors: VTableEditors };
 window.VTableEditors = VTableEditors;
 // @ts-ignore
 window.VTableGantt = VTableGantt;
-// // @ts-ignore
-// window.VTableSheet = VTableSheet;
+// @ts-ignore
+window.VTableSheet = VTableSheet;
+// 创建一个新对象，不包含问题模块
+const VTablePlugins = { TableSeriesNumber, AddRowColumnPlugin, ExcelEditCellKeyboardPlugin };
+
 // @ts-ignore
 window.VTablePlugins = VTablePlugins;
 // @ts-ignore
@@ -23,6 +26,7 @@ export default {
   VTableEditors,
   VTableGantt,
   VTablePlugins,
+  VTableSheet,
   VRender
 };
 

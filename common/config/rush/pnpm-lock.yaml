@@ -1224,6 +1224,7 @@ importers:
       '@visactor/vtable-editors': workspace:*
       '@visactor/vtable-gantt': workspace:*
       '@visactor/vtable-plugins': workspace:*
+      '@visactor/vtable-sheet': workspace:*
       cross-env: ^7.0.3
       eslint: ~8.18.0
       form-data: ~4.0.0
@@ -1235,6 +1236,7 @@ importers:
       '@visactor/vtable-editors': link:../../packages/vtable-editors
       '@visactor/vtable-gantt': link:../../packages/vtable-gantt
       '@visactor/vtable-plugins': link:../../packages/vtable-plugins
+      '@visactor/vtable-sheet': link:../../packages/vtable-sheet
     devDependencies:
       '@internal/bundler': link:../bundler
       '@internal/eslint-config': link:../../share/eslint-config
