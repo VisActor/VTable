@@ -10,7 +10,8 @@
   "dependencies": {
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*"
+    "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vtable-plugins": "workspace:*"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "~1.1.4",
