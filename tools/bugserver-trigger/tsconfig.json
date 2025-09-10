@@ -5,7 +5,6 @@
       "@visactor/vtable": ["../../packages/vtable/src"],
       "@visactor/vtable/es/vrender": ["../../packages/vtable/src/vrender.ts"],
       "@visactor/vtable-gantt": ["../../packages/vtable-gantt/src"],
-      "@visactor/vtable-plugins": ["../../packages/vtable-plugins/src"],
       "@visactor/vtable-editors": ["../../packages/vtable-editors/src"]
     },
     "target": "ES2016",
@@ -30,9 +29,6 @@
     },
     {
       "path": "../../packages/vtable-gantt"
-    },
-    {
-      "path": "../../packages/vtable-plugins"
     },
 
     {
