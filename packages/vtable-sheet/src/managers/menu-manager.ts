@@ -48,7 +48,9 @@ export class MenuManager {
         };
         li.onmouseleave = () => {
           li.classList.remove('vtable-sheet-main-menu-item-has-children-hover');
-          li.removeChild(li.querySelector('.vtable-sheet-main-menu-sub-menu'));
+          if (li.querySelector('.vtable-sheet-main-menu-sub-menu')) {
+            li.removeChild(li.querySelector('.vtable-sheet-main-menu-sub-menu'));
+          }
         };
       }
       li.addEventListener('click', () => {
