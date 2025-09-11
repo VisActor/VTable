@@ -1,3 +1,12 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-menu-styleSheet';
+  styleElement.textContent = `
 .vtable-sheet-main-menu {
   display: flex;
   flex-direction: row;
@@ -150,4 +159,8 @@
     left: auto !important;
     right: 100%; /* 小屏幕改为向左展开 */
   }
+}
+`;
+
+  document.head.appendChild(styleElement);
 }

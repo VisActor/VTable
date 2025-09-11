@@ -1,3 +1,12 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-sheet-tab-styleSheet';
+  styleElement.textContent = `
 /* Sheet标签栏样式 */
 .vtable-sheet-tab-bar {
   height: 32px;
@@ -322,4 +331,8 @@
 .vtable-sheet-menu-delete-button:hover {
   color: #000000;
   background-color: #eaeaea;
+}
+`;
+
+  document.head.appendChild(styleElement);
 }

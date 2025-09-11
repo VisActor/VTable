@@ -1,3 +1,12 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-sheet-styleSheet';
+  styleElement.textContent = `
 /* Sheet容器样式 */
 .vtable-sheet-container {
   position: relative;
@@ -153,4 +162,9 @@
 /* 隐藏底部功能区 */
 .vtable-sheet-footer {
   display: none;
+}
+
+`;
+
+  document.head.appendChild(styleElement);
 }

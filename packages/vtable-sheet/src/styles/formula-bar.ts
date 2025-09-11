@@ -1,4 +1,13 @@
-/* 公式栏样式 */
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-formula-bar-styleSheet';
+  styleElement.textContent = `
+  /* 公式栏样式 */
 .vtable-sheet-formula-bar {
   height: 30px;
   padding: 0;
@@ -20,7 +29,8 @@
   padding: 0 10px;
   display: flex;
   align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: #333;
   height: 100%;
   border: 1px solid #e0e0e0;
@@ -46,7 +56,8 @@
   flex: 1;
   padding: 0 8px;
   border: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   outline: none;
   font-size: 13px;
   height: 100%;
@@ -124,3 +135,7 @@
 .vtable-sheet-toolbar-group {
   display: none;
 } 
+`;
+
+  document.head.appendChild(styleElement);
+}

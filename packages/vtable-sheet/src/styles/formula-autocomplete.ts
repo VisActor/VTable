@@ -1,3 +1,12 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-formula-autocomplete-styleSheet';
+  styleElement.textContent = `
 /* 公式自动补全容器 */
 .vtable-formula-autocomplete {
   position: absolute;
@@ -166,7 +175,7 @@
 .vtable-editor-container input {
   font-family: inherit;
 }
+`;
 
-
-
-
+  document.head.appendChild(styleElement);
+}

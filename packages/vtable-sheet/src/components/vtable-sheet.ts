@@ -1,7 +1,6 @@
 import { FormulaManager } from '../managers/formula-manager';
 import SheetManager from '../managers/sheet-manager';
 import { WorkSheet } from '../core/WorkSheet';
-import '../styles/index.css';
 import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';

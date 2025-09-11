@@ -1,3 +1,12 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-common-styleSheet';
+  styleElement.textContent = `
 /* 通用样式和变量 */
 :root {
   --border-color: #e0e0e0;
@@ -63,7 +72,8 @@
   --icon-size-large: 24px;
 
   /* 字体 */
-  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+    Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-family-mono: 'Roboto Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 
   /* 间距 */
@@ -317,3 +327,7 @@
 .vtable-sheet-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: var(--gray-500);
 } 
+`;
+
+  document.head.appendChild(styleElement);
+}
