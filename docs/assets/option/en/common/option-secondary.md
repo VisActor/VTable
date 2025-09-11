@@ -200,6 +200,10 @@ Switching the selected cells with the up, down, left and right arrow keys is not
 
 Whether to enable ctrl multi-select. Default is true.
 
+##${prefix} ignoreCtrlForSelectCells(boolean)
+
+Whether to still allow multiple selection by calling the Methods.selectCells method when ctrlMultiSelect=false is set to disable Ctrl key multi-selection.
+
 #${prefix} eventOptions(Object)
 
 Issue settings related to event triggering, specific configuration items:

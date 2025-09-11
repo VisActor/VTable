@@ -198,6 +198,10 @@ export interface SelectAllOnCtrlAOption {
 
 是否开启 ctrl 多选框，默认开启。
 
+##${prefix} ignoreCtrlForSelectCells(boolean)
+
+当设置 ctrlMultiSelect=false 禁用Ctrl键多选时，是否仍允许通过调用 Methods.selectCells 方法进行多选。
+
 #${prefix} eventOptions(Object)
 
 事件触发相关问题设置，具体配置项：
