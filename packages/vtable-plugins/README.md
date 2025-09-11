@@ -20,6 +20,31 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 # Usage
 
+## 可选依赖
+
+部分高级功能需要额外的依赖：
+
+- **甘特图导出功能**：需要安装 `@visactor/vtable-gantt`
+
+  ```bash
+  npm install @visactor/vtable-gantt
+  ```
+  
+  可以通过两种方式使用：
+  
+  1. 直接从主包导入（推荐，自动处理依赖缺失情况）：
+  ```js
+  import { ExportGanttPlugin } from '@visactor/vtable-plugins';
+  
+  const exportPlugin = new ExportGanttPlugin();
+  // 如果未安装甘特图依赖，会收到友好的警告信息
+  ```
+  
+  2. 从专用入口导入（明确表示需要额外依赖）：
+  ```js
+  import { ExportGanttPlugin } from '@visactor/vtable-plugins/gantt-extensions';
+  ```
+
 ## Installation
 
 [npm package](https://www.npmjs.com/package/@visactor/vtable-search)
