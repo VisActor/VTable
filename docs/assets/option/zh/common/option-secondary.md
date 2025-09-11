@@ -284,6 +284,11 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 拖拽选择单元格时是否禁用框选。
 
+##${prefix} disableSelectOnContextMenu(boolean) = true
+
+右键点击单元格是否禁用选择单元格。
+
+
 ##${prefix} highlightInRange(boolean) = false
 
 是否在多行或者多列时展示整行或整列高亮效果。
