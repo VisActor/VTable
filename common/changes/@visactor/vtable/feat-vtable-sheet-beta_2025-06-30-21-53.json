@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "feat: sync cell & fx value\n\n",
-      "type": "none",
+      "comment": "feat: add vtable sheet component\n\n",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "ucccth@gmail.com"
+  "email": "892739385@qq.com"
 }
