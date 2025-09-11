@@ -150,7 +150,6 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     this.addIconForAddColumn.style.display = 'none';
     this.addIconForAddColumn.style.borderRadius = '50%';
     this.addIconForAddColumn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    this.addIconForAddColumn.style.display = 'flex';
     this.addIconForAddColumn.style.justifyContent = 'center';
     this.addIconForAddColumn.style.alignItems = 'center';
     this.addIconForAddColumn.style.border = '1px solid white';
@@ -232,12 +231,21 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       if (this.pluginOptions.addColumnCallback) {
         this.pluginOptions.addColumnCallback(addColIndex, this.table);
       } else {
-        columns.splice(addColIndex, 0, {
-          field: ``,
-          title: `New Column ${col}`,
-          width: 100
-        });
-        this.table.updateColumns(columns);
+        // columns.splice(addColIndex, 0, {
+        //   field: ``,
+        //   title: `New Column ${col}`,
+        //   width: 100
+        // });
+        // this.table.updateColumns(columns);
+        this.table.addColumn(
+          {
+            field: addColIndex,
+            title: `New Column ${col}`,
+            width: 100
+          },
+          addColIndex,
+          true
+        );
       }
       this.delayHideAllForAddColumn(0);
     });

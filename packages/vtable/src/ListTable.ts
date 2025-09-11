@@ -289,6 +289,16 @@ export class ListTable extends BaseTable implements ListTableAPI {
     if (colIndex === undefined) {
       columns.push(column);
     } else {
+      if (isMaintainArrayData) {
+        // 需要将columns中的field是数字index的，将其对应的做+1处理
+        for (let i = 0; i < columns.length; i++) {
+          if (typeof columns[i].field === 'number') {
+            if ((columns[i].field as number) >= colIndex) {
+              columns[i].field = (columns[i].field as number) + 1;
+            }
+          }
+        }
+      }
       columns.splice(colIndex, 0, column);
     }
     //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
