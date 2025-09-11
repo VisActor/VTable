@@ -2,13 +2,7 @@ import { register } from '@visactor/vtable';
 import { DateInputEditor, InputEditor } from '@visactor/vtable-editors';
 import type { IVTableSheetOptions } from '../../src/index';
 import { VTableSheet } from '../../src/index';
-
 const CONTAINER_ID = 'vTable';
-const date_input_editor = new DateInputEditor({});
-const input_editor = new InputEditor({});
-register.editor('input', input_editor);
-register.editor('date-input', date_input_editor);
-
 /**
  * 简化版筛选状态持久化示例
  * 演示核心功能：保存和恢复筛选状态
