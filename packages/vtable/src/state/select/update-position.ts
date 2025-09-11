@@ -24,7 +24,7 @@ export function updateSelectPosition(
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
-  const { highlightScope, disableHeader, cellPos, disableCtrlMultiSelect } = state.select;
+  const { highlightScope, disableHeader, cellPos, disableCtrlMultiSelect, ignoreCtrlForSelectCells } = state.select;
   // const disableSelect = table.options?.select?.disableSelect;
   // const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
   // const { highlightScope, disableHeader, cellPos } = state.select;
@@ -170,7 +170,9 @@ export function updateSelectPosition(
     } else {
       let extendSelectRange = true;
       // 单选或多选开始
-      if (cellPos.col !== -1 && cellPos.row !== -1 && (!isCtrl || disableCtrlMultiSelect)) {
+      const isSingleSelect = cellPos.col !== -1 && cellPos.row !== -1;
+      const cantMultiSelect = !isCtrl || (disableCtrlMultiSelect && !ignoreCtrlForSelectCells);
+      if (isSingleSelect && cantMultiSelect) {
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }

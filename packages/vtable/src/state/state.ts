@@ -83,6 +83,7 @@ export class StateManager {
     singleStyle?: boolean; // select当前单元格是否使用单独样式
     disableHeader?: boolean; // 是否禁用表头select
     disableCtrlMultiSelect?: boolean; // 是否禁用ctrl多选框
+    ignoreCtrlForSelectCells?: boolean; // 禁用ctrl的时候依然可以通过selectCells多选
     /** 点击表头单元格效果
      * 'inline': 点击行表头则整行选中，选择列表头则整列选中；
      * 'cell': 仅仅选择当前点击的表头单元格；
@@ -502,6 +503,7 @@ export class StateManager {
     this.select.cornerHeaderSelectMode = cornerHeaderSelectMode;
     this.select.highlightInRange = highlightInRange;
     this.select.disableCtrlMultiSelect = this.table.options.keyboardOptions?.ctrlMultiSelect === false;
+    this.select.ignoreCtrlForSelectCells = this.table.options.select?.ignoreCtrlForSelectCells;
   }
 
   isSelected(col: number, row: number): boolean {
