@@ -326,7 +326,6 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     this.addIconForAddRow.style.display = 'none';
     this.addIconForAddRow.style.borderRadius = '50%';
     this.addIconForAddRow.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    this.addIconForAddRow.style.display = 'flex';
     this.addIconForAddRow.style.justifyContent = 'center';
     this.addIconForAddRow.style.alignItems = 'center';
     this.addIconForAddRow.style.border = '1px solid white';

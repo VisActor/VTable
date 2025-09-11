@@ -42,7 +42,13 @@
     "@types/file-saver": "2.0.7"
   },
   "peerDependencies": {
-    "@visactor/vtable": "workspace:*"
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-gantt": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@visactor/vtable-gantt": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@visactor/vtable": "workspace:*",

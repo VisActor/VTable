@@ -1,4 +1,3 @@
-import type { ExcelImportPlugin, TableExportPlugin } from '@visactor/vtable-plugins';
 import type VTableSheet from '../components/vtable-sheet';
 import type { MainMenuItem } from '../ts-types/base';
 import { MainMenuItemKey } from '../ts-types/base';

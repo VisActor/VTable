@@ -1,4 +1,5 @@
-import * as VTableGantt from '@visactor/vtable-gantt';
+import type { plugins } from '@visactor/vtable-gantt';
+import { Gantt } from '@visactor/vtable-gantt';
 
 // 甘特图导出配置项接口
 export interface ExportOptions {
@@ -14,14 +15,14 @@ export interface ExportOptions {
  * 甘特图导出插件
  * @description 提供完整的甘特图导出功能，支持高分辨率输出和精准布局保留
  */
-export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
+export class ExportGanttPlugin implements plugins.IGanttPlugin {
   id: string = `gantt-export-helper`;
   name = 'Gantt Export Helper';
-  private _gantt: VTableGantt.Gantt | null = null;
+  private _gantt: Gantt | null = null;
 
   // run 方法，在插件初始化时由 PluginManager调用
   run(...args: any[]): void {
-    const ganttInstance = args[0] as VTableGantt.Gantt;
+    const ganttInstance = args[0] as Gantt;
     if (!ganttInstance) {
       console.error('ExportGanttPlugin: Gantt instance not provided to run method.');
       return;
@@ -151,7 +152,7 @@ export class ExportGanttPlugin implements VTableGantt.plugins.IGanttPlugin {
     clonedContainer.style.height = `${totalHeight}px`;
     tempContainer.appendChild(clonedContainer);
 
-    const clonedGantt = new VTableGantt.Gantt(clonedContainer, {
+    const clonedGantt = new Gantt(clonedContainer, {
       ...this._gantt.options,
       records: this._gantt.records,
       taskListTable: {
