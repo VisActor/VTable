@@ -5,17 +5,17 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: add disableSelectOnContextMenu option
-- **@visactor/vtable-gantt**: gantt task bar process percentage can be resized
+- **@visactor/vtable**: 添加 disableSelectOnContextMenu 配置项
+- **@visactor/vtable-gantt**: 甘特图任务条进度百分比可调整
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: add isReleased check before resize in initialization
-- **@visactor/vtable**: fix fill handler not show error [#4376](https://github.com/VisActor/VTable/issues/4376)
+- **@visactor/vtable**: 添加 isReleased 检查，增强健壮性
+- **@visactor/vtable**: 修复填充句柄不显示的错误 [#4376](https://github.com/VisActor/VTable/issues/4376)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: build library process on window system
+- **@visactor/vtable**: 优化在 Windows 系统上的库构建流程
 
 
 
