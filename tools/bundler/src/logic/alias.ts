@@ -76,7 +76,9 @@ function resolveImports(file: ReadonlyArray<string>, imports: FileData[], option
     }
 
     const current = path.relative(cwd, path.dirname(imported.path));
-    const target = path.relative(current, resolved);
+    // const target = path.relative(current, resolved);
+    // fix: windows下打包路径解析异常问题
+    const target = path.relative(current, resolved).replace(/\\/g, '/');
 
     lines[imported.index] = line.replace(imported.import, `./${target}`);
   }

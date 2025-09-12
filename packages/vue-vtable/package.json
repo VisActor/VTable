@@ -44,9 +44,10 @@
   },
   "scripts": {
     "start": "vite ./demo",
-    "build": "cross-env USE_TYPESCRIPT2=true bundle --clean",
+    "build": "npm run fix-memory-limit &&cross-env USE_TYPESCRIPT2=true bundle --clean",
     "compile": "tsc --noEmit",
-    "eslint": "eslint --debug --fix src/"
+    "eslint": "eslint --debug --fix src/",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -61,6 +62,7 @@
   },
   "devDependencies": {
     "@arco-design/web-vue": "^2.11.0",
+    "increase-memory-limit": "^1.0.7",
     "cross-env": "^7.0.3",
     "@visactor/vchart": "2.0.2",
     "@internal/bundler": "workspace:*",

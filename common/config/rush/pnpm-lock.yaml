@@ -108,8 +108,10 @@ importers:
       '@visactor/vutils': ~0.19.1
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -150,8 +152,10 @@ importers:
       '@visactor/vchart': 2.0.2
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -199,8 +203,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -252,8 +258,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -308,6 +316,7 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       cssfontparser: ^1.2.1
       d3-array: 3.2.3
       d3-dsv: ^3.0.1
@@ -317,6 +326,7 @@ importers:
       eslint: ~8.18.0
       form-data: ~4.0.0
       gifuct-js: 2.1.2
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -376,6 +386,7 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       d3-array: 3.2.3
       d3-dsv: 3.0.1
       d3-geo: 3.1.1
@@ -383,6 +394,7 @@ importers:
       d3-hierarchy: 3.1.2
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -430,9 +442,11 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       date-fns: 3.6.0
       eslint: ~8.18.0
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -479,8 +493,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -515,8 +531,10 @@ importers:
       '@types/jest': ^26.0.0
       '@types/node': '*'
       '@types/offscreencanvas': 2019.6.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       husky: 7.0.4
+      increase-memory-limit: ^1.0.7
       jest: ^26.0.0
       jest-electron: ^0.1.12
       lint-staged: 12.3.7
@@ -537,8 +555,10 @@ importers:
       '@types/jest': 26.0.24
       '@types/node': 24.2.0
       '@types/offscreencanvas': 2019.6.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       husky: 7.0.4
+      increase-memory-limit: 1.0.7
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
       lint-staged: 12.3.7
@@ -575,10 +595,12 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       exceljs: 4.4.0
       file-saver: 2.0.5
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -628,8 +650,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -679,6 +703,7 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       cssfontparser: ^1.2.1
       d3-array: 3.2.3
       d3-dsv: ^3.0.1
@@ -687,6 +712,7 @@ importers:
       d3-hierarchy: ^3.1.1
       eslint: ~8.18.0
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -737,6 +763,7 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       d3-array: 3.2.3
       d3-dsv: 3.0.1
       d3-geo: 3.1.1
@@ -744,6 +771,7 @@ importers:
       d3-hierarchy: 3.1.2
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -797,10 +825,12 @@ importers:
       axios: ^1.4.0
       big.js: 6.2.2
       chai: 4.3.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       exceljs: 4.4.0
       file-saver: 2.0.5
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -856,8 +886,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -905,8 +937,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
       chai: 4.3.4
+      cross-env: ^7.0.3
       eslint: ~8.18.0
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -953,8 +987,10 @@ importers:
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       axios: 1.11.0
       chai: 4.3.4
+      cross-env: 7.0.3
       eslint: 8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -1004,6 +1040,7 @@ importers:
       eslint: ~8.18.0
       eslint-plugin-vue: ^9.26.0
       form-data: ~4.0.0
+      increase-memory-limit: ^1.0.7
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
@@ -1051,6 +1088,7 @@ importers:
       eslint: 8.18.0
       eslint-plugin-vue: 9.33.0_eslint@8.18.0
       form-data: 4.0.4
+      increase-memory-limit: 1.0.7
       inversify: 6.0.1
       jest: 26.6.3_ts-node@10.9.0
       jest-electron: 0.1.12_jest@26.6.3
@@ -8480,6 +8518,13 @@ packages:
   /imurmurhash/0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
+
+  /increase-memory-limit/1.0.7:
+    resolution: {integrity: sha512-ozyn+HHAPD9VxMT1U50A7G8XXlktUWhnnEDYSeDYnQjKsNrBWHqq6XfEA0uhMdDPD+q/7rXWlzF1CbXX/c1LiQ==}
+    hasBin: true
+    dependencies:
+      glob: 7.2.3
+    dev: true
 
   /indent-string/4.0.0:
     resolution: {integrity: sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg==}
