@@ -106,9 +106,10 @@ export function updateSelectPosition(
     !table.eventManager.isDraging &&
     !table.stateManager.isResizeCol()
   ) {
+    const isSingleSelect = (!isCtrl || disableCtrlMultiSelect) && !(isCtrl && disableCtrlMultiSelect);
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
     if (isShift && currentRange) {
-      if (!isCtrl || disableCtrlMultiSelect) {
+      if ((!isCtrl || disableCtrlMultiSelect) && isSingleSelect) {
         cellPos.col = col;
         cellPos.row = row;
       }
@@ -170,7 +171,7 @@ export function updateSelectPosition(
     } else {
       let extendSelectRange = true;
       // 单选或多选开始
-      if (cellPos.col !== -1 && cellPos.row !== -1 && (!isCtrl || disableCtrlMultiSelect)) {
+      if (cellPos.col !== -1 && cellPos.row !== -1 && isSingleSelect) {
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }
