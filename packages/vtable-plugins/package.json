@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.19.8",
+  "version": "1.19.9",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -24,7 +24,8 @@
   },
   "scripts": {
     "demo": "vite ./demo",
-    "build": "bundle --clean"
+    "build": "npm run fix-memory-limit && bundle --clean",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -45,6 +46,8 @@
     "@visactor/vtable": "workspace:*"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",

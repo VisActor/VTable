@@ -323,6 +323,13 @@
           }
         },
         {
+          "path": "gantt-progress-adjust",
+          "title": {
+            "zh": "甘特图交互——任务条进度调整",
+            "en": "Gantt Interaction —— Task Bar Progress Adjust"
+          }
+        },
+        {
           "path": "gantt-taskShowMode",
           "title": {
             "zh": "甘特图任务显示模式",

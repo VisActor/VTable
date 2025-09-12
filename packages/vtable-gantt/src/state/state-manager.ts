@@ -1,8 +1,8 @@
-import { clone, cloneDeep, isValid, max } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
 import { InteractionState, GANTT_EVENT_TYPE, DependencyType, TasksShowMode, TaskType } from '../ts-types';
-import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
+import type { Group, FederatedPointerEvent, Polygon, Line } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
   syncScrollStateFromTable,
@@ -23,7 +23,13 @@ import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
 import { Inertia } from '../tools/inertia';
-import { createDateAtMidnight, getEndDateByTimeUnit, getStartDateByTimeUnit, toBoxArray } from '../tools/util';
+import {
+  createDateAtMidnight,
+  getEndDateByTimeUnit,
+  getStartDateByTimeUnit,
+  toBoxArray,
+  parseStringTemplate
+} from '../tools/util';
 export class StateManager {
   _gantt: Gantt;
 
@@ -74,6 +80,14 @@ export class StateManager {
     target: GanttTaskBarNode;
     resizing: boolean;
     onIconName: string;
+  };
+  adjustProgressBar: {
+    /** x坐标是相对table内坐标 */
+    startX: number;
+    startY: number;
+    target: GanttTaskBarNode;
+    adjusting: boolean;
+    originalProgress: number;
   };
   selectedTaskBar: {
     target: GanttTaskBarNode;
@@ -148,6 +162,13 @@ export class StateManager {
       target: null,
       resizing: false,
       onIconName: ''
+    };
+    this.adjustProgressBar = {
+      startX: null,
+      startY: null,
+      target: null,
+      adjusting: false,
+      originalProgress: 0
     };
     this.resizeTableWidth = {
       lastX: null,
@@ -790,6 +811,89 @@ export class StateManager {
     );
 
     this._gantt.scenegraph.updateNextFrame();
+  }
+  startAdjustProgressBar(target: GanttTaskBarNode, x: number, y: number) {
+    const { progress } = this._gantt.getTaskInfoByTaskListIndex(target.task_index, target.sub_task_index);
+    this.adjustProgressBar.target = target;
+    this.adjustProgressBar.adjusting = true;
+    this.adjustProgressBar.startX = x;
+    this.adjustProgressBar.startY = y;
+    this.adjustProgressBar.originalProgress = progress;
+  }
+  isAdjustingProgressBar() {
+    return this.adjustProgressBar.adjusting;
+  }
+  endAdjustProgressBar(x: number) {
+    const target = this.adjustProgressBar.target;
+    const taskBarWidth = target.attribute.width;
+    const deltaX = x - this.adjustProgressBar.startX;
+    const newProgress = Math.max(
+      0,
+      Math.min(100, this.adjustProgressBar.originalProgress + (deltaX / taskBarWidth) * 100)
+    );
+
+    if (Math.abs(newProgress - this.adjustProgressBar.originalProgress) >= 1) {
+      const taskIndex = target.task_index;
+      const subTaskIndex = target.sub_task_index;
+
+      // 更新数据
+      this._gantt._updateProgressToTaskRecord(Math.round(newProgress), taskIndex, subTaskIndex);
+      const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
+
+      // 触发进度更新事件
+      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
+          federatedEvent: null,
+          event: null,
+          index: taskIndex,
+          sub_task_index: subTaskIndex,
+          progress: Math.round(newProgress),
+          oldProgress: Math.round(this.adjustProgressBar.originalProgress),
+          record: newRecord
+        });
+      }
+    }
+
+    // 重置状态
+    this.adjustProgressBar.adjusting = false;
+    this.adjustProgressBar.target = null;
+    this.adjustProgressBar.startX = null;
+    this.adjustProgressBar.startY = null;
+    this.adjustProgressBar.originalProgress = 0;
+  }
+  dealAdjustProgressBar(e: FederatedPointerEvent) {
+    const target = this.adjustProgressBar.target;
+    const taskBarWidth = target.attribute.width;
+    const deltaX = e.x - this.adjustProgressBar.startX;
+    const newProgress = Math.max(
+      0,
+      Math.min(100, this.adjustProgressBar.originalProgress + (deltaX / taskBarWidth) * 100)
+    );
+
+    // 更新进度条显示
+    if (target.progressRect) {
+      target.progressRect.setAttribute('width', (taskBarWidth * newProgress) / 100);
+    }
+
+    // 更新进度手柄位置
+    if (
+      this._gantt.scenegraph.taskBar.hoverBarProgressHandle &&
+      this._gantt.scenegraph.taskBar.hoverBarProgressHandle.attribute.visibleAll
+    ) {
+      this._gantt.scenegraph.taskBar.hoverBarProgressHandle.setAttribute('x', (taskBarWidth * newProgress) / 100 - 6);
+    }
+
+    // 更新文字标签中的进度百分比
+    if (target.textLabel && target.record) {
+      const tempRecord = { ...target.record, progress: Math.round(newProgress) };
+      const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
+      target.textLabel.setAttribute('text', newText);
+    }
+
+    // 实时显示变化
+    if (this._gantt.scenegraph && this._gantt.scenegraph.stage) {
+      this._gantt.scenegraph.stage.renderNextFrame();
+    }
   }
   //#endregion
   //#region 生成关联线的交互处理

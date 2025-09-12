@@ -129,6 +129,10 @@ links:[
 
 通过 `taskBar.resizable` 配置项，可以设置任务条是否可调整大小。
 
+#### 任务条的进度调整
+
+通过 `taskBar.progressAdjustable` 配置项，可以设置任务条是否可调整进度。
+
 #### 调整左侧表格宽度
 
 通过 `frame.verticalSplitLineMoveable` 配置为 true，可以设置分割线可拖拽。

@@ -718,7 +718,8 @@ export function bindTableGroupListener(eventManager: EventManager) {
           }
         }
 
-        if (!cellInRange) {
+        const disableSelectOnContextMenu = table.options.select?.disableSelectOnContextMenu;
+        if (!cellInRange && !disableSelectOnContextMenu) {
           table.selectCell(col, row);
         }
 

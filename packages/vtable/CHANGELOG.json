@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.9",
+      "tag": "@visactor/vtable_v1.19.9",
+      "date": "Fri, 12 Sep 2025 09:25:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add isReleased check before resize in initialization"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.8",
       "tag": "@visactor/vtable_v1.19.8",
       "date": "Fri, 29 Aug 2025 06:50:15 GMT",
