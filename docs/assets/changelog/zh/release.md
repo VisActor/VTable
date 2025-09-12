@@ -1,3 +1,26 @@
+# v1.19.9
+
+2025-09-12
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: add disableSelectOnContextMenu option
+- **@visactor/vtable-gantt**: gantt task bar process percentage can be resized
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: add isReleased check before resize in initialization
+- **@visactor/vtable**: fix fill handler not show error [#4376](https://github.com/VisActor/VTable/issues/4376)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: build library process on window system
+
+
+
+[更多详情请查看 v1.19.9](https://github.com/VisActor/VTable/releases/tag/v1.19.9)
+
 # v1.19.8
 
 2025-08-29
