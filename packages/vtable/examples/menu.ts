@@ -337,6 +337,14 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-funnel-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-heatmap-legend'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {

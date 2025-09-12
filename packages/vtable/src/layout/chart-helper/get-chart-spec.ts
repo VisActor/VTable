@@ -253,26 +253,19 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       // 左侧维度轴
       merge(
         {
-          // domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
           domain: axisOption?.type === 'linear' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          // range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
           range: axisOption?.type === 'linear' && !Array.isArray(domain) ? domain : undefined,
           label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
         },
         axisOption,
         {
-          // type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
           orient: 'left',
-          // visible: true,
           label: { visible: false },
           domainLine: { visible: false },
           tick: { visible: false },
           subTick: { visible: false },
           title: { visible: false }
-          // height: -1,
-          // width: -1
-          // autoIndent: false,
         }
       )
     );
@@ -301,12 +294,22 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       if (hasSameAxis(axisOption, axes)) {
         return;
       }
+      const { chartType } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      let domain: Array<string> = [];
+      if (chartType === 'heatmap') {
+        //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-axis-config.ts中的getAxisConfigInPivotChart方法处理
+        const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row, 'yField');
+        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
 
+        const rowPath = layout.getRowKeysPath(col, row);
+        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+      }
       axes.push(
         merge(
           {
             range,
-            label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
+            label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } },
+            domain: axisOption?.type === 'linear' ? undefined : Array.from(domain)
           },
           axisOption,
           {
@@ -345,15 +348,12 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       // 底部维度轴
       merge(
         {
-          // domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
           domain: axisOption?.type === 'linear' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          // range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
           range: axisOption?.type === 'linear' && !Array.isArray(domain) ? domain : undefined,
           label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
         },
         axisOption,
         {
-          // type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
           orient: 'bottom',
           visible: true,
@@ -362,8 +362,6 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           tick: { visible: false },
           subTick: { visible: false },
           title: { visible: false }
-          // height: -1
-          // autoIndent: false,
         }
       )
     );

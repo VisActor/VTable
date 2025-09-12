@@ -3791,14 +3791,18 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   /**
    *  获取图表对应的维度key非指标
    * */
-  getDimensionKeyInChartSpec(_col: number, _row: number) {
+  getDimensionKeyInChartSpec(_col: number, _row: number, type?: 'xField' | 'yField') {
     let dimensionKey: string;
     if (this.indicatorsAsCol === false) {
       //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
       for (let i = 0; i < this.indicatorsDefine.length; i++) {
         const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
         if (chartSpec) {
-          dimensionKey = chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+          dimensionKey =
+            type === 'yField'
+              ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+              : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+
           if (dimensionKey) {
             return dimensionKey;
           }
@@ -3809,7 +3813,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       for (let i = 0; i < this.indicatorsDefine.length; i++) {
         const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
         if (chartSpec) {
-          dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+          dimensionKey =
+            type === 'xField'
+              ? chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+              : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
           if (dimensionKey) {
             return dimensionKey;
           }

@@ -114,6 +114,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       });
 
       const axisRange = getRange('bottom', col, row - 1, col, row, col, row, 0, layout);
+      const { chartType } = getAxisOption(col, row - 1, 'bottom', layout);
       if (!axisRange) {
         return;
       }
@@ -151,7 +152,19 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           axisOption.zero = false;
         }
       }
+      let domain: Array<string> = [];
+      if (chartType === 'heatmap') {
+        //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
+        const colDimensionKey = layout.getDimensionKeyInChartSpec(
+          col,
+          layout.rowCount - layout.bottomFrozenRowCount - 1,
+          'xField'
+        );
+        const data = layout.dataset.collectedValues[colDimensionKey] ?? ([] as string[]);
 
+        const colPath = layout.getColKeysPath(col, row);
+        domain = ((data as any)?.[colPath ?? ''] as Array<string>) ?? [];
+      }
       // 底侧指标轴
       return merge(
         {
@@ -160,7 +173,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             text: (indicatorInfo as any)?.title
             // autoRotate: true
           },
-          range
+          range,
+          domain: axisOption?.type === 'linear' ? undefined : Array.from(domain)
         },
         axisOption,
         {
@@ -203,9 +217,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 左侧维度轴
       return merge(
         {
-          // domain: chartType === 'scatter' ? undefined : Array.from(domain),
           domain: axisOption?.type === 'linear' ? undefined : Array.from(domain),
-          // range: chartType === 'scatter' ? domain : undefined,
           range: axisOption?.type === 'linear' ? domain : undefined,
           title: {
             autoRotate: true
@@ -214,7 +226,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         axisOption,
         {
           orient: 'left',
-          // type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
           __vtableChartTheme: theme,
           // 默认左侧维度轴对应的图表direction 为 horizontal
@@ -244,6 +255,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       });
 
       const axisRange = getRange('left', col + 1, row, col, row, col, row, 0, layout);
+      const { chartType } = getAxisOption(col + 1, row, 'left', layout);
       if (!axisRange) {
         return;
       }
@@ -281,7 +293,14 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           axisOption.zero = false;
         }
       }
-
+      let domain: Array<string> = [];
+      if (chartType === 'heatmap') {
+        //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
+        const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row, 'yField');
+        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
+        const rowPath = layout.getRowKeysPath(col, row);
+        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+      }
       // 左侧指标轴
       return merge(
         {
@@ -290,7 +309,8 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             text: (indicatorInfo as any)?.title,
             autoRotate: true
           },
-          range: range
+          range: range,
+          domain: axisOption?.type === 'linear' ? undefined : Array.from(domain)
         },
         axisOption,
         {
@@ -313,6 +333,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
       const axisRange = getRange('right', col - 1, row, layout.rowHeaderLevelCount - 1, row, col, row, 1, layout);
+      const { chartType } = getAxisOption(col - 1, row, 'right', layout);
       if (!axisRange) {
         return;
       }
@@ -350,14 +371,26 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           axisOption.zero = false;
         }
       }
-
+      let domain: Array<string> = [];
+      if (chartType === 'heatmap') {
+        //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
+        const rowDimensionKey = layout.getDimensionKeyInChartSpec(
+          layout.colCount - layout.rightFrozenColCount - 1,
+          row,
+          'yField'
+        );
+        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
+        const rowPath = layout.getRowKeysPath(col, row);
+        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+      }
       // 右侧副指标轴
       return merge(
         {
           range: range,
           title: {
             autoRotate: true
-          }
+          },
+          domain: axisOption?.type === 'linear' ? undefined : Array.from(domain)
         },
         axisOption,
         {
@@ -401,15 +434,12 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       // 底部维度轴
       return merge(
         {
-          // domain: chartType === 'scatter' ? undefined : Array.from(domain),
           domain: axisOption?.type === 'linear' ? undefined : Array.from(domain),
-          // range: chartType === 'scatter' ? domain : undefined
           range: axisOption?.type === 'linear' ? domain : undefined
         },
         axisOption,
         {
           orient: 'bottom',
-          // type: chartType === 'scatter' ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
           __vtableChartTheme: theme,
           __vtablePadding: padding
@@ -674,49 +704,100 @@ function isXAxis(orient: IOrientType) {
 
 export function hasLinearAxis(spec: any, tableAxesConfig: any, isHorizontal: boolean, isThisXAxis: boolean): boolean {
   if (!isArray(spec.axes) || spec.axes.length === 0) {
+    // 据图表方向和轴类型返回默认值：
+    // 水平图表的X轴应该是线性的
+    // 垂直图表的Y轴应该是线性的
     return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
   }
 
   for (let i = 0; i < spec.axes.length; i++) {
+    // 检查 spec.axes 中是否有匹配当前情况的轴配置，主要检查四种情况：
+    // 垂直图表的X轴（bottom orient）是否为线性轴
+    // 水平图表的X轴（bottom orient）是否为非线性轴
+    // 垂直图表的Y轴（left orient）是否为非线性轴
+    // 水平图表的Y轴（left orient）是否为线性轴
     const axisSpec = spec.axes[i];
-    if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type === 'linear') {
-      return true;
+
+    if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
+      }
+      if (axisSpec.type === 'linear') {
+        return true;
+      }
     }
 
-    if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type !== 'linear') {
-      return true;
+    if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
+      }
+      if (axisSpec.type !== 'linear') {
+        return true;
+      }
     }
 
-    if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type !== 'linear') {
-      return true;
+    if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
+      }
+      if (axisSpec.type !== 'linear') {
+        return true;
+      }
     }
 
-    if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type === 'linear') {
-      return true;
+    if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
+      }
+      if (axisSpec.type === 'linear') {
+        return true;
+      }
     }
   }
 
   if (isArray(tableAxesConfig) && tableAxesConfig.length > 0) {
     for (let i = 0; i < tableAxesConfig.length; i++) {
       const axisSpec = tableAxesConfig[i];
-      if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type === 'linear') {
-        return true;
+      if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type === 'linear') {
+          return true;
+        }
       }
 
-      if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom' && axisSpec.type !== 'linear') {
-        return true;
+      if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type !== 'linear') {
+          return true;
+        }
       }
 
-      if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type !== 'linear') {
-        return true;
+      if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type !== 'linear') {
+          return true;
+        }
       }
 
-      if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left' && axisSpec.type === 'linear') {
-        return true;
+      if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type === 'linear') {
+          return true;
+        }
       }
     }
   }
-
+  // 返回默认值：
+  // 水平图表的X轴应该是线性的
+  // 垂直图表的Y轴应该是线性的
   return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
 }
 

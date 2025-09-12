@@ -944,6 +944,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         if (
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'rose' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'funnel' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'radar' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'gauge' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'wordCloud'
@@ -959,19 +960,20 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
             (indicatorSpec.stack = true);
           // 收集指标值的范围
-          collectValuesBy[indicatorDefine.indicatorKey] = {
-            by: rowKeys,
-            range: true,
-            // 判断是否需要匹配维度值相同的进行求和计算
-            sumBy: indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
-          };
+          if (indicatorSpec?.type !== 'heatmap') {
+            collectValuesBy[indicatorDefine.indicatorKey] = {
+              by: rowKeys,
+              range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false),
+              // 判断是否需要匹配维度值相同的进行求和计算
+              sumBy: indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
+            };
+          }
           if (indicatorSpec.series) {
             indicatorSpec.series.forEach((chartSeries: any) => {
               const xField = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
               collectValuesBy[xField] = {
                 by: columnKeys,
                 type: chartSeries.direction !== 'horizontal' ? 'xField' : undefined,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction === 'horizontal',
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', true),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
@@ -985,7 +987,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[yField] = {
                 by: rowKeys,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction !== 'horizontal', // direction默认为'vertical'
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', false),
                 sumBy: chartSeries.stack && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
                 sortBy:
@@ -1000,7 +1001,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction !== 'horizontal' ? 'xField' : undefined,
-              // range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal',
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
               sortBy:
                 indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined
@@ -1013,7 +1013,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             const yField = indicatorSpec.yField;
             collectValuesBy[yField] = {
               by: rowKeys,
-              range: indicatorSpec.direction !== 'horizontal', // direction默认为'vertical'
+              type: indicatorSpec.direction !== 'horizontal' ? 'yField' : undefined,
+              range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false), //indicatorSpec.direction !== 'horizontal', // direction默认为'vertical'
               sumBy: indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined,
@@ -1027,19 +1028,20 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
             (indicatorSpec.stack = true);
           // 收集指标值的范围
-          collectValuesBy[indicatorDefine.indicatorKey] = {
-            by: columnKeys,
-            range: true,
-            // 判断是否需要匹配维度值相同的进行求和计算
-            sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
-          };
+          if (indicatorSpec?.type !== 'heatmap') {
+            collectValuesBy[indicatorDefine.indicatorKey] = {
+              by: columnKeys,
+              range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
+              // 判断是否需要匹配维度值相同的进行求和计算
+              sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
+            };
+          }
           if (indicatorSpec.series) {
             indicatorSpec.series.forEach((chartSeries: any) => {
               const yField = typeof chartSeries.yField === 'string' ? chartSeries.yField : chartSeries.yField[0];
               collectValuesBy[yField] = {
                 by: rowKeys,
                 type: chartSeries.direction === 'horizontal' ? 'yField' : undefined,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction !== 'horizontal',
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', false),
                 sortBy:
                   chartSeries.direction === 'horizontal'
@@ -1053,7 +1055,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[xField] = {
                 by: columnKeys,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction === 'horizontal', // direction默认为'vertical'
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', true),
                 sumBy: chartSeries.stack && rowKeys.concat(chartSeries?.yField),
                 sortBy:
@@ -1068,7 +1069,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             collectValuesBy[yField] = {
               by: rowKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'yField' : undefined,
-              // range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction !== 'horizontal',
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false),
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined
@@ -1081,7 +1081,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             const xField = indicatorSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
-              // range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal', // direction默认为'vertical'
+              type: indicatorSpec.direction === 'horizontal' ? 'xField' : undefined,
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
               sumBy: indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
               sortBy:
