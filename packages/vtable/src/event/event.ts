@@ -267,11 +267,13 @@ export class EventManager {
         return false;
       }
 
+      // 键盘事件Ctrl是否多选
+      const disableCtrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
       this.table.stateManager.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
         eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+        (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && !disableCtrlMultiSelect,
         false,
         isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
