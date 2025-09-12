@@ -129,6 +129,10 @@ You can set whether task bars are draggable through the `taskBar.moveable` confi
 
 You can set whether task bars are resizable through the `taskBar.resizable` configuration item.
 
+#### Adjusting the Progress of Task Bars
+
+You can set whether task bars are adjustable through the `taskBar.progressAdjustable` configuration item.
+
 #### Adjusting the Width of the Left Table
 
 You can set the divider line to be draggable by configuring `frame.verticalSplitLineMoveable` to true.

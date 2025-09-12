@@ -147,6 +147,7 @@ export class Gantt extends EventTarget {
       | boolean
       | [boolean, boolean]
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
+    taskBarProgressAdjustable: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     taskBarDragOrder: boolean;
     taskBarLabelStyle: ITaskBarLabelTextStyle;
     taskBarCustomLayout: ITaskBarCustomLayout;
@@ -964,6 +965,23 @@ export class Gantt extends EventTarget {
     } else if (Array.isArray(sub_task_index)) {
       // 递归更新父级project任务的时间范围
       this.stateManager.updateProjectTaskTimes(sub_task_index);
+    }
+  }
+
+  /**
+   * 更新任务进度
+   * @param progress 进度
+   * @param index 对应的一定是左侧表格body的index
+   * @param sub_task_index 子任务的index, 当taskShowMode是sub_tasks_*模式时，会传入sub_task_index。如果是tasks_separate模式，sub_task_index传入undefined。
+   */
+  _updateProgressToTaskRecord(progress: number, index: number, sub_task_index?: number) {
+    const taskRecord = this.getRecordByIndex(index, sub_task_index);
+    const progressField = this.parsedOptions.progressField;
+    if (progressField) {
+      taskRecord[progressField] = progress;
+      const indexs = this.getRecordIndexByTaskShowIndex(index);
+      this._updateRecordToListTable(taskRecord, indexs);
+      this._refreshTaskBar(index, sub_task_index);
     }
   }
 
