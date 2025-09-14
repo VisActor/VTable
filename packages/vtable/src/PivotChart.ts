@@ -963,7 +963,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           if (indicatorSpec?.type !== 'heatmap') {
             collectValuesBy[indicatorDefine.indicatorKey] = {
               by: rowKeys,
-              range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false),
+              range: true,
               // 判断是否需要匹配维度值相同的进行求和计算
               sumBy: indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
             };
@@ -1031,7 +1031,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           if (indicatorSpec?.type !== 'heatmap') {
             collectValuesBy[indicatorDefine.indicatorKey] = {
               by: columnKeys,
-              range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
+              range: true,
               // 判断是否需要匹配维度值相同的进行求和计算
               sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
             };
