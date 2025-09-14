@@ -8,6 +8,7 @@ import { ConfigManager } from './config';
 import { EventManager } from './events';
 import { SubTableManager } from './subtable';
 import { TableAPIExtensions } from './table-api-extensions';
+import { bindMasterDetailCheckboxChange, enableMasterDetailCheckboxCascade } from './checkbox';
 
 /**
  * 主从表插件核心类
@@ -114,6 +115,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.eventManager.bindEventHandlers();
     // 扩展表格 API
     this.extendTableAPI();
+    // 初始化checkbox联动功能
+    this.initCheckboxCascade();
+  }
+
+  /**
+   * 初始化checkbox联动功能
+   */
+  private initCheckboxCascade(): void {
+    enableMasterDetailCheckboxCascade(this.table);
+    bindMasterDetailCheckboxChange(this.table, this.eventManager);
   }
 
   /**
@@ -124,6 +135,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps.expandedRecordIndices = [];
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
+    internalProps.subTableCheckboxStates = new Map();
   }
 
   /**

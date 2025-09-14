@@ -160,7 +160,6 @@ export class TableAPIExtensions {
    */
   private extendUpdateResizeRow(): void {
     const table = this.table;
-    // 完全重写 updateResizeRow 方法，解决 adaptive 模式下的 limitMinHeight 问题
     this.originalUpdateResizeRow = table.stateManager.updateResizeRow.bind(table.stateManager);
     table.stateManager.updateResizeRow = (xInTable: number, yInTable: number) => {
       const state = table.stateManager;
@@ -635,8 +634,7 @@ export class TableAPIExtensions {
   }
 
   /**
-   * 扩展 getRowY 方法
-   * 拦截 getRowY 函数，为展开行提供正确的Y坐标计算
+   * 处理 getRowY 中使用getRowHeight的方法
    */
   private extendGetRowY(): void {
     // 直接拦截 scenegraph.component 的方法

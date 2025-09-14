@@ -47,3 +47,58 @@ export function getOriginalRowHeight(table: VTable.ListTable, bodyRowIndex: numb
   const internalProps = getInternalProps(table);
   return internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
 }
+
+/**
+ * 查找checkbox列的索引
+ */
+export function findCheckboxColumnIndex(table: VTable.ListTable, field: string | number): number {
+  for (let col = 0; col < table.colCount; col++) {
+    const cellField = table.getHeaderField(col, 0);
+    if (cellField === field) {
+      return col;
+    }
+  }
+  return -1;
+}
+
+/**
+ * 设置单元格checkbox状态并更新属性
+ */
+export function setCellCheckboxStateByAttribute(
+  col: number,
+  row: number,
+  checked: boolean | 'indeterminate',
+  table: VTable.ListTable
+): void {
+  const cellGroup = table.scenegraph.getCell(col, row);
+  if (cellGroup) {
+    cellGroup.forEachChildren((child: unknown) => {
+      const childNode = child as {
+        name?: string;
+        type?: string;
+        attribute?: { type?: string };
+        setAttributes?: (attrs: { checked?: boolean; indeterminate?: boolean }) => void;
+      };
+      if (
+        childNode.name === 'checkbox-icon' ||
+        childNode.name === 'checkbox' ||
+        childNode.type === 'checkbox' ||
+        (childNode.attribute && childNode.attribute.type === 'checkbox')
+      ) {
+        if (childNode.setAttributes) {
+          if (checked === 'indeterminate') {
+            childNode.setAttributes({
+              checked: false,
+              indeterminate: true
+            });
+          } else {
+            childNode.setAttributes({
+              checked: checked,
+              indeterminate: false
+            });
+          }
+        }
+      }
+    });
+  }
+}

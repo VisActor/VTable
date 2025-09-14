@@ -19,6 +19,14 @@ export interface MasterDetailPluginOptions {
 }
 
 /**
+ * 子表checkbox状态接口
+ */
+export interface SubTableCheckboxState {
+  checkedState: Record<string, Record<string | number, boolean | 'indeterminate'>>;
+  headerCheckedState: Record<string | number, boolean | 'indeterminate'>;
+}
+
+/**
  * 内部属性扩展接口
  */
 export interface InternalProps {
@@ -26,6 +34,7 @@ export interface InternalProps {
   subTableInstances: Map<number, VTable.ListTable>;
   originalRowHeights: Map<number, number>;
   _tempExpandedRecordIndices?: (number | number[])[];
+  subTableCheckboxStates?: Map<number, SubTableCheckboxState>;
 }
 
 /**
