@@ -1,3 +1,67 @@
+# v1.19.9
+
+2025-09-12
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 disableSelectOnContextMenu 配置项
+- **@visactor/vtable-gantt**: 甘特图任务条进度百分比可调整
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 添加 isReleased 检查，增强健壮性
+- **@visactor/vtable**: 修复填充句柄不显示的错误 [#4376](https://github.com/VisActor/VTable/issues/4376)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化在 Windows 系统上的库构建流程
+
+
+
+[更多详情请查看 v1.19.9](https://github.com/VisActor/VTable/releases/tag/v1.19.9)
+
+# v1.19.8
+
+2025-08-29
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 getLayoutRowTree api 错误 [#4346](https://github.com/VisActor/VTable/issues/4346)
+- **@visactor/vtable**: 修复当有多列展开时 columnTree 场景图节点 y 值错误 [#4357](https://github.com/VisActor/VTable/issues/4357)
+- **@visactor/vtable**: 当数据透视表仅有指标无维度时 columnWidthConfig 不生效 [#4388](https://github.com/VisActor/VTable/issues/4388)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 补充 contextmenu-click 事件参数 [#4364](https://github.com/VisActor/VTable/issues/4364)
+
+
+
+[更多详情请查看 v1.19.8](https://github.com/VisActor/VTable/releases/tag/v1.19.8)
+
+# v1.19.7
+
+2025-08-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 新增 ignoreFrozenCols 配置，用于设置冻结列的样式
+- **@visactor/vtable**: 新增 CONTEXTMENU_CANVAS 事件类型
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复当设置隐藏列时，带有子列的列报错的问题 [#4223](https://github.com/VisActor/VTable/issues/4223)
+- **@visactor/vtable**: 修复甘特图刷新容器大小的问题 [#4319](https://github.com/VisActor/VTable/issues/4319)
+- **@visactor/vtable**: 修复当使用 InputEditor 更新 groupBy 配置时，同步组折叠状态时报错的问题 [#4216](https://github.com/VisActor/VTable/issues/4216)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 当记录较少时，不需要显示滚动条时，滚动条不显示
+
+[更多详情请查看 v1.19.7](https://github.com/VisActor/VTable/releases/tag/v1.19.7)
+
 # v1.19.6
 
 2025-08-08

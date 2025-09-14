@@ -20,6 +20,8 @@
     contextMenuItems?: MenuListItem[] | ((field: string, row: number, col: number, table: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    /** 右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单  */
+    contextMenuWorkOnlyCell?: boolean;
   };
 };
 ```
@@ -28,6 +30,8 @@
 - defaultHeaderMenuItems：指定表头默认配置项内容
 - contextMenuItems：指定右键菜单列表
 - dropDownMenuHighlight：如果菜单有对应的选中状态，在这里进行配置
+- contextMenuWorkOnlyCell：右键菜单是否只工作在单元格上
+
 
 ## 示例
 
@@ -179,7 +183,8 @@ fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American
             field: 'Order ID',
             menuKey: '升序规则1'
           }
-        ]
+        ],
+        contextMenuWorkOnlyCell: true
       }
     };
     tableInstance = new VTable.ListTable(option);

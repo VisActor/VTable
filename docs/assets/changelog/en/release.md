@@ -1,3 +1,67 @@
+# v1.19.9
+
+2025-09-12
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add disableSelectOnContextMenu option
+- **@visactor/vtable-gantt**: gantt task bar process percentage can be resized
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add isReleased check before resize in initialization
+- **@visactor/vtable**: fix fill handler not show error [#4376](https://github.com/VisActor/VTable/issues/4376)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: build library process on window system
+
+
+
+[more detail about v1.19.9](https://github.com/VisActor/VTable/releases/tag/v1.19.9)
+
+# v1.19.8
+
+2025-08-29
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix getLayoutRowTree api error [#4346](https://github.com/VisActor/VTable/issues/4346)
+- **@visactor/vtable**: fix when has many columns expand columnTree scenegraph node y value error [#4357](https://github.com/VisActor/VTable/issues/4357)
+- **@visactor/vtable**: columnWidthConfig not work when just has indicator on pivot table [#4388](https://github.com/VisActor/VTable/issues/4388)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: supplement contextmenu-click event arguments [#4364](https://github.com/VisActor/VTable/issues/4364)
+
+
+
+[more detail about v1.19.8](https://github.com/VisActor/VTable/releases/tag/v1.19.8)
+
+# v1.19.7
+
+2025-08-19
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add ignoreFrozenCols for theme's scrollStyle setting
+- **@visactor/vtable**: add event type CONTEXTMENU_CANVAS
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: when set hide for column with children occor error [#4223](https://github.com/VisActor/VTable/issues/4223)
+- **@visactor/vtable**: markline refresh container size [#4319](https://github.com/VisActor/VTable/issues/4319)
+- **@visactor/vtable**: fix error in syncGroupCollapseState when use InputEditor update groupBy config key.[#4216](https://github.com/VisActor/VTable/issues/4216)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: scrollbar not show when less records no need show scrollbar
+
+[more detail about v1.19.7](https://github.com/VisActor/VTable/releases/tag/v1.19.7)
+
 # v1.19.6
 
 2025-08-08

@@ -575,7 +575,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   // 注意和pointertap事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    console.log('tableGroup', 'pointerup');
+    // console.log('tableGroup', 'pointerup');
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -696,43 +696,71 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
       //处理监听的右键事件
       const { col, row } = eventArgsSet.eventArgs;
-      if ((table as any).hasListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL)) {
-        const cellInfo = table.getCellInfo(col, row);
-        let icon;
-        let position;
-        if (eventArgsSet.eventArgs?.target) {
-          const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-          if (iconInfo) {
-            icon = iconInfo.icon;
-            position = iconInfo.position;
-          }
-        }
-        const cellsEvent: MousePointerMultiCellEvent = {
-          ...cellInfo,
-          event: e.nativeEvent,
-          cells: [],
-          targetIcon: icon
-            ? {
-                name: icon.name,
-                position: position,
-                funcType: (icon as any).attribute.funcType
-              }
-            : undefined,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
-        };
-        if (table.options.eventOptions?.contextmenuReturnAllSelectedCells ?? true) {
-          if (cellInRanges(table.stateManager.select.ranges, col, row)) {
-            // 用户右键点击已经选中的区域
-            // const { start, end } = eventManager.selection.range;
-            cellsEvent.cells = table.getSelectedCellInfos();
-          } else {
-            // 用户右键点击新单元格
-            cellsEvent.cells = [[cellInfo]];
+      if (col >= 0 && row >= 0) {
+        const ranges = table.getSelectedCellRanges();
+        let cellInRange = false;
+        if (ranges.length > 0) {
+          for (let i = 0; i < ranges.length; i++) {
+            const range = ranges[i];
+            const startCol = range.start.col;
+            const endCol = range.end.col;
+            const startRow = range.start.row;
+            const endRow = range.end.row;
+            if (
+              (col >= startCol && col <= endCol && row >= startRow && row <= endRow) || // 左上向右下选择
+              (col >= endCol && col <= startCol && row >= endRow && row <= startRow) || // 右下向左上选择
+              (col >= startCol && col <= endCol && row >= endRow && row <= startRow) || // 左下向右上选择
+              (col >= endCol && col <= startCol && row >= startRow && row <= endRow) // 右上向左下选择
+            ) {
+              cellInRange = true;
+              break;
+            }
           }
         }
 
-        table.fireListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, cellsEvent);
+        const disableSelectOnContextMenu = table.options.select?.disableSelectOnContextMenu;
+        if (!cellInRange && !disableSelectOnContextMenu) {
+          table.selectCell(col, row);
+        }
+
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL)) {
+          const cellInfo = table.getCellInfo(col, row);
+          let icon;
+          let position;
+          if (eventArgsSet.eventArgs?.target) {
+            const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
+            if (iconInfo) {
+              icon = iconInfo.icon;
+              position = iconInfo.position;
+            }
+          }
+          const cellsEvent: MousePointerMultiCellEvent = {
+            ...cellInfo,
+            event: e.nativeEvent,
+            cells: [],
+            targetIcon: icon
+              ? {
+                  name: icon.name,
+                  position: position,
+                  funcType: (icon as any).attribute.funcType
+                }
+              : undefined,
+            target: eventArgsSet?.eventArgs?.target,
+            mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+          };
+          if (table.options.eventOptions?.contextmenuReturnAllSelectedCells ?? true) {
+            if (cellInRanges(table.stateManager.select.ranges, col, row)) {
+              // 用户右键点击已经选中的区域
+              // const { start, end } = eventManager.selection.range;
+              cellsEvent.cells = table.getSelectedCellInfos();
+            } else {
+              // 用户右键点击新单元格
+              cellsEvent.cells = [[cellInfo]];
+            }
+          }
+
+          table.fireListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, cellsEvent);
+        }
       }
     }
   });

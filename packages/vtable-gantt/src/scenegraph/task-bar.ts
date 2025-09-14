@@ -1,21 +1,9 @@
-import { Group, createText, createRect, Image, Circle, Line, Rect } from '@visactor/vtable/es/vrender';
+import { Group, createText, createRect, Image, Circle, Line, Polygon } from '@visactor/vtable/es/vrender';
 import type { Scenegraph } from './scenegraph';
 // import { Icon } from './icon';
-import {
-  computeCountToTimeScale,
-  createDateAtLastHour,
-  createDateAtMidnight,
-  parseStringTemplate,
-  toBoxArray
-} from '../tools/util';
+import { computeCountToTimeScale, parseStringTemplate, toBoxArray } from '../tools/util';
 import { isValid } from '@visactor/vutils';
-import {
-  computeRowsCountByRecordDate,
-  computeRowsCountByRecordDateForCompact,
-  defaultTaskBarStyle,
-  getSubTaskRowIndexByRecordDate,
-  getTextPos
-} from '../gantt-helper';
+import { defaultTaskBarStyle, getTextPos } from '../gantt-helper';
 import { GanttTaskBarNode } from './gantt-node';
 import { TasksShowMode, TaskType } from '../ts-types';
 
@@ -109,6 +97,7 @@ export class TaskBar {
   creatingDependencyLine: Line;
   hoverBarLeftIcon: Image;
   hoverBarRightIcon: Image;
+  hoverBarProgressHandle: Group;
   _scene: Scenegraph;
   width: number;
   height: number;
@@ -460,7 +449,7 @@ export class TaskBar {
       y: 0,
       width: 100,
       height: 100,
-      clip: true,
+      clip: false, // 关闭裁剪以允许进度手柄显示在任务条外部
       pickable: false,
       cornerRadius:
         this._scene._gantt.parsedOptions.taskBarHoverStyle.cornerRadius ?? defaultTaskBarStyle.cornerRadius ?? 0,
@@ -499,6 +488,35 @@ export class TaskBar {
       this.hoverBarRightIcon = rightIcon;
       hoverBarGroup.appendChild(rightIcon);
     }
+
+    // 创建进度手柄
+    const progressHandle = new Group({
+      x: 0,
+      y: 0,
+      width: 12,
+      height: 12,
+      pickable: true,
+      cursor: 'ew-resize',
+      visible: false
+    });
+
+    // 创建三角形手柄
+    const triangleHandle = new Polygon({
+      points: [
+        { x: 6, y: 0 }, // 顶部中心点
+        { x: 0, y: 6 }, // 左下角
+        { x: 12, y: 6 } // 右下角
+      ],
+      fill: '#0064ff',
+      stroke: '#ffffff',
+      lineWidth: 1,
+      pickable: false
+    });
+    progressHandle.appendChild(triangleHandle);
+
+    progressHandle.name = 'task-bar-progress-handle';
+    this.hoverBarProgressHandle = progressHandle;
+    hoverBarGroup.appendChild(progressHandle);
   }
 
   setX(x: number) {
@@ -531,7 +549,7 @@ export class TaskBar {
     this.group.setAttribute('height', this.height);
   }
 
-  showHoverBar(x: number, y: number, width: number, height: number, target?: Group) {
+  showHoverBar(x: number, y: number, width: number, height: number, target?: GanttTaskBarNode) {
     const { startDate, endDate, taskRecord } = this._scene._gantt.getTaskInfoByTaskListIndex(
       target.task_index,
       target.sub_task_index
@@ -555,12 +573,35 @@ export class TaskBar {
     }
     this.hoverBarLeftIcon?.setAttribute('visible', false);
     this.hoverBarRightIcon?.setAttribute('visible', false);
+    this.hoverBarProgressHandle?.setAttribute('visibleAll', false);
 
     let leftResizable = true;
     let rightResizable = true;
+    let progressAdjustable = true;
+
+    const progressField = this._scene._gantt.parsedOptions.progressField;
+    const hasProgressField =
+      progressField && taskRecord[progressField] !== undefined && taskRecord[progressField] !== null;
+
+    if (!hasProgressField) {
+      progressAdjustable = false;
+    } else if (typeof this._scene._gantt.parsedOptions.taskBarProgressAdjustable === 'function') {
+      const arg = {
+        index: target.task_index,
+        startDate,
+        endDate,
+        taskRecord,
+        ganttInstance: this._scene._gantt
+      };
+      progressAdjustable = this._scene._gantt.parsedOptions.taskBarProgressAdjustable(arg);
+    } else {
+      progressAdjustable = this._scene._gantt.parsedOptions.taskBarProgressAdjustable;
+    }
+
     if (taskRecord.type === TaskType.MILESTONE) {
       leftResizable = false;
       rightResizable = false;
+      progressAdjustable = false;
     } else if (typeof this._scene._gantt.parsedOptions.taskBarResizable === 'function') {
       const arg = {
         index: target.task_index,
@@ -588,6 +629,9 @@ export class TaskBar {
     if (rightResizable) {
       this.hoverBarRightIcon.setAttribute('visible', true);
     }
+    if (progressAdjustable) {
+      this.hoverBarProgressHandle.setAttribute('visibleAll', true);
+    }
     if (this.hoverBarLeftIcon) {
       this.hoverBarLeftIcon.setAttribute('x', 0);
       this.hoverBarLeftIcon.setAttribute('y', Math.ceil(height / 10));
@@ -597,6 +641,12 @@ export class TaskBar {
       this.hoverBarRightIcon.setAttribute('y', Math.ceil(height / 10));
       this.hoverBarRightIcon.setAttribute('width', TASKBAR_HOVER_ICON_WIDTH);
       this.hoverBarRightIcon.setAttribute('height', height - 2 * Math.ceil(height / 10));
+    }
+    if (this.hoverBarProgressHandle) {
+      const { progress } = this._scene._gantt.getTaskInfoByTaskListIndex(target.task_index, target.sub_task_index);
+      const progressX = (width * progress) / 100 - 6;
+      this.hoverBarProgressHandle.setAttribute('x', progressX);
+      this.hoverBarProgressHandle.setAttribute('y', height - 3); // 让三角形有一半在进度条内
     }
   }
   hideHoverBar() {

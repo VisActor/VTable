@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-gantt",
-  "version": "1.19.5",
+  "version": "1.19.9",
   "description": "canvas table width high performance",
   "keywords": [
     "vtable-gantt",
@@ -40,13 +40,14 @@
     "demo": "vite serve examples",
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle --clean",
+    "build": "npm run fix-memory-limit && bundle --clean",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": "jest --silent",
     "test-cov": "jest --coverage",
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
-    "build:es": "bundle --clean -f es --ignorePostTasks"
+    "build:es": "bundle --clean -f es --ignorePostTasks",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "dependencies": {
     "@visactor/vtable": "workspace:*",
@@ -57,6 +58,8 @@
     "cssfontparser": "^1.2.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "luxon": "*",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",

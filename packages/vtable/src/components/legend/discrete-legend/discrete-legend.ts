@@ -57,11 +57,11 @@ export class DiscreteTableLegend {
     if (!this.legendComponent || this.visible === false) {
       return;
     }
-
-    this.legendComponent.setAttributes({
-      maxWidth: this.table.tableNoFrameWidth,
-      maxHeight: this.table.tableNoFrameHeight
+    const attrs = this.getLegendAttributes({
+      width: this.table.tableNoFrameWidth,
+      height: this.table.tableNoFrameHeight
     });
+    this.legendComponent.setAttributes(attrs);
 
     this.adjustTableSize(this.legendComponent.attribute);
   }

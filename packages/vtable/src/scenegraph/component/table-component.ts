@@ -346,8 +346,10 @@ export class TableComponent {
     const horizontalVisible = theme.scrollStyle?.horizontalVisible ?? visible1;
     const verticalVisible = theme.scrollStyle?.verticalVisible ?? visible1;
     // const hoverOn = theme.scrollStyle?.hoverOn as boolean;
-    const tableWidth = Math.ceil(this.table.scenegraph.tableGroup.attribute.width);
-    const tableHeight = Math.ceil(this.table.scenegraph.tableGroup.attribute.height);
+    // const tableWidth = Math.ceil(this.table.scenegraph.tableGroup.attribute.width);
+    // const tableHeight = Math.ceil(this.table.scenegraph.tableGroup.attribute.height);
+    const tableWidth = Math.ceil(this.table.tableNoFrameWidth);
+    const tableHeight = Math.ceil(this.table.tableNoFrameHeight);
 
     const totalHeight = this.table.getAllRowsHeight();
     const totalWidth = this.table.getAllColsWidth();
@@ -355,17 +357,16 @@ export class TableComponent {
     const frozenColsWidth = this.table.getFrozenColsWidth();
     const bottomFrozenRowsHeight = this.table.getBottomFrozenRowsHeight();
     const rightFrozenColsWidth = this.table.getRightFrozenColsWidth();
-
+    const hoverOn = this.table.theme.scrollStyle.hoverOn;
     // _disableColumnAndRowSizeRound环境中，可能出现
     // getAllColsWidth/getAllRowsHeight(A) + getAllColsWidth/getAllRowsHeight(B) < getAllColsWidth/getAllRowsHeight(A+B)
     // （由于小数在取数时被省略）
     // 这里加入tolerance，避免出现无用滚动
     const sizeTolerance = this.table.options.customConfig?._disableColumnAndRowSizeRound ? 1 : 0;
+
     if (totalWidth > tableWidth + sizeTolerance) {
       const y = Math.min(tableHeight, totalHeight);
       const rangeEnd = Math.max(0.05, (tableWidth - frozenColsWidth) / (totalWidth - frozenColsWidth));
-
-      const hoverOn = this.table.theme.scrollStyle.hoverOn;
 
       let attrY = 0;
       if (this.table.theme.scrollStyle.barToSide) {
@@ -377,10 +378,25 @@ export class TableComponent {
         attrY = y - (hoverOn ? width : -this.table.scenegraph.tableGroup.attribute.y);
       }
 
+      let hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+
+      let hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+
+      // 忽略所有冻结列宽度
+      const ignoreFrozenCols = this.table.theme.scrollStyle?.ignoreFrozenCols ?? false;
+
+      if (ignoreFrozenCols) {
+        hScrollBarx = !hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0;
+        hScrollBarWidth = tableWidth;
+      } else {
+        hScrollBarx = frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0);
+        hScrollBarWidth = tableWidth - frozenColsWidth - rightFrozenColsWidth;
+      }
+
       this.hScrollBar.setAttributes({
-        x: frozenColsWidth + (!hoverOn ? this.table.scenegraph.tableGroup.attribute.x : 0),
+        x: hScrollBarx,
         y: attrY,
-        width: tableWidth - frozenColsWidth - rightFrozenColsWidth,
+        width: hScrollBarWidth,
         range: [0, rangeEnd],
         visible: horizontalVisible === 'always'
       });
@@ -406,7 +422,6 @@ export class TableComponent {
       const rangeEnd = Math.max(0.05, (tableHeight - frozenRowsHeight) / (totalHeight - frozenRowsHeight));
 
       let attrX = 0;
-      const hoverOn = this.table.theme.scrollStyle.hoverOn;
 
       if (this.table.theme.scrollStyle.barToSide) {
         attrX =

@@ -1,6 +1,54 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 31 Jul 2025 11:30:27 GMT and should not be manually modified.
+This log was last generated on Fri, 12 Sep 2025 09:25:46 GMT and should not be manually modified.
+
+## 1.19.9
+Fri, 12 Sep 2025 09:25:46 GMT
+
+### Updates
+
+- fix: add isReleased check before resize in initialization
+
+## 1.19.8
+Fri, 29 Aug 2025 06:50:15 GMT
+
+### Updates
+
+- fix: getLayoutRowTree api error #4346
+
+
+- fix: when has many columns expand columnTree scenegraph node y error #4357
+
+
+- refactor: contextmenu-click event arguments #4364
+
+
+- fix: columnWidthConfig not work when just has indicator on pivot table #4388
+
+
+
+## 1.19.7
+Mon, 18 Aug 2025 11:14:19 GMT
+
+_Version update only_
+
+## 1.19.6
+Fri, 08 Aug 2025 06:24:08 GMT
+
+### Updates
+
+- fix: pivot table set columnHierarchyType gird expand tree error #4254
+
+
+- fix: when no records markline render error #4305
+
+
+- feat: pivot chart add columnWidthConfig option
+
+
+- refactor: add table export plugin
+
+
 
 ## 1.19.5
 Thu, 31 Jul 2025 11:30:27 GMT

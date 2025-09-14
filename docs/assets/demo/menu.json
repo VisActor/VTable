@@ -323,6 +323,13 @@
           }
         },
         {
+          "path": "gantt-progress-adjust",
+          "title": {
+            "zh": "甘特图交互——任务条进度调整",
+            "en": "Gantt Interaction —— Task Bar Progress Adjust"
+          }
+        },
+        {
           "path": "gantt-taskShowMode",
           "title": {
             "zh": "甘特图任务显示模式",
@@ -1202,6 +1209,13 @@
           "title": {
             "zh": "自定义角头单元格",
             "en": "Custom Corner Cell"
+          }
+        },
+        {
+          "path": "cell-custom-reactive-layout",
+          "title": {
+            "zh": "单元格自定义响应式布局",
+            "en": "cell custom reactive layout"
           }
         }
       ]

@@ -2,6 +2,66 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.19.9",
+      "tag": "@visactor/vtable_v1.19.9",
+      "date": "Fri, 12 Sep 2025 09:25:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add isReleased check before resize in initialization"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.19.8",
+      "tag": "@visactor/vtable_v1.19.8",
+      "date": "Fri, 29 Aug 2025 06:50:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: getLayoutRowTree api error #4346\n\n"
+          },
+          {
+            "comment": "fix: when has many columns expand columnTree scenegraph node y error #4357\n\n"
+          },
+          {
+            "comment": "refactor: contextmenu-click event arguments #4364\n\n"
+          },
+          {
+            "comment": "fix: columnWidthConfig not work when just has indicator on pivot table #4388\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.19.7",
+      "tag": "@visactor/vtable_v1.19.7",
+      "date": "Mon, 18 Aug 2025 11:14:19 GMT",
+      "comments": {}
+    },
+    {
+      "version": "1.19.6",
+      "tag": "@visactor/vtable_v1.19.6",
+      "date": "Fri, 08 Aug 2025 06:24:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: pivot table set columnHierarchyType gird expand tree error #4254\n\n"
+          },
+          {
+            "comment": "fix: when no records markline render error #4305\n\n"
+          },
+          {
+            "comment": "feat: pivot chart add columnWidthConfig option\n\n"
+          },
+          {
+            "comment": "refactor: add table export plugin\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.5",
       "tag": "@visactor/vtable_v1.19.5",
       "date": "Thu, 31 Jul 2025 11:30:27 GMT",
