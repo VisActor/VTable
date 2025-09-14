@@ -657,6 +657,21 @@ Event callback function parameter types:
 }
 ```
 
+## BEFORE_SET_RECORDS
+
+Event triggered before setting data records.
+
+Event callback function parameter types:
+
+```
+{
+  records: any[];
+  table: any;
+  rowHierarchyType?: 'grid' | 'tree';
+  rowHierarchyTypeMust?: 'grid' | 'tree';
+}
+```
+
 ## BEFORE_CREATE_PROGRESS_BAR
 
 Event triggered before creating progress bar, allows modifying height.

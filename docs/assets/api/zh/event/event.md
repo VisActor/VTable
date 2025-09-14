@@ -698,6 +698,21 @@ event: Event;
 }
 ```
 
+## BEFORE_SET_RECORDS
+
+设置数据记录前触发的事件。
+
+事件回调函数的参数类型:
+
+```
+{
+  records: any[];
+  table: any;
+  rowHierarchyType?: 'grid' | 'tree';
+  rowHierarchyTypeMust?: 'grid' | 'tree';
+}
+```
+
 ## BEFORE_CREATE_PROGRESS_BAR
 
 创建进度条前触发的事件，允许修改高度。
