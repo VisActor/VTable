@@ -106,7 +106,7 @@ Maximum freezing width, fixed value or percentage. Default is '80%'
 
 #${prefix} unfreezeAllOnExceedsMaxWidth(boolean) = true
 
-Whether to defrost after the maximum freezing width is exceeded. The default value is true
+Whether to defrost after the maximum freezing width is exceeded. The default value is true. If set to false, it will not unfreeze all columns, but will determine the number of columns to be unfrozen according to the value of maxFrozenWidth.
 
 #${prefix} allowFrozenColCount(number) = 0
 
@@ -289,6 +289,10 @@ Whether to cancel the selection when clicking outside the table.
 
 Whether to disable dragging selection.
 
+##${prefix} disableSelectOnContextMenu(boolean) = false
+
+Whether to disable selection on context menu.
+
 ##${prefix} highlightInRange(boolean) = false
 
 Will the entire row or column be highlighted when select in multiple rows or columns.
@@ -349,6 +353,10 @@ Set the selected state of the menu. Declaration type is `DropDownMenuHighlightIn
 
 {{ use: common-IDimensionInfo()}}
 
+##${prefix} contextMenuWorkOnlyCell(boolean)
+
+Right-click menu works only on cells. Default is true, only on cells display right-click menu, configure false, also pop up right-click menu on blank area.
+
 #${prefix} title(Object)
 
 {{ use: common-title(
@@ -386,6 +394,11 @@ The overflow text tooltip delays disappearance time. If you need to delay disapp
 ##${prefix} confine (boolean) = true
 
 Whether to confine the tooltip box within the canvas area, default is enabled. It is valid for renderMode:"html".
+
+##${prefix} position(string) = 'top'
+
+Tooltip box position, optional top left right bottom
+
 
 #${prefix} legends
 

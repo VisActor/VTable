@@ -1,6 +1,12 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailGridOptions } from './types';
-import { getInternalProps, getRecordByRowIndex, parseMargin } from './utils';
+import type { DetailGridOptions, SubTableCheckboxState } from './types';
+import {
+  getInternalProps,
+  getRecordByRowIndex,
+  parseMargin,
+  setCellCheckboxStateByAttribute,
+  findCheckboxColumnIndex
+} from './utils';
 import type { ConfigManager } from './config';
 
 /**
@@ -8,13 +14,177 @@ import type { ConfigManager } from './config';
  */
 export class SubTableManager {
   constructor(private table: VTable.ListTable, private configManager: ConfigManager) {}
+  private saveSubTableCheckboxState(bodyRowIndex: number, subTable: VTable.ListTable): void {
+    if (!subTable.stateManager) {
+      return;
+    }
+    const internalProps = getInternalProps(this.table);
+    internalProps.subTableCheckboxStates = new Map();
+    const subTableState: SubTableCheckboxState = {
+      checkedState: Object.fromEntries(
+        Array.from(subTable.stateManager.checkedState.entries()).map(([recordKey, fieldStates]) => [
+          recordKey,
+          { ...fieldStates }
+        ])
+      ),
+      headerCheckedState: { ...subTable.stateManager.headerCheckedState }
+    };
+    internalProps.subTableCheckboxStates.set(bodyRowIndex, subTableState);
+  }
+
+  /**
+   * 恢复子表的checkbox状态
+   */
+  private restoreSubTableCheckboxState(bodyRowIndex: number, subTable: VTable.ListTable): void {
+    const internalProps = getInternalProps(this.table);
+    let savedState = internalProps.subTableCheckboxStates?.get(bodyRowIndex);
+    if (!subTable.stateManager) {
+      return;
+    }
+    if (!savedState) {
+      savedState = {
+        checkedState: {},
+        headerCheckedState: {}
+      };
+    }
+
+    // 先检查父表对应行的checkbox状态，并应用到子表
+    const parentRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+    const parentRecord = getRecordByRowIndex(this.table, bodyRowIndex);
+    if (parentRecord && this.table.stateManager) {
+      const parentDataIndex = this.table.getRecordIndexByCell(0, parentRowIndex);
+      if (parentDataIndex !== undefined && parentDataIndex !== null) {
+        const parentIndexKey = parentDataIndex.toString();
+        const parentCheckedStates = this.table.stateManager.checkedState.get(parentIndexKey);
+        if (parentCheckedStates) {
+          Object.keys(parentCheckedStates).forEach(field => {
+            const parentState = parentCheckedStates[field];
+            if (parentState === true || parentState === false) {
+              if (savedState.checkedState) {
+                Object.keys(savedState.checkedState).forEach(recordKey => {
+                  savedState.checkedState[recordKey][field] = parentState;
+                });
+              }
+              savedState.headerCheckedState[field] = parentState;
+            }
+          });
+        }
+      }
+    }
+    if (savedState.checkedState) {
+      Object.keys(savedState.checkedState).forEach(recordKey => {
+        const fieldStates = savedState.checkedState[recordKey];
+        subTable.stateManager.checkedState.set(recordKey, fieldStates);
+      });
+    }
+    if (savedState.headerCheckedState) {
+      Object.keys(savedState.headerCheckedState).forEach(field => {
+        subTable.stateManager.headerCheckedState[field] = savedState.headerCheckedState[field];
+      });
+    }
+    if (parentRecord) {
+      const parentDataIndex = this.table.getRecordIndexByCell(0, parentRowIndex);
+      if (parentDataIndex !== undefined && parentDataIndex !== null) {
+        const parentIndexKey = parentDataIndex.toString();
+        const parentCheckedStates = this.table.stateManager.checkedState.get(parentIndexKey);
+        if (parentCheckedStates) {
+          Object.keys(parentCheckedStates).forEach(field => {
+            const parentState = parentCheckedStates[field];
+            if (parentState === true || parentState === false) {
+              subTable.stateManager.headerCheckedState[field] = parentState;
+              const records = subTable.records || [];
+              records.forEach((record, recordIndex) => {
+                const indexKey = recordIndex.toString();
+                let recordStates = subTable.stateManager.checkedState.get(indexKey);
+                if (!recordStates) {
+                  recordStates = {};
+                  subTable.stateManager.checkedState.set(indexKey, recordStates);
+                }
+                recordStates[field] = parentState;
+                (record as Record<string, unknown>)[field] = parentState;
+              });
+            }
+          });
+        }
+      }
+    }
+    setTimeout(() => {
+      this.updateSubTableCheckboxVisualState(subTable);
+    }, 0);
+  }
+  /**
+   * 更新子表checkbox的视觉状态
+   */
+  private updateSubTableCheckboxVisualState(subTable: VTable.ListTable, savedState?: SubTableCheckboxState): void {
+    if (!subTable.stateManager) {
+      return;
+    }
+
+    // 如果提供了保存的状态，使用保存的状态；否则使用当前状态管理器中的状态
+    const headerStates = savedState?.headerCheckedState || subTable.stateManager.headerCheckedState;
+    const recordStates = savedState?.checkedState || {};
+
+    // 更新表头checkbox视觉状态
+    Object.keys(headerStates).forEach(field => {
+      const headerState = headerStates[field];
+      const checkboxCol = findCheckboxColumnIndex(subTable, field);
+      if (checkboxCol !== -1) {
+        const headerRow = 0;
+        if (subTable.isHeader(checkboxCol, headerRow)) {
+          subTable.scenegraph.updateHeaderCheckboxCellState(checkboxCol, headerRow, headerState);
+        }
+      }
+    });
+
+    // 更新body区域checkbox视觉状态
+    if (savedState?.checkedState) {
+      // 使用保存的状态
+      Object.keys(recordStates).forEach(recordKey => {
+        const fieldStates = recordStates[recordKey];
+        const recordIndex = Number(recordKey);
+        Object.keys(fieldStates).forEach(field => {
+          const checkboxState = fieldStates[field];
+          const checkboxCol = findCheckboxColumnIndex(subTable, field);
+          if (checkboxCol !== -1) {
+            // 查找对应的行
+            for (let row = subTable.columnHeaderLevelCount; row < subTable.rowCount; row++) {
+              const dataIndex = subTable.getRecordIndexByCell(checkboxCol, row);
+              if (dataIndex === recordIndex) {
+                setCellCheckboxStateByAttribute(checkboxCol, row, checkboxState, subTable);
+                break;
+              }
+            }
+          }
+        });
+      });
+    } else {
+      // 使用状态管理器中的状态
+      subTable.stateManager.checkedState.forEach((fieldStates, recordKey) => {
+        const recordIndex = Number(recordKey);
+        Object.keys(fieldStates).forEach(field => {
+          const checkboxState = fieldStates[field];
+          const checkboxCol = findCheckboxColumnIndex(subTable, field);
+          if (checkboxCol !== -1) {
+            // 查找对应的行
+            for (let row = subTable.columnHeaderLevelCount; row < subTable.rowCount; row++) {
+              const dataIndex = subTable.getRecordIndexByCell(checkboxCol, row);
+              if (dataIndex === recordIndex) {
+                setCellCheckboxStateByAttribute(checkboxCol, row, checkboxState, subTable);
+                break;
+              }
+            }
+          }
+        });
+      });
+    }
+  }
 
   /**
    * 检查记录是否有子数据
    */
   private hasChildren(record: unknown): boolean {
     if (record && typeof record === 'object' && 'children' in record) {
-      const children = (record as any).children;
+      const children = record.children;
       return Array.isArray(children) && children.length > 0;
     }
     return false;
@@ -25,7 +195,7 @@ export class SubTableManager {
    */
   private getChildren(record: unknown): unknown[] {
     if (record && typeof record === 'object' && 'children' in record) {
-      const children = (record as any).children;
+      const children = record.children;
       return Array.isArray(children) ? children : [];
     }
     return [];
@@ -74,6 +244,8 @@ export class SubTableManager {
     const subTable = new VTable.ListTable(this.table.container, subTableOptions);
     internalProps.subTableInstances.set(bodyRowIndex, subTable);
 
+    // 恢复子表的checkbox状态（如果之前有保存的状态）
+    this.restoreSubTableCheckboxState(bodyRowIndex, subTable);
     // 确保子表内容在父表重绘后保持在上层
     const afterRenderHandler = () => {
       if (internalProps.subTableInstances && internalProps.subTableInstances.has(bodyRowIndex)) {
@@ -126,6 +298,15 @@ export class SubTableManager {
     // 解析margin配置 [上, 右, 下, 左]
     const [marginTop, marginRight, marginBottom, marginLeft] = parseMargin(detailConfig?.style?.margin);
     const configHeight = height ? height : detailConfig?.style?.height || 300;
+    // 如果配置的高度小于垂直margin总和，则不渲染子表
+    if (configHeight <= marginTop + marginBottom) {
+      return {
+        x1: firstColRect.left + marginLeft,
+        y1: detailRowRect.top + originalHeight,
+        x2: lastColRect.right - marginRight,
+        y2: detailRowRect.top + originalHeight
+      };
+    }
     const viewBox = {
       x1: firstColRect.left + marginLeft,
       y1: detailRowRect.top + originalHeight + marginTop,
@@ -146,6 +327,8 @@ export class SubTableManager {
     const internalProps = getInternalProps(this.table);
     const subTable = internalProps.subTableInstances?.get(bodyRowIndex);
     if (subTable) {
+      // 在删除子表前，保存其checkbox状态
+      this.saveSubTableCheckboxState(bodyRowIndex, subTable);
       const afterRenderHandler = (subTable as VTable.ListTable & { __afterRenderHandler?: () => void })
         .__afterRenderHandler;
       if (afterRenderHandler) {
@@ -169,12 +352,10 @@ export class SubTableManager {
       if (subTableScrollHandler) {
         subTable.off('can_scroll', subTableScrollHandler);
       }
-      // 清理clip interval
       const clipInterval = extendedSubTable.__clipInterval;
       if (clipInterval) {
         clearInterval(clipInterval);
       }
-      // 清理防闪烁机制
       const antiFlickerHandler = extendedSubTable.__antiFlickerHandler;
       if (antiFlickerHandler) {
         this.table.off('after_render', antiFlickerHandler);
@@ -182,7 +363,7 @@ export class SubTableManager {
       if (typeof subTable.release === 'function') {
         subTable.release();
       }
-      internalProps.subTableInstances?.delete(bodyRowIndex);
+      internalProps.subTableInstances.delete(bodyRowIndex);
     }
   }
 
@@ -498,7 +679,7 @@ export class SubTableManager {
       try {
         const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
         const scenegraph = this.table.scenegraph;
-        let cellGroup: any;
+        let cellGroup: { attribute?: { height?: number } } | null = null;
         if (scenegraph && typeof scenegraph.highPerformanceGetCell === 'function') {
           cellGroup = scenegraph.highPerformanceGetCell(0, rowIndex);
         } else if (scenegraph && typeof scenegraph.getCell === 'function') {
@@ -566,7 +747,6 @@ export class SubTableManager {
     getDetailConfig?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null
   ): void {
     const internalProps = getInternalProps(this.table);
-    const recordsToRecreate: number[] = [];
     internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
       // 如果指定了范围，只处理范围内的子表
       if (start !== undefined && bodyRowIndex < start) {
@@ -575,12 +755,38 @@ export class SubTableManager {
       if (end !== undefined && bodyRowIndex > end) {
         return;
       }
-      recordsToRecreate.push(bodyRowIndex);
-    });
-    // 需要recordsToRecreate，因为我这个removeSubTable和renderSubTable这个都会修改subTableInstances如果直接用的话会导致混乱
-    recordsToRecreate.forEach(bodyRowIndex => {
-      this.removeSubTable(bodyRowIndex);
-      this.renderSubTable(bodyRowIndex, getDetailConfig || (() => null));
+      // 获取记录和配置
+      const record = getRecordByRowIndex(this.table, bodyRowIndex);
+      const detailConfig = getDetailConfig
+        ? getDetailConfig(record, bodyRowIndex)
+        : this.getDetailConfigForRecord
+        ? this.getDetailConfigForRecord(record, bodyRowIndex)
+        : null;
+
+      // 重新计算子表的 viewBox
+      const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+      const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
+      const currentRowHeight = this.table.getRowHeight(rowIndex);
+      const detailHeight = currentRowHeight - originalHeight;
+      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig, detailHeight);
+      if (newViewBox) {
+        const newContainerWidth = newViewBox.x2 - newViewBox.x1;
+        const newContainerHeight = newViewBox.y2 - newViewBox.y1;
+        (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
+          newViewBox;
+        const subTableOptions = subTable.options as VTable.ListTableConstructorOptions;
+        if (subTableOptions.canvasWidth !== newContainerWidth || subTableOptions.canvasHeight !== newContainerHeight) {
+          subTableOptions.canvasWidth = newContainerWidth;
+          subTableOptions.canvasHeight = newContainerHeight;
+          subTable.resize();
+        }
+        if (subTable.scenegraph?.stage) {
+          (subTable.scenegraph.stage as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
+            newViewBox,
+            false
+          );
+        }
+      }
     });
   }
 

@@ -33,6 +33,7 @@ TABLE_EVENT_TYPE = {
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  CONTEXTMENU_CANVAS: 'contextmenu_canvas',
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
   MOUSEDOWN_TABLE: 'mousedown_table',
@@ -150,6 +151,10 @@ TABLE_EVENT_TYPE = {
 单元格右键事件
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## CONTEXTMENU_CANVAS
+
+画布右键事件
 
 ## MOUSEENTER_TABLE
 
@@ -690,6 +695,21 @@ event: Event;
   padding: [number, number, number, number];
   textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
+}
+```
+
+## BEFORE_SET_RECORDS
+
+设置数据记录前触发的事件。
+
+事件回调函数的参数类型:
+
+```
+{
+  records: any[];
+  table: any;
+  rowHierarchyType?: 'grid' | 'tree';
+  rowHierarchyTypeMust?: 'grid' | 'tree';
 }
 ```
 

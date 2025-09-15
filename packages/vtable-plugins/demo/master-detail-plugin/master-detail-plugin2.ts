@@ -525,6 +525,7 @@ export function createTable(): VTable.ListTable {
     container: document.getElementById(CONTAINER_ID),
     records: attachChildren(data),
     columns,
+    rowResizeMode: 'all',
     widthMode: 'adaptive',
     heightMode: 'adaptive',
     widthAdaptiveMode: 'only-body',

@@ -209,6 +209,8 @@ export interface IBaseTableProtected {
       | ((field: FieldDef, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    /** 右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单  */
+    contextMenuWorkOnlyCell?: boolean;
     parentElement?: HTMLElement;
   };
   /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
@@ -417,6 +419,8 @@ export interface BaseTableConstructorOptions {
     highlightInRange?: boolean;
     /** 是否将选中的单元格自动滚动到视口内 默认为true */
     makeSelectCellVisible?: boolean;
+    /** 右键点击单元格是否禁用选择单元格 */
+    disableSelectOnContextMenu?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -432,6 +436,8 @@ export interface BaseTableConstructorOptions {
       | ((field: string, row: number, col: number, table?: BaseTableAPI) => MenuListItem[]);
     /** 设置选中状态的菜单。代替原来的option.dropDownMenuHighlight  */
     dropDownMenuHighlight?: DropDownMenuHighlightInfo[];
+    /** 右键菜单是否只工作在单元格上。默认true只在单元格上显示右键菜单, 配置false在空白处也弹出右键菜单  */
+    contextMenuWorkOnlyCell?: boolean;
     parentElement?: HTMLElement;
   };
   /** tooltip相关配置 */

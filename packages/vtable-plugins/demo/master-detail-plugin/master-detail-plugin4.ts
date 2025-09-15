@@ -176,6 +176,8 @@ export function createTable() {
     id: 'master-detail-celltype-demo',
     detailGridOptions: {
       columns: [
+        { field: 'isCheck', title: '', width: 60, headerType: 'checkbox', cellType: 'checkbox' },
+        { field: 'isCheck2', title: '', width: 60, cellType: 'checkbox' },
         { field: 'taskName', title: '任务', width: 200, cellType: 'text' },
         { field: 'progress', title: '进度', width: 160, cellType: 'progressbar' }
       ],
@@ -191,6 +193,7 @@ export function createTable() {
     // 添加整表级复选框列（带表头复选框）
     { field: '230517143221027', cellType: 'text', title: 'Order ID', width: 'auto' },
     { field: 'isCheck', title: '', width: 60, headerType: 'checkbox', cellType: 'checkbox' },
+    { field: 'isCheck2', title: '', width: 60, headerType: 'checkbox', cellType: 'checkbox' },
     { field: 'thumbnail', title: '图片', width: 120, cellType: 'image' },
     { field: 'demoVideo', title: '视频', width: 240, cellType: 'video' },
     {
@@ -925,6 +928,7 @@ export function createTable() {
     records: recordsWithChildren,
     columns,
     defaultRowHeight: 120,
+    rowResizeMode: 'all',
     plugins: [masterDetailPlugin]
   };
 

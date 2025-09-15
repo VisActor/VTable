@@ -178,6 +178,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-groupBy'
+      },
+      {
+        path: 'list',
         name: 'list-group-manyChild'
       },
       {
@@ -838,6 +842,10 @@ export const menus = [
       {
         path: 'theme',
         name: 'custom-list'
+      },
+      {
+        path: 'theme',
+        name: 'scroll-style'
       }
     ]
   },
@@ -986,6 +994,10 @@ export const menus = [
       {
         path: 'frozen',
         name: 'list-table-right-frozen'
+      },
+      {
+        path: 'frozen',
+        name: 'list-table-scrollx-skip-frozen'
       },
       {
         path: 'frozen',

@@ -1,4 +1,6 @@
 import * as VTable from '@visactor/vtable';
+import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
+import type { Scenegraph } from '@visactor/vtable/es/scenegraph/scenegraph';
 import type { MasterDetailPluginOptions } from './types';
 import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
@@ -6,6 +8,7 @@ import { ConfigManager } from './config';
 import { EventManager } from './events';
 import { SubTableManager } from './subtable';
 import { TableAPIExtensions } from './table-api-extensions';
+import { bindMasterDetailCheckboxChange, enableMasterDetailCheckboxCascade } from './checkbox';
 
 /**
  * 主从表插件核心类
@@ -89,6 +92,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       onUpdateSubTablePositionsForRow: () => this.subTableManager.updateSubTablePositionsForRowResize(),
       onExpandRow: (rowIndex: number, colIndex?: number) => this.expandRow(rowIndex, colIndex),
       onCollapseRow: (rowIndex: number, colIndex?: number) => this.collapseRow(rowIndex, colIndex),
+      onCollapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
       onToggleRowExpand: (rowIndex: number, colIndex?: number) => this.toggleRowExpand(rowIndex, colIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)
     });
@@ -111,6 +115,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.eventManager.bindEventHandlers();
     // 扩展表格 API
     this.extendTableAPI();
+    // 初始化checkbox联动功能
+    this.initCheckboxCascade();
+  }
+
+  /**
+   * 初始化checkbox联动功能
+   */
+  private initCheckboxCascade(): void {
+    enableMasterDetailCheckboxCascade(this.table);
+    bindMasterDetailCheckboxChange(this.table, this.eventManager);
   }
 
   /**
@@ -121,6 +135,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps.expandedRecordIndices = [];
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
+    internalProps.subTableCheckboxStates = new Map();
   }
 
   /**
@@ -129,14 +144,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private extendTableAPI(): void {
     // 创建 TableAPIExtensions 实例
     this.tableAPIExtensions = new TableAPIExtensions(this.table, this.configManager, this.eventManager, {
-      addUnderlineToCell: (cellGroup: any, originalHeight: number) =>
+      addUnderlineToCell: (cellGroup: Group, originalHeight: number) =>
         this.addUnderlineToCell(cellGroup, originalHeight),
       applyMinimalHeightStrategy: (
         startRow: number,
         endRow: number,
         totalHeight: number,
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-        scenegraph: any
+        scenegraph: Scenegraph
       ) => this.applyMinimalHeightStrategy(startRow, endRow, totalHeight, expandedRowsInfo, scenegraph),
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
@@ -162,8 +177,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     row: number;
     width: number;
     height: number;
-    table: any;
-    range?: any;
+    table: VTable.ListTable;
+    range?: Range;
     modifiedHeight: number;
   }): void {
     const { row } = eventArgs;
@@ -200,7 +215,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     endRow: number,
     totalHeight: number,
     expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-    scenegraph: any
+    scenegraph: Scenegraph
   ): void {
     let normalRowCount = 0;
     for (let row = startRow; row < endRow; row++) {
@@ -472,7 +487,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowCells.length === 0) {
       return;
     }
-    rowCells.forEach((cellGroup: any, index: number) => {
+    rowCells.forEach((cellGroup: Group, index: number) => {
       if (cellGroup && cellGroup.attribute) {
         this.addUnderlineToCell(cellGroup, originalHeight);
       }
@@ -484,8 +499,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 获取指定行的所有cell元素
    */
-  private getRowCells(rowIndex: number): any[] {
-    const cells: any[] = [];
+  private getRowCells(rowIndex: number): Group[] {
+    const cells: Group[] = [];
     for (let col = 0; col < this.table.colCount; col++) {
       const cellGroup = this.table.scenegraph.getCell(col, rowIndex);
       if (cellGroup && cellGroup.role === 'cell') {
@@ -520,9 +535,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const originalStrokeArrayColor = cellGroup._originalStrokeArrayColor || currentStrokeArrayColor;
     const enhancedStrokeArrayWidth = [...originalStrokeArrayWidth];
     const enhancedStrokeArrayColor = [...originalStrokeArrayColor];
-    const dpr = this.table.internalProps?.pixelRatio || window.devicePixelRatio || 1;
     // 要还原本来的下划线的效果，那么我们应该要加上下一行的上划线的因为我记得原本的线是叠层的
-    const enhancedWidth = ((originalStrokeArrayWidth[2] || 1) * 0.75 + (originalStrokeArrayWidth[0] || 1) * 0.75) * dpr;
+    const enhancedWidth = ((originalStrokeArrayWidth[2] || 1) * 0.75 + (originalStrokeArrayWidth[0] || 1) * 0.75) * 2;
     enhancedStrokeArrayWidth[2] = enhancedWidth;
     if (originalStrokeArrayColor[2] === 'transparent' || !originalStrokeArrayColor[2]) {
       const theme = this.table.theme;
@@ -619,7 +633,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     this.eventManager?.cleanup();
     this.subTableManager?.cleanup();
-    this.table = null as any;
+    this.table = null;
   }
 
   /**
