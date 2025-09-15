@@ -295,6 +295,10 @@ Whether to cancel the selection when clicking outside the table.
 
 Whether to disable dragging selection.
 
+##${prefix} disableSelectOnContextMenu(boolean) = false
+
+Whether to disable selection on context menu.
+
 ##${prefix} highlightInRange(boolean) = false
 
 Will the entire row or column be highlighted when select in multiple rows or columns.

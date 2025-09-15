@@ -1,3 +1,26 @@
+# v1.19.9
+
+2025-09-12
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 disableSelectOnContextMenu 配置项
+- **@visactor/vtable-gantt**: 甘特图任务条进度百分比可调整
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 添加 isReleased 检查，增强健壮性
+- **@visactor/vtable**: 修复填充句柄不显示的错误 [#4376](https://github.com/VisActor/VTable/issues/4376)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化在 Windows 系统上的库构建流程
+
+
+
+[更多详情请查看 v1.19.9](https://github.com/VisActor/VTable/releases/tag/v1.19.9)
+
 # v1.19.8
 
 2025-08-29

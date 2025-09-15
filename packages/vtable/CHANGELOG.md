@@ -1,6 +1,13 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 29 Aug 2025 06:50:15 GMT and should not be manually modified.
+This log was last generated on Fri, 12 Sep 2025 09:25:46 GMT and should not be manually modified.
+
+## 1.19.9
+Fri, 12 Sep 2025 09:25:46 GMT
+
+### Updates
+
+- fix: add isReleased check before resize in initialization
 
 ## 1.19.8
 Fri, 29 Aug 2025 06:50:15 GMT

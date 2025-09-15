@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vtable",
-  "version": "1.19.8",
+  "version": "1.19.9",
   "description": "The react version of VTable",
   "keywords": [
     "react",
@@ -37,9 +37,10 @@
   },
   "scripts": {
     "start": "vite ./demo",
-    "build": "bundle --clean",
+    "build": "npm run fix-memory-limit && bundle --clean",
     "compile": "tsc --noEmit",
-    "eslint": "eslint --debug --fix src/"
+    "eslint": "eslint --debug --fix src/",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -55,6 +56,8 @@
     "react-reconciler": "0.29.2"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "@visactor/vchart": "2.0.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",

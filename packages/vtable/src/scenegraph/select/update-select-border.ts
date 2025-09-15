@@ -112,32 +112,30 @@ function updateComponent(
     //#region 计算填充柄小方块的位置
 
     let lastCellBound;
+    let handlerX;
     //当选择区域没有到到最后一列时
-    if (computeRectCellRangeEndCol < table.colCount - 1) {
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeEndCol,
-        computeRectCellRangeEndRow
-      ).globalAABBBounds;
+    if (endCol < table.colCount - 1) {
+      lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
+      handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
     } else {
       // 最后一列
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeStartCol - 1,
-        computeRectCellRangeEndRow
-      ).globalAABBBounds;
+      // computeRectCellRangeStartCol 而且是第一列时
+      if (startCol === 0) {
+        //解决issue #4376  但还是有问题当存在冻结的时候。以及需要处理类似情况下面逻辑最后一行的情况
+        lastCellBound = scene.highPerformanceGetCell(0, endRow).globalAABBBounds;
+        handlerX = lastCellBound.x1 - scene.tableGroup.attribute.x;
+      } else {
+        lastCellBound = scene.highPerformanceGetCell(startCol - 1, endRow).globalAABBBounds;
+        handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+      }
     }
-    const handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+    // const handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
     //当选择区域没有到到最后一行时
-    if (computeRectCellRangeEndRow < table.rowCount - 1) {
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeEndCol,
-        computeRectCellRangeEndRow
-      ).globalAABBBounds;
+    if (endRow < table.rowCount - 1) {
+      lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
     } else {
       // 最后一行
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeEndCol,
-        computeRectCellRangeStartRow - 1
-      ).globalAABBBounds;
+      lastCellBound = scene.highPerformanceGetCell(endCol, startRow - 1).globalAABBBounds;
     }
     const handlerY = lastCellBound.y2 - scene.tableGroup.attribute.y - 3;
     //#endregion
