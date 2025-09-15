@@ -38,7 +38,7 @@ export function createTable() {
   ];
   const indicators: VTable.TYPES.IChartIndicator[] = [
     {
-      indicatorKey: '230417171050030',
+      indicatorKey: '230417171050011',
       title: '数量',
       cellType: 'chart',
       chartModule: 'vchart',
@@ -57,49 +57,7 @@ export function createTable() {
         yField: '230417171050030',
         valueField: '230417171050011',
         barWidth: 50,
-        axes: [
-          {
-            orient: 'bottom',
-            type: 'band',
-            grid: {
-              visible: false
-            },
-            domainLine: {
-              visible: false
-            },
-            label: {
-              space: 10,
-              style: {
-                textAlign: 'left',
-                textBaseline: 'middle',
-                angle: 90,
-                fontSize: 8
-              }
-            },
-            bandPadding: 0,
-            height: layoutRect => {
-              // canvas height - region height - paddingTop - paddingBottom
-              return layoutRect.height - 314;
-            }
-          },
-          {
-            orient: 'left',
-            type: 'band',
-            grid: {
-              visible: false
-            },
-            domainLine: {
-              visible: false
-            },
-            label: {
-              space: 10,
-              style: {
-                fontSize: 8
-              }
-            },
-            bandPadding: 0
-          }
-        ],
+
         cell: {
           style: {
             fill: {
@@ -115,26 +73,6 @@ export function createTable() {
         }
       }
     }
-    // {
-    //   indicatorKey: '230417171050025',
-    //   title: '销售额',
-    //   cellType: 'chart',
-    //   chartModule: 'vchart',
-    //   headerStyle: {
-    //     color: 'red',
-    //     borderLineWidth: [1, 0, 1, 0],
-    //     autoWrapText: true
-    //   },
-    //   style: {
-    //     padding: 1
-    //   },
-    //   chartSpec: {
-    //     type: 'bar',
-    //     data: { id: 'data2' },
-    //     xField: ['230417170554008'],
-    //     yField: '230417171050025',
-    //   }
-    // },
   ];
   const records = [
     {
@@ -9235,7 +9173,46 @@ export function createTable() {
       value: [0, 1000],
       max: 1000,
       min: 0
-    }
+    },
+    axes: [
+      {
+        orient: 'bottom',
+        type: 'band',
+        grid: {
+          visible: false
+        },
+        domainLine: {
+          visible: false
+        },
+        label: {
+          space: 10,
+          style: {
+            textAlign: 'left',
+            textBaseline: 'middle',
+            angle: 90,
+            fontSize: 8
+          }
+        },
+        bandPadding: 0
+      },
+      {
+        orient: 'left',
+        type: 'band',
+        grid: {
+          visible: false
+        },
+        domainLine: {
+          visible: false
+        },
+        label: {
+          space: 10,
+          style: {
+            fontSize: 8
+          }
+        },
+        bandPadding: 0
+      }
+    ]
   };
 
   const tableInstance = new VTable.PivotChart(option);

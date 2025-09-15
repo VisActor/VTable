@@ -703,54 +703,55 @@ function isXAxis(orient: IOrientType) {
 }
 
 export function hasLinearAxis(spec: any, tableAxesConfig: any, isHorizontal: boolean, isThisXAxis: boolean): boolean {
-  if (!isArray(spec.axes) || spec.axes.length === 0) {
+  if ((!isArray(spec.axes) || spec.axes.length === 0) && (!isArray(tableAxesConfig) || tableAxesConfig.length === 0)) {
     // 据图表方向和轴类型返回默认值：
     // 水平图表的X轴应该是线性的
     // 垂直图表的Y轴应该是线性的
     return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
   }
+  if (isArray(spec.axes) && spec.axes.length > 0) {
+    for (let i = 0; i < spec.axes.length; i++) {
+      // 检查 spec.axes 中是否有匹配当前情况的轴配置，主要检查四种情况：
+      // 垂直图表的X轴（bottom orient）是否为线性轴
+      // 水平图表的X轴（bottom orient）是否为非线性轴
+      // 垂直图表的Y轴（left orient）是否为非线性轴
+      // 水平图表的Y轴（left orient）是否为线性轴
+      const axisSpec = spec.axes[i];
 
-  for (let i = 0; i < spec.axes.length; i++) {
-    // 检查 spec.axes 中是否有匹配当前情况的轴配置，主要检查四种情况：
-    // 垂直图表的X轴（bottom orient）是否为线性轴
-    // 水平图表的X轴（bottom orient）是否为非线性轴
-    // 垂直图表的Y轴（left orient）是否为非线性轴
-    // 水平图表的Y轴（left orient）是否为线性轴
-    const axisSpec = spec.axes[i];
+      if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type === 'linear') {
+          return true;
+        }
+      }
 
-    if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
-      if (spec.type === 'heatmap') {
-        return axisSpec.type === 'linear';
+      if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type !== 'linear') {
+          return true;
+        }
       }
-      if (axisSpec.type === 'linear') {
-        return true;
-      }
-    }
 
-    if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
-      if (spec.type === 'heatmap') {
-        return axisSpec.type === 'linear';
+      if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type !== 'linear') {
+          return true;
+        }
       }
-      if (axisSpec.type !== 'linear') {
-        return true;
-      }
-    }
 
-    if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
-      if (spec.type === 'heatmap') {
-        return axisSpec.type === 'linear';
-      }
-      if (axisSpec.type !== 'linear') {
-        return true;
-      }
-    }
-
-    if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
-      if (spec.type === 'heatmap') {
-        return axisSpec.type === 'linear';
-      }
-      if (axisSpec.type === 'linear') {
-        return true;
+      if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+        if (spec.type === 'heatmap') {
+          return axisSpec.type === 'linear';
+        }
+        if (axisSpec.type === 'linear') {
+          return true;
+        }
       }
     }
   }
