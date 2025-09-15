@@ -53,10 +53,10 @@ export function createTable() {
       chartSpec: {
         type: 'heatmap',
         data: { id: 'data1' },
-
         xField: '230417170554008',
         yField: '230417171050030',
         valueField: '230417171050011',
+        barWidth: 50,
         axes: [
           {
             orient: 'bottom',
@@ -110,12 +110,7 @@ export function createTable() {
         },
         color: {
           type: 'linear',
-          domain: [
-            {
-              dataId: 'data1',
-              fields: ['230417171050011']
-            }
-          ],
+          domain: [0, 1000],
           range: ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603']
         }
       }
@@ -134,32 +129,12 @@ export function createTable() {
     //     padding: 1
     //   },
     //   chartSpec: {
-    //     type: 'funnel',
+    //     type: 'bar',
     //     data: { id: 'data2' },
-    //     categoryField: '230417170554008',
-    //     valueField: '230417171050025'
+    //     xField: ['230417170554008'],
+    //     yField: '230417171050025',
     //   }
     // },
-    // {
-    //   indicatorKey: '230707112948009',
-    //   title: '折扣',
-    //   cellType: 'chart',
-    //   chartModule: 'vchart',
-    //   headerStyle: {
-    //     color: 'red',
-    //     borderLineWidth: [1, 0, 1, 0],
-    //     autoWrapText: true
-    //   },
-    //   style: {
-    //     padding: 1
-    //   },
-    //   chartSpec: {
-    //     type: 'pie',
-    //     data: { id: 'data3' },
-    //     categoryField: '230417170554008',
-    //     valueField: '230707112948009'
-    //   }
-    // }
   ];
   const records = [
     {
@@ -9242,111 +9217,25 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 30,
     defaultColWidth: 280,
-    defaultHeaderColWidth: [80, 50],
-
+    defaultHeaderColWidth: [80, 'auto'],
+    widthMode: 'autoWidth',
+    heightMode: 'autoHeight',
     corner: {
       titleOnDimension: 'row',
       headerStyle: {
         autoWrapText: true,
         padding: 0
       }
+    },
+    legends: {
+      orient: 'top',
+      position: 'start',
+      type: 'color',
+      colors: ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603'],
+      value: [0, 1000],
+      max: 1000,
+      min: 0
     }
-    // legends: {
-    //   data: [
-    //     {
-    //       label: '桌子',
-    //       shape: {
-    //         fill: '#2E62F1',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '椅子',
-    //       shape: {
-    //         fill: '#4DC36A',
-    //         symbolType: 'square'
-    //       }
-    //     },
-    //     {
-    //       label: '复印机',
-    //       shape: {
-    //         fill: '#FF8406',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '电话',
-    //       shape: {
-    //         fill: '#FFCC00',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '设备',
-    //       shape: {
-    //         fill: '#4F44CF',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '配件',
-    //       shape: {
-    //         fill: '#5AC8FA',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '信封',
-    //       shape: {
-    //         fill: '#003A8C',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '器具',
-    //       shape: {
-    //         fill: '#B08AE2',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '美术',
-    //       shape: {
-    //         fill: '#FF6341',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '装订机',
-    //       shape: {
-    //         fill: '#98DD62',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '用品',
-    //       shape: {
-    //         fill: '#07A199',
-    //         symbolType: 'circle'
-    //       }
-    //     },
-    //     {
-    //       label: '系固件',
-    //       shape: {
-    //         fill: '#87DBDD',
-    //         symbolType: 'circle'
-    //       }
-    //     }
-    //   ],
-    //   orient: 'bottom',
-    //   position: 'start',
-    //   maxRow: 1,
-    //   padding: [50, 0, 0, 0]
-    // },
-
-    // select: {
-    //   disableSelect: true
-    // }
   };
 
   const tableInstance = new VTable.PivotChart(option);
@@ -9357,13 +9246,20 @@ export function createTable() {
     console.log('onVChartEvent mouseover', args);
   });
   window.tableInstance = tableInstance;
-  const { LEGEND_ITEM_CLICK } = VTable.ListTable.EVENT_TYPE;
-  tableInstance.on(LEGEND_ITEM_CLICK, args => {
-    console.log('LEGEND_ITEM_CLICK', args);
+  const { LEGEND_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(LEGEND_CHANGE, args => {
+    console.log('LEGEND_CHANGE', args);
+    const maxValue = args.value[1];
+    const minValue = args.value[0];
     tableInstance.updateFilterRules([
       {
-        filterKey: '230417170554008',
-        filteredValues: args.value
+        filterFunc: (record: any) => {
+          console.log('updateFilterRules', record);
+          if (record['230417171050011'] >= minValue && record['230417171050011'] <= maxValue) {
+            return true;
+          }
+          return false;
+        }
       }
     ]);
   });
