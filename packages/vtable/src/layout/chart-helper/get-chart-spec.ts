@@ -324,7 +324,8 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             // width: -1,
             // grid: index === 0 ? undefined : { visible: false }
             tick: {
-              tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+              tickMode: getTickModeFunction(targetTicks, targetRange, range, index),
+              visible: false // 轴刻度不显示
             },
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
