@@ -1553,6 +1553,13 @@
             "zh": "类Excel在线编辑",
             "en": "Excel online editing"
           }
+        },
+        {
+          "path": "master-detail",
+          "title": {
+            "zh": "主从表功能",
+            "en": "Master Detail"
+          }
         }
       ]
     },

@@ -173,6 +173,14 @@ export interface TableEvents {
   AFTER_RENDER: 'after_render';
   /** 表格实例初始化完成 */
   INITIALIZED: 'initialized';
+  /** 单元格内容宽度更新后触发 */
+  AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width';
+  /** 创建进度条前触发，允许修改高度 */
+  BEFORE_CREATE_PROGRESS_BAR: 'before_create_progress_bar';
+  /** 设置数据源前触发，允许修改行层级类型 */
+  BEFORE_SET_RECORDS: 'before_set_records';
+  /** 选择边框高度更新后触发 */
+  AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height';
   //#endregion
 
   /** 编辑单元格 */
@@ -281,6 +289,10 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   BEFORE_INIT: 'before_init',
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
+  AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width',
+  BEFORE_CREATE_PROGRESS_BAR: 'before_create_progress_bar',
+  BEFORE_SET_RECORDS: 'before_set_records',
+  AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height',
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',

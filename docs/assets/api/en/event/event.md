@@ -634,3 +634,77 @@ Empty data prompt click event.
 ## EMPTY_TIP_DBLCLICK
 
 Empty data prompt double-click event.
+
+## AFTER_UPDATE_CELL_CONTENT_WIDTH
+
+Event triggered after cell content width is updated.
+
+Event callback function parameter types:
+
+```
+{
+  col: number;
+  row: number;
+  distWidth: number;
+  cellHeight: number;
+  detaX: number;
+  autoRowHeight: boolean;
+  needUpdateRowHeight: boolean;
+  cellGroup: any;
+  padding: [number, number, number, number];
+  textAlign: CanvasTextAlign;
+  textBaseline: CanvasTextBaseline;
+}
+```
+
+## BEFORE_SET_RECORDS
+
+Event triggered before setting data records.
+
+Event callback function parameter types:
+
+```
+{
+  records: any[];
+  table: any;
+  rowHierarchyType?: 'grid' | 'tree';
+  rowHierarchyTypeMust?: 'grid' | 'tree';
+}
+```
+
+## BEFORE_CREATE_PROGRESS_BAR
+
+Event triggered before creating progress bar, allows modifying height.
+
+Event callback function parameter types:
+
+```
+{
+  col: number;
+  row: number;
+  width: number;
+  height: number;
+  table: any;
+  range?: any;
+  modifiedHeight: number;
+}
+```
+
+## AFTER_UPDATE_SELECT_BORDER_HEIGHT
+
+Event triggered after selection border height is updated.
+
+Event callback function parameter types:
+
+```
+{
+  startRow: number;
+  endRow: number;
+  currentHeight: number;
+  selectComp: { 
+    rect: any; 
+    fillhandle?: any; 
+    role: string; 
+  };
+}
+```
