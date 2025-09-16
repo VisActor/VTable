@@ -10,19 +10,21 @@ import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 import { DEFAULT_TEXT_FONT_SIZE } from '../../components/axis/get-axis-attributes';
 import { convertDomainToTickData } from '@src/vrender';
 import { getTickModeFunction, getZeroAlignTickAlignTicks } from './tick-align';
+import {
+  getIndicatorObject,
+  getChartType,
+  isCartesianChartType,
+  CHART_TYPES,
+  getDimensionKey,
+  getHeatmapDimensionData,
+  hasCartesianChart,
+  hasNonCartesianChart
+} from './chart-common';
 
 const NO_AXISID_FRO_VTABLE = 'NO_AXISID_FRO_VTABLE';
 
 export function getRawChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
-  const paths = layout.getCellHeaderPaths(col, row);
-  let indicatorObj;
-  if (layout.indicatorsAsCol) {
-    const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-  } else {
-    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-  }
+  const indicatorObj = getIndicatorObject(col, row, layout);
   const chartSpec = indicatorObj?.chartSpec;
 
   if (typeof chartSpec === 'function') {
@@ -40,15 +42,7 @@ export function getRawChartSpec(col: number, row: number, layout: PivotHeaderLay
   return chartSpec;
 }
 export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLayoutMap): any {
-  const paths = layout.getCellHeaderPaths(col, row);
-  let indicatorObj;
-  if (layout.indicatorsAsCol) {
-    const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-  } else {
-    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-  }
+  const indicatorObj = getIndicatorObject(col, row, layout);
   const chartSpec = indicatorObj?.chartSpec;
 
   if (typeof chartSpec === 'function') {
@@ -57,61 +51,25 @@ export function isShareChartSpec(col: number, row: number, layout: PivotHeaderLa
   return true;
 }
 export function isNoChartDataRenderNothing(col: number, row: number, layout: PivotHeaderLayoutMap): any {
-  const paths = layout.getCellHeaderPaths(col, row);
-  let indicatorObj;
-  if (layout.indicatorsAsCol) {
-    const indicatorKey = paths.colHeaderPaths.find(colPath => colPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-  } else {
-    const indicatorKey = paths.rowHeaderPaths.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
-    indicatorObj = layout.columnObjects.find(indicator => indicator.indicatorKey === indicatorKey);
-  }
+  const indicatorObj = getIndicatorObject(col, row, layout);
   const noDataRenderNothing = indicatorObj?.noDataRenderNothing;
 
   return noDataRenderNothing;
 }
 /** 检查是否有直角坐标系的图表 */
 export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartIndicator | string)[]) {
-  let isHasCartesianChart = false;
-  for (let i = 0; i < indicatorsDefine.length; i++) {
-    //columnObjects数量和指标数量一样 并不是每个列都有 所有会快一些
-    const columnObj = indicatorsDefine[i] as IChartIndicator;
-    if (columnObj.chartSpec) {
-      if (
-        columnObj.chartSpec.type !== 'wordCloud' &&
-        columnObj.chartSpec.type !== 'radar' &&
-        columnObj.chartSpec.type !== 'gauge' &&
-        columnObj.chartSpec.type !== 'pie' &&
-        columnObj.chartSpec.type !== 'funnel' &&
-        columnObj.chartSpec.type !== 'rose'
-      ) {
-        isHasCartesianChart = true;
-        break;
-      }
-    }
-  }
-  return isHasCartesianChart;
+  return hasCartesianChart(indicatorsDefine);
 }
 
 /** 检查是否有直角坐标系的图表 */
 export function isCartesianChart(col: number, row: number, layout: PivotHeaderLayoutMap) {
-  let isHasCartesianChart = true;
   const chartSpec = layout.getRawChartSpec(col, row);
-  if (chartSpec) {
-    if (
-      chartSpec.type === 'pie' ||
-      chartSpec.type === 'radar' ||
-      chartSpec.type === 'gauge' ||
-      chartSpec.type === 'wordCloud' ||
-      chartSpec.type === 'funnel' ||
-      chartSpec.type === 'rose'
-    ) {
-      isHasCartesianChart = false;
-    }
-  } else {
-    isHasCartesianChart = false;
+  if (!chartSpec) {
+    return false;
   }
-  return isHasCartesianChart;
+
+  const chartType = getChartType(chartSpec);
+  return isCartesianChartType(chartType);
 }
 
 /** 检查是否有直角坐标系的图表 整行或者整列去检查 */
@@ -296,13 +254,11 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       }
       const { chartType } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
       let domain: Array<string> = [];
-      if (chartType === 'heatmap') {
+      if (chartType === CHART_TYPES.HEATMAP) {
         //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-axis-config.ts中的getAxisConfigInPivotChart方法处理
-        const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row, 'yField');
-        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
-
+        const rowDimensionKey = getDimensionKey(layout.rowHeaderLevelCount, row, layout, 'yField');
         const rowPath = layout.getRowKeysPath(col, row);
-        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+        domain = getHeatmapDimensionData(rowDimensionKey, rowPath, layout);
       }
       axes.push(
         merge(
@@ -333,18 +289,11 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       );
     });
 
-    let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount);
-    if (isArray(columnDimensionKey)) {
-      columnDimensionKey = columnDimensionKey[0];
-    }
-    const data =
-      layout.dataset.cacheCollectedValues[columnDimensionKey] ||
-      layout.dataset.collectedValues[columnDimensionKey] ||
-      ([] as string[]);
+    const columnDimensionKey = getDimensionKey(col, layout.columnHeaderLevelCount, layout);
     const colPath = layout.getColKeysPath(col, row);
-    const domain: string[] | Set<string> = ((data as any)?.[colPath ?? ''] as Set<string>) ?? [];
+    const domain = getHeatmapDimensionData(columnDimensionKey, colPath, layout);
 
-    const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'bottom', layout);
+    const { axisOption } = getAxisOption(col, row, 'bottom', layout);
     axes.push(
       // 底部维度轴
       merge(

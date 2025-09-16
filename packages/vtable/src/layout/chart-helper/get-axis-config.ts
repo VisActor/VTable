@@ -9,6 +9,7 @@ import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 import { getProp } from '../../scenegraph/utils/get-prop';
 import { getTickModeFunction, getZeroAlignTickAlignTicks } from './tick-align';
+import { getDimensionKey, getHeatmapDimensionData, CHART_TYPES } from './chart-common';
 
 type AxisRange = {
   min: number;
@@ -153,17 +154,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let domain: Array<string> = [];
-      if (chartType === 'heatmap') {
+      if (chartType === CHART_TYPES.HEATMAP) {
         //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
-        const colDimensionKey = layout.getDimensionKeyInChartSpec(
+        const colDimensionKey = getDimensionKey(
           col,
           layout.rowCount - layout.bottomFrozenRowCount - 1,
+          layout,
           'xField'
         );
-        const data = layout.dataset.collectedValues[colDimensionKey] ?? ([] as string[]);
-
         const colPath = layout.getColKeysPath(col, row);
-        domain = ((data as any)?.[colPath ?? ''] as Array<string>) ?? [];
+        domain = getHeatmapDimensionData(colDimensionKey, colPath, layout);
       }
       // 底侧指标轴
       return merge(
@@ -294,12 +294,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let domain: Array<string> = [];
-      if (chartType === 'heatmap') {
+      if (chartType === CHART_TYPES.HEATMAP) {
         //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
-        const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row, 'yField');
-        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
+        const rowDimensionKey = getDimensionKey(layout.rowHeaderLevelCount, row, layout, 'yField');
         const rowPath = layout.getRowKeysPath(col, row);
-        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+        domain = getHeatmapDimensionData(rowDimensionKey, rowPath, layout);
       }
       // 左侧指标轴
       return merge(
@@ -372,16 +371,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         }
       }
       let domain: Array<string> = [];
-      if (chartType === 'heatmap') {
+      if (chartType === CHART_TYPES.HEATMAP) {
         //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
-        const rowDimensionKey = layout.getDimensionKeyInChartSpec(
+        const rowDimensionKey = getDimensionKey(
           layout.colCount - layout.rightFrozenColCount - 1,
           row,
+          layout,
           'yField'
         );
-        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
         const rowPath = layout.getRowKeysPath(col, row);
-        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+        domain = getHeatmapDimensionData(rowDimensionKey, rowPath, layout);
       }
       // 右侧副指标轴
       return merge(
@@ -414,16 +413,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
     ) {
       // const indicatorKeys = layout.getIndicatorKeyInChartSpec(col, row);
 
-      let columnDimensionKey = layout.getDimensionKeyInChartSpec(col, layout.columnHeaderLevelCount);
-      if (isArray(columnDimensionKey)) {
-        columnDimensionKey = columnDimensionKey[0];
-      }
-      const data = layout.dataset.collectedValues[columnDimensionKey] ?? ([] as string[]);
-
+      const columnDimensionKey = getDimensionKey(col, layout.columnHeaderLevelCount, layout);
       const colPath = layout.getColKeysPath(col, row);
-      const domain = ((data as any)?.[colPath ?? ''] as Array<string>) ?? [];
+      const domain = getHeatmapDimensionData(columnDimensionKey, colPath, layout);
 
-      const { axisOption, isPercent, theme, chartType } = getAxisOption(col, row - 1, 'bottom', layout);
+      const { axisOption, theme } = getAxisOption(col, row - 1, 'bottom', layout);
       if (axisOption?.visible === false) {
         return;
       }
