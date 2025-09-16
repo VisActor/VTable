@@ -349,6 +349,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-sunburst'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {

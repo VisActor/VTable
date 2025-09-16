@@ -83,7 +83,8 @@ export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartInd
         columnObj.chartSpec.type !== 'gauge' &&
         columnObj.chartSpec.type !== 'pie' &&
         columnObj.chartSpec.type !== 'funnel' &&
-        columnObj.chartSpec.type !== 'rose'
+        columnObj.chartSpec.type !== 'rose' &&
+        columnObj.chartSpec.type !== 'sunburst'
       ) {
         isHasCartesianChart = true;
         break;
@@ -104,7 +105,8 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
       chartSpec.type === 'gauge' ||
       chartSpec.type === 'wordCloud' ||
       chartSpec.type === 'funnel' ||
-      chartSpec.type === 'rose'
+      chartSpec.type === 'rose' ||
+      chartSpec.type === 'sunburst'
     ) {
       isHasCartesianChart = false;
     }
@@ -133,7 +135,8 @@ export function isHasCartesianChartInline(
           columnObj.chartSpec.type !== 'radar' &&
           columnObj.chartSpec.type !== 'gauge' &&
           columnObj.chartSpec.type !== 'funnel' &&
-          columnObj.chartSpec.type !== 'rose'
+          columnObj.chartSpec.type !== 'rose' &&
+          columnObj.chartSpec.type !== 'sunburst'
         ) {
           isHasCartesianChart = true;
           break;
@@ -149,7 +152,8 @@ export function isHasCartesianChartInline(
         chartSpec.type !== 'gauge' &&
         chartSpec.type !== 'wordCloud' &&
         chartSpec.type !== 'funnel' &&
-        chartSpec.type !== 'rose'
+        chartSpec.type !== 'rose' &&
+        chartSpec.type !== 'sunburst'
       ) {
         isHasCartesianChart = true;
       }
@@ -171,7 +175,15 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
           serie.sortDataByAxis = true;
         });
       }
-      if (chartSpec.type !== 'gauge' && chartSpec.type !== 'rose' && chartSpec.type !== 'radar') {
+      if (
+        chartSpec.type !== 'pie' &&
+        chartSpec.type !== 'radar' &&
+        chartSpec.type !== 'gauge' &&
+        chartSpec.type !== 'wordCloud' &&
+        chartSpec.type !== 'funnel' &&
+        chartSpec.type !== 'rose' &&
+        chartSpec.type !== 'sunburst'
+      ) {
         chartSpec.axes = layout.getChartAxes(col, row);
       }
       chartSpec.padding = 0;
