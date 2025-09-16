@@ -1,6 +1,5 @@
 import * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import type { Scenegraph } from '@visactor/vtable/es/scenegraph/scenegraph';
 import type { MasterDetailPluginOptions } from './types';
 import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
@@ -8,7 +7,7 @@ import { ConfigManager } from './config';
 import { EventManager } from './events';
 import { SubTableManager } from './subtable';
 import { TableAPIExtensions } from './table-api-extensions';
-import { bindMasterDetailCheckboxChange, enableMasterDetailCheckboxCascade } from './checkbox';
+import { bindMasterDetailCheckboxChange } from './checkbox';
 
 /**
  * 主从表插件核心类
@@ -22,9 +21,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     VTable.TABLE_EVENT_TYPE.SORT_CLICK,
     VTable.TABLE_EVENT_TYPE.AFTER_SORT,
     VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH,
-    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT,
-    VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR,
-    VTable.TABLE_EVENT_TYPE.BEFORE_SET_RECORDS
+    VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT
   ];
 
   pluginOptions: MasterDetailPluginOptions;
@@ -66,12 +63,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     } else if (runTime === VTable.TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT) {
       // 高亮处理
       this.eventManager.handleAfterUpdateSelectBorderHeight(eventArgs as any);
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR) {
-      // progressbar 创建前处理：如果是展开行，修改高度为原始高度
-      this.handleBeforeCreateProgressBar(eventArgs as any);
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.BEFORE_SET_RECORDS) {
-      // 设置数据源前处理：将 rowHierarchyType 设置为 'grid'
-      this.handleBeforeSetRecords(eventArgs as any);
     }
   }
 
@@ -81,7 +72,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private initializeManagers(): void {
     this.configManager = new ConfigManager(this.pluginOptions, this.table);
     this.eventManager = new EventManager(this.table);
-    this.subTableManager = new SubTableManager(this.table, this.configManager);
+    const enableCheckboxCascade = this.pluginOptions.enableCheckboxCascade ?? true;
+    this.subTableManager = new SubTableManager(this.table, enableCheckboxCascade);
 
     // 设置配置管理器的行展开状态检查函数
     this.configManager.setRowExpandedChecker((row: number) => this.eventManager.isRowExpanded(row));
@@ -123,8 +115,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
    * 初始化checkbox联动功能
    */
   private initCheckboxCascade(): void {
-    enableMasterDetailCheckboxCascade(this.table);
-    bindMasterDetailCheckboxChange(this.table, this.eventManager);
+    // 检查是否启用checkbox级联功能，默认为 true
+    const enableCheckboxCascade = this.pluginOptions.enableCheckboxCascade ?? true;
+    if (enableCheckboxCascade) {
+      bindMasterDetailCheckboxChange(this.table, this.eventManager);
+    }
   }
 
   /**
@@ -146,13 +141,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.tableAPIExtensions = new TableAPIExtensions(this.table, this.configManager, this.eventManager, {
       addUnderlineToCell: (cellGroup: Group, originalHeight: number) =>
         this.addUnderlineToCell(cellGroup, originalHeight),
-      applyMinimalHeightStrategy: (
-        startRow: number,
-        endRow: number,
-        totalHeight: number,
-        expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-        scenegraph: Scenegraph
-      ) => this.applyMinimalHeightStrategy(startRow, endRow, totalHeight, expandedRowsInfo, scenegraph),
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
       ) => this.updateOriginalHeightsAfterAdaptive(expandedRowsInfo),
@@ -167,90 +155,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 执行API扩展
     this.tableAPIExtensions.extendTableAPI();
-  }
-
-  /**
-   * 处理 progressbar 创建前的事件
-   */
-  private handleBeforeCreateProgressBar(eventArgs: {
-    col: number;
-    row: number;
-    width: number;
-    height: number;
-    table: VTable.ListTable;
-    range?: Range;
-    modifiedHeight: number;
-  }): void {
-    const { row } = eventArgs;
-    const isExpandedRow = this.eventManager.isRowExpanded(row);
-    if (isExpandedRow) {
-      // 如果是展开行，使用原始高度
-      const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-      const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
-      if (originalHeight > 0) {
-        // 修改事件参数中的高度
-        eventArgs.modifiedHeight = originalHeight;
-      }
-    }
-  }
-
-  /**
-   * 处理设置数据源前的事件
-   */
-  private handleBeforeSetRecords(eventArgs: {
-    records: unknown[];
-    table: VTable.ListTable;
-    rowHierarchyType?: 'grid' | 'tree';
-    rowHierarchyTypeMust?: 'grid' | 'tree';
-  }): void {
-    // 主从表插件需要将 rowHierarchyType 设置为 'grid'
-    eventArgs.rowHierarchyTypeMust = 'grid';
-  }
-
-  /**
-   * 空间不足时的最小高度分配策略
-   */
-  private applyMinimalHeightStrategy(
-    startRow: number,
-    endRow: number,
-    totalHeight: number,
-    expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-    scenegraph: Scenegraph
-  ): void {
-    let normalRowCount = 0;
-    for (let row = startRow; row < endRow; row++) {
-      if (!this.configManager.isVirtualRow(row) && !expandedRowsInfo.has(row)) {
-        normalRowCount++;
-      }
-    }
-    const tableInternalProps = this.table.internalProps;
-    const minNormalRowHeight = tableInternalProps?.limitMinHeight || 10;
-    const minNormalRowsTotalHeight = normalRowCount * minNormalRowHeight;
-    // 剩余高度分配给展开行
-    const remainingHeight = totalHeight - minNormalRowsTotalHeight;
-    const avgExpandedRowHeight = expandedRowsInfo.size > 0 ? Math.floor(remainingHeight / expandedRowsInfo.size) : 0;
-
-    for (let row = startRow; row < endRow; row++) {
-      if (this.configManager.isVirtualRow(row)) {
-        // 虚拟行高度永远为 0
-        scenegraph.setRowHeight(row, 0);
-        continue;
-      }
-
-      if (expandedRowsInfo.has(row)) {
-        const finalHeight = avgExpandedRowHeight;
-        scenegraph.setRowHeight(row, finalHeight);
-        const info = expandedRowsInfo.get(row);
-        if (info) {
-          expandedRowsInfo.set(row, {
-            baseHeight: Math.max(finalHeight - info.detailHeight, minNormalRowHeight),
-            detailHeight: info.detailHeight
-          });
-        }
-      } else {
-        scenegraph.setRowHeight(row, minNormalRowHeight);
-      }
-    }
   }
 
   /**
@@ -311,6 +215,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (realRecordIndex === undefined || realRecordIndex === null) {
       return;
     }
+    // 更新展开行的数据源
     if (internalProps.expandedRecordIndices) {
       if (!includesRecordIndex(internalProps.expandedRecordIndices, realRecordIndex)) {
         internalProps.expandedRecordIndices.push(realRecordIndex);
@@ -363,6 +268,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (realRecordIndex === undefined || realRecordIndex === null) {
       return;
     }
+    // 更新展开行的数据源
     this.subTableManager.removeSubTable(bodyRowIndex);
     if (internalProps.expandedRecordIndices) {
       const index = findRecordIndexPosition(internalProps.expandedRecordIndices, realRecordIndex);

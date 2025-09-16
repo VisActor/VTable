@@ -27,10 +27,10 @@ export function parseMargin(
 }
 
 /**
- * 获取内部属性 - 类型安全的访问器
+ * 获取内部属性
  */
-export function getInternalProps(table: VTable.ListTable): VTable.ListTable['internalProps'] & InternalProps {
-  return table.internalProps as VTable.ListTable['internalProps'] & InternalProps;
+export function getInternalProps(table: VTable.ListTable): VTable.TYPES.ListTableProtected & InternalProps {
+  return table.internalProps as VTable.TYPES.ListTableProtected & InternalProps;
 }
 
 /**
@@ -50,6 +50,7 @@ export function getOriginalRowHeight(table: VTable.ListTable, bodyRowIndex: numb
 
 /**
  * 查找checkbox列的索引
+ * 通过字段名在表格中查找对应的checkbox列索引
  */
 export function findCheckboxColumnIndex(table: VTable.ListTable, field: string | number): number {
   for (let col = 0; col < table.colCount; col++) {

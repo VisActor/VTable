@@ -7,7 +7,6 @@ import { getQuadProps } from '../../utils/padding';
 import type { BaseTableAPI } from '../../../ts-types/base-table';
 import { isNumber } from '@visactor/vutils';
 import type { CellRange, StylePropertyFunctionArg } from '../../../ts-types';
-import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
 
 export function createProgressBarCell(
   progressBarDefine: {
@@ -74,23 +73,20 @@ export function createProgressBarCell(
   } else {
     height = table.getRowHeight(row);
   }
-  // 触发 before_create_progress_bar 事件，允许插件修改高度
-  const beforeCreateProgressBarEvent = {
-    col,
-    row,
-    width,
-    height,
-    table,
-    range,
-    // 允许插件修改高度
-    modifiedHeight: height
-  };
-  if (table.fireListeners) {
-    table.fireListeners(TABLE_EVENT_TYPE.BEFORE_CREATE_PROGRESS_BAR, beforeCreateProgressBarEvent);
-    // 使用插件可能修改过的高度
-    height = beforeCreateProgressBarEvent.modifiedHeight;
+  
+  // 检查是否有主从表插件，如果有则使用原始高度
+  if ((table as any).pluginManager) {
+    const masterDetailPlugin = (table as any).pluginManager.getPluginByName('Master Detail Plugin');
+    if (masterDetailPlugin) {
+      // 如果是展开行，使用原始高度而不是展开后的高度
+      const bodyRowIndex = row - table.columnHeaderLevelCount;
+      const internalProps = (table as any).internalProps;
+      const originalHeight = internalProps?.originalRowHeights?.get(bodyRowIndex);
+      if (originalHeight !== undefined && originalHeight > 0) {
+        height = originalHeight;
+      }
+    }
   }
-  // 这里，把如果这行是展开行的话，就去获取originHeight作为height
   let contentWidth = width;
   let contentHeight = height;
   let _contentOffset = 0;

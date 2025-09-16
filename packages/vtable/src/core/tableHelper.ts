@@ -18,7 +18,7 @@ import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
 import { isValid } from '@visactor/vutils';
-import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
+import type { PluginManager } from '../plugins/plugin-manager';
 
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -62,16 +62,7 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
 }
 /** @private */
 export function _setRecords(table: ListTableAPI, records: any[] = []): void {
-  // 发送 before_set_records 事件，允许插件修改 rowHierarchyType
-  const beforeSetRecordsEvent = {
-    records,
-    table,
-    rowHierarchyType: table.internalProps.layoutMap.rowHierarchyType,
-    rowHierarchyTypeMust: undefined as 'grid' | 'tree' | undefined
-  };
-  if (table.fireListeners) {
-    table.fireListeners(TABLE_EVENT_TYPE.BEFORE_SET_RECORDS, beforeSetRecordsEvent);
-  }
+  const tableWithPlugins = table as ListTableAPI & { pluginManager?: PluginManager };
 
   _dealWithUpdateDataSource(table, () => {
     table.internalProps.records = records;
@@ -82,7 +73,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
       table.internalProps.columns,
       table.internalProps.layoutMap.rowHierarchyType,
       getHierarchyExpandLevel(table),
-      beforeSetRecordsEvent.rowHierarchyTypeMust // 传入事件中可能被修改的值
+      tableWithPlugins.pluginManager
     ));
     table.addReleaseObj(newDataSource);
   });

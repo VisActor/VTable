@@ -13,6 +13,7 @@ MasterDetailPlugin follows TypeScript interface specifications to ensure type sa
 ```typescript
 interface MasterDetailPluginOptions {
   id?: string;
+  enableCheckboxCascade?: boolean;
   /** Detail grid configuration options - supports static configuration object or dynamic configuration function */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
 }
@@ -31,6 +32,7 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 | Parameter Name | Type | Default Value | Description |
 |----------------|------|---------------|-------------|
 | `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
+| `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
 | `detailGridOptions` | DetailGridOptions \| Function | - | Detail grid configuration options, supports static object configuration or dynamic configuration function based on data |
 
 #### DetailGridOptions Advanced Configuration
@@ -68,6 +70,7 @@ import { MasterDetailPlugin } from '@visactor/vtable-plugins';
 // Create master-detail plugin instance
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-plugin',
+  enableCheckboxCascade: true, // Enable checkbox cascade functionality (default: true)
   detailGridOptions: {
     columns: [
       { field: 'task', title: 'Task Name', width: 220 },
@@ -77,6 +80,15 @@ const masterDetailPlugin = new MasterDetailPlugin({
     defaultHeaderRowHeight: 30,
     style: { margin: 12, height: 160 },
     theme: VTable.themes.BRIGHT
+  }
+});
+
+// To disable checkbox cascade functionality:
+const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
+  id: 'master-detail-plugin-no-cascade',
+  enableCheckboxCascade: false, // Disable checkbox cascade functionality
+  detailGridOptions: {
+    // ... same configuration as above
   }
 });
 ```

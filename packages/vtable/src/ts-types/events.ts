@@ -245,31 +245,12 @@ export interface TableEventHandlersEventArgumentMap {
   after_update_cell_content_width: {
     col: number;
     row: number;
-    distWidth: number;
     cellHeight: number;
-    detaX: number;
-    autoRowHeight: boolean;
-    needUpdateRowHeight: boolean;
     cellGroup: Group;
     padding: [number, number, number, number];
-    textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
   };
-  before_create_progress_bar: {
-    col: number;
-    row: number;
-    width: number;
-    height: number;
-    table: BaseTableAPI;
-    range?: CellRange;
-    modifiedHeight: number;
-  };
-  before_set_records: {
-    records: unknown[];
-    table: BaseTableAPI;
-    rowHierarchyType?: 'grid' | 'tree';
-    rowHierarchyTypeMust?: 'grid' | 'tree';
-  };
+
   after_update_select_border_height: {
     startRow: number;
     endRow: number;
@@ -387,8 +368,7 @@ export interface TableEventHandlersReturnMap {
   after_render: void;
   initialized: void;
   after_update_cell_content_width: void;
-  before_create_progress_bar: void;
-  before_set_records: void;
+
   after_update_select_border_height: void;
   change_cell_value: void;
   mousedown_fill_handle: void;

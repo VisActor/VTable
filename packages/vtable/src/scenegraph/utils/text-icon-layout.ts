@@ -741,14 +741,9 @@ export function updateCellContentWidth(
       scene.table.fireListeners('after_update_cell_content_width', {
         col: cellGroup.col,
         row: cellGroup.row,
-        distWidth,
         cellHeight,
-        detaX,
-        autoRowHeight,
-        needUpdateRowHeight: true,
         cellGroup,
         padding,
-        textAlign,
         textBaseline
       });
       return true;
@@ -786,22 +781,16 @@ export function updateCellContentWidth(
       }
     });
   }
-  
   // 触发事件钩子 - 正常完成的情况
   scene.table.fireListeners('after_update_cell_content_width', {
     col: cellGroup.col,
     row: cellGroup.row,
-    distWidth,
     cellHeight,
-    detaX,
-    autoRowHeight,
-    needUpdateRowHeight: false,
     cellGroup,
     padding,
-    textAlign,
     textBaseline
   });
-  
+
   return false;
 }
 

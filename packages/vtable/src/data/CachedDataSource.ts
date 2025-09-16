@@ -12,6 +12,7 @@ import {
 } from '../ts-types';
 import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import type { ColumnData, ColumnsDefine } from '../ts-types/list-table/layout-map/api';
+import type { PluginManager } from '../plugins/plugin-manager';
 import type { DataSourceParam } from './DataSource';
 import { DataSource, getValue, getValueFromDeepArray, sortRecordIndexs } from './DataSource';
 import get from 'lodash/get';
@@ -56,7 +57,7 @@ export class CachedDataSource extends DataSource {
     columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number,
-    rowHierarchyTypeMust?: 'grid' | 'tree'
+    pluginManager?: PluginManager
   ): CachedDataSource {
     return new CachedDataSource(
       {
@@ -74,7 +75,7 @@ export class CachedDataSource extends DataSource {
       columns,
       rowHierarchyType,
       hierarchyExpandLevel,
-      rowHierarchyTypeMust
+      pluginManager
     );
   }
 
@@ -86,14 +87,17 @@ export class CachedDataSource extends DataSource {
     columns?: ColumnsDefine,
     rowHierarchyType?: 'grid' | 'tree',
     hierarchyExpandLevel?: number,
-    rowHierarchyTypeMust?: 'grid' | 'tree'
+    pluginManager?: PluginManager
   ) {
     let _isGrouped;
     if (isArray(dataConfig?.groupByRules)) {
       rowHierarchyType = 'tree';
       _isGrouped = true;
     }
-    rowHierarchyType = rowHierarchyTypeMust ? rowHierarchyTypeMust : rowHierarchyType;
+    // 检查是否有 Master Detail Plugin，如果有就设置为 grid 模式
+    if (pluginManager.getPluginByName('Master Detail Plugin')) {
+      rowHierarchyType = 'grid';
+    }
     super(opt, dataConfig, pagination, columns, rowHierarchyType, hierarchyExpandLevel);
     this._isGrouped = _isGrouped;
     this._recordCache = [];

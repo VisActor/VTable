@@ -246,7 +246,6 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.ListTable(option);
-  
   // 展开一些行来演示效果
   setTimeout(() => {
     if (masterDetailPlugin.expandRow) {

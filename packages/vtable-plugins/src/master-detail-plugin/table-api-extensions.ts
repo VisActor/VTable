@@ -36,19 +36,12 @@ export class TableAPIExtensions {
   private mouseEventListener?: (event: MouseEvent) => void;
 
   // 拖拽状态跟踪
-  private isDragging: boolean = false;
-  private dragStartIsPluginUnderline: boolean = false;
+  private isDragging: boolean = false; // 表示是否在拖拽中
+  private dragStartIsPluginUnderline: boolean = false; // 表示拖拽的是否是我主从表插件加入的下划线
 
   // 回调函数
   private callbacks: {
     addUnderlineToCell: (cellGroup: Group, originalHeight: number) => void;
-    applyMinimalHeightStrategy: (
-      startRow: number,
-      endRow: number,
-      totalHeight: number,
-      expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-      scenegraph: Scenegraph
-    ) => void;
     updateOriginalHeightsAfterAdaptive: (
       expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
     ) => void;
@@ -66,13 +59,6 @@ export class TableAPIExtensions {
     eventManager: EventManager,
     callbacks: {
       addUnderlineToCell: (cellGroup: Group, originalHeight: number) => void;
-      applyMinimalHeightStrategy: (
-        startRow: number,
-        endRow: number,
-        totalHeight: number,
-        expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>,
-        scenegraph: Scenegraph
-      ) => void;
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
       ) => void;
@@ -133,16 +119,27 @@ export class TableAPIExtensions {
    * 扩展表格 API
    */
   extendTableAPI(): void {
+    // 处理展开行单元格高度，还有下划线问题
     this.extendUpdateCellContent();
+    // 处理展开行高更改时候的limitMinHeight
     this.extendUpdateResizeRow();
+    // 处理主从表的adaptive的高度计算
     this.extendDealHeightMode();
+    // 处理页面切换的时候的主从表处理
     this.extendUpdatePagination();
+    // 处理表头分组和折叠的主从表处理
     this.extendToggleHierarchyState();
+    // 处理过滤的主从表处理
     this.extendUpdateFilterRules();
+    // 处理改变展开行的宽度的时候CellType为Chart的高度的处理
     this.extendUpdateChartSizeForResizeColWidth();
+    // 处理改变展开行的高度的时候CellType为Chart的高度的处理
     this.extendUpdateChartSizeForResizeRowHeight();
+    // 处理主从表展开行的改变行高的基准线的处理
     this.extendGetRowY();
+    // 处理主从表展开行的改变行高的改变行高来方法来处理展开行的两个下划线（主从表加的CellGroup的下滑线，还有原本的行高的下划线）的不同处理
     this.extendUpdateRowHeight();
+    // 处理右边冻结行的情况下展开行的列宽调整检测
     this.extendGetResizeColAt();
   }
 
@@ -152,7 +149,51 @@ export class TableAPIExtensions {
   private extendUpdateCellContent(): void {
     const table = this.table;
     this.originalUpdateCellContent = table.scenegraph.updateCellContent.bind(table.scenegraph);
-    table.scenegraph.updateCellContent = this.protectedUpdateCellContent.bind(this);
+    table.scenegraph.updateCellContent = (col: number, row: number, forceFastUpdate: boolean = false) => {
+      const isExpandedRow = this.eventManager.isRowExpanded(row);
+      if (isExpandedRow) {
+        // 对于展开行，我们需要临时恢复到原始高度来创建cellGroup
+        const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+        const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
+        const currentHeight = this.table.getRowHeight(row);
+        if (originalHeight > 0 && currentHeight !== originalHeight) {
+          // 临时设置为原始高度
+          this.table._setRowHeight(row, originalHeight, false);
+          // 保存原始位置信息
+          const oldCellGroup = this.table.scenegraph.getCell(col, row);
+          const originalY = oldCellGroup?.attribute?.y;
+          // 调用原始方法，此时内容会按照原始高度创建
+          const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
+          // 恢复展开后的高度
+          this.table._setRowHeight(row, currentHeight, false);
+          // 如果位置发生了变化，恢复到原始位置
+          if (originalY !== undefined) {
+            const newCellGroup = this.table.scenegraph.getCell(col, row);
+            if (newCellGroup && newCellGroup.attribute.y !== originalY) {
+              newCellGroup.setAttribute('y', originalY);
+            }
+          }
+          // 为展开行添加下划线
+          const cellGroup = this.table.scenegraph.getCell(col, row);
+          if (cellGroup) {
+            this.callbacks.addUnderlineToCell(cellGroup, originalHeight);
+            // 触发事件处理
+            this.eventManager.handleAfterUpdateCellContentWidth({
+              col,
+              row,
+              cellHeight: cellGroup.attribute?.height || 0,
+              cellGroup,
+              padding: [0, 0, 0, 0],
+              textBaseline: 'middle' as CanvasTextBaseline
+            });
+          }
+          return result;
+        }
+      }
+      // 非展开行或其他情况，直接调用原始方法
+      const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
+      return result;
+    };
   }
 
   /**
@@ -226,7 +267,7 @@ export class TableAPIExtensions {
       }
       detaY = Math.ceil(detaY);
 
-      // 调用对应的行高更新函数（这里需要实现这些函数或调用原始逻辑）
+      // 调用对应的行高更新函数
       if (
         state.rowResize.row < state.table.columnHeaderLevelCount ||
         state.rowResize.row >= state.table.rowCount - state.table.bottomFrozenRowCount
@@ -239,11 +280,7 @@ export class TableAPIExtensions {
       }
 
       state.rowResize.y = yInTable;
-
-      // update resize row component
       state.table.scenegraph.component.updateResizeRow(state.rowResize.row, xInTable, state.rowResize.isBottomFrozen);
-
-      // stage rerender
       state.table.scenegraph.updateNextFrame();
     };
   }
@@ -352,6 +389,7 @@ export class TableAPIExtensions {
       }
 
       // 有展开行时，需要特殊处理
+      // 累计所有子表高度
       const expandedRowsInfo = new Map<number, { baseHeight: number; detailHeight: number }>();
       let totalExpandedExtraHeight = 0;
 
@@ -369,7 +407,7 @@ export class TableAPIExtensions {
             baseHeight: originalHeight > 0 ? originalHeight : currentRowHeight,
             detailHeight
           });
-          totalExpandedExtraHeight += detailHeight;
+          totalExpandedExtraHeight += detailHeight; // 所有展开行的展开空间高度和
         }
       }
 
@@ -387,20 +425,13 @@ export class TableAPIExtensions {
           // 展开行也要参与基础高度计算（用于比例计算）
           const info = expandedRowsInfo.get(row);
           if (info) {
-            normalRowsBaseHeight += info.baseHeight;
+            normalRowsBaseHeight += info.baseHeight; // 普通行的高度和
           }
         }
       }
 
       // 计算可用于缩放的高度（总高度 - 展开行的额外高度）
       const availableHeightForScaling = totalDrawHeight - totalExpandedExtraHeight;
-      if (availableHeightForScaling <= 0 || normalRowsBaseHeight <= 0) {
-        // 空间严重不足，使用最小高度策略
-        this.callbacks.applyMinimalHeightStrategy(startRow, endRow, totalDrawHeight, expandedRowsInfo, scenegraph);
-        // 更新原始高度缓存
-        this.callbacks.updateOriginalHeightsAfterAdaptive(expandedRowsInfo);
-        return;
-      }
 
       // 计算缩放因子
       const scaleFactor = availableHeightForScaling / normalRowsBaseHeight;
@@ -660,7 +691,6 @@ export class TableAPIExtensions {
 
   /**
    * 扩展 updateRowHeight 方法
-   * 在表格初始化时就替换整个 updateRowHeight 方法
    */
   private extendUpdateRowHeight(): void {
     const scenegraph = this.table.scenegraph;
@@ -685,41 +715,31 @@ export class TableAPIExtensions {
     const scenegraph = this.table.scenegraph;
     this.originalGetResizeColAt = scenegraph.getResizeColAt.bind(scenegraph);
     scenegraph.getResizeColAt = (abstractX: number, abstractY: number, cellGroup?: Group) => {
-      return this.protectedGetResizeColAt(abstractX, abstractY, cellGroup);
-    };
-  }
-
-  /**
-   * 保护的 getResizeColAt 方法
-   * 处理展开行的特殊情况
-   */
-  private protectedGetResizeColAt(
-    abstractX: number,
-    abstractY: number,
-    cellGroup?: Group
-  ): { col: number; row: number; x?: number; rightFrozen?: boolean } {
-    // 如果没有 cellGroup，先检查是否在展开行的右边冻结列区域
-    if (!cellGroup) {
-      // 检查当前位置是否在展开行中
-      const cell = this.table.getCellAtRelativePosition(abstractX, abstractY);
-      if (cell && cell.row >= 0) {
-        const isExpandedRow = this.eventManager.isRowExpanded(cell.row);
-        if (isExpandedRow && this.table.rightFrozenColCount > 0) {
-          // 检查是否在右边冻结列区域
-          const tableWidth = this.table.tableNoFrameWidth;
-          const rightFrozenWidth = this.table.getRightFrozenColsWidth();
-          const isInRightFrozenArea = abstractX > tableWidth - rightFrozenWidth;
-          if (isInRightFrozenArea) {
-            // 在展开行的右边冻结列区域，不允许调整列宽
-            return { col: -1, row: -1 };
+      // 如果没有 cellGroup，先检查是否在展开行的右边冻结列区域
+      if (!cellGroup) {
+        // 检查当前位置是否在展开行中
+        const cell = this.table.getCellAtRelativePosition(abstractX, abstractY);
+        if (cell && cell.row >= 0) {
+          const isExpandedRow = this.eventManager.isRowExpanded(cell.row);
+          if (isExpandedRow && this.table.rightFrozenColCount > 0) {
+            // 检查是否在右边冻结列区域
+            const tableWidth = this.table.tableNoFrameWidth;
+            const rightFrozenWidth = this.table.getRightFrozenColsWidth();
+            const isInRightFrozenArea = abstractX > tableWidth - rightFrozenWidth;
+            if (isInRightFrozenArea) {
+              // 在展开行的右边冻结列区域，不允许调整列宽
+              return { col: -1, row: -1 };
+            }
           }
         }
       }
-    }
 
-    // 调用原始的 getResizeColAt 方法
-    return this.originalGetResizeColAt(abstractX, abstractY, cellGroup);
+      // 调用原始的 getResizeColAt 方法
+      return this.originalGetResizeColAt(abstractX, abstractY, cellGroup);
+    };
   }
+
+
 
   /**
    * 检测鼠标是否在插件绘制的下划线区域
@@ -733,7 +753,8 @@ export class TableAPIExtensions {
       const rowY = this.table.getRowsHeight(0, row - 1);
       const rowHeight = this.table.getRowHeight(row);
       const rowBottomY = rowY + rowHeight;
-      const viewportRowBottomY = rowBottomY - scrollTop;
+      const shadowBlur = this.table.theme?.frameStyle?.shadowBlur || 0;
+      const viewportRowBottomY = rowBottomY - scrollTop + shadowBlur;
       const isNearRowBottom =
         this.currentMouseY >= viewportRowBottomY - (this.table.internalProps.limitMinHeight - 1) &&
         this.currentMouseY <= viewportRowBottomY + (this.table.internalProps.limitMinHeight - 1);
@@ -900,59 +921,7 @@ export class TableAPIExtensions {
     }
     return totalHeight;
   }
-  /**
-   * 保护的updateCellContent方法
-   */
-  private protectedUpdateCellContent(col: number, row: number, forceFastUpdate: boolean = false) {
-    const isExpandedRow = this.eventManager.isRowExpanded(row);
-    if (isExpandedRow) {
-      // 对于展开行，我们需要临时恢复到原始高度来创建内容
-      const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-      const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
-      const currentHeight = this.table.getRowHeight(row);
-      if (originalHeight > 0 && currentHeight !== originalHeight) {
-        // 临时设置为原始高度
-        this.table._setRowHeight(row, originalHeight, false);
-        // 保存原始位置信息
-        const oldCellGroup = this.table.scenegraph.getCell(col, row);
-        const originalY = oldCellGroup?.attribute?.y;
-        // 调用原始方法，此时内容会按照原始高度创建
-        const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
-        // 恢复展开后的高度
-        this.table._setRowHeight(row, currentHeight, false);
-        // 如果位置发生了变化，恢复到原始位置
-        if (originalY !== undefined) {
-          const newCellGroup = this.table.scenegraph.getCell(col, row);
-          if (newCellGroup && newCellGroup.attribute.y !== originalY) {
-            newCellGroup.setAttribute('y', originalY);
-          }
-        }
-        // 为展开行添加下划线
-        const cellGroup = this.table.scenegraph.getCell(col, row);
-        if (cellGroup) {
-          this.callbacks.addUnderlineToCell(cellGroup, originalHeight);
-          // 触发事件处理
-          this.eventManager.handleAfterUpdateCellContentWidth({
-            col,
-            row,
-            distWidth: 0,
-            cellHeight: cellGroup.attribute?.height || 0,
-            detaX: 0,
-            autoRowHeight: false,
-            needUpdateRowHeight: false,
-            cellGroup,
-            padding: [0, 0, 0, 0],
-            textAlign: 'left' as CanvasTextAlign,
-            textBaseline: 'middle' as CanvasTextBaseline
-          });
-        }
-        return result;
-      }
-    }
-    // 非展开行或其他情况，直接调用原始方法
-    const result = this.originalUpdateCellContent?.(col, row, forceFastUpdate);
-    return result;
-  }
+
 
   /**
    * 等待渲染完成后执行回调

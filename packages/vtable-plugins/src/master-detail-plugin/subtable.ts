@@ -7,19 +7,20 @@ import {
   setCellCheckboxStateByAttribute,
   findCheckboxColumnIndex
 } from './utils';
-import type { ConfigManager } from './config';
 
 /**
  * 子表管理相关功能
  */
 export class SubTableManager {
-  constructor(private table: VTable.ListTable, private configManager: ConfigManager) {}
+  constructor(private table: VTable.ListTable, private enableCheckboxCascade: boolean = true) {}
   private saveSubTableCheckboxState(bodyRowIndex: number, subTable: VTable.ListTable): void {
     if (!subTable.stateManager) {
       return;
     }
     const internalProps = getInternalProps(this.table);
-    internalProps.subTableCheckboxStates = new Map();
+    if (!internalProps.subTableCheckboxStates) {
+      internalProps.subTableCheckboxStates = new Map();
+    }
     const subTableState: SubTableCheckboxState = {
       checkedState: Object.fromEntries(
         Array.from(subTable.stateManager.checkedState.entries()).map(([recordKey, fieldStates]) => [
@@ -34,6 +35,7 @@ export class SubTableManager {
 
   /**
    * 恢复子表的checkbox状态
+   * 先恢复之前保存的状态，然后根据enableCheckboxCascade决定是否应用父表状态覆盖
    */
   private restoreSubTableCheckboxState(bodyRowIndex: number, subTable: VTable.ListTable): void {
     const internalProps = getInternalProps(this.table);
@@ -48,29 +50,7 @@ export class SubTableManager {
       };
     }
 
-    // 先检查父表对应行的checkbox状态，并应用到子表
-    const parentRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
-    const parentRecord = getRecordByRowIndex(this.table, bodyRowIndex);
-    if (parentRecord && this.table.stateManager) {
-      const parentDataIndex = this.table.getRecordIndexByCell(0, parentRowIndex);
-      if (parentDataIndex !== undefined && parentDataIndex !== null) {
-        const parentIndexKey = parentDataIndex.toString();
-        const parentCheckedStates = this.table.stateManager.checkedState.get(parentIndexKey);
-        if (parentCheckedStates) {
-          Object.keys(parentCheckedStates).forEach(field => {
-            const parentState = parentCheckedStates[field];
-            if (parentState === true || parentState === false) {
-              if (savedState.checkedState) {
-                Object.keys(savedState.checkedState).forEach(recordKey => {
-                  savedState.checkedState[recordKey][field] = parentState;
-                });
-              }
-              savedState.headerCheckedState[field] = parentState;
-            }
-          });
-        }
-      }
-    }
+    // 恢复保存的状态到子表状态管理器
     if (savedState.checkedState) {
       Object.keys(savedState.checkedState).forEach(recordKey => {
         const fieldStates = savedState.checkedState[recordKey];
@@ -82,29 +62,35 @@ export class SubTableManager {
         subTable.stateManager.headerCheckedState[field] = savedState.headerCheckedState[field];
       });
     }
-    if (parentRecord) {
-      const parentDataIndex = this.table.getRecordIndexByCell(0, parentRowIndex);
-      if (parentDataIndex !== undefined && parentDataIndex !== null) {
-        const parentIndexKey = parentDataIndex.toString();
-        const parentCheckedStates = this.table.stateManager.checkedState.get(parentIndexKey);
-        if (parentCheckedStates) {
-          Object.keys(parentCheckedStates).forEach(field => {
-            const parentState = parentCheckedStates[field];
-            if (parentState === true || parentState === false) {
-              subTable.stateManager.headerCheckedState[field] = parentState;
-              const records = subTable.records || [];
-              records.forEach((record, recordIndex) => {
-                const indexKey = recordIndex.toString();
-                let recordStates = subTable.stateManager.checkedState.get(indexKey);
-                if (!recordStates) {
-                  recordStates = {};
-                  subTable.stateManager.checkedState.set(indexKey, recordStates);
-                }
-                recordStates[field] = parentState;
-                (record as Record<string, unknown>)[field] = parentState;
-              });
-            }
-          });
+
+    // 如果启用了checkbox级联，应用父表状态覆盖子表状态
+    if (this.enableCheckboxCascade) {
+      const parentRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+      const parentRecord = getRecordByRowIndex(this.table, bodyRowIndex);
+      if (parentRecord && this.table.stateManager) {
+        const parentDataIndex = this.table.getRecordIndexByCell(0, parentRowIndex);
+        if (parentDataIndex !== undefined && parentDataIndex !== null) {
+          const parentIndexKey = parentDataIndex.toString();
+          const parentCheckedStates = this.table.stateManager.checkedState.get(parentIndexKey);
+          if (parentCheckedStates) {
+            Object.keys(parentCheckedStates).forEach(field => {
+              const parentState = parentCheckedStates[field];
+              if (parentState === true || parentState === false) {
+                subTable.stateManager.headerCheckedState[field] = parentState;
+                const records = subTable.records || [];
+                records.forEach((record, recordIndex) => {
+                  const indexKey = recordIndex.toString();
+                  let recordStates = subTable.stateManager.checkedState.get(indexKey);
+                  if (!recordStates) {
+                    recordStates = {};
+                    subTable.stateManager.checkedState.set(indexKey, recordStates);
+                  }
+                  recordStates[field] = parentState;
+                  (record as Record<string, unknown>)[field] = parentState;
+                });
+              }
+            });
+          }
         }
       }
     }
@@ -203,6 +189,7 @@ export class SubTableManager {
 
   /**
    * 渲染子表
+   * 创建子表实例，设置viewBox区域，配置滚动隔离、选中管理、canvas裁剪
    */
   renderSubTable(
     bodyRowIndex: number,
@@ -371,7 +358,7 @@ export class SubTableManager {
    * 设置滚动事件隔离
    */
   private setupScrollEventIsolation(subTable: VTable.ListTable): void {
-    // 判断鼠标是否在子表区域内
+    // 检测鼠标是否在子表区域内
     const isMouseInChildTableArea = (event: MouseEvent) => {
       const rect = this.table.canvas.getBoundingClientRect();
       const x = event.clientX - rect.left;
@@ -560,7 +547,7 @@ export class SubTableManager {
    * 设置子表canvas裁剪，实现真正的clip截断效果
    */
   private setupSubTableCanvasClipping(subTable: VTable.ListTable, bodyRowIndex: number): void {
-    // 获取子表的stage
+    // 获取子表的渲染stage
     if (!subTable.scenegraph?.stage) {
       return;
     }

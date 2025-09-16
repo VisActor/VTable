@@ -29,9 +29,9 @@ export class ConfigManager {
     if (!options.customConfig) {
       options.customConfig = {};
     }
+    // 确保滚动事件始终触发，用于子表位置同步
     options.customConfig.scrollEventAlwaysTrigger = true;
     const originalCustomComputeRowHeight = options.customComputeRowHeight;
-    // 默认情况下使用children字段
     options.customComputeRowHeight = params => {
       const { row, table } = params;
       if (this.isVirtualRow(row)) {
@@ -39,7 +39,6 @@ export class ConfigManager {
       }
       if (this.isRowExpanded(row)) {
         const expandedHeight = table.getRowHeight(row);
-        // 确保返回值符合 customComputeRowHeight 的类型要求
         if (Array.isArray(expandedHeight)) {
           return expandedHeight[0] ?? 'auto';
         }
@@ -84,12 +83,14 @@ export class ConfigManager {
       const detailOptions = this.pluginOptions.detailGridOptions;
       // 判断是静态配置还是动态函数
       if (typeof detailOptions === 'function') {
+        // 动态配置：根据数据和行索引返回不同的子表配置
         (
           options as VTable.ListTableConstructorOptions & {
             getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
           }
         ).getDetailGridOptions = detailOptions;
       } else {
+        // 静态配置：所有子表使用相同配置
         (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
           detailOptions;
       }
@@ -113,6 +114,7 @@ export class ConfigManager {
 
   /**
    * 添加虚拟行
+   * 在表格底部添加一行虚拟行，用于展开子表时处理setBodyAndRowHeaderY的lastBodyCell.attribute.height的问题
    */
   private addVirtualRows(): void {
     const { layoutMap } = this.table.internalProps;
@@ -161,23 +163,19 @@ export class ConfigManager {
 
   /**
    * 给第一列添加层级图标
+   * 为有子数据的行添加展开/收起图标，无子数据的行添加占位图标保持对齐
    */
   private injectHierarchyIcons(options: VTable.ListTableConstructorOptions): void {
     if (!options.columns || options.columns.length === 0) {
       return;
     }
 
-    // 获取第一列
-    const firstColumn = options.columns[0] as any;
+    // 获取第一列，用于添加展开/收起图标
+    const firstColumn = options.columns[0] as VTable.TYPES.ColumnDefine;
 
     // 创建图标函数
-    const iconFunction = (params: {
-      col: number;
-      row: number;
-      dataValue: unknown;
-      cellValue: unknown;
-    }): VTable.TYPES.SvgIcon[] => {
-      const { col, row } = params;
+    const iconFunction = (args: VTable.TYPES.CellInfo & { table: VTable.BaseTableAPI }) => {
+      const { col, row } = args;
       // 获取记录
       let record: unknown;
       try {

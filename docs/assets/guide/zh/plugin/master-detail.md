@@ -13,6 +13,8 @@ MasterDetailPlugin 采用 TypeScript 接口规范，确保类型安全和开发�
 ```typescript
 interface MasterDetailPluginOptions {
   id?: string;
+  /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
+  enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
 }
@@ -31,6 +33,7 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 | 参数名称 | 类型 | 默认值 | 功能说明 |
 |---------|------|--------|----------|
 | `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
+| `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
 | `detailGridOptions` | DetailGridOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
 
 #### DetailGridOptions 高级配置
@@ -68,6 +71,7 @@ import { MasterDetailPlugin } from '@visactor/vtable-plugins';
 // 创建主从表插件实例
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-plugin',
+  enableCheckboxCascade: true, // 启用checkbox级联功能（默认：true）
   detailGridOptions: {
     columns: [
       { field: 'task', title: '任务名称', width: 220 },
@@ -77,6 +81,15 @@ const masterDetailPlugin = new MasterDetailPlugin({
     defaultHeaderRowHeight: 30,
     style: { margin: 12, height: 160 },
     theme: VTable.themes.BRIGHT
+  }
+});
+
+// 禁用checkbox级联功能的示例：
+const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
+  id: 'master-detail-plugin-no-cascade',
+  enableCheckboxCascade: false, // 禁用checkbox级联功能
+  detailGridOptions: {
+    // ... 与上面相同的配置
   }
 });
 ```
