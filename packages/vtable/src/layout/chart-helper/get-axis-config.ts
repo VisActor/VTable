@@ -8,7 +8,7 @@ import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
 import { getQuadProps } from '../../scenegraph/utils/padding';
 import { getProp } from '../../scenegraph/utils/get-prop';
-import { getTickModeFunction, getZeroAlignTickAlignTicks } from './tick-align';
+import { getTickModeFunction, getZeroAlignTickAlignTicks, getAxisOptionInPivotChart } from './axis-utils';
 
 type AxisRange = {
   min: number;
@@ -452,113 +452,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 }
 
 export function getAxisOption(col: number, row: number, orient: string, layout: PivotHeaderLayoutMap) {
-  const spec = layout.getRawChartSpec(col, row);
-  const axes = spec.axes ?? [];
-  (layout._table as PivotChart).pivotChartAxes.forEach(axis => {
-    const index = axes.findIndex((a: any) => {
-      return axis.orient === a.orient;
-    });
-    if (index === -1) {
-      axes.push(axis);
-    }
-  });
-
-  if (spec && isArray(axes)) {
-    const axisOption = axes.find((axis: any) => {
-      return axis.orient === orient;
-    });
-    if (axisOption) {
-      const { seriesIndex, seriesId } = axisOption;
-      let seriesIndice;
-      let seriesSpec: any;
-      if (isValid(seriesId) && isArray(spec.series)) {
-        seriesIndice = (isArray(seriesId) ? seriesId : [seriesId]).map(id => {
-          const index = spec.series.findIndex((s: any) => s.id === id);
-          if (index >= 0) {
-            seriesSpec = spec.series[index];
-          }
-          return index;
-        });
-      } else if (isValid(seriesIndex) && isArray(spec.series)) {
-        seriesIndice = seriesIndex;
-      }
-      const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
-      return {
-        axisOption,
-        isPercent: spec.percent,
-        isZeroAlign,
-        isTickAlign,
-        seriesIndice,
-        theme: spec.theme,
-        chartType: seriesSpec?.type ?? spec.type
-      };
-    }
-  }
-  const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-    return axisOption.orient === orient;
-  });
-  const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
-  return {
-    axisOption,
-    isPercent: false,
-    // isZeroAlign: checkZeroAlign(spec, orient, layout),
-    isZeroAlign,
-    isTickAlign,
-    theme: spec.theme,
-    chartType: spec.type
-  };
+  return getAxisOptionInPivotChart(col, row, orient, layout);
 }
 
-function checkZeroAlign(spec: any, orient: string, layout: PivotHeaderLayoutMap) {
-  // check condition:
-  // 1. two axes and one set sync
-  // 2. axisId in sync is another
-  const orients: string[] = [];
-  if (orient === 'left' || orient === 'right') {
-    orients.push('left', 'right');
-  } else if (orient === 'top' || orient === 'bottom') {
-    orients.push('top', 'bottom');
-  }
-  // const spec = layout.getRawChartSpec(col, row);
-  let axesSpec;
-  if (spec && isArray(spec.axes)) {
-    axesSpec = spec.axes;
-  } else {
-    axesSpec = (layout._table as PivotChart).pivotChartAxes as ITableAxisOption[];
-  }
-
-  let isZeroAlign = false;
-  let isTickAlign = false;
-  if (isArray(axesSpec)) {
-    const axes: any[] = [];
-    axesSpec.forEach((axis: any) => {
-      if (orients.includes(axis.orient)) {
-        axes.push(axis);
-      }
-    });
-    for (let i = 0; i < axes.length; i++) {
-      const axis = axes[i];
-      if (
-        axis.sync &&
-        // axis.sync.zeroAlign &&
-        axis.sync.axisId &&
-        axes.find(axisSync => {
-          return axisSync.id === axis.sync.axisId;
-        })
-      ) {
-        // return true;
-        isZeroAlign = isZeroAlign || axis.sync.zeroAlign;
-        isTickAlign = isTickAlign || axis.sync.tickAlign;
-      }
-    }
-  }
-
-  // return false;
-  return {
-    isZeroAlign,
-    isTickAlign
-  };
-}
+// checkZeroAlign 函数已移至 axis-utils.ts
 
 export function getAxisRange(
   collectedValues: Record<string, Record<string, CollectedValue>>,
@@ -703,55 +600,54 @@ function isXAxis(orient: IOrientType) {
 }
 
 export function hasLinearAxis(spec: any, tableAxesConfig: any, isHorizontal: boolean, isThisXAxis: boolean): boolean {
-  if ((!isArray(spec.axes) || spec.axes.length === 0) && (!isArray(tableAxesConfig) || tableAxesConfig.length === 0)) {
+  if (!isArray(spec.axes) || spec.axes.length === 0) {
     // 据图表方向和轴类型返回默认值：
     // 水平图表的X轴应该是线性的
     // 垂直图表的Y轴应该是线性的
     return (isHorizontal && isThisXAxis) || (!isHorizontal && !isThisXAxis);
   }
-  if (isArray(spec.axes) && spec.axes.length > 0) {
-    for (let i = 0; i < spec.axes.length; i++) {
-      // 检查 spec.axes 中是否有匹配当前情况的轴配置，主要检查四种情况：
-      // 垂直图表的X轴（bottom orient）是否为线性轴
-      // 水平图表的X轴（bottom orient）是否为非线性轴
-      // 垂直图表的Y轴（left orient）是否为非线性轴
-      // 水平图表的Y轴（left orient）是否为线性轴
-      const axisSpec = spec.axes[i];
 
-      if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
-        if (spec.type === 'heatmap') {
-          return axisSpec.type === 'linear';
-        }
-        if (axisSpec.type === 'linear') {
-          return true;
-        }
+  for (let i = 0; i < spec.axes.length; i++) {
+    // 检查 spec.axes 中是否有匹配当前情况的轴配置，主要检查四种情况：
+    // 垂直图表的X轴（bottom orient）是否为线性轴
+    // 水平图表的X轴（bottom orient）是否为非线性轴
+    // 垂直图表的Y轴（left orient）是否为非线性轴
+    // 水平图表的Y轴（left orient）是否为线性轴
+    const axisSpec = spec.axes[i];
+
+    if (!isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
       }
-
-      if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
-        if (spec.type === 'heatmap') {
-          return axisSpec.type === 'linear';
-        }
-        if (axisSpec.type !== 'linear') {
-          return true;
-        }
+      if (axisSpec.type === 'linear') {
+        return true;
       }
+    }
 
-      if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
-        if (spec.type === 'heatmap') {
-          return axisSpec.type === 'linear';
-        }
-        if (axisSpec.type !== 'linear') {
-          return true;
-        }
+    if (isHorizontal && isThisXAxis && axisSpec.orient === 'bottom') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
       }
+      if (axisSpec.type !== 'linear') {
+        return true;
+      }
+    }
 
-      if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
-        if (spec.type === 'heatmap') {
-          return axisSpec.type === 'linear';
-        }
-        if (axisSpec.type === 'linear') {
-          return true;
-        }
+    if (!isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
+      }
+      if (axisSpec.type !== 'linear') {
+        return true;
+      }
+    }
+
+    if (isHorizontal && !isThisXAxis && axisSpec.orient === 'left') {
+      if (spec.type === 'heatmap') {
+        return axisSpec.type === 'linear';
+      }
+      if (axisSpec.type === 'linear') {
+        return true;
       }
     }
   }
