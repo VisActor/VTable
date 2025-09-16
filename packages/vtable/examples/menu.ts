@@ -345,6 +345,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-histogram'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {

@@ -965,7 +965,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               by: rowKeys,
               range: true,
               // 判断是否需要匹配维度值相同的进行求和计算
-              sumBy: indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
+              sumBy:
+                indicatorSpec.type === 'histogram'
+                  ? columnKeys.concat(indicatorSpec?.xField, indicatorSpec?.x2Field)
+                  : indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
             };
           }
           if (indicatorSpec.series) {
@@ -997,7 +1000,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               };
             });
           } else {
-            const xField = typeof indicatorSpec.xField === 'string' ? indicatorSpec.xField : indicatorSpec.xField[0];
+            const xField =
+              indicatorSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+                ? indicatorSpec.x2Field
+                : typeof indicatorSpec.xField === 'string'
+                ? indicatorSpec.xField
+                : indicatorSpec.xField[0];
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction !== 'horizontal' ? 'xField' : undefined,
@@ -1015,7 +1023,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               by: rowKeys,
               type: indicatorSpec.direction !== 'horizontal' ? 'yField' : undefined,
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false), //indicatorSpec.direction !== 'horizontal', // direction默认为'vertical'
-              sumBy: indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+              sumBy:
+                indicatorSpec.type === 'histogram'
+                  ? columnKeys.concat(indicatorSpec?.xField, indicatorSpec?.x2Field)
+                  : indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined,
               extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
@@ -1077,8 +1088,9 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             indicatorSpec?.stack !== false &&
               (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
               (indicatorSpec.stack = true);
-            //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-            const xField = indicatorSpec.xField;
+            //下面这个收集的值 是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同(heatmap情况除外)
+            //特殊处理histogram直方图xField和x2Field
+            const xField = indicatorSpec.type === 'histogram' ? indicatorSpec.x2Field : indicatorSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'xField' : undefined,

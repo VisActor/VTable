@@ -3801,6 +3801,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           dimensionKey =
             type === 'yField'
               ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+              : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+              ? chartSpec.x2Field
               : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
 
           if (dimensionKey) {
@@ -3815,7 +3817,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (chartSpec) {
           dimensionKey =
             type === 'xField'
-              ? chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+              ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+                ? chartSpec.x2Field
+                : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
               : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
           if (dimensionKey) {
             return dimensionKey;
