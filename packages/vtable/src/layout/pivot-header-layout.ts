@@ -3794,9 +3794,6 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   getDimensionKeyInChartSpec(_col: number, _row: number, type?: 'xField' | 'yField') {
     let dimensionKey: string;
     if (this.indicatorsAsCol === false) {
-      //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
-      // for (let i = 0; i < this.indicatorsDefine.length; i++) {
-      // const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
       const chartSpec = this.getRawChartSpec(_col, _row);
       if (chartSpec) {
         dimensionKey =
@@ -3810,11 +3807,23 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           return dimensionKey;
         }
       }
-      // }
+      //考虑pie和bar 同时配置的情况 , 只有上面的判断逻辑是不足的，例如https://bugserver.cn.goofy.app/case?product=VTable&fileid=65a66c5c518457638fa485bf
+      for (let i = 0; i < this.indicatorsDefine.length; i++) {
+        const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
+        if (chartSpec) {
+          dimensionKey =
+            type === 'yField'
+              ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+              : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+              ? chartSpec.x2Field
+              : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+
+          if (dimensionKey) {
+            return dimensionKey;
+          }
+        }
+      }
     } else {
-      //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
-      // for (let i = 0; i < this.indicatorsDefine.length; i++) {
-      // const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
       const chartSpec = this.getRawChartSpec(_col, _row);
       if (chartSpec) {
         dimensionKey =
@@ -3827,7 +3836,21 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           return dimensionKey;
         }
       }
-      // }
+      //考虑pie和bar 同时配置的情况 , 只有上面的判断逻辑是不足的，例如https://bugserver.cn.goofy.app/case?product=VTable&fileid=65a66c5c518457638fa485bf
+      for (let i = 0; i < this.indicatorsDefine.length; i++) {
+        const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
+        if (chartSpec) {
+          dimensionKey =
+            type === 'xField'
+              ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+                ? chartSpec.x2Field
+                : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+              : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+          if (dimensionKey) {
+            return dimensionKey;
+          }
+        }
+      }
     }
     return null;
   }
