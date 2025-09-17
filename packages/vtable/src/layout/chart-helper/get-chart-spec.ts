@@ -84,7 +84,10 @@ export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartInd
         columnObj.chartSpec.type !== 'pie' &&
         columnObj.chartSpec.type !== 'funnel' &&
         columnObj.chartSpec.type !== 'rose' &&
-        columnObj.chartSpec.type !== 'sunburst'
+        columnObj.chartSpec.type !== 'sunburst' &&
+        columnObj.chartSpec.type !== 'treemap' &&
+        columnObj.chartSpec.type !== 'sankey' &&
+        columnObj.chartSpec.type !== 'circlePacking'
       ) {
         isHasCartesianChart = true;
         break;
@@ -106,7 +109,10 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
       chartSpec.type === 'wordCloud' ||
       chartSpec.type === 'funnel' ||
       chartSpec.type === 'rose' ||
-      chartSpec.type === 'sunburst'
+      chartSpec.type === 'sunburst' ||
+      chartSpec.type === 'treemap' ||
+      chartSpec.type === 'sankey' ||
+      chartSpec.type === 'circlePacking'
     ) {
       isHasCartesianChart = false;
     }
@@ -136,7 +142,10 @@ export function isHasCartesianChartInline(
           columnObj.chartSpec.type !== 'gauge' &&
           columnObj.chartSpec.type !== 'funnel' &&
           columnObj.chartSpec.type !== 'rose' &&
-          columnObj.chartSpec.type !== 'sunburst'
+          columnObj.chartSpec.type !== 'sunburst' &&
+          columnObj.chartSpec.type !== 'treemap' &&
+          columnObj.chartSpec.type !== 'sankey' &&
+          columnObj.chartSpec.type !== 'circlePacking'
         ) {
           isHasCartesianChart = true;
           break;
@@ -153,7 +162,10 @@ export function isHasCartesianChartInline(
         chartSpec.type !== 'wordCloud' &&
         chartSpec.type !== 'funnel' &&
         chartSpec.type !== 'rose' &&
-        chartSpec.type !== 'sunburst'
+        chartSpec.type !== 'sunburst' &&
+        chartSpec.type !== 'treemap' &&
+        chartSpec.type !== 'sankey' &&
+        chartSpec.type !== 'circlePacking'
       ) {
         isHasCartesianChart = true;
       }
@@ -182,7 +194,10 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
         chartSpec.type !== 'wordCloud' &&
         chartSpec.type !== 'funnel' &&
         chartSpec.type !== 'rose' &&
-        chartSpec.type !== 'sunburst'
+        chartSpec.type !== 'sunburst' &&
+        chartSpec.type !== 'treemap' &&
+        chartSpec.type !== 'sankey' &&
+        chartSpec.type !== 'circlePacking'
       ) {
         chartSpec.axes = layout.getChartAxes(col, row);
       }

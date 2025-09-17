@@ -948,7 +948,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'radar' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'gauge' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'wordCloud' ||
-          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'sunburst'
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'sunburst' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'treemap' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'sankey' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'circlePacking'
         ) {
           continue;
         }

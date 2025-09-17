@@ -10,7 +10,7 @@ export function createTable() {
   const indicators: VTable.TYPES.IChartIndicator[] = [
     {
       indicatorKey: 'name',
-      title: '利润',
+      title: '名称',
       cellType: 'chart',
       chartModule: 'vchart',
       headerStyle: {

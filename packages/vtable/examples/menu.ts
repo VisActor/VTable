@@ -353,6 +353,18 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-treemap'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-sankey'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-circlePacking'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {
