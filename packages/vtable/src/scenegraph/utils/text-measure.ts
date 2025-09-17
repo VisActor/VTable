@@ -6,9 +6,10 @@ import {
   TextMeasureContribution,
   ContainerModule,
   container,
-  Text
+  Text,
+  measureTextSize
 } from '@src/vrender';
-import { MeasureModeEnum } from '@src/vrender';
+// import { MeasureModeEnum } from '@src/vrender';
 // eslint-disable-next-line max-len
 // import {
 //   DefaultTextMeasureContribution,
@@ -24,12 +25,14 @@ type ITextGraphicAttributeFroMeasure = Omit<ITextGraphicAttribute, 'lineHeight'>
   lineHeight?: number;
 };
 
+let useFastTextMeasure = true;
 const textMeasureModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-  if (isBound(TextMeasureContribution)) {
-    rebind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
-  } else {
-    bind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
-  }
+  // if (isBound(TextMeasureContribution)) {
+  //   rebind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
+  // } else {
+  // }
+  useFastTextMeasure = true;
+  bind(TextMeasureContribution).to(FastTextMeasureContribution).inSingletonScope();
 });
 
 const restoreTextMeasureModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -38,6 +41,7 @@ const restoreTextMeasureModule = new ContainerModule((bind, unbind, isBound, reb
   } else {
     bind(TextMeasureContribution).to(DefaultTextMeasureContribution).inSingletonScope();
   }
+  useFastTextMeasure = false;
 });
 
 export default textMeasureModule;
@@ -88,6 +92,7 @@ function getFastTextMeasure(
 }
 
 export class FastTextMeasureContribution extends DefaultTextMeasureContribution {
+  id = 'fastTextMeasureContribution';
   _fastMeasure(text: string, options: TextOptionsType) {
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
@@ -151,6 +156,9 @@ export class TextMeasureTool {
    * @param options
    */
   measureText(text: string, options: ITextGraphicAttribute): ITextSize {
+    if (!useFastTextMeasure) {
+      return measureTextSize(text, options);
+    }
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
@@ -163,6 +171,9 @@ export class TextMeasureTool {
    * @param options
    */
   measureTextWidth(text: string, options: ITextGraphicAttribute): number {
+    if (!useFastTextMeasure) {
+      return measureTextSize(text, options).width;
+    }
     const { fontSize, fontFamily = 'Arial,sans-serif', fontWeight = 'normal', fontStyle = 'normal' } = options;
     const fastTextMeasure = getFastTextMeasure(fontSize, fontWeight, fontFamily, fontStyle);
     const textMeasure = fastTextMeasure.measure(text, textMeasureMode);
