@@ -271,7 +271,7 @@ export class FormulaManager {
    * @param sheetKey 工作表键
    * @returns 工作表ID
    */
-  private getSheetId(sheetKey: string): number {
+  getSheetId(sheetKey: string): number {
     const sheetId = this.sheetMapping.get(sheetKey);
     if (sheetId === undefined) {
       // 自动创建新sheet
@@ -607,6 +607,92 @@ export class FormulaManager {
   }
 
   /**
+   * 根据依赖关系对公式进行排序
+   * @param sheetKey 工作表键
+   * @param formulas 公式数据 (A1表示法的单元格引用 -> 公式内容)
+   * @returns 排序后的公式条目数组
+   */
+  sortFormulasByDependency(sheetKey: string, formulas: Record<string, string>): [string, string][] {
+    try {
+      // 初始化依赖图
+      const dependencyGraph: Record<string, string[]> = {};
+      const cellDependencies: Record<string, string[]> = {};
+      // 分析每个公式的依赖关系
+      for (const [cellRef, formula] of Object.entries(formulas)) {
+        const dependencies = this.extractCellReferences(formula);
+        cellDependencies[cellRef] = dependencies;
+        dependencyGraph[cellRef] = [];
+        // 找出这个公式依赖的其他公式单元格
+        for (const dep of dependencies) {
+          if (formulas[dep]) {
+            dependencyGraph[cellRef].push(dep);
+          }
+        }
+      }
+      // 拓扑排序
+      const sorted: string[] = [];
+      const visited: Record<string, boolean> = {};
+      const tempVisited: Record<string, boolean> = {}; // 用于检测循环依赖
+      const visit = (cellRef: string): void => {
+        // 如果已经访问过，跳过
+        if (visited[cellRef]) {
+          return;
+        }
+        // 检测循环依赖
+        if (tempVisited[cellRef]) {
+          console.warn(`Circular dependency detected involving cell ${cellRef}`);
+          return;
+        }
+        // 标记为临时访问
+        tempVisited[cellRef] = true;
+        // 递归访问所有依赖
+        for (const dep of dependencyGraph[cellRef] || []) {
+          visit(dep);
+        }
+        // 标记为已访问并添加到结果中
+        visited[cellRef] = true;
+        tempVisited[cellRef] = false;
+        sorted.push(cellRef);
+      };
+      // 对每个公式进行访问
+      for (const cellRef of Object.keys(formulas)) {
+        if (!visited[cellRef]) {
+          visit(cellRef);
+        }
+      }
+      // 反转数组，使依赖关系正确（先计算依赖，再计算被依赖）
+      sorted.reverse();
+      // 返回排序后的公式数组
+      return sorted.map(cellRef => [cellRef, formulas[cellRef]]);
+    } catch (error) {
+      console.error(`Failed to sort formulas by dependency for sheet ${sheetKey}:`, error);
+      // 如果排序失败，返回原始顺序
+      return Object.entries(formulas);
+    }
+  }
+
+  /**
+   * 从公式中提取单元格引用
+   * @param formula 公式字符串
+   * @returns 单元格引用数组
+   */
+  private extractCellReferences(formula: string): string[] {
+    if (!formula || typeof formula !== 'string') {
+      return [];
+    }
+    // 如果不是公式，则没有依赖
+    if (!formula.startsWith('=')) {
+      return [];
+    }
+    // 提取单元格引用 (例如 A1, B2, AA10)
+    // 匹配模式: 字母+数字 (排除函数名，只匹配单元格引用)
+    const cellRefPattern = /(?<![A-Za-z])([A-Za-z]+[0-9]+)(?![A-Za-z0-9])/g;
+    const matches = formula.match(cellRefPattern) || [];
+    // 去重
+    return [...new Set(matches)];
+  }
+
+  /**
    * 设置工作表内容
    * @param sheetKey 工作表键
    * @param normalizedData 工作表数据 需要规范处理过 且包含表头的数据
@@ -616,7 +702,6 @@ export class FormulaManager {
 
     try {
       const sheetId = this.getSheetId(sheetKey);
-
       (this.hyperFormula as any).setSheetContent(sheetId, normalizedData);
     } catch (error) {
       console.error('Failed to set sheet content:', error);
@@ -948,6 +1033,64 @@ export class FormulaManager {
       functions: this.getAvailableFunctions(),
       stats: this.isInitialized ? (this.hyperFormula as any).getStats() : null
     };
+  }
+
+  /**
+   * 导出指定工作表中的所有公式
+   * @param sheetKey 工作表键
+   * @returns 公式数据 (A1表示法的单元格引用 -> 公式内容)
+   */
+  exportFormulas(sheetKey: string): Record<string, string> {
+    this.ensureInitialized();
+    const formulas: Record<string, string> = {};
+
+    try {
+      const sheetId = this.getSheetId(sheetKey);
+      const content = (this.hyperFormula as any).getSheetSerialized(sheetId);
+      if (!Array.isArray(content) || content.length === 0) {
+        return formulas;
+      }
+
+      // 遍历表格内容查找公式
+      for (let row = 0; row < content.length; row++) {
+        if (!Array.isArray(content[row])) {
+          continue;
+        }
+        for (let col = 0; col < content[row].length; col++) {
+          const address = { sheet: sheetKey, row, col };
+          if (this.isCellFormula(address)) {
+            const formula = this.getCellFormula(address);
+            if (formula) {
+              const cellKey = this.getCellA1Notation(row, col);
+              formulas[cellKey] = formula;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to export formulas for sheet ${sheetKey}:`, error);
+    }
+
+    return formulas;
+  }
+
+  /**
+   * 将行列索引转换为A1表示法
+   * @param row 行索引 (0-based)
+   * @param col 列索引 (0-based)
+   * @returns A1表示法的单元格引用
+   */
+  private getCellA1Notation(row: number, col: number): string {
+    // 将列索引转换为字母 (0 -> A, 1 -> B, ..., 25 -> Z, 26 -> AA, etc.)
+    let columnStr = '';
+    let tempCol = col;
+    do {
+      columnStr = String.fromCharCode(65 + (tempCol % 26)) + columnStr;
+      tempCol = Math.floor(tempCol / 26) - 1;
+    } while (tempCol >= 0);
+    // 行索引从1开始
+    const rowStr = (row + 1).toString();
+    return columnStr + rowStr;
   }
 
   /**

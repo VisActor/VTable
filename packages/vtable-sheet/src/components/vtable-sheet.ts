@@ -679,12 +679,66 @@ export default class VTableSheet {
     try {
       const normalizedData = this.formulaManager.normalizeSheetData(sheetDefine.data, sheet.tableInstance);
       this.formulaManager.addSheet(sheetDefine.sheetKey, normalizedData);
+      // 加载保存的公式数据（如果有）
+      if (sheetDefine.formulas && Object.keys(sheetDefine.formulas).length > 0) {
+        this.loadFormulas(sheetDefine.sheetKey, sheetDefine.formulas);
+      }
     } catch (error) {
       console.warn(`Sheet ${sheetDefine.sheetKey} may already exist in formula manager:`, error);
       // 如果添加失败（可能已存在），继续执行
     }
 
     return sheet;
+  }
+  /**
+   * 加载指定工作表的公式数据
+   * @param sheetKey 工作表键
+   * @param formulas 公式数据 (A1表示法的单元格引用 -> 公式内容)
+   */
+  private loadFormulas(sheetKey: string, formulas: Record<string, string>): void {
+    if (!formulas || Object.keys(formulas).length === 0) {
+      return;
+    }
+
+    try {
+      // 优化公式计算顺序
+      const sortedFormulas = this.formulaManager.sortFormulasByDependency(sheetKey, formulas);
+      // 按照优化后的顺序设置公式
+      for (const [cellRef, formula] of sortedFormulas) {
+        // 解析单元格引用 (如 A1, B2) 到行列索引
+        const { row, col } = this.parseCellKey(cellRef);
+        // 设置单元格公式
+        this.formulaManager.setCellContent({ sheet: sheetKey, row, col }, formula);
+      }
+
+      // 刷新计算
+      this.formulaManager.rebuildAndRecalculate();
+    } catch (error) {
+      console.error(`Failed to load formulas for sheet ${sheetKey}:`, error);
+    }
+  }
+
+  /**
+   * 将单元格引用（A1表示法）解析为行列索引
+   * @param cellKey 单元格引用 (如 A1, B2)
+   * @returns 行列索引 (0-based)
+   */
+  private parseCellKey(cellKey: string): { row: number; col: number } {
+    // 匹配列引用（字母部分）和行引用（数字部分）
+    const match = cellKey.match(/^([A-Za-z]+)(\d+)$/);
+    if (!match) {
+      throw new Error(`Invalid cell reference: ${cellKey}`);
+    }
+    const [, colStr, rowStr] = match;
+    // 解析行索引 (1-based -> 0-based)
+    const row = parseInt(rowStr, 10) - 1;
+    // 解析列索引 (A -> 0, B -> 1, ..., Z -> 25, AA -> 26, etc.)
+    let col = 0;
+    for (let i = 0; i < colStr.length; i++) {
+      const charCode = colStr.toUpperCase().charCodeAt(i) - 65; // 65 is ASCII for 'A'
+      col = col * 26 + charCode;
+    }
+    return { row, col };
   }
 
   /**
@@ -830,6 +884,9 @@ export default class VTableSheet {
           ...(item.orderFn != null && { orderFn: item.orderFn })
         }));
 
+        // 使用FormulaManager的导出方法获取所有公式
+        const formulas = this.formulaManager.exportFormulas(sheetDefine.sheetKey);
+
         sheets.push({
           ...sheetDefine,
           data,
@@ -840,7 +897,8 @@ export default class VTableSheet {
           frozenColCount: instance.tableInstance.frozenColCount,
           active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey,
           filterState: filterState,
-          sortState: currentSortState
+          sortState: currentSortState,
+          formulas: Object.keys(formulas).length > 0 ? formulas : undefined
         });
       } else {
         sheets.push(sheetDefine);
@@ -852,6 +910,7 @@ export default class VTableSheet {
       sheets
     };
   }
+
   /** 导出当前sheet到文件 */
   exportSheetToFile(fileType: 'csv' | 'xlsx'): void {
     const sheet = this.getActiveSheet();
