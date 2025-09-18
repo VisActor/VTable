@@ -1,16 +1,7 @@
-/*
- * @Author: lym
- * @Date: 2025-02-28 16:55:22
- * @LastEditors: lym
- * @LastEditTime: 2025-03-21 14:23:04
- * @Description: 集成编辑器工具方法
- */
 import { register } from '@visactor/vtable';
-import { DynamicRenderEditor } from './editor';
 import { isValid } from '@visactor/vutils';
-
-/** 动态渲染编辑器名称 */
-const DYNAMIC_RENDER_EDITOR = 'dynamic-render-editor';
+import { DynamicRenderEditor } from './editor';
+import { DYNAMIC_RENDER_EDITOR } from '../constants';
 
 /**
  * @description: 校验动态渲染式编辑器
