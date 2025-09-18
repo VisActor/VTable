@@ -16,6 +16,7 @@ import { isMergeCellGroup } from './is-merge-cell-group';
 import { breakString } from './break-string';
 import { CUSTOM_CONTAINER_NAME } from '../component/custom';
 import { getTargetCell } from '../../event/util';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 // import { createLine } from '@src/vrender';
 
 /**
@@ -738,14 +739,16 @@ export function updateCellContentWidth(
     if (isCellHeightUpdate(scene, cellGroup, Math.round(newHeight + padding[0] + padding[2]), oldCellHeight)) {
       // cellGroup.setAttribute('height', newHeight + padding[0] + padding[2]);
       // 触发事件钩子 - 需要更新行高的情况
-      scene.table.fireListeners('after_update_cell_content_width', {
-        col: cellGroup.col,
-        row: cellGroup.row,
-        cellHeight,
-        cellGroup,
-        padding,
-        textBaseline
-      });
+      if (scene.table.hasListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH)) {
+        scene.table.fireListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH, {
+          col: cellGroup.col,
+          row: cellGroup.row,
+          cellHeight,
+          cellGroup,
+          padding,
+          textBaseline
+        });
+      }
       return true;
     }
 
@@ -781,15 +784,16 @@ export function updateCellContentWidth(
       }
     });
   }
-  // 触发事件钩子 - 正常完成的情况
-  scene.table.fireListeners('after_update_cell_content_width', {
-    col: cellGroup.col,
-    row: cellGroup.row,
-    cellHeight,
-    cellGroup,
-    padding,
-    textBaseline
-  });
+  if (scene.table.hasListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH)) {
+    scene.table.fireListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_CELL_CONTENT_WIDTH, {
+      col: cellGroup.col,
+      row: cellGroup.row,
+      cellHeight,
+      cellGroup,
+      padding,
+      textBaseline
+    });
+  }
 
   return false;
 }

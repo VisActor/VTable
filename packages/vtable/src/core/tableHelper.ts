@@ -17,7 +17,7 @@ import type {
 import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
-import { isValid } from '@visactor/vutils';
+import { isValid, isArray } from '@visactor/vutils';
 import type { PluginManager } from '../plugins/plugin-manager';
 
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
@@ -66,14 +66,20 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
 
   _dealWithUpdateDataSource(table, () => {
     table.internalProps.records = records;
+    let rowHierarchyType = table.internalProps.layoutMap.rowHierarchyType;
+    if (isArray(table.internalProps.dataConfig?.groupByRules)) {
+      rowHierarchyType = 'tree';
+    }
+    if (tableWithPlugins.pluginManager?.getPluginByName('Master Detail Plugin')) {
+      rowHierarchyType = 'grid';
+    }
     const newDataSource = (table.internalProps.dataSource = CachedDataSource.ofArray(
       records,
       table.internalProps.dataConfig,
       table.pagination,
       table.internalProps.columns,
-      table.internalProps.layoutMap.rowHierarchyType,
-      getHierarchyExpandLevel(table),
-      tableWithPlugins.pluginManager
+      rowHierarchyType,
+      getHierarchyExpandLevel(table)
     ));
     table.addReleaseObj(newDataSource);
   });
