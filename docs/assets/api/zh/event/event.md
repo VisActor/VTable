@@ -686,48 +686,10 @@ event: Event;
 {
   col: number;
   row: number;
-  distWidth: number;
   cellHeight: number;
-  detaX: number;
-  autoRowHeight: boolean;
-  needUpdateRowHeight: boolean;
   cellGroup: any;
   padding: [number, number, number, number];
-  textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
-}
-```
-
-## BEFORE_SET_RECORDS
-
-设置数据记录前触发的事件。
-
-事件回调函数的参数类型:
-
-```
-{
-  records: any[];
-  table: any;
-  rowHierarchyType?: 'grid' | 'tree';
-  rowHierarchyTypeMust?: 'grid' | 'tree';
-}
-```
-
-## BEFORE_CREATE_PROGRESS_BAR
-
-创建进度条前触发的事件，允许修改高度。
-
-事件回调函数的参数类型:
-
-```
-{
-  col: number;
-  row: number;
-  width: number;
-  height: number;
-  table: any;
-  range?: any;
-  modifiedHeight: number;
 }
 ```
 

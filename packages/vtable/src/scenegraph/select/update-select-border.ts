@@ -2,6 +2,7 @@ import { type IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
   scene.customSelectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
@@ -104,12 +105,14 @@ function updateComponent(
     visible: true
   });
 
-  table.fireListeners('after_update_select_border_height', {
-    startRow: computeRectCellRangeStartRow,
-    endRow: computeRectCellRangeEndRow,
-    currentHeight: rowsHeight,
-    selectComp
-  });
+  if (table.hasListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT)) {
+    table.fireListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT, {
+      startRow: computeRectCellRangeStartRow,
+      endRow: computeRectCellRangeEndRow,
+      currentHeight: rowsHeight,
+      selectComp
+    });
+  }
   if (selectComp.fillhandle) {
     const fillHandle = scene.table.options.excelOptions?.fillHandle;
     let visible = true;

@@ -14,6 +14,8 @@ export interface DetailGridOptions extends VTable.ListTableConstructorOptions {
  */
 export interface MasterDetailPluginOptions {
   id?: string;
+  /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
+  enableCheckboxCascade?: boolean;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
 }

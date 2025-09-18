@@ -36,14 +36,9 @@ export class EventManager {
   handleAfterUpdateCellContentWidth(eventData: {
     col: number;
     row: number;
-    distWidth: number;
     cellHeight: number;
-    detaX: number;
-    autoRowHeight: boolean;
-    needUpdateRowHeight: boolean;
     cellGroup: any;
     padding: [number, number, number, number];
-    textAlign: CanvasTextAlign;
     textBaseline: CanvasTextBaseline;
   }): void {
     const { col, row, cellGroup, cellHeight, padding, textBaseline } = eventData;

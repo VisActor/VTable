@@ -10,6 +10,7 @@ The configurations required here are:
 - `style.margin`: Margin settings for the sub-table
 - `style.height`: Height of the sub-table container
 - `columns`: Definition of sub-table columns
+
 As well as some configuration options available in ListTableConstructorOptions
 
 ## 代码演示

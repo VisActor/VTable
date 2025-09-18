@@ -80,7 +80,6 @@ export function createTable() {
     frozenColCount: 1,
     rightFrozenColCount: 1,
     frozenRowCount: 3,
-    bottomFrozenRowCount: 2,
     autoFillWidth: true,
     rowResizeMode: 'all',
     plugins: [masterDetailPlugin]

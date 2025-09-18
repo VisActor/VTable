@@ -645,48 +645,10 @@ Event callback function parameter types:
 {
   col: number;
   row: number;
-  distWidth: number;
   cellHeight: number;
-  detaX: number;
-  autoRowHeight: boolean;
-  needUpdateRowHeight: boolean;
   cellGroup: any;
   padding: [number, number, number, number];
-  textAlign: CanvasTextAlign;
   textBaseline: CanvasTextBaseline;
-}
-```
-
-## BEFORE_SET_RECORDS
-
-Event triggered before setting data records.
-
-Event callback function parameter types:
-
-```
-{
-  records: any[];
-  table: any;
-  rowHierarchyType?: 'grid' | 'tree';
-  rowHierarchyTypeMust?: 'grid' | 'tree';
-}
-```
-
-## BEFORE_CREATE_PROGRESS_BAR
-
-Event triggered before creating progress bar, allows modifying height.
-
-Event callback function parameter types:
-
-```
-{
-  col: number;
-  row: number;
-  width: number;
-  height: number;
-  table: any;
-  range?: any;
-  modifiedHeight: number;
 }
 ```
 

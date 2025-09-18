@@ -2,7 +2,6 @@ import type * as VTable from '@visactor/vtable';
 import { getInternalProps, findCheckboxColumnIndex, setCellCheckboxStateByAttribute } from './utils';
 /**
  * 绑定主从表checkbox联动事件
- * 这个函数需要在表格初始化完成后调用
  */
 export function bindMasterDetailCheckboxChange(
   table: VTable.ListTable,
@@ -11,7 +10,7 @@ export function bindMasterDetailCheckboxChange(
   table.on('checkbox_state_change', (args: unknown) => {
     const { col, row, checked, field } = args as { col: number; row: number; checked: boolean; field: string };
 
-    // 处理主表表头checkbox点击 - 需要更新所有展开子表的对应列
+    // 主表表头checkbox变化：同步更新所有已展开子表的对应字段
     if (table.isHeader(col, row)) {
       const internalProps = getInternalProps(table);
       const expandedRows = eventManager.getExpandedRows();
@@ -26,7 +25,7 @@ export function bindMasterDetailCheckboxChange(
       return;
     }
 
-    // 处理主表body checkbox点击
+    // 主表body行checkbox变化：如果该行已展开，则更新对应子表的所有checkbox
     const rowIndex = row;
     if (!eventManager.isRowExpanded(rowIndex)) {
       return;
@@ -70,7 +69,7 @@ function updateMainTableRowCheckboxFromSubTable(
   subTableKey: number,
   field: string
 ) {
-  // 计算主表对应的行号
+  // 将bodyRowIndex转换为主表rowIndex
   const mainTableRow = subTableKey + mainTable.columnHeaderLevelCount;
   let subTableState: boolean | 'indeterminate' = false;
   const headerState = subTable.stateManager.headerCheckedState[field];
@@ -174,11 +173,4 @@ function updateAllSubTableCheckboxes(subTable: VTable.ListTable, field: string, 
       break;
     }
   }
-}
-
-/**
- * 启用主从表checkbox联动功能
- */
-export function enableMasterDetailCheckboxCascade(table: VTable.ListTable): void {
-  (table as VTable.ListTable & { _masterDetailCheckboxEnabled?: boolean })._masterDetailCheckboxEnabled = true;
 }
