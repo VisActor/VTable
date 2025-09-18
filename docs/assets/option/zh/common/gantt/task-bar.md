@@ -114,6 +114,27 @@ export type TaskBarInteractionArgumentType = {
 };
 ```
 
+${prefix} progressAdjustable(boolean | Function) = true
+
+任务进度是否可调整。默认为 true。设置为 true 时，用户可以拖拽任务条上的进度控制柄来调整进度百分比。设置为 false 时，进度控制柄将被隐藏，禁止进度调整。
+
+非必填
+
+```
+progressAdjustable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+
+//其中：
+export type TaskBarInteractionArgumentType = {
+  taskRecord: any;
+  index: number;
+  startDate: Date;
+  endDate: Date;
+  ganttInstance: Gantt;
+};
+```
+
+**注意：** 只有当任务定义了进度字段时，进度调整功能才可用。里程碑任务无法调整进度。
+
 ${prefix} moveToExtendDateRange(boolean) = true
 
 任务条拖拽超出当前日期范围时自动扩展日期范围, 默认为 true
