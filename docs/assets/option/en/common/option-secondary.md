@@ -200,6 +200,10 @@ Switching the selected cells with the up, down, left and right arrow keys is not
 
 Whether to enable ctrl multi-select. Default is true.
 
+##${prefix} shiftMultiSelect(boolean) = true
+
+Whether to enable shift multi-select. Default is true.
+
 #${prefix} eventOptions(Object)
 
 Issue settings related to event triggering, specific configuration items:
