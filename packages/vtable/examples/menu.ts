@@ -345,7 +345,7 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
-        name: 'pivotChart-twoIndicator-heatmap'
+        name: 'pivotChart-heatmap-twoIndicator'
       },
       {
         path: 'pivot-chart',
