@@ -6,10 +6,11 @@
 
 - `detailGridOptions`: 子表配置选项，支持静态配置或动态配置函数
 
-这里面需要配置是
+这里面可以配置的是
 - `style.margin`: 子表边距设置
 - `style.height`: 子表容器高度
 - `columns`: 子表列定义
+
 以及一些ListTableConstructorOptions中拥有的配置选项
 
 ## 代码演示
