@@ -571,21 +571,34 @@ export class EventManager {
             this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row
           );
           // 计算鼠标与fillhandle矩形中心之间的距离 distanceX 和 distanceY
-          // 考虑最后一行和最后一列的特殊情况
-          let lastCellBound;
+          // 考虑最后一行和最后一列的特殊情况  逻辑处理需要和update-select-border.ts 中 “计算填充柄小方块的位置” 逻辑处理一致。目前都还有小问题，例如存在冻结的时候。
+          let lastCellBoundTargetX;
           if (lastCol < this.table.colCount - 1) {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            lastCellBoundTargetX = lastCellBound.x2;
           } else {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(startCol - 1, lastRow).globalAABBBounds;
+            if (startCol === 0) {
+              const lastCellBound = this.table.scenegraph.highPerformanceGetCell(0, lastRow).globalAABBBounds;
+              lastCellBoundTargetX = lastCellBound.x1;
+            } else {
+              const lastCellBound = this.table.scenegraph.highPerformanceGetCell(
+                startCol - 1,
+                lastRow
+              ).globalAABBBounds;
+              lastCellBoundTargetX = lastCellBound.x2;
+            }
           }
-          const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
+          const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBoundTargetX);
 
+          let lastCellBoundTargetY;
           if (lastRow < this.table.rowCount - 1) {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            lastCellBoundTargetY = lastCellBound.y2;
           } else {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, startRow - 1).globalAABBBounds;
+            const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, startRow - 1).globalAABBBounds;
+            lastCellBoundTargetY = lastCellBound.y2;
           }
-          const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
+          const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBoundTargetY);
 
           const squareSize = 6 * 3;
           // 判断鼠标是否落在fillhandle矩形内

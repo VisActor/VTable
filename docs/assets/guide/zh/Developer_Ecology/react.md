@@ -286,7 +286,7 @@ function App() {
 
 ### register
 
-在 VTable 中，图表、编辑器等组件需要通过 resigister 方法注册，才能正常使用；在 React-VTable 中，暴露了相应的 register 方法，可以直接使用。
+在 VTable 中，图表、编辑器等组件需要通过 register 方法注册，才能正常使用；在 React-VTable 中，暴露了相应的 register 方法，可以直接使用。
 
 ```jsx
 import { register } from '@visactor/react-vtable';
@@ -299,7 +299,7 @@ register.chartModule('vchart', VChart);
 
 ### 列宽保持
 
-在 React-VTable 中，props的更新会触发VTable的updateOption（或setRecords），如果手动调整了列宽，则会导致列宽重置为初始状态。如果需要保留列宽，可以配置`keepColumnWidthChange` props为true。需要注意的是，在列表中，需要给每个`ListColumn`配置`key`作为唯一标识，透视表中不需要。
+在 React-VTable 中，props 的更新会触发 VTable 的 updateOption（或 setRecords），如果手动调整了列宽，则会导致列宽重置为初始状态。如果需要保留列宽，可以配置`keepColumnWidthChange` props 为 true。需要注意的是，在列表中，需要给每个`ListColumn`配置`key`作为唯一标识，透视表中不需要。
 
 ```jsx
 <ListTable records={records} keepColumnWidthChange={true}>
