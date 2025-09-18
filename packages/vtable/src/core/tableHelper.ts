@@ -70,7 +70,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
     if (isArray(table.internalProps.dataConfig?.groupByRules)) {
       rowHierarchyType = 'tree';
     }
-    if (tableWithPlugins.pluginManager?.getPluginByName('Master Detail Plugin')) {
+    if (tableWithPlugins.pluginManager.getPluginByName('Master Detail Plugin')) {
       rowHierarchyType = 'grid';
     }
     const newDataSource = (table.internalProps.dataSource = CachedDataSource.ofArray(
