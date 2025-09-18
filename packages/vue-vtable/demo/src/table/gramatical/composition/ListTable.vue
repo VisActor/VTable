@@ -54,7 +54,7 @@ const tableOptions = ref({
     contextMenuItems: ['copy', 'paste', 'delete', '...']
   },
   keyboardOptions:{
-    // ctrlMultiSelect: false,
+    ctrlMultiSelect: false,
     shiftMultiSelect: false,
   },
   select: {

@@ -109,8 +109,8 @@ export function updateSelectPosition(
     // isCtrl=true 和 disableCtrlMultiSelect=true 时，应该可以多选
     const _disableCtrlMultiSelect = (!isCtrl || disableCtrlMultiSelect) && !(isCtrl && disableCtrlMultiSelect);
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    if (isShift && currentRange && !disableShiftMultiSelect) {
-      if ((!isCtrl || disableCtrlMultiSelect) && _disableCtrlMultiSelect) {
+    if (isShift && currentRange) {
+      if (!isCtrl || disableCtrlMultiSelect) {
         cellPos.col = col;
         cellPos.row = row;
       }
@@ -152,6 +152,10 @@ export function updateSelectPosition(
         }
       } else {
         currentRange.end = { col, row };
+      }
+      // 禁用shift多选时，选中范围的end应该和start一致
+      if (disableShiftMultiSelect) {
+        currentRange.end = currentRange.start;
       }
       scenegraph.deleteLastSelectedRangeComponents();
       scenegraph.updateCellSelectBorder(currentRange);
