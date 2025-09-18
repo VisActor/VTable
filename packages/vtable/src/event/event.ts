@@ -267,11 +267,12 @@ export class EventManager {
         return false;
       }
 
+      const disableCtrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
       this.table.stateManager.updateSelectPos(
         eventArgs.col,
         eventArgs.row,
         eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+        (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && disableCtrlMultiSelect,
         false,
         isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
@@ -325,21 +326,22 @@ export class EventManager {
             updateCol = eventArgs.col;
           }
         }
-
+        const disableCtrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
         this.table.stateManager.updateSelectPos(
           isSelectMoving ? updateCol : currentRange.end.col,
           isSelectMoving ? updateRow : currentRange.end.row,
           true,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && disableCtrlMultiSelect,
           false,
           !isSelectMoving
         );
       } else {
+        const disableCtrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
         this.table.stateManager.updateSelectPos(
           eventArgs.col,
           eventArgs.row,
           eventArgs.event.shiftKey,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && disableCtrlMultiSelect,
           false,
           !isSelectMoving
         );

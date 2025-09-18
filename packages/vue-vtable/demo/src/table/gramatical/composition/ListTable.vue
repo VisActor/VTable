@@ -54,7 +54,8 @@ const tableOptions = ref({
     contextMenuItems: ['copy', 'paste', 'delete', '...']
   },
   keyboardOptions:{
-    ctrlMultiSelect: false
+    // ctrlMultiSelect: false,
+    shiftMultiSelect: false,
   },
   select: {
     ignoreCtrlForSelectCells: true
@@ -74,7 +75,7 @@ window.update = () => {
 };
 const handleSelectCell = (args) => {
   console.log(args,'args',tableRef)
-  tableRef.value.vTableInstance.selectCells([ { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },  { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } }])
+  // tableRef.value.vTableInstance.selectCells([ { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },  { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } }])
 }
 // 定义 handleDropdownMenuClick 方法
 const handleDropdownMenuClick = args => {
