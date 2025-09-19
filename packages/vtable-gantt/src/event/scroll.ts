@@ -22,9 +22,9 @@ export function handleWhell(
   if (event.ctrlKey) {
     event.preventDefault(); // 阻止默认滚动行为
 
-    // 如果禁用了缩放功能，则不执行缩放
+    // 如果禁用了缩放功能或没有配置zoomScale，则不执行缩放
     const mouseWheelEnabled = gantt.options.zoomScale?.enabled;
-    if (mouseWheelEnabled === false) {
+    if (mouseWheelEnabled !== true) {
       return;
     }
 

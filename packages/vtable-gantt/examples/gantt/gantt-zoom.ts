@@ -1224,12 +1224,32 @@ export function createTable() {
   //   },
   //   ...
   // ]
+  const existingControls = document.getElementById('zoom-controls');
+  if (existingControls) {
+    existingControls.remove();
+  }
+
   const ganttInstance = new Gantt(document.getElementById(CONTAINER_ID)!, option);
   (window as any).ganttInstance = ganttInstance;
   ganttInstance.setRecords(records);
 
   // 创建缩放控制按钮
-  createZoomControls(ganttInstance);
+  const zoomControlsContainer = createZoomControls(ganttInstance);
+
+  const cleanup = () => {
+    if (zoomControlsContainer && zoomControlsContainer.parentNode) {
+      zoomControlsContainer.parentNode.removeChild(zoomControlsContainer);
+    }
+  };
+
+  window.addEventListener('beforeunload', cleanup);
+
+  const originalRelease = ganttInstance.release.bind(ganttInstance);
+  ganttInstance.release = function () {
+    cleanup();
+    window.removeEventListener('beforeunload', cleanup);
+    originalRelease();
+  };
 
   ganttInstance.on('scroll', e => {
     console.log('scroll', e);
