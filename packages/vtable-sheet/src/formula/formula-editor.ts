@@ -34,14 +34,6 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
         const handler = (e: Event) => {
           const cursorPos = this.element.selectionStart;
           if (cursorPos !== null && cursorPos !== undefined) {
-            console.log(
-              'event',
-              e,
-              'old',
-              this.sheet.formulaManager.lastKnownCursorPosInFormulaInput,
-              'new',
-              cursorPos
-            );
             this.sheet.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
             this.sheet.formulaManager.inputingElement = this.element;
           }
@@ -74,7 +66,6 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     }
 
     const value = this.element.value;
-    console.log('handleFormulaInput', value);
     // 同步内容到顶部输入栏
     this.sheet.formulaUIManager.formulaInput.value = value;
     // const inputEvent = new Event('input', { bubbles: true });
@@ -253,7 +244,6 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
           formulaInput.value,
           this.sheet.formulaManager.lastKnownCursorPosInFormulaInput
         );
-        console.log('test formula complete', newValue, this.sheet.formulaManager.inputIsParamMode);
         if (this.sheet.formulaManager.inputIsParamMode.inParamMode) {
           // // 如果公式不完整，不退出编辑状态  TODO 这里不应该只判断完整性，如这种情况下按住ctrl连续点选 =SUM(H5) 这种情况应该允许继续编辑输入点选单元格范围
           // if (!formulaManager.isFormulaComplete(newValue)) {

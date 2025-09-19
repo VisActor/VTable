@@ -59,7 +59,6 @@ export class FormulaUIManager {
       formulaInput.addEventListener(eventType, e => {
         const cursorPos = formulaInput.selectionStart;
         if (cursorPos !== null && cursorPos !== undefined) {
-          console.log('event', e, 'old', this.sheet.formulaManager.lastKnownCursorPosInFormulaInput, 'new', cursorPos);
           this.sheet.formulaManager.lastKnownCursorPosInFormulaInput = cursorPos;
           this.sheet.formulaManager.inputingElement = formulaInput;
         }
@@ -103,7 +102,6 @@ export class FormulaUIManager {
     });
 
     formulaInput.addEventListener('blur', () => {
-      console.log('blur', formulaInput.selectionStart);
       if (this.sheet.formulaManager.formulaWorkingOnCell) {
         return;
       }
@@ -320,7 +318,6 @@ export class FormulaUIManager {
             const cellValue = activeWorkSheet.getCellValue(selection.startRow, selection.startCol);
             formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
           }
-          console.log('222 formulaInput.value', formulaInput.value);
         } catch (e) {
           console.warn('Error updating formula input:', e);
           formulaInput.value = '';
@@ -408,7 +405,6 @@ export class FormulaUIManager {
    * @param event 事件
    */
   private handleFormulaKeydown(event: KeyboardEvent): void {
-    console.log('handleFormulaKeydown');
     const activeWorkSheet = this.sheet.getActiveSheet();
     if (!activeWorkSheet) {
       return;
@@ -466,7 +462,6 @@ export class FormulaUIManager {
           // // 在公式栏中显示计算结果
           // input.value = result.error ? '#ERROR!' : String(result.value);
           this.isFormulaBarShowingResult = true;
-          console.log('isFormulaBarShowingResult', true);
           input.blur();
           setTimeout(() => {
             this.sheet.formulaManager.formulaWorkingOnCell = null;

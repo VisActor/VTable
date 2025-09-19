@@ -94,21 +94,18 @@ export function clearPageSelection(): void {
       // 方法1: removeAllRanges() - 标准方法，最广泛支持
       if (typeof selection.removeAllRanges === 'function') {
         selection.removeAllRanges();
-        console.log('使用 removeAllRanges() 清空selection');
         return;
       }
 
       // 方法2: empty() - IE 和一些旧浏览器
       if (typeof (selection as any).empty === 'function') {
         (selection as any).empty();
-        console.log('使用 empty() 清空selection');
         return;
       }
 
       // 方法3: collapse() - 备用方法
       if (typeof selection.collapse === 'function') {
         selection.collapse(document.body, 0);
-        console.log('使用 collapse() 清空selection');
         return;
       }
 

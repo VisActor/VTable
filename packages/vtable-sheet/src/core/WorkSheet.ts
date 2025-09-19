@@ -252,7 +252,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
       // 监听选择变化事件（多选时）
       this.tableInstance.on('selected_changed' as any, (event: any) => {
-        console.log('selected_changed', this.tableInstance.eventManager.isDraging);
         // 判断是drag过程中的选中单元格变化
         if (!this.tableInstance.eventManager.isDraging) {
           if (!this.vtableSheet.formulaManager.formulaWorkingOnCell) {

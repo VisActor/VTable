@@ -155,7 +155,6 @@ export class MenuManager {
     this.menuContainer.classList.remove('active');
   }
   handleMenuClick(menuKey: MainMenuItemKey) {
-    console.log('menuKey click', menuKey);
     const tableInstance = this.sheet.getActiveSheet().tableInstance;
 
     switch (menuKey) {

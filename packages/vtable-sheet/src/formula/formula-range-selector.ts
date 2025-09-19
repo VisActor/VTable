@@ -335,7 +335,6 @@ export class FormulaRangeSelector {
    * @param event 事件
    */
   handleCellValueChanged(event: CellValueChangedEvent): void {
-    console.log('handleCellValueChanged', event);
     const activeWorkSheet = this.formulaManager.sheet.getActiveSheet();
     const formulaManager = this.formulaManager.sheet.formulaManager;
 
@@ -456,7 +455,6 @@ export class FormulaRangeSelector {
    * 处理范围选择模式下的单元格选中事件
    */
   handleSelectionChangedForRangeMode(event: any): void {
-    console.log('handleSelectionChangedForRangeMode', event);
     const activeWorkSheet = this.formulaManager.sheet.getActiveSheet();
     const formulaWorkingOnCell = this.formulaManager.formulaWorkingOnCell;
     const formulaManager = this.formulaManager.sheet.formulaManager;

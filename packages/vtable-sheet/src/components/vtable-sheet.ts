@@ -751,7 +751,7 @@ export default class VTableSheet {
       return;
     }
 
-    console.log(`恢复 Sheet ${sheetDefine.sheetKey} 的筛选状态:`, sheetDefine.filterState);
+    // console.log(`恢复 Sheet ${sheetDefine.sheetKey} 的筛选状态:`, sheetDefine.filterState);
 
     // 等待表格初始化完成
     setTimeout(() => {
@@ -759,7 +759,6 @@ export default class VTableSheet {
         const filterPlugin = sheet.tableInstance.pluginManager.getPluginByName('Filter') as any;
         if (filterPlugin) {
           filterPlugin.setFilterState(sheetDefine.filterState);
-          console.log(`Sheet ${sheetDefine.sheetKey} 筛选状态恢复完成`);
         } else {
           console.warn(`Sheet ${sheetDefine.sheetKey} 未找到筛选插件或插件不支持 setFilterState 方法`);
         }

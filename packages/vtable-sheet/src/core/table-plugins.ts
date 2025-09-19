@@ -200,7 +200,6 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: C
       col: number,
       row: number
     ) => {
-      console.log('beforeShowAdjustMenuItems', menuItems, table, col, row);
       let isColumnSeriesNumber = false;
       let isHeaderCell = false;
       let isBodyCell = false;
@@ -251,7 +250,6 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: C
     },
     menuClickCallback: {
       set_filter: (args: MenuClickEventArgs, table: VTable.ListTable) => {
-        console.log('set_filter', args, table);
         // 更新 sheetDefine 配置
         sheetDefine.columns[args.colIndex].filter = true;
 
@@ -269,7 +267,6 @@ function createContextMenuItems(sheetDefine: ISheetDefine, userPluginOptions?: C
         table.updateOption(newOptions, { clearColWidthCache: false, clearRowHeightCache: false });
       },
       cancel_filter: (args: MenuClickEventArgs, table: VTable.ListTable) => {
-        console.log('cancel_filter', args, table);
         // 更新 sheetDefine 配置
         sheetDefine.columns[args.colIndex].filter = false;
 

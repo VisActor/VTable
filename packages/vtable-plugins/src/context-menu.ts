@@ -29,9 +29,11 @@ export interface ContextMenuOptions {
    * 以这里配置的为准 ，没有匹配的menuKey时，则使用内部默认的菜单项处理逻辑。*/
   menuClickCallback?:
     | MenuClickCallback
-    | {
+    | ({
         [key in MenuKey]?: MenuClickCallback;
-      };
+      } & {
+        [key: string]: MenuClickCallback | undefined;
+      });
 
   beforeShowAdjustMenuItems?: (
     menuItems: MenuItemOrSeparator[],

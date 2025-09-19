@@ -144,7 +144,6 @@ export class FormulaAutocomplete {
       const cellSuggestions = this.generateCellSuggestions(searchTerm);
       this.items.push(...cellSuggestions);
     }
-    console.log('updateSuggestions', context, this.items);
     this.renderDropdown();
   }
 
