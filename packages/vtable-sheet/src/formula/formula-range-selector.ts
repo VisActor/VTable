@@ -314,7 +314,7 @@ export class FormulaRangeSelector {
    * @param formulaInput 公式输入框
    * @param addressFromCoord 坐标转地址函数
    */
-  handleSelectionChanged(
+  private handleSelectionChanged(
     selections: CellRange[],
     formulaInput: HTMLInputElement,
     isCtrlAddSelection: boolean,

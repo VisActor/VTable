@@ -9,8 +9,11 @@ import type {
   CellRange,
   CellValue,
   CellValueChangedEvent,
+  CellClickEvent,
+  SelectionChangedEvent,
   IFormulaManagerOptions
 } from '../ts-types';
+import { WorkSheetEventType } from '../ts-types';
 import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
@@ -247,7 +250,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         }
       });
 
-      // 监听选择变化事件（多选时）- 优化：移除console.log调试代码
+      // 监听选择变化事件（多选时）
       this.tableInstance.on('selected_changed' as any, (event: any) => {
         console.log('selected_changed', this.tableInstance.eventManager.isDraging);
         // 判断是drag过程中的选中单元格变化
@@ -262,18 +265,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
           this.handleCellSelected(event);
         }
         this.handleSelectionChanged(event);
-        // if (this.vtableSheet.formulaManager.formulaWorkingOnCell) {
-        //   //#region 在完整公式状态下 计算完结果 可以退出编辑状态  并重新响应重新选中的单元格
-        //   this.vtableSheet.formulaManager.inputIsParamMode = detectFunctionParameterPosition(
-        //     this.vtableSheet.formulaManager.inputingElement.value,
-        //     this.vtableSheet.formulaManager.lastKnownCursorPosInFormulaInput
-        //   );
-        //   if (!this.vtableSheet.formulaManager.inputIsParamMode.inParamMode) {
-        //     this.vtableSheet.formulaManager.formulaWorkingOnCell = null;
-        //     this.handleCellSelected(event);
-        //   }
-        // }
-        //#endregion
       });
 
       // 监听拖拽选择结束事件 - 优化：移除console.log和debugger调试代码
@@ -306,8 +297,15 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       endCol: event.col
     };
 
-    // 触发事件给父组件
-    this.fire('cell-selected', event);
+    // 使用事件类型枚举触发事件给父组件
+    const cellSelectedEvent: CellClickEvent = {
+      row: event.row,
+      col: event.col,
+      value: event.value,
+      cellElement: event.cellElement,
+      originalEvent: event.originalEvent
+    };
+    this.fire(WorkSheetEventType.CELL_CLICK, cellSelectedEvent);
   }
 
   /**
@@ -324,7 +322,16 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: r.end.col
       };
     }
-    this.fire('selection-changed', event);
+    // 保持原始事件结构，同时确保类型符合定义
+    const selectionChangedEvent: SelectionChangedEvent = {
+      row: event.row,
+      col: event.col,
+      value: event.value,
+      ranges: event.ranges,
+      cells: event.cells,
+      originalEvent: event.originalEvent
+    };
+    this.fire(WorkSheetEventType.SELECTION_CHANGED, selectionChangedEvent);
   }
 
   /**
@@ -343,7 +350,13 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         endCol: last.col
       };
     }
-    this.fire('selection-end', event);
+    // 保持原始事件结构，同时确保类型符合定义
+    const selectionEndEvent: SelectionChangedEvent = {
+      ranges: event.ranges,
+      cells: event.cells,
+      originalEvent: event.originalEvent
+    };
+    this.fire(WorkSheetEventType.SELECTION_END, selectionEndEvent);
   }
 
   /**
@@ -351,12 +364,13 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * @param event 值变更事件
    */
   private handleCellValueChanged(event: any): void {
-    this.fire('cell-value-changed', {
+    const cellValueChangedEvent: CellValueChangedEvent = {
       row: event.row,
       col: event.col,
       oldValue: event.rawValue,
       newValue: event.changedValue
-    });
+    };
+    this.fire(WorkSheetEventType.CELL_VALUE_CHANGED, cellValueChangedEvent);
   }
 
   /**

@@ -6,6 +6,7 @@ import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
 import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent } from '../ts-types';
+import { WorkSheetEventType } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
 import { FormulaAutocomplete } from '../formula/formula-autocomplete';
@@ -669,11 +670,11 @@ export default class VTableSheet {
       theme: sheetDefine.theme?.tableTheme || this.options.theme?.tableTheme
     } as any);
 
-    // 注册事件 - 使用预先绑定的事件处理方法
-    sheet.on('cell-selected', this.eventManager.handleCellSelectedBind);
-    sheet.on('cell-value-changed', this.eventManager.handleCellValueChangedBind);
-    sheet.on('selection-changed', this.eventManager.handleSelectionChangedForRangeModeBind);
-    sheet.on('selection-end', this.eventManager.handleSelectionChangedForRangeModeBind);
+    // 注册事件 - 使用预先绑定的事件处理方法和WorkSheetEventType枚举
+    sheet.on(WorkSheetEventType.CELL_CLICK, this.eventManager.handleCellClickBind);
+    sheet.on(WorkSheetEventType.CELL_VALUE_CHANGED, this.eventManager.handleCellValueChangedBind);
+    sheet.on(WorkSheetEventType.SELECTION_CHANGED, this.eventManager.handleSelectionChangedForRangeModeBind);
+    sheet.on(WorkSheetEventType.SELECTION_END, this.eventManager.handleSelectionChangedForRangeModeBind);
 
     // 在公式管理器中添加这个sheet
     try {

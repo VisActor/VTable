@@ -153,4 +153,8 @@ Supports common formula error handling:
 - Cell addresses use A1 format, such as A1, B2, C3, etc.
 - Range references use a colon separator, such as A1:B10
 
-**Currently, the formula capabilities are not fully complete. Features such as formula saving and formula linkage processing will be gradually improved in future updates.**
+**The formula capabilities are not fully complete**
+**The formula linkage processing, formula and sorting, and dragging rows and columns have conflicts**
+**If other cell editors are manually configured, the formula capabilities will be disabled.**
+**The formula capabilities will be gradually improved in future updates.**
+**Welcome to participate in the contribution of the formula capabilities.**

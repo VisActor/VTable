@@ -1,25 +1,28 @@
-import type { CellCoord } from '../ts-types';
+import type { CellClickEvent, CellValueChangedEvent, SelectionChangedEvent } from '../ts-types';
 import type VTableSheet from '../components/vtable-sheet';
-import type { FormulaUIManager } from '../formula/formula-ui-manager';
 
+/**
+ * 事件管理器类
+ * 负责处理VTableSheet组件的事件系统中转和基础DOM事件
+ */
 export class EventManager {
   private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
 
   // 预先绑定的事件处理方法
-  readonly handleCellSelectedBind: () => void;
-  readonly handleCellValueChangedBind: (event: any) => void;
-  readonly handleSelectionChangedForRangeModeBind: (event: any) => void;
+  readonly handleCellClickBind: (event: CellClickEvent) => void;
+  readonly handleCellValueChangedBind: (event: CellValueChangedEvent) => void;
+  readonly handleSelectionChangedForRangeModeBind: (event: SelectionChangedEvent) => void;
 
   /**
-   * Creates a new EventManager instance
-   * @param sheet The Sheet instance
+   * 创建事件管理器实例
+   * @param sheet VTableSheet实例
    */
   constructor(sheet: VTableSheet) {
     this.sheet = sheet;
 
     // 预先绑定事件处理方法
-    this.handleCellSelectedBind = this.handleCellSelected.bind(this);
+    this.handleCellClickBind = this.handleCellClick.bind(this);
     this.handleCellValueChangedBind = this.handleCellValueChanged.bind(this);
     this.handleSelectionChangedForRangeModeBind = this.handleSelectionChangedForRangeMode.bind(this);
 
@@ -27,7 +30,7 @@ export class EventManager {
   }
 
   /**
-   * 设置事件监听
+   * 设置DOM事件监听
    */
   private setupEventListeners(): void {
     // 获取Sheet元素
@@ -57,7 +60,7 @@ export class EventManager {
   }
 
   /**
-   * 添加事件监听
+   * 添加DOM事件监听
    * @param target 事件目标
    * @param eventType 事件类型
    * @param handler 事件处理函数
@@ -70,8 +73,9 @@ export class EventManager {
   /**
    * 处理单元格选择事件
    * 这个方法处理从Worksheet冒泡上来的cell-selected事件
+   * @param event 单元格选择事件数据
    */
-  handleCellSelected(): void {
+  handleCellClick(event: CellClickEvent): void {
     // 如果在公式编辑状态，不处理
     if (this.sheet.formulaManager.formulaWorkingOnCell) {
       return;
@@ -86,15 +90,23 @@ export class EventManager {
 
   /**
    * 处理单元格值变更事件
+   * @param event 单元格值变更事件数据
    */
-  handleCellValueChanged(event: any): void {
+  handleCellValueChanged(event: CellValueChangedEvent): void {
+    // 处理公式相关逻辑
     this.sheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
   }
-  handleSelectionChangedForRangeMode(event: any): void {
+
+  /**
+   * 处理选择范围变化事件
+   * @param event 选择范围变化事件数据
+   */
+  handleSelectionChangedForRangeMode(event: SelectionChangedEvent): void {
+    // 处理公式相关逻辑
     this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
   }
 
-  // 原有方法保持不变
+  // 原有DOM事件处理方法保持不变
   private handleMouseDown(event: MouseEvent): void {
     // 原有逻辑保持不变
   }
@@ -139,24 +151,13 @@ export class EventManager {
     // 原有逻辑保持不变
   }
 
+  /**
+   * 处理窗口大小变化事件
+   * @param event UI事件
+   */
   private handleWindowResize(event: UIEvent): void {
     // 更新Sheet大小
     this.sheet.resize();
-  }
-
-  private getCellFromMouseCoords(x: number, y: number): CellCoord {
-    // 原有实现保持不变
-    return {
-      row: 0,
-      col: 0
-    };
-  }
-
-  /**
-   * 获取FormulaUIManager实例
-   */
-  private getFormulaUIManager(): FormulaUIManager | null {
-    return (this.sheet as any).formulaUIManager || null;
   }
 
   /**
@@ -165,7 +166,7 @@ export class EventManager {
   release(): void {
     const element = this.sheet.getContainer();
 
-    // 移除所有事件监听器
+    // 移除所有DOM事件监听器
     for (const [key, handler] of this.boundHandlers.entries()) {
       const eventType = key.split('-')[0];
 
