@@ -803,7 +803,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.frozenRowCount = frozenRowCount;
     this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
   }
-
+  /**
+   * 设置冻结行数 不赋值options.frozenRowCount。供内部逻辑调用
+   */
+  _setFrozenRowCount(frozenRowCount: number) {
+    this.internalProps.frozenRowCount = frozenRowCount;
+    this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
+  }
   get rightFrozenColCount(): number {
     return this.internalProps?.layoutMap?.rightFrozenColCount ?? this.internalProps?.rightFrozenColCount ?? 0;
   }

@@ -548,8 +548,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     table.rowCount = layoutMap.rowCount ?? 0;
     // table.frozenColCount = layoutMap.rowHeaderLevelCount; //这里不要这样写 这个setter会检查扁头宽度 可能将frozenColCount置为0
     table.internalProps.frozenColCount = layoutMap.rowHeaderLevelCount ?? 0;
-    // table.frozenRowCount = layoutMap.headerLevelCount;
-    table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
+    // 不能使用frozenRowCount setter 因为会把options.frozenRowCount赋值
+    table._setFrozenRowCount(Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0));
     if (table.bottomFrozenRowCount !== (layoutMap?.bottomFrozenRowCount ?? 0)) {
       table.bottomFrozenRowCount = layoutMap?.bottomFrozenRowCount ?? 0;
     }

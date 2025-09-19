@@ -740,7 +740,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
       if (this.options.frozenColCount >= this.colCount) {
         this.internalProps.frozenColCount = 0;
       }
-      table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
+      // 不能使用frozenRowCount setter 因为会把options.frozenRowCount赋值
+      table._setFrozenRowCount(Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0));
 
       if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
         table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
