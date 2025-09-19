@@ -260,6 +260,13 @@
             "zh": "甘特图导出",
             "en": "Gantt Export"
           }
+        },
+        {
+          "path": "gantt_zoom_scale",
+          "title": {
+            "zh": "智能缩放",
+            "en": "Smart Zoom Scale"
+          }
         }
       ]
     },

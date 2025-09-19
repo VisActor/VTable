@@ -26,7 +26,69 @@ The Gantt chart smart zoom feature provides multi-level timeline display schemes
 // import * as VTableGantt from '@visactor/vtable-gantt';
 let ganttInstance;
 
+// Force cleanup of all possible existing zoom control panels
+// First try to call any previously existing global cleanup function
+if (typeof window.cleanupZoomControls === 'function') {
+  window.cleanupZoomControls();
+}
+
+const existingControls = document.getElementById('zoom-controls');
+if (existingControls) {
+  existingControls.remove();
+}
+
+// Additional cleanup: find all possible zoom control panels
+const allZoomControls = document.querySelectorAll('[id*="zoom-control"], .zoom-controls, [class*="zoom-control"]');
+allZoomControls.forEach(element => {
+  if (element && element.parentNode) {
+    element.parentNode.removeChild(element);
+  }
+});
+
+// Clean up possible floating elements remaining in body
+const floatingElements = document.querySelectorAll('div[style*="position: fixed"][style*="bottom"][style*="right"]');
+floatingElements.forEach(element => {
+  // Check if it contains zoom-related text content
+  if (
+    element.textContent &&
+    (element.textContent.includes('Zoom') ||
+      element.textContent.includes('zoom') ||
+      element.textContent.includes('In') ||
+      element.textContent.includes('Out'))
+  ) {
+    element.remove();
+  }
+});
+
 const records = [
+  {
+    id: 8,
+    title: 'User Research',
+    start: '2024-06-15',
+    end: '2024-07-10',
+    progress: 100
+  },
+  {
+    id: 9,
+    title: 'Competitive Analysis',
+    start: '2024-06-20',
+    end: '2024-07-15',
+    progress: 100
+  },
+  {
+    id: 10,
+    title: 'Technical Research',
+    start: '2024-06-25',
+    end: '2024-07-20',
+    progress: 90
+  },
+  {
+    id: 11,
+    title: 'Risk Assessment',
+    start: '2024-07-10',
+    end: '2024-07-25',
+    progress: 85
+  },
   {
     id: 1,
     title: 'Project Initiation',
@@ -453,8 +515,8 @@ const option = {
   records,
   taskListTable: {
     columns,
-    tableWidth: 400,
-    minTableWidth: 300,
+    tableWidth: 200,
+    minTableWidth: 200,
     maxTableWidth: 600
   },
   // Smart zoom configuration
@@ -674,6 +736,9 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
+// Ensure ganttInstance can be properly cleaned up by the documentation system
+window[CONTAINER_ID] = ganttInstance;
+
 /**
  * Create zoom control buttons
  */
@@ -682,17 +747,21 @@ function createZoomControls(ganttInstance) {
   const controlsContainer = document.createElement('div');
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
-    position: relative;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    background: #f8f9fa;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
-    margin-bottom: 16px;
+    gap: 8px;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
     font-family: Arial, sans-serif;
+    min-width: 140px;
+    max-height: 80vh;
+    overflow-y: auto;
   `;
 
   // Create title
@@ -700,11 +769,10 @@ function createZoomControls(ganttInstance) {
   title.textContent = 'Zoom Controls';
   title.style.cssText = `
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
+    margin-bottom: 8px;
     color: #333;
-    margin-right: 16px;
-    align-self: center;
-    min-width: 100px;
+    text-align: center;
   `;
   controlsContainer.appendChild(title);
 
@@ -712,24 +780,23 @@ function createZoomControls(ganttInstance) {
   const buttonsContainer = document.createElement('div');
   buttonsContainer.style.cssText = `
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
   `;
 
   // Zoom in 10% button
   const zoomInBtn = document.createElement('button');
   zoomInBtn.textContent = 'Zoom In 10%';
   zoomInBtn.style.cssText = `
-    padding: 8px 12px;
+    flex: 1;
+    padding: 6px 8px;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
     transition: background-color 0.2s;
-    min-width: 100px;
   `;
   zoomInBtn.onmouseover = () => {
     zoomInBtn.style.background = '#45a049';
@@ -750,16 +817,15 @@ function createZoomControls(ganttInstance) {
   const zoomOutBtn = document.createElement('button');
   zoomOutBtn.textContent = 'Zoom Out 10%';
   zoomOutBtn.style.cssText = `
-    padding: 8px 12px;
+    flex: 1;
+    padding: 6px 8px;
     background: #f44336;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
     transition: background-color 0.2s;
-    min-width: 100px;
   `;
   zoomOutBtn.onmouseover = () => {
     zoomOutBtn.style.background = '#da190b';
@@ -784,19 +850,20 @@ function createZoomControls(ganttInstance) {
   if (ganttInstance.zoomScaleManager) {
     const levelSelectorContainer = document.createElement('div');
     levelSelectorContainer.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      background: #f9f9f9;
+      padding: 8px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
     `;
 
     const levelTitle = document.createElement('div');
-    levelTitle.textContent = 'Level:';
+    levelTitle.textContent = 'Zoom Level Selection:';
     levelTitle.style.cssText = `
-      font-weight: 500;
-      font-size: 12px;
+      font-weight: bold;
+      font-size: 11px;
+      margin-bottom: 6px;
       color: #333;
-      min-width: 50px;
     `;
     levelSelectorContainer.appendChild(levelTitle);
 
@@ -805,10 +872,9 @@ function createZoomControls(ganttInstance) {
 
     const radioGroup = document.createElement('div');
     radioGroup.style.cssText = `
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
     `;
 
     levels.forEach((level, index) => {
@@ -819,27 +885,16 @@ function createZoomControls(ganttInstance) {
         display: flex;
         align-items: center;
         cursor: pointer;
-        font-size: 12px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        background: white;
-        transition: all 0.2s;
-        white-space: nowrap;
+        font-size: 10px;
+        padding: 1px 3px;
+        border-radius: 2px;
+        transition: background-color 0.2s;
       `;
       radioContainer.onmouseover = () => {
-        radioContainer.style.backgroundColor = '#f0f8ff';
-        radioContainer.style.borderColor = '#2196F3';
+        radioContainer.style.backgroundColor = '#e8f4fd';
       };
       radioContainer.onmouseout = () => {
-        const radio = radioContainer.querySelector('input[type="radio"]');
-        if (radio.checked) {
-          radioContainer.style.backgroundColor = '#e3f2fd';
-          radioContainer.style.borderColor = '#2196F3';
-        } else {
-          radioContainer.style.backgroundColor = 'white';
-          radioContainer.style.borderColor = '#ddd';
-        }
+        radioContainer.style.backgroundColor = 'transparent';
       };
 
       const radio = document.createElement('input');
@@ -847,27 +902,17 @@ function createZoomControls(ganttInstance) {
       radio.name = 'zoomLevel';
       radio.value = index.toString();
       radio.style.cssText = `
-        margin-right: 6px;
+        margin-right: 4px;
+        transform: scale(0.8);
       `;
 
       // Check current level
       if (index === ganttInstance.zoomScaleManager?.getCurrentLevel()) {
         radio.checked = true;
-        radioContainer.style.backgroundColor = '#e3f2fd';
-        radioContainer.style.borderColor = '#2196F3';
       }
 
       radio.onchange = () => {
         if (radio.checked) {
-          // Update all container styles
-          const allContainers = radioGroup.querySelectorAll('label');
-          allContainers.forEach(container => {
-            container.style.backgroundColor = 'white';
-            container.style.borderColor = '#ddd';
-          });
-          radioContainer.style.backgroundColor = '#e3f2fd';
-          radioContainer.style.borderColor = '#2196F3';
-
           // Switch to the middle state of the corresponding level
           ganttInstance.zoomScaleManager?.setZoomPosition({
             levelNum: index
@@ -879,9 +924,11 @@ function createZoomControls(ganttInstance) {
       const label = document.createElement('span');
       label.textContent = `L${index}: ${minUnit?.unit}×${minUnit?.step}`;
       label.style.cssText = `
-        color: #333;
+        color: #555;
         user-select: none;
-        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       `;
 
       radioContainer.appendChild(radio);
@@ -896,18 +943,8 @@ function createZoomControls(ganttInstance) {
     ganttInstance.on('zoom', () => {
       const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel();
       const radios = radioGroup.querySelectorAll('input[name="zoomLevel"]');
-      const containers = radioGroup.querySelectorAll('label');
-
       radios.forEach((radio, index) => {
         radio.checked = index === currentLevel;
-        const container = containers[index];
-        if (index === currentLevel) {
-          container.style.backgroundColor = '#e3f2fd';
-          container.style.borderColor = '#2196F3';
-        } else {
-          container.style.backgroundColor = 'white';
-          container.style.borderColor = '#ddd';
-        }
       });
     });
   }
@@ -916,15 +953,13 @@ function createZoomControls(ganttInstance) {
   const statusDisplay = document.createElement('div');
   statusDisplay.id = 'zoom-status';
   statusDisplay.style.cssText = `
-    background: white;
-    padding: 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #333;
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    line-height: 1.3;
+    color: #666;
     border: 1px solid #ddd;
-    margin-top: 12px;
-    font-family: monospace;
   `;
   controlsContainer.appendChild(statusDisplay);
 
@@ -949,12 +984,12 @@ function createZoomControls(ganttInstance) {
     const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel() ?? 'N/A';
 
     statusDisplay.innerHTML = `
-      <strong>Status:</strong> 
-      Timeline Column Width: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px | 
-      Current Time Unit: ${scale?.unit} × ${scale?.step} | 
-      Current Level: ${currentLevel} | 
-      TimePerPixel: ${currentTimePerPixel.toFixed(0)} | 
-      Zoom Range: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
+      <strong>Status:</strong><br>
+      • Timeline Column Width: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px<br>
+      • Current Time Unit: ${scale?.unit} × ${scale?.step}<br>
+      • Current Level: ${currentLevel}<br>
+      • TimePerPixel: ${currentTimePerPixel.toFixed(0)}<br>
+      • Zoom Range: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
     `;
   }
 
@@ -966,9 +1001,8 @@ function createZoomControls(ganttInstance) {
     updateStatusDisplay();
   });
 
-  // Add control panel before gantt container
-  const ganttContainer = document.getElementById(CONTAINER_ID);
-  ganttContainer.parentNode.insertBefore(controlsContainer, ganttContainer);
+  // Add control panel to page
+  document.body.appendChild(controlsContainer);
 
   // Return control panel element for subsequent operations
   return controlsContainer;
@@ -977,224 +1011,81 @@ function createZoomControls(ganttInstance) {
 // Create zoom control interface
 const zoomControlsContainer = createZoomControls(ganttInstance);
 
-// Cleanup when page unloads
+// Global cleanup function
 const cleanup = () => {
+  // Clean up our created control panel
   if (zoomControlsContainer && zoomControlsContainer.parentNode) {
     zoomControlsContainer.parentNode.removeChild(zoomControlsContainer);
   }
+
+  // Additional safety: clean up all possible remaining elements again
+  const allControls = document.querySelectorAll('#zoom-controls, [id*="zoom-control"]');
+  allControls.forEach(el => el.remove());
+
+  // Clean up floating elements
+  const floatingElements = document.querySelectorAll('div[style*="position: fixed"][style*="bottom"][style*="right"]');
+  floatingElements.forEach(element => {
+    if (
+      element.textContent &&
+      (element.textContent.includes('Zoom') ||
+        element.textContent.includes('zoom') ||
+        element.textContent.includes('In') ||
+        element.textContent.includes('Out'))
+    ) {
+      element.remove();
+    }
+  });
 };
 
+// Multiple cleanup safeguards
 window.addEventListener('beforeunload', cleanup);
+window.addEventListener('pagehide', cleanup);
 
 // Override release method to ensure cleanup
 const originalRelease = ganttInstance.release.bind(ganttInstance);
 ganttInstance.release = function () {
   cleanup();
   window.removeEventListener('beforeunload', cleanup);
+  window.removeEventListener('pagehide', cleanup);
   originalRelease();
+};
+
+// Store cleanup function globally for other calls
+window.cleanupZoomControls = cleanup;
+```
+
+## Feature Description
+
+The Gantt chart smart zoom scale feature provides multi-level timeline zooming capabilities that automatically switch to appropriate time scale combinations based on different zoom levels.
+
+### Key Features
+
+- **Multi-level Zooming**: Support defining multiple zoom levels, each corresponding to different time scale combinations
+- **Automatic Switching**: Automatically select the most suitable time scale display based on current zoom state
+- **Interactive Zooming**: Support mouse wheel zooming (hold `Ctrl` key and scroll) and programmatic zoom control
+- **Priority Override**: When enabled, overrides the static configuration of `timelineHeader.scales`
+
+### Basic Usage
+
+```javascript
+const ganttOptions = {
+  zoomScale: {
+    enabled: true, // Enable smart zoom feature
+    levels: [
+      // Level 0: Month-Week combination (coarsest)
+      [
+        { unit: 'month', step: 1 },
+        { unit: 'week', step: 1 }
+      ],
+      // Level 1: Month-Week-Day combination
+      [
+        { unit: 'month', step: 1 },
+        { unit: 'week', step: 1 },
+        { unit: 'day', step: 4 }
+      ]
+    ]
+  }
 };
 ```
 
-## Zoom Methods
-
-Users can zoom through the following methods after enabling the `zoomScale` feature:
-
-- **Zoom In**: Hold `Ctrl` key and scroll mouse wheel up or pinch to zoom in
-- **Zoom Out**: Hold `Ctrl` key and scroll mouse wheel down or pinch to zoom out
-- **Zoom Center**: Zooming will be centered at the mouse pointer position
-
-## Configuration Details
-
-### zoomScale Configuration Structure
-
-```typescript
-interface IZoomScale {
-  enabled: boolean; // Whether to enable smart zoom
-  levels: ITimelineScale[][]; // Multi-level time scale configuration
-}
-```
-
-### Level Configuration Description
-
-Each level is an array of time scales, arranged from coarse to fine granularity:
-
-- **Level 0**: Month-Week combination (coarsest, suitable for viewing long-term projects)
-- **Level 1**: Month-Week-Day combination (suitable for viewing monthly plans)
-
-```typescript
-levels: [
-  // Level 0: Month-Week combination (coarsest)
-  [
-    {
-      unit: 'month',
-      step: 1,
-      format: date => {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
-      }
-    },
-    {
-      unit: 'week',
-      step: 1,
-      format: date => {
-        const weekNum = Math.ceil(
-          (date.startDate.getDate() + new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) / 7
-        );
-        return `Week ${weekNum}`;
-      }
-    }
-  ],
-  // Level 1: Month-Day combination
-  [
-    {
-      unit: 'month',
-      step: 1,
-      format: date => {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
-      }
-    },
-    {
-      unit: 'week',
-      step: 1,
-      format: date => {
-        const weekNum = Math.ceil(
-          (date.startDate.getDate() + new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) / 7
-        );
-        return `Week ${weekNum}`;
-      }
-    },
-    {
-      unit: 'day',
-      step: 4,
-      format: date => date.startDate.getDate().toString()
-    }
-  ]
-];
-```
-
-## API Usage
-
-### Get Zoom Manager
-
-```javascript
-const zoomManager = ganttInstance.zoomScaleManager;
-```
-
-### Get Zoom State
-
-#### 1. Get Detailed Zoom State - `getCurrentZoomState()`
-
-Get detailed information about the current zoom state.
-
-```javascript
-const state = zoomManager.getCurrentZoomState();
-console.log('Current Level:', state.levelNum); // Level index
-console.log('Min Time Unit:', state.minUnit); // Minimum time unit
-console.log('Time Step:', state.step); // Step size
-console.log('Column Width:', state.currentColWidth); // Current column width
-```
-
-**Return Type:**
-
-```typescript
-interface ZoomState {
-  levelNum: number; // Current level index
-  minUnit: string; // Minimum time unit
-  step: number; // Time step
-  currentColWidth: number; // Current column width
-}
-```
-
-#### 2. Get Current Level - `getCurrentLevel()`
-
-Get only the current level index.
-
-```javascript
-const currentLevel = zoomManager.getCurrentLevel();
-console.log('Current Level:', currentLevel); // Returns number like 0, 1, 2...
-```
-
-### Zoom Operation Methods
-
-#### 1. Zoom by Percentage - `zoomByPercentage(percentage, center?, centerX?)`
-
-Zoom based on a percentage of the global zoom range, automatically selecting the appropriate level.
-
-```javascript
-// Basic usage
-zoomManager.zoomByPercentage(10); // Zoom in 10%
-zoomManager.zoomByPercentage(-10); // Zoom out 10%
-
-// Specify zoom center
-zoomManager.zoomByPercentage(15, true, 300); // Zoom in 15% centered at X coordinate 300
-```
-
-**Parameter Description:**
-
-- `percentage` (number): Zoom percentage, positive for zoom in, negative for zoom out
-- `center` (boolean, optional): Whether to maintain view center, default is true
-- `centerX` (number, optional): X coordinate of zoom center, default is view center
-
-#### 2. Set Zoom State - `setZoomPosition(params)`
-
-Precisely set to a specific zoom state, supporting multiple parameter combinations.
-
-```javascript
-// Method 1: Set by level number and column width
-zoomManager.setZoomPosition({
-  levelNum: 2, // Switch to level 2
-  colWidth: 60 // Set column width to 60px
-});
-
-// Method 2: Set by time unit and step
-zoomManager.setZoomPosition({
-  minUnit: 'day', // Minimum time unit is day
-  step: 1, // Step size is 1
-  colWidth: 80 // Set column width to 80px (optional)
-});
-
-// Method 3: Switch level only (use middle state of level)
-zoomManager.setZoomPosition({
-  levelNum: 3
-});
-```
-
-**Parameter Description:**
-
-- `levelNum` (number, optional): Target level index
-- `minUnit` (string, optional): Minimum time unit ('year', 'month', 'week', 'day', 'hour', 'minute', 'second')
-- `step` (number, optional): Time step
-- `colWidth` (number, optional): Target column width, uses level's middle state if not specified
-
-**Return Value:** boolean - Whether the operation was successful
-
-## Best Practices
-
-### 1. Level Design Principles
-
-- **Coarse to Fine**: Level 0 should be the coarsest time scale, higher levels should be more refined
-- **Reasonable Transitions**: Time granularity differences between adjacent levels should not be too large
-- **Practical Priority**: Design appropriate time scale combinations based on actual scenarios
-- **Reasonable Level Count**: Recommend controlling to 3-6 levels
-
-### 2. Performance Optimization
-
-- **Appropriate Column Width**: Recommend minimum time unit column width between 40-100px for each level
-- **Efficient Rendering**: Avoid too many levels that might impact performance
-
-### 3. User Experience
-
-- **Provide Zoom Hints**: Inform users they can use Ctrl+scroll wheel to zoom
-- **Status Feedback**: Display current zoom status and level information in real-time
-- **Smooth Transitions**: Avoid abrupt jumps during zooming
-
-## Notes
-
-1. **Enabling Condition**: Smart zoom functionality only works when `zoomScale.enabled` is `true`
-2. **Mouse Wheel**: Need to hold `Ctrl` key and scroll mouse wheel to zoom
-3. **Level Switching**: System automatically selects the most appropriate level based on current `timePerPixel` value
-4. **Compatibility**: Smart zoom functionality overrides `timelineHeader.scales` configuration
-5. **Event Listening**: Can listen to `zoom` events to get zoom status changes
-
-By properly configuring the smart zoom functionality, users can get the optimal Gantt chart viewing experience at different time dimensions.
+For more detailed configuration and API usage, please refer to the [Smart Zoom Scale Tutorial](../../guide/gantt/gantt_zoom_scale).

@@ -26,7 +26,68 @@ option: Gantt#zoomScale
 // import * as VTableGantt from '@visactor/vtable-gantt';
 let ganttInstance;
 
+// 强制清理所有可能存在的缩放控制面板
+// 首先尝试调用之前可能存在的全局清理函数
+if (typeof window.cleanupZoomControls === 'function') {
+  window.cleanupZoomControls();
+}
+
+const existingControls = document.getElementById('zoom-controls');
+if (existingControls) {
+  existingControls.remove();
+}
+
+// 额外清理：查找所有可能的缩放控制面板
+const allZoomControls = document.querySelectorAll('[id*="zoom-control"], .zoom-controls, [class*="zoom-control"]');
+allZoomControls.forEach(element => {
+  if (element && element.parentNode) {
+    element.parentNode.removeChild(element);
+  }
+});
+
+// 清理可能残留在body中的悬浮元素
+const floatingElements = document.querySelectorAll('div[style*="position: fixed"][style*="bottom"][style*="right"]');
+floatingElements.forEach(element => {
+  // 检查是否包含缩放相关的文本内容
+  if (
+    element.textContent &&
+    (element.textContent.includes('缩放') ||
+      element.textContent.includes('放大') ||
+      element.textContent.includes('缩小'))
+  ) {
+    element.remove();
+  }
+});
+
 const records = [
+  {
+    id: 8,
+    title: '用户调研',
+    start: '2024-06-15',
+    end: '2024-07-10',
+    progress: 100
+  },
+  {
+    id: 9,
+    title: '竞品分析',
+    start: '2024-06-20',
+    end: '2024-07-15',
+    progress: 100
+  },
+  {
+    id: 10,
+    title: '技术预研',
+    start: '2024-06-25',
+    end: '2024-07-20',
+    progress: 90
+  },
+  {
+    id: 11,
+    title: '风险评估',
+    start: '2024-07-10',
+    end: '2024-07-25',
+    progress: 85
+  },
   {
     id: 1,
     title: '项目启动',
@@ -333,34 +394,6 @@ const records = [
     progress: 35
   },
   {
-    id: 8,
-    title: '用户调研',
-    start: '2024-06-15',
-    end: '2024-07-10',
-    progress: 100
-  },
-  {
-    id: 9,
-    title: '竞品分析',
-    start: '2024-06-20',
-    end: '2024-07-15',
-    progress: 100
-  },
-  {
-    id: 10,
-    title: '技术预研',
-    start: '2024-06-25',
-    end: '2024-07-20',
-    progress: 90
-  },
-  {
-    id: 11,
-    title: '风险评估',
-    start: '2024-07-10',
-    end: '2024-07-25',
-    progress: 85
-  },
-  {
     id: 12,
     title: '资源规划',
     start: '2024-07-05',
@@ -453,8 +486,8 @@ const option = {
   records,
   taskListTable: {
     columns,
-    tableWidth: 400,
-    minTableWidth: 300,
+    tableWidth: 200,
+    minTableWidth: 200,
     maxTableWidth: 600
   },
   // 智能缩放配置
@@ -674,6 +707,9 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
+// 确保ganttInstance能被文档系统正确清理
+window[CONTAINER_ID] = ganttInstance;
+
 /**
  * 创建缩放控制按钮
  */
@@ -682,17 +718,21 @@ function createZoomControls(ganttInstance) {
   const controlsContainer = document.createElement('div');
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
-    position: relative;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    background: #f8f9fa;
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #e9ecef;
-    margin-bottom: 16px;
+    gap: 8px;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
     font-family: Arial, sans-serif;
+    min-width: 140px;
+    max-height: 80vh;
+    overflow-y: auto;
   `;
 
   // 创建标题
@@ -700,11 +740,10 @@ function createZoomControls(ganttInstance) {
   title.textContent = '缩放控制';
   title.style.cssText = `
     font-weight: bold;
-    font-size: 14px;
+    font-size: 13px;
+    margin-bottom: 8px;
     color: #333;
-    margin-right: 16px;
-    align-self: center;
-    min-width: 80px;
+    text-align: center;
   `;
   controlsContainer.appendChild(title);
 
@@ -712,24 +751,23 @@ function createZoomControls(ganttInstance) {
   const buttonsContainer = document.createElement('div');
   buttonsContainer.style.cssText = `
     display: flex;
-    gap: 8px;
-    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
   `;
 
   // 放大10%按钮
   const zoomInBtn = document.createElement('button');
   zoomInBtn.textContent = '放大10%';
   zoomInBtn.style.cssText = `
-    padding: 8px 12px;
+    flex: 1;
+    padding: 6px 8px;
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
     transition: background-color 0.2s;
-    min-width: 80px;
   `;
   zoomInBtn.onmouseover = () => {
     zoomInBtn.style.background = '#45a049';
@@ -750,16 +788,15 @@ function createZoomControls(ganttInstance) {
   const zoomOutBtn = document.createElement('button');
   zoomOutBtn.textContent = '缩小10%';
   zoomOutBtn.style.cssText = `
-    padding: 8px 12px;
+    flex: 1;
+    padding: 6px 8px;
     background: #f44336;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
     transition: background-color 0.2s;
-    min-width: 80px;
   `;
   zoomOutBtn.onmouseover = () => {
     zoomOutBtn.style.background = '#da190b';
@@ -784,19 +821,20 @@ function createZoomControls(ganttInstance) {
   if (ganttInstance.zoomScaleManager) {
     const levelSelectorContainer = document.createElement('div');
     levelSelectorContainer.style.cssText = `
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      background: #f9f9f9;
+      padding: 8px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
     `;
 
     const levelTitle = document.createElement('div');
-    levelTitle.textContent = '级别:';
+    levelTitle.textContent = '缩放级别选择:';
     levelTitle.style.cssText = `
-      font-weight: 500;
-      font-size: 12px;
+      font-weight: bold;
+      font-size: 11px;
+      margin-bottom: 6px;
       color: #333;
-      min-width: 40px;
     `;
     levelSelectorContainer.appendChild(levelTitle);
 
@@ -805,10 +843,9 @@ function createZoomControls(ganttInstance) {
 
     const radioGroup = document.createElement('div');
     radioGroup.style.cssText = `
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
     `;
 
     levels.forEach((level, index) => {
@@ -819,27 +856,16 @@ function createZoomControls(ganttInstance) {
         display: flex;
         align-items: center;
         cursor: pointer;
-        font-size: 12px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        background: white;
-        transition: all 0.2s;
-        white-space: nowrap;
+        font-size: 10px;
+        padding: 1px 3px;
+        border-radius: 2px;
+        transition: background-color 0.2s;
       `;
       radioContainer.onmouseover = () => {
-        radioContainer.style.backgroundColor = '#f0f8ff';
-        radioContainer.style.borderColor = '#2196F3';
+        radioContainer.style.backgroundColor = '#e8f4fd';
       };
       radioContainer.onmouseout = () => {
-        const radio = radioContainer.querySelector('input[type="radio"]');
-        if (radio.checked) {
-          radioContainer.style.backgroundColor = '#e3f2fd';
-          radioContainer.style.borderColor = '#2196F3';
-        } else {
-          radioContainer.style.backgroundColor = 'white';
-          radioContainer.style.borderColor = '#ddd';
-        }
+        radioContainer.style.backgroundColor = 'transparent';
       };
 
       const radio = document.createElement('input');
@@ -847,27 +873,17 @@ function createZoomControls(ganttInstance) {
       radio.name = 'zoomLevel';
       radio.value = index.toString();
       radio.style.cssText = `
-        margin-right: 6px;
+        margin-right: 4px;
+        transform: scale(0.8);
       `;
 
       // 检查当前级别
       if (index === ganttInstance.zoomScaleManager?.getCurrentLevel()) {
         radio.checked = true;
-        radioContainer.style.backgroundColor = '#e3f2fd';
-        radioContainer.style.borderColor = '#2196F3';
       }
 
       radio.onchange = () => {
         if (radio.checked) {
-          // 更新所有容器样式
-          const allContainers = radioGroup.querySelectorAll('label');
-          allContainers.forEach(container => {
-            container.style.backgroundColor = 'white';
-            container.style.borderColor = '#ddd';
-          });
-          radioContainer.style.backgroundColor = '#e3f2fd';
-          radioContainer.style.borderColor = '#2196F3';
-
           // 切换到对应级别的中间状态
           ganttInstance.zoomScaleManager?.setZoomPosition({
             levelNum: index
@@ -879,9 +895,11 @@ function createZoomControls(ganttInstance) {
       const label = document.createElement('span');
       label.textContent = `L${index}: ${minUnit?.unit}×${minUnit?.step}`;
       label.style.cssText = `
-        color: #333;
+        color: #555;
         user-select: none;
-        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       `;
 
       radioContainer.appendChild(radio);
@@ -896,18 +914,8 @@ function createZoomControls(ganttInstance) {
     ganttInstance.on('zoom', () => {
       const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel();
       const radios = radioGroup.querySelectorAll('input[name="zoomLevel"]');
-      const containers = radioGroup.querySelectorAll('label');
-
       radios.forEach((radio, index) => {
         radio.checked = index === currentLevel;
-        const container = containers[index];
-        if (index === currentLevel) {
-          container.style.backgroundColor = '#e3f2fd';
-          container.style.borderColor = '#2196F3';
-        } else {
-          container.style.backgroundColor = 'white';
-          container.style.borderColor = '#ddd';
-        }
       });
     });
   }
@@ -916,15 +924,13 @@ function createZoomControls(ganttInstance) {
   const statusDisplay = document.createElement('div');
   statusDisplay.id = 'zoom-status';
   statusDisplay.style.cssText = `
-    background: white;
-    padding: 12px;
-    border-radius: 4px;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #333;
+    background: #f5f5f5;
+    padding: 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    line-height: 1.3;
+    color: #666;
     border: 1px solid #ddd;
-    margin-top: 12px;
-    font-family: monospace;
   `;
   controlsContainer.appendChild(statusDisplay);
 
@@ -949,12 +955,12 @@ function createZoomControls(ganttInstance) {
     const currentLevel = ganttInstance.zoomScaleManager?.getCurrentLevel() ?? 'N/A';
 
     statusDisplay.innerHTML = `
-      <strong>状态:</strong> 
-      时间轴列宽: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px | 
-      当前时间单位: ${scale?.unit} × ${scale?.step} | 
-      当前级别: ${currentLevel} | 
-      TimePerPixel: ${currentTimePerPixel.toFixed(0)} | 
-      缩放范围: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
+      <strong>状态:</strong><br>
+      • 时间轴列宽: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px<br>
+      • 当前时间单位: ${scale?.unit} × ${scale?.step}<br>
+      • 当前级别: ${currentLevel}<br>
+      • TimePerPixel: ${currentTimePerPixel.toFixed(0)}<br>
+      • 缩放范围: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
     `;
   }
 
@@ -966,9 +972,8 @@ function createZoomControls(ganttInstance) {
     updateStatusDisplay();
   });
 
-  // 将控制面板添加到甘特图容器之前
-  const ganttContainer = document.getElementById(CONTAINER_ID);
-  ganttContainer.parentNode.insertBefore(controlsContainer, ganttContainer);
+  // 将控制面板添加到页面
+  document.body.appendChild(controlsContainer);
 
   // 返回控制面板元素，便于后续操作
   return controlsContainer;
@@ -977,203 +982,80 @@ function createZoomControls(ganttInstance) {
 // 创建缩放控制界面
 const zoomControlsContainer = createZoomControls(ganttInstance);
 
-// 页面卸载时清理
+// 全局清理函数
 const cleanup = () => {
+  // 清理我们创建的控制面板
   if (zoomControlsContainer && zoomControlsContainer.parentNode) {
     zoomControlsContainer.parentNode.removeChild(zoomControlsContainer);
   }
+
+  // 额外保险：再次清理所有可能的残留元素
+  const allControls = document.querySelectorAll('#zoom-controls, [id*="zoom-control"]');
+  allControls.forEach(el => el.remove());
+
+  // 清理悬浮元素
+  const floatingElements = document.querySelectorAll('div[style*="position: fixed"][style*="bottom"][style*="right"]');
+  floatingElements.forEach(element => {
+    if (
+      element.textContent &&
+      (element.textContent.includes('缩放') ||
+        element.textContent.includes('放大') ||
+        element.textContent.includes('缩小'))
+    ) {
+      element.remove();
+    }
+  });
 };
 
+// 多重清理保障
 window.addEventListener('beforeunload', cleanup);
+window.addEventListener('pagehide', cleanup);
 
 // 重写release方法确保清理
 const originalRelease = ganttInstance.release.bind(ganttInstance);
 ganttInstance.release = function () {
   cleanup();
   window.removeEventListener('beforeunload', cleanup);
+  window.removeEventListener('pagehide', cleanup);
   originalRelease();
+};
+
+// 在全局存储清理函数，以便其他地方也能调用
+window.cleanupZoomControls = cleanup;
+```
+
+## 功能说明
+
+甘特图智能缩放功能提供了多级别的时间轴缩放能力，能够根据不同的缩放级别自动切换合适的时间刻度组合。
+
+### 主要特性
+
+- **多级别缩放**：支持定义多个缩放级别，每个级别对应不同的时间刻度组合
+- **自动切换**：根据当前缩放状态自动选择最适合的时间刻度显示
+- **交互式缩放**：支持鼠标滚轮缩放（按住 `Ctrl` 键滚动）和程序化缩放控制
+- **优先级覆盖**：启用后会覆盖 `timelineHeader.scales` 的静态配置
+
+### 基本用法
+
+```javascript
+const ganttOptions = {
+  zoomScale: {
+    enabled: true, // 启用智能缩放功能
+    levels: [
+      // 级别0：月-周组合 (最粗糙)
+      [
+        { unit: 'month', step: 1 },
+        { unit: 'week', step: 1 }
+      ],
+      // 级别1：月-周-日组合
+      [
+        { unit: 'month', step: 1 },
+        { unit: 'week', step: 1 },
+        { unit: 'day', step: 4 }
+      ]
+    ]
+  }
 };
 ```
 
-## 缩放方法
-
-启用 `zoomScale` 功能后，用户可以通过以下方式进行缩放：
-
-- **放大**：按住 `Ctrl` 键，向上滚动鼠标滚轮或者双指放大
-- **缩小**：按住 `Ctrl` 键，向下滚动鼠标滚轮或者双指缩小
-- **缩放中心**：缩放会以鼠标指针位置为中心进行
-
-## 配置详解
-
-### zoomScale 配置结构
-
-```typescript
-interface IZoomScale {
-  enabled: boolean; // 是否启用智能缩放
-  levels: ITimelineScale[][]; // 多级别时间刻度配置
-}
-```
-
-### 级别配置说明
-
-每个级别是一个时间刻度数组，从粗粒度到细粒度排列：
-
-- **级别 0**：月-周组合（最粗糙，适合查看长期项目）
-- **级别 1**：月-周-日组合（适合查看月度计划）
-
-```typescript
-levels: [
-  // 级别0：月-周组合 (最粗糙)
-  [
-    {
-      unit: 'month',
-      step: 1,
-      format: date => {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
-      }
-    },
-    {
-      unit: 'week',
-      step: 1,
-      format: date => {
-        const weekNum = Math.ceil(
-          (date.startDate.getDate() + new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) / 7
-        );
-        return `Week ${weekNum}`;
-      }
-    }
-  ],
-  // 级别1：月-日组合
-  [
-    {
-      unit: 'month',
-      step: 1,
-      format: date => {
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
-      }
-    },
-    {
-      unit: 'week',
-      step: 1,
-      format: date => {
-        const weekNum = Math.ceil(
-          (date.startDate.getDate() + new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) / 7
-        );
-        return `Week ${weekNum}`;
-      }
-    },
-    {
-      unit: 'day',
-      step: 4,
-      format: date => date.startDate.getDate().toString()
-    }
-  ]
-];
-```
-
-## API 使用
-
-### 获取缩放管理器
-
-```javascript
-const zoomManager = ganttInstance.zoomScaleManager;
-```
-
-### 获取缩放状态
-
-#### 1. 获取详细缩放状态 - `getCurrentZoomState()`
-
-获取当前缩放的详细信息。
-
-```javascript
-const state = zoomManager.getCurrentZoomState();
-console.log('当前级别:', state.levelNum); // 级别索引
-console.log('最小时间单位:', state.minUnit); // 最小时间单位
-console.log('时间步长:', state.step); // 步长
-console.log('列宽:', state.currentColWidth); // 当前列宽
-```
-
-**返回值类型：**
-
-```typescript
-interface ZoomState {
-  levelNum: number; // 当前级别索引
-  minUnit: string; // 最小时间单位
-  step: number; // 时间步长
-  currentColWidth: number; // 当前列宽
-}
-```
-
-#### 2. 获取当前级别 - `getCurrentLevel()`
-
-仅获取当前级别索引。
-
-```javascript
-const currentLevel = zoomManager.getCurrentLevel();
-console.log('当前级别:', currentLevel); // 返回数字，如 0, 1, 2...
-```
-
-### 缩放操作方法
-
-#### 1. 按百分比缩放 - `zoomByPercentage(percentage, center?, centerX?)`
-
-根据全局缩放范围的百分比进行缩放，会自动选择合适的级别。
-
-```javascript
-// 基础用法
-zoomManager.zoomByPercentage(10); // 放大10%
-zoomManager.zoomByPercentage(-10); // 缩小10%
-
-// 指定缩放中心
-zoomManager.zoomByPercentage(15, true, 300); // 以X坐标300为中心放大15%
-```
-
-**参数说明：**
-
-- `percentage` (number): 缩放百分比，正数放大，负数缩小
-- `center` (boolean, 可选): 是否保持视图中心，默认为 true
-- `centerX` (number, 可选): 缩放中心的 X 坐标，默认为视图中心
-
-#### 2. 设置缩放状态 - `setZoomPosition(params)`
-
-精确设置到指定的缩放状态，支持多种参数组合。
-
-```javascript
-// 方式1：通过级别编号和列宽设置
-zoomManager.setZoomPosition({
-  levelNum: 2, // 切换到级别2
-  colWidth: 60 // 设置列宽为60px
-});
-
-// 方式2：通过时间单位和步长设置
-zoomManager.setZoomPosition({
-  minUnit: 'day', // 最小时间单位为天
-  step: 1, // 步长为1
-  colWidth: 80 // 设置列宽为80px（可选）
-});
-
-// 方式3：仅切换级别（使用级别的中间状态）
-zoomManager.setZoomPosition({
-  levelNum: 3
-});
-```
-
-**参数说明：**
-
-- `levelNum` (number, 可选): 目标级别索引
-- `minUnit` (string, 可选): 最小时间单位 ('year', 'month', 'week', 'day', 'hour', 'minute', 'second')
-- `step` (number, 可选): 时间步长
-- `colWidth` (number, 可选): 目标列宽，如果不指定则使用级别的中间状态
-
-**返回值：** boolean - 操作是否成功
-
-## 最佳实践
-
-### 1. 级别设计原则
-
-- **从粗到细**：级别 0 应该是最粗糙的时间刻度，级别越高越精细
-- **合理过渡**：相邻级别之间的时间粒度差异不宜过大
-- **实用性优先**：根据实际场景设计合适的时间刻度组合
-- **合理的级别数量**：建议控制在 3-6 个级别
+更多详细配置和 API 使用方法，请参考 [智能缩放教程](../../guide/gantt/gantt_zoom_scale)。
