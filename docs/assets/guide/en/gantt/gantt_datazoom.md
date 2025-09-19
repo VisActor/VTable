@@ -5,11 +5,12 @@ DataZoomAxis is a visual time range selector for Gantt charts, displayed as a sc
 ## Features
 
 - **Visual Scrollbar**: Display time range selection scrollbar at the bottom of Gantt chart
-- **Bidirectional Sync**: DataZoomAxis and Gantt chart view update synchronously in real-time
+- **Precise Range Selection**: Precisely control display time range through dragging handles
+- **Quick View Navigation**: Drag middle area to quickly move to different time periods
+- **Real-time Bidirectional Sync**: Scrollbar operations synchronize with Gantt chart view in real-time
+- **Automatic Range Limitation**: Prevent zooming beyond reasonable display ranges
+- **Responsive Design**: Automatically adapt to container size changes
 - **Smart Zoom Integration**: Perfect integration with multi-level smart zoom system
-- **Precise Range Control**: Precisely control display time range through dragging handles
-- **Quick Navigation**: Achieve quick time period jumping through clicking or dragging
-- **Automatic Limitation**: Intelligently calculate and limit reasonable zoom ranges
 
 ## Basic Configuration
 
@@ -55,10 +56,11 @@ const ganttOptions = {
 
 ### Basic Operations
 
-1. **Drag Left Handle**: Adjust the start time of display range
-2. **Drag Right Handle**: Adjust the end time of display range
-3. **Drag Middle Selection Area**: Pan the current display time range as a whole
-4. **Click Scrollbar Background**: Quickly jump to corresponding time position
+1. **Drag Left Handle**: Adjust the start time of display range, drag right to shrink range
+2. **Drag Right Handle**: Adjust the end time of display range, drag left to shrink range
+3. **Define Selection Area**: Adjust view and scrollbar to specified position
+4. **Drag Middle Selection Area**: Pan the current display time range as a whole
+5. **Scrollbar Background Area**: Click to quickly jump to corresponding time position
 
 ### Bidirectional Sync Mechanism
 

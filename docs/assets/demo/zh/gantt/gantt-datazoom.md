@@ -731,7 +731,7 @@ function createZoomControls(ganttInstance) {
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
     position: fixed;
-    bottom: 20px;
+    top: 180px;
     right: 20px;
     display: flex;
     gap: 8px;
@@ -1037,24 +1037,3 @@ ganttInstance.release = function () {
 // 在全局存储清理函数，以便其他地方也能调用
 window.cleanupZoomControls = cleanup;
 ```
-
-## 功能说明
-
-DataZoomAxis 是甘特图的可视化时间范围选择器，以滚动条的形式显示在甘特图底部，为用户提供直观的时间导航和缩放控制功能。
-
-### DataZoomAxis 核心特性
-
-- **可视化滚动条**：在甘特图底部显示时间范围选择滚动条
-- **精确范围选择**：通过拖拽手柄精确控制显示的时间范围
-- **快速视图导航**：拖拽中间区域快速移动到不同时间段
-- **实时双向同步**：滚动条操作与甘特图视图实时同步更新
-- **自动范围限制**：防止缩放超出合理的显示范围
-- **响应式设计**：自动适配容器尺寸变化
-
-### DataZoomAxis 交互操作
-
-- **拖拽左手柄** ：调整显示范围的起始时间，向右拖拽缩小范围
-- **拖拽右手柄** ：调整显示范围的结束时间，向左拖拽缩小范围
-- **划定选择区域** ：调整视图和滚动条到指定位置
-- **拖拽中间选择区域** ：整体平移当前显示的时间范围
-- **滚动条背景区域** ：点击快速跳转到对应时间位置

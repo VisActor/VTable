@@ -86,6 +86,16 @@ export class ZoomScaleManager {
   }
 
   /**
+   * 处理表头宽度变化
+   * 当左侧表头宽度被拖拽改变时调用此方法
+   */
+  handleTableWidthChange(): void {
+    if (this.dataZoomIntegration) {
+      this.dataZoomIntegration.updateResponsive();
+    }
+  }
+
+  /**
    * 对级别进行排序：从粗糙到精细
    */
   private sortLevelsByCoarseness(): void {

@@ -990,7 +990,9 @@ function createZoomControls(ganttInstance) {
       • Current Time Unit: ${scale?.unit} × ${scale?.step}<br>
       • Current Level: ${currentLevel}<br>
       • MillisecondsPerPixel: ${currentMillisecondsPerPixel.toFixed(0)}<br>
-      • Zoom Range: ${zoomConfig?.minMillisecondsPerPixel?.toFixed(0)} ~ ${zoomConfig?.maxMillisecondsPerPixel?.toFixed(0)}
+      • Zoom Range: ${zoomConfig?.minMillisecondsPerPixel?.toFixed(0)} ~ ${zoomConfig?.maxMillisecondsPerPixel?.toFixed(
+      0
+    )}
     `;
   }
 
@@ -1054,41 +1056,3 @@ ganttInstance.release = function () {
 // Store cleanup function globally for other calls
 window.cleanupZoomControls = cleanup;
 ```
-
-## Feature Description
-
-The Gantt chart smart zoom scale feature provides multi-level timeline zooming capabilities that automatically switch to appropriate time scale combinations based on different zoom levels.
-
-### Key Features
-
-- **Multi-level Zooming**: Support defining multiple zoom levels, each corresponding to different time scale combinations
-- **Automatic Switching**: Automatically select the most suitable time scale display based on current zoom state
-- **Interactive Zooming**: Support mouse wheel zooming (hold `Ctrl` key and scroll) and programmatic zoom control
-- **Priority Override**: When enabled, overrides the static configuration of `timelineHeader.scales`
-
-### Basic Usage
-
-```javascript
-const ganttOptions = {
-  timelineHeader: {
-    zoomScale: {
-      enabled: true, // Enable smart zoom feature
-      levels: [
-        // Level 0: Month-Week combination (coarsest)
-        [
-          { unit: 'month', step: 1 },
-          { unit: 'week', step: 1 }
-        ],
-        // Level 1: Month-Week-Day combination
-        [
-          { unit: 'month', step: 1 },
-          { unit: 'week', step: 1 },
-          { unit: 'day', step: 4 }
-        ]
-      ]
-    }
-  }
-};
-```
-
-For more detailed configuration and API usage, please refer to the [Smart Zoom Scale Tutorial](../../guide/gantt/gantt_zoom_scale).
