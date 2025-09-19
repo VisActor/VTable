@@ -17,11 +17,14 @@
 ```javascript
 const ganttOptions = {
   // 其他配置...
-  zoomScale: {
-    enabled: true, // 启用智能缩放功能
-    levels: [
-      // 级别配置数组
-    ]
+  timelineHeader: {
+    // 智能缩放配置
+    zoomScale: {
+      enabled: true, // 启用智能缩放功能
+      levels: [
+        // 级别配置数组
+      ]
+    }
   }
 };
 ```
@@ -42,9 +45,10 @@ interface IZoomScale {
 ### 基础三级配置
 
 ```javascript
-zoomScale: {
-  enabled: true,
-  levels: [
+timelineHeader: {
+  zoomScale: {
+    enabled: true,
+    levels: [
     // 级别0：月-周组合 (最粗糙，适合查看长期项目)
     [
       {
@@ -110,6 +114,7 @@ zoomScale: {
       }
     ]
   ]
+  }
 }
 ```
 

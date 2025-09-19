@@ -33,7 +33,7 @@ export interface DataZoomLimits {
  */
 export class DataZoomIntegration {
   private gantt: Gantt;
-  private dataZoom: DataZoom;
+  private dataZoomAxis: DataZoom;
   private stage: any;
   private canvas: HTMLCanvasElement;
   private isUpdatingFromDataZoom = false;
@@ -150,7 +150,7 @@ export class DataZoomIntegration {
     });
 
     // 创建 DataZoom 实例
-    this.dataZoom = new DataZoom({
+    this.dataZoomAxis = new DataZoom({
       start,
       end,
       position: { x: 0, y: 0 },
@@ -169,7 +169,7 @@ export class DataZoomIntegration {
       }
     });
 
-    this.stage.defaultLayer.add(this.dataZoom as any);
+    this.stage.defaultLayer.add(this.dataZoomAxis as any);
     this.stage.render();
 
     this.lastDataZoomState = { start, end };
@@ -191,8 +191,8 @@ export class DataZoomIntegration {
       let end = event.end ?? event.detail?.end ?? event.currentTarget?.attribute?.end;
 
       if (start === undefined || end === undefined) {
-        start = this.dataZoom.attribute.start;
-        end = this.dataZoom.attribute.end;
+        start = this.dataZoomAxis.attribute.start;
+        end = this.dataZoomAxis.attribute.end;
       }
 
       if (start !== undefined && end !== undefined && !isNaN(start) && !isNaN(end)) {
@@ -204,9 +204,9 @@ export class DataZoomIntegration {
       }, 50);
     };
 
-    this.dataZoom.addEventListener('change', dataZoomChangeHandler);
+    this.dataZoomAxis.addEventListener('change', dataZoomChangeHandler);
     this.cleanupCallbacks.push(() => {
-      this.dataZoom.removeEventListener('change', dataZoomChangeHandler);
+      this.dataZoomAxis.removeEventListener('change', dataZoomChangeHandler);
     });
 
     // Gantt 滚动时同步到 DataZoom
@@ -220,12 +220,12 @@ export class DataZoomIntegration {
 
       this.isUpdatingFromGantt = true;
       const boundaries = this.getGanttViewBoundaries();
-      this.dataZoom.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
+      this.dataZoomAxis.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
 
       this.stage.render();
 
       setTimeout(() => {
-        this.dataZoom.setAttribute('disableTriggerEvent', false);
+        this.dataZoomAxis.setAttribute('disableTriggerEvent', false);
         this.isUpdatingFromGantt = false;
       }, 10);
     };
@@ -315,7 +315,7 @@ export class DataZoomIntegration {
   private updateDataZoomLimits(): void {
     const limits = this.calculateDataZoomLimits();
 
-    this.dataZoom.setAttributes({
+    this.dataZoomAxis.setAttributes({
       minSpan: limits.minRangeRatio,
       maxSpan: limits.maxRangeRatio
     });
@@ -393,7 +393,7 @@ export class DataZoomIntegration {
     setTimeout(() => {
       const boundaries = this.getGanttViewBoundaries();
       if (boundaries.startRatio > 0 || boundaries.endRatio < 1) {
-        this.dataZoom.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
+        this.dataZoomAxis.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
       }
     }, 100);
   }
@@ -402,8 +402,8 @@ export class DataZoomIntegration {
    * 手动同步 DataZoom 到 Gantt 当前视图
    */
   syncToGantt(): void {
-    const start = this.dataZoom.attribute.start || 0;
-    const end = this.dataZoom.attribute.end || 1;
+    const start = this.dataZoomAxis.attribute.start || 0;
+    const end = this.dataZoomAxis.attribute.end || 1;
     this.applyDataZoomRangeToGantt(start, end);
   }
 
@@ -413,7 +413,7 @@ export class DataZoomIntegration {
   syncToDataZoom(): void {
     const boundaries = this.getGanttViewBoundaries();
 
-    this.dataZoom.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
+    this.dataZoomAxis.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
   }
 
   /**
@@ -431,7 +431,7 @@ export class DataZoomIntegration {
    * 设置 DataZoom 的范围
    */
   setRange(start: number, end: number): void {
-    this.dataZoom.setStartAndEnd(start, end);
+    this.dataZoomAxis.setStartAndEnd(start, end);
   }
 
   /**
@@ -439,8 +439,8 @@ export class DataZoomIntegration {
    */
   getRange(): { start: number; end: number } {
     return {
-      start: this.dataZoom.attribute.start || 0,
-      end: this.dataZoom.attribute.end || 1
+      start: this.dataZoomAxis.attribute.start || 0,
+      end: this.dataZoomAxis.attribute.end || 1
     };
   }
 
@@ -470,7 +470,7 @@ export class DataZoomIntegration {
     this.canvas.style.height = `${height}px`;
 
     this.stage.resize(width, height);
-    this.dataZoom.setAttributes({
+    this.dataZoomAxis.setAttributes({
       size: { width, height }
     });
 
@@ -490,8 +490,8 @@ export class DataZoomIntegration {
     }
 
     // 保存当前的 DataZoom 状态
-    const currentStart = this.dataZoom.attribute.start;
-    const currentEnd = this.dataZoom.attribute.end;
+    const currentStart = this.dataZoomAxis.attribute.start;
+    const currentEnd = this.dataZoomAxis.attribute.end;
 
     const containerRect = container.getBoundingClientRect();
     // 计算新宽度：容器宽度减去左侧表头宽度
@@ -504,7 +504,7 @@ export class DataZoomIntegration {
     const defaultX = this.gantt.taskTableWidth || 0;
     this.updatePosition(defaultX, 0);
 
-    this.dataZoom.setStartAndEnd(currentStart, currentEnd);
+    this.dataZoomAxis.setStartAndEnd(currentStart, currentEnd);
 
     // 同步到 Gantt（可能因为宽度变化导致时间轴需要重新计算）
     setTimeout(() => {

@@ -1,6 +1,6 @@
 # 甘特图缩放滚动条
 
-DataZoom 是甘特图的可视化时间范围选择器，以滚动条的形式显示在甘特图底部，提供直观的时间导航和缩放控制功能。它与智能缩放系统无缝集成，实现双向同步的交互体验。
+DataZoomAxis 是甘特图的可视化时间范围选择器，以滚动条的形式显示在甘特图底部，提供直观的时间导航和缩放控制功能。它与智能缩放系统无缝集成，实现双向同步的交互体验。
 
 ## 功能特性
 
@@ -13,28 +13,31 @@ DataZoom 是甘特图的可视化时间范围选择器，以滚动条的形式�
 
 ## 基本配置
 
-### 启用 DataZoom
+### 启用 DataZoomAxis
 
-DataZoom 需要与智能缩放功能配合使用：
+DataZoomAxis 需要与智能缩放功能配合使用：
 
 ```javascript
 const ganttOptions = {
   // 其他配置...
-  zoomScale: {
-    enabled: true, // 启用智能缩放功能
-    dataZoom: {
-      enabled: true, // 启用 DataZoom 滚动条
-      height: 30, // 滚动条高度
-      delayTime: 10 // 事件防抖延迟
-    },
-    levels: [
-      // 智能缩放级别配置
-      [
-        { unit: 'month', step: 1 },
-        { unit: 'week', step: 1 }
+  timelineHeader: {
+    // 智能缩放配置
+    zoomScale: {
+      enabled: true, // 启用智能缩放功能
+      dataZoomAxis: {
+        enabled: true, // 启用 DataZoomAxis 滚动条
+        height: 30, // 滚动条高度
+        delayTime: 10 // 事件防抖延迟
+      },
+      levels: [
+        // 智能缩放级别配置
+        [
+          { unit: 'month', step: 1 },
+          { unit: 'week', step: 1 }
+        ]
+        // 更多级别...
       ]
-      // 更多级别...
-    ]
+    }
   }
 };
 ```
@@ -43,7 +46,7 @@ const ganttOptions = {
 
 #### 基础配置
 
-- `enabled` (boolean): 是否启用 DataZoom 功能
+- `enabled` (boolean): 是否启用 DataZoomAxis 功能
 - `width` (number): 滚动条宽度，默认自动计算
 - `height` (number): 滚动条高度，默认 30px
 - `x` (number): X 坐标偏移，默认与时间轴对齐
@@ -61,7 +64,7 @@ const ganttOptions = {
 
 ### 双向同步机制
 
-DataZoom 与甘特图之间实现了完整的双向同步：
+DataZoomAxis 与甘特图之间实现了完整的双向同步：
 
-- **甘特图 → DataZoom**：当用户通过鼠标滚轮、缩放按钮等方式改变甘特图的视图时，DataZoom 会自动更新选择范围
-- **DataZoom → 甘特图**：当用户拖拽 DataZoom 手柄时，甘特图会自动调整显示范围和缩放级别
+- **甘特图 → DataZoomAxis**：当用户通过鼠标滚轮、缩放按钮等方式改变甘特图的视图时，DataZoom 会自动更新选择范围
+- **DataZoomAxis → 甘特图**：当用户拖拽 DataZoomAxis 手柄时，甘特图会自动调整显示范围和缩放级别

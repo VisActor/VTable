@@ -23,11 +23,11 @@ ${prefix} levels(Array<Array<ITimelineScale>>)
 
 {{ use: common-gantt-timeline-scale( prefix = ${prefix} + '#') }}
 
-${prefix} dataZoom(IDataZoomConfig)
+${prefix} dataZoomAxis(IDataZoomAxisConfig)
 
-DataZoom 滚动条配置，提供可视化的时间范围选择器
+DataZoomAxis 滚动条配置，提供可视化的时间范围选择器
 
-DataZoom 以滚动条的形式显示在甘特图底部，用户可以通过拖拽手柄来精确控制显示的时间范围，实现快速导航和缩放操作。
+DataZoomAxis 以滚动条的形式显示在甘特图底部，用户可以通过拖拽手柄来精确控制显示的时间范围，实现快速导航和缩放操作。
 
 非必填
 

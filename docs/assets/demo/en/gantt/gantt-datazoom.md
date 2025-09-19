@@ -1,26 +1,27 @@
 ---
 category: examples
 group: gantt
-title: Gantt DataZoom Scrollbar
+title: Gantt DataZoomAxis Scrollbar
 cover:
 link: gantt/datazoom
-option: Gantt#zoomScale.dataZoom
+option: Gantt#zoomScale.dataZoomAxis
 ---
 
-# Gantt DataZoom Scrollbar
+# Gantt DataZoomAxis Scrollbar
 
-The Gantt DataZoom feature provides a visual time range selector that intuitively controls the display range and zoom level of the Gantt chart through dragging scrollbars. Users can precisely select time periods to view by dragging scrollbar handles, enabling quick navigation and zoom operations.
+The Gantt DataZoomAxis feature provides a visual time range selector that intuitively controls the display range and zoom level of the Gantt chart through dragging scrollbars. Users can precisely select time periods to view by dragging scrollbar handles, enabling quick navigation and zoom operations.
 
 ## Key Configuration
 
 ### Basic Configuration
 
-- `zoomScale.dataZoom.enabled`: Enable DataZoom scrollbar
-- `zoomScale.dataZoom.width`: Set DataZoom width, defaults to automatic use of Gantt timeline area width
-- `zoomScale.dataZoom.height`: Set DataZoom height (pixels), default 30
-- `zoomScale.dataZoom.x`: Set X coordinate, relative to container left, defaults to excluding left table header width
-- `zoomScale.dataZoom.y`: Set Y coordinate, relative to container bottom boundary offset, positive values downward, default 0
-- `zoomScale.dataZoom.delayTime`: Event trigger delay time (milliseconds), for debouncing, default 10
+- `timelineHeader.zoomScale.enabled`: Enable smart zoom functionality
+- `timelineHeader.zoomScale.dataZoomAxis.enabled`: Enable DataZoomAxis scrollbar
+- `timelineHeader.zoomScale.dataZoomAxis.width`: Set DataZoomAxis width, defaults to automatic use of Gantt timeline area width
+- `timelineHeader.zoomScale.dataZoomAxis.height`: Set DataZoomAxis height (pixels), default 30
+- `timelineHeader.zoomScale.dataZoomAxis.x`: Set X coordinate, relative to container left, defaults to excluding left table header width
+- `timelineHeader.zoomScale.dataZoomAxis.y`: Set Y coordinate, relative to container bottom boundary offset, positive values downward, default 0
+- `timelineHeader.zoomScale.dataZoomAxis.delayTime`: Event trigger delay time (milliseconds), for debouncing, default 10
 
 ## Code Demo
 
@@ -490,169 +491,182 @@ const option = {
     minTableWidth: 200,
     maxTableWidth: 600
   },
-  // Smart zoom configuration
-  zoomScale: {
-    enabled: true,
-    dataZoom: {
-      enabled: true,
-      height: 30,
-      delayTime: 1
+  // Timeline configuration
+  timelineHeader: {
+    colWidth: 60,
+    backgroundColor: '#f8f9fa',
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e9ecef'
     },
-    levels: [
-      // Level 0: Month-Week combination (coarsest)
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e9ecef'
+    },
+    // Smart zoom configuration
+    zoomScale: {
+      enabled: true,
+      dataZoomAxis: {
+        enabled: true,
+        height: 30,
+        delayTime: 1
+      },
+      levels: [
+        // Level 0: Month-Week combination (coarsest)
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // Level 1: Month-Day combination
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 4,
+            format: date => date.startDate.getDate().toString()
           }
-        }
-      ],
-      // Level 1: Month-Day combination
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+        ],
+        // Level 2: Month-Week-Day combination
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => date.startDate.getDate().toString()
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // Level 3: Week-Day-Hour combination (12 hours)
+        [
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 12,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours() - 1; // End time minus 1 hour, then show 59 minutes
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+            }
           }
-        },
-        {
-          unit: 'day',
-          step: 4,
-          format: date => date.startDate.getDate().toString()
-        }
-      ],
-      // Level 2: Month-Week-Day combination
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+        ],
+        // Level 4: Day-Hour combination (6 hours)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 6,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours() - 1; // End time minus 1 hour, then show 59 minutes
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+            }
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // Level 5: Day-Hour combination (1 hour)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 1,
+            format: date => {
+              const hour = date.startDate.getHours();
+              return `${hour.toString().padStart(2, '0')}:00`;
+            }
           }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format: date => date.startDate.getDate().toString()
-        }
-      ],
-      // Level 3: Week-Day-Hour combination (12 hours)
-      [
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
-          }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 12,
-          format: date => {
-            const startHour = date.startDate.getHours();
-            const endHour = date.endDate.getHours() - 1; // End time minus 1 hour, then show 59 minutes
-            return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
-          }
-        }
-      ],
-      // Level 4: Day-Hour combination (6 hours)
-      [
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 6,
-          format: date => {
-            const startHour = date.startDate.getHours();
-            const endHour = date.endDate.getHours() - 1; // End time minus 1 hour, then show 59 minutes
-            return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
-          }
-        }
-      ],
-      // Level 5: Day-Hour combination (1 hour)
-      [
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 1,
-          format: date => {
-            const hour = date.startDate.getHours();
-            return `${hour.toString().padStart(2, '0')}:00`;
-          }
-        }
+        ]
       ]
-    ]
+    }
   },
   taskBar: {
     startDateField: 'start',
@@ -668,18 +682,6 @@ const option = {
       barColor: '#4CAF50',
       completedBarColor: '#81C784',
       cornerRadius: 4
-    }
-  },
-  timelineHeader: {
-    colWidth: 60,
-    backgroundColor: '#f8f9fa',
-    horizontalLine: {
-      lineWidth: 1,
-      lineColor: '#e9ecef'
-    },
-    verticalLine: {
-      lineWidth: 1,
-      lineColor: '#e9ecef'
     }
   },
   scrollStyle: {
@@ -1034,9 +1036,9 @@ window.cleanupZoomControls = cleanup;
 
 ## Feature Description
 
-DataZoom is a visual time range selector for Gantt charts, displayed as a scrollbar at the bottom of the Gantt chart, providing intuitive time navigation and zoom control functionality.
+DataZoomAxis is a visual time range selector for Gantt charts, displayed as a scrollbar at the bottom of the Gantt chart, providing intuitive time navigation and zoom control functionality.
 
-### DataZoom Core Features
+### DataZoomAxis Core Features
 
 - **Visual Scrollbar**: Display time range selection scrollbar at the bottom of Gantt chart
 - **Precise Range Selection**: Precisely control display time range through dragging handles
@@ -1045,7 +1047,7 @@ DataZoom is a visual time range selector for Gantt charts, displayed as a scroll
 - **Automatic Range Limitation**: Prevent zooming beyond reasonable display ranges
 - **Responsive Design**: Automatically adapt to container size changes
 
-### DataZoom Interactive Operations
+### DataZoomAxis Interactive Operations
 
 - **Drag Left Handle** : Adjust display range start time, drag right to reduce range
 - **Drag Right Handle** : Adjust display range end time, drag left to reduce range

@@ -272,7 +272,7 @@
           "path": "gantt_datazoom",
           "title": {
             "zh": "甘特图缩放滚动条",
-            "en": "Gantt DataZoom Scrollbar"
+            "en": "Gantt DataZoomAxis Scrollbar"
           }
         }
       ]

@@ -1,16 +1,16 @@
 import type { ITimelineScale } from './gantt-engine';
 
 /**
- * DataZoom 配置接口
+ * DataZoomAxis 配置接口
  */
-export interface IDataZoomConfig {
-  /** 是否启用 DataZoom */
+export interface IDataZoomAxisConfig {
+  /** 是否启用 DataZoomAxis */
   enabled?: boolean;
-  /** DataZoom 容器 ID（可选，如果不提供会自动从 Gantt 实例获取） */
+  /** DataZoomAxis 容器 ID（可选，如果不提供会自动从 Gantt 实例获取） */
   containerId?: string;
-  /** DataZoom 宽度（默认自动使用 Gantt 时间轴区域宽度，即容器宽度减去左侧表头宽度） */
+  /** DataZoomAxis 宽度（默认自动使用 Gantt 时间轴区域宽度，即容器宽度减去左侧表头宽度） */
   width?: number;
-  /** DataZoom 高度 */
+  /** DataZoomAxis 高度 */
   height?: number;
   /** X 坐标（相对于容器左侧，默认排除左侧表头宽度，与时间轴内容区域对齐） */
   x?: number;
@@ -28,17 +28,20 @@ export interface IZoomScale {
   /** 是否启用 ZoomScale 功能 */
   enabled?: boolean;
 
-  /** DataZoom 集成配置 */
-  dataZoom?: IDataZoomConfig;
+  /** DataZoomAxis 集成配置 */
+  dataZoomAxis?: IDataZoomAxisConfig;
+
+  /** 最小 timePerPixel 值（毫秒/像素） */
+  minTimePerPixel?: number;
+
+  /** 最大 timePerPixel 值（毫秒/像素） */
+  maxTimePerPixel?: number;
+
+  /** 缩放步长 */
+  step?: number;
 
   /**
    * 级别定义：二维数组，每个级别是完整的 scales 组合
-   * 例如：
-   * [
-   *   [{ unit: 'month', step: 1 }, { unit: 'week', step: 1 }],  // 级别0：月-周组合
-   *   [{ unit: 'day', step: 1 }],                              // 级别1：日组合
-   *   [{ unit: 'day', step: 1 }, { unit: 'hour', step: 1 }]   // 级别2：日-小时组合
-   * ]
    */
   levels: ITimelineScale[][];
 }

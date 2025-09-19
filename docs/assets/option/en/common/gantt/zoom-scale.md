@@ -23,11 +23,11 @@ Each level's time scale configuration format is exactly the same as `timelineHea
 
 {{ use: common-gantt-timeline-scale( prefix = ${prefix} + '#') }}
 
-${prefix} dataZoom(IDataZoomConfig)
+${prefix} dataZoomAxis(IDataZoomAxisConfig)
 
-DataZoom scrollbar configuration, providing a visual time range selector
+DataZoomAxis scrollbar configuration, providing a visual time range selector
 
-DataZoom is displayed as a scrollbar at the bottom of the Gantt chart, allowing users to precisely control the display time range through dragging handles, enabling quick navigation and zoom operations.
+DataZoomAxis is displayed as a scrollbar at the bottom of the Gantt chart, allowing users to precisely control the display time range through dragging handles, enabling quick navigation and zoom operations.
 
 Optional
 

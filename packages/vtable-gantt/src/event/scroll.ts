@@ -22,7 +22,7 @@ export function handleWhell(
   if (event.ctrlKey) {
     event.preventDefault();
 
-    const mouseWheelEnabled = gantt.options.zoomScale?.enabled;
+    const mouseWheelEnabled = gantt.options.timelineHeader?.zoomScale?.enabled;
     if (mouseWheelEnabled !== true) {
       return;
     }

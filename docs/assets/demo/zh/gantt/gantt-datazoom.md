@@ -1,26 +1,27 @@
 ---
 category: examples
 group: gantt
-title: 甘特图 DataZoom 滚动条
+title: 甘特图 DataZoomAxis 滚动条
 cover:
 link: gantt/datazoom
-option: Gantt#zoomScale.dataZoom
+option: Gantt#zoomScale.dataZoomAxis
 ---
 
-# 甘特图 DataZoom 滚动条
+# 甘特图 DataZoomAxis 滚动条
 
-甘特图的 DataZoom 功能提供了可视化的时间范围选择器，通过拖拽滚动条直观地控制甘特图的显示范围和缩放级别。用户可以通过拖拽滚动条的手柄来精确选择要查看的时间段，实现快速导航和缩放操作。
+甘特图的 DataZoomAxis 功能提供了可视化的时间范围选择器，通过拖拽滚动条直观地控制甘特图的显示范围和缩放级别。用户可以通过拖拽滚动条的手柄来精确选择要查看的时间段，实现快速导航和缩放操作。
 
 ## 关键配置
 
 ### 基础配置
 
-- `zoomScale.dataZoom.enabled`: 启用 DataZoom 滚动条
-- `zoomScale.dataZoom.width`: 设置 DataZoom 宽度，默认自动使用 Gantt 时间轴区域宽度
-- `zoomScale.dataZoom.height`: 设置 DataZoom 高度（像素），默认 30
-- `zoomScale.dataZoom.x`: 设置 X 坐标，相对于容器左侧，默认排除左侧表头宽度
-- `zoomScale.dataZoom.y`: 设置 Y 坐标，相对于容器底边界的偏移，正值向下，默认 0
-- `zoomScale.dataZoom.delayTime`: 事件触发延迟时间（毫秒），用于防抖，默认 10
+- `timelineHeader.zoomScale.enabled`: 启用智能缩放功能
+- `timelineHeader.zoomScale.dataZoomAxis.enabled`: 启用 DataZoomAxis 滚动条
+- `timelineHeader.zoomScale.dataZoomAxis.width`: 设置 DataZoomAxis 宽度，默认自动使用 Gantt 时间轴区域宽度
+- `timelineHeader.zoomScale.dataZoomAxis.height`: 设置 DataZoomAxis 高度（像素），默认 30
+- `timelineHeader.zoomScale.dataZoomAxis.x`: 设置 X 坐标，相对于容器左侧，默认排除左侧表头宽度
+- `timelineHeader.zoomScale.dataZoomAxis.y`: 设置 Y 坐标，相对于容器底边界的偏移，正值向下，默认 0
+- `timelineHeader.zoomScale.dataZoomAxis.delayTime`: 事件触发延迟时间（毫秒），用于防抖，默认 10
 
 ## 代码演示
 
@@ -492,169 +493,182 @@ const option = {
     minTableWidth: 200,
     maxTableWidth: 600
   },
-  // 智能缩放配置
-  zoomScale: {
-    enabled: true,
-    dataZoom: {
-      enabled: true,
-      height: 30,
-      delayTime: 1
+  // 时间轴配置
+  timelineHeader: {
+    colWidth: 60,
+    backgroundColor: '#f8f9fa',
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e9ecef'
     },
-    levels: [
-      // 级别0：月-周组合 (最粗糙)
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e9ecef'
+    },
+    // 智能缩放配置
+    zoomScale: {
+      enabled: true,
+      dataZoomAxis: {
+        enabled: true,
+        height: 30,
+        delayTime: 1
+      },
+      levels: [
+        // 级别0：月-周组合 (最粗糙)
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // 级别1：月-日组合
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 4,
+            format: date => date.startDate.getDate().toString()
           }
-        }
-      ],
-      // 级别1：月-日组合
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+        ],
+        // 级别2：月-周-日组合
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => date.startDate.getDate().toString()
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // 级别3：周-日-小时组合 (12小时)
+        [
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 12,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+            }
           }
-        },
-        {
-          unit: 'day',
-          step: 4,
-          format: date => date.startDate.getDate().toString()
-        }
-      ],
-      // 级别2：月-周-日组合
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+        ],
+        // 级别4：日-小时组合 (6小时)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 6,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+            }
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // 级别5：日-小时组合 (1小时)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 1,
+            format: date => {
+              const hour = date.startDate.getHours();
+              return `${hour.toString().padStart(2, '0')}:00`;
+            }
           }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format: date => date.startDate.getDate().toString()
-        }
-      ],
-      // 级别3：周-日-小时组合 (12小时)
-      [
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
-          }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 12,
-          format: date => {
-            const startHour = date.startDate.getHours();
-            const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
-            return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
-          }
-        }
-      ],
-      // 级别4：日-小时组合 (6小时)
-      [
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 6,
-          format: date => {
-            const startHour = date.startDate.getHours();
-            const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
-            return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
-          }
-        }
-      ],
-      // 级别5：日-小时组合 (1小时)
-      [
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 1,
-          format: date => {
-            const hour = date.startDate.getHours();
-            return `${hour.toString().padStart(2, '0')}:00`;
-          }
-        }
+        ]
       ]
-    ]
+    }
   },
   taskBar: {
     startDateField: 'start',
@@ -670,18 +684,6 @@ const option = {
       barColor: '#4CAF50',
       completedBarColor: '#81C784',
       cornerRadius: 4
-    }
-  },
-  timelineHeader: {
-    colWidth: 60,
-    backgroundColor: '#f8f9fa',
-    horizontalLine: {
-      lineWidth: 1,
-      lineColor: '#e9ecef'
-    },
-    verticalLine: {
-      lineWidth: 1,
-      lineColor: '#e9ecef'
     }
   },
   scrollStyle: {
@@ -1036,9 +1038,9 @@ window.cleanupZoomControls = cleanup;
 
 ## 功能说明
 
-DataZoom 是甘特图的可视化时间范围选择器，以滚动条的形式显示在甘特图底部，为用户提供直观的时间导航和缩放控制功能。
+DataZoomAxis 是甘特图的可视化时间范围选择器，以滚动条的形式显示在甘特图底部，为用户提供直观的时间导航和缩放控制功能。
 
-### DataZoom 核心特性
+### DataZoomAxis 核心特性
 
 - **可视化滚动条**：在甘特图底部显示时间范围选择滚动条
 - **精确范围选择**：通过拖拽手柄精确控制显示的时间范围
@@ -1047,7 +1049,7 @@ DataZoom 是甘特图的可视化时间范围选择器，以滚动条的形式�
 - **自动范围限制**：防止缩放超出合理的显示范围
 - **响应式设计**：自动适配容器尺寸变化
 
-### DataZoom 交互操作
+### DataZoomAxis 交互操作
 
 - **拖拽左手柄** ：调整显示范围的起始时间，向右拖拽缩小范围
 - **拖拽右手柄** ：调整显示范围的结束时间，向左拖拽缩小范围

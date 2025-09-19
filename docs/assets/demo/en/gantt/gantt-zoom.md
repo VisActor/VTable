@@ -13,8 +13,8 @@ The Gantt chart smart zoom feature provides multi-level timeline display schemes
 
 ## Key Configuration
 
-- `zoomScale.enabled`: Enable smart zoom functionality
-- `zoomScale.levels`: Configure multi-level time scale combinations
+- `timelineHeader.zoomScale.enabled`: Enable smart zoom functionality
+- `timelineHeader.zoomScale.levels`: Configure multi-level time scale combinations
 - Mouse wheel zooming: Hold `Ctrl` key and scroll mouse wheel to zoom
 - API get current zoom state: Use methods provided by `getCurrentZoomState`
 - API set current zoom state: Use methods provided by `setZoomPosition`
@@ -519,164 +519,177 @@ const option = {
     minTableWidth: 200,
     maxTableWidth: 600
   },
-  // Smart zoom configuration
-  zoomScale: {
-    enabled: true,
-    levels: [
-      // Level 0: Month-Week combination (coarsest)
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+  // Timeline configuration
+  timelineHeader: {
+    colWidth: 60,
+    backgroundColor: '#f8f9fa',
+    horizontalLine: {
+      lineWidth: 1,
+      lineColor: '#e9ecef'
+    },
+    verticalLine: {
+      lineWidth: 1,
+      lineColor: '#e9ecef'
+    },
+    // Smart zoom configuration
+    zoomScale: {
+      enabled: true,
+      levels: [
+        // Level 0: Month-Week combination (coarsest)
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // Level 1: Month-Day combination
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 4,
+            format: date => date.startDate.getDate().toString()
           }
-        }
-      ],
-      // Level 1: Month-Day combination
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+        ],
+        // Level 2: Month-Week-Day combination
+        [
+          {
+            unit: 'month',
+            step: 1,
+            format: date => {
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+            }
+          },
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => date.startDate.getDate().toString()
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // Level 3: Week-Day-Hour combination (12 hours)
+        [
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 12,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours() - 1; // Subtract 1 hour from end time, then show 59 minutes
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+            }
           }
-        },
-        {
-          unit: 'day',
-          step: 4,
-          format: date => date.startDate.getDate().toString()
-        }
-      ],
-      // Level 2: Month-Week-Day combination
-      [
-        {
-          unit: 'month',
-          step: 1,
-          format: date => {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+        ],
+        // Level 4: Day-Hour combination (6 hours)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 6,
+            format: date => {
+              const startHour = date.startDate.getHours();
+              const endHour = date.endDate.getHours() - 1; // Subtract 1 hour from end time, then show 59 minutes
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+            }
           }
-        },
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
+        ],
+        // Level 5: Day-Hour combination (1 hour)
+        [
+          {
+            unit: 'day',
+            step: 1,
+            format: date => {
+              const day = date.startDate.getDate();
+              const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+              return `${day} ${monthNames[date.startDate.getMonth()]}`;
+            }
+          },
+          {
+            unit: 'hour',
+            step: 1,
+            format: date => {
+              const hour = date.startDate.getHours();
+              return `${hour.toString().padStart(2, '0')}:00`;
+            }
           }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format: date => date.startDate.getDate().toString()
-        }
-      ],
-      // Level 3: Week-Day-Hour combination (12 hours)
-      [
-        {
-          unit: 'week',
-          step: 1,
-          format: date => {
-            const weekNum = Math.ceil(
-              (date.startDate.getDate() +
-                new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
-                7
-            );
-            return `Week ${weekNum}`;
-          }
-        },
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 12,
-          format: date => {
-            const startHour = date.startDate.getHours();
-            const endHour = date.endDate.getHours() - 1; // Subtract 1 hour from end time, then show 59 minutes
-            return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
-          }
-        }
-      ],
-      // Level 4: Day-Hour combination (6 hours)
-      [
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 6,
-          format: date => {
-            const startHour = date.startDate.getHours();
-            const endHour = date.endDate.getHours() - 1; // Subtract 1 hour from end time, then show 59 minutes
-            return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
-          }
-        }
-      ],
-      // Level 5: Day-Hour combination (1 hour)
-      [
-        {
-          unit: 'day',
-          step: 1,
-          format: date => {
-            const day = date.startDate.getDate();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            return `${day} ${monthNames[date.startDate.getMonth()]}`;
-          }
-        },
-        {
-          unit: 'hour',
-          step: 1,
-          format: date => {
-            const hour = date.startDate.getHours();
-            return `${hour.toString().padStart(2, '0')}:00`;
-          }
-        }
+        ]
       ]
-    ]
+    }
   },
   taskBar: {
     startDateField: 'start',
@@ -692,18 +705,6 @@ const option = {
       barColor: '#4CAF50',
       completedBarColor: '#81C784',
       cornerRadius: 4
-    }
-  },
-  timelineHeader: {
-    colWidth: 60,
-    backgroundColor: '#f8f9fa',
-    horizontalLine: {
-      lineWidth: 1,
-      lineColor: '#e9ecef'
-    },
-    verticalLine: {
-      lineWidth: 1,
-      lineColor: '#e9ecef'
     }
   },
   frame: {
@@ -1069,21 +1070,23 @@ The Gantt chart smart zoom scale feature provides multi-level timeline zooming c
 
 ```javascript
 const ganttOptions = {
-  zoomScale: {
-    enabled: true, // Enable smart zoom feature
-    levels: [
-      // Level 0: Month-Week combination (coarsest)
-      [
-        { unit: 'month', step: 1 },
-        { unit: 'week', step: 1 }
-      ],
-      // Level 1: Month-Week-Day combination
-      [
-        { unit: 'month', step: 1 },
-        { unit: 'week', step: 1 },
-        { unit: 'day', step: 4 }
+  timelineHeader: {
+    zoomScale: {
+      enabled: true, // Enable smart zoom feature
+      levels: [
+        // Level 0: Month-Week combination (coarsest)
+        [
+          { unit: 'month', step: 1 },
+          { unit: 'week', step: 1 }
+        ],
+        // Level 1: Month-Week-Day combination
+        [
+          { unit: 'month', step: 1 },
+          { unit: 'week', step: 1 },
+          { unit: 'day', step: 4 }
+        ]
       ]
-    ]
+    }
   }
 };
 ```

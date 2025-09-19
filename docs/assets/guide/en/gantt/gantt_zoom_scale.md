@@ -17,11 +17,14 @@ The Gantt chart smart zoom scale feature provides multi-level timeline zooming c
 ```javascript
 const ganttOptions = {
   // Other configurations...
-  zoomScale: {
-    enabled: true, // Enable smart zoom feature
-    levels: [
-      // Level configuration array
-    ]
+  timelineHeader: {
+    // Smart zoom configuration
+    zoomScale: {
+      enabled: true, // Enable smart zoom feature
+      levels: [
+        // Level configuration array
+      ]
+    }
   }
 };
 ```
@@ -42,9 +45,10 @@ interface IZoomScale {
 ### Basic Three-Level Configuration
 
 ```javascript
-zoomScale: {
-  enabled: true,
-  levels: [
+timelineHeader: {
+  zoomScale: {
+    enabled: true,
+    levels: [
     // Level 0: Month-Week combination (coarsest, suitable for long-term projects)
     [
       {
@@ -110,6 +114,7 @@ zoomScale: {
       }
     ]
   ]
+  }
 }
 ```
 

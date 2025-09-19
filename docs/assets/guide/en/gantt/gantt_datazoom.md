@@ -1,11 +1,11 @@
-# Gantt DataZoom Scrollbar
+# Gantt DataZoomAxis Scrollbar
 
-DataZoom is a visual time range selector for Gantt charts, displayed as a scrollbar at the bottom of the Gantt chart, providing intuitive time navigation and zoom control functionality. It seamlessly integrates with the smart zoom system to achieve a bidirectional synchronized interactive experience.
+DataZoomAxis is a visual time range selector for Gantt charts, displayed as a scrollbar at the bottom of the Gantt chart, providing intuitive time navigation and zoom control functionality. It seamlessly integrates with the smart zoom system to achieve a bidirectional synchronized interactive experience.
 
 ## Features
 
 - **Visual Scrollbar**: Display time range selection scrollbar at the bottom of Gantt chart
-- **Bidirectional Sync**: DataZoom and Gantt chart view update synchronously in real-time
+- **Bidirectional Sync**: DataZoomAxis and Gantt chart view update synchronously in real-time
 - **Smart Zoom Integration**: Perfect integration with multi-level smart zoom system
 - **Precise Range Control**: Precisely control display time range through dragging handles
 - **Quick Navigation**: Achieve quick time period jumping through clicking or dragging
@@ -13,35 +13,38 @@ DataZoom is a visual time range selector for Gantt charts, displayed as a scroll
 
 ## Basic Configuration
 
-### Enable DataZoom
+### Enable DataZoomAxis
 
-DataZoom needs to work together with smart zoom functionality:
+DataZoomAxis needs to work together with smart zoom functionality:
 
 ```javascript
 const ganttOptions = {
   // Other configurations...
-  zoomScale: {
-    enabled: true, // Enable smart zoom functionality
-    dataZoom: {
-      enabled: true, // Enable DataZoom scrollbar
-      height: 30, // Scrollbar height
-      delayTime: 10 // Event debounce delay
-    },
-    levels: [
-      // Smart zoom level configuration
-      [
-        { unit: 'month', step: 1 },
-        { unit: 'week', step: 1 }
+  timelineHeader: {
+    // Smart zoom configuration
+    zoomScale: {
+      enabled: true, // Enable smart zoom functionality
+      dataZoomAxis: {
+        enabled: true, // Enable DataZoomAxis scrollbar
+        height: 30, // Scrollbar height
+        delayTime: 10 // Event debounce delay
+      },
+      levels: [
+        // Smart zoom level configuration
+        [
+          { unit: 'month', step: 1 },
+          { unit: 'week', step: 1 }
+        ]
+        // More levels...
       ]
-      // More levels...
-    ]
+    }
   }
 };
 ```
 
 ### Configuration Parameters
 
-- `enabled` (boolean): Whether to enable DataZoom functionality
+- `enabled` (boolean): Whether to enable DataZoomAxis functionality
 - `width` (number): Scrollbar width, automatically calculated by default
 - `height` (number): Scrollbar height, default 30px
 - `x` (number): X coordinate offset, aligned with timeline by default
@@ -59,7 +62,7 @@ const ganttOptions = {
 
 ### Bidirectional Sync Mechanism
 
-DataZoom and Gantt chart achieve complete bidirectional synchronization:
+DataZoomAxis and Gantt chart achieve complete bidirectional synchronization:
 
-- **Gantt → DataZoom**: When users change the Gantt chart view through mouse wheel, zoom buttons, etc., DataZoom automatically updates the selection range
-- **DataZoom → Gantt**: When users drag DataZoom handles, the Gantt chart automatically adjusts display range and zoom level
+- **Gantt → DataZoomAxis**: When users change the Gantt chart view through mouse wheel, zoom buttons, etc., DataZoomAxis automatically updates the selection range
+- **DataZoomAxis → Gantt**: When users drag DataZoomAxis handles, the Gantt chart automatically adjusts display range and zoom level

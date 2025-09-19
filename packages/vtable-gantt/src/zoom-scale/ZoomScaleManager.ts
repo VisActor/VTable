@@ -50,10 +50,11 @@ export class ZoomScaleManager {
    */
   private initializeZoomLimits(): void {
     const existingZoom = this.gantt.parsedOptions.zoom;
+    const zoomScaleConfig = this.config;
     this.gantt.parsedOptions.zoom = {
-      minTimePerPixel: existingZoom?.minTimePerPixel ?? this.gantt.options.zoom?.minTimePerPixel ?? 1000,
-      maxTimePerPixel: existingZoom?.maxTimePerPixel ?? this.gantt.options.zoom?.maxTimePerPixel ?? 6000000,
-      step: this.gantt.options.zoom?.step ?? 0.015
+      minTimePerPixel: existingZoom?.minTimePerPixel ?? zoomScaleConfig.minTimePerPixel ?? 1000,
+      maxTimePerPixel: existingZoom?.maxTimePerPixel ?? zoomScaleConfig.maxTimePerPixel ?? 6000000,
+      step: zoomScaleConfig.step ?? 0.015
     };
   }
 
@@ -61,7 +62,7 @@ export class ZoomScaleManager {
    * 初始化 DataZoom 集成（如果需要）
    */
   private initializeDataZoomIfNeeded(): void {
-    const dataZoomConfig = this.config.dataZoom;
+    const dataZoomConfig = this.config.dataZoomAxis;
     if (!dataZoomConfig?.enabled) {
       return;
     }
