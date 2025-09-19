@@ -31,13 +31,10 @@ export class ZoomScaleManager {
     // 根据级别阈值自动设置 zoom 的 minTimePerPixel 和 maxTimePerPixel
     this.updateZoomLimits();
 
-    // 初始化：根据默认 timePerPixel 选择合适的初始级别
-    // 因为此时 gantt 的 parsedOptions 等还未初始化完成
+    // 初始化：计算合适 timePerPixel，选择合适的级别
     if (this.config.levels.length > 0) {
-      // 使用默认的 timePerPixel (1440000ms/px, 即60px=1天) 来选择初始级别
-      const defaultTimePerPixel = (24 * 60 * 60 * 1000) / 60; // 1440000ms/px
-      const initialLevel = this.findOptimalLevel(defaultTimePerPixel);
-      this.setInitialLevel(initialLevel);
+      const initialTimePerPixel = this.calculateInitialTimePerPixel();
+      this.initializeWithTimePerPixel(initialTimePerPixel);
     }
   }
 
@@ -95,6 +92,27 @@ export class ZoomScaleManager {
     }
     this.gantt.parsedOptions.zoom.minTimePerPixel = globalMinTimePerPixel;
     this.gantt.parsedOptions.zoom.maxTimePerPixel = globalMaxTimePerPixel;
+  }
+
+  private calculateInitialTimePerPixel(): number {
+    const globalMinTimePerPixel = this.gantt.parsedOptions.zoom?.minTimePerPixel;
+    const globalMaxTimePerPixel = this.gantt.parsedOptions.zoom?.maxTimePerPixel;
+
+    if (!globalMinTimePerPixel || !globalMaxTimePerPixel) {
+      return (24 * 60 * 60 * 1000) / 60;
+    }
+    //调整初始视图所在位置
+    const initialTimePerPixel = globalMinTimePerPixel + (globalMaxTimePerPixel - globalMinTimePerPixel) * 0.3;
+
+    return initialTimePerPixel;
+  }
+
+  private initializeWithTimePerPixel(timePerPixel: number): void {
+    if (this.config.levels.length === 0) {
+      return;
+    }
+    const optimalLevel = this.findOptimalLevel(timePerPixel);
+    this.setInitialLevel(optimalLevel);
   }
 
   /**
@@ -257,5 +275,12 @@ export class ZoomScaleManager {
   }
   getCurrentLevel(): number {
     return this.currentLevelIndex;
+  }
+
+  getInitialTimePerPixel(): number {
+    if (this.config.levels.length > 0) {
+      return this.calculateInitialTimePerPixel();
+    }
+    return (24 * 60 * 60 * 1000) / 60;
   }
 }

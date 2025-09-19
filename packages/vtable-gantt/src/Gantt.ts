@@ -397,19 +397,23 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    // 优先初始化 ZoomScaleManager，让它接管 scales 设置
+    // 优先初始化 ZoomScaleManager
     if (options.zoomScale?.enabled) {
       this.zoomScaleManager = new ZoomScaleManager(this, options.zoomScale);
       this._sortScales();
     } else {
-      // 只有未启用 zoomScale 时才使用原有的 scales
       this._sortScales();
     }
 
     initOptions(this);
 
-    // 初始化timePerPixel - 默认60px = 1天
-    this.timePerPixel = (24 * 60 * 60 * 1000) / 60; // 1440000ms/px
+    // 初始化 timePerPixel
+    if (this.zoomScaleManager) {
+      this.timePerPixel = this.zoomScaleManager.getInitialTimePerPixel();
+    } else {
+      // 默认值：60px = 1天
+      this.timePerPixel = (24 * 60 * 60 * 1000) / 60; // 1440000ms/px
+    }
 
     // 初始化项目任务时间
     initProjectTaskTimes(this);
