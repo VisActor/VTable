@@ -8,9 +8,6 @@ export interface IZoomScale {
   /** 是否启用 ZoomScale 功能 */
   enabled?: boolean;
 
-  /** 是否启用鼠标滚轮缩放 */
-  enableMouseWheel?: boolean;
-
   /**
    * 最大放大限制：最精细级别（如小时）的最小列宽
    * 当达到这个列宽时，无法继续放大
@@ -26,12 +23,6 @@ export interface IZoomScale {
    * 默认值：150
    */
   maxZoomOutColumnWidth?: number;
-
-  // 向后兼容：支持旧的属性名（已废弃，请使用新名称）
-  /** @deprecated 请使用 maxZoomInColumnWidth */
-  minColumnWidth?: number;
-  /** @deprecated 请使用 maxZoomOutColumnWidth */
-  maxColumnWidth?: number;
 
   /**
    * 级别定义：二维数组，每个级别是完整的 scales 组合

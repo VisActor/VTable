@@ -205,8 +205,6 @@ export class Gantt extends EventTarget {
     markLineCreateOptions: IMarkLineCreateOptions;
 
     zoom?: {
-      // 是否启用鼠标滚轮缩放
-      enableMouseWheel?: boolean;
       // 最小时间每像素值（最大放大）
       minTimePerPixel?: number;
       // 最大时间每像素值（最大缩小）
@@ -362,25 +360,6 @@ export class Gantt extends EventTarget {
     }
   }
 
-  /**
-   * 放大时间轴
-   * @param factor 缩放因子，大于1表示放大
-   * @param center 是否保持视图中心不变
-   * @param centerX 缩放中心点X坐标
-   */
-  zoomIn(factor: number = 1.1, center: boolean = true, centerX?: number): void {
-    this.zoomByFactor(factor, center, centerX);
-  }
-
-  /**
-   * 缩小时间轴
-   * @param factor 缩放因子，小于1表示缩小
-   * @param center 是否保持视图中心不变
-   * @param centerX 缩放中心点X坐标
-   */
-  zoomOut(factor: number = 0.9, center: boolean = true, centerX?: number): void {
-    this.zoomByFactor(factor, center, centerX);
-  }
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
@@ -1555,6 +1534,38 @@ export class Gantt extends EventTarget {
   // 查询当前的 timePerPixel 值
   getCurrentTimePerPixel(): number {
     return this.timePerPixel;
+  }
+
+  /**
+   * 直接设置 timePerPixel 并重新计算时间轴
+   */
+  setTimePerPixel(timePerPixel: number): void {
+    // 应用 timePerPixel 限制
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
+
+    const oldTimePerPixel = this.timePerPixel;
+    const oldWidth = this.parsedOptions.timelineColWidth;
+
+    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, timePerPixel));
+
+    this.recalculateTimeScale();
+    this._updateSize();
+    this.scenegraph.refreshAll();
+
+    // 触发缩放事件
+    const newWidth = this.parsedOptions.timelineColWidth;
+    const scale = newWidth / oldWidth;
+
+    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
+        oldWidth,
+        newWidth,
+        scale,
+        oldTimePerPixel,
+        newTimePerPixel: this.timePerPixel
+      });
+    }
   }
 
   getCurrentZoomScaleLevel(): number {
