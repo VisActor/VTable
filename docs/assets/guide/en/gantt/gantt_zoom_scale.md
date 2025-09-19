@@ -118,6 +118,145 @@ timelineHeader: {
 }
 ```
 
+## Zoom Range Control
+
+### Understanding millisecondsPerPixel
+
+`millisecondsPerPixel` is the core concept of the Gantt chart zoom system, representing how many milliseconds each pixel represents in time. This value directly determines the time resolution and visible range of the Gantt chart.
+
+#### Concept Explanation
+
+**Basic Meaning**:
+
+- If `millisecondsPerPixel = 1000`, each pixel represents 1 second (1000 milliseconds)
+- If `millisecondsPerPixel = 60000`, each pixel represents 1 minute (60000 milliseconds)
+- If `millisecondsPerPixel = 3600000`, each pixel represents 1 hour (3600000 milliseconds)
+
+**Visual Effects**:
+
+- **Smaller values**: Finer time granularity, allowing users to see more detailed time information, but with a smaller visible time range
+- **Larger values**: Longer time spans, allowing users to see more macroscopic project views, but with less detailed information
+
+#### Practical Calculation Examples
+
+Assuming the Gantt chart timeline area width is 800 pixels:
+
+```javascript
+// Example 1: Fine-grained view
+millisecondsPerPixel: 1000  // 1 second/pixel
+Visible time range = 800 × 1000 = 800,000 milliseconds ≈ 13.3 minutes
+
+// Example 2: Medium view
+millisecondsPerPixel: 60000  // 1 minute/pixel
+Visible time range = 800 × 60000 = 48,000,000 milliseconds ≈ 13.3 hours
+
+// Example 3: Macro view
+millisecondsPerPixel: 3600000  // 1 hour/pixel
+Visible time range = 800 × 3600000 = 2,880,000,000 milliseconds ≈ 33.3 days
+```
+
+#### Common Value Reference Table
+
+| millisecondsPerPixel | Time Unit/Pixel  | Use Case                   | 800px Visible Range |
+| -------------------- | ---------------- | -------------------------- | ------------------- |
+| 100                  | 0.1 second/pixel | Ultra-fine operations      | 1.3 minutes         |
+| 1000                 | 1 second/pixel   | Detailed task management   | 13.3 minutes        |
+| 60000                | 1 minute/pixel   | Daily project management   | 13.3 hours          |
+| 3600000              | 1 hour/pixel     | Periodic planning          | 33.3 days           |
+| 86400000             | 1 day/pixel      | Long-term project planning | 2.2 years           |
+
+#### Dynamic Change Mechanism
+
+In the smart zoom system, `millisecondsPerPixel` changes dynamically based on user operations:
+
+```javascript
+// User zoom in operation (mouse wheel up)
+millisecondsPerPixel decreases → Time granularity becomes finer → See more details
+
+// User zoom out operation (mouse wheel down)
+millisecondsPerPixel increases → Time span becomes longer → See larger range
+```
+
+#### Relationship with Level Switching
+
+The system automatically selects the most appropriate time scale level based on the current `millisecondsPerPixel` value:
+
+```javascript
+// When millisecondsPerPixel is small (fine view)
+Auto-select: Second-Minute-Hour level combination
+
+// When millisecondsPerPixel is large (macro view)
+Auto-select: Month-Week-Day level combination
+```
+
+### minMillisecondsPerPixel (Maximum Zoom Level)
+
+Controls the finest time granularity users can zoom in to:
+
+```javascript
+timelineHeader: {
+  zoomScale: {
+    minMillisecondsPerPixel: 1000, // 1 second/pixel, maximum zoom level
+    // Users can zoom in at most to 1 second per pixel
+  }
+}
+```
+
+**Common Configuration Examples**:
+
+- `500`: 0.5 seconds/pixel, suitable for projects requiring second-level precision
+- `1000`: 1 second/pixel, default value, suitable for most scenarios
+- `60000`: 1 minute/pixel, suitable for projects not requiring second-level precision
+
+### maxMillisecondsPerPixel (Minimum Zoom Level)
+
+Controls the coarsest time span users can zoom out to:
+
+```javascript
+timelineHeader: {
+  zoomScale: {
+    maxMillisecondsPerPixel: 6000000, // 100 minutes/pixel, minimum zoom level
+    // Users can zoom out at most to 100 minutes per pixel
+  }
+}
+```
+
+**Common Configuration Examples**:
+
+- `3600000`: 1 hour/pixel, suitable for short-term projects
+- `6000000`: 100 minutes/pixel, default value
+- `86400000`: 1 day/pixel, suitable for long-term project planning
+
+### Practical Application Scenarios
+
+#### Short-term Detailed Projects
+
+```javascript
+timelineHeader: {
+  zoomScale: {
+    minMillisecondsPerPixel: 500,      // Finest to 0.5 seconds
+    maxMillisecondsPerPixel: 3600000,  // Coarsest to 1 hour
+    levels: [
+      // Configure hour-minute-second levels
+    ]
+  }
+}
+```
+
+#### Long-term Planning Projects
+
+```javascript
+timelineHeader: {
+  zoomScale: {
+    minMillisecondsPerPixel: 3600000,   // Finest to 1 hour
+    maxMillisecondsPerPixel: 86400000,  // Coarsest to 1 day
+    levels: [
+      // Configure year-month-week-day levels
+    ]
+  }
+}
+```
+
 ## API Usage
 
 ### Get Zoom Manager

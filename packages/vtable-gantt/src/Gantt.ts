@@ -205,19 +205,19 @@ export class Gantt extends EventTarget {
     markLineCreateOptions: IMarkLineCreateOptions;
 
     zoom?: {
-      minTimePerPixel?: number;
-      maxTimePerPixel?: number;
+      minMillisecondsPerPixel?: number;
+      maxMillisecondsPerPixel?: number;
       step?: number;
     };
   } = {} as any;
 
   //  时间缩放基准 - 每像素代表多少毫秒
-  private timePerPixel: number;
+  private millisecondsPerPixel: number;
   zoomScaleManager?: ZoomScaleManager;
 
   /**
    * 重新计算时间相关的尺寸参数
-   * 用于根据当前 timePerPixel 重新计算 timelineColWidth
+   * 用于根据当前 millisecondsPerPixel 重新计算 timelineColWidth
    */
   recalculateTimeScale(): void {
     if (this.zoomScaleManager) {
@@ -263,11 +263,11 @@ export class Gantt extends EventTarget {
 
     initOptions(this);
 
-    // 初始化 timePerPixel
+    // 初始化 millisecondsPerPixel
     if (this.zoomScaleManager) {
-      this.timePerPixel = this.zoomScaleManager.getInitialTimePerPixel();
+      this.millisecondsPerPixel = this.zoomScaleManager.getInitialMillisecondsPerPixel();
     } else {
-      this.timePerPixel = (24 * 60 * 60 * 1000) / 60;
+      this.millisecondsPerPixel = (24 * 60 * 60 * 1000) / 60;
     }
 
     // 初始化项目任务时间
@@ -1407,23 +1407,26 @@ export class Gantt extends EventTarget {
     return formatDate(date, format);
   }
 
-  // 查询当前的 timePerPixel 值
-  getCurrentTimePerPixel(): number {
-    return this.timePerPixel;
+  // 查询当前的 millisecondsPerPixel 值
+  getCurrentMillisecondsPerPixel(): number {
+    return this.millisecondsPerPixel;
   }
 
   /**
-   * 直接设置 timePerPixel 并重新计算时间轴
+   * 直接设置 millisecondsPerPixel 并重新计算时间轴
    */
-  setTimePerPixel(timePerPixel: number): void {
-    // 应用 timePerPixel 限制
-    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
-    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
+  setMillisecondsPerPixel(millisecondsPerPixel: number): void {
+    // 应用 millisecondsPerPixel 限制
+    const minMillisecondsPerPixel = this.parsedOptions.zoom?.minMillisecondsPerPixel ?? 200000;
+    const maxMillisecondsPerPixel = this.parsedOptions.zoom?.maxMillisecondsPerPixel ?? 3000000;
 
-    const oldTimePerPixel = this.timePerPixel;
+    const oldMillisecondsPerPixel = this.millisecondsPerPixel;
     const oldWidth = this.parsedOptions.timelineColWidth;
 
-    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, timePerPixel));
+    this.millisecondsPerPixel = Math.max(
+      minMillisecondsPerPixel,
+      Math.min(maxMillisecondsPerPixel, millisecondsPerPixel)
+    );
 
     this.recalculateTimeScale();
     this._updateSize();
@@ -1438,8 +1441,8 @@ export class Gantt extends EventTarget {
         oldWidth,
         newWidth,
         scale,
-        oldTimePerPixel,
-        newTimePerPixel: this.timePerPixel
+        oldMillisecondsPerPixel,
+        newMillisecondsPerPixel: this.millisecondsPerPixel
       });
     }
   }

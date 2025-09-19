@@ -946,7 +946,7 @@ function createZoomControls(ganttInstance) {
 
   // Function to update status display
   function updateStatusDisplay() {
-    const currentTimePerPixel = ganttInstance.getCurrentTimePerPixel();
+    const currentMillisecondsPerPixel = ganttInstance.getCurrentMillisecondsPerPixel();
     const scale = ganttInstance.parsedOptions.reverseSortedTimelineScales[0];
     const zoomConfig = ganttInstance.parsedOptions.zoom;
 
@@ -969,8 +969,10 @@ function createZoomControls(ganttInstance) {
       • Timeline Column Width: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px<br>
       • Current Time Unit: ${scale?.unit} × ${scale?.step}<br>
       • Current Level: ${currentLevel}<br>
-      • TimePerPixel: ${currentTimePerPixel.toFixed(0)}<br>
-      • Zoom Range: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}
+      • MillisecondsPerPixel: ${currentMillisecondsPerPixel.toFixed(0)}<br>
+      • Zoom Range: ${zoomConfig?.minMillisecondsPerPixel?.toFixed(0)} ~ ${zoomConfig?.maxMillisecondsPerPixel?.toFixed(
+      0
+    )}
     `;
   }
 

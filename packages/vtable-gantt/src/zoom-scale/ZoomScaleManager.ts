@@ -6,15 +6,15 @@ import { GANTT_EVENT_TYPE } from '../ts-types/EVENT_TYPE';
 
 /**
  * ZoomScale 管理器
- * 负责根据 timePerPixel 智能选择和切换时间轴级别
+ * 负责根据 millisecondsPerPixel 智能选择和切换时间轴级别
  */
 export class ZoomScaleManager {
   private readonly gantt: Gantt;
   readonly config: IZoomScale;
   private currentLevelIndex: number = 0;
   private levelBoundaries: number[] = [];
-  private globalMinTimePerPixel: number = 0;
-  private globalMaxTimePerPixel: number = 0;
+  private globalMinMillisecondsPerPixel: number = 0;
+  private globalMaxMillisecondsPerPixel: number = 0;
   private dataZoomIntegration: DataZoomIntegration | null = null;
 
   constructor(gantt: Gantt, config: IZoomScale) {
@@ -32,13 +32,13 @@ export class ZoomScaleManager {
     this.initializeZoomLimits();
 
     this.sortLevelsByCoarseness();
-    this.calculateGlobalTimePerPixelRange();
+    this.calculateGlobalMillisecondsPerPixelRange();
     this.calculateLevelBoundaries();
     this.updateZoomLimits();
 
     if (this.config.levels.length > 0) {
-      const initialTimePerPixel = this.calculateInitialTimePerPixel();
-      this.initializeWithTimePerPixel(initialTimePerPixel);
+      const initialMillisecondsPerPixel = this.calculateInitialMillisecondsPerPixel();
+      this.initializeWithMillisecondsPerPixel(initialMillisecondsPerPixel);
     }
 
     // 如果配置了 DataZoom，自动创建集成
@@ -52,8 +52,9 @@ export class ZoomScaleManager {
     const existingZoom = this.gantt.parsedOptions.zoom;
     const zoomScaleConfig = this.config;
     this.gantt.parsedOptions.zoom = {
-      minTimePerPixel: existingZoom?.minTimePerPixel ?? zoomScaleConfig.minTimePerPixel ?? 1000,
-      maxTimePerPixel: existingZoom?.maxTimePerPixel ?? zoomScaleConfig.maxTimePerPixel ?? 6000000,
+      minMillisecondsPerPixel: existingZoom?.minMillisecondsPerPixel ?? zoomScaleConfig.minMillisecondsPerPixel ?? 1000,
+      maxMillisecondsPerPixel:
+        existingZoom?.maxMillisecondsPerPixel ?? zoomScaleConfig.maxMillisecondsPerPixel ?? 6000000,
       step: zoomScaleConfig.step ?? 0.015
     };
   }
@@ -104,9 +105,9 @@ export class ZoomScaleManager {
   }
 
   /**
-   * 计算全局 timePerPixel 范围
+   * 计算全局 millisecondsPerPixel 范围
    */
-  private calculateGlobalTimePerPixelRange(): void {
+  private calculateGlobalMillisecondsPerPixelRange(): void {
     const levels = this.config.levels;
     if (levels.length === 0) {
       return;
@@ -140,14 +141,14 @@ export class ZoomScaleManager {
       return;
     }
 
-    this.globalMinTimePerPixel = minMinUnitMs / maxZoomInColumnWidth;
-    this.globalMaxTimePerPixel = maxMinUnitMs / maxZoomOutColumnWidth;
+    this.globalMinMillisecondsPerPixel = minMinUnitMs / maxZoomInColumnWidth;
+    this.globalMaxMillisecondsPerPixel = maxMinUnitMs / maxZoomOutColumnWidth;
 
-    // 确保 minTimePerPixel < maxTimePerPixel
-    if (this.globalMinTimePerPixel > this.globalMaxTimePerPixel) {
-      const temp = this.globalMinTimePerPixel;
-      this.globalMinTimePerPixel = this.globalMaxTimePerPixel;
-      this.globalMaxTimePerPixel = temp;
+    // 确保 minMillisecondsPerPixel < maxMillisecondsPerPixel
+    if (this.globalMinMillisecondsPerPixel > this.globalMaxMillisecondsPerPixel) {
+      const temp = this.globalMinMillisecondsPerPixel;
+      this.globalMinMillisecondsPerPixel = this.globalMaxMillisecondsPerPixel;
+      this.globalMaxMillisecondsPerPixel = temp;
     }
   }
 
@@ -163,7 +164,7 @@ export class ZoomScaleManager {
     this.levelBoundaries = [];
     const idealBoundaries: number[] = [];
 
-    idealBoundaries[levelCount] = this.globalMinTimePerPixel;
+    idealBoundaries[levelCount] = this.globalMinMillisecondsPerPixel;
 
     // 从精细级别开始计算理想边界
     for (let i = levelCount - 1; i >= 1; i--) {
@@ -175,20 +176,20 @@ export class ZoomScaleManager {
       idealBoundaries[i] = idealBoundary;
     }
 
-    idealBoundaries[0] = this.globalMaxTimePerPixel;
+    idealBoundaries[0] = this.globalMaxMillisecondsPerPixel;
     this.levelBoundaries = [...idealBoundaries];
 
     // 调整边界确保递减顺序
     for (let i = 1; i < levelCount; i++) {
       if (this.levelBoundaries[i] >= this.levelBoundaries[i - 1]) {
         const prevBoundary = this.levelBoundaries[i - 1];
-        const nextBoundary = this.levelBoundaries[i + 1] || this.globalMinTimePerPixel;
+        const nextBoundary = this.levelBoundaries[i + 1] || this.globalMinMillisecondsPerPixel;
         this.levelBoundaries[i] = (prevBoundary + nextBoundary) / 2;
       }
 
       this.levelBoundaries[i] = Math.max(
-        this.globalMinTimePerPixel,
-        Math.min(this.globalMaxTimePerPixel, this.levelBoundaries[i])
+        this.globalMinMillisecondsPerPixel,
+        Math.min(this.globalMaxMillisecondsPerPixel, this.levelBoundaries[i])
       );
     }
   }
@@ -197,33 +198,36 @@ export class ZoomScaleManager {
     if (!this.gantt.parsedOptions.zoom) {
       this.gantt.parsedOptions.zoom = {};
     }
-    this.gantt.parsedOptions.zoom.minTimePerPixel = this.globalMinTimePerPixel;
-    this.gantt.parsedOptions.zoom.maxTimePerPixel = this.globalMaxTimePerPixel;
+    this.gantt.parsedOptions.zoom.minMillisecondsPerPixel = this.globalMinMillisecondsPerPixel;
+    this.gantt.parsedOptions.zoom.maxMillisecondsPerPixel = this.globalMaxMillisecondsPerPixel;
   }
 
   /**
-   * 获取全局最小 timePerPixel
+   * 获取全局最小 millisecondsPerPixel
    */
-  getGlobalMinTimePerPixel(): number {
-    return this.globalMinTimePerPixel;
+  getGlobalMinMillisecondsPerPixel(): number {
+    return this.globalMinMillisecondsPerPixel;
   }
 
   /**
-   * 获取全局最大 timePerPixel
+   * 获取全局最大 millisecondsPerPixel
    */
-  getGlobalMaxTimePerPixel(): number {
-    return this.globalMaxTimePerPixel;
+  getGlobalMaxMillisecondsPerPixel(): number {
+    return this.globalMaxMillisecondsPerPixel;
   }
 
-  private calculateInitialTimePerPixel(): number {
-    return this.globalMinTimePerPixel + (this.globalMaxTimePerPixel - this.globalMinTimePerPixel) * 0.4;
+  private calculateInitialMillisecondsPerPixel(): number {
+    return (
+      this.globalMinMillisecondsPerPixel +
+      (this.globalMaxMillisecondsPerPixel - this.globalMinMillisecondsPerPixel) * 0.4
+    );
   }
 
-  private initializeWithTimePerPixel(timePerPixel: number): void {
+  private initializeWithMillisecondsPerPixel(millisecondsPerPixel: number): void {
     if (this.config.levels.length === 0) {
       return;
     }
-    const optimalLevel = this.findOptimalLevel(timePerPixel);
+    const optimalLevel = this.findOptimalLevel(millisecondsPerPixel);
     this.setInitialLevel(optimalLevel);
   }
 
@@ -244,16 +248,19 @@ export class ZoomScaleManager {
   }
 
   /**
-   * 根据 timePerPixel 找到最合适的级别
+   * 根据 millisecondsPerPixel 找到最合适的级别
    */
-  findOptimalLevel(timePerPixel: number): number {
-    const clampedTimePerPixel = Math.max(
-      this.globalMinTimePerPixel,
-      Math.min(this.globalMaxTimePerPixel, timePerPixel)
+  findOptimalLevel(millisecondsPerPixel: number): number {
+    const clampedMillisecondsPerPixel = Math.max(
+      this.globalMinMillisecondsPerPixel,
+      Math.min(this.globalMaxMillisecondsPerPixel, millisecondsPerPixel)
     );
 
     for (let i = 0; i < this.levelBoundaries.length - 1; i++) {
-      if (clampedTimePerPixel <= this.levelBoundaries[i] && clampedTimePerPixel > this.levelBoundaries[i + 1]) {
+      if (
+        clampedMillisecondsPerPixel <= this.levelBoundaries[i] &&
+        clampedMillisecondsPerPixel > this.levelBoundaries[i + 1]
+      ) {
         return i;
       }
     }
@@ -343,8 +350,8 @@ export class ZoomScaleManager {
     return this.currentLevelIndex;
   }
 
-  getInitialTimePerPixel(): number {
-    return this.calculateInitialTimePerPixel();
+  getInitialMillisecondsPerPixel(): number {
+    return this.calculateInitialMillisecondsPerPixel();
   }
 
   /**
@@ -357,9 +364,9 @@ export class ZoomScaleManager {
 
     const currentLevel = this.config.levels[this.currentLevelIndex];
     const minUnit = this.findMinTimeUnit(currentLevel);
-    const currentTimePerPixel = this.gantt.getCurrentTimePerPixel();
+    const currentMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
     const unitMs = this.getUnitMilliseconds(minUnit.unit, minUnit.step);
-    const currentColWidth = unitMs / currentTimePerPixel;
+    const currentColWidth = unitMs / currentMillisecondsPerPixel;
 
     return {
       minUnit: minUnit.unit,
@@ -402,31 +409,31 @@ export class ZoomScaleManager {
       return false;
     }
 
-    let targetTimePerPixel: number;
+    let targetMillisecondsPerPixel: number;
 
     if (colWidth !== undefined) {
       const targetLevel = this.config.levels[targetLevelIndex];
       const targetMinUnit = this.findMinTimeUnit(targetLevel);
       const unitMs = this.getUnitMilliseconds(targetMinUnit.unit, targetMinUnit.step);
-      targetTimePerPixel = unitMs / colWidth;
+      targetMillisecondsPerPixel = unitMs / colWidth;
 
       const upperBoundary = this.levelBoundaries[targetLevelIndex];
       const lowerBoundary = this.levelBoundaries[targetLevelIndex + 1];
 
-      if (targetTimePerPixel < lowerBoundary || targetTimePerPixel > upperBoundary) {
-        targetTimePerPixel = (upperBoundary + lowerBoundary) / 2;
+      if (targetMillisecondsPerPixel < lowerBoundary || targetMillisecondsPerPixel > upperBoundary) {
+        targetMillisecondsPerPixel = (upperBoundary + lowerBoundary) / 2;
       }
     } else {
       const upperBoundary = this.levelBoundaries[targetLevelIndex];
       const lowerBoundary = this.levelBoundaries[targetLevelIndex + 1];
-      targetTimePerPixel = (upperBoundary + lowerBoundary) / 2;
+      targetMillisecondsPerPixel = (upperBoundary + lowerBoundary) / 2;
     }
 
     if (targetLevelIndex !== this.currentLevelIndex) {
       this.switchToLevel(targetLevelIndex);
     }
 
-    this.gantt.setTimePerPixel(targetTimePerPixel);
+    this.gantt.setMillisecondsPerPixel(targetMillisecondsPerPixel);
 
     return true;
   }
@@ -472,31 +479,31 @@ export class ZoomScaleManager {
    * @param centerX 缩放中心点X坐标
    */
   zoomByPercentage(percentage: number, center: boolean = true, centerX?: number): void {
-    const currentTimePerPixel = this.gantt.getCurrentTimePerPixel();
-    const totalRange = this.globalMaxTimePerPixel - this.globalMinTimePerPixel;
-    const deltaTimePerPixel = (totalRange * percentage) / 100;
+    const currentMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
+    const totalRange = this.globalMaxMillisecondsPerPixel - this.globalMinMillisecondsPerPixel;
+    const deltaMillisecondsPerPixel = (totalRange * percentage) / 100;
 
-    const targetTimePerPixel = currentTimePerPixel - deltaTimePerPixel;
+    const targetMillisecondsPerPixel = currentMillisecondsPerPixel - deltaMillisecondsPerPixel;
 
     let centerTimePosition: number | undefined;
     if (center && this.gantt.scenegraph) {
       if (centerX === undefined) {
         centerX = this.gantt.scenegraph.width / 2;
       }
-      centerTimePosition = (this.gantt.stateManager.scroll.horizontalBarPos + centerX) * currentTimePerPixel;
+      centerTimePosition = (this.gantt.stateManager.scroll.horizontalBarPos + centerX) * currentMillisecondsPerPixel;
     }
 
-    const targetLevel = this.findOptimalLevel(targetTimePerPixel);
+    const targetLevel = this.findOptimalLevel(targetMillisecondsPerPixel);
     const currentLevel = this.getCurrentLevel();
 
     if (targetLevel !== currentLevel) {
       this.switchToLevel(targetLevel);
     }
 
-    this.gantt.setTimePerPixel(targetTimePerPixel);
+    this.gantt.setMillisecondsPerPixel(targetMillisecondsPerPixel);
 
     if (centerTimePosition !== undefined && centerX !== undefined) {
-      const newScrollLeft = centerTimePosition / this.gantt.getCurrentTimePerPixel() - centerX;
+      const newScrollLeft = centerTimePosition / this.gantt.getCurrentMillisecondsPerPixel() - centerX;
       this.gantt.stateManager.setScrollLeft(newScrollLeft);
     }
   }
@@ -547,7 +554,7 @@ export class ZoomScaleManager {
 
   /**
    * 重新计算时间相关的尺寸参数
-   * 用于根据当前 timePerPixel 重新计算 timelineColWidth
+   * 用于根据当前 millisecondsPerPixel 重新计算 timelineColWidth
    * （从 Gantt.ts 移动到这里）
    */
   recalculateTimeScale(): void {
@@ -587,7 +594,7 @@ export class ZoomScaleManager {
       default:
         msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
     }
-    const newTimelineColWidth = msPerStep / this.gantt.getCurrentTimePerPixel();
+    const newTimelineColWidth = msPerStep / this.gantt.getCurrentMillisecondsPerPixel();
 
     this.gantt.parsedOptions.timelineColWidth = newTimelineColWidth;
 
@@ -609,10 +616,10 @@ export class ZoomScaleManager {
    * @param centerX 缩放中心点X坐标
    */
   zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
-    const minTimePerPixel = this.gantt.parsedOptions.zoom?.minTimePerPixel ?? 200000;
-    const maxTimePerPixel = this.gantt.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
+    const minMillisecondsPerPixel = this.gantt.parsedOptions.zoom?.minMillisecondsPerPixel ?? 200000;
+    const maxMillisecondsPerPixel = this.gantt.parsedOptions.zoom?.maxMillisecondsPerPixel ?? 3000000;
 
-    const oldTimePerPixel = this.gantt.getCurrentTimePerPixel();
+    const oldMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
     const oldWidth = this.gantt.parsedOptions.timelineColWidth;
 
     // 在级别切换前先计算中心时间位置
@@ -622,17 +629,17 @@ export class ZoomScaleManager {
         centerX = this.gantt.scenegraph.width / 2;
       }
       // 计算中心点对应的绝对时间位置
-      const scrollOffsetMs = (this.gantt.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
+      const scrollOffsetMs = (this.gantt.stateManager.scroll.horizontalBarPos + centerX) * oldMillisecondsPerPixel;
       centerTimePosition = this.gantt.parsedOptions._minDateTime + scrollOffsetMs;
     }
 
-    const currentTimePerPixel = this.gantt.getCurrentTimePerPixel();
+    const currentMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
     let adjustedFactor = factor;
 
-    const baseTimePerPixel = 1440000;
-    const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
+    const baseMillisecondsPerPixel = 1440000;
+    const zoomRatio = Math.log(currentMillisecondsPerPixel / baseMillisecondsPerPixel) / Math.log(2);
 
-    if (currentTimePerPixel < baseTimePerPixel) {
+    if (currentMillisecondsPerPixel < baseMillisecondsPerPixel) {
       const enhancement = Math.pow(1.2, -zoomRatio);
       adjustedFactor = Math.pow(factor, enhancement);
     } else {
@@ -640,11 +647,14 @@ export class ZoomScaleManager {
       adjustedFactor = Math.pow(factor, dampening);
     }
 
-    const newTimePerPixel = this.gantt.getCurrentTimePerPixel() / adjustedFactor;
-    const clampedTimePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
-    this.gantt.setTimePerPixel(clampedTimePerPixel);
+    const newMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel() / adjustedFactor;
+    const clampedMillisecondsPerPixel = Math.max(
+      minMillisecondsPerPixel,
+      Math.min(maxMillisecondsPerPixel, newMillisecondsPerPixel)
+    );
+    this.gantt.setMillisecondsPerPixel(clampedMillisecondsPerPixel);
 
-    const targetLevel = this.findOptimalLevel(clampedTimePerPixel);
+    const targetLevel = this.findOptimalLevel(clampedMillisecondsPerPixel);
     const currentLevel = this.getCurrentLevel();
 
     if (targetLevel !== currentLevel) {
@@ -655,23 +665,23 @@ export class ZoomScaleManager {
 
     // 在级别切换和重新计算后再调整视图中心
     if (keepCenter && centerTimePosition !== undefined && centerX !== undefined) {
-      const actualTimePerPixel = this.gantt.getCurrentTimePerPixel();
+      const actualMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
       // 计算中心时间相对于新minDate的偏移量
       const newMinDateTime = this.gantt.parsedOptions._minDateTime;
       const timeOffsetFromNewMin = centerTimePosition - newMinDateTime;
-      const newScrollLeft = timeOffsetFromNewMin / actualTimePerPixel - centerX;
+      const newScrollLeft = timeOffsetFromNewMin / actualMillisecondsPerPixel - centerX;
       this.gantt.stateManager.setScrollLeft(newScrollLeft);
     }
 
     // 触发缩放事件
     if (this.gantt.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
-      const actualTimePerPixel = this.gantt.getCurrentTimePerPixel();
+      const actualMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
       this.gantt.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
         oldWidth,
         newWidth: this.gantt.parsedOptions.timelineColWidth,
-        scale: oldTimePerPixel / actualTimePerPixel,
-        oldTimePerPixel,
-        newTimePerPixel: actualTimePerPixel
+        scale: oldMillisecondsPerPixel / actualMillisecondsPerPixel,
+        oldMillisecondsPerPixel,
+        newMillisecondsPerPixel: actualMillisecondsPerPixel
       });
     }
   }

@@ -1554,7 +1554,7 @@ function createZoomControls(ganttInstance: Gantt) {
 
   // 更新状态显示的函数
   function updateStatusDisplay() {
-    const currentTimePerPixel = ganttInstance.getCurrentTimePerPixel();
+    const currentMillisecondsPerPixel = ganttInstance.getCurrentMillisecondsPerPixel();
     const scale = ganttInstance.parsedOptions.reverseSortedTimelineScales[0];
     const zoomConfig = ganttInstance.parsedOptions.zoom;
 
@@ -1572,10 +1572,12 @@ function createZoomControls(ganttInstance: Gantt) {
 
     statusDisplay.innerHTML = `
       <strong>缩放状态:</strong><br>
-      • TimePerPixel: ${currentTimePerPixel.toFixed(0)}<br>
+      • MillisecondsPerPixel: ${currentMillisecondsPerPixel.toFixed(0)}<br>
       • 时间轴列宽: ${ganttInstance.parsedOptions.timelineColWidth.toFixed(1)}px<br>
       • 当前时间单位: ${scale?.unit} × ${scale?.step}<br>
-      • 缩放范围: ${zoomConfig?.minTimePerPixel?.toFixed(0)} ~ ${zoomConfig?.maxTimePerPixel?.toFixed(0)}<br>
+      • 缩放范围: ${zoomConfig?.minMillisecondsPerPixel?.toFixed(0)} ~ ${zoomConfig?.maxMillisecondsPerPixel?.toFixed(
+      0
+    )}<br>
       ${zoomScaleInfo}
     `;
   }

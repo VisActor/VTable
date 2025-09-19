@@ -23,8 +23,8 @@ export interface DataZoomConfig {
 export interface DataZoomLimits {
   minRangeRatio: number;
   maxRangeRatio: number;
-  minTimePerPixel: number;
-  maxTimePerPixel: number;
+  minMillisecondsPerPixel: number;
+  maxMillisecondsPerPixel: number;
 }
 
 /**
@@ -274,27 +274,27 @@ export class DataZoomIntegration {
    */
   private calculateDataZoomLimits(): DataZoomLimits {
     // 获取 Gantt 的缩放限制
-    let minTimePerPixel: number;
-    let maxTimePerPixel: number;
+    let minMillisecondsPerPixel: number;
+    let maxMillisecondsPerPixel: number;
 
     if (this.gantt.zoomScaleManager) {
-      minTimePerPixel = this.gantt.zoomScaleManager.getGlobalMinTimePerPixel?.() || 1000;
-      maxTimePerPixel = this.gantt.zoomScaleManager.getGlobalMaxTimePerPixel?.() || 6000000;
+      minMillisecondsPerPixel = this.gantt.zoomScaleManager.getGlobalMinMillisecondsPerPixel?.() || 1000;
+      maxMillisecondsPerPixel = this.gantt.zoomScaleManager.getGlobalMaxMillisecondsPerPixel?.() || 6000000;
     } else {
-      minTimePerPixel = this.gantt.parsedOptions.zoom?.minTimePerPixel ?? 1000;
-      maxTimePerPixel = this.gantt.parsedOptions.zoom?.maxTimePerPixel ?? 6000000;
+      minMillisecondsPerPixel = this.gantt.parsedOptions.zoom?.minMillisecondsPerPixel ?? 1000;
+      maxMillisecondsPerPixel = this.gantt.parsedOptions.zoom?.maxMillisecondsPerPixel ?? 6000000;
     }
 
     // 获取关键参数
     const viewportWidth = this.gantt.tableNoFrameWidth; // 视口宽度（像素）
     const totalTimeRange = this.gantt.parsedOptions._maxDateTime - this.gantt.parsedOptions._minDateTime; // 总时间范围
 
-    // 计算 minSpan：当使用 minTimePerPixel 时，视口能显示的时间范围占总时间的比例
-    const minViewTimeRange = minTimePerPixel * viewportWidth; // 最小缩放时视口显示的时间范围
+    // 计算 minSpan：当使用 minMillisecondsPerPixel 时，视口能显示的时间范围占总时间的比例
+    const minViewTimeRange = minMillisecondsPerPixel * viewportWidth; // 最小缩放时视口显示的时间范围
     const minRangeRatio = Math.min(1.0, minViewTimeRange / totalTimeRange);
 
-    // 计算 maxSpan：当使用 maxTimePerPixel 时，视口能显示的时间范围占总时间的比例
-    const maxViewTimeRange = maxTimePerPixel * viewportWidth; // 最大缩放时视口显示的时间范围
+    // 计算 maxSpan：当使用 maxMillisecondsPerPixel 时，视口能显示的时间范围占总时间的比例
+    const maxViewTimeRange = maxMillisecondsPerPixel * viewportWidth; // 最大缩放时视口显示的时间范围
     const maxRangeRatio = Math.min(1.0, maxViewTimeRange / totalTimeRange);
 
     // 确保逻辑正确：minSpan < maxSpan
@@ -304,8 +304,8 @@ export class DataZoomIntegration {
     return {
       minRangeRatio: finalMinRangeRatio,
       maxRangeRatio: finalMaxRangeRatio,
-      minTimePerPixel,
-      maxTimePerPixel
+      minMillisecondsPerPixel,
+      maxMillisecondsPerPixel
     };
   }
 
@@ -356,27 +356,27 @@ export class DataZoomIntegration {
 
     // 获取当前 Gantt 的基础信息
     const currentViewportWidth = this.gantt.tableNoFrameWidth;
-    const currentTimePerPixel = this.gantt.getCurrentTimePerPixel();
+    const currentMillisecondsPerPixel = this.gantt.getCurrentMillisecondsPerPixel();
     const rangeRatio = end - start;
 
-    // 根据 DataZoom 范围计算目标 timePerPixel
+    // 根据 DataZoom 范围计算目标 millisecondsPerPixel
     const totalTimeRange = this.gantt.parsedOptions._maxDateTime - this.gantt.parsedOptions._minDateTime;
     const selectedTimeRange = totalTimeRange * rangeRatio;
-    const targetTimePerPixel = selectedTimeRange / currentViewportWidth;
+    const targetMillisecondsPerPixel = selectedTimeRange / currentViewportWidth;
 
-    // 应用新的 timePerPixel
-    if (Math.abs(targetTimePerPixel - currentTimePerPixel) > currentTimePerPixel * 0.01) {
+    // 应用新的 millisecondsPerPixel
+    if (Math.abs(targetMillisecondsPerPixel - currentMillisecondsPerPixel) > currentMillisecondsPerPixel * 0.01) {
       if (this.gantt.zoomScaleManager) {
-        const targetLevel = this.gantt.zoomScaleManager.findOptimalLevel(targetTimePerPixel);
+        const targetLevel = this.gantt.zoomScaleManager.findOptimalLevel(targetMillisecondsPerPixel);
         const currentLevel = this.gantt.zoomScaleManager.getCurrentLevel();
 
         if (targetLevel !== currentLevel) {
           this.gantt.zoomScaleManager.switchToLevel(targetLevel);
         }
 
-        this.gantt.setTimePerPixel(targetTimePerPixel);
+        this.gantt.setMillisecondsPerPixel(targetMillisecondsPerPixel);
       } else {
-        this.gantt.setTimePerPixel(targetTimePerPixel);
+        this.gantt.setMillisecondsPerPixel(targetMillisecondsPerPixel);
       }
     }
 

@@ -31,13 +31,13 @@ export interface IZoomScale {
   /** DataZoomAxis 集成配置 */
   dataZoomAxis?: IDataZoomAxisConfig;
 
-  /** 最小 timePerPixel 值（毫秒/像素） */
-  minTimePerPixel?: number;
+  /** 最小 millisecondsPerPixel 值（毫秒/像素） */
+  minMillisecondsPerPixel?: number;
 
-  /** 最大 timePerPixel 值（毫秒/像素） */
-  maxTimePerPixel?: number;
+  /** 最大 millisecondsPerPixel 值（毫秒/像素） */
+  maxMillisecondsPerPixel?: number;
 
-  /** 缩放步长 */
+  /** 缩放步长：控制缩放的精细程度，现由系统自动计算 */
   step?: number;
 
   /**
@@ -54,11 +54,11 @@ export interface ILevelThreshold {
   /** 级别索引 */
   levelIndex: number;
 
-  /** 该级别可用的最小 timePerPixel 值 */
-  minTimePerPixel: number;
+  /** 该级别可用的最小 millisecondsPerPixel 值 */
+  minMillisecondsPerPixel: number;
 
-  /** 该级别可用的最大 timePerPixel 值 */
-  maxTimePerPixel: number;
+  /** 该级别可用的最大 millisecondsPerPixel 值 */
+  maxMillisecondsPerPixel: number;
 
   /** 最小时间单位描述 */
   minUnit: string;
@@ -78,8 +78,8 @@ export interface IZoomEventArgs {
   newWidth: number;
   /** 缩放比例 (newWidth / oldWidth) */
   scale: number;
-  /** 缩放前的timePerPixel */
-  oldTimePerPixel?: number;
-  /** 缩放后的timePerPixel */
-  newTimePerPixel?: number;
+  /** 缩放前的millisecondsPerPixel */
+  oldMillisecondsPerPixel?: number;
+  /** 缩放后的millisecondsPerPixel */
+  newMillisecondsPerPixel?: number;
 }
