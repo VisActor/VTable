@@ -232,10 +232,10 @@ export interface GanttConstructorOptions {
   zoom?: {
     // 是否启用鼠标滚轮缩放
     enableMouseWheel?: boolean;
-    // 最小列宽
-    minColWidth?: number;
-    // 最大列宽
-    maxColWidth?: number;
+    // 最小时间每像素值（最大放大）
+    minTimePerPixel?: number;
+    // 最大时间每像素值（最大缩小）
+    maxTimePerPixel?: number;
     // 缩放步长
     step?: number;
   };

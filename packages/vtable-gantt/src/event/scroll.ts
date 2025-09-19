@@ -34,13 +34,11 @@ export function handleWhell(
     // 判断缩放方向
     const zoomIn = event.deltaY < 0;
 
-    // 计算新的列宽
-    const currentColWidth = gantt.parsedOptions.timelineColWidth;
     const zoomStep = gantt.parsedOptions.zoom?.step ?? 0.1;
     const factor = zoomIn ? 1 + zoomStep : 1 - zoomStep;
 
-    // 使用Gantt API进行缩放
-    gantt.setTimelineColWidth(currentColWidth * factor, true, mouseX);
+    // 使用 timePerPixel 缩放
+    gantt.zoomByFactor(factor, true, mouseX);
 
     return; // 执行缩放后不再执行滚动
   }

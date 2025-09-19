@@ -397,9 +397,9 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
   gantt.parsedOptions.zoom = {
     enableMouseWheel: gantt.options.zoom?.enableMouseWheel ?? true,
-    minColWidth: gantt.options.zoom?.minColWidth ?? 30,
-    maxColWidth: gantt.options.zoom?.maxColWidth ?? 200,
-    step: gantt.options.zoom?.step ?? 0.05 // 默认每次缩放10%
+    minTimePerPixel: gantt.options.zoom?.minTimePerPixel ?? 200000,
+    maxTimePerPixel: gantt.options.zoom?.maxTimePerPixel ?? 3000000,
+    step: gantt.options.zoom?.step ?? 0.05
   };
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {

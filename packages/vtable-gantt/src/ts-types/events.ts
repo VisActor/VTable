@@ -153,6 +153,10 @@ export interface TableEventHandlersEventArgumentMap {
     newWidth: number;
     /** 缩放比例 (newWidth / oldWidth) */
     scale: number;
+    /** 缩放前的timePerPixel */
+    oldTimePerPixel?: number;
+    /** 缩放后的timePerPixel */
+    newTimePerPixel?: number;
   };
 }
 
