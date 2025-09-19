@@ -1545,11 +1545,15 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    return formatDate(date, format);
+    return formatDate(new Date(date), format);
   }
 
   // 查询当前的 timePerPixel 值
   getCurrentTimePerPixel(): number {
     return this.timePerPixel;
+  }
+
+  getCurrentZoomScaleLevel(): number {
+    return this.zoomScaleManager?.getCurrentLevel() ?? -1;
   }
 }
