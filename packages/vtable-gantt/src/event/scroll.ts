@@ -34,7 +34,7 @@ export function handleWhell(
     // 判断缩放方向
     const zoomIn = event.deltaY < 0;
 
-    const zoomStep = gantt.parsedOptions.zoom?.step || 0.15;
+    const zoomStep = gantt.parsedOptions.zoom?.step || 0.015;
     const factor = zoomIn ? 1 + zoomStep : 1 - zoomStep;
 
     // 使用 timePerPixel 缩放
