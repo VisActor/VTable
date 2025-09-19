@@ -220,53 +220,8 @@ export class Gantt extends EventTarget {
    * 用于根据当前 timePerPixel 重新计算 timelineColWidth
    */
   recalculateTimeScale(): void {
-    // 获取当前的主时间刻度
-    const primaryScale = this.parsedOptions.reverseSortedTimelineScales[0];
-    if (!primaryScale) {
-      return;
-    }
-
-    // 根据当前 scale 的 unit 和 step 计算每个单元格应该占用的毫秒数
-    let msPerStep: number;
-    switch (primaryScale.unit as string) {
-      case 'second':
-        msPerStep = 1000 * primaryScale.step;
-        break;
-      case 'minute':
-        msPerStep = 60 * 1000 * primaryScale.step;
-        break;
-      case 'hour':
-        msPerStep = 60 * 60 * 1000 * primaryScale.step;
-        break;
-      case 'day':
-        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
-        break;
-      case 'week':
-        msPerStep = 7 * 24 * 60 * 60 * 1000 * primaryScale.step;
-        break;
-      case 'month':
-        msPerStep = 30 * 24 * 60 * 60 * 1000 * primaryScale.step;
-        break;
-      case 'quarter':
-        msPerStep = 90 * 24 * 60 * 60 * 1000 * primaryScale.step;
-        break;
-      case 'year':
-        msPerStep = 365 * 24 * 60 * 60 * 1000 * primaryScale.step;
-        break;
-      default:
-        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
-    }
-    const newTimelineColWidth = msPerStep / this.timePerPixel;
-
-    this.parsedOptions.timelineColWidth = newTimelineColWidth;
-
-    // 重新生成时间线日期映射
-    this._generateTimeLineDateMap();
-
-    // 更新尺寸和重新渲染
-    if (this.scenegraph) {
-      this._updateSize();
-      this.scenegraph.refreshAll();
+    if (this.zoomScaleManager) {
+      this.zoomScaleManager.recalculateTimeScale();
     }
   }
 
@@ -277,74 +232,8 @@ export class Gantt extends EventTarget {
    * @param centerX 缩放中心点X坐标
    */
   zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
-    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
-    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
-
-    const oldTimePerPixel = this.timePerPixel;
-    const oldWidth = this.parsedOptions.timelineColWidth;
-
-    // 在级别切换前先计算中心时间位置
-    let centerTimePosition: number | undefined;
-    let oldMinDateTime: number | undefined;
-    if (keepCenter) {
-      if (centerX === undefined) {
-        centerX = this.scenegraph.width / 2;
-      }
-      // 计算中心点对应的绝对时间位置
-      const scrollOffsetMs = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
-      centerTimePosition = this.parsedOptions._minDateTime + scrollOffsetMs;
-      oldMinDateTime = this.parsedOptions._minDateTime;
-    }
-
-    const currentTimePerPixel = this.timePerPixel;
-    let adjustedFactor = factor;
-
-    const baseTimePerPixel = 1440000;
-    const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
-
-    if (currentTimePerPixel < baseTimePerPixel) {
-      const enhancement = Math.pow(1.2, -zoomRatio);
-      adjustedFactor = Math.pow(factor, enhancement);
-    } else {
-      const dampening = Math.pow(0.9, zoomRatio);
-      adjustedFactor = Math.pow(factor, dampening);
-    }
-
-    const newTimePerPixel = this.timePerPixel / adjustedFactor;
-    this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
-
     if (this.zoomScaleManager) {
-      const targetLevel = this.zoomScaleManager.findOptimalLevel(this.timePerPixel);
-      const currentLevel = this.zoomScaleManager.getCurrentLevel();
-
-      if (targetLevel !== currentLevel) {
-        this.zoomScaleManager.switchToLevel(targetLevel);
-      } else {
-        this.recalculateTimeScale();
-      }
-    } else {
-      this.recalculateTimeScale();
-    }
-
-    // 在级别切换和重新计算后再调整视图中心
-    if (keepCenter && centerTimePosition !== undefined && centerX !== undefined) {
-      const actualTimePerPixel = this.getCurrentTimePerPixel();
-      // 计算中心时间相对于新minDate的偏移量
-      const newMinDateTime = this.parsedOptions._minDateTime;
-      const timeOffsetFromNewMin = centerTimePosition - newMinDateTime;
-      const newScrollLeft = timeOffsetFromNewMin / actualTimePerPixel - centerX;
-      this.stateManager.setScrollLeft(newScrollLeft);
-    }
-
-    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
-      const actualTimePerPixel = this.getCurrentTimePerPixel();
-      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
-        oldWidth,
-        newWidth: this.parsedOptions.timelineColWidth,
-        scale: oldTimePerPixel / actualTimePerPixel,
-        oldTimePerPixel,
-        newTimePerPixel: actualTimePerPixel
-      });
+      this.zoomScaleManager.zoomByFactor(factor, keepCenter, centerX);
     }
   }
 
@@ -364,7 +253,7 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    // 优先初始化 ZoomScaleManager
+    // 按需初始化 ZoomScaleManager
     if (options.zoomScale?.enabled) {
       this.zoomScaleManager = new ZoomScaleManager(this, options.zoomScale);
       this._sortScales();
