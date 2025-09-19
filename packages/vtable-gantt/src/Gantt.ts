@@ -348,28 +348,6 @@ export class Gantt extends EventTarget {
   zoomOut(factor: number = 0.9, center: boolean = true, centerX?: number): void {
     this.zoomByFactor(factor, center, centerX);
   }
-
-  /**
-   * 🎯 调试方法：显示当前的timePerPixel状态
-   */
-  debugTimePerPixel(): void {
-    const currentStep = this.parsedOptions.reverseSortedTimelineScales[0]?.step || 1;
-    const currentUnit = this.parsedOptions.reverseSortedTimelineScales[0]?.unit || 'day';
-    const currentWidth = this.parsedOptions.timelineColWidth;
-
-    // 计算每天的像素数
-    const msPerDay = 24 * 60 * 60 * 1000;
-    const pixelsPerDay = msPerDay / this.timePerPixel;
-
-    console.log('📊 当前缩放状态:', {
-      timePerPixel: this.timePerPixel,
-      pixelsPerDay: pixelsPerDay.toFixed(2),
-      currentWidth: currentWidth.toFixed(2),
-      currentStep: currentStep,
-      currentUnit: currentUnit,
-      说明: `每像素代表 ${(this.timePerPixel / 1000 / 60).toFixed(2)} 分钟`
-    });
-  }
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
