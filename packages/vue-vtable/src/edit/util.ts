@@ -17,6 +17,12 @@ export function checkRenderEditor(column: any, getEditCustomNode?: any) {
   }
   if (typeof getEditCustomNode === 'function') {
     column.getEditCustomNode = getEditCustomNode;
+    // 处理子列
+    if (Array.isArray(column.columns) && column.columns.length) {
+      for (const childColumn of column.columns) {
+        checkRenderEditor(childColumn, getEditCustomNode);
+      }
+    }
     return true;
   }
   return typeof column.getEditCustomNode === 'function';
