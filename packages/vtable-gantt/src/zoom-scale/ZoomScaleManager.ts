@@ -1,6 +1,7 @@
 import type { Gantt } from '../Gantt';
 import type { IZoomScale } from '../ts-types/zoom-scale';
 import type { ITimelineScale } from '../ts-types/gantt-engine';
+import { DataZoomIntegration, type DataZoomConfig } from './DataZoomIntegration';
 
 /**
  * ZoomScale 管理器
@@ -13,6 +14,7 @@ export class ZoomScaleManager {
   private levelBoundaries: number[] = [];
   private globalMinTimePerPixel: number = 0;
   private globalMaxTimePerPixel: number = 0;
+  private dataZoomIntegration: DataZoomIntegration | null = null;
 
   constructor(gantt: Gantt, config: IZoomScale) {
     this.gantt = gantt;
@@ -33,6 +35,35 @@ export class ZoomScaleManager {
     if (this.config.levels.length > 0) {
       const initialTimePerPixel = this.calculateInitialTimePerPixel();
       this.initializeWithTimePerPixel(initialTimePerPixel);
+    }
+
+    // 如果配置了 DataZoom，自动创建集成
+    this.initializeDataZoomIfNeeded();
+  }
+
+  /**
+   * 初始化 DataZoom 集成（如果需要）
+   */
+  private initializeDataZoomIfNeeded(): void {
+    const dataZoomConfig = this.config.dataZoom;
+    if (!dataZoomConfig?.enabled) {
+      return;
+    }
+
+    // 设置默认值（width 和 x 会在 DataZoomIntegration 中自动处理）
+    const finalConfig: DataZoomConfig = {
+      containerId: dataZoomConfig.containerId, // 可选，让 DataZoomIntegration 自动处理
+      width: dataZoomConfig.width, // 如果未设置，会自动使用容器宽度
+      height: dataZoomConfig.height ?? 30,
+      x: dataZoomConfig.x, // 如果未设置，会自动与容器左侧对齐
+      y: dataZoomConfig.y ?? 0, // 默认贴着容器底部
+      delayTime: dataZoomConfig.delayTime ?? 10
+    };
+
+    try {
+      this.dataZoomIntegration = new DataZoomIntegration(this.gantt, finalConfig);
+    } catch (error) {
+      console.error('ZoomScaleManager: 创建 DataZoom 集成失败', error);
     }
   }
 
@@ -151,6 +182,20 @@ export class ZoomScaleManager {
     }
     this.gantt.parsedOptions.zoom.minTimePerPixel = this.globalMinTimePerPixel;
     this.gantt.parsedOptions.zoom.maxTimePerPixel = this.globalMaxTimePerPixel;
+  }
+
+  /**
+   * 获取全局最小 timePerPixel
+   */
+  getGlobalMinTimePerPixel(): number {
+    return this.globalMinTimePerPixel;
+  }
+
+  /**
+   * 获取全局最大 timePerPixel
+   */
+  getGlobalMaxTimePerPixel(): number {
+    return this.globalMaxTimePerPixel;
   }
 
   private calculateInitialTimePerPixel(): number {
@@ -436,6 +481,50 @@ export class ZoomScaleManager {
     if (centerTimePosition !== undefined && centerX !== undefined) {
       const newScrollLeft = centerTimePosition / this.gantt.getCurrentTimePerPixel() - centerX;
       this.gantt.stateManager.setScrollLeft(newScrollLeft);
+    }
+  }
+
+  /**
+   * 获取 DataZoom 集成实例
+   * @returns DataZoom 集成实例，如果未启用则返回 null
+   */
+  getDataZoomIntegration(): DataZoomIntegration | null {
+    return this.dataZoomIntegration;
+  }
+
+  /**
+   * 创建 DataZoom 集成
+   * @param config DataZoom 配置
+   * @returns DataZoom 集成实例
+   */
+  createDataZoomIntegration(config: DataZoomConfig): DataZoomIntegration {
+    // 如果已经有通过配置创建的实例，先销毁它
+    if (this.dataZoomIntegration) {
+      console.warn('ZoomScaleManager: 已存在 DataZoom 集成实例，将被替换');
+      this.dataZoomIntegration.destroy();
+    }
+
+    this.dataZoomIntegration = new DataZoomIntegration(this.gantt, config);
+    return this.dataZoomIntegration;
+  }
+
+  /**
+   * 销毁 DataZoom 集成
+   */
+  destroyDataZoomIntegration(): void {
+    if (this.dataZoomIntegration) {
+      this.dataZoomIntegration.destroy();
+      this.dataZoomIntegration = null;
+    }
+  }
+
+  /**
+   * 响应式更新 DataZoom
+   * 当 Gantt 容器大小发生变化时调用
+   */
+  updateDataZoomResponsive(): void {
+    if (this.dataZoomIntegration) {
+      this.dataZoomIntegration.updateResponsive();
     }
   }
 }

@@ -1,2 +1,4 @@
 export { ZoomScaleManager } from './ZoomScaleManager';
-export type { IZoomScale, ILevelThreshold } from '../ts-types/zoom-scale';
+export { DataZoomIntegration } from './DataZoomIntegration';
+export type { DataZoomConfig, DataZoomLimits } from './DataZoomIntegration';
+export type { IZoomScale, IDataZoomConfig, ILevelThreshold } from '../ts-types/zoom-scale';

@@ -1,12 +1,35 @@
 import type { ITimelineScale } from './gantt-engine';
 
 /**
+ * DataZoom 配置接口
+ */
+export interface IDataZoomConfig {
+  /** 是否启用 DataZoom */
+  enabled?: boolean;
+  /** DataZoom 容器 ID（可选，如果不提供会自动从 Gantt 实例获取） */
+  containerId?: string;
+  /** DataZoom 宽度（默认自动使用 Gantt 时间轴区域宽度，即容器宽度减去左侧表头宽度） */
+  width?: number;
+  /** DataZoom 高度 */
+  height?: number;
+  /** X 坐标（相对于容器左侧，默认排除左侧表头宽度，与时间轴内容区域对齐） */
+  x?: number;
+  /** Y 坐标（相对于容器底边界的偏移，正值向下，默认 0） */
+  y?: number;
+  /** 事件触发延迟时间 */
+  delayTime?: number;
+}
+
+/**
  * ZoomScale 配置接口
  * 用于定义多级别的时间轴缩放系统
  */
 export interface IZoomScale {
   /** 是否启用 ZoomScale 功能 */
   enabled?: boolean;
+
+  /** DataZoom 集成配置 */
+  dataZoom?: IDataZoomConfig;
 
   /**
    * 级别定义：二维数组，每个级别是完整的 scales 组合
