@@ -1234,11 +1234,11 @@ export function createTable() {
     console.log('scroll', e);
   });
   ganttInstance.on('zoom', args => {
-    console.log('🔍 缩放事件:', args);
+    console.log('缩放事件:', args);
 
     // 获取当前时间单位信息
     const scale = ganttInstance.parsedOptions.reverseSortedTimelineScales[0];
-    console.log('📅 当前时间单位:', {
+    console.log('当前时间单位:', {
       unit: scale?.unit,
       step: scale?.step,
       timelineColWidth: ganttInstance.parsedOptions.timelineColWidth.toFixed(1)
@@ -1271,24 +1271,4 @@ export function createTable() {
   bindDebugTool(ganttInstance.scenegraph.stage as any, {
     customGrapicKeys: ['role', '_updateTag']
   });
-
-  // 🔍 验证 minColumnWidth/maxColumnWidth 是否正确生效
-  setTimeout(() => {
-    const zoomConfig = ganttInstance.parsedOptions.zoom;
-    console.log('🔍 验证用户配置是否生效:', {
-      用户设置: {
-        maxZoomInColumnWidth: 40, // 最大放大限制（小时格式自动调整）
-        maxZoomOutColumnWidth: 150 // 最大缩小限制
-      },
-      系统计算: {
-        minTimePerPixel: zoomConfig?.minTimePerPixel,
-        maxTimePerPixel: zoomConfig?.maxTimePerPixel
-      },
-      验证结果:
-        zoomConfig?.minTimePerPixel !== 1000 && zoomConfig?.maxTimePerPixel !== 6000000
-          ? '✅ 用户配置生效'
-          : '❌ 使用了默认值',
-      说明: '如果显示❌，说明 maxZoomInColumnWidth/maxZoomOutColumnWidth 没有正确转换为 timePerPixel 限制'
-    });
-  }, 1000);
 }

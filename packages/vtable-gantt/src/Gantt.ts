@@ -1548,31 +1548,7 @@ export class Gantt extends EventTarget {
     return formatDate(date, format);
   }
 
-  // ZoomScale API
-  getCurrentZoomScaleLevel(): number {
-    return this.zoomScaleManager?.getCurrentLevel() ?? -1;
-  }
-
-  switchToZoomScaleLevel(levelIndex: number): boolean {
-    return this.zoomScaleManager?.switchToLevel(levelIndex) ?? false;
-  }
-
-  getZoomScaleLevelsCount(): number {
-    return this.zoomScaleManager?.getLevelCount() ?? 0;
-  }
-
-  isZoomScaleEnabled(): boolean {
-    return !!this.zoomScaleManager;
-  }
-
-  getZoomScaleConfig() {
-    return this.zoomScaleManager?.getConfig();
-  }
-
-  getZoomScaleLevelThresholds() {
-    return this.zoomScaleManager?.getLevelThresholds();
-  }
-
+  // 查询当前的 timePerPixel 值
   getCurrentTimePerPixel(): number {
     return this.timePerPixel;
   }
