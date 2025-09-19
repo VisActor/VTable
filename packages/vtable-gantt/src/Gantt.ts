@@ -364,8 +364,7 @@ export class Gantt extends EventTarget {
     if (this.zoomScaleManager) {
       this.timePerPixel = this.zoomScaleManager.getInitialTimePerPixel();
     } else {
-      // 默认值：60px = 1天
-      this.timePerPixel = (24 * 60 * 60 * 1000) / 60; // 1440000ms/px
+      this.timePerPixel = (24 * 60 * 60 * 1000) / 60;
     }
 
     // 初始化项目任务时间
@@ -1502,7 +1501,7 @@ export class Gantt extends EventTarget {
    * @returns 格式化后的日期字符串
    */
   formatDate(date: Date | string, format: string) {
-    return formatDate(new Date(date), format);
+    return formatDate(date, format);
   }
 
   // 查询当前的 timePerPixel 值
