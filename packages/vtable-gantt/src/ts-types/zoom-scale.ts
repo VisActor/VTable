@@ -63,3 +63,20 @@ export interface ILevelThreshold {
   /** 最小时间单位的毫秒数 */
   minUnitMs: number;
 }
+
+/**
+ * 缩放事件参数接口
+ * 当 Gantt 发生缩放时触发的事件数据
+ */
+export interface IZoomEventArgs {
+  /** 缩放前的列宽 */
+  oldWidth: number;
+  /** 缩放后的列宽 */
+  newWidth: number;
+  /** 缩放比例 (newWidth / oldWidth) */
+  scale: number;
+  /** 缩放前的timePerPixel */
+  oldTimePerPixel?: number;
+  /** 缩放后的timePerPixel */
+  newTimePerPixel?: number;
+}

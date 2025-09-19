@@ -1,6 +1,7 @@
 import type { FederatedPointerEvent } from '@visactor/vtable/es/vrender';
 import type { IMarkLine, ITaskLink, ITimelineDateInfo } from './gantt-engine';
 import type { IPosition } from './common';
+import type { IZoomEventArgs } from './zoom-scale';
 
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
   args: TableEventHandlersEventArgumentMap[TYPE]
@@ -145,19 +146,8 @@ export interface TableEventHandlersEventArgumentMap {
     /** 改变后的数据条目 */
     record: any;
   };
-  // 添加缩放事件参数
-  zoom: {
-    /** 缩放前的列宽 */
-    oldWidth: number;
-    /** 缩放后的列宽 */
-    newWidth: number;
-    /** 缩放比例 (newWidth / oldWidth) */
-    scale: number;
-    /** 缩放前的timePerPixel */
-    oldTimePerPixel?: number;
-    /** 缩放后的timePerPixel */
-    newTimePerPixel?: number;
-  };
+  // 缩放事件参数
+  zoom: IZoomEventArgs;
 }
 
 export interface TableEventHandlersReturnMap {

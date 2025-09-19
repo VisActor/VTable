@@ -27,6 +27,9 @@ export class ZoomScaleManager {
 
     this.config = finalConfig;
 
+    // 初始化缩放限制的默认值
+    this.initializeZoomLimits();
+
     this.sortLevelsByCoarseness();
     this.calculateGlobalTimePerPixelRange();
     this.calculateLevelBoundaries();
@@ -39,6 +42,18 @@ export class ZoomScaleManager {
 
     // 如果配置了 DataZoom，自动创建集成
     this.initializeDataZoomIfNeeded();
+  }
+
+  /**
+   * 初始化缩放限制的默认值
+   */
+  private initializeZoomLimits(): void {
+    const existingZoom = this.gantt.parsedOptions.zoom;
+    this.gantt.parsedOptions.zoom = {
+      minTimePerPixel: existingZoom?.minTimePerPixel ?? this.gantt.options.zoom?.minTimePerPixel ?? 1000,
+      maxTimePerPixel: existingZoom?.maxTimePerPixel ?? this.gantt.options.zoom?.maxTimePerPixel ?? 6000000,
+      step: this.gantt.options.zoom?.step ?? 0.015
+    };
   }
 
   /**
