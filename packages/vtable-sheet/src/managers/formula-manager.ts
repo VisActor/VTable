@@ -1,4 +1,4 @@
-import type { SimpleCellAddress } from 'hyperformula';
+import type { SimpleCellAddress, SimpleCellRange } from 'hyperformula';
 import { HyperFormula, CellError } from 'hyperformula';
 import type VTableSheet from '../components/vtable-sheet';
 import type { FormulaCell, FormulaResult } from '../ts-types/formula';
@@ -431,7 +431,16 @@ export class FormulaManager {
   }
 
   /**
-   * 获取依赖此单元格的所有单元格
+   * 检查对象是否为SimpleCellRange
+   * @param obj 要检查的对象
+   * @returns 是否为SimpleCellRange
+   */
+  private isSimpleCellRange(obj: any): obj is SimpleCellRange {
+    return obj && typeof obj === 'object' && 'start' in obj && 'end' in obj;
+  }
+
+  /**
+   * 获取依赖此单元格的所有单元格（包括范围依赖）
    * @param cell 单元格
    * @returns 依赖此单元格的所有单元格
    */
@@ -446,15 +455,72 @@ export class FormulaManager {
         col: cell.col
       };
 
-      const dependents = this.hyperFormula.getCellDependents(address);
+      // 获取原始的依赖项（包括范围和单个单元格）
+      const rawDependents = this.hyperFormula.getCellDependents(address);
+      const result: FormulaCell[] = [];
 
-      return dependents
-        .filter((dep): dep is SimpleCellAddress => 'sheet' in dep && 'row' in dep && 'col' in dep)
-        .map(dep => ({
-          sheet: this.reverseSheetMapping.get(dep.sheet) || '',
-          row: dep.row,
-          col: dep.col
-        }));
+      // 处理所有依赖项
+      for (const dep of rawDependents) {
+        if (this.isSimpleCellRange(dep)) {
+          // 这是一个范围依赖 - 需要找到使用这个范围的具体公式单元格
+          const range = dep;
+
+          // 简化方法：检查当前工作表中的所有公式单元格
+          const currentSheetId = sheetId;
+          const currentSheetName = cell.sheet;
+          const sheetDimensions = (this.hyperFormula as any).getSheetDimensions(currentSheetId);
+
+          if (sheetDimensions) {
+            const sheetHeight = sheetDimensions.height;
+            const sheetWidth = sheetDimensions.width;
+
+            // 检查当前工作表中的所有单元格
+            for (let row = 0; row < sheetHeight; row++) {
+              for (let col = 0; col < sheetWidth; col++) {
+                const cellAddress = { sheet: currentSheetId, row, col };
+
+                // 只检查有公式的单元格
+                if (this.hyperFormula.doesCellHaveFormula(cellAddress)) {
+                  const precedents = (this.hyperFormula as any).getCellPrecedents(cellAddress);
+
+                  // 检查这个公式是否使用了我们的范围
+                  for (const prec of precedents) {
+                    if (this.isSimpleCellRange(prec)) {
+                      const precRange = prec;
+                      // 检查是否是同一个范围
+                      if (
+                        precRange.start.sheet === range.start.sheet &&
+                        precRange.start.row === range.start.row &&
+                        precRange.start.col === range.start.col &&
+                        precRange.end.sheet === range.end.sheet &&
+                        precRange.end.row === range.end.row &&
+                        precRange.end.col === range.end.col
+                      ) {
+                        // 找到使用这个范围的公式单元格
+                        result.push({
+                          sheet: currentSheetName,
+                          row: row,
+                          col: col
+                        });
+                        break; // 避免重复添加同一个单元格
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        } else {
+          // 单个单元格依赖 - 直接添加
+          result.push({
+            sheet: this.reverseSheetMapping.get(dep.sheet) || '',
+            row: dep.row,
+            col: dep.col
+          });
+        }
+      }
+
+      return result;
     } catch (error) {
       console.error('Failed to get cell dependents:', error);
       return [];

@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { FormulaManager } from '../src/managers/formula-manager';
-import VTableSheet from '../src/components/vtable-sheet';
+import { FormulaManager } from '../s../../src/managers/formula-manager';
+import VTableSheet from '../s../../src/components/vtable-sheet';
 import type { IVTableSheetOptions } from '../src/ts-types';
 
 // 设置全局版本变量，与其他测试保持一致

@@ -352,11 +352,13 @@ export class FormulaUIManager {
       this.sheet.getActiveSheet().tableInstance.startEditCell(editingCell.col, editingCell.row, value);
     }
     //将值同步到编辑器输入框
-    if (this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor?.getInputElement) {
-      (
-        this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor.getInputElement() as HTMLInputElement
-      ).value = value;
-      input.focus();
+    const editingEditor = this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor;
+    if (editingEditor && 'getInputElement' in editingEditor && typeof editingEditor.getInputElement === 'function') {
+      const inputElement = editingEditor.getInputElement() as HTMLInputElement;
+      if (inputElement) {
+        inputElement.value = value;
+        input.focus();
+      }
     }
 
     // 如果是公式，高亮引用的单元格

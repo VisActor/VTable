@@ -1,5 +1,5 @@
-import { FormulaManager } from '../managers/formula-manager';
-import type VTableSheet from '../components/vtable-sheet';
+import { FormulaManager } from '../../src/managers/formula-manager';
+import type VTableSheet from '../../src/components/vtable-sheet';
 
 describe('FormulaManager.isFormulaComplete', () => {
   let formulaManager: FormulaManager;
@@ -8,6 +8,14 @@ describe('FormulaManager.isFormulaComplete', () => {
   const mockSheet = {
     getActiveSheet: jest.fn().mockReturnValue({
       getKey: jest.fn().mockReturnValue('Sheet1')
+    }),
+    getSheetManager: () => ({
+      getSheet: (sheetKey: string) => ({
+        sheetTitle: 'Test Sheet',
+        sheetKey: sheetKey,
+        showHeader: true,
+        columns: [] as any[]
+      })
     })
   } as unknown as VTableSheet;
 

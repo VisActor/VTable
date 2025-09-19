@@ -381,7 +381,8 @@ export class FormulaRangeSelector {
 
           // 更新单元格显示 - 如果正在编辑则显示公式，否则显示计算结果
           // activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, isEditing ? newValue : result.value);
-          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, result.value, true, false);
+          // 不触发事件，避免无限循环 - 我们将在updateDependentCellsCascade中处理所有依赖
+          activeWorkSheet.tableInstance?.changeCellValue(event.col, event.row, result.value, false, false);
           this.formulaManager.formulaWorkingOnCell = null;
         } catch (error) {
           console.warn('Formula processing error:', error);
@@ -399,35 +400,45 @@ export class FormulaRangeSelector {
           },
           newValue
         );
-      }
 
-      // 使用FormulaThrottle来优化公式重新计算
-      const formulaThrottle = FormulaThrottle.getInstance();
-      // 判断是否需要立即更新
-      const needImmediateUpdate = this.hasFormulaDependents({
-        sheet: activeWorkSheet.getKey(),
-        row: event.row,
-        col: event.col
-      });
-      if (needImmediateUpdate) {
-        // 更新依赖的公式
-        const dependents = formulaManager.getCellDependents({
+        // 检查是否需要级联更新依赖单元格
+        const needImmediateUpdate = this.hasFormulaDependents({
           sheet: activeWorkSheet.getKey(),
           row: event.row,
           col: event.col
         });
 
-        // 重新计算依赖该单元格的所有公式
-        dependents.forEach(dependent => {
-          const result = formulaManager.getCellValue(dependent);
-          if (activeWorkSheet) {
-            activeWorkSheet.setCellValue(dependent.row, dependent.col, result.value);
-          }
+        if (needImmediateUpdate) {
+          // 使用HyperFormula的原生依赖图进行级联更新
+          this.updateDependentCellsCascade(activeWorkSheet, formulaManager, {
+            sheet: activeWorkSheet.getKey(),
+            row: event.row,
+            col: event.col
+          });
+        }
+      }
+
+      // 使用FormulaThrottle来优化公式重新计算
+      const formulaThrottle = FormulaThrottle.getInstance();
+
+      // 判断是否需要立即更新（检查是否有依赖该单元格的公式）
+      const needImmediateUpdate = this.hasFormulaDependents({
+        sheet: activeWorkSheet.getKey(),
+        row: event.row,
+        col: event.col
+      });
+
+      if (needImmediateUpdate) {
+        // 使用HyperFormula的原生依赖图进行级联更新
+        this.updateDependentCellsCascade(activeWorkSheet, formulaManager, {
+          sheet: activeWorkSheet.getKey(),
+          row: event.row,
+          col: event.col
         });
         // 立即执行完整重新计算
         formulaThrottle.immediateRebuildAndRecalculate(formulaManager);
       } else {
-        // 使用节流方式进行公式计算
+        // 使用节流方式进行公式计算（用于没有依赖的情况）
         formulaThrottle.throttledRebuildAndRecalculate(formulaManager);
       }
 
@@ -520,6 +531,147 @@ export class FormulaRangeSelector {
       console.warn('Error checking formula dependents:', error);
       return false;
     }
+  }
+
+  /**
+   * 使用HyperFormula的原生依赖图进行级联更新
+   * @param activeWorkSheet 当前工作表
+   * @param formulaManager 公式管理器
+   * @param changedCell 发生变化的单元格
+   */
+  private updateDependentCellsCascade(
+    activeWorkSheet: any,
+    formulaManager: FormulaManager,
+    changedCell: FormulaCell
+  ): void {
+    try {
+      // 获取所有依赖该单元格的单元格（包括间接依赖）
+      const allDependents = this.getAllDependentsRecursive(formulaManager, changedCell);
+
+      if (allDependents.length === 0) {
+        return;
+      }
+
+      // 按依赖顺序排序（确保依赖项先被更新）
+      const sortedDependents = this.sortCellsByDependencyOrder(formulaManager, allDependents);
+
+      // 批量更新所有依赖单元格
+      for (const dependent of sortedDependents) {
+        const result = formulaManager.getCellValue(dependent);
+        if (result && activeWorkSheet) {
+          // 更新单元格显示值，但不触发事件（避免无限循环）
+          activeWorkSheet.tableInstance?.changeCellValue(
+            dependent.col,
+            dependent.row,
+            result.value,
+            false, // workOnEditableCell: allow editing any cell
+            false // triggerEvent: don't fire events to avoid infinite loops
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error in updateDependentCellsCascade:', error);
+    }
+  }
+
+  /**
+   * 递归获取所有依赖单元格（包括间接依赖）
+   * @param formulaManager 公式管理器
+   * @param cell 起始单元格
+   * @param visited 已访问的单元格（防止循环）
+   * @returns 所有依赖单元格
+   */
+  private getAllDependentsRecursive(
+    formulaManager: FormulaManager,
+    cell: FormulaCell,
+    visited: Set<string> = new Set()
+  ): FormulaCell[] {
+    const cellKey = `${cell.sheet}!${cell.row},${cell.col}`;
+
+    // 防止循环依赖
+    if (visited.has(cellKey)) {
+      return [];
+    }
+    visited.add(cellKey);
+
+    const directDependents = formulaManager.getCellDependents(cell);
+    let allDependents: FormulaCell[] = [...directDependents];
+
+    // 递归获取间接依赖
+    for (const dependent of directDependents) {
+      const indirectDependents = this.getAllDependentsRecursive(formulaManager, dependent, visited);
+      allDependents = allDependents.concat(indirectDependents);
+    }
+
+    return allDependents;
+  }
+
+  /**
+   * 按依赖顺序对单元格进行排序
+   * @param formulaManager 公式管理器
+   * @param cells 要排序的单元格
+   * @returns 排序后的单元格
+   */
+  private sortCellsByDependencyOrder(formulaManager: FormulaManager, cells: FormulaCell[]): FormulaCell[] {
+    // 创建一个依赖图
+    const dependencyGraph = new Map<string, Set<string>>();
+
+    // 为每个单元格构建依赖关系
+    for (const cell of cells) {
+      const cellKey = `${cell.sheet}!${cell.row},${cell.col}`;
+      const precedents = formulaManager.getCellPrecedents(cell);
+
+      const dependencies = new Set<string>();
+      for (const precedent of precedents) {
+        const precedentKey = `${precedent.sheet}!${precedent.row},${precedent.col}`;
+        dependencies.add(precedentKey);
+      }
+
+      dependencyGraph.set(cellKey, dependencies);
+    }
+
+    // 使用拓扑排序确保依赖项先被处理
+    const sorted: FormulaCell[] = [];
+    const visited = new Set<string>();
+    const visiting = new Set<string>();
+
+    const visit = (cell: FormulaCell) => {
+      const cellKey = `${cell.sheet}!${cell.row},${cell.col}`;
+
+      if (visited.has(cellKey)) {
+        return;
+      }
+
+      if (visiting.has(cellKey)) {
+        // 检测到循环依赖，跳过
+        console.warn('Circular dependency detected:', cellKey);
+        return;
+      }
+
+      visiting.add(cellKey);
+
+      // 先访问依赖项
+      const dependencies = dependencyGraph.get(cellKey) || new Set();
+      for (const depKey of Array.from(dependencies)) {
+        const depCell = cells.find(c => `${c.sheet}!${c.row},${c.col}` === depKey);
+        if (depCell) {
+          visit(depCell);
+        }
+      }
+
+      visiting.delete(cellKey);
+      visited.add(cellKey);
+      sorted.push(cell);
+    };
+
+    // 对所有单元格进行排序
+    for (const cell of cells) {
+      if (!visited.has(`${cell.sheet}!${cell.row},${cell.col}`)) {
+        visit(cell);
+      }
+    }
+
+    return sorted;
   }
 
   /**

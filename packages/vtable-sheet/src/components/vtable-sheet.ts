@@ -877,12 +877,15 @@ export default class VTableSheet {
 
         // 获取排序状态
         let sortState = instance.tableInstance.internalProps.sortState;
-        sortState = Array.isArray(sortState) ? sortState : [sortState];
-        const currentSortState = sortState.map(item => ({
-          field: item.field,
-          order: item.order,
-          ...(item.orderFn != null && { orderFn: item.orderFn })
-        }));
+        let currentSortState;
+        if (sortState) {
+          sortState = Array.isArray(sortState) ? sortState : [sortState];
+          currentSortState = sortState.map(item => ({
+            field: item.field,
+            order: item.order,
+            ...(item.orderFn != null && { orderFn: item.orderFn })
+          }));
+        }
 
         // 使用FormulaManager的导出方法获取所有公式
         const formulas = this.formulaManager.exportFormulas(sheetDefine.sheetKey);
