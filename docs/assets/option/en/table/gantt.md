@@ -60,6 +60,14 @@ Time scale configuration array.
 
 {{ use: common-gantt-timeline-scale( prefix = '####') }}
 
+## zoomScale(Object)
+
+Smart zoom configuration. When enabled, it will automatically switch between different time scale combinations based on zoom levels, with higher priority than the `timelineHeader.scales` configuration.
+
+Optional
+
+{{ use: common-gantt-zoom-scale(prefix = '###') }}
+
 ## taskBar(Object)
 
 Set task bar style.
