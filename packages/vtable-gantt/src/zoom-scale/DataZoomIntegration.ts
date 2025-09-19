@@ -64,7 +64,6 @@ export class DataZoomIntegration {
       return ganttContainer.id;
     }
 
-    // 尝试从 DOM 中查找 Gantt 容器
     const ganttElements = document.querySelectorAll(
       '[id*="gantt"], [id*="table"], [class*="gantt"], [class*="vtable"]'
     );
@@ -115,7 +114,6 @@ export class DataZoomIntegration {
       throw new Error(`DataZoom container "${containerId}" has no parent element`);
     }
 
-    // 确保父容器有相对定位
     const parentStyle = window.getComputedStyle(parentContainer);
     if (parentStyle.position === 'static') {
       parentContainer.style.position = 'relative';
@@ -127,10 +125,8 @@ export class DataZoomIntegration {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    // 获取父容器的位置信息
     const parentRect = parentContainer.getBoundingClientRect();
 
-    // 计算相对于父容器的偏移
     const relativeLeft = containerRect.left - parentRect.left + x;
     const relativeTop = containerRect.bottom - parentRect.top + y;
 
@@ -159,7 +155,7 @@ export class DataZoomIntegration {
       end,
       position: { x: 0, y: 0 },
       size: { width, height },
-      showDetail: false, // 恒定为 false，不允许用户配置
+      showDetail: false,
       delayTime,
       backgroundChartStyle: {
         line: { visible: true, stroke: '#ddd' },
@@ -226,11 +222,9 @@ export class DataZoomIntegration {
       const boundaries = this.getGanttViewBoundaries();
       this.dataZoom.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
 
-      // 强制重新渲染
       this.stage.render();
 
       setTimeout(() => {
-        // 重新启用 DataZoom 的 change 事件
         this.dataZoom.setAttribute('disableTriggerEvent', false);
         this.isUpdatingFromGantt = false;
       }, 10);
@@ -243,13 +237,11 @@ export class DataZoomIntegration {
 
     // 窗口大小变化时的响应式更新
     const windowResizeHandler = () => {
-      // 使用防抖避免频繁更新
       clearTimeout(this.resizeTimeout);
       this.resizeTimeout = setTimeout(() => {
         this.updateResponsive();
-        // 重新计算限制，因为视口宽度可能发生变化
         this.updateDataZoomLimits();
-      }, 150);
+      }, 50);
     };
 
     window.addEventListener('resize', windowResizeHandler);
@@ -262,15 +254,13 @@ export class DataZoomIntegration {
 
     // 监听 Gantt 的缩放事件，重新计算限制并同步 DataZoom 位置
     const ganttZoomHandler = () => {
-      // 延迟更新，避免与缩放操作冲突
       setTimeout(() => {
-        // 重新计算限制
         this.updateDataZoomLimits();
         // 同步 DataZoom 位置到当前 Gantt 视图
         if (!this.isUpdatingFromDataZoom) {
           this.syncToDataZoom();
         }
-      }, 100);
+      }, 50);
     };
 
     this.gantt.addEventListener('zoom', ganttZoomHandler);
@@ -325,13 +315,11 @@ export class DataZoomIntegration {
   private updateDataZoomLimits(): void {
     const limits = this.calculateDataZoomLimits();
 
-    // 设置 DataZoom 的范围限制
     this.dataZoom.setAttributes({
       minSpan: limits.minRangeRatio,
       maxSpan: limits.maxRangeRatio
     });
 
-    // 强制更新 DataZoom
     this.stage.render();
   }
 
@@ -429,7 +417,7 @@ export class DataZoomIntegration {
   }
 
   /**
-   * 私有方法：同步 DataZoom 范围到 Gantt（带状态控制）
+   * 私有方法：同步 DataZoom 范围到 Gantt
    */
   private syncToGanttWithState(start: number, end: number): void {
     this.isUpdatingFromDataZoom = true;
@@ -460,7 +448,6 @@ export class DataZoomIntegration {
    * 更新 DataZoom 尺寸
    */
   resize(width?: number, height?: number): void {
-    // 如果没有提供宽度，自动计算：容器宽度减去左侧表头宽度
     if (width === undefined) {
       const containerId = this.getContainerId();
       const container = document.getElementById(containerId);
@@ -511,14 +498,12 @@ export class DataZoomIntegration {
     const taskTableWidth = this.gantt.taskTableWidth || 0;
     const newWidth = (containerRect.width || 1000) - taskTableWidth;
 
-    // 更新宽度
     this.resize(newWidth);
 
     // 更新位置（保持与时间轴内容区域对齐，排除左侧表头）
     const defaultX = this.gantt.taskTableWidth || 0;
     this.updatePosition(defaultX, 0);
 
-    // 确保 DataZoom 状态保持一致
     this.dataZoom.setStartAndEnd(currentStart, currentEnd);
 
     // 同步到 Gantt（可能因为宽度变化导致时间轴需要重新计算）
@@ -554,16 +539,13 @@ export class DataZoomIntegration {
    * 销毁 DataZoom 集成
    */
   destroy(): void {
-    // 清理事件监听器
     this.cleanupCallbacks.forEach(cleanup => cleanup());
     this.cleanupCallbacks = [];
 
-    // 清理 DataZoom canvas
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
     }
 
-    // 清理 stage
     if (this.stage) {
       this.stage.release();
     }

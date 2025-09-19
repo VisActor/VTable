@@ -1207,7 +1207,7 @@ export function createTable() {
       }
     },
     scrollStyle: {
-      visible: 'always'
+      visible: 'none'
     },
     eventOptions: {
       preventDefaultContextMenu: false
@@ -1308,7 +1308,7 @@ function createZoomControls(ganttInstance: Gantt) {
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
     position: fixed;
-    bottom: 20px;
+    bottom: 80px;
     right: 20px;
     display: flex;
     gap: 8px;
