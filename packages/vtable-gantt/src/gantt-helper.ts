@@ -396,7 +396,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
   gantt.parsedOptions.zoom = {
-    enableMouseWheel: gantt.options.zoom?.enableMouseWheel ?? true,
+    enableMouseWheel: gantt.options.zoom?.enableMouseWheel ?? false,
     minTimePerPixel: gantt.options.zoom?.minTimePerPixel ?? 1000,
     maxTimePerPixel: gantt.options.zoom?.maxTimePerPixel ?? 6000000,
     step: gantt.options.zoom?.step ?? 0.015
