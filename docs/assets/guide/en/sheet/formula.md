@@ -58,7 +58,8 @@ VTable2's formula system is primarily implemented using the following components
 
 ### Core Calculation Engine
 
-VTable2 uses [HyperFormula](https://github.com/handsontable/hyperformula) as its core calculation engine, which is an open-source, high-performance spreadsheet formula calculation library:
+
+VTableSheet has independently developed the FormulaEngine module as the core computing engine
 
 - Supports most common Excel functions
 - Builds dependency graphs to track reference relationships between cells
@@ -68,7 +69,7 @@ VTable2 uses [HyperFormula](https://github.com/handsontable/hyperformula) as its
 
 The formula system consists of the following main components:
 
-1. **FormulaManager**: Core management class responsible for interacting with HyperFormula, handling formula calculations and cell state management
+1. **FormulaManager**: Core management class responsible for interacting with FormulaEngine, handling formula calculations and cell state management
 2. **FormulaEditor**: Handles formula input and editing interface
 3. **FormulaAutocomplete**: Provides intelligent function and cell reference suggestions
 4. **FormulaRangeSelector**: Handles cell and range selection logic
@@ -78,8 +79,8 @@ The formula system consists of the following main components:
 
 1. User inputs a formula starting with "="
 2. Formula editor parses the input content, providing function suggestions and parameter hints
-3. After the formula is submitted, FormulaManager passes it to HyperFormula
-4. HyperFormula parses the formula, builds a dependency graph, and performs calculations
+3. After the formula is submitted, FormulaManager passes it to FormulaEngine
+4. FormulaEngine parses the formula, builds a dependency graph, and performs calculations
 5. Results are returned and displayed in the cell
 6. When dependent cells are updated, the system automatically recalculates affected formulas (TODO)
 

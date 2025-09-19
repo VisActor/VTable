@@ -390,7 +390,7 @@ export class FormulaRangeSelector {
           this.formulaManager.formulaWorkingOnCell = null;
         }
       } else {
-        // 非公式值，同步到HyperFormula
+        // 非公式值，同步到FormulaEngine (MIT兼容)
         formulaManager.setCellContent(
           {
             sheet: activeWorkSheet.getKey(),
@@ -408,7 +408,7 @@ export class FormulaRangeSelector {
         });
 
         if (needImmediateUpdate) {
-          // 使用HyperFormula的原生依赖图进行级联更新
+          // 使用FormulaEngine的依赖管理进行级联更新 (MIT兼容)
           this.updateDependentCellsCascade(activeWorkSheet, formulaManager, {
             sheet: activeWorkSheet.getKey(),
             row: event.row,
@@ -428,7 +428,7 @@ export class FormulaRangeSelector {
       });
 
       if (needImmediateUpdate) {
-        // 使用HyperFormula的原生依赖图进行级联更新
+        // 使用FormulaEngine的依赖管理进行级联更新 (MIT兼容)
         this.updateDependentCellsCascade(activeWorkSheet, formulaManager, {
           sheet: activeWorkSheet.getKey(),
           row: event.row,
@@ -532,7 +532,7 @@ export class FormulaRangeSelector {
   }
 
   /**
-   * 使用HyperFormula的原生依赖图进行级联更新
+   * 使用FormulaEngine的依赖管理进行级联更新 (MIT兼容)
    * @param activeWorkSheet 当前工作表
    * @param formulaManager 公式管理器
    * @param changedCell 发生变化的单元格

@@ -58,7 +58,7 @@ VTable2 的公式系统主要基于以下组件实现：
 
 ### 核心计算引擎
 
-VTable2 使用 [HyperFormula](https://github.com/handsontable/hyperformula) 作为核心的计算引擎，它是一个开源的、高性能的电子表格公式计算库：
+VTableSheet 自身开发了 FormulaEngine 模块 作为核心的计算引擎：
 
 - 支持大多数常见的 Excel 函数
 - 构建依赖图以跟踪单元格之间的引用关系
@@ -68,7 +68,7 @@ VTable2 使用 [HyperFormula](https://github.com/handsontable/hyperformula) 作�
 
 公式系统主要由以下几个部分组成：
 
-1. **FormulaManager**: 核心管理类，负责与 HyperFormula 交互，处理公式计算和单元格状态管理
+1. **FormulaManager**: 核心管理类，负责与 FormulaEngine 交互，处理公式计算和单元格状态管理
 2. **FormulaEditor**: 处理公式输入和编辑界面
 3. **FormulaAutocomplete**: 提供智能的函数和单元格引用提示
 4. **FormulaRangeSelector**: 处理单元格和区域选择逻辑
@@ -78,8 +78,8 @@ VTable2 使用 [HyperFormula](https://github.com/handsontable/hyperformula) 作�
 
 1. 用户输入公式，以"="开头
 2. 公式编辑器解析输入内容，提供函数提示和参数提示
-3. 公式提交后，FormulaManager 将其传递给 HyperFormula
-4. HyperFormula 解析公式，构建依赖图，执行计算
+3. 公式提交后，FormulaManager 将其传递给 FormulaEngine
+4. FormulaEngine 解析公式，构建依赖图，执行计算
 5. 结果返回并显示在单元格中
 6. 当依赖的单元格更新时，系统自动重新计算受影响的公式（TODO）
 
