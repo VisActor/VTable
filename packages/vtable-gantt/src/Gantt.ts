@@ -274,9 +274,6 @@ export class Gantt extends EventTarget {
       this._updateSize();
       this.scenegraph.refreshAll();
     }
-
-    // 7. 调试输出
-    console.log('step自动切换:', { timePerPixel: this.timePerPixel, pixelsPerDay, step, newTimelineColWidth });
   }
 
   /**
@@ -286,9 +283,9 @@ export class Gantt extends EventTarget {
    * @param centerX 缩放中心点X坐标
    */
   zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
-    // 应用 timePerPixel 限制
-    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000; // 最小值，对应最大放大
-    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000; // 最大值，对应最大缩小
+    // 应用 timePerPixel 限制（默认值已在 initOptions 中设置）
+    const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel || 200000;
+    const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel || 3000000;
 
     // 记录旧值用于视图中心保持和事件触发
     const oldTimePerPixel = this.timePerPixel;

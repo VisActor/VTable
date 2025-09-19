@@ -399,7 +399,7 @@ export function initOptions(gantt: Gantt) {
     enableMouseWheel: gantt.options.zoom?.enableMouseWheel ?? true,
     minTimePerPixel: gantt.options.zoom?.minTimePerPixel ?? 200000,
     maxTimePerPixel: gantt.options.zoom?.maxTimePerPixel ?? 3000000,
-    step: gantt.options.zoom?.step ?? 0.05
+    step: gantt.options.zoom?.step ?? 0.15
   };
 }
 export function updateOptionsWhenScaleChanged(gantt: Gantt) {
