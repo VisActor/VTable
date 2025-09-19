@@ -283,6 +283,19 @@ export class Gantt extends EventTarget {
     const oldTimePerPixel = this.timePerPixel;
     const oldWidth = this.parsedOptions.timelineColWidth;
 
+    // 在级别切换前先计算中心时间位置
+    let centerTimePosition: number | undefined;
+    let oldMinDateTime: number | undefined;
+    if (keepCenter) {
+      if (centerX === undefined) {
+        centerX = this.scenegraph.width / 2;
+      }
+      // 计算中心点对应的绝对时间位置
+      const scrollOffsetMs = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
+      centerTimePosition = this.parsedOptions._minDateTime + scrollOffsetMs;
+      oldMinDateTime = this.parsedOptions._minDateTime;
+    }
+
     const currentTimePerPixel = this.timePerPixel;
     let adjustedFactor = factor;
 
@@ -313,23 +326,24 @@ export class Gantt extends EventTarget {
       this.recalculateTimeScale();
     }
 
-    if (keepCenter) {
-      if (centerX === undefined) {
-        centerX = this.scenegraph.width / 2;
-      }
-
-      const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
-      const newScrollLeft = centerTimePosition / this.timePerPixel - centerX;
+    // 在级别切换和重新计算后再调整视图中心
+    if (keepCenter && centerTimePosition !== undefined && centerX !== undefined) {
+      const actualTimePerPixel = this.getCurrentTimePerPixel();
+      // 计算中心时间相对于新minDate的偏移量
+      const newMinDateTime = this.parsedOptions._minDateTime;
+      const timeOffsetFromNewMin = centerTimePosition - newMinDateTime;
+      const newScrollLeft = timeOffsetFromNewMin / actualTimePerPixel - centerX;
       this.stateManager.setScrollLeft(newScrollLeft);
     }
 
     if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      const actualTimePerPixel = this.getCurrentTimePerPixel();
       this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
         oldWidth,
         newWidth: this.parsedOptions.timelineColWidth,
-        scale: oldTimePerPixel / this.timePerPixel,
+        scale: oldTimePerPixel / actualTimePerPixel,
         oldTimePerPixel,
-        newTimePerPixel: this.timePerPixel
+        newTimePerPixel: actualTimePerPixel
       });
     }
   }

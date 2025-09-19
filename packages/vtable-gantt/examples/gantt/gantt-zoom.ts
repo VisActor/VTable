@@ -1202,7 +1202,7 @@ export function createTable() {
       }
     },
     scrollStyle: {
-      visible: 'scrolling'
+      visible: 'always'
     },
     eventOptions: {
       preventDefaultContextMenu: false
