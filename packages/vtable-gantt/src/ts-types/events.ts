@@ -145,6 +145,15 @@ export interface TableEventHandlersEventArgumentMap {
     /** 改变后的数据条目 */
     record: any;
   };
+  // 添加缩放事件参数
+  zoom: {
+    /** 缩放前的列宽 */
+    oldWidth: number;
+    /** 缩放后的列宽 */
+    newWidth: number;
+    /** 缩放比例 (newWidth / oldWidth) */
+    scale: number;
+  };
 }
 
 export interface TableEventHandlersReturnMap {
@@ -163,4 +172,5 @@ export interface TableEventHandlersReturnMap {
   move_end_task_bar: void;
   progress_update: void;
   click_dependency_link_point: void;
+  zoom: void;
 }

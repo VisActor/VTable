@@ -29,7 +29,7 @@ import type {
   IKeyboardOptions,
   IMarkLineCreateOptions
 } from './ts-types';
-import { TasksShowMode, TaskType } from './ts-types';
+import { TasksShowMode, TaskType, GANTT_EVENT_TYPE } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -202,7 +202,101 @@ export class Gantt extends EventTarget {
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
     markLineCreateOptions: IMarkLineCreateOptions;
+
+    zoom?: {
+      // 是否启用鼠标滚轮缩放
+      enableMouseWheel?: boolean;
+      // 最小列宽
+      minColWidth?: number;
+      // 最大列宽
+      maxColWidth?: number;
+      // 缩放步长
+      step?: number;
+    };
   } = {} as any;
+  /**
+   * 设置时间轴列宽
+   * @param width 新的列宽
+   * @param keepCenter 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标，如果不提供则使用视图中心
+   */
+  setTimelineColWidth(width: number, keepCenter: boolean = false, centerX?: number): void {
+    // 获取缩放限制
+    const minWidth = this.parsedOptions.zoom?.minColWidth ?? 10;
+    const maxWidth = this.parsedOptions.zoom?.maxColWidth ?? 200;
+
+    // 限制列宽范围
+    const newWidth = Math.max(minWidth, Math.min(maxWidth, width));
+
+    // 如果列宽没有变化，则不执行后续操作
+    if (newWidth === this.parsedOptions.timelineColWidth) {
+      return;
+    }
+
+    // 记录旧的列宽，用于事件触发
+    const oldWidth = this.parsedOptions.timelineColWidth;
+
+    // 如果需要保持视图中心不变
+    if (keepCenter) {
+      // 如果没有提供中心点，则使用视图中心
+      if (centerX === undefined) {
+        centerX = this.scenegraph.width / 2;
+      }
+
+      // 计算中心点对应的时间位置
+      const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) / oldWidth;
+
+      // 更新列宽
+      this.parsedOptions.timelineColWidth = newWidth;
+
+      // 更新视图
+      this._updateSize();
+      this._generateTimeLineDateMap();
+
+      // 调整滚动位置以保持中心点
+      const newScrollLeft = centerTimePosition * newWidth - centerX;
+      this.stateManager.setScrollLeft(newScrollLeft);
+    } else {
+      // 直接更新列宽
+      this.parsedOptions.timelineColWidth = newWidth;
+
+      // 更新视图
+      this._updateSize();
+      this._generateTimeLineDateMap();
+    }
+
+    // 刷新场景图
+    this.scenegraph.refreshAll();
+
+    // 触发缩放事件
+    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
+        oldWidth,
+        newWidth,
+        scale: newWidth / oldWidth
+      });
+    }
+  }
+
+  /**
+   * 放大时间轴
+   * @param factor 缩放因子，大于1表示放大
+   * @param center 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomIn(factor: number = 1.1, center: boolean = true, centerX?: number): void {
+    this.setTimelineColWidth(this.parsedOptions.timelineColWidth * factor, center, centerX);
+  }
+
+  /**
+   * 缩小时间轴
+   * @param factor 缩放因子，小于1表示缩小
+   * @param center 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomOut(factor: number = 0.9, center: boolean = true, centerX?: number): void {
+    this.setTimelineColWidth(this.parsedOptions.timelineColWidth * factor, center, centerX);
+  }
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
