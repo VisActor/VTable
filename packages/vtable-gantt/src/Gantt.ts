@@ -205,11 +205,8 @@ export class Gantt extends EventTarget {
     markLineCreateOptions: IMarkLineCreateOptions;
 
     zoom?: {
-      // 最小时间每像素值（最大放大）
       minTimePerPixel?: number;
-      // 最大时间每像素值（最大缩小）
       maxTimePerPixel?: number;
-      // 缩放步长
       step?: number;
     };
   } = {} as any;
@@ -248,22 +245,19 @@ export class Gantt extends EventTarget {
         msPerStep = 7 * 24 * 60 * 60 * 1000 * primaryScale.step;
         break;
       case 'month':
-        msPerStep = 30 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似30天
+        msPerStep = 30 * 24 * 60 * 60 * 1000 * primaryScale.step;
         break;
       case 'quarter':
-        msPerStep = 90 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似90天
+        msPerStep = 90 * 24 * 60 * 60 * 1000 * primaryScale.step;
         break;
       case 'year':
-        msPerStep = 365 * 24 * 60 * 60 * 1000 * primaryScale.step; // 近似365天
+        msPerStep = 365 * 24 * 60 * 60 * 1000 * primaryScale.step;
         break;
       default:
-        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step; // 默认为天
+        msPerStep = 24 * 60 * 60 * 1000 * primaryScale.step;
     }
-
-    // 计算新的 timelineColWidth
     const newTimelineColWidth = msPerStep / this.timePerPixel;
 
-    // 更新 parsedOptions
     this.parsedOptions.timelineColWidth = newTimelineColWidth;
 
     // 重新生成时间线日期映射
@@ -277,78 +271,58 @@ export class Gantt extends EventTarget {
   }
 
   /**
-   * 缩放方法
+   * 缩放方法，用于滚轮和双指缩放
    * @param factor 缩放因子，大于1表示放大
    * @param keepCenter 是否保持视图中心不变
    * @param centerX 缩放中心点X坐标
    */
   zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
-    // 应用 timePerPixel 限制（由 ZoomScaleManager 根据 minColumnWidth/maxColumnWidth 计算）
     const minTimePerPixel = this.parsedOptions.zoom?.minTimePerPixel ?? 200000;
     const maxTimePerPixel = this.parsedOptions.zoom?.maxTimePerPixel ?? 3000000;
 
-    // 记录旧值用于视图中心保持和事件触发
     const oldTimePerPixel = this.timePerPixel;
     const oldWidth = this.parsedOptions.timelineColWidth;
 
-    // 动态调整缩放步长，让缩放在不同级别下都保持平滑
     const currentTimePerPixel = this.timePerPixel;
     let adjustedFactor = factor;
 
-    // 根据当前的 timePerPixel 级别动态调整缩放因子
-    // timePerPixel 越小（放大越多），需要更大的缩放因子来产生明显的视觉变化
-    const baseTimePerPixel = 1440000; // 基准值：60px/day
+    const baseTimePerPixel = 1440000;
     const zoomRatio = Math.log(currentTimePerPixel / baseTimePerPixel) / Math.log(2);
 
-    // 缩放因子调整：timePerPixel 越小，调整幅度越大
     if (currentTimePerPixel < baseTimePerPixel) {
-      // 高放大状态：放大和缩小都需要增强缩放效果，但不要过于激进
       const enhancement = Math.pow(1.2, -zoomRatio);
       adjustedFactor = Math.pow(factor, enhancement);
     } else {
-      // 正常/缩小状态：适当减缓缩放效果，避免跳跃过快
       const dampening = Math.pow(0.9, zoomRatio);
       adjustedFactor = Math.pow(factor, dampening);
     }
 
-    // factor > 1 = 放大 → timePerPixel 变小
     const newTimePerPixel = this.timePerPixel / adjustedFactor;
-
-    // 应用限制
     this.timePerPixel = Math.max(minTimePerPixel, Math.min(maxTimePerPixel, newTimePerPixel));
 
-    // 检查是否需要切换级别
     if (this.zoomScaleManager) {
       const targetLevel = this.zoomScaleManager.findOptimalLevel(this.timePerPixel);
       const currentLevel = this.zoomScaleManager.getCurrentLevel();
 
       if (targetLevel !== currentLevel) {
-        // 切换级别：zoomScaleManager会调用updateScales，自动处理所有更新
         this.zoomScaleManager.switchToLevel(targetLevel);
       } else {
-        // 级别未变：使用现有的时间刻度重计算逻辑
         this.recalculateTimeScale();
       }
     } else {
-      // 未启用zoomScale：完全使用原有逻辑
       this.recalculateTimeScale();
     }
 
-    // 处理视图中心保持
     if (keepCenter) {
       if (centerX === undefined) {
         centerX = this.scenegraph.width / 2;
       }
 
-      // 计算中心点对应的时间位置
       const centerTimePosition = (this.stateManager.scroll.horizontalBarPos + centerX) * oldTimePerPixel;
-
-      // 调整滚动位置以保持中心点
       const newScrollLeft = centerTimePosition / this.timePerPixel - centerX;
       this.stateManager.setScrollLeft(newScrollLeft);
     }
 
-    // 触发缩放事件
     if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
       this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
         oldWidth,

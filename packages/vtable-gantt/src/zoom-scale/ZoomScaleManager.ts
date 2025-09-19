@@ -17,10 +17,9 @@ export class ZoomScaleManager {
   constructor(gantt: Gantt, config: IZoomScale) {
     this.gantt = gantt;
 
-    const finalConfig: Required<IZoomScale> = {
+    const finalConfig: IZoomScale = {
       enabled: true,
-      maxZoomInColumnWidth: 120,
-      maxZoomOutColumnWidth: 150,
+      levels: [],
       ...config
     };
 
@@ -65,6 +64,9 @@ export class ZoomScaleManager {
       return;
     }
 
+    const maxZoomInColumnWidth = 120;
+    const maxZoomOutColumnWidth = 150;
+
     let maxMinUnit: ITimelineScale | null = null;
     let maxMinUnitMs = 0;
     let minMinUnit: ITimelineScale | null = null;
@@ -90,8 +92,8 @@ export class ZoomScaleManager {
       return;
     }
 
-    this.globalMinTimePerPixel = minMinUnitMs / this.config.maxZoomInColumnWidth;
-    this.globalMaxTimePerPixel = maxMinUnitMs / this.config.maxZoomOutColumnWidth;
+    this.globalMinTimePerPixel = minMinUnitMs / maxZoomInColumnWidth;
+    this.globalMaxTimePerPixel = maxMinUnitMs / maxZoomOutColumnWidth;
 
     // 确保 minTimePerPixel < maxTimePerPixel
     if (this.globalMinTimePerPixel > this.globalMaxTimePerPixel) {

@@ -9,22 +9,6 @@ export interface IZoomScale {
   enabled?: boolean;
 
   /**
-   * 最大放大限制：最精细级别（如小时）的最小列宽
-   * 当达到这个列宽时，无法继续放大
-   * 例如：30px 表示小时级别的列宽不能小于30px
-   * 默认值：30
-   */
-  maxZoomInColumnWidth?: number;
-
-  /**
-   * 最大缩小限制：最粗糙级别（如月）的最大列宽
-   * 当达到这个列宽时，无法继续缩小
-   * 例如：150px 表示月级别的列宽不能大于150px
-   * 默认值：150
-   */
-  maxZoomOutColumnWidth?: number;
-
-  /**
    * 级别定义：二维数组，每个级别是完整的 scales 组合
    * 例如：
    * [
