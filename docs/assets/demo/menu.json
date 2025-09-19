@@ -377,6 +377,13 @@
             "zh": "甘特图缩放",
             "en": "Gantt Zoom"
           }
+        },
+        {
+          "path": "gantt-datazoom",
+          "title": {
+            "zh": "甘特图缩放滚动条",
+            "en": "Gantt DataZoom Scrollbar"
+          }
         }
       ]
     },

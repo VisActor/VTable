@@ -22,3 +22,13 @@ ${prefix} levels(Array<Array<ITimelineScale>>)
 每个级别中的时间刻度配置格式与 `timelineHeader.scales` 中的配置完全相同：
 
 {{ use: common-gantt-timeline-scale( prefix = ${prefix} + '#') }}
+
+${prefix} dataZoom(IDataZoomConfig)
+
+DataZoom 滚动条配置，提供可视化的时间范围选择器
+
+DataZoom 以滚动条的形式显示在甘特图底部，用户可以通过拖拽手柄来精确控制显示的时间范围，实现快速导航和缩放操作。
+
+非必填
+
+{{ use: common-gantt-data-zoom-config( prefix = ${prefix} + '#') }}

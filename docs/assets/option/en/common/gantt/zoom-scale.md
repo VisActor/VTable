@@ -22,3 +22,13 @@ The time scale array within each level is arranged from coarse to fine granulari
 Each level's time scale configuration format is exactly the same as `timelineHeader.scales`:
 
 {{ use: common-gantt-timeline-scale( prefix = ${prefix} + '#') }}
+
+${prefix} dataZoom(IDataZoomConfig)
+
+DataZoom scrollbar configuration, providing a visual time range selector
+
+DataZoom is displayed as a scrollbar at the bottom of the Gantt chart, allowing users to precisely control the display time range through dragging handles, enabling quick navigation and zoom operations.
+
+Optional
+
+{{ use: common-gantt-data-zoom-config( prefix = ${prefix} + '#') }}

@@ -267,6 +267,13 @@
             "zh": "智能缩放",
             "en": "Smart Zoom Scale"
           }
+        },
+        {
+          "path": "gantt_datazoom",
+          "title": {
+            "zh": "甘特图缩放滚动条",
+            "en": "Gantt DataZoom Scrollbar"
+          }
         }
       ]
     },
