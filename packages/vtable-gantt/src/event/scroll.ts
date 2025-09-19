@@ -22,8 +22,8 @@ export function handleWhell(
   if (event.ctrlKey) {
     event.preventDefault();
 
-    const mouseWheelEnabled = gantt.options.timelineHeader?.zoomScale?.enabled;
-    if (mouseWheelEnabled !== true) {
+    // 检查是否启用了智能缩放功能
+    if (!gantt.zoomScaleManager) {
       return;
     }
 

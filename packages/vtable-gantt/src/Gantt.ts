@@ -254,7 +254,7 @@ export class Gantt extends EventTarget {
     this.records = options?.records ?? [];
 
     // 按需初始化 ZoomScaleManager
-    if (options.timelineHeader?.zoomScale?.enabled) {
+    if (options.timelineHeader?.zoomScale && options.timelineHeader.zoomScale.enabled !== false) {
       this.zoomScaleManager = new ZoomScaleManager(this, options.timelineHeader.zoomScale);
       this._sortScales();
     } else {
