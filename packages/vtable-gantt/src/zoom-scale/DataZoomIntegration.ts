@@ -226,7 +226,12 @@ export class DataZoomIntegration {
       const boundaries = this.getGanttViewBoundaries();
       this.dataZoom.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
 
+      // 强制重新渲染
+      this.stage.render();
+
       setTimeout(() => {
+        // 重新启用 DataZoom 的 change 事件
+        this.dataZoom.setAttribute('disableTriggerEvent', false);
         this.isUpdatingFromGantt = false;
       }, 10);
     };
