@@ -12,7 +12,7 @@ export interface IZoomScale {
   enableMouseWheel?: boolean;
 
   /**
-   * 🔍 最大放大限制：最精细级别（如小时）的最小列宽
+   * 最大放大限制：最精细级别（如小时）的最小列宽
    * 当达到这个列宽时，无法继续放大
    * 例如：30px 表示小时级别的列宽不能小于30px
    * 默认值：30
@@ -20,14 +20,14 @@ export interface IZoomScale {
   maxZoomInColumnWidth?: number;
 
   /**
-   * 🔍 最大缩小限制：最粗糙级别（如月）的最大列宽
+   * 最大缩小限制：最粗糙级别（如月）的最大列宽
    * 当达到这个列宽时，无法继续缩小
    * 例如：150px 表示月级别的列宽不能大于150px
    * 默认值：150
    */
   maxZoomOutColumnWidth?: number;
 
-  // 🔄 向后兼容：支持旧的属性名（已废弃，请使用新名称）
+  // 向后兼容：支持旧的属性名（已废弃，请使用新名称）
   /** @deprecated 请使用 maxZoomInColumnWidth */
   minColumnWidth?: number;
   /** @deprecated 请使用 maxZoomOutColumnWidth */
@@ -59,7 +59,7 @@ export interface ILevelThreshold {
   /** 该级别可用的最大 timePerPixel 值 */
   maxTimePerPixel: number;
 
-  /** 最小时间单位描述（用于调试） */
+  /** 最小时间单位描述 */
   minUnit: string;
 
   /** 最小时间单位的毫秒数 */

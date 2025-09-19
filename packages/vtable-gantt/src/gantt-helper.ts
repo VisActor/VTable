@@ -395,11 +395,9 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.eventOptions = options?.eventOptions;
   gantt.parsedOptions.keyboardOptions = options?.keyboardOptions;
   gantt.parsedOptions.markLineCreateOptions = options?.markLineCreateOptions;
-  // 🔑 修复：优先使用 ZoomScaleManager 计算的限制，而不是硬编码默认值
   const existingZoom = gantt.parsedOptions.zoom;
   gantt.parsedOptions.zoom = {
     enableMouseWheel: gantt.options.zoomScale?.enableMouseWheel ?? gantt.options.zoom?.enableMouseWheel ?? false,
-    // 如果 ZoomScaleManager 已经设置了限制，则使用它们；否则使用配置或默认值
     minTimePerPixel: existingZoom?.minTimePerPixel ?? gantt.options.zoom?.minTimePerPixel ?? 1000,
     maxTimePerPixel: existingZoom?.maxTimePerPixel ?? gantt.options.zoom?.maxTimePerPixel ?? 6000000,
     step: gantt.options.zoom?.step ?? 0.015
