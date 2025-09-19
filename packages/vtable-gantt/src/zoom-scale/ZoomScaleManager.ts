@@ -66,7 +66,7 @@ export class ZoomScaleManager {
       const minUnit = this.findMinTimeUnit(level);
       const msPerMinUnit = this.getUnitMilliseconds(minUnit.unit, minUnit.step);
 
-      // 🔑 根据时间单位类型确定该级别的实际最小宽度
+      // 根据时间单位类型确定该级别的实际最小宽度
       const levelMinWidth = this.getMinWidthForTimeUnit(minUnit.unit, minUnit.step, globalMinWidth);
       const levelMaxWidth = globalMaxWidth;
 
@@ -82,8 +82,6 @@ export class ZoomScaleManager {
         minUnitMs: msPerMinUnit
       });
     }
-
-    console.log('📊 ZoomScale级别阈值计算完成:', this.levelThresholds);
   }
 
   /**
@@ -107,24 +105,10 @@ export class ZoomScaleManager {
     }
     this.gantt.parsedOptions.zoom.minTimePerPixel = globalMinTimePerPixel;
     this.gantt.parsedOptions.zoom.maxTimePerPixel = globalMaxTimePerPixel;
-
-    console.log('📊 ZoomScale自动更新缩放限制:', {
-      用户配置: {
-        maxZoomInColumnWidth: this.config.maxZoomInColumnWidth,
-        maxZoomOutColumnWidth: this.config.maxZoomOutColumnWidth
-      },
-      计算结果: {
-        minTimePerPixel: globalMinTimePerPixel.toFixed(0),
-        maxTimePerPixel: globalMaxTimePerPixel.toFixed(0)
-      },
-      说明: `列宽限制${this.config.maxZoomInColumnWidth}px-${
-        this.config.maxZoomOutColumnWidth
-      }px → timePerPixel ${globalMinTimePerPixel.toFixed(0)}-${globalMaxTimePerPixel.toFixed(0)}ms/px`
-    });
   }
 
   /**
-   * 初始化时设置级别（直接修改 options，不调用完整的 switchToLevel）
+   * 初始化时设置级别
    */
   private setInitialLevel(levelIndex: number): void {
     if (levelIndex < 0 || levelIndex >= this.config.levels.length) {
@@ -141,12 +125,6 @@ export class ZoomScaleManager {
     // 直接设置到 gantt.options.timelineHeader.scales
     this.gantt.options.timelineHeader.scales = [...levelScales];
     this.currentLevelIndex = levelIndex;
-
-    console.log('📊 ZoomScale初始级别设置:', {
-      级别: levelIndex,
-      scales数量: levelScales.length,
-      最小时间单位: this.levelThresholds[levelIndex]?.minUnit
-    });
   }
 
   /**
@@ -166,7 +144,6 @@ export class ZoomScaleManager {
 
   /**
    * 切换到指定级别
-   * 🔑 关键：完全复用现有的 updateScales API
    */
   switchToLevel(levelIndex: number): boolean {
     if (levelIndex < 0 || levelIndex >= this.config.levels.length) {
@@ -187,24 +164,15 @@ export class ZoomScaleManager {
     try {
       const oldLevel = this.currentLevelIndex;
 
-      // 🔑 关键：使用现有的 updateScales 方法进行切换
+      // 使用现有的 updateScales 方法进行切换
       // 这会自动调用 _sortScales, updateOptionsWhenScaleChanged, _generateTimeLineDateMap 等
       this.gantt.updateScales([...levelScales]);
 
       this.currentLevelIndex = levelIndex;
 
-      // 🔧 修复：级别切换后需要重新计算 timelineColWidth
+      // 级别切换后需要重新计算 timelineColWidth
       // updateScales 不会自动更新 colWidth，需要手动调用
       this.gantt.recalculateTimeScale();
-
-      console.log('📊 ZoomScale级别切换:', {
-        从级别: oldLevel,
-        到级别: levelIndex,
-        scales数量: levelScales.length,
-        最小时间单位: this.levelThresholds[levelIndex]?.minUnit,
-        当前timePerPixel: this.gantt.getCurrentTimePerPixel().toFixed(0),
-        新timelineColWidth: this.gantt.parsedOptions.timelineColWidth.toFixed(1)
-      });
 
       return true;
     } catch (error) {
@@ -241,16 +209,17 @@ export class ZoomScaleManager {
       case 'hour':
         // 小时格式需要更多宽度来显示 "xx:xx~xx:xx" 或 "xx:xx"
         if (step > 1) {
-          // 时间段格式 "00:00~12:00" 需要约 80-90px
-          return Math.max(globalMinWidth, 85);
+          return Math.max(globalMinWidth, 270);
         }
-        // 单小时格式 "00:00" 需要约 40-50px
-        return Math.max(globalMinWidth, 45);
+        return Math.max(globalMinWidth, 200);
 
       case 'minute':
-        // 分钟格式也需要足够宽度显示时间
-        return Math.max(globalMinWidth, 45);
+        return Math.max(globalMinWidth, 240);
       case 'day':
+        // 优化天到小时的显示宽度
+        if (step === 1) {
+          return Math.max(globalMinWidth, 240);
+        }
       case 'week':
       case 'month':
       case 'quarter':
@@ -297,12 +266,6 @@ export class ZoomScaleManager {
         closestIndex = threshold.levelIndex;
       }
     }
-
-    console.log('📊 ZoomScale找到最接近级别:', {
-      timePerPixel,
-      选择级别: closestIndex,
-      距离: minDistance
-    });
 
     return closestIndex;
   }

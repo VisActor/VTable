@@ -954,6 +954,18 @@ export function createTable() {
             }
           },
           {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
             unit: 'day',
             step: 4,
             format: date => date.startDate.getDate().toString()
@@ -969,6 +981,18 @@ export function createTable() {
             }
           },
           {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
+          {
             unit: 'day',
             step: 1,
             format: date => date.startDate.getDate().toString()
@@ -976,6 +1000,18 @@ export function createTable() {
         ],
         // 级别2：日-小时组合 (12小时)
         [
+          {
+            unit: 'week',
+            step: 1,
+            format: date => {
+              const weekNum = Math.ceil(
+                (date.startDate.getDate() +
+                  new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                  7
+              );
+              return `Week ${weekNum}`;
+            }
+          },
           {
             unit: 'day',
             step: 1,
@@ -990,8 +1026,8 @@ export function createTable() {
             step: 12,
             format: date => {
               const startHour = date.startDate.getHours();
-              const endHour = date.endDate.getHours();
-              return `${startHour.toString().padStart(2, '0')}:00~${endHour.toString().padStart(2, '0')}:00`;
+              const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
             }
           }
         ],
@@ -1011,8 +1047,8 @@ export function createTable() {
             step: 6,
             format: date => {
               const startHour = date.startDate.getHours();
-              const endHour = date.endDate.getHours();
-              return `${startHour.toString().padStart(2, '0')}:00~${endHour.toString().padStart(2, '0')}:00`;
+              const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
+              return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
             }
           }
         ],
