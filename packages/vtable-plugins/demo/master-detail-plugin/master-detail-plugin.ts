@@ -269,7 +269,7 @@ export function createTable() {
   // 创建主从表插件实例
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'employee-detail-plugin',
-    detailGridOptions: ({ data, bodyRowIndex }) => {
+    detailTableOptions: ({ data, bodyRowIndex }) => {
       if (bodyRowIndex === 0) {
         return {
           columns: [

@@ -1,7 +1,6 @@
 import type * as VTable from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import type { Scenegraph } from '@visactor/vtable/es/scenegraph/scenegraph';
 import { getInternalProps, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
@@ -739,8 +738,6 @@ export class TableAPIExtensions {
     };
   }
 
-
-
   /**
    * 检测鼠标是否在插件绘制的下划线区域
    */
@@ -921,8 +918,6 @@ export class TableAPIExtensions {
     }
     return totalHeight;
   }
-
-
   /**
    * 等待渲染完成后执行回调
    */
@@ -1039,5 +1034,16 @@ export class TableAPIExtensions {
       }
       this.originalGetResizeColAt = undefined;
     }
+
+    // 清理状态和引用，避免循环引用
+    this.isDragging = false;
+    this.dragStartIsPluginUnderline = false;
+    this.currentMouseX = 0;
+    this.currentMouseY = 0;
+    // 清理回调函数引用
+    (this as unknown as { callbacks: unknown }).callbacks = null;
+    (this as unknown as { table: unknown }).table = null;
+    (this as unknown as { configManager: unknown }).configManager = null;
+    (this as unknown as { eventManager: unknown }).eventManager = null;
   }
 }

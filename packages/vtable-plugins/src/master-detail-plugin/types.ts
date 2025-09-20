@@ -2,7 +2,7 @@ import type * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/src/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
-export interface DetailGridOptions extends VTable.ListTableConstructorOptions {
+export interface DetailTableOptions extends VTable.ListTableConstructorOptions {
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
@@ -17,7 +17,7 @@ export interface MasterDetailPluginOptions {
   /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
   enableCheckboxCascade?: boolean;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
-  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
 
 /**

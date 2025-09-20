@@ -1,13 +1,13 @@
 import type * as VTable from '@visactor/vtable';
 import { getInternalProps, findCheckboxColumnIndex, setCellCheckboxStateByAttribute } from './utils';
 /**
- * 绑定主从表checkbox联动事件
+ * 设置主从表checkbox联动功能
  */
 export function bindMasterDetailCheckboxChange(
   table: VTable.ListTable,
   eventManager: { isRowExpanded: (row: number) => boolean; getExpandedRows: () => number[] }
-) {
-  table.on('checkbox_state_change', (args: unknown) => {
+): () => void {
+  const checkboxChangeHandler = (args: unknown) => {
     const { col, row, checked, field } = args as { col: number; row: number; checked: boolean; field: string };
 
     // 主表表头checkbox变化：同步更新所有已展开子表的对应字段
@@ -37,14 +37,20 @@ export function bindMasterDetailCheckboxChange(
       const fieldStr = typeof field === 'string' ? field : String(field);
       updateAllSubTableCheckboxes(subTableInstance, fieldStr, checked);
     }
-  });
-  bindSubTableCheckboxEvents(table);
+  };
+
+  table.on('checkbox_state_change', checkboxChangeHandler);
+  const subTableCleanup = bindSubTableCheckboxEvents(table);
+  return () => {
+    table.off('checkbox_state_change', checkboxChangeHandler);
+    subTableCleanup();
+  };
 }
 
 /**
  * 绑定子表checkbox事件，实现子表到主表的反向联动
  */
-function bindSubTableCheckboxEvents(table: VTable.ListTable) {
+function bindSubTableCheckboxEvents(table: VTable.ListTable): () => void {
   const internalProps = getInternalProps(table);
   const originalSet = internalProps.subTableInstances.set;
   if (originalSet && internalProps.subTableInstances) {
@@ -57,7 +63,17 @@ function bindSubTableCheckboxEvents(table: VTable.ListTable) {
       });
       return result;
     };
+    // 返回清理函数
+    return () => {
+      if (internalProps.subTableInstances && originalSet) {
+        internalProps.subTableInstances.set = originalSet;
+      }
+    };
   }
+  // 如果没有设置成功，返回空的清理函数
+  return () => {
+    // no-op
+  };
 }
 
 /**

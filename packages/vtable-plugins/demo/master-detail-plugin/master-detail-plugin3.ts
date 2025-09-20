@@ -1,4 +1,4 @@
-// 该 case 测试：排序、冻结列行、使用静态 DetailGridOptions
+// 该 case 测试：排序、冻结列行、使用静态 DetailTableOptions
 // widthMode, heightMode = 'adaptive'
 // widthAdaptiveMode, heightAdaptiveMode = 'all'
 import * as VTable from '@visactor/vtable';
@@ -31,10 +31,10 @@ function generateData(count: number) {
 export function createTable() {
   const records = generateData(11);
 
-  // 使用静态 DetailGridOptions
+  // 使用静态 DetailTableOptions
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'master-detail-static-3',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'task', title: '任务名', width: 220 },
         { field: 'status', title: '状态', width: 120 }

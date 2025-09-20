@@ -15,10 +15,10 @@ interface MasterDetailPluginOptions {
   id?: string;
   enableCheckboxCascade?: boolean;
   /** Detail grid configuration options - supports static configuration object or dynamic configuration function */
-  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
 
-interface DetailGridOptions extends VTable.ListTableConstructorOptions {
+interface DetailTableOptions extends VTable.ListTableConstructorOptions {
   /** Detail grid style configuration, including layout margins and size settings */
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
@@ -33,11 +33,11 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 |----------------|------|---------------|-------------|
 | `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
 | `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
-| `detailGridOptions` | DetailGridOptions \| Function | - | Detail grid configuration options, supports static object configuration or dynamic configuration function based on data |
+| `detailTableOptions` | DetailTableOptions \| Function | - | Detail grid configuration options, supports static object configuration or dynamic configuration function based on data |
 
-#### DetailGridOptions Advanced Configuration
+#### DetailTableOptions Advanced Configuration
 
-`DetailGridOptions` fully inherits all features of `VTable.ListTableConstructorOptions`, meaning the detail grid enjoys the same functionality and configuration capabilities as the master table:
+`DetailTableOptions` fully inherits all features of `VTable.ListTableConstructorOptions`, meaning the detail grid enjoys the same functionality and configuration capabilities as the master table:
 
 **Core Configuration Items:**
 - **columns**: Detail grid column definitions, supports complete column configuration options
@@ -71,7 +71,7 @@ import { MasterDetailPlugin } from '@visactor/vtable-plugins';
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-plugin',
   enableCheckboxCascade: true, // Enable checkbox cascade functionality (default: true)
-  detailGridOptions: {
+  detailTableOptions: {
     columns: [
       { field: 'task', title: 'Task Name', width: 220 },
       { field: 'status', title: 'Status', width: 120 }
@@ -87,7 +87,7 @@ const masterDetailPlugin = new MasterDetailPlugin({
 const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
   id: 'master-detail-plugin-no-cascade',
   enableCheckboxCascade: false, // Disable checkbox cascade functionality
-  detailGridOptions: {
+  detailTableOptions: {
     // ... same configuration as above
   }
 });
@@ -134,10 +134,10 @@ function generateData(count) {
 function createTable() {
   const records = generateData(11);
 
-  // Using static DetailGridOptions
+  // Using static DetailTableOptions
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-static-3',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'task', title: 'Task Name', width: 220 },
         { field: 'status', title: 'Status', width: 120 }
@@ -201,7 +201,7 @@ MasterDetailPlugin supports dynamic configuration based on data content and row 
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'employee-detail-plugin',
-  detailGridOptions: ({ data, bodyRowIndex }) => {
+  detailTableOptions: ({ data, bodyRowIndex }) => {
     if (bodyRowIndex === 0) {
       return {
         columns: [
@@ -344,7 +344,7 @@ function createGroupTable() {
   // Create master-detail plugin - use detailData field instead of default children
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'Order ID', title: 'Order ID', width: 150 },
         { field: 'Product Name', title: 'Product Name', width: 200 },
@@ -455,7 +455,7 @@ function createEmployeeTable() {
   // Create enterprise employee management master-detail plugin
   const employeeDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'employee-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: 'Project Name', 
@@ -657,7 +657,7 @@ function createCustomerTable() {
   // Create customer order management master-detail plugin
   const customerDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'customer-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: 'Order Number', 

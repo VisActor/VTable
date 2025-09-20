@@ -1,5 +1,5 @@
 export {
   MasterDetailPlugin,
   type MasterDetailPluginOptions,
-  type DetailGridOptions
+  type DetailTableOptions
 } from './master-detail-plugin/index';

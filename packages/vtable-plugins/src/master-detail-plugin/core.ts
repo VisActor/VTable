@@ -31,6 +31,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private subTableManager: SubTableManager;
   private tableAPIExtensions: TableAPIExtensions;
   private resizeObserver?: ResizeObserver;
+  private checkboxCascadeCleanup: () => void;
 
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
     this.id = pluginOptions.id ?? this.id;
@@ -80,7 +81,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 设置事件管理器的回调函数
     this.eventManager.setCallbacks({
-      onUpdateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
+      onUpdateSubTablePositions: () => this.subTableManager.recalculateAllSubTablePositions(),
       onUpdateSubTablePositionsForRow: () => this.subTableManager.updateSubTablePositionsForRowResize(),
       onExpandRow: (rowIndex: number, colIndex?: number) => this.expandRow(rowIndex, colIndex),
       onCollapseRow: (rowIndex: number, colIndex?: number) => this.collapseRow(rowIndex, colIndex),
@@ -113,12 +114,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
   /**
    * 初始化checkbox联动功能
+   * 设置主从表之间的复选框状态同步，并保存清理函数以便后续释放资源
    */
   private initCheckboxCascade(): void {
     // 检查是否启用checkbox级联功能，默认为 true
     const enableCheckboxCascade = this.pluginOptions.enableCheckboxCascade ?? true;
     if (enableCheckboxCascade) {
-      bindMasterDetailCheckboxChange(this.table, this.eventManager);
+      // 设置checkbox联动并保存清理函数
+      this.checkboxCascadeCleanup = bindMasterDetailCheckboxChange(this.table, this.eventManager);
     }
   }
 
@@ -148,7 +151,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       expandRow: (rowIndex: number) => this.expandRow(rowIndex),
       restoreExpandedStatesAfter: () => this.restoreExpandedStatesAfter(),
       collapseRow: (rowIndex: number) => this.collapseRow(rowIndex),
-      updateSubTablePositions: () => this.subTableManager.updateSubTablePositionsForResize(),
+      updateSubTablePositions: () => this.subTableManager.recalculateAllSubTablePositions(),
       updateRowHeightForExpand: (rowIndex: number, deltaHeight: number) =>
         this.updateRowHeightForExpand(rowIndex, deltaHeight)
     });
@@ -539,7 +542,27 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     this.eventManager?.cleanup();
     this.subTableManager?.cleanup();
-    this.table = null;
+    this.configManager?.release();
+    // 清理checkbox联动功能
+    this.checkboxCascadeCleanup?.();
+    // 清理内部属性
+    if (this.table) {
+      const internalProps = getInternalProps(this.table);
+      if (internalProps) {
+        // 清理Map和Set，防止内存泄露
+        internalProps.expandedRecordIndices?.splice(0);
+        internalProps.subTableInstances?.clear();
+        internalProps.originalRowHeights?.clear();
+        internalProps.subTableCheckboxStates?.clear();
+        internalProps._heightResizedRowMap?.clear();
+      }
+    }
+    // 清理引用，避免循环引用
+    (this as unknown as { configManager: unknown }).configManager = null;
+    (this as unknown as { eventManager: unknown }).eventManager = null;
+    (this as unknown as { subTableManager: unknown }).subTableManager = null;
+    (this as unknown as { tableAPIExtensions: unknown }).tableAPIExtensions = null;
+    (this as unknown as { table: unknown }).table = null;
   }
 
   /**

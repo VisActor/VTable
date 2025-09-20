@@ -4,7 +4,7 @@ Based on the VTable plugin mechanism, the master-detail function is realized, en
 
 ## 关键配置
 
-- `detailGridOptions`: Sub-table configuration options, supporting either static configuration or dynamic configuration functions
+- `detailTableOptions`: Sub-table configuration options, supporting either static configuration or dynamic configuration functions
 
 The configurations required here are:
 - `style.margin`: Margin settings for the sub-table
@@ -59,7 +59,7 @@ function generateData(count) {
 // 创建主从表插件
 const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
   id: 'employee-detail-plugin',
-  detailGridOptions: {
+  detailTableOptions: {
     columns: [
       { 
         field: '项目名称', 

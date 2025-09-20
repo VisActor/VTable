@@ -1,5 +1,5 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailGridOptions, MasterDetailPluginOptions, VirtualRecordIds } from './types';
+import type { DetailTableOptions, MasterDetailPluginOptions, VirtualRecordIds } from './types';
 
 /**
  * 配置注入相关功能
@@ -79,20 +79,21 @@ export class ConfigManager {
     this.injectHierarchyIcons(options);
 
     // 注入子表配置
-    if (this.pluginOptions.detailGridOptions) {
-      const detailOptions = this.pluginOptions.detailGridOptions;
+    if (this.pluginOptions.detailTableOptions) {
+      const detailOptions = this.pluginOptions.detailTableOptions;
       // 判断是静态配置还是动态函数
       if (typeof detailOptions === 'function') {
         // 动态配置：根据数据和行索引返回不同的子表配置
         (
           options as VTable.ListTableConstructorOptions & {
-            getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
+            getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions;
           }
         ).getDetailGridOptions = detailOptions;
       } else {
         // 静态配置：所有子表使用相同配置
-        (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
-          detailOptions;
+        (
+          options as VTable.ListTableConstructorOptions & { detailTableOptions: DetailTableOptions }
+        ).detailTableOptions = detailOptions;
       }
     }
 
@@ -264,8 +265,8 @@ export class ConfigManager {
   /**
    * 获取详情配置
    */
-  getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {
-    const detailOptions = this.pluginOptions.detailGridOptions;
+  getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailTableOptions | null {
+    const detailOptions = this.pluginOptions.detailTableOptions;
     if (!detailOptions) {
       return null;
     }
@@ -290,5 +291,16 @@ export class ConfigManager {
    */
   setRowExpandedChecker(checker: (row: number) => boolean): void {
     this.isRowExpanded = checker;
+  }
+
+  /**
+   * 释放所有资源和引用
+   */
+  release(): void {
+    this.virtualRecordIds = null;
+    this.isRowExpanded = () => false;
+    // 清理对表格的引用
+    (this as unknown as { table: VTable.ListTable | null }).table = null;
+    (this as unknown as { pluginOptions: MasterDetailPluginOptions | null }).pluginOptions = null;
   }
 }

@@ -4,7 +4,7 @@
 
 ## 关键配置
 
-- `detailGridOptions`: 子表配置选项，支持静态配置或动态配置函数
+- `detailTableOptions`: 子表配置选项，支持静态配置或动态配置函数
 
 这里面可以配置的是
 - `style.margin`: 子表边距设置
@@ -59,7 +59,7 @@ function generateData(count) {
 // 创建主从表插件
 const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
   id: 'employee-detail-plugin',
-  detailGridOptions: {
+  detailTableOptions: {
     columns: [
       { 
         field: '项目名称', 

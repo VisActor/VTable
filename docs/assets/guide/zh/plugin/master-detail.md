@@ -16,10 +16,10 @@ interface MasterDetailPluginOptions {
   /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
   enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
-  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
 
-interface DetailGridOptions extends VTable.ListTableConstructorOptions {
+interface DetailTableOptions extends VTable.ListTableConstructorOptions {
   /** 子表样式配置，包括布局边距和尺寸设置 */
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
@@ -34,11 +34,11 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 |---------|------|--------|----------|
 | `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
 | `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
-| `detailGridOptions` | DetailGridOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
+| `detailTableOptions` | DetailTableOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
 
-#### DetailGridOptions 高级配置
+#### DetailTableOptions 高级配置
 
-`DetailGridOptions` 完全继承 `VTable.ListTableConstructorOptions` 的所有特性，这意味着子表享有与主表相同的功能和配置能力：
+`DetailTableOptions` 完全继承 `VTable.ListTableConstructorOptions` 的所有特性，这意味着子表享有与主表相同的功能和配置能力：
 
 **核心配置项：**
 - **columns**：子表列定义，支持完整的列配置选项
@@ -72,7 +72,7 @@ import { MasterDetailPlugin } from '@visactor/vtable-plugins';
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-plugin',
   enableCheckboxCascade: true, // 启用checkbox级联功能（默认：true）
-  detailGridOptions: {
+  detailTableOptions: {
     columns: [
       { field: 'task', title: '任务名称', width: 220 },
       { field: 'status', title: '状态', width: 120 }
@@ -88,7 +88,7 @@ const masterDetailPlugin = new MasterDetailPlugin({
 const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
   id: 'master-detail-plugin-no-cascade',
   enableCheckboxCascade: false, // 禁用checkbox级联功能
-  detailGridOptions: {
+  detailTableOptions: {
     // ... 与上面相同的配置
   }
 });
@@ -135,10 +135,10 @@ function generateData(count) {
 function createTable() {
   const records = generateData(11);
 
-  // 使用静态 DetailGridOptions
+  // 使用静态 DetailTableOptions
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-static-3',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'task', title: '任务名', width: 220 },
         { field: 'status', title: '状态', width: 120 }
@@ -202,7 +202,7 @@ MasterDetailPlugin 支持基于数据内容和行位置的动态配置，实现�
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'employee-detail-plugin',
-  detailGridOptions: ({ data, bodyRowIndex }) => {
+  detailTableOptions: ({ data, bodyRowIndex }) => {
     if (bodyRowIndex === 0) {
       return {
         columns: [
@@ -345,7 +345,7 @@ function createGroupTable() {
   // 创建主从表插件 - 使用detailData字段而不是默认的children
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'Order ID', title: 'Order ID', width: 150 },
         { field: 'Product Name', title: 'Product Name', width: 200 },
@@ -456,7 +456,7 @@ function createEmployeeTable() {
   // 创建企业员工管理主从表插件
   const employeeDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'employee-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: '项目名称', 
@@ -658,7 +658,7 @@ function createCustomerTable() {
   // 创建客户订单管理主从表插件
   const customerDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'customer-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: '订单号', 
