@@ -501,10 +501,6 @@ export class DataZoomIntegration {
       return;
     }
 
-    // 保存当前的 DataZoom 状态
-    const currentStart = this.dataZoomAxis.attribute.start;
-    const currentEnd = this.dataZoomAxis.attribute.end;
-
     const containerRect = container.getBoundingClientRect();
     // 计算新宽度：容器宽度减去左侧表头宽度
     const taskTableWidth = this.gantt.taskTableWidth || 0;
@@ -516,10 +512,10 @@ export class DataZoomIntegration {
     const defaultX = this.gantt.taskTableWidth || 0;
     this.updatePosition(defaultX, 0);
 
-    this.dataZoomAxis.setStartAndEnd(currentStart, currentEnd);
-
-    // 注意：响应式更新不应该改变 Gantt 的 millisecondsPerPixel
-    // 只是调整 DataZoom 的视口大小和位置
+    // 重新同步 DataZoom 状态，因为视图宽度变化会影响时间范围的显示比例
+    setTimeout(() => {
+      this.syncToDataZoom();
+    }, 10);
   }
 
   /**
