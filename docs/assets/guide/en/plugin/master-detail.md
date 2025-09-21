@@ -13,17 +13,39 @@ MasterDetailPlugin follows TypeScript interface specifications to ensure type sa
 ```typescript
 interface MasterDetailPluginOptions {
   id?: string;
+  /** Whether to enable checkbox cascade functionality - controls checkbox linkage between master and detail tables, default is true */
   enableCheckboxCascade?: boolean;
-  /** Detail grid configuration options - supports static configuration object or dynamic configuration function */
+  /** Detail table configuration - can be static configuration object or dynamic configuration function */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
+  /** Lazy loading icon configuration */
+  lazyLoadingIcon?: {
+    src?: string;
+    width?: number;
+    height?: number;
+  };
+  /** Lazy loading callback function */
+  onLazyLoad?: (
+    eventData: LazyLoadEventData & {
+      callback: (error: unknown, detailData: DetailTableOptions | null) => void;
+    }
+  ) => void;
 }
 
 interface DetailTableOptions extends VTable.ListTableConstructorOptions {
-  /** Detail grid style configuration, including layout margins and size settings */
+  /** Detail table style configuration, including layout margins and size settings */
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
   };
+}
+
+interface LazyLoadEventData {
+  /** Current row data record */
+  record: unknown;
+  /** Row index */
+  row: number;
+  /** Column index */
+  col: number;
 }
 ```
 
@@ -33,7 +55,9 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 |----------------|------|---------------|-------------|
 | `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
 | `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
-| `detailTableOptions` | DetailTableOptions \| Function | - | Detail grid configuration options, supports static object configuration or dynamic configuration function based on data |
+| `detailTableOptions` | DetailTableOptions \| Function | - | Detail table configuration options, supports static object configuration or dynamic configuration function based on data |
+| `lazyLoadingIcon` | object | - | Lazy loading icon configuration, including src, width, height properties |
+| `onLazyLoad` | function | - | Lazy loading callback function for handling asynchronous data fetching and error handling. Configuring this enables lazy loading functionality |
 
 #### DetailTableOptions Advanced Configuration
 
@@ -385,6 +409,265 @@ function createGroupTable() {
 
 createGroupTable();
 ```
+
+### Lazy Loading Setup
+
+MasterDetailPlugin supports lazy loading functionality, allowing dynamic asynchronous loading of sub-table data when users expand rows. This is very useful for handling large amounts of data or scenarios that require real-time data fetching from servers.
+
+Lazy loading functionality is enabled by configuring the `onLazyLoad` callback function, with no need for additional switch configurations.
+
+| Parameter Name | Type | Default Value | Description |
+|----------------|------|---------------|-------------|
+| `lazyLoadingIcon` | object | - | Lazy loading icon configuration, including src, width, height properties |
+| `onLazyLoad` | function | - | Lazy loading callback function for handling asynchronous data fetching logic. Configuring this enables lazy loading functionality |
+
+1. **Data Identification**: In master table data, set the `children` property of rows that need lazy loading to `true`
+2. **Trigger Mechanism**: When users click the expand icon, the plugin detects the `children: true` identifier and triggers lazy loading
+3. **Asynchronous Processing**: Handle asynchronous data fetching through the `onLazyLoad` callback function
+4. **State Management**: The plugin automatically displays loading animation and updates the interface after data loading completes
+
+The following is a complete lazy loading example demonstrating how to implement product detail lazy loading in an order management system:
+
+```javascript livedemo template=vtable
+function createLazyLoadTable() {
+  // Master table data - including lazy loading identifiers
+  const masterData = [
+    {
+      id: 1,
+      orderNo: 'ORD001',
+      customer: 'Zhang San Company',
+      amount: 15000,
+      status: 'Completed',
+      date: '2024-01-15',
+      // Static sub-table data - display directly
+      children: [
+        { productName: 'Laptop', quantity: 2, price: 5000, total: 10000 },
+        { productName: 'Mouse', quantity: 5, price: 100, total: 500 }
+      ]
+    },
+    {
+      id: 2,
+      orderNo: 'ORD002',
+      customer: 'Li Si Enterprise',
+      amount: 25000,
+      status: 'Processing',
+      date: '2024-01-16',
+      children: true // Lazy loading identifier - requires asynchronous data loading
+    },
+    {
+      id: 3,
+      orderNo: 'ORD003',
+      customer: 'Wang Wu Group',
+      amount: 35000,
+      status: 'Completed',
+      date: '2024-01-17',
+      children: true // Lazy loading identifier - requires asynchronous data loading
+    },
+    {
+      id: 4,
+      orderNo: 'ORD004',
+      customer: 'Zhao Liu Limited',
+      amount: 18000,
+      status: 'Pending Shipment',
+      date: '2024-01-18'
+      // No children property means no sub-data, no expand icon displayed
+    }
+  ];
+
+  // Mock asynchronous data fetching function
+  async function mockFetchDetailData(orderId) {
+    // Simulate network delay
+    const delay = 1000 + Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    // Return different product detail data based on order ID
+    const mockDetailData = {
+      2: [
+        { productName: 'Desktop', quantity: 1, price: 8000, total: 8000 },
+        { productName: 'Monitor', quantity: 2, price: 2000, total: 4000 },
+        { productName: 'Keyboard', quantity: 1, price: 200, total: 200 },
+        { productName: 'USB Drive', quantity: 10, price: 50, total: 500 },
+        { productName: 'Speaker', quantity: 1, price: 1200, total: 1200 }
+      ],
+      3: [
+        { productName: 'Server', quantity: 2, price: 15000, total: 30000 },
+        { productName: 'Network Equipment', quantity: 5, price: 1000, total: 5000 },
+        { productName: 'Switch', quantity: 3, price: 800, total: 2400 }
+      ]
+    };
+    
+    return mockDetailData[orderId] || [
+      { productName: 'Default Product', quantity: 1, price: 100, total: 100 }
+    ];
+  }
+
+  // Create master-detail plugin - configure lazy loading
+  const lazyLoadPlugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'lazy-load-demo',
+    enableCheckboxCascade: true,
+    
+    // Lazy loading event handler
+    onLazyLoad: async (eventData) => {
+      const { record, callback } = eventData;
+      try {
+        // Display loading state (plugin handles automatically)
+        console.log('Starting to load order details:', record);
+        
+        // Get order ID from record
+        const orderId = record.id;
+        
+        // Fetch data asynchronously
+        const detailData = await mockFetchDetailData(orderId);
+        
+        // Return data and configuration through callback
+        callback(null, {
+          columns: [
+            { field: 'productName', title: 'Product Name', width: 150 },
+            { field: 'quantity', title: 'Quantity', width: 80 },
+            { field: 'price', title: 'Unit Price', width: 100 },
+            { field: 'total', title: 'Subtotal', width: 100 }
+          ],
+          records: detailData,
+          style: {
+            height: 250,
+            margin: [10, 20, 10, 20]
+          },
+          theme: VTable.themes.BRIGHT
+        });
+        
+        console.log('Data loading completed:', detailData);
+      } catch (error) {
+        console.error('Data loading failed:', error);
+        // Return error through callback
+        callback(error, null);
+      }
+    },
+    
+    // Static data configuration (for cases where children is an array)
+    detailTableOptions: (params) => {
+      const { data } = params;
+      // If it's static data (children is an array), return configuration directly
+      if (data && typeof data === 'object' && 'children' in data && Array.isArray(data.children)) {
+        return {
+          columns: [
+            { field: 'productName', title: 'Product Name', width: 150 },
+            { field: 'quantity', title: 'Quantity', width: 80 },
+            { field: 'price', title: 'Unit Price', width: 100 },
+            { field: 'total', title: 'Subtotal', width: 100 }
+          ],
+          records: data.children,
+          style: {
+            height: 200,
+            margin: [10, 20, 10, 20]
+          },
+          theme: VTable.themes.BRIGHT
+        };
+      }
+      // Return default configuration
+      return {
+        columns: [
+          { field: 'productName', title: 'Product Name', width: 150 },
+          { field: 'quantity', title: 'Quantity', width: 80 },
+          { field: 'price', title: 'Unit Price', width: 100 },
+          { field: 'total', title: 'Subtotal', width: 100 }
+        ],
+        records: []
+      };
+    }
+  });
+
+  // Master table configuration
+  const columns = [
+    { field: 'orderNo', title: 'Order No.', width: 120 },
+    { field: 'customer', title: 'Customer Name', width: 150 },
+    { field: 'amount', title: 'Order Amount', width: 120 },
+    { field: 'status', title: 'Status', width: 100 },
+    { field: 'date', title: 'Order Date', width: 120 }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: masterData,
+    widthMode: 'standard',
+    allowFrozenColCount: 2,
+    defaultRowHeight: 40,
+    plugins: [lazyLoadPlugin]
+  };
+
+  // Create table instance
+  const tableInstance = new VTable.ListTable(option);
+  
+  return tableInstance;
+}
+
+createLazyLoadTable();
+```
+
+#### Lazy Loading Key Points
+
+**1. Data Identifier Configuration**
+```typescript
+// Static data - display immediately
+{
+  id: 1,
+  name: 'Order 1',
+  children: [/* static sub-data array */]
+}
+
+// Lazy loading data - fetch asynchronously
+{
+  id: 2,
+  name: 'Order 2',
+  children: true  // Lazy loading identifier
+}
+
+// No sub-data - no expand icon displayed
+{
+  id: 3,
+  name: 'Order 3'
+  // No children property
+}
+```
+
+**2. onLazyLoad Callback Function**
+```typescript
+onLazyLoad: async (eventData) => {
+  const { record, row, col, callback } = eventData;
+  
+  try {
+    // Execute asynchronous data fetching
+    const data = await fetchDataFromServer(record.id);
+    
+    // Call callback(null, detailTableConfig) on success
+    callback(null, {
+      columns: [/* column configuration */],
+      records: data,
+      style: { height: 200, margin: 10 }
+    });
+  } catch (error) {
+    // Call callback(error, null) on failure
+    callback(error, null);
+  }
+}
+```
+
+**3. Loading State Management**
+- Plugin automatically displays loading animation (GIF format loading icon)
+- Supports custom loading icon style and position
+- Automatically handles loading success and failure state transitions
+
+**4. Error Handling Mechanism**
+- Pass error information through the first parameter of callback function
+- Supports detailed error log output to console
+- Loading animation stops and returns to original state when loading fails
+
+#### Lazy Loading Use Cases
+
+- **Large data pagination loading**: Master table displays summary information, sub-tables load detailed data on demand
+- **Real-time data fetching**: Fetch latest associated data from server in real-time
+- **Permission control**: Dynamically load different sub-table content based on user permissions
+- **Performance optimization**: Reduce initial data transmission volume, improve page loading speed
 
 ## Typical Business Scenario Examples
 

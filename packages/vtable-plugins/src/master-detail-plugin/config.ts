@@ -1,13 +1,167 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailTableOptions, MasterDetailPluginOptions, VirtualRecordIds } from './types';
+import type { DetailTableOptions, MasterDetailPluginOptions, VirtualRecordIds, LazyLoadState } from './types';
 
 /**
  * 配置注入相关功能
  */
 export class ConfigManager {
   private virtualRecordIds: VirtualRecordIds | null = null;
+  private lazyLoadingStates: Map<number, LazyLoadState> = new Map();
 
-  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
+  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {
+    // 注册loading图标（如果配置了懒加载回调）
+    if (this.pluginOptions.onLazyLoad) {
+      this.registerLoadingIcon();
+    }
+  }
+
+  /**
+   * 注册loading图标
+   */
+  private registerLoadingIcon(): void {
+    const iconConfig = this.pluginOptions.lazyLoadingIcon || {};
+    const gifUrl =
+      iconConfig.src || 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif';
+
+    VTable.register.icon('master-detail-loading', {
+      type: 'image',
+      width: iconConfig.width || 16,
+      height: iconConfig.height || 16,
+      src: gifUrl,
+      gif: gifUrl, // 添加gif属性启用动画
+      isGif: true, // 标记为GIF图标
+      name: 'master-detail-loading',
+      positionType: VTable.TYPES.IconPosition.contentLeft,
+      marginLeft: 0,
+      marginRight: 4,
+      visibleTime: 'always',
+      hover: {
+        width: 20,
+        height: 20,
+        bgColor: 'rgba(101,117,168,0.1)'
+      }
+    } as VTable.TYPES.ImageIcon & { gif: string; isGif: boolean }); // 扩展类型定义
+  }
+
+  /**
+   * 检查记录是否为懒加载节点
+   */
+  isLazyLoadRecord(record: unknown): boolean {
+    // 只有配置了懒加载回调函数才启用懒加载功能
+    if (!this.pluginOptions.onLazyLoad) {
+      return false;
+    }
+    return record && typeof record === 'object' && 'children' in record && record.children === true;
+  }
+
+  /**
+   * 获取懒加载状态
+   */
+  getLazyLoadingState(bodyRowIndex: number): LazyLoadState | undefined {
+    return this.lazyLoadingStates.get(bodyRowIndex);
+  }
+
+  /**
+   * 设置懒加载状态
+   */
+  setLazyLoadingState(bodyRowIndex: number, state: LazyLoadState): void {
+    this.lazyLoadingStates.set(bodyRowIndex, state);
+  }
+
+  /**
+   * 创建loading图标配置
+   */
+  private createLoadingIcon(): VTable.TYPES.ImageIcon & { gif: string; isGif: boolean } {
+    const iconConfig = this.pluginOptions.lazyLoadingIcon || {};
+    const gifUrl =
+      iconConfig.src || 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif';
+    return {
+      type: 'image',
+      width: iconConfig.width || 16,
+      height: iconConfig.height || 16,
+      src: gifUrl,
+      gif: gifUrl, // 添加gif属性启用动画
+      isGif: true, // 标记为GIF图标
+      name: 'master-detail-loading',
+      positionType: VTable.TYPES.IconPosition.contentLeft,
+      marginLeft: 0,
+      marginRight: 4,
+      cursor: 'default'
+    };
+  }
+
+  /**
+   * 创建展开图标配置
+   */
+  private createExpandIcon(): VTable.TYPES.SvgIcon {
+    return {
+      type: 'svg',
+      svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 
+         4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 
+         11.3501Z" fill="#141414" fill-opacity="1"/>
+      </svg>`,
+      width: 16,
+      height: 16,
+      name: 'hierarchy-expand',
+      positionType: VTable.TYPES.IconPosition.contentLeft,
+      marginLeft: 0,
+      marginRight: 4,
+      cursor: 'pointer',
+      visibleTime: 'always',
+      hover: {
+        width: 20,
+        height: 20,
+        bgColor: 'rgba(101, 117, 168, 0.1)'
+      }
+    } as VTable.TYPES.SvgIcon;
+  }
+
+  /**
+   * 创建收起图标配置
+   */
+  private createCollapseIcon(): VTable.TYPES.SvgIcon {
+    return {
+      type: 'svg',
+      svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 
+         11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 
+         6.81235Z" fill="#141414" fill-opacity="1"/>
+      </svg>`,
+      width: 16,
+      height: 16,
+      name: 'hierarchy-collapse',
+      positionType: VTable.TYPES.IconPosition.contentLeft,
+      marginLeft: 0,
+      marginRight: 4,
+      cursor: 'pointer',
+      visibleTime: 'always',
+      hover: {
+        width: 20,
+        height: 20,
+        bgColor: 'rgba(101, 117, 168, 0.1)'
+      }
+    } as VTable.TYPES.SvgIcon;
+  }
+
+  /**
+   * 创建占位图标配置
+   */
+  private createPlaceholderIcon(): VTable.TYPES.SvgIcon {
+    return {
+      type: 'svg',
+      svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <!-- 透明占位图标，用于保持对齐 -->
+      </svg>`,
+      width: 16,
+      height: 16,
+      name: 'hierarchy-placeholder',
+      positionType: VTable.TYPES.IconPosition.contentLeft,
+      marginLeft: 0,
+      marginRight: 4,
+      cursor: 'default'
+    } as VTable.TYPES.SvgIcon;
+  }
 
   /**
    * 检查记录是否有子数据
@@ -187,75 +341,31 @@ export class ConfigManager {
       } catch (error) {
         return [];
       }
-      if (!record || !this.hasChildren(record)) {
-        return [
-          {
-            type: 'svg',
-            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <!-- 透明占位图标，用于保持对齐 -->
-            </svg>`,
-            width: 16,
-            height: 16,
-            name: 'hierarchy-placeholder',
-            positionType: VTable.TYPES.IconPosition.contentLeft,
-            marginLeft: 0,
-            marginRight: 4,
-            cursor: 'default'
-          } as VTable.TYPES.SvgIcon
-        ];
+
+      if (!record) {
+        return [this.createPlaceholderIcon()];
+      }
+
+      // 检查是否为懒加载节点
+      if (this.isLazyLoadRecord(record)) {
+        const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+        const loadingState = this.getLazyLoadingState(bodyRowIndex);
+        
+        if (loadingState === 'loading') {
+          return [this.createLoadingIcon()];
+        }
+        
+        const isExpanded = this.isRowExpanded(row);
+        return isExpanded ? [this.createCollapseIcon()] : [this.createExpandIcon()];
+      }
+
+      // 检查是否有实际children数据
+      if (!this.hasChildren(record)) {
+        return [this.createPlaceholderIcon()];
       }
 
       const isExpanded = this.isRowExpanded(row);
-
-      // 返回对应的图标配置
-      if (isExpanded) {
-        return [
-          {
-            type: 'svg',
-            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 
-             11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 
-             6.81235Z" fill="#141414" fill-opacity="1"/>
-          </svg>`,
-            width: 16,
-            height: 16,
-            name: 'hierarchy-collapse',
-            positionType: VTable.TYPES.IconPosition.contentLeft,
-            marginLeft: 0,
-            marginRight: 4,
-            funcType: VTable.TYPES.IconFuncTypeEnum.collapse,
-            cursor: 'pointer',
-            hover: {
-              width: 20,
-              height: 20,
-              bgColor: 'rgba(101, 117, 168, 0.1)'
-            }
-          } as VTable.TYPES.SvgIcon
-        ];
-      }
-      return [
-        {
-          type: 'svg',
-          svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 
-           4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 
-           11.3501Z" fill="#141414" fill-opacity="1"/>
-        </svg>`,
-          width: 16,
-          height: 16,
-          name: 'hierarchy-expand',
-          positionType: VTable.TYPES.IconPosition.contentLeft,
-          marginLeft: 0,
-          marginRight: 4,
-          funcType: VTable.TYPES.IconFuncTypeEnum.expand,
-          cursor: 'pointer',
-          hover: {
-            width: 20,
-            height: 20,
-            bgColor: 'rgba(101, 117, 168, 0.1)'
-          }
-        } as VTable.TYPES.SvgIcon
-      ];
+      return isExpanded ? [this.createCollapseIcon()] : [this.createExpandIcon()];
     };
 
     // 设置第一列的图标
@@ -299,6 +409,8 @@ export class ConfigManager {
   release(): void {
     this.virtualRecordIds = null;
     this.isRowExpanded = () => false;
+    // 清理懒加载状态
+    this.lazyLoadingStates.clear();
     // 清理对表格的引用
     (this as unknown as { table: VTable.ListTable | null }).table = null;
     (this as unknown as { pluginOptions: MasterDetailPluginOptions | null }).pluginOptions = null;

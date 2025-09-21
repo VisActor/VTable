@@ -17,6 +17,18 @@ interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
+  /** 懒加载loading图标配置 */
+  lazyLoadingIcon?: {
+    src?: string;
+    width?: number;
+    height?: number;
+  };
+  /** 懒加载回调函数 */
+  onLazyLoad?: (
+    eventData: LazyLoadEventData & {
+      callback: (error: unknown, detailData: DetailTableOptions | null) => void;
+    }
+  ) => void;
 }
 
 interface DetailTableOptions extends VTable.ListTableConstructorOptions {
@@ -25,6 +37,15 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
   };
+}
+
+interface LazyLoadEventData {
+  /** 当前行的数据记录 */
+  record: unknown;
+  /** 行索引 */
+  row: number;
+  /** 列索引 */
+  col: number;
 }
 ```
 
@@ -35,6 +56,8 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 | `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
 | `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
 | `detailTableOptions` | DetailTableOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
+| `lazyLoadingIcon` | object | - | 懒加载loading图标配置，包含 src、width、height 等属性 |
+| `onLazyLoad` | function | - | 懒加载回调函数，用于处理异步数据获取和错误处理。配置此项即启用懒加载功能 |
 
 #### DetailTableOptions 高级配置
 
@@ -386,6 +409,265 @@ function createGroupTable() {
 
 createGroupTable();
 ```
+
+### 懒加载设置
+
+MasterDetailPlugin 支持懒加载功能，允许在用户展开行时动态异步加载子表数据，这对于处理大量数据或需要从服务器实时获取数据的场景非常有用。
+
+懒加载功能通过配置 `onLazyLoad` 回调函数来启用，无需额外的开关配置。
+
+| 参数名称 | 类型 | 默认值 | 功能说明 |
+|---------|------|--------|----------|
+| `lazyLoadingIcon` | object | - | 懒加载loading图标配置，包含 src、width、height 等属性 |
+| `onLazyLoad` | function | - | 懒加载回调函数，处理异步数据获取逻辑。配置此项即启用懒加载功能 |
+
+1. **数据标识**：在主表数据中，将需要懒加载的行的 `children` 属性设置为 `true`
+2. **触发机制**：当用户点击展开图标时，插件会检测到 `children: true` 标识并触发懒加载
+3. **异步处理**：通过 `onLazyLoad` 回调函数处理异步数据获取
+4. **状态管理**：插件会自动显示加载动画，并在数据加载完成后更新界面
+
+以下是一个完整的懒加载示例，演示如何在订单管理系统中实现产品明细的懒加载：
+
+```javascript livedemo template=vtable
+function createLazyLoadTable() {
+  // 主表数据 - 包含懒加载标识
+  const masterData = [
+    {
+      id: 1,
+      orderNo: 'ORD001',
+      customer: '张三公司',
+      amount: 15000,
+      status: '已完成',
+      date: '2024-01-15',
+      // 静态子表数据 - 直接展示
+      children: [
+        { productName: '笔记本电脑', quantity: 2, price: 5000, total: 10000 },
+        { productName: '鼠标', quantity: 5, price: 100, total: 500 }
+      ]
+    },
+    {
+      id: 2,
+      orderNo: 'ORD002',
+      customer: '李四企业',
+      amount: 25000,
+      status: '处理中',
+      date: '2024-01-16',
+      children: true // 懒加载标识 - 需要异步加载数据
+    },
+    {
+      id: 3,
+      orderNo: 'ORD003',
+      customer: '王五集团',
+      amount: 35000,
+      status: '已完成',
+      date: '2024-01-17',
+      children: true // 懒加载标识 - 需要异步加载数据
+    },
+    {
+      id: 4,
+      orderNo: 'ORD004',
+      customer: '赵六有限公司',
+      amount: 18000,
+      status: '待发货',
+      date: '2024-01-18'
+      // 没有children属性，表示没有子数据，不显示展开图标
+    }
+  ];
+
+  // 模拟异步数据获取函数
+  async function mockFetchDetailData(orderId) {
+    // 模拟网络延迟
+    const delay = 1000 + Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    // 根据订单ID返回不同的产品明细数据
+    const mockDetailData = {
+      2: [
+        { productName: '台式机', quantity: 1, price: 8000, total: 8000 },
+        { productName: '显示器', quantity: 2, price: 2000, total: 4000 },
+        { productName: '键盘', quantity: 1, price: 200, total: 200 },
+        { productName: 'U盘', quantity: 10, price: 50, total: 500 },
+        { productName: '音响', quantity: 1, price: 1200, total: 1200 }
+      ],
+      3: [
+        { productName: '服务器', quantity: 2, price: 15000, total: 30000 },
+        { productName: '网络设备', quantity: 5, price: 1000, total: 5000 },
+        { productName: '交换机', quantity: 3, price: 800, total: 2400 }
+      ]
+    };
+    
+    return mockDetailData[orderId] || [
+      { productName: '默认产品', quantity: 1, price: 100, total: 100 }
+    ];
+  }
+
+  // 创建主从表插件 - 配置懒加载
+  const lazyLoadPlugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'lazy-load-demo',
+    enableCheckboxCascade: true,
+    
+    // 懒加载事件处理器
+    onLazyLoad: async (eventData) => {
+      const { record, callback } = eventData;
+      try {
+        // 显示加载状态（插件会自动处理）
+        console.log('开始加载订单详情：', record);
+        
+        // 从记录中获取订单ID
+        const orderId = record.id;
+        
+        // 异步获取数据
+        const detailData = await mockFetchDetailData(orderId);
+        
+        // 通过callback返回数据和配置
+        callback(null, {
+          columns: [
+            { field: 'productName', title: '产品名称', width: 150 },
+            { field: 'quantity', title: '数量', width: 80 },
+            { field: 'price', title: '单价', width: 100 },
+            { field: 'total', title: '小计', width: 100 }
+          ],
+          records: detailData,
+          style: {
+            height: 250,
+            margin: [10, 20, 10, 20]
+          },
+          theme: VTable.themes.BRIGHT
+        });
+        
+        console.log('数据加载完成：', detailData);
+      } catch (error) {
+        console.error('数据加载失败:', error);
+        // 通过callback返回错误
+        callback(error, null);
+      }
+    },
+    
+    // 静态数据配置（用于 children 是数组的情况）
+    detailTableOptions: (params) => {
+      const { data } = params;
+      // 如果是静态数据（children是数组），直接返回配置
+      if (data && typeof data === 'object' && 'children' in data && Array.isArray(data.children)) {
+        return {
+          columns: [
+            { field: 'productName', title: '产品名称', width: 150 },
+            { field: 'quantity', title: '数量', width: 80 },
+            { field: 'price', title: '单价', width: 100 },
+            { field: 'total', title: '小计', width: 100 }
+          ],
+          records: data.children,
+          style: {
+            height: 200,
+            margin: [10, 20, 10, 20]
+          },
+          theme: VTable.themes.BRIGHT
+        };
+      }
+      // 返回默认配置
+      return {
+        columns: [
+          { field: 'productName', title: '产品名称', width: 150 },
+          { field: 'quantity', title: '数量', width: 80 },
+          { field: 'price', title: '单价', width: 100 },
+          { field: 'total', title: '小计', width: 100 }
+        ],
+        records: []
+      };
+    }
+  });
+
+  // 主表配置
+  const columns = [
+    { field: 'orderNo', title: '订单号', width: 120 },
+    { field: 'customer', title: '客户名称', width: 150 },
+    { field: 'amount', title: '订单金额', width: 120 },
+    { field: 'status', title: '状态', width: 100 },
+    { field: 'date', title: '订单日期', width: 120 }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: masterData,
+    widthMode: 'standard',
+    allowFrozenColCount: 2,
+    defaultRowHeight: 40,
+    plugins: [lazyLoadPlugin]
+  };
+
+  // 创建表格实例
+  const tableInstance = new VTable.ListTable(option);
+  
+  return tableInstance;
+}
+
+createLazyLoadTable();
+```
+
+#### 懒加载核心要点
+
+**1. 数据标识配置**
+```typescript
+// 静态数据 - 立即展示
+{
+  id: 1,
+  name: '订单1',
+  children: [/* 静态子数据数组 */]
+}
+
+// 懒加载数据 - 异步获取
+{
+  id: 2,
+  name: '订单2',
+  children: true  // 懒加载标识
+}
+
+// 无子数据 - 不显示展开图标
+{
+  id: 3,
+  name: '订单3'
+  // 没有children属性
+}
+```
+
+**2. onLazyLoad 回调函数**
+```typescript
+onLazyLoad: async (eventData) => {
+  const { record, row, col, callback } = eventData;
+  
+  try {
+    // 执行异步数据获取
+    const data = await fetchDataFromServer(record.id);
+    
+    // 成功时调用 callback(null, detailTableConfig)
+    callback(null, {
+      columns: [/* 列配置 */],
+      records: data,
+      style: { height: 200, margin: 10 }
+    });
+  } catch (error) {
+    // 失败时调用 callback(error, null)
+    callback(error, null);
+  }
+}
+```
+
+**3. 加载状态管理**
+- 插件会自动显示加载动画（GIF格式的loading图标）
+- 支持自定义loading图标的样式和位置
+- 自动处理加载成功和失败的状态切换
+
+**4. 错误处理机制**
+- 通过 callback 函数的第一个参数传递错误信息
+- 支持在控制台输出详细的错误日志
+- 加载失败时会停止loading动画并恢复原始状态
+
+#### 懒加载使用场景
+
+- **大数据量分页加载**：主表显示概要信息，子表按需加载详细数据
+- **实时数据获取**：从服务器实时获取最新的关联数据
+- **权限控制**：根据用户权限动态加载不同的子表内容
+- **性能优化**：减少初始化时的数据传输量，提升页面加载速度
 
 ## 典型业务场景示例
 

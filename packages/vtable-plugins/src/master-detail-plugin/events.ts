@@ -1,4 +1,5 @@
 import * as VTable from '@visactor/vtable';
+import type { LazyLoadEventData } from './types';
 
 /**
  * 事件处理相关功能
@@ -8,6 +9,7 @@ export class EventManager {
   private originalResize: () => void;
   private eventHandlers: Array<{ type: string; handler: (...args: unknown[]) => unknown }> = [];
   private allExpandedRowsBeforeMove: Set<number> = new Set();
+  private onLazyLoad?: (eventData: LazyLoadEventData) => void;
 
   constructor(private table: VTable.ListTable) {}
 
@@ -294,17 +296,60 @@ export class EventManager {
    * 绑定图标点击事件
    */
   private bindIconClickEvent(): void {
-    const iconClickHandler = (iconInfo: any) => {
-      const { col, row, funcType, name } = iconInfo;
-      if (
-        (name === 'hierarchy-expand' || name === 'hierarchy-collapse') &&
-        (funcType === VTable.TYPES.IconFuncTypeEnum.expand || funcType === VTable.TYPES.IconFuncTypeEnum.collapse)
-      ) {
+    const iconClickHandler = (iconInfo: unknown) => {
+      const { col, row, name } = iconInfo as {
+        col: number;
+        row: number;
+        name: string;
+      };
+
+      if (name === 'hierarchy-expand') {
+        // 获取记录数据以检查是否为懒加载
+        const record = this.getRecordByCell(col, row);
+        if (this.isLazyLoadRecord?.(record)) {
+          this.triggerLazyLoad(row, col, record);
+          return;
+        }
+
+        // 普通展开逻辑
+        this.onToggleRowExpand?.(row, col);
+      } else if (name === 'hierarchy-collapse') {
         this.onToggleRowExpand?.(row, col);
       }
     };
     this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, iconClickHandler);
     this.eventHandlers.push({ type: VTable.TABLE_EVENT_TYPE.ICON_CLICK, handler: iconClickHandler });
+  }
+
+  /**
+   * 获取单元格记录数据
+   */
+  private getRecordByCell(col: number, row: number): unknown {
+    try {
+      const recordIndex = this.table.getRecordShowIndexByCell(col, row);
+      if (recordIndex !== undefined) {
+        return this.table.getRecordByCell(col, row);
+      }
+    } catch (error) {
+      console.warn('Failed to get record by cell:', error);
+    }
+    return null;
+  }
+
+  /**
+   * 触发懒加载事件
+   */
+  private triggerLazyLoad(row: number, col: number, record: unknown): void {
+    // 触发懒加载事件
+    const eventData: LazyLoadEventData = {
+      row,
+      col,
+      record
+    };
+    // 使用回调函数处理懒加载
+    if (this.onLazyLoad) {
+      this.onLazyLoad(eventData);
+    }
   }
 
   /**
@@ -426,6 +471,8 @@ export class EventManager {
     this.onCollapseRowToNoRealRecordIndex = undefined;
     this.onToggleRowExpand = undefined;
     this.getOriginalRowHeight = undefined;
+    this.isLazyLoadRecord = undefined;
+    this.onLazyLoad = undefined;
   }
 
   // 回调函数，需要从外部注入
@@ -436,6 +483,7 @@ export class EventManager {
   private onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
   private onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
   private getOriginalRowHeight?: (bodyRowIndex: number) => number;
+  private isLazyLoadRecord?: (record: unknown) => boolean;
 
   /**
    * 设置回调函数
@@ -448,6 +496,8 @@ export class EventManager {
     onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
     onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
+    isLazyLoadRecord?: (record: unknown) => boolean;
+    onLazyLoad?: (eventData: LazyLoadEventData) => void;
   }): void {
     this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;
     this.onUpdateSubTablePositionsForRow = callbacks.onUpdateSubTablePositionsForRow;
@@ -456,5 +506,7 @@ export class EventManager {
     this.onCollapseRowToNoRealRecordIndex = callbacks.onCollapseRowToNoRealRecordIndex;
     this.onToggleRowExpand = callbacks.onToggleRowExpand;
     this.getOriginalRowHeight = callbacks.getOriginalRowHeight;
+    this.isLazyLoadRecord = callbacks.isLazyLoadRecord;
+    this.onLazyLoad = callbacks.onLazyLoad;
   }
 }

@@ -18,6 +18,18 @@ export interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
+  /** 懒加载loading图标配置 */
+  lazyLoadingIcon?: {
+    src?: string;
+    width?: number;
+    height?: number;
+  };
+  /** 懒加载回调函数 */
+  onLazyLoad?: (
+    eventData: LazyLoadEventData & {
+      callback: (error: unknown, detailData: DetailTableOptions | null) => void;
+    }
+  ) => void;
 }
 
 /**
@@ -37,6 +49,10 @@ export interface InternalProps {
   originalRowHeights: Map<number, number>;
   _tempExpandedRecordIndices?: (number | number[])[];
   subTableCheckboxStates?: Map<number, SubTableCheckboxState>;
+  /** 懒加载状态管理 */
+  lazyLoadingStates?: Map<number, 'loading' | 'loaded' | 'error'>;
+  /** 懒加载Promise缓存，防止重复请求 */
+  lazyLoadingPromises?: Map<number, Promise<unknown>>;
 }
 
 /**
@@ -68,8 +84,25 @@ export interface SelectBorderHeightEventData {
   startRow: number;
   endRow: number;
   currentHeight: number;
-  selectComp: { rect: any; fillhandle?: any; role: string };
+  selectComp: { rect: unknown; fillhandle?: unknown; role: string };
 }
+
+/**
+ * 懒加载事件数据接口
+ */
+export interface LazyLoadEventData {
+  /** 行索引 */
+  row: number;
+  /** 列索引 */
+  col: number;
+  /** 记录数据 */
+  record: unknown;
+}
+
+/**
+ * 懒加载状态枚举
+ */
+export type LazyLoadState = 'loading' | 'loaded' | 'error';
 
 /**
  * 记录索引类型 - 支持单个数字或数字数组
