@@ -85,11 +85,7 @@ export function createTable() {
         const detailData = await mockFetchDetailData(orderId);
         // 通过callback返回数据
         callback(null, {
-          records: detailData,
-          style: {
-            height: 250,
-            margin: [10, 20, 10, 20]
-          }
+          records: detailData
         });
       } catch (error) {
         console.error('数据加载失败:', error);

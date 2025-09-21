@@ -435,11 +435,8 @@ onLazyLoad: async (eventData) => {
     // 执行异步数据获取
     const data = await fetchDataFromServer(record.id);
     
-    // 成功时调用 callback(null, detailTableConfig)
     callback(null, {
-      columns: [/* 列配置 */],
       records: data,
-      style: { height: 200, margin: 10 }
     });
   } catch (error) {
     // 失败时调用 callback(error, null)
@@ -541,20 +538,9 @@ function createLazyLoadTable() {
         // 异步获取数据
         const detailData = await mockFetchDetailData(orderId);
         
-        // 通过callback返回数据和配置
+        // 通过callback返回数据 - 只需要records即可
         callback(null, {
-          columns: [
-            { field: 'productName', title: '产品名称', width: 150 },
-            { field: 'quantity', title: '数量', width: 80 },
-            { field: 'price', title: '单价', width: 100 },
-            { field: 'total', title: '小计', width: 100 }
-          ],
-          records: detailData,
-          style: {
-            height: 250,
-            margin: [10, 20, 10, 20]
-          },
-          theme: VTable.themes.BRIGHT
+          records: detailData
         });
         
         console.log('数据加载完成：', detailData);

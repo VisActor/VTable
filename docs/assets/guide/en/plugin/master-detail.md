@@ -435,11 +435,8 @@ onLazyLoad: async (eventData) => {
     // Execute asynchronous data fetching
     const data = await fetchDataFromServer(record.id);
     
-    // Call callback(null, detailTableConfig) on success
     callback(null, {
-      columns: [/* column configuration */],
-      records: data,
-      style: { height: 200, margin: 10 }
+      records: data
     });
   } catch (error) {
     // Call callback(error, null) on failure
@@ -541,20 +538,9 @@ function createLazyLoadTable() {
         // Fetch data asynchronously
         const detailData = await mockFetchDetailData(orderId);
         
-        // Return data and configuration through callback
+        // Return data through callback - only records needed
         callback(null, {
-          columns: [
-            { field: 'productName', title: 'Product Name', width: 150 },
-            { field: 'quantity', title: 'Quantity', width: 80 },
-            { field: 'price', title: 'Unit Price', width: 100 },
-            { field: 'total', title: 'Subtotal', width: 100 }
-          ],
-          records: detailData,
-          style: {
-            height: 250,
-            margin: [10, 20, 10, 20]
-          },
-          theme: VTable.themes.BRIGHT
+          records: detailData
         });
         
         console.log('Data loading completed:', detailData);
