@@ -350,11 +350,9 @@ export class ConfigManager {
       if (this.isLazyLoadRecord(record)) {
         const bodyRowIndex = row - this.table.columnHeaderLevelCount;
         const loadingState = this.getLazyLoadingState(bodyRowIndex);
-        
         if (loadingState === 'loading') {
           return [this.createLoadingIcon()];
         }
-        
         const isExpanded = this.isRowExpanded(row);
         return isExpanded ? [this.createCollapseIcon()] : [this.createExpandIcon()];
       }

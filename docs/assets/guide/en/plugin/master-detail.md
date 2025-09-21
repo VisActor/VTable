@@ -426,6 +426,28 @@ Lazy loading functionality is enabled by configuring the `onLazyLoad` callback f
 3. **Asynchronous Processing**: Handle asynchronous data fetching through the `onLazyLoad` callback function
 4. **State Management**: The plugin automatically displays loading animation and updates the interface after data loading completes
 
+The key point is that onLazyLoad needs to be configured.
+```typescript
+onLazyLoad: async (eventData) => {
+  const { record, row, col, callback } = eventData;
+  
+  try {
+    // Execute asynchronous data fetching
+    const data = await fetchDataFromServer(record.id);
+    
+    // Call callback(null, detailTableConfig) on success
+    callback(null, {
+      columns: [/* column configuration */],
+      records: data,
+      style: { height: 200, margin: 10 }
+    });
+  } catch (error) {
+    // Call callback(error, null) on failure
+    callback(error, null);
+  }
+}
+```
+
 The following is a complete lazy loading example demonstrating how to implement product detail lazy loading in an order management system:
 
 ```javascript livedemo template=vtable
@@ -603,71 +625,6 @@ function createLazyLoadTable() {
 
 createLazyLoadTable();
 ```
-
-#### Lazy Loading Key Points
-
-**1. Data Identifier Configuration**
-```typescript
-// Static data - display immediately
-{
-  id: 1,
-  name: 'Order 1',
-  children: [/* static sub-data array */]
-}
-
-// Lazy loading data - fetch asynchronously
-{
-  id: 2,
-  name: 'Order 2',
-  children: true  // Lazy loading identifier
-}
-
-// No sub-data - no expand icon displayed
-{
-  id: 3,
-  name: 'Order 3'
-  // No children property
-}
-```
-
-**2. onLazyLoad Callback Function**
-```typescript
-onLazyLoad: async (eventData) => {
-  const { record, row, col, callback } = eventData;
-  
-  try {
-    // Execute asynchronous data fetching
-    const data = await fetchDataFromServer(record.id);
-    
-    // Call callback(null, detailTableConfig) on success
-    callback(null, {
-      columns: [/* column configuration */],
-      records: data,
-      style: { height: 200, margin: 10 }
-    });
-  } catch (error) {
-    // Call callback(error, null) on failure
-    callback(error, null);
-  }
-}
-```
-
-**3. Loading State Management**
-- Plugin automatically displays loading animation (GIF format loading icon)
-- Supports custom loading icon style and position
-- Automatically handles loading success and failure state transitions
-
-**4. Error Handling Mechanism**
-- Pass error information through the first parameter of callback function
-- Supports detailed error log output to console
-- Loading animation stops and returns to original state when loading fails
-
-#### Lazy Loading Use Cases
-
-- **Large data pagination loading**: Master table displays summary information, sub-tables load detailed data on demand
-- **Real-time data fetching**: Fetch latest associated data from server in real-time
-- **Permission control**: Dynamically load different sub-table content based on user permissions
-- **Performance optimization**: Reduce initial data transmission volume, improve page loading speed
 
 ## Typical Business Scenario Examples
 

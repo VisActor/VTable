@@ -426,6 +426,28 @@ MasterDetailPlugin 支持懒加载功能，允许在用户展开行时动态异�
 3. **异步处理**：通过 `onLazyLoad` 回调函数处理异步数据获取
 4. **状态管理**：插件会自动显示加载动画，并在数据加载完成后更新界面
 
+核心是需要配置onLazyLoad
+```typescript
+onLazyLoad: async (eventData) => {
+  const { record, row, col, callback } = eventData;
+  
+  try {
+    // 执行异步数据获取
+    const data = await fetchDataFromServer(record.id);
+    
+    // 成功时调用 callback(null, detailTableConfig)
+    callback(null, {
+      columns: [/* 列配置 */],
+      records: data,
+      style: { height: 200, margin: 10 }
+    });
+  } catch (error) {
+    // 失败时调用 callback(error, null)
+    callback(error, null);
+  }
+}
+```
+
 以下是一个完整的懒加载示例，演示如何在订单管理系统中实现产品明细的懒加载：
 
 ```javascript livedemo template=vtable
@@ -603,71 +625,6 @@ function createLazyLoadTable() {
 
 createLazyLoadTable();
 ```
-
-#### 懒加载核心要点
-
-**1. 数据标识配置**
-```typescript
-// 静态数据 - 立即展示
-{
-  id: 1,
-  name: '订单1',
-  children: [/* 静态子数据数组 */]
-}
-
-// 懒加载数据 - 异步获取
-{
-  id: 2,
-  name: '订单2',
-  children: true  // 懒加载标识
-}
-
-// 无子数据 - 不显示展开图标
-{
-  id: 3,
-  name: '订单3'
-  // 没有children属性
-}
-```
-
-**2. onLazyLoad 回调函数**
-```typescript
-onLazyLoad: async (eventData) => {
-  const { record, row, col, callback } = eventData;
-  
-  try {
-    // 执行异步数据获取
-    const data = await fetchDataFromServer(record.id);
-    
-    // 成功时调用 callback(null, detailTableConfig)
-    callback(null, {
-      columns: [/* 列配置 */],
-      records: data,
-      style: { height: 200, margin: 10 }
-    });
-  } catch (error) {
-    // 失败时调用 callback(error, null)
-    callback(error, null);
-  }
-}
-```
-
-**3. 加载状态管理**
-- 插件会自动显示加载动画（GIF格式的loading图标）
-- 支持自定义loading图标的样式和位置
-- 自动处理加载成功和失败的状态切换
-
-**4. 错误处理机制**
-- 通过 callback 函数的第一个参数传递错误信息
-- 支持在控制台输出详细的错误日志
-- 加载失败时会停止loading动画并恢复原始状态
-
-#### 懒加载使用场景
-
-- **大数据量分页加载**：主表显示概要信息，子表按需加载详细数据
-- **实时数据获取**：从服务器实时获取最新的关联数据
-- **权限控制**：根据用户权限动态加载不同的子表内容
-- **性能优化**：减少初始化时的数据传输量，提升页面加载速度
 
 ## 典型业务场景示例
 
