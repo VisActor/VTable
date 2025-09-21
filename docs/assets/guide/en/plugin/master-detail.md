@@ -568,24 +568,6 @@ function createLazyLoadTable() {
     // Static data configuration (for cases where children is an array)
     detailTableOptions: (params) => {
       const { data } = params;
-      // If it's static data (children is an array), return configuration directly
-      if (data && typeof data === 'object' && 'children' in data && Array.isArray(data.children)) {
-        return {
-          columns: [
-            { field: 'productName', title: 'Product Name', width: 150 },
-            { field: 'quantity', title: 'Quantity', width: 80 },
-            { field: 'price', title: 'Unit Price', width: 100 },
-            { field: 'total', title: 'Subtotal', width: 100 }
-          ],
-          records: data.children,
-          style: {
-            height: 200,
-            margin: [10, 20, 10, 20]
-          },
-          theme: VTable.themes.BRIGHT
-        };
-      }
-      // Return default configuration
       return {
         columns: [
           { field: 'productName', title: 'Product Name', width: 150 },
@@ -593,7 +575,12 @@ function createLazyLoadTable() {
           { field: 'price', title: 'Unit Price', width: 100 },
           { field: 'total', title: 'Subtotal', width: 100 }
         ],
-        records: []
+        records: data.children,
+        style: {
+          height: 200,
+          margin: [10, 20, 10, 20]
+        },
+        theme: VTable.themes.BRIGHT
       };
     }
   });

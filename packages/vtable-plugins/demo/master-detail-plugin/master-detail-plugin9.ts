@@ -99,10 +99,6 @@ export function createTable() {
     },
     detailTableOptions: params => {
       const { data } = params;
-      // 定义数据类型
-      interface DataWithChildren {
-        children?: unknown[];
-      }
       return {
         columns: [
           { field: 'productName', title: '产品名称', width: 150 },
@@ -110,7 +106,7 @@ export function createTable() {
           { field: 'price', title: '单价', width: 100 },
           { field: 'total', title: '小计', width: 100 }
         ],
-        records: (data as DataWithChildren).children,
+        records: (data as any).children,
         style: {
           height: 200,
           margin: [10, 20, 10, 20]

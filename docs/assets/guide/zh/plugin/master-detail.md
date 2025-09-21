@@ -565,27 +565,8 @@ function createLazyLoadTable() {
       }
     },
     
-    // 静态数据配置（用于 children 是数组的情况）
     detailTableOptions: (params) => {
       const { data } = params;
-      // 如果是静态数据（children是数组），直接返回配置
-      if (data && typeof data === 'object' && 'children' in data && Array.isArray(data.children)) {
-        return {
-          columns: [
-            { field: 'productName', title: '产品名称', width: 150 },
-            { field: 'quantity', title: '数量', width: 80 },
-            { field: 'price', title: '单价', width: 100 },
-            { field: 'total', title: '小计', width: 100 }
-          ],
-          records: data.children,
-          style: {
-            height: 200,
-            margin: [10, 20, 10, 20]
-          },
-          theme: VTable.themes.BRIGHT
-        };
-      }
-      // 返回默认配置
       return {
         columns: [
           { field: 'productName', title: '产品名称', width: 150 },
@@ -593,7 +574,12 @@ function createLazyLoadTable() {
           { field: 'price', title: '单价', width: 100 },
           { field: 'total', title: '小计', width: 100 }
         ],
-        records: []
+        records: data.children,
+        style: {
+          height: 200,
+          margin: [10, 20, 10, 20]
+        },
+        theme: VTable.themes.BRIGHT
       };
     }
   });
