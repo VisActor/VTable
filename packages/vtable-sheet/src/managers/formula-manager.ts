@@ -1,4 +1,4 @@
-import { FormulaEngine, type CellAddress, type CellRangeAddress } from '../formula/formula-engine';
+import { FormulaEngine } from '../formula/formula-engine';
 import type VTableSheet from '../components/vtable-sheet';
 import type { FormulaCell, FormulaResult } from '../ts-types/formula';
 import { FormulaRangeSelector } from '../formula/formula-range-selector';
@@ -21,7 +21,7 @@ const DEFAULT_FORMULA_ENGINE_CONFIG = {
 export class FormulaManager {
   /** Sheet实例 */
   sheet: VTableSheet;
-  /** NestedFormulaEngine实例 (MIT兼容) */
+  /** FormulaEngine实例 */
   private formulaEngine: FormulaEngine;
   /** 工作表映射 */
   private sheetMapping: Map<string, number> = new Map();
@@ -57,7 +57,6 @@ export class FormulaManager {
     return this._formulaWorkingOnCell;
   }
   set formulaWorkingOnCell(value: FormulaCell | null) {
-    console.trace('set formulaWorkingOnCell', value);
     this._formulaWorkingOnCell = value;
   }
 
@@ -69,14 +68,14 @@ export class FormulaManager {
   }
 
   /**
-   * 初始化NestedFormulaEngine实例 (MIT兼容)
+   * 初始化FormulaEngine实例
    */
   private initializeFormulaEngine(): void {
     try {
       this.formulaEngine = new FormulaEngine(DEFAULT_FORMULA_ENGINE_CONFIG);
       this.isInitialized = true;
     } catch (error) {
-      console.error('Failed to initialize NestedFormulaEngine:', error);
+      console.error('Failed to initialize FormulaEngine:', error);
       throw new Error('FormulaManager initialization failed');
     }
   }
@@ -87,12 +86,15 @@ export class FormulaManager {
    * @param  normalizedData 工作表数据 需要规范处理过 且包含表头的数据 因为要输入给FormulaEngine
    * @returns 工作表ID
    */
-  addSheet(sheetKey: string, normalizedData?: any[][]): number {
+  addSheet(sheetKey: string, normalizedData?: unknown[][]): number {
     this.ensureInitialized();
 
     // 检查是否已存在
     if (this.sheetMapping.has(sheetKey)) {
-      return this.sheetMapping.get(sheetKey)!;
+      const existingId = this.sheetMapping.get(sheetKey);
+      if (existingId !== undefined) {
+        return existingId;
+      }
     }
 
     try {
@@ -115,12 +117,12 @@ export class FormulaManager {
    * @param data 工作表数据
    * @returns 标准化后的工作表数据
    */
-  normalizeSheetData(data: any[][], tableInstance: VTable.ListTable): any[][] {
+  normalizeSheetData(data: unknown[][], tableInstance: VTable.ListTable): unknown[][] {
     try {
       //将columns中的title追加到data中
-      const headerRows: any[][] = [];
+      const headerRows: unknown[][] = [];
       for (let i = 0; i < tableInstance.columnHeaderLevelCount; i++) {
-        const headerRow: any[] = [];
+        const headerRow: unknown[] = [];
         for (let j = 0; j < tableInstance.colCount; j++) {
           const cellValue = tableInstance.getCellValue(j, i);
           headerRow.push(cellValue);
@@ -233,23 +235,11 @@ export class FormulaManager {
   }
 
   /**
-   * 获取是否有表头
-   * @param sheetKey 工作表键
-   * @returns 是否有表头
-   */
-  private getHasHeader(sheetKey: string): boolean {
-    const sheetDefine = this.sheet.getSheetManager().getSheet(sheetKey);
-
-    return sheetDefine?.showHeader ?? sheetDefine?.columns?.length > 0 ?? false;
-  }
-
-  /**
    * 设置单元格内容 (MIT兼容)
    * @param cell 单元格
    * @param value 值
    */
-  setCellContent(cell: FormulaCell, value: any): void {
-    console.trace('setCellContent', cell, value);
+  setCellContent(cell: FormulaCell, value: unknown): void {
     this.ensureInitialized();
 
     // 检查单元格参数有效性
@@ -333,15 +323,6 @@ export class FormulaManager {
   }
 
   /**
-   * 检查对象是否为CellRangeAddress (MIT兼容)
-   * @param obj 要检查的对象
-   * @returns 是否为CellRangeAddress
-   */
-  private isCellRangeAddress(obj: any): obj is CellRangeAddress {
-    return obj && typeof obj === 'object' && 'start' in obj && 'end' in obj;
-  }
-
-  /**
    * 获取依赖此单元格的所有单元格（包括范围依赖）(MIT兼容)
    * @param cell 单元格
    * @returns 依赖此单元格的所有单元格
@@ -379,7 +360,7 @@ export class FormulaManager {
    * 批量更新单元格 (MIT兼容)
    * @param changes 更新内容
    */
-  batchUpdate(changes: Array<{ cell: FormulaCell; value: any }>): void {
+  batchUpdate(changes: Array<{ cell: FormulaCell; value: unknown }>): void {
     this.ensureInitialized();
 
     try {
@@ -399,7 +380,7 @@ export class FormulaManager {
    * @param rowIndex 行索引
    * @param numberOfRows 添加的行数
    */
-  addRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
+  addRows(_sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
     this.ensureInitialized();
 
     try {
@@ -420,7 +401,7 @@ export class FormulaManager {
    * @param rowIndex 行索引
    * @param numberOfRows 删除的行数
    */
-  removeRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
+  removeRows(_sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
     this.ensureInitialized();
 
     try {
@@ -440,7 +421,7 @@ export class FormulaManager {
    * @param columnIndex 列索引
    * @param numberOfColumns 添加的列数
    */
-  addColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
+  addColumns(_sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
 
     try {
@@ -461,7 +442,7 @@ export class FormulaManager {
    * @param columnIndex 列索引
    * @param numberOfColumns 删除的列数
    */
-  removeColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
+  removeColumns(_sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
 
     try {
@@ -481,7 +462,7 @@ export class FormulaManager {
    * @param sheetKey 工作表键
    * @returns 工作表序列化数据
    */
-  getSheetSerialized(sheetKey: string): any[][] {
+  getSheetSerialized(sheetKey: string): unknown[][] {
     this.ensureInitialized();
 
     try {
@@ -505,20 +486,9 @@ export class FormulaManager {
       // 使用FormulaEngine的依赖排序功能
       return this.formulaEngine.sortFormulasByDependency(sheetKey, formulas);
     } catch (error) {
-      console.error(`Failed to sort formulas by dependency for sheet ${sheetKey}:`, error);
       // 如果排序失败，返回原始顺序
       return Object.entries(formulas);
     }
-  }
-
-  /**
-   * 从公式中提取单元格引用 (MIT兼容 - 已弃用)
-   * @param formula 公式字符串
-   * @returns 单元格引用数组
-   */
-  private extractCellReferences(formula: string): string[] {
-    // 此方法已弃用，FormulaEngine内部处理依赖关系
-    return [];
   }
 
   /**
@@ -526,7 +496,7 @@ export class FormulaManager {
    * @param sheetKey 工作表键
    * @param normalizedData 工作表数据 需要规范处理过 且包含表头的数据
    */
-  setSheetContent(sheetKey: string, normalizedData: any[][]): void {
+  setSheetContent(sheetKey: string, _normalizedData: unknown[][]): void {
     this.ensureInitialized();
 
     try {
@@ -770,7 +740,7 @@ export class FormulaManager {
    * @param formula 公式
    * @returns 计算结果
    */
-  calculateFormula(formula: string): { value: any; error?: string } {
+  calculateFormula(formula: string): { value: unknown; error?: string } {
     try {
       // 使用FormulaEngine计算公式
       return this.formulaEngine.calculateFormula(formula);
@@ -856,7 +826,7 @@ export class FormulaManager {
   /**
    * 导出状态用于调试 (MIT兼容)
    */
-  exportState(): any {
+  exportState(): Record<string, unknown> {
     return {
       isInitialized: this.isInitialized,
       sheets: Array.from(this.sheetMapping.entries()),
@@ -880,25 +850,6 @@ export class FormulaManager {
       console.error(`Failed to export formulas for sheet ${sheetKey}:`, error);
       return {};
     }
-  }
-
-  /**
-   * 将行列索引转换为A1表示法
-   * @param row 行索引 (0-based)
-   * @param col 列索引 (0-based)
-   * @returns A1表示法的单元格引用
-   */
-  private getCellA1Notation(row: number, col: number): string {
-    // 将列索引转换为字母 (0 -> A, 1 -> B, ..., 25 -> Z, 26 -> AA, etc.)
-    let columnStr = '';
-    let tempCol = col;
-    do {
-      columnStr = String.fromCharCode(65 + (tempCol % 26)) + columnStr;
-      tempCol = Math.floor(tempCol / 26) - 1;
-    } while (tempCol >= 0);
-    // 行索引从1开始
-    const rowStr = (row + 1).toString();
-    return columnStr + rowStr;
   }
 
   /**

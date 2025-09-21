@@ -345,15 +345,15 @@ export class FormulaEngine {
         return { value: Number(expr), error: undefined };
       }
 
-      // 处理范围引用
-      if (expr.includes(':')) {
+      // 处理范围引用（只处理简单的范围格式，如 A2:A4）
+      if (/^[A-Z]+[0-9]+:[A-Z]+[0-9]+$/.test(expr)) {
         const values = this.getRangeValuesFromExpr(expr);
         return { value: values, error: undefined };
       }
 
       // 处理算术表达式（包含+、-、*、/）
       if (expr.includes('+') || expr.includes('-') || expr.includes('*') || expr.includes('/')) {
-        return this.evaluateBasicArithmetic(expr);
+        return this.evaluateArithmeticWithFunctions(expr);
       }
 
       // 如果都不匹配，返回原始值
@@ -364,13 +364,41 @@ export class FormulaEngine {
   }
 
   private tryParseFunction(expr: string): { value: unknown; error?: string } | null {
-    const functionMatch = expr.match(/^([A-Z]+)\s*\((.*)\)$/i);
-    if (!functionMatch) {
+    // 更精确地匹配函数调用 - 确保是整个表达式且括号平衡
+    // 首先检查是否以函数名开头
+    const funcStartMatch = expr.match(/^([A-Z]+)\s*\(/i);
+    if (!funcStartMatch) {
       return null;
     }
 
-    const funcName = functionMatch[1].toUpperCase();
-    const argsStr = functionMatch[2];
+    const funcName = funcStartMatch[1].toUpperCase();
+
+    // 找到匹配的右括号
+    let depth = 1;
+    let argsEnd = funcStartMatch[0].length - 1; // 位置在左括号
+
+    for (let i = funcStartMatch[0].length; i < expr.length; i++) {
+      if (expr[i] === '(') {
+        depth++;
+      } else if (expr[i] === ')') {
+        depth--;
+        if (depth === 0) {
+          argsEnd = i;
+          break;
+        }
+      }
+    }
+
+    if (depth !== 0) {
+      return null; // 没有找到匹配的右括号
+    }
+
+    // 确保这是整个表达式（没有剩余字符）
+    if (argsEnd + 1 !== expr.length) {
+      return null; // 这不是一个完整的函数调用，后面还有其他内容
+    }
+
+    const argsStr = expr.substring(funcStartMatch[0].length, argsEnd);
 
     // 解析参数（处理嵌套）
     const args = this.parseArguments(argsStr);
@@ -499,6 +527,14 @@ export class FormulaEngine {
           return this.calculateCount(args);
         case 'COUNTA':
           return this.calculateCountA(args);
+        case 'STDEV':
+          return this.calculateStdev(args);
+        case 'VAR':
+          return this.calculateVar(args);
+        case 'MEDIAN':
+          return this.calculateMedian(args);
+        case 'PRODUCT':
+          return this.calculateProduct(args);
 
         // 逻辑函数
         case 'IF':
@@ -527,7 +563,7 @@ export class FormulaEngine {
   // 函数实现
   private calculateSum(args: unknown[]): { value: unknown; error?: string } {
     let total = 0;
-    for (const arg of this.flattenArgs(args)) {
+    for (const arg of this.flattenArgsWithRanges(args)) {
       const num = Number(arg);
       if (!isNaN(num)) {
         total += num;
@@ -537,7 +573,7 @@ export class FormulaEngine {
   }
 
   private calculateAverage(args: unknown[]): { value: unknown; error?: string } {
-    const values = this.flattenArgs(args).filter(arg => !isNaN(Number(arg)));
+    const values = this.flattenArgsWithRanges(args).filter(arg => !isNaN(Number(arg)));
     if (values.length === 0) {
       return { value: 0, error: undefined };
     }
@@ -546,7 +582,7 @@ export class FormulaEngine {
   }
 
   private calculateMax(args: unknown[]): { value: unknown; error?: string } {
-    const values = this.flattenArgs(args)
+    const values = this.flattenArgsWithRanges(args)
       .filter(arg => !isNaN(Number(arg)))
       .map(arg => Number(arg));
     if (values.length === 0) {
@@ -556,7 +592,7 @@ export class FormulaEngine {
   }
 
   private calculateMin(args: unknown[]): { value: unknown; error?: string } {
-    const values = this.flattenArgs(args)
+    const values = this.flattenArgsWithRanges(args)
       .filter(arg => !isNaN(Number(arg)))
       .map(arg => Number(arg));
     if (values.length === 0) {
@@ -614,9 +650,12 @@ export class FormulaEngine {
     const values = this.flattenArgs(args);
     let count = 0;
     for (const value of values) {
-      const num = Number(value);
-      if (!isNaN(num)) {
-        count++;
+      // COUNT only counts numeric values, excluding empty strings, null, undefined
+      if (value !== '' && value !== null && value !== undefined) {
+        const num = Number(value);
+        if (!isNaN(num)) {
+          count++;
+        }
       }
     }
     return { value: count, error: undefined };
@@ -631,6 +670,82 @@ export class FormulaEngine {
       }
     }
     return { value: count, error: undefined };
+  }
+
+  private calculateStdev(args: unknown[]): { value: unknown; error?: string } {
+    const values = this.flattenArgs(args)
+      .filter(arg => !isNaN(Number(arg)) && arg !== '' && arg !== null && arg !== undefined)
+      .map(arg => Number(arg));
+
+    if (values.length < 2) {
+      return { value: 0, error: undefined };
+    }
+
+    // Calculate mean
+    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+
+    // Calculate variance
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (values.length - 1);
+
+    // Return standard deviation
+    return { value: Math.sqrt(variance), error: undefined };
+  }
+
+  private calculateVar(args: unknown[]): { value: unknown; error?: string } {
+    const values = this.flattenArgs(args)
+      .filter(arg => !isNaN(Number(arg)) && arg !== '' && arg !== null && arg !== undefined)
+      .map(arg => Number(arg));
+
+    if (values.length < 2) {
+      return { value: 0, error: undefined };
+    }
+
+    // Calculate mean
+    const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
+
+    // Calculate variance (sample variance - divide by n-1 like STDEV)
+    const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (values.length - 1);
+
+    return { value: variance, error: undefined };
+  }
+
+  private calculateMedian(args: unknown[]): { value: unknown; error?: string } {
+    const values = this.flattenArgs(args)
+      .filter(arg => !isNaN(Number(arg)) && arg !== '' && arg !== null && arg !== undefined)
+      .map(arg => Number(arg));
+
+    if (values.length === 0) {
+      return { value: 0, error: undefined };
+    }
+
+    // Sort the values
+    const sortedValues = values.sort((a, b) => a - b);
+
+    if (sortedValues.length % 2 === 0) {
+      // Even number of values - return average of middle two
+      const mid1 = sortedValues[sortedValues.length / 2 - 1];
+      const mid2 = sortedValues[sortedValues.length / 2];
+      return { value: (mid1 + mid2) / 2, error: undefined };
+    }
+    // Odd number of values - return middle value
+    return { value: sortedValues[Math.floor(sortedValues.length / 2)], error: undefined };
+  }
+
+  private calculateProduct(args: unknown[]): { value: unknown; error?: string } {
+    let product = 1;
+    const values = this.flattenArgs(args)
+      .filter(arg => !isNaN(Number(arg)) && arg !== '' && arg !== null && arg !== undefined)
+      .map(arg => Number(arg));
+
+    if (values.length === 0) {
+      return { value: 0, error: undefined };
+    }
+
+    for (const value of values) {
+      product *= value;
+    }
+
+    return { value: product, error: undefined };
   }
 
   private calculateIf(args: unknown[]): { value: unknown; error?: string } {
@@ -702,6 +817,27 @@ export class FormulaEngine {
     return result;
   }
 
+  private flattenArgsWithRanges(args: unknown[]): unknown[] {
+    const result: unknown[] = [];
+    for (const arg of args) {
+      if (Array.isArray(arg)) {
+        result.push(...arg);
+      } else if (typeof arg === 'string' && arg.includes(':')) {
+        // 处理范围引用，如 A2:A4
+        try {
+          const rangeValues = this.getRangeValuesFromExpr(arg);
+          result.push(...rangeValues);
+        } catch {
+          // 如果范围解析失败，保持原样
+          result.push(arg);
+        }
+      } else {
+        result.push(arg);
+      }
+    }
+    return result;
+  }
+
   private isTruthy(value: unknown): boolean {
     if (value === null || value === undefined) {
       return false;
@@ -731,21 +867,69 @@ export class FormulaEngine {
     return true; // 非空值视为true
   }
 
+  private evaluateArithmeticWithFunctions(expr: string): { value: unknown; error?: string } {
+    try {
+      // 这个函数处理包含函数调用的算术表达式，如 SUM(A2:A4)+AVERAGE(A2:A4)
+
+      // 1. 首先找到所有的函数调用
+      const functionMatches = [];
+      const functionRegex = /[A-Z]+\([^)]*\)/g;
+      let match;
+
+      while ((match = functionRegex.exec(expr)) !== null) {
+        functionMatches.push({
+          match: match[0],
+          start: match.index,
+          end: match.index + match[0].length
+        });
+      }
+
+      // 2. 计算每个函数的值
+      let processedExpr = expr;
+      const functionValues = [];
+
+      for (const funcMatch of functionMatches) {
+        const funcResult = this.parseExpression(funcMatch.match);
+        if (funcResult.error) {
+          return { value: null, error: `Error in function ${funcMatch.match}: ${funcResult.error}` };
+        }
+        functionValues.push(funcResult.value);
+        // 用占位符替换函数调用，避免重复处理
+        processedExpr = processedExpr.replace(funcMatch.match, `__FUNC_${functionValues.length - 1}__`);
+      }
+
+      // 3. 处理剩余的单元格引用
+      const cellRefs = processedExpr.match(/[A-Z]+[0-9]+/g) || [];
+      for (const cellRef of cellRefs) {
+        const value = this.getCellValueByA1(cellRef);
+        processedExpr = processedExpr.replace(cellRef, String(value));
+      }
+
+      // 4. 将占位符替换回实际值
+      for (let i = 0; i < functionValues.length; i++) {
+        processedExpr = processedExpr.replace(`__FUNC_${i}__`, String(functionValues[i]));
+      }
+
+      // 5. 计算最终的算术表达式
+      // eslint-disable-next-line @typescript-eslint/no-implied-eval
+      const result = Function('"use strict"; return (' + processedExpr + ')')();
+      return { value: result, error: undefined };
+    } catch (error) {
+      return { value: null, error: 'Basic arithmetic evaluation failed' };
+    }
+  }
+
   private evaluateBasicArithmetic(expr: string): { value: unknown; error?: string } {
     try {
+      // 如果表达式还包含函数调用，不应该在这里处理
+      if (/[A-Z]+\s*\(/.test(expr)) {
+        return { value: null, error: 'Expression contains function calls' };
+      }
+
       // 替换单元格引用为实际值
       let processedExpr = expr;
 
-      // 首先处理函数调用，避免被当作简单单元格引用
-      const functionMatches = expr.match(/[A-Z]+\([^)]*\)/g) || [];
-      for (const funcMatch of functionMatches) {
-        const funcResult = this.parseExpression(funcMatch);
-        if (!funcResult.error) {
-          processedExpr = processedExpr.replace(funcMatch, String(funcResult.value));
-        }
-      }
-
-      // 然后处理剩余的单元格引用
+      // 处理单元格引用
       const cellRefs = processedExpr.match(/[A-Z]+[0-9]+/g) || [];
       for (const cellRef of cellRefs) {
         const value = this.getCellValueByA1(cellRef);
@@ -762,8 +946,19 @@ export class FormulaEngine {
 
   private getCellValueByA1(a1Notation: string): unknown {
     try {
-      const { row, col } = this.parseA1Notation(a1Notation);
-      const sheetKey = this.reverseSheets.get(0) || 'Sheet1';
+      let sheetKey = this.reverseSheets.get(0) || 'Sheet1';
+      let cellRef = a1Notation;
+
+      // 检查是否包含工作表前缀
+      if (a1Notation.includes('!')) {
+        const parts = a1Notation.split('!');
+        if (parts.length === 2) {
+          sheetKey = parts[0];
+          cellRef = parts[1];
+        }
+      }
+
+      const { row, col } = this.parseA1Notation(cellRef);
       const cell: FormulaCell = { sheet: sheetKey, row, col };
       return this.getCellValue(cell).value;
     } catch {
@@ -777,12 +972,24 @@ export class FormulaEngine {
         return [this.getCellValueByA1(expr)];
       }
 
-      const [start, end] = expr.split(':');
+      // 解析范围引用，可能包含工作表前缀，如 DataSheet!A2:A4
+      let sheetKey = this.reverseSheets.get(0) || 'Sheet1';
+      let rangeExpr = expr;
+
+      // 检查是否包含工作表前缀
+      if (expr.includes('!')) {
+        const parts = expr.split('!');
+        if (parts.length === 2) {
+          sheetKey = parts[0];
+          rangeExpr = parts[1];
+        }
+      }
+
+      const [start, end] = rangeExpr.split(':');
       const startCell = this.parseA1Notation(start.trim());
       const endCell = this.parseA1Notation(end.trim());
 
       const values: unknown[] = [];
-      const sheetKey = this.reverseSheets.get(0) || 'Sheet1';
 
       for (let row = startCell.row; row <= endCell.row; row++) {
         for (let col = startCell.col; col <= endCell.col; col++) {
@@ -881,20 +1088,84 @@ export class FormulaEngine {
     return result;
   }
 
+  getAvailableFunctions(): string[] {
+    return [...supportedFunctions];
+  }
+
+  // 新增方法：验证公式语法（仅语法验证，不计算）
   validateFormula(formula: string): { isValid: boolean; error?: string } {
     try {
-      const result = this.calculateFormula(formula);
-      return { isValid: !result.error, error: result.error };
+      // 仅进行语法验证，不进行实际计算
+      if (!formula.startsWith('=')) {
+        return { isValid: true }; // 非公式总是有效的
+      }
+
+      const expression = formula.substring(1).trim();
+      if (!expression) {
+        return { isValid: false, error: 'Empty expression' };
+      }
+
+      // 基本语法检查
+      this.validateExpressionStructure(expression);
+
+      // 验证函数名是否有效
+      this.validateFunctionNames(expression);
+
+      return { isValid: true };
     } catch (error) {
       return {
         isValid: false,
-        error: error instanceof Error ? error.message : 'Invalid formula'
+        error: error instanceof Error ? error.message : 'Invalid formula syntax'
       };
     }
   }
 
-  getAvailableFunctions(): string[] {
-    return [...supportedFunctions];
+  private validateFunctionNames(expr: string): void {
+    // 匹配函数调用模式
+    const functionPattern = /([A-Z]+)\s*\(/gi;
+    let match;
+
+    while ((match = functionPattern.exec(expr)) !== null) {
+      const funcName = match[1].toUpperCase();
+      if (!supportedFunctions.includes(funcName)) {
+        throw new Error(`Unknown function: ${funcName}`);
+      }
+    }
+  }
+
+  private validateExpressionStructure(expr: string): void {
+    // 检查括号是否匹配
+    const openParenCount = (expr.match(/\(/g) || []).length;
+    const closeParenCount = (expr.match(/\)/g) || []).length;
+    if (openParenCount !== closeParenCount) {
+      throw new Error('Unmatched parentheses');
+    }
+
+    // 检查引号是否匹配
+    const doubleQuoteCount = (expr.match(/"/g) || []).length;
+    if (doubleQuoteCount % 2 !== 0) {
+      throw new Error('Unmatched quotes');
+    }
+
+    // 检查是否有未完成的操作符
+    if (expr.match(/[+\-*/^&%<>=]$/)) {
+      throw new Error('Expression ends with operator');
+    }
+
+    // 检查是否有连续的逗号
+    if (expr.match(/,,/)) {
+      throw new Error('Consecutive commas');
+    }
+
+    // 检查是否有未完成的函数参数
+    if (expr.match(/\([^)]*,\s*\)/) || expr.match(/,\s*\)/) || expr.match(/\(\s*\)/)) {
+      throw new Error('Invalid function arguments');
+    }
+
+    // 检查是否有连续的操作符 (如 1++1)
+    if (expr.match(/[+\-*/^&%][+\-*/^&%]/)) {
+      throw new Error('Basic arithmetic evaluation failed');
+    }
   }
 
   release(): void {
@@ -905,6 +1176,283 @@ export class FormulaEngine {
     this.dependencies.clear();
     this.dependents.clear();
     this.nextSheetId = 0;
+  }
+
+  // 新增方法：导出公式
+  exportFormulas(sheetKey: string): Record<string, string> {
+    const result: Record<string, string> = {};
+    const sheetId = this.sheets.get(sheetKey);
+
+    if (sheetId === undefined) {
+      return result;
+    }
+
+    // 遍历所有公式单元格
+    for (const entry of Array.from(this.formulaCells.entries())) {
+      const [cellKey, formula] = entry;
+      const cell = this.parseCellKey(cellKey);
+      if (cell && cell.sheet === sheetKey) {
+        const a1Notation = this.getA1Notation(cell.row, cell.col);
+        result[a1Notation] = formula;
+      }
+    }
+
+    return result;
+  }
+
+  // 新增方法：获取所有工作表
+  getAllSheets(): Array<{ key: string; id: number; name: string }> {
+    const result: Array<{ key: string; id: number; name: string }> = [];
+
+    for (const entry of Array.from(this.sheets.entries())) {
+      const [sheetKey, sheetId] = entry;
+      result.push({
+        key: sheetKey,
+        id: sheetId,
+        name: sheetKey // 使用key作为名称
+      });
+    }
+
+    return result;
+  }
+
+  // 新增方法：按依赖关系对公式进行排序
+  sortFormulasByDependency(sheetKey: string, formulas: Record<string, string>): [string, string][] {
+    try {
+      // 创建临时依赖图用于排序
+      const tempDependencies = new Map<string, Set<string>>();
+      const tempDependents = new Map<string, Set<string>>();
+
+      // 分析所有公式的依赖关系
+      for (const [cellRef, formula] of Object.entries(formulas)) {
+        const cellKey = `${sheetKey}!${cellRef}`;
+        const dependencies = this.extractCellReferences(formula, sheetKey);
+
+        tempDependencies.set(cellKey, new Set(dependencies));
+
+        // 建立反向依赖关系
+        for (const dep of dependencies) {
+          const depDependents = tempDependents.get(dep) || new Set();
+          depDependents.add(cellKey);
+          tempDependents.set(dep, depDependents);
+        }
+      }
+
+      // 使用拓扑排序
+      const visited = new Set<string>();
+      const tempVisited = new Set<string>();
+      const result: [string, string][] = [];
+
+      const visit = (cellKey: string): void => {
+        if (visited.has(cellKey)) {
+          return;
+        }
+        if (tempVisited.has(cellKey)) {
+          console.warn(`Circular dependency detected involving cell ${cellKey}`);
+          return;
+        }
+
+        tempVisited.add(cellKey);
+
+        const deps = tempDependencies.get(cellKey) || new Set();
+        for (const dep of deps) {
+          if (tempDependencies.has(dep)) {
+            // 只访问也是公式的依赖
+            visit(dep);
+          }
+        }
+
+        tempVisited.delete(cellKey);
+        visited.add(cellKey);
+
+        // 提取单元格引用（移除工作表前缀）
+        const cellRef = cellKey.substring(sheetKey.length + 1);
+        const formula = formulas[cellRef];
+        if (formula) {
+          result.push([cellRef, formula]);
+        }
+      };
+
+      // 访问所有公式单元格
+      for (const cellKey of tempDependencies.keys()) {
+        if (!visited.has(cellKey)) {
+          visit(cellKey);
+        }
+      }
+
+      return result;
+    } catch (error) {
+      console.warn(`Failed to sort formulas by dependency for sheet ${sheetKey}:`, error);
+      // 如果排序失败，返回原始顺序
+      return Object.entries(formulas);
+    }
+  }
+
+  // 新增方法：删除工作表
+  removeSheet(sheetKey: string): void {
+    const sheetId = this.sheets.get(sheetKey);
+    if (sheetId === undefined) {
+      return;
+    }
+
+    // 不能删除最后一个sheet
+    if (this.sheets.size <= 1) {
+      throw new Error('Cannot remove the last sheet');
+    }
+
+    // 删除工作表数据
+    this.sheetData.delete(sheetId);
+    this.sheets.delete(sheetKey);
+    this.reverseSheets.delete(sheetId);
+
+    // 删除相关的公式和依赖关系
+    const keysToRemove: string[] = [];
+    for (const entry of Array.from(this.formulaCells.entries())) {
+      const [cellKey] = entry;
+      if (cellKey.startsWith(`${sheetKey}!`)) {
+        keysToRemove.push(cellKey);
+      }
+    }
+
+    for (const cellKey of keysToRemove) {
+      this.formulaCells.delete(cellKey);
+      this.dependencies.delete(cellKey);
+      this.dependents.delete(cellKey);
+    }
+
+    // 清理依赖关系中的引用
+    for (const entry of Array.from(this.dependencies.entries())) {
+      const [cellKey, deps] = entry;
+      const newDeps = new Set<string>();
+      for (const dep of deps) {
+        if (!dep.startsWith(`${sheetKey}!`)) {
+          newDeps.add(dep);
+        }
+      }
+      if (newDeps.size === 0) {
+        this.dependencies.delete(cellKey);
+      } else {
+        this.dependencies.set(cellKey, newDeps);
+      }
+    }
+
+    for (const entry of Array.from(this.dependents.entries())) {
+      const [cellKey, dependents] = entry;
+      const newDependents = new Set<string>();
+      for (const dep of dependents) {
+        if (!dep.startsWith(`${sheetKey}!`)) {
+          newDependents.add(dep);
+        }
+      }
+      if (newDependents.size === 0) {
+        this.dependents.delete(cellKey);
+      } else {
+        this.dependents.set(cellKey, newDependents);
+      }
+    }
+  }
+
+  // 新增方法：重命名工作表
+  renameSheet(oldKey: string, newKey: string): void {
+    const sheetId = this.sheets.get(oldKey);
+    if (sheetId === undefined) {
+      throw new Error(`Sheet not found: ${oldKey}`);
+    }
+
+    if (this.sheets.has(newKey)) {
+      throw new Error(`Sheet already exists: ${newKey}`);
+    }
+
+    // 更新工作表映射
+    this.sheets.delete(oldKey);
+    this.sheets.set(newKey, sheetId);
+    this.reverseSheets.set(sheetId, newKey);
+
+    // 更新公式单元格的键
+    const formulaEntriesToUpdate: [string, string][] = [];
+    for (const entry of Array.from(this.formulaCells.entries())) {
+      const [cellKey, formula] = entry;
+      if (cellKey.startsWith(`${oldKey}!`)) {
+        const newCellKey = cellKey.replace(`${oldKey}!`, `${newKey}!`);
+        formulaEntriesToUpdate.push([newCellKey, formula]);
+        this.formulaCells.delete(cellKey);
+      }
+    }
+
+    for (const [newCellKey, formula] of formulaEntriesToUpdate) {
+      this.formulaCells.set(newCellKey, formula);
+    }
+
+    // 更新依赖关系的键
+    const dependencyEntriesToUpdate: [string, Set<string>][] = [];
+    for (const entry of Array.from(this.dependencies.entries())) {
+      const [cellKey, deps] = entry;
+      let newCellKey = cellKey;
+      const newDeps = new Set<string>();
+
+      if (cellKey.startsWith(`${oldKey}!`)) {
+        newCellKey = cellKey.replace(`${oldKey}!`, `${newKey}!`);
+      }
+
+      for (const dep of deps) {
+        if (dep.startsWith(`${oldKey}!`)) {
+          newDeps.add(dep.replace(`${oldKey}!`, `${newKey}!`));
+        } else {
+          newDeps.add(dep);
+        }
+      }
+
+      if (newCellKey !== cellKey || !this.areSetsEqual(newDeps, deps)) {
+        dependencyEntriesToUpdate.push([newCellKey, newDeps]);
+        this.dependencies.delete(cellKey);
+      }
+    }
+
+    for (const [newCellKey, newDeps] of dependencyEntriesToUpdate) {
+      this.dependencies.set(newCellKey, newDeps);
+    }
+
+    // 更新被依赖关系的键
+    const dependentEntriesToUpdate: [string, Set<string>][] = [];
+    for (const entry of Array.from(this.dependents.entries())) {
+      const [cellKey, dependents] = entry;
+      let newCellKey = cellKey;
+      const newDependents = new Set<string>();
+
+      if (cellKey.startsWith(`${oldKey}!`)) {
+        newCellKey = cellKey.replace(`${oldKey}!`, `${newKey}!`);
+      }
+
+      for (const dep of dependents) {
+        if (dep.startsWith(`${oldKey}!`)) {
+          newDependents.add(dep.replace(`${oldKey}!`, `${newKey}!`));
+        } else {
+          newDependents.add(dep);
+        }
+      }
+
+      if (newCellKey !== cellKey || !this.areSetsEqual(newDependents, dependents)) {
+        dependentEntriesToUpdate.push([newCellKey, newDependents]);
+        this.dependents.delete(cellKey);
+      }
+    }
+
+    for (const [newCellKey, newDependents] of dependentEntriesToUpdate) {
+      this.dependents.set(newCellKey, newDependents);
+    }
+  }
+
+  // 辅助方法：比较两个Set是否相等
+  private areSetsEqual(set1: Set<string>, set2: Set<string>): boolean {
+    if (set1.size !== set2.size) {
+      return false;
+    }
+    for (const item of set1) {
+      if (!set2.has(item)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // 依赖关系管理

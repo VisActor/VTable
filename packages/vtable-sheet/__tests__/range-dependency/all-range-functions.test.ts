@@ -1,5 +1,5 @@
-import { FormulaManager } from '../../s../../src/managers/formula-manager';
-import type VTableSheet from '../../s../../src/components/vtable-sheet';
+import { FormulaManager } from '../../src/managers/formula-manager';
+import type VTableSheet from '../../src/components/vtable-sheet';
 
 // Mock VTableSheet for testing
 const mockVTableSheet = {

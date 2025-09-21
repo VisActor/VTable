@@ -1,10 +1,10 @@
 /**
- * NestedFormulaEngine 完整单元测试
+ * FormulaEngine 完整单元测试
  */
 
 import { FormulaEngine } from '../src/formula/formula-engine';
 
-describe('NestedFormulaEngine', () => {
+describe('FormulaEngine', () => {
   let engine: FormulaEngine;
 
   beforeEach(() => {
