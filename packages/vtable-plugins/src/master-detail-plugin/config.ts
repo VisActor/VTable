@@ -1,38 +1,12 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailTableOptions, MasterDetailPluginOptions, LazyLoadState } from './types';
+import type { DetailTableOptions, MasterDetailPluginOptions } from './types';
+import { getInternalProps } from './utils';
 
 /**
  * 配置注入相关功能
  */
 export class ConfigManager {
-  private lazyLoadingStates: Map<number, LazyLoadState> = new Map();
-
   constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
-
-  /**
-   * 检查记录是否为懒加载节点
-   */
-  isLazyLoadRecord(record: unknown): boolean {
-    // 只有配置了懒加载回调函数才启用懒加载功能
-    if (!this.pluginOptions.onLazyLoad) {
-      return false;
-    }
-    return record && typeof record === 'object' && 'children' in record && record.children === true;
-  }
-
-  /**
-   * 获取懒加载状态
-   */
-  getLazyLoadingState(bodyRowIndex: number): LazyLoadState | undefined {
-    return this.lazyLoadingStates.get(bodyRowIndex);
-  }
-
-  /**
-   * 设置懒加载状态
-   */
-  setLazyLoadingState(bodyRowIndex: number, state: LazyLoadState): void {
-    this.lazyLoadingStates.set(bodyRowIndex, state);
-  }
 
   /**
    * 创建展开图标配置
@@ -291,9 +265,16 @@ export class ConfigManager {
       }
 
       // 检查是否为懒加载节点
-      if (this.isLazyLoadRecord(record)) {
+      if (
+        this.pluginOptions.onLazyLoad &&
+        record &&
+        typeof record === 'object' &&
+        'children' in record &&
+        record.children === true
+      ) {
         const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-        const loadingState = this.getLazyLoadingState(bodyRowIndex);
+        const internalProps = getInternalProps(this.table);
+        const loadingState = internalProps.lazyLoadingStates?.get(bodyRowIndex);
         if (loadingState === 'loading') {
           // 使用用户注册的loading图标名称
           return ['loading']; // 直接返回图标名称，VTable会自动查找注册的图标
@@ -344,8 +325,6 @@ export class ConfigManager {
    */
   release(): void {
     this.isRowExpanded = () => false;
-    // 清理懒加载状态
-    this.lazyLoadingStates.clear();
     // 清理对表格的引用
     (this as unknown as { table: VTable.ListTable | null }).table = null;
     (this as unknown as { pluginOptions: MasterDetailPluginOptions | null }).pluginOptions = null;

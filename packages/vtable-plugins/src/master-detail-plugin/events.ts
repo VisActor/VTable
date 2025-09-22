@@ -445,7 +445,6 @@ export class EventManager {
     this.onCollapseRowToNoRealRecordIndex = undefined;
     this.onToggleRowExpand = undefined;
     this.getOriginalRowHeight = undefined;
-    this.isLazyLoadRecord = undefined;
   }
 
   // 回调函数，需要从外部注入
@@ -456,7 +455,6 @@ export class EventManager {
   private onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
   private onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
   private getOriginalRowHeight?: (bodyRowIndex: number) => number;
-  private isLazyLoadRecord?: (record: unknown) => boolean;
 
   /**
    * 设置回调函数
@@ -469,7 +467,6 @@ export class EventManager {
     onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
     onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
-    isLazyLoadRecord?: (record: unknown) => boolean;
   }): void {
     this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;
     this.onUpdateSubTablePositionsForRow = callbacks.onUpdateSubTablePositionsForRow;
@@ -478,6 +475,5 @@ export class EventManager {
     this.onCollapseRowToNoRealRecordIndex = callbacks.onCollapseRowToNoRealRecordIndex;
     this.onToggleRowExpand = callbacks.onToggleRowExpand;
     this.getOriginalRowHeight = callbacks.getOriginalRowHeight;
-    this.isLazyLoadRecord = callbacks.isLazyLoadRecord;
   }
 }

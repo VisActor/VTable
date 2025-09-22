@@ -87,8 +87,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       onCollapseRow: (rowIndex: number, colIndex?: number) => this.collapseRow(rowIndex, colIndex),
       onCollapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
       onToggleRowExpand: (rowIndex: number, colIndex?: number) => this.toggleRowExpand(rowIndex, colIndex),
-      getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex),
-      isLazyLoadRecord: (record: unknown) => this.configManager.isLazyLoadRecord(record)
+      getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex)
     });
 
     // 设置子表管理器的回调函数
@@ -233,7 +232,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       internalProps.lazyLoadingStates = new Map();
     }
 
-    const currentState = this.configManager.getLazyLoadingState(bodyRowIndex);
+    const currentState = internalProps.lazyLoadingStates?.get(bodyRowIndex);
 
     // 检查状态
     if (currentState === 'loading') {
@@ -246,13 +245,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     // 开始懒加载
-    this.configManager.setLazyLoadingState(bodyRowIndex, 'loading');
+    if (!internalProps.lazyLoadingStates) {
+      internalProps.lazyLoadingStates = new Map();
+    }
     internalProps.lazyLoadingStates.set(bodyRowIndex, 'loading');
     this.refreshRowIcon(row, 0);
 
     const callback = (error: unknown, detailData: DetailTableOptions | null) => {
       if (error) {
-        this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
         if (internalProps.lazyLoadingStates) {
           internalProps.lazyLoadingStates.set(bodyRowIndex, 'error');
         }
@@ -263,7 +263,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
       if (detailData) {
         // 更新数据和状态
-        this.configManager.setLazyLoadingState(bodyRowIndex, 'loaded');
         if (internalProps.lazyLoadingStates) {
           internalProps.lazyLoadingStates.set(bodyRowIndex, 'loaded');
         }
@@ -284,7 +283,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     try {
       this.pluginOptions.onLazyLoad({ row, col: 0, record, callback });
     } catch (error) {
-      this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
       if (internalProps.lazyLoadingStates) {
         internalProps.lazyLoadingStates.set(bodyRowIndex, 'error');
       }
