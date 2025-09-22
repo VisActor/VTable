@@ -849,7 +849,7 @@ export default class VTableSheet {
     this.sheetManager.getAllSheets().forEach(sheetDefine => {
       const instance = this.workSheetInstances.get(sheetDefine.sheetKey);
       if (instance) {
-        const data = instance.getData();
+        const data = instance.getCopiedData();
         //column中去除field字段 (field字段会在columns.map中被使用)
         const columns = instance.getColumns().map(column => {
           // 解构时省略field属性

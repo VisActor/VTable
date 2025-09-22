@@ -502,6 +502,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     return this.options.data || [];
   }
 
+  getCopiedData(): any[][] {
+    // 为了避免影响当前数据，所以需要复制一份数据
+    return this.getData().map(row => (Array.isArray(row) ? row.slice() : []));
+  }
+
   /**
    * 设置表格数据
    * @param data 表格数据
