@@ -251,6 +251,6 @@ VisActor 官网：[www.visactor.io/](https://link.juejin.cn/?target=https%3A%2F%
 discord：https://discord.com/invite/3wPyxVyH6m
 
 
-# 本文档由由以下人员贡献
+# 本文档由以下人员贡献
 
 [玄魂](https://github.com/xuanhun)

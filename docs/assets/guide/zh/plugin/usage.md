@@ -54,6 +54,8 @@ const option: VTable.ListTableConstructorOptions = {
 | `RotateTablePlugin` | 表格旋转插件 | `ListTable`,`PivotTable` |
 | `TableExportPlugin` | 表格导出插件 | `ListTable`,`PivotTable` |
 | `ExcelImportPlugin` | 导入execl，csv，json，html到表格中 | `ListTable` |
+| `ContextMenuPlugin` | 右键菜单插件 | `ListTable` |
+| `TableSeriesNumberPlugin` | 表格序号插件 | `ListTable` |
 
 <br>
 
@@ -63,3 +65,27 @@ const option: VTable.ListTableConstructorOptions = {
 | --- | --- | --- |
 | `ExportGanttPlugin` | 实现全量导出甘特图,可以自适应甘特图的大小 | `Gantt` |
 | `ExcelImportPlugin` | 导入execl，csv，json，html到表格中 | `ListTable` |
+
+## 插件事件
+
+插件可以触发事件到表格，其他插件可以监听该类型事件。
+
+如某个插件需要在内部处理逻辑中触发右键事件到表格，其他插件可以监听该类型事件。
+
+```ts
+const tableInstance =new ListTable(options);
+
+const {
+    PLUGIN_EVENT
+} = VTable.ListTable.EVENT_TYPE;
+
+tableInstance.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+  plugin: this,
+  event: nativeEvent,
+   pluginEventInfo: {
+     eventType: 'rightclick',
+     colIndex: colIndex,
+     ...
+  } 
+});
+```

@@ -1,0 +1,170 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-sheet-styleSheet';
+  styleElement.textContent = `
+/* Sheet容器样式 */
+.vtable-sheet-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-default);
+  font-family: var(--font-family-sans);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.vtable-sheet-top-container {
+  height: 30px;
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center; /* 确保子元素垂直居中 */
+}
+
+/* 主内容区域 */
+.vtable-sheet-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+
+/* VTable 容器 */
+.vtable-sheet-table {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-default);
+}
+
+/* 表格加载动画 */
+.vtable-sheet-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+}
+
+.vtable-sheet-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: vtable-sheet-spinner 0.8s linear infinite;
+}
+
+@keyframes vtable-sheet-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 状态提示 */
+.vtable-sheet-status {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background-color: var(--gray-800);
+  color: var(--white);
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  opacity: 0.8;
+  z-index: 50;
+  transition: opacity 0.2s;
+}
+
+.vtable-sheet-status:hover {
+  opacity: 1;
+}
+
+.vtable-sheet-snackbar-message {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background-color: #333;
+  color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.vtable-sheet-snackbar-message.show {
+  opacity: 1;
+}
+
+/* 选择区域高亮 */
+.vtable-sheet-selection-highlight {
+  position: absolute;
+  border: 2px solid var(--primary-color);
+  background-color: rgba(26, 115, 232, 0.1);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* 辅助区域 */
+.vtable-sheet-helper-area {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* 调整尺寸标记 */
+.vtable-sheet-resize-marker {
+  position: absolute;
+  background-color: var(--primary-color);
+  z-index: 25;
+}
+
+.vtable-sheet-resize-marker.horizontal {
+  height: 2px;
+  left: 0;
+  right: 0;
+}
+
+.vtable-sheet-resize-marker.vertical {
+  width: 2px;
+  top: 0;
+  bottom: 0;
+}
+
+.vtable-sheet-error {
+  padding: 16px;
+  color: #d93025;
+  text-align: center;
+}
+
+/* 隐藏底部功能区 */
+.vtable-sheet-footer {
+  display: none;
+}
+
+`;
+
+  document.head.appendChild(styleElement);
+}

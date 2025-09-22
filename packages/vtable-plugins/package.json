@@ -20,6 +20,10 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./es/index.js"
+    },
+    "./gantt-extensions": {
+      "require": "./cjs/gantt-export-image.js",
+      "import": "./es/gantt-export-image.js"
     }
   },
   "scripts": {
@@ -29,7 +33,7 @@
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-exporter.js"
+    "dist/vtable-plugins.js"
   ],
   "publishConfig": {
     "access": "public"
@@ -43,7 +47,13 @@
     "@types/file-saver": "2.0.7"
   },
   "peerDependencies": {
-    "@visactor/vtable": "workspace:*"
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-gantt": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@visactor/vtable-gantt": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

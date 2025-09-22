@@ -10,7 +10,7 @@ export type IWpsFillHandlePluginOptions = {
 };
 
 export class WpsFillHandlePlugin implements VTable.plugins.IVTablePlugin {
-  id = `wps-fill-handle-${Date.now()}`;
+  id = `wps-fill-handle`;
   name = 'WPS Fill Handle';
   runTime = [VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END];
   table: VTable.ListTable;

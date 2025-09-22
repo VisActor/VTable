@@ -20,7 +20,7 @@ import * as VTable from './vtable';
 import * as plugins from './plugins';
 export const version = __VERSION__;
 /**
- * @namespace VTable
+ * @namespace VTableGantt
  */
 export {
   TYPES,
