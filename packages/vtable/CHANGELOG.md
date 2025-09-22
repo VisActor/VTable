@@ -1,6 +1,27 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 12 Sep 2025 09:25:46 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Sep 2025 03:03:09 GMT and should not be manually modified.
+
+## 1.20.0
+Mon, 22 Sep 2025 03:03:09 GMT
+
+### Minor changes
+
+- feat: add vtable sheet component
+
+
+
+### Updates
+
+- chore: update vrender version to 1.0.16
+
+
+- feat: add cutSelected for vtable
+
+
+- feat: add HyperFormula & refactor formulat-manager
+
+
 
 ## 1.19.9
 Fri, 12 Sep 2025 09:25:46 GMT
