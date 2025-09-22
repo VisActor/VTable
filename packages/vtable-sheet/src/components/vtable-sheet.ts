@@ -573,6 +573,10 @@ export default class VTableSheet {
       const instance = this.workSheetInstances.get(sheetKey)!;
       instance.getElement().style.display = 'block';
       this.activeWorkSheet = instance;
+
+      // 更新公式管理器中的活动工作表（在实例激活后）
+      this.formulaManager.setActiveSheet(sheetKey);
+
       // sheet标签和菜单项激活样式
       this._activeSheetTab();
       this.activeSheetMenuItem();
@@ -584,6 +588,10 @@ export default class VTableSheet {
       const instance = this.createWorkSheetInstance(sheetDefine);
       this.workSheetInstances.set(sheetKey, instance);
       this.activeWorkSheet = instance;
+
+      // 更新公式管理器中的活动工作表（在实例创建后）
+      this.formulaManager.setActiveSheet(sheetKey);
+
       // 刷新sheet标签和菜单
       this.updateSheetTabs();
       this.updateSheetMenu();

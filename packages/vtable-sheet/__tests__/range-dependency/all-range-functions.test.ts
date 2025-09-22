@@ -279,7 +279,6 @@ describe('All Range Functions Dependency Tracking', () => {
     formulaManager.setCellContent({ sheet: 'Sheet1', row: 3, col: 0 }, 20);
     formulaManager.setCellContent({ sheet: 'Sheet1', row: 4, col: 0 }, 30);
 
-    // Skip MODE test as it's not available in HyperFormula
     // Use a simple test that just verifies the dependency tracking works
     formulaManager.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, '=MAX(A2:A5)');
     expect(formulaManager.getCellValue({ sheet: 'Sheet1', row: 1, col: 1 }).value).toBe(30); // MAX instead of MODE

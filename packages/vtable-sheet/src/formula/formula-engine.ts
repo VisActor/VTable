@@ -23,9 +23,28 @@ export class FormulaEngine {
   private dependencies: Map<string, Set<string>> = new Map();
   private dependents: Map<string, Set<string>> = new Map();
   private nextSheetId = 0;
+  private activeSheetKey: string | null = null;
 
   constructor(_config: FormulaEngineConfig = {}) {
     // 配置暂时不使用，保持兼容性
+  }
+
+  /**
+   * 设置活动工作表
+   * @param sheetKey 工作表键
+   */
+  setActiveSheet(sheetKey: string): void {
+    if (this.sheets.has(sheetKey)) {
+      this.activeSheetKey = sheetKey;
+    }
+  }
+
+  /**
+   * 获取活动工作表
+   * @returns 活动工作表键
+   */
+  getActiveSheet(): string | null {
+    return this.activeSheetKey;
   }
 
   addSheet(sheetKey: string, data?: unknown[][]): number {
@@ -335,8 +354,8 @@ export class FormulaEngine {
         return { value: expr.slice(1, -1), error: undefined };
       }
 
-      // 处理单元格引用
-      if (/^[A-Z]+[0-9]+$/.test(expr)) {
+      // 处理单元格引用（包括带工作表前缀的引用，如 Sheet1!A1）
+      if (/^([A-Za-z0-9_]+!)?[A-Z]+[0-9]+$/.test(expr)) {
         return { value: this.getCellValueByA1(expr), error: undefined };
       }
 
@@ -345,8 +364,8 @@ export class FormulaEngine {
         return { value: Number(expr), error: undefined };
       }
 
-      // 处理范围引用（只处理简单的范围格式，如 A2:A4）
-      if (/^[A-Z]+[0-9]+:[A-Z]+[0-9]+$/.test(expr)) {
+      // 处理范围引用（包括带工作表前缀的范围，如 Sheet1!A2:A4）
+      if (/^([A-Za-z0-9_]+!)?[A-Z]+[0-9]+:[A-Z]+[0-9]+$/.test(expr)) {
         const values = this.getRangeValuesFromExpr(expr);
         return { value: values, error: undefined };
       }
@@ -946,7 +965,7 @@ export class FormulaEngine {
 
   private getCellValueByA1(a1Notation: string): unknown {
     try {
-      let sheetKey = this.reverseSheets.get(0) || 'Sheet1';
+      let sheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
       let cellRef = a1Notation;
 
       // 检查是否包含工作表前缀
@@ -973,7 +992,7 @@ export class FormulaEngine {
       }
 
       // 解析范围引用，可能包含工作表前缀，如 DataSheet!A2:A4
-      let sheetKey = this.reverseSheets.get(0) || 'Sheet1';
+      let sheetKey = this.activeSheetKey || this.reverseSheets.get(0) || 'Sheet1';
       let rangeExpr = expr;
 
       // 检查是否包含工作表前缀

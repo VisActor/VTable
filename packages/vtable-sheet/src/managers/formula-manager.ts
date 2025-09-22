@@ -98,12 +98,20 @@ export class FormulaManager {
     }
 
     try {
+      // 记录添加前的数量
+      const wasFirstSheet = this.sheetMapping.size === 0;
+
       // 使用FormulaEngine创建工作表
       const sheetId = this.formulaEngine.addSheet(sheetKey, normalizedData);
 
       this.sheetMapping.set(sheetKey, sheetId);
       this.reverseSheetMapping.set(sheetId, sheetKey);
       this.nextSheetId = Math.max(this.nextSheetId, sheetId + 1);
+
+      // 如果是第一个工作表，设置为活动工作表
+      if (wasFirstSheet) {
+        this.formulaEngine.setActiveSheet(sheetKey);
+      }
 
       return sheetId;
     } catch (error) {
@@ -871,6 +879,37 @@ export class FormulaManager {
     } catch (error) {
       console.error('Failed to get all sheets:', error);
       return [];
+    }
+  }
+
+  /**
+   * 设置活动工作表 (MIT兼容)
+   * @param sheetKey 工作表键
+   */
+  setActiveSheet(sheetKey: string): void {
+    this.ensureInitialized();
+
+    try {
+      // 使用FormulaEngine设置活动工作表
+      this.formulaEngine.setActiveSheet(sheetKey);
+    } catch (error) {
+      console.error(`Failed to set active sheet ${sheetKey}:`, error);
+      throw new Error(`Failed to set active sheet: ${sheetKey}`);
+    }
+  }
+
+  /**
+   * 获取活动工作表 (MIT兼容)
+   */
+  getActiveSheet(): string | null {
+    this.ensureInitialized();
+
+    try {
+      // 使用FormulaEngine获取活动工作表
+      return this.formulaEngine.getActiveSheet();
+    } catch (error) {
+      console.error('Failed to get active sheet:', error);
+      return null;
     }
   }
 
