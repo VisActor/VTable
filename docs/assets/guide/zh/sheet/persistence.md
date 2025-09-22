@@ -143,70 +143,62 @@ window.sheetInstance = sheetInstance;
     const controlsHtml = `
       <div id="simple-controls" style="
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 10px;
+        right: 10px;
         background: white;
-        padding: 16px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         font-family: Arial, sans-serif;
         z-index: 1000;
-        min-width: 200px;
+        width: 120px;
       ">
-        <h4 style="margin: 0 0 12px 0; color: #333;">控制面板</h4>
+        <h4 style="margin: 0 0 6px 0; color: #333; font-size: 12px;">控制面板</h4>
 
         <button id="save-btn" style="
           width: 100%;
-          margin: 4px 0;
-          padding: 8px 12px;
+          margin: 2px 0;
+          padding: 4px;
           border: 1px solid #007bff;
           background: #007bff;
           color: white;
-          border-radius: 4px;
+          border-radius: 3px;
           cursor: pointer;
-        ">手动保存</button>
+          font-size: 11px;
+        ">保存</button>
 
         <button id="reload-btn" style="
           width: 100%;
-          margin: 4px 0;
-          padding: 8px 12px;
+          margin: 2px 0;
+          padding: 4px;
           border: 1px solid #28a745;
           background: #28a745;
           color: white;
-          border-radius: 4px;
+          border-radius: 3px;
           cursor: pointer;
-        ">重新加载</button>
+          font-size: 11px;
+        ">重载</button>
 
         <button id="clear-btn" style="
           width: 100%;
-          margin: 4px 0;
-          padding: 8px 12px;
+          margin: 2px 0;
+          padding: 4px;
           border: 1px solid #dc3545;
           background: #dc3545;
           color: white;
-          border-radius: 4px;
+          border-radius: 3px;
           cursor: pointer;
-        ">清除数据</button>
+          font-size: 11px;
+        ">清除</button>
 
         <div id="status" style="
-          margin-top: 12px;
-          padding: 8px;
+          margin-top: 6px;
+          padding: 3px;
           background: #f8f9fa;
-          border-radius: 4px;
-          font-size: 12px;
+          border-radius: 3px;
+          font-size: 10px;
           color: #666;
         ">状态: 已加载</div>
-
-        <div style="
-          margin-top: 12px;
-          padding: 8px;
-          background: #e7f3ff;
-          border-radius: 4px;
-          font-size: 11px;
-          color: #0066cc;
-        ">
-          右键设置合并后点击手动保存，然后重新加载验证效果
-        </div>
       </div>
     `;
 
