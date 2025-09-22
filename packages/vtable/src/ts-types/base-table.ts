@@ -105,6 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -526,6 +527,10 @@ export interface BaseTableConstructorOptions {
   canvasHeight?: number | 'auto';
   maxCanvasWidth?: number;
   maxCanvasHeight?: number;
+  /** 表格的x偏移量（会影响width）, 内部适配的表格边框或者title等组件的占位不算在内 */
+  contentOffsetX?: number;
+  /** 表格的y偏移量（会影响height）, 内部适配的表格边框或者title等组件的占位不算在内 */
+  contentOffsetY?: number;
 
   // #endregion
   /**
@@ -596,6 +601,12 @@ export interface BaseTableConstructorOptions {
     disableBuildInChartActive?: boolean;
     /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
     forceComputeAllRowHeight?: boolean;
+
+    /** 是否取消当前单元格选中状态的判断钩子，用在table-group文件的pointertap事件中，当点击空白区域时，取消选中状态 */
+    cancelSelectCellHook?: (e: FederatedPointerEvent) => boolean;
+
+    /** 当编辑器没有退出情况时，可继续选中其他单元格，比如在vtable-sheet中，当编辑器没有退出情况时，可继续选中其他单元格 */
+    selectCellWhenCellEditorNotExists?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -630,6 +641,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 插件配置 */
   plugins?: IVTablePlugin[];
+  /** 默认的鼠标样式 */
+  defaultCursor?: string;
 }
 export interface BaseTableAPI {
   id: string;

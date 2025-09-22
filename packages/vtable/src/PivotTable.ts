@@ -295,11 +295,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: PivotTableConstructorOptions) {
+  updateOption(
+    options: PivotTableConstructorOptions,
+    updateConfig: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: true,
+      clearRowHeightCache: true
+    }
+  ) {
     const internalProps = this.internalProps;
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
-    super.updateOption(options);
+    super.updateOption(options, updateConfig);
     if (!options.rowHierarchyType) {
       options.rowHierarchyType = 'grid';
     }
@@ -505,6 +511,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
+    setTimeout(() => {
+      this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
+    }, 0);
     // this.render();
     return new Promise(resolve => {
       setTimeout(resolve, 0);
@@ -576,7 +585,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //   (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
     //   this.options.frozenColCount ?? 0
     // );
-    table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
+    // 不能使用frozenRowCount setter 因为会把options.frozenRowCount赋值
+    table._setFrozenRowCount(Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0));
 
     if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;

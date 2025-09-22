@@ -57,8 +57,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
 
     if (
-      stateManager.interactionState === InteractionState.grabing &&
-      !(table as ListTableAPI).editorManager?.editingEditor
+      stateManager.interactionState === InteractionState.grabing
+      // &&
+      // !(table as ListTableAPI).editorManager?.editingEditor
     ) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol() || stateManager.isResizeRow()) {
@@ -434,7 +435,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      if (isCompleteEdit === false) {
+      if (!table.options.customConfig?.selectCellWhenCellEditorNotExists && isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
       }
@@ -843,9 +844,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.hideMenu();
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    let isCompleteEdit: boolean | Promise<boolean> = false;
+    //需要判断是否点击到了tableGroup，如果点击到了tableGroup，已经在tableGroup的pointerdown中处理了编辑状态的退出
+    const target: any = e.target;
+    if (target !== table.scenegraph.tableGroup && !target.isDescendantsOf(table.scenegraph.tableGroup)) {
+      isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    }
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      if (isCompleteEdit === false) {
+      if (!table.options.customConfig?.selectCellWhenCellEditorNotExists && isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
       }
@@ -914,8 +920,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       const isHasSelected = !!stateManager.select.ranges?.length;
+      // 是否自定义了判断当前是否需要取消选中单元格的钩子，如在点击到表格序号插件的单元格上时，不需要取消选中单元格的逻辑是通过这个钩子实现的
+      if (table.options.customConfig?.cancelSelectCellHook) {
+        if (table.options.customConfig?.cancelSelectCellHook(e)) {
+          eventManager.dealTableSelect();
+        }
+      }
       // 点击空白区域取消选中
-      if (table.options.select?.blankAreaClickDeselect ?? true) {
+      else if (table.options.select?.blankAreaClickDeselect ?? true) {
         eventManager.dealTableSelect();
       }
       stateManager.endSelectCells(true, isHasSelected);

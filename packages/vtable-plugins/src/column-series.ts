@@ -17,7 +17,7 @@ export interface ColumnSeriesOptions {
  * 生成列序号标题的插件
  */
 export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
-  id = `column-series-${Date.now()}`;
+  id = `column-series`;
   name = 'Column Series';
   runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT, VTable.TABLE_EVENT_TYPE.BEFORE_KEYDOWN];
   pluginOptions: ColumnSeriesOptions;

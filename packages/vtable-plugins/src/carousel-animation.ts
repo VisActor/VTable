@@ -1,5 +1,5 @@
 import type { EasingType } from '@visactor/vtable/es/vrender';
-import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
+import type { BaseTableAPI } from '@visactor/vtable';
 
 function isInteger(value: number) {
   return Math.floor(value) === value;

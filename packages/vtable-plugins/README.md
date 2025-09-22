@@ -20,6 +20,31 @@ VTable is not just a high-performance multidimensional data analysis table, but 
 
 # Usage
 
+## 可选依赖
+
+部分高级功能需要额外的依赖：
+
+- **甘特图导出功能**：需要安装 `@visactor/vtable-gantt`
+
+  ```bash
+  npm install @visactor/vtable-gantt
+  ```
+  
+  可以通过两种方式使用：
+  
+  1. 直接从主包导入（推荐，自动处理依赖缺失情况）：
+  ```js
+  import { ExportGanttPlugin } from '@visactor/vtable-plugins';
+  
+  const exportPlugin = new ExportGanttPlugin();
+  // 如果未安装甘特图依赖，会收到友好的警告信息
+  ```
+  
+  2. 从专用入口导入（明确表示需要额外依赖）：
+  ```js
+  import { ExportGanttPlugin } from '@visactor/vtable-plugins/gantt-extensions';
+  ```
+
 ## Installation
 
 [npm package](https://www.npmjs.com/package/@visactor/vtable-search)
@@ -42,9 +67,9 @@ yarn add @visactor/vtable-plugins
 
 # Ecosystem
 
-| Project                                                     | Description                                                                            |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [AI-generated Components](https://visactor.io/ai-vtable)    | AI-generated table component.                                                          |
+| Project                                                  | Description                   |
+| -------------------------------------------------------- | ----------------------------- |
+| [AI-generated Components](https://visactor.io/ai-vtable) | AI-generated table component. |
 
 # Contribution
 
@@ -56,4 +81,7 @@ Small streams converge to make great rivers and seas!
 
 # License
 
-[MIT License](./LICENSE)
+- **MIT License** - [LICENSE](../../LICENSE)
+- **Apache 2.0 License** - [LICENSE-APACHE](./LICENSE-APACHE)
+
+> **Note**: The auto-fill functionality references [Univer](https://github.com/dream-num/univer)'s implementation and is subject to Apache 2.0 license terms.
