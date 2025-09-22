@@ -222,7 +222,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.configManager.setLazyLoadingState(bodyRowIndex, 'loading');
     // 同时设置内部属性中的状态
     internalProps.lazyLoadingStates.set(bodyRowIndex, 'loading');
-    // 刷新图标显示
+    // 刷新图标显示，让loading图标显示
     this.refreshRowIcon(row, col);
   }
 
@@ -282,7 +282,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         ...eventData,
         callback: (error: unknown, detailData: DetailTableOptions | null) => {
           if (error) {
-            // 错误处理：重置为展开图标状态
             const bodyRowIndex = row - this.table.columnHeaderLevelCount;
             this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
             this.refreshRowIcon(row, col);
@@ -297,7 +296,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         this.pluginOptions.onLazyLoad(eventDataWithCallback);
       } catch (error) {
         console.warn('Error in lazy load callback:', error);
-        // 出错时重置状态
+        // 出错时重置状态并刷新图标显示
         const bodyRowIndex = row - this.table.columnHeaderLevelCount;
         this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
         this.refreshRowIcon(row, col);

@@ -4,6 +4,25 @@ import * as VTable from '@visactor/vtable';
 
 const CONTAINER_ID = 'vTable';
 
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.contentLeft, // 改为左边位置，和展开/收起图标一致
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
 // 注册主题
 VTable.register.theme('simpleDark', {
   defaultStyle: {

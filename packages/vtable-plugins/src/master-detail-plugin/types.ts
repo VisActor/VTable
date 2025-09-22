@@ -18,12 +18,6 @@ export interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
-  /** 懒加载loading图标配置 */
-  lazyLoadingIcon?: {
-    src?: string;
-    width?: number;
-    height?: number;
-  };
   /** 懒加载回调函数 */
   onLazyLoad?: (
     eventData: LazyLoadEventData & {

@@ -9,38 +9,7 @@ export class ConfigManager {
   private lazyLoadingStates: Map<number, LazyLoadState> = new Map();
 
   constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {
-    // 注册loading图标（如果配置了懒加载回调）
-    if (this.pluginOptions.onLazyLoad) {
-      this.registerLoadingIcon();
-    }
-  }
-
-  /**
-   * 注册loading图标
-   */
-  private registerLoadingIcon(): void {
-    const iconConfig = this.pluginOptions.lazyLoadingIcon || {};
-    const gifUrl =
-      iconConfig.src || 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif';
-
-    VTable.register.icon('master-detail-loading', {
-      type: 'image',
-      width: iconConfig.width || 16,
-      height: iconConfig.height || 16,
-      src: gifUrl,
-      gif: gifUrl, // 添加gif属性启用动画
-      isGif: true, // 标记为GIF图标
-      name: 'master-detail-loading',
-      positionType: VTable.TYPES.IconPosition.contentLeft,
-      marginLeft: 0,
-      marginRight: 4,
-      visibleTime: 'always',
-      hover: {
-        width: 20,
-        height: 20,
-        bgColor: 'rgba(101,117,168,0.1)'
-      }
-    } as VTable.TYPES.ImageIcon & { gif: string; isGif: boolean }); // 扩展类型定义
+    // 配置管理器初始化
   }
 
   /**
@@ -66,28 +35,6 @@ export class ConfigManager {
    */
   setLazyLoadingState(bodyRowIndex: number, state: LazyLoadState): void {
     this.lazyLoadingStates.set(bodyRowIndex, state);
-  }
-
-  /**
-   * 创建loading图标配置
-   */
-  private createLoadingIcon(): VTable.TYPES.ImageIcon & { gif: string; isGif: boolean } {
-    const iconConfig = this.pluginOptions.lazyLoadingIcon || {};
-    const gifUrl =
-      iconConfig.src || 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif';
-    return {
-      type: 'image',
-      width: iconConfig.width || 16,
-      height: iconConfig.height || 16,
-      src: gifUrl,
-      gif: gifUrl, // 添加gif属性启用动画
-      isGif: true, // 标记为GIF图标
-      name: 'master-detail-loading',
-      positionType: VTable.TYPES.IconPosition.contentLeft,
-      marginLeft: 0,
-      marginRight: 4,
-      cursor: 'default'
-    };
   }
 
   /**
@@ -351,7 +298,8 @@ export class ConfigManager {
         const bodyRowIndex = row - this.table.columnHeaderLevelCount;
         const loadingState = this.getLazyLoadingState(bodyRowIndex);
         if (loadingState === 'loading') {
-          return [this.createLoadingIcon()];
+          // 使用用户注册的loading图标名称
+          return ['loading']; // 直接返回图标名称，VTable会自动查找注册的图标
         }
         const isExpanded = this.isRowExpanded(row);
         return isExpanded ? [this.createCollapseIcon()] : [this.createExpandIcon()];
