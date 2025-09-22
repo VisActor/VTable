@@ -91,12 +91,12 @@ const SheetPersistence = {
         const config = JSON.parse(savedJson);
         return new VTableSheet.VTableSheet(container, config);  
       } else if (defaultConfig) {
-        return new VTableSheet.VTableSheet(container, defaultConfig);
+        return new VTableSheet.VTableSheet(container,JSON.parse(JSON.stringify(defaultConfig)));
       }
     } catch (error) {
       console.error('Failed to load table state:', error);
       if (defaultConfig) {
-        return new VTableSheet.VTableSheet(container, defaultConfig);
+        return new VTableSheet.VTableSheet(container,JSON.parse(JSON.stringify(defaultConfig)));
       }
     }
     return null;
