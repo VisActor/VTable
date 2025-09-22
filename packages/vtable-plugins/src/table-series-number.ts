@@ -46,9 +46,85 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
       colSeriesNumberHeight: pluginOptions.colSeriesNumberHeight,
       rowSeriesNumberGenerate: pluginOptions.rowSeriesNumberGenerate,
       colSeriesNumberGenerate: pluginOptions.colSeriesNumberGenerate,
-      rowSeriesNumberCellStyle: pluginOptions.rowSeriesNumberCellStyle,
-      colSeriesNumberCellStyle: pluginOptions.colSeriesNumberCellStyle,
-      cornerCellStyle: pluginOptions.cornerCellStyle
+      rowSeriesNumberCellStyle: Object.assign(
+        {
+          text: {
+            fontSize: 14,
+            fill: '#7A7A7A',
+            pickable: false,
+            textAlign: 'left',
+            textBaseline: 'middle',
+            padding: [2, 4, 2, 4]
+          },
+          borderLine: {
+            stroke: '#D9D9D9',
+            lineWidth: 1,
+            pickable: false
+          },
+          bgColor: '#F9F9F9',
+          states: {
+            hover: {
+              fill: '#c8daf6',
+              opacity: 0.7
+            },
+            select: {
+              fill: '#c8daf6',
+              opacity: 1
+            }
+          }
+        },
+        pluginOptions.rowSeriesNumberCellStyle
+      ),
+      colSeriesNumberCellStyle: Object.assign(
+        {
+          text: {
+            fontSize: 14,
+            fill: '#7A7A7A',
+            pickable: false,
+            textAlign: 'left',
+            textBaseline: 'middle',
+            padding: [2, 4, 2, 4]
+          },
+          borderLine: {
+            stroke: '#D9D9D9',
+            lineWidth: 1,
+            pickable: false
+          },
+          bgColor: '#F9F9F9',
+          states: {
+            hover: {
+              fill: '#c8daf6',
+              opacity: 0.7
+            },
+            select: {
+              fill: '#c8daf6',
+              opacity: 1
+            }
+          }
+        },
+        pluginOptions.colSeriesNumberCellStyle
+      ),
+      cornerCellStyle: Object.assign(
+        {
+          borderLine: {
+            stroke: '#D9D9D9',
+            lineWidth: 1,
+            pickable: false
+          },
+          bgColor: '#F9F9F9',
+          states: {
+            hover: {
+              fill: '#98C8A5',
+              opacity: 0.7
+            },
+            select: {
+              fill: '#98C8A5',
+              opacity: 1
+            }
+          }
+        },
+        pluginOptions.cornerCellStyle
+      )
     });
     this.listenComponentEvents();
   }
