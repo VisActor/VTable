@@ -25,6 +25,7 @@ export function updateSelectPosition(
   const { table, interactionState } = state;
   const { scenegraph } = table;
   const { highlightScope, disableHeader, cellPos, disableCtrlMultiSelect } = state.select;
+  state.select.isSelectAll = isSelectAll;
   // const disableSelect = table.options?.select?.disableSelect;
   // const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
   // const { highlightScope, disableHeader, cellPos } = state.select;

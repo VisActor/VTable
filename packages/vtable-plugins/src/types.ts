@@ -2,3 +2,4 @@
 export type EventArg = {
   event: MouseEvent | KeyboardEvent;
 };
+export * from './contextmenu';

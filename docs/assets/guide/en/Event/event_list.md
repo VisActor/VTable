@@ -51,6 +51,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | The mouse leaves the table area            | MOUSELEAVE_TABLE                                    | This event is triggered when the mouse leaves the table area                                                           |
 | Mouse down                                 | MOUSEDOWN_TABLE                                     | This event is triggered when the mouse is pressed in the table area                                                    |
 | Paste data                                 | PASTED_DATA                                         | Paste data event                                                                                                      |
+| Plugin event                              | PLUGIN_EVENT                                        | Plugin want fire event to table, other plugins can listen this type event                                                                                                         |
 
 ## Event monitoring method
 

@@ -171,6 +171,12 @@ export interface SelectAllOnCtrlAOption {
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
 
+##${prefix} cutSelected(boolean) = false
+开启快捷键剪切，与浏览器的快捷键一致。
+
+##${prefix} showCopyCellBorder(boolean) = false
+是否显示复制单元格的边框，默认：false。
+
 ##${prefix} pasteValueToCell(boolean) = false
 开启快捷键粘贴，与浏览器的快捷键一致。粘贴生效仅针对配置了编辑 editor 的单元格
 
@@ -725,3 +731,11 @@ validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
 #${prefix} disableInteraction(boolean) = false
 
 是否禁用表格所有交互。
+
+#${prefix} defaultCursor(string) = 'default'
+
+默认的鼠标样式。
+
+```
+defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
+```

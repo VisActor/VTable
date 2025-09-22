@@ -14,6 +14,7 @@ Regarding keyboard response settings, VTable has the following two configuration
 | top        | Same as above |
 | bottom     | Same as above |
 | ctrl+c     | The keybinding is not exact, this copy matches the browser's shortcut.<br> Copies selected cell content, requires keyboardOptions.copySelected to be enabled |
+| ctrl+x     | The keybinding is not exact, this cut matches the browser's shortcut.<br> Cuts selected cell content, requires keyboardOptions.cutSelected to be enabled |
 | ctrl+v     | The keybinding is not exact, paste shortcut matches the browser's shortcut.<br> Pastes content to cells, requires keyboardOptions.pasteValueToCell to be enabled, paste only works on cells configured with editor |
 | ctrl+a     | Select all, requires keyboardOptions.selectAllOnCtrlA to be enabled |
 | shift      | Hold shift and left mouse button to select cells in a continuous area |

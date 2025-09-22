@@ -1,3 +1,20 @@
+# v1.20.0
+
+2025-09-22
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: 新增vtable-sheet组件
+- **@visactor/vtable**: 新增 keyboardOption.cutSelected配置
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: 更新vrender版本至1.0.16
+
+
+[更多详情请查看 v1.20.0](https://github.com/VisActor/VTable/releases/tag/v1.20.0)
+
 # v1.19.9
 
 2025-09-12

@@ -1,10 +1,3 @@
-<!--
- * @Author: lym
- * @Date: 2025-03-03 20:20:37
- * @LastEditors: lym
- * @LastEditTime: 2025-03-04 14:15:45
- * @Description: 渲染式编辑器
--->
 <template>
   <vue-list-table ref="tableRef" :options="option">
     <ListColumn
@@ -13,7 +6,7 @@
       :field="column.field"
       :title="column.title"
       :width="column.width"
-      editor="dynamic-render-editor"
+      :editor="DYNAMIC_RENDER_EDITOR"
       :edit-config="editConfig"
     >
       <template #edit="{ value, onChange }">
@@ -39,7 +32,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ListColumn } from '../../../../../src';
+import { ListColumn, DYNAMIC_RENDER_EDITOR } from '../../../../../src';
 import { generateMockData } from '../../utils';
 
 const { columns, records } = generateMockData(20);
