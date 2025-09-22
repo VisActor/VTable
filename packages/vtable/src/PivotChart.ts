@@ -1226,6 +1226,42 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   /** 更新数据过滤规则，适用场景：点击图例项后 更新过滤规则 来更新图表 */
   updateFilterRules(filterRules: FilterRules) {
+    // 使用节流函数包装实际的更新逻辑
+    this._throttledUpdateFilterRules(filterRules);
+  }
+
+  //#region  节流相关变量
+  private _throttleTimer: number | null = null;
+  private _latestFilterRules: FilterRules | null = null;
+
+  /**
+   * 实际执行过滤规则更新的节流方法
+   * @private
+   */
+  private _throttledUpdateFilterRules(filterRules: FilterRules): void {
+    // 始终保存最新的过滤规则
+    this._latestFilterRules = filterRules;
+
+    // 如果没有定时器在运行，立即执行一次更新
+    if (this._throttleTimer === null) {
+      this._executeFilterUpdate(filterRules);
+
+      // 设置节流定时器
+      this._throttleTimer = window.setTimeout(() => {
+        // 定时器结束时，如果有新的过滤规则，再次执行更新
+        if (this._latestFilterRules !== filterRules) {
+          this._executeFilterUpdate(this._latestFilterRules as FilterRules);
+        }
+        this._throttleTimer = null;
+      }, 200);
+    }
+  }
+  //#endregion
+  /**
+   * 执行实际的过滤规则更新操作
+   * @private
+   */
+  private _executeFilterUpdate(filterRules: FilterRules): void {
     this.internalProps.dataConfig.filterRules = filterRules;
     this.dataset.updateFilterRules(filterRules);
     clearChartCacheImage(this.scenegraph);
