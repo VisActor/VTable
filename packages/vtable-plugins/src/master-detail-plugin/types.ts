@@ -43,18 +43,7 @@ export interface InternalProps {
   originalRowHeights: Map<number, number>;
   _tempExpandedRecordIndices?: (number | number[])[];
   subTableCheckboxStates?: Map<number, SubTableCheckboxState>;
-  /** 懒加载状态管理 */
   lazyLoadingStates?: Map<number, 'loading' | 'loaded' | 'error'>;
-  /** 懒加载Promise缓存，防止重复请求 */
-  lazyLoadingPromises?: Map<number, Promise<unknown>>;
-}
-
-/**
- * 虚拟记录ID接口
- */
-export interface VirtualRecordIds {
-  topId: string;
-  bottomId: string;
 }
 
 /**

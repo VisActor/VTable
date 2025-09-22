@@ -17,12 +17,6 @@ interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
-  /** 懒加载loading图标配置 */
-  lazyLoadingIcon?: {
-    src?: string;
-    width?: number;
-    height?: number;
-  };
   /** 懒加载回调函数 */
   onLazyLoad?: (
     eventData: LazyLoadEventData & {
@@ -56,7 +50,6 @@ interface LazyLoadEventData {
 | `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
 | `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
 | `detailTableOptions` | DetailTableOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
-| `lazyLoadingIcon` | object | - | 懒加载loading图标配置，包含 src、width、height 等属性 |
 | `onLazyLoad` | function | - | 懒加载回调函数，用于处理异步数据获取和错误处理。配置此项即启用懒加载功能 |
 
 #### DetailTableOptions 高级配置
@@ -418,7 +411,6 @@ MasterDetailPlugin 支持懒加载功能，允许在用户展开行时动态异�
 
 | 参数名称 | 类型 | 默认值 | 功能说明 |
 |---------|------|--------|----------|
-| `lazyLoadingIcon` | object | - | 懒加载loading图标配置，包含 src、width、height 等属性 |
 | `onLazyLoad` | function | - | 懒加载回调函数，处理异步数据获取逻辑。配置此项即启用懒加载功能 |
 
 1. **数据标识**：在主表数据中，将需要懒加载的行的 `children` 属性设置为 `true`
@@ -448,6 +440,26 @@ onLazyLoad: async (eventData) => {
 以下是一个完整的懒加载示例，演示如何在订单管理系统中实现产品明细的懒加载：
 
 ```javascript livedemo template=vtable
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.contentLeft, // 改为左边位置，和展开/收起图标一致
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
+
 function createLazyLoadTable() {
   // 主表数据 - 包含懒加载标识
   const masterData = [

@@ -1,16 +1,13 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailTableOptions, MasterDetailPluginOptions, VirtualRecordIds, LazyLoadState } from './types';
+import type { DetailTableOptions, MasterDetailPluginOptions, LazyLoadState } from './types';
 
 /**
  * 配置注入相关功能
  */
 export class ConfigManager {
-  private virtualRecordIds: VirtualRecordIds | null = null;
   private lazyLoadingStates: Map<number, LazyLoadState> = new Map();
 
-  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {
-    // 配置管理器初始化
-  }
+  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
 
   /**
    * 检查记录是否为懒加载节点
@@ -333,13 +330,6 @@ export class ConfigManager {
     return detailOptions;
   }
 
-  /**
-   * 获取虚拟记录ID
-   */
-  getVirtualRecordIds(): VirtualRecordIds | null {
-    return this.virtualRecordIds;
-  }
-
   private isRowExpanded: (row: number) => boolean = () => false;
 
   /**
@@ -353,7 +343,6 @@ export class ConfigManager {
    * 释放所有资源和引用
    */
   release(): void {
-    this.virtualRecordIds = null;
     this.isRowExpanded = () => false;
     // 清理懒加载状态
     this.lazyLoadingStates.clear();

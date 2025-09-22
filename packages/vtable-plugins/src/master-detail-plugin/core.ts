@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import type { MasterDetailPluginOptions, DetailTableOptions, LazyLoadEventData } from './types';
+import type { MasterDetailPluginOptions, DetailTableOptions } from './types';
 import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import { ConfigManager } from './config';
@@ -88,8 +88,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       onCollapseRowToNoRealRecordIndex: (rowIndex: number) => this.collapseRowToNoRealRecordIndex(rowIndex),
       onToggleRowExpand: (rowIndex: number, colIndex?: number) => this.toggleRowExpand(rowIndex, colIndex),
       getOriginalRowHeight: (bodyRowIndex: number) => getOriginalRowHeight(this.table, bodyRowIndex),
-      isLazyLoadRecord: (record: unknown) => this.configManager.isLazyLoadRecord(record),
-      onLazyLoad: eventData => this.handleLazyLoad(eventData)
+      isLazyLoadRecord: (record: unknown) => this.configManager.isLazyLoadRecord(record)
     });
 
     // 设置子表管理器的回调函数
@@ -136,9 +135,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
     internalProps.subTableCheckboxStates = new Map();
-    // 初始化懒加载状态管理
+    // 初始化懒加载状态管理（用于图标显示持久化）
     internalProps.lazyLoadingStates = new Map();
-    internalProps.lazyLoadingPromises = new Map();
   }
 
   /**
@@ -208,99 +206,122 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 设置懒加载状态为loading
-   * @param row 行索引
-   * @param col 列索引
+   * 获取记录的子数据，内嵌处理所有懒加载逻辑
+   * @param record 记录数据
+   * @param bodyRowIndex 数据行索引
+   * @returns 子数据数组，如果是懒加载情况则返回空数组
    */
-  setLoadingState(row: number, col?: number): void {
-    const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+  private getChildren(record: unknown, bodyRowIndex: number): unknown[] {
+    if (!record || typeof record !== 'object' || !('children' in record)) {
+      return [];
+    }
+
+    const children = record.children;
+    if (children !== true) {
+      return Array.isArray(children) ? children : [];
+    }
+
+    // 懒加载逻辑
+    if (!this.pluginOptions.onLazyLoad) {
+      return [];
+    }
+
+    const row = bodyRowIndex + this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
+    // 确保懒加载状态Map存在（用于图标状态持久化）
     if (!internalProps.lazyLoadingStates) {
       internalProps.lazyLoadingStates = new Map();
     }
-    // 设置配置管理器中的状态
+
+    const currentState = this.configManager.getLazyLoadingState(bodyRowIndex);
+
+    // 检查状态
+    if (currentState === 'loading') {
+      return [];
+    }
+    if (currentState === 'loaded') {
+      return Array.isArray((record as { children: unknown[] }).children)
+        ? (record as { children: unknown[] }).children
+        : [];
+    }
+
+    // 开始懒加载
     this.configManager.setLazyLoadingState(bodyRowIndex, 'loading');
-    // 同时设置内部属性中的状态
     internalProps.lazyLoadingStates.set(bodyRowIndex, 'loading');
-    // 刷新图标显示，让loading图标显示
-    this.refreshRowIcon(row, col);
-  }
+    this.refreshRowIcon(row, 0);
 
-  /**
-   * 设置子表数据并展开
-   * @param detailOptions 子表配置
-   * @param row 行索引
-   * @param col 列索引
-   */
-  setDetailData(detailOptions: DetailTableOptions, row: number, col?: number): void {
-    const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-    const internalProps = getInternalProps(this.table);
-    // 更新加载状态
-    if (internalProps.lazyLoadingStates) {
-      internalProps.lazyLoadingStates.set(bodyRowIndex, 'loaded');
-    }
-    this.configManager.setLazyLoadingState(bodyRowIndex, 'loaded');
-    // 更新记录数据，将children: true 替换为实际的数据数组
-    const record = getRecordByRowIndex(this.table, bodyRowIndex);
-    if (record && typeof record === 'object') {
-      // 设置子表的实际数据到children属性中
-      (record as unknown as { children: unknown[] }).children = detailOptions.records || [];
-    }
-    // 清理懒加载Promise缓存
-    if (internalProps.lazyLoadingPromises) {
-      internalProps.lazyLoadingPromises.delete(bodyRowIndex);
-    }
-    // 执行展开逻辑
-    this.expandRow(row, col);
-    // 刷新图标显示
-    this.table.scenegraph.updateNextFrame();
-  }
-
-  /**
-   * 获取懒加载状态
-   * @param row 行索引
-   * @returns 懒加载状态
-   */
-  getLazyLoadingState(row: number): 'loading' | 'loaded' | 'error' | undefined {
-    const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-    const internalProps = getInternalProps(this.table);
-    return internalProps.lazyLoadingStates?.get(bodyRowIndex);
-  }
-
-  /**
-   * 处理懒加载事件
-   * @param eventData 懒加载事件数据
-   */
-  private handleLazyLoad(eventData: LazyLoadEventData): void {
-    const { row, col } = eventData;
-    // 设置loading状态
-    this.setLoadingState(row, col);
-    // 直接调用用户配置的懒加载回调
-    if (this.pluginOptions.onLazyLoad) {
-      // 创建包含callback的事件数据
-      const eventDataWithCallback = {
-        ...eventData,
-        callback: (error: unknown, detailData: DetailTableOptions | null) => {
-          if (error) {
-            const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-            this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
-            this.refreshRowIcon(row, col);
-            console.warn('Master detail lazy load error:', error);
-          } else if (detailData) {
-            // 成功：设置数据并展开
-            this.setDetailData(detailData, row, col);
-          }
-        }
-      };
-      try {
-        this.pluginOptions.onLazyLoad(eventDataWithCallback);
-      } catch (error) {
-        console.warn('Error in lazy load callback:', error);
-        // 出错时重置状态并刷新图标显示
-        const bodyRowIndex = row - this.table.columnHeaderLevelCount;
+    const callback = (error: unknown, detailData: DetailTableOptions | null) => {
+      if (error) {
         this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
-        this.refreshRowIcon(row, col);
+        if (internalProps.lazyLoadingStates) {
+          internalProps.lazyLoadingStates.set(bodyRowIndex, 'error');
+        }
+        this.refreshRowIcon(row, 0);
+        console.warn('Master detail lazy load error:', error);
+        return;
       }
+
+      if (detailData) {
+        // 更新数据和状态
+        this.configManager.setLazyLoadingState(bodyRowIndex, 'loaded');
+        if (internalProps.lazyLoadingStates) {
+          internalProps.lazyLoadingStates.set(bodyRowIndex, 'loaded');
+        }
+        if (record && typeof record === 'object') {
+          (record as { children: unknown[] }).children = detailData.records || [];
+        }
+
+        // 执行展开操作
+        const childrenData = detailData.records || [];
+        if (childrenData.length > 0) {
+          this.performLazyExpansion(record, bodyRowIndex, row, childrenData);
+        }
+        this.refreshRowIcon(row, 0);
+        this.table.scenegraph.updateNextFrame();
+      }
+    };
+
+    try {
+      this.pluginOptions.onLazyLoad({ row, col: 0, record, callback });
+    } catch (error) {
+      this.configManager.setLazyLoadingState(bodyRowIndex, 'error');
+      if (internalProps.lazyLoadingStates) {
+        internalProps.lazyLoadingStates.set(bodyRowIndex, 'error');
+      }
+      this.refreshRowIcon(row, 0);
+      console.warn('Error in lazy load callback:', error);
+    }
+
+    return [];
+  }
+
+  /**
+   * 执行懒加载后的展开操作
+   */
+  private performLazyExpansion(record: unknown, bodyRowIndex: number, row: number, childrenData: unknown[]): void {
+    const internalProps = getInternalProps(this.table);
+    const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
+    const deltaHeight = detailConfig?.style?.height || 300;
+
+    this.updateRowHeightForExpand(row, deltaHeight);
+    this.table.scenegraph.updateContainerHeight(row, deltaHeight);
+    internalProps._heightResizedRowMap.add(row);
+
+    this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
+      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+
+    this.subTableManager.recalculateAllSubTablePositions(
+      bodyRowIndex + 1,
+      undefined,
+      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
+
+    const originalHeight = this.table.getRowHeight(row) - deltaHeight;
+    this.drawUnderlineForRow(row, originalHeight);
+
+    if (this.table.heightMode === 'adaptive') {
+      this.table.scenegraph.dealHeightMode();
     }
   }
 
@@ -337,19 +358,27 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
     const height = detailConfig?.style?.height || 300;
 
-    const deltaHeight = height;
-    this.updateRowHeightForExpand(rowIndex, deltaHeight);
-    this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
-    internalProps._heightResizedRowMap.add(rowIndex);
-    this.subTableManager.renderSubTable(bodyRowIndex, (record, bodyRowIndex) =>
-      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
-    this.subTableManager.recalculateAllSubTablePositions(
-      bodyRowIndex + 1,
-      undefined,
-      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
-    this.drawUnderlineForRow(rowIndex, originalHeight);
+    // 先获取子数据，处理懒加载逻辑
+    const childrenData = this.getChildren(record, bodyRowIndex);
+
+    // 只有当有实际子数据时才执行展开操作
+    if (childrenData.length > 0) {
+      const deltaHeight = height;
+      this.updateRowHeightForExpand(rowIndex, deltaHeight);
+      this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
+      internalProps._heightResizedRowMap.add(rowIndex);
+      // 将子数据传递给 renderSubTable
+      this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
+        this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+      );
+      this.subTableManager.recalculateAllSubTablePositions(
+        bodyRowIndex + 1,
+        undefined,
+        (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+      );
+      this.drawUnderlineForRow(rowIndex, originalHeight);
+    }
+    // 如果是懒加载（childrenData.length === 0），只刷新图标显示loading状态，不扩展行高
     this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
@@ -657,9 +686,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         internalProps.originalRowHeights?.clear();
         internalProps.subTableCheckboxStates?.clear();
         internalProps._heightResizedRowMap?.clear();
-        // 清理懒加载状态
-        internalProps.lazyLoadingStates?.clear();
-        internalProps.lazyLoadingPromises?.clear();
       }
     }
     // 清理引用，避免循环引用

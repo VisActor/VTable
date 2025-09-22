@@ -166,38 +166,21 @@ export class SubTableManager {
   }
 
   /**
-   * 检查记录是否有子数据
-   */
-  private hasChildren(record: unknown): boolean {
-    if (record && typeof record === 'object' && 'children' in record) {
-      const children = record.children;
-      return Array.isArray(children) && children.length > 0;
-    }
-    return false;
-  }
-
-  /**
-   * 获取记录的子数据
-   */
-  private getChildren(record: unknown): unknown[] {
-    if (record && typeof record === 'object' && 'children' in record) {
-      const children = record.children;
-      return Array.isArray(children) ? children : [];
-    }
-    return [];
-  }
-
-  /**
    * 渲染子表
    * 创建子表实例，设置viewBox区域，配置滚动隔离、选中管理、canvas裁剪
    */
   renderSubTable(
     bodyRowIndex: number,
+    childrenData: unknown[],
     getDetailConfig: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null
   ): void {
     const internalProps = getInternalProps(this.table);
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
-    if (!record || !this.hasChildren(record)) {
+    if (!record) {
+      return;
+    }
+    // 如果没有子数据，不渲染子表
+    if (!childrenData || childrenData.length === 0) {
       return;
     }
     const detailConfig = getDetailConfig(record, bodyRowIndex);
@@ -205,7 +188,6 @@ export class SubTableManager {
     if (!childViewBox) {
       return;
     }
-    const childrenData = this.getChildren(record);
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
     // 创建子表配置，首先使用父表的重要属性作为基础

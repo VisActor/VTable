@@ -1,5 +1,4 @@
 import * as VTable from '@visactor/vtable';
-import type { LazyLoadEventData } from './types';
 
 /**
  * 事件处理相关功能
@@ -9,7 +8,6 @@ export class EventManager {
   private originalResize: () => void;
   private eventHandlers: Array<{ type: string; handler: (...args: unknown[]) => unknown }> = [];
   private allExpandedRowsBeforeMove: Set<number> = new Set();
-  private onLazyLoad?: (eventData: LazyLoadEventData) => void;
 
   constructor(private table: VTable.ListTable) {}
 
@@ -304,14 +302,6 @@ export class EventManager {
       };
 
       if (name === 'hierarchy-expand') {
-        // 获取记录数据以检查是否为懒加载
-        const record = this.getRecordByCell(col, row);
-        if (this.isLazyLoadRecord?.(record)) {
-          this.triggerLazyLoad(row, col, record);
-          return;
-        }
-
-        // 普通展开逻辑
         this.onToggleRowExpand?.(row, col);
       } else if (name === 'hierarchy-collapse') {
         this.onToggleRowExpand?.(row, col);
@@ -334,22 +324,6 @@ export class EventManager {
       console.warn('Failed to get record by cell:', error);
     }
     return null;
-  }
-
-  /**
-   * 触发懒加载事件
-   */
-  private triggerLazyLoad(row: number, col: number, record: unknown): void {
-    // 触发懒加载事件
-    const eventData: LazyLoadEventData = {
-      row,
-      col,
-      record
-    };
-    // 使用回调函数处理懒加载
-    if (this.onLazyLoad) {
-      this.onLazyLoad(eventData);
-    }
   }
 
   /**
@@ -472,7 +446,6 @@ export class EventManager {
     this.onToggleRowExpand = undefined;
     this.getOriginalRowHeight = undefined;
     this.isLazyLoadRecord = undefined;
-    this.onLazyLoad = undefined;
   }
 
   // 回调函数，需要从外部注入
@@ -497,7 +470,6 @@ export class EventManager {
     onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
     getOriginalRowHeight?: (bodyRowIndex: number) => number;
     isLazyLoadRecord?: (record: unknown) => boolean;
-    onLazyLoad?: (eventData: LazyLoadEventData) => void;
   }): void {
     this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;
     this.onUpdateSubTablePositionsForRow = callbacks.onUpdateSubTablePositionsForRow;
@@ -507,6 +479,5 @@ export class EventManager {
     this.onToggleRowExpand = callbacks.onToggleRowExpand;
     this.getOriginalRowHeight = callbacks.getOriginalRowHeight;
     this.isLazyLoadRecord = callbacks.isLazyLoadRecord;
-    this.onLazyLoad = callbacks.onLazyLoad;
   }
 }

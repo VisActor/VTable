@@ -17,12 +17,6 @@ interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** Detail table configuration - can be static configuration object or dynamic configuration function */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
-  /** Lazy loading icon configuration */
-  lazyLoadingIcon?: {
-    src?: string;
-    width?: number;
-    height?: number;
-  };
   /** Lazy loading callback function */
   onLazyLoad?: (
     eventData: LazyLoadEventData & {
@@ -56,7 +50,6 @@ interface LazyLoadEventData {
 | `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
 | `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
 | `detailTableOptions` | DetailTableOptions \| Function | - | Detail table configuration options, supports static object configuration or dynamic configuration function based on data |
-| `lazyLoadingIcon` | object | - | Lazy loading icon configuration, including src, width, height properties |
 | `onLazyLoad` | function | - | Lazy loading callback function for handling asynchronous data fetching and error handling. Configuring this enables lazy loading functionality |
 
 #### DetailTableOptions Advanced Configuration
@@ -418,7 +411,6 @@ Lazy loading functionality is enabled by configuring the `onLazyLoad` callback f
 
 | Parameter Name | Type | Default Value | Description |
 |----------------|------|---------------|-------------|
-| `lazyLoadingIcon` | object | - | Lazy loading icon configuration, including src, width, height properties |
 | `onLazyLoad` | function | - | Lazy loading callback function for handling asynchronous data fetching logic. Configuring this enables lazy loading functionality |
 
 1. **Data Identification**: In master table data, set the `children` property of rows that need lazy loading to `true`
@@ -448,6 +440,25 @@ onLazyLoad: async (eventData) => {
 The following is a complete lazy loading example demonstrating how to implement product detail lazy loading in an order management system:
 
 ```javascript livedemo template=vtable
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
+  positionType: VTable.TYPES.IconPosition.contentLeft, // 改为左边位置，和展开/收起图标一致
+  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
+  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
+  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  hover: {
+    // 热区大小
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
 function createLazyLoadTable() {
   // Master table data - including lazy loading identifiers
   const masterData = [
