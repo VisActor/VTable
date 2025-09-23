@@ -43,6 +43,8 @@
 ```
   updateScales: (scales: ITimelineScale[]) => void
 ```
+ITimelineScale的类型参考[配置文档]:https://visactor.com/vtable/option/Gantt#timelineHeader.scales(Array%3CITimelineScale%3E)
+
 
 {{ use: common-gantt-timeline-scale }}
 
