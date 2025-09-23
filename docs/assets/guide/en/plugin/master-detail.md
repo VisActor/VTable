@@ -17,12 +17,6 @@ interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** Detail table configuration - can be static configuration object or dynamic configuration function */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
-  /** Lazy loading callback function */
-  onLazyLoad?: (
-    eventData: LazyLoadEventData & {
-      callback: (error: unknown, detailData: DetailTableOptions | null) => void;
-    }
-  ) => void;
 }
 
 interface DetailTableOptions extends VTable.ListTableConstructorOptions {
@@ -31,15 +25,6 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
   };
-}
-
-interface LazyLoadEventData {
-  /** Current row data record */
-  record: unknown;
-  /** Row index */
-  row: number;
-  /** Column index */
-  col: number;
 }
 ```
 
@@ -50,7 +35,6 @@ interface LazyLoadEventData {
 | `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
 | `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
 | `detailTableOptions` | DetailTableOptions \| Function | - | Detail table configuration options, supports static object configuration or dynamic configuration function based on data |
-| `onLazyLoad` | function | - | Lazy loading callback function for handling asynchronous data fetching and error handling. Configuring this enables lazy loading functionality |
 
 #### DetailTableOptions Advanced Configuration
 
@@ -407,34 +391,42 @@ createGroupTable();
 
 MasterDetailPlugin supports lazy loading functionality, allowing dynamic asynchronous loading of sub-table data when users expand rows. This is very useful for handling large amounts of data or scenarios that require real-time data fetching from servers.
 
-Lazy loading functionality is enabled by configuring the `onLazyLoad` callback function, with no need for additional switch configurations.
+Lazy loading functionality uses VTable's standard event-driven approach by listening to the `MASTER_DETAIL_HIERARCHY_STATE_CHANGE` event.
 
-| Parameter Name | Type | Default Value | Description |
-|----------------|------|---------------|-------------|
-| `onLazyLoad` | function | - | Lazy loading callback function for handling asynchronous data fetching logic. Configuring this enables lazy loading functionality |
+**Lazy Loading Workflow:**
 
 1. **Data Identification**: In master table data, set the `children` property of rows that need lazy loading to `true`
-2. **Trigger Mechanism**: When users click the expand icon, the plugin detects the `children: true` identifier and triggers lazy loading
-3. **Asynchronous Processing**: Handle asynchronous data fetching through the `onLazyLoad` callback function
-4. **State Management**: The plugin automatically displays loading animation and updates the interface after data loading completes
+2. **Trigger Mechanism**: When users click the expand icon, the table triggers the `MASTER_DETAIL_HIERARCHY_STATE_CHANGE` event
+3. **Event Handling**: In the event handler, detect lazy loading identifiers and execute asynchronous data fetching
+4. **State Management**: Use plugin convenience methods to display loading animation and set data
 
-The key point is that onLazyLoad needs to be configured.
+**Core APIs:**
+- Listen to event: `VTable.ListTable.EVENT_TYPE.MASTER_DETAIL_HIERARCHY_STATE_CHANGE`
+- Show loading state: `plugin.setLoadingHierarchyState(col, row)`  
+- Set child data: `plugin.setRecordChildren(detailData, col, row)`
+
 ```typescript
-onLazyLoad: async (eventData) => {
-  const { record, row, col, callback } = eventData;
-  
-  try {
-    // Execute asynchronous data fetching
-    const data = await fetchDataFromServer(record.id);
+// Listen to expand/collapse events
+const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+  // Only handle expand operations with children === true (lazy loading identifier)
+  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+      args.originData?.children === true) {
     
-    callback(null, {
-      records: data
-    });
-  } catch (error) {
-    // Call callback(error, null) on failure
-    callback(error, null);
+    // Show loading state
+    plugin.setLoadingHierarchyState(args.col, args.row);
+    
+    try {
+      // Asynchronously fetch data
+      const detailData = await fetchDataFromServer(args.originData.id);
+      
+      // Set child data and automatically expand
+      plugin.setRecordChildren(detailData, args.col, args.row);
+    } catch (error) {
+      console.error('Failed to load detail data:', error);
+    }
   }
-}
+});
 ```
 
 The following is a complete lazy loading example demonstrating how to implement product detail lazy loading in an order management system:
@@ -445,13 +437,12 @@ VTable.register.icon('loading', {
   width: 16,
   height: 16,
   src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
-  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
-  positionType: VTable.TYPES.IconPosition.contentLeft, // 改为左边位置，和展开/收起图标一致
-  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
-  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
-  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  name: 'loading',
+  positionType: VTable.TYPES.IconPosition.contentLeft,
+  marginLeft: 0,
+  marginRight: 4,
+  visibleTime: 'always',
   hover: {
-    // 热区大小
     width: 22,
     height: 22,
     bgColor: 'rgba(101,117,168,0.1)'
@@ -531,38 +522,116 @@ function createLazyLoadTable() {
     ];
   }
 
-  // Create master-detail plugin - configure lazy loading
-  const lazyLoadPlugin = new VTablePlugins.MasterDetailPlugin({
+  // Create master-detail plugin
+  const plugin = new VTablePlugins.MasterDetailPlugin({
     id: 'lazy-load-demo',
     enableCheckboxCascade: true,
-    
-    // Lazy loading event handler
-    onLazyLoad: async (eventData) => {
-      const { record, callback } = eventData;
+    detailTableOptions: (params) => {
+      const { data } = params;
+      return {
+        columns: [
+          { field: 'productName', title: 'Product Name', width: 150 },
+          { field: 'quantity', title: 'Quantity', width: 80 },
+          { field: 'price', title: 'Price', width: 100 },
+          { field: 'total', title: 'Total', width: 100 }
+        ],
+        records: data.children,
+        style: {
+          height: 200,
+          margin: [10, 20, 10, 20]
+        },
+        theme: VTable.themes.BRIGHT
+      };
+    }
+  });
+
+  // Master table configuration
+  const columns = [
+    { field: 'orderNo', title: 'Order No.', width: 120 },
+    { field: 'customer', title: 'Customer Name', width: 150 },
+    { field: 'amount', title: 'Order Amount', width: 120 },
+    { field: 'status', title: 'Status', width: 100 },
+    { field: 'date', title: 'Order Date', width: 120 }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: masterData,
+    widthMode: 'standard',
+    allowFrozenColCount: 2,
+    defaultRowHeight: 40,
+    plugins: [plugin]
+  };
+
+  // Create table instance
+  const tableInstance = new VTable.ListTable(option);
+  
+  // Listen to master-detail hierarchy state change events for lazy loading
+  const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+    // Only handle expand operations with children === true (lazy loading identifier)
+    if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+        args.originData?.children === true) {
+      
+      // Show loading state
+      plugin.setLoadingHierarchyState(args.col, args.row);
+      
       try {
-        // Display loading state (plugin handles automatically)
-        console.log('Starting to load order details:', record);
-        
-        // Get order ID from record
-        const orderId = record.id;
-        
-        // Fetch data asynchronously
+        // Get order ID and load data asynchronously
+        const orderId = args.originData.id;
         const detailData = await mockFetchDetailData(orderId);
         
-        // Return data through callback - only records needed
-        callback(null, {
-          records: detailData
-        });
-        
-        console.log('Data loading completed:', detailData);
+        // Use plugin convenience method to set child data and expand
+        plugin.setRecordChildren(detailData, args.col, args.row);
       } catch (error) {
-        console.error('Data loading failed:', error);
-        // Return error through callback
-        callback(error, null);
+        console.error('Failed to load detail data:', error);
       }
-    },
+    }
+  });
+  
+  return tableInstance;
+}
+
+createLazyLoadTable();
+```
+      status: 'Pending Shipment',
+      date: '2024-01-18'
+      // No children property means no sub-data, no expand icon displayed
+    }
+  ];
+
+  // Mock asynchronous data fetching function
+  async function mockFetchDetailData(orderId) {
+    // Simulate network delay
+    const delay = 1000 + Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, delay));
     
-    // Static data configuration (for cases where children is an array)
+    // Return different product detail data based on order ID
+    const mockDetailData = {
+      2: [
+        { productName: 'Desktop', quantity: 1, price: 8000, total: 8000 },
+        { productName: 'Monitor', quantity: 2, price: 2000, total: 4000 },
+        { productName: 'Keyboard', quantity: 1, price: 200, total: 200 },
+        { productName: 'USB Drive', quantity: 10, price: 50, total: 500 },
+        { productName: 'Speaker', quantity: 1, price: 1200, total: 1200 }
+      ],
+      3: [
+        { productName: 'Server', quantity: 2, price: 15000, total: 30000 },
+        { productName: 'Network Equipment', quantity: 5, price: 1000, total: 5000 },
+        { productName: 'Switch', quantity: 3, price: 800, total: 2400 }
+      ]
+    };
+    
+    return mockDetailData[orderId] || [
+      { productName: 'Default Product', quantity: 1, price: 100, total: 100 }
+    ];
+  }
+
+  // Create master-detail plugin
+  const plugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'lazy-load-demo',
+    enableCheckboxCascade: true,
     detailTableOptions: (params) => {
       const { data } = params;
       return {
@@ -598,7 +667,7 @@ function createLazyLoadTable() {
     widthMode: 'standard',
     allowFrozenColCount: 2,
     defaultRowHeight: 40,
-    plugins: [lazyLoadPlugin]
+    plugins: [plugin]
   };
 
   // Create table instance

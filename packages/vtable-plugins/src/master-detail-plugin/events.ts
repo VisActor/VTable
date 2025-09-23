@@ -301,9 +301,35 @@ export class EventManager {
         name: string;
       };
 
-      if (name === 'hierarchy-expand') {
-        this.onToggleRowExpand?.(row, col);
-      } else if (name === 'hierarchy-collapse') {
+      if (name === 'hierarchy-expand' || name === 'hierarchy-collapse') {
+        // 获取原始记录数据
+        const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
+
+        // 确定层次状态：如果当前是展开状态则要收起，如果是收起状态则要展开
+        const currentlyExpanded = this.isRowExpanded(row);
+        const hierarchyState = currentlyExpanded
+          ? VTable.TYPES.HierarchyState.collapse
+          : VTable.TYPES.HierarchyState.expand;
+
+        // 触发主从表层次状态变化事件
+        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.MASTER_DETAIL_HIERARCHY_STATE_CHANGE, {
+          col,
+          row,
+          hierarchyState,
+          originData: record,
+          cellLocation: this.table.getCellLocation(col, row)
+        });
+        if (
+          hierarchyState === VTable.TYPES.HierarchyState.expand &&
+          record &&
+          typeof record === 'object' &&
+          'children' in record &&
+          record.children === true
+        ) {
+          return;
+        }
+
+        // 非懒加载情况：正常处理展开/收起
         this.onToggleRowExpand?.(row, col);
       }
     };
@@ -312,18 +338,17 @@ export class EventManager {
   }
 
   /**
-   * 获取单元格记录数据
+   * 获取指定行的记录数据
    */
-  private getRecordByCell(col: number, row: number): unknown {
+  private getRecordByRowIndex(bodyRowIndex: number): unknown {
     try {
-      const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-      if (recordIndex !== undefined) {
-        return this.table.getRecordByCell(col, row);
-      }
+      const table = this.table;
+      const recordIndex = table.getRecordShowIndexByCell(0, bodyRowIndex + table.columnHeaderLevelCount);
+      return table.dataSource.get(recordIndex);
     } catch (error) {
-      console.warn('Failed to get record by cell:', error);
+      console.warn('Error getting record by row index:', error);
+      return null;
     }
-    return null;
   }
 
   /**

@@ -94,24 +94,6 @@ export function createTable() {
   // 创建主从表插件
   const plugin = new MasterDetailPlugin({
     enableCheckboxCascade: true,
-    // 懒加载事件处理
-    onLazyLoad: async eventData => {
-      const { record, callback } = eventData;
-      try {
-        // 从记录中获取订单ID
-        const orderId = (record as { id: number }).id;
-        // 异步获取数据
-        const detailData = await mockFetchDetailData(orderId);
-        // 通过callback返回数据
-        callback(null, {
-          records: detailData
-        });
-      } catch (error) {
-        console.error('数据加载失败:', error);
-        // 通过callback返回错误
-        callback(error, null);
-      }
-    },
     detailTableOptions: params => {
       const { data } = params;
       return {
@@ -148,6 +130,28 @@ export function createTable() {
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(container, tableOptions);
+  // 监听主从表层次状态变化事件，处理懒加载
+  const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async args => {
+    // 只处理展开操作且 children 为 true（懒加载标识）
+    if (
+      args.hierarchyState === VTable.TYPES.HierarchyState.expand &&
+      args.originData &&
+      args.originData.children === true
+    ) {
+      // 显示loading状态
+      plugin.setLoadingHierarchyState(args.col, args.row);
+      try {
+        // 获取订单ID并异步加载数据
+        const orderId = args.originData.id;
+        const detailData = await mockFetchDetailData(orderId);
+        // 使用插件的便捷方法设置子数据并展开
+        plugin.setRecordChildren(detailData, args.col, args.row);
+      } catch (error) {
+        console.error('Failed to load detail data:', error);
+      }
+    }
+  });
 
   // 模拟异步数据获取函数
   async function mockFetchDetailData(orderId: number) {

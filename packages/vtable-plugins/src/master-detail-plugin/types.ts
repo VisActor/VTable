@@ -18,12 +18,6 @@ export interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
-  /** 懒加载回调函数 */
-  onLazyLoad?: (
-    eventData: LazyLoadEventData & {
-      callback: (error: unknown, detailData: DetailTableOptions | null) => void;
-    }
-  ) => void;
 }
 
 /**
@@ -68,18 +62,6 @@ export interface SelectBorderHeightEventData {
   endRow: number;
   currentHeight: number;
   selectComp: { rect: unknown; fillhandle?: unknown; role: string };
-}
-
-/**
- * 懒加载事件数据接口
- */
-export interface LazyLoadEventData {
-  /** 行索引 */
-  row: number;
-  /** 列索引 */
-  col: number;
-  /** 记录数据 */
-  record: unknown;
 }
 
 /**

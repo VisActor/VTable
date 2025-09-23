@@ -17,12 +17,6 @@ interface MasterDetailPluginOptions {
   enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
   detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
-  /** 懒加载回调函数 */
-  onLazyLoad?: (
-    eventData: LazyLoadEventData & {
-      callback: (error: unknown, detailData: DetailTableOptions | null) => void;
-    }
-  ) => void;
 }
 
 interface DetailTableOptions extends VTable.ListTableConstructorOptions {
@@ -31,15 +25,6 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
   };
-}
-
-interface LazyLoadEventData {
-  /** 当前行的数据记录 */
-  record: unknown;
-  /** 行索引 */
-  row: number;
-  /** 列索引 */
-  col: number;
 }
 ```
 
@@ -50,7 +35,6 @@ interface LazyLoadEventData {
 | `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
 | `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
 | `detailTableOptions` | DetailTableOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
-| `onLazyLoad` | function | - | 懒加载回调函数，用于处理异步数据获取和错误处理。配置此项即启用懒加载功能 |
 
 #### DetailTableOptions 高级配置
 
@@ -407,34 +391,42 @@ createGroupTable();
 
 MasterDetailPlugin 支持懒加载功能，允许在用户展开行时动态异步加载子表数据，这对于处理大量数据或需要从服务器实时获取数据的场景非常有用。
 
-懒加载功能通过配置 `onLazyLoad` 回调函数来启用，无需额外的开关配置。
+懒加载功能采用 VTable 标准的事件驱动方式，通过监听 `MASTER_DETAIL_HIERARCHY_STATE_CHANGE` 事件来实现。
 
-| 参数名称 | 类型 | 默认值 | 功能说明 |
-|---------|------|--------|----------|
-| `onLazyLoad` | function | - | 懒加载回调函数，处理异步数据获取逻辑。配置此项即启用懒加载功能 |
+**懒加载的工作流程：**
 
 1. **数据标识**：在主表数据中，将需要懒加载的行的 `children` 属性设置为 `true`
-2. **触发机制**：当用户点击展开图标时，插件会检测到 `children: true` 标识并触发懒加载
-3. **异步处理**：通过 `onLazyLoad` 回调函数处理异步数据获取
-4. **状态管理**：插件会自动显示加载动画，并在数据加载完成后更新界面
+2. **触发机制**：当用户点击展开图标时，表格会触发 `MASTER_DETAIL_HIERARCHY_STATE_CHANGE` 事件
+3. **事件处理**：在事件处理器中检测懒加载标识并执行异步数据获取
+4. **状态管理**：使用插件提供的便捷方法显示加载动画并设置数据
 
-核心是需要配置onLazyLoad
+**核心API：**
+- 监听事件：`VTable.ListTable.EVENT_TYPE.MASTER_DETAIL_HIERARCHY_STATE_CHANGE`
+- 显示加载状态：`plugin.setLoadingHierarchyState(col, row)`  
+- 设置子数据：`plugin.setRecordChildren(detailData, col, row)`
+
 ```typescript
-onLazyLoad: async (eventData) => {
-  const { record, row, col, callback } = eventData;
-  
-  try {
-    // 执行异步数据获取
-    const data = await fetchDataFromServer(record.id);
+// 监听展开/收起事件
+const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+  // 只处理展开操作且 children 为 true（懒加载标识）
+  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+      args.originData?.children === true) {
     
-    callback(null, {
-      records: data,
-    });
-  } catch (error) {
-    // 失败时调用 callback(error, null)
-    callback(error, null);
+    // 显示loading状态
+    plugin.setLoadingHierarchyState(args.col, args.row);
+    
+    try {
+      // 异步获取数据
+      const detailData = await fetchDataFromServer(args.originData.id);
+      
+      // 设置子数据并自动展开
+      plugin.setRecordChildren(detailData, args.col, args.row);
+    } catch (error) {
+      console.error('Failed to load detail data:', error);
+    }
   }
-}
+});
 ```
 
 以下是一个完整的懒加载示例，演示如何在订单管理系统中实现产品明细的懒加载：
@@ -445,20 +437,18 @@ VTable.register.icon('loading', {
   width: 16,
   height: 16,
   src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
-  name: 'loading', //定义图标的名称，在内部会作为缓存的key值
-  positionType: VTable.TYPES.IconPosition.contentLeft, // 改为左边位置，和展开/收起图标一致
-  marginLeft: 0, // 左侧内容间隔 在特定位置position中起作用
-  marginRight: 4, // 右侧内容间隔 在特定位置position中起作用
-  visibleTime: 'always', // 显示时机， 'always' | 'mouseover_cell' | 'click_cell'
+  name: 'loading',
+  positionType: VTable.TYPES.IconPosition.contentLeft,
+  marginLeft: 0,
+  marginRight: 4,
+  visibleTime: 'always',
   hover: {
-    // 热区大小
     width: 22,
     height: 22,
     bgColor: 'rgba(101,117,168,0.1)'
   },
   isGif: true
 });
-
 
 function createLazyLoadTable() {
   // 主表数据 - 包含懒加载标识
@@ -532,37 +522,10 @@ function createLazyLoadTable() {
     ];
   }
 
-  // 创建主从表插件 - 配置懒加载
-  const lazyLoadPlugin = new VTablePlugins.MasterDetailPlugin({
+  // 创建主从表插件
+  const plugin = new VTablePlugins.MasterDetailPlugin({
     id: 'lazy-load-demo',
     enableCheckboxCascade: true,
-    
-    // 懒加载事件处理器
-    onLazyLoad: async (eventData) => {
-      const { record, callback } = eventData;
-      try {
-        // 显示加载状态（插件会自动处理）
-        console.log('开始加载订单详情：', record);
-        
-        // 从记录中获取订单ID
-        const orderId = record.id;
-        
-        // 异步获取数据
-        const detailData = await mockFetchDetailData(orderId);
-        
-        // 通过callback返回数据 - 只需要records即可
-        callback(null, {
-          records: detailData
-        });
-        
-        console.log('数据加载完成：', detailData);
-      } catch (error) {
-        console.error('数据加载失败:', error);
-        // 通过callback返回错误
-        callback(error, null);
-      }
-    },
-    
     detailTableOptions: (params) => {
       const { data } = params;
       return {
@@ -598,11 +561,34 @@ function createLazyLoadTable() {
     widthMode: 'standard',
     allowFrozenColCount: 2,
     defaultRowHeight: 40,
-    plugins: [lazyLoadPlugin]
+    plugins: [plugin]
   };
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(option);
+  
+  // 监听主从表层次状态变化事件，处理懒加载
+  const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+    // 只处理展开操作且 children 为 true（懒加载标识）
+    if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+        args.originData?.children === true) {
+      
+      // 显示loading状态
+      plugin.setLoadingHierarchyState(args.col, args.row);
+      
+      try {
+        // 获取订单ID并异步加载数据
+        const orderId = args.originData.id;
+        const detailData = await mockFetchDetailData(orderId);
+        
+        // 使用插件的便捷方法设置子数据并展开
+        plugin.setRecordChildren(detailData, args.col, args.row);
+      } catch (error) {
+        console.error('Failed to load detail data:', error);
+      }
+    }
+  });
   
   return tableInstance;
 }

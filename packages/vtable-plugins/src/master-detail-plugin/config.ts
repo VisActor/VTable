@@ -265,13 +265,7 @@ export class ConfigManager {
       }
 
       // 检查是否为懒加载节点
-      if (
-        this.pluginOptions.onLazyLoad &&
-        record &&
-        typeof record === 'object' &&
-        'children' in record &&
-        record.children === true
-      ) {
+      if (record && typeof record === 'object' && 'children' in record && record.children === true) {
         const bodyRowIndex = row - this.table.columnHeaderLevelCount;
         const internalProps = getInternalProps(this.table);
         const loadingState = internalProps.lazyLoadingStates?.get(bodyRowIndex);
