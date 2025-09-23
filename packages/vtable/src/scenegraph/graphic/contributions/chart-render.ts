@@ -82,7 +82,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
         const formatResult = table.options.specFormat(chart.attribute.spec, activeChartInstance, chart);
         if (formatResult.needFormatSpec && formatResult.spec) {
           const spec = formatResult.spec;
-          activeChartInstance.updateSpecSync(spec);
+          activeChartInstance.updateSpecSync(spec, false, { reuse: false, morph: false });
           // return;
         }
       }
