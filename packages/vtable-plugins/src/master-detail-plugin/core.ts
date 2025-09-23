@@ -227,7 +227,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     const row = bodyRowIndex + this.table.columnHeaderLevelCount;
     const internalProps = getInternalProps(this.table);
-    // 确保懒加载状态Map存在（用于图标状态持久化）
     if (!internalProps.lazyLoadingStates) {
       internalProps.lazyLoadingStates = new Map();
     }
@@ -273,7 +272,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         // 执行展开操作
         const childrenData = detailData.records || [];
         if (childrenData.length > 0) {
-          this.performLazyExpansion(record, bodyRowIndex, row, childrenData);
+          this.expandToLazy(record, bodyRowIndex, row, childrenData);
         }
         this.refreshRowIcon(row, 0);
         this.table.scenegraph.updateNextFrame();
@@ -296,7 +295,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 执行懒加载后的展开操作
    */
-  private performLazyExpansion(record: unknown, bodyRowIndex: number, row: number, childrenData: unknown[]): void {
+  private expandToLazy(record: unknown, bodyRowIndex: number, row: number, childrenData: unknown[]): void {
     const internalProps = getInternalProps(this.table);
     const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
     const deltaHeight = detailConfig?.style?.height || 300;
@@ -376,7 +375,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       );
       this.drawUnderlineForRow(rowIndex, originalHeight);
     }
-    // 如果是懒加载（childrenData.length === 0），只刷新图标显示loading状态，不扩展行高
     this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
