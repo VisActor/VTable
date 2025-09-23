@@ -237,15 +237,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const detailConfig = this.configManager.getDetailConfigForRecord(record, bodyRowIndex);
     const height = detailConfig?.style?.height || 300;
 
-    // 先获取子数据，处理懒加载逻辑
     const childrenData = Array.isArray(record.children) ? record.children : [];
 
-    // 只有当有实际子数据时才执行展开操作
     const deltaHeight = height;
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
-    // 将子数据传递给 renderSubTable
     this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
