@@ -169,15 +169,35 @@ export class DataZoomIntegration {
       size: { width, height },
       showDetail: false,
       delayTime,
+      brushSelect: false,
       backgroundChartStyle: {
         line: { visible: true, stroke: '#ddd' },
         area: { visible: true, fill: '#f5f5f5' }
       },
-      startHandlerStyle: { fill: '#1976d2', size: 8 },
-      endHandlerStyle: { fill: '#1976d2', size: 8 },
+      startHandlerStyle: {
+        symbolType:
+          'M-0.5-2.4h0.9c0.4,0,0.7,0.3,0.7,0.7v3.3c0,0.4-0.3,0.7-0.7,0.7h-0.9c-0.4,0-0.7-0.3-0.7-0.7v-3.3\n' +
+          'C-1.2-2-0.9-2.4-0.5-2.4z M-0.4-1.4L-0.4-1.4c0,0,0,0.1,0,0.1v2.6c0,0.1,0,0.1,0,0.1l0,0c0,0,0-0.1,0-0.1' +
+          'v-2.6\nC-0.4-1.4-0.4-1.4-0.4-1.4z M0.3-1.4L0.3-1.4c0,0,0,0.1,0,0.1v2.6c0,0.1,0,0.1,0,0.1l0,0c0,0,' +
+          '0-0.1,0-0.1v-2.6\nC0.3-1.4,0.3-1.4,0.3-1.4z;',
+        fill: '#fff',
+        size: config.width ?? 30,
+        stroke: '#c2c8cf',
+        lineWidth: 1
+      },
+      endHandlerStyle: {
+        symbolType:
+          'M-0.5-2.4h0.9c0.4,0,0.7,0.3,0.7,0.7v3.3c0,0.4-0.3,0.7-0.7,0.7h-0.9c-0.4,0-0.7-0.3-0.7-0.7v-3.3\n' +
+          'C-1.2-2-0.9-2.4-0.5-2.4z M-0.4-1.4L-0.4-1.4c0,0,0,0.1,0,0.1v2.6c0,0.1,0,0.1,0,0.1l0,0c0,0,0-0.1,0-0.1' +
+          'v-2.6\nC-0.4-1.4-0.4-1.4-0.4-1.4z M0.3-1.4L0.3-1.4c0,0,0,0.1,0,0.1v2.6c0,0.1,0,0.1,0,0.1l0,0c0,0,' +
+          '0-0.1,0-0.1v-2.6\nC0.3-1.4,0.3-1.4,0.3-1.4z;',
+        fill: '#fff',
+        size: config.width ?? 30,
+        stroke: '#c2c8cf',
+        lineWidth: 1
+      },
       middleHandlerStyle: {
-        visible: true,
-        background: { style: { fill: 'rgba(25,118,210,0.1)' } }
+        visible: false
       }
     });
 
