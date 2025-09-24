@@ -172,6 +172,12 @@ Whether to disable the selection of row sequence numbers when the shortcut key i
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
 
+##${prefix} cutSelected(boolean) = false
+Enable shortcut key to cut, consistent with the browser's shortcut key.
+
+##${prefix} showCopyCellBorder(boolean) = false
+Whether to show the border of the copied cell, default: false.
+
 ##${prefix} pasteValueToCell(boolean) = false
 
 Enable shortcut key to paste, consistent with the browser's shortcut key.Paste takes effect only for cells with an editor configured
@@ -729,3 +735,11 @@ The position and size of the table in the canvas. Only need to configure this pr
 #${prefix} disableInteraction(boolean) = false
 
 Whether to disable all interactions of the table.
+
+#${prefix} defaultCursor(string) = 'default'
+
+Default cursor style.
+
+```
+defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
+```

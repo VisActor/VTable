@@ -2,6 +2,29 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.20.0",
+      "tag": "@visactor/vtable_v1.20.0",
+      "date": "Mon, 22 Sep 2025 03:03:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "chore: update vrender version to 1.0.16\n\n"
+          },
+          {
+            "comment": "feat: add cutSelected for vtable\n\n"
+          },
+          {
+            "comment": "feat: add HyperFormula & refactor formulat-manager\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add vtable sheet component\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.19.9",
       "tag": "@visactor/vtable_v1.19.9",
       "date": "Fri, 12 Sep 2025 09:25:46 GMT",

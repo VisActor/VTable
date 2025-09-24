@@ -23,7 +23,7 @@ export type IRotateTablePluginOptions = {
  * 这里使用transform:'rotate(90deg)'的设置来达到旋转的目的。 其他角度应该也是可以实现的，请自行扩展这个插件并兼容
  */
 export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
-  id = `rotate-table-${Date.now()}`;
+  id = `rotate-table`;
   name = 'Rotate Table';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
   table: VTable.ListTable;

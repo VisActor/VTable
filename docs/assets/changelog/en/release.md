@@ -1,3 +1,21 @@
+# v1.20.0
+
+2025-09-22
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: add cutSelected keyboardOption for vtable
+- **@visactor/vtable-sheet**: add vtable sheet component
+
+**🔧 Configuration releated**
+
+- **@visactor/vtable**: update vrender version to 1.0.16
+
+
+
+[more detail about v1.20.0](https://github.com/VisActor/VTable/releases/tag/v1.20.0)
+
 # v1.19.9
 
 2025-09-12

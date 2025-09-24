@@ -12,12 +12,20 @@ export const menus = [
     name: 'excel-import'
   },
   {
+    path: 'filter',
+    name: 'filter'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
   {
     path: 'invert-highlight',
     name: '(deprecated)invert-highlight'
+  },
+  {
+    path: 'auto-fill',
+    name: 'auto-fill'
   },
   {
     path: 'wps-fill-handle',
@@ -54,6 +62,14 @@ export const menus = [
   {
     path: 'rotate-table',
     name: 'rotate-table'
+  },
+  {
+    path: 'table-series-number',
+    name: 'table-series-number'
+  },
+  {
+    path: 'table-series-number',
+    name: 'pivot-table-series-number'
   },
   {
     path: 'master-detail-plugin',
@@ -99,6 +115,10 @@ export const menus = [
         name: 'pivot-plugin'
       }
     ]
+  },
+  {
+    path: 'context-menu',
+    name: 'context-menu'
   },
   {
     path: 'table-export',

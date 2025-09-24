@@ -294,6 +294,99 @@
       ]
     },
     {
+      "path": "sheet",
+      "title": {
+        "zh": "Sheet",
+        "en": "sheet"
+      },
+      "children": [
+        {
+          "path": "introduction",
+          "title": {
+            "zh": "VTable-Sheet介绍",
+            "en": "VTable-Sheet introduction"
+          }
+        },
+        {
+          "path": "Getting_Started",
+          "title": {
+            "zh": "快速上手",
+            "en": "sheet getting started"
+          }
+        },
+        {
+          "path": "multi-sheet",
+          "title": {
+            "zh": "多表格页",
+            "en": "multi sheet"
+          }
+        },
+        {
+          "path": "style",
+          "title": {
+            "zh": "样式",
+            "en": "style"
+          }
+        },
+        {
+          "path": "formula",
+          "title": {
+            "zh": "公式计算",
+            "en": "formula"
+          }
+        },
+        {
+          "path": "filter",
+          "title": {
+            "zh": "数据过滤",
+            "en": "filter"
+          }
+        },
+        {
+          "path": "menu",
+          "title": {
+            "zh": "菜单功能",
+            "en": "sheet menu"
+          }
+        },
+        {
+          "path": "plugins",
+          "title": {
+            "zh": "插件",
+            "en": "sheet plugins"
+          }
+        },
+        {
+          "path": "persistence",
+          "title": {
+            "zh": "数据持久化",
+            "en": "persistence"
+          }
+        },
+        {
+          "path": "import_export",
+          "title": {
+            "zh": "导入导出",
+            "en": "import and export"
+          }
+        },
+        {
+          "path": "editor",
+          "title": {
+            "zh": "单元格编辑",
+            "en": "cell editor"
+          }
+        },
+        {
+          "path": "other",
+          "title": {
+            "zh": "其他功能",
+            "en": "other"
+          }
+        }
+      ]
+    },
+    {
       "path": "cell_type",
       "title": {
         "zh": "单元格类型",
@@ -905,6 +998,34 @@
           "title": {
             "zh": "表格导出",
             "en": "table export"
+          }
+        },
+        {
+          "path": "table-series-number",
+          "title": {
+            "zh": "表格专用序号插件",
+            "en": "table series number plugin"
+          }
+        },
+        {
+          "path": "context-menu",
+          "title": {
+            "zh": "右键菜单插件",
+            "en": "context menu plugin"
+          }
+        },
+        {
+          "path": "auto-fill",
+          "title": {
+            "zh": "自动填充插件",
+            "en": "auto fill plugin"
+          }
+        },
+        {
+          "path": "filter",
+          "title": {
+            "zh": "筛选插件",
+            "en": "filter plugin"
           }
         }
       ]

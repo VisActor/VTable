@@ -246,6 +246,22 @@
       ]
     },
     {
+      "path": "vtable-sheet",
+      "title": {
+        "zh": "电子表格",
+        "en": "Sheet"
+      },
+      "children": [
+        {
+          "path": "sheet",
+          "title": {
+            "zh": "电子表格",
+            "en": "VTable-Sheet"
+          }
+        }
+      ]
+    },
+    {
       "path": "gantt",
       "title": {
         "zh": "甘特图",

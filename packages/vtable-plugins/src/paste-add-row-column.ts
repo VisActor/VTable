@@ -1,11 +1,12 @@
 import * as VTable from '@visactor/vtable';
 export type IPasteAddRowColumnPluginOptions = {
+  id?: string;
   addRowCallback?: (addedRow: number, table: VTable.ListTable) => void;
   addColumnCallback?: (addedCount: number, table: VTable.ListTable) => void;
 };
 
 export class PasteAddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
-  id = `paste-add-row-${Date.now()}`;
+  id = `paste-add-row-column`;
   name = 'Paste Add row';
   runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.PASTED_DATA];
   table: VTable.ListTable;
@@ -13,6 +14,7 @@ export class PasteAddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
   pastedData: any;
   constructor(pluginOptions?: IPasteAddRowColumnPluginOptions) {
     this.pluginOptions = pluginOptions;
+    this.id = pluginOptions?.id ?? this.id;
   }
   run(...args: any[]) {
     const runtime = args[1];

@@ -9,3 +9,5 @@
 {{import: gantt}}
 
 {{import: calendar}}
+
+{{import: table-sheet}}

@@ -11,8 +11,9 @@
    * 更新options 目前只支持全量更新
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions) => void
+  updateOption(options: BaseTableConstructorOptions, updateConfig?: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean }) => void
 ```
+updateConfig可以对更新配置项进行控制，默认情况下会清除列宽缓存和行高缓存，如果不需要清除缓存，可以传入{ clearColWidthCache: false, clearRowHeightCache: false }。
 
 如果需要更新单个配置项，请参考下面其他`update**`接口
 
@@ -247,6 +248,16 @@ setRecords(records: Array<any>)
 
 其中：
 {{ use: CellRange() }}
+
+## selectRow(Function)
+
+选中整行
+
+## selectCol(Function)
+
+选中整列
+
+
 
 ## getSelectedCellInfos(Function)
 
@@ -1467,6 +1478,14 @@ setLoadingHierarchyState: (col: number, row: number) => void;
 ```
   /** 设置画布的像素比 */
   setPixelRatio: (pixelRatio: number) => void;
+```
+## setTranslate(Function)
+
+设置表格的偏移量
+
+```
+  /** 设置表格的偏移量 */
+  setTranslate: (x: number, y: number) => void;
 ```
 
 ## expandAllTreeNode(Function)
