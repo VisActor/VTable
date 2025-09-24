@@ -391,21 +391,39 @@ createGroupTable();
 
 MasterDetailPlugin 支持懒加载功能，允许在用户展开行时动态异步加载子表数据，这对于处理大量数据或需要从服务器实时获取数据的场景非常有用。
 
-懒加载功能采用 VTable 标准的事件驱动方式，通过监听 `MASTER_DETAIL_HIERARCHY_STATE_CHANGE` 事件来实现。
-
 **懒加载的工作流程：**
 
 1. **数据标识**：在主表数据中，将需要懒加载的行的 `children` 属性设置为 `true`
-2. **触发机制**：当用户点击展开图标时，表格会触发 `MASTER_DETAIL_HIERARCHY_STATE_CHANGE` 事件
-3. **事件处理**：在事件处理器中检测懒加载标识并执行异步数据获取
-4. **状态管理**：使用插件提供的便捷方法显示加载动画并设置数据
+2. **事件触发机制**：当用户点击展开图标时，VTable触发 `TREE_HIERARCHY_STATE_CHANGE` 事件
 
 **核心API：**
-- 监听事件：`VTable.ListTable.EVENT_TYPE.MASTER_DETAIL_HIERARCHY_STATE_CHANGE`
-- 显示加载状态：`plugin.setLoadingHierarchyState(col, row)`  
+- 监听事件：`'TREE_HIERARCHY_STATE_CHANGE'`
+- 显示加载状态：`tableInstance.setLoadingHierarchyState(col, row)`  
 - 设置子数据：`plugin.setRecordChildren(detailData, col, row)`
 
+**实现方式：**
+
 ```typescript
+// 数据结构示例
+const masterData = [
+  {
+    id: 1,
+    name: "张三公司", 
+    amount: 15000,
+    // 静态子数据 - 直接显示
+    children: [
+      { productName: "笔记本电脑", quantity: 2, price: 5000 },
+      { productName: "鼠标", quantity: 5, price: 100 }
+    ]
+  },
+  {
+    id: 2,
+    name: "李四企业",
+    amount: 25000,
+    children: true // 懒加载标识 - 需要异步加载数据
+  }
+];
+
 // 监听展开/收起事件
 const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
 tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
@@ -414,7 +432,7 @@ tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
       args.originData?.children === true) {
     
     // 显示loading状态
-    plugin.setLoadingHierarchyState(args.col, args.row);
+    tableInstance.setLoadingHierarchyState(args.col, args.row);
     
     try {
       // 异步获取数据
@@ -428,6 +446,10 @@ tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
   }
 });
 ```
+
+**技术实现原理：**
+
+插件内部通过以下机制实现懒加载支持：监听VTable的 `TREE_HIERARCHY_STATE_CHANGE` 事件，确保层级状态的正确同步
 
 以下是一个完整的懒加载示例，演示如何在订单管理系统中实现产品明细的懒加载：
 
@@ -568,14 +590,14 @@ function createLazyLoadTable() {
   const tableInstance = new VTable.ListTable(option);
   
   // 监听主从表层次状态变化事件，处理懒加载
-  const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-  tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+  const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, async (args) => {
     // 只处理展开操作且 children 为 true（懒加载标识）
     if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
         args.originData?.children === true) {
       
       // 显示loading状态
-      plugin.setLoadingHierarchyState(args.col, args.row);
+      tableInstance.setLoadingHierarchyState(args.col, args.row);
       
       try {
         // 获取订单ID并异步加载数据

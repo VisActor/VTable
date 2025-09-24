@@ -435,6 +435,7 @@ export function createTable() {
     heightMode: 'standard',
     autoFillWidth: true,
     theme: VTable.themes.SIMPLIFY,
+    hierarchyTextStartAlignment: true,
     // 分页配置
     pagination: {
       totalCount: records.length,

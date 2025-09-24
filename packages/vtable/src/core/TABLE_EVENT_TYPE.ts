@@ -145,11 +145,6 @@ export interface TableEvents {
    */
   TREE_HIERARCHY_STATE_CHANGE: 'tree_hierarchy_state_change';
 
-  /**
-   * 主从表层次状态变化事件
-   */
-  MASTER_DETAIL_HIERARCHY_STATE_CHANGE: 'master_detail_hierarchy_state_change';
-
   SHOW_MENU: 'show_menu';
   HIDE_MENU: 'hide_menu';
   /**
@@ -270,7 +265,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   DROPDOWN_MENU_CLEAR: 'dropdown_menu_clear', // 清空下拉菜单事件（菜单显示时点击其他区域）
 
   TREE_HIERARCHY_STATE_CHANGE: 'tree_hierarchy_state_change', //树形结构展开收起的点击事件
-  MASTER_DETAIL_HIERARCHY_STATE_CHANGE: 'master_detail_hierarchy_state_change', //主从表层次状态变化事件
 
   SHOW_MENU: 'show_menu',
   HIDE_MENU: 'hide_menu',

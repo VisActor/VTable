@@ -57,10 +57,13 @@ function bindSubTableCheckboxEvents(table: VTable.ListTable): () => void {
     internalProps.subTableInstances.set = function (key: number, subTable: VTable.ListTable) {
       const result = originalSet.call(this, key, subTable);
       // 为新创建的子表绑定checkbox事件
-      subTable.on('checkbox_state_change', (args: unknown) => {
+      const checkboxHandler = (args: unknown) => {
         const { field } = args as { col: number; row: number; checked: boolean; field: string };
         updateMainTableRowCheckboxFromSubTable(table, subTable, key, field as string);
-      });
+      };
+      subTable.on('checkbox_state_change', checkboxHandler);
+      const extendedSubTable = subTable as VTable.ListTable & { __checkboxHandler?: (args: unknown) => void };
+      extendedSubTable.__checkboxHandler = checkboxHandler;
       return result;
     };
     // 返回清理函数

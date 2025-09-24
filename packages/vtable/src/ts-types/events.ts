@@ -217,14 +217,6 @@ export interface TableEventHandlersEventArgumentMap {
     originData?: any;
     cellLocation?: CellLocation;
   };
-  master_detail_hierarchy_state_change: {
-    col: number;
-    row: number;
-    hierarchyState: HierarchyState;
-    /**整条数据-原始数据 */
-    originData?: any;
-    cellLocation?: CellLocation;
-  };
   vchart_event_type: {
     eventName: string;
     col: number;
@@ -355,7 +347,6 @@ export interface TableEventHandlersReturnMap {
   pivot_sort_click: void;
 
   tree_hierarchy_state_change: void;
-  master_detail_hierarchy_state_change: void;
 
   vchart_event_type: void;
   //datasource部分的事件

@@ -37,7 +37,6 @@ export interface InternalProps {
   originalRowHeights: Map<number, number>;
   _tempExpandedRecordIndices?: (number | number[])[];
   subTableCheckboxStates?: Map<number, SubTableCheckboxState>;
-  lazyLoadingStates?: Map<number, 'loading' | 'loaded' | 'error'>;
 }
 
 /**

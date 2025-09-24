@@ -134,8 +134,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     internalProps.subTableInstances = new Map();
     internalProps.originalRowHeights = new Map();
     internalProps.subTableCheckboxStates = new Map();
-    // 初始化懒加载状态管理（用于图标显示持久化）
-    internalProps.lazyLoadingStates = new Map();
   }
 
   /**
@@ -523,10 +521,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const hasRowSeriesNumber = !!this.table.options.rowSeriesNumber;
       targetColumnIndex = hasRowSeriesNumber ? 1 : 0;
     }
-    // 触发目标列的重绘以更新图标状态
-    const cellGroup = this.table.scenegraph.getCell(targetColumnIndex, rowIndex);
-    if (cellGroup) {
-      this.table.scenegraph.updateCellContent(targetColumnIndex, rowIndex);
+
+    const record = this.table.getCellOriginRecord(targetColumnIndex, rowIndex);
+    if (record && typeof record === 'object') {
+      const recordObj = record as Record<string, unknown>;
+      const HierarchyState = VTable.TYPES.HierarchyState;
+      const isExpanded = this.eventManager.isRowExpanded(rowIndex);
+      recordObj.hierarchyState = isExpanded ? HierarchyState.expand : HierarchyState.collapse;
+      this.table.scenegraph.updateHierarchyIcon(targetColumnIndex, rowIndex);
     }
   }
 
@@ -557,21 +559,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
 
     // 直接修改原始记录的 children 属性
-    (record as any).children = children;
-    // 调用展开方法
+    (record as Record<string, unknown>).children = children;
     this.expandRow(row, col);
-  }
-
-  /**
-   * 设置loading状态
-   */
-  setLoadingHierarchyState(col: number, row: number): void {
-    const bodyRowIndex = row - this.table.columnHeaderLevelCount;
-    const internalProps = getInternalProps(this.table);
-    if (!internalProps.lazyLoadingStates) {
-      internalProps.lazyLoadingStates = new Map();
-    }
-    internalProps.lazyLoadingStates.set(bodyRowIndex, 'loading');
     this.table.scenegraph.updateCellContent(col, row);
   }
 

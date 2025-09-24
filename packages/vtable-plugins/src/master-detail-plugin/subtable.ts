@@ -377,6 +377,14 @@ export class SubTableManager {
       this.table.off('after_render', antiFlickerHandler);
       delete extendedSubTable.__antiFlickerHandler;
     }
+
+    // 清理checkbox事件处理器
+    const checkboxHandler = (extendedSubTable as VTable.ListTable & { __checkboxHandler?: (args: unknown) => void })
+      .__checkboxHandler;
+    if (checkboxHandler) {
+      subTable.off('checkbox_state_change', checkboxHandler);
+      delete (extendedSubTable as VTable.ListTable & { __checkboxHandler?: (args: unknown) => void }).__checkboxHandler;
+    }
   }
 
   /**
@@ -788,6 +796,9 @@ export class SubTableManager {
     }
     // 清理回调函数引用，避免循环引用
     this.getDetailConfigForRecord = undefined;
+    
+    // 清理表格引用
+    (this as unknown as { table: unknown }).table = null;
   }
 
   private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;

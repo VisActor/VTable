@@ -131,8 +131,8 @@ export function createTable() {
   // 创建表格实例
   const tableInstance = new VTable.ListTable(container, tableOptions);
   // 监听主从表层次状态变化事件，处理懒加载
-  const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-  tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async args => {
+  const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, async args => {
     // 只处理展开操作且 children 为 true（懒加载标识）
     if (
       args.hierarchyState === VTable.TYPES.HierarchyState.expand &&
@@ -140,7 +140,7 @@ export function createTable() {
       args.originData.children === true
     ) {
       // 显示loading状态
-      plugin.setLoadingHierarchyState(args.col, args.row);
+      tableInstance.setLoadingHierarchyState(args.col, args.row);
       try {
         // 获取订单ID并异步加载数据
         const orderId = args.originData.id;

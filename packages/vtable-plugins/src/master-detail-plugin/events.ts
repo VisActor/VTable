@@ -301,24 +301,14 @@ export class EventManager {
         name: string;
       };
 
-      if (name === 'hierarchy-expand' || name === 'hierarchy-collapse') {
+      if (name === 'expand' || name === 'collapse') {
         // 获取原始记录数据
         const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
 
-        // 确定层次状态：如果当前是展开状态则要收起，如果是收起状态则要展开
         const currentlyExpanded = this.isRowExpanded(row);
         const hierarchyState = currentlyExpanded
           ? VTable.TYPES.HierarchyState.collapse
           : VTable.TYPES.HierarchyState.expand;
-
-        // 触发主从表层次状态变化事件
-        this.table.fireListeners(VTable.TABLE_EVENT_TYPE.MASTER_DETAIL_HIERARCHY_STATE_CHANGE, {
-          col,
-          row,
-          hierarchyState,
-          originData: record,
-          cellLocation: this.table.getCellLocation(col, row)
-        });
         if (
           hierarchyState === VTable.TYPES.HierarchyState.expand &&
           record &&
@@ -470,6 +460,8 @@ export class EventManager {
     this.onCollapseRowToNoRealRecordIndex = undefined;
     this.onToggleRowExpand = undefined;
     this.getOriginalRowHeight = undefined;
+    // 清理表格引用，避免循环引用
+    (this as unknown as { table: unknown }).table = null;
   }
 
   // 回调函数，需要从外部注入
