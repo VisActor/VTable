@@ -304,21 +304,9 @@ export class EventManager {
       if (name === 'expand' || name === 'collapse') {
         // 获取原始记录数据
         const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
-
-        const currentlyExpanded = this.isRowExpanded(row);
-        const hierarchyState = currentlyExpanded
-          ? VTable.TYPES.HierarchyState.collapse
-          : VTable.TYPES.HierarchyState.expand;
-        if (
-          hierarchyState === VTable.TYPES.HierarchyState.expand &&
-          record &&
-          typeof record === 'object' &&
-          'children' in record &&
-          record.children === true
-        ) {
+        if (record && typeof record === 'object' && 'children' in record && record.children === true) {
           return;
         }
-
         // 非懒加载情况：正常处理展开/收起
         this.onToggleRowExpand?.(row, col);
       }
