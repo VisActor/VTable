@@ -192,6 +192,7 @@ export class TimelineHeader {
             pickable: false,
             stroke: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineColor,
             lineWidth: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineWidth,
+            lineDash: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineDash,
             points: [
               { x: scene._gantt.parsedOptions.timelineHeaderVerticalLineStyle?.lineWidth & 1 ? 0.5 : 0, y: 0 },
               {
@@ -209,6 +210,7 @@ export class TimelineHeader {
           pickable: false,
           stroke: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineColor,
           lineWidth: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth,
+          lineDash: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineDash,
           points: [
             { x: 0, y: scene._gantt.parsedOptions.timelineHeaderHorizontalLineStyle?.lineWidth & 1 ? 0.5 : 0 },
             {
