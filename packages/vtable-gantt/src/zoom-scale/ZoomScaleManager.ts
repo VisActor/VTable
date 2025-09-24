@@ -226,6 +226,10 @@ export class ZoomScaleManager {
     return this.globalMaxMillisecondsPerPixel;
   }
 
+  /**
+   * 计算初始的 millisecondsPerPixel 值
+   * 选择全局范围内 40% 的位置作为初始缩放级别
+   */
   private calculateInitialMillisecondsPerPixel(): number {
     return (
       this.globalMinMillisecondsPerPixel +
