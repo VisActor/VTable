@@ -8,6 +8,10 @@ export const menus = [
   },
   {
     path: 'gantt',
+    name: 'gantt-zoom'
+  },
+  {
+    path: 'gantt',
     name: 'gantt-milestone'
   },
   {

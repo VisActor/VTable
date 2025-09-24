@@ -29,7 +29,7 @@ import type {
   IKeyboardOptions,
   IMarkLineCreateOptions
 } from './ts-types';
-import { TasksShowMode, TaskType } from './ts-types';
+import { TasksShowMode, TaskType, GANTT_EVENT_TYPE } from './ts-types';
 import type { ListTableConstructorOptions } from '@visactor/vtable';
 import { themes, registerCheckboxCell, registerProgressBarCell, registerRadioCell, ListTable } from '@visactor/vtable';
 import { EventManager } from './event/event-manager';
@@ -69,6 +69,7 @@ import type { GanttTaskBarNode } from './scenegraph/gantt-node';
 import { PluginManager } from './plugins/plugin-manager';
 // import { generateGanttChartColumns } from './gantt-helper';
 import { toBoxArray } from '@visactor/vtable';
+import { ZoomScaleManager } from './zoom-scale';
 export function createRootElement(padding: any, className: string = 'vtable-gantt'): HTMLElement {
   const element = document.createElement('div');
   element.setAttribute('tabindex', '0');
@@ -202,7 +203,40 @@ export class Gantt extends EventTarget {
     eventOptions: IEventOptions;
     keyboardOptions: IKeyboardOptions;
     markLineCreateOptions: IMarkLineCreateOptions;
+
+    zoom?: {
+      minMillisecondsPerPixel?: number;
+      maxMillisecondsPerPixel?: number;
+      step?: number;
+    };
   } = {} as any;
+
+  //  时间缩放基准 - 每像素代表多少毫秒
+  private millisecondsPerPixel: number;
+  zoomScaleManager?: ZoomScaleManager;
+
+  /**
+   * 重新计算时间相关的尺寸参数
+   * 用于根据当前 millisecondsPerPixel 重新计算 timelineColWidth
+   */
+  recalculateTimeScale(): void {
+    if (this.zoomScaleManager) {
+      this.zoomScaleManager.recalculateTimeScale();
+    }
+  }
+
+  /**
+   * 缩放方法，用于滚轮和双指缩放
+   * @param factor 缩放因子，大于1表示放大
+   * @param keepCenter 是否保持视图中心不变
+   * @param centerX 缩放中心点X坐标
+   */
+  zoomByFactor(factor: number, keepCenter: boolean = true, centerX?: number): void {
+    if (this.zoomScaleManager) {
+      this.zoomScaleManager.zoomByFactor(factor, keepCenter, centerX);
+    }
+  }
+
   /** 左侧任务表格的整体宽度 比表格实例taskListTableInstance的tableNoFrameWidth会多出左侧frame边框的宽度  */
   taskTableWidth: number;
   taskTableColumns: ITableColumnsDefine;
@@ -219,8 +253,23 @@ export class Gantt extends EventTarget {
     this.taskTableColumns = options?.taskListTable?.columns ?? [];
     this.records = options?.records ?? [];
 
-    this._sortScales();
+    // 按需初始化 ZoomScaleManager
+    if (options.timelineHeader?.zoomScale && options.timelineHeader.zoomScale.enabled !== false) {
+      this.zoomScaleManager = new ZoomScaleManager(this, options.timelineHeader.zoomScale);
+      this._sortScales();
+    } else {
+      this._sortScales();
+    }
+
     initOptions(this);
+
+    // 初始化 millisecondsPerPixel
+    if (this.zoomScaleManager) {
+      this.millisecondsPerPixel = this.zoomScaleManager.getInitialMillisecondsPerPixel();
+    } else {
+      this.millisecondsPerPixel = (24 * 60 * 60 * 1000) / 60;
+    }
+
     // 初始化项目任务时间
     initProjectTaskTimes(this);
     this.data = new DataSource(this);
@@ -252,6 +301,8 @@ export class Gantt extends EventTarget {
     this.scenegraph.afterCreateSceneGraph();
     this._scrollToMarkLine();
     this.pluginManager = new PluginManager(this, options);
+
+    this.recalculateTimeScale();
   }
 
   renderTaskBarsTable() {
@@ -1354,5 +1405,49 @@ export class Gantt extends EventTarget {
    */
   formatDate(date: Date | string, format: string) {
     return formatDate(date, format);
+  }
+
+  // 查询当前的 millisecondsPerPixel 值
+  getCurrentMillisecondsPerPixel(): number {
+    return this.millisecondsPerPixel;
+  }
+
+  /**
+   * 直接设置 millisecondsPerPixel 并重新计算时间轴
+   */
+  setMillisecondsPerPixel(millisecondsPerPixel: number): void {
+    // 应用 millisecondsPerPixel 限制
+    const minMillisecondsPerPixel = this.parsedOptions.zoom?.minMillisecondsPerPixel ?? 200000;
+    const maxMillisecondsPerPixel = this.parsedOptions.zoom?.maxMillisecondsPerPixel ?? 3000000;
+
+    const oldMillisecondsPerPixel = this.millisecondsPerPixel;
+    const oldWidth = this.parsedOptions.timelineColWidth;
+
+    this.millisecondsPerPixel = Math.max(
+      minMillisecondsPerPixel,
+      Math.min(maxMillisecondsPerPixel, millisecondsPerPixel)
+    );
+
+    this.recalculateTimeScale();
+    this._updateSize();
+    this.scenegraph.refreshAll();
+
+    // 触发缩放事件
+    const newWidth = this.parsedOptions.timelineColWidth;
+    const scale = newWidth / oldWidth;
+
+    if (this.hasListeners(GANTT_EVENT_TYPE.ZOOM)) {
+      this.fireListeners(GANTT_EVENT_TYPE.ZOOM, {
+        oldWidth,
+        newWidth,
+        scale,
+        oldMillisecondsPerPixel,
+        newMillisecondsPerPixel: this.millisecondsPerPixel
+      });
+    }
+  }
+
+  getCurrentZoomScaleLevel(): number {
+    return this.zoomScaleManager?.getCurrentLevel() ?? -1;
   }
 }
