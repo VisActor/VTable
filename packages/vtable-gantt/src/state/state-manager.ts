@@ -96,6 +96,7 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     lastX: number;
     resizing: boolean;
+    /** 用于节流 DataZoom 更新的定时器，避免在拖拽表头时频繁触发响应式更新 */
     updateTimeout?: NodeJS.Timeout | null;
   };
 

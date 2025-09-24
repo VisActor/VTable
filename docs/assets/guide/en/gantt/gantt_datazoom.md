@@ -58,9 +58,8 @@ const ganttOptions = {
 
 1. **Drag Left Handle**: Adjust the start time of display range, drag right to shrink range
 2. **Drag Right Handle**: Adjust the end time of display range, drag left to shrink range
-3. **Define Selection Area**: Adjust view and scrollbar to specified position
-4. **Drag Middle Selection Area**: Pan the current display time range as a whole
-5. **Scrollbar Background Area**: Click to quickly jump to corresponding time position
+3. **Drag Middle Selection Area**: Pan the current display time range as a whole
+4. **Scrollbar Background Area**: Click to quickly jump to corresponding time position
 
 ### Bidirectional Sync Mechanism
 
