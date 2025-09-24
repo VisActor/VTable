@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: gannt grid line style linedash not work #4495\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
