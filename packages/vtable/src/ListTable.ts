@@ -399,7 +399,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
       } else {
         const define = table.getBodyColumnDefine(col, row);
         const checkboxSeriesNumberStyle = (table as ListTable).getFieldData(define.field, col, row);
-        if (typeof checkboxSeriesNumberStyle === 'string') {
+        if (['number', 'string'].includes(typeof checkboxSeriesNumberStyle)) {
           value = checkboxSeriesNumberStyle;
         } else if (checkboxSeriesNumberStyle?.text) {
           value = checkboxSeriesNumberStyle.text ?? '';
