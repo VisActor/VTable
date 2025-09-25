@@ -211,4 +211,6 @@ window.tableInstance = tableInstance;
 - Filter states are automatically synchronized when table configuration is updated
 - It is recommended to enable filtering for large data tables to improve user experience
 
-# This plugin was contributed by [PoorShawn](https://github.com/PoorShawn)
+# This plugin was contributed by 
+
+[PoorShawn](https://github.com/PoorShawn)
