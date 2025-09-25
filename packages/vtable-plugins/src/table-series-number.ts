@@ -343,8 +343,10 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
 
   private handleSeriesNumberCellClick = (e: any) => {
     const { seriesNumberCell, event, isDragSelect } = e.detail;
-    const isCtrl = event.nativeEvent.ctrlKey || event.nativeEvent.metaKey;
-    const isShift = event.nativeEvent.shiftKey;
+    const ctrlMultiSelect = this.table.options.keyboardOptions?.ctrlMultiSelect ?? true;
+    const shiftMultiSelect = this.table.options.keyboardOptions?.shiftMultiSelect ?? true;
+    const enableCtrlSelectMode = (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) && ctrlMultiSelect;
+    const enableShiftSelectMode = event.nativeEvent.shiftKey && shiftMultiSelect;
     const isRow = seriesNumberCell.name.includes('row');
     const isCol = seriesNumberCell.name.includes('col');
     if (isRow) {
@@ -352,17 +354,17 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
       const rowIndex = seriesNumberCell.id;
 
       if (isDragSelect) {
-        this.table.dragSelectRow(rowIndex, isCtrl);
+        this.table.dragSelectRow(rowIndex, enableCtrlSelectMode);
       } else {
-        this.table.startDragSelectRow(rowIndex, isCtrl, isShift);
+        this.table.startDragSelectRow(rowIndex, enableCtrlSelectMode, enableShiftSelectMode);
       }
     } else if (isCol) {
       this.table.stateManager.setSelectInline('col');
       const colIndex = seriesNumberCell.id;
       if (isDragSelect) {
-        this.table.dragSelectCol(colIndex, isCtrl);
+        this.table.dragSelectCol(colIndex, enableCtrlSelectMode);
       } else {
-        this.table.startDragSelectCol(colIndex, isCtrl, isShift);
+        this.table.startDragSelectCol(colIndex, enableCtrlSelectMode, enableShiftSelectMode);
       }
     } else {
       this.table.eventManager.deelTableSelectAll();

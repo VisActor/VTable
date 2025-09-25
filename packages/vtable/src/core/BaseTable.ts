@@ -3077,16 +3077,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
-   * @param isShift 是否按住 shift 键
-   * @param isCtrl 是否按住 ctrl 键
+   * @param enableShiftSelectMode 是否按住 shift 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param makeSelectCellVisible 是否让选中的单元格可见
    * @param skipBodyMerge 是否忽略合并单元格，默认 false针对合并单元自动扩大选取范围
    */
   selectCell(
     col: number,
     row: number,
-    isShift?: boolean,
-    isCtrl?: boolean,
+    enableShiftSelectMode?: boolean,
+    enableCtrlSelectMode?: boolean,
     makeSelectCellVisible?: boolean,
     skipBodyMerge: boolean = false
   ) {
@@ -3094,8 +3094,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManager.updateSelectPos(
       col,
       row,
-      isShift,
-      isCtrl,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
       false,
       makeSelectCellVisible ?? this.options.select?.makeSelectCellVisible ?? true,
       skipBodyMerge
@@ -3200,20 +3200,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 开始拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整列
    * @param colIndex 列索引
-   * @param isCtrl 是否按住 ctrl 键
-   * @param isShift 是否按住 shift 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
+   * @param enableShiftSelectMode 是否按住 shift 键
    */
-  startDragSelectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
+  startDragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, enableShiftSelectMode?: boolean) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
-    const startCol = isShift && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
+    const startCol = enableShiftSelectMode && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
     const startRow = 0;
     const endCol = colIndex;
     const endRow = this.rowCount - 1;
     this.stateManager.updateSelectPos(
       startCol,
       startRow,
-      isShift,
-      isCtrl,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3222,8 +3222,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManager.updateSelectPos(
       endCol,
       endRow,
-      isShift,
-      isCtrl,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3232,9 +3232,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
    * @param colIndex 列索引
-   * @param isCtrl 是否按住 ctrl 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
    */
-  dragSelectCol(colIndex: number, isCtrl?: boolean) {
+  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
@@ -3244,7 +3244,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       colIndex,
       this.rowCount - 1,
       false,
-      isCtrl,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3261,10 +3261,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 开始拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整行
    * @param rowIndex 行索引
-   * @param isCtrl 是否按住 ctrl 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param isShift 是否按住 shift 键
    */
-  startDragSelectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
+  startDragSelectRow(rowIndex: number, enableCtrlSelectMode?: boolean, isShift?: boolean) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = 0;
     const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
@@ -3274,7 +3274,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       startCol,
       startRow,
       isShift,
-      isCtrl,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3284,7 +3284,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       endCol,
       endRow,
       isShift,
-      isCtrl,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true

@@ -621,8 +621,8 @@ export class StateManager {
   updateSelectPos(
     col: number,
     row: number,
-    isShift: boolean = false,
-    isCtrl: boolean = false,
+    enableShiftSelectMode: boolean = false,
+    enableCtrlSelectMode: boolean = false,
     isSelectAll: boolean = false,
     makeSelectCellVisible: boolean = true,
     skipBodyMerge: boolean = false
@@ -645,7 +645,16 @@ export class StateManager {
     }
     const oldCellPosCol = this.select.cellPos.col;
     const oldCellPosRow = this.select.cellPos.row;
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
+    updateSelectPosition(
+      this,
+      col,
+      row,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
+      isSelectAll,
+      makeSelectCellVisible,
+      skipBodyMerge
+    );
     if (
       this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED) &&
       (oldCellPosCol !== col || oldCellPosRow !== row)
