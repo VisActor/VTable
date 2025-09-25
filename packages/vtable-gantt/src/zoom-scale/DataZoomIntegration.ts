@@ -41,13 +41,13 @@ export class DataZoomIntegration {
   private lastDataZoomState = { start: 0.2, end: 0.5 };
   private cleanupCallbacks: (() => void)[] = [];
   private resizeTimeout: NodeJS.Timeout | null = null;
+  private isInitializing = true;
 
   constructor(gantt: Gantt, config: DataZoomConfig) {
     this.gantt = gantt;
     this.initializeDataZoom(config);
     this.setupEventListeners();
     this.updateDataZoomLimits();
-    this.syncInitialPosition();
   }
 
   /**
@@ -89,11 +89,16 @@ export class DataZoomIntegration {
       throw new Error(`DataZoom container with ID "${containerId}" not found`);
     }
 
-    // 获取容器的实际宽度和位置信息
-    const containerRect = container.getBoundingClientRect();
-    // 计算 DataZoom 的默认宽度：容器宽度减去左侧表头宽度
+    // 获取甘特图容器（VTable 容器）
+    const ganttContainer = this.gantt.container as HTMLElement;
+    if (!ganttContainer) {
+      throw new Error('Gantt container not found');
+    }
+
+    // 计算 DataZoom 的默认宽度：甘特图容器宽度减去左侧表头宽度
     const taskTableWidth = this.gantt.taskTableWidth || 0;
-    const defaultWidth = (containerRect.width || 1000) - taskTableWidth;
+    const ganttContainerWidth = ganttContainer.offsetWidth || 1000;
+    const defaultWidth = ganttContainerWidth - taskTableWidth;
 
     // 计算默认 x 坐标，排除左侧表头宽度
     const defaultX = this.gantt.taskTableWidth || 0;
@@ -107,12 +112,6 @@ export class DataZoomIntegration {
       y = 0, // 默认贴着容器底部
       delayTime = 10
     } = config;
-
-    // 获取 VTable 容器（甘特图的主容器）
-    const ganttContainer = this.gantt.container as HTMLElement;
-    if (!ganttContainer) {
-      throw new Error('Gantt container not found');
-    }
 
     // 确保 VTable 容器有相对定位
     const containerStyle = window.getComputedStyle(ganttContainer);
@@ -201,7 +200,15 @@ export class DataZoomIntegration {
     });
 
     this.stage.defaultLayer.add(this.dataZoomAxis as any);
-    this.stage.render();
+
+    requestAnimationFrame(() => {
+      if (this.isInitializing) {
+        const boundaries = this.getGanttViewBoundaries();
+        this.dataZoomAxis.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);
+        this.isInitializing = false;
+      }
+      this.stage.render();
+    });
 
     this.lastDataZoomState = { start, end };
   }
@@ -480,12 +487,11 @@ export class DataZoomIntegration {
    */
   resize(width?: number, height?: number): void {
     if (width === undefined) {
-      const containerId = this.getContainerId();
-      const container = document.getElementById(containerId);
-      if (container) {
-        const containerRect = container.getBoundingClientRect();
+      // 使用甘特图容器而不是外部容器来计算宽度
+      const ganttContainer = this.gantt.container as HTMLElement;
+      if (ganttContainer) {
         const taskTableWidth = this.gantt.taskTableWidth || 0;
-        width = (containerRect.width || 1000) - taskTableWidth;
+        width = ganttContainer.offsetWidth - taskTableWidth;
       } else {
         width = 1000;
       }
@@ -514,16 +520,14 @@ export class DataZoomIntegration {
    * 当容器大小或位置发生变化时调用
    */
   updateResponsive(): void {
-    const containerId = this.getContainerId();
-    const container = document.getElementById(containerId);
-    if (!container) {
+    const ganttContainer = this.gantt.container as HTMLElement;
+    if (!ganttContainer) {
       return;
     }
 
-    const containerRect = container.getBoundingClientRect();
-    // 计算新宽度：容器宽度减去左侧表头宽度
+    // 计算新宽度：甘特图容器宽度减去左侧表头宽度
     const taskTableWidth = this.gantt.taskTableWidth || 0;
-    const newWidth = (containerRect.width || 1000) - taskTableWidth;
+    const newWidth = ganttContainer.offsetWidth - taskTableWidth;
 
     this.resize(newWidth);
 

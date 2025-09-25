@@ -1124,7 +1124,19 @@ export class Gantt extends EventTarget {
    * 检查是否启用了 DataZoom
    */
   private hasDataZoom(): boolean {
-    return this.zoomScaleManager?.getDataZoomIntegration() !== null;
+    // 首先检查是否有 zoomScaleManager
+    if (!this.zoomScaleManager) {
+      return false;
+    }
+
+    // 检查 DataZoom 配置是否存在且启用
+    const dataZoomConfig = this.zoomScaleManager.config?.dataZoomAxis;
+    if (!dataZoomConfig || dataZoomConfig.enabled === false) {
+      return false;
+    }
+
+    // 最后检查 DataZoomIntegration 是否确实存在
+    return this.zoomScaleManager.getDataZoomIntegration() !== null;
   }
 
   /**
