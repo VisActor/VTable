@@ -108,27 +108,30 @@ export class DataZoomIntegration {
       delayTime = 10
     } = config;
 
-    // 创建 DataZoom 包装器容器
-    const parentContainer = container.parentElement;
-    if (!parentContainer) {
-      throw new Error(`DataZoom container "${containerId}" has no parent element`);
+    // 获取 VTable 容器（甘特图的主容器）
+    const ganttContainer = this.gantt.container as HTMLElement;
+    if (!ganttContainer) {
+      throw new Error('Gantt container not found');
     }
 
-    const parentStyle = window.getComputedStyle(parentContainer);
-    if (parentStyle.position === 'static') {
-      parentContainer.style.position = 'relative';
+    // 确保 VTable 容器有相对定位
+    const containerStyle = window.getComputedStyle(ganttContainer);
+    if (containerStyle.position === 'static') {
+      ganttContainer.style.position = 'relative';
     }
 
     const dataZoomWrapper = document.createElement('div');
     dataZoomWrapper.id = 'dataZoomWrapper';
     dataZoomWrapper.style.cssText = `
       width: 100%;
-      height: ${height + Math.abs(y)}px;
-      position: relative;
-      margin-top: ${y >= 0 ? 0 : Math.abs(y)}px;
+      height: ${height}px;
+      position: absolute;
+      bottom: ${y}px;
+      left: 0px;
       background: transparent;
       overflow: visible;
       pointer-events: none;
+      z-index: 1000;
     `;
 
     // 创建独立的 Canvas 和 Stage
@@ -137,22 +140,18 @@ export class DataZoomIntegration {
     this.canvas.width = width;
     this.canvas.height = height;
 
-    // 计算 Canvas 在包装器内的相对位置
-    const relativeLeft = containerRect.left - parentContainer.getBoundingClientRect().left + x;
-
     this.canvas.style.cssText = `
       width: ${width}px;
       height: ${height}px;
       position: absolute;
-      top: ${y >= 0 ? y : 0}px;
-      left: ${relativeLeft}px;
-      z-index: 1000;
+      top: 0px;
+      left: ${x}px;
       pointer-events: auto;
     `;
 
-    // 将 Canvas 添加到包装器，再将包装器添加到父容器
+    // 将 Canvas 添加到包装器，再将包装器添加到 VTable 容器
     dataZoomWrapper.appendChild(this.canvas);
-    parentContainer.appendChild(dataZoomWrapper);
+    ganttContainer.appendChild(dataZoomWrapper);
 
     this.stage = createStage({
       canvas: this.canvas,
@@ -166,7 +165,7 @@ export class DataZoomIntegration {
       start,
       end,
       position: { x: 0, y: 0 },
-      size: { width, height },
+      size: { width, height: height - 1 },
       showDetail: false,
       delayTime,
       brushSelect: false,
@@ -503,7 +502,7 @@ export class DataZoomIntegration {
 
     this.stage.resize(width, height);
     this.dataZoomAxis.setAttributes({
-      size: { width, height }
+      size: { width, height: height - 1 }
     });
 
     // 强制重新渲染
@@ -543,24 +542,8 @@ export class DataZoomIntegration {
    * 当容器位置发生变化时调用
    */
   updatePosition(x?: number, y?: number): void {
-    const containerId = this.getContainerId();
-    const container = document.getElementById(containerId);
-    const parentContainer = container?.parentElement;
-
-    if (!container || !parentContainer) {
-      return;
-    }
-
-    // 由于现在使用包装器，Canvas 的位置相对于包装器计算
-    const containerRect = container.getBoundingClientRect();
-    const parentRect = parentContainer.getBoundingClientRect();
-
-    // 更新 Canvas 在包装器内的位置
-    const relativeLeft = containerRect.left - parentRect.left + (x ?? 0);
-    const yPos = y ?? 0;
-
-    this.canvas.style.left = `${relativeLeft}px`;
-    this.canvas.style.top = `${yPos >= 0 ? yPos : 0}px`;
+    const xPos = x ?? this.gantt.taskTableWidth ?? 0;
+    this.canvas.style.left = `${xPos}px`;
   }
 
   /**

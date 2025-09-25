@@ -331,7 +331,9 @@ export class Gantt extends EventTarget {
           parseInt(computedStyle.paddingBottom || '0px', 20);
       }
       const width1 = (widthWithoutPadding ?? 1) - 1 - this.taskTableWidth;
-      const height1 = (heightWithoutPadding ?? 1) - 1;
+      // 为 DataZoom 预留空间
+      const dataZoomHeight = this.getDataZoomHeight();
+      const height1 = (heightWithoutPadding ?? 1) - 1 - dataZoomHeight;
 
       element.style.width = (width1 && `${width1}px`) || '0px';
       element.style.height = (height1 && `${height1}px`) || '0px';
@@ -1116,6 +1118,24 @@ export class Gantt extends EventTarget {
     this.headerHeight = this.getAllHeaderRowsHeight();
     this.drawHeight = Math.min(this.getAllRowsHeight(), this.tableNoFrameHeight);
     this.gridHeight = this.drawHeight - this.headerHeight;
+  }
+
+  /**
+   * 检查是否启用了 DataZoom
+   */
+  private hasDataZoom(): boolean {
+    return this.zoomScaleManager?.getDataZoomIntegration() !== null;
+  }
+
+  /**
+   * 获取 DataZoom 的高度
+   */
+  private getDataZoomHeight(): number {
+    if (!this.hasDataZoom()) {
+      return 0;
+    }
+    // 从配置中获取 DataZoom 的高度，默认为 30
+    return this.zoomScaleManager?.config?.dataZoomAxis?.height || 30;
   }
   /** 获取绘制画布的canvas上下文 */
   getContext(): CanvasRenderingContext2D {
