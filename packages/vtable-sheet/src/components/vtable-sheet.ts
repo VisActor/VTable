@@ -251,6 +251,46 @@ export default class VTableSheet {
   private toggleSheetMenu(event: MouseEvent): void {
     const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
     menuContainer.classList.toggle('active');
+
+    // 如果菜单被打开，添加点击外部关闭的监听器
+    if (menuContainer.classList.contains('active')) {
+      this.addClickOutsideListener();
+    } else {
+      this.removeClickOutsideListener();
+    }
+  }
+
+  /**
+   * 添加点击外部关闭菜单的监听器
+   */
+  private clickOutsideHandler = (event: MouseEvent): void => {
+    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
+    const menuButton = this.sheetTabElement?.querySelector('.vtable-sheet-menu-button') as HTMLElement;
+
+    // 如果点击的不是菜单容器和菜单按钮，则关闭菜单
+    if (
+      menuContainer &&
+      menuButton &&
+      !menuContainer.contains(event.target as Node) &&
+      !menuButton.contains(event.target as Node)
+    ) {
+      menuContainer.classList.remove('active');
+      this.removeClickOutsideListener();
+    }
+  };
+
+  /**
+   * 添加点击外部监听器
+   */
+  private addClickOutsideListener(): void {
+    document.addEventListener('click', this.clickOutsideHandler);
+  }
+
+  /**
+   * 移除点击外部监听器
+   */
+  private removeClickOutsideListener(): void {
+    document.removeEventListener('click', this.clickOutsideHandler);
   }
 
   /**
@@ -1004,6 +1044,8 @@ export default class VTableSheet {
     this.eventManager.release();
     this.formulaManager.release();
     this.formulaUIManager.release();
+    // 移除点击外部监听器
+    this.removeClickOutsideListener();
     // 销毁所有sheet实例
     this.workSheetInstances.forEach(instance => {
       instance.release();
