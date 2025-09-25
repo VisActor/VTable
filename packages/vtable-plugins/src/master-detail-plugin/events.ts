@@ -24,7 +24,7 @@ export class EventManager {
       { type: VTable.TABLE_EVENT_TYPE.RESIZE_ROW, handler: resizeRowHandler }
     );
     this.wrapTableResizeMethod();
-    this.bindIconClickEvent();
+    this.bindTreeHierarchyStateChange();
     this.bindRowMoveEvents();
   }
 
@@ -291,28 +291,25 @@ export class EventManager {
   }
 
   /**
-   * 绑定图标点击事件
+   * 绑定树状态变化事件
    */
-  private bindIconClickEvent(): void {
-    const iconClickHandler = (iconInfo: unknown) => {
-      const { col, row, name } = iconInfo as {
+  private bindTreeHierarchyStateChange(): void {
+    const hierarchyStateChangeHandler = (args: unknown) => {
+      const { col, row } = args as {
         col: number;
         row: number;
-        name: string;
       };
-
-      if (name === 'expand' || name === 'collapse') {
-        // 获取原始记录数据
-        const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
-        if (record && typeof record === 'object' && 'children' in record && record.children === true) {
-          return;
-        }
-        // 非懒加载情况：正常处理展开/收起
-        this.onToggleRowExpand?.(row, col);
+      const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
+      if (record && typeof record === 'object' && 'children' in record && record.children === true) {
+        return;
       }
+      this.onToggleRowExpand?.(row, col);
     };
-    this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, iconClickHandler);
-    this.eventHandlers.push({ type: VTable.TABLE_EVENT_TYPE.ICON_CLICK, handler: iconClickHandler });
+    this.table.on(VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, hierarchyStateChangeHandler);
+    this.eventHandlers.push({
+      type: VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE,
+      handler: hierarchyStateChangeHandler
+    });
   }
 
   /**

@@ -213,9 +213,7 @@ export class ConfigManager {
           // 处理普通的有子数据的记录
           if (this.hasChildren(record)) {
             recordObj.hierarchyState = HierarchyState.collapse;
-          }
-          // 处理懒加载节点 - children为true表示懒加载
-          else if (recordObj.children === true) {
+          } else if (recordObj.children === true) {
             recordObj.hierarchyState = HierarchyState.collapse;
           }
         }
