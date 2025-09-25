@@ -281,7 +281,7 @@ interface EventsProps {
 
 ### register
 
-在 VTable 中，图表、编辑器等组件需要通过 resigister 方法注册，才能正常使用；在 React-VTable 中，暴露了相应的 register 方法，可以直接使用。
+在 VTable 中，图表、编辑器等组件需要通过 register 方法注册，才能正常使用；在 Vue-VTable 中，暴露了相应的 register 方法，可以直接使用。
 
 ```jsx
 import { registerChartModule } from '@visactor/vue-vtable';

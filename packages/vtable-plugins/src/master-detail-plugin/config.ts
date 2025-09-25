@@ -1,12 +1,10 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailGridOptions, MasterDetailPluginOptions, VirtualRecordIds } from './types';
+import type { DetailTableOptions, MasterDetailPluginOptions } from './types';
 
 /**
  * 配置注入相关功能
  */
 export class ConfigManager {
-  private virtualRecordIds: VirtualRecordIds | null = null;
-
   constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
 
   /**
@@ -75,29 +73,39 @@ export class ConfigManager {
       return 'auto';
     };
 
-    // 给第一列添加图标
-    this.injectHierarchyIcons(options);
+    // 设置第一列为树形结构，是为什么方便getHierarchyState等的判断，他们需要有tree的配置，这不会导致主从表变为tree的状态，因为在_setRecords的时候会直接强制设置为grid
+    if (options.columns && options.columns.length > 0) {
+      const firstColumn = options.columns[0] as VTable.TYPES.ColumnDefine;
+      firstColumn.tree = true;
+    }
+
+    // 监听表格初始化完成事件，设置图标
+    this.setupInitializedListener();
 
     // 注入子表配置
-    if (this.pluginOptions.detailGridOptions) {
-      const detailOptions = this.pluginOptions.detailGridOptions;
+    if (this.pluginOptions.detailTableOptions) {
+      const detailOptions = this.pluginOptions.detailTableOptions;
       // 判断是静态配置还是动态函数
       if (typeof detailOptions === 'function') {
         // 动态配置：根据数据和行索引返回不同的子表配置
         (
           options as VTable.ListTableConstructorOptions & {
-            getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions;
+            getDetailGridOptions: (params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions;
           }
         ).getDetailGridOptions = detailOptions;
       } else {
         // 静态配置：所有子表使用相同配置
-        (options as VTable.ListTableConstructorOptions & { detailGridOptions: DetailGridOptions }).detailGridOptions =
-          detailOptions;
+        (
+          options as VTable.ListTableConstructorOptions & { detailTableOptions: DetailTableOptions }
+        ).detailTableOptions = detailOptions;
       }
     }
 
     // 拦截表格的refreshRowColCount方法来添加虚拟行
     this.interceptRefreshRowColCount();
+
+    // 禁用 _refreshHierarchyState 方法
+    this.disableRefreshHierarchyState();
   }
 
   /**
@@ -162,110 +170,65 @@ export class ConfigManager {
   }
 
   /**
-   * 给第一列添加层级图标
-   * 为有子数据的行添加展开/收起图标，无子数据的行添加占位图标保持对齐
+   * 禁用VTable的_refreshHierarchyState方法
+   * 在主从表场景下，我们需要自己控制层级状态，避免VTable的自动刷新机制干扰
    */
-  private injectHierarchyIcons(options: VTable.ListTableConstructorOptions): void {
-    if (!options.columns || options.columns.length === 0) {
-      return;
-    }
-
-    // 获取第一列，用于添加展开/收起图标
-    const firstColumn = options.columns[0] as VTable.TYPES.ColumnDefine;
-
-    // 创建图标函数
-    const iconFunction = (args: VTable.TYPES.CellInfo & { table: VTable.BaseTableAPI }) => {
-      const { col, row } = args;
-      // 获取记录
-      let record: unknown;
-      try {
-        const recordIndex = this.table.getRecordShowIndexByCell(col, row);
-        if (recordIndex !== undefined) {
-          record = this.table.getRecordByCell(col, row);
-        }
-      } catch (error) {
-        return [];
+  private disableRefreshHierarchyState(): void {
+    // 延迟执行，确保表格已经创建完成
+    setTimeout(() => {
+      const tableWithPrivateMethod = this.table as unknown as {
+        _refreshHierarchyState?: () => void;
+        _originalRefreshHierarchyState?: () => void;
+      };
+      if (tableWithPrivateMethod && typeof tableWithPrivateMethod._refreshHierarchyState === 'function') {
+        tableWithPrivateMethod._originalRefreshHierarchyState = tableWithPrivateMethod._refreshHierarchyState;
+        tableWithPrivateMethod._refreshHierarchyState = () => {
+          // 禁用_refreshHierarchyState函数
+        };
       }
-      if (!record || !this.hasChildren(record)) {
-        return [
-          {
-            type: 'svg',
-            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <!-- 透明占位图标，用于保持对齐 -->
-            </svg>`,
-            width: 16,
-            height: 16,
-            name: 'hierarchy-placeholder',
-            positionType: VTable.TYPES.IconPosition.contentLeft,
-            marginLeft: 0,
-            marginRight: 4,
-            cursor: 'default'
-          } as VTable.TYPES.SvgIcon
-        ];
-      }
+    }, 0);
+  }
 
-      const isExpanded = this.isRowExpanded(row);
+  /**
+   * 处理图标的显示
+   */
+  private setupInitializedListener(): void {
+    // 监听表格初始化完成事件
+    this.table.on('initialized', () => {
+      const records = this.table.dataSource.records;
+      this.processRecordsHierarchyStates(records);
+      this.table.renderWithRecreateCells();
+    });
+  }
 
-      // 返回对应的图标配置
-      if (isExpanded) {
-        return [
-          {
-            type: 'svg',
-            svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4.64988 6.81235C4.38797 6.48497 4.62106 6 5.04031 6L10.9597 6C11.3789 6 11.612 6.48497 
-             11.3501 6.81235L8.39043 10.512C8.19027 10.7622 7.80973 10.7622 7.60957 10.512L4.64988 
-             6.81235Z" fill="#141414" fill-opacity="1"/>
-          </svg>`,
-            width: 16,
-            height: 16,
-            name: 'hierarchy-collapse',
-            positionType: VTable.TYPES.IconPosition.contentLeft,
-            marginLeft: 0,
-            marginRight: 4,
-            funcType: VTable.TYPES.IconFuncTypeEnum.collapse,
-            cursor: 'pointer',
-            hover: {
-              width: 20,
-              height: 20,
-              bgColor: 'rgba(101, 117, 168, 0.1)'
-            }
-          } as VTable.TYPES.SvgIcon
-        ];
-      }
-      return [
-        {
-          type: 'svg',
-          svg: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 
-           4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 
-           11.3501Z" fill="#141414" fill-opacity="1"/>
-        </svg>`,
-          width: 16,
-          height: 16,
-          name: 'hierarchy-expand',
-          positionType: VTable.TYPES.IconPosition.contentLeft,
-          marginLeft: 0,
-          marginRight: 4,
-          funcType: VTable.TYPES.IconFuncTypeEnum.expand,
-          cursor: 'pointer',
-          hover: {
-            width: 20,
-            height: 20,
-            bgColor: 'rgba(101, 117, 168, 0.1)'
+  /**
+   * 处理图标的显示
+   */
+  private processRecordsHierarchyStates(records: unknown[]): void {
+    const HierarchyState = VTable.TYPES.HierarchyState;
+    const processRecords = (recordList: unknown[]) => {
+      recordList.forEach(record => {
+        if (record && typeof record === 'object') {
+          const recordObj = record as Record<string, unknown>;
+          // 处理普通的有子数据的记录
+          if (this.hasChildren(record)) {
+            recordObj.hierarchyState = HierarchyState.collapse;
           }
-        } as VTable.TYPES.SvgIcon
-      ];
+          // 处理懒加载节点 - children为true表示懒加载
+          else if (recordObj.children === true) {
+            recordObj.hierarchyState = HierarchyState.collapse;
+          }
+        }
+      });
     };
-
-    // 设置第一列的图标
-    firstColumn.icon = iconFunction;
+    processRecords(records);
   }
 
   /**
    * 获取详情配置
    */
-  getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailGridOptions | null {
-    const detailOptions = this.pluginOptions.detailGridOptions;
+  getDetailConfigForRecord(record: unknown, bodyRowIndex: number): DetailTableOptions | null {
+    const detailOptions = this.pluginOptions.detailTableOptions;
     if (!detailOptions) {
       return null;
     }
@@ -276,13 +239,6 @@ export class ConfigManager {
     return detailOptions;
   }
 
-  /**
-   * 获取虚拟记录ID
-   */
-  getVirtualRecordIds(): VirtualRecordIds | null {
-    return this.virtualRecordIds;
-  }
-
   private isRowExpanded: (row: number) => boolean = () => false;
 
   /**
@@ -290,5 +246,15 @@ export class ConfigManager {
    */
   setRowExpandedChecker(checker: (row: number) => boolean): void {
     this.isRowExpanded = checker;
+  }
+
+  /**
+   * 释放所有资源和引用
+   */
+  release(): void {
+    this.isRowExpanded = () => false;
+    // 清理对表格的引用
+    (this as unknown as { table: VTable.ListTable | null }).table = null;
+    (this as unknown as { pluginOptions: MasterDetailPluginOptions | null }).pluginOptions = null;
   }
 }

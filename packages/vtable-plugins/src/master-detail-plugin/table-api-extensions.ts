@@ -1,7 +1,6 @@
 import type * as VTable from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import type { Scenegraph } from '@visactor/vtable/es/scenegraph/scenegraph';
 import { getInternalProps, getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
@@ -139,7 +138,7 @@ export class TableAPIExtensions {
     this.extendGetRowY();
     // 处理主从表展开行的改变行高的改变行高来方法来处理展开行的两个下划线（主从表加的CellGroup的下滑线，还有原本的行高的下划线）的不同处理
     this.extendUpdateRowHeight();
-    // 处理右边冻结行的情况下展开行的列宽调整检测
+    // 处理展开行的列宽调整检测
     this.extendGetResizeColAt();
   }
 
@@ -715,21 +714,13 @@ export class TableAPIExtensions {
     const scenegraph = this.table.scenegraph;
     this.originalGetResizeColAt = scenegraph.getResizeColAt.bind(scenegraph);
     scenegraph.getResizeColAt = (abstractX: number, abstractY: number, cellGroup?: Group) => {
-      // 如果没有 cellGroup，先检查是否在展开行的右边冻结列区域
       if (!cellGroup) {
         // 检查当前位置是否在展开行中
         const cell = this.table.getCellAtRelativePosition(abstractX, abstractY);
         if (cell && cell.row >= 0) {
           const isExpandedRow = this.eventManager.isRowExpanded(cell.row);
-          if (isExpandedRow && this.table.rightFrozenColCount > 0) {
-            // 检查是否在右边冻结列区域
-            const tableWidth = this.table.tableNoFrameWidth;
-            const rightFrozenWidth = this.table.getRightFrozenColsWidth();
-            const isInRightFrozenArea = abstractX > tableWidth - rightFrozenWidth;
-            if (isInRightFrozenArea) {
-              // 在展开行的右边冻结列区域，不允许调整列宽
-              return { col: -1, row: -1 };
-            }
+          if (isExpandedRow) {
+            return { col: -1, row: -1 };
           }
         }
       }
@@ -738,8 +729,6 @@ export class TableAPIExtensions {
       return this.originalGetResizeColAt(abstractX, abstractY, cellGroup);
     };
   }
-
-
 
   /**
    * 检测鼠标是否在插件绘制的下划线区域
@@ -921,8 +910,6 @@ export class TableAPIExtensions {
     }
     return totalHeight;
   }
-
-
   /**
    * 等待渲染完成后执行回调
    */
@@ -1039,5 +1026,16 @@ export class TableAPIExtensions {
       }
       this.originalGetResizeColAt = undefined;
     }
+
+    // 清理状态和引用，避免循环引用
+    this.isDragging = false;
+    this.dragStartIsPluginUnderline = false;
+    this.currentMouseX = 0;
+    this.currentMouseY = 0;
+    // 清理回调函数引用
+    (this as unknown as { callbacks: unknown }).callbacks = null;
+    (this as unknown as { table: unknown }).table = null;
+    (this as unknown as { configManager: unknown }).configManager = null;
+    (this as unknown as { eventManager: unknown }).eventManager = null;
   }
 }

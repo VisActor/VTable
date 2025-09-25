@@ -12,7 +12,8 @@ import type {
   MenuListItem,
   PivotTableAPI,
   SortOrder,
-  SortState
+  SortState,
+  CustomSelectionStyle
 } from '../ts-types';
 import { HighlightScope, InteractionState, SortType } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -54,13 +55,6 @@ import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
 import { expendCellRange } from '../tools/merge-range';
 
-export type CustomSelectionStyle = {
-  cellBorderColor?: string; //边框颜色
-  cellBorderLineWidth?: number; //边框线宽度
-  cellBorderLineDash?: number[]; //边框线虚线
-  cellBgColor?: string; //选择框背景颜色
-};
-
 export class StateManager {
   table: BaseTableAPI;
   /**
@@ -75,6 +69,8 @@ export class StateManager {
   interactionStateBeforeScroll?: InteractionState;
   // select记录两个位置，第二个位置只在range模式生效
   select: {
+    isSelectAll?: boolean;
+    selectInline?: 'col' | 'row' | false; //是否必须整行或者整列选中
     ranges: (CellRange & { skipBodyMerge?: boolean })[];
     highlightScope: HighlightScope;
     cellPos: CellPosition;
@@ -645,7 +641,19 @@ export class StateManager {
     if (row > this.table.rowCount - 1) {
       row = this.table.rowCount - 1;
     }
+    const oldCellPosCol = this.select.cellPos.col;
+    const oldCellPosRow = this.select.cellPos.row;
     updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
+    if (
+      this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED) &&
+      (oldCellPosCol !== col || oldCellPosRow !== row)
+    ) {
+      this.table.fireListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED, {
+        ranges: this.select.ranges,
+        col: col,
+        row: row
+      });
+    }
   }
 
   checkCellRangeInSelect(cellPosStart: CellAddress, cellPosEnd: CellAddress) {
@@ -1595,7 +1603,9 @@ export class StateManager {
       event
     });
   }
-
+  setSelectInline(selectInline: 'col' | 'row' | false) {
+    this.select.selectInline = selectInline;
+  }
   updateSortState(sortState: SortState[]) {
     sortState = Array.isArray(sortState) ? sortState : [sortState];
 
@@ -1694,7 +1704,10 @@ export class StateManager {
     this.frozen.icon = iconMark;
   }
 
-  updateCursor(mode: string = 'default') {
+  updateCursor(mode?: string) {
+    if (!mode) {
+      mode = this.table.options.defaultCursor ?? 'default';
+    }
     this.table.getElement().style.cursor = mode;
   }
 

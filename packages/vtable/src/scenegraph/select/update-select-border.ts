@@ -2,6 +2,7 @@ import { type IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { calculateCellRangeDistribution } from '../utils/cell-pos';
 import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
@@ -504,67 +505,17 @@ export function updateCellSelectBorder(
   );
   scene.selectingRangeComponents = new Map();
 
-  let needRowHeader = false;
-  let needRightRowHeader = false; // 右侧冻结
-  let needColumnHeader = false;
-  let needBottomColumnHeader = false; // 底部冻结
-  let needBody = false;
-  let needCornerHeader = false;
-  let needRightTopCornerHeader = false;
-  let needRightBottomCornerHeader = false;
-  let needLeftBottomCornerHeader = false;
-  if (startCol <= table.frozenColCount - 1 && startRow <= table.frozenRowCount - 1) {
-    needCornerHeader = true;
-  }
-  if (endCol >= table.colCount - table.rightFrozenColCount && startRow <= table.frozenRowCount - 1) {
-    needRightTopCornerHeader = true;
-  }
-
-  if (startCol <= table.frozenColCount - 1 && endRow >= table.rowCount - table.bottomFrozenRowCount) {
-    needLeftBottomCornerHeader = true;
-  }
-
-  if (endCol >= table.colCount - table.rightFrozenColCount && endRow >= table.rowCount - table.bottomFrozenRowCount) {
-    needRightBottomCornerHeader = true;
-  }
-
-  if (
-    startCol <= table.frozenColCount - 1 &&
-    endRow >= table.frozenRowCount &&
-    startRow <= table.rowCount - table.bottomFrozenRowCount - 1
-  ) {
-    needRowHeader = true;
-  }
-  if (
-    endCol >= table.colCount - table.rightFrozenColCount &&
-    endRow >= table.frozenRowCount &&
-    startRow <= table.rowCount - table.bottomFrozenRowCount - 1
-  ) {
-    needRightRowHeader = true;
-  }
-
-  if (
-    startRow <= table.frozenRowCount - 1 &&
-    endCol >= table.frozenColCount &&
-    startCol <= table.colCount - table.rightFrozenColCount - 1
-  ) {
-    needColumnHeader = true;
-  }
-  if (
-    endRow >= table.rowCount - table.bottomFrozenRowCount &&
-    endCol >= table.frozenColCount &&
-    startCol <= table.colCount - table.rightFrozenColCount - 1
-  ) {
-    needBottomColumnHeader = true;
-  }
-  if (
-    startCol <= table.colCount - table.rightFrozenColCount - 1 &&
-    endCol >= table.frozenColCount &&
-    startRow <= table.rowCount - table.bottomFrozenRowCount - 1 &&
-    endRow >= table.frozenRowCount
-  ) {
-    needBody = true;
-  }
+  const {
+    needRowHeader,
+    needRightRowHeader,
+    needColumnHeader,
+    needBottomColumnHeader,
+    needBody,
+    needCornerHeader,
+    needRightTopCornerHeader,
+    needLeftBottomCornerHeader,
+    needRightBottomCornerHeader
+  } = calculateCellRangeDistribution(startCol, startRow, endCol, endRow, table);
 
   // TODO 可以尝试不拆分三个表头和body【前提是theme中合并配置】 用一个SelectBorder 需要结合clip，并动态设置border的范围【依据区域范围 已经是否跨表头及body】
   if (needCornerHeader) {

@@ -15,11 +15,11 @@ export interface AddRowColumnOptions {
   /**
    * 添加列的回调函数
    */
-  addColumnCallback?: (col: number) => void;
+  addColumnCallback?: (col: number, table: VTable.ListTable) => void;
   /**
    * 添加行的回调函数
    */
-  addRowCallback?: (row: number) => void;
+  addRowCallback?: (row: number, table: VTable.ListTable) => void;
 }
 /**
  * 添加行和列的插件
@@ -28,7 +28,7 @@ export interface AddRowColumnOptions {
  * 当鼠标离开table的cell时，会隐藏添加行和列的dot和加号
  */
 export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
-  id = `add-row-column-${Date.now()}`;
+  id = `add-row-column`;
   name = 'Add Row Column';
   runTime = [
     VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL,
@@ -150,7 +150,6 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     this.addIconForAddColumn.style.display = 'none';
     this.addIconForAddColumn.style.borderRadius = '50%';
     this.addIconForAddColumn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    this.addIconForAddColumn.style.display = 'flex';
     this.addIconForAddColumn.style.justifyContent = 'center';
     this.addIconForAddColumn.style.alignItems = 'center';
     this.addIconForAddColumn.style.border = '1px solid white';
@@ -230,14 +229,23 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       const col = this.hoverCell.col;
       const addColIndex = isLeft ? col : col + 1;
       if (this.pluginOptions.addColumnCallback) {
-        this.pluginOptions.addColumnCallback(addColIndex);
+        this.pluginOptions.addColumnCallback(addColIndex, this.table);
       } else {
-        columns.splice(addColIndex, 0, {
-          field: ``,
-          title: `New Column ${col}`,
-          width: 100
-        });
-        this.table.updateColumns(columns);
+        // columns.splice(addColIndex, 0, {
+        //   field: ``,
+        //   title: `New Column ${col}`,
+        //   width: 100
+        // });
+        // this.table.updateColumns(columns);
+        this.table.addColumn(
+          {
+            field: addColIndex,
+            title: `New Column ${col}`,
+            width: 100
+          },
+          addColIndex,
+          true
+        );
       }
       this.delayHideAllForAddColumn(0);
     });
@@ -326,7 +334,6 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
     this.addIconForAddRow.style.display = 'none';
     this.addIconForAddRow.style.borderRadius = '50%';
     this.addIconForAddRow.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    this.addIconForAddRow.style.display = 'flex';
     this.addIconForAddRow.style.justifyContent = 'center';
     this.addIconForAddRow.style.alignItems = 'center';
     this.addIconForAddRow.style.border = '1px solid white';
@@ -402,7 +409,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       const row = this.hoverCell.row;
       const addRowIndex = isTop ? row : row + 1;
       if (this.pluginOptions.addRowCallback) {
-        this.pluginOptions.addRowCallback(addRowIndex);
+        this.pluginOptions.addRowCallback(addRowIndex, this.table as VTable.ListTable);
       } else {
         const recordIndex = this.table.getRecordIndexByCell(0, addRowIndex);
         this.table.addRecord({}, recordIndex);

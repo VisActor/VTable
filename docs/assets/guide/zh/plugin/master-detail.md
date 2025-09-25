@@ -16,10 +16,10 @@ interface MasterDetailPluginOptions {
   /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
   enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
-  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
 
-interface DetailGridOptions extends VTable.ListTableConstructorOptions {
+interface DetailTableOptions extends VTable.ListTableConstructorOptions {
   /** 子表样式配置，包括布局边距和尺寸设置 */
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
@@ -34,11 +34,11 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 |---------|------|--------|----------|
 | `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
 | `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
-| `detailGridOptions` | DetailGridOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
+| `detailTableOptions` | DetailTableOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
 
-#### DetailGridOptions 高级配置
+#### DetailTableOptions 高级配置
 
-`DetailGridOptions` 完全继承 `VTable.ListTableConstructorOptions` 的所有特性，这意味着子表享有与主表相同的功能和配置能力：
+`DetailTableOptions` 完全继承 `VTable.ListTableConstructorOptions` 的所有特性，这意味着子表享有与主表相同的功能和配置能力：
 
 **核心配置项：**
 - **columns**：子表列定义，支持完整的列配置选项
@@ -72,7 +72,7 @@ import { MasterDetailPlugin } from '@visactor/vtable-plugins';
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-plugin',
   enableCheckboxCascade: true, // 启用checkbox级联功能（默认：true）
-  detailGridOptions: {
+  detailTableOptions: {
     columns: [
       { field: 'task', title: '任务名称', width: 220 },
       { field: 'status', title: '状态', width: 120 }
@@ -88,7 +88,7 @@ const masterDetailPlugin = new MasterDetailPlugin({
 const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
   id: 'master-detail-plugin-no-cascade',
   enableCheckboxCascade: false, // 禁用checkbox级联功能
-  detailGridOptions: {
+  detailTableOptions: {
     // ... 与上面相同的配置
   }
 });
@@ -135,10 +135,10 @@ function generateData(count) {
 function createTable() {
   const records = generateData(11);
 
-  // 使用静态 DetailGridOptions
+  // 使用静态 DetailTableOptions
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-static-3',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'task', title: '任务名', width: 220 },
         { field: 'status', title: '状态', width: 120 }
@@ -202,7 +202,7 @@ MasterDetailPlugin 支持基于数据内容和行位置的动态配置，实现�
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'employee-detail-plugin',
-  detailGridOptions: ({ data, bodyRowIndex }) => {
+  detailTableOptions: ({ data, bodyRowIndex }) => {
     if (bodyRowIndex === 0) {
       return {
         columns: [
@@ -345,7 +345,7 @@ function createGroupTable() {
   // 创建主从表插件 - 使用detailData字段而不是默认的children
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'Order ID', title: 'Order ID', width: 150 },
         { field: 'Product Name', title: 'Product Name', width: 200 },
@@ -385,6 +385,237 @@ function createGroupTable() {
 }
 
 createGroupTable();
+```
+
+### 懒加载设置
+
+MasterDetailPlugin 支持懒加载功能，允许在用户展开行时动态异步加载子表数据，这对于处理大量数据或需要从服务器实时获取数据的场景非常有用。
+
+**懒加载的工作流程：**
+
+1. **数据标识**：在主表数据中，将需要懒加载的行的 `children` 属性设置为 `true`
+2. **事件触发机制**：当用户点击展开图标时，VTable触发 `TREE_HIERARCHY_STATE_CHANGE` 事件
+
+**核心API：**
+- 监听事件：`'TREE_HIERARCHY_STATE_CHANGE'`
+- 显示加载状态：`tableInstance.setLoadingHierarchyState(col, row)`  
+- 设置子数据：`plugin.setRecordChildren(detailData, col, row)`
+
+**实现方式：**
+
+```typescript
+// 数据结构示例
+const masterData = [
+  {
+    id: 1,
+    name: "张三公司", 
+    amount: 15000,
+    // 静态子数据 - 直接显示
+    children: [
+      { productName: "笔记本电脑", quantity: 2, price: 5000 },
+      { productName: "鼠标", quantity: 5, price: 100 }
+    ]
+  },
+  {
+    id: 2,
+    name: "李四企业",
+    amount: 25000,
+    children: true // 懒加载标识 - 需要异步加载数据
+  }
+];
+
+// 监听展开/收起事件
+const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+  // 只处理展开操作且 children 为 true（懒加载标识）
+  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+      args.originData?.children === true) {
+    
+    // 显示loading状态
+    tableInstance.setLoadingHierarchyState(args.col, args.row);
+    
+    try {
+      // 异步获取数据
+      const detailData = await fetchDataFromServer(args.originData.id);
+      
+      // 设置子数据并自动展开
+      plugin.setRecordChildren(detailData, args.col, args.row);
+    } catch (error) {
+      console.error('Failed to load detail data:', error);
+    }
+  }
+});
+```
+
+**技术实现原理：**
+
+插件内部通过以下机制实现懒加载支持：监听VTable的 `TREE_HIERARCHY_STATE_CHANGE` 事件，确保层级状态的正确同步
+
+以下是一个完整的懒加载示例，演示如何在订单管理系统中实现产品明细的懒加载：
+
+```javascript livedemo template=vtable
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading',
+  positionType: VTable.TYPES.IconPosition.contentLeft,
+  marginLeft: 0,
+  marginRight: 4,
+  visibleTime: 'always',
+  hover: {
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
+function createLazyLoadTable() {
+  // 主表数据 - 包含懒加载标识
+  const masterData = [
+    {
+      id: 1,
+      orderNo: 'ORD001',
+      customer: '张三公司',
+      amount: 15000,
+      status: '已完成',
+      date: '2024-01-15',
+      // 静态子表数据 - 直接展示
+      children: [
+        { productName: '笔记本电脑', quantity: 2, price: 5000, total: 10000 },
+        { productName: '鼠标', quantity: 5, price: 100, total: 500 }
+      ]
+    },
+    {
+      id: 2,
+      orderNo: 'ORD002',
+      customer: '李四企业',
+      amount: 25000,
+      status: '处理中',
+      date: '2024-01-16',
+      children: true // 懒加载标识 - 需要异步加载数据
+    },
+    {
+      id: 3,
+      orderNo: 'ORD003',
+      customer: '王五集团',
+      amount: 35000,
+      status: '已完成',
+      date: '2024-01-17',
+      children: true // 懒加载标识 - 需要异步加载数据
+    },
+    {
+      id: 4,
+      orderNo: 'ORD004',
+      customer: '赵六有限公司',
+      amount: 18000,
+      status: '待发货',
+      date: '2024-01-18'
+      // 没有children属性，表示没有子数据，不显示展开图标
+    }
+  ];
+
+  // 模拟异步数据获取函数
+  async function mockFetchDetailData(orderId) {
+    // 模拟网络延迟
+    const delay = 1000 + Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    // 根据订单ID返回不同的产品明细数据
+    const mockDetailData = {
+      2: [
+        { productName: '台式机', quantity: 1, price: 8000, total: 8000 },
+        { productName: '显示器', quantity: 2, price: 2000, total: 4000 },
+        { productName: '键盘', quantity: 1, price: 200, total: 200 },
+        { productName: 'U盘', quantity: 10, price: 50, total: 500 },
+        { productName: '音响', quantity: 1, price: 1200, total: 1200 }
+      ],
+      3: [
+        { productName: '服务器', quantity: 2, price: 15000, total: 30000 },
+        { productName: '网络设备', quantity: 5, price: 1000, total: 5000 },
+        { productName: '交换机', quantity: 3, price: 800, total: 2400 }
+      ]
+    };
+    
+    return mockDetailData[orderId] || [
+      { productName: '默认产品', quantity: 1, price: 100, total: 100 }
+    ];
+  }
+
+  // 创建主从表插件
+  const plugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'lazy-load-demo',
+    enableCheckboxCascade: true,
+    detailTableOptions: (params) => {
+      const { data } = params;
+      return {
+        columns: [
+          { field: 'productName', title: '产品名称', width: 150 },
+          { field: 'quantity', title: '数量', width: 80 },
+          { field: 'price', title: '单价', width: 100 },
+          { field: 'total', title: '小计', width: 100 }
+        ],
+        records: data.children,
+        style: {
+          height: 200,
+          margin: [10, 20, 10, 20]
+        },
+        theme: VTable.themes.BRIGHT
+      };
+    }
+  });
+
+  // 主表配置
+  const columns = [
+    { field: 'orderNo', title: '订单号', width: 120 },
+    { field: 'customer', title: '客户名称', width: 150 },
+    { field: 'amount', title: '订单金额', width: 120 },
+    { field: 'status', title: '状态', width: 100 },
+    { field: 'date', title: '订单日期', width: 120 }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: masterData,
+    widthMode: 'standard',
+    allowFrozenColCount: 2,
+    defaultRowHeight: 40,
+    plugins: [plugin]
+  };
+
+  // 创建表格实例
+  const tableInstance = new VTable.ListTable(option);
+  
+  // 监听主从表层次状态变化事件，处理懒加载
+  const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, async (args) => {
+    // 只处理展开操作且 children 为 true（懒加载标识）
+    if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+        args.originData?.children === true) {
+      
+      // 显示loading状态
+      tableInstance.setLoadingHierarchyState(args.col, args.row);
+      
+      try {
+        // 获取订单ID并异步加载数据
+        const orderId = args.originData.id;
+        const detailData = await mockFetchDetailData(orderId);
+        
+        // 使用插件的便捷方法设置子数据并展开
+        plugin.setRecordChildren(detailData, args.col, args.row);
+      } catch (error) {
+        console.error('Failed to load detail data:', error);
+      }
+    }
+  });
+  
+  return tableInstance;
+}
+
+createLazyLoadTable();
 ```
 
 ## 典型业务场景示例
@@ -456,7 +687,7 @@ function createEmployeeTable() {
   // 创建企业员工管理主从表插件
   const employeeDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'employee-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: '项目名称', 
@@ -658,7 +889,7 @@ function createCustomerTable() {
   // 创建客户订单管理主从表插件
   const customerDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'customer-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: '订单号', 

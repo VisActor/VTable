@@ -1,5 +1,5 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailGridOptions, SubTableCheckboxState } from './types';
+import type { DetailTableOptions, SubTableCheckboxState } from './types';
 import {
   getInternalProps,
   getRecordByRowIndex,
@@ -166,38 +166,21 @@ export class SubTableManager {
   }
 
   /**
-   * 检查记录是否有子数据
-   */
-  private hasChildren(record: unknown): boolean {
-    if (record && typeof record === 'object' && 'children' in record) {
-      const children = record.children;
-      return Array.isArray(children) && children.length > 0;
-    }
-    return false;
-  }
-
-  /**
-   * 获取记录的子数据
-   */
-  private getChildren(record: unknown): unknown[] {
-    if (record && typeof record === 'object' && 'children' in record) {
-      const children = record.children;
-      return Array.isArray(children) ? children : [];
-    }
-    return [];
-  }
-
-  /**
    * 渲染子表
    * 创建子表实例，设置viewBox区域，配置滚动隔离、选中管理、canvas裁剪
    */
   renderSubTable(
     bodyRowIndex: number,
-    getDetailConfig: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null
+    childrenData: unknown[],
+    getDetailConfig: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null
   ): void {
     const internalProps = getInternalProps(this.table);
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
-    if (!record || !this.hasChildren(record)) {
+    if (!record) {
+      return;
+    }
+    // 如果没有子数据，不渲染子表
+    if (!childrenData || childrenData.length === 0) {
       return;
     }
     const detailConfig = getDetailConfig(record, bodyRowIndex);
@@ -205,7 +188,6 @@ export class SubTableManager {
     if (!childViewBox) {
       return;
     }
-    const childrenData = this.getChildren(record);
     const containerWidth = childViewBox.x2 - childViewBox.x1;
     const containerHeight = childViewBox.y2 - childViewBox.y1;
     // 创建子表配置，首先使用父表的重要属性作为基础
@@ -253,7 +235,7 @@ export class SubTableManager {
    */
   private calculateSubTableViewBox(
     bodyRowIndex: number,
-    detailConfig?: DetailGridOptions | null,
+    detailConfig?: DetailTableOptions | null,
     height?: number
   ): { x1: number; y1: number; x2: number; y2: number } | null {
     const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
@@ -316,41 +298,92 @@ export class SubTableManager {
     if (subTable) {
       // 在删除子表前，保存其checkbox状态
       this.saveSubTableCheckboxState(bodyRowIndex, subTable);
-      const afterRenderHandler = (subTable as VTable.ListTable & { __afterRenderHandler?: () => void })
-        .__afterRenderHandler;
-      if (afterRenderHandler) {
-        this.table.off('after_render', afterRenderHandler);
-      }
-      const selectionHandler = (subTable as VTable.ListTable & { __selectionHandler?: () => void }).__selectionHandler;
-      if (selectionHandler) {
-        subTable.off('click_cell', selectionHandler);
-      }
-      const extendedSubTable = subTable as VTable.ListTable & {
-        __scrollHandler?: (args: unknown) => boolean;
-        __subTableScrollHandler?: () => boolean;
-        __clipInterval?: number;
-        __antiFlickerHandler?: () => void;
-      };
-      const scrollHandler = extendedSubTable.__scrollHandler;
-      if (scrollHandler) {
-        this.table.off('can_scroll', scrollHandler);
-      }
-      const subTableScrollHandler = extendedSubTable.__subTableScrollHandler;
-      if (subTableScrollHandler) {
-        subTable.off('can_scroll', subTableScrollHandler);
-      }
-      const clipInterval = extendedSubTable.__clipInterval;
-      if (clipInterval) {
-        clearInterval(clipInterval);
-      }
-      const antiFlickerHandler = extendedSubTable.__antiFlickerHandler;
-      if (antiFlickerHandler) {
-        this.table.off('after_render', antiFlickerHandler);
-      }
+      // 清理所有事件处理器和引用
+      this.cleanupSubTableEventHandlers(subTable);
+      // 释放子表资源
       if (typeof subTable.release === 'function') {
-        subTable.release();
+        try {
+          subTable.release();
+        } catch (error) {
+          console.warn('Failed to release sub table:', error);
+        }
       }
       internalProps.subTableInstances.delete(bodyRowIndex);
+    }
+  }
+
+  /**
+   * 清理子表的事件处理器和引用
+   */
+  private cleanupSubTableEventHandlers(subTable: VTable.ListTable): void {
+    // 清理after_render事件处理器
+    const afterRenderHandler = (subTable as VTable.ListTable & { __afterRenderHandler?: () => void })
+      .__afterRenderHandler;
+    if (afterRenderHandler) {
+      this.table.off('after_render', afterRenderHandler);
+      delete (subTable as VTable.ListTable & { __afterRenderHandler?: () => void }).__afterRenderHandler;
+    }
+
+    // 清理selection事件处理器
+    const selectionHandler = (subTable as VTable.ListTable & { __selectionHandler?: () => void }).__selectionHandler;
+    if (selectionHandler) {
+      subTable.off('click_cell', selectionHandler);
+      delete (subTable as VTable.ListTable & { __selectionHandler?: () => void }).__selectionHandler;
+    }
+
+    // 恢复原始的canvas方法
+    const extendedSubTable = subTable as VTable.ListTable & {
+      __originalRenderMethod?: (...args: unknown[]) => unknown;
+      __originalDrawMethod?: (...args: unknown[]) => unknown;
+      __scrollHandler?: (args: unknown) => boolean;
+      __subTableScrollHandler?: () => boolean;
+      __clipInterval?: number;
+      __antiFlickerHandler?: () => void;
+    };
+
+    // 恢复原始的render和draw方法
+    if (subTable.scenegraph?.stage?.defaultLayer && extendedSubTable.__originalRenderMethod) {
+      (subTable.scenegraph.stage.defaultLayer as Record<string, unknown>).render =
+        extendedSubTable.__originalRenderMethod;
+      delete extendedSubTable.__originalRenderMethod;
+    }
+
+    if (subTable.scenegraph?.stage?.defaultLayer && extendedSubTable.__originalDrawMethod) {
+      (subTable.scenegraph.stage.defaultLayer as Record<string, unknown>).draw = extendedSubTable.__originalDrawMethod;
+      delete extendedSubTable.__originalDrawMethod;
+    }
+    const scrollHandler = extendedSubTable.__scrollHandler;
+    if (scrollHandler) {
+      this.table.off('can_scroll', scrollHandler);
+      delete extendedSubTable.__scrollHandler;
+    }
+
+    const subTableScrollHandler = extendedSubTable.__subTableScrollHandler;
+    if (subTableScrollHandler) {
+      subTable.off('can_scroll', subTableScrollHandler);
+      delete extendedSubTable.__subTableScrollHandler;
+    }
+
+    // 清理定时器
+    const clipInterval = extendedSubTable.__clipInterval;
+    if (clipInterval) {
+      clearInterval(clipInterval);
+      delete extendedSubTable.__clipInterval;
+    }
+
+    // 清理anti-flicker事件处理器
+    const antiFlickerHandler = extendedSubTable.__antiFlickerHandler;
+    if (antiFlickerHandler) {
+      this.table.off('after_render', antiFlickerHandler);
+      delete extendedSubTable.__antiFlickerHandler;
+    }
+
+    // 清理checkbox事件处理器
+    const checkboxHandler = (extendedSubTable as VTable.ListTable & { __checkboxHandler?: (args: unknown) => void })
+      .__checkboxHandler;
+    if (checkboxHandler) {
+      subTable.off('checkbox_state_change', checkboxHandler);
+      delete (extendedSubTable as VTable.ListTable & { __checkboxHandler?: (args: unknown) => void }).__checkboxHandler;
     }
   }
 
@@ -552,6 +585,11 @@ export class SubTableManager {
       return;
     }
     const stage = subTable.scenegraph.stage;
+    // 存储原始方法的引用，以便后续恢复
+    const extendedSubTable = subTable as VTable.ListTable & {
+      __originalRenderMethod?: (...args: unknown[]) => unknown;
+      __originalDrawMethod?: (...args: unknown[]) => unknown;
+    };
     // 计算裁剪区域的函数
     const calculateClipRegion = () => {
       try {
@@ -600,9 +638,11 @@ export class SubTableManager {
     if (!context) {
       return;
     }
-    const wrapRenderMethod = (obj: Record<string, unknown>, methodName: string) => {
+    const wrapRenderMethod = (obj: Record<string, unknown>, methodName: string, originalMethodKey: string) => {
       const originalMethod = obj[methodName] as (...args: unknown[]) => unknown;
       if (typeof originalMethod === 'function') {
+        // 存储原始方法
+        (extendedSubTable as unknown as Record<string, unknown>)[originalMethodKey] = originalMethod;
         obj[methodName] = function (...args: unknown[]) {
           context.save();
           try {
@@ -629,8 +669,8 @@ export class SubTableManager {
       }
     };
     if (stage.defaultLayer) {
-      wrapRenderMethod(stage.defaultLayer, 'render');
-      wrapRenderMethod(stage.defaultLayer, 'draw');
+      wrapRenderMethod(stage.defaultLayer, 'render', '__originalRenderMethod');
+      wrapRenderMethod(stage.defaultLayer, 'draw', '__originalDrawMethod');
     }
   }
 
@@ -683,44 +723,7 @@ export class SubTableManager {
         // 保持原有逻辑继续执行
       }
     });
-    this.updateSubTablePositionsForResize();
-  }
-
-  /**
-   * 父表尺寸变化时更新所有子表位置和宽度
-   */
-  updateSubTablePositionsForResize(): void {
-    const internalProps = getInternalProps(this.table);
-    if (!internalProps.subTableInstances) {
-      return;
-    }
-    internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
-      const record = getRecordByRowIndex(this.table, bodyRowIndex);
-      const detailConfig = record ? this.getDetailConfigForRecord?.(record, bodyRowIndex) : null;
-      const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
-      const internalProps = getInternalProps(this.table);
-      const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
-      const rowHeight = this.table.getRowHeight(rowIndex) - originalHeight;
-      const newViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig, rowHeight);
-      if (newViewBox) {
-        const newContainerWidth = newViewBox.x2 - newViewBox.x1;
-        const newContainerHeight = newViewBox.y2 - newViewBox.y1;
-        (subTable as { options: { viewBox?: { x1: number; y1: number; x2: number; y2: number } } }).options.viewBox =
-          newViewBox;
-        const subTableOptions = subTable.options as VTable.ListTableConstructorOptions;
-        if (subTableOptions.canvasWidth !== newContainerWidth || subTableOptions.canvasHeight !== newContainerHeight) {
-          subTableOptions.canvasWidth = newContainerWidth;
-          subTableOptions.canvasHeight = newContainerHeight;
-          subTable.resize();
-        }
-        if (subTable.scenegraph?.stage) {
-          (subTable.scenegraph.stage as { setViewBox: (viewBox: unknown, flag: boolean) => void }).setViewBox(
-            newViewBox,
-            false
-          );
-        }
-      }
-    });
+    this.recalculateAllSubTablePositions();
   }
 
   /**
@@ -731,7 +734,7 @@ export class SubTableManager {
   recalculateAllSubTablePositions(
     start?: number,
     end?: number,
-    getDetailConfig?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null
+    getDetailConfig?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null
   ): void {
     const internalProps = getInternalProps(this.table);
     internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
@@ -786,26 +789,25 @@ export class SubTableManager {
     }
     const internalProps = getInternalProps(this.table);
     if (internalProps && internalProps.subTableInstances) {
-      internalProps.subTableInstances.forEach(subTable => {
-        if (subTable && typeof subTable.release === 'function') {
-          try {
-            subTable.release();
-          } catch (error) {
-            console.warn('Failed to release sub table:', error);
-          }
-        }
+      internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {
+        this.removeSubTable(bodyRowIndex);
       });
       internalProps.subTableInstances.clear();
     }
+    // 清理回调函数引用，避免循环引用
+    this.getDetailConfigForRecord = undefined;
+    
+    // 清理表格引用
+    (this as unknown as { table: unknown }).table = null;
   }
 
-  private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null;
+  private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
 
   /**
    * 设置回调函数
    */
   setCallbacks(callbacks: {
-    getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailGridOptions | null;
+    getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
     redrawAllUnderlines?: () => void;
   }): void {
     this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;

@@ -13,13 +13,14 @@ MasterDetailPlugin follows TypeScript interface specifications to ensure type sa
 ```typescript
 interface MasterDetailPluginOptions {
   id?: string;
+  /** Whether to enable checkbox cascade functionality - controls checkbox linkage between master and detail tables, default is true */
   enableCheckboxCascade?: boolean;
-  /** Detail grid configuration options - supports static configuration object or dynamic configuration function */
-  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  /** Detail table configuration - can be static configuration object or dynamic configuration function */
+  detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
 
-interface DetailGridOptions extends VTable.ListTableConstructorOptions {
-  /** Detail grid style configuration, including layout margins and size settings */
+interface DetailTableOptions extends VTable.ListTableConstructorOptions {
+  /** Detail table style configuration, including layout margins and size settings */
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
@@ -33,11 +34,11 @@ interface DetailGridOptions extends VTable.ListTableConstructorOptions {
 |----------------|------|---------------|-------------|
 | `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
 | `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
-| `detailGridOptions` | DetailGridOptions \| Function | - | Detail grid configuration options, supports static object configuration or dynamic configuration function based on data |
+| `detailTableOptions` | DetailTableOptions \| Function | - | Detail table configuration options, supports static object configuration or dynamic configuration function based on data |
 
-#### DetailGridOptions Advanced Configuration
+#### DetailTableOptions Advanced Configuration
 
-`DetailGridOptions` fully inherits all features of `VTable.ListTableConstructorOptions`, meaning the detail grid enjoys the same functionality and configuration capabilities as the master table:
+`DetailTableOptions` fully inherits all features of `VTable.ListTableConstructorOptions`, meaning the detail grid enjoys the same functionality and configuration capabilities as the master table:
 
 **Core Configuration Items:**
 - **columns**: Detail grid column definitions, supports complete column configuration options
@@ -71,7 +72,7 @@ import { MasterDetailPlugin } from '@visactor/vtable-plugins';
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'master-detail-plugin',
   enableCheckboxCascade: true, // Enable checkbox cascade functionality (default: true)
-  detailGridOptions: {
+  detailTableOptions: {
     columns: [
       { field: 'task', title: 'Task Name', width: 220 },
       { field: 'status', title: 'Status', width: 120 }
@@ -87,7 +88,7 @@ const masterDetailPlugin = new MasterDetailPlugin({
 const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
   id: 'master-detail-plugin-no-cascade',
   enableCheckboxCascade: false, // Disable checkbox cascade functionality
-  detailGridOptions: {
+  detailTableOptions: {
     // ... same configuration as above
   }
 });
@@ -134,10 +135,10 @@ function generateData(count) {
 function createTable() {
   const records = generateData(11);
 
-  // Using static DetailGridOptions
+  // Using static DetailTableOptions
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-static-3',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'task', title: 'Task Name', width: 220 },
         { field: 'status', title: 'Status', width: 120 }
@@ -201,7 +202,7 @@ MasterDetailPlugin supports dynamic configuration based on data content and row 
 ```typescript
 const masterDetailPlugin = new MasterDetailPlugin({
   id: 'employee-detail-plugin',
-  detailGridOptions: ({ data, bodyRowIndex }) => {
+  detailTableOptions: ({ data, bodyRowIndex }) => {
     if (bodyRowIndex === 0) {
       return {
         columns: [
@@ -344,7 +345,7 @@ function createGroupTable() {
   // Create master-detail plugin - use detailData field instead of default children
   const masterDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'master-detail-grouping-demo',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { field: 'Order ID', title: 'Order ID', width: 150 },
         { field: 'Product Name', title: 'Product Name', width: 200 },
@@ -384,6 +385,236 @@ function createGroupTable() {
 }
 
 createGroupTable();
+```
+
+### Lazy Loading Setup
+
+MasterDetailPlugin supports lazy loading functionality, allowing dynamic asynchronous loading of sub-table data when users expand rows. This is very useful for handling large amounts of data or scenarios that require real-time data fetching from servers.
+
+
+**Lazy Loading Workflow:**
+
+1. **Data Identifier**: In the main table data, set the `children` attribute of the rows that need lazy loading to `true`
+2. **Event Trigger Mechanism**: When the user clicks the expand icon, the VTable triggers the `TREE_HIERARCHY_STATE_CHANGE` event
+
+**Core APIs:**
+- Listen to event: `'TREE_HIERARCHY_STATE_CHANGE'`
+- Show loading state: `tableInstance.setLoadingHierarchyState(col, row)`  
+- Set child data: `plugin.setRecordChildren(detailData, col, row)`
+
+**Implementation Method:**
+
+```typescript
+// Data structure example
+const masterData = [
+  {
+    id: 1,
+    name: "Zhang San Company", 
+    amount: 15000,
+    // Static sub-data - display directly
+    children: [
+      { productName: "Laptop", quantity: 2, price: 5000 },
+      { productName: "Mouse", quantity: 5, price: 100 }
+    ]
+  },
+  {
+    id: 2,
+    name: "Li Si Enterprise",
+    amount: 25000,
+    children: true // Lazy loading identifier - requires asynchronous data loading
+  }
+];
+
+// Listen to expand/collapse events
+tableInstance.on('tree_hierarchy_state_change', async (args) => {
+  // Only handle expand operations with children === true (lazy loading identifier)
+  if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+      args.originData?.children === true) {
+    
+    // Show loading state
+    tableInstance.setLoadingHierarchyState(args.col, args.row);
+    
+    try {
+      // Asynchronously fetch data
+      const detailData = await fetchDataFromServer(args.originData.id);
+      
+      // Set child data and automatically expand
+      plugin.setRecordChildren(detailData, args.col, args.row);
+    } catch (error) {
+      console.error('Failed to load detail data:', error);
+    }
+  }
+});
+```
+
+**Technical Implementation Details:**
+
+The plugin internally implements lazy loading support through the following mechanism: listening to the `TREE_HIERARCHY_STATE_CHANGE` event of the VTable to ensure the correct synchronization of the hierarchy state.
+
+The following is a complete lazy loading example demonstrating how to implement product detail lazy loading in an order management system:
+
+```javascript livedemo template=vtable
+VTable.register.icon('loading', {
+  type: 'image',
+  width: 16,
+  height: 16,
+  src: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/media/loading-circle.gif',
+  name: 'loading',
+  positionType: VTable.TYPES.IconPosition.contentLeft,
+  marginLeft: 0,
+  marginRight: 4,
+  visibleTime: 'always',
+  hover: {
+    width: 22,
+    height: 22,
+    bgColor: 'rgba(101,117,168,0.1)'
+  },
+  isGif: true
+});
+
+function createLazyLoadTable() {
+  // Master table data - including lazy loading identifiers
+  const masterData = [
+    {
+      id: 1,
+      orderNo: 'ORD001',
+      customer: 'Zhang San Company',
+      amount: 15000,
+      status: 'Completed',
+      date: '2024-01-15',
+      // Static sub-table data - display directly
+      children: [
+        { productName: 'Laptop', quantity: 2, price: 5000, total: 10000 },
+        { productName: 'Mouse', quantity: 5, price: 100, total: 500 }
+      ]
+    },
+    {
+      id: 2,
+      orderNo: 'ORD002',
+      customer: 'Li Si Enterprise',
+      amount: 25000,
+      status: 'Processing',
+      date: '2024-01-16',
+      children: true // Lazy loading identifier - requires asynchronous data loading
+    },
+    {
+      id: 3,
+      orderNo: 'ORD003',
+      customer: 'Wang Wu Group',
+      amount: 35000,
+      status: 'Completed',
+      date: '2024-01-17',
+      children: true // Lazy loading identifier - requires asynchronous data loading
+    },
+    {
+      id: 4,
+      orderNo: 'ORD004',
+      customer: 'Zhao Liu Limited',
+      amount: 18000,
+      status: 'Pending Shipment',
+      date: '2024-01-18'
+      // No children property means no sub-data, no expand icon displayed
+    }
+  ];
+
+  // Mock asynchronous data fetching function
+  async function mockFetchDetailData(orderId) {
+    // Simulate network delay
+    const delay = 1000 + Math.random() * 1000;
+    await new Promise(resolve => setTimeout(resolve, delay));
+    
+    // Return different product detail data based on order ID
+    const mockDetailData = {
+      2: [
+        { productName: 'Desktop', quantity: 1, price: 8000, total: 8000 },
+        { productName: 'Monitor', quantity: 2, price: 2000, total: 4000 },
+        { productName: 'Keyboard', quantity: 1, price: 200, total: 200 },
+        { productName: 'USB Drive', quantity: 10, price: 50, total: 500 },
+        { productName: 'Speaker', quantity: 1, price: 1200, total: 1200 }
+      ],
+      3: [
+        { productName: 'Server', quantity: 2, price: 15000, total: 30000 },
+        { productName: 'Network Equipment', quantity: 5, price: 1000, total: 5000 },
+        { productName: 'Switch', quantity: 3, price: 800, total: 2400 }
+      ]
+    };
+    
+    return mockDetailData[orderId] || [
+      { productName: 'Default Product', quantity: 1, price: 100, total: 100 }
+    ];
+  }
+
+  // Create master-detail plugin
+  const plugin = new VTablePlugins.MasterDetailPlugin({
+    id: 'lazy-load-demo',
+    enableCheckboxCascade: true,
+    detailTableOptions: (params) => {
+      const { data } = params;
+      return {
+        columns: [
+          { field: 'productName', title: 'Product Name', width: 150 },
+          { field: 'quantity', title: 'Quantity', width: 80 },
+          { field: 'price', title: 'Price', width: 100 },
+          { field: 'total', title: 'Total', width: 100 }
+        ],
+        records: data.children,
+        style: {
+          height: 200,
+          margin: [10, 20, 10, 20]
+        },
+        theme: VTable.themes.BRIGHT
+      };
+    }
+  });
+
+  // Master table configuration
+  const columns = [
+    { field: 'orderNo', title: 'Order No.', width: 120 },
+    { field: 'customer', title: 'Customer Name', width: 150 },
+    { field: 'amount', title: 'Order Amount', width: 120 },
+    { field: 'status', title: 'Status', width: 100 },
+    { field: 'date', title: 'Order Date', width: 120 }
+  ];
+
+  const option = {
+    container: document.getElementById(CONTAINER_ID),
+    columns,
+    records: masterData,
+    widthMode: 'standard',
+    allowFrozenColCount: 2,
+    defaultRowHeight: 40,
+    plugins: [plugin]
+  };
+
+  // Create table instance
+  const tableInstance = new VTable.ListTable(option);
+
+  const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+  tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, async (args) => {
+    // Only handle expand operations with children === true (lazy loading identifier)
+    if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
+        args.originData?.children === true) {
+      
+      // Show loading state
+      tableInstance.setLoadingHierarchyState(args.col, args.row);
+      
+      try {
+        // Get order ID and load data asynchronously
+        const orderId = args.originData.id;
+        const detailData = await mockFetchDetailData(orderId);
+        
+        // Use plugin convenience method to set child data and expand
+        plugin.setRecordChildren(detailData, args.col, args.row);
+      } catch (error) {
+        console.error('Failed to load detail data:', error);
+      }
+    }
+  });
+  
+  return tableInstance;
+}
+
+createLazyLoadTable();
 ```
 
 ## Typical Business Scenario Examples
@@ -455,7 +686,7 @@ function createEmployeeTable() {
   // Create enterprise employee management master-detail plugin
   const employeeDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'employee-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: 'Project Name', 
@@ -657,7 +888,7 @@ function createCustomerTable() {
   // Create customer order management master-detail plugin
   const customerDetailPlugin = new VTablePlugins.MasterDetailPlugin({
     id: 'customer-management-plugin',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         { 
           field: 'Order Number', 

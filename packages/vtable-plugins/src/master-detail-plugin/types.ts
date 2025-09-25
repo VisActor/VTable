@@ -2,7 +2,7 @@ import type * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/src/vrender';
 
 /** 子表配置接口 - 继承 ListTableConstructorOptions */
-export interface DetailGridOptions extends VTable.ListTableConstructorOptions {
+export interface DetailTableOptions extends VTable.ListTableConstructorOptions {
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
     height?: number;
@@ -17,7 +17,7 @@ export interface MasterDetailPluginOptions {
   /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
   enableCheckboxCascade?: boolean;
   /** 子表配置 - 可以是静态配置对象或动态配置函数 */
-  detailGridOptions?: DetailGridOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailGridOptions);
+  detailTableOptions?: DetailTableOptions | ((params: { data: unknown; bodyRowIndex: number }) => DetailTableOptions);
 }
 
 /**
@@ -37,14 +37,6 @@ export interface InternalProps {
   originalRowHeights: Map<number, number>;
   _tempExpandedRecordIndices?: (number | number[])[];
   subTableCheckboxStates?: Map<number, SubTableCheckboxState>;
-}
-
-/**
- * 虚拟记录ID接口
- */
-export interface VirtualRecordIds {
-  topId: string;
-  bottomId: string;
 }
 
 /**
@@ -68,8 +60,13 @@ export interface SelectBorderHeightEventData {
   startRow: number;
   endRow: number;
   currentHeight: number;
-  selectComp: { rect: any; fillhandle?: any; role: string };
+  selectComp: { rect: unknown; fillhandle?: unknown; role: string };
 }
+
+/**
+ * 懒加载状态枚举
+ */
+export type LazyLoadState = 'loading' | 'loaded' | 'error';
 
 /**
  * 记录索引类型 - 支持单个数字或数字数组

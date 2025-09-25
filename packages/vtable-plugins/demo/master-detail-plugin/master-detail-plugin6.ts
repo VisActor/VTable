@@ -66,7 +66,7 @@ export function createTable() {
   // 创建主从表插件
   const masterDetailPlugin = new MasterDetailPlugin({
     id: 'master-detail-container-fit-6',
-    detailGridOptions: {
+    detailTableOptions: {
       columns: [
         {
           field: 'projectName',

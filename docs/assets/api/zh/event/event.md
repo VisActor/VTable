@@ -66,10 +66,26 @@ TABLE_EVENT_TYPE = {
   ......
 }
 ```
+## BEFORE_INIT
+
+表格初始化前触发
+
+## BEFORE_UPDATE_OPTION
+
+表格更新配置前触发
 
 ## INITIALIZED
 
 成功初始化完成后触发
+
+## UPDATED
+
+表格更新完成事件
+
+## BEFORE_SET_SIZE
+
+表格设置大小前触发
+
 
 ## AFTER_RENDER
 
@@ -87,6 +103,10 @@ TABLE_EVENT_TYPE = {
    */
   onVChartEvent(type: string, listener: AnyFunction): void
 ```
+
+## UPDATED
+
+表格更新完成事件
 
 ## CLICK_CELL
 
@@ -121,6 +141,19 @@ TABLE_EVENT_TYPE = {
 ## SELECTED_CLEAR
 
 当鼠标点击到表格空白区域，所有选择单元格将被取消，会触发这个事件
+
+## SELECTED_CHANGED
+
+单元格选中范围改变事件
+
+回调参数：
+```
+{
+    col: number;
+    row: number;
+    ranges: CellRange[];
+  };
+```
 
 ## KEYDOWN
 

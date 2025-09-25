@@ -1,0 +1,181 @@
+import { Env } from '../tools/env';
+
+export function importStyle() {
+  if (Env.mode === 'node') {
+    return;
+  }
+  const styleElement = document.createElement('style');
+  styleElement.id = 'vtable-sheet-formula-autocomplete-styleSheet';
+  styleElement.textContent = `
+/* 公式自动补全容器 */
+.vtable-formula-autocomplete {
+  position: absolute;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 1050;
+  font-size: 13px;
+  min-width: 300px;
+}
+
+/* 自动补全项 */
+.vtable-formula-autocomplete-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vtable-formula-autocomplete-item:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.vtable-formula-autocomplete-item:hover {
+  background-color: #f5f7fa;
+}
+
+.vtable-formula-autocomplete-item.selected {
+  background-color: #e6f7ff;
+}
+
+/* 函数名称 */
+.vtable-formula-autocomplete-item .item-name {
+  font-weight: 600;
+  color: #1890ff;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 函数类型标签 */
+.vtable-formula-autocomplete-item .item-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  height: 18px;
+  background: #f0f0f0;
+  border-radius: 2px;
+  font-size: 11px;
+  color: #666;
+  font-weight: normal;
+}
+
+.vtable-formula-autocomplete-item .item-type.function {
+  background: #e6f7ff;
+  color: #1890ff;
+}
+
+.vtable-formula-autocomplete-item .item-type.cell {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+.vtable-formula-autocomplete-item .item-type.range {
+  background: #fff7e6;
+  color: #fa8c16;
+}
+
+/* 函数签名 */
+.vtable-formula-autocomplete-item .item-signature {
+  font-size: 12px;
+  color: #595959;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  margin-left: 2px;
+}
+
+/* 函数描述 */
+.vtable-formula-autocomplete-item .item-description {
+  font-size: 12px;
+  color: #8c8c8c;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* 无结果提示 */
+.vtable-formula-autocomplete-empty {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+/* 滚动条样式 */
+.vtable-formula-autocomplete::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vtable-formula-autocomplete::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.vtable-formula-autocomplete::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 3px;
+}
+
+.vtable-formula-autocomplete::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* 分组标题 */
+.vtable-formula-autocomplete-group {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* 快捷键提示 */
+.vtable-formula-autocomplete-footer {
+  padding: 8px 12px;
+  background: #fafafa;
+  border-top: 1px solid #f0f0f0;
+  font-size: 11px;
+  color: #999;
+  display: flex;
+  gap: 16px;
+  position: sticky;
+  bottom: 0;
+}
+
+.vtable-formula-autocomplete-footer .shortcut {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.vtable-formula-autocomplete-footer .key {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 10px;
+  color: #666;
+}
+
+.vtable-formula-autocomplete {
+  z-index: 10000 !important;
+}
+
+.vtable-editor-container input {
+  font-family: inherit;
+}
+`;
+
+  document.head.appendChild(styleElement);
+}
