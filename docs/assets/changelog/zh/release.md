@@ -5,17 +5,17 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: extend chart type
-- **@visactor/vtable**: support detailPath when pick vchart to add detectPickChartItem config
+- **@visactor/vtable**: 透视图扩展图表类型
+- **@visactor/vtable**: 支持在选取vchart时使用detailPath，添加detectPickChartItem配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: deleteRecord switchState error after call renderWidthCreateCells api [#4436](https://github.com/VisActor/VTable/issues/4436)
-- **@visactor/vtable**: maxfrozenwidth not work when set brower scale [#4494](https://github.com/VisActor/VTable/issues/4494)
-- **@visactor/vtable**: gannt grid line style linedash not work [#4495](https://github.com/VisActor/VTable/issues/4495)
-- **@visactor/vtable**: when updateOption change enablecheckboxcascade not work [#4499](https://github.com/VisActor/VTable/issues/4499)
-- **@visactor/vtable**: api selectCells not work with ctrlMultiSelect false
-- **@visactor/vtable**: row change order not work with pagination
+- **@visactor/vtable**: 修复调用deleteRecord和renderWidthCreateCells api，switchState错误 [#4436](https://github.com/VisActor/VTable/issues/4436)
+- **@visactor/vtable**: 修复设置浏览器缩放时maxfrozenwidth不生效 [#4494](https://github.com/VisActor/VTable/issues/4494)
+- **@visactor/vtable-gantt**: 修复甘特图网格线样式linedash不生效 [#4495](https://github.com/VisActor/VTable/issues/4495)
+- **@visactor/vtable**: 修复updateOption时更改enablecheckboxcascade不生效 [#4499](https://github.com/VisActor/VTable/issues/4499)
+- **@visactor/vtable**: 修复api selectCells在ctrlMultiSelect为false时不生效
+- **@visactor/vtable**: 修复分页时行顺序更改不生效
 
 
 
