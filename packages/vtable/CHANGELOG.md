@@ -1,6 +1,36 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 22 Sep 2025 03:03:09 GMT and should not be manually modified.
+This log was last generated on Fri, 26 Sep 2025 10:28:51 GMT and should not be manually modified.
+
+## 1.20.1
+Fri, 26 Sep 2025 10:28:51 GMT
+
+### Updates
+
+- feat: extend chart type
+
+
+- fix: deleteRecord switchState error after call renderWidthCreateCells api #4436
+
+
+- fix: maxfrozenwidth not work when set brower scale #4494
+
+
+- fix: gannt grid line style linedash not work #4495
+
+
+- fix: when updateOption change enablecheckboxcascade not work #4499
+
+
+- fix: api selectCells not work with ctrlMultiSelect false
+
+
+- fix: row change order not work with pagination
+
+
+- feat: support detailPath when pick vchart to add detectPickChartItem config
+
+
 
 ## 1.20.0
 Mon, 22 Sep 2025 03:03:09 GMT
