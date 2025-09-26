@@ -26,6 +26,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   tableChartOption: any;
   col?: number;
   row?: number;
+  detectPickChartItem?: boolean;
 }
 
 export const CHART_NUMBER_TYPE = genNumberType();
