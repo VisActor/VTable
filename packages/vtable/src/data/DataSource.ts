@@ -246,12 +246,12 @@ export class DataSource extends EventTarget implements DataSourceAPI {
   initTreeHierarchyState() {
     // if (this.hierarchyExpandLevel) {
     this._sourceLength = this._source?.length || 0;
-    this.currentIndexedData = Array.from({ length: this._sourceLength }, (_, i) => i);
+    this.currentIndexedData = [];
     // if (this.hierarchyExpandLevel > 1) {
-    let nodeLength = this._sourceLength;
+    const nodeLength = this._sourceLength;
     for (let i = 0; i < nodeLength; i++) {
-      const indexKey = this.currentIndexedData[i];
-      const nodeData = this.getOriginalRecord(indexKey);
+      this.currentIndexedData.push(i);
+      const nodeData = this.getOriginalRecord(i);
       if (!nodeData) {
         continue;
       }
@@ -266,9 +266,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
         if (nodeData.hierarchyState === HierarchyState.collapse) {
           continue;
         }
-        const childrenLength = this.initChildrenNodeHierarchy(indexKey, this.hierarchyExpandLevel, 2, nodeData);
-        i += childrenLength;
-        nodeLength += childrenLength;
+        this.initChildrenNodeHierarchy(i, this.hierarchyExpandLevel, 2, nodeData);
       } else if ((nodeData as any).children === true) {
         !nodeData.hierarchyState && (nodeData.hierarchyState = HierarchyState.collapse);
       }
@@ -451,13 +449,15 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     // subNodeIndex:number,
     hierarchyExpandLevel: number,
     currentLevel: number,
-    nodeData: any
+    nodeData: any,
+    insertKeys?: (number | number[])[]
   ): number {
     // if (currentLevel > hierarchyExpandLevel) {
     //   return 0;
     // }
     let childTotalLength = 0;
     const nodeLength = nodeData.filteredChildren ? nodeData.filteredChildren.length : nodeData.children?.length ?? 0;
+    const localInsertKeys: (number | number[])[] = insertKeys ?? [];
     for (let j = 0; j < nodeLength; j++) {
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
         childTotalLength += 1;
@@ -465,12 +465,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
       const childNodeData = nodeData.filteredChildren ? nodeData.filteredChildren[j] : nodeData.children[j];
       const childIndexKey = Array.isArray(indexKey) ? indexKey.concat(j) : [indexKey, j];
       if (currentLevel <= hierarchyExpandLevel || nodeData.hierarchyState === HierarchyState.expand) {
-        this.currentIndexedData.splice(
-          this.currentIndexedData.indexOf(indexKey) + childTotalLength,
-          // childTotalLength,
-          0,
-          childIndexKey
-        );
+        localInsertKeys.push(childIndexKey);
       }
       if (
         childNodeData.filteredChildren ? childNodeData.filteredChildren.length > 0 : childNodeData.children?.length > 0
@@ -495,12 +490,17 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           childIndexKey,
           hierarchyExpandLevel,
           currentLevel + 1,
-          childNodeData
+          childNodeData,
+          localInsertKeys
         );
       }
       if ((childNodeData as any).children === true) {
         !childNodeData.hierarchyState && (childNodeData.hierarchyState = HierarchyState.collapse);
       }
+    }
+    // 仅在最外层调用时做一次性插入（insertKeys 未传入时）
+    if (!insertKeys && localInsertKeys.length > 0) {
+      this.currentIndexedData.push(...localInsertKeys);
     }
     return childTotalLength;
   }
