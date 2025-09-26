@@ -934,7 +934,8 @@ export class EventManager {
               rowValues.push(cell);
             });
           });
-          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values);
+          // 保持与 navigator.clipboard.read 中的操作一致
+          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
           if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
             table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
               col,
