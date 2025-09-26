@@ -2581,7 +2581,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.proxy.release();
 
     internalProps.focusControl.release();
-    const { parentElement } = internalProps.element;
+    const parentElement = internalProps.element?.parentElement;
     if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }
