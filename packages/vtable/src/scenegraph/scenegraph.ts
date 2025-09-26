@@ -79,7 +79,7 @@ import { temporarilyUpdateSelectRectStyle } from './select/update-select-style';
 import type { CheckboxContent } from './component/checkbox-content';
 // import { contextModule } from './context/module';
 
-import { FederatedPointerEvent } from '@src/vrender';
+import type { FederatedPointerEvent } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
