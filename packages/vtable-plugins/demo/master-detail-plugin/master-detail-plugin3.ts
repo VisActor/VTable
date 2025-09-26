@@ -85,7 +85,9 @@ export function createTable() {
   };
 
   const tableInstance = new VTable.ListTable(option);
-
+  // 挂载到全局，方便调试
+  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
+  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   setTimeout(() => {
     tableInstance.toggleHierarchyState(0, 1);
     tableInstance.toggleHierarchyState(0, 5);

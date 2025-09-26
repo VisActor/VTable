@@ -456,6 +456,8 @@ export function createTable() {
 
   // 创建分页控制器
   createPaginationControls(tableInstance, records);
-
+  // 挂载到全局，方便调试
+  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
+  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   return tableInstance;
 }

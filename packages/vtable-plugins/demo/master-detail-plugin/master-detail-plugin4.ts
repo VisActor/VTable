@@ -936,6 +936,8 @@ export function createTable() {
   setTimeout(() => {
     tableInstance.toggleHierarchyState(0, 2);
   }, 100);
-
+  // 挂载到全局，方便调试
+  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
+  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   return tableInstance;
 }
