@@ -38,6 +38,7 @@ export class TaskCreationButton {
         pickable: false,
         stroke: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineColor,
         lineWidth: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineWidth,
+        // lineDash: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineDash,
         points: [
           { x: 50, y: 0 },
           { x: 50, y: 100 }
@@ -48,6 +49,7 @@ export class TaskCreationButton {
         pickable: false,
         stroke: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineColor,
         lineWidth: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineWidth,
+        // lineDash: this._scene._gantt.parsedOptions.taskBarCreationButtonStyle.lineDash,
         points: [
           { x: 0, y: 50 },
           { x: 100, y: 50 }

@@ -83,7 +83,11 @@ export function checkHasCartesianChart(indicatorsDefine: (IIndicator | IChartInd
         columnObj.chartSpec.type !== 'gauge' &&
         columnObj.chartSpec.type !== 'pie' &&
         columnObj.chartSpec.type !== 'funnel' &&
-        columnObj.chartSpec.type !== 'rose'
+        columnObj.chartSpec.type !== 'rose' &&
+        columnObj.chartSpec.type !== 'sunburst' &&
+        columnObj.chartSpec.type !== 'treemap' &&
+        columnObj.chartSpec.type !== 'sankey' &&
+        columnObj.chartSpec.type !== 'circlePacking'
       ) {
         isHasCartesianChart = true;
         break;
@@ -104,7 +108,11 @@ export function isCartesianChart(col: number, row: number, layout: PivotHeaderLa
       chartSpec.type === 'gauge' ||
       chartSpec.type === 'wordCloud' ||
       chartSpec.type === 'funnel' ||
-      chartSpec.type === 'rose'
+      chartSpec.type === 'rose' ||
+      chartSpec.type === 'sunburst' ||
+      chartSpec.type === 'treemap' ||
+      chartSpec.type === 'sankey' ||
+      chartSpec.type === 'circlePacking'
     ) {
       isHasCartesianChart = false;
     }
@@ -133,7 +141,11 @@ export function isHasCartesianChartInline(
           columnObj.chartSpec.type !== 'radar' &&
           columnObj.chartSpec.type !== 'gauge' &&
           columnObj.chartSpec.type !== 'funnel' &&
-          columnObj.chartSpec.type !== 'rose'
+          columnObj.chartSpec.type !== 'rose' &&
+          columnObj.chartSpec.type !== 'sunburst' &&
+          columnObj.chartSpec.type !== 'treemap' &&
+          columnObj.chartSpec.type !== 'sankey' &&
+          columnObj.chartSpec.type !== 'circlePacking'
         ) {
           isHasCartesianChart = true;
           break;
@@ -149,7 +161,11 @@ export function isHasCartesianChartInline(
         chartSpec.type !== 'gauge' &&
         chartSpec.type !== 'wordCloud' &&
         chartSpec.type !== 'funnel' &&
-        chartSpec.type !== 'rose'
+        chartSpec.type !== 'rose' &&
+        chartSpec.type !== 'sunburst' &&
+        chartSpec.type !== 'treemap' &&
+        chartSpec.type !== 'sankey' &&
+        chartSpec.type !== 'circlePacking'
       ) {
         isHasCartesianChart = true;
       }
@@ -171,7 +187,18 @@ export function getChartSpec(col: number, row: number, layout: PivotHeaderLayout
           serie.sortDataByAxis = true;
         });
       }
-      if (chartSpec.type !== 'gauge' && chartSpec.type !== 'rose' && chartSpec.type !== 'radar') {
+      if (
+        chartSpec.type !== 'pie' &&
+        chartSpec.type !== 'radar' &&
+        chartSpec.type !== 'gauge' &&
+        chartSpec.type !== 'wordCloud' &&
+        chartSpec.type !== 'funnel' &&
+        chartSpec.type !== 'rose' &&
+        chartSpec.type !== 'sunburst' &&
+        chartSpec.type !== 'treemap' &&
+        chartSpec.type !== 'sankey' &&
+        chartSpec.type !== 'circlePacking'
+      ) {
         chartSpec.axes = layout.getChartAxes(col, row);
       }
       chartSpec.padding = 0;
@@ -253,26 +280,19 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       // 左侧维度轴
       merge(
         {
-          // domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
           domain: axisOption?.type === 'linear' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          // range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
           range: axisOption?.type === 'linear' && !Array.isArray(domain) ? domain : undefined,
           label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
         },
         axisOption,
         {
-          // type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
           orient: 'left',
-          // visible: true,
           label: { visible: false },
           domainLine: { visible: false },
           tick: { visible: false },
           subTick: { visible: false },
           title: { visible: false }
-          // height: -1,
-          // width: -1
-          // autoIndent: false,
         }
       )
     );
@@ -301,12 +321,22 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       if (hasSameAxis(axisOption, axes)) {
         return;
       }
+      const { chartType } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+      let domain: Array<string> = [];
+      if (chartType === 'heatmap') {
+        //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-axis-config.ts中的getAxisConfigInPivotChart方法处理
+        const rowDimensionKey = layout.getDimensionKeyInChartSpec(layout.rowHeaderLevelCount, row, 'yField');
+        const data = layout.dataset.collectedValues[rowDimensionKey] ?? ([] as string[]);
 
+        const rowPath = layout.getRowKeysPath(col, row);
+        domain = ((data as any)?.[rowPath ?? ''] as Array<string>) ?? [];
+      }
       axes.push(
         merge(
           {
             range,
-            label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
+            label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } },
+            domain: axisOption?.type === 'linear' ? undefined : Array.from(domain)
           },
           axisOption,
           {
@@ -321,7 +351,8 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
             // width: -1,
             // grid: index === 0 ? undefined : { visible: false }
             tick: {
-              tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
+              tickMode: getTickModeFunction(targetTicks, targetRange, range, index),
+              visible: false // 轴刻度不显示
             },
             sync: { axisId: NO_AXISID_FRO_VTABLE } // hack for fs
           }
@@ -345,15 +376,12 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
       // 底部维度轴
       merge(
         {
-          // domain: chartType === 'scatter' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
           domain: axisOption?.type === 'linear' && !Array.isArray(domain) ? undefined : Array.from(domain ?? []),
-          // range: chartType === 'scatter' && !Array.isArray(domain) ? domain : undefined,
           range: axisOption?.type === 'linear' && !Array.isArray(domain) ? domain : undefined,
           label: { style: { fontSize: DEFAULT_TEXT_FONT_SIZE } }
         },
         axisOption,
         {
-          // type: chartType === 'scatter' && !Array.isArray(domain) ? axisOption?.type ?? 'linear' : 'band',
           type: axisOption?.type ?? 'band',
           orient: 'bottom',
           visible: true,
@@ -362,8 +390,6 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
           tick: { visible: false },
           subTick: { visible: false },
           title: { visible: false }
-          // height: -1
-          // autoIndent: false,
         }
       )
     );

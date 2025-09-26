@@ -457,7 +457,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         if (Env.mode === 'node') {
           return that.canvasWidth / (pixelRatio ?? 1);
         }
-        return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
+        return (
+          this._.canvas.width /
+          ((this._.context as any).pixelRatio ?? that.internalProps.pixelRatio ?? window.devicePixelRatio)
+        );
       }
       // get em(): number {
       //   return getFontSize(this._.context, this._.theme.font).width;
@@ -1107,6 +1110,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   setPixelRatio(pixelRatio: number) {
     if (pixelRatio !== this.internalProps?.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
+      const that = this;
       const canvasWidth = this.canvasWidth;
       this.internalProps.calcWidthContext = {
         _: this.internalProps,
@@ -1114,7 +1118,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           if (Env.mode === 'node') {
             return canvasWidth / (pixelRatio ?? 1);
           }
-          return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
+          return (
+            this._.canvas.width /
+            ((this._.context as any).pixelRatio ?? that.internalProps.pixelRatio ?? window.devicePixelRatio)
+          );
         }
       };
       this.scenegraph.setPixelRatio(pixelRatio);
@@ -2574,7 +2581,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.proxy.release();
 
     internalProps.focusControl.release();
-    const { parentElement } = internalProps.element;
+    const parentElement = internalProps.element?.parentElement;
     if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }

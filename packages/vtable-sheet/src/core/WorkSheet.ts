@@ -325,7 +325,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     const selectionChangedEvent: SelectionChangedEvent = {
       row: event.row,
       col: event.col,
-      value: event.value,
       ranges: event.ranges,
       cells: event.cells,
       originalEvent: event.originalEvent
@@ -351,6 +350,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     }
     // 保持原始事件结构，同时确保类型符合定义
     const selectionEndEvent: SelectionChangedEvent = {
+      row: event.row,
+      col: event.col,
       ranges: event.ranges,
       cells: event.cells,
       originalEvent: event.originalEvent

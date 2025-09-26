@@ -953,9 +953,14 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         if (
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'pie' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'rose' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'funnel' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'radar' ||
           (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'gauge' ||
-          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'wordCloud'
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'wordCloud' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'sunburst' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'treemap' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'sankey' ||
+          (indicators[i] as IChartColumnIndicator).chartSpec?.type === 'circlePacking'
         ) {
           continue;
         }
@@ -968,19 +973,23 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
             (indicatorSpec.stack = true);
           // 收集指标值的范围
-          collectValuesBy[indicatorDefine.indicatorKey] = {
-            by: rowKeys,
-            range: true,
-            // 判断是否需要匹配维度值相同的进行求和计算
-            sumBy: indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
-          };
+          if (indicatorSpec?.type !== 'heatmap') {
+            collectValuesBy[indicatorDefine.indicatorKey] = {
+              by: rowKeys,
+              range: true,
+              // 判断是否需要匹配维度值相同的进行求和计算
+              sumBy:
+                indicatorSpec.type === 'histogram'
+                  ? columnKeys.concat(indicatorSpec?.xField, indicatorSpec?.x2Field)
+                  : indicatorSpec?.stack && columnKeys.concat(indicatorSpec?.xField)
+            };
+          }
           if (indicatorSpec.series) {
             indicatorSpec.series.forEach((chartSeries: any) => {
               const xField = typeof chartSeries.xField === 'string' ? chartSeries.xField : chartSeries.xField[0];
               collectValuesBy[xField] = {
                 by: columnKeys,
                 type: chartSeries.direction !== 'horizontal' ? 'xField' : undefined,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction === 'horizontal',
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', true),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
@@ -994,7 +1003,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[yField] = {
                 by: rowKeys,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction !== 'horizontal', // direction默认为'vertical'
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', false),
                 sumBy: chartSeries.stack && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
                 sortBy:
@@ -1005,11 +1013,15 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               };
             });
           } else {
-            const xField = typeof indicatorSpec.xField === 'string' ? indicatorSpec.xField : indicatorSpec.xField[0];
+            const xField =
+              indicatorSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+                ? indicatorSpec.x2Field
+                : typeof indicatorSpec.xField === 'string'
+                ? indicatorSpec.xField
+                : indicatorSpec.xField[0];
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction !== 'horizontal' ? 'xField' : undefined,
-              // range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal',
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
               sortBy:
                 indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined
@@ -1022,8 +1034,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             const yField = indicatorSpec.yField;
             collectValuesBy[yField] = {
               by: rowKeys,
-              range: indicatorSpec.direction !== 'horizontal', // direction默认为'vertical'
-              sumBy: indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
+              type: indicatorSpec.direction !== 'horizontal' ? 'yField' : undefined,
+              range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false), //indicatorSpec.direction !== 'horizontal', // direction默认为'vertical'
+              sumBy:
+                indicatorSpec.type === 'histogram'
+                  ? columnKeys.concat(indicatorSpec?.xField, indicatorSpec?.x2Field)
+                  : indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined,
               extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
@@ -1036,19 +1052,20 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
             (indicatorSpec.stack = true);
           // 收集指标值的范围
-          collectValuesBy[indicatorDefine.indicatorKey] = {
-            by: columnKeys,
-            range: true,
-            // 判断是否需要匹配维度值相同的进行求和计算
-            sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
-          };
+          if (indicatorSpec?.type !== 'heatmap') {
+            collectValuesBy[indicatorDefine.indicatorKey] = {
+              by: columnKeys,
+              range: true,
+              // 判断是否需要匹配维度值相同的进行求和计算
+              sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
+            };
+          }
           if (indicatorSpec.series) {
             indicatorSpec.series.forEach((chartSeries: any) => {
               const yField = typeof chartSeries.yField === 'string' ? chartSeries.yField : chartSeries.yField[0];
               collectValuesBy[yField] = {
                 by: rowKeys,
                 type: chartSeries.direction === 'horizontal' ? 'yField' : undefined,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction !== 'horizontal',
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', false),
                 sortBy:
                   chartSeries.direction === 'horizontal'
@@ -1062,7 +1079,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 (chartSeries.stack = true); //明确指定 chartSpec.stack为true
               collectValuesBy[xField] = {
                 by: columnKeys,
-                // range: chartSeries.type === 'scatter' ? true : chartSeries.direction === 'horizontal', // direction默认为'vertical'
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', true),
                 sumBy: chartSeries.stack && rowKeys.concat(chartSeries?.yField),
                 sortBy:
@@ -1077,7 +1093,6 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             collectValuesBy[yField] = {
               by: rowKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'yField' : undefined,
-              // range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction !== 'horizontal',
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', false),
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined
@@ -1086,11 +1101,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             indicatorSpec?.stack !== false &&
               (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
               (indicatorSpec.stack = true);
-            //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-            const xField = indicatorSpec.xField;
+            //下面这个收集的值 是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同(heatmap情况除外)
+            //特殊处理histogram直方图xField和x2Field
+            const xField = indicatorSpec.type === 'histogram' ? indicatorSpec.x2Field : indicatorSpec.xField;
             collectValuesBy[xField] = {
               by: columnKeys,
-              // range: indicatorSpec.type === 'scatter' ? true : indicatorSpec.direction === 'horizontal', // direction默认为'vertical'
+              type: indicatorSpec.direction === 'horizontal' ? 'xField' : undefined,
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
               sumBy: indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
               sortBy:
@@ -1210,6 +1226,42 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
 
   /** 更新数据过滤规则，适用场景：点击图例项后 更新过滤规则 来更新图表 */
   updateFilterRules(filterRules: FilterRules) {
+    // 使用节流函数包装实际的更新逻辑
+    this._throttledUpdateFilterRules(filterRules);
+  }
+
+  //#region  节流相关变量
+  private _throttleTimer: number | null = null;
+  private _latestFilterRules: FilterRules | null = null;
+
+  /**
+   * 实际执行过滤规则更新的节流方法
+   * @private
+   */
+  private _throttledUpdateFilterRules(filterRules: FilterRules): void {
+    // 始终保存最新的过滤规则
+    this._latestFilterRules = filterRules;
+
+    // 如果没有定时器在运行，立即执行一次更新
+    if (this._throttleTimer === null) {
+      this._executeFilterUpdate(filterRules);
+
+      // 设置节流定时器
+      this._throttleTimer = window.setTimeout(() => {
+        // 定时器结束时，如果有新的过滤规则，再次执行更新
+        if (this._latestFilterRules !== filterRules) {
+          this._executeFilterUpdate(this._latestFilterRules as FilterRules);
+        }
+        this._throttleTimer = null;
+      }, 200);
+    }
+  }
+  //#endregion
+  /**
+   * 执行实际的过滤规则更新操作
+   * @private
+   */
+  private _executeFilterUpdate(filterRules: FilterRules): void {
     this.internalProps.dataConfig.filterRules = filterRules;
     this.dataset.updateFilterRules(filterRules);
     clearChartCacheImage(this.scenegraph);
