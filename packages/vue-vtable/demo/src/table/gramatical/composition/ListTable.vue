@@ -1,7 +1,7 @@
-<template>
+	<template>
   <vue-list-table :options="tableOptions" :records="records" :keep-column-width-change="keepColumnWidthChange"
     @on-dropdown-menu-click="handleDropdownMenuClick" @on-mouse-enter-cell="handleMouseEnterCell"
-    @on-selected-clear="handleSelectedClear">
+    @on-selected-clear="handleSelectedClear" @on-click-cell="handleSelectCell" ref="tableRef">
     <ListColumn key="0" field="0" title="名字" max-width="300" :drag-header="true" />
     <ListColumn key="1" field="1" title="年龄" max-width="300" :drag-header="true" />
     <ListColumn key="2" field="2" title="性别" max-width="300" :drag-header="true" />
@@ -20,7 +20,7 @@ const records = ref([
   ['王五', 22, '男', '羽毛球'],
   ['赵六', 24, '女', '乒乓球']
 ]);
-
+const tableRef = ref()
 const tableOptions = ref({
   columns: [
     {
@@ -52,6 +52,13 @@ const tableOptions = ref({
   ],
   menu: {
     contextMenuItems: ['copy', 'paste', 'delete', '...']
+  },
+  keyboardOptions:{
+    ctrlMultiSelect: false,
+    shiftMultiSelect: false,
+  },
+  select: {
+    ignoreCtrlForSelectCells: true
   }
 });
 
@@ -66,7 +73,10 @@ window.update = () => {
     ['赵六1', 24, '女', '乒乓球']
   ];
 };
-
+const handleSelectCell = (args) => {
+  console.log(args,'args',tableRef)
+  // tableRef.value.vTableInstance.selectCells([ { start: { col: 1, row: 3 }, end: { col: 4, row: 6 } },  { start: { col: 0, row: 4 }, end: { col: 7, row: 4 } }])
+}
 // 定义 handleDropdownMenuClick 方法
 const handleDropdownMenuClick = args => {
   console.log('menu click', tableOptions.value);
@@ -75,10 +85,10 @@ const handleDropdownMenuClick = args => {
 
 // 定义 handleMouseEnterCell 方法
 const handleMouseEnterCell = args => {
-  console.log('mouse enter cell', args);
+  // console.log('mouse enter cell', args);
 };
 // 定义 handleSelectedClear 方法
 const handleSelectedClear = args => {
-  alert('selected clear');
+  // alert('selected clear');
 };
 </script>

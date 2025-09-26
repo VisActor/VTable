@@ -274,12 +274,13 @@ export class EventManager {
         this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
-
+      const shiftMultiSelect = this.table.keyboardOptions?.shiftMultiSelect ?? true;
+      const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
       this.table.stateManager.updateSelectPos(
         this.table.stateManager.select.selectInline === 'row' ? this.table.colCount - 1 : eventArgs.col,
         this.table.stateManager.select.selectInline === 'col' ? this.table.rowCount - 1 : eventArgs.row,
-        eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+        eventArgs.event.shiftKey && shiftMultiSelect,
+        (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
         false,
         isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
@@ -333,21 +334,24 @@ export class EventManager {
             updateCol = eventArgs.col;
           }
         }
+        const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
 
         this.table.stateManager.updateSelectPos(
           isSelectMoving ? updateCol : currentRange.end.col,
           isSelectMoving ? updateRow : currentRange.end.row,
           true,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
           false,
           !isSelectMoving
         );
       } else {
+        const shiftMultiSelect = this.table.keyboardOptions?.shiftMultiSelect ?? true;
+        const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
         this.table.stateManager.updateSelectPos(
           eventArgs.col,
           eventArgs.row,
-          eventArgs.event.shiftKey,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          eventArgs.event.shiftKey && shiftMultiSelect,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
           false,
           !isSelectMoving
         );

@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "feat: support detailPath when pick vchart to add detectPickChartItem config\n\n",
+      "comment": "fix: row change order not work with pagination\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "lixuef1313@163.com"
+  "email": "892739385@qq.com"
 }
