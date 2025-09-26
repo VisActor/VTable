@@ -105,6 +105,7 @@ export function createChartCellGroup(
       data: table.getCellValue(col, row) || [],
       cellPadding: padding,
       dpr: table.internalProps.pixelRatio,
+      detectPickChartItem: table.options.customConfig?.detectPickChartItem,
       // viewBox: {
       //   x1: Math.ceil(cellGroup.globalAABBBounds.x1 + padding[3] + table.scrollLeft),
       //   x2: Math.ceil(cellGroup.globalAABBBounds.x1 + width - padding[1] + table.scrollLeft),
