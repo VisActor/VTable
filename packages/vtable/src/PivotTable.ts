@@ -2284,7 +2284,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
-    this.editorManager.release();
+    this.editorManager?.release();
     super.release();
   }
 }
