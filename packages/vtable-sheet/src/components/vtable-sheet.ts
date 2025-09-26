@@ -15,6 +15,7 @@ import { CellHighlightManager } from '../formula/cell-highlight-manager';
 import type { TYPES } from '@visactor/vtable';
 import { MenuManager } from '../managers/menu-manager';
 import { FormulaUIManager } from '../formula/formula-ui-manager';
+import { SheetTabEventHandler } from './sheet-tab-event-handler';
 
 // 注册公式编辑器
 VTable.register.editor('formula', formulaEditor);
@@ -51,6 +52,8 @@ export default class VTableSheet {
 
   // tab拖拽管理器
   private dragManager: SheetTabDragManager;
+  /** sheet标签事件处理器 */
+  private sheetTabEventHandler: SheetTabEventHandler;
 
   /**
    * 构造函数
@@ -67,6 +70,7 @@ export default class VTableSheet {
     this.dragManager = new SheetTabDragManager(this);
     this.menuManager = new MenuManager(this);
     this.formulaUIManager = new FormulaUIManager(this);
+    this.sheetTabEventHandler = new SheetTabEventHandler(this);
 
     // 初始化UI
     this.initUI();
@@ -180,7 +184,9 @@ export default class VTableSheet {
     // 创建中间的tabs容器
     const tabsContainer = document.createElement('div');
     tabsContainer.className = 'vtable-sheet-tabs-container';
-    tabsContainer.addEventListener('scroll', () => this.updateFadeEffects(tabsContainer, fadeLeft, fadeRight));
+    tabsContainer.addEventListener('scroll', () =>
+      this.sheetTabEventHandler.updateFadeEffects(tabsContainer, fadeLeft, fadeRight)
+    );
     sheetTab.appendChild(tabsContainer);
 
     // 创建插入指示器
@@ -211,7 +217,7 @@ export default class VTableSheet {
     leftScrollBtn.className = 'vtable-sheet-scroll-button';
     leftScrollBtn.innerHTML = leftIcon;
     leftScrollBtn.title = '向左滚动';
-    leftScrollBtn.addEventListener('click', () => this.scrollSheetTabs('left', tabsContainer));
+    leftScrollBtn.addEventListener('click', () => this.sheetTabEventHandler.scrollSheetTabs('left', tabsContainer));
     navButtons.appendChild(leftScrollBtn);
 
     // 创建右侧滚动按钮
@@ -219,7 +225,7 @@ export default class VTableSheet {
     rightScrollBtn.className = 'vtable-sheet-scroll-button';
     rightScrollBtn.innerHTML = rightIcon;
     rightScrollBtn.title = '向右滚动';
-    rightScrollBtn.addEventListener('click', () => this.scrollSheetTabs('right', tabsContainer));
+    rightScrollBtn.addEventListener('click', () => this.sheetTabEventHandler.scrollSheetTabs('right', tabsContainer));
     navButtons.appendChild(rightScrollBtn);
 
     // 创建sheet菜单按钮
@@ -227,7 +233,7 @@ export default class VTableSheet {
     menuButton.className = 'vtable-sheet-menu-button';
     menuButton.innerHTML = menuIcon;
     menuButton.title = '工作表选项';
-    menuButton.addEventListener('click', e => this.toggleSheetMenu(e));
+    menuButton.addEventListener('click', e => this.sheetTabEventHandler.toggleSheetMenu(e));
     navButtons.appendChild(menuButton);
 
     // 创建菜单容器
@@ -238,84 +244,17 @@ export default class VTableSheet {
     sheetTab.appendChild(navButtons);
     // 初始化渐变效果
     setTimeout(() => {
-      this.updateFadeEffects(tabsContainer, fadeLeft, fadeRight);
+      this.sheetTabEventHandler.updateFadeEffects(tabsContainer, fadeLeft, fadeRight);
     }, 100);
 
     return sheetTab;
   }
 
   /**
-   * 显示工作表菜单
-   */
-
-  private toggleSheetMenu(event: MouseEvent): void {
-    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
-    menuContainer.classList.toggle('active');
-  }
-
-  /**
-   * 更新渐变效果
-   * @param tabsContainer 标签容器
-   * @param fadeLeft 左侧渐变效果
-   * @param fadeRight 右侧渐变效果
-   */
-  private updateFadeEffects(tabsContainer: HTMLElement, fadeLeft: HTMLElement, fadeRight: HTMLElement): void {
-    // 显示/隐藏左侧渐变
-    if (tabsContainer.scrollLeft > 10) {
-      fadeLeft.style.display = 'block';
-    } else {
-      fadeLeft.style.display = 'none';
-    }
-
-    // 显示/隐藏右侧渐变
-    const maxScroll = tabsContainer.scrollWidth - tabsContainer.clientWidth;
-    if (tabsContainer.scrollLeft < maxScroll - 10) {
-      fadeRight.style.display = 'block';
-    } else {
-      fadeRight.style.display = 'none';
-    }
-  }
-
-  /**
-   * 滚动sheet标签
-   * @param direction 滚动方向
-   * @param tabsContainer 标签容器
-   */
-  private scrollSheetTabs(direction: 'left' | 'right', tabsContainer: HTMLElement): void {
-    const scrollAmount = 200; // 每次滚动的像素数
-    const currentScroll = tabsContainer.scrollLeft;
-
-    if (direction === 'left') {
-      tabsContainer.scrollTo({
-        left: Math.max(0, currentScroll - scrollAmount),
-        behavior: 'smooth'
-      });
-    } else {
-      tabsContainer.scrollTo({
-        left: currentScroll + scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  }
-  /**
    * 激活sheet标签并滚动到可见区域
    */
   private _activeSheetTab(): void {
-    const tabs = this.sheetTabElement?.querySelectorAll('.vtable-sheet-tab') as NodeListOf<HTMLElement>;
-    let activeTab: HTMLElement | null = null;
-    tabs.forEach(tab => {
-      tab.classList.remove('active');
-      if (tab.dataset.key === this.activeWorkSheet?.getKey()) {
-        tab.classList.add('active');
-        activeTab = tab;
-      }
-    });
-    // 确保激活的标签可见
-    setTimeout(() => {
-      if (activeTab) {
-        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 100);
+    this.sheetTabEventHandler.activeSheetTab();
   }
   /**
    * 更新sheet切换标签
@@ -350,176 +289,20 @@ export default class VTableSheet {
     tab.textContent = sheet.sheetTitle;
     tab.title = sheet.sheetTitle;
     tab.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
-    tab.addEventListener('dblclick', () => this.handleSheetTabDblClick(sheet.sheetKey, sheet.sheetTitle));
+    tab.addEventListener('dblclick', () =>
+      this.sheetTabEventHandler.handleSheetTabDblClick(sheet.sheetKey, sheet.sheetTitle)
+    );
     // 拖拽事件
     tab.addEventListener('mousedown', e => this.dragManager.handleTabMouseDown(e, sheet.sheetKey));
 
     return tab;
-  }
-  /**
-   * 处理sheet标签双击事件
-   * 双击sheet标签后，将标签设为可编辑状态。输入完成后进行重命名。
-   * @param sheetKey 工作表key
-   * @param originalTitle 原始名称
-   */
-  private handleSheetTabDblClick(sheetKey: string, originalTitle: string): void {
-    const targetTab = this.getSheetTabElementByKey(sheetKey);
-    if (!targetTab) {
-      return;
-    }
-    // 将原文本节点设为可编辑
-    targetTab.setAttribute('contenteditable', 'true');
-    targetTab.setAttribute('spellcheck', 'false');
-    targetTab.classList.add('editing'); // 添加编辑状态样式
-    // 选中所有文本
-    const range = document.createRange();
-    range.selectNodeContents(targetTab);
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-
-    const onBlur = () => {
-      finishInput(true);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      e.stopPropagation();
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        finishInput(true);
-      } else if (e.key === 'Escape') {
-        finishInput(false);
-      }
-    };
-    const finishInput = (commit: boolean) => {
-      targetTab.removeEventListener('blur', onBlur);
-      targetTab.removeEventListener('keydown', onKeyDown);
-      targetTab.classList.remove('editing');
-      targetTab.setAttribute('contenteditable', 'false');
-      const newTitle = targetTab.textContent?.trim();
-      if (!commit || newTitle === originalTitle || !this.renameSheet(sheetKey, newTitle)) {
-        targetTab.textContent = originalTitle;
-        return;
-      }
-    };
-    targetTab.addEventListener('blur', onBlur);
-    targetTab.addEventListener('keydown', onKeyDown);
-  }
-
-  /**
-   * 重命名sheet
-   * @param sheetKey 工作表key
-   * @param newTitle 新名称
-   * @returns 是否成功
-   */
-  private renameSheet(sheetKey: string, newTitle: string): boolean {
-    const sheet = this.sheetManager.getSheet(sheetKey);
-    if (!sheet) {
-      return false;
-    }
-    const error = checkTabTitle(newTitle);
-    if (error) {
-      showSnackbar(error, 1300);
-      return false;
-    }
-    const isExist = this.sheetManager.getAllSheets().find(s => s.sheetKey !== sheetKey && s.sheetTitle === newTitle);
-    if (isExist) {
-      showSnackbar('工作表名称已存在，请重新输入', 1300);
-      return false;
-    }
-    this.sheetManager.renameSheet(sheetKey, newTitle);
-    this.workSheetInstances.get(sheetKey)?.setTitle(newTitle);
-    this.updateSheetTabs();
-    this.updateSheetMenu();
-    return true;
-  }
-
-  /**
-   * 获取指定sheetKey的标签元素
-   */
-  private getSheetTabElementByKey(sheetKey: string): HTMLElement | null {
-    const tabsContainer = this.sheetTabElement?.querySelector('.vtable-sheet-tabs-container') as HTMLElement;
-    return tabsContainer?.querySelector(`.vtable-sheet-tab[data-key="${sheetKey}"]`) as HTMLElement;
   }
 
   /**
    * 更新sheet列表
    */
   updateSheetMenu(): void {
-    const menuContainer = this.sheetTabElement?.querySelector('.vtable-sheet-menu-list') as HTMLElement;
-    menuContainer.innerHTML = '';
-    const sheets = this.sheetManager.getAllSheets();
-    sheets.forEach(sheet => {
-      // li
-      const li = document.createElement('li');
-      li.className = 'vtable-sheet-menu-item';
-      li.dataset.key = sheet.sheetKey;
-      // title
-      const title = document.createElement('span');
-      title.className = 'vtable-sheet-menu-item-title';
-      title.innerText = sheet.sheetTitle;
-      li.appendChild(title);
-      // delete button
-      const div = document.createElement('div');
-      div.className = 'vtable-sheet-menu-delete-button';
-      div.innerHTML =
-        '<svg class="x-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-        '<path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '</svg>';
-      div.addEventListener('click', e => {
-        e.stopPropagation();
-        this.removeSheet(sheet.sheetKey);
-      });
-      li.addEventListener('click', () => this.activateSheet(sheet.sheetKey));
-      li.appendChild(div);
-      menuContainer.appendChild(li);
-    });
-    this.activeSheetMenuItem();
-    // 确保激活的标签可见
-    setTimeout(() => {
-      const activeItem = menuContainer.querySelector('.vtable-sheet-main-menu-item.active');
-      if (activeItem) {
-        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 100);
-  }
-
-  /**
-   * 激活sheet菜单项并滚动到可见区域
-   */
-  private activeSheetMenuItem(): void {
-    const menuItems = this.sheetTabElement?.querySelectorAll('.vtable-sheet-main-menu-item') as NodeListOf<HTMLElement>;
-    let activeItem: HTMLElement | null = null;
-    menuItems.forEach(item => {
-      item.classList.remove('active');
-      if (item.dataset.key === this.activeWorkSheet?.getKey()) {
-        item.classList.add('active');
-        activeItem = item;
-      }
-    });
-    setTimeout(() => {
-      if (activeItem) {
-        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }, 100);
-  }
-
-  /**
-   * 滚动以确保标签可见
-   * @param tab 标签
-   * @param container 容器
-   */
-  private scrollTabIntoView(tab: HTMLElement, container: HTMLElement): void {
-    const tabRect = tab.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-
-    if (tabRect.left < containerRect.left) {
-      // 标签在可见区域左侧
-      container.scrollLeft += tabRect.left - containerRect.left - 10;
-    } else if (tabRect.right > containerRect.right) {
-      // 标签在可见区域右侧
-      container.scrollLeft += tabRect.right - containerRect.right + 10;
-    }
+    this.sheetTabEventHandler.updateSheetMenu();
   }
 
   /**
@@ -579,7 +362,7 @@ export default class VTableSheet {
 
       // sheet标签和菜单项激活样式
       this._activeSheetTab();
-      this.activeSheetMenuItem();
+      this.sheetTabEventHandler.activeSheetMenuItem();
 
       // 恢复筛选状态
       this.restoreFilterState(instance, sheetDefine);
@@ -1004,6 +787,8 @@ export default class VTableSheet {
     this.eventManager.release();
     this.formulaManager.release();
     this.formulaUIManager.release();
+    // 移除点击外部监听器
+    this.sheetTabEventHandler.removeClickOutsideListener();
     // 销毁所有sheet实例
     this.workSheetInstances.forEach(instance => {
       instance.release();

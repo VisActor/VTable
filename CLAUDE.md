@@ -107,3 +107,4 @@ The library is built on a canvas-based rendering system using VRender:
 - Current branch: `feat/vtable-sheet` (spreadsheet functionality)
 - Main branches: `main`, `develop`
 - Node.js versions supported: 14.15.0+, 16.13.0+, 18.15.0+
+- to memorize

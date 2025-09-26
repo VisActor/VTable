@@ -123,6 +123,8 @@ export interface CellValueChangedEvent {
  * ```
  */
 export interface SelectionChangedEvent {
+  row: number;
+  col: number;
   /** 选择区域 */
   ranges?: Array<{
     start: {
