@@ -30,6 +30,7 @@ export class ConfigManager {
     // 确保滚动事件始终触发，用于子表位置同步
     options.customConfig.scrollEventAlwaysTrigger = true;
     const originalCustomComputeRowHeight = options.customComputeRowHeight;
+    // 这个customComputeRowHeight是为了处理虚拟行的问题，让他的高度始终为0
     options.customComputeRowHeight = params => {
       const { row, table } = params;
       if (this.isVirtualRow(row)) {
@@ -121,6 +122,16 @@ export class ConfigManager {
   }
 
   /**
+   * 获取数据数量
+   */
+  private getDataCount(): number {
+    if (this.table.pagination) {
+      return this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
+    }
+    return this.table.dataSource?.sourceLength ?? 0;
+  }
+
+  /**
    * 添加虚拟行
    * 在表格底部添加一行虚拟行，用于展开子表时处理setBodyAndRowHeaderY的lastBodyCell.attribute.height的问题
    */
@@ -130,13 +141,7 @@ export class ConfigManager {
       return;
     }
 
-    // 获取数据数量
-    let dataCount = 0;
-    if (this.table.pagination) {
-      dataCount = this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
-    } else {
-      dataCount = this.table.dataSource?.sourceLength ?? 0;
-    }
+    const dataCount = this.getDataCount();
     if (dataCount > 0) {
       const virtualRowsCount = 1;
       const originalRowCount = this.table.rowCount;
@@ -154,13 +159,7 @@ export class ConfigManager {
     }
 
     const headerLevelCount = layoutMap.headerLevelCount;
-    // 获取数据数量（分页情况下取当前页数据，非分页情况下取全部数据）
-    let dataCount = 0;
-    if (this.table.pagination) {
-      dataCount = this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
-    } else {
-      dataCount = this.table.dataSource?.sourceLength ?? 0;
-    }
+    const dataCount = this.getDataCount();
     if (dataCount === 0) {
       return false;
     }
@@ -171,7 +170,6 @@ export class ConfigManager {
 
   /**
    * 禁用VTable的_refreshHierarchyState方法
-   * 在主从表场景下，我们需要自己控制层级状态，避免VTable的自动刷新机制干扰
    */
   private disableRefreshHierarchyState(): void {
     // 延迟执行，确保表格已经创建完成

@@ -2,7 +2,6 @@
 // 包含行序号、主从表插件、支持移动行/列/调整宽高等交互功能
 // limitMinHeight,limitMinWidth
 import * as VTable from '@visactor/vtable';
-import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { MasterDetailPlugin } from '../../src';
 
 const CONTAINER_ID = 'vTable';
@@ -163,22 +162,11 @@ export function createTable() {
 
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID) as HTMLElement, option);
 
-  // 挂到全局便于调试
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).tableInstance = tableInstance;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).masterDetailPlugin = masterDetailPlugin;
-
-  // 绑定调试工具
-  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
-
   // 展开一些行来展示子表
   setTimeout(() => {
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(1); // 展开第一行（序号1）
-      masterDetailPlugin.expandRow(6); // 展开第六行（序号6）
-      masterDetailPlugin.expandRow(11); // 展开第十一行（序号11）
-    }
+    tableInstance.toggleHierarchyState(1, 1);
+    tableInstance.toggleHierarchyState(1, 6);
+    tableInstance.toggleHierarchyState(1, 11);
   }, 100);
 
   return tableInstance;

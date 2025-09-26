@@ -2,7 +2,6 @@
 
 import * as VTable from '@visactor/vtable';
 import VChart from '@visactor/vchart';
-import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { MasterDetailPlugin } from '../../src';
 
 const CONTAINER_ID = 'vTable';
@@ -934,23 +933,8 @@ export function createTable() {
 
   const tableInstance = new VTable.ListTable(option);
 
-  // 挂到全局便于调试
-  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
-  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
-
-  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
-
-  // 按钮点击事件示例：弹窗显示事件类型与位置
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.BUTTON_CLICK, e => {
-    // eslint-disable-next-line no-alert
-    alert(`${VTable.ListTable.EVENT_TYPE.BUTTON_CLICK}, ${e.col}, ${e.row}`);
-  });
-
   setTimeout(() => {
-    // 展开第0行（表头后的第一行数据）
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(2);
-    }
+    tableInstance.toggleHierarchyState(0, 2);
   }, 100);
 
   return tableInstance;

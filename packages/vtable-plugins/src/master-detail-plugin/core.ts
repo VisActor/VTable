@@ -37,7 +37,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = pluginOptions;
   }
-
   run(...args: unknown[]): boolean | void {
     const eventArgs = args[0];
     const runTime = args[1];
@@ -94,7 +93,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.subTableManager.setCallbacks({
       getDetailConfigForRecord: (record, bodyRowIndex) =>
         this.configManager.getDetailConfigForRecord(record, bodyRowIndex),
-      redrawAllUnderlines: () => this.redrawAllUnderlines()
+      redrawAllUnderlines: () => this.redrawAllUnderlines(),
+      clearMainTableSelection: () => this.clearMainTableSelection()
     });
   }
 
@@ -106,10 +106,26 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.initInternalProps();
     // 绑定事件处理器
     this.eventManager.bindEventHandlers();
+    // 设置统一选择状态管理
+    this.setupUnifiedSelectionManagement();
     // 扩展表格 API
     this.extendTableAPI();
     // 初始化checkbox联动功能
     this.initCheckboxCascade();
+  }
+
+  // 主表点击事件处理器引用
+  private mainTableClickHandler?: () => void;
+
+  /**
+   * 设置统一选中状态管理
+   */
+  private setupUnifiedSelectionManagement(): void {
+    // 绑定主表的点击事件，清除所有子表选中状态
+    this.mainTableClickHandler = () => {
+      this.clearAllSubTableVisibleSelections();
+    };
+    this.table.on('click_cell', this.mainTableClickHandler);
   }
 
   /**
@@ -142,8 +158,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private extendTableAPI(): void {
     // 创建 TableAPIExtensions 实例
     this.tableAPIExtensions = new TableAPIExtensions(this.table, this.configManager, this.eventManager, {
-      addUnderlineToCell: (cellGroup: Group, originalHeight: number) =>
-        this.addUnderlineToCell(cellGroup, originalHeight),
+      addUnderlineToCell: (cellGroup: Group) => this.addUnderlineToCell(cellGroup),
       updateOriginalHeightsAfterAdaptive: (
         expandedRowsInfo: Map<number, { baseHeight: number; detailHeight: number }>
       ) => this.updateOriginalHeightsAfterAdaptive(expandedRowsInfo),
@@ -249,7 +264,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       undefined,
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
-    this.drawUnderlineForRow(rowIndex, originalHeight);
+    this.drawUnderlineForRow(rowIndex);
     this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
@@ -388,7 +403,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 为指定行绘制下划线
    */
-  private drawUnderlineForRow(rowIndex: number, originalHeight: number): void {
+  private drawUnderlineForRow(rowIndex: number): void {
     const sceneGraph = this.table.scenegraph;
     if (!sceneGraph) {
       return;
@@ -400,7 +415,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     }
     rowCells.forEach((cellGroup: Group, index: number) => {
       if (cellGroup && cellGroup.attribute) {
-        this.addUnderlineToCell(cellGroup, originalHeight);
+        this.addUnderlineToCell(cellGroup);
       }
     });
     // 触发重新渲染
@@ -424,7 +439,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 为cell添加下划线
    */
-  private addUnderlineToCell(cellGroup: any, originalHeight: number): void {
+  private addUnderlineToCell(cellGroup: any): void {
     const currentAttr = cellGroup.attribute;
     const currentStrokeArrayWidth =
       currentAttr.strokeArrayWidth ||
@@ -503,7 +518,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
       if (originalHeight > 0) {
         this.removeUnderlineFromRow(rowIndex);
-        this.drawUnderlineForRow(rowIndex, originalHeight);
+        this.drawUnderlineForRow(rowIndex);
       }
     });
   }
@@ -596,9 +611,35 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
+   * 清除所有子表的可见选中状态
+   */
+  private clearAllSubTableVisibleSelections(): void {
+    const internalProps = getInternalProps(this.table);
+    internalProps.subTableInstances?.forEach(subTable => {
+      if (subTable && typeof (subTable as { clearSelected?: () => void }).clearSelected === 'function') {
+        (subTable as { clearSelected: () => void }).clearSelected();
+      }
+    });
+  }
+
+  /**
+   * 清除主表选中状态
+   */
+  private clearMainTableSelection(): void {
+    if (typeof (this.table as { clearSelected?: () => void }).clearSelected === 'function') {
+      (this.table as { clearSelected: () => void }).clearSelected();
+    }
+  }
+
+  /**
    * 清理主从表功能
    */
   private cleanupMasterDetailFeatures(): void {
+    // 清理主表事件处理器
+    if (this.mainTableClickHandler) {
+      this.table.off('click_cell', this.mainTableClickHandler);
+      this.mainTableClickHandler = undefined;
+    }
     // 清理表格 API 扩展
     if (this.tableAPIExtensions) {
       this.tableAPIExtensions.cleanup();

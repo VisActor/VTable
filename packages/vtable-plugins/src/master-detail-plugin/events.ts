@@ -357,28 +357,27 @@ export class EventManager {
         return;
       }
 
-      const { source, target } = args;
+      // 直接从columnMove状态获取原始的移动参数
+      const columnMoveState = this.table.stateManager?.columnMove;
+      const { colSource, rowSource, colTarget, rowTarget } = columnMoveState;
       // 移动成功后，恢复所有之前展开的行
       setTimeout(() => {
-        const sourceRowIndex = source.row;
-        const targetRowIndex = target.row;
+        const sourceRowIndex = rowSource;
+        const targetRowIndex = rowTarget;
         const moveDirection = targetRowIndex > sourceRowIndex ? 'down' : 'up';
-        const sourceSize = this.table.stateManager?.columnMove?.rowSourceSize || 1;
         // 计算移动后各行的新位置并重新展开
         this.allExpandedRowsBeforeMove.forEach(originalRowIndex => {
           let newRowIndex = originalRowIndex;
-          // 计算移动后的新行索引
-          if (originalRowIndex >= sourceRowIndex && originalRowIndex < sourceRowIndex + sourceSize) {
-            // 这是被移动的行，移动到目标位置
-            const relativeIndex = originalRowIndex - sourceRowIndex;
-            newRowIndex = targetRowIndex + relativeIndex;
+
+          if (sourceRowIndex === originalRowIndex) {
+            newRowIndex = targetRowIndex;
           } else if (moveDirection === 'down') {
-            if (originalRowIndex > sourceRowIndex + sourceSize - 1 && originalRowIndex <= targetRowIndex) {
-              newRowIndex = originalRowIndex - sourceSize;
+            if (originalRowIndex <= targetRowIndex && originalRowIndex > sourceRowIndex) {
+              newRowIndex = originalRowIndex - 1;
             }
-          } else {
+          } else if (moveDirection === 'up') {
             if (originalRowIndex >= targetRowIndex && originalRowIndex < sourceRowIndex) {
-              newRowIndex = originalRowIndex + sourceSize;
+              newRowIndex = originalRowIndex + 1;
             }
           }
           this.onExpandRow?.(newRowIndex);

@@ -39,8 +39,11 @@ export function bindMasterDetailCheckboxChange(
     }
   };
 
+  // 绑定主表复选框状态变化事件
   table.on('checkbox_state_change', checkboxChangeHandler);
+  // 绑定子表复选框事件，实现反向联动
   const subTableCleanup = bindSubTableCheckboxEvents(table);
+  // 返回清理函数，用于移除所有事件监听器
   return () => {
     table.off('checkbox_state_change', checkboxChangeHandler);
     subTableCleanup();
@@ -75,7 +78,7 @@ function bindSubTableCheckboxEvents(table: VTable.ListTable): () => void {
   }
   // 如果没有设置成功，返回空的清理函数
   return () => {
-    // no-op
+    //
   };
 }
 
@@ -163,7 +166,7 @@ function updateHeaderCheckedStateWithIndeterminate(field: string | number, state
 }
 
 /**
- * 更新子表所有checkbox状态
+ * 更新子表的checkbox状态
  */
 function updateAllSubTableCheckboxes(subTable: VTable.ListTable, field: string, checked: boolean): void {
   if (!subTable.stateManager) {
@@ -182,14 +185,12 @@ function updateAllSubTableCheckboxes(subTable: VTable.ListTable, field: string, 
     }
     recordStates[field] = checked;
   });
-  for (let col = 0; col < subTable.colCount; col++) {
-    const cellField = subTable.getHeaderField(col, 0);
-    if (cellField === field) {
-      subTable.scenegraph.updateHeaderCheckboxCellState(col, 0, checked);
-      for (let row = subTable.columnHeaderLevelCount; row < subTable.rowCount; row++) {
-        setCellCheckboxStateByAttribute(col, row, checked, subTable);
-      }
-      break;
+  // 使用缓存的列索引避免重复查找
+  const checkboxCol = findCheckboxColumnIndex(subTable, field);
+  if (checkboxCol >= 0) {
+    subTable.scenegraph.updateHeaderCheckboxCellState(checkboxCol, 0, checked);
+    for (let row = subTable.columnHeaderLevelCount; row < subTable.rowCount; row++) {
+      setCellCheckboxStateByAttribute(checkboxCol, row, checked, subTable);
     }
   }
 }

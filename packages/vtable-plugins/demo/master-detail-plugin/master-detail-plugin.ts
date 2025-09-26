@@ -2,7 +2,6 @@
 // defaultColWidth,defaultHeaderColWidth,defaultRowHeight,defaultHeaderRowHeight
 // widthMode heightMode 为standard
 import * as VTable from '@visactor/vtable';
-import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { MasterDetailPlugin } from '../../src';
 
 const CONTAINER_ID = 'vTable';
@@ -451,26 +450,12 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(option);
 
   setTimeout(() => {
-    // 展开第0行（表头后的第一行数据）
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(2);
-    }
-    // 展开第3行
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(5);
-    }
+    tableInstance.toggleHierarchyState(0, 2);
+    tableInstance.toggleHierarchyState(0, 5);
   }, 100);
 
   // 创建分页控制器
   createPaginationControls(tableInstance, records);
-  // 挂载到全局，方便调试
-  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
-  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
-
-  // 绑定调试工具
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
 
   return tableInstance;
 }

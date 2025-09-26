@@ -2,7 +2,6 @@
 // widthMode, heightMode = 'adaptive'
 // widthAdaptiveMode, heightAdaptiveMode = 'all'
 import * as VTable from '@visactor/vtable';
-import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { MasterDetailPlugin } from '../../src';
 
 const CONTAINER_ID = 'vTable';
@@ -87,19 +86,9 @@ export function createTable() {
 
   const tableInstance = new VTable.ListTable(option);
 
-  // 挂到全局便于调试
-  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
-  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
-
-  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
   setTimeout(() => {
-    // 展开第0行（表头后的第一行数据）
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(1);
-    }
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(5);
-    }
+    tableInstance.toggleHierarchyState(0, 1);
+    tableInstance.toggleHierarchyState(0, 5);
   }, 100);
 
   return tableInstance;

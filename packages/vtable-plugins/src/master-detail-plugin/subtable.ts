@@ -167,7 +167,18 @@ export class SubTableManager {
 
   /**
    * 渲染子表
-   * 创建子表实例，设置viewBox区域，配置滚动隔离、选中管理、canvas裁剪
+   *
+   * 为指定的主表行创建并渲染子表实例。这是子表管理器的核心方法，包含以下步骤：
+   * 1. 获取记录数据和详细配置
+   * 2. 创建子表实例并设置配置选项
+   * 3. 配置子表的视图区域（viewBox）和样式
+   * 4. 设置滚动隔离和选中状态管理
+   * 5. 恢复子表的复选框状态
+   * 6. 将子表添加到主表的场景图中
+   *
+   * @param bodyRowIndex - 主表body区域的行索引
+   * @param childrenData - 子表的数据数组
+   * @param getDetailConfig - 获取详细配置的回调函数
    */
   renderSubTable(
     bodyRowIndex: number,
@@ -204,7 +215,6 @@ export class SubTableManager {
       // 继承父表的theme
       theme: parentOptions.theme
     };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { style: _style, ...userDetailConfig } = detailConfig || {};
     const subTableOptions = {
       ...baseSubTableOptions,
@@ -230,6 +240,36 @@ export class SubTableManager {
     subTable.render();
   }
 
+  // 缓存列范围计算结果
+  private columnRangeCache: { startCol: number; endCol: number } | null = null;
+
+  /**
+   * 获取列范围
+   */
+  private getColumnRange(): { startCol: number; endCol: number } | null {
+    if (this.columnRangeCache) {
+      return this.columnRangeCache;
+    }
+
+    const frozenColCount = this.table.frozenColCount || 0;
+    const rightFrozenColCount = this.table.rightFrozenColCount || 0;
+    const totalColCount = this.table.colCount;
+    let startCol = frozenColCount;
+    let endCol = totalColCount - rightFrozenColCount - 1;
+    // 如果没有冻结列，则使用全部列
+    if (frozenColCount === 0 && rightFrozenColCount === 0) {
+      startCol = 0;
+      endCol = totalColCount - 1;
+    }
+    // 确保列索引有效
+    if (startCol >= totalColCount || endCol < startCol) {
+      return null;
+    }
+
+    this.columnRangeCache = { startCol, endCol };
+    return this.columnRangeCache;
+  }
+
   /**
    * 计算子表的viewBox区域
    */
@@ -245,20 +285,11 @@ export class SubTableManager {
     }
     const internalProps = getInternalProps(this.table);
     const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
-    const frozenColCount = this.table.frozenColCount || 0;
-    const rightFrozenColCount = this.table.rightFrozenColCount || 0;
-    const totalColCount = this.table.colCount;
-    let startCol = frozenColCount;
-    let endCol = totalColCount - rightFrozenColCount - 1;
-    // 如果没有冻结列，则使用全部列
-    if (frozenColCount === 0 && rightFrozenColCount === 0) {
-      startCol = 0;
-      endCol = totalColCount - 1;
-    }
-    // 确保列索引有效
-    if (startCol >= totalColCount || endCol < startCol) {
+    const columnRange = this.getColumnRange();
+    if (!columnRange) {
       return null;
     }
+    const { startCol, endCol } = columnRange;
     const firstColRect = this.table.getCellRangeRelativeRect({ col: startCol, row: rowIndex });
     const lastColRect = this.table.getCellRangeRelativeRect({ col: endCol, row: rowIndex });
     if (!firstColRect || !lastColRect) {
@@ -414,7 +445,8 @@ export class SubTableManager {
         return true;
       }
       const maxScrollTop = totalContentHeight - viewportHeight;
-      const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 0;
+      // 使用小的容差值来处理浮点数精度问题
+      const isAtBottom = Math.abs(scrollTop - maxScrollTop) <= 1;
       return isAtBottom;
     };
     // 判断子表在滚动边界时是否应该继续滚动
@@ -474,48 +506,12 @@ export class SubTableManager {
    * 设置统一选中状态管理
    */
   private setupUnifiedSelectionManagement(bodyRowIndex: number, subTable: VTable.ListTable): void {
-    this.table.on('click_cell', () => {
-      this.clearAllSubTableVisibleSelections();
-    });
-    subTable.on('click_cell', () => {
-      this.clearAllSelectionsExcept(bodyRowIndex);
-    });
-    (subTable as VTable.ListTable & { __selectionHandler: () => void }).__selectionHandler = () => {
+    // 这里设置子表的选择事件
+    const selectionHandler = () => {
       this.clearAllSelectionsExcept(bodyRowIndex);
     };
-  }
-
-  /**
-   * 清除所有子表的可见选中状态
-   */
-  private clearAllSubTableVisibleSelections(): void {
-    const internalProps = getInternalProps(this.table);
-    internalProps.subTableInstances?.forEach(subTable => {
-      if (subTable && typeof (subTable as { clearSelected?: () => void }).clearSelected === 'function') {
-        (subTable as { clearSelected: () => void }).clearSelected();
-      }
-    });
-  }
-
-  /**
-   * 清除除指定子表外的所有选中状态
-   */
-  private clearAllSelectionsExcept(exceptRecordIndex: number): void {
-    // 清除父表选中状态
-    if (typeof (this.table as { clearSelected?: () => void }).clearSelected === 'function') {
-      (this.table as { clearSelected: () => void }).clearSelected();
-    }
-    // 清除其他子表的选中状态
-    const internalProps = getInternalProps(this.table);
-    internalProps.subTableInstances?.forEach((subTable, rowIndex) => {
-      if (
-        rowIndex !== exceptRecordIndex &&
-        subTable &&
-        typeof (subTable as { clearSelected?: () => void }).clearSelected === 'function'
-      ) {
-        (subTable as { clearSelected: () => void }).clearSelected();
-      }
-    });
+    subTable.on('click_cell', selectionHandler);
+    (subTable as VTable.ListTable & { __selectionHandler: () => void }).__selectionHandler = selectionHandler;
   }
 
   /**
@@ -794,9 +790,10 @@ export class SubTableManager {
       });
       internalProps.subTableInstances.clear();
     }
+    // 清理缓存
+    this.columnRangeCache = null;
     // 清理回调函数引用，避免循环引用
     this.getDetailConfigForRecord = undefined;
-    
     // 清理表格引用
     (this as unknown as { table: unknown }).table = null;
   }
@@ -809,7 +806,32 @@ export class SubTableManager {
   setCallbacks(callbacks: {
     getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
     redrawAllUnderlines?: () => void;
+    clearMainTableSelection?: () => void;
   }): void {
     this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
+    this.clearMainTableSelection = callbacks.clearMainTableSelection;
+  }
+
+  private clearMainTableSelection?: () => void;
+
+  /**
+   * 清除除指定子表外的所有选中状态
+   */
+  private clearAllSelectionsExcept(exceptRecordIndex: number): void {
+    // 清除父表选中状态
+    if (this.clearMainTableSelection) {
+      this.clearMainTableSelection();
+    }
+    // 清除其他子表的选中状态
+    const internalProps = getInternalProps(this.table);
+    internalProps.subTableInstances?.forEach((subTable, rowIndex) => {
+      if (
+        rowIndex !== exceptRecordIndex &&
+        subTable &&
+        typeof (subTable as { clearSelected?: () => void }).clearSelected === 'function'
+      ) {
+        (subTable as { clearSelected: () => void }).clearSelected();
+      }
+    });
   }
 }

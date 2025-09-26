@@ -48,17 +48,36 @@ export function getOriginalRowHeight(table: VTable.ListTable, bodyRowIndex: numb
   return internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
 }
 
+// 缓存列索引
+const columnIndexCache = new WeakMap<VTable.ListTable, Map<string | number, number>>();
+
 /**
  * 查找checkbox列的索引
- * 通过字段名在表格中查找对应的checkbox列索引
  */
 export function findCheckboxColumnIndex(table: VTable.ListTable, field: string | number): number {
+  // 获取或创建表格的缓存
+  let tableCache = columnIndexCache.get(table);
+  if (!tableCache) {
+    tableCache = new Map();
+    columnIndexCache.set(table, tableCache);
+  }
+
+  // 检查缓存
+  if (tableCache.has(field)) {
+    return tableCache.get(field);
+  }
+
+  // 查找列索引
   for (let col = 0; col < table.colCount; col++) {
     const cellField = table.getHeaderField(col, 0);
     if (cellField === field) {
+      tableCache.set(field, col);
       return col;
     }
   }
+
+  // 未找到时也缓存结果
+  tableCache.set(field, -1);
   return -1;
 }
 

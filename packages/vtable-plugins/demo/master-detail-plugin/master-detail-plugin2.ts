@@ -565,9 +565,7 @@ export function createTable(): VTable.ListTable {
   // 暴露到 window 方便调试
   (window as any).tableInstance = tableInstance;
   setTimeout(() => {
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(1);
-    }
+    tableInstance.toggleHierarchyState(0, 1);
   }, 100);
   return tableInstance;
 }

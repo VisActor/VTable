@@ -1,5 +1,5 @@
 // 该case测试的是数据过滤，数据聚合分析
-// widthMode heightMode 为autoHeight
+// widthMode heightMode 为autoHeight,冻结行
 
 import * as VTable from '@visactor/vtable';
 import { MasterDetailPlugin } from '../../src';
@@ -68,7 +68,6 @@ function generateOlympicData(count: number) {
       bronze: Math.floor(Math.random() * 5),
       total: 0
     };
-    
     baseItem.total = baseItem.gold + baseItem.silver + baseItem.bronze;
 
     // 每5行数据添加子表数据
@@ -235,28 +234,18 @@ export function createTable() {
     autoWrapText: true,
     heightMode: 'autoHeight',
     widthMode: 'autoWidth',
-    bottomFrozenRowCount: 1,
-    theme: VTable.themes.ARCO.extends({
-      bottomFrozenStyle: {
-        fontFamily: 'PingFang SC',
-        fontWeight: 500
-      }
-    }),
+    frozenRowCount: 4,
+    bottomFrozenRowCount: 2,
+    theme: VTable.themes.ARCO,
     plugins: [masterDetailPlugin]
   };
 
   const tableInstance = new VTable.ListTable(option);
   // 展开一些行来演示效果
   setTimeout(() => {
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(1); // 展开第一行
-      masterDetailPlugin.expandRow(6); // 展开第六行
-    }
+    tableInstance.toggleHierarchyState(0, 1);
+    tableInstance.toggleHierarchyState(0, 6);
   }, 100);
-
-  // 挂到全局便于调试
-  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
-  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
 
   const filterListValues: Record<string, string[]> = {
     country: ['all', 'China', 'United States', 'Australia'],
