@@ -88,6 +88,20 @@ type CustomMergeCellArray = Array<{
 
 筛选状态，设置当前的筛选条件和状态。
 
+### sortState(Array<SortState> | SortState | null)
+
+排序状态，设置当前的排序条件和状态。
+
+SortState定义可参考[SortState](./ListTable#sortState)。
+```
+SortState {
+  /** 排序依据字段 */
+  field: number|string;
+  /** 排序规则 */
+  order: 'desc' | 'asc' | 'normal';
+}
+```
+
 ### theme(IThemeDefine)
 
 工作表主题配置。

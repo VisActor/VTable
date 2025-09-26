@@ -1,5 +1,5 @@
 // @ts-nocheck
-// 有问题可对照demo unitTestPivotTable
+// 有问题可对照demo unitTestpivotChart
 import records from './data/marketsales.json';
 import * as VTable from '../src/index';
 import VChart from '@visactor/vchart';
@@ -9212,7 +9212,7 @@ const records = [
   }
 ];
 function createTable(containerDom) {
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.pivotChartConstructorOptions = {
     columnTree,
     rowTree,
     rows,
@@ -9249,7 +9249,7 @@ function createTable(containerDom) {
   const tableInstance = new VTable.PivotChart(option);
   return tableInstance;
 }
-describe('pivotTable init test', () => {
+describe('pivotChart init test', () => {
   const containerDom: HTMLElement = createDiv();
   containerDom.style.position = 'relative';
   containerDom.style.width = '500px';
@@ -9257,14 +9257,14 @@ describe('pivotTable init test', () => {
 
   const pivotChart = createTable(containerDom);
 
-  test('pivotTable init', () => {
+  test('pivotChart init', () => {
     expect(pivotChart.frozenColCount).toBe(2);
   });
-  test('pivotTable rowHeaderLevelCount', () => {
+  test('pivotChart rowHeaderLevelCount', () => {
     expect(pivotChart.rowHeaderLevelCount).toBe(2);
   });
 
-  test('pivotTable API getCellHeaderPaths', () => {
+  test('pivotChart API getCellHeaderPaths', () => {
     expect(pivotChart.getCellHeaderPaths(2, 4)).toEqual({
       colHeaderPaths: [
         {
@@ -9290,7 +9290,7 @@ describe('pivotTable init test', () => {
     });
   });
 
-  test('pivotTable API getCellAddressByHeaderPaths', () => {
+  test('pivotChart API getCellAddressByHeaderPaths', () => {
     expect(
       pivotChart.getCellAddressByHeaderPaths({
         colHeaderPaths: [
@@ -9318,7 +9318,7 @@ describe('pivotTable init test', () => {
     ).toEqual({ col: 2, row: 4 });
   });
 
-  test('pivotTable getChartDatumPosition', () => {
+  test('pivotChart getChartDatumPosition', () => {
     const datum = {
       '10002': '83',
       '10003': '230417171050011',
@@ -9356,12 +9356,15 @@ describe('pivotTable init test', () => {
     expect(pivotChart.getChartDatumPosition(datum, cellAddr)).toEqual({ x: 438, y: 305 });
   });
 
-  test('pivotTable collectValuesBy', () => {
+  test('pivotChart collectValuesBy', () => {
     expect(pivotChart.dataset.collectValuesBy).toEqual({
       '230417171050011': {
         by: ['230417170554012'],
         range: true,
-        sumBy: ['230417171050031', '230417171050028', '230417170554008']
+        sumBy: ['230417171050031', '230417171050028', '230417170554008'],
+        extendRange: undefined,
+        sortBy: undefined,
+        type: 'yField'
       },
       '230417170554008': {
         by: ['230417171050031', '230417171050028'],
@@ -9390,21 +9393,28 @@ describe('pivotTable init test', () => {
       '230417171050025': {
         by: ['230417170554012'],
         range: true,
-        sumBy: false
+        sumBy: false,
+        extendRange: undefined,
+        sortBy: undefined
       },
       '230713150305011': {
         by: ['230417170554012'],
         range: true,
+        extendRange: undefined,
+        sortBy: undefined,
         sumBy: ['230417171050031', '230417171050028', '230417170554008']
       },
       '230707112948009': {
         by: ['230417170554012'],
         range: true,
+        extendRange: undefined,
+        sortBy: undefined,
+        type: 'yField',
         sumBy: false
       }
     });
   });
-  test('pivotTable collectedValues', () => {
+  test('pivotChart collectedValues', () => {
     const collectedValues = {
       '230417171050011': {
         一级: {
@@ -9514,7 +9524,7 @@ describe('pivotTable init test', () => {
     delete result['230417170554008']; //这个key是set类型 这里不能正确进行比对
     expect(result).toEqual(collectedValues);
   });
-  test('pivotTable updateFilterRules', () => {
+  test('pivotChart updateFilterRules', () => {
     pivotChart.updateFilterRules([
       {
         filterKey: '230417171050030',
@@ -9614,7 +9624,7 @@ describe('pivotTable init test', () => {
       }
     });
   });
-  test('pivotTable updateOption axis&records', () => {
+  test('pivotChart updateOption axis&records', () => {
     const datum = {
       '10002': '134',
       '10003': '230417171050011',
@@ -9812,7 +9822,7 @@ describe('pivotTable init test', () => {
     ];
     const recordDeleted = records.slice(-700);
 
-    const option1: VTable.PivotTableConstructorOptions = {
+    const option1: VTable.pivotChartConstructorOptions = {
       records: recordDeleted,
       columnTree,
       rowTree,

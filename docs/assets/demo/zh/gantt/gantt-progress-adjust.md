@@ -37,7 +37,7 @@ const records = [
     developer: 'Alice',
     start: '2024-07-15',
     end: '2024-08-15',
-    progress: 45,
+    progress: 45.2,
     priority: 'P0',
     type: 'task'
   },
@@ -47,7 +47,7 @@ const records = [
     developer: 'Bob',
     start: '2024-07-20',
     end: '2024-08-20',
-    progress: 75,
+    progress: 75.2,
     priority: 'P0',
     type: 'task'
   },
@@ -57,7 +57,7 @@ const records = [
     developer: 'Carol',
     start: '2024-07-10',
     end: '2024-07-25',
-    progress: 90,
+    progress: 90.2,
     priority: 'P1',
     type: 'task'
   },
@@ -67,7 +67,7 @@ const records = [
     developer: 'David',
     start: '2024-08-01',
     end: '2024-08-10',
-    progress: 25,
+    progress: 25.2,
     priority: 'P2',
     type: 'task'
   },
@@ -170,7 +170,7 @@ const option = {
     minTableWidth: 300,
     maxTableWidth: 800
   },
-  tasksShowMode: 'sub_tasks_separate',
+  tasksShowMode: 'tasks_separate',
   frame: {
     verticalSplitLineMoveable: true,
     outerFrameStyle: {

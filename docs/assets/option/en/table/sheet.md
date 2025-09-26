@@ -88,6 +88,21 @@ Filter configuration, can be a boolean value or a detailed configuration object.
 
 Filter state, sets the current filter conditions and state.
 
+### sortState(Array<SortState> | SortState | null)
+
+Sort state, sets the current sort conditions and state.
+
+SortState definition can be referenced to [SortState](./ListTable#sortState).
+
+```
+SortState {
+  /** Sorting field */
+  field: number|string;
+  /** Sorting order */
+  order: 'desc' | 'asc' | 'normal';
+}
+```
+
 ### theme(IThemeDefine)
 
 Worksheet theme configuration.

@@ -5,7 +5,7 @@ VTable Sheet is a powerful Excel-like spreadsheet component based on VTable. It 
 ## Features
 
 - Multiple sheet support
-- Formula calculation using HyperFormula
+- Formula calculation is a completely self-developed formula calculation engine
 - Cell formatting
 - Cell merging
 - Sheet operations (add, rename, delete)
@@ -76,7 +76,7 @@ interface IVTableSheetOptions {
 
 ## Working with Formulas
 
-VTableSheet supports Excel-like formulas powered by [HyperFormula](https://github.com/handsontable/hyperformula).
+VTableSheet supports Excel-like formulas, which is a completely self-developed formula calculation engine.
 
 ### Formula Storage and Persistence
 

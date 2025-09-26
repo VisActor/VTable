@@ -59,11 +59,18 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
   mainMenu: {
     show: true,
     items: [
-      { name: '导入', menuKey: 'import', onClick: () => { console.log('导入'); } },
+      { name: '导入', description: '导入数据替换到当前sheet', menuKey: 'import'},
       { name: '导出',items: [
-            { name: '导出CSV', menuKey: 'export-current-sheet-csv', onClick: () => { console.log('导出CSV'); } },
-            { name: '导出XLSX', menuKey: 'export-current-sheet-xlsx', onClick: () => { console.log('导出XLSX'); } },
+            { name: '导出CSV',  description: '导出当前sheet数据',menuKey: 'export-current-sheet-csv'},
+            { name: '导出XLSX', menuKey: 'export-current-sheet-xlsx' },
           ] },
+      {
+          name: '测试',
+          description: '测试',
+          onClick: () => {
+            console.log('测试');
+          }
+        }
     ]
   }
 });
