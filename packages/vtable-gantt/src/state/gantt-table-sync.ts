@@ -1,7 +1,6 @@
 import type { Gantt } from '../Gantt';
 import { updateSplitLineAndResizeLine } from '../gantt-helper';
-import { TasksShowMode } from '../ts-types';
-import { TaskType } from '../ts-types';
+import { TasksShowMode, TaskType } from '../ts-types';
 
 export function syncScrollStateToTable(gantt: Gantt) {
   const { scroll } = gantt.stateManager;
@@ -141,4 +140,8 @@ function _syncTableSize(gantt: Gantt) {
   );
   gantt._updateSize();
   updateSplitLineAndResizeLine(gantt);
+
+  if (gantt.zoomScaleManager) {
+    gantt.zoomScaleManager.handleTableWidthChange();
+  }
 }

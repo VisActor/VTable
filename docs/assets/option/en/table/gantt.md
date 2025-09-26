@@ -30,6 +30,7 @@ Time scale configuration.
     verticalLine?: ILineStyle;
     /** Horizontal line style */
     horizontalLine?: ILineStyle;
+    zoomScale?: IZoomScale;
     scales: ITimelineScale[];
   }
 ```
@@ -59,6 +60,14 @@ Horizontal line style.
 Time scale configuration array.
 
 {{ use: common-gantt-timeline-scale( prefix = '####') }}
+
+### zoomScale(IZoomScale)
+
+Smart zoom configuration. When enabled, it will automatically switch between different time scale combinations based on zoom levels, with higher priority than the `timelineHeader.scales` configuration.
+
+Optional
+
+{{ use: common-gantt-zoom-scale(prefix = '####') }}
 
 ## taskBar(Object)
 

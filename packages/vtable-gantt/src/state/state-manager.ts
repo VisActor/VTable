@@ -96,6 +96,8 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     lastX: number;
     resizing: boolean;
+    /** 用于节流 DataZoom 更新的定时器，避免在拖拽表头时频繁触发响应式更新 */
+    updateTimeout?: NodeJS.Timeout | null;
   };
 
   selectedDenpendencyLink: {
@@ -974,6 +976,10 @@ export class StateManager {
   }
   endResizeTableWidth() {
     this.resizeTableWidth.resizing = false;
+
+    if (this._gantt.zoomScaleManager) {
+      this._gantt.zoomScaleManager.handleTableWidthChange();
+    }
   }
 
   dealResizeTableWidth(e: MouseEvent) {
@@ -1005,6 +1011,16 @@ export class StateManager {
         : '0px';
       this._gantt._resize();
       this.resizeTableWidth.lastX = e.pageX;
+
+      // 在拖拽过程中实时更新 DataZoom
+      if (this._gantt.zoomScaleManager && !this.resizeTableWidth.updateTimeout) {
+        this.resizeTableWidth.updateTimeout = setTimeout(() => {
+          if (this._gantt.zoomScaleManager) {
+            this._gantt.zoomScaleManager.handleTableWidthChange();
+          }
+          this.resizeTableWidth.updateTimeout = null;
+        }, 50);
+      }
     }
   }
   //#endregion
