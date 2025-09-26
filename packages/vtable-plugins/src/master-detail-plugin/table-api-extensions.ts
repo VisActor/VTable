@@ -213,6 +213,11 @@ export class TableAPIExtensions {
 
       // 获取当前调整的行索引
       const resizeRowIndex = state.rowResize.row;
+      if (resizeRowIndex === state.table.rowCount - 1) {
+        // 强制将底部冻结行高度设为0
+        state.table.scenegraph.setRowHeight(resizeRowIndex, 0);
+        return;
+      }
       const isExpandedRow = this.eventManager.isRowExpanded(resizeRowIndex);
       // 保存原始的 limitMinHeight
       const originalLimitMinHeight = state.table.internalProps.limitMinHeight;

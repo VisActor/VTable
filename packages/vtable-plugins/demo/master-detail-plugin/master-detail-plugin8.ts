@@ -422,7 +422,9 @@ export function createTable(): VTable.ListTable {
 
   const tableInstance = new VTable.ListTable(container, option);
   window.tableInstance = tableInstance;
-
+  // 挂载到全局，方便调试
+  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
+  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   return tableInstance;
 }
 
