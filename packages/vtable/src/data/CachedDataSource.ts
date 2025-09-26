@@ -87,7 +87,6 @@ export class CachedDataSource extends DataSource {
   ) {
     let _isGrouped;
     if (isArray(dataConfig?.groupByRules)) {
-      rowHierarchyType = 'tree';
       _isGrouped = true;
     }
     super(opt, dataConfig, pagination, columns, rowHierarchyType, hierarchyExpandLevel);

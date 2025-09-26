@@ -73,6 +73,20 @@ export function createProgressBarCell(
   } else {
     height = table.getRowHeight(row);
   }
+  
+  // 检查是否有主从表插件，如果有则使用原始高度
+  if ((table as any).pluginManager) {
+    const masterDetailPlugin = (table as any).pluginManager.getPluginByName('Master Detail Plugin');
+    if (masterDetailPlugin) {
+      // 如果是展开行，使用原始高度而不是展开后的高度
+      const bodyRowIndex = row - table.columnHeaderLevelCount;
+      const internalProps = (table as any).internalProps;
+      const originalHeight = internalProps?.originalRowHeights?.get(bodyRowIndex);
+      if (originalHeight !== undefined && originalHeight > 0) {
+        height = originalHeight;
+      }
+    }
+  }
   let contentWidth = width;
   let contentHeight = height;
   let _contentOffset = 0;

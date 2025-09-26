@@ -666,3 +666,39 @@ Empty data prompt click event.
 ## EMPTY_TIP_DBLCLICK
 
 Empty data prompt double-click event.
+
+## AFTER_UPDATE_CELL_CONTENT_WIDTH
+
+Event triggered after cell content width is updated.
+
+Event callback function parameter types:
+
+```
+{
+  col: number;
+  row: number;
+  cellHeight: number;
+  cellGroup: any;
+  padding: [number, number, number, number];
+  textBaseline: CanvasTextBaseline;
+}
+```
+
+## AFTER_UPDATE_SELECT_BORDER_HEIGHT
+
+Event triggered after selection border height is updated.
+
+Event callback function parameter types:
+
+```
+{
+  startRow: number;
+  endRow: number;
+  currentHeight: number;
+  selectComp: { 
+    rect: any; 
+    fillhandle?: any; 
+    role: string; 
+  };
+}
+```

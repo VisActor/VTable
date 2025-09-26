@@ -3,6 +3,7 @@ import type { Scenegraph } from '../scenegraph';
 import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
 import { calculateCellRangeDistribution } from '../utils/cell-pos';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
   scene.customSelectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
@@ -91,6 +92,7 @@ function updateComponent(
   // const rowsHeight = table.getRowsHeight(cellRange.start.row, endRow);
   const colsWidth = table.getColsWidth(computeRectCellRangeStartCol, computeRectCellRangeEndCol);
   const rowsHeight = table.getRowsHeight(computeRectCellRangeStartRow, computeRectCellRangeEndRow);
+  
   const firstCellBound = scene.highPerformanceGetCell(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
@@ -103,6 +105,15 @@ function updateComponent(
     height: rowsHeight,
     visible: true
   });
+
+  if (table.hasListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT)) {
+    table.fireListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT, {
+      startRow: computeRectCellRangeStartRow,
+      endRow: computeRectCellRangeEndRow,
+      currentHeight: rowsHeight,
+      selectComp
+    });
+  }
   if (selectComp.fillhandle) {
     const fillHandle = scene.table.options.excelOptions?.fillHandle;
     let visible = true;

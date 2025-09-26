@@ -56,6 +56,7 @@ const option: VTable.ListTableConstructorOptions = {
 | `ExcelImportPlugin` | 导入execl，csv，json，html到表格中 | `ListTable` |
 | `ContextMenuPlugin` | 右键菜单插件 | `ListTable` |
 | `TableSeriesNumberPlugin` | 表格序号插件 | `ListTable` |
+| `MasterDetailPlugin` | 添加主从表功能 | `ListTable` |
 
 <br>
 
