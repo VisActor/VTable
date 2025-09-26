@@ -2,6 +2,39 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.20.1",
+      "tag": "@visactor/vtable_v1.20.1",
+      "date": "Fri, 26 Sep 2025 10:28:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: extend chart type\n\n"
+          },
+          {
+            "comment": "fix: deleteRecord switchState error after call renderWidthCreateCells api #4436\n\n"
+          },
+          {
+            "comment": "fix: maxfrozenwidth not work when set brower scale #4494\n\n"
+          },
+          {
+            "comment": "fix: gannt grid line style linedash not work #4495\n\n"
+          },
+          {
+            "comment": "fix: when updateOption change enablecheckboxcascade not work #4499\n\n"
+          },
+          {
+            "comment": "fix: api selectCells not work with ctrlMultiSelect false\n\n"
+          },
+          {
+            "comment": "fix: row change order not work with pagination\n\n"
+          },
+          {
+            "comment": "feat: support detailPath when pick vchart to add detectPickChartItem config\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.20.0",
       "tag": "@visactor/vtable_v1.20.0",
       "date": "Mon, 22 Sep 2025 03:03:09 GMT",
