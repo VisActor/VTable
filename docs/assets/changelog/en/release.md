@@ -1,3 +1,26 @@
+# v1.20.1
+
+2025-09-26
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: extend chart type
+- **@visactor/vtable**: support detailPath when pick vchart to add detectPickChartItem config
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: deleteRecord switchState error after call renderWidthCreateCells api [#4436](https://github.com/VisActor/VTable/issues/4436)
+- **@visactor/vtable**: maxfrozenwidth not work when set brower scale [#4494](https://github.com/VisActor/VTable/issues/4494)
+- **@visactor/vtable**: gannt grid line style linedash not work [#4495](https://github.com/VisActor/VTable/issues/4495)
+- **@visactor/vtable**: when updateOption change enablecheckboxcascade not work [#4499](https://github.com/VisActor/VTable/issues/4499)
+- **@visactor/vtable**: api selectCells not work with ctrlMultiSelect false
+- **@visactor/vtable**: row change order not work with pagination
+
+
+
+[more detail about v1.20.1](https://github.com/VisActor/VTable/releases/tag/v1.20.1)
+
 # v1.20.0
 
 2025-09-22
