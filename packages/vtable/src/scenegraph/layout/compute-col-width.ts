@@ -320,8 +320,20 @@ function computeAutoColWidth(
   // 如果是透视图
   if (table.isPivotChart() && col >= table.rowHeaderLevelCount && col < table.colCount - table.rightFrozenColCount) {
     if (!(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
+      //这里判断指标是不是热力图，注意这里既定了用户只设置一种指标
+      const chartSpec = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(
+        col,
+        table.columnHeaderLevelCount
+      );
+      let isHeatmap = false;
+      if (chartSpec.type === 'heatmap') {
+        isHeatmap = true;
+      }
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
-      const optimunWidth = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunWidthForChart(col);
+      const optimunWidth = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunWidthForChart(
+        col,
+        isHeatmap
+      );
       if (optimunWidth > 0) {
         return optimunWidth;
       }

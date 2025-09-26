@@ -3984,8 +3984,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return null;
   }
   /** 获取某一图表列的最优高度，计算逻辑是根据图表的yField的维度值个数 * barWidth */
-  getOptimunHeightForChart(row: number) {
+  getOptimunHeightForChart(row: number, isHeatmap: boolean) {
     const path = this.getCellHeaderPaths(this.rowHeaderLevelCount, row).rowHeaderPaths;
+    if (isHeatmap) {
+      //如果是热力图，最后一层指标不能参与路径匹配
+      if (path[path.length - 1].indicatorKey) {
+        path.pop();
+      }
+    }
     let collectedValues: any;
     for (const key in this.dataset.collectValuesBy) {
       if (this.dataset.collectValuesBy[key].type === 'yField' && !this.dataset.collectValuesBy[key].range) {
@@ -4011,13 +4017,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     } else {
       const barWidth = this._chartItemSpanSize || 25;
-      height = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+      height = (collectedValues?.length ?? 0) * (barWidth + (isHeatmap ? 0 : barWidth / 3));
     }
     const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
     return height + padding[0] + padding[2];
   }
   /** 获取某一图表列的最优宽度，计算逻辑是根据图表的xField的维度值个数 * barWidth */
-  getOptimunWidthForChart(col: number) {
+  getOptimunWidthForChart(col: number, isHeatmap: boolean) {
     const path = this.getCellHeaderPaths(col, this.columnHeaderLevelCount).colHeaderPaths;
     let collectedValues: any;
     for (const key in this.dataset.collectValuesBy) {
@@ -4044,7 +4050,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     } else {
       const barWidth = this._chartItemSpanSize || 25;
-      width = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+      width = (collectedValues?.length ?? 0) * (barWidth + (isHeatmap ? 0 : barWidth / 3));
     }
 
     const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
