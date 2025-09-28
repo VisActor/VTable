@@ -732,6 +732,8 @@ export class SubTableManager {
     end?: number,
     getDetailConfig?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null
   ): void {
+    // 清理列范围缓存，确保使用最新的列宽度信息
+    this.columnRangeCache = null;
     const internalProps = getInternalProps(this.table);
     internalProps.subTableInstances?.forEach((subTable, bodyRowIndex) => {
       // 如果指定了范围，只处理范围内的子表
@@ -806,22 +808,25 @@ export class SubTableManager {
   setCallbacks(callbacks: {
     getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
     redrawAllUnderlines?: () => void;
-    clearMainTableSelection?: () => void;
   }): void {
     this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
-    this.clearMainTableSelection = callbacks.clearMainTableSelection;
   }
 
-  private clearMainTableSelection?: () => void;
+  /**
+   * 直接清除主表选中
+   */
+  private clearMainTableSelectionInternal(): void {
+    if (typeof (this.table as { clearSelected?: () => void }).clearSelected === 'function') {
+      (this.table as { clearSelected: () => void }).clearSelected();
+    }
+  }
 
   /**
    * 清除除指定子表外的所有选中状态
    */
   private clearAllSelectionsExcept(exceptRecordIndex: number): void {
     // 清除父表选中状态
-    if (this.clearMainTableSelection) {
-      this.clearMainTableSelection();
-    }
+    this.clearMainTableSelectionInternal();
     // 清除其他子表的选中状态
     const internalProps = getInternalProps(this.table);
     internalProps.subTableInstances?.forEach((subTable, rowIndex) => {

@@ -93,8 +93,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.subTableManager.setCallbacks({
       getDetailConfigForRecord: (record, bodyRowIndex) =>
         this.configManager.getDetailConfigForRecord(record, bodyRowIndex),
-      redrawAllUnderlines: () => this.redrawAllUnderlines(),
-      clearMainTableSelection: () => this.clearMainTableSelection()
+      redrawAllUnderlines: () => this.redrawAllUnderlines()
     });
   }
 
@@ -621,16 +620,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       }
     });
   }
-
-  /**
-   * 清除主表选中状态
-   */
-  private clearMainTableSelection(): void {
-    if (typeof (this.table as { clearSelected?: () => void }).clearSelected === 'function') {
-      (this.table as { clearSelected: () => void }).clearSelected();
-    }
-  }
-
   /**
    * 清理主从表功能
    */
