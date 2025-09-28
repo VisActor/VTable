@@ -1,6 +1,6 @@
 import type { ListTable, BaseTableAPI } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { plugins } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 import { MenuManager } from './contextmenu/menu-manager';
 import { MenuHandler } from './contextmenu/handle-menu-helper';
 import type { MenuItemOrSeparator, MenuClickEventArgs } from './contextmenu/types';
@@ -49,7 +49,7 @@ export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => 
 /**
  * 右键菜单插件
  */
-export class ContextMenuPlugin implements plugins.IVTablePlugin {
+export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   id = `context-menu`;
   name = 'Context Menu';
   runTime = [TABLE_EVENT_TYPE.CONTEXTMENU_CELL, TABLE_EVENT_TYPE.PLUGIN_EVENT];

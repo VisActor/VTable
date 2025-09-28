@@ -6,7 +6,7 @@ import type { FilterOptions, FilterConfig, FilterState } from './types';
 import { FilterActionType } from './types';
 import type {
   ListTableConstructorOptions,
-  plugins,
+  pluginsDefinition,
   ListTable,
   PivotTable,
   BaseTableAPI,
@@ -16,7 +16,7 @@ import type {
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
  */
-export class FilterPlugin implements plugins.IVTablePlugin {
+export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   id = `filter`;
   name = 'Filter';
   runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, TABLE_EVENT_TYPE.ICON_CLICK];

@@ -1,4 +1,4 @@
-import type { ListTable, BaseTableAPI, TYPES, plugins } from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, TYPES, pluginsDefinition } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
@@ -9,7 +9,7 @@ export type IExcelEditCellKeyboardPluginOptions = {
   // enableDeleteKey?: boolean;
 };
 
-export class ExcelEditCellKeyboardPlugin implements plugins.IVTablePlugin {
+export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlugin {
   id = `excel-edit-cell-keyboard`;
   name = 'Excel Edit Cell Keyboard';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED];

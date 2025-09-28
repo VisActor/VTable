@@ -1,4 +1,4 @@
-import type { plugins, ListTable } from '@visactor/vtable';
+import type { pluginsDefinition, ListTable } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { ExportVTableToCsvOptions, ExportVTableToExcelOptions } from './table-export/index';
 import { exportVTableToCsv, exportVTableToExcel, downloadCsv, downloadExcel } from './table-export/index';
@@ -21,7 +21,7 @@ export type TableExportPluginOptions = {
  * 表格导出插件
  * 提供CSV和Excel格式的表格数据导出功能
  */
-export class TableExportPlugin implements plugins.IVTablePlugin {
+export class TableExportPlugin implements pluginsDefinition.IVTablePlugin {
   id = 'table-export-plugin';
   name = 'TableExport';
   runTime: any[] = [TABLE_EVENT_TYPE.INITIALIZED];

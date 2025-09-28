@@ -1,4 +1,4 @@
-import type { plugins, BaseTableAPI, ListTable, TYPES } from '@visactor/vtable';
+import type { pluginsDefinition, BaseTableAPI, ListTable, TYPES } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
@@ -10,7 +10,7 @@ export type IWpsFillHandlePluginOptions = {
   // enableDeleteKey?: boolean;
 };
 
-export class WpsFillHandlePlugin implements plugins.IVTablePlugin {
+export class WpsFillHandlePlugin implements pluginsDefinition.IVTablePlugin {
   id = `wps-fill-handle`;
   name = 'WPS Fill Handle';
   runTime = [TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END];

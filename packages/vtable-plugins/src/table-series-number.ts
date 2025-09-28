@@ -1,4 +1,4 @@
-import type { BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
+import type { BaseTableAPI, ListTable, ListTableConstructorOptions, pluginsDefinition } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
 import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vtable/es/vrender';
 import type { ILayer, TableSeriesNumberAttributes } from '@visactor/vtable/es/vrender';
@@ -20,7 +20,7 @@ export type TableSeriesNumberOptions = {
     | 'rowSeriesNumberWidth'
   >
 >;
-export class TableSeriesNumber implements plugins.IVTablePlugin {
+export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
   id = `table-series-number`;
   name = 'Table Series Number';
   runTime = [

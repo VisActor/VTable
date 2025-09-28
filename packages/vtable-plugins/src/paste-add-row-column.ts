@@ -1,4 +1,4 @@
-import type { ListTable, BaseTableAPI, plugins } from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, pluginsDefinition } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 export type IPasteAddRowColumnPluginOptions = {
   id?: string;
@@ -6,7 +6,7 @@ export type IPasteAddRowColumnPluginOptions = {
   addColumnCallback?: (addedCount: number, table: ListTable) => void;
 };
 
-export class PasteAddRowColumnPlugin implements plugins.IVTablePlugin {
+export class PasteAddRowColumnPlugin implements pluginsDefinition.IVTablePlugin {
   id = `paste-add-row-column`;
   name = 'Paste Add row';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.PASTED_DATA];

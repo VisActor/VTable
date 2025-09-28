@@ -1,6 +1,6 @@
 import type { ListTable, BaseTableAPI, ColumnsDefine, ColumnDefine } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { plugins } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 /**
  * 添加行和列的插件的配置选项
  */
@@ -18,7 +18,7 @@ export interface ColumnSeriesOptions {
 /**
  * 生成列序号标题的插件
  */
-export class ColumnSeriesPlugin implements plugins.IVTablePlugin {
+export class ColumnSeriesPlugin implements pluginsDefinition.IVTablePlugin {
   id = `column-series`;
   name = 'Column Series';
   runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_KEYDOWN];

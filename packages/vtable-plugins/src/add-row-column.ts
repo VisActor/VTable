@@ -1,6 +1,6 @@
 import type { ListTable, BaseTableAPI, TYPES } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { plugins } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 /**
  * 添加行和列的插件的配置选项
  */
@@ -29,7 +29,7 @@ export interface AddRowColumnOptions {
  * 当鼠标hover到table的cell时，会显示添加行和列的dot和加号
  * 当鼠标离开table的cell时，会隐藏添加行和列的dot和加号
  */
-export class AddRowColumnPlugin implements plugins.IVTablePlugin {
+export class AddRowColumnPlugin implements pluginsDefinition.IVTablePlugin {
   id = `add-row-column`;
   name = 'Add Row Column';
   runTime = [TABLE_EVENT_TYPE.MOUSEENTER_CELL, TABLE_EVENT_TYPE.MOUSELEAVE_CELL, TABLE_EVENT_TYPE.MOUSELEAVE_TABLE];

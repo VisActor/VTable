@@ -1,4 +1,4 @@
-import type { plugins, ListTable, BaseTableAPI } from '@visactor/vtable';
+import type { pluginsDefinition, ListTable, BaseTableAPI } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import { AutoFillManager } from './auto-fill-manager';
@@ -22,7 +22,7 @@ export interface IAutoFillPluginOptions {
   fastFillMode?: 'copy' | 'series';
 }
 
-export class AutoFillPlugin implements plugins.IVTablePlugin {
+export class AutoFillPlugin implements pluginsDefinition.IVTablePlugin {
   id = `auto-fill`;
   name = 'Auto Fill';
   runTime = [

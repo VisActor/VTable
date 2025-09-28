@@ -7,7 +7,7 @@ import {
   vglobal
 } from '@visactor/vtable/es/vrender';
 import type { BaseTable } from '@visactor/vtable/src/core/BaseTable';
-import type { ListTable, plugins, BaseTableAPI } from '@visactor/vtable';
+import type { ListTable, pluginsDefinition, BaseTableAPI } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
@@ -32,7 +32,7 @@ export type IRotateTablePluginOptions = {
  * 所以需要进行坐标转换，将旋转后的坐标转换后作为VRender及VTable逻辑中用到的坐标。
  * 这里使用transform:'rotate(90deg)'的设置来达到旋转的目的。 其他角度应该也是可以实现的，请自行扩展这个插件并兼容
  */
-export class RotateTablePlugin implements plugins.IVTablePlugin {
+export class RotateTablePlugin implements pluginsDefinition.IVTablePlugin {
   id = `rotate-table`;
   name = 'Rotate Table';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED];

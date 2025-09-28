@@ -1,7 +1,7 @@
 import ExcelJS from 'exceljs';
 import type { ListTable, ColumnsDefine, ColumnDefine } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { plugins } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 // 数据导入结果类型
 export interface ImportResult {
   columns: ColumnsDefine;
@@ -20,7 +20,7 @@ export interface ExcelImportOptions {
   asyncDelay?: number; // 异步处理延迟时间(ms)，默认5ms
 }
 
-export class ExcelImportPlugin implements plugins.IVTablePlugin {
+export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
   id: string = `excel-import-plugin`;
   name = 'ExcelImportPlugin';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED];
