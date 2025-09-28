@@ -1,4 +1,5 @@
-import * as VTable from '@visactor/vtable';
+import type { plugins, ListTable, BaseTableAPI } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import { AutoFillManager } from './auto-fill-manager';
 /**
@@ -21,38 +22,34 @@ export interface IAutoFillPluginOptions {
   fastFillMode?: 'copy' | 'series';
 }
 
-export class AutoFillPlugin implements VTable.plugins.IVTablePlugin {
+export class AutoFillPlugin implements plugins.IVTablePlugin {
   id = `auto-fill`;
   name = 'Auto Fill';
   runTime = [
-    VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
-    VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END,
-    VTable.TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE
+    TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
+    TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END,
+    TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE
   ];
-  table: VTable.ListTable;
+  table: ListTable;
   private autoFillManager: AutoFillManager;
   constructor(options?: IAutoFillPluginOptions) {
     this.autoFillManager = new AutoFillManager(options);
   }
   run(
-    ...args: [
-      { direction: string },
-      TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][],
-      VTable.BaseTableAPI
-    ]
+    ...args: [{ direction: string }, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]
   ) {
     // start drag
     console.log('auto fill plugin run', args);
-    if (args[1] === VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE) {
+    if (args[1] === TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE) {
       const [_, __, table] = args;
-      this.table = table as VTable.ListTable;
+      this.table = table as ListTable;
       this.autoFillManager.setTable(this.table);
       this.autoFillManager.handleStartDrag(this.table?.getSelectedCellRanges()[0]);
-    } else if (args[1] === VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END) {
+    } else if (args[1] === TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END) {
       // end drag
       const [{ direction }] = args;
       this.autoFillManager.handleEndDrag(this.table?.getSelectedCellRanges()[0], direction);
-    } else if (args[1] === VTable.TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE) {
+    } else if (args[1] === TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE) {
       this.autoFillManager.handleDbClick();
     }
   }

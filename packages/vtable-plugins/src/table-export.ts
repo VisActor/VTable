@@ -1,4 +1,5 @@
-import * as VTable from '@visactor/vtable';
+import type { plugins, ListTable } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { ExportVTableToCsvOptions, ExportVTableToExcelOptions } from './table-export/index';
 import { exportVTableToCsv, exportVTableToExcel, downloadCsv, downloadExcel } from './table-export/index';
 
@@ -20,11 +21,11 @@ export type TableExportPluginOptions = {
  * 表格导出插件
  * 提供CSV和Excel格式的表格数据导出功能
  */
-export class TableExportPlugin implements VTable.plugins.IVTablePlugin {
+export class TableExportPlugin implements plugins.IVTablePlugin {
   id = 'table-export-plugin';
   name = 'TableExport';
-  runTime: any[] = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
-  private table: VTable.ListTable;
+  runTime: any[] = [TABLE_EVENT_TYPE.INITIALIZED];
+  private table: ListTable;
   private pluginOptions: TableExportPluginOptions;
   constructor(pluginOptions: TableExportPluginOptions) {
     this.pluginOptions = Object.assign(
@@ -43,7 +44,7 @@ export class TableExportPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     // const eventArgs = args[0];
     const runTime = args[1];
-    if (runTime === VTable.TABLE_EVENT_TYPE.INITIALIZED) {
+    if (runTime === TABLE_EVENT_TYPE.INITIALIZED) {
       const eventArgs = args[0];
       this.table = args[2];
       // 挂载导出方法到表格实例

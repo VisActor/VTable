@@ -1,4 +1,6 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, TYPES } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+import type { plugins } from '@visactor/vtable';
 /**
  * 添加行和列的插件的配置选项
  */
@@ -15,11 +17,11 @@ export interface AddRowColumnOptions {
   /**
    * 添加列的回调函数
    */
-  addColumnCallback?: (col: number, table: VTable.ListTable) => void;
+  addColumnCallback?: (col: number, table: ListTable) => void;
   /**
    * 添加行的回调函数
    */
-  addRowCallback?: (row: number, table: VTable.ListTable) => void;
+  addRowCallback?: (row: number, table: ListTable) => void;
 }
 /**
  * 添加行和列的插件
@@ -27,17 +29,13 @@ export interface AddRowColumnOptions {
  * 当鼠标hover到table的cell时，会显示添加行和列的dot和加号
  * 当鼠标离开table的cell时，会隐藏添加行和列的dot和加号
  */
-export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
+export class AddRowColumnPlugin implements plugins.IVTablePlugin {
   id = `add-row-column`;
   name = 'Add Row Column';
-  runTime = [
-    VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL,
-    VTable.TABLE_EVENT_TYPE.MOUSELEAVE_CELL,
-    VTable.TABLE_EVENT_TYPE.MOUSELEAVE_TABLE
-  ];
+  runTime = [TABLE_EVENT_TYPE.MOUSEENTER_CELL, TABLE_EVENT_TYPE.MOUSELEAVE_CELL, TABLE_EVENT_TYPE.MOUSELEAVE_TABLE];
   pluginOptions: AddRowColumnOptions;
-  table: VTable.ListTable;
-  hoverCell: VTable.TYPES.CellAddressWithBound;
+  table: ListTable;
+  hoverCell: TYPES.CellAddressWithBound;
   hideAllTimeoutId_addColumn: NodeJS.Timeout;
   hideAllTimeoutId_addRow: NodeJS.Timeout;
   leftDotForAddColumn: HTMLElement;
@@ -71,9 +69,9 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     const eventArgs = args[0];
     const runTime = args[1];
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
-    if (runTime === VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL) {
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable;
+    if (runTime === TABLE_EVENT_TYPE.MOUSEENTER_CELL) {
       clearTimeout(this.hideAllTimeoutId_addColumn);
       clearTimeout(this.hideAllTimeoutId_addRow);
       const canvasBounds = table.canvas.getBoundingClientRect();
@@ -102,8 +100,8 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
           !isHeader
         );
       }
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.MOUSELEAVE_CELL) {
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.MOUSELEAVE_TABLE) {
+    } else if (runTime === TABLE_EVENT_TYPE.MOUSELEAVE_CELL) {
+    } else if (runTime === TABLE_EVENT_TYPE.MOUSELEAVE_TABLE) {
       if (this.pluginOptions.addColumnEnable) {
         this.delayHideAllForAddColumn();
       }
@@ -409,7 +407,7 @@ export class AddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
       const row = this.hoverCell.row;
       const addRowIndex = isTop ? row : row + 1;
       if (this.pluginOptions.addRowCallback) {
-        this.pluginOptions.addRowCallback(addRowIndex, this.table as VTable.ListTable);
+        this.pluginOptions.addRowCallback(addRowIndex, this.table as ListTable);
       } else {
         const recordIndex = this.table.getRecordIndexByCell(0, addRowIndex);
         this.table.addRecord({}, recordIndex);

@@ -17,7 +17,7 @@
 import type { ICellData, Nullable } from '../types';
 import { Direction, CellValueType } from '../types';
 import deepClone from 'lodash/cloneDeep';
-import { IConverter } from '../series-converters';
+import type { IConverter } from '../series-converters';
 
 export const chnNumChar = { 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
 export const chnNumChar2 = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
@@ -384,7 +384,7 @@ export function fillSeries(
   // 用于检查数列
   const dataNumArr = [];
   for (let j = 0; j < data.length; j++) {
-    dataNumArr.push(Number(data[j]?.v));
+    dataNumArr.push(Number((data[j] as any)?.v));
   }
 
   if (data.length > 2 && isEqualRatio(dataNumArr)) {
@@ -392,9 +392,12 @@ export function fillSeries(
       const index = (i - 1) % data.length;
       const d = deepClone(data[index]);
       removeCellCustom(d);
-      const num = Number(data[data.length - 1]?.v) * (Number(data[1]?.v) / Number(data[0]?.v)) ** i;
+      const lastValue = Number((data[data.length - 1] as any)?.v);
+      const firstValue = Number((data[0] as any)?.v);
+      const secondValue = Number((data[1] as any)?.v);
+      const num = lastValue * (secondValue / firstValue) ** i;
       if (d) {
-        d.v = converter ? converter.fromNumber(num, d.f) : num;
+        d.v = converter ? converter.fromNumber(num, (d as any).f) : num;
         applyData.push(d);
       }
     }
@@ -410,7 +413,7 @@ export function fillSeries(
       const y = forecast(data.length + i, dataNumArr, xArr, forward);
 
       if (d) {
-        d.v = converter ? converter.fromNumber(y, d.f) : y;
+        d.v = converter ? converter.fromNumber(y, (d as any).f) : y;
         applyData.push(d);
       }
     }
@@ -462,7 +465,7 @@ export function fillExtendNumber(data: Array<Nullable<ICellData>>, len: number, 
 
     removeCellCustom(d);
 
-    const last = `${data[data.length - 1]?.v}`;
+    const last = `${(data[data.length - 1] as any)?.v ?? ''}`;
     if (!last) {
       continue;
     }
@@ -525,10 +528,10 @@ export function fillChnWeek(data: Array<Nullable<ICellData>>, len: number, step:
     removeCellCustom(d);
 
     let num = 0;
-    if (data[data.length - 1]?.v === keyword[0]) {
+    if ((data[data.length - 1] as any)?.v === keyword[0]) {
       num = 7 + step * i;
     } else {
-      const last = `${data[data.length - 1]?.v}`;
+      const last = `${(data[data.length - 1] as any)?.v ?? ''}`;
       if (last) {
         const txt = last.substr(last.length - 1, 1);
         num = chineseToNumber(txt) + step * i;
@@ -559,7 +562,7 @@ export function fillChnNumber(data: Array<Nullable<ICellData>>, len: number, ste
 
     removeCellCustom(d);
 
-    const formattedValue = `${data[data.length - 1]?.v}`;
+    const formattedValue = `${(data[data.length - 1] as any)?.v ?? ''}`;
     const num = chineseToNumber(formattedValue) + step * i;
     let txt;
     if (num <= 0) {
@@ -636,7 +639,7 @@ export function fillLoopSeries(data: Array<Nullable<ICellData>>, len: number, st
 
     removeCellCustom(d);
 
-    const last = `${data[data.length - 1]?.v}`;
+    const last = `${(data[data.length - 1] as any)?.v ?? ''}`;
     let num = series.indexOf(last) + step * i;
 
     if (num < 0) {

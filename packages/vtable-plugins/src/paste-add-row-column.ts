@@ -1,15 +1,16 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, plugins } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 export type IPasteAddRowColumnPluginOptions = {
   id?: string;
-  addRowCallback?: (addedRow: number, table: VTable.ListTable) => void;
-  addColumnCallback?: (addedCount: number, table: VTable.ListTable) => void;
+  addRowCallback?: (addedRow: number, table: ListTable) => void;
+  addColumnCallback?: (addedCount: number, table: ListTable) => void;
 };
 
-export class PasteAddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
+export class PasteAddRowColumnPlugin implements plugins.IVTablePlugin {
   id = `paste-add-row-column`;
   name = 'Paste Add row';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED, VTable.TABLE_EVENT_TYPE.PASTED_DATA];
-  table: VTable.ListTable;
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.PASTED_DATA];
+  table: ListTable;
   pluginOptions: IPasteAddRowColumnPluginOptions;
   pastedData: any;
   constructor(pluginOptions?: IPasteAddRowColumnPluginOptions) {
@@ -18,9 +19,9 @@ export class PasteAddRowColumnPlugin implements VTable.plugins.IVTablePlugin {
   }
   run(...args: any[]) {
     const runtime = args[1];
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
-    if (runtime === VTable.TABLE_EVENT_TYPE.PASTED_DATA) {
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable;
+    if (runtime === TABLE_EVENT_TYPE.PASTED_DATA) {
       this.pastedData = args[0];
       this.handlePaste();
     }

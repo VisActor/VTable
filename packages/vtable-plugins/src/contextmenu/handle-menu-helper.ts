@@ -1,4 +1,4 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable } from '@visactor/vtable';
 
 /**
  * 菜单辅助类
@@ -14,28 +14,28 @@ export class MenuHandler {
   /**
    * 处理复制操作
    */
-  handleCopy(table: VTable.ListTable): void {
+  handleCopy(table: ListTable): void {
     table.eventManager.handleCopy(new KeyboardEvent('copy'));
   }
 
   /**
    * 处理剪切操作
    */
-  handleCut(table: VTable.ListTable): void {
+  handleCut(table: ListTable): void {
     table.eventManager.handleCut(new KeyboardEvent('cut'));
   }
 
   /**
    * 处理粘贴操作
    */
-  handlePaste(table: VTable.ListTable): void {
+  handlePaste(table: ListTable): void {
     table.eventManager.handlePaste(new KeyboardEvent('paste'));
   }
 
   /**
    * 处理向上插入行
    */
-  handleInsertRowAbove(table: VTable.ListTable, rowIndex?: number, count: number = 1): void {
+  handleInsertRowAbove(table: ListTable, rowIndex?: number, count: number = 1): void {
     if (rowIndex === undefined) {
       return;
     }
@@ -51,7 +51,7 @@ export class MenuHandler {
   /**
    * 处理向下插入行
    */
-  handleInsertRowBelow(table: VTable.ListTable, rowIndex?: number, count: number = 1): void {
+  handleInsertRowBelow(table: ListTable, rowIndex?: number, count: number = 1): void {
     if (rowIndex === undefined) {
       return;
     }
@@ -66,7 +66,7 @@ export class MenuHandler {
   /**
    * 处理向左插入列
    */
-  handleInsertColumnLeft(table: VTable.ListTable, colIndex?: number, count: number = 1): void {
+  handleInsertColumnLeft(table: ListTable, colIndex?: number, count: number = 1): void {
     if (colIndex === undefined) {
       return;
     }
@@ -81,7 +81,7 @@ export class MenuHandler {
   /**
    * 处理向右插入列
    */
-  handleInsertColumnRight(table: VTable.ListTable, colIndex?: number, count: number = 1): void {
+  handleInsertColumnRight(table: ListTable, colIndex?: number, count: number = 1): void {
     if (colIndex === undefined) {
       return;
     }
@@ -95,7 +95,7 @@ export class MenuHandler {
   /**
    * 处理删除行
    */
-  handleDeleteRow(table: VTable.ListTable, rowIndex?: number): void {
+  handleDeleteRow(table: ListTable, rowIndex?: number): void {
     if (rowIndex === undefined) {
       return;
     }
@@ -127,7 +127,7 @@ export class MenuHandler {
   /**
    * 处理删除列
    */
-  handleDeleteColumn(table: VTable.ListTable, colIndex?: number): void {
+  handleDeleteColumn(table: ListTable, colIndex?: number): void {
     if (colIndex === undefined) {
       return;
     }
@@ -153,7 +153,7 @@ export class MenuHandler {
   /**
    * 处理隐藏列
    */
-  handleHideColumn(table: VTable.ListTable, colIndex?: number): void {
+  handleHideColumn(table: ListTable, colIndex?: number): void {
     if (colIndex === undefined) {
       return;
     }
@@ -167,7 +167,7 @@ export class MenuHandler {
   /**
    * 处理排序
    */
-  handleSort(table: VTable.ListTable, colIndex?: number): void {
+  handleSort(table: ListTable, colIndex?: number): void {
     if (colIndex === undefined) {
       return;
     }
@@ -189,7 +189,7 @@ export class MenuHandler {
   /**
    * 处理合并单元格
    */
-  handleMergeCells(table: VTable.ListTable): void {
+  handleMergeCells(table: ListTable): void {
     // 获取当前选中区域
     if ((table.stateManager.select.ranges?.length ?? 0) === 1 && typeof (table as any).mergeCells === 'function') {
       const { row: startRow, col: startCol } = table.stateManager.select.ranges[0].start;
@@ -208,7 +208,7 @@ export class MenuHandler {
   /**
    * 处理取消合并单元格
    */
-  handleUnmergeCells(table: VTable.ListTable): void {
+  handleUnmergeCells(table: ListTable): void {
     if ((table.stateManager.select.ranges?.length ?? 0) === 1 && typeof (table as any).unmergeCells === 'function') {
       const { row: startRow, col: startCol } = table.stateManager.select.ranges[0].start;
       const { row: endRow, col: endCol } = table.stateManager.select.ranges[0].end;
@@ -227,14 +227,14 @@ export class MenuHandler {
   /**
    * 处理设置保护范围
    */
-  handleSetProtection(table: VTable.ListTable): void {
+  handleSetProtection(table: ListTable): void {
     // 需要表格API支持
   }
 
   /**
    * 处理冻结到本行
    */
-  handleFreezeToRow(table: VTable.ListTable, rowIndex?: number): void {
+  handleFreezeToRow(table: ListTable, rowIndex?: number): void {
     if (rowIndex === undefined) {
       return;
     }
@@ -245,7 +245,7 @@ export class MenuHandler {
   /**
    * 处理冻结到本列
    */
-  handleFreezeToColumn(table: VTable.ListTable, colIndex?: number): void {
+  handleFreezeToColumn(table: ListTable, colIndex?: number): void {
     if (colIndex === undefined) {
       return;
     }
@@ -256,7 +256,7 @@ export class MenuHandler {
   /**
    * 处理冻结到本行本列
    */
-  handleFreezeToRowAndColumn(table: VTable.ListTable, rowIndex?: number, colIndex?: number): void {
+  handleFreezeToRowAndColumn(table: ListTable, rowIndex?: number, colIndex?: number): void {
     if (rowIndex === undefined || colIndex === undefined) {
       return;
     }
@@ -268,7 +268,7 @@ export class MenuHandler {
   /**
    * 处理取消冻结
    */
-  handleUnfreeze(table: VTable.ListTable): void {
+  handleUnfreeze(table: ListTable): void {
     table.frozenRowCount = 0;
     table.frozenColCount = 0;
   }

@@ -3,10 +3,10 @@ import { createRect } from '@visactor/vtable/es/vrender';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
 import { isSameRange } from '@visactor/vtable/es/tools/cell-range';
 import type { CellAddress, CellRange } from '@visactor/vtable/es/ts-types';
+import type { plugins } from '@visactor/vtable';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import { cellInRange } from '@visactor/vtable/es/tools/helper';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type * as VTable from '@visactor/vtable';
 export interface FocusHighlightPluginOptions {
   id?: string;
   fill?: string;
@@ -14,7 +14,7 @@ export interface FocusHighlightPluginOptions {
   highlightRange?: CellAddress | CellRange; //初始化聚焦高亮范围
 }
 
-export class FocusHighlightPlugin implements VTable.plugins.IVTablePlugin {
+export class FocusHighlightPlugin implements plugins.IVTablePlugin {
   id = `focus-highlight`;
   name = 'Focus Highlight';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED, TABLE_EVENT_TYPE.SELECTED_CELL, TABLE_EVENT_TYPE.SELECTED_CLEAR];
