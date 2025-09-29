@@ -438,12 +438,26 @@ Set column width based on dimension information
 }[];
 ```
 
-- dimensions The dimension information of each level of the dimension is an array of IDimensionInfo type. The vtable will locate the specific column according to this path.
+- dimensions The column dimension information of each level of the dimension is an array of IDimensionInfo type. The vtable will locate the specific column according to this path.
   {{ use: common-IDimensionInfo()}}
 
 -width specifies the column width.
 
 ## columnWidthConfigForRowHeader(Array)
 
-Set column width based on dimension information for row header
+Set column width based on dimension information for row header，set example:
 
+```
+columnWidthConfigForRowHeader": [
+    {
+      "dimensions": [
+        {
+          "dimensionKey": "city",
+          "value": "北京"
+        }
+      ],
+      "width": 318
+    }
+  ]
+```
+Matching key is the key of the row dimension: dimensionKey。
