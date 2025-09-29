@@ -1,7 +1,7 @@
 import type * as VTable from '@visactor/vtable';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import { getInternalProps, getOriginalRowHeight } from './utils';
+import { getOriginalRowHeight } from './utils';
 import type { ConfigManager } from './config';
 import type { EventManager } from './events';
 
@@ -213,6 +213,11 @@ export class TableAPIExtensions {
 
       // 获取当前调整的行索引
       const resizeRowIndex = state.rowResize.row;
+      if (resizeRowIndex === state.table.rowCount - 1) {
+        // 强制将底部冻结行高度设为0
+        state.table.scenegraph.setRowHeight(resizeRowIndex, 0);
+        return;
+      }
       const isExpandedRow = this.eventManager.isRowExpanded(resizeRowIndex);
       // 保存原始的 limitMinHeight
       const originalLimitMinHeight = state.table.internalProps.limitMinHeight;
@@ -518,15 +523,7 @@ export class TableAPIExtensions {
     // 拦截 updatePagination 方法，在分页切换时收起所有展开的行
     this.originalUpdatePagination = table.updatePagination.bind(table);
     table.updatePagination = (pagination: VTable.TYPES.IPagination) => {
-      const internalProps = getInternalProps(this.table);
       const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-      currentExpandedRows.forEach(rowIndex => {
-        const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-        const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-        if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
-          internalProps.expandedRecordIndices.push(recordIndex);
-        }
-      });
       currentExpandedRows.forEach(rowIndex => {
         this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
       });
@@ -546,23 +543,12 @@ export class TableAPIExtensions {
    */
   private extendToggleHierarchyState(): void {
     const table = this.table;
-    // 拦截 toggleHierarchyState 方法
+    // 拦截 toggleHierarchy 方法
     this.originalToggleHierarchyState = table.toggleHierarchyState.bind(table);
     table.toggleHierarchyState = (col: number, row: number, recalculateColWidths: boolean = true) => {
       // 处理表头分组的情况
       if (this.table.isHeader(col, row)) {
-        const internalProps = getInternalProps(this.table);
         const currentExpandedRows = [...this.eventManager.getExpandedRows()];
-        currentExpandedRows.forEach(rowIndex => {
-          const realRecordIndex = this.table.getRecordIndexByCell(0, rowIndex);
-          if (realRecordIndex === undefined || realRecordIndex === null) {
-            return;
-          }
-          const recordIndex = typeof realRecordIndex === 'number' ? realRecordIndex : realRecordIndex[0];
-          if (internalProps.expandedRecordIndices && !internalProps.expandedRecordIndices.includes(recordIndex)) {
-            internalProps.expandedRecordIndices.push(recordIndex);
-          }
-        });
         currentExpandedRows.forEach(rowIndex => {
           this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
         });

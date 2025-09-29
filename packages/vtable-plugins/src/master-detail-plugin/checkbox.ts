@@ -39,10 +39,80 @@ export function bindMasterDetailCheckboxChange(
     }
   };
 
+  // 增强主表的updateHeaderCheckedState方法，添加indeterminate状态处理
+  const originalUpdateHeaderCheckedState = table.stateManager.updateHeaderCheckedState;
+  table.stateManager.updateHeaderCheckedState = function (
+    field: string | number,
+    col: number,
+    row: number
+  ): boolean | 'indeterminate' {
+    const stateManager = this;
+    let allChecked = true;
+    let allUnChecked = true;
+    let hasChecked = false;
+    let hasIndeterminate = false;
+
+    stateManager.checkedState.forEach(
+      (check_state: Record<string | number, boolean | 'indeterminate'>, index: string | number | number[]) => {
+        if ((index as string).includes(',')) {
+          index = (index as string).split(',').map(item => {
+            return Number(item);
+          }) as number[];
+        } else {
+          index = Number(index);
+        }
+        const tableIndex = stateManager.table.getTableIndexByRecordIndex(index as number);
+        const mergeCell = (stateManager.table as VTable.ListTable).transpose
+          ? stateManager.table.getCustomMerge(tableIndex, row)
+          : stateManager.table.getCustomMerge(col, tableIndex);
+
+        const data = stateManager.table.dataSource?.get(index as number);
+        if (mergeCell || (!stateManager.table.internalProps.enableCheckboxCascade && data?.vtableMerge)) {
+          // 不参与check状态的计算
+          return;
+        }
+
+        const checkValue = check_state?.[field];
+        // 主从表特判：处理indeterminate状态
+        if (checkValue === 'indeterminate') {
+          hasIndeterminate = true;
+          hasChecked = true;
+          allChecked = false;
+          allUnChecked = false;
+        } else if (checkValue !== true) {
+          allChecked = false;
+        } else {
+          allUnChecked = false;
+          hasChecked = true;
+        }
+      }
+    );
+
+    let result: boolean | 'indeterminate';
+    if (hasIndeterminate) {
+      result = 'indeterminate';
+    } else if (allChecked) {
+      result = true;
+    } else if (allUnChecked) {
+      result = false;
+    } else if (hasChecked) {
+      result = 'indeterminate';
+    } else {
+      result = false;
+    }
+    stateManager.headerCheckedState[field] = result;
+    return result;
+  };
+
+  // 绑定主表复选框状态变化事件
   table.on('checkbox_state_change', checkboxChangeHandler);
+  // 绑定子表复选框事件，实现反向联动
   const subTableCleanup = bindSubTableCheckboxEvents(table);
+  // 返回清理函数，用于移除所有事件监听器和恢复原始方法
   return () => {
     table.off('checkbox_state_change', checkboxChangeHandler);
+    // 恢复原始的updateHeaderCheckedState方法
+    table.stateManager.updateHeaderCheckedState = originalUpdateHeaderCheckedState;
     subTableCleanup();
   };
 }
@@ -75,7 +145,7 @@ function bindSubTableCheckboxEvents(table: VTable.ListTable): () => void {
   }
   // 如果没有设置成功，返回空的清理函数
   return () => {
-    // no-op
+    //
   };
 }
 
@@ -108,7 +178,7 @@ function updateMainTableRowCheckboxFromSubTable(
     }
     if (mainTable.internalProps.enableCheckboxCascade) {
       const oldHeaderCheckedState = mainTable.stateManager.headerCheckedState[field];
-      const newHeaderCheckedState = updateHeaderCheckedStateWithIndeterminate(field, mainTable.stateManager);
+      const newHeaderCheckedState = mainTable.stateManager.updateHeaderCheckedState(field, mainTableCheckboxCol, 0);
       if (oldHeaderCheckedState !== newHeaderCheckedState) {
         const headerRow = 0;
         if (mainTable.isHeader(mainTableCheckboxCol, headerRow)) {
@@ -120,50 +190,7 @@ function updateMainTableRowCheckboxFromSubTable(
 }
 
 /**
- * 自定义的表头checkbox状态更新函数
- */
-function updateHeaderCheckedStateWithIndeterminate(field: string | number, state: unknown): boolean | 'indeterminate' {
-  const stateManager = state as {
-    checkedState: Map<string, Record<string | number, boolean | 'indeterminate'>>;
-    headerCheckedState: Record<string | number, boolean | 'indeterminate'>;
-    table: VTable.ListTable;
-  };
-  let allChecked = true;
-  let allUnChecked = true;
-  let hasChecked = false;
-  let hasIndeterminate = false;
-  stateManager.checkedState.forEach(check_state => {
-    const checkValue = check_state?.[field];
-    if (checkValue === 'indeterminate') {
-      hasIndeterminate = true;
-      allChecked = false;
-      allUnChecked = false;
-    } else if (checkValue !== true) {
-      allChecked = false;
-    } else {
-      allUnChecked = false;
-      hasChecked = true;
-    }
-  });
-
-  let result: boolean | 'indeterminate';
-  if (hasIndeterminate) {
-    result = 'indeterminate';
-  } else if (allChecked) {
-    result = true;
-  } else if (allUnChecked) {
-    result = false;
-  } else if (hasChecked) {
-    result = 'indeterminate';
-  } else {
-    result = false;
-  }
-  stateManager.headerCheckedState[field] = result;
-  return result;
-}
-
-/**
- * 更新子表所有checkbox状态
+ * 更新子表的checkbox状态
  */
 function updateAllSubTableCheckboxes(subTable: VTable.ListTable, field: string, checked: boolean): void {
   if (!subTable.stateManager) {
@@ -182,14 +209,12 @@ function updateAllSubTableCheckboxes(subTable: VTable.ListTable, field: string, 
     }
     recordStates[field] = checked;
   });
-  for (let col = 0; col < subTable.colCount; col++) {
-    const cellField = subTable.getHeaderField(col, 0);
-    if (cellField === field) {
-      subTable.scenegraph.updateHeaderCheckboxCellState(col, 0, checked);
-      for (let row = subTable.columnHeaderLevelCount; row < subTable.rowCount; row++) {
-        setCellCheckboxStateByAttribute(col, row, checked, subTable);
-      }
-      break;
+  // 使用缓存的列索引避免重复查找
+  const checkboxCol = findCheckboxColumnIndex(subTable, field);
+  if (checkboxCol >= 0) {
+    subTable.scenegraph.updateHeaderCheckboxCellState(checkboxCol, 0, checked);
+    for (let row = subTable.columnHeaderLevelCount; row < subTable.rowCount; row++) {
+      setCellCheckboxStateByAttribute(checkboxCol, row, checked, subTable);
     }
   }
 }

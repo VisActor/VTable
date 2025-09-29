@@ -425,8 +425,8 @@ const masterData = [
 ];
 
 // 监听展开/收起事件
-const { MASTER_DETAIL_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
-tableInstance.on(MASTER_DETAIL_HIERARCHY_STATE_CHANGE, async (args) => {
+const { TREE_HIERARCHY_STATE_CHANGE } = VTable.ListTable.EVENT_TYPE;
+tableInstance.on(TREE_HIERARCHY_STATE_CHANGE, async (args) => {
   // 只处理展开操作且 children 为 true（懒加载标识）
   if (args.hierarchyState === VTable.TYPES.HierarchyState.expand && 
       args.originData?.children === true) {

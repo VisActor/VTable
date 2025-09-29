@@ -562,12 +562,11 @@ export function createTable(): VTable.ListTable {
   }
 
   const tableInstance = new VTable.ListTable(container, option);
-  // 暴露到 window 方便调试
-  (window as any).tableInstance = tableInstance;
+  // 挂载到全局，方便调试
+  (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
+  (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   setTimeout(() => {
-    if (masterDetailPlugin.expandRow) {
-      masterDetailPlugin.expandRow(1);
-    }
+    tableInstance.toggleHierarchyState(0, 1);
   }, 100);
   return tableInstance;
 }

@@ -24,7 +24,7 @@ export class EventManager {
       { type: VTable.TABLE_EVENT_TYPE.RESIZE_ROW, handler: resizeRowHandler }
     );
     this.wrapTableResizeMethod();
-    this.bindIconClickEvent();
+    this.bindTreeHierarchyStateChange();
     this.bindRowMoveEvents();
   }
 
@@ -291,28 +291,25 @@ export class EventManager {
   }
 
   /**
-   * 绑定图标点击事件
+   * 绑定树状态变化事件
    */
-  private bindIconClickEvent(): void {
-    const iconClickHandler = (iconInfo: unknown) => {
-      const { col, row, name } = iconInfo as {
+  private bindTreeHierarchyStateChange(): void {
+    const hierarchyStateChangeHandler = (args: unknown) => {
+      const { col, row } = args as {
         col: number;
         row: number;
-        name: string;
       };
-
-      if (name === 'expand' || name === 'collapse') {
-        // 获取原始记录数据
-        const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
-        if (record && typeof record === 'object' && 'children' in record && record.children === true) {
-          return;
-        }
-        // 非懒加载情况：正常处理展开/收起
-        this.onToggleRowExpand?.(row, col);
+      const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
+      if (record && typeof record === 'object' && 'children' in record && record.children === true) {
+        return;
       }
+      this.onToggleRowExpand?.(row, col);
     };
-    this.table.on(VTable.TABLE_EVENT_TYPE.ICON_CLICK, iconClickHandler);
-    this.eventHandlers.push({ type: VTable.TABLE_EVENT_TYPE.ICON_CLICK, handler: iconClickHandler });
+    this.table.on(VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, hierarchyStateChangeHandler);
+    this.eventHandlers.push({
+      type: VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE,
+      handler: hierarchyStateChangeHandler
+    });
   }
 
   /**
@@ -360,28 +357,27 @@ export class EventManager {
         return;
       }
 
-      const { source, target } = args;
+      // 直接从columnMove状态获取原始的移动参数
+      const columnMoveState = this.table.stateManager?.columnMove;
+      const { colSource, rowSource, colTarget, rowTarget } = columnMoveState;
       // 移动成功后，恢复所有之前展开的行
       setTimeout(() => {
-        const sourceRowIndex = source.row;
-        const targetRowIndex = target.row;
+        const sourceRowIndex = rowSource;
+        const targetRowIndex = rowTarget;
         const moveDirection = targetRowIndex > sourceRowIndex ? 'down' : 'up';
-        const sourceSize = this.table.stateManager?.columnMove?.rowSourceSize || 1;
         // 计算移动后各行的新位置并重新展开
         this.allExpandedRowsBeforeMove.forEach(originalRowIndex => {
           let newRowIndex = originalRowIndex;
-          // 计算移动后的新行索引
-          if (originalRowIndex >= sourceRowIndex && originalRowIndex < sourceRowIndex + sourceSize) {
-            // 这是被移动的行，移动到目标位置
-            const relativeIndex = originalRowIndex - sourceRowIndex;
-            newRowIndex = targetRowIndex + relativeIndex;
+
+          if (sourceRowIndex === originalRowIndex) {
+            newRowIndex = targetRowIndex;
           } else if (moveDirection === 'down') {
-            if (originalRowIndex > sourceRowIndex + sourceSize - 1 && originalRowIndex <= targetRowIndex) {
-              newRowIndex = originalRowIndex - sourceSize;
+            if (originalRowIndex <= targetRowIndex && originalRowIndex > sourceRowIndex) {
+              newRowIndex = originalRowIndex - 1;
             }
-          } else {
+          } else if (moveDirection === 'up') {
             if (originalRowIndex >= targetRowIndex && originalRowIndex < sourceRowIndex) {
-              newRowIndex = originalRowIndex + sourceSize;
+              newRowIndex = originalRowIndex + 1;
             }
           }
           this.onExpandRow?.(newRowIndex);
