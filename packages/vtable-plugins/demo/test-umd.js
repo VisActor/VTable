@@ -1,6 +1,6 @@
 const container = document.getElementById('vTable');
 debugger;
-const contextMenuPlugin = new VTable.plugins.ContextMenuPlugin();
+// const contextMenuPlugin = new VTable.plugins.ContextMenuPlugin();
 const sheetOption = {
   // showFormulaBar: false,
   showSheetTab: true,
@@ -669,37 +669,37 @@ const sheetOption = {
       }
     })
   },
-  VTablePluginModules: [
-    {
-      module: VTable.plugins.ExcelImportPlugin,
-      moduleOptions: {
-        // exportData:false
-      }
-    },
-    {
-      module: VTable.plugins.TableExportPlugin
-    },
-    {
-      module: VTable.plugins.TableSeriesNumber,
-      moduleOptions: {
-        rowSeriesNumberCellStyle: {
-          text: {
-            fontSize: 14,
-            fill: 'black',
-            pickable: false,
-            textAlign: 'left',
-            textBaseline: 'middle',
-            padding: [2, 4, 2, 4]
-          },
-          borderLine: {
-            stroke: '#D9D9D9',
-            lineWidth: 1,
-            pickable: false
-          }
-        }
-      }
-    }
-  ],
+  // VTablePluginModules: [
+  //   {
+  //     module: VTable.plugins.ExcelImportPlugin,
+  //     moduleOptions: {
+  //       // exportData:false
+  //     }
+  //   },
+  //   {
+  //     module: VTable.plugins.TableExportPlugin
+  //   },
+  //   {
+  //     module: VTable.plugins.TableSeriesNumber,
+  //     moduleOptions: {
+  //       rowSeriesNumberCellStyle: {
+  //         text: {
+  //           fontSize: 14,
+  //           fill: 'black',
+  //           pickable: false,
+  //           textAlign: 'left',
+  //           textBaseline: 'middle',
+  //           padding: [2, 4, 2, 4]
+  //         },
+  //         borderLine: {
+  //           stroke: '#D9D9D9',
+  //           lineWidth: 1,
+  //           pickable: false
+  //         }
+  //       }
+  //     }
+  //   }
+  // ],
   mainMenu: {
     show: true,
     items: [

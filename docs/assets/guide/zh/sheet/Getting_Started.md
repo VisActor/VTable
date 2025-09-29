@@ -26,6 +26,32 @@ import { VTableSheet } from '@visactor/vtable-sheet';
 const { VTableSheet } = require('@visactor/vtable-sheet');
 ```
 
+### cdn引入
+
+如果只引入vtable-sheet的umd包，因为底层vrender的环境限制是无法正常工作的！！！
+
+需要同时引入vrender和vtable的umd包。
+
+其中vtable的umd包也不能使用unpkg平台的，需要用户fork先vtable的源码，自己打包一份vtable的umd包！！！
+
+打包之前需要注意要将下图所示[打包配置](https://github.com/VisActor/VTable/blob/develop/packages/vtable/bundler.config.js)中关于vrender的注释的代码放开。运行命令`cd packages/vtable && rushx build`得到dist目录下的vtable.js文件。
+<div style="display: flex; justify-content: center;  width: 50%;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/sheet-build-umd.png"  style="width: 100%; object-fit: contain; padding: 10px;">
+</div>
+具体引用方式如下：
+```html
+<script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
+<script src="vtable.js"></script>
+<script src="https://unpkg.com/@visactor/vtable-sheet@latest/dist/vtable-sheet.js"></script>
+```
+如果还需要引用插件包`vtable-plugins`的umd包，可以添加：
+```html
+<script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
+<script src="vtable.js"></script>
+<script src="https://unpkg.com/@visactor/vtable-plugins@latest/dist/vtable-plugins.js"></script>
+<script src="https://unpkg.com/@visactor/vtable-sheet@latest/dist/vtable-sheet.js"></script>
+```
+
 ### 创建基础表格
 
 以下是创建一个简单表格的示例：
