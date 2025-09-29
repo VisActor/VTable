@@ -15,12 +15,14 @@ module.exports = {
   },
   globals: {
     '@visactor/vtable': 'VTable',
-    '@visactor/vtable-gantt': 'VTable.gantt',
+    '@visactor/vtable/es/vrender': 'VRender',
+    '@visactor/vtable-gantt': 'VTableGantt',
     roughjs: 'Rough'
   },
   external: [
     // ...其他外部依赖
     '@visactor/vtable',
+    '@visactor/vtable/es/vrender',
     '@visactor/vtable-gantt',
     'roughjs'
   ]

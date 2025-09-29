@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/jpeg" href="https://lf1-cdn-tos.bytescm.com/obj/static/visactor-site/img/visactor/vtable-icon.svg">
+  <link rel="stylesheet" href="./style.css">
+  <title>VTable demos</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+    </div>
+    <div class="content">
+      <div id="chartContainer" style="position: relative;">
+        <!-- 创建一个新的div和vtable同级 定位在vtable的上面 -->
+        <!-- <div id="chartContainer2" style="position: relative; top: 0; left: 0; width: 100%; height: 30%; background-color: #f0f0f0;"></div> -->
+        <div id="vTable" style="height:70%; overflow: hidden; background-color: #f0f0f0; position: relative;"></div>
+      </div>
+      <div id="article">
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- <script src="./main.ts" type="module"></script> -->
+<script src="https://unpkg.com/@visactor/vrender@1.0.18-alpha.0/dist/index.js"></script>
+<script src="../../vtable/dist/vtable.js"></script>
+<script src="../dist/vtable-plugins.js"></script>
+<script src="../../vtable-sheet/dist/vtable-sheet.js"></script>
+<script src="test-umd.js"></script>
+</html>
