@@ -214,11 +214,19 @@ export class SearchComponent {
   updateCellStyle(highlight: boolean = true) {
     if (highlight == null) {
       if (this.queryResult?.length) {
-        this.queryResult.forEach(({ range }) => {
+        this.queryResult.forEach(({ range, row, col }) => {
           if (range) {
             this.table.arrangeCustomCellStyle(
               { range },
               '' // 或者 null，看API是否允许
+            );
+          } else {
+            this.table.arrangeCustomCellStyle(
+              {
+                col,
+                row
+              },
+              highlight ? '__search_component_highlight' : null
             );
           }
         });
