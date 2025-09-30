@@ -158,7 +158,32 @@ export class FormulaInputEditor extends VTable_editors.InputEditor {
     };
 
     // 附加自动补全到输入框
-    this.formulaAutocomplete.attachTo(this.element, undefined, customPositioning);
+    this.formulaAutocomplete.attachTo(
+      this.element,
+      item => {
+        // 当选择项目时的回调函数
+        this.handleAutocompleteSelect(item);
+      },
+      customPositioning
+    );
+  }
+
+  /**
+   * 处理自动补全选择
+   */
+  private handleAutocompleteSelect(item: any): void {
+    if (!this.element || !this.sheet) {
+      return;
+    }
+    this.element.value = '=' + item.value;
+    // 同步内容到顶部输入栏
+    this.sheet.formulaUIManager.formulaInput.value = this.element.value;
+
+    // 触发高亮更新
+    const highlightManager = this.sheet.formulaManager.cellHighlightManager;
+    if (highlightManager && this.element.value.startsWith('=')) {
+      highlightManager.highlightFormulaCells(this.element.value);
+    }
   }
 
   /**

@@ -83,7 +83,7 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
           // 阻止事件传播和默认行为
           event.stopPropagation();
           event.preventDefault();
-        } else if (event.key === 'Delete' || event.key === 'Backspace') {
+        } else if (!this.table.editorManager.editingEditor && (event.key === 'Delete' || event.key === 'Backspace')) {
           //响应删除键，删除
           const selectCells = this.table.getSelectedCellInfos();
           if (selectCells?.length > 0) {
