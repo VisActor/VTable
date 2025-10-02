@@ -534,17 +534,17 @@ export function createTable(): VTable.ListTable {
     sortState: { field: 'Category', order: 'asc' },
     plugins: [masterDetailPlugin],
     customMergeCell: (col, row, table) => {
-      if (col >= 0 && col < table.colCount && row === table.rowCount - 2) {
+      if (col >= 0 && col < table.colCount && row === table.rowCount - 1) {
         return {
           text: '总结栏：此数据为一份人员基本信息',
           range: {
             start: {
               col: 0,
-              row: table.rowCount - 2
+              row: table.rowCount - 1
             },
             end: {
               col: table.colCount - 1,
-              row: table.rowCount - 2
+              row: table.rowCount - 1
             }
           },
           style: {

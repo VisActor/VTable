@@ -175,7 +175,9 @@ export class TableAPIExtensions {
           // 为展开行添加下划线
           const cellGroup = this.table.scenegraph.getCell(col, row);
           if (cellGroup) {
-            this.callbacks.addUnderlineToCell(cellGroup, originalHeight);
+            if (row !== this.table.rowCount - 1) {
+              this.callbacks.addUnderlineToCell(cellGroup, originalHeight);
+            }
             // 触发事件处理
             this.eventManager.handleAfterUpdateCellContentWidth({
               col,
@@ -210,14 +212,8 @@ export class TableAPIExtensions {
       if (Math.abs(detaY) < 1) {
         return;
       }
-
       // 获取当前调整的行索引
       const resizeRowIndex = state.rowResize.row;
-      if (resizeRowIndex === state.table.rowCount - 1) {
-        // 强制将底部冻结行高度设为0
-        state.table.scenegraph.setRowHeight(resizeRowIndex, 0);
-        return;
-      }
       const isExpandedRow = this.eventManager.isRowExpanded(resizeRowIndex);
       // 保存原始的 limitMinHeight
       const originalLimitMinHeight = state.table.internalProps.limitMinHeight;
@@ -243,12 +239,8 @@ export class TableAPIExtensions {
         afterSize = currentRowMinHeight;
         detaY = afterSize - state.table.getRowHeight(state.rowResize.row);
       }
-      // adaptive 模式下检查下一行的最小高度（排除虚拟行）
-      if (
-        state.table.heightMode === 'adaptive' &&
-        state.rowResize.row < state.table.rowCount - 1 &&
-        !this.configManager.isVirtualRow(state.rowResize.row + 1)
-      ) {
+      // adaptive 模式下检查下一行的最小高度
+      if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
         const bottomRowHeightCache = state.table.getRowHeight(state.rowResize.row + 1);
         let bottomRowHeight = bottomRowHeightCache;
         bottomRowHeight -= detaY;
@@ -293,11 +285,7 @@ export class TableAPIExtensions {
    * 简单的行高调整（用于 row 类型）
    */
   private updateResizeColForRow(detaY: number, state: VTable.ListTable['stateManager']): void {
-    if (
-      state.table.heightMode === 'adaptive' &&
-      state.rowResize.row < state.table.rowCount - 1 &&
-      !this.configManager.isVirtualRow(state.rowResize.row + 1)
-    ) {
+    if (state.table.heightMode === 'adaptive' && state.rowResize.row < state.table.rowCount - 1) {
       state.table.scenegraph.updateRowHeight(state.rowResize.row, detaY);
       state.table.scenegraph.updateRowHeight(state.rowResize.row + 1, -detaY);
 
@@ -359,34 +347,22 @@ export class TableAPIExtensions {
 
       const endRow = table.isPivotChart() ? table.rowCount - table.bottomFrozenRowCount : table.rowCount;
 
-      // 首先处理虚拟行，将其高度设为 0
-      for (let row = startRow; row < endRow; row++) {
-        if (this.configManager.isVirtualRow(row)) {
-          // 虚拟行高度永远为 0
-          scenegraph.setRowHeight(row, 0);
-        }
-      }
-
-      // 如果没有展开行，对非虚拟行使用原始逻辑
+      // 如果没有展开行，使用原始逻辑处理所有行
       if (expandedRowIndices.length === 0) {
-        // 重新计算非虚拟行的基础高度总和
+        // 计算所有行的基础高度总和
         let normalRowsBaseHeight = 0;
         for (let row = startRow; row < endRow; row++) {
-          if (!this.configManager.isVirtualRow(row)) {
-            normalRowsBaseHeight += table.getRowHeight(row);
-          }
+          normalRowsBaseHeight += table.getRowHeight(row);
         }
 
         if (normalRowsBaseHeight > 0) {
           // 计算缩放因子
           const scaleFactor = totalDrawHeight / normalRowsBaseHeight;
-          // 对非虚拟行应用缩放
+          // 对所有行应用缩放
           for (let row = startRow; row < endRow; row++) {
-            if (!this.configManager.isVirtualRow(row)) {
-              const baseHeight = table.getRowHeight(row);
-              const newHeight = Math.max(Math.round(baseHeight * scaleFactor), 20);
-              scenegraph.setRowHeight(row, newHeight);
-            }
+            const baseHeight = table.getRowHeight(row);
+            const newHeight = Math.max(Math.round(baseHeight * scaleFactor), 20);
+            scenegraph.setRowHeight(row, newHeight);
           }
         }
         return;
@@ -398,11 +374,7 @@ export class TableAPIExtensions {
       let totalExpandedExtraHeight = 0;
 
       for (const rowIndex of expandedRowIndices) {
-        if (
-          rowIndex >= table.columnHeaderLevelCount &&
-          rowIndex < endRow &&
-          !this.configManager.isVirtualRow(rowIndex)
-        ) {
+        if (rowIndex >= table.columnHeaderLevelCount && rowIndex < endRow) {
           const bodyRowIndex = rowIndex - table.columnHeaderLevelCount;
           const originalHeight = getOriginalRowHeight(table, bodyRowIndex);
           const currentRowHeight = table.getRowHeight(rowIndex);
@@ -415,14 +387,10 @@ export class TableAPIExtensions {
         }
       }
 
-      // 计算普通行（非虚拟行、非展开行）的基础高度总和
+      // 计算普通行（非展开行）的基础高度总和
       let normalRowsBaseHeight = 0;
 
       for (let row = startRow; row < endRow; row++) {
-        // 跳过虚拟行
-        if (this.configManager.isVirtualRow(row)) {
-          continue;
-        }
         if (!expandedRowsInfo.has(row)) {
           normalRowsBaseHeight += table.getRowHeight(row);
         } else {
@@ -442,11 +410,6 @@ export class TableAPIExtensions {
 
       // 应用新的行高
       for (let row = startRow; row < endRow; row++) {
-        // 跳过虚拟行，其高度已经设为 0
-        if (this.configManager.isVirtualRow(row)) {
-          continue;
-        }
-
         let newHeight: number;
 
         if (expandedRowsInfo.has(row)) {
@@ -475,25 +438,24 @@ export class TableAPIExtensions {
         scenegraph.setRowHeight(row, newHeight);
       }
 
-      // 最后一行特殊处理，确保总高度精确匹配（排除虚拟行）
-      const nonVirtualRows: number[] = [];
+      // 最后一行特殊处理，确保总高度精确匹配
+      // 构建所有行的数组
+      const allRows: number[] = [];
       for (let row = startRow; row < endRow; row++) {
-        if (!this.configManager.isVirtualRow(row)) {
-          nonVirtualRows.push(row);
-        }
+        allRows.push(row);
       }
 
-      if (nonVirtualRows.length > 0) {
-        const currentTotalHeight = nonVirtualRows.reduce((sum, row) => sum + table.getRowHeight(row), 0);
+      if (allRows.length > 0) {
+        const currentTotalHeight = allRows.reduce((sum, row) => sum + table.getRowHeight(row), 0);
         if (Math.abs(currentTotalHeight - totalDrawHeight) > 1) {
-          const lastRowIndex = nonVirtualRows[nonVirtualRows.length - 1];
-          const otherRowsHeight = nonVirtualRows.slice(0, -1).reduce((sum, row) => sum + table.getRowHeight(row), 0);
+          const lastRowIndex = allRows[allRows.length - 1];
+          const otherRowsHeight = allRows.slice(0, -1).reduce((sum, row) => sum + table.getRowHeight(row), 0);
           const adjustment = totalDrawHeight - otherRowsHeight;
           if (expandedRowsInfo.has(lastRowIndex)) {
             // 最后一行是展开行，调整时要保证子表高度
             const info = expandedRowsInfo.get(lastRowIndex);
             if (info) {
-              const minHeight = info.detailHeight; // 至少保留20px给基础内容
+              const minHeight = info.detailHeight; // 至少保留子表高度
               const finalHeight = Math.max(adjustment, minHeight);
               scenegraph.setRowHeight(lastRowIndex, finalHeight);
               // 更新展开行信息
@@ -528,7 +490,6 @@ export class TableAPIExtensions {
         this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
       });
       const result = this.originalUpdatePagination(pagination);
-      this.resetVirtualRowsHeight();
       // 使用事件钩子替代固定延时
       this.waitForRenderComplete(() => {
         this.callbacks.restoreExpandedStatesAfter();
@@ -553,7 +514,6 @@ export class TableAPIExtensions {
           this.callbacks.collapseRowToNoRealRecordIndex(rowIndex);
         });
         const result = this.originalToggleHierarchyState(col, row, recalculateColWidths);
-        this.resetVirtualRowsHeight();
         // 使用事件钩子替代固定延时
         this.waitForRenderComplete(() => {
           this.callbacks.restoreExpandedStatesAfter();
@@ -564,20 +524,6 @@ export class TableAPIExtensions {
 
       return this.originalToggleHierarchyState(col, row, recalculateColWidths);
     };
-  }
-
-  private resetVirtualRowsHeight(): void {
-    try {
-      const bodyStartRow = this.table.columnHeaderLevelCount;
-      const bodyEndRow = this.table.rowCount;
-      for (let row = bodyStartRow; row < bodyEndRow; row++) {
-        if (this.configManager.isVirtualRow(row)) {
-          this.table.scenegraph.setRowHeight(row, 0);
-        }
-      }
-    } catch (error) {
-      console.warn('重置虚拟行高度时出错：', error);
-    }
   }
 
   /**

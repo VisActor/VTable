@@ -488,7 +488,11 @@ export class SubTableManager {
     };
     this.table.on('can_scroll', handleParentScroll);
 
-    const handleSubTableScroll = () => {
+    const handleSubTableScroll = (parentArgs: unknown) => {
+      const args = parentArgs as { event?: MouseEvent };
+      if (args.event === undefined) {
+        return true;
+      }
       return subTableCanScroll;
     };
 
@@ -496,7 +500,7 @@ export class SubTableManager {
 
     const extendedSubTable = subTable as VTable.ListTable & {
       __scrollHandler?: (args: unknown) => boolean;
-      __subTableScrollHandler?: () => boolean;
+      __subTableScrollHandler?: (args: unknown) => boolean;
     };
     extendedSubTable.__scrollHandler = handleParentScroll;
     extendedSubTable.__subTableScrollHandler = handleSubTableScroll;
@@ -807,7 +811,6 @@ export class SubTableManager {
    */
   setCallbacks(callbacks: {
     getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
-    redrawAllUnderlines?: () => void;
   }): void {
     this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
   }

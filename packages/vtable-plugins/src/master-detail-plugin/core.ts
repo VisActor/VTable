@@ -92,8 +92,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 设置子表管理器的回调函数
     this.subTableManager.setCallbacks({
       getDetailConfigForRecord: (record, bodyRowIndex) =>
-        this.configManager.getDetailConfigForRecord(record, bodyRowIndex),
-      redrawAllUnderlines: () => this.redrawAllUnderlines()
+        this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     });
   }
 
@@ -263,7 +262,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       undefined,
       (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
-    this.drawUnderlineForRow(rowIndex);
+    if (rowIndex !== this.table.rowCount - 1) {
+      this.drawUnderlineForRow(rowIndex);
+    }
     this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
@@ -308,8 +309,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (internalProps.originalRowHeights) {
       internalProps.originalRowHeights.delete(bodyRowIndex);
     }
-
-    this.removeUnderlineFromRow(rowIndex);
+    if (rowIndex !== this.table.rowCount - 1) {
+      this.removeUnderlineFromRow(rowIndex);
+    }
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -460,7 +462,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     const originalStrokeArrayColor = cellGroup._originalStrokeArrayColor || currentStrokeArrayColor;
     const enhancedStrokeArrayWidth = [...originalStrokeArrayWidth];
     const enhancedStrokeArrayColor = [...originalStrokeArrayColor];
-    // 要还原本来的下划线的效果，那么我们应该要加上下一行的上划线的因为我记得原本的线是叠层的
     const enhancedWidth = ((originalStrokeArrayWidth[2] || 1) * 0.75 + (originalStrokeArrayWidth[0] || 1) * 0.75) * 2;
     enhancedStrokeArrayWidth[2] = enhancedWidth;
     if (originalStrokeArrayColor[2] === 'transparent' || !originalStrokeArrayColor[2]) {
@@ -506,20 +507,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       // 清除下划线标记
       cellGroup._hasUnderline = false;
     }
-  }
-
-  /**
-   * 重绘所有展开行的下划线
-   */
-  private redrawAllUnderlines(): void {
-    this.eventManager.getExpandedRows().forEach(rowIndex => {
-      const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
-      const originalHeight = getOriginalRowHeight(this.table, bodyRowIndex);
-      if (originalHeight > 0) {
-        this.removeUnderlineFromRow(rowIndex);
-        this.drawUnderlineForRow(rowIndex);
-      }
-    });
   }
 
   /**

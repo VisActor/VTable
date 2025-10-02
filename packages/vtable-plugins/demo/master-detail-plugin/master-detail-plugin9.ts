@@ -101,8 +101,9 @@ export function createTable() {
           { field: 'productName', title: '产品名称', width: 150 },
           { field: 'quantity', title: '数量', width: 80 },
           { field: 'price', title: '单价', width: 100 },
-          { field: 'total', title: '小计', width: 100 }
+          { field: 'total', title: '小计', width: 1000 }
         ],
+        widthMode: 'standard',
         records: (data as any).children,
         style: {
           height: 200,
