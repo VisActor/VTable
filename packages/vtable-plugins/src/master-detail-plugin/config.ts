@@ -30,12 +30,9 @@ export class ConfigManager {
     // 确保滚动事件始终触发，用于子表位置同步
     options.customConfig.scrollEventAlwaysTrigger = true;
     const originalCustomComputeRowHeight = options.customComputeRowHeight;
-    // 这个customComputeRowHeight是为了处理虚拟行的问题，让他的高度始终为0
+    // 这个customComputeRowHeight用来保持展开行的高度
     options.customComputeRowHeight = params => {
       const { row, table } = params;
-      if (this.isVirtualRow(row)) {
-        return 0;
-      }
       if (this.isRowExpanded(row)) {
         const expandedHeight = table.getRowHeight(row);
         if (Array.isArray(expandedHeight)) {
@@ -49,29 +46,6 @@ export class ConfigManager {
           return userResult;
         }
       }
-
-      // 优先使用表头/表体的用户配置的默认行高（如果存在）
-      // 如果当前是表头行，优先使用 defaultHeaderRowHeight，其次回退到 defaultRowHeight
-      // 否则使用 defaultRowHeight，最后回退到 'auto'
-      const opts = options as VTable.ListTableConstructorOptions & Record<string, unknown>;
-      const userDefaultRow = opts.defaultRowHeight;
-      const userDefaultHeaderRow = opts.defaultHeaderRowHeight;
-      const headerLevelCount = typeof table.columnHeaderLevelCount === 'number' ? table.columnHeaderLevelCount : 0;
-      if (row < headerLevelCount) {
-        // 表头行：优先使用 defaultHeaderRowHeight，然后 defaultRowHeight，最后 'auto'
-        if (userDefaultHeaderRow !== undefined && userDefaultHeaderRow !== null) {
-          return userDefaultHeaderRow;
-        }
-        if (userDefaultRow !== undefined && userDefaultRow !== null) {
-          return userDefaultRow;
-        }
-        return 'auto';
-      }
-      // 表体行：使用 defaultRowHeight，最后 'auto'
-      if (userDefaultRow !== undefined && userDefaultRow !== null) {
-        return userDefaultRow;
-      }
-      return 'auto';
     };
 
     // 设置第一列为树形结构，是为什么方便getHierarchyState等的判断，他们需要有tree的配置，这不会导致主从表变为tree的状态，因为在_setRecords的时候会直接强制设置为grid
@@ -101,24 +75,8 @@ export class ConfigManager {
         ).detailTableOptions = detailOptions;
       }
     }
-
-    // 拦截表格的refreshRowColCount方法来添加虚拟行
-    this.interceptRefreshRowColCount();
-
     // 禁用 _refreshHierarchyState 方法
     this.disableRefreshHierarchyState();
-  }
-
-  /**
-   * 拦截表格的refreshRowColCount方法来添加虚拟行
-   */
-  private interceptRefreshRowColCount(): void {
-    const originalRefreshRowColCount = this.table.refreshRowColCount.bind(this.table);
-    this.table.refreshRowColCount = () => {
-      originalRefreshRowColCount();
-      // 添加虚拟行
-      this.addVirtualRows();
-    };
   }
 
   /**
@@ -129,43 +87,6 @@ export class ConfigManager {
       return this.table.dataSource?.currentPagerIndexedData?.length ?? 0;
     }
     return this.table.dataSource?.sourceLength ?? 0;
-  }
-
-  /**
-   * 添加虚拟行
-   * 在表格底部添加一行虚拟行，用于展开子表时处理setBodyAndRowHeaderY的lastBodyCell.attribute.height的问题
-   */
-  private addVirtualRows(): void {
-    const { layoutMap } = this.table.internalProps;
-    if (!layoutMap) {
-      return;
-    }
-
-    const dataCount = this.getDataCount();
-    if (dataCount > 0) {
-      const virtualRowsCount = 1;
-      const originalRowCount = this.table.rowCount;
-      this.table.rowCount = originalRowCount + virtualRowsCount;
-    }
-  }
-
-  /**
-   * 检查指定行是否为虚拟行
-   */
-  isVirtualRow(row: number): boolean {
-    const { layoutMap } = this.table.internalProps;
-    if (!layoutMap) {
-      return false;
-    }
-
-    const headerLevelCount = layoutMap.headerLevelCount;
-    const dataCount = this.getDataCount();
-    if (dataCount === 0) {
-      return false;
-    }
-    const virtualRowIndex =
-      headerLevelCount + dataCount + layoutMap.hasAggregationOnBottomCount + layoutMap.hasAggregationOnTopCount;
-    return row === virtualRowIndex;
   }
 
   /**
