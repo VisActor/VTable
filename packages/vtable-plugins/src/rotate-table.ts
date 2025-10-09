@@ -7,9 +7,19 @@ import {
   vglobal
 } from '@visactor/vtable/es/vrender';
 import type { BaseTable } from '@visactor/vtable/src/core/BaseTable';
-import * as VTable from '@visactor/vtable';
+import type { ListTable, pluginsDefinition, BaseTableAPI } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
+
+// Extend the ListTable interface to include the rotation methods
+declare module '@visactor/vtable' {
+  interface ListTableAll {
+    rotate90WithTransform?: (rotateDom: HTMLElement) => void;
+    cancelTransform?: (rotateDom: HTMLElement) => void;
+    rotateDegree?: number;
+  }
+}
 import type { Matrix } from '@visactor/vutils';
 export type IRotateTablePluginOptions = {
   id?: string;
@@ -22,24 +32,24 @@ export type IRotateTablePluginOptions = {
  * 所以需要进行坐标转换，将旋转后的坐标转换后作为VRender及VTable逻辑中用到的坐标。
  * 这里使用transform:'rotate(90deg)'的设置来达到旋转的目的。 其他角度应该也是可以实现的，请自行扩展这个插件并兼容
  */
-export class RotateTablePlugin implements VTable.plugins.IVTablePlugin {
+export class RotateTablePlugin implements pluginsDefinition.IVTablePlugin {
   id = `rotate-table`;
   name = 'Rotate Table';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
-  table: VTable.ListTable;
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED];
+  table: ListTable;
   matrix: Matrix;
-  vglobal_mapToCanvasPoint: any; // 保存vrender中vglobal的mapToCanvasPoint原方法
+  vglobal_mapToCanvasPoint: typeof vglobal.mapToCanvasPoint; // 保存vrender中vglobal的mapToCanvasPoint原方法
   // pluginOptions: IRotateTablePluginOptions;
   constructor(pluginOptions?: IRotateTablePluginOptions) {
     this.id = pluginOptions?.id ?? this.id;
     // this.pluginOptions = pluginOptions;
   }
-  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], VTable.BaseTableAPI]) {
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
+  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]) {
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable;
     //将函数rotate90WithTransform绑定到table实例上，一般情况下插件不需要将api绑定到table实例上，可以直接自身实现某个api功能
-    this.table.rotate90WithTransform = rotate90WithTransform.bind(this.table);
-    this.table.cancelTransform = cancelTransform.bind(this.table);
+    (this.table as any).rotate90WithTransform = rotate90WithTransform.bind(this.table);
+    (this.table as any).cancelTransform = cancelTransform.bind(this.table);
   }
 
   release() {
@@ -82,10 +92,6 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
         height: window.innerHeight || document.documentElement.clientHeight
       };
     }
-    // 如果有 vglobal 上的方法可以使用
-    if (vglobal && vglobal.getViewportSize) {
-      return vglobal.getViewportSize();
-    }
     // 默认使用容器的尺寸
     return rotateDom.getBoundingClientRect();
   };
@@ -109,12 +115,12 @@ export function rotate90WithTransform(this: BaseTable, rotateDom: HTMLElement) {
     }
     return matrix;
   };
-  registerGlobalEventTransformer(vglobal, this.getElement(), getMatrix, getRect, transformPointForCanvas);
+  registerGlobalEventTransformer(vglobal, this.getElement(), getMatrix, getRect as any, transformPointForCanvas);
   registerWindowEventTransformer(
     this.scenegraph.stage.window,
     this.getElement(),
     getMatrix,
-    getRect,
+    getRect as any,
     transformPointForCanvas
   );
   const rotateRablePlugin = this.pluginManager.getPluginByName('Rotate Table');
@@ -150,12 +156,12 @@ export function cancelTransform(this: BaseTable, rotateDom: HTMLElement) {
     matrix.translate(x1, y1);
     return matrix;
   };
-  registerGlobalEventTransformer(vglobal, this.getElement(), getMatrix, getRect, transformPointForCanvas);
+  registerGlobalEventTransformer(vglobal, this.getElement(), getMatrix, getRect as any, transformPointForCanvas);
   registerWindowEventTransformer(
     this.scenegraph.stage.window,
     this.getElement(),
     getMatrix,
-    getRect,
+    getRect as any,
     transformPointForCanvas
   );
   const rotateRablePlugin = this.pluginManager.getPluginByName('Rotate Table');

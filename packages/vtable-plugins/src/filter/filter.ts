@@ -1,26 +1,29 @@
-import * as VTable from '@visactor/vtable';
+import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
 import { FilterEngine } from './filter-engine';
 import { FilterStateManager } from './filter-state-manager';
 import { FilterToolbar } from './filter-toolbar';
 import type { FilterOptions, FilterConfig, FilterState } from './types';
 import { FilterActionType } from './types';
-import type { ListTableConstructorOptions } from '@visactor/vtable';
+import type {
+  ListTableConstructorOptions,
+  pluginsDefinition,
+  ListTable,
+  PivotTable,
+  BaseTableAPI,
+  ColumnDefine
+} from '@visactor/vtable';
 
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
  */
-export class FilterPlugin implements VTable.plugins.IVTablePlugin {
+export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   id = `filter`;
   name = 'Filter';
-  runTime = [
-    VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
-    VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
-    VTable.TABLE_EVENT_TYPE.ICON_CLICK
-  ];
+  runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, TABLE_EVENT_TYPE.ICON_CLICK];
 
   pluginOptions: FilterOptions;
 
-  table: VTable.ListTable | VTable.PivotTable;
+  table: ListTable | PivotTable;
 
   filterEngine: FilterEngine;
   filterStateManager: FilterStateManager;
@@ -34,7 +37,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       type: 'svg',
       width: 12,
       height: 12,
-      positionType: VTable.TYPES.IconPosition.right,
+      positionType: TYPES.IconPosition.right,
       cursor: 'pointer',
       svg: '<svg t="1752821809070" class="icon" viewBox="0 0 1664 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12092" width="200" height="200"><path d="M89.6 179.2A89.6 89.6 0 0 1 89.6 0h1408a89.6 89.6 0 0 1 0 179.2H89.6z m256 384a89.6 89.6 0 0 1 0-179.2h896a89.6 89.6 0 0 1 0 179.2h-896z m256 384a89.6 89.6 0 0 1 0-179.2h384a89.6 89.6 0 0 1 0 179.2h-384z" fill="#93a2b9" p-id="12093"></path></svg>'
     };
@@ -43,7 +46,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       type: 'svg',
       width: 12,
       height: 12,
-      positionType: VTable.TYPES.IconPosition.right,
+      positionType: TYPES.IconPosition.right,
       cursor: 'pointer',
       svg: '<svg t="1752821771292" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11926" width="200" height="200"><path d="M971.614323 53.05548L655.77935 412.054233C635.196622 435.434613 623.906096 465.509377 623.906096 496.583302v495.384307c0 28.975686-35.570152 43.063864-55.353551 21.781723l-159.865852-171.256294c-5.495389-5.895053-8.59279-13.688514-8.592789-21.781722V496.583302c0-31.073925-11.290526-61.148688-31.873254-84.429153L52.385677 53.05548C34.200936 32.472751 48.888611 0 76.365554 0h871.268892c27.476943 0 42.164618 32.472751 23.979877 53.05548z" fill="#416eff" p-id="11927"></path></svg>'
     };
@@ -55,24 +58,24 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     const eventArgs = args[0];
     const runtime = args[1];
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable | VTable.PivotTable;
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable | PivotTable;
 
-    if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
+    if (runtime === TABLE_EVENT_TYPE.BEFORE_INIT) {
       this.filterEngine = new FilterEngine();
       this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
       this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
 
       this.filterToolbar.render(document.body);
       this.updateFilterIcons(eventArgs.options);
-    } else if (runtime === VTable.TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
+    } else if (runtime === TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
       this.pluginOptions = {
         ...this.pluginOptions,
         ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
       };
       this.handleOptionUpdate(eventArgs.options);
     } else if (
-      (runtime === VTable.TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
+      (runtime === TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
       eventArgs.name === 'filtering-icon'
     ) {
       const isRightClick =
@@ -155,7 +158,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
    */
   private updateFilterIcons(options: ListTableConstructorOptions): void {
     const columns = options.columns; // TODO: 待处理多行的情况，待扩展透视表类型
-    columns.forEach((col: VTable.ColumnDefine) => {
+    columns.forEach((col: ColumnDefine) => {
       // 检查是否应该为这一列启用筛选功能
       if (this.shouldEnableFilterForColumn(col.field as string | number, col)) {
         col.headerIcon = this.pluginOptions.filterIcon;
@@ -170,7 +173,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 判断指定列是否应该启用筛选功能
    */
-  shouldEnableFilterForColumn(field: number | string, column: VTable.ColumnDefine): boolean {
+  shouldEnableFilterForColumn(field: number | string, column: ColumnDefine): boolean {
     // 如果是空白列，不适用筛选
     if (!column.title) {
       return false;
@@ -241,7 +244,7 @@ export class FilterPlugin implements VTable.plugins.IVTablePlugin {
       payload: {}
     });
 
-    const columns = (this.table as VTable.ListTable).columns;
+    const columns = (this.table as ListTable).columns;
 
     // 恢复每个筛选配置
     Object.entries(filterState.filters).forEach(([, config]: [string, any]) => {

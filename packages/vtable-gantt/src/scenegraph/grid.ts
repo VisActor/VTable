@@ -63,6 +63,7 @@ export class Grid {
       pickable: false,
       stroke: options.horizontalSplitLine?.lineColor ?? options.timelineHeaderHorizontalLineStyle?.lineColor,
       lineWidth: horizontalSplitLineWidth + (horizontalSplitLineWidth & 1 ? 1 : 0), // 加上后面这个1是为了和左侧表格的水平分割线对齐
+      lineDash: options.horizontalSplitLine?.lineDash ?? options.timelineHeaderHorizontalLineStyle?.lineDash,
       points: [
         { x: 0, y: bottomLineY },
         {
@@ -118,6 +119,7 @@ export class Grid {
             pickable: false,
             stroke: verticalLine_style.lineColor,
             lineWidth: verticalLine_style.lineWidth,
+            lineDash: verticalLine_style.lineDash,
             points: [
               { x, y: 0 },
               { x, y: this.allGridHeight }
@@ -139,6 +141,7 @@ export class Grid {
             pickable: false,
             stroke: verticalLine_style.lineColor,
             lineWidth: verticalLine_style.lineWidth,
+            lineDash: verticalLine_style.lineDash,
             points: [
               { x, y: 0 },
               { x, y: this.allGridHeight }
@@ -172,6 +175,7 @@ export class Grid {
             pickable: false,
             stroke: horizontalLine_style.lineColor,
             lineWidth: horizontalLine_style.lineWidth,
+            lineDash: horizontalLine_style.lineDash,
             points: [
               { x: 0, y },
               { x: this.allGridWidth, y }
@@ -191,6 +195,7 @@ export class Grid {
             pickable: false,
             stroke: horizontalLine_style.lineColor,
             lineWidth: horizontalLine_style.lineWidth,
+            lineDash: horizontalLine_style.lineDash,
             points: [
               { x: 0, y },
               { x: this.allGridWidth, y }

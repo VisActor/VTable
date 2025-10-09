@@ -117,7 +117,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if (isCellDisableSelect(table, targetCol, targetRow)) {
         return;
       }
-      table.selectCell(targetCol, targetRow, e.shiftKey);
+      const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+      table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
         (table as ListTableAPI).editorManager?.editingEditor
@@ -148,7 +149,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
           if (isCellDisableSelect(table, targetCol, targetRow)) {
             return;
           }
-          table.selectCell(targetCol, targetRow, e.shiftKey);
+          const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+          table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
         }
         // 直接返回，不再触发最后的keydown监听事件相关代码
         return;
@@ -161,7 +163,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
         if (isCellDisableSelect(table, targetCol, targetRow)) {
           return;
         }
-        table.selectCell(targetCol, targetRow, e.shiftKey);
+        const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+        table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
       } else if (
         (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
         (table.stateManager.select.ranges?.length ?? 0) === 1

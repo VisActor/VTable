@@ -120,6 +120,8 @@ export interface TableKeyboardOptions {
   moveSelectedCellOnArrowKeys?: boolean;
   /** 是否启用ctrl多选框 */
   ctrlMultiSelect?: boolean;
+  /** 是否启用shift多选框 */
+  shiftMultiSelect?: boolean;
 }
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/

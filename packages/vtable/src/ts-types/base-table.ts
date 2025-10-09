@@ -599,6 +599,9 @@ export interface BaseTableConstructorOptions {
 
     // 是否禁用内置图表激活
     disableBuildInChartActive?: boolean;
+
+    /** 是否检测图表内具体元素的点击事件，用于 chart-render-helper.ts中 contains方法判断是否选中图表（图表助手需求）,默认false */
+    detectPickChartItem?: boolean;
     /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
     forceComputeAllRowHeight?: boolean;
 

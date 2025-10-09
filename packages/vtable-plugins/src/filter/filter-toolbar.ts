@@ -1,15 +1,15 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
 import { applyStyles, filterStyles } from './styles';
-import { FilterMode } from './types';
+import type { FilterMode } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
  */
 export class FilterToolbar {
-  table: VTable.ListTable | VTable.PivotTable;
+  table: ListTable | PivotTable;
   filterStateManager: FilterStateManager;
   valueFilter: ValueFilter | null = null;
   conditionFilter: ConditionFilter | null = null;
@@ -26,7 +26,7 @@ export class FilterToolbar {
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  constructor(table: VTable.ListTable | VTable.PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
     this.table = table;
     this.filterStateManager = filterStateManager;
     this.valueFilter = new ValueFilter(this.table, this.filterStateManager);

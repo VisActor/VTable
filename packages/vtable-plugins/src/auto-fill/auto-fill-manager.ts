@@ -28,8 +28,8 @@ import { fillCopy, getDataIndex, getLenS } from './utils/fill';
 import type { ICopyDataInType } from './utils/fill';
 import type { APPLY_FUNCTIONS } from './types';
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { ListTable } from '@visactor/vtable';
-import * as VTable from '@visactor/vtable';
 import {
   getSelectedRangeArray,
   getTargetRange,
@@ -71,7 +71,7 @@ export class AutoFillManager {
       col: new Set()
     };
     this.tableInstance = table;
-    table.on(VTable.TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, (args: any) => {
+    table.on(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, (args: any) => {
       if (args.text === '复制填充') {
         this.fillData(APPLY_TYPE.COPY);
       } else if (args.text === '序列填充') {
@@ -301,7 +301,7 @@ export class AutoFillManager {
 
     const sourceData = this.sourceData;
 
-    let csLen;
+    let csLen: number;
     if (direction === Direction.DOWN || direction === Direction.UP) {
       csLen = sourceRows.length;
     } else {
@@ -321,10 +321,7 @@ export class AutoFillManager {
       for (let i = 0; i < untransformedApplyDatas[0].length; i++) {
         const row: Array<Nullable<ICellData>> = [];
         for (let j = 0; j < untransformedApplyDatas.length; j++) {
-          row.push({
-            s: null,
-            ...untransformedApplyDatas[j][i]
-          });
+          row.push(untransformedApplyDatas[j][i]);
         }
         applyDatas.push(row);
       }
@@ -335,10 +332,7 @@ export class AutoFillManager {
         const applyData = this.getApplyData(copyD, csLen, asLen, direction, applyType, location);
         const row: Array<Nullable<ICellData>> = [];
         for (let j = 0; j < applyData.length; j++) {
-          row.push({
-            s: null,
-            ...applyData[j]
-          });
+          row.push(applyData[j]);
         }
         applyDatas.push(row);
       });
@@ -356,7 +350,7 @@ export class AutoFillManager {
         }
         // 填充数据存入rowValues，再一次性填充到表格中
         if (applyDatas[rowIndex][colIndex]) {
-          rowValues.push(applyDatas[rowIndex][colIndex]!.v + '');
+          rowValues.push((applyDatas[rowIndex][colIndex] as any)?.v + '');
         }
       });
       values.push(rowValues);
@@ -485,5 +479,7 @@ export class AutoFillManager {
       }
       return fillCopy(data, len);
     }
+    // Default case: return empty array
+    return [];
   }
 }

@@ -1531,26 +1531,30 @@ export class DataSource extends EventTarget implements DataSourceAPI {
             Array.prototype.splice.apply(this.records, sourceIds);
           }
         } else {
-          sourceI = this.currentPagerIndexedData[sourceIndex] as number;
-          targetI = this.currentPagerIndexedData[targetIndex];
-          // 从source的二维数组中取出需要操作的records
-          const records = this.records.splice(sourceI, 1);
-          // 将records插入到目标地址targetIndex处
-          // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
-          records.unshift(targetI, 0);
-          Array.prototype.splice.apply(this.records, records);
+          this.exchangeRecordData(sourceIndex, targetIndex);
         }
         this.restoreTreeHierarchyState();
         this.updatePagerData();
       } else {
-        // 从source的二维数组中取出需要操作的records
-        const records = this.records.splice(sourceIndex, 1);
-        // 将records插入到目标地址targetIndex处
-        // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
-        records.unshift(targetIndex, 0);
-        Array.prototype.splice.apply(this.records, records);
+        this.exchangeRecordData(sourceIndex, targetIndex);
       }
     }
+  }
+
+  /**
+   * @description: 交换源数据
+   * @param {number} sourceIndex 源索引
+   * @param {number} targetIndex 目标索引
+   */
+  exchangeRecordData(sourceIndex: number, targetIndex: number) {
+    const sourceI = this.getRecordIndexPaths(sourceIndex) as number;
+    const targetI = this.getRecordIndexPaths(targetIndex) as number;
+    // 从source的二维数组中取出需要操作的records
+    const records = this.records.splice(sourceI, 1);
+    // 将records插入到目标地址targetIndex处
+    // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
+    records.unshift(targetI, 0);
+    Array.prototype.splice.apply(this.records, records);
   }
 
   restoreTreeHierarchyState() {

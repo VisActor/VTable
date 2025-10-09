@@ -97,11 +97,11 @@ export const otherRule: IAutoFillRule = {
 export const extendNumberRule: IAutoFillRule = {
   type: DATA_TYPE.EXTEND_NUMBER,
   priority: 900,
-  match: cellData => matchExtendNumber(`${cellData?.v}` || '').isExtendNumber,
+  match: cellData => matchExtendNumber(`${(cellData as any)?.v ?? ''}` || '').isExtendNumber,
   isContinue: (prev: any, cur: any) => {
     if (prev.type === DATA_TYPE.EXTEND_NUMBER) {
-      const { beforeTxt, afterTxt } = matchExtendNumber(`${prev.cellData?.v}` || '');
-      const { beforeTxt: curBeforeTxt, afterTxt: curAfterTxt } = matchExtendNumber(`${cur?.v}` || '');
+      const { beforeTxt, afterTxt } = matchExtendNumber(`${(prev.cellData as any)?.v ?? ''}` || '');
+      const { beforeTxt: curBeforeTxt, afterTxt: curAfterTxt } = matchExtendNumber(`${(cur as any)?.v ?? ''}` || '');
       if (beforeTxt === curBeforeTxt && afterTxt === curAfterTxt) {
         return true;
       }
@@ -143,7 +143,7 @@ export const chnNumberRule: IAutoFillRule = {
   type: DATA_TYPE.CHN_NUMBER,
   priority: 830,
   match: cellData => {
-    if (isChnNumber(`${cellData?.v}` || '')) {
+    if (isChnNumber(`${(cellData as any)?.v ?? ''}` || '')) {
       return true;
     }
     return false;
@@ -216,7 +216,7 @@ export const chnWeek2Rule: IAutoFillRule = {
   type: DATA_TYPE.CHN_WEEK2,
   priority: 820,
   match: cellData => {
-    if (isChnWeek2(`${cellData?.v}` || '')) {
+    if (isChnWeek2(`${(cellData as any)?.v ?? ''}` || '')) {
       return true;
     }
     return false;
@@ -272,7 +272,7 @@ export const chnWeek2Rule: IAutoFillRule = {
 export const chnWeek3Rule: IAutoFillRule = {
   type: DATA_TYPE.CHN_WEEK3,
   priority: 810,
-  match: cellData => isChnWeek3(`${cellData?.v}` || ''),
+  match: cellData => isChnWeek3(`${(cellData as any)?.v ?? ''}` || ''),
   isContinue: (prev: any, cur: any) => prev.type === DATA_TYPE.CHN_WEEK3,
   applyFunctions: {
     [APPLY_TYPE.SERIES]: (dataWithIndex: any, len: any, direction: any) => {
@@ -326,10 +326,13 @@ export const chnWeek3Rule: IAutoFillRule = {
 export const loopSeriesRule: IAutoFillRule = {
   type: DATA_TYPE.LOOP_SERIES,
   priority: 800,
-  match: cellData => isLoopSeries(`${cellData?.v}` || ''),
+  match: cellData => isLoopSeries(`${(cellData as any)?.v ?? ''}` || ''),
   isContinue: (prev: any, cur: any) => {
     if (prev.type === DATA_TYPE.LOOP_SERIES) {
-      return getLoopSeriesInfo(`${prev.cellData?.v}` || '').name === getLoopSeriesInfo(`${cur?.v}` || '').name;
+      return (
+        getLoopSeriesInfo(`${(prev.cellData as any)?.v ?? ''}` || '').name ===
+        getLoopSeriesInfo(`${(cur as any)?.v ?? ''}` || '').name
+      );
     }
     return false;
   },
