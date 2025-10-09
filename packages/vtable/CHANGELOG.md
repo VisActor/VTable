@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 26 Sep 2025 10:28:51 GMT and should not be manually modified.
+This log was last generated on Thu, 09 Oct 2025 10:16:27 GMT and should not be manually modified.
+
+## 1.20.2
+Thu, 09 Oct 2025 10:16:27 GMT
+
+### Updates
+
+- fix: umd build for plugins
+
+
+- docs: vtable sheet umd import
+
+
+- fix: search component clear method #4476
+
+
 
 ## 1.20.1
 Fri, 26 Sep 2025 10:28:51 GMT
