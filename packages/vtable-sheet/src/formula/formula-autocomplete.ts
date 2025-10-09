@@ -513,6 +513,7 @@ export class FormulaAutocomplete {
   private show(): void {
     if (this.dropdown && this.items.length > 0) {
       this.originalEditingEditor = this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor;
+      //这个地方不得已将其临时置为null，因为显示出公式列表后期望列表能响应enter、arrowDown、arrowUp等按键，但是和插件excel-edit-cell-keyboard冲突，单元格编辑状态中的话插件里面捕获了这些按键，所以需要临时置为null
       this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor = null;
       this.dropdown.style.display = 'block';
       this.isVisible = true;
@@ -526,6 +527,7 @@ export class FormulaAutocomplete {
    */
   private hide(): void {
     if (this.originalEditingEditor) {
+      //恢复原来的编辑状态
       this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor = this.originalEditingEditor;
       this.originalEditingEditor = null;
     }
