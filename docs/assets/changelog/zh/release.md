@@ -1,3 +1,22 @@
+# v1.20.2
+
+2025-10-09
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: refactor umd build for vtable-plugins and vtable-sheet component
+- **@visactor/vtable**: search component clear method [#4476](https://github.com/VisActor/VTable/issues/4476)
+- **@visactor/vtable-sheet**: refactor use keyboard to select formula select item
+
+**📖 文档更新**
+
+- **@visactor/vtable**: vtable sheet umd import guide
+
+
+
+[更多详情请查看 v1.20.2](https://github.com/VisActor/VTable/releases/tag/v1.20.2)
+
 # v1.20.1
 
 2025-09-26
