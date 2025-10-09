@@ -1,3 +1,4 @@
+import type { IEditor } from '@visactor/vtable-editors';
 import type VTableSheet from '../components/vtable-sheet';
 
 interface AutocompleteItem {
@@ -14,6 +15,7 @@ export class FormulaAutocomplete {
   private items: AutocompleteItem[] = [];
   private selectedIndex: number = -1;
   private isVisible: boolean = false;
+  private originalEditingEditor: IEditor<any, any> = null;
   private inputElement: HTMLInputElement | null = null;
   private sheet: VTableSheet;
   private onSelectCallback?: (item: AutocompleteItem) => void;
@@ -46,9 +48,9 @@ export class FormulaAutocomplete {
 
     // 绑定事件
     input.addEventListener('input', this.handleInput.bind(this));
-    input.addEventListener('keydown', this.handleKeydown.bind(this));
+    input.addEventListener('keydown', this.handleKeydown.bind(this), true);
     input.addEventListener('blur', () => {
-      setTimeout(() => this.hide(), 200);
+      setTimeout(() => this.hide(), 10);
     });
   }
 
@@ -302,7 +304,7 @@ export class FormulaAutocomplete {
           itemEl.appendChild(descEl);
         }
 
-        itemEl.addEventListener('click', () => this.selectItem(globalIndex));
+        itemEl.addEventListener('mousedown', () => this.selectItem(globalIndex));
         itemEl.addEventListener('mouseenter', () => {
           this.selectedIndex = globalIndex;
           this.renderDropdown();
@@ -410,11 +412,13 @@ export class FormulaAutocomplete {
         event.preventDefault();
         this.selectedIndex = Math.min(this.selectedIndex + 1, this.items.length - 1);
         this.renderDropdown();
+        this.scrollToSelectedItem();
         break;
       case 'ArrowUp':
         event.preventDefault();
         this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
         this.renderDropdown();
+        this.scrollToSelectedItem();
         break;
       case 'Enter':
         if (this.selectedIndex >= 0) {
@@ -423,14 +427,39 @@ export class FormulaAutocomplete {
         }
         break;
       case 'Escape':
+        event.preventDefault();
         this.hide();
+        // 确保输入框重新获得焦点
+        if (this.inputElement) {
+          this.inputElement.focus();
+        }
         break;
       case 'Tab':
         if (this.selectedIndex >= 0) {
           event.preventDefault();
           this.selectItem(this.selectedIndex);
+        } else {
+          this.hide();
         }
         break;
+    }
+  }
+
+  /**
+   * 滚动到选中的项目
+   */
+  private scrollToSelectedItem(): void {
+    if (!this.dropdown || this.selectedIndex < 0) {
+      return;
+    }
+
+    const items = this.dropdown.querySelectorAll('.vtable-formula-autocomplete-item');
+    if (items[this.selectedIndex]) {
+      const selectedItem = items[this.selectedIndex] as HTMLElement;
+      selectedItem.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+      });
     }
   }
 
@@ -462,9 +491,20 @@ export class FormulaAutocomplete {
       // 设置光标位置
       const newCursorPos = context.insertPosition + item.value.length + (item.type === 'function' ? 1 : 0);
       this.inputElement.setSelectionRange(newCursorPos, newCursorPos);
+
+      // 触发input事件以同步到其他组件
+      const inputEvent = new Event('input', { bubbles: true });
+      this.inputElement.dispatchEvent(inputEvent);
     }
 
     this.hide();
+
+    // 确保输入框重新获得焦点
+    if (this.inputElement) {
+      setTimeout(() => {
+        this.inputElement.focus();
+      }, 50);
+    }
   }
 
   /**
@@ -472,6 +512,9 @@ export class FormulaAutocomplete {
    */
   private show(): void {
     if (this.dropdown && this.items.length > 0) {
+      this.originalEditingEditor = this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor;
+      //这个地方不得已将其临时置为null，因为显示出公式列表后期望列表能响应enter、arrowDown、arrowUp等按键，但是和插件excel-edit-cell-keyboard冲突，单元格编辑状态中的话插件里面捕获了这些按键，所以需要临时置为null
+      this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor = null;
       this.dropdown.style.display = 'block';
       this.isVisible = true;
       this.selectedIndex = 0;
@@ -483,6 +526,11 @@ export class FormulaAutocomplete {
    * 隐藏下拉框
    */
   private hide(): void {
+    if (this.originalEditingEditor) {
+      //恢复原来的编辑状态
+      this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor = this.originalEditingEditor;
+      this.originalEditingEditor = null;
+    }
     if (this.dropdown) {
       this.dropdown.style.display = 'none';
       this.isVisible = false;

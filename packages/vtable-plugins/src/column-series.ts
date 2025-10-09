@@ -1,4 +1,6 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, ColumnsDefine, ColumnDefine } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 /**
  * 添加行和列的插件的配置选项
  */
@@ -16,32 +18,32 @@ export interface ColumnSeriesOptions {
 /**
  * 生成列序号标题的插件
  */
-export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
+export class ColumnSeriesPlugin implements pluginsDefinition.IVTablePlugin {
   id = `column-series`;
   name = 'Column Series';
-  runTime = [VTable.TABLE_EVENT_TYPE.BEFORE_INIT, VTable.TABLE_EVENT_TYPE.BEFORE_KEYDOWN];
+  runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_KEYDOWN];
   pluginOptions: ColumnSeriesOptions;
-  table: VTable.ListTable;
+  table: ListTable;
   columns: { field?: string; title: string }[] = [];
   constructor(pluginOptions: ColumnSeriesOptions) {
     this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = Object.assign({ columnCount: 100 }, pluginOptions);
   }
   run(...args: any[]) {
-    if (args[1] === VTable.TABLE_EVENT_TYPE.BEFORE_INIT) {
+    if (args[1] === TABLE_EVENT_TYPE.BEFORE_INIT) {
       const eventArgs = args[0];
-      const table: VTable.BaseTableAPI = args[2];
-      this.table = table as VTable.ListTable;
+      const table: BaseTableAPI = args[2];
+      this.table = table as ListTable;
       const options = eventArgs.options;
       //根据pluginOptions的columnCount组织columns，column的title生成规则和excel一致，如A~Z,AA~AZ,AB~AZ,AA~ZZ,AAA~ZZZ
       this.columns = this.generateColumns(this.pluginOptions.columnCount);
       options.columns = this.columns;
-    } else if (args[1] === VTable.TABLE_EVENT_TYPE.BEFORE_KEYDOWN) {
+    } else if (args[1] === TABLE_EVENT_TYPE.BEFORE_KEYDOWN) {
       const eventArgs = args[0];
       const e = eventArgs.event;
       if (this.pluginOptions.autoExtendColumnTriggerKeys?.includes(e.key)) {
         if (this.table.stateManager.select.cellPos.col === this.table.colCount - 1) {
-          this.table.addColumn(this.generateColumn(this.table.colCount - 1) as VTable.ColumnDefine);
+          this.table.addColumn(this.generateColumn(this.table.colCount - 1) as ColumnDefine);
         }
       }
     }
@@ -96,6 +98,6 @@ export class ColumnSeriesPlugin implements VTable.plugins.IVTablePlugin {
   resetColumnCount(columnCount: number) {
     this.pluginOptions.columnCount = columnCount;
     this.columns = this.generateColumns(columnCount);
-    this.table.updateColumns(this.columns as VTable.ColumnsDefine);
+    this.table.updateColumns(this.columns as ColumnsDefine);
   }
 }

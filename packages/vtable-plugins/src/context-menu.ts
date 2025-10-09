@@ -1,4 +1,6 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, BaseTableAPI } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 import { MenuManager } from './contextmenu/menu-manager';
 import { MenuHandler } from './contextmenu/handle-menu-helper';
 import type { MenuItemOrSeparator, MenuClickEventArgs } from './contextmenu/types';
@@ -37,22 +39,22 @@ export interface ContextMenuOptions {
 
   beforeShowAdjustMenuItems?: (
     menuItems: MenuItemOrSeparator[],
-    table: VTable.ListTable,
+    table: ListTable,
     col: number,
     row: number
   ) => MenuItemOrSeparator[];
 }
 
-export type MenuClickCallback = (args: MenuClickEventArgs, table: VTable.ListTable) => void;
+export type MenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => void;
 /**
  * 右键菜单插件
  */
-export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
+export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
   id = `context-menu`;
   name = 'Context Menu';
-  runTime = [VTable.TABLE_EVENT_TYPE.CONTEXTMENU_CELL, VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT];
+  runTime = [TABLE_EVENT_TYPE.CONTEXTMENU_CELL, TABLE_EVENT_TYPE.PLUGIN_EVENT];
   pluginOptions: ContextMenuOptions;
-  table: VTable.ListTable;
+  table: ListTable;
   /** 菜单管理器 */
   private menuManager: MenuManager;
   /** 菜单处理器 */
@@ -98,7 +100,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 处理单元格右键菜单事件
    */
-  private handleContextMenuCell = (eventArgs: any, table: VTable.BaseTableAPI): void => {
+  private handleContextMenuCell = (eventArgs: any, table: BaseTableAPI): void => {
     // 获取单元格信息
     const { col, row } = eventArgs;
 
@@ -139,7 +141,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
 
       // 调整菜单项
       if (this.pluginOptions.beforeShowAdjustMenuItems) {
-        menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as VTable.ListTable, col, row);
+        menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as ListTable, col, row);
       }
 
       // 显示右键菜单
@@ -150,7 +152,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 处理插件事件
    */
-  private handlePluginEvent = (eventArgs: any, table: VTable.BaseTableAPI): void => {
+  private handlePluginEvent = (eventArgs: any, table: BaseTableAPI): void => {
     const { eventType, rowIndex, colIndex, isCorner } = eventArgs.pluginEventInfo;
     const fireEventFromPlugin = eventArgs.plugin;
 
@@ -171,12 +173,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
 
       // 调整菜单项
       if (this.pluginOptions.beforeShowAdjustMenuItems) {
-        menuItems = this.pluginOptions.beforeShowAdjustMenuItems(
-          menuItems,
-          table as VTable.ListTable,
-          colIndex,
-          rowIndex
-        );
+        menuItems = this.pluginOptions.beforeShowAdjustMenuItems(menuItems, table as ListTable, colIndex, rowIndex);
       }
 
       // 显示右键菜单
@@ -190,16 +187,16 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: any[]) {
     const eventArgs = args[0];
     const runTime = args[1];
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable;
 
     // 阻止默认右键菜单
     eventArgs.event.preventDefault();
 
     // 根据事件类型处理不同的右键菜单
-    if (runTime === VTable.TABLE_EVENT_TYPE.CONTEXTMENU_CELL) {
+    if (runTime === TABLE_EVENT_TYPE.CONTEXTMENU_CELL) {
       this.handleContextMenuCell(eventArgs, table);
-    } else if (runTime === VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT) {
+    } else if (runTime === TABLE_EVENT_TYPE.PLUGIN_EVENT) {
       this.handlePluginEvent(eventArgs, table);
     }
   }
@@ -207,7 +204,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 显示右键菜单
    */
-  private handleMenuClickCallback = (args: MenuClickEventArgs, table: VTable.ListTable) => {
+  private handleMenuClickCallback = (args: MenuClickEventArgs, table: ListTable) => {
     if (typeof this.pluginOptions.menuClickCallback === 'function') {
       this.pluginOptions.menuClickCallback(args, table);
     } else {
@@ -236,7 +233,7 @@ export class ContextMenuPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 处理菜单点击事件
    */
-  private handleMenuClick(args: MenuClickEventArgs, table: VTable.ListTable): void {
+  private handleMenuClick(args: MenuClickEventArgs, table: ListTable): void {
     const { menuKey, rowIndex, colIndex, inputValue = 1 } = args;
     if (
       typeof this.pluginOptions.menuClickCallback === 'object' &&

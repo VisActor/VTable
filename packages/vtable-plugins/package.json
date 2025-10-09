@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.20.1",
+  "version": "1.20.2",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -28,6 +28,7 @@
   },
   "scripts": {
     "demo": "vite ./demo",
+    "compile": "tsc --noEmit",
     "build": "npm run fix-memory-limit && bundle --clean",
     "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },

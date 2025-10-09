@@ -1,7 +1,7 @@
 import type { EasingType } from '@visactor/vtable/es/vrender';
 import type { BaseTableAPI } from '@visactor/vtable/es/ts-types/base-table';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type * as VTable from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 function isInteger(value: number) {
   return Math.floor(value) === value;
 }
@@ -20,7 +20,7 @@ export interface ITableCarouselAnimationPluginOptions {
   customDistColFunction?: (col: number, table: BaseTableAPI) => { distCol: number; animation?: boolean } | undefined;
 }
 
-export class TableCarouselAnimationPlugin implements VTable.plugins.IVTablePlugin {
+export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePlugin {
   id = `table-carousel-animation`;
   name = 'Table Carousel Animation';
   runTime = [TABLE_EVENT_TYPE.INITIALIZED];

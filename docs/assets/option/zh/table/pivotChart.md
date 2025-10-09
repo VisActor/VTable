@@ -165,12 +165,25 @@ export interface IIndicatorHeaderNode {
   }[];
 ```
 
-- dimensions 维度各层级的维度信息，是一个 IDimensionInfo 类型的数组，vtable 会根据这个路径来定位到具体的列。
+- dimensions 列表头维度各层级的维度信息，是一个 IDimensionInfo 类型的数组，vtable 会根据这个路径来定位到具体的列。
   {{ use: common-IDimensionInfo()}}
 
 - width 指定列宽。
 
 ## columnWidthConfigForRowHeader(Array)
 
-依据维度信息设置行表头列宽
-
+依据行维度信息设置行表头列宽, 设置示例：
+```
+columnWidthConfigForRowHeader": [
+    {
+      "dimensions": [
+        {
+          "dimensionKey": "city",
+          "value": "北京"
+        }
+      ],
+      "width": 318
+    }
+  ]
+```
+匹配关键是行维度的key：dimensionKey。

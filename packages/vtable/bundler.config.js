@@ -11,9 +11,17 @@ module.exports = {
     treeshake: true
   },
   globals: {
-    // '@visactor/vtable-editors': 'VTable.editors'
+    // 如果umd打包想要排除vrender的依赖，可以注放开下面注释的代码
+    // '@visactor/vrender-core': 'VRender',
+    // '@visactor/vrender-components': 'VRender',
+    // '@visactor/vrender-kits': 'VRender',
+    // '@visactor/vrender-animate': 'VRender',
   },
   external: [
-    // '@visactor/vtable-editors'
+    //如果umd打包想要排除vrender的依赖，可以注放开下面注释的代码
+    // '@visactor/vrender-core',
+    // '@visactor/vrender-components',
+    // '@visactor/vrender-kits',
+    // '@visactor/vrender-animate',
   ]
 };
