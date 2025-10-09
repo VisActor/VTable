@@ -216,7 +216,7 @@ export class SearchComponent {
 
   /**
    * @description: 为查询结果项设置自定义单元格样式
-   * @param {QueryResult['results'][number]} resultItem 查询结果项
+   * @param {(typeof this.queryResult)[number]} resultItem 查询结果项
    * @param {boolean} highlight 是否高亮
    * @param {string} customStyleId 自定义样式ID
    */
