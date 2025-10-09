@@ -5,13 +5,13 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: refactor umd build for vtable-plugins and vtable-sheet component
-- **@visactor/vtable**: search component clear method [#4476](https://github.com/VisActor/VTable/issues/4476)
-- **@visactor/vtable-sheet**: refactor use keyboard to select formula select item
+- **@visactor/vtable**: 重构 vtable-plugins 和 vtable-sheet 组件的 UMD 构建产物
+- **@visactor/vtable**: 搜索组件clear方法问题修复 [#4476](https://github.com/VisActor/VTable/issues/4476)
+- **@visactor/vtable-sheet**: 编辑表格组件使用键盘选择公式选择项后enter，arrow键不生效问题修复
 
 **📖 文档更新**
 
-- **@visactor/vtable**: vtable sheet umd import guide
+- **@visactor/vtable**: vtable sheet UMD 导入指南
 
 
 
