@@ -1,4 +1,4 @@
-import type { BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
+import type { BaseTableAPI, ListTable, ListTableConstructorOptions, pluginsDefinition } from '@visactor/vtable';
 import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
 import { TableSeriesNumber as VRenderTableSeriesNumber, SeriesNumberEvent } from '@visactor/vtable/es/vrender';
 import type { ILayer, TableSeriesNumberAttributes } from '@visactor/vtable/es/vrender';
@@ -20,7 +20,7 @@ export type TableSeriesNumberOptions = {
     | 'rowSeriesNumberWidth'
   >
 >;
-export class TableSeriesNumber implements plugins.IVTablePlugin {
+export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
   id = `table-series-number`;
   name = 'Table Series Number';
   runTime = [
@@ -174,6 +174,7 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
         if (target.isDescendantsOf(this.seriesNumberComponent)) {
           return false;
         }
+        return true;
       };
 
       // const rowSeriesNumberColWidth = this.seriesNumberComponent.rowSeriesNumberWidth;
@@ -344,7 +345,7 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
   private handleSeriesNumberCellClick = (e: any) => {
     const { seriesNumberCell, event, isDragSelect } = e.detail;
     const ctrlMultiSelect = this.table.options.keyboardOptions?.ctrlMultiSelect ?? true;
-    const shiftMultiSelect = this.table.options.keyboardOptions?.shiftMultiSelect ?? true;
+    const shiftMultiSelect = (this.table.options.keyboardOptions as any)?.shiftMultiSelect ?? true;
     const enableCtrlSelectMode = (event.nativeEvent.ctrlKey || event.nativeEvent.metaKey) && ctrlMultiSelect;
     const enableShiftSelectMode = event.nativeEvent.shiftKey && shiftMultiSelect;
     const isRow = seriesNumberCell.name.includes('row');
@@ -456,8 +457,8 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
     const adjustStartRowIndex = Math.max(rowStart - 2, this.table.frozenRowCount);
     const adjustEndRowIndex = Math.min(rowEnd + 2, this.table.rowCount - 1);
     //判断seriesNumberComponent的冻结行数是否变化
-    if (this.table.frozenRowCount !== this.seriesNumberComponent.getAttributes().frozenRowCount) {
-      this.seriesNumberComponent.setAttributes({ frozenRowCount: this.table.frozenRowCount });
+    if (this.table.frozenRowCount !== (this.seriesNumberComponent.getAttributes() as any).frozenRowCount) {
+      this.seriesNumberComponent.setAttributes({ frozenRowCount: this.table.frozenRowCount } as any);
     }
     // 调用行序号重建接口
     this.seriesNumberComponent.recreateCellsToRowSeriesNumberGroup(adjustStartRowIndex, adjustEndRowIndex);
@@ -482,8 +483,8 @@ export class TableSeriesNumber implements plugins.IVTablePlugin {
     //  console.log('syncColWidthToComponent adjust', adjustStartColIndex, adjustEndColIndex);
 
     //判断seriesNumberComponent的冻结列数是否变化
-    if (this.table.frozenColCount !== this.seriesNumberComponent.getAttributes().frozenColCount) {
-      this.seriesNumberComponent.setAttributes({ frozenColCount: this.table.frozenColCount });
+    if (this.table.frozenColCount !== (this.seriesNumberComponent.getAttributes() as any).frozenColCount) {
+      this.seriesNumberComponent.setAttributes({ frozenColCount: this.table.frozenColCount } as any);
     }
     // 调用列序号重建接口
     this.seriesNumberComponent.recreateCellsToColSeriesNumberGroup(adjustStartColIndex, adjustEndColIndex);

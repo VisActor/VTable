@@ -1,9 +1,9 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable, PivotChart, TYPES } from '@visactor/vtable';
 import type { CellInfo } from '../excel';
 import { handlePaginationExport } from '../util/pagination';
 
-type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
-type CellRange = VTable.TYPES.CellRange;
+type IVTable = ListTable | PivotTable | PivotChart;
+type CellRange = TYPES.CellRange;
 
 const newLine = '\r\n';
 const separator = ',';
@@ -16,7 +16,10 @@ export type ExportVTableToCsvOptions = {
   fileName?: string;
 };
 
-export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
+export function exportVTableToCsv(
+  tableInstance: ListTable | PivotTable | PivotChart,
+  option?: ExportVTableToCsvOptions
+): string {
   const exportAllData = !!option?.exportAllData;
   const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);
   const minRow = 0;
@@ -50,7 +53,7 @@ export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableT
 function getCopyCellValue(
   col: number,
   row: number,
-  tableInstance: IVTable,
+  tableInstance: ListTable | PivotTable | PivotChart,
   option?: ExportVTableToCsvOptions
 ): string | Promise<string> | void {
   const rawRecord = tableInstance.getCellRawRecord(col, row);

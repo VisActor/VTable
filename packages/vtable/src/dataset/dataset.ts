@@ -540,7 +540,7 @@ export class Dataset {
         const record = this.records[i];
         if (!isNeedFilter || this.filterRecord(record)) {
           (this.filteredRecords as any[]).push(record);
-          this.processRecord(record);
+          record && this.processRecord(record);
         }
       }
     } else {

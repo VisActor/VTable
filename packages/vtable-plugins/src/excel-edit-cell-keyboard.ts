@@ -1,4 +1,5 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, TYPES, pluginsDefinition } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
 //备用 插件配置项 目前感觉都走默认逻辑就行
@@ -8,11 +9,11 @@ export type IExcelEditCellKeyboardPluginOptions = {
   // enableDeleteKey?: boolean;
 };
 
-export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin {
+export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlugin {
   id = `excel-edit-cell-keyboard`;
   name = 'Excel Edit Cell Keyboard';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
-  table: VTable.ListTable;
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED];
+  table: ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
   constructor(pluginOptions?: IExcelEditCellKeyboardPluginOptions) {
     this.id = pluginOptions?.id ?? this.id;
@@ -20,9 +21,9 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
 
     this.bindEvent();
   }
-  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], VTable.BaseTableAPI]) {
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
+  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]) {
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable;
   }
 
   bindEvent() {
@@ -113,7 +114,7 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   }
 }
 //将选中单元格的值设置为空
-function deleteSelectRange(selectCells: VTable.TYPES.CellInfo[][], tableInstance: VTable.ListTable) {
+function deleteSelectRange(selectCells: TYPES.CellInfo[][], tableInstance: ListTable) {
   for (let i = 0; i < selectCells.length; i++) {
     for (let j = 0; j < selectCells[i].length; j++) {
       tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');

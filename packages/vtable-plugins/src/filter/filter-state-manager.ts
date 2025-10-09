@@ -1,4 +1,5 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable } from '@visactor/vtable';
+import type { ColumnDefine } from '@visactor/vtable/es/ts-types';
 import type { FilterState, FilterAction, FilterConfig } from './types';
 import { FilterActionType } from './types';
 import type { FilterEngine } from './filter-engine';
@@ -12,9 +13,9 @@ export class FilterStateManager {
   private engine: FilterEngine;
   private listeners: Array<(state: FilterState) => void> = [];
 
-  private table: VTable.ListTable | VTable.PivotTable;
+  private table: ListTable | PivotTable;
 
-  constructor(table: VTable.ListTable | VTable.PivotTable, engine: FilterEngine) {
+  constructor(table: ListTable | PivotTable, engine: FilterEngine) {
     this.state = {
       filters: new Map()
     };
@@ -115,7 +116,7 @@ export class FilterStateManager {
    * 更新列图标状态
    */
   private updateColumnIcons() {
-    const columns = (this.table as VTable.ListTable).columns;
+    const columns = (this.table as ListTable).columns;
     if (!columns) {
       return;
     }
@@ -129,7 +130,7 @@ export class FilterStateManager {
     const filteringIcon = plugin.pluginOptions.filteringIcon;
 
     // 遍历所有列，更新图标
-    columns.forEach((col: VTable.ColumnDefine, index: number) => {
+    columns.forEach((col: ColumnDefine, index: number) => {
       const field = col.field as string;
       const filterConfig = this.state.filters.get(field);
 
@@ -154,7 +155,7 @@ export class FilterStateManager {
     });
 
     // 更新表格列定义
-    (this.table as VTable.ListTable).updateColumns(columns);
+    (this.table as ListTable).updateColumns(columns);
   }
 
   private shouldApplyFilter(action: FilterAction) {

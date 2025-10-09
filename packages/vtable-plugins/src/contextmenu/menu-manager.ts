@@ -12,7 +12,7 @@ import {
   createNumberInputItem,
   MENU_ITEM_DISABLED_CLASS
 } from './styles';
-import type { MenuItemOrSeparator } from './types';
+import type { MenuItemOrSeparator, MenuKey } from './types';
 import type { MenuItem } from './types';
 import type { MenuClickEventArgs } from './types';
 
@@ -136,7 +136,7 @@ export class MenuManager {
           input.addEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
               this.handleMenuItemClick({
-                menuKey: menuItem.menuKey,
+                menuKey: menuItem.menuKey as MenuKey,
                 menuText: menuItem.text,
                 inputValue: parseInt(input.value, 10),
                 ...this.context
@@ -187,7 +187,7 @@ export class MenuManager {
                 return;
               }
               this.handleMenuItemClick({
-                menuKey: menuItem.menuKey,
+                menuKey: menuItem.menuKey as MenuKey,
                 menuText: menuItem.text,
                 ...this.context
               });
