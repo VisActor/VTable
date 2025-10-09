@@ -142,7 +142,7 @@ export class SearchComponent {
           this.table
         );
       }
-      this.updateCellStyle(true);
+      this.updateCellStyle();
 
       // if (this.autoJump) {
       //   return this.next();
@@ -190,7 +190,7 @@ export class SearchComponent {
         }
       }
     }
-    this.updateCellStyle(true);
+    this.updateCellStyle();
 
     if (this.callback) {
       this.callback(
@@ -211,26 +211,34 @@ export class SearchComponent {
     };
   }
 
+  /**
+   * @description: 为查询结果项设置自定义单元格样式
+   * @param {QueryResult['results'][number]} resultItem 查询结果项
+   * @param {boolean} highlight 是否高亮
+   * @param {string} customStyleId 自定义样式ID
+   */
+  arrangeCustomCellStyle(
+    resultItem: (typeof this.queryResult)[number],
+    highlight: boolean = true,
+    customStyleId: string = '__search_component_highlight'
+  ) {
+    const { col, row, range } = resultItem;
+    this.table.arrangeCustomCellStyle(
+      range
+        ? { range }
+        : {
+            row,
+            col
+          },
+      highlight ? customStyleId : null
+    );
+  }
+
   updateCellStyle(highlight: boolean = true) {
-    if (highlight == null) {
-      if (this.queryResult?.length) {
-        this.queryResult.forEach(({ range, row, col }) => {
-          if (range) {
-            this.table.arrangeCustomCellStyle(
-              { range },
-              '' // 或者 null，看API是否允许
-            );
-          } else {
-            this.table.arrangeCustomCellStyle(
-              {
-                col,
-                row
-              },
-              highlight ? '__search_component_highlight' : null
-            );
-          }
-        });
-      }
+    if (!highlight) {
+      (this.queryResult || []).forEach(resultItem => {
+        this.arrangeCustomCellStyle(resultItem, highlight);
+      });
       return;
     }
     if (!this.queryResult) {
@@ -256,31 +264,16 @@ export class SearchComponent {
       range.start.row = row;
       range.end.row = row;
 
-      this.table.arrangeCustomCellStyle(
+      this.arrangeCustomCellStyle(
         {
           range
         },
-        highlight ? '__search_component_focuse' : null
+        highlight,
+        '__search_component_focuse'
       );
     } else {
       for (let i = 0; i < this.queryResult.length; i++) {
-        const { col, row, range } = this.queryResult[i];
-        if (range) {
-          this.table.arrangeCustomCellStyle(
-            {
-              range
-            },
-            highlight ? '__search_component_highlight' : null
-          );
-        } else {
-          this.table.arrangeCustomCellStyle(
-            {
-              col,
-              row
-            },
-            highlight ? '__search_component_highlight' : null
-          );
-        }
+        this.arrangeCustomCellStyle(this.queryResult[i], highlight);
       }
     }
   }
@@ -306,12 +299,7 @@ export class SearchComponent {
           const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
           range.start.row = row;
           range.end.row = row;
-          this.table.arrangeCustomCellStyle(
-            {
-              range
-            },
-            '__search_component_highlight'
-          );
+          this.arrangeCustomCellStyle({ range });
         }
       }
 
@@ -332,58 +320,26 @@ export class SearchComponent {
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.table.arrangeCustomCellStyle(
+        this.arrangeCustomCellStyle(
           {
             range
           },
+          true,
           '__search_component_focuse'
         );
       }
     } else {
       if (this.currentIndex !== -1) {
-        const { col, row, range } = this.queryResult[this.currentIndex];
-
         // reset last focus
-        if (range) {
-          this.table.arrangeCustomCellStyle(
-            {
-              range
-            },
-            '__search_component_highlight'
-          );
-        } else {
-          this.table.arrangeCustomCellStyle(
-            {
-              col,
-              row
-            },
-            '__search_component_highlight'
-          );
-        }
+        this.arrangeCustomCellStyle(this.queryResult[this.currentIndex]);
       }
       this.currentIndex++;
       if (this.currentIndex >= this.queryResult.length) {
         this.currentIndex = 0;
       }
-      const { col, row, range } = this.queryResult[this.currentIndex];
+      const { col, row } = this.queryResult[this.currentIndex];
 
-      // this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
-      if (range) {
-        this.table.arrangeCustomCellStyle(
-          {
-            range
-          },
-          '__search_component_focuse'
-        );
-      } else {
-        this.table.arrangeCustomCellStyle(
-          {
-            col,
-            row
-          },
-          '__search_component_focuse'
-        );
-      }
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, '__search_component_focuse');
 
       this.jumpToCell({ col, row });
     }
@@ -414,7 +370,7 @@ export class SearchComponent {
           const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
           range.start.row = row;
           range.end.row = row;
-          this.table.arrangeCustomCellStyle({ range }, '__search_component_highlight');
+          this.arrangeCustomCellStyle({ range });
         }
       }
 
@@ -436,17 +392,12 @@ export class SearchComponent {
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.table.arrangeCustomCellStyle({ range }, '__search_component_focuse');
+        this.arrangeCustomCellStyle({ range }, true, '__search_component_focuse');
       }
     } else {
       // 普通表格处理
       if (this.currentIndex !== -1) {
-        const { col, row, range } = this.queryResult[this.currentIndex];
-        if (range) {
-          this.table.arrangeCustomCellStyle({ range }, '__search_component_highlight');
-        } else {
-          this.table.arrangeCustomCellStyle({ col, row }, '__search_component_highlight');
-        }
+        this.arrangeCustomCellStyle(this.queryResult[this.currentIndex]);
       }
 
       this.currentIndex--;
@@ -454,13 +405,8 @@ export class SearchComponent {
         this.currentIndex = this.queryResult.length - 1;
       }
 
-      const { col, row, range } = this.queryResult[this.currentIndex];
-      if (range) {
-        this.table.arrangeCustomCellStyle({ range }, '__search_component_focuse');
-      } else {
-        this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
-      }
-
+      const { col, row } = this.queryResult[this.currentIndex];
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, '__search_component_focuse');
       this.jumpToCell({ col, row });
     }
 
@@ -514,7 +460,7 @@ export class SearchComponent {
   }
   clear() {
     // reset highlight cell style
-    this.updateCellStyle(null);
+    this.updateCellStyle(false);
     this.queryStr = '';
     this.queryResult = [];
     this.currentIndex = -1;
