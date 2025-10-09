@@ -802,9 +802,11 @@ export class SceneProxy {
         //   cellGroup.attribute.height -
         //   (this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()) -
         //   y;
+        const actualRowHeight = this.table.getRowHeight(this.rowEnd); // 获取实际行高
+        // 使用实际行高而不是cellGroup.attribute.height
         const deltaY =
           cellGroup.attribute.y +
-          cellGroup.attribute.height -
+          actualRowHeight -
           (this.table.getAllRowsHeight() - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight());
         this.deltaY = -deltaY;
       }
