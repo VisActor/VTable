@@ -27,6 +27,9 @@ export type SearchComponentOption = {
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 };
 
+const HighlightStyleId = '__search_component_highlight';
+const FocuseHighlightStyleId = '__search_component_focuse';
+
 const defalutHightlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
   bgColor: 'rgba(255, 255, 0, 0.2)'
 };
@@ -88,8 +91,8 @@ export class SearchComponent {
     this.callback = option.callback;
     this.scrollOption =
       option.scrollOption || ({ duration: 900, easing: 'quartIn' as EasingType } as ITableAnimationOption);
-    this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
-    this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
+    this.table.registerCustomCellStyle(HighlightStyleId, this.highlightCellStyle as any);
+    this.table.registerCustomCellStyle(FocuseHighlightStyleId, this.focuseHighlightCellStyle as any);
   }
 
   search(str: string) {
@@ -220,7 +223,7 @@ export class SearchComponent {
   arrangeCustomCellStyle(
     resultItem: (typeof this.queryResult)[number],
     highlight: boolean = true,
-    customStyleId: string = '__search_component_highlight'
+    customStyleId: string = HighlightStyleId
   ) {
     const { col, row, range } = resultItem;
     this.table.arrangeCustomCellStyle(
@@ -245,11 +248,11 @@ export class SearchComponent {
       return;
     }
 
-    if (!this.table.hasCustomCellStyle('__search_component_highlight')) {
-      this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
+    if (!this.table.hasCustomCellStyle(HighlightStyleId)) {
+      this.table.registerCustomCellStyle(HighlightStyleId, this.highlightCellStyle as any);
     }
-    if (!this.table.hasCustomCellStyle('__search_component_focuse')) {
-      this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
+    if (!this.table.hasCustomCellStyle(FocuseHighlightStyleId)) {
+      this.table.registerCustomCellStyle(FocuseHighlightStyleId, this.focuseHighlightCellStyle as any);
     }
     if (this.isTree) {
       const { range, indexNumber } = this.queryResult[0];
@@ -269,7 +272,7 @@ export class SearchComponent {
           range
         },
         highlight,
-        '__search_component_focuse'
+        FocuseHighlightStyleId
       );
     } else {
       for (let i = 0; i < this.queryResult.length; i++) {
@@ -325,7 +328,7 @@ export class SearchComponent {
             range
           },
           true,
-          '__search_component_focuse'
+          FocuseHighlightStyleId
         );
       }
     } else {
@@ -339,7 +342,7 @@ export class SearchComponent {
       }
       const { col, row } = this.queryResult[this.currentIndex];
 
-      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, '__search_component_focuse');
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocuseHighlightStyleId);
 
       this.jumpToCell({ col, row });
     }
@@ -392,7 +395,7 @@ export class SearchComponent {
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.arrangeCustomCellStyle({ range }, true, '__search_component_focuse');
+        this.arrangeCustomCellStyle({ range }, true, FocuseHighlightStyleId);
       }
     } else {
       // 普通表格处理
@@ -406,7 +409,7 @@ export class SearchComponent {
       }
 
       const { col, row } = this.queryResult[this.currentIndex];
-      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, '__search_component_focuse');
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocuseHighlightStyleId);
       this.jumpToCell({ col, row });
     }
 
