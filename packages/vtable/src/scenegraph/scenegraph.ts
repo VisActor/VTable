@@ -2377,7 +2377,7 @@ export class Scenegraph {
       return this.table.getRowsHeight(0, row - 1);
     } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
       // body
-      return this.table.getRowsHeight(this.table.frozenRowCount, row - 1);
+      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);
