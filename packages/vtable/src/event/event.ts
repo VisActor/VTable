@@ -1080,7 +1080,7 @@ export class EventManager {
             for (const item of clipboardItems) {
               if (item.types.includes('text/plain')) {
                 item.getType('text/plain').then((blob: Blob) => {
-                  blob.text().then(this._pasteValue);
+                  blob.text().then(data => this._pasteValue(data));
                 });
               }
             }
