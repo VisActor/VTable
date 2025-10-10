@@ -1,4 +1,3 @@
-import type { IEditor } from '@visactor/vtable-editors';
 import type VTableSheet from '../components/vtable-sheet';
 import { ExcelEditCellKeyboardResponse } from '@visactor/vtable-plugins';
 import type { ExcelEditCellKeyboardPlugin } from '@visactor/vtable-plugins';
