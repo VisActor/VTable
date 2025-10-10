@@ -1,6 +1,21 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Thu, 09 Oct 2025 10:16:27 GMT and should not be manually modified.
+This log was last generated on Fri, 10 Oct 2025 11:28:59 GMT and should not be manually modified.
+
+## 1.20.3
+Fri, 10 Oct 2025 11:28:59 GMT
+
+### Updates
+
+- fix: paste html to cell no work #4551
+
+
+- fix: select formula item use keyboard arrowUp and arrowDown
+
+
+- fix: dbclick the automatic column width in the rightFrozenColCount configuration #4526
+
+
 
 ## 1.20.2
 Thu, 09 Oct 2025 10:16:27 GMT
