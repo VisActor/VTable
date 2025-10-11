@@ -1,3 +1,18 @@
+# v1.20.3
+
+2025-10-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: paste html to cell no work [#4551](https://github.com/VisActor/VTable/issues/4551)
+- **@visactor/vtable**: select formula item use keyboard arrowUp and arrowDown
+- **@visactor/vtable**: dbclick the automatic column width in the rightFrozenColCount configuration [#4526](https://github.com/VisActor/VTable/issues/4526)
+
+
+
+[更多详情请查看 v1.20.3](https://github.com/VisActor/VTable/releases/tag/v1.20.3)
+
 # v1.20.2
 
 2025-10-09
