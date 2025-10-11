@@ -1,5 +1,6 @@
-import type { IEditor } from '@visactor/vtable-editors';
 import type VTableSheet from '../components/vtable-sheet';
+import { ExcelEditCellKeyboardResponse } from '@visactor/vtable-plugins';
+import type { ExcelEditCellKeyboardPlugin } from '@visactor/vtable-plugins';
 
 interface AutocompleteItem {
   type: 'function' | 'cell' | 'range';
@@ -15,7 +16,6 @@ export class FormulaAutocomplete {
   private items: AutocompleteItem[] = [];
   private selectedIndex: number = -1;
   private isVisible: boolean = false;
-  private originalEditingEditor: IEditor<any, any> = null;
   private inputElement: HTMLInputElement | null = null;
   private sheet: VTableSheet;
   private onSelectCallback?: (item: AutocompleteItem) => void;
@@ -512,9 +512,19 @@ export class FormulaAutocomplete {
    */
   private show(): void {
     if (this.dropdown && this.items.length > 0) {
-      this.originalEditingEditor = this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor;
-      //这个地方不得已将其临时置为null，因为显示出公式列表后期望列表能响应enter、arrowDown、arrowUp等按键，但是和插件excel-edit-cell-keyboard冲突，单元格编辑状态中的话插件里面捕获了这些按键，所以需要临时置为null
-      this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor = null;
+      // 因为显示出公式列表后期望列表能响应enter、arrowDown、arrowUp等按键，但是和插件excel-edit-cell-keyboard冲突，单元格编辑状态中的话插件里面捕获了这些按键
+      // 将table的plugins中excel-edit-cell-keyboard的响应键盘设置为空
+      const excelEditCellKeyboardPlugin = this.sheet
+        .getActiveSheet()
+        .tableInstance.pluginManager.getPlugin('excel-edit-cell-keyboard') as ExcelEditCellKeyboardPlugin;
+      if (excelEditCellKeyboardPlugin) {
+        excelEditCellKeyboardPlugin.deleteResponseKeyboard([
+          ExcelEditCellKeyboardResponse.ARROW_DOWN,
+          ExcelEditCellKeyboardResponse.ARROW_UP,
+          ExcelEditCellKeyboardResponse.ENTER
+        ]);
+      }
+
       this.dropdown.style.display = 'block';
       this.isVisible = true;
       this.selectedIndex = 0;
@@ -526,10 +536,16 @@ export class FormulaAutocomplete {
    * 隐藏下拉框
    */
   private hide(): void {
-    if (this.originalEditingEditor) {
-      //恢复原来的编辑状态
-      this.sheet.getActiveSheet().tableInstance.editorManager.editingEditor = this.originalEditingEditor;
-      this.originalEditingEditor = null;
+    const excelEditCellKeyboardPlugin = this.sheet
+      .getActiveSheet()
+      .tableInstance.pluginManager.getPlugin('excel-edit-cell-keyboard') as ExcelEditCellKeyboardPlugin;
+    if (excelEditCellKeyboardPlugin) {
+      // 将show的时候删除的键盘响应重新添加回来
+      excelEditCellKeyboardPlugin.addResponseKeyboard([
+        ExcelEditCellKeyboardResponse.ARROW_DOWN,
+        ExcelEditCellKeyboardResponse.ARROW_UP,
+        ExcelEditCellKeyboardResponse.ENTER
+      ]);
     }
     if (this.dropdown) {
       this.dropdown.style.display = 'none';
