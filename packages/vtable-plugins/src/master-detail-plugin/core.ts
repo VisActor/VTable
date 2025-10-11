@@ -648,7 +648,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   filterSubTables(
     predicate: (bodyRowIndex: number, subTable: VTable.ListTable, record?: unknown) => boolean
   ): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }> {
-    const result: Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }> = [];
+    const result: Array<{ bodyRowIndex: number; subTable: VTable.ListTable;}> = [];
     const allSubTables = this.subTableManager.getAllSubTableInstances();
     if (!allSubTables) {
       return result;
@@ -658,117 +658,13 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       try {
         const record = getRecordByRowIndex(this.table, bodyRowIndex);
         if (predicate(bodyRowIndex, subTable, record)) {
-          result.push({ bodyRowIndex, subTable, record });
+          result.push({ bodyRowIndex, subTable });
         }
       } catch (error) {
         console.warn(`筛选子表时出错:`, error);
       }
     }
     return result;
-  }
-
-  /**
-   * 根据指定单元格的值获取子表实例
-   * @param cellValue 要查找的单元格值
-   * @param searchOptions 搜索选项
-   * @returns 匹配的子表实例数组
-   */
-  getSubTableByCellValue(
-    cellValue: unknown,
-    searchOptions?: {
-      fieldName?: string; // 指定字段名，如果不指定则搜索所有字段
-      rowIndex?: number; // 指定行索引，如果不指定则搜索所有行
-      exactMatch?: boolean; // 是否精确匹配，默认为true
-    }
-  ): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record: unknown; matchedField?: string }> {
-    const result: Array<{
-      bodyRowIndex: number;
-      subTable: VTable.ListTable;
-      record: unknown;
-      matchedField?: string;
-    }> = [];
-    const allSubTables = this.subTableManager.getAllSubTableInstances();
-    if (!allSubTables) {
-      return result;
-    }
-
-    const options = {
-      exactMatch: true,
-      ...searchOptions
-    };
-
-    for (const [bodyRowIndex, subTable] of allSubTables) {
-      try {
-        // 如果指定了行索引，只检查该行
-        if (options.rowIndex !== undefined && bodyRowIndex !== options.rowIndex) {
-          continue;
-        }
-
-        const record = getRecordByRowIndex(this.table, bodyRowIndex);
-        if (!record || typeof record !== 'object') {
-          continue;
-        }
-
-        let matchedField: string | undefined;
-        let isMatch = false;
-
-        if (options.fieldName) {
-          // 搜索指定字段
-          const fieldValue = (record as Record<string, unknown>)[options.fieldName];
-          if (options.exactMatch) {
-            isMatch = fieldValue === cellValue;
-          } else {
-            isMatch = String(fieldValue).includes(String(cellValue));
-          }
-          if (isMatch) {
-            matchedField = options.fieldName;
-          }
-        } else {
-          // 搜索所有字段
-          for (const [key, value] of Object.entries(record)) {
-            if (options.exactMatch) {
-              if (value === cellValue) {
-                isMatch = true;
-                matchedField = key;
-                break;
-              }
-            } else {
-              if (String(value).includes(String(cellValue))) {
-                isMatch = true;
-                matchedField = key;
-                break;
-              }
-            }
-          }
-        }
-
-        if (isMatch) {
-          result.push({ bodyRowIndex, subTable, record, matchedField });
-        }
-      } catch (error) {
-        console.warn(`搜索子表时出错:`, error);
-      }
-    }
-
-    return result;
-  }
-
-  /**
-   * 根据指定单元格的值获取第一个匹配的子表实例
-   * @param cellValue 要查找的单元格值
-   * @param searchOptions 搜索选项
-   * @returns 第一个匹配的子表实例，如果不存在则返回null
-   */
-  getFirstSubTableByCellValue(
-    cellValue: unknown,
-    searchOptions?: {
-      fieldName?: string;
-      rowIndex?: number;
-      exactMatch?: boolean;
-    }
-  ): VTable.ListTable | null {
-    const results = this.getSubTableByCellValue(cellValue, searchOptions);
-    return results.length > 0 ? results[0].subTable : null;
   }
 
   /**

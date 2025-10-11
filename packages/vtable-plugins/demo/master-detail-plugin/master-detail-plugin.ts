@@ -454,6 +454,9 @@ export function createTable() {
   setTimeout(() => {
     tableInstance.toggleHierarchyState(0, 2);
     tableInstance.toggleHierarchyState(0, 5);
+    setTimeout(() => {
+      demonstrateFilterSubTables(masterDetailPlugin);
+    }, 1000);
   }, 100);
 
   // 创建分页控制器
@@ -465,7 +468,7 @@ export function createTable() {
 }
 
 /**
- * 设置子表事件监听示例 - 只监听单元格点击事件
+ * 设置子表事件监听示例
  */
 function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
   // 监听子表的单元格点击事件
@@ -478,7 +481,8 @@ function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
       pluginEventInfo?.eventType === SUB_TABLE_EVENT_TYPE.CLICK_CELL
     ) {
       const eventInfo = pluginEventInfo;
-      console.log('子表单元格点击事件:', {
+      // eslint-disable-next-line no-console
+      console.log('🖱️ 子表单元格点击事件:', {
         eventType: eventInfo.eventType,
         masterRowIndex: eventInfo.masterRowIndex,
         masterBodyRowIndex: eventInfo.masterBodyRowIndex,
@@ -487,4 +491,56 @@ function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
       });
     }
   });
+}
+
+function demonstrateFilterSubTables(masterDetailPlugin: MasterDetailPlugin) {
+  // 1. 按部门筛选
+  const engineeringSubTables = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) =>
+    Boolean(record && typeof record === 'object' && 'department' in record && record.department === 'Engineering')
+  );
+  console.log(`Engineering部门: ${engineeringSubTables.length}个子表`);
+  console.log(engineeringSubTables);
+  engineeringSubTables.forEach(({ bodyRowIndex, subTable, record }) => {
+    // 对子表实例进行事件监听
+    subTable.on(VTable.TABLE_EVENT_TYPE.CLICK_CELL, args => {
+      console.log(`Engineering部门子表(行${bodyRowIndex})单元格点击:`, args);
+    });
+  });
+  // 2. 按薪资筛选
+  const highSalarySubTables = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) =>
+    Boolean(
+      record &&
+        typeof record === 'object' &&
+        'salary' in record &&
+        typeof record.salary === 'number' &&
+        record.salary > 80000
+    )
+  );
+  console.log(`高薪员工: ${highSalarySubTables.length}个子表`);
+  console.log(highSalarySubTables);
+  // 3. 按行索引筛选
+  const firstFiveSubTables = masterDetailPlugin.filterSubTables(bodyRowIndex => bodyRowIndex < 5);
+  console.log(`前5行: ${firstFiveSubTables.length}个子表, ${firstFiveSubTables}`);
+  console.log(firstFiveSubTables);
+  // 4. 按子表数据量筛选
+  const largeSubTables = masterDetailPlugin.filterSubTables(
+    (bodyRowIndex, subTable) => (subTable.records?.length || 0) > 5
+  );
+  console.log(`数据量>5: ${largeSubTables.length}个子表, ${largeSubTables}`);
+  console.log(largeSubTables);
+  // 5. 复合条件筛选
+  const marketingHighSalary = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) => {
+    if (!record || typeof record !== 'object') {
+      return false;
+    }
+    return (
+      'department' in record &&
+      record.department === 'Marketing' &&
+      'salary' in record &&
+      typeof record.salary === 'number' &&
+      record.salary > 70000
+    );
+  });
+  console.log(`Marketing高薪: ${marketingHighSalary.length}个子表, ${marketingHighSalary}`);
+  console.log(marketingHighSalary);
 }

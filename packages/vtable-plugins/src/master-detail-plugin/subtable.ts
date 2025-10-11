@@ -979,9 +979,8 @@ export class SubTableManager {
       { vtableEvent: VTable.TABLE_EVENT_TYPE.INITIALIZED, subTableEventType: SUB_TABLE_EVENT_TYPE.INITIALIZED }
     ];
 
-    // 为每个事件设置监听器，使用安全检查避免运行时错误
+    // 为每个事件设置监听器
     eventsToForward.forEach(({ vtableEvent, subTableEventType }) => {
-      // 检查事件类型是否存在，避免运行时错误
       if (vtableEvent && subTableEventType) {
         const handler = (...args: unknown[]) => {
           this.forwardSubTableEvent(subTableEventType, bodyRowIndex, masterRowIndex, subTable, args);
@@ -1021,8 +1020,6 @@ export class SubTableManager {
       subTable: subTable,
       originalEventArgs: originalArgs
     };
-
-    // 如果是单元格相关事件，提取单元格位置信息
     if (originalArgs.length > 0 && typeof originalArgs[0] === 'object' && originalArgs[0] !== null) {
       const eventData = originalArgs[0] as { col?: number; row?: number };
       if (typeof eventData.col === 'number' && typeof eventData.row === 'number') {
@@ -1032,7 +1029,6 @@ export class SubTableManager {
         };
       }
     }
-
     // 直接触发到主表的插件事
     this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
       plugin: { name: 'Master Detail Plugin' },
