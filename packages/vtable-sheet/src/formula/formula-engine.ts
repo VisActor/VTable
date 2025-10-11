@@ -299,6 +299,11 @@ export class FormulaEngine {
 
       const expression = formula.substring(1).trim();
 
+      // 检查是否包含#REF!错误
+      if (expression.includes('#REF!')) {
+        return { value: '#REF!', error: undefined };
+      }
+
       // 使用递归下降解析器
       const result = this.parseExpression(expression);
       return result;
