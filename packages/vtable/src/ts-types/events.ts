@@ -282,6 +282,24 @@ export interface TableEventHandlersEventArgumentMap {
     plugin: any;
     pluginEventInfo: any;
   };
+
+  add_record: {
+    records: any[];
+    recordIndex?: number | number[];
+    recordCount: number;
+  };
+
+  delete_record: {
+    recordIndexs: number[] | number[][];
+    rowIndexs: number[];
+    deletedCount: number;
+  };
+
+  update_record: {
+    records: any[];
+    recordIndexs: (number | number[])[];
+    updateCount: number;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -384,4 +402,8 @@ export interface TableEventHandlersReturnMap {
   before_cache_chart_image: void;
   pasted_data: void;
   plugin_event: void;
+
+  add_record: void;
+  delete_record: void;
+  update_record: void;
 }

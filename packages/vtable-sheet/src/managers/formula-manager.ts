@@ -388,15 +388,44 @@ export class FormulaManager {
    * @param rowIndex 行索引
    * @param numberOfRows 添加的行数
    */
-  addRows(_sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
+  addRows(
+    sheetKey: string,
+    rowIndex: number,
+    numberOfRows: number = 1
+  ): {
+    adjustedCells: Array<{ row: number; col: number }>;
+    movedCells: Array<{ row: number; col: number }>;
+    affectedCells: Array<{ row: number; col: number }>;
+  } {
     this.ensureInitialized();
 
     try {
       // 简化实现：在指定位置插入空行
       console.warn(
-        `addRows operation not fully implemented in MIT version. 
+        `addRows operation not fully implemented in MIT version.
         Inserting ${numberOfRows} empty rows at index ${rowIndex}`
       );
+      // 调整公式引用
+      const { adjustedCells, movedCells } = this.formulaEngine.adjustFormulaReferences(
+        sheetKey,
+        'insert',
+        'row',
+        rowIndex,
+        numberOfRows
+      );
+
+      // 刷新所有受影响的单元格
+      [...adjustedCells, ...movedCells].forEach(cell => {
+        // this.sheet.getActiveSheet().tableInstance.scenegraph.updateCellContent(cell.row, cell.col);
+        const result = this.sheet.formulaManager.getCellValue({
+          sheet: sheetKey,
+          row: cell.row,
+          col: cell.col
+        });
+        this.sheet
+          .getActiveSheet()
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+      });
     } catch (error) {
       console.error('Failed to add rows:', error);
       throw new Error(`Failed to add ${numberOfRows} rows at index ${rowIndex}`);
@@ -409,7 +438,15 @@ export class FormulaManager {
    * @param rowIndex 行索引
    * @param numberOfRows 删除的行数
    */
-  removeRows(_sheetKey: string, rowIndex: number, numberOfRows: number = 1): void {
+  removeRows(
+    sheetKey: string,
+    rowIndex: number,
+    numberOfRows: number = 1
+  ): {
+    adjustedCells: Array<{ row: number; col: number }>;
+    movedCells: Array<{ row: number; col: number }>;
+    affectedCells: Array<{ row: number; col: number }>;
+  } {
     this.ensureInitialized();
 
     try {
@@ -417,6 +454,28 @@ export class FormulaManager {
       console.warn(
         `removeRows operation not fully implemented in MIT version. Removing ${numberOfRows} rows at index ${rowIndex}`
       );
+
+      // 调整公式引用，获取所有受影响的单元格
+      const { adjustedCells, movedCells } = this.formulaEngine.adjustFormulaReferences(
+        sheetKey,
+        'delete',
+        'row',
+        rowIndex,
+        numberOfRows
+      );
+
+      // 刷新所有受影响的单元格
+      [...adjustedCells, ...movedCells].forEach(cell => {
+        //  this.sheet.getActiveSheet().tableInstance.scenegraph.updateCellContent(cell.row, cell.col);
+        const result = this.sheet.formulaManager.getCellValue({
+          sheet: sheetKey,
+          row: cell.row,
+          col: cell.col
+        });
+        this.sheet
+          .getActiveSheet()
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+      });
     } catch (error) {
       console.error('Failed to remove rows:', error);
       throw new Error(`Failed to remove ${numberOfRows} rows at index ${rowIndex}`);
@@ -429,15 +488,18 @@ export class FormulaManager {
    * @param columnIndex 列索引
    * @param numberOfColumns 添加的列数
    */
-  addColumns(_sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
+  addColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
 
     try {
       // 简化实现：在指定位置插入空列
       console.warn(
-        `addColumns operation not fully implemented in MIT version. 
+        `addColumns operation not fully implemented in MIT version.
         Inserting ${numberOfColumns} empty columns at index ${columnIndex}`
       );
+
+      // 调整公式引用
+      this.formulaEngine.adjustFormulaReferences(sheetKey, 'insert', 'column', columnIndex, numberOfColumns);
     } catch (error) {
       console.error('Failed to add columns:', error);
       throw new Error(`Failed to add ${numberOfColumns} columns at index ${columnIndex}`);
@@ -450,15 +512,18 @@ export class FormulaManager {
    * @param columnIndex 列索引
    * @param numberOfColumns 删除的列数
    */
-  removeColumns(_sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
+  removeColumns(sheetKey: string, columnIndex: number, numberOfColumns: number = 1): void {
     this.ensureInitialized();
 
     try {
       // 简化实现：删除指定位置的列
       console.warn(
-        `removeColumns operation not fully implemented in MIT version. 
+        `removeColumns operation not fully implemented in MIT version.
         Removing ${numberOfColumns} columns at index ${columnIndex}`
       );
+
+      // 调整公式引用
+      this.formulaEngine.adjustFormulaReferences(sheetKey, 'delete', 'column', columnIndex, numberOfColumns);
     } catch (error) {
       console.error('Failed to remove columns:', error);
       throw new Error(`Failed to remove ${numberOfColumns} columns at index ${columnIndex}`);

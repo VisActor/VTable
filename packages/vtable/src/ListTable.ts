@@ -1526,8 +1526,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecord(record: any, recordIndex?: number | number[]) {
-    listTableAddRecord(record, recordIndex, this);
+    const success = listTableAddRecord(record, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
+
+    // 只在成功添加时触发事件
+    if (success) {
+      this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
+        records: [record],
+        recordIndex,
+        recordCount: 1
+      });
+    }
   }
 
   /**
@@ -1538,8 +1547,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecords(records: any[], recordIndex?: number | number[]) {
-    listTableAddRecords(records, recordIndex, this);
+    const success = listTableAddRecords(records, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
+
+    // 只在成功添加时触发事件
+    if (success) {
+      this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
+        records,
+        recordIndex,
+        recordCount: records.length
+      });
+    }
   }
 
   /**
@@ -1549,6 +1567,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
   deleteRecords(recordIndexs: number[] | number[][]) {
     listTableDeleteRecords(recordIndexs, this);
     this.internalProps.emptyTip?.resetVisible();
+    const rowIndexs = [];
+    for (let i = 0; i < recordIndexs.length; i++) {
+      rowIndexs.push(this.getBodyRowIndexByRecordIndex(recordIndexs[i]) + this.columnHeaderLevelCount);
+    }
+    // 触发删除数据记录事件 - 假设操作成功
+    this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
+      recordIndexs,
+      rowIndexs,
+      deletedCount: Array.isArray(recordIndexs[0])
+        ? (recordIndexs as number[][]).length
+        : (recordIndexs as number[]).length
+    });
   }
 
   /**
@@ -1560,6 +1590,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     listTableUpdateRecords(records, recordIndexs, this);
+
+    // 触发更新数据记录事件 - 假设操作成功
+    this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
+      records,
+      recordIndexs,
+      updateCount: records.length
+    });
   }
 
   _hasCustomRenderOrLayout() {

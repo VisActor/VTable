@@ -276,6 +276,19 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         this.handleCellValueChanged(event);
       });
 
+      // 监听数据记录变更事件 - 用于调整公式引用
+      this.tableInstance.on('add_record', (event: any) => {
+        this.handleDataRecordsChanged('add', event);
+      });
+
+      this.tableInstance.on('delete_record', (event: any) => {
+        this.handleDataRecordsChanged('delete', event);
+      });
+
+      this.tableInstance.on('update_record', (event: any) => {
+        this.handleDataRecordsChanged('update', event);
+      });
+
       // 监听编辑结束事件，恢复十字光标
       this.tableInstance.on('click_cell', () => {
         this.element.classList.add('vtable-excel-cursor');
@@ -371,6 +384,41 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       newValue: event.changedValue
     };
     this.fire(WorkSheetEventType.CELL_VALUE_CHANGED, cellValueChangedEvent);
+  }
+
+  /**
+   * 处理数据记录变更事件 - 用于调整公式引用
+   * @param type 变更类型 ('add' | 'delete' | 'update')
+   * @param event 数据变更事件
+   */
+  private handleDataRecordsChanged(type: 'add' | 'delete' | 'update', event: any): void {
+    try {
+      const sheetKey = this.getKey();
+
+      if (type === 'add') {
+        // 处理添加记录事件
+        const { recordIndex, recordCount } = event;
+        if (recordIndex !== undefined && recordCount > 0) {
+          // 在指定位置插入行，需要调整该位置之后的公式引用
+          this.vtableSheet.formulaManager.addRows(sheetKey, recordIndex, recordCount);
+        } else {
+          // 默认在末尾添加
+          const currentRowCount = this.getRowCount();
+          this.vtableSheet.formulaManager.addRows(sheetKey, currentRowCount, recordCount);
+        }
+      } else if (type === 'delete') {
+        // 处理删除记录事件
+        const { rowIndexs, deletedCount } = event;
+        if (rowIndexs && rowIndexs.length > 0) {
+          // 为了简化，我们假设删除的是连续的行，从最小的索引开始
+          const minIndex = Math.min(...rowIndexs.flat());
+          this.vtableSheet.formulaManager.removeRows(sheetKey, minIndex, deletedCount);
+        }
+      }
+      // update 事件不需要调整引用，因为只是数据内容变更
+    } catch (error) {
+      console.error(`Failed to handle data records changed (${type}):`, error);
+    }
   }
 
   /**
