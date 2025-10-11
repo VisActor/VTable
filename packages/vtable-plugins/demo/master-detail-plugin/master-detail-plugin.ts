@@ -2,7 +2,7 @@
 // defaultColWidth,defaultHeaderColWidth,defaultRowHeight,defaultHeaderRowHeight
 // widthMode heightMode 为standard
 import * as VTable from '@visactor/vtable';
-import { MasterDetailPlugin } from '../../src';
+import { MasterDetailPlugin, SUB_TABLE_EVENT_TYPE } from '../../src';
 
 const CONTAINER_ID = 'vTable';
 
@@ -449,6 +449,8 @@ export function createTable() {
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(option);
+  // 添加子表事件监听示例
+  setupSubTableEventListeners(tableInstance);
   setTimeout(() => {
     tableInstance.toggleHierarchyState(0, 2);
     tableInstance.toggleHierarchyState(0, 5);
@@ -460,4 +462,29 @@ export function createTable() {
   (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
   (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   return tableInstance;
+}
+
+/**
+ * 设置子表事件监听示例 - 只监听单元格点击事件
+ */
+function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
+  // 监听子表的单元格点击事件
+  tableInstance.on(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, args => {
+    const { plugin, pluginEventInfo } = args;
+    // 检查是否是主从表插件的事件，并且只处理单元格点击事件
+    if (
+      plugin &&
+      (plugin as { name?: string }).name === 'Master Detail Plugin' &&
+      pluginEventInfo?.eventType === SUB_TABLE_EVENT_TYPE.CLICK_CELL
+    ) {
+      const eventInfo = pluginEventInfo;
+      console.log('子表单元格点击事件:', {
+        eventType: eventInfo.eventType,
+        masterRowIndex: eventInfo.masterRowIndex,
+        masterBodyRowIndex: eventInfo.masterBodyRowIndex,
+        subTableCell: eventInfo.subTableCell,
+        originalEventArgs: eventInfo.originalEventArgs
+      });
+    }
+  });
 }

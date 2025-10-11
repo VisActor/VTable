@@ -1,5 +1,6 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailTableOptions, SubTableCheckboxState } from './types';
+import type { DetailTableOptions, SubTableCheckboxState, SubTableEventInfo } from './types';
+import { SUB_TABLE_EVENT_TYPE } from './types';
 import {
   getInternalProps,
   getRecordByRowIndex,
@@ -237,6 +238,8 @@ export class SubTableManager {
     this.setupUnifiedSelectionManagement(bodyRowIndex, subTable);
     this.setupSubTableCanvasClipping(subTable, bodyRowIndex);
     this.setupAntiFlickerMechanism(subTable);
+    // 设置子表事件监听
+    this.setupSubTableEventForwarding(bodyRowIndex, subTable);
     subTable.render();
   }
 
@@ -347,6 +350,9 @@ export class SubTableManager {
    * 清理子表的事件处理器和引用
    */
   private cleanupSubTableEventHandlers(subTable: VTable.ListTable): void {
+    // 清理事件转发处理器
+    this.cleanupSubTableEventForwarding(subTable);
+
     // 清理after_render事件处理器
     const afterRenderHandler = (subTable as VTable.ListTable & { __afterRenderHandler?: () => void })
       .__afterRenderHandler;
@@ -835,6 +841,207 @@ export class SubTableManager {
   }
 
   /**
+   * 设置子表事件转发
+   */
+  private setupSubTableEventForwarding(bodyRowIndex: number, subTable: VTable.ListTable): void {
+    const masterRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+
+    // 需要转发的事件列表
+    const eventsToForward = [
+      // 基础鼠标事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.CLICK_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.CLICK_CELL },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.DBLCLICK_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.DBLCLICK_CELL },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEDOWN_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEDOWN_CELL },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEUP_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEUP_CELL },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEENTER_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEENTER_CELL },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSELEAVE_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSELEAVE_CELL },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEMOVE_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEMOVE_CELL },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CONTEXTMENU_CELL,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CONTEXTMENU_CELL
+      },
+      // 表格级鼠标事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEENTER_TABLE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEENTER_TABLE
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSELEAVE_TABLE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSELEAVE_TABLE
+      },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEDOWN_TABLE, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEDOWN_TABLE },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEMOVE_TABLE, subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEMOVE_TABLE },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CONTEXTMENU_CANVAS
+      },
+      // 选择相关事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.SELECTED_CELL, subTableEventType: SUB_TABLE_EVENT_TYPE.SELECTED_CELL },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.SELECTED_CHANGED,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.SELECTED_CHANGED
+      },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.SELECTED_CLEAR, subTableEventType: SUB_TABLE_EVENT_TYPE.SELECTED_CLEAR },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.DRAG_SELECT_END, subTableEventType: SUB_TABLE_EVENT_TYPE.DRAG_SELECT_END },
+      // 键盘事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.KEYDOWN, subTableEventType: SUB_TABLE_EVENT_TYPE.KEYDOWN },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.BEFORE_KEYDOWN, subTableEventType: SUB_TABLE_EVENT_TYPE.BEFORE_KEYDOWN },
+      // 滚动事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.SCROLL, subTableEventType: SUB_TABLE_EVENT_TYPE.SCROLL },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.SCROLL_VERTICAL_END,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.SCROLL_VERTICAL_END
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.SCROLL_HORIZONTAL_END
+      },
+      // 调整大小事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN, subTableEventType: SUB_TABLE_EVENT_TYPE.RESIZE_COLUMN },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.RESIZE_COLUMN_END,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.RESIZE_COLUMN_END
+      },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.RESIZE_ROW, subTableEventType: SUB_TABLE_EVENT_TYPE.RESIZE_ROW },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.RESIZE_ROW_END, subTableEventType: SUB_TABLE_EVENT_TYPE.RESIZE_ROW_END },
+      // 排序相关事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.SORT_CLICK, subTableEventType: SUB_TABLE_EVENT_TYPE.SORT_CLICK },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.AFTER_SORT, subTableEventType: SUB_TABLE_EVENT_TYPE.AFTER_SORT },
+      // 表头操作事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL
+      },
+      // 冻结相关事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.FREEZE_CLICK, subTableEventType: SUB_TABLE_EVENT_TYPE.FREEZE_CLICK },
+      // 下拉菜单事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.DROPDOWN_ICON_CLICK
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.DROPDOWN_MENU_CLEAR
+      },
+      // 菜单事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.SHOW_MENU, subTableEventType: SUB_TABLE_EVENT_TYPE.SHOW_MENU },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.HIDE_MENU, subTableEventType: SUB_TABLE_EVENT_TYPE.HIDE_MENU },
+      // 图标事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.ICON_CLICK, subTableEventType: SUB_TABLE_EVENT_TYPE.ICON_CLICK },
+      // 层次结构事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE
+      },
+      // 复选框和单选框事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CHECKBOX_STATE_CHANGE
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.RADIO_STATE_CHANGE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.RADIO_STATE_CHANGE
+      },
+      // 编辑相关事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.CHANGE_CELL_VALUE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.CHANGE_CELL_VALUE
+      },
+      // 填充手柄事件
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END
+      },
+      {
+        vtableEvent: VTable.TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE,
+        subTableEventType: SUB_TABLE_EVENT_TYPE.DBLCLICK_FILL_HANDLE
+      },
+      // 数据复制事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.COPY_DATA, subTableEventType: SUB_TABLE_EVENT_TYPE.COPY_DATA },
+      // 生命周期事件
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.AFTER_RENDER, subTableEventType: SUB_TABLE_EVENT_TYPE.AFTER_RENDER },
+      { vtableEvent: VTable.TABLE_EVENT_TYPE.INITIALIZED, subTableEventType: SUB_TABLE_EVENT_TYPE.INITIALIZED }
+    ];
+
+    // 为每个事件设置监听器，使用安全检查避免运行时错误
+    eventsToForward.forEach(({ vtableEvent, subTableEventType }) => {
+      // 检查事件类型是否存在，避免运行时错误
+      if (vtableEvent && subTableEventType) {
+        const handler = (...args: unknown[]) => {
+          this.forwardSubTableEvent(subTableEventType, bodyRowIndex, masterRowIndex, subTable, args);
+        };
+
+        subTable.on(vtableEvent, handler);
+
+        // 保存处理器引用以便后续清理
+        const subTableWithHandlers = subTable as unknown as { __eventHandlers?: Map<string, unknown[]> };
+        if (!subTableWithHandlers.__eventHandlers) {
+          subTableWithHandlers.__eventHandlers = new Map();
+        }
+        const handlers = subTableWithHandlers.__eventHandlers;
+        if (!handlers.has(vtableEvent)) {
+          handlers.set(vtableEvent, []);
+        }
+        handlers.get(vtableEvent)?.push(handler);
+      }
+    });
+  }
+
+  /**
+   * 转发子表事件到主表
+   */
+  private forwardSubTableEvent(
+    eventType: string,
+    bodyRowIndex: number,
+    masterRowIndex: number,
+    subTable: VTable.ListTable,
+    originalArgs: unknown[]
+  ): void {
+    // 构建子表事件信息
+    const subTableEventInfo: SubTableEventInfo = {
+      eventType: eventType as keyof typeof SUB_TABLE_EVENT_TYPE,
+      masterBodyRowIndex: bodyRowIndex,
+      masterRowIndex: masterRowIndex,
+      subTable: subTable,
+      originalEventArgs: originalArgs
+    };
+
+    // 如果是单元格相关事件，提取单元格位置信息
+    if (originalArgs.length > 0 && typeof originalArgs[0] === 'object' && originalArgs[0] !== null) {
+      const eventData = originalArgs[0] as { col?: number; row?: number };
+      if (typeof eventData.col === 'number' && typeof eventData.row === 'number') {
+        subTableEventInfo.subTableCell = {
+          col: eventData.col,
+          row: eventData.row
+        };
+      }
+    }
+
+    // 直接触发到主表的插件事
+    this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+      plugin: { name: 'Master Detail Plugin' },
+      event: originalArgs[0], // 原始事件对象
+      pluginEventInfo: subTableEventInfo
+    });
+  }
+
+  /**
    * 直接清除主表选中
    */
   private clearMainTableSelectionInternal(): void {
@@ -860,5 +1067,22 @@ export class SubTableManager {
         (subTable as { clearSelected: () => void }).clearSelected();
       }
     });
+  }
+
+  /**
+   * 清理子表事件转发
+   */
+  private cleanupSubTableEventForwarding(subTable: VTable.ListTable): void {
+    const subTableWithHandlers = subTable as unknown as { __eventHandlers?: Map<string, unknown[]> };
+    if (subTableWithHandlers.__eventHandlers) {
+      // 移除所有事件监听器
+      for (const [eventType, handlers] of subTableWithHandlers.__eventHandlers) {
+        for (const handler of handlers) {
+          subTable.off(eventType, handler as (...args: unknown[]) => void);
+        }
+      }
+      // 清理引用
+      delete subTableWithHandlers.__eventHandlers;
+    }
   }
 }

@@ -1,6 +1,6 @@
 export {
   MasterDetailPlugin,
+  SUB_TABLE_EVENT_TYPE,
   type MasterDetailPluginOptions,
-  type DetailTableOptions,
-  type SUB_TABLE_EVENT_TYPE
+  type DetailTableOptions
 } from './master-detail-plugin/index';
