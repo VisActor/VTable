@@ -5,9 +5,9 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: paste html to cell no work [#4551](https://github.com/VisActor/VTable/issues/4551)
-- **@visactor/vtable**: select formula item use keyboard arrowUp and arrowDown
-- **@visactor/vtable**: dbclick the automatic column width in the rightFrozenColCount configuration [#4526](https://github.com/VisActor/VTable/issues/4526)
+- **@visactor/vtable**: 修复粘贴 HTML 到单元格失效的问题 [#4551](https://github.com/VisActor/VTable/issues/4551)
+- **@visactor/vtable**: 修复使用键盘方向键 arrowUp 和 arrowDown 选择公式项项的问题
+- **@visactor/vtable**: 修复配置 rightFrozenColCount 时双击使右侧冻结列自动列宽分割线未更新问题 [#4526](https://github.com/VisActor/VTable/issues/4526)
 
 
 
