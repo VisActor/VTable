@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import type { MasterDetailPluginOptions, SubTableEventInfo } from './types';
+import type { MasterDetailPluginOptions } from './types';
 import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import { ConfigManager } from './config';
@@ -91,8 +91,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 设置子表管理器的回调函数
     this.subTableManager.setCallbacks({
-      fireSubTableEvent: (eventType: string, eventInfo: SubTableEventInfo) =>
-        this.fireSubTableEvent(eventType, eventInfo),
       getDetailConfigForRecord: (record, bodyRowIndex) =>
         this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     });
@@ -256,16 +254,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
-    // 渲染子表
-    this.subTableManager.renderSubTable(bodyRowIndex, childrenData);
-    // 触发子表行展开事件
-    this.fireSubTableEvent('sub_table_row_expanded', {
-      eventType: 'SUB_TABLE_ROW_EXPANDED',
-      masterRowIndex: rowIndex,
-      recordIndex: realRecordIndex,
-      masterData: record,
-      subTableOptions: detailConfig
-    });
+    this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
+      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    );
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -321,12 +312,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowIndex !== this.table.rowCount - 1) {
       this.removeUnderlineFromRow(rowIndex);
     }
-    // 触发子表行收起事件
-    this.fireSubTableEvent('sub_table_row_collapsed', {
-      eventType: 'SUB_TABLE_ROW_COLLAPSED',
-      masterRowIndex: rowIndex,
-      recordIndex: realRecordIndex
-    });
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -363,11 +348,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowIndex !== this.table.rowCount - 1) {
       this.removeUnderlineFromRow(rowIndex);
     }
-    // 触发子表行收起事件
-    this.fireSubTableEvent('sub_table_row_collapsed_no_realrecordindex', {
-      eventType: 'SUB_TABLE_ROW_COLLAPSED_NO_REALRECORDINDEX',
-      masterRowIndex: rowIndex
-    });
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -642,6 +622,156 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
+   * 根据主表行号获取子表实例
+   * @param rowIndex 主表行索引（包含表头）
+   * @returns 子表实例，如果不存在则返回null
+   */
+  getSubTableByRowIndex(rowIndex: number): VTable.ListTable | null {
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    return this.subTableManager.getSubTableInstance(bodyRowIndex);
+  }
+
+  /**
+   * 根据主表body行号获取子表实例
+   * @param bodyRowIndex 主表body行索引（不包含表头）
+   * @returns 子表实例，如果不存在则返回null
+   */
+  getSubTableByBodyRowIndex(bodyRowIndex: number): VTable.ListTable | null {
+    return this.subTableManager.getSubTableInstance(bodyRowIndex);
+  }
+
+  /**
+   * 根据条件筛选子表实例
+   * @param predicate 筛选条件函数
+   * @returns 符合条件的子表实例数组
+   */
+  filterSubTables(
+    predicate: (bodyRowIndex: number, subTable: VTable.ListTable, record?: unknown) => boolean
+  ): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }> {
+    const result: Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }> = [];
+    const allSubTables = this.subTableManager.getAllSubTableInstances();
+    if (!allSubTables) {
+      return result;
+    }
+
+    for (const [bodyRowIndex, subTable] of allSubTables) {
+      try {
+        const record = getRecordByRowIndex(this.table, bodyRowIndex);
+        if (predicate(bodyRowIndex, subTable, record)) {
+          result.push({ bodyRowIndex, subTable, record });
+        }
+      } catch (error) {
+        console.warn(`筛选子表时出错:`, error);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * 根据指定单元格的值获取子表实例
+   * @param cellValue 要查找的单元格值
+   * @param searchOptions 搜索选项
+   * @returns 匹配的子表实例数组
+   */
+  getSubTableByCellValue(
+    cellValue: unknown,
+    searchOptions?: {
+      fieldName?: string; // 指定字段名，如果不指定则搜索所有字段
+      rowIndex?: number; // 指定行索引，如果不指定则搜索所有行
+      exactMatch?: boolean; // 是否精确匹配，默认为true
+    }
+  ): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record: unknown; matchedField?: string }> {
+    const result: Array<{
+      bodyRowIndex: number;
+      subTable: VTable.ListTable;
+      record: unknown;
+      matchedField?: string;
+    }> = [];
+    const allSubTables = this.subTableManager.getAllSubTableInstances();
+    if (!allSubTables) {
+      return result;
+    }
+
+    const options = {
+      exactMatch: true,
+      ...searchOptions
+    };
+
+    for (const [bodyRowIndex, subTable] of allSubTables) {
+      try {
+        // 如果指定了行索引，只检查该行
+        if (options.rowIndex !== undefined && bodyRowIndex !== options.rowIndex) {
+          continue;
+        }
+
+        const record = getRecordByRowIndex(this.table, bodyRowIndex);
+        if (!record || typeof record !== 'object') {
+          continue;
+        }
+
+        let matchedField: string | undefined;
+        let isMatch = false;
+
+        if (options.fieldName) {
+          // 搜索指定字段
+          const fieldValue = (record as Record<string, unknown>)[options.fieldName];
+          if (options.exactMatch) {
+            isMatch = fieldValue === cellValue;
+          } else {
+            isMatch = String(fieldValue).includes(String(cellValue));
+          }
+          if (isMatch) {
+            matchedField = options.fieldName;
+          }
+        } else {
+          // 搜索所有字段
+          for (const [key, value] of Object.entries(record)) {
+            if (options.exactMatch) {
+              if (value === cellValue) {
+                isMatch = true;
+                matchedField = key;
+                break;
+              }
+            } else {
+              if (String(value).includes(String(cellValue))) {
+                isMatch = true;
+                matchedField = key;
+                break;
+              }
+            }
+          }
+        }
+
+        if (isMatch) {
+          result.push({ bodyRowIndex, subTable, record, matchedField });
+        }
+      } catch (error) {
+        console.warn(`搜索子表时出错:`, error);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * 根据指定单元格的值获取第一个匹配的子表实例
+   * @param cellValue 要查找的单元格值
+   * @param searchOptions 搜索选项
+   * @returns 第一个匹配的子表实例，如果不存在则返回null
+   */
+  getFirstSubTableByCellValue(
+    cellValue: unknown,
+    searchOptions?: {
+      fieldName?: string;
+      rowIndex?: number;
+      exactMatch?: boolean;
+    }
+  ): VTable.ListTable | null {
+    const results = this.getSubTableByCellValue(cellValue, searchOptions);
+    return results.length > 0 ? results[0].subTable : null;
+  }
+
+  /**
    * 释放所有子表资源
    */
   private releaseAllSubTables(): void {
@@ -674,20 +804,5 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.tableAPIExtensions) {
       this.tableAPIExtensions.cleanup();
     }
-  }
-
-  /**
-   * 触发子表事件
-   */
-  private fireSubTableEvent(eventType: string, eventInfo: SubTableEventInfo): void {
-    // 使用VTable的PLUGIN_EVENT系统触发子表事件
-    this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
-      plugin: this,
-      event: null,
-      pluginEventInfo: {
-        eventType,
-        ...eventInfo
-      }
-    });
   }
 }

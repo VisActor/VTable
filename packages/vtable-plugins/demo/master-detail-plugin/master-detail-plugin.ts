@@ -449,7 +449,6 @@ export function createTable() {
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(option);
-
   setTimeout(() => {
     tableInstance.toggleHierarchyState(0, 2);
     tableInstance.toggleHierarchyState(0, 5);
