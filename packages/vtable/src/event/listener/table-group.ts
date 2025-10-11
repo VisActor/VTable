@@ -941,6 +941,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   table.scenegraph.stage.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+
+    // 检查事件是否来自当前表格的有效区域
+    const isEventFromCurrentTable = e.target?.isDescendantsOf?.(table.scenegraph.tableGroup) ?? false;
+
+    // 如果事件不是来自当前表格的有效区域，则忽略
+    if (!isEventFromCurrentTable) {
+      return;
+    }
+
     // 处理列宽调整  这里和tableGroup.addEventListener('pointermove' 逻辑一样
     if (stateManager.isResizeCol() || eventManager.checkColumnResize(eventArgsSet)) {
       // 更新填充柄pointer

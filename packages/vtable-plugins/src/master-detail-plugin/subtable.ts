@@ -1,5 +1,5 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailTableOptions, SubTableCheckboxState } from './types';
+import type { DetailTableOptions, SubTableCheckboxState, SubTableEventInfo } from './types';
 import {
   getInternalProps,
   getRecordByRowIndex,
@@ -12,7 +12,19 @@ import {
  * 子表管理相关功能
  */
 export class SubTableManager {
+  private fireSubTableEventCallback?: (eventType: string, eventInfo: SubTableEventInfo) => void;
+  private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
   constructor(private table: VTable.ListTable, private enableCheckboxCascade: boolean = true) {}
+  /**
+   * 设置回调函数
+   */
+  setCallbacks(callbacks: {
+    fireSubTableEvent?: (eventType: string, eventInfo: SubTableEventInfo) => void;
+    getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
+  }): void {
+    this.fireSubTableEventCallback = callbacks.fireSubTableEvent;
+    this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
+  }
   private saveSubTableCheckboxState(bodyRowIndex: number, subTable: VTable.ListTable): void {
     if (!subTable.stateManager) {
       return;
@@ -178,13 +190,8 @@ export class SubTableManager {
    *
    * @param bodyRowIndex - 主表body区域的行索引
    * @param childrenData - 子表的数据数组
-   * @param getDetailConfig - 获取详细配置的回调函数
    */
-  renderSubTable(
-    bodyRowIndex: number,
-    childrenData: unknown[],
-    getDetailConfig: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null
-  ): void {
+  renderSubTable(bodyRowIndex: number, childrenData: unknown[]): void {
     const internalProps = getInternalProps(this.table);
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
     if (!record) {
@@ -194,7 +201,7 @@ export class SubTableManager {
     if (!childrenData || childrenData.length === 0) {
       return;
     }
-    const detailConfig = getDetailConfig(record, bodyRowIndex);
+    const detailConfig = this.getDetailConfigForRecord ? this.getDetailConfigForRecord(record, bodyRowIndex) : null;
     const childViewBox = this.calculateSubTableViewBox(bodyRowIndex, detailConfig);
     if (!childViewBox) {
       return;
@@ -237,7 +244,22 @@ export class SubTableManager {
     this.setupUnifiedSelectionManagement(bodyRowIndex, subTable);
     this.setupSubTableCanvasClipping(subTable, bodyRowIndex);
     this.setupAntiFlickerMechanism(subTable);
+    // 渲染子表
     subTable.render();
+    // 触发子表渲染完成事件
+    if (this.fireSubTableEventCallback) {
+      const record = getRecordByRowIndex(this.table, bodyRowIndex);
+      const recordIndex =
+        this.table.getRecordIndexByCell(0, bodyRowIndex + this.table.columnHeaderLevelCount) || bodyRowIndex;
+      this.fireSubTableEventCallback('sub_table_rendered', {
+        eventType: 'SUB_TABLE_RENDERED',
+        masterRowIndex: bodyRowIndex + this.table.columnHeaderLevelCount,
+        recordIndex,
+        masterData: record,
+        subTable: subTable,
+        subTableOptions: detailConfig
+      });
+    }
   }
 
   // 缓存列范围计算结果
@@ -329,6 +351,19 @@ export class SubTableManager {
     if (subTable) {
       // 在删除子表前，保存其checkbox状态
       this.saveSubTableCheckboxState(bodyRowIndex, subTable);
+      // 触发子表销毁事件
+      if (this.fireSubTableEventCallback) {
+        const record = getRecordByRowIndex(this.table, bodyRowIndex);
+        const recordIndex =
+          this.table.getRecordIndexByCell(0, bodyRowIndex + this.table.columnHeaderLevelCount) || bodyRowIndex;
+        this.fireSubTableEventCallback('sub_table_destroyed', {
+          eventType: 'SUB_TABLE_DESTROYED',
+          masterRowIndex: bodyRowIndex + this.table.columnHeaderLevelCount,
+          recordIndex,
+          masterData: record,
+          subTable: subTable
+        });
+      }
       // 清理所有事件处理器和引用
       this.cleanupSubTableEventHandlers(subTable);
       // 释放子表资源
@@ -804,15 +839,13 @@ export class SubTableManager {
     (this as unknown as { table: unknown }).table = null;
   }
 
-  private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
-
   /**
-   * 设置回调函数
+   * 获取所有子表实例
+   * @returns Map<bodyRowIndex, VTable.ListTable>
    */
-  setCallbacks(callbacks: {
-    getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
-  }): void {
-    this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
+  getAllSubTableInstances(): Map<number, VTable.ListTable> | undefined {
+    const internalProps = getInternalProps(this.table);
+    return internalProps.subTableInstances;
   }
 
   /**

@@ -299,6 +299,7 @@ export function createTable() {
               fieldFormat: (value: number) => `${value}%`
             }
           ],
+          rowResizeMode: 'all',
           theme: VTable.themes.BRIGHT,
           style: {
             margin: 20,

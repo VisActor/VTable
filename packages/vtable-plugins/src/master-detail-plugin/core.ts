@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import type { Group } from '@visactor/vtable/es/scenegraph/graphic/group';
-import type { MasterDetailPluginOptions } from './types';
+import type { MasterDetailPluginOptions, SubTableEventInfo } from './types';
 import { includesRecordIndex, findRecordIndexPosition } from './types';
 import { getInternalProps, getRecordByRowIndex, getOriginalRowHeight } from './utils';
 import { ConfigManager } from './config';
@@ -91,6 +91,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 设置子表管理器的回调函数
     this.subTableManager.setCallbacks({
+      fireSubTableEvent: (eventType: string, eventInfo: SubTableEventInfo) =>
+        this.fireSubTableEvent(eventType, eventInfo),
       getDetailConfigForRecord: (record, bodyRowIndex) =>
         this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     });
@@ -254,9 +256,16 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
-    this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
-      this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
+    // 渲染子表
+    this.subTableManager.renderSubTable(bodyRowIndex, childrenData);
+    // 触发子表行展开事件
+    this.fireSubTableEvent('sub_table_row_expanded', {
+      eventType: 'SUB_TABLE_ROW_EXPANDED',
+      masterRowIndex: rowIndex,
+      recordIndex: realRecordIndex,
+      masterData: record,
+      subTableOptions: detailConfig
+    });
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -312,6 +321,12 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowIndex !== this.table.rowCount - 1) {
       this.removeUnderlineFromRow(rowIndex);
     }
+    // 触发子表行收起事件
+    this.fireSubTableEvent('sub_table_row_collapsed', {
+      eventType: 'SUB_TABLE_ROW_COLLAPSED',
+      masterRowIndex: rowIndex,
+      recordIndex: realRecordIndex
+    });
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -345,7 +360,14 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       internalProps.originalRowHeights.delete(bodyRowIndex);
     }
 
-    this.removeUnderlineFromRow(rowIndex);
+    if (rowIndex !== this.table.rowCount - 1) {
+      this.removeUnderlineFromRow(rowIndex);
+    }
+    // 触发子表行收起事件
+    this.fireSubTableEvent('sub_table_row_collapsed_no_realrecordindex', {
+      eventType: 'SUB_TABLE_ROW_COLLAPSED_NO_REALRECORDINDEX',
+      masterRowIndex: rowIndex
+    });
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -566,6 +588,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   release(): void {
+    // 首先释放所有子表资源
+    this.releaseAllSubTables();
+    // 清理主从表功能
     this.cleanupMasterDetailFeatures();
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
@@ -607,6 +632,35 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       }
     });
   }
+
+  /**
+   * 获取所有子表实例
+   * @returns 子表实例的Map，键为bodyRowIndex，值为VTable实例
+   */
+  getAllSubTableInstances(): Map<number, VTable.ListTable> | null {
+    return this.subTableManager.getAllSubTableInstances();
+  }
+
+  /**
+   * 释放所有子表资源
+   */
+  private releaseAllSubTables(): void {
+    const subTableInstances = this.subTableManager.getAllSubTableInstances();
+    if (subTableInstances) {
+      subTableInstances.forEach((subTable, bodyRowIndex) => {
+        try {
+          // 直接调用子表实例的 release 方法
+          if (subTable && typeof subTable.release === 'function') {
+            subTable.release();
+          }
+        } catch (error) {
+          console.warn(`释放子表 ${bodyRowIndex} 时出错:`, error);
+        }
+      });
+      // 清空子表实例映射
+      subTableInstances.clear();
+    }
+  }
   /**
    * 清理主从表功能
    */
@@ -620,5 +674,20 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.tableAPIExtensions) {
       this.tableAPIExtensions.cleanup();
     }
+  }
+
+  /**
+   * 触发子表事件
+   */
+  private fireSubTableEvent(eventType: string, eventInfo: SubTableEventInfo): void {
+    // 使用VTable的PLUGIN_EVENT系统触发子表事件
+    this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+      plugin: this,
+      event: null,
+      pluginEventInfo: {
+        eventType,
+        ...eventInfo
+      }
+    });
   }
 }

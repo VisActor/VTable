@@ -29,6 +29,42 @@ export interface SubTableCheckboxState {
 }
 
 /**
+ * 子表事件类型常量
+ */
+export const SUB_TABLE_EVENT_TYPE = {
+  /** 子表行展开事件 */
+  SUB_TABLE_ROW_EXPANDED: 'sub_table_row_expanded',
+  /** 子表行收起事件 */
+  SUB_TABLE_ROW_COLLAPSED: 'sub_table_row_collapsed',
+  /** 子表行收起但是不改变RealRecordIndex事件 */
+  SUB_TABLE_ROW_COLLAPSED_NO_REALRECORDINDEX: 'sub_table_row_collapsed_no_realrecordindex',
+  /** 子表销毁事件 */
+  SUB_TABLE_DESTROYED: 'sub_table_destroyed',
+  /** 子表渲染完成事件 */
+  SUB_TABLE_RENDERED: 'sub_table_rendered'
+} as const;
+
+/**
+ * 子表事件信息接口
+ */
+export interface SubTableEventInfo {
+  /** 事件类型 */
+  eventType: keyof typeof SUB_TABLE_EVENT_TYPE;
+  /** 主表行索引 */
+  masterRowIndex: number;
+  /** 记录索引 */
+  recordIndex?: number | number[];
+  /** 主表数据 */
+  masterData?: unknown;
+  /** 子表实例 */
+  subTable?: VTable.ListTable;
+  /** 子表配置 */
+  subTableOptions?: DetailTableOptions;
+  /** 原始浏览器事件（如果有） */
+  event?: Event;
+}
+
+/**
  * 内部属性扩展接口
  */
 export interface InternalProps {
