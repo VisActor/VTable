@@ -1,3 +1,20 @@
+# v1.21.0
+
+2025-10-13
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: add zoom interaction feature for gantt
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: the updateFilterRules method of PivotTable [#4450](https://github.com/VisActor/VTable/issues/4450)
+
+
+
+[更多详情请查看 v1.21.0](https://github.com/VisActor/VTable/releases/tag/v1.21.0)
+
 # v1.20.3
 
 2025-10-11
