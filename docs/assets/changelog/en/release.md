@@ -1,3 +1,37 @@
+# v1.20.3
+
+2025-10-11
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: paste html to cell no work [#4551](https://github.com/VisActor/VTable/issues/4551)
+- **@visactor/vtable**: select formula item use keyboard arrowUp and arrowDown
+- **@visactor/vtable**: dbclick the automatic column width in the rightFrozenColCount configuration [#4526](https://github.com/VisActor/VTable/issues/4526)
+
+
+
+[more detail about v1.20.3](https://github.com/VisActor/VTable/releases/tag/v1.20.3)
+
+# v1.20.2
+
+2025-10-09
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: refactor umd build for vtable-plugins and vtable-sheet component
+- **@visactor/vtable**: search component clear method [#4476](https://github.com/VisActor/VTable/issues/4476)
+- **@visactor/vtable-sheet**: refactor use keyboard to select formula select item
+
+**📖 Site / documentation update**
+
+- **@visactor/vtable**: vtable sheet umd import guide
+
+
+
+[more detail about v1.20.2](https://github.com/VisActor/VTable/releases/tag/v1.20.2)
+
 # v1.20.1
 
 2025-09-26

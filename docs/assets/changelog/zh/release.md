@@ -1,3 +1,37 @@
+# v1.20.3
+
+2025-10-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复粘贴 HTML 到单元格失效的问题 [#4551](https://github.com/VisActor/VTable/issues/4551)
+- **@visactor/vtable**: 修复使用键盘方向键 arrowUp 和 arrowDown 选择公式项项的问题
+- **@visactor/vtable**: 修复配置 rightFrozenColCount 时双击使右侧冻结列自动列宽分割线未更新问题 [#4526](https://github.com/VisActor/VTable/issues/4526)
+
+
+
+[更多详情请查看 v1.20.3](https://github.com/VisActor/VTable/releases/tag/v1.20.3)
+
+# v1.20.2
+
+2025-10-09
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 重构 vtable-plugins 和 vtable-sheet 组件的 UMD 构建产物
+- **@visactor/vtable**: 搜索组件clear方法问题修复 [#4476](https://github.com/VisActor/VTable/issues/4476)
+- **@visactor/vtable-sheet**: 编辑表格组件使用键盘选择公式选择项后enter，arrow键不生效问题修复
+
+**📖 文档更新**
+
+- **@visactor/vtable**: vtable sheet UMD 导入指南
+
+
+
+[更多详情请查看 v1.20.2](https://github.com/VisActor/VTable/releases/tag/v1.20.2)
+
 # v1.20.1
 
 2025-09-26

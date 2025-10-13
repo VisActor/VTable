@@ -2,6 +2,42 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.20.3",
+      "tag": "@visactor/vtable_v1.20.3",
+      "date": "Fri, 10 Oct 2025 11:28:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: paste html to cell no work #4551\n\n"
+          },
+          {
+            "comment": "fix: select formula item use keyboard arrowUp and arrowDown\n\n"
+          },
+          {
+            "comment": "fix: dbclick the automatic column width in the rightFrozenColCount configuration #4526\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.20.2",
+      "tag": "@visactor/vtable_v1.20.2",
+      "date": "Thu, 09 Oct 2025 10:16:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: umd build for plugins\n\n"
+          },
+          {
+            "comment": "docs: vtable sheet umd import\n\n"
+          },
+          {
+            "comment": "fix: search component clear method #4476\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.20.1",
       "tag": "@visactor/vtable_v1.20.1",
       "date": "Fri, 26 Sep 2025 10:28:51 GMT",
