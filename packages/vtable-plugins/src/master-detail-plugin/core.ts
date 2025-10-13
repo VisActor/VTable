@@ -345,7 +345,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       internalProps.originalRowHeights.delete(bodyRowIndex);
     }
 
-    this.removeUnderlineFromRow(rowIndex);
+    if (rowIndex !== this.table.rowCount - 1) {
+      this.removeUnderlineFromRow(rowIndex);
+    }
     this.subTableManager.recalculateAllSubTablePositions(
       bodyRowIndex + 1,
       undefined,
@@ -566,6 +568,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   release(): void {
+    // 首先释放所有子表资源
+    this.releaseAllSubTables();
+    // 清理主从表功能
     this.cleanupMasterDetailFeatures();
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
@@ -606,6 +611,81 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
         (subTable as { clearSelected: () => void }).clearSelected();
       }
     });
+  }
+
+  /**
+   * 获取所有子表实例
+   * @returns 子表实例的Map，键为bodyRowIndex，值为VTable实例
+   */
+  getAllSubTableInstances(): Map<number, VTable.ListTable> | null {
+    return this.subTableManager.getAllSubTableInstances();
+  }
+
+  /**
+   * 根据主表行号获取子表实例
+   * @param rowIndex 主表行索引（包含表头）
+   * @returns 子表实例，如果不存在则返回null
+   */
+  getSubTableByRowIndex(rowIndex: number): VTable.ListTable | null {
+    const bodyRowIndex = rowIndex - this.table.columnHeaderLevelCount;
+    return this.subTableManager.getSubTableInstance(bodyRowIndex);
+  }
+
+  /**
+   * 根据主表body行号获取子表实例
+   * @param bodyRowIndex 主表body行索引（不包含表头）
+   * @returns 子表实例，如果不存在则返回null
+   */
+  getSubTableByBodyRowIndex(bodyRowIndex: number): VTable.ListTable | null {
+    return this.subTableManager.getSubTableInstance(bodyRowIndex);
+  }
+
+  /**
+   * 根据条件筛选子表实例
+   * @param predicate 筛选条件函数
+   * @returns 符合条件的子表实例数组
+   */
+  filterSubTables(
+    predicate: (bodyRowIndex: number, subTable: VTable.ListTable, record?: unknown) => boolean
+  ): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }> {
+    const result: Array<{ bodyRowIndex: number; subTable: VTable.ListTable;}> = [];
+    const allSubTables = this.subTableManager.getAllSubTableInstances();
+    if (!allSubTables) {
+      return result;
+    }
+
+    for (const [bodyRowIndex, subTable] of allSubTables) {
+      try {
+        const record = getRecordByRowIndex(this.table, bodyRowIndex);
+        if (predicate(bodyRowIndex, subTable, record)) {
+          result.push({ bodyRowIndex, subTable });
+        }
+      } catch (error) {
+        console.warn(`筛选子表时出错:`, error);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * 释放所有子表资源
+   */
+  private releaseAllSubTables(): void {
+    const subTableInstances = this.subTableManager.getAllSubTableInstances();
+    if (subTableInstances) {
+      subTableInstances.forEach((subTable, bodyRowIndex) => {
+        try {
+          // 直接调用子表实例的 release 方法
+          if (subTable && typeof subTable.release === 'function') {
+            subTable.release();
+          }
+        } catch (error) {
+          console.warn(`释放子表 ${bodyRowIndex} 时出错:`, error);
+        }
+      });
+      // 清空子表实例映射
+      subTableInstances.clear();
+    }
   }
   /**
    * 清理主从表功能

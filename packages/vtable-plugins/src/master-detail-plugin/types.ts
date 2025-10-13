@@ -106,3 +106,19 @@ export function includesRecordIndex(array: (number | number[])[], target: Record
 export function findRecordIndexPosition(array: (number | number[])[], target: RecordIndexType): number {
   return array.findIndex(item => recordIndexEquals(item, target));
 }
+
+/**
+ * 子表事件信息接口
+ */
+export interface SubTableEventInfo {
+  /** 子表事件类型 */
+  eventType: keyof typeof VTable.TABLE_EVENT_TYPE;
+  /** 主表行索引（不包含表头） */
+  masterBodyRowIndex: number;
+  /** 主表行索引（包含表头） */
+  masterRowIndex: number;
+  /** 子表实例 */
+  subTable: unknown;
+  /** 原始事件数据 */
+  originalEventArgs?: unknown;
+}

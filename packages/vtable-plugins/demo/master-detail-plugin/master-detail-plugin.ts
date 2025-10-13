@@ -299,6 +299,7 @@ export function createTable() {
               fieldFormat: (value: number) => `${value}%`
             }
           ],
+          rowResizeMode: 'all',
           theme: VTable.themes.BRIGHT,
           style: {
             margin: 20,
@@ -448,10 +449,14 @@ export function createTable() {
 
   // 创建表格实例
   const tableInstance = new VTable.ListTable(option);
-
+  // 添加子表事件监听示例
+  setupSubTableEventListeners(tableInstance);
   setTimeout(() => {
     tableInstance.toggleHierarchyState(0, 2);
     tableInstance.toggleHierarchyState(0, 5);
+    setTimeout(() => {
+      demonstrateFilterSubTables(masterDetailPlugin);
+    }, 1000);
   }, 100);
 
   // 创建分页控制器
@@ -460,4 +465,97 @@ export function createTable() {
   (window as unknown as Record<string, unknown>).tableInstance = tableInstance;
   (window as unknown as Record<string, unknown>).masterDetailPlugin = masterDetailPlugin;
   return tableInstance;
+}
+
+/**
+ * 设置子表事件监听示例
+ */
+function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
+  // 监听子表的单元格点击事件
+  tableInstance.on(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, args => {
+    const { plugin, pluginEventInfo } = args;
+    // 检查是否是主从表插件的事件，并且只处理单元格点击事件
+    if (
+      plugin &&
+      (plugin as { name?: string }).name === 'Master Detail Plugin' &&
+      pluginEventInfo?.eventType === VTable.TABLE_EVENT_TYPE.CLICK_CELL
+    ) {
+      const eventInfo = pluginEventInfo;
+      // eslint-disable-next-line no-console
+      console.log('子表单元格点击事件:', {
+        eventType: eventInfo.eventType,
+        masterRowIndex: eventInfo.masterRowIndex,
+        masterBodyRowIndex: eventInfo.masterBodyRowIndex,
+        originalEventArgs: eventInfo.originalEventArgs
+      });
+    }
+  });
+}
+
+function demonstrateFilterSubTables(masterDetailPlugin: MasterDetailPlugin) {
+  // 1. 按部门筛选
+  const engineeringSubTables = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) =>
+    Boolean(record && typeof record === 'object' && 'department' in record && record.department === 'Engineering')
+  );
+  console.log(`Engineering部门: ${engineeringSubTables.length}个子表`);
+  console.log(engineeringSubTables);
+  engineeringSubTables.forEach(({ bodyRowIndex, subTable, record }) => {
+    // 对子表实例进行事件监听
+    subTable.on(VTable.TABLE_EVENT_TYPE.CLICK_CELL, args => {
+      console.log(`Engineering部门子表(行${bodyRowIndex})单元格点击:`, args);
+    });
+  });
+  // 2. 按薪资筛选
+  const highSalarySubTables = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) =>
+    Boolean(
+      record &&
+        typeof record === 'object' &&
+        'salary' in record &&
+        typeof record.salary === 'number' &&
+        record.salary > 80000
+    )
+  );
+  console.log(`高薪员工: ${highSalarySubTables.length}个子表`);
+  console.log(highSalarySubTables);
+  // 3. 按行索引筛选
+  const firstFiveSubTables = masterDetailPlugin.filterSubTables(bodyRowIndex => bodyRowIndex < 5);
+  console.log(`前5行: ${firstFiveSubTables.length}个子表, ${firstFiveSubTables}`);
+  console.log(firstFiveSubTables);
+  // 4. 按子表数据量筛选
+  const largeSubTables = masterDetailPlugin.filterSubTables(
+    (bodyRowIndex, subTable) => (subTable.records?.length || 0) > 5
+  );
+  console.log(`数据量>5: ${largeSubTables.length}个子表, ${largeSubTables}`);
+  console.log(largeSubTables);
+  // 5. 复合条件筛选
+  const marketingHighSalary = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) => {
+    if (!record || typeof record !== 'object') {
+      return false;
+    }
+    return (
+      'department' in record &&
+      record.department === 'Marketing' &&
+      'salary' in record &&
+      typeof record.salary === 'number' &&
+      record.salary > 70000
+    );
+  });
+  console.log(`Marketing高薪: ${marketingHighSalary.length}个子表, ${marketingHighSalary}`);
+  console.log(marketingHighSalary);
+  // 6. 根据子表内数据筛选 - 筛选包含特定项目名称的子表
+  const projectASubTables = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) => {
+    if (!subTable.records || !Array.isArray(subTable.records)) {
+      return false;
+    }
+    return subTable.records.some(
+      projectRecord =>
+        projectRecord &&
+        typeof projectRecord === 'object' &&
+        'project' in projectRecord &&
+        typeof projectRecord.project === 'string' &&
+        projectRecord.project.includes('项目A')
+    );
+  });
+  console.log(`包含项目A的子表: ${projectASubTables.length}个`);
+  console.log(projectASubTables);
 }

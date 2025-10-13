@@ -1,5 +1,5 @@
 import * as VTable from '@visactor/vtable';
-import type { DetailTableOptions, SubTableCheckboxState } from './types';
+import type { DetailTableOptions, SubTableCheckboxState, SubTableEventInfo } from './types';
 import {
   getInternalProps,
   getRecordByRowIndex,
@@ -237,6 +237,8 @@ export class SubTableManager {
     this.setupUnifiedSelectionManagement(bodyRowIndex, subTable);
     this.setupSubTableCanvasClipping(subTable, bodyRowIndex);
     this.setupAntiFlickerMechanism(subTable);
+    // 设置子表事件监听
+    this.setupSubTableEventForwarding(bodyRowIndex, subTable);
     subTable.render();
   }
 
@@ -347,6 +349,9 @@ export class SubTableManager {
    * 清理子表的事件处理器和引用
    */
   private cleanupSubTableEventHandlers(subTable: VTable.ListTable): void {
+    // 清理事件转发处理器
+    this.cleanupSubTableEventForwarding(subTable);
+
     // 清理after_render事件处理器
     const afterRenderHandler = (subTable as VTable.ListTable & { __afterRenderHandler?: () => void })
       .__afterRenderHandler;
@@ -804,6 +809,25 @@ export class SubTableManager {
     (this as unknown as { table: unknown }).table = null;
   }
 
+  /**
+   * 获取所有子表实例
+   * @returns Map<bodyRowIndex, VTable.ListTable>
+   */
+  getAllSubTableInstances(): Map<number, VTable.ListTable> | undefined {
+    const internalProps = getInternalProps(this.table);
+    return internalProps.subTableInstances;
+  }
+
+  /**
+   * 根据bodyRowIndex获取指定的子表实例
+   * @param bodyRowIndex body行索引
+   * @returns 子表实例，如果不存在则返回null
+   */
+  getSubTableInstance(bodyRowIndex: number): VTable.ListTable | null {
+    const internalProps = getInternalProps(this.table);
+    return internalProps.subTableInstances?.get(bodyRowIndex) || null;
+  }
+
   private getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
 
   /**
@@ -813,6 +837,59 @@ export class SubTableManager {
     getDetailConfigForRecord?: (record: unknown, bodyRowIndex: number) => DetailTableOptions | null;
   }): void {
     this.getDetailConfigForRecord = callbacks.getDetailConfigForRecord;
+  }
+
+  /**
+   * 设置子表事件转发
+   */
+  private setupSubTableEventForwarding(bodyRowIndex: number, subTable: VTable.ListTable): void {
+    const masterRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+    Object.values(VTable.TABLE_EVENT_TYPE).forEach(eventType => {
+      if (eventType) {
+        const handler = (...args: unknown[]) => {
+          this.forwardSubTableEvent(eventType, bodyRowIndex, masterRowIndex, subTable, args);
+        };
+
+        subTable.on(eventType, handler);
+
+        // 保存处理器引用以便后续清理
+        const subTableWithHandlers = subTable as unknown as { __eventHandlers?: Map<string, unknown[]> };
+        if (!subTableWithHandlers.__eventHandlers) {
+          subTableWithHandlers.__eventHandlers = new Map();
+        }
+        const handlers = subTableWithHandlers.__eventHandlers;
+        if (!handlers.has(eventType)) {
+          handlers.set(eventType, []);
+        }
+        handlers.get(eventType)?.push(handler);
+      }
+    });
+  }
+
+  /**
+   * 转发子表事件到主表
+   */
+  private forwardSubTableEvent(
+    eventType: string,
+    bodyRowIndex: number,
+    masterRowIndex: number,
+    subTable: VTable.ListTable,
+    originalArgs: unknown[]
+  ): void {
+    // 构建子表事件信息，直接使用VTable原生事件类型
+    const subTableEventInfo: SubTableEventInfo = {
+      eventType: eventType as keyof typeof VTable.TABLE_EVENT_TYPE,
+      masterBodyRowIndex: bodyRowIndex,
+      masterRowIndex: masterRowIndex,
+      subTable: subTable,
+      originalEventArgs: originalArgs
+    };
+    // 直接触发到主表的插件事件
+    this.table.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+      plugin: { name: 'Master Detail Plugin' },
+      event: originalArgs[0], // 原始事件对象
+      pluginEventInfo: subTableEventInfo
+    });
   }
 
   /**
@@ -841,5 +918,22 @@ export class SubTableManager {
         (subTable as { clearSelected: () => void }).clearSelected();
       }
     });
+  }
+
+  /**
+   * 清理子表事件转发
+   */
+  private cleanupSubTableEventForwarding(subTable: VTable.ListTable): void {
+    const subTableWithHandlers = subTable as unknown as { __eventHandlers?: Map<string, unknown[]> };
+    if (subTableWithHandlers.__eventHandlers) {
+      // 移除所有事件监听器
+      for (const [eventType, handlers] of subTableWithHandlers.__eventHandlers) {
+        for (const handler of handlers) {
+          subTable.off(eventType, handler as (...args: unknown[]) => void);
+        }
+      }
+      // 清理引用
+      delete subTableWithHandlers.__eventHandlers;
+    }
   }
 }

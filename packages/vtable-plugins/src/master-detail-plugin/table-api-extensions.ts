@@ -681,7 +681,7 @@ export class TableAPIExtensions {
         this.currentMouseY <= viewportRowBottomY + (this.table.internalProps.limitMinHeight - 1);
       // 如果是展开行且鼠标在行底部，认为是插件绘制的下划线
       const isExpandedRow = this.eventManager.isRowExpanded(row);
-      const isPluginUnderline = isNearRowBottom && isExpandedRow;
+      const isRowBottomUnderline = isNearRowBottom && isExpandedRow;
       // console.log('Mouse underline detection:', {
       //   row,
       //   mouseX: this.currentMouseX,
@@ -697,7 +697,7 @@ export class TableAPIExtensions {
       //   'distance from bottom': Math.abs(this.currentMouseY - viewportRowBottomY)
       // });
 
-      return !isPluginUnderline;
+      return !isRowBottomUnderline;
     } catch (error) {
       return false;
     }
