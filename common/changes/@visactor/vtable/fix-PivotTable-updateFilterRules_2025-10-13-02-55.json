@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: the updateFilterRules method of PivotTable #4450",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "760478279@qq.com"
+}
