@@ -291,7 +291,7 @@ Separately set the header not to respond to mouse select interaction.
 
 Whether to cancel the selection when clicking the blank area.
 
-##${prefix} outsideClickDeselect(boolean) = true
+##${prefix} outsideClickDeselect(boolean) = false
 
 Whether to cancel the selection when clicking outside the table.
 

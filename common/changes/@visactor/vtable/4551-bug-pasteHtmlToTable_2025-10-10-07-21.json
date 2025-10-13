@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: add zoom interaction for gantt chart\n\n",
+      "type": "minor",
+      "packageName": "@visactor/vtable-gantt"
+    }
+  ],
+  "packageName": "@visactor/vtable-gantt",
+  "email": "892739385@qq.com"
+}
