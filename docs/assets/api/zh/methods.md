@@ -1432,6 +1432,17 @@ updateFilterRules(filterRules: FilterRules) => void
 
 use case: 对于透视图的场景上，点击图例项后 更新过滤规则 来更新图表
 
+透视表PivotTable该接口的签名如下：
+
+```
+  /**
+   * 更新数据过滤规则 对应dataConfig中filterRules配置格式
+   * @param filterRules 过滤规则
+   * @param isResetTree 是否重置表头树结构。 当为true时，会重置表头树结构，当为false时，表头树结构维持不变
+   */
+  updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) => void
+```
+
 ## getFilteredRecords(Function)
 
 获取过滤后的数据
