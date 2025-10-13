@@ -482,7 +482,7 @@ function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
     ) {
       const eventInfo = pluginEventInfo;
       // eslint-disable-next-line no-console
-      console.log('🖱️ 子表单元格点击事件:', {
+      console.log('子表单元格点击事件:', {
         eventType: eventInfo.eventType,
         masterRowIndex: eventInfo.masterRowIndex,
         masterBodyRowIndex: eventInfo.masterBodyRowIndex,
@@ -542,4 +542,20 @@ function demonstrateFilterSubTables(masterDetailPlugin: MasterDetailPlugin) {
   });
   console.log(`Marketing高薪: ${marketingHighSalary.length}个子表, ${marketingHighSalary}`);
   console.log(marketingHighSalary);
+  // 6. 根据子表内数据筛选 - 筛选包含特定项目名称的子表
+  const projectASubTables = masterDetailPlugin.filterSubTables((bodyRowIndex, subTable, record) => {
+    if (!subTable.records || !Array.isArray(subTable.records)) {
+      return false;
+    }
+    return subTable.records.some(
+      projectRecord =>
+        projectRecord &&
+        typeof projectRecord === 'object' &&
+        'project' in projectRecord &&
+        typeof projectRecord.project === 'string' &&
+        projectRecord.project.includes('项目A')
+    );
+  });
+  console.log(`包含项目A的子表: ${projectASubTables.length}个`);
+  console.log(projectASubTables);
 }

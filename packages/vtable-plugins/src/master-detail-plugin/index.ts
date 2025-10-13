@@ -1,5 +1,5 @@
 import { MasterDetailPlugin } from './core';
-import type { MasterDetailPluginOptions, DetailTableOptions, SubTableEventInfo } from './types';
+import type { MasterDetailPluginOptions, DetailTableOptions } from './types';
 
 export { MasterDetailPlugin };
-export type { MasterDetailPluginOptions, DetailTableOptions, SubTableEventInfo };
+export type { MasterDetailPluginOptions, DetailTableOptions };
