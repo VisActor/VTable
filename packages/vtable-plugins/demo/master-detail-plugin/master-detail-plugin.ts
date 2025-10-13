@@ -2,7 +2,7 @@
 // defaultColWidth,defaultHeaderColWidth,defaultRowHeight,defaultHeaderRowHeight
 // widthMode heightMode 为standard
 import * as VTable from '@visactor/vtable';
-import { MasterDetailPlugin, SUB_TABLE_EVENT_TYPE } from '../../src';
+import { MasterDetailPlugin } from '../../src';
 
 const CONTAINER_ID = 'vTable';
 
@@ -478,7 +478,7 @@ function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
     if (
       plugin &&
       (plugin as { name?: string }).name === 'Master Detail Plugin' &&
-      pluginEventInfo?.eventType === SUB_TABLE_EVENT_TYPE.CLICK_CELL
+      pluginEventInfo?.eventType === VTable.TABLE_EVENT_TYPE.CLICK_CELL
     ) {
       const eventInfo = pluginEventInfo;
       // eslint-disable-next-line no-console
@@ -486,7 +486,6 @@ function setupSubTableEventListeners(tableInstance: VTable.ListTable) {
         eventType: eventInfo.eventType,
         masterRowIndex: eventInfo.masterRowIndex,
         masterBodyRowIndex: eventInfo.masterBodyRowIndex,
-        subTableCell: eventInfo.subTableCell,
         originalEventArgs: eventInfo.originalEventArgs
       });
     }
