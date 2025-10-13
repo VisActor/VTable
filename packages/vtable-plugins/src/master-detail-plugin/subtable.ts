@@ -844,8 +844,6 @@ export class SubTableManager {
    */
   private setupSubTableEventForwarding(bodyRowIndex: number, subTable: VTable.ListTable): void {
     const masterRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
-
-    // 直接遍历VTable的所有事件类型进行转发，无需手动维护列表
     Object.values(VTable.TABLE_EVENT_TYPE).forEach(eventType => {
       if (eventType) {
         const handler = (...args: unknown[]) => {
