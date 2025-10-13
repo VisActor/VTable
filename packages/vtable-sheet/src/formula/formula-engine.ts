@@ -1992,7 +1992,7 @@ export class FormulaEngine {
       let needsAdjustment = false;
       let newRowNumber = rowNumber;
       let newColLetters = colLetters;
-      let isDeletedCell = false;
+      const isDeletedCell = false;
 
       if (dimension === 'row') {
         // Convert 1-based row number to 0-based for comparison
@@ -2004,13 +2004,13 @@ export class FormulaEngine {
           needsAdjustment = true;
         } else if (type === 'delete' && zeroBasedRowNumber >= index) {
           // 删除行：在删除点及之后的行需要向前移动
-          if (zeroBasedRowNumber > index + count - 1) {
+          if (zeroBasedRowNumber >= index + count) {
             // 完全在删除范围之后的行
             newRowNumber = rowNumber - count;
             needsAdjustment = true;
           } else if (zeroBasedRowNumber >= index && zeroBasedRowNumber < index + count) {
-            // 被删除的行：需要转换为 #REF!
-            isDeletedCell = true;
+            // 在删除范围内的行：需要调整到删除前的位置
+            newRowNumber = index; // 调整到删除位置（即原来的位置-1）
             needsAdjustment = true;
           }
         }
@@ -2023,20 +2023,27 @@ export class FormulaEngine {
           needsAdjustment = true;
         } else if (type === 'delete' && colIndex >= index) {
           // 删除列：在删除点及之后的列需要向前移动
-          if (colIndex > index + count - 1) {
+          if (colIndex >= index + count) {
             // 完全在删除范围之后的列
             newColLetters = this.indexToColumnLetters(colIndex - count);
             needsAdjustment = true;
           } else if (colIndex >= index && colIndex < index + count) {
-            // 被删除的列：需要转换为 #REF!
-            isDeletedCell = true;
+            // 在删除范围内的列：需要调整到删除前的位置
+            newColLetters = this.indexToColumnLetters(index); // 调整到删除位置
             needsAdjustment = true;
           }
         }
       }
       if (needsAdjustment) {
         let replacement: string;
-        if (isDeletedCell) {
+        if (dimension === 'row' && newRowNumber === index) {
+          // 行被调整到删除位置，表示该行被删除
+          replacement = '#REF!';
+        } else if (
+          dimension === 'column' &&
+          this.indexToColumnLetters(this.columnLettersToIndex(newColLetters)) === this.indexToColumnLetters(index)
+        ) {
+          // 列被调整到删除位置，表示该列被删除
           replacement = '#REF!';
         } else {
           replacement = newColLetters + newRowNumber;
