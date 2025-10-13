@@ -28,8 +28,8 @@ let ganttInstance;
 
 // Force cleanup of all possible existing zoom control panels
 // First try to call any previously existing global cleanup function
-if (typeof window.cleanupZoomControls === 'function') {
-  window.cleanupZoomControls();
+if (typeof window.cleanupControls === 'function') {
+  window.cleanupControls();
 }
 
 const existingControls = document.getElementById('zoom-controls');
@@ -737,9 +737,6 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
-// Ensure ganttInstance can be properly cleaned up by the documentation system
-window[CONTAINER_ID] = ganttInstance;
-
 /**
  * Create zoom control buttons
  */
@@ -749,8 +746,8 @@ function createZoomControls(ganttInstance) {
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 0px;
+    left: 130px;
     display: flex;
     gap: 8px;
     flex-direction: column;
@@ -1054,5 +1051,5 @@ ganttInstance.release = function () {
 };
 
 // Store cleanup function globally for other calls
-window.cleanupZoomControls = cleanup;
+window.cleanupControls = cleanup;
 ```
