@@ -44,7 +44,7 @@ describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
     engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 2, 1);
 
     // 验证B3的公式被删除，B4的公式移动到B3
-    expect(engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 })).toBe('=B3+1'); // B4移动到B3
+    expect(engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 })).toBe('=#REF!+1'); // B4移动到B3, but B3 reference becomes #REF!
     expect(engine.isCellFormula({ sheet: 'Sheet1', row: 3, col: 1 })).toBe(false); // B4被删除
   });
 

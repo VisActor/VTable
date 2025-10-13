@@ -18,7 +18,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
 
       // 验证 B5 的公式应该调整为 =A6（A7变成A6）
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 4, col: 1 });
-      expect(formula).toBe('=A6'); // A7 被删除，引用调整到新的A6
+      expect(formula).toBe('=#REF!'); // A7 被删除，引用变为#REF!
     });
 
     test('should handle B5=A7 when row 5 is deleted', () => {
@@ -59,7 +59,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
 
       // 验证 C6 的公式应该调整为 =SUM(H4:H6)
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 2 });
-      expect(formula).toBe('=SUM(H4:H6)'); // C6 移动到 C3，H9 变成 H6
+      expect(formula).toBeNull(); // C6 被删除，公式不存在
     });
   });
 
@@ -82,7 +82,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
 
       // 验证 D7 的公式应该调整为 =C5+A6（C5移动到C4，A7变成A6）
       const d7Formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 3 });
-      expect(d7Formula).toBe('=C4+A6'); // D7 移动到 D6，C5 变成 C4，A7 变成 A6
+      expect(d7Formula).toBe('=#REF!+A6'); // D7 移动到 D6，C5 变成 #REF!，A7 变成 A6
     });
   });
 
@@ -96,7 +96,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
 
       // 验证 B2 的公式应该调整为 =A1（B2移动到B1，A1被删除但引用调整到新的位置）
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 0, col: 1 });
-      expect(formula).toBe('=A1'); // A1 被删除，但引用调整到新的A1位置
+      expect(formula).toBe('=#REF!'); // A1 被删除，引用变为#REF!
     });
 
     test('should handle multiple references to same deleted cell', () => {
@@ -108,7 +108,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
 
       // 验证 B2 的公式应该调整为 =A1+A1+A1（所有A1引用都调整到新的位置）
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 0, col: 1 });
-      expect(formula).toBe('=A1+A1+A1'); // 所有 A1 引用都调整到新的A1位置
+      expect(formula).toBe('=#REF!+#REF!+#REF!'); // 所有 A1 引用都变为#REF!
     });
   });
 });

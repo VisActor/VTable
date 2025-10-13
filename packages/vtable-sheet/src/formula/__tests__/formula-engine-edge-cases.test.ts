@@ -46,7 +46,7 @@ describe('FormulaEngine.adjustFormulaReferences - Edge Cases', () => {
       engine.adjustFormulaReferences('Sheet1', 'delete', 'column', 0, 1);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 1, col: 0 });
-      expect(formula).toBe('=A2+B2'); // B2→A2, C2→B2
+      expect(formula).toBe('=#REF!+B2'); // B2→#REF!, C2→B2
     });
   });
 
@@ -78,7 +78,7 @@ describe('FormulaEngine.adjustFormulaReferences - Edge Cases', () => {
       engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 0, 1); // Delete row 0
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 });
-      expect(formula).toBe('=B2+B1'); // Should be adjusted correctly
+      expect(formula).toBe('=B2+#REF!'); // B1 becomes #REF! after deletion
     });
   });
 

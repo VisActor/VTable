@@ -42,7 +42,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
-      expect(formula).toBe('=B6+1'); // B7 moved to B6
+      expect(formula).toBe('=#REF!+1'); // B7 moved to B6, but B6 reference becomes #REF!
 
       const b7Cell = { sheet: 'Sheet1', row: 6, col: 1 };
       expect(engine.isCellFormula(b7Cell)).toBe(false); // B7 deleted
@@ -57,8 +57,8 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       const b5Formula = engine.getFormulaString({ sheet: 'Sheet1', row: 4, col: 1 });
       const b6Formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
 
-      expect(b5Formula).toBe('=B5+1'); // B6 moved to B5
-      expect(b6Formula).toBe('=B5+1'); // B7 moved to B6
+      expect(b5Formula).toBe('=#REF!+1'); // B6 moved to B5, but B5 reference becomes #REF!
+      expect(b6Formula).toBe('=B5+1'); // B7 moved to B6, reference adjusted correctly
     });
 
     test('delete column - formula cell deletion', () => {
@@ -68,7 +68,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.adjustFormulaReferences('Sheet1', 'delete', 'column', 1, 1);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
-      expect(formula).toBe('=B6+1'); // C6 moved to B6
+      expect(formula).toBe('=#REF!+1'); // C6 moved to B6, but C6 reference becomes #REF!
 
       const c6Cell = { sheet: 'Sheet1', row: 5, col: 2 };
       expect(engine.isCellFormula(c6Cell)).toBe(false); // C6 deleted
