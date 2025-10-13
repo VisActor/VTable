@@ -1432,6 +1432,17 @@ updateFilterRules(filterRules: FilterRules) => void
 
 use case: For pivot chart scenarios, update filtering rules after clicking legend items to update the chart
 
+To PivotTable，this interface has the following signature:
+
+```
+  /**
+   * Update data filtering rules
+   * @param filterRules Filter rules
+   * @param isResetTree Whether to reset the table header tree structure. When true, the table header tree structure will be reset, when false, the table header tree structure will remain unchanged
+   */
+  updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) => void
+```
+
 ## getFilteredRecords(Function)
 
 Get filtered data
