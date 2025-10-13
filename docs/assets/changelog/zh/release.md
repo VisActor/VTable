@@ -5,11 +5,11 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-gantt**: add zoom interaction feature for gantt
+- **@visactor/vtable-gantt**: 甘特图新增缩放zoom交互功能
 
-**🐛 功能修复**
+**🐛 功能优化**
 
-- **@visactor/vtable**: the updateFilterRules method of PivotTable [#4450](https://github.com/VisActor/VTable/issues/4450)
+- **@visactor/vtable**: 优化PivotTable的updateFilterRules方法新增isResetTree参数 [#4450](https://github.com/VisActor/VTable/issues/4450)
 
 
 
