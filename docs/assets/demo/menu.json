@@ -237,6 +237,13 @@
           }
         },
         {
+          "path": "pivot-chart-heatmap",
+          "title": {
+            "zh": "透视组合图（热力图）",
+            "en": "Pivot Chart Heatmap"
+          }
+        },
+        {
           "path": "pivot-chart-wordCloud",
           "title": {
             "zh": "透视组合图（词云图）",

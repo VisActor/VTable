@@ -834,12 +834,12 @@ export class StateManager {
       Math.min(100, this.adjustProgressBar.originalProgress + (deltaX / taskBarWidth) * 100)
     );
 
-    if (Math.abs(newProgress - this.adjustProgressBar.originalProgress) >= 1) {
+    if (Math.abs(newProgress - this.adjustProgressBar.originalProgress) >= 0.1) {
       const taskIndex = target.task_index;
       const subTaskIndex = target.sub_task_index;
 
-      // 更新数据
-      this._gantt._updateProgressToTaskRecord(Math.round(newProgress), taskIndex, subTaskIndex);
+      // 更新数据，保留小数精度
+      this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
       const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
 
       // 触发进度更新事件
@@ -849,8 +849,8 @@ export class StateManager {
           event: null,
           index: taskIndex,
           sub_task_index: subTaskIndex,
-          progress: Math.round(newProgress),
-          oldProgress: Math.round(this.adjustProgressBar.originalProgress),
+          progress: Math.round(newProgress * 10) / 10,
+          oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
           record: newRecord
         });
       }
@@ -887,7 +887,7 @@ export class StateManager {
 
     // 更新文字标签中的进度百分比
     if (target.textLabel && target.record) {
-      const tempRecord = { ...target.record, progress: Math.round(newProgress) };
+      const tempRecord = { ...target.record, progress: Math.round(newProgress * 10) / 10 };
       const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
       target.textLabel.setAttribute('text', newText);
     }

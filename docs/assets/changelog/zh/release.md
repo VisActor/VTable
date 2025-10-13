@@ -1,3 +1,60 @@
+# v1.20.3
+
+2025-10-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复粘贴 HTML 到单元格失效的问题 [#4551](https://github.com/VisActor/VTable/issues/4551)
+- **@visactor/vtable**: 修复使用键盘方向键 arrowUp 和 arrowDown 选择公式项项的问题
+- **@visactor/vtable**: 修复配置 rightFrozenColCount 时双击使右侧冻结列自动列宽分割线未更新问题 [#4526](https://github.com/VisActor/VTable/issues/4526)
+
+
+
+[更多详情请查看 v1.20.3](https://github.com/VisActor/VTable/releases/tag/v1.20.3)
+
+# v1.20.2
+
+2025-10-09
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 重构 vtable-plugins 和 vtable-sheet 组件的 UMD 构建产物
+- **@visactor/vtable**: 搜索组件clear方法问题修复 [#4476](https://github.com/VisActor/VTable/issues/4476)
+- **@visactor/vtable-sheet**: 编辑表格组件使用键盘选择公式选择项后enter，arrow键不生效问题修复
+
+**📖 文档更新**
+
+- **@visactor/vtable**: vtable sheet UMD 导入指南
+
+
+
+[更多详情请查看 v1.20.2](https://github.com/VisActor/VTable/releases/tag/v1.20.2)
+
+# v1.20.1
+
+2025-09-26
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视图扩展图表类型
+- **@visactor/vtable**: 支持在选取vchart时使用detailPath，添加detectPickChartItem配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复调用deleteRecord和renderWidthCreateCells api，switchState错误 [#4436](https://github.com/VisActor/VTable/issues/4436)
+- **@visactor/vtable**: 修复设置浏览器缩放时maxfrozenwidth不生效 [#4494](https://github.com/VisActor/VTable/issues/4494)
+- **@visactor/vtable-gantt**: 修复甘特图网格线样式linedash不生效 [#4495](https://github.com/VisActor/VTable/issues/4495)
+- **@visactor/vtable**: 修复updateOption时更改enablecheckboxcascade不生效 [#4499](https://github.com/VisActor/VTable/issues/4499)
+- **@visactor/vtable**: 修复api selectCells在ctrlMultiSelect为false时不生效
+- **@visactor/vtable**: 修复分页时行顺序更改不生效
+
+
+
+[更多详情请查看 v1.20.1](https://github.com/VisActor/VTable/releases/tag/v1.20.1)
+
 # v1.20.0
 
 2025-09-22

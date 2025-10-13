@@ -1349,6 +1349,7 @@ const option = {
   columns: columns,
   indicators,
   records: data,
+  indicatorsAsCol:false,
   defaultRowHeight: 200,
   defaultHeaderRowHeight: 50,
   defaultColWidth: 280,

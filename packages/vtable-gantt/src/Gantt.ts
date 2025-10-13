@@ -1158,7 +1158,7 @@ export class Gantt extends EventTarget {
     super.release?.();
     this.eventManager.release();
     this.taskListTableInstance?.release();
-    const { parentElement } = this.element;
+    const parentElement = this.element?.parentElement;
     if (parentElement) {
       parentElement.removeChild(this.element);
       this.verticalSplitResizeLine && parentElement.removeChild(this.verticalSplitResizeLine);

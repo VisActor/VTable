@@ -381,9 +381,24 @@ export function computeRowHeight(row: number, startCol: number, endCol: number, 
     row >= table.columnHeaderLevelCount &&
     row < table.rowCount - table.bottomFrozenRowCount
   ) {
-    if ((table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
+    let ifNeedComputeRowHeight = (table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol;
+    let isHeatmap = false;
+    if (!(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
+      const chartSpec = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(
+        table.rowHeaderLevelCount,
+        row
+      );
+      if (chartSpec.type === 'heatmap') {
+        isHeatmap = true;
+        ifNeedComputeRowHeight = true;
+      }
+    }
+    if (ifNeedComputeRowHeight) {
       //并且指标是以列展示 计算行高需要根据y轴的值域范围
-      const optimunHeight = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunHeightForChart(row);
+      const optimunHeight = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunHeightForChart(
+        row,
+        isHeatmap
+      );
       if (optimunHeight > 0) {
         return optimunHeight;
       }

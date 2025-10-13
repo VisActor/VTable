@@ -1,14 +1,14 @@
-import type * as VTable from '@visactor/vtable';
+import type { TYPES } from '@visactor/vtable';
 
 export interface FilterOptions {
   /** 筛选器 ID，用于唯一标识筛选器 */
   id?: string;
   /** 筛选器图标 */
-  filterIcon?: VTable.TYPES.ColumnIconOption;
+  filterIcon?: TYPES.ColumnIconOption;
   /** 筛选器激活图标 */
-  filteringIcon?: VTable.TYPES.ColumnIconOption;
+  filteringIcon?: TYPES.ColumnIconOption;
   /** 筛选功能启用钩子函数，返回指定列是否启用筛选功能 */
-  enableFilter?: (field: number | string, column: VTable.TYPES.ColumnDefine) => boolean;
+  enableFilter?: (field: number | string, column: TYPES.ColumnDefine) => boolean;
   /** 默认是否启用筛选（当 enableFilter 未定义时使用） */
   defaultEnabled?: boolean;
   /** 是否展示按条件筛选，按值筛选 UI */

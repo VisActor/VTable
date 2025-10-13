@@ -1,14 +1,14 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable, TYPES } from '@visactor/vtable';
 import type { FilterState, FilterOperator, FilterConfig } from './types';
 
 /**
  * 筛选引擎，用于进行实际的筛选操作
  */
 export class FilterEngine {
-  filterFuncRule: (VTable.TYPES.FilterFuncRule & { fieldId?: string })[] = [];
-  filterValueRule: VTable.TYPES.FilterValueRule[] = [];
+  filterFuncRule: (TYPES.FilterFuncRule & { fieldId?: string })[] = [];
+  filterValueRule: TYPES.FilterValueRule[] = [];
 
-  applyFilter(state: FilterState, table: VTable.ListTable | VTable.PivotTable) {
+  applyFilter(state: FilterState, table: ListTable | PivotTable) {
     const { filters } = state;
     this.filterFuncRule = [];
     this.filterValueRule = [];
@@ -120,13 +120,13 @@ export class FilterEngine {
     return valueStr === conditionStr ? 0 : valueStr > conditionStr ? 1 : -1;
   }
 
-  clearAllFilter(table: VTable.ListTable | VTable.PivotTable) {
+  clearAllFilter(table: ListTable | PivotTable) {
     this.filterFuncRule = [];
     this.filterValueRule = [];
     table.updateFilterRules([]);
   }
 
-  clearFilter(table: VTable.ListTable | VTable.PivotTable, fieldId: string | number) {
+  clearFilter(table: ListTable | PivotTable, fieldId: string | number) {
     this.filterValueRule = this.filterValueRule.filter(rule => rule.filterKey !== fieldId);
     this.filterFuncRule = this.filterFuncRule.filter(rule => rule.fieldId !== fieldId);
 

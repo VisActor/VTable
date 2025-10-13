@@ -90,7 +90,7 @@ export class ExportGanttPlugin implements IGanttPlugin {
     } = options;
 
     try {
-      const { tempContainer, clonedGantt } = this.createFullSizeContainer(scale);
+      const { tempContainer, clonedGantt } = await this.createFullSizeContainer(scale);
 
       try {
         await new Promise(resolve => requestAnimationFrame(resolve));

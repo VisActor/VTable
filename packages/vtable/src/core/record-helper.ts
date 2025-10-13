@@ -631,6 +631,8 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
   if (recordIndexs?.length > 0) {
     if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).deleteRecordsForGroup?.(recordIndexs);
+      // Note: For grouped records, checkbox state adjustment is handled differently
+      // The group deletion logic is more complex and may require special handling
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
       table.sortState && sortRecords(table);
@@ -653,6 +655,8 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
       table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
+      // Note: For sorted records, checkbox state is cleared entirely (checkedState.clear())
+      // So no need to adjust individual state mappings
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
@@ -662,6 +666,10 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       const deletedRecordIndexs = table.dataSource.deleteRecords(recordIndexs as number[]);
       if (deletedRecordIndexs.length === 0) {
         return;
+      }
+      // Fix: Adjust checkbox/switch state map when deleting regular records
+      for (let index = 0; index < deletedRecordIndexs.length; index++) {
+        adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
       }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
       table.refreshRowColCount();
@@ -953,13 +961,35 @@ function adjustCheckBoxStateMapWithDeleteRecordIndex(table: ListTable, recordInd
       }
     });
   } else {
-    // super.adjustBeforeChangedRecordsMap(insertIndex as number, insertCount, type);
-    const length = checkedState.size;
-    for (let key = length - 1; key >= (recordIndex as number); key--) {
-      const record = checkedState.get(key.toString());
-      checkedState.delete(key.toString());
-      checkedState.set((key - count).toString(), record);
-    }
+    // For regular records, we need to adjust the data indices in the checkedState map
+    // The keys are data indices from dataSource.getIndexKey(), not simple integers
+    const toDelete: string[] = [];
+    const toUpdate: { originKey: string; targetKey: string; value: any }[] = [];
+
+    checkedState.forEach((value, key: string) => {
+      const dataIndex = Number(key);
+      if (!isNaN(dataIndex) && dataIndex >= (recordIndex as number)) {
+        // This key needs to be adjusted
+        if (dataIndex === (recordIndex as number)) {
+          // This is the deleted record - mark for deletion
+          toDelete.push(key);
+        } else if (dataIndex > (recordIndex as number)) {
+          // This record needs to be shifted down
+          toUpdate.push({
+            originKey: key,
+            targetKey: (dataIndex - count).toString(),
+            value
+          });
+        }
+      }
+    });
+
+    // Apply the changes
+    toDelete.forEach(key => checkedState.delete(key));
+    toUpdate.forEach(({ originKey, targetKey, value }) => {
+      checkedState.delete(originKey);
+      checkedState.set(targetKey, value);
+    });
   }
 }
 

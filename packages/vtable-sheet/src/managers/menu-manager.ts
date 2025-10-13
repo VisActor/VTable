@@ -99,10 +99,10 @@ export class MenuManager {
       // 绑定点击事件
       li.addEventListener('click', e => {
         e.stopPropagation();
-        if (item.menuKey) {
+        if (item.onClick) {
+          item.onClick();
+        } else if (item.menuKey) {
           this.handleMenuClick(item.menuKey);
-        } else {
-          item.onClick?.();
         }
         this.hideAllSubMenus(); // 点击后关闭所有子菜单
       });

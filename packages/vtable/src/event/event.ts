@@ -274,12 +274,13 @@ export class EventManager {
         this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
-
+      const shiftMultiSelect = this.table.keyboardOptions?.shiftMultiSelect ?? true;
+      const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
       this.table.stateManager.updateSelectPos(
         this.table.stateManager.select.selectInline === 'row' ? this.table.colCount - 1 : eventArgs.col,
         this.table.stateManager.select.selectInline === 'col' ? this.table.rowCount - 1 : eventArgs.row,
-        eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+        eventArgs.event.shiftKey && shiftMultiSelect,
+        (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
         false,
         isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
@@ -333,21 +334,24 @@ export class EventManager {
             updateCol = eventArgs.col;
           }
         }
+        const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
 
         this.table.stateManager.updateSelectPos(
           isSelectMoving ? updateCol : currentRange.end.col,
           isSelectMoving ? updateRow : currentRange.end.row,
           true,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
           false,
           !isSelectMoving
         );
       } else {
+        const shiftMultiSelect = this.table.keyboardOptions?.shiftMultiSelect ?? true;
+        const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
         this.table.stateManager.updateSelectPos(
           eventArgs.col,
           eventArgs.row,
-          eventArgs.event.shiftKey,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          eventArgs.event.shiftKey && shiftMultiSelect,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
           false,
           !isSelectMoving
         );
@@ -724,7 +728,7 @@ export class EventManager {
   }
   /** TODO 其他的事件并么有做remove */
   release() {
-    this.gesture.release();
+    this.gesture?.release();
 
     // remove global event listerner
     this.globalEventListeners.forEach(item => {
@@ -934,7 +938,8 @@ export class EventManager {
               rowValues.push(cell);
             });
           });
-          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values);
+          // 保持与 navigator.clipboard.read 中的操作一致
+          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
           if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
             table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
               col,
@@ -1075,7 +1080,7 @@ export class EventManager {
             for (const item of clipboardItems) {
               if (item.types.includes('text/plain')) {
                 item.getType('text/plain').then((blob: Blob) => {
-                  blob.text().then(this._pasteValue);
+                  blob.text().then(data => this._pasteValue(data));
                 });
               }
             }
