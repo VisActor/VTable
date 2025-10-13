@@ -2151,7 +2151,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   /** 更新数据过滤规则 对应dataConfig中filterRules配置格式 */
   updateFilterRules(filterRules: FilterRules) {
     this.internalProps.dataConfig.filterRules = filterRules;
-    this.dataset.updateFilterRules(filterRules);
+    // 由于筛选数据可能导致行列变化，所以需要重置树结构
+    this.dataset.updateFilterRules(filterRules, true);
+    this.internalProps.layoutMap.resetHeaderTree();
     this.renderWithRecreateCells();
   }
   /** 获取过滤后的数据 */
