@@ -1158,6 +1158,13 @@ export class Gantt extends EventTarget {
     super.release?.();
     this.eventManager.release();
     this.taskListTableInstance?.release();
+
+    // 清理 zoomScaleManager 及其 DataZoom 组件
+    if (this.zoomScaleManager) {
+      this.zoomScaleManager.destroyDataZoomIntegration();
+      this.zoomScaleManager = null;
+    }
+
     const parentElement = this.element?.parentElement;
     if (parentElement) {
       parentElement.removeChild(this.element);
