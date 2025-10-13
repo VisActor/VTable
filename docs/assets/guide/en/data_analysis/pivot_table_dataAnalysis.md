@@ -577,3 +577,18 @@ Specific demo: https://visactor.io/vtable/demo/data-analysis/pivot-analysis-tabl
 ### getCellOriginRecord
 
 It can help to obtain the original data entry corresponding to the cell aggregate value.
+
+### updateFilterRules
+
+Update data filtering rules.
+
+Interface definition:
+
+```
+/**
+ * Update data filtering rules
+ * @param filterRules Filter rules
+ * @param isResetTree Whether to reset the table header tree structure. When true, the table header tree structure will be reset, when false, the table header tree structure will remain unchanged
+ */
+updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) => void
+```

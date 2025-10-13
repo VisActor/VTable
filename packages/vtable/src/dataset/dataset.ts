@@ -1089,7 +1089,7 @@ export class Dataset {
     this.filterRules = filterRules;
     this.filteredRecords = undefined;
     if (isResetTree) {
-      this.tree = {};
+      return this.setRecords(this.records);
     } else {
       for (const treeRowKey in this.tree) {
         for (const treeColKey in this.tree[treeRowKey]) {
