@@ -5,7 +5,7 @@
 
 **🐛 Bug fix**
 
-- **@visactor/vtable**: zoom axis component should release
+- **@visactor/vtable-gantt**: fix gantt zoom axis component should release
 
 
 

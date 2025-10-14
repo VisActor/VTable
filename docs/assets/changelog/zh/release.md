@@ -5,7 +5,7 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: zoom axis component should release
+- **@visactor/vtable-gantt**: 修复甘特图缩放轴组件及时释放问题
 
 
 
