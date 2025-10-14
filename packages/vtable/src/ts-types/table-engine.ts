@@ -554,6 +554,12 @@ export interface PivotTableAPI extends BaseTableAPI {
   _parseColumnWidthConfigForRowHeader: (
     columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]
   ) => void;
+  /**
+   * 获取行表头全路径
+   * @param col 列号
+   * @returns
+   */
+  getCellRowHeaderFullPaths: (col: number) => IDimensionInfo[];
 }
 export interface PivotChartAPI extends BaseTableAPI {
   records?: any | Record<string, any[]>;

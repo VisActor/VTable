@@ -632,6 +632,21 @@ Get the path to the row list header
 
 {{ use: ICellHeaderPaths() }}
 
+## getCellRowHeaderFullPaths(Function)
+
+Get the full path of the row header，solve the problem of getting the correct row header path when there are merged cells.
+
+**PivotTable Proprietary**
+
+```
+  /**
+   * Get the full path of the row header
+   * @param col
+   * @returns
+   */
+  getCellRowHeaderFullPaths(col: number) => IDimensionInfo[]
+```
+
 ## getCellHeaderTreeNodes(Function)
 
 Obtain the header tree node based on the row and column number, which includes the user's custom attributes on the custom tree rowTree and columnTree trees (it is also the node of the internal layout tree, please do not modify it at will after obtaining it).Under normal circumstances, just use getCellHeaderPaths.

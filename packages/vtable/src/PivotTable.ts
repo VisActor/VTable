@@ -2210,7 +2210,9 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       cellLocation
     };
   }
-
+  getCellRowHeaderFullPaths(col: number): IDimensionInfo[] {
+    return this.internalProps.layoutMap.getCellRowHeaderFullPaths(col);
+  }
   /**
    * 开启层级节点展开的loading动画状态，在设置数据调用setRecordChildren后会自动关闭loading
    * @param col
