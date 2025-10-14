@@ -32,7 +32,12 @@ export function handleWhell(
 
     const zoomIn = event.deltaY < 0;
 
-    const zoomStep = gantt.parsedOptions.zoom?.step || 0.015;
+    // 区分触控板和鼠标滚轮
+    const isTouchpad = Math.abs(event.deltaY) < 100 && event.deltaY % 1 !== 0;
+
+    const baseStep = gantt.parsedOptions.zoom?.step || 0.015;
+    const zoomStep = isTouchpad ? baseStep : baseStep * 5; // 触控板使用原始数据，鼠标使用五倍数据
+
     const factor = zoomIn ? 1 + zoomStep : 1 - zoomStep;
 
     gantt.zoomByFactor(factor, true, mouseX);
