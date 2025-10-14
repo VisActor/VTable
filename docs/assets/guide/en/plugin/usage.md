@@ -40,6 +40,25 @@ const option: VTable.ListTableConstructorOptions = {
 The order of plugin usage generally has no special requirements. Please carefully read the documentation for each plugin to understand its execution timing, and if necessary, refer to the plugin's source code.
 
 If you encounter issues with plugin usage, please provide feedback promptly.
+### cdn import
+
+Due to the underlying vrender environment restriction, it is not possible to directly import the vtable-plugins umd package! ! !
+
+And it is necessary to import both the vrender and vtable umd packages to work properly.
+
+The vtable umd package cannot also use the unpkg platform, the user needs to fork the vtable source code first, and then package a vtable umd package themselves! ! !
+
+Before packaging, it is necessary to release the commented code about vrender in the [packaging configuration](https://github.com/VisActor/VTable/blob/develop/packages/vtable/bundler.config.js). Run the command `cd packages/vtable && rushx build` to get the vtable.js file in the dist directory.
+<div style="display: flex; justify-content: center;  width: 50%;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/sheet-build-umd.png"  style="width: 100%; object-fit: contain; padding: 10px;">
+</div>
+Specific import methods are as follows:
+
+```html
+<script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
+<script src="vtable.js"></script>
+<script src="https://unpkg.com/@visactor/vtable-plugins@latest/dist/vtable-plugins.js"></script>
+```
 
 ## Plugin List
 | Plugin Name | Plugin Description | Applicable Object |
