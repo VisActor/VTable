@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图智能缩放功能
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/gantt-zoom.gif
 link: gantt/zoom-scale
 option: Gantt#zoomScale
 ---
@@ -28,8 +28,8 @@ let ganttInstance;
 
 // 强制清理所有可能存在的缩放控制面板
 // 首先尝试调用之前可能存在的全局清理函数
-if (typeof window.cleanupZoomControls === 'function') {
-  window.cleanupZoomControls();
+if (typeof window.cleanupControls === 'function') {
+  window.cleanupControls();
 }
 
 const existingControls = document.getElementById('zoom-controls');
@@ -708,9 +708,6 @@ const option = {
 ganttInstance = new VTableGantt.Gantt(document.getElementById(CONTAINER_ID), option);
 window['ganttInstance'] = ganttInstance;
 
-// 确保ganttInstance能被文档系统正确清理
-window[CONTAINER_ID] = ganttInstance;
-
 /**
  * 创建缩放控制按钮
  */
@@ -720,8 +717,8 @@ function createZoomControls(ganttInstance) {
   controlsContainer.id = 'zoom-controls';
   controlsContainer.style.cssText = `
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 0px;
+    left: 130px;
     display: flex;
     gap: 8px;
     flex-direction: column;
@@ -1024,5 +1021,5 @@ ganttInstance.release = function () {
 };
 
 // 在全局存储清理函数，以便其他地方也能调用
-window.cleanupZoomControls = cleanup;
+window.cleanupControls = cleanup;
 ```
