@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: Gantt DataZoomAxis Scrollbar
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/gantt-zoom-axis.gif
 link: gantt/datazoom
 option: Gantt#zoomScale.dataZoomAxis
 ---

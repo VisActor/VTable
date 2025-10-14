@@ -2,7 +2,7 @@
 category: examples
 group: gantt
 title: 甘特图智能缩放功能
-cover:
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/gantt-zoom.gif
 link: gantt/zoom-scale
 option: Gantt#zoomScale
 ---
