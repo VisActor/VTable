@@ -1,3 +1,16 @@
+# v1.21.1
+
+2025-10-14
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: zoom axis component should release
+
+
+
+[more detail about v1.21.1](https://github.com/VisActor/VTable/releases/tag/v1.21.1)
+
 # v1.21.0
 
 2025-10-13
