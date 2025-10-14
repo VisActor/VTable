@@ -590,6 +590,16 @@ export interface PivotTableAPI extends BaseTableAPI {
    * @param values 多个单元格的数据数组
    */
   changeCellValues: (col: number, row: number, values: (string | number)[][], workOnEditableCell: boolean) => void;
+  _parseColumnWidthConfig: (columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]) => void;
+  _parseColumnWidthConfigForRowHeader: (
+    columnWidthConfig: { dimensions: IDimensionInfo[]; width: string | number }[]
+  ) => void;
+  /**
+   * 获取行表头全路径
+   * @param col 列号
+   * @returns
+   */
+  getCellRowHeaderFullPaths: (col: number) => IDimensionInfo[];
 
   getCellAddressByHeaderPaths: (
     dimensionPaths:

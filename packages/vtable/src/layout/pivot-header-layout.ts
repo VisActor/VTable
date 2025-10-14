@@ -2312,6 +2312,36 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     });
     return headerPaths;
   }
+  getCellRowHeaderFullPaths(col: number): IDimensionInfo[] {
+    const headerPaths: IDimensionInfo[] = [];
+    //根据rows和indicatorAsCol来获取行表头路径,只需要考虑rowHierarchyType为grid的情况
+    if (this.rowHierarchyType === 'grid') {
+      for (let i = 0; i <= Math.min(this.rowsDefine.length - 1, col); i++) {
+        const rowDefine = this.rowsDefine[i];
+        if (typeof rowDefine === 'string') {
+          headerPaths.push({
+            dimensionKey: rowDefine
+          });
+        } else {
+          headerPaths.push({
+            dimensionKey: rowDefine.dimensionKey
+          });
+        }
+      }
+      if (col >= this.rowsDefine.length && this.indicatorsAsCol === false && this.indicatorsDefine.length > 0) {
+        if (typeof this.indicatorsDefine[0] === 'string') {
+          headerPaths.push({
+            indicatorKey: this.indicatorsDefine[0]
+          });
+        } else {
+          headerPaths.push({
+            indicatorKey: this.indicatorsDefine[0].indicatorKey
+          });
+        }
+      }
+    }
+    return headerPaths;
+  }
   private getIndicatorInfoByIndicatorKey(indicatorKey: string) {
     const indicatorInfo = this.indicatorsDefine?.find(indicator => {
       if (typeof indicator === 'string') {
@@ -3493,6 +3523,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         }
       }
     }
+
     // 如果是body单元格 需要找到行列对应的维度值节点
     if (!forceBody && needLowestLevel_colPaths && needLowestLevel_rowPaths) {
       if ((!rowDimensionFinded && !isValid(row)) || !colDimensionFinded) {
@@ -3505,7 +3536,16 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       const { startInTotal, afterSpanLevel } = (rowDimensionFinded as ITreeLayoutHeadNode) ?? defaultDimension;
       row += startInTotal ?? 0;
       if (this.rowHierarchyType === 'grid') {
-        defaultCol = (this.rowHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel) + this.leftRowSeriesNumberColumnCount;
+        // defaultCol = (this.rowHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel) + this.leftRowSeriesNumberColumnCount;
+        // 传入rowHeaderPaths是合并单元格如行总计的path数据的情况，上面defaultCol总是返回0 所以需要修改如下：
+        const col = rowHeaderPaths.reduce((acc, path) => {
+          const index = this.rowDimensionKeys.indexOf(path.dimensionKey);
+          if (index >= 0) {
+            acc += 1;
+          }
+          return acc;
+        }, -1);
+        defaultCol = (this.rowHeaderTitle ? col + 1 : col) + this.leftRowSeriesNumberColumnCount;
       } else {
         defaultCol = 0;
       } //树形展示的情况下 肯定是在第0列
