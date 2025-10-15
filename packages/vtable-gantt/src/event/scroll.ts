@@ -30,6 +30,9 @@ export function handleWhell(
     const rect = gantt.element.getBoundingClientRect();
     const mouseX = event.clientX - rect.left;
 
+    if (deltaY === 0) {
+      return;
+    }
     const zoomIn = event.deltaY < 0;
 
     // 区分触控板和鼠标滚轮
