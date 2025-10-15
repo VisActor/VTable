@@ -12,6 +12,7 @@ import {
  * 子表管理相关功能
  */
 export class SubTableManager {
+  private timers: Set<NodeJS.Timeout> = new Set();
   constructor(private table: VTable.ListTable, private enableCheckboxCascade: boolean = true) {}
   private saveSubTableCheckboxState(bodyRowIndex: number, subTable: VTable.ListTable): void {
     if (!subTable.stateManager) {
@@ -94,9 +95,30 @@ export class SubTableManager {
         }
       }
     }
-    setTimeout(() => {
+    // 使用安全的定时器管理
+    this.safeSetTimeout(() => {
       this.updateSubTableCheckboxVisualState(subTable);
     }, 0);
+  }
+
+  private safeSetTimeout(callback: () => void, delay: number): NodeJS.Timeout {
+    const id = setTimeout(() => {
+      this.timers.delete(id);
+      try {
+        callback();
+      } catch (error) {
+        console.warn('Timer callback error:', error);
+      }
+    }, delay);
+    this.timers.add(id);
+    return id;
+  }
+  /**
+   * 清理所有定时器
+   */
+  private cleanupAllTimers(): void {
+    this.timers.forEach(id => clearTimeout(id));
+    this.timers.clear();
   }
   /**
    * 更新子表checkbox的视觉状态
@@ -794,6 +816,8 @@ export class SubTableManager {
     if (!this.table) {
       return;
     }
+    // 首先清理所有定时器
+    this.cleanupAllTimers();
     const internalProps = getInternalProps(this.table);
     if (internalProps && internalProps.subTableInstances) {
       internalProps.subTableInstances.forEach((subTable, bodyRowIndex) => {

@@ -5,9 +5,10 @@ import * as VTable from '@visactor/vtable';
  */
 export class EventManager {
   private expandedRows: number[] = [];
-  private originalResize: () => void;
+  private originalResize: (() => void) | undefined;
   private eventHandlers: Array<{ type: string; handler: (...args: unknown[]) => unknown }> = [];
   private allExpandedRowsBeforeMove: Set<number> = new Set();
+  private isCleanedUp = false;
 
   constructor(private table: VTable.ListTable) {}
 
@@ -416,20 +417,32 @@ export class EventManager {
    * 清理事件处理器
    */
   cleanup(): void {
+    if (this.isCleanedUp) {
+      return; // 防止重复清理
+    }
+    this.isCleanedUp = true;
     // 清理展开状态数组
     this.expandedRows.length = 0;
     // 清理行移动状态
     this.allExpandedRowsBeforeMove.clear();
     // 恢复原始的resize方法
     if (this.originalResize && this.table) {
-      this.table.resize = this.originalResize;
-      this.originalResize = undefined;
+      try {
+        this.table.resize = this.originalResize;
+        this.originalResize = undefined;
+      } catch (error) {
+        console.warn('Error restoring original resize method:', error);
+      }
     }
     // 移除所有事件监听器
     try {
       if (this.table) {
         this.eventHandlers.forEach(({ type, handler }) => {
-          (this.table.off as (type: string, handler: unknown) => void)(type, handler);
+          try {
+            (this.table.off as (type: string, handler: unknown) => void)(type, handler);
+          } catch (error) {
+            console.warn(`Error removing event listener ${type}:`, error);
+          }
         });
         this.eventHandlers.length = 0;
       }

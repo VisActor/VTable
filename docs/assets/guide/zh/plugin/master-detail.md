@@ -1014,9 +1014,146 @@ function createCustomerTable() {
 createCustomerTable();
 ```
 
-## 技术实现原理
+## 插件接口和事件
 
-MasterDetailPlugin 采用了高效的渲染策略来实现主从表功能：
+### 插件接口
+
+#### getAllSubTableInstances(Function)
+
+获取所有子表实例的映射表。
+
+```ts
+/**
+ * 获取所有子表实例
+ * @returns 子表实例的Map，键为bodyRowIndex，值为VTable实例
+ */
+getAllSubTableInstances(): Map<number, VTable.ListTable> | null
+```
+
+返回包含所有已创建子表实例的Map，其中键为主表的body行索引（不包含表头），值为对应的VTable子表实例。如果没有子表实例，则返回null。
+
+#### getSubTableByRowIndex(Function)
+
+根据主表行号获取子表实例。
+
+```ts
+/**
+ * 根据主表行号获取子表实例
+ * @param rowIndex 主表行索引（包含表头）
+ * @returns 子表实例，如果不存在则返回null
+ */
+getSubTableByRowIndex(rowIndex: number): VTable.ListTable | null
+```
+
+根据主表的行索引（包含表头）获取对应的子表实例。该方法会自动计算出对应的body行索引。
+
+#### getSubTableByBodyRowIndex(Function)
+
+根据主表body行号获取子表实例。
+
+```ts
+/**
+ * 根据主表body行号获取子表实例
+ * @param bodyRowIndex 主表body行索引（不包含表头）
+ * @returns 子表实例，如果不存在则返回null
+ */
+getSubTableByBodyRowIndex(bodyRowIndex: number): VTable.ListTable | null
+```
+
+根据主表的body行索引（不包含表头）获取对应的子表实例。这是最直接的获取子表实例的方法。
+
+#### filterSubTables(Function)
+
+根据条件筛选子表实例。
+
+```ts
+/**
+ * 根据条件筛选子表实例
+ * @param predicate 筛选条件函数
+ * @returns 符合条件的子表实例数组
+ */
+filterSubTables(
+  predicate: (bodyRowIndex: number, subTable: VTable.ListTable, record?: unknown) => boolean
+): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }>
+```
+
+根据提供的筛选条件函数筛选子表实例。筛选函数接收body行索引、子表实例和记录数据作为参数，返回布尔值表示是否符合条件。返回值为包含符合条件的子表信息的数组。
+
+#### setRecordChildren(Function)
+
+设置记录的子数据并展开。
+
+```ts
+/**
+ * 设置记录的子数据并展开
+ * @param children 子数据数组
+ * @param col 列索引
+ * @param row 行索引
+ */
+setRecordChildren(children: unknown[], col: number, row: number): void
+```
+
+为指定单元格对应的记录设置子数据，并自动展开该行显示子表。该方法会修改原始记录数据的children属性并刷新表格显示，是在懒加载的时候使用
+
+### 插件事件
+
+主从表插件通过`setupSubTableEventForwarding`机制遍历[VTable.TABLE_EVENT_TYPE](https://visactor.com/vtable/api/events)将子表的所有事件转发到主表，使用`VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT`事件类型进行统一转发：
+
+#### 子表事件转发
+
+主从表插件事件转发机制。
+
+```ts
+/**
+ * 插件事件信息接口
+ */
+interface SubTableEventInfo {
+  /** 子表事件类型 */
+  eventType: keyof typeof VTable.TABLE_EVENT_TYPE;
+  /** 主表行索引（不包含表头） */
+  masterBodyRowIndex: number;
+  /** 主表行索引（包含表头） */
+  masterRowIndex: number;
+  /** 子表实例 */
+  subTable: VTable.ListTable;
+  /** 原始事件数据 */
+  originalEventArgs?: unknown;
+}
+```
+
+当子表发生任何事件时，插件会将事件信息包装为`SubTableEventInfo`对象，并通过主表的`PLUGIN_EVENT`事件进行转发。
+
+**监听示例：**
+
+```typescript
+// 监听子表事件
+tableInstance.on(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, (args) => {
+  const { plugin, pluginEventInfo } = args;
+  
+  // 检查是否是主从表插件的事件
+  if (plugin?.name === 'Master Detail Plugin') {
+    const eventInfo = pluginEventInfo;
+    
+    console.log('子表事件:', {
+      eventType: eventInfo.eventType,           // 原始事件类型，如 'click_cell'
+      masterRowIndex: eventInfo.masterRowIndex, // 主表行索引（含表头）
+      masterBodyRowIndex: eventInfo.masterBodyRowIndex, // 主表body行索引
+      subTable: eventInfo.subTable,            // 子表实例
+      originalEventArgs: eventInfo.originalEventArgs // 原始事件参数
+    });
+    
+    // 根据事件类型处理不同逻辑
+    if (eventInfo.eventType === VTable.TABLE_EVENT_TYPE.CLICK_CELL) {
+      // 处理子表单元格点击事件
+      handleSubTableCellClick(eventInfo);
+    }
+  }
+});
+```
+
+通过这种事件转发机制，开发者可以在主表级别统一处理所有子表的交互事件，实现复杂的业务逻辑。
+
+## 技术实现原理
 
 1. **ViewBox 定位系统**：插件基于 VTable 的 ViewBox 机制进行精确定位，确保子表能够准确渲染在展开行的指定位置。
 
@@ -1025,6 +1162,12 @@ MasterDetailPlugin 采用了高效的渲染策略来实现主从表功能：
 3. **动态行高调整**：通过智能调整展开行的行高，同时保持该行中 CellGroup 的原始高度不变，巧妙地创造出用于渲染子表的空白区域。
 
 4. **滚动事件优化**：插件自动将 `scrollEventAlwaysTrigger` 设置为 `true`，确保在表格滚动到边界时仍能触发滚动事件，实现子表的自动滚动效果。
+
+主从表插件的一个重要设计理念是：**子表所在的行在视觉上呈现独立的行，但其实际上属于对应的主表展开行**。
+
+![图片](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/masterSubTable-explanation.jpeg)
+
+主表的行号（如图中的1、2、3、4、5、6, 7）始终保持连续，不会因为子表的存在而中断，子表实际上是通过动态调整主表展开行的高度，使得其行内拥有对应的空间，然后在该行内部创建的渲染区域，因此子表并没有真正的"行号"，主从表插件通过各种技术手段让展开行在视觉上呈现为一个独立的子表区域，但本质上这个区域仍然属于主表对应的行
 
 ## 注意事项
 - 请不要使用转置功能

@@ -568,37 +568,86 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   release(): void {
-    // 首先释放所有子表资源
-    this.releaseAllSubTables();
-    // 清理主从表功能
-    this.cleanupMasterDetailFeatures();
-    if (this.resizeObserver) {
-      this.resizeObserver.disconnect();
-      this.resizeObserver = undefined;
+    // 设置释放标志
+    const internalProps = getInternalProps(this.table);
+    if (internalProps) {
+      (internalProps as { _isReleasing?: boolean })._isReleasing = true;
     }
-    this.eventManager?.cleanup();
-    this.subTableManager?.cleanup();
-    this.configManager?.release();
-    // 清理checkbox联动功能
-    this.checkboxCascadeCleanup?.();
-    // 清理内部属性
-    if (this.table) {
-      const internalProps = getInternalProps(this.table);
-      if (internalProps) {
-        // 清理Map和Set，防止内存泄露
-        internalProps.expandedRecordIndices?.splice(0);
-        internalProps.subTableInstances?.clear();
-        internalProps.originalRowHeights?.clear();
-        internalProps.subTableCheckboxStates?.clear();
-        internalProps._heightResizedRowMap?.clear();
+
+    try {
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+        this.resizeObserver = undefined;
+      }
+
+      // 清理checkbox联动功能
+      if (this.checkboxCascadeCleanup) {
+        try {
+          this.checkboxCascadeCleanup();
+        } catch (error) {
+          console.warn('Error during checkbox cascade cleanup:', error);
+        }
+        this.checkboxCascadeCleanup = undefined;
+      }
+
+      // 清理事件管理器
+      if (this.eventManager) {
+        try {
+          this.eventManager.cleanup();
+        } catch (error) {
+          console.warn('Error during event manager cleanup:', error);
+        }
+      }
+
+      // 清理子表管理器
+      if (this.subTableManager) {
+        try {
+          this.subTableManager.cleanup();
+        } catch (error) {
+          console.warn('Error during sub table manager cleanup:', error);
+        }
+      }
+
+      // 清理配置管理器
+      if (this.configManager) {
+        try {
+          this.configManager.release();
+        } catch (error) {
+          console.warn('Error during config manager cleanup:', error);
+        }
+      }
+
+      // 清理主从表功能
+      this.cleanupMasterDetailFeatures();
+
+      // 清理内部属性
+      if (this.table && internalProps) {
+        try {
+          // 清理Map和Set，防止内存泄露
+          internalProps.expandedRecordIndices?.splice(0);
+          internalProps.subTableInstances?.clear();
+          internalProps.originalRowHeights?.clear();
+          internalProps.subTableCheckboxStates?.clear();
+          internalProps._heightResizedRowMap?.clear();
+        } catch (error) {
+          console.warn('Error clearing internal props:', error);
+        }
+      }
+    } catch (error) {
+      console.warn('Error during release:', error);
+    } finally {
+      // 避免循环引用
+      try {
+        (this as unknown as { configManager: unknown }).configManager = null;
+        (this as unknown as { eventManager: unknown }).eventManager = null;
+        (this as unknown as { subTableManager: unknown }).subTableManager = null;
+        (this as unknown as { tableAPIExtensions: unknown }).tableAPIExtensions = null;
+        (this as unknown as { table: unknown }).table = null;
+        (this as unknown as { pluginOptions: unknown }).pluginOptions = null;
+      } catch (error) {
+        console.warn('Error clearing references:', error);
       }
     }
-    // 清理引用，避免循环引用
-    (this as unknown as { configManager: unknown }).configManager = null;
-    (this as unknown as { eventManager: unknown }).eventManager = null;
-    (this as unknown as { subTableManager: unknown }).subTableManager = null;
-    (this as unknown as { tableAPIExtensions: unknown }).tableAPIExtensions = null;
-    (this as unknown as { table: unknown }).table = null;
   }
 
   /**
@@ -648,7 +697,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   filterSubTables(
     predicate: (bodyRowIndex: number, subTable: VTable.ListTable, record?: unknown) => boolean
   ): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }> {
-    const result: Array<{ bodyRowIndex: number; subTable: VTable.ListTable;}> = [];
+    const result: Array<{ bodyRowIndex: number; subTable: VTable.ListTable }> = [];
     const allSubTables = this.subTableManager.getAllSubTableInstances();
     if (!allSubTables) {
       return result;
@@ -668,26 +717,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   }
 
   /**
-   * 释放所有子表资源
-   */
-  private releaseAllSubTables(): void {
-    const subTableInstances = this.subTableManager.getAllSubTableInstances();
-    if (subTableInstances) {
-      subTableInstances.forEach((subTable, bodyRowIndex) => {
-        try {
-          // 直接调用子表实例的 release 方法
-          if (subTable && typeof subTable.release === 'function') {
-            subTable.release();
-          }
-        } catch (error) {
-          console.warn(`释放子表 ${bodyRowIndex} 时出错:`, error);
-        }
-      });
-      // 清空子表实例映射
-      subTableInstances.clear();
-    }
-  }
-  /**
    * 清理主从表功能
    */
   private cleanupMasterDetailFeatures(): void {
@@ -699,6 +728,7 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     // 清理表格 API 扩展
     if (this.tableAPIExtensions) {
       this.tableAPIExtensions.cleanup();
+      this.tableAPIExtensions = undefined;
     }
   }
 }
