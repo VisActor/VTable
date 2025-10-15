@@ -161,7 +161,7 @@ export class FormulaManager {
                   return cell; // 保持公式不变
                 }
                 const num = Number(cell);
-                return !isNaN(num) ? num : cell;
+                return !isNaN(num) && cell.trim() !== '' ? num : cell;
               }
               return cell ?? '';
             })
