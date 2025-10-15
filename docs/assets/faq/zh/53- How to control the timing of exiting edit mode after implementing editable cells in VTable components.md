@@ -19,7 +19,7 @@ VTable表格组件实现单元格可编辑后，怎么控制退出编辑的时�
 
 ### 键入enter不退出编辑
 
-这个可以监听编辑dom的keydown事件，直接组织冒泡，不让VTable监听到也就不会退出编辑了</br>
+这个可以监听编辑dom的keydown事件，直接阻止冒泡，不让VTable监听到也就不会退出编辑了</br>
 ## 示例代码
 
 ```
@@ -213,6 +213,7 @@ tableInstance.on('change_cell_value', arg => {
 https://visactor.io/vtable/option/ListTable#editor</br>
 https://visactor.io/vtable/option/ListTable-columns-text#editor</br>
 github：https://github.com/VisActor/VTable</br>
+
 
 
 
