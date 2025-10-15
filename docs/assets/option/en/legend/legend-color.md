@@ -26,7 +26,7 @@ Continuous color legend configuration.
 
 ##${prefix}  value([number, number])
 
-**Required**, The numerical range displayed by the color legend, which is an array composed of two numbers, the start data and the end data, such as `[0, 100]`.
+**Required**, The current range of the color legend, such as `[50, 100]`.
 
 ##${prefix}  max(number)
 

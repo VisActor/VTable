@@ -1,6 +1,6 @@
 import type { CellRange } from '@visactor/vtable/es/ts-types';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { BaseTableAPI, plugins } from '@visactor/vtable';
+import type { BaseTableAPI, pluginsDefinition } from '@visactor/vtable';
 export interface IHighlightHeaderWhenSelectCellPluginOptions {
   id?: string;
   rowHighlight?: boolean;
@@ -11,7 +11,7 @@ export interface IHighlightHeaderWhenSelectCellPluginOptions {
   rowHighlightColor?: string;
 }
 
-export class HighlightHeaderWhenSelectCellPlugin implements plugins.IVTablePlugin {
+export class HighlightHeaderWhenSelectCellPlugin implements pluginsDefinition.IVTablePlugin {
   id = `highlight-header-when-select-cell`;
   name = 'Highlight Header When Select Cell';
   runTime = [

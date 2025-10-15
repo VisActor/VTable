@@ -1,6 +1,82 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 22 Sep 2025 03:03:09 GMT and should not be manually modified.
+This log was last generated on Tue, 14 Oct 2025 03:40:50 GMT and should not be manually modified.
+
+## 1.21.1
+Tue, 14 Oct 2025 03:40:50 GMT
+
+### Updates
+
+- fix: zoom axis component should release
+
+
+
+## 1.21.0
+Mon, 13 Oct 2025 09:24:03 GMT
+
+### Updates
+
+- fix: the updateFilterRules method of PivotTable #4450
+
+## 1.20.3
+Fri, 10 Oct 2025 11:28:59 GMT
+
+### Updates
+
+- fix: paste html to cell no work #4551
+
+
+- fix: select formula item use keyboard arrowUp and arrowDown
+
+
+- fix: dbclick the automatic column width in the rightFrozenColCount configuration #4526
+
+
+
+## 1.20.2
+Thu, 09 Oct 2025 10:16:27 GMT
+
+### Updates
+
+- fix: umd build for plugins
+
+
+- docs: vtable sheet umd import
+
+
+- fix: search component clear method #4476
+
+
+
+## 1.20.1
+Fri, 26 Sep 2025 10:28:51 GMT
+
+### Updates
+
+- feat: extend chart type
+
+
+- fix: deleteRecord switchState error after call renderWidthCreateCells api #4436
+
+
+- fix: maxfrozenwidth not work when set brower scale #4494
+
+
+- fix: gannt grid line style linedash not work #4495
+
+
+- fix: when updateOption change enablecheckboxcascade not work #4499
+
+
+- fix: api selectCells not work with ctrlMultiSelect false
+
+
+- fix: row change order not work with pagination
+
+
+- feat: support detailPath when pick vchart to add detectPickChartItem config
+
+
 
 ## 1.20.0
 Mon, 22 Sep 2025 03:03:09 GMT

@@ -237,6 +237,13 @@
           }
         },
         {
+          "path": "pivot-chart-heatmap",
+          "title": {
+            "zh": "透视组合图（热力图）",
+            "en": "Pivot Chart Heatmap"
+          }
+        },
+        {
           "path": "pivot-chart-wordCloud",
           "title": {
             "zh": "透视组合图（词云图）",
@@ -385,6 +392,20 @@
           "title": {
             "zh": "甘特图样式-文字不隐藏",
             "en": "Gantt Style —— Text Not Hidden"
+          }
+        },
+        {
+          "path": "gantt-zoom",
+          "title": {
+            "zh": "甘特图缩放",
+            "en": "Gantt Zoom"
+          }
+        },
+        {
+          "path": "gantt-datazoom",
+          "title": {
+            "zh": "甘特图缩放滚动条",
+            "en": "Gantt DataZoomAxis Scrollbar"
           }
         }
       ]

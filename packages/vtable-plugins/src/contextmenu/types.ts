@@ -10,7 +10,7 @@ export interface MenuClickEventArgs {
 /**menuKey的枚举类型 */
 export enum MenuKey {
   /** 空白无意义的key，用于占位 */
-  EMPTY = undefined,
+  EMPTY = '',
   COPY = 'copy',
   CUT = 'cut',
   PASTE = 'paste',

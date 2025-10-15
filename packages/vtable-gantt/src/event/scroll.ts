@@ -18,6 +18,35 @@ export function handleWhell(
   isWheelEvent: boolean = true
 ) {
   let { deltaX, deltaY } = event;
+  // 如果按住Ctrl键，执行缩放操作
+  if (event.ctrlKey) {
+    event.preventDefault();
+
+    // 检查是否启用了智能缩放功能
+    if (!gantt.zoomScaleManager) {
+      return;
+    }
+
+    const rect = gantt.element.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+
+    if (deltaY === 0) {
+      return;
+    }
+    const zoomIn = event.deltaY < 0;
+
+    // 区分触控板和鼠标滚轮
+    const isTouchpad = Math.abs(event.deltaY) < 100 && event.deltaY % 1 !== 0;
+
+    const baseStep = gantt.parsedOptions.zoom?.step || 0.015;
+    const zoomStep = isTouchpad ? baseStep : baseStep * 5; // 触控板使用原始数据，鼠标使用五倍数据
+
+    const factor = zoomIn ? 1 + zoomStep : 1 - zoomStep;
+
+    gantt.zoomByFactor(factor, true, mouseX);
+
+    return;
+  }
   // 如果按住了shift 则进行横向滚动 纵向不滚动
   if (event.shiftKey && event.deltaY) {
     //mac电脑按住shift 鼠标滚动deltaX和deltaY是自动互换的，所以此逻辑只针对windows电脑有效及mac触摸板有效

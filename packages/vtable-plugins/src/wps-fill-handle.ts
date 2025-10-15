@@ -1,4 +1,5 @@
-import * as VTable from '@visactor/vtable';
+import type { pluginsDefinition, BaseTableAPI, ListTable, TYPES } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
 import { generateAutoFillData } from './fillHandleUtils/autoFillHandle';
@@ -9,11 +10,11 @@ export type IWpsFillHandlePluginOptions = {
   // enableDeleteKey?: boolean;
 };
 
-export class WpsFillHandlePlugin implements VTable.plugins.IVTablePlugin {
+export class WpsFillHandlePlugin implements pluginsDefinition.IVTablePlugin {
   id = `wps-fill-handle`;
   name = 'WPS Fill Handle';
-  runTime = [VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END];
-  table: VTable.ListTable;
+  runTime = [TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE, TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END];
+  table: ListTable;
   pluginOptions: IWpsFillHandlePluginOptions;
 
   beforeDragMinCol = 0;
@@ -25,11 +26,11 @@ export class WpsFillHandlePlugin implements VTable.plugins.IVTablePlugin {
     this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
   }
-  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], VTable.BaseTableAPI]) {
-    if (args[1] === VTable.TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE) {
+  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]) {
+    if (args[1] === TABLE_EVENT_TYPE.MOUSEDOWN_FILL_HANDLE) {
       const eventArgs = args[0];
-      const table: VTable.BaseTableAPI = args[2];
-      this.table = table as VTable.ListTable;
+      const table: BaseTableAPI = args[2];
+      this.table = table as ListTable;
       const startSelectCellRange = this.table?.getSelectedCellRanges()[0];
       if (!startSelectCellRange) {
         return;
@@ -38,7 +39,7 @@ export class WpsFillHandlePlugin implements VTable.plugins.IVTablePlugin {
       this.beforeDragMinCol = Math.min(startSelectCellRange.start.col, startSelectCellRange.end.col);
       this.beforeDragMaxRow = Math.max(startSelectCellRange.start.row, startSelectCellRange.end.row);
       this.beforeDragMinRow = Math.min(startSelectCellRange.start.row, startSelectCellRange.end.row);
-    } else if (args[1] === VTable.TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END) {
+    } else if (args[1] === TABLE_EVENT_TYPE.DRAG_FILL_HANDLE_END) {
       const direction = (args[0] as { direction?: 'bottom' | 'right' | 'top' | 'left' }).direction;
       let endChangeCellCol;
       let endChangeCellRow;
@@ -62,7 +63,7 @@ export class WpsFillHandlePlugin implements VTable.plugins.IVTablePlugin {
       }
       const rowDatas = this.table?.records;
       const tableColumns = this.table?.getAllColumnHeaderCells() || [];
-      let highestColumns: VTable.TYPES.CellInfo[] = [];
+      let highestColumns: TYPES.CellInfo[] = [];
       if (tableColumns?.length) {
         highestColumns = tableColumns[tableColumns.length - 1];
       }
@@ -108,7 +109,7 @@ export class WpsFillHandlePlugin implements VTable.plugins.IVTablePlugin {
   }
 }
 //将选中单元格的值设置为空
-function deleteSelectRange(selectCells: VTable.TYPES.CellInfo[][], tableInstance: VTable.ListTable) {
+function deleteSelectRange(selectCells: TYPES.CellInfo[][], tableInstance: ListTable) {
   for (let i = 0; i < selectCells.length; i++) {
     for (let j = 0; j < selectCells[i].length; j++) {
       tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');

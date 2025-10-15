@@ -1,4 +1,4 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable } from '@visactor/vtable';
 import { arrayEqual } from '@visactor/vutils';
 import type { FilterConfig, ValueFilterOptionDom, FilterState } from './types';
 import { FilterActionType } from './types';
@@ -6,7 +6,7 @@ import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles, filterStyles } from './styles';
 
 export class ValueFilter {
-  private table: VTable.ListTable | VTable.PivotTable;
+  private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
   private uniqueKeys = new Map<string | number, Array<{ value: any; count: number; rawValue: any }>>();
   private displayToRawValueMap = new Map<string | number, Map<any, any>>();
@@ -18,7 +18,7 @@ export class ValueFilter {
   private selectAllCheckbox: HTMLInputElement;
   private filterItemsContainer: HTMLElement;
 
-  constructor(table: VTable.ListTable | VTable.PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
     this.table = table;
     this.filterStateManager = filterStateManager;
 
@@ -60,7 +60,9 @@ export class ValueFilter {
           }
         }
       }
-      if (targetCol !== -1) break;
+      if (targetCol !== -1) {
+        break;
+      }
     }
 
     if (isEnable) {
@@ -69,20 +71,26 @@ export class ValueFilter {
       const recordsLength = records.length;
 
       for (let i = 0; i < recordsLength; i++) {
-        let rawValue, displayValue;
+        let rawValue;
+        let displayValue;
         if (targetCol !== -1) {
           const row = this.table.columnHeaderLevelCount + i;
           const currentRecord = records[i];
           // 获取原始数据
           rawValue = currentRecord[fieldId];
-            // 获取格式化显示数据
-            const bodyInfo = this.table.internalProps.layoutMap.getBody(targetCol, row);
-            if (bodyInfo && 'fieldFormat' in bodyInfo && bodyInfo.fieldFormat && typeof bodyInfo.fieldFormat === 'function') {
-              // displayValue = bodyInfo.fieldFormat(rawValue, targetCol, row, this.table);
-              displayValue = bodyInfo.fieldFormat({ [fieldId]: rawValue });
-            } else {
-              displayValue = rawValue;
-            }
+          // 获取格式化显示数据
+          const bodyInfo = this.table.internalProps.layoutMap.getBody(targetCol, row);
+          if (
+            bodyInfo &&
+            'fieldFormat' in bodyInfo &&
+            bodyInfo.fieldFormat &&
+            typeof bodyInfo.fieldFormat === 'function'
+          ) {
+            // displayValue = bodyInfo.fieldFormat(rawValue, targetCol, row, this.table);
+            displayValue = bodyInfo.fieldFormat({ [fieldId]: rawValue });
+          } else {
+            displayValue = rawValue;
+          }
         }
 
         if (rawValue !== undefined && rawValue !== null) {
@@ -97,7 +105,8 @@ export class ValueFilter {
       const currentLength = dataSource.length;
 
       for (let i = 0; i < currentLength; i++) {
-        let rawValue, displayValue;
+        let rawValue;
+        let displayValue;
         if (targetCol !== -1) {
           const row = this.table.columnHeaderLevelCount + i;
           if (row < this.table.rowCount) {
@@ -107,7 +116,11 @@ export class ValueFilter {
             displayValue = this.table.getCellValue(targetCol, row);
           }
         } else {
-          rawValue = this.table.getFieldData(String(fieldId), targetCol !== -1 ? targetCol : 0, this.table.columnHeaderLevelCount + i);
+          rawValue = this.table.getFieldData(
+            String(fieldId),
+            targetCol !== -1 ? targetCol : 0,
+            this.table.columnHeaderLevelCount + i
+          );
           displayValue = rawValue; // 如果没有格式化函数，显示值等于原始值
         }
 
@@ -221,7 +234,9 @@ export class ValueFilter {
           }
         }
       }
-      if (targetCol !== -1) break;
+      if (targetCol !== -1) {
+        break;
+      }
     }
 
     // 收集当前显示的数据对应的原始值
@@ -229,7 +244,8 @@ export class ValueFilter {
     const currentLength = dataSource.length;
 
     for (let i = 0; i < currentLength; i++) {
-      let displayValue, rawValue;
+      let displayValue;
+      let rawValue;
       if (targetCol !== -1) {
         const row = this.table.columnHeaderLevelCount + i;
         if (row < this.table.rowCount) {
@@ -239,7 +255,11 @@ export class ValueFilter {
           rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
         }
       } else {
-        displayValue = this.table.getFieldData(String(fieldId), targetCol !== -1 ? targetCol : 0, this.table.columnHeaderLevelCount + i);
+        displayValue = this.table.getFieldData(
+          String(fieldId),
+          targetCol !== -1 ? targetCol : 0,
+          this.table.columnHeaderLevelCount + i
+        );
         rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
       }
 

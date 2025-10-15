@@ -579,3 +579,18 @@ VTable 官网示例：https://visactor.io/vtable/demo/table-type/pivot-table.
 ### getCellOriginRecord
 
 可以帮助获取单元格聚合值对应的原始数据条目。
+
+### updateFilterRules
+
+更新数据过滤规则。
+
+接口定义：
+
+```
+/**
+ * 更新数据过滤规则
+ * @param filterRules 过滤规则
+ * @param isResetTree 是否重置表头树结构。 当为true时，会重置表头树结构，当为false时，表头树结构维持不变
+ */
+updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) => void
+```

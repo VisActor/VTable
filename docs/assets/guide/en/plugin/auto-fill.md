@@ -266,4 +266,6 @@ const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID)
 
 The fill handle functionality of this plugin references the implementation from [Univer](https://github.com/dream-num/univer), and this part of the code follows the Apache 2.0 license. For details, please refer to the LICENSE-APACHE file of the project.
 
-# This plugin was contributed by [PoorShawn](https://github.com/hokkine)
+# This plugin was contributed by 
+
+[hokkine](https://github.com/hokkine)

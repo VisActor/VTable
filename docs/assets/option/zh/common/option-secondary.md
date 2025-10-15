@@ -204,6 +204,10 @@ export interface SelectAllOnCtrlAOption {
 
 是否开启 ctrl 多选框，默认开启。
 
+##${prefix} shiftMultiSelect(boolean) = true
+
+是否开启 shift 多选框，默认开启。
+
 #${prefix} eventOptions(Object)
 
 事件触发相关问题设置，具体配置项：
@@ -282,7 +286,7 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 点击空白区域是否取消选中。
 
-##${prefix} outsideClickDeselect(boolean) = true
+##${prefix} outsideClickDeselect(boolean) = false
 
 点击外部区域是否取消选中。
 

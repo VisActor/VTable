@@ -96,6 +96,8 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     lastX: number;
     resizing: boolean;
+    /** 用于节流 DataZoom 更新的定时器，避免在拖拽表头时频繁触发响应式更新 */
+    updateTimeout?: NodeJS.Timeout | null;
   };
 
   selectedDenpendencyLink: {
@@ -832,12 +834,12 @@ export class StateManager {
       Math.min(100, this.adjustProgressBar.originalProgress + (deltaX / taskBarWidth) * 100)
     );
 
-    if (Math.abs(newProgress - this.adjustProgressBar.originalProgress) >= 1) {
+    if (Math.abs(newProgress - this.adjustProgressBar.originalProgress) >= 0.1) {
       const taskIndex = target.task_index;
       const subTaskIndex = target.sub_task_index;
 
-      // 更新数据
-      this._gantt._updateProgressToTaskRecord(Math.round(newProgress), taskIndex, subTaskIndex);
+      // 更新数据，保留小数精度
+      this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
       const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
 
       // 触发进度更新事件
@@ -847,8 +849,8 @@ export class StateManager {
           event: null,
           index: taskIndex,
           sub_task_index: subTaskIndex,
-          progress: Math.round(newProgress),
-          oldProgress: Math.round(this.adjustProgressBar.originalProgress),
+          progress: Math.round(newProgress * 10) / 10,
+          oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
           record: newRecord
         });
       }
@@ -885,7 +887,7 @@ export class StateManager {
 
     // 更新文字标签中的进度百分比
     if (target.textLabel && target.record) {
-      const tempRecord = { ...target.record, progress: Math.round(newProgress) };
+      const tempRecord = { ...target.record, progress: Math.round(newProgress * 10) / 10 };
       const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
       target.textLabel.setAttribute('text', newText);
     }
@@ -974,6 +976,10 @@ export class StateManager {
   }
   endResizeTableWidth() {
     this.resizeTableWidth.resizing = false;
+
+    if (this._gantt.zoomScaleManager) {
+      this._gantt.zoomScaleManager.handleTableWidthChange();
+    }
   }
 
   dealResizeTableWidth(e: MouseEvent) {
@@ -1005,6 +1011,16 @@ export class StateManager {
         : '0px';
       this._gantt._resize();
       this.resizeTableWidth.lastX = e.pageX;
+
+      // 在拖拽过程中实时更新 DataZoom
+      if (this._gantt.zoomScaleManager && !this.resizeTableWidth.updateTimeout) {
+        this.resizeTableWidth.updateTimeout = setTimeout(() => {
+          if (this._gantt.zoomScaleManager) {
+            this._gantt.zoomScaleManager.handleTableWidthChange();
+          }
+          this.resizeTableWidth.updateTimeout = null;
+        }, 50);
+      }
     }
   }
   //#endregion

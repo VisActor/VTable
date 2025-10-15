@@ -2148,10 +2148,20 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
   }
 
-  /** 更新数据过滤规则 对应dataConfig中filterRules配置格式 */
-  updateFilterRules(filterRules: FilterRules) {
+  /**
+   * 更新数据过滤规则 对应dataConfig中filterRules配置格式
+   * @param filterRules 过滤规则
+   * @param isResetTree 是否重置表头树结构。 当为true时，会重置表头树结构，当为false时，表头树结构维持不变
+   */
+  updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {
     this.internalProps.dataConfig.filterRules = filterRules;
-    this.dataset.updateFilterRules(filterRules);
+    if (isResetTree) {
+      // 由于筛选数据可能导致行列变化，所以需要重置树结构
+      this.dataset.updateFilterRules(filterRules, true);
+      this.internalProps.layoutMap.resetHeaderTree();
+    } else {
+      this.dataset.updateFilterRules(filterRules);
+    }
     this.renderWithRecreateCells();
   }
   /** 获取过滤后的数据 */
@@ -2284,7 +2294,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
-    this.editorManager.release();
+    this.editorManager?.release();
     super.release();
   }
 }

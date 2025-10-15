@@ -1,4 +1,4 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles, filterStyles, createElement } from './styles';
 import type { FilterOperator, OperatorOption } from './types';
@@ -8,7 +8,7 @@ import { FilterActionType, FilterOperatorCategory } from './types';
  * 按条件筛选组件
  */
 export class ConditionFilter {
-  private table: VTable.ListTable | VTable.PivotTable;
+  private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
   private filterByConditionPanel: HTMLElement;
   private selectedField: string | number;
@@ -67,7 +67,7 @@ export class ConditionFilter {
     { value: FilterOperatorCategory.RADIO, label: '单选框' }
   ];
 
-  constructor(table: VTable.ListTable | VTable.PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
     this.table = table;
     this.filterStateManager = filterStateManager;
   }
