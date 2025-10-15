@@ -1013,6 +1013,147 @@ function createCustomerTable() {
 createCustomerTable();
 ```
 
+## Plugin Interfaces and Events
+
+### Plugin Interfaces
+
+The master-detail plugin provides the following interface methods for getting and manipulating sub-table instances:
+
+#### getAllSubTableInstances(Function)
+
+Get a mapping of all sub-table instances.
+
+```ts
+/**
+ * Get all sub-table instances
+ * @returns Map of sub-table instances, where key is bodyRowIndex and value is VTable instance
+ */
+getAllSubTableInstances(): Map<number, VTable.ListTable> | null
+```
+
+Returns a Map containing all created sub-table instances, where the key is the body row index of the master table (excluding header), and the value is the corresponding VTable sub-table instance. Returns null if there are no sub-table instances.
+
+#### getSubTableByRowIndex(Function)
+
+Get sub-table instance by master table row number.
+
+```ts
+/**
+ * Get sub-table instance by master table row number
+ * @param rowIndex Master table row index (including header)
+ * @returns Sub-table instance, or null if not exists
+ */
+getSubTableByRowIndex(rowIndex: number): VTable.ListTable | null
+```
+
+Get the corresponding sub-table instance based on the master table's row index (including header). This method automatically calculates the corresponding body row index.
+
+#### getSubTableByBodyRowIndex(Function)
+
+Get sub-table instance by master table body row number.
+
+```ts
+/**
+ * Get sub-table instance by master table body row number
+ * @param bodyRowIndex Master table body row index (excluding header)
+ * @returns Sub-table instance, or null if not exists
+ */
+getSubTableByBodyRowIndex(bodyRowIndex: number): VTable.ListTable | null
+```
+
+Get the corresponding sub-table instance based on the master table's body row index (excluding header). This is the most direct way to get sub-table instances.
+
+#### filterSubTables(Function)
+
+Filter sub-table instances based on conditions.
+
+```ts
+/**
+ * Filter sub-table instances based on conditions
+ * @param predicate Filter condition function
+ * @returns Array of sub-table instances that meet the conditions
+ */
+filterSubTables(
+  predicate: (bodyRowIndex: number, subTable: VTable.ListTable, record?: unknown) => boolean
+): Array<{ bodyRowIndex: number; subTable: VTable.ListTable; record?: unknown }>
+```
+
+Filter sub-table instances based on the provided filter condition function. The filter function receives body row index, sub-table instance, and record data as parameters, and returns a boolean indicating whether the condition is met. The return value is an array containing information about sub-tables that meet the conditions.
+
+#### setRecordChildren(Function)
+
+Set child data for a record and expand it.
+
+```ts
+/**
+ * Set child data for a record and expand it
+ * @param children Array of child data
+ * @param col Column index
+ * @param row Row index
+ */
+setRecordChildren(children: unknown[], col: number, row: number): void
+```
+
+Set child data for the record corresponding to the specified cell and automatically expand that row to display the sub-table. This method modifies the children property of the original record data and refreshes the table display. It is used for lazy loading scenarios.
+
+### Plugin Events
+
+The master-detail plugin forwards all sub-table events to the master table through the `setupSubTableEventForwarding` mechanism, which traverses [VTable.TABLE_EVENT_TYPE](https://visactor.com/vtable/api/events) and uses the `VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT` event type for unified forwarding:
+
+#### Sub-table Event Forwarding
+
+Master-detail plugin event forwarding mechanism.
+
+```ts
+/**
+ * Plugin event information interface
+ */
+interface SubTableEventInfo {
+  /** Sub-table event type */
+  eventType: keyof typeof VTable.TABLE_EVENT_TYPE;
+  /** Master table row index (excluding header) */
+  masterBodyRowIndex: number;
+  /** Master table row index (including header) */
+  masterRowIndex: number;
+  /** Sub-table instance */
+  subTable: VTable.ListTable;
+  /** Original event data */
+  originalEventArgs?: unknown;
+}
+```
+
+When any event occurs in a sub-table, the plugin wraps the event information as a `SubTableEventInfo` object and forwards it through the master table's `PLUGIN_EVENT` event.
+
+**Listening Example:**
+
+```typescript
+// Listen to sub-table events
+tableInstance.on(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, (args) => {
+  const { plugin, pluginEventInfo } = args;
+  
+  // Check if it's a master-detail plugin event
+  if (plugin?.name === 'Master Detail Plugin') {
+    const eventInfo = pluginEventInfo;
+    
+    console.log('Sub-table event:', {
+      eventType: eventInfo.eventType,           // Original event type, e.g., 'click_cell'
+      masterRowIndex: eventInfo.masterRowIndex, // Master table row index (including header)
+      masterBodyRowIndex: eventInfo.masterBodyRowIndex, // Master table body row index
+      subTable: eventInfo.subTable,            // Sub-table instance
+      originalEventArgs: eventInfo.originalEventArgs // Original event parameters
+    });
+    
+    // Handle different logic based on event type
+    if (eventInfo.eventType === VTable.TABLE_EVENT_TYPE.CLICK_CELL) {
+      // Handle sub-table cell click event
+      handleSubTableCellClick(eventInfo);
+    }
+  }
+});
+```
+
+Through this event forwarding mechanism, developers can uniformly handle all sub-table interaction events at the master table level, enabling complex business logic implementation.
+
 ## Technical Implementation Principles
 
 MasterDetailPlugin adopts efficient rendering strategies to implement master-detail functionality:
@@ -1024,6 +1165,12 @@ MasterDetailPlugin adopts efficient rendering strategies to implement master-det
 3. **Dynamic Row Height Adjustment**: By intelligently adjusting the height of expanded rows while keeping the original height of CellGroups in those rows unchanged, it cleverly creates blank areas for rendering detail grids.
 
 4. **Scroll Event Optimization**: The plugin automatically sets `scrollEventAlwaysTrigger` to `true`, ensuring that scroll events can still be triggered when the table scrolls to boundaries, achieving automatic scrolling effects for detail grids.
+
+An important design concept of the master-slave table plugin is that: **The rows where the sub-tables are located visually appear as separate rows, but they actually belong to the expanded rows of the corresponding master table**
+
+![图片](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/masterSubTable-explanation.jpeg)
+
+The row numbers of the main table (such as 1, 2, 3, 4, 5, 6, 7 in the figure) remain continuous and do not break due to the existence of sub-tables. The sub-tables actually adjust the height of the expanded rows of the main table dynamically, so that there is corresponding space within the rows. Then, a rendering area is created within that row. Therefore, the sub-tables do not have true "row numbers". The master-slave table plugin uses various technical means to make the expanded rows visually appear as an independent sub-table area, but essentially this area still belongs to the corresponding row of the main table.
 
 ## Notes
 - Please do not use the transpose feature

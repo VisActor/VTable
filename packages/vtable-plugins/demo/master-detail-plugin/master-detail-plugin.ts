@@ -407,8 +407,7 @@ export function createTable() {
         {
           field: 'salary',
           title: '薪资',
-          sort: true,
-          fieldFormat: (value: number) => `$${value.toLocaleString()}`
+          sort: true
         },
         {
           field: 'status',
