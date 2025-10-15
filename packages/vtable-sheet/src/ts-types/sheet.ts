@@ -44,9 +44,6 @@ export interface IWorkSheetAPI {
   /** 获取数据 */
   getData: () => CellValue[][];
 
-  /** 设置数据 */
-  setData: (data: CellValue[][]) => void;
-
   /** 获取行数 */
   getRowCount: () => number;
 

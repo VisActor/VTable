@@ -316,11 +316,34 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 删除列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param colIndex
    */
-  deleteColumn(colIndex: number) {
+  deleteColumns(deleteColIndexs: number[], isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
-    columns.splice(colIndex, 1);
+    deleteColIndexs.sort((a, b) => b - a);
+    for (let i = 0; i < deleteColIndexs.length; i++) {
+      columns.splice(deleteColIndexs[i], 1);
+      if (isMaintainArrayData) {
+        //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
+        for (let j = 0; j < this.records.length; j++) {
+          const record = this.records[j];
+          if (Array.isArray(record)) {
+            record.splice(deleteColIndexs[i], 1);
+          }
+        }
+      }
+    }
+    if (isMaintainArrayData) {
+      //重新整理column中的field值
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].field = i;
+      }
+    }
     this.updateColumns(columns);
+    this.fireListeners(TABLE_EVENT_TYPE.DELETE_COLUMN, {
+      deleteColIndexs: deleteColIndexs,
+      columns
+    });
   }
+
   get columns(): ColumnsDefine {
     // return this.internalProps.columns;
     return this.internalProps.layoutMap.columnTree.getCopiedTree(); //调整顺序后的columns

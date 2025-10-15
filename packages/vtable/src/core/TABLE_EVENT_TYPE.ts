@@ -234,6 +234,10 @@ export interface TableEvents {
    * 更新数据记录事件
    */
   UPDATE_RECORD: 'update_record';
+  /**
+   * 删除列事件
+   */
+  DELETE_COLUMN: 'delete_column';
 }
 /**
  * Table event types
@@ -321,5 +325,6 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   ADD_RECORD: 'add_record',
   DELETE_RECORD: 'delete_record',
-  UPDATE_RECORD: 'update_record'
+  UPDATE_RECORD: 'update_record',
+  DELETE_COLUMN: 'delete_column'
 } as TableEvents;

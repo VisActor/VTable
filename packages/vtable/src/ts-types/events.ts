@@ -10,7 +10,7 @@ import type {
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
-import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
+import type { IconFuncTypeEnum, CellInfo, HierarchyState, ColumnsDefine } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
 import type { BaseTableConstructorOptions } from './base-table';
@@ -300,6 +300,11 @@ export interface TableEventHandlersEventArgumentMap {
     recordIndexs: (number | number[])[];
     updateCount: number;
   };
+  delete_column: {
+    // deleteBeforeColumns: ColumnsDefine;
+    deleteColIndexs: number[];
+    columns: ColumnsDefine;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -406,4 +411,5 @@ export interface TableEventHandlersReturnMap {
   add_record: void;
   delete_record: void;
   update_record: void;
+  delete_column: void;
 }

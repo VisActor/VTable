@@ -288,6 +288,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       this.tableInstance.on('update_record', (event: any) => {
         this.handleDataRecordsChanged('update', event);
       });
+      this.tableInstance.on('delete_column', (event: any) => {
+        this.handleColumnsChanged('delete', event);
+      });
 
       // 监听编辑结束事件，恢复十字光标
       this.tableInstance.on('click_cell', () => {
@@ -394,7 +397,13 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   private handleDataRecordsChanged(type: 'add' | 'delete' | 'update', event: any): void {
     try {
       const sheetKey = this.getKey();
-
+      //#region 处理数据变化后，公式引擎中的数据也需要更新
+      const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
+        this.tableInstance.records,
+        this.tableInstance
+      );
+      this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
+      //#endregion
       if (type === 'add') {
         // 处理添加记录事件
         const { recordIndex, recordCount } = event;
@@ -418,6 +427,21 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       // update 事件不需要调整引用，因为只是数据内容变更
     } catch (error) {
       console.error(`Failed to handle data records changed (${type}):`, error);
+    }
+  }
+  private handleColumnsChanged(type: 'delete', event: any): void {
+    try {
+      const sheetKey = this.getKey();
+      //#region 处理数据变化后，公式引擎中的数据也需要更新
+      const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
+        this.tableInstance.records,
+        this.tableInstance
+      );
+      this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
+      //#endregion
+      this.vtableSheet.formulaManager.removeColumns(sheetKey, event.deleteColIndexs);
+    } catch (error) {
+      console.error(`Failed to handle columns changed (${type}):`, error);
     }
   }
 
@@ -554,29 +578,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   getCopiedData(): any[][] {
     // 为了避免影响当前数据，所以需要复制一份数据
     return this.getData().map(row => (Array.isArray(row) ? row.slice() : []));
-  }
-
-  /**
-   * 设置表格数据
-   * @param data 表格数据
-   */
-  setData(data: any[][]): void {
-    this.options.data = data;
-    // 更新表格实例数据
-    if (this.tableInstance) {
-      this.tableInstance.updateOption({
-        records: data
-      });
-      // 更新公式引擎中的数据
-      if (this.vtableSheet?.formulaManager) {
-        try {
-          const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(data, this.tableInstance);
-          this.vtableSheet.formulaManager.setSheetContent(this.sheetKey, normalizedData);
-        } catch (e) {
-          console.warn('Failed to update formula data:', e);
-        }
-      }
-    }
   }
   /**
    * 获取指定坐标的单元格值

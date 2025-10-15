@@ -22,7 +22,7 @@ export class FormulaManager {
   /** Sheet实例 */
   sheet: VTableSheet;
   /** FormulaEngine实例 */
-  private formulaEngine: FormulaEngine;
+  formulaEngine: FormulaEngine;
   /** 工作表映射 */
   private sheetMapping: Map<string, number> = new Map();
   /** 反向工作表映射 */
@@ -388,15 +388,7 @@ export class FormulaManager {
    * @param rowIndex 行索引
    * @param numberOfRows 添加的行数
    */
-  addRows(
-    sheetKey: string,
-    rowIndex: number,
-    numberOfRows: number = 1
-  ): {
-    adjustedCells: Array<{ row: number; col: number }>;
-    movedCells: Array<{ row: number; col: number }>;
-    affectedCells: Array<{ row: number; col: number }>;
-  } {
+  addRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1) {
     this.ensureInitialized();
 
     try {
@@ -411,7 +403,9 @@ export class FormulaManager {
         'insert',
         'row',
         rowIndex,
-        numberOfRows
+        numberOfRows,
+        this.sheet.getSheet(sheetKey).columnCount,
+        this.sheet.getSheet(sheetKey).rowCount
       );
 
       // 刷新所有受影响的单元格
@@ -438,15 +432,7 @@ export class FormulaManager {
    * @param rowIndex 行索引
    * @param numberOfRows 删除的行数
    */
-  removeRows(
-    sheetKey: string,
-    rowIndex: number,
-    numberOfRows: number = 1
-  ): {
-    adjustedCells: Array<{ row: number; col: number }>;
-    movedCells: Array<{ row: number; col: number }>;
-    affectedCells: Array<{ row: number; col: number }>;
-  } {
+  removeRows(sheetKey: string, rowIndex: number, numberOfRows: number = 1) {
     this.ensureInitialized();
 
     try {
@@ -461,7 +447,9 @@ export class FormulaManager {
         'delete',
         'row',
         rowIndex,
-        numberOfRows
+        numberOfRows,
+        this.sheet.getSheet(sheetKey).columnCount,
+        this.sheet.getSheet(sheetKey).rowCount
       );
 
       // 刷新所有受影响的单元格
@@ -499,7 +487,15 @@ export class FormulaManager {
       );
 
       // 调整公式引用
-      this.formulaEngine.adjustFormulaReferences(sheetKey, 'insert', 'column', columnIndex, numberOfColumns);
+      this.formulaEngine.adjustFormulaReferences(
+        sheetKey,
+        'insert',
+        'column',
+        columnIndex,
+        numberOfColumns,
+        this.sheet.getSheet(sheetKey).columnCount,
+        this.sheet.getSheet(sheetKey).rowCount
+      );
     } catch (error) {
       console.error('Failed to add columns:', error);
       throw new Error(`Failed to add ${numberOfColumns} columns at index ${columnIndex}`);
@@ -522,8 +518,28 @@ export class FormulaManager {
         Removing ${numberOfColumns} columns at index ${columnIndex}`
       );
 
-      // 调整公式引用
-      this.formulaEngine.adjustFormulaReferences(sheetKey, 'delete', 'column', columnIndex, numberOfColumns);
+      // 调整公式引用，获取所有受影响的单元格
+      const { adjustedCells, movedCells } = this.formulaEngine.adjustFormulaReferences(
+        sheetKey,
+        'delete',
+        'column',
+        columnIndex,
+        numberOfColumns,
+        this.sheet.getSheet(sheetKey).columnCount,
+        this.sheet.getSheet(sheetKey).rowCount
+      );
+      // 刷新所有受影响的单元格
+      [...adjustedCells, ...movedCells].forEach(cell => {
+        // this.sheet.getActiveSheet().tableInstance.scenegraph.updateCellContent(cell.row, cell.col);
+        const result = this.sheet.formulaManager.getCellValue({
+          sheet: sheetKey,
+          row: cell.row,
+          col: cell.col
+        });
+        this.sheet
+          .getActiveSheet()
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+      });
     } catch (error) {
       console.error('Failed to remove columns:', error);
       throw new Error(`Failed to remove ${numberOfColumns} columns at index ${columnIndex}`);
@@ -561,24 +577,6 @@ export class FormulaManager {
     } catch (error) {
       // 如果排序失败，返回原始顺序
       return Object.entries(formulas);
-    }
-  }
-
-  /**
-   * 设置工作表内容 (MIT兼容 - 简化实现)
-   * @param sheetKey 工作表键
-   * @param normalizedData 工作表数据 需要规范处理过 且包含表头的数据
-   */
-  setSheetContent(sheetKey: string, _normalizedData: unknown[][]): void {
-    this.ensureInitialized();
-
-    try {
-      // 简化实现：通过逐个设置单元格来设置工作表内容
-      console.warn(`setSheetContent operation not fully implemented in MIT version for sheet ${sheetKey}`);
-      // 这里可以逐个设置单元格内容
-    } catch (error) {
-      console.error('Failed to set sheet content:', error);
-      throw new Error(`Failed to set content for sheet: ${sheetKey}`);
     }
   }
 

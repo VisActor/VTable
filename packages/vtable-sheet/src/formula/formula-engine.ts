@@ -58,9 +58,16 @@ export class FormulaEngine {
 
     // 初始化工作表数据
     const sheetData = data || [['']];
-    this.sheetData.set(sheetId, this.normalizeData(sheetData));
+    // this.sheetData.set(sheetId, this.normalizeData(sheetData));
+    this.sheetData.set(sheetId, sheetData);
 
     return sheetId;
+  }
+  updateSheetData(sheetKey: string, data: unknown[][]): void {
+    const sheetId = this.sheets.get(sheetKey);
+    if (sheetId !== undefined && sheetId !== null) {
+      this.sheetData.set(sheetId, data);
+    }
   }
 
   private normalizeData(data: unknown[][]): unknown[][] {
@@ -1788,7 +1795,9 @@ export class FormulaEngine {
     type: 'insert' | 'delete',
     dimension: 'row' | 'column',
     index: number,
-    count: number = 1
+    count: number,
+    totalColCount: number,
+    totalRowCount: number
   ): { adjustedCells: FormulaCell[]; movedCells: FormulaCell[] } {
     try {
       const adjustedFormulas: Array<{ cell: FormulaCell; oldFormula: string; newFormula: string }> = [];
@@ -1800,7 +1809,7 @@ export class FormulaEngine {
         for (let i = 0; i < count; i++) {
           if (dimension === 'row') {
             // 收集被删除行的所有单元格
-            for (let col = 0; col < 1000; col++) {
+            for (let col = 0; col < totalColCount; col++) {
               // 假设最大1000列
               const deletedCell = { sheet: sheetKey, row: index + i, col };
               const deletedCellKey = this.getCellKey(deletedCell);
@@ -1808,7 +1817,7 @@ export class FormulaEngine {
             }
           } else if (dimension === 'column') {
             // 收集被删除列的所有单元格
-            for (let row = 0; row < 1000000; row++) {
+            for (let row = 0; row < totalRowCount; row++) {
               // 假设最大100万行
               const deletedCell = { sheet: sheetKey, row, col: index + i };
               const deletedCellKey = this.getCellKey(deletedCell);
