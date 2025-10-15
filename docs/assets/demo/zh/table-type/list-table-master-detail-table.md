@@ -1,6 +1,6 @@
 ---
 category: examples
-group: plugin
+group: table-type
 title: 主从表功能展示
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/masterSubTable.gif
 link: plugin/usage
