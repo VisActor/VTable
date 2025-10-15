@@ -12,7 +12,6 @@ MasterDetailPlugin 采用 TypeScript 接口规范，确保类型安全和开发�
 
 ```typescript
 interface MasterDetailPluginOptions {
-  id?: string;
   /** 是否启用checkbox级联功能 - 控制主从表之间的复选框联动，默认为 true */
   enableCheckboxCascade?: boolean;
   /** 子表配置选项 - 支持静态配置对象或动态配置函数 */
@@ -32,7 +31,6 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 
 | 参数名称 | 类型 | 默认值 | 功能说明 |
 |---------|------|--------|----------|
-| `id` | string | `master-detail-${timestamp}` | 插件实例的全局唯一标识符，用于区分多个插件实例 |
 | `enableCheckboxCascade` | boolean | `true` | 是否启用主从表之间的checkbox级联功能，主表中的复选框选择会自动与相应的子表同步|
 | `detailTableOptions` | DetailTableOptions \| Function | - | 子表配置选项，支持静态对象配置或基于数据的动态配置函数 |
 
@@ -47,6 +45,8 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 - **sortState**：排序状态配置
 - **widthMode**：宽度模式（standard、adaptive、autoWidth 等）
 - **以及所有 ListTable 支持的高级配置选项**
+
+在`DetailTableOptions`中不需要去配置`record`，展开行的时候会从配置的主表对应的行中的`children`中配置的值作为子表的`record`
 
 #### 样式配置选项
 
@@ -81,15 +81,6 @@ const masterDetailPlugin = new MasterDetailPlugin({
     defaultHeaderRowHeight: 30,
     style: { margin: 12, height: 160 },
     theme: VTable.themes.BRIGHT
-  }
-});
-
-// 禁用checkbox级联功能的示例：
-const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
-  id: 'master-detail-plugin-no-cascade',
-  enableCheckboxCascade: false, // 禁用checkbox级联功能
-  detailTableOptions: {
-    // ... 与上面相同的配置
   }
 });
 ```

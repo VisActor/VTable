@@ -367,7 +367,6 @@ export function createTable(): VTable.ListTable {
 
   // 创建主从表插件
   const masterDetailPlugin = new MasterDetailPlugin({
-    id: 'master-detail-grouping-demo',
     detailTableOptions: {
       columns: [
         { field: 'Order ID', title: 'Order ID', width: 200 },

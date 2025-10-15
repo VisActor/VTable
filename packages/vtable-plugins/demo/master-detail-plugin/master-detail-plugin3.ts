@@ -32,7 +32,6 @@ export function createTable() {
 
   // 使用静态 DetailTableOptions
   const masterDetailPlugin = new MasterDetailPlugin({
-    id: 'master-detail-static-3',
     detailTableOptions: {
       columns: [
         { field: 'task', title: '任务名', width: 220 },

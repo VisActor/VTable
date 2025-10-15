@@ -211,7 +211,6 @@ export function createTable() {
 
   // 创建主从表插件
   const masterDetailPlugin = new MasterDetailPlugin({
-    id: 'master-detail-olympic',
     detailTableOptions: {
       columns: [
         { field: 'athlete', title: 'Sub Athlete', width: 120 },

@@ -1,8 +1,17 @@
-# 主从表功能
+---
+category: examples
+group: plugin
+title: master detail table functions
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/masterSubTable-plugin.gif
+link: plugin/usage
+option: plugins
+---
+
+# MasterDetailTable Function
 
 Based on the VTable plugin mechanism, the master-detail function is realized, enabling the embedding of a complete sub-table within the rows of the main table, achieving a hierarchical data display effect. The `masterDetailPlugin` plugin needs to be used.
 
-## 关键配置
+## Key configuration
 
 - `detailTableOptions`: Sub-table configuration options, supporting either static configuration or dynamic configuration functions
 
@@ -13,7 +22,9 @@ The configurations required here are:
 
 As well as some configuration options available in ListTableConstructorOptions
 
-## 代码演示
+In `DetailTableOptions`, there is no need to configure `record`. When expanding rows, the values configured in the `children` of the corresponding row in the main table will be used as the `record` of the sub-table
+
+## Code demonstration
 
 ```javascript livedemo template=vtable
 // When using it, you need to import the plugin package @visactor/vtable-plugins

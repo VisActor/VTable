@@ -12,7 +12,6 @@ MasterDetailPlugin follows TypeScript interface specifications to ensure type sa
 
 ```typescript
 interface MasterDetailPluginOptions {
-  id?: string;
   /** Whether to enable checkbox cascade functionality - controls checkbox linkage between master and detail tables, default is true */
   enableCheckboxCascade?: boolean;
   /** Detail table configuration - can be static configuration object or dynamic configuration function */
@@ -32,7 +31,6 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 
 | Parameter Name | Type | Default Value | Description |
 |----------------|------|---------------|-------------|
-| `id` | string | `master-detail-${timestamp}` | Global unique identifier for the plugin instance, used to distinguish multiple plugin instances |
 | `enableCheckboxCascade` | boolean | `true` | Whether to enable checkbox cascade functionality between master and detail tables. When enabled, checkbox selections in master table will automatically sync with corresponding detail tables and vice versa |
 | `detailTableOptions` | DetailTableOptions \| Function | - | Detail table configuration options, supports static object configuration or dynamic configuration function based on data |
 
@@ -47,6 +45,8 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 - **sortState**: Sort state configuration
 - **widthMode**: Width mode (standard, adaptive, autoWidth, etc.)
 - **All advanced configuration options supported by ListTable**
+
+In `DetailTableOptions`, there is no need to configure `record`. When expanding rows, the values configured in the `children` of the corresponding row in the main table will be used as the `record` of the sub-table.
 
 #### Style Configuration Options
 
@@ -81,15 +81,6 @@ const masterDetailPlugin = new MasterDetailPlugin({
     defaultHeaderRowHeight: 30,
     style: { margin: 12, height: 160 },
     theme: VTable.themes.BRIGHT
-  }
-});
-
-// To disable checkbox cascade functionality:
-const masterDetailPluginWithoutCascade = new MasterDetailPlugin({
-  id: 'master-detail-plugin-no-cascade',
-  enableCheckboxCascade: false, // Disable checkbox cascade functionality
-  detailTableOptions: {
-    // ... same configuration as above
   }
 });
 ```

@@ -1,3 +1,12 @@
+---
+category: examples
+group: plugin
+title: 主从表功能展示
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/masterSubTable-plugin.gif
+link: plugin/usage
+option: plugins
+---
+
 # 主从表功能
 
 基于 VTable 的插件机制，实现主从表功能，能够在主表的行中嵌入完整的子表格，实现层次化的数据展示效果。需要使用`masterDetailPlugin`插件
@@ -12,6 +21,8 @@
 - `columns`: 子表列定义
 
 以及一些ListTableConstructorOptions中拥有的配置选项
+
+在`DetailTableOptions`中不需要去配置`record`，展开行的时候会从配置的主表对应的行中的`children`中配置的值作为子表的`record`
 
 ## 代码演示
 
