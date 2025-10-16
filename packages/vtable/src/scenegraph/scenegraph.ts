@@ -1385,7 +1385,7 @@ export class Scenegraph {
       lastBodyCell &&
       this.table.tableNoFrameHeight < this.table.getAllRowsHeight() &&
       lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
-      lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
+      lastBodyCell.attribute.y + this.table.getRowHeight(lastBodyCell.row) + y <
         this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
     ) {
       y =
@@ -1393,7 +1393,7 @@ export class Scenegraph {
         this.table.getFrozenRowsHeight() -
         this.table.getBottomFrozenRowsHeight() -
         lastBodyCell.attribute.y -
-        lastBodyCell.attribute.height;
+        this.table.getRowHeight(lastBodyCell.row);
     }
     if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
       return;
