@@ -13,7 +13,7 @@ import { bindMasterDetailCheckboxChange } from './checkbox';
  * 主从表插件核心类
  */
 export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
-  id = `master-detail-${Date.now()}`;
+  id = `Master Detail Plugin`;
   name = 'Master Detail Plugin';
   runTime = [
     VTable.TABLE_EVENT_TYPE.BEFORE_INIT,
@@ -34,7 +34,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
   private checkboxCascadeCleanup: () => void;
 
   constructor(pluginOptions: MasterDetailPluginOptions = {}) {
-    this.id = pluginOptions.id ?? this.id;
     this.pluginOptions = pluginOptions;
   }
   run(...args: unknown[]): boolean | void {

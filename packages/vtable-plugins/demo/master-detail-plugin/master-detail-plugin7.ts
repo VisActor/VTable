@@ -68,7 +68,6 @@ export function createTable() {
 
   // 创建主从表插件
   const masterDetailPlugin = new MasterDetailPlugin({
-    id: 'master-detail-interactive-7',
     detailTableOptions: {
       columns: [
         { field: 'project', title: '项目名称', width: 180 },

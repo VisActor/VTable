@@ -508,7 +508,6 @@ export function createTable(): VTable.ListTable {
   }
 
   const masterDetailPlugin = new MasterDetailPlugin({
-    id: 'master-detail-static-2',
     detailTableOptions: {
       columns: [
         { field: 'task', title: '任务名', width: 220 },

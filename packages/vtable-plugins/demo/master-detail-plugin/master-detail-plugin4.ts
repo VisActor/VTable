@@ -172,7 +172,6 @@ export function createTable() {
 
   // 子表配置
   const masterDetailPlugin = new MasterDetailPlugin({
-    id: 'master-detail-celltype-demo',
     detailTableOptions: {
       columns: [
         { field: 'isCheck', title: '', width: 60, headerType: 'checkbox', cellType: 'checkbox' },
