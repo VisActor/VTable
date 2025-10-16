@@ -186,7 +186,10 @@ export class StateManager {
       startOffsetY: null,
       targetStartX: null,
       creating: false,
-      secondTaskBarNode: null
+      firstTaskBarPosition: 'left',
+      secondTaskBarPosition: 'left',
+      secondTaskBarNode: null,
+      lastHighLightLinkPoint: null
     };
 
     this.updateVerticalScrollBar = this.updateVerticalScrollBar.bind(this);
@@ -815,6 +818,19 @@ export class StateManager {
     this._gantt.scenegraph.updateNextFrame();
   }
   startAdjustProgressBar(target: GanttTaskBarNode, x: number, y: number) {
+    // 验证目标任务条是否有效
+    if (!target || !target.record) {
+      console.warn('Invalid target for progress adjustment');
+      return;
+    }
+
+    // 检查进度字段是否存在
+    const progressField = this._gantt.parsedOptions.progressField;
+    if (!progressField || target.record[progressField] === undefined || target.record[progressField] === null) {
+      console.warn('Progress field not found or invalid');
+      return;
+    }
+
     const { progress } = this._gantt.getTaskInfoByTaskListIndex(target.task_index, target.sub_task_index);
     this.adjustProgressBar.target = target;
     this.adjustProgressBar.adjusting = true;
@@ -827,6 +843,10 @@ export class StateManager {
   }
   endAdjustProgressBar(x: number) {
     const target = this.adjustProgressBar.target;
+    if (!target) {
+      return;
+    }
+
     const taskBarWidth = target.attribute.width;
     const deltaX = x - this.adjustProgressBar.startX;
     const newProgress = Math.max(
@@ -838,21 +858,38 @@ export class StateManager {
       const taskIndex = target.task_index;
       const subTaskIndex = target.sub_task_index;
 
-      // 更新数据，保留小数精度
-      this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
-      const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
+      try {
+        // 直接更新任务记录的进度值
+        const progressField = this._gantt.parsedOptions.progressField;
+        if (progressField && target.record) {
+          target.record[progressField] = Math.round(newProgress * 10) / 10;
+        }
 
-      // 触发进度更新事件
-      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
-        this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
-          federatedEvent: null,
-          event: null,
-          index: taskIndex,
-          sub_task_index: subTaskIndex,
-          progress: Math.round(newProgress * 10) / 10,
-          oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
-          record: newRecord
-        });
+        // 根据不同的 tasksShowMode 决定是否需要同步到表格
+        if (this.shouldSyncProgressToTable(taskIndex, subTaskIndex)) {
+          this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
+        }
+
+        // 刷新任务条显示
+        this._gantt.scenegraph.taskBar.updateTaskBarNode(taskIndex, subTaskIndex);
+
+        // 获取更新后的记录
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
+
+        // 触发进度更新事件
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
+            federatedEvent: null,
+            event: null,
+            index: taskIndex,
+            sub_task_index: subTaskIndex,
+            progress: Math.round(newProgress * 10) / 10,
+            oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
+            record: newRecord
+          });
+        }
+      } catch (error) {
+        console.error('Failed to update progress:', error);
       }
     }
 
@@ -863,9 +900,57 @@ export class StateManager {
     this.adjustProgressBar.startY = null;
     this.adjustProgressBar.originalProgress = 0;
   }
+
+  /**
+   * 判断是否需要将进度同步到左侧表格
+   * 根据不同的 tasksShowMode 和任务类型决定
+   */
+  private shouldSyncProgressToTable(taskIndex: number, subTaskIndex?: number | number[]): boolean {
+    const tasksShowMode = this._gantt.parsedOptions.tasksShowMode;
+
+    // Tasks_Separate 模式：所有任务都需要同步到表格
+    if (tasksShowMode === TasksShowMode.Tasks_Separate) {
+      return true;
+    }
+
+    // 如果没有子任务索引，说明是主任务，需要同步
+    if (!isValid(subTaskIndex)) {
+      return true;
+    }
+
+    // 其他子任务模式：子任务通常不需要同步到表格，因为它们不占独立行
+    switch (tasksShowMode) {
+      case TasksShowMode.Sub_Tasks_Inline:
+      case TasksShowMode.Sub_Tasks_Arrange:
+      case TasksShowMode.Sub_Tasks_Compact:
+        return false; // 子任务不占独立行，不需要同步
+
+      case TasksShowMode.Sub_Tasks_Separate:
+        return true; // 子任务占独立行，需要同步
+
+      case TasksShowMode.Project_Sub_Tasks_Inline:
+        // 需要检查父项目的展开状态
+        const parentRecord = this._gantt.getRecordByIndex(taskIndex);
+        if (parentRecord && parentRecord.type === TaskType.PROJECT) {
+          return parentRecord.hierarchyState === 'expand';
+        }
+        return false;
+
+      default:
+        return false;
+    }
+  }
   dealAdjustProgressBar(e: FederatedPointerEvent) {
     const target = this.adjustProgressBar.target;
+    if (!target || !this.adjustProgressBar.adjusting) {
+      return;
+    }
+
     const taskBarWidth = target.attribute.width;
+    if (!taskBarWidth || taskBarWidth <= 0) {
+      return;
+    }
+
     const deltaX = e.x - this.adjustProgressBar.startX;
     const newProgress = Math.max(
       0,
@@ -886,10 +971,18 @@ export class StateManager {
     }
 
     // 更新文字标签中的进度百分比
-    if (target.textLabel && target.record) {
-      const tempRecord = { ...target.record, progress: Math.round(newProgress * 10) / 10 };
-      const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
-      target.textLabel.setAttribute('text', newText);
+    if (target.textLabel && target.record && this._gantt.parsedOptions.taskBarLabelText) {
+      try {
+        const progressField = this._gantt.parsedOptions.progressField;
+        const tempRecord = {
+          ...target.record,
+          [progressField]: Math.round(newProgress * 10) / 10
+        };
+        const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
+        target.textLabel.setAttribute('text', newText);
+      } catch (error) {
+        console.warn('Failed to update progress label:', error);
+      }
     }
 
     // 实时显示变化
