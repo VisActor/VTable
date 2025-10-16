@@ -1,4 +1,4 @@
-import { FormulaEngine } from '../formula-engine';
+import { FormulaEngine } from '../../src/formula/formula-engine';
 
 describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', () => {
   let engine: FormulaEngine;
@@ -14,7 +14,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 4, col: 1 }, '=A7'); // B5=A7
 
       // 删除第7行（0-based索引6）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 6, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 6, 1, 100, 100);
 
       // 验证 B5 的公式应该调整为 =A6（A7变成A6）
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 4, col: 1 });
@@ -26,7 +26,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 4, col: 1 }, '=A7'); // B5=A7
 
       // 删除第5行（0-based索引4）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 4, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 4, 1, 100, 100);
 
       // 验证 B5 被删除
       expect(engine.isCellFormula({ sheet: 'Sheet1', row: 4, col: 1 })).toBe(false);
@@ -43,7 +43,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 2 }, '=SUM(H4:H9)'); // C6=SUM(H4:H9)
 
       // 删除第7行（0-based索引6，包含H7）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 6, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 6, 1, 100, 100);
 
       // 验证 C6 的公式应该调整为 =SUM(H4:H8)
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 2 });
@@ -55,7 +55,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 2 }, '=SUM(H4:H9)'); // C6=SUM(H4:H9)
 
       // 删除第6-8行（0-based索引5-7，包含H6-H8）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 3);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 3, 100, 100);
 
       // 验证 C6 的公式应该调整为 =SUM(H4:H6)
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 2 });
@@ -71,7 +71,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 3 }, '=C5+A7'); // D7=C5+A7
 
       // 删除第5行（0-based索引4，包含A5和C5）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 4, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 4, 1, 100, 100);
 
       // 验证 B3 的公式应该调整为 =A3+A4（不变，因为A3和A4没有被删除）
       const b3Formula = engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 });
@@ -92,7 +92,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, '=A1'); // B2=A1
 
       // 删除第1行（0-based索引0，包含A1）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 0, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 0, 1, 100, 100);
 
       // 验证 B2 的公式应该调整为 =A1（B2移动到B1，A1被删除但引用调整到新的位置）
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 0, col: 1 });
@@ -104,7 +104,7 @@ describe('FormulaEngine.adjustFormulaReferences - Complex Deletion Scenarios', (
       engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, '=A1+A1+A1'); // B2=A1+A1+A1
 
       // 删除第1行（0-based索引0，包含A1）
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 0, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 0, 1, 100, 100);
 
       // 验证 B2 的公式应该调整为 =A1+A1+A1（所有A1引用都调整到新的位置）
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 0, col: 1 });

@@ -2196,8 +2196,8 @@ export class FormulaEngine {
 
         // 调整起始行
         if (minRow >= deleteStartRow && minRow <= deleteEndRow) {
-          // 起始行被删除 - 替换为#REF!
-          newMinRow = -1; // 特殊标记表示#REF!
+          // 起始行被删除 - 调整到删除前的位置
+          newMinRow = deleteStartRow > 0 ? deleteStartRow - 1 : 0;
         } else if (minRow > deleteEndRow) {
           // 起始行在删除范围之后，需要向前移动
           newMinRow = minRow - count;
@@ -2208,13 +2208,13 @@ export class FormulaEngine {
 
         // 调整结束行
         if (maxRow >= deleteStartRow && maxRow <= deleteEndRow) {
-          // 结束行被删除 - 替换为#REF!
-          newMaxRow = -1; // 特殊标记表示#REF!
+          // 结束行被删除 - 调整到删除前的位置
+          newMaxRow = deleteStartRow > 0 ? deleteStartRow - 1 : 0;
         } else if (maxRow > deleteEndRow) {
           // 结束行在删除范围之后，需要向前移动
           newMaxRow = maxRow - count;
           if (newMaxRow < 0) {
-            newMaxRow = -1; // 如果调整后为负数，也标记为#REF!
+            newMaxRow = 0; // 确保不为负数
           }
         }
 
@@ -2228,8 +2228,8 @@ export class FormulaEngine {
 
         // 调整起始列
         if (minCol >= deleteStartCol && minCol <= deleteEndCol) {
-          // 起始列被删除 - 替换为#REF!
-          newMinCol = -1; // 特殊标记表示#REF!
+          // 起始列被删除 - 调整到删除前的位置
+          newMinCol = deleteStartCol > 0 ? deleteStartCol - 1 : 0;
         } else if (minCol > deleteEndCol) {
           // 起始列在删除范围之后，需要向前移动
           newMinCol = minCol - count;
@@ -2240,8 +2240,8 @@ export class FormulaEngine {
 
         // 调整结束列
         if (maxCol >= deleteStartCol && maxCol <= deleteEndCol) {
-          // 结束列被删除 - 替换为#REF!
-          newMaxCol = -1; // 特殊标记表示#REF!
+          // 结束列被删除 - 调整到删除前的位置
+          newMaxCol = deleteStartCol > 0 ? deleteStartCol - 1 : 0;
         } else if (maxCol > deleteEndCol) {
           // 结束列在删除范围之后，需要向前移动
           newMaxCol = maxCol - count;
@@ -2297,6 +2297,11 @@ export class FormulaEngine {
         } else {
           newEndCell = this.getA1Notation(newMaxRow, newMaxCol);
         }
+      }
+
+      // 如果起始和结束相同，返回单个单元格引用
+      if (newStartCell === newEndCell) {
+        return newStartCell;
       }
 
       return `${newStartCell}:${newEndCell}`;

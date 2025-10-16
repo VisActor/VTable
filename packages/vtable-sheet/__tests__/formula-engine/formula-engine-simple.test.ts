@@ -1,4 +1,4 @@
-import { FormulaEngine } from '../formula-engine';
+import { FormulaEngine } from '../../src/formula/formula-engine';
 
 describe('FormulaEngine.adjustFormulaReferences - Simple Tests', () => {
   let engine: FormulaEngine;
@@ -13,7 +13,7 @@ describe('FormulaEngine.adjustFormulaReferences - Simple Tests', () => {
     engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=B5+B4');
 
     // 在第2行插入一行
-    engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+    engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
 
     // 验证B7的公式被正确调整
     const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 6, col: 1 });
@@ -26,7 +26,7 @@ describe('FormulaEngine.adjustFormulaReferences - Simple Tests', () => {
     engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 1 }, '=B6+1');
 
     // 删除第6行
-    engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1);
+    engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1, 100, 100);
 
     // 验证B6的公式被正确调整（B7移动到B6）
     const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
@@ -43,7 +43,7 @@ describe('FormulaEngine.adjustFormulaReferences - Simple Tests', () => {
     expect(initialPrecedents.length).toBeGreaterThan(0);
 
     // 插入行
-    engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+    engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
 
     // 验证新的依赖关系
     const newCell = { sheet: 'Sheet1', row: 6, col: 1 };
@@ -67,7 +67,7 @@ describe('FormulaEngine.adjustFormulaReferences - Simple Tests', () => {
     expect(initialB7Precedents.length).toBeGreaterThan(0);
 
     // 删除第6行
-    engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1);
+    engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1, 100, 100);
 
     // 验证新的依赖关系（B7移动到B6）
     const newB6Cell = { sheet: 'Sheet1', row: 5, col: 1 };

@@ -1,4 +1,4 @@
-import { FormulaEngine } from '../formula-engine';
+import { FormulaEngine } from '../../src/formula/formula-engine';
 
 describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
   let engine: FormulaEngine;
@@ -21,7 +21,7 @@ describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
     expect(engine.getCellPrecedents(c3Cell).length).toBeGreaterThan(0);
 
     // 在第1行插入一行
-    engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 0, 1);
+    engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 0, 1, 100, 100);
 
     // 验证公式正确调整
     expect(engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 })).toBe('=B2+A2'); // B3=B2+A2
@@ -41,7 +41,7 @@ describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
     engine.setCellContent({ sheet: 'Sheet1', row: 3, col: 1 }, '=B3+1'); // B4=B3+1
 
     // 删除第3行（包含B3公式）
-    engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 2, 1);
+    engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 2, 1, 100, 100);
 
     // 验证B3的公式被删除，B4的公式移动到B3
     expect(engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 })).toBe('=#REF!+1'); // B4移动到B3, but B3 reference becomes #REF!
@@ -54,7 +54,7 @@ describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
     engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 2 }, '=B2+C1'); // C2=B2+C1
 
     // 在第B列插入一列
-    engine.adjustFormulaReferences('Sheet1', 'insert', 'column', 1, 1);
+    engine.adjustFormulaReferences('Sheet1', 'insert', 'column', 1, 1, 100, 100);
 
     // 验证列引用正确调整
     expect(engine.getFormulaString({ sheet: 'Sheet1', row: 1, col: 2 })).toBe('=D1+C1'); // C2=D1+C1
@@ -71,12 +71,12 @@ describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
   test('error handling and edge cases', () => {
     // 测试空操作
     expect(() => {
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 0);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 0, 100, 100);
     }).not.toThrow();
 
     // 测试不存在的sheet
     expect(() => {
-      engine.adjustFormulaReferences('NonExistentSheet', 'insert', 'row', 1, 1);
+      engine.adjustFormulaReferences('NonExistentSheet', 'insert', 'row', 1, 1, 100, 100);
     }).not.toThrow();
 
     // 测试循环依赖
@@ -84,7 +84,7 @@ describe('FormulaEngine.adjustFormulaReferences - Final Verification', () => {
     engine.setCellContent({ sheet: 'Sheet1', row: 2, col: 1 }, '=B1+1'); // B3=B1+1
 
     expect(() => {
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
     }).not.toThrow();
 
     // 验证循环依赖仍然存在

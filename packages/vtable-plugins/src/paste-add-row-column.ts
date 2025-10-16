@@ -56,11 +56,13 @@ export class PasteAddRowColumnPlugin implements pluginsDefinition.IVTablePlugin 
         if (this.pluginOptions?.addColumnCallback) {
           this.pluginOptions.addColumnCallback(newColIndex, this.table);
         } else {
-          this.table.addColumn({
-            field: `field_${newColIndex}`,
-            title: `New Column ${newColIndex}`,
-            width: 100
-          });
+          this.table.addColumns([
+            {
+              field: `field_${newColIndex}`,
+              title: `New Column ${newColIndex}`,
+              width: 100
+            }
+          ]);
         }
       }
     }

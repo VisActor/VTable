@@ -14,11 +14,18 @@ const mockVTableSheet = {
       columns: [] as any[]
     })
   }),
-  getActiveSheet: (): any => null,
+  getActiveSheet: (): any => ({
+    tableInstance: {
+      changeCellValue: () => {
+        /* Mock implementation */
+      }
+    }
+  }),
   getSheet: (sheetKey: string) => ({
     columnCount: 10,
     rowCount: 10
-  })
+  }),
+  formulaManager: null // 这会在创建FormulaManager时自动设置
 } as unknown as VTableSheet;
 
 // 测试用的基本标准化函数
@@ -58,6 +65,8 @@ describe('Column Operations Formula References', () => {
 
   beforeEach(() => {
     formulaManager = new FormulaManager(mockVTableSheet);
+    // 设置mock对象的formulaManager属性，以便在测试中使用
+    mockVTableSheet.formulaManager = formulaManager;
   });
 
   afterEach(() => {
@@ -84,7 +93,7 @@ describe('Column Operations Formula References', () => {
     expect(formulaManager.getCellValue({ sheet: sheetKey, row: 2, col: 4 }).value).toBe(80); // 40*2=80
 
     // 模拟删除B列（索引1）
-    const { adjustedCells } = formulaManager.formulaEngine.adjustFormulaReferences(
+    const { adjustedCells, movedCells } = formulaManager.formulaEngine.adjustFormulaReferences(
       sheetKey,
       'delete',
       'column',
@@ -96,15 +105,16 @@ describe('Column Operations Formula References', () => {
 
     // 验证公式引用是否被正确调整
     // C3的公式应该变成 =A2+A2 (原来是 =A2+B2，但B2已经变成A2了)
-    const originalFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 2 });
-    expect(originalFormula).toContain('A2+B2');
+    const originalFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 1 });
+    expect(originalFormula).toContain('#REF!');
 
     // 验证引用调整后的单元格列表
-    expect(adjustedCells.length).toBeGreaterThan(0);
+    expect(adjustedCells.length).toEqual(0);
+    expect(movedCells.length).toBeGreaterThan(0);
 
     // E3的公式应该变成 =C2*2 (原来是 =D2*2，但D2已经变成C2了)
-    const eFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 4 });
-    expect(eFormula).toContain('D2');
+    const eFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 3 });
+    expect(eFormula).toContain('C2');
   });
 
   test('should update formula references when adding columns', () => {
@@ -127,7 +137,7 @@ describe('Column Operations Formula References', () => {
     expect(formulaManager.getCellValue({ sheet: sheetKey, row: 2, col: 3 }).value).toBe(60); // 30*2=60
 
     // 模拟在B列（索引1）前插入一列
-    const { adjustedCells } = formulaManager.formulaEngine.adjustFormulaReferences(
+    const { adjustedCells, movedCells } = formulaManager.formulaEngine.adjustFormulaReferences(
       sheetKey,
       'insert',
       'column',
@@ -139,15 +149,15 @@ describe('Column Operations Formula References', () => {
 
     // 验证公式引用是否被正确调整
     // C3的公式应该变成 =A2+C2 (原来是 =A2+B2，但B2已经变成C2了)
-    const originalFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 2 });
-    expect(originalFormula).toContain('A2+B2');
+    const originalFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 3 });
+    expect(originalFormula).toContain('A2+C2');
 
     // 验证引用调整后的单元格列表
-    expect(adjustedCells.length).toBeGreaterThan(0);
-
+    expect(adjustedCells.length).toEqual(0);
+    expect(movedCells.length).toBeGreaterThan(0);
     // D3的公式应该变成 =D2*2 (原来是 =C2*2，但C2已经变成D2了)
-    const dFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 3 });
-    expect(dFormula).toContain('C2');
+    const dFormula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 4 });
+    expect(dFormula).toContain('D2');
   });
 
   test('should handle edge cases when manipulating columns', () => {
@@ -210,5 +220,36 @@ describe('Column Operations Formula References', () => {
     } catch (error) {
       console.error(`删除包含公式的列应该不会抛出错误: ${error}`);
     }
+  });
+  // 测试情况 C3=SUM(A2:B2)，删除B列，B3(原C3)应该变成 =SUM(A2)
+  test('should handle SUM formula when deleting columns', () => {
+    const sheetKey = 'Sheet1';
+    formulaManager.addSheet(sheetKey, [
+      ['A', 'B', 'C'],
+      ['10', '20', '30'],
+      ['', '', '']
+    ]);
+
+    // 在C3中创建引用A2:B2的求和公式
+    formulaManager.setCellContent({ sheet: sheetKey, row: 2, col: 2 }, '=SUM(A2:B2)');
+    expect(formulaManager.getCellValue({ sheet: sheetKey, row: 2, col: 2 }).value).toBe(30); // 10+20=30
+
+    // 模拟删除B列(索引1)
+    const { adjustedCells, movedCells } = formulaManager.formulaEngine.adjustFormulaReferences(
+      sheetKey,
+      'delete',
+      'column',
+      1,
+      1,
+      3,
+      3
+    );
+
+    // 验证公式已被修复
+    const formula = formulaManager.getCellFormula({ sheet: sheetKey, row: 2, col: 1 });
+    expect(formula).toEqual('=SUM(A2)');
+
+    // 确认值仍然正确
+    expect(formulaManager.getCellValue({ sheet: sheetKey, row: 2, col: 1 }).value).toBe(10); // 现在只有A2的值
   });
 });

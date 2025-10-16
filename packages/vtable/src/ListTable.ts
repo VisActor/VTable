@@ -287,6 +287,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
   addColumns(toAddColumns: ColumnDefine[], colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
     if (colIndex === undefined) {
+      colIndex = columns.length;
       columns.push(...toAddColumns);
     } else {
       columns.splice(colIndex, 0, ...toAddColumns);

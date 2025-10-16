@@ -1,4 +1,4 @@
-import { FormulaEngine } from '../formula-engine';
+import { FormulaEngine } from '../../src/formula/formula-engine';
 
 describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
   let engine: FormulaEngine;
@@ -11,7 +11,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
   describe('Insert Operations', () => {
     test('insert row - basic formula adjustment', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=B5+B4'); // B6=B5+B4
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 6, col: 1 });
       expect(formula).toBe('=B6+B5');
@@ -19,7 +19,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
 
     test('insert row - formula cell movement', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, '=B1+A1'); // B2=B1+A1
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 0, 1);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 0, 1, 100, 100);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 2, col: 1 });
       expect(formula).toBe('=B2+A2');
@@ -27,7 +27,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
 
     test('insert column - basic formula adjustment', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=C5+B5'); // B6=C5+B5
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'column', 1, 1);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'column', 1, 1, 100, 100);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 2 });
       expect(formula).toBe('=D5+C5'); // C→D, B→C
@@ -39,7 +39,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=B5+1'); // B6=B5+1
       engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 1 }, '=B6+1'); // B7=B6+1
 
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1, 100, 100);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
       expect(formula).toBe('=#REF!+1'); // B7 moved to B6, but B6 reference becomes #REF!
@@ -52,7 +52,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=B5+1'); // B6=B5+1
       engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 1 }, '=B6+1'); // B7=B6+1
 
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 4, 1); // Delete row 5
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 4, 1, 100, 100); // Delete row 5
 
       const b5Formula = engine.getFormulaString({ sheet: 'Sheet1', row: 4, col: 1 });
       const b6Formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
@@ -65,7 +65,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=B5+1'); // B6=B5+1
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 2 }, '=B6+1'); // C6=B6+1
 
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'column', 1, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'column', 1, 1, 100, 100);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 5, col: 1 });
       expect(formula).toBe('=#REF!+1'); // C6 moved to B6, but C6 reference becomes #REF!
@@ -83,7 +83,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       const initialPrecedents = engine.getCellPrecedents(initialCell);
       expect(initialPrecedents.length).toBeGreaterThan(0);
 
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
 
       const newCell = { sheet: 'Sheet1', row: 6, col: 1 };
       const newPrecedents = engine.getCellPrecedents(newCell);
@@ -103,7 +103,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       expect(initialB6Precedents.length).toBeGreaterThan(0);
       expect(initialB7Precedents.length).toBeGreaterThan(0);
 
-      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1);
+      engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 5, 1, 100, 100);
 
       const newB6Cell = { sheet: 'Sheet1', row: 5, col: 1 };
       const newB6Precedents = engine.getCellPrecedents(newB6Cell);
@@ -115,7 +115,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
   describe('Edge Cases', () => {
     test('no error with empty formula cells', () => {
       expect(() => {
-        engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+        engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
       }).not.toThrow();
     });
 
@@ -123,7 +123,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.addSheet('Sheet2');
       engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 1 }, '=Sheet2!B5+B4');
 
-      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+      engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
 
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 6, col: 1 });
       expect(formula).toBe('=Sheet2!B6+B5'); // B5->B6, B4->B5
@@ -134,7 +134,7 @@ describe('FormulaEngine.adjustFormulaReferences - Core Functionality', () => {
       engine.setCellContent({ sheet: 'Sheet1', row: 6, col: 1 }, '=B6+1');
 
       expect(() => {
-        engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1);
+        engine.adjustFormulaReferences('Sheet1', 'insert', 'row', 1, 1, 100, 100);
       }).not.toThrow();
 
       const b6Cell = { sheet: 'Sheet1', row: 6, col: 1 };
