@@ -284,33 +284,33 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param column
    */
-  addColumn(column: ColumnDefine, colIndex?: number, isMaintainArrayData: boolean = true) {
+  addColumns(toAddColumns: ColumnDefine[], colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
     if (colIndex === undefined) {
-      columns.push(column);
+      columns.push(...toAddColumns);
     } else {
-      if (isMaintainArrayData) {
-        // 需要将columns中的field是数字index的，将其对应的做+1处理
-        for (let i = 0; i < columns.length; i++) {
-          if (typeof columns[i].field === 'number') {
-            if ((columns[i].field as number) >= colIndex) {
-              columns[i].field = (columns[i].field as number) + 1;
-            }
-          }
-        }
-      }
-      columns.splice(colIndex, 0, column);
+      columns.splice(colIndex, 0, ...toAddColumns);
     }
-    //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
     if (isMaintainArrayData) {
+      //重新整理column中的field值
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].field = i;
+      }
+
+      //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (Array.isArray(record)) {
-          record.splice(colIndex, 0, undefined);
+          record.splice(colIndex, 0, ...Array(toAddColumns.length).fill(undefined));
         }
       }
     }
     this.updateColumns(columns);
+    this.fireListeners(TABLE_EVENT_TYPE.ADD_COLUMN, {
+      columnIndex: colIndex,
+      columnCount: toAddColumns.length,
+      columns
+    });
   }
   /**
    * 删除列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能

@@ -277,18 +277,22 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       });
 
       // 监听数据记录变更事件 - 用于调整公式引用
-      this.tableInstance.on('add_record', (event: any) => {
+      // 注意：'add_record' 事件类型需要使用 as any 绕过类型检查
+      (this.tableInstance as any).on('add_record', (event: any) => {
         this.handleDataRecordsChanged('add', event);
       });
 
-      this.tableInstance.on('delete_record', (event: any) => {
+      // 注意：'delete_record' 事件类型需要使用 as any 绕过类型检查
+      (this.tableInstance as any).on('delete_record', (event: any) => {
         this.handleDataRecordsChanged('delete', event);
       });
-
-      this.tableInstance.on('update_record', (event: any) => {
-        this.handleDataRecordsChanged('update', event);
+      // 注意：'add_column' 事件类型尚未在 VTable 中定义，这里使用 as any 绕过类型检查
+      (this.tableInstance as any).on('add_column', (event: any) => {
+        this.handleColumnsChanged('add', event);
       });
-      this.tableInstance.on('delete_column', (event: any) => {
+
+      // 注意：'delete_column' 事件类型需要使用 as any 绕过类型检查
+      (this.tableInstance as any).on('delete_column', (event: any) => {
         this.handleColumnsChanged('delete', event);
       });
 
@@ -391,10 +395,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
   /**
    * 处理数据记录变更事件 - 用于调整公式引用
-   * @param type 变更类型 ('add' | 'delete' | 'update')
+   * @param type 变更类型 ('add' | 'delete')
    * @param event 数据变更事件
    */
-  private handleDataRecordsChanged(type: 'add' | 'delete' | 'update', event: any): void {
+  private handleDataRecordsChanged(type: 'add' | 'delete', event: any): void {
     try {
       const sheetKey = this.getKey();
       //#region 处理数据变化后，公式引擎中的数据也需要更新
@@ -429,7 +433,12 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       console.error(`Failed to handle data records changed (${type}):`, error);
     }
   }
-  private handleColumnsChanged(type: 'delete', event: any): void {
+  /**
+   * 处理列变更事件 - 用于调整公式引用
+   * @param type 变更类型 ('add' | 'delete')
+   * @param event 列变更事件
+   */
+  private handleColumnsChanged(type: 'add' | 'delete', event: any): void {
     try {
       const sheetKey = this.getKey();
       //#region 处理数据变化后，公式引擎中的数据也需要更新
@@ -439,7 +448,28 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       );
       this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
       //#endregion
-      this.vtableSheet.formulaManager.removeColumns(sheetKey, event.deleteColIndexs);
+      if (type === 'add') {
+        // 处理添加列事件
+        const { columnIndex, columnCount } = event;
+        if (columnIndex !== undefined && columnCount > 0) {
+          // 在指定位置插入列，需要调整该位置之后的公式引用
+          this.vtableSheet.formulaManager.addColumns(sheetKey, columnIndex, columnCount);
+        } else {
+          // 默认在末尾添加
+          const currentColumnCount = this.getColumnCount();
+          this.vtableSheet.formulaManager.addColumns(sheetKey, currentColumnCount, columnCount);
+        }
+      } else if (type === 'delete') {
+        // 处理删除列事件
+        const { deleteColIndexs } = event;
+        if (deleteColIndexs && deleteColIndexs.length > 0) {
+          // 为了简化，我们假设删除的是连续的列，从最小的索引开始
+          const minIndex = Math.min(...deleteColIndexs.flat());
+          const deletedCount = deleteColIndexs.length;
+          this.vtableSheet.formulaManager.removeColumns(sheetKey, minIndex, deletedCount);
+        }
+      }
+      // update 事件不需要调整引用，因为只是数据内容变更
     } catch (error) {
       console.error(`Failed to handle columns changed (${type}):`, error);
     }

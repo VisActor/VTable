@@ -300,6 +300,11 @@ export interface TableEventHandlersEventArgumentMap {
     recordIndexs: (number | number[])[];
     updateCount: number;
   };
+  add_column: {
+    columnIndex: number;
+    columnCount: number;
+    columns: ColumnsDefine;
+  };
   delete_column: {
     // deleteBeforeColumns: ColumnsDefine;
     deleteColIndexs: number[];
@@ -411,5 +416,6 @@ export interface TableEventHandlersReturnMap {
   add_record: void;
   delete_record: void;
   update_record: void;
+  add_column: void;
   delete_column: void;
 }

@@ -1,4 +1,4 @@
-import type { ListTable } from '@visactor/vtable';
+import type { ColumnDefine, ListTable } from '@visactor/vtable';
 
 /**
  * 菜单辅助类
@@ -70,11 +70,13 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    if (typeof (table as any).addColumn === 'function') {
+    if (typeof (table as any).addColumns === 'function') {
+      const toAddColumns: ColumnDefine[] = [];
       // 使用表格API插入列
       for (let i = 0; i < count; i++) {
-        table.addColumn({ field: colIndex }, colIndex, true);
+        toAddColumns.push({ field: colIndex - i });
       }
+      table.addColumns(toAddColumns, colIndex, true);
     }
   }
 
@@ -85,10 +87,12 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    if (typeof (table as any).addColumn === 'function') {
+    if (typeof (table as any).addColumns === 'function') {
+      const toAddColumns: ColumnDefine[] = [];
       for (let i = 0; i < count; i++) {
-        table.addColumn({ field: colIndex + 1 }, colIndex + 1, true);
+        toAddColumns.push({ field: colIndex + 1 });
       }
+      table.addColumns(toAddColumns, colIndex + 1, true);
     }
   }
 

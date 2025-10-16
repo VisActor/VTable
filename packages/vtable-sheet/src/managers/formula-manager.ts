@@ -486,8 +486,8 @@ export class FormulaManager {
         Inserting ${numberOfColumns} empty columns at index ${columnIndex}`
       );
 
-      // 调整公式引用
-      this.formulaEngine.adjustFormulaReferences(
+      // 调整公式引用，获取所有受影响的单元格
+      const { adjustedCells, movedCells } = this.formulaEngine.adjustFormulaReferences(
         sheetKey,
         'insert',
         'column',
@@ -496,6 +496,16 @@ export class FormulaManager {
         this.sheet.getSheet(sheetKey).columnCount,
         this.sheet.getSheet(sheetKey).rowCount
       );
+      [...adjustedCells, ...movedCells].forEach(cell => {
+        const result = this.sheet.formulaManager.getCellValue({
+          sheet: sheetKey,
+          row: cell.row,
+          col: cell.col
+        });
+        this.sheet
+          .getActiveSheet()
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+      });
     } catch (error) {
       console.error('Failed to add columns:', error);
       throw new Error(`Failed to add ${numberOfColumns} columns at index ${columnIndex}`);
@@ -530,7 +540,6 @@ export class FormulaManager {
       );
       // 刷新所有受影响的单元格
       [...adjustedCells, ...movedCells].forEach(cell => {
-        // this.sheet.getActiveSheet().tableInstance.scenegraph.updateCellContent(cell.row, cell.col);
         const result = this.sheet.formulaManager.getCellValue({
           sheet: sheetKey,
           row: cell.row,
