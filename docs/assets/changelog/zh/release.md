@@ -1,3 +1,33 @@
+# v1.21.1
+
+2025-10-14
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 修复甘特图缩放轴组件及时释放问题
+
+
+
+[更多详情请查看 v1.21.1](https://github.com/VisActor/VTable/releases/tag/v1.21.1)
+
+# v1.21.0
+
+2025-10-13
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 甘特图新增缩放zoom交互功能
+
+**🐛 功能优化**
+
+- **@visactor/vtable**: 优化PivotTable的updateFilterRules方法新增isResetTree参数 [#4450](https://github.com/VisActor/VTable/issues/4450)
+
+
+
+[更多详情请查看 v1.21.0](https://github.com/VisActor/VTable/releases/tag/v1.21.0)
+
 # v1.20.3
 
 2025-10-11

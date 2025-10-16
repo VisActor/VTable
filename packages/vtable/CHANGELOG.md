@@ -1,6 +1,22 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 10 Oct 2025 11:28:59 GMT and should not be manually modified.
+This log was last generated on Tue, 14 Oct 2025 03:40:50 GMT and should not be manually modified.
+
+## 1.21.1
+Tue, 14 Oct 2025 03:40:50 GMT
+
+### Updates
+
+- fix: zoom axis component should release
+
+
+
+## 1.21.0
+Mon, 13 Oct 2025 09:24:03 GMT
+
+### Updates
+
+- fix: the updateFilterRules method of PivotTable #4450
 
 ## 1.20.3
 Fri, 10 Oct 2025 11:28:59 GMT

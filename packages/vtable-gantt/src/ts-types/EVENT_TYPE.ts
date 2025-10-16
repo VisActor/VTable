@@ -52,6 +52,8 @@ export interface EVENT_TYPES {
   MOVE_END_TASK_BAR: 'move_end_task_bar';
   /** 进度调整事件 */
   PROGRESS_UPDATE: 'progress_update';
+  /** 缩放事件 */
+  ZOOM: 'zoom';
 }
 /**
  * GanttChart event types
@@ -71,5 +73,6 @@ export const GANTT_EVENT_TYPE: EVENT_TYPES = {
   CLICK_MARKLINE_CREATE: 'click_markline_create',
   CLICK_MARKLINE_CONTENT: 'click_markline_content',
   MOVE_END_TASK_BAR: 'move_end_task_bar',
-  PROGRESS_UPDATE: 'progress_update'
+  PROGRESS_UPDATE: 'progress_update',
+  ZOOM: 'zoom'
 } as EVENT_TYPES;

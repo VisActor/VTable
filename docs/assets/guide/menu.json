@@ -260,6 +260,20 @@
             "zh": "甘特图导出",
             "en": "Gantt Export"
           }
+        },
+        {
+          "path": "gantt_zoom_scale",
+          "title": {
+            "zh": "智能缩放",
+            "en": "Smart Zoom Scale"
+          }
+        },
+        {
+          "path": "gantt_datazoom",
+          "title": {
+            "zh": "甘特图缩放滚动条",
+            "en": "Gantt DataZoomAxis Scrollbar"
+          }
         }
       ]
     },
@@ -914,6 +928,13 @@
           "title": {
             "zh": "插件贡献",
             "en": "plugin contribute"
+          }
+        },
+        {
+          "path": "master-detail",
+          "title": {
+            "zh": "主从表",
+            "en": "master detail table"
           }
         },
         {

@@ -2,6 +2,30 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.21.1",
+      "tag": "@visactor/vtable_v1.21.1",
+      "date": "Tue, 14 Oct 2025 03:40:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: zoom axis component should release\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.21.0",
+      "tag": "@visactor/vtable_v1.21.0",
+      "date": "Mon, 13 Oct 2025 09:24:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: the updateFilterRules method of PivotTable #4450"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.20.3",
       "tag": "@visactor/vtable_v1.20.3",
       "date": "Fri, 10 Oct 2025 11:28:59 GMT",
