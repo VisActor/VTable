@@ -230,3 +230,9 @@ ${prefix} minWidth(number)
 The minimum width of the task bar creation button.
 
 Optional
+
+${prefix} clip(boolean)
+
+Whether to crop out the part that overflows the taskBar, the default is true
+
+Optional
