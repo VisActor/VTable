@@ -1,8 +1,8 @@
 {
   "changes": [
     {
-      "comment": "docs: update menu order\n\n",
-      "type": "none",
+      "comment": "feat: add master detail table plugin\n\n",
+      "type": "minor",
       "packageName": "@visactor/vtable"
     }
   ],
