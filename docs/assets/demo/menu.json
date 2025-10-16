@@ -87,17 +87,17 @@
           }
         },
         {
-          "path": "list-table-master-detail-table",
-          "title": {
-            "zh": "主从表功能展示",
-            "en": "Master Detail Table"
-          }
-        },
-        {
           "path": "list-table-group-checkbox",
           "title": {
             "zh": "基本表格分组复选框",
             "en": "List Table Group Checkbox"
+          }
+        },
+        {
+          "path": "list-table-master-detail-table",
+          "title": {
+            "zh": "主从表功能展示",
+            "en": "Master Detail Table"
           }
         },
         {
