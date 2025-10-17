@@ -12,12 +12,20 @@ export const menus = [
     name: 'excel-import'
   },
   {
+    path: 'filter',
+    name: 'filter'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
   {
     path: 'invert-highlight',
     name: '(deprecated)invert-highlight'
+  },
+  {
+    path: 'auto-fill',
+    name: 'auto-fill'
   },
   {
     path: 'wps-fill-handle',
@@ -56,6 +64,50 @@ export const menus = [
     name: 'rotate-table'
   },
   {
+    path: 'table-series-number',
+    name: 'table-series-number'
+  },
+  {
+    path: 'table-series-number',
+    name: 'pivot-table-series-number'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin2'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin3'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin4'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin5'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin6'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin7'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin8'
+  },
+  {
+    path: 'master-detail-plugin',
+    name: 'master-detail-plugin9'
+  },
+  {
     menu: 'pivot-plugin',
     children: [
       {
@@ -63,6 +115,10 @@ export const menus = [
         name: 'pivot-plugin'
       }
     ]
+  },
+  {
+    path: 'context-menu',
+    name: 'context-menu'
   },
   {
     path: 'table-export',

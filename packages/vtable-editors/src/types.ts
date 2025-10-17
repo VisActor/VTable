@@ -7,6 +7,8 @@ export interface IEditor<V = any, T = any> {
    * after removal of `beginEditing`.
    */
   onStart: (context: EditContext<V, T>) => void;
+
+  beforeEnd?: () => void;
   /**
    * called when cell exits edit mode.
    *
@@ -14,6 +16,7 @@ export interface IEditor<V = any, T = any> {
    * after removal of `exit`.
    */
   onEnd: () => void;
+  getInputElement?: () => HTMLElement;
   /**
    * Called when user click somewhere while editor is in edit mode.
    *
@@ -35,7 +38,8 @@ export interface IEditor<V = any, T = any> {
     newValue?: any,
     oldValue?: any,
     position?: CellAddress,
-    table?: any
+    table?: any,
+    isClickOnTable?: boolean
   ) => boolean | ValidateEnum | Promise<boolean | ValidateEnum>;
   /**
    * Called when editor mode is exited by any means.

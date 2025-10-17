@@ -1,7 +1,7 @@
-import type * as VTable from '@visactor/vtable';
+import type { ListTable, PivotTable, PivotChart, TYPES } from '@visactor/vtable';
 
-export type IVTable = VTable.ListTable | VTable.PivotTable | VTable.PivotChart;
-export type CellRange = VTable.TYPES.CellRange;
-export type CellStyle = VTable.TYPES.CellStyle;
-export type LineDashsDef = VTable.TYPES.LineDashsDef;
-export type CellType = VTable.TYPES.ColumnTypeOption;
+export type IVTable = ListTable | PivotTable | PivotChart;
+export type CellRange = TYPES.CellRange;
+export type CellStyle = TYPES.CellStyle;
+export type LineDashsDef = TYPES.LineDashsDef;
+export type CellType = TYPES.ColumnTypeOption;

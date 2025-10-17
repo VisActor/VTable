@@ -108,14 +108,20 @@ export interface TableKeyboardOptions {
   moveEditCellOnArrowKeys?: boolean;
   /** 开启快捷键全选 默认：false */
   selectAllOnCtrlA?: boolean | SelectAllOnCtrlAOption;
+  /** 快捷键剪切  默认：false*/
+  cutSelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 被复制单元格是否显示虚线框，默认：false */
+  showCopyCellBorder?: boolean;
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
   /** 方向键是否可以更改选中单元格位置，默认：true */
   moveSelectedCellOnArrowKeys?: boolean;
   /** 是否启用ctrl多选框 */
   ctrlMultiSelect?: boolean;
+  /** 是否启用shift多选框 */
+  shiftMultiSelect?: boolean;
 }
 export interface TableEventOptions {
   /** 是否阻止右键的默认行为， 默认为true。*/
@@ -223,6 +229,7 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
    * 数据集合
    */
   records?: any[];
+  addRecordRule?: 'Array' | 'Object';
   /**
    * 传入用户实例化的数据对象
    */

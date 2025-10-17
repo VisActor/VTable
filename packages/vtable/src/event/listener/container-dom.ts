@@ -117,7 +117,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
       if (isCellDisableSelect(table, targetCol, targetRow)) {
         return;
       }
-      table.selectCell(targetCol, targetRow, e.shiftKey);
+      const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+      table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
       if (
         (table.options.keyboardOptions?.moveEditCellOnArrowKeys ?? false) &&
         (table as ListTableAPI).editorManager?.editingEditor
@@ -148,7 +149,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
           if (isCellDisableSelect(table, targetCol, targetRow)) {
             return;
           }
-          table.selectCell(targetCol, targetRow, e.shiftKey);
+          const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+          table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
         }
         // 直接返回，不再触发最后的keydown监听事件相关代码
         return;
@@ -161,7 +163,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
         if (isCellDisableSelect(table, targetCol, targetRow)) {
           return;
         }
-        table.selectCell(targetCol, targetRow, e.shiftKey);
+        const enableShiftSelectMode = table.options.keyboardOptions?.shiftMultiSelect ?? true;
+        table.selectCell(targetCol, targetRow, e.shiftKey && enableShiftSelectMode);
       } else if (
         (table.options.keyboardOptions?.editCellOnEnter ?? true) &&
         (table.stateManager.select.ranges?.length ?? 0) === 1
@@ -247,130 +250,17 @@ export function bindContainerDomListener(eventManager: EventManager) {
 
   handler.on(table.getElement(), 'copy', async (e: KeyboardEvent) => {
     if (table.keyboardOptions?.copySelected) {
-      const data = table.getCopyValue();
-      if (isValid(data)) {
-        e.preventDefault();
-        //检查是否有权限
-        const permissionState = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName });
-        if (navigator.clipboard?.write && permissionState.state === 'granted') {
-          // 将复制的数据转为html格式
-          const setDataToHTML = (data: string) => {
-            const result = ['<table>'];
-            const META_HEAD = [
-              '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
-              //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
-              //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
-              '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
-            ].join('');
-            const rows = data.split('\r\n'); // 将数据拆分为行
-            rows.forEach(function (rowCells: any, rowIndex: number) {
-              const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-              const rowValues: string[] = [];
-              if (rowIndex === 0) {
-                result.push('<tbody>');
-              }
-              cells.forEach(function (cell: string, cellIndex: number) {
-                // 单元格数据处理
-                const parsedCellData = !cell
-                  ? ' '
-                  : cell
-                      .toString()
-                      .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
-                      .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
-                      .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
-                      .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
-                      .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
-                      .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
-                      .replace(/\x20{2,}/gi, (substring: string | any[]) => {
-                        //  excel连续空格序列化
-                        return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
-                      }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
-                      .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
-
-                rowValues.push(`<td>${parsedCellData}</td>`);
-              });
-              result.push('<tr>', ...rowValues, '</tr>');
-
-              if (rowIndex === rows.length - 1) {
-                result.push('</tbody>');
-              }
-            });
-            result.push('</table>');
-            return [META_HEAD, result.join('')].join('');
-          };
-          const dataHTML = setDataToHTML(data);
-          navigator.clipboard.write([
-            new ClipboardItem({
-              'text/html': new Blob([dataHTML], { type: 'text/html' }),
-              'text/plain': new Blob([data], { type: 'text/plain' })
-            })
-          ]);
-        } else {
-          if (browser.IE) {
-            (window as any).clipboardData.setData('Text', data); // IE
-          } else {
-            (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
-          }
-        }
-        table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
-          cellRange: table.stateManager.select.ranges,
-          copyData: data
-        });
-      }
+      eventManager.handleCopy(e);
+    }
+  });
+  handler.on(table.getElement(), 'cut', async (e: KeyboardEvent) => {
+    if (table.keyboardOptions?.cutSelected) {
+      eventManager.handleCut(e);
     }
   });
   handler.on(table.getElement(), 'paste', async (e: any) => {
-    if (table.keyboardOptions?.pasteValueToCell && (table as ListTableAPI).changeCellValues) {
-      if ((table as ListTableAPI).editorManager?.editingEditor) {
-        return;
-      }
-      if (table.stateManager.select.ranges?.length > 0) {
-        if (navigator.clipboard?.read) {
-          // 读取剪切板数据
-          navigator.clipboard.read().then(clipboardItems => {
-            for (const item of clipboardItems) {
-              // 优先处理 html 格式数据
-              if (item.types.includes('text/html')) {
-                pasteHtmlToTable(item);
-              } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
-                pasteTextToTable(item);
-              } else {
-                // 其他情况
-              }
-            }
-          });
-        } else {
-          const ranges = table.stateManager.select.ranges;
-          const col = Math.min(ranges[0].start.col, ranges[0].end.col);
-          const row = Math.min(ranges[0].start.row, ranges[0].end.row);
-
-          const clipboardData = e.clipboardData || window.Clipboard;
-          const pastedData = clipboardData.getData('text');
-          const rows = pastedData.split('\n'); // 将数据拆分为行
-          const values: (string | number)[][] = [];
-          rows.forEach(function (rowCells: any, rowIndex: number) {
-            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-            const rowValues: (string | number)[] = [];
-            values.push(rowValues);
-            cells.forEach(function (cell: string, cellIndex: number) {
-              // 去掉单元格数据末尾的 '\r'
-              if (cellIndex === cells.length - 1) {
-                cell = cell.trim();
-              }
-              rowValues.push(cell);
-            });
-          });
-          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values);
-          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
-            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
-              col,
-              row,
-              pasteData: values,
-              changedCellResults
-            });
-          }
-        }
-      }
+    if (table.keyboardOptions?.pasteValueToCell) {
+      eventManager.handlePaste(e);
     }
   });
 
@@ -405,196 +295,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     });
   }
 
-  // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
-  const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
-  // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
-  const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/g; // for webpack3
-
-  function pasteHtmlToTable(item: ClipboardItem) {
-    const ranges = table.stateManager.select.ranges;
-    const selectRangeLength = ranges.length;
-    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
-    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
-    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
-    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
-    let pasteValuesColCount = 0;
-    let pasteValuesRowCount = 0;
-    let values: (string | number)[][] = [];
-    item.getType('text/html').then((blob: any) => {
-      blob.text().then(async (pastedData: any) => {
-        // 解析html数据
-        if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
-          // const matches = pastedData.matchAll(regex);
-          const matches = Array.from(pastedData.matchAll(regex));
-          for (const match of matches) {
-            const rowContent = match[1]; // 获取<tr>标签中的内容
-            const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
-            const rowValues = cellMatches.map(cellMatch => {
-              return (
-                cellMatch[1]
-                  .replace(/(<(?!br)([^>]+)>)/gi, '') // 除了 <br> 标签以外的所有 HTML 标签都替换为空字符串
-                  .replace(/<br(\s*|\/)>[\r\n]?/gim, '\n') // 将字符串中的 <br> 标签以及其后可能存在的空白字符和斜杠都替换为换行符 \n
-                  // .replace(/<br>/g, '\n') // 替换<br>标签为换行符
-                  // .replace(/<(?:.|\n)*?>/gm, '') // 去除HTML标签
-                  //将字符串中的 HTML 实体字符转换为原始的字符
-                  .replace(/&amp;/g, '&')
-                  .replace(/&lt;/g, '<')
-                  .replace(/&gt;/g, '>')
-                  .replace(/&#9;/gi, '\t')
-                  .replace(/&nbsp;/g, ' ')
-              );
-              // .trim(); // 去除首尾空格
-            });
-            values.push(rowValues);
-            pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
-          }
-          pasteValuesRowCount = values.length ?? 0;
-          values = handlePasteValues(
-            values,
-            pasteValuesRowCount,
-            pasteValuesColCount,
-            maxRow - row + 1,
-            maxCol - col + 1
-          );
-
-          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
-          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
-            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
-              col,
-              row,
-              pasteData: values,
-              changedCellResults
-            });
-          }
-        } else {
-          navigator.clipboard.read().then(clipboardItems => {
-            for (const item of clipboardItems) {
-              if (item.types.includes('text/plain')) {
-                item.getType('text/plain').then((blob: Blob) => {
-                  blob.text().then(_pasteValue);
-                });
-              }
-            }
-          });
-        }
-      });
-    });
-  }
-
-  async function _pasteValue(pastedData: string) {
-    const ranges = table.stateManager.select.ranges;
-    const selectRangeLength = ranges.length;
-    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
-    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
-    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
-    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
-    let pasteValuesColCount = 0;
-    let pasteValuesRowCount = 0;
-    let values: (string | number)[][] = [];
-    const rows = pastedData.split('\n'); // 将数据拆分为行
-    rows.forEach(function (rowCells: any, rowIndex: number) {
-      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-      const rowValues: (string | number)[] = [];
-      values.push(rowValues);
-      cells.forEach(function (cell: string, cellIndex: number) {
-        // 去掉单元格数据末尾的 '\r'
-        if (cellIndex === cells.length - 1) {
-          cell = cell.trim();
-        }
-        rowValues.push(cell);
-      });
-      pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
-    });
-    pasteValuesRowCount = values.length ?? 0;
-    values = handlePasteValues(values, pasteValuesRowCount, pasteValuesColCount, maxRow - row + 1, maxCol - col + 1);
-    const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
-    if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
-      table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
-        col,
-        row,
-        pasteData: values,
-        changedCellResults
-      });
-    }
-  }
-  function pasteTextToTable(item: ClipboardItem) {
-    // 如果只有 'text/plain'
-    const ranges = table.stateManager.select.ranges;
-    const selectRangeLength = ranges.length;
-    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
-    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
-    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
-    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
-    let pasteValuesColCount = 0;
-    let pasteValuesRowCount = 0;
-    // const values: (string | number)[][] = [];
-    item.getType('text/plain').then((blob: any) => {
-      blob.text().then(async (pastedData: any) => {
-        const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
-        let values: (string | number)[][] = [];
-        if (rows.length > 1 && rows[rows.length - 1] === '') {
-          rows.pop();
-        }
-        rows.forEach(function (rowCells: any, rowIndex: number) {
-          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
-          const rowValues: (string | number)[] = [];
-          values.push(rowValues);
-          cells.forEach(function (cell: string, cellIndex: number) {
-            if (cell.includes('\n')) {
-              cell = cell
-                .replace(/^"(.*)"$/, '$1') // 将字符串开头和结尾的双引号去除，并保留双引号内的内容
-                .replace(/["]*/g, match => new Array(Math.floor(match.length / 2)).fill('"').join('')); // 连续出现的双引号替换为一半数量的双引号
-            }
-            rowValues.push(cell);
-          });
-          pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
-        });
-        pasteValuesRowCount = values.length ?? 0;
-        values = handlePasteValues(
-          values,
-          pasteValuesRowCount,
-          pasteValuesColCount,
-          maxRow - row + 1,
-          maxCol - col + 1
-        );
-        const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
-        if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
-          table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
-            col,
-            row,
-            pasteData: values,
-            changedCellResults
-          });
-        }
-      });
-    });
-  }
-  function handlePasteValues(
-    values: (string | number)[][],
-    rowCount: number,
-    colCount: number,
-    selectedRowCount: number,
-    selectedColCount: number
-  ) {
-    if (selectedColCount > colCount || selectedRowCount > rowCount) {
-      if (selectedColCount % colCount === 0 && selectedRowCount % rowCount === 0) {
-        const toPasteValues: (string | number)[][] = [];
-        // 在目标区域中循环遍历，将复制的值逐个粘贴到每个单元格中
-        for (let i = 0; i < selectedRowCount; i++) {
-          const rowPasteValue: (string | number)[] = [];
-          toPasteValues.push(rowPasteValue);
-          for (let j = 0; j < selectedColCount; j++) {
-            const copiedRow = i % rowCount;
-            const copiedCol = j % colCount;
-            rowPasteValue.push(values[copiedRow][copiedCol]);
-          }
-        }
-        return toPasteValues;
-      }
-      return values;
-    }
-    return values;
-  }
   // 有被阻止冒泡的场景 就触发不到这里的事件了 所以这个LastBodyPointerXY变量的赋值在scrollbar的down事件也进行了处理
   const globalPointerdownCallback = (e: MouseEvent) => {
     if (table.isReleased) {
@@ -869,7 +569,14 @@ export function bindContainerDomListener(eventManager: EventManager) {
           const targetCol = table.getTargetColAtConsiderRightFrozen(selectX, considerFrozenX);
           const targetRow = table.getTargetRowAtConsiderBottomFrozen(selectY, considerFrozenY);
           if (!table.options.select?.disableDragSelect && isValid(targetCol) && isValid(targetRow)) {
-            table.stateManager.updateSelectPos(targetCol.col, targetRow.row, false, false, false, false);
+            table.stateManager.updateSelectPos(
+              table.stateManager.select.selectInline === 'row' ? table.colCount - 1 : targetCol.col,
+              table.stateManager.select.selectInline === 'col' ? table.rowCount - 1 : targetRow.row,
+              false,
+              false,
+              false,
+              false
+            );
           }
         });
       } else if (table.eventManager.inertiaScroll.isInertiaScrolling()) {

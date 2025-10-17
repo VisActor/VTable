@@ -151,6 +151,7 @@ export interface ISortedMapItem {
 }
 
 export class DataSource extends EventTarget implements DataSourceAPI {
+  addRecordRule: 'Array' | 'Object' = 'Object';
   dataConfig: IListTableDataConfig;
   dataSourceObj: DataSourceParam | DataSource;
   private _get: (index: number | number[]) => any;
@@ -214,6 +215,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     hierarchyExpandLevel?: number
   ) {
     super();
+    this.addRecordRule = dataConfig?.addRecordRule || 'Object';
     this.registerAggregators();
     this.dataSourceObj = dataSourceObj;
     this.dataConfig = dataConfig;
@@ -389,6 +391,10 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     if (isHasFilterRule || isHasAggregation) {
       for (let i = 0, len = records.length; i < len; i++) {
         const record = records[i];
+        // 跳过空白行
+        if (record === undefined || record === null) {
+          continue;
+        }
         if (this.dataConfig?.filterRules?.length >= 1) {
           if (this.filterRecord(record)) {
             filteredRecords.push(record);
@@ -756,7 +762,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
           if (record) {
             record[field] = formatValue;
           } else {
-            this.records[dataIndex as number] = {};
+            this.records[dataIndex as number] = this.addRecordRule === 'Array' ? [] : {};
             this.records[dataIndex as number][field] = formatValue;
           }
         }
@@ -1091,9 +1097,39 @@ export class DataSource extends EventTarget implements DataSourceAPI {
 
     // Perform sorting on each state
     sortedIndexArray.sort((indexA, indexB) => {
+      // 获取两个索引对应的记录
+      const recordA = this.getOriginalRecord(indexA);
+      const recordB = this.getOriginalRecord(indexB);
+
+      // 检查记录是否为空（null、undefined 或空对象）
+      const isEmptyA =
+        recordA === null || recordA === undefined || (typeof recordA === 'object' && Object.keys(recordA).length === 0);
+      const isEmptyB =
+        recordB === null || recordB === undefined || (typeof recordB === 'object' && Object.keys(recordB).length === 0);
+
       return states.reduce((result: number, state: SortState) => {
         if (result !== 0) {
           return result;
+        }
+
+        // 如果有排序状态（非normal状态），则空数据排在后面
+        if (state.order === 'asc' || state.order === 'desc') {
+          // 如果一个是空记录而另一个不是，则空记录排在后面
+          if (isEmptyA && !isEmptyB) {
+            return 1; // A是空的，B不是，A排后面
+          }
+          if (!isEmptyA && isEmptyB) {
+            return -1; // A不是空的，B是，B排后面
+          }
+          // 如果两者都是空记录，保持原有顺序
+          if (isEmptyA && isEmptyB) {
+            return indexA - indexB; // 保持原有顺序
+          }
+        } else {
+          // normal状态，保持原始顺序
+          if (isEmptyA || isEmptyB) {
+            return indexA - indexB;
+          }
         }
 
         const orderFn =
@@ -1495,26 +1531,30 @@ export class DataSource extends EventTarget implements DataSourceAPI {
             Array.prototype.splice.apply(this.records, sourceIds);
           }
         } else {
-          sourceI = this.currentPagerIndexedData[sourceIndex] as number;
-          targetI = this.currentPagerIndexedData[targetIndex];
-          // 从source的二维数组中取出需要操作的records
-          const records = this.records.splice(sourceI, 1);
-          // 将records插入到目标地址targetIndex处
-          // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
-          records.unshift(targetI, 0);
-          Array.prototype.splice.apply(this.records, records);
+          this.exchangeRecordData(sourceIndex, targetIndex);
         }
         this.restoreTreeHierarchyState();
         this.updatePagerData();
       } else {
-        // 从source的二维数组中取出需要操作的records
-        const records = this.records.splice(sourceIndex, 1);
-        // 将records插入到目标地址targetIndex处
-        // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
-        records.unshift(targetIndex, 0);
-        Array.prototype.splice.apply(this.records, records);
+        this.exchangeRecordData(sourceIndex, targetIndex);
       }
     }
+  }
+
+  /**
+   * @description: 交换源数据
+   * @param {number} sourceIndex 源索引
+   * @param {number} targetIndex 目标索引
+   */
+  exchangeRecordData(sourceIndex: number, targetIndex: number) {
+    const sourceI = this.getRecordIndexPaths(sourceIndex) as number;
+    const targetI = this.getRecordIndexPaths(targetIndex) as number;
+    // 从source的二维数组中取出需要操作的records
+    const records = this.records.splice(sourceI, 1);
+    // 将records插入到目标地址targetIndex处
+    // 把records变成一个适合splice的数组（包含splice前2个参数的数组） 以通过splice来插入到source数组
+    records.unshift(targetI, 0);
+    Array.prototype.splice.apply(this.records, records);
   }
 
   restoreTreeHierarchyState() {

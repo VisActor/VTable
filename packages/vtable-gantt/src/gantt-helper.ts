@@ -272,6 +272,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.taskBarMoveable = options?.taskBar?.moveable ?? true;
   gantt.parsedOptions.moveTaskBarToExtendDateRange = options?.taskBar?.moveToExtendDateRange ?? true;
   gantt.parsedOptions.taskBarResizable = options?.taskBar?.resizable ?? true;
+  gantt.parsedOptions.taskBarProgressAdjustable = options?.taskBar?.progressAdjustable ?? false;
   gantt.parsedOptions.taskBarDragOrder = options?.taskBar?.dragOrder ?? true;
 
   // gantt.parsedOptions.taskBarHoverColor =
@@ -679,13 +680,18 @@ export function convertProgress(progress: number | string) {
     progress = parseFloat(progress);
   }
 
+  // 确保进度值在合理范围内
+  if (isNaN(progress)) {
+    return 0;
+  }
+
   // // 如果小于或等于1，说明是0.4这种情况，转换成百分比
   // if (progress <= 1) {
   //   progress = progress * 100;
   // }
 
-  // 最后转换成整数
-  return Math.round(progress);
+  // 支持小数进度，限制在0-100范围内，保留1位小数
+  return Math.max(0, Math.min(100, Math.round(progress * 10) / 10));
 }
 
 export function createSplitLineAndResizeLine(gantt: Gantt) {

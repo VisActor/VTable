@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-plugins",
-  "version": "1.19.7",
+  "version": "1.22.0",
   "description": "The search util of VTable",
   "author": {
     "name": "VisActor",
@@ -20,15 +20,21 @@
     ".": {
       "require": "./cjs/index.js",
       "import": "./es/index.js"
+    },
+    "./gantt-extensions": {
+      "require": "./cjs/gantt-export-image.js",
+      "import": "./es/gantt-export-image.js"
     }
   },
   "scripts": {
     "demo": "vite ./demo",
-    "build": "bundle --clean"
+    "compile": "tsc --noEmit",
+    "build": "npm run fix-memory-limit && bundle --clean",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "unpkg": "latest",
   "unpkgFiles": [
-    "dist/vtable-exporter.js"
+    "dist/vtable-plugins.js"
   ],
   "publishConfig": {
     "access": "public"
@@ -42,9 +48,17 @@
     "@types/file-saver": "2.0.7"
   },
   "peerDependencies": {
-    "@visactor/vtable": "workspace:*"
+    "@visactor/vtable": "workspace:*",
+    "@visactor/vtable-gantt": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@visactor/vtable-gantt": {
+      "optional": true
+    }
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "@visactor/vtable": "workspace:*",
     "@visactor/vtable-editors": "workspace:*",
     "@visactor/vtable-gantt": "workspace:*",

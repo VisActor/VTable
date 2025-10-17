@@ -126,7 +126,7 @@ export function createGantt(container) {
       id: 1,
       title: 'Software Development',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-30',
+      start: '2024-07-01',
       end: '2024-08-14',
       progress: 31,
       priority: 'P0'
@@ -135,7 +135,7 @@ export function createGantt(container) {
       id: 2,
       title: 'Scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024-07-24',
+      start: '2024-07-04',
       end: '2024-08-04',
       progress: 60,
       priority: 'P0'
@@ -144,7 +144,7 @@ export function createGantt(container) {
       id: 3,
       title: 'Determine project scope',
       developer: 'liufangfang.jane@bytedance.com',
-      start: '2024/07/24',
+      start: '2024/07/05',
       end: '2024/08/04',
       progress: 100,
       priority: 'P1'
@@ -923,9 +923,9 @@ export function createGantt(container) {
     records,
     taskListTable: {
       columns: columns,
-      tableWidth: 400,
+      tableWidth: 100,
       minTableWidth: 100,
-      maxTableWidth: 600,
+      maxTableWidth: 300,
       theme: VTable.themes.ARCO
     },
 
@@ -991,6 +991,169 @@ export function createGantt(container) {
       },
       backgroundColor: '#EEF1F5',
       colWidth: 60,
+      zoomScale: {
+        enabled: true,
+        dataZoomAxis: {
+          enabled: true,
+          height: 30,
+          delayTime: 1
+        },
+        levels: [
+          // 级别0：月-周组合 (最粗糙)
+          [
+            {
+              unit: 'month',
+              step: 1,
+              format: date => {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+              }
+            },
+            {
+              unit: 'week',
+              step: 1,
+              format: date => {
+                const weekNum = Math.ceil(
+                  (date.startDate.getDate() +
+                    new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                    7
+                );
+                return `Week ${weekNum}`;
+              }
+            }
+          ],
+          // 级别1：月-日组合
+          [
+            {
+              unit: 'month',
+              step: 1,
+              format: date => {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+              }
+            },
+            {
+              unit: 'week',
+              step: 1,
+              format: date => {
+                const weekNum = Math.ceil(
+                  (date.startDate.getDate() +
+                    new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                    7
+                );
+                return `Week ${weekNum}`;
+              }
+            },
+            {
+              unit: 'day',
+              step: 4,
+              format: date => date.startDate.getDate().toString()
+            }
+          ],
+          // 级别2：月-周-日组合
+          [
+            {
+              unit: 'month',
+              step: 1,
+              format: date => {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${monthNames[date.startDate.getMonth()]} ${date.startDate.getFullYear()}`;
+              }
+            },
+            {
+              unit: 'week',
+              step: 1,
+              format: date => {
+                const weekNum = Math.ceil(
+                  (date.startDate.getDate() +
+                    new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                    7
+                );
+                return `Week ${weekNum}`;
+              }
+            },
+            {
+              unit: 'day',
+              step: 1,
+              format: date => date.startDate.getDate().toString()
+            }
+          ],
+          // 级别3：周-日-小时组合 (12小时)
+          [
+            {
+              unit: 'week',
+              step: 1,
+              format: date => {
+                const weekNum = Math.ceil(
+                  (date.startDate.getDate() +
+                    new Date(date.startDate.getFullYear(), date.startDate.getMonth(), 1).getDay()) /
+                    7
+                );
+                return `Week ${weekNum}`;
+              }
+            },
+            {
+              unit: 'day',
+              step: 1,
+              format: date => {
+                const day = date.startDate.getDate();
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${day} ${monthNames[date.startDate.getMonth()]}`;
+              }
+            },
+            {
+              unit: 'hour',
+              step: 12,
+              format: date => {
+                const startHour = date.startDate.getHours();
+                const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
+                return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+              }
+            }
+          ],
+          // 级别4：日-小时组合 (6小时)
+          [
+            {
+              unit: 'day',
+              step: 1,
+              format: date => {
+                const day = date.startDate.getDate();
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${day} ${monthNames[date.startDate.getMonth()]}`;
+              }
+            },
+            {
+              unit: 'hour',
+              step: 6,
+              format: date => {
+                const startHour = date.startDate.getHours();
+                const endHour = date.endDate.getHours() - 1; // 结束时间减1小时，然后显示59分
+                return `${startHour.toString().padStart(2, '0')}:00~${(endHour + 1).toString().padStart(2, '0')}:59`;
+              }
+            }
+          ],
+          // 级别5：日-小时组合 (1小时)
+          [
+            {
+              unit: 'day',
+              step: 1,
+              format: date => {
+                const day = date.startDate.getDate();
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${day} ${monthNames[date.startDate.getMonth()]}`;
+              }
+            },
+            {
+              unit: 'hour',
+              step: 1,
+              format: date => {
+                const hour = date.startDate.getHours();
+                return `${hour.toString().padStart(2, '0')}:00`;
+              }
+            }
+          ]
+        ]
+      },
       scales: [
         {
           unit: 'week',

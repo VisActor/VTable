@@ -1,7 +1,7 @@
 // import { FederatedPointerEvent } from '@src/vrender';
 import type { FederatedPointerEvent, Gesture, IEventTarget } from '@src/vrender';
 import { RichText, vglobal } from '@src/vrender';
-import type { ColumnDefine, ListTableConstructorOptions, MousePointerCellEvent } from '../ts-types';
+import type { CellInfo, ListTableAPI, ListTableConstructorOptions } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
 import type { StateManager } from '../state/state';
 import type { Group } from '../scenegraph/graphic/group';
@@ -35,6 +35,8 @@ import { bindButtonClickEvent } from './component/button';
 import { bindIconClickEvent } from './self-event-listener/base-table/icon';
 import { bindDropdownMenuEvent } from './self-event-listener/base-table/dropdown-menu';
 import { bindDBClickAutoColumnWidthEvent } from './self-event-listener/base-table/dbclick-auto-column-width';
+import { browser } from '../tools/helper';
+import { clearActiveCellRangeState, setActiveCellRangeState } from '../tools/style';
 
 export class EventManager {
   table: BaseTableAPI;
@@ -75,6 +77,12 @@ export class EventManager {
   bindSparklineHoverEvent: boolean;
 
   _enableTableScroll: boolean = true;
+  /** 剪切后等待粘贴 */
+  cutWaitPaste: boolean = false;
+  private clipboardCheckTimer: number | null = null; // 剪贴板检测定时器
+  private cutOperationTime: number = 0; // 记录剪切操作的时间
+  lastClipboardContent: string = ''; // 最后一次复制/剪切的内容
+  cutCellRange: CellInfo[][] | null = null;
   constructor(table: BaseTableAPI) {
     this.table = table;
     this.handleTextStickBindId = [];
@@ -266,12 +274,13 @@ export class EventManager {
         this.table.stateManager.updateSelectPos(-1, -1);
         return false;
       }
-
+      const shiftMultiSelect = this.table.keyboardOptions?.shiftMultiSelect ?? true;
+      const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
       this.table.stateManager.updateSelectPos(
-        eventArgs.col,
-        eventArgs.row,
-        eventArgs.event.shiftKey,
-        eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+        this.table.stateManager.select.selectInline === 'row' ? this.table.colCount - 1 : eventArgs.col,
+        this.table.stateManager.select.selectInline === 'col' ? this.table.rowCount - 1 : eventArgs.row,
+        eventArgs.event.shiftKey && shiftMultiSelect,
+        (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
         false,
         isSelectMoving ? false : this.table.options.select?.makeSelectCellVisible ?? true
       );
@@ -325,21 +334,24 @@ export class EventManager {
             updateCol = eventArgs.col;
           }
         }
+        const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
 
         this.table.stateManager.updateSelectPos(
           isSelectMoving ? updateCol : currentRange.end.col,
           isSelectMoving ? updateRow : currentRange.end.row,
           true,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
           false,
           !isSelectMoving
         );
       } else {
+        const shiftMultiSelect = this.table.keyboardOptions?.shiftMultiSelect ?? true;
+        const ctrlMultiSelect = this.table.keyboardOptions?.ctrlMultiSelect ?? true;
         this.table.stateManager.updateSelectPos(
           eventArgs.col,
           eventArgs.row,
-          eventArgs.event.shiftKey,
-          eventArgs.event.ctrlKey || eventArgs.event.metaKey,
+          eventArgs.event.shiftKey && shiftMultiSelect,
+          (eventArgs.event.ctrlKey || eventArgs.event.metaKey) && ctrlMultiSelect,
           false,
           !isSelectMoving
         );
@@ -569,21 +581,34 @@ export class EventManager {
             this.table.stateManager.select.ranges[this.table.stateManager.select.ranges.length - 1].end.row
           );
           // 计算鼠标与fillhandle矩形中心之间的距离 distanceX 和 distanceY
-          // 考虑最后一行和最后一列的特殊情况
-          let lastCellBound;
+          // 考虑最后一行和最后一列的特殊情况  逻辑处理需要和update-select-border.ts 中 “计算填充柄小方块的位置” 逻辑处理一致。目前都还有小问题，例如存在冻结的时候。
+          let lastCellBoundTargetX;
           if (lastCol < this.table.colCount - 1) {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            lastCellBoundTargetX = lastCellBound.x2;
           } else {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(startCol - 1, lastRow).globalAABBBounds;
+            if (startCol === 0) {
+              const lastCellBound = this.table.scenegraph.highPerformanceGetCell(0, lastRow).globalAABBBounds;
+              lastCellBoundTargetX = lastCellBound.x1;
+            } else {
+              const lastCellBound = this.table.scenegraph.highPerformanceGetCell(
+                startCol - 1,
+                lastRow
+              ).globalAABBBounds;
+              lastCellBoundTargetX = lastCellBound.x2;
+            }
           }
-          const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBound.x2);
+          const distanceX = Math.abs(eventArgsSet.abstractPos.x - lastCellBoundTargetX);
 
+          let lastCellBoundTargetY;
           if (lastRow < this.table.rowCount - 1) {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, lastRow).globalAABBBounds;
+            lastCellBoundTargetY = lastCellBound.y2;
           } else {
-            lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, startRow - 1).globalAABBBounds;
+            const lastCellBound = this.table.scenegraph.highPerformanceGetCell(lastCol, startRow - 1).globalAABBBounds;
+            lastCellBoundTargetY = lastCellBound.y2;
           }
-          const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBound.y2);
+          const distanceY = Math.abs(eventArgsSet.abstractPos.y - lastCellBoundTargetY);
 
           const squareSize = 6 * 3;
           // 判断鼠标是否落在fillhandle矩形内
@@ -703,7 +728,7 @@ export class EventManager {
   }
   /** TODO 其他的事件并么有做remove */
   release() {
-    this.gesture.release();
+    this.gesture?.release();
 
     // remove global event listerner
     this.globalEventListeners.forEach(item => {
@@ -726,5 +751,465 @@ export class EventManager {
 
   disableScroll() {
     this._enableTableScroll = false;
+  }
+
+  async handleCopy(e: KeyboardEvent, isCut: boolean = false) {
+    const table = this.table;
+    !isCut && (this.cutWaitPaste = false);
+    const data = this.table.getCopyValue();
+    if (isValid(data)) {
+      e.preventDefault();
+      //检查是否有权限
+      const permissionState = await navigator.permissions.query({ name: 'clipboard-write' as PermissionName });
+      if (navigator.clipboard?.write && permissionState.state === 'granted') {
+        // 将复制的数据转为html格式
+        const setDataToHTML = (data: string) => {
+          const result = ['<table>'];
+          const META_HEAD = [
+            '<meta name="author" content="Visactor"/>', // 后面可用于vtable之间的快速复制粘贴
+            //white-space:normal，连续的空白字符会被合并为一个空格，并且文本会根据容器的宽度自动换行显示
+            //mso-data-placement:same-cell，excel专用， 在同一个单元格中显示所有数据，而不是默认情况下将数据分散到多个单元格中显示
+            '<style type="text/css">td{white-space:normal}br{mso-data-placement:same-cell}</style>'
+          ].join('');
+          const rows = data.split('\r\n'); // 将数据拆分为行
+          rows.forEach(function (rowCells: any, rowIndex: number) {
+            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+            const rowValues: string[] = [];
+            if (rowIndex === 0) {
+              result.push('<tbody>');
+            }
+            cells.forEach(function (cell: string, cellIndex: number) {
+              // 单元格数据处理
+              const parsedCellData = !cell
+                ? ' '
+                : cell
+                    .toString()
+                    .replace(/&/g, '&amp;') // replace & with &amp; to prevent XSS attacks
+                    .replace(/'/g, '&#39;') // replace ' with &#39; to prevent XSS attacks
+                    .replace(/</g, '&lt;') // replace < with &lt; to prevent XSS attacks
+                    .replace(/>/g, '&gt;') // replace > with &gt; to prevent XSS attacks
+                    .replace(/\n/g, '<br>') // replace \n with <br> to prevent XSS attacks
+                    .replace(/(<br(\s*|\/)>(\r\n|\n)?|\r\n|\n)/g, '<br>\r\n') //   replace <br> with <br>\r\n to prevent XSS attacks
+                    .replace(/\x20{2,}/gi, (substring: string | any[]) => {
+                      //  excel连续空格序列化
+                      return `<span style="mso-spacerun: yes">${'&nbsp;'.repeat(substring.length - 1)} </span>`;
+                    }) // replace 2 or more spaces with &nbsp; to prevent XSS attacks
+                    .replace(/\t/gi, '&#9;'); //   replace \t with &#9; to prevent XSS attacks
+
+              rowValues.push(`<td>${parsedCellData}</td>`);
+            });
+            result.push('<tr>', ...rowValues, '</tr>');
+
+            if (rowIndex === rows.length - 1) {
+              result.push('</tbody>');
+            }
+          });
+          result.push('</table>');
+          return [META_HEAD, result.join('')].join('');
+        };
+        const dataHTML = setDataToHTML(data);
+        navigator.clipboard.write([
+          new ClipboardItem({
+            'text/html': new Blob([dataHTML], { type: 'text/html' }),
+            'text/plain': new Blob([data], { type: 'text/plain' })
+          })
+        ]);
+      } else {
+        if (browser.IE) {
+          (window as any).clipboardData.setData('Text', data); // IE
+        } else {
+          (e as any).clipboardData.setData('text/plain', data); // Chrome, Firefox
+        }
+      }
+      table.fireListeners(TABLE_EVENT_TYPE.COPY_DATA, {
+        cellRange: table.stateManager.select.ranges,
+        copyData: data,
+        isCut
+      });
+    }
+    if (table.keyboardOptions?.showCopyCellBorder) {
+      setActiveCellRangeState(table);
+      table.clearSelected();
+    }
+  }
+  async handleCut(e: KeyboardEvent) {
+    this.handleCopy(e, true);
+    this.cutWaitPaste = true;
+    this.cutCellRange = this.table.getSelectedCellInfos();
+    // 设置自动超时，防止剪切状态无限期保持
+    if (this.clipboardCheckTimer) {
+      clearTimeout(this.clipboardCheckTimer);
+    }
+
+    // 30秒后自动取消剪切状态
+    this.clipboardCheckTimer = window.setTimeout(() => {
+      if (this.cutWaitPaste) {
+        // 剪切操作超时，重置剪切状态
+        this.cutWaitPaste = false;
+        this.cutCellRange = null;
+        this.clipboardCheckTimer = null;
+      }
+    }, 30000); // 30秒超时
+
+    // 保存剪贴板内容以便后续检测变化
+    this.saveClipboardContent();
+  }
+
+  // 执行实际的粘贴操作
+  handlePaste(e: KeyboardEvent): void {
+    if (!this.cutWaitPaste) {
+      // 非剪切状态，直接粘贴
+      this.executePaste(e);
+      return;
+    }
+
+    this.checkClipboardChanged()
+      .then(changed => {
+        // 执行粘贴操作，并根据剪贴板是否变化决定是否清空选中区域
+        this.executePaste(e);
+        if (!changed) {
+          this.clearCutArea(this.table as ListTableAPI);
+        }
+        // 执行完粘贴操作后，重置剪切状态
+        if (this.cutWaitPaste) {
+          this.cutWaitPaste = false;
+          this.cutCellRange = null;
+          // 清除定时器
+          if (this.clipboardCheckTimer) {
+            clearTimeout(this.clipboardCheckTimer);
+            this.clipboardCheckTimer = null;
+          }
+        }
+      })
+      .catch(() => {
+        // 如果无法检测剪贴板变化（例如权限问题），则保守地执行粘贴但不清空选中区域
+        this.executePaste(e);
+        // 执行完粘贴操作后，重置剪切状态
+        if (this.cutWaitPaste) {
+          this.cutWaitPaste = false;
+          this.cutCellRange = null;
+          // 清除定时器
+          if (this.clipboardCheckTimer) {
+            clearTimeout(this.clipboardCheckTimer);
+            this.clipboardCheckTimer = null;
+          }
+        }
+      });
+  }
+  private async executePaste(e: any) {
+    const table = this.table;
+    if ((table as ListTableAPI).changeCellValues) {
+      if ((table as ListTableAPI).editorManager?.editingEditor) {
+        return;
+      }
+      if (table.stateManager.select.ranges?.length > 0) {
+        if (navigator.clipboard?.read) {
+          // 读取剪切板数据
+          navigator.clipboard.read().then(clipboardItems => {
+            for (const item of clipboardItems) {
+              // 优先处理 html 格式数据
+              if (item.types.includes('text/html')) {
+                this.pasteHtmlToTable(item);
+              } else if (item.types.length === 1 && item.types[0] === 'text/plain') {
+                this.pasteTextToTable(item);
+              } else {
+                // 其他情况
+              }
+            }
+          });
+        } else {
+          const ranges = table.stateManager.select.ranges;
+          const col = Math.min(ranges[0].start.col, ranges[0].end.col);
+          const row = Math.min(ranges[0].start.row, ranges[0].end.row);
+
+          const clipboardData = e.clipboardData || window.Clipboard;
+          const pastedData = clipboardData.getData('text');
+          const rows = pastedData.split('\n'); // 将数据拆分为行
+          const values: (string | number)[][] = [];
+          rows.forEach(function (rowCells: any, rowIndex: number) {
+            const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+            const rowValues: (string | number)[] = [];
+            values.push(rowValues);
+            cells.forEach(function (cell: string, cellIndex: number) {
+              // 去掉单元格数据末尾的 '\r'
+              if (cellIndex === cells.length - 1) {
+                cell = cell.trim();
+              }
+              rowValues.push(cell);
+            });
+          });
+          // 保持与 navigator.clipboard.read 中的操作一致
+          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
+        }
+      }
+    }
+    if (table.keyboardOptions?.showCopyCellBorder) {
+      clearActiveCellRangeState(table);
+    }
+  }
+  // 清空选中区域的内容
+  private clearCutArea(table: ListTableAPI): void {
+    try {
+      const selectCells = this.cutCellRange;
+      if (!selectCells || selectCells.length === 0) {
+        return;
+      }
+
+      for (let i = 0; i < selectCells.length; i++) {
+        for (let j = 0; j < selectCells[i].length; j++) {
+          if (selectCells[i][j]) {
+            table.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, undefined);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('清空单元格内容失败', error);
+    }
+  }
+
+  // 检查剪贴板内容是否被其他应用更改
+  private async checkClipboardChanged(): Promise<boolean> {
+    // 如果不支持读取剪贴板，则无法检测变化
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      return false;
+    }
+
+    try {
+      const currentContent = await navigator.clipboard.readText();
+      // console.log('当前剪贴板内容:', currentContent);
+      // console.log('上次保存的剪贴板内容:', this.lastClipboardContent);
+
+      // 比较当前剪贴板内容与剪切时保存的内容
+      return currentContent !== this.lastClipboardContent;
+    } catch (err) {
+      console.warn('检查剪贴板状态失败:', err);
+      // 出错时假设剪贴板未变化
+      return false;
+    }
+  }
+
+  // 保存剪贴板内容
+  private saveClipboardContent(): void {
+    // 尝试获取剪贴板内容
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      // 延迟一点以确保剪贴板内容已更新
+      setTimeout(() => {
+        navigator.clipboard
+          .readText()
+          .then(text => {
+            this.lastClipboardContent = text;
+            console.log('已保存剪贴板状态');
+          })
+          .catch(err => {
+            console.warn('无法读取剪贴板内容:', err);
+          });
+      }, 50);
+    }
+  }
+  private pasteHtmlToTable(item: ClipboardItem) {
+    // const regex = /<tr[^>]*>(.*?)<\/tr>/gs; // 匹配<tr>标签及其内容
+    const regex = /<tr[^>]*>([\s\S]*?)<\/tr>/g; // for webpack3
+    // const cellRegex = /<td[^>]*>(.*?)<\/td>/gs; // 匹配<td>标签及其内容
+    const cellRegex = /<td[^>]*>([\s\S]*?)<\/td>/g; // for webpack3
+    const table = this.table;
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    let values: (string | number)[][] = [];
+    item.getType('text/html').then((blob: any) => {
+      blob.text().then(async (pastedData: any) => {
+        // 解析html数据
+        if (pastedData && /(<table)|(<TABLE)/g.test(pastedData)) {
+          // const matches = pastedData.matchAll(regex);
+          const matches = Array.from(pastedData.matchAll(regex));
+          for (const match of matches) {
+            const rowContent = match[1]; // 获取<tr>标签中的内容
+            const cellMatches: RegExpMatchArray[] = Array.from(rowContent.matchAll(cellRegex)); // 获取<td>标签中的内容
+            const rowValues = cellMatches.map(cellMatch => {
+              return (
+                cellMatch[1]
+                  .replace(/(<(?!br)([^>]+)>)/gi, '') // 除了 <br> 标签以外的所有 HTML 标签都替换为空字符串
+                  .replace(/<br(\s*|\/)>[\r\n]?/gim, '\n') // 将字符串中的 <br> 标签以及其后可能存在的空白字符和斜杠都替换为换行符 \n
+                  // .replace(/<br>/g, '\n') // 替换<br>标签为换行符
+                  // .replace(/<(?:.|\n)*?>/gm, '') // 去除HTML标签
+                  //将字符串中的 HTML 实体字符转换为原始的字符
+                  .replace(/&amp;/g, '&')
+                  .replace(/&lt;/g, '<')
+                  .replace(/&gt;/g, '>')
+                  .replace(/&#9;/gi, '\t')
+                  .replace(/&nbsp;/g, ' ')
+              );
+              // .trim(); // 去除首尾空格
+            });
+            values.push(rowValues);
+            pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+          }
+          pasteValuesRowCount = values.length ?? 0;
+          values = this.handlePasteValues(
+            values,
+            pasteValuesRowCount,
+            pasteValuesColCount,
+            maxRow - row + 1,
+            maxCol - col + 1
+          );
+
+          const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
+          if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+            table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+              col,
+              row,
+              pasteData: values,
+              changedCellResults
+            });
+          }
+        } else {
+          navigator.clipboard.read().then(clipboardItems => {
+            for (const item of clipboardItems) {
+              if (item.types.includes('text/plain')) {
+                item.getType('text/plain').then((blob: Blob) => {
+                  blob.text().then(data => this._pasteValue(data));
+                });
+              }
+            }
+          });
+        }
+      });
+    });
+  }
+
+  private async _pasteValue(pastedData: string) {
+    const table = this.table;
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    let values: (string | number)[][] = [];
+    const rows = pastedData.split('\n'); // 将数据拆分为行
+    rows.forEach(function (rowCells: any, rowIndex: number) {
+      const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+      const rowValues: (string | number)[] = [];
+      values.push(rowValues);
+      cells.forEach(function (cell: string, cellIndex: number) {
+        // 去掉单元格数据末尾的 '\r'
+        if (cellIndex === cells.length - 1) {
+          cell = cell.trim();
+        }
+        rowValues.push(cell);
+      });
+      pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+    });
+    pasteValuesRowCount = values.length ?? 0;
+    values = this.handlePasteValues(
+      values,
+      pasteValuesRowCount,
+      pasteValuesColCount,
+      maxRow - row + 1,
+      maxCol - col + 1
+    );
+    const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
+    if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+      table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+        col,
+        row,
+        pasteData: values,
+        changedCellResults
+      });
+    }
+  }
+  private pasteTextToTable(item: ClipboardItem) {
+    const table = this.table;
+    // 如果只有 'text/plain'
+    const ranges = table.stateManager.select.ranges;
+    const selectRangeLength = ranges.length;
+    const col = Math.min(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const row = Math.min(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    const maxCol = Math.max(ranges[selectRangeLength - 1].start.col, ranges[selectRangeLength - 1].end.col);
+    const maxRow = Math.max(ranges[selectRangeLength - 1].start.row, ranges[selectRangeLength - 1].end.row);
+    let pasteValuesColCount = 0;
+    let pasteValuesRowCount = 0;
+    // const values: (string | number)[][] = [];
+    item.getType('text/plain').then((blob: any) => {
+      blob.text().then(async (pastedData: any) => {
+        const rows = pastedData.replace(/\r(?!\n)/g, '\r\n').split('\r\n'); // 文本中的换行符格式进行统一处理
+        let values: (string | number)[][] = [];
+        if (rows.length > 1 && rows[rows.length - 1] === '') {
+          rows.pop();
+        }
+        rows.forEach(function (rowCells: any, rowIndex: number) {
+          const cells = rowCells.split('\t'); // 将行数据拆分为单元格
+          const rowValues: (string | number)[] = [];
+          values.push(rowValues);
+          cells.forEach(function (cell: string, cellIndex: number) {
+            if (cell.includes('\n')) {
+              cell = cell
+                .replace(/^"(.*)"$/, '$1') // 将字符串开头和结尾的双引号去除，并保留双引号内的内容
+                .replace(/["]*/g, match => new Array(Math.floor(match.length / 2)).fill('"').join('')); // 连续出现的双引号替换为一半数量的双引号
+            }
+            rowValues.push(cell);
+          });
+          pasteValuesColCount = Math.max(pasteValuesColCount, rowValues?.length ?? 0);
+        });
+        pasteValuesRowCount = values.length ?? 0;
+        values = this.handlePasteValues(
+          values,
+          pasteValuesRowCount,
+          pasteValuesColCount,
+          maxRow - row + 1,
+          maxCol - col + 1
+        );
+        const changedCellResults = await (table as ListTableAPI).changeCellValues(col, row, values, true);
+        if (table.hasListeners(TABLE_EVENT_TYPE.PASTED_DATA)) {
+          table.fireListeners(TABLE_EVENT_TYPE.PASTED_DATA, {
+            col,
+            row,
+            pasteData: values,
+            changedCellResults
+          });
+        }
+      });
+    });
+  }
+  private handlePasteValues(
+    values: (string | number)[][],
+    rowCount: number,
+    colCount: number,
+    selectedRowCount: number,
+    selectedColCount: number
+  ) {
+    if (selectedColCount > colCount || selectedRowCount > rowCount) {
+      if (selectedColCount % colCount === 0 && selectedRowCount % rowCount === 0) {
+        const toPasteValues: (string | number)[][] = [];
+        // 在目标区域中循环遍历，将复制的值逐个粘贴到每个单元格中
+        for (let i = 0; i < selectedRowCount; i++) {
+          const rowPasteValue: (string | number)[] = [];
+          toPasteValues.push(rowPasteValue);
+          for (let j = 0; j < selectedColCount; j++) {
+            const copiedRow = i % rowCount;
+            const copiedCol = j % colCount;
+            rowPasteValue.push(values[copiedRow][copiedCol]);
+          }
+        }
+        return toPasteValues;
+      }
+      return values;
+    }
+    return values;
   }
 }

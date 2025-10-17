@@ -9,9 +9,21 @@ module.exports = {
   copy: ['css'],
   name: 'VTable.plugins',
   umdOutputFilename: 'vtable-plugins',
-  rollupOptions: {},
-  globals: {
-    '@visactor/vtable': 'VTable'
+  rollupOptions: {
+    treeshake: true,
+    plugins: [resolve({ browser: true })]
   },
-  external: ['@visactor/vtable']
+  globals: {
+    '@visactor/vtable': 'VTable',
+    '@visactor/vtable/es/vrender': 'VRender',
+    '@visactor/vtable-gantt': 'VTableGantt',
+    roughjs: 'Rough'
+  },
+  external: [
+    // ...其他外部依赖
+    '@visactor/vtable',
+    '@visactor/vtable/es/vrender',
+    '@visactor/vtable-gantt',
+    'roughjs'
+  ]
 };

@@ -9,6 +9,7 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
   table.on('checkbox_state_change', args => {
     const { col, row, checked, field } = args;
 
+    // Check the current state when the event occurs
     if (!table.internalProps.layoutMap.isSeriesNumber(col, row) || table.internalProps.enableCheckboxCascade !== true) {
       return;
     }
@@ -63,10 +64,12 @@ export function bindGroupTitleCheckboxChange(table: BaseTableAPI) {
 
 // 在cellType: 'checkbox'与tree: true同时配置时，开启enableTreeCheckbox
 export function bindGroupCheckboxTreeChange(table: ListTableAPI) {
-  if (table.internalProps.enableCheckboxCascade !== true) {
-    return;
-  }
+  // Don't check enableCheckboxCascade here - check it in the event handler instead
   table.on('checkbox_state_change', args => {
+    // Check the current state when the event occurs
+    if (table.internalProps.enableCheckboxCascade !== true) {
+      return;
+    }
     const { col, row, checked, field } = args;
 
     const isCheckboxAndTree = table.internalProps.columns.some(column => column.tree);
@@ -294,10 +297,12 @@ function updateChildrenCheckboxState(
 }
 
 export function bindHeaderCheckboxChange(table: BaseTableAPI) {
-  if (table.internalProps.enableHeaderCheckboxCascade !== true) {
-    return;
-  }
+  // Don't check enableHeaderCheckboxCascade here - check it in the event handler instead
   table.on('checkbox_state_change', args => {
+    // Check the current state when the event occurs
+    if (table.internalProps.enableHeaderCheckboxCascade !== true) {
+      return;
+    }
     const { col, row, checked, field } = args;
     if (table.isHeader(col, row)) {
       //点击的表头部分的checkbox 需要同时处理表头和body单元格的状态

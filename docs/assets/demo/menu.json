@@ -94,6 +94,13 @@
           }
         },
         {
+          "path": "list-table-master-detail-table",
+          "title": {
+            "zh": "主从表功能展示",
+            "en": "Master Detail Table"
+          }
+        },
+        {
           "path": "transpose-table",
           "title": {
             "zh": "转置表格",
@@ -237,10 +244,33 @@
           }
         },
         {
+          "path": "pivot-chart-heatmap",
+          "title": {
+            "zh": "透视组合图（热力图）",
+            "en": "Pivot Chart Heatmap"
+          }
+        },
+        {
           "path": "pivot-chart-wordCloud",
           "title": {
             "zh": "透视组合图（词云图）",
             "en": "Pivot Chart Word Cloud"
+          }
+        }
+      ]
+    },
+    {
+      "path": "vtable-sheet",
+      "title": {
+        "zh": "电子表格",
+        "en": "Sheet"
+      },
+      "children": [
+        {
+          "path": "sheet",
+          "title": {
+            "zh": "电子表格",
+            "en": "VTable-Sheet"
           }
         }
       ]
@@ -323,6 +353,13 @@
           }
         },
         {
+          "path": "gantt-progress-adjust",
+          "title": {
+            "zh": "甘特图交互——任务条进度调整",
+            "en": "Gantt Interaction —— Task Bar Progress Adjust"
+          }
+        },
+        {
           "path": "gantt-taskShowMode",
           "title": {
             "zh": "甘特图任务显示模式",
@@ -362,6 +399,20 @@
           "title": {
             "zh": "甘特图样式-文字不隐藏",
             "en": "Gantt Style —— Text Not Hidden"
+          }
+        },
+        {
+          "path": "gantt-zoom",
+          "title": {
+            "zh": "甘特图缩放",
+            "en": "Gantt Zoom"
+          }
+        },
+        {
+          "path": "gantt-datazoom",
+          "title": {
+            "zh": "甘特图缩放滚动条",
+            "en": "Gantt DataZoomAxis Scrollbar"
           }
         }
       ]
@@ -1545,6 +1596,13 @@
           "title": {
             "zh": "类Excel在线编辑",
             "en": "Excel online editing"
+          }
+        },
+        {
+          "path": "master-detail",
+          "title": {
+            "zh": "主从表功能",
+            "en": "Master Detail"
           }
         }
       ]

@@ -3,6 +3,7 @@ import type { Group } from '@visactor/vtable/es/vrender';
 import type { Gantt } from '../Gantt';
 export type LayoutObjectId = number | string;
 import type { IGanttPlugin } from '../plugins/interface';
+import type { IZoomScale } from './zoom-scale';
 export interface ITimelineDateInfo {
   days: number;
   endDate: Date;
@@ -76,6 +77,11 @@ export interface GanttConstructorOptions {
     verticalLine?: ILineStyle;
     /** 水平间隔线样式 */
     horizontalLine?: ILineStyle;
+    /**
+     * ZoomScale 多级别缩放配置（优先级高于 timelineHeader.scales）
+     * 当启用时，会根据缩放级别自动切换不同的 scales 组合
+     */
+    zoomScale?: IZoomScale;
     scales: ITimelineScale[];
   };
 
@@ -104,6 +110,8 @@ export interface GanttConstructorOptions {
       | ((interactionArgs: TaskBarInteractionArgumentType) => boolean | [boolean, boolean]);
     /** 任务条是否可移动 */
     moveable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
+    /** 任务进度是否可调整 */
+    progressAdjustable?: boolean | ((interactionArgs: TaskBarInteractionArgumentType) => boolean);
     /** 任务条拖拽超出当前日期范围时自动扩展日期范围 */
     moveToExtendDateRange?: boolean;
     /** 任务条是否可以被拖拽来改变顺序 */

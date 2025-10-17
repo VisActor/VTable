@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-calendar",
-  "version": "1.19.7",
+  "version": "1.22.0",
   "description": "The calendar component of VTable",
   "author": {
     "name": "VisActor",
@@ -25,7 +25,8 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "start": "vite ./demo",
-    "build": "bundle --clean"
+    "build": "npm run fix-memory-limit && bundle --clean",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "unpkg": "latest",
   "unpkgFiles": [
@@ -40,6 +41,8 @@
     "date-fns": "3.6.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",

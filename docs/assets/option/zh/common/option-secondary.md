@@ -171,6 +171,12 @@ export interface SelectAllOnCtrlAOption {
 ##${prefix} copySelected(boolean) = false
 开启快捷键复制，与浏览器的快捷键一致。
 
+##${prefix} cutSelected(boolean) = false
+开启快捷键剪切，与浏览器的快捷键一致。
+
+##${prefix} showCopyCellBorder(boolean) = false
+是否显示复制单元格的边框，默认：false。
+
 ##${prefix} pasteValueToCell(boolean) = false
 开启快捷键粘贴，与浏览器的快捷键一致。粘贴生效仅针对配置了编辑 editor 的单元格
 
@@ -197,6 +203,10 @@ export interface SelectAllOnCtrlAOption {
 ##${prefix} ctrlMultiSelect(boolean) = true
 
 是否开启 ctrl 多选框，默认开启。
+
+##${prefix} shiftMultiSelect(boolean) = true
+
+是否开启 shift 多选框，默认开启。
 
 #${prefix} eventOptions(Object)
 
@@ -276,13 +286,18 @@ hover 交互响应模式：十字交叉、整列、整行或者单个单元格�
 
 点击空白区域是否取消选中。
 
-##${prefix} outsideClickDeselect(boolean) = true
+##${prefix} outsideClickDeselect(boolean) = false
 
 点击外部区域是否取消选中。
 
 ##${prefix} disableDragSelect(boolean) = true
 
 拖拽选择单元格时是否禁用框选。
+
+##${prefix} disableSelectOnContextMenu(boolean) = true
+
+右键点击单元格是否禁用选择单元格。
+
 
 ##${prefix} highlightInRange(boolean) = false
 
@@ -720,3 +735,11 @@ validateDragOrderOnEnd?: (source: CellAddress, target: CellAddress) => boolean;
 #${prefix} disableInteraction(boolean) = false
 
 是否禁用表格所有交互。
+
+#${prefix} defaultCursor(string) = 'default'
+
+默认的鼠标样式。
+
+```
+defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
+```

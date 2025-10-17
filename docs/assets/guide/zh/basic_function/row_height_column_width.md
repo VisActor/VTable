@@ -156,6 +156,8 @@ const table = new VTable.PivotTable({
 
 另外，透视表和透视图还支持`columnWidthConfigForRowHeader`配置项，用于设置行表头列宽。
 
+注意和`columnWidthConfig`的区别，`columnWidthConfigForRowHeader`是通过行维度key设置行表头列宽，而`columnWidthConfig`是设通过列维度路径来设置列宽。如果不想通过维度key设置行表头列宽，也可以通过配置[`defaultHeaderColWidth`](https://visactor.com/vtable/option/ListTable#defaultHeaderColWidth)来设置。
+
 ## 默认列宽
 
 在 VTable 中，您可以设置一个统一的默认列宽值。默认列宽可以通过 `defaultColWidth` 配置项进行设置。以下代码示例展示了如何设置列宽为 100：

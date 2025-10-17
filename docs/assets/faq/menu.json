@@ -458,6 +458,14 @@
         "zh": "60. VTable表格组件如何在透视表中渐进加载子节点",
         "en": "60.How the VTable component progressively loads sub-nodes in pivot tables"
       }
+    },
+    {
+      "Index": 61,
+      "path": "61-The font of VTable is blurry or ghosted after the browser is zoomed",
+      "title": {
+        "zh": "61. 如何解决 VTable 经过浏览器缩放后字体模糊或者重影",
+        "en": "61. The font of VTable is blurry or ghosted after the browser is zoomed"
+      }
     }
   ]
 }

@@ -8,7 +8,7 @@ import isNumber from 'lodash/isNumber';
 import isObject from 'lodash/isObject';
 import type { RowObject, RowData } from './translateRowObj';
 import { translateRowArrayToObj, translateRowObjToArray } from './translateRowObj';
-import type * as VTable from '@visactor/vtable';
+import type { TYPES } from '@visactor/vtable';
 
 const bigFunc = (a: string | number, b: string | number, func: 'plus' | 'minus' | 'times' | 'div') => {
   if (typeof a !== 'number') {
@@ -98,7 +98,7 @@ const parseValue = (value: RowData) => {
 
 export const generateAutoFillData = (
   originalData: RowObject[] | RowData[][],
-  columns: VTable.TYPES.CellInfo[],
+  columns: TYPES.CellInfo[],
   startRange: { startRow: number; startCol: number; endRow: number; endCol: number }, // 初始选区 { startRow, startCol, endRow, endCol }
   currentEnd: { row: number; col: number } // 当前拖拽终点 { row, col },
 ) => {

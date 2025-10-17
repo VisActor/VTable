@@ -16,6 +16,7 @@ import { updateAutoColumn } from './update-position/update-auto-column';
 import { getDefaultHeight, getDefaultWidth } from './default-width-height';
 import { handleTextStick } from '../../stick-text';
 import type { ColumnInfo, RowInfo } from '../../../ts-types';
+import { TABLE_EVENT_TYPE } from '../../../core/TABLE_EVENT_TYPE';
 
 export class SceneProxy {
   table: BaseTableAPI;
@@ -258,8 +259,6 @@ export class SceneProxy {
         if (this.isRelease) {
           return;
         }
-        // console.log('progress col', this.colUpdatePos, this.colEnd, this.currentCol, this.totalCol);
-        // console.log('progress row', this.rowUpdatePos, this.rowEnd, this.currentRow, this.totalRow);
         // console.log('before: createRow', table.scenegraph.bodyGroup.lastChild.attribute);
         // if (this.isSkipProgress) {
         //   await this.progress();
@@ -803,9 +802,11 @@ export class SceneProxy {
         //   cellGroup.attribute.height -
         //   (this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()) -
         //   y;
+        const actualRowHeight = this.table.getRowHeight(this.rowEnd); // 获取实际行高
+        // 使用实际行高而不是cellGroup.attribute.height
         const deltaY =
           cellGroup.attribute.y +
-          cellGroup.attribute.height -
+          actualRowHeight -
           (this.table.getAllRowsHeight() - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight());
         this.deltaY = -deltaY;
       }
@@ -849,7 +850,6 @@ export class SceneProxy {
       this.deltaX = distColXOffset - currentColXOffset;
     }
   }
-
   release() {
     this.isRelease = true;
   }

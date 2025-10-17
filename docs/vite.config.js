@@ -28,10 +28,10 @@ export default {
       '@visactor/vtable-plugins': path.resolve('../packages/vtable-plugins/src/index.ts'),
       '@visactor/react-vtable': path.resolve('../packages/react-vtable/src/index.ts'),
       '@visactor/vue-vtable': path.resolve('../packages/vue-vtable/src/index.ts'),
+      '@visactor/vtable-sheet': path.resolve('../packages/vtable-sheet/src/index.ts'),
       '@visactor/openinula-vtable': path.resolve('../packages/openinula-vtable/src/index.ts'),
       '@vutils-extension': path.resolve(__dirname, '../packages/vtable/src/vutil-extension-temp'),
       '@src': path.resolve(__dirname, '../packages/vtable/src/'),
-
       'vue': 'vue/dist/vue.esm-bundler.js' 
 
       // react: 'openinula', // 新增

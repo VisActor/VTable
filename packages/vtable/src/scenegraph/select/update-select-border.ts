@@ -2,6 +2,8 @@ import { type IRect } from '@src/vrender';
 import type { Scenegraph } from '../scenegraph';
 import type { CellRange, CellSubLocation } from '../../ts-types';
 import { getCellMergeInfo } from '../utils/get-cell-merge';
+import { calculateCellRangeDistribution } from '../utils/cell-pos';
+import { TABLE_EVENT_TYPE } from '../../core/TABLE_EVENT_TYPE';
 
 export function updateAllSelectComponent(scene: Scenegraph) {
   scene.customSelectedRangeComponents.forEach((selectComp: { rect: IRect; role: CellSubLocation }, key: string) => {
@@ -90,6 +92,7 @@ function updateComponent(
   // const rowsHeight = table.getRowsHeight(cellRange.start.row, endRow);
   const colsWidth = table.getColsWidth(computeRectCellRangeStartCol, computeRectCellRangeEndCol);
   const rowsHeight = table.getRowsHeight(computeRectCellRangeStartRow, computeRectCellRangeEndRow);
+  
   const firstCellBound = scene.highPerformanceGetCell(
     computeRectCellRangeStartCol,
     computeRectCellRangeStartRow
@@ -102,6 +105,15 @@ function updateComponent(
     height: rowsHeight,
     visible: true
   });
+
+  if (table.hasListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT)) {
+    table.fireListeners(TABLE_EVENT_TYPE.AFTER_UPDATE_SELECT_BORDER_HEIGHT, {
+      startRow: computeRectCellRangeStartRow,
+      endRow: computeRectCellRangeEndRow,
+      currentHeight: rowsHeight,
+      selectComp
+    });
+  }
   if (selectComp.fillhandle) {
     const fillHandle = scene.table.options.excelOptions?.fillHandle;
     let visible = true;
@@ -111,32 +123,30 @@ function updateComponent(
     //#region 计算填充柄小方块的位置
 
     let lastCellBound;
+    let handlerX;
     //当选择区域没有到到最后一列时
-    if (computeRectCellRangeEndCol < table.colCount - 1) {
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeEndCol,
-        computeRectCellRangeEndRow
-      ).globalAABBBounds;
+    if (endCol < table.colCount - 1) {
+      lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
+      handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
     } else {
       // 最后一列
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeStartCol - 1,
-        computeRectCellRangeEndRow
-      ).globalAABBBounds;
+      // computeRectCellRangeStartCol 而且是第一列时
+      if (startCol === 0) {
+        //解决issue #4376  但还是有问题当存在冻结的时候。以及需要处理类似情况下面逻辑最后一行的情况
+        lastCellBound = scene.highPerformanceGetCell(0, endRow).globalAABBBounds;
+        handlerX = lastCellBound.x1 - scene.tableGroup.attribute.x;
+      } else {
+        lastCellBound = scene.highPerformanceGetCell(startCol - 1, endRow).globalAABBBounds;
+        handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+      }
     }
-    const handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
+    // const handlerX = lastCellBound.x2 - scene.tableGroup.attribute.x - 3;
     //当选择区域没有到到最后一行时
-    if (computeRectCellRangeEndRow < table.rowCount - 1) {
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeEndCol,
-        computeRectCellRangeEndRow
-      ).globalAABBBounds;
+    if (endRow < table.rowCount - 1) {
+      lastCellBound = scene.highPerformanceGetCell(endCol, endRow).globalAABBBounds;
     } else {
       // 最后一行
-      lastCellBound = scene.highPerformanceGetCell(
-        computeRectCellRangeEndCol,
-        computeRectCellRangeStartRow - 1
-      ).globalAABBBounds;
+      lastCellBound = scene.highPerformanceGetCell(endCol, startRow - 1).globalAABBBounds;
     }
     const handlerY = lastCellBound.y2 - scene.tableGroup.attribute.y - 3;
     //#endregion
@@ -495,67 +505,17 @@ export function updateCellSelectBorder(
   );
   scene.selectingRangeComponents = new Map();
 
-  let needRowHeader = false;
-  let needRightRowHeader = false; // 右侧冻结
-  let needColumnHeader = false;
-  let needBottomColumnHeader = false; // 底部冻结
-  let needBody = false;
-  let needCornerHeader = false;
-  let needRightTopCornerHeader = false;
-  let needRightBottomCornerHeader = false;
-  let needLeftBottomCornerHeader = false;
-  if (startCol <= table.frozenColCount - 1 && startRow <= table.frozenRowCount - 1) {
-    needCornerHeader = true;
-  }
-  if (endCol >= table.colCount - table.rightFrozenColCount && startRow <= table.frozenRowCount - 1) {
-    needRightTopCornerHeader = true;
-  }
-
-  if (startCol <= table.frozenColCount - 1 && endRow >= table.rowCount - table.bottomFrozenRowCount) {
-    needLeftBottomCornerHeader = true;
-  }
-
-  if (endCol >= table.colCount - table.rightFrozenColCount && endRow >= table.rowCount - table.bottomFrozenRowCount) {
-    needRightBottomCornerHeader = true;
-  }
-
-  if (
-    startCol <= table.frozenColCount - 1 &&
-    endRow >= table.frozenRowCount &&
-    startRow <= table.rowCount - table.bottomFrozenRowCount - 1
-  ) {
-    needRowHeader = true;
-  }
-  if (
-    endCol >= table.colCount - table.rightFrozenColCount &&
-    endRow >= table.frozenRowCount &&
-    startRow <= table.rowCount - table.bottomFrozenRowCount - 1
-  ) {
-    needRightRowHeader = true;
-  }
-
-  if (
-    startRow <= table.frozenRowCount - 1 &&
-    endCol >= table.frozenColCount &&
-    startCol <= table.colCount - table.rightFrozenColCount - 1
-  ) {
-    needColumnHeader = true;
-  }
-  if (
-    endRow >= table.rowCount - table.bottomFrozenRowCount &&
-    endCol >= table.frozenColCount &&
-    startCol <= table.colCount - table.rightFrozenColCount - 1
-  ) {
-    needBottomColumnHeader = true;
-  }
-  if (
-    startCol <= table.colCount - table.rightFrozenColCount - 1 &&
-    endCol >= table.frozenColCount &&
-    startRow <= table.rowCount - table.bottomFrozenRowCount - 1 &&
-    endRow >= table.frozenRowCount
-  ) {
-    needBody = true;
-  }
+  const {
+    needRowHeader,
+    needRightRowHeader,
+    needColumnHeader,
+    needBottomColumnHeader,
+    needBody,
+    needCornerHeader,
+    needRightTopCornerHeader,
+    needLeftBottomCornerHeader,
+    needRightBottomCornerHeader
+  } = calculateCellRangeDistribution(startCol, startRow, endCol, endRow, table);
 
   // TODO 可以尝试不拆分三个表头和body【前提是theme中合并配置】 用一个SelectBorder 需要结合clip，并动态设置border的范围【依据区域范围 已经是否跨表头及body】
   if (needCornerHeader) {

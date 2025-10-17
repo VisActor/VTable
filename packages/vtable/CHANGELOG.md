@@ -1,6 +1,149 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Mon, 18 Aug 2025 11:14:19 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Oct 2025 02:49:45 GMT and should not be manually modified.
+
+## 1.22.0
+Fri, 17 Oct 2025 02:49:45 GMT
+
+### Minor changes
+
+- feat: add master detail table plugin
+
+
+
+### Updates
+
+- fix: the getFilteredRecords method of PivotTable
+
+
+- feat: a new getFilteredRecords method has been added to ListTable #4537
+
+
+- fix: plugin HighlightHeaderWhenSelectCellPlugin options parse
+
+
+
+## 1.21.1
+Tue, 14 Oct 2025 03:40:50 GMT
+
+### Updates
+
+- fix: zoom axis component should release
+
+
+
+## 1.21.0
+Mon, 13 Oct 2025 09:24:03 GMT
+
+### Updates
+
+- fix: the updateFilterRules method of PivotTable #4450
+
+## 1.20.3
+Fri, 10 Oct 2025 11:28:59 GMT
+
+### Updates
+
+- fix: paste html to cell no work #4551
+
+
+- fix: select formula item use keyboard arrowUp and arrowDown
+
+
+- fix: dbclick the automatic column width in the rightFrozenColCount configuration #4526
+
+
+
+## 1.20.2
+Thu, 09 Oct 2025 10:16:27 GMT
+
+### Updates
+
+- fix: umd build for plugins
+
+
+- docs: vtable sheet umd import
+
+
+- fix: search component clear method #4476
+
+
+
+## 1.20.1
+Fri, 26 Sep 2025 10:28:51 GMT
+
+### Updates
+
+- feat: extend chart type
+
+
+- fix: deleteRecord switchState error after call renderWidthCreateCells api #4436
+
+
+- fix: maxfrozenwidth not work when set brower scale #4494
+
+
+- fix: gannt grid line style linedash not work #4495
+
+
+- fix: when updateOption change enablecheckboxcascade not work #4499
+
+
+- fix: api selectCells not work with ctrlMultiSelect false
+
+
+- fix: row change order not work with pagination
+
+
+- feat: support detailPath when pick vchart to add detectPickChartItem config
+
+
+
+## 1.20.0
+Mon, 22 Sep 2025 03:03:09 GMT
+
+### Minor changes
+
+- feat: add vtable sheet component
+
+
+
+### Updates
+
+- chore: update vrender version to 1.0.16
+
+
+- feat: add cutSelected for vtable
+
+
+- feat: add HyperFormula & refactor formulat-manager
+
+
+
+## 1.19.9
+Fri, 12 Sep 2025 09:25:46 GMT
+
+### Updates
+
+- fix: add isReleased check before resize in initialization
+
+## 1.19.8
+Fri, 29 Aug 2025 06:50:15 GMT
+
+### Updates
+
+- fix: getLayoutRowTree api error #4346
+
+
+- fix: when has many columns expand columnTree scenegraph node y error #4357
+
+
+- refactor: contextmenu-click event arguments #4364
+
+
+- fix: columnWidthConfig not work when just has indicator on pivot table #4388
+
+
 
 ## 1.19.7
 Mon, 18 Aug 2025 11:14:19 GMT

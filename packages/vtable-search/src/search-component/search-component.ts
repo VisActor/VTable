@@ -27,6 +27,9 @@ export type SearchComponentOption = {
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 };
 
+const HighlightStyleId = '__search_component_highlight';
+const FocuseHighlightStyleId = '__search_component_focuse';
+
 const defalutHightlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
   bgColor: 'rgba(255, 255, 0, 0.2)'
 };
@@ -88,8 +91,8 @@ export class SearchComponent {
     this.callback = option.callback;
     this.scrollOption =
       option.scrollOption || ({ duration: 900, easing: 'quartIn' as EasingType } as ITableAnimationOption);
-    this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
-    this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
+    this.table.registerCustomCellStyle(HighlightStyleId, this.highlightCellStyle as any);
+    this.table.registerCustomCellStyle(FocuseHighlightStyleId, this.focuseHighlightCellStyle as any);
   }
 
   search(str: string) {
@@ -129,8 +132,9 @@ export class SearchComponent {
       };
 
       walk(this.table.records, []);
-
-      this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
+      if (this.queryResult.length > 0) {
+        this.jumpToCell({ IndexNumber: this.queryResult[0].indexNumber });
+      }
 
       if (this.callback) {
         this.callback(
@@ -210,16 +214,45 @@ export class SearchComponent {
     };
   }
 
+  /**
+   * @description: 为查询结果项设置自定义单元格样式
+   * @param {(typeof this.queryResult)[number]} resultItem 查询结果项
+   * @param {boolean} highlight 是否高亮
+   * @param {string} customStyleId 自定义样式ID
+   */
+  arrangeCustomCellStyle(
+    resultItem: (typeof this.queryResult)[number],
+    highlight: boolean = true,
+    customStyleId: string = HighlightStyleId
+  ) {
+    const { col, row, range } = resultItem;
+    this.table.arrangeCustomCellStyle(
+      range
+        ? { range }
+        : {
+            row,
+            col
+          },
+      highlight ? customStyleId : null
+    );
+  }
+
   updateCellStyle(highlight: boolean = true) {
+    if (!highlight) {
+      (this.queryResult || []).forEach(resultItem => {
+        this.arrangeCustomCellStyle(resultItem, highlight);
+      });
+      return;
+    }
     if (!this.queryResult) {
       return;
     }
 
-    if (!this.table.hasCustomCellStyle('__search_component_highlight')) {
-      this.table.registerCustomCellStyle('__search_component_highlight', this.highlightCellStyle as any);
+    if (!this.table.hasCustomCellStyle(HighlightStyleId)) {
+      this.table.registerCustomCellStyle(HighlightStyleId, this.highlightCellStyle as any);
     }
-    if (!this.table.hasCustomCellStyle('__search_component_focuse')) {
-      this.table.registerCustomCellStyle('__search_component_focuse', this.focuseHighlightCellStyle as any);
+    if (!this.table.hasCustomCellStyle(FocuseHighlightStyleId)) {
+      this.table.registerCustomCellStyle(FocuseHighlightStyleId, this.focuseHighlightCellStyle as any);
     }
     if (this.isTree) {
       const { range, indexNumber } = this.queryResult[0];
@@ -234,31 +267,16 @@ export class SearchComponent {
       range.start.row = row;
       range.end.row = row;
 
-      this.table.arrangeCustomCellStyle(
+      this.arrangeCustomCellStyle(
         {
           range
         },
-        highlight ? '__search_component_focuse' : null
+        highlight,
+        FocuseHighlightStyleId
       );
     } else {
       for (let i = 0; i < this.queryResult.length; i++) {
-        const { col, row, range } = this.queryResult[i];
-        if (range) {
-          this.table.arrangeCustomCellStyle(
-            {
-              range
-            },
-            highlight ? '__search_component_highlight' : null
-          );
-        } else {
-          this.table.arrangeCustomCellStyle(
-            {
-              col,
-              row
-            },
-            highlight ? '__search_component_highlight' : null
-          );
-        }
+        this.arrangeCustomCellStyle(this.queryResult[i], highlight);
       }
     }
   }
@@ -284,12 +302,7 @@ export class SearchComponent {
           const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
           range.start.row = row;
           range.end.row = row;
-          this.table.arrangeCustomCellStyle(
-            {
-              range
-            },
-            '__search_component_highlight'
-          );
+          this.arrangeCustomCellStyle({ range });
         }
       }
 
@@ -310,58 +323,26 @@ export class SearchComponent {
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.table.arrangeCustomCellStyle(
+        this.arrangeCustomCellStyle(
           {
             range
           },
-          '__search_component_focuse'
+          true,
+          FocuseHighlightStyleId
         );
       }
     } else {
       if (this.currentIndex !== -1) {
-        const { col, row, range } = this.queryResult[this.currentIndex];
-
         // reset last focus
-        if (range) {
-          this.table.arrangeCustomCellStyle(
-            {
-              range
-            },
-            '__search_component_highlight'
-          );
-        } else {
-          this.table.arrangeCustomCellStyle(
-            {
-              col,
-              row
-            },
-            '__search_component_highlight'
-          );
-        }
+        this.arrangeCustomCellStyle(this.queryResult[this.currentIndex]);
       }
       this.currentIndex++;
       if (this.currentIndex >= this.queryResult.length) {
         this.currentIndex = 0;
       }
-      const { col, row, range } = this.queryResult[this.currentIndex];
+      const { col, row } = this.queryResult[this.currentIndex];
 
-      // this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
-      if (range) {
-        this.table.arrangeCustomCellStyle(
-          {
-            range
-          },
-          '__search_component_focuse'
-        );
-      } else {
-        this.table.arrangeCustomCellStyle(
-          {
-            col,
-            row
-          },
-          '__search_component_focuse'
-        );
-      }
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocuseHighlightStyleId);
 
       this.jumpToCell({ col, row });
     }
@@ -392,7 +373,7 @@ export class SearchComponent {
           const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
           range.start.row = row;
           range.end.row = row;
-          this.table.arrangeCustomCellStyle({ range }, '__search_component_highlight');
+          this.arrangeCustomCellStyle({ range });
         }
       }
 
@@ -414,17 +395,12 @@ export class SearchComponent {
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.table.arrangeCustomCellStyle({ range }, '__search_component_focuse');
+        this.arrangeCustomCellStyle({ range }, true, FocuseHighlightStyleId);
       }
     } else {
       // 普通表格处理
       if (this.currentIndex !== -1) {
-        const { col, row, range } = this.queryResult[this.currentIndex];
-        if (range) {
-          this.table.arrangeCustomCellStyle({ range }, '__search_component_highlight');
-        } else {
-          this.table.arrangeCustomCellStyle({ col, row }, '__search_component_highlight');
-        }
+        this.arrangeCustomCellStyle(this.queryResult[this.currentIndex]);
       }
 
       this.currentIndex--;
@@ -432,13 +408,8 @@ export class SearchComponent {
         this.currentIndex = this.queryResult.length - 1;
       }
 
-      const { col, row, range } = this.queryResult[this.currentIndex];
-      if (range) {
-        this.table.arrangeCustomCellStyle({ range }, '__search_component_focuse');
-      } else {
-        this.table.arrangeCustomCellStyle({ col, row }, '__search_component_focuse');
-      }
-
+      const { col, row } = this.queryResult[this.currentIndex];
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocuseHighlightStyleId);
       this.jumpToCell({ col, row });
     }
 
@@ -492,7 +463,7 @@ export class SearchComponent {
   }
   clear() {
     // reset highlight cell style
-    this.updateCellStyle(null);
+    this.updateCellStyle(false);
     this.queryStr = '';
     this.queryResult = [];
     this.currentIndex = -1;

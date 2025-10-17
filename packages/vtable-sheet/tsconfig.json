@@ -1,0 +1,35 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "include": ["src"],
+  "compilerOptions": {    
+    "types": ["jest", "offscreencanvas", "node"],
+    "lib": ["DOM", "ESNext"],
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true,
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
+    ],
+    "strict": false,
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@vutils-extension": ["./src/vutil-extension-temp"]
+    }
+  },
+  "references": [
+    {
+      "path": "../vtable-editors"
+    }
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
+}

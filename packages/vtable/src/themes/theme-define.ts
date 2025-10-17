@@ -835,7 +835,7 @@ export class TableTheme implements ITableThemeDefine {
   extends(obj: PartialTableThemeDefine): TableTheme {
     return new TableTheme(
       ingoreNoneValueMerge({}, obj),
-      ingoreNoneValueMerge(this.internalTheme.superTheme, this.internalTheme.obj)
+      ingoreNoneValueMerge({}, this.internalTheme.superTheme, this.internalTheme.obj)
     );
   }
   private getStyle(style: ThemeStyle) {

@@ -1,28 +1,51 @@
-import * as VTable from '@visactor/vtable';
+import type { ListTable, BaseTableAPI, TYPES, pluginsDefinition } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { TableEvents } from '@visactor/vtable/src/core/TABLE_EVENT_TYPE';
 import type { EventArg } from './types';
+export enum ExcelEditCellKeyboardResponse {
+  ENTER = 'enter',
+  TAB = 'tab',
+  ARROW_LEFT = 'arrowLeft',
+  ARROW_RIGHT = 'arrowRight',
+  ARROW_DOWN = 'arrowDown',
+  ARROW_UP = 'arrowUp',
+  DELETE = 'delete',
+  BACKSPACE = 'backspace'
+}
 //备用 插件配置项 目前感觉都走默认逻辑就行
 export type IExcelEditCellKeyboardPluginOptions = {
   id?: string;
+  responseKeyboard?: ExcelEditCellKeyboardResponse[];
   // 是否响应删除
   // enableDeleteKey?: boolean;
 };
 
-export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin {
-  id = `excel-edit-cell-keyboard-${Date.now()}`;
+export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlugin {
+  id = `excel-edit-cell-keyboard`;
   name = 'Excel Edit Cell Keyboard';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
-  table: VTable.ListTable;
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED];
+  table: ListTable;
   pluginOptions: IExcelEditCellKeyboardPluginOptions;
+  responseKeyboard: ExcelEditCellKeyboardResponse[];
   constructor(pluginOptions?: IExcelEditCellKeyboardPluginOptions) {
     this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
+    this.responseKeyboard = pluginOptions?.responseKeyboard ?? [
+      ExcelEditCellKeyboardResponse.ENTER,
+      ExcelEditCellKeyboardResponse.TAB,
+      ExcelEditCellKeyboardResponse.ARROW_LEFT,
+      ExcelEditCellKeyboardResponse.ARROW_RIGHT,
+      ExcelEditCellKeyboardResponse.ARROW_DOWN,
+      ExcelEditCellKeyboardResponse.ARROW_UP,
+      ExcelEditCellKeyboardResponse.DELETE,
+      ExcelEditCellKeyboardResponse.BACKSPACE
+    ];
 
     this.bindEvent();
   }
-  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], VTable.BaseTableAPI]) {
-    const table: VTable.BaseTableAPI = args[2];
-    this.table = table as VTable.ListTable;
+  run(...args: [EventArg, TableEvents[keyof TableEvents] | TableEvents[keyof TableEvents][], BaseTableAPI]) {
+    const table: BaseTableAPI = args[2];
+    this.table = table as ListTable;
   }
 
   bindEvent() {
@@ -43,47 +66,51 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
     //   });
   }
   handleKeyDown(event: KeyboardEvent) {
-    if (this.table.editorManager) {
+    if (this.table.editorManager && this.isExcelShortcutKey(event)) {
       //判断是键盘触发编辑单元格的情况下，那么在编辑状态中切换方向需要选中下一个继续编辑
-      if (this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
-        if (this.table.editorManager.editingEditor && this.isExcelShortcutKey(event)) {
-          const { col, row } = this.table.editorManager.editCell;
-          this.table.editorManager.completeEdit();
-          this.table.getElement().focus();
-          if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
-            //有这些配合键，则不进行选中下一个单元格的行为 执行vtable内部逻辑
-            if (event.key === 'Enter') {
-              this.table.selectCell(col, row + 1);
-            } else if (event.key === 'Tab') {
-              this.table.selectCell(col + 1, row);
-            } else if (event.key === 'ArrowLeft') {
-              this.table.selectCell(col - 1, row);
-            } else if (event.key === 'ArrowRight') {
-              this.table.selectCell(col + 1, row);
-            } else if (event.key === 'ArrowDown') {
-              this.table.selectCell(col, row + 1);
-            } else if (event.key === 'ArrowUp') {
-              this.table.selectCell(col, row - 1);
-            }
-            // 阻止事件传播和默认行为
-            event.stopPropagation();
-            event.preventDefault();
+      if (this.table.editorManager.editingEditor && this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
+        const { col, row } = this.table.editorManager.editCell;
+        this.table.editorManager.completeEdit();
+        this.table.getElement().focus();
+        if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
+          //有这些配合键，则不进行选中下一个单元格的行为 执行vtable内部逻辑
+          if (event.key === ExcelEditCellKeyboardResponse.ENTER) {
+            this.table.selectCell(col, row + 1);
+          } else if (event.key === ExcelEditCellKeyboardResponse.TAB) {
+            this.table.selectCell(col + 1, row);
+          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_LEFT) {
+            this.table.selectCell(col - 1, row);
+          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_RIGHT) {
+            this.table.selectCell(col + 1, row);
+          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_DOWN) {
+            this.table.selectCell(col, row + 1);
+          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_UP) {
+            this.table.selectCell(col, row - 1);
           }
+          // 阻止事件传播和默认行为
+          event.stopPropagation();
+          event.preventDefault();
         }
       } else {
         const { col, row } = this.table.stateManager.select.cellPos;
-        if (this.table.editorManager.editingEditor && (event.key === 'Enter' || event.key === 'Tab')) {
+        if (
+          this.table.editorManager.editingEditor &&
+          (event.key === ExcelEditCellKeyboardResponse.ENTER || event.key === ExcelEditCellKeyboardResponse.TAB)
+        ) {
           this.table.editorManager.completeEdit();
           this.table.getElement().focus();
-          if (event.key === 'Enter') {
+          if (event.key === ExcelEditCellKeyboardResponse.ENTER) {
             this.table.selectCell(col, row + 1);
-          } else if (event.key === 'Tab') {
+          } else if (event.key === ExcelEditCellKeyboardResponse.TAB) {
             this.table.selectCell(col + 1, row);
           }
           // 阻止事件传播和默认行为
           event.stopPropagation();
           event.preventDefault();
-        } else if (event.key === 'Delete') {
+        } else if (
+          !this.table.editorManager.editingEditor &&
+          (event.key === ExcelEditCellKeyboardResponse.DELETE || event.key === ExcelEditCellKeyboardResponse.BACKSPACE)
+        ) {
           //响应删除键，删除
           const selectCells = this.table.getSelectedCellInfos();
           if (selectCells?.length > 0) {
@@ -99,21 +126,23 @@ export class ExcelEditCellKeyboardPlugin implements VTable.plugins.IVTablePlugin
   }
   // 判断event的keyCode是否是excel的快捷键
   isExcelShortcutKey(event: KeyboardEvent) {
-    return (
-      event.key === 'Enter' ||
-      event.key === 'Tab' ||
-      event.key === 'ArrowLeft' ||
-      event.key === 'ArrowRight' ||
-      event.key === 'ArrowDown' ||
-      event.key === 'ArrowUp'
-    );
+    return this.responseKeyboard.includes(event.key as ExcelEditCellKeyboardResponse);
+  }
+  setResponseKeyboard(responseKeyboard: ExcelEditCellKeyboardResponse[]) {
+    this.responseKeyboard = responseKeyboard;
+  }
+  deleteResponseKeyboard(responseKeyboard: ExcelEditCellKeyboardResponse[]) {
+    this.responseKeyboard = this.responseKeyboard.filter(key => !responseKeyboard.includes(key));
+  }
+  addResponseKeyboard(responseKeyboard: ExcelEditCellKeyboardResponse[]) {
+    this.responseKeyboard = [...this.responseKeyboard, ...responseKeyboard];
   }
   release() {
     document.removeEventListener('keydown', this.handleKeyDown, true);
   }
 }
 //将选中单元格的值设置为空
-function deleteSelectRange(selectCells: VTable.TYPES.CellInfo[][], tableInstance: VTable.ListTable) {
+function deleteSelectRange(selectCells: TYPES.CellInfo[][], tableInstance: ListTable) {
   for (let i = 0; i < selectCells.length; i++) {
     for (let j = 0; j < selectCells[i].length; j++) {
       tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');

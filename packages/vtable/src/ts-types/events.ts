@@ -10,10 +10,10 @@ import type {
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
-import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
+import type { IconFuncTypeEnum, CellInfo, HierarchyState, ColumnsDefine } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
-import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
-import type { BaseTableConstructorOptions } from './base-table';
+import type { FederatedPointerEvent, Group, IEventTarget } from '@src/vrender';
+import type { BaseTableConstructorOptions, BaseTableAPI } from './base-table';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -174,7 +174,12 @@ export interface TableEventHandlersEventArgumentMap {
   mouseover_chart_symbol: MousePointerSparklineEvent;
 
   drag_select_end: MousePointerMultiCellEvent;
-  copy_data: { cellRange: CellRange[]; copyData: string };
+  selected_changed: {
+    col: number;
+    row: number;
+    ranges: CellRange[];
+  };
+  copy_data: { cellRange: CellRange[]; copyData: string; isCut: boolean };
   drillmenu_click: DrillMenuEventInfo;
 
   dropdown_icon_click: CellAddress & { event: Event };
@@ -239,9 +244,26 @@ export interface TableEventHandlersEventArgumentMap {
   radio_state_change: MousePointerCellEvent & { radioIndexInCell: number | undefined };
   switch_state_change: MousePointerCellEvent & { checked: boolean };
   before_init: { options: BaseTableConstructorOptions; container: HTMLElement | null };
+  before_update_option: { options: BaseTableConstructorOptions; container: HTMLElement | null };
   before_set_size: { width: number; height: number };
   after_render: null;
   initialized: null;
+  updated: null;
+  after_update_cell_content_width: {
+    col: number;
+    row: number;
+    cellHeight: number;
+    cellGroup: Group;
+    padding: [number, number, number, number];
+    textBaseline: CanvasTextBaseline;
+  };
+
+  after_update_select_border_height: {
+    startRow: number;
+    endRow: number;
+    currentHeight: number;
+    selectComp: { rect: any; fillhandle?: any; role: string };
+  };
 
   change_cell_value: {
     col: number;
@@ -270,6 +292,39 @@ export interface TableEventHandlersEventArgumentMap {
     pasteData: (string | number)[][];
     changedCellResults: boolean[][];
   };
+  plugin_event: {
+    event: any;
+    plugin: any;
+    pluginEventInfo: any;
+  };
+
+  add_record: {
+    records: any[];
+    recordIndex?: number | number[];
+    recordCount: number;
+  };
+
+  delete_record: {
+    recordIndexs: number[] | number[][];
+    rowIndexs: number[];
+    deletedCount: number;
+  };
+
+  update_record: {
+    records: any[];
+    recordIndexs: (number | number[])[];
+    updateCount: number;
+  };
+  add_column: {
+    columnIndex: number;
+    columnCount: number;
+    columns: ColumnsDefine;
+  };
+  delete_column: {
+    // deleteBeforeColumns: ColumnsDefine;
+    deleteColIndexs: number[];
+    columns: ColumnsDefine;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -294,7 +349,7 @@ export interface TableEventHandlersReturnMap {
   // mouseover_cell: void;
   mouseout_cell: void;
   mousemove_cell: void;
-  mousedown_cell: boolean;
+  mousedown_cell: void;
   mouseup_cell: void;
   contextmenu_cell: void;
   contextmenu_canvas: void;
@@ -319,6 +374,7 @@ export interface TableEventHandlersReturnMap {
 
   mouseover_chart_symbol: void;
   drag_select_end: void;
+  selected_changed: void;
   copy_data: void;
   drillmenu_click: void;
 
@@ -349,10 +405,14 @@ export interface TableEventHandlersReturnMap {
   radio_state_change: void;
   switch_state_change: void;
   before_init: void;
+  before_update_option: void;
   before_set_size: void;
   after_render: void;
   initialized: void;
+  updated: void;
+  after_update_cell_content_width: void;
 
+  after_update_select_border_height: void;
   change_cell_value: void;
   mousedown_fill_handle: void;
   drag_fill_handle_end: void;
@@ -368,4 +428,11 @@ export interface TableEventHandlersReturnMap {
   button_click: void;
   before_cache_chart_image: void;
   pasted_data: void;
+  plugin_event: void;
+
+  add_record: void;
+  delete_record: void;
+  update_record: void;
+  add_column: void;
+  delete_column: void;
 }

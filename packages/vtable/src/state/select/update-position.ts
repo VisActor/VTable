@@ -15,8 +15,8 @@ export function updateSelectPosition(
   state: StateManager,
   col: number,
   row: number,
-  isShift: boolean,
-  isCtrl: boolean,
+  enableShiftSelectMode: boolean,
+  enableCtrlSelectMode: boolean,
   isSelectAll: boolean,
   makeSelectCellVisible: boolean = true,
   skipBodyMerge: boolean = false
@@ -24,17 +24,9 @@ export function updateSelectPosition(
 ) {
   const { table, interactionState } = state;
   const { scenegraph } = table;
-  const { highlightScope, disableHeader, cellPos, disableCtrlMultiSelect } = state.select;
-  // const disableSelect = table.options?.select?.disableSelect;
-  // const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
-  // const { highlightScope, disableHeader, cellPos } = state.select;
-  // const disableSelect = table.options?.select?.disableSelect;
-  // const cellDisable = typeof disableSelect === 'function' ? disableSelect(col, row, table) : disableSelect;
+  const { cellPos } = state.select;
+  state.select.isSelectAll = isSelectAll;
 
-  // if (
-  //   ((disableHeader && table.isHeader(col, row)) || highlightScope === 'none' || cellDisable) &&
-  //   forceSelect === false
-  // ) {
   if (col !== -1 && row !== -1 && makeSelectCellVisible) {
     table._makeVisibleCell(col, row);
   }
@@ -107,11 +99,7 @@ export function updateSelectPosition(
     !table.stateManager.isResizeCol()
   ) {
     const currentRange = state.select.ranges[state.select.ranges.length - 1];
-    if (isShift && currentRange) {
-      if (!isCtrl || disableCtrlMultiSelect) {
-        cellPos.col = col;
-        cellPos.row = row;
-      }
+    if (enableShiftSelectMode && currentRange) {
       if (state.select.headerSelectMode !== 'cell' && table.isColumnHeader(col, row)) {
         const startCol = Math.min(currentRange.start.col, currentRange.end.col, col);
         const endCol = Math.max(currentRange.start.col, currentRange.end.col, col);
@@ -151,6 +139,10 @@ export function updateSelectPosition(
       } else {
         currentRange.end = { col, row };
       }
+      // 禁用shift多选时，选中范围的end应该和start一致
+      if (!enableShiftSelectMode) {
+        currentRange.end = currentRange.start;
+      }
       scenegraph.deleteLastSelectedRangeComponents();
       scenegraph.updateCellSelectBorder(currentRange);
       // } else if (isCtrl) {
@@ -170,7 +162,7 @@ export function updateSelectPosition(
     } else {
       let extendSelectRange = true;
       // 单选或多选开始
-      if (cellPos.col !== -1 && cellPos.row !== -1 && (!isCtrl || disableCtrlMultiSelect)) {
+      if (cellPos.col !== -1 && cellPos.row !== -1 && !enableCtrlSelectMode) {
         state.select.ranges = [];
         scenegraph.deleteAllSelectBorder();
       }

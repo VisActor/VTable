@@ -59,7 +59,7 @@ export function createComplexColumn(
     y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
   } else if (columnGroup.colHeight) {
     y = columnGroup.colHeight;
-  } else if (rowStart >= table.columnHeaderLevelCount) {
+  } else if (rowStart >= table.columnHeaderLevelCount && rowStart < table.rowCount - table.bottomFrozenRowCount) {
     // 这个if判断为了解决#4357 当传入的rowStart例如50但是columnGroup中并没有其他cell的情况下，上面逻辑有问题y赋值的0 导致新建单元格错位
     y = table.getRowsHeight(table.columnHeaderLevelCount, rowStart - 1);
   }

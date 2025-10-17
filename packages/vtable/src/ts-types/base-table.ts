@@ -105,6 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -419,6 +420,8 @@ export interface BaseTableConstructorOptions {
     highlightInRange?: boolean;
     /** 是否将选中的单元格自动滚动到视口内 默认为true */
     makeSelectCellVisible?: boolean;
+    /** 右键点击单元格是否禁用选择单元格 */
+    disableSelectOnContextMenu?: boolean;
   };
   /** 下拉菜单的相关配置。消失时机：显示后点击菜单区域外自动消失*/
   menu?: {
@@ -524,6 +527,10 @@ export interface BaseTableConstructorOptions {
   canvasHeight?: number | 'auto';
   maxCanvasWidth?: number;
   maxCanvasHeight?: number;
+  /** 表格的x偏移量（会影响width）, 内部适配的表格边框或者title等组件的占位不算在内 */
+  contentOffsetX?: number;
+  /** 表格的y偏移量（会影响height）, 内部适配的表格边框或者title等组件的占位不算在内 */
+  contentOffsetY?: number;
 
   // #endregion
   /**
@@ -592,8 +599,17 @@ export interface BaseTableConstructorOptions {
 
     // 是否禁用内置图表激活
     disableBuildInChartActive?: boolean;
+
+    /** 是否检测图表内具体元素的点击事件，用于 chart-render-helper.ts中 contains方法判断是否选中图表（图表助手需求）,默认false */
+    detectPickChartItem?: boolean;
     /** 强制计算所有行高，用于某些场景下，如vtable-gantt中，需要一次性计算所有行高 */
     forceComputeAllRowHeight?: boolean;
+
+    /** 是否取消当前单元格选中状态的判断钩子，用在table-group文件的pointertap事件中，当点击空白区域时，取消选中状态 */
+    cancelSelectCellHook?: (e: FederatedPointerEvent) => boolean;
+
+    /** 当编辑器没有退出情况时，可继续选中其他单元格，比如在vtable-sheet中，当编辑器没有退出情况时，可继续选中其他单元格 */
+    selectCellWhenCellEditorNotExists?: boolean;
   }; // 部分特殊配置，兼容xTable等作用
 
   animationAppear?: boolean | IAnimationAppear;
@@ -628,6 +644,8 @@ export interface BaseTableConstructorOptions {
   };
   /** 插件配置 */
   plugins?: IVTablePlugin[];
+  /** 默认的鼠标样式 */
+  defaultCursor?: string;
 }
 export interface BaseTableAPI {
   id: string;

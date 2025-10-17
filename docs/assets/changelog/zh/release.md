@@ -1,3 +1,169 @@
+# v1.22.0
+
+2025-10-17
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-plugins**: 新增主从表能力的插件
+- **@visactor/vtable-sheet**: 针对新增或删除行和列的情况，优化处理公式计算
+- **@visactor/vtable**: 新增getFilteredRecords方法到ListTable [#4537](https://github.com/VisActor/VTable/issues/4537)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复PivotTable的getFilteredRecords方法 [#4537](https://github.com/VisActor/VTable/issues/4537)
+- **@visactor/vtable**: 修复HighlightHeaderWhenSelectCellPlugin插件的options解析问题
+
+
+
+[更多详情请查看 v1.22.0](https://github.com/VisActor/VTable/releases/tag/v1.22.0)
+
+# v1.21.1
+
+2025-10-14
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable-gantt**: 修复甘特图缩放轴组件及时释放问题
+
+
+
+[更多详情请查看 v1.21.1](https://github.com/VisActor/VTable/releases/tag/v1.21.1)
+
+# v1.21.0
+
+2025-10-13
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-gantt**: 甘特图新增缩放zoom交互功能
+
+**🐛 功能优化**
+
+- **@visactor/vtable**: 优化PivotTable的updateFilterRules方法新增isResetTree参数 [#4450](https://github.com/VisActor/VTable/issues/4450)
+
+
+
+[更多详情请查看 v1.21.0](https://github.com/VisActor/VTable/releases/tag/v1.21.0)
+
+# v1.20.3
+
+2025-10-11
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复粘贴 HTML 到单元格失效的问题 [#4551](https://github.com/VisActor/VTable/issues/4551)
+- **@visactor/vtable**: 修复使用键盘方向键 arrowUp 和 arrowDown 选择公式项项的问题
+- **@visactor/vtable**: 修复配置 rightFrozenColCount 时双击使右侧冻结列自动列宽分割线未更新问题 [#4526](https://github.com/VisActor/VTable/issues/4526)
+
+
+
+[更多详情请查看 v1.20.3](https://github.com/VisActor/VTable/releases/tag/v1.20.3)
+
+# v1.20.2
+
+2025-10-09
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 重构 vtable-plugins 和 vtable-sheet 组件的 UMD 构建产物
+- **@visactor/vtable**: 搜索组件clear方法问题修复 [#4476](https://github.com/VisActor/VTable/issues/4476)
+- **@visactor/vtable-sheet**: 编辑表格组件使用键盘选择公式选择项后enter，arrow键不生效问题修复
+
+**📖 文档更新**
+
+- **@visactor/vtable**: vtable sheet UMD 导入指南
+
+
+
+[更多详情请查看 v1.20.2](https://github.com/VisActor/VTable/releases/tag/v1.20.2)
+
+# v1.20.1
+
+2025-09-26
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 透视图扩展图表类型
+- **@visactor/vtable**: 支持在选取vchart时使用detailPath，添加detectPickChartItem配置
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复调用deleteRecord和renderWidthCreateCells api，switchState错误 [#4436](https://github.com/VisActor/VTable/issues/4436)
+- **@visactor/vtable**: 修复设置浏览器缩放时maxfrozenwidth不生效 [#4494](https://github.com/VisActor/VTable/issues/4494)
+- **@visactor/vtable-gantt**: 修复甘特图网格线样式linedash不生效 [#4495](https://github.com/VisActor/VTable/issues/4495)
+- **@visactor/vtable**: 修复updateOption时更改enablecheckboxcascade不生效 [#4499](https://github.com/VisActor/VTable/issues/4499)
+- **@visactor/vtable**: 修复api selectCells在ctrlMultiSelect为false时不生效
+- **@visactor/vtable**: 修复分页时行顺序更改不生效
+
+
+
+[更多详情请查看 v1.20.1](https://github.com/VisActor/VTable/releases/tag/v1.20.1)
+
+# v1.20.0
+
+2025-09-22
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: 新增vtable-sheet组件
+- **@visactor/vtable**: 新增 keyboardOption.cutSelected配置
+
+**🔧 项目配置**
+
+- **@visactor/vtable**: 更新vrender版本至1.0.16
+
+
+[更多详情请查看 v1.20.0](https://github.com/VisActor/VTable/releases/tag/v1.20.0)
+
+# v1.19.9
+
+2025-09-12
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable**: 添加 disableSelectOnContextMenu 配置项
+- **@visactor/vtable-gantt**: 甘特图任务条进度百分比可调整
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 添加 isReleased 检查，增强健壮性
+- **@visactor/vtable**: 修复填充句柄不显示的错误 [#4376](https://github.com/VisActor/VTable/issues/4376)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化在 Windows 系统上的库构建流程
+
+
+
+[更多详情请查看 v1.19.9](https://github.com/VisActor/VTable/releases/tag/v1.19.9)
+
+# v1.19.8
+
+2025-08-29
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复 getLayoutRowTree api 错误 [#4346](https://github.com/VisActor/VTable/issues/4346)
+- **@visactor/vtable**: 修复当有多列展开时 columnTree 场景图节点 y 值错误 [#4357](https://github.com/VisActor/VTable/issues/4357)
+- **@visactor/vtable**: 当数据透视表仅有指标无维度时 columnWidthConfig 不生效 [#4388](https://github.com/VisActor/VTable/issues/4388)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 补充 contextmenu-click 事件参数 [#4364](https://github.com/VisActor/VTable/issues/4364)
+
+
+
+[更多详情请查看 v1.19.8](https://github.com/VisActor/VTable/releases/tag/v1.19.8)
+
 # v1.19.7
 
 2025-08-19

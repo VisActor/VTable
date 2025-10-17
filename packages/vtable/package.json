@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable",
-  "version": "1.19.7",
+  "version": "1.22.0",
   "description": "canvas table width high performance",
   "keywords": [
     "grid",
@@ -41,21 +41,22 @@
     "site-demo": "vite serve site-demo",
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle --clean",
+    "build": "npm run fix-memory-limit && bundle --clean",
     "dev": "bundle --clean -f es -w",
     "start": "vite serve examples",
     "test": "jest --silent",
     "test-cov": "jest --coverage",
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts",
     "build:es": "bundle --clean -f es --ignorePostTasks",
-    "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts"
+    "test-nodejs": "ts-node --transpileOnly --skipProject ./nodejs/index.ts",
+    "fix-memory-limit": "cross-env LIMIT=10240 increase-memory-limit"
   },
   "dependencies": {
     "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vrender-core": "1.0.9",
-    "@visactor/vrender-kits": "1.0.9",
-    "@visactor/vrender-components": "1.0.9",
-    "@visactor/vrender-animate": "1.0.9",
+    "@visactor/vrender-core": "~1.0.17",
+    "@visactor/vrender-kits": "~1.0.17",
+    "@visactor/vrender-components": "~1.0.17",
+    "@visactor/vrender-animate": "~1.0.17",
     "@visactor/vutils": "~0.19.1",
     "@visactor/vscale": "~0.18.1",
     "@visactor/vdataset": "~0.18.1",
@@ -65,6 +66,8 @@
     "lodash": "4.17.21"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "increase-memory-limit": "^1.0.7",
     "luxon": "*",
     "@visactor/vchart": "2.0.2",
     "@internal/bundler": "workspace:*",

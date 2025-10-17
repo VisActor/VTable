@@ -1,10 +1,10 @@
 import ExcelJS from 'exceljs';
-import type { ListTable } from '@visactor/vtable';
-import * as VTable from '@visactor/vtable';
-
+import type { ListTable, ColumnsDefine, ColumnDefine } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE } from '@visactor/vtable';
+import type { pluginsDefinition } from '@visactor/vtable';
 // 数据导入结果类型
 export interface ImportResult {
-  columns: VTable.ColumnsDefine;
+  columns: ColumnsDefine;
   records: Record<string, unknown>[];
 }
 
@@ -20,10 +20,10 @@ export interface ExcelImportOptions {
   asyncDelay?: number; // 异步处理延迟时间(ms)，默认5ms
 }
 
-export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
-  id: string = `excel-import-plugin-${Date.now()}`;
+export class ExcelImportPlugin implements pluginsDefinition.IVTablePlugin {
+  id: string = `excel-import-plugin`;
   name = 'ExcelImportPlugin';
-  runTime = [VTable.TABLE_EVENT_TYPE.INITIALIZED];
+  runTime = [TABLE_EVENT_TYPE.INITIALIZED];
   private options: ExcelImportOptions;
   private _tableInstance: ListTable | null = null;
   constructor(options?: ExcelImportOptions) {
@@ -45,6 +45,9 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   run(...args: [unknown, unknown, ListTable]) {
     const tableInstance = args[2];
     this._tableInstance = tableInstance;
+    (this._tableInstance as any).importFile = () => {
+      this.import('file');
+    };
   }
 
   release() {
@@ -115,10 +118,11 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
           // 根据配置决定是否自动更新表格
           if (options.autoTable && this._tableInstance) {
             if (options.autoColumns) {
-              this._tableInstance.updateOption({
-                columns: result.columns,
-                plugins: [this]
-              });
+              this._tableInstance.updateOption(
+                Object.assign({}, this._tableInstance.options, {
+                  columns: result.columns
+                })
+              );
             }
             this._tableInstance.setRecords(result.records);
           }
@@ -273,7 +277,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 从表头行构建列配置
    */
-  private _buildColumnsFromHeaders(headerRows: string[][]): VTable.ColumnsDefine {
+  private _buildColumnsFromHeaders(headerRows: string[][]): ColumnsDefine {
     if (headerRows.length === 1) {
       return headerRows[0].map((title, index) => ({
         field: `col${index}`,
@@ -378,9 +382,9 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
     return headerRowCount;
   }
 
-  private static buildColumns(headerRows: unknown[][], colStart = 0, colEnd?: number, level = 0): VTable.ColumnsDefine {
+  private static buildColumns(headerRows: unknown[][], colStart = 0, colEnd?: number, level = 0): ColumnsDefine {
     const row = headerRows[level] as unknown[];
-    const columns: VTable.ColumnsDefine = [];
+    const columns: ColumnsDefine = [];
     colEnd = colEnd ?? row.length;
     let i = colStart;
     while (i < colEnd) {
@@ -535,7 +539,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
       'columns' in jsonData &&
       'records' in jsonData
     ) {
-      const data = jsonData as { columns: VTable.ColumnsDefine; records: Record<string, unknown>[] };
+      const data = jsonData as { columns: ColumnsDefine; records: Record<string, unknown>[] };
       const records: Record<string, unknown>[] = [];
       await this._processBatchRecords(data.records, options, async (batch: Record<string, unknown>[]) => {
         const batchRecords = batch.map(record => ({ ...record }));
@@ -547,7 +551,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
       };
     } else if (Array.isArray(jsonData) && jsonData.length > 0) {
       const firstRecord = jsonData[0] as Record<string, unknown>;
-      const columns: VTable.ColumnsDefine = Object.keys(firstRecord).map(key => ({
+      const columns: ColumnsDefine = Object.keys(firstRecord).map(key => ({
         field: key,
         title: key,
         cellType: 'text' as const,
@@ -579,7 +583,7 @@ export class ExcelImportPlugin implements VTable.plugins.IVTablePlugin {
   /**
    * 生成JavaScript对象字面量格式的导出内容
    */
-  private static _generateJavaScriptExport(columns: VTable.ColumnsDefine, records: Record<string, unknown>[]): string {
+  private static _generateJavaScriptExport(columns: ColumnsDefine, records: Record<string, unknown>[]): string {
     // 格式化值，确保正确的缩进
     const formatValue = (value: unknown, indent: string = ''): string => {
       if (value === null || value === undefined) {
@@ -650,7 +654,7 @@ ${recordsStr}
   /**
    * 导出数据为JavaScript对象字面量格式
    */
-  private _exportToJS(columns: VTable.ColumnDefine[], records: Record<string, unknown>[]): void {
+  private _exportToJS(columns: ColumnDefine[], records: Record<string, unknown>[]): void {
     const jsContent = ExcelImportPlugin._generateJavaScriptExport(columns, records);
     const blob = new Blob([jsContent], { type: 'text/javascript' });
     const url = URL.createObjectURL(blob);

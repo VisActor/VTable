@@ -172,6 +172,12 @@ Whether to disable the selection of row sequence numbers when the shortcut key i
 
 Enable shortcut key to copy, consistent with the browser's shortcut key.
 
+##${prefix} cutSelected(boolean) = false
+Enable shortcut key to cut, consistent with the browser's shortcut key.
+
+##${prefix} showCopyCellBorder(boolean) = false
+Whether to show the border of the copied cell, default: false.
+
 ##${prefix} pasteValueToCell(boolean) = false
 
 Enable shortcut key to paste, consistent with the browser's shortcut key.Paste takes effect only for cells with an editor configured
@@ -199,6 +205,10 @@ Switching the selected cells with the up, down, left and right arrow keys is not
 ##${prefix} ctrlMultiSelect(boolean) = true
 
 Whether to enable ctrl multi-select. Default is true.
+
+##${prefix} shiftMultiSelect(boolean) = true
+
+Whether to enable shift multi-select. Default is true.
 
 #${prefix} eventOptions(Object)
 
@@ -281,13 +291,17 @@ Separately set the header not to respond to mouse select interaction.
 
 Whether to cancel the selection when clicking the blank area.
 
-##${prefix} outsideClickDeselect(boolean) = true
+##${prefix} outsideClickDeselect(boolean) = false
 
 Whether to cancel the selection when clicking outside the table.
 
 ##${prefix} disableDragSelect(boolean) = true
 
 Whether to disable dragging selection.
+
+##${prefix} disableSelectOnContextMenu(boolean) = false
+
+Whether to disable selection on context menu.
 
 ##${prefix} highlightInRange(boolean) = false
 
@@ -725,3 +739,11 @@ The position and size of the table in the canvas. Only need to configure this pr
 #${prefix} disableInteraction(boolean) = false
 
 Whether to disable all interactions of the table.
+
+#${prefix} defaultCursor(string) = 'default'
+
+Default cursor style.
+
+```
+defaultCursor?: 'default' | 'cell' | 'pointer' | 'text' | 'wait' | 'help' | 'crosshair' | 'not-allowed';
+```

@@ -57,6 +57,10 @@ search.clear();
 | highlightCellStyle | ICellStyle | 全部搜索结果的高亮样式 |
 | focuseHighlightCellStyle | ICellStyle | 当前目标搜索结果的高亮样式 |
 | queryMethod | (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean | 搜索匹配方法，默认使用`includes`方法 |
+| treeQueryMethod | (queryStr: string, node: any, fieldsToSearch: string[],option?: {table: IVTable }) => boolean | 树节点的时候使用该搜索匹配方法，默认使用`includes`方法 |
+| fieldsToSearch | string[] | 查询的字段，默认为全查询。 |
+| scrollOption | ITableAnimationOption | 滚动设置|
+
 | callback | (queryResult: QueryResult, table: IVTable) => void | 搜索完成后的回调 |
 
 注意

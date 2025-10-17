@@ -48,7 +48,7 @@ import {
   updateChartState
 } from './refresh-node/update-chart';
 import { initSceneGraph } from './group-creater/init-scenegraph';
-import { updateContainerChildrenX } from './utils/update-container';
+import { updateContainerChildrenX, updateContainerChildrenY } from './utils/update-container';
 import type { CheckBox } from '@src/vrender';
 import { loadPoptip, setPoptipTheme } from '@src/vrender';
 import textMeasureModule from './utils/text-measure';
@@ -787,7 +787,7 @@ export class Scenegraph {
     // this.updateContainerWidth(col, detaX);
     if (!skipUpdateContainer) {
       // this.updateContainerAttrWidthAndX();
-      this.updateContainer(true);
+      this.updateContainer({ async: true });
     }
   }
 
@@ -1385,7 +1385,7 @@ export class Scenegraph {
       lastBodyCell &&
       this.table.tableNoFrameHeight < this.table.getAllRowsHeight() &&
       lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
-      lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
+      lastBodyCell.attribute.y + this.table.getRowHeight(lastBodyCell.row) + y <
         this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
     ) {
       y =
@@ -1393,7 +1393,7 @@ export class Scenegraph {
         this.table.getFrozenRowsHeight() -
         this.table.getBottomFrozenRowsHeight() -
         lastBodyCell.attribute.y -
-        lastBodyCell.attribute.height;
+        this.table.getRowHeight(lastBodyCell.row);
     }
     if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
       return;
@@ -1801,26 +1801,87 @@ export class Scenegraph {
     this.bodyGroup.setAttribute('x', this.rowHeaderGroup.attribute.width);
   }
 
-  updateContainer(async: boolean = false) {
-    if (async) {
+  updateContainerAttrHeightAndY() {
+    for (let i = 0; i < this.cornerHeaderGroup.children.length; i++) {
+      updateContainerChildrenY(this.cornerHeaderGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.colHeaderGroup.children.length; i++) {
+      updateContainerChildrenY(this.colHeaderGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.rightTopCornerGroup.children.length; i++) {
+      updateContainerChildrenY(this.rightTopCornerGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.rowHeaderGroup.children.length; i++) {
+      this.rowHeaderGroup.children[i].firstChild &&
+        updateContainerChildrenY(
+          this.rowHeaderGroup.children[i] as Group,
+          (this.rowHeaderGroup.children[i].firstChild as Group).row > 0
+            ? this.table.getRowsHeight(
+                this.table.frozenRowCount ?? 0,
+                (this.rowHeaderGroup.children[i].firstChild as Group).row - 1
+              )
+            : 0
+        );
+    }
+    for (let i = 0; i < this.bodyGroup.children.length; i++) {
+      this.bodyGroup.children[i].firstChild &&
+        updateContainerChildrenY(
+          this.bodyGroup.children[i] as Group,
+          (this.bodyGroup.children[i].firstChild as Group).row > 0
+            ? this.table.getRowsHeight(
+                this.table.frozenRowCount ?? 0,
+                (this.bodyGroup.children[i].firstChild as Group).row - 1
+              )
+            : 0
+        );
+    }
+    for (let i = 0; i < this.rightFrozenGroup.children.length; i++) {
+      this.rightFrozenGroup.children[i].firstChild &&
+        updateContainerChildrenY(
+          this.rightFrozenGroup.children[i] as Group,
+          (this.rightFrozenGroup.children[i].firstChild as Group).row > 0
+            ? this.table.getRowsHeight(
+                this.table.frozenRowCount ?? 0,
+                (this.rightFrozenGroup.children[i].firstChild as Group).row - 1
+              )
+            : 0
+        );
+    }
+    for (let i = 0; i < this.leftBottomCornerGroup.children.length; i++) {
+      updateContainerChildrenY(this.leftBottomCornerGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.bottomFrozenGroup.children.length; i++) {
+      updateContainerChildrenY(this.bottomFrozenGroup.children[i] as Group, 0);
+    }
+    for (let i = 0; i < this.rightBottomCornerGroup.children.length; i++) {
+      updateContainerChildrenY(this.rightBottomCornerGroup.children[i] as Group, 0);
+    }
+  }
+  updateContainer(
+    updateConfig: { async?: boolean; needUpdateCellY?: boolean } = { async: false, needUpdateCellY: false }
+  ) {
+    if (updateConfig.async) {
       if (!this._needUpdateContainer) {
         this._needUpdateContainer = true;
         setTimeout(() => {
-          this.updateContainerSync();
+          this.updateContainerSync(updateConfig.needUpdateCellY ?? false);
         }, 0);
       }
     } else {
       this._needUpdateContainer = true;
-      this.updateContainerSync();
+      this.updateContainerSync(updateConfig.needUpdateCellY ?? false);
     }
   }
 
-  updateContainerSync() {
+  updateContainerSync(needUpdateCellY: boolean = false) {
     if (!this._needUpdateContainer) {
       return;
     }
     this._needUpdateContainer = false;
     this.updateContainerAttrWidthAndX();
+    if (needUpdateCellY) {
+      this.updateContainerAttrHeightAndY();
+    }
     this.updateTableSize();
     this.component.updateScrollBar();
 
@@ -2321,7 +2382,7 @@ export class Scenegraph {
       return this.table.getRowsHeight(0, row - 1);
     } else if (row < this.table.rowCount - this.table.bottomFrozenRowCount) {
       // body
-      return this.table.getRowsHeight(this.table.frozenRowCount, row - 1);
+      return this.table.getRowsHeight(this.table.columnHeaderLevelCount, row - 1);
     } else if (row < this.table.rowCount) {
       // bottom frozen
       return this.table.getRowsHeight(this.table.rowCount - this.table.bottomFrozenRowCount, row - 1);

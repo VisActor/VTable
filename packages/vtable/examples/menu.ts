@@ -341,6 +341,38 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-funnel-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-heatmap-legend'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-heatmap-twoIndicator'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-histogram'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-sunburst'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-treemap'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-sankey'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-circlePacking'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {

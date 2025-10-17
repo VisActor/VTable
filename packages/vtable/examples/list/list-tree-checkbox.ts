@@ -323,5 +323,136 @@ export function createTable() {
 
   const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
   window.tableInstance = tableInstance;
+  setTimeout(() => {
+    tableInstance.updateOption({
+      container: document.getElementById(CONTAINER_ID),
+      columns: [
+        {
+          field: '类别',
+          tree: true,
+          title: '类别',
+          width: 'auto',
+          sort: true
+        },
+        {
+          field: '销售额',
+          title: '销售额',
+          width: 'auto',
+          sort: true
+          // tree: true,
+        },
+        {
+          field: '利润',
+          title: '利润',
+          width: 'auto',
+          sort: true
+        }
+      ],
+      showFrozenIcon: true, //显示VTable内置冻结列图标
+      widthMode: 'standard',
+      // autoFillHeight: true,
+      // heightMode: 'adaptive',
+      allowFrozenColCount: 2,
+      records: data,
+
+      hierarchyIndent: 20,
+      hierarchyExpandLevel: 2,
+
+      // sortState: {
+      //   field: '销售额',
+      //   order: 'desc'
+      // },
+      theme: VTable.themes.BRIGHT,
+      defaultRowHeight: 32,
+      select: {
+        disableDragSelect: true
+      },
+      enableHeaderCheckboxCascade: false,
+      enableCheckboxCascade: false,
+      rowSeriesNumber: {
+        // dragOrder: true,
+        // title: '序号',
+        width: 'auto',
+        headerStyle: {
+          color: 'black',
+          bgColor: 'pink'
+        },
+        format: () => {
+          return '';
+        },
+        style: {
+          color: 'red'
+        },
+        cellType: 'checkbox',
+        enableTreeCheckbox: true
+      }
+    });
+  }, 3000);
+
+  setTimeout(() => {
+    tableInstance.updateOption({
+      container: document.getElementById(CONTAINER_ID),
+      columns: [
+        {
+          field: '类别',
+          tree: true,
+          title: '类别',
+          width: 'auto',
+          sort: true
+        },
+        {
+          field: '销售额',
+          title: '销售额',
+          width: 'auto',
+          sort: true
+          // tree: true,
+        },
+        {
+          field: '利润',
+          title: '利润',
+          width: 'auto',
+          sort: true
+        }
+      ],
+      showFrozenIcon: true, //显示VTable内置冻结列图标
+      widthMode: 'standard',
+      // autoFillHeight: true,
+      // heightMode: 'adaptive',
+      allowFrozenColCount: 2,
+      records: data,
+
+      hierarchyIndent: 20,
+      hierarchyExpandLevel: 2,
+
+      // sortState: {
+      //   field: '销售额',
+      //   order: 'desc'
+      // },
+      theme: VTable.themes.BRIGHT,
+      defaultRowHeight: 32,
+      select: {
+        disableDragSelect: true
+      },
+      enableHeaderCheckboxCascade: true,
+      enableCheckboxCascade: true,
+      rowSeriesNumber: {
+        // dragOrder: true,
+        // title: '序号',
+        width: 'auto',
+        headerStyle: {
+          color: 'black',
+          bgColor: 'pink'
+        },
+        format: () => {
+          return '';
+        },
+        style: {
+          color: 'red'
+        },
+        cellType: 'checkbox',
+        enableTreeCheckbox: true
+      }
+    });
+  }, 6000);
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }
