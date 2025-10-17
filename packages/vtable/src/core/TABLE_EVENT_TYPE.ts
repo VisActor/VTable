@@ -226,6 +226,27 @@ export interface TableEvents {
    */
   PASTED_DATA: 'pasted_data';
   PLUGIN_EVENT: 'plugin_event';
+
+  /**
+   * 添加数据记录事件
+   */
+  ADD_RECORD: 'add_record';
+  /**
+   * 删除数据记录事件
+   */
+  DELETE_RECORD: 'delete_record';
+  /**
+   * 更新数据记录事件
+   */
+  UPDATE_RECORD: 'update_record';
+  /**
+   * 添加列事件
+   */
+  ADD_COLUMN: 'add_column';
+  /**
+   * 删除列事件
+   */
+  DELETE_COLUMN: 'delete_column';
 }
 /**
  * Table event types
@@ -311,5 +332,11 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   BUTTON_CLICK: 'button_click',
   BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image',
   PASTED_DATA: 'pasted_data',
-  PLUGIN_EVENT: 'plugin_event'
+  PLUGIN_EVENT: 'plugin_event',
+
+  ADD_RECORD: 'add_record',
+  DELETE_RECORD: 'delete_record',
+  UPDATE_RECORD: 'update_record',
+  ADD_COLUMN: 'add_column',
+  DELETE_COLUMN: 'delete_column'
 } as TableEvents;

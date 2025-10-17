@@ -235,12 +235,14 @@ export class AddRowColumnPlugin implements pluginsDefinition.IVTablePlugin {
         //   width: 100
         // });
         // this.table.updateColumns(columns);
-        this.table.addColumn(
-          {
-            field: addColIndex,
-            title: `New Column ${col}`,
-            width: 100
-          },
+        this.table.addColumns(
+          [
+            {
+              field: addColIndex,
+              title: `New Column ${col}`,
+              width: 100
+            }
+          ],
           addColIndex,
           true
         );

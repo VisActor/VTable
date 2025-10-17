@@ -284,43 +284,67 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * 添加列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param column
    */
-  addColumn(column: ColumnDefine, colIndex?: number, isMaintainArrayData: boolean = true) {
+  addColumns(toAddColumns: ColumnDefine[], colIndex?: number, isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
     if (colIndex === undefined) {
-      columns.push(column);
+      colIndex = columns.length;
+      columns.push(...toAddColumns);
     } else {
-      if (isMaintainArrayData) {
-        // 需要将columns中的field是数字index的，将其对应的做+1处理
-        for (let i = 0; i < columns.length; i++) {
-          if (typeof columns[i].field === 'number') {
-            if ((columns[i].field as number) >= colIndex) {
-              columns[i].field = (columns[i].field as number) + 1;
-            }
-          }
-        }
-      }
-      columns.splice(colIndex, 0, column);
+      columns.splice(colIndex, 0, ...toAddColumns);
     }
-    //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
     if (isMaintainArrayData) {
+      //重新整理column中的field值
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].field = i;
+      }
+
+      //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
       for (let i = 0; i < this.records.length; i++) {
         const record = this.records[i];
         if (Array.isArray(record)) {
-          record.splice(colIndex, 0, undefined);
+          record.splice(colIndex, 0, ...Array(toAddColumns.length).fill(undefined));
         }
       }
     }
     this.updateColumns(columns);
+    this.fireListeners(TABLE_EVENT_TYPE.ADD_COLUMN, {
+      columnIndex: colIndex,
+      columnCount: toAddColumns.length,
+      columns
+    });
   }
   /**
    * 删除列 TODO: 需要优化 这个方法目前直接调用了updateColumns 可以避免调用 做优化性能
    * @param colIndex
    */
-  deleteColumn(colIndex: number) {
+  deleteColumns(deleteColIndexs: number[], isMaintainArrayData: boolean = true) {
     const columns = this.options.columns;
-    columns.splice(colIndex, 1);
+    deleteColIndexs.sort((a, b) => b - a);
+    for (let i = 0; i < deleteColIndexs.length; i++) {
+      columns.splice(deleteColIndexs[i], 1);
+      if (isMaintainArrayData) {
+        //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
+        for (let j = 0; j < this.records.length; j++) {
+          const record = this.records[j];
+          if (Array.isArray(record)) {
+            record.splice(deleteColIndexs[i], 1);
+          }
+        }
+      }
+    }
+    if (isMaintainArrayData) {
+      //重新整理column中的field值
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].field = i;
+      }
+    }
     this.updateColumns(columns);
+    this.fireListeners(TABLE_EVENT_TYPE.DELETE_COLUMN, {
+      deleteColIndexs: deleteColIndexs,
+      columns
+    });
   }
+
   get columns(): ColumnsDefine {
     // return this.internalProps.columns;
     return this.internalProps.layoutMap.columnTree.getCopiedTree(); //调整顺序后的columns
@@ -1530,8 +1554,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecord(record: any, recordIndex?: number | number[]) {
-    listTableAddRecord(record, recordIndex, this);
+    const success = listTableAddRecord(record, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
+
+    // 只在成功添加时触发事件
+    if (success) {
+      this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
+        records: [record],
+        recordIndex,
+        recordCount: 1
+      });
+    }
   }
 
   /**
@@ -1542,8 +1575,17 @@ export class ListTable extends BaseTable implements ListTableAPI {
    * recordIndex 可以通过接口getRecordShowIndexByCell获取
    */
   addRecords(records: any[], recordIndex?: number | number[]) {
-    listTableAddRecords(records, recordIndex, this);
+    const success = listTableAddRecords(records, recordIndex, this);
     this.internalProps.emptyTip?.resetVisible();
+
+    // 只在成功添加时触发事件
+    if (success) {
+      this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
+        records,
+        recordIndex,
+        recordCount: records.length
+      });
+    }
   }
 
   /**
@@ -1553,6 +1595,18 @@ export class ListTable extends BaseTable implements ListTableAPI {
   deleteRecords(recordIndexs: number[] | number[][]) {
     listTableDeleteRecords(recordIndexs, this);
     this.internalProps.emptyTip?.resetVisible();
+    const rowIndexs = [];
+    for (let i = 0; i < recordIndexs.length; i++) {
+      rowIndexs.push(this.getBodyRowIndexByRecordIndex(recordIndexs[i]) + this.columnHeaderLevelCount);
+    }
+    // 触发删除数据记录事件 - 假设操作成功
+    this.fireListeners(TABLE_EVENT_TYPE.DELETE_RECORD, {
+      recordIndexs,
+      rowIndexs,
+      deletedCount: Array.isArray(recordIndexs[0])
+        ? (recordIndexs as number[][]).length
+        : (recordIndexs as number[]).length
+    });
   }
 
   /**
@@ -1564,6 +1618,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   updateRecords(records: any[], recordIndexs: (number | number[])[]) {
     listTableUpdateRecords(records, recordIndexs, this);
+
+    // 触发更新数据记录事件 - 假设操作成功
+    this.fireListeners(TABLE_EVENT_TYPE.UPDATE_RECORD, {
+      records,
+      recordIndexs,
+      updateCount: records.length
+    });
   }
 
   _hasCustomRenderOrLayout() {

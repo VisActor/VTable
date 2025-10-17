@@ -43,7 +43,7 @@ export class ColumnSeriesPlugin implements pluginsDefinition.IVTablePlugin {
       const e = eventArgs.event;
       if (this.pluginOptions.autoExtendColumnTriggerKeys?.includes(e.key)) {
         if (this.table.stateManager.select.cellPos.col === this.table.colCount - 1) {
-          this.table.addColumn(this.generateColumn(this.table.colCount - 1) as ColumnDefine);
+          this.table.addColumns([this.generateColumn(this.table.colCount - 1) as ColumnDefine]);
         }
       }
     }

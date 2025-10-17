@@ -10,7 +10,7 @@ import type {
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
-import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
+import type { IconFuncTypeEnum, CellInfo, HierarchyState, ColumnsDefine } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
 import type { FederatedPointerEvent, Group, IEventTarget } from '@src/vrender';
 import type { BaseTableConstructorOptions, BaseTableAPI } from './base-table';
@@ -297,6 +297,34 @@ export interface TableEventHandlersEventArgumentMap {
     plugin: any;
     pluginEventInfo: any;
   };
+
+  add_record: {
+    records: any[];
+    recordIndex?: number | number[];
+    recordCount: number;
+  };
+
+  delete_record: {
+    recordIndexs: number[] | number[][];
+    rowIndexs: number[];
+    deletedCount: number;
+  };
+
+  update_record: {
+    records: any[];
+    recordIndexs: (number | number[])[];
+    updateCount: number;
+  };
+  add_column: {
+    columnIndex: number;
+    columnCount: number;
+    columns: ColumnsDefine;
+  };
+  delete_column: {
+    // deleteBeforeColumns: ColumnsDefine;
+    deleteColIndexs: number[];
+    columns: ColumnsDefine;
+  };
 }
 export interface DrillMenuEventInfo {
   dimensionKey: string | number;
@@ -401,4 +429,10 @@ export interface TableEventHandlersReturnMap {
   before_cache_chart_image: void;
   pasted_data: void;
   plugin_event: void;
+
+  add_record: void;
+  delete_record: void;
+  update_record: void;
+  add_column: void;
+  delete_column: void;
 }
