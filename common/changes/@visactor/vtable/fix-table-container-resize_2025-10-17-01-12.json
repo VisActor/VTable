@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: the resize event of tableContainer #4558\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "760478279@qq.com"
+}
