@@ -23,7 +23,8 @@ import {
   FilterPlugin,
 
   // 其他功能
-  AutoFillPlugin
+  AutoFillPlugin,
+  MasterDetailPlugin
 } from '@visactor/vtable-plugins';
 import * as VTableSheet from '@visactor/vtable-sheet';
 
@@ -52,7 +53,8 @@ const VTablePlugins = {
   ContextMenuPlugin,
   FilterPlugin,
   // 其他功能
-  AutoFillPlugin
+  AutoFillPlugin,
+  MasterDetailPlugin
 };
 
 // @ts-ignore

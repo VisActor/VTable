@@ -2166,7 +2166,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
   }
   /** 获取过滤后的数据 */
   getFilteredRecords() {
-    return this.dataset?.filterRules;
+    return this.dataset?.filteredRecords;
   }
 
   getCellPivotRole(col: number, row: number) {

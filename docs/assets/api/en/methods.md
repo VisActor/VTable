@@ -13,6 +13,7 @@ Update table configuration options, automatically redraws after calling.
    */
   updateOption(options: BaseTableConstructorOptions, updateConfig?: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean }) => void
 ```
+
 updateConfig can control the update configuration. By default, it clears column width cache and row height cache. If you don't need to clear the cache, you can pass { clearColWidthCache: false, clearRowHeightCache: false }.
 
 If you need to update a single configuration item, please refer to other `update**` interfaces below
@@ -143,29 +144,32 @@ on<TYPE extends keyof TableEventHandlersEventArgumentMap>(
 ```
 
 **Parameter description:**
+
 - `type`: Event type, such as `'click_cell'`, `'scroll'`, `'selected_cell'`, etc.
 - `listener`: Event handler function, receives event parameter object
 
 **Usage examples:**
+
 ```javascript
 // Listen to cell click event
-const listenerId = tableInstance.on('click_cell', (event) => {
+const listenerId = tableInstance.on('click_cell', event => {
   console.log('Clicked cell:', event.col, event.row);
   console.log('Cell data:', event.value);
 });
 
 // Listen to scroll event
-tableInstance.on('scroll', (event) => {
+tableInstance.on('scroll', event => {
   console.log('Scroll position:', event.scrollLeft, event.scrollTop);
 });
 
 // Listen to selection state change
-tableInstance.on('selected_cell', (event) => {
+tableInstance.on('selected_cell', event => {
   console.log('Selected cell ranges:', event.ranges);
 });
 ```
 
 **Common event types:**
+
 - `click_cell`: Cell click event
 - `dblclick_cell`: Cell double-click event
 - `scroll`: Table scroll event
@@ -175,6 +179,7 @@ tableInstance.on('selected_cell', (event) => {
 - `resize_row`: Row height adjustment event
 
 **Event parameter descriptions:**
+
 - `click_cell` event parameters: `{ col: number, row: number, value: any, event: MouseEvent }`
 - `scroll` event parameters: `{ scrollLeft: number, scrollTop: number, event: WheelEvent }`
 - `selected_cell` event parameters: `{ ranges: CellRange[], cells: CellAddress[] }`
@@ -199,11 +204,13 @@ off(type: string, listener: TableEventListener): void;
 ```
 
 **Parameter description:**
+
 - `id`: Event listener ID returned by on method
 - `type`: Event type (corresponds to the type parameter in on method)
 - `listener`: Event handler function to be removed
 
 **Usage examples:**
+
 ```javascript
 // Method 1: Remove by listener ID
 const listenerId = tableInstance.on('click_cell', handleClick);
@@ -217,8 +224,12 @@ tableInstance.on('click_cell', handleClick);
 tableInstance.off('click_cell', handleClick);
 
 // Remove all event listeners of specified type
-function handleScroll1(event) { /* ... */ }
-function handleScroll2(event) { /* ... */ }
+function handleScroll1(event) {
+  /* ... */
+}
+function handleScroll2(event) {
+  /* ... */
+}
 tableInstance.on('scroll', handleScroll1);
 tableInstance.on('scroll', handleScroll2);
 // Need to remove each listener separately
@@ -248,24 +259,26 @@ onVChartEvent(type: string, query: any, callback: AnyFunction): void;
 ```
 
 **Parameter description:**
+
 - `type`: Chart event type, such as `'mouseover'`, `'click'`, `'legend_item_click'`, etc.
 - `query`: Optional query condition, used to filter specific chart elements (such as specific series, dimensions, etc.)
 - `callback`: Event handler function, receives chart event parameters
 
 **Usage examples:**
+
 ```javascript
 // Listen to chart mouse hover event
-tableInstance.onVChartEvent('mouseover', (event) => {
+tableInstance.onVChartEvent('mouseover', event => {
   console.log('Mouse hovering over chart:', event);
 });
 
 // Listen to specific series click event
-tableInstance.onVChartEvent('click', { seriesId: 'series1' }, (event) => {
+tableInstance.onVChartEvent('click', { seriesId: 'series1' }, event => {
   console.log('Clicked series1:', event.data);
 });
 
 // Listen to legend item click event
-tableInstance.onVChartEvent('legend_item_click', (event) => {
+tableInstance.onVChartEvent('legend_item_click', event => {
   console.log('Legend item clicked:', event.item);
 });
 ```
@@ -284,10 +297,12 @@ offVChartEvent(type: string, callback?: AnyFunction): void;
 ```
 
 **Parameter description:**
+
 - `type`: Chart event type
 - `callback`: Specific event handler function to be removed. If not provided, removes all listeners of this type
 
 **Usage examples:**
+
 ```javascript
 // Define event handler function
 function handleChartClick(event) {
@@ -391,6 +406,7 @@ Returns an object containing boundary information, structured as follows:
 ```
 
 **Usage scenarios:**
+
 - Get the exact position and size of table content
 - Calculate the layout of table content on the canvas
 - Used for custom drawing or overlay positioning
@@ -442,22 +458,24 @@ selectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean): void
 ```
 
 **Parameter description:**
+
 - `rowIndex`: Row index to be selected, starting from 0
 - `isCtrl`: Whether to use Ctrl key multiple selection mode. When true, retains previous selections and adds new row
 - `isShift`: Whether to use Shift key range selection mode. When true, extends from last selection to current row
 
 **Usage examples:**
+
 ```javascript
 // Single select row (clears previous selections)
 tableInstance.selectRow(2);
 
 // Ctrl+click effect: Multiple row selection
-tableInstance.selectRow(2, true);  // Select row 3
-tableInstance.selectRow(5, true);  // Keep row 3 selected, simultaneously select row 6
+tableInstance.selectRow(2, true); // Select row 3
+tableInstance.selectRow(5, true); // Keep row 3 selected, simultaneously select row 6
 
 // Shift+click effect: Range selection
-tableInstance.selectRow(2);       // First select row 3
-tableInstance.selectRow(5, false, true);  // Select all rows from row 3 to row 6
+tableInstance.selectRow(2); // First select row 3
+tableInstance.selectRow(5, false, true); // Select all rows from row 3 to row 6
 ```
 
 ## selectCol(Function)
@@ -475,25 +493,25 @@ selectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean): void
 ```
 
 **Parameter description:**
+
 - `colIndex`: Column index to be selected, starting from 0
 - `isCtrl`: Whether to use Ctrl key multiple selection mode. When true, retains previous selections and adds new column
 - `isShift`: Whether to use Shift key range selection mode. When true, extends from last selection to current column
 
 **Usage examples:**
+
 ```javascript
 // Single select column (clears previous selections)
 tableInstance.selectCol(1);
 
 // Ctrl+click effect: Multiple column selection
-tableInstance.selectCol(1, true);  // Select column 2
-tableInstance.selectCol(3, true);  // Keep column 2 selected, simultaneously select column 4
+tableInstance.selectCol(1, true); // Select column 2
+tableInstance.selectCol(3, true); // Keep column 2 selected, simultaneously select column 4
 
 // Shift+click effect: Range selection
-tableInstance.selectCol(1);       // First select column 2
-tableInstance.selectCol(3, false, true);  // Select all columns from column 2 to column 4
+tableInstance.selectCol(1); // First select column 2
+tableInstance.selectCol(3, false, true); // Select all columns from column 2 to column 4
 ```
-
-
 
 ## getSelectedCellInfos(Function)
 
@@ -518,6 +536,7 @@ clearSelected(): void
 ```
 
 **Usage examples:**
+
 ```javascript
 // Select some cells
 tableInstance.selectCell(2, 3);
@@ -532,6 +551,7 @@ console.log(selectedInfos); // null
 ```
 
 **Related methods:**
+
 - `selectCell()`: Select single cell
 - `selectCells()`: Select multiple cell areas
 - `getSelectedCellInfos()`: Get information about currently selected cells
@@ -568,15 +588,18 @@ getCellValue(col: number, row: number, skipCustomMerge?: boolean): FieldData;
 ```
 
 **Parameter description:**
+
 - `col`: Column index, starting from 0
 - `row`: Row index, starting from 0
 - `skipCustomMerge`: Whether to skip custom merge cell logic, needs to be set to true when used in customMergeCell function
 
 **Return value description:**
+
 - Returns the formatted cell display value (string or number)
 - If the cell doesn't exist or is empty, may return null or undefined
 
 **Usage examples:**
+
 ```javascript
 // Get the display value of the cell at row 3, column 2
 const cellValue = tableInstance.getCellValue(1, 2);
@@ -590,6 +613,7 @@ function customMergeCell(col, row) {
 ```
 
 **Notes:**
+
 - Returns the formatted display value, not the original data
 - To get original data, please use getCellOriginValue or getCellRawValue methods
 
@@ -608,26 +632,30 @@ getCellOriginValue(col: number, row: number): FieldData;
 ```
 
 **Parameter description:**
+
 - `col`: Column index, starting from 0
 - `row`: Row index, starting from 0
 
 **Return value description:**
+
 - Returns the unformatted original data value
 - Different from getCellValue(), this value has not been processed by the format function in column configuration
 
 **Usage examples:**
+
 ```javascript
 // Get the original data value of the cell at row 3, column 2
 const originValue = tableInstance.getCellOriginValue(1, 2);
 console.log('Original data value:', originValue);
 
 // Compare values before and after formatting
-const displayValue = tableInstance.getCellValue(1, 2);     // Formatted display value
+const displayValue = tableInstance.getCellValue(1, 2); // Formatted display value
 const originValue = tableInstance.getCellOriginValue(1, 2); // Original data value
 console.log('Display value:', displayValue, 'Original value:', originValue);
 ```
 
 **Differences from related methods:**
+
 - `getCellValue()`: Returns the formatted display value
 - `getCellOriginValue()`: Returns the original value before formatting
 - `getCellRawValue()`: Returns the most original value from the data source (including nested data)
@@ -647,27 +675,31 @@ getCellRawValue(col: number, row: number): FieldData;
 ```
 
 **Parameter description:**
+
 - `col`: Column index, starting from 0
 - `row`: Row index, starting from 0
 
 **Return value description:**
+
 - Returns the most original data directly obtained from the data source records
 - For nested data structures, returns the complete nested object
 - Not affected by any formatting or transformation functions
 
 **Usage examples:**
+
 ```javascript
 // Get the most original data value of the cell at row 3, column 2
 const rawValue = tableInstance.getCellRawValue(1, 2);
 console.log('Most original data value:', rawValue);
 
 // Comparison of three value retrieval methods
-const displayValue = tableInstance.getCellValue(1, 2);      // Formatted display value: "$1,234.56"
+const displayValue = tableInstance.getCellValue(1, 2); // Formatted display value: "$1,234.56"
 const originValue = tableInstance.getCellOriginValue(1, 2); // Original data value: 1234.56
-const rawValue = tableInstance.getCellRawValue(1, 2);       // Most original value: { price: 1234.56, currency: "USD" }
+const rawValue = tableInstance.getCellRawValue(1, 2); // Most original value: { price: 1234.56, currency: "USD" }
 ```
 
 **Applicable scenarios:**
+
 - Need to access complete data object structure
 - Perform data debugging and validation
 - Get specific properties of nested data objects
@@ -687,11 +719,13 @@ getCellStyle(col: number, row: number): CellStyle
 ```
 
 **Parameter description:**
+
 - `col`: Column index, starting from 0
 - `row`: Row index, starting from 0
 
 **Return value description:**
 Returns an object containing all style properties of the cell, may include:
+
 - `color`: Text color
 - `bgColor`: Background color
 - `fontSize`: Font size
@@ -703,6 +737,7 @@ Returns an object containing all style properties of the cell, may include:
 - And other style properties
 
 **Usage examples:**
+
 ```javascript
 // Get the style of the cell at row 3, column 2
 const cellStyle = tableInstance.getCellStyle(1, 2);
@@ -716,6 +751,7 @@ if (style.bgColor === '#ff0000') {
 ```
 
 **Notes:**
+
 - Returns the calculated final style, including the merged result of theme, column configuration, cell custom styles, etc.
 - If the cell has no special styles, returns the default style object
 
@@ -734,15 +770,18 @@ getRecordByCell(col: number, row: row): any | any[]
 ```
 
 **Parameter description:**
+
 - `col`: Column index, starting from 0
 - `row`: Row index, starting from 0
 
 **Return value description:**
+
 - **ListTable**: Returns the single data record (object) corresponding to the cell
 - **PivotTable**: Returns the record array corresponding to the cell (because pivot table cells may contain multiple aggregated data)
 - **Header cells**: May return null or header-related information
 
 **Usage examples:**
+
 ```javascript
 // ListTable example
 const record = tableInstance.getRecordByCell(1, 2);
@@ -762,6 +801,7 @@ if (record && record.name) {
 ```
 
 **Notes:**
+
 - For ListTable, returns a single data object
 - For PivotTable, returns a data array (because pivot table cells may aggregate multiple data)
 - If the specified row and column numbers are out of range, may return null or undefined
@@ -1085,16 +1125,18 @@ getScrollTop(): number
 ```
 
 **Return value description:**
+
 - Returns the vertical scroll distance of the table content, in pixels
 - If the table has not scrolled vertically, returns 0
 
 **Usage examples:**
+
 ```javascript
 const scrollTop = tableInstance.getScrollTop();
 console.log('Current vertical scroll position:', scrollTop, 'px');
 
 // Listen to scroll events to get scroll position
-tableInstance.on('scroll', (event) => {
+tableInstance.on('scroll', event => {
   console.log('Vertical scroll position:', tableInstance.getScrollTop());
   console.log('Horizontal scroll position:', tableInstance.getScrollLeft());
 });
@@ -1113,10 +1155,12 @@ getScrollLeft(): number
 ```
 
 **Return value description:**
+
 - Returns the scroll distance of the table content in the horizontal direction, in pixels
 - If the table has not scrolled horizontally, returns 0
 
 **Usage examples:**
+
 ```javascript
 const scrollLeft = tableInstance.getScrollLeft();
 console.log('Current horizontal scroll position:', scrollLeft, 'px');
@@ -1135,10 +1179,12 @@ setScrollTop(scrollTop: number): void
 ```
 
 **Parameter description:**
+
 - `scrollTop`: Vertical scroll distance to be set, in pixels
 - Valid value range: 0 to (total table height - visible area height)
 
 **Usage examples:**
+
 ```javascript
 // Scroll to top
 tableInstance.setScrollTop(0);
@@ -1153,6 +1199,7 @@ tableInstance.setScrollTop(totalHeight - visibleHeight);
 ```
 
 **Notes:**
+
 - Will immediately update the rendering interface after setting
 - If the set value is out of range, it will be automatically adjusted to the valid range
 
@@ -1169,10 +1216,12 @@ setScrollLeft(scrollLeft: number): void
 ```
 
 **Parameter description:**
+
 - `scrollLeft`: Horizontal scroll distance to be set, in pixels
 - Valid value range: 0 to (total table width - visible area width)
 
 **Usage examples:**
+
 ```javascript
 // Scroll to far left
 tableInstance.setScrollLeft(0);
@@ -1187,6 +1236,7 @@ tableInstance.setScrollLeft(totalWidth - visibleWidth);
 ```
 
 **Notes:**
+
 - Will immediately update the rendering interface after setting
 - If the set value is out of range, it will be automatically adjusted to the valid range
 
@@ -1447,7 +1497,7 @@ To PivotTable，this interface has the following signature:
 
 Get filtered data
 
-**PivotTable specific**
+**ListTable, PivotTable specific**
 
 ## setLegendSelected(Function)
 
@@ -1487,11 +1537,13 @@ exportImg(): string
 ```
 
 **Return value description:**
+
 - Returns the base64 encoded image string of the current visible area table content
 - Image format is PNG
 - Only includes table content within the current visible area
 
 **Usage examples:**
+
 ```javascript
 // Export image of current visible area
 const base64Image = tableInstance.exportImg();
@@ -1510,6 +1562,7 @@ link.click();
 ```
 
 **Notes:**
+
 - Only exports content in the current visible area, excluding hidden scrolled parts
 - The returned base64 string can be directly used as the src attribute of an image
 - Image quality depends on the current table's rendering settings and pixel ratio
@@ -1530,6 +1583,7 @@ exportCellImg(col: number, row: number, options?: { disableBackground?: boolean;
 ```
 
 **Parameter description:**
+
 - `col`: Column index, starting from 0
 - `row`: Row index, starting from 0
 - `options`: Optional export configuration
@@ -1537,10 +1591,12 @@ exportCellImg(col: number, row: number, options?: { disableBackground?: boolean;
   - `disableBorder`: Whether to disable border, default is false
 
 **Return value description:**
+
 - Returns the base64 encoded image string of the specified cell
 - Image format is PNG
 
 **Usage examples:**
+
 ```javascript
 // Export single cell image (including background and borders)
 const cellImage = tableInstance.exportCellImg(1, 2);
@@ -1563,6 +1619,7 @@ const cellImageContentOnly = tableInstance.exportCellImg(1, 2, {
 ```
 
 **Notes:**
+
 - Can precisely control the style elements of the exported image
 - Suitable for scenarios where cell content needs to be embedded into other documents or reports
 - The returned base64 string can be directly used as the src attribute of an image
@@ -1581,40 +1638,44 @@ exportCellRangeImg(cellRange: CellRange): string
 ```
 
 **Parameter description:**
+
 - `cellRange`: The cell area range to be exported, including start and end positions
   - `start`: Start cell position `{ col: number, row: number }`
   - `end`: End cell position `{ col: number, row: number }`
 
 **Return value description:**
+
 - Returns the base64 encoded image string of the specified cell area
 - Image format is PNG
 - Includes content, styles, and borders of all cells in the area
 
 **Usage examples:**
+
 ```javascript
 // Export area from row 1, column 1 to row 3, column 4
 const cellRange = {
-  start: { col: 0, row: 0 },  // Row 1, column 1
-  end: { col: 3, row: 2 }     // Row 3, column 4
+  start: { col: 0, row: 0 }, // Row 1, column 1
+  end: { col: 3, row: 2 } // Row 3, column 4
 };
 const rangeImage = tableInstance.exportCellRangeImg(cellRange);
 
 // Export single cell (area start and end are the same)
 const singleCellRange = {
-  start: { col: 1, row: 2 },  // Row 3, column 2
-  end: { col: 1, row: 2 }     // Same cell
+  start: { col: 1, row: 2 }, // Row 3, column 2
+  end: { col: 1, row: 2 } // Same cell
 };
 const singleCellImage = tableInstance.exportCellRangeImg(singleCellRange);
 
 // Export entire row
 const rowRange = {
-  start: { col: 0, row: 5 },  // Row 6, column 1
+  start: { col: 0, row: 5 }, // Row 6, column 1
   end: { col: tableInstance.colCount - 1, row: 5 } // Row 6, last column
 };
 const rowImage = tableInstance.exportCellRangeImg(rowRange);
 ```
 
 **Notes:**
+
 - The area must be rectangular, determined by start and end positions
 - Includes complete styles (background, borders, text, etc.) of all cells in the area
 - Suitable for exporting specific parts of the table, such as reports, statistical areas, etc.
@@ -2119,6 +2180,7 @@ Get pixelRatio canvas pixel ratio can be directly obtained through the pixelRati
   /** Set the pixel ratio of the canvas */
   setPixelRatio: (pixelRatio: number) => void;
 ```
+
 ## setTranslate(Function)
 
 Set the offset of the table

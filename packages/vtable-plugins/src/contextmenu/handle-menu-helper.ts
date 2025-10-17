@@ -1,4 +1,4 @@
-import type { ListTable } from '@visactor/vtable';
+import type { ColumnDefine, ListTable } from '@visactor/vtable';
 
 /**
  * 菜单辅助类
@@ -70,11 +70,13 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    if (typeof (table as any).addColumn === 'function') {
+    if (typeof (table as any).addColumns === 'function') {
+      const toAddColumns: ColumnDefine[] = [];
       // 使用表格API插入列
       for (let i = 0; i < count; i++) {
-        table.addColumn({ field: colIndex }, colIndex, true);
+        toAddColumns.push({ field: colIndex - i });
       }
+      table.addColumns(toAddColumns, colIndex, true);
     }
   }
 
@@ -85,10 +87,12 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    if (typeof (table as any).addColumn === 'function') {
+    if (typeof (table as any).addColumns === 'function') {
+      const toAddColumns: ColumnDefine[] = [];
       for (let i = 0; i < count; i++) {
-        table.addColumn({ field: colIndex + 1 }, colIndex + 1, true);
+        toAddColumns.push({ field: colIndex + 1 });
       }
+      table.addColumns(toAddColumns, colIndex + 1, true);
     }
   }
 
@@ -131,7 +135,7 @@ export class MenuHandler {
     if (colIndex === undefined) {
       return;
     }
-    if (typeof (table as any).deleteColumn === 'function') {
+    if (typeof (table as any).deleteColumns === 'function') {
       const selectRanges = table.stateManager.select.ranges;
       //处理selectRanges中的每个选择区域，记录到deleteColIndexs数组中，保证没给col值记录一次，且按倒序排序
       const deleteColIndexs: number[] = [];
@@ -143,10 +147,11 @@ export class MenuHandler {
           }
         }
       }
-      deleteColIndexs.sort((a, b) => b - a);
-      for (let i = 0; i < deleteColIndexs.length; i++) {
-        (table as any).deleteColumn(deleteColIndexs[i]); //TODO 性能考虑的话 这样做不好
-      }
+      // deleteColIndexs.sort((a, b) => b - a);
+      // for (let i = 0; i < deleteColIndexs.length; i++) {
+      //   (table as any).deleteColumn(deleteColIndexs[i]); //TODO 性能考虑的话 这样做不好
+      // }
+      table.deleteColumns(deleteColIndexs, true);
     }
   }
 

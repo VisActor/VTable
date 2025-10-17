@@ -41,6 +41,25 @@ const option: VTable.ListTableConstructorOptions = {
 
 如果你发现使用插件上存在问题，请及时反馈。
 
+### cdn引入
+
+由于底层vrender的环境限制导致无法直接引入vtable-plugins的umd包！！！
+
+且需要同时引入vrender和vtable的umd包，才能正常使用。
+
+其中vtable的umd包也不能直接使用unpkg平台的，需要用户fork先vtable的源码，自己打包一份vtable的umd包！！！
+
+打包之前需要注意要将下图所示[打包配置](https://github.com/VisActor/VTable/blob/develop/packages/vtable/bundler.config.js)中关于vrender的注释的代码放开。运行命令`cd packages/vtable && rushx build`得到dist目录下的vtable.js文件。
+<div style="display: flex; justify-content: center;  width: 50%;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/sheet-build-umd.png"  style="width: 100%; object-fit: contain; padding: 10px;">
+</div>
+具体引用方式如下：
+
+```html
+<script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
+<script src="vtable.js"></script>
+<script src="https://unpkg.com/@visactor/vtable-plugins@latest/dist/vtable-plugins.js"></script>
+```
 
 ## 插件列表
 | 插件名称 | 插件描述 |适用对象|
@@ -56,6 +75,7 @@ const option: VTable.ListTableConstructorOptions = {
 | `ExcelImportPlugin` | 导入execl，csv，json，html到表格中 | `ListTable` |
 | `ContextMenuPlugin` | 右键菜单插件 | `ListTable` |
 | `TableSeriesNumberPlugin` | 表格序号插件 | `ListTable` |
+| `MasterDetailPlugin` | 添加主从表功能 | `ListTable` |
 
 <br>
 

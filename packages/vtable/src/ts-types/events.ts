@@ -10,10 +10,10 @@ import type {
 import type { DropDownMenuEventArgs, MenuListItem, PivotInfo } from './menu';
 
 import type { IDimensionInfo, MergeCellInfo, RectProps, SortOrder } from './common';
-import type { IconFuncTypeEnum, CellInfo, HierarchyState } from '.';
+import type { IconFuncTypeEnum, CellInfo, HierarchyState, ColumnsDefine } from '.';
 import type { Icon } from '../scenegraph/graphic/icon';
-import type { FederatedPointerEvent, IEventTarget } from '@src/vrender';
-import type { BaseTableConstructorOptions } from './base-table';
+import type { FederatedPointerEvent, Group, IEventTarget } from '@src/vrender';
+import type { BaseTableConstructorOptions, BaseTableAPI } from './base-table';
 
 export type KeyboardEventListener = (e: KeyboardEvent) => void;
 export type TableEventListener<TYPE extends keyof TableEventHandlersEventArgumentMap> = (
@@ -249,6 +249,21 @@ export interface TableEventHandlersEventArgumentMap {
   after_render: null;
   initialized: null;
   updated: null;
+  after_update_cell_content_width: {
+    col: number;
+    row: number;
+    cellHeight: number;
+    cellGroup: Group;
+    padding: [number, number, number, number];
+    textBaseline: CanvasTextBaseline;
+  };
+
+  after_update_select_border_height: {
+    startRow: number;
+    endRow: number;
+    currentHeight: number;
+    selectComp: { rect: any; fillhandle?: any; role: string };
+  };
 
   change_cell_value: {
     col: number;
@@ -281,6 +296,34 @@ export interface TableEventHandlersEventArgumentMap {
     event: any;
     plugin: any;
     pluginEventInfo: any;
+  };
+
+  add_record: {
+    records: any[];
+    recordIndex?: number | number[];
+    recordCount: number;
+  };
+
+  delete_record: {
+    recordIndexs: number[] | number[][];
+    rowIndexs: number[];
+    deletedCount: number;
+  };
+
+  update_record: {
+    records: any[];
+    recordIndexs: (number | number[])[];
+    updateCount: number;
+  };
+  add_column: {
+    columnIndex: number;
+    columnCount: number;
+    columns: ColumnsDefine;
+  };
+  delete_column: {
+    // deleteBeforeColumns: ColumnsDefine;
+    deleteColIndexs: number[];
+    columns: ColumnsDefine;
   };
 }
 export interface DrillMenuEventInfo {
@@ -367,7 +410,9 @@ export interface TableEventHandlersReturnMap {
   after_render: void;
   initialized: void;
   updated: void;
+  after_update_cell_content_width: void;
 
+  after_update_select_border_height: void;
   change_cell_value: void;
   mousedown_fill_handle: void;
   drag_fill_handle_end: void;
@@ -384,4 +429,10 @@ export interface TableEventHandlersReturnMap {
   before_cache_chart_image: void;
   pasted_data: void;
   plugin_event: void;
+
+  add_record: void;
+  delete_record: void;
+  update_record: void;
+  add_column: void;
+  delete_column: void;
 }

@@ -25,7 +25,7 @@ export class HighlightHeaderWhenSelectCellPlugin implements pluginsDefinition.IV
   colHeaderRanges: CellRange[] = [];
   rowHeaderRanges: CellRange[] = [];
   constructor(pluginOptions: IHighlightHeaderWhenSelectCellPluginOptions) {
-    this.id = pluginOptions.id ?? this.id;
+    this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
   }
   run(...args: any[]) {

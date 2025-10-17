@@ -2,6 +2,29 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.0",
+      "tag": "@visactor/vtable_v1.22.0",
+      "date": "Fri, 17 Oct 2025 02:49:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: the getFilteredRecords method of PivotTable\n\n"
+          },
+          {
+            "comment": "feat: a new getFilteredRecords method has been added to ListTable #4537\n\n"
+          },
+          {
+            "comment": "fix: plugin HighlightHeaderWhenSelectCellPlugin options parse\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add master detail table plugin\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.21.1",
       "tag": "@visactor/vtable_v1.21.1",
       "date": "Tue, 14 Oct 2025 03:40:50 GMT",

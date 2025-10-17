@@ -708,3 +708,39 @@ event: Event;
 ## EMPTY_TIP_DBLCLICK
 
 空数据提示双击事件。
+
+## AFTER_UPDATE_CELL_CONTENT_WIDTH
+
+单元格内容宽度更新后触发的事件。
+
+事件回调函数的参数类型:
+
+```
+{
+  col: number;
+  row: number;
+  cellHeight: number;
+  cellGroup: any;
+  padding: [number, number, number, number];
+  textBaseline: CanvasTextBaseline;
+}
+```
+
+## AFTER_UPDATE_SELECT_BORDER_HEIGHT
+
+选择边框高度更新后触发的事件。
+
+事件回调函数的参数类型:
+
+```
+{
+  startRow: number;
+  endRow: number;
+  currentHeight: number;
+  selectComp: { 
+    rect: any; 
+    fillhandle?: any; 
+    role: string; 
+  };
+}
+```

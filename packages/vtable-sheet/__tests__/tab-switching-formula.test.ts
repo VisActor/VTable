@@ -14,6 +14,38 @@ const mockVTableSheet = {
   getActiveSheet: (): any => null
 } as unknown as VTableSheet;
 
+// 测试用的基本标准化函数
+function normalizeTestData(data: unknown[][]): unknown[][] {
+  if (!Array.isArray(data) || data.length === 0) {
+    return [['']];
+  }
+
+  const maxCols = Math.max(...data.map(row => (Array.isArray(row) ? row.length : 0)));
+
+  return data.map(row => {
+    if (!Array.isArray(row)) {
+      return Array(maxCols).fill('');
+    }
+
+    const normalizedRow = row.map(cell => {
+      if (typeof cell === 'string') {
+        if (cell.startsWith('=')) {
+          return cell; // 保持公式不变
+        }
+        const num = Number(cell);
+        return !isNaN(num) && cell.trim() !== '' ? num : cell;
+      }
+      return cell ?? '';
+    });
+
+    while (normalizedRow.length < maxCols) {
+      normalizedRow.push('');
+    }
+
+    return normalizedRow;
+  });
+}
+
 describe('Tab Switching Formula References', () => {
   let formulaManager: FormulaManager;
 
@@ -26,18 +58,20 @@ describe('Tab Switching Formula References', () => {
   });
 
   test('should use active sheet context for formulas without explicit sheet reference', () => {
-    // Create two sheets
-    formulaManager.addSheet('Sheet1', [
+    // Create two sheets with normalized data
+    const sheet1Data = normalizeTestData([
       ['A', 'B'],
       ['100', ''],
       ['', '']
     ]);
-
-    formulaManager.addSheet('Sheet2', [
+    const sheet2Data = normalizeTestData([
       ['A', 'B'],
       ['200', ''],
       ['', '']
     ]);
+
+    formulaManager.addSheet('Sheet1', sheet1Data);
+    formulaManager.addSheet('Sheet2', sheet2Data);
 
     // Set formula on Sheet1 that references B2 (should use Sheet1's A2)
     formulaManager.setCellContent({ sheet: 'Sheet1', row: 1, col: 1 }, '=A2');
@@ -58,18 +92,20 @@ describe('Tab Switching Formula References', () => {
   });
 
   test('should handle cross-sheet references correctly even with active sheet switching', () => {
-    // Create two sheets
-    formulaManager.addSheet('DataSheet', [
+    // Create two sheets with normalized data
+    const dataSheetData = normalizeTestData([
       ['A', 'B'],
       ['500', ''],
       ['', '']
     ]);
-
-    formulaManager.addSheet('SummarySheet', [
+    const summarySheetData = normalizeTestData([
       ['A', 'B'],
       ['', ''],
       ['', '']
     ]);
+
+    formulaManager.addSheet('DataSheet', dataSheetData);
+    formulaManager.addSheet('SummarySheet', summarySheetData);
 
     // Set active sheet to SummarySheet
     formulaManager.setActiveSheet('SummarySheet');
@@ -90,20 +126,22 @@ describe('Tab Switching Formula References', () => {
   });
 
   test('should handle range references with active sheet context', () => {
-    // Create two sheets with different data
-    formulaManager.addSheet('Sheet1', [
+    // Create two sheets with normalized data
+    const sheet1Data = normalizeTestData([
       ['A', 'B'],
       ['10', '20'],
       ['30', '40'],
       ['', '']
     ]);
-
-    formulaManager.addSheet('Sheet2', [
+    const sheet2Data = normalizeTestData([
       ['A', 'B'],
       ['100', '200'],
       ['300', '400'],
       ['', '']
     ]);
+
+    formulaManager.addSheet('Sheet1', sheet1Data);
+    formulaManager.addSheet('Sheet2', sheet2Data);
 
     // Set active sheet to Sheet1
     formulaManager.setActiveSheet('Sheet1');
@@ -121,10 +159,14 @@ describe('Tab Switching Formula References', () => {
   });
 
   test('should maintain correct active sheet when switching between existing sheets', () => {
-    // Create multiple sheets
-    formulaManager.addSheet('SheetA', [['Data'], ['1000']]);
-    formulaManager.addSheet('SheetB', [['Data'], ['2000']]);
-    formulaManager.addSheet('SheetC', [['Data'], ['3000']]);
+    // Create multiple sheets with normalized data
+    const sheetAData = normalizeTestData([['Data'], ['1000']]);
+    const sheetBData = normalizeTestData([['Data'], ['2000']]);
+    const sheetCData = normalizeTestData([['Data'], ['3000']]);
+
+    formulaManager.addSheet('SheetA', sheetAData);
+    formulaManager.addSheet('SheetB', sheetBData);
+    formulaManager.addSheet('SheetC', sheetCData);
 
     // Initially SheetA should be active (first sheet)
     formulaManager.setCellContent({ sheet: 'SheetA', row: 1, col: 1 }, '=A2');

@@ -14,6 +14,38 @@ const mockVTableSheet = {
   getActiveSheet: (): any => null
 } as unknown as VTableSheet;
 
+// 测试用的基本标准化函数
+function normalizeTestData(data: unknown[][]): unknown[][] {
+  if (!Array.isArray(data) || data.length === 0) {
+    return [['']];
+  }
+
+  const maxCols = Math.max(...data.map(row => (Array.isArray(row) ? row.length : 0)));
+
+  return data.map(row => {
+    if (!Array.isArray(row)) {
+      return Array(maxCols).fill('');
+    }
+
+    const normalizedRow = row.map(cell => {
+      if (typeof cell === 'string') {
+        if (cell.startsWith('=')) {
+          return cell; // 保持公式不变
+        }
+        const num = Number(cell);
+        return !isNaN(num) && cell.trim() !== '' ? num : cell;
+      }
+      return cell ?? '';
+    });
+
+    while (normalizedRow.length < maxCols) {
+      normalizedRow.push('');
+    }
+
+    return normalizedRow;
+  });
+}
+
 describe('Complete Tab Switching Fix', () => {
   let formulaManager: FormulaManager;
 
@@ -26,18 +58,20 @@ describe('Complete Tab Switching Fix', () => {
   });
 
   test('should handle tab switching with existing sheets correctly', () => {
-    // Create initial sheets (simulating existing sheets)
-    formulaManager.addSheet('Sheet1', [
+    // Create initial sheets with normalized data (simulating existing sheets)
+    const sheet1Data = normalizeTestData([
       ['Data', 'Value'], // row 0
       ['A', '100'], // row 1: A=col0, 100=col1
       ['B', '200'] // row 2: B=col0, 200=col1
     ]);
-
-    formulaManager.addSheet('Sheet2', [
+    const sheet2Data = normalizeTestData([
       ['Data', 'Value'], // row 0
       ['X', '1000'], // row 1: X=col0, 1000=col1
       ['Y', '2000'] // row 2: Y=col0, 2000=col1
     ]);
+
+    formulaManager.addSheet('Sheet1', sheet1Data);
+    formulaManager.addSheet('Sheet2', sheet2Data);
 
     // Verify initial state - Sheet1 should be active
     expect(formulaManager.getActiveSheet()).toBe('Sheet1');
@@ -61,19 +95,21 @@ describe('Complete Tab Switching Fix', () => {
   });
 
   test('should handle tab switching with newly created sheets correctly', () => {
-    // Create first sheet
-    formulaManager.addSheet('InitialSheet', [
+    // Create first sheet with normalized data
+    const initialSheetData = normalizeTestData([
       ['Data', 'Value'],
       ['Item1', '500']
     ]);
+    formulaManager.addSheet('InitialSheet', initialSheetData);
 
     expect(formulaManager.getActiveSheet()).toBe('InitialSheet');
 
     // Simulate creating a new sheet and switching to it
-    formulaManager.addSheet('NewSheet', [
+    const newSheetData = normalizeTestData([
       ['Data', 'Value'],
       ['Product1', '1500']
     ]);
+    formulaManager.addSheet('NewSheet', newSheetData);
 
     // Switch to the new sheet
     formulaManager.setActiveSheet('NewSheet');
@@ -91,23 +127,25 @@ describe('Complete Tab Switching Fix', () => {
   });
 
   test('should handle complex scenario with multiple sheet switches', () => {
-    // Create multiple sheets
-    formulaManager.addSheet('DataSheet1', [
+    // Create multiple sheets with normalized data
+    const dataSheet1Data = normalizeTestData([
       ['A', 'B'], // row 0
       ['10', '20'], // row 1: A2=10, B2=20
       ['30', '40'] // row 2: A3=30, B3=40
     ]);
-
-    formulaManager.addSheet('DataSheet2', [
+    const dataSheet2Data = normalizeTestData([
       ['A', 'B'], // row 0
       ['100', '200'], // row 1: A2=100, B2=200
       ['300', '400'] // row 2: A3=300, B3=400
     ]);
-
-    formulaManager.addSheet('SummarySheet', [
+    const summarySheetData = normalizeTestData([
       ['A', 'B'], // row 0
       ['', ''] // row 1
     ]);
+
+    formulaManager.addSheet('DataSheet1', dataSheet1Data);
+    formulaManager.addSheet('DataSheet2', dataSheet2Data);
+    formulaManager.addSheet('SummarySheet', summarySheetData);
 
     // Initially DataSheet1 is active
     expect(formulaManager.getActiveSheet()).toBe('DataSheet1');
@@ -129,8 +167,9 @@ describe('Complete Tab Switching Fix', () => {
   });
 
   test('should handle edge case of switching to non-existent sheet then creating it', () => {
-    // Create initial sheet
-    formulaManager.addSheet('MainSheet', [['Data'], ['42']]);
+    // Create initial sheet with normalized data
+    const mainSheetData = normalizeTestData([['Data'], ['42']]);
+    formulaManager.addSheet('MainSheet', mainSheetData);
 
     expect(formulaManager.getActiveSheet()).toBe('MainSheet');
 
@@ -141,8 +180,9 @@ describe('Complete Tab Switching Fix', () => {
     // Sheet should still be MainSheet
     expect(formulaManager.getActiveSheet()).toBe('MainSheet');
 
-    // Now create the FutureSheet
-    formulaManager.addSheet('FutureSheet', [['Data'], ['99']]);
+    // Now create the FutureSheet with normalized data
+    const futureSheetData = normalizeTestData([['Data'], ['99']]);
+    formulaManager.addSheet('FutureSheet', futureSheetData);
 
     // Now switch to FutureSheet
     formulaManager.setActiveSheet('FutureSheet');
