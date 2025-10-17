@@ -1,6 +1,27 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 14 Oct 2025 03:40:50 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Oct 2025 02:49:45 GMT and should not be manually modified.
+
+## 1.22.0
+Fri, 17 Oct 2025 02:49:45 GMT
+
+### Minor changes
+
+- feat: add master detail table plugin
+
+
+
+### Updates
+
+- fix: the getFilteredRecords method of PivotTable
+
+
+- feat: a new getFilteredRecords method has been added to ListTable #4537
+
+
+- fix: plugin HighlightHeaderWhenSelectCellPlugin options parse
+
+
 
 ## 1.21.1
 Tue, 14 Oct 2025 03:40:50 GMT
