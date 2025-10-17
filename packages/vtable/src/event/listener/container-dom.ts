@@ -283,7 +283,12 @@ export function bindContainerDomListener(eventManager: EventManager) {
         // 临时绕行解决因为display设置为none产生的问题
         return;
       }
-      if (table.autoFillWidth || table.autoFillHeight) {
+      if (
+        table.autoFillWidth ||
+        table.autoFillHeight ||
+        table.widthMode === 'adaptive' ||
+        table.heightMode === 'adaptive'
+      ) {
         table.editorManager?.completeEdit();
       }
       if (!isValid(table.options.pixelRatio)) {
