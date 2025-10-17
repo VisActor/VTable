@@ -40,9 +40,9 @@ describe('FormulaEngine #REF! error implementation', () => {
       // 删除第2行（包含B2）
       engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 1, 1, 100, 100);
 
-      // 验证 A1 的公式应该变成 =SUM(B1:C2) - 实际行为：B2被删除后，B1:C2范围被调整
+      // 验证 A1 的公式应该变成 =SUM(B2:C2) - B2保持在删除边界位置
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 0, col: 0 });
-      expect(formula).toBe('=SUM(B1:C2)');
+      expect(formula).toBe('=SUM(B2:C2)');
     });
 
     test('should create #REF! when entire range is invalid', () => {
@@ -52,9 +52,9 @@ describe('FormulaEngine #REF! error implementation', () => {
       // 删除第2-6行（使整个范围无效）
       engine.adjustFormulaReferences('Sheet1', 'delete', 'row', 1, 5, 100, 100);
 
-      // 验证 A1 的公式应该变成 =SUM(B1) - 实际行为：范围被调整为B1
+      // 验证 A1 的公式应该变成 =SUM(#REF!) - 整个范围被删除
       const formula = engine.getFormulaString({ sheet: 'Sheet1', row: 0, col: 0 });
-      expect(formula).toBe('=SUM(B1)');
+      expect(formula).toBe('=SUM(#REF!)');
     });
   });
 
