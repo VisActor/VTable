@@ -5,15 +5,14 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-plugins**: add master detail table plugin
-- **@visactor/vtable-sheet**:  handle with formula calculate when add or delete row and column;
-- **@visactor/vtable**: a new getFilteredRecords method has been added to ListTable [#4537](https://github.com/VisActor/VTable/issues/4537)
-
+- **@visactor/vtable-plugins**: 新增主从表能力的插件
+- **@visactor/vtable-sheet**: 针对新增或删除行和列的情况，优化处理公式计算
+- **@visactor/vtable**: 新增getFilteredRecords方法到ListTable [#4537](https://github.com/VisActor/VTable/issues/4537)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: the getFilteredRecords method of PivotTable
-- **@visactor/vtable**: plugin HighlightHeaderWhenSelectCellPlugin options parse
+- **@visactor/vtable**: 修复PivotTable的getFilteredRecords方法 [#4537](https://github.com/VisActor/VTable/issues/4537)
+- **@visactor/vtable**: 修复HighlightHeaderWhenSelectCellPlugin插件的options解析问题
 
 
 
