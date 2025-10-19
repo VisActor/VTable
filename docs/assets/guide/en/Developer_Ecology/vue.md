@@ -226,6 +226,7 @@ interface EventsProps {
   onMouseEnterCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_cell']>;
   onMouseLeaveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_cell']>;
   onContextMenuCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_cell']>;
+  onContextMenuCanvas?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_canvas']>;
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
@@ -280,7 +281,7 @@ For detailed event descriptions, refer to: [Event Introduction](../../guide/Even
 
 ### Register
 
-In VTable, components such as charts and editors need to be registered through the register method to be used normally; in React-VTable, the corresponding register method is exposed and can be used directly.
+In VTable, components such as charts and editors need to be registered through the register method to be used normally; in Vue-VTable, the corresponding register method is exposed and can be used directly.
 
 ```jsx
 import { registerChartModule } from '@visactor/vue-vtable';
@@ -293,7 +294,7 @@ registerChartModule('vchart', VChart);
 
 ### Keep column width
 
-In React-VTable, the update of props will trigger VTable's updateOption (or setRecords). If the column width is manually adjusted, it will cause the column width to be reset to the initial state. If you need to keep the column width, you can configure `keepColumnWidthChange` props to true. It should be noted that in the list, each `ListColumn` needs to be configured with `key` as a unique identifier, which is not required in the pivot table.
+In Vue-VTable, the update of props will trigger VTable's updateOption (or setRecords). If the column width is manually adjusted, it will cause the column width to be reset to the initial state. If you need to keep the column width, you can configure `keepColumnWidthChange` props to true. It should be noted that in the list, each `ListColumn` needs to be configured with `key` as a unique identifier, which is not required in the pivot table.
 
 ```jsx
 <vue-list-table

@@ -31,6 +31,7 @@ Supported event types:
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  CONTEXTMENU_CANVAS: 'contextmenu_canvas'
   MOUSEENTER_TABLE: 'mouseenter_table',
   MOUSELEAVE_TABLE: 'mouseleave_table',
   MOUSEDOWN_TABLE: 'mousedown_table',
@@ -179,6 +180,10 @@ Refer to the parameter types introduced in the CLICK_CELL event for the paramete
 Cell right-click events
 
 {{ use: MousePointerMultiCellEvent() }}
+
+## CONTEXTMENU_CANVAS
+
+Canvas right-click events
 
 ## MOUSEENTER_TABLE
 
@@ -661,3 +666,39 @@ Empty data prompt click event.
 ## EMPTY_TIP_DBLCLICK
 
 Empty data prompt double-click event.
+
+## AFTER_UPDATE_CELL_CONTENT_WIDTH
+
+Event triggered after cell content width is updated.
+
+Event callback function parameter types:
+
+```
+{
+  col: number;
+  row: number;
+  cellHeight: number;
+  cellGroup: any;
+  padding: [number, number, number, number];
+  textBaseline: CanvasTextBaseline;
+}
+```
+
+## AFTER_UPDATE_SELECT_BORDER_HEIGHT
+
+Event triggered after selection border height is updated.
+
+Event callback function parameter types:
+
+```
+{
+  startRow: number;
+  endRow: number;
+  currentHeight: number;
+  selectComp: { 
+    rect: any; 
+    fillhandle?: any; 
+    role: string; 
+  };
+}
+```

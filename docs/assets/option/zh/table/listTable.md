@@ -22,6 +22,13 @@
 ]
 ```
 
+## addRecordRule('Array' | 'Object') = 'Object'
+
+添加数据时，指定传入records的数据格式。默认是 Object 格式。这个会影响到addRecord和addRecords方法。
+```
+addRecordRule?: 'Array' | 'Object';
+```
+
 {{ use: column-define( prefix = '#',) }}
 
 ## transpose(boolean) = false
@@ -134,21 +141,63 @@ type CustomAggregation = {
 
 数据为空时是否仍显示聚合结果。
 
-## groupBy(string|string[])
+## enableCheckboxCascade(boolean)
+
+开启分组复选框级联功能。默认是true。
+
+## enableHeaderCheckboxCascade(boolean)
+
+开启表头与body单元格的复选框级联功能。默认是true。
+
+
+## groupConfig(GroupConfig)
+
+分组配置。
+
+```
+type GroupConfig = {
+  /** 开启分组展示功能，用于展示数据中分组字段的层级结构。值为分组字段名称，可以配置一个字段，也可以配置多个字段组成的数组。 */
+  groupBy: GroupByOption;
+  /** 开启分组标题吸附功能。 */
+  enableTreeStickCell: boolean;
+  /** 开启分组标题复选框功能。 这个配置对应当在rowSeriesNumber中配置cellType: 'checkbox'时，如想在group分组名中显示checkbox，则需要开启这个配置 。默认为false */
+  titleCheckbox: boolean;
+  /** 自定义分组标题。 */
+  titleFieldFormat: (record: any, col?: number, row?: number, table?: BaseTableAPI) => string;
+  /** 分组标题自定义布局。 */
+  titleCustomLayout: ICustomLayout;
+};
+
+export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
+
+export type GroupConfig = {
+  key: string;
+  sort?: SortOrder;
+};
+type SortOrder = 'asc' | 'desc' | 'normal' | 'ASC' | 'DESC' | 'NORMAL';
+
+```
+
+### groupBy
 
 开启分组展示功能，用于展示数据中分组字段的层级结构。值为分组字段名称，可以配置一个字段，也可以配置多个字段组成的数组。
 
-## enableTreeStickCell(boolean) = false
+### enableTreeStickCell
 
 开启分组标题吸附功能。
 
-## groupTitleFieldFormat(Function)
+### titleCheckbox
+
+开启分组标题复选框功能。 这个配置对应当在rowSeriesNumber中配置cellType: 'checkbox'时，如想在group分组名中显示checkbox，则需要开启这个配置 。默认为false
+
+### titleFieldFormat
 
 自定义分组标题。
 
-## groupTitleCustomLayout(CustomLayout)
+### titleCustomLayout
 
 分组标题自定义布局。
+
 
 ## customComputeRowHeight(Function)
 
@@ -161,3 +210,13 @@ customComputeRowHeight?: (computeArgs: { row: number; table: ListTableAPI }) => 
 ## tableSizeAntiJitter(boolean) = false
 
 当表格出现抖动情况，请排查是否上层 dom 容器的宽高是小数引起的。如果不能保证是整数，请配置这个配置项为 true
+
+
+## columnWidthConfig(Array)
+
+根据key设置列宽
+
+```
+  columnWidthConfig?: { key: string; width: number }[];
+```
+其中key对应到columns中定义的每列具体配置中的key。

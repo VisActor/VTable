@@ -57,8 +57,9 @@ export function bindTableGroupListener(eventManager: EventManager) {
     }
 
     if (
-      stateManager.interactionState === InteractionState.grabing &&
-      !(table as ListTableAPI).editorManager?.editingEditor
+      stateManager.interactionState === InteractionState.grabing
+      // &&
+      // !(table as ListTableAPI).editorManager?.editingEditor
     ) {
       if (Math.abs(lastX - e.x) + Math.abs(lastY - e.y) >= 1) {
         if (stateManager.isResizeCol() || stateManager.isResizeRow()) {
@@ -434,7 +435,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
     const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      if (isCompleteEdit === false) {
+      if (!table.options.customConfig?.selectCellWhenCellEditorNotExists && isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
       }
@@ -575,7 +576,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   // 注意和pointertap事件的处理 vrender中的事件系统： 是先触发pointerup 如果是点击到的场景树图元节点则会继续触发pointertap 否则不触发pointertap
   table.scenegraph.tableGroup.addEventListener('pointerup', (e: FederatedPointerEvent) => {
-    console.log('tableGroup', 'pointerup');
+    // console.log('tableGroup', 'pointerup');
     if (e.button !== 0) {
       // 只处理左键
       return;
@@ -696,43 +697,71 @@ export function bindTableGroupListener(eventManager: EventManager) {
 
       //处理监听的右键事件
       const { col, row } = eventArgsSet.eventArgs;
-      if ((table as any).hasListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL)) {
-        const cellInfo = table.getCellInfo(col, row);
-        let icon;
-        let position;
-        if (eventArgsSet.eventArgs?.target) {
-          const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
-          if (iconInfo) {
-            icon = iconInfo.icon;
-            position = iconInfo.position;
-          }
-        }
-        const cellsEvent: MousePointerMultiCellEvent = {
-          ...cellInfo,
-          event: e.nativeEvent,
-          cells: [],
-          targetIcon: icon
-            ? {
-                name: icon.name,
-                position: position,
-                funcType: (icon as any).attribute.funcType
-              }
-            : undefined,
-          target: eventArgsSet?.eventArgs?.target,
-          mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
-        };
-        if (table.options.eventOptions?.contextmenuReturnAllSelectedCells ?? true) {
-          if (cellInRanges(table.stateManager.select.ranges, col, row)) {
-            // 用户右键点击已经选中的区域
-            // const { start, end } = eventManager.selection.range;
-            cellsEvent.cells = table.getSelectedCellInfos();
-          } else {
-            // 用户右键点击新单元格
-            cellsEvent.cells = [[cellInfo]];
+      if (col >= 0 && row >= 0) {
+        const ranges = table.getSelectedCellRanges();
+        let cellInRange = false;
+        if (ranges.length > 0) {
+          for (let i = 0; i < ranges.length; i++) {
+            const range = ranges[i];
+            const startCol = range.start.col;
+            const endCol = range.end.col;
+            const startRow = range.start.row;
+            const endRow = range.end.row;
+            if (
+              (col >= startCol && col <= endCol && row >= startRow && row <= endRow) || // 左上向右下选择
+              (col >= endCol && col <= startCol && row >= endRow && row <= startRow) || // 右下向左上选择
+              (col >= startCol && col <= endCol && row >= endRow && row <= startRow) || // 左下向右上选择
+              (col >= endCol && col <= startCol && row >= startRow && row <= endRow) // 右上向左下选择
+            ) {
+              cellInRange = true;
+              break;
+            }
           }
         }
 
-        table.fireListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, cellsEvent);
+        const disableSelectOnContextMenu = table.options.select?.disableSelectOnContextMenu;
+        if (!cellInRange && !disableSelectOnContextMenu) {
+          table.selectCell(col, row);
+        }
+
+        if ((table as any).hasListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL)) {
+          const cellInfo = table.getCellInfo(col, row);
+          let icon;
+          let position;
+          if (eventArgsSet.eventArgs?.target) {
+            const iconInfo = getIconAndPositionFromTarget(eventArgsSet.eventArgs?.target);
+            if (iconInfo) {
+              icon = iconInfo.icon;
+              position = iconInfo.position;
+            }
+          }
+          const cellsEvent: MousePointerMultiCellEvent = {
+            ...cellInfo,
+            event: e.nativeEvent,
+            cells: [],
+            targetIcon: icon
+              ? {
+                  name: icon.name,
+                  position: position,
+                  funcType: (icon as any).attribute.funcType
+                }
+              : undefined,
+            target: eventArgsSet?.eventArgs?.target,
+            mergeCellInfo: eventArgsSet.eventArgs?.mergeInfo
+          };
+          if (table.options.eventOptions?.contextmenuReturnAllSelectedCells ?? true) {
+            if (cellInRanges(table.stateManager.select.ranges, col, row)) {
+              // 用户右键点击已经选中的区域
+              // const { start, end } = eventManager.selection.range;
+              cellsEvent.cells = table.getSelectedCellInfos();
+            } else {
+              // 用户右键点击新单元格
+              cellsEvent.cells = [[cellInfo]];
+            }
+          }
+
+          table.fireListeners(TABLE_EVENT_TYPE.CONTEXTMENU_CELL, cellsEvent);
+        }
       }
     }
   });
@@ -815,9 +844,14 @@ export function bindTableGroupListener(eventManager: EventManager) {
     ) {
       stateManager.hideMenu();
     }
-    const isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    let isCompleteEdit: boolean | Promise<boolean> = false;
+    //需要判断是否点击到了tableGroup，如果点击到了tableGroup，已经在tableGroup的pointerdown中处理了编辑状态的退出
+    const target: any = e.target;
+    if (target !== table.scenegraph.tableGroup && !target.isDescendantsOf(table.scenegraph.tableGroup)) {
+      isCompleteEdit = (table as ListTableAPI).editorManager?.completeEdit(e.nativeEvent);
+    }
     getPromiseValue<boolean>(isCompleteEdit, isCompleteEdit => {
-      if (isCompleteEdit === false) {
+      if (!table.options.customConfig?.selectCellWhenCellEditorNotExists && isCompleteEdit === false) {
         // 如果没有正常退出编辑状态 则不执行下面的逻辑 如选择其他单元格的逻辑
         return;
       }
@@ -886,6 +920,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
       stateManager.updateInteractionState(InteractionState.default);
       eventManager.dealTableHover();
       const isHasSelected = !!stateManager.select.ranges?.length;
+      // 是否自定义了判断当前是否需要取消选中单元格的钩子，如在点击到表格序号插件的单元格上时，不需要取消选中单元格的逻辑是通过这个钩子实现的
       if (table.options.customConfig?.cancelSelectCellHook) {
         if (table.options.customConfig?.cancelSelectCellHook(e)) {
           eventManager.dealTableSelect();
@@ -906,6 +941,15 @@ export function bindTableGroupListener(eventManager: EventManager) {
   });
   table.scenegraph.stage.addEventListener('pointermove', (e: FederatedPointerEvent) => {
     const eventArgsSet: SceneEvent = getCellEventArgsSet(e);
+
+    // 检查事件是否来自当前表格的有效区域
+    const isEventFromCurrentTable = e.target?.isDescendantsOf?.(table.scenegraph.tableGroup) ?? false;
+
+    // 如果事件不是来自当前表格的有效区域，则忽略
+    if (!isEventFromCurrentTable) {
+      return;
+    }
+
     // 处理列宽调整  这里和tableGroup.addEventListener('pointermove' 逻辑一样
     if (stateManager.isResizeCol() || eventManager.checkColumnResize(eventArgsSet)) {
       // 更新填充柄pointer
@@ -972,9 +1016,11 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const cellType = table.getCellType(col, row);
-      if (cellType === 'checkbox') {
-        table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
+      if (table.internalProps.enableHeaderCheckboxCascade) {
+        const cellType = table.getCellType(col, row);
+        if (cellType === 'checkbox') {
+          table.scenegraph.updateCheckboxCellState(col, row, (e.detail as unknown as { checked: boolean }).checked);
+        }
       }
     } else {
       //点击的是body单元格的checkbox  处理本单元格的状态维护 同时需要检查表头是否改变状态
@@ -984,16 +1030,18 @@ export function bindTableGroupListener(eventManager: EventManager) {
         cellInfo.field as string | number,
         (e.detail as unknown as { checked: boolean }).checked
       );
-      const cellType = table.getCellType(col, row);
-      if (cellType === 'checkbox') {
-        const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
-        const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(
-          cellInfo.field as string | number,
-          col,
-          row
-        );
-        if (oldHeaderCheckedState !== newHeaderCheckedState) {
-          table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+      if (table.internalProps.enableCheckboxCascade) {
+        const cellType = table.getCellType(col, row); //获取
+        if (cellType === 'checkbox') {
+          const oldHeaderCheckedState = table.stateManager.headerCheckedState[cellInfo.field as string | number];
+          const newHeaderCheckedState = table.stateManager.updateHeaderCheckedState(
+            cellInfo.field as string | number,
+            col,
+            row
+          );
+          if (oldHeaderCheckedState !== newHeaderCheckedState) {
+            table.scenegraph.updateHeaderCheckboxCellState(col, row, newHeaderCheckedState);
+          }
         }
       }
     }

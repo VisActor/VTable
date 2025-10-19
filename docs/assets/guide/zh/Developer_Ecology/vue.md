@@ -226,6 +226,7 @@ interface EventsProps {
   onMouseEnterCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseenter_cell']>;
   onMouseLeaveCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['mouseleave_cell']>;
   onContextMenuCell?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_cell']>;
+  onContextMenuCanvas?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['contextmenu_canvas']>;
   onResizeColumn?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column']>;
   onResizeColumnEnd?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['resize_column_end']>;
   onChangeHeaderPosition?: EventCallback<TYPES.TableEventHandlersEventArgumentMap['change_header_position']>;
@@ -280,7 +281,7 @@ interface EventsProps {
 
 ### register
 
-在 VTable 中，图表、编辑器等组件需要通过 resigister 方法注册，才能正常使用；在 React-VTable 中，暴露了相应的 register 方法，可以直接使用。
+在 VTable 中，图表、编辑器等组件需要通过 register 方法注册，才能正常使用；在 Vue-VTable 中，暴露了相应的 register 方法，可以直接使用。
 
 ```jsx
 import { registerChartModule } from '@visactor/vue-vtable';

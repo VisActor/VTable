@@ -35,6 +35,7 @@ import {
   type LayoutObjectId,
   type HeightModeDef,
   type ITableThemeDefine,
+  type ScrollStyle,
   InteractionState,
   Placement
 } from '../ts-types';
@@ -112,7 +113,7 @@ import type {
   BaseTableAPI,
   BaseTableConstructorOptions,
   IBaseTableProtected,
-  PivotTableProtected
+  ListTableProtected
 } from '../ts-types/base-table';
 import { FocusInput } from './FouseInput';
 import { defaultPixelRatio } from '../tools/pixel-ratio';
@@ -186,8 +187,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
   canvasWidth?: number;
   canvasHeight?: number;
-  translateX?: number;
-  translateY?: number;
+  contentOffsetX?: number;
+  contentOffsetY?: number;
 
   _vDataSet?: DataSet;
   scenegraph: Scenegraph;
@@ -286,6 +287,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       eventOptions,
       rowSeriesNumber,
       enableCheckboxCascade,
+      enableHeaderCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -310,13 +312,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       modeParams,
       canvasWidth,
       canvasHeight,
-      translateX,
-      translateY,
+      contentOffsetX: translateX,
+      contentOffsetY: translateY,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight,
       clearDOM = true
     } = options;
+
+    const { groupConfig, groupBy, groupTitleFieldFormat, groupTitleCustomLayout, enableTreeStickCell } =
+      options as ListTableConstructorOptions;
     this.container = container;
     this.options = options;
     this._widthMode = widthMode;
@@ -358,8 +363,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     this.tableNoFrameWidth = 0;
     this.tableNoFrameHeight = 0;
-    this.translateX = translateX ?? 0;
-    this.translateY = translateY ?? 0;
+    this.contentOffsetX = translateX ?? 0;
+    this.contentOffsetY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
 
@@ -415,7 +420,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.enableCheckboxCascade = enableCheckboxCascade;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
+    internalProps.enableHeaderCheckboxCascade = enableCheckboxCascade || (enableHeaderCheckboxCascade ?? true);
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -424,6 +430,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.renderChartAsync = renderChartAsync;
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
+
+    (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
+    (internalProps as ListTableProtected).groupTitleCheckbox =
+      groupConfig?.titleCheckbox ?? !!rowSeriesNumber?.enableTreeCheckbox;
+    (internalProps as ListTableProtected).groupTitleFieldFormat =
+      groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
+    (internalProps as ListTableProtected).groupTitleCustomLayout =
+      groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
+    (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
+
     internalProps._rowHeightsMap = new NumberRangeMap(this);
     internalProps._rowRangeHeightsMap = new Map();
     internalProps._colRangeWidthsMap = new Map();
@@ -441,7 +457,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
         if (Env.mode === 'node') {
           return that.canvasWidth / (pixelRatio ?? 1);
         }
-        return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
+        return (
+          this._.canvas.width /
+          ((this._.context as any).pixelRatio ?? that.internalProps.pixelRatio ?? window.devicePixelRatio)
+        );
       }
       // get em(): number {
       //   return getFontSize(this._.context, this._.theme.font).width;
@@ -649,11 +668,11 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.options.canvasWidth = canvasWidth;
     this.resize();
   }
-  setTranslate(translateX: number, translateY: number) {
-    this.translateX = translateX;
-    this.translateY = translateY;
-    this.options.translateX = translateX;
-    this.options.translateY = translateY;
+  setContentInsetXY(contentOffsetX: number, contentOffsetY: number) {
+    this.contentOffsetX = contentOffsetX;
+    this.contentOffsetY = contentOffsetY;
+    this.options.contentOffsetX = contentOffsetX;
+    this.options.contentOffsetY = contentOffsetY;
     this.resize();
   }
   resize() {
@@ -703,6 +722,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * Set the number of frozen columns.
+   * 设置冻结列数 会自动刷新渲染节点
    */
   set frozenColCount(frozenColCount: number) {
     // 此情况将frozenColCount设为0（显示效果一致）
@@ -779,12 +799,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
   /**
    * Set the number of frozen rows.
+   * 设置冻结行数 会自动刷新渲染节点
    */
   set frozenRowCount(frozenRowCount: number) {
     this.internalProps.frozenRowCount = frozenRowCount;
+    this.options.frozenRowCount = frozenRowCount;
     this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
   }
-
+  /**
+   * 设置冻结行数 不赋值options.frozenRowCount。供内部逻辑调用
+   */
+  _setFrozenRowCount(frozenRowCount: number) {
+    this.internalProps.frozenRowCount = frozenRowCount;
+    this.stateManager.setFrozenRow(this.internalProps.frozenRowCount);
+  }
   get rightFrozenColCount(): number {
     return this.internalProps?.layoutMap?.rightFrozenColCount ?? this.internalProps?.rightFrozenColCount ?? 0;
   }
@@ -1082,6 +1110,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   setPixelRatio(pixelRatio: number) {
     if (pixelRatio !== this.internalProps?.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
+      const that = this;
       const canvasWidth = this.canvasWidth;
       this.internalProps.calcWidthContext = {
         _: this.internalProps,
@@ -1089,7 +1118,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           if (Env.mode === 'node') {
             return canvasWidth / (pixelRatio ?? 1);
           }
-          return this._.canvas.width / ((this._.context as any).pixelRatio ?? window.devicePixelRatio);
+          return (
+            this._.canvas.width /
+            ((this._.context as any).pixelRatio ?? that.internalProps.pixelRatio ?? window.devicePixelRatio)
+          );
         }
       };
       this.scenegraph.setPixelRatio(pixelRatio);
@@ -1106,8 +1138,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     let widthP = 0;
     let heightP = 0;
-    this.tableX = this.translateX;
-    this.tableY = this.translateY;
+    this.tableX = this.contentOffsetX;
+    this.tableY = this.contentOffsetY;
 
     if (this.options.canvas && this.options.viewBox) {
       widthP = this.options.viewBox.x2 - this.options.viewBox.x1;
@@ -1194,36 +1226,111 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       heightP = this.canvasHeight - 1;
     }
 
-    const width = Math.floor(widthP - style.getVerticalScrollBarSize(this.getTheme().scrollStyle));
-    const height = Math.floor(heightP - style.getHorizontalScrollBarSize(this.getTheme().scrollStyle));
+    const scrollStyle = this.getTheme().scrollStyle;
+
+    let vScrollBarWidth = 0;
+    let hScrollBarWidth = 0;
+
+    vScrollBarWidth = this.shouldVScrollBarWidthShow(widthP, heightP, scrollStyle)
+      ? style.getVerticalScrollBarSize(scrollStyle)
+      : 0;
+    hScrollBarWidth = this.shouldHScrollBarWidthShow(widthP, heightP, scrollStyle)
+      ? style.getHorizontalScrollBarSize(scrollStyle)
+      : 0;
+
+    const width = Math.floor(widthP - vScrollBarWidth);
+    const height = Math.floor(heightP - hScrollBarWidth);
+
+    // const width = Math.floor(widthP - style.getVerticalScrollBarSize(scrollStyle));
+    // const height = Math.floor(heightP - style.getHorizontalScrollBarSize(scrollStyle));
 
     if (this.internalProps.theme?.frameStyle) {
       //考虑表格整体边框的问题
       const lineWidths = toBoxArray(this.internalProps.theme.frameStyle?.borderLineWidth ?? [null]);
       const shadowWidths = toBoxArray(this.internalProps.theme.frameStyle?.shadowBlur ?? [0]);
       if (this.theme.frameStyle?.innerBorder) {
-        this.tableX += this.translateX;
-        this.tableY += this.translateY;
-        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.translateX;
-        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.translateY;
+        this.tableX += this.contentOffsetX;
+        this.tableY += this.contentOffsetY;
+        this.tableNoFrameWidth = width - (shadowWidths[1] ?? 0) - this.contentOffsetX;
+        this.tableNoFrameHeight = height - (shadowWidths[2] ?? 0) - this.contentOffsetY;
       } else {
         this.tableX += (lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0);
         this.tableY += (lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0);
+        const rightBorder = (lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0);
         this.tableNoFrameWidth =
           width -
-          ((lineWidths[1] ?? 0) + (shadowWidths[1] ?? 0)) -
+          (rightBorder > vScrollBarWidth ? rightBorder - vScrollBarWidth : 0) -
           ((lineWidths[3] ?? 0) + (shadowWidths[3] ?? 0)) -
-          this.translateX;
+          this.contentOffsetX;
+        const bottomBorder = (lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0);
         this.tableNoFrameHeight =
           height -
+          (bottomBorder > hScrollBarWidth ? bottomBorder - hScrollBarWidth : 0) -
           ((lineWidths[0] ?? 0) + (shadowWidths[0] ?? 0)) -
-          ((lineWidths[2] ?? 0) + (shadowWidths[2] ?? 0)) -
-          this.translateY;
+          this.contentOffsetY;
       }
     }
 
     this._clearColRangeWidthsMap();
     this._clearRowRangeHeightsMap();
+  }
+
+  shouldVScrollBarWidthShow(tableWidth: number, tableHeight: number, scrollStyle: ScrollStyle): boolean {
+    if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
+      return false;
+    }
+    const totalHeight = this.getAllRowsHeight();
+    //判断横向滚动条的存在是否影响纵向滚动条的显示
+    const sizeTolerance = scrollStyle.visible ? style.getHorizontalScrollBarSize(scrollStyle) : 0;
+    const isHScrollBarDecideVScrollBar = totalHeight > tableHeight - sizeTolerance && totalHeight <= tableHeight;
+    //如果横向滚动条的存在决定了纵向滚动条是否显示，这里再对纵向滚动条判断，因为有相互依赖的问题
+    if (isHScrollBarDecideVScrollBar) {
+      const totalWidth = this.getAllColsWidth();
+      const sizeTolerance = scrollStyle.visible ? style.getVerticalScrollBarSize(scrollStyle) : 0;
+      const isVScrollBarDecideHScrollBar = totalWidth > tableWidth - sizeTolerance && totalWidth <= tableWidth;
+      //出现了相互依赖的情况，则不显示纵向滚动条（横向也不显示）
+      if (isVScrollBarDecideHScrollBar) {
+        return false;
+      }
+      // 一定显示横向滚动条，则也一定显示纵向滚动条
+      if (totalWidth > tableWidth) {
+        return true;
+      }
+      // 横向滚动条不存在，则纵向滚动条也不存在
+      if (totalWidth <= tableWidth - sizeTolerance) {
+        return false;
+      }
+    }
+    return !(totalHeight <= tableHeight - sizeTolerance);
+  }
+
+  shouldHScrollBarWidthShow(tableWidth: number, tableHeight: number, scrollStyle: ScrollStyle): boolean {
+    if (scrollStyle.hoverOn || scrollStyle.visible === 'none') {
+      return false;
+    }
+    const totalWidth = this.getAllColsWidth();
+    //判断纵向滚动条的存在是否影响横向滚动条的显示
+    const sizeTolerance = scrollStyle.visible ? style.getVerticalScrollBarSize(scrollStyle) : 0;
+    const isVScrollBarDecideHScrollBar = totalWidth > tableWidth - sizeTolerance && totalWidth <= tableWidth;
+    //如果纵向滚动条的存在决定了横向滚动条是否显示，这里再对横向滚动条判断，因为有相互依赖的问题
+    if (isVScrollBarDecideHScrollBar) {
+      const totalHeight = this.getAllRowsHeight();
+      const sizeTolerance = scrollStyle.visible ? style.getHorizontalScrollBarSize(scrollStyle) : 0;
+      const isHScrollBarDecideVScrollBar = totalHeight > tableHeight - sizeTolerance && totalHeight <= tableHeight;
+      //出现了相互依赖的情况，则不显示横向滚动条（纵向也不显示）
+      if (isHScrollBarDecideVScrollBar) {
+        return false;
+      }
+      // 一定显示纵向滚动条，则也一定显示横向滚动条
+      if (totalHeight > tableHeight) {
+        return true;
+      }
+      // 纵向滚动条不存在，则横向滚动条也不存在
+      if (totalHeight <= tableHeight - sizeTolerance) {
+        return false;
+      }
+    }
+    return !(totalWidth <= tableWidth - sizeTolerance);
   }
 
   updateViewBox(newViewBox: IBoundsLike) {
@@ -2452,6 +2559,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.menuHandler?.release?.();
 
     super.release?.();
+    this.pluginManager.release();
     internalProps.handler?.release?.();
     // internalProps.scrollable?.release?.();
     this.eventManager.release();
@@ -2473,7 +2581,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.scenegraph.proxy.release();
 
     internalProps.focusControl.release();
-    const { parentElement } = internalProps.element;
+    const parentElement = internalProps.element?.parentElement;
     if (parentElement && !this.options.canvas) {
       parentElement.removeChild(internalProps.element);
     }
@@ -2483,7 +2591,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.internalProps = null;
 
     this.reactCustomLayout?.clearCache();
-    this.pluginManager.release();
+
     clearChartRenderQueue();
   }
 
@@ -2498,7 +2606,13 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 更新options 目前只支持全量更新
    * @param options
    */
-  updateOption(options: BaseTableConstructorOptions) {
+  updateOption(
+    options: BaseTableConstructorOptions,
+    updateConfig: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: true,
+      clearRowHeightCache: true
+    }
+  ) {
     this.fireListeners(TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, { options, container: this.container });
     this.editorManager?.cancelEdit();
     (this.options as BaseTable['options']) = options;
@@ -2517,6 +2631,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       eventOptions,
       rowSeriesNumber,
       enableCheckboxCascade,
+      enableHeaderCheckboxCascade,
       // columnSeriesNumber,
       // disableRowHeaderColumnResize,
       columnResizeMode,
@@ -2544,12 +2659,14 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       renderChartAsyncBatchCount,
       canvasWidth,
       canvasHeight,
-      translateX = 0,
-      translateY = 0,
+      contentOffsetX: translateX = 0,
+      contentOffsetY: translateY = 0,
       overscrollBehavior,
       limitMinWidth,
       limitMinHeight
     } = options;
+    const { groupConfig, groupBy, groupTitleFieldFormat, groupTitleCustomLayout, enableTreeStickCell } =
+      options as ListTableConstructorOptions;
     if (pixelRatio && pixelRatio !== this.internalProps.pixelRatio) {
       this.internalProps.pixelRatio = pixelRatio;
     }
@@ -2592,8 +2709,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       }
     }
     this.customRender = customRender;
-    this.translateX = translateX ?? 0;
-    this.translateY = translateY ?? 0;
+    this.contentOffsetX = translateX ?? 0;
+    this.contentOffsetY = translateY ?? 0;
     this.canvasWidth = isNumber(canvasWidth) ? canvasWidth : undefined;
     this.canvasHeight = isNumber(canvasHeight) ? canvasHeight : undefined;
     // 更新protectedSpace
@@ -2616,7 +2733,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     internalProps.keyboardOptions = keyboardOptions;
     internalProps.eventOptions = eventOptions;
     internalProps.rowSeriesNumber = rowSeriesNumber;
-    internalProps.enableCheckboxCascade = enableCheckboxCascade;
+    internalProps.enableCheckboxCascade = enableCheckboxCascade ?? rowSeriesNumber?.enableTreeCheckbox ?? true;
+    internalProps.enableHeaderCheckboxCascade = enableCheckboxCascade || (enableHeaderCheckboxCascade ?? true);
     // internalProps.columnSeriesNumber = columnSeriesNumber;
 
     internalProps.columnResizeMode = resize?.columnResizeMode ?? columnResizeMode;
@@ -2626,16 +2744,28 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     setBatchRenderChartCount(renderChartAsyncBatchCount);
     internalProps.overscrollBehavior = overscrollBehavior ?? 'auto';
     internalProps.cellTextOverflows = {};
-    internalProps._rowHeightsMap = new NumberRangeMap(this);
-    internalProps._rowRangeHeightsMap = new Map();
-    internalProps._colRangeWidthsMap = new Map();
 
-    internalProps._widthResizedColMap = new Set();
-    internalProps._heightResizedRowMap = new Set();
+    (internalProps as ListTableProtected).groupBy = groupConfig?.groupBy ?? groupBy;
+    (internalProps as ListTableProtected).groupTitleCheckbox = groupConfig?.titleCheckbox;
+    (internalProps as ListTableProtected).groupTitleFieldFormat =
+      groupConfig?.titleFieldFormat ?? groupTitleFieldFormat;
+    (internalProps as ListTableProtected).groupTitleCustomLayout =
+      groupConfig?.titleCustomLayout ?? groupTitleCustomLayout;
+    (internalProps as ListTableProtected).enableTreeStickCell = groupConfig?.enableTreeStickCell ?? enableTreeStickCell;
 
-    this.colWidthsMap = new NumberMap();
-    this.colContentWidthsMap = new NumberMap();
-    this.colWidthsLimit = {};
+    if (updateConfig?.clearColWidthCache) {
+      internalProps._widthResizedColMap.clear();
+      this.colWidthsMap = new NumberMap();
+      this.colContentWidthsMap = new NumberMap();
+      this.colWidthsLimit = {};
+    }
+
+    if (updateConfig?.clearRowHeightCache) {
+      internalProps._heightResizedRowMap.clear();
+      internalProps._rowHeightsMap = new NumberRangeMap(this);
+      internalProps._rowRangeHeightsMap = new Map();
+      internalProps._colRangeWidthsMap = new Map();
+    }
 
     internalProps.stick.changedCells.clear();
 
@@ -2747,8 +2877,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       internalProps.menuHandler = new MenuHandler(this);
     }
     this.clearCellStyleCache();
-    this.clearColWidthCache();
-    this.clearRowHeightCache();
+    if (updateConfig?.clearColWidthCache) {
+      this.clearColWidthCache();
+    }
+    if (updateConfig?.clearRowHeightCache) {
+      this.clearRowHeightCache();
+    }
 
     internalProps.customMergeCell = getCustomMergeCellFunc(options.customMergeCell);
 
@@ -2950,16 +3084,16 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    * 选中单元格  和鼠标选中单元格效果一致
    * @param col
    * @param row
-   * @param isShift 是否按住 shift 键
-   * @param isCtrl 是否按住 ctrl 键
+   * @param enableShiftSelectMode 是否按住 shift 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param makeSelectCellVisible 是否让选中的单元格可见
    * @param skipBodyMerge 是否忽略合并单元格，默认 false针对合并单元自动扩大选取范围
    */
   selectCell(
     col: number,
     row: number,
-    isShift?: boolean,
-    isCtrl?: boolean,
+    enableShiftSelectMode?: boolean,
+    enableCtrlSelectMode?: boolean,
     makeSelectCellVisible?: boolean,
     skipBodyMerge: boolean = false
   ) {
@@ -2967,8 +3101,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManager.updateSelectPos(
       col,
       row,
-      isShift,
-      isCtrl,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
       false,
       makeSelectCellVisible ?? this.options.select?.makeSelectCellVisible ?? true,
       skipBodyMerge
@@ -3073,20 +3207,20 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 开始拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整列
    * @param colIndex 列索引
-   * @param isCtrl 是否按住 ctrl 键
-   * @param isShift 是否按住 shift 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
+   * @param enableShiftSelectMode 是否按住 shift 键
    */
-  startDragSelectCol(colIndex: number, isCtrl?: boolean, isShift?: boolean) {
+  startDragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean, enableShiftSelectMode?: boolean) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
-    const startCol = isShift && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
+    const startCol = enableShiftSelectMode && lastSelectRange?.start?.col ? lastSelectRange?.start?.col : colIndex;
     const startRow = 0;
     const endCol = colIndex;
     const endRow = this.rowCount - 1;
     this.stateManager.updateSelectPos(
       startCol,
       startRow,
-      isShift,
-      isCtrl,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3095,8 +3229,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     this.stateManager.updateSelectPos(
       endCol,
       endRow,
-      isShift,
-      isCtrl,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3105,9 +3239,9 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 拖拽选择列. 当结合插件table-series-number使用时，需要使用这个方法来拖拽选择整列
    * @param colIndex 列索引
-   * @param isCtrl 是否按住 ctrl 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
    */
-  dragSelectCol(colIndex: number, isCtrl?: boolean) {
+  dragSelectCol(colIndex: number, enableCtrlSelectMode?: boolean) {
     const currentSelectRanges = this.stateManager.select.ranges;
     const lastSelectRange = currentSelectRanges[currentSelectRanges.length - 1];
     if (lastSelectRange) {
@@ -3117,7 +3251,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       colIndex,
       this.rowCount - 1,
       false,
-      isCtrl,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3134,10 +3268,10 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   /**
    * 开始拖拽选择行. 当结合插件table-series-number使用时，需要使用这个方法来开始拖拽选择整行
    * @param rowIndex 行索引
-   * @param isCtrl 是否按住 ctrl 键
+   * @param enableCtrlSelectMode 是否按住 ctrl 键
    * @param isShift 是否按住 shift 键
    */
-  startDragSelectRow(rowIndex: number, isCtrl?: boolean, isShift?: boolean) {
+  startDragSelectRow(rowIndex: number, enableCtrlSelectMode?: boolean, isShift?: boolean) {
     const lastSelectRange = this.stateManager.select.ranges[this.stateManager.select.ranges.length - 1];
     const startCol = 0;
     const startRow = isShift && lastSelectRange?.start?.row ? lastSelectRange?.start?.row : rowIndex;
@@ -3147,7 +3281,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       startCol,
       startRow,
       isShift,
-      isCtrl,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3157,7 +3291,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       endCol,
       endRow,
       isShift,
-      isCtrl,
+      enableCtrlSelectMode,
       false,
       this.options.select?.makeSelectCellVisible ?? true,
       true
@@ -3894,7 +4028,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     if (this.isHeader(col, row)) {
       icons = this.internalProps.headerHelper.getIcons(col, row);
     } else if ((this.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumber(col, row)) {
-      if (!(this.options as ListTableConstructorOptions).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
+      if (!(this.internalProps as ListTableProtected).groupBy || !this.getCellRawRecord(col, row)?.vtableMerge) {
         const dragOrder = (this.internalProps.layoutMap as SimpleHeaderLayoutMap).getSeriesNumberBody(col, row)?.define
           ?.dragOrder;
         if (dragOrder) {
@@ -4840,8 +4974,5 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     } else {
       this._containerFit = { width: false, height: false };
     }
-  }
-  set customConfig(customConfig: any) {
-    this.options.customConfig = customConfig;
   }
 }

@@ -260,6 +260,20 @@
             "zh": "甘特图导出",
             "en": "Gantt Export"
           }
+        },
+        {
+          "path": "gantt_zoom_scale",
+          "title": {
+            "zh": "智能缩放",
+            "en": "Smart Zoom Scale"
+          }
+        },
+        {
+          "path": "gantt_datazoom",
+          "title": {
+            "zh": "甘特图缩放滚动条",
+            "en": "Gantt DataZoomAxis Scrollbar"
+          }
         }
       ]
     },
@@ -289,6 +303,99 @@
           "title": {
             "zh": "日历图自定义单元格",
             "en": "calendar custom layout"
+          }
+        }
+      ]
+    },
+    {
+      "path": "sheet",
+      "title": {
+        "zh": "Sheet",
+        "en": "sheet"
+      },
+      "children": [
+        {
+          "path": "introduction",
+          "title": {
+            "zh": "VTable-Sheet介绍",
+            "en": "VTable-Sheet introduction"
+          }
+        },
+        {
+          "path": "Getting_Started",
+          "title": {
+            "zh": "快速上手",
+            "en": "sheet getting started"
+          }
+        },
+        {
+          "path": "multi-sheet",
+          "title": {
+            "zh": "多表格页",
+            "en": "multi sheet"
+          }
+        },
+        {
+          "path": "style",
+          "title": {
+            "zh": "样式",
+            "en": "style"
+          }
+        },
+        {
+          "path": "formula",
+          "title": {
+            "zh": "公式计算",
+            "en": "formula"
+          }
+        },
+        {
+          "path": "filter",
+          "title": {
+            "zh": "数据过滤",
+            "en": "filter"
+          }
+        },
+        {
+          "path": "menu",
+          "title": {
+            "zh": "菜单功能",
+            "en": "sheet menu"
+          }
+        },
+        {
+          "path": "plugins",
+          "title": {
+            "zh": "插件",
+            "en": "sheet plugins"
+          }
+        },
+        {
+          "path": "persistence",
+          "title": {
+            "zh": "数据持久化",
+            "en": "persistence"
+          }
+        },
+        {
+          "path": "import_export",
+          "title": {
+            "zh": "导入导出",
+            "en": "import and export"
+          }
+        },
+        {
+          "path": "editor",
+          "title": {
+            "zh": "单元格编辑",
+            "en": "cell editor"
+          }
+        },
+        {
+          "path": "other",
+          "title": {
+            "zh": "其他功能",
+            "en": "other"
           }
         }
       ]
@@ -449,6 +556,13 @@
           "title": {
             "zh": "行序号",
             "en": "row series number"
+          }
+        },
+        {
+          "path": "render_on_current_canvas",
+          "title": {
+            "zh": "在已有的 canvas 中渲染表格",
+            "en": "render on current canvas"
           }
         }
       ]
@@ -817,6 +931,13 @@
           }
         },
         {
+          "path": "master-detail",
+          "title": {
+            "zh": "主从表",
+            "en": "master detail table"
+          }
+        },
+        {
           "path": "row-column-series",
           "title": {
             "zh": "行列序号",
@@ -852,6 +973,13 @@
           }
         },
         {
+          "path": "paste-add-row-column",
+          "title": {
+            "zh": "粘贴新增行和列插件",
+            "en": "paste add row and column plugin"
+          }
+        },
+        {
           "path": "table-carousel-animation",
           "title": {
             "zh": "表格轮播动画",
@@ -880,10 +1008,38 @@
           }
         },
         {
+          "path": "table-export",
+          "title": {
+            "zh": "表格导出",
+            "en": "table export"
+          }
+        },
+        {
           "path": "table-series-number",
           "title": {
             "zh": "表格专用序号插件",
             "en": "table series number plugin"
+          }
+        },
+        {
+          "path": "context-menu",
+          "title": {
+            "zh": "右键菜单插件",
+            "en": "context menu plugin"
+          }
+        },
+        {
+          "path": "auto-fill",
+          "title": {
+            "zh": "自动填充插件",
+            "en": "auto fill plugin"
+          }
+        },
+        {
+          "path": "filter",
+          "title": {
+            "zh": "筛选插件",
+            "en": "filter plugin"
           }
         }
       ]

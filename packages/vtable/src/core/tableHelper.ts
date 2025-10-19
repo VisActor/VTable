@@ -14,10 +14,11 @@ import type {
   ListTableConstructorOptions,
   SortState
 } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import { defaultOrderFn } from '../tools/util';
 import type { ListTable } from '../ListTable';
-import { isValid } from '@visactor/vutils';
+import { isValid, isArray } from '@visactor/vutils';
+import type { PluginManager } from '../plugins/plugin-manager';
 
 export function createRootElement(padding: any, className: string = 'vtable'): HTMLElement {
   const element = document.createElement('div');
@@ -61,14 +62,23 @@ export function _dealWithUpdateDataSource(table: BaseTableAPI, fn: (table: BaseT
 }
 /** @private */
 export function _setRecords(table: ListTableAPI, records: any[] = []): void {
+  const tableWithPlugins = table as ListTableAPI & { pluginManager?: PluginManager };
+
   _dealWithUpdateDataSource(table, () => {
     table.internalProps.records = records;
+    let rowHierarchyType = table.internalProps.layoutMap.rowHierarchyType;
+    if (isArray(table.internalProps.dataConfig?.groupByRules)) {
+      rowHierarchyType = 'tree';
+    }
+    if (tableWithPlugins.pluginManager.getPluginByName('Master Detail Plugin')) {
+      rowHierarchyType = 'grid';
+    }
     const newDataSource = (table.internalProps.dataSource = CachedDataSource.ofArray(
       records,
       table.internalProps.dataConfig,
       table.pagination,
       table.internalProps.columns,
-      table.internalProps.layoutMap.rowHierarchyType,
+      rowHierarchyType,
       getHierarchyExpandLevel(table)
     ));
     table.addReleaseObj(newDataSource);
@@ -78,7 +88,7 @@ export function _setRecords(table: ListTableAPI, records: any[] = []): void {
 function getHierarchyExpandLevel(table: ListTableAPI) {
   if ((table.options as ListTableConstructorOptions).hierarchyExpandLevel) {
     return (table.options as ListTableConstructorOptions).hierarchyExpandLevel;
-  } else if (table.options.groupBy) {
+  } else if ((table.internalProps as ListTableProtected).groupBy) {
     return Infinity;
   }
   return table._hasHierarchyTreeHeader?.() ? 1 : undefined;

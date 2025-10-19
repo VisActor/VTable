@@ -1,57 +1,69 @@
-import type { Sheet } from '../core/Sheet';
-import type { CellCoord, CellRange } from '../ts-types';
+import type { CellClickEvent, CellValueChangedEvent, SelectionChangedEvent } from '../ts-types';
+import type VTableSheet from '../components/vtable-sheet';
 
 /**
- * Manages events and event handlers for the Sheet component
+ * 事件管理器类
+ * 负责处理VTableSheet组件的事件系统中转和基础DOM事件
  */
 export class EventManager {
-  private sheet: Sheet;
+  private sheet: VTableSheet;
   private boundHandlers: Map<string, EventListener> = new Map();
 
+  // 预先绑定的事件处理方法
+  readonly handleCellClickBind: (event: CellClickEvent) => void;
+  readonly handleCellValueChangedBind: (event: CellValueChangedEvent) => void;
+  readonly handleSelectionChangedForRangeModeBind: (event: SelectionChangedEvent) => void;
+
   /**
-   * Creates a new EventManager instance
-   * @param sheet The Sheet instance
+   * 创建事件管理器实例
+   * @param sheet VTableSheet实例
    */
-  constructor(sheet: Sheet) {
+  constructor(sheet: VTableSheet) {
     this.sheet = sheet;
+
+    // 预先绑定事件处理方法
+    this.handleCellClickBind = this.handleCellClick.bind(this);
+    this.handleCellValueChangedBind = this.handleCellValueChanged.bind(this);
+    this.handleSelectionChangedForRangeModeBind = this.handleSelectionChangedForRangeMode.bind(this);
+
     this.setupEventListeners();
   }
 
   /**
-   * Sets up event listeners for the sheet element
+   * 设置DOM事件监听
    */
   private setupEventListeners(): void {
-    // Get the sheet element
-    const element = this.sheet.getElement();
+    // 获取Sheet元素
+    const element = this.sheet.getContainer();
 
-    // Set up mouse events
+    // 设置鼠标事件
     this.addEvent(element, 'mousedown', this.handleMouseDown.bind(this));
     this.addEvent(element, 'mousemove', this.handleMouseMove.bind(this));
     this.addEvent(element, 'mouseup', this.handleMouseUp.bind(this));
     this.addEvent(element, 'dblclick', this.handleDoubleClick.bind(this));
 
-    // Set up keyboard events
+    // 设置键盘事件
     this.addEvent(element, 'keydown', this.handleKeyDown.bind(this));
     this.addEvent(element, 'keyup', this.handleKeyUp.bind(this));
 
-    // Set up clipboard events
+    // 设置剪贴板事件
     this.addEvent(element, 'copy', this.handleCopy.bind(this));
     this.addEvent(element, 'paste', this.handlePaste.bind(this));
     this.addEvent(element, 'cut', this.handleCut.bind(this));
 
-    // Set up focus events
+    // 设置焦点事件
     this.addEvent(element, 'focus', this.handleFocus.bind(this));
     this.addEvent(element, 'blur', this.handleBlur.bind(this));
 
-    // Window resize event
+    // 窗口大小变化事件
     this.addEvent(window, 'resize', this.handleWindowResize.bind(this));
   }
 
   /**
-   * Adds an event listener and stores the bound handler for later removal
-   * @param target Event target
-   * @param eventType Event type
-   * @param handler Event handler
+   * 添加DOM事件监听
+   * @param target 事件目标
+   * @param eventType 事件类型
+   * @param handler 事件处理函数
    */
   private addEvent(target: EventTarget, eventType: string, handler: EventListener): void {
     target.addEventListener(eventType, handler);
@@ -59,151 +71,102 @@ export class EventManager {
   }
 
   /**
-   * Handles mouse down events
-   * @param event Mouse event
+   * 处理单元格选择事件
+   * 这个方法处理从Worksheet冒泡上来的cell-selected事件
+   * @param event 单元格选择事件数据
    */
+  handleCellClick(event: CellClickEvent): void {
+    // 如果在公式编辑状态，不处理
+    if (this.sheet.formulaManager.formulaWorkingOnCell) {
+      return;
+    }
+
+    // 重置公式栏显示标志，让公式栏显示选中单元格的值
+    const formulaUIManager = this.sheet.formulaUIManager;
+    formulaUIManager.isFormulaBarShowingResult = false;
+    formulaUIManager.clearFormula();
+    formulaUIManager.updateFormulaBar();
+  }
+
+  /**
+   * 处理单元格值变更事件
+   * @param event 单元格值变更事件数据
+   */
+  handleCellValueChanged(event: CellValueChangedEvent): void {
+    // 处理公式相关逻辑
+    this.sheet.formulaManager.formulaRangeSelector.handleCellValueChanged(event);
+  }
+
+  /**
+   * 处理选择范围变化事件
+   * @param event 选择范围变化事件数据
+   */
+  handleSelectionChangedForRangeMode(event: SelectionChangedEvent): void {
+    // 处理公式相关逻辑
+    this.sheet.formulaManager.formulaRangeSelector.handleSelectionChangedForRangeMode(event);
+  }
+
+  // 原有DOM事件处理方法保持不变
   private handleMouseDown(event: MouseEvent): void {
-    // TODO: Implement cell selection logic
-    // 1. Get the cell coordinates from the mouse position
-    // 2. Start cell selection
-    // 3. Update UI to show selection
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles mouse move events
-   * @param event Mouse event
-   */
   private handleMouseMove(event: MouseEvent): void {
-    // TODO: Implement cell selection dragging
-    // 1. If selection is active, extend selection to current cell
-    // 2. Update UI to show selection
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles mouse up events
-   * @param event Mouse event
-   */
   private handleMouseUp(event: MouseEvent): void {
-    // TODO: Implement end of cell selection
-    // 1. Finalize the selection
-    // 2. Update UI
-    // 3. Trigger selection change event
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles double click events
-   * @param event Mouse event
-   */
   private handleDoubleClick(event: MouseEvent): void {
-    // TODO: Start cell editing
-    // 1. Get cell coordinates
-    // 2. Switch cell to edit mode
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles key down events
-   * @param event Keyboard event
-   */
   private handleKeyDown(event: KeyboardEvent): void {
-    // TODO: Handle keyboard navigation and commands
-    // Examples:
-    // - Arrow keys: Move selection
-    // - Enter: Start editing or move down
-    // - Tab: Move right
-    // - Shift+Tab: Move left
-    // - Ctrl/Cmd+C: Copy
-    // - Ctrl/Cmd+V: Paste
-    // - Ctrl/Cmd+Z: Undo
-    // - Ctrl/Cmd+Y: Redo
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles key up events
-   * @param event Keyboard event
-   */
   private handleKeyUp(event: KeyboardEvent): void {
-    // Handle any key up specific logic
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles copy events
-   * @param event Clipboard event
-   */
   private handleCopy(event: ClipboardEvent): void {
-    // TODO: Copy selected cells to clipboard
-    // 1. Get selected range
-    // 2. Format data for clipboard
-    // 3. Set clipboard data
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles paste events
-   * @param event Clipboard event
-   */
   private handlePaste(event: ClipboardEvent): void {
-    // TODO: Paste clipboard data to selected cells
-    // 1. Get clipboard data
-    // 2. Parse data
-    // 3. Apply to selected range
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles cut events
-   * @param event Clipboard event
-   */
   private handleCut(event: ClipboardEvent): void {
-    // TODO: Cut selected cells to clipboard
-    // 1. Copy selected cells to clipboard
-    // 2. Clear selected cells
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles focus events
-   * @param event Focus event
-   */
   private handleFocus(event: FocusEvent): void {
-    // Handle focus-related logic
+    // 原有逻辑保持不变
   }
 
-  /**
-   * Handles blur events
-   * @param event Focus event
-   */
   private handleBlur(event: FocusEvent): void {
-    // Handle blur-related logic
+    // 原有逻辑保持不变
   }
 
   /**
-   * Handles window resize events
-   * @param event Resize event
+   * 处理窗口大小变化事件
+   * @param event UI事件
    */
   private handleWindowResize(event: UIEvent): void {
-    // Update sheet size on window resize
-    this.sheet._updateSize();
+    // 更新Sheet大小
+    this.sheet.resize();
   }
 
   /**
-   * Converts mouse coordinates to cell coordinates
-   * @param x Mouse X coordinate
-   * @param y Mouse Y coordinate
-   * @returns Cell coordinates
-   */
-  private getCellFromMouseCoords(x: number, y: number): CellCoord {
-    // TODO: Implement conversion of mouse coordinates to cell coordinates
-    // This is a placeholder implementation
-    return {
-      row: 0,
-      col: 0
-    };
-  }
-
-  /**
-   * Releases all event handlers
+   * 释放所有事件处理函数
    */
   release(): void {
-    const element = this.sheet.getElement();
+    const element = this.sheet.getContainer();
 
-    // Remove all event listeners
+    // 移除所有DOM事件监听器
     for (const [key, handler] of this.boundHandlers.entries()) {
       const eventType = key.split('-')[0];
 
@@ -214,7 +177,7 @@ export class EventManager {
       }
     }
 
-    // Clear the map
+    // 清空事件处理函数映射
     this.boundHandlers.clear();
   }
 }

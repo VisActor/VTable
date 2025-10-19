@@ -5,9 +5,11 @@ import type {
   IRowSeriesNumber,
   ListTableAPI,
   PivotTableAPI,
+  PivotChartAPI,
   RadioColumnDefine,
   RadioStyleOption,
-  TextColumnDefine
+  TextColumnDefine,
+  IDimensionInfo
 } from '../../ts-types';
 import { HierarchyState, IconPosition } from '../../ts-types';
 import * as calc from '../../tools/calc';
@@ -34,15 +36,14 @@ import { getOrApply } from '../../tools/helper';
  */
 export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?: number, update?: boolean): void {
   // const time = typeof window !== 'undefined' ? window.performance.now() : 0;
-  (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig &&
-    (table as PivotTableAPI | ListTableAPI)._parseColumnWidthConfig(
-      (table as PivotTableAPI | ListTableAPI).internalProps.columnWidthConfig as any
-    );
 
-  (table as PivotTableAPI).isPivotTable() &&
-    (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader &&
-    (table as PivotTableAPI)._parseColumnWidthConfigForRowHeader(
-      (table as PivotTableAPI).internalProps.columnWidthConfigForRowHeader
+  table.internalProps.columnWidthConfig && _parseColumnWidthConfig(table, table.internalProps.columnWidthConfig as any);
+
+  (table as PivotTableAPI | PivotChartAPI).isPivotTable() &&
+    (table as PivotTableAPI | PivotChartAPI).internalProps.columnWidthConfigForRowHeader &&
+    _parseColumnWidthConfigForPivotRowHeader(
+      table as PivotTableAPI | PivotChartAPI,
+      (table as PivotTableAPI | PivotChartAPI).internalProps.columnWidthConfigForRowHeader
     );
 
   colStart = colStart ?? 0;
@@ -112,10 +113,6 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
 
   // 处理adaptive宽度
   if (table.widthMode === 'adaptive') {
-    // const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
-    // const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
-    // const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
-
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
     let actualHeaderWidth = 0;
@@ -135,39 +132,6 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
       endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
     }
     getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
-    // const canvasWidth = table.internalProps.canvas.width;
-    // const rowHeaderWidth = table.getColsWidth(0, table.rowHeaderLevelCount - 1);
-    // const rightHeaderWidth = table.isPivotChart() ? table.getRightFrozenColsWidth() : 0;
-    // const totalDrawWidth = table.tableNoFrameWidth - rowHeaderWidth - rightHeaderWidth;
-    // const startCol = table.rowHeaderLevelCount;
-    // const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
-    // let actualWidth = 0;
-    // for (let col = startCol; col < endCol; col++) {
-    //   actualWidth += update ? newWidths[col] : table.getColWidth(col);
-    // }
-    // const factor = totalDrawWidth / actualWidth;
-    // for (let col = startCol; col < endCol; col++) {
-    //   let colWidth;
-    //   if (col === endCol - 1) {
-    //     colWidth =
-    //       totalDrawWidth -
-    //       (update
-    //         ? newWidths.reduce((acr, cur, index) => {
-    //             if (index >= startCol && index <= endCol - 2) {
-    //               return acr + cur;
-    //             }
-    //             return acr;
-    //           }, 0)
-    //         : table.getColsWidth(startCol, endCol - 2));
-    //   } else {
-    //     colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
-    //   }
-    //   if (update) {
-    //     newWidths[col] = table._adjustColWidth(col, colWidth);
-    //   } else {
-    //     table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
-    //   }
-    // }
   } else if (table.autoFillWidth) {
     table._clearColRangeWidthsMap();
     const canvasWidth = table.tableNoFrameWidth;
@@ -176,8 +140,9 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     for (let col = 0; col < table.colCount; col++) {
       const colWidth = update ? newWidths[col] ?? table.getColWidth(col) : table.getColWidth(col);
       if (
-        col < table.rowHeaderLevelCount + table.leftRowSeriesNumberCount ||
-        (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+        table.widthAdaptiveMode === 'only-body' &&
+        (col < table.rowHeaderLevelCount + table.leftRowSeriesNumberCount ||
+          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount))
       ) {
         actualHeaderWidth += colWidth;
       }
@@ -185,42 +150,15 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
     }
     // 如果内容宽度小于canvas宽度，执行adaptive放大
     if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-      const startCol = table.rowHeaderLevelCount + table.leftRowSeriesNumberCount;
-      const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+      let startCol = 0;
+      let endCol = table.colCount;
+      if (table.widthAdaptiveMode === 'only-body') {
+        startCol = table.rowHeaderLevelCount + table.leftRowSeriesNumberCount;
+        endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+      }
       getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, update, newWidths, table);
     }
-
-    // // 如果内容宽度小于canvas宽度，执行adaptive放大
-    // if (actualWidth < canvasWidth && actualWidth - actualHeaderWidth > 0) {
-    //   const factor = (canvasWidth - actualHeaderWidth) / (actualWidth - actualHeaderWidth);
-    //   for (let col = table.frozenColCount; col < table.colCount - table.rightFrozenColCount; col++) {
-    //     let colWidth;
-    //     if (col === table.colCount - table.rightFrozenColCount - 1) {
-    //       colWidth =
-    //         canvasWidth -
-    //         actualHeaderWidth -
-    //         (update
-    //           ? newWidths.reduce((acr, cur, index) => {
-    //               if (index >= table.frozenColCount && index <= table.colCount - table.rightFrozenColCount - 2) {
-    //                 return acr + cur;
-    //               }
-    //               return acr;
-    //             }, 0)
-    //           : table.getColsWidth(table.frozenColCount, table.colCount - table.rightFrozenColCount - 2));
-    //     } else {
-    //       colWidth = Math.round((update ? newWidths[col] : table.getColWidth(col)) * factor);
-    //     }
-    //     if (update) {
-    //       // newWidths[col] = newWidths[col] * factor;
-    //       newWidths[col] = table._adjustColWidth(col, colWidth);
-    //     } else {
-    //       // table.setColWidth(col, table.getColWidth(col) * factor, false, true);
-    //       table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
-    //     }
-    //   }
-    // }
   }
-  // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time);
 
   if (update) {
     for (let col = 0; col < table.colCount; col++) {
@@ -244,7 +182,7 @@ export function computeColsWidth(table: BaseTableAPI, colStart?: number, colEnd?
         table.scenegraph.updateColWidth(col, newColWidth - oldColWidths[col], true, true);
       }
     }
-    table.scenegraph.updateContainer(true);
+    table.scenegraph.updateContainer({ async: true });
   }
   // console.log('computeColsWidth  time:', (typeof window !== 'undefined' ? window.performance.now() : 0) - time, colStart, colEnd);
 
@@ -319,8 +257,20 @@ function computeAutoColWidth(
   // 如果是透视图
   if (table.isPivotChart() && col >= table.rowHeaderLevelCount && col < table.colCount - table.rightFrozenColCount) {
     if (!(table.internalProps.layoutMap as PivotHeaderLayoutMap).indicatorsAsCol) {
+      //这里判断指标是不是热力图，注意这里既定了用户只设置一种指标
+      const chartSpec = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getChartSpec(
+        col,
+        table.columnHeaderLevelCount
+      );
+      let isHeatmap = false;
+      if (chartSpec.type === 'heatmap') {
+        isHeatmap = true;
+      }
       //并且指标是以行展示 计算列宽需要根据x轴的值域范围
-      const optimunWidth = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunWidthForChart(col);
+      const optimunWidth = (table.internalProps.layoutMap as PivotHeaderLayoutMap).getOptimunWidthForChart(
+        col,
+        isHeatmap
+      );
       if (optimunWidth > 0) {
         return optimunWidth;
       }
@@ -855,6 +805,91 @@ export function getAdaptiveWidth(
       table.scenegraph.setColWidth(col, table._adjustColWidth(col, colWidth));
     } else {
       table._setColWidth(col, table._adjustColWidth(col, colWidth), false, true);
+    }
+  }
+}
+
+function _parseColumnWidthConfig(table: BaseTableAPI, columnWidthConfig: any) {
+  if (table.isPivotTable()) {
+    // 透视表和透视图都会走这个逻辑
+    _parseColumnWidthConfigForPivotTable(table as PivotTableAPI, columnWidthConfig);
+  } else if (table.isListTable()) {
+    _parseColumnWidthConfigForListTable(table as ListTableAPI, columnWidthConfig);
+  }
+}
+function _parseColumnWidthConfigForListTable(table: ListTableAPI, columnWidthConfig: any) {
+  for (let i = 0; i < columnWidthConfig?.length; i++) {
+    const item = columnWidthConfig[i];
+    const key = item.key;
+    const width = item.width;
+    const columnData = table.internalProps.layoutMap.getColumnByKey(key);
+    if (columnData.columnDefine) {
+      const { col } = columnData;
+      if (!table.internalProps._widthResizedColMap.has(col)) {
+        table._setColWidth(col, width);
+        table.internalProps._widthResizedColMap.add(col); // add resize tag
+      }
+    }
+  }
+}
+function _parseColumnWidthConfigForPivotTable(
+  table: PivotTableAPI | PivotChartAPI,
+  columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]
+) {
+  for (let i = 0; i < columnWidthConfig?.length; i++) {
+    const item = columnWidthConfig[i];
+    const dimensions = item.dimensions;
+    const width = item.width;
+    const cell = table.getCellAddressByHeaderPaths(dimensions);
+    if (cell && cell.col >= table.rowHeaderLevelCount) {
+      const cellPath = table.getCellHeaderPaths(cell.col, table.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
+      if (cellPath.colHeaderPaths.length === dimensions.length) {
+        let match = true;
+        for (let i = 0; i < dimensions.length; i++) {
+          const dimension = dimensions[i];
+          const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
+            if (colPath.indicatorKey === dimension.indicatorKey) {
+              return true;
+            }
+            if (colPath.dimensionKey === dimension.dimensionKey && colPath.value === dimension.value) {
+              return true;
+            }
+            return false;
+          });
+          if (finded < 0) {
+            match = false;
+            break;
+          }
+        }
+        if (match && !table.internalProps._widthResizedColMap.has(cell.col)) {
+          table._setColWidth(cell.col, width);
+          table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+        }
+      }
+    } else if (cell && cell.col < table.rowHeaderLevelCount) {
+      if (!table.internalProps._widthResizedColMap.has(cell.col)) {
+        table._setColWidth(cell.col, width);
+        table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      }
+    }
+  }
+}
+
+// particularly for row header in react-vtable keepColumnWidthChange config
+function _parseColumnWidthConfigForPivotRowHeader(
+  table: PivotTableAPI | PivotChartAPI,
+  columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]
+) {
+  for (let i = 0; i < columnWidthConfig?.length; i++) {
+    const item = columnWidthConfig[i];
+    const dimensions = item.dimensions;
+    const width = item.width;
+    const cell = table.getCellAddressByHeaderPaths(dimensions);
+    if (cell && cell.col < table.rowHeaderLevelCount) {
+      if (!table.internalProps._widthResizedColMap.has(cell.col)) {
+        table._setColWidth(cell.col, width);
+        table.internalProps._widthResizedColMap.add(cell.col); // add resize tag
+      }
     }
   }
 }

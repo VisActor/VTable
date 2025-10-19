@@ -3,6 +3,7 @@ import { genNumberType, Rect } from '@src/vrender';
 import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
+import { getCellHoverColor } from '../../state/hover/is-cell-hover';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -25,6 +26,7 @@ interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   tableChartOption: any;
   col?: number;
   row?: number;
+  detectPickChartItem?: boolean;
 }
 
 export const CHART_NUMBER_TYPE = genNumberType();
@@ -90,6 +92,7 @@ export class Chart extends Rect {
   activate(table: BaseTableAPI) {
     this.active = true;
     const { col, row } = this.parent;
+    const hoverColor = getCellHoverColor(this.parent, table);
     // this.chart = new TestChart(this.attribute.spec);
     // const ctx = this.attribute.canvas.getContext('2d');
     // const { x1, y1, x2, y2 } = this.attribute.viewBox;
@@ -165,6 +168,17 @@ export class Chart extends Rect {
 
           stage.needRender = false;
           chartStage.resumeRender();
+        },
+        renderHooks: {
+          afterClearRect(drawParams: any) {
+            const { context, layer, viewBox } = drawParams;
+            if (layer.main && drawParams.clear && hoverColor) {
+              context.beginPath();
+              context.fillStyle = hoverColor;
+              context.rect(viewBox.x1, viewBox.y1, viewBox.x2 - viewBox.x1, viewBox.y2 - viewBox.y1);
+              context.fill();
+            }
+          }
         }
       })
     );

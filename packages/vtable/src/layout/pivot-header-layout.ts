@@ -3392,10 +3392,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       needLowestLevel_colPaths = true;
       needLowestLevel_rowPaths = true;
     }
-    if (colHeaderPaths.length >= this._getColumnHeaderTreeExpandedMaxLevelCount()) {
+    if ((colHeaderPaths?.length ?? 0) && colHeaderPaths.length >= this._getColumnHeaderTreeExpandedMaxLevelCount()) {
       needLowestLevel_colPaths = true;
     }
-    if (rowHeaderPaths.length >= this._getRowHeaderTreeExpandedMaxLevelCount()) {
+    if ((rowHeaderPaths?.length ?? 0) && rowHeaderPaths.length >= this._getRowHeaderTreeExpandedMaxLevelCount()) {
       needLowestLevel_rowPaths = true;
     }
     let col;
@@ -3791,25 +3791,61 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
   /**
    *  获取图表对应的维度key非指标
    * */
-  getDimensionKeyInChartSpec(_col: number, _row: number) {
+  getDimensionKeyInChartSpec(_col: number, _row: number, type?: 'xField' | 'yField') {
     let dimensionKey: string;
     if (this.indicatorsAsCol === false) {
-      //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
+      const chartSpec = this.getRawChartSpec(_col, _row);
+      if (chartSpec) {
+        dimensionKey =
+          type === 'yField'
+            ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+            : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+            ? chartSpec.x2Field
+            : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+
+        if (dimensionKey) {
+          return dimensionKey;
+        }
+      }
+      //考虑pie和bar 同时配置的情况 , 只有上面的判断逻辑是不足的，例如https://bugserver.cn.goofy.app/case?product=VTable&fileid=65a66c5c518457638fa485bf
       for (let i = 0; i < this.indicatorsDefine.length; i++) {
         const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
         if (chartSpec) {
-          dimensionKey = chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+          dimensionKey =
+            type === 'yField'
+              ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+              : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+              ? chartSpec.x2Field
+              : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+
           if (dimensionKey) {
             return dimensionKey;
           }
         }
       }
     } else {
-      //考虑pie和bar 同时配置的情况 series?.[0]?.xField;没有的情况
+      const chartSpec = this.getRawChartSpec(_col, _row);
+      if (chartSpec) {
+        dimensionKey =
+          type === 'xField'
+            ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+              ? chartSpec.x2Field
+              : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+            : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+        if (dimensionKey) {
+          return dimensionKey;
+        }
+      }
+      //考虑pie和bar 同时配置的情况 , 只有上面的判断逻辑是不足的，例如https://bugserver.cn.goofy.app/case?product=VTable&fileid=65a66c5c518457638fa485bf
       for (let i = 0; i < this.indicatorsDefine.length; i++) {
         const chartSpec = (this.indicatorsDefine[i] as IChartIndicator).chartSpec;
         if (chartSpec) {
-          dimensionKey = chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+          dimensionKey =
+            type === 'xField'
+              ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+                ? chartSpec.x2Field
+                : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+              : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
           if (dimensionKey) {
             return dimensionKey;
           }
@@ -3948,8 +3984,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     return null;
   }
   /** 获取某一图表列的最优高度，计算逻辑是根据图表的yField的维度值个数 * barWidth */
-  getOptimunHeightForChart(row: number) {
+  getOptimunHeightForChart(row: number, isHeatmap: boolean) {
     const path = this.getCellHeaderPaths(this.rowHeaderLevelCount, row).rowHeaderPaths;
+    if (isHeatmap) {
+      //如果是热力图，最后一层指标不能参与路径匹配
+      if (path[path.length - 1].indicatorKey) {
+        path.pop();
+      }
+    }
     let collectedValues: any;
     for (const key in this.dataset.collectValuesBy) {
       if (this.dataset.collectValuesBy[key].type === 'yField' && !this.dataset.collectValuesBy[key].range) {
@@ -3975,13 +4017,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     } else {
       const barWidth = this._chartItemSpanSize || 25;
-      height = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+      height = (collectedValues?.length ?? 0) * (barWidth + (isHeatmap ? 0 : barWidth / 3));
     }
     const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);
     return height + padding[0] + padding[2];
   }
   /** 获取某一图表列的最优宽度，计算逻辑是根据图表的xField的维度值个数 * barWidth */
-  getOptimunWidthForChart(col: number) {
+  getOptimunWidthForChart(col: number, isHeatmap: boolean) {
     const path = this.getCellHeaderPaths(col, this.columnHeaderLevelCount).colHeaderPaths;
     let collectedValues: any;
     for (const key in this.dataset.collectValuesBy) {
@@ -4008,7 +4050,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       );
     } else {
       const barWidth = this._chartItemSpanSize || 25;
-      width = (collectedValues?.length ?? 0) * (barWidth + barWidth / 3);
+      width = (collectedValues?.length ?? 0) * (barWidth + (isHeatmap ? 0 : barWidth / 3));
     }
 
     const padding = getQuadProps(this._chartPadding ?? (this._table.theme.bodyStyle.padding as number) ?? 0);

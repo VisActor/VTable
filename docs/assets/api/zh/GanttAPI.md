@@ -43,6 +43,8 @@
 ```
   updateScales: (scales: ITimelineScale[]) => void
 ```
+ITimelineScale的类型参考[配置文档]:https://visactor.com/vtable/option/Gantt#timelineHeader.scales(Array%3CITimelineScale%3E)
+
 
 {{ use: common-gantt-timeline-scale }}
 
@@ -141,11 +143,12 @@
 具体使用方式：
 
 ```
+  import * as VTableGantt from '@visactor/vtable-gantt';
   const tableInstance =new Gantt(containerDom, options);
 
   const {
       CLICK_TASK_BAR
-    } = EVENT_TYPES;
+    } = VTableGantt.TYPES.GANTT_EVENT_TYPE;
 
   tableInstance.on(CLICK_TASK_BAR, (args) => console.log(CLICK_CELL, args));
 ```
@@ -187,6 +190,10 @@ export interface EVENT_TYPES {
    * 创建任务依赖关系
    */
   CREATE_DEPENDENCY_LINK: 'create_dependency_link';
+  /**
+   * 任务条移动结束事件
+   */
+  MOVE_END_TASK_BAR: 'move_end_task_bar';
 }
 ```
 
@@ -197,9 +204,17 @@ export interface EVENT_TYPES {
 如下为监听表格单元格选中事件的例子：
 
 ```
-  const tableInstance =new Gantt(containerDom, options);
-  tableInstance.taskListTableInstance.on('click_cell', (args)=>{});
+  const ganttInstance =new Gantt(containerDom, options);
+  ganttInstance.taskListTableInstance.on('click_cell', (args)=>{});
 ```
+其中 click_cell 事件也可以使用枚举类型如
+```
+  import * as VTableGantt from '@visactor/vtable-gantt';
+  ganttInstance.taskListTableInstance?.on(VTableGantt.VTable.TABLE_EVENT_TYPE.SCROLL, e => {
+    console.log('listTable scroll', e);
+  });
+```
+
 
 具体 ListTable 的事件参考：https://visactor.io/vtable/api/events
 
@@ -376,5 +391,32 @@ export interface EVENT_TYPES {
     event: Event;
     data: IMarkLine; // markLine信息
     position: IPosition; // 位置信息
+  };
+```
+
+### MOVE_END_TASK_BAR
+
+任务条移动结束事件
+
+事件回传参数：
+
+```
+ {
+    /** 第几条数据 */
+    index: number;
+    /** 改变后的起始日期 */
+    startDate: Date;
+    /** 改变后的结束日期 */
+    endDate: Date;
+    /** 改变前的起始日期 */
+    oldStartDate: Date;
+    /** 改变前的结束日期 */
+    oldEndDate: Date;
+    /** 改变后的数据条目 */
+    record: any;
+    /** 改变前所在行号 */
+    oldRowIndex: number;
+    /** 改变后所在行号 */
+    newRowIndex: number;
   };
 ```

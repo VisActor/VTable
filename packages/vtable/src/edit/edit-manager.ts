@@ -191,8 +191,15 @@ export class EditManager {
       this.isValidatingValue = true;
       const newValue = this.editingEditor.getValue();
       const oldValue = this.table.getCellOriginValue(this.editCell.col, this.editCell.row);
+      const target = e?.target as HTMLElement | undefined;
 
-      const maybePromiseOrValue = this.editingEditor.validateValue?.(newValue, oldValue, this.editCell, this.table);
+      const maybePromiseOrValue = this.editingEditor.validateValue?.(
+        newValue,
+        oldValue,
+        this.editCell,
+        this.table,
+        !!this.table.getElement().contains(target)
+      );
 
       if (isPromise(maybePromiseOrValue)) {
         this.isValidatingValue = true;
@@ -232,6 +239,7 @@ export class EditManager {
       }
       changedValues.push(rowChangedValues);
     }
+    this.editingEditor.beforeEnd?.();
     (this.table as ListTableAPI).changeCellValues(range.start.col, range.start.row, changedValues);
     this.editingEditor.exit && console.warn('VTable Warn: `exit` is deprecated, please use `onEnd` instead.');
     this.editingEditor.exit?.();

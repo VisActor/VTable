@@ -1,5 +1,5 @@
 import { isValid } from '@visactor/vutils';
-import type { SortOrder } from '../ts-types';
+import { HierarchyState, type SortOrder } from '../ts-types';
 
 export const judgeType = (value: any) => {
   switch (Object.prototype.toString.call(value)) {
@@ -442,4 +442,33 @@ export function traverseObject(obj: any, childrenProperty: string, callback: Fun
   if (obj?.[childrenProperty] && Array.isArray(obj?.[childrenProperty])) {
     obj[childrenProperty].forEach((child: any) => traverseObject(child, childrenProperty, callback));
   }
+}
+
+/**
+ * 当某个节点由展开变为折叠，需要计算出影响的节点数量 使用childrenLength来标记。同样需递归（不包含自身）
+ * @param indexKey
+ * @param hierarchyState
+ * @param nodeData
+ * @returns
+ */
+export function computeChildrenNodeLength(indexKey: number | number[], hierarchyState: HierarchyState, nodeData: any) {
+  let size = 0;
+  if (!hierarchyState || hierarchyState === HierarchyState.collapse || hierarchyState === HierarchyState.none) {
+    return size;
+  }
+  const children = nodeData.filteredChildren ? nodeData.filteredChildren : nodeData.children;
+  if (children) {
+    for (let i = 0; i < children.length; i++) {
+      size += 1;
+      const childIndex = Array.isArray(indexKey) ? indexKey.concat([i]) : [indexKey, i];
+
+      size += computeChildrenNodeLength(
+        childIndex,
+        // this.treeDataHierarchyState.get(childIndex.join(',')),
+        children[i].hierarchyState,
+        children[i]
+      );
+    }
+  }
+  return size;
 }

@@ -13,7 +13,7 @@ export function useEditorRender(props: any, tableRef: Ref) {
   const instance = getCurrentInstance();
   /** 需要渲染编辑器的列 */
   const validColumns = computed(() => {
-    const columns = props.options?.columns;
+    const columns = flattenColumns(props.options?.columns || []);
     if (!isArray(columns)) {
       return [];
     }
@@ -68,4 +68,12 @@ export function useEditorRender(props: any, tableRef: Ref) {
   function getTableId() {
     return tableRef.value?.id;
   }
+}
+
+/**
+ * @description: 获取所有扁平化的 columns
+ * @param {any} columns
+ */
+function flattenColumns(columns: any[]): any[] {
+  return columns.flatMap(column => (Array.isArray(column.columns) ? flattenColumns(column.columns) : column));
 }

@@ -14,6 +14,9 @@ export type ExportVTableToCsvOptions = {
   exportAllData?: boolean;
 };
 
+/**
+ * @deprecated 请使用@visactor/vtable-plugins中的`TableExportPlugin` 插件
+ */
 export function exportVTableToCsv(tableInstance: IVTable, option?: ExportVTableToCsvOptions): string {
   const exportAllData = !!option?.exportAllData;
   const { handleRowCount, reset } = handlePaginationExport(tableInstance, exportAllData);

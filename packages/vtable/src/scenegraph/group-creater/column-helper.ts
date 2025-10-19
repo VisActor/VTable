@@ -12,7 +12,7 @@ import { Group } from '../graphic/group';
 import { getProp, getRawProp } from '../utils/get-prop';
 import type { MergeMap } from '../scenegraph';
 import { createCell, dealWithMergeCellSize, resizeCellGroup } from './cell-helper';
-import type { BaseTableAPI, HeaderData } from '../../ts-types/base-table';
+import type { BaseTableAPI, HeaderData, ListTableProtected } from '../../ts-types/base-table';
 import { getCellCornerRadius, getStyleTheme } from '../../core/tableHelper';
 import { isPromise } from '../../tools/helper';
 import { dealPromiseData } from '../utils/deal-promise-data';
@@ -59,6 +59,9 @@ export function createComplexColumn(
     y = (columnGroup.lastChild as Group).attribute.y + (columnGroup.lastChild as Group).attribute.height;
   } else if (columnGroup.colHeight) {
     y = columnGroup.colHeight;
+  } else if (rowStart >= table.columnHeaderLevelCount && rowStart < table.rowCount - table.bottomFrozenRowCount) {
+    // 这个if判断为了解决#4357 当传入的rowStart例如50但是columnGroup中并没有其他cell的情况下，上面逻辑有问题y赋值的0 导致新建单元格错位
+    y = table.getRowsHeight(table.columnHeaderLevelCount, rowStart - 1);
   }
 
   for (let j = rowStart; j <= rowEnd; j++) {
@@ -173,9 +176,9 @@ export function createComplexColumn(
       isVtableMerge = vtableMerge;
       if (vtableMerge) {
         mayHaveIcon = true;
-        if ((table.options as ListTableConstructorOptions).groupTitleCustomLayout) {
+        if ((table.internalProps as ListTableProtected).groupTitleCustomLayout) {
           customResult = dealWithCustom(
-            (table.options as ListTableConstructorOptions).groupTitleCustomLayout,
+            (table.internalProps as ListTableProtected).groupTitleCustomLayout,
             undefined,
             range.start.col,
             range.start.row,
@@ -188,8 +191,8 @@ export function createComplexColumn(
             table
           );
         }
-        if ((table.options as ListTableConstructorOptions).groupTitleFieldFormat) {
-          value = (table.options as ListTableConstructorOptions).groupTitleFieldFormat(rawRecord, col, row, table);
+        if ((table.internalProps as ListTableProtected).groupTitleFieldFormat) {
+          value = (table.internalProps as ListTableProtected).groupTitleFieldFormat(rawRecord, col, row, table);
         } else if (vtableMergeName !== undefined) {
           value = vtableMergeName;
         }
@@ -199,9 +202,9 @@ export function createComplexColumn(
     const type =
       isVtableMerge || isCustomMerge
         ? 'text'
-        : ((table.isHeader(col, row)
-            ? ((table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
-            : table.getBodyColumnType(col, row)) ?? 'text');
+        : (table.isHeader(col, row)
+            ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
+            : table.getBodyColumnType(col, row)) ?? 'text';
 
     // deal with promise data
     if (isPromise(value)) {

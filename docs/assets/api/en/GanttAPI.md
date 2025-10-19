@@ -43,6 +43,7 @@ Update timeline scales
 ```
   updateScales: (scales: ITimelineScale[]) => void
 ```
+ITimelineScale的类型参考[配置文档]:https://visactor.com/vtable/option/Gantt#timelineHeader.scales(Array%3CITimelineScale%3E)
 
 {{ use: common-gantt-timeline-scale }}
 
@@ -141,11 +142,12 @@ The Gantt chart event list allows you to listen to the required events and imple
 Usage example:
 
 ```
+  import * as VTableGantt from '@visactor/vtable-gantt';
   const tableInstance = new Gantt(containerDom, options);
 
   const {
       CLICK_TASK_BAR
-    } = EVENT_TYPES;
+    } = VTableGantt.TYPES.GANTT_EVENT_TYPE;
 
   tableInstance.on(CLICK_TASK_BAR, (args) => console.log(CLICK_CELL, args));
 ```
@@ -199,6 +201,14 @@ The following is an example of listening to the table cell selection event:
 ```
   const tableInstance = new Gantt(containerDom, options);
   tableInstance.taskListTableInstance.on('click_cell', (args) => {});
+```
+
+The click_cell event can also be used with enumeration types, such as:
+```
+  import * as VTableGantt from '@visactor/vtable-gantt';
+  ganttInstance.taskListTableInstance?.on(VTableGantt.VTable.TABLE_EVENT_TYPE.SCROLL, e => {
+    console.log('listTable scroll', e);
+  });
 ```
 
 For specific ListTable events, refer to: https://visactor.io/vtable/api/events
@@ -390,5 +400,31 @@ Event return parameters:
     event: Event;
     data: IMarkLine; // markLine information
     position: IPosition; // position information
-  };
+};
+```
+
+### MOVE_END_TASK_BAR
+
+Event triggered when the task bar movement ends.
+The event returns the following parameters:
+
+```
+{
+    /** Which data entry */
+    index: number;
+    /** The new start date after change */
+    startDate: Date;
+    /** The new end date after change */
+    endDate: Date;
+    /** The old start date before change */
+    oldStartDate: Date;
+    /** The old end date before change */
+    oldEndDate: Date;
+    /** The data entry after change */
+    record: any;
+    /** The old row number before change */
+    oldRowIndex: number;
+    /** The new row number after change */
+    newRowIndex: number;
+}
 ```

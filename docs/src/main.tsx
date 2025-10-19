@@ -4,6 +4,7 @@ import Inula from 'openinula';
 import * as VTable from '@visactor/vtable';
 import * as VRender from '@visactor/vtable/es/vrender';
 import * as VTableGantt from '@visactor/vtable-gantt';
+import * as VTableSheet from '@visactor/vtable-sheet';
 import * as VTableCalendar from '@visactor/vtable-calendar';
 import * as VChart from '@visactor/vchart';
 import * as VTableEditors from '@visactor/vtable-editors';
@@ -11,6 +12,7 @@ import { downloadCsv, exportVTableToCsv, downloadExcel, exportVTableToExcel } fr
 import { SearchComponent } from '@visactor/vtable-search';
 import * as ReactVTable from '@visactor/react-vtable';
 import * as VueVTable from '@visactor/vue-vtable';
+import * as VUtils from '@visactor/vutils';
 import * as InulaVTable from '@visactor/openinula-vtable';
 import * as VTablePlugins from '@visactor/vtable-plugins';
 import { App } from './app';
@@ -31,7 +33,7 @@ import { createApp, ref, onMounted, h } from 'vue';
 (window as any).VTable_editors = VTableEditors;
 (window as any).VTablePlugins = VTablePlugins;
 (window as any).VChart = VChart.VChart;
-
+(window as any).VTableSheet = VTableSheet;
 (window as any).downloadCsv = downloadCsv;
 (window as any).exportVTableToCsv = exportVTableToCsv;
 (window as any).downloadExcel = downloadExcel;
@@ -51,7 +53,7 @@ import { createApp, ref, onMounted, h } from 'vue';
 
 (window as any).Inula = Inula;
 (window as any).InulaVTable = InulaVTable;
-
+(window as any).VUtils = VUtils;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>

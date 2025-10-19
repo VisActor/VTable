@@ -16,7 +16,7 @@ const generatePersons = count => {
 };
 
 export function createTable() {
-  const records = generatePersons(20);
+  const records = generatePersons(2000);
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -70,10 +70,10 @@ export function createTable() {
     tooltip: {
       isShowOverflowTextTooltip: true
     },
-    pagination: {
-      perPageCount: 10,
-      currentPage: 0
-    },
+    // pagination: {
+    //   perPageCount: 10,
+    //   currentPage: 0
+    // },
 
     rowSeriesNumber: {
       title: '行号',

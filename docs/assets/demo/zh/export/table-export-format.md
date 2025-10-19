@@ -15,15 +15,25 @@ link: '../../guide/export/excel'
 ## 代码演示
 
 ```javascript livedemo template=vtable
-// 使用时需要引入插件包@visactor/vtable-export
-// import {
-//   downloadCsv,
-//   exportVTableToCsv,
-//   downloadExcel,
-//   exportVTableToExcel,
-// } from "@visactor/vtable-export";
-// umd引入时导出工具会挂载到VTable.export
-
+// 使用时需要引入插件包@visactor/vtable-plugins
+// import * as VTablePlugins from '@visactor/vtable-plugins';
+// 正常使用方式 const tableExportPlugin = new VTablePlugins.TableExportPlugin({});
+// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+const tableExportPlugin = new VTablePlugins.TableExportPlugin({
+  exportExcelOptions: {
+    downloadFile: true,
+    fileName: 'fff-excel',
+    formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
+            if (cellType === 'checkbox') {
+              return table.getCellCheckboxState(col, row) ? 'true' : 'false';
+            }
+          }
+  },
+  exportCsvOptions: {
+    downloadFile: true,
+    fileName: 'fff'
+  },
+});
 const records = [
   { productName: 'aaaa', price: 20, check: { text: 'unchecked', checked: false, disable: false } },
   { productName: 'bbbb', price: 18, check: { text: 'checked', checked: true, disable: false } },
@@ -65,7 +75,8 @@ const columns = [
 ];
 const option = {
   records,
-  columns
+  columns,
+  plugins: [tableExportPlugin]
 };
 const tableInstance = new VTable.ListTable(document.getElementById(CONTAINER_ID), option);
 window.tableInstance = tableInstance;
@@ -95,22 +106,13 @@ function bindExport() {
 
   exportCsvButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadCsv(exportVTableToCsv(window.tableInstance), 'export');
+      window.tableInstance.exportToCsv();
     }
   });
 
   exportExcelButton.addEventListener('click', async () => {
     if (window.tableInstance) {
-      await downloadExcel(
-        await exportVTableToExcel(window.tableInstance, {
-          formatExportOutput: ({ cellType, cellValue, table, col, row }) => {
-            if (cellType === 'checkbox') {
-              return table.getCellCheckboxState(col, row) ? 'true' : 'false';
-            }
-          }
-        }),
-        'export'
-      );
+      window.tableInstance.exportToExcel();
     }
   });
 }

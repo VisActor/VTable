@@ -899,6 +899,7 @@ export function createTable() {
         }
         return {
           lineWidth: 1,
+          lineDash: [8, 4],
           lineColor: 'red'
         };
       },

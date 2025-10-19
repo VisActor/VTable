@@ -5,8 +5,9 @@ import { computeColWidth } from '../scenegraph/layout/compute-col-width';
 import { computeRowHeight } from '../scenegraph/layout/compute-row-height';
 import { isPromise } from '../tools/helper';
 import { defaultOrderFn } from '../tools/util';
-import type { SortState } from '../ts-types';
+import type { ListTableProtected, SortState } from '../ts-types';
 import { TABLE_EVENT_TYPE } from './TABLE_EVENT_TYPE';
+import { isNumber } from '@visactor/vutils';
 
 /**
  * 更改单元格数据 会触发change_cell_value事件
@@ -323,11 +324,11 @@ function getCellUpdateType(
   if (oldCellUpdateType === 'group') {
     return oldCellUpdateType;
   }
-  if (oldCellUpdateType === 'sort' && !table.options.groupBy) {
+  if (oldCellUpdateType === 'sort' && !(table.internalProps as ListTableProtected).groupBy) {
     return oldCellUpdateType;
   }
   let cellUpdateType: CellUpdateType = 'normal';
-  if (table.options.groupBy) {
+  if ((table.internalProps as ListTableProtected).groupBy) {
     cellUpdateType = 'group';
   } else if (!table.isHeader(col, row) && (table.dataSource as any).lastOrderField) {
     const field = table.getBodyField(col, row);
@@ -360,121 +361,139 @@ export function sortRecords(table: ListTable) {
  * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
-export function listTableAddRecord(record: any, recordIndex: number | number[], table: ListTable) {
-  if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
-    table.refreshRowColCount();
-    table.internalProps.layoutMap.clearCellRangeMap();
-    table.sortState && sortRecords(table);
-
-    // 更新整个场景树
-    table.scenegraph.clearCells();
-    table.scenegraph.createSceneGraph();
-  } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
-    (table.dataSource as CachedDataSource).addRecordsForTree?.([record], recordIndex);
-    table.refreshRowColCount();
-    table.internalProps.layoutMap.clearCellRangeMap();
-    table.sortState && sortRecords(table);
-
-    // 更新整个场景树
-    table.scenegraph.clearCells();
-    table.scenegraph.createSceneGraph();
-  } else if (table.sortState) {
-    table.dataSource.addRecordForSorted(record);
-    sortRecords(table);
-    table.refreshRowColCount();
-    // 更新整个场景树
-    table.scenegraph.clearCells();
-    table.scenegraph.createSceneGraph();
-  } else {
-    recordIndex = recordIndex as number;
-    if (recordIndex === undefined || recordIndex > table.dataSource.sourceLength) {
-      recordIndex = table.dataSource.sourceLength;
+export function listTableAddRecord(record: any, recordIndex: number | number[], table: ListTable): boolean {
+  try {
+    // Validate input
+    if (!record) {
+      return false;
     }
-    const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-    table.dataSource.addRecord(record, recordIndex);
-    const oldRowCount = table.rowCount;
-    table.refreshRowColCount();
-    if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
+
+    if ((table.internalProps as ListTableProtected).groupBy) {
+      (table.dataSource as CachedDataSource).addRecordsForGroup?.([record], recordIndex);
+      table.refreshRowColCount();
+      table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
+
+      // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
-      return;
-    }
-    const newRowCount = table.transpose ? table.colCount : table.rowCount;
-    if (table.pagination) {
-      const { perPageCount, currentPage } = table.pagination;
-      const startIndex = perPageCount * (currentPage || 0);
-      const endIndex = startIndex + perPageCount;
-      if (recordIndex < endIndex) {
-        //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
-        if (recordIndex < endIndex - perPageCount) {
-          // 如果是当页之前的数据 则整个场景树都更新
-          table.scenegraph.clearCells();
-          table.scenegraph.createSceneGraph();
-        } else {
-          //如果是插入当前页数据
-          const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
-          if (oldRowCount - headerCount === table.pagination.perPageCount) {
-            //如果当页数据是满的 则更新插入的部分行
-            const updateRows = [];
-            for (let row = rowNum; row < newRowCount; row++) {
-              if (table.transpose) {
-                updateRows.push({ col: row, row: 0 });
-              } else {
-                updateRows.push({ col: 0, row });
-              }
-            }
-            table.transpose
-              ? table.scenegraph.updateCol([], [], updateRows)
-              : table.scenegraph.updateRow([], [], updateRows);
+    } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
+      (table.dataSource as CachedDataSource).addRecordsForTree?.([record], recordIndex);
+
+      adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
+
+      table.refreshRowColCount();
+      table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
+
+      // 更新整个场景树
+      table.scenegraph.clearCells();
+      table.scenegraph.createSceneGraph();
+    } else if (table.sortState) {
+      table.dataSource.addRecordForSorted(record);
+      // 清理checkedState
+      table.stateManager.checkedState.clear();
+      sortRecords(table);
+      table.refreshRowColCount();
+      // 更新整个场景树
+      table.scenegraph.clearCells();
+      table.scenegraph.createSceneGraph();
+    } else {
+      recordIndex = recordIndex as number;
+      if (recordIndex === undefined || recordIndex > table.dataSource.sourceLength) {
+        recordIndex = table.dataSource.sourceLength;
+      }
+      const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+      table.dataSource.addRecord(record, recordIndex);
+      adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, 1);
+      const oldRowCount = table.rowCount;
+      table.refreshRowColCount();
+      if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return true;
+      }
+      const newRowCount = table.transpose ? table.colCount : table.rowCount;
+      if (table.pagination) {
+        const { perPageCount, currentPage } = table.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (recordIndex < endIndex) {
+          //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
+          if (recordIndex < endIndex - perPageCount) {
+            // 如果是当页之前的数据 则整个场景树都更新
+            table.scenegraph.clearCells();
+            table.scenegraph.createSceneGraph();
           } else {
-            //如果当页数据不是满的 则插入新数据
-            const addRows = [];
-            for (let row = rowNum; row < Math.min(newRowCount, rowNum + 1); row++) {
-              if (table.transpose) {
-                addRows.push({ col: row, row: 0 });
-              } else {
-                addRows.push({ col: 0, row });
+            //如果是插入当前页数据
+            const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
+            if (oldRowCount - headerCount === table.pagination.perPageCount) {
+              //如果当页数据是满的 则更新插入的部分行
+              const updateRows = [];
+              for (let row = rowNum; row < newRowCount; row++) {
+                if (table.transpose) {
+                  updateRows.push({ col: row, row: 0 });
+                } else {
+                  updateRows.push({ col: 0, row });
+                }
               }
+              table.transpose
+                ? table.scenegraph.updateCol([], [], updateRows)
+                : table.scenegraph.updateRow([], [], updateRows);
+            } else {
+              //如果当页数据不是满的 则插入新数据
+              const addRows = [];
+              for (let row = rowNum; row < Math.min(newRowCount, rowNum + 1); row++) {
+                if (table.transpose) {
+                  addRows.push({ col: row, row: 0 });
+                } else {
+                  addRows.push({ col: 0, row });
+                }
+              }
+              table.transpose
+                ? table.scenegraph.updateCol([], addRows, [])
+                : table.scenegraph.updateRow([], addRows, []);
             }
-            table.transpose ? table.scenegraph.updateCol([], addRows, []) : table.scenegraph.updateRow([], addRows, []);
           }
         }
-      }
-    } else {
-      const addRows = [];
-      for (let row = recordIndex + headerCount; row < recordIndex + headerCount + 1; row++) {
-        if (table.transpose) {
-          addRows.push({ col: row, row: 0 });
-        } else {
-          addRows.push({ col: 0, row });
+      } else {
+        const addRows = [];
+        for (let row = recordIndex + headerCount; row < recordIndex + headerCount + 1; row++) {
+          if (table.transpose) {
+            addRows.push({ col: row, row: 0 });
+          } else {
+            addRows.push({ col: 0, row });
+          }
         }
-      }
-      const updateRows = [];
-      const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
-      const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
-      for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
-        if (table.transpose) {
-          updateRows.push({ col: row, row: 0 });
-        } else {
-          updateRows.push({ col: 0, row });
+        const updateRows = [];
+        const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+        const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
+        for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
         }
-      }
-      for (
-        let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
-        row < (table.transpose ? table.colCount : table.rowCount);
-        row++
-      ) {
-        if (table.transpose) {
-          updateRows.push({ col: row, row: 0 });
-        } else {
-          updateRows.push({ col: 0, row });
+        for (
+          let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
+          row < (table.transpose ? table.colCount : table.rowCount);
+          row++
+        ) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
         }
+        table.transpose ? table.scenegraph.updateCol([], addRows, []) : table.scenegraph.updateRow([], addRows, []);
       }
-      table.transpose ? table.scenegraph.updateCol([], addRows, []) : table.scenegraph.updateRow([], addRows, []);
     }
+    return true;
+  } catch (error) {
+    console.error('Error adding record:', error);
+    return false;
   }
-  // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
 }
 
 /**
@@ -484,134 +503,148 @@ export function listTableAddRecord(record: any, recordIndex: number | number[], 
  * 如果设置了排序规则recordIndex无效，会自动适应排序逻辑确定插入顺序。
  * recordIndex 可以通过接口getRecordShowIndexByCell获取
  */
-export function listTableAddRecords(records: any[], recordIndex: number | number[], table: ListTable) {
-  if (table.options.groupBy) {
-    (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
-    table.refreshRowColCount();
-    table.internalProps.layoutMap.clearCellRangeMap();
-    table.sortState && sortRecords(table);
-
-    // 更新整个场景树
-    table.scenegraph.clearCells();
-    table.scenegraph.createSceneGraph();
-  } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
-    (table.dataSource as CachedDataSource).addRecordsForTree?.(records, recordIndex);
-    table.refreshRowColCount();
-    table.internalProps.layoutMap.clearCellRangeMap();
-    table.sortState && sortRecords(table);
-
-    // 更新整个场景树
-    table.scenegraph.clearCells();
-    table.scenegraph.createSceneGraph();
-  } else if (table.sortState) {
-    table.dataSource.addRecordsForSorted(records);
-    sortRecords(table);
-    table.refreshRowColCount();
-    // 更新整个场景树
-    table.scenegraph.clearCells();
-    table.scenegraph.createSceneGraph();
-  } else {
-    recordIndex = recordIndex as number;
-    if (recordIndex === undefined || recordIndex > table.dataSource.sourceLength) {
-      recordIndex = table.dataSource.sourceLength;
-    } else if (recordIndex < 0) {
-      recordIndex = 0;
+export function listTableAddRecords(records: any[], recordIndex: number | number[], table: ListTable): boolean {
+  try {
+    // Validate input
+    if (!records || records.length === 0) {
+      return false;
     }
-    const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
-    table.dataSource.addRecords(records, recordIndex);
-    const oldRowCount = table.transpose ? table.colCount : table.rowCount;
-    table.refreshRowColCount();
-    if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
+
+    if ((table.internalProps as ListTableProtected).groupBy) {
+      (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
+      table.refreshRowColCount();
+      table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
+
+      // 更新整个场景树
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
-      return;
-    }
-    const newRowCount = table.transpose ? table.colCount : table.rowCount;
-    if (table.pagination) {
-      const { perPageCount, currentPage } = table.pagination;
-      const startIndex = perPageCount * (currentPage || 0);
-      const endIndex = startIndex + perPageCount;
-      if (recordIndex < endIndex) {
-        //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
-        if (recordIndex < endIndex - perPageCount) {
-          // 如果是当页之前的数据 则整个场景树都更新
-          table.scenegraph.clearCells();
-          table.scenegraph.createSceneGraph();
-        } else {
-          //如果是插入当前页数据
+    } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
+      (table.dataSource as CachedDataSource).addRecordsForTree?.(records, recordIndex);
+      adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
+      table.refreshRowColCount();
+      table.internalProps.layoutMap.clearCellRangeMap();
+      table.sortState && sortRecords(table);
 
-          const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
-          if (oldRowCount - headerCount === table.pagination.perPageCount) {
-            //如果当页数据是满的 则更新插入的部分行
-            const updateRows = [];
-            for (let row = rowNum; row < newRowCount; row++) {
-              if (table.transpose) {
-                updateRows.push({ col: row, row: 0 });
-              } else {
-                updateRows.push({ col: 0, row });
-              }
-            }
-            table.transpose
-              ? table.scenegraph.updateCol([], [], updateRows)
-              : table.scenegraph.updateRow([], [], updateRows);
+      // 更新整个场景树
+      table.scenegraph.clearCells();
+      table.scenegraph.createSceneGraph();
+    } else if (table.sortState) {
+      table.dataSource.addRecordsForSorted(records);
+      sortRecords(table);
+      table.refreshRowColCount();
+      // 更新整个场景树
+      table.scenegraph.clearCells();
+      table.scenegraph.createSceneGraph();
+    } else {
+      recordIndex = recordIndex as number;
+      if (recordIndex === undefined || recordIndex > table.dataSource.sourceLength) {
+        recordIndex = table.dataSource.sourceLength;
+      } else if (recordIndex < 0) {
+        recordIndex = 0;
+      }
+      const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+      table.dataSource.addRecords(records, recordIndex);
+      adjustCheckBoxStateMapWithAddRecordIndex(table, recordIndex, records.length);
+      const oldRowCount = table.transpose ? table.colCount : table.rowCount;
+      table.refreshRowColCount();
+      if (table.scenegraph.proxy.totalActualBodyRowCount === 0) {
+        table.scenegraph.clearCells();
+        table.scenegraph.createSceneGraph();
+        return true;
+      }
+      const newRowCount = table.transpose ? table.colCount : table.rowCount;
+      if (table.pagination) {
+        const { perPageCount, currentPage } = table.pagination;
+        const startIndex = perPageCount * (currentPage || 0);
+        const endIndex = startIndex + perPageCount;
+        if (recordIndex < endIndex) {
+          //插入当前页或者前面的数据才需要更新 如果是插入的是当前页后面的数据不需要更新场景树
+          if (recordIndex < endIndex - perPageCount) {
+            // 如果是当页之前的数据 则整个场景树都更新
+            table.scenegraph.clearCells();
+            table.scenegraph.createSceneGraph();
           } else {
-            //如果当页数据不是满的 则插入新数据
-            const addRows = [];
-            for (
-              let row = rowNum;
-              row < Math.min(newRowCount, rowNum + (Array.isArray(records) ? records.length : 1));
-              row++
-            ) {
-              if (table.transpose) {
-                addRows.push({ col: row, row: 0 });
-              } else {
-                addRows.push({ col: 0, row });
+            //如果是插入当前页数据
+
+            const rowNum = recordIndex - (endIndex - perPageCount) + headerCount;
+            if (oldRowCount - headerCount === table.pagination.perPageCount) {
+              //如果当页数据是满的 则更新插入的部分行
+              const updateRows = [];
+              for (let row = rowNum; row < newRowCount; row++) {
+                if (table.transpose) {
+                  updateRows.push({ col: row, row: 0 });
+                } else {
+                  updateRows.push({ col: 0, row });
+                }
               }
+              table.transpose
+                ? table.scenegraph.updateCol([], [], updateRows)
+                : table.scenegraph.updateRow([], [], updateRows);
+            } else {
+              //如果当页数据不是满的 则插入新数据
+              const addRows = [];
+              for (
+                let row = rowNum;
+                row < Math.min(newRowCount, rowNum + (Array.isArray(records) ? records.length : 1));
+                row++
+              ) {
+                if (table.transpose) {
+                  addRows.push({ col: row, row: 0 });
+                } else {
+                  addRows.push({ col: 0, row });
+                }
+              }
+              table.transpose
+                ? table.scenegraph.updateCol([], addRows, [])
+                : table.scenegraph.updateRow([], addRows, []);
             }
-            table.transpose ? table.scenegraph.updateCol([], addRows, []) : table.scenegraph.updateRow([], addRows, []);
           }
         }
-      }
-    } else {
-      const addRows = [];
-      for (
-        let row = recordIndex + headerCount;
-        row < recordIndex + headerCount + (Array.isArray(records) ? records.length : 1);
-        row++
-      ) {
-        if (table.transpose) {
-          addRows.push({ col: row, row: 0 });
-        } else {
-          addRows.push({ col: 0, row });
+      } else {
+        const addRows = [];
+        for (
+          let row = recordIndex + headerCount;
+          row < recordIndex + headerCount + (Array.isArray(records) ? records.length : 1);
+          row++
+        ) {
+          if (table.transpose) {
+            addRows.push({ col: row, row: 0 });
+          } else {
+            addRows.push({ col: 0, row });
+          }
         }
-      }
-      const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
-      const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
-      const updateRows = [];
-      for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
-        if (table.transpose) {
-          updateRows.push({ col: row, row: 0 });
-        } else {
-          updateRows.push({ col: 0, row });
+        const topAggregationCount = table.internalProps.layoutMap.hasAggregationOnTopCount;
+        const bottomAggregationCount = table.internalProps.layoutMap.hasAggregationOnBottomCount;
+        const updateRows = [];
+        for (let row = headerCount; row < headerCount + topAggregationCount; row++) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
         }
-      }
-      for (
-        let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
-        row < (table.transpose ? table.colCount : table.rowCount);
-        row++
-      ) {
-        if (table.transpose) {
-          updateRows.push({ col: row, row: 0 });
-        } else {
-          updateRows.push({ col: 0, row });
+        for (
+          let row = (table.transpose ? table.colCount : table.rowCount) - bottomAggregationCount;
+          row < (table.transpose ? table.colCount : table.rowCount);
+          row++
+        ) {
+          if (table.transpose) {
+            updateRows.push({ col: row, row: 0 });
+          } else {
+            updateRows.push({ col: 0, row });
+          }
         }
+        table.transpose
+          ? table.scenegraph.updateCol([], addRows, updateRows)
+          : table.scenegraph.updateRow([], addRows, updateRows);
       }
-      table.transpose
-        ? table.scenegraph.updateCol([], addRows, updateRows)
-        : table.scenegraph.updateRow([], addRows, updateRows);
     }
+    return true;
+  } catch (error) {
+    console.error('Error adding records:', error);
+    return false;
   }
-  // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
 }
 
 /**
@@ -620,8 +653,10 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
  */
 export function listTableDeleteRecords(recordIndexs: number[] | number[][], table: ListTable) {
   if (recordIndexs?.length > 0) {
-    if (table.options.groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).deleteRecordsForGroup?.(recordIndexs);
+      // Note: For grouped records, checkbox state adjustment is handled differently
+      // The group deletion logic is more complex and may require special handling
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
       table.sortState && sortRecords(table);
@@ -629,7 +664,13 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.clearCells();
       table.scenegraph.createSceneGraph();
     } else if ((table.dataSource as CachedDataSource).rowHierarchyType === 'tree') {
-      (table.dataSource as CachedDataSource).deleteRecordsForTree?.(recordIndexs);
+      const deletedRecordIndexs = (table.dataSource as CachedDataSource).deleteRecordsForTree?.(recordIndexs);
+      if (deletedRecordIndexs.length === 0) {
+        return;
+      }
+      for (let index = 0; index < deletedRecordIndexs.length; index++) {
+        adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
+      }
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
       table.sortState && sortRecords(table);
@@ -638,6 +679,8 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       table.scenegraph.createSceneGraph();
     } else if (table.sortState) {
       table.dataSource.deleteRecordsForSorted(recordIndexs as number[]);
+      // Note: For sorted records, checkbox state is cleared entirely (checkedState.clear())
+      // So no need to adjust individual state mappings
       sortRecords(table);
       table.refreshRowColCount();
       // 更新整个场景树
@@ -647,6 +690,10 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
       const deletedRecordIndexs = table.dataSource.deleteRecords(recordIndexs as number[]);
       if (deletedRecordIndexs.length === 0) {
         return;
+      }
+      // Fix: Adjust checkbox/switch state map when deleting regular records
+      for (let index = 0; index < deletedRecordIndexs.length; index++) {
+        adjustCheckBoxStateMapWithDeleteRecordIndex(table, deletedRecordIndexs[index], 1);
       }
       const oldRowCount = table.transpose ? table.colCount : table.rowCount;
       table.refreshRowColCount();
@@ -761,7 +808,7 @@ export function listTableDeleteRecords(recordIndexs: number[] | number[][], tabl
  */
 export function listTableUpdateRecords(records: any[], recordIndexs: (number | number[])[], table: ListTable) {
   if (recordIndexs?.length > 0) {
-    if (table.options.groupBy) {
+    if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).updateRecordsForGroup?.(records, recordIndexs as number[]);
       table.refreshRowColCount();
       table.internalProps.layoutMap.clearCellRangeMap();
@@ -868,5 +915,182 @@ export function listTableUpdateRecords(records: any[], recordIndexs: (number | n
       }
     }
     // table.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, { row });
+  }
+}
+function adjustCheckBoxStateMapWithDeleteRecordIndex(table: ListTable, recordIndex: number | number[], count: number) {
+  const { checkedState } = table.stateManager;
+  if (!checkedState) {
+    return;
+  }
+  if (table.dataSource.rowHierarchyType === 'tree') {
+    let toOperateIndexArr: number[];
+    if (isNumber(recordIndex)) {
+      toOperateIndexArr = [recordIndex];
+    } else {
+      toOperateIndexArr = recordIndex;
+    }
+    const toOperateIndexArrLength = toOperateIndexArr.length;
+    const targetResult: { originKey: string; targetKey?: string; value: any }[] = [];
+    checkedState.forEach((value, key: string) => {
+      const keyArray = key.split(',');
+      if (keyArray.length >= toOperateIndexArr.length) {
+        //toOperateIndexArr 的增删只会影响checkedState中keyArray.length大于等于toOperateIndexArr.length的key
+        // const length = Math.max(keyArray.length, toOperateIndexArr.length);
+
+        for (let i = 0; i < keyArray.length; i++) {
+          const toOperateIndex = toOperateIndexArr[i] ?? -1;
+          const keyIndex = Number(keyArray[i]);
+          if (toOperateIndex === keyIndex && i < keyArray.length - 1) {
+          } else if ((toOperateIndex === keyIndex && i === keyArray.length - 1) || toOperateIndex === -1) {
+            //这个条件符合则表示和toOperateIndexArr一模一样则要删除
+            targetResult.push({
+              originKey: key,
+              value
+            });
+            break;
+          } else if (toOperateIndex < keyIndex && i === toOperateIndexArrLength - 1) {
+            keyArray[i] = (keyIndex - count).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            break;
+          } else {
+            break;
+          }
+        }
+      }
+    });
+    //需要将targetResult按originKey排序进行升序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'后面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'后面
+    targetResult.sort((a, b) => {
+      const aArray = a.originKey.split(',');
+      const bArray = b.originKey.split(',');
+      const aLength = aArray.length;
+      const bLength = bArray.length;
+      const minLength = Math.min(aLength, bLength);
+      for (let i = 0; i < minLength; i++) {
+        const aIndex = Number(aArray[i]);
+        const bIndex = Number(bArray[i]);
+        if (aIndex !== bIndex) {
+          return aIndex - bIndex;
+        }
+      }
+      return aLength - bLength;
+    });
+    targetResult.forEach(({ originKey, targetKey, value }) => {
+      checkedState.delete(originKey);
+      if (targetKey) {
+        checkedState.set(targetKey, value);
+      }
+    });
+  } else {
+    // For regular records, we need to adjust the data indices in the checkedState map
+    // The keys are data indices from dataSource.getIndexKey(), not simple integers
+    const toDelete: string[] = [];
+    const toUpdate: { originKey: string; targetKey: string; value: any }[] = [];
+
+    checkedState.forEach((value, key: string) => {
+      const dataIndex = Number(key);
+      if (!isNaN(dataIndex) && dataIndex >= (recordIndex as number)) {
+        // This key needs to be adjusted
+        if (dataIndex === (recordIndex as number)) {
+          // This is the deleted record - mark for deletion
+          toDelete.push(key);
+        } else if (dataIndex > (recordIndex as number)) {
+          // This record needs to be shifted down
+          toUpdate.push({
+            originKey: key,
+            targetKey: (dataIndex - count).toString(),
+            value
+          });
+        }
+      }
+    });
+
+    // Apply the changes
+    toDelete.forEach(key => checkedState.delete(key));
+    toUpdate.forEach(({ originKey, targetKey, value }) => {
+      checkedState.delete(originKey);
+      checkedState.set(targetKey, value);
+    });
+  }
+}
+
+function adjustCheckBoxStateMapWithAddRecordIndex(table: ListTable, recordIndex: number | number[], count: number) {
+  const { checkedState } = table.stateManager;
+  if (!checkedState) {
+    return;
+  }
+  if (table.dataSource.rowHierarchyType === 'tree') {
+    let toOperateIndexArr: number[];
+    if (isNumber(recordIndex)) {
+      toOperateIndexArr = [recordIndex];
+    } else {
+      toOperateIndexArr = recordIndex;
+    }
+    const toOperateIndexArrLength = toOperateIndexArr.length;
+    const targetResult: { originKey: string; targetKey?: string; value: any }[] = [];
+    checkedState.forEach((value, key: string) => {
+      const keyArray = key.split(',');
+      if (keyArray.length >= toOperateIndexArr.length) {
+        //toOperateIndexArr 的增删只会影响checkedState中keyArray.length大于等于toOperateIndexArr.length的key
+        // const length = Math.max(keyArray.length, toOperateIndexArr.length);
+        for (let i = 0; i < keyArray.length; i++) {
+          const toOperateIndex = toOperateIndexArr[i] ?? -1;
+          const keyIndex = Number(keyArray[i]);
+          if (toOperateIndex === keyIndex && (i === keyArray.length - 1 || i === toOperateIndexArrLength - 1)) {
+            //这个条件符合则表示和toOperateIndexArr一模一样
+            keyArray[i] = (keyIndex + count).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            break;
+          } else if (toOperateIndex === keyIndex && i < keyArray.length - 1) {
+          } else if (toOperateIndex < keyIndex && i === toOperateIndexArrLength - 1) {
+            keyArray[i] = (keyIndex + count).toString();
+            targetResult.push({
+              originKey: key,
+              targetKey: keyArray.toString(),
+              value
+            });
+            break;
+          } else {
+            break;
+          }
+        }
+      }
+    });
+    //需要将targetResult按originKey排序进行降序排序，因为originKey是展示index的join，需要拆分后排序，如'1,0'，'1,0,0'要排在'0,1'及'0,1,0'前面，如'1,1'，'1,1,0'要排在1,0'，'1,0,0'前面
+    targetResult.sort((a, b) => {
+      const aArray = a.originKey.split(',');
+      const bArray = b.originKey.split(',');
+      const aLength = aArray.length;
+      const bLength = bArray.length;
+      const minLength = Math.min(aLength, bLength);
+      for (let i = 0; i < minLength; i++) {
+        const aIndex = Number(aArray[i]);
+        const bIndex = Number(bArray[i]);
+        if (aIndex !== bIndex) {
+          return -aIndex + bIndex;
+        }
+      }
+      return -aLength + bLength;
+    });
+    targetResult.forEach(({ originKey, targetKey, value }) => {
+      checkedState.delete(originKey);
+      if (targetKey) {
+        checkedState.set(targetKey, value);
+      }
+    });
+  } else {
+    const length = checkedState.size;
+    for (let key = length - 1; key >= (recordIndex as number); key--) {
+      const record = checkedState.get(key.toString());
+      checkedState.delete(key.toString());
+      checkedState.set((key + count).toString(), record);
+    }
   }
 }

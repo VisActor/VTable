@@ -65,6 +65,10 @@ export interface TableEvents {
    */
   CONTEXTMENU_CELL: 'contextmenu_cell';
   /**
+   * 画布右键事件
+   */
+  CONTEXTMENU_CANVAS: 'contextmenu_canvas';
+  /**
    * 列宽调整事件
    */
   RESIZE_COLUMN: 'resize_column';
@@ -177,6 +181,11 @@ export interface TableEvents {
   INITIALIZED: 'initialized';
   /** 表格更新完成 */
   UPDATED: 'updated';
+  /** 单元格内容宽度更新后触发 */
+  AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width';
+
+  /** 选择边框高度更新后触发 */
+  AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height';
   //#endregion
 
   /** 编辑单元格 */
@@ -216,6 +225,28 @@ export interface TableEvents {
    * 粘贴数据事件
    */
   PASTED_DATA: 'pasted_data';
+  PLUGIN_EVENT: 'plugin_event';
+
+  /**
+   * 添加数据记录事件
+   */
+  ADD_RECORD: 'add_record';
+  /**
+   * 删除数据记录事件
+   */
+  DELETE_RECORD: 'delete_record';
+  /**
+   * 更新数据记录事件
+   */
+  UPDATE_RECORD: 'update_record';
+  /**
+   * 添加列事件
+   */
+  ADD_COLUMN: 'add_column';
+  /**
+   * 删除列事件
+   */
+  DELETE_COLUMN: 'delete_column';
 }
 /**
  * Table event types
@@ -237,6 +268,7 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   MOUSEENTER_CELL: 'mouseenter_cell',
   MOUSELEAVE_CELL: 'mouseleave_cell',
   CONTEXTMENU_CELL: 'contextmenu_cell',
+  CONTEXTMENU_CANVAS: 'contextmenu_canvas',
   RESIZE_COLUMN: 'resize_column',
   RESIZE_COLUMN_END: 'resize_column_end',
   RESIZE_ROW: 'resize_row',
@@ -287,6 +319,8 @@ export const TABLE_EVENT_TYPE: TableEvents = {
   AFTER_RENDER: 'after_render',
   INITIALIZED: 'initialized',
   UPDATED: 'updated',
+  AFTER_UPDATE_CELL_CONTENT_WIDTH: 'after_update_cell_content_width',
+  AFTER_UPDATE_SELECT_BORDER_HEIGHT: 'after_update_select_border_height',
   CHANGE_CELL_VALUE: 'change_cell_value',
   DRAG_FILL_HANDLE_END: 'drag_fill_handle_end',
   MOUSEDOWN_FILL_HANDLE: 'mousedown_fill_handle',
@@ -297,5 +331,12 @@ export const TABLE_EVENT_TYPE: TableEvents = {
 
   BUTTON_CLICK: 'button_click',
   BEFORE_CACHE_CHART_IMAGE: 'before_cache_chart_image',
-  PASTED_DATA: 'pasted_data'
+  PASTED_DATA: 'pasted_data',
+  PLUGIN_EVENT: 'plugin_event',
+
+  ADD_RECORD: 'add_record',
+  DELETE_RECORD: 'delete_record',
+  UPDATE_RECORD: 'update_record',
+  ADD_COLUMN: 'add_column',
+  DELETE_COLUMN: 'delete_column'
 } as TableEvents;

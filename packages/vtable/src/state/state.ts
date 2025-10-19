@@ -12,7 +12,8 @@ import type {
   MenuListItem,
   PivotTableAPI,
   SortOrder,
-  SortState
+  SortState,
+  CustomSelectionStyle
 } from '../ts-types';
 import { HighlightScope, InteractionState, SortType } from '../ts-types';
 import { IconFuncTypeEnum } from '../ts-types';
@@ -54,13 +55,6 @@ import type { ColumnData } from '../ts-types/list-table/layout-map/api';
 import { addCustomSelectRanges, deletaCustomSelectRanges } from './select/custom-select';
 import { expendCellRange } from '../tools/merge-range';
 
-export type CustomSelectionStyle = {
-  cellBorderColor?: string; //边框颜色
-  cellBorderLineWidth?: number; //边框线宽度
-  cellBorderLineDash?: number[]; //边框线虚线
-  cellBgColor?: string; //选择框背景颜色
-};
-
 export class StateManager {
   table: BaseTableAPI;
   /**
@@ -85,6 +79,7 @@ export class StateManager {
     singleStyle?: boolean; // select当前单元格是否使用单独样式
     disableHeader?: boolean; // 是否禁用表头select
     disableCtrlMultiSelect?: boolean; // 是否禁用ctrl多选框
+    disableShiftMultiSelect?: boolean; // 是否禁用shift多选框
     /** 点击表头单元格效果
      * 'inline': 点击行表头则整行选中，选择列表头则整列选中；
      * 'cell': 仅仅选择当前点击的表头单元格；
@@ -151,7 +146,9 @@ export class StateManager {
     colSource: number;
     colTarget: number;
     rowSource: number;
+    rowSourceSize: number;
     rowTarget: number;
+    rowTargetSize: number;
     x: number;
     y: number;
     moving: boolean;
@@ -284,6 +281,8 @@ export class StateManager {
       colTarget: -1,
       rowSource: -1,
       rowTarget: -1,
+      rowSourceSize: 0,
+      rowTargetSize: 0,
       x: 0,
       y: 0,
       moving: false
@@ -368,6 +367,8 @@ export class StateManager {
       colTarget: -1,
       rowSource: -1,
       rowTarget: -1,
+      rowSourceSize: 0,
+      rowTargetSize: 0,
       x: 0,
       y: 0,
       moving: false
@@ -498,6 +499,7 @@ export class StateManager {
     this.select.cornerHeaderSelectMode = cornerHeaderSelectMode;
     this.select.highlightInRange = highlightInRange;
     this.select.disableCtrlMultiSelect = this.table.options.keyboardOptions?.ctrlMultiSelect === false;
+    this.select.disableShiftMultiSelect = this.table.options.keyboardOptions?.shiftMultiSelect === false;
   }
 
   isSelected(col: number, row: number): boolean {
@@ -619,8 +621,8 @@ export class StateManager {
   updateSelectPos(
     col: number,
     row: number,
-    isShift: boolean = false,
-    isCtrl: boolean = false,
+    enableShiftSelectMode: boolean = false,
+    enableCtrlSelectMode: boolean = false,
     isSelectAll: boolean = false,
     makeSelectCellVisible: boolean = true,
     skipBodyMerge: boolean = false
@@ -643,7 +645,16 @@ export class StateManager {
     }
     const oldCellPosCol = this.select.cellPos.col;
     const oldCellPosRow = this.select.cellPos.row;
-    updateSelectPosition(this, col, row, isShift, isCtrl, isSelectAll, makeSelectCellVisible, skipBodyMerge);
+    updateSelectPosition(
+      this,
+      col,
+      row,
+      enableShiftSelectMode,
+      enableCtrlSelectMode,
+      isSelectAll,
+      makeSelectCellVisible,
+      skipBodyMerge
+    );
     if (
       this.table.hasListeners(TABLE_EVENT_TYPE.SELECTED_CHANGED) &&
       (oldCellPosCol !== col || oldCellPosRow !== row)
@@ -1704,7 +1715,10 @@ export class StateManager {
     this.frozen.icon = iconMark;
   }
 
-  updateCursor(mode: string = 'default') {
+  updateCursor(mode?: string) {
+    if (!mode) {
+      mode = this.table.options.defaultCursor ?? 'default';
+    }
     this.table.getElement().style.cursor = mode;
   }
 

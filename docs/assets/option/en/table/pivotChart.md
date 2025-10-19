@@ -153,3 +153,38 @@ Turn on asynchronous rendering of charts. The number of progressively rendered c
       prefix = '#',
       tableType = 'pivotChart'
   ) }}
+
+## columnWidthConfig(Array)
+
+Set column width based on dimension information
+
+```
+ {
+    dimensions: IDimensionInfo[];
+    width: number;
+  }[];
+```
+
+- dimensions The column dimension information of each level of the dimension is an array of IDimensionInfo type. The vtable will locate the specific column according to this path.
+  {{ use: common-IDimensionInfo()}}
+
+-width specifies the column width.
+
+## columnWidthConfigForRowHeader(Array)
+
+Set column width based on row dimension information for row header，set example:
+
+```
+columnWidthConfigForRowHeader": [
+    {
+      "dimensions": [
+        {
+          "dimensionKey": "city",
+          "value": "北京"
+        }
+      ],
+      "width": 318
+    }
+  ]
+```
+Matching key is the key of the row dimension: dimensionKey。

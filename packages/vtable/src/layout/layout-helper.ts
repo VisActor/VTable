@@ -1,7 +1,7 @@
 import { isArray, isString } from '@visactor/vutils';
 import type { PivotTable } from '../PivotTable';
 import { AggregationType } from '../ts-types';
-import type { BaseTableAPI } from '../ts-types/base-table';
+import type { BaseTableAPI, ListTableProtected } from '../ts-types/base-table';
 import type {
   Aggregation,
   IHeaderTreeDefine,
@@ -69,7 +69,7 @@ export function checkHasAggregationOnBottom(layoutMap: SimpleHeaderLayoutMap) {
 }
 
 export function checkHasTreeDefine(layoutMap: SimpleHeaderLayoutMap) {
-  if (layoutMap._table.options.groupBy) {
+  if ((layoutMap._table.internalProps as ListTableProtected).groupBy) {
     return true;
   }
   const { columns } = layoutMap._table.options as ListTableConstructorOptions;

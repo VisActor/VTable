@@ -1,8 +1,8 @@
-import { clone, cloneDeep, isValid, max } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import type { Gantt } from '../Gantt';
 import type { ITaskLink } from '../ts-types';
 import { InteractionState, GANTT_EVENT_TYPE, DependencyType, TasksShowMode, TaskType } from '../ts-types';
-import type { Group, FederatedPointerEvent, Polygon, Line, Circle } from '@visactor/vtable/es/vrender';
+import type { Group, FederatedPointerEvent, Polygon, Line } from '@visactor/vtable/es/vrender';
 import {
   syncEditCellFromTable,
   syncScrollStateFromTable,
@@ -23,7 +23,13 @@ import { debounce } from '../tools/debounce';
 import type { GanttTaskBarNode } from '../scenegraph/gantt-node';
 import { TASKBAR_HOVER_ICON_WIDTH } from '../scenegraph/task-bar';
 import { Inertia } from '../tools/inertia';
-import { createDateAtMidnight, getEndDateByTimeUnit, getStartDateByTimeUnit, toBoxArray } from '../tools/util';
+import {
+  createDateAtMidnight,
+  getEndDateByTimeUnit,
+  getStartDateByTimeUnit,
+  toBoxArray,
+  parseStringTemplate
+} from '../tools/util';
 export class StateManager {
   _gantt: Gantt;
 
@@ -75,6 +81,14 @@ export class StateManager {
     resizing: boolean;
     onIconName: string;
   };
+  adjustProgressBar: {
+    /** x坐标是相对table内坐标 */
+    startX: number;
+    startY: number;
+    target: GanttTaskBarNode;
+    adjusting: boolean;
+    originalProgress: number;
+  };
   selectedTaskBar: {
     target: GanttTaskBarNode;
   };
@@ -82,6 +96,8 @@ export class StateManager {
     /** x坐标是相对table内坐标 */
     lastX: number;
     resizing: boolean;
+    /** 用于节流 DataZoom 更新的定时器，避免在拖拽表头时频繁触发响应式更新 */
+    updateTimeout?: NodeJS.Timeout | null;
   };
 
   selectedDenpendencyLink: {
@@ -148,6 +164,13 @@ export class StateManager {
       target: null,
       resizing: false,
       onIconName: ''
+    };
+    this.adjustProgressBar = {
+      startX: null,
+      startY: null,
+      target: null,
+      adjusting: false,
+      originalProgress: 0
     };
     this.resizeTableWidth = {
       lastX: null,
@@ -352,6 +375,8 @@ export class StateManager {
     const deltaY = this.moveTaskBar.deltaY;
     const target = this.moveTaskBar.target;
     if (Math.abs(deltaX) >= 1 || Math.abs(deltaY) >= 1) {
+      // 计算原始行号
+      const oldRowIndex = target.task_index;
       const taskIndex = target.task_index;
       const sub_task_index = target.sub_task_index;
       const { startDate: oldStartDate, endDate: oldEndDate } = this._gantt.getTaskInfoByTaskListIndex(
@@ -402,6 +427,41 @@ export class StateManager {
             oldStartDate,
             oldEndDate,
             index: taskIndex,
+            record: newRecord
+          });
+        }
+
+        const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+        const newRowIndex = indexs.task_index;
+        // 触发通用拖拽事件
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR, {
+            startDate: newRecord[this._gantt.parsedOptions.startDateField],
+            endDate: newRecord[this._gantt.parsedOptions.endDateField],
+            oldStartDate,
+            oldEndDate,
+            oldRowIndex,
+            newRowIndex,
+            index: taskIndex,
+            record: newRecord
+            // dateChanged: !!dateChanged,
+            // positionChanged: oldRowIndex !== newRowIndex
+          });
+        }
+      } else {
+        const newRecord = this._gantt.getRecordByIndex(taskIndex, sub_task_index);
+        const indexs = getTaskIndexsByTaskY(targetEndY, this._gantt);
+        const newRowIndex = indexs.task_index;
+        // 触发通用拖拽事件
+        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR)) {
+          this._gantt.fireListeners(GANTT_EVENT_TYPE.MOVE_END_TASK_BAR, {
+            startDate: newRecord[this._gantt.parsedOptions.startDateField],
+            endDate: newRecord[this._gantt.parsedOptions.endDateField],
+            oldStartDate,
+            oldEndDate,
+            oldRowIndex,
+            newRowIndex,
+            index: newRowIndex,
             record: newRecord
           });
         }
@@ -754,6 +814,89 @@ export class StateManager {
 
     this._gantt.scenegraph.updateNextFrame();
   }
+  startAdjustProgressBar(target: GanttTaskBarNode, x: number, y: number) {
+    const { progress } = this._gantt.getTaskInfoByTaskListIndex(target.task_index, target.sub_task_index);
+    this.adjustProgressBar.target = target;
+    this.adjustProgressBar.adjusting = true;
+    this.adjustProgressBar.startX = x;
+    this.adjustProgressBar.startY = y;
+    this.adjustProgressBar.originalProgress = progress;
+  }
+  isAdjustingProgressBar() {
+    return this.adjustProgressBar.adjusting;
+  }
+  endAdjustProgressBar(x: number) {
+    const target = this.adjustProgressBar.target;
+    const taskBarWidth = target.attribute.width;
+    const deltaX = x - this.adjustProgressBar.startX;
+    const newProgress = Math.max(
+      0,
+      Math.min(100, this.adjustProgressBar.originalProgress + (deltaX / taskBarWidth) * 100)
+    );
+
+    if (Math.abs(newProgress - this.adjustProgressBar.originalProgress) >= 0.1) {
+      const taskIndex = target.task_index;
+      const subTaskIndex = target.sub_task_index;
+
+      // 更新数据，保留小数精度
+      this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
+      const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
+
+      // 触发进度更新事件
+      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
+          federatedEvent: null,
+          event: null,
+          index: taskIndex,
+          sub_task_index: subTaskIndex,
+          progress: Math.round(newProgress * 10) / 10,
+          oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
+          record: newRecord
+        });
+      }
+    }
+
+    // 重置状态
+    this.adjustProgressBar.adjusting = false;
+    this.adjustProgressBar.target = null;
+    this.adjustProgressBar.startX = null;
+    this.adjustProgressBar.startY = null;
+    this.adjustProgressBar.originalProgress = 0;
+  }
+  dealAdjustProgressBar(e: FederatedPointerEvent) {
+    const target = this.adjustProgressBar.target;
+    const taskBarWidth = target.attribute.width;
+    const deltaX = e.x - this.adjustProgressBar.startX;
+    const newProgress = Math.max(
+      0,
+      Math.min(100, this.adjustProgressBar.originalProgress + (deltaX / taskBarWidth) * 100)
+    );
+
+    // 更新进度条显示
+    if (target.progressRect) {
+      target.progressRect.setAttribute('width', (taskBarWidth * newProgress) / 100);
+    }
+
+    // 更新进度手柄位置
+    if (
+      this._gantt.scenegraph.taskBar.hoverBarProgressHandle &&
+      this._gantt.scenegraph.taskBar.hoverBarProgressHandle.attribute.visibleAll
+    ) {
+      this._gantt.scenegraph.taskBar.hoverBarProgressHandle.setAttribute('x', (taskBarWidth * newProgress) / 100 - 6);
+    }
+
+    // 更新文字标签中的进度百分比
+    if (target.textLabel && target.record) {
+      const tempRecord = { ...target.record, progress: Math.round(newProgress * 10) / 10 };
+      const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
+      target.textLabel.setAttribute('text', newText);
+    }
+
+    // 实时显示变化
+    if (this._gantt.scenegraph && this._gantt.scenegraph.stage) {
+      this._gantt.scenegraph.stage.renderNextFrame();
+    }
+  }
   //#endregion
   //#region 生成关联线的交互处理
   startCreateDependencyLine(target: Group, x: number, y: number, startOffsetY: number, position: 'left' | 'right') {
@@ -833,6 +976,10 @@ export class StateManager {
   }
   endResizeTableWidth() {
     this.resizeTableWidth.resizing = false;
+
+    if (this._gantt.zoomScaleManager) {
+      this._gantt.zoomScaleManager.handleTableWidthChange();
+    }
   }
 
   dealResizeTableWidth(e: MouseEvent) {
@@ -864,6 +1011,16 @@ export class StateManager {
         : '0px';
       this._gantt._resize();
       this.resizeTableWidth.lastX = e.pageX;
+
+      // 在拖拽过程中实时更新 DataZoom
+      if (this._gantt.zoomScaleManager && !this.resizeTableWidth.updateTimeout) {
+        this.resizeTableWidth.updateTimeout = setTimeout(() => {
+          if (this._gantt.zoomScaleManager) {
+            this._gantt.zoomScaleManager.handleTableWidthChange();
+          }
+          this.resizeTableWidth.updateTimeout = null;
+        }, 50);
+      }
     }
   }
   //#endregion

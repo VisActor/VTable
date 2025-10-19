@@ -1,5 +1,5 @@
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
-import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, plugins } from '@visactor/vtable';
+import type { TYPES, BaseTableAPI, ListTable, ListTableConstructorOptions, pluginsDefinition } from '@visactor/vtable';
 /**
  * 添加行和列的插件的配置选项
  */
@@ -17,8 +17,8 @@ export interface RowSeriesOptions {
 /**
  * 生成行序号标题的插件
  */
-export class RowSeriesPlugin implements plugins.IVTablePlugin {
-  id = `row-series-${Date.now()}`;
+export class RowSeriesPlugin implements pluginsDefinition.IVTablePlugin {
+  id = `row-series`;
   name = 'Row Series';
   runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_KEYDOWN];
   pluginOptions: RowSeriesOptions;

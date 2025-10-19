@@ -1305,7 +1305,7 @@ export function createTable() {
   ];
   const option = {
     // hideIndicatorName: true,
-    // indicatorsAsCol:false,
+    indicatorsAsCol: false,
     rows: rows,
     columns: columns,
     indicators,
@@ -1316,7 +1316,7 @@ export function createTable() {
     defaultHeaderColWidth: 100,
     indicatorTitle: '指标',
     autoWrapText: true,
-    // widthMode: 'adaptive',
+    // widthMode: 'autoWidth',
     // heightMode: 'adaptive',
     corner: {
       titleOnDimension: 'row',

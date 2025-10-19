@@ -16,6 +16,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | Click                                      | CLICK_CELL                                          | Cell Click Event                                                                                                       |
 | Double Click                               | DBLCLICK_CELL                                       | Cell Double Click Event                                                                                                |
 | Right Click                                | CONTEXTMENU_CELL                                    | Cell Right Click Event                                                                                                 |
+| Right Click on the canvas                  | CONTEXTMENU_CANVAS                                  | Canvas Right Click Event                                                                                                 |
 | Keyboard Press                             | CLICK_CELL                                          | Keyboard Press Events                                                                                                  |
 | mouse down                                 | MOUSEDOWN_CELL                                      | cell mouse down event                                                                                                  |
 | mouse release                              | MOUSEUP_CELL                                        | cell mouse release event                                                                                               |
@@ -50,6 +51,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
 | The mouse leaves the table area            | MOUSELEAVE_TABLE                                    | This event is triggered when the mouse leaves the table area                                                           |
 | Mouse down                                 | MOUSEDOWN_TABLE                                     | This event is triggered when the mouse is pressed in the table area                                                    |
 | Paste data                                 | PASTED_DATA                                         | Paste data event                                                                                                      |
+| Plugin event                              | PLUGIN_EVENT                                        | Plugin want fire event to table, other plugins can listen this type event                                                                                                         |
 
 ## Event monitoring method
 
@@ -78,6 +80,7 @@ For a more comprehensive list of events, please refer to: https://visactor.io/vt
         AFTER_SORT,
         DROPDOWN_MENU_CLICK,
         CONTEXTMENU_CELL,
+        CONTEXTMENU_CANVAS,
       } = VTable.ListTable.EVENT_TYPE;
       const tableInstance =new ListTable(options);
       tableInstance.on(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));

@@ -16,6 +16,7 @@
 | 点击                     | CLICK_CELL                  | 单元格点击事件                                                            |
 | 双击                     | DBLCLICK_CELL               | 单元格双击事件                                                            |
 | 右键                     | CONTEXTMENU_CELL            | 单元格右键事件                                                            |
+| 右键画布                  | CONTEXTMENU_CANVAS          | 画布右键事件                                                            |
 | 键盘按下                 | CLICK_CELL                  | 键盘按下事件                                                              |
 | 鼠标按下                 | MOUSEDOWN_CELL              | 单元格鼠标按下事件                                                        |
 | 鼠标松开                 | MOUSEUP_CELL                | 单元格鼠标松开事件                                                        |
@@ -52,6 +53,7 @@
 | 鼠标离开表格区域         | MOUSELEAVE_TABLE            | 鼠标离开表格区域触发该事件                                                |
 | 鼠标按下                 | MOUSEDOWN_TABLE             | 鼠标在表格区域按下触发该事件                                              |
 | 粘贴事件的数据                 | PASTED_DATA                 | 粘贴数据事件                                                              |
+| 插件事件                     | PLUGIN_EVENT                | 插件想触发事件到表格，其他插件可以监听该类型事件                        |
 
 ## 事件监听方式
 
@@ -81,6 +83,7 @@ const {
     AFTER_SORT,
     DROPDOWN_MENU_CLICK,
     CONTEXTMENU_CELL,
+    CONTEXTMENU_CANVAS
   } = VTable.ListTable.EVENT_TYPE;
   const tableInstance =new ListTable(options);
   tableInstance.on(CLICK_CELL, (...args) => console.log(CLICK_CELL, args));

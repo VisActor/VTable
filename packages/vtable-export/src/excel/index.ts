@@ -49,6 +49,9 @@ function requestIdleCallbackPromise(options?: IdleRequestOptions) {
   });
 }
 
+/**
+ * @deprecated 请使用@visactor/vtable-plugins中的`TableExportPlugin` 插件
+ */
 export async function exportVTableToExcel(
   tableInstance: IVTable,
   options?: ExportVTableToExcelOptions,

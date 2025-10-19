@@ -243,7 +243,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       if (options.title) {
         const Title = Factory.getComponent('title') as ITitleComponent;
         this.internalProps.title = new Title(options.title, this);
-        this.scenegraph.resize();
+        // this.scenegraph.resize();//下面有个resize了 所以这个可以去掉
       }
       if (this.options.emptyTip) {
         if (this.internalProps.emptyTip) {
@@ -256,6 +256,10 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
       }
       //为了确保用户监听得到这个事件 这里做了异步 确保vtable实例已经初始化完成
       setTimeout(() => {
+        if (this.isReleased) {
+          return;
+        }
+        this.resize();
         this.fireListeners(TABLE_EVENT_TYPE.INITIALIZED, null);
       }, 0);
     }
@@ -291,11 +295,17 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
     return ifCan;
   }
-  updateOption(options: PivotTableConstructorOptions) {
+  updateOption(
+    options: PivotTableConstructorOptions,
+    updateConfig: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: true,
+      clearRowHeightCache: true
+    }
+  ) {
     const internalProps = this.internalProps;
     //维护选中状态
     // const range = internalProps.selection.range; //保留原有单元格选中状态
-    super.updateOption(options);
+    super.updateOption(options, updateConfig);
     if (!options.rowHierarchyType) {
       options.rowHierarchyType = 'grid';
     }
@@ -575,7 +585,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     //   (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
     //   this.options.frozenColCount ?? 0
     // );
-    table.frozenRowCount = Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0);
+    // 不能使用frozenRowCount setter 因为会把options.frozenRowCount赋值
+    table._setFrozenRowCount(Math.max(layoutMap.headerLevelCount, this.options.frozenRowCount ?? 0));
 
     if (table.bottomFrozenRowCount !== (this.options.bottomFrozenRowCount ?? 0)) {
       table.bottomFrozenRowCount = this.options.bottomFrozenRowCount ?? 0;
@@ -614,7 +625,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     if (sourceNode.value === targetNode.value && sourceNode.dimensionKey === targetNode.dimensionKey) {
       targetNode.hierarchyState =
         targetNode.hierarchyState ?? (targetNode?.children ? sourceNode.hierarchyState : undefined);
-      (targetNode?.children as IHeaderTreeDefine[])?.forEach((targetChildNode: IHeaderTreeDefine, index: number) => {
+      (targetNode?.children as IHeaderTreeDefine[])?.forEach?.((targetChildNode: IHeaderTreeDefine, index: number) => {
         if (sourceNode?.children?.[index] && targetChildNode) {
           const beforeRowDimension = sourceNode.children.find(
             (item: any) => item.dimensionKey === targetChildNode.dimensionKey && item.value === targetChildNode.value
@@ -1174,62 +1185,6 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
         order: SortType[sortType]
       });
       // }
-    }
-  }
-  /** 解析配置columnWidthConfig传入的列宽配置 */
-  _parseColumnWidthConfig(columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]) {
-    for (let i = 0; i < columnWidthConfig?.length; i++) {
-      const item = columnWidthConfig[i];
-      const dimensions = item.dimensions;
-      const width = item.width;
-      const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell && cell.col >= this.rowHeaderLevelCount) {
-        const cellPath = this.getCellHeaderPaths(cell.col, this.columnHeaderLevelCount); //如单指标隐藏指标情况，从body行去取headerPath才会包括指标维度
-        if (cellPath.colHeaderPaths.length === dimensions.length) {
-          let match = true;
-          for (let i = 0; i < dimensions.length; i++) {
-            const dimension = dimensions[i];
-            const finded = (cellPath.colHeaderPaths as IDimensionInfo[]).findIndex((colPath: IDimensionInfo, index) => {
-              if (colPath.indicatorKey === dimension.indicatorKey) {
-                return true;
-              }
-              if (colPath.dimensionKey === dimension.dimensionKey && colPath.value === dimension.value) {
-                return true;
-              }
-              return false;
-            });
-            if (finded < 0) {
-              match = false;
-              break;
-            }
-          }
-          if (match && !this.internalProps._widthResizedColMap.has(cell.col)) {
-            this._setColWidth(cell.col, width);
-            this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
-          }
-        }
-      } else if (cell && cell.col < this.rowHeaderLevelCount) {
-        if (!this.internalProps._widthResizedColMap.has(cell.col)) {
-          this._setColWidth(cell.col, width);
-          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
-        }
-      }
-    }
-  }
-
-  // particularly for row header in react-vtable keepColumnWidthChange config
-  _parseColumnWidthConfigForRowHeader(columnWidthConfig: { dimensions: IDimensionInfo[]; width: number }[]) {
-    for (let i = 0; i < columnWidthConfig?.length; i++) {
-      const item = columnWidthConfig[i];
-      const dimensions = item.dimensions;
-      const width = item.width;
-      const cell = this.getCellAddressByHeaderPaths(dimensions);
-      if (cell && cell.col < this.rowHeaderLevelCount) {
-        if (!this.internalProps._widthResizedColMap.has(cell.col)) {
-          this._setColWidth(cell.col, width);
-          this.internalProps._widthResizedColMap.add(cell.col); // add resize tag
-        }
-      }
     }
   }
 
@@ -2193,15 +2148,25 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     }
   }
 
-  /** 更新数据过滤规则 对应dataConfig中filterRules配置格式 */
-  updateFilterRules(filterRules: FilterRules) {
+  /**
+   * 更新数据过滤规则 对应dataConfig中filterRules配置格式
+   * @param filterRules 过滤规则
+   * @param isResetTree 是否重置表头树结构。 当为true时，会重置表头树结构，当为false时，表头树结构维持不变
+   */
+  updateFilterRules(filterRules: FilterRules, isResetTree: boolean = false) {
     this.internalProps.dataConfig.filterRules = filterRules;
-    this.dataset.updateFilterRules(filterRules);
+    if (isResetTree) {
+      // 由于筛选数据可能导致行列变化，所以需要重置树结构
+      this.dataset.updateFilterRules(filterRules, true);
+      this.internalProps.layoutMap.resetHeaderTree();
+    } else {
+      this.dataset.updateFilterRules(filterRules);
+    }
     this.renderWithRecreateCells();
   }
   /** 获取过滤后的数据 */
   getFilteredRecords() {
-    return this.dataset?.filterRules;
+    return this.dataset?.filteredRecords;
   }
 
   getCellPivotRole(col: number, row: number) {
@@ -2329,7 +2294,7 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
 
   release() {
     this.internalProps.layoutMap.clearHeaderPathCache();
-    this.editorManager.release();
+    this.editorManager?.release();
     super.release();
   }
 }

@@ -40,6 +40,25 @@ const option: VTable.ListTableConstructorOptions = {
 The order of plugin usage generally has no special requirements. Please carefully read the documentation for each plugin to understand its execution timing, and if necessary, refer to the plugin's source code.
 
 If you encounter issues with plugin usage, please provide feedback promptly.
+### cdn import
+
+Due to the underlying vrender environment restriction, it is not possible to directly import the vtable-plugins umd package! ! !
+
+And it is necessary to import both the vrender and vtable umd packages to work properly.
+
+The vtable umd package cannot also use the unpkg platform, the user needs to fork the vtable source code first, and then package a vtable umd package themselves! ! !
+
+Before packaging, it is necessary to release the commented code about vrender in the [packaging configuration](https://github.com/VisActor/VTable/blob/develop/packages/vtable/bundler.config.js). Run the command `cd packages/vtable && rushx build` to get the vtable.js file in the dist directory.
+<div style="display: flex; justify-content: center;  width: 50%;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/sheet-build-umd.png"  style="width: 100%; object-fit: contain; padding: 10px;">
+</div>
+Specific import methods are as follows:
+
+```html
+<script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
+<script src="vtable.js"></script>
+<script src="https://unpkg.com/@visactor/vtable-plugins@latest/dist/vtable-plugins.js"></script>
+```
 
 ## Plugin List
 | Plugin Name | Plugin Description | Applicable Object |
@@ -51,6 +70,10 @@ If you encounter issues with plugin usage, please provide feedback promptly.
 | `ExcelEditCellKeyboardPlugin` | Excel edit cell keyboard plugin | `ListTable`,`PivotTable` |
 | `TableCarouselAnimationPlugin` | Table carousel animation plugin | `ListTable`,`PivotTable` |
 | `RotateTablePlugin` | Table rotation plugin | `ListTable`,`PivotTable` |
+| `TableExportPlugin` | Table export plugin | `ListTable`,`PivotTable` |
+| `ExcelImportPlugin` | Import excel, csv, json, and html files into the table | `ListTable` |
+| `ContextMenuPlugin` | Right-click menu plugin | `ListTable` |
+| `TableSeriesNumberPlugin` | Table series number plugin | `ListTable` |
 
 <br>
 
@@ -59,3 +82,27 @@ Gantt chart VTable-Gantt component currently supports the following plugins:
 | --- | --- | --- |
 | `ExportGanttPlugin` | Realize the full export of Gantt charts and be able to adapt to the size of the Gantt chart | `Gantt` |
 | `ExcelImportPlugin` | Imports excel, csv, json, and html files into the table | `ListTable` |
+
+## Plugin Event
+
+Plugins can trigger events to the table, and other plugins can listen to this type of event.
+
+If a plugin needs to trigger a right-click event to the table, other plugins can listen to this type of event.
+
+```ts
+const tableInstance =new ListTable(options);
+
+const {
+    PLUGIN_EVENT
+} = VTable.ListTable.EVENT_TYPE;
+
+tableInstance.fireListeners(VTable.TABLE_EVENT_TYPE.PLUGIN_EVENT, {
+  plugin: this,
+  event: nativeEvent,
+  pluginEventInfo: {
+    eventType: 'rightclick',
+    colIndex: colIndex,
+    ...
+  }
+});
+```
