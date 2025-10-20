@@ -1,3 +1,24 @@
+# v1.22.0
+
+2025-10-17
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-plugins**: add master detail table plugin
+- **@visactor/vtable-sheet**:  handle with formula calculate when add or delete row and column;
+- **@visactor/vtable**: a new getFilteredRecords method has been added to ListTable [#4537](https://github.com/VisActor/VTable/issues/4537)
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: the getFilteredRecords method of PivotTable
+- **@visactor/vtable**: plugin HighlightHeaderWhenSelectCellPlugin options parse
+
+
+
+[more detail about v1.22.0](https://github.com/VisActor/VTable/releases/tag/v1.22.0)
+
 # v1.21.1
 
 2025-10-14

@@ -94,6 +94,13 @@
           }
         },
         {
+          "path": "list-table-master-detail-table",
+          "title": {
+            "zh": "主从表功能展示",
+            "en": "Master Detail Table"
+          }
+        },
+        {
           "path": "transpose-table",
           "title": {
             "zh": "转置表格",
@@ -1589,6 +1596,13 @@
           "title": {
             "zh": "类Excel在线编辑",
             "en": "Excel online editing"
+          }
+        },
+        {
+          "path": "master-detail",
+          "title": {
+            "zh": "主从表功能",
+            "en": "Master Detail"
           }
         }
       ]

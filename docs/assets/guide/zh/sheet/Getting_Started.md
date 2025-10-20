@@ -39,12 +39,14 @@ const { VTableSheet } = require('@visactor/vtable-sheet');
   <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/sheet-build-umd.png"  style="width: 100%; object-fit: contain; padding: 10px;">
 </div>
 具体引用方式如下：
+
 ```html
 <script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
 <script src="vtable.js"></script>
 <script src="https://unpkg.com/@visactor/vtable-sheet@latest/dist/vtable-sheet.js"></script>
 ```
 如果还需要引用插件包`vtable-plugins`的umd包，可以添加：
+
 ```html
 <script src="https://unpkg.com/@visactor/vrender@latest/dist/index.js"></script>
 <script src="vtable.js"></script>

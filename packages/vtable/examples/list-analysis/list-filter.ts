@@ -362,4 +362,7 @@ export function createTable() {
   tableInstance.on('change_cell_value', arg => {
     console.log(arg);
   });
+  tableInstance.on('click_cell', arg => {
+    console.log(tableInstance.getFilteredRecords());
+  });
 }

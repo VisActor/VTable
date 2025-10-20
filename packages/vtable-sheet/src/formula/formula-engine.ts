@@ -58,9 +58,16 @@ export class FormulaEngine {
 
     // 初始化工作表数据
     const sheetData = data || [['']];
-    this.sheetData.set(sheetId, this.normalizeData(sheetData));
+    // this.sheetData.set(sheetId, this.normalizeData(sheetData));
+    this.sheetData.set(sheetId, sheetData);
 
     return sheetId;
+  }
+  updateSheetData(sheetKey: string, data: unknown[][]): void {
+    const sheetId = this.sheets.get(sheetKey);
+    if (sheetId !== undefined && sheetId !== null) {
+      this.sheetData.set(sheetId, data);
+    }
   }
 
   private normalizeData(data: unknown[][]): unknown[][] {
@@ -100,6 +107,87 @@ export class FormulaEngine {
       return this.addSheet(sheetKey);
     }
     return sheetId;
+  }
+
+  /**
+   * 获取单元格的公式字符串
+   */
+  getFormulaString(cell: FormulaCell): string | null {
+    const cellKey = this.getCellKey(cell);
+    return this.formulaCells.get(cellKey) || null;
+  }
+
+  /**
+   * 清除指定单元格的依赖关系
+   */
+  private clearDependencies(cellKey: string): void {
+    // 清除该单元格对其他单元的依赖
+    const oldDeps = this.dependencies.get(cellKey) || new Set();
+    for (const dep of oldDeps) {
+      const depDependents = this.dependents.get(dep) || new Set();
+      depDependents.delete(cellKey);
+      if (depDependents.size === 0) {
+        this.dependents.delete(dep);
+      } else {
+        this.dependents.set(dep, depDependents);
+      }
+    }
+
+    // 清除该单元格的依赖记录
+    this.dependencies.delete(cellKey);
+  }
+
+  /**
+   * 设置单元格内容但不更新依赖关系（用于批量操作）
+   */
+  private setCellContentWithoutDependencyUpdate(cell: FormulaCell, value: unknown): void {
+    if (!cell || cell.sheet === undefined || cell.row === undefined || cell.col === undefined) {
+      throw new Error('Invalid cell parameter');
+    }
+
+    if (cell.row < 0 || cell.col < 0) {
+      throw new Error(`Cell coordinates out of bounds: row=${cell.row}, col=${cell.col}`);
+    }
+
+    const sheetId = this.getSheetId(cell.sheet);
+
+    if (!this.sheetData.has(sheetId)) {
+      this.sheetData.set(sheetId, [['']]);
+    }
+
+    const sheet = this.sheetData.get(sheetId);
+    if (!sheet) {
+      throw new Error(`Sheet data not found for ID: ${sheetId}`);
+    }
+
+    // 确保行存在
+    while (sheet.length <= cell.row) {
+      sheet.push([]);
+    }
+
+    // 确保列存在
+    while (sheet[cell.row].length <= cell.col) {
+      sheet[cell.row].push('');
+    }
+
+    let processedValue = value;
+
+    // 处理空值
+    if (processedValue === null || processedValue === undefined) {
+      processedValue = '';
+    }
+
+    // 只有字符串类型的值才需要检查是否为数字
+    if (typeof processedValue === 'string' && !processedValue.startsWith('=')) {
+      const numericValue = Number(processedValue);
+      // 只有非空字符串且能转换为有效数字时才转换
+      if (!isNaN(numericValue) && processedValue.trim() !== '') {
+        processedValue = numericValue;
+      }
+    }
+
+    // 更新单元格值
+    sheet[cell.row][cell.col] = processedValue;
   }
 
   setCellContent(cell: FormulaCell, value: unknown): void {
@@ -217,6 +305,11 @@ export class FormulaEngine {
       }
 
       const expression = formula.substring(1).trim();
+
+      // 检查是否包含#REF!错误
+      if (expression.includes('#REF!')) {
+        return { value: '#REF!', error: undefined };
+      }
 
       // 使用递归下降解析器
       const result = this.parseExpression(expression);
@@ -1688,8 +1781,536 @@ export class FormulaEngine {
 
     return result;
   }
+
+  /**
+   * 调整公式引用 - 当插入或删除行/列时 (MIT兼容)
+   * @param sheetKey 工作表键
+   * @param type 调整类型 ('insert' | 'delete')
+   * @param dimension 维度 ('row' | 'column')
+   * @param index 插入/删除的位置索引
+   * @param count 插入/删除的数量
+   */
+  adjustFormulaReferences(
+    sheetKey: string,
+    type: 'insert' | 'delete',
+    dimension: 'row' | 'column',
+    index: number,
+    count: number,
+    totalColCount: number,
+    totalRowCount: number
+  ): { adjustedCells: FormulaCell[]; movedCells: FormulaCell[] } {
+    try {
+      const adjustedFormulas: Array<{ cell: FormulaCell; oldFormula: string; newFormula: string }> = [];
+      const movedFormulas: Array<{ oldCellKey: string; newCell: FormulaCell; formula: string }> = [];
+      const deletedCells: Set<string> = new Set();
+
+      // 第一步：收集被删除的单元格
+      if (type === 'delete') {
+        for (let i = 0; i < count; i++) {
+          if (dimension === 'row') {
+            // 收集被删除行的所有单元格
+            for (let col = 0; col < totalColCount; col++) {
+              // 假设最大1000列
+              const deletedCell = { sheet: sheetKey, row: index + i, col };
+              const deletedCellKey = this.getCellKey(deletedCell);
+              deletedCells.add(deletedCellKey);
+            }
+          } else if (dimension === 'column') {
+            // 收集被删除列的所有单元格
+            for (let row = 0; row < totalRowCount; row++) {
+              // 假设最大100万行
+              const deletedCell = { sheet: sheetKey, row, col: index + i };
+              const deletedCellKey = this.getCellKey(deletedCell);
+              deletedCells.add(deletedCellKey);
+            }
+          }
+        }
+      }
+
+      // 第二步：处理公式单元格
+      for (const [cellKey, formula] of Array.from(this.formulaCells.entries())) {
+        const cell = this.parseCellKey(cellKey);
+        if (!cell || cell.sheet !== sheetKey) {
+          continue; // 跳过其他工作表的公式
+        }
+
+        // 检查公式单元格本身是否需要移动
+        const newCell = { ...cell };
+        let cellNeedsMove = false;
+
+        if (dimension === 'row') {
+          if (type === 'insert' && cell.row >= index) {
+            // 插入行：在插入点之后的单元格需要向后移动
+            newCell.row = cell.row + count;
+            cellNeedsMove = true;
+          } else if (type === 'delete' && cell.row > index) {
+            // 删除行：在删除点之后的单元格需要向前移动
+            newCell.row = cell.row - count;
+            cellNeedsMove = true;
+          } else if (type === 'delete' && cell.row >= index && cell.row < index + count) {
+            // 删除的行：这些公式单元格将被删除
+            this.formulaCells.delete(cellKey);
+            continue;
+          }
+        } else if (dimension === 'column') {
+          if (type === 'insert' && cell.col >= index) {
+            // 插入列：在插入点之后的单元格需要向后移动
+            newCell.col = cell.col + count;
+            cellNeedsMove = true;
+          } else if (type === 'delete' && cell.col > index) {
+            // 删除列：在删除点之后的单元格需要向前移动
+            newCell.col = cell.col - count;
+            cellNeedsMove = true;
+          } else if (type === 'delete' && cell.col >= index && cell.col < index + count) {
+            // 删除的列：这些公式单元格将被删除
+            this.formulaCells.delete(cellKey);
+            continue;
+          }
+        }
+
+        // 调整公式引用，传入被删除的单元格信息
+        const newFormula = this.adjustFormulaReference(formula, type, dimension, index, count);
+
+        if (cellNeedsMove) {
+          // 如果单元格位置发生变化，需要移动公式
+          // 注意：公式中的引用已经根据操作类型调整了，这是正确的
+          movedFormulas.push({ oldCellKey: cellKey, newCell, formula: newFormula });
+          // 删除旧的公式条目和依赖关系
+          this.formulaCells.delete(cellKey);
+          this.clearDependencies(cellKey);
+        } else if (newFormula !== formula) {
+          // 如果只有公式引用发生变化，更新原单元格
+          adjustedFormulas.push({ cell, oldFormula: formula, newFormula });
+          // 清除旧的依赖关系，将在批量更新时重新建立
+          this.clearDependencies(cellKey);
+        }
+      }
+
+      // 处理移动的公式
+      for (const { newCell, formula } of movedFormulas) {
+        const newCellKey = this.getCellKey(newCell);
+        this.formulaCells.set(newCellKey, formula);
+        // 重新建立依赖关系
+        this.updateDependencies(newCellKey, formula);
+        // 更新单元格内容但不重新计算依赖（因为已经更新了）
+        this.setCellContentWithoutDependencyUpdate(newCell, formula);
+      }
+
+      // 批量更新调整后的公式
+      for (const { cell, newFormula } of adjustedFormulas) {
+        const cellKey = this.getCellKey(cell);
+        // 更新公式存储
+        this.formulaCells.set(cellKey, newFormula);
+        // 更新依赖关系
+        this.updateDependencies(cellKey, newFormula);
+        // 更新单元格内容但不重新计算依赖（因为已经更新了）
+        this.setCellContentWithoutDependencyUpdate(cell, newFormula);
+      }
+
+      const totalChanges = adjustedFormulas.length + movedFormulas.length;
+      if (totalChanges > 0) {
+        // console.log(
+        //   `Adjusted ${adjustedFormulas.length} formulas and moved ${movedFormulas.length} ` +
+        //     `formulas for ${type} ${dimension} at ${index}`
+        // );
+      }
+
+      // 返回所有受影响的单元格
+      const adjustedCells = adjustedFormulas.map(item => item.cell);
+      const movedCells = movedFormulas.map(item => item.newCell);
+
+      return { adjustedCells, movedCells };
+    } catch (error) {
+      console.error(`Failed to adjust formula references for ${type} ${dimension} at ${index}:`, error);
+      return { adjustedCells: [], movedCells: [] };
+    }
+  }
+
+  /**
+   * 调整单个公式引用 (MIT兼容)
+   * @param formula 原公式
+   * @param type 调整类型 ('insert' | 'delete')
+   * @param dimension 维度 ('row' | 'column')
+   * @param index 插入/删除的位置索引
+   * @param count 插入/删除的数量
+   * @returns 调整后的公式
+   */
+  private adjustFormulaReference(
+    formula: string,
+    type: 'insert' | 'delete',
+    dimension: 'row' | 'column',
+    index: number,
+    count: number
+  ): string {
+    if (!formula || !formula.startsWith('=')) {
+      return formula;
+    }
+
+    const expression = formula.substring(1);
+
+    // 使用正则表达式匹配单元格引用 (A1, B2, 等) 和范围引用 (A1:B2)
+    const cellRefRegex = /([A-Z]+)([0-9]+)/g;
+    const rangeRefRegex = /([A-Z]+[0-9]+):([A-Z]+[0-9]+)/g;
+
+    let newExpression = expression;
+    let match: RegExpExecArray | null;
+    const replacements: Array<{ start: number; end: number; replacement: string }> = [];
+
+    // 首先处理范围引用
+    while ((match = rangeRefRegex.exec(expression)) !== null) {
+      const fullRangeMatch = match[0];
+      const startCell = match[1];
+      const endCell = match[2];
+
+      if (type === 'delete') {
+        // 检查范围是否包含被删除的单元格
+        const rangeContainsDeletedCells = this.rangeContainsDeletedCells(startCell, endCell, dimension, index, count);
+
+        if (rangeContainsDeletedCells) {
+          // 范围包含被删除的单元格，需要调整范围
+          const newRange = this.adjustRangeForDeletion(startCell, endCell, dimension, index, count);
+          if (newRange !== fullRangeMatch) {
+            replacements.push({
+              start: match.index,
+              end: match.index + fullRangeMatch.length,
+              replacement: newRange
+            });
+          }
+        }
+      }
+    }
+
+    // 重置正则表达式，避免与范围引用冲突
+    cellRefRegex.lastIndex = 0;
+
+    while ((match = cellRefRegex.exec(expression)) !== null) {
+      const fullMatch = match[0];
+      const colLetters = match[1];
+      const rowNumber = parseInt(match[2], 10);
+
+      // 检查这个单元格引用是否已经被范围引用处理过
+      const currentMatchIndex = match.index;
+      const isPartOfRange = replacements.some(
+        replacement => currentMatchIndex >= replacement.start && currentMatchIndex < replacement.end
+      );
+
+      if (isPartOfRange) {
+        continue;
+      }
+
+      let needsAdjustment = false;
+      let newRowNumber = rowNumber;
+      let newColLetters = colLetters;
+      const isDeletedCell = false;
+
+      if (dimension === 'row') {
+        // Convert 1-based row number to 0-based for comparison
+        const zeroBasedRowNumber = rowNumber - 1;
+
+        if (type === 'insert' && zeroBasedRowNumber >= index) {
+          // 插入行：在插入点之后的行需要向后移动
+          newRowNumber = rowNumber + count;
+          needsAdjustment = true;
+        } else if (type === 'delete' && zeroBasedRowNumber >= index) {
+          // 删除行：在删除点及之后的行需要向前移动
+          if (zeroBasedRowNumber >= index + count) {
+            // 完全在删除范围之后的行
+            newRowNumber = rowNumber - count;
+            needsAdjustment = true;
+          } else if (zeroBasedRowNumber >= index && zeroBasedRowNumber < index + count) {
+            // 在删除范围内的行：需要调整到删除前的位置
+            newRowNumber = index; // 调整到删除位置（即原来的位置-1）
+            needsAdjustment = true;
+          }
+        }
+      } else if (dimension === 'column') {
+        const colIndex = this.columnLettersToIndex(colLetters);
+
+        if (type === 'insert' && colIndex >= index) {
+          // 插入列：在插入点之后的列需要向后移动
+          newColLetters = this.indexToColumnLetters(colIndex + count);
+          needsAdjustment = true;
+        } else if (type === 'delete' && colIndex >= index) {
+          // 删除列：在删除点及之后的列需要向前移动
+          if (colIndex >= index + count) {
+            // 完全在删除范围之后的列
+            newColLetters = this.indexToColumnLetters(colIndex - count);
+            needsAdjustment = true;
+          } else if (colIndex >= index && colIndex < index + count) {
+            // 在删除范围内的列：需要调整到删除前的位置
+            newColLetters = this.indexToColumnLetters(index); // 调整到删除位置
+            needsAdjustment = true;
+          }
+        }
+      }
+      if (needsAdjustment) {
+        let replacement: string;
+        if (dimension === 'row' && newRowNumber === index) {
+          // 行被调整到删除位置，表示该行被删除
+          replacement = '#REF!';
+        } else if (
+          dimension === 'column' &&
+          this.indexToColumnLetters(this.columnLettersToIndex(newColLetters)) === this.indexToColumnLetters(index)
+        ) {
+          // 列被调整到删除位置，表示该列被删除
+          replacement = '#REF!';
+        } else {
+          replacement = newColLetters + newRowNumber;
+        }
+        replacements.push({
+          start: match.index,
+          end: match.index + fullMatch.length,
+          replacement: replacement
+        });
+      }
+    }
+
+    // 按位置倒序排序，以便从后向前替换
+    replacements.sort((a, b) => b.start - a.start);
+
+    // 执行替换
+    for (const { start, end, replacement } of replacements) {
+      newExpression = newExpression.substring(0, start) + replacement + newExpression.substring(end);
+    }
+
+    return '=' + newExpression;
+  }
+
+  /**
+   * 将列字母转换为索引 (A=0, B=1, ..., Z=25, AA=26, 等) (MIT兼容)
+   * @param letters 列字母
+   * @returns 列索引
+   */
+  private columnLettersToIndex(letters: string): number {
+    let index = 0;
+    for (let i = 0; i < letters.length; i++) {
+      index = index * 26 + (letters.charCodeAt(i) - 64); // A=1, B=2, etc.
+    }
+    return index - 1; // Convert to 0-based index
+  }
+
+  /**
+   * 将列索引转换为字母 (0=A, 1=B, ..., 25=Z, 26=AA, 等) (MIT兼容)
+   * @param index 列索引
+   * @returns 列字母
+   */
+  private indexToColumnLetters(index: number): string {
+    let letters = '';
+    do {
+      letters = String.fromCharCode(65 + (index % 26)) + letters;
+      index = Math.floor(index / 26) - 1;
+    } while (index >= 0);
+    return letters;
+  }
+
+  /**
+   * 检查范围是否包含被删除的单元格
+   * @param startCell 范围起始单元格 (如 "A1")
+   * @param endCell 范围结束单元格 (如 "B2")
+   * @param dimension 删除维度 ('row' | 'column')
+   * @param index 删除起始索引
+   * @param count 删除数量
+   * @param deletedCells 被删除的单元格集合
+   * @param currentSheet 当前工作表
+   * @returns 是否包含被删除的单元格
+   */
+  private rangeContainsDeletedCells(
+    startCell: string,
+    endCell: string,
+    dimension: 'row' | 'column',
+    index: number,
+    count: number
+  ): boolean {
+    try {
+      const start = this.parseA1Notation(startCell);
+      const end = this.parseA1Notation(endCell);
+
+      // 确保start <= end
+      const minRow = Math.min(start.row, end.row);
+      const maxRow = Math.max(start.row, end.row);
+      const minCol = Math.min(start.col, end.col);
+      const maxCol = Math.max(start.col, end.col);
+
+      if (dimension === 'row') {
+        // 检查删除的行是否在范围内
+        const deleteStartRow = index;
+        const deleteEndRow = index + count - 1;
+
+        // 检查是否有重叠
+        if (deleteEndRow >= minRow && deleteStartRow <= maxRow) {
+          return true;
+        }
+      } else if (dimension === 'column') {
+        // 检查删除的列是否在范围内
+        const deleteStartCol = index;
+        const deleteEndCol = index + count - 1;
+
+        // 检查是否有重叠
+        if (deleteEndCol >= minCol && deleteStartCol <= maxCol) {
+          return true;
+        }
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 调整范围引用以处理删除操作
+   * @param startCell 范围起始单元格 (如 "A1")
+   * @param endCell 范围结束单元格 (如 "B2")
+   * @param dimension 删除维度 ('row' | 'column')
+   * @param index 删除起始索引
+   * @param count 删除数量
+   * @param deletedCells 被删除的单元格集合
+   * @param currentSheet 当前工作表
+   * @returns 调整后的范围引用
+   */
+  private adjustRangeForDeletion(
+    startCell: string,
+    endCell: string,
+    dimension: 'row' | 'column',
+    index: number,
+    count: number
+  ): string {
+    try {
+      const start = this.parseA1Notation(startCell);
+      const end = this.parseA1Notation(endCell);
+
+      // 确保start <= end
+      const minRow = Math.min(start.row, end.row);
+      const maxRow = Math.max(start.row, end.row);
+      const minCol = Math.min(start.col, end.col);
+      const maxCol = Math.max(start.col, end.col);
+
+      let newMinRow = minRow;
+      let newMaxRow = maxRow;
+      let newMinCol = minCol;
+      let newMaxCol = maxCol;
+
+      if (dimension === 'row') {
+        const deleteStartRow = index;
+        const deleteEndRow = index + count - 1;
+
+        // 调整起始行
+        if (minRow >= deleteStartRow && minRow <= deleteEndRow) {
+          // 起始行被删除 - 调整到删除前的位置
+          newMinRow = deleteStartRow > 0 ? deleteStartRow - 1 : 0;
+        } else if (minRow > deleteEndRow) {
+          // 起始行在删除范围之后，需要向前移动
+          newMinRow = minRow - count;
+          if (newMinRow < 0) {
+            newMinRow = 0; // 确保不为负数
+          }
+        }
+
+        // 调整结束行
+        if (maxRow >= deleteStartRow && maxRow <= deleteEndRow) {
+          // 结束行被删除 - 调整到删除前的位置
+          newMaxRow = deleteStartRow > 0 ? deleteStartRow - 1 : 0;
+        } else if (maxRow > deleteEndRow) {
+          // 结束行在删除范围之后，需要向前移动
+          newMaxRow = maxRow - count;
+          if (newMaxRow < 0) {
+            newMaxRow = 0; // 确保不为负数
+          }
+        }
+
+        // 检查调整后的范围是否有效
+        if (newMinRow > newMaxRow) {
+          return '#REF!';
+        }
+      } else if (dimension === 'column') {
+        const deleteStartCol = index;
+        const deleteEndCol = index + count - 1;
+
+        // 调整起始列
+        if (minCol >= deleteStartCol && minCol <= deleteEndCol) {
+          // 起始列被删除 - 调整到删除前的位置
+          newMinCol = deleteStartCol > 0 ? deleteStartCol - 1 : 0;
+        } else if (minCol > deleteEndCol) {
+          // 起始列在删除范围之后，需要向前移动
+          newMinCol = minCol - count;
+          if (newMinCol < 0) {
+            newMinCol = 0; // 确保不为负数
+          }
+        }
+
+        // 调整结束列
+        if (maxCol >= deleteStartCol && maxCol <= deleteEndCol) {
+          // 结束列被删除 - 调整到删除前的位置
+          newMaxCol = deleteStartCol > 0 ? deleteStartCol - 1 : 0;
+        } else if (maxCol > deleteEndCol) {
+          // 结束列在删除范围之后，需要向前移动
+          newMaxCol = maxCol - count;
+          if (newMaxCol < 0) {
+            newMaxCol = 0; // 确保不为负数
+          }
+        }
+
+        // 检查调整后的范围是否有效
+        if (newMinCol > newMaxCol) {
+          return '#REF!';
+        }
+
+        // 如果起始列或结束列是#REF!，或者整个范围无效，返回#REF!
+        if (newMinCol === -1 || newMaxCol === -1) {
+          return '#REF!';
+        }
+      }
+
+      // 如果起始和结束都是#REF!，返回#REF!
+      if (
+        (dimension === 'row' && newMinRow === -1 && newMaxRow === -1) ||
+        (dimension === 'column' && newMinCol === -1 && newMaxCol === -1)
+      ) {
+        return '#REF!';
+      }
+
+      // 构建新的范围引用
+      let newStartCell: string;
+      let newEndCell: string;
+
+      if (dimension === 'row') {
+        if (newMinRow === -1) {
+          newStartCell = '#REF!';
+        } else {
+          newStartCell = this.getA1Notation(newMinRow, newMinCol);
+        }
+
+        if (newMaxRow === -1) {
+          newEndCell = '#REF!';
+        } else {
+          newEndCell = this.getA1Notation(newMaxRow, newMaxCol);
+        }
+      } else {
+        if (newMinCol === -1) {
+          newStartCell = '#REF!';
+        } else {
+          newStartCell = this.getA1Notation(newMinRow, newMinCol);
+        }
+
+        if (newMaxCol === -1) {
+          newEndCell = '#REF!';
+        } else {
+          newEndCell = this.getA1Notation(newMaxRow, newMaxCol);
+        }
+      }
+
+      // 如果起始和结束相同，返回单个单元格引用
+      if (newStartCell === newEndCell) {
+        return newStartCell;
+      }
+
+      return `${newStartCell}:${newEndCell}`;
+    } catch {
+      return '#REF!';
+    }
+  }
 }
 
 class FormulaError {
-  constructor(public message: string) {}
+  constructor(public message: string, public type: 'REF' | 'VALUE' | 'DIV0' | 'NAME' | 'NA' = 'VALUE') {}
 }

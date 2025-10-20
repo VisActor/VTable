@@ -931,6 +931,13 @@
           }
         },
         {
+          "path": "master-detail",
+          "title": {
+            "zh": "主从表",
+            "en": "master detail table"
+          }
+        },
+        {
           "path": "row-column-series",
           "title": {
             "zh": "行列序号",

@@ -276,6 +276,26 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         this.handleCellValueChanged(event);
       });
 
+      // 监听数据记录变更事件 - 用于调整公式引用
+      // 注意：'add_record' 事件类型需要使用 as any 绕过类型检查
+      (this.tableInstance as any).on('add_record', (event: any) => {
+        this.handleDataRecordsChanged('add', event);
+      });
+
+      // 注意：'delete_record' 事件类型需要使用 as any 绕过类型检查
+      (this.tableInstance as any).on('delete_record', (event: any) => {
+        this.handleDataRecordsChanged('delete', event);
+      });
+      // 注意：'add_column' 事件类型尚未在 VTable 中定义，这里使用 as any 绕过类型检查
+      (this.tableInstance as any).on('add_column', (event: any) => {
+        this.handleColumnsChanged('add', event);
+      });
+
+      // 注意：'delete_column' 事件类型需要使用 as any 绕过类型检查
+      (this.tableInstance as any).on('delete_column', (event: any) => {
+        this.handleColumnsChanged('delete', event);
+      });
+
       // 监听编辑结束事件，恢复十字光标
       this.tableInstance.on('click_cell', () => {
         this.element.classList.add('vtable-excel-cursor');
@@ -371,6 +391,88 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       newValue: event.changedValue
     };
     this.fire(WorkSheetEventType.CELL_VALUE_CHANGED, cellValueChangedEvent);
+  }
+
+  /**
+   * 处理数据记录变更事件 - 用于调整公式引用
+   * @param type 变更类型 ('add' | 'delete')
+   * @param event 数据变更事件
+   */
+  private handleDataRecordsChanged(type: 'add' | 'delete', event: any): void {
+    try {
+      const sheetKey = this.getKey();
+      //#region 处理数据变化后，公式引擎中的数据也需要更新
+      const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
+        this.tableInstance.records,
+        this.tableInstance
+      );
+      this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
+      //#endregion
+      if (type === 'add') {
+        // 处理添加记录事件
+        const { recordIndex, recordCount } = event;
+        if (recordIndex !== undefined && recordCount > 0) {
+          // 在指定位置插入行，需要调整该位置之后的公式引用
+          this.vtableSheet.formulaManager.addRows(sheetKey, recordIndex, recordCount);
+        } else {
+          // 默认在末尾添加
+          const currentRowCount = this.getRowCount();
+          this.vtableSheet.formulaManager.addRows(sheetKey, currentRowCount, recordCount);
+        }
+      } else if (type === 'delete') {
+        // 处理删除记录事件
+        const { rowIndexs, deletedCount } = event;
+        if (rowIndexs && rowIndexs.length > 0) {
+          // 为了简化，我们假设删除的是连续的行，从最小的索引开始
+          const minIndex = Math.min(...rowIndexs.flat());
+          this.vtableSheet.formulaManager.removeRows(sheetKey, minIndex, deletedCount);
+        }
+      }
+      // update 事件不需要调整引用，因为只是数据内容变更
+    } catch (error) {
+      console.error(`Failed to handle data records changed (${type}):`, error);
+    }
+  }
+  /**
+   * 处理列变更事件 - 用于调整公式引用
+   * @param type 变更类型 ('add' | 'delete')
+   * @param event 列变更事件
+   */
+  private handleColumnsChanged(type: 'add' | 'delete', event: any): void {
+    try {
+      const sheetKey = this.getKey();
+      //#region 处理数据变化后，公式引擎中的数据也需要更新
+      const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
+        this.tableInstance.records,
+        this.tableInstance
+      );
+      this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
+      //#endregion
+      if (type === 'add') {
+        // 处理添加列事件
+        const { columnIndex, columnCount } = event;
+        if (columnIndex !== undefined && columnCount > 0) {
+          // 在指定位置插入列，需要调整该位置之后的公式引用
+          this.vtableSheet.formulaManager.addColumns(sheetKey, columnIndex, columnCount);
+        } else {
+          // 默认在末尾添加
+          const currentColumnCount = this.getColumnCount();
+          this.vtableSheet.formulaManager.addColumns(sheetKey, currentColumnCount, columnCount);
+        }
+      } else if (type === 'delete') {
+        // 处理删除列事件
+        const { deleteColIndexs } = event;
+        if (deleteColIndexs && deleteColIndexs.length > 0) {
+          // 为了简化，我们假设删除的是连续的列，从最小的索引开始
+          const minIndex = Math.min(...deleteColIndexs.flat());
+          const deletedCount = deleteColIndexs.length;
+          this.vtableSheet.formulaManager.removeColumns(sheetKey, minIndex, deletedCount);
+        }
+      }
+      // update 事件不需要调整引用，因为只是数据内容变更
+    } catch (error) {
+      console.error(`Failed to handle columns changed (${type}):`, error);
+    }
   }
 
   /**
@@ -506,29 +608,6 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   getCopiedData(): any[][] {
     // 为了避免影响当前数据，所以需要复制一份数据
     return this.getData().map(row => (Array.isArray(row) ? row.slice() : []));
-  }
-
-  /**
-   * 设置表格数据
-   * @param data 表格数据
-   */
-  setData(data: any[][]): void {
-    this.options.data = data;
-    // 更新表格实例数据
-    if (this.tableInstance) {
-      this.tableInstance.updateOption({
-        records: data
-      });
-      // 更新公式引擎中的数据
-      if (this.vtableSheet?.formulaManager) {
-        try {
-          const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(data, this.tableInstance);
-          this.vtableSheet.formulaManager.setSheetContent(this.sheetKey, normalizedData);
-        } catch (e) {
-          console.warn('Failed to update formula data:', e);
-        }
-      }
-    }
   }
   /**
    * 获取指定坐标的单元格值

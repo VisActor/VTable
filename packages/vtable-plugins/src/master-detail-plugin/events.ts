@@ -1,0 +1,493 @@
+import * as VTable from '@visactor/vtable';
+
+/**
+ * 事件处理相关功能
+ */
+export class EventManager {
+  private expandedRows: number[] = [];
+  private originalResize: (() => void) | undefined;
+  private eventHandlers: Array<{ type: string; handler: (...args: unknown[]) => unknown }> = [];
+  private allExpandedRowsBeforeMove: Set<number> = new Set();
+  private isCleanedUp = false;
+
+  constructor(private table: VTable.ListTable) {}
+
+  /**
+   * 绑定事件处理器
+   */
+  bindEventHandlers(): void {
+    const scrollHandler = () => this.onUpdateSubTablePositions();
+    const resizeRowHandler = () => this.onUpdateSubTablePositionsForRow();
+    this.table.on(VTable.TABLE_EVENT_TYPE.SCROLL, scrollHandler);
+    this.table.on(VTable.TABLE_EVENT_TYPE.RESIZE_ROW, resizeRowHandler);
+    this.eventHandlers.push(
+      { type: VTable.TABLE_EVENT_TYPE.SCROLL, handler: scrollHandler },
+      { type: VTable.TABLE_EVENT_TYPE.RESIZE_ROW, handler: resizeRowHandler }
+    );
+    this.wrapTableResizeMethod();
+    this.bindTreeHierarchyStateChange();
+    this.bindRowMoveEvents();
+  }
+
+  /**
+   * 包装表格resize方法
+   */
+  private wrapTableResizeMethod(): void {
+    const originalResize = this.table.resize.bind(this.table);
+    this.originalResize = originalResize;
+    this.table.resize = () => {
+      originalResize();
+      this.onUpdateSubTablePositions();
+    };
+  }
+
+  /**
+   * 处理单元格内容宽度更新后的事件
+   */
+  handleAfterUpdateCellContentWidth(eventData: {
+    col: number;
+    row: number;
+    cellHeight: number;
+    cellGroup: any;
+    padding: [number, number, number, number];
+    textBaseline: CanvasTextBaseline;
+  }): void {
+    const { col, row, cellGroup, cellHeight, padding, textBaseline } = eventData;
+    // 检查是否为 customMergeCell，如果是则修正文字位置
+    if (this.isCustomMergeCell(col, row)) {
+      this.fixCustomMergeCellTextPosition(cellGroup, padding);
+      return;
+    }
+    let effectiveCellHeight = cellHeight;
+    if (cellGroup.col !== undefined && cellGroup.row !== undefined) {
+      try {
+        const recordIndex = this.table.getRecordShowIndexByCell(cellGroup.col, cellGroup.row);
+        if (recordIndex !== undefined) {
+          const originalHeight = this.getOriginalRowHeight?.(recordIndex) || 0;
+          if (originalHeight > 0) {
+            effectiveCellHeight = originalHeight;
+            // 重新调整单元格内容的纵向位置，使用原始高度
+            const newHeight = effectiveCellHeight - (padding[0] + padding[2]);
+            cellGroup.forEachChildren((child: any) => {
+              if (child.type === 'rect' || child.type === 'chart' || child.name === 'custom-container') {
+                return;
+              }
+              if (child.name === 'mark') {
+                child.setAttribute('y', 0);
+              } else if (textBaseline === 'middle') {
+                child.setAttribute('y', padding[0] + (newHeight - child.AABBBounds.height()) / 2);
+              } else if (textBaseline === 'bottom') {
+                child.setAttribute('y', padding[0] + newHeight - child.AABBBounds.height());
+              } else {
+                child.setAttribute('y', padding[0]);
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.warn(
+          'Failed to get original row height in masterDetail mode (handleAfterUpdateCellContentWidth):',
+          error
+        );
+      }
+    }
+  }
+
+  /**
+   * 修正 customMergeCell 的文字位置
+   */
+  private fixCustomMergeCellTextPosition(cellGroup: any, padding: [number, number, number, number]): void {
+    const { col, row } = cellGroup;
+    const table = this.table as any;
+    const customMerge = table.getCustomMerge(col, row);
+    if (!customMerge || !customMerge.style || !customMerge.range) {
+      return;
+    }
+    // 获取配置的 textAlign，默认为 'left'
+    const configuredTextAlign = customMerge.style.textAlign || 'left';
+    const { start, end } = customMerge.range;
+    let totalMergeWidth = 0;
+    let mergeStartX = 0;
+    for (let c = start.col; c <= end.col; c++) {
+      totalMergeWidth += table.getColWidth(c);
+    }
+    for (let c = 0; c < start.col; c++) {
+      mergeStartX += table.getColWidth(c);
+    }
+    cellGroup.forEachChildren((child: any) => {
+      if (child.name === 'text' || child.name === 'content') {
+        let xPosition: number;
+        if (configuredTextAlign === 'center') {
+          // 居中对齐：合并区域起始位置 + padding + 合并区域宽度的一半
+          xPosition = mergeStartX + padding[3] + (totalMergeWidth - padding[1] - padding[3]) / 2;
+        } else if (configuredTextAlign === 'right') {
+          // 右对齐：合并区域起始位置 + 合并区域总宽度 - 右padding
+          xPosition = mergeStartX + totalMergeWidth - padding[1];
+        } else {
+          // 左对齐：合并区域起始位置 + 左padding
+          xPosition = mergeStartX + padding[3];
+        }
+        child.setAttribute('x', xPosition);
+        child.setAttribute('textAlign', configuredTextAlign);
+      }
+    });
+  }
+
+  /**
+   * 检查是否为 customMergeCell
+   */
+  private isCustomMergeCell(col: number, row: number): boolean {
+    try {
+      const table = this.table;
+      if (table && table.getCustomMerge) {
+        const customMerge = table.getCustomMerge(col, row);
+        return !!customMerge;
+      }
+    } catch (error) {
+      console.warn('Error checking custom merge cell:', error);
+    }
+    return false;
+  }
+
+  /**
+   * 处理选择边框高度更新后的事件
+   */
+  handleAfterUpdateSelectBorderHeight(eventData: {
+    startRow: number;
+    endRow: number;
+    currentHeight: number;
+    selectComp: { rect: any; fillhandle?: any; role: string };
+  }): void {
+    const { startRow, endRow, selectComp } = eventData;
+    // 判断是否为单选一个单元格
+    const isSingleCellSelection = startRow === endRow;
+    // 判断选中区域的最后一行是否为展开行
+    const isLastRowExpanded = this.expandedRows.includes(endRow);
+    if (isSingleCellSelection) {
+      // 单选一个CellGroup，使用原始高度
+      const headerCount = this.table.columnHeaderLevelCount || 0;
+      const bodyRowIndex = startRow - headerCount;
+      const originalHeight = this.getOriginalRowHeight?.(bodyRowIndex) || 0;
+      if (originalHeight > 0 && originalHeight !== eventData.currentHeight) {
+        selectComp.rect.setAttributes({
+          height: originalHeight
+        });
+        if (selectComp.fillhandle) {
+          const currentY = selectComp.rect.attribute.y;
+          selectComp.fillhandle.setAttributes({
+            y: currentY + originalHeight
+          });
+        }
+      }
+    } else if (isLastRowExpanded) {
+      // 多行选中且最后一行是展开行，需要调整总高度
+      const headerCount = this.table.columnHeaderLevelCount || 0;
+      const lastRowBodyIndex = endRow - headerCount;
+      const lastRowOriginalHeight = this.getOriginalRowHeight?.(lastRowBodyIndex) || 0;
+      if (lastRowOriginalHeight > 0) {
+        // 获取最后一行的当前逻辑高度
+        const lastRowCurrentHeight = this.table.getRowHeight(endRow);
+        // 计算调整后的总高度：当前总高度 - 最后一行当前高度 + 最后一行原始高度
+        const adjustedTotalHeight = eventData.currentHeight - lastRowCurrentHeight + lastRowOriginalHeight;
+        selectComp.rect.setAttributes({
+          height: adjustedTotalHeight
+        });
+        if (selectComp.fillhandle) {
+          const currentY = selectComp.rect.attribute.y;
+          selectComp.fillhandle.setAttributes({
+            y: currentY + adjustedTotalHeight
+          });
+        }
+      }
+    }
+  }
+
+  /**
+   * 排序前的操作
+   */
+  executeMasterDetailBeforeSort(): void {
+    const table = this.table as any;
+    if (table.internalProps.expandedRecordIndices && table.internalProps.expandedRecordIndices.length > 0) {
+      table.internalProps._tempExpandedRecordIndices = [...table.internalProps.expandedRecordIndices];
+    }
+    if (this.expandedRows.length > 0) {
+      const expandedRowIndices = [...this.expandedRows];
+      expandedRowIndices.forEach(rowIndex => {
+        try {
+          const tableOptions = (table as any).options;
+          if (tableOptions && tableOptions.pagination) {
+            this.onCollapseRowToNoRealRecordIndex?.(rowIndex);
+          } else {
+            this.onCollapseRow?.(rowIndex);
+          }
+        } catch (e) {
+          // 收起失败
+          console.warn(`Failed to collapse row ${rowIndex} before sort:`, e);
+        }
+      });
+    }
+  }
+
+  /**
+   * 排序后的操作
+   */
+  executeMasterDetailAfterSort(): void {
+    const table = this.table as any;
+    const tempExpandedRecordIndices = table.internalProps._tempExpandedRecordIndices;
+    if (tempExpandedRecordIndices && tempExpandedRecordIndices.length > 0) {
+      const recordIndicesArray = [...tempExpandedRecordIndices];
+      recordIndicesArray.forEach(recordIndex => {
+        const bodyRowIndex = table.getBodyRowIndexByRecordIndex(recordIndex);
+        if (bodyRowIndex >= 0) {
+          try {
+            const targetRowIndex = bodyRowIndex + table.columnHeaderLevelCount;
+            this.onExpandRow?.(targetRowIndex);
+          } catch (e) {
+            console.warn(`Failed to expand row ${bodyRowIndex + table.columnHeaderLevelCount} after sort:`, e);
+          }
+        }
+      });
+      // 清理临时变量
+      delete table.internalProps._tempExpandedRecordIndices;
+    }
+  }
+  /**
+   * 获取展开的行数组
+   */
+  getExpandedRows(): number[] {
+    return this.expandedRows;
+  }
+
+  /**
+   * 设置展开的行数组
+   */
+  setExpandedRows(rows: number[]): void {
+    this.expandedRows = rows;
+  }
+
+  /**
+   * 添加展开行
+   */
+  addExpandedRow(rowIndex: number): void {
+    if (!this.expandedRows.includes(rowIndex)) {
+      this.expandedRows.push(rowIndex);
+    }
+  }
+
+  /**
+   * 移除展开行
+   */
+  removeExpandedRow(rowIndex: number): void {
+    const index = this.expandedRows.indexOf(rowIndex);
+    if (index > -1) {
+      this.expandedRows.splice(index, 1);
+    }
+  }
+
+  /**
+   * 检查行是否展开
+   */
+  isRowExpanded(rowIndex: number): boolean {
+    return this.expandedRows.includes(rowIndex);
+  }
+
+  /**
+   * 绑定树状态变化事件
+   */
+  private bindTreeHierarchyStateChange(): void {
+    const hierarchyStateChangeHandler = (args: unknown) => {
+      const { col, row } = args as {
+        col: number;
+        row: number;
+      };
+      const record = this.getRecordByRowIndex(row - this.table.columnHeaderLevelCount);
+      if (record && typeof record === 'object' && 'children' in record && record.children === true) {
+        return;
+      }
+      this.onToggleRowExpand?.(row, col);
+    };
+    this.table.on(VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE, hierarchyStateChangeHandler);
+    this.eventHandlers.push({
+      type: VTable.TABLE_EVENT_TYPE.TREE_HIERARCHY_STATE_CHANGE,
+      handler: hierarchyStateChangeHandler
+    });
+  }
+
+  /**
+   * 获取指定行的记录数据
+   */
+  private getRecordByRowIndex(bodyRowIndex: number): unknown {
+    try {
+      const table = this.table;
+      const recordIndex = table.getRecordShowIndexByCell(0, bodyRowIndex + table.columnHeaderLevelCount);
+      return table.dataSource.get(recordIndex);
+    } catch (error) {
+      console.warn('Error getting record by row index:', error);
+      return null;
+    }
+  }
+
+  /**
+   * 绑定行移动事件处理
+   */
+  private bindRowMoveEvents(): void {
+    const moveStartHandler = (args: any) => {
+      if (!args || typeof args.col !== 'number' || typeof args.row !== 'number') {
+        return;
+      }
+      const { col, row } = args;
+      const cellLocation = this.table.getCellLocation(col, row);
+      const isRowMove =
+        cellLocation === 'rowHeader' || (this.table.internalProps.layoutMap as any).isSeriesNumberInBody?.(col, row);
+      if (!isRowMove) {
+        return;
+      }
+      this.allExpandedRowsBeforeMove.clear();
+      const currentExpandedRows = [...this.expandedRows];
+      currentExpandedRows.forEach(rowIndex => {
+        this.allExpandedRowsBeforeMove.add(rowIndex);
+      });
+      currentExpandedRows.forEach(rowIndex => {
+        this.onCollapseRow?.(rowIndex);
+      });
+    };
+
+    const moveSuccessHandler = (args: any) => {
+      // 如果没有记录的展开状态，说明不是行移动或没有展开的行
+      if (this.allExpandedRowsBeforeMove.size === 0) {
+        return;
+      }
+
+      // 直接从columnMove状态获取原始的移动参数
+      const columnMoveState = this.table.stateManager?.columnMove;
+      const { colSource, rowSource, colTarget, rowTarget } = columnMoveState;
+      // 移动成功后，恢复所有之前展开的行
+      setTimeout(() => {
+        const sourceRowIndex = rowSource;
+        const targetRowIndex = rowTarget;
+        const moveDirection = targetRowIndex > sourceRowIndex ? 'down' : 'up';
+        // 计算移动后各行的新位置并重新展开
+        this.allExpandedRowsBeforeMove.forEach(originalRowIndex => {
+          let newRowIndex = originalRowIndex;
+
+          if (sourceRowIndex === originalRowIndex) {
+            newRowIndex = targetRowIndex;
+          } else if (moveDirection === 'down') {
+            if (originalRowIndex <= targetRowIndex && originalRowIndex > sourceRowIndex) {
+              newRowIndex = originalRowIndex - 1;
+            }
+          } else if (moveDirection === 'up') {
+            if (originalRowIndex >= targetRowIndex && originalRowIndex < sourceRowIndex) {
+              newRowIndex = originalRowIndex + 1;
+            }
+          }
+          this.onExpandRow?.(newRowIndex);
+        });
+        // 清空状态记录
+        this.allExpandedRowsBeforeMove.clear();
+      }, 0);
+    };
+
+    const moveFailHandler = (args: any) => {
+      // 如果没有记录的展开状态，说明不是行移动或没有展开的行
+      if (this.allExpandedRowsBeforeMove.size === 0) {
+        return;
+      }
+
+      // 移动失败时，在原位置恢复所有展开的行
+      setTimeout(() => {
+        this.allExpandedRowsBeforeMove.forEach(originalRowIndex => {
+          this.onExpandRow?.(originalRowIndex);
+        });
+        this.allExpandedRowsBeforeMove.clear();
+      }, 0);
+    };
+
+    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, moveStartHandler);
+    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, moveSuccessHandler);
+    this.table.on(VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, moveFailHandler);
+    this.eventHandlers.push(
+      { type: VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, handler: moveStartHandler },
+      { type: VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, handler: moveSuccessHandler },
+      { type: VTable.TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_FAIL, handler: moveFailHandler }
+    );
+  }
+
+  /**
+   * 清理事件处理器
+   */
+  cleanup(): void {
+    if (this.isCleanedUp) {
+      return; // 防止重复清理
+    }
+    this.isCleanedUp = true;
+    // 清理展开状态数组
+    this.expandedRows.length = 0;
+    // 清理行移动状态
+    this.allExpandedRowsBeforeMove.clear();
+    // 恢复原始的resize方法
+    if (this.originalResize && this.table) {
+      try {
+        this.table.resize = this.originalResize;
+        this.originalResize = undefined;
+      } catch (error) {
+        console.warn('Error restoring original resize method:', error);
+      }
+    }
+    // 移除所有事件监听器
+    try {
+      if (this.table) {
+        this.eventHandlers.forEach(({ type, handler }) => {
+          try {
+            (this.table.off as (type: string, handler: unknown) => void)(type, handler);
+          } catch (error) {
+            console.warn(`Error removing event listener ${type}:`, error);
+          }
+        });
+        this.eventHandlers.length = 0;
+      }
+    } catch (error) {
+      console.warn('Error removing event listeners:', error);
+    }
+    // 清理回调函数引用
+    this.onUpdateSubTablePositions = undefined;
+    this.onUpdateSubTablePositionsForRow = undefined;
+    this.onExpandRow = undefined;
+    this.onCollapseRow = undefined;
+    this.onCollapseRowToNoRealRecordIndex = undefined;
+    this.onToggleRowExpand = undefined;
+    this.getOriginalRowHeight = undefined;
+    // 清理表格引用，避免循环引用
+    (this as unknown as { table: unknown }).table = null;
+  }
+
+  // 回调函数，需要从外部注入
+  private onUpdateSubTablePositions?: () => void;
+  private onUpdateSubTablePositionsForRow?: () => void;
+  private onExpandRow?: (rowIndex: number, colIndex?: number) => void;
+  private onCollapseRow?: (rowIndex: number, colIndex?: number) => void;
+  private onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
+  private onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
+  private getOriginalRowHeight?: (bodyRowIndex: number) => number;
+
+  /**
+   * 设置回调函数
+   */
+  setCallbacks(callbacks: {
+    onUpdateSubTablePositions?: () => void;
+    onUpdateSubTablePositionsForRow?: () => void;
+    onExpandRow?: (rowIndex: number, colIndex?: number) => void;
+    onCollapseRow?: (rowIndex: number, colIndex?: number) => void;
+    onCollapseRowToNoRealRecordIndex?: (rowIndex: number) => void;
+    onToggleRowExpand?: (rowIndex: number, colIndex?: number) => void;
+    getOriginalRowHeight?: (bodyRowIndex: number) => number;
+  }): void {
+    this.onUpdateSubTablePositions = callbacks.onUpdateSubTablePositions;
+    this.onUpdateSubTablePositionsForRow = callbacks.onUpdateSubTablePositionsForRow;
+    this.onExpandRow = callbacks.onExpandRow;
+    this.onCollapseRow = callbacks.onCollapseRow;
+    this.onCollapseRowToNoRealRecordIndex = callbacks.onCollapseRowToNoRealRecordIndex;
+    this.onToggleRowExpand = callbacks.onToggleRowExpand;
+    this.getOriginalRowHeight = callbacks.getOriginalRowHeight;
+  }
+}

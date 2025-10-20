@@ -1385,7 +1385,7 @@ export class Scenegraph {
       lastBodyCell &&
       this.table.tableNoFrameHeight < this.table.getAllRowsHeight() &&
       lastBodyCell.row === this.table.rowCount - this.table.bottomFrozenRowCount - 1 &&
-      lastBodyCell.attribute.y + lastBodyCell.attribute.height + y <
+      lastBodyCell.attribute.y + this.table.getRowHeight(lastBodyCell.row) + y <
         this.table.tableNoFrameHeight - this.table.getFrozenRowsHeight() - this.table.getBottomFrozenRowsHeight()
     ) {
       y =
@@ -1393,7 +1393,7 @@ export class Scenegraph {
         this.table.getFrozenRowsHeight() -
         this.table.getBottomFrozenRowsHeight() -
         lastBodyCell.attribute.y -
-        lastBodyCell.attribute.height;
+        this.table.getRowHeight(lastBodyCell.row);
     }
     if (this.colHeaderGroup.attribute.height + y === this.bodyGroup.attribute.y) {
       return;
@@ -1537,8 +1537,9 @@ export class Scenegraph {
       for (let col = 0; col < table.colCount; col++) {
         const colWidth = table.getColWidth(col);
         if (
-          col < table.rowHeaderLevelCount ||
-          (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount)
+          table.widthAdaptiveMode === 'only-body' &&
+          (col < table.rowHeaderLevelCount ||
+            (table.isPivotChart() && col >= table.colCount - table.rightFrozenColCount))
         ) {
           actualHeaderWidth += colWidth;
         }
@@ -1546,8 +1547,12 @@ export class Scenegraph {
       }
       // 如果内容宽度小于canvas宽度，执行adaptive放大
       if (actualWidth < canvasWidth && actualWidth > actualHeaderWidth) {
-        const startCol = table.rowHeaderLevelCount;
-        const endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+        let startCol = 0;
+        let endCol = table.colCount;
+        if (table.widthAdaptiveMode === 'only-body') {
+          startCol = table.rowHeaderLevelCount;
+          endCol = table.isPivotChart() ? table.colCount - table.rightFrozenColCount : table.colCount;
+        }
         getAdaptiveWidth(canvasWidth - actualHeaderWidth, startCol, endCol, false, [], table, true);
       }
     }
