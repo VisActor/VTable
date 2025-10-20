@@ -4975,4 +4975,36 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       this._containerFit = { width: false, height: false };
     }
   }
+  /** 是否选中了指定列 整列单元格被选中*/
+  isColumnSelected(col: number): boolean {
+    const selectRange = this.stateManager.select.ranges;
+    for (let i = 0; i <= selectRange.length - 1; i++) {
+      const range = selectRange[i];
+      if (
+        range.start.col <= col &&
+        range.end.col >= col &&
+        range.start.row === 0 &&
+        range.end.row === this.rowCount - 1
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /** 是否选中了指定行 */
+  isRowSelected(row: number): boolean {
+    const selectRange = this.stateManager.select.ranges;
+    for (let i = 0; i <= selectRange.length - 1; i++) {
+      const range = selectRange[i];
+      if (
+        range.start.row <= row &&
+        range.end.row >= row &&
+        range.start.col === 0 &&
+        range.end.col === this.colCount - 1
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

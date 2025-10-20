@@ -152,6 +152,7 @@ export class StateManager {
     x: number;
     y: number;
     moving: boolean;
+    movingColumnOrRow: 'column' | 'row';
   };
   menu: {
     x: number;
@@ -285,7 +286,8 @@ export class StateManager {
       rowTargetSize: 0,
       x: 0,
       y: 0,
-      moving: false
+      moving: false,
+      movingColumnOrRow: undefined
     };
     this.menu = {
       x: -1,
@@ -905,8 +907,15 @@ export class StateManager {
     this.fillHandle.beforeFillMinRow = undefined;
   }
 
-  startMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
-    startMoveCol(col, row, x, y, this, event);
+  startMoveCol(
+    col: number,
+    row: number,
+    x: number,
+    y: number,
+    event: MouseEvent | PointerEvent | TouchEvent,
+    dragColumnOrRow?: 'column' | 'row'
+  ) {
+    startMoveCol(col, row, x, y, this, event, dragColumnOrRow);
   }
   updateMoveCol(col: number, row: number, x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
     updateMoveCol(col, row, x, y, this, event);

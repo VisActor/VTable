@@ -428,7 +428,6 @@ export function bindContainerDomListener(eventManager: EventManager) {
     //   console.log('eventManager.touchSetTimeout', eventManager.touchSetTimeout);
     //   eventManager.touchSetTimeout = undefined;
     // }
-    // const eventArgsSet = getCellEventArgsSet(e);
     const { x, y } = table._getMouseAbstractPoint(e);
     // if (stateManager.interactionState === InteractionState.scrolling) {
     //   return;
@@ -450,6 +449,8 @@ export function bindContainerDomListener(eventManager: EventManager) {
             rowHeight: table.getRowHeight(table.stateManager.rowResize.row)
           });
         }
+      } else if (stateManager.isMoveCol()) {
+        eventManager.dealColumnMover(x, y, e);
       }
     }
     const isSelecting = table.stateManager.isSelecting();

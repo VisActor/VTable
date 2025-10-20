@@ -661,16 +661,11 @@ export class EventManager {
     return false;
   }
 
-  dealColumnMover(eventArgsSet: SceneEvent) {
-    const { eventArgs } = eventArgsSet;
-    if (isValid(eventArgs.col) && isValid(eventArgs.row)) {
-      this.table.stateManager.updateMoveCol(
-        eventArgs.col,
-        eventArgs.row,
-        eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y,
-        eventArgs?.event?.nativeEvent
-      );
+  dealColumnMover(x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
+    const cellInfo = this.table.getCellAt(x - this.table.tableX, y - this.table.tableY);
+    // const { eventArgs } = eventArgsSet;
+    if (isValid(cellInfo.col) && isValid(cellInfo.row)) {
+      this.table.stateManager.updateMoveCol(cellInfo.col, cellInfo.row, x, y, null);
     }
   }
 

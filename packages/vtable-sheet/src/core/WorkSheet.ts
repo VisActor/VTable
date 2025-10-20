@@ -218,6 +218,9 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     }
     return {
       ...this.options,
+      dragOrder: {
+        maintainArrayDataOrder: true
+      },
       addRecordRule: 'Array',
       defaultCursor: 'cell',
       records: this.options.data,

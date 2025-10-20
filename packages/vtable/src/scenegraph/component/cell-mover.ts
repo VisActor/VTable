@@ -76,7 +76,8 @@ export class CellMover {
     let symbolY = 0;
     let symbolRotate = Math.PI;
     const linePoints: { x: number; y: number }[] = [];
-    if (cellLocation === 'columnHeader') {
+    const movingColumnOrRow = this.table.stateManager.columnMove.movingColumnOrRow;
+    if ((cellLocation === 'columnHeader' && movingColumnOrRow === undefined) || movingColumnOrRow === 'column') {
       rectX = this.table.getColsWidth(0, col - 1) - this.table.stateManager.scroll.horizontalBarPos;
       rectY = this.table.getRowsHeight(0, this.table.frozenRowCount - 1);
       rectHeight = this.table.tableNoFrameHeight;
@@ -94,7 +95,8 @@ export class CellMover {
       linePoints.push({ x: 0, y: this.table.tableNoFrameHeight });
     } else if (
       cellLocation === 'rowHeader' ||
-      (this.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      (this.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row) ||
+      movingColumnOrRow === 'row'
     ) {
       rectY = this.table.getRowsHeight(0, row - 1) - this.table.stateManager.scroll.verticalBarPos;
       rectX = this.table.getColsWidth(0, this.table.frozenColCount - 1);

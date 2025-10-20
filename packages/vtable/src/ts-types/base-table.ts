@@ -1065,6 +1065,8 @@ export interface BaseTableAPI {
   getGroupTitleLevel: (col: number, row: number) => number | undefined;
   _getMaxFrozenWidth: () => number;
   _getComputedFrozenColCount: (frozenColCount: number) => number;
+  isColumnSelected: (col: number) => boolean;
+  isRowSelected: (row: number) => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */
