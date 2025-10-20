@@ -665,7 +665,7 @@ export class EventManager {
     const cellInfo = this.table.getCellAt(x - this.table.tableX, y - this.table.tableY);
     // const { eventArgs } = eventArgsSet;
     if (isValid(cellInfo.col) && isValid(cellInfo.row)) {
-      this.table.stateManager.updateMoveCol(cellInfo.col, cellInfo.row, x, y, null);
+      this.table.stateManager.updateMoveCol(cellInfo.col, cellInfo.row, x, y, event);
     }
   }
 
