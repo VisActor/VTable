@@ -858,38 +858,34 @@ export class StateManager {
       const taskIndex = target.task_index;
       const subTaskIndex = target.sub_task_index;
 
-      try {
-        // 直接更新任务记录的进度值
-        const progressField = this._gantt.parsedOptions.progressField;
-        if (progressField && target.record) {
-          target.record[progressField] = Math.round(newProgress * 10) / 10;
-        }
+      // 直接更新任务记录的进度值
+      const progressField = this._gantt.parsedOptions.progressField;
+      if (progressField && target.record) {
+        target.record[progressField] = Math.round(newProgress * 10) / 10;
+      }
 
-        // 根据不同的 tasksShowMode 决定是否需要同步到表格
-        if (this.shouldSyncProgressToTable(taskIndex, subTaskIndex)) {
-          this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
-        }
+      // 根据不同的 tasksShowMode 决定是否需要同步到表格
+      if (this.shouldSyncProgressToTable(taskIndex, subTaskIndex)) {
+        this._gantt._updateProgressToTaskRecord(Math.round(newProgress * 10) / 10, taskIndex, subTaskIndex);
+      }
 
-        // 刷新任务条显示
-        this._gantt.scenegraph.taskBar.updateTaskBarNode(taskIndex, subTaskIndex);
+      // 刷新任务条显示
+      this._gantt.scenegraph.taskBar.updateTaskBarNode(taskIndex, subTaskIndex);
 
-        // 获取更新后的记录
-        const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
+      // 获取更新后的记录
+      const newRecord = this._gantt.getRecordByIndex(taskIndex, subTaskIndex);
 
-        // 触发进度更新事件
-        if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
-          this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
-            federatedEvent: null,
-            event: null,
-            index: taskIndex,
-            sub_task_index: subTaskIndex,
-            progress: Math.round(newProgress * 10) / 10,
-            oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
-            record: newRecord
-          });
-        }
-      } catch (error) {
-        console.error('Failed to update progress:', error);
+      // 触发进度更新事件
+      if (this._gantt.hasListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE)) {
+        this._gantt.fireListeners(GANTT_EVENT_TYPE.PROGRESS_UPDATE, {
+          federatedEvent: null,
+          event: null,
+          index: taskIndex,
+          sub_task_index: subTaskIndex,
+          progress: Math.round(newProgress * 10) / 10,
+          oldProgress: Math.round(this.adjustProgressBar.originalProgress * 10) / 10,
+          record: newRecord
+        });
       }
     }
 
@@ -972,17 +968,13 @@ export class StateManager {
 
     // 更新文字标签中的进度百分比
     if (target.textLabel && target.record && this._gantt.parsedOptions.taskBarLabelText) {
-      try {
-        const progressField = this._gantt.parsedOptions.progressField;
-        const tempRecord = {
-          ...target.record,
-          [progressField]: Math.round(newProgress * 10) / 10
-        };
-        const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
-        target.textLabel.setAttribute('text', newText);
-      } catch (error) {
-        console.warn('Failed to update progress label:', error);
-      }
+      const progressField = this._gantt.parsedOptions.progressField;
+      const tempRecord = {
+        ...target.record,
+        [progressField]: Math.round(newProgress * 10) / 10
+      };
+      const newText = parseStringTemplate(this._gantt.parsedOptions.taskBarLabelText as string, tempRecord);
+      target.textLabel.setAttribute('text', newText);
     }
 
     // 实时显示变化
