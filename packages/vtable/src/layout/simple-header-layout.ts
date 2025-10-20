@@ -1290,6 +1290,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
           for (let j = 0; j < this._table.dataSource.dataSourceObj?.records.length; j++) {
             const rowRecords = this._table.dataSource.dataSourceObj?.records[j];
             if (Array.isArray(rowRecords)) {
+              // 如果rowRecords的长度小于targetIndex,需要向rowRecords中添加空数据
+              if (rowRecords.length - 1 < targetIndex) {
+                rowRecords.push(...Array(targetIndex - rowRecords.length + 1).fill(undefined));
+              }
               const sourceData = rowRecords.splice(
                 sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
                 sourceSize
