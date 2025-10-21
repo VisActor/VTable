@@ -42,9 +42,8 @@ export class MenuHandler {
 
     if (typeof (table as any).addRecord === 'function') {
       // 使用表格API插入行
-      for (let i = 0; i < count; i++) {
-        table.addRecord([], rowIndex - 1);
-      }
+      const records: any[] = Array.from({ length: count }, (_, i) => []);
+      table.addRecords(records, rowIndex - 1);
     }
   }
 
@@ -57,9 +56,9 @@ export class MenuHandler {
     }
     if (typeof (table as any).addRecord === 'function') {
       // 使用表格API插入行
-      for (let i = 0; i < count; i++) {
-        table.addRecord([], rowIndex + i);
-      }
+      // 批量组织好数据，一次性插入
+      const records: any[] = Array.from({ length: count }, (_, i) => []);
+      table.addRecords(records, rowIndex);
     }
   }
 

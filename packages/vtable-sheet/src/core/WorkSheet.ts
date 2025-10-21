@@ -597,7 +597,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * 获取列定义
    */
   getColumns(): ColumnDefine[] {
-    return this.options.columns || [];
+    return this.tableInstance.columns || [];
   }
 
   /**
