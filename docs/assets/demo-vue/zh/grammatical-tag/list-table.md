@@ -7,7 +7,7 @@ order: 1-1
 link: Developer_Ecology/vue
 ---
 
-# 透视分析表
+# 基本表格
 
 ListTable 语义化子组件如下：
 
