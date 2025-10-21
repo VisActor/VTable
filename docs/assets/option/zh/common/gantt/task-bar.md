@@ -236,3 +236,9 @@ ${prefix} minWidth(number)
 任务条创建按钮的最小宽度
 
 非必填
+
+${prefix} clip(boolean)
+
+是否裁剪掉溢出 taskBar 的部分，默认为 true
+
+非必填
