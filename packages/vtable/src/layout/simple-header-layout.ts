@@ -1330,7 +1330,7 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
         if (this._table.options.dragOrder?.maintainArrayDataOrder) {
           //重新整理column中的field值
           for (let i = 0; i < this.columnTree.tree.children.length; i++) {
-            this.columnTree.tree.children[i].field = i;
+            (this.columnTree.tree.children[i] as any).field = i;
           }
         }
         //#endregion
