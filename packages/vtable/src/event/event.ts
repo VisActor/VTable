@@ -662,7 +662,7 @@ export class EventManager {
   }
 
   dealColumnMover(x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
-    const cellInfo = this.table.getCellAt(x - this.table.tableX, y - this.table.tableY);
+    const cellInfo = this.table.getCellAtRelativePosition(x, y);
     // const { eventArgs } = eventArgsSet;
     if (isValid(cellInfo.col) && isValid(cellInfo.row)) {
       this.table.stateManager.updateMoveCol(cellInfo.col, cellInfo.row, x, y, event);

@@ -200,7 +200,9 @@ export function getTargetColAtConsiderRightFrozen(
       }
     }
   }
-  return getTargetColAt(absoluteX, _this);
+  //为了和getCellAt接口一致的结果  改用getColAt计算
+  // return getTargetColAt(absoluteX, _this);
+  return getColAt(absoluteX, _this);
 }
 
 /**
@@ -235,7 +237,9 @@ export function getTargetRowAtConsiderBottomFrozen(
       }
     }
   }
-  return getTargetRowAt(absoluteY, _this);
+  //为了和getCellAt接口一致的结果  改用getRowAt计算
+  // return getTargetRowAt(absoluteY, _this);
+  return getRowAt(absoluteY, _this);
 }
 
 /**

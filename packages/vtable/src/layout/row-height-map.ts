@@ -235,9 +235,9 @@ export class NumberRangeMap {
 
   // del and reorder
   delete(position: number) {
-    if (!this.has(position)) {
-      return;
-    }
+    // if (!this.has(position)) {
+    //   return;
+    // }
 
     // clear all sum cover position
     for (let i = position; i <= this.getLastIndex(); i++) {
@@ -246,8 +246,24 @@ export class NumberRangeMap {
 
     const lastIndex = this.getLastIndex();
 
-    this.adjustOrder(position + 1, position, lastIndex - position);
-    this.delLast();
+    // 首先删除被指定删除的位置
+    if (this.has(position)) {
+      this.remove(position);
+    }
+
+    // 保存需要后移的所有值
+    const values = [];
+    for (let i = position + 1; i <= lastIndex; i++) {
+      if (this.has(i)) {
+        values.push({ position: i, value: this.get(i) });
+      }
+    }
+
+    // 删除原来的数据并重新设置
+    for (const { position, value } of values) {
+      this.remove(position);
+      this.add(position - 1, value);
+    }
   }
 
   /**

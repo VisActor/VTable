@@ -65,7 +65,7 @@ export function bindTableGroupListener(eventManager: EventManager) {
         if (stateManager.isResizeCol() || stateManager.isResizeRow()) {
           /* do nothing */
         } else if (stateManager.isMoveCol()) {
-          // eventManager.dealColumnMover(eventArgsSet);移动到了container-dom.ts中
+          // eventManager.dealColumnMover(eventArgsSet); //移动到了container-dom.ts中
           /* do nothing */
         } else if (stateManager.isFillHandle()) {
           eventManager.dealFillSelect(eventArgsSet, true);
