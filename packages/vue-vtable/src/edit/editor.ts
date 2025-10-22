@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { VNode } from 'vue';
-import { isVNode, render } from 'vue';
+import { isVNode, createApp, h } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
 /** 渲染式编辑器参数 */
@@ -72,6 +72,8 @@ export class DynamicRenderEditor {
   nodeMap?: Map<string | number, Map<string | number, (params: DynamicRenderEditorParams) => any>>;
   /** 当前上下文 */
   currentContext?: any;
+  /** vue实例 */
+  root: any;
 
   constructor(currentContext?: any) {
     this.currentContext = currentContext;
@@ -176,13 +178,40 @@ export class DynamicRenderEditor {
     this.wrapContainer = wrapContainer;
     this.tableContainer = container;
     this.tableContainer.appendChild(wrapContainer);
-    render(vnode, wrapContainer);
-
+    // 创建 Vue 实例
+    const app = this.createVueApp(value, vnode);
+    app.mount(wrapContainer);
+    this.root = app;
     // 位置同步
     if (referencePosition?.rect) {
       this.adjustPosition(referencePosition.rect);
     }
     return true;
+  }
+  /**
+   * @description: 创建 Vue 实例
+   * @param {any} defaultValue
+   * @param {VNode} vnode
+   * @return {*}
+   */
+  createVueApp(defaultValue: any, vnode: VNode) {
+    const self = this;
+    return createApp({
+      data() {
+        return {
+          value: defaultValue
+        };
+      },
+      render() {
+        return h(vnode, {
+          modelValue: this.value,
+          'onUpdate:modelValue': (v: any) => {
+            this.value = v;
+            self.setValue(v);
+          }
+        });
+      }
+    });
   }
   /**
    * @description: 校验并传递上下文
@@ -261,8 +290,11 @@ export class DynamicRenderEditor {
   }
 
   onEnd() {
+    if (this.root) {
+      this.root.unmount();
+      this.root = null;
+    }
     if (this.wrapContainer && this.tableContainer) {
-      render(null, this.wrapContainer);
       this.tableContainer.removeChild(this.wrapContainer);
     }
     this.wrapContainer = null;
