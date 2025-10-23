@@ -811,6 +811,8 @@ export interface BaseTableAPI {
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
   getCellAt: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
   getCellAtRelativePosition: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
+  getColAtRelativePosition: (absoluteX: number) => number;
+  getRowAtRelativePosition: (absoluteY: number) => number;
   _makeVisibleCell: (col: number, row: number) => void;
   // setFocusCursor(col: number, row: number): void;
   // focusCell(col: number, row: number): void;
