@@ -98,10 +98,7 @@ export class MenuHandler {
   /**
    * 处理删除行
    */
-  handleDeleteRow(table: ListTable, rowIndex?: number): void {
-    if (rowIndex === undefined) {
-      return;
-    }
+  handleDeleteRow(table: ListTable): void {
     if (typeof (table as any).deleteRecords === 'function') {
       const selectRanges = table.stateManager.select.ranges;
       //处理selectRanges中的每个选择区域，记录到deleteRowIndexs数组中，保证没给row值记录一次，且按倒序排序
@@ -115,11 +112,12 @@ export class MenuHandler {
         }
       }
       deleteRowIndexs.sort((a, b) => b - a);
+      const delRecordIndexs: (number | number[])[] = [];
       for (let i = 0; i < deleteRowIndexs.length; i++) {
         const recordIndex = table.getRecordIndexByCell(0, deleteRowIndexs[i]);
-        // 使用表格API删除行
-        (table as any).deleteRecords([recordIndex]);
+        delRecordIndexs.push(recordIndex);
       }
+      (table as any).deleteRecords(delRecordIndexs);
     }
 
     // const recordIndex = table.getRecordIndexByCell(0, rowIndex);
