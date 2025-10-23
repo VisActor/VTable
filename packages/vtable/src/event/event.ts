@@ -662,10 +662,17 @@ export class EventManager {
   }
 
   dealColumnMover(x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
-    const cellInfo = this.table.getCellAtRelativePosition(x, y);
+    let col = this.table.getColAtRelativePosition(x);
+    let row = this.table.getRowAtRelativePosition(y);
+    if (col === -1 && this.table.stateManager.columnMove.movingColumnOrRow === 'row') {
+      col = 0;
+    }
+    if (row === -1 && this.table.stateManager.columnMove.movingColumnOrRow === 'column') {
+      row = 0;
+    }
     // const { eventArgs } = eventArgsSet;
-    if (isValid(cellInfo.col) && isValid(cellInfo.row)) {
-      this.table.stateManager.updateMoveCol(cellInfo.col, cellInfo.row, x, y, event);
+    if (isValid(col) && isValid(row)) {
+      this.table.stateManager.updateMoveCol(col, row, x, y, event);
     }
   }
 

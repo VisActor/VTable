@@ -140,6 +140,8 @@ import { Factory } from './factory';
 import {
   getCellAt,
   getCellAtRelativePosition,
+  getColAtRelativePosition,
+  getRowAtRelativePosition,
   getColAt,
   getRowAt,
   getTargetColAt,
@@ -2285,6 +2287,12 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
    */
   getCellAtRelativePosition(relativeX: number, relativeY: number): CellAddressWithBound {
     return getCellAtRelativePosition(relativeX, relativeY, this);
+  }
+  getColAtRelativePosition(relativeX: number): number {
+    return getColAtRelativePosition(relativeX, this);
+  }
+  getRowAtRelativePosition(relativeY: number): number {
+    return getRowAtRelativePosition(relativeY, this);
   }
   /**
    * 检查行列号是否正确
