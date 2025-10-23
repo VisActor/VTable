@@ -1,4 +1,4 @@
-import { container, VWindow, type IStage, type IWindow } from '@src/vrender';
+import { container, vglobal, VWindow, type IStage, type IWindow } from '@src/vrender';
 import type { Chart } from '../chart';
 import type { IAABBBounds } from '@visactor/vutils';
 import { Bounds, isValid } from '@visactor/vutils';
@@ -22,7 +22,7 @@ export function clearChartRenderQueue() {
   chartRenderKeys = [];
   chartRenderQueueList = [];
   isHandlingChartQueue = false;
-  cancelAnimationFrame(requestAnimationFrameId);
+  vglobal.getCancelAnimationFrame()(requestAnimationFrameId);
 }
 export function IsHandlingChartQueue() {
   return isHandlingChartQueue;
@@ -190,7 +190,7 @@ export function startRenderChartQueue(table: any) {
   if (chartRenderQueueList.length > 0) {
     // 使用 requestAnimationFrame 或 setTimeout 来调度下一批图表的渲染
     // requestAnimationFrame(() => renderChartQueue(table));
-    requestAnimationFrameId = requestAnimationFrame(() => {
+    requestAnimationFrameId = vglobal.getRequestAnimationFrame()(() => {
       // 从集合中获取要渲染的图表上下文
       const chartsToRender = chartRenderQueueList.splice(0, batchRenderChartCount);
       chartRenderKeys.splice(0, batchRenderChartCount);
