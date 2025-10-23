@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { VNode } from 'vue';
-import { isVNode, render } from 'vue';
+import { h, isVNode, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
 /** 渲染式编辑器参数 */
@@ -151,17 +151,18 @@ export class DynamicRenderEditor {
       }
     }
     const record = table?.getCellOriginRecord(col, row);
-    const vnode = this.getNode(
-      id,
-      key
-    )?.({
+    const renderVNodeFn = this.getNode(id, key);
+    if (!renderVNodeFn) {
+      return false;
+    }
+    const vnode = h(renderVNodeFn, {
       row,
       col,
       value,
       record,
       table,
       onChange: (value: any) => this.setValue(value)
-    })?.find((node: any) => node?.type !== Symbol.for('v-cmt'));
+    });
     if (!vnode || !isVNode(vnode)) {
       return false;
     }
