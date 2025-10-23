@@ -2,9 +2,9 @@ import type { ColumnDefine } from '@visactor/vtable';
 import { TYPES as VTableTypes, themes as VTableThemes } from '@visactor/vtable';
 import type { CellValue, IStyle, MainMenuItem } from './base';
 import type { IFilterState } from './filter';
-import type { TableSeriesNumberOptions } from '@visactor/vtable-plugins';
+import type { TableSeriesNumberOptions, ImportResult } from '@visactor/vtable-plugins';
 import type { SortState } from '@visactor/vtable/es/ts-types';
-export { VTableThemes, VTableTypes };
+export { VTableThemes, VTableTypes, ImportResult };
 /** 筛选配置 */
 export interface IFilterConfig {
   /** 指定筛选器支持的筛选模式（按值、按条件、或两者） */
