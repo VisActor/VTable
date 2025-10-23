@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
-import type { VNode } from 'vue';
-import { h, isVNode, render } from 'vue';
+import type { Ref, VNode } from 'vue';
+import { h, isVNode, ref, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
 /** 渲染式编辑器参数 */
@@ -11,6 +11,8 @@ export interface DynamicRenderEditorParams {
   col: number;
   /** 值 */
   value: any;
+  /** 响应式值 供 v-model 绑定 */
+  refValue: Ref<any>;
   /** 行数据 */
   record: any;
   /** 表格实例 */
@@ -159,6 +161,7 @@ export class DynamicRenderEditor {
       row,
       col,
       value,
+      refValue: ref(value),
       record,
       table,
       onChange: (value: any) => this.setValue(value)
