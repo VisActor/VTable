@@ -204,6 +204,9 @@ export function createTable() {
     keyboardOptions: {
       copySelected: true
     },
+    resize: {
+      rowResizeMode: 'all'
+    },
     transpose: true,
     dragHeaderMode: 'all',
     // sortState: {
