@@ -17,14 +17,7 @@
           :trigger-props="{ 'content-class': 'table-editor-element' }"
           @change="onChange"
         />
-        <a-input
-          v-else
-          v-model="refValue.value"
-          style="width: 100%; height: 100%"
-          allow-clear
-          @input="onChange"
-          @clear="onChange()"
-        />
+        <a-input v-else v-model="refValue.value" style="width: 100%; height: 100%" allow-clear />
       </template>
     </ListColumn>
   </vue-list-table>

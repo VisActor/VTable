@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
 import type { Ref, VNode } from 'vue';
-import { h, isVNode, ref, render } from 'vue';
+import { h, isVNode, customRef, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
 /** 渲染式编辑器参数 */
@@ -55,14 +55,9 @@ interface ColumnDefine {
   editConfig?: DynamicRenderEditorConfig;
 }
 
-/*
- * @Author: lym
- * @Date: 2025-02-07 11:36:48
- * @LastEditors: lym
- * @LastEditTime: 2025-03-03 16:42:10
- * @Description: 自定义渲染式编辑器
+/**
+ * @description: 自定义渲染式编辑器
  */
-
 export class DynamicRenderEditor {
   /** 包裹容器 */
   wrapContainer: HTMLElement;
@@ -161,7 +156,18 @@ export class DynamicRenderEditor {
       row,
       col,
       value,
-      refValue: ref(value),
+      refValue: customRef((track, trigger) => {
+        return {
+          get: () => {
+            track()
+            return this.getValue()
+          },
+          set: (value) => {
+            this.setValue(value)
+            trigger()
+          }
+        }
+      }),
       record,
       table,
       onChange: (value: any) => this.setValue(value)
