@@ -217,9 +217,20 @@ export class NumberRangeMap {
       this.cumulativeSum.delete(i);
     }
     const lastIndex = this.getLastIndex() + 1;
-    this.adjustOrder(position, position + 1, lastIndex - position);
+    // this.adjustOrder(position, position + 1, lastIndex - position);
+    const values = [];
+    for (let i = position; i <= lastIndex; i++) {
+      if (this.has(i)) {
+        values.push({ position: i, value: this.get(i) });
+        this.remove(i);
+      }
+    }
+
     if (isValid(value)) {
       this.put(position, value);
+    }
+    for (const { position, value } of values) {
+      this.put(position + 1, value);
     }
   }
 
@@ -266,51 +277,51 @@ export class NumberRangeMap {
     }
   }
 
-  /**
-   * 将sourceIndex位置开始 往后moveCount个值 调整到targetIndex位置处
-   * @param sourceIndex
-   * @param targetIndex
-   * @param moveCount
-   */
-  adjustOrder(sourceIndex: number, targetIndex: number, moveCount: number) {
-    this.clearRange();
-    this._sort();
-    const { _keys: keys } = this;
+  // /** 逻辑错乱 去除该方法
+  //  * 将sourceIndex位置开始 往后moveCount个值 调整到targetIndex位置处
+  //  * @param sourceIndex
+  //  * @param targetIndex
+  //  * @param moveCount
+  //  */
+  // adjustOrder(sourceIndex: number, targetIndex: number, moveCount: number) {
+  //   this.clearRange();
+  //   this._sort();
+  //   const { _keys: keys } = this;
 
-    if (sourceIndex > targetIndex) {
-      const sourceVals = [];
-      for (let i = indexFirst(keys, sourceIndex + moveCount - 1); i >= 0; i--) {
-        const key = keys[i];
-        if (key >= sourceIndex) {
-          sourceVals.push(this.get(key));
-        } else if (targetIndex <= key && key < sourceIndex) {
-          this.put(key + moveCount, this.get(key));
-        } else if (key < targetIndex) {
-          break;
-        }
-      }
-      for (let i = 0; i < moveCount; i++) {
-        this.put(targetIndex + i, sourceVals[moveCount - 1 - i]);
-      }
-    }
-    const { length } = keys;
-    if (sourceIndex < targetIndex) {
-      const sourceVals = [];
-      for (let i = indexFirst(keys, sourceIndex); i < length; i++) {
-        const key = keys[i];
-        if (key >= sourceIndex && key < sourceIndex + moveCount) {
-          sourceVals.push(this.get(key));
-        } else if (sourceIndex + moveCount <= key && key <= targetIndex) {
-          this.put(key - moveCount, this.get(key));
-        } else if (key > targetIndex) {
-          break;
-        }
-      }
-      for (let i = 0; i < moveCount; i++) {
-        this.put(targetIndex + i, sourceVals[i]);
-      }
-    }
-  }
+  //   if (sourceIndex > targetIndex) {
+  //     const sourceVals = [];
+  //     for (let i = indexFirst(keys, sourceIndex + moveCount - 1); i >= 0; i--) {
+  //       const key = keys[i];
+  //       if (key >= sourceIndex) {
+  //         sourceVals.push(this.get(key));
+  //       } else if (targetIndex <= key && key < sourceIndex) {
+  //         this.put(key + moveCount, this.get(key));
+  //       } else if (key < targetIndex) {
+  //         break;
+  //       }
+  //     }
+  //     for (let i = 0; i < moveCount; i++) {
+  //       this.put(targetIndex + i, sourceVals[moveCount - 1 - i]);
+  //     }
+  //   }
+  //   const { length } = keys;
+  //   if (sourceIndex < targetIndex) {
+  //     const sourceVals = [];
+  //     for (let i = indexFirst(keys, sourceIndex); i < length; i++) {
+  //       const key = keys[i];
+  //       if (key >= sourceIndex && key < sourceIndex + moveCount) {
+  //         sourceVals.push(this.get(key));
+  //       } else if (sourceIndex + moveCount <= key && key <= targetIndex) {
+  //         this.put(key - moveCount, this.get(key));
+  //       } else if (key > targetIndex) {
+  //         break;
+  //       }
+  //     }
+  //     for (let i = 0; i < moveCount; i++) {
+  //       this.put(targetIndex + i, sourceVals[i]);
+  //     }
+  //   }
+  // }
 
   exchangeOrder(
     sourceIndex: number,
@@ -387,5 +398,10 @@ function indexFirst(arr: number[], elm: number): number {
       low = i + 1;
     }
   }
-  return high < 0 ? 0 : high;
+  // return high < 0 ? 0 : high;
+  const tempI = high < 0 ? 0 : high;
+  if (arr[tempI] === elm) {
+    return tempI;
+  }
+  return -1;
 }

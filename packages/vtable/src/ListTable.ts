@@ -221,7 +221,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * Sets the define of the column.
    */
-  updateColumns(columns: ColumnsDefine, options?: { clearColWidthCache?: boolean }) {
+  updateColumns(
+    columns: ColumnsDefine,
+    options: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: false,
+      clearRowHeightCache: true
+    }
+  ) {
     this.scenegraph.clearCells(); //将该代码提前 逻辑中有设置this.clear=true。refreshHeader逻辑中有判断clear这个值的地方
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns, ['children']);
@@ -247,7 +253,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.bodyBottomStyleCache = new Map();
-    this.scenegraph.createSceneGraph();
+    this.scenegraph.createSceneGraph(!!!options?.clearRowHeightCache);
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
     this.eventManager.updateEventBinder();
@@ -321,7 +327,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
     }
-    this.updateColumns(columns);
+    this.updateColumns(columns, { clearRowHeightCache: false });
     this.fireListeners(TABLE_EVENT_TYPE.ADD_COLUMN, {
       columnIndex: colIndex,
       columnCount: toAddColumns.length,
@@ -371,7 +377,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         columns[i].field = i;
       }
     }
-    this.updateColumns(columns);
+    this.updateColumns(columns, { clearRowHeightCache: false });
     this.fireListeners(TABLE_EVENT_TYPE.DELETE_COLUMN, {
       deleteColIndexs: deleteColIndexs,
       columns

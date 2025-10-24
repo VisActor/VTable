@@ -505,7 +505,6 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
     }
   }
   syncColWidthToComponent() {
-    console.trace('----syncColWidthToComponent');
     const { colStart, colEnd } = this.table.getBodyVisibleColRange();
     const adjustStartColIndex = colStart;
     const adjustEndColIndex = Math.min(colEnd, this.table.scenegraph.proxy.colEnd);
