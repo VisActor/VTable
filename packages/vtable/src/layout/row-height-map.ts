@@ -37,7 +37,7 @@ export class NumberRangeMap {
     this.difference.clear();
   }
 
-  add(position: number, value: number) {
+  _add(position: number, value: number) {
     if (!isValid(value)) {
       return;
     }
@@ -52,7 +52,7 @@ export class NumberRangeMap {
     this.updateDifference(position, value - defaultValue);
   }
 
-  remove(position: number) {
+  _remove(position: number) {
     if (this.data.has(position)) {
       const value = this.data.get(position);
       this.data.delete(position);
@@ -83,7 +83,7 @@ export class NumberRangeMap {
       // this.updateCumulativeSum(position, difference);
       this.updateDifference(position, difference);
     } else {
-      this.add(position, newValue);
+      this._add(position, newValue);
     }
   }
 
@@ -222,7 +222,7 @@ export class NumberRangeMap {
     for (let i = position; i <= lastIndex; i++) {
       if (this.has(i)) {
         values.push({ position: i, value: this.get(i) });
-        this.remove(i);
+        this._remove(i);
       }
     }
 
@@ -241,7 +241,7 @@ export class NumberRangeMap {
 
   delLast() {
     const lastIndex = this.getLastIndex();
-    this.remove(lastIndex);
+    this._remove(lastIndex);
   }
 
   // del and reorder
@@ -259,7 +259,7 @@ export class NumberRangeMap {
 
     // 首先删除被指定删除的位置
     if (this.has(position)) {
-      this.remove(position);
+      this._remove(position);
     }
 
     // 保存需要后移的所有值
@@ -272,8 +272,8 @@ export class NumberRangeMap {
 
     // 删除原来的数据并重新设置
     for (const { position, value } of values) {
-      this.remove(position);
-      this.add(position - 1, value);
+      this._remove(position);
+      this._add(position - 1, value);
     }
   }
 
@@ -330,58 +330,66 @@ export class NumberRangeMap {
     targetCount: number,
     insertIndex: number
   ) {
-    const { _keys: keys } = this;
-    if (!this._sorted) {
-      keys.sort((a, b) => {
-        if (a < b) {
-          return -1;
-        }
-        if (a > b) {
-          return 1;
-        }
-        return 0;
-      });
-      this._sorted = true;
+    const values = [];
+    for (let i = sourceIndex; i < sourceIndex + sourceCount; i++) {
+      values.push({ position: i, value: this.get(i) });
+      this.delete(i);
     }
-    if (sourceIndex > targetIndex) {
-      //先将target部分的值存起来
-      const targetVals = [];
-      const sourceVals = [];
-      for (let i = indexFirst(keys, targetIndex); i < indexFirst(keys, sourceIndex) + sourceCount; i++) {
-        const key = keys[i];
-        if (key >= sourceIndex && key < sourceIndex + sourceCount) {
-          sourceVals.push(this.get(key));
-        } else {
-          targetVals.push(this.get(key));
-        }
-      }
-      for (let i = 0; i < sourceCount; i++) {
-        this.put(insertIndex + i, sourceVals[i]);
-      }
-
-      for (let i = 0; i < targetVals.length; i++) {
-        this.put(insertIndex + sourceCount + i, targetVals[i]);
-      }
-    } else {
-      //先将target部分的值存起来
-      const targetVals = [];
-      const sourceVals = [];
-      for (let i = indexFirst(keys, sourceIndex); i < indexFirst(keys, targetIndex) + targetCount; i++) {
-        const key = keys[i];
-        if (key >= sourceIndex && key < sourceIndex + sourceCount) {
-          sourceVals.push(this.get(key));
-        } else {
-          targetVals.push(this.get(key));
-        }
-      }
-      for (let i = 0; i < sourceCount; i++) {
-        this.put(insertIndex + i, sourceVals[i]);
-      }
-
-      for (let i = 0; i < targetVals.length; i++) {
-        this.put(sourceIndex + i, targetVals[i]);
-      }
+    for (let i = 0; i < sourceCount; i++) {
+      this.insert(i + insertIndex, values[i].value);
     }
+    // const { _keys: keys } = this;
+    // if (!this._sorted) {
+    //   keys.sort((a, b) => {
+    //     if (a < b) {
+    //       return -1;
+    //     }
+    //     if (a > b) {
+    //       return 1;
+    //     }
+    //     return 0;
+    //   });
+    //   this._sorted = true;
+    // }
+    // if (sourceIndex > targetIndex) {
+    //   //先将target部分的值存起来
+    //   const targetVals = [];
+    //   const sourceVals = [];
+    //   for (let i = indexFirst(keys, targetIndex); i < indexFirst(keys, sourceIndex) + sourceCount; i++) {
+    //     const key = keys[i];
+    //     if (key >= sourceIndex && key < sourceIndex + sourceCount) {
+    //       sourceVals.push(this.get(key));
+    //     } else {
+    //       targetVals.push(this.get(key));
+    //     }
+    //   }
+    //   for (let i = 0; i < sourceCount; i++) {
+    //     this.put(insertIndex + i, sourceVals[i]);
+    //   }
+
+    //   for (let i = 0; i < targetVals.length; i++) {
+    //     this.put(insertIndex + sourceCount + i, targetVals[i]);
+    //   }
+    // } else {
+    //   //先将target部分的值存起来
+    //   const targetVals = [];
+    //   const sourceVals = [];
+    //   for (let i = indexFirst(keys, sourceIndex); i < indexFirst(keys, targetIndex) + targetCount; i++) {
+    //     const key = keys[i];
+    //     if (key >= sourceIndex && key < sourceIndex + sourceCount) {
+    //       sourceVals.push(this.get(key));
+    //     } else {
+    //       targetVals.push(this.get(key));
+    //     }
+    //   }
+    //   for (let i = 0; i < sourceCount; i++) {
+    //     this.put(insertIndex + i, sourceVals[i]);
+    //   }
+
+    //   for (let i = 0; i < targetVals.length; i++) {
+    //     this.put(sourceIndex + i, targetVals[i]);
+    //   }
+    // }
   }
 }
 
