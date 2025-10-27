@@ -10,7 +10,7 @@ option: ListTable-columns-text#cellType
 
 # event listerner
 
-The events supported by VTable can be monitored through react props. For details, please refer to [Event List]([../api/event](https://www.visactor.io/vtable/guide/Developer_Ecology/react# %E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A)).
+The events supported by VTable can be monitored through react props. For details, please refer to [Event List](../../api/events).
 
 ## code demo
 

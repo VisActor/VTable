@@ -2,19 +2,19 @@
 category: examples
 group: edit-cell
 title: 动态渲染式编辑器
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-editor-basic.png
-link: edit-cell/slot-render
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-edit-render.png
+link: Developer_Ecology/vue
 ---
 
 # 动态渲染式编辑器
 
 通过插槽式渲染机制实现动态编辑器注入，同步支持条件校验拦截，且可以不依赖 `@visactor/vtable-editors` 组件。
 
-## 核心功能
+**✨ 核心功能**
 
-1. **插槽式编辑器注入** - 通过 `<template #edit>` 注入任意 Vue 组件
-2. **条件校验拦截** - `editConfig.editBefore` 和 `editConfig.validateValue` 分别校验**进入编辑状态前**和**修改值后**，支持同步/异步校验逻辑
-3. **禁用提示配置** - `editConfig.disablePrompt` 和 `editConfig.invalidPrompt` 分别配置**禁用时**和**校验失败时**的文字提示
+- **插槽式编辑器注入** - 通过 `<template #edit>` 注入任意 Vue 组件
+- **条件校验拦截** - `editConfig.editBefore` 和 `editConfig.validateValue` 分别校验**进入编辑状态前**和**修改值后**，支持同步/异步校验逻辑
+- **禁用提示配置** - `editConfig.disablePrompt` 和 `editConfig.invalidPrompt` 分别配置**禁用时**和**校验失败时**的文字提示
 
 ## 代码演示
 
