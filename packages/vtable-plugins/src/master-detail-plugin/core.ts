@@ -76,6 +76,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     // 设置配置管理器的行展开状态检查函数
     this.configManager.setRowExpandedChecker((row: number) => this.eventManager.isRowExpanded(row));
+    // 设置配置管理器的展开行回调函数
+    this.configManager.setExpandRowCallback((rowIndex: number) => this.expandRow(rowIndex));
 
     // 设置事件管理器的回调函数
     this.eventManager.setCallbacks({
@@ -92,6 +94,11 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.subTableManager.setCallbacks({
       getDetailConfigForRecord: (record, bodyRowIndex) =>
         this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
+    });
+
+    // 设置auto高度计算完成的回调
+    this.subTableManager.setAutoHeightCallback((bodyRowIndex: number, newTotalHeight: number) => {
+      this.handleAutoHeightUpdate(bodyRowIndex, newTotalHeight);
     });
   }
 
@@ -249,24 +256,43 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     const childrenData = Array.isArray(record.children) ? record.children : [];
 
-    const deltaHeight = height;
+    // 处理初始高度：如果是auto，先用默认值300展开
+    const isAutoHeight = height === 'auto';
+    const deltaHeight = isAutoHeight ? 300 : typeof height === 'number' ? height : 300;
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
     this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
-    this.subTableManager.recalculateAllSubTablePositions(
-      bodyRowIndex + 1,
-      undefined,
-      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
+
     if (rowIndex !== this.table.rowCount - 1) {
       this.drawUnderlineForRow(rowIndex);
     }
     this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
+    }
+  }
+
+  /**
+   * 处理auto高度更新
+   * 当子表计算出实际内容高度后，更新主表行高
+   */
+  private handleAutoHeightUpdate(bodyRowIndex: number, newTotalHeight: number): void {
+    try {
+      const rowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+      // 获取当前行高
+      const currentRowHeight = this.table.getRowHeight(rowIndex);
+      const internalProps = getInternalProps(this.table);
+      const originalHeight = internalProps.originalRowHeights?.get(bodyRowIndex) || 0;
+      const currentDetailHeight = currentRowHeight - originalHeight;
+      // 计算需要调整的高度差
+      const heightDifference = newTotalHeight - currentDetailHeight;
+      this.updateRowHeightForExpand(rowIndex, heightDifference);
+      this.table.scenegraph.updateContainerHeight(rowIndex, heightDifference);
+    } catch (error) {
+      console.warn('Error in auto height update:', error);
     }
   }
 
@@ -311,11 +337,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowIndex !== this.table.rowCount - 1) {
       this.removeUnderlineFromRow(rowIndex);
     }
-    this.subTableManager.recalculateAllSubTablePositions(
-      bodyRowIndex + 1,
-      undefined,
-      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
     this.refreshRowIcon(rowIndex, colIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
@@ -347,11 +368,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (rowIndex !== this.table.rowCount - 1) {
       this.removeUnderlineFromRow(rowIndex);
     }
-    this.subTableManager.recalculateAllSubTablePositions(
-      bodyRowIndex + 1,
-      undefined,
-      (record: unknown, bodyRowIndex: number) => this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-    );
     this.refreshRowIcon(rowIndex);
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
@@ -531,14 +547,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       const isExpanded = this.eventManager.isRowExpanded(rowIndex);
       recordObj.hierarchyState = isExpanded ? HierarchyState.expand : HierarchyState.collapse;
       this.table.scenegraph.updateHierarchyIcon(targetColumnIndex, rowIndex);
-    }
-  }
-
-  update(): void {
-    if (this.table) {
-      this.subTableManager.recalculateAllSubTablePositions(0, undefined, (record: unknown, bodyRowIndex: number) =>
-        this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
-      );
     }
   }
 

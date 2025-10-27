@@ -262,6 +262,87 @@ export class SubTableManager {
     // 设置子表事件监听
     this.setupSubTableEventForwarding(bodyRowIndex, subTable);
     subTable.render();
+    // 处理auto高度的情况
+    if (detailConfig?.style?.height === 'auto') {
+      this.handleAutoHeightAfterRender(bodyRowIndex, subTable, detailConfig);
+    }
+  }
+
+  /**
+   * 处理auto高度的后续计算
+   * 在子表渲染完成后，计算实际内容高度并更新viewBox
+   */
+  private handleAutoHeightAfterRender(
+    bodyRowIndex: number,
+    subTable: VTable.ListTable,
+    detailConfig: DetailTableOptions
+  ): void {
+    try {
+      const actualContentHeight = this.calculateSubTableContentHeight(subTable);
+      const [marginTop,, marginBottom] = parseMargin(detailConfig?.style?.margin);
+      const totalRequiredHeight = actualContentHeight + marginTop + marginBottom;
+      // 通知core插件更新主表行高
+      if (this.onAutoHeightCalculated) {
+        this.onAutoHeightCalculated(bodyRowIndex, totalRequiredHeight);
+      }
+    } catch (error) {
+      console.warn('Error in auto height calculation:', error);
+    }
+  }
+
+  /**
+   * 计算子表内容实际需要的高度
+   */
+  private calculateSubTableContentHeight(subTable: VTable.ListTable): number {
+    try {
+      const contentHeight = subTable.getAllRowsHeight();
+      // 获取边框和阴影的额外高度
+      let frameExtraHeight = 0;
+      const theme = subTable.theme;
+      if (theme?.frameStyle) {
+        const frameStyle = theme.frameStyle;
+        let borderTopWidth = 0;
+        let borderBottomWidth = 0;
+        if (frameStyle.borderLineWidth) {
+          if (typeof frameStyle.borderLineWidth === 'number') {
+            borderTopWidth = borderBottomWidth = frameStyle.borderLineWidth;
+          } else if (Array.isArray(frameStyle.borderLineWidth)) {
+            const borders = frameStyle.borderLineWidth;
+            borderTopWidth = borders[0] || 0;
+            borderBottomWidth = borders[2] || 0;
+          }
+        }
+        let shadowTopHeight = 0;
+        let shadowBottomHeight = 0;
+        if (frameStyle.shadowBlur) {
+          if (typeof frameStyle.shadowBlur === 'number') {
+            shadowTopHeight = shadowBottomHeight = frameStyle.shadowBlur;
+          } else if (Array.isArray(frameStyle.shadowBlur)) {
+            const shadows = frameStyle.shadowBlur;
+            shadowTopHeight = shadows[0] || 0;
+            shadowBottomHeight = shadows[2] || 0;
+          }
+        }
+        if (!frameStyle.innerBorder) {
+          frameExtraHeight = borderTopWidth + borderBottomWidth + shadowTopHeight + shadowBottomHeight;
+        }
+      }
+      const totalHeight = contentHeight + frameExtraHeight;
+      return totalHeight;
+    } catch (error) {
+      console.warn('Error getting sub table total height:', error);
+      return 300; // 默认高度
+    }
+  }
+
+  // 回调函数用于通知core插件更新主表行高
+  private onAutoHeightCalculated?: (bodyRowIndex: number, newTotalHeight: number) => void;
+
+  /**
+   * 设置auto高度计算完成的回调
+   */
+  setAutoHeightCallback(callback: (bodyRowIndex: number, newTotalHeight: number) => void): void {
+    this.onAutoHeightCalculated = callback;
   }
 
   // 缓存列范围计算结果
@@ -322,8 +403,16 @@ export class SubTableManager {
     // 解析margin配置 [上, 右, 下, 左]
     const [marginTop, marginRight, marginBottom, marginLeft] = parseMargin(detailConfig?.style?.margin);
     const configHeight = height ? height : detailConfig?.style?.height || 300;
+    // 处理auto高度的情况
+    let actualHeight: number;
+    if (configHeight === 'auto') {
+      // auto高度在renderSubTable后处理，这里先用默认值
+      actualHeight = 300;
+    } else {
+      actualHeight = typeof configHeight === 'number' ? configHeight : 300;
+    }
     // 如果配置的高度小于垂直margin总和，则不渲染子表
-    if (configHeight <= marginTop + marginBottom) {
+    if (actualHeight <= marginTop + marginBottom) {
       return {
         x1: firstColRect.left + marginLeft,
         y1: detailRowRect.top + originalHeight,
@@ -335,7 +424,7 @@ export class SubTableManager {
       x1: firstColRect.left + marginLeft,
       y1: detailRowRect.top + originalHeight + marginTop,
       x2: lastColRect.right - marginRight,
-      y2: detailRowRect.top + originalHeight - marginBottom + configHeight
+      y2: detailRowRect.top + originalHeight - marginBottom + actualHeight
     };
     // 确保viewBox有效
     if (viewBox.x2 <= viewBox.x1 || viewBox.y2 <= viewBox.y1) {
