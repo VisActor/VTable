@@ -1,10 +1,3 @@
-/*
- * @Author: lym
- * @Date: 2025-02-24 09:32:53
- * @LastEditors: lym
- * @LastEditTime: 2025-04-01 17:33:53
- * @Description:
- */
 import type {
   CommonDomOptions,
   IGraphic,
