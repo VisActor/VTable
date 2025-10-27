@@ -12,7 +12,7 @@ export function fireMoveColEventListeners(table: BaseTableAPI, endMoveColSuccess
   ) {
     // 下面触发CHANGE_HEADER_POSITION 区别于pointerup
     if ((table as any).hasListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION)) {
-      const { colSource, rowSource, colTarget, rowTarget } = table.stateManager.columnMove;
+      const { colSource, rowSource, colTarget, rowTarget, movingColumnOrRow } = table.stateManager.columnMove;
       const rowSourceSize = table.stateManager.columnMove.rowSourceSize ?? 0;
       const rowTargetSize = table.stateManager.columnMove.rowTargetSize ?? 0;
       table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, {
@@ -21,6 +21,7 @@ export function fireMoveColEventListeners(table: BaseTableAPI, endMoveColSuccess
           col: colSource,
           row: rowSource
         },
+        movingColumnOrRow,
         event: e
       });
     }
@@ -37,6 +38,7 @@ export function fireMoveColEventListeners(table: BaseTableAPI, endMoveColSuccess
           col: table.stateManager.columnMove.colSource,
           row: table.stateManager.columnMove.rowSource
         },
+        movingColumnOrRow: table.stateManager.columnMove.movingColumnOrRow,
         event: e
       });
     }

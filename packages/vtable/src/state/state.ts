@@ -373,7 +373,8 @@ export class StateManager {
       rowTargetSize: 0,
       x: 0,
       y: 0,
-      moving: false
+      moving: false,
+      movingColumnOrRow: undefined
     };
     this.menu = {
       x: -1,

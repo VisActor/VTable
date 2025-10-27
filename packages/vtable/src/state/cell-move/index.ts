@@ -60,7 +60,8 @@ export function startMoveCol(
     lineX,
     backY,
     lineY,
-    event
+    event,
+    movingColumnOrRow: dragColumnOrRow
   });
   // 调整列顺序期间清空选中清空
   const isHasSelected = !!state.select.ranges?.length;
@@ -159,7 +160,8 @@ export function updateMoveCol(
       lineX,
       backY,
       lineY,
-      event
+      event,
+      movingColumnOrRow: state.columnMove.movingColumnOrRow
     });
     state.table.scenegraph.updateNextFrame();
   }
@@ -298,26 +300,29 @@ export function endMoveCol(state: StateManager): boolean {
       moveColResult = true;
     } else {
       state.updateCursor();
-      //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
       state.columnMove.moving = false;
-      state.columnMove.movingColumnOrRow = undefined;
-      delete state.columnMove.colSource;
-      delete state.columnMove.rowSource;
-      delete state.columnMove.colTarget;
-      delete state.columnMove.rowTarget;
+      setTimeout(() => {
+        //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
+        delete state.columnMove.colSource;
+        delete state.columnMove.rowSource;
+        delete state.columnMove.colTarget;
+        delete state.columnMove.rowTarget;
+        state.columnMove.movingColumnOrRow = undefined;
+      }, 0);
       state.table.scenegraph.component.hideMoveCol();
       state.table.scenegraph.updateNextFrame();
       return false;
     }
   }
   state.columnMove.moving = false;
-  state.columnMove.movingColumnOrRow = undefined;
+
   setTimeout(() => {
     //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
     delete state.columnMove.colSource;
     delete state.columnMove.rowSource;
     delete state.columnMove.colTarget;
     delete state.columnMove.rowTarget;
+    state.columnMove.movingColumnOrRow = undefined;
   }, 0);
   state.table.scenegraph.component.hideMoveCol();
   // update frozen shadowline component

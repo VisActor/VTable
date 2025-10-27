@@ -303,6 +303,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       this.tableInstance.on('click_cell', () => {
         this.element.classList.add('vtable-excel-cursor');
       });
+      // 监听编辑结束事件，恢复十字光标
+      this.tableInstance.on('change_header_position', (event: any) => {
+        this.handleChangeHeaderPosition(event);
+      });
     }
   }
 
@@ -476,6 +480,46 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     } catch (error) {
       console.error(`Failed to handle columns changed (${type}):`, error);
     }
+  }
+  /**
+   * 处理表头位置变更事件
+   * @param event 表头位置变更事件
+   */
+  private handleChangeHeaderPosition(event: any): void {
+    console.log('handleChangeHeaderPosition', event);
+    if (event.movingColumnOrRow === 'column') {
+      this.handleChangeColumnHeaderPosition(event);
+    } else {
+      this.handleChangeRowHeaderPosition(event);
+    }
+  }
+  /**
+   * 处理列表头位置变更事件
+   * @param event 列表头位置变更事件
+   */
+  private handleChangeColumnHeaderPosition(event: any): void {
+    console.log('handleChangeColumnHeaderPosition', event);
+    // 注意：tableInstance.options.columns 中的顺序并未更新（和其他操作如delete/add等操作不同）需要注意后续是否有什么问题
+    const { source, target } = event;
+    const { col: sourceCol, row: sourceRow } = source;
+    const { col: targetCol, row: targetRow } = target;
+    const sheetKey = this.getKey();
+    //#region 处理数据变化后，公式引擎中的数据也需要更新
+    const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
+      this.tableInstance.records,
+      this.tableInstance
+    );
+    this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
+    //#endregion
+    // 在指定位置插入列，需要调整该位置之后的公式引用
+    this.vtableSheet.formulaManager.changeColumnHeaderPosition(sheetKey, sourceCol, targetCol);
+  }
+  /**
+   * 处理行表头位置变更事件
+   * @param event 行表头位置变更事件
+   */
+  private handleChangeRowHeaderPosition(event: any): void {
+    console.log('handleChangeRowHeaderPosition', event);
   }
 
   /**
