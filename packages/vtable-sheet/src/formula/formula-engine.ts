@@ -241,9 +241,13 @@ export class FormulaEngine {
     // 如果是公式，更新依赖关系
     if (typeof processedValue === 'string' && processedValue.startsWith('=')) {
       const cellKey = this.getCellKey(cell);
-      this.formulaCells.set(cellKey, processedValue);
-      this.updateDependencies(cellKey, processedValue);
-      // console.log(`Set formula ${cellKey}: ${processedValue}`);
+      // 自动纠正公式大小写
+      const correctedFormula = this.correctFormulaCase(processedValue);
+      this.formulaCells.set(cellKey, correctedFormula);
+      this.updateDependencies(cellKey, correctedFormula);
+      // 更新单元格值为纠正后的公式
+      sheet[cell.row][cell.col] = correctedFormula;
+      // console.log(`Set formula ${cellKey}: ${correctedFormula}`);
     }
 
     // 重新计算受影响的单元格
@@ -304,7 +308,9 @@ export class FormulaEngine {
         return { value: formula, error: undefined };
       }
 
-      const expression = formula.substring(1).trim();
+      // 自动纠正公式大小写
+      const correctedFormula = this.correctFormulaCase(formula);
+      const expression = correctedFormula.substring(1).trim();
 
       // 检查是否包含#REF!错误
       if (expression.includes('#REF!')) {
@@ -320,6 +326,164 @@ export class FormulaEngine {
         error: error instanceof Error ? error.message : 'Calculation failed'
       };
     }
+  }
+
+  /**
+   * 自动纠正公式的大小写
+   * 将函数名转换为大写，将单元格引用转换为大写（如 f4 -> F4）
+   * 保持工作表名称不变（区分大小写）
+   */
+  private correctFormulaCase(formula: string): string {
+    if (!formula.startsWith('=')) {
+      return formula;
+    }
+
+    let corrected = '=';
+    const expression = formula.substring(1);
+
+    // 用于跟踪是否在字符串字面量中
+    let inQuotes = false;
+    let quoteChar = '';
+    let i = 0;
+
+    while (i < expression.length) {
+      const char = expression[i];
+
+      // 处理字符串字面量
+      if ((char === '"' || char === "'") && (i === 0 || expression[i - 1] !== '\\')) {
+        if (!inQuotes) {
+          inQuotes = true;
+          quoteChar = char;
+        } else if (char === quoteChar) {
+          inQuotes = false;
+          quoteChar = '';
+        }
+        corrected += char;
+        i++;
+        continue;
+      }
+
+      // 如果在字符串中，直接复制字符
+      if (inQuotes) {
+        corrected += char;
+        i++;
+        continue;
+      }
+
+      // 查找函数名模式（字母开头，后跟字母数字，然后是左括号）
+      const funcMatch = expression.substring(i).match(/^[A-Za-z][A-Za-z0-9]*\s*\(/);
+      if (funcMatch) {
+        const funcName = funcMatch[0].replace(/\s*\($/, '');
+        corrected += funcName.toUpperCase() + '(';
+        i += funcName.length + 1;
+        // 跳过可能的空白字符
+        while (i < expression.length && expression[i] === ' ') {
+          i++;
+        }
+        continue;
+      }
+
+      // 查找带工作表前缀的单元格引用（如 Sheet1!a1）
+      const sheetCellMatch = expression.substring(i).match(/^[A-Za-z0-9_]+![A-Za-z]+[0-9]+/);
+      if (sheetCellMatch) {
+        const fullRef = sheetCellMatch[0];
+        const [sheetName, cellRef] = fullRef.split('!');
+
+        // 查找原始工作表名称（保持大小写）
+        const originalSheetName = this.findOriginalSheetName(sheetName);
+
+        // 保持工作表名称不变，只纠正单元格引用
+        const letters = cellRef.replace(/[0-9]/g, '');
+        const numbers = cellRef.replace(/[A-Za-z]/g, '');
+        corrected += (originalSheetName || sheetName) + '!' + letters.toUpperCase() + numbers;
+        i += fullRef.length;
+        continue;
+      }
+
+      // 查找带工作表前缀的范围引用（如 Sheet1!a1:b2）
+      const sheetRangeMatch = expression.substring(i).match(/^[A-Za-z0-9_]+![A-Za-z]+[0-9]+:[A-Za-z]+[0-9]+/);
+      if (sheetRangeMatch) {
+        const fullRangeRef = sheetRangeMatch[0];
+        const [sheetPart, rangePart] = fullRangeRef.split('!');
+        const [startCell, endCell] = rangePart.split(':');
+
+        // 查找原始工作表名称（保持大小写）
+        const originalSheetName = this.findOriginalSheetName(sheetPart);
+
+        // 转换起始单元格
+        const startLetters = startCell.replace(/[0-9]/g, '');
+        const startNumbers = startCell.replace(/[A-Za-z]/g, '');
+        const newStartCell = startLetters.toUpperCase() + startNumbers;
+
+        // 转换结束单元格
+        const endLetters = endCell.replace(/[0-9]/g, '');
+        const endNumbers = endCell.replace(/[A-Za-z]/g, '');
+        const newEndCell = endLetters.toUpperCase() + endNumbers;
+
+        corrected += (originalSheetName || sheetPart) + '!' + newStartCell + ':' + newEndCell;
+        i += fullRangeRef.length;
+        continue;
+      }
+
+      // 查找普通单元格引用模式（字母+数字，如 f4, A1, AA10）
+      const cellMatch = expression.substring(i).match(/^[A-Za-z]+[0-9]+/);
+      if (cellMatch) {
+        const cellRef = cellMatch[0];
+        // 将字母部分转换为大写
+        const letters = cellRef.replace(/[0-9]/g, '');
+        const numbers = cellRef.replace(/[A-Za-z]/g, '');
+        corrected += letters.toUpperCase() + numbers;
+        i += cellRef.length;
+        continue;
+      }
+
+      // 查找普通范围引用模式（如 f4:f8, A1:B2）
+      const rangeMatch = expression.substring(i).match(/^[A-Za-z]+[0-9]+:[A-Za-z]+[0-9]+/);
+      if (rangeMatch) {
+        const rangeRef = rangeMatch[0];
+        const [startCell, endCell] = rangeRef.split(':');
+
+        // 转换起始单元格
+        const startLetters = startCell.replace(/[0-9]/g, '');
+        const startNumbers = startCell.replace(/[A-Za-z]/g, '');
+        const newStartCell = startLetters.toUpperCase() + startNumbers;
+
+        // 转换结束单元格
+        const endLetters = endCell.replace(/[0-9]/g, '');
+        const endNumbers = endCell.replace(/[A-Za-z]/g, '');
+        const newEndCell = endLetters.toUpperCase() + endNumbers;
+
+        corrected += newStartCell + ':' + newEndCell;
+        i += rangeRef.length;
+        continue;
+      }
+
+      // 普通字符，直接复制
+      corrected += char;
+      i++;
+    }
+
+    return corrected;
+  }
+
+  /**
+   * 查找原始工作表名称（保持大小写）
+   */
+  private findOriginalSheetName(sheetName: string): string | null {
+    // 首先尝试精确匹配
+    if (this.sheets.has(sheetName)) {
+      return sheetName;
+    }
+
+    // 如果找不到，尝试不区分大小写的匹配
+    const lowerSheetName = sheetName.toLowerCase();
+    for (const [existingSheetName] of this.sheets.entries()) {
+      if (existingSheetName.toLowerCase() === lowerSheetName) {
+        return existingSheetName;
+      }
+    }
+
+    return null;
   }
 
   private parseExpression(expr: string): { value: unknown; error?: string } {
@@ -1023,31 +1187,6 @@ export class FormulaEngine {
       }
 
       // 5. 计算最终的算术表达式
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      const result = Function('"use strict"; return (' + processedExpr + ')')();
-      return { value: result, error: undefined };
-    } catch (error) {
-      return { value: null, error: 'Basic arithmetic evaluation failed' };
-    }
-  }
-
-  private evaluateBasicArithmetic(expr: string): { value: unknown; error?: string } {
-    try {
-      // 如果表达式还包含函数调用，不应该在这里处理
-      if (/[A-Z]+\s*\(/.test(expr)) {
-        return { value: null, error: 'Expression contains function calls' };
-      }
-
-      // 替换单元格引用为实际值
-      let processedExpr = expr;
-
-      // 处理单元格引用
-      const cellRefs = processedExpr.match(/[A-Z]+[0-9]+/g) || [];
-      for (const cellRef of cellRefs) {
-        const value = this.getCellValueByA1(cellRef);
-        processedExpr = processedExpr.replace(cellRef, String(value));
-      }
-
       // eslint-disable-next-line @typescript-eslint/no-implied-eval
       const result = Function('"use strict"; return (' + processedExpr + ')')();
       return { value: result, error: undefined };
