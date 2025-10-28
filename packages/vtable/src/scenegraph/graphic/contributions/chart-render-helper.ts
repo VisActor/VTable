@@ -134,6 +134,8 @@ export function renderChart(chart: Chart) {
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
 
     if (typeof dataId === 'string') {
+      // 重新布局图表，marker 等需要重新布局的图表组件需要出发布局声明周期
+      chartInstance.getChart().setLayoutTag(true);
       chartInstance.updateDataSync(dataId, data ?? []);
     } else {
       const dataBatch = [];
@@ -161,6 +163,8 @@ export function renderChart(chart: Chart) {
           );
         }
       }
+      // 重新布局图表，marker 等需要重新布局的图表组件需要出发布局声明周期
+      chartInstance.getChart().setLayoutTag(true);
       chartInstance.updateFullDataSync?.(dataBatch);
     }
   }
