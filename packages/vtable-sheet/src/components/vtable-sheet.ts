@@ -5,7 +5,7 @@ import * as VTable from '@visactor/vtable';
 import { getTablePlugins } from '../core/table-plugins';
 import { EventManager } from '../event/event-manager';
 import { showSnackbar } from '../tools/ui/snackbar';
-import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent } from '../ts-types';
+import type { IVTableSheetOptions, ISheetDefine, CellValueChangedEvent, ImportResult } from '../ts-types';
 import { WorkSheetEventType } from '../ts-types';
 import SheetTabDragManager from '../managers/tab-drag-manager';
 import { checkTabTitle } from '../tools';
@@ -726,13 +726,13 @@ export default class VTableSheet {
     }
   }
   /** 导入文件到当前sheet */
-  importFileToSheet(): void {
+  async importFileToSheet(): Promise<ImportResult | void> {
     const sheet = this.getActiveSheet();
     if (!sheet) {
       return;
     }
     if ((sheet.tableInstance as any)?.importFile) {
-      (sheet.tableInstance as any).importFile();
+      return await (sheet.tableInstance as any).importFile();
     } else {
       console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
     }
