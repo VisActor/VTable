@@ -9,7 +9,7 @@
       :editor="DYNAMIC_RENDER_EDITOR"
       :edit-config="editConfig"
     >
-      <template #edit="{ value, onChange }">
+      <template #edit="{ value, refValue, onChange }">
         <a-date-picker
           v-if="column.field === 'birthday'"
           :default-value="value"
@@ -17,14 +17,7 @@
           :trigger-props="{ 'content-class': 'table-editor-element' }"
           @change="onChange"
         />
-        <a-input
-          v-else
-          :default-value="value"
-          style="width: 100%; height: 100%"
-          allow-clear
-          @input="onChange"
-          @clear="onChange()"
-        />
+        <a-input v-else v-model="refValue.value" style="width: 100%; height: 100%" allow-clear />
       </template>
     </ListColumn>
   </vue-list-table>

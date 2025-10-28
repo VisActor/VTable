@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: the addition of the refValue parameter in vue-vtable dynamic rendering editing now supports v-model #4597\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "760478279@qq.com"
+}
