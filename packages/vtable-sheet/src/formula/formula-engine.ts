@@ -1828,7 +1828,9 @@ export class FormulaEngine {
       }
 
       // 第二步：处理公式单元格
-      for (const [cellKey, formula] of Array.from(this.formulaCells.entries())) {
+      const entries = Array.from(this.formulaCells.entries());
+
+      for (const [cellKey, formula] of entries) {
         const cell = this.parseCellKey(cellKey);
         if (!cell || cell.sheet !== sheetKey) {
           continue; // 跳过其他工作表的公式
@@ -1889,6 +1891,13 @@ export class FormulaEngine {
       // 处理移动的公式
       for (const { newCell, formula } of movedFormulas) {
         const newCellKey = this.getCellKey(newCell);
+
+        // Debug: Check if this is the D6 formula
+        // if (newCellKey === 'Sheet1!D6') {
+        //   const fs = require('fs');
+        //   fs.appendFileSync('/Users/bytedance/VisActor/VTable3/debug_formula.log', `DEBUG: Moving D6 formula to ${newCellKey}: ${formula}\n`);
+        // }
+
         this.formulaCells.set(newCellKey, formula);
         // 重新建立依赖关系
         this.updateDependencies(newCellKey, formula);
@@ -1962,6 +1971,8 @@ export class FormulaEngine {
       const startCell = match[1];
       const endCell = match[2];
 
+      // Debug: Check B2:B5 case
+
       if (type === 'delete') {
         // 检查范围是否包含被删除的单元格
         const rangeContainsDeletedCells = this.rangeContainsDeletedCells(startCell, endCell, dimension, index, count);
@@ -2001,7 +2012,6 @@ export class FormulaEngine {
       let needsAdjustment = false;
       let newRowNumber = rowNumber;
       let newColLetters = colLetters;
-      const isDeletedCell = false;
 
       if (dimension === 'row') {
         // Convert 1-based row number to 0-based for comparison
@@ -2194,10 +2204,16 @@ export class FormulaEngine {
         const deleteStartRow = index;
         const deleteEndRow = index + count - 1;
 
+        // 检查整个范围是否被删除
+        const entireRangeDeleted = minRow >= deleteStartRow && maxRow <= deleteEndRow;
+        if (entireRangeDeleted) {
+          return '#REF!';
+        }
+
         // 调整起始行
         if (minRow >= deleteStartRow && minRow <= deleteEndRow) {
-          // 起始行被删除 - 调整到删除前的位置
-          newMinRow = deleteStartRow > 0 ? deleteStartRow - 1 : 0;
+          // 起始行被删除 - 调整到删除边界位置（保持相同位置）
+          newMinRow = deleteStartRow;
         } else if (minRow > deleteEndRow) {
           // 起始行在删除范围之后，需要向前移动
           newMinRow = minRow - count;
@@ -2225,6 +2241,12 @@ export class FormulaEngine {
       } else if (dimension === 'column') {
         const deleteStartCol = index;
         const deleteEndCol = index + count - 1;
+
+        // 检查整个范围是否被删除
+        const entireRangeDeleted = minCol >= deleteStartCol && maxCol <= deleteEndCol;
+        if (entireRangeDeleted) {
+          return '#REF!';
+        }
 
         // 调整起始列
         if (minCol >= deleteStartCol && minCol <= deleteEndCol) {
