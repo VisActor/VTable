@@ -1,4 +1,5 @@
 import { isObject } from './isx';
+import { vglobal } from '@visactor/vtable/es/vrender';
 
 export function debounce(func: Function, wait?: number, options?: any) {
   let lastArgs: any;
@@ -17,7 +18,7 @@ export function debounce(func: Function, wait?: number, options?: any) {
   // 是否在延迟结束后调用函数
   let trailing = true;
 
-  const useRAF = !wait && wait !== 0 && typeof requestAnimationFrame === 'function';
+  const useRAF = !wait && wait !== 0 && typeof vglobal.getRequestAnimationFrame() === 'function';
 
   if (typeof func !== 'function') {
     throw new TypeError('Expected a function');
@@ -50,7 +51,7 @@ export function debounce(func: Function, wait?: number, options?: any) {
   // 开启定时器
   function startTimer(pendingFunc: any, wait: number) {
     if (useRAF) {
-      return requestAnimationFrame(pendingFunc);
+      return vglobal.getRequestAnimationFrame()(pendingFunc);
     }
     return setTimeout(pendingFunc, wait);
   }

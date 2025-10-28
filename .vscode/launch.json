@@ -26,6 +26,15 @@
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "node run table",
+            "type": "pwa-node",
+            "request": "launch",
+            "program": "${workspaceFolder}/packages/vtable/nodejs/index.js",
+            "args": [
+                
+            ],
         }
     ]
 }

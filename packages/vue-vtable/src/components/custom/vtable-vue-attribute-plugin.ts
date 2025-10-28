@@ -7,7 +7,7 @@ import type {
   IText,
   SimpleDomStyleOptions
 } from '@visactor/vtable/es/vrender';
-import { HtmlAttributePlugin, application } from '@visactor/vtable/es/vrender';
+import { HtmlAttributePlugin, application, vglobal } from '@visactor/vtable/es/vrender';
 import {
   calculateAnchorOfBounds,
   isArray,
@@ -99,7 +99,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
     }
 
     this.isRendering = true;
-    requestAnimationFrame(() => {
+    vglobal.getRequestAnimationFrame()(() => {
       this.renderQueue.forEach(graphic => {
         try {
           this.doRenderGraphic(graphic);
@@ -561,7 +561,7 @@ export class VTableVueAttributePlugin extends HtmlAttributePlugin implements IPl
   private requestStyleUpdate() {
     if (!this.styleUpdateRequested) {
       this.styleUpdateRequested = true;
-      requestAnimationFrame(() => {
+      vglobal.getRequestAnimationFrame()(() => {
         this.styleUpdateQueue.forEach((changes, id) => {
           const container = this.htmlMap?.[id]?.wrapContainer;
           if (container) {
