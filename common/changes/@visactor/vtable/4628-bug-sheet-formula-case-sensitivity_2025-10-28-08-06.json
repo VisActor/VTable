@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: formula context support lower case character #4628\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}
