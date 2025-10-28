@@ -1,4 +1,4 @@
-import type { ColumnDefine, ListTableConstructorOptions } from '@visactor/vtable';
+import type { ColumnDefine, ListTableConstructorOptions, ColumnsDefine } from '@visactor/vtable';
 import { ListTable } from '@visactor/vtable';
 import { isValid, type EventEmitter } from '@visactor/vutils';
 import { EventTarget } from '../event/event-target';
@@ -209,15 +209,20 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
         borderLineWidth: 0
       });
     } else {
-      changedTheme = this.options.theme;
-      changedTheme.frameStyle = Object.assign({}, this.options.theme.frameStyle, {
-        shadowBlur: 0,
-        cornerRadius: 0,
-        borderLineWidth: 0
-      });
+      // 确保theme是一个对象而不是字符串
+      if (typeof this.options.theme === 'string') {
+        console.warn('theme is a string, it will be ignored');
+      } else {
+        changedTheme = this.options.theme;
+        changedTheme.frameStyle = Object.assign({}, this.options.theme.frameStyle, {
+          shadowBlur: 0,
+          cornerRadius: 0,
+          borderLineWidth: 0
+        });
+      }
     }
     return {
-      ...this.options,
+      ...(this.options as any),
       dragOrder: {
         maintainArrayDataOrder: true
       },
@@ -518,8 +523,21 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * 处理行表头位置变更事件
    * @param event 行表头位置变更事件
    */
-  private handleChangeRowHeaderPosition(event: any): void {
-    console.log('handleChangeRowHeaderPosition', event);
+  handleChangeRowHeaderPosition(event: any): void {
+    // 注意：tableInstance.options.columns 中的顺序并未更新（和其他操作如delete/add等操作不同）需要注意后续是否有什么问题
+    const { source, target } = event;
+    const { row: sourceRow } = source;
+    const { row: targetRow } = target;
+    const sheetKey = this.getKey();
+    //#region 处理数据变化后，公式引擎中的数据也需要更新
+    const normalizedData = this.vtableSheet.formulaManager.normalizeSheetData(
+      this.tableInstance.records,
+      this.tableInstance
+    );
+    this.vtableSheet.formulaManager.formulaEngine.updateSheetData(sheetKey, normalizedData);
+    //#endregion
+    // 在指定位置插入行，需要调整该位置之后的公式引用
+    this.vtableSheet.formulaManager.changeRowHeaderPosition(sheetKey, sourceRow, targetRow);
   }
 
   /**
@@ -796,7 +814,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     }
 
     // 转换VTable的坐标格式到WorkSheet格式
-    return vtableRanges.map(range => ({
+    return vtableRanges.map((range: any) => ({
       startRow: range.start.row,
       startCol: range.start.col,
       endRow: range.end.row,
@@ -825,7 +843,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     data.shift();
     this.tableInstance.updateOption({
       ...this.options,
-      columns: this.options.columns,
+      columns: this.options.columns as any as ColumnsDefine,
       showHeader: true,
       records: data
     });
