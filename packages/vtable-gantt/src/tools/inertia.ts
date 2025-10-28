@@ -1,3 +1,4 @@
+import { vglobal } from '@visactor/vtable/es/vrender';
 export class Inertia {
   friction: number;
   lastTime: number;
@@ -20,7 +21,7 @@ export class Inertia {
     this.speedY = speedY;
     this.friction = friction;
     if (!this.runingId) {
-      this.runingId = requestAnimationFrame(this.inertia.bind(this));
+      this.runingId = vglobal.getRequestAnimationFrame()(this.inertia.bind(this));
     }
   }
   inertia() {
@@ -52,10 +53,10 @@ export class Inertia {
     this.speedX = newSpeedX;
     this.speedY = newSpeedY;
 
-    this.runingId = requestAnimationFrame(this.inertia.bind(this));
+    this.runingId = vglobal.getRequestAnimationFrame()(this.inertia.bind(this));
   }
   endInertia() {
-    cancelAnimationFrame(this.runingId);
+    vglobal.getCancelAnimationFrame()(this.runingId);
     this.runingId = null;
     this.stopped = true;
   }

@@ -1,6 +1,6 @@
 import { isValid } from '@visactor/vutils';
-import type { VNode } from 'vue';
-import { isVNode, render } from 'vue';
+import type { Ref, VNode } from 'vue';
+import { h, isVNode, customRef, render } from 'vue';
 import { TYPES } from '@visactor/vtable';
 
 /** 渲染式编辑器参数 */
@@ -11,6 +11,8 @@ export interface DynamicRenderEditorParams {
   col: number;
   /** 值 */
   value: any;
+  /** 响应式值 供 v-model 绑定 */
+  refValue: Ref<any>;
   /** 行数据 */
   record: any;
   /** 表格实例 */
@@ -53,14 +55,9 @@ interface ColumnDefine {
   editConfig?: DynamicRenderEditorConfig;
 }
 
-/*
- * @Author: lym
- * @Date: 2025-02-07 11:36:48
- * @LastEditors: lym
- * @LastEditTime: 2025-03-03 16:42:10
- * @Description: 自定义渲染式编辑器
+/**
+ * @description: 自定义渲染式编辑器
  */
-
 export class DynamicRenderEditor {
   /** 包裹容器 */
   wrapContainer: HTMLElement;
@@ -151,17 +148,30 @@ export class DynamicRenderEditor {
       }
     }
     const record = table?.getCellOriginRecord(col, row);
-    const vnode = this.getNode(
-      id,
-      key
-    )?.({
+    const renderVNodeFn = this.getNode(id, key);
+    if (!renderVNodeFn) {
+      return false;
+    }
+    const vnode = h(renderVNodeFn, {
       row,
       col,
       value,
+      refValue: customRef((track, trigger) => {
+        return {
+          get: () => {
+            track()
+            return this.getValue()
+          },
+          set: (value) => {
+            this.setValue(value)
+            trigger()
+          }
+        }
+      }),
       record,
       table,
       onChange: (value: any) => this.setValue(value)
-    })?.find((node: any) => node?.type !== Symbol.for('v-cmt'));
+    });
     if (!vnode || !isVNode(vnode)) {
       return false;
     }

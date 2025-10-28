@@ -773,7 +773,8 @@ export class StateManager {
       // deal with merge cell
       if (
         !this.table.isSeriesNumber(this.select.cellPos.col, this.select.cellPos.row) &&
-        !this.table.isHeader(this.select.cellPos.col, this.select.cellPos.row)
+        !this.table.isHeader(this.select.cellPos.col, this.select.cellPos.row) &&
+        !this.table.isSeriesNumberInBody(currentRange.start.col, currentRange.start.row)
       ) {
         expendCellRange(currentRange, this.table);
       }

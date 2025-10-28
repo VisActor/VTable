@@ -2,7 +2,7 @@
  * 这个文件提供了甘特图导出功能，但使用了懒加载方式避免强制依赖
  * 只有在实际使用时才会尝试加载 @visactor/vtable-gantt
  */
-
+import { vglobal } from '@visactor/vtable/es/vrender';
 // 使用类型声明而不是直接导入，避免静态依赖
 type Gantt = any;
 interface IGanttPlugin {
@@ -93,7 +93,7 @@ export class ExportGanttPlugin implements IGanttPlugin {
       const { tempContainer, clonedGantt } = await this.createFullSizeContainer(scale);
 
       try {
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => vglobal.getRequestAnimationFrame()(resolve));
 
         const totalWidth =
           (clonedGantt.taskListTableInstance.getAllColsWidth() + clonedGantt.getAllDateColsWidth()) * scale;

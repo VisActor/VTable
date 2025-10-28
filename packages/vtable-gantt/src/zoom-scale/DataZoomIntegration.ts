@@ -1,5 +1,5 @@
 import type { Gantt } from '../Gantt';
-import { DataZoom, createStage } from '@visactor/vtable/es/vrender';
+import { DataZoom, createStage, vglobal } from '@visactor/vtable/es/vrender';
 
 export interface DataZoomConfig {
   /** DataZoom 容器 ID（可选，如果不提供会自动从 Gantt 实例获取） */
@@ -201,7 +201,7 @@ export class DataZoomIntegration {
 
     this.stage.defaultLayer.add(this.dataZoomAxis as any);
 
-    requestAnimationFrame(() => {
+    vglobal.getRequestAnimationFrame()(() => {
       if (this.isInitializing) {
         const boundaries = this.getGanttViewBoundaries();
         this.dataZoomAxis.setStartAndEnd(boundaries.startRatio, boundaries.endRatio);

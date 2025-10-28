@@ -4,7 +4,12 @@ var small_table = require("./small-table");
 var list_table = require("./list-table");
 var pivot_table = require("./pivot-table");
 var pivot_chart = require("./pivot-chart");
-// small_table.createSmallTable();
+try{
+  small_table.createSmallTable();
+
 // list_table.createListTable();
 // pivot_table.createPivotTable();
-pivot_chart.createPivotChart();
+// pivot_chart.createPivotChart();
+}catch(e){
+  debugger
+}

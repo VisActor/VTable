@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: after resize column width legend title position error #4629\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

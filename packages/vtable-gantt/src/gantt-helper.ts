@@ -127,6 +127,7 @@ export function initOptions(gantt: Gantt) {
   gantt.parsedOptions.startDateField = options.taskBar?.startDateField ?? 'startDate';
   gantt.parsedOptions.endDateField = options.taskBar?.endDateField ?? 'endDate';
   gantt.parsedOptions.progressField = options.taskBar?.progressField ?? 'progress';
+  gantt.parsedOptions.taskBarClip = options?.taskBar?.clip ?? true;
   gantt.parsedOptions.projectSubTasksExpandable = options?.projectSubTasksExpandable ?? true;
   // gantt.parsedOptions.minDate = options?.minDate
   //   ? gantt.parsedOptions.timeScaleIncludeHour

@@ -105,7 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
-import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import type { FederatedPointerEvent } from '@src/vrender';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
