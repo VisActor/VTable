@@ -2,6 +2,54 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.2",
+      "tag": "@visactor/vtable_v1.22.2",
+      "date": "Wed, 29 Oct 2025 04:47:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: drag order for vtable-sheet\n\n"
+          },
+          {
+            "comment": "fix: drag row order to update rowHeightMap\n\n"
+          },
+          {
+            "comment": "feat: drag column order to update and calculate formula\n\n"
+          },
+          {
+            "comment": "fix: select row use row series number with cell merge, select state error\n\n"
+          },
+          {
+            "comment": "refactor: requestAnimationFrame use vrender api #4619\n\n"
+          },
+          {
+            "comment": "refactor: formula context support lower case character #4628\n\n"
+          },
+          {
+            "comment": "fix: after resize column width legend title position error #4629\n\n"
+          },
+          {
+            "comment": "feat: add adaptive mode for auto fill width"
+          },
+          {
+            "comment": "fix: adjust formula dependency cell change\n\n"
+          },
+          {
+            "comment": "fix: fix issue of markline layout in PivotChart\n\n"
+          },
+          {
+            "comment": "fix: the resize event of tableContainer #4558\n\n"
+          },
+          {
+            "comment": "fix: vue-vtable dynamic rendering editing #4621\n\n"
+          },
+          {
+            "comment": "feat: the addition of the refValue parameter in vue-vtable dynamic rendering editing now supports v-model #4597\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.1",
       "tag": "@visactor/vtable_v1.22.1",
       "date": "Fri, 17 Oct 2025 02:49:45 GMT",
