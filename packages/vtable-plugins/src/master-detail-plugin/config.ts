@@ -151,63 +151,120 @@ export class ConfigManager {
       });
     };
     processRecords(records);
-    // 处理完 hierarchyState 后，遍历所有 body 行并执行对应操作
     this.performInitialExpansion();
   }
 
   /**
    * 遍历所有记录，根据 hierarchyState 状态执行初始展开
+   * 与VTable的异步CellGroup创建过程同步，在每个CellGroup创建后检查是否需要展开
    */
   private performInitialExpansion(): void {
-    // 延迟执行，确保表格已经完成渲染
-    setTimeout(() => {
-      const dataSource = this.table.dataSource as unknown as {
-        source?: unknown[];
-        _source?: unknown[];
-        records: unknown[];
-      };
-      const allRecords = dataSource.source || dataSource._source || this.table.dataSource.records;
-      const HierarchyState = VTable.TYPES.HierarchyState;
-      // 获取插件内部属性来访问 expandedRecordIndices
-      const tableWithInternalProps = this.table as unknown as {
-        internalProps: { expandedRecordIndices: number[] };
-      };
-      if (!tableWithInternalProps.internalProps.expandedRecordIndices) {
-        tableWithInternalProps.internalProps.expandedRecordIndices = [];
-      }
-      const expandedRecordIndices = tableWithInternalProps.internalProps.expandedRecordIndices;
-      // 遍历所有记录
-      for (let recordIndex = 0; recordIndex < allRecords.length; recordIndex++) {
-        const record = allRecords[recordIndex];
-        if (record && typeof record === 'object') {
-          const recordObj = record as Record<string, unknown>;
-          // 检查是否需要展开
-          if (
-            (this.hasChildren(record) || recordObj.children === true) &&
-            recordObj.hierarchyState === HierarchyState.expand
-          ) {
-            // 将记录索引添加到 expandedRecordIndices 中
-            if (!expandedRecordIndices.includes(recordIndex)) {
-              expandedRecordIndices.push(recordIndex);
+    // 获取需要展开的记录索引列表
+    const expandableRecords = this.getExpandableRecords();
+    if (expandableRecords.length === 0) {
+      return;
+    }
+
+    // 开始异步展开过程，与VTable的渲染频率同步
+    this.startAsyncExpansion(expandableRecords);
+  }
+
+  /**
+   * 获取所有需要展开的记录信息
+   */
+  private getExpandableRecords(): Array<{ recordIndex: number; actualRowIndex: number; record: unknown }> {
+    const dataSource = this.table.dataSource as unknown as {
+      source?: unknown[];
+      _source?: unknown[];
+      records: unknown[];
+    };
+    const allRecords = dataSource.source || dataSource._source || this.table.dataSource.records;
+    const HierarchyState = VTable.TYPES.HierarchyState;
+    const expandableRecords: Array<{ recordIndex: number; actualRowIndex: number; record: unknown }> = [];
+
+    // 获取插件内部属性来访问 expandedRecordIndices
+    const tableWithInternalProps = this.table as unknown as {
+      internalProps: { expandedRecordIndices: number[] };
+    };
+    if (!tableWithInternalProps.internalProps.expandedRecordIndices) {
+      tableWithInternalProps.internalProps.expandedRecordIndices = [];
+    }
+    const expandedRecordIndices = tableWithInternalProps.internalProps.expandedRecordIndices;
+
+    // 遍历所有记录，收集需要展开的行
+    for (let recordIndex = 0; recordIndex < allRecords.length; recordIndex++) {
+      const record = allRecords[recordIndex];
+      if (record && typeof record === 'object') {
+        const recordObj = record as Record<string, unknown>;
+        // 检查是否需要展开
+        if (
+          (this.hasChildren(record) || recordObj.children === true) &&
+          recordObj.hierarchyState === HierarchyState.expand
+        ) {
+          // 将记录索引添加到 expandedRecordIndices 中
+          if (!expandedRecordIndices.includes(recordIndex)) {
+            expandedRecordIndices.push(recordIndex);
+          }
+          // 尝试获取行索引
+          try {
+            const bodyRowIndex = this.table.getBodyRowIndexByRecordIndex(recordIndex);
+            if (bodyRowIndex >= 0) {
+              const actualRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
+              expandableRecords.push({ recordIndex, actualRowIndex, record });
             }
-            // 如果记录在当前页面中，执行实际的展开操作
-            try {
-              const bodyRowIndex = this.table.getBodyRowIndexByRecordIndex(recordIndex);
-              if (bodyRowIndex >= 0) {
-                // 计算实际行索引（body行索引 + 表头行数）
-                const actualRowIndex = bodyRowIndex + this.table.columnHeaderLevelCount;
-                // 调用展开行方法
-                if (this.expandRowCallback) {
-                  this.expandRowCallback(actualRowIndex);
-                }
-              }
-            } catch (error) {
-              //
-            }
+          } catch (error) {
+            // 记录可能不在当前页面中，跳过
           }
         }
       }
-    }, 0);
+    }
+
+    return expandableRecords;
+  }
+
+  /**
+   * 开始异步展开过程，与VTable的异步渲染同步
+   */
+  private startAsyncExpansion(
+    expandableRecords: Array<{ recordIndex: number; actualRowIndex: number; record: unknown }>
+  ): void {
+    let currentIndex = 0;
+
+    const processNextExpansion = (): void => {
+      if (currentIndex >= expandableRecords.length) {
+        return; // 所有展开操作完成
+      }
+
+      const { actualRowIndex } = expandableRecords[currentIndex];
+      // 检查该行的CellGroup是否已经创建
+      if (this.isCellGroupCreated(actualRowIndex)) {
+        // CellGroup已创建，立即执行展开
+        if (this.expandRowCallback) {
+          this.expandRowCallback(actualRowIndex);
+        }
+        currentIndex++;
+        // 立即处理下一个，避免不必要的延迟
+        setTimeout(processNextExpansion, 0);
+      } else {
+        // CellGroup尚未创建，等待16ms后再检查（与VTable的异步渲染频率同步）
+        setTimeout(processNextExpansion, 16);
+      }
+    };
+    // 启动异步展开过程
+    setTimeout(processNextExpansion, 0);
+  }
+
+  /**
+   * 检查指定行的CellGroup是否已经创建
+   */
+  private isCellGroupCreated(rowIndex: number): boolean {
+    try {
+      // 检查第一列的CellGroup是否存在且有效
+      const cellGroup = this.table.scenegraph.getCell(0, rowIndex);
+      return cellGroup && cellGroup.role === 'cell';
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
