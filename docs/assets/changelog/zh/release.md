@@ -5,26 +5,25 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-sheet**: drag row or column order for vtable-sheet
-- **@visactor/vtable-sheet**: drag column order to update and calculate formula
-- **@visactor/vtable-sheet**: adjust formula dependency after delete or add rows columns
-- **@visactor/vtable**: add adaptive mode for auto fill width
-- **@visactor/vtable**: the addition of the refValue parameter in vue-vtable dynamic rendering editing now supports v-model [#4597](https://github.com/VisActor/VTable/issues/4597)
+- **@visactor/vtable-sheet**: 新增拖拽行或列顺序功能
+- **@visactor/vtable-sheet**: 新增拖拽列顺序功能，支持更新和计算公式
+- **@visactor/vtable-sheet**: 新增删除或添加行和列后调整公式依赖关系功能
+- **@visactor/vtable**: 新增 refValue 参数，支持 vue-vtable 动态渲染编辑时使用 v-model [#4597](https://github.com/VisActor/VTable/issues/4597)
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: drag row order to update rowHeightMap
-- **@visactor/vtable**: select row use row series number with cell merge, select state error
-- **@visactor/vtable**: after resize column width legend title position error [#4629](https://github.com/VisActor/VTable/issues/4629)
-- **@visactor/vtable**: fix issue of markline layout in PivotChart
-- **@visactor/vtable**: the resize event of tableContainer [#4558](https://github.com/VisActor/VTable/issues/4558)
-- **@visactor/vtable**: vue-vtable dynamic rendering editing [#4621](https://github.com/VisActor/VTable/issues/4621)
+- **@visactor/vtable**: 拖拽行顺序更新 rowHeightMap
+- **@visactor/vtable**: 使用行系列编号合并单元格时选择状态错误
+- **@visactor/vtable**: 调整列宽后图例标题位置错误 [#4629](https://github.com/VisActor/VTable/issues/4629)
+- **@visactor/vtable**: 修复透视图标记线布局问题
+- **@visactor/vtable**: 修复表格容器调整大小事件问题 [#4558](https://github.com/VisActor/VTable/issues/4558)
+- **@visactor/vtable**: 修复 vue-vtable 动态渲染编辑问题 [#4621](https://github.com/VisActor/VTable/issues/4621)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: requestAnimationFrame use vrender api [#4619](https://github.com/VisActor/VTable/issues/4619)
-- **@visactor/vtable-sheet**: formula context support lower case character [#4628](https://github.com/VisActor/VTable/issues/4628)
-
+- **@visactor/vtable**: 优化宽度自适应模式计算逻辑
+- **@visactor/vtable**: 使用 vrender api 替换 requestAnimationFrame [#4619](https://github.com/VisActor/VTable/issues/4619)
+- **@visactor/vtable-sheet**: 支持小写字母公式上下文 [#4628](https://github.com/VisActor/VTable/issues/4628)
 
 
 [更多详情请查看 v1.22.2](https://github.com/VisActor/VTable/releases/tag/v1.22.2)

@@ -8,7 +8,6 @@
 - **@visactor/vtable-sheet**: drag row or column order for vtable-sheet
 - **@visactor/vtable-sheet**: drag column order to update and calculate formula
 - **@visactor/vtable-sheet**: adjust formula dependency after delete or add rows columns
-- **@visactor/vtable**: add adaptive mode for auto fill width
 - **@visactor/vtable**: the addition of the refValue parameter in vue-vtable dynamic rendering editing now supports v-model [#4597](https://github.com/VisActor/VTable/issues/4597)
 
 **🐛 Bug fix**
@@ -22,6 +21,7 @@
 
 **🔨 Refactor**
 
+- **@visactor/vtable**: refactor adaptive mode for column width calculation
 - **@visactor/vtable**: requestAnimationFrame use vrender api [#4619](https://github.com/VisActor/VTable/issues/4619)
 - **@visactor/vtable-sheet**: formula context support lower case character [#4628](https://github.com/VisActor/VTable/issues/4628)
 
