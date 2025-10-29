@@ -331,12 +331,13 @@ export class NumberRangeMap {
     insertIndex: number
   ) {
     const values = [];
-    for (let i = sourceIndex; i < sourceIndex + sourceCount; i++) {
+    //逐个删除，注意应该从大到小删除，否则会破坏顺序
+    for (let i = sourceIndex + sourceCount - 1; i >= sourceIndex; i--) {
       values.push({ position: i, value: this.get(i) });
       this.delete(i);
     }
     for (let i = 0; i < sourceCount; i++) {
-      this.insert(i + insertIndex, values[i].value);
+      this.insert(insertIndex, values[i].value);
     }
     // const { _keys: keys } = this;
     // if (!this._sorted) {
