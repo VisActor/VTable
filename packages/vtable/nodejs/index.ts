@@ -3,7 +3,7 @@ import { createPivotChart } from './pivot-chart.ts';
 import { createPivotTable } from './pivot-table.ts';
 import { createSmallTable } from './small-table.ts';
 
-// createSmallTable();
+createSmallTable();
 // createListTable();
 // createPivotTable();
-createPivotChart();
+// createPivotChart();

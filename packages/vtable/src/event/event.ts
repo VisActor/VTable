@@ -661,16 +661,18 @@ export class EventManager {
     return false;
   }
 
-  dealColumnMover(eventArgsSet: SceneEvent) {
-    const { eventArgs } = eventArgsSet;
-    if (isValid(eventArgs.col) && isValid(eventArgs.row)) {
-      this.table.stateManager.updateMoveCol(
-        eventArgs.col,
-        eventArgs.row,
-        eventArgsSet.abstractPos.x,
-        eventArgsSet.abstractPos.y,
-        eventArgs?.event?.nativeEvent
-      );
+  dealColumnMover(x: number, y: number, event: MouseEvent | PointerEvent | TouchEvent) {
+    let col = this.table.getColAtRelativePosition(x);
+    let row = this.table.getRowAtRelativePosition(y);
+    if (col === -1 && this.table.stateManager.columnMove.movingColumnOrRow === 'row') {
+      col = 0;
+    }
+    if (row === -1 && this.table.stateManager.columnMove.movingColumnOrRow === 'column') {
+      row = 0;
+    }
+    // const { eventArgs } = eventArgsSet;
+    if (isValid(col) && isValid(row)) {
+      this.table.stateManager.updateMoveCol(col, row, x, y, event);
     }
   }
 

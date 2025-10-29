@@ -236,21 +236,22 @@ function getIgnoreCase(obj: any, name: string): any {
   return undefined;
 }
 
-export function toBoxArray<T>(obj: T | T[]): [T, T, T, T] {
+type BoxTuple<T> = [top: T, right: T, bottom: T, left: T];
+export function toBoxArray<T>(obj: T | T[]): BoxTuple<T> {
   if (!Array.isArray(obj)) {
-    return [obj /*top*/, obj /*right*/, obj /*bottom*/, obj /*left*/];
+    return [obj, obj, obj, obj];
   }
   if (obj.length === 3) {
-    return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[1] /*left*/];
+    return [obj[0], obj[1], obj[2], obj[1]];
   }
   if (obj.length === 2) {
-    return [obj[0] /*top*/, obj[1] /*right*/, obj[0] /*bottom*/, obj[1] /*left*/];
+    return [obj[0], obj[1], obj[0], obj[1]];
   }
   if (obj.length === 1) {
-    return [obj[0] /*top*/, obj[0] /*right*/, obj[0] /*bottom*/, obj[0] /*left*/];
+    return [obj[0], obj[0], obj[0], obj[0]];
   }
   // return obj as [T, T, T, T];//原先这种返回方式，会造成修改引用问题
-  return [obj[0] /*top*/, obj[1] /*right*/, obj[2] /*bottom*/, obj[3] /*left*/];
+  return [obj[0], obj[1], obj[2], obj[3]];
 }
 
 export { isNode, getChainSafe, applyChainSafe, getOrApply, getIgnoreCase, array };

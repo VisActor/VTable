@@ -9,7 +9,7 @@ link: Developer_Ecology/vue
 
 # Custom Cell Component
 
-Similar to customLayout, you can use Vue components for custom layouts. For more details, refer to [Custom Component](../../guide/Developer_Ecology/react-custom-component).
+Similar to customLayout, you can use Vue components for custom layouts. For more details, refer to [Custom Component](../../guide/custom_define/vue-custom-component).
 
 ## Code Demonstration
 

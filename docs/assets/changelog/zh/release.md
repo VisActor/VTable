@@ -1,3 +1,23 @@
+# v1.22.0
+
+2025-10-17
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-plugins**: 新增主从表能力的插件
+- **@visactor/vtable-sheet**: 针对新增或删除行和列的情况，优化处理公式计算
+- **@visactor/vtable**: 新增getFilteredRecords方法到ListTable [#4537](https://github.com/VisActor/VTable/issues/4537)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复PivotTable的getFilteredRecords方法 [#4537](https://github.com/VisActor/VTable/issues/4537)
+- **@visactor/vtable**: 修复HighlightHeaderWhenSelectCellPlugin插件的options解析问题
+
+
+
+[更多详情请查看 v1.22.0](https://github.com/VisActor/VTable/releases/tag/v1.22.0)
+
 # v1.21.1
 
 2025-10-14

@@ -14,6 +14,11 @@ Other related configuration items that will affect the function change are:
 
 - `columns.style.lineClamp: number | string`: Set the maximum number of rows in a cell, support numbers or`'auto'`Value. If set to`'auto'`, the number of rows is automatically calculated based on the cell content length.
 
+Set the row number may require a certain row height to display, so you need to set the default row height, the following two ways can be used:
+
+- `heightMode: 'autoHeight'`: Set the height mode of the table to automatic height, and calculate the row height based on the content.
+- `defaultRowHeight: number`: Set the default row height of the table, set a fixed row height value, so that the height is enough to display the content.
+
 Next, we'll demonstrate how to use the line wrap feature with a practical example.
 
 ## example

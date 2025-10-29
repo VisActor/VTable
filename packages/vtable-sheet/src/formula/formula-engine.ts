@@ -241,9 +241,13 @@ export class FormulaEngine {
     // 如果是公式，更新依赖关系
     if (typeof processedValue === 'string' && processedValue.startsWith('=')) {
       const cellKey = this.getCellKey(cell);
-      this.formulaCells.set(cellKey, processedValue);
-      this.updateDependencies(cellKey, processedValue);
-      // console.log(`Set formula ${cellKey}: ${processedValue}`);
+      // 自动纠正公式大小写
+      const correctedFormula = this.correctFormulaCase(processedValue);
+      this.formulaCells.set(cellKey, correctedFormula);
+      this.updateDependencies(cellKey, correctedFormula);
+      // 更新单元格值为纠正后的公式
+      sheet[cell.row][cell.col] = correctedFormula;
+      // console.log(`Set formula ${cellKey}: ${correctedFormula}`);
     }
 
     // 重新计算受影响的单元格
@@ -304,7 +308,9 @@ export class FormulaEngine {
         return { value: formula, error: undefined };
       }
 
-      const expression = formula.substring(1).trim();
+      // 自动纠正公式大小写
+      const correctedFormula = this.correctFormulaCase(formula);
+      const expression = correctedFormula.substring(1).trim();
 
       // 检查是否包含#REF!错误
       if (expression.includes('#REF!')) {
@@ -320,6 +326,164 @@ export class FormulaEngine {
         error: error instanceof Error ? error.message : 'Calculation failed'
       };
     }
+  }
+
+  /**
+   * 自动纠正公式的大小写
+   * 将函数名转换为大写，将单元格引用转换为大写（如 f4 -> F4）
+   * 保持工作表名称不变（区分大小写）
+   */
+  private correctFormulaCase(formula: string): string {
+    if (!formula.startsWith('=')) {
+      return formula;
+    }
+
+    let corrected = '=';
+    const expression = formula.substring(1);
+
+    // 用于跟踪是否在字符串字面量中
+    let inQuotes = false;
+    let quoteChar = '';
+    let i = 0;
+
+    while (i < expression.length) {
+      const char = expression[i];
+
+      // 处理字符串字面量
+      if ((char === '"' || char === "'") && (i === 0 || expression[i - 1] !== '\\')) {
+        if (!inQuotes) {
+          inQuotes = true;
+          quoteChar = char;
+        } else if (char === quoteChar) {
+          inQuotes = false;
+          quoteChar = '';
+        }
+        corrected += char;
+        i++;
+        continue;
+      }
+
+      // 如果在字符串中，直接复制字符
+      if (inQuotes) {
+        corrected += char;
+        i++;
+        continue;
+      }
+
+      // 查找函数名模式（字母开头，后跟字母数字，然后是左括号）
+      const funcMatch = expression.substring(i).match(/^[A-Za-z][A-Za-z0-9]*\s*\(/);
+      if (funcMatch) {
+        const funcName = funcMatch[0].replace(/\s*\($/, '');
+        corrected += funcName.toUpperCase() + '(';
+        i += funcName.length + 1;
+        // 跳过可能的空白字符
+        while (i < expression.length && expression[i] === ' ') {
+          i++;
+        }
+        continue;
+      }
+
+      // 查找带工作表前缀的单元格引用（如 Sheet1!a1）
+      const sheetCellMatch = expression.substring(i).match(/^[A-Za-z0-9_]+![A-Za-z]+[0-9]+/);
+      if (sheetCellMatch) {
+        const fullRef = sheetCellMatch[0];
+        const [sheetName, cellRef] = fullRef.split('!');
+
+        // 查找原始工作表名称（保持大小写）
+        const originalSheetName = this.findOriginalSheetName(sheetName);
+
+        // 保持工作表名称不变，只纠正单元格引用
+        const letters = cellRef.replace(/[0-9]/g, '');
+        const numbers = cellRef.replace(/[A-Za-z]/g, '');
+        corrected += (originalSheetName || sheetName) + '!' + letters.toUpperCase() + numbers;
+        i += fullRef.length;
+        continue;
+      }
+
+      // 查找带工作表前缀的范围引用（如 Sheet1!a1:b2）
+      const sheetRangeMatch = expression.substring(i).match(/^[A-Za-z0-9_]+![A-Za-z]+[0-9]+:[A-Za-z]+[0-9]+/);
+      if (sheetRangeMatch) {
+        const fullRangeRef = sheetRangeMatch[0];
+        const [sheetPart, rangePart] = fullRangeRef.split('!');
+        const [startCell, endCell] = rangePart.split(':');
+
+        // 查找原始工作表名称（保持大小写）
+        const originalSheetName = this.findOriginalSheetName(sheetPart);
+
+        // 转换起始单元格
+        const startLetters = startCell.replace(/[0-9]/g, '');
+        const startNumbers = startCell.replace(/[A-Za-z]/g, '');
+        const newStartCell = startLetters.toUpperCase() + startNumbers;
+
+        // 转换结束单元格
+        const endLetters = endCell.replace(/[0-9]/g, '');
+        const endNumbers = endCell.replace(/[A-Za-z]/g, '');
+        const newEndCell = endLetters.toUpperCase() + endNumbers;
+
+        corrected += (originalSheetName || sheetPart) + '!' + newStartCell + ':' + newEndCell;
+        i += fullRangeRef.length;
+        continue;
+      }
+
+      // 查找普通单元格引用模式（字母+数字，如 f4, A1, AA10）
+      const cellMatch = expression.substring(i).match(/^[A-Za-z]+[0-9]+/);
+      if (cellMatch) {
+        const cellRef = cellMatch[0];
+        // 将字母部分转换为大写
+        const letters = cellRef.replace(/[0-9]/g, '');
+        const numbers = cellRef.replace(/[A-Za-z]/g, '');
+        corrected += letters.toUpperCase() + numbers;
+        i += cellRef.length;
+        continue;
+      }
+
+      // 查找普通范围引用模式（如 f4:f8, A1:B2）
+      const rangeMatch = expression.substring(i).match(/^[A-Za-z]+[0-9]+:[A-Za-z]+[0-9]+/);
+      if (rangeMatch) {
+        const rangeRef = rangeMatch[0];
+        const [startCell, endCell] = rangeRef.split(':');
+
+        // 转换起始单元格
+        const startLetters = startCell.replace(/[0-9]/g, '');
+        const startNumbers = startCell.replace(/[A-Za-z]/g, '');
+        const newStartCell = startLetters.toUpperCase() + startNumbers;
+
+        // 转换结束单元格
+        const endLetters = endCell.replace(/[0-9]/g, '');
+        const endNumbers = endCell.replace(/[A-Za-z]/g, '');
+        const newEndCell = endLetters.toUpperCase() + endNumbers;
+
+        corrected += newStartCell + ':' + newEndCell;
+        i += rangeRef.length;
+        continue;
+      }
+
+      // 普通字符，直接复制
+      corrected += char;
+      i++;
+    }
+
+    return corrected;
+  }
+
+  /**
+   * 查找原始工作表名称（保持大小写）
+   */
+  private findOriginalSheetName(sheetName: string): string | null {
+    // 首先尝试精确匹配
+    if (this.sheets.has(sheetName)) {
+      return sheetName;
+    }
+
+    // 如果找不到，尝试不区分大小写的匹配
+    const lowerSheetName = sheetName.toLowerCase();
+    for (const [existingSheetName] of this.sheets.entries()) {
+      if (existingSheetName.toLowerCase() === lowerSheetName) {
+        return existingSheetName;
+      }
+    }
+
+    return null;
   }
 
   private parseExpression(expr: string): { value: unknown; error?: string } {
@@ -1023,31 +1187,6 @@ export class FormulaEngine {
       }
 
       // 5. 计算最终的算术表达式
-      // eslint-disable-next-line @typescript-eslint/no-implied-eval
-      const result = Function('"use strict"; return (' + processedExpr + ')')();
-      return { value: result, error: undefined };
-    } catch (error) {
-      return { value: null, error: 'Basic arithmetic evaluation failed' };
-    }
-  }
-
-  private evaluateBasicArithmetic(expr: string): { value: unknown; error?: string } {
-    try {
-      // 如果表达式还包含函数调用，不应该在这里处理
-      if (/[A-Z]+\s*\(/.test(expr)) {
-        return { value: null, error: 'Expression contains function calls' };
-      }
-
-      // 替换单元格引用为实际值
-      let processedExpr = expr;
-
-      // 处理单元格引用
-      const cellRefs = processedExpr.match(/[A-Z]+[0-9]+/g) || [];
-      for (const cellRef of cellRefs) {
-        const value = this.getCellValueByA1(cellRef);
-        processedExpr = processedExpr.replace(cellRef, String(value));
-      }
-
       // eslint-disable-next-line @typescript-eslint/no-implied-eval
       const result = Function('"use strict"; return (' + processedExpr + ')')();
       return { value: result, error: undefined };
@@ -1828,7 +1967,9 @@ export class FormulaEngine {
       }
 
       // 第二步：处理公式单元格
-      for (const [cellKey, formula] of Array.from(this.formulaCells.entries())) {
+      const entries = Array.from(this.formulaCells.entries());
+
+      for (const [cellKey, formula] of entries) {
         const cell = this.parseCellKey(cellKey);
         if (!cell || cell.sheet !== sheetKey) {
           continue; // 跳过其他工作表的公式
@@ -1889,6 +2030,13 @@ export class FormulaEngine {
       // 处理移动的公式
       for (const { newCell, formula } of movedFormulas) {
         const newCellKey = this.getCellKey(newCell);
+
+        // Debug: Check if this is the D6 formula
+        // if (newCellKey === 'Sheet1!D6') {
+        //   const fs = require('fs');
+        //   fs.appendFileSync('/Users/bytedance/VisActor/VTable3/debug_formula.log', `DEBUG: Moving D6 formula to ${newCellKey}: ${formula}\n`);
+        // }
+
         this.formulaCells.set(newCellKey, formula);
         // 重新建立依赖关系
         this.updateDependencies(newCellKey, formula);
@@ -1962,6 +2110,8 @@ export class FormulaEngine {
       const startCell = match[1];
       const endCell = match[2];
 
+      // Debug: Check B2:B5 case
+
       if (type === 'delete') {
         // 检查范围是否包含被删除的单元格
         const rangeContainsDeletedCells = this.rangeContainsDeletedCells(startCell, endCell, dimension, index, count);
@@ -2001,7 +2151,6 @@ export class FormulaEngine {
       let needsAdjustment = false;
       let newRowNumber = rowNumber;
       let newColLetters = colLetters;
-      const isDeletedCell = false;
 
       if (dimension === 'row') {
         // Convert 1-based row number to 0-based for comparison
@@ -2194,10 +2343,16 @@ export class FormulaEngine {
         const deleteStartRow = index;
         const deleteEndRow = index + count - 1;
 
+        // 检查整个范围是否被删除
+        const entireRangeDeleted = minRow >= deleteStartRow && maxRow <= deleteEndRow;
+        if (entireRangeDeleted) {
+          return '#REF!';
+        }
+
         // 调整起始行
         if (minRow >= deleteStartRow && minRow <= deleteEndRow) {
-          // 起始行被删除 - 调整到删除前的位置
-          newMinRow = deleteStartRow > 0 ? deleteStartRow - 1 : 0;
+          // 起始行被删除 - 调整到删除边界位置（保持相同位置）
+          newMinRow = deleteStartRow;
         } else if (minRow > deleteEndRow) {
           // 起始行在删除范围之后，需要向前移动
           newMinRow = minRow - count;
@@ -2225,6 +2380,12 @@ export class FormulaEngine {
       } else if (dimension === 'column') {
         const deleteStartCol = index;
         const deleteEndCol = index + count - 1;
+
+        // 检查整个范围是否被删除
+        const entireRangeDeleted = minCol >= deleteStartCol && maxCol <= deleteEndCol;
+        if (entireRangeDeleted) {
+          return '#REF!';
+        }
 
         // 调整起始列
         if (minCol >= deleteStartCol && minCol <= deleteEndCol) {
@@ -2308,6 +2469,460 @@ export class FormulaEngine {
     } catch {
       return '#REF!';
     }
+  }
+
+  /**
+   * 专门处理列位置移动的公式引用调整
+   * 避免在移动过程中产生#REF!错误
+   * @param sheetKey 工作表键
+   * @param sourceCol 源列索引
+   * @param targetCol 目标列索引
+   * @param totalColCount 总列数
+   * @param totalRowCount 总行数
+   * @returns 受影响的单元格列表
+   */
+  adjustFormulaReferencesForColumnMove(
+    sheetKey: string,
+    sourceCol: number,
+    targetCol: number,
+    totalColCount: number,
+    totalRowCount: number
+  ): { adjustedCells: FormulaCell[]; movedCells: FormulaCell[] } {
+    try {
+      const adjustedFormulas: Array<{ cell: FormulaCell; oldFormula: string; newFormula: string }> = [];
+      const movedFormulas: Array<{ oldCellKey: string; newCell: FormulaCell; formula: string }> = [];
+
+      // 确定移动方向
+      const isMovingForward = targetCol > sourceCol;
+
+      // 第二步：创建列映射 - 先处理引用调整映射
+      const columnMapping = new Map<number, number>();
+
+      if (isMovingForward) {
+        // 向前移动：sourceCol -> targetCol
+        // 1. 在 (sourceCol, targetCol] 范围内的列需要向左移动一位
+        for (let col = sourceCol + 1; col <= targetCol; col++) {
+          columnMapping.set(col, col - 1);
+        }
+        // 2. 源列移动到目标位置
+        columnMapping.set(sourceCol, targetCol);
+      } else {
+        // 向后移动：sourceCol -> targetCol
+        // 1. 在 [targetCol, sourceCol) 范围内的列需要向右移动一位
+        for (let col = targetCol; col < sourceCol; col++) {
+          columnMapping.set(col, col + 1);
+        }
+        // 2. 源列移动到目标位置
+        columnMapping.set(sourceCol, targetCol);
+      }
+
+      // 第一步：处理所有公式中的引用调整（包括公式单元格本身可能需要移动的情况）
+      for (const [cellKey, formula] of Array.from(this.formulaCells.entries())) {
+        const cell = this.parseCellKey(cellKey);
+        if (!cell || cell.sheet !== sheetKey) {
+          continue;
+        }
+
+        // 检查这个公式单元格是否受到列移动的影响
+        let needsCellMove = false;
+        const newCellLocation = { ...cell };
+
+        // 如果公式单元格本身在受影响的列中，需要更新其位置
+        if (columnMapping.has(cell.col)) {
+          const mappedCol = columnMapping.get(cell.col);
+          if (mappedCol !== undefined) {
+            newCellLocation.col = mappedCol;
+            needsCellMove = true;
+          }
+        }
+
+        // 应用列映射到公式引用
+        const newFormula = this.adjustFormulaWithColumnMapping(formula, columnMapping);
+
+        if (needsCellMove || newFormula !== formula) {
+          if (needsCellMove) {
+            // 公式单元格需要移动位置
+            movedFormulas.push({
+              oldCellKey: cellKey,
+              newCell: newCellLocation,
+              formula: newFormula
+            });
+            this.formulaCells.delete(cellKey);
+            this.clearDependencies(cellKey);
+          } else {
+            // 只需要调整公式引用，不需要移动单元格
+            adjustedFormulas.push({ cell, oldFormula: formula, newFormula });
+            this.clearDependencies(cellKey);
+          }
+        }
+      }
+
+      // 第三步：应用所有更改
+      // 先处理移动的公式
+      for (const { newCell, formula } of movedFormulas) {
+        const newCellKey = this.getCellKey(newCell);
+        this.formulaCells.set(newCellKey, formula);
+        this.updateDependencies(newCellKey, formula);
+        this.setCellContentWithoutDependencyUpdate(newCell, formula);
+      }
+
+      // 再处理调整的公式
+      for (const { cell, newFormula } of adjustedFormulas) {
+        const cellKey = this.getCellKey(cell);
+        this.formulaCells.set(cellKey, newFormula);
+        this.updateDependencies(cellKey, newFormula);
+        this.setCellContentWithoutDependencyUpdate(cell, newFormula);
+      }
+
+      const adjustedCells = adjustedFormulas.map(item => item.cell);
+      const movedCells = movedFormulas.map(item => item.newCell);
+
+      return { adjustedCells, movedCells };
+    } catch (error) {
+      console.error('Error in adjustFormulaReferencesForColumnMove:', error);
+      return { adjustedCells: [], movedCells: [] };
+    }
+  }
+
+  /**
+   * 使用列映射调整公式中的所有引用
+   */
+  private adjustFormulaWithColumnMapping(formula: string, columnMapping: Map<number, number>): string {
+    if (!formula || !formula.startsWith('=')) {
+      return formula;
+    }
+
+    let expression = formula.substring(1);
+
+    // 处理范围引用 (如 D4:D6)
+    const rangeRegex = /([A-Z]+)([0-9]+):([A-Z]+)([0-9]+)/g;
+    let match: RegExpExecArray | null;
+    const rangeReplacements: Array<{ start: number; end: number; replacement: string }> = [];
+    const processedRanges: Array<{ start: number; end: number }> = [];
+
+    while ((match = rangeRegex.exec(expression)) !== null) {
+      const fullMatch = match[0];
+      const startCol = match[1];
+      const startRow = match[2];
+      const endCol = match[3];
+      const endRow = match[4];
+
+      const startColIndex = this.columnLettersToIndex(startCol);
+      const endColIndex = this.columnLettersToIndex(endCol);
+
+      let newStartCol = startColIndex;
+      let newEndCol = endColIndex;
+
+      // 检查起始列是否需要调整
+      if (columnMapping.has(startColIndex)) {
+        const mappedStartCol = columnMapping.get(startColIndex);
+        if (mappedStartCol !== undefined) {
+          newStartCol = mappedStartCol;
+        }
+      }
+
+      // 检查结束列是否需要调整
+      if (columnMapping.has(endColIndex)) {
+        const mappedEndCol = columnMapping.get(endColIndex);
+        if (mappedEndCol !== undefined) {
+          newEndCol = mappedEndCol;
+        }
+      }
+
+      // 确保范围有效（起始不大于结束）
+      if (newStartCol > newEndCol) {
+        [newStartCol, newEndCol] = [newEndCol, newStartCol];
+      }
+
+      const newStartColLetters = this.indexToColumnLetters(newStartCol);
+      const newEndColLetters = this.indexToColumnLetters(newEndCol);
+      const replacement = `${newStartColLetters}${startRow}:${newEndColLetters}${endRow}`;
+
+      rangeReplacements.push({
+        start: match.index,
+        end: match.index + fullMatch.length,
+        replacement
+      });
+
+      processedRanges.push({ start: match.index, end: match.index + fullMatch.length });
+    }
+
+    // 应用范围替换（从后往前，避免位置偏移）
+    for (let i = rangeReplacements.length - 1; i >= 0; i--) {
+      const { start, end, replacement } = rangeReplacements[i];
+      expression = expression.substring(0, start) + replacement + expression.substring(end);
+    }
+
+    // 处理单个单元格引用 (如 D4)，但跳过已经在范围中处理过的
+    const cellRegex = /([A-Z]+)([0-9]+)/g;
+    const cellReplacements: Array<{ start: number; end: number; replacement: string }> = [];
+
+    while ((match = cellRegex.exec(expression)) !== null) {
+      const fullMatch = match[0];
+      const colLetters = match[1];
+      const row = match[2];
+      const colIndex = this.columnLettersToIndex(colLetters);
+
+      const matchIndex = match.index; // 保存到局部变量
+
+      // 检查这个位置是否已经在范围中被处理过
+      const isInProcessedRange = processedRanges.some(range => {
+        return matchIndex >= range.start && matchIndex < range.end;
+      });
+
+      if (isInProcessedRange) {
+        continue; // 跳过已经在范围中处理过的单元格
+      }
+
+      // 检查该列是否需要调整
+      if (columnMapping.has(colIndex)) {
+        const newColIndex = columnMapping.get(colIndex);
+        if (newColIndex !== undefined) {
+          const newColLetters = this.indexToColumnLetters(newColIndex);
+          const replacement = `${newColLetters}${row}`;
+
+          cellReplacements.push({
+            start: match.index,
+            end: match.index + fullMatch.length,
+            replacement
+          });
+        }
+      }
+    }
+
+    // 应用单元格替换（从后往前，避免位置偏移）
+    for (let i = cellReplacements.length - 1; i >= 0; i--) {
+      const { start, end, replacement } = cellReplacements[i];
+      expression = expression.substring(0, start) + replacement + expression.substring(end);
+    }
+
+    return '=' + expression;
+  }
+
+  /**
+   * 移动行表头位置.将sourceRow位置开始往后moveCount个行，移动调整到targetRow位置处
+   * @param sheetKey 工作表键
+   * @param sourceRow 源行索引
+   * @param targetRow 目标行索引
+   * @param totalColCount 总列数
+   * @param totalRowCount 总行数
+   * @returns 受影响的单元格列表
+   */
+  adjustFormulaReferencesForRowMove(
+    sheetKey: string,
+    sourceRow: number,
+    targetRow: number
+  ): { adjustedCells: FormulaCell[]; movedCells: FormulaCell[] } {
+    try {
+      // 验证输入参数
+      if (sourceRow < 0 || targetRow < 0) {
+        return { adjustedCells: [], movedCells: [] };
+      }
+
+      const adjustedFormulas: Array<{ cell: FormulaCell; oldFormula: string; newFormula: string }> = [];
+      const movedFormulas: Array<{ oldCellKey: string; newCell: FormulaCell; formula: string }> = [];
+
+      // 确定移动方向
+      const isMovingForward = targetRow > sourceRow;
+
+      // 创建行映射 - 处理引用调整映射
+      const rowMapping = new Map<number, number>();
+
+      if (isMovingForward) {
+        // 向前移动：sourceRow -> targetRow
+        // 1. 在 (sourceRow, targetRow] 范围内的行需要向上移动一位
+        for (let row = sourceRow + 1; row <= targetRow; row++) {
+          rowMapping.set(row, row - 1);
+        }
+        // 2. 源行移动到目标位置
+        rowMapping.set(sourceRow, targetRow);
+      } else {
+        // 向后移动：sourceRow -> targetRow
+        // 1. 在 [targetRow, sourceRow) 范围内的行需要向下移动一位
+        for (let row = targetRow; row < sourceRow; row++) {
+          rowMapping.set(row, row + 1);
+        }
+        // 2. 源行移动到目标位置
+        rowMapping.set(sourceRow, targetRow);
+      }
+      // 处理所有公式中的引用调整
+      for (const [cellKey, formula] of Array.from(this.formulaCells.entries())) {
+        const cell = this.parseCellKey(cellKey);
+        if (!cell || cell.sheet !== sheetKey) {
+          continue;
+        }
+
+        let needsCellMove = false;
+        const newCellLocation = { ...cell };
+
+        // 检查公式单元格本身是否在移动范围内
+        if (rowMapping.has(cell.row)) {
+          const mappedRow = rowMapping.get(cell.row);
+          if (mappedRow !== undefined && mappedRow !== cell.row) {
+            newCellLocation.row = mappedRow;
+            needsCellMove = true;
+          }
+        }
+
+        // 应用行映射到公式引用
+        const newFormula = this.adjustFormulaWithRowMapping(formula, rowMapping);
+
+        if (needsCellMove || newFormula !== formula) {
+          if (needsCellMove) {
+            // 公式单元格需要移动位置
+            movedFormulas.push({
+              oldCellKey: cellKey,
+              newCell: newCellLocation,
+              formula: newFormula
+            });
+            this.formulaCells.delete(cellKey);
+            this.clearDependencies(cellKey);
+          } else {
+            // 只需要调整公式引用，不需要移动单元格
+            adjustedFormulas.push({ cell, oldFormula: formula, newFormula });
+            this.clearDependencies(cellKey);
+          }
+        }
+      }
+
+      // 应用所有更改
+      // 先处理移动的公式
+      for (const { newCell, formula } of movedFormulas) {
+        const newCellKey = this.getCellKey(newCell);
+        this.formulaCells.set(newCellKey, formula);
+        this.updateDependencies(newCellKey, formula);
+        this.setCellContentWithoutDependencyUpdate(newCell, formula);
+      }
+
+      // 再处理调整的公式
+      for (const { cell, newFormula } of adjustedFormulas) {
+        const cellKey = this.getCellKey(cell);
+        this.formulaCells.set(cellKey, newFormula);
+        this.updateDependencies(cellKey, newFormula);
+        this.setCellContentWithoutDependencyUpdate(cell, newFormula);
+      }
+
+      const adjustedCells = adjustedFormulas.map(item => item.cell);
+      const movedCells = movedFormulas.map(item => item.newCell);
+
+      return { adjustedCells, movedCells };
+    } catch (error) {
+      console.error('Error in adjustFormulaReferencesForRowMove:', error);
+      return { adjustedCells: [], movedCells: [] };
+    }
+  }
+
+  /**
+   * 使用行映射调整公式中的所有引用
+   */
+  private adjustFormulaWithRowMapping(formula: string, rowMapping: Map<number, number>): string {
+    if (!formula || !formula.startsWith('=')) {
+      return formula;
+    }
+
+    let expression = formula.substring(1);
+
+    // 处理范围引用 (如 D4:D6)
+    const rangeRegex = /([A-Z]+)([0-9]+):([A-Z]+)([0-9]+)/g;
+    let match: RegExpExecArray | null;
+    const rangeReplacements: Array<{ start: number; end: number; replacement: string }> = [];
+    const processedRanges: Array<{ start: number; end: number }> = [];
+
+    while ((match = rangeRegex.exec(expression)) !== null) {
+      const fullMatch = match[0];
+      const startCol = match[1];
+      const startRow = match[2];
+      const endCol = match[3];
+      const endRow = match[4];
+
+      const startRowIndex = parseInt(startRow, 10) - 1; // Excel行号从1开始，转换为从0开始
+      const endRowIndex = parseInt(endRow, 10) - 1;
+
+      let newStartRow = startRowIndex;
+      let newEndRow = endRowIndex;
+
+      // 检查起始行是否需要调整
+      if (rowMapping.has(startRowIndex)) {
+        const mappedStartRow = rowMapping.get(startRowIndex);
+        if (mappedStartRow !== undefined) {
+          newStartRow = mappedStartRow;
+        }
+      }
+
+      // 检查结束行是否需要调整
+      if (rowMapping.has(endRowIndex)) {
+        const mappedEndRow = rowMapping.get(endRowIndex);
+        if (mappedEndRow !== undefined) {
+          newEndRow = mappedEndRow;
+        }
+      }
+
+      // 只有当至少有一个行需要调整时才进行替换
+      if (newStartRow !== startRowIndex || newEndRow !== endRowIndex) {
+        const newStartRowNumber = newStartRow + 1; // 转换回Excel行号（从1开始）
+        const newEndRowNumber = newEndRow + 1;
+        const replacement = `${startCol}${newStartRowNumber}:${endCol}${newEndRowNumber}`;
+
+        rangeReplacements.push({
+          start: match.index,
+          end: match.index + fullMatch.length,
+          replacement
+        });
+
+        processedRanges.push({ start: match.index, end: match.index + fullMatch.length });
+      }
+    }
+
+    // 应用范围替换（从后往前，避免位置偏移）
+    for (let i = rangeReplacements.length - 1; i >= 0; i--) {
+      const { start, end, replacement } = rangeReplacements[i];
+      expression = expression.substring(0, start) + replacement + expression.substring(end);
+    }
+
+    // 处理单个单元格引用 (如 D4)，但跳过已经在范围中处理过的
+    const cellRegex = /([A-Z]+)([0-9]+)/g;
+    const cellReplacements: Array<{ start: number; end: number; replacement: string }> = [];
+
+    while ((match = cellRegex.exec(expression)) !== null) {
+      const fullMatch = match[0];
+      const colLetters = match[1];
+      const row = match[2];
+      const rowIndex = parseInt(row, 10) - 1; // Excel行号从1开始，转换为从0开始
+
+      const matchIndex = match.index; // 保存到局部变量
+
+      // 检查这个位置是否已经在范围中被处理过
+      const isInProcessedRange = processedRanges.some(range => {
+        return matchIndex >= range.start && matchIndex < range.end;
+      });
+
+      if (isInProcessedRange) {
+        continue; // 跳过已经在范围中处理过的单元格
+      }
+
+      // 检查该行是否需要调整
+      if (rowMapping.has(rowIndex)) {
+        const newRowIndex = rowMapping.get(rowIndex);
+        if (newRowIndex !== undefined) {
+          const newRowNumber = newRowIndex + 1; // 转换回Excel行号（从1开始）
+          const replacement = `${colLetters}${newRowNumber}`;
+
+          cellReplacements.push({
+            start: match.index,
+            end: match.index + fullMatch.length,
+            replacement
+          });
+        }
+      }
+    }
+
+    // 应用单元格替换（从后往前，避免位置偏移）
+    for (let i = cellReplacements.length - 1; i >= 0; i--) {
+      const { start, end, replacement } = cellReplacements[i];
+      expression = expression.substring(0, start) + replacement + expression.substring(end);
+    }
+
+    return '=' + expression;
   }
 }
 

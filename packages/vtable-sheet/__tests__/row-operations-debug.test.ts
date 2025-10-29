@@ -87,7 +87,7 @@ describe('Row Operations Debug Tests', () => {
     console.log('Value after deletion:', valueAfter);
 
     // 实际行为：公式变成 =SUM(A1:B1)，值是0（A1和B1是表头，没有数值）
-    expect(formulaAfter).toEqual('=SUM(A1:B1)');
-    expect(valueAfter.value).toBe(0);
+    expect(formulaAfter).toEqual('=SUM(#REF!)');
+    expect(valueAfter.value).toBe('#REF!');
   });
 });

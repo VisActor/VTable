@@ -19,7 +19,7 @@ You can use a custom editor to control when to exit the edit state. Because the 
 
 ### Type enter without exiting edit
 
-This can listen to the keydown event of editing `dom`, directly organize bubbling, and prevent `VTable` from listening, so it will not exit editing.</br>
+This can listen to the keydown event of editing `dom`, directly prevent bubbling, and prevent `VTable` from listening, so it will not exit editing.</br>
 ## Example code
 
 ```

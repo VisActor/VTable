@@ -1,6 +1,6 @@
 import type { StateManager } from '../state/state';
 import { InteractionState } from '../ts-types';
-import type { FederatedWheelEvent } from '@src/vrender';
+import { vglobal, type FederatedWheelEvent } from '@src/vrender';
 
 /**
  *
@@ -127,7 +127,7 @@ export class InertiaScroll {
     this.speedY = speedY;
     this.friction = friction;
     if (!this.runingId) {
-      this.runingId = requestAnimationFrame(this.inertia.bind(this));
+      this.runingId = vglobal.getRequestAnimationFrame()(this.inertia.bind(this));
     }
   }
   inertia() {
@@ -156,10 +156,10 @@ export class InertiaScroll {
     this.speedX = newSpeedX;
     this.speedY = newSpeedY;
 
-    this.runingId = requestAnimationFrame(this.inertia.bind(this));
+    this.runingId = vglobal.getRequestAnimationFrame()(this.inertia.bind(this));
   }
   endInertia() {
-    cancelAnimationFrame(this.runingId);
+    vglobal.getCancelAnimationFrame()(this.runingId);
     this.runingId = null;
   }
   isInertiaScrolling() {
