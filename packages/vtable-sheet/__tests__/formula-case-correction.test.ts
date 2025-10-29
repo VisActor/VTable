@@ -1,4 +1,4 @@
-import { FormulaEngine } from '../formula-engine';
+import { FormulaEngine } from '../src/formula/formula-engine';
 
 describe('Formula Case Correction', () => {
   let engine: FormulaEngine;

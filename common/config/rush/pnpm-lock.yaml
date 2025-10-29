@@ -307,10 +307,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 2.0.2
       '@visactor/vdataset': ~0.18.1
-      '@visactor/vrender-animate': 1.0.21
-      '@visactor/vrender-components': 1.0.21
-      '@visactor/vrender-core': 1.0.21
-      '@visactor/vrender-kits': 1.0.21
+      '@visactor/vrender-animate': ~1.0.21
+      '@visactor/vrender-components': ~1.0.21
+      '@visactor/vrender-core': ~1.0.21
+      '@visactor/vrender-kits': ~1.0.21
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.19.1
@@ -4444,7 +4444,7 @@ packages:
     resolution: {integrity: sha512-qknQZmr6qnLrMOUXMnuLyFln3wTtOhFUNYoNpYyupwrPCIRleR8LKnBycJ1TRANFBZELSI1R5471T9hENUgz2w==}
     dependencies:
       '@visactor/vdataset': 1.0.9
-      '@visactor/vutils': 1.0.9
+      '@visactor/vutils': 1.0.12
 
   /@visactor/vutils/0.18.18:
     resolution: {integrity: sha512-byEJefqxiCz3UWe+YedEVjsdPtnJOAtKdRYi4qT9ojgACdd6QqlWs53Eb7PlMZgWDxVxqkxJP2bZnRKw+ME0Xg==}
@@ -4468,7 +4468,6 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
-    dev: false
 
   /@visactor/vutils/1.0.6:
     resolution: {integrity: sha512-87/AYLrjY1rtvIT0N/9S+sESialMQUKYv7MDjLjUo37u0hmeL/AwRSGBSvjxdxayKHOmdwUK1BLpQrDIrssKLg==}

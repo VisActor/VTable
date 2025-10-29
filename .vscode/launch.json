@@ -32,9 +32,7 @@
             "type": "pwa-node",
             "request": "launch",
             "program": "${workspaceFolder}/packages/vtable/nodejs/index.js",
-            "args": [
-                
-            ],
+            "args": []
         }
     ]
 }
