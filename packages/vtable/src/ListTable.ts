@@ -221,7 +221,13 @@ export class ListTable extends BaseTable implements ListTableAPI {
   /**
    * Sets the define of the column.
    */
-  updateColumns(columns: ColumnsDefine, options?: { clearColWidthCache?: boolean }) {
+  updateColumns(
+    columns: ColumnsDefine,
+    options: { clearColWidthCache?: boolean; clearRowHeightCache?: boolean } = {
+      clearColWidthCache: false,
+      clearRowHeightCache: true
+    }
+  ) {
     this.scenegraph.clearCells(); //将该代码提前 逻辑中有设置this.clear=true。refreshHeader逻辑中有判断clear这个值的地方
     const oldHoverState = { col: this.stateManager.hover.cellPos.col, row: this.stateManager.hover.cellPos.row };
     this.internalProps.columns = cloneDeepSpec(columns, ['children']);
@@ -247,7 +253,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.headerStyleCache = new Map();
     this.bodyStyleCache = new Map();
     this.bodyBottomStyleCache = new Map();
-    this.scenegraph.createSceneGraph();
+    this.scenegraph.createSceneGraph(!!!options?.clearRowHeightCache);
     this.stateManager.updateHoverPos(oldHoverState.col, oldHoverState.row);
     this.renderAsync();
     this.eventManager.updateEventBinder();
@@ -292,6 +298,21 @@ export class ListTable extends BaseTable implements ListTableAPI {
     } else {
       columns.splice(colIndex, 0, ...toAddColumns);
     }
+    for (let i = 0; i < toAddColumns.length; i++) {
+      this.colWidthsMap.addAndReorder(colIndex + i, toAddColumns[i].width ?? this.internalProps.defaultColWidth);
+    }
+    //#region 修正colWidthsMap中的列宽缓存
+    this.internalProps._colRangeWidthsMap.clear();
+    //_widthResizedColMap修养修正，里面的列号需要修正，保证删除某些列后 其他列号做对应调整
+    const resizedColIndexs = Array.from(this.internalProps._widthResizedColMap.keys());
+    for (let i = 0; i < resizedColIndexs.length; i++) {
+      if ((resizedColIndexs[i] as number) >= (colIndex as number)) {
+        this.internalProps._widthResizedColMap.delete(resizedColIndexs[i] as number);
+        this.internalProps._widthResizedColMap.add((resizedColIndexs[i] as number) + toAddColumns.length);
+      }
+    }
+    //#endregion
+
     if (isMaintainArrayData) {
       //重新整理column中的field值
       for (let i = 0; i < columns.length; i++) {
@@ -306,7 +327,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
     }
-    this.updateColumns(columns);
+    this.updateColumns(columns, { clearRowHeightCache: false });
     this.fireListeners(TABLE_EVENT_TYPE.ADD_COLUMN, {
       columnIndex: colIndex,
       columnCount: toAddColumns.length,
@@ -322,6 +343,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
     deleteColIndexs.sort((a, b) => b - a);
     for (let i = 0; i < deleteColIndexs.length; i++) {
       columns.splice(deleteColIndexs[i], 1);
+      //#region 修正colWidthsMap中的列宽缓存
+      this.colWidthsMap.delAndReorder(deleteColIndexs[i]);
+      this.internalProps._widthResizedColMap.delete(deleteColIndexs[i]);
+      //#endregion
       if (isMaintainArrayData) {
         //如果isMaintainArrayData为true 则需要维护其中是数组类型的数据
         for (let j = 0; j < this.records.length; j++) {
@@ -332,13 +357,27 @@ export class ListTable extends BaseTable implements ListTableAPI {
         }
       }
     }
+    //#region 修正colWidthsMap中的列宽缓存
+    this.internalProps._colRangeWidthsMap.clear();
+    //_widthResizedColMap修养修正，里面的列号需要修正，保证删除某些列后 其他列号做对应调整
+    const resizedColIndexs = Array.from(this.internalProps._widthResizedColMap.keys());
+    for (let i = 0; i < resizedColIndexs.length; i++) {
+      for (let j = 0; j < deleteColIndexs.length; j++) {
+        if ((resizedColIndexs[i] as number) > (deleteColIndexs[j] as number)) {
+          this.internalProps._widthResizedColMap.delete(resizedColIndexs[i] as number);
+          this.internalProps._widthResizedColMap.add((resizedColIndexs[i] as number) - (deleteColIndexs.length - j));
+          break;
+        }
+      }
+    }
+    //#endregion
     if (isMaintainArrayData) {
       //重新整理column中的field值
       for (let i = 0; i < columns.length; i++) {
         columns[i].field = i;
       }
     }
-    this.updateColumns(columns);
+    this.updateColumns(columns, { clearRowHeightCache: false });
     this.fireListeners(TABLE_EVENT_TYPE.DELETE_COLUMN, {
       deleteColIndexs: deleteColIndexs,
       columns

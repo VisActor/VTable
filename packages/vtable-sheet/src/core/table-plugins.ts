@@ -102,11 +102,11 @@ export function getTablePlugins(
   if (options?.VTablePluginModules) {
     options.VTablePluginModules.forEach(
       (module: { module: new (options: any) => VTable.plugins.IVTablePlugin; moduleOptions: any }) => {
-        if (typeof module.module === 'function') {
+        if (typeof module?.module === 'function') {
           // 检查是否为构造函数
           plugins.push(new module.module(module.moduleOptions));
         } else {
-          throw new Error(`Invalid plugin: ${module.module}`);
+          console.error(`Invalid plugin: ${module.module}`);
         }
       }
     );

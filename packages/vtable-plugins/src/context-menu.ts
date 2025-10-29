@@ -267,7 +267,7 @@ export class ContextMenuPlugin implements pluginsDefinition.IVTablePlugin {
           this.menuHandler.handleInsertColumnRight(table, colIndex, inputValue as number);
           break;
         case MenuKey.DELETE_ROW:
-          this.menuHandler.handleDeleteRow(table, rowIndex);
+          this.menuHandler.handleDeleteRow(table);
           break;
         case MenuKey.DELETE_COLUMN:
           this.menuHandler.handleDeleteColumn(table, colIndex);
