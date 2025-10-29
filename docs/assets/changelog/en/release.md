@@ -1,3 +1,34 @@
+# v1.22.2
+
+2025-10-29
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-sheet**: drag row or column order for vtable-sheet
+- **@visactor/vtable-sheet**: drag column order to update and calculate formula
+- **@visactor/vtable-sheet**: adjust formula dependency after delete or add rows columns
+- **@visactor/vtable**: add adaptive mode for auto fill width
+- **@visactor/vtable**: the addition of the refValue parameter in vue-vtable dynamic rendering editing now supports v-model [#4597](https://github.com/VisActor/VTable/issues/4597)
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: drag row order to update rowHeightMap
+- **@visactor/vtable**: select row use row series number with cell merge, select state error
+- **@visactor/vtable**: after resize column width legend title position error [#4629](https://github.com/VisActor/VTable/issues/4629)
+- **@visactor/vtable**: fix issue of markline layout in PivotChart
+- **@visactor/vtable**: the resize event of tableContainer [#4558](https://github.com/VisActor/VTable/issues/4558)
+- **@visactor/vtable**: vue-vtable dynamic rendering editing [#4621](https://github.com/VisActor/VTable/issues/4621)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: requestAnimationFrame use vrender api [#4619](https://github.com/VisActor/VTable/issues/4619)
+- **@visactor/vtable-sheet**: formula context support lower case character [#4628](https://github.com/VisActor/VTable/issues/4628)
+
+
+
+[more detail about v1.22.2](https://github.com/VisActor/VTable/releases/tag/v1.22.2)
+
 # v1.22.0
 
 2025-10-17
