@@ -3372,14 +3372,22 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (rowHeaderPaths.length > 0) {
       //表示寻找的是行表头的某个列号
       //匹配和this.rowDimensionKeys数组中的维度key，找到对应的列号
-      const col = rowHeaderPaths.reduce((acc, path) => {
-        const index = this.rowDimensionKeys.indexOf(path.dimensionKey);
-        if (index >= 0) {
-          acc += 1;
-        }
-        return acc;
-      }, -1);
-      return { col: (this.rowHeaderTitle ? col + 1 : col) + this.leftRowSeriesNumberColumnCount, row: undefined };
+      //检查rowHeaderPaths 和this.rowDimensionKeys数组中的维度key是否匹配
+      const isMatch = rowHeaderPaths.every((path: IDimensionInfo, index: number) => {
+        return this.rowDimensionKeys[index] === path.dimensionKey;
+      });
+      if (isMatch) {
+        const col = rowHeaderPaths.length - 1;
+        return { col: (this.rowHeaderTitle ? col + 1 : col) + this.leftRowSeriesNumberColumnCount, row: undefined };
+      }
+      // const col = rowHeaderPaths.reduce((acc, path) => {
+      //   const index = this.rowDimensionKeys.indexOf(path.dimensionKey);
+      //   if (index >= 0) {
+      //     acc += 1;
+      //   }
+      //   return acc;
+      // }, -1);
+      // return { col: (this.rowHeaderTitle ? col + 1 : col) + this.leftRowSeriesNumberColumnCount, row: undefined };
     }
     return undefined;
   }
