@@ -282,7 +282,6 @@ export class Dataset {
       // },
       this.processRecords();
       // }
-
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有聚合需求的sumby 处理收集维度值范围
       this.processCollectedValuesWithSumBy();
       //processRecord中按照collectValuesBy 收集了维度值。现在需要对有排序需求的处理sortby
@@ -636,8 +635,22 @@ export class Dataset {
             max: number;
             min: number;
           };
-          const max = Math.max(record[field], fieldRange.max);
-          const min = Math.min(record[field], fieldRange.min);
+          let max = Math.max(record[field], fieldRange.max);
+          let min = Math.min(record[field], fieldRange.min);
+          // 处理considerFields
+          if (this.collectValuesBy[field].considerFields) {
+            for (const considerField of this.collectValuesBy[field].considerFields) {
+              if (record[considerField]) {
+                if (typeof record[considerField] === 'number') {
+                  max = Math.max(record[considerField], max);
+                  min = Math.min(record[considerField], min);
+                } else if (Array.isArray(record[considerField])) {
+                  max = Math.max(...record[considerField], max);
+                  min = Math.min(...record[considerField], min);
+                }
+              }
+            }
+          }
           if (!isNaN(max)) {
             fieldRange.max = max;
             fieldRange.min = min;
@@ -1090,15 +1103,15 @@ export class Dataset {
     this.filteredRecords = undefined;
     if (isResetTree) {
       return this.setRecords(this.records);
-    } else {
-      for (const treeRowKey in this.tree) {
-        for (const treeColKey in this.tree[treeRowKey]) {
-          for (let i = 0; i < this.tree[treeRowKey][treeColKey].length; i++) {
-            this.tree[treeRowKey][treeColKey][i]?.reset();
-          }
+    }
+    for (const treeRowKey in this.tree) {
+      for (const treeColKey in this.tree[treeRowKey]) {
+        for (let i = 0; i < this.tree[treeRowKey][treeColKey].length; i++) {
+          this.tree[treeRowKey][treeColKey][i]?.reset();
         }
       }
     }
+
     this.collectedValues = {};
     this.processRecords();
     this.processCollectedValuesWithSumBy();
