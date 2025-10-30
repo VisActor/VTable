@@ -3953,6 +3953,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     const chartSpec = this.getRawChartSpec(_col, _row);
     const indicatorKeys: string[] = [];
     if (chartSpec) {
+      if (chartSpec.type === 'boxPlot') {
+        return [chartSpec.maxField];
+      }
       if (chartSpec.series || chartSpec.xField || chartSpec.yField) {
         if (this.indicatorsAsCol === false) {
           if (chartSpec.series) {

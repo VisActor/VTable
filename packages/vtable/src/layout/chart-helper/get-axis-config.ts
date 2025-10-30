@@ -280,18 +280,21 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       //     }
       //   }
       // }
-
-      if (isNumber(axisOption?.min)) {
-        range.min = axisOption.min;
-        if (range.min > 0) {
-          axisOption.zero = false;
-        }
-      }
       if (isNumber(axisOption?.max)) {
         range.max = axisOption.max;
         if (range.max < 0) {
           axisOption.zero = false;
         }
+      } else if (chartType === 'boxPlot') {
+        range.max += (range.max - range.min) / 20;
+      }
+      if (isNumber(axisOption?.min)) {
+        range.min = axisOption.min;
+        if (range.min > 0) {
+          axisOption.zero = false;
+        }
+      } else if (chartType === 'boxPlot') {
+        range.min -= (range.max - range.min) / 20;
       }
       let domain: Array<string> = [];
       if (chartType === 'heatmap') {

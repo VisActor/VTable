@@ -1031,7 +1031,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
               (indicatorSpec.stack = true);
             //下面这个收集的值 应该是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同
-            const yField = indicatorSpec.yField;
+            const yField = indicatorSpec.yField ?? indicatorSpec.maxField;
             collectValuesBy[yField] = {
               by: rowKeys,
               type: indicatorSpec.direction !== 'horizontal' ? 'yField' : undefined,
@@ -1042,7 +1042,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                   : indicatorSpec.stack && columnKeys.concat(indicatorSpec?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined,
-              extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
+              extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine),
+              considerFields:
+                indicatorSpec?.type === 'boxPlot'
+                  ? [indicatorSpec.maxField, indicatorSpec.minField, indicatorSpec.outliersField]
+                  : undefined
             };
           }
         } else {

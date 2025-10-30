@@ -373,6 +373,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-boxPlot'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart'
       },
       {
