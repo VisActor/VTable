@@ -139,19 +139,23 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       //     }
       //   }
       // }
-
-      if (isNumber(axisOption?.min)) {
-        range.min = axisOption.min;
-        if (range.min > 0) {
-          axisOption.zero = false;
-        }
-      }
       if (isNumber(axisOption?.max)) {
         range.max = axisOption.max;
         if (range.max < 0) {
           axisOption.zero = false;
         }
+      } else if (chartType === 'boxPlot') {
+        range.max += (range.max - range.min) / 20;
       }
+      if (isNumber(axisOption?.min)) {
+        range.min = axisOption.min;
+        if (range.min > 0) {
+          axisOption.zero = false;
+        }
+      } else if (chartType === 'boxPlot') {
+        range.min -= (range.max - range.min) / 20;
+      }
+
       let domain: Array<string> = [];
       if (chartType === 'heatmap') {
         //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-chart-spec.ts中的getChartAxes方法处理
@@ -969,7 +973,7 @@ export function getAxisRangeAndTicks(
   path: string,
   layout: PivotHeaderLayoutMap
 ) {
-  const { range, isZeroAlign, isTickAlign, axisOption } = getChartAxisRange(
+  const { range, isZeroAlign, isTickAlign, axisOption, chartType } = getChartAxisRange(
     col,
     row,
     index,
@@ -1019,7 +1023,8 @@ export function getAxisRangeAndTicks(
     axisOption,
     range,
     targetTicks,
-    targetRange
+    targetRange,
+    chartType
   };
 }
 

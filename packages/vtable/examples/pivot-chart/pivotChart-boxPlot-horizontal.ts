@@ -9,7 +9,7 @@ const CONTAINER_ID = 'vTable';
 
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  const rows: (VTable.IDimension | string)[] = [
+  const columns: (VTable.IDimension | string)[] = [
     {
       dimensionKey: 'Country',
       title: 'Country'
@@ -20,7 +20,7 @@ export function createTable() {
     }
     // '230417170554008'
   ];
-  const columns = [
+  const rows = [
     {
       dimensionKey: 'Category',
       title: 'Category'
@@ -40,16 +40,16 @@ export function createTable() {
         data: {
           id: 'dataId'
         },
-        xField: 'Sub-Category',
+        yField: 'Sub-Category',
         minField: 'y1',
         q1Field: 'y2',
         medianField: 'y3',
         q3Field: 'y4',
         maxField: 'y5',
         outliersField: 'y6',
-        direction: 'vertical',
+        direction: 'horizontal',
         // axes: [
-        //   { orient: 'left', min:0 ,max:50},
+        //   { orient: 'bottom', visible: true, min:0 ,max:50},
         // ],
         boxPlot: {
           style: {
@@ -205,7 +205,7 @@ export function createTable() {
     rows,
     columns,
     indicators,
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
     container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,

@@ -218,7 +218,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     // const colIndex = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
-      const { range, targetTicks, targetRange, axisOption } = getAxisRangeAndTicks(
+      const { range, targetTicks, targetRange, axisOption, chartType } = getAxisRangeAndTicks(
         col,
         row,
         index,
@@ -228,11 +228,15 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
         colPath,
         layout
       );
-      if (isNumber(axisOption?.min)) {
-        (range as any).min = axisOption.min;
-      }
       if (isNumber(axisOption?.max)) {
-        (range as any).max = axisOption.max;
+        range.max = axisOption.max;
+      } else if (chartType === 'boxPlot') {
+        range.max += (range.max - range.min) / 20;
+      }
+      if (isNumber(axisOption?.min)) {
+        range.min = axisOption.min;
+      } else if (chartType === 'boxPlot') {
+        range.min -= (range.max - range.min) / 20;
       }
 
       if (hasSameAxis(axisOption, axes)) {

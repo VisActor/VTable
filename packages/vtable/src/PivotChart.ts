@@ -1107,7 +1107,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               (indicatorSpec.stack = true);
             //下面这个收集的值 是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同(heatmap情况除外)
             //特殊处理histogram直方图xField和x2Field
-            const xField = indicatorSpec.type === 'histogram' ? indicatorSpec.x2Field : indicatorSpec.xField;
+            const xField =
+              indicatorSpec.type === 'histogram'
+                ? indicatorSpec.x2Field
+                : indicatorSpec.xField ?? indicatorSpec.maxField;
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'xField' : undefined,
@@ -1115,7 +1118,11 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               sumBy: indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
               sortBy:
                 indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined,
-              extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
+              extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine),
+              considerFields:
+                indicatorSpec?.type === 'boxPlot'
+                  ? [indicatorSpec.maxField, indicatorSpec.minField, indicatorSpec.outliersField]
+                  : undefined
             };
           }
         }
