@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "feat: support boxPlot horizontal\n\n",
+      "comment": "feat: support boxPlot chart in pivotChart\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
