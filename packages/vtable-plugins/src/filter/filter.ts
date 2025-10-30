@@ -156,19 +156,32 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
    * 更新所有列的筛选图标状态
    * 根据列的筛选启用状态，添加或移除筛选图标
    */
-  private updateFilterIcons(options: ListTableConstructorOptions): void {
-    const columns = options.columns; // TODO: 待处理多行的情况，待扩展透视表类型
-    columns.forEach((col: ColumnDefine) => {
-      // 检查是否应该为这一列启用筛选功能
-      if (this.shouldEnableFilterForColumn(col.field as string | number, col)) {
-        col.headerIcon = this.pluginOptions.filterIcon;
-      } else {
-        // 如果不应该启用筛选，则移除 headerIcon
-        delete col.headerIcon;
-      }
+  private updateFilterIcons(options) {
+    const filterIcon = this.pluginOptions.filterIcon;
+
+    const isIconEqual = (a, b) =>
+        a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
+
+    const toIconList = icons => icons ? (Array.isArray(icons) ? icons : [icons]) : [];
+
+    const compactIcons = list =>
+        list.length === 0 ? undefined : (list.length === 1 ? list[0] : list);
+
+    options.columns.forEach(column => {
+        const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
+        let icons = toIconList(column.headerIcon);
+
+        if (shouldShow) {
+            if (!icons.some(icon => isIconEqual(icon, filterIcon))) {
+                icons.push(filterIcon);
+            }
+        } else {
+            icons = icons.filter(icon => !isIconEqual(icon, filterIcon));
+        }
+
+        column.headerIcon = compactIcons(icons);
     });
-    // (this.table as VTable.ListTable).updateColumns(columns);
-  }
+}
 
   /**
    * 判断指定列是否应该启用筛选功能
