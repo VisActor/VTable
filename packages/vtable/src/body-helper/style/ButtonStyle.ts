@@ -4,7 +4,41 @@ import type { ButtonStyle as ButtonStyleThemeOption } from '../../ts-types/colum
 
 let defaultStyle: ButtonStyle;
 
-export class ButtonStyle extends Style {
+/**
+ * 复选框样式接口，继承自 IStyleOption
+ */
+export interface IButtonStyle extends IStyleOption {
+  /**
+   * 按钮的颜色
+   */
+  buttonColor?: string;
+  /**
+   * 按钮的边框颜色
+   */
+  buttonBorderColor?: string;
+  /**
+   * 按钮的边框宽度
+   */
+  buttonLineWidth?: number;
+  /**
+   * 按钮的圆角半径
+   */
+  buttonBorderRadius?: number;
+  /**
+   * 按钮悬停时的颜色
+   */
+  buttonHoverColor?: string;
+  /**
+   * 按钮悬停时的边框颜色
+   */
+  buttonHoverBorderColor?: string;
+  /**
+   * 按钮悬停时的文本颜色
+   */
+  buttonTextHoverColor?: string;
+}
+
+export class ButtonStyle extends Style implements IButtonStyle {
   private _buttonColor: string;
   private _buttonBorderColor: string;
   private _buttonLineWidth: number;

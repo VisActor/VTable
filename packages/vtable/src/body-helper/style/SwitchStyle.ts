@@ -4,7 +4,53 @@ import type { SwitchStyle as SwitchStyleThemeOption } from '../../ts-types/colum
 
 let defaultStyle: SwitchStyle;
 
-export class SwitchStyle extends Style {
+/**
+ * 开关样式接口，继承自 IStyleOption
+ */
+export interface ISwitchStyle extends IStyleOption {
+  /**
+   * 开关的尺寸
+   */
+  size?: number;
+  /**
+   * 文本与开关之间的间距
+   */
+  spaceBetweenTextAndCircle?: number;
+  /**
+   * 开关的圆半径
+   */
+  circleRadius?: number;
+  /**
+   * 开关的宽度
+   */
+  boxWidth?: number;
+  /**
+   * 开关的高度
+   */
+  boxHeight?: number;
+  /**
+   * 选中状态下的填充颜色
+   */
+  checkedFill?: string;
+  /**
+   * 未选中状态下的填充颜色
+   */
+  uncheckedFill?: string;
+  /**
+   * 禁用且选中状态下的填充颜色
+   */
+  disableCheckedFill?: string;
+  /**
+   * 禁用且未选中状态下的填充颜色
+   */
+  disableUncheckedFill?: string;
+  /**
+   * 开关圆的填充颜色
+   */
+  circleFill?: string;
+}
+
+export class SwitchStyle extends Style implements ISwitchStyle {
   private _spaceBetweenTextAndCircle: number;
   private _circleRadius: number;
   private _boxWidth: number;
