@@ -303,5 +303,41 @@ describe('Row Position Change - Core Logic Tests', () => {
       expect(rowResult).toBeDefined();
       expect(rowResult).toBe('=A4+B4'); // A2->A4, B2->B4
     });
+
+    test('列移动应该保持范围引用的完整性 - 修复D6=SUM(A2:C2)变成SUM(A2:B2)的bug', () => {
+      // 设置测试场景：D6=SUM(A2:C2)
+      engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 3 }, '=SUM(A2:C2)'); // D6=SUM(A2:C2)
+
+      // 移动第2列(C)到第0列(A)位置
+      engine.adjustFormulaReferencesForColumnMove('Sheet1', 2, 0, 5, 5);
+
+      // 验证公式应该保持为SUM(A2:C2)，而不是变成SUM(A2:B2)
+      const finalFormula = engine.getCellFormula({ sheet: 'Sheet1', row: 5, col: 3 });
+      expect(finalFormula).toBe('=SUM(A2:C2)');
+    });
+
+    test('列移动应该正确处理不包含移动列的范围', () => {
+      // 设置测试场景：E6=SUM(A2:B2) (不包含第2列)
+      engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 4 }, '=SUM(A2:B2)'); // E6=SUM(A2:B2)
+
+      // 移动第2列(C)到第0列(A)位置
+      engine.adjustFormulaReferencesForColumnMove('Sheet1', 2, 0, 5, 5);
+
+      // 验证公式应该调整为SUM(B2:C2) (A->B, B->C)
+      const finalFormula = engine.getCellFormula({ sheet: 'Sheet1', row: 5, col: 4 });
+      expect(finalFormula).toBe('=SUM(B2:C2)');
+    });
+
+    test('列移动应该正确处理部分包含移动列的范围', () => {
+      // 设置测试场景：D6=SUM(B2:D2) (部分包含第2列)
+      engine.setCellContent({ sheet: 'Sheet1', row: 5, col: 3 }, '=SUM(B2:D2)'); // D6=SUM(B2:D2)
+
+      // 移动第2列(C)到第0列(A)位置
+      engine.adjustFormulaReferencesForColumnMove('Sheet1', 2, 0, 5, 5);
+
+      // 验证公式应该保持为SUM(B2:D2)，因为包含被移动的列
+      const finalFormula = engine.getCellFormula({ sheet: 'Sheet1', row: 5, col: 3 });
+      expect(finalFormula).toBe('=SUM(B2:D2)');
+    });
   });
 });

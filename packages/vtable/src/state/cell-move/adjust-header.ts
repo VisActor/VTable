@@ -6,12 +6,15 @@ import type { BaseTableAPI } from '../../ts-types/base-table';
 export function adjustMoveHeaderTarget(source: CellAddress, target: CellAddress, table: BaseTableAPI) {
   const sourceCellRange = table.getCellRange(source.col, source.row);
 
-  if (table.isColumnHeader(source.col, source.row)) {
+  if (
+    table.isColumnHeader(source.col, source.row) ||
+    ((table as ListTable).stateManager.columnMove.movingColumnOrRow === 'column' && source.row === 0)
+  ) {
     // 处理是目标位置处是合并单元格的情况
     const targetCellRange = table.getCellRange(target.col, sourceCellRange.start.row);
     // 如果是拖拽处是body target.row处理成表头最后一层
     if (target.row >= table.columnHeaderLevelCount) {
-      target.row = table.columnHeaderLevelCount - 1;
+      target.row = Math.max(table.columnHeaderLevelCount - 1, 0);
     }
     //如果拖拽目标的列在原位置的右侧 位置是合并单元格的最右侧
     if (target.col >= source.col) {

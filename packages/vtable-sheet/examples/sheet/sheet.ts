@@ -23,9 +23,11 @@ export function createTable() {
         ],
         data: [
           [1, 2, 3],
+          [4, 5, 6],
+          [7, 8, 9],
           ['放到', '个', '哦']
         ],
-        active: false,
+        active: true,
         theme: {
           rowSeriesNumberCellStyle: {
             text: {
@@ -94,10 +96,11 @@ export function createTable() {
         sheetTitle: 'sheet4',
         active: false,
         showHeader: false,
+        columnCount: 200,
         data: [
-          ['r', 't', 'y'],
-          ['y', 'u', 'i'],
-          ['j', 'k', 'h']
+          ['r', 't', 'y', 1, 2, 3],
+          ['y', 'u', 'i', 4, 5, 6],
+          ['j', 'k', 'h', 7, 8, 9]
         ],
         cellMerge: [
           {
