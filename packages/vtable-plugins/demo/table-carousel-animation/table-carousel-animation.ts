@@ -88,6 +88,7 @@ export function createTable() {
       disableSelect: true
     },
     plugins: [tca]
+    // defaultHeaderRowHeight: 0
   };
   const tableInstance = new VTable.ListTable(option);
   window.tableInstance = tableInstance;
