@@ -3538,14 +3538,17 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (this.rowHierarchyType === 'grid') {
         // defaultCol = (this.rowHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel) + this.leftRowSeriesNumberColumnCount;
         // 传入rowHeaderPaths是合并单元格如行总计的path数据的情况，上面defaultCol总是返回0 所以需要修改如下：
-        const col = rowHeaderPaths.reduce((acc, path) => {
-          const index = this.rowDimensionKeys.indexOf(path.dimensionKey);
-          if (index >= 0) {
-            acc += 1;
-          }
-          return acc;
-        }, -1);
-        defaultCol = (this.rowHeaderTitle ? col + 1 : col) + this.leftRowSeriesNumberColumnCount;
+        //检查rowHeaderPaths 和this.rowDimensionKeys数组中的维度key是否匹配
+        const isMatch = rowHeaderPaths.every((path: IDimensionInfo, index: number) => {
+          return this.rowDimensionKeys[index] === path.dimensionKey;
+        });
+        if (isMatch) {
+          const col = rowHeaderPaths.length - 1;
+          defaultCol = (this.rowHeaderTitle ? col + 1 : col) + this.leftRowSeriesNumberColumnCount;
+        } else {
+          defaultCol =
+            (this.rowHeaderTitle ? afterSpanLevel + 1 : afterSpanLevel) + this.leftRowSeriesNumberColumnCount;
+        }
       } else {
         defaultCol = 0;
       } //树形展示的情况下 肯定是在第0列
