@@ -1064,6 +1064,23 @@ export interface CellAddress {
 
 {{ use: ICellHeaderPaths() }}
 
+## getCellRowHeaderFullPaths(Function)
+
+获取行表头全路径
+
+解决 getCellHeaderPaths 接口在有合并单元格的情况，获取不到正确的行表头路径的问题。
+
+**PivotTable 专有**
+
+```
+  /**
+   * 获取行表头全路径
+   * @param col
+   * @returns
+   */
+  getCellRowHeaderFullPaths(col: number) => IDimensionInfo[]
+```
+
 ## getCellHeaderTreeNodes(Function)
 
 根据行列号获取表头 tree 节点，包含了用户在自定义树 rowTree 及 columnTree 树上的自定义属性（也是内部布局树的节点，获取后请不要随意修改）。一般情况下用 getCellHeaderPaths 即可。
