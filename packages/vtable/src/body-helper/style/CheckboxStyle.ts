@@ -4,7 +4,57 @@ import type { CheckboxStyle as CheckboxStyleThemeOption } from '../../ts-types/c
 
 let defaultStyle: CheckboxStyle;
 
-export class CheckboxStyle extends Style {
+/**
+ * 复选框样式接口，继承自 IStyleOption
+ */
+export interface ICheckboxStyle extends IStyleOption {
+  /**
+   * 复选框的尺寸
+   */
+  size?: number;
+  /**
+   * 文本与图标之间的间距
+   */
+  spaceBetweenTextAndIcon?: number;
+  /**
+   * 默认状态下的填充颜色
+   */
+  defaultFill?: string;
+  /**
+   * 默认状态下的边框颜色
+   */
+  defaultStroke?: string;
+  /**
+   * 禁用状态下的填充颜色
+   */
+  disableFill?: string;
+  /**
+   * 选中状态下的填充颜色
+   */
+  checkedFill?: string;
+  /**
+   * 选中状态下的边框颜色
+   */
+  checkedStroke?: string;
+  /**
+   * 禁用且选中状态下的填充颜色
+   */
+  disableCheckedFill?: string;
+  /**
+   * 禁用且选中状态下的边框颜色
+   */
+  disableCheckedStroke?: string;
+  /**
+   * 选中状态下的图标图片
+   */
+  checkIconImage?: string;
+  /**
+   * 部分选中状态下的图标图片
+   */
+  indeterminateIconImage?: string;
+}
+
+export class CheckboxStyle extends Style implements ICheckboxStyle {
   private _size: number;
   private _spaceBetweenTextAndIcon: number;
 

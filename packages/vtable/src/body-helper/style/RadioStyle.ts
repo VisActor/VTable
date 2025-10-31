@@ -4,7 +4,33 @@ import type { RadioStyle as RadioStyleThemeOption } from '../../ts-types/column/
 
 let defaultStyle: RadioStyle;
 
-export class RadioStyle extends Style {
+/**
+ * 单选框样式接口，继承自 IStyleOption
+ */
+export interface IRadioStyle extends IStyleOption {
+  /**
+   * 单选框的尺寸
+   */
+  size?: number;
+  /**
+   * 文本与图标之间的间距
+   */
+  spaceBetweenTextAndIcon?: number;
+  /**
+   * 单元格内多个单选框，单选框直接的间距
+   */
+  spaceBetweenRadio?: number;
+  /**
+   * 单选框的外部半径
+   */
+  outerRadius?: number;
+  /**
+   * 单选框的内部半径
+   */
+  innerRadius?: number;
+}
+
+export class RadioStyle extends Style implements IRadioStyle {
   private _size: number;
   private _spaceBetweenTextAndIcon: number;
   private _spaceBetweenRadio: number;
