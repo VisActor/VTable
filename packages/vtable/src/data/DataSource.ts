@@ -1149,7 +1149,7 @@ export class DataSource extends EventTarget implements DataSourceAPI {
     this.currentIndexedData = sortedIndexArray;
 
     // Process the hierarchy, if any
-    if (this.hierarchyExpandLevel) {
+    if (this.hierarchyExpandLevel && this.rowHierarchyType === 'tree') {
       let nodeLength = sortedIndexArray.length;
       for (let i = 0; i < nodeLength; i++) {
         const record = this.getOriginalRecord(sortedIndexArray[i]);

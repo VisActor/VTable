@@ -176,6 +176,7 @@ const generateEmployeeData = (count: number) => {
     position: positions[i % 7],
     salary: 65000 + Math.floor(Math.random() * 35000),
     status: 'Active',
+    hierarchyState: 'collapse',
     // 只有部分记录有子数据
     children:
       i % 3 === 0
@@ -263,7 +264,7 @@ const generateEmployeeData = (count: number) => {
 };
 
 export function createTable() {
-  const records = generateEmployeeData(701);
+  const records = generateEmployeeData(752);
 
   // 创建主从表插件实例
   const masterDetailPlugin = new MasterDetailPlugin({
@@ -302,7 +303,7 @@ export function createTable() {
           theme: VTable.themes.BRIGHT,
           style: {
             margin: 20,
-            height: 300
+            height: 'auto'
           }
         };
       }
@@ -338,7 +339,7 @@ export function createTable() {
         theme: VTable.themes.DARK,
         style: {
           margin: 20,
-          height: 300
+          height: 'auto'
         }
       };
     }

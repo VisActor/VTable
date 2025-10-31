@@ -5,7 +5,7 @@ import type { Group } from '@visactor/vtable/src/vrender';
 export interface DetailTableOptions extends VTable.ListTableConstructorOptions {
   style?: {
     margin?: number | [number, number] | [number, number, number, number];
-    height?: number;
+    height?: number | 'auto';
   };
 }
 
