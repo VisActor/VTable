@@ -2537,7 +2537,7 @@ export class FormulaEngine {
         }
 
         // 应用列映射到公式引用
-        const newFormula = this.adjustFormulaWithColumnMapping(formula, columnMapping);
+        const newFormula = this.adjustFormulaWithColumnMapping(formula, columnMapping, sourceCol, targetCol);
 
         if (needsCellMove || newFormula !== formula) {
           if (needsCellMove) {
@@ -2587,7 +2587,12 @@ export class FormulaEngine {
   /**
    * 使用列映射调整公式中的所有引用
    */
-  private adjustFormulaWithColumnMapping(formula: string, columnMapping: Map<number, number>): string {
+  private adjustFormulaWithColumnMapping(
+    formula: string,
+    columnMapping: Map<number, number>,
+    sourceCol?: number,
+    targetCol?: number
+  ): string {
     if (!formula || !formula.startsWith('=')) {
       return formula;
     }
@@ -2613,19 +2618,31 @@ export class FormulaEngine {
       let newStartCol = startColIndex;
       let newEndCol = endColIndex;
 
-      // 检查起始列是否需要调整
-      if (columnMapping.has(startColIndex)) {
-        const mappedStartCol = columnMapping.get(startColIndex);
-        if (mappedStartCol !== undefined) {
-          newStartCol = mappedStartCol;
-        }
-      }
+      // 关键修复：当范围包含被移动的列时，保持原始范围不变
+      // 检查原始范围是否包含被移动的列
+      const isSourceColInRange = startColIndex <= sourceCol && sourceCol <= endColIndex;
 
-      // 检查结束列是否需要调整
-      if (columnMapping.has(endColIndex)) {
-        const mappedEndCol = columnMapping.get(endColIndex);
-        if (mappedEndCol !== undefined) {
-          newEndCol = mappedEndCol;
+      if (isSourceColInRange) {
+        // 如果移动的列在范围内，保持原始范围引用不变
+        // 这样公式 A2:C2 在移动列后仍然是 A2:C2
+        newStartCol = startColIndex;
+        newEndCol = endColIndex;
+      } else {
+        // 只有范围不包含被移动的列时，才正常调整引用
+        // 检查起始列是否需要调整
+        if (columnMapping.has(startColIndex)) {
+          const mappedStartCol = columnMapping.get(startColIndex);
+          if (mappedStartCol !== undefined) {
+            newStartCol = mappedStartCol;
+          }
+        }
+
+        // 检查结束列是否需要调整
+        if (columnMapping.has(endColIndex)) {
+          const mappedEndCol = columnMapping.get(endColIndex);
+          if (mappedEndCol !== undefined) {
+            newEndCol = mappedEndCol;
+          }
         }
       }
 
