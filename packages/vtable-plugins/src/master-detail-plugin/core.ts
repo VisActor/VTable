@@ -64,7 +64,6 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       this.eventManager.handleAfterUpdateSelectBorderHeight(eventArgs as any);
     }
   }
-
   /**
    * 初始化管理器
    */
@@ -248,6 +247,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
 
     const originalHeight = this.table.getRowHeight(rowIndex);
     if (internalProps.originalRowHeights) {
+      const oldCellGroup = this.table.scenegraph.getCell(colIndex, rowIndex);
+      // console.log(bodyRowIndex,oldCellGroup)
       internalProps.originalRowHeights.set(bodyRowIndex, originalHeight);
     }
     const record = getRecordByRowIndex(this.table, bodyRowIndex);
@@ -262,6 +263,9 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
+    if(rowIndex === 96){
+      console.log("wokk");
+    }
     this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)
     );
@@ -273,6 +277,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
     }
+    // 更新冻结线高度
+    this.updateFrozenColumnShadowHeight();
   }
 
   /**
@@ -341,6 +347,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
     }
+    // 更新冻结线高度
+    this.updateFrozenColumnShadowHeight();
   }
 
   /**
@@ -372,6 +380,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     if (this.table.heightMode === 'adaptive') {
       this.table.scenegraph.dealHeightMode();
     }
+    // 更新冻结线高度
+    this.updateFrozenColumnShadowHeight();
   }
 
   /**
@@ -721,6 +731,22 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
       }
     }
     return result;
+  }
+
+  /**
+   * 更新冻结列阴影高度
+   * 当行展开/收起导致表格总高度变化时，需要更新冻结列的阴影高度
+   */
+  private updateFrozenColumnShadowHeight(): void {
+    try {
+      // 获取当前冻结列数量
+      const frozenColCount = this.table.frozenColCount;
+      if (frozenColCount > 0) {
+        this.table.scenegraph.component.setFrozenColumnShadow(frozenColCount - 1);
+      }
+    } catch (error) {
+      console.warn('更新冻结列阴影高度失败:', error);
+    }
   }
 
   /**
