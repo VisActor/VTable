@@ -95,7 +95,17 @@ export function updateResizeColumn(xInTable: number, yInTable: number, state: St
   // update resize column component
   state.table.scenegraph.component.updateResizeCol(state.columnResize.col, yInTable, state.columnResize.isRightFrozen);
   state.table._updateSize();
-
+  //#region 后续可以考虑将下面的逻辑统一到_updateSize中
+  state.table.internalProps.legends?.forEach(legend => {
+    legend?.resize();
+  });
+  if (state.table.internalProps.title) {
+    state.table.internalProps.title.resize();
+  }
+  if (state.table.internalProps.emptyTip) {
+    state.table.internalProps.emptyTip.resize();
+  }
+  //#endregion
   if (
     state.columnResize.col < state.table.frozenColCount &&
     !state.table.isPivotTable() &&

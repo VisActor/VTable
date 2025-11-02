@@ -1,0 +1,8 @@
+
+Current behavior:
+- D5 (was D6): =SUM(A2:C2) (has formula: true, direct: =SUM(A2:C2))
+- D6 (was D7): null (has formula: false, direct: undefined)
+
+Expected behavior:
+- D5 (was D6): =SUM(#REF!)  [because A2:C2 referenced deleted row]
+- D6 (was D7): =SUM(A2:C2)  [because it should reference the new positions]

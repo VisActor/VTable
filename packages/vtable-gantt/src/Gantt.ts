@@ -164,6 +164,7 @@ export class Gantt extends EventTarget {
     pixelRatio: number;
     tasksShowMode: TasksShowMode;
     projectSubTasksExpandable: boolean;
+    taskBarClip: boolean;
 
     startDateField: string;
     endDateField: string;

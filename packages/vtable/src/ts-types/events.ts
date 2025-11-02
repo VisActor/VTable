@@ -134,7 +134,12 @@ export interface TableEventHandlersEventArgumentMap {
   resize_column_end: { col: number; colWidths: number[] };
   resize_row: { row: number; rowHeight: number };
   resize_row_end: { row: number; rowHeight: number };
-  change_header_position: { source: CellAddress; target: CellAddress; event: Event };
+  change_header_position: {
+    source: CellAddress;
+    target: CellAddress;
+    movingColumnOrRow?: 'column' | 'row';
+    event: Event;
+  };
   change_header_position_start: {
     col: number;
     row: number;
@@ -145,6 +150,7 @@ export interface TableEventHandlersEventArgumentMap {
     backY: number;
     lineY: number;
     event: Event;
+    movingColumnOrRow?: 'column' | 'row';
   };
   changing_header_position: {
     col: number;
@@ -156,8 +162,14 @@ export interface TableEventHandlersEventArgumentMap {
     backY: number;
     lineY: number;
     event: Event;
+    movingColumnOrRow?: 'column' | 'row';
   };
-  change_header_position_fail: { source: CellAddress; target: CellAddress; event: Event };
+  change_header_position_fail: {
+    source: CellAddress;
+    target: CellAddress;
+    movingColumnOrRow?: 'column' | 'row';
+    event: Event;
+  };
   sort_click: {
     field: FieldDef;
     order: SortOrder;

@@ -1,3 +1,33 @@
+# v1.22.2
+
+2025-10-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: 新增拖拽行或列顺序功能
+- **@visactor/vtable-sheet**: 新增拖拽列顺序功能，支持更新和计算公式
+- **@visactor/vtable-sheet**: 新增删除或添加行和列后调整公式依赖关系功能
+- **@visactor/vtable**: 新增 refValue 参数，支持 vue-vtable 动态渲染编辑时使用 v-model [#4597](https://github.com/VisActor/VTable/issues/4597)
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 拖拽行顺序更新 rowHeightMap
+- **@visactor/vtable**: 使用行系列编号合并单元格时选择状态错误
+- **@visactor/vtable**: 调整列宽后图例标题位置错误 [#4629](https://github.com/VisActor/VTable/issues/4629)
+- **@visactor/vtable**: 修复透视图标记线布局问题
+- **@visactor/vtable**: 修复表格容器调整大小事件问题 [#4558](https://github.com/VisActor/VTable/issues/4558)
+- **@visactor/vtable**: 修复 vue-vtable 动态渲染编辑问题 [#4621](https://github.com/VisActor/VTable/issues/4621)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 优化宽度自适应模式计算逻辑
+- **@visactor/vtable**: 使用 vrender api 替换 requestAnimationFrame [#4619](https://github.com/VisActor/VTable/issues/4619)
+- **@visactor/vtable-sheet**: 支持小写字母公式上下文 [#4628](https://github.com/VisActor/VTable/issues/4628)
+
+
+[更多详情请查看 v1.22.2](https://github.com/VisActor/VTable/releases/tag/v1.22.2)
+
 # v1.22.0
 
 2025-10-17

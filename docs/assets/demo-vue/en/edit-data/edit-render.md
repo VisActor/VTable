@@ -2,19 +2,19 @@
 category: examples
 group: edit-cell
 title: Dynamic Render Editor
-cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-editor-basic.png
-link: edit-cell/slot-render
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/preview/vue-edit-render.png
+link: Developer_Ecology/vue
 ---
 
 # Dynamic Render Editor
 
 Implement dynamic editor injection through slot-based rendering mechanism, supporting conditional validation interception without relying on `@visactor/vtable-editors` component.
 
-## Core Features
+**✨ Core Features**
 
-1. **Slot-based Editor Injection** - Inject any Vue component via `<template #edit>`
-2. **Conditional Validation Interception** - Use `editConfig.editBefore` and `editConfig.validateValue` to validate before entering edit state and after value modification respectively, supporting sync/async logic
-3. **Disable Prompt Configuration** - Configure text prompts using `editConfig.disablePrompt` (for disabled states) and `editConfig.invalidPrompt` (for validation failures)
+- **Slot-based Editor Injection** - Inject any Vue component via `<template #edit>`
+- **Conditional Validation Interception** - Use `editConfig.editBefore` and `editConfig.validateValue` to validate before entering edit state and after value modification respectively, supporting sync/async logic
+- **Disable Prompt Configuration** - Configure text prompts using `editConfig.disablePrompt` (for disabled states) and `editConfig.invalidPrompt` (for validation failures)
 
 ## Code Demo
 

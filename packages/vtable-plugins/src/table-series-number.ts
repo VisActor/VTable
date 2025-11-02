@@ -124,7 +124,13 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
           }
         },
         pluginOptions.cornerCellStyle
-      )
+      ),
+      checkMoveColumnOrder: (colIndex: number) => {
+        return this.table.isColumnSelected(colIndex);
+      },
+      checkMoveRowOrder: (rowIndex: number) => {
+        return this.table.isRowSelected(rowIndex);
+      }
     });
     this.listenComponentEvents();
   }
@@ -256,12 +262,19 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
     this.seriesNumberComponent.setAttribute('hover', true);
   };
 
+  private handleChangeHeaderPosition = (e: any) => {
+    console.log('-----handleChangeHeaderPosition');
+    // this.seriesNumberComponent.render();
+    this.syncColWidthToComponent();
+  };
+
   listenTableEvents() {
     this.table.on(TABLE_EVENT_TYPE.SCROLL, this.handleScroll);
     this.table.on(TABLE_EVENT_TYPE.AFTER_SORT, this.handleAfterSort);
     this.table.on(TABLE_EVENT_TYPE.SELECTED_CHANGED, this.handleSelectedChanged);
     this.table.on(TABLE_EVENT_TYPE.RESIZE_COLUMN_END, this.handleResizeColumnEnd);
     this.table.on(TABLE_EVENT_TYPE.RESIZE_ROW_END, this.handleResizeRowEnd);
+    this.table.on(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION, this.handleChangeHeaderPosition);
   }
 
   private handleSeriesNumberCellRightClick = (e: any) => {
@@ -397,6 +410,19 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
     this.table.stateManager.startResizeRow(rowIndex, event.viewport.x, event.viewport.y);
   };
 
+  private handleDragColumOrderStart = (e: any) => {
+    console.log('handleDragColumOrderStart', e.detail.event.viewport.x, e.detail.event.viewport.y);
+    const { colIndex, event } = e.detail;
+    this.table.stateManager.updateInteractionState(TYPES.InteractionState.grabing);
+    this.table.stateManager.startMoveCol(colIndex, 0, event.viewport.x, event.viewport.y, event.nativeEvent, 'column');
+  };
+  private handleDragRowOrderStart = (e: any) => {
+    console.log('handleDragRowOrderStart', e.detail.event.viewport.x, e.detail.event.viewport.y);
+    const { rowIndex, event } = e.detail;
+    this.table.stateManager.updateInteractionState(TYPES.InteractionState.grabing);
+    this.table.stateManager.startMoveCol(0, rowIndex, event.viewport.x, event.viewport.y, event.nativeEvent, 'row');
+  };
+
   listenComponentEvents() {
     this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellRightClick, this.handleSeriesNumberCellRightClick);
     this.seriesNumberComponent.on(SeriesNumberEvent.seriesNumberCellHover, this.handleSeriesNumberCellHover);
@@ -406,6 +432,8 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
     this.seriesNumberComponent.on(SeriesNumberEvent.rowSeriesNumberWidthChange, this.handleRowSeriesNumberWidthChange);
     this.seriesNumberComponent.on(SeriesNumberEvent.resizeColWidthStart, this.handleResizeColWidthStart);
     this.seriesNumberComponent.on(SeriesNumberEvent.resizeRowHeightStart, this.handleResizeRowHeightStart);
+    this.seriesNumberComponent.on(SeriesNumberEvent.dragColumnOrderStart, this.handleDragColumOrderStart);
+    this.seriesNumberComponent.on(SeriesNumberEvent.dragRowOrderStart, this.handleDragRowOrderStart);
   }
   release() {
     // 清除组件资源

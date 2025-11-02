@@ -15,11 +15,13 @@ export function startMoveCol(
   x: number,
   y: number,
   state: StateManager,
-  event: MouseEvent | PointerEvent | TouchEvent
+  event: MouseEvent | PointerEvent | TouchEvent,
+  dragColumnOrRow?: 'column' | 'row'
 ) {
   if (!('canMoveHeaderPosition' in state.table.internalProps.layoutMap)) {
     return;
   }
+  state.columnMove.movingColumnOrRow = dragColumnOrRow;
   state.columnMove.moving = true;
   state.columnMove.colSource = col;
   state.columnMove.rowSource = row;
@@ -32,15 +34,21 @@ export function startMoveCol(
   state.columnMove.x = x - state.table.tableX;
   state.columnMove.y = y - state.table.tableY;
 
-  const cellLocation = state.table.getCellLocation(col, row);
-  const delta =
-    cellLocation === 'columnHeader'
-      ? state.columnMove.x
-      : cellLocation === 'rowHeader' ||
-        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
-      ? state.columnMove.y
-      : 0;
-
+  let delta;
+  if (dragColumnOrRow === 'column') {
+    delta = state.columnMove.x;
+  } else if (dragColumnOrRow === 'row') {
+    delta = state.columnMove.y;
+  } else {
+    const cellLocation = state.table.getCellLocation(col, row);
+    delta =
+      cellLocation === 'columnHeader'
+        ? state.columnMove.x
+        : cellLocation === 'rowHeader' ||
+          (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+        ? state.columnMove.y
+        : 0;
+  }
   const { backX, lineX, backY, lineY } = state.table.scenegraph.component.showMoveCol(col, row, delta);
 
   state.table.fireListeners(TABLE_EVENT_TYPE.CHANGE_HEADER_POSITION_START, {
@@ -52,7 +60,8 @@ export function startMoveCol(
     lineX,
     backY,
     lineY,
-    event
+    event,
+    movingColumnOrRow: dragColumnOrRow
   });
   // 调整列顺序期间清空选中清空
   const isHasSelected = !!state.select.ranges?.length;
@@ -121,7 +130,8 @@ export function updateMoveCol(
       }
     } else if (
       cellLocation === 'rowHeader' ||
-      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row)
+      (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(col, row) ||
+      state.columnMove.movingColumnOrRow === 'row'
     ) {
       backY = state.columnMove.y;
       if (state.table.isFrozenRow(row)) {
@@ -150,7 +160,8 @@ export function updateMoveCol(
       lineX,
       backY,
       lineY,
-      event
+      event,
+      movingColumnOrRow: state.columnMove.movingColumnOrRow
     });
     state.table.scenegraph.updateNextFrame();
   }
@@ -161,10 +172,10 @@ export function endMoveCol(state: StateManager): boolean {
   if (
     'canMoveHeaderPosition' in state.table.internalProps.layoutMap &&
     state.columnMove.moving &&
-    state.columnMove.colSource >= 0 &&
-    state.columnMove.rowSource >= 0 &&
-    state.columnMove.colTarget >= 0 &&
-    state.columnMove.rowTarget >= 0 &&
+    (state.columnMove.colSource >= 0 || state.columnMove.movingColumnOrRow === 'row') &&
+    (state.columnMove.rowSource >= 0 || state.columnMove.movingColumnOrRow === 'column') &&
+    (state.columnMove.colTarget >= 0 || state.columnMove.movingColumnOrRow === 'row') &&
+    (state.columnMove.rowTarget >= 0 || state.columnMove.movingColumnOrRow === 'column') &&
     state.table.options.customConfig?.notUpdateInColumnRowMove !== true
   ) {
     //getCellMergeInfo 一定要在moveHeaderPosition之前调用  否则就不是修改前的range了
@@ -219,10 +230,11 @@ export function endMoveCol(state: StateManager): boolean {
       }
       if (
         !(state.table as ListTable).transpose &&
-        (state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
+        ((state.table.internalProps.layoutMap as SimpleHeaderLayoutMap).isSeriesNumberInBody(
           state.columnMove.colSource,
           state.columnMove.rowSource
-        )
+        ) ||
+          state.columnMove.movingColumnOrRow === 'row')
       ) {
         state.table.changeRecordOrder(moveContext.sourceIndex, moveContext.targetIndex);
         state.changeCheckboxAndRadioOrder(moveContext.sourceIndex, moveContext.targetIndex);
@@ -237,7 +249,11 @@ export function endMoveCol(state: StateManager): boolean {
       // clear cell style cache
       state.table.clearCellStyleCache();
       if (
-        state.table.internalProps.layoutMap.isSeriesNumberInBody(state.columnMove.colSource, state.columnMove.rowSource)
+        state.table.internalProps.layoutMap.isSeriesNumberInBody(
+          state.columnMove.colSource,
+          state.columnMove.rowSource
+        ) ||
+        state.columnMove.movingColumnOrRow === 'row'
       ) {
         // 如果是拖拽序号换位置 考虑到非拖拽单元格合并而是其他地方有合并被拆开或者独立单元格拖拽后变为合并的情况  这里直接刷新这个场景树的节点 才能覆盖所有情况
         state.table.scenegraph.updateHeaderPosition(
@@ -284,24 +300,29 @@ export function endMoveCol(state: StateManager): boolean {
       moveColResult = true;
     } else {
       state.updateCursor();
-      //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
       state.columnMove.moving = false;
-      delete state.columnMove.colSource;
-      delete state.columnMove.rowSource;
-      delete state.columnMove.colTarget;
-      delete state.columnMove.rowTarget;
+      setTimeout(() => {
+        //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
+        delete state.columnMove.colSource;
+        delete state.columnMove.rowSource;
+        delete state.columnMove.colTarget;
+        delete state.columnMove.rowTarget;
+        state.columnMove.movingColumnOrRow = undefined;
+      }, 0);
       state.table.scenegraph.component.hideMoveCol();
       state.table.scenegraph.updateNextFrame();
       return false;
     }
   }
   state.columnMove.moving = false;
+
   setTimeout(() => {
     //触发事件 CHANGE_HEADER_POSITION 还需要用到这些值 所以延迟清理
     delete state.columnMove.colSource;
     delete state.columnMove.rowSource;
     delete state.columnMove.colTarget;
     delete state.columnMove.rowTarget;
+    state.columnMove.movingColumnOrRow = undefined;
   }, 0);
   state.table.scenegraph.component.hideMoveCol();
   // update frozen shadowline component

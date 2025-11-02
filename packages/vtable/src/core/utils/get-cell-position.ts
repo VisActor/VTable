@@ -202,7 +202,6 @@ export function getTargetColAtConsiderRightFrozen(
   }
   return getTargetColAt(absoluteX, _this);
 }
-
 /**
  * 根据y获取底部冻结该位置所处行值
  * @param table
@@ -237,7 +236,6 @@ export function getTargetRowAtConsiderBottomFrozen(
   }
   return getTargetRowAt(absoluteY, _this);
 }
-
 /**
  * 根据y值（包括了scroll的）计算所在行
  * @param this
@@ -368,4 +366,74 @@ export function getCellAtRelativePosition(x: number, y: number, _this: BaseTable
     };
   }
   return { col: -1, row: -1 };
+}
+
+export function getColAtRelativePosition(x: number, _this: BaseTableAPI): number {
+  // table border and outer component
+  x -= _this.tableX;
+
+  // left frozen
+  let leftFrozen = false;
+  if (x > 0 && x < _this.getFrozenColsWidth()) {
+    leftFrozen = true;
+  }
+
+  // right frozen
+  let rightFrozen = false;
+  if (
+    x > _this.tableNoFrameWidth - _this.getRightFrozenColsWidth() &&
+    x < _this.tableNoFrameWidth &&
+    x <= _this.getAllColsWidth()
+  ) {
+    rightFrozen = true;
+  }
+
+  // 加上 tableX 是因为在考虑冻结列时，需要将坐标转换为相对于表格左上角的坐标
+  const colInfo = getTargetColAtConsiderRightFrozen(
+    (leftFrozen || rightFrozen ? x : x + _this.scrollLeft) + _this.tableX,
+    rightFrozen,
+    _this
+  );
+
+  if (colInfo) {
+    const { col } = colInfo;
+
+    return col;
+  }
+  return -1;
+}
+
+export function getRowAtRelativePosition(y: number, _this: BaseTableAPI): number {
+  // table border and outer component
+  y -= _this.tableY;
+
+  // top frozen
+  let topFrozen = false;
+  if (y > 0 && y < _this.getFrozenRowsHeight()) {
+    topFrozen = true;
+  }
+
+  // bottom frozen
+  let bottomFrozen = false;
+  if (
+    y > _this.tableNoFrameHeight - _this.getBottomFrozenRowsHeight() &&
+    y < _this.tableNoFrameHeight &&
+    y <= _this.getAllRowsHeight()
+  ) {
+    bottomFrozen = true;
+  }
+
+  // 加上 tableY 是因为在考虑冻结行时，需要将坐标转换为相对于表格左上角的坐标
+  const rowInfo = getTargetRowAtConsiderBottomFrozen(
+    (topFrozen || bottomFrozen ? y : y + _this.scrollTop) + _this.tableY,
+    bottomFrozen,
+    _this
+  );
+
+  if (rowInfo) {
+    const { row } = rowInfo;
+
+    return row;
+  }
+  return -1;
 }

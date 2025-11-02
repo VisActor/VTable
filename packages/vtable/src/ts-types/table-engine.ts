@@ -288,6 +288,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
      * "fixedFrozenCount"（可调整冻结列，并维持冻结数量不变）：允许自由拖拽其他列的表头移入或移出冻结列位置，同时保持冻结列的数量不变。
      */
     frozenColDragHeaderMode?: 'disabled' | 'adjustFrozenCount' | 'fixedFrozenCount';
+    /** 拖拽表头移动位置时是否维护数组数据的顺序，而不是改变columns中列的顺序 .目前仅vtable-sheet使用*/
+    maintainArrayDataOrder?: boolean;
   };
   aggregation?:
     | Aggregation

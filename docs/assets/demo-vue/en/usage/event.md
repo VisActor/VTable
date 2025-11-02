@@ -10,7 +10,7 @@ option: ListTable-columns-text#cellType
 
 # Event Listening
 
-All events supported by VTable can be listened to through Vue's props. For more details, refer to the [Event List](<[../api/event](https://www.visactor.io/vtable/guide/Developer_Ecology/react#%E4%BA%8B%E4%BB%B6%E7%BB%91%E5%AE%9A)>).
+All events supported by VTable can be listened to through Vue's props. For more details, refer to the [Event List](../../api/events).
 
 ## Code Demonstration
 

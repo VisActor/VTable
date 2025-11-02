@@ -109,7 +109,7 @@ describe('Range Adjustment Debug Test', () => {
     console.log('Value after:', value_after);
 
     // 实际行为：公式变成 =SUM(A1:B1)，值是0（A1和B1是表头，没有数值）
-    expect(formula_after).toBe('=SUM(A1:B1)');
-    expect(value_after.value).toBe(0);
+    expect(formula_after).toBe('=SUM(#REF!)');
+    expect(value_after.value).toBe('#REF!');
   });
 });

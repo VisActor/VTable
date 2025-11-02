@@ -105,7 +105,7 @@ import type { EditManager } from '../edit/edit-manager';
 import type { TableAnimationManager } from '../core/animation';
 import type { CustomCellStylePlugin } from '../plugins/custom-cell-style';
 import type { IVTablePlugin } from '../plugins/interface';
-import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import type { FederatedPointerEvent } from '@src/vrender';
 
 export interface IBaseTableProtected {
   element: HTMLElement;
@@ -811,6 +811,8 @@ export interface BaseTableAPI {
   getColAt: (absoluteX: number) => { left: number; col: number; right: number };
   getCellAt: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
   getCellAtRelativePosition: (absoluteX: number, absoluteY: number) => CellAddressWithBound;
+  getColAtRelativePosition: (absoluteX: number) => number;
+  getRowAtRelativePosition: (absoluteY: number) => number;
   _makeVisibleCell: (col: number, row: number) => void;
   // setFocusCursor(col: number, row: number): void;
   // focusCell(col: number, row: number): void;
@@ -1065,6 +1067,8 @@ export interface BaseTableAPI {
   getGroupTitleLevel: (col: number, row: number) => number | undefined;
   _getMaxFrozenWidth: () => number;
   _getComputedFrozenColCount: (frozenColCount: number) => number;
+  isColumnSelected: (col: number) => boolean;
+  isRowSelected: (row: number) => boolean;
 }
 export interface ListTableProtected extends IBaseTableProtected {
   /** 表格数据 */

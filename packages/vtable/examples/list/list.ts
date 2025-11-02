@@ -11,7 +11,7 @@ const generatePersons = count => {
     tel: '000-0000-0000',
     sex: i % 2 === 0 ? 'boy' : 'girl',
     work: i % 2 === 0 ? 'back-end engineer' + (i + 1) : 'front-end engineer' + (i + 1),
-    city: 'beijing'
+    city: i % 3 === 0 ? 'beijing' : 'shanghai'
   }));
 };
 
@@ -137,7 +137,8 @@ export function createTable() {
     {
       field: 'city',
       title: 'city',
-      width: 150
+      width: 150,
+      mergeCell: true
     },
     {
       field: 'date1',

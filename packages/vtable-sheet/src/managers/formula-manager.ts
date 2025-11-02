@@ -554,6 +554,99 @@ export class FormulaManager {
       throw new Error(`Failed to remove ${numberOfColumns} columns at index ${columnIndex}`);
     }
   }
+  /**
+   * 移动列表头位置.将sourceCol位置开始往后moveCount个列，移动调整到targetCol位置处
+   * @param sheetKey
+   * @param sourceCol
+   * @param targetCol
+   * @returns
+   */
+  changeColumnHeaderPosition(sheetKey: string, sourceCol: number, targetCol: number): void {
+    this.ensureInitialized();
+
+    try {
+      // 获取工作表信息
+      const sheet = this.sheet.getSheet(sheetKey);
+      if (!sheet) {
+        throw new Error(`Sheet not found: ${sheetKey}`);
+      }
+
+      const totalColCount = sheet.columnCount;
+      const totalRowCount = sheet.rowCount;
+
+      // 使用专门的列移动方法来避免#REF!错误
+      const { adjustedCells, movedCells } = this.formulaEngine.adjustFormulaReferencesForColumnMove(
+        sheetKey,
+        sourceCol,
+        targetCol,
+        totalColCount,
+        totalRowCount
+      );
+
+      // 刷新所有受影响的单元格
+      const allAffectedCells = [...adjustedCells, ...movedCells];
+      for (const cell of allAffectedCells) {
+        const result = this.getCellValue(cell);
+        this.sheet
+          .getActiveSheet()
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+      }
+
+      // Log completion info
+      // console.log(
+      //   `Column move completed: ${adjustedCells.length} formulas adjusted, ${movedCells.length} formulas moved`
+      // );
+    } catch (error) {
+      console.error(`Failed to change column header position from ${sourceCol} to ${targetCol}:`, error);
+      throw new Error(
+        `Failed to change column header position: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  }
+
+  /**
+   * 移动行表头位置.将sourceRow位置开始往后moveCount个行，移动调整到targetRow位置处
+   * @param sheetKey 工作表键
+   * @param sourceRow 源行索引
+   * @param targetRow 目标行索引
+   */
+  changeRowHeaderPosition(sheetKey: string, sourceRow: number, targetRow: number): void {
+    this.ensureInitialized();
+
+    try {
+      // 获取工作表信息
+      const sheet = this.sheet.getSheet(sheetKey);
+      if (!sheet) {
+        throw new Error(`Sheet not found: ${sheetKey}`);
+      }
+
+      // 使用专门的行移动方法来避免#REF!错误
+      const { adjustedCells, movedCells } = this.formulaEngine.adjustFormulaReferencesForRowMove(
+        sheetKey,
+        sourceRow,
+        targetRow
+      );
+
+      // 刷新所有受影响的单元格
+      const allAffectedCells = [...adjustedCells, ...movedCells];
+      for (const cell of allAffectedCells) {
+        const result = this.getCellValue(cell);
+        this.sheet
+          .getActiveSheet()
+          .tableInstance?.changeCellValue(cell.col, cell.row, result.error ? '#ERROR!' : result.value);
+      }
+
+      // Log completion info
+      // console.log(
+      //   `Row move completed: ${adjustedCells.length} formulas adjusted, ${movedCells.length} formulas moved`
+      // );
+    } catch (error) {
+      console.error(`Failed to change row header position from ${sourceRow} to ${targetRow}:`, error);
+      throw new Error(
+        `Failed to change row header position: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
+  }
 
   /**
    * 获取工作表序列化数据 (MIT兼容 - 简化实现)

@@ -1,8 +1,51 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 17 Oct 2025 02:49:45 GMT and should not be manually modified.
+This log was last generated on Wed, 29 Oct 2025 04:47:13 GMT and should not be manually modified.
 
-## 1.22.0
+## 1.22.2
+Wed, 29 Oct 2025 04:47:13 GMT
+
+### Updates
+
+- feat: drag order for vtable-sheet
+
+
+- fix: drag row order to update rowHeightMap
+
+
+- feat: drag column order to update and calculate formula
+
+
+- fix: select row use row series number with cell merge, select state error
+
+
+- refactor: requestAnimationFrame use vrender api #4619
+
+
+- refactor: formula context support lower case character #4628
+
+
+- fix: after resize column width legend title position error #4629
+
+
+- feat: add adaptive mode for auto fill width
+- fix: adjust formula dependency cell change
+
+
+- fix: fix issue of markline layout in PivotChart
+
+
+- fix: the resize event of tableContainer #4558
+
+
+- fix: vue-vtable dynamic rendering editing #4621
+
+
+- feat: the addition of the refValue parameter in vue-vtable dynamic rendering editing now supports v-model #4597
+
+
+
+## 1.22.1
 Fri, 17 Oct 2025 02:49:45 GMT
 
 ### Minor changes
