@@ -107,3 +107,67 @@ export function adjustWidthResizedColMap(
     }
   }
 }
+
+export function adjustHeightResizedRowMap(
+  moveContext: { sourceIndex: number; targetIndex: number; sourceSize: number },
+  table: BaseTableAPI
+) {
+  // internalProps._heightResizedRowMap 中存储着被手动调整过行高的列号 这里也需要调整下存储的列号
+  if (table.internalProps._heightResizedRowMap.size > 0) {
+    // 获取当前所有被调整过行高的列号
+    const resizedRowIndexs = Array.from(table.internalProps._heightResizedRowMap.keys());
+    // 清空映射，准备重新添加调整后的列号
+    table.internalProps._heightResizedRowMap.clear();
+
+    for (let i = 0; i < resizedRowIndexs.length; i++) {
+      const rowIndex = resizedRowIndexs[i] as number;
+      // 根据列移动情况调整列号
+      let newRowIndex: number;
+      const { sourceIndex, targetIndex, sourceSize } = moveContext;
+      if (rowIndex >= sourceIndex && rowIndex < sourceIndex + sourceSize) {
+        // 如果行在移动源范围内，则调整到目标位置
+        newRowIndex = targetIndex + (rowIndex - sourceIndex);
+      } else if (sourceIndex < targetIndex) {
+        // 如果源位置在目标位置之前（向后移动）
+        if (rowIndex >= sourceIndex + sourceSize && rowIndex < targetIndex) {
+          // 在源位置之后、目标位置之前的行向前移动
+          newRowIndex = rowIndex - sourceSize;
+        } else if (rowIndex >= targetIndex) {
+          // 修复：目标位置之后的行需要向左移动（减去sourceSize）
+          // 原始逻辑错误：原来是保持不变 newRowIndex = rowIndex;
+          newRowIndex = rowIndex - sourceSize;
+        } else {
+          // 源位置之前的行保持不变
+          newRowIndex = rowIndex;
+        }
+      } else {
+        // 如果源位置在目标位置之后（向前移动）
+        if (rowIndex >= targetIndex && rowIndex < sourceIndex) {
+          // 在目标位置之后、源位置之后的行向后移动
+          newRowIndex = rowIndex + sourceSize;
+        } else if (rowIndex >= sourceIndex + sourceSize) {
+          // 源位置之后的行保持不变
+          newRowIndex = rowIndex;
+        } else {
+          // 目标位置之前的行保持不变
+          newRowIndex = rowIndex;
+        }
+      }
+
+      // 将调整后的行号添加到映射中
+      table.internalProps._heightResizedRowMap.add(newRowIndex);
+    }
+  }
+}
+
+export function adjustHeightResizedRowMapWithAddRecordIndex(table: ListTable, recordIndex: number, records: any[]) {
+  const resizedRowIndexs = Array.from(table.internalProps._heightResizedRowMap.keys());
+  const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+  const rowIndex = (recordIndex as number) + headerCount;
+  for (let i = 0; i < resizedRowIndexs.length; i++) {
+    if ((resizedRowIndexs[i] as number) >= (rowIndex as number)) {
+      table.internalProps._heightResizedRowMap.delete(resizedRowIndexs[i] as number);
+      table.internalProps._heightResizedRowMap.add((resizedRowIndexs[i] as number) + records.length);
+    }
+  }
+}

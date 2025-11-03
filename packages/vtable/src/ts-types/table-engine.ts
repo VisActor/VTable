@@ -321,7 +321,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   /** @deprecated 请使用groupConfig */
   enableTreeStickCell?: boolean;
 
-  columnWidthConfig?: { key: string; width: number }[];
+  columnWidthConfig?: { key: string | number; width: number }[];
+  rowHeightConfig?: { key: number; height: number }[];
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];

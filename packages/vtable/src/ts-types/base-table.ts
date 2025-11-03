@@ -299,6 +299,7 @@ export interface IBaseTableProtected {
   _oldColCount?: number;
 
   columnWidthConfig?: any;
+  rowHeightConfig?: any;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -1077,8 +1078,12 @@ export interface ListTableProtected extends IBaseTableProtected {
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
   columnWidthConfig?: {
-    key: string;
+    key: string | number;
     width: number;
+  }[];
+  rowHeightConfig?: {
+    key: number;
+    height: number;
   }[];
 
   groupBy: GroupByOption;
