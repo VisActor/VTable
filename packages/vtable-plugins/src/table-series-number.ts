@@ -159,6 +159,7 @@ export class TableSeriesNumber implements pluginsDefinition.IVTablePlugin {
       for (let i = options.columns.length; i < this.pluginOptions.colCount; i++) {
         const columnFields = {
           field: i,
+          key: i,
           title: ``
         };
         options.columns.push(columnFields);

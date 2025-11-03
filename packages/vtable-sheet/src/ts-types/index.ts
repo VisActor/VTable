@@ -52,6 +52,11 @@ export interface ISheetDefine {
   sortState?: SortState[] | SortState | null;
   /** 主题 */
   theme?: IThemeDefine;
+  /** 列宽配置 */
+  columnWidthConfig?: {
+    key: string | number;
+    width: number;
+  }[];
 }
 export interface IThemeDefine {
   rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];

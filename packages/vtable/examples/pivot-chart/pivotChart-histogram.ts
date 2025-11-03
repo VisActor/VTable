@@ -46,6 +46,7 @@ export function createTable() {
       city: '北京',
       category: '电子'
     },
+
     {
       from: 0,
       to: 100,

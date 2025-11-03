@@ -57,6 +57,7 @@ import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugin
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 import { getCustomMergeCellFunc } from './core/utils/get-custom-merge-cell-func';
+import { adjustWidthResizedColMap } from './state/cell-move/adjust-header';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -876,49 +877,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
           targetCellRange.end.col - targetCellRange.start.col + 1,
           moveContext.targetIndex
         );
-        // internalProps._widthResizedColMap 中存储着被手动调整过列宽的列号 这里也需要调整下存储的列号
-        if (this.internalProps._widthResizedColMap.size > 0) {
-          // 获取当前所有被调整过列宽的列号
-          const resizedColIndexs = Array.from(this.internalProps._widthResizedColMap.keys());
-          // 清空映射，准备重新添加调整后的列号
-          this.internalProps._widthResizedColMap.clear();
-          for (let i = 0; i < resizedColIndexs.length; i++) {
-            const colIndex = resizedColIndexs[i] as number;
-            // 根据列移动情况调整列号
-            let newColIndex: number;
-            const { sourceIndex, targetIndex, sourceSize } = moveContext;
-            if (colIndex >= sourceIndex && colIndex < sourceIndex + sourceSize) {
-              // 如果列在移动源范围内，则调整到目标位置
-              newColIndex = targetIndex + (colIndex - sourceIndex);
-            } else if (sourceIndex < targetIndex) {
-              // 如果源位置在目标位置之前（向后移动）
-              if (colIndex >= sourceIndex + sourceSize && colIndex < targetIndex) {
-                // 在源位置之后、目标位置之前的列向前移动
-                newColIndex = colIndex - sourceSize;
-              } else if (colIndex >= targetIndex) {
-                // 目标位置之后的列保持不变
-                newColIndex = colIndex;
-              } else {
-                // 源位置之前的列保持不变
-                newColIndex = colIndex;
-              }
-            } else {
-              // 如果源位置在目标位置之后（向前移动）
-              if (colIndex >= targetIndex && colIndex < sourceIndex) {
-                // 在目标位置之后、源位置之前的列向后移动
-                newColIndex = colIndex + sourceSize;
-              } else if (colIndex >= sourceIndex + sourceSize) {
-                // 源位置之后的列保持不变
-                newColIndex = colIndex;
-              } else {
-                // 目标位置之前的列保持不变
-                newColIndex = colIndex;
-              }
-            }
-            // 将调整后的列号添加到映射中
-            this.internalProps._widthResizedColMap.add(newColIndex);
-          }
-        }
+        adjustWidthResizedColMap(moveContext, this);
 
         if (!this.transpose) {
           //下面代码取自refreshHeader列宽设置逻辑
