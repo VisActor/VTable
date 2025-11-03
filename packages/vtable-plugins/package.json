@@ -34,16 +34,16 @@
     "access": "public"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.19.1"
+    "@visactor/vutils": "~0.19.1",
+    "@visactor/vtable-editors": "workspace:*",
+    "@visactor/vtable-gantt": "workspace:*",
+    "@visactor/vchart": "1.13.3-alpha.2"
   },
   "peerDependencies": {
     "@visactor/vtable": "workspace:*"
   },
   "devDependencies": {
     "@visactor/vtable": "workspace:*",
-    "@visactor/vtable-editors": "workspace:*",
-    "@visactor/vtable-gantt": "workspace:*",
-    "@visactor/vchart": "1.13.3-alpha.2",
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
