@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: animation bug when header height is 0",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
