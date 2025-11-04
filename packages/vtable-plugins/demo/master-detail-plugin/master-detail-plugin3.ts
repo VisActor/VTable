@@ -17,6 +17,7 @@ function generateData(count: number) {
     score: Math.floor(Math.random() * 100),
     amount: Math.floor(Math.random() * 10000) / 100,
     // 仅部分记录含有子表数据
+    hierarchyState: 'expand',
     children:
       i % 4 === 0
         ? [
@@ -39,7 +40,7 @@ export function createTable() {
       ],
       defaultRowHeight: 30,
       defaultHeaderRowHeight: 30,
-      style: { margin: 12, height: 160 },
+      style: { margin: 12, height: 'auto' },
       theme: VTable.themes.BRIGHT
     }
   });
