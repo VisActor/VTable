@@ -1223,7 +1223,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     // 获取操作单元格的range范围
     const sourceCellRange = this.getCellRange(source.col, source.row);
     // 获取source和target对应sourceCellRange.start.row的headerId
-    if (this.isColumnHeader(source.col, source.row)) {
+    if (
+      this.isColumnHeader(source.col, source.row) ||
+      (this._table.stateManager.columnMove.movingColumnOrRow === 'column' && source.row === 0)
+    ) {
       const sourceTopId = this.getParentCellId(source.col, sourceCellRange.start.row);
       const targetTopId = this.getParentCellId(target.col, sourceCellRange.start.row);
       return sourceTopId === targetTopId;
@@ -1258,7 +1261,10 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
     ) {
       let sourceCellRange = this.getCellRange(source.col, source.row);
       // 对移动列表头 行表头 分别处理
-      if (this.isColumnHeader(source.col, source.row)) {
+      if (
+        this.isColumnHeader(source.col, source.row) ||
+        (this._table.stateManager.columnMove.movingColumnOrRow === 'column' && source.row === 0)
+      ) {
         // source单元格包含的列数
         const sourceSize = sourceCellRange.end.col - sourceCellRange.start.col + 1;
         // 插入目标地址的列index
@@ -1291,8 +1297,8 @@ export class SimpleHeaderLayoutMap implements LayoutMapAPI {
             const rowRecords = this._table.dataSource.dataSourceObj?.records[j];
             if (Array.isArray(rowRecords)) {
               // 如果rowRecords的长度小于targetIndex,需要向rowRecords中添加空数据
-              if (rowRecords.length - 1 < targetIndex) {
-                rowRecords.push(...Array(targetIndex - rowRecords.length + 1).fill(undefined));
+              if (rowRecords.length - 1 < Math.max(targetIndex, source.col)) {
+                rowRecords.push(...Array(Math.max(targetIndex, source.col) - rowRecords.length + 1).fill(undefined));
               }
               const sourceData = rowRecords.splice(
                 sourceCellRange.start.col - this.leftRowSeriesNumberColumnCount,
