@@ -60,6 +60,7 @@ import { getCustomMergeCellFunc } from './core/utils/get-custom-merge-cell-func'
 import {
   adjustHeightResizedRowMap,
   adjustHeightResizedRowMapWithAddRecordIndex,
+  adjustHeightResizedRowMapWithDeleteRecordIndex,
   adjustWidthResizedColMap
 } from './state/cell-move/adjust-header';
 // import {
@@ -1297,7 +1298,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.stateManager.updateSortState(sortState);
     }
   }
-  updateFilterRules(filterRules: FilterRules) {
+  updateFilterRules(
+    filterRules: FilterRules,
+    options: {
+      clearRowHeightCache?: boolean;
+    } = { clearRowHeightCache: true }
+  ) {
     this.scenegraph.clearCells();
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
@@ -1307,7 +1313,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
-    this.scenegraph.createSceneGraph();
+    this.scenegraph.createSceneGraph(!!!options?.clearRowHeightCache);
     this.resize();
   }
   /** 获取过滤后的数据 */
@@ -1647,6 +1653,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   deleteRecords(recordIndexs: number[] | number[][]) {
     listTableDeleteRecords(recordIndexs, this);
+    adjustHeightResizedRowMapWithDeleteRecordIndex(this as ListTable, recordIndexs as number[]);
     this.internalProps.emptyTip?.resetVisible();
     const rowIndexs = [];
     for (let i = 0; i < recordIndexs.length; i++) {

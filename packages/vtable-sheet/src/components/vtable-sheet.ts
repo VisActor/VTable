@@ -693,6 +693,14 @@ export default class VTableSheet {
           };
         });
         //#endregion
+        //#region 从tableInstance.internalProps._heightResizedRowMap对应到columns的key 组织rowHeightConfig
+        const rowHeightConfig = Array.from(instance.tableInstance.internalProps._heightResizedRowMap).map(key => {
+          return {
+            key: key,
+            height: instance.tableInstance.getRowHeight(key)
+          };
+        });
+        //#endregion
 
         sheets.push({
           ...sheetDefine,
@@ -706,7 +714,8 @@ export default class VTableSheet {
           filterState: filterState,
           sortState: currentSortState,
           formulas: Object.keys(formulas).length > 0 ? formulas : undefined,
-          columnWidthConfig
+          columnWidthConfig,
+          rowHeightConfig
         });
       } else {
         sheets.push(sheetDefine);

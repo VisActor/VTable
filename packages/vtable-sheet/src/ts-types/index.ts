@@ -57,6 +57,11 @@ export interface ISheetDefine {
     key: string | number;
     width: number;
   }[];
+  /** 行高配置 */
+  rowHeightConfig?: {
+    key: number;
+    height: number;
+  }[];
 }
 export interface IThemeDefine {
   rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];

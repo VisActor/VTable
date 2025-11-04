@@ -171,3 +171,21 @@ export function adjustHeightResizedRowMapWithAddRecordIndex(table: ListTable, re
     }
   }
 }
+
+export function adjustHeightResizedRowMapWithDeleteRecordIndex(table: ListTable, recordIndexs: number[]) {
+  const headerCount = table.transpose ? table.rowHeaderLevelCount : table.columnHeaderLevelCount;
+  recordIndexs.sort((a, b) => b - a);
+  for (let i = 0; i < recordIndexs.length; i++) {
+    const rowIndex = (recordIndexs[i] as number) + headerCount;
+    const resizedRowIndexs = Array.from(table.internalProps._heightResizedRowMap.keys());
+    for (let j = 0; j < resizedRowIndexs.length; j++) {
+      if ((resizedRowIndexs[j] as number) === (rowIndex as number)) {
+        table.internalProps._heightResizedRowMap.delete(resizedRowIndexs[j] as number);
+      } else if ((resizedRowIndexs[j] as number) > (rowIndex as number)) {
+        table.internalProps._heightResizedRowMap.delete(resizedRowIndexs[j] as number);
+        table.internalProps._heightResizedRowMap.add((resizedRowIndexs[j] as number) - 1);
+      } else {
+      }
+    }
+  }
+}
