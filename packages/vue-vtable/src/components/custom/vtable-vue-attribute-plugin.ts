@@ -701,7 +701,7 @@ function checkFrozenContainer(graphic: IGraphic) {
  */
 function getTargetGroup(target: any) {
   while (target?.parent) {
-    if (target.name === 'custom-container') {
+    if (target.name === 'custom-container' || (target.name || '').startsWith('_custom_')) {
       return target;
     }
     target = target.parent;
