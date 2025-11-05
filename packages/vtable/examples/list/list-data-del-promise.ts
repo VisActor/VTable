@@ -38,7 +38,7 @@ const getRecordsWithAjax = (startIndex: number, num: number): Promise<Record<str
 
 export function createTable() {
   // 记录已删除的记录数
-  let deletedCount = 0;
+  const deletedCount = 0;
 
   // 数据缓存对象
   const loadedData: Record<string | number, Promise<Record<string, string | number>[]>> = {};
@@ -132,6 +132,16 @@ export function createTable() {
 
     deleted(index: number[]) {
       this.length -= index.length;
+      const deletedRecordIndexs = index;
+      // 异步更新loadedData中的数据
+      (async () => {
+        try {
+          await updateLoadedDataAfterDelete(deletedRecordIndexs);
+          console.log('删除记录并更新数据完成');
+        } catch (err) {
+          console.error('更新数据失败:', err);
+        }
+      })();
     },
 
     length: 5000 // 所有记录的数量
@@ -296,23 +306,6 @@ export function createTable() {
     console.log('更新后的批次信息:', JSON.stringify(batchInfos));
     console.log('更新后的loadedData键:', Object.keys(loadedData));
   }
-
-  // 监听删除记录事件
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.DELETE_RECORD, (args: Record<string, any>) => {
-    const deletedRecordIndexs = args.recordIndexs;
-    // 更新删除计数（可用于其他逻辑）
-    deletedCount += args.deletedCount;
-
-    // 异步更新loadedData中的数据
-    (async () => {
-      try {
-        await updateLoadedDataAfterDelete(deletedRecordIndexs);
-        console.log('删除记录并更新数据完成');
-      } catch (err) {
-        console.error('更新数据失败:', err);
-      }
-    })();
-  });
 
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }
