@@ -109,53 +109,6 @@ export class FilterStateManager {
 
   private applyFilters() {
     this.engine.applyFilter(this.state, this.table);
-    this.updateColumnIcons();
-  }
-
-  /**
-   * 更新列图标状态
-   */
-  private updateColumnIcons() {
-    const columns = (this.table as ListTable).columns;
-    if (!columns) {
-      return;
-    }
-
-    const plugin = this.table.pluginManager.getPluginByName('Filter') as FilterPlugin;
-    if (!plugin || !plugin.pluginOptions) {
-      return;
-    }
-
-    const filterIcon = plugin.pluginOptions.filterIcon;
-    const filteringIcon = plugin.pluginOptions.filteringIcon;
-
-    // 遍历所有列，更新图标
-    columns.forEach((col: ColumnDefine, index: number) => {
-      const field = col.field as string;
-      const filterConfig = this.state.filters.get(field);
-
-      // 首先检查这一列是否应该启用筛选功能
-      const shouldEnableFilter = plugin.shouldEnableFilterForColumn
-        ? plugin.shouldEnableFilterForColumn(index, col)
-        : true;
-
-      if (shouldEnableFilter) {
-        // 如果该列有激活的筛选，则使用filteringIcon
-        if (filterConfig && filterConfig.enable) {
-          col.headerIcon = filteringIcon;
-        } else {
-          col.headerIcon = filterIcon;
-        }
-      } else {
-        // 如果不应该启用筛选，则移除筛选图标
-        if (col.headerIcon === filterIcon || col.headerIcon === filteringIcon) {
-          delete col.headerIcon;
-        }
-      }
-    });
-
-    // 更新表格列定义
-    (this.table as ListTable).updateColumns(columns);
   }
 
   private shouldApplyFilter(action: FilterAction) {
