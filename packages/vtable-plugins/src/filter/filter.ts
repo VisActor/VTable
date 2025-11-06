@@ -68,6 +68,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
       this.filterToolbar.render(document.body);
       this.updateFilterIcons(eventArgs.options);
+      this.filterStateManager.subscribe(() => {
+        this.updateFilterIcons(eventArgs.options);
+        (this.table as ListTable).updateColumns(eventArgs.options.columns);
+      });
     } else if (runtime === TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
       this.pluginOptions = {
         ...this.pluginOptions,
@@ -158,30 +162,39 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
    */
   private updateFilterIcons(options) {
     const filterIcon = this.pluginOptions.filterIcon;
+    const filteringIcon = this.pluginOptions.filteringIcon;
 
     const isIconEqual = (a, b) =>
-        a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
+      a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
 
-    const toIconList = icons => icons ? (Array.isArray(icons) ? icons : [icons]) : [];
+    const toIconList = icons => (icons ? (Array.isArray(icons) ? icons : [icons]) : []);
 
-    const compactIcons = list =>
-        list.length === 0 ? undefined : (list.length === 1 ? list[0] : list);
+    const compactIcons = list => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
 
     options.columns.forEach(column => {
-        const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
-        let icons = toIconList(column.headerIcon);
+      const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
+      const isFiltering = !!this.filterStateManager.getFilterState(column.field)?.enable;
+      let icons = toIconList(column.headerIcon);
 
-        if (shouldShow) {
-            if (!icons.some(icon => isIconEqual(icon, filterIcon))) {
-                icons.push(filterIcon);
-            }
-        } else {
+      if (shouldShow) {
+        if (isFiltering) {
+          if (!icons.some(icon => isIconEqual(icon, filteringIcon))) {
             icons = icons.filter(icon => !isIconEqual(icon, filterIcon));
+            icons.push(filteringIcon);
+          }
+        } else {
+          if (!icons.some(icon => isIconEqual(icon, filterIcon))) {
+            icons = icons.filter(icon => !isIconEqual(icon, filteringIcon));
+            icons.push(filterIcon);
+          }
         }
+      } else {
+        icons = icons.filter(icon => !isIconEqual(icon, filterIcon));
+      }
 
-        column.headerIcon = compactIcons(icons);
+      column.headerIcon = compactIcons(icons);
     });
-}
+  }
 
   /**
    * 判断指定列是否应该启用筛选功能

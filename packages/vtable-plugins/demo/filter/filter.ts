@@ -51,7 +51,16 @@ export function createTable() {
       field: 'name',
       title: '姓名',
       width: 120,
-      sort: true
+      sort: true,
+      headerIcon: {
+        type: 'svg',
+        svg: '<svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 44C35.0457 44 44 35.0457 44 24C44 12.9543 35.0457 4 24 4C12.9543 4 4 12.9543 4 24C4 35.0457 12.9543 44 24 44Z" fill="#ff5a5f" stroke="#333" stroke-width="1"/></svg>',
+        width: 20,
+        height: 20,
+        name: 'name-icon',
+        positionType: VTable.TYPES.IconPosition.absoluteRight,
+        marginRight: 30
+      }
     },
     {
       field: 'gender',
@@ -71,7 +80,7 @@ export function createTable() {
       width: 120,
       sort: true,
       fieldFormat(record) {
-        return '￥' + record.salary
+        return '￥' + record.salary;
       }
     },
     {
@@ -80,7 +89,7 @@ export function createTable() {
       width: 150,
       sort: true,
       fieldFormat(record) {
-        return '￥' + record.sales
+        return '￥' + record.sales;
       }
     },
     {
@@ -107,7 +116,7 @@ export function createTable() {
       title: '状态',
       width: 120,
       style: {
-        textAlign: 'center',
+        textAlign: 'center'
         // color: (args: any) => {
         //   const { value } = args;
         //   if (value === '在职') {
