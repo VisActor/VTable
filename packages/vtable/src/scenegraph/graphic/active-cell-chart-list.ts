@@ -6,7 +6,7 @@ import type { Chart } from './chart';
 export const chartInstanceListColumnByColumnDirection: Record<number, Record<number, any>> = {};
 
 //临时存储 用于调试
-window.chartInstanceListColumn = chartInstanceListColumnByColumnDirection;
+//window.chartInstanceListColumn = chartInstanceListColumnByColumnDirection;
 /**
  * 根据列号生成可视区域内图表实例列表
  * @param col 列号
