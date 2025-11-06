@@ -34,7 +34,8 @@ export function handleWhell(event: FederatedWheelEvent, state: StateManager, isW
   isWheelEvent && state.resetInteractionState(state.interactionStateBeforeScroll);
   if (
     event.nativeEvent?.cancelable &&
-    (state.table.internalProps.overscrollBehavior === 'none' ||
+    ((state.table.internalProps.overscrollBehavior === 'none' &&
+      ((deltaY && isVerticalExistScrollBar(state)) || (deltaX && isHorizontalExistScrollBar(state)))) ||
       (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, state)) ||
       (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, state)))
   ) {
@@ -78,6 +79,22 @@ export function isHorizontalScrollable(deltaX: number, state: StateManager) {
     return false;
   }
   return !isScrollToLeft(deltaX, state) && !isScrollToRight(deltaX, state);
+}
+
+export function isVerticalExistScrollBar(state: StateManager) {
+  const totalHeight = state.table.getAllRowsHeight() - state.table.scenegraph.height;
+  if (totalHeight <= 0) {
+    return false;
+  }
+  return true;
+}
+
+export function isHorizontalExistScrollBar(state: StateManager) {
+  const totalWidth = state.table.getAllColsWidth() - state.table.scenegraph.width;
+  if (totalWidth <= 0) {
+    return false;
+  }
+  return true;
 }
 
 function isScrollToTop(deltaY: number, state: StateManager) {
