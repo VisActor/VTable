@@ -566,6 +566,8 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
     dimensions: IDimensionInfo[];
     width: number;
   }[];
+  /** 透视图中多个图表基于相同维度值进行交互联动的功能,是否开启  */
+  enableChartDimensionLinkage?: boolean;
 }
 export interface PivotTableAPI extends BaseTableAPI {
   internalProps: PivotTableProtected;

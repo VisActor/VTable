@@ -4,6 +4,8 @@ import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
+import { clearChartInstanceList, generateChartInstanceListByColumnDirection } from './active-cell-chart-list';
+import type { PivotChartConstructorOptions } from '../..';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -90,6 +92,9 @@ export class Chart extends Rect {
    * @param table
    */
   activate(table: BaseTableAPI) {
+    if (this.active && this.activeChartInstance) {
+      return;
+    }
     this.active = true;
     const { col, row } = this.parent;
     const hoverColor = getCellHoverColor(this.parent, table);
@@ -106,6 +111,7 @@ export class Chart extends Rect {
       y2: y2 - table.scrollTop
     });
     this.activeChartInstance?.release();
+    this.attribute.ClassType.globalConfig.uniqueTooltip = false;
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
       merge({}, this.attribute.tableChartOption, {
@@ -209,6 +215,17 @@ export class Chart extends Rect {
         Chart.temp = 1;
       }, 0);
     });
+    if ((table.options as PivotChartConstructorOptions).enableChartDimensionLinkage) {
+      this.activeChartInstance.on('dimensionHover', (params: any) => {
+        const dimensionInfo = params?.dimensionInfo[0];
+        const canvasXY = params?.event?.canvas;
+        console.log('----vchart dimensionHover', params, params.action, dimensionInfo);
+        if (params.action === 'enter') {
+          const dimensionValue = dimensionInfo.value;
+          generateChartInstanceListByColumnDirection(col, dimensionValue, canvasXY, table);
+        }
+      });
+    }
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
   }
   static temp: number = 1;
@@ -216,22 +233,33 @@ export class Chart extends Rect {
    * 图表失去焦点
    * @param table
    */
-  deactivate() {
+  deactivate(
+    table: BaseTableAPI,
+    {
+      releaseChartInstance = true,
+      releaseColumnChartInstance = true
+    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean } = {}
+  ) {
     this.active = false;
-    // move active chart view box out of browser view
-    // to avoid async render when chart is releasd
-    this.activeChartInstance?.updateViewBox(
-      {
-        x1: -1000,
-        x2: -800,
-        y1: -1000,
-        y2: -800
-      },
-      false,
-      false
-    );
-    this.activeChartInstance?.release();
-    this.activeChartInstance = null;
+    if (releaseChartInstance) {
+      // move active chart view box out of browser view
+      // to avoid async render when chart is releasd
+      this.activeChartInstance?.updateViewBox(
+        {
+          x1: -1000,
+          x2: -800,
+          y1: -1000,
+          y2: -800
+        },
+        false,
+        false
+      );
+      this.activeChartInstance?.release();
+      this.activeChartInstance = null;
+    }
+    if (releaseColumnChartInstance) {
+      clearChartInstanceList(this.parent.col, table);
+    }
   }
   /** 更新图表对应数据 */
   updateData(data: any) {

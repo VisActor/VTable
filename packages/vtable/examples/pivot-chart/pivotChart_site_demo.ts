@@ -39,6 +39,14 @@ export function createTable() {
             // type: 'common',
             stack: true,
             type: 'bar',
+            crosshair: {
+              xField: {
+                visible: true
+              },
+              yField: {
+                visible: false
+              }
+            },
             data: {
               id: 'data',
               fields: {
@@ -145,6 +153,14 @@ export function createTable() {
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
+            crosshair: {
+              xField: {
+                visible: true
+              },
+              yField: {
+                visible: false
+              }
+            },
             series: [
               {
                 type: 'bar',
@@ -417,16 +433,17 @@ export function createTable() {
             borderLineWidth: 0
           }
         },
-        renderChartAsync: true
+        enableChartDimensionLinkage: true
+        // renderChartAsync: true
       };
 
       const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID)!, option);
-      tableInstance.onVChartEvent('click', args => {
-        console.log('onVChartEvent click', args);
-      });
-      tableInstance.onVChartEvent('mouseover', args => {
-        console.log('onVChartEvent mouseover', args);
-      });
+      // tableInstance.onVChartEvent('click', args => {
+      //   console.log('onVChartEvent click', args);
+      // });
+      // tableInstance.onVChartEvent('mouseover', args => {
+      //   console.log('onVChartEvent mouseover', args);
+      // });
       window.tableInstance = tableInstance;
     });
 }

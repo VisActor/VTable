@@ -1,6 +1,6 @@
 import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
-import type { CellRange, CellSubLocation } from '../ts-types';
+import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
 import {
   type CellAddress,
   type CellLocation,
@@ -714,7 +714,21 @@ export class Scenegraph {
       return;
     }
     const cellGroup = this.getCell(col, row);
-    (cellGroup?.firstChild as any)?.deactivate?.();
+    (cellGroup?.firstChild as any)?.deactivate?.(
+      this.table,
+      (this.table.options as PivotChartConstructorOptions).enableChartDimensionLinkage
+        ? {
+            releaseChartInstance:
+              col !== this.table.stateManager.hover.cellPos.col ||
+              this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+              this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+            releaseColumnChartInstance:
+              col !== this.table.stateManager.hover.cellPos.col ||
+              this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+              this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount
+          }
+        : undefined
+    );
   }
   /**
    * hover 到单元格上 激活该单元格对应的图表实例
