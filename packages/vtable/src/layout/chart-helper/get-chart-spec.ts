@@ -218,7 +218,7 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     // const colIndex = layout.getRecordIndexByCol(col);
     const colPath = layout.getColKeysPath(col, row);
     indicatorKeys.forEach((key, index) => {
-      const { range, targetTicks, targetRange, axisOption } = getAxisRangeAndTicks(
+      const { range, targetTicks, targetRange, axisOption, chartType } = getAxisRangeAndTicks(
         col,
         row,
         index,
@@ -228,11 +228,15 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
         colPath,
         layout
       );
-      if (isNumber(axisOption?.min)) {
-        (range as any).min = axisOption.min;
-      }
       if (isNumber(axisOption?.max)) {
-        (range as any).max = axisOption.max;
+        range.max = axisOption.max;
+      } else if (chartType === 'boxPlot') {
+        range.max += (range.max - range.min) / 20;
+      }
+      if (isNumber(axisOption?.min)) {
+        range.min = axisOption.min;
+      } else if (chartType === 'boxPlot') {
+        range.min -= (range.max - range.min) / 20;
       }
 
       if (hasSameAxis(axisOption, axes)) {
@@ -311,17 +315,24 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
         rowPath,
         layout
       );
+      const { chartType } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+
+      if (isNumber(axisOption?.max)) {
+        range.max = axisOption.max;
+      } else if (chartType === 'boxPlot') {
+        range.max += (range.max - range.min) / 20;
+      }
+
       if (isNumber(axisOption?.min)) {
         (range as any).min = axisOption.min;
-      }
-      if (isNumber(axisOption?.max)) {
-        (range as any).max = axisOption.max;
+      } else if (chartType === 'boxPlot') {
+        range.min -= (range.max - range.min) / 20;
       }
 
       if (hasSameAxis(axisOption, axes)) {
         return;
       }
-      const { chartType } = getAxisOption(col, row, index === 0 ? 'left' : 'right', layout);
+
       let domain: Array<string> = [];
       if (chartType === 'heatmap') {
         //为heatmap时 需要获取维度轴的domain 因为有可能都是离散轴。这里的处理对应get-axis-config.ts中的getAxisConfigInPivotChart方法处理

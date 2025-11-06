@@ -3,283 +3,422 @@ const PivotTable = VTable.PivotTable;
 const CONTAINER_ID = 'vTable';
 
 export function createTable() {
-  const option: VTable.PivotTableConstructorOptions = {
+  const option = {
+    records: [
+      {
+        fldPv4llJC_SUM: '{"text":"1","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"1"}',
+        original: {
+          fldPv4llJC_SUM: {
+            value: 1,
+            text: '1',
+            formatString: '',
+            groupKey: '1',
+            fldKey: 'fldPv4llJC_SUM'
+          },
+          fldpt0upgC: {
+            value: '1',
+            text: '1',
+            groupKey: '1',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '1',
+            text: '1',
+            groupKey: '1',
+            fldKey: 'fldY2kZIri'
+          }
+        },
+        fldpt0upgC: '{"text":"1","fldKey":"fldpt0upgC","groupKey":"1"}',
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"1","fldKey":"fldY2kZIri","groupKey":"1"}'
+      },
+      {
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}',
+        original: {
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          },
+          fldpt0upgC: {
+            value: '2',
+            text: '2',
+            groupKey: '2',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '2',
+            text: '2',
+            groupKey: '2',
+            fldKey: 'fldY2kZIri'
+          }
+        },
+        fldpt0upgC: '{"text":"2","fldKey":"fldpt0upgC","groupKey":"2"}',
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"2","fldKey":"fldY2kZIri","groupKey":"2"}'
+      },
+      {
+        fldpt0upgC: '{"text":"3","fldKey":"fldpt0upgC","groupKey":"3"}',
+        original: {
+          fldpt0upgC: {
+            value: '3',
+            text: '3',
+            groupKey: '3',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        },
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}'
+      },
+      {
+        fldpt0upgC: '{"text":"4","fldKey":"fldpt0upgC","groupKey":"4"}',
+        original: {
+          fldpt0upgC: {
+            value: '4',
+            text: '4',
+            groupKey: '4',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 1,
+            text: '1',
+            formatString: '',
+            groupKey: '1',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        },
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        fldPv4llJC_SUM: '{"text":"1","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"1"}'
+      },
+      {
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        original: {
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          },
+          fldpt0upgC: {
+            value: '5',
+            text: '5',
+            groupKey: '5',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          }
+        },
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}',
+        fldpt0upgC: '{"text":"5","fldKey":"fldpt0upgC","groupKey":"5"}',
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}'
+      },
+      {
+        fldpt0upgC: '{"text":"6","fldKey":"fldpt0upgC","groupKey":"6"}',
+        original: {
+          fldpt0upgC: {
+            value: '6',
+            text: '6',
+            groupKey: '6',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        },
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}'
+      },
+      {
+        fldpt0upgC: '{"text":"7","fldKey":"fldpt0upgC","groupKey":"7"}',
+        original: {
+          fldpt0upgC: {
+            value: '7',
+            text: '7',
+            groupKey: '7',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        },
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}'
+      },
+      {
+        fldpt0upgC: '{"text":"8","fldKey":"fldpt0upgC","groupKey":"8"}',
+        original: {
+          fldpt0upgC: {
+            value: '8',
+            text: '8',
+            groupKey: '8',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        },
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}'
+      },
+      {
+        fldpt0upgC: '{"text":"","fldKey":"fldpt0upgC","groupKey":""}',
+        original: {
+          fldpt0upgC: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldpt0upgC'
+          },
+          fldBSOxbIR: {
+            value: '',
+            text: '',
+            groupKey: null,
+            fldKey: 'fldBSOxbIR'
+          },
+          fldY2kZIri: {
+            value: '',
+            text: '',
+            groupKey: '',
+            fldKey: 'fldY2kZIri'
+          },
+          fldPv4llJC_SUM: {
+            value: 0,
+            text: '0',
+            formatString: '',
+            groupKey: '0',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        },
+        fldBSOxbIR: '{"text":"","fldKey":"fldBSOxbIR","groupKey":null}',
+        fldY2kZIri: '{"text":"","fldKey":"fldY2kZIri","groupKey":""}',
+        fldPv4llJC_SUM: '{"text":"0","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"0"}'
+      },
+      {
+        fldPv4llJC_SUM: '{"text":"2","formatString":"","fldKey":"fldPv4llJC_SUM","groupKey":"2"}',
+        original: {
+          fldPv4llJC_SUM: {
+            value: 2,
+            text: '2',
+            formatString: '',
+            groupKey: '2',
+            fldKey: 'fldPv4llJC_SUM'
+          }
+        }
+      }
+    ],
     rows: [
       {
-        dimensionKey: 'province',
+        dimensionKey: 'fldpt0upgC',
+        title: '文本',
+        groupType: 'RAW',
+        fieldId: 'fldpt0upgC',
         width: 'auto',
-        title: 'province--gfdsh'
+        minWidth: 90
       },
-      'city-gjfkdshjg fjgdshfd gfjkd'
+      {
+        dimensionKey: 'fldBSOxbIR',
+        title: '单选',
+        groupType: 'RAW',
+        fieldId: 'fldBSOxbIR',
+        width: 'auto',
+        minWidth: 90
+      },
+      {
+        dimensionKey: 'fldY2kZIri',
+        title: 'xx',
+        groupType: 'RAW',
+        fieldId: 'fldY2kZIri',
+        width: 'auto',
+        minWidth: 90
+      }
     ],
-    columns: ['category', 'sub_category'],
-    indicators: ['sales', 'number'],
+    columns: [],
+    indicators: [
+      {
+        indicatorKey: 'fldPv4llJC_SUM',
+        title: '计数：日期',
+        fieldId: 'fldPv4llJC',
+        statType: 'COUNT',
+        width: 'auto',
+        minWidth: 90
+      }
+    ],
+    dataConfig: {
+      aggregationRules: [
+        {
+          indicatorKey: 'fldPv4llJC_SUM',
+          field: 'fldPv4llJC_SUM',
+          aggregationType: 'NONE'
+        }
+      ],
+      sortRules: [
+        {
+          sortField: 'fldPv4llJC',
+          sortType: 'asc'
+        }
+      ],
+      totals: {
+        row: {
+          showGrandTotals: true,
+          showGrandTotalsOnTop: true,
+          grandTotalLabel: 'GrandRowTotalKey'
+        },
+        column: {
+          showGrandTotals: true,
+          showGrandTotalsOnLeft: false,
+          grandTotalLabel: 'GrandColumnTotalKey'
+        }
+      }
+    },
 
-    indicatorTitle: '指标名称',
-    indicatorsAsCol: true,
-    corner: { titleOnDimension: 'all' }
-    // resize: {
-    // columnResizeType: 'all',
-    // },
-    // records: [
-    //   {
-    //     sales: 891,
-    //     number: 7789,
-    //     province: '浙江省',
-    //     city: '杭州市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 792,
-    //     number: 2367,
-    //     province: '浙江省',
-    //     city: '绍兴市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 893,
-    //     number: 3877,
-    //     province: '浙江省',
-    //     city: '宁波市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 1094,
-    //     number: 4342,
-    //     province: '浙江省',
-    //     city: '舟山市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 1295,
-    //     number: 5343,
-    //     province: '浙江省',
-    //     city: '杭州市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 496,
-    //     number: 632,
-    //     province: '浙江省',
-    //     city: '绍兴市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 1097,
-    //     number: 7234,
-    //     province: '浙江省',
-    //     city: '宁波市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 998,
-    //     number: 834,
-    //     province: '浙江省',
-    //     city: '舟山市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 766,
-    //     number: 945,
-    //     province: '浙江省',
-    //     city: '杭州市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 990,
-    //     number: 1304,
-    //     province: '浙江省',
-    //     city: '绍兴市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 891,
-    //     number: 1145,
-    //     province: '浙江省',
-    //     city: '宁波市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 792,
-    //     number: 1432,
-    //     province: '浙江省',
-    //     city: '舟山市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 745,
-    //     number: 1343,
-    //     province: '浙江省',
-    //     city: '杭州市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 843,
-    //     number: 1354,
-    //     province: '浙江省',
-    //     city: '绍兴市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 895,
-    //     number: 1523,
-    //     province: '浙江省',
-    //     city: '宁波市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 965,
-    //     number: 1634,
-    //     province: '浙江省',
-    //     city: '舟山市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 776,
-    //     number: 1723,
-    //     province: '四川省',
-    //     city: '成都市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 634,
-    //     number: 1822,
-    //     province: '四川省',
-    //     city: '绵阳市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 909,
-    //     number: 1943,
-    //     province: '四川省',
-    //     city: '南充市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 399,
-    //     number: 2330,
-    //     province: '四川省',
-    //     city: '乐山市',
-    //     category: '家具',
-    //     sub_category: '桌子'
-    //   },
-    //   {
-    //     sales: 700,
-    //     number: 2451,
-    //     province: '四川省',
-    //     city: '成都市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 689,
-    //     number: 2244,
-    //     province: '四川省',
-    //     city: '绵阳市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 500,
-    //     number: 2333,
-    //     province: '四川省',
-    //     city: '南充市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 800,
-    //     number: 2445,
-    //     province: '四川省',
-    //     city: '乐山市',
-    //     category: '家具',
-    //     sub_category: '沙发'
-    //   },
-    //   {
-    //     sales: 1044,
-    //     number: 2335,
-    //     province: '四川省',
-    //     city: '成都市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 689,
-    //     number: 245,
-    //     province: '四川省',
-    //     city: '绵阳市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 794,
-    //     number: 2457,
-    //     province: '四川省',
-    //     city: '南充市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 566,
-    //     number: 2458,
-    //     province: '四川省',
-    //     city: '乐山市',
-    //     category: '办公用品',
-    //     sub_category: '笔'
-    //   },
-    //   {
-    //     sales: 865,
-    //     number: 4004,
-    //     province: '四川省',
-    //     city: '成都市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 999,
-    //     number: 3077,
-    //     province: '四川省',
-    //     city: '绵阳市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 999,
-    //     number: 3551,
-    //     province: '四川省',
-    //     city: '南充市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   },
-    //   {
-    //     sales: 999,
-    //     number: 352,
-    //     province: '四川省',
-    //     city: '乐山市',
-    //     category: '办公用品',
-    //     sub_category: '纸张'
-    //   }
-    // ],
-    // widthMode: 'autoWidth' // 宽度模式：standard 标准模式； adaptive 自动填满容器
+    frozenColCount: 3,
+    defaultRowHeight: 32,
+    corner: {
+      titleOnDimension: 'row',
+      headerStyle: {
+        textStick: false
+      }
+    },
+    widthMode: 'autoWidth',
+    rowHierarchyIndent: 20,
+    rowHierarchyTextStartAlignment: true,
+    hideIndicatorName: false,
+    select: {
+      blankAreaClickDeselect: false
+    },
+    limitMaxAutoWidth: 370,
+    autoFillWidth: false,
+    tooltip: {
+      isShowOverflowTextTooltip: true,
+      renderMode: 'html',
+      confine: true
+    },
+    columnWidthConfigForRowHeader: [
+      {
+        dimensions: [
+          {
+            dimensionKey: 'fldpt0upgC',
+            value: 'GrandRowTotalKey',
+            role: 'grand-total'
+          },
+          {
+            dimensionKey: 'fldBSOxbIR',
+            value: 'GrandRowTotalKey',
+            role: 'grand-total'
+          }
+        ],
+        width: 90
+      }
+    ]
   };
 
   const instance = new PivotTable(document.getElementById(CONTAINER_ID)!, option);
