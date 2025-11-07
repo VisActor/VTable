@@ -1,6 +1,33 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 29 Oct 2025 04:47:13 GMT and should not be manually modified.
+This log was last generated on Fri, 07 Nov 2025 09:51:25 GMT and should not be manually modified.
+
+## 1.22.3
+Fri, 07 Nov 2025 09:51:25 GMT
+
+### Updates
+
+- fix: vtable-sheet drag column position #4645
+
+
+- feat: add dragOrder to vtableSheet
+
+
+- refactor: overscrollBehavior set none not scrollbar effect #4675
+
+
+- fix: leftTop cornder render frame border line #4677
+
+
+- feat: add api getCellRowHeaderFullPaths for pivotTable
+
+
+- feat: support boxPlot chart in pivotChart
+
+
+- fix: the getTargetGroup method of vue-vtable #4663
+
+
 
 ## 1.22.2
 Wed, 29 Oct 2025 04:47:13 GMT
