@@ -435,7 +435,7 @@ export default class VTableSheet {
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
     const contentHeight = this.contentElement.clientHeight;
-
+    sheetDefine.dragOrder = sheetDefine.dragOrder ?? this.options.dragOrder;
     // 创建sheet实例
     const sheet = new WorkSheet(this, {
       ...sheetDefine,
@@ -444,6 +444,7 @@ export default class VTableSheet {
       height: contentHeight,
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
+      dragOrder: sheetDefine.dragOrder,
       plugins: getTablePlugins(sheetDefine, this.options),
       headerEditor: 'formula',
       editor: 'formula',

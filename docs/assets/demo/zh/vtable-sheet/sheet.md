@@ -51,7 +51,7 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
       ],
       active: true,
       filter: true,
-      widthMode:'autoWidth',
+      widthMode:'autoWidth'
       // frozenRowCount: 1,
       // frozenColCount: 1
     },
@@ -72,6 +72,10 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
           }
         }
     ]
+  },
+  dragOrder: {
+    enableDragColumnOrder: true,
+    enableDragRowOrder: true
   }
 });
 window.sheetInstance = sheetInstance;

@@ -34,16 +34,16 @@ export function getTablePlugins(
 ): VTable.plugins.IVTablePlugin[] {
   const plugins: VTable.plugins.IVTablePlugin[] = [];
   // 结合options.VTablePluginModules，来判断是否禁用插件
-  const disabledPlugins = options?.VTablePluginModules?.filter(module => module.disabled);
-  const enabledPlugins = options?.VTablePluginModules?.filter(module => !module.disabled);
-  if (!disabledPlugins?.some(module => module.module === FilterPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === FilterPlugin)
+  const disabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => module.disabled);
+  let enabledPluginsUserSetted = options?.VTablePluginModules?.filter(module => !module.disabled);
+  if (!disabledPluginsUserSetted?.some(module => module.module === FilterPlugin)) {
+    const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === FilterPlugin)
       ?.moduleOptions as FilterOptions;
     const filterPlugin = createFilterPlugin(sheetDefine, userPluginOptions);
     plugins.push(filterPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === AddRowColumnPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === AddRowColumnPlugin)
+  if (!disabledPluginsUserSetted?.some(module => module.module === AddRowColumnPlugin)) {
+    const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === AddRowColumnPlugin)
       ?.moduleOptions as AddRowColumnOptions;
     const addRowColumnPlugin = new AddRowColumnPlugin({
       addRowCallback: (row: number, tableInstance: VTable.ListTable) => {
@@ -52,13 +52,16 @@ export function getTablePlugins(
       ...userPluginOptions
     });
     plugins.push(addRowColumnPlugin);
+    //已经初始化过的插件，从enabledPluginsUserSetted中移除
+    enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== AddRowColumnPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === TableSeriesNumber)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === TableSeriesNumber)
+  if (!disabledPluginsUserSetted?.some(module => module.module === TableSeriesNumber)) {
+    const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === TableSeriesNumber)
       ?.moduleOptions as TableSeriesNumberOptions;
     const tableSeriesNumberPlugin = new TableSeriesNumber({
       rowCount: sheetDefine?.rowCount || 100,
       colCount: sheetDefine?.columnCount || 100,
+      dragOrder: sheetDefine?.dragOrder,
       rowSeriesNumberWidth: 30,
       colSeriesNumberHeight: 30,
       rowSeriesNumberCellStyle:
@@ -68,6 +71,8 @@ export function getTablePlugins(
       ...userPluginOptions
     });
     plugins.push(tableSeriesNumberPlugin);
+    //已经初始化过的插件，从enabledPluginsUserSetted中移除
+    enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== TableSeriesNumber);
   }
   // 这个插件有个bug 先不启用 #4447
   // if (!disabledPlugins?.some(module => module.module === HighlightHeaderWhenSelectCellPlugin)) {
@@ -80,28 +85,42 @@ export function getTablePlugins(
   //   });
   //   plugins.push(highlightHeaderWhenSelectCellPlugin); // 这个插件有个bug 先不启用 #4447
   // }
-  if (!disabledPlugins?.some(module => module.module === ContextMenuPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(module => module.module === ContextMenuPlugin)?.moduleOptions;
+  if (!disabledPluginsUserSetted?.some(module => module.module === ContextMenuPlugin)) {
+    const userPluginOptions = enabledPluginsUserSetted?.find(
+      module => module.module === ContextMenuPlugin
+    )?.moduleOptions;
     const contextMenuPlugin = createContextMenuItems(sheetDefine, userPluginOptions);
     plugins.push(contextMenuPlugin);
+    //已经初始化过的插件，从enabledPluginsUserSetted中移除
+    enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== ContextMenuPlugin);
   }
-  if (!disabledPlugins?.some(module => module.module === ExcelEditCellKeyboardPlugin)) {
-    const userPluginOptions = enabledPlugins?.find(
+  if (!disabledPluginsUserSetted?.some(module => module.module === ExcelEditCellKeyboardPlugin)) {
+    const userPluginOptions = enabledPluginsUserSetted?.find(
       module => module.module === ExcelEditCellKeyboardPlugin
     )?.moduleOptions;
     const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin(userPluginOptions);
     plugins.push(excelEditCellKeyboardPlugin);
+    //已经初始化过的插件，从enabledPluginsUserSetted中移除
+    enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(
+      module => module.module !== ExcelEditCellKeyboardPlugin
+    );
   }
-  if (!disabledPlugins?.some(module => module.module === AutoFillPlugin)) {
+  if (!disabledPluginsUserSetted?.some(module => module.module === AutoFillPlugin)) {
     // const userPluginOptions = enabledPlugins?.find(
     //   module => module.module === VTablePlugins.AutoFillPlugin
     // )?.moduleOptions;
     const autoFillPlugin = new AutoFillPlugin();
     plugins.push(autoFillPlugin);
+    //已经初始化过的插件，从enabledPluginsUserSetted中移除
+    enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== AutoFillPlugin);
   }
-  if (options?.VTablePluginModules) {
-    options.VTablePluginModules.forEach(
-      (module: { module: new (options: any) => VTable.plugins.IVTablePlugin; moduleOptions: any }) => {
+  if (enabledPluginsUserSetted?.length) {
+    enabledPluginsUserSetted.forEach(
+      (module: {
+        module: new (options: any) => VTable.plugins.IVTablePlugin;
+        moduleOptions: any;
+        disabled: boolean;
+      }) => {
         if (typeof module?.module === 'function') {
           // 检查是否为构造函数
           plugins.push(new module.module(module.moduleOptions));

@@ -109,6 +109,39 @@ Worksheet theme configuration.
 
 {{use:sheet-theme( prefix = '####', )}}
 
+### dragOrder(Object)
+
+Drag column order and row order configuration.
+
+```typescript
+dragOrder: {
+  enableDragColumnOrder: boolean;
+  enableDragRowOrder: boolean;
+}
+```
+
+### columnWidthConfig
+
+Column width configuration. The key is the column index, starting from 0, and the width is the width to be set.
+
+```typescript
+columnWidthConfig: {
+  key: string | number;
+  width: number;
+}
+```
+
+### rowHeightConfig
+
+Row height configuration. The key is the row index, starting from 0, and the height is the height to be set.
+
+```typescript
+rowHeightConfig: {
+  key: number;
+  height: number;
+}
+```
+
 ## showToolbar(boolean) = false
 
 Whether to display the toolbar.
@@ -152,6 +185,18 @@ Default row height.
 ## defaultColWidth(number) = 100
 
 Default column width.
+
+
+## dragOrder(Object)
+
+Drag column order and row order configuration.
+
+```typescript
+dragOrder: {
+  enableDragColumnOrder: boolean;
+  enableDragRowOrder: boolean;
+}
+```
 
 {{ target: sheet-filter-config }}
 

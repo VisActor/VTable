@@ -14,6 +14,18 @@ export function createTable() {
         sheetKey: 'sheet1',
         sheetTitle: 'sheet1',
         filter: true,
+        columnWidthConfig: [
+          {
+            key: 0,
+            width: 130
+          }
+        ],
+        rowHeightConfig: [
+          {
+            key: 0,
+            height: 65
+          }
+        ],
         columns: [
           {
             title: '名称',
@@ -28,6 +40,10 @@ export function createTable() {
           ['放到', '个', '哦']
         ],
         active: true,
+        // dragOrder: {
+        //   enableDragColumnOrder: false,
+        //   enableDragRowOrder: true
+        // },
         theme: {
           rowSeriesNumberCellStyle: {
             text: {
