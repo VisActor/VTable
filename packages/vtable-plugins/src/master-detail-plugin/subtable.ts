@@ -279,7 +279,7 @@ export class SubTableManager {
   ): void {
     try {
       const actualContentHeight = this.calculateSubTableContentHeight(subTable);
-      const [marginTop,, marginBottom] = parseMargin(detailConfig?.style?.margin);
+      const [marginTop, , marginBottom] = parseMargin(detailConfig?.style?.margin);
       const totalRequiredHeight = actualContentHeight + marginTop + marginBottom;
       // 通知core插件更新主表行高
       if (this.onAutoHeightCalculated) {
