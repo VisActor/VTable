@@ -112,7 +112,10 @@ export function updateMoveCol(
     let lineY;
     let backY;
     const cellLocation = state.table.getCellLocation(state.columnMove.colSource, state.columnMove.rowSource);
-    if (cellLocation === 'columnHeader') {
+    if (
+      cellLocation === 'columnHeader' ||
+      (state.columnMove.movingColumnOrRow === 'column' && state.columnMove.rowSource === 0)
+    ) {
       backX = state.columnMove.x;
       if (state.table.isLeftFrozenColumn(col)) {
         lineX =

@@ -10,6 +10,7 @@ import type {
 import { DefaultAttribute, ReactAttributePlugin, application } from '@visactor/vtable/es/vrender';
 import { calculateAnchorOfBounds, isFunction, isNil, isObject, isString, styleStringToObject } from '@visactor/vutils';
 import type { CreateDOMParamsTypeForVTable } from './vtable-browser-env-contribution';
+import { CUSTOM_CONTAINER_NAME } from '@visactor/vtable';
 
 export class VTableReactAttributePlugin extends ReactAttributePlugin {
   declare htmlMap: Record<
@@ -279,7 +280,7 @@ function checkFrozenContainer(graphic: IGraphic) {
 
 function getTargetGroup(target: any) {
   while (target && target.parent) {
-    if (target.name === 'custom-container') {
+    if (target.name === CUSTOM_CONTAINER_NAME) {
       return target;
     }
     target = target.parent;

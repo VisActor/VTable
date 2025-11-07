@@ -509,7 +509,6 @@ export function listTableAddRecords(records: any[], recordIndex: number | number
     if (!records || records.length === 0) {
       return false;
     }
-
     if ((table.internalProps as ListTableProtected).groupBy) {
       (table.dataSource as CachedDataSource).addRecordsForGroup?.(records, recordIndex);
       table.refreshRowColCount();

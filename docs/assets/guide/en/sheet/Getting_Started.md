@@ -102,6 +102,7 @@ The VTableSheet component supports a rich set of configuration options:
 | theme | ITheme | - | Table theme configuration |
 | VTablePluginModules | Array | [] | Plugin module configuration. You can configure VTable-supported plugins for VTableSheet or disable some built-in plugins. For plugin configuration options, refer to [VTable-Plugins](../plugin/usage) |
 | mainMenu | IMainMenu | - | Main menu configuration |
+| dragOrder | Object | - | Drag column order and row order configuration, if configured in ISheetDefine, this configuration will be ignored |
 
 ### Worksheet Configuration (ISheetDefine)
 
@@ -120,6 +121,10 @@ The VTableSheet component supports a rich set of configuration options:
 | frozenRowCount | number | 0 | Number of frozen rows |
 | frozenColCount | number | 0 | Number of frozen columns |
 | cellMerge | ICellMerge[] | [] | Cell merge configuration |
+| dragOrder | Object | - | Drag column order and row order configuration |
+| columnWidthConfig | Object[] | [] | Column width configuration |
+| rowHeightConfig | Object[] | [] | Row height configuration |
+| theme | IThemeDefine | - | Worksheet theme configuration |
 
 **Note:**
 

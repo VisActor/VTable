@@ -435,7 +435,7 @@ export default class VTableSheet {
     // 计算内容区域大小
     const contentWidth = this.contentElement.clientWidth;
     const contentHeight = this.contentElement.clientHeight;
-
+    sheetDefine.dragOrder = sheetDefine.dragOrder ?? this.options.dragOrder;
     // 创建sheet实例
     const sheet = new WorkSheet(this, {
       ...sheetDefine,
@@ -444,6 +444,7 @@ export default class VTableSheet {
       height: contentHeight,
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
+      dragOrder: sheetDefine.dragOrder,
       plugins: getTablePlugins(sheetDefine, this.options),
       headerEditor: 'formula',
       editor: 'formula',
@@ -633,6 +634,7 @@ export default class VTableSheet {
       const instance = this.workSheetInstances.get(sheetDefine.sheetKey);
       if (instance) {
         const data = instance.getCopiedData();
+        //#region 组织columns
         //column中去除field字段 (field字段会在columns.map中被使用)
         const columns = instance.getColumns().map(column => {
           // 解构时省略field属性
@@ -650,6 +652,9 @@ export default class VTableSheet {
         } else {
           columns.splice(lastTitleIndex + 1);
         }
+        //#endregion
+
+        //#region 组织data
         // 找到最后一个有非空值的行
         const lastDataIndex = data.reduce((lastIndex, rowData, index) => (rowData ? index : lastIndex), -1);
         // 保留到最后一个有值的行，删除之后的空行
@@ -658,7 +663,7 @@ export default class VTableSheet {
         } else {
           data.splice(lastDataIndex + 1);
         }
-
+        //#endregion
         // 获取筛选状态
         let filterState = null;
         const filterPlugin = instance.tableInstance.pluginManager.getPluginByName('Filter') as any;
@@ -681,6 +686,23 @@ export default class VTableSheet {
         // 使用FormulaManager的导出方法获取所有公式
         const formulas = this.formulaManager.exportFormulas(sheetDefine.sheetKey);
 
+        //#region 从tableInstance.internalProps._widthResizedColMap对应到columns的key 组织columnWidthConfig
+        const columnWidthConfig = Array.from(instance.tableInstance.internalProps._widthResizedColMap).map(key => {
+          return {
+            key: key,
+            width: instance.tableInstance.getColWidth(key)
+          };
+        });
+        //#endregion
+        //#region 从tableInstance.internalProps._heightResizedRowMap对应到columns的key 组织rowHeightConfig
+        const rowHeightConfig = Array.from(instance.tableInstance.internalProps._heightResizedRowMap).map(key => {
+          return {
+            key: key,
+            height: instance.tableInstance.getRowHeight(key)
+          };
+        });
+        //#endregion
+
         sheets.push({
           ...sheetDefine,
           data,
@@ -692,7 +714,9 @@ export default class VTableSheet {
           active: sheetDefine.sheetKey === this.sheetManager.getActiveSheet().sheetKey,
           filterState: filterState,
           sortState: currentSortState,
-          formulas: Object.keys(formulas).length > 0 ? formulas : undefined
+          formulas: Object.keys(formulas).length > 0 ? formulas : undefined,
+          columnWidthConfig,
+          rowHeightConfig
         });
       } else {
         sheets.push(sheetDefine);
@@ -733,9 +757,8 @@ export default class VTableSheet {
     }
     if ((sheet.tableInstance as any)?.importFile) {
       return await (sheet.tableInstance as any).importFile();
-    } else {
-      console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
     }
+    console.warn('Please configure ExcelImportPlugin in VTablePluginModules');
   }
   /**
    * 获取容器元素

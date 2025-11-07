@@ -70,7 +70,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       this.updateFilterIcons(eventArgs.options);
       this.filterStateManager.subscribe(() => {
         this.updateFilterIcons(eventArgs.options);
-        (this.table as ListTable).updateColumns(eventArgs.options.columns);
+        (this.table as ListTable).updateColumns(eventArgs.options.columns, {
+          clearRowHeightCache: false
+        });
       });
     } else if (runtime === TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
       this.pluginOptions = {
