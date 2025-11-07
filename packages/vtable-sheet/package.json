@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vtable-sheet",
-  "version": "1.22.2",
+  "version": "1.22.3",
   "description": "Lightweight editable spreadsheet component based on VTable",
   "keywords": [
     "vtable-sheet",
