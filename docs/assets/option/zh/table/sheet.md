@@ -108,6 +108,39 @@ SortState {
 
 {{use:sheet-theme( prefix = '####', )}}
 
+### dragOrder(Object)
+
+拖拽列顺序和行顺序配置。
+
+```typescript
+dragOrder: {
+  enableDragColumnOrder: boolean;
+  enableDragRowOrder: boolean;
+}
+```
+
+### columnWidthConfig
+
+列宽配置。其中key为列索引，从0开始，width为要设置的列宽。
+
+```typescript
+columnWidthConfig: {
+  key: string | number;
+  width: number;
+}
+```
+
+### rowHeightConfig
+
+行高配置。其中key为行索引，从0开始，height为要设置的行高。
+
+```typescript
+rowHeightConfig: {
+  key: number;
+  height: number;
+}
+```
+
 ## showToolbar(boolean) = false
 
 是否显示工具栏。
@@ -149,8 +182,18 @@ SortState {
 默认行高。
 
 ## defaultColWidth(number) = 100
-
 默认列宽。
+
+## dragOrder(Object)
+
+拖拽列顺序和行顺序配置。
+
+```typescript
+dragOrder: {
+  enableDragColumnOrder: boolean;
+  enableDragRowOrder: boolean;
+}
+```
 
 {{ target: sheet-filter-config }}
 

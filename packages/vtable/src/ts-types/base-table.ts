@@ -176,7 +176,7 @@ export interface IBaseTableProtected {
   _rowRangeHeightsMap: Map<string, number>; //存储指定行范围的总高度
   _colRangeWidthsMap: Map<string, number>; //存储指定列范围的总宽度
 
-  _widthResizedColMap: Set<number | string>; //记录下被手动调整过列宽的列号
+  _widthResizedColMap: Set<number>; //记录下被手动调整过列宽的列号
   _heightResizedRowMap: Set<number>; //记录下被手动调整过行高的行号
 
   bodyHelper: BodyHelper;
@@ -299,6 +299,7 @@ export interface IBaseTableProtected {
   _oldColCount?: number;
 
   columnWidthConfig?: any;
+  rowHeightConfig?: any;
 }
 export interface BaseTableConstructorOptions {
   // /** 指定表格的行数 */
@@ -1077,8 +1078,12 @@ export interface ListTableProtected extends IBaseTableProtected {
   columns: ColumnsDefine;
   layoutMap: SimpleHeaderLayoutMap;
   columnWidthConfig?: {
-    key: string;
+    key: string | number;
     width: number;
+  }[];
+  rowHeightConfig?: {
+    key: number;
+    height: number;
   }[];
 
   groupBy: GroupByOption;

@@ -155,7 +155,9 @@ export class FilterStateManager {
     });
 
     // 更新表格列定义
-    (this.table as ListTable).updateColumns(columns);
+    (this.table as ListTable).updateColumns(columns, {
+      clearRowHeightCache: false
+    });
   }
 
   private shouldApplyFilter(action: FilterAction) {
