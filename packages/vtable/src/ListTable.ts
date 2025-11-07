@@ -57,6 +57,12 @@ import type { IListTreeStickCellPlugin, ListTreeStickCellPlugin } from './plugin
 import { fixUpdateRowRange } from './tools/update-row';
 import { clearChartRenderQueue } from './scenegraph/graphic/contributions/chart-render-helper';
 import { getCustomMergeCellFunc } from './core/utils/get-custom-merge-cell-func';
+import {
+  adjustHeightResizedRowMap,
+  adjustHeightResizedRowMapWithAddRecordIndex,
+  adjustHeightResizedRowMapWithDeleteRecordIndex,
+  adjustWidthResizedColMap
+} from './state/cell-move/adjust-header';
 // import {
 //   registerAxis,
 //   registerEmptyTip,
@@ -137,6 +143,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.showHeader = options.showHeader ?? true;
 
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
+    this.internalProps.rowHeightConfig = options.rowHeightConfig;
 
     this.transpose = options.transpose ?? false;
     if (Env.mode !== 'node') {
@@ -663,6 +670,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     this.internalProps.useOneRowHeightFillAll = false;
 
     this.internalProps.columnWidthConfig = options.columnWidthConfig;
+    this.internalProps.rowHeightConfig = options.rowHeightConfig;
 
     // this.hasMedia = null; // 避免重复绑定
     // 清空目前数据
@@ -876,6 +884,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
           targetCellRange.end.col - targetCellRange.start.col + 1,
           moveContext.targetIndex
         );
+        adjustWidthResizedColMap(moveContext, this);
+
         if (!this.transpose) {
           //下面代码取自refreshHeader列宽设置逻辑
           //设置列宽极限值 TODO 目前是有问题的 最大最小宽度限制 移动列位置后不正确
@@ -914,6 +924,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
             moveContext.targetIndex
           );
         }
+        adjustHeightResizedRowMap(moveContext, this);
       }
       return moveContext;
     }
@@ -1287,7 +1298,12 @@ export class ListTable extends BaseTable implements ListTableAPI {
       this.stateManager.updateSortState(sortState);
     }
   }
-  updateFilterRules(filterRules: FilterRules) {
+  updateFilterRules(
+    filterRules: FilterRules,
+    options: {
+      clearRowHeightCache?: boolean;
+    } = { clearRowHeightCache: true }
+  ) {
     this.scenegraph.clearCells();
     if (this.sortState) {
       this.dataSource.updateFilterRulesForSorted(filterRules);
@@ -1297,7 +1313,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
     this.refreshRowColCount();
     this.stateManager.initCheckedState(this.records);
-    this.scenegraph.createSceneGraph();
+    this.scenegraph.createSceneGraph(!!!options?.clearRowHeightCache);
     this.resize();
   }
   /** 获取过滤后的数据 */
@@ -1594,8 +1610,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addRecord(record: any, recordIndex?: number | number[]) {
     const success = listTableAddRecord(record, recordIndex, this);
+    adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, [record]);
     this.internalProps.emptyTip?.resetVisible();
-
     // 只在成功添加时触发事件
     if (success) {
       this.fireListeners(TABLE_EVENT_TYPE.ADD_RECORD, {
@@ -1615,6 +1631,10 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   addRecords(records: any[], recordIndex?: number | number[]) {
     const success = listTableAddRecords(records, recordIndex, this);
+    //_heightResizedRowMap修正，里面的行号需要修正，保证添加数据后 其他行号做对应调整
+    if (typeof recordIndex === 'number') {
+      adjustHeightResizedRowMapWithAddRecordIndex(this as ListTable, recordIndex as number, records);
+    }
     this.internalProps.emptyTip?.resetVisible();
 
     // 只在成功添加时触发事件
@@ -1633,6 +1653,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
    */
   deleteRecords(recordIndexs: number[] | number[][]) {
     listTableDeleteRecords(recordIndexs, this);
+    adjustHeightResizedRowMapWithDeleteRecordIndex(this as ListTable, recordIndexs as number[]);
     this.internalProps.emptyTip?.resetVisible();
     const rowIndexs = [];
     for (let i = 0; i < recordIndexs.length; i++) {

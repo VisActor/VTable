@@ -52,6 +52,20 @@ export interface ISheetDefine {
   sortState?: SortState[] | SortState | null;
   /** 主题 */
   theme?: IThemeDefine;
+  /** 列宽配置 */
+  columnWidthConfig?: {
+    key: string | number;
+    width: number;
+  }[];
+  /** 行高配置 */
+  rowHeightConfig?: {
+    key: number;
+    height: number;
+  }[];
+  dragOrder?: {
+    enableDragColumnOrder?: boolean;
+    enableDragRowOrder?: boolean;
+  };
 }
 export interface IThemeDefine {
   rowSeriesNumberCellStyle?: TableSeriesNumberOptions['rowSeriesNumberCellStyle'];
@@ -97,6 +111,11 @@ export interface IVTableSheetOptions {
   defaultRowHeight?: number;
   /** 默认列宽 */
   defaultColWidth?: number;
+  /** 拖拽列顺序和行顺序配置 如果sheets中单独配置过，这个配置会被忽略*/
+  dragOrder: {
+    enableDragColumnOrder: true;
+    enableDragRowOrder: true;
+  };
 }
 export * from './base';
 export * from './event';

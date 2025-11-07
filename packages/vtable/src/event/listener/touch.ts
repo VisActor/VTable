@@ -1,6 +1,12 @@
 import { vglobal } from '@src/vrender';
 import type { FederatedPointerEvent } from '@src/vrender';
-import { handleWhell, isHorizontalScrollable, isVerticalScrollable } from '../scroll';
+import {
+  handleWhell,
+  isHorizontalExistScrollBar,
+  isHorizontalScrollable,
+  isVerticalExistScrollBar,
+  isVerticalScrollable
+} from '../scroll';
 import type { EventManager } from '../event';
 import { IconFuncTypeEnum } from '../../ts-types';
 
@@ -69,7 +75,9 @@ export function bindTouchListener(eventManager: EventManager) {
 
         if (
           e.cancelable &&
-          (table.internalProps.overscrollBehavior === 'none' ||
+          ((table.internalProps.overscrollBehavior === 'none' &&
+            ((deltaY && isVerticalExistScrollBar(stateManager)) ||
+              (deltaX && isHorizontalExistScrollBar(stateManager)))) ||
             (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0 && isVerticalScrollable(deltaY, stateManager)) ||
             (Math.abs(deltaY) <= Math.abs(deltaX) && deltaX !== 0 && isHorizontalScrollable(deltaX, stateManager)))
         ) {

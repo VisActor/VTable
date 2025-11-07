@@ -96,14 +96,15 @@ export class TableCarouselAnimationPlugin implements pluginsDefinition.IVTablePl
     }
 
     let animation = true;
+    const screenTopRow = Math.max(this.table.scenegraph.proxy.screenTopRow, this.table.frozenRowCount);
     const customRow = this.customDistRowFunction && this.customDistRowFunction(this.row, this.table);
     if (customRow) {
       this.row = customRow.distRow;
       animation = customRow.animation ?? true;
-    } else if (isInteger(this.row) && this.table.scenegraph.proxy.screenTopRow !== this.row) {
+    } else if (isInteger(this.row) && screenTopRow !== this.row) {
       this.row = this.table.frozenRowCount;
       animation = false;
-    } else if (!isInteger(this.row) && this.table.scenegraph.proxy.screenTopRow !== Math.floor(this.row)) {
+    } else if (!isInteger(this.row) && screenTopRow !== Math.floor(this.row)) {
       this.row = this.table.frozenRowCount;
       animation = false;
     } else {

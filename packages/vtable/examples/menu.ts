@@ -85,6 +85,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-data-del-promise'
+      },
+      {
+        path: 'list',
         name: 'list-dataSource-changeOrder'
       },
       {
@@ -370,6 +374,14 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-circlePacking'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-boxPlot'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-boxPlot-horizontal'
       },
       {
         path: 'pivot-chart',
