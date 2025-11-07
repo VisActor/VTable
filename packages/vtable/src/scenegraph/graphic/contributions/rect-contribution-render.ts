@@ -153,7 +153,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       // highlightStrokeArrayPart = (rectAttribute as any).highlightStrokeArrayPart,
     } = rect.attribute as any;
 
-    if (!stroke || (!Array.isArray(strokeArrayWidth) && lineWidth === 0)) {
+    if (!stroke || (!Array.isArray(strokeArrayWidth) && lineWidth === 0) || width <= 0 || height <= 0) {
       return;
     }
 
