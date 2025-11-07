@@ -1,3 +1,28 @@
+# v1.22.3
+
+2025-11-07
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-sheet**: add dragOrder to vtableSheet
+- **@visactor/vtable**: add api getCellRowHeaderFullPaths for pivotTable
+- **@visactor/vtable**: support boxPlot chart in pivotChart
+
+**🐛 Bug fix**
+
+- **@visactor/vtable-sheet**: vtable-sheet drag column position [#4645](https://github.com/VisActor/VTable/issues/4645)
+- **@visactor/vtable**: leftTop cornder render frame border line [#4677](https://github.com/VisActor/VTable/issues/4677)
+- **@visactor/vtable**: the getTargetGroup method of vue-vtable [#4663](https://github.com/VisActor/VTable/issues/4663)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: overscrollBehavior set none not scrollbar effect [#4675](https://github.com/VisActor/VTable/issues/4675)
+
+
+
+[more detail about v1.22.3](https://github.com/VisActor/VTable/releases/tag/v1.22.3)
+
 # v1.22.2
 
 2025-10-29
