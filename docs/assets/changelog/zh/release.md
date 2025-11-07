@@ -5,19 +5,19 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-sheet**: add dragOrder to vtableSheet
-- **@visactor/vtable**: add api getCellRowHeaderFullPaths for pivotTable
-- **@visactor/vtable**: support boxPlot chart in pivotChart
+- **@visactor/vtable-sheet**: 新增 dragOrder 配置，支持拖拽行或列顺序
+- **@visactor/vtable**: 新增 api getCellRowHeaderFullPaths 方法，支持获取透视表单元格的行表头完整路径
+- **@visactor/vtable**: 在透视图中支持 boxPlot 图表类型
 
 **🐛 功能修复**
 
-- **@visactor/vtable-sheet**: vtable-sheet drag column position [#4645](https://github.com/VisActor/VTable/issues/4645)
-- **@visactor/vtable**: leftTop cornder render frame border line [#4677](https://github.com/VisActor/VTable/issues/4677)
-- **@visactor/vtable**: the getTargetGroup method of vue-vtable [#4663](https://github.com/VisActor/VTable/issues/4663)
+- **@visactor/vtable-sheet**: 修复拖拽列位置问题 [#4645](https://github.com/VisActor/VTable/issues/4645)
+- **@visactor/vtable**: 修复左上角渲染边框线问题 [#4677](https://github.com/VisActor/VTable/issues/4677)
+- **@visactor/vtable**: 修复 vue-vtable 的 getTargetGroup 方法 [#4663](https://github.com/VisActor/VTable/issues/4663)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: overscrollBehavior set none not scrollbar effect [#4675](https://github.com/VisActor/VTable/issues/4675)
+- **@visactor/vtable**: 优化 overscrollBehavior 设置为 none 交互效果 [#4675](https://github.com/VisActor/VTable/issues/4675)
 
 
 
