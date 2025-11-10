@@ -118,6 +118,14 @@ export function createTable() {
       chartSpec: {
         type: 'common',
         direction: 'horizontal',
+        crosshair: {
+          xField: {
+            visible: false
+          },
+          yField: {
+            visible: true
+          }
+        },
         series: [
           {
             type: 'bar',
@@ -9217,13 +9225,18 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.PivotChartConstructorOptions = {
     columnTree,
     rowTree,
     rows,
     columns,
     indicators,
     indicatorsAsCol: true,
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightOfLastRowToShowTooltip: 80,
+      widthOfLastColumnToShowTooltip: 80
+    },
     container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,
@@ -9241,10 +9254,10 @@ export function createTable() {
       selectionStyle: {
         cellBgColor: ''
       }
-    }),
+    })
     // widthMode: 'adaptive',
     // heightMode: 'adaptive',
-    showRowHeader: false
+    // showRowHeader: false
     // showColumnHeader:false,
     // hover: {
     //   disableHeaderHover:false,

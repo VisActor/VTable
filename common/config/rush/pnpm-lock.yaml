@@ -4283,14 +4283,14 @@ packages:
   /@visactor/vchart/2.0.2:
     resolution: {integrity: sha512-9ERESHbN/HaTlNmT9yom28IsoJuIW0hO4ngrtXwvQwqMEOoimly+BaDUiq0emFSUXGnDTbv5sVai1OQT/17xyA==}
     dependencies:
-      '@visactor/vdataset': 1.0.9
-      '@visactor/vlayouts': 1.0.9
+      '@visactor/vdataset': 1.0.14
+      '@visactor/vlayouts': 1.0.14
       '@visactor/vrender-animate': 1.0.9
       '@visactor/vrender-components': 1.0.9
       '@visactor/vrender-core': 1.0.9
       '@visactor/vrender-kits': 1.0.9
-      '@visactor/vscale': 1.0.9
-      '@visactor/vutils': 1.0.9
+      '@visactor/vscale': 1.0.14
+      '@visactor/vutils': 1.0.14
       '@visactor/vutils-extension': 2.0.2
 
   /@visactor/vdataset/0.18.18:
@@ -4315,13 +4315,13 @@ packages:
       topojson-client: 3.1.0
     dev: false
 
-  /@visactor/vdataset/1.0.9:
-    resolution: {integrity: sha512-8OJWm8rZ1ss46r7BgO7L7se0qb28Ygk1yd999tV5SsN7R06sgB08l6ZP8dbvAXlYW08FWLYXc5RmCTRVG8mL2Q==}
+  /@visactor/vdataset/1.0.14:
+    resolution: {integrity: sha512-V7bBDQ6iUNxWEPS34l6CJjjvhyCo+PLLZkoWOJ4Gkpk33S9aLTYDijWEdQlU6aQxjoAdbBDMuXlZ5ph6Zwe1+A==}
     dependencies:
       '@turf/flatten': 6.5.0
       '@turf/helpers': 6.5.0
       '@turf/rewind': 6.5.0
-      '@visactor/vutils': 1.0.9
+      '@visactor/vutils': 1.0.14
       d3-dsv: 2.0.0
       d3-geo: 1.12.1
       d3-hexbin: 0.2.2
@@ -4336,13 +4336,13 @@ packages:
       simplify-geojson: 1.0.5
       topojson-client: 3.1.0
 
-  /@visactor/vlayouts/1.0.9:
-    resolution: {integrity: sha512-85oR9zRfxidq2TCScSAfPWUYeqxIcH4LSKNQPKBmXc1f+nqw7SV3NKT/oiYfrqrbdNxF29jn06R2eaGlo3LaDg==}
+  /@visactor/vlayouts/1.0.14:
+    resolution: {integrity: sha512-nzuiRk4aaGoTpKnqmkdSa+8KGTiTBMZIPl8WPv8BqYIbqE1sql58dCx5xdF3jS8RGySL0NWHs/IWaDjF6FHTVw==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
-      '@visactor/vscale': 1.0.9
-      '@visactor/vutils': 1.0.9
+      '@visactor/vscale': 1.0.14
+      '@visactor/vutils': 1.0.14
       eventemitter3: 4.0.7
 
   /@visactor/vrender-animate/1.0.21:
@@ -4423,15 +4423,15 @@ packages:
       '@visactor/vutils': 1.0.12
     dev: false
 
+  /@visactor/vscale/1.0.14:
+    resolution: {integrity: sha512-hpV/11eKc2BJ9ZiduM/3zNOraCIIkt209HZ+C1brqbJzM3sBNBwEofm+rT/7Ylz1LOwxFMO1WLiZiAAMt6myRw==}
+    dependencies:
+      '@visactor/vutils': 1.0.14
+
   /@visactor/vscale/1.0.6:
     resolution: {integrity: sha512-E6ySrzOIyL85luy5dKPpKzaCjf/hkLFF/mAn37Lv8XJWhyxWjYO29GM7cIlqDNCKAY0qsONPnfmgdGX+Hoe5vg==}
     dependencies:
       '@visactor/vutils': 1.0.6
-
-  /@visactor/vscale/1.0.9:
-    resolution: {integrity: sha512-8u7ousY+Yo9smgcPyFePYl45sD4VXciQf9JOAc2jncNFIyZch7/2Li2CvqL3HPrdenjrl1twAVc5C5IPbyEUyQ==}
-    dependencies:
-      '@visactor/vutils': 1.0.9
 
   /@visactor/vutils-extension/1.11.14:
     resolution: {integrity: sha512-vfViZphXJBH0NwCHIoe8S1/+tDtykEKIfsLMIHprh7Azv7fVSB1eotG00SAegK75E18ARQGNXF1DxixUFiXSIQ==}
@@ -4443,8 +4443,8 @@ packages:
   /@visactor/vutils-extension/2.0.2:
     resolution: {integrity: sha512-qknQZmr6qnLrMOUXMnuLyFln3wTtOhFUNYoNpYyupwrPCIRleR8LKnBycJ1TRANFBZELSI1R5471T9hENUgz2w==}
     dependencies:
-      '@visactor/vdataset': 1.0.9
-      '@visactor/vutils': 1.0.12
+      '@visactor/vdataset': 1.0.14
+      '@visactor/vutils': 1.0.14
 
   /@visactor/vutils/0.18.18:
     resolution: {integrity: sha512-byEJefqxiCz3UWe+YedEVjsdPtnJOAtKdRYi4qT9ojgACdd6QqlWs53Eb7PlMZgWDxVxqkxJP2bZnRKw+ME0Xg==}
@@ -4468,16 +4468,17 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
+    dev: false
 
-  /@visactor/vutils/1.0.6:
-    resolution: {integrity: sha512-87/AYLrjY1rtvIT0N/9S+sESialMQUKYv7MDjLjUo37u0hmeL/AwRSGBSvjxdxayKHOmdwUK1BLpQrDIrssKLg==}
+  /@visactor/vutils/1.0.14:
+    resolution: {integrity: sha512-x925pDRsyrgADjU6kcHhaMBPWG4xCD4BR0hEVzkCIU35rAX/EudQAOLK6OESvamQ+e7etuH9hE/djxztG61YSQ==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
 
-  /@visactor/vutils/1.0.9:
-    resolution: {integrity: sha512-78Y7ZbpViscZuGIfsUAahilBHnMpAjIhbTvS4g04H4DOu/a5kNyvF6J2a4u4JFGMbazdzY9L1lDQ9koNdpviGQ==}
+  /@visactor/vutils/1.0.6:
+    resolution: {integrity: sha512-87/AYLrjY1rtvIT0N/9S+sESialMQUKYv7MDjLjUo37u0hmeL/AwRSGBSvjxdxayKHOmdwUK1BLpQrDIrssKLg==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0

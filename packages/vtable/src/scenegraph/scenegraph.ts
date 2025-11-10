@@ -83,6 +83,7 @@ import type { FederatedPointerEvent } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
+import type { Chart } from './graphic/chart';
 
 registerForVrender();
 
@@ -714,21 +715,43 @@ export class Scenegraph {
       return;
     }
     const cellGroup = this.getCell(col, row);
-    (cellGroup?.firstChild as any)?.deactivate?.(
-      this.table,
-      (this.table.options as PivotChartConstructorOptions).enableChartDimensionLinkage
-        ? {
-            releaseChartInstance:
-              col !== this.table.stateManager.hover.cellPos.col ||
-              this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
-              this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
-            releaseColumnChartInstance:
-              col !== this.table.stateManager.hover.cellPos.col ||
-              this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
-              this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount
-          }
-        : undefined
-    );
+    if ((cellGroup?.firstChild as any)?.deactivate) {
+      const chartNode = cellGroup?.firstChild as Chart;
+      const chartType = chartNode.attribute.spec.type;
+
+      (cellGroup?.firstChild as any)?.deactivate?.(
+        this.table,
+        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage
+          ? {
+              releaseChartInstance:
+                chartType === 'scatter'
+                  ? (col !== this.table.stateManager.hover.cellPos.col &&
+                      row !== this.table.stateManager.hover.cellPos.row) ||
+                    this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                    this.table.stateManager.hover.cellPos.row >
+                      this.table.rowCount - 1 - this.table.bottomFrozenRowCount ||
+                    this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                    this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+                  : (this.table.options as PivotChartConstructorOptions).indicatorsAsCol
+                  ? row !== this.table.stateManager.hover.cellPos.row ||
+                    this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                    this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+                  : col !== this.table.stateManager.hover.cellPos.col ||
+                    this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                    this.table.stateManager.hover.cellPos.row >
+                      this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+              releaseColumnChartInstance:
+                col !== this.table.stateManager.hover.cellPos.col ||
+                this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+              releaseRowChartInstance:
+                row !== this.table.stateManager.hover.cellPos.row ||
+                this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+            }
+          : undefined
+      );
+    }
   }
   /**
    * hover 到单元格上 激活该单元格对应的图表实例

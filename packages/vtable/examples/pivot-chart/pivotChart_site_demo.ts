@@ -39,6 +39,12 @@ export function createTable() {
             // type: 'common',
             stack: true,
             type: 'bar',
+            tooltip: {
+              visible: true,
+              dimension: {
+                positionMode: 'pointer'
+              }
+            },
             crosshair: {
               xField: {
                 visible: true
@@ -153,6 +159,13 @@ export function createTable() {
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
+            tooltip: {
+              visible: true,
+              dimension: {
+                positionMode: 'pointer',
+                position: 'centerTop'
+              }
+            },
             crosshair: {
               xField: {
                 visible: true
@@ -341,7 +354,7 @@ export function createTable() {
           }
         }
       ];
-      const option: VTable.PivotTableConstructorOptions = {
+      const option: VTable.PivotChartConstructorOptions = {
         rows,
         columns,
         indicators,
@@ -433,7 +446,11 @@ export function createTable() {
             borderLineWidth: 0
           }
         },
-        enableChartDimensionLinkage: true
+        chartDimensionLinkage: {
+          showTooltip: true,
+          heightOfLastRowToShowTooltip: 60,
+          widthOfLastColumnToShowTooltip: 90
+        }
         // renderChartAsync: true
       };
 

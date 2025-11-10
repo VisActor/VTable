@@ -4,7 +4,12 @@ import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
-import { clearChartInstanceList, generateChartInstanceListByColumnDirection } from './active-cell-chart-list';
+import {
+  clearChartInstanceListByColumnDirection,
+  clearChartInstanceListByRowDirection,
+  generateChartInstanceListByColumnDirection,
+  generateChartInstanceListByRowDirection
+} from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
@@ -38,7 +43,6 @@ export class Chart extends Rect {
   declare attribute: IChartGraphicAttribute;
   chartInstance: any;
   activeChartInstance: any;
-  active: boolean;
   cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
   isShareChartSpec: boolean; //针对chartSpec用户配置成函数形式的话 就不需要存储chartInstance了 会太占内存，使用这个变量 当渲染出缓存图表会就删除chartInstance实例
   constructor(isShareChartSpec: boolean, params: IChartGraphicAttribute) {
@@ -92,10 +96,9 @@ export class Chart extends Rect {
    * @param table
    */
   activate(table: BaseTableAPI) {
-    if (this.active && this.activeChartInstance) {
+    if (this.activeChartInstance) {
       return;
     }
-    this.active = true;
     const { col, row } = this.parent;
     const hoverColor = getCellHoverColor(this.parent, table);
     // this.chart = new TestChart(this.attribute.spec);
@@ -215,14 +218,34 @@ export class Chart extends Rect {
         Chart.temp = 1;
       }, 0);
     });
-    if ((table.options as PivotChartConstructorOptions).enableChartDimensionLinkage) {
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage) {
       this.activeChartInstance.on('dimensionHover', (params: any) => {
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;
-        console.log('----vchart dimensionHover', params, params.action, dimensionInfo);
         if (params.action === 'enter') {
           const dimensionValue = dimensionInfo.value;
-          generateChartInstanceListByColumnDirection(col, dimensionValue, canvasXY, table);
+          const position = dimensionInfo.position;
+          const indicatorsAsCol = (table.options as PivotChartConstructorOptions).indicatorsAsCol;
+          if (this.attribute.spec.type === 'scatter') {
+            generateChartInstanceListByColumnDirection(
+              col,
+              indicatorsAsCol ? position : dimensionValue,
+              canvasXY,
+              table,
+              true
+            );
+            generateChartInstanceListByRowDirection(
+              row,
+              !indicatorsAsCol ? position : dimensionValue,
+              canvasXY,
+              table,
+              true
+            );
+          } else if (indicatorsAsCol) {
+            generateChartInstanceListByRowDirection(row, dimensionValue, canvasXY, table);
+          } else {
+            generateChartInstanceListByColumnDirection(col, dimensionValue, canvasXY, table);
+          }
         }
       });
     }
@@ -237,10 +260,19 @@ export class Chart extends Rect {
     table: BaseTableAPI,
     {
       releaseChartInstance = true,
-      releaseColumnChartInstance = true
-    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean } = {}
+      releaseColumnChartInstance = true,
+      releaseRowChartInstance = true
+    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean; releaseRowChartInstance?: boolean } = {}
   ) {
-    this.active = false;
+    console.log(
+      '------deactivate',
+      releaseChartInstance,
+      releaseColumnChartInstance,
+      releaseRowChartInstance,
+      window.chartInstanceListColumnByColumnDirection,
+      window.chartInstanceListColumnByRowDirection
+    );
+
     if (releaseChartInstance) {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd
@@ -258,7 +290,18 @@ export class Chart extends Rect {
       this.activeChartInstance = null;
     }
     if (releaseColumnChartInstance) {
-      clearChartInstanceList(this.parent.col, table);
+      clearChartInstanceListByColumnDirection(
+        this.parent.col,
+        this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
+        table
+      );
+    }
+    if (releaseRowChartInstance) {
+      clearChartInstanceListByRowDirection(
+        this.parent.row,
+        this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
+        table
+      );
     }
   }
   /** 更新图表对应数据 */

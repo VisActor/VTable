@@ -991,9 +991,9 @@ export interface BaseTableAPI {
   /** 获取表格body部分的显示单元格范围 */
   getBodyVisibleCellRange: () => { rowStart: number; colStart: number; rowEnd: number; colEnd: number };
   /** 获取表格body部分的显示列号范围 */
-  getBodyVisibleColRange: () => { colStart: number; colEnd: number };
+  getBodyVisibleColRange: (deltaX?: number) => { colStart: number; colEnd: number };
   /** 获取表格body部分的显示行号范围 */
-  getBodyVisibleRowRange: () => { rowStart: number; rowEnd: number };
+  getBodyVisibleRowRange: (deltaY?: number) => { rowStart: number; rowEnd: number };
 
   _hasCustomRenderOrLayout: () => boolean;
   /** 根据表格单元格的行列号 获取在body部分的列索引及行索引 */

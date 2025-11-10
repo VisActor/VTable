@@ -1245,23 +1245,23 @@ export function createTable() {
         },
         crosshair: {
           yField: {
+            label: {
+              visible: false
+            },
             visible: true,
             line: {
               visible: true,
               type: 'line'
-            },
-            label: {
-              visible: true // label 默认关闭
             }
           },
           xField: {
+            label: {
+              visible: false
+            },
             visible: true,
             line: {
               visible: true,
               type: 'line'
-            },
-            label: {
-              visible: true // label 默认关闭
             }
           }
         },
@@ -1324,10 +1324,10 @@ export function createTable() {
         autoWrapText: true
       }
     },
-
-    pagination: {
-      currentPage: 0,
-      perPageCount: 8
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightOfLastRowToShowTooltip: 60,
+      widthOfLastColumnToShowTooltip: 90
     }
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
