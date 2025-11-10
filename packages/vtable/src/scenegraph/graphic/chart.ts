@@ -264,14 +264,7 @@ export class Chart extends Rect {
       releaseRowChartInstance = true
     }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean; releaseRowChartInstance?: boolean } = {}
   ) {
-    console.log(
-      '------deactivate',
-      releaseChartInstance,
-      releaseColumnChartInstance,
-      releaseRowChartInstance,
-      window.chartInstanceListColumnByColumnDirection,
-      window.chartInstanceListColumnByRowDirection
-    );
+    console.log('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
 
     if (releaseChartInstance) {
       // move active chart view box out of browser view
