@@ -18,7 +18,8 @@ export const chartInstanceListRowByRowDirection: Record<number, Record<number, a
  */
 export function generateChartInstanceListByColumnDirection(
   col: number,
-  dimensionValue: string,
+  dimensionValueOrXValue: string,
+  positionValueOrYValue: string | number,
   canvasXY: { x: number; y: number },
   table: BaseTableAPI,
   isScatter: boolean = false
@@ -26,7 +27,10 @@ export function generateChartInstanceListByColumnDirection(
   if (!isValid(chartInstanceListColumnByColumnDirection[col])) {
     chartInstanceListColumnByColumnDirection[col] = {};
   }
-  const { rowStart, rowEnd } = table.getBodyVisibleRowRange(); //增加10像素的偏移量，最后一行不是完整显示的chart就不显示tooltip
+  const { rowStart } = table.getBodyVisibleRowRange();
+  let rowEnd = table.getBodyVisibleRowRange().rowEnd;
+  rowEnd = Math.min(table.rowCount - 1 - table.bottomFrozenRowCount, rowEnd);
+  //增加10像素的偏移量，最后一行不是完整显示的chart就不显示tooltip
   for (let i = rowStart; i <= rowEnd; i++) {
     const cellGroup = table.scenegraph.getCell(col, i);
     const chartNode = cellGroup?.getChildren()?.[0] as Chart;
@@ -64,18 +68,29 @@ export function generateChartInstanceListByColumnDirection(
               }
             }
           }
-          const _21Group = table.scenegraph.getCell(2, 1).firstChild.activeChartInstance;
-          console.log(
-            'setDimensionIndex column',
-            col,
-            i,
-            chartInstanceListColumnByColumnDirection[col][i].id,
-            _21Group?.id
-          );
-          chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValue, {
-            tooltip: isShowTooltip,
-            showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3 }
-          });
+          //测试代码 用于查看图表实例的id
+          // const _21Group = table.scenegraph.getCell(2, 1).firstChild.activeChartInstance;
+          // console.log(
+          //   'setDimensionIndex column',
+          //   col,
+          //   i,
+          //   chartInstanceListColumnByColumnDirection[col][i].id,
+          //   _21Group?.id
+          // );
+          if (isScatter) {
+            chartInstanceListColumnByColumnDirection[col][i].showCrosshair((axis: any) => {
+              // console.log('showCrosshair', axis.layoutOrient, dimensionValueOrXValue);
+              if (axis.layoutOrient === 'left') {
+                return positionValueOrYValue;
+              }
+              return dimensionValueOrXValue;
+            });
+          } else {
+            chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
+              tooltip: isShowTooltip,
+              showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3 }
+            });
+          }
         }
       }, 0);
     }
@@ -111,7 +126,8 @@ export function clearChartInstanceListByColumnDirection(col: number, excludedRow
  */
 export function generateChartInstanceListByRowDirection(
   row: number,
-  dimensionValue: string,
+  dimensionValueOrXValue: string,
+  positionValueOrYValue: string | number,
   canvasXY: { x: number; y: number },
   table: BaseTableAPI,
   isScatter: boolean = false
@@ -119,7 +135,9 @@ export function generateChartInstanceListByRowDirection(
   if (!isValid(chartInstanceListRowByRowDirection[row])) {
     chartInstanceListRowByRowDirection[row] = {};
   }
-  const { colStart, colEnd } = table.getBodyVisibleColRange(); //增加10像素的偏移量，最后一列不是完整显示的chart就不显示tooltip
+  const { colStart } = table.getBodyVisibleColRange();
+  let colEnd = table.getBodyVisibleColRange().colEnd;
+  colEnd = Math.min(table.colCount - 1 - table.rightFrozenColCount, colEnd);
   for (let i = colStart; i <= colEnd; i++) {
     const cellGroup = table.scenegraph.getCell(i, row);
     const chartNode = cellGroup?.getChildren()?.[0] as Chart;
@@ -157,15 +175,20 @@ export function generateChartInstanceListByRowDirection(
               }
             }
           }
-          console.log('setDimensionIndex row', i, row, chartInstanceListRowByRowDirection[row][i].id);
-          chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValue, {
-            // filter: (args: any) => {
-            //   // debugger;
-            //   return args.type === 'cartesianAxis-linear' && args.layoutOrient === 'left';
-            // },
-            tooltip: isShowTooltip,
-            showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y }
-          });
+          // console.log('setDimensionIndex row', i, row, chartInstanceListRowByRowDirection[row][i].id);
+          if (isScatter) {
+            chartInstanceListRowByRowDirection[row][i].showCrosshair((axis: any) => {
+              if (axis.layoutOrient === 'left') {
+                return positionValueOrYValue;
+              }
+              return dimensionValueOrXValue;
+            });
+          } else {
+            chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
+              tooltip: isShowTooltip,
+              showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y }
+            });
+          }
         }
       }, 0);
     }

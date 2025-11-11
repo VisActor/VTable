@@ -222,29 +222,22 @@ export class Chart extends Rect {
       this.activeChartInstance.on('dimensionHover', (params: any) => {
         const dimensionInfo = params?.dimensionInfo[0];
         const canvasXY = params?.event?.canvas;
-        if (params.action === 'enter') {
-          const dimensionValue = dimensionInfo.value;
-          const position = dimensionInfo.position;
-          const indicatorsAsCol = (table.options as PivotChartConstructorOptions).indicatorsAsCol;
-          if (this.attribute.spec.type === 'scatter') {
-            generateChartInstanceListByColumnDirection(
-              col,
-              indicatorsAsCol ? position : dimensionValue,
-              canvasXY,
-              table,
-              true
-            );
-            generateChartInstanceListByRowDirection(
-              row,
-              !indicatorsAsCol ? position : dimensionValue,
-              canvasXY,
-              table,
-              true
-            );
-          } else if (indicatorsAsCol) {
-            generateChartInstanceListByRowDirection(row, dimensionValue, canvasXY, table);
-          } else {
-            generateChartInstanceListByColumnDirection(col, dimensionValue, canvasXY, table);
+        const viewport = params?.event?.viewport;
+        if (this.attribute.spec.type === 'scatter') {
+          // console.log('receive scatter dimensionHover', params.action);
+          const xValue = dimensionInfo.data[0].series.positionToDataX(viewport.x);
+          const yValue = dimensionInfo.data[0].series.positionToDataY(viewport.y);
+          generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, true);
+          generateChartInstanceListByRowDirection(row, undefined, yValue, canvasXY, table, true);
+        } else {
+          if (params.action === 'enter') {
+            const dimensionValue = dimensionInfo.value;
+            const indicatorsAsCol = (table.options as PivotChartConstructorOptions).indicatorsAsCol;
+            if (indicatorsAsCol) {
+              generateChartInstanceListByRowDirection(row, dimensionValue, null, canvasXY, table);
+            } else {
+              generateChartInstanceListByColumnDirection(col, dimensionValue, null, canvasXY, table);
+            }
           }
         }
       });

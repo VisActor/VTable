@@ -159,13 +159,13 @@ export function createTable() {
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
-            tooltip: {
-              visible: true,
-              dimension: {
-                positionMode: 'pointer',
-                position: 'centerTop'
-              }
-            },
+            // tooltip: {
+            //   visible: true,
+            //   dimension: {
+            //     positionMode: 'pointer',
+            //     position: 'centerTop'
+            //   }
+            // },
             crosshair: {
               xField: {
                 visible: true

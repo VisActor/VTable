@@ -724,7 +724,7 @@ export class Scenegraph {
         (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage
           ? {
               releaseChartInstance:
-                chartType === 'scatter'
+                chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
                   ? (col !== this.table.stateManager.hover.cellPos.col &&
                       row !== this.table.stateManager.hover.cellPos.row) ||
                     this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
@@ -732,7 +732,7 @@ export class Scenegraph {
                       this.table.rowCount - 1 - this.table.bottomFrozenRowCount ||
                     this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
                     this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
-                  : (this.table.options as PivotChartConstructorOptions).indicatorsAsCol
+                  : (this.table.options as PivotChartConstructorOptions).indicatorsAsCol //非散点图的话判断是显示横向crosshair还是纵向crosshair
                   ? row !== this.table.stateManager.hover.cellPos.row ||
                     this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
                     this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount

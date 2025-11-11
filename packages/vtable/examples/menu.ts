@@ -333,6 +333,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-scatter-reverse'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-pie'
       },
       {

@@ -50,6 +50,33 @@ export function createTable() {
         chartModule: 'vchart',
         disableHeaderHover: true,
         chartSpec: {
+          tooltip: {
+            dimension: {
+              visible: false
+            }
+          },
+          crosshair: {
+            yField: {
+              label: {
+                visible: false
+              },
+              visible: true,
+              line: {
+                visible: true,
+                type: 'line'
+              }
+            },
+            xField: {
+              label: {
+                visible: false
+              },
+              visible: true,
+              line: {
+                visible: true,
+                type: 'line'
+              }
+            }
+          },
           axes: [
             {
               title: {
@@ -99,6 +126,33 @@ export function createTable() {
         chartModule: 'vchart',
         disableHeaderHover: true,
         chartSpec: {
+          tooltip: {
+            dimension: {
+              visible: false
+            }
+          },
+          crosshair: {
+            yField: {
+              label: {
+                visible: false
+              },
+              visible: true,
+              line: {
+                visible: true,
+                type: 'line'
+              }
+            },
+            xField: {
+              label: {
+                visible: false
+              },
+              visible: true,
+              line: {
+                visible: true,
+                type: 'line'
+              }
+            }
+          },
           axes: [
             {
               title: {
@@ -121,6 +175,7 @@ export function createTable() {
           data: {
             id: 'col_59'
           },
+
           scatter: {
             state: {
               selected_reverse: {
@@ -387,6 +442,11 @@ export function createTable() {
         borderLineWidth: 0,
         borderColor: '#CBCBCB'
       }
+    },
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightOfLastRowToShowTooltip: 60,
+      widthOfLastColumnToShowTooltip: 90
     }
   };
 
