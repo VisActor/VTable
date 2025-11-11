@@ -85,6 +85,10 @@ export const menus = [
       },
       {
         path: 'list',
+        name: 'list-data-del-promise'
+      },
+      {
+        path: 'list',
         name: 'list-dataSource-changeOrder'
       },
       {

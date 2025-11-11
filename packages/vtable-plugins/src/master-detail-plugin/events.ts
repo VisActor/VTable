@@ -69,7 +69,7 @@ export class EventManager {
             // 重新调整单元格内容的纵向位置，使用原始高度
             const newHeight = effectiveCellHeight - (padding[0] + padding[2]);
             cellGroup.forEachChildren((child: any) => {
-              if (child.type === 'rect' || child.type === 'chart' || child.name === 'custom-container') {
+              if (child.type === 'rect' || child.type === 'chart' || child.name === VTable.CUSTOM_CONTAINER_NAME) {
                 return;
               }
               if (child.name === 'mark') {

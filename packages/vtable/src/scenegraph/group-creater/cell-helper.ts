@@ -12,11 +12,10 @@ import type {
   IRowSeriesNumber,
   TextColumnDefine,
   RadioColumnDefine,
-  ListTableConstructorOptions,
   SwitchColumnDefine,
   ButtonColumnDefine
 } from '../../ts-types';
-import { dealWithCustom } from '../component/custom';
+import { CUSTOM_CONTAINER_NAME, dealWithCustom } from '../component/custom';
 import type { Group } from '../graphic/group';
 import { getProp } from '../utils/get-prop';
 import type { CreateChartCellGroup } from './cell-type/chart-cell';
@@ -943,7 +942,7 @@ function updateCellContent(
   if (!addNew && oldCellGroup.parent) {
     // clear react container
     if (table.reactCustomLayout) {
-      const reactGroup = oldCellGroup.getChildByName('custom-container');
+      const reactGroup = oldCellGroup.getChildByName(CUSTOM_CONTAINER_NAME);
       if (reactGroup) {
         const { col, row } = reactGroup;
         if (isNumber(col) && isNumber(row)) {

@@ -2,6 +2,36 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.3",
+      "tag": "@visactor/vtable_v1.22.3",
+      "date": "Fri, 07 Nov 2025 09:51:25 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: vtable-sheet drag column position #4645\n\n"
+          },
+          {
+            "comment": "feat: add dragOrder to vtableSheet\n\n"
+          },
+          {
+            "comment": "refactor: overscrollBehavior set none not scrollbar effect #4675\n\n"
+          },
+          {
+            "comment": "fix: leftTop cornder render frame border line #4677\n\n"
+          },
+          {
+            "comment": "feat: add api getCellRowHeaderFullPaths for pivotTable\n\n"
+          },
+          {
+            "comment": "feat: support boxPlot chart in pivotChart\n\n"
+          },
+          {
+            "comment": "fix: the getTargetGroup method of vue-vtable #4663\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.2",
       "tag": "@visactor/vtable_v1.22.2",
       "date": "Wed, 29 Oct 2025 04:47:13 GMT",

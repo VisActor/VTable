@@ -252,6 +252,10 @@ const sheetInstance = new VTableSheet.VTableSheet(container, {
         ]
       }
     ]
+  },
+  dragOrder: {
+    enableDragColumnOrder: true,
+    enableDragRowOrder: true
   }
 });
 window.sheetInstance = sheetInstance;

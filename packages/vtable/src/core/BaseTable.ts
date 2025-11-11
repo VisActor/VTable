@@ -1745,6 +1745,8 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
       return true;
     } else if (this.options.customComputeRowHeight) {
       return true;
+    } else if (this.internalProps.rowHeightConfig) {
+      return true;
     } else if (row >= 0 && row < this.columnHeaderLevelCount) {
       return this.getDefaultRowHeight(row) === 'auto';
     }

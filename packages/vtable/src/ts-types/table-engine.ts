@@ -321,7 +321,8 @@ export interface ListTableConstructorOptions extends BaseTableConstructorOptions
   /** @deprecated 请使用groupConfig */
   enableTreeStickCell?: boolean;
 
-  columnWidthConfig?: { key: string; width: number }[];
+  columnWidthConfig?: { key: string | number; width: number }[];
+  rowHeightConfig?: { key: number; height: number }[];
 }
 
 export type GroupByOption = string | string[] | GroupConfig | GroupConfig[];
@@ -375,7 +376,7 @@ export interface ListTableAPI extends BaseTableAPI {
   addRecords: (records: any[], recordIndex?: number) => void;
   deleteRecords: (recordIndexs: number[]) => void;
   updateRecords: (records: any[], recordIndexs: (number | number[])[]) => void;
-  updateFilterRules: (filterRules: FilterRules) => void;
+  updateFilterRules: (filterRules: FilterRules, options: { clearRowHeightCache?: boolean }) => void;
   getAggregateValuesByField: (field: string | number) => {
     col: number;
     aggregateValue: { aggregationType: AggregationType; value: number | string }[];

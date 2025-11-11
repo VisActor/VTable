@@ -263,8 +263,8 @@ export class MasterDetailPlugin implements VTable.plugins.IVTablePlugin {
     this.updateRowHeightForExpand(rowIndex, deltaHeight);
     this.table.scenegraph.updateContainerHeight(rowIndex, deltaHeight);
     internalProps._heightResizedRowMap.add(rowIndex);
-    if(rowIndex === 96){
-      console.log("wokk");
+    if (rowIndex === 96) {
+      console.log('wokk');
     }
     this.subTableManager.renderSubTable(bodyRowIndex, childrenData, (record, bodyRowIndex) =>
       this.configManager.getDetailConfigForRecord(record, bodyRowIndex)

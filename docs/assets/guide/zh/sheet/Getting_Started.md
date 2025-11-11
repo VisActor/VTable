@@ -101,6 +101,7 @@ VTableSheet组件支持丰富的配置选项：
 | theme | ITheme | - | 表格主题配置 |
 | VTablePluginModules | Array | [] | 插件模块配置,可以将VTable支持的插件配置到VTableSheet中，也可以禁用掉某些已经内置使用的插件。插件的配置项请参考[VTable-Plugins](../plugin/usage) |
 | mainMenu | IMainMenu | - | 主菜单配置 |
+| dragOrder | Object | - | 拖拽列顺序和行顺序配置 ，如果sheets中ISheetDefine单独配置过，这个配置会被忽略|
 
 ### 工作表配置 (ISheetDefine)
 
@@ -119,6 +120,10 @@ VTableSheet组件支持丰富的配置选项：
 | frozenRowCount | number | 0 | 冻结的行数量 |
 | frozenColCount | number | 0 | 冻结的列数量 |
 | cellMerge | ICellMerge[] | [] | 单元格合并配置 |
+| dragOrder | Object | - | 拖拽列顺序和行顺序配置 |
+| columnWidthConfig | Object[] | [] | 列宽配置 |
+| rowHeightConfig | Object[] | [] | 行高配置 |
+| theme | IThemeDefine | - | 工作表主题配置 |
 
 **注意：**
 
