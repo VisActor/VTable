@@ -1,6 +1,15 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 03 Sep 2025 04:35:33 GMT and should not be manually modified.
+This log was last generated on Tue, 11 Nov 2025 07:05:35 GMT and should not be manually modified.
+
+## 1.18.11
+Tue, 11 Nov 2025 07:05:35 GMT
+
+### Updates
+
+- feat: add api getCellRowHeaderFullPaths for pivotTable
+
+
 
 ## 1.18.10
 Wed, 03 Sep 2025 04:35:33 GMT

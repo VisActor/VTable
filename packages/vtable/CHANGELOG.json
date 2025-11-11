@@ -2,6 +2,18 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.18.11",
+      "tag": "@visactor/vtable_v1.18.11",
+      "date": "Tue, 11 Nov 2025 07:05:35 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add api getCellRowHeaderFullPaths for pivotTable\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.18.10",
       "tag": "@visactor/vtable_v1.18.10",
       "date": "Wed, 03 Sep 2025 04:35:33 GMT",
