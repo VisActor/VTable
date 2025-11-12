@@ -83,6 +83,63 @@ body p {
   margin-bottom: 20px;
 }
 
+#search-component {
+  flex-shrink: 0;
+  background-color: white;
+  border-bottom: 1px solid #e8e8e8;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  /* 防止吸顶时内容跳动 */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.search-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-inputs input {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.search-inputs span {
+  font-weight: bold;
+  color: #666;
+  min-width: 40px;
+  text-align: center;
+}
+
+.search-inputs button {
+  padding: 6px 12px;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-inputs button:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.search-inputs button:active {
+  background-color: var(--primary-1);
+}
 #chartContainer {
   /* height: 500px; */
   height: calc(100% - 2em);

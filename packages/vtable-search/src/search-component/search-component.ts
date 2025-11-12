@@ -16,7 +16,13 @@ export type QueryResult = {
 
 export type SearchComponentOption = {
   table: IVTable;
-  autoJump?: boolean;
+  autoJump?: boolean; // 搜索完成后是否自动跳转到第一个搜索结果
+  autoScroll?: {
+    // 是否启用表格内滚动（可选）
+    enableTableScroll?: boolean;
+    // 是否启用页面滚动（可选）
+    enableViewportScroll?: boolean;
+  };
   skipHeader?: boolean;
   highlightCellStyle?: VTable.TYPES.CellStyle;
   focuseHighlightCellStyle?: VTable.TYPES.CellStyle;
@@ -55,6 +61,10 @@ export class SearchComponent {
   table: IVTable;
   skipHeader: boolean;
   autoJump: boolean;
+  autoScroll: {
+    enableTableScroll?: boolean;
+    enableViewportScroll?: boolean;
+  };
   highlightCellStyle: Partial<VTable.TYPES.CellStyle>;
   focuseHighlightCellStyle: Partial<VTable.TYPES.CellStyle>;
   queryMethod: (queryStr: string, value: string, option: { col: number; row: number; table: IVTable }) => boolean;
@@ -80,6 +90,7 @@ export class SearchComponent {
   constructor(option: SearchComponentOption) {
     this.table = option.table;
     this.autoJump = option.autoJump || false;
+    this.autoScroll = option.autoScroll || { enableTableScroll: true, enableViewportScroll: true };
     this.skipHeader = option.skipHeader || false;
     this.highlightCellStyle = option.highlightCellStyle || defalutHightlightCellStyle;
     this.focuseHighlightCellStyle = option.focuseHighlightCellStyle || defalutFocusHightlightCellStyle;
@@ -444,14 +455,41 @@ export class SearchComponent {
           this.table.toggleHierarchyState(this.treeIndex, row);
         }
       }
-      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, this.scrollOption);
+      const isInVisualView = this.table.cellIsInVisualView(
+        this.treeIndex,
+        this.getBodyRowIndexByRecordIndex(indexNumbers) + i
+      );
+
+      // 如果启用了表格内滚动，执行表格滚动
+      if (this.autoScroll.enableTableScroll) {
+        this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, this.scrollOption);
+      }
+
+      // 如果启用了页面滚动且单元格不在可视区域内，执行页面滚动
+      if (this.autoScroll.enableViewportScroll && !isInVisualView) {
+        const { top, left } = this.table.getCellRelativeRect(
+          this.treeIndex,
+          this.getBodyRowIndexByRecordIndex(indexNumbers) + i
+        );
+        typeof window !== 'undefined' && window.scrollTo(left, top);
+      }
     } else {
       const { col, row } = params;
-      // if focus cell out of screen, jump to cell
+      // 检查单元格是否在表格可视区域内（与原始逻辑保持一致）
       const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
       const { colStart, colEnd } = this.table.getBodyVisibleColRange();
-      if (row <= rowStart || row >= rowEnd || col <= colStart || col >= colEnd) {
+      const isInTableVisualView = !(row <= rowStart || row >= rowEnd || col <= colStart || col >= colEnd);
+      const isInVisualView = this.table.cellIsInVisualView(col, row);
+
+      // 如果启用了表格内滚动且单元格不在表格可视区域内，执行表格滚动
+      if (this.autoScroll.enableTableScroll && !isInTableVisualView) {
         this.table.scrollToCell({ col, row });
+      }
+
+      // 如果启用了页面滚动且单元格不在页面可视区域内，执行页面滚动
+      if (this.autoScroll.enableViewportScroll && !isInVisualView) {
+        const { top, left } = this.table.getCellRelativeRect(col, row);
+        typeof window !== 'undefined' && window.scrollTo(left, top);
       }
     }
   }
