@@ -19,7 +19,12 @@ import type {
 export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   id = `filter`;
   name = 'Filter';
-  runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, TABLE_EVENT_TYPE.ICON_CLICK];
+  runTime = [
+    TABLE_EVENT_TYPE.BEFORE_INIT,
+    TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
+    TABLE_EVENT_TYPE.ICON_CLICK,
+    TABLE_EVENT_TYPE.SCROLL
+  ];
 
   pluginOptions: FilterOptions;
 
@@ -91,6 +96,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
         this.filterToolbar.hide();
       } else {
         this.filterToolbar.show(col, row, this.pluginOptions.filterModes);
+      }
+    } else if (runtime === TABLE_EVENT_TYPE.SCROLL) {
+      if (eventArgs.scrollDirection === 'horizontal') {
+        this.filterToolbar.adjustMenuPosition();
       }
     }
   }
