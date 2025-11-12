@@ -33,7 +33,9 @@ export class FilterEngine {
       }
     });
 
-    table.updateFilterRules([...this.filterFuncRule, ...this.filterValueRule]);
+    table.updateFilterRules([...this.filterFuncRule, ...this.filterValueRule], {
+      clearRowHeightCache: false
+    });
   }
 
   /**

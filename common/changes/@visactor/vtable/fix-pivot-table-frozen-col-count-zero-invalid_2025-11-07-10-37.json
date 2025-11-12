@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "feat: support boxPlot chart in pivotChart\n\n",
+      "comment": "fix(pivot-table): fix frozenColCount being invalid when set to 0\n\n",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
   ],
   "packageName": "@visactor/vtable",
-  "email": "892739385@qq.com"
+  "email": "gongshiwei@kkgroup.cn"
 }

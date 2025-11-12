@@ -65,6 +65,15 @@ const table = new VTable.ListTable({
 
 如果需要自定义计算行高的逻辑，可以配置`customComputeRowHeight`函数来代理 VTable 内部计算行高的逻辑。
 
+## 逐列设置行高
+
+通过`rowHeightConfig`配置项进行设置，该配置项可以设定为一个数组，分别对应每一行的行高。key 为行索引，height 为行高。
+
+```javascript
+const table = new VTable.ListTable({
+  rowHeightConfig: [{key: 0, height: 50}, {key: 3, height: 60}]
+});
+```
 # 列宽相关配置
 
 ## 列宽 width
@@ -85,6 +94,28 @@ const table = new VTable.ListTable({
       width: 200
     }
   ]
+});
+```
+
+除了在列属性中配置具体的宽度值，还可以通过`columnWidthConfig`配置项进行设置，该配置项可以设定为一个数组，分别对应每一列的列宽。key 为columns中定义的每列具体配置中的key，width 为列宽。
+
+```javascript
+const table = new VTable.ListTable({
+   columns: [
+    {
+      // ...其他配置项
+      key: 'name',
+      title: '姓名',
+      field: 'name',
+    },
+    {
+      // ...其他配置项
+      key: 'age',
+      title: '年龄',
+      field: 'age',
+    }
+  ],
+  columnWidthConfig: [{key: 'name', width: 200}, {key: 'age', width: 300}]
 });
 ```
 

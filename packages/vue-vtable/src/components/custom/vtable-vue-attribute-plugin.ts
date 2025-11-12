@@ -1,3 +1,4 @@
+import { CUSTOM_CONTAINER_NAME, CUSTOM_MERGE_PRE_NAME } from '@visactor/vtable';
 import type {
   CommonDomOptions,
   IGraphic,
@@ -701,7 +702,7 @@ function checkFrozenContainer(graphic: IGraphic) {
  */
 function getTargetGroup(target: any) {
   while (target?.parent) {
-    if (target.name === 'custom-container') {
+    if (target.name === CUSTOM_CONTAINER_NAME || (target.name || '').startsWith(CUSTOM_MERGE_PRE_NAME)) {
       return target;
     }
     target = target.parent;

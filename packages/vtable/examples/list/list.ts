@@ -223,7 +223,9 @@ export function createTable() {
     rowSeriesNumber: {
       dragOrder: true
     },
-
+    dragOrder: {
+      dragHeaderMode: 'column'
+    },
     columns: [
       ...columns
       // ...columns,

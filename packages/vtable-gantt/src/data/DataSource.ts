@@ -91,6 +91,11 @@ export class DataSource {
     ) {
       return;
     }
+    // Excluding scenarios where the target value exceeds the boundary
+    if (target_index < 0 || target_sub_task_index < 0) {
+      return;
+    }
+
     if (this._gantt.parsedOptions.tasksShowMode === TasksShowMode.Sub_Tasks_Inline) {
       if (
         isValid(source_sub_task_index) &&
@@ -100,7 +105,8 @@ export class DataSource {
       ) {
         const sub_task_record = this.records[source_index].children[source_sub_task_index];
         this.records[source_index].children.splice(source_sub_task_index, 1);
-        if (!this.records[target_index].children) {
+
+        if (!this.records[target_index]?.children) {
           this.records[target_index].children = [];
         }
         this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);
@@ -126,8 +132,7 @@ export class DataSource {
         // Moving subtask from a project to another project or normal task
         const sub_task_record = this.records[source_index].children[source_sub_task_index];
         this.records[source_index].children.splice(source_sub_task_index, 1);
-
-        if (!this.records[target_index].children) {
+        if (!this.records[target_index]?.children) {
           this.records[target_index].children = [];
         }
 
@@ -152,7 +157,7 @@ export class DataSource {
       ) {
         const sub_task_record = this.records[source_index].children[source_sub_task_index];
         this.records[source_index].children.splice(source_sub_task_index, 1);
-        if (!this.records[target_index].children) {
+        if (!this.records[target_index]?.children) {
           this.records[target_index].children = [];
         }
         this.records[target_index].children.splice(target_sub_task_index, 0, sub_task_record);

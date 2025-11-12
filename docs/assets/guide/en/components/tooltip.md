@@ -17,7 +17,7 @@ The configuration items are:
     {
       /** 提示弹框的相关配置。消失时机：显示后鼠标移动到指定区域外或者进入新的单元格后自动消失*/
       tooltip: {
-        /** 渲染方式：如使用html具有较好灵活行，上层可以覆盖样式；canvas具有较好的跨平台展示稳定性 */
+        /** 渲染方式：如使用html具有较好灵活性，上层可以覆盖样式；canvas具有较好的跨平台展示稳定性 */
         renderMode: 'html' | 'canvas';
         /** 代替原来hover:isShowTooltip配置 */
         isShowOverflowTextTooltip: boolean;
