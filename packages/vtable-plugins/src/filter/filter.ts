@@ -10,7 +10,8 @@ import type {
   ListTable,
   PivotTable,
   BaseTableAPI,
-  ColumnDefine
+  ColumnDefine,
+  ColumnsDefine
 } from '@visactor/vtable';
 
 /**
@@ -24,6 +25,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   pluginOptions: FilterOptions;
 
   table: ListTable | PivotTable;
+  columns: ColumnsDefine;
 
   filterEngine: FilterEngine;
   filterStateManager: FilterStateManager;
@@ -65,12 +67,13 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       this.filterEngine = new FilterEngine();
       this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
       this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
+      this.columns = eventArgs.options.columns;
 
       this.filterToolbar.render(document.body);
-      this.updateFilterIcons(eventArgs.options);
+      this.updateFilterIcons(this.columns);
       this.filterStateManager.subscribe(() => {
-        this.updateFilterIcons(eventArgs.options);
-        (this.table as ListTable).updateColumns(eventArgs.options.columns, {
+        this.updateFilterIcons(this.columns);
+        (this.table as ListTable).updateColumns(this.columns, {
           clearRowHeightCache: false
         });
       });
@@ -79,6 +82,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
         ...this.pluginOptions,
         ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
       };
+      this.columns = eventArgs.options.columns;
       this.handleOptionUpdate(eventArgs.options);
     } else if (
       (runtime === TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
@@ -119,7 +123,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     // 更新筛选图标
-    this.updateFilterIcons(options);
+    this.updateFilterIcons(options.columns);
   }
 
   /**
@@ -162,7 +166,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
    * 更新所有列的筛选图标状态
    * 根据列的筛选启用状态，添加或移除筛选图标
    */
-  private updateFilterIcons(options) {
+  private updateFilterIcons(columns: ColumnsDefine = []) {
     const filterIcon = this.pluginOptions.filterIcon;
     const filteringIcon = this.pluginOptions.filteringIcon;
 
@@ -173,7 +177,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
     const compactIcons = list => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
 
-    options.columns.forEach(column => {
+    columns.forEach(column => {
       const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
       const isFiltering = !!this.filterStateManager.getFilterState(column.field)?.enable;
       let icons = toIconList(column.headerIcon);
