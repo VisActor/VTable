@@ -15,6 +15,19 @@ export class FilterStateManager {
 
   private table: ListTable | PivotTable;
 
+  // 筛选菜单相关的状态
+  private filterMenuStates: Map<
+    string | number,
+    {
+      // 筛选菜单打开时固定的候选值列表
+      stableCandidateValues: Array<{ value: any; count: number; rawValue: any }>;
+      // 当前搜索关键词
+      currentSearchKeyword: string;
+      // 显示值到原始值的映射
+      displayToRawMap: Map<any, any>;
+    }
+  > = new Map();
+
   constructor(table: ListTable | PivotTable, engine: FilterEngine) {
     this.state = {
       filters: new Map()
@@ -120,5 +133,89 @@ export class FilterStateManager {
       FilterActionType.APPLY_FILTERS
     ];
     return shouldApplyActions.includes(action.type) || action.payload.enable;
+  }
+
+  /**
+   * 初始化筛选菜单状态（当筛选菜单打开时调用）
+   */
+  initializeFilterMenuState(
+    fieldId: string | number,
+    candidateValues: Array<{ value: any; count: number; rawValue: any }>,
+    displayToRawMap: Map<any, any>
+  ): void {
+    this.filterMenuStates.set(fieldId, {
+      stableCandidateValues: candidateValues,
+      currentSearchKeyword: '',
+      displayToRawMap: displayToRawMap
+    });
+  }
+
+  /**
+   * 获取筛选菜单的稳定候选值列表
+   */
+  getStableCandidateValues(fieldId: string | number): Array<{ value: any; count: number; rawValue: any }> {
+    return this.filterMenuStates.get(fieldId)?.stableCandidateValues || [];
+  }
+
+  /**
+   * 更新搜索关键词
+   */
+  updateSearchKeyword(fieldId: string | number, keyword: string): void {
+    const menuState = this.filterMenuStates.get(fieldId);
+    if (!menuState) {
+      return;
+    }
+
+    menuState.currentSearchKeyword = keyword;
+  }
+
+  /**
+   * 获取当前可见的选中值（根据搜索关键词从筛选状态中筛选）
+   */
+  getVisibleSelectedValues(fieldId: string | number): Set<any> {
+    const menuState = this.filterMenuStates.get(fieldId);
+    const filter = this.getFilterState(fieldId);
+    if (!menuState || !filter?.values) {
+      return new Set();
+    }
+
+    const allSelectedValues = new Set(filter.values);
+    const keyword = menuState.currentSearchKeyword;
+    const filterKeywords = keyword
+      .toUpperCase()
+      .split(' ')
+      .filter(s => s);
+
+    // 如果没有搜索关键词，返回所有被选中的值
+    if (filterKeywords.length === 0) {
+      return allSelectedValues;
+    }
+
+    // 根据搜索关键词筛选出可见的选中值
+    const visibleSelected = new Set<any>();
+    for (const candidate of menuState.stableCandidateValues) {
+      const displayValue = candidate.value;
+      const txtValue = String(displayValue).toUpperCase();
+
+      // 检查是否匹配搜索关键词
+      const match = filterKeywords.some(keyword => txtValue.includes(keyword));
+
+      if (match) {
+        // 如果可见，检查是否被选中
+        const rawValue = menuState.displayToRawMap ? menuState.displayToRawMap.get(displayValue) : displayValue;
+        if (allSelectedValues.has(rawValue)) {
+          visibleSelected.add(rawValue);
+        }
+      }
+    }
+
+    return visibleSelected;
+  }
+
+  /**
+   * 获取当前搜索关键词
+   */
+  getCurrentSearchKeyword(fieldId: string | number): string {
+    return this.filterMenuStates.get(fieldId)?.currentSearchKeyword || '';
   }
 }
