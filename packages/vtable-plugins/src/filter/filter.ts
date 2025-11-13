@@ -273,9 +273,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
    * 设置筛选状态
    * 用于从保存的配置中恢复筛选状态
    */
-  setFilterState(filterState: FilterState): void {
-    if (!this.filterStateManager || !filterState || !filterState.filters) {
-      console.warn('setFilterState: 无效的筛选状态或状态管理器未初始化');
+  setFilterState(filterState?: FilterState): void {
+    if (!this.filterStateManager) {
+      console.warn('setFilterState: 状态管理器未初始化');
       return;
     }
 
@@ -285,7 +285,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       payload: {}
     });
 
-    const columns = (this.table as ListTable).columns;
+    // 若传入参数为空，则重置筛选状态
+    if (!filterState || !filterState.filters) {
+      return;
+    }
 
     // 恢复每个筛选配置
     Object.entries(filterState.filters).forEach(([, config]: [string, any]) => {
