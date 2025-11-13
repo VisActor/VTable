@@ -46,9 +46,7 @@ export class ValueFilter {
       return;
     }
 
-    const displayValueCountMap = new Map<any, number>(); // displayValue -> count
     const displayToRawMap = new Map<any, any>(); // displayValue -> rawValue
-    const rawToDisplayMap = new Map<any, any>();
 
     // 找到第一个匹配字段的列位置，用于获取格式化数据
     let targetCol = -1;
@@ -67,7 +65,7 @@ export class ValueFilter {
       }
     }
 
-    // 从原始数据收集候选值和计数（不受其他列筛选影响）
+    // 从原始数据收集候选值（不计数，只收集唯一值）
     const records = this.table.internalProps.records;
     const recordsLength = records.length;
 
@@ -96,27 +94,89 @@ export class ValueFilter {
         displayValue = rawValue;
       }
 
-      if (rawValue !== undefined && rawValue !== null) {
-        // 统计每个显示值在原始数据中的出现次数
-        displayValueCountMap.set(displayValue, (displayValueCountMap.get(displayValue) || 0) + 1);
-        if (!displayToRawMap.has(displayValue)) {
-          displayToRawMap.set(displayValue, rawValue);
-          rawToDisplayMap.set(rawValue, displayValue);
-        }
+      if (rawValue !== undefined && rawValue !== null && !displayToRawMap.has(displayValue)) {
+        displayToRawMap.set(displayValue, rawValue);
       }
     }
 
     // 保存显示值到原始值的映射关系
     this.displayToRawValueMap.set(fieldId, displayToRawMap);
 
-    // 转换为所需格式，包含显示值、计数和原始值（计数基于原始数据）
-    const uniqueValues = Array.from(displayValueCountMap.entries()).map(([displayValue, count]) => ({
+    // 转换为所需格式，包含显示值、计数和原始值（count = 0 占位，后续会更新）
+    const uniqueValues = Array.from(displayToRawMap.entries()).map(([displayValue, rawValue]) => ({
       value: displayValue, // UI显示的格式化值
-      count: count, // 该值在原始数据中的出现次数
-      rawValue: displayToRawMap.get(displayValue) // 对应的原始值
+      count: 0, // 计数占位，后续会根据筛选状态动态计算
+      rawValue: rawValue // 对应的原始值
     }));
 
     this.uniqueKeys.set(fieldId, uniqueValues);
+  }
+
+  /**
+   * 更新候选值列表的计数（基于当前筛选状态选择数据源）
+   * - 未筛选列：使用当前表格数据（dataSource）计算计数
+   * - 已筛选列：使用原始数据（records）计算计数
+   */
+  private updateCandidateCounts(fieldId: string | number): void {
+    const uniqueValues = this.uniqueKeys.get(fieldId);
+    if (!uniqueValues) {
+      return;
+    }
+
+    // 判断当前列是否已启用筛选
+    const filter = this.filterStateManager.getFilterState(fieldId);
+    const isFiltered = filter?.enable;
+
+    // 根据筛选状态选择数据源
+    const dataSource = isFiltered
+      ? this.table.internalProps.records // 已筛选：使用原始数据
+      : this.table.internalProps.dataSource; // 未筛选：使用当前表格数据
+
+    // 找到第一个匹配字段的列位置，用于获取格式化数据
+    let targetCol = -1;
+    for (let col = 0; col < this.table.colCount; col++) {
+      for (let row = this.table.columnHeaderLevelCount; row < this.table.rowCount; row++) {
+        if (!this.table.internalProps.layoutMap.isHeader(col, row)) {
+          const bodyInfo = this.table.internalProps.layoutMap.getBody(col, row);
+          if (bodyInfo && bodyInfo.field === fieldId) {
+            targetCol = col;
+            break;
+          }
+        }
+      }
+      if (targetCol !== -1) {
+        break;
+      }
+    }
+
+    // 计算每个候选值的计数
+    const dataLength = dataSource.length;
+    const countMap = new Map<any, number>();
+
+    for (let i = 0; i < dataLength; i++) {
+      let displayValue;
+      if (targetCol !== -1) {
+        const row = this.table.columnHeaderLevelCount + i;
+        if (row < this.table.rowCount) {
+          displayValue = this.table.getCellValue(targetCol, row);
+        }
+      } else {
+        displayValue = this.table.getFieldData(
+          String(fieldId),
+          targetCol !== -1 ? targetCol : 0,
+          this.table.columnHeaderLevelCount + i
+        );
+      }
+
+      if (displayValue !== undefined && displayValue !== null) {
+        countMap.set(displayValue, (countMap.get(displayValue) || 0) + 1);
+      }
+    }
+
+    // 更新计数
+    uniqueValues.forEach(item => {
+      item.count = countMap.get(item.value) || 0;
+    });
   }
 
   private onValueSelect(fieldId: string | number, displayValue: any, selected: boolean): void {
@@ -303,11 +363,12 @@ export class ValueFilter {
         });
       }
     } else {
-      // 如果筛选未启用，初始化为所有值都选中（但不启用筛选）
+      // 如果筛选未启用，初始化为计数>0的值都选中（但不启用筛选）
       if (!filter) {
-        const allRawValues =
+        const availableRawValues =
           this.uniqueKeys
             .get(fieldId)
+            ?.filter(item => item.count > 0) // 只选中计数>0的值
             ?.map(item => item.rawValue)
             .filter(v => v !== undefined && v !== null) || [];
 
@@ -316,7 +377,7 @@ export class ValueFilter {
           payload: {
             field: fieldId,
             type: 'byValue',
-            values: allRawValues,
+            values: availableRawValues,
             enable: false // 初始状态为未启用
           }
         });
@@ -342,6 +403,10 @@ export class ValueFilter {
 
       // 检查原始值是否在选中的原始值列表中
       optionDom.checkbox.checked = selectedRawValues.some(v => v === rawValue);
+
+      // 同步禁用状态：计数为0时禁用复选框
+      const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
+      optionDom.checkbox.disabled = count === 0;
     });
   }
 
@@ -476,6 +541,8 @@ export class ValueFilter {
       checkbox.value = String(value); // 显示值作为checkbox的value
       // 使用原始值进行选中状态判断，优化为O(1)复杂度
       checkbox.checked = selectedRawValueSet.has(rawValue);
+      // 计数为0时禁用复选框（不可选中）
+      checkbox.disabled = count === 0;
       applyStyles(checkbox, filterStyles.checkbox);
 
       const countSpan = document.createElement('span');
@@ -529,20 +596,28 @@ export class ValueFilter {
   }
 
   show(): void {
+    // 1. 收集候选值（来自原始数据）
+    this.collectUniqueColumnValues(this.selectedField);
+
+    // 2. 更新计数（根据筛选状态选择数据源）
+    this.updateCandidateCounts(this.selectedField);
+
+    // 3. 初始化筛选状态（必须在 renderFilterOptions 之前执行）
     this.initFilterStateFromTableData(this.selectedField);
 
-    // 初始化筛选菜单状态，确保候选值列表稳定，并清空搜索关键词
+    // 4. 初始化筛选菜单状态，确保候选值列表稳定，并清空搜索关键词
     const uniqueValues = this.uniqueKeys.get(this.selectedField);
     const displayToRawMap = this.displayToRawValueMap.get(this.selectedField);
     if (uniqueValues && displayToRawMap) {
       this.filterStateManager.initializeFilterMenuState(this.selectedField, uniqueValues, displayToRawMap);
     }
 
-    // 清空搜索框
+    // 5. 清空搜索框
     if (this.filterByValueSearchInput) {
       this.filterByValueSearchInput.value = '';
     }
 
+    // 6. 渲染选项（此时状态已经初始化完成）
     this.renderFilterOptions(this.selectedField);
     this.filterByValuePanel.style.display = 'block';
   }
