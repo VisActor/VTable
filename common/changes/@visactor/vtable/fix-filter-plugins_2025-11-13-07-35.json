@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "comment": "Merge pull request #4704 from PoorShawn/fix/filter-reset-with-empty-input\n\nfix: reset filter when setFilterState receives empty params\n",
+      "comment": "refactor: filter plugins update when filterState changes",
       "type": "none",
       "packageName": "@visactor/vtable"
     }
