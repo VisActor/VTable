@@ -53,7 +53,7 @@ interface DetailTableOptions extends VTable.ListTableConstructorOptions {
 | 属性名称 | 数据类型 | 默认值 | 配置说明 |
 |---------|----------|--------|----------|
 | `margin` | number \| number[] | 0 | 子表边距设置，支持灵活的边距配置：<br/>• **单数值**：`12` - 四边统一边距<br/>• **双数值**：`[12, 16]` - 垂直和水平边距<br/>• **四数值**：`[12, 16, 12, 16]` - 上、右、下、左独立设置 |
-| `height` | number | 300 | 子表容器固定高度（单位：像素），建议根据业务数据量合理设置 |
+| `height` | number \| 'auto' | 300 | 子表容器固定高度（单位：像素），建议根据业务数据量合理设置，也可通过配置auto来自动适应子表高度 |
 
 ## 快速开始
 
@@ -177,6 +177,41 @@ function createTable() {
 }
 
 createTable();
+```
+
+### 配置数据对应展开状态
+
+可以通过配置option中的hierarchyExpandLevel来配置该数据行对应的展开状态
+
+```typescript
+const option: VTable.ListTableConstructorOptions = {
+  // ......
+  hierarchyExpandLevel: 2,
+  // ......
+};
+```
+
+也可以在数据records中的hierarchyState来配置该数据行对应的展开状态
+
+```typescript
+{
+  id: 1,
+  name: `员工1`,
+  department: 'Engineering',
+  position: Senior Developer,
+  salary: 15000,
+  status: 'Active',
+  hierarchyState: 'expand',
+  children:[
+    {
+      project: `项目A-1`,
+      role: '负责人',
+      startDate: '2024-01-15',
+      endDate: '2024-12-31',
+      progress: 85
+    },
+  ]
+};
 ```
 
 ### 动态配置

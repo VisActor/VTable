@@ -53,7 +53,7 @@ In `DetailTableOptions`, there is no need to configure `record`. When expanding 
 | Property Name | Data Type | Default Value | Configuration Description |
 |---------------|-----------|---------------|---------------------------|
 | `margin` | number \| number[] | 0 | Detail grid margin settings, supports flexible margin configuration:<br/>• **Single value**: `12` - uniform margin on all sides<br/>• **Two values**: `[12, 16]` - vertical and horizontal margins<br/>• **Four values**: `[12, 16, 12, 16]` - independent settings for top, right, bottom, left |
-| `height` | number | 300 | Fixed height of detail grid container (in pixels), recommended to be set reasonably based on business data volume |
+| `height` | number \| 'auto' | 300 | Fixed height of detail grid container (in pixels), recommended to be set reasonably based on business data volume The height of the sub-table can also be automatically adapted by configuring auto |
 
 ## Quick Start
 
@@ -177,6 +177,41 @@ function createTable() {
 }
 
 createTable();
+```
+
+### Configuration data corresponding to the expanded state
+
+The expansion status corresponding to this data row can be configured by setting the "hierarchyExpandLevel" in the "option" section.
+
+```typescript
+const option: VTable.ListTableConstructorOptions = {
+  // ......
+  hierarchyExpandLevel: 2,
+  // ......
+};
+```
+
+The expansion state corresponding to the data row can also be configured in the "hierarchyState" field of the "records" data.
+
+```typescript
+{
+  id: 1,
+  name: `员工1`,
+  department: 'Engineering',
+  position: Senior Developer,
+  salary: 15000,
+  status: 'Active',
+  hierarchyState: 'expand',
+  children:[
+    {
+      project: `项目A-1`,
+      role: '负责人',
+      startDate: '2024-01-15',
+      endDate: '2024-12-31',
+      progress: 85
+    },
+  ]
+};
 ```
 
 ### Dynamic Configuration
