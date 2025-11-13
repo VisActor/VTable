@@ -41,21 +41,23 @@ export class ValueFilter {
   }
 
   collectUniqueColumnValues(fieldId: string | number): void {
-    const isEnable = this.filterStateManager.getFilterState(fieldId)?.enable;
-    const displayValueMap = new Map<any, number>();
+    // 如果已经收集过，直接返回
+    if (this.uniqueKeys.has(fieldId)) {
+      return;
+    }
+
+    const displayValueCountMap = new Map<any, number>(); // displayValue -> count
+    const displayToRawMap = new Map<any, any>(); // displayValue -> rawValue
     const rawToDisplayMap = new Map<any, any>();
-    const displayToRawMap = new Map<any, any>();
 
     // 找到第一个匹配字段的列位置，用于获取格式化数据
     let targetCol = -1;
-    let targetRow = -1;
     for (let col = 0; col < this.table.colCount; col++) {
       for (let row = this.table.columnHeaderLevelCount; row < this.table.rowCount; row++) {
         if (!this.table.internalProps.layoutMap.isHeader(col, row)) {
           const bodyInfo = this.table.internalProps.layoutMap.getBody(col, row);
           if (bodyInfo && bodyInfo.field === fieldId) {
             targetCol = col;
-            targetRow = row;
             break;
           }
         }
@@ -65,69 +67,41 @@ export class ValueFilter {
       }
     }
 
-    if (isEnable) {
-      // 如果已应用筛选，则从原始数据收集
-      const records = this.table.internalProps.records;
-      const recordsLength = records.length;
+    // 从原始数据收集候选值和计数（不受其他列筛选影响）
+    const records = this.table.internalProps.records;
+    const recordsLength = records.length;
 
-      for (let i = 0; i < recordsLength; i++) {
-        let rawValue;
-        let displayValue;
-        if (targetCol !== -1) {
-          const row = this.table.columnHeaderLevelCount + i;
-          const currentRecord = records[i];
-          // 获取原始数据
-          rawValue = currentRecord[fieldId];
-          // 获取格式化显示数据
-          const bodyInfo = this.table.internalProps.layoutMap.getBody(targetCol, row);
-          if (
-            bodyInfo &&
-            'fieldFormat' in bodyInfo &&
-            bodyInfo.fieldFormat &&
-            typeof bodyInfo.fieldFormat === 'function'
-          ) {
-            // displayValue = bodyInfo.fieldFormat(rawValue, targetCol, row, this.table);
-            displayValue = bodyInfo.fieldFormat({ [fieldId]: rawValue });
-          } else {
-            displayValue = rawValue;
-          }
-        }
-
-        if (rawValue !== undefined && rawValue !== null) {
-          displayValueMap.set(displayValue, (displayValueMap.get(displayValue) || 0) + 1);
-          rawToDisplayMap.set(rawValue, displayValue);
-          displayToRawMap.set(displayValue, rawValue);
-        }
-      }
-    } else {
-      // 如果未筛选，则从当前表格数据收集
-      const dataSource = this.table.internalProps.dataSource;
-      const currentLength = dataSource.length;
-
-      for (let i = 0; i < currentLength; i++) {
-        let rawValue;
-        let displayValue;
-        if (targetCol !== -1) {
-          const row = this.table.columnHeaderLevelCount + i;
-          if (row < this.table.rowCount) {
-            // 获取原始数据
-            rawValue = this.table.getCellOriginValue(targetCol, row);
-            // 获取格式化显示数据
-            displayValue = this.table.getCellValue(targetCol, row);
-          }
+    for (let i = 0; i < recordsLength; i++) {
+      let rawValue;
+      let displayValue;
+      if (targetCol !== -1) {
+        const row = this.table.columnHeaderLevelCount + i;
+        const currentRecord = records[i];
+        // 获取原始数据
+        rawValue = currentRecord[fieldId];
+        // 获取格式化显示数据
+        const bodyInfo = this.table.internalProps.layoutMap.getBody(targetCol, row);
+        if (
+          bodyInfo &&
+          'fieldFormat' in bodyInfo &&
+          bodyInfo.fieldFormat &&
+          typeof bodyInfo.fieldFormat === 'function'
+        ) {
+          displayValue = bodyInfo.fieldFormat({ [fieldId]: rawValue });
         } else {
-          rawValue = this.table.getFieldData(
-            String(fieldId),
-            targetCol !== -1 ? targetCol : 0,
-            this.table.columnHeaderLevelCount + i
-          );
-          displayValue = rawValue; // 如果没有格式化函数，显示值等于原始值
+          displayValue = rawValue;
         }
+      } else {
+        rawValue = records[i][fieldId];
+        displayValue = rawValue;
+      }
 
-        if (rawValue !== undefined && rawValue !== null) {
-          displayValueMap.set(displayValue, (displayValueMap.get(displayValue) || 0) + 1);
-          rawToDisplayMap.set(rawValue, displayValue);
+      if (rawValue !== undefined && rawValue !== null) {
+        // 统计每个显示值在原始数据中的出现次数
+        displayValueCountMap.set(displayValue, (displayValueCountMap.get(displayValue) || 0) + 1);
+        if (!displayToRawMap.has(displayValue)) {
           displayToRawMap.set(displayValue, rawValue);
+          rawToDisplayMap.set(rawValue, displayValue);
         }
       }
     }
@@ -135,10 +109,10 @@ export class ValueFilter {
     // 保存显示值到原始值的映射关系
     this.displayToRawValueMap.set(fieldId, displayToRawMap);
 
-    // 转换为所需格式，包含显示值、计数和原始值
-    const uniqueValues = Array.from(displayValueMap.entries()).map(([displayValue, count]) => ({
+    // 转换为所需格式，包含显示值、计数和原始值（计数基于原始数据）
+    const uniqueValues = Array.from(displayValueCountMap.entries()).map(([displayValue, count]) => ({
       value: displayValue, // UI显示的格式化值
-      count,
+      count: count, // 该值在原始数据中的出现次数
       rawValue: displayToRawMap.get(displayValue) // 对应的原始值
     }));
 
@@ -150,20 +124,23 @@ export class ValueFilter {
     const displayToRawMap = this.displayToRawValueMap.get(fieldId);
     const rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
 
+    // 更新筛选状态
     const filter = this.filterStateManager.getFilterState(fieldId);
+    let updatedValues: any[];
     if (!filter) {
+      updatedValues = selected ? [rawValue] : [];
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
         payload: {
           field: fieldId,
           type: 'byValue',
-          values: [rawValue] // 使用原始值
+          values: updatedValues
         }
       });
     } else {
-      const updatedValues = selected
-        ? [...(filter.values || []), rawValue] // 使用原始值
-        : (filter.values || []).filter(v => v !== rawValue); // 使用原始值进行比较
+      updatedValues = selected
+        ? [...(filter.values || []), rawValue]
+        : (filter.values || []).filter(v => v !== rawValue);
       this.filterStateManager.dispatch({
         type: FilterActionType.UPDATE_FILTER,
         payload: {
@@ -174,122 +151,176 @@ export class ValueFilter {
     }
   }
 
+  /**
+   * 检查值在当前搜索关键词下是否可见
+   */
+  private isValueVisible(displayValue: any, keyword: string): boolean {
+    if (!keyword) {
+      return true;
+    }
+
+    const filterKeywords = keyword
+      .toUpperCase()
+      .split(' ')
+      .filter(s => s);
+
+    const txtValue = String(displayValue).toUpperCase();
+    return filterKeywords.some(keyword => txtValue.includes(keyword));
+  }
+
   private toggleSelectAll(fieldId: string | number, selected: boolean): void {
+    // 获取当前可见的值进行全选/取消全选
+    const currentKeyword = this.filterStateManager.getCurrentSearchKeyword(fieldId);
+    const stableCandidates = this.filterStateManager.getStableCandidateValues(fieldId);
+    const displayToRawMap = this.displayToRawValueMap.get(fieldId);
+
+    // 找出当前可见的所有值
+    const visibleRawValues = stableCandidates
+      .filter(candidate => this.isValueVisible(candidate.value, currentKeyword))
+      .map(candidate => (displayToRawMap ? displayToRawMap.get(candidate.value) : candidate.value));
+
     const filter = this.filterStateManager.getFilterState(fieldId);
-    // 获取所有原始值用于全选/取消全选
-    const rawValuesToUpdate = selected ? this.uniqueKeys.get(fieldId)?.map(item => item.rawValue) || [] : [];
+    const currentValues = new Set(filter?.values || []);
+
+    let updatedValues: any[];
+    if (selected) {
+      // 全选：将可见的值添加到当前选中值中
+      updatedValues = Array.from(new Set([...currentValues, ...visibleRawValues]));
+    } else {
+      // 取消全选：从当前选中值中移除可见的值
+      updatedValues = Array.from(currentValues).filter(value => !visibleRawValues.includes(value));
+    }
+
     if (!filter) {
       this.filterStateManager.dispatch({
         type: FilterActionType.ADD_FILTER,
         payload: {
           field: fieldId,
           type: 'byValue',
-          values: rawValuesToUpdate, // 使用原始值
+          values: updatedValues,
           enable: true
         }
       });
     } else {
-      const updatedValues = selected ? rawValuesToUpdate : [];
       this.filterStateManager.dispatch({
         type: FilterActionType.UPDATE_FILTER,
         payload: {
           field: fieldId,
-          values: updatedValues // 使用原始值
+          values: updatedValues
         }
       });
     }
   }
 
   private onSearch(fieldId: string | number, value: string): void {
+    // 更新 FilterStateManager 中的搜索关键词
+    this.filterStateManager.updateSearchKeyword(fieldId, value);
+
+    // 更新UI显示
+    const items = this.valueFilterOptionList.get(fieldId);
     const filterKeywords = value
       .toUpperCase()
       .split(' ')
       .filter(s => s);
-    const items = this.valueFilterOptionList.get(fieldId);
 
     for (const item of items) {
       const txtValue = item.id.toUpperCase() || '';
       const match = filterKeywords.some(keyword => txtValue.includes(keyword));
-      item.itemContainer.style.display = filterKeywords.length === 0 || match ? 'flex' : 'none';
+      const isVisible = filterKeywords.length === 0 || match;
+
+      item.itemContainer.style.display = isVisible ? 'flex' : 'none';
     }
   }
 
   /**
-   * 根据当前表格中的数据，更新 filter 的被选状态 selectedKeys
+   * 根据当前表格中的数据，初始化或更新 filter 的被选状态
+   * 如果筛选已启用(enable=true)，收集当前显示的数据作为选中项
+   * 如果筛选未启用，初始化为所有值都选中
    */
   private initFilterStateFromTableData(fieldId: string | number): void {
     const filter = this.filterStateManager.getFilterState(fieldId);
-    const selectedRawValues = new Set();
-    const displayToRawMap = this.displayToRawValueMap.get(fieldId);
+    const isEnable = filter?.enable;
 
-    // 找到第一个匹配字段的列位置，用于获取格式化数据
-    let targetCol = -1;
-    for (let col = 0; col < this.table.colCount; col++) {
-      for (let row = this.table.columnHeaderLevelCount; row < this.table.rowCount; row++) {
-        if (!this.table.internalProps.layoutMap.isHeader(col, row)) {
-          const bodyInfo = this.table.internalProps.layoutMap.getBody(col, row);
-          if (bodyInfo && bodyInfo.field === fieldId) {
-            targetCol = col;
-            break;
+    // 如果筛选已启用，使用当前显示的数据作为选中值
+    if (isEnable) {
+      const selectedRawValues = new Set();
+      const displayToRawMap = this.displayToRawValueMap.get(fieldId);
+
+      // 找到第一个匹配字段的列位置，用于获取格式化数据
+      let targetCol = -1;
+      for (let col = 0; col < this.table.colCount; col++) {
+        for (let row = this.table.columnHeaderLevelCount; row < this.table.rowCount; row++) {
+          if (!this.table.internalProps.layoutMap.isHeader(col, row)) {
+            const bodyInfo = this.table.internalProps.layoutMap.getBody(col, row);
+            if (bodyInfo && bodyInfo.field === fieldId) {
+              targetCol = col;
+              break;
+            }
           }
         }
+        if (targetCol !== -1) {
+          break;
+        }
       }
-      if (targetCol !== -1) {
-        break;
-      }
-    }
 
-    // 收集当前显示的数据对应的原始值
-    const dataSource = this.table.internalProps.dataSource;
-    const currentLength = dataSource.length;
+      // 收集当前显示的数据对应的原始值
+      const dataSource = this.table.internalProps.dataSource;
+      const currentLength = dataSource.length;
 
-    for (let i = 0; i < currentLength; i++) {
-      let displayValue;
-      let rawValue;
-      if (targetCol !== -1) {
-        const row = this.table.columnHeaderLevelCount + i;
-        if (row < this.table.rowCount) {
-          // 获取格式化显示值
-          displayValue = this.table.getCellValue(targetCol, row);
-          // 通过映射获取对应的原始值
+      for (let i = 0; i < currentLength; i++) {
+        let displayValue;
+        let rawValue;
+        if (targetCol !== -1) {
+          const row = this.table.columnHeaderLevelCount + i;
+          if (row < this.table.rowCount) {
+            // 获取格式化显示值
+            displayValue = this.table.getCellValue(targetCol, row);
+            // 通过映射获取对应的原始值
+            rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
+          }
+        } else {
+          displayValue = this.table.getFieldData(
+            String(fieldId),
+            targetCol !== -1 ? targetCol : 0,
+            this.table.columnHeaderLevelCount + i
+          );
           rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
         }
-      } else {
-        displayValue = this.table.getFieldData(
-          String(fieldId),
-          targetCol !== -1 ? targetCol : 0,
-          this.table.columnHeaderLevelCount + i
-        );
-        rawValue = displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
-      }
 
-      if (rawValue !== undefined && rawValue !== null) {
-        selectedRawValues.add(rawValue);
-      }
-    }
-
-    const hasChanged = !filter || !arrayEqual(filter.values, Array.from(selectedRawValues));
-    if (!hasChanged) {
-      return;
-    }
-    if (filter) {
-      this.filterStateManager.dispatch({
-        type: FilterActionType.UPDATE_FILTER,
-        payload: {
-          field: fieldId,
-          type: 'byValue',
-          values: Array.from(selectedRawValues) // 使用原始值
+        if (rawValue !== undefined && rawValue !== null) {
+          selectedRawValues.add(rawValue);
         }
-      });
+      }
+
+      const hasChanged = !arrayEqual(filter.values, Array.from(selectedRawValues));
+      if (hasChanged) {
+        this.filterStateManager.dispatch({
+          type: FilterActionType.UPDATE_FILTER,
+          payload: {
+            field: fieldId,
+            values: Array.from(selectedRawValues)
+          }
+        });
+      }
     } else {
-      this.filterStateManager.dispatch({
-        type: FilterActionType.ADD_FILTER,
-        payload: {
-          field: fieldId,
-          type: 'byValue',
-          values: Array.from(selectedRawValues) // 使用原始值
-        }
-      });
+      // 如果筛选未启用，初始化为所有值都选中（但不启用筛选）
+      if (!filter) {
+        const allRawValues =
+          this.uniqueKeys
+            .get(fieldId)
+            ?.map(item => item.rawValue)
+            .filter(v => v !== undefined && v !== null) || [];
+
+        this.filterStateManager.dispatch({
+          type: FilterActionType.ADD_FILTER,
+          payload: {
+            field: fieldId,
+            type: 'byValue',
+            values: allRawValues,
+            enable: false // 初始状态为未启用
+          }
+        });
+      }
     }
   }
 
@@ -311,10 +342,6 @@ export class ValueFilter {
 
       // 检查原始值是否在选中的原始值列表中
       optionDom.checkbox.checked = selectedRawValues.some(v => v === rawValue);
-
-      const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
-      optionDom.countSpan.textContent = String(count);
-      optionDom.itemContainer.style.display = count === 0 ? 'none' : 'flex';
     });
   }
 
@@ -348,14 +375,16 @@ export class ValueFilter {
   }
 
   applyFilter(fieldId: string | number = this.selectedField): void {
-    const selectedKeys = this.filterStateManager.getFilterState(fieldId)?.values || [];
-    if (selectedKeys.length > 0 && selectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
+    // 获取当前搜索过滤后可见的选中值
+    const visibleSelectedKeys = Array.from(this.filterStateManager.getVisibleSelectedValues(fieldId));
+
+    if (visibleSelectedKeys.length > 0 && visibleSelectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
           field: fieldId,
           type: 'byValue',
-          values: selectedKeys,
+          values: visibleSelectedKeys,
           enable: true
         }
       });
@@ -437,6 +466,7 @@ export class ValueFilter {
     this.uniqueKeys.get(field)?.forEach(({ value, count, rawValue }) => {
       const itemDiv = document.createElement('div');
       applyStyles(itemDiv, filterStyles.optionItem);
+      itemDiv.style.display = 'flex';
 
       const label = document.createElement('label');
       applyStyles(label, filterStyles.optionLabel);
@@ -500,6 +530,19 @@ export class ValueFilter {
 
   show(): void {
     this.initFilterStateFromTableData(this.selectedField);
+
+    // 初始化筛选菜单状态，确保候选值列表稳定，并清空搜索关键词
+    const uniqueValues = this.uniqueKeys.get(this.selectedField);
+    const displayToRawMap = this.displayToRawValueMap.get(this.selectedField);
+    if (uniqueValues && displayToRawMap) {
+      this.filterStateManager.initializeFilterMenuState(this.selectedField, uniqueValues, displayToRawMap);
+    }
+
+    // 清空搜索框
+    if (this.filterByValueSearchInput) {
+      this.filterByValueSearchInput.value = '';
+    }
+
     this.renderFilterOptions(this.selectedField);
     this.filterByValuePanel.style.display = 'block';
   }
