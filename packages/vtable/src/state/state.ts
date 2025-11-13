@@ -942,10 +942,9 @@ export class StateManager {
     //       );
     let originalFrozenColCount =
       this.table.options.frozenColCount ??
-      (this.table.isPivotTable() || (this.table.isListTable() && this.table.internalProps.transpose))
+      (this.table.isPivotTable() || (this.table.isListTable() && this.table.internalProps.transpose)
         ? (this.table.rowHeaderLevelCount ?? 0) + this.table.internalProps.layoutMap.leftRowSeriesNumberColumnCount
-        : 0;
-
+        : 0);
     if (originalFrozenColCount) {
       // 确保冻结列数不超过实际列数
       originalFrozenColCount = Math.min(originalFrozenColCount, this.table.colCount);
