@@ -20,6 +20,8 @@ export class FilterToolbar {
 
   private filterMenu: HTMLElement;
   private filterMenuWidth: number;
+  private currentCol?: number | null;
+  private currentRow?: number | null;
   private filterTabByValue: HTMLButtonElement;
   private filterTabByCondition: HTMLButtonElement;
   private clearFilterOptionLink: HTMLAnchorElement;
@@ -168,20 +170,36 @@ export class FilterToolbar {
     });
   }
 
-  show(col: number, row: number, filterModes: FilterMode[]): void {
-    this.filterModes = filterModes;
-    if (!this.filterModes.includes('byValue')) {
-      this.filterTabByValue.style.display = 'none';
-      setTimeout(() => this.onTabSwitch('byCondition'), 0);
-    } else if (!this.filterModes.includes('byCondition')) {
-      this.filterTabByCondition.style.display = 'none';
-      setTimeout(() => this.onTabSwitch('byValue'), 0);
+  adjustMenuPosition(
+    col?: number | null,
+    row?: number | null,
+    providedLeft?: number | null,
+    providedTop?: number | null
+  ) {
+    if (typeof providedLeft === 'number' && typeof providedTop === 'number') {
+      this.filterMenu.style.display = this.isVisible ? 'block' : 'none';
+      this.filterMenu.style.left = `${providedLeft}px`;
+      this.filterMenu.style.top = `${providedTop}px`;
+      return;
     }
+
+    // 明晰的参数 > 记忆的数字
+    const effectiveCol = typeof col === 'number' ? col : this.currentCol;
+    const effectiveRow = typeof row === 'number' ? row : this.currentRow;
+
+    if (typeof effectiveCol !== 'number' || typeof effectiveRow !== 'number') {
+      return;
+    }
+
+    this.currentCol = effectiveCol;
+    this.currentRow = effectiveRow;
 
     let left: number = 0;
     let top: number = 0;
+
     const canvasBounds = this.table.canvas.getBoundingClientRect();
-    const cell = this.table.getMergeCellRect(col, row);
+    const cell = this.table.getCellRelativeRect(effectiveCol, effectiveRow);
+
     if (cell.right < this.filterMenuWidth) {
       // 无法把筛选菜单完整地显示在左侧，那么显示在右侧
       left = cell.left + canvasBounds.left;
@@ -192,9 +210,23 @@ export class FilterToolbar {
       top = cell.bottom + canvasBounds.top;
     }
 
-    this.filterMenu.style.display = 'block';
+    this.filterMenu.style.display = this.isVisible ? 'block' : 'none';
     this.filterMenu.style.left = `${left}px`;
     this.filterMenu.style.top = `${top}px`;
+  }
+
+  show(col: number, row: number, filterModes: FilterMode[]): void {
+    this.filterModes = filterModes;
+    if (!this.filterModes.includes('byValue')) {
+      this.filterTabByValue.style.display = 'none';
+      this.onTabSwitch('byCondition');
+    } else if (!this.filterModes.includes('byCondition')) {
+      this.filterTabByCondition.style.display = 'none';
+      this.onTabSwitch('byValue');
+    }
+
+    this.adjustMenuPosition(col, row);
+    this.filterMenu.style.display = 'block';
 
     const field = this.table.internalProps.layoutMap.getHeaderField(col, row) as string | number;
     this.updateSelectedField(field);

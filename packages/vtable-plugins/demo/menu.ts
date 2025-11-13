@@ -16,6 +16,10 @@ export const menus = [
     name: 'filter'
   },
   {
+    path: 'filter',
+    name: 'bug'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
