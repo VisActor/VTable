@@ -251,7 +251,10 @@ export class Chart extends Rect {
                 // 显示左侧纵向crosshair的labelHoverOnAxis
                 table.scenegraph
                   .getCell(table.rowHeaderLevelCount - 1, row)
-                  .firstChild.showLabelHoverOnAxis(y + width / 2, yValue);
+                  .firstChild.showLabelHoverOnAxis(
+                    y + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
+                    yValue
+                  );
 
                 generateChartInstanceListByRowDirection(row, dimensionValue, null, canvasXY, table);
               } else {
@@ -261,7 +264,10 @@ export class Chart extends Rect {
                 // 显示底部横向crosshair的labelHoverOnAxis
                 table.scenegraph
                   .getCell(col, table.rowCount - table.bottomFrozenRowCount)
-                  .firstChild.showLabelHoverOnAxis(x + width / 2, dimensionValue);
+                  .firstChild.showLabelHoverOnAxis(
+                    x + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
+                    dimensionValue
+                  );
                 generateChartInstanceListByColumnDirection(col, dimensionValue, null, canvasXY, table);
               }
             }

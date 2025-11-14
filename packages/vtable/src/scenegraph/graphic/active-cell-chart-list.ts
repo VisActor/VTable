@@ -87,7 +87,7 @@ export function generateChartInstanceListByColumnDirection(
             });
           } else {
             chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
-              tooltip: false,
+              tooltip: isShowTooltip,
               showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3 }
             });
           }

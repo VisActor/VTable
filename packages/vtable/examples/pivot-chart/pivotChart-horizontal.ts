@@ -65,7 +65,34 @@ export function createTable() {
         yField: '230417170554008',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          {
+            orient: 'left',
+            visible: true,
+            label: { visible: true },
+            labelHoverOnAxis: {
+              visible: true,
+              position: 50,
+              autoRotate: false,
+              space: 0,
+              padding: 2,
+              textStyle: {
+                fontSize: 12,
+                fill: '#363839',
+                fontWeight: 'normal',
+                fillOpacity: 1,
+                textAlign: 'right',
+                textBaseline: 'middle'
+              },
+              background: {
+                visible: true,
+                style: {
+                  fill: 'red'
+                }
+              },
+              text: ''
+              // maxWidth: 100
+            }
+          },
           { orient: 'bottom', visible: true }
         ],
         bar: {
@@ -9192,6 +9219,11 @@ export function createTable() {
     }
   ];
   const option: VTable.PivotChartConstructorOptions = {
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightOfLastRowToShowTooltip: 60,
+      widthOfLastColumnToShowTooltip: 90
+    },
     columnWidthConfigForRowHeader: [
       {
         dimensions: [
