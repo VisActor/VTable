@@ -1,7 +1,10 @@
 /**
  * 筛选组件样式定义
  */
-export const filterStyles = {
+
+import type { FilterStyles } from './types';
+
+export const filterStyles: FilterStyles = {
   // 筛选菜单
   filterMenu: {
     display: 'none',

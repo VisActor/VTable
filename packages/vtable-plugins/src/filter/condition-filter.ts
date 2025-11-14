@@ -1,7 +1,7 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
-import { applyStyles, filterStyles, createElement } from './styles';
-import type { FilterOperator, OperatorOption } from './types';
+import { applyStyles, createElement } from './styles';
+import type { FilterOperator, OperatorOption, FilterStyles } from './types';
 import { FilterActionType, FilterOperatorCategory } from './types';
 
 /**
@@ -10,6 +10,8 @@ import { FilterActionType, FilterOperatorCategory } from './types';
 export class ConditionFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private styles: FilterStyles;
+
   private filterByConditionPanel: HTMLElement;
   private selectedField: string | number;
   private operatorSelect: HTMLSelectElement;
@@ -67,8 +69,9 @@ export class ConditionFilter {
     { value: FilterOperatorCategory.RADIO, label: '单选框' }
   ];
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, styles: FilterStyles) {
     this.table = table;
+    this.styles = styles;
     this.filterStateManager = filterStateManager;
   }
 
@@ -312,18 +315,18 @@ export class ConditionFilter {
   render(container: HTMLElement): void {
     // 按条件筛选面板
     this.filterByConditionPanel = document.createElement('div');
-    applyStyles(this.filterByConditionPanel, filterStyles.filterPanel);
+    applyStyles(this.filterByConditionPanel, this.styles.filterPanel);
 
     // 条件选择区域
     const conditionContainer = document.createElement('div');
-    applyStyles(conditionContainer, filterStyles.conditionContainer);
+    applyStyles(conditionContainer, this.styles.conditionContainer);
 
     // 分类选择下拉框
     const categoryLabel = createElement('label', {}, ['筛选类型：']);
-    applyStyles(categoryLabel, filterStyles.formLabel);
+    applyStyles(categoryLabel, this.styles.formLabel);
 
     this.categorySelect = createElement('select') as HTMLSelectElement;
-    applyStyles(this.categorySelect, filterStyles.operatorSelect);
+    applyStyles(this.categorySelect, this.styles.operatorSelect);
 
     // 添加分类选项
     this.categories.forEach(category => {
@@ -335,28 +338,28 @@ export class ConditionFilter {
 
     // 操作符选择下拉框
     const operatorLabel = createElement('label', {}, ['筛选条件：']);
-    applyStyles(operatorLabel, filterStyles.formLabel);
+    applyStyles(operatorLabel, this.styles.formLabel);
 
     this.operatorSelect = createElement('select') as HTMLSelectElement;
-    applyStyles(this.operatorSelect, filterStyles.operatorSelect);
+    applyStyles(this.operatorSelect, this.styles.operatorSelect);
 
     // 条件值输入框
     const valueLabel = createElement('label', {}, ['筛选值：']);
-    applyStyles(valueLabel, filterStyles.formLabel);
+    applyStyles(valueLabel, this.styles.formLabel);
 
     // 一个容器来包装两个输入框和"和"字
     const rangeInputContainer = createElement('div');
-    applyStyles(rangeInputContainer, filterStyles.rangeInputContainer);
+    applyStyles(rangeInputContainer, this.styles.rangeInputContainer);
 
     this.valueInput = createElement('input', {
       type: 'text',
       placeholder: '请输入筛选值'
     }) as HTMLInputElement;
-    applyStyles(this.valueInput, filterStyles.searchInput);
+    applyStyles(this.valueInput, this.styles.searchInput);
 
     // "和"字标签
     const andLabel = createElement('span', {}, ['和']);
-    applyStyles(andLabel, filterStyles.addLabel);
+    applyStyles(andLabel, this.styles.addLabel);
     andLabel.style.display = 'none'; // 默认隐藏
 
     // 范围筛选的最大值输入框
@@ -364,7 +367,7 @@ export class ConditionFilter {
       type: 'text',
       placeholder: '最大值'
     }) as HTMLInputElement;
-    applyStyles(this.valueInputMax, filterStyles.searchInput);
+    applyStyles(this.valueInputMax, this.styles.searchInput);
     this.valueInputMax.style.display = 'none'; // 默认隐藏
 
     // 将输入框和"和"字添加到容器中
