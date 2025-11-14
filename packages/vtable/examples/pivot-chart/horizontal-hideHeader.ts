@@ -91,7 +91,35 @@ export function createTable() {
         yField: '230417170554008',
         seriesField: '230417171050030',
         axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
+          {
+            orient: 'left',
+            visible: true,
+            label: { visible: true },
+            labelHoverOnAxis: {
+              visible: true,
+              position: 50,
+              autoRotate: false,
+              space: 2,
+              padding: 2,
+              textStyle: {
+                fontSize: 12,
+                fill: 'white',
+                fontWeight: 'normal',
+                fillOpacity: 1,
+                textAlign: 'right',
+                textBaseline: 'middle'
+              },
+              background: {
+                visible: true,
+                style: {
+                  cornerRadius: 4,
+                  fill: 'red'
+                }
+              },
+              text: ''
+              // maxWidth: 100
+            }
+          },
           { orient: 'bottom', visible: true }
         ],
         bar: {

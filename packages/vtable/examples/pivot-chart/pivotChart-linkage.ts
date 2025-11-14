@@ -11,14 +11,6 @@ export function createTable() {
       value: '一级',
       children: [
         {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
           value: '折扣',
           indicatorKey: '230707112948009'
         }
@@ -28,14 +20,6 @@ export function createTable() {
       dimensionKey: '230417170554012',
       value: '二级',
       children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
         {
           value: '折扣',
           indicatorKey: '230707112948009'
@@ -47,14 +31,6 @@ export function createTable() {
       value: '当日',
       children: [
         {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
-        {
           value: '折扣',
           indicatorKey: '230707112948009'
         }
@@ -64,14 +40,6 @@ export function createTable() {
       dimensionKey: '230417170554012',
       value: '标准级',
       children: [
-        {
-          value: '数量',
-          indicatorKey: '230713183656009'
-        },
-        {
-          value: '销售额',
-          indicatorKey: '230417171050025'
-        },
         {
           value: '折扣',
           indicatorKey: '230707112948009'
@@ -137,319 +105,7 @@ export function createTable() {
       }
     }
   ];
-  const indicators: VTable.TYPES.IIndicator[] = [
-    {
-      indicatorKey: '230713183656009',
-      title: '数量',
-      width: 'auto',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        tooltip: {
-          throttleInterval: 0
-        },
-        // type: 'common',
-        stack: true,
-        type: 'bar',
-        padding: { left: 0, right: 0, top: 3, bottom: 3 },
-        data: {
-          id: 'dataId',
-          fields: {
-            //设置xField数据的顺序
-            230417170554008: {
-              sortIndex: 0,
-              domain: [
-                '纸张',
-                '标签',
-                '装订机',
-                '系固件',
-                '用品',
-                '美术',
-                '器具',
-                '收纳具',
-                '信封',
-                '椅子',
-                '书架',
-                '用具',
-                '桌子',
-                '复印机',
-                '电话',
-                '设备',
-                '配件'
-              ]
-              // lockStatisticsByDomain:  true
-            },
-            230717170834024: {
-              //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-              sortIndex: 1,
-              domain: ['消费者', '小型企业', '公司']
-              // lockStatisticsByDomain:  true
-            }
-          }
-        },
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
-        ],
-        // brush: {
-        //   brushType: 'rect',
-        //   brushLinkSeriesIndex: [1, 2],
-        //   inBrush: {
-        //     colorAlpha: 1
-        //   },
-        //   outOfBrush: {
-        //     colorAlpha: 0.2
-        //   }
-        // },
-        xField: ['230417170554008'],
-        yField: '230713183656009',
-        seriesField: '20001',
-        bar: {
-          state: {
-            selected: {
-              fill: 'yellow'
-            },
-            selected_reverse: {
-              // fill: '#ddd'
-              opacity: 0.2
-            }
-          }
-        },
-        scales: [
-          {
-            id: 'color',
-            type: 'ordinal',
-            domain: [
-              '公司-数量',
-              '小型企业-数量',
-              '消费者-数量',
-              '公司-销售额',
-              '小型企业-销售额',
-              '消费者-销售额',
-              '公司-利润',
-              '小型企业-利润',
-              '消费者-利润',
-              '公司-折扣',
-              '小型企业-折扣',
-              '消费者-折扣'
-            ],
-            range: [
-              '#2E62F1',
-              '#4DC36A',
-              '#FF8406',
-              '#FFCC00',
-              '#4F44CF',
-              '#5AC8FA',
-              '#003A8C',
-              '#B08AE2',
-              '#FF6341',
-              '#98DD62',
-              '#07A199',
-              '#87DBDD'
-            ]
-          }
-        ]
-      },
-      style: {
-        padding: 1
-      }
-    },
-    {
-      indicatorKey: '230417171050025',
-      title: '销售额 & 利润',
-      cellType: 'chart',
-      chartModule: 'vchart',
-      chartSpec: {
-        tooltip: {
-          throttleInterval: 0
-        },
-        type: 'common',
-        padding: { left: 0, right: 0, top: 3, bottom: 3 },
-        // data: {
-        //   id: 'dataId',
-        //   fields: {
-        //     230417170554008: {
-        //       sortIndex: 0,
-        //       domain: [
-        //         '纸张',
-        //         '标签',
-        //         '装订机',
-        //         '系固件',
-        //         '用品',
-        //         '美术',
-        //         '器具',
-        //         '收纳具',
-        //         '信封',
-        //         '椅子',
-        //         '书架',
-        //         '用具',
-        //         '桌子',
-        //         '复印机',
-        //         '电话',
-        //         '设备',
-        //         '配件'
-        //       ]
-        //       // lockStatisticsByDomain:  true
-        //     },
-        //     230717170834024: {
-        //       sortIndex: 1,
-        //       domain: ['消费者', '小型企业', '公司']
-        //       // lockStatisticsByDomain:  true
-        //     }
-        //   }
-        // },
-        series: [
-          {
-            type: 'bar',
-            stack: true,
-            data: {
-              id: 'id1',
-              fields: {
-                230417170554008: {
-                  sortIndex: 0,
-                  domain: [
-                    '纸张',
-                    '标签',
-                    '装订机',
-                    '系固件',
-                    '用品',
-                    '美术',
-                    '器具',
-                    '收纳具',
-                    '信封',
-                    '椅子',
-                    '书架',
-                    '用具',
-                    '桌子',
-                    '复印机',
-                    '电话',
-                    '设备',
-                    '配件'
-                  ]
-                  // lockStatisticsByDomain:  true
-                },
-                230717170834024: {
-                  sortIndex: 1,
-                  domain: ['消费者', '小型企业', '公司']
-                  // lockStatisticsByDomain:  true
-                }
-              }
-            },
-            xField: ['230417170554008'],
-            yField: '230713152555009',
-            seriesField: '20001',
-            bar: {
-              state: {
-                selected: {
-                  fill: 'yellow'
-                },
-                selected_reverse: {
-                  // fill: '#ddd'
-                  opacity: 0.2
-                }
-              }
-            }
-          },
-          {
-            type: 'line',
-            stack: false,
-            data: {
-              id: 'id2',
-              fields: {
-                230417170554008: {
-                  sortIndex: 0,
-                  domain: [
-                    '纸张',
-                    '标签',
-                    '装订机',
-                    '系固件',
-                    '用品',
-                    '美术',
-                    '器具',
-                    '收纳具',
-                    '信封',
-                    '椅子',
-                    '书架',
-                    '用具',
-                    '桌子',
-                    '复印机',
-                    '电话',
-                    '设备',
-                    '配件'
-                  ]
-                  // lockStatisticsByDomain:  true
-                }
-              }
-            },
-            invalidType: 'break',
-            xField: ['230417170554008'],
-            yField: '230417171050025',
-            seriesField: '20001',
-            line: {
-              state: {
-                selected: {
-                  lineWidth: 3
-                },
-                selected_reverse: {
-                  lineWidth: 1
-                }
-              }
-            },
-            point: {
-              state: {
-                selected: {
-                  fill: 'yellow'
-                },
-                selected_reverse: {
-                  fill: '#ddd'
-                }
-              }
-            }
-          }
-        ],
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: false }
-        ],
-        scales: [
-          {
-            id: 'color',
-            type: 'ordinal',
-            domain: [
-              '公司-数量',
-              '小型企业-数量',
-              '消费者-数量',
-              '公司-销售额',
-              '小型企业-销售额',
-              '消费者-销售额',
-              '公司-利润',
-              '小型企业-利润',
-              '消费者-利润',
-              '公司-折扣',
-              '小型企业-折扣',
-              '消费者-折扣'
-            ],
-            range: [
-              '#2E62F1',
-              '#4DC36A',
-              '#FF8406',
-              '#FFCC00',
-              '#4F44CF',
-              '#5AC8FA',
-              '#003A8C',
-              '#B08AE2',
-              '#FF6341',
-              '#98DD62',
-              '#07A199',
-              '#87DBDD'
-            ]
-          }
-        ]
-      },
-      style: {
-        padding: 1
-      }
-    },
+  const indicators: (string | VTable.TYPES.IChartIndicator)[] = [
     {
       indicatorKey: '230707112948009',
       title: '折扣',
@@ -459,6 +115,28 @@ export function createTable() {
       chartSpec: {
         tooltip: {
           throttleInterval: 0
+        },
+        crosshair: {
+          yField: {
+            label: {
+              visible: true
+            },
+            visible: true,
+            line: {
+              visible: true,
+              type: 'line'
+            }
+          },
+          xField: {
+            label: {
+              visible: true
+            },
+            visible: true,
+            line: {
+              visible: true,
+              type: 'line'
+            }
+          }
         },
         // type: 'common',
         stack: true,
@@ -10368,7 +10046,7 @@ export function createTable() {
       '230717170834024': '小型企业'
     }
   ];
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.PivotChartConstructorOptions = {
     // renderChartAsync:true,
     renderChartAsyncBatchCount: 50,
     columnTree,
@@ -10380,7 +10058,7 @@ export function createTable() {
     container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 50,
-    defaultHeaderRowHeight: 50,
+    defaultHeaderRowHeight: 150,
     defaultColWidth: 280,
     defaultHeaderColWidth: 100,
     indicatorTitle: '指标',
@@ -10486,9 +10164,14 @@ export function createTable() {
       position: 'start',
       maxRow: 1,
       padding: [50, 0, 0, 0]
+    },
+    widthMode: 'adaptive',
+    heightMode: 'adaptive',
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightOfLastRowToShowTooltip: 60,
+      widthOfLastColumnToShowTooltip: 90
     }
-    // widthMode: 'adaptive',
-    // heightMode: 'adaptive'
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true

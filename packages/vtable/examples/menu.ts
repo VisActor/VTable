@@ -474,6 +474,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-aeolus-large-column'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-linkage'
       }
     ]
   },
