@@ -18,6 +18,10 @@ module.exports = {
       '@src': path.resolve(__dirname, '../src/'),
       '@vutils-extension': path.resolve(__dirname, '../src/vutil-extension-temp'),
       '@visactor/vtable/es': path.resolve(__dirname, '../src/')
+      // '@visactor/vrender-core': '/Users/bytedance/VisActor/VRender/packages/vrender-core/src/index.ts',
+      // '@visactor/vrender-kits': '/Users/bytedance/VisActor/VRender/packages/vrender-kits/src/index.ts',
+      // '@visactor/vrender-components': '/Users/bytedance/VisActor/VRender/packages/vrender-components/src/index.ts',
+      // '@visactor/vrender-animate': '/Users/bytedance/VisActor/VRender/packages/vrender-animate/src/index.ts'
     }
   },
   plugins: [

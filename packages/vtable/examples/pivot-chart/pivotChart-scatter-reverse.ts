@@ -1223,8 +1223,8 @@ export function createTable() {
       chartModule: 'vchart',
       chartSpec: {
         type: 'scatter',
-        xField: 'milesPerGallon',
-        yField: 'horsepower',
+        yField: 'milesPerGallon',
+        xField: 'horsepower',
 
         data: {
           id: 'baseData'
@@ -1271,7 +1271,7 @@ export function createTable() {
               visible: true,
               text: 'Horse Power'
             },
-            orient: 'left',
+            orient: 'bottom',
             range: { min: 0 },
             type: 'linear',
             innerOffset: {
@@ -1279,37 +1279,6 @@ export function createTable() {
               right: 4,
               top: 4,
               bottom: 4
-            },
-            labelHoverOnAxis: {
-              visible: false,
-              position: 50,
-              autoRotate: false,
-              space: 2,
-              padding: 2,
-              formatMethod(value) {
-                // value保留两位小数
-                if (typeof value === 'number') {
-                  return value.toFixed(2);
-                }
-                return value;
-              },
-              textStyle: {
-                fontSize: 12,
-                fill: '#363839',
-                fontWeight: 'normal',
-                fillOpacity: 1,
-                textAlign: 'right',
-                textBaseline: 'middle'
-              },
-              background: {
-                visible: true,
-                style: {
-                  fill: 'red',
-                  cornerRadius: 5
-                }
-              }
-              // text: '细分',
-              // maxWidth: 100
             }
           },
           {
@@ -1317,7 +1286,7 @@ export function createTable() {
               visible: true,
               text: 'Miles Per Gallon'
             },
-            orient: 'bottom',
+            orient: 'left',
             label: { visible: true },
             type: 'linear',
             innerOffset: {
@@ -1325,37 +1294,6 @@ export function createTable() {
               right: 4,
               top: 4,
               bottom: 4
-            },
-            labelHoverOnAxis: {
-              visible: false,
-              position: 50,
-              autoRotate: false,
-              space: 2,
-              padding: 2,
-              formatMethod(value) {
-                debugger;
-                // value保留两位小数
-                if (typeof value === 'number') {
-                  return value.toFixed(2);
-                }
-                return value;
-              },
-              textStyle: {
-                fontSize: 12,
-                fill: '#363839',
-                fontWeight: 'normal',
-                fillOpacity: 1,
-                textAlign: 'center',
-                textBaseline: 'top'
-              },
-              background: {
-                visible: true,
-                style: {
-                  fill: 'red'
-                }
-              }
-              // text: '细分',
-              // maxWidth: 100
             }
           }
         ]
@@ -1367,7 +1305,7 @@ export function createTable() {
   ];
   const option = {
     // hideIndicatorName: true,
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
     rows: rows,
     columns: columns,
     indicators,
@@ -1393,12 +1331,12 @@ export function createTable() {
     }
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-  // tableInstance.onVChartEvent('click', args => {
-  //   console.log('onVChartEvent click', args);
-  // });
-  // tableInstance.onVChartEvent('mouseover', args => {
-  //   console.log('onVChartEvent mouseover', args);
-  // });
+  tableInstance.onVChartEvent('click', args => {
+    console.log('onVChartEvent click', args);
+  });
+  tableInstance.onVChartEvent('mouseover', args => {
+    console.log('onVChartEvent mouseover', args);
+  });
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });

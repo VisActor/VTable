@@ -39,6 +39,20 @@ export function createTable() {
             // type: 'common',
             stack: true,
             type: 'bar',
+            tooltip: {
+              visible: true,
+              dimension: {
+                positionMode: 'pointer'
+              }
+            },
+            crosshair: {
+              xField: {
+                visible: true
+              },
+              yField: {
+                visible: false
+              }
+            },
             data: {
               id: 'data',
               fields: {
@@ -88,8 +102,69 @@ export function createTable() {
             yField: 'Quantity',
             seriesField: 'Segment-Indicator',
             axes: [
-              { orient: 'left', visible: true, label: { visible: true } },
-              { orient: 'bottom', visible: true }
+              {
+                orient: 'left',
+                visible: true,
+                label: { visible: true },
+                labelHoverOnAxis: {
+                  visible: true,
+                  position: 50,
+                  autoRotate: false,
+                  space: 10,
+                  padding: 2,
+                  textStyle: {
+                    fontSize: 12,
+                    fill: '#363839',
+                    fontWeight: 'normal',
+                    fillOpacity: 1,
+                    textAlign: 'right',
+                    textBaseline: 'middle'
+                  },
+                  background: {
+                    visible: true,
+                    style: {
+                      fill: 'red'
+                    }
+                  },
+                  text: ''
+                  // maxWidth: 100
+                }
+              },
+              {
+                orient: 'bottom',
+                visible: true,
+                labelHoverOnAxis: {
+                  visible: true,
+                  position: 50,
+                  autoRotate: false,
+                  space: 2,
+                  padding: 2,
+                  formatMethod(value) {
+                    debugger;
+                    // value保留两位小数
+                    if (typeof value === 'number') {
+                      return value.toFixed(2);
+                    }
+                    return value;
+                  },
+                  textStyle: {
+                    fontSize: 12,
+                    fill: '#363839',
+                    fontWeight: 'normal',
+                    fillOpacity: 1,
+                    textAlign: 'center',
+                    textBaseline: 'top'
+                  },
+                  background: {
+                    visible: true,
+                    style: {
+                      fill: 'red'
+                    }
+                  }
+                  // text: '细分',
+                  // maxWidth: 100
+                }
+              }
             ],
             bar: {
               state: {
@@ -145,6 +220,21 @@ export function createTable() {
           chartModule: 'vchart',
           chartSpec: {
             type: 'common',
+            // tooltip: {
+            //   visible: true,
+            //   dimension: {
+            //     positionMode: 'pointer',
+            //     position: 'centerTop'
+            //   }
+            // },
+            crosshair: {
+              xField: {
+                visible: true
+              },
+              yField: {
+                visible: false
+              }
+            },
             series: [
               {
                 type: 'bar',
@@ -325,7 +415,7 @@ export function createTable() {
           }
         }
       ];
-      const option: VTable.PivotTableConstructorOptions = {
+      const option: VTable.PivotChartConstructorOptions = {
         rows,
         columns,
         indicators,
@@ -417,16 +507,21 @@ export function createTable() {
             borderLineWidth: 0
           }
         },
-        renderChartAsync: true
+        chartDimensionLinkage: {
+          showTooltip: true,
+          heightOfLastRowToShowTooltip: 60,
+          widthOfLastColumnToShowTooltip: 90
+        }
+        // renderChartAsync: true
       };
 
       const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID)!, option);
-      tableInstance.onVChartEvent('click', args => {
-        console.log('onVChartEvent click', args);
-      });
-      tableInstance.onVChartEvent('mouseover', args => {
-        console.log('onVChartEvent mouseover', args);
-      });
+      // tableInstance.onVChartEvent('click', args => {
+      //   console.log('onVChartEvent click', args);
+      // });
+      // tableInstance.onVChartEvent('mouseover', args => {
+      //   console.log('onVChartEvent mouseover', args);
+      // });
       window.tableInstance = tableInstance;
     });
 }

@@ -333,6 +333,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-scatter-reverse'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-pie'
       },
       {
@@ -470,6 +474,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-aeolus-large-column'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-linkage'
       }
     ]
   },

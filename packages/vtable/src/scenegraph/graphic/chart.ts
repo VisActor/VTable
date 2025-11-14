@@ -4,6 +4,13 @@ import { Bounds, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { PivotChart } from '../../PivotChart';
 import { getCellHoverColor } from '../../state/hover/is-cell-hover';
+import {
+  clearChartInstanceListByColumnDirection,
+  clearChartInstanceListByRowDirection,
+  generateChartInstanceListByColumnDirection,
+  generateChartInstanceListByRowDirection
+} from './active-cell-chart-list';
+import type { PivotChartConstructorOptions } from '../..';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -36,7 +43,6 @@ export class Chart extends Rect {
   declare attribute: IChartGraphicAttribute;
   chartInstance: any;
   activeChartInstance: any;
-  active: boolean;
   cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
   isShareChartSpec: boolean; //针对chartSpec用户配置成函数形式的话 就不需要存储chartInstance了 会太占内存，使用这个变量 当渲染出缓存图表会就删除chartInstance实例
   constructor(isShareChartSpec: boolean, params: IChartGraphicAttribute) {
@@ -90,7 +96,9 @@ export class Chart extends Rect {
    * @param table
    */
   activate(table: BaseTableAPI) {
-    this.active = true;
+    if (this.activeChartInstance) {
+      return;
+    }
     const { col, row } = this.parent;
     const hoverColor = getCellHoverColor(this.parent, table);
     // this.chart = new TestChart(this.attribute.spec);
@@ -106,6 +114,7 @@ export class Chart extends Rect {
       y2: y2 - table.scrollTop
     });
     this.activeChartInstance?.release();
+    this.attribute.ClassType.globalConfig.uniqueTooltip = false;
     this.activeChartInstance = new this.attribute.ClassType(
       this.attribute.spec,
       merge({}, this.attribute.tableChartOption, {
@@ -209,6 +218,63 @@ export class Chart extends Rect {
         Chart.temp = 1;
       }, 0);
     });
+    if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage) {
+      this.activeChartInstance.on('dimensionHover', (params: any) => {
+        const dimensionInfo = params?.dimensionInfo[0];
+        const canvasXY = params?.event?.canvas;
+        const viewport = params?.event?.viewport;
+        if (viewport) {
+          const xValue = dimensionInfo.data[0].series.positionToDataX(viewport.x);
+          const yValue = dimensionInfo.data[0].series.positionToDataY(viewport.y);
+
+          if (this.attribute.spec.type === 'scatter') {
+            // console.log('receive scatter dimensionHover', params.action);
+            generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, true);
+            generateChartInstanceListByRowDirection(row, undefined, yValue, canvasXY, table, true);
+            // 显示左侧纵向crosshair的labelHoverOnAxis
+            table.scenegraph
+              .getCell(table.rowHeaderLevelCount - 1, row)
+              .firstChild.showLabelHoverOnAxis(canvasXY.y - table.getCellRelativeRect(col, row).top, yValue);
+            // 显示底部横向crosshair的labelHoverOnAxis
+            table.scenegraph
+              .getCell(col, table.rowCount - table.bottomFrozenRowCount)
+              .firstChild.showLabelHoverOnAxis(canvasXY.x - table.getCellRelativeRect(col, row).left, xValue);
+          } else {
+            if (params.action === 'enter') {
+              const dimensionValue = dimensionInfo.value;
+
+              const indicatorsAsCol = (table.options as PivotChartConstructorOptions).indicatorsAsCol;
+              if (indicatorsAsCol) {
+                const series = dimensionInfo.data[0].series;
+                const width = series.getYAxisHelper().getBandwidth(0);
+                const y = series.valueToPositionY(dimensionValue);
+                // 显示左侧纵向crosshair的labelHoverOnAxis
+                table.scenegraph
+                  .getCell(table.rowHeaderLevelCount - 1, row)
+                  .firstChild.showLabelHoverOnAxis(
+                    y + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
+                    yValue
+                  );
+
+                generateChartInstanceListByRowDirection(row, dimensionValue, null, canvasXY, table);
+              } else {
+                const series = dimensionInfo.data[0].series;
+                const width = series.getXAxisHelper().getBandwidth(0);
+                const x = series.valueToPositionX(dimensionValue);
+                // 显示底部横向crosshair的labelHoverOnAxis
+                table.scenegraph
+                  .getCell(col, table.rowCount - table.bottomFrozenRowCount)
+                  .firstChild.showLabelHoverOnAxis(
+                    x + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
+                    dimensionValue
+                  );
+                generateChartInstanceListByColumnDirection(col, dimensionValue, null, canvasXY, table);
+              }
+            }
+          }
+        }
+      });
+    }
     (table as PivotChart)._bindChartEvent?.(this.activeChartInstance);
   }
   static temp: number = 1;
@@ -216,22 +282,52 @@ export class Chart extends Rect {
    * 图表失去焦点
    * @param table
    */
-  deactivate() {
-    this.active = false;
-    // move active chart view box out of browser view
-    // to avoid async render when chart is releasd
-    this.activeChartInstance?.updateViewBox(
-      {
-        x1: -1000,
-        x2: -800,
-        y1: -1000,
-        y2: -800
-      },
-      false,
-      false
-    );
-    this.activeChartInstance?.release();
-    this.activeChartInstance = null;
+  deactivate(
+    table: BaseTableAPI,
+    {
+      releaseChartInstance = true,
+      releaseColumnChartInstance = true,
+      releaseRowChartInstance = true
+    }: { releaseChartInstance?: boolean; releaseColumnChartInstance?: boolean; releaseRowChartInstance?: boolean } = {}
+  ) {
+    // console.log('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
+
+    if (releaseChartInstance) {
+      // move active chart view box out of browser view
+      // to avoid async render when chart is releasd
+      this.activeChartInstance?.updateViewBox(
+        {
+          x1: -1000,
+          x2: -800,
+          y1: -1000,
+          y2: -800
+        },
+        false,
+        false
+      );
+      this.activeChartInstance?.release();
+      this.activeChartInstance = null;
+      const { col, row } = this.parent;
+      const table = (this.stage as any).table as BaseTableAPI;
+      // 隐藏左侧纵向crosshair的labelHoverOnAxis
+      table.scenegraph.getCell(table.rowHeaderLevelCount - 1, row).firstChild.hideLabelHoverOnAxis();
+      // 隐藏底部横向crosshair的labelHoverOnAxis
+      table.scenegraph.getCell(col, table.rowCount - table.bottomFrozenRowCount).firstChild.hideLabelHoverOnAxis();
+    }
+    if (releaseColumnChartInstance) {
+      clearChartInstanceListByColumnDirection(
+        this.parent.col,
+        this.attribute.spec.type === 'scatter' ? this.parent.row : undefined,
+        table
+      );
+    }
+    if (releaseRowChartInstance) {
+      clearChartInstanceListByRowDirection(
+        this.parent.row,
+        this.attribute.spec.type === 'scatter' ? this.parent.col : undefined,
+        table
+      );
+    }
   }
   /** 更新图表对应数据 */
   updateData(data: any) {

@@ -136,9 +136,7 @@ export function getAxisAttributes(option: ICellAxisOption) {
       titleTextStyle = DEFAULT_TITLE_STYLE[spec.orient];
     }
   }
-
   const labelSpec = pickWithout(spec.label, ['style', 'formatMethod', 'state']);
-
   return {
     orient: spec.orient,
     select: spec.select,
@@ -231,6 +229,7 @@ export function getAxisAttributes(option: ICellAxisOption) {
         background: transformStateStyle(spec.title.background?.state)
       }
     },
+    labelHoverOnAxis: spec.labelHoverOnAxis,
     panel: {
       visible: spec.background?.visible,
       style: transformToGraphic(spec.background?.style),
