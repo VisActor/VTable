@@ -1,13 +1,14 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import { arrayEqual } from '@visactor/vutils';
-import type { FilterConfig, ValueFilterOptionDom, FilterState } from './types';
+import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterStyles } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
-import { applyStyles, filterStyles } from './styles';
+import { applyStyles } from './styles';
 
 export class ValueFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private styles: FilterStyles;
   private uniqueKeys = new Map<string | number, Array<{ value: any; count: number; rawValue: any }>>();
   private displayToRawValueMap = new Map<string | number, Map<any, any>>();
   private selectedField: string | number;
@@ -18,9 +19,10 @@ export class ValueFilter {
   private selectAllCheckbox: HTMLInputElement;
   private filterItemsContainer: HTMLElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, styles: FilterStyles) {
     this.table = table;
     this.filterStateManager = filterStateManager;
+    this.styles = styles;
 
     this.filterStateManager.subscribe((state: FilterState) => {
       const filterState = state.filters.get(this.selectedField);
@@ -477,33 +479,33 @@ export class ValueFilter {
   render(container: HTMLElement): void {
     // === 按值筛选的菜单内容 ===
     this.filterByValuePanel = document.createElement('div');
-    applyStyles(this.filterByValuePanel, filterStyles.filterPanel);
+    applyStyles(this.filterByValuePanel, this.styles.filterPanel);
 
     // -- 搜索栏 ---
     const searchContainer = document.createElement('div');
-    applyStyles(searchContainer, filterStyles.searchContainer);
+    applyStyles(searchContainer, this.styles.searchContainer);
 
     this.filterByValueSearchInput = document.createElement('input');
     this.filterByValueSearchInput.type = 'text';
     this.filterByValueSearchInput.placeholder = '可使用空格分隔多个关键词';
-    applyStyles(this.filterByValueSearchInput, filterStyles.searchInput);
+    applyStyles(this.filterByValueSearchInput, this.styles.searchInput);
 
     searchContainer.appendChild(this.filterByValueSearchInput);
 
     // --- 筛选选项 ---
     const optionsContainer = document.createElement('div');
-    applyStyles(optionsContainer, filterStyles.optionsContainer);
+    applyStyles(optionsContainer, this.styles.optionsContainer);
 
     const selectAllItemDiv = document.createElement('div');
-    applyStyles(selectAllItemDiv, filterStyles.optionItem);
+    applyStyles(selectAllItemDiv, this.styles.optionItem);
 
     const selectAllLabel = document.createElement('label');
-    applyStyles(selectAllLabel, filterStyles.optionLabel);
+    applyStyles(selectAllLabel, this.styles.optionLabel);
 
     this.selectAllCheckbox = document.createElement('input');
     this.selectAllCheckbox.type = 'checkbox';
     this.selectAllCheckbox.checked = true; // 默认全选
-    applyStyles(this.selectAllCheckbox, filterStyles.checkbox);
+    applyStyles(this.selectAllCheckbox, this.styles.checkbox);
 
     selectAllLabel.append(this.selectAllCheckbox, ' 全选');
     selectAllItemDiv.appendChild(selectAllLabel);
@@ -530,11 +532,11 @@ export class ValueFilter {
     const itemDomList: ValueFilterOptionDom[] = [];
     this.uniqueKeys.get(field)?.forEach(({ value, count, rawValue }) => {
       const itemDiv = document.createElement('div');
-      applyStyles(itemDiv, filterStyles.optionItem);
+      applyStyles(itemDiv, this.styles.optionItem);
       itemDiv.style.display = 'flex';
 
       const label = document.createElement('label');
-      applyStyles(label, filterStyles.optionLabel);
+      applyStyles(label, this.styles.optionLabel);
 
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
@@ -543,11 +545,11 @@ export class ValueFilter {
       checkbox.checked = selectedRawValueSet.has(rawValue);
       // 计数为0时禁用复选框（不可选中）
       checkbox.disabled = count === 0;
-      applyStyles(checkbox, filterStyles.checkbox);
+      applyStyles(checkbox, this.styles.checkbox);
 
       const countSpan = document.createElement('span');
       countSpan.textContent = String(count);
-      applyStyles(countSpan, filterStyles.countSpan);
+      applyStyles(countSpan, this.styles.countSpan);
 
       label.append(checkbox, ` ${value}`); // UI显示格式化值
       itemDiv.append(label, countSpan);

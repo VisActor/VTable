@@ -2,8 +2,8 @@ import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
-import { applyStyles, filterStyles } from './styles';
-import type { FilterMode } from './types';
+import { applyStyles } from './styles';
+import type { FilterMode, FilterStyles } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -11,6 +11,8 @@ import type { FilterMode } from './types';
 export class FilterToolbar {
   table: ListTable | PivotTable;
   filterStateManager: FilterStateManager;
+  styles: FilterStyles;
+
   valueFilter: ValueFilter | null = null;
   conditionFilter: ConditionFilter | null = null;
   activeTab: 'byValue' | 'byCondition' = 'byValue';
@@ -28,11 +30,12 @@ export class FilterToolbar {
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, styles: FilterStyles) {
     this.table = table;
     this.filterStateManager = filterStateManager;
-    this.valueFilter = new ValueFilter(this.table, this.filterStateManager);
-    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager);
+    this.styles = styles;
+    this.valueFilter = new ValueFilter(this.table, this.filterStateManager, this.styles);
+    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, this.styles);
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
 
@@ -55,8 +58,8 @@ export class FilterToolbar {
     }
 
     const isValueTab = tab === 'byValue';
-    applyStyles(this.filterTabByValue, filterStyles.tabStyle(isValueTab));
-    applyStyles(this.filterTabByCondition, filterStyles.tabStyle(!isValueTab));
+    applyStyles(this.filterTabByValue, this.styles.tabStyle(isValueTab));
+    applyStyles(this.filterTabByCondition, this.styles.tabStyle(!isValueTab));
   }
 
   private updateSelectedField(field: string | number): void {
@@ -105,40 +108,40 @@ export class FilterToolbar {
   render(container: HTMLElement): void {
     // === 主容器 ===
     this.filterMenu = document.createElement('div');
-    applyStyles(this.filterMenu, filterStyles.filterMenu);
+    applyStyles(this.filterMenu, this.styles.filterMenu);
     this.filterMenu.style.width = `${this.filterMenuWidth}px`;
 
     // === 筛选 Tab ===
     const filterTabsContainer = document.createElement('div');
-    applyStyles(filterTabsContainer, filterStyles.tabsContainer);
+    applyStyles(filterTabsContainer, this.styles.tabsContainer);
 
     this.filterTabByValue = document.createElement('button');
     this.filterTabByValue.innerText = '按值筛选';
-    applyStyles(this.filterTabByValue, filterStyles.tabStyle(true));
+    applyStyles(this.filterTabByValue, this.styles.tabStyle(true));
 
     this.filterTabByCondition = document.createElement('button');
     this.filterTabByCondition.innerText = '按条件筛选';
-    applyStyles(this.filterTabByCondition, filterStyles.tabStyle(false));
+    applyStyles(this.filterTabByCondition, this.styles.tabStyle(false));
 
     filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
 
     // === 页脚（清除、取消、确定 筛选按钮） ===
     const footerContainer = document.createElement('div');
-    applyStyles(footerContainer, filterStyles.footerContainer);
+    applyStyles(footerContainer, this.styles.footerContainer);
 
     this.clearFilterOptionLink = document.createElement('a');
     this.clearFilterOptionLink.href = '#';
     this.clearFilterOptionLink.innerText = '清除筛选';
-    applyStyles(this.clearFilterOptionLink, filterStyles.clearLink);
+    applyStyles(this.clearFilterOptionLink, this.styles.clearLink);
 
     const footerButtons = document.createElement('div');
     this.cancelFilterButton = document.createElement('button');
     this.cancelFilterButton.innerText = '取消';
-    applyStyles(this.cancelFilterButton, filterStyles.footerButton(false));
+    applyStyles(this.cancelFilterButton, this.styles.footerButton(false));
 
     this.applyFilterButton = document.createElement('button');
     this.applyFilterButton.innerText = '确认';
-    applyStyles(this.applyFilterButton, filterStyles.footerButton(true));
+    applyStyles(this.applyFilterButton, this.styles.footerButton(true));
 
     footerButtons.append(this.cancelFilterButton, this.applyFilterButton);
     footerContainer.append(this.clearFilterOptionLink, footerButtons);

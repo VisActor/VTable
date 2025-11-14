@@ -143,7 +143,13 @@ export function createTable() {
     }
   ];
 
-  const filterPlugin = new FilterPlugin({});
+  const filterPlugin = new FilterPlugin({
+    styles: {
+      filterMenu: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)'
+      }
+    }
+  });
   (window as any).filterPlugin = filterPlugin;
 
   const option: VTable.ListTableConstructorOptions = {
