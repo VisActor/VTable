@@ -2705,6 +2705,7 @@ describe('pivot-header-layout test', () => {
 
   test('pivot-header-layout getAxisConfigInPivotChart', () => {
     expect(layout.getAxisConfigInPivotChart(1, 1)).toEqual({
+      labelHoverOnAxis: {},
       title: {
         visible: true,
         text: '销售额-存在空',
@@ -2785,6 +2786,7 @@ describe('pivot-header-layout test', () => {
       zero: true,
       nice: true,
       __ticksForVTable: [-100000, 0, 100000, 200000, 300000, 400000, 500000],
+      __vtableChartTheme: undefined,
       __vtablePadding: [1, 1, 0, 1]
     });
     expect(layout.getAxisConfigInPivotChart(2, 4)).toEqual({
@@ -2822,6 +2824,8 @@ describe('pivot-header-layout test', () => {
         }
       },
       sampling: false,
+      range: undefined,
+      labelHoverOnAxis: {},
       zIndex: 200,
       label: {
         visible: true,
@@ -2853,7 +2857,8 @@ describe('pivot-header-layout test', () => {
       },
       paddingInner: [0.15, 0.1],
       paddingOuter: [0.075, 0.1],
-      __vtablePadding: [1, 1, 0, 1]
+      __vtablePadding: [1, 1, 0, 1],
+      __vtableChartTheme: undefined
     });
   });
 
