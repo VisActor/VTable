@@ -54,8 +54,8 @@ export function generateChartInstanceListByColumnDirection(
           if (!isScatter && typeof chartDimensionLinkage === 'object') {
             isShowTooltip = chartDimensionLinkage.showTooltip ?? true;
             if (i === rowEnd && isShowTooltip) {
-              const heightOfLastRowToShowTooltip = chartDimensionLinkage.heightOfLastRowToShowTooltip;
-              const { rowEnd: rowEnd1 } = table.getBodyVisibleRowRange(-heightOfLastRowToShowTooltip);
+              const heightLimitToShowTooltipForLastRow = chartDimensionLinkage.heightLimitToShowTooltipForLastRow;
+              const { rowEnd: rowEnd1 } = table.getBodyVisibleRowRange(-heightLimitToShowTooltipForLastRow);
               if (rowEnd1 === rowEnd) {
                 isShowTooltip = true;
               } else {
@@ -78,7 +78,7 @@ export function generateChartInstanceListByColumnDirection(
           //   _21Group?.id
           // );
           if (isScatter) {
-            chartInstanceListColumnByColumnDirection[col][i].showCrosshair((axis: any) => {
+            chartInstanceListColumnByColumnDirection[col][i].showCrosshair?.((axis: any) => {
               // console.log('showCrosshair', axis.layoutOrient, dimensionValueOrXValue);
               if (axis.layoutOrient === 'left') {
                 return positionValueOrYValue;
@@ -161,8 +161,8 @@ export function generateChartInstanceListByRowDirection(
           if (!isScatter && typeof chartDimensionLinkage === 'object') {
             isShowTooltip = chartDimensionLinkage.showTooltip ?? true;
             if (i === colEnd && isShowTooltip) {
-              const widthOfLastColumnToShowTooltip = chartDimensionLinkage.widthOfLastColumnToShowTooltip;
-              const { colEnd: colEnd1 } = table.getBodyVisibleColRange(-widthOfLastColumnToShowTooltip);
+              const widthLimitToShowTooltipForLastColumn = chartDimensionLinkage.widthLimitToShowTooltipForLastColumn;
+              const { colEnd: colEnd1 } = table.getBodyVisibleColRange(-widthLimitToShowTooltipForLastColumn);
               if (colEnd1 === colEnd) {
                 isShowTooltip = true;
               } else {
@@ -177,7 +177,7 @@ export function generateChartInstanceListByRowDirection(
           }
           // console.log('setDimensionIndex row', i, row, chartInstanceListRowByRowDirection[row][i].id);
           if (isScatter) {
-            chartInstanceListRowByRowDirection[row][i].showCrosshair((axis: any) => {
+            chartInstanceListRowByRowDirection[row][i].showCrosshair?.((axis: any) => {
               if (axis.layoutOrient === 'left') {
                 return positionValueOrYValue;
               }

@@ -2,7 +2,7 @@ import { isArray, isNumber, isValid, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
-import type { CollectedValue } from '../../ts-types';
+import type { CollectedValue, PivotChartConstructorOptions } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
 import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
@@ -490,6 +490,12 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
         seriesIndice = seriesIndex;
       }
       const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
+      if (!axisOption.labelHoverOnAxis) {
+        axisOption.labelHoverOnAxis =
+          (layout._table.options as PivotChartConstructorOptions).chartDimensionLinkage?.labelHoverOnAxis?.[
+            orient as 'left' | 'right' | 'top' | 'bottom'
+          ] ?? {};
+      }
       return {
         axisOption,
         isPercent: spec.percent,
@@ -501,9 +507,16 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       };
     }
   }
-  const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-    return axisOption.orient === orient;
-  });
+  const axisOption =
+    ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === orient;
+    }) ?? {};
+  if (!axisOption.labelHoverOnAxis) {
+    axisOption.labelHoverOnAxis =
+      (layout._table.options as PivotChartConstructorOptions).chartDimensionLinkage?.labelHoverOnAxis?.[
+        orient as 'left' | 'right' | 'top' | 'bottom'
+      ] ?? {};
+  }
   const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
   return {
     axisOption,

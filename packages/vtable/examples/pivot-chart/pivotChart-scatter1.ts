@@ -445,8 +445,8 @@ export function createTable() {
     },
     chartDimensionLinkage: {
       showTooltip: true,
-      heightOfLastRowToShowTooltip: 60,
-      widthOfLastColumnToShowTooltip: 90
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90
     }
   };
 

@@ -229,11 +229,11 @@ export function getAxisAttributes(option: ICellAxisOption) {
         background: transformStateStyle(spec.title.background?.state)
       }
     },
-    labelHoverOnAxis: spec.labelHoverOnAxis,
     panel: {
       visible: spec.background?.visible,
       style: transformToGraphic(spec.background?.style),
       state: transformStateStyle(spec.background?.state)
-    }
+    },
+    labelHoverOnAxis: spec.labelHoverOnAxis
   };
 }

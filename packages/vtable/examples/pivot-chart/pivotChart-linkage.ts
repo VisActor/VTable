@@ -119,9 +119,9 @@ export function createTable() {
         crosshair: {
           yField: {
             label: {
-              visible: true
+              visible: false
             },
-            visible: true,
+            visible: false,
             line: {
               visible: true,
               type: 'line'
@@ -129,7 +129,7 @@ export function createTable() {
           },
           xField: {
             label: {
-              visible: true
+              visible: false
             },
             visible: true,
             line: {
@@ -10169,8 +10169,49 @@ export function createTable() {
     heightMode: 'adaptive',
     chartDimensionLinkage: {
       showTooltip: true,
-      heightOfLastRowToShowTooltip: 60,
-      widthOfLastColumnToShowTooltip: 90
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90,
+      labelHoverOnAxis: {
+        left: {
+          visible: true,
+          position: 50,
+          autoRotate: false,
+          space: 2,
+          padding: 2,
+          formatMethod(value) {
+            // value保留两位小数
+            if (typeof value === 'number') {
+              return value.toFixed(2);
+            }
+            return value;
+          },
+          textStyle: {
+            fontSize: 12,
+            fill: '#363839',
+            fontWeight: 'normal',
+            fillOpacity: 1,
+            textAlign: 'right',
+            textBaseline: 'middle'
+          },
+          background: {
+            visible: true,
+            style: {
+              fill: 'red',
+              cornerRadius: 5
+            }
+          }
+          // text: '细分',
+          // maxWidth: 100
+        },
+        bottom: {
+          visible: true,
+          position: 50,
+          space: 0,
+          padding: 1
+          // text: '细分',
+          // maxWidth: 100
+        }
+      }
     }
     // hover: {
     //   disableHeaderHover:false,

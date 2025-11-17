@@ -1279,37 +1279,6 @@ export function createTable() {
               right: 4,
               top: 4,
               bottom: 4
-            },
-            labelHoverOnAxis: {
-              visible: false,
-              position: 50,
-              autoRotate: false,
-              space: 2,
-              padding: 2,
-              formatMethod(value) {
-                // value保留两位小数
-                if (typeof value === 'number') {
-                  return value.toFixed(2);
-                }
-                return value;
-              },
-              textStyle: {
-                fontSize: 12,
-                fill: '#363839',
-                fontWeight: 'normal',
-                fillOpacity: 1,
-                textAlign: 'right',
-                textBaseline: 'middle'
-              },
-              background: {
-                visible: true,
-                style: {
-                  fill: 'red',
-                  cornerRadius: 5
-                }
-              }
-              // text: '细分',
-              // maxWidth: 100
             }
           },
           {
@@ -1325,37 +1294,6 @@ export function createTable() {
               right: 4,
               top: 4,
               bottom: 4
-            },
-            labelHoverOnAxis: {
-              visible: false,
-              position: 50,
-              autoRotate: false,
-              space: 2,
-              padding: 2,
-              formatMethod(value) {
-                debugger;
-                // value保留两位小数
-                if (typeof value === 'number') {
-                  return value.toFixed(2);
-                }
-                return value;
-              },
-              textStyle: {
-                fontSize: 12,
-                fill: '#363839',
-                fontWeight: 'normal',
-                fillOpacity: 1,
-                textAlign: 'center',
-                textBaseline: 'top'
-              },
-              background: {
-                visible: true,
-                style: {
-                  fill: 'red'
-                }
-              }
-              // text: '细分',
-              // maxWidth: 100
             }
           }
         ]
@@ -1388,8 +1326,71 @@ export function createTable() {
     },
     chartDimensionLinkage: {
       showTooltip: true,
-      heightOfLastRowToShowTooltip: 60,
-      widthOfLastColumnToShowTooltip: 90
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90,
+      labelHoverOnAxis: {
+        left: {
+          visible: false,
+          position: 50,
+          autoRotate: false,
+          space: 2,
+          padding: 2,
+          formatMethod(value) {
+            // value保留两位小数
+            if (typeof value === 'number') {
+              return value.toFixed(2);
+            }
+            return value;
+          },
+          textStyle: {
+            fontSize: 12,
+            fill: '#363839',
+            fontWeight: 'normal',
+            fillOpacity: 1,
+            textAlign: 'right',
+            textBaseline: 'middle'
+          },
+          background: {
+            visible: true,
+            style: {
+              fill: 'red',
+              cornerRadius: 5
+            }
+          }
+          // text: '细分',
+          // maxWidth: 100
+        },
+        bottom: {
+          visible: false,
+          position: 50,
+          autoRotate: false,
+          space: 2,
+          padding: 2,
+          formatMethod(value) {
+            // value保留两位小数
+            if (typeof value === 'number') {
+              return value.toFixed(2);
+            }
+            return value;
+          },
+          textStyle: {
+            fontSize: 12,
+            fill: 'white',
+            fontWeight: 'normal',
+            fillOpacity: 1,
+            textAlign: 'center',
+            textBaseline: 'top'
+          },
+          background: {
+            visible: true,
+            style: {
+              fill: 'green'
+            }
+          }
+          // text: '细分',
+          // maxWidth: 100
+        }
+      }
     }
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);

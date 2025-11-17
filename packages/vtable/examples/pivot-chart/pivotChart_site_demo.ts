@@ -105,65 +105,34 @@ export function createTable() {
               {
                 orient: 'left',
                 visible: true,
-                label: { visible: true },
-                labelHoverOnAxis: {
-                  visible: true,
-                  position: 50,
-                  autoRotate: false,
-                  space: 10,
-                  padding: 2,
-                  textStyle: {
-                    fontSize: 12,
-                    fill: '#363839',
-                    fontWeight: 'normal',
-                    fillOpacity: 1,
-                    textAlign: 'right',
-                    textBaseline: 'middle'
-                  },
-                  background: {
-                    visible: true,
-                    style: {
-                      fill: 'red'
-                    }
-                  },
-                  text: ''
-                  // maxWidth: 100
-                }
+                label: { visible: true }
+                // labelHoverOnAxis: {
+                //   visible: true,
+                //   position: 50,
+                //   autoRotate: false,
+                //   space: 10,
+                //   padding: 2,
+                //   textStyle: {
+                //     fontSize: 12,
+                //     fill: '#363839',
+                //     fontWeight: 'normal',
+                //     fillOpacity: 1,
+                //     textAlign: 'right',
+                //     textBaseline: 'middle'
+                //   },
+                //   background: {
+                //     visible: true,
+                //     style: {
+                //       fill: 'red'
+                //     }
+                //   },
+                //   text: ''
+                //   // maxWidth: 100
+                // }
               },
               {
                 orient: 'bottom',
-                visible: true,
-                labelHoverOnAxis: {
-                  visible: true,
-                  position: 50,
-                  autoRotate: false,
-                  space: 2,
-                  padding: 2,
-                  formatMethod(value) {
-                    debugger;
-                    // value保留两位小数
-                    if (typeof value === 'number') {
-                      return value.toFixed(2);
-                    }
-                    return value;
-                  },
-                  textStyle: {
-                    fontSize: 12,
-                    fill: '#363839',
-                    fontWeight: 'normal',
-                    fillOpacity: 1,
-                    textAlign: 'center',
-                    textBaseline: 'top'
-                  },
-                  background: {
-                    visible: true,
-                    style: {
-                      fill: 'red'
-                    }
-                  }
-                  // text: '细分',
-                  // maxWidth: 100
-                }
+                visible: true
               }
             ],
             bar: {
@@ -404,11 +373,11 @@ export function createTable() {
                   '#87DBDD'
                 ]
               }
+            ],
+            axes: [
+              { orient: 'left', visible: true, label: { visible: true } },
+              { orient: 'bottom', visible: true }
             ]
-            // axes: [
-            //   { orient: 'left', visible: true, label: { visible: true } },
-            //   { orient: 'bottom', visible: true }
-            // ]
           },
           style: {
             padding: 1
@@ -509,8 +478,41 @@ export function createTable() {
         },
         chartDimensionLinkage: {
           showTooltip: true,
-          heightOfLastRowToShowTooltip: 60,
-          widthOfLastColumnToShowTooltip: 90
+          heightLimitToShowTooltipForLastRow: 60,
+          widthLimitToShowTooltipForLastColumn: 90,
+          labelHoverOnAxis: {
+            bottom: {
+              visible: true,
+              position: 50,
+              autoRotate: false,
+              // space: 30,
+              padding: 2,
+              formatMethod(value) {
+                debugger;
+                // value保留两位小数
+                if (typeof value === 'number') {
+                  return value.toFixed(2);
+                }
+                return value;
+              },
+              textStyle: {
+                // fontSize: 22,
+                fill: 'yellow',
+                fontWeight: 'normal',
+                fillOpacity: 1,
+                textAlign: 'center',
+                textBaseline: 'top'
+              },
+              background: {
+                visible: true,
+                style: {
+                  fill: '#000'
+                }
+              }
+              // text: '细分',
+              // maxWidth: 100
+            }
+          }
         }
         // renderChartAsync: true
       };

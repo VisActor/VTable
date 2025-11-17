@@ -9221,8 +9221,8 @@ export function createTable() {
   const option: VTable.PivotChartConstructorOptions = {
     chartDimensionLinkage: {
       showTooltip: true,
-      heightOfLastRowToShowTooltip: 60,
-      widthOfLastColumnToShowTooltip: 90
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90
     },
     columnWidthConfigForRowHeader: [
       {

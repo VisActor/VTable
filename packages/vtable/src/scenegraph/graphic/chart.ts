@@ -232,13 +232,17 @@ export class Chart extends Rect {
             generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, true);
             generateChartInstanceListByRowDirection(row, undefined, yValue, canvasXY, table, true);
             // 显示左侧纵向crosshair的labelHoverOnAxis
-            table.scenegraph
-              .getCell(table.rowHeaderLevelCount - 1, row)
-              .firstChild.showLabelHoverOnAxis(canvasXY.y - table.getCellRelativeRect(col, row).top, yValue);
+            if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.left) {
+              table.scenegraph
+                .getCell(table.rowHeaderLevelCount - 1, row)
+                .firstChild.showLabelHoverOnAxis(canvasXY.y - table.getCellRelativeRect(col, row).top, yValue);
+            }
             // 显示底部横向crosshair的labelHoverOnAxis
-            table.scenegraph
-              .getCell(col, table.rowCount - table.bottomFrozenRowCount)
-              .firstChild.showLabelHoverOnAxis(canvasXY.x - table.getCellRelativeRect(col, row).left, xValue);
+            if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.bottom) {
+              table.scenegraph
+                .getCell(col, table.rowCount - table.bottomFrozenRowCount)
+                .firstChild.showLabelHoverOnAxis(canvasXY.x - table.getCellRelativeRect(col, row).left, xValue);
+            }
           } else {
             if (params.action === 'enter') {
               const dimensionValue = dimensionInfo.value;
@@ -249,12 +253,14 @@ export class Chart extends Rect {
                 const width = series.getYAxisHelper().getBandwidth(0);
                 const y = series.valueToPositionY(dimensionValue);
                 // 显示左侧纵向crosshair的labelHoverOnAxis
-                table.scenegraph
-                  .getCell(table.rowHeaderLevelCount - 1, row)
-                  .firstChild.showLabelHoverOnAxis(
-                    y + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
-                    yValue
-                  );
+                if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.left) {
+                  table.scenegraph
+                    .getCell(table.rowHeaderLevelCount - 1, row)
+                    .firstChild.showLabelHoverOnAxis(
+                      y + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
+                      yValue
+                    );
+                }
 
                 generateChartInstanceListByRowDirection(row, dimensionValue, null, canvasXY, table);
               } else {
@@ -262,12 +268,14 @@ export class Chart extends Rect {
                 const width = series.getXAxisHelper().getBandwidth(0);
                 const x = series.valueToPositionX(dimensionValue);
                 // 显示底部横向crosshair的labelHoverOnAxis
-                table.scenegraph
-                  .getCell(col, table.rowCount - table.bottomFrozenRowCount)
-                  .firstChild.showLabelHoverOnAxis(
-                    x + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
-                    dimensionValue
-                  );
+                if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.bottom) {
+                  table.scenegraph
+                    .getCell(col, table.rowCount - table.bottomFrozenRowCount)
+                    .firstChild.showLabelHoverOnAxis(
+                      x + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
+                      dimensionValue
+                    );
+                }
                 generateChartInstanceListByColumnDirection(col, dimensionValue, null, canvasXY, table);
               }
             }

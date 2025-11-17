@@ -9224,8 +9224,8 @@ export function createTable() {
     indicatorsAsCol: true,
     chartDimensionLinkage: {
       showTooltip: true,
-      heightOfLastRowToShowTooltip: 80,
-      widthOfLastColumnToShowTooltip: 80
+      heightLimitToShowTooltipForLastRow: 80,
+      widthLimitToShowTooltipForLastColumn: 80
     },
     container: document.getElementById(CONTAINER_ID),
     records,
@@ -9246,6 +9246,10 @@ export function createTable() {
       }
     }),
     axes: [
+      // {
+      //   orient: 'top',
+      //   visible: false,
+      // },
       {
         orient: 'left',
         visible: true,
