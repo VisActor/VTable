@@ -124,6 +124,7 @@ export class ConfigManager {
    */
   private processRecordsHierarchyStates(records: unknown[]): void {
     const HierarchyState = VTable.TYPES.HierarchyState;
+    // 兼容处理headerExpandLevel
     const hierarchyExpandLevel = this.table.options.hierarchyExpandLevel || this.table.options.headerExpandLevel;
     const processRecords = (recordList: unknown[]) => {
       recordList.forEach(record => {
