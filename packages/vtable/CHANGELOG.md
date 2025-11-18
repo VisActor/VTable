@@ -1,6 +1,22 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 07 Nov 2025 09:51:25 GMT and should not be manually modified.
+This log was last generated on Tue, 18 Nov 2025 06:13:47 GMT and should not be manually modified.
+
+## 1.22.4
+Tue, 18 Nov 2025 06:13:47 GMT
+
+### Updates
+
+- refactor: filter plugins update when filterState changes
+- fix: fix backtracking issue in getCellAdressByHeaderPath matching algorithm
+
+
+- fix(pivot-table): fix frozenColCount being invalid when set to 0
+
+
+- fix: the serial number cannot be edited #4627
+
+
 
 ## 1.22.3
 Fri, 07 Nov 2025 09:51:25 GMT
