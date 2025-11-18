@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: the serial number cannot be edited #4627\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "760478279@qq.com"
+}
