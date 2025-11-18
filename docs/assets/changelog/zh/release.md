@@ -5,14 +5,14 @@
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: fix backtracking issue in getCellAdressByHeaderPath matching algorithm
-- **pivot-table**: fix frozenColCount being invalid when set to 0
-- **@visactor/vtable**: the serial number cannot be edited [#4627](https://github.com/VisActor/VTable/issues/4627)
+- **@visactor/vtable**: 修复getCellAdressByHeaderPath匹配算法回溯问题 [#4680](https://github.com/VisActor/VTable/issues/4680)
+- **pivot-table**: 修复冻结列数设置为0时的无效问题 [#4680](https://github.com/VisActor/VTable/issues/4680)
+- **@visactor/vtable**: 修复序列号无法编辑问题 [#4627](https://github.com/VisActor/VTable/issues/4627)
 
 **🔨 功能重构**
 
-- **@visactor/vtable**: filter plugins update when filterState changes
-- **@visactor/vtable-plugins**: master sub table plugins refactor config
+- **@visactor/vtable**: 过滤插件优化filterState变化接口
+- **@visactor/vtable-plugins**: 主从表插件展开收起配置优化
 
 
 
