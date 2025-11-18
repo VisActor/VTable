@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: filter plugins update when filterState changes",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "892739385@qq.com"
+}

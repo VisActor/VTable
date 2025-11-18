@@ -41,7 +41,9 @@ export function exportVTableToCsv(
           copyValue += strCellValue;
         }
       }
-      copyValue += separator;
+      if (col !== maxCol) {
+        copyValue += separator;
+      }
     }
     copyValue += newLine;
   }

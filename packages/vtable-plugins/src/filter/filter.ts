@@ -10,7 +10,8 @@ import type {
   ListTable,
   PivotTable,
   BaseTableAPI,
-  ColumnDefine
+  ColumnDefine,
+  ColumnsDefine
 } from '@visactor/vtable';
 
 /**
@@ -19,11 +20,17 @@ import type {
 export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   id = `filter`;
   name = 'Filter';
-  runTime = [TABLE_EVENT_TYPE.BEFORE_INIT, TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION, TABLE_EVENT_TYPE.ICON_CLICK];
+  runTime = [
+    TABLE_EVENT_TYPE.BEFORE_INIT,
+    TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION,
+    TABLE_EVENT_TYPE.ICON_CLICK,
+    TABLE_EVENT_TYPE.SCROLL
+  ];
 
   pluginOptions: FilterOptions;
 
   table: ListTable | PivotTable;
+  columns: ColumnsDefine;
 
   filterEngine: FilterEngine;
   filterStateManager: FilterStateManager;
@@ -65,12 +72,13 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       this.filterEngine = new FilterEngine();
       this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
       this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
+      this.columns = eventArgs.options.columns;
 
       this.filterToolbar.render(document.body);
-      this.updateFilterIcons(eventArgs.options);
+      this.updateFilterIcons(this.columns);
       this.filterStateManager.subscribe(() => {
-        this.updateFilterIcons(eventArgs.options);
-        (this.table as ListTable).updateColumns(eventArgs.options.columns, {
+        this.updateFilterIcons(this.columns);
+        (this.table as ListTable).updateColumns(this.columns, {
           clearRowHeightCache: false
         });
       });
@@ -79,6 +87,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
         ...this.pluginOptions,
         ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
       };
+      this.columns = eventArgs.options.columns;
       this.handleOptionUpdate(eventArgs.options);
     } else if (
       (runtime === TABLE_EVENT_TYPE.ICON_CLICK && eventArgs.name === 'filter-icon') ||
@@ -97,6 +106,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
         this.filterToolbar.hide();
       } else {
         this.filterToolbar.show(col, row, this.pluginOptions.filterModes);
+      }
+    } else if (runtime === TABLE_EVENT_TYPE.SCROLL) {
+      if (eventArgs.scrollDirection === 'horizontal') {
+        this.filterToolbar.adjustMenuPosition();
       }
     }
   }
@@ -119,7 +132,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     // 更新筛选图标
-    this.updateFilterIcons(options);
+    this.updateFilterIcons(options.columns);
   }
 
   /**
@@ -162,7 +175,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
    * 更新所有列的筛选图标状态
    * 根据列的筛选启用状态，添加或移除筛选图标
    */
-  private updateFilterIcons(options) {
+  private updateFilterIcons(columns: ColumnsDefine = []) {
     const filterIcon = this.pluginOptions.filterIcon;
     const filteringIcon = this.pluginOptions.filteringIcon;
 
@@ -173,7 +186,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
     const compactIcons = list => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
 
-    options.columns.forEach(column => {
+    columns.forEach(column => {
       const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
       const isFiltering = !!this.filterStateManager.getFilterState(column.field)?.enable;
       let icons = toIconList(column.headerIcon);
@@ -260,9 +273,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
    * 设置筛选状态
    * 用于从保存的配置中恢复筛选状态
    */
-  setFilterState(filterState: FilterState): void {
-    if (!this.filterStateManager || !filterState || !filterState.filters) {
-      console.warn('setFilterState: 无效的筛选状态或状态管理器未初始化');
+  setFilterState(filterState?: FilterState): void {
+    if (!this.filterStateManager) {
+      console.warn('setFilterState: 状态管理器未初始化');
       return;
     }
 
@@ -272,7 +285,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       payload: {}
     });
 
-    const columns = (this.table as ListTable).columns;
+    // 若传入参数为空，则重置筛选状态
+    if (!filterState || !filterState.filters) {
+      return;
+    }
 
     // 恢复每个筛选配置
     Object.entries(filterState.filters).forEach(([, config]: [string, any]) => {
