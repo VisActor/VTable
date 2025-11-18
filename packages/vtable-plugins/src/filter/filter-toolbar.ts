@@ -108,6 +108,7 @@ export class FilterToolbar {
   render(container: HTMLElement): void {
     // === 主容器 ===
     this.filterMenu = document.createElement('div');
+    this.filterMenu.classList.add('vtable-filter-menu');
     applyStyles(this.filterMenu, this.styles.filterMenu);
     this.filterMenu.style.width = `${this.filterMenuWidth}px`;
 
