@@ -96,6 +96,10 @@ export class EditManager {
       //     return;
       //   }
       // }
+      // 序号不允许编辑
+      if (this.table.internalProps.layoutMap.isSeriesNumber(col, row)) {
+        return;
+      }
       //ListTable聚合值不可以修改，PivotTable聚合值在updateAggregationOnEditCell false可以修改，true不可以修改
       if ((this.table.internalProps.layoutMap as SimpleHeaderLayoutMap)?.isAggregation?.(col, row)) {
         const isPivotTable = this.table.isPivotTable?.();

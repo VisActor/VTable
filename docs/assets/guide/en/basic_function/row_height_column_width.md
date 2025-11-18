@@ -65,6 +65,16 @@ const table = new VTable.ListTable({
 
 If you need to customize the logic for calculating row height, you can configure the `customComputeRowHeight` function to proxy the logic for calculating row height inside VTable.
 
+## Set row height by row index
+
+You can set the row height through the `rowHeightConfig` configuration item. The configuration item can be set to an array, corresponding to the row height of each row. The key corresponds to the row index, and the height corresponds to the row height.
+
+```javascript
+const table = new VTable.ListTable({
+  rowHeightConfig: [{key: 0, height: 50}, {key: 3, height: 60}]
+});
+```
+
 # Column width related configuration
 
 ## Column width width
@@ -85,6 +95,28 @@ const table = new VTable.ListTable({
       width: 200
     }
   ]
+});
+```
+
+Besides configuring a specific width value in the column properties, you can also configure the column width through the `columnWidthConfig` configuration item. The configuration item can be set to an array, corresponding to the column width of each column. The key corresponds to the key defined in the specific configuration of each column in columns.
+
+```javascript
+const table = new VTable.ListTable({
+  columns: [
+    {
+      // ...Other configuration items
+      key: 'name',
+      title: 'Name',
+      field: 'name',
+    },
+    {
+      // ...Other configuration items
+      key: 'age',
+      title: 'Age',
+      field: 'age',
+    }
+  ],
+  columnWidthConfig: [{key: 'name', width: 200}, {key: 'age', width: 300}]
 });
 ```
 

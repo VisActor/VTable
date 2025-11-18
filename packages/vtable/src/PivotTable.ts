@@ -578,9 +578,8 @@ export class PivotTable extends BaseTable implements PivotTableAPI {
     table.colCount = layoutMap.colCount ?? 0;
     table.rowCount = layoutMap.rowCount ?? 0;
 
-    this.internalProps.frozenColCount = this.options.frozenColCount
-      ? this.options.frozenColCount
-      : (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount;
+    this.internalProps.frozenColCount =
+      this.options.frozenColCount ?? (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount;
     //   this.internalProps.frozenColCount= Math.max(
     //   (layoutMap.rowHeaderLevelCount ?? 0) + layoutMap.leftRowSeriesNumberColumnCount,
     //   this.options.frozenColCount ?? 0
