@@ -1,3 +1,23 @@
+# v1.22.4
+
+2025-11-18
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: fix backtracking issue in getCellAdressByHeaderPath matching algorithm
+- **pivot-table**: fix frozenColCount being invalid when set to 0
+- **@visactor/vtable**: the serial number cannot be edited [#4627](https://github.com/VisActor/VTable/issues/4627)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: filter plugins update when filterState changes
+- **@visactor/vtable-plugins**: master sub table plugins refactor config
+
+
+
+[更多详情请查看 v1.22.4](https://github.com/VisActor/VTable/releases/tag/v1.22.4)
+
 # v1.22.3
 
 2025-11-07
