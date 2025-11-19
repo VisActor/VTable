@@ -2,6 +2,27 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.4",
+      "tag": "@visactor/vtable_v1.22.4",
+      "date": "Tue, 18 Nov 2025 06:13:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: filter plugins update when filterState changes"
+          },
+          {
+            "comment": "fix: fix backtracking issue in getCellAdressByHeaderPath matching algorithm\n\n"
+          },
+          {
+            "comment": "fix(pivot-table): fix frozenColCount being invalid when set to 0\n\n"
+          },
+          {
+            "comment": "fix: the serial number cannot be edited #4627\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.3",
       "tag": "@visactor/vtable_v1.22.3",
       "date": "Fri, 07 Nov 2025 09:51:25 GMT",
