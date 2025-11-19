@@ -2,6 +2,7 @@ import { isArray, isFunction, isString, merge } from '@visactor/vutils';
 import type { BaseTableAPI } from '../../ts-types/base-table';
 import type { ICellAxisOption } from '../../ts-types/component/axis';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE, commonAxis } from './get-axis-attributes';
+import { getTableAxisTheme } from './axis';
 
 export type ComputeAxisComponentWidth = (config: ICellAxisOption, table: BaseTableAPI) => number;
 export type ComputeAxisComponentHeight = (config: ICellAxisOption, table: BaseTableAPI) => number;
@@ -90,11 +91,11 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
     titleWidth += attribute.title.space ?? 4;
   }
   let paddingWidth = 0;
+  const themeAxisConfig = getTableAxisTheme(config.orient, table.theme);
   if (config.orient === 'left') {
-    paddingWidth = config.__vtableAxisCellPadding[3];
-  }
-  if (config.orient === 'right') {
-    paddingWidth = config.__vtableAxisCellPadding[1];
+    paddingWidth = themeAxisConfig?.cellPaddingLeft ?? 0;
+  } else if (config.orient === 'right') {
+    paddingWidth = themeAxisConfig?.cellPaddingRight ?? 0;
   }
   return Math.ceil(tickWidth + labelWidth + titleWidth + paddingWidth + 1); // 1 is buffer
 }
@@ -182,8 +183,14 @@ export function computeAxisComponentHeight(config: ICellAxisOption, table: BaseT
     }
     titleHeight += attribute.title.space ?? 4;
   }
-
-  return tickHeight + labelHeight + titleHeight + 1; // 2 is buffer
+  let paddingHeight = 0;
+  const themeAxisConfig = getTableAxisTheme(config.orient, table.theme);
+  if (config.orient === 'top') {
+    paddingHeight = themeAxisConfig?.cellPaddingTop ?? 0;
+  } else if (config.orient === 'bottom') {
+    paddingHeight = themeAxisConfig?.cellPaddingBottom ?? 0;
+  }
+  return tickHeight + labelHeight + titleHeight + paddingHeight + 1; // 1 is buffer
 }
 
 // 保留一位有效数字

@@ -438,7 +438,6 @@ function updateTableAxes(containerGroup: Group, table: BaseTableAPI) {
               cell.attribute.width,
               cell.attribute.height,
               axisConfig.__vtableBodyChartCellPadding ?? padding,
-              padding,
               table
             );
             cell.clear();

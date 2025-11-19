@@ -45,27 +45,26 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
     }
     const hd = layoutMap.getHeader(col, row);
 
-    // paddingForAxis 取body图表单元格的padding的逻辑去除，就取单元格实际的padding
-    // let paddingForAxis;
-    // if (
-    //   table.isPivotChart() &&
-    //   isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
-    //   layoutMap.isAxisCell(col, row)
-    // ) {
-    //   // get chart padding for axis cell
-    //   const chartColumn = layoutMap.getBody(col, table.rowHeaderLevelCount);
-    //   const padding = (chartColumn.style as any)?.padding ?? table.theme.bodyStyle.padding;
-    //   paddingForAxis = padding;
-    // } else if (
-    //   table.isPivotChart() &&
-    //   isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
-    //   layoutMap.isAxisCell(col, row)
-    // ) {
-    //   // get chart padding for axis cell
-    //   const chartColumn = layoutMap.getBody(table.columnHeaderLevelCount, row);
-    //   const padding = (chartColumn.style as any)?.padding ?? table.theme.bodyStyle.padding;
-    //   paddingForAxis = padding;
-    // }
+    let paddingForAxis;
+    if (
+      table.isPivotChart() &&
+      isTopOrBottomAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
+      layoutMap.isAxisCell(col, row)
+    ) {
+      // get chart padding for axis cell
+      const chartColumn = layoutMap.getBody(col, table.rowHeaderLevelCount);
+      const padding = (chartColumn.style as any)?.padding ?? table.theme.bodyStyle.padding;
+      paddingForAxis = padding;
+    } else if (
+      table.isPivotChart() &&
+      isLeftOrRightAxis(col, row, layoutMap as PivotHeaderLayoutMap) &&
+      layoutMap.isAxisCell(col, row)
+    ) {
+      // get chart padding for axis cell
+      const chartColumn = layoutMap.getBody(table.columnHeaderLevelCount, row);
+      const padding = (chartColumn.style as any)?.padding ?? table.theme.bodyStyle.padding;
+      paddingForAxis = padding;
+    }
 
     if (
       (!hd || (hd as HeaderData).isEmpty) &&
@@ -80,8 +79,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
     const styleClass = table.internalProps.headerHelper.getStyleClass((hd as HeaderData)?.headerType || 'text');
     if (layoutMap.isBottomFrozenRow(col, row) && table.theme.bottomFrozenStyle) {
       cacheStyle = <FullExtendStyle>headerStyleContents.of(
-        // paddingForAxis ? { padding: paddingForAxis } : {},
-        {},
+        paddingForAxis ? { padding: paddingForAxis } : {},
         table.theme.bottomFrozenStyle,
         {
           col,
@@ -97,8 +95,7 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
       );
     } else if (layoutMap.isRightFrozenColumn(col, row) && table.theme.rightFrozenStyle) {
       cacheStyle = <FullExtendStyle>headerStyleContents.of(
-        // paddingForAxis ? { padding: paddingForAxis } : {},
-        {},
+        paddingForAxis ? { padding: paddingForAxis } : {},
         table.theme.rightFrozenStyle,
         {
           col,
@@ -113,10 +110,22 @@ export function getCellStyle(col: number, row: number, table: BaseTableAPI): Ful
         table.theme
       );
     } else {
-      const style = hd?.style || {};
-      // if (paddingForAxis) {
-      //   (style as any).padding = paddingForAxis;
+      // let defaultStyle;
+      // if (layoutMap.isColumnHeader(col, row) || layoutMap.isBottomFrozenRow(col, row)) {
+      //   defaultStyle = table.theme.headerStyle;
+      // } else if (table.internalProps.transpose && layoutMap.isRowHeader(col, row)) {
+      //   defaultStyle = table.theme.headerStyle;
+      // } else if (layoutMap.isRowHeader(col, row) || layoutMap.isRightFrozenColumn(col, row)) {
+      //   defaultStyle = table.theme.rowHeaderStyle;
+      // } else {
+      //   defaultStyle = table.theme.cornerHeaderStyle;
       // }
+      // const styleClass = hd.headerType.StyleClass; //BaseHeader文件
+      // const { style } = hd;
+      const style = hd?.style || {};
+      if (paddingForAxis) {
+        (style as any).padding = paddingForAxis;
+      }
       cacheStyle = <FullExtendStyle>headerStyleContents.of(
         style,
         // defaultStyle,

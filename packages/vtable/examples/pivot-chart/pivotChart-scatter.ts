@@ -1316,7 +1316,7 @@ export function createTable() {
     indicators,
     records: data,
     defaultRowHeight: 200,
-    defaultHeaderRowHeight: 50,
+    defaultHeaderRowHeight: 'auto',
     defaultColWidth: 280,
     defaultHeaderColWidth: 'auto',
     indicatorTitle: '指标',
@@ -1330,8 +1330,13 @@ export function createTable() {
       }
     },
     theme: VTable.themes.ARCO.extends({
-      rowHeaderStyle: {
-        padding: 40
+      axisStyle: {
+        leftAxisStyle: {
+          cellPaddingLeft: 20
+        },
+        bottomAxisStyle: {
+          cellPaddingBottom: 10
+        }
       }
     }),
     chartDimensionLinkage: {

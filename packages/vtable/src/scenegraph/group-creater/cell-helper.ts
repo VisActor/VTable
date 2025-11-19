@@ -215,7 +215,6 @@ export function createCell(
         cellGroup.attribute.width,
         cellGroup.attribute.height,
         axisConfig.__vtableBodyChartCellPadding ?? padding,
-        padding,
         table
       );
       cellGroup.clear();

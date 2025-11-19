@@ -36,8 +36,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const chartCellStyle = layout._table._getCellStyle(col, row + 1);
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col, row + 1, layout._table));
-      const axisCellStyle = layout._table._getCellStyle(col, row);
-      const axisCellPadding = getQuadProps(getProp('padding', axisCellStyle, col, row, layout._table));
       // range for top axis
       const { range, ticks, axisOption, targetTicks, targetRange, index, theme } = axisRange;
 
@@ -96,8 +94,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtableBodyChartCellPadding: bodyChartCellPadding,
-          __vtableAxisCellPadding: axisCellPadding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -123,8 +120,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const chartCellStyle = layout._table._getCellStyle(col, row - 1);
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
-      const axisCellStyle = layout._table._getCellStyle(col, row);
-      const axisCellPadding = getQuadProps(getProp('padding', axisCellStyle, col, row, layout._table));
 
       // range for bottom axis
       const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
@@ -196,8 +191,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtableBodyChartCellPadding: bodyChartCellPadding,
-          __vtableAxisCellPadding: axisCellPadding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -221,8 +215,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const chartCellStyle = layout._table._getCellStyle(col + 1, row);
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
-      const axisCellStyle = layout._table._getCellStyle(col, row);
-      const axisCellPadding = getQuadProps(getProp('padding', axisCellStyle, col, row, layout._table));
 
       const spec = layout.getRawChartSpec(col + 1, row);
       // 左侧维度轴
@@ -245,8 +237,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             axisOption,
             (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
           ),
-          __vtableBodyChartCellPadding: bodyChartCellPadding,
-          __vtableAxisCellPadding: axisCellPadding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     }
@@ -274,8 +265,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const chartCellStyle = layout._table._getCellStyle(col + 1, row);
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
-      const axisCellStyle = layout._table._getCellStyle(col, row);
-      const axisCellPadding = getQuadProps(getProp('padding', axisCellStyle, col, row, layout._table));
 
       // range for left axis
       const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
@@ -341,8 +330,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtableBodyChartCellPadding: bodyChartCellPadding,
-          __vtableAxisCellPadding: axisCellPadding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -358,8 +346,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const chartCellStyle = layout._table._getCellStyle(col - 1, row);
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col - 1, row, layout._table));
-      const axisCellStyle = layout._table._getCellStyle(col, row);
-      const axisCellPadding = getQuadProps(getProp('padding', axisCellStyle, col, row, layout._table));
 
       // range for right axis
       const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
@@ -424,8 +410,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtableBodyChartCellPadding: bodyChartCellPadding,
-          __vtableAxisCellPadding: axisCellPadding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -451,8 +436,6 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
 
       const chartCellStyle = layout._table._getCellStyle(col, row - 1);
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
-      const axisCellStyle = layout._table._getCellStyle(col, row);
-      const axisCellPadding = getQuadProps(getProp('padding', axisCellStyle, col, row, layout._table));
 
       // 底部维度轴
       return merge(
@@ -465,8 +448,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           orient: 'bottom',
           type: axisOption?.type ?? 'band',
           __vtableChartTheme: theme,
-          __vtableBodyChartCellPadding: bodyChartCellPadding,
-          __vtableAxisCellPadding: axisCellPadding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     }
