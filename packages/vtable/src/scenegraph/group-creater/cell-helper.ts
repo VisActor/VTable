@@ -214,7 +214,8 @@ export function createCell(
         axisConfig,
         cellGroup.attribute.width,
         cellGroup.attribute.height,
-        axisConfig.__vtablePadding ?? padding,
+        axisConfig.__vtableBodyChartCellPadding ?? padding,
+        padding,
         table
       );
       cellGroup.clear();

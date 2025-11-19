@@ -2,6 +2,7 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
+import { theme } from '../../src/register';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
@@ -1300,6 +1301,10 @@ export function createTable() {
       },
       style: {
         padding: 1
+      },
+      headerStyle: {
+        padding: 20,
+        bgColor: 'red'
       }
     }
   ];
@@ -1313,7 +1318,7 @@ export function createTable() {
     defaultRowHeight: 200,
     defaultHeaderRowHeight: 50,
     defaultColWidth: 280,
-    defaultHeaderColWidth: 100,
+    defaultHeaderColWidth: 'auto',
     indicatorTitle: '指标',
     autoWrapText: true,
     // widthMode: 'autoWidth',
@@ -1324,6 +1329,11 @@ export function createTable() {
         autoWrapText: true
       }
     },
+    theme: VTable.themes.ARCO.extends({
+      rowHeaderStyle: {
+        padding: 40
+      }
+    }),
     chartDimensionLinkage: {
       showTooltip: true,
       heightLimitToShowTooltipForLastRow: 60,
@@ -1332,9 +1342,7 @@ export function createTable() {
         left: {
           visible: false,
           position: 50,
-          autoRotate: false,
-          space: 2,
-          padding: 2,
+
           formatMethod(value) {
             // value保留两位小数
             if (typeof value === 'number') {

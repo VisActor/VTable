@@ -22,6 +22,7 @@ export function generateChartInstanceListByColumnDirection(
   positionValueOrYValue: string | number,
   canvasXY: { x: number; y: number },
   table: BaseTableAPI,
+  hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
   if (!isValid(chartInstanceListColumnByColumnDirection[col])) {
@@ -86,10 +87,14 @@ export function generateChartInstanceListByColumnDirection(
               return dimensionValueOrXValue;
             });
           } else {
-            chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
-              tooltip: isShowTooltip,
-              showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3 }
-            });
+            if (hideTooltip) {
+              chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
+            } else {
+              chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
+                tooltip: isShowTooltip,
+                showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3, activeType: 'dimension' }
+              });
+            }
           }
         }
       }, 0);
@@ -130,8 +135,10 @@ export function generateChartInstanceListByRowDirection(
   positionValueOrYValue: string | number,
   canvasXY: { x: number; y: number },
   table: BaseTableAPI,
+  hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
+  console.log('-----forbid_Show_Tooltip', hideTooltip);
   if (!isValid(chartInstanceListRowByRowDirection[row])) {
     chartInstanceListRowByRowDirection[row] = {};
   }
@@ -153,7 +160,7 @@ export function generateChartInstanceListByRowDirection(
     }
     if (table.stateManager.hover.cellPos.col !== i || table.stateManager.hover.cellPos.row !== row) {
       setTimeout(() => {
-        // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才能触发setDimensionIndex
+        // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才可触发setDimensionIndex绘制出东西 否则会绘制出空的
         if (chartInstanceListRowByRowDirection[row]?.[i]) {
           const absolutePosition = table.getCellRelativeRect(i, row);
           const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
@@ -184,10 +191,14 @@ export function generateChartInstanceListByRowDirection(
               return dimensionValueOrXValue;
             });
           } else {
-            chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
-              tooltip: isShowTooltip,
-              showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y }
-            });
+            if (hideTooltip) {
+              chartInstanceListRowByRowDirection[row][i].hideTooltip();
+            } else {
+              chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
+                tooltip: isShowTooltip,
+                showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y, activeType: 'dimension' }
+              });
+            }
           }
         }
       }, 0);

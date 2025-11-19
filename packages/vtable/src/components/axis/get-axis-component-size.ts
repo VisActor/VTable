@@ -89,7 +89,14 @@ export function computeAxisComponentWidth(config: ICellAxisOption, table: BaseTa
     }
     titleWidth += attribute.title.space ?? 4;
   }
-  return Math.ceil(tickWidth + labelWidth + titleWidth + 1); // 2 is buffer
+  let paddingWidth = 0;
+  if (config.orient === 'left') {
+    paddingWidth = config.__vtableAxisCellPadding[3];
+  }
+  if (config.orient === 'right') {
+    paddingWidth = config.__vtableAxisCellPadding[1];
+  }
+  return Math.ceil(tickWidth + labelWidth + titleWidth + paddingWidth + 1); // 1 is buffer
 }
 
 /**
