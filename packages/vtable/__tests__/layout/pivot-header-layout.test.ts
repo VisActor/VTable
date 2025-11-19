@@ -2787,7 +2787,8 @@ describe('pivot-header-layout test', () => {
       nice: true,
       __ticksForVTable: [-100000, 0, 100000, 200000, 300000, 400000, 500000],
       __vtableChartTheme: undefined,
-      __vtablePadding: [1, 1, 0, 1]
+      __vtableBodyChartCellPadding: [1, 1, 0, 1],
+      __vtableAxisCellPadding: [0, 0, 0, 4]
     });
     expect(layout.getAxisConfigInPivotChart(2, 4)).toEqual({
       domain: ['辽宁', '黑龙江', '吉林'],
@@ -2857,7 +2858,8 @@ describe('pivot-header-layout test', () => {
       },
       paddingInner: [0.15, 0.1],
       paddingOuter: [0.075, 0.1],
-      __vtablePadding: [1, 1, 0, 1],
+      __vtableBodyChartCellPadding: [1, 1, 0, 1],
+      __vtableAxisCellPadding: [0, 0, 0, 0],
       __vtableChartTheme: undefined
     });
   });
