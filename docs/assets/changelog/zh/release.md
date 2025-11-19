@@ -1,3 +1,23 @@
+# v1.22.4
+
+2025-11-18
+
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: 修复getCellAdressByHeaderPath匹配算法回溯问题 [#4680](https://github.com/VisActor/VTable/issues/4680)
+- **pivot-table**: 修复冻结列数设置为0时的无效问题 [#4680](https://github.com/VisActor/VTable/issues/4680)
+- **@visactor/vtable**: 修复序列号无法编辑问题 [#4627](https://github.com/VisActor/VTable/issues/4627)
+
+**🔨 功能重构**
+
+- **@visactor/vtable**: 过滤插件优化filterState变化接口
+- **@visactor/vtable-plugins**: 主从表插件展开收起配置优化
+
+
+
+[更多详情请查看 v1.22.4](https://github.com/VisActor/VTable/releases/tag/v1.22.4)
+
 # v1.22.3
 
 2025-11-07
