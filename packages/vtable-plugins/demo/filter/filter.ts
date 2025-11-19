@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { FilterPlugin } from '../../src/filter';
+import { FilterOperatorCategory, FilterPlugin } from '../../src/filter';
 const CONTAINER_ID = 'vTable';
 
 /**
@@ -148,7 +148,15 @@ export function createTable() {
       filterMenu: {
         backgroundColor: 'rgba(255, 255, 255, 0.95)'
       }
-    }
+    },
+    conditionCategories: [
+      { value: FilterOperatorCategory.ALL, label: '全部' },
+      { value: FilterOperatorCategory.TEXT, label: '文本' },
+      { value: FilterOperatorCategory.NUMBER, label: '数值' }
+      // { value: FilterOperatorCategory.COLOR, label: '颜色' },
+      // { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
+      // { value: FilterOperatorCategory.RADIO, label: '单选框' }
+    ]
   });
   (window as any).filterPlugin = filterPlugin;
 
@@ -164,5 +172,14 @@ export function createTable() {
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
+  });
+
+  tableInstance.on('click_cell', (...args) => {
+    console.log('click_cell', args);
+  });
+  tableInstance.on('icon_click', (...args) => {
+    args[0].event.stopPropagation();
+    args[0].event.preventDefault();
+    console.log('icon_click');
   });
 }

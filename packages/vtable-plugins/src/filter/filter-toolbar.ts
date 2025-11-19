@@ -3,7 +3,7 @@ import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
 import { applyStyles } from './styles';
-import type { FilterMode, FilterStyles } from './types';
+import type { FilterMode, FilterOperatorCategoryOption, FilterStyles } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -30,12 +30,17 @@ export class FilterToolbar {
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, styles: FilterStyles) {
+  constructor(
+    table: ListTable | PivotTable,
+    filterStateManager: FilterStateManager,
+    styles: FilterStyles,
+    conditionCategories: FilterOperatorCategoryOption[]
+  ) {
     this.table = table;
     this.filterStateManager = filterStateManager;
     this.styles = styles;
     this.valueFilter = new ValueFilter(this.table, this.filterStateManager, this.styles);
-    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, this.styles);
+    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, this.styles, conditionCategories);
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
 

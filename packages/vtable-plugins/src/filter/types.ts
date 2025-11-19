@@ -15,6 +15,7 @@ export interface FilterOptions {
   filterModes?: FilterMode[];
   /** 筛选器样式 */
   styles?: FilterStyles;
+  conditionCategories?: FilterOperatorCategoryOption[];
 }
 
 export type FilterMode = 'byValue' | 'byCondition';
@@ -91,6 +92,11 @@ export enum FilterOperatorCategory {
   COLOR = 'color',
   CHECKBOX = 'checkbox',
   RADIO = 'radio'
+}
+
+export interface FilterOperatorCategoryOption {
+  value: FilterOperatorCategory;
+  label: string;
 }
 
 /**
