@@ -35,7 +35,7 @@ export class PluginManager {
   }
 
   _bindTableEventForPlugin(plugin: IVTablePlugin) {
-    plugin.runTime?.forEach(runTime => {
+    (plugin.runTime as any[])?.forEach(runTime => {
       const id = this.table.on(runTime, (...args) => {
         plugin.run?.(...args, runTime, this.table);
       });
