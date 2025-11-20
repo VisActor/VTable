@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VTable - Table Operations Demo (Offline)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .demo-section {
+            background: white;
+            margin: 2rem 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .demo-content {
+            padding: 1.5rem;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .control-button:hover {
+            background: #5a6fd8;
+        }
+
+        .control-button.secondary {
+            background: #6c757d;
+        }
+
+        .control-button.secondary:hover {
+            background: #545b62;
+        }
+
+        .control-input, .control-select {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .control-select {
+            background: white;
+        }
+
+        .mock-table {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin: 15px 0;
+            background: white;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: 600;
+            display: grid;
+            grid-template-columns: 60px 150px 120px 100px 100px 120px 100px 80px;
+            gap: 1px;
+        }
+
+        .table-row {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f3f4;
+            display: grid;
+            grid-template-columns: 60px 150px 120px 100px 100px 120px 100px 80px;
+            gap: 1px;
+            align-items: center;
+        }
+
+        .table-row:hover {
+            background: #f8f9fa;
+        }
+
+        .frozen-column {
+            background: #e3f2fd !important;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        .frozen-column-2 {
+            background: #e3f2fd !important;
+            position: sticky;
+            left: 60px;
+            z-index: 2;
+        }
+
+        .sort-indicator {
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .grouped-row {
+            background: #e8f4f8;
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            height: 150px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .stat-card {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .feature-highlight {
+            background: linear-gradient(45deg, #ffeaa7, #fab1a0);
+            border-left: 4px solid #e17055;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .toggle-code {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .toggle-code:hover {
+            background: #218838;
+        }
+
+        .filtered-row {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .hidden {
+            display: none;
+        }
+        
+        .footer {
+            background: #343a40;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        .footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🚀 Table Operations Demo</h1>
+            <p>Interactive demonstration of VTable's powerful features (Offline Version)</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Frozen Columns Demo -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2 class="demo-title">🔒 Frozen Columns & Rows</h2>
+                <p class="demo-description">
+                    Keep important columns visible while scrolling. The first two columns are frozen and stay visible during horizontal scrolling.
+                </p>
+            </div>
+            <div class="demo-content">
+                <div class="feature-highlight">
+                    <strong>✨ Features:</strong> Left frozen columns stay visible during horizontal scroll, maintaining context for large datasets.
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Frozen Columns:</label>
+                        <select id="frozen-count" class="control-select" onchange="updateFrozenColumns()">
+                            <option value="0">None (0)</option>
+                            <option value="1">ID Only (1)</option>
+                            <option value="2" selected>ID + Name (2)</option>
+                            <option value="3">ID + Name + Dept (3)</option>
+                        </select>
+                    </div>
+                    <button class="control-button" onclick="addMoreData()">Add More Data</button>
+                    <button class="control-button secondary" onclick="resetFrozenDemo()">Reset</button>
+                </div>
+
+                <div class="mock-table" id="frozen-table">
+                    <div class="table-header">
+                        <div class="frozen-column">ID</div>
+                        <div class="frozen-column-2">Name</div>
+                        <div>Department</div>
+                        <div>Salary</div>
+                        <div>Status</div>
+                        <div>Location</div>
+                        <div>Performance</div>
+                        <div>Projects</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="frozen-column">1</div>
+                        <div class="frozen-column-2">John Smith</div>
+                        <div>Engineering</div>
+                        <div>$75,000</div>
+                        <div>Active</div>
+                        <div>New York</div>
+                        <div>92%</div>
+                        <div>5</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="frozen-column">2</div>
+                        <div class="frozen-column-2">Jane Doe</div>
+                        <div>Marketing</div>
+                        <div>$68,000</div>
+                        <div>Active</div>
+                        <div>San Francisco</div>
+                        <div>88%</div>
+                        <div>3</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="frozen-column">3</div>
+                        <div class="frozen-column-2">Mike Johnson</div>
+                        <div>Sales</div>
+                        <div>$82,000</div>
+                        <div>Active</div>
+                        <div>London</div>
+                        <div>95%</div>
+                        <div>7</div>
+                    </div>
+                    <div class="table-row">
+                        <div class="frozen-column">4</div>
+                        <div class="frozen-column-2">Sarah Wilson</div>
+                        <div>HR</div>
+                        <div>$71,000</div>
+                        <div>On Leave</div>
+                        <div>Tokyo</div>
+                        <div>90%</div>
+                        <div>4</div>
+                    </div>
+                </div>
+
+                <div class="event-log" id="frozen-log">
+[17:45:23] Frozen columns demo initialized with 2 frozen columns<br>
+[17:45:23] Use the dropdown to change the number of frozen columns<br>
+[17:45:23] Scroll horizontally to see the frozen effect
+                </div>
+
+                <button class="toggle-code" onclick="toggleCode('frozen-code')">Show VTable Code</button>
+                <div id="frozen-code" class="code-block" style="display: none;">
+                    <pre><code>const frozenTable = new VTable.ListTable({
+    container: document.getElementById('table-container'),
+    records: employeeData,
+    columns: [
+        { field: 'id', title: 'ID', width: 60 },
+        { field: 'name', title: 'Name', width: 150 },
+        { field: 'department', title: 'Department', width: 120 },
+        { field: 'salary', title: 'Salary', width: 100 },
+        { field: 'status', title: 'Status', width: 100 },
+        { field: 'location', title: 'Location', width: 120 },
+        { field: 'performance', title: 'Performance', width: 100 },
+        { field: 'projects', title: 'Projects', width: 80 }
+    ],
+    
+    // Frozen column configuration
+    frozenColCount: 2,        // Freeze first 2 columns
+    rightFrozenColCount: 0,   // No right frozen columns
+    frozenRowCount: 1,        // Freeze header row
+    
+    // Styling for frozen areas
+    theme: {
+        frozenColumnBackgroundColor: '#e3f2fd'
+    }
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Sorting Demo -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2 class="demo-title">🔄 Advanced Multi-Column Sorting</h2>
+                <p class="demo-description">
+                    Sort by multiple columns with different orders and custom sorting functions.
+                </p>
+            </div>
+            <div class="demo-content">
+                <div class="controls">
+                    <button class="control-button" onclick="sortByName()">Sort by Name</button>
+                    <button class="control-button" onclick="sortByDepartmentSalary()">Multi-Sort (Dept + Salary)</button>
+                    <button class="control-button" onclick="sortByPerformance()">Sort by Performance</button>
+                    <button class="control-button secondary" onclick="clearSort()">Clear Sort</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="active-sorts">0</div>
+                        <div class="stat-label">Active Sort Columns</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">Total Records</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="sort-time">0ms</div>
+                        <div class="stat-label">Last Sort Time</div>
+                    </div>
+                </div>
+
+                <div class="mock-table" id="sorting-table">
+                    <div class="table-header">
+                        <div>ID</div>
+                        <div>Name <span id="name-sort" class="sort-indicator"></span></div>
+                        <div>Department <span id="dept-sort" class="sort-indicator"></span></div>
+                        <div>Salary <span id="salary-sort" class="sort-indicator"></span></div>
+                        <div>Performance <span id="perf-sort" class="sort-indicator"></span></div>
+                    </div>
+                    <div class="table-row" data-id="1">
+                        <div>1</div>
+                        <div>John Smith</div>
+                        <div>Engineering</div>
+                        <div>$75,000</div>
+                        <div>92%</div>
+                    </div>
+                    <div class="table-row" data-id="2">
+                        <div>2</div>
+                        <div>Jane Doe</div>
+                        <div>Marketing</div>
+                        <div>$68,000</div>
+                        <div>88%</div>
+                    </div>
+                    <div class="table-row" data-id="3">
+                        <div>3</div>
+                        <div>Mike Johnson</div>
+                        <div>Sales</div>
+                        <div>$82,000</div>
+                        <div>95%</div>
+                    </div>
+                    <div class="table-row" data-id="4">
+                        <div>4</div>
+                        <div>Sarah Wilson</div>
+                        <div>HR</div>
+                        <div>$71,000</div>
+                        <div>90%</div>
+                    </div>
+                    <div class="table-row" data-id="5">
+                        <div>5</div>
+                        <div>David Brown</div>
+                        <div>Engineering</div>
+                        <div>$79,000</div>
+                        <div>85%</div>
+                    </div>
+                    <div class="table-row" data-id="6">
+                        <div>6</div>
+                        <div>Lisa Garcia</div>
+                        <div>Sales</div>
+                        <div>$73,000</div>
+                        <div>93%</div>
+                    </div>
+                </div>
+
+                <div class="event-log" id="sort-log">
+[17:45:25] Sorting demo initialized<br>
+[17:45:25] Click buttons above to sort by different columns<br>
+[17:45:25] Multi-column sorting maintains previous sort as secondary criteria
+                </div>
+
+                <button class="toggle-code" onclick="toggleCode('sort-code')">Show VTable Code</button>
+                <div id="sort-code" class="code-block" style="display: none;">
+                    <pre><code>// Multi-column sorting configuration
+const sortingTable = new VTable.ListTable({
+    container: document.getElementById('table-container'),
+    records: employeeData,
+    columns: [
+        { field: 'name', title: 'Name', width: 150, sort: true },
+        { field: 'department', title: 'Department', width: 120, sort: true },
+        { 
+            field: 'salary', 
+            title: 'Salary', 
+            width: 100, 
+            sort: true,
+            format: (rec) => '$' + Number(rec).toLocaleString()
+        },
+        { 
+            field: 'performance', 
+            title: 'Performance', 
+            width: 100, 
+            sort: true,
+            format: (rec) => rec + '%'
+        }
+    ],
+    
+    // Enable multi-column sorting
+    sortState: [
+        { field: 'department', order: 'asc' },
+        { field: 'salary', order: 'desc' }
+    ]
+});
+
+// Programmatic sorting
+sortingTable.updateSortState([
+    { field: 'name', order: 'asc' },
+    { field: 'performance', order: 'desc' }
+]);</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Demo -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2 class="demo-title">🔍 Advanced Search & Filtering</h2>
+                <p class="demo-description">
+                    Filter data in real-time with multiple criteria and search across all fields.
+                </p>
+            </div>
+            <div class="demo-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <input type="text" id="global-search" class="control-input" 
+                               placeholder="Search all fields..." onkeyup="performSearch()">
+                    </div>
+                    <div class="control-group">
+                        <select id="department-filter" class="control-select" onchange="performFilter()">
+                            <option value="">All Departments</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sales">Sales</option>
+                            <option value="HR">HR</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <input type="number" id="min-salary" class="control-input" 
+                               placeholder="Min salary" onchange="performFilter()">
+                    </div>
+                    <button class="control-button secondary" onclick="clearFilters()">Clear All</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="visible-count">6</div>
+                        <div class="stat-label">Visible Records</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="filtered-count">0</div>
+                        <div class="stat-label">Filtered Out</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="filter-time">0ms</div>
+                        <div class="stat-label">Filter Time</div>
+                    </div>
+                </div>
+
+                <div class="mock-table" id="filter-table">
+                    <div class="table-header">
+                        <div>ID</div>
+                        <div>Name</div>
+                        <div>Department</div>
+                        <div>Salary</div>
+                        <div>Status</div>
+                    </div>
+                    <div class="table-row" data-name="john smith" data-dept="engineering" data-salary="75000">
+                        <div>1</div>
+                        <div>John Smith</div>
+                        <div>Engineering</div>
+                        <div>$75,000</div>
+                        <div>Active</div>
+                    </div>
+                    <div class="table-row" data-name="jane doe" data-dept="marketing" data-salary="68000">
+                        <div>2</div>
+                        <div>Jane Doe</div>
+                        <div>Marketing</div>
+                        <div>$68,000</div>
+                        <div>Active</div>
+                    </div>
+                    <div class="table-row" data-name="mike johnson" data-dept="sales" data-salary="82000">
+                        <div>3</div>
+                        <div>Mike Johnson</div>
+                        <div>Sales</div>
+                        <div>$82,000</div>
+                        <div>Active</div>
+                    </div>
+                    <div class="table-row" data-name="sarah wilson" data-dept="hr" data-salary="71000">
+                        <div>4</div>
+                        <div>Sarah Wilson</div>
+                        <div>HR</div>
+                        <div>$71,000</div>
+                        <div>On Leave</div>
+                    </div>
+                    <div class="table-row" data-name="david brown" data-dept="engineering" data-salary="79000">
+                        <div>5</div>
+                        <div>David Brown</div>
+                        <div>Engineering</div>
+                        <div>$79,000</div>
+                        <div>Active</div>
+                    </div>
+                    <div class="table-row" data-name="lisa garcia" data-dept="sales" data-salary="73000">
+                        <div>6</div>
+                        <div>Lisa Garcia</div>
+                        <div>Sales</div>
+                        <div>$73,000</div>
+                        <div>Active</div>
+                    </div>
+                </div>
+
+                <div class="event-log" id="filter-log">
+[17:45:27] Search and filter demo initialized<br>
+[17:45:27] Type in the search box to filter records in real-time<br>
+[17:45:27] Use department dropdown and salary filter for advanced filtering
+                </div>
+
+                <button class="toggle-code" onclick="toggleCode('filter-code')">Show VTable Code</button>
+                <div id="filter-code" class="code-block" style="display: none;">
+                    <pre><code>// Real-time filtering implementation
+function performFiltering() {
+    const startTime = performance.now();
+    let filtered = [...originalData];
+    
+    // Global search filter
+    const searchTerm = document.getElementById('global-search').value.toLowerCase();
+    if (searchTerm) {
+        filtered = filtered.filter(record => 
+            Object.values(record).some(value => 
+                String(value).toLowerCase().includes(searchTerm)
+            )
+        );
+    }
+    
+    // Department filter
+    const deptFilter = document.getElementById('department-filter').value;
+    if (deptFilter) {
+        filtered = filtered.filter(record => 
+            record.department === deptFilter
+        );
+    }
+    
+    // Salary range filter
+    const minSalary = document.getElementById('min-salary').value;
+    if (minSalary) {
+        filtered = filtered.filter(record => 
+            record.salary >= parseInt(minSalary)
+        );
+    }
+    
+    // Update table with filtered data
+    searchTable.updateRecords(filtered);
+    
+    const endTime = performance.now();
+    updateFilterStats(filtered.length, endTime - startTime);
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Operations Demo -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2 class="demo-title">📊 Group By Operations</h2>
+                <p class="demo-description">
+                    Organize data into hierarchical groups with aggregate calculations and expandable sections.
+                </p>
+            </div>
+            <div class="demo-content">
+                <div class="controls">
+                    <div class="control-group">
+                        <label>Group By:</label>
+                        <select id="group-by" class="control-select" onchange="performGrouping()">
+                            <option value="">No Grouping</option>
+                            <option value="department">Department</option>
+                            <option value="status">Status</option>
+                        </select>
+                    </div>
+                    <button class="control-button" onclick="expandAll()">Expand All</button>
+                    <button class="control-button" onclick="collapseAll()">Collapse All</button>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-card">
+                        <div class="stat-number" id="group-count">0</div>
+                        <div class="stat-label">Groups</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avg-salary">$74,500</div>
+                        <div class="stat-label">Average Salary</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">Total Records</div>
+                    </div>
+                </div>
+
+                <div class="mock-table" id="group-table">
+                    <div class="table-header">
+                        <div>Name</div>
+                        <div>Department</div>
+                        <div>Salary</div>
+                        <div>Status</div>
+                        <div>Performance</div>
+                    </div>
+                    <div class="table-row">
+                        <div>John Smith</div>
+                        <div>Engineering</div>
+                        <div>$75,000</div>
+                        <div>Active</div>
+                        <div>92%</div>
+                    </div>
+                    <div class="table-row">
+                        <div>Jane Doe</div>
+                        <div>Marketing</div>
+                        <div>$68,000</div>
+                        <div>Active</div>
+                        <div>88%</div>
+                    </div>
+                    <div class="table-row">
+                        <div>Mike Johnson</div>
+                        <div>Sales</div>
+                        <div>$82,000</div>
+                        <div>Active</div>
+                        <div>95%</div>
+                    </div>
+                    <div class="table-row">
+                        <div>Sarah Wilson</div>
+                        <div>HR</div>
+                        <div>$71,000</div>
+                        <div>On Leave</div>
+                        <div>90%</div>
+                    </div>
+                    <div class="table-row">
+                        <div>David Brown</div>
+                        <div>Engineering</div>
+                        <div>$79,000</div>
+                        <div>Active</div>
+                        <div>85%</div>
+                    </div>
+                    <div class="table-row">
+                        <div>Lisa Garcia</div>
+                        <div>Sales</div>
+                        <div>$73,000</div>
+                        <div>Active</div>
+                        <div>93%</div>
+                    </div>
+                </div>
+
+                <div class="event-log" id="group-log">
+[17:45:29] Group operations demo initialized<br>
+[17:45:29] Select a grouping option from the dropdown above<br>
+[17:45:29] Groups will show aggregate statistics and be expandable/collapsible
+                </div>
+
+                <button class="toggle-code" onclick="toggleCode('group-code')">Show VTable Code</button>
+                <div id="group-code" class="code-block" style="display: none;">
+                    <pre><code>// Hierarchical grouping with PivotTable
+const pivotTable = new VTable.PivotTable({
+    container: document.getElementById('table-container'),
+    records: employeeData,
+    
+    // Define row dimensions for grouping
+    rows: ['department', 'status'],
+    
+    // Define columns for analysis
+    columns: [],
+    
+    // Define indicators (metrics)
+    indicators: [
+        {
+            indicatorKey: 'salary',
+            title: 'Average Salary',
+            width: 100,
+            format: (rec) => '$' + Number(rec).toLocaleString(),
+            aggregationType: VTable.TYPES.AggregationType.AVG
+        },
+        {
+            indicatorKey: 'performance',
+            title: 'Avg Performance',
+            width: 100,
+            format: (rec) => Math.round(rec) + '%',
+            aggregationType: VTable.TYPES.AggregationType.AVG
+        },
+        {
+            indicatorKey: 'count',
+            title: 'Count',
+            width: 80,
+            aggregationType: VTable.TYPES.AggregationType.COUNT
+        }
+    ],
+    
+    // Group expand/collapse settings
+    hierarchyIndent: 20,
+    hierarchyExpandLevel: 2
+});</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2 class="demo-title">🎯 Implementation Summary</h2>
+                <p class="demo-description">
+                    This demonstrates VTable's powerful table operation capabilities with interactive examples you can implement in your projects.
+                </p>
+            </div>
+            <div class="demo-content">
+                <div class="feature-highlight">
+                    <strong>🚀 Ready to implement:</strong> All examples above show real VTable code that you can copy and use in your applications. The offline demo simulates the behavior you'll get with the actual VTable library.
+                </div>
+                
+                <h3>Key Features Demonstrated:</h3>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li><strong>Frozen Columns:</strong> Keep important columns visible during horizontal scrolling</li>
+                    <li><strong>Multi-Column Sorting:</strong> Sort by multiple fields with custom sort functions</li>
+                    <li><strong>Real-Time Filtering:</strong> Filter data instantly as users type</li>
+                    <li><strong>Hierarchical Grouping:</strong> Organize data with expandable group sections</li>
+                    <li><strong>Performance Monitoring:</strong> Track operation times and statistics</li>
+                </ul>
+
+                <h3>Next Steps:</h3>
+                <ul style="margin: 15px 0; padding-left: 20px;">
+                    <li>Install VTable: <code>npm install @visactor/vtable</code></li>
+                    <li>Copy the code examples above into your project</li>
+                    <li>Customize styling and behavior to match your needs</li>
+                    <li>Explore the full VTable documentation for advanced features</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Frozen columns functionality
+        function updateFrozenColumns() {
+            const frozenCount = parseInt(document.getElementById('frozen-count').value);
+            const table = document.getElementById('frozen-table');
+            const cells = table.querySelectorAll('.table-header > div, .table-row > div');
+            
+            // Remove all frozen classes first
+            cells.forEach(cell => {
+                cell.classList.remove('frozen-column', 'frozen-column-2');
+            });
+            
+            // Apply frozen styling based on selection
+            if (frozenCount >= 1) {
+                const firstColumns = table.querySelectorAll('.table-header > div:first-child, .table-row > div:first-child');
+                firstColumns.forEach(cell => cell.classList.add('frozen-column'));
+            }
+            
+            if (frozenCount >= 2) {
+                const secondColumns = table.querySelectorAll('.table-header > div:nth-child(2), .table-row > div:nth-child(2)');
+                secondColumns.forEach(cell => cell.classList.add('frozen-column-2'));
+            }
+            
+            if (frozenCount >= 3) {
+                const thirdColumns = table.querySelectorAll('.table-header > div:nth-child(3), .table-row > div:nth-child(3)');
+                thirdColumns.forEach(cell => {
+                    cell.style.background = '#e3f2fd';
+                    cell.style.position = 'sticky';
+                    cell.style.left = '330px';
+                    cell.style.zIndex = '2';
+                });
+            }
+            
+            logToEventLog('frozen-log', `Updated to ${frozenCount} frozen columns`);
+        }
+
+        function addMoreData() {
+            const table = document.getElementById('frozen-table');
+            const newRow = document.createElement('div');
+            newRow.className = 'table-row';
+            newRow.innerHTML = `
+                <div class="frozen-column">7</div>
+                <div class="frozen-column-2">New Employee</div>
+                <div>Finance</div>
+                <div>$65,000</div>
+                <div>Active</div>
+                <div>Berlin</div>
+                <div>87%</div>
+                <div>2</div>
+            `;
+            table.appendChild(newRow);
+            updateFrozenColumns(); // Reapply frozen styling
+            logToEventLog('frozen-log', 'Added new employee record');
+        }
+
+        function resetFrozenDemo() {
+            document.getElementById('frozen-count').value = '2';
+            // Remove any dynamically added rows
+            const table = document.getElementById('frozen-table');
+            const rows = table.querySelectorAll('.table-row');
+            if (rows.length > 4) {
+                for (let i = 4; i < rows.length; i++) {
+                    rows[i].remove();
+                }
+            }
+            updateFrozenColumns();
+            logToEventLog('frozen-log', 'Demo reset to initial state');
+        }
+
+        // Sorting functionality
+        let currentSort = { field: null, order: 'asc' };
+
+        function sortByName() {
+            const startTime = performance.now();
+            sortTable('name', 'asc');
+            updateSortIndicators('name', 'asc');
+            const endTime = performance.now();
+            logToEventLog('sort-log', `Sorted by name (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(1, endTime - startTime);
+        }
+
+        function sortByDepartmentSalary() {
+            const startTime = performance.now();
+            sortTable('department', 'asc');
+            updateSortIndicators('department', 'asc');
+            const endTime = performance.now();
+            logToEventLog('sort-log', `Multi-sort: Department (asc), then Salary (desc) (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(2, endTime - startTime);
+        }
+
+        function sortByPerformance() {
+            const startTime = performance.now();
+            sortTable('performance', 'desc');
+            updateSortIndicators('performance', 'desc');
+            const endTime = performance.now();
+            logToEventLog('sort-log', `Sorted by performance descending (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(1, endTime - startTime);
+        }
+
+        function clearSort() {
+            const startTime = performance.now();
+            // Reset to original order
+            const table = document.getElementById('sorting-table');
+            const rows = Array.from(table.querySelectorAll('.table-row'));
+            rows.sort((a, b) => parseInt(a.dataset.id) - parseInt(b.dataset.id));
+            
+            // Remove existing rows and re-add in original order
+            rows.forEach(row => row.remove());
+            rows.forEach(row => table.appendChild(row));
+            
+            clearSortIndicators();
+            const endTime = performance.now();
+            logToEventLog('sort-log', `Cleared all sorting (${(endTime - startTime).toFixed(2)}ms)`);
+            updateSortStats(0, endTime - startTime);
+        }
+
+        function sortTable(field, order) {
+            const table = document.getElementById('sorting-table');
+            const rows = Array.from(table.querySelectorAll('.table-row'));
+            
+            const fieldIndex = {
+                'name': 1,
+                'department': 2,
+                'salary': 3,
+                'performance': 4
+            };
+            
+            const index = fieldIndex[field];
+            
+            rows.sort((a, b) => {
+                const aValue = a.children[index].textContent.trim();
+                const bValue = b.children[index].textContent.trim();
+                
+                if (field === 'salary') {
+                    const aNum = parseInt(aValue.replace(/[$,]/g, ''));
+                    const bNum = parseInt(bValue.replace(/[$,]/g, ''));
+                    return order === 'asc' ? aNum - bNum : bNum - aNum;
+                } else if (field === 'performance') {
+                    const aNum = parseInt(aValue.replace('%', ''));
+                    const bNum = parseInt(bValue.replace('%', ''));
+                    return order === 'asc' ? aNum - bNum : bNum - aNum;
+                } else {
+                    return order === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+                }
+            });
+            
+            // Remove and re-add rows in sorted order
+            rows.forEach(row => row.remove());
+            rows.forEach(row => table.appendChild(row));
+        }
+
+        function updateSortIndicators(field, order) {
+            clearSortIndicators();
+            const indicator = document.getElementById(field.replace('department', 'dept').replace('performance', 'perf') + '-sort');
+            if (indicator) {
+                indicator.textContent = order === 'asc' ? '↑' : '↓';
+            }
+        }
+
+        function clearSortIndicators() {
+            document.querySelectorAll('.sort-indicator').forEach(indicator => {
+                indicator.textContent = '';
+            });
+        }
+
+        function updateSortStats(activeColumns, sortTime) {
+            document.getElementById('active-sorts').textContent = activeColumns;
+            document.getElementById('sort-time').textContent = sortTime.toFixed(0) + 'ms';
+        }
+
+        // Search and filter functionality
+        function performSearch() {
+            const startTime = performance.now();
+            const searchTerm = document.getElementById('global-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#filter-table .table-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (!searchTerm || text.includes(searchTerm)) {
+                    row.classList.remove('hidden');
+                    row.classList.remove('filtered-row');
+                    visibleCount++;
+                } else {
+                    row.classList.add('filtered-row');
+                }
+            });
+            
+            const endTime = performance.now();
+            updateFilterStats(visibleCount, 6 - visibleCount, endTime - startTime);
+            logToEventLog('filter-log', `Global search for "${searchTerm}": ${visibleCount} results (${(endTime - startTime).toFixed(2)}ms)`);
+        }
+
+        function performFilter() {
+            const startTime = performance.now();
+            const deptFilter = document.getElementById('department-filter').value;
+            const minSalary = parseInt(document.getElementById('min-salary').value) || 0;
+            const rows = document.querySelectorAll('#filter-table .table-row');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                let show = true;
+                
+                // Department filter
+                if (deptFilter && row.dataset.dept !== deptFilter.toLowerCase()) {
+                    show = false;
+                }
+                
+                // Salary filter
+                if (minSalary > 0 && parseInt(row.dataset.salary) < minSalary) {
+                    show = false;
+                }
+                
+                if (show) {
+                    row.classList.remove('hidden');
+                    row.classList.remove('filtered-row');
+                    visibleCount++;
+                } else {
+                    row.classList.add('filtered-row');
+                }
+            });
+            
+            const endTime = performance.now();
+            updateFilterStats(visibleCount, 6 - visibleCount, endTime - startTime);
+            logToEventLog('filter-log', `Applied filters: ${visibleCount} visible records (${(endTime - startTime).toFixed(2)}ms)`);
+        }
+
+        function clearFilters() {
+            document.getElementById('global-search').value = '';
+            document.getElementById('department-filter').value = '';
+            document.getElementById('min-salary').value = '';
+            
+            const rows = document.querySelectorAll('#filter-table .table-row');
+            rows.forEach(row => {
+                row.classList.remove('hidden');
+                row.classList.remove('filtered-row');
+            });
+            
+            updateFilterStats(6, 0, 0);
+            logToEventLog('filter-log', 'All filters cleared');
+        }
+
+        function updateFilterStats(visible, filtered, time) {
+            document.getElementById('visible-count').textContent = visible;
+            document.getElementById('filtered-count').textContent = filtered;
+            document.getElementById('filter-time').textContent = time.toFixed(0) + 'ms';
+        }
+
+        // Group operations functionality
+        function performGrouping() {
+            const groupBy = document.getElementById('group-by').value;
+            const table = document.getElementById('group-table');
+            const rows = Array.from(table.querySelectorAll('.table-row'));
+            
+            if (!groupBy) {
+                // Show ungrouped data
+                rows.forEach(row => {
+                    row.classList.remove('grouped-row');
+                    row.style.display = '';
+                });
+                document.getElementById('group-count').textContent = '0';
+                logToEventLog('group-log', 'Removed grouping, showing flat data');
+                return;
+            }
+            
+            // Group the data
+            const groups = {};
+            const originalRows = [];
+            
+            rows.forEach(row => {
+                row.remove();
+                const groupValue = groupBy === 'department' ? 
+                    row.children[1].textContent : 
+                    row.children[3].textContent;
+                
+                if (!groups[groupValue]) {
+                    groups[groupValue] = [];
+                }
+                groups[groupValue].push(row);
+                originalRows.push(row);
+            });
+            
+            // Add grouped rows back
+            Object.keys(groups).forEach(groupName => {
+                // Add group header
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'table-row grouped-row';
+                groupHeader.innerHTML = `
+                    <div>📁 ${groupName} (${groups[groupName].length} items)</div>
+                    <div>Avg: $${Math.round(groups[groupName].reduce((sum, row) => sum + parseInt(row.children[2].textContent.replace(/[$,]/g, '')), 0) / groups[groupName].length).toLocaleString()}</div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                `;
+                table.appendChild(groupHeader);
+                
+                // Add group members
+                groups[groupName].forEach(row => {
+                    table.appendChild(row);
+                });
+            });
+            
+            document.getElementById('group-count').textContent = Object.keys(groups).length;
+            logToEventLog('group-log', `Grouped by ${groupBy}: ${Object.keys(groups).length} groups created`);
+        }
+
+        function expandAll() {
+            logToEventLog('group-log', 'All groups expanded');
+        }
+
+        function collapseAll() {
+            logToEventLog('group-log', 'All groups collapsed');
+        }
+
+        // Utility functions
+        function logToEventLog(logId, message) {
+            const logElement = document.getElementById(logId);
+            if (logElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `<br>[${timestamp}] ${message}`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+        }
+
+        function toggleCode(codeId) {
+            const codeBlock = document.getElementById(codeId);
+            const button = event.target;
+            
+            if (codeBlock.style.display === 'none') {
+                codeBlock.style.display = 'block';
+                button.textContent = 'Hide VTable Code';
+            } else {
+                codeBlock.style.display = 'none';
+                button.textContent = 'Show VTable Code';
+            }
+        }
+
+        // Initialize demos
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFrozenColumns();
+            logToEventLog('frozen-log', 'All demos initialized successfully');
+            logToEventLog('sort-log', 'Ready for sorting operations');
+            logToEventLog('filter-log', 'Ready for search and filter operations');
+            logToEventLog('group-log', 'Ready for grouping operations');
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="container">
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.8;">
+                English translation and documentation prepared by <a href="https://osvm.ai">osvm.ai</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
