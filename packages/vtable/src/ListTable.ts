@@ -126,8 +126,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children']) // children for react
       : options.header
-      ? cloneDeepSpec(options.header, ['children'])
-      : [];
+        ? cloneDeepSpec(options.header, ['children'])
+        : [];
     generateAggregationForColumn(this);
     // options.columns?.forEach((colDefine, index) => {
     //   //如果editor 是一个IEditor的实例  需要这样重新赋值 否则clone后变质了
@@ -636,6 +636,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   ) {
     const internalProps = this.internalProps;
+    this.pluginManager.updatePlugins(options.plugins);
     super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
@@ -651,8 +652,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     internalProps.columns = options.columns
       ? cloneDeepSpec(options.columns, ['children'])
       : options.header
-      ? cloneDeepSpec(options.header, ['children'])
-      : [];
+        ? cloneDeepSpec(options.header, ['children'])
+        : [];
     generateAggregationForColumn(this);
     // options.columns.forEach((colDefine, index) => {
     //   if (colDefine.editor) {
@@ -717,7 +718,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
-    this.pluginManager.updatePlugins(options.plugins);
+    // this.pluginManager.updatePlugins(options.plugins);
     setTimeout(() => {
       this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
     }, 0);
@@ -1356,7 +1357,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         return state && state[field];
       });
     }
-    return new Array(...this.stateManager.checkedState.values());
+    return [...this.stateManager.checkedState.values()];
   }
   /** 获取某个单元格checkbox的状态 */
   getCellCheckboxState(col: number, row: number) {
@@ -1529,8 +1530,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   getEditor(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     let editorDefine = this.isHeader(col, row)
-      ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
-      : (define as ColumnDefine)?.editor ?? this.options.editor;
+      ? ((define as ColumnDefine)?.headerEditor ?? this.options.headerEditor)
+      : ((define as ColumnDefine)?.editor ?? this.options.editor);
 
     if (typeof editorDefine === 'function') {
       const arg = {
@@ -1551,8 +1552,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
   isHasEditorDefine(col: number, row: number) {
     const define = this.getBodyColumnDefine(col, row);
     let editorDefine = this.isHeader(col, row)
-      ? (define as ColumnDefine)?.headerEditor ?? this.options.headerEditor
-      : (define as ColumnDefine)?.editor ?? this.options.editor;
+      ? ((define as ColumnDefine)?.headerEditor ?? this.options.headerEditor)
+      : ((define as ColumnDefine)?.editor ?? this.options.editor);
 
     if (typeof editorDefine === 'function') {
       const arg = {
