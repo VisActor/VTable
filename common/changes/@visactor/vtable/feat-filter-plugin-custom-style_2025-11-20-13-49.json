@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": " feat: add event when filter menu show or hide",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: filter plugin display error when update",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
