@@ -76,7 +76,7 @@ export class FilterStateManager {
     if (this.shouldApplyFilter(action)) {
       this.applyFilters();
     }
-    this.notifyListeners();
+    this.notifyListeners(action);
   }
 
   subscribe(listener: (state: FilterState) => void): () => void {
@@ -86,8 +86,8 @@ export class FilterStateManager {
     };
   }
 
-  private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.state));
+  private notifyListeners(action: FilterAction): void {
+    this.listeners.forEach(listener => listener(this.state, action));
   }
 
   private reduce(state: FilterState, action: FilterAction): FilterState {

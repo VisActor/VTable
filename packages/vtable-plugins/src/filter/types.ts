@@ -133,3 +133,4 @@ interface FunctionStyles {
 
 // 完整的筛选样式类型
 export type FilterStyles = StaticStyles & FunctionStyles;
+export type FilterListener = (state: FilterState, action?: FilterAction) => void;
