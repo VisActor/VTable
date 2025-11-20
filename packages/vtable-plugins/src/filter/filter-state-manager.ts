@@ -1,9 +1,7 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
-import type { ColumnDefine } from '@visactor/vtable/es/ts-types';
-import type { FilterState, FilterAction, FilterConfig } from './types';
+import type { FilterState, FilterAction, FilterConfig, FilterListener } from './types';
 import { FilterActionType } from './types';
 import type { FilterEngine } from './filter-engine';
-import type { FilterPlugin } from '../filter';
 
 /**
  * 筛选状态管理器，用于管理筛选状态
@@ -11,7 +9,7 @@ import type { FilterPlugin } from '../filter';
 export class FilterStateManager {
   private state: FilterState;
   private engine: FilterEngine;
-  private listeners: Array<(state: FilterState) => void> = [];
+  private listeners: Array<FilterListener> = [];
 
   private table: ListTable | PivotTable;
 
@@ -63,18 +61,18 @@ export class FilterStateManager {
     if (this.shouldApplyFilter(action)) {
       this.applyFilters();
     }
-    this.notifyListeners();
+    this.notifyListeners(action);
   }
 
-  subscribe(listener: (state: FilterState) => void): () => void {
+  subscribe(listener: FilterListener): () => void {
     this.listeners.push(listener);
     return () => {
       this.listeners = this.listeners.filter(l => l !== listener);
     };
   }
 
-  private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.state));
+  private notifyListeners(action: FilterAction): void {
+    this.listeners.forEach(listener => listener(this.state, action));
   }
 
   private reduce(state: FilterState, action: FilterAction): FilterState {
