@@ -189,16 +189,16 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     const filterIcon = this.pluginOptions.filterIcon;
     const filteringIcon = this.pluginOptions.filteringIcon;
 
-    const isIconEqual = (a, b) =>
+    const isIconEqual = (a: any, b: any) =>
       a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
 
-    const toIconList = icons => (icons ? (Array.isArray(icons) ? icons : [icons]) : []);
+    const toIconList = (icons: any) => (icons ? (Array.isArray(icons) ? icons : [icons]) : []);
 
-    const compactIcons = list => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
+    const compactIcons = (list: any[]) => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
 
     columns.forEach(column => {
-      const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
-      const isFiltering = !!this.filterStateManager.getFilterState(column.field)?.enable;
+      const shouldShow = this.shouldEnableFilterForColumn(column.field as string | number, column);
+      const isFiltering = !!this.filterStateManager.getFilterState(column.field as string | number)?.enable;
       let icons = toIconList(column.headerIcon);
 
       if (shouldShow) {
