@@ -1,6 +1,7 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { FilterOperatorCategory, FilterPlugin } from '../../src/filter';
+import { ListTable } from '@visactor/vtable';
 const CONTAINER_ID = 'vTable';
 
 /**
@@ -169,6 +170,17 @@ export function createTable() {
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+  tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_SHOW, (...args) => {
+    console.log('filter_menu_show', args);
+  });
+
+  setTimeout(() => {
+    console.log('update');
+    tableInstance.updateOption({
+      ...option,
+      plugins: [filterPlugin]
+    });
+  }, 1000);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
