@@ -133,4 +133,6 @@ interface FunctionStyles {
 
 // 完整的筛选样式类型
 export type FilterStyles = StaticStyles & FunctionStyles;
+
+// 事件监听类型
 export type FilterListener = (state: FilterState, action?: FilterAction) => void;
