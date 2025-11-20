@@ -11,6 +11,7 @@ import {
   generateChartInstanceListByRowDirection
 } from './active-cell-chart-list';
 import type { PivotChartConstructorOptions } from '../..';
+import { getAxisConfigInPivotChart } from '../../layout/chart-helper/get-axis-config';
 
 interface IChartGraphicAttribute extends IGroupGraphicAttribute {
   canvas: HTMLCanvasElement;
@@ -232,14 +233,24 @@ export class Chart extends Rect {
             // console.log('receive scatter dimensionHover', params.action);
             generateChartInstanceListByColumnDirection(col, xValue, undefined, canvasXY, table, false, true);
             generateChartInstanceListByRowDirection(row, undefined, yValue, canvasXY, table, false, true);
+            const axisConfigLeft = getAxisConfigInPivotChart(
+              table.rowHeaderLevelCount - 1,
+              row,
+              table.internalProps.layoutMap as any
+            );
             // 显示左侧纵向crosshair的labelHoverOnAxis
-            if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.left) {
+            if (axisConfigLeft.labelHoverOnAxis) {
               table.scenegraph
                 .getCell(table.rowHeaderLevelCount - 1, row)
                 .firstChild.showLabelHoverOnAxis(canvasXY.y - table.getCellRelativeRect(col, row).top, yValue);
             }
+            const axisConfigBottom = getAxisConfigInPivotChart(
+              col,
+              table.rowCount - table.bottomFrozenRowCount,
+              table.internalProps.layoutMap as any
+            );
             // 显示底部横向crosshair的labelHoverOnAxis
-            if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.bottom) {
+            if (axisConfigBottom.labelHoverOnAxis) {
               table.scenegraph
                 .getCell(col, table.rowCount - table.bottomFrozenRowCount)
                 .firstChild.showLabelHoverOnAxis(canvasXY.x - table.getCellRelativeRect(col, row).left, xValue);
@@ -265,8 +276,14 @@ export class Chart extends Rect {
                 const series = dimensionInfo.data[0].series;
                 const width = series.getYAxisHelper().getBandwidth(0);
                 const y = series.valueToPositionY(dimensionValue);
+
+                const axisConfig = getAxisConfigInPivotChart(
+                  table.rowHeaderLevelCount - 1,
+                  row,
+                  table.internalProps.layoutMap as any
+                );
                 // 显示左侧纵向crosshair的labelHoverOnAxis
-                if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.left) {
+                if (axisConfig.labelHoverOnAxis) {
                   table.scenegraph
                     .getCell(table.rowHeaderLevelCount - 1, row)
                     .firstChild.showLabelHoverOnAxis(
@@ -280,8 +297,13 @@ export class Chart extends Rect {
                 const series = dimensionInfo.data[0].series;
                 const width = series.getXAxisHelper().getBandwidth(0);
                 const x = series.valueToPositionX(dimensionValue);
+                const axisConfig = getAxisConfigInPivotChart(
+                  col,
+                  table.rowCount - table.bottomFrozenRowCount,
+                  table.internalProps.layoutMap as any
+                );
                 // 显示底部横向crosshair的labelHoverOnAxis
-                if ((table.options as PivotChartConstructorOptions).chartDimensionLinkage.labelHoverOnAxis?.bottom) {
+                if (axisConfig.labelHoverOnAxis) {
                   table.scenegraph
                     .getCell(col, table.rowCount - table.bottomFrozenRowCount)
                     .firstChild.showLabelHoverOnAxis(

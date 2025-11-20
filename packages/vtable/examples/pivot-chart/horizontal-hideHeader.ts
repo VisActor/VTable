@@ -9225,7 +9225,33 @@ export function createTable() {
     chartDimensionLinkage: {
       showTooltip: true,
       heightLimitToShowTooltipForLastRow: 80,
-      widthLimitToShowTooltipForLastColumn: 80
+      widthLimitToShowTooltipForLastColumn: 80,
+      labelHoverOnAxis: {
+        left: {
+          visible: true,
+          position: 50,
+          autoRotate: false,
+          space: 2,
+          padding: 2,
+          textStyle: {
+            fontSize: 12,
+            fill: 'white',
+            fontWeight: 'normal',
+            fillOpacity: 1,
+            textAlign: 'right',
+            textBaseline: 'middle'
+          },
+          background: {
+            visible: true,
+            style: {
+              cornerRadius: 4,
+              fill: 'red'
+            }
+          },
+          text: ''
+          // maxWidth: 100
+        }
+      }
     },
     container: document.getElementById(CONTAINER_ID),
     records,
@@ -9253,31 +9279,7 @@ export function createTable() {
       {
         orient: 'left',
         visible: true,
-        label: { visible: true },
-        labelHoverOnAxis: {
-          visible: true,
-          position: 50,
-          autoRotate: false,
-          space: 2,
-          padding: 2,
-          textStyle: {
-            fontSize: 12,
-            fill: 'white',
-            fontWeight: 'normal',
-            fillOpacity: 1,
-            textAlign: 'right',
-            textBaseline: 'middle'
-          },
-          background: {
-            visible: true,
-            style: {
-              cornerRadius: 4,
-              fill: 'red'
-            }
-          },
-          text: ''
-          // maxWidth: 100
-        }
+        label: { visible: true }
       }
     ]
     // widthMode: 'adaptive',

@@ -490,10 +490,9 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       }
       const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
       if (!axisOption.labelHoverOnAxis) {
-        axisOption.labelHoverOnAxis =
-          (layout._table.options as PivotChartConstructorOptions).chartDimensionLinkage?.labelHoverOnAxis?.[
-            orient as 'left' | 'right' | 'top' | 'bottom'
-          ] ?? {};
+        axisOption.labelHoverOnAxis = (
+          layout._table.options as PivotChartConstructorOptions
+        ).chartDimensionLinkage?.labelHoverOnAxis?.[orient as 'left' | 'right' | 'top' | 'bottom'];
       }
       return {
         axisOption,
@@ -511,10 +510,9 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       return axisOption.orient === orient;
     }) ?? {};
   if (!axisOption.labelHoverOnAxis) {
-    axisOption.labelHoverOnAxis =
-      (layout._table.options as PivotChartConstructorOptions).chartDimensionLinkage?.labelHoverOnAxis?.[
-        orient as 'left' | 'right' | 'top' | 'bottom'
-      ] ?? {};
+    axisOption.labelHoverOnAxis = (
+      layout._table.options as PivotChartConstructorOptions
+    ).chartDimensionLinkage?.labelHoverOnAxis?.[orient as 'left' | 'right' | 'top' | 'bottom'];
   }
   const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
   return {
