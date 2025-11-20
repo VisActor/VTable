@@ -91,4 +91,4 @@ export enum FilterOperatorCategory {
   RADIO = 'radio'
 }
 
-export type FilterListener = (state: FilterState) => void;
+export type FilterListener = (state: FilterState, action?: FilterAction) => void;
