@@ -627,4 +627,8 @@ export class ValueFilter {
   hide(): void {
     this.filterByValuePanel.style.display = 'none';
   }
+
+  clearSearchInputValue(): void {
+    this.filterByValueSearchInput.value = '';
+  }
 }
