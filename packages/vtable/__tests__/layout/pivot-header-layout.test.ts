@@ -2705,7 +2705,7 @@ describe('pivot-header-layout test', () => {
 
   test('pivot-header-layout getAxisConfigInPivotChart', () => {
     expect(layout.getAxisConfigInPivotChart(1, 1)).toEqual({
-      labelHoverOnAxis: {},
+      labelHoverOnAxis: undefined,
       title: {
         visible: true,
         text: '销售额-存在空',
@@ -2825,7 +2825,7 @@ describe('pivot-header-layout test', () => {
       },
       sampling: false,
       range: undefined,
-      labelHoverOnAxis: {},
+      labelHoverOnAxis: undefined,
       zIndex: 200,
       label: {
         visible: true,
