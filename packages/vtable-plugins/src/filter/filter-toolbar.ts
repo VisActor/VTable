@@ -159,8 +159,8 @@ export class FilterToolbar {
     });
 
     // 点击空白处整个筛选菜单可消失
-    document.addEventListener('click', () => {
-      if (this.isVisible) {
+    document.addEventListener('click', e => {
+      if (this.isVisible && !this.filterStateManager.clickedTableHeaderFilterIcon) {
         this.hide();
       }
     });
@@ -209,7 +209,6 @@ export class FilterToolbar {
       left = cell.right + canvasBounds.left - this.filterMenuWidth;
       top = cell.bottom + canvasBounds.top;
     }
-
     this.filterMenu.style.display = this.isVisible ? 'block' : 'none';
     this.filterMenu.style.left = `${left}px`;
     this.filterMenu.style.top = `${top}px`;
@@ -217,6 +216,7 @@ export class FilterToolbar {
 
   show(col: number, row: number, filterModes: FilterMode[]): void {
     this.filterModes = filterModes;
+    this.isVisible = true;
     if (!this.filterModes.includes('byValue')) {
       this.filterTabByValue.style.display = 'none';
       this.onTabSwitch('byCondition');
@@ -238,11 +238,6 @@ export class FilterToolbar {
     } else {
       this.onTabSwitch('byValue');
     }
-
-    // 确保在事件冒泡完成后才设置 isVisible 为 true
-    setTimeout(() => {
-      this.isVisible = true;
-    }, 0);
   }
 
   hide(): void {

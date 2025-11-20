@@ -35,7 +35,6 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   filterEngine: FilterEngine;
   filterStateManager: FilterStateManager;
   filterToolbar: FilterToolbar;
-
   constructor(pluginOptions: FilterOptions) {
     this.id = pluginOptions?.id ?? this.id;
     this.pluginOptions = pluginOptions;
@@ -99,7 +98,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       if (isRightClick) {
         return;
       }
-
+      this.filterStateManager.clickedTableHeaderFilterIcon = true;
+      setTimeout(() => {
+        this.filterStateManager.clickedTableHeaderFilterIcon = false;
+      }, 0);
       const col = eventArgs.col;
       const row = eventArgs.row;
       if (this.filterToolbar.isVisible) {
