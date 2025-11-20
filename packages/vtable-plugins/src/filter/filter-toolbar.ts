@@ -216,6 +216,7 @@ export class FilterToolbar {
   }
 
   show(col: number, row: number, filterModes: FilterMode[]): void {
+    this.valueFilter.clearSearchInputValue();
     this.filterModes = filterModes;
     if (!this.filterModes.includes('byValue')) {
       this.filterTabByValue.style.display = 'none';
