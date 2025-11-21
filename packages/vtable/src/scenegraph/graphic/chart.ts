@@ -45,6 +45,9 @@ export class Chart extends Rect {
   chartInstance: any;
   activeChartInstance: any;
   activeChartInstanceHoverOnMark: any = null;
+  justShowMarkTooltip: boolean = undefined;
+  justShowMarkTooltipTimer: number = Date.now();
+  delayRunDimensionHoverTimer: any = undefined;
   cacheCanvas: HTMLCanvasElement | { x: number; y: number; width: number; height: number; canvas: HTMLCanvasElement }[]; // HTMLCanvasElement
   isShareChartSpec: boolean; //针对chartSpec用户配置成函数形式的话 就不需要存储chartInstance了 会太占内存，使用这个变量 当渲染出缓存图表会就删除chartInstance实例
   constructor(isShareChartSpec: boolean, params: IChartGraphicAttribute) {
@@ -256,15 +259,37 @@ export class Chart extends Rect {
                 .firstChild.showLabelHoverOnAxis(canvasXY.x - table.getCellRelativeRect(col, row).left, xValue);
             }
           } else {
-            let hideTooltip = false;
+            let justShowMarkTooltip = true;
             const preMark = this.activeChartInstanceHoverOnMark;
-
+            const prev_justShowMarkTooltip = this.justShowMarkTooltip;
             // console.log('----', params, params.datum, params.dimensionInfo[0].data[0]);
             if (params.mark && params.datum && !Array.isArray(params.datum)) {
               this.activeChartInstanceHoverOnMark = params.mark;
-              hideTooltip = true;
+              justShowMarkTooltip = true;
             } else {
               this.activeChartInstanceHoverOnMark = null;
+              justShowMarkTooltip = false;
+            }
+            this.justShowMarkTooltip = justShowMarkTooltip;
+            let delayRunDimensionHover: boolean = false;
+            if (prev_justShowMarkTooltip === true && justShowMarkTooltip === false) {
+              this.justShowMarkTooltipTimer = Date.now();
+              delayRunDimensionHover = true;
+            } else if (prev_justShowMarkTooltip === false && justShowMarkTooltip === false) {
+              if (Date.now() - this.justShowMarkTooltipTimer < 100) {
+                // 鼠标hover到空白区域时，不要立马显示tooltip，而是等100ms后显示 以防止tooltip在mark和dimension的tooltip之间来回闪烁
+                delayRunDimensionHover = true;
+              } else {
+                delayRunDimensionHover = false;
+              }
+            } else if (prev_justShowMarkTooltip === false && justShowMarkTooltip === true) {
+              delayRunDimensionHover = false;
+              clearTimeout(this.delayRunDimensionHoverTimer);
+              this.delayRunDimensionHoverTimer = undefined;
+            } else if (prev_justShowMarkTooltip === true && justShowMarkTooltip === true) {
+              delayRunDimensionHover = false;
+              clearTimeout(this.delayRunDimensionHoverTimer); //及时清除之前的定时器
+              this.delayRunDimensionHoverTimer = undefined;
             }
 
             if (params.action === 'enter' || preMark !== this.activeChartInstanceHoverOnMark) {
@@ -272,6 +297,56 @@ export class Chart extends Rect {
               const dimensionValue = dimensionInfo.value;
 
               const indicatorsAsCol = (table.options as PivotChartConstructorOptions).indicatorsAsCol;
+              if (!delayRunDimensionHover) {
+                if (indicatorsAsCol) {
+                  generateChartInstanceListByRowDirection(
+                    row,
+                    dimensionValue,
+                    null,
+                    canvasXY,
+                    table,
+                    justShowMarkTooltip,
+                    false
+                  );
+                } else {
+                  generateChartInstanceListByColumnDirection(
+                    col,
+                    dimensionValue,
+                    null,
+                    canvasXY,
+                    table,
+                    justShowMarkTooltip,
+                    false
+                  );
+                }
+              } else {
+                clearTimeout(this.delayRunDimensionHoverTimer);
+                //还是需要有个延迟出现的时间，否则从mark切换到dimension时，tooltip不会出现了（ preMark !== this.activeChartInstanceHoverOnMark总是为false）
+                this.delayRunDimensionHoverTimer = setTimeout(() => {
+                  if (indicatorsAsCol) {
+                    generateChartInstanceListByRowDirection(
+                      row,
+                      dimensionValue,
+                      null,
+                      canvasXY,
+                      table,
+                      justShowMarkTooltip,
+                      false
+                    );
+                  } else {
+                    generateChartInstanceListByColumnDirection(
+                      col,
+                      dimensionValue,
+                      null,
+                      canvasXY,
+                      table,
+                      justShowMarkTooltip,
+                      false
+                    );
+                  }
+                }, 100);
+              }
+
               if (indicatorsAsCol) {
                 const series = dimensionInfo.data[0].series;
                 const width = series.getYAxisHelper().getBandwidth(0);
@@ -291,8 +366,6 @@ export class Chart extends Rect {
                       yValue
                     );
                 }
-
-                generateChartInstanceListByRowDirection(row, dimensionValue, null, canvasXY, table, hideTooltip, false);
               } else {
                 const series = dimensionInfo.data[0].series;
                 const width = series.getXAxisHelper().getBandwidth(0);
@@ -311,15 +384,6 @@ export class Chart extends Rect {
                       dimensionValue
                     );
                 }
-                generateChartInstanceListByColumnDirection(
-                  col,
-                  dimensionValue,
-                  null,
-                  canvasXY,
-                  table,
-                  hideTooltip,
-                  false
-                );
               }
             }
           }
@@ -343,6 +407,10 @@ export class Chart extends Rect {
   ) {
     // console.log('------deactivate', releaseChartInstance, releaseColumnChartInstance, releaseRowChartInstance);
     this.activeChartInstanceHoverOnMark = null;
+    this.justShowMarkTooltip = undefined;
+    this.justShowMarkTooltipTimer = Date.now();
+    clearTimeout(this.delayRunDimensionHoverTimer);
+    this.delayRunDimensionHoverTimer = undefined;
     if (releaseChartInstance) {
       // move active chart view box out of browser view
       // to avoid async render when chart is releasd
