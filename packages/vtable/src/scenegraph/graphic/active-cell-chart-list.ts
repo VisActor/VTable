@@ -89,6 +89,10 @@ export function generateChartInstanceListByColumnDirection(
           } else {
             if (hideTooltip) {
               chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
+              chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
+                tooltip: false,
+                showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3, activeType: 'dimension' }
+              });
             } else {
               chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
                 tooltip: isShowTooltip,
@@ -138,7 +142,6 @@ export function generateChartInstanceListByRowDirection(
   hideTooltip: boolean = false,
   isScatter: boolean = false
 ) {
-  console.log('-----forbid_Show_Tooltip', hideTooltip);
   if (!isValid(chartInstanceListRowByRowDirection[row])) {
     chartInstanceListRowByRowDirection[row] = {};
   }
@@ -193,6 +196,10 @@ export function generateChartInstanceListByRowDirection(
           } else {
             if (hideTooltip) {
               chartInstanceListRowByRowDirection[row][i].hideTooltip();
+              chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
+                tooltip: false,
+                showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y, activeType: 'dimension' }
+              });
             } else {
               chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
                 tooltip: isShowTooltip,
