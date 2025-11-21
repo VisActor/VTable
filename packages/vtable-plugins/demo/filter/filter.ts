@@ -172,6 +172,16 @@ export function createTable() {
   (window as any).tableInstance = tableInstance;
   tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_SHOW, (...args) => {
     console.log('filter_menu_show', args);
+    tableInstance.arrangeCustomCellStyle({ col: 1, row: 0 }, 'header_highlight');
+  });
+
+  tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_HIDE, (...args) => {
+    console.log('filter_menu_hide', args);
+    tableInstance.arrangeCustomCellStyle({ col: 1, row: 0 }, 'header_highlight');
+  });
+
+  tableInstance.registerCustomCellStyle('header_highlight', {
+    bgColor: 'red'
   });
 
   setTimeout(() => {
