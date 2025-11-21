@@ -598,7 +598,7 @@ export function getAxisRange(
     }
     return null;
   }
-  let defaultKey = indicatorKeys?.[seriesId];
+  let defaultKey = indicatorKeys?.[seriesId] ?? indicatorKeys?.[0];
   if (isArray(defaultKey)) {
     defaultKey = defaultKey[0];
   }

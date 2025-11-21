@@ -478,6 +478,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-linkage'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-rightAxis'
       }
     ]
   },
