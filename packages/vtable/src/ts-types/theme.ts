@@ -164,16 +164,16 @@ export interface ITableThemeDefine {
   axisStyle?: {
     defaultAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'>;
     leftAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'> & {
-      cellPaddingLeft: number;
+      cellPaddingLeft?: number;
     };
     rightAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'> & {
-      cellPaddingRight: number;
+      cellPaddingRight?: number;
     };
     topAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'> & {
-      cellPaddingTop: number;
+      cellPaddingTop?: number;
     };
     bottomAxisStyle?: Omit<ICellAxisOption, 'type' | 'domain' | 'range' | 'orient' | '__ticksForVTable'> & {
-      cellPaddingBottom: number;
+      cellPaddingBottom?: number;
     };
   };
 
