@@ -338,9 +338,10 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
+      const { axisOption, chartType } = getAxisOption(col - 1, row, 'right', layout);
       const axisRange = getRange('right', col - 1, row, layout.rowHeaderLevelCount - 1, row, col, row, 1, layout);
-      const { chartType } = getAxisOption(col - 1, row, 'right', layout);
-      if (!axisRange) {
+
+      if (!axisRange || !axisOption) {
         return;
       }
 
@@ -348,7 +349,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col - 1, row, layout._table));
 
       // range for right axis
-      const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
+      const { range, ticks, index, targetTicks, targetRange, theme } = axisRange;
 
       // if (isZeroAlign) {
       //   // range for left axis
