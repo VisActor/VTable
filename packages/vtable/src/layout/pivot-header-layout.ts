@@ -274,7 +274,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       // if (this.hasTwoIndicatorAxes === false) {
       this.indicatorsDefine.forEach((indicatorObject: any) => {
         if ((indicatorObject as any).hasTwoIndicatorAxes) {
-          return;
+          return false;
         }
         if (indicatorObject.chartSpec) {
           const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
