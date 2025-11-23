@@ -338,10 +338,15 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
+      const indicatorKey = layout.getIndicatorKey(col, row);
+      const indicatorInfo = layout.getIndicatorInfo(indicatorKey);
+      if (!(indicatorInfo as any)?.hasTwoIndicatorAxes) {
+        return;
+      }
+
       const { axisOption, chartType } = getAxisOption(col - 1, row, 'right', layout);
       const axisRange = getRange('right', col - 1, row, layout.rowHeaderLevelCount - 1, row, col, row, 1, layout);
-
-      if (!axisRange || !axisOption) {
+      if (!axisRange) {
         return;
       }
 

@@ -245,7 +245,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this.resetRowHeaderLevelCount();
 
     if (this._table.isPivotChart()) {
-      this.hasTwoIndicatorAxes = this.indicatorsDefine.some((indicatorObject: any) => {
+      this.hasTwoIndicatorAxes = false;
+      this.indicatorsDefine.forEach((indicatorObject: any) => {
         if (
           indicatorObject.chartSpec &&
           indicatorObject.chartSpec.series &&
@@ -261,53 +262,62 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               return true;
             })
           ) {
+            indicatorObject.hasTwoIndicatorAxes = true;
+            this.hasTwoIndicatorAxes = true;
             return true;
           }
         }
+        indicatorObject.hasTwoIndicatorAxes = false;
         return false;
       });
       //上面的series多系列判断逻辑基础上，在判断是否主动配置了两个指标轴（不是series的话应该是两个一模一样的轴）
-      if (this.hasTwoIndicatorAxes === false) {
-        this.hasTwoIndicatorAxes = this.indicatorsDefine.some((indicatorObject: any) => {
-          if (indicatorObject.chartSpec) {
-            const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
-            if (this.indicatorsAsCol) {
-              const topAxis = axes.find((axis: any) => {
-                if (axis.orient === 'top' && axis.visible !== false) {
-                  return true;
-                }
-                return false;
-              });
-              const bottomAxis = axes.find((axis: any) => {
-                if (axis.orient === 'bottom' && axis.visible !== false) {
-                  return true;
-                }
-                return false;
-              });
-              if (topAxis && bottomAxis) {
+      // if (this.hasTwoIndicatorAxes === false) {
+      this.indicatorsDefine.forEach((indicatorObject: any) => {
+        if ((indicatorObject as any).hasTwoIndicatorAxes) {
+          return;
+        }
+        if (indicatorObject.chartSpec) {
+          const axes = indicatorObject.chartSpec.axes ?? (this._table as PivotChart).pivotChartAxes ?? [];
+          if (this.indicatorsAsCol) {
+            const topAxis = axes.find((axis: any) => {
+              if (axis.orient === 'top' && axis.visible !== false) {
                 return true;
               }
-            } else {
-              const leftAxis = axes.find((axis: any) => {
-                if (axis.orient === 'left' && axis.visible !== false) {
-                  return true;
-                }
-                return false;
-              });
-              const rightAxis = axes.find((axis: any) => {
-                if (axis.orient === 'right' && axis.visible !== false) {
-                  return true;
-                }
-                return false;
-              });
-              if (leftAxis && rightAxis) {
+              return false;
+            });
+            const bottomAxis = axes.find((axis: any) => {
+              if (axis.orient === 'bottom' && axis.visible !== false) {
                 return true;
               }
+              return false;
+            });
+            if (topAxis && bottomAxis) {
+              indicatorObject.hasTwoIndicatorAxes = true;
+              return true;
+            }
+          } else {
+            const leftAxis = axes.find((axis: any) => {
+              if (axis.orient === 'left' && axis.visible !== false) {
+                return true;
+              }
+              return false;
+            });
+            const rightAxis = axes.find((axis: any) => {
+              if (axis.orient === 'right' && axis.visible !== false) {
+                return true;
+              }
+              return false;
+            });
+            if (leftAxis && rightAxis) {
+              indicatorObject.hasTwoIndicatorAxes = true;
+              return true;
             }
           }
-          return false;
-        });
-      }
+        }
+        indicatorObject.hasTwoIndicatorAxes = false;
+        return false;
+      });
+      // }
     }
     this.resetColumnHeaderLevelCount();
 
