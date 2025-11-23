@@ -6,6 +6,25 @@ const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
   const option = {
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90,
+      labelHoverOnAxis: {
+        bottom: {
+          visible: true,
+          background: {
+            visible: true,
+            style: {
+              fill: '#364159'
+            }
+          },
+          textStyle: {
+            fill: '#ffffff'
+          }
+        }
+      }
+    },
     animation: true,
     rows: [
       {

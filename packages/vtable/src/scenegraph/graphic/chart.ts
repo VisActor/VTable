@@ -368,7 +368,10 @@ export class Chart extends Rect {
                 }
               } else {
                 const series = dimensionInfo.data[0].series;
-                const width = series.getXAxisHelper().getBandwidth(0);
+                const width =
+                  this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
+                    ? 0
+                    : series.getXAxisHelper().getBandwidth(0);
                 const x = series.valueToPositionX(dimensionValue);
                 const axisConfig = getAxisConfigInPivotChart(
                   col,
@@ -379,10 +382,7 @@ export class Chart extends Rect {
                 if (axisConfig.labelHoverOnAxis) {
                   table.scenegraph
                     .getCell(col, table.rowCount - table.bottomFrozenRowCount)
-                    .firstChild.showLabelHoverOnAxis(
-                      x + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
-                      dimensionValue
-                    );
+                    .firstChild.showLabelHoverOnAxis(x + width / 2, dimensionValue);
                 }
               }
             }
