@@ -407,8 +407,8 @@ export class ValueFilter {
       optionDom.checkbox.checked = selectedRawValues.some(v => v === rawValue);
 
       // 同步禁用状态：计数为0时禁用复选框
-      const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
-      optionDom.checkbox.disabled = count === 0;
+      // const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
+      // optionDom.checkbox.disabled = count === 0;
     });
   }
 
@@ -544,7 +544,7 @@ export class ValueFilter {
       // 使用原始值进行选中状态判断，优化为O(1)复杂度
       checkbox.checked = selectedRawValueSet.has(rawValue);
       // 计数为0时禁用复选框（不可选中）
-      checkbox.disabled = count === 0;
+      // checkbox.disabled = count === 0;
       applyStyles(checkbox, this.styles.checkbox);
 
       const countSpan = document.createElement('span');
