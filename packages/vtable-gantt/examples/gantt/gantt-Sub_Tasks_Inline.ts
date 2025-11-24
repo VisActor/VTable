@@ -289,7 +289,6 @@ export function createTable() {
       verticalSplitLineMoveable: true
     },
     grid: {
-      backgroundColor: 'gray',
       verticalLine: {
         lineWidth: 1,
         lineColor: '#e1e4e8'
