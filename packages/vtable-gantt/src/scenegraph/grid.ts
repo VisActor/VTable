@@ -20,6 +20,7 @@ export class Grid {
   horizontalLineGroup: Group;
   verticalBackgroundRectsGroup: Group;
   horizontalBackgroundRectsGroup: Group;
+  cellBackgroundRectsGroup: Group;
   allGridHeight: number;
   allGridWidth: number;
   _scene: Scenegraph;
@@ -48,6 +49,7 @@ export class Grid {
     scene.ganttGroup.addChild(this.group);
     this.createVerticalBackgroundRects();
     this.createHorizontalBackgroundRects();
+    this.createCellBackgroundRects();
     this.createVerticalLines();
     this.createHorizontalLines();
     this.createTimeLineHeaderBottomLine();
@@ -296,6 +298,68 @@ export class Grid {
       }
     }
   }
+  createCellBackgroundRects() {
+    const cellBackgroundColor = this._scene._gantt.parsedOptions.grid.cellBackgroundColor;
+    if (!cellBackgroundColor) {
+      return;
+    }
+
+    // 创建 cell 背景分组
+    this.cellBackgroundRectsGroup = new Group({
+      x: 0,
+      y: 0,
+      width: this.allGridWidth,
+      height: this.allGridHeight
+    });
+    this.cellBackgroundRectsGroup.name = 'grid-cell-background';
+    this.group.appendChild(this.cellBackgroundRectsGroup);
+
+    const rowCount = this.rowCount;
+    const { timelineDates } = this._scene._gantt.parsedOptions.reverseSortedTimelineScales[0];
+    const colCount = timelineDates.length;
+
+    const timelineColWidth = this._scene._gantt.parsedOptions.timelineColWidth;
+
+    let y = 0;
+
+    for (let r = 0; r < rowCount; r++) {
+      const rowHeight = this._scene._gantt.getRowHeightByIndex(r);
+      let x = 0;
+
+      for (let c = 0; c < colCount; c++) {
+        let backgroundColor;
+
+        if (typeof cellBackgroundColor === 'function') {
+          // 函数样式：用户完全控制颜色
+          backgroundColor = cellBackgroundColor({
+            rowIndex: r,
+            colIndex: c,
+            date: timelineDates[c]?.startDate,
+            ganttInstance: this._scene._gantt
+          });
+        } else {
+          // 数组样式
+          backgroundColor = cellBackgroundColor[(r + c) % cellBackgroundColor.length];
+        }
+
+        if (backgroundColor) {
+          const rect = createRect({
+            pickable: false,
+            fill: backgroundColor,
+            x,
+            y,
+            width: timelineColWidth,
+            height: rowHeight
+          });
+          this.cellBackgroundRectsGroup.appendChild(rect);
+        }
+
+        x += timelineColWidth;
+      }
+
+      y += rowHeight;
+    }
+  }
   /** 重新创建网格线场景树结点 */
   refresh() {
     this.width = this._scene.ganttGroup.attribute.width;
@@ -315,6 +379,7 @@ export class Grid {
     // this.horizontalBackgroundRectsGroup?.parent.removeChild(this.horizontalBackgroundRectsGroup);
     this.createVerticalBackgroundRects();
     this.createHorizontalBackgroundRects();
+    this.createCellBackgroundRects();
     this.createVerticalLines();
     this.createHorizontalLines();
     this.createTimeLineHeaderBottomLine();
@@ -324,12 +389,14 @@ export class Grid {
     this.horizontalLineGroup?.setAttribute('x', x);
     this.verticalBackgroundRectsGroup?.setAttribute('x', x);
     this.horizontalBackgroundRectsGroup?.setAttribute('x', x);
+    this.cellBackgroundRectsGroup?.setAttribute('x', x); // ← 增加
   }
   setY(y: number) {
     this.verticalLineGroup?.setAttribute('y', y);
     this.horizontalLineGroup?.setAttribute('y', y);
     this.verticalBackgroundRectsGroup?.setAttribute('y', y);
     this.horizontalBackgroundRectsGroup?.setAttribute('y', y);
+    this.cellBackgroundRectsGroup?.setAttribute('y', y); // ← 增加
   }
   resize() {
     this.width = this._scene.ganttGroup.attribute.width;
