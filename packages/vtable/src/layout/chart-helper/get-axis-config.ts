@@ -29,6 +29,11 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
     ) {
+      const indicatorKey = layout.getIndicatorKey(col, row);
+      const indicatorInfo = layout.getIndicatorInfo(indicatorKey);
+      if (!(indicatorInfo as any)?.hasTwoIndicatorAxes) {
+        return;
+      }
       const axisRange = getRange('top', col, row + 1, col, layout.columnHeaderLevelCount - 1, col, row, 1, layout);
       if (!axisRange) {
         return;
