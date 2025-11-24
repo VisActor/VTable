@@ -551,7 +551,7 @@ export class ValueFilter {
       countSpan.textContent = String(count);
       applyStyles(countSpan, this.styles.countSpan);
 
-      label.append(checkbox, ` ${value}`); // UI显示格式化值
+      label.append(checkbox, ` ${rawValue}`); // UI显示原始值
       itemDiv.append(label, countSpan);
       this.filterItemsContainer.appendChild(itemDiv);
 
