@@ -350,7 +350,10 @@ export class Chart extends Rect {
               if (indicatorsAsCol) {
                 const series = dimensionInfo.data[0].series;
                 const width =
-                  this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
+                  this.attribute.spec.type === 'histogram' ||
+                  this.attribute.spec.type === 'boxPlot' ||
+                  series.type === 'line' ||
+                  series.type === 'area'
                     ? 0
                     : series.getYAxisHelper().getBandwidth(0);
                 let y = series.valueToPositionY(dimensionValue);
@@ -382,7 +385,10 @@ export class Chart extends Rect {
               } else {
                 const series = dimensionInfo.data[0].series;
                 const width =
-                  this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
+                  this.attribute.spec.type === 'histogram' ||
+                  this.attribute.spec.type === 'boxPlot' ||
+                  series.type === 'line' ||
+                  series.type === 'area'
                     ? 0
                     : series.getXAxisHelper().getBandwidth(0);
                 let x = series.valueToPositionX(dimensionValue);

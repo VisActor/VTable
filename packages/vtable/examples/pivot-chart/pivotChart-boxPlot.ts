@@ -199,6 +199,25 @@ export function createTable() {
   ];
 
   const option: VTable.PivotChartConstructorOptions = {
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90,
+      labelHoverOnAxis: {
+        bottom: {
+          visible: true,
+          background: {
+            visible: true,
+            style: {
+              fill: '#364159'
+            }
+          },
+          textStyle: {
+            fill: '#ffffff'
+          }
+        }
+      }
+    },
     // columnTree,
     emptyTip: true,
     // rowTree,

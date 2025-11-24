@@ -516,9 +516,10 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       };
     }
   }
-  const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-    return axisOption.orient === orient;
-  });
+  const axisOption =
+    ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === orient;
+    }) ?? {};
   if (axisOption && !axisOption.labelHoverOnAxis) {
     axisOption.labelHoverOnAxis = (
       layout._table.options as PivotChartConstructorOptions
