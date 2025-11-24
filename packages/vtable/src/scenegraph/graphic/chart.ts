@@ -349,21 +349,34 @@ export class Chart extends Rect {
 
               if (indicatorsAsCol) {
                 const series = dimensionInfo.data[0].series;
-                const width = series.getYAxisHelper().getBandwidth(0);
-                const y = series.valueToPositionY(dimensionValue);
+                const width =
+                  this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
+                    ? 0
+                    : series.getYAxisHelper().getBandwidth(0);
+                let y = series.valueToPositionY(dimensionValue);
 
                 const axisConfig = getAxisConfigInPivotChart(
                   table.rowHeaderLevelCount - 1,
                   row,
                   table.internalProps.layoutMap as any
                 );
+                let hoverOnLabelValue = yValue;
+                if (this.attribute.spec.type === 'histogram') {
+                  const { series, datum } = dimensionInfo.data[0];
+                  if (datum.length > 0) {
+                    const rangeStartValue = datum[0][series.fieldY[0]];
+                    const rangeEndValue = datum[0][series.fieldY2];
+                    hoverOnLabelValue = rangeStartValue + ' ~ ' + rangeEndValue;
+                    y = (series.valueToPositionY(rangeStartValue) + series.valueToPositionY(rangeEndValue)) / 2;
+                  }
+                }
                 // 显示左侧纵向crosshair的labelHoverOnAxis
                 if (axisConfig.labelHoverOnAxis) {
                   table.scenegraph
                     .getCell(table.rowHeaderLevelCount - 1, row)
                     .firstChild.showLabelHoverOnAxis(
                       y + (series.type === 'line' || series.type === 'area' ? 0 : width / 2),
-                      yValue
+                      hoverOnLabelValue
                     );
                 }
               } else {
@@ -372,17 +385,27 @@ export class Chart extends Rect {
                   this.attribute.spec.type === 'histogram' || series.type === 'line' || series.type === 'area'
                     ? 0
                     : series.getXAxisHelper().getBandwidth(0);
-                const x = series.valueToPositionX(dimensionValue);
+                let x = series.valueToPositionX(dimensionValue);
                 const axisConfig = getAxisConfigInPivotChart(
                   col,
                   table.rowCount - table.bottomFrozenRowCount,
                   table.internalProps.layoutMap as any
                 );
+                let hoverOnLabelValue = dimensionValue;
+                if (this.attribute.spec.type === 'histogram') {
+                  const { series, datum } = dimensionInfo.data[0];
+                  if (datum.length > 0) {
+                    const rangeStartValue = datum[0][series.fieldX[0]];
+                    const rangeEndValue = datum[0][series.fieldX2];
+                    hoverOnLabelValue = rangeStartValue + ' ~ ' + rangeEndValue;
+                    x = (series.valueToPositionX(rangeStartValue) + series.valueToPositionX(rangeEndValue)) / 2;
+                  }
+                }
                 // 显示底部横向crosshair的labelHoverOnAxis
                 if (axisConfig.labelHoverOnAxis) {
                   table.scenegraph
                     .getCell(col, table.rowCount - table.bottomFrozenRowCount)
-                    .firstChild.showLabelHoverOnAxis(x + width / 2, dimensionValue);
+                    .firstChild.showLabelHoverOnAxis(x + width / 2, hoverOnLabelValue);
                 }
               }
             }

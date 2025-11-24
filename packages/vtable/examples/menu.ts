@@ -369,6 +369,10 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-histogram-horital'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-sunburst'
       },
       {

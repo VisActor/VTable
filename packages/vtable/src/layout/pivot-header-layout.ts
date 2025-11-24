@@ -3984,6 +3984,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
               ? chartSpec.x2Field
               : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+            : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+            ? chartSpec.y2Field
             : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
         if (dimensionKey) {
           return dimensionKey;

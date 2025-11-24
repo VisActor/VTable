@@ -11,7 +11,7 @@ export function createTable() {
       heightLimitToShowTooltipForLastRow: 60,
       widthLimitToShowTooltipForLastColumn: 90,
       labelHoverOnAxis: {
-        bottom: {
+        left: {
           visible: true,
           background: {
             visible: true,
@@ -45,10 +45,11 @@ export function createTable() {
         cellType: 'chart',
         chartModule: 'vchart',
         chartSpec: {
+          direction: 'horizontal',
           type: 'histogram',
-          xField: '__BinStart__',
-          x2Field: '__BinEnd__',
-          yField: '__MeaValue__',
+          yField: '__BinStart__',
+          y2Field: '__BinEnd__',
+          xField: '__MeaValue__',
           padding: 0,
           region: [
             {
@@ -334,7 +335,7 @@ export function createTable() {
             }
           },
           crosshair: {
-            xField: {
+            yField: {
               visible: true,
               line: {
                 type: 'rect',
@@ -831,7 +832,7 @@ export function createTable() {
     autoFillHeight: true,
     defaultRowHeight: 100,
     defaultHeaderRowHeight: 'auto',
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
     select: {
       highlightMode: 'cell',
       headerSelectMode: 'inline'

@@ -369,7 +369,10 @@ export function updateChartState(scenegraph: Scenegraph, datum: any) {
   const table = scenegraph.table;
   if (table.isPivotChart()) {
     const preSelectItemsCount = (table as PivotChart)._selectedDataItemsInChart.length;
-    if ((datum === null || datum?.length === 0 || Object.keys(datum).length === 0) && preSelectItemsCount === 0) {
+    if (
+      (datum === null || datum === undefined || datum?.length === 0 || Object.keys(datum).length === 0) &&
+      preSelectItemsCount === 0
+    ) {
       //避免无效的更新
       return;
     }
