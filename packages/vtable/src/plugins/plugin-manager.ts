@@ -43,8 +43,7 @@ export class PluginManager {
     });
   }
 
-  // 更新所有插件
-  updatePlugins(plugins?: IVTablePlugin[]): void {
+  removeOrAddPlugins(plugins?: IVTablePlugin[]): void {
     // 先找到plugins中没有，但this.plugins中有，也就是已经被移除的插件
     const removedPlugins = Array.from(this.plugins.values()).filter(plugin => !plugins?.some(p => p.id === plugin.id));
     removedPlugins.forEach(plugin => {
@@ -54,17 +53,20 @@ export class PluginManager {
       this.release();
       this.plugins.delete(plugin.id);
     });
-    // 更新插件
-    this.plugins.forEach(plugin => {
-      if (plugin.update) {
-        plugin.update();
-      }
-    });
     // 添加新插件
     const addedPlugins = plugins?.filter(plugin => !this.plugins.has(plugin.id));
     addedPlugins?.forEach(plugin => {
       this.register(plugin);
       this._bindTableEventForPlugin(plugin);
+    });
+  }
+  // 更新所有插件
+  updatePlugins(): void {
+    // 更新插件
+    this.plugins.forEach(plugin => {
+      if (plugin.update) {
+        plugin.update();
+      }
     });
   }
   release() {

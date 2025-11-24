@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: filter not working after update option",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
