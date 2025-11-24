@@ -1,5 +1,5 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
-import { arrayEqual } from '@visactor/vutils';
+import { arrayEqual, isValid } from '@visactor/vutils';
 import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterStyles } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
@@ -580,19 +580,51 @@ export class ValueFilter {
     });
 
     // 事件委托：复选框的 change 事件
+    // 只改变UI状态，不更新筛选状态
+    // 因为只有点击确认后，筛选状态才能落库
     this.filterByValuePanel.addEventListener('change', (event: Event) => {
       const target = event.target;
       if (target instanceof HTMLInputElement && target.type === 'checkbox') {
         if (target === this.selectAllCheckbox) {
-          this.toggleSelectAll(this.selectedField, this.selectAllCheckbox.checked);
+          this.valueFilterOptionList.get(this.selectedField).forEach(item => (item.checkbox.checked = target.checked));
         } else {
-          const checkbox = target;
-          const checked = checkbox.checked;
-          const value = this.valueFilterOptionList
-            .get(this.selectedField)
-            ?.find(item => item.id === checkbox.value)?.originalValue;
-          this.onValueSelect(this.selectedField, value, checked);
+          this.updateCheckboxUI(this.selectedField);
         }
+      }
+    });
+  }
+
+  updateCheckboxUI(field: string | number): void {
+    const checkedItem = this.valueFilterOptionList.get(field)?.filter(item => item.checkbox.checked);
+    const uncheckedItem = this.valueFilterOptionList.get(field)?.filter(item => !item.checkbox.checked);
+    if (!isValid(checkedItem) || !isValid(uncheckedItem)) {
+      return;
+    }
+    if (checkedItem.length !== 0 && uncheckedItem.length !== 0) {
+      this.selectAllCheckbox.indeterminate = true;
+    } else {
+      this.selectAllCheckbox.indeterminate = false;
+      this.selectAllCheckbox.checked = uncheckedItem.length === 0;
+    }
+  }
+
+  updateCheckboxState(field: string | number): void {
+    const originalValues: any = this.valueFilterOptionList
+      .get(field)
+      ?.filter(item => item.checkbox.checked)
+      .map(item => item.originalValue);
+    // 获取显示值对应的原始值
+    const displayToRawMap = this.displayToRawValueMap.get(field);
+    const rawValues = originalValues.map((displayValue: any) => {
+      return displayToRawMap ? displayToRawMap.get(displayValue) : displayValue;
+    });
+    // 更新筛选状态
+    this.filterStateManager.dispatch({
+      type: FilterActionType.ADD_FILTER,
+      payload: {
+        field: field,
+        type: 'byValue',
+        values: rawValues
       }
     });
   }
@@ -618,9 +650,10 @@ export class ValueFilter {
     if (this.filterByValueSearchInput) {
       this.filterByValueSearchInput.value = '';
     }
-
     // 6. 渲染选项（此时状态已经初始化完成）
     this.renderFilterOptions(this.selectedField);
+    // 7. 同步全选状态(必须放在render之后, 只有这样checkbox ui才能与state同步, 此时需要做的是同步全选状态)
+    this.updateCheckboxUI(this.selectedField);
     this.filterByValuePanel.style.display = 'block';
   }
 

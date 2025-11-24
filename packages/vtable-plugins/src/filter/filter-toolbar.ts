@@ -80,6 +80,8 @@ export class FilterToolbar {
 
   private applyFilter(field: string | number): void {
     if (this.activeTab === 'byValue') {
+      // 更新筛选组件的全选选中状态
+      this.valueFilter.updateCheckboxState(field);
       this.valueFilter.applyFilter(field);
     } else if (this.activeTab === 'byCondition') {
       this.conditionFilter.applyFilter(field);
