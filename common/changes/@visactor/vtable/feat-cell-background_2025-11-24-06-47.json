@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat(gantt): support custom cell background rendering\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "jianglin.tu@wimisoft.com"
+}

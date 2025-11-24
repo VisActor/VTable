@@ -4,9 +4,6 @@ The grid lines mainly refer to the grid lines of the left information table of t
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
-
-
-
 ## Gantt Task List Table Grid Lines
 
 In the Gantt chart, the grid lines of the left information table are rendered and organized by the VTable component, which can be controlled through the `taskListTable` configuration item.
@@ -14,6 +11,7 @@ In the Gantt chart, the grid lines of the left information table are rendered an
 The specific configuration of the left information table can refer to the configuration items of VTable, please refer to the tutorial [theme](https://www.visactor.com/vtable/guide/theme_and_style/theme) or [style](https://www.visactor.com/vtable/guide/theme_and_style/style).
 
 For example, to remove the vertical split lines of the table, you can configure the `theme`:
+
 ```
 {
   "taskListTable": {
@@ -26,6 +24,7 @@ For example, to remove the vertical split lines of the table, you can configure 
 }
 
 ```
+
 ## Date Table Grid Lines
 
 The relevant configurations of the date table are in the `timelineHeader` configuration item, where the `verticalLine` configuration item can control the vertical split lines of the date table, and the `horizontalLine` configuration item can control the horizontal split lines of the date table.
@@ -48,6 +47,7 @@ The relevant configurations of the date table are in the `timelineHeader` config
 ## Gantt Task Bar Grid Lines
 
 The grid lines of the Gantt task bar can be controlled through the `grid` configuration item. The specific configuration is as follows:
+
 ```
 export interface IGrid {
   backgroundColor?: string;
@@ -55,6 +55,8 @@ export interface IGrid {
   horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
   /** Set different background colors for different date columns */
   verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  /** Set different background colors need to be set according to data rows and dates. */
+  cellBackgroundColor?: string[] | ((args: GridCellStyleArgumentType) => string | { color: string; startTime: Date; endTime: Date });
   /** Weekend background color */
   weekendBackgroundColor?: string;
   /** Vertical interval line style */
@@ -71,6 +73,7 @@ It can be seen that the `grid` configuration item can control the grid lines of 
 The background color and split lines can be configured as arrays to set different background colors for different rows or columns. They can also be configured as functions to set different background colors for different data rows or date columns.
 
 For example:
+
 ```
 {
   "grid": {
@@ -83,11 +86,10 @@ For example:
 }
 ```
 
-
-
 ## Gantt Chart Outer Frame Line
 
 The outer frame line of the Gantt chart can be controlled through the `frame.outerFrameStyle` configuration item. The specific configuration is as follows:
+
 ```
 {
   "frame": {
@@ -100,11 +102,13 @@ The outer frame line of the Gantt chart can be controlled through the `frame.out
 ```
 
 ## Gantt Chart Overall Split Line
+
 The split line between the left information table and the right task bar can be controlled through the `frame.verticalSplitLine` configuration item.
 
 The split line between the header and the list body can be controlled through the `frame.horizontalSplitLine` configuration item.
 
 For example:
+
 ```
 {
   "frame": {

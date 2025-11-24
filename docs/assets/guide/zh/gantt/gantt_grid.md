@@ -4,16 +4,14 @@
 
 ![image](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/gantt/gantt-structure.png)
 
-
-
-
 ## 任务信息表网格线
 
-甘特图中，左侧信息表格的网格线是VTable组件所渲染和组织的，可以通过`taskListTable`配置项来控制网格线的显示。
+甘特图中，左侧信息表格的网格线是 VTable 组件所渲染和组织的，可以通过`taskListTable`配置项来控制网格线的显示。
 
-左侧信息表格的具体配置可以参考VTable的配置项，请参考教程[theme](https://www.visactor.com/vtable/guide/theme_and_style/theme)或者[style](https://www.visactor.com/vtable/guide/theme_and_style/style)。
+左侧信息表格的具体配置可以参考 VTable 的配置项，请参考教程[theme](https://www.visactor.com/vtable/guide/theme_and_style/theme)或者[style](https://www.visactor.com/vtable/guide/theme_and_style/style)。
 
 如想要去掉表格的纵向分割线，可以配置`theme`:
+
 ```
 {
   "taskListTable": {
@@ -26,9 +24,10 @@
 }
 
 ```
+
 ## 日期表格网格线
 
-日期表格的相关配置都在timelineHeader中，其中`verticalLine`配置项可以控制日期表格的纵向分割线，`horizontalLine`配置项可以控制日期表格的水平分割线。
+日期表格的相关配置都在 timelineHeader 中，其中`verticalLine`配置项可以控制日期表格的纵向分割线，`horizontalLine`配置项可以控制日期表格的水平分割线。
 
 ```
 {
@@ -48,6 +47,7 @@
 ## 任务条网格线
 
 甘特图任务条的网格线，可以通过`grid`配置项来控制任务条的网格线。具体配置：
+
 ```
 export interface IGrid {
   backgroundColor?: string;
@@ -55,6 +55,8 @@ export interface IGrid {
   horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
   /** 需要按日期列设置不同背景色 */
   verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  /** 需要按数据行和日期设置不同背景色 */
+  cellBackgroundColor?: string[] | ((args: GridCellStyleArgumentType) => string | { color: string; startTime: Date; endTime: Date });
   /** 周末背景色 */
   weekendBackgroundColor?: string;
   /** 垂直间隔线样式 */
@@ -66,11 +68,12 @@ export interface IGrid {
 }
 ```
 
-可以看出，`grid`配置项可以控制任务条的网格线，包括背景色、水平分割线、垂直分割线、周末背景色、竖线依赖的具体日期刻度scale。
+可以看出，`grid`配置项可以控制任务条的网格线，包括背景色、水平分割线、垂直分割线、周末背景色、竖线依赖的具体日期刻度 scale。
 
 其中背景色和分割线都可以配置为数组，来按行或者按列设置不同的背景色。也可以配置为函数，来根据具体的数据行或者日期列来设置不同的背景色。
 
 如：
+
 ```
 {
   "grid": {
@@ -83,11 +86,10 @@ export interface IGrid {
 }
 ```
 
-
-
 ## 甘特图外边框线
 
 甘特图外边框线，可以通过`frame.outerFrameStyle`配置项来控制甘特图的外边框线。具体配置：
+
 ```
 {
   "frame": {
@@ -100,11 +102,13 @@ export interface IGrid {
 ```
 
 ## 甘特图整体分割线
+
 左侧信息表格和右侧任务条的分割线，可以通过`frame.verticalSplitLine`配置项来控制。
 
-表头和列表body部分的分割线，可以通过`frame.horizontalSplitLine`配置项来控制。
+表头和列表 body 部分的分割线，可以通过`frame.horizontalSplitLine`配置项来控制。
 
 如：
+
 ```
 {
   "frame": {

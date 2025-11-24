@@ -33,6 +33,10 @@ export interface IGrid {
   horizontalBackgroundColor?: string[] | ((args: GridHorizontalLineStyleArgumentType) => string);
   /** 需要按日期列设置不同背景色 */
   verticalBackgroundColor?: string[] | ((args: GridVerticalLineStyleArgumentType) => string);
+  /** 需要按数据行和日期范围设置不同背景色, 支持分钟 */
+  cellBackgroundColor?:
+    | string[]
+    | ((args: GridCellStyleArgumentType) => string | { color: string; startTime: Date; endTime: Date });
   /** 周末背景色 */
   weekendBackgroundColor?: string;
 
@@ -419,6 +423,16 @@ export type GridVerticalLineStyleArgumentType = {
 export type GridHorizontalLineStyleArgumentType = {
   /** 横线是第几条线 也代表了左侧表格的body行号 */
   index: number;
+  ganttInstance: Gantt;
+};
+
+export type GridCellStyleArgumentType = {
+  /** 行索引 */
+  rowIndex: number;
+  /** 列索引 */
+  colIndex: number;
+  /** 列当前日期 */
+  date?: Date;
   ganttInstance: Gantt;
 };
 
