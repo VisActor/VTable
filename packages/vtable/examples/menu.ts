@@ -494,6 +494,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-combined'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-line'
       }
     ]
   },

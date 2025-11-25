@@ -292,7 +292,11 @@ export class Chart extends Rect {
               this.delayRunDimensionHoverTimer = undefined;
             }
 
-            if (params.action === 'enter' || preMark !== this.activeChartInstanceHoverOnMark) {
+            if (
+              params.action === 'enter' ||
+              params.action === 'move' ||
+              preMark !== this.activeChartInstanceHoverOnMark
+            ) {
               // console.log('-----preMark', params.action, hideTooltip, preMark, this.activeChartInstanceHoverOnMark);
               const dimensionValue = dimensionInfo.value;
 
