@@ -445,7 +445,7 @@ export default class VTableSheet {
       defaultRowHeight: this.options.defaultRowHeight,
       defaultColWidth: this.options.defaultColWidth,
       dragOrder: sheetDefine.dragOrder,
-      plugins: getTablePlugins(sheetDefine, this.options),
+      plugins: getTablePlugins(sheetDefine, this.options, this),
       headerEditor: 'formula',
       editor: 'formula',
       select: {
