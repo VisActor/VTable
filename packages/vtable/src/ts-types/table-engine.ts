@@ -570,7 +570,7 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
   }[];
   /** 透视图中多个图表基于相同维度值进行交互联动的功能,是否开启  */
   chartDimensionLinkage?: {
-    /** 是否显示tooltip 默认false*/
+    /** 是否显示tooltip 默认true*/
     showTooltip?: boolean;
     /** 针对条形图折线图等， 整列显示tooltip时，最后一行可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多高 可允许显示tooltip。*/
     heightLimitToShowTooltipForLastRow?: number;
