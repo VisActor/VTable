@@ -307,10 +307,10 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 2.0.8-alpha.5
       '@visactor/vdataset': ~0.18.1
-      '@visactor/vrender-animate': 1.0.27-alpha.0
-      '@visactor/vrender-components': 1.0.27-alpha.0
-      '@visactor/vrender-core': 1.0.27-alpha.0
-      '@visactor/vrender-kits': 1.0.27-alpha.0
+      '@visactor/vrender-animate': ~1.0.27
+      '@visactor/vrender-components': ~1.0.27
+      '@visactor/vrender-core': ~1.0.27
+      '@visactor/vrender-kits': ~1.0.27
       '@visactor/vscale': ~0.18.1
       '@visactor/vtable-editors': workspace:*
       '@visactor/vutils': ~0.19.1
@@ -357,10 +357,10 @@ importers:
       vite-plugin-markdown: ^2.1.0
     dependencies:
       '@visactor/vdataset': 0.18.18
-      '@visactor/vrender-animate': 1.0.27-alpha.0
-      '@visactor/vrender-components': 1.0.27-alpha.0
-      '@visactor/vrender-core': 1.0.27-alpha.0
-      '@visactor/vrender-kits': 1.0.27-alpha.0
+      '@visactor/vrender-animate': 1.0.29
+      '@visactor/vrender-components': 1.0.29
+      '@visactor/vrender-core': 1.0.29
+      '@visactor/vrender-kits': 1.0.29
       '@visactor/vscale': 0.18.18
       '@visactor/vtable-editors': link:../vtable-editors
       '@visactor/vutils': 0.19.7
@@ -4285,10 +4285,10 @@ packages:
     dependencies:
       '@visactor/vdataset': 1.0.14
       '@visactor/vlayouts': 1.0.14
-      '@visactor/vrender-animate': 1.0.27-alpha.0
-      '@visactor/vrender-components': 1.0.27-alpha.0
-      '@visactor/vrender-core': 1.0.27-alpha.0
-      '@visactor/vrender-kits': 1.0.27-alpha.0
+      '@visactor/vrender-animate': 1.0.29
+      '@visactor/vrender-components': 1.0.29
+      '@visactor/vrender-core': 1.0.29
+      '@visactor/vrender-kits': 1.0.29
       '@visactor/vscale': 1.0.14
       '@visactor/vutils': 1.0.14
       '@visactor/vutils-extension': 2.0.8-alpha.5
@@ -4345,32 +4345,32 @@ packages:
       '@visactor/vutils': 1.0.14
       eventemitter3: 4.0.7
 
-  /@visactor/vrender-animate/1.0.27-alpha.0:
-    resolution: {integrity: sha512-MdaRrd6etTuVLsGni1HrMakNPFlrrUFVhyM6Ot4iLUQWxItWN7nrJD1TZotaIlvTmgVoJ9q7GwTymX/6vjOyvg==}
+  /@visactor/vrender-animate/1.0.29:
+    resolution: {integrity: sha512-7xuMQPLDC3XDjQY4xTA2WzDqwUx1WLObWDshJdn4wPbgHigZlzukUcmNZgyJoWw/MwzzzHENa309ZlZj2XZq6g==}
     dependencies:
-      '@visactor/vrender-core': 1.0.27-alpha.0
+      '@visactor/vrender-core': 1.0.29
       '@visactor/vutils': 1.0.14
 
-  /@visactor/vrender-components/1.0.27-alpha.0:
-    resolution: {integrity: sha512-FeOWx6EO9cvKQ4MDx40sMivOyk1FTuQibav6PpwRHEdqNOOsFqXIwBUfpARXfD8+Jj2xC1fgWqpTj7NK6z2wKA==}
+  /@visactor/vrender-components/1.0.29:
+    resolution: {integrity: sha512-8D2vmDuIWSIiDvXDd1zFKC+rZCtgJBf+SQxkqJq5qdHjiOsNJso01T80o+9h8N1b9iOy985Pb+qFGa6clqOItw==}
     dependencies:
-      '@visactor/vrender-animate': 1.0.27-alpha.0
-      '@visactor/vrender-core': 1.0.27-alpha.0
-      '@visactor/vrender-kits': 1.0.27-alpha.0
+      '@visactor/vrender-animate': 1.0.29
+      '@visactor/vrender-core': 1.0.29
+      '@visactor/vrender-kits': 1.0.29
       '@visactor/vscale': 1.0.14
       '@visactor/vutils': 1.0.14
 
-  /@visactor/vrender-core/1.0.27-alpha.0:
-    resolution: {integrity: sha512-aElEYxyzQhma530QBplO2iHjedps1mpc1Cbzsz5AiqLrKZAOtizdfO/6gNE1cSyPr9glC+iNxV0zzSwG7n4Ybg==}
+  /@visactor/vrender-core/1.0.29:
+    resolution: {integrity: sha512-dAqiI4cksUqpKtKHqGYMY3YPZrywOZN7ZqBvLkpy0i4+9y65K2DlOEe/eBLo0TZY8hOd9TTiuUWziV4IKvAP/w==}
     dependencies:
       '@visactor/vutils': 1.0.14
       color-convert: 2.0.1
 
-  /@visactor/vrender-kits/1.0.27-alpha.0:
-    resolution: {integrity: sha512-43Rj6v5uXOKjzN7BheB8ijh+Z7mA/9vLkffWIc/gPeHG2vKNx6NlFFG0HAu7agaVH/SZiiYxdZm1FRLQ58OJgg==}
+  /@visactor/vrender-kits/1.0.29:
+    resolution: {integrity: sha512-+Zc/l4zW5kQTkRgQoVGorwcxIPxjgkODQtkQLTDpcNPdhFqKYgPMuNn99aAL3QktEGf+ZaRrjHIVH5DZYYaadg==}
     dependencies:
       '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender-core': 1.0.27-alpha.0
+      '@visactor/vrender-core': 1.0.29
       '@visactor/vutils': 1.0.14
       gifuct-js: 2.1.2
       lottie-web: 5.13.0
