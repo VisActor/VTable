@@ -126,9 +126,9 @@ export function getCommonAxis(theme: any) {
 
 export function getAxisAttributes(option: ICellAxisOption) {
   const spec = merge({}, option);
-  if (option.labelHoverOnAxis) {
+  if (option.labelHoverOnAxis && spec.domainLine.visible === false) {
     spec.domainLine.style.lineWidth = 0;
-    spec.domainLine.visible = true;
+    spec.domainLine.visible = true; // vrender里面showLabelHoverOnAxis方法调整label的位置时，需要利用line的长度撑开组件的长度来计算bounds。所以必须为显示状态
   }
   // const spec = option;
   let titleAngle = spec.title?.angle ?? 0;

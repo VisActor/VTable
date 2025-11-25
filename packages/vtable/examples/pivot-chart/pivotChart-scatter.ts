@@ -1308,7 +1308,9 @@ export function createTable() {
               visible: true,
               text: 'Miles Per Gallon'
             },
-
+            domainLine: {
+              visible: false
+            },
             orient: 'bottom',
             label: { visible: true },
             type: 'linear',
