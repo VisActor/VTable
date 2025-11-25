@@ -2,436 +2,1366 @@
 import * as VTable from '../../src';
 import VChart from '@visactor/vchart';
 import { bindDebugTool } from '../../src/scenegraph/debug-tool';
-import { theme } from '../../src/register';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  fetch('https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/North_American_Superstore_Pivot_Chart_data.json')
-    .then(res => res.json())
-    .then(data => {
-      const columns = [
-        {
-          dimensionKey: 'Region',
-          title: 'Region',
-          headerStyle: {
-            textStick: true
-          }
-        },
-        'Category'
-      ];
-      const rows = [
-        {
-          dimensionKey: 'Order Year',
-          title: 'Order Year',
-          headerStyle: {
-            textStick: true
-          }
-        },
-        'Ship Mode'
-      ];
-      const indicators = [
-        {
-          indicatorKey: 'Quantity',
-          title: 'Quantity',
-          width: 'auto',
-          cellType: 'chart',
-          chartModule: 'vchart',
-          chartSpec: {
-            // type: 'common',
-            stack: true,
-            type: 'scatter',
-            data: {
-              id: 'data',
-              fields: {
-                //设置xField数据的顺序
-                'Sub-Category': {
-                  sortIndex: 0,
-                  domain: [
-                    'Chairs',
-                    'Tables',
-                    'Bookcases',
-                    'Furnishings',
-
-                    'Binders',
-                    'Art',
-                    'Storage',
-                    'Appliances',
-                    'Envelopes',
-                    'Fasteners',
-                    'Paper',
-                    'Labels',
-                    'Supplies',
-                    'Accessories',
-                    'Phones',
-                    'Copiers',
-                    'Machines'
-                  ]
-                },
-                'Segment-Indicator': {
-                  //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                  sortIndex: 1,
-                  domain: [
-                    'Consumer-Quantity',
-                    'Corporate-Quantity',
-                    'Home Office-Quantity',
-                    'Consumer-Sales',
-                    'Corporate-Sales',
-                    'Home Office-Sales',
-                    'Consumer-Profit',
-                    'Corporate-Profit',
-                    'Home Office-Profit'
-                  ]
-                  // lockStatisticsByDomain:  true
-                }
-              }
-            },
-            xField: ['Sub-Category'],
-            yField: 'Quantity',
-            seriesField: 'Segment-Indicator',
-            axes: [
-              { orient: 'left', visible: true, label: { visible: true } },
-              { orient: 'bottom', visible: true }
-            ],
-            bar: {
-              state: {
-                selected: {
-                  fill: 'yellow'
-                },
-                selected_reverse: {
-                  // fill: '#ddd'
-                  opacity: 0.2
-                }
-              }
-            },
-            scales: [
-              {
-                id: 'color',
-                type: 'ordinal',
-                domain: [
-                  'Consumer-Quantity',
-                  'Corporate-Quantity',
-                  'Home Office-Quantity',
-                  'Consumer-Sales',
-                  'Corporate-Sales',
-                  'Home Office-Sales',
-                  'Consumer-Profit',
-                  'Corporate-Profit',
-                  'Home Office-Profit'
-                ],
-                range: [
-                  '#2E62F1',
-                  '#4DC36A',
-                  '#FF8406',
-                  '#FFCC00',
-                  '#4F44CF',
-                  '#5AC8FA',
-                  '#003A8C',
-                  '#B08AE2',
-                  '#FF6341',
-                  '#98DD62',
-                  '#07A199',
-                  '#87DBDD'
-                ]
-              }
-            ]
-          },
-          style: {
-            padding: 1
-          }
-        },
-        {
-          indicatorKey: 'Sales',
-          title: 'Sales & Profit',
-          cellType: 'chart',
-          chartModule: 'vchart',
-          chartSpec: {
-            type: 'common',
-            series: [
-              {
-                type: 'bar',
-                barWidth: 20,
-                data: {
-                  id: 'data1',
-                  fields: {
-                    //设置xField数据的顺序
-                    'Sub-Category': {
-                      sortIndex: 0,
-                      domain: [
-                        'Chairs',
-                        'Tables',
-                        'Bookcases',
-                        'Furnishings',
-
-                        'Binders',
-                        'Art',
-                        'Storage',
-                        'Appliances',
-                        'Envelopes',
-                        'Fasteners',
-                        'Paper',
-                        'Labels',
-                        'Supplies',
-                        'Accessories',
-                        'Phones',
-                        'Copiers',
-                        'Machines'
-                      ]
-                    },
-                    'Segment-Indicator': {
-                      //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                      sortIndex: 1,
-                      domain: [
-                        'Consumer-Quantity',
-                        'Corporate-Quantity',
-                        'Home Office-Quantity',
-                        'Consumer-Sales',
-                        'Corporate-Sales',
-                        'Home Office-Sales',
-                        'Consumer-Profit',
-                        'Corporate-Profit',
-                        'Home Office-Profit'
-                      ]
-                      // lockStatisticsByDomain:  true
-                    }
-                  }
-                },
-                stack: true,
-                xField: ['Sub-Category'],
-                yField: 'Sales',
-                seriesField: 'Segment-Indicator',
-                bar: {
-                  state: {
-                    selected: {
-                      fill: 'yellow'
-                    },
-                    selected_reverse: {
-                      // fill: '#ddd'
-                      opacity: 0.2
-                    }
-                  }
-                }
-              },
-              {
-                type: 'line',
-                data: {
-                  id: 'data2',
-                  fields: {
-                    //设置xField数据的顺序
-                    'Sub-Category': {
-                      sortIndex: 0,
-                      domain: [
-                        'Chairs',
-                        'Tables',
-                        'Bookcases',
-                        'Furnishings',
-
-                        'Binders',
-                        'Art',
-                        'Storage',
-                        'Appliances',
-                        'Envelopes',
-                        'Fasteners',
-                        'Paper',
-                        'Labels',
-                        'Supplies',
-
-                        'Phones',
-                        'Accessories',
-                        'Machines',
-                        'Copiers'
-                      ]
-                    },
-                    'Segment-Indicator': {
-                      //设置seriesField数据的顺序 应该设置20001的顺序的 但是按照图例的顺序设置后堆叠效果和3.X不一致
-                      sortIndex: 1,
-                      domain: [
-                        'Consumer-Quantity',
-                        'Corporate-Quantity',
-                        'Home Office-Quantity',
-                        'Consumer-Sales',
-                        'Corporate-Sales',
-                        'Home Office-Sales',
-                        'Consumer-Profit',
-                        'Corporate-Profit',
-                        'Home Office-Profit'
-                      ]
-                      // lockStatisticsByDomain:  true
-                    }
-                  }
-                },
-                stack: false,
-                xField: ['Sub-Category'],
-                yField: 'Profit',
-                seriesField: 'Segment-Indicator',
-                line: {
-                  state: {
-                    selected: {
-                      lineWidth: 3
-                    },
-                    selected_reverse: {
-                      lineWidth: 1
-                    }
-                  }
-                },
-                point: {
-                  state: {
-                    selected: {
-                      fill: 'yellow'
-                    },
-                    selected_reverse: {
-                      fill: '#ddd'
-                    }
-                  }
-                }
-              }
-            ],
-            scales: [
-              {
-                id: 'color',
-                type: 'ordinal',
-                domain: [
-                  'Consumer-Quantity',
-                  'Corporate-Quantity',
-                  'Home Office-Quantity',
-                  'Consumer-Sales',
-                  'Corporate-Sales',
-                  'Home Office-Sales',
-                  'Consumer-Profit',
-                  'Corporate-Profit',
-                  'Home Office-Profit'
-                ],
-                range: [
-                  '#2E62F1',
-                  '#4DC36A',
-                  '#FF8406',
-                  '#FFCC00',
-                  '#4F44CF',
-                  '#5AC8FA',
-                  '#003A8C',
-                  '#B08AE2',
-                  '#FF6341',
-                  '#98DD62',
-                  '#07A199',
-                  '#87DBDD'
-                ]
-              }
-            ]
-            // axes: [
-            //   { orient: 'left', visible: true, label: { visible: true } },
-            //   { orient: 'bottom', visible: true }
-            // ]
-          },
-          style: {
-            padding: 1
-          }
+  const chartDimensionLinkage = {
+    showTooltip: true,
+    heightLimitToShowTooltipForLastRow: 60,
+    widthLimitToShowTooltipForLastColumn: 90,
+    labelHoverOnAxis: {
+      bottom: {
+        visible: true,
+        formatMethod: a => {
+          return Math.floor(a * 100) / 100;
         }
-      ];
-      const option = {
-        rows,
-        columns,
-        indicators,
-        indicatorsAsCol: false,
-        records: data,
-        defaultRowHeight: 131,
-        defaultHeaderRowHeight: 50,
-        defaultColWidth: 280,
-        defaultHeaderColWidth: 80,
-        indicatorTitle: 'indicator',
-        autoWrapText: true,
-        columnResizeType: 'indicator',
-        // widthMode:'adaptive',
-        // heightMode:'adaptive',
-        corner: {
-          titleOnDimension: 'row',
-          headerStyle: {
-            autoWrapText: true
+      },
+      left: {
+        visible: true,
+        formatMethod: a => {
+          return Math.floor(a);
+        }
+      }
+    }
+  };
+  const data = [
+    {
+      name: 'citroen ds-21 pallas',
+      milesPerGallon: 0,
+      cylinders: 4,
+      horsepower: 115,
+      origin_country: 'France'
+    },
+    {
+      name: 'amc gremlin',
+      milesPerGallon: 21,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet chevelle malibu',
+      milesPerGallon: 18,
+      cylinders: 8,
+      horsepower: 130,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick skylark 320',
+      milesPerGallon: 15,
+      cylinders: 8,
+      horsepower: 165,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth satellite',
+      milesPerGallon: 18,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc rebel sst',
+      milesPerGallon: 16,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford torino',
+      milesPerGallon: 17,
+      cylinders: 8,
+      horsepower: 140,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford galaxie 500',
+      milesPerGallon: 15,
+      cylinders: 8,
+      horsepower: 198,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet impala',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 220,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth fury iii',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 215,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac catalina',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 225,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc ambassador dpl',
+      milesPerGallon: 15,
+      cylinders: 8,
+      horsepower: 190,
+      origin_country: 'USA'
+    },
+
+    {
+      name: 'chevrolet chevelle concours (sw)',
+      milesPerGallon: 0,
+      cylinders: 8,
+      horsepower: 165,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford torino (sw)',
+      milesPerGallon: 0,
+      cylinders: 8,
+      horsepower: 153,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth satellite (sw)',
+      milesPerGallon: 0,
+      cylinders: 8,
+      horsepower: 175,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc rebel sst (sw)',
+      milesPerGallon: 0,
+      cylinders: 8,
+      horsepower: 175,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge challenger se',
+      milesPerGallon: 15,
+      cylinders: 8,
+      horsepower: 170,
+      origin_country: 'USA'
+    },
+    {
+      name: "plymouth 'cuda 340",
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 160,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford mustang boss 302',
+      milesPerGallon: 0,
+      cylinders: 8,
+      horsepower: 140,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet monte carlo',
+      milesPerGallon: 15,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick estate wagon (sw)',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 225,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota corona mark ii',
+      milesPerGallon: 24,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'plymouth duster',
+      milesPerGallon: 22,
+      cylinders: 6,
+      horsepower: 95,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc hornet',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 97,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford maverick',
+      milesPerGallon: 21,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun pl510',
+      milesPerGallon: 27,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'volkswagen 1131 deluxe sedan',
+      milesPerGallon: 26,
+      cylinders: 4,
+      horsepower: 46,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'peugeot 504',
+      milesPerGallon: 25,
+      cylinders: 4,
+      horsepower: 87,
+      origin_country: 'France'
+    },
+    {
+      name: 'audi 100 ls',
+      milesPerGallon: 24,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'Germany'
+    },
+
+    {
+      name: 'bmw 2002',
+      milesPerGallon: 26,
+      cylinders: 4,
+      horsepower: 113,
+      origin_country: 'Germany'
+    },
+
+    {
+      name: 'ford f250',
+      milesPerGallon: 10,
+      cylinders: 8,
+      horsepower: 215,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevy c20',
+      milesPerGallon: 10,
+      cylinders: 8,
+      horsepower: 200,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge d200',
+      milesPerGallon: 11,
+      cylinders: 8,
+      horsepower: 210,
+      origin_country: 'USA'
+    },
+    {
+      name: 'hi 1200d',
+      milesPerGallon: 9,
+      cylinders: 8,
+      horsepower: 193,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun pl510',
+      milesPerGallon: 27,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'chevrolet vega 2300',
+      milesPerGallon: 28,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota corona',
+      milesPerGallon: 25,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'ford pinto',
+      milesPerGallon: 25,
+      cylinders: 4,
+      horsepower: 0,
+      origin_country: 'USA'
+    },
+    {
+      name: 'volkswagen super beetle 117',
+      milesPerGallon: 0,
+      cylinders: 4,
+      horsepower: 48,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'amc gremlin',
+      milesPerGallon: 19,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth satellite custom',
+      milesPerGallon: 16,
+      cylinders: 6,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet chevelle malibu',
+      milesPerGallon: 17,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford torino 500',
+      milesPerGallon: 19,
+      cylinders: 6,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc matador',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet impala',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 165,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac catalina brougham',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 175,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford galaxie 500',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 153,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth fury iii',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge monaco (sw)',
+      milesPerGallon: 12,
+      cylinders: 8,
+      horsepower: 180,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford country squire (sw)',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 170,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac safari (sw)',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 175,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc hornet sportabout (sw)',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet vega (sw)',
+      milesPerGallon: 22,
+      cylinders: 4,
+      horsepower: 72,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac firebird',
+      milesPerGallon: 19,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford mustang',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury capri 2000',
+      milesPerGallon: 23,
+      cylinders: 4,
+      horsepower: 86,
+      origin_country: 'USA'
+    },
+    {
+      name: 'opel 1900',
+      milesPerGallon: 28,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'peugeot 304',
+      milesPerGallon: 30,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'France'
+    },
+    {
+      name: 'toyota corolla 1200',
+      milesPerGallon: 31,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'datsun 1200',
+      milesPerGallon: 35,
+      cylinders: 4,
+      horsepower: 69,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'volkswagen model 111',
+      milesPerGallon: 27,
+      cylinders: 4,
+      horsepower: 60,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'plymouth cricket',
+      milesPerGallon: 26,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota corona hardtop',
+      milesPerGallon: 24,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'dodge colt hardtop',
+      milesPerGallon: 25,
+      cylinders: 4,
+      horsepower: 80,
+      origin_country: 'USA'
+    },
+    {
+      name: 'volkswagen type 3',
+      milesPerGallon: 23,
+      cylinders: 4,
+      horsepower: 54,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'chevrolet vega',
+      milesPerGallon: 20,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford pinto runabout',
+      milesPerGallon: 21,
+      cylinders: 4,
+      horsepower: 86,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet impala',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 165,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac catalina',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 175,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth fury iii',
+      milesPerGallon: 15,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford galaxie 500',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 153,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc ambassador sst',
+      milesPerGallon: 17,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury marquis',
+      milesPerGallon: 11,
+      cylinders: 8,
+      horsepower: 208,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick lesabre custom',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 155,
+      origin_country: 'USA'
+    },
+    {
+      name: 'oldsmobile delta 88 royale',
+      milesPerGallon: 12,
+      cylinders: 8,
+      horsepower: 160,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford ltd',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 158,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth fury gran sedan',
+      milesPerGallon: 14,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chrysler new yorker brougham',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 215,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick electra 225 custom',
+      milesPerGallon: 12,
+      cylinders: 8,
+      horsepower: 225,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc ambassador brougham',
+      milesPerGallon: 13,
+      cylinders: 8,
+      horsepower: 175,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth valiant',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet nova custom',
+      milesPerGallon: 16,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc hornet',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford maverick',
+      milesPerGallon: 18,
+      cylinders: 6,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth duster',
+      milesPerGallon: 23,
+      cylinders: 6,
+      horsepower: 95,
+      origin_country: 'USA'
+    },
+    {
+      name: 'volkswagen super beetle',
+      milesPerGallon: 26,
+      cylinders: 4,
+      horsepower: 46,
+      origin_country: 'Germany'
+    },
+    // 这是最后一批数据
+    {
+      name: 'toyota corona',
+      milesPerGallon: 25,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'ford pinto',
+      milesPerGallon: 25,
+      cylinders: 4,
+      horsepower: 0,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 810',
+      milesPerGallon: 22,
+      cylinders: 6,
+      horsepower: 97,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'bmw 320i',
+      milesPerGallon: 21.5,
+      cylinders: 4,
+      horsepower: 110,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'volkswagen rabbit custom diesel',
+      milesPerGallon: 43.1,
+      cylinders: 4,
+      horsepower: 48,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'ford fiesta',
+      milesPerGallon: 36.1,
+      cylinders: 4,
+      horsepower: 66,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mazda glc deluxe',
+      milesPerGallon: 32.8,
+      cylinders: 4,
+      horsepower: 52,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'datsun b210 gx',
+      milesPerGallon: 39.4,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'honda civic cvcc',
+      milesPerGallon: 36.1,
+      cylinders: 4,
+      horsepower: 60,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'oldsmobile cutlass salon brougham',
+      milesPerGallon: 19.9,
+      cylinders: 8,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge diplomat',
+      milesPerGallon: 19.4,
+      cylinders: 8,
+      horsepower: 140,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury monarch ghia',
+      milesPerGallon: 20.2,
+      cylinders: 8,
+      horsepower: 139,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac phoenix lj',
+      milesPerGallon: 19.2,
+      cylinders: 6,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet malibu',
+      milesPerGallon: 20.5,
+      cylinders: 6,
+      horsepower: 95,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont (auto)',
+      milesPerGallon: 20.2,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont (man)',
+      milesPerGallon: 25.1,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth volare',
+      milesPerGallon: 20.5,
+      cylinders: 6,
+      horsepower: 100,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord',
+      milesPerGallon: 19.4,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick century special',
+      milesPerGallon: 20.6,
+      cylinders: 6,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury zephyr',
+      milesPerGallon: 20.8,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge aspen',
+      milesPerGallon: 18.6,
+      cylinders: 6,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord d/l',
+      milesPerGallon: 18.1,
+      cylinders: 6,
+      horsepower: 120,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet monte carlo landau',
+      milesPerGallon: 19.2,
+      cylinders: 8,
+      horsepower: 145,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick regal sport coupe (turbo)',
+      milesPerGallon: 17.7,
+      cylinders: 6,
+      horsepower: 165,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford futura',
+      milesPerGallon: 18.1,
+      cylinders: 8,
+      horsepower: 139,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge magnum xe',
+      milesPerGallon: 17.5,
+      cylinders: 8,
+      horsepower: 140,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet chevette',
+      milesPerGallon: 30,
+      cylinders: 4,
+      horsepower: 68,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota corona',
+      milesPerGallon: 27.5,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'datsun 510',
+      milesPerGallon: 27.2,
+      cylinders: 4,
+      horsepower: 97,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'dodge omni',
+      milesPerGallon: 30.9,
+      cylinders: 4,
+      horsepower: 75,
+      origin_country: 'USA'
+    },
+    {
+      name: 'toyota celica gt liftback',
+      milesPerGallon: 21.1,
+      cylinders: 4,
+      horsepower: 95,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'plymouth sapporo',
+      milesPerGallon: 23.2,
+      cylinders: 4,
+      horsepower: 105,
+      origin_country: 'USA'
+    },
+    {
+      name: 'oldsmobile starfire sx',
+      milesPerGallon: 23.8,
+      cylinders: 4,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 200-sx',
+      milesPerGallon: 23.9,
+      cylinders: 4,
+      horsepower: 97,
+      origin_country: 'Japan'
+    },
+
+    {
+      name: 'peugeot 604sl',
+      milesPerGallon: 16.2,
+      cylinders: 6,
+      horsepower: 133,
+      origin_country: 'France'
+    },
+    {
+      name: 'volkswagen scirocco',
+      milesPerGallon: 31.5,
+      cylinders: 4,
+      horsepower: 71,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'honda Accelerationord lx',
+      milesPerGallon: 29.5,
+      cylinders: 4,
+      horsepower: 68,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'pontiac lemans v6',
+      milesPerGallon: 21.5,
+      cylinders: 6,
+      horsepower: 115,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury zephyr 6',
+      milesPerGallon: 19.8,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont 4',
+      milesPerGallon: 22.3,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord dl 6',
+      milesPerGallon: 20.2,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge aspen 6',
+      milesPerGallon: 20.6,
+      cylinders: 6,
+      horsepower: 110,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet caprice classic',
+      milesPerGallon: 17,
+      cylinders: 8,
+      horsepower: 130,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford ltd landau',
+      milesPerGallon: 17.6,
+      cylinders: 8,
+      horsepower: 129,
+      origin_country: 'USA'
+    },
+    {
+      name: 'mercury grand marquis',
+      milesPerGallon: 16.5,
+      cylinders: 8,
+      horsepower: 138,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge st. regis',
+      milesPerGallon: 18.2,
+      cylinders: 8,
+      horsepower: 135,
+      origin_country: 'USA'
+    },
+    {
+      name: 'buick estate wagon (sw)',
+      milesPerGallon: 16.9,
+      cylinders: 8,
+      horsepower: 155,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford country squire (sw)',
+      milesPerGallon: 15.5,
+      cylinders: 8,
+      horsepower: 142,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet malibu classic (sw)',
+      milesPerGallon: 19.2,
+      cylinders: 8,
+      horsepower: 125,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chrysler lebaron town @ country (sw)',
+      milesPerGallon: 18.5,
+      cylinders: 8,
+      horsepower: 150,
+      origin_country: 'USA'
+    },
+    {
+      name: 'maxda glc deluxe',
+      milesPerGallon: 34.1,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'dodge colt hatchback custom',
+      milesPerGallon: 35.7,
+      cylinders: 4,
+      horsepower: 80,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc spirit dl',
+      milesPerGallon: 27.4,
+      cylinders: 4,
+      horsepower: 80,
+      origin_country: 'USA'
+    },
+    {
+      name: 'cadillac eldorado',
+      milesPerGallon: 23,
+      cylinders: 8,
+      horsepower: 125,
+      origin_country: 'USA'
+    },
+    {
+      name: 'peugeot 504',
+      milesPerGallon: 27.2,
+      cylinders: 4,
+      horsepower: 71,
+      origin_country: 'France'
+    },
+    {
+      name: 'oldsmobile cutlass salon brougham',
+      milesPerGallon: 23.9,
+      cylinders: 8,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth horizon',
+      milesPerGallon: 34.2,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'plymouth horizon tc3',
+      milesPerGallon: 34.5,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 210',
+      milesPerGallon: 31.8,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'buick skylark limited',
+      milesPerGallon: 28.4,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'chevrolet citation',
+      milesPerGallon: 28.8,
+      cylinders: 6,
+      horsepower: 115,
+      origin_country: 'USA'
+    },
+    {
+      name: 'oldsmobile omega brougham',
+      milesPerGallon: 26.8,
+      cylinders: 6,
+      horsepower: 115,
+      origin_country: 'USA'
+    },
+    {
+      name: 'pontiac phoenix',
+      milesPerGallon: 33.5,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'vw rabbit',
+      milesPerGallon: 41.5,
+      cylinders: 4,
+      horsepower: 76,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'toyota corolla tercel',
+      milesPerGallon: 38.1,
+      cylinders: 4,
+      horsepower: 60,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'chevrolet chevette',
+      milesPerGallon: 32.1,
+      cylinders: 4,
+      horsepower: 70,
+      origin_country: 'USA'
+    },
+    {
+      name: 'datsun 310',
+      milesPerGallon: 37.2,
+      cylinders: 4,
+      horsepower: 65,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'chevrolet citation',
+      milesPerGallon: 28,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'ford fairmont',
+      milesPerGallon: 26.4,
+      cylinders: 4,
+      horsepower: 88,
+      origin_country: 'USA'
+    },
+    {
+      name: 'amc concord',
+      milesPerGallon: 24.3,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'dodge aspen',
+      milesPerGallon: 19.1,
+      cylinders: 6,
+      horsepower: 90,
+      origin_country: 'USA'
+    },
+    {
+      name: 'audi 4000',
+      milesPerGallon: 34.3,
+      cylinders: 4,
+      horsepower: 78,
+      origin_country: 'Germany'
+    },
+    {
+      name: 'toyota corona liftback',
+      milesPerGallon: 29.8,
+      cylinders: 4,
+      horsepower: 90,
+      origin_country: 'Japan'
+    },
+    {
+      name: 'mazda 626',
+      milesPerGallon: 31.3,
+      cylinders: 4,
+      horsepower: 75,
+      origin_country: 'Japan'
+    },
+    { name: 'vokswagen rabbit', milesPerGallon: 29.8, cylinders: 4, horsepower: 62, origin_country: 'Germany' },
+    { name: 'datsun 280-zx', milesPerGallon: 32.7, cylinders: 6, horsepower: 132, origin_country: 'Japan' },
+
+    { name: 'ford mustang cobra', milesPerGallon: 23.6, cylinders: 4, horsepower: 0, origin_country: 'USA' },
+    { name: 'honda Accelerationord', milesPerGallon: 32.4, cylinders: 4, horsepower: 72, origin_country: 'Japan' },
+    { name: 'plymouth reliant', milesPerGallon: 27.2, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'buick skylark', milesPerGallon: 26.6, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'dodge aries wagon (sw)', milesPerGallon: 25.8, cylinders: 4, horsepower: 92, origin_country: 'USA' },
+    { name: 'chevrolet citation', milesPerGallon: 23.5, cylinders: 6, horsepower: 110, origin_country: 'USA' },
+    { name: 'plymouth reliant', milesPerGallon: 30, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'toyota starlet', milesPerGallon: 39.1, cylinders: 4, horsepower: 58, origin_country: 'Japan' },
+    { name: 'plymouth champ', milesPerGallon: 39, cylinders: 4, horsepower: 64, origin_country: 'USA' },
+    { name: 'honda civic 1300', milesPerGallon: 35.1, cylinders: 4, horsepower: 60, origin_country: 'Japan' },
+    { name: 'subaru', milesPerGallon: 32.3, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+    { name: 'datsun 210', milesPerGallon: 37, cylinders: 4, horsepower: 65, origin_country: 'Japan' },
+    { name: 'toyota tercel', milesPerGallon: 37.7, cylinders: 4, horsepower: 62, origin_country: 'Japan' },
+    { name: 'honda prelude', milesPerGallon: 33.7, cylinders: 4, horsepower: 75, origin_country: 'Japan' },
+    { name: 'toyota corolla', milesPerGallon: 32.4, cylinders: 4, horsepower: 75, origin_country: 'Japan' },
+    { name: 'datsun 200sx', milesPerGallon: 32.9, cylinders: 4, horsepower: 100, origin_country: 'Japan' },
+    { name: 'mazda 626', milesPerGallon: 31.6, cylinders: 4, horsepower: 74, origin_country: 'Japan' },
+    { name: 'peugeot 505s turbo diesel', milesPerGallon: 28.1, cylinders: 4, horsepower: 80, origin_country: 'France' },
+
+    { name: 'toyota cressida', milesPerGallon: 25.4, cylinders: 6, horsepower: 116, origin_country: 'Japan' },
+    { name: 'datsun 810 maxima', milesPerGallon: 24.2, cylinders: 6, horsepower: 120, origin_country: 'Japan' },
+    { name: 'buick century', milesPerGallon: 22.4, cylinders: 6, horsepower: 110, origin_country: 'USA' },
+    { name: 'oldsmobile cutlass ls', milesPerGallon: 26.6, cylinders: 8, horsepower: 105, origin_country: 'USA' },
+    { name: 'ford granada gl', milesPerGallon: 20.2, cylinders: 6, horsepower: 88, origin_country: 'USA' },
+    { name: 'chrysler lebaron salon', milesPerGallon: 17.6, cylinders: 6, horsepower: 85, origin_country: 'USA' },
+    { name: 'chevrolet cavalier', milesPerGallon: 28, cylinders: 4, horsepower: 88, origin_country: 'USA' },
+    { name: 'chevrolet cavalier wagon', milesPerGallon: 27, cylinders: 4, horsepower: 88, origin_country: 'USA' },
+    { name: 'chevrolet cavalier 2-door', milesPerGallon: 34, cylinders: 4, horsepower: 88, origin_country: 'USA' },
+    { name: 'pontiac j2000 se hatchback', milesPerGallon: 31, cylinders: 4, horsepower: 85, origin_country: 'USA' },
+    { name: 'dodge aries se', milesPerGallon: 29, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'pontiac phoenix', milesPerGallon: 27, cylinders: 4, horsepower: 90, origin_country: 'USA' },
+    { name: 'ford fairmont futura', milesPerGallon: 24, cylinders: 4, horsepower: 92, origin_country: 'USA' },
+    { name: 'amc concord dl', milesPerGallon: 23, cylinders: 4, horsepower: 0, origin_country: 'USA' },
+    { name: 'volkswagen rabbit l', milesPerGallon: 36, cylinders: 4, horsepower: 74, origin_country: 'Germany' },
+    { name: 'mazda glc custom l', milesPerGallon: 37, cylinders: 4, horsepower: 68, origin_country: 'Japan' },
+    { name: 'mazda glc custom', milesPerGallon: 31, cylinders: 4, horsepower: 68, origin_country: 'Japan' },
+    { name: 'plymouth horizon miser', milesPerGallon: 38, cylinders: 4, horsepower: 63, origin_country: 'USA' },
+    { name: 'mercury lynx l', milesPerGallon: 36, cylinders: 4, horsepower: 70, origin_country: 'USA' },
+    { name: 'nissan stanza xe', milesPerGallon: 36, cylinders: 4, horsepower: 88, origin_country: 'Japan' },
+    { name: 'honda Accordion', milesPerGallon: 36, cylinders: 4, horsepower: 75, origin_country: 'Japan' },
+    { name: 'toyota corolla', milesPerGallon: 34, cylinders: 4, horsepower: 70, origin_country: 'Japan' },
+    { name: 'honda civic', milesPerGallon: 38, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+    { name: 'honda civic (auto)', milesPerGallon: 32, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+    { name: 'datsun 310 gx', milesPerGallon: 38, cylinders: 4, horsepower: 67, origin_country: 'Japan' },
+
+    { name: 'buick century limited', milesPerGallon: 25, cylinders: 6, horsepower: 110, origin_country: 'USA' },
+    {
+      name: 'oldsmobile cutlass ciera (diesel)',
+      milesPerGallon: 38,
+      cylinders: 6,
+      horsepower: 85,
+      origin_country: 'USA'
+    },
+    { name: 'chrysler lebaron medallion', milesPerGallon: 26, cylinders: 4, horsepower: 92, origin_country: 'USA' },
+    { name: 'ford granada l', milesPerGallon: 22, cylinders: 6, horsepower: 112, origin_country: 'USA' },
+    { name: 'toyota celica gt', milesPerGallon: 32, cylinders: 4, horsepower: 96, origin_country: 'Japan' },
+    { name: 'dodge charger 2.2', milesPerGallon: 36, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'chevrolet camaro', milesPerGallon: 27, cylinders: 4, horsepower: 90, origin_country: 'USA' },
+    { name: 'ford mustang gl', milesPerGallon: 27, cylinders: 4, horsepower: 86, origin_country: 'USA' },
+    { name: 'vw pickup', milesPerGallon: 44, cylinders: 4, horsepower: 52, origin_country: 'Germany' },
+    { name: 'dodge rampage', milesPerGallon: 32, cylinders: 4, horsepower: 84, origin_country: 'USA' },
+    { name: 'ford ranger', milesPerGallon: 28, cylinders: 4, horsepower: 79, origin_country: 'USA' },
+    { name: 'chevy s-10', milesPerGallon: 31, cylinders: 4, horsepower: 82, origin_country: 'USA' }
+  ];
+  const columns = [
+    {
+      dimensionKey: 'cylinders',
+      title: 'cylinders',
+      headerFormat(value) {
+        return `${value} cylinders`;
+      }
+    }
+  ];
+
+  const rows = [
+    {
+      dimensionKey: 'origin_country',
+      title: 'origin_country'
+    }
+  ];
+
+  const indicators = [
+    {
+      indicatorKey: 'milesPerGallon',
+      title: 'milesPerGallon',
+      cellType: 'chart',
+      chartModule: 'vchart',
+      chartSpec: {
+        type: 'scatter',
+        xField: 'milesPerGallon',
+        yField: 'horsepower',
+
+        data: {
+          id: 'baseData'
+        },
+        tooltip: {
+          dimension: {
+            visible: true
+          },
+          mark: {
+            title: true,
+            content: [
+              {
+                key: d => d.name,
+                value: d => d.y
+              }
+            ]
           }
         },
-        theme: {
-          bodyStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [1, 0, 0, 1]
-          },
-          headerStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [0, 0, 1, 1],
-            hover: {
-              cellBgColor: '#CCE0FF'
+        crosshair: {
+          yField: {
+            visible: true,
+            line: {
+              visible: true,
+              type: 'line'
+            },
+            label: {
+              visible: true // label 默认关闭
             }
           },
-          rowHeaderStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [1, 1, 0, 0],
-            hover: {
-              cellBgColor: '#CCE0FF'
+          xField: {
+            visible: true,
+            line: {
+              visible: true,
+              type: 'line'
+            },
+            label: {
+              visible: true // label 默认关闭
             }
-          },
-          cornerHeaderStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [0, 1, 1, 0],
-            hover: {
-              cellBgColor: ''
-            }
-          },
-          cornerRightTopCellStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [0, 0, 1, 1],
-            hover: {
-              cellBgColor: ''
-            }
-          },
-          cornerLeftBottomCellStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [1, 1, 0, 0],
-            hover: {
-              cellBgColor: ''
-            }
-          },
-          cornerRightBottomCellStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [1, 0, 0, 1],
-            hover: {
-              cellBgColor: ''
-            }
-          },
-          rightFrozenStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [1, 0, 1, 1],
-            hover: {
-              cellBgColor: ''
-            }
-          },
-          bottomFrozenStyle: {
-            borderColor: 'gray',
-            borderLineWidth: [1, 1, 0, 1],
-            hover: {
-              cellBgColor: ''
-            }
-          },
-          selectionStyle: {
-            cellBgColor: '',
-            cellBorderColor: ''
-          },
-          frameStyle: {
-            borderLineWidth: 0
           }
         },
-        renderChartAsync: true
-      };
-      const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
-      // tableInstance.onVChartEvent('click', args => {
-      //   console.log('onVChartEvent click', args);
-      // });
-      // tableInstance.onVChartEvent('mouseover', args => {
-      //   console.log('onVChartEvent mouseover', args);
-      // });
-      window.tableInstance = tableInstance;
+        axes: [
+          {
+            title: {
+              visible: true,
+              text: 'Horse Power'
+            },
+            domainLine: {
+              visible: false
+            },
+            orient: 'left',
+            range: { min: 0 },
+            type: 'linear',
+            innerOffset: {
+              left: 4,
+              right: 4,
+              top: 4,
+              bottom: 4
+            }
+          },
+          {
+            title: {
+              visible: true,
+              text: 'Miles Per Gallon'
+            },
 
-      bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
+            orient: 'bottom',
+            label: { visible: true },
+            type: 'linear',
+            innerOffset: {
+              left: 4,
+              right: 4,
+              top: 4,
+              bottom: 4
+            }
+          }
+        ]
+      },
+      style: {
+        padding: 1
+      }
+    }
+  ];
+  const option = {
+    chartDimensionLinkage,
+    // hideIndicatorName: true,
+    indicatorsAsCol: false,
+    rows: rows,
+    columns: columns,
+    indicators,
+    records: data,
+    defaultRowHeight: 200,
+    defaultHeaderRowHeight: 50,
+    defaultColWidth: 280,
+    defaultHeaderColWidth: 100,
+    indicatorTitle: '指标',
+    autoWrapText: true,
+    // widthMode: 'autoWidth',
+    // heightMode: 'adaptive',
+    corner: {
+      titleOnDimension: 'row',
+      headerStyle: {
+        autoWrapText: true
+      }
+    },
 
-      window.update = () => {
-        theme.cornerLeftBottomCellStyle.borderColor = 'red';
-        tableInstance.updateTheme(theme);
-      };
-    });
+    pagination: {
+      currentPage: 0,
+      perPageCount: 8
+    }
+  };
+  const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
+  tableInstance.onVChartEvent('click', args => {
+    console.log('onVChartEvent click', args);
+  });
+  tableInstance.onVChartEvent('mouseover', args => {
+    console.log('onVChartEvent mouseover', args);
+  });
+  window.tableInstance = tableInstance;
+
+  bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
 }

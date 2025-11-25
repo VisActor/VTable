@@ -97,6 +97,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           tick: {
             tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
           },
+          domainLine: {
+            visible: false
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
@@ -194,6 +197,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           tick: {
             tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
           },
+          domainLine: {
+            visible: false
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
@@ -235,6 +241,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           orient: 'left',
           type: axisOption?.type ?? 'band',
+          domainLine: {
+            visible: false
+          },
           __vtableChartTheme: theme,
           // 默认左侧维度轴对应的图表direction 为 horizontal
           // 散点图特殊处理
@@ -333,6 +342,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           tick: {
             tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
           },
+          domainLine: {
+            visible: false
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
@@ -419,6 +431,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           tick: {
             tickMode: getTickModeFunction(targetTicks, targetRange, range, index)
           },
+          domainLine: {
+            visible: false
+          },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
@@ -458,6 +473,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           orient: 'bottom',
           type: axisOption?.type ?? 'band',
+          domainLine: {
+            visible: false
+          },
           __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
         }

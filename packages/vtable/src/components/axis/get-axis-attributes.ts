@@ -33,7 +33,7 @@ export const commonAxis = {
   domainLine: {
     visible: true,
     style: {
-      lineWidth: 1,
+      lineWidth: 0,
       stroke: '#D9DDE4',
       strokeOpacity: 1
     }
@@ -126,6 +126,10 @@ export function getCommonAxis(theme: any) {
 
 export function getAxisAttributes(option: ICellAxisOption) {
   const spec = merge({}, option);
+  if (option.labelHoverOnAxis) {
+    spec.domainLine.style.lineWidth = 0;
+    spec.domainLine.visible = true;
+  }
   // const spec = option;
   let titleAngle = spec.title?.angle ?? 0;
   let titleTextStyle;
