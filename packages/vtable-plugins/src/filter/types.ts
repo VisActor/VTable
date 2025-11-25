@@ -15,6 +15,7 @@ export interface FilterOptions {
   filterModes?: FilterMode[];
   /** 筛选器样式 */
   styles?: FilterStyles;
+  /** 筛选器操作符分类 */
   conditionCategories?: FilterOperatorCategoryOption[];
 }
 

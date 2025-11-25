@@ -32,7 +32,7 @@ export class ValueFilter {
     });
   }
 
-  private updateUI(filterState: FilterConfig): void {
+  updateUI(filterState: FilterConfig): void {
     this.syncCheckboxesWithFilterState(filterState);
     this.syncSelectAllWithFilterState(filterState);
   }
@@ -42,9 +42,9 @@ export class ValueFilter {
     this.collectUniqueColumnValues(fieldId);
   }
 
-  collectUniqueColumnValues(fieldId: string | number): void {
+  collectUniqueColumnValues(fieldId: string | number, forceCollect: boolean = false): void {
     // 如果已经收集过，直接返回
-    if (this.uniqueKeys.has(fieldId)) {
+    if (this.uniqueKeys.has(fieldId) && !forceCollect) {
       return;
     }
 
@@ -98,6 +98,9 @@ export class ValueFilter {
 
       if (rawValue !== undefined && rawValue !== null && !displayToRawMap.has(displayValue)) {
         displayToRawMap.set(displayValue, rawValue);
+        if (this.filterStateManager.getFilterState(fieldId)?.values?.length > 0) {
+          this.filterStateManager.getFilterState(fieldId).values.push(rawValue);
+        }
       }
     }
 
@@ -487,7 +490,7 @@ export class ValueFilter {
 
     this.filterByValueSearchInput = document.createElement('input');
     this.filterByValueSearchInput.type = 'text';
-    this.filterByValueSearchInput.placeholder = '可使用空格分隔多个关键词';
+    this.filterByValueSearchInput.placeholder = this.styles.searchInput?.placeholder || '可使用空格分隔多个关键词';
     applyStyles(this.filterByValueSearchInput, this.styles.searchInput);
 
     searchContainer.appendChild(this.filterByValueSearchInput);

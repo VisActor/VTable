@@ -135,6 +135,16 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   update() {
+    if (this.filterToolbar.valueFilter) {
+      const allFields = (this.table as ListTable).columns.map(col => col.field) as string[];
+      const valueFilter = this.filterToolbar.valueFilter;
+      allFields.forEach(field => {
+        // 更新筛选候选值 & 新增的数据需要设置为选中态
+        valueFilter.collectUniqueColumnValues(field, true);
+        // 更新筛选UI
+        valueFilter.updateUI(this.filterStateManager.getFilterState(field));
+      });
+    }
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
     }
