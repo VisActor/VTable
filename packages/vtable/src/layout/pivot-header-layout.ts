@@ -3368,7 +3368,9 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               for (const node of nodes) {
                 const nodeChildren = node.children as IHeaderTreeDefine[];
                 const nodeHasAxis =
-                  checkAxisNode && nodeChildren.some((row: IHeaderTreeDefine) => row.dimensionKey === 'axis');
+                  checkAxisNode &&
+                  nodeChildren &&
+                  nodeChildren.some((row: IHeaderTreeDefine) => row.dimensionKey === 'axis');
                 if (!nodeChildren?.length || nodeHasAxis) {
                   return node as ITreeLayoutHeadNode;
                 }
