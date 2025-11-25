@@ -98,8 +98,10 @@ export class ValueFilter {
 
       if (rawValue !== undefined && rawValue !== null && !displayToRawMap.has(displayValue)) {
         displayToRawMap.set(displayValue, rawValue);
-        if (this.filterStateManager.getFilterState(fieldId)?.values?.length > 0) {
-          this.filterStateManager.getFilterState(fieldId).values.push(rawValue);
+        if (this.displayToRawValueMap.has(fieldId) && !this.displayToRawValueMap.get(fieldId)?.has(displayValue)) {
+          if (this.filterStateManager.getFilterState(fieldId)?.values?.length > 0) {
+            this.filterStateManager.getFilterState(fieldId).values.push(rawValue);
+          }
         }
       }
     }
