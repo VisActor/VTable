@@ -2744,8 +2744,9 @@ describe('pivot-header-layout test', () => {
       },
       orient: 'left',
       visible: true,
+      domain: undefined,
       domainLine: {
-        visible: true,
+        visible: false,
         style: {
           lineWidth: 1,
           stroke: 'rgba(255, 255, 255, 0)'
@@ -2807,7 +2808,7 @@ describe('pivot-header-layout test', () => {
       orient: 'bottom',
       visible: true,
       domainLine: {
-        visible: true,
+        visible: false,
         style: {
           lineWidth: 1,
           stroke: '#f7555d'
