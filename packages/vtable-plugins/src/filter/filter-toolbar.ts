@@ -35,6 +35,13 @@ export class FilterToolbar {
     this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager);
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
+
+    // 监听筛选状态变化，更新清除筛选按钮状态
+    this.filterStateManager.subscribe(state => {
+      if (this.isVisible && this.selectedField !== null) {
+        this.updateClearFilterButtonState(this.selectedField);
+      }
+    });
   }
 
   private onTabSwitch(tab: 'byValue' | 'byCondition'): void {
@@ -80,6 +87,19 @@ export class FilterToolbar {
       this.conditionFilter.clearFilter(field);
     }
     this.hide();
+  }
+
+  /**
+   * 更新清除筛选按钮的状态
+   */
+  private updateClearFilterButtonState(field: string | number): void {
+    const currentFilter = this.filterStateManager.getFilterState(field);
+    const hasActiveFilter = currentFilter && currentFilter.enable;
+
+    this.clearFilterOptionLink.style.display = 'inline';
+    this.clearFilterOptionLink.style.opacity = hasActiveFilter ? '1' : '0.5';
+    this.clearFilterOptionLink.style.pointerEvents = hasActiveFilter ? 'auto' : 'none';
+    this.clearFilterOptionLink.style.cursor = hasActiveFilter ? 'pointer' : 'not-allowed';
   }
 
   render(container: HTMLElement): void {
@@ -239,6 +259,9 @@ export class FilterToolbar {
     } else {
       this.onTabSwitch('byValue');
     }
+
+    // 更新清除筛选按钮状态
+    this.updateClearFilterButtonState(field);
 
     // 确保在事件冒泡完成后才设置 isVisible 为 true
     setTimeout(() => {

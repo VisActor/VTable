@@ -117,6 +117,6 @@ export class FilterStateManager {
       FilterActionType.CLEAR_ALL_FILTERS,
       FilterActionType.APPLY_FILTERS
     ];
-    return shouldApplyActions.includes(action.type) || action.payload.enable;
+    return shouldApplyActions.includes(action.type);
   }
 }

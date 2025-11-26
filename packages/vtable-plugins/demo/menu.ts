@@ -20,6 +20,10 @@ export const menus = [
     name: 'bug'
   },
   {
+    path: 'filter',
+    name: 'value-filter'
+  },
+  {
     path: 'header-highlight',
     name: '(deprecated)header-highlight'
   },
