@@ -1,3 +1,21 @@
+# v1.22.5
+
+2025-11-26
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support right axis in pivotChart spec [#4723](https://github.com/VisActor/VTable/issues/4723)
+- **@visactor/vtable**: add chartDimensionLinkage for pivotChart
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add null check for nodeChildren in matchDimensionPath
+
+
+
+[more detail about v1.22.5](https://github.com/VisActor/VTable/releases/tag/v1.22.5)
+
 # v1.22.4
 
 2025-11-18
