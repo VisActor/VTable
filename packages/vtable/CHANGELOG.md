@@ -1,6 +1,24 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Tue, 18 Nov 2025 06:13:47 GMT and should not be manually modified.
+This log was last generated on Wed, 26 Nov 2025 02:07:13 GMT and should not be manually modified.
+
+## 1.22.5
+Wed, 26 Nov 2025 02:07:13 GMT
+
+### Updates
+
+- feat: support right axis in pivotChart spec #4723
+
+
+- feat: add enableChartDimensionLinkage for pivotChart
+
+
+- feat: add chartDimensionLinkage for pivotChart
+
+
+- fix: add null check for nodeChildren in matchDimensionPath
+
+
 
 ## 1.22.4
 Tue, 18 Nov 2025 06:13:47 GMT
