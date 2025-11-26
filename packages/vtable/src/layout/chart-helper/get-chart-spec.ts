@@ -1,4 +1,4 @@
-import { cloneDeep, isArray, isNumber, merge } from '@visactor/vutils';
+import { cloneDeep, isArray, isNumber, isValid, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { SimpleHeaderLayoutMap } from '../simple-header-layout';
 import { getAxisOption, getAxisRange, getAxisRangeAndTicks } from './get-axis-config';
@@ -280,6 +280,18 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const rowPath = layout.getRowKeysPath(col, row);
     const domain = (data as any)[rowPath ?? ''] as Set<string>;
     const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'left', layout);
+
+    if (
+      axisOption?.zero &&
+      domain &&
+      !Array.isArray(domain) &&
+      isValid((domain as any).min) &&
+      isValid((domain as any).max) &&
+      (axisOption?.zero || (domain as any).min === (domain as any).max)
+    ) {
+      (domain as any).min = Math.min((domain as any).min, 0);
+      (domain as any).max = Math.max((domain as any).max, 0);
+    }
     axes.push(
       // 左侧维度轴
       merge(
@@ -383,6 +395,17 @@ export function getChartAxes(col: number, row: number, layout: PivotHeaderLayout
     const domain: string[] | Set<string> = ((data as any)?.[colPath ?? ''] as Set<string>) ?? [];
 
     const { axisOption, isPercent, chartType } = getAxisOption(col, row, 'bottom', layout);
+    if (
+      axisOption?.zero &&
+      domain &&
+      !Array.isArray(domain) &&
+      isValid((domain as any).min) &&
+      isValid((domain as any).max) &&
+      (axisOption?.zero || (domain as any).min === (domain as any).max)
+    ) {
+      (domain as any).min = Math.min((domain as any).min, 0);
+      (domain as any).max = Math.max((domain as any).max, 0);
+    }
     axes.push(
       // 底部维度轴
       merge(

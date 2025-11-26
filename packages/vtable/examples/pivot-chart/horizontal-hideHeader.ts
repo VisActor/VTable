@@ -90,10 +90,7 @@ export function createTable() {
         xField: '230417171050011',
         yField: '230417170554008',
         seriesField: '230417171050030',
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
-        ],
+
         bar: {
           state: {
             selected: {
@@ -118,6 +115,14 @@ export function createTable() {
       chartSpec: {
         type: 'common',
         direction: 'horizontal',
+        crosshair: {
+          xField: {
+            visible: false
+          },
+          yField: {
+            visible: true
+          }
+        },
         series: [
           {
             type: 'bar',
@@ -172,10 +177,6 @@ export function createTable() {
               id: 'data2'
             }
           }
-        ],
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
         ]
       },
       style: {
@@ -199,10 +200,7 @@ export function createTable() {
         xField: '230707112948009',
         yField: '230417170554008',
         seriesField: '230417171050030',
-        axes: [
-          { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: true }
-        ],
+
         line: {
           state: {
             selected: {
@@ -9217,13 +9215,44 @@ export function createTable() {
       '230713150305018': '利润'
     }
   ];
-  const option: VTable.PivotTableConstructorOptions = {
+  const option: VTable.PivotChartConstructorOptions = {
     columnTree,
     rowTree,
     rows,
     columns,
     indicators,
     indicatorsAsCol: true,
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightLimitToShowTooltipForLastRow: 80,
+      widthLimitToShowTooltipForLastColumn: 80,
+      labelHoverOnAxis: {
+        left: {
+          visible: true,
+          position: 50,
+          autoRotate: false,
+          space: 2,
+          padding: 2,
+          textStyle: {
+            fontSize: 12,
+            fill: 'white',
+            fontWeight: 'normal',
+            fillOpacity: 1,
+            textAlign: 'right',
+            textBaseline: 'middle'
+          },
+          background: {
+            visible: true,
+            style: {
+              cornerRadius: 4,
+              fill: 'red'
+            }
+          },
+          text: ''
+          // maxWidth: 100
+        }
+      }
+    },
     container: document.getElementById(CONTAINER_ID),
     records,
     defaultRowHeight: 200,
@@ -9242,9 +9271,20 @@ export function createTable() {
         cellBgColor: ''
       }
     }),
+    axes: [
+      // {
+      //   orient: 'top',
+      //   visible: false,
+      // },
+      {
+        orient: 'left',
+        visible: true,
+        label: { visible: true }
+      }
+    ]
     // widthMode: 'adaptive',
     // heightMode: 'adaptive',
-    showRowHeader: false
+    // showRowHeader: false
     // showColumnHeader:false,
     // hover: {
     //   disableHeaderHover:false,

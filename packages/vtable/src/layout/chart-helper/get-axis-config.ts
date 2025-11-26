@@ -2,7 +2,7 @@ import { isArray, isNumber, isValid, merge } from '@visactor/vutils';
 import type { PivotHeaderLayoutMap } from '../pivot-header-layout';
 import type { ITableAxisOption } from '../../ts-types/component/axis';
 import type { PivotChart } from '../../PivotChart';
-import type { CollectedValue } from '../../ts-types';
+import type { CollectedValue, PivotChartConstructorOptions } from '../../ts-types';
 import { getNewRangeToAlign } from './zero-align';
 import { Factory } from '../../core/factory';
 import type { GetAxisDomainRangeAndLabels } from './get-axis-domain';
@@ -29,14 +29,18 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       col >= layout.rowHeaderLevelCount &&
       col < layout.colCount - layout.rightFrozenColCount
     ) {
+      const indicatorKey = layout.getIndicatorKey(col, row);
+      const indicatorInfo = layout.getIndicatorInfo(indicatorKey);
+      if (!(indicatorInfo as any)?.hasTwoIndicatorAxes) {
+        return;
+      }
       const axisRange = getRange('top', col, row + 1, col, layout.columnHeaderLevelCount - 1, col, row, 1, layout);
       if (!axisRange) {
         return;
       }
 
       const chartCellStyle = layout._table._getCellStyle(col, row + 1);
-      const padding = getQuadProps(getProp('padding', chartCellStyle, col, row + 1, layout._table));
-
+      const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col, row + 1, layout._table));
       // range for top axis
       const { range, ticks, axisOption, targetTicks, targetRange, index, theme } = axisRange;
 
@@ -95,7 +99,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtablePadding: padding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -120,7 +124,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
 
       const chartCellStyle = layout._table._getCellStyle(col, row - 1);
-      const padding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
+      const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
 
       // range for bottom axis
       const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
@@ -192,7 +196,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtablePadding: padding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -215,7 +219,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
 
       const chartCellStyle = layout._table._getCellStyle(col + 1, row);
-      const padding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
+      const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
 
       const spec = layout.getRawChartSpec(col + 1, row);
       // 左侧维度轴
@@ -238,7 +242,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
             axisOption,
             (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
           ),
-          __vtablePadding: padding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     }
@@ -265,7 +269,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
 
       const chartCellStyle = layout._table._getCellStyle(col + 1, row);
-      const padding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
+      const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col + 1, row, layout._table));
 
       // range for left axis
       const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
@@ -331,7 +335,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtablePadding: padding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -339,17 +343,23 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       row >= layout.columnHeaderLevelCount &&
       row < layout.rowCount - layout.bottomFrozenRowCount
     ) {
+      const indicatorKey = layout.getIndicatorKey(col, row);
+      const indicatorInfo = layout.getIndicatorInfo(indicatorKey);
+      if (!(indicatorInfo as any)?.hasTwoIndicatorAxes) {
+        return;
+      }
+
+      const { axisOption, chartType } = getAxisOption(col - 1, row, 'right', layout);
       const axisRange = getRange('right', col - 1, row, layout.rowHeaderLevelCount - 1, row, col, row, 1, layout);
-      const { chartType } = getAxisOption(col - 1, row, 'right', layout);
       if (!axisRange) {
         return;
       }
 
       const chartCellStyle = layout._table._getCellStyle(col - 1, row);
-      const padding = getQuadProps(getProp('padding', chartCellStyle, col - 1, row, layout._table));
+      const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col - 1, row, layout._table));
 
       // range for right axis
-      const { range, ticks, axisOption, index, targetTicks, targetRange, theme } = axisRange;
+      const { range, ticks, index, targetTicks, targetRange, theme } = axisRange;
 
       // if (isZeroAlign) {
       //   // range for left axis
@@ -411,7 +421,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           },
           __ticksForVTable: ticks,
           __vtableChartTheme: theme,
-          __vtablePadding: padding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     } else if (
@@ -436,7 +446,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
       }
 
       const chartCellStyle = layout._table._getCellStyle(col, row - 1);
-      const padding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
+      const bodyChartCellPadding = getQuadProps(getProp('padding', chartCellStyle, col, row - 1, layout._table));
 
       // 底部维度轴
       return merge(
@@ -449,7 +459,7 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
           orient: 'bottom',
           type: axisOption?.type ?? 'band',
           __vtableChartTheme: theme,
-          __vtablePadding: padding
+          __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
     }
@@ -490,6 +500,11 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
         seriesIndice = seriesIndex;
       }
       const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
+      if (!axisOption.labelHoverOnAxis) {
+        axisOption.labelHoverOnAxis = (
+          layout._table.options as PivotChartConstructorOptions
+        ).chartDimensionLinkage?.labelHoverOnAxis?.[orient as 'left' | 'right' | 'top' | 'bottom'];
+      }
       return {
         axisOption,
         isPercent: spec.percent,
@@ -501,9 +516,15 @@ export function getAxisOption(col: number, row: number, orient: string, layout: 
       };
     }
   }
-  const axisOption = ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
-    return axisOption.orient === orient;
-  });
+  const axisOption =
+    ((layout._table as PivotChart).pivotChartAxes as ITableAxisOption[]).find(axisOption => {
+      return axisOption.orient === orient;
+    }) ?? {};
+  if (axisOption && !axisOption.labelHoverOnAxis) {
+    axisOption.labelHoverOnAxis = (
+      layout._table.options as PivotChartConstructorOptions
+    ).chartDimensionLinkage?.labelHoverOnAxis?.[orient as 'left' | 'right' | 'top' | 'bottom'];
+  }
   const { isZeroAlign, isTickAlign } = checkZeroAlign(spec, orient, layout);
   return {
     axisOption,
@@ -588,7 +609,7 @@ export function getAxisRange(
     }
     return null;
   }
-  let defaultKey = indicatorKeys?.[seriesId];
+  let defaultKey = indicatorKeys?.[seriesId] ?? indicatorKeys?.[0];
   if (isArray(defaultKey)) {
     defaultKey = defaultKey[0];
   }

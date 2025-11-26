@@ -2444,7 +2444,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return { rowStart, colStart, rowEnd, colEnd };
   }
   /** 获取表格body部分的显示行号范围 */
-  getBodyVisibleRowRange() {
+  getBodyVisibleRowRange(deltaY: number = 0) {
     const { scrollTop } = this;
     const frozenRowsHeight = this.getFrozenRowsHeight();
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
@@ -2452,7 +2452,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
-        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight).row
+        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight + deltaY).row
         : this.rowCount - 1;
     if (rowEnd < 0) {
       return null;
@@ -2460,7 +2460,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     return { rowStart, rowEnd };
   }
   /** 获取表格body部分的显示列号范围 */
-  getBodyVisibleColRange() {
+  getBodyVisibleColRange(deltaX: number = 0) {
     const { scrollLeft } = this;
     const frozenColsWidth = this.getFrozenColsWidth();
     const rightFrozenColsWidth = this.getRightFrozenColsWidth();
@@ -2469,7 +2469,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
 
     const colEnd =
       this.getAllColsWidth() > this.tableNoFrameWidth
-        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth).col
+        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth + deltaX).col
         : this.colCount - 1;
     if (colEnd < 0) {
       return null;

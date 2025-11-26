@@ -5,25 +5,6 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
-  const chartDimensionLinkage = {
-    showTooltip: true,
-    heightLimitToShowTooltipForLastRow: 60,
-    widthLimitToShowTooltipForLastColumn: 90,
-    labelHoverOnAxis: {
-      bottom: {
-        visible: true,
-        formatMethod: a => {
-          return Math.floor(a * 100) / 100;
-        }
-      },
-      left: {
-        visible: true,
-        formatMethod: a => {
-          return Math.floor(a);
-        }
-      }
-    }
-  };
   const data = [
     {
       name: 'citroen ds-21 pallas',
@@ -1242,15 +1223,15 @@ export function createTable() {
       chartModule: 'vchart',
       chartSpec: {
         type: 'scatter',
-        xField: 'milesPerGallon',
-        yField: 'horsepower',
+        yField: 'milesPerGallon',
+        xField: 'horsepower',
 
         data: {
           id: 'baseData'
         },
         tooltip: {
           dimension: {
-            visible: true
+            visible: false
           },
           mark: {
             title: true,
@@ -1264,23 +1245,23 @@ export function createTable() {
         },
         crosshair: {
           yField: {
+            label: {
+              visible: false
+            },
             visible: true,
             line: {
               visible: true,
               type: 'line'
-            },
-            label: {
-              visible: true // label 默认关闭
             }
           },
           xField: {
+            label: {
+              visible: false
+            },
             visible: true,
             line: {
               visible: true,
               type: 'line'
-            },
-            label: {
-              visible: true // label 默认关闭
             }
           }
         },
@@ -1290,10 +1271,7 @@ export function createTable() {
               visible: true,
               text: 'Horse Power'
             },
-            domainLine: {
-              visible: false
-            },
-            orient: 'left',
+            orient: 'bottom',
             range: { min: 0 },
             type: 'linear',
             innerOffset: {
@@ -1308,10 +1286,7 @@ export function createTable() {
               visible: true,
               text: 'Miles Per Gallon'
             },
-            domainLine: {
-              visible: false
-            },
-            orient: 'bottom',
+            orient: 'left',
             label: { visible: true },
             type: 'linear',
             innerOffset: {
@@ -1329,9 +1304,8 @@ export function createTable() {
     }
   ];
   const option = {
-    chartDimensionLinkage,
     // hideIndicatorName: true,
-    indicatorsAsCol: false,
+    indicatorsAsCol: true,
     rows: rows,
     columns: columns,
     indicators,
@@ -1350,10 +1324,10 @@ export function createTable() {
         autoWrapText: true
       }
     },
-
-    pagination: {
-      currentPage: 0,
-      perPageCount: 8
+    chartDimensionLinkage: {
+      showTooltip: true,
+      heightLimitToShowTooltipForLastRow: 60,
+      widthLimitToShowTooltipForLastColumn: 90
     }
   };
   const tableInstance = new VTable.PivotChart(document.getElementById(CONTAINER_ID), option);
@@ -1366,4 +1340,9 @@ export function createTable() {
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
+
+  window.update = () => {
+    theme.cornerLeftBottomCellStyle.borderColor = 'red';
+    tableInstance.updateTheme(theme);
+  };
 }
