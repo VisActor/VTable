@@ -33,7 +33,7 @@ export const commonAxis = {
   domainLine: {
     visible: true,
     style: {
-      lineWidth: 1,
+      lineWidth: 0,
       stroke: '#D9DDE4',
       strokeOpacity: 1
     }
@@ -126,6 +126,10 @@ export function getCommonAxis(theme: any) {
 
 export function getAxisAttributes(option: ICellAxisOption) {
   const spec = merge({}, option);
+  if (option.labelHoverOnAxis && spec.domainLine.visible === false) {
+    spec.domainLine.style.lineWidth = 0;
+    spec.domainLine.visible = true; // vrender里面showLabelHoverOnAxis方法调整label的位置时，需要利用line的长度撑开组件的长度来计算bounds。所以必须为显示状态
+  }
   // const spec = option;
   let titleAngle = spec.title?.angle ?? 0;
   let titleTextStyle;
@@ -136,9 +140,7 @@ export function getAxisAttributes(option: ICellAxisOption) {
       titleTextStyle = DEFAULT_TITLE_STYLE[spec.orient];
     }
   }
-
   const labelSpec = pickWithout(spec.label, ['style', 'formatMethod', 'state']);
-
   return {
     orient: spec.orient,
     select: spec.select,
@@ -235,6 +237,7 @@ export function getAxisAttributes(option: ICellAxisOption) {
       visible: spec.background?.visible,
       style: transformToGraphic(spec.background?.style),
       state: transformStateStyle(spec.background?.state)
-    }
+    },
+    labelHoverOnAxis: spec.labelHoverOnAxis
   };
 }
