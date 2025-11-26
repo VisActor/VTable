@@ -18,6 +18,7 @@ import type { TYPES, VTableSheet } from '..';
 import { isPropertyWritable } from '../tools';
 import { VTableThemes } from '../ts-types';
 import { detectFunctionParameterPosition } from '../formula/formula-helper';
+import { FormulaPasteProcessor } from '../formula/formula-paste-processor';
 
 /**
  * Sheet constructor options. 内部类型Sheet的构造函数参数类型
@@ -188,6 +189,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     const keyboardOptions = {
       ...this.options.keyboardOptions,
       copySelected: true,
+      getCopyCellValueFunction: {
+        html: (col: number, row: number) => this.getCellValueConsiderFormula(row, col)
+      },
+      processFormulaPasteFunction: this.processFormulaPaste.bind(this),
       pasteValueToCell: true,
       showCopyCellBorder: true,
       cutSelected: true
@@ -698,6 +703,34 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     }
     return null;
   }
+  /**
+   * 获取指定坐标的单元格值
+   * @param row 行索引
+   * @param col 列索引
+   */
+  getCellValueConsiderFormula(row: number, col: number): any {
+    if (this.tableInstance) {
+      try {
+        if (
+          this.vtableSheet.formulaManager.isCellFormula({
+            sheet: this.getKey(),
+            row,
+            col
+          })
+        ) {
+          return this.vtableSheet.formulaManager.getCellFormula({
+            sheet: this.getKey(),
+            row,
+            col
+          });
+        }
+        return this.getCellValue(row, col);
+      } catch (error) {
+        console.warn('Failed to get cell value from VTable:', error);
+      }
+      return null;
+    }
+  }
 
   /**
    * 设置指定坐标的单元格值
@@ -850,6 +883,148 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       showHeader: true,
       records: data
     });
+  }
+
+  /**
+   * 处理公式粘贴 - 调整公式中的单元格引用
+   * @param formulas 要粘贴的公式数组
+   * @param sourceStartCol 源起始列
+   * @param sourceStartRow 源起始行
+   * @param targetStartCol 目标起始列
+   * @param targetStartRow 目标起始行
+   */
+  processFormulaPaste(
+    formulas: string[][],
+    sourceStartCol: number,
+    sourceStartRow: number,
+    targetStartCol: number,
+    targetStartRow: number
+  ): (string | number)[][] {
+    if (!formulas || formulas.length === 0) {
+      return formulas;
+    }
+
+    // 计算整个范围的相对位移
+    const colOffset = targetStartCol - sourceStartCol;
+    const rowOffset = targetStartRow - sourceStartRow;
+
+    // 使用计算出的位移来调整公式
+    return FormulaPasteProcessor.adjustFormulasForPasteWithOffset(formulas, colOffset, rowOffset);
+  }
+
+  /**
+   * 获取复制数据，包括公式处理
+   */
+  getCopyData(): (string | number)[][] {
+    const selections = this.getMultipleSelections();
+    if (selections.length === 0) {
+      return [];
+    }
+
+    const data = this.getData();
+    const result: string[][] = [];
+
+    // 获取第一个选择范围
+    const selection = selections[0];
+    const rows = selection.endRow - selection.startRow + 1;
+    const cols = selection.endCol - selection.startCol + 1;
+
+    for (let row = 0; row < rows; row++) {
+      const rowData: string[] = [];
+      for (let col = 0; col < cols; col++) {
+        const actualRow = selection.startRow + row;
+        const actualCol = selection.startCol + col;
+
+        if (data[actualRow] && data[actualRow][actualCol] !== undefined) {
+          // 如果是公式，返回公式字符串；否则返回值
+          if (
+            this.vtableSheet.formulaManager.isCellFormula({
+              sheet: this.getKey(),
+              row: actualRow,
+              col: actualCol
+            })
+          ) {
+            const formula = this.vtableSheet.formulaManager.getCellFormula({
+              sheet: this.getKey(),
+              row: actualRow,
+              col: actualCol
+            });
+            rowData.push(formula);
+          } else {
+            rowData.push(data[actualRow][actualCol]);
+          }
+        } else {
+          rowData.push('');
+        }
+      }
+      result.push(rowData);
+    }
+
+    return result;
+  }
+
+  /**
+   * 粘贴数据，包括公式处理
+   */
+  pasteData(data: string[][], targetStartCol: number, targetStartRow: number): void {
+    if (!data || data.length === 0) {
+      return;
+    }
+
+    const selections = this.getMultipleSelections();
+    if (selections.length === 0) {
+      return;
+    }
+
+    // 获取源数据范围（从当前选择范围推断）
+    const sourceSelection = selections[0];
+    const sourceStartCol = sourceSelection.startCol;
+    const sourceStartRow = sourceSelection.startRow;
+
+    // 处理公式粘贴
+    const processedData = this.processFormulaPaste(
+      data,
+      sourceStartCol,
+      sourceStartRow,
+      targetStartCol,
+      targetStartRow
+    );
+
+    // 应用处理后的数据
+    const dataArray = this.getData();
+    for (let row = 0; row < processedData.length; row++) {
+      for (let col = 0; col < processedData[row].length; col++) {
+        const targetRow = targetStartRow + row;
+        const targetCol = targetStartCol + col;
+
+        if (targetRow < dataArray.length && targetCol < dataArray[targetRow].length) {
+          const value = processedData[row][col];
+
+          // 如果是公式，设置公式；否则设置普通值
+          if (FormulaPasteProcessor.needsFormulaAdjustment(value)) {
+            this.setCellFormula(targetRow, targetCol, value);
+          } else {
+            this.setCellValue(targetRow, targetCol, value);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * 设置单元格公式
+   */
+  setCellFormula(row: number, col: number, formula: string): void {
+    if (this.vtableSheet.formulaManager) {
+      this.vtableSheet.formulaManager.setCellContent(
+        {
+          sheet: this.getKey(),
+          row,
+          col
+        },
+        formula
+      );
+    }
   }
 
   /**

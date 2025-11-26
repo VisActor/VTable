@@ -939,7 +939,7 @@ export interface BaseTableAPI {
 
   isRowHeader: (col: number, row: number) => boolean;
 
-  getCopyValue: () => string;
+  getCopyValue: (getCellValueFunction?: (col: number, row: number) => string | number) => string;
 
   getSelectedCellInfos: () => CellInfo[][];
   getSelectedCellRanges: () => CellRange[];
