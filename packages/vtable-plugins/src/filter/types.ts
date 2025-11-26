@@ -90,3 +90,5 @@ export enum FilterOperatorCategory {
   CHECKBOX = 'checkbox',
   RADIO = 'radio'
 }
+
+export type FilterListener = (state: FilterState, action?: FilterAction) => void;

@@ -2,7 +2,7 @@ import { TABLE_EVENT_TYPE, TYPES } from '@visactor/vtable';
 import { FilterEngine } from './filter-engine';
 import { FilterStateManager } from './filter-state-manager';
 import { FilterToolbar } from './filter-toolbar';
-import type { FilterOptions, FilterConfig, FilterState } from './types';
+import type { FilterOptions, FilterConfig, FilterState, FilterAction } from './types';
 import { FilterActionType } from './types';
 import type {
   ListTableConstructorOptions,
@@ -76,7 +76,11 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
       this.filterToolbar.render(document.body);
       this.updateFilterIcons(this.columns);
-      this.filterStateManager.subscribe(() => {
+      this.filterStateManager.subscribe((_: FilterState, action?: FilterAction) => {
+        // 新增筛选配置时，不需要更新筛选图标以及表格
+        if (action?.type === FilterActionType.ADD_FILTER) {
+          return;
+        }
         this.updateFilterIcons(this.columns);
         (this.table as ListTable).updateColumns(this.columns, {
           clearRowHeightCache: false
@@ -179,16 +183,16 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     const filterIcon = this.pluginOptions.filterIcon;
     const filteringIcon = this.pluginOptions.filteringIcon;
 
-    const isIconEqual = (a, b) =>
+    const isIconEqual = (a: any, b: any) =>
       a === b || (a && b && typeof a === 'object' && typeof b === 'object' && a.name === b.name);
 
-    const toIconList = icons => (icons ? (Array.isArray(icons) ? icons : [icons]) : []);
+    const toIconList = (icons: any) => (icons ? (Array.isArray(icons) ? icons : [icons]) : []);
 
-    const compactIcons = list => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
+    const compactIcons = (list: any[]) => (list.length === 0 ? undefined : list.length === 1 ? list[0] : list);
 
     columns.forEach(column => {
-      const shouldShow = this.shouldEnableFilterForColumn(column.field, column);
-      const isFiltering = !!this.filterStateManager.getFilterState(column.field)?.enable;
+      const shouldShow = this.shouldEnableFilterForColumn(column.field as string | number, column);
+      const isFiltering = !!this.filterStateManager.getFilterState(column.field as string | number)?.enable;
       let icons = toIconList(column.headerIcon);
 
       if (shouldShow) {
