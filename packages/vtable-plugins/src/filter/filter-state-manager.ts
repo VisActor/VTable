@@ -13,6 +13,7 @@ export class FilterStateManager {
 
   private table: ListTable | PivotTable;
 
+  private _clickedTableHeaderFilterIcon: boolean = false;
   constructor(table: ListTable | PivotTable, engine: FilterEngine) {
     this.state = {
       filters: new Map()
@@ -118,5 +119,12 @@ export class FilterStateManager {
       FilterActionType.APPLY_FILTERS
     ];
     return shouldApplyActions.includes(action.type) || action.payload.enable;
+  }
+
+  set clickedTableHeaderFilterIcon(value: boolean) {
+    this._clickedTableHeaderFilterIcon = value;
+  }
+  get clickedTableHeaderFilterIcon() {
+    return this._clickedTableHeaderFilterIcon;
   }
 }
