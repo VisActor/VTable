@@ -66,7 +66,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
     //   });
   }
   handleKeyDown(event: KeyboardEvent) {
-    if (this.table.editorManager && this.isExcelShortcutKey(event)) {
+    if (this.table?.editorManager && this.isExcelShortcutKey(event)) {
       //判断是键盘触发编辑单元格的情况下，那么在编辑状态中切换方向需要选中下一个继续编辑
       if (this.table.editorManager.editingEditor && this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
         const { col, row } = this.table.editorManager.editCell;
