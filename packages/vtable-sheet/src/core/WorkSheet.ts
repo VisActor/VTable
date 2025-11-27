@@ -684,10 +684,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   }
   /**
    * 获取指定坐标的单元格值
-   * @param row 行索引
    * @param col 列索引
+   * @param row 行索引
    */
-  getCellValue(row: number, col: number): any {
+  getCellValue(col: number, row: number): any {
     if (this.tableInstance) {
       try {
         const value = this.tableInstance.getCellValue(col, row);
@@ -705,8 +705,8 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
   }
   /**
    * 获取指定坐标的单元格值
-   * @param row 行索引
    * @param col 列索引
+   * @param row 行索引
    */
   getCellValueConsiderFormula(col: number, row: number): any {
     if (this.tableInstance) {
@@ -724,7 +724,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
             col
           });
         }
-        return this.getCellValue(row, col);
+        return this.getCellValue(col, row);
       } catch (error) {
         console.warn('Failed to get cell value from VTable:', error);
       }
@@ -734,11 +734,11 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
 
   /**
    * 设置指定坐标的单元格值
-   * @param row 行索引
    * @param col 列索引
+   * @param row 行索引
    * @param value 新值
    */
-  setCellValue(row: number, col: number, value: any): void {
+  setCellValue(col: number, row: number, value: any): void {
     const data = this.getData();
     if (data && data[row]) {
       const oldValue = data[row][col];
@@ -769,7 +769,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     const coord = this.coordFromAddress(address);
     return {
       coord,
-      value: this.getCellValue(coord.row, coord.col)
+      value: this.getCellValue(coord.col, coord.row)
     };
   }
 
@@ -778,21 +778,21 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * @param coord 坐标
    */
   addressFromCoord(coord: CellCoord): string;
-  addressFromCoord(row: number, col: number): string;
-  addressFromCoord(coordOrRow: CellCoord | number, col?: number): string {
-    let row: number;
-    let colNum: number;
+  addressFromCoord(col: number, row: number): string;
+  addressFromCoord(coordOrCol: CellCoord | number, row?: number): string {
+    let col: number;
+    let rowNum: number;
 
-    if (typeof coordOrRow === 'object') {
-      row = coordOrRow.row;
-      colNum = coordOrRow.col;
+    if (typeof coordOrCol === 'object') {
+      col = coordOrCol.col;
+      rowNum = coordOrCol.row;
     } else {
-      row = coordOrRow;
-      colNum = col!;
+      col = coordOrCol;
+      rowNum = row!;
     }
 
     let colStr = '';
-    let tempCol = colNum + 1;
+    let tempCol = col + 1;
 
     do {
       tempCol -= 1;
@@ -800,7 +800,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
       tempCol = Math.floor(tempCol / 26);
     } while (tempCol > 0);
 
-    return `${colStr}${row + 1}`;
+    return `${colStr}${rowNum + 1}`;
   }
 
   /**
