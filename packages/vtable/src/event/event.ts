@@ -1023,6 +1023,9 @@ export class EventManager {
         await this.fallbackPasteFromClipboard(e);
       }
     }
+    if (table.keyboardOptions?.showCopyCellBorder) {
+      clearActiveCellRangeState(table);
+    }
   }
 
   // 降级粘贴方案
