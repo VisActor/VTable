@@ -189,10 +189,10 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
     const keyboardOptions = {
       ...this.options.keyboardOptions,
       copySelected: true,
-      getCopyCellValueFunction: {
-        html: (col: number, row: number) => this.getCellValueConsiderFormula(row, col)
+      getCopyCellValue: {
+        html: this.getCellValueConsiderFormula.bind(this)
       },
-      processFormulaPasteFunction: this.processFormulaPaste.bind(this),
+      processFormulaBeforePaste: this.processFormulaPaste.bind(this),
       pasteValueToCell: true,
       showCopyCellBorder: true,
       cutSelected: true
@@ -708,7 +708,7 @@ export class WorkSheet extends EventTarget implements IWorkSheetAPI {
    * @param row 行索引
    * @param col 列索引
    */
-  getCellValueConsiderFormula(row: number, col: number): any {
+  getCellValueConsiderFormula(col: number, row: number): any {
     if (this.tableInstance) {
       try {
         if (
