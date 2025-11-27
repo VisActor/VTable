@@ -4200,7 +4200,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
   }
 
   /**获取选中区域的内容 作为复制内容 */
-  getCopyValue(): string | null {
+  getCopyValue(getCellValueFunction?: (col: number, row: number) => string | number): string | null {
     if (this.stateManager.select?.ranges?.length > 0) {
       const ranges = this.stateManager.select.ranges;
       let minCol = Math.min(ranges[0].start.col, ranges[0].end.col);
@@ -4265,7 +4265,7 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
           return '';
         }
 
-        const value = this.getCellValue(col, row);
+        const value = getCellValueFunction ? getCellValueFunction(col, row) : this.getCellValue(col, row);
         return value;
       };
       let copyValue = '';
