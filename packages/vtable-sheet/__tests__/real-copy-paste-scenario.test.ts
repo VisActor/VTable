@@ -1,5 +1,5 @@
 /**
- * 真实复制粘贴场景测试
+ * 真实复制粘贴场景测试 - 修复版本
  * 模拟用户从C5复制公式=A2粘贴到D5，应该变成=B2
  */
 
@@ -33,14 +33,14 @@ describe('真实复制粘贴场景测试', () => {
       getKey: () => 'sheet1'
     };
 
-    // 模拟getCopyData方法
-    const getCopyData = function () {
-      const selections = this.getMultipleSelections();
+    // 模拟getCopyData方法 - 使用箭头函数保持this上下文
+    const getCopyData = () => {
+      const selections = mockWorkSheet.getMultipleSelections();
       if (selections.length === 0) {
         return [];
       }
 
-      const data = this.getData();
+      const data = mockWorkSheet.getData();
       const result: string[][] = [];
       const selection = selections[0];
       const rows = selection.endRow - selection.startRow + 1;
@@ -55,14 +55,14 @@ describe('真实复制粘贴场景测试', () => {
           if (data[actualRow] && data[actualRow][actualCol] !== undefined) {
             // 检查是否是公式
             if (
-              this.vtableSheet.formulaManager.isCellFormula({
-                sheet: this.getKey(),
+              mockWorkSheet.vtableSheet.formulaManager.isCellFormula({
+                sheet: mockWorkSheet.getKey(),
                 row: actualRow,
                 col: actualCol
               })
             ) {
-              const formula = this.vtableSheet.formulaManager.getCellFormula({
-                sheet: this.getKey(),
+              const formula = mockWorkSheet.vtableSheet.formulaManager.getCellFormula({
+                sheet: mockWorkSheet.getKey(),
                 row: actualRow,
                 col: actualCol
               });
@@ -79,22 +79,19 @@ describe('真实复制粘贴场景测试', () => {
       return result;
     };
 
-    // 绑定方法
-    const boundGetCopyData = getCopyData.bind(mockWorkSheet);
-
     // 测试复制数据
-    const copiedData = boundGetCopyData();
+    const copiedData = getCopyData();
     console.log('从C5复制的数据:', copiedData);
     expect(copiedData).toEqual([['=A2']]);
 
     // 模拟processFormulaPaste方法
-    const processFormulaPaste = function (
+    const processFormulaPaste = (
       formulas: string[][],
       sourceStartCol: number,
       sourceStartRow: number,
       targetStartCol: number,
       targetStartRow: number
-    ): string[][] {
+    ): string[][] => {
       if (!formulas || formulas.length === 0) {
         return formulas;
       }
@@ -144,13 +141,13 @@ describe('真实复制粘贴场景测试', () => {
     ];
 
     // 从A1:B2复制到C3:D4
-    const processFormulaPaste = function (
+    const processFormulaPaste = (
       formulas: string[][],
       sourceStartCol: number,
       sourceStartRow: number,
       targetStartCol: number,
       targetStartRow: number
-    ): string[][] {
+    ): string[][] => {
       const colOffset = targetStartCol - sourceStartCol;
       const rowOffset = targetStartRow - sourceStartRow;
 
