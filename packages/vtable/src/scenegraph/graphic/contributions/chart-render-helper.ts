@@ -133,7 +133,7 @@ export function renderChart(chart: Chart) {
     // to be fixed: update state everytimes render, need be fix by vchart
     (table.internalProps.layoutMap as any)?.updateDataStateToActiveChartInstance?.(chartInstance);
 
-    if (typeof dataId === 'string') {
+    if (typeof dataId === 'string' || typeof dataId === 'number') {
       // 重新布局图表，marker 等需要重新布局的图表组件需要出发布局声明周期
       chartInstance.getChart().setLayoutTag(true);
       chartInstance.updateDataSync(dataId, data ?? []);

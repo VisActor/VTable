@@ -293,6 +293,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             });
             if (topAxis && bottomAxis) {
               indicatorObject.hasTwoIndicatorAxes = true;
+              this.hasTwoIndicatorAxes = true;
               return true;
             }
           } else {
@@ -310,6 +311,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             });
             if (leftAxis && rightAxis) {
               indicatorObject.hasTwoIndicatorAxes = true;
+              this.hasTwoIndicatorAxes = true;
               return true;
             }
           }
