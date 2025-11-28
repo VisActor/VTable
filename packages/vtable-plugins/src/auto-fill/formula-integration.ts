@@ -95,132 +95,10 @@ export class DefaultFormulaAdapter implements IFormulaAwareTable {
 }
 
 /**
- * VTableSheet formula adapter for integration with vtable-sheet formula system
- */
-export class VTableSheetFormulaAdapter implements IFormulaAwareTable {
-  private table: ListTable;
-  private formulaManager: any; // FormulaManager from vtable-sheet
-
-  constructor(table: ListTable, formulaManager?: any) {
-    this.table = table;
-    this.formulaManager = formulaManager;
-  }
-
-  isFormulaCell(col: number, row: number): boolean {
-    if (!this.hasFormulaEngine()) {
-      const cellValue = this.table.getCellValue(col, row);
-      return typeof cellValue === 'string' && cellValue.startsWith('=');
-    }
-
-    try {
-      const sheetName = this.getCurrentSheetName();
-      return this.formulaManager.isCellFormula({
-        sheet: sheetName,
-        row: row,
-        col: col
-      });
-    } catch (error) {
-      // Fallback to simple check
-      const cellValue = this.table.getCellValue(col, row);
-      return typeof cellValue === 'string' && cellValue.startsWith('=');
-    }
-  }
-
-  getCellFormula(col: number, row: number): string | undefined {
-    if (!this.hasFormulaEngine()) {
-      const cellValue = this.table.getCellValue(col, row);
-      if (typeof cellValue === 'string' && cellValue.startsWith('=')) {
-        return cellValue;
-      }
-      return undefined;
-    }
-
-    try {
-      const sheetName = this.getCurrentSheetName();
-      return this.formulaManager.getCellFormula({
-        sheet: sheetName,
-        row: row,
-        col: col
-      });
-    } catch (error) {
-      return undefined;
-    }
-  }
-
-  setCellFormula(col: number, row: number, formula: string): void {
-    if (!this.hasFormulaEngine()) {
-      this.table.changeCellValue(col, row, formula);
-      return;
-    }
-
-    try {
-      const sheetName = this.getCurrentSheetName();
-      this.formulaManager.setCellContent(
-        {
-          sheet: sheetName,
-          row: row,
-          col: col
-        },
-        formula
-      );
-    } catch (error) {
-      // Fallback to direct cell change
-      this.table.changeCellValue(col, row, formula);
-    }
-  }
-
-  getCalculatedValue(col: number, row: number): any {
-    if (!this.hasFormulaEngine()) {
-      return this.table.getCellValue(col, row);
-    }
-
-    try {
-      const sheetName = this.getCurrentSheetName();
-      const result = this.formulaManager.getCellValue({
-        sheet: sheetName,
-        row: row,
-        col: col
-      });
-      return result?.value ?? null;
-    } catch (error) {
-      return this.table.getCellValue(col, row);
-    }
-  }
-
-  refreshFormulas(): void {
-    if (this.hasFormulaEngine()) {
-      try {
-        // Trigger formula recalculation if available
-        this.formulaManager.rebuildAndRecalculate?.();
-      } catch (error) {
-        // Ignore errors, formulas will be recalculated on next access
-      }
-    }
-  }
-
-  hasFormulaEngine(): boolean {
-    return this.formulaManager != null;
-  }
-
-  private getCurrentSheetName(): string {
-    // Try to get current sheet name from table or use default
-    try {
-      if (this.formulaManager.getActiveSheet) {
-        return this.formulaManager.getActiveSheet() || 'Sheet1';
-      }
-    } catch (error) {
-      // Ignore
-    }
-    return 'Sheet1';
-  }
-}
-
-/**
  * Factory to create appropriate formula adapter with custom functions
  */
 export function createFormulaAdapter(
   table: ListTable,
-  formulaManager?: any,
   customIsFormulaCell?: (col: number, row: number, cellData: any, table: ListTable) => boolean,
   customGetCellFormula?: (col: number, row: number, cellData: any, table: ListTable) => string | undefined,
   customSetCellFormula?: (col: number, row: number, formula: string, table: ListTable) => void
@@ -228,21 +106,6 @@ export function createFormulaAdapter(
   // If custom functions are provided, create a custom adapter
   if (customIsFormulaCell || customGetCellFormula || customSetCellFormula) {
     return new CustomFormulaAdapter(table, customIsFormulaCell, customGetCellFormula, customSetCellFormula);
-  }
-
-  if (formulaManager) {
-    return new VTableSheetFormulaAdapter(table, formulaManager);
-  }
-
-  // Check if table has formula capabilities
-  const tableAny = table as any;
-  if (tableAny.formulaManager) {
-    return new VTableSheetFormulaAdapter(table, tableAny.formulaManager);
-  }
-
-  // Check if table is part of a sheet system
-  if (tableAny.sheet?.formulaManager) {
-    return new VTableSheetFormulaAdapter(table, tableAny.sheet.formulaManager);
   }
 
   return new DefaultFormulaAdapter(table);

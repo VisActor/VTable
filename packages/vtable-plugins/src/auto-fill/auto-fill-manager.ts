@@ -74,11 +74,9 @@ export class AutoFillManager {
       col: new Set()
     };
     this.tableInstance = table;
-
     // Create formula adapter based on table capabilities and custom functions
     this.formulaAdapter = createFormulaAdapter(
       table,
-      undefined,
       this.options?.isFormulaCell,
       this.options?.getCellFormula,
       this.options?.setCellFormula

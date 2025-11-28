@@ -65,36 +65,10 @@ export interface IFormulaManagerOptions {
 
 /** 公式管理器接口 */
 export interface IFormulaManager {
-  /** 注册公式 */
-  registerFormula: (cell: CellAddress, formula: string) => void;
-
-  /** 获取公式 */
-  getFormula: (cell: CellAddress) => IFormulaCell | null;
-
-  /** 计算公式 */
-  evaluateFormula: (formula: string, context?: any) => IFormulaResult;
-
-  /** 更新公式依赖单元格的值 */
-  updateDependencies: (cell: CellAddress) => void;
-
-  /** 获取依赖某个单元格的所有单元格 */
-  getDependentCells: (cell: CellAddress) => CellAddress[];
-
-  /** 检查循环依赖 */
-  checkCircularDependency: (cell: CellAddress, formula: string) => boolean;
-
-  /** 注册自定义公式函数 */
-  registerFunction: (func: IFormulaFunction) => void;
-
-  /** 获取所有公式 */
-  getAllFormulas: () => Record<string, IFormulaCell>;
-
-  /** 清除公式缓存 */
-  clearCache: () => void;
-
   /** 导出公式 */
-  exportFormulas: () => Record<string, string>;
+  exportFormulas: (sheetKey: string) => Record<string, string>;
 
-  /** 导入公式 */
-  importFormulas: (formulas: Record<string, string>) => void;
+  isCellFormula: (cell: { sheet: string; row: number; col: number }) => boolean;
+  getCellFormula: (cell: { sheet: string; row: number; col: number }) => string | undefined;
+  setCellContent: (cell: { sheet: string; row: number; col: number }, value: string) => void;
 }

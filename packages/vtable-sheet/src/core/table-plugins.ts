@@ -363,15 +363,6 @@ function handleDisableFirstRowAsHeader(table: VTable.ListTable): void {
 }
 
 /**
- * Formula manager interface for type safety
- */
-interface IFormulaManager {
-  isCellFormula: (cell: { sheet: string; row: number; col: number }) => boolean;
-  getCellFormula: (cell: { sheet: string; row: number; col: number }) => string | undefined;
-  setCellContent: (cell: { sheet: string; row: number; col: number }, value: string) => void;
-}
-
-/**
  * 创建公式检测选项，使用vtable-sheet的公式引擎
  */
 function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVTableSheetOptions, vtableSheet?: any) {
@@ -391,21 +382,6 @@ function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVT
           });
         } catch (error) {
           // 如果公式引擎调用失败，回退到表格级别的检测
-        }
-      }
-
-      // 尝试使用表格实例的公式管理器（向后兼容）
-      const tableAny = table as unknown as Record<string, unknown>;
-      if (tableAny.formulaManager) {
-        try {
-          const sheetName = (tableAny.getCurrentSheetName as () => string)?.() || 'Sheet1';
-          return (tableAny.formulaManager as IFormulaManager).isCellFormula({
-            sheet: sheetName,
-            row: row,
-            col: col
-          });
-        } catch (error) {
-          // 如果公式引擎调用失败，回退到简单检测
         }
       }
 
@@ -437,21 +413,6 @@ function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVT
         }
       }
 
-      // 尝试使用表格实例的公式管理器（向后兼容）
-      const tableAny = table as unknown as Record<string, unknown>;
-      if (tableAny.formulaManager) {
-        try {
-          const sheetName = (tableAny.getCurrentSheetName as () => string)?.() || 'Sheet1';
-          return (tableAny.formulaManager as IFormulaManager).getCellFormula({
-            sheet: sheetName,
-            row: row,
-            col: col
-          });
-        } catch (error) {
-          // 如果公式引擎调用失败，回退到简单检测
-        }
-      }
-
       // 回退到简单检测：如果单元格值以=开头，返回该值作为公式
       const cellValue = table.getCellValue(col, row);
       if (typeof cellValue === 'string' && cellValue.startsWith('=')) {
@@ -480,25 +441,6 @@ function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVT
           return;
         } catch (error) {
           // 如果公式引擎调用失败，回退到表格级别的设置
-        }
-      }
-
-      // 尝试使用表格实例的公式管理器（向后兼容）
-      const tableAny = table as unknown as Record<string, unknown>;
-      if (tableAny.formulaManager) {
-        try {
-          const sheetName = (tableAny.getCurrentSheetName as () => string)?.() || 'Sheet1';
-          (tableAny.formulaManager as IFormulaManager).setCellContent(
-            {
-              sheet: sheetName,
-              row: row,
-              col: col
-            },
-            formula
-          );
-          return;
-        } catch (error) {
-          // 如果公式引擎调用失败，回退到直接设置单元格值
         }
       }
 
