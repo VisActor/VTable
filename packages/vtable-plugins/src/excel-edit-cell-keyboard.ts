@@ -67,6 +67,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
   }
   handleKeyDown(event: KeyboardEvent) {
     if (this.table.editorManager && this.isExcelShortcutKey(event)) {
+      const eventKey = event.key.toLowerCase() as ExcelEditCellKeyboardResponse;
       //判断是键盘触发编辑单元格的情况下，那么在编辑状态中切换方向需要选中下一个继续编辑
       if (this.table.editorManager.editingEditor && this.table.editorManager.beginTriggerEditCellMode === 'keydown') {
         const { col, row } = this.table.editorManager.editCell;
@@ -74,17 +75,17 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
         this.table.getElement().focus();
         if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
           //有这些配合键，则不进行选中下一个单元格的行为 执行vtable内部逻辑
-          if (event.key === ExcelEditCellKeyboardResponse.ENTER) {
+          if (eventKey === ExcelEditCellKeyboardResponse.ENTER) {
             this.table.selectCell(col, row + 1);
-          } else if (event.key === ExcelEditCellKeyboardResponse.TAB) {
+          } else if (eventKey === ExcelEditCellKeyboardResponse.TAB) {
             this.table.selectCell(col + 1, row);
-          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_LEFT) {
+          } else if (eventKey === ExcelEditCellKeyboardResponse.ARROW_LEFT) {
             this.table.selectCell(col - 1, row);
-          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_RIGHT) {
+          } else if (eventKey === ExcelEditCellKeyboardResponse.ARROW_RIGHT) {
             this.table.selectCell(col + 1, row);
-          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_DOWN) {
+          } else if (eventKey === ExcelEditCellKeyboardResponse.ARROW_DOWN) {
             this.table.selectCell(col, row + 1);
-          } else if (event.key === ExcelEditCellKeyboardResponse.ARROW_UP) {
+          } else if (eventKey === ExcelEditCellKeyboardResponse.ARROW_UP) {
             this.table.selectCell(col, row - 1);
           }
           // 阻止事件传播和默认行为
@@ -95,13 +96,13 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
         const { col, row } = this.table.stateManager.select.cellPos;
         if (
           this.table.editorManager.editingEditor &&
-          (event.key === ExcelEditCellKeyboardResponse.ENTER || event.key === ExcelEditCellKeyboardResponse.TAB)
+          (eventKey === ExcelEditCellKeyboardResponse.ENTER || eventKey === ExcelEditCellKeyboardResponse.TAB)
         ) {
           this.table.editorManager.completeEdit();
           this.table.getElement().focus();
-          if (event.key === ExcelEditCellKeyboardResponse.ENTER) {
+          if (eventKey === ExcelEditCellKeyboardResponse.ENTER) {
             this.table.selectCell(col, row + 1);
-          } else if (event.key === ExcelEditCellKeyboardResponse.TAB) {
+          } else if (eventKey === ExcelEditCellKeyboardResponse.TAB) {
             this.table.selectCell(col + 1, row);
           }
           // 阻止事件传播和默认行为
@@ -109,7 +110,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
           event.preventDefault();
         } else if (
           !this.table.editorManager.editingEditor &&
-          (event.key === ExcelEditCellKeyboardResponse.DELETE || event.key === ExcelEditCellKeyboardResponse.BACKSPACE)
+          (eventKey === ExcelEditCellKeyboardResponse.DELETE || eventKey === ExcelEditCellKeyboardResponse.BACKSPACE)
         ) {
           //响应删除键，删除
           const selectCells = this.table.getSelectedCellInfos();
@@ -126,7 +127,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
   }
   // 判断event的keyCode是否是excel的快捷键
   isExcelShortcutKey(event: KeyboardEvent) {
-    return this.responseKeyboard.includes(event.key as ExcelEditCellKeyboardResponse);
+    return this.responseKeyboard.includes(event.key.toLowerCase() as ExcelEditCellKeyboardResponse);
   }
   setResponseKeyboard(responseKeyboard: ExcelEditCellKeyboardResponse[]) {
     this.responseKeyboard = responseKeyboard;
