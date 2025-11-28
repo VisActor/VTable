@@ -18,6 +18,8 @@ In order to facilitate users to operate the form, we provide the following short
 | ctrl     | Hold down ctrl and the left mouse button to select multiple areas                                                                                                                                                                                                                                                         |
 | Any key  | can be monitored tableInstance.on('keydown',(args)=>{ })                                                                                                                                                                                                                                                                  |
 
+If the above shortcut key response list does not include the ability you need, you can refer to [Excel Keyboard Interaction Alignment Plugin Usage Description](./plugin/excel-keyboard-alignment).
+
 Related configuration:
 
 ```
