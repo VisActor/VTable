@@ -18,6 +18,8 @@
 | ctrl       | 按住 ctrl 和鼠标左键，选中多个区域                                                                                                                                                                                                                    |
 | 任何一个键 | 可以监听 tableInstance.on('keydown',(args)=>{ })                                                                                                                                                                                                      |
 
+如果以上快捷键响应列表不包括你所需要的能力，可以移步到[excel键盘交互对齐插件使用说明](./plugin/excel-keyboard-alignment)。
+
 相关配置：
 
 ```
