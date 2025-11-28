@@ -235,13 +235,16 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           orient: 'left',
           type: axisOption?.type ?? 'band',
-          __vtableChartTheme: theme,
+          label: {
+            flush: true
+          },
           // 默认左侧维度轴对应的图表direction 为 horizontal
           // 散点图特殊处理
           inverse: transformInverse(
             axisOption,
             (spec?.direction ?? (chartType === 'scatter' ? 'vertical' : 'horizontal')) === Direction.horizontal
           ),
+          __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
         }
       );
@@ -458,6 +461,9 @@ export function getAxisConfigInPivotChart(col: number, row: number, layout: Pivo
         {
           orient: 'bottom',
           type: axisOption?.type ?? 'band',
+          label: {
+            flush: true
+          },
           __vtableChartTheme: theme,
           __vtableBodyChartCellPadding: bodyChartCellPadding
         }
