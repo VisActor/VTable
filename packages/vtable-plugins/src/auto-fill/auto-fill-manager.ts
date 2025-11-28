@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Direction, APPLY_TYPE, CellValueType } from './types';
+import { Direction, APPLY_TYPE } from './types';
 import type {
   ISourceDataPiece,
   ICellData,
   Nullable,
   IRuleConfirmedData,
   IDiscreteRange,
-  IAutoFillLocation
+  IAutoFillLocation,
+  APPLY_FUNCTIONS
 } from './types';
-import { AutoFillService } from './auto-fill-services';
-import { otherRule } from './rules';
-import { fillCopy, getDataIndex, getLenS } from './utils/fill';
-import type { ICopyDataInType } from './utils/fill';
-import type { APPLY_FUNCTIONS } from './types';
 import type { CellRange } from '@visactor/vtable/es/ts-types/table-engine';
 import { TABLE_EVENT_TYPE } from '@visactor/vtable';
 import type { ListTable } from '@visactor/vtable';
@@ -39,6 +35,11 @@ import {
 } from './auto-fill-helper';
 import type { IAutoFillPluginOptions } from '.';
 import { InteractionState } from '@visactor/vtable/es/ts-types';
+import { createFormulaAdapter, type IFormulaAwareTable, DefaultFormulaAdapter } from './formula-integration';
+import { AutoFillService } from './auto-fill-services';
+import { otherRule } from './rules';
+import { fillCopy, getDataIndex, getLenS } from './utils/fill';
+import type { ICopyDataInType } from './utils/fill';
 export class AutoFillManager {
   // 源数据
   private sourceData: ISourceDataPiece[] = [];
@@ -59,10 +60,12 @@ export class AutoFillManager {
   };
 
   private options?: IAutoFillPluginOptions;
+  private formulaAdapter: IFormulaAwareTable;
 
   constructor(options?: IAutoFillPluginOptions) {
     this.options = options;
     this.autoFillService = new AutoFillService();
+    this.formulaAdapter = new DefaultFormulaAdapter({} as ListTable); // Will be updated in setTable
   }
 
   setTable(table: ListTable) {
@@ -71,6 +74,14 @@ export class AutoFillManager {
       col: new Set()
     };
     this.tableInstance = table;
+    // Create formula adapter based on table capabilities and custom functions
+    this.formulaAdapter = createFormulaAdapter(
+      table,
+      this.options?.isFormulaCell,
+      this.options?.getCellFormula,
+      this.options?.setCellFormula
+    );
+
     table.on(TABLE_EVENT_TYPE.DROPDOWN_MENU_CLICK, (args: any) => {
       if (args.text === '复制填充') {
         this.fillData(APPLY_TYPE.COPY);
@@ -195,13 +206,29 @@ export class AutoFillManager {
       };
       bArray.forEach(b => {
         let data: Nullable<ICellData>;
+        const col = isVertical ? a : b;
+        const row = isVertical ? b : a;
+
         if (isVertical) {
           data = matrix.getValue(b, a);
         } else {
           data = matrix.getValue(a, b);
         }
+
+        // Enhance cell data with formula information if available
+        if (data && this.formulaAdapter.isFormulaCell(col, row)) {
+          const formula = this.formulaAdapter.getCellFormula(col, row);
+          if (formula) {
+            data = {
+              ...data,
+              v: formula // Use formula string as value for auto-fill processing
+            };
+          }
+        }
+
         // find rules to match data
-        const { type, isContinue } = rules.find(r => r.match(data, null)) || otherRule;
+        const ruleMatch = rules.find((r: any) => r.match(data, null)) || otherRule;
+        const { type, isContinue } = ruleMatch;
         if (isContinue(prevData, data)) {
           const typeInfo = sourceDataPiece[type];
 
@@ -340,6 +367,8 @@ export class AutoFillManager {
 
     // 获取填充的值
     const values: string[][] = [];
+    const formulaUpdates: Array<{ col: number; row: number; formula: string }> = [];
+
     targetRows.forEach((row, rowIndex) => {
       const rowValues: string[] = [];
       targetCols.forEach((col, colIndex) => {
@@ -350,15 +379,44 @@ export class AutoFillManager {
         }
         // 填充数据存入rowValues，再一次性填充到表格中
         if (applyDatas[rowIndex][colIndex]) {
-          rowValues.push((applyDatas[rowIndex][colIndex] as any)?.v + '');
+          const cellData = applyDatas[rowIndex][colIndex];
+          const cellValue = (cellData as any)?.v + '';
+
+          // Check if this is a formula that needs special handling
+          if (cellData && typeof cellData.v === 'string' && cellData.v.startsWith('=')) {
+            // Store formula for separate processing
+            formulaUpdates.push({
+              col,
+              row,
+              formula: cellData.v
+            });
+            rowValues.push(cellValue);
+          } else {
+            rowValues.push(cellValue);
+          }
         }
       });
       values.push(rowValues);
     });
+
     // 获取填充开始的行和列，设置表格值
     const minRow = Math.min(...targetRows);
     const minCol = Math.min(...targetCols);
+
+    // Set regular values first
     this.tableInstance.changeCellValues(minCol, minRow, values);
+
+    // Then set formulas using the formula adapter for proper integration
+    if (formulaUpdates.length > 0) {
+      formulaUpdates.forEach(({ col, row, formula }) => {
+        this.formulaAdapter.setCellFormula(col, row, formula);
+      });
+
+      // Refresh formula calculations if we have a formula engine
+      if (this.formulaAdapter.hasFormulaEngine()) {
+        this.formulaAdapter.refreshFormulas();
+      }
+    }
   }
 
   /**
@@ -386,12 +444,12 @@ export class AutoFillManager {
 
     const applyDataInTypes: { [key: string]: any[] } = {};
 
-    rules.forEach(r => {
+    rules.forEach((r: any) => {
       applyDataInTypes[r.type] = [];
     });
 
     // calc cell data to apply
-    rules.forEach(r => {
+    rules.forEach((r: any) => {
       const { type, applyFunctions: customApplyFunctions = {} } = r;
       const copyDataInType = sourceDataPiece[type];
       if (!copyDataInType) {
@@ -421,7 +479,7 @@ export class AutoFillManager {
 
     // calc index
     for (let x = 0; x < asLen; x++) {
-      rules.forEach(r => {
+      rules.forEach((r: any) => {
         const { type } = r;
         const applyDataInType = applyDataInTypes[type];
         for (let y = 0; y < applyDataInType.length; y++) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { IAutoFillRule } from './types';
+import type { IAutoFillRule, ICellData, Nullable } from './types';
 
 import {
   chineseToNumber,
@@ -385,4 +385,286 @@ export const loopSeriesRule: IAutoFillRule = {
 
 export function reverseIfNeed<T>(data: T[], reverse: boolean): T[] {
   return reverse ? data.reverse() : data;
+}
+
+export const formulaRule: IAutoFillRule = {
+  type: DATA_TYPE.FORMULA,
+  priority: 1200,
+  match: (cellData: any, accessor: any) => {
+    // Check if cell contains a formula (starts with =)
+    return typeof cellData?.v === 'string' && cellData.v.startsWith('=');
+  },
+  isContinue: (prev: any, cur: any) => {
+    // Continue if both are formulas
+    if (prev.type === DATA_TYPE.FORMULA && cur?.v?.startsWith('=')) {
+      return true;
+    }
+    return false;
+  },
+  applyFunctions: {
+    [APPLY_TYPE.COPY]: (dataWithIndex: any, len: any, direction: any, copyDataPiece: any, location?: any) => {
+      const { data } = dataWithIndex;
+      return fillCopy(data, len);
+    },
+    [APPLY_TYPE.SERIES]: (dataWithIndex: any, len: any, direction: any, copyDataPiece: any, location?: any) => {
+      const { data } = dataWithIndex;
+
+      // For formulas, series fill means adjusting cell references
+      if (data.length === 1) {
+        // Single formula - adjust references based on direction
+        return adjustFormulaReferences(data, len, direction, location);
+      }
+
+      // Multiple formulas - check if they follow a pattern
+      const adjustedFormulas = adjustFormulaReferencesInSeries(data, len, direction, location);
+      if (adjustedFormulas) {
+        return adjustedFormulas;
+      }
+
+      // If no clear pattern, fall back to copy
+      return fillCopy(data, len);
+    }
+  }
+};
+
+/**
+ * Adjust formula cell references for auto-fill
+ */
+function adjustFormulaReferences(
+  formulas: any[],
+  len: number,
+  direction: Direction,
+  location?: any
+): Array<Nullable<ICellData>> {
+  const result: Array<Nullable<ICellData>> = [];
+  const baseFormula = formulas[0]?.v || '';
+
+  for (let i = 0; i < len; i++) {
+    let newFormula = baseFormula;
+
+    // Calculate offset based on direction and position
+    let rowOffset = 0;
+    let colOffset = 0;
+
+    switch (direction) {
+      case Direction.DOWN:
+        rowOffset = i + 1;
+        break;
+      case Direction.UP:
+        rowOffset = -(i + 1);
+        break;
+      case Direction.RIGHT:
+        colOffset = i + 1;
+        break;
+      case Direction.LEFT:
+        colOffset = -(i + 1);
+        break;
+    }
+
+    // Adjust cell references in formula
+    newFormula = adjustCellReferencesInFormula(baseFormula, rowOffset, colOffset);
+
+    result.push({
+      v: newFormula,
+      t: formulas[0]?.t
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Adjust formula references in a series pattern
+ */
+function adjustFormulaReferencesInSeries(
+  formulas: any[],
+  len: number,
+  direction: Direction,
+  location?: any
+): Array<Nullable<ICellData>> | null {
+  if (formulas.length < 2) {
+    return null;
+  }
+
+  // Extract and analyze the pattern in existing formulas
+  const baseFormula1 = formulas[0]?.v || '';
+  const baseFormula2 = formulas[1]?.v || '';
+
+  // Try to detect the pattern difference
+  const pattern = detectFormulaPattern(baseFormula1, baseFormula2);
+  if (!pattern) {
+    return null;
+  }
+
+  const result: Array<Nullable<ICellData>> = [];
+
+  // Generate formulas following the detected pattern
+  for (let i = 0; i < len; i++) {
+    let newFormula = baseFormula1;
+
+    // Apply pattern multiplier based on position
+    const multiplier = i + 1;
+    newFormula = applyFormulaPattern(newFormula, pattern, multiplier, direction);
+
+    result.push({
+      v: newFormula,
+      t: formulas[0]?.t
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Detect the pattern between two formulas
+ */
+function detectFormulaPattern(formula1: string, formula2: string): { rowOffset: number; colOffset: number } | null {
+  // Simple pattern detection - look for cell reference differences
+  const cellRefRegex = /\$?([A-Z]+)\$?(\d+)/g;
+  const matches1 = [...formula1.matchAll(cellRefRegex)];
+  const matches2 = [...formula2.matchAll(cellRefRegex)];
+
+  if (matches1.length !== matches2.length || matches1.length === 0) {
+    return null;
+  }
+
+  // Calculate average offset
+  let totalRowOffset = 0;
+  let totalColOffset = 0;
+  let validMatches = 0;
+
+  for (let i = 0; i < matches1.length; i++) {
+    const col1 = matches1[i][1];
+    const row1 = parseInt(matches1[i][2], 10);
+    const col2 = matches2[i][1];
+    const row2 = parseInt(matches2[i][2], 10);
+
+    const colOffset = columnToNumber(col2) - columnToNumber(col1);
+    const rowOffset = row2 - row1;
+
+    if (Math.abs(colOffset) < 100 && Math.abs(rowOffset) < 10000) {
+      // Sanity check
+      totalColOffset += colOffset;
+      totalRowOffset += rowOffset;
+      validMatches++;
+    }
+  }
+
+  if (validMatches === 0) {
+    return null;
+  }
+
+  return {
+    rowOffset: totalRowOffset / validMatches,
+    colOffset: totalColOffset / validMatches
+  };
+}
+
+/**
+ * Apply pattern to formula
+ */
+function applyFormulaPattern(
+  formula: string,
+  pattern: { rowOffset: number; colOffset: number },
+  multiplier: number,
+  direction: Direction
+): string {
+  const cellRefRegex = /\$?([A-Z]+)\$?(\d+)/g;
+
+  return formula.replace(cellRefRegex, (match, colStr, rowStr) => {
+    const isColAbsolute = match.startsWith('$') && match.indexOf(colStr) > 0;
+    const isRowAbsolute = match.includes('$' + rowStr);
+
+    let newCol = colStr;
+    let newRow = rowStr;
+
+    if (!isColAbsolute && pattern.colOffset !== 0) {
+      const colNum = columnToNumber(colStr);
+      const newColNum = colNum + pattern.colOffset * multiplier;
+      newCol = numberToColumn(newColNum);
+    }
+
+    if (!isRowAbsolute && pattern.rowOffset !== 0) {
+      const rowNum = parseInt(rowStr, 10);
+      const newRowNum = rowNum + pattern.rowOffset * multiplier;
+      newRow = newRowNum.toString();
+    }
+
+    // Reconstruct reference with original absolute references preserved
+    let result = '';
+    if (isColAbsolute) {
+      result += '$';
+    }
+    result += newCol;
+    if (isRowAbsolute) {
+      result += '$';
+    }
+    result += newRow;
+
+    return result;
+  });
+}
+
+/**
+ * Adjust cell references in formula
+ */
+function adjustCellReferencesInFormula(formula: string, rowOffset: number, colOffset: number): string {
+  const cellRefRegex = /\$?([A-Z]+)\$?(\d+)/g;
+
+  return formula.replace(cellRefRegex, (match, colStr, rowStr) => {
+    const isColAbsolute = match.startsWith('$') && match.indexOf(colStr) > 0;
+    const isRowAbsolute = match.includes('$' + rowStr);
+
+    let newCol = colStr;
+    let newRow = rowStr;
+
+    if (!isColAbsolute && colOffset !== 0) {
+      const colNum = columnToNumber(colStr);
+      const newColNum = colNum + colOffset;
+      newCol = numberToColumn(newColNum);
+    }
+
+    if (!isRowAbsolute && rowOffset !== 0) {
+      const rowNum = parseInt(rowStr, 10);
+      const newRowNum = rowNum + rowOffset;
+      newRow = newRowNum.toString();
+    }
+
+    // Reconstruct reference with original absolute references preserved
+    let result = '';
+    if (isColAbsolute) {
+      result += '$';
+    }
+    result += newCol;
+    if (isRowAbsolute) {
+      result += '$';
+    }
+    result += newRow;
+
+    return result;
+  });
+}
+
+/**
+ * Convert column letter to number (A=1, B=2, etc.)
+ */
+function columnToNumber(col: string): number {
+  let result = 0;
+  for (let i = 0; i < col.length; i++) {
+    result = result * 26 + (col.charCodeAt(i) - 'A'.charCodeAt(0) + 1);
+  }
+  return result;
+}
+
+/**
+ * Convert column number to letter (1=A, 2=B, etc.)
+ */
+function numberToColumn(num: number): string {
+  let result = '';
+  while (num > 0) {
+    num--;
+    result = String.fromCharCode('A'.charCodeAt(0) + (num % 26)) + result;
+    num = Math.floor(num / 26);
+  }
+  return result;
 }
