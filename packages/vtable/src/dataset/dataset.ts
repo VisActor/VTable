@@ -803,8 +803,9 @@ export class Dataset {
         if (this.indicatorsAsCol) {
           assignedIndicatorKey_value = colKeys[col_j].indicatorKey;
         }
-        const flatRowKey = rowKey.join(this.stringJoinChar);
-        const flatColKey = colKey.join(this.stringJoinChar);
+        // 原生的数组join方法会将null转换为空字符串
+        const flatRowKey = join(rowKey, this.stringJoinChar);
+        const flatColKey = join(colKey, this.stringJoinChar);
 
         //#region 收集用户传入的汇总数据到totalRecordsTree
         //该条数据为汇总数据
