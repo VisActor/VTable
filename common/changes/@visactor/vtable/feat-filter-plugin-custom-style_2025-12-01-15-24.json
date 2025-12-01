@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: filter state not right after other filter change",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

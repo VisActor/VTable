@@ -371,24 +371,25 @@ export class ValueFilter {
       }
     } else {
       // 如果筛选未启用，初始化为计数>0的值都选中（但不启用筛选）
-      if (!filter) {
-        const availableRawValues =
-          this.uniqueKeys
-            .get(fieldId)
-            ?.filter(item => item.count > 0) // 只选中计数>0的值
-            ?.map(item => item.rawValue)
-            .filter(v => v !== undefined && v !== null) || [];
+      // 此处，不应该判断: 未开启filter时filter.values中仍然可能会被其他筛选器联动的数据
+      // if (!filter) {
+      const availableRawValues =
+        this.uniqueKeys
+          .get(fieldId)
+          ?.filter(item => item.count > 0) // 只选中计数>0的值
+          ?.map(item => item.rawValue)
+          .filter(v => v !== undefined && v !== null) || [];
 
-        this.filterStateManager.dispatch({
-          type: FilterActionType.ADD_FILTER,
-          payload: {
-            field: fieldId,
-            type: 'byValue',
-            values: availableRawValues,
-            enable: false // 初始状态为未启用
-          }
-        });
-      }
+      this.filterStateManager.dispatch({
+        type: FilterActionType.ADD_FILTER,
+        payload: {
+          field: fieldId,
+          type: 'byValue',
+          values: availableRawValues,
+          enable: false // 初始状态为未启用
+        }
+      });
+      // }
     }
   }
 
@@ -448,15 +449,18 @@ export class ValueFilter {
 
   applyFilter(fieldId: string | number = this.selectedField): void {
     // 获取当前搜索过滤后可见的选中值
-    const visibleSelectedKeys = Array.from(this.filterStateManager.getVisibleSelectedValues(fieldId));
+    // const visibleSelectedKeys = Array.from(this.filterStateManager.getVisibleSelectedValues(fieldId));
 
-    if (visibleSelectedKeys.length >= 0 && visibleSelectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
+    // 业务侧期望: 搜索出来的结果作为原有筛选结果的增项，而不覆盖原有筛选结果
+    const filter = this.filterStateManager.getFilterState(fieldId);
+    const allSelectedValues = filter.values;
+    if (allSelectedValues.length >= 0 && allSelectedValues.length < this.uniqueKeys.get(fieldId)?.length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
           field: fieldId,
           type: 'byValue',
-          values: visibleSelectedKeys,
+          values: allSelectedValues,
           enable: true
         }
       });
