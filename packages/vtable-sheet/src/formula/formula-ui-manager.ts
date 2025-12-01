@@ -204,12 +204,12 @@ export class FormulaUIManager {
       if (value.startsWith('=') && value.length > 1) {
         try {
           // 检查是否包含循环引用
-          const currentCellAddress = activeWorkSheet.addressFromCoord(selection.row, selection.col);
+          const currentCellAddress = activeWorkSheet.addressFromCoord(selection.col, selection.row);
           // 使用正则表达式来精确匹配单元格引用
           const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
           if (cellRegex.test(value)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
-            activeWorkSheet.setCellValue(selection.row, selection.col, '#CYCLE!');
+            activeWorkSheet.setCellValue(selection.col, selection.row, '#CYCLE!');
             activeWorkSheet.tableInstance?.changeCellValue(selection.col, selection.row, '#CYCLE!');
             formulaInput.value = '';
             formulaInput.blur();
@@ -233,14 +233,14 @@ export class FormulaUIManager {
             col: selection.col
           });
 
-          activeWorkSheet.setCellValue(selection.row, selection.col, result.value);
+          activeWorkSheet.setCellValue(selection.col, selection.row, result.value);
         } catch (error) {
           console.warn('Formula confirmation error:', error);
           // 显示错误状态
-          activeWorkSheet.setCellValue(selection.row, selection.col, '#ERROR!');
+          activeWorkSheet.setCellValue(selection.col, selection.row, '#ERROR!');
         }
       } else {
-        activeWorkSheet.setCellValue(selection.row, selection.col, value);
+        activeWorkSheet.setCellValue(selection.col, selection.row, value);
       }
     }
   }
@@ -284,7 +284,7 @@ export class FormulaUIManager {
       // 更新单元格地址
       const cellAddressBox = this.formulaBarElement.querySelector('.vtable-sheet-cell-address');
       if (cellAddressBox) {
-        cellAddressBox.textContent = activeWorkSheet.addressFromCoord(selection.startRow, selection.startCol);
+        cellAddressBox.textContent = activeWorkSheet.addressFromCoord(selection.startCol, selection.startRow);
       }
 
       // 更新公式输入框
@@ -315,7 +315,7 @@ export class FormulaUIManager {
             const displayFormula = formula.startsWith('=') ? formula : '=' + formula;
             formulaInput.value = displayFormula;
           } else {
-            const cellValue = activeWorkSheet.getCellValue(selection.startRow, selection.startCol);
+            const cellValue = activeWorkSheet.getCellValue(selection.startCol, selection.startRow);
             formulaInput.value = cellValue !== undefined && cellValue !== null ? String(cellValue) : '';
           }
         } catch (e) {
@@ -423,12 +423,12 @@ export class FormulaUIManager {
       if (value.startsWith('=') && value.length > 1) {
         try {
           // 检查是否包含循环引用
-          const currentCellAddress = activeWorkSheet.addressFromCoord(editingCell.row, editingCell.col);
+          const currentCellAddress = activeWorkSheet.addressFromCoord(editingCell.col, editingCell.row);
           // 使用正则表达式来精确匹配单元格引用
           const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
           if (cellRegex.test(value)) {
             console.warn('Circular reference detected:', value, 'contains', currentCellAddress);
-            activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#CYCLE!');
+            activeWorkSheet.setCellValue(editingCell.col, editingCell.row, '#CYCLE!');
             activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#CYCLE!');
             this.sheet.formulaManager.formulaWorkingOnCell = null;
             input.value = '';
@@ -472,13 +472,13 @@ export class FormulaUIManager {
         } catch (error) {
           console.warn('Formula evaluation error:', error);
           // 显示错误状态
-          activeWorkSheet.setCellValue(editingCell.row, editingCell.col, '#ERROR!');
+          activeWorkSheet.setCellValue(editingCell.col, editingCell.row, '#ERROR!');
           activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, '#ERROR!');
           this.sheet.formulaManager.formulaWorkingOnCell = null;
         }
       } else {
         // 普通值，直接设置
-        activeWorkSheet.setCellValue(editingCell.row, editingCell.col, value);
+        activeWorkSheet.setCellValue(editingCell.col, editingCell.row, value);
         activeWorkSheet.tableInstance?.changeCellValue(editingCell.col, editingCell.row, value);
         this.sheet.formulaManager.formulaWorkingOnCell = null;
       }
