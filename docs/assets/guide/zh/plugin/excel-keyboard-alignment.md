@@ -17,12 +17,13 @@ const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugi
 ```ts
 export type IExcelEditCellKeyboardPluginOptions = {
   id?: string;
+  /** 该插件响应的键盘事件列表 */
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
-  // 是否响应删除
-  // enableDeleteKey?: boolean;
+  /** 删除能力是否只应用到可编辑单元格 */
+  deleteWorkOnEditableCell?: boolean;
 };
 ```
-其中`responseKeyboard`配置项用于配置响应的键盘事件，值类型为`ExcelEditCellKeyboardResponse`，具体定义如下：
+其中`responseKeyboard`配置项用于配置该插件响应的键盘事件列表，值类型为`ExcelEditCellKeyboardResponse`，具体定义如下：
 ```ts
 export enum ExcelEditCellKeyboardResponse {
   ENTER = 'enter',

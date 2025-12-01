@@ -17,12 +17,13 @@ The constructor of `ExcelEditCellKeyboardPlugin` can accept a configuration item
 ```ts
 export type IExcelEditCellKeyboardPluginOptions = {
   id?: string;
+  /** The list of keyboard events that the plugin responds to */
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
-  // Whether to respond to delete
-  // enableDeleteKey?: boolean;
+  /** Whether the delete ability only applies to editable cells */
+  deleteWorkOnEditableCell?: boolean;
 };
 ```
-The `responseKeyboard` configuration item is used to configure the keyboard event to be responded to, the value type of which is `ExcelEditCellKeyboardResponse`, as follows:
+  The `responseKeyboard` configuration item is used to configure the list of keyboard events that the plugin responds to, the value type of which is `ExcelEditCellKeyboardResponse`, as follows:
 ```ts
 export enum ExcelEditCellKeyboardResponse {
   ENTER = 'enter',

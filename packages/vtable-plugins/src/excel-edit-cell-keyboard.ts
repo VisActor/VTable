@@ -15,12 +15,12 @@ export enum ExcelEditCellKeyboardResponse {
 //备用 插件配置项 目前感觉都走默认逻辑就行
 export type IExcelEditCellKeyboardPluginOptions = {
   id?: string;
+  /** 该插件响应的键盘事件列表 */
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
+  /** 删除能力是否只应用到可编辑单元格 */
   deleteWorkOnEditableCell?: boolean;
   // keyDown_before?: (event: KeyboardEvent) => void;
   // keyDown_after?: (event: KeyboardEvent) => void;
-  // 是否响应删除
-  // enableDeleteKey?: boolean;
 };
 
 export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlugin {
