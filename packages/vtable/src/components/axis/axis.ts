@@ -26,7 +26,9 @@ export interface ICartesianAxis {
     option: ICellAxisOption,
     width: number,
     height: number,
-    padding: [number, number, number, number],
+    //原来值传入了bodyChartCellPadding，没有考虑轴所在单元格本身的padding，而是将轴直接占满单元格的情况来写的逻辑，现在需考虑轴所在单元格本身的padding，来控制轴和单元格分割线的间距
+    bodyChartCellPadding: [number, number, number, number],
+    // axisCellPadding: [number, number, number, number],
     table: BaseTableAPI
   ): CartesianAxis;
 }
@@ -46,16 +48,19 @@ export class CartesianAxis {
   tickData: DataView;
   scale: BandAxisScale | LinearAxisScale;
   component: LineAxis;
-  padding: [number, number, number, number];
+  bodyChartCellPadding: [number, number, number, number];
+  // axisCellPadding: [number, number, number, number];
 
   constructor(
     option: ICellAxisOption,
     width: number,
     height: number,
-    padding: [number, number, number, number],
+    bodyChartCellPadding: [number, number, number, number],
+    // axisCellPadding: [number, number, number, number],
     table: BaseTableAPI
   ) {
-    this.padding = padding;
+    this.bodyChartCellPadding = bodyChartCellPadding;
+    // this.axisCellPadding = axisCellPadding;
     this.table = table;
     this.orient = option.orient ?? 'left';
     this.type = option.type ?? 'band';
@@ -73,17 +78,35 @@ export class CartesianAxis {
       // const innerOffsetBottom = this.option.innerOffset?.bottom ?? 0;
       const innerOffsetTop = 0;
       const innerOffsetBottom = 0;
-      this.width = width;
-      this.height = height - padding[0] - padding[2] - innerOffsetBottom;
-      this.y = padding[0] + innerOffsetTop;
+      if (this.orient === 'left') {
+        // 左轴只考虑padding的左值
+        this.x = this.option.cellPaddingLeft ?? 0;
+        this.width = width - (this.option.cellPaddingLeft ?? 0);
+      }
+      if (this.orient === 'right') {
+        // 右轴只考虑padding的右值
+        this.x = 0;
+        this.width = width - (this.option.cellPaddingRight ?? 0);
+      }
+      this.height = height - bodyChartCellPadding[0] - bodyChartCellPadding[2] - innerOffsetBottom;
+      this.y = bodyChartCellPadding[0] + innerOffsetTop;
     } else if (this.orient === 'top' || this.orient === 'bottom') {
       // const innerOffsetLeft = this.option.innerOffset?.left ?? 0;
       // const innerOffsetRight = this.option.innerOffset?.right ?? 0;
       const innerOffsetLeft = 0;
       const innerOffsetRight = 0;
-      this.width = width - padding[1] - padding[3] - innerOffsetRight;
-      this.height = height;
-      this.x = padding[3] + innerOffsetLeft;
+      this.width = width - bodyChartCellPadding[1] - bodyChartCellPadding[3] - innerOffsetRight;
+      this.x = bodyChartCellPadding[3] + innerOffsetLeft;
+      if (this.orient === 'top') {
+        // 上轴只考虑padding的上值
+        this.y = this.option.cellPaddingTop ?? 0;
+        this.height = height - (this.option.cellPaddingTop ?? 0);
+      }
+      if (this.orient === 'bottom') {
+        // 下轴只考虑padding的下值
+        this.y = 0;
+        this.height = height - (this.option.cellPaddingBottom ?? 0);
+      }
     }
 
     this.visible = option.visible ?? true;
@@ -194,8 +217,23 @@ export class CartesianAxis {
   }
 
   resize(width: number, height: number) {
-    this.width = width - (this.orient === 'top' || this.orient === 'bottom' ? this.padding[1] + this.padding[3] : 0);
-    this.height = height - (this.orient === 'left' || this.orient === 'right' ? this.padding[2] + this.padding[0] : 0);
+    if (this.orient === 'left') {
+      // 左轴只考虑padding的左值
+      this.width = width - (this.option.cellPaddingLeft ?? 0);
+    } else if (this.orient === 'right') {
+      // 右轴只考虑padding的右值
+      this.width = width - (this.option.cellPaddingRight ?? 0);
+    } else if (this.orient === 'top' || this.orient === 'bottom') {
+      // 上轴和下轴只考虑图表单元格的bodyChartCellPadding的值
+      this.width = width - (this.bodyChartCellPadding[1] + this.bodyChartCellPadding[3]);
+    }
+    if (this.orient === 'top') {
+      this.height = height - (this.option.cellPaddingTop ?? 0);
+    } else if (this.orient === 'bottom') {
+      this.height = height - (this.option.cellPaddingBottom ?? 0);
+    } else if (this.orient === 'left' || this.orient === 'right') {
+      this.height = height - (this.bodyChartCellPadding[2] + this.bodyChartCellPadding[0]);
+    }
     this.updateScaleRange();
     this.computeData();
     const axisStylrAttrs = getAxisAttributes(this.option);
@@ -348,7 +386,7 @@ export class CartesianAxis {
   }
 }
 
-function getTableAxisTheme(orient: IOrientType, theme: TableTheme) {
+export function getTableAxisTheme(orient: IOrientType, theme: TableTheme) {
   let directionStyle;
   if (orient === 'left') {
     directionStyle = theme.axisStyle.leftAxisStyle;

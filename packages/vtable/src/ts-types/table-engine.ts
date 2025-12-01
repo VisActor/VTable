@@ -40,6 +40,7 @@ import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
 import type { ColorPropertyDefine, StylePropertyFunctionArg } from './style-define';
 import type { TableTheme } from '../themes/theme-define';
+import type { LineAxisAttributes } from '@src/vrender';
 
 export interface CellAddress {
   col: number;
@@ -582,6 +583,24 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
     dimensions: IDimensionInfo[];
     width: number;
   }[];
+  /** 透视图中多个图表基于相同维度值进行交互联动的功能,是否开启  */
+  chartDimensionLinkage?: {
+    /** 是否显示tooltip 默认true*/
+    showTooltip?: boolean;
+    /** 针对条形图折线图等， 整列显示tooltip时，最后一行可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多高 可允许显示tooltip。*/
+    heightLimitToShowTooltipForLastRow?: number;
+    /** 针对横向条形图，整行显示tooltip时，最后一列可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多宽 可允许显示tooltip。*/
+    widthLimitToShowTooltipForLastColumn?: number;
+    /**
+     * 鼠标hover到透视图上时，轴上悬浮label标签的相关配置
+     */
+    labelHoverOnAxis?: {
+      left?: LineAxisAttributes['labelHoverOnAxis'];
+      right?: LineAxisAttributes['labelHoverOnAxis'];
+      top?: LineAxisAttributes['labelHoverOnAxis'];
+      bottom?: LineAxisAttributes['labelHoverOnAxis'];
+    };
+  };
 }
 export interface PivotTableAPI extends BaseTableAPI {
   internalProps: PivotTableProtected;

@@ -1061,7 +1061,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               by: columnKeys,
               range: true,
               // 判断是否需要匹配维度值相同的进行求和计算
-              sumBy: indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
+              sumBy:
+                indicatorSpec.type === 'histogram'
+                  ? rowKeys.concat(indicatorSpec?.yField, indicatorSpec?.y2Field)
+                  : indicatorSpec?.stack && rowKeys.concat(indicatorSpec?.yField)
             };
           }
           if (indicatorSpec.series) {
@@ -1093,7 +1096,12 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               };
             });
           } else {
-            const yField = typeof indicatorSpec.yField === 'string' ? indicatorSpec.yField : indicatorSpec.yField[0];
+            const yField =
+              indicatorSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
+                ? indicatorSpec.y2Field
+                : typeof indicatorSpec.yField === 'string'
+                ? indicatorSpec.yField
+                : indicatorSpec.yField[0];
             collectValuesBy[yField] = {
               by: rowKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'yField' : undefined,
@@ -1101,21 +1109,22 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               sortBy:
                 indicatorSpec.direction === 'horizontal' ? indicatorSpec?.data?.fields?.[yField]?.domain : undefined
             };
+
             //明确指定 chartSpec.stack为true
             indicatorSpec?.stack !== false &&
               (indicatorSpec?.type === 'bar' || indicatorSpec?.type === 'area') &&
               (indicatorSpec.stack = true);
             //下面这个收集的值 是和收集的 collectValuesBy[indicatorDefine.indicatorKey] 相同(heatmap情况除外)
             //特殊处理histogram直方图xField和x2Field
-            const xField =
-              indicatorSpec.type === 'histogram'
-                ? indicatorSpec.x2Field
-                : indicatorSpec.xField ?? indicatorSpec.maxField;
+            const xField = indicatorSpec.xField ?? indicatorSpec.maxField;
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'xField' : undefined,
               range: hasLinearAxis(indicatorSpec, this._axes, indicatorSpec.direction === 'horizontal', true),
-              sumBy: indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
+              sumBy:
+                indicatorSpec.type === 'histogram'
+                  ? rowKeys.concat(indicatorSpec?.yField, indicatorSpec?.y2Field)
+                  : indicatorSpec.stack && rowKeys.concat(indicatorSpec?.yField),
               sortBy:
                 indicatorSpec.direction !== 'horizontal' ? indicatorSpec?.data?.fields?.[xField]?.domain : undefined,
               extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine),
@@ -1422,7 +1431,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
 
         // chartInstance.updateDataSync(dataId, data);
-        if (typeof dataId === 'string') {
+        if (typeof dataId === 'string' || typeof dataId === 'number') {
           chartInstance.updateDataSync(dataId, data ?? []);
         } else {
           const dataBatch = [];
@@ -1535,7 +1544,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         stageMatrix.e,
         stageMatrix.f
       );
-      if (typeof dataId === 'string') {
+      if (typeof dataId === 'string' || typeof dataId === 'number') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {
         const dataBatch = [];

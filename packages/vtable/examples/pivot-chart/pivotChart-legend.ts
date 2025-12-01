@@ -187,7 +187,10 @@ export function createTable() {
             }
           }
         },
-        axes: [{ orient: 'left', visible: true, label: { visible: true } }],
+        axes: [
+          { orient: 'left', visible: true, label: { visible: true } },
+          { orient: 'bottom', visible: true }
+        ],
         // brush: {
         //   brushType: 'rect',
         //   brushLinkSeriesIndex: [1, 2],
@@ -499,7 +502,7 @@ export function createTable() {
         seriesField: '20001',
         axes: [
           { orient: 'left', visible: true, label: { visible: true } },
-          { orient: 'bottom', visible: false }
+          { orient: 'bottom', visible: true }
         ],
         scales: [
           {
@@ -10483,9 +10486,9 @@ export function createTable() {
       position: 'start',
       maxRow: 1,
       padding: [50, 0, 0, 0]
-    },
-    widthMode: 'adaptive',
-    heightMode: 'adaptive'
+    }
+    // widthMode: 'adaptive',
+    // heightMode: 'adaptive'
     // hover: {
     //   disableHeaderHover:false,
     //   disableHover: true

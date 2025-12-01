@@ -48,7 +48,7 @@ export interface FilterAction {
 
 export interface ValueFilterOptionDom {
   id: string;
-  originalValue: any;
+  originalValue: any[];
   itemContainer: HTMLDivElement;
   checkbox: HTMLInputElement;
   countSpan: HTMLSpanElement;
@@ -90,3 +90,5 @@ export enum FilterOperatorCategory {
   CHECKBOX = 'checkbox',
   RADIO = 'radio'
 }
+
+export type FilterListener = (state: FilterState, action?: FilterAction) => void;
