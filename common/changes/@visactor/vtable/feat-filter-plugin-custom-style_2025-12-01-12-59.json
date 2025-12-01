@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: select none not effect bug",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

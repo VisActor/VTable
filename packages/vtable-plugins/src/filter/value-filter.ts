@@ -450,7 +450,7 @@ export class ValueFilter {
     // 获取当前搜索过滤后可见的选中值
     const visibleSelectedKeys = Array.from(this.filterStateManager.getVisibleSelectedValues(fieldId));
 
-    if (visibleSelectedKeys.length > 0 && visibleSelectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
+    if (visibleSelectedKeys.length >= 0 && visibleSelectedKeys.length < this.uniqueKeys.get(fieldId)?.length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
