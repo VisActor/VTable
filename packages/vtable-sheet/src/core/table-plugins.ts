@@ -98,9 +98,31 @@ export function getTablePlugins(
     enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== ContextMenuPlugin);
   }
   if (!disabledPluginsUserSetted?.some(module => module.module === ExcelEditCellKeyboardPlugin)) {
-    const userPluginOptions = enabledPluginsUserSetted?.find(
-      module => module.module === ExcelEditCellKeyboardPlugin
-    )?.moduleOptions;
+    const userPluginOptions =
+      enabledPluginsUserSetted?.find(module => module.module === ExcelEditCellKeyboardPlugin)?.moduleOptions ?? {};
+    // let currentState_editingEditor: IEditor | null = null; //需要在keyDownBeforeCallback中保存下来，因为插件处理事件中会影响这个值（调用了completeEdit）
+    // const keyDownBeforeCallback = function (this: ExcelEditCellKeyboardPlugin, event: KeyboardEvent) {
+    //   currentState_editingEditor = sheet.getActiveSheet()?.tableInstance?.editorManager.editingEditor;
+    // };
+    // // 注意：这里使用普通函数而不是箭头函数，这样才能通过 apply 正确绑定 this 为插件实例
+    // const keyDownAfterCallback = function (this: ExcelEditCellKeyboardPlugin, event: KeyboardEvent) {
+    //   const eventKey = event.key.toLowerCase() as ExcelEditCellKeyboardResponse;
+    //   if (this.responseKeyboard.includes(eventKey)) {
+    //     if (
+    //       (currentState_editingEditor &&
+    //         eventKey !== ExcelEditCellKeyboardResponse.DELETE &&
+    //         eventKey !== ExcelEditCellKeyboardResponse.BACKSPACE) ||
+    //       (!currentState_editingEditor &&
+    //         (eventKey === ExcelEditCellKeyboardResponse.DELETE ||
+    //           eventKey === ExcelEditCellKeyboardResponse.BACKSPACE)) ||
+    //       sheet.formulaManager._formulaWorkingOnCell
+    //     ) {
+    //       event.stopPropagation();
+    //       event.preventDefault();
+    //     }
+    //   }
+    // };
+    // 创建插件时包含回调
     const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin(userPluginOptions);
     plugins.push(excelEditCellKeyboardPlugin);
     //已经初始化过的插件，从enabledPluginsUserSetted中移除

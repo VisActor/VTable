@@ -1,45 +1,50 @@
-# Excel Edit Cell Keyboard Behavior Alignment Plugin
+# Excel Keyboard Interaction Alignment Plugin Usage Description
 
-`ExcelEditCellKeyboardPlugin` is a VTable extension component that aligns keyboard behavior in cell editing with Excel functionality.
+`ExcelEditCellKeyboardPlugin` is an extension component of VTable, which can achieve the function of aligning the keyboard behavior of editing cells with Excel.
 
-## Plugin Capabilities
-Regarding keyboard response settings, VTable has the following two configuration entry points:
+## Plugin Implementation Ability Description
+VTable has a lot of keyboard event responses, which can be referred to in the [Shortcut](../shortcut) chapter.
 
-| keyboard   | Response                                                                                                                                                                                                                                                  |
-| :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| enter      | If in edit state, confirms editing completion;<br> If keyboardOptions.moveFocusCellOnEnter is true, pressing enter switches the selected cell to the cell below.<br> If keyboardOptions.editCellOnEnter is true, pressing enter will enter edit mode when a cell is selected. |
-| tab        | Requires keyboardOptions.moveFocusCellOnTab to be enabled.<br> Pressing tab switches the selected cell, if currently editing a cell, the next cell will also be in edit mode. |
-| left       | Direction key, switches the selected cell.<br> If keyboardOptions.moveEditCellOnArrowKeys is enabled, you can also switch the editing cell in edit mode |
-| right      | Same as above |
-| top        | Same as above |
-| bottom     | Same as above |
-| ctrl+c     | The keybinding is not exact, this copy matches the browser's shortcut.<br> Copies selected cell content, requires keyboardOptions.copySelected to be enabled |
-| ctrl+x     | The keybinding is not exact, this cut matches the browser's shortcut.<br> Cuts selected cell content, requires keyboardOptions.cutSelected to be enabled |
-| ctrl+v     | The keybinding is not exact, paste shortcut matches the browser's shortcut.<br> Pastes content to cells, requires keyboardOptions.pasteValueToCell to be enabled, paste only works on cells configured with editor |
-| ctrl+a     | Select all, requires keyboardOptions.selectAllOnCtrlA to be enabled |
-| shift      | Hold shift and left mouse button to select cells in a continuous area |
-| ctrl       | Hold ctrl and left mouse button to select multiple areas |
-| any key    | Can listen to tableInstance.on('keydown',(args)=>{ }) |
+These configuration items can meet the requirements of most editing table keyboard responses, but to better align with the keyboard behavior of Excel, we have developed the `ExcelEditCellKeyboardPlugin` plugin, which can achieve the function of aligning the keyboard behavior of editing cells with Excel.
 
-These settings can satisfy most editing table keyboard response requirements, but compared to Excel, VTable's keyboard behavior still has some differences, such as:
+## Basic Usage of Plugin
 
-- In VTable, when editing a cell, pressing arrow keys doesn't switch to the next cell, but moves the cursor within the editing cell.
-- In VTable, when editing a cell, pressing enter doesn't confirm editing completion, but switches to the next cell.
-- In VTable, when editing a cell, pressing tab doesn't switch to the next cell, but moves the cursor within the editing cell.
-- In VTable, when editing a cell, pressing shift and left mouse button doesn't select cells in a continuous area.
-- In VTable, when editing a cell, holding ctrl and left mouse button doesn't select multiple areas.
+```ts
+const excelEditCellKeyboardPlugin = new VTablePlugins.ExcelEditCellKeyboardPlugin();
+```
+The constructor of `ExcelEditCellKeyboardPlugin` can accept a configuration item, the type of which is `IExcelEditCellKeyboardPluginOptions`, as follows:
 
-
-Combined with VTable's existing capabilities that partially meet the requirements, we developed the `ExcelEditCellKeyboardPlugin` plugin to align cell editing keyboard behavior with Excel functionality.
+```ts
+export type IExcelEditCellKeyboardPluginOptions = {
+  id?: string;
+  /** The list of keyboard events that the plugin responds to */
+  responseKeyboard?: ExcelEditCellKeyboardResponse[];
+  /** Whether the delete ability only applies to editable cells */
+  deleteWorkOnEditableCell?: boolean;
+};
+```
+  The `responseKeyboard` configuration item is used to configure the list of keyboard events that the plugin responds to, the value type of which is `ExcelEditCellKeyboardResponse`, as follows:
+```ts
+export enum ExcelEditCellKeyboardResponse {
+  ENTER = 'enter',
+  TAB = 'tab',
+  ARROW_LEFT = 'arrowLeft',
+  ARROW_RIGHT = 'arrowRight',
+  ARROW_DOWN = 'arrowDown',
+  ARROW_UP = 'arrowUp',
+  DELETE = 'delete',
+  BACKSPACE = 'backspace'
+}
+```
 
 ## Plugin Usage Example
 
 ```javascript livedemo template=vtable
 //  import * as VTable from '@visactor/vtable';
-// 使用时需要引入插件包@visactor/vtable-plugins
+//  When using, you need to import the plugin package @visactor/vtable-plugins
 // import * as VTablePlugins from '@visactor/vtable-plugins';
-// 正常使用方式 const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
-// 官网编辑器中将 VTable.plugins重命名成了VTablePlugins
+//  Normal usage const columnSeries = new VTable.plugins.ColumnSeriesPlugin({});
+//  In the official editor, VTable.plugins is renamed to VTablePlugins
 
 const generatePersons = count => {
   return Array.from(new Array(count)).map((_, i) => ({
@@ -115,22 +120,5 @@ const generatePersons = count => {
   
 ```
 
-## Future Plugin Improvements
 
-Other keyboard behaviors that differ from Excel, such as:
-
-- Support for configuration option to respond to the delete key
-- Support for configuration option to respond to ctrl+c and ctrl+v
-- Support for configuration option to respond to shift and left mouse button
-- Support for configuration option to respond to ctrl and left mouse button
-
-Whether each response behavior needs to be explicitly configured by users, such as providing configuration options:
-```ts
-const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin({
-    enableDeleteKey: false
-});
-const excelEditCellKeyboardPlugin = new ExcelEditCellKeyboardPlugin(excelEditCellKeyboardPlugin);
-
-```
-
-We welcome your contributions to write more plugins! Let's build the VTable ecosystem together!
+Welcome to contribute your strength, write more plugins together, and build the ecosystem of VTable together!
