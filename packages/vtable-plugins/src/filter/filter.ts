@@ -141,9 +141,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       allFields.forEach(field => {
         // 更新筛选候选值 & 新增的数据需要设置为选中态
         valueFilter.collectUniqueColumnValues(field, true);
-        // 更新筛选UI
-        valueFilter.updateUI(this.filterStateManager.getFilterState(field));
       });
+      // 更新筛选UI
+      valueFilter.updateUI(this.filterStateManager.getFilterState(this.filterToolbar.selectedField));
     }
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
