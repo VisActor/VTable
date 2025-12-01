@@ -26,11 +26,14 @@ import { isValid } from '@visactor/vutils';
 /**
  * 获取表格插件列表
  * @param sheetDefine Sheet配置定义
+ * @param options 配置选项
+ * @param vtableSheet VTableSheet实例（可选，用于访问公式管理器）
  * @returns 插件数组
  */
 export function getTablePlugins(
   sheetDefine?: ISheetDefine,
-  options?: IVTableSheetOptions
+  options?: IVTableSheetOptions,
+  vtableSheet?: any
 ): VTable.plugins.IVTablePlugin[] {
   const plugins: VTable.plugins.IVTablePlugin[] = [];
   // 结合options.VTablePluginModules，来判断是否禁用插件
@@ -106,10 +109,15 @@ export function getTablePlugins(
     );
   }
   if (!disabledPluginsUserSetted?.some(module => module.module === AutoFillPlugin)) {
-    // const userPluginOptions = enabledPlugins?.find(
-    //   module => module.module === VTablePlugins.AutoFillPlugin
-    // )?.moduleOptions;
-    const autoFillPlugin = new AutoFillPlugin();
+    const userPluginOptions = enabledPluginsUserSetted?.find(module => module.module === AutoFillPlugin)?.moduleOptions;
+
+    // Create formula detection functions that use vtable-sheet's formula engine
+    const formulaDetectionOptions = createFormulaDetectionOptions(sheetDefine, options, vtableSheet);
+
+    const autoFillPlugin = new AutoFillPlugin({
+      ...userPluginOptions,
+      ...formulaDetectionOptions
+    });
     plugins.push(autoFillPlugin);
     //已经初始化过的插件，从enabledPluginsUserSetted中移除
     enabledPluginsUserSetted = enabledPluginsUserSetted?.filter(module => module.module !== AutoFillPlugin);
@@ -117,8 +125,8 @@ export function getTablePlugins(
   if (enabledPluginsUserSetted?.length) {
     enabledPluginsUserSetted.forEach(
       (module: {
-        module: new (options: any) => VTable.plugins.IVTablePlugin;
-        moduleOptions: any;
+        module: new (options: unknown) => VTable.plugins.IVTablePlugin;
+        moduleOptions: unknown;
         disabled: boolean;
       }) => {
         if (typeof module?.module === 'function') {
@@ -352,4 +360,92 @@ function handleDisableFirstRowAsHeader(table: VTable.ListTable): void {
     clearRowHeightCache: false
   });
   table.scenegraph.updateNextFrame();
+}
+
+/**
+ * 创建公式检测选项，使用vtable-sheet的公式引擎
+ */
+function createFormulaDetectionOptions(sheetDefine?: ISheetDefine, options?: IVTableSheetOptions, vtableSheet?: any) {
+  return {
+    /**
+     * 自定义公式检测函数 - 使用vtable-sheet的公式引擎判断是否为公式
+     */
+    isFormulaCell: (col: number, row: number, cellData: unknown, table: VTable.ListTable): boolean => {
+      // 首先尝试使用vtable-sheet的公式管理器
+      if (vtableSheet?.formulaManager) {
+        try {
+          const sheetName = (vtableSheet.sheetManager as any)?._activeSheetKey || 'Sheet1';
+          return vtableSheet.formulaManager.isCellFormula({
+            sheet: sheetName,
+            row: row,
+            col: col
+          });
+        } catch (error) {
+          // 如果公式引擎调用失败，回退到表格级别的检测
+        }
+      }
+
+      // 回退到简单检测：检查单元格值是否以=开头
+      if (typeof cellData === 'string' && cellData.startsWith('=')) {
+        return true;
+      }
+
+      // 检查单元格原始值（可能是计算后的值）
+      const cellValue = table.getCellValue(col, row);
+      return typeof cellValue === 'string' && cellValue.startsWith('=');
+    },
+
+    /**
+     * 自定义公式获取函数 - 从vtable-sheet公式引擎获取公式字符串
+     */
+    getCellFormula: (col: number, row: number, cellData: unknown, table: VTable.ListTable): string | undefined => {
+      // 首先尝试使用vtable-sheet的公式管理器
+      if (vtableSheet?.formulaManager) {
+        try {
+          const sheetName = (vtableSheet.sheetManager as any)?._activeSheetKey || 'Sheet1';
+          return vtableSheet.formulaManager.getCellFormula({
+            sheet: sheetName,
+            row: row,
+            col: col
+          });
+        } catch (error) {
+          // 如果公式引擎调用失败，回退到表格级别的检测
+        }
+      }
+
+      // 回退到简单检测：如果单元格值以=开头，返回该值作为公式
+      const cellValue = table.getCellValue(col, row);
+      if (typeof cellValue === 'string' && cellValue.startsWith('=')) {
+        return cellValue;
+      }
+
+      return undefined;
+    },
+
+    /**
+     * 自定义公式设置函数 - 使用vtable-sheet公式引擎设置公式
+     */
+    setCellFormula: (col: number, row: number, formula: string, table: VTable.ListTable): void => {
+      // 首先尝试使用vtable-sheet的公式管理器
+      if (vtableSheet?.formulaManager) {
+        try {
+          const sheetName = (vtableSheet.sheetManager as any)?._activeSheetKey || 'Sheet1';
+          vtableSheet.formulaManager.setCellContent(
+            {
+              sheet: sheetName,
+              row: row,
+              col: col
+            },
+            formula
+          );
+          return;
+        } catch (error) {
+          // 如果公式引擎调用失败，回退到表格级别的设置
+        }
+      }
+
+      // 回退到直接设置单元格值
+      table.changeCellValue(col, row, formula);
+    }
+  };
 }
