@@ -16,6 +16,7 @@ export enum ExcelEditCellKeyboardResponse {
 export type IExcelEditCellKeyboardPluginOptions = {
   id?: string;
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
+  deleteWorkOnEditableCell?: boolean;
   // keyDown_before?: (event: KeyboardEvent) => void;
   // keyDown_after?: (event: KeyboardEvent) => void;
   // 是否响应删除
@@ -119,7 +120,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
           const selectCells = this.table.getSelectedCellInfos();
           if (selectCells?.length > 0 && document.activeElement === this.table.getElement()) {
             // 如果选中的是范围，则删除范围内的所有单元格
-            deleteSelectRange(selectCells, this.table);
+            deleteSelectRange(selectCells, this.table, this.pluginOptions?.deleteWorkOnEditableCell ?? true);
             // 阻止事件传播和默认行为
             event.stopPropagation();
             event.preventDefault();
@@ -147,10 +148,14 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
   }
 }
 //将选中单元格的值设置为空
-function deleteSelectRange(selectCells: TYPES.CellInfo[][], tableInstance: ListTable) {
+function deleteSelectRange(
+  selectCells: TYPES.CellInfo[][],
+  tableInstance: ListTable,
+  workOnEditableCell: boolean = false
+) {
   for (let i = 0; i < selectCells.length; i++) {
     for (let j = 0; j < selectCells[i].length; j++) {
-      tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '');
+      tableInstance.changeCellValue(selectCells[i][j].col, selectCells[i][j].row, '', workOnEditableCell);
     }
   }
 }
