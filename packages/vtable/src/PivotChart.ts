@@ -1431,7 +1431,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           chartStage.window.setViewBoxTransform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f);
 
         // chartInstance.updateDataSync(dataId, data);
-        if (typeof dataId === 'string') {
+        if (typeof dataId === 'string' || typeof dataId === 'number') {
           chartInstance.updateDataSync(dataId, data ?? []);
         } else {
           const dataBatch = [];
@@ -1544,7 +1544,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
         stageMatrix.e,
         stageMatrix.f
       );
-      if (typeof dataId === 'string') {
+      if (typeof dataId === 'string' || typeof dataId === 'number') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {
         const dataBatch = [];

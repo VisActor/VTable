@@ -122,7 +122,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
         stageMatrix.f
       );
 
-      if (typeof dataId === 'string') {
+      if (typeof dataId === 'string' || typeof dataId === 'number') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {
         const dataBatch = [];
