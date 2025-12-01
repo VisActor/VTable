@@ -16,6 +16,8 @@ export enum ExcelEditCellKeyboardResponse {
 export type IExcelEditCellKeyboardPluginOptions = {
   id?: string;
   responseKeyboard?: ExcelEditCellKeyboardResponse[];
+  // keyDown_before?: (event: KeyboardEvent) => void;
+  // keyDown_after?: (event: KeyboardEvent) => void;
   // 是否响应删除
   // enableDeleteKey?: boolean;
 };
@@ -66,6 +68,7 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
     //   });
   }
   handleKeyDown(event: KeyboardEvent) {
+    // this.pluginOptions?.keyDown_before?.(event);
     if (this.table.editorManager && this.isExcelShortcutKey(event)) {
       const eventKey = event.key.toLowerCase() as ExcelEditCellKeyboardResponse;
       //判断是键盘触发编辑单元格的情况下，那么在编辑状态中切换方向需要选中下一个继续编辑
@@ -114,16 +117,17 @@ export class ExcelEditCellKeyboardPlugin implements pluginsDefinition.IVTablePlu
         ) {
           //响应删除键，删除
           const selectCells = this.table.getSelectedCellInfos();
-          if (selectCells?.length > 0) {
+          if (selectCells?.length > 0 && document.activeElement === this.table.getElement()) {
             // 如果选中的是范围，则删除范围内的所有单元格
             deleteSelectRange(selectCells, this.table);
+            // 阻止事件传播和默认行为
+            event.stopPropagation();
+            event.preventDefault();
           }
-          // 阻止事件传播和默认行为
-          event.stopPropagation();
-          event.preventDefault();
         }
       }
     }
+    // this.pluginOptions?.keyDown_after?.apply(this, [event]);
   }
   // 判断event的keyCode是否是excel的快捷键
   isExcelShortcutKey(event: KeyboardEvent) {
