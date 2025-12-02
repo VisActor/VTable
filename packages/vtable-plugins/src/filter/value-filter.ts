@@ -1,6 +1,6 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import { arrayEqual, isValid } from '@visactor/vutils';
-import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterStyles } from './types';
+import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterStyles, FilterOptions } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles } from './styles';
@@ -8,6 +8,7 @@ import { applyStyles } from './styles';
 export class ValueFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private pluginOptions: FilterOptions;
   private styles: FilterStyles;
   private uniqueKeys = new Map<string | number, Array<{ value: any; count: number; rawValue: any }>>();
   private displayToRawValueMap = new Map<string | number, Map<any, any>>();
@@ -24,10 +25,11 @@ export class ValueFilter {
   private selectAllCheckbox: HTMLInputElement;
   private filterItemsContainer: HTMLElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, styles: FilterStyles) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
-    this.styles = styles;
+    this.pluginOptions = pluginOptions;
+    this.styles = pluginOptions.styles;
 
     this.filterStateManager.subscribe((state: FilterState) => {
       const filterState = state.filters.get(this.selectedField);
@@ -312,6 +314,7 @@ export class ValueFilter {
   private initFilterStateFromTableData(fieldId: string | number): void {
     const filter = this.filterStateManager.getFilterState(fieldId);
     const isEnable = filter?.enable;
+    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
 
     // 如果筛选已启用，使用当前显示的数据作为选中值
     if (isEnable) {
@@ -365,7 +368,8 @@ export class ValueFilter {
       }
 
       const hasChanged = !arrayEqual(filter.values, Array.from(selectedRawValues));
-      if (hasChanged) {
+
+      if (hasChanged && syncCheckboxCheckedState) {
         this.filterStateManager.dispatch({
           type: FilterActionType.UPDATE_FILTER,
           payload: {
@@ -381,7 +385,8 @@ export class ValueFilter {
       const availableRawValues =
         this.uniqueKeys
           .get(fieldId)
-          ?.filter(item => item.count > 0) // 只选中计数>0的值
+
+          ?.filter(item => !syncCheckboxCheckedState || item.count > 0) // 只选中计数>0的值
           ?.map(item => item.rawValue)
           .filter(v => v !== undefined && v !== null) || [];
 
@@ -418,8 +423,8 @@ export class ValueFilter {
       optionDom.checkbox.checked = selectedRawValues.some(v => v === rawValue);
 
       // 同步禁用状态：计数为0时禁用复选框
-      const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
-      optionDom.checkbox.disabled = count === 0;
+      // const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
+      // optionDom.checkbox.disabled = count === 0;
     });
   }
 
@@ -534,6 +539,16 @@ export class ValueFilter {
     this.bindEventForFilterByValue();
   }
 
+  /**
+   * 更新插件选项
+   * @param filterOptions 筛选选项
+   */
+  updatePluginOptions(pluginOptions: FilterOptions): void {
+    this.pluginOptions = pluginOptions;
+    this.styles = pluginOptions.styles;
+    this.updateStyles(pluginOptions.styles);
+  }
+
   updateStyles(styles: FilterStyles): void {
     applyStyles(this.filterByValuePanel, styles.filterPanel);
     applyStyles(this.searchContainer, styles.searchContainer);
@@ -555,6 +570,7 @@ export class ValueFilter {
     const selectedRawValueSet = new Set(selectedRawValues);
 
     const itemDomList: ValueFilterOptionDom[] = [];
+
     this.uniqueKeys.get(field)?.forEach(({ value, count, rawValue }) => {
       const itemDiv = document.createElement('div');
       applyStyles(itemDiv, this.styles.optionItem);
@@ -569,7 +585,7 @@ export class ValueFilter {
       // 使用原始值进行选中状态判断，优化为O(1)复杂度
       checkbox.checked = selectedRawValueSet.has(rawValue);
       // 计数为0时禁用复选框（不可选中）
-      checkbox.disabled = count === 0;
+      // checkbox.disabled = count === 0;
       applyStyles(checkbox, this.styles.checkbox);
 
       const countSpan = document.createElement('span');
@@ -590,6 +606,8 @@ export class ValueFilter {
 
       itemDomList.push(itemDom);
     });
+
+    console.log('uniqueKeys----', itemDomList);
 
     this.valueFilterOptionList.set(field, itemDomList);
   }
@@ -668,6 +686,7 @@ export class ValueFilter {
     const uniqueValues = this.uniqueKeys.get(this.selectedField);
     const displayToRawMap = this.displayToRawValueMap.get(this.selectedField);
     if (uniqueValues && displayToRawMap) {
+      console.log('uniqueValues', uniqueValues, displayToRawMap);
       this.filterStateManager.initializeFilterMenuState(this.selectedField, uniqueValues, displayToRawMap);
     }
 

@@ -258,7 +258,7 @@ export function createTable() {
       // { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
       // { value: FilterOperatorCategory.RADIO, label: '单选框' }
     ],
-    parentElement: document.getElementById(CONTAINER_ID)
+    syncCheckboxCheckedState: false
   });
   (window as any).filterPlugin = filterPlugin;
 

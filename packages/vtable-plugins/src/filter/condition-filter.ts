@@ -1,7 +1,13 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles, createElement } from './styles';
-import type { FilterOperator, OperatorOption, FilterStyles, FilterOperatorCategoryOption } from './types';
+import type {
+  FilterOperator,
+  OperatorOption,
+  FilterStyles,
+  FilterOperatorCategoryOption,
+  FilterOptions
+} from './types';
 import { FilterActionType, FilterOperatorCategory } from './types';
 import { operators } from './constants';
 
@@ -31,16 +37,11 @@ export class ConditionFilter {
   private categories: FilterOperatorCategoryOption[] = [];
   protected operators: OperatorOption[] = [];
 
-  constructor(
-    table: ListTable | PivotTable,
-    filterStateManager: FilterStateManager,
-    styles: FilterStyles,
-    conditionCategories: FilterOperatorCategoryOption[]
-  ) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
-    this.styles = styles;
+    this.styles = pluginOptions.styles;
     this.filterStateManager = filterStateManager;
-    this.categories = conditionCategories;
+    this.categories = pluginOptions.conditionCategories;
     this.operators = operators;
   }
 
@@ -365,6 +366,20 @@ export class ConditionFilter {
     this.bindEvents();
   }
 
+  /**
+   * 更新插件选项
+   * @param filterOptions 筛选选项
+   */
+  updatePluginOptions(filterOptions: FilterOptions): void {
+    this.styles = filterOptions.styles;
+    this.categories = filterOptions.conditionCategories;
+    this.updateStyles(filterOptions.styles);
+  }
+
+  /**
+   * 更新样式
+   * @param styles 筛选样式
+   */
   updateStyles(styles: FilterStyles) {
     applyStyles(this.filterByConditionPanel, styles.filterPanel);
     applyStyles(this.conditionContainer, styles.conditionContainer);

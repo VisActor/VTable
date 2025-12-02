@@ -70,12 +70,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   initFilterPlugin(eventArgs: any) {
     this.filterEngine = new FilterEngine();
     this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
-    this.filterToolbar = new FilterToolbar(
-      this.table,
-      this.filterStateManager,
-      this.pluginOptions.styles,
-      this.pluginOptions.conditionCategories
-    );
+    this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
     this.columns = eventArgs.options.columns;
 
     this.filterToolbar.render(document.body);
@@ -136,12 +131,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
 
   updatePluginOptions(pluginOptions: FilterOptions) {
     this.pluginOptions = merge(this.pluginOptions, pluginOptions);
+    this.filterToolbar.updatePluginOptions(this.pluginOptions);
   }
 
   update() {
-    // 更新筛选器UI样式
-    this.filterToolbar.updateStyles(this.pluginOptions.styles);
-
     // 更新筛选器数据
     if (this.filterToolbar.valueFilter) {
       const allFields = (this.table as ListTable).columns.map(col => col.field) as string[];

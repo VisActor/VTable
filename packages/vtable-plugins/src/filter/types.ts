@@ -17,6 +17,12 @@ export interface FilterOptions {
   styles?: FilterStyles;
   /** 筛选器操作符分类 */
   conditionCategories?: FilterOperatorCategoryOption[];
+  // /** 参与筛选的数据 */
+  // customFilterData?: (dataSource: any[]) => boolean;
+  /** 多个筛选器之间是否联动
+   * @default true
+   */
+  syncCheckboxCheckedState?: boolean;
 }
 
 export type FilterMode = 'byValue' | 'byCondition';
