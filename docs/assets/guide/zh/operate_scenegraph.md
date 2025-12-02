@@ -17,7 +17,8 @@ tableInstance.scenegraph.getCell(colIndex, rowIndex);
 ```
 
 
-## 获取场景树中某个单元格节点
+## 更新场景树中某个单元格节点内容
+通过这个接口会触发单元格节点的刷新和重绘
 
 ```ts
 tableInstance.scenegraph.updateCellContent();
