@@ -5,15 +5,15 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable-sheet**: support copy formula to paste cell
-- **@visactor/vtable-sheet**: support formula auto fill
+- **@visactor/vtable-sheet**: 支持复制公式到粘贴单元格
+- **@visactor/vtable-sheet**: 支持公式利用填充柄自动填充
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: excel keyboard plugin when use key of delete and back to delete not work
-- **@visactor/vtable**: distinguish null and empty string values in row/column dimensions
-- **@visactor/vtable**: the filter plugin cannot be opened normally when clicked [#4736](https://github.com/VisActor/VTable/issues/4736)
-- **@visactor/vtable**: clear the value of the searchInput when the filter plugin is displayed [#4736](https://github.com/VisActor/VTable/issues/4736)
+- **@visactor/vtable**: 修复excel键盘插件删除和退格键不生效问题
+- **@visactor/vtable**: 透视表修复行/列维度中区分空值和空字符串值
+- **@visactor/vtable-plugins**: 修复点击过滤插件时无法正常打开的问题 [#4736](https://github.com/VisActor/VTable/issues/4736)
+- **@visactor/vtable-plugins**: 修复过滤插件显示时搜索输入框值不清空的问题 [#4736](https://github.com/VisActor/VTable/issues/4736)
 
 
 
@@ -26,12 +26,12 @@
 
 **🆕 新增功能**
 
-- **@visactor/vtable**: support right axis in pivotChart spec [#4723](https://github.com/VisActor/VTable/issues/4723)
-- **@visactor/vtable**: add chartDimensionLinkage for pivotChart
+- **@visactor/vtable**: 支持透视图右侧轴配置 [#4723](https://github.com/VisActor/VTable/issues/4723)
+- **@visactor/vtable**: 支持透视图维度联动配置
 
 **🐛 功能修复**
 
-- **@visactor/vtable**: add null check for nodeChildren in matchDimensionPath
+- **@visactor/vtable**: 修复matchDimensionPath方法中nodeChildren为空检查
 
 
 
