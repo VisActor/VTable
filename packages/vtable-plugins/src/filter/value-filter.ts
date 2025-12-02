@@ -93,6 +93,10 @@ export class ValueFilter {
     const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
     const records = recordsList.filter(record =>
       filteredFields.every(field => {
+        const filterType = this.filterStateManager.getFilterState(field)?.type;
+        if (filterType !== 'byValue' && filterType !== null && filterType !== undefined) {
+          this.syncSingleStateFromTableData(field);
+        }
         const set = this.selectedKeys.get(field);
         return set.has(record[field]);
       })
@@ -382,12 +386,18 @@ export class ValueFilter {
       this.collectCandidateKeysForFilteredColumn(this.selectedField);
     }
 
-    // 2. 清空搜索框
+    // 2. 初始筛选状态
+    const filterType = this.filterStateManager.getFilterState(this.selectedField)?.type;
+    if (filterType !== null && filterType !== undefined && filterType !== 'byValue') {
+      this.syncSingleStateFromTableData(this.selectedField);
+    }
+
+    // 3. 清空搜索框
     if (this.filterByValueSearchInput) {
       this.filterByValueSearchInput.value = '';
     }
 
-    // 3. 渲染选项（此时状态已经初始化完成）
+    // 4. 渲染选项（此时状态已经初始化完成）
     this.renderFilterOptions(this.selectedField);
     this.filterByValuePanel.style.display = 'block';
   }

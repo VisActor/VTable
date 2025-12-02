@@ -139,15 +139,18 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   syncFilterWithTableData(field?: string | number) {
-    if (field !== null && field !== undefined) {
-      this.filterToolbar.valueFilter.syncSingleStateFromTableData(field);
-      return;
-    }
+    const filterType = this.filterStateManager.getFilterState(field)?.type;
+    if (filterType === 'byValue') {
+      if (field !== null && field !== undefined) {
+        this.filterToolbar.valueFilter.syncSingleStateFromTableData(field);
+        return;
+      }
 
-    const columns = this.table.dataSource.columns;
-    columns.forEach(({ field }) => {
-      this.filterToolbar.valueFilter.syncSingleStateFromTableData(field as string | number);
-    });
+      const columns = this.table.dataSource.columns;
+      columns.forEach(({ field }) => {
+        this.filterToolbar.valueFilter.syncSingleStateFromTableData(field as string | number);
+      });
+    }
   }
 
   /**
