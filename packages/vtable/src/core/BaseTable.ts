@@ -2443,33 +2443,43 @@ export abstract class BaseTable extends EventTarget implements BaseTableAPI {
     }
     return { rowStart, colStart, rowEnd, colEnd };
   }
-  /** 获取表格body部分的显示行号范围 */
-  getBodyVisibleRowRange(deltaY: number = 0) {
+  /**
+   * 获取表格body部分的显示行号范围
+   * @param start_deltaY 相对于表格body部分的顶部偏移量(不设置默认是可视区域的最边缘)
+   * @param end_deltaY 相对于表格body部分的底部偏移量(不设置默认是可视区域的最边缘)
+   * @returns { rowStart: number; rowEnd: number }
+   */
+  getBodyVisibleRowRange(start_deltaY: number = 0, end_deltaY: number = 0) {
     const { scrollTop } = this;
     const frozenRowsHeight = this.getFrozenRowsHeight();
     const bottomFrozenRowsHeight = this.getBottomFrozenRowsHeight();
     // 计算非冻结
-    const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1);
+    const { row: rowStart } = this.getRowAt(scrollTop + frozenRowsHeight + 1 + start_deltaY);
     const rowEnd =
       this.getAllRowsHeight() > this.tableNoFrameHeight
-        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight + deltaY).row
+        ? this.getRowAt(scrollTop + this.tableNoFrameHeight - 1 - bottomFrozenRowsHeight + end_deltaY).row
         : this.rowCount - 1;
     if (rowEnd < 0) {
       return null;
     }
     return { rowStart, rowEnd };
   }
-  /** 获取表格body部分的显示列号范围 */
-  getBodyVisibleColRange(deltaX: number = 0) {
+  /**
+   * 获取表格body部分的显示列号范围
+   * @param start_deltaX 相对于表格body部分的左侧偏移量(不设置默认是可视区域的最边缘)
+   * @param end_deltaX 相对于表格body部分的右侧偏移量(不设置默认是可视区域的最边缘)
+   * @returns { colStart: number; colEnd: number }
+   */
+  getBodyVisibleColRange(start_deltaX: number = 0, end_deltaX: number = 0) {
     const { scrollLeft } = this;
     const frozenColsWidth = this.getFrozenColsWidth();
     const rightFrozenColsWidth = this.getRightFrozenColsWidth();
     // 计算非冻结
-    const { col: colStart } = this.getColAt(scrollLeft + frozenColsWidth + 1);
+    const { col: colStart } = this.getColAt(scrollLeft + frozenColsWidth + 1 + start_deltaX);
 
     const colEnd =
       this.getAllColsWidth() > this.tableNoFrameWidth
-        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth + deltaX).col
+        ? this.getColAt(scrollLeft + this.tableNoFrameWidth - 1 - rightFrozenColsWidth + end_deltaX).col
         : this.colCount - 1;
     if (colEnd < 0) {
       return null;

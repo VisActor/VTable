@@ -49,19 +49,31 @@ export function generateChartInstanceListByColumnDirection(
       setTimeout(() => {
         // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才能触发setDimensionIndex
         if (chartInstanceListColumnByColumnDirection[col]?.[i]) {
-          const absolutePosition = table.getCellRelativeRect(col, i);
           const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
           let isShowTooltip = !isScatter;
           if (!isScatter && typeof chartDimensionLinkage === 'object') {
             isShowTooltip = chartDimensionLinkage.showTooltip ?? true;
             if (i === rowEnd && isShowTooltip) {
-              const heightLimitToShowTooltipForLastRow = chartDimensionLinkage.heightLimitToShowTooltipForLastRow;
-              const { rowEnd: rowEnd1 } = table.getBodyVisibleRowRange(-heightLimitToShowTooltipForLastRow);
+              const heightLimitToShowTooltipForEdgeRow = chartDimensionLinkage.heightLimitToShowTooltipForEdgeRow;
+              const { rowEnd: rowEnd1 } = table.getBodyVisibleRowRange(0, -heightLimitToShowTooltipForEdgeRow);
               if (rowEnd1 === rowEnd) {
                 isShowTooltip = true;
               } else {
-                const { rowEnd: rowEnd2 } = table.getBodyVisibleRowRange(5);
+                const { rowEnd: rowEnd2 } = table.getBodyVisibleRowRange(0, 5);
                 if (rowEnd2 !== rowEnd) {
+                  isShowTooltip = true;
+                } else {
+                  isShowTooltip = false;
+                }
+              }
+            } else if (i === rowStart && isShowTooltip) {
+              const heightLimitToShowTooltipForEdgeRow = chartDimensionLinkage.heightLimitToShowTooltipForEdgeRow;
+              const { rowStart: rowStart1 } = table.getBodyVisibleRowRange(heightLimitToShowTooltipForEdgeRow, 0);
+              if (rowStart1 === rowStart) {
+                isShowTooltip = true;
+              } else {
+                const { rowStart: rowStart2 } = table.getBodyVisibleRowRange(0, -5);
+                if (rowStart2 !== rowStart) {
                   isShowTooltip = true;
                 } else {
                   isShowTooltip = false;
@@ -87,16 +99,20 @@ export function generateChartInstanceListByColumnDirection(
               return dimensionValueOrXValue;
             });
           } else {
+            const bodyBoundryTop = table.frozenRowCount
+              ? table.getCellRelativeRect(col, table.frozenRowCount - 1).bottom
+              : 0;
+            const absolutePositionTop = Math.max(bodyBoundryTop, table.getCellRelativeRect(col, i).top);
             if (hideTooltip) {
               chartInstanceListColumnByColumnDirection[col][i].hideTooltip();
               chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
                 tooltip: false,
-                showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3, activeType: 'dimension' }
+                showTooltipOption: { x: canvasXY.x, y: absolutePositionTop, activeType: 'dimension' }
               });
             } else {
               chartInstanceListColumnByColumnDirection[col][i].setDimensionIndex(dimensionValueOrXValue, {
                 tooltip: isShowTooltip,
-                showTooltipOption: { x: canvasXY.x, y: absolutePosition.top + 3, activeType: 'dimension' }
+                showTooltipOption: { x: canvasXY.x, y: absolutePositionTop, activeType: 'dimension' }
               });
             }
           }
@@ -165,19 +181,31 @@ export function generateChartInstanceListByRowDirection(
       setTimeout(() => {
         // 需要等updateNextFrame 触发了chart的drawShape后 设置了数据后 才可触发setDimensionIndex绘制出东西 否则会绘制出空的
         if (chartInstanceListRowByRowDirection[row]?.[i]) {
-          const absolutePosition = table.getCellRelativeRect(i, row);
           const chartDimensionLinkage = (table.options as PivotChartConstructorOptions).chartDimensionLinkage;
           let isShowTooltip = !isScatter;
           if (!isScatter && typeof chartDimensionLinkage === 'object') {
             isShowTooltip = chartDimensionLinkage.showTooltip ?? true;
             if (i === colEnd && isShowTooltip) {
-              const widthLimitToShowTooltipForLastColumn = chartDimensionLinkage.widthLimitToShowTooltipForLastColumn;
-              const { colEnd: colEnd1 } = table.getBodyVisibleColRange(-widthLimitToShowTooltipForLastColumn);
+              const widthLimitToShowTooltipForEdgeColumn = chartDimensionLinkage.widthLimitToShowTooltipForEdgeColumn;
+              const { colEnd: colEnd1 } = table.getBodyVisibleColRange(0, -widthLimitToShowTooltipForEdgeColumn);
               if (colEnd1 === colEnd) {
                 isShowTooltip = true;
               } else {
-                const { colEnd: colEnd2 } = table.getBodyVisibleColRange(5);
+                const { colEnd: colEnd2 } = table.getBodyVisibleColRange(0, 5);
                 if (colEnd2 !== colEnd) {
+                  isShowTooltip = true;
+                } else {
+                  isShowTooltip = false;
+                }
+              }
+            } else if (i === colStart && isShowTooltip) {
+              const widthLimitToShowTooltipForEdgeColumn = chartDimensionLinkage.widthLimitToShowTooltipForEdgeColumn;
+              const { colStart: colStart1 } = table.getBodyVisibleColRange(widthLimitToShowTooltipForEdgeColumn, 0);
+              if (colStart1 === colStart) {
+                isShowTooltip = true;
+              } else {
+                const { colStart: colStart2 } = table.getBodyVisibleColRange(0, -5);
+                if (colStart2 !== colStart) {
                   isShowTooltip = true;
                 } else {
                   isShowTooltip = false;
@@ -194,16 +222,20 @@ export function generateChartInstanceListByRowDirection(
               return dimensionValueOrXValue;
             });
           } else {
+            const bodyBoundryLeft = table.frozenColCount
+              ? table.getCellRelativeRect(table.frozenColCount - 1, row).right
+              : 0;
+            const absolutePositionLeft = Math.max(bodyBoundryLeft, table.getCellRelativeRect(i, row).left);
             if (hideTooltip) {
               chartInstanceListRowByRowDirection[row][i].hideTooltip();
               chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
                 tooltip: false,
-                showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y, activeType: 'dimension' }
+                showTooltipOption: { x: absolutePositionLeft, y: canvasXY.y, activeType: 'dimension' }
               });
             } else {
               chartInstanceListRowByRowDirection[row][i].setDimensionIndex(dimensionValueOrXValue, {
                 tooltip: isShowTooltip,
-                showTooltipOption: { x: absolutePosition.left + 3, y: canvasXY.y, activeType: 'dimension' }
+                showTooltipOption: { x: absolutePositionLeft, y: canvasXY.y, activeType: 'dimension' }
               });
             }
           }
