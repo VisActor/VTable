@@ -1,6 +1,30 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Wed, 26 Nov 2025 02:07:13 GMT and should not be manually modified.
+This log was last generated on Mon, 01 Dec 2025 11:33:45 GMT and should not be manually modified.
+
+## 1.22.6
+Mon, 01 Dec 2025 11:33:45 GMT
+
+### Updates
+
+- feat: copy formula to paste cell
+
+
+- feat: vtable-sheet support formula auto fill
+
+
+- fix: excel keyboard del and back to delete
+
+
+- fix: distinguish null and empty string values in row/column dimensions
+
+
+- fix: the filter plugin cannot be opened normally when clicked #4736
+
+
+- fix: clear the value of the searchInput when the filter plugin is displayed #4736
+
+
 
 ## 1.22.5
 Wed, 26 Nov 2025 02:07:13 GMT
