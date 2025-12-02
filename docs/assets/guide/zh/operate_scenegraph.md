@@ -18,10 +18,10 @@ tableInstance.scenegraph.getCell(colIndex, rowIndex);
 
 
 ## 更新场景树中某个单元格节点内容
-通过这个接口会触发单元格节点的刷新和重绘
+通过这个接口会触发单元格节点的刷新和重绘。适用于自定义单元格内容customLayout的场景中，需要执行customLayout重新计算单元格内容的情况。
 
 ```ts
-tableInstance.scenegraph.updateCellContent();
+tableInstance.scenegraph.updateCellContent(colIndex, rowIndex);
 ```
 
 ## 通过某个节点获取其所属单元格节点
