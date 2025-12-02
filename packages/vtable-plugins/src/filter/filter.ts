@@ -134,7 +134,15 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     }
   }
 
+  updatePluginOptions(pluginOptions: FilterOptions) {
+    this.pluginOptions = merge(this.pluginOptions, pluginOptions);
+  }
+
   update() {
+    // 更新筛选器UI样式
+    this.filterToolbar.updateStyles(this.pluginOptions.styles);
+
+    // 更新筛选器数据
     if (this.filterToolbar.valueFilter) {
       const allFields = (this.table as ListTable).columns.map(col => col.field) as string[];
       const valueFilter = this.filterToolbar.valueFilter;

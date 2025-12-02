@@ -14,11 +14,18 @@ export class ConditionFilter {
   private styles: FilterStyles;
 
   private filterByConditionPanel: HTMLElement;
+  private conditionContainer: HTMLElement;
+  private categoryLabel: HTMLElement;
   private selectedField: string | number;
   private operatorSelect: HTMLSelectElement;
   private valueInput: HTMLInputElement;
+  private andLabel: HTMLElement;
   private valueInputMax: HTMLInputElement;
   private categorySelect: HTMLSelectElement;
+  private operatorLabel: HTMLElement;
+  private rangeInputContainer: HTMLElement;
+  private valueLabel: HTMLElement;
+
   private currentCategory: FilterOperatorCategory = FilterOperatorCategory.ALL;
 
   private categories: FilterOperatorCategoryOption[] = [];
@@ -282,12 +289,12 @@ export class ConditionFilter {
     applyStyles(this.filterByConditionPanel, this.styles.filterPanel);
 
     // 条件选择区域
-    const conditionContainer = document.createElement('div');
-    applyStyles(conditionContainer, this.styles.conditionContainer);
+    this.conditionContainer = document.createElement('div');
+    applyStyles(this.conditionContainer, this.styles.conditionContainer);
 
     // 分类选择下拉框
-    const categoryLabel = createElement('label', {}, ['筛选类型：']);
-    applyStyles(categoryLabel, this.styles.formLabel);
+    this.categoryLabel = createElement('label', {}, ['筛选类型：']);
+    applyStyles(this.categoryLabel, this.styles.formLabel);
 
     this.categorySelect = createElement('select') as HTMLSelectElement;
     applyStyles(this.categorySelect, this.styles.operatorSelect);
@@ -301,19 +308,19 @@ export class ConditionFilter {
     });
 
     // 操作符选择下拉框
-    const operatorLabel = createElement('label', {}, ['筛选条件：']);
-    applyStyles(operatorLabel, this.styles.formLabel);
+    this.operatorLabel = createElement('label', {}, ['筛选条件：']);
+    applyStyles(this.operatorLabel, this.styles.formLabel);
 
     this.operatorSelect = createElement('select') as HTMLSelectElement;
     applyStyles(this.operatorSelect, this.styles.operatorSelect);
 
     // 条件值输入框
-    const valueLabel = createElement('label', {}, ['筛选值：']);
-    applyStyles(valueLabel, this.styles.formLabel);
+    this.valueLabel = createElement('label', {}, ['筛选值：']);
+    applyStyles(this.valueLabel, this.styles.formLabel);
 
     // 一个容器来包装两个输入框和"和"字
-    const rangeInputContainer = createElement('div');
-    applyStyles(rangeInputContainer, this.styles.rangeInputContainer);
+    this.rangeInputContainer = createElement('div');
+    applyStyles(this.rangeInputContainer, this.styles.rangeInputContainer);
 
     this.valueInput = createElement('input', {
       type: 'text',
@@ -322,9 +329,9 @@ export class ConditionFilter {
     applyStyles(this.valueInput, this.styles.searchInput);
 
     // "和"字标签
-    const andLabel = createElement('span', {}, ['和']);
-    applyStyles(andLabel, this.styles.addLabel);
-    andLabel.style.display = 'none'; // 默认隐藏
+    this.andLabel = createElement('span', {}, ['和']);
+    applyStyles(this.andLabel, this.styles.addLabel);
+    this.andLabel.style.display = 'none'; // 默认隐藏
 
     // 范围筛选的最大值输入框
     this.valueInputMax = createElement('input', {
@@ -335,19 +342,19 @@ export class ConditionFilter {
     this.valueInputMax.style.display = 'none'; // 默认隐藏
 
     // 将输入框和"和"字添加到容器中
-    rangeInputContainer.appendChild(this.valueInput);
-    rangeInputContainer.appendChild(andLabel);
-    rangeInputContainer.appendChild(this.valueInputMax);
+    this.rangeInputContainer.appendChild(this.valueInput);
+    this.rangeInputContainer.appendChild(this.andLabel);
+    this.rangeInputContainer.appendChild(this.valueInputMax);
 
     // 将元素添加到容器中
-    conditionContainer.appendChild(categoryLabel);
-    conditionContainer.appendChild(this.categorySelect);
-    conditionContainer.appendChild(operatorLabel);
-    conditionContainer.appendChild(this.operatorSelect);
-    conditionContainer.appendChild(valueLabel);
-    conditionContainer.appendChild(rangeInputContainer);
+    this.conditionContainer.appendChild(this.categoryLabel);
+    this.conditionContainer.appendChild(this.categorySelect);
+    this.conditionContainer.appendChild(this.operatorLabel);
+    this.conditionContainer.appendChild(this.operatorSelect);
+    this.conditionContainer.appendChild(this.valueLabel);
+    this.conditionContainer.appendChild(this.rangeInputContainer);
 
-    this.filterByConditionPanel.appendChild(conditionContainer);
+    this.filterByConditionPanel.appendChild(this.conditionContainer);
     container.appendChild(this.filterByConditionPanel);
 
     // 默认隐藏
@@ -356,6 +363,20 @@ export class ConditionFilter {
     // 初始化操作符选项
     this.updateOperatorOptions();
     this.bindEvents();
+  }
+
+  updateStyles(styles: FilterStyles) {
+    applyStyles(this.filterByConditionPanel, styles.filterPanel);
+    applyStyles(this.conditionContainer, styles.conditionContainer);
+    applyStyles(this.categoryLabel, styles.formLabel);
+    applyStyles(this.categorySelect, styles.operatorSelect);
+    applyStyles(this.operatorLabel, styles.formLabel);
+    applyStyles(this.operatorSelect, styles.operatorSelect);
+    applyStyles(this.valueLabel, styles.formLabel);
+    applyStyles(this.rangeInputContainer, styles.rangeInputContainer);
+    applyStyles(this.valueInput, styles.searchInput);
+    applyStyles(this.andLabel, styles.addLabel);
+    applyStyles(this.valueInputMax, styles.searchInput);
   }
 
   /**

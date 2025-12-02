@@ -286,11 +286,22 @@ export function createTable() {
   });
 
   setTimeout(() => {
+    filterPlugin.updatePluginOptions({
+      styles: {
+        optionItem: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 5px',
+          color: 'blue'
+        }
+      }
+    });
     console.log('update');
     tableInstance.updateOption({
       ...option,
       plugins: [filterPlugin],
-      records: generateDemoData(50, '第一次')
+      records: generateDemoData(50, '第二次')
     });
   }, 5000);
 

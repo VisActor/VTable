@@ -14,7 +14,12 @@ export class ValueFilter {
   private selectedField: string | number;
 
   private valueFilterOptionList: Map<string | number, ValueFilterOptionDom[]> = new Map();
+
   private filterByValuePanel: HTMLElement;
+  private searchContainer: HTMLElement;
+  private optionsContainer: HTMLElement;
+  private selectAllItemDiv: HTMLElement;
+  private selectAllLabel: HTMLElement;
   private filterByValueSearchInput: HTMLInputElement;
   private selectAllCheckbox: HTMLInputElement;
   private filterItemsContainer: HTMLElement;
@@ -413,8 +418,8 @@ export class ValueFilter {
       optionDom.checkbox.checked = selectedRawValues.some(v => v === rawValue);
 
       // 同步禁用状态：计数为0时禁用复选框
-      // const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
-      // optionDom.checkbox.disabled = count === 0;
+      const count = this.uniqueKeys.get(filter.field)?.find(key => String(key.value) === optionDom.id)?.count || 0;
+      optionDom.checkbox.disabled = count === 0;
     });
   }
 
@@ -491,42 +496,53 @@ export class ValueFilter {
     applyStyles(this.filterByValuePanel, this.styles.filterPanel);
 
     // -- 搜索栏 ---
-    const searchContainer = document.createElement('div');
-    applyStyles(searchContainer, this.styles.searchContainer);
+    this.searchContainer = document.createElement('div');
+    applyStyles(this.searchContainer, this.styles.searchContainer);
 
     this.filterByValueSearchInput = document.createElement('input');
     this.filterByValueSearchInput.type = 'text';
     this.filterByValueSearchInput.placeholder = this.styles.searchInput?.placeholder || '可使用空格分隔多个关键词';
     applyStyles(this.filterByValueSearchInput, this.styles.searchInput);
 
-    searchContainer.appendChild(this.filterByValueSearchInput);
+    this.searchContainer.appendChild(this.filterByValueSearchInput);
 
     // --- 筛选选项 ---
-    const optionsContainer = document.createElement('div');
-    applyStyles(optionsContainer, this.styles.optionsContainer);
+    this.optionsContainer = document.createElement('div');
+    applyStyles(this.optionsContainer, this.styles.optionsContainer);
 
-    const selectAllItemDiv = document.createElement('div');
-    applyStyles(selectAllItemDiv, this.styles.optionItem);
+    this.selectAllItemDiv = document.createElement('div');
+    applyStyles(this.selectAllItemDiv, this.styles.optionItem);
 
-    const selectAllLabel = document.createElement('label');
-    applyStyles(selectAllLabel, this.styles.optionLabel);
+    this.selectAllLabel = document.createElement('label');
+    applyStyles(this.selectAllLabel, this.styles.optionLabel);
 
     this.selectAllCheckbox = document.createElement('input');
     this.selectAllCheckbox.type = 'checkbox';
     this.selectAllCheckbox.checked = true; // 默认全选
     applyStyles(this.selectAllCheckbox, this.styles.checkbox);
 
-    selectAllLabel.append(this.selectAllCheckbox, ' 全选');
-    selectAllItemDiv.appendChild(selectAllLabel);
+    this.selectAllLabel.append(this.selectAllCheckbox, ' 全选');
+    this.selectAllItemDiv.appendChild(this.selectAllLabel);
 
     this.filterItemsContainer = document.createElement('div'); // 筛选条目的容器，后续应动态 appendChild
 
-    optionsContainer.append(selectAllItemDiv, this.filterItemsContainer);
-    this.filterByValuePanel.append(searchContainer, optionsContainer);
+    this.optionsContainer.append(this.selectAllItemDiv, this.filterItemsContainer);
+    this.filterByValuePanel.append(this.searchContainer, this.optionsContainer);
 
     container.appendChild(this.filterByValuePanel);
 
     this.bindEventForFilterByValue();
+  }
+
+  updateStyles(styles: FilterStyles): void {
+    applyStyles(this.filterByValuePanel, styles.filterPanel);
+    applyStyles(this.searchContainer, styles.searchContainer);
+    this.filterByValueSearchInput.placeholder = styles.searchInput?.placeholder || '可使用空格分隔多个关键词';
+    applyStyles(this.filterByValueSearchInput, styles.searchInput);
+    applyStyles(this.optionsContainer, styles.optionsContainer);
+    applyStyles(this.selectAllItemDiv, styles.optionItem);
+    applyStyles(this.selectAllLabel, styles.optionLabel);
+    applyStyles(this.selectAllCheckbox, styles.checkbox);
   }
 
   private renderFilterOptions(field: string | number): void {
@@ -553,7 +569,7 @@ export class ValueFilter {
       // 使用原始值进行选中状态判断，优化为O(1)复杂度
       checkbox.checked = selectedRawValueSet.has(rawValue);
       // 计数为0时禁用复选框（不可选中）
-      // checkbox.disabled = count === 0;
+      checkbox.disabled = count === 0;
       applyStyles(checkbox, this.styles.checkbox);
 
       const countSpan = document.createElement('span');
