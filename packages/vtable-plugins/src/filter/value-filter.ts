@@ -1,6 +1,6 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import { arrayEqual } from '@visactor/vutils';
-import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterOptions } from './types';
+import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterOptions, FilterStyles } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles } from './styles';
@@ -17,7 +17,12 @@ export class ValueFilter {
   private toUnformattedCache = new Map<string | number, Map<any, Set<any>>>();
 
   private valueFilterOptionList: Map<string | number, ValueFilterOptionDom[]> = new Map();
+
   private filterByValuePanel: HTMLElement;
+  private searchContainer: HTMLElement;
+  private optionsContainer: HTMLElement;
+  private selectAllItemDiv: HTMLElement;
+  private selectAllLabel: HTMLElement;
   private filterByValueSearchInput: HTMLInputElement;
   private selectAllCheckbox: HTMLInputElement;
   private totalCountSpan: HTMLSpanElement;
@@ -273,25 +278,25 @@ export class ValueFilter {
     applyStyles(this.filterByValuePanel, filterStyles.filterPanel);
 
     // -- 搜索栏 ---
-    const searchContainer = document.createElement('div');
-    applyStyles(searchContainer, filterStyles.searchContainer);
+    this.searchContainer = document.createElement('div');
+    applyStyles(this.searchContainer, this.styles.searchContainer);
 
     this.filterByValueSearchInput = document.createElement('input');
     this.filterByValueSearchInput.type = 'text';
-    this.filterByValueSearchInput.placeholder = '可使用空格分隔多个关键词';
+    this.filterByValueSearchInput.placeholder = filterStyles.searchInput?.placeholder || '可使用空格分隔多个关键词';
     applyStyles(this.filterByValueSearchInput, filterStyles.searchInput);
 
-    searchContainer.appendChild(this.filterByValueSearchInput);
+    this.searchContainer.appendChild(this.filterByValueSearchInput);
 
     // --- 筛选选项 ---
-    const optionsContainer = document.createElement('div');
-    applyStyles(optionsContainer, filterStyles.optionsContainer);
+    this.optionsContainer = document.createElement('div');
+    applyStyles(this.optionsContainer, this.styles.optionsContainer);
 
-    const selectAllItemDiv = document.createElement('div');
-    applyStyles(selectAllItemDiv, filterStyles.optionItem);
+    this.selectAllItemDiv = document.createElement('div');
+    applyStyles(this.selectAllItemDiv, this.styles.optionItem);
 
-    const selectAllLabel = document.createElement('label');
-    applyStyles(selectAllLabel, filterStyles.optionLabel);
+    this.selectAllLabel = document.createElement('label');
+    applyStyles(this.selectAllLabel, this.styles.optionLabel);
 
     this.selectAllCheckbox = document.createElement('input');
     this.selectAllCheckbox.type = 'checkbox';
@@ -302,17 +307,28 @@ export class ValueFilter {
     this.totalCountSpan.textContent = '';
     applyStyles(this.totalCountSpan, filterStyles.countSpan);
 
-    selectAllLabel.append(this.selectAllCheckbox, ' 全选');
-    selectAllItemDiv.append(selectAllLabel, this.totalCountSpan);
+    this.selectAllLabel.append(this.selectAllCheckbox, ' 全选');
+    this.selectAllItemDiv.appendChild(this.selectAllLabel);
 
     this.filterItemsContainer = document.createElement('div'); // 筛选条目的容器，后续应动态 appendChild
 
-    optionsContainer.append(selectAllItemDiv, this.filterItemsContainer);
-    this.filterByValuePanel.append(searchContainer, optionsContainer);
+    this.optionsContainer.append(this.selectAllItemDiv, this.filterItemsContainer);
+    this.filterByValuePanel.append(this.searchContainer, this.optionsContainer);
 
     container.appendChild(this.filterByValuePanel);
 
     this.bindEventForFilterByValue();
+  }
+
+  updateStyles(styles: FilterStyles): void {
+    applyStyles(this.filterByValuePanel, styles.filterPanel);
+    applyStyles(this.searchContainer, styles.searchContainer);
+    this.filterByValueSearchInput.placeholder = styles.searchInput?.placeholder || '可使用空格分隔多个关键词';
+    applyStyles(this.filterByValueSearchInput, styles.searchInput);
+    applyStyles(this.optionsContainer, styles.optionsContainer);
+    applyStyles(this.selectAllItemDiv, styles.optionItem);
+    applyStyles(this.selectAllLabel, styles.optionLabel);
+    applyStyles(this.selectAllCheckbox, styles.checkbox);
   }
 
   private renderFilterOptions(field: string | number): void {

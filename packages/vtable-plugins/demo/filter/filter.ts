@@ -288,17 +288,21 @@ export function createTable() {
   });
 
   setTimeout(() => {
-    // filterPlugin.updatePluginOptions({
-    //   styles: {
-    //     optionItem: {
-    //       display: 'flex',
-    //       justifyContent: 'space-between',
-    //       alignItems: 'center',
-    //       padding: '8px 5px',
-    //       color: 'blue'
-    //     }
-    //   }
-    // });
+    filterPlugin.updatePluginOptions({
+      styles: {
+        searchInput: {
+          placeholder: 'xxx',
+          color: 'blue'
+        },
+        optionItem: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 5px',
+          color: 'blue'
+        }
+      }
+    });
     console.log('update');
     tableInstance.updateOption({
       ...option,

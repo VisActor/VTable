@@ -3,7 +3,7 @@ import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
 import { applyStyles, filterStyles } from './styles';
-import type { FilterMode, FilterOptions } from './types';
+import type { FilterMode, FilterOptions, FilterStyles } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -20,11 +20,13 @@ export class FilterToolbar {
   filterModes: FilterMode[] = [];
 
   private filterMenu: HTMLElement;
+  private filterTabsContainer: HTMLElement;
   private filterMenuWidth: number;
   private currentCol?: number | null;
   private currentRow?: number | null;
   private filterTabByValue: HTMLButtonElement;
   private filterTabByCondition: HTMLButtonElement;
+  private footerContainer: HTMLElement;
   private clearFilterOptionLink: HTMLAnchorElement;
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
@@ -105,6 +107,7 @@ export class FilterToolbar {
   }
 
   render(container: HTMLElement): void {
+    const filterStyles = this.pluginOptions.styles || {};
     // === 主容器 ===
     this.filterMenu = document.createElement('div');
     this.filterMenu.classList.add('vtable-filter-menu');
@@ -112,8 +115,8 @@ export class FilterToolbar {
     this.filterMenu.style.width = `${this.filterMenuWidth}px`;
 
     // === 筛选 Tab ===
-    const filterTabsContainer = document.createElement('div');
-    applyStyles(filterTabsContainer, filterStyles.tabsContainer);
+    this.filterTabsContainer = document.createElement('div');
+    applyStyles(this.filterTabsContainer, filterStyles.tabsContainer);
 
     this.filterTabByValue = document.createElement('button');
     this.filterTabByValue.innerText = '按值筛选';
@@ -123,11 +126,11 @@ export class FilterToolbar {
     this.filterTabByCondition.innerText = '按条件筛选';
     applyStyles(this.filterTabByCondition, filterStyles.tabStyle(false));
 
-    filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
+    this.filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
 
     // === 页脚（清除、取消、确定 筛选按钮） ===
-    const footerContainer = document.createElement('div');
-    applyStyles(footerContainer, filterStyles.footerContainer);
+    this.footerContainer = document.createElement('div');
+    applyStyles(this.footerContainer, filterStyles.footerContainer);
 
     this.clearFilterOptionLink = document.createElement('a');
     this.clearFilterOptionLink.href = '#';
@@ -144,20 +147,32 @@ export class FilterToolbar {
     applyStyles(this.applyFilterButton, filterStyles.footerButton(true));
 
     footerButtons.append(this.cancelFilterButton, this.applyFilterButton);
-    footerContainer.append(this.clearFilterOptionLink, footerButtons);
+    this.footerContainer.append(this.clearFilterOptionLink, footerButtons);
 
     // --- 筛选器头部 Tab ---
-    this.filterMenu.append(filterTabsContainer);
+    this.filterMenu.append(this.filterTabsContainer);
 
     // --- 筛选器内容 ---
     this.valueFilter.render(this.filterMenu);
     this.conditionFilter.render(this.filterMenu);
 
     // --- 筛选器页脚 ---
-    this.filterMenu.append(footerContainer);
+    this.filterMenu.append(this.footerContainer);
 
     container.appendChild(this.filterMenu); // 将筛选器添加到 DOM 中
     this.attachEventListeners();
+  }
+
+  updateStyles(styles: FilterStyles) {
+    applyStyles(this.filterMenu, styles.filterMenu);
+    applyStyles(this.filterTabsContainer, styles.tabsContainer);
+    applyStyles(this.filterTabByValue, styles.tabStyle(true));
+    applyStyles(this.footerContainer, styles.footerContainer);
+    applyStyles(this.clearFilterOptionLink, styles.clearLink);
+    applyStyles(this.cancelFilterButton, styles.footerButton(false));
+    applyStyles(this.applyFilterButton, styles.footerButton(true));
+    this.valueFilter.updateStyles(styles);
+    this.conditionFilter.updateStyles(styles);
   }
 
   attachEventListeners() {
