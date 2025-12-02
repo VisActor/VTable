@@ -1,6 +1,6 @@
 import { FormulaEngine } from '../formula/formula-engine';
 import type VTableSheet from '../components/vtable-sheet';
-import type { FormulaCell, FormulaResult } from '../ts-types/formula';
+import type { FormulaCell, FormulaResult, IFormulaManager } from '../ts-types/formula';
 import { FormulaRangeSelector } from '../formula/formula-range-selector';
 import type { CellRange } from '../ts-types';
 import { CellHighlightManager } from '../formula';
@@ -18,7 +18,7 @@ const DEFAULT_FORMULA_ENGINE_CONFIG = {
   timeFormats: ['hh:mm', 'hh:mm:ss.s']
 };
 
-export class FormulaManager {
+export class FormulaManager implements IFormulaManager {
   /** Sheet实例 */
   sheet: VTableSheet;
   /** FormulaEngine实例 */

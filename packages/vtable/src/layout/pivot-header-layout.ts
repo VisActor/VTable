@@ -293,6 +293,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             });
             if (topAxis && bottomAxis) {
               indicatorObject.hasTwoIndicatorAxes = true;
+              this.hasTwoIndicatorAxes = true;
               return true;
             }
           } else {
@@ -310,6 +311,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             });
             if (leftAxis && rightAxis) {
               indicatorObject.hasTwoIndicatorAxes = true;
+              this.hasTwoIndicatorAxes = true;
               return true;
             }
           }
@@ -2342,8 +2344,12 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         } = {};
         rowHeaderPath.dimensionKey = rowHeader.dimensionKey;
         rowHeaderPath.indicatorKey = rowHeader.indicatorKey;
+        // 如果value为null且没有indicatorKey时保持value为null（区分null和空字符串，防止单元格数据匹配不对）
         rowHeaderPath.value =
-          rowHeader.value ?? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '';
+          rowHeader.value ??
+          (rowHeader.indicatorKey
+            ? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? ''
+            : rowHeader.value);
         rowHeaderPath.virtual = rowHeader.virtual;
         rowHeaderPath.role = rowHeader.role;
         headerPaths.rowHeaderPaths!.push(rowHeaderPath);

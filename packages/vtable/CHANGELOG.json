@@ -2,6 +2,33 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.6",
+      "tag": "@visactor/vtable_v1.22.6",
+      "date": "Mon, 01 Dec 2025 11:33:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: copy formula to paste cell\n\n"
+          },
+          {
+            "comment": "feat: vtable-sheet support formula auto fill\n\n"
+          },
+          {
+            "comment": "fix: excel keyboard del and back to delete\n\n"
+          },
+          {
+            "comment": "fix: distinguish null and empty string values in row/column dimensions\n\n"
+          },
+          {
+            "comment": "fix: the filter plugin cannot be opened normally when clicked #4736\n\n"
+          },
+          {
+            "comment": "fix: clear the value of the searchInput when the filter plugin is displayed #4736\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.5",
       "tag": "@visactor/vtable_v1.22.5",
       "date": "Wed, 26 Nov 2025 02:07:13 GMT",

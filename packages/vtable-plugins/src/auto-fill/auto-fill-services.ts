@@ -22,6 +22,7 @@ import {
   chnWeek2Rule,
   chnWeek3Rule,
   loopSeriesRule,
+  formulaRule,
   otherRule
 } from './rules';
 
@@ -39,6 +40,7 @@ export class AutoFillService implements IAutoFillService {
 
   private _init() {
     this._rules = [
+      formulaRule,
       dateRule,
       numberRule,
       extendNumberRule,

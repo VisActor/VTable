@@ -82,6 +82,19 @@ export function createTable() {
         }
       ];
       const option = {
+        chartDimensionLinkage: {
+          showTooltip: true,
+          heightLimitToShowTooltipForLastRow: 60,
+          widthLimitToShowTooltipForLastColumn: 90,
+          labelHoverOnAxis: {
+            bottom: {
+              visible: true
+            },
+            left: {
+              visible: true
+            }
+          }
+        },
         hideIndicatorName: false,
         rows,
         columns,

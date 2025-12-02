@@ -25,10 +25,10 @@ export interface IWorkSheetOptions extends Omit<ListTableConstructorOptions, 're
 /** Sheet API 接口 */
 export interface IWorkSheetAPI {
   /** 获取单元格值 */
-  getCellValue: (row: number, col: number) => CellValue;
+  getCellValue: (col: number, row: number) => CellValue;
 
   /** 设置单元格值 */
-  setCellValue: (row: number, col: number, value: CellValue) => void;
+  setCellValue: (col: number, row: number, value: CellValue) => void;
 
   /** 根据地址获取单元格 */
   getCellByAddress: (address: string) => { coord: CellCoord; value: CellValue };
