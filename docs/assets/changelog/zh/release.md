@@ -1,3 +1,24 @@
+# v1.22.6
+
+2025-12-02
+
+
+**🆕 新增功能**
+
+- **@visactor/vtable-sheet**: support copy formula to paste cell
+- **@visactor/vtable-sheet**: support formula auto fill
+
+**🐛 功能修复**
+
+- **@visactor/vtable**: excel keyboard plugin when use key of delete and back to delete not work
+- **@visactor/vtable**: distinguish null and empty string values in row/column dimensions
+- **@visactor/vtable**: the filter plugin cannot be opened normally when clicked [#4736](https://github.com/VisActor/VTable/issues/4736)
+- **@visactor/vtable**: clear the value of the searchInput when the filter plugin is displayed [#4736](https://github.com/VisActor/VTable/issues/4736)
+
+
+
+[更多详情请查看 v1.22.6](https://github.com/VisActor/VTable/releases/tag/v1.22.6)
+
 # v1.22.5
 
 2025-11-26
