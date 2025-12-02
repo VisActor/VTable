@@ -151,13 +151,9 @@ export class ValueFilter {
 
   /**
    * 根据当前表格中的数据，更新 filter 的被选状态
+   * 适用情况：表格数据发生变化，或者需要自动检测当前表格的数据情况
    */
-  private initFilterStateFromTableData(fieldId: string | number): void {
-    const isHasFilteredState = this.filterStateManager.getActiveFilterFields();
-    if (isHasFilteredState) {
-      return;
-    }
-
+  syncSingleStateFromTableData(fieldId: string | number): void {
     const selectedValues = new Set<any>();
     const originalValues = new Set<any>();
 
@@ -176,10 +172,9 @@ export class ValueFilter {
       this.selectedKeys.set(fieldId, selectedValues);
 
       this.filterStateManager.dispatch({
-        type: FilterActionType.ADD_FILTER,
+        type: FilterActionType.UPDATE_FILTER,
         payload: {
           field: fieldId,
-          type: 'byValue',
           values: Array.from(selectedValues),
           enable: true
         }
@@ -387,15 +382,12 @@ export class ValueFilter {
       this.collectCandidateKeysForFilteredColumn(this.selectedField);
     }
 
-    // 2. 初始化筛选状态（必须在 renderFilterOptions 之前执行）
-    this.initFilterStateFromTableData(this.selectedField);
-
-    // 3. 清空搜索框
+    // 2. 清空搜索框
     if (this.filterByValueSearchInput) {
       this.filterByValueSearchInput.value = '';
     }
 
-    // 4. 渲染选项（此时状态已经初始化完成）
+    // 3. 渲染选项（此时状态已经初始化完成）
     this.renderFilterOptions(this.selectedField);
     this.filterByValuePanel.style.display = 'block';
   }
