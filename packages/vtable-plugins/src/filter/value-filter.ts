@@ -8,6 +8,7 @@ import { applyStyles } from './styles';
 export class ValueFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private pluginOptions: FilterOptions;
   private styles: Record<any, any>;
   private selectedField: string | number;
   private selectedKeys = new Map<string | number, Set<string | number>>(); // 存储 format 之前的原始数据
@@ -28,6 +29,7 @@ export class ValueFilter {
   constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
+    this.pluginOptions = pluginOptions;
     this.styles = pluginOptions.styles || {};
   }
 
@@ -337,7 +339,7 @@ export class ValueFilter {
       countSpan.textContent = String(count);
       applyStyles(countSpan, filterStyles.countSpan);
 
-      label.append(checkbox, ` ${val}`); // UI显示格式化值
+      label.append(checkbox, ` ${this.pluginOptions.checkboxItemFormat?.(val, unformattedArr) || val}`); // UI显示格式化值 或 用户二次加工的值
       itemDiv.append(label, countSpan);
       this.filterItemsContainer.appendChild(itemDiv);
 

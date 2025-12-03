@@ -257,8 +257,10 @@ export function createTable() {
       // { value: FilterOperatorCategory.COLOR, label: '颜色' },
       // { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
       // { value: FilterOperatorCategory.RADIO, label: '单选框' }
-    ]
-    // syncCheckboxCheckedState: false
+    ],
+    checkboxItemFormat: (formatValue, rawValue) => {
+      return formatValue;
+    }
   });
   (window as any).filterPlugin = filterPlugin;
 

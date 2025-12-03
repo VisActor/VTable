@@ -17,6 +17,8 @@ export interface FilterOptions {
   styles?: FilterStyles;
   /** 自定义筛选分类 */
   conditionCategories?: FilterOperatorCategoryOption[];
+  /** 筛选选项是否展示为原始值 */
+  checkboxItemFormat?: (rawValue: any, formatValue: any) => any;
 }
 
 export interface FilterOperatorCategoryOption {
