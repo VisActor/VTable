@@ -1,13 +1,14 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
 import { FilterOperatorCategory, FilterPlugin } from '../../src/filter';
+import { ListTable } from '@visactor/vtable';
 const CONTAINER_ID = 'vTable';
 
 /**
  * 生成展示筛选功能的演示数据
  * 包含各种类型的数据：文本、数值、日期、布尔值、颜色等
  */
-const generateDemoData = (count: number) => {
+const generateDemoData = (count: number, prefix: string) => {
   const colors = ['#f5a623', '#7ed321', '#bd10e0', '#4a90e2', '#50e3c2', '#ff5a5f', '#000000'];
   const departments = ['研发部', '市场部', '销售部', '人事部', '财务部', '设计部', '客服部', '运营部'];
 
@@ -19,7 +20,7 @@ const generateDemoData = (count: number) => {
 
     return {
       id: i + 1,
-      name: `员工${i + 1}`,
+      name: `${prefix}_员工${i + 1}`,
       gender: i % 2 === 0 ? '男' : '女',
       salary,
       sales,
@@ -39,7 +40,7 @@ const generateDemoData = (count: number) => {
 };
 
 export function createTable() {
-  const records = generateDemoData(50);
+  const records = generateDemoData(50, '第一次');
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -257,31 +258,71 @@ export function createTable() {
       // { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
       // { value: FilterOperatorCategory.RADIO, label: '单选框' }
     ]
+    // syncCheckboxCheckedState: false
   });
   (window as any).filterPlugin = filterPlugin;
 
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    records,
+    records: [...records],
     columns,
     padding: 10,
-    plugins: []
+    plugins: [filterPlugin]
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
-
-  tableInstance.on(VTable.ListTable.EVENT_TYPE.FILTER_MENU_SHOW, (...args) => {
+  tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_SHOW, (...args) => {
     console.log('filter_menu_show', args);
+    tableInstance.arrangeCustomCellStyle({ col: 1, row: 0 }, 'header_highlight');
+  });
+
+  tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_HIDE, (...args) => {
+    console.log('filter_menu_hide', args);
+    tableInstance.arrangeCustomCellStyle({ col: 1, row: 0 }, 'header_highlight');
+  });
+
+  tableInstance.registerCustomCellStyle('header_highlight', {
+    bgColor: 'red'
   });
 
   setTimeout(() => {
+    // filterPlugin.updatePluginOptions({
+    //   styles: {
+    //     optionItem: {
+    //       display: 'flex',
+    //       justifyContent: 'space-between',
+    //       alignItems: 'center',
+    //       padding: '8px 5px',
+    //       color: 'blue'
+    //     }
+    //   }
+    // });
+    console.log('update');
     tableInstance.updateOption({
       ...option,
-      plugins: [filterPlugin]
+      plugins: [filterPlugin],
+      records: generateDemoData(50, '第二次')
     });
-  }, 2000);
+  }, 5000);
+
+  // setTimeout(() => {
+  //   console.log('update');
+  //   tableInstance.updateOption({
+  //     ...option,
+  //     plugins: [filterPlugin]
+  //   });
+  // }, 8000);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
+  });
+
+  tableInstance.on('click_cell', (...args) => {
+    console.log('click_cell', args);
+  });
+  tableInstance.on('icon_click', (...args) => {
+    args[0].event.stopPropagation();
+    args[0].event.preventDefault();
+    console.log('icon_click');
   });
 }

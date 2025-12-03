@@ -636,7 +636,8 @@ export class ListTable extends BaseTable implements ListTableAPI {
     }
   ) {
     const internalProps = this.internalProps;
-    this.pluginManager.updatePlugins(options.plugins);
+
+    this.pluginManager.removeOrAddPlugins(options.plugins);
     super.updateOption(options, updateConfig);
     internalProps.frozenColDragHeaderMode =
       options.dragOrder?.frozenColDragHeaderMode ?? options.frozenColDragHeaderMode;
@@ -718,7 +719,7 @@ export class ListTable extends BaseTable implements ListTableAPI {
         this.internalProps.emptyTip?.resetVisible();
       }
     }
-    // this.pluginManager.updatePlugins(options.plugins);
+    this.pluginManager.updatePlugins(options.plugins);
     setTimeout(() => {
       this.fireListeners(TABLE_EVENT_TYPE.UPDATED, null);
     }, 0);
