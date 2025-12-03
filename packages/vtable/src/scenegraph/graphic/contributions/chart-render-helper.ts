@@ -145,10 +145,10 @@ export function renderChart(chart: Chart) {
         dataBatch.push({
           id: dataIdStr,
           values: dataIdAndField
-            ? data?.filter((item: any) => {
+            ? (data?.filter((item: any) => {
                 return item.hasOwnProperty(dataIdAndField);
-              }) ?? []
-            : data ?? [],
+              }) ?? [])
+            : (data ?? []),
           fields: series?.data?.fields
         });
         // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
@@ -156,10 +156,10 @@ export function renderChart(chart: Chart) {
           chartInstance.updateDataSync(
             dataIdStr,
             dataIdAndField
-              ? data?.filter((item: any) => {
+              ? (data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
-                }) ?? []
-              : data ?? []
+                }) ?? [])
+              : (data ?? [])
           );
         }
       }

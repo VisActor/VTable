@@ -1,13 +1,14 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { FilterPlugin } from '../../src/filter';
+import { FilterOperatorCategory, FilterPlugin } from '../../src/filter';
+import { ListTable } from '@visactor/vtable';
 const CONTAINER_ID = 'vTable';
 
 /**
  * 生成展示筛选功能的演示数据
  * 包含各种类型的数据：文本、数值、日期、布尔值、颜色等
  */
-const generateDemoData = (count: number) => {
+const generateDemoData = (count: number, prefix: string) => {
   const colors = ['#f5a623', '#7ed321', '#bd10e0', '#4a90e2', '#50e3c2', '#ff5a5f', '#000000'];
   const departments = ['研发部', '市场部', '销售部', '人事部', '财务部', '设计部', '客服部', '运营部'];
 
@@ -19,7 +20,7 @@ const generateDemoData = (count: number) => {
 
     return {
       id: i + 1,
-      name: `员工${i + 1}`,
+      name: `${prefix}_员工${i + 1}`,
       gender: i % 2 === 0 ? '男' : '女',
       salary,
       sales,
@@ -39,7 +40,7 @@ const generateDemoData = (count: number) => {
 };
 
 export function createTable() {
-  const records = generateDemoData(50);
+  const records = generateDemoData(50, '第一次');
   const columns: VTable.ColumnsDefine = [
     {
       field: 'id',
@@ -143,20 +144,185 @@ export function createTable() {
     }
   ];
 
-  const filterPlugin = new FilterPlugin({});
+  const filterPlugin = new FilterPlugin({
+    styles: {
+      filterMenu: {
+        display: 'none',
+        position: 'absolute',
+        backgroundColor: '#0E1119',
+        border: '0px solid #272A30',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+        zIndex: '100',
+        borderRadius: '4px',
+        color: '#FFF',
+        fontFamily: 'SourceHanSansCN-Normal',
+        fontSize: '12px'
+      },
+      filterPanel: {
+        padding: '10px',
+        display: 'block'
+      },
+      searchContainer: {
+        padding: '5px'
+      },
+      searchInput: {
+        width: '100%',
+        padding: '8px 10px',
+        border: '1px solid #272a30',
+        borderRadius: '4px',
+        fontSize: '14px',
+        boxSizing: 'border-box',
+        backgroundColor: '#0e1119',
+        color: 'red'
+      },
+      optionsContainer: {
+        maxHeight: '200px',
+        overflowY: 'auto',
+        marginTop: '10px'
+      },
+      optionItem: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '8px 5px',
+        color: 'red'
+      },
+      optionLabel: {
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        flexGrow: '1',
+        fontWeight: 'normal'
+      },
+      checkbox: {
+        marginRight: '10px'
+      },
+      countSpan: {
+        color: '#888',
+        fontSize: '12px'
+      },
+      tabsContainer: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        borderBottom: '0px solid #e0e0e0'
+      },
+      footerContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 15px',
+        borderTop: '0px solid #e0e0e0',
+        backgroundColor: 'transparent'
+      },
+      clearLink: {
+        color: '#006EFF',
+        textDecoration: 'none'
+      },
+      conditionContainer: {
+        marginBottom: '15px',
+        padding: '10px',
+        backgroundColor: '#0E1119'
+      },
+      formLabel: {
+        display: 'block',
+        marginBottom: '8px',
+        fontWeight: 'normal',
+        backgroundColor: 'transparent'
+      },
+      operatorSelect: {
+        width: '100%',
+        padding: '8px',
+        marginBottom: '15px',
+        border: '1px solid #272a30',
+        borderRadius: '4px',
+        boxSizing: 'border-box',
+        backgroundColor: '#0e1119',
+        color: 'red'
+      },
+      rangeInputContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        backgroundColor: '#0E1119'
+      },
+      addLabel: {
+        display: 'none',
+        padding: '0 5px'
+      }
+    },
+    conditionCategories: [
+      { value: FilterOperatorCategory.ALL, label: '全部' },
+      { value: FilterOperatorCategory.TEXT, label: '文本' },
+      { value: FilterOperatorCategory.NUMBER, label: '数值' }
+      // { value: FilterOperatorCategory.COLOR, label: '颜色' },
+      // { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
+      // { value: FilterOperatorCategory.RADIO, label: '单选框' }
+    ],
+    syncCheckboxCheckedState: false
+  });
   (window as any).filterPlugin = filterPlugin;
 
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    records,
+    records: [...records, undefined, null],
     columns,
     padding: 10,
     plugins: [filterPlugin]
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+  tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_SHOW, (...args) => {
+    console.log('filter_menu_show', args);
+    tableInstance.arrangeCustomCellStyle({ col: 1, row: 0 }, 'header_highlight');
+  });
+
+  tableInstance.on(ListTable.EVENT_TYPE.FILTER_MENU_HIDE, (...args) => {
+    console.log('filter_menu_hide', args);
+    tableInstance.arrangeCustomCellStyle({ col: 1, row: 0 }, 'header_highlight');
+  });
+
+  tableInstance.registerCustomCellStyle('header_highlight', {
+    bgColor: 'red'
+  });
+
+  // setTimeout(() => {
+  //   filterPlugin.updatePluginOptions({
+  //     styles: {
+  //       optionItem: {
+  //         display: 'flex',
+  //         justifyContent: 'space-between',
+  //         alignItems: 'center',
+  //         padding: '8px 5px',
+  //         color: 'blue'
+  //       }
+  //     }
+  //   });
+  //   console.log('update');
+  //   tableInstance.updateOption({
+  //     ...option,
+  //     plugins: [filterPlugin],
+  //     records: generateDemoData(50, '第二次')
+  //   });
+  // }, 5000);
+
+  // setTimeout(() => {
+  //   console.log('update');
+  //   tableInstance.updateOption({
+  //     ...option,
+  //     plugins: [filterPlugin]
+  //   });
+  // }, 8000);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']
+  });
+
+  tableInstance.on('click_cell', (...args) => {
+    console.log('click_cell', args);
+  });
+  tableInstance.on('icon_click', (...args) => {
+    args[0].event.stopPropagation();
+    args[0].event.preventDefault();
+    console.log('icon_click');
   });
 }

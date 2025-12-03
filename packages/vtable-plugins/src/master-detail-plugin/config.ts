@@ -7,7 +7,10 @@ import type { DetailTableOptions, MasterDetailPluginOptions } from './types';
 export class ConfigManager {
   private expandRowCallback?: (rowIndex: number) => void;
 
-  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
+  constructor(
+    private pluginOptions: MasterDetailPluginOptions,
+    private table: VTable.ListTable
+  ) {}
 
   /**
    * 设置展开行的回调函数

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add custom style option and condition option",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

@@ -1,0 +1,16 @@
+{
+  "changes": [
+    {
+      "comment": "fix: the filter plugin cannot be opened normally when clicked #4736\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    },
+    {
+      "comment": "fix: clear the value of the searchInput when the filter plugin is displayed #4736\n\n",
+      "type": "none",
+      "packageName": "@visactor/vtable"
+    }
+  ],
+  "packageName": "@visactor/vtable",
+  "email": "760478279@qq.com"
+}

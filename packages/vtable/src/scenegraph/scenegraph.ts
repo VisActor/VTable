@@ -733,13 +733,14 @@ export class Scenegraph {
                     this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
                     this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
                   : (this.table.options as PivotChartConstructorOptions).indicatorsAsCol //非散点图的话判断是显示横向crosshair还是纵向crosshair
-                  ? row !== this.table.stateManager.hover.cellPos.row ||
-                    this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
-                    this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
-                  : col !== this.table.stateManager.hover.cellPos.col ||
-                    this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
-                    this.table.stateManager.hover.cellPos.row >
-                      this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+                    ? row !== this.table.stateManager.hover.cellPos.row ||
+                      this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                      this.table.stateManager.hover.cellPos.col >
+                        this.table.colCount - 1 - this.table.rightFrozenColCount
+                    : col !== this.table.stateManager.hover.cellPos.col ||
+                      this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                      this.table.stateManager.hover.cellPos.row >
+                        this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
               releaseColumnChartInstance:
                 col !== this.table.stateManager.hover.cellPos.col ||
                 this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
@@ -1188,16 +1189,16 @@ export class Scenegraph {
       if ((rectAttributes as any)?.strokeArrayWidth) {
         borderTop = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[0]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
         borderRight = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[1]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
         borderBottom = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[2]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
         borderLeft = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[3]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
       } else {
         borderTop = (rectAttributes?.lineWidth as number) ?? 0;
         borderRight = (rectAttributes?.lineWidth as number) ?? 0;
@@ -1932,8 +1933,8 @@ export class Scenegraph {
     const type = isVtableMerge
       ? 'text'
       : this.table.isHeader(col, row)
-      ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-      : this.table.getBodyColumnType(col, row);
+        ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+        : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
@@ -1972,8 +1973,8 @@ export class Scenegraph {
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
         : this.table.internalProps.transpose
-        ? this.table.theme.rowHeaderStyle.frameStyle
-        : this.table.theme.bodyStyle.frameStyle,
+          ? this.table.theme.rowHeaderStyle.frameStyle
+          : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );

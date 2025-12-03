@@ -13,6 +13,16 @@ export interface FilterOptions {
   defaultEnabled?: boolean;
   /** 是否展示按条件筛选，按值筛选 UI */
   filterModes?: FilterMode[];
+  /** 筛选器样式 */
+  styles?: FilterStyles;
+  /** 筛选器操作符分类 */
+  conditionCategories?: FilterOperatorCategoryOption[];
+  // /** 参与筛选的数据 */
+  // customFilterData?: (dataSource: any[]) => boolean;
+  /** 多个筛选器之间是否联动
+   * @default true
+   */
+  syncCheckboxCheckedState?: boolean;
 }
 
 export type FilterMode = 'byValue' | 'byCondition';
@@ -91,4 +101,45 @@ export enum FilterOperatorCategory {
   RADIO = 'radio'
 }
 
+export interface FilterOperatorCategoryOption {
+  value: FilterOperatorCategory;
+  label: string;
+}
+
+/**
+ * 筛选组件样式类型定义
+ */
+
+// 静态样式类型
+interface StaticStyles {
+  filterMenu?: Record<string, string>;
+  filterPanel?: Record<string, string>;
+  searchContainer?: Record<string, string>;
+  searchInput?: Record<string, string>;
+  optionsContainer?: Record<string, string>;
+  optionItem?: Record<string, string>;
+  optionLabel?: Record<string, string>;
+  checkbox?: Record<string, string>;
+  countSpan?: Record<string, string>;
+  tabsContainer?: Record<string, string>;
+  footerContainer?: Record<string, string>;
+  clearLink?: Record<string, string>;
+  conditionContainer?: Record<string, string>;
+  formLabel?: Record<string, string>;
+  operatorSelect?: Record<string, string>;
+  rangeInputContainer?: Record<string, string>;
+  addLabel?: Record<string, string>;
+}
+
+// 函数样式类型
+interface FunctionStyles {
+  tabStyle?: (isActive: boolean) => Record<string, string>;
+  footerButton?: (isPrimary: boolean) => Record<string, string>;
+  buttonStyle?: (isPrimary?: boolean) => Record<string, string>;
+}
+
+// 完整的筛选样式类型
+export type FilterStyles = StaticStyles & FunctionStyles;
+
+// 事件监听类型
 export type FilterListener = (state: FilterState, action?: FilterAction) => void;

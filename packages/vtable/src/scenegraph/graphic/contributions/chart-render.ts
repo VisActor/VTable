@@ -133,20 +133,20 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
           dataBatch.push({
             id: dataIdStr,
             values: dataIdAndField
-              ? data?.filter((item: any) => {
+              ? (data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
-                }) ?? []
-              : data ?? [],
+                }) ?? [])
+              : (data ?? []),
             fields: series?.data?.fields
           });
           if (!activeChartInstance.updateFullDataSync) {
             activeChartInstance.updateDataSync(
               dataIdStr,
               dataIdAndField
-                ? data?.filter((item: any) => {
+                ? (data?.filter((item: any) => {
                     return item.hasOwnProperty(dataIdAndField);
-                  }) ?? []
-                : data ?? []
+                  }) ?? [])
+                : (data ?? [])
             );
           }
         }

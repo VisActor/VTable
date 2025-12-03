@@ -101,8 +101,8 @@ export class FormulaRangeSelector {
     const newCursorPos = isCtrlAddSelection
       ? this.formulaManager.lastKnownCursorPosInFormulaInput + (newValue.length - currentValue.length)
       : argPosition
-      ? argPosition.start + a1Notation.length
-      : cursorPos;
+        ? argPosition.start + a1Notation.length
+        : cursorPos;
 
     formulaInput.setSelectionRange(newCursorPos, newCursorPos);
     setTimeout(() => {

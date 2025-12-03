@@ -159,24 +159,24 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
-      : options.rows?.reduce((keys, rowObj) => {
+      : (options.rows?.reduce((keys, rowObj) => {
           if (typeof rowObj === 'string') {
             keys.push(rowObj);
           } else {
             keys.push(rowObj.dimensionKey);
           }
           return keys;
-        }, []) ?? [];
+        }, []) ?? []);
     const columnKeys = columnDimensionTree?.dimensionKeys?.count
       ? columnDimensionTree.dimensionKeys.valueArr()
-      : options.columns?.reduce((keys, columnObj) => {
+      : (options.columns?.reduce((keys, columnObj) => {
           if (typeof columnObj === 'string') {
             keys.push(columnObj);
           } else {
             keys.push(columnObj.dimensionKey);
           }
           return keys;
-        }, []) ?? [];
+        }, []) ?? []);
     const indicatorKeys =
       options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
@@ -379,24 +379,24 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
     }
     const rowKeys = rowDimensionTree?.dimensionKeys?.count
       ? rowDimensionTree.dimensionKeys.valueArr()
-      : options.rows?.reduce((keys, rowObj) => {
+      : (options.rows?.reduce((keys, rowObj) => {
           if (typeof rowObj === 'string') {
             keys.push(rowObj);
           } else {
             keys.push(rowObj.dimensionKey);
           }
           return keys;
-        }, []) ?? [];
+        }, []) ?? []);
     const columnKeys = columnDimensionTree?.dimensionKeys?.count
       ? columnDimensionTree.dimensionKeys.valueArr()
-      : options.columns?.reduce((keys, columnObj) => {
+      : (options.columns?.reduce((keys, columnObj) => {
           if (typeof columnObj === 'string') {
             keys.push(columnObj);
           } else {
             keys.push(columnObj.dimensionKey);
           }
           return keys;
-        }, []) ?? [];
+        }, []) ?? []);
     const indicatorKeys =
       options.indicators?.reduce((keys, indicatorObj) => {
         if (typeof indicatorObj === 'string') {
@@ -993,7 +993,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', true),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
-                    ? chartSeries?.data?.fields?.[xField]?.domain ?? indicatorSpec?.data?.fields?.[xField]?.domain
+                    ? (chartSeries?.data?.fields?.[xField]?.domain ?? indicatorSpec?.data?.fields?.[xField]?.domain)
                     : undefined
               };
 
@@ -1007,7 +1007,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 sumBy: chartSeries.stack && columnKeys.concat(chartSeries?.xField), // 逻辑严谨的话 这个concat的值也需要结合 chartSeries.direction来判断是xField还是yField
                 sortBy:
                   chartSeries.direction === 'horizontal'
-                    ? chartSeries?.data?.fields?.[yField]?.domain ?? indicatorSpec?.data?.fields?.[yField]?.domain
+                    ? (chartSeries?.data?.fields?.[yField]?.domain ?? indicatorSpec?.data?.fields?.[yField]?.domain)
                     : undefined,
                 extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
               };
@@ -1017,8 +1017,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               indicatorSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
                 ? indicatorSpec.x2Field
                 : typeof indicatorSpec.xField === 'string'
-                ? indicatorSpec.xField
-                : indicatorSpec.xField[0];
+                  ? indicatorSpec.xField
+                  : indicatorSpec.xField[0];
             collectValuesBy[xField] = {
               by: columnKeys,
               type: indicatorSpec.direction !== 'horizontal' ? 'xField' : undefined,
@@ -1076,7 +1076,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 range: hasLinearAxis(chartSeries, this._axes, chartSeries.direction === 'horizontal', false),
                 sortBy:
                   chartSeries.direction === 'horizontal'
-                    ? chartSeries?.data?.fields?.[yField]?.domain ?? indicatorSpec?.data?.fields?.[yField]?.domain
+                    ? (chartSeries?.data?.fields?.[yField]?.domain ?? indicatorSpec?.data?.fields?.[yField]?.domain)
                     : undefined
               };
 
@@ -1090,7 +1090,7 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
                 sumBy: chartSeries.stack && rowKeys.concat(chartSeries?.yField),
                 sortBy:
                   chartSeries.direction !== 'horizontal'
-                    ? chartSeries?.data?.fields?.[xField]?.domain ?? indicatorSpec?.data?.fields?.[xField]?.domain
+                    ? (chartSeries?.data?.fields?.[xField]?.domain ?? indicatorSpec?.data?.fields?.[xField]?.domain)
                     : undefined,
                 extendRange: parseMarkLineGetExtendRange(indicatorSpec.markLine)
               };
@@ -1100,8 +1100,8 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               indicatorSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
                 ? indicatorSpec.y2Field
                 : typeof indicatorSpec.yField === 'string'
-                ? indicatorSpec.yField
-                : indicatorSpec.yField[0];
+                  ? indicatorSpec.yField
+                  : indicatorSpec.yField[0];
             collectValuesBy[yField] = {
               by: rowKeys,
               type: indicatorSpec.direction === 'horizontal' ? 'yField' : undefined,
@@ -1441,10 +1441,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
             dataBatch.push({
               id: dataIdStr,
               values: dataIdAndField
-                ? data?.filter((item: any) => {
+                ? (data?.filter((item: any) => {
                     return item.hasOwnProperty(dataIdAndField);
-                  }) ?? []
-                : data ?? [],
+                  }) ?? [])
+                : (data ?? []),
               fields: series?.data?.fields
             });
             // 判断是否有updateFullDataSync 木有的话 还是循环调用updateDataSync
@@ -1452,10 +1452,10 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
               chartInstance.updateDataSync(
                 dataIdStr,
                 dataIdAndField
-                  ? data?.filter((item: any) => {
+                  ? (data?.filter((item: any) => {
                       return item.hasOwnProperty(dataIdAndField);
-                    }) ?? []
-                  : data ?? []
+                    }) ?? [])
+                  : (data ?? [])
               );
             }
           }
@@ -1555,20 +1555,20 @@ export class PivotChart extends BaseTable implements PivotChartAPI {
           dataBatch.push({
             id: dataIdStr,
             values: dataIdAndField
-              ? data?.filter((item: any) => {
+              ? (data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
-                }) ?? []
-              : data ?? [],
+                }) ?? [])
+              : (data ?? []),
             fields: series?.data?.fields
           });
           if (!activeChartInstance.updateFullDataSync) {
             activeChartInstance.updateDataSync(
               dataIdStr,
               dataIdAndField
-                ? data?.filter((item: any) => {
+                ? (data?.filter((item: any) => {
                     return item.hasOwnProperty(dataIdAndField);
-                  }) ?? []
-                : data ?? []
+                  }) ?? [])
+                : (data ?? [])
             );
           }
         }

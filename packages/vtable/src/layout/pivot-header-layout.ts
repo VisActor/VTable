@@ -423,10 +423,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     );
     //#endregion
     this.colIndex = 0;
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._headerObjectMap = this._headerObjects.reduce(
+      (o, e) => {
+        o[e.id as number] = e;
+        return o;
+      },
+      {} as { [key: LayoutObjectId]: HeaderData }
+    );
 
     if (this.indicatorsAsCol && !this.hideIndicatorName) {
       this._indicatorShowType = 'column';
@@ -708,8 +711,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return this.cornerSetting.titleOnDimension === 'row'
         ? this.rowDimensionTree.totalLevel
         : this.indicatorsAsCol
-        ? this.rowDimensionTree.expandedMaxLevel
-        : this.rowDimensionTree.expandedMaxLevel + 1;
+          ? this.rowDimensionTree.expandedMaxLevel
+          : this.rowDimensionTree.expandedMaxLevel + 1;
     }
     return this.rowDimensionTree.totalLevel;
   }
@@ -718,8 +721,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       return this.cornerSetting.titleOnDimension === 'column'
         ? this.columnDimensionTree.totalLevel
         : this.indicatorsAsCol === false
-        ? this.columnDimensionTree.expandedMaxLevel
-        : this.columnDimensionTree.expandedMaxLevel + 1;
+          ? this.columnDimensionTree.expandedMaxLevel
+          : this.columnDimensionTree.expandedMaxLevel + 1;
     }
     return this.columnDimensionTree.totalLevel;
   }
@@ -873,10 +876,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 dimensionKey === this.indicatorDimensionKey
                   ? this.indicatorTitle
                   : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
+                    ? dimensionInfo.title
+                    : dimensionKey === 'axis'
+                      ? ''
+                      : (dimensionKey as string),
               field: dimensionKey, //'维度名称',
               style: this.cornerSetting.headerStyle,
               headerType: this.cornerSetting.headerType ?? 'text',
@@ -926,10 +929,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 dimensionKey === this.indicatorDimensionKey
                   ? this.indicatorTitle
                   : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
+                    ? dimensionInfo.title
+                    : dimensionKey === 'axis'
+                      ? ''
+                      : (dimensionKey as string),
               field: dimensionKey, //'维度名称',
               style: this.cornerSetting.headerStyle,
               headerType: this.cornerSetting.headerType ?? 'text',
@@ -977,10 +980,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 dimensionKey === this.indicatorDimensionKey
                   ? this.indicatorTitle
                   : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
+                    ? dimensionInfo.title
+                    : dimensionKey === 'axis'
+                      ? ''
+                      : (dimensionKey as string),
               field: dimensionKey, //'维度名称',
               style: this.cornerSetting.headerStyle,
               headerType: this.cornerSetting.headerType ?? 'text',
@@ -1030,10 +1033,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
                 dimensionKey === this.indicatorDimensionKey
                   ? this.indicatorTitle
                   : dimensionInfo
-                  ? dimensionInfo.title
-                  : dimensionKey === 'axis'
-                  ? ''
-                  : (dimensionKey as string),
+                    ? dimensionInfo.title
+                    : dimensionKey === 'axis'
+                      ? ''
+                      : (dimensionKey as string),
               field: dimensionKey, //'维度名称',
               style: this.cornerSetting.headerStyle,
               headerType: this.cornerSetting.headerType ?? 'text',
@@ -1089,10 +1092,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
               dimensionKey === this.indicatorDimensionKey
                 ? this.indicatorTitle
                 : dimensionInfo
-                ? dimensionInfo.title
-                : dimensionKey === 'axis'
-                ? ''
-                : (dimensionKey as string),
+                  ? dimensionInfo.title
+                  : dimensionKey === 'axis'
+                    ? ''
+                    : (dimensionKey as string),
             field: dimensionKey, //'维度名称',
             style: this.cornerSetting.headerStyle,
             headerType: this.cornerSetting.headerType ?? 'text',
@@ -1805,7 +1808,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this._indicators?.length > 0 && // 前两个判断条件来判断  有展示的body值的情况 需要展示body row
       !this._rowHeaderCellIds?.length // 需要展示body值 但 _rowHeaderCellIds的长度维度为0  无rows 行表头为空
         ? 1 //兼容bugserver: https://bugserver.cn.goofy.app/case?product=VTable&fileid=65364a57173c354c242a7c4f
-        : this._rowHeaderCellIds?.length ?? 0) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
+        : (this._rowHeaderCellIds?.length ?? 0)) + //兼容 bugserver：https://bugserver.cn.goofy.app/case?product=VTable&fileid=6527ac0695c0cdbd788cf17d
       this.columnHeaderLevelCount +
       this.bottomHeaderRowCount // 小心bottomFrozenRowCount和rowCount的循环引用 造成调用栈溢出
     );
@@ -1977,14 +1980,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     if (this.indicatorsAsCol) {
       const indicatorKey = paths.colHeaderPaths?.find(colPath => colPath.indicatorKey)?.indicatorKey;
       const body = isValid(indicatorKey)
-        ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+        ? (this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
           this._indicators[0] ?? {
             id: '',
             field: undefined,
             indicatorKey: undefined,
             cellType: 'text',
             define: undefined
-          }
+          })
         : ({
             id: '',
             field: undefined,
@@ -1997,14 +2000,14 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
     const indicatorKey = paths.rowHeaderPaths?.find(rowPath => rowPath.indicatorKey)?.indicatorKey;
     const body = isValid(indicatorKey)
-      ? this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
+      ? (this._indicators?.find(indicator => indicator.indicatorKey === indicatorKey) ??
         this._indicators[0] ?? {
           id: '',
           field: undefined,
           indicatorKey: undefined,
           cellType: 'text',
           define: undefined
-        }
+        })
       : ({
           id: '',
           field: undefined,
@@ -2348,7 +2351,7 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         rowHeaderPath.value =
           rowHeader.value ??
           (rowHeader.indicatorKey
-            ? this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? ''
+            ? (this.getIndicatorInfoByIndicatorKey(rowHeader.indicatorKey)?.title ?? '')
             : rowHeader.value);
         rowHeaderPath.virtual = rowHeader.virtual;
         rowHeaderPath.role = rowHeader.role;
@@ -2569,10 +2572,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     // 6. 重置所有对象映射和缓存
     this.colIndex = 0;
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._headerObjectMap = this._headerObjects.reduce(
+      (o, e) => {
+        o[e.id as number] = e;
+        return o;
+      },
+      {} as { [key: LayoutObjectId]: HeaderData }
+    );
     this._CellHeaderPathMap = new Map();
     this._largeCellRangeCache.length = 0;
 
@@ -2650,10 +2656,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
 
     // 5. 重置所有对象映射和缓存
     this.colIndex = 0;
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._headerObjectMap = this._headerObjects.reduce(
+      (o, e) => {
+        o[e.id as number] = e;
+        return o;
+      },
+      {} as { [key: LayoutObjectId]: HeaderData }
+    );
     this._CellHeaderPathMap = new Map();
     this._largeCellRangeCache.length = 0;
 
@@ -2767,10 +2776,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       this.generateExtensionRowTree();
     }
     this.colIndex = 0;
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._headerObjectMap = this._headerObjects.reduce(
+      (o, e) => {
+        o[e.id as number] = e;
+        return o;
+      },
+      {} as { [key: LayoutObjectId]: HeaderData }
+    );
     this._CellHeaderPathMap = new Map();
     // this._cellRangeMap = new Map();
     this._largeCellRangeCache.length = 0;
@@ -2891,10 +2903,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     }
 
     this.colIndex = 0;
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._headerObjectMap = this._headerObjects.reduce(
+      (o, e) => {
+        o[e.id as number] = e;
+        return o;
+      },
+      {} as { [key: LayoutObjectId]: HeaderData }
+    );
     this._CellHeaderPathMap = new Map();
     // this._cellRangeMap = new Map();
     this._largeCellRangeCache.length = 0;
@@ -3959,10 +3974,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
       if (chartSpec) {
         dimensionKey =
           type === 'yField'
-            ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+            ? (chartSpec.yField ?? chartSpec?.series?.[0]?.yField)
             : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
-            ? chartSpec.x2Field
-            : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+              ? chartSpec.x2Field
+              : (chartSpec.xField ?? chartSpec?.series?.[0]?.xField);
 
         if (dimensionKey) {
           return dimensionKey;
@@ -3974,10 +3989,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
         if (chartSpec) {
           dimensionKey =
             type === 'yField'
-              ? chartSpec.yField ?? chartSpec?.series?.[0]?.yField
+              ? (chartSpec.yField ?? chartSpec?.series?.[0]?.yField)
               : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
-              ? chartSpec.x2Field
-              : chartSpec.xField ?? chartSpec?.series?.[0]?.xField;
+                ? chartSpec.x2Field
+                : (chartSpec.xField ?? chartSpec?.series?.[0]?.xField);
 
           if (dimensionKey) {
             return dimensionKey;
@@ -3991,10 +4006,10 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
           type === 'xField'
             ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
               ? chartSpec.x2Field
-              : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
+              : (chartSpec.xField ?? chartSpec?.series?.[0]?.xField)
             : chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
-            ? chartSpec.y2Field
-            : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+              ? chartSpec.y2Field
+              : (chartSpec.yField ?? chartSpec?.series?.[0]?.yField);
         if (dimensionKey) {
           return dimensionKey;
         }
@@ -4007,8 +4022,8 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
             type === 'xField'
               ? chartSpec.type === 'histogram' //特殊处理histogram直方图xField和x2Field
                 ? chartSpec.x2Field
-                : chartSpec.xField ?? chartSpec?.series?.[0]?.xField
-              : chartSpec.yField ?? chartSpec?.series?.[0]?.yField;
+                : (chartSpec.xField ?? chartSpec?.series?.[0]?.xField)
+              : (chartSpec.yField ?? chartSpec?.series?.[0]?.yField);
           if (dimensionKey) {
             return dimensionKey;
           }
@@ -4385,10 +4400,13 @@ export class PivotHeaderLayoutMap implements LayoutMapAPI {
     this._generateRowHeaderIds();
     this._rowHeaderCellFullPathIds_FULL = transpose(this._rowHeaderCellFullPathIds_FULL);
 
-    this._headerObjectMap = this._headerObjects.reduce((o, e) => {
-      o[e.id as number] = e;
-      return o;
-    }, {} as { [key: LayoutObjectId]: HeaderData });
+    this._headerObjectMap = this._headerObjects.reduce(
+      (o, e) => {
+        o[e.id as number] = e;
+        return o;
+      },
+      {} as { [key: LayoutObjectId]: HeaderData }
+    );
 
     this._CellHeaderPathMap = new Map();
     this._largeCellRangeCache.length = 0;

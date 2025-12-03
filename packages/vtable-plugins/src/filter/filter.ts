@@ -13,6 +13,9 @@ import type {
   ColumnDefine,
   ColumnsDefine
 } from '@visactor/vtable';
+import { filterStyles } from './styles';
+import { merge } from 'lodash';
+import { categories } from './constants';
 
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
@@ -60,6 +63,28 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     if (!this.pluginOptions.filterModes || !this.pluginOptions.filterModes.length) {
       this.pluginOptions.filterModes = ['byValue', 'byCondition'];
     }
+    this.pluginOptions.styles = merge({}, filterStyles, pluginOptions.styles);
+    this.pluginOptions.conditionCategories = pluginOptions.conditionCategories ?? categories;
+  }
+
+  initFilterPlugin(eventArgs: any) {
+    this.filterEngine = new FilterEngine();
+    this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
+    this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
+    this.columns = eventArgs.options.columns;
+
+    this.filterToolbar.render(document.body);
+    this.updateFilterIcons(this.columns);
+    this.filterStateManager.subscribe((_: FilterState, action?: FilterAction) => {
+      // 新增筛选配置时，不需要更新筛选图标以及表格
+      if (action?.type === FilterActionType.ADD_FILTER) {
+        return;
+      }
+      this.updateFilterIcons(this.columns);
+      (this.table as ListTable).updateColumns(this.columns, {
+        clearRowHeightCache: false
+      });
+    });
   }
 
   run(...args: any[]) {
@@ -69,27 +94,14 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.table = table as ListTable | PivotTable;
 
     if (runtime === TABLE_EVENT_TYPE.BEFORE_INIT) {
-      this.filterEngine = new FilterEngine();
-      this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
-      this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
-      this.columns = eventArgs.options.columns;
-
-      this.filterToolbar.render(document.body);
-      this.updateFilterIcons(this.columns);
-      this.filterStateManager.subscribe((_: FilterState, action?: FilterAction) => {
-        // 新增筛选配置时，不需要更新筛选图标以及表格
-        if (action?.type === FilterActionType.ADD_FILTER) {
-          return;
-        }
-        this.updateFilterIcons(this.columns);
-        (this.table as ListTable).updateColumns(this.columns, {
-          clearRowHeightCache: false
-        });
-      });
+      this.initFilterPlugin(eventArgs);
     } else if (runtime === TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
+      if (!this.filterEngine || !this.filterStateManager || !this.filterToolbar) {
+        this.initFilterPlugin(eventArgs);
+      }
       this.pluginOptions = {
         ...this.pluginOptions,
-        ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
+        ...(eventArgs.options.plugins as FilterPlugin[])?.find(plugin => plugin.id === this.id)?.pluginOptions
       };
       this.columns = eventArgs.options.columns;
       this.handleOptionUpdate(eventArgs.options);
@@ -103,11 +115,10 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       if (isRightClick) {
         return;
       }
-
       const col = eventArgs.col;
       const row = eventArgs.row;
       if (this.filterToolbar.isVisible) {
-        this.filterToolbar.hide();
+        this.filterToolbar.hide(eventArgs.col, eventArgs.row);
       } else {
         this.filterToolbar.show(col, row, this.pluginOptions.filterModes);
       }
@@ -118,7 +129,23 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     }
   }
 
+  updatePluginOptions(pluginOptions: FilterOptions) {
+    this.pluginOptions = merge(this.pluginOptions, pluginOptions);
+    this.filterToolbar.updatePluginOptions(this.pluginOptions);
+  }
+
   update() {
+    // 更新筛选器数据
+    if (this.filterToolbar.valueFilter) {
+      const allFields = (this.table as ListTable).columns.map(col => col.field) as string[];
+      const valueFilter = this.filterToolbar.valueFilter;
+      allFields.forEach(field => {
+        // 更新筛选候选值 & 新增的数据需要设置为选中态
+        valueFilter.collectUniqueColumnValues(field, true);
+      });
+      // 更新筛选UI
+      valueFilter.updateUI(this.filterStateManager.getFilterState(this.filterToolbar.selectedField));
+    }
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
     }
@@ -313,6 +340,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   release() {
+    this.columns.forEach(column => {
+      column.headerIcon = undefined;
+    });
     this.table = null;
     this.filterEngine = null;
     this.filterStateManager = null;

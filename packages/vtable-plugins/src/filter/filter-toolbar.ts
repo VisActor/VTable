@@ -1,9 +1,9 @@
-import type { ListTable, PivotTable } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE, type ListTable, type PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
-import { applyStyles, filterStyles } from './styles';
-import type { FilterMode } from './types';
+import { applyStyles } from './styles';
+import type { FilterMode, FilterOptions, FilterStyles } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -11,6 +11,8 @@ import type { FilterMode } from './types';
 export class FilterToolbar {
   table: ListTable | PivotTable;
   filterStateManager: FilterStateManager;
+  styles: FilterStyles;
+
   valueFilter: ValueFilter | null = null;
   conditionFilter: ConditionFilter | null = null;
   activeTab: 'byValue' | 'byCondition' = 'byValue';
@@ -19,20 +21,23 @@ export class FilterToolbar {
   filterModes: FilterMode[] = [];
 
   private filterMenu: HTMLElement;
+  private filterTabsContainer: HTMLElement;
   private filterMenuWidth: number;
   private currentCol?: number | null;
   private currentRow?: number | null;
   private filterTabByValue: HTMLButtonElement;
   private filterTabByCondition: HTMLButtonElement;
+  private footerContainer: HTMLElement;
   private clearFilterOptionLink: HTMLAnchorElement;
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
-    this.valueFilter = new ValueFilter(this.table, this.filterStateManager);
-    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager);
+    this.styles = pluginOptions.styles;
+    this.valueFilter = new ValueFilter(this.table, this.filterStateManager, pluginOptions);
+    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, pluginOptions);
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
 
@@ -42,6 +47,11 @@ export class FilterToolbar {
         this.updateClearFilterButtonState(this.selectedField);
       }
     });
+  }
+
+  updatePluginOptions(pluginOptions: FilterOptions) {
+    this.valueFilter.updatePluginOptions(pluginOptions);
+    this.conditionFilter.updatePluginOptions(pluginOptions);
   }
 
   private onTabSwitch(tab: 'byValue' | 'byCondition'): void {
@@ -55,8 +65,8 @@ export class FilterToolbar {
     }
 
     const isValueTab = tab === 'byValue';
-    applyStyles(this.filterTabByValue, filterStyles.tabStyle(isValueTab));
-    applyStyles(this.filterTabByCondition, filterStyles.tabStyle(!isValueTab));
+    applyStyles(this.filterTabByValue, this.styles.tabStyle(isValueTab));
+    applyStyles(this.filterTabByCondition, this.styles.tabStyle(!isValueTab));
   }
 
   private updateSelectedField(field: string | number): void {
@@ -72,11 +82,13 @@ export class FilterToolbar {
 
   private applyFilter(field: string | number): void {
     if (this.activeTab === 'byValue') {
+      // 更新筛选组件的全选选中状态
+      this.valueFilter.updateCheckboxState(field);
       this.valueFilter.applyFilter(field);
     } else if (this.activeTab === 'byCondition') {
       this.conditionFilter.applyFilter(field);
     }
-    this.hide();
+    this.hide(this.currentCol!, this.currentRow!);
   }
 
   private clearFilter(field: string | number): void {
@@ -86,7 +98,20 @@ export class FilterToolbar {
     if (this.conditionFilter) {
       this.conditionFilter.clearFilter(field);
     }
-    this.hide();
+    this.hide(this.currentCol!, this.currentRow!);
+  }
+
+  /**
+   * 更新清除筛选按钮的状态
+   */
+  private updateClearFilterButtonState(field: string | number): void {
+    const currentFilter = this.filterStateManager.getFilterState(field);
+    const hasActiveFilter = currentFilter && currentFilter.enable;
+
+    this.clearFilterOptionLink.style.display = 'inline';
+    this.clearFilterOptionLink.style.opacity = hasActiveFilter ? '1' : '0.5';
+    this.clearFilterOptionLink.style.pointerEvents = hasActiveFilter ? 'auto' : 'none';
+    this.clearFilterOptionLink.style.cursor = hasActiveFilter ? 'pointer' : 'not-allowed';
   }
 
   /**
@@ -105,56 +130,69 @@ export class FilterToolbar {
   render(container: HTMLElement): void {
     // === 主容器 ===
     this.filterMenu = document.createElement('div');
-    applyStyles(this.filterMenu, filterStyles.filterMenu);
+    this.filterMenu.classList.add('vtable-filter-menu');
+    applyStyles(this.filterMenu, this.styles.filterMenu);
     this.filterMenu.style.width = `${this.filterMenuWidth}px`;
 
     // === 筛选 Tab ===
-    const filterTabsContainer = document.createElement('div');
-    applyStyles(filterTabsContainer, filterStyles.tabsContainer);
+    this.filterTabsContainer = document.createElement('div');
+    applyStyles(this.filterTabsContainer, this.styles.tabsContainer);
 
     this.filterTabByValue = document.createElement('button');
     this.filterTabByValue.innerText = '按值筛选';
-    applyStyles(this.filterTabByValue, filterStyles.tabStyle(true));
+    applyStyles(this.filterTabByValue, this.styles.tabStyle(true));
 
     this.filterTabByCondition = document.createElement('button');
     this.filterTabByCondition.innerText = '按条件筛选';
-    applyStyles(this.filterTabByCondition, filterStyles.tabStyle(false));
+    applyStyles(this.filterTabByCondition, this.styles.tabStyle(false));
 
-    filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
+    this.filterTabsContainer.append(this.filterTabByValue, this.filterTabByCondition);
 
     // === 页脚（清除、取消、确定 筛选按钮） ===
-    const footerContainer = document.createElement('div');
-    applyStyles(footerContainer, filterStyles.footerContainer);
+    this.footerContainer = document.createElement('div');
+    applyStyles(this.footerContainer, this.styles.footerContainer);
 
     this.clearFilterOptionLink = document.createElement('a');
     this.clearFilterOptionLink.href = '#';
     this.clearFilterOptionLink.innerText = '清除筛选';
-    applyStyles(this.clearFilterOptionLink, filterStyles.clearLink);
+    applyStyles(this.clearFilterOptionLink, this.styles.clearLink);
 
     const footerButtons = document.createElement('div');
     this.cancelFilterButton = document.createElement('button');
     this.cancelFilterButton.innerText = '取消';
-    applyStyles(this.cancelFilterButton, filterStyles.footerButton(false));
+    applyStyles(this.cancelFilterButton, this.styles.footerButton(false));
 
     this.applyFilterButton = document.createElement('button');
     this.applyFilterButton.innerText = '确认';
-    applyStyles(this.applyFilterButton, filterStyles.footerButton(true));
+    applyStyles(this.applyFilterButton, this.styles.footerButton(true));
 
     footerButtons.append(this.cancelFilterButton, this.applyFilterButton);
-    footerContainer.append(this.clearFilterOptionLink, footerButtons);
+    this.footerContainer.append(this.clearFilterOptionLink, footerButtons);
 
     // --- 筛选器头部 Tab ---
-    this.filterMenu.append(filterTabsContainer);
+    this.filterMenu.append(this.filterTabsContainer);
 
     // --- 筛选器内容 ---
     this.valueFilter.render(this.filterMenu);
     this.conditionFilter.render(this.filterMenu);
 
     // --- 筛选器页脚 ---
-    this.filterMenu.append(footerContainer);
+    this.filterMenu.append(this.footerContainer);
 
     container.appendChild(this.filterMenu); // 将筛选器添加到 DOM 中
     this.attachEventListeners();
+  }
+
+  updateStyles(styles: FilterStyles) {
+    applyStyles(this.filterMenu, styles.filterMenu);
+    applyStyles(this.filterTabsContainer, styles.tabsContainer);
+    applyStyles(this.filterTabByValue, styles.tabStyle(true));
+    applyStyles(this.footerContainer, styles.footerContainer);
+    applyStyles(this.clearFilterOptionLink, styles.clearLink);
+    applyStyles(this.cancelFilterButton, styles.footerButton(false));
+    applyStyles(this.applyFilterButton, styles.footerButton(true));
+    this.valueFilter.updateStyles(styles);
+    this.conditionFilter.updateStyles(styles);
   }
 
   attachEventListeners() {
@@ -167,7 +205,7 @@ export class FilterToolbar {
       this.onTabSwitch('byCondition');
     });
 
-    this.cancelFilterButton.addEventListener('click', () => this.hide());
+    this.cancelFilterButton.addEventListener('click', () => this.hide(this.currentCol!, this.currentRow!));
 
     this.clearFilterOptionLink.addEventListener('click', e => {
       e.preventDefault();
@@ -181,7 +219,7 @@ export class FilterToolbar {
     // 点击空白处整个筛选菜单可消失
     document.addEventListener('click', () => {
       if (this.isVisible) {
-        this.hide();
+        this.hide(this.currentCol!, this.currentRow!);
       }
     });
 
@@ -219,6 +257,8 @@ export class FilterToolbar {
 
     const canvasBounds = this.table.canvas.getBoundingClientRect();
     const cell = this.table.getCellRelativeRect(effectiveCol, effectiveRow);
+    const filterMenuWidth = this.filterMenuWidth;
+    const filterMenuHeight = 380; // 最高高度预估值
 
     if (cell.right < this.filterMenuWidth) {
       // 无法把筛选菜单完整地显示在左侧，那么显示在右侧
@@ -229,6 +269,10 @@ export class FilterToolbar {
       left = cell.right + canvasBounds.left - this.filterMenuWidth;
       top = cell.bottom + canvasBounds.top;
     }
+
+    // 确保筛选菜单不会超出窗口边界
+    left = Math.max(0, Math.min(window.innerWidth - filterMenuWidth, left));
+    top = Math.max(0, Math.min(window.innerHeight - filterMenuHeight, top));
 
     this.filterMenu.style.display = this.isVisible ? 'block' : 'none';
     this.filterMenu.style.left = `${left}px`;
@@ -266,11 +310,19 @@ export class FilterToolbar {
     // 确保在事件冒泡完成后才设置 isVisible 为 true
     setTimeout(() => {
       this.isVisible = true;
+      this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_SHOW, {
+        col: col,
+        row: row
+      });
     }, 0);
   }
 
-  hide(): void {
+  hide(currentCol: number | null, currentRow: number | null): void {
     this.filterMenu.style.display = 'none';
     this.isVisible = false;
+    this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_HIDE, {
+      col: currentCol,
+      row: currentRow
+    });
   }
 }

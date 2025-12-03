@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: menu limit to body range",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

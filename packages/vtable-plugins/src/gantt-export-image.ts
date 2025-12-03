@@ -22,7 +22,6 @@ export interface ExportOptions {
   download?: boolean;
 }
 
-
 /**
  * 甘特图导出插件
  * @description 提供完整的甘特图导出功能，支持高分辨率输出和精准布局保留
@@ -49,7 +48,6 @@ export class ExportGanttPlugin implements IGanttPlugin {
    * @throws {Error} 导出过程中发生错误时抛出异常
    */
   async exportToImage(options: ExportOptions = {}): Promise<string | undefined> {
-
     if (!this._gantt) {
       // 保留这个 error
       console.error('ExportGanttPlugin: Gantt instance not available.');

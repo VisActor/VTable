@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: checkbox disabled after filter",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

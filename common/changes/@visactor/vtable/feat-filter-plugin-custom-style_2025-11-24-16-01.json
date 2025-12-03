@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: checkbox state should not saved when cancel filter",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
