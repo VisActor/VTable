@@ -15,6 +15,7 @@ import type {
 } from '@visactor/vtable';
 import { merge } from 'lodash';
 import { filterStyles } from './styles';
+import { categories } from './constant';
 
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
@@ -64,6 +65,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     }
 
     this.pluginOptions.styles = merge(filterStyles, this.pluginOptions.styles ?? {});
+    this.pluginOptions.conditionCategories = pluginOptions.conditionCategories ?? categories;
   }
 
   run(...args: any[]) {

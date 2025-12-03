@@ -1,6 +1,6 @@
 import * as VTable from '@visactor/vtable';
 import { bindDebugTool } from '@visactor/vtable/es/scenegraph/debug-tool';
-import { FilterPlugin } from '../../src/filter';
+import { FilterOperatorCategory, FilterPlugin } from '../../src/filter';
 const CONTAINER_ID = 'vTable';
 
 /**
@@ -248,7 +248,15 @@ export function createTable() {
         display: 'none',
         padding: '0 5px'
       }
-    }
+    },
+    conditionCategories: [
+      { value: FilterOperatorCategory.ALL, label: '全部' },
+      { value: FilterOperatorCategory.TEXT, label: '文本' },
+      { value: FilterOperatorCategory.NUMBER, label: '数值' }
+      // { value: FilterOperatorCategory.COLOR, label: '颜色' },
+      // { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
+      // { value: FilterOperatorCategory.RADIO, label: '单选框' }
+    ]
   });
   (window as any).filterPlugin = filterPlugin;
 

@@ -1,8 +1,9 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles, filterStyles, createElement } from './styles';
-import type { FilterOperator, FilterOptions, OperatorOption } from './types';
+import type { FilterOperator, FilterOperatorCategoryOption, FilterOptions, OperatorOption } from './types';
 import { FilterActionType, FilterOperatorCategory } from './types';
+import { operators } from './constant';
 
 /**
  * 按条件筛选组件
@@ -22,60 +23,16 @@ export class ConditionFilter {
   private categorySelect: HTMLSelectElement;
   private currentCategory: FilterOperatorCategory = FilterOperatorCategory.ALL;
 
-  // 按分类组织的操作符选项
-  private operators: OperatorOption[] = [
-    // 通用操作符 (全部分类中显示)
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.ALL },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.ALL },
-
-    // 数值操作符
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'greaterThan', label: '大于', category: FilterOperatorCategory.NUMBER },
-    { value: 'lessThan', label: '小于', category: FilterOperatorCategory.NUMBER },
-    { value: 'greaterThanOrEqual', label: '大于等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'lessThanOrEqual', label: '小于等于', category: FilterOperatorCategory.NUMBER },
-    { value: 'between', label: '介于', category: FilterOperatorCategory.NUMBER },
-    { value: 'notBetween', label: '不介于', category: FilterOperatorCategory.NUMBER },
-
-    // 文本操作符
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.TEXT },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.TEXT },
-    { value: 'contains', label: '包含', category: FilterOperatorCategory.TEXT },
-    { value: 'notContains', label: '不包含', category: FilterOperatorCategory.TEXT },
-    { value: 'startsWith', label: '开头是', category: FilterOperatorCategory.TEXT },
-    { value: 'notStartsWith', label: '开头不是', category: FilterOperatorCategory.TEXT },
-    { value: 'endsWith', label: '结尾是', category: FilterOperatorCategory.TEXT },
-    { value: 'notEndsWith', label: '结尾不是', category: FilterOperatorCategory.TEXT },
-
-    // 颜色操作符
-    { value: 'equals', label: '等于', category: FilterOperatorCategory.COLOR },
-    { value: 'notEquals', label: '不等于', category: FilterOperatorCategory.COLOR },
-
-    // 复选框操作符
-    { value: 'isChecked', label: '已选中', category: FilterOperatorCategory.CHECKBOX },
-    { value: 'isUnchecked', label: '未选中', category: FilterOperatorCategory.CHECKBOX },
-
-    // 单选框操作符
-    { value: 'isChecked', label: '已选中', category: FilterOperatorCategory.RADIO },
-    { value: 'isUnchecked', label: '未选中', category: FilterOperatorCategory.RADIO }
-  ];
-
-  // 分类下拉选项
-  private categories = [
-    { value: FilterOperatorCategory.ALL, label: '全部' },
-    { value: FilterOperatorCategory.TEXT, label: '文本' },
-    { value: FilterOperatorCategory.NUMBER, label: '数值' },
-    { value: FilterOperatorCategory.COLOR, label: '颜色' },
-    { value: FilterOperatorCategory.CHECKBOX, label: '复选框' },
-    { value: FilterOperatorCategory.RADIO, label: '单选框' }
-  ];
+  private categories: FilterOperatorCategoryOption[] = [];
+  protected operators: OperatorOption[] = [];
 
   constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
     this.pluginOptions = pluginOptions;
     this.styles = pluginOptions.styles || {};
+    this.categories = pluginOptions.conditionCategories;
+    this.operators = operators;
   }
 
   setSelectedField(fieldId: string | number): void {
@@ -95,13 +52,15 @@ export class ConditionFilter {
     let filteredOperators: OperatorOption[];
 
     if (this.currentCategory === FilterOperatorCategory.ALL) {
-      // 当选择"全部"时，收集所有不重复的操作符
+      // 当选择"全部"时，收集所有配置的分类中, 不重复的操作符
       const uniqueOperators = new Map<string, OperatorOption>();
-      this.operators.forEach(op => {
-        if (!uniqueOperators.has(op.value)) {
-          uniqueOperators.set(op.value, op);
-        }
-      });
+      this.operators
+        .filter(op => this.categories.map(cat => cat.value).includes(op.category))
+        .forEach(op => {
+          if (!uniqueOperators.has(op.value)) {
+            uniqueOperators.set(op.value, op);
+          }
+        });
       filteredOperators = Array.from(uniqueOperators.values());
     } else {
       // 其他类别正常筛选

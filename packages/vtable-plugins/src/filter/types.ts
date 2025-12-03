@@ -15,6 +15,13 @@ export interface FilterOptions {
   filterModes?: FilterMode[];
   /** 筛选器样式 */
   styles?: FilterStyles;
+  /** 自定义筛选分类 */
+  conditionCategories?: FilterOperatorCategoryOption[];
+}
+
+export interface FilterOperatorCategoryOption {
+  value: FilterOperatorCategory;
+  label: string;
 }
 
 export type FilterMode = 'byValue' | 'byCondition';
