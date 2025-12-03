@@ -120,9 +120,13 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
       const col = eventArgs.col;
       const row = eventArgs.row;
       if (this.filterToolbar.isVisible) {
-        this.filterToolbar.hide();
+        this.filterToolbar.hide(eventArgs.col, eventArgs.row);
       } else {
         this.filterToolbar.show(col, row, this.pluginOptions.filterModes);
+        this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_SHOW, {
+          col: eventArgs.col,
+          row: eventArgs.row
+        });
       }
     } else if (runtime === TABLE_EVENT_TYPE.SCROLL) {
       if (eventArgs.scrollDirection === 'horizontal') {

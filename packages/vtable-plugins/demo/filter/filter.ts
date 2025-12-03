@@ -270,6 +270,10 @@ export function createTable() {
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
 
+  tableInstance.on(VTable.ListTable.EVENT_TYPE.FILTER_MENU_SHOW, (...args) => {
+    console.log('filter_menu_show', args);
+  });
+
   setTimeout(() => {
     tableInstance.updateOption({
       ...option,

@@ -1,4 +1,4 @@
-import type { ListTable, PivotTable } from '@visactor/vtable';
+import { TABLE_EVENT_TYPE, type ListTable, type PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
@@ -78,7 +78,7 @@ export class FilterToolbar {
     } else if (this.activeTab === 'byCondition') {
       this.conditionFilter.applyFilter(field);
     }
-    this.hide();
+    this.hide(this.currentCol, this.currentRow);
   }
 
   private clearFilter(field: string | number): void {
@@ -88,7 +88,7 @@ export class FilterToolbar {
     if (this.conditionFilter) {
       this.conditionFilter.clearFilter(field);
     }
-    this.hide();
+    this.hide(this.currentCol, this.currentRow);
   }
 
   /**
@@ -170,7 +170,7 @@ export class FilterToolbar {
       this.onTabSwitch('byCondition');
     });
 
-    this.cancelFilterButton.addEventListener('click', () => this.hide());
+    this.cancelFilterButton.addEventListener('click', () => this.hide(this.currentCol, this.currentRow));
 
     this.clearFilterOptionLink.addEventListener('click', e => {
       e.preventDefault();
@@ -184,7 +184,7 @@ export class FilterToolbar {
     // 点击空白处整个筛选菜单可消失
     document.addEventListener('click', () => {
       if (this.isVisible) {
-        this.hide();
+        this.hide(this.currentCol, this.currentRow);
       }
     });
 
@@ -269,11 +269,19 @@ export class FilterToolbar {
     // 确保在事件冒泡完成后才设置 isVisible 为 true
     setTimeout(() => {
       this.isVisible = true;
+      this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_SHOW, {
+        col: col,
+        row: row
+      });
     }, 0);
   }
 
-  hide(): void {
+  hide(currentCol: number | null, currentRow: number | null): void {
     this.filterMenu.style.display = 'none';
     this.isVisible = false;
+    this.table.fireListeners(TABLE_EVENT_TYPE.FILTER_MENU_HIDE, {
+      col: currentCol,
+      row: currentRow
+    });
   }
 }
