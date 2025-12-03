@@ -264,7 +264,7 @@ export function createTable() {
 
   const option: VTable.ListTableConstructorOptions = {
     container: document.getElementById(CONTAINER_ID),
-    records,
+    records: [...records, undefined, null],
     columns,
     padding: 10,
     plugins: [filterPlugin]
@@ -285,25 +285,25 @@ export function createTable() {
     bgColor: 'red'
   });
 
-  setTimeout(() => {
-    filterPlugin.updatePluginOptions({
-      styles: {
-        optionItem: {
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '8px 5px',
-          color: 'blue'
-        }
-      }
-    });
-    console.log('update');
-    tableInstance.updateOption({
-      ...option,
-      plugins: [filterPlugin],
-      records: generateDemoData(50, '第二次')
-    });
-  }, 5000);
+  // setTimeout(() => {
+  //   filterPlugin.updatePluginOptions({
+  //     styles: {
+  //       optionItem: {
+  //         display: 'flex',
+  //         justifyContent: 'space-between',
+  //         alignItems: 'center',
+  //         padding: '8px 5px',
+  //         color: 'blue'
+  //       }
+  //     }
+  //   });
+  //   console.log('update');
+  //   tableInstance.updateOption({
+  //     ...option,
+  //     plugins: [filterPlugin],
+  //     records: generateDemoData(50, '第二次')
+  //   });
+  // }, 5000);
 
   // setTimeout(() => {
   //   console.log('update');

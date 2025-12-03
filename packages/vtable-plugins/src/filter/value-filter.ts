@@ -84,6 +84,10 @@ export class ValueFilter {
       if (targetCol !== -1) {
         const row = this.table.columnHeaderLevelCount + i;
         const currentRecord = records[i];
+        // 空行不做处理
+        if (currentRecord === null || currentRecord === undefined) {
+          continue;
+        }
         // 获取原始数据
         rawValue = currentRecord[fieldId];
         // 获取格式化显示数据
