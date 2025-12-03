@@ -1,7 +1,7 @@
 import type { ListTable, PivotTable } from '@visactor/vtable';
 import type { FilterStateManager } from './filter-state-manager';
 import { applyStyles, filterStyles, createElement } from './styles';
-import type { FilterOperator, OperatorOption } from './types';
+import type { FilterOperator, FilterOptions, OperatorOption } from './types';
 import { FilterActionType, FilterOperatorCategory } from './types';
 
 /**
@@ -10,6 +10,10 @@ import { FilterActionType, FilterOperatorCategory } from './types';
 export class ConditionFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private pluginOptions: FilterOptions;
+
+  private styles: Record<any, any>;
+
   private filterByConditionPanel: HTMLElement;
   private selectedField: string | number;
   private operatorSelect: HTMLSelectElement;
@@ -67,9 +71,11 @@ export class ConditionFilter {
     { value: FilterOperatorCategory.RADIO, label: '单选框' }
   ];
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
+    this.pluginOptions = pluginOptions;
+    this.styles = pluginOptions.styles || {};
   }
 
   setSelectedField(fieldId: string | number): void {
@@ -310,6 +316,7 @@ export class ConditionFilter {
    * 渲染条件筛选面板
    */
   render(container: HTMLElement): void {
+    const filterStyles = this.styles;
     // 按条件筛选面板
     this.filterByConditionPanel = document.createElement('div');
     applyStyles(this.filterByConditionPanel, filterStyles.filterPanel);

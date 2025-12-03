@@ -143,7 +143,113 @@ export function createTable() {
     }
   ];
 
-  const filterPlugin = new FilterPlugin({});
+  const filterPlugin = new FilterPlugin({
+    styles: {
+      filterMenu: {
+        display: 'none',
+        position: 'absolute',
+        backgroundColor: '#0E1119',
+        border: '0px solid #272A30',
+        boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
+        zIndex: '100',
+        borderRadius: '4px',
+        color: '#FFF',
+        fontFamily: 'SourceHanSansCN-Normal',
+        fontSize: '12px'
+      },
+      filterPanel: {
+        padding: '10px',
+        display: 'block'
+      },
+      searchContainer: {
+        padding: '5px'
+      },
+      searchInput: {
+        width: '100%',
+        padding: '8px 10px',
+        border: '1px solid #272a30',
+        borderRadius: '4px',
+        fontSize: '14px',
+        boxSizing: 'border-box',
+        backgroundColor: '#0e1119',
+        color: 'red'
+      },
+      optionsContainer: {
+        maxHeight: '200px',
+        overflowY: 'auto',
+        marginTop: '10px'
+      },
+      optionItem: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '8px 5px',
+        color: 'red'
+      },
+      optionLabel: {
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+        flexGrow: '1',
+        fontWeight: 'normal'
+      },
+      checkbox: {
+        marginRight: '10px'
+      },
+      countSpan: {
+        color: '#888',
+        fontSize: '12px'
+      },
+      tabsContainer: {
+        display: 'flex',
+        justifyContent: 'space-around',
+        borderBottom: '0px solid #e0e0e0'
+      },
+      footerContainer: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 15px',
+        borderTop: '0px solid #e0e0e0',
+        backgroundColor: 'transparent'
+      },
+      clearLink: {
+        color: '#006EFF',
+        textDecoration: 'none'
+      },
+      conditionContainer: {
+        marginBottom: '15px',
+        padding: '10px',
+        backgroundColor: '#0E1119'
+      },
+      formLabel: {
+        display: 'block',
+        marginBottom: '8px',
+        fontWeight: 'normal',
+        backgroundColor: 'transparent'
+      },
+      operatorSelect: {
+        width: '100%',
+        padding: '8px',
+        marginBottom: '15px',
+        border: '1px solid #272a30',
+        borderRadius: '4px',
+        boxSizing: 'border-box',
+        backgroundColor: '#0e1119',
+        color: 'red'
+      },
+      rangeInputContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        backgroundColor: '#0E1119'
+      },
+      addLabel: {
+        display: 'none',
+        padding: '0 5px'
+      }
+    }
+  });
   (window as any).filterPlugin = filterPlugin;
 
   const option: VTable.ListTableConstructorOptions = {

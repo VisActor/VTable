@@ -13,6 +13,8 @@ import type {
   ColumnDefine,
   ColumnsDefine
 } from '@visactor/vtable';
+import { merge } from 'lodash';
+import { filterStyles } from './styles';
 
 /**
  * 筛选插件，负责初始化筛选引擎、状态管理器和工具栏
@@ -60,6 +62,8 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     if (!this.pluginOptions.filterModes || !this.pluginOptions.filterModes.length) {
       this.pluginOptions.filterModes = ['byValue', 'byCondition'];
     }
+
+    this.pluginOptions.styles = merge(filterStyles, this.pluginOptions.styles ?? {});
   }
 
   run(...args: any[]) {
@@ -71,7 +75,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     if (runtime === TABLE_EVENT_TYPE.BEFORE_INIT) {
       this.filterEngine = new FilterEngine();
       this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
-      this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager);
+      this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
       this.columns = eventArgs.options.columns;
 
       this.filterToolbar.render(document.body);

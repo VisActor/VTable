@@ -1,13 +1,14 @@
-import { ListTable, PivotTable } from '@visactor/vtable';
+import type { ListTable, PivotTable } from '@visactor/vtable';
 import { arrayEqual } from '@visactor/vutils';
-import type { FilterConfig, ValueFilterOptionDom, FilterState } from './types';
+import type { FilterConfig, ValueFilterOptionDom, FilterState, FilterOptions } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
-import { applyStyles, filterStyles } from './styles';
+import { applyStyles } from './styles';
 
 export class ValueFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private styles: Record<any, any>;
   private selectedField: string | number;
   private selectedKeys = new Map<string | number, Set<string | number>>(); // 存储 format 之前的原始数据
   private candidateKeys = new Map<string | number, Map<string | number, number>>(); // 存储 format 后的数据
@@ -24,9 +25,10 @@ export class ValueFilter {
   private _onInputKeyUpHandler: (event: KeyboardEvent) => void;
   private _onCheckboxChangeHandler: (event: Event) => void;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
+    this.styles = pluginOptions.styles || {};
   }
 
   setSelectedField(fieldId: string | number): void {
@@ -237,6 +239,7 @@ export class ValueFilter {
   }
 
   render(container: HTMLElement): void {
+    const filterStyles = this.styles;
     // === 按值筛选的菜单内容 ===
     this.filterByValuePanel = document.createElement('div');
     applyStyles(this.filterByValuePanel, filterStyles.filterPanel);
@@ -285,6 +288,7 @@ export class ValueFilter {
   }
 
   private renderFilterOptions(field: string | number): void {
+    const filterStyles = this.styles;
     this.filterItemsContainer.innerHTML = '';
     this.valueFilterOptionList.delete(field);
     this.valueFilterOptionList.set(field, []);

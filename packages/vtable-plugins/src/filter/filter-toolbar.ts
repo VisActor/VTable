@@ -3,7 +3,7 @@ import type { FilterStateManager } from './filter-state-manager';
 import { ValueFilter } from './value-filter';
 import { ConditionFilter } from './condition-filter';
 import { applyStyles, filterStyles } from './styles';
-import type { FilterMode } from './types';
+import type { FilterMode, FilterOptions } from './types';
 
 /**
  * 筛选工具栏，管理按值和按条件筛选组件
@@ -11,6 +11,7 @@ import type { FilterMode } from './types';
 export class FilterToolbar {
   table: ListTable | PivotTable;
   filterStateManager: FilterStateManager;
+  pluginOptions: FilterOptions;
   valueFilter: ValueFilter | null = null;
   conditionFilter: ConditionFilter | null = null;
   activeTab: 'byValue' | 'byCondition' = 'byValue';
@@ -28,11 +29,12 @@ export class FilterToolbar {
   private cancelFilterButton: HTMLButtonElement;
   private applyFilterButton: HTMLButtonElement;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
-    this.valueFilter = new ValueFilter(this.table, this.filterStateManager);
-    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager);
+    this.valueFilter = new ValueFilter(this.table, this.filterStateManager, pluginOptions);
+    this.conditionFilter = new ConditionFilter(this.table, this.filterStateManager, pluginOptions);
+    this.pluginOptions = pluginOptions;
 
     this.filterMenuWidth = 300; // 待优化，可能需要自适应内容的宽度
 
@@ -105,6 +107,7 @@ export class FilterToolbar {
   render(container: HTMLElement): void {
     // === 主容器 ===
     this.filterMenu = document.createElement('div');
+    this.filterMenu.classList.add('vtable-filter-menu');
     applyStyles(this.filterMenu, filterStyles.filterMenu);
     this.filterMenu.style.width = `${this.filterMenuWidth}px`;
 
