@@ -68,6 +68,26 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.pluginOptions.conditionCategories = pluginOptions.conditionCategories ?? categories;
   }
 
+  initFilterPlugin(eventArgs: any) {
+    this.filterEngine = new FilterEngine();
+    this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
+    this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
+    this.columns = eventArgs.options.columns;
+
+    this.filterToolbar.render(document.body);
+    this.updateFilterIcons(this.columns);
+    this.filterStateManager.subscribe((_: FilterState, action?: FilterAction) => {
+      // 新增筛选配置时，不需要更新筛选图标以及表格
+      if (action?.type === FilterActionType.ADD_FILTER) {
+        return;
+      }
+      this.updateFilterIcons(this.columns);
+      (this.table as ListTable).updateColumns(this.columns, {
+        clearRowHeightCache: false
+      });
+    });
+  }
+
   run(...args: any[]) {
     const eventArgs = args[0];
     const runtime = args[1];
@@ -75,27 +95,14 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.table = table as ListTable | PivotTable;
 
     if (runtime === TABLE_EVENT_TYPE.BEFORE_INIT) {
-      this.filterEngine = new FilterEngine();
-      this.filterStateManager = new FilterStateManager(this.table, this.filterEngine);
-      this.filterToolbar = new FilterToolbar(this.table, this.filterStateManager, this.pluginOptions);
-      this.columns = eventArgs.options.columns;
-
-      this.filterToolbar.render(document.body);
-      this.updateFilterIcons(this.columns);
-      this.filterStateManager.subscribe((_: FilterState, action?: FilterAction) => {
-        // 新增筛选配置时，不需要更新筛选图标以及表格
-        if (action?.type === FilterActionType.ADD_FILTER) {
-          return;
-        }
-        this.updateFilterIcons(this.columns);
-        (this.table as ListTable).updateColumns(this.columns, {
-          clearRowHeightCache: false
-        });
-      });
+      this.initFilterPlugin(eventArgs);
     } else if (runtime === TABLE_EVENT_TYPE.BEFORE_UPDATE_OPTION) {
+      if (!this.filterEngine || !this.filterStateManager || !this.filterToolbar) {
+        this.initFilterPlugin(eventArgs);
+      }
       this.pluginOptions = {
         ...this.pluginOptions,
-        ...(eventArgs.options.plugins as FilterPlugin[]).find(plugin => plugin.id === this.id).pluginOptions
+        ...(eventArgs.options.plugins as FilterPlugin[])?.find(plugin => plugin.id === this.id)?.pluginOptions
       };
       this.columns = eventArgs.options.columns;
       this.handleOptionUpdate(eventArgs.options);
@@ -319,6 +326,9 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   release() {
+    this.columns.forEach(column => {
+      column.headerIcon = undefined;
+    });
     this.table = null;
     this.filterEngine = null;
     this.filterStateManager = null;

@@ -265,10 +265,17 @@ export function createTable() {
     records,
     columns,
     padding: 10,
-    plugins: [filterPlugin]
+    plugins: []
   };
   const tableInstance = new VTable.ListTable(option);
   (window as any).tableInstance = tableInstance;
+
+  setTimeout(() => {
+    tableInstance.updateOption({
+      ...option,
+      plugins: [filterPlugin]
+    });
+  }, 2000);
 
   bindDebugTool(tableInstance.scenegraph.stage, {
     customGrapicKeys: ['col', 'row']

@@ -6,6 +6,8 @@ export class PluginManager {
   private plugins: Map<string, IVTablePlugin> = new Map();
   private table: BaseTableAPI;
 
+  private pluginEventMap: Map<string, number[]> = new Map();
+
   constructor(table: BaseTableAPI, options: BaseTableConstructorOptions) {
     this.table = table;
     options.plugins?.map(plugin => {
@@ -34,9 +36,10 @@ export class PluginManager {
 
   _bindTableEventForPlugin(plugin: IVTablePlugin) {
     plugin.runTime?.forEach(runTime => {
-      this.table.on(runTime, (...args) => {
+      const id = this.table.on(runTime, (...args) => {
         plugin.run?.(...args, runTime, this.table);
       });
+      this.pluginEventMap.set(plugin.id, [...(this.pluginEventMap.get(plugin.id) || []), id]);
     });
   }
 
@@ -45,6 +48,9 @@ export class PluginManager {
     // 先找到plugins中没有，但this.plugins中有，也就是已经被移除的插件
     const removedPlugins = Array.from(this.plugins.values()).filter(plugin => !plugins?.some(p => p.id === plugin.id));
     removedPlugins.forEach(plugin => {
+      this.pluginEventMap.get(plugin.id)?.forEach(id => {
+        this.table.off(id);
+      });
       this.release();
       this.plugins.delete(plugin.id);
     });
