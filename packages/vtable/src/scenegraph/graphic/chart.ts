@@ -193,7 +193,16 @@ export class Chart extends Rect {
               context.fill();
             }
           }
-        }
+        },
+        componentShowContent: (table.options as PivotChartConstructorOptions).chartDimensionLinkage
+          ? {
+              tooltip: {
+                dimension: false,
+                mark: true
+              },
+              crosshair: false
+            }
+          : undefined
       })
     );
     const chartStage = this.activeChartInstance.getStage();

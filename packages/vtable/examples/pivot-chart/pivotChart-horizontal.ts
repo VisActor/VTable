@@ -9358,7 +9358,7 @@ export function createTable() {
   });
   window.tableInstance = tableInstance;
 
-  bindDebugTool(tableInstance.scenegraph.stage, {
-    customGrapicKeys: ['col', 'row']
-  });
+  // bindDebugTool(tableInstance.scenegraph.stage, {
+  //   customGrapicKeys: ['col', 'row']
+  // });
 }
