@@ -214,7 +214,7 @@ export function createCell(
         axisConfig,
         cellGroup.attribute.width,
         cellGroup.attribute.height,
-        axisConfig.__vtablePadding ?? padding,
+        axisConfig.__vtableBodyChartCellPadding ?? padding,
         table
       );
       cellGroup.clear();
@@ -794,8 +794,8 @@ export function updateCell(
     isVtableMerge || isCustomMerge
       ? 'text'
       : table.isHeader(col, row)
-      ? (table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-      : table.getBodyColumnType(col, row) ?? 'text';
+        ? ((table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
+        : (table.getBodyColumnType(col, row) ?? 'text');
 
   const padding = cellTheme._vtable.padding;
   const textAlign = cellTheme.text.textAlign;

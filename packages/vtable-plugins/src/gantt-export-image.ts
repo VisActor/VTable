@@ -22,22 +22,6 @@ export interface ExportOptions {
   download?: boolean;
 }
 
-// 检查依赖是否可用
-const checkGanttDependency = () => {
-  try {
-    // 不实际导入，只检查是否可用
-    require.resolve('@visactor/vtable-gantt');
-    return true;
-  } catch (e) {
-    console.warn(
-      '警告: 使用 ExportGanttPlugin 需要安装 @visactor/vtable-gantt 依赖。\n' +
-        '请执行: npm install @visactor/vtable-gantt\n' +
-        '更多信息请参考文档: https://visactor.io/vtable'
-    );
-    return false;
-  }
-};
-
 /**
  * 甘特图导出插件
  * @description 提供完整的甘特图导出功能，支持高分辨率输出和精准布局保留
@@ -46,11 +30,6 @@ export class ExportGanttPlugin implements IGanttPlugin {
   id: string = `gantt-export-helper`;
   name = 'Gantt Export Helper';
   private _gantt: Gantt | null = null;
-
-  constructor() {
-    // 构造时提前检查依赖可用性，以便给开发者更早的反馈
-    checkGanttDependency();
-  }
 
   // run 方法，在插件初始化时由 PluginManager调用
   run(...args: any[]): void {
@@ -69,11 +48,6 @@ export class ExportGanttPlugin implements IGanttPlugin {
    * @throws {Error} 导出过程中发生错误时抛出异常
    */
   async exportToImage(options: ExportOptions = {}): Promise<string | undefined> {
-    // 初始检查依赖是否存在
-    if (!checkGanttDependency()) {
-      return undefined;
-    }
-
     if (!this._gantt) {
       // 保留这个 error
       console.error('ExportGanttPlugin: Gantt instance not available.');

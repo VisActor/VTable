@@ -1,3 +1,62 @@
+# v1.22.6
+
+2025-12-02
+
+
+**🆕 New feature**
+
+- **@visactor/vtable-sheet**: support copy formula to paste cell
+- **@visactor/vtable-sheet**: support formula auto fill
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: excel keyboard plugin when use key of delete and back to delete not work
+- **@visactor/vtable**: distinguish null and empty string values in row/column dimensions
+- **@visactor/vtable**: the filter plugin cannot be opened normally when clicked [#4736](https://github.com/VisActor/VTable/issues/4736)
+- **@visactor/vtable**: clear the value of the searchInput when the filter plugin is displayed [#4736](https://github.com/VisActor/VTable/issues/4736)
+
+
+
+[more detail about v1.22.6](https://github.com/VisActor/VTable/releases/tag/v1.22.6)
+
+# v1.22.5
+
+2025-11-26
+
+
+**🆕 New feature**
+
+- **@visactor/vtable**: support right axis in pivotChart spec [#4723](https://github.com/VisActor/VTable/issues/4723)
+- **@visactor/vtable**: add chartDimensionLinkage for pivotChart
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: add null check for nodeChildren in matchDimensionPath
+
+
+
+[more detail about v1.22.5](https://github.com/VisActor/VTable/releases/tag/v1.22.5)
+
+# v1.22.4
+
+2025-11-18
+
+
+**🐛 Bug fix**
+
+- **@visactor/vtable**: fix backtracking issue in getCellAdressByHeaderPath matching algorithm
+- **pivot-table**: fix frozenColCount being invalid when set to 0
+- **@visactor/vtable**: the serial number cannot be edited [#4627](https://github.com/VisActor/VTable/issues/4627)
+
+**🔨 Refactor**
+
+- **@visactor/vtable**: filter plugins update when filterState changes
+- **@visactor/vtable-plugins**: master sub table plugins refactor config
+
+
+
+[more detail about v1.22.4](https://github.com/VisActor/VTable/releases/tag/v1.22.4)
+
 # v1.22.3
 
 2025-11-07

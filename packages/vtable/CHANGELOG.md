@@ -1,6 +1,64 @@
 # Change Log - @visactor/vtable
 
-This log was last generated on Fri, 07 Nov 2025 09:51:25 GMT and should not be manually modified.
+This log was last generated on Mon, 01 Dec 2025 11:33:45 GMT and should not be manually modified.
+
+## 1.22.6
+Mon, 01 Dec 2025 11:33:45 GMT
+
+### Updates
+
+- feat: copy formula to paste cell
+
+
+- feat: vtable-sheet support formula auto fill
+
+
+- fix: excel keyboard del and back to delete
+
+
+- fix: distinguish null and empty string values in row/column dimensions
+
+
+- fix: the filter plugin cannot be opened normally when clicked #4736
+
+
+- fix: clear the value of the searchInput when the filter plugin is displayed #4736
+
+
+
+## 1.22.5
+Wed, 26 Nov 2025 02:07:13 GMT
+
+### Updates
+
+- feat: support right axis in pivotChart spec #4723
+
+
+- feat: add enableChartDimensionLinkage for pivotChart
+
+
+- feat: add chartDimensionLinkage for pivotChart
+
+
+- fix: add null check for nodeChildren in matchDimensionPath
+
+
+
+## 1.22.4
+Tue, 18 Nov 2025 06:13:47 GMT
+
+### Updates
+
+- refactor: filter plugins update when filterState changes
+- fix: fix backtracking issue in getCellAdressByHeaderPath matching algorithm
+
+
+- fix(pivot-table): fix frozenColCount being invalid when set to 0
+
+
+- fix: the serial number cannot be edited #4627
+
+
 
 ## 1.22.3
 Fri, 07 Nov 2025 09:51:25 GMT

@@ -273,8 +273,8 @@ function updateCellWidth(
     isVtableMerge || isCustomMerge
       ? 'text'
       : scene.table.isHeader(col, row)
-      ? (scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text'
-      : scene.table.getBodyColumnType(col, row) ?? 'text';
+        ? ((scene.table._getHeaderLayoutMap(col, row) as HeaderData).headerType ?? 'text')
+        : (scene.table.getBodyColumnType(col, row) ?? 'text');
   let isHeightChange = false;
   if (type === 'progressbar') {
     // 目前先采用重新生成节点的方案
@@ -351,7 +351,7 @@ function updateCellWidth(
         axisConfig,
         cellGroup.attribute.width,
         cellGroup.attribute.height,
-        axisConfig.__vtablePadding ?? padding,
+        axisConfig.__vtableBodyChartCellPadding ?? padding,
         scene.table
       );
       cellGroup.clear();

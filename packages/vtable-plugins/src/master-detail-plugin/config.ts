@@ -7,7 +7,10 @@ import type { DetailTableOptions, MasterDetailPluginOptions } from './types';
 export class ConfigManager {
   private expandRowCallback?: (rowIndex: number) => void;
 
-  constructor(private pluginOptions: MasterDetailPluginOptions, private table: VTable.ListTable) {}
+  constructor(
+    private pluginOptions: MasterDetailPluginOptions,
+    private table: VTable.ListTable
+  ) {}
 
   /**
    * 设置展开行的回调函数
@@ -124,14 +127,15 @@ export class ConfigManager {
    */
   private processRecordsHierarchyStates(records: unknown[]): void {
     const HierarchyState = VTable.TYPES.HierarchyState;
-    const headerExpandLevel = this.table.options.headerExpandLevel;
+    // 兼容处理headerExpandLevel
+    const hierarchyExpandLevel = this.table.options.hierarchyExpandLevel || this.table.options.headerExpandLevel;
     const processRecords = (recordList: unknown[]) => {
       recordList.forEach(record => {
         if (record && typeof record === 'object') {
           const recordObj = record as Record<string, unknown>;
           // 处理有子数据的记录
           if (this.hasChildren(record) || recordObj.children === true) {
-            // 优先级：records 中的 hierarchyState > headerExpandLevel
+            // 优先级：records 中的 hierarchyState > hierarchyExpandLevel
             if (recordObj.hierarchyState === 'expand') {
               // 明确设置为展开
               recordObj.hierarchyState = HierarchyState.expand;
@@ -139,8 +143,8 @@ export class ConfigManager {
               // 明确设置为收起
               recordObj.hierarchyState = HierarchyState.collapse;
             } else if (!recordObj.hierarchyState) {
-              // 没有明确设置，根据 headerExpandLevel 决定
-              if (headerExpandLevel && headerExpandLevel > 1) {
+              // 没有明确设置，根据 hierarchyExpandLevel 决定
+              if (hierarchyExpandLevel && hierarchyExpandLevel > 1) {
                 recordObj.hierarchyState = HierarchyState.expand;
               } else {
                 recordObj.hierarchyState = HierarchyState.collapse;

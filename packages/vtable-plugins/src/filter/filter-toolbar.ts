@@ -114,6 +114,19 @@ export class FilterToolbar {
     this.clearFilterOptionLink.style.cursor = hasActiveFilter ? 'pointer' : 'not-allowed';
   }
 
+  /**
+   * 更新清除筛选按钮的状态
+   */
+  private updateClearFilterButtonState(field: string | number): void {
+    const currentFilter = this.filterStateManager.getFilterState(field);
+    const hasActiveFilter = currentFilter && currentFilter.enable;
+
+    this.clearFilterOptionLink.style.display = 'inline';
+    this.clearFilterOptionLink.style.opacity = hasActiveFilter ? '1' : '0.5';
+    this.clearFilterOptionLink.style.pointerEvents = hasActiveFilter ? 'auto' : 'none';
+    this.clearFilterOptionLink.style.cursor = hasActiveFilter ? 'pointer' : 'not-allowed';
+  }
+
   render(container: HTMLElement): void {
     // === 主容器 ===
     this.filterMenu = document.createElement('div');

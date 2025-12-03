@@ -5,6 +5,25 @@ import { bindDebugTool } from '../../src/scenegraph/debug-tool';
 const CONTAINER_ID = 'vTable';
 VTable.register.chartModule('vchart', VChart);
 export function createTable() {
+  const chartDimensionLinkage = {
+    showTooltip: true,
+    heightLimitToShowTooltipForLastRow: 60,
+    widthLimitToShowTooltipForLastColumn: 90,
+    labelHoverOnAxis: {
+      bottom: {
+        visible: true,
+        formatMethod: a => {
+          return Math.floor(a * 100) / 100;
+        }
+      },
+      left: {
+        visible: true,
+        formatMethod: a => {
+          return Math.floor(a);
+        }
+      }
+    }
+  };
   const data = [
     {
       name: 'citroen ds-21 pallas',
@@ -1271,6 +1290,9 @@ export function createTable() {
               visible: true,
               text: 'Horse Power'
             },
+            domainLine: {
+              visible: false
+            },
             orient: 'left',
             range: { min: 0 },
             type: 'linear',
@@ -1285,6 +1307,9 @@ export function createTable() {
             title: {
               visible: true,
               text: 'Miles Per Gallon'
+            },
+            domainLine: {
+              visible: false
             },
             orient: 'bottom',
             label: { visible: true },
@@ -1304,6 +1329,7 @@ export function createTable() {
     }
   ];
   const option = {
+    chartDimensionLinkage,
     // hideIndicatorName: true,
     indicatorsAsCol: false,
     rows: rows,
@@ -1340,9 +1366,4 @@ export function createTable() {
   window.tableInstance = tableInstance;
 
   bindDebugTool(tableInstance.scenegraph.stage, { customGrapicKeys: ['col', 'row'] });
-
-  window.update = () => {
-    theme.cornerLeftBottomCellStyle.borderColor = 'red';
-    tableInstance.updateTheme(theme);
-  };
 }

@@ -1,6 +1,6 @@
 import type { IStage, IRect, ITextCache, INode, Text, RichText, Stage, IRectGraphicAttribute } from '@src/vrender';
 import { createStage, createRect, IContainPointMode, container, vglobal, registerForVrender } from '@src/vrender';
-import type { CellRange, CellSubLocation } from '../ts-types';
+import type { CellRange, CellSubLocation, PivotChartConstructorOptions } from '../ts-types';
 import {
   type CellAddress,
   type CellLocation,
@@ -83,6 +83,7 @@ import type { FederatedPointerEvent } from '@src/vrender';
 import { TABLE_EVENT_TYPE } from '../core/TABLE_EVENT_TYPE';
 import { getCellEventArgsSet } from '../event/util';
 import type { SceneEvent } from '../event/util';
+import type { Chart } from './graphic/chart';
 
 registerForVrender();
 
@@ -714,7 +715,44 @@ export class Scenegraph {
       return;
     }
     const cellGroup = this.getCell(col, row);
-    (cellGroup?.firstChild as any)?.deactivate?.();
+    if ((cellGroup?.firstChild as any)?.deactivate) {
+      const chartNode = cellGroup?.firstChild as Chart;
+      const chartType = chartNode.attribute.spec.type;
+
+      (cellGroup?.firstChild as any)?.deactivate?.(
+        this.table,
+        (this.table.options as PivotChartConstructorOptions).chartDimensionLinkage
+          ? {
+              releaseChartInstance:
+                chartType === 'scatter' // 散点图一般是横纵crosshair 所以需要判断是否是hover的单元格 是否是超出图表显示区域到了边界表头或者轴单元格
+                  ? (col !== this.table.stateManager.hover.cellPos.col &&
+                      row !== this.table.stateManager.hover.cellPos.row) ||
+                    this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                    this.table.stateManager.hover.cellPos.row >
+                      this.table.rowCount - 1 - this.table.bottomFrozenRowCount ||
+                    this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                    this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+                  : (this.table.options as PivotChartConstructorOptions).indicatorsAsCol //非散点图的话判断是显示横向crosshair还是纵向crosshair
+                    ? row !== this.table.stateManager.hover.cellPos.row ||
+                      this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                      this.table.stateManager.hover.cellPos.col >
+                        this.table.colCount - 1 - this.table.rightFrozenColCount
+                    : col !== this.table.stateManager.hover.cellPos.col ||
+                      this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                      this.table.stateManager.hover.cellPos.row >
+                        this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+              releaseColumnChartInstance:
+                col !== this.table.stateManager.hover.cellPos.col ||
+                this.table.stateManager.hover.cellPos.row < this.table.frozenRowCount ||
+                this.table.stateManager.hover.cellPos.row > this.table.rowCount - 1 - this.table.bottomFrozenRowCount,
+              releaseRowChartInstance:
+                row !== this.table.stateManager.hover.cellPos.row ||
+                this.table.stateManager.hover.cellPos.col < this.table.frozenColCount ||
+                this.table.stateManager.hover.cellPos.col > this.table.colCount - 1 - this.table.rightFrozenColCount
+            }
+          : undefined
+      );
+    }
   }
   /**
    * hover 到单元格上 激活该单元格对应的图表实例
@@ -1151,16 +1189,16 @@ export class Scenegraph {
       if ((rectAttributes as any)?.strokeArrayWidth) {
         borderTop = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[0]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
         borderRight = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[1]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
         borderBottom = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[2]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
         borderLeft = (rectAttributes as any).strokeArrayWidth
           ? (rectAttributes as any).strokeArrayWidth[3]
-          : (rectAttributes.lineWidth as number) ?? 0;
+          : ((rectAttributes.lineWidth as number) ?? 0);
       } else {
         borderTop = (rectAttributes?.lineWidth as number) ?? 0;
         borderRight = (rectAttributes?.lineWidth as number) ?? 0;
@@ -1895,8 +1933,8 @@ export class Scenegraph {
     const type = isVtableMerge
       ? 'text'
       : this.table.isHeader(col, row)
-      ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
-      : this.table.getBodyColumnType(col, row);
+        ? (this.table._getHeaderLayoutMap(col, row) as HeaderData).headerType
+        : this.table.getBodyColumnType(col, row);
     const cellGroup = this.getCell(col, row);
     if (type === 'image' || type === 'video') {
       updateImageCellContentWhileResize(cellGroup, col, row, 0, 0, this.table);
@@ -1935,8 +1973,8 @@ export class Scenegraph {
       this.isPivot
         ? this.table.theme.rowHeaderStyle.frameStyle
         : this.table.internalProps.transpose
-        ? this.table.theme.rowHeaderStyle.frameStyle
-        : this.table.theme.bodyStyle.frameStyle,
+          ? this.table.theme.rowHeaderStyle.frameStyle
+          : this.table.theme.bodyStyle.frameStyle,
       this.rowHeaderGroup.role,
       isListTableWithFrozen ? [true, false, true, true] : undefined
     );

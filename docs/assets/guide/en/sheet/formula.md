@@ -115,11 +115,22 @@ Cell reference input and range selection:
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/formula-drag-cellRange.gif" />
   </div>
 
-### Formula Copying (TODO)
+### Formula Copying
 
 When copying cells containing formulas, references are automatically adjusted:
 - Relative references adjust according to position offset
 - Absolute references remain unchanged
+
+ <div style="width: 30%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/formula-copy.gif" />
+  </div>
+
+### Formula Auto Filling
+
+When a region is selected and contains formulas, the formula is automatically filled using the fill handle.
+ <div style="width: 30%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/formula-autoFill.gif" />
+  </div>
 
 ## 6. Advanced Features
 

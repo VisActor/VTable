@@ -333,6 +333,14 @@ export const menus = [
       },
       {
         path: 'pivot-chart',
+        name: 'pivotChart-scatter2'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-scatter-reverse'
+      },
+      {
+        path: 'pivot-chart',
         name: 'pivotChart-pie'
       },
       {
@@ -358,6 +366,10 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-histogram'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-histogram-horital'
       },
       {
         path: 'pivot-chart',
@@ -470,6 +482,26 @@ export const menus = [
       {
         path: 'pivot-chart',
         name: 'pivotChart-aeolus-large-column'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-linkage'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-rightAxis'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-combined'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'pivotChart-line'
+      },
+      {
+        path: 'pivot-chart',
+        name: 'linkage-pivotChart-horizontal'
       }
     ]
   },

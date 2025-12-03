@@ -346,6 +346,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
     this.table = null;
     this.filterEngine = null;
     this.filterStateManager = null;
+    this.filterToolbar.valueFilter.destroy();
     this.filterToolbar = null;
   }
 }

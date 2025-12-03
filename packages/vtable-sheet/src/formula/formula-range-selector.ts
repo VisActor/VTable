@@ -33,8 +33,8 @@ export class FormulaRangeSelector {
     const ranges: string[] = [];
 
     for (const range of selections) {
-      const startAddr = addressFromCoord(range.startRow, range.startCol);
-      const endAddr = addressFromCoord(range.endRow, range.endCol);
+      const startAddr = addressFromCoord(range.startCol, range.startRow);
+      const endAddr = addressFromCoord(range.endCol, range.endRow);
 
       // 如果是单个单元格（start和end相同）
       if (range.startRow === range.endRow && range.startCol === range.endCol) {
@@ -101,8 +101,8 @@ export class FormulaRangeSelector {
     const newCursorPos = isCtrlAddSelection
       ? this.formulaManager.lastKnownCursorPosInFormulaInput + (newValue.length - currentValue.length)
       : argPosition
-      ? argPosition.start + a1Notation.length
-      : cursorPos;
+        ? argPosition.start + a1Notation.length
+        : cursorPos;
 
     formulaInput.setSelectionRange(newCursorPos, newCursorPos);
     setTimeout(() => {
@@ -348,7 +348,7 @@ export class FormulaRangeSelector {
       if (typeof newValue === 'string' && newValue.startsWith('=') && newValue.length > 1) {
         try {
           // 检查是否包含循环引用
-          const currentCellAddress = activeWorkSheet.addressFromCoord(event.row, event.col);
+          const currentCellAddress = activeWorkSheet.addressFromCoord(event.col, event.row);
           // 使用正则表达式来精确匹配单元格引用
           const cellRegex = new RegExp(`(^|[^A-Za-z0-9])${currentCellAddress}([^A-Za-z0-9]|$)`);
           if (cellRegex.test(newValue)) {
@@ -509,8 +509,8 @@ export class FormulaRangeSelector {
       editCell?.col || 0
     );
 
-    this.handleSelectionChanged([safeSelections], formulaInput, isCtrlAddSelection, (row: number, col: number) =>
-      activeWorkSheet!.addressFromCoord(row, col)
+    this.handleSelectionChanged([safeSelections], formulaInput, isCtrlAddSelection, (col: number, row: number) =>
+      activeWorkSheet!.addressFromCoord(col, row)
     );
 
     // 写入后不再刷新公式栏，以免覆盖刚插入的引用

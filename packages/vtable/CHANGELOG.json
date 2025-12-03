@@ -2,6 +2,75 @@
   "name": "@visactor/vtable",
   "entries": [
     {
+      "version": "1.22.6",
+      "tag": "@visactor/vtable_v1.22.6",
+      "date": "Mon, 01 Dec 2025 11:33:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: copy formula to paste cell\n\n"
+          },
+          {
+            "comment": "feat: vtable-sheet support formula auto fill\n\n"
+          },
+          {
+            "comment": "fix: excel keyboard del and back to delete\n\n"
+          },
+          {
+            "comment": "fix: distinguish null and empty string values in row/column dimensions\n\n"
+          },
+          {
+            "comment": "fix: the filter plugin cannot be opened normally when clicked #4736\n\n"
+          },
+          {
+            "comment": "fix: clear the value of the searchInput when the filter plugin is displayed #4736\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.22.5",
+      "tag": "@visactor/vtable_v1.22.5",
+      "date": "Wed, 26 Nov 2025 02:07:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support right axis in pivotChart spec #4723\n\n"
+          },
+          {
+            "comment": "feat: add enableChartDimensionLinkage for pivotChart\n\n"
+          },
+          {
+            "comment": "feat: add chartDimensionLinkage for pivotChart\n\n"
+          },
+          {
+            "comment": "fix: add null check for nodeChildren in matchDimensionPath\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "1.22.4",
+      "tag": "@visactor/vtable_v1.22.4",
+      "date": "Tue, 18 Nov 2025 06:13:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: filter plugins update when filterState changes"
+          },
+          {
+            "comment": "fix: fix backtracking issue in getCellAdressByHeaderPath matching algorithm\n\n"
+          },
+          {
+            "comment": "fix(pivot-table): fix frozenColCount being invalid when set to 0\n\n"
+          },
+          {
+            "comment": "fix: the serial number cannot be edited #4627\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.22.3",
       "tag": "@visactor/vtable_v1.22.3",
       "date": "Fri, 07 Nov 2025 09:51:25 GMT",

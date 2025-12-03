@@ -188,3 +188,42 @@ columnWidthConfigForRowHeader": [
   ]
 ```
 Matching key is the key of the row dimension: dimensionKey。
+
+## chartDimensionLinkage(Object)
+
+The configuration of the multiple charts based on the same dimension value for interactive functions, whether to turn on, the specific configuration items are as follows:
+
+```
+export interface PivotChartConstructorOptions {
+  chartDimensionLinkage?: {
+    showTooltip?: boolean;
+    heightLimitToShowTooltipForLastRow?: number;
+    widthLimitToShowTooltipForLastColumn?: number;
+    labelHoverOnAxis?: {
+      bottom?: LineAxisAttributes['labelHoverOnAxis'];
+      left?: LineAxisAttributes['labelHoverOnAxis'];
+      right?: LineAxisAttributes['labelHoverOnAxis'];
+      top?: LineAxisAttributes['labelHoverOnAxis'];
+    };
+  };
+}
+```
+
+- showTooltip: whether to display tooltip, default is true.
+- heightLimitToShowTooltipForLastRow: for bar chart, line chart, etc., when displaying tooltip for an entire column, it is detected that the last row may be occluded by scrolling and only a part of it is displayed. The minimum height allowed to display the tooltip is detected.
+- widthLimitToShowTooltipForLastColumn: for horizontal bar chart, when displaying tooltip for an entire row, it is detected that the last column may be occluded by scrolling and only a part of it is displayed. The minimum width allowed to display the tooltip is detected.
+- labelHoverOnAxis: the related configuration of the floating label label on the axis when the mouse hovers over the perspective chart. Supports configuration for the left, right, top, and bottom four directions.
+
+Example configuration:
+```
+chartDimensionLinkage: {
+  showTooltip: true,
+  heightLimitToShowTooltipForLastRow: 60,
+  widthLimitToShowTooltipForLastColumn: 90,
+  labelHoverOnAxis: {
+    bottom: {
+      visible: true
+    }
+  }
+}
+```

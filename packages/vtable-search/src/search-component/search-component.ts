@@ -19,29 +19,38 @@ export type SearchComponentOption = {
   autoJump?: boolean;
   skipHeader?: boolean;
   highlightCellStyle?: VTable.TYPES.CellStyle;
+  /**
+   * @deprecated use focusHighlightCellStyle instead
+   */
   focuseHighlightCellStyle?: VTable.TYPES.CellStyle;
+  focusHighlightCellStyle?: VTable.TYPES.CellStyle;
   queryMethod?: (queryStr: string, value: string, option?: { col: number; row: number; table: IVTable }) => boolean;
   treeQueryMethod?: (queryStr: string, node: any, fieldsToSearch?: string[], option?: { table: IVTable }) => boolean;
   fieldsToSearch?: string[];
   scrollOption?: ITableAnimationOption;
+  /**
+   * 当开启时，搜索结果会自动滚动到视口范围内
+   * @since 1.22.4
+   */
+  enableViewportScroll?: boolean;
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 };
 
 const HighlightStyleId = '__search_component_highlight';
-const FocuseHighlightStyleId = '__search_component_focuse';
+const FocusHighlightStyleId = '__search_component_focus';
 
-const defalutHightlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
+const defaultHighlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
   bgColor: 'rgba(255, 255, 0, 0.2)'
 };
 
-const defalutFocusHightlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
+const defaultFocusHighlightCellStyle: Partial<VTable.TYPES.CellStyle> = {
   bgColor: 'rgba(255, 155, 0, 0.2)'
 };
 
-function defalultQueryMethod(queryStr: string, value: string) {
+function defaultQueryMethod(queryStr: string, value: string) {
   return isValid(queryStr) && isValid(value) && value.toString().includes(queryStr);
 }
-function defalultTreeQueryMethod(queryStr: string, node: any, fieldsToSearch?: string[]) {
+function defaultTreeQueryMethod(queryStr: string, node: any, fieldsToSearch?: string[]) {
   if (!isValid(queryStr)) {
     return false;
   }
@@ -57,10 +66,11 @@ export class SearchComponent {
   autoJump: boolean;
   highlightCellStyle: Partial<VTable.TYPES.CellStyle>;
   focuseHighlightCellStyle: Partial<VTable.TYPES.CellStyle>;
+  focusHighlightCellStyle: Partial<VTable.TYPES.CellStyle>;
   queryMethod: (queryStr: string, value: string, option: { col: number; row: number; table: IVTable }) => boolean;
   treeQueryMethod: (queryStr: string, node: any, fieldsToSearch?: string[], option?: { table: IVTable }) => boolean;
   fieldsToSearch: string[];
-
+  enableViewportScroll?: boolean;
   callback?: (queryResult: QueryResult, table: IVTable) => void;
 
   queryStr: string;
@@ -81,18 +91,21 @@ export class SearchComponent {
     this.table = option.table;
     this.autoJump = option.autoJump || false;
     this.skipHeader = option.skipHeader || false;
-    this.highlightCellStyle = option.highlightCellStyle || defalutHightlightCellStyle;
-    this.focuseHighlightCellStyle = option.focuseHighlightCellStyle || defalutFocusHightlightCellStyle;
-    this.queryMethod = option.queryMethod || defalultQueryMethod;
-    this.treeQueryMethod = option.treeQueryMethod || defalultTreeQueryMethod;
+    this.highlightCellStyle = option.highlightCellStyle || defaultHighlightCellStyle;
+    this.focusHighlightCellStyle =
+      // 兼容兜底处理，修复拼写错误的问题
+      option.focusHighlightCellStyle || option.focuseHighlightCellStyle || defaultFocusHighlightCellStyle;
+    this.queryMethod = option.queryMethod || defaultQueryMethod;
+    this.treeQueryMethod = option.treeQueryMethod || defaultTreeQueryMethod;
     this.fieldsToSearch = option.fieldsToSearch || [];
     this.isTree = false;
     this.treeIndex = 0;
     this.callback = option.callback;
     this.scrollOption =
       option.scrollOption || ({ duration: 900, easing: 'quartIn' as EasingType } as ITableAnimationOption);
+    this.enableViewportScroll = option.enableViewportScroll || false;
     this.table.registerCustomCellStyle(HighlightStyleId, this.highlightCellStyle as any);
-    this.table.registerCustomCellStyle(FocuseHighlightStyleId, this.focuseHighlightCellStyle as any);
+    this.table.registerCustomCellStyle(FocusHighlightStyleId, this.focusHighlightCellStyle as any);
   }
 
   search(str: string) {
@@ -251,8 +264,8 @@ export class SearchComponent {
     if (!this.table.hasCustomCellStyle(HighlightStyleId)) {
       this.table.registerCustomCellStyle(HighlightStyleId, this.highlightCellStyle as any);
     }
-    if (!this.table.hasCustomCellStyle(FocuseHighlightStyleId)) {
-      this.table.registerCustomCellStyle(FocuseHighlightStyleId, this.focuseHighlightCellStyle as any);
+    if (!this.table.hasCustomCellStyle(FocusHighlightStyleId)) {
+      this.table.registerCustomCellStyle(FocusHighlightStyleId, this.focusHighlightCellStyle as any);
     }
     if (this.isTree) {
       const { range, indexNumber } = this.queryResult[0];
@@ -272,7 +285,7 @@ export class SearchComponent {
           range
         },
         highlight,
-        FocuseHighlightStyleId
+        FocusHighlightStyleId
       );
     } else {
       for (let i = 0; i < this.queryResult.length; i++) {
@@ -328,7 +341,7 @@ export class SearchComponent {
             range
           },
           true,
-          FocuseHighlightStyleId
+          FocusHighlightStyleId
         );
       }
     } else {
@@ -342,7 +355,7 @@ export class SearchComponent {
       }
       const { col, row } = this.queryResult[this.currentIndex];
 
-      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocuseHighlightStyleId);
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocusHighlightStyleId);
 
       this.jumpToCell({ col, row });
     }
@@ -395,7 +408,7 @@ export class SearchComponent {
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
         range.start.row = row;
         range.end.row = row;
-        this.arrangeCustomCellStyle({ range }, true, FocuseHighlightStyleId);
+        this.arrangeCustomCellStyle({ range }, true, FocusHighlightStyleId);
       }
     } else {
       // 普通表格处理
@@ -409,7 +422,7 @@ export class SearchComponent {
       }
 
       const { col, row } = this.queryResult[this.currentIndex];
-      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocuseHighlightStyleId);
+      this.arrangeCustomCellStyle(this.queryResult[this.currentIndex], true, FocusHighlightStyleId);
       this.jumpToCell({ col, row });
     }
 
@@ -428,30 +441,48 @@ export class SearchComponent {
       let tmpNumber = 0;
       let i = 0;
 
+      // 展开树形结构的父节点
       while (tmpNumber < tmp.length - 1) {
         tmpNumber++;
         const indexNumber = indexNumbers.slice(0, tmpNumber);
 
-        // 如果是表头就往下偏移
+        // 跳过表头行
         while (this.table.isHeader(0, i)) {
           i++;
         }
         const row = this.getBodyRowIndexByRecordIndex(indexNumber) + i;
 
         const hierarchyState = this.table.getHierarchyState(this.treeIndex, row);
-
         if (hierarchyState !== 'expand') {
           this.table.toggleHierarchyState(this.treeIndex, row);
         }
       }
-      this.table.scrollToRow(this.getBodyRowIndexByRecordIndex(indexNumbers) + i, this.scrollOption);
+
+      const finalRow = this.getBodyRowIndexByRecordIndex(indexNumbers) + i;
+
+      // 根据配置决定是否滚动表格
+      this.table.scrollToRow(finalRow, this.scrollOption);
+
+      // 根据配置决定是否滚动页面
+      if (this.enableViewportScroll) {
+        scrollVTableCellIntoView(this.table, { row: finalRow, col: this.treeIndex });
+      }
     } else {
       const { col, row } = params;
-      // if focus cell out of screen, jump to cell
       const { rowStart, rowEnd } = this.table.getBodyVisibleRowRange();
       const { colStart, colEnd } = this.table.getBodyVisibleColRange();
-      if (row <= rowStart || row >= rowEnd || col <= colStart || col >= colEnd) {
+
+      // 检查单元格是否在表格可视范围内
+      const isInTableView = !(row <= rowStart || row >= rowEnd || col <= colStart || col >= colEnd);
+
+      // 根据配置决定是否滚动表格
+      if (!isInTableView) {
         this.table.scrollToCell({ col, row });
+      }
+
+      // 根据配置决定是否滚动页面
+      if (this.enableViewportScroll) {
+        scrollVTableCellIntoView(this.table, { row, col });
       }
     }
   }
@@ -467,5 +498,76 @@ export class SearchComponent {
     this.queryStr = '';
     this.queryResult = [];
     this.currentIndex = -1;
+  }
+}
+
+function scrollVTableCellIntoView(table: IVTable, cellInfo: { row: number; col: number }): void {
+  if (typeof document === 'undefined' || typeof window === 'undefined') {
+    return;
+  }
+
+  const tableEl = table.getElement?.() || table.container;
+  if (!tableEl) {
+    return;
+  }
+
+  // 获取单元格在表格中的位置信息
+  const cellRect = table.getCellRect(cellInfo.col, cellInfo.row);
+  if (!cellRect) {
+    return;
+  }
+
+  // 查找最近的可滚动父容器
+  let scrollContainer: Element | null = tableEl.parentElement;
+  while (scrollContainer) {
+    const computedStyle = getComputedStyle(scrollContainer);
+    const hasScroll = /(auto|scroll|overlay)/.test(computedStyle.overflowY);
+    const canScroll = scrollContainer.scrollHeight > scrollContainer.clientHeight;
+
+    if (hasScroll && canScroll) {
+      break;
+    }
+
+    // 向上查找父元素，包括 Shadow DOM 情况
+    scrollContainer = scrollContainer.parentElement || (scrollContainer.getRootNode?.() as ShadowRoot)?.host || null;
+  }
+
+  // 如果没找到可滚动容器，使用 document
+  if (!scrollContainer) {
+    scrollContainer = document.scrollingElement || document.documentElement;
+  }
+
+  const scrollContainerEl = scrollContainer as HTMLElement;
+
+  // 计算单元格在滚动容器中的绝对位置
+  const tableRect = tableEl.getBoundingClientRect();
+  const containerRect = scrollContainerEl.getBoundingClientRect();
+
+  // 表格相对于滚动容器的位置
+  const tableOffsetTop = tableRect.top - containerRect.top + scrollContainerEl.scrollTop;
+
+  // 单元格在滚动容器中的绝对位置
+  const cellTop = tableOffsetTop + cellRect.top;
+  const cellBottom = cellTop + cellRect.height;
+  const containerHeight = scrollContainerEl.clientHeight;
+  const scrollTop = scrollContainerEl.scrollTop;
+
+  // 检查单元格是否完全可见
+  const isFullyVisible = cellTop >= scrollTop && cellBottom <= scrollTop + containerHeight;
+
+  if (!isFullyVisible) {
+    // 计算新的滚动位置
+    let newScrollTop: number;
+
+    if (cellTop < scrollTop) {
+      // 单元格在上方，滚动到单元格顶部
+      newScrollTop = cellTop;
+    } else {
+      // 单元格在下方，滚动到单元格底部对齐容器底部
+      newScrollTop = cellBottom - containerHeight;
+    }
+
+    // 确保滚动位置不小于 0
+    scrollContainerEl.scrollTop = Math.max(0, newScrollTop);
   }
 }

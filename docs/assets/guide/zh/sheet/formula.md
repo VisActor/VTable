@@ -114,12 +114,21 @@ VTableSheet 自身开发了 FormulaEngine 模块 作为核心的计算引擎：
      <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/formula-drag-cellRange.gif" />
   </div>
 
-### 公式复制(TODO)
+### 公式复制
 
 当复制包含公式的单元格时，引用会自动调整：
 - 相对引用会根据位置偏移调整
 - 绝对引用保持不变
+ <div style="width: 30%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/formula-copy.gif" />
+  </div>
+  
+### 填充柄自动填充
 
+  当选中区域存在公式的时候，利用填充柄拖拽自动填充单元格的公式。
+ <div style="width:30%; text-align: center;">
+     <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/guide/formula-autoFill.gif" />
+  </div>
 ## 6. 高级功能
 
 ### 多工作表支持(TODO)

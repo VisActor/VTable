@@ -40,6 +40,7 @@ import type { ICustomRender } from './customElement';
 import type { ICustomLayout } from './customLayout';
 import type { ColorPropertyDefine, StylePropertyFunctionArg } from './style-define';
 import type { TableTheme } from '../themes/theme-define';
+import type { LineAxisAttributes } from '@src/vrender';
 
 export interface CellAddress {
   col: number;
@@ -112,10 +113,25 @@ export interface TableKeyboardOptions {
   cutSelected?: boolean; //这个copy是和浏览器的快捷键一致的
   /** 快捷键复制  默认：false*/
   copySelected?: boolean; //这个copy是和浏览器的快捷键一致的
+  /** 获取单元格的复制值, 替代内部获取单元格的复制值的接口getCellValue。当用户需要自定义单元格的复制值时，可以配置这个选项。 */
+  getCopyCellValue?: {
+    /** 因为复制到系统剪切板的时候需要兼容"text/plain"格式，这个函数返回值会放到"text/plain"的blob中。*/
+    value?: (col: number, row: number) => string | number;
+    /** 因为复制到系统剪切板的时候需要兼容"text/html"格式，这个函数返回值会放到"text/html"的blob中。例如vtable-sheet中的公式处理需要用到 */
+    html?: (col: number, row: number) => string;
+  };
   /** 被复制单元格是否显示虚线框，默认：false */
   showCopyCellBorder?: boolean;
   /** 快捷键粘贴，默认：false 。粘贴内容到指定位置（即粘贴前要有选中的单元格）；支持批量粘贴；粘贴生效仅针对配置了编辑 editor 的单元格；*/
   pasteValueToCell?: boolean; //paste是和浏览器的快捷键一致的
+  /** 粘贴指到表格时候针对公式进行处理，用于处理公式依赖关系的调整，引用关系需要考虑相对位置，比如A4=A2，将A4粘贴到B4，则B4=B2*/
+  processFormulaBeforePaste?: (
+    values: (string | number)[][],
+    sourceStartCol: number,
+    sourceStartRow: number,
+    targetStartCol: number,
+    targetStartRow: number
+  ) => (string | number)[][];
   /** 方向键是否可以更改选中单元格位置，默认：true */
   moveSelectedCellOnArrowKeys?: boolean;
   /** 是否启用ctrl多选框 */
@@ -567,6 +583,24 @@ export interface PivotChartConstructorOptions extends BaseTableConstructorOption
     dimensions: IDimensionInfo[];
     width: number;
   }[];
+  /** 透视图中多个图表基于相同维度值进行交互联动的功能,是否开启  */
+  chartDimensionLinkage?: {
+    /** 是否显示tooltip 默认true*/
+    showTooltip?: boolean;
+    /** 针对条形图折线图等， 整列显示tooltip时，最后一行可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多高 可允许显示tooltip。*/
+    heightLimitToShowTooltipForLastRow?: number;
+    /** 针对横向条形图，整行显示tooltip时，最后一列可能被滚动遮挡只显示一部分的情况下，检测该图表显示出来至少多宽 可允许显示tooltip。*/
+    widthLimitToShowTooltipForLastColumn?: number;
+    /**
+     * 鼠标hover到透视图上时，轴上悬浮label标签的相关配置
+     */
+    labelHoverOnAxis?: {
+      left?: LineAxisAttributes['labelHoverOnAxis'];
+      right?: LineAxisAttributes['labelHoverOnAxis'];
+      top?: LineAxisAttributes['labelHoverOnAxis'];
+      bottom?: LineAxisAttributes['labelHoverOnAxis'];
+    };
+  };
 }
 export interface PivotTableAPI extends BaseTableAPI {
   internalProps: PivotTableProtected;

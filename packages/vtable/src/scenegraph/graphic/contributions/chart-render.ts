@@ -66,9 +66,9 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
     const { width = groupAttribute.width, height = groupAttribute.height } = chart.attribute;
     const { table } = chart.getRootNode() as any;
 
-    const { active, cacheCanvas, activeChartInstance } = chart;
+    const { cacheCanvas, activeChartInstance } = chart;
     // console.log('render chart', chart.parent.col, chart.parent.row, viewBox, cacheCanvas);
-    if (!active && cacheCanvas) {
+    if (!activeChartInstance && cacheCanvas) {
       if (isArray(cacheCanvas)) {
         cacheCanvas.forEach(singleCacheCanvas => {
           const { x, y, width, height, canvas } = singleCacheCanvas;
@@ -122,7 +122,7 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
         stageMatrix.f
       );
 
-      if (typeof dataId === 'string') {
+      if (typeof dataId === 'string' || typeof dataId === 'number') {
         activeChartInstance.updateDataSync(dataId, data ?? []);
       } else {
         const dataBatch = [];
@@ -133,20 +133,20 @@ export class DefaultCanvasChartRender extends BaseRender<Chart> implements IGrap
           dataBatch.push({
             id: dataIdStr,
             values: dataIdAndField
-              ? data?.filter((item: any) => {
+              ? (data?.filter((item: any) => {
                   return item.hasOwnProperty(dataIdAndField);
-                }) ?? []
-              : data ?? [],
+                }) ?? [])
+              : (data ?? []),
             fields: series?.data?.fields
           });
           if (!activeChartInstance.updateFullDataSync) {
             activeChartInstance.updateDataSync(
               dataIdStr,
               dataIdAndField
-                ? data?.filter((item: any) => {
+                ? (data?.filter((item: any) => {
                     return item.hasOwnProperty(dataIdAndField);
-                  }) ?? []
-                : data ?? []
+                  }) ?? [])
+                : (data ?? [])
             );
           }
         }
