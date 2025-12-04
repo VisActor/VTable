@@ -305,7 +305,7 @@ export function createTable() {
       plugins: [filterPlugin],
       records: generateDemoData(50, '第二次')
     });
-  }, 5000);
+  }, 8000);
 
   // setTimeout(() => {
   //   console.log('update');

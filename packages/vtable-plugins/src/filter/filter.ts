@@ -136,6 +136,7 @@ export class FilterPlugin implements pluginsDefinition.IVTablePlugin {
   }
 
   update() {
+    this.filterToolbar.valueFilter?.update();
     if (this.filterStateManager) {
       this.reapplyActiveFilters();
     }

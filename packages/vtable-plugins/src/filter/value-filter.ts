@@ -85,6 +85,32 @@ export class ValueFilter {
     this.toUnformattedCache.set(fieldId, toUnformatted);
   }
 
+  update() {
+    // 表格更新时, 可能会插入新数据, 此时需要更新筛选结果和候选值:
+    // 1. 更新筛选结果
+    // - 出现了之前没有出现过的选项
+    // - 筛选器出于被筛选状态（有值）
+    // - 则将该选项添加到筛选器中
+    // 2. 更新候选值
+    const currentRecords = this.table.internalProps.dataSource.records; // 当前数据
+    const filteredFields = this.filterStateManager.getActiveFilterFields();
+    currentRecords.forEach(record => {
+      filteredFields.forEach(candidateField => {
+        const formatFn = this.getFormatFnCache(candidateField);
+        const originalValue = record[candidateField];
+        const formattedValue = formatFn(record);
+        const lastToUnformatted = this.toUnformattedCache.get(candidateField) || new Map();
+        if (
+          !lastToUnformatted.has(formattedValue) &&
+          this.filterStateManager.getFilterState(candidateField)?.values?.length > 0
+        ) {
+          this.filterStateManager.getFilterState(candidateField).values.push(originalValue);
+          this.selectedKeys.get(candidateField).add(originalValue);
+        }
+      });
+    });
+  }
+
   /**
    * 为已应用筛选的列，收集候选值集合
    */
