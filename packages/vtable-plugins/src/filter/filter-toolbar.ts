@@ -238,6 +238,9 @@ export class FilterToolbar {
     const canvasBounds = this.table.canvas.getBoundingClientRect();
     const cell = this.table.getCellRelativeRect(effectiveCol, effectiveRow);
 
+    const filterMenuWidth = this.filterMenuWidth;
+    const filterMenuHeight = 380; // 最高高度预估值
+
     if (cell.right < this.filterMenuWidth) {
       // 无法把筛选菜单完整地显示在左侧，那么显示在右侧
       left = cell.left + canvasBounds.left;
@@ -247,6 +250,10 @@ export class FilterToolbar {
       left = cell.right + canvasBounds.left - this.filterMenuWidth;
       top = cell.bottom + canvasBounds.top;
     }
+
+    // 确保筛选菜单不会超出窗口边界
+    left = Math.max(0, Math.min(window.innerWidth - filterMenuWidth, left));
+    top = Math.max(0, Math.min(window.innerHeight - filterMenuHeight, top));
 
     this.filterMenu.style.display = this.isVisible ? 'block' : 'none';
     this.filterMenu.style.left = `${left}px`;
