@@ -447,4 +447,7 @@ export interface TableEventHandlersReturnMap {
   update_record: void;
   add_column: void;
   delete_column: void;
+
+  filter_menu_show: { col: number; row: number };
+  filter_menu_hide: { col: number; row: number };
 }

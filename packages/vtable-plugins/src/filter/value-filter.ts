@@ -1,13 +1,15 @@
-import { ListTable, PivotTable } from '@visactor/vtable';
-import { arrayEqual } from '@visactor/vutils';
-import type { FilterConfig, ValueFilterOptionDom, FilterState } from './types';
+import type { ListTable, PivotTable } from '@visactor/vtable';
+import { arrayEqual, isValid } from '@visactor/vutils';
+import type { ValueFilterOptionDom, FilterState, FilterOptions, FilterStyles } from './types';
 import { FilterActionType } from './types';
 import type { FilterStateManager } from './filter-state-manager';
-import { applyStyles, filterStyles } from './styles';
+import { applyStyles } from './styles';
 
 export class ValueFilter {
   private table: ListTable | PivotTable;
   private filterStateManager: FilterStateManager;
+  private pluginOptions: FilterOptions;
+  private styles: Record<any, any>;
   private selectedField: string | number;
   private selectedKeys = new Map<string | number, Set<string | number>>(); // 存储 format 之前的原始数据
   private candidateKeys = new Map<string | number, Map<string | number, number>>(); // 存储 format 后的数据
@@ -15,7 +17,12 @@ export class ValueFilter {
   private toUnformattedCache = new Map<string | number, Map<any, Set<any>>>();
 
   private valueFilterOptionList: Map<string | number, ValueFilterOptionDom[]> = new Map();
+
   private filterByValuePanel: HTMLElement;
+  private searchContainer: HTMLElement;
+  private optionsContainer: HTMLElement;
+  private selectAllItemDiv: HTMLElement;
+  private selectAllLabel: HTMLElement;
   private filterByValueSearchInput: HTMLInputElement;
   private selectAllCheckbox: HTMLInputElement;
   private totalCountSpan: HTMLSpanElement;
@@ -24,9 +31,11 @@ export class ValueFilter {
   private _onInputKeyUpHandler: (event: KeyboardEvent) => void;
   private _onCheckboxChangeHandler: (event: Event) => void;
 
-  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager) {
+  constructor(table: ListTable | PivotTable, filterStateManager: FilterStateManager, pluginOptions: FilterOptions) {
     this.table = table;
     this.filterStateManager = filterStateManager;
+    this.pluginOptions = pluginOptions;
+    this.styles = pluginOptions.styles || {};
   }
 
   setSelectedField(fieldId: string | number): void {
@@ -57,22 +66,32 @@ export class ValueFilter {
    * 为未应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForUnfilteredColumn(fieldId: string | number): void {
+    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
+    let records = [];
+    // 如果各个筛选器之间不联动, 则永远从原数据中获取候选值
+    if (!syncCheckboxCheckedState) {
+      records = this.table.internalProps.records;
+    } else {
+      records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
+    }
     const formatFn = this.getFormatFnCache(fieldId);
     const toUnformatted = new Map();
 
     records.forEach(record => {
-      const originalValue = record[fieldId];
-      const formattedValue = formatFn(record);
-      if (formattedValue !== undefined && formattedValue !== null) {
-        countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
+      // 空行不做处理
+      if (isValid(record)) {
+        const originalValue = record[fieldId];
+        const formattedValue = formatFn(record);
+        if (formattedValue !== undefined && formattedValue !== null) {
+          countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
 
-        const unformattedSet = toUnformatted.get(formattedValue);
-        if (unformattedSet !== undefined && unformattedSet !== null) {
-          unformattedSet.add(originalValue);
-        } else {
-          toUnformatted.set(formattedValue, new Set([originalValue]));
+          const unformattedSet = toUnformatted.get(formattedValue);
+          if (unformattedSet !== undefined && unformattedSet !== null) {
+            unformattedSet.add(originalValue);
+          } else {
+            toUnformatted.set(formattedValue, new Set([originalValue]));
+          }
         }
       }
     });
@@ -81,33 +100,95 @@ export class ValueFilter {
     this.toUnformattedCache.set(fieldId, toUnformatted);
   }
 
+  updateBeforeFilter() {
+    // 处于值筛选状态, 表格更新时:
+    // 可能会插入新数据, 此时需要更新筛选结果和候选值:
+    // 1. 更新筛选结果
+    // - 出现了之前没有出现过的选项
+    // - 筛选器出于被筛选状态（有值）
+    // - 则将该选项添加到筛选器中
+    // 2. 更新候选值
+    const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
+    const filteredFields = this.filterStateManager.getActiveFilterFields();
+    currentRecords.forEach(record => {
+      filteredFields.forEach(candidateField => {
+        const formatFn = this.getFormatFnCache(candidateField);
+
+        // 空行不做处理
+        if (isValid(record)) {
+          const originalValue = record[candidateField];
+          const formattedValue = formatFn(record);
+          const lastToUnformatted = this.toUnformattedCache.get(candidateField) || new Map();
+          if (
+            !lastToUnformatted.has(formattedValue) &&
+            this.filterStateManager.getFilterState(candidateField)?.values?.length > 0
+          ) {
+            this.filterStateManager.getFilterState(candidateField).values.push(originalValue);
+            this.selectedKeys.get(candidateField).add(originalValue);
+          }
+        }
+      });
+    });
+  }
+
+  updateAfterFilter() {
+    // 处于条件筛选状态, 表格更新时:
+    // 值筛选面板需要同步筛选结果
+    const currentRecords = this.table.internalProps.dataSource.records; // 此时还没做筛选, 当前数据 = 原始表格数据
+    const filteredFields = this.filterStateManager.getActiveFilterFields();
+    currentRecords.forEach(record => {
+      filteredFields.forEach(candidateField => {
+        // 空行不做处理
+        if (isValid(record)) {
+          const originalValue = record[candidateField];
+          if (this.filterStateManager.getFilterState(candidateField)?.type === 'byCondition') {
+            if (!this.selectedKeys.get(candidateField)) {
+              this.selectedKeys.set(candidateField, new Set());
+            }
+            this.selectedKeys.get(candidateField).add(originalValue);
+          }
+        }
+      });
+    });
+  }
+
   /**
    * 为已应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForFilteredColumn(candidateField: string | number): void {
+    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
     const filteredFields = this.filterStateManager.getActiveFilterFields().filter(field => field !== candidateField);
     const toUnformatted = new Map();
     const formatFn = this.getFormatFnCache(candidateField);
 
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
-    const records = recordsList.filter(record =>
-      filteredFields.every(field => {
-        const set = this.selectedKeys.get(field);
-        return set.has(record[field]);
-      })
-    );
+    let records = [];
+    // 如果各个筛选器之间不联动, 则永远从原数据中获取候选值
+    if (!syncCheckboxCheckedState) {
+      records = this.table.internalProps.records;
+    } else {
+      const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
+      records = recordsList.filter(record =>
+        filteredFields.every(field => {
+          const set = this.selectedKeys.get(field);
+          return set.has(record[field]);
+        })
+      );
+    }
 
     records.forEach(record => {
-      const originalValue = record[candidateField];
-      const formattedValue = formatFn(record);
-      countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
-      if (formattedValue !== undefined && formattedValue !== null) {
-        const unformattedSet = toUnformatted.get(formattedValue);
-        if (unformattedSet !== undefined && unformattedSet !== null) {
-          unformattedSet.add(originalValue);
-        } else {
-          toUnformatted.set(formattedValue, new Set([originalValue]));
+      // 空行不做处理
+      if (isValid(record)) {
+        const originalValue = record[candidateField];
+        const formattedValue = formatFn(record);
+        countMap.set(formattedValue, (countMap.get(formattedValue) || 0) + 1);
+        if (formattedValue !== undefined && formattedValue !== null) {
+          const unformattedSet = toUnformatted.get(formattedValue);
+          if (unformattedSet !== undefined && unformattedSet !== null) {
+            unformattedSet.add(originalValue);
+          } else {
+            toUnformatted.set(formattedValue, new Set([originalValue]));
+          }
         }
       }
     });
@@ -163,12 +244,18 @@ export class ValueFilter {
 
     const currentRecords = this.table.internalProps.dataSource.records; // 当前数据
     currentRecords.forEach(record => {
-      selectedValues.add(record[fieldId]);
+      // 空行不做处理
+      if (isValid(record)) {
+        selectedValues.add(record[fieldId]);
+      }
     });
 
     const originalRecords = this.table.internalProps.records; // 原始数据
     originalRecords.forEach(record => {
-      originalValues.add(record[fieldId]);
+      // 空行不做处理
+      if (isValid(record)) {
+        originalValues.add(record[fieldId]);
+      }
     });
 
     const hasFiltered = !arrayEqual(Array.from(originalValues), Array.from(selectedValues));
@@ -205,7 +292,7 @@ export class ValueFilter {
 
     this.selectedKeys.set(fieldId, new Set(selections));
 
-    if (selections.length > 0 && selections.length < this.valueFilterOptionList.get(fieldId).length) {
+    if (selections.length >= 0 && selections.length < this.valueFilterOptionList.get(fieldId).length) {
       this.filterStateManager.dispatch({
         type: FilterActionType.APPLY_FILTERS,
         payload: {
@@ -237,30 +324,31 @@ export class ValueFilter {
   }
 
   render(container: HTMLElement): void {
+    const filterStyles = this.styles;
     // === 按值筛选的菜单内容 ===
     this.filterByValuePanel = document.createElement('div');
     applyStyles(this.filterByValuePanel, filterStyles.filterPanel);
 
     // -- 搜索栏 ---
-    const searchContainer = document.createElement('div');
-    applyStyles(searchContainer, filterStyles.searchContainer);
+    this.searchContainer = document.createElement('div');
+    applyStyles(this.searchContainer, this.styles.searchContainer);
 
     this.filterByValueSearchInput = document.createElement('input');
     this.filterByValueSearchInput.type = 'text';
-    this.filterByValueSearchInput.placeholder = '可使用空格分隔多个关键词';
+    this.filterByValueSearchInput.placeholder = filterStyles.searchInput?.placeholder || '可使用空格分隔多个关键词';
     applyStyles(this.filterByValueSearchInput, filterStyles.searchInput);
 
-    searchContainer.appendChild(this.filterByValueSearchInput);
+    this.searchContainer.appendChild(this.filterByValueSearchInput);
 
     // --- 筛选选项 ---
-    const optionsContainer = document.createElement('div');
-    applyStyles(optionsContainer, filterStyles.optionsContainer);
+    this.optionsContainer = document.createElement('div');
+    applyStyles(this.optionsContainer, this.styles.optionsContainer);
 
-    const selectAllItemDiv = document.createElement('div');
-    applyStyles(selectAllItemDiv, filterStyles.optionItem);
+    this.selectAllItemDiv = document.createElement('div');
+    applyStyles(this.selectAllItemDiv, this.styles.optionItem);
 
-    const selectAllLabel = document.createElement('label');
-    applyStyles(selectAllLabel, filterStyles.optionLabel);
+    this.selectAllLabel = document.createElement('label');
+    applyStyles(this.selectAllLabel, this.styles.optionLabel);
 
     this.selectAllCheckbox = document.createElement('input');
     this.selectAllCheckbox.type = 'checkbox';
@@ -271,20 +359,32 @@ export class ValueFilter {
     this.totalCountSpan.textContent = '';
     applyStyles(this.totalCountSpan, filterStyles.countSpan);
 
-    selectAllLabel.append(this.selectAllCheckbox, ' 全选');
-    selectAllItemDiv.append(selectAllLabel, this.totalCountSpan);
+    this.selectAllLabel.append(this.selectAllCheckbox, ' 全选');
+    this.selectAllItemDiv.appendChild(this.selectAllLabel);
 
     this.filterItemsContainer = document.createElement('div'); // 筛选条目的容器，后续应动态 appendChild
 
-    optionsContainer.append(selectAllItemDiv, this.filterItemsContainer);
-    this.filterByValuePanel.append(searchContainer, optionsContainer);
+    this.optionsContainer.append(this.selectAllItemDiv, this.filterItemsContainer);
+    this.filterByValuePanel.append(this.searchContainer, this.optionsContainer);
 
     container.appendChild(this.filterByValuePanel);
 
     this.bindEventForFilterByValue();
   }
 
+  updateStyles(styles: FilterStyles): void {
+    applyStyles(this.filterByValuePanel, styles.filterPanel);
+    applyStyles(this.searchContainer, styles.searchContainer);
+    this.filterByValueSearchInput.placeholder = styles.searchInput?.placeholder || '可使用空格分隔多个关键词';
+    applyStyles(this.filterByValueSearchInput, styles.searchInput);
+    applyStyles(this.optionsContainer, styles.optionsContainer);
+    applyStyles(this.selectAllItemDiv, styles.optionItem);
+    applyStyles(this.selectAllLabel, styles.optionLabel);
+    applyStyles(this.selectAllCheckbox, styles.checkbox);
+  }
+
   private renderFilterOptions(field: string | number): void {
+    const filterStyles = this.styles;
     this.filterItemsContainer.innerHTML = '';
     this.valueFilterOptionList.delete(field);
     this.valueFilterOptionList.set(field, []);
@@ -333,7 +433,7 @@ export class ValueFilter {
       countSpan.textContent = String(count);
       applyStyles(countSpan, filterStyles.countSpan);
 
-      label.append(checkbox, ` ${val}`); // UI显示格式化值
+      label.append(checkbox, ` ${this.pluginOptions.checkboxItemFormat?.(val, unformattedArr) || val}`); // UI显示格式化值 或 用户二次加工的值
       itemDiv.append(label, countSpan);
       this.filterItemsContainer.appendChild(itemDiv);
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: apply filter after update table data. fix#4785",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

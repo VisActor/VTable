@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "feat: add config to disable sync multiple filter state. close#4793",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}

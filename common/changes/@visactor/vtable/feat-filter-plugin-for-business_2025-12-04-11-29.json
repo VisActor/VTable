@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vtable",
+      "comment": "fix: update checkbox state after update data. fix#4795",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vtable"
+}
