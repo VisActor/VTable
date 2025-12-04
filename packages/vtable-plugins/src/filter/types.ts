@@ -19,6 +19,10 @@ export interface FilterOptions {
   conditionCategories?: FilterOperatorCategoryOption[];
   /** 筛选选项是否展示为原始值 */
   checkboxItemFormat?: (rawValue: any, formatValue: any) => any;
+  /** 多个筛选器之间是否联动
+   * @default true
+   */
+  syncCheckboxCheckedState?: boolean;
 }
 
 export interface FilterOperatorCategoryOption {

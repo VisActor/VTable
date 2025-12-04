@@ -66,8 +66,15 @@ export class ValueFilter {
    * 为未应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForUnfilteredColumn(fieldId: string | number): void {
+    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
+    let records = [];
+    // 如果各个筛选器之间不联动, 则永远从原数据中获取候选值
+    if (!syncCheckboxCheckedState) {
+      records = this.table.internalProps.records;
+    } else {
+      records = this.table.internalProps.dataSource.records; // 未筛选：使用当前表格数据
+    }
     const formatFn = this.getFormatFnCache(fieldId);
     const toUnformatted = new Map();
 
@@ -120,18 +127,25 @@ export class ValueFilter {
    * 为已应用筛选的列，收集候选值集合
    */
   private collectCandidateKeysForFilteredColumn(candidateField: string | number): void {
+    const syncCheckboxCheckedState = this.pluginOptions?.syncCheckboxCheckedState ?? true;
     const filteredFields = this.filterStateManager.getActiveFilterFields().filter(field => field !== candidateField);
     const toUnformatted = new Map();
     const formatFn = this.getFormatFnCache(candidateField);
 
     const countMap = new Map<any, number>(); // 计算每个候选值的计数
-    const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
-    const records = recordsList.filter(record =>
-      filteredFields.every(field => {
-        const set = this.selectedKeys.get(field);
-        return set.has(record[field]);
-      })
-    );
+    let records = [];
+    // 如果各个筛选器之间不联动, 则永远从原数据中获取候选值
+    if (!syncCheckboxCheckedState) {
+      records = this.table.internalProps.records;
+    } else {
+      const recordsList = this.table.internalProps.records; // 已筛选：使用原始表格数据
+      records = recordsList.filter(record =>
+        filteredFields.every(field => {
+          const set = this.selectedKeys.get(field);
+          return set.has(record[field]);
+        })
+      );
+    }
 
     records.forEach(record => {
       const originalValue = record[candidateField];
